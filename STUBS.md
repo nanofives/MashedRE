@@ -129,3 +129,93 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0207 | 0x00498ea0 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498ea0; called after dialog path before LAB_00499590; no args; depth-3 of rw_engine_init_d2 |
 | S-0208 | 0x004c2e70 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004c2e70; called FUN_004c2e70(DAT_0077340c); depth-3 of rw_engine_init_d2; not in rw_engine_init session D |
 | S-0209 | 0x004c2f30 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004c2f30; called FUN_004c2f30(DAT_00773200); depth-3 of rw_engine_init_d2; not in rw_engine_init session D |
+| S-0215 | 0x004cfa00 | 0x004c7a60 thunk_FUN_004cfa00 | render | passthrough | 2026-05-02 | FUN_004cfa00; thunk target; zeros 512B at DAT_00911b00 then initializes D3D/RW format-cap table 0x911b50..0x911cd5; depth-3 |
+| S-0216 | 0x004c7690 | 0x004c7a60 thunk_FUN_004cfa00 | render | passthrough | 2026-05-02 | FUN_004c7690; called by FUN_004cfa00 with (0x24,0x40c,&LAB_004cfdd0,&LAB_004cfdf0,0); depth-3 |
+| S-0160 | 0x004e4860 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004e4860; called with (DAT_636560, DAT_636570) and (DAT_636560, DAT_63656c); depth-3 |
+| S-0161 | 0x004c0c20 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004c0c20; called with *(DAT_636570+4) if non-zero; depth-3 |
+| S-0162 | 0x004c0740 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004c0740; called with (global, 0); depth-3 |
+| S-0163 | 0x004e4d90 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004e4d90; called with global arg; depth-3 |
+| S-0164 | 0x004e45b0 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004e45b0; called with (DAT_636560, DAT_636564); depth-3 |
+| S-0165 | 0x004e5700 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004e5700; called with DAT_636560; depth-3 |
+| S-0166 | 0x004e6e00 | 0x004015a0 FUN_004015a0 | boot | passthrough | 2026-05-02 | FUN_004e6e00; called on 10 handle-slots per element and on DAT_636560/DAT_636564; depth-3 |
+| S-0167 | 0x00401630 | 0x004025f0 FUN_004025f0 | boot | passthrough | 2026-05-02 | FUN_00401630; called with index value from local_34; result stored to *puVar4; depth-3 |
+| S-0168 | 0x00401690 | 0x004025f0 FUN_004025f0 | boot | passthrough | 2026-05-02 | FUN_00401690; called with no args per loop iteration; depth-3 |
+| S-0169 | 0x00402240 | 0x004025f0 FUN_004025f0 | boot | passthrough | 2026-05-02 | FUN_00402240; called 4x per iteration; result stored to puVar4[0x10..0x13]; depth-3 |
+| S-0170 | 0x00402590 | 0x004025f0 FUN_004025f0 | boot | passthrough | 2026-05-02 | FUN_00402590; called 6x per iteration; result stored to puVar4[0x14..0x19]; depth-3 |
+| S-0171 | 0x004671a0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004671a0; called with 1-3 args per iter: (0,&0xff000000,3)/(0)/(0,0,1); depth-3 |
+| S-0172 | 0x004c1bb0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1bb0; called with result of FUN_004671a0(0,&local,3); depth-3 |
+| S-0173 | 0x004c1a00 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1a00; called with result of FUN_004671a0(0); return checked nonzero; depth-3 |
+| S-0174 | 0x004c19f0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c19f0; called conditionally when FUN_004c1a00 returns nonzero; depth-3 |
+| S-0175 | 0x004c1be0 | 0x004026d0 FUN_004026d0 | boot | passthrough | 2026-05-02 | FUN_004c1be0; called with result of FUN_004671a0(0,0,1); depth-3 |
+| S-0176 | 0x004034a0 | 0x00403640 FUN_00403640 | boot | passthrough | 2026-05-02 | FUN_004034a0; called with param_1; result stored to DAT_0x636b78; depth-3 |
+| S-0177 | 0x004c7650 | 0x00403660 FUN_00403660 | boot | passthrough | 2026-05-02 | FUN_004c7650; called with DAT_0x636b78 if nonzero; depth-3 |
+| S-0178 | 0x004c5c00 | 0x0040bb30 FUN_0040bb30 | boot | passthrough | 2026-05-02 | FUN_004c5c00; called with (global, param_1) from two forwarders (0x63b8f8 and 0x63b8fc); depth-3 |
+| S-0179 | 0x00401000 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00401000; no args; called in sfx/TXD init sequence; depth-3 |
+| S-0305 | 0x00413b80 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00413b80; no args; called near end of sfx init; depth-3 |
+| S-0306 | 0x004210b0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004210b0; no args; depth-3 of FUN_0040bbb0 |
+| S-0307 | 0x0042a6b0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0042a6b0; called with (name, 0, 0) to load TXD/asset handles; depth-3 |
+| S-0308 | 0x00475a00 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00475a00; called with (handle, 0x18)/(handle, 0x10) for scorch/wfall; depth-3 |
+| S-0309 | 0x004759b0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004759b0; called with arg 2; depth-3 |
+| S-0310 | 0x00476390 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00476390; no args; depth-3 |
+| S-0311 | 0x004775b0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004775b0; no args; depth-3 |
+| S-0312 | 0x00477e40 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00477e40; no args; depth-3 |
+| S-0313 | 0x00485d90 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00485d90; no args; depth-3 |
+| S-0314 | 0x004862d0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004862d0; no args; depth-3 |
+| S-0315 | 0x00487e00 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00487e00; called with (0x32, handle) for RWObjShad; depth-3 |
+| S-0316 | 0x00489290 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00489290; no args; depth-3 |
+| S-0317 | 0x0048a460 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048a460; no args; last call in FUN_0040bbb0; depth-3 |
+| S-0318 | 0x0048a830 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048a830; called with arg 0; depth-3 |
+| S-0319 | 0x0048ae00 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048ae00; no args; depth-3 |
+| S-0320 | 0x0048bbe0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048bbe0; no args; called after first FUN_0042a6b0; depth-3 |
+| S-0321 | 0x0048e820 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048e820; called with arg 0x20; depth-3 |
+| S-0322 | 0x0048eac0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048eac0; no args; depth-3 |
+| S-0323 | 0x0048ff20 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_0048ff20; no args; early in sfx init sequence; depth-3 |
+| S-0324 | 0x00495280 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_00495280; called with sfx.piz path string; depth-3 |
+| S-0325 | 0x004952f0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004952f0; no args; depth-3 |
+| S-0326 | 0x004a332b | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004a332b; called with arg 0; no-return path after wprintf error; depth-3 |
+| S-0327 | 0x004c5bc0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004c5bc0; called with (DAT_0x63b8f8, FUN_004c5cb0 result); depth-3 |
+| S-0328 | 0x004c5c80 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004c5c80; called with 0 and with DAT_0x63c60c; depth-3 |
+| S-0329 | 0x004c5cb0 | 0x0040bbb0 FUN_0040bbb0 | boot | passthrough | 2026-05-02 | FUN_004c5cb0; called with (&DAT_005ccca8, 0); result nonzero check; depth-3 |
+| S-0330 | 0x0048bc10 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_0048bc10; first call in teardown sequence; depth-3 |
+| S-0331 | 0x0048ffd0 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_0048ffd0; no args; depth-3 |
+| S-0332 | 0x00477870 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00477870; no args; depth-3 |
+| S-0333 | 0x00475ea0 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00475ea0; no args; depth-3 |
+| S-0334 | 0x00475d90 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00475d90; no args; depth-3 |
+| S-0335 | 0x0045b350 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_0045b350; called twice in FUN_0040bd00 and once in FUN_0040cf80; depth-3 |
+| S-0336 | 0x0048fdd0 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_0048fdd0; no args; depth-3 |
+| S-0337 | 0x0048af70 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_0048af70; no args; depth-3 |
+| S-0338 | 0x00487140 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00487140; no args; depth-3 |
+| S-0339 | 0x0048cf70 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_0048cf70; no args; depth-3 |
+| S-0340 | 0x00485e10 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00485e10; no args; depth-3 |
+| S-0341 | 0x00486350 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00486350; no args; depth-3 |
+| S-0342 | 0x00413bb0 | 0x0040bd00 FUN_0040bd00 | boot | passthrough | 2026-05-02 | FUN_00413bb0; no args; depth-3 |
+| S-0343 | 0x0041f320 | 0x0040cf80 FUN_0040cf80 | boot | passthrough | 2026-05-02 | FUN_0041f320; called with index 0..3; return checked nonzero; depth-3 |
+| S-0344 | 0x0041a980 | 0x0040cf80 FUN_0040cf80 | boot | passthrough | 2026-05-02 | FUN_0041a980; no args; called when any FUN_0041f320 result nonzero; depth-3 |
+| S-0345 | 0x00422140 | 0x0040cf80 FUN_0040cf80 | boot | passthrough | 2026-05-02 | FUN_00422140; no args; depth-3 |
+| S-0346 | 0x0041ec00 | 0x0040cf80 FUN_0040cf80 | boot | passthrough | 2026-05-02 | FUN_0041ec00; called with index 0..3; depth-3 |
+| S-0347 | 0x0040cf40 | 0x0040cf80 FUN_0040cf80 | boot | passthrough | 2026-05-02 | FUN_0040cf40; no args; last call when bVar1 true; depth-3 |
+| S-0348 | 0x00490000 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_00490000; no args; first call in FUN_0040cfd0; depth-3 |
+| S-0349 | 0x0045bed0 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_0045bed0; no args; depth-3 |
+| S-0350 | 0x0045bf30 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_0045bf30; no args; depth-3 |
+| S-0351 | 0x00426c00 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_00426c00; no args; result forwarded to FUN_00426b40; depth-3 |
+| S-0352 | 0x004725f0 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_004725f0; no args; between FUN_00426c00 and FUN_00426b40; depth-3 |
+| S-0353 | 0x00426b40 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_00426b40; called with FUN_00426c00 return value; depth-3 |
+| S-0354 | 0x00405400 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_00405400; no args; depth-3 |
+| S-0355 | 0x00484c90 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_00484c90; no args; depth-3 |
+| S-0356 | 0x00471df0 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_00471df0; no args; depth-3 |
+| S-0357 | 0x004114e0 | 0x0040cfd0 FUN_0040cfd0 | boot | passthrough | 2026-05-02 | FUN_004114e0; no args; last call in FUN_0040cfd0; depth-3 |
+| S-0358 | 0x00482900 | 0x004113b0 FUN_004113b0 | boot | passthrough | 2026-05-02 | FUN_00482900; called with (table_entry, 10); result summed toward 0x24a3c; depth-3 |
+| S-0359 | 0x004987b0 | 0x004113b0 FUN_004113b0 | boot | passthrough | 2026-05-02 | FUN_004987b0; called on sum mismatch error; depth-3 |
+| S-0360 | 0x004770c0 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_004770c0; called with (&DAT_0x63bfd8, 0x80c, 8, shockwave_handle); depth-3 |
+| S-0361 | 0x0042a5d0 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_0042a5d0; called with (dff_name,0,0) and (target_name,0,0); depth-3 |
+| S-0362 | 0x00419090 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_00419090; called with loop index 0..1; depth-3 |
+| S-0363 | 0x004b3f90 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_004b3f90; called with DAT_0x63c608 result; return forwarded to FUN_004e69a0; depth-3 |
+| S-0364 | 0x004e69a0 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_004e69a0; called with FUN_004b3f90 result in loop 2; result stored to *puVar5; depth-3 |
+| S-0365 | 0x004c0b30 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_004c0b30; no args; result passed to FUN_004e7e30; depth-3 |
+| S-0366 | 0x004e7e30 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_004e7e30; called with (*puVar5, FUN_004c0b30 result); depth-3 |
+| S-0367 | 0x00418a00 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_00418a00; no args; called per iteration in loop 3; depth-3 |
+| S-0368 | 0x00418a30 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_00418a30; no args; called after FUN_00418a00 each iteration; depth-3 |
+| S-0369 | 0x00419ff0 | 0x00418980 thunk_FUN_0041a060 | boot | passthrough | 2026-05-02 | FUN_00419ff0; no args; called after all 3 loops; depth-3 |
+| S-0370 | 0x004e6920 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_004e6920; called with *piVar2 in teardown loop 2; depth-3 |
+| S-0371 | 0x004768c0 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_004768c0; called with &DAT_0x63bfd8; depth-3 |
+| S-0372 | 0x00418f40 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_00418f40; no args; last teardown call; depth-3 |
