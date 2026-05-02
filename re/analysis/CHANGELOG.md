@@ -83,3 +83,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  004c32b0  FUN_004c32b0 (RwEngineInit)  C0->C1  structural read; 767 bytes; sets DAT_007d3ff8=&DAT_007d3ec8; 14x FUN_004d7de0 plugin ids; sets [0x49]=1; U-0071 (re/analysis/rw_engine_init/004c32b0.md)
 2026-05-02  004c5c80  FUN_004c5c80            C0->C1  structural read; writes param_1 to *(DAT_007d4054+0x10+DAT_007d3ff8); called as (0) (re/analysis/rw_engine_init/004c5c80.md)
 2026-05-02  004c9eb0  FUN_004c9eb0            C0->C1  structural read; writes param_1 to DAT_006181c4; double-indirect via DAT_007d4108+0x18/+0x1c; 3-elem loop 0x5d8b80; called as (0x3c) (re/analysis/rw_engine_init/004c9eb0.md)
+2026-05-02  sweep-20260502-1827  scribe-claim-sweep  buckets=4
