@@ -353,3 +353,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0492 | 0x0040d270 | 0x0040d440 FUN_0040d440 | util | passthrough | 2026-05-02 | FUN_0040d270; called with (PTR_PTR_005f2770, DAT_0063ba7c); course-load orchestrator seen during discovery traversal |
 | S-0493 | 0x0040e470 | 0x0042c220 FUN_0042c220 | util | passthrough | 2026-05-02 | FUN_0040e470; called per slot index 0–3; return==1 gates thunk call in FUN_0042c220 |
 | S-0494 | 0x00497450 | 0x0042c220 FUN_0042c220 | util | passthrough | 2026-05-02 | thunk_FUN_00497450; called with DAT_007f1a14[i] (0–11); return==0 triggers DAT_0067ea10 flag write |
+| S-0680 | 0x004a92de | 0x004af2d4 FUN_004af2d4 | util | passthrough | 2026-05-02 | terminate; CRT terminate(); called when MSVC C++ exception (0xE06D7363/3/0x19930520) detected in top-level SEH filter |
+| S-0681 | 0x004af400 | 0x004af2d4 FUN_004af2d4 | util | passthrough | 2026-05-02 | _ValidateExecute; CRT IsBadCodePtr-style validator for function pointer; gates chain-to-old-filter path in FUN_004af2d4 |
+| S-0660 | 0x004a4170 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __alldiv; MSVC 64-bit integer division runtime helper embedded in binary |
+| S-0661 | 0x004a4220 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __allmul; MSVC 64-bit integer multiply runtime helper embedded in binary |
