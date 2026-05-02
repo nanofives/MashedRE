@@ -190,3 +190,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-1935  scribe-release  bucket=rw_engine_teardown_d2  writes=5  errors=0  (sweep)
 2026-05-02  sweep-20260502-1935  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='function_at returned: no function found at 004c7a70 (FPO prologue, undefined function)'
 2026-05-02  sweep-20260502-1935  scribe-release-sweep  buckets=3  total_writes=16  errors=1  (halted at render_d3d9_device; 6 buckets remain queued)
+2026-05-02  sweep-20260502-1941  scribe-claim-sweep  buckets=7  (render_d3d9_device reordered last)
