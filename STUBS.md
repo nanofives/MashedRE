@@ -98,3 +98,19 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0221 | 0x004d8480 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d8480; called with &uStack_8 in default handler of FUN_004c2c90; depth-3; already D-0234, S-0102 |
 | S-0222 | 0x004ccce0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004ccce0; called with (DAT_007d6c50, &LAB_004d7d70, DAT_007d6c50); depth-3; DEFERRED D-0580 |
 | S-0223 | 0x004cc9f0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004cc9f0; called with DAT_007d6c50 as single arg; depth-3; DEFERRED D-0581 |
+| S-0180 | 0x004a2bb8 | 0x004a2be9 __security_check_cookie | boot | passthrough | 2026-05-02 | report_failure; depth-4 of boot_crt_exit_d3; D-0462 |
+| S-0181 | 0x004a31e1 | 0x004a4126 __onexit | boot | passthrough | 2026-05-02 | FUN_004a31e1; called before __onexit_lk; role unknown; depth-4; D-0463 |
+| S-0182 | 0x004a407e | 0x004a4126 __onexit | boot | passthrough | 2026-05-02 | __onexit_lk; core logic of __onexit; depth-4; D-0464 |
+| S-0183 | 0x004a4158 | 0x004a4126 __onexit | boot | passthrough | 2026-05-02 | FUN_004a4158; called after __onexit_lk; role unknown; depth-4; D-0465 |
+| S-0184 | 0x004ad33b | 0x004a5de3 FUN_004a5de3 | boot | passthrough | 2026-05-02 | __controlfp; called with (0x10000,0x30000); depth-4; D-0466 |
+| S-0185 | 0x004a5df5 | 0x004a5e35 __ms_p5_mp_test_fdiv | boot | passthrough | 2026-05-02 | __ms_p5_test_fdiv; fallback FPU test; depth-4; D-0467 |
+| S-0186 | 0x004a9744 | 0x004a5f07 ___endstdio | boot | passthrough | 2026-05-02 | __flushall; unconditional flush; depth-4; D-0468 |
+| S-0187 | 0x004ad351 | 0x004a5f07 ___endstdio | boot | passthrough | 2026-05-02 | __fcloseall; conditional close; depth-4; D-0469 |
+| S-0188 | 0x004a7800 | 0x004a787f __lock | boot | passthrough | 2026-05-02 | FUN_004a7800; lazy init of lock slot; depth-4; D-0470 |
+| S-0189 | 0x004aa7da | 0x004aac76 ___sbh_alloc_block | boot | passthrough | 2026-05-02 | ___sbh_alloc_new_region; allocates new SBH region; depth-4; D-0471 |
+| S-0190 | 0x004aa891 | 0x004aac76 ___sbh_alloc_block | boot | passthrough | 2026-05-02 | ___sbh_alloc_new_group; initialises new SBH group; depth-4; D-0472 |
+| S-0300 | 0x004b7330 | 0x0047b860 FUN_0047b860 | input | passthrough | 2026-05-02 | FUN_004b7330; called FUN_004b7330(0); returns ptr stored in DAT_006bf1e0; lua_open/lua_newstate equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
+| S-0301 | 0x004c0510 | 0x0047b860 FUN_0047b860 | input | passthrough | 2026-05-02 | FUN_004c0510; called FUN_004c0510(DAT_006bf1e0); takes Lua state pointer; luaL_openlibs equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
+| S-0302 | 0x004b7480 | 0x0047b880 FUN_0047b880 | input | passthrough | 2026-05-02 | FUN_004b7480; called FUN_004b7480(DAT_006bf1e0); takes Lua state pointer; lua_close equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
+| S-0303 | 0x0047b8a0 | 0x0047b8d0 FUN_0047b8d0 | input | passthrough | 2026-05-02 | FUN_0047b8a0; called FUN_0047b8a0(buf, byte_count, param_2); Lua script executor; lua_dostring/lua_dobuffer equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
+| S-0304 | 0x004b6520 | 0x0047b8d0 FUN_0047b8d0 | input | passthrough | 2026-05-02 | FUN_004b6520; called FUN_004b6520(buf, 0x8000); wraps FUN_004b64e0(buf,0,len); zero-fill; depth-2 of LUA_INIT_FN; filed D-0820 |
