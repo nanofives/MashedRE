@@ -128,3 +128,5 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0047b880,FUN_0047b880,input,C1,mapped,re/analysis/input_lua/0047b880.md,,,Lua state closer: FUN_004b7480(DAT_006bf1e0) then DAT_006bf1e0=0; lua_close; S-0302; D-0820
 0047b8d0,FUN_0047b8d0,input,C1,mapped,re/analysis/input_lua/0047b8d0.md,,,Lua file loader: fopen("rb"@0x005cf010) seek+read 32k buf; fread(buf,1,ftell,f); FUN_0047b8a0(buf,count,param_2); S-0303 S-0304; U-0309; D-0820
 00472380,FUN_00472380,render,C1,mapped,re/analysis/rw_engine_init_d2/00472380.md,,,calls FUN_004c2d90(0,4,cb,cb) then FUN_004e7d40(0x10,0x26990004,lbl,cb,lbl); result→DAT_0086ecd4; returns bool; S-0200 S-0201 U-0207 U-0208
+00498b60,FUN_00498b60,render,C1,mapped,re/analysis/rw_engine_init_d2/00498b60.md,,,frees pointer-array at DAT_00773408 (DAT_00773410 elements) then frees DAT_00773408+DAT_007731f8+DAT_007731fc; failure-path teardown
+00498bf0,FUN_00498bf0,render,C1,mapped,re/analysis/rw_engine_init_d2/00498bf0.md,,,getter: returns DAT_00773204; caller checks non-zero before ShowCursor(0)

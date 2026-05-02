@@ -29,26 +29,19 @@ A row goes into DEFERRED when:
 | D-0167 | 0x004af166 __setmbcp | depth-2 of ___initmbctable (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0168 | 0x004affaf FUN_004affaf | depth-2 of FUN_004affe0 (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0700 | 0x004a42c5 FUN_004a42c5 | depth-2 of FUN_004987b0; varargs string formatter; not recursed per session rules; S-0260 | input_dinput-cont1 session | input |
-| D-0100 | 0x004a2bf7 FUN_004a2bf7 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
-| D-0101 | 0x004a5e35 __ms_p5_mp_test_fdiv | depth-3 of FUN_004a2c2f; return stored to DAT_00773994 | boot_crt_exit-cont1 session | boot |
-| D-0102 | 0x004a5de3 FUN_004a5de3 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
-| D-0103 | 0x004a5f07 ___endstdio | depth-3 of FUN_004a3258; fn-ptr table 005ea05c-005ea070 | boot_crt_exit-cont1 session | boot |
-| D-0104 | 0x004a77eb FUN_004a77eb | depth-3 of FUN_004a3258; called with arg 8 on param_3!=0 | boot_crt_exit-cont1 session | boot |
-| D-0105 | 0x004a787f __lock | depth-3 of FUN_004a3258+_calloc; lock indices 4+8 | boot_crt_exit-cont1 session | boot |
-| D-0106 | 0x004af32d FUN_004af32d | depth-3 of FUN_004a3258; fn-ptr table 005ea05c-005ea070 | boot_crt_exit-cont1 session | boot |
-| D-0107 | 0x004a4126 __onexit | depth-3 of _atexit; _atexit fully delegates to __onexit | boot_crt_exit-cont1 session | boot |
-| D-0108 | 0x004a4728 FUN_004a4728 | depth-3 of _calloc; called after ___sbh_alloc_block | boot_crt_exit-cont1 session | boot |
-| D-0109 | 0x004a5984 __SEH_prolog | depth-3 of _calloc; SEH frame setup | boot_crt_exit-cont1 session | boot |
-| D-0110 | 0x004a59bf __SEH_epilog | depth-3 of _calloc; SEH frame teardown | boot_crt_exit-cont1 session | boot |
-| D-0111 | 0x004aac76 ___sbh_alloc_block | depth-3 of _calloc; SBH allocator | boot_crt_exit-cont1 session | boot |
-| D-0112 | 0x004aaf72 __callnewh | depth-3 of _calloc; new-handler callback | boot_crt_exit-cont1 session | boot |
-| D-0113 | 0x004aaf90 _memset | depth-3 of _calloc; zero-fills SBH allocation | boot_crt_exit-cont1 session | boot |
-| D-0114 | 0x004a7796 __mtdeletelocks | depth-3 of FUN_004a87f7; deletes MT locks | boot_crt_exit-cont1 session | boot |
-| D-0115 | 0x004a2be9 __security_check_cookie | depth-3 of FUN_004ab8d6; stack-cookie injection | boot_crt_exit-cont1 session | boot |
-| D-0116 | 0x004a3440 __chkstk | depth-3 of FUN_004ab8d6; alloca_probe injection | boot_crt_exit-cont1 session | boot |
-| D-0117 | 0x004a34b0 _strncpy | depth-3 of FUN_004ab8d6; path truncation with "..." | boot_crt_exit-cont1 session | boot |
-| D-0118 | 0x004ac45c ___crtMessageBoxA | depth-3 of FUN_004ab8d6; messagebox display | boot_crt_exit-cont1 session | boot |
-| D-0119 | 0x004ac570 FUN_004ac570 | depth-3 of FUN_004ab8d6; called in VarArgs frame setup | boot_crt_exit-cont1 session | boot |
+| D-0460 | 0x004ac570 FUN_004ac570 | depth-3 of FUN_004ab8d6; supersedes D-0119; not taken in boot_crt_exit_d3 (cap 18) | pick up as bucket boot_crt_exit_d3-cont1; no further recursion | boot |
+| D-0461 | 0x004af32d FUN_004af32d | depth-3 of FUN_004a3258; supersedes D-0106; not taken in boot_crt_exit_d3 (cap 18) | pick up as bucket boot_crt_exit_d3-cont1; no further recursion | boot |
+| D-0462 | 0x004a2bb8 report_failure | depth-4 of 0x004a2be9 __security_check_cookie; not recursed | boot_crt_exit_d3-cont1 or dedicated boot session | boot |
+| D-0463 | 0x004a31e1 FUN_004a31e1 | depth-4 of 0x004a4126 __onexit; called before __onexit_lk | boot_crt_exit_d3-cont1 | boot |
+| D-0464 | 0x004a407e __onexit_lk | depth-4 of 0x004a4126 __onexit; core logic of __onexit | boot_crt_exit_d3-cont1 | boot |
+| D-0465 | 0x004a4158 FUN_004a4158 | depth-4 of 0x004a4126 __onexit; called after __onexit_lk | boot_crt_exit_d3-cont1 | boot |
+| D-0466 | 0x004ad33b __controlfp | depth-4 of 0x004a5de3 FUN_004a5de3; called with (0x10000,0x30000) | boot_crt_exit_d3-cont1 | boot |
+| D-0467 | 0x004a5df5 __ms_p5_test_fdiv | depth-4 of 0x004a5e35 __ms_p5_mp_test_fdiv; fallback FPU test | boot_crt_exit_d3-cont1 | boot |
+| D-0468 | 0x004a9744 __flushall | depth-4 of 0x004a5f07 ___endstdio; unconditional flush | boot_crt_exit_d3-cont1 | boot |
+| D-0469 | 0x004ad351 __fcloseall | depth-4 of 0x004a5f07 ___endstdio; conditional close via DAT_007739d4 | boot_crt_exit_d3-cont1 | boot |
+| D-0470 | 0x004a7800 FUN_004a7800 | depth-4 of 0x004a787f __lock; lazy-init of lock slot | boot_crt_exit_d3-cont1 | boot |
+| D-0471 | 0x004aa7da ___sbh_alloc_new_region | depth-4 of 0x004aac76 ___sbh_alloc_block; allocates new SBH region | boot_crt_exit_d3-cont1 | boot |
+| D-0472 | 0x004aa891 ___sbh_alloc_new_group | depth-4 of 0x004aac76 ___sbh_alloc_block; initialises new SBH group | boot_crt_exit_d3-cont1 | boot |
 | D-0580 | 0x004ccce0 FUN_004ccce0 | depth-3 of 0x004d7ca0 FUN_004d7ca0; called with (DAT_007d6c50, &LAB_004d7d70, DAT_007d6c50); not recursed from rw_engine_teardown_d2 | rw_engine_teardown_d3 or dedicated session | render |
 | D-0581 | 0x004cc9f0 FUN_004cc9f0 | depth-3 of 0x004d7ca0 FUN_004d7ca0; called with DAT_007d6c50 as single arg; not recursed from rw_engine_teardown_d2 | rw_engine_teardown_d3 or dedicated session | render |
 | D-0281 | 0x004954f0 FUN_004954f0 (HardwareExitApplication) and its callees: 0x00498bf0,ShowCursor,0x00498b60,0x0045b350,thunk_FUN_00496370,0x00496010,thunk_FUN_00495580 | sister function to FUN_004938c0; called by FUN_00492370 for hardware-layer teardown; not in rw_engine_teardown subset (callee of outer shell FUN_00492370, not of RW_TEAR_FN) | pick up as bucket rw_hw_teardown; after rw_engine_teardown-cont1 finishes; confirm if D3D teardown path is here | render |
@@ -139,6 +132,26 @@ A row goes into DEFERRED when:
 | D-0037 | 0x004abd1a FUN_004abd1a | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
 | D-0038 | 0x004aaff0 _memcpy | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
 | D-0039 | 0x004ae29f ___crtInitCritSecAndSpinCount | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0100 | 0x004a2bf7 FUN_004a2bf7 | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0101 | 0x004a5e35 __ms_p5_mp_test_fdiv | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0102 | 0x004a5de3 FUN_004a5de3 | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0103 | 0x004a5f07 ___endstdio | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0104 | 0x004a77eb FUN_004a77eb | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0105 | 0x004a787f __lock | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0106 | 0x004af32d FUN_004af32d | superseded by D-0461; not taken due to cap | 2026-05-02 |
+| D-0107 | 0x004a4126 __onexit | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0108 | 0x004a4728 FUN_004a4728 | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0109 | 0x004a5984 __SEH_prolog | analyzed C1 (entry_callees already; D now closed) | 2026-05-02 |
+| D-0110 | 0x004a59bf __SEH_epilog | analyzed C1 (entry_callees already; D now closed) | 2026-05-02 |
+| D-0111 | 0x004aac76 ___sbh_alloc_block | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0112 | 0x004aaf72 __callnewh | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0113 | 0x004aaf90 _memset | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0114 | 0x004a7796 __mtdeletelocks | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0115 | 0x004a2be9 __security_check_cookie | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0116 | 0x004a3440 __chkstk | analyzed C1 (entry_callees already; D now closed) | 2026-05-02 |
+| D-0117 | 0x004a34b0 _strncpy | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0118 | 0x004ac45c ___crtMessageBoxA | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
+| D-0119 | 0x004ac570 FUN_004ac570 | superseded by D-0460; not taken due to cap | 2026-05-02 |
 | D-0280 | 0x00551510,0x004c2c90,0x004d8060,0x004d7ca0,0x004ccf20 | analyzed C1 session rw_engine_teardown_d2-20260502-1854 (all 5 RVAs) | 2026-05-02 |
 
 ## Conventions
