@@ -130,3 +130,6 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00472380,FUN_00472380,render,C1,mapped,re/analysis/rw_engine_init_d2/00472380.md,,,calls FUN_004c2d90(0,4,cb,cb) then FUN_004e7d40(0x10,0x26990004,lbl,cb,lbl); result→DAT_0086ecd4; returns bool; S-0200 S-0201 U-0207 U-0208
 00498b60,FUN_00498b60,render,C1,mapped,re/analysis/rw_engine_init_d2/00498b60.md,,,frees pointer-array at DAT_00773408 (DAT_00773410 elements) then frees DAT_00773408+DAT_007731f8+DAT_007731fc; failure-path teardown
 00498bf0,FUN_00498bf0,render,C1,mapped,re/analysis/rw_engine_init_d2/00498bf0.md,,,getter: returns DAT_00773204; caller checks non-zero before ShowCursor(0)
+00499400,FUN_00499400,render,C1,mapped,re/analysis/rw_engine_init_d2/00499400.md,,,display-mode selector: logs subsystems/modes; if param_1==0 auto-select else DialogBoxParamA(id=0x65); sets window WS_POPUP+SWP_FRAMECHANGED on mode; S-0202..S-0209 U-0209..U-0211
+00499710,FUN_00499710,render,C1,mapped,re/analysis/rw_engine_init_d2/00499710.md,,,getter: returns DAT_007e9584 (window handle HWND global; also used as HWND in SetWindowLongA/SetWindowPos/DialogBoxParamA)
+004a2d18,FUN_004a2d18,render,C1,mapped,re/analysis/rw_engine_init_d2/004a2d18.md,,,wrapper: __unlock_file2(1, unaff_ESI); CRT file-unlock thunk; callee of _wprintf path (0x004a2cbd)

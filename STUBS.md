@@ -121,3 +121,11 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0282 | 0x004cbd30 FUN_004cbd30 | 0x004b3b70 sub_004b3b70 | save | passthrough | 2026-05-02 | read operation; args (handle, buffer, size); depth-2 of file-read wrapper; DEFERRED D-0762 |
 | S-0283 | 0x004cc160 FUN_004cc160 | 0x004b3b70 sub_004b3b70 + 0x004b3bb0 sub_004b3bb0 | save | passthrough | 2026-05-02 | close; args (handle, 0) in read path; args (write_result, 0) in write path U-0288; depth-2; DEFERRED D-0763 |
 | S-0284 | 0x004cbe80 FUN_004cbe80 | 0x004b3bb0 sub_004b3bb0 | save | passthrough | 2026-05-02 | write operation; args (handle, buffer, size, ESI_caller); 4th arg uncertain U-0287; depth-2 of file-write wrapper; DEFERRED D-0764 |
+| S-0202 | 0x00498950 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498950; called for saved-subsystem check; return non-zero copies DAT_0077338c/DAT_00773390; depth-3 of rw_engine_init_d2 |
+| S-0203 | 0x004989b0 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004989b0; called after FUN_00498ea0 before LAB_00499590; no args; depth-3 of rw_engine_init_d2 |
+| S-0204 | 0x00498a00 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498a00; called with &64-byte-buf; fills buffer; used in mode-name logging inner loop; depth-3 of rw_engine_init_d2 |
+| S-0205 | 0x00498c00 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498c00; called first in FUN_00499400; no args; depth-3 of rw_engine_init_d2 |
+| S-0206 | 0x00498e40 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498e40; called when param_1==0 and FUN_00498950==0; return stored to DAT_00773200; depth-3 of rw_engine_init_d2 |
+| S-0207 | 0x00498ea0 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498ea0; called after dialog path before LAB_00499590; no args; depth-3 of rw_engine_init_d2 |
+| S-0208 | 0x004c2e70 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004c2e70; called FUN_004c2e70(DAT_0077340c); depth-3 of rw_engine_init_d2; not in rw_engine_init session D |
+| S-0209 | 0x004c2f30 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004c2f30; called FUN_004c2f30(DAT_00773200); depth-3 of rw_engine_init_d2; not in rw_engine_init session D |
