@@ -182,3 +182,11 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  004189e0  thunk_FUN_004196f0       C0->C1  thunk→0x4196f0; teardown loops 0x63bf70+0x63bde0; S-0161+S-0166+S-0370..S-0372 (re/analysis/boot_app_init_d3/0x004189e0.md)
 2026-05-02  boot_app_init_d3-20260502-1859  session-analysis  bucket=boot_app_init_d3  rvas=18  U-0167..U-0177  S-0160..S-0179+S-0305..S-0372  D-0400..D-0401
 2026-05-02  sweep-20260502-1935  scribe-claim-sweep  buckets=10
+2026-05-02  sweep-20260502-1935  scribe-claim  bucket=boot_crt_env  rvas=9  (sweep)
+2026-05-02  sweep-20260502-1935  scribe-release  bucket=boot_crt_env  writes=9  errors=0  (sweep)
+2026-05-02  sweep-20260502-1935  scribe-claim  bucket=input_dinput  rvas=2  (sweep)
+2026-05-02  sweep-20260502-1935  scribe-release  bucket=input_dinput  writes=2  errors=0  (sweep)
+2026-05-02  sweep-20260502-1935  scribe-claim  bucket=rw_engine_teardown_d2  rvas=5  (sweep)
+2026-05-02  sweep-20260502-1935  scribe-release  bucket=rw_engine_teardown_d2  writes=5  errors=0  (sweep)
+2026-05-02  sweep-20260502-1935  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='function_at returned: no function found at 004c7a70 (FPO prologue, undefined function)'
+2026-05-02  sweep-20260502-1935  scribe-release-sweep  buckets=3  total_writes=16  errors=1  (halted at render_d3d9_device; 6 buckets remain queued)
