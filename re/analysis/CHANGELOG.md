@@ -234,3 +234,15 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  00417da0  FUN_00417da0  C0->C1  session ai_update-20260502-1952; depth-1 callee; AI control step mode-8 variant
 2026-05-02  00426c00  FUN_00426c00  C0->C1  session ai_update-20260502-1952; depth-1 callee; powerup-state getter DAT_00644158
 2026-05-02  sweep-20260502-2109  scribe-claim-sweep  buckets=5  (render_d3d9_device deferred)
+2026-05-02  sweep-20260502-2109  scribe-claim  bucket=powerups  rvas=11  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-release  bucket=powerups  writes=11  errors=0  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-claim  bucket=hud_frontend  rvas=15  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-release  bucket=hud_frontend  writes=15  errors=0  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-claim  bucket=ai_update  rvas=11  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-release  bucket=ai_update  writes=11  errors=0  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-claim  bucket=video_mci  rvas=9  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-release  bucket=video_mci  writes=9  errors=0  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-claim  bucket=track_loader  rvas=16  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-release  bucket=track_loader  writes=16  errors=0  (sweep)
+2026-05-02  sweep-20260502-2109  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='no function found at 004c7a70 (FPO; expected; needs function_create before sweep)'
+2026-05-02  sweep-20260502-2109  scribe-release-sweep  buckets=5  total_writes=62  errors=1  (halted at render_d3d9_device — last bucket; only render_d3d9_device remains queued)
