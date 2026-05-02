@@ -59,6 +59,91 @@ SLOT=$(cat .pool_slot 2>/dev/null)
 
 If a session is killed (network drop, crash, host reboot): the next session that hits the project should run `bash scripts/ghidra_pool.sh cleanup` to clear stale `.lock`/`.lock~` files and reclaim slots.
 
+## Pre-flight asserts (every session, every time)
+
+The dominant multi-session failure mode is **silent hallucination of session control** — a session reports facts about a function in "the open program" without having verified which program is open, whether the slot is current, or whether another session is mid-edit. Run the four file-level asserts before any decomp work, and the MCP-side asserts after opening:
+
+```bash
+# After acquire, before any program_open:
+bash scripts/ghidra_assert.sh preflight "$SLOT"     # slot-match + staleness + scribe-check
+```
+
+```text
+After project_program_open_existing succeeds:
+  - call mcp__ghidra__program_list_open and assert the returned path contains "$SLOT"
+  - if not, close immediately — you've opened the wrong program
+
+Before citing any RVA in conversation, source comment, hooks.csv, or analysis note:
+  - call mcp__ghidra__function_at <rva> OR mcp__ghidra__listing_code_unit_at <rva>
+  - if result is null, HALT — do not cite, do not "round" to a nearby valid address
+
+Before any write-tool call (rename, retype, struct edit, comment_set, transaction_begin, etc.):
+  - assert you hold a master.WIP-<sessionid> flag in repo root (scribe-check)
+  - if not, the call is forbidden — slots are read-only by convention; only the scribe writes
+```
+
+The full write-tool list is in `ghidra-pool/SKILL.md` under "Write-tool gating." When in doubt, treat a tool as a write tool.
+
+## MCP-down halts the session
+
+Every parallel session is bound to Ghidra MCP — that is the only tool that can answer questions about MASHED.exe. If MCP is unreachable or returns an error on `health_ping` / `ghidra_info`, **the session must stop** and report the failure. Falling back to prior-art repos, web search, or "I'll just describe what the function probably does" is never acceptable: it produces hallucinated RE notes that then poison the trackers for every other session that reads them.
+
+The same applies mid-session: if a single MCP call fails (timeout, transport error, server crash), do not retry against documentation. Surface the failure to the user, halt the in-flight function, and either reconnect or release the slot. See `ghidra-pool/SKILL.md` § "MCP availability is required" for the full rule.
+
+## Scribe protocol (master writes)
+
+Master `Mashed.gpr` accepts only one writer at a time. Every analysis session attempts a scribe
+immediately after its analysis commit. The rule is **serial and immediate — no polling, no retry
+loop.**
+
+### Lock check — do this before touching the master
+
+```bash
+bash scripts/ghidra_assert.sh scribe-check
+```
+
+- **No `master.WIP-*` flag present** → proceed.
+- **Flag present** → **stop and surface to the user verbatim:**
+
+  > "Master is locked by `<flag-file-name>`. Scribe step skipped.
+  > When the lock is released, re-run the scribe step manually for this subset:
+  > bucket=`<bucket>`, RVAs: `<comma-separated list>`."
+
+  **Do not poll. Do not retry automatically.** The user reads the message and says "retry" when
+  the lock is gone.
+
+### Execution order (when lock is clear)
+
+1. **Claim flag** — `echo "" > master.WIP-<sessionid>`, `git add`, `git commit`.
+   Record in `re/analysis/CHANGELOG.md`: `YYYY-MM-DD <sessionid> scribe-claim bucket=<b> rvas=<n>`.
+2. **Open master writable** — `mcp__ghidra__project_program_open_existing` with `read_only=false`
+   against `Mashed.gpr` (project_location = `C:/Users/maria/Desktop/Proyectos/Mashed`). Never
+   against a pool slot.
+3. **Write** — per-RVA, in address order, one at a time. Allowed writes depend on confidence level;
+   see `re/SESSION_RULES.md` § "What to write at C1" for the first-pass write list.
+   - Confirm `function_at <rva>` non-null before each write.
+   - If any MCP write call fails: halt, surface error verbatim. Partial writes already applied are
+     safe to leave. Do not continue to the next RVA without user approval.
+4. **Save** — `mcp__ghidra__program_save`.
+5. **Close** — `mcp__ghidra__program_close`.
+6. **Sync** — `bash scripts/ghidra_pool.sh sync` — refreshes all unlocked slots and stamps
+   `.last_master_sync`.
+7. **Release flag** — `git rm master.WIP-<sessionid>`, `git commit`.
+   Record in `re/analysis/CHANGELOG.md`: `YYYY-MM-DD <sessionid> scribe-release writes=<n> errors=<n>`.
+
+Other sessions, after a sync lands on their branch, must `cleanup` + re-`acquire` so their slot's
+`.rep` mtime moves past `.last_master_sync`. The `staleness` assert catches them if they forget.
+
+## Sync timestamp (`.last_master_sync`)
+
+`scripts/ghidra_pool.sh sync` writes `.last_master_sync` at the start of its run, before any `cp`. The semantics:
+
+- A slot whose `.rep` mtime is **newer** than `.last_master_sync` was refreshed by this sync (or a later one) — **current**.
+- A slot whose `.rep` mtime is **older** than `.last_master_sync` was locked when sync ran — **stale**. The session holding it is operating on pre-master-write state and may produce incorrect names/types in its output.
+- No `.last_master_sync` file → no master writes have ever happened on this branch — all slots are current by definition.
+
+`ghidra_assert.sh staleness` checks this before you trust the open program.
+
 ## Slot ownership rules
 
 - **One slot, one session.** Never `mcp__ghidra__project_program_open_existing` against a slot you didn't acquire (or that's bound to another worktree's `.pool_slot`).
@@ -88,6 +173,7 @@ When two sessions edit the same tracker file:
 | `acquire` returns "all locked" with only one Claude active | stale `.lock` files from killed sessions | `bash scripts/ghidra_pool.sh cleanup` + retry |
 | `hooks.csv` merge conflict every commit | two sessions promoting same RVA | pre-coordinate which sessions own which subsystems; document in `re/analysis/SESSION_OWNERSHIP.md` |
 | Master `Mashed.gpr` won't open (already locked) | another session has GUI open | check for `master.WIP-*` flag file or running Ghidra GUI process |
+| Scribe step surfaced lock message and stopped | another session holds `master.WIP-*` | wait for that session to release the flag; then tell Claude "retry scribe" with the bucket+RVA list it printed |
 | Stub IDs collide | two sessions filed `S-NNNN` simultaneously | renumber the later session's IDs; use `merge_trackers.py` |
 
 ## Boundary: what this skill does NOT do
