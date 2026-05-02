@@ -191,3 +191,17 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-1935  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='function_at returned: no function found at 004c7a70 (FPO prologue, undefined function)'
 2026-05-02  sweep-20260502-1935  scribe-release-sweep  buckets=3  total_writes=16  errors=1  (halted at render_d3d9_device; 6 buckets remain queued)
 2026-05-02  sweep-20260502-1941  scribe-claim-sweep  buckets=7  (render_d3d9_device reordered last)
+2026-05-02  sweep-20260502-1941  scribe-claim  bucket=rw_engine_init_d2  rvas=18  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-release  bucket=rw_engine_init_d2  writes=18  errors=0  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-claim  bucket=audio_rws_loader  rvas=17  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-release  bucket=audio_rws_loader  writes=17  errors=0  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-claim  bucket=input_lua  rvas=4  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-release  bucket=input_lua  writes=4  errors=0  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-claim  bucket=boot_crt_exit_d3  rvas=18  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-release  bucket=boot_crt_exit_d3  writes=18  errors=0  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-claim  bucket=save_gamesave  rvas=6  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-release  bucket=save_gamesave  writes=6  errors=0  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-claim  bucket=boot_app_init_d3  rvas=18  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-release  bucket=boot_app_init_d3  writes=18  errors=0  (sweep)
+2026-05-02  sweep-20260502-1941  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='no function found at 004c7a70 (FPO; expected per prior session)'
+2026-05-02  sweep-20260502-1941  scribe-release-sweep  buckets=6  total_writes=81  errors=1  (halted at render_d3d9_device; 1 bucket remains queued — needs function definitions before scribe can process)
