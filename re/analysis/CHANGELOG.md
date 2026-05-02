@@ -256,3 +256,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-2131  scribe-claim  bucket=audio_dsound  rvas=5  (sweep)
 2026-05-02  sweep-20260502-2131  scribe-release-partial  bucket=audio_dsound  writes=3  errors=2  (drained 0x005b9f30,0x005a9e10,0x005aee20; halted at 0x005ba1d0 [no function found], 0x005bad30 [no function found] — FPO undefined)
 2026-05-02  sweep-20260502-2131  scribe-release-sweep  buckets=0_full+1_partial  total_writes=3  errors=2  (audio_dsound partial; 0x005ba1d0+0x005bad30 + render_d3d9_device remain queued — all need function_create before next sweep)
+2026-05-02  fixup-20260502-2148  function_create  rvas=14  bucket=render_d3d9_device+audio_dsound_FPO  (disassemble_seed + function_create on FPO entries; ready for sweep)
