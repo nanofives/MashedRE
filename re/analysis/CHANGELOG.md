@@ -181,3 +181,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  00418980  thunk_FUN_0041a060       C0->C1  thunk→0x41a060; shockwave/crosshair2/crosshair/exocet.dff/airstrike; 3 init loops 0x63bf30/0x63bde0/0x63c018; S-0307+S-0328+S-0360..S-0369 (re/analysis/boot_app_init_d3/0x00418980.md)
 2026-05-02  004189e0  thunk_FUN_004196f0       C0->C1  thunk→0x4196f0; teardown loops 0x63bf70+0x63bde0; S-0161+S-0166+S-0370..S-0372 (re/analysis/boot_app_init_d3/0x004189e0.md)
 2026-05-02  boot_app_init_d3-20260502-1859  session-analysis  bucket=boot_app_init_d3  rvas=18  U-0167..U-0177  S-0160..S-0179+S-0305..S-0372  D-0400..D-0401
+2026-05-02  sweep-20260502-1935  scribe-claim-sweep  buckets=10
