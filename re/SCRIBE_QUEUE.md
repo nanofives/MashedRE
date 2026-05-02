@@ -14,6 +14,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-02  texture_loader-20260502-1900  bucket=texture_loader  rvas=0x0042a530,0x004b3d20,0x004b3d80
+2026-05-02  effects_particle-20260502-2135  bucket=effects_particle  rvas=00490500,00472650,00472690,004769a0,004769d0,004769f0,00476a30,00476a40,00476d00,00476df0,0048ebc0,0048ebf0,0048f290,0048f420,0048fe70,004a2c48
 ```
 
 ## Drained
