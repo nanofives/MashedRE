@@ -17,6 +17,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-02  input_dinput-20260502-1855  bucket=input_dinput  rvas=0x00495530,0x004987b0
 2026-05-02  rw_engine_teardown_d2-20260502-1854  bucket=rw_engine_teardown_d2  rvas=0x004c2c90,0x004ccf20,0x004d7ca0,0x004d8060,0x00551510
 2026-05-02  render_d3d9_device-20260502-1856  bucket=render_d3d9_device  rvas=0x004c7a70,0x004c8650,0x004c8690,0x004c8740,0x004c8800,0x004c8c70,0x004c8e50,0x004cc820,0x004cc9f0,0x004dcf90,0x004dcff0,0x004dd050
+2026-05-02  rw_engine_init_d2-20260502-1905  bucket=rw_engine_init_d2  rvas=0x00472380,0x00496400,0x00498b60,0x00498bf0,0x00499400,0x00499710,0x004a2d18,0x004a504f,0x004c2c90,0x004c7a60,0x004c9f50,0x004c9f60,0x004cae90,0x004cbb60,0x004cbc60,0x004cbc70,0x004cbc80,0x004cbc90
 ```
 
 ## Drained
