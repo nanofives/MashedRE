@@ -347,3 +347,29 @@ A row goes into DEFERRED when:
 | D-1663 | 0x00538c80 FUN_00538c80 | world sector query with callback; depth-2 of FUN_0048fe70; S-0598 | effects_particle-cont1 session | render |
 | D-1600 | depth-2 callees of hud_ingame-20260502-2132 session: 0x004c1a00,0x004c1c80,0x004c19f0,0x00402fb0,0x00428760,0x0041c2d0,0x0041b340,0x0041bc50,0x0041c9a0,0x0041d410,0x0041de80,0x0041e630 (S-0561..S-0572) | session cap; depth-1 of hud_ingame functions | hud_ingame-cont1 session | hud |
 | D-1360 | 0x0042c280,0x0042c2d0,0x0042c2e0,0x0042c2f0,0x0042f500,0x0042f6a0,0x00432080,0x004331a0,0x00448700,0x004927c0,0x005c9d00 from session game_state-20260502-2144 bucket game_state — pick up as bucket game_state-cont1; same depth, no further recursion. S-0480..S-0490 |
+
+## camera_follow-20260502-2132 depth-2 callees (D-1540..D-1599)
+
+| ID | RVA | Ghidra name | Caller | Reason deferred | Re-pickup condition |
+|---|---|---|---|---|---|
+| D-1540 | 0x004756e0 | FUN_004756e0 | FUN_00426700 | depth-2 callee; camera path node per-tick updater; purpose unknown | reverse FUN_00426700 fully first |
+| D-1541 | 0x00475010 | FUN_00475010 | FUN_00426780 | depth-2 callee; camera path entry time-delta processor; purpose unknown | reverse FUN_00426780 fully first |
+| D-1542 | 0x004c4d20 | FUN_004c4d20 | FUN_00426810 | depth-2 callee; called in lerp path; candidate RW math or position helper | reverse FUN_00426810 fully first |
+| D-1543 | 0x004c3dc0 | FUN_004c3dc0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
+| D-1544 | 0x004c39b0 | FUN_004c39b0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
+| D-1545 | 0x004a2c48 | FUN_004a2c48 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
+| D-1546 | 0x004924c0 | FUN_004924c0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
+| D-1547 | 0x004c1b10 | FUN_004c1b10 | FUN_00426810 | depth-2 callee; receives interpolated Y/Z; candidate position setter | reverse FUN_00426810 fully first |
+| D-1548 | 0x0040e180 | FUN_0040e180 | FUN_00471ec0 | depth-2 callee; populates timing struct at local_24 | reverse FUN_00471ec0 fully first |
+| D-1549 | 0x00407a40 | FUN_00407a40 | FUN_00471ec0 | depth-2 callee; returns frame counter / tick A from timing struct | reverse FUN_00471ec0 fully first |
+| D-1550 | 0x00407a20 | FUN_00407a20 | FUN_00471ec0 | depth-2 callee; returns tick B from timing struct | reverse FUN_00471ec0 fully first |
+| D-1551 | 0x0047ce80 | FUN_0047ce80 | FUN_00471ec0 | depth-2 callee; returns ID from target object (inner loop B) | reverse FUN_00471ec0 fully first |
+| D-1552 | 0x0047ce00 | FUN_0047ce00 | FUN_00471ec0 | depth-2 callee; returns flags from target object (inner loop B) | reverse FUN_00471ec0 fully first |
+| D-1553 | 0x0047d130 | FUN_0047d130 | FUN_00471ec0 | depth-2 callee; returns inner ref from target object (dispatch case 2) | reverse FUN_00471ec0 fully first |
+| D-1554 | 0x0057c210 | FUN_0057c210 | FUN_00471ec0 | depth-2 callee; returns animation object from ref (dispatch case 2) | reverse FUN_00471ec0 fully first |
+| D-1555 | 0x004c0ed0 | FUN_004c0ed0 | FUN_0047c160 | depth-2 callee; takes vehicle sub-ptr *(param_1+4); result+0x30 passed to FUN_0047bb10; candidate RW frame accessor | reverse FUN_0047c160 fully first |
+| D-1556 | 0x004c1b40 | FUN_004c1b40 | FUN_0047c160 | depth-2 callee; spatial containment test: vehicle vs camera path node range | reverse FUN_0047c160 fully first |
+| D-1557 | 0x00491340 | FUN_00491340 | FUN_00491490 | depth-2 callee; camera mode A (DAT_007f108b==0 path); purpose unknown | reverse FUN_00491490 fully first |
+| D-1558 | 0x004910c0 | FUN_004910c0 | FUN_00491490 | depth-2 callee; camera mode B (DAT_007f108b!=0 path); purpose unknown | reverse FUN_00491490 fully first |
+| D-1559 | 0x0042b930 | FUN_0042b930 | FUN_004671a0,FUN_00467210 | depth-2 callee; returns state discriminant (3 = alt mode); S-0549 filed | reverse FUN_004671a0 or FUN_00467210 fully first |
+| D-1560 | 0x0042f510 | FUN_0042f510 | FUN_004671a0,FUN_00467210 | depth-2 callee; alt vehicle getter (state==3 && param_1!=-1); S-0550 filed | reverse FUN_004671a0 or FUN_00467210 fully first |

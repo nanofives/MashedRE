@@ -296,3 +296,5 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0042f500,sub_0042f500,hud,C1,mapped,re/analysis/hud_ingame/0x0042f500.md,,,returns DAT_0067ea64; path discriminator (0=FUN_0041b630 else FUN_0041c0c0)
 0042f6a0,sub_0042f6a0,hud,C1,mapped,re/analysis/hud_ingame/0x0042f6a0.md,,,returns DAT_0067e9fc; game sub-mode global; primary switch in HUD_INGAME_FN
 004929d0,FUN_004929d0,util,C1,mapped,re/analysis/game_state/0x004929d0.md,,,STATE_FN: switch(DAT_00771968) 7 cases; session-phase dispatcher; calls course-load in case 2; U-0487 U-0488; S-0480..S-0490
+0040b430,FUN_0040b430,util,C1,mapped,re/analysis/game_state/0x0040b430.md,,,adds param_2 to int array at 0x008a94f0[param_1]; overflow to 0x008a94fc if param_1>3; U-0489
+0x00491490,FUN_00491490,C1,render,re/analysis/camera_follow/0x00491490.md

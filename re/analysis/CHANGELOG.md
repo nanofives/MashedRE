@@ -267,3 +267,16 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02 effects_particle-20260502-2135 analysis bucket=effects_particle rvas=16
 2026-05-02 hud_ingame-20260502-2132 analysis bucket=hud_ingame rvas=14 (0040dfc0,00403160,0041a3e0,0041b630,0041c0c0,0041c300,0041ccc0,0041d870,0041db80,0041ded0,0041e850,00426ba0,0042f500,0042f6a0) stubs=S-0560..S-0572 uncertainties=U-0567..U-0579 deferred=D-1600
 2026-05-02 game_state-20260502-2144 analysis bucket=game_state rvas=20 (STATE_FN 0x004929d0 + callees 0x0040b430..0x0042c220) stubs=S-0480..S-0490 uncertainties=U-0487..U-0488 deferred=D-1360
+2026-05-02  0x0040b090  FUN_0040b090  C0->C1  camera_follow-20260502-2132: per-slot camera dispatch, 4-player outer loop, color-token inner dispatch
+2026-05-02  0x0041e8c0  FUN_0041e8c0  C0->C1  camera_follow-20260502-2132: 8-byte indirect tail-call via DAT_0063d7e4+0x18
+2026-05-02  0x0041e9b0  FUN_0041e9b0  C0->C1  camera_follow-20260502-2132: 20-byte bool comparator DAT_0063d7e4+0x10 == param_1
+2026-05-02  0x0041e9e0  FUN_0041e9e0  C0->C1  camera_follow-20260502-2132: 8-byte getter DAT_0063d7e4+0x18
+2026-05-02  0x00426700  FUN_00426700  C0->C1  camera_follow-20260502-2132: 124-byte camera path node-list iterator
+2026-05-02  0x00426780  FUN_00426780  C0->C1  camera_follow-20260502-2132: 132-byte two-array updater (64+8 entry loops)
+2026-05-02  0x00426810  FUN_00426810  C0->C1  camera_follow-20260502-2132: 671-byte camera-path position lerp
+2026-05-02  0x00426ab0  FUN_00426ab0  C0->C1  camera_follow-20260502-2132: CAMERA_FN confirmed (131 bytes, per-frame)
+2026-05-02  0x004671a0  FUN_004671a0  C0->C1  camera_follow-20260502-2132: 27-byte vehicle-0 getter
+2026-05-02  0x00467210  FUN_00467210  C0->C1  camera_follow-20260502-2132: 53-byte vehicle sub-obj getter (*(vehicle+4)+0x10)
+2026-05-02  0x00471ec0  FUN_00471ec0  C0->C1  camera_follow-20260502-2132: 642-byte camera-anim trigger checker
+2026-05-02  0x0047c160  FUN_0047c160  C0->C1  camera_follow-20260502-2132: 140-byte camera-path node loop
+2026-05-02  0x00491490  FUN_00491490  C0->C1  camera_follow-20260502-2132: 18-byte mode dispatcher (DAT_007f108b flag)
