@@ -253,3 +253,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  005bad30  LAB_005bad30          C0->C1  unrecognized; DirectSound init path B; listing-only; 459 bytes; U-0356..U-0359; S-0352; D-0941..D-0951 (re/analysis/audio_dsound/0x005bad30.md)
 2026-05-02  audio_dsound-20260502-1942  session-analysis  bucket=audio_dsound  rvas=5  slot=Mashed_pool1  U-0347..U-0359  S-0340..S-0352  D-0940..D-0951
 2026-05-02  sweep-20260502-2131  scribe-claim-sweep  buckets=1  (render_d3d9_device deferred)
+2026-05-02  sweep-20260502-2131  scribe-claim  bucket=audio_dsound  rvas=5  (sweep)
+2026-05-02  sweep-20260502-2131  scribe-release-partial  bucket=audio_dsound  writes=3  errors=2  (drained 0x005b9f30,0x005a9e10,0x005aee20; halted at 0x005ba1d0 [no function found], 0x005bad30 [no function found] — FPO undefined)
+2026-05-02  sweep-20260502-2131  scribe-release-sweep  buckets=0_full+1_partial  total_writes=3  errors=2  (audio_dsound partial; 0x005ba1d0+0x005bad30 + render_d3d9_device remain queued — all need function_create before next sweep)
