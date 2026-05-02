@@ -298,3 +298,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-2217  scribe-release  bucket=physics_collision  writes=2  errors=0  (sweep)
 2026-05-02  sweep-20260502-2217  scribe-release-sweep  buckets=7  total_writes=72  errors=0  (queue empty)
 2026-05-02  exception_filter-20260502-2221  analysis  bucket=exception_filter  rvas=3  slot=Mashed_pool2
+2026-05-02  localization-20260502-2227  analysis  bucket=localization  rvas=4  slot=Mashed_pool11  LOC_INIT_FN=0x004274d0  LOC_FN=0x004274e0

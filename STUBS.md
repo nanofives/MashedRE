@@ -370,3 +370,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0810 | 0x004c1a00 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1a00; takes render target; non-zero return gates draw call |
 | S-0811 | 0x004c1bb0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1bb0; takes (render_target, color_bytes_ptr, 1); sets render state |
 | S-0812 | 0x004c1be0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1be0; takes (render_target, FUN_00499710_result); purpose unknown |
+| S-0813 | 0x004967e0 | 0x00492d20 FUN_00492d20 | frontend | passthrough | 2026-05-02 | FUN_004967e0; 283 bytes; sole callee of shim FUN_00492d20; depth-2 from INTRO_FN; D-2320 |
+| S-0860 | 0x005507b0 FUN_005507b0 | 0x004cc230 FUN_004cc230 | frontend | passthrough | 2026-05-02 | PIZ archive file-open; called as FUN_005507b0(filename, piz_base); depth-2 of stream-open (localization path) |
+| S-0861 | 0x00550bc0 FUN_00550bc0 | 0x004cc230 FUN_004cc230 | frontend | passthrough | 2026-05-02 | File open by name; called as FUN_00550bc0(filename); depth-2 of stream-open (type=1 branch) |
+| S-0862 | 0x00550910 FUN_00550910 | 0x004cc160 FUN_004cc160 | frontend | passthrough | 2026-05-02 | File close; called as FUN_00550910(file_handle); depth-2 of stream-close |
+| S-0662 | 0x0049d1d0 | 0x0049d270 FUN_0049d270 | util | passthrough | 2026-05-02 | FUN_0049d1d0; no-arg callee at end of FUN_0049d270; purpose unknown |

@@ -328,3 +328,15 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0049d240,FUN_0049d240,util,C1,mapped,re/analysis/timer/0x0049d240.md,,,fastcall; vtable call at *param_1+0xb4 then timeGetTime()→param_1[0x3f]; timestamp-save not frame-delta; U-0670 U-0671
 00495350,sub_00495350,frontend,C1,new,re/analysis/intro_splash/0x00495350.md,,,intro video sequence: loops 4 indexed videos (1-4) via FUN_00494a80; button-skippable scan at DAT_007f1502; 5ms frame sleep; U-0807 U-0808 U-0809 U-0810 S-0800..S-0812
 00492d20,sub_00492d20,frontend,C1,new,re/analysis/intro_splash/0x00492d20.md,,,shim: calls FUN_004967e0 then returns 1; caller discards return; U-0811 S-0813
+00493f70,sub_00493f70,frontend,C1,new,re/analysis/intro_splash/0x00493f70.md,,,pure global reader: returns DAT_00771a04; 0=video done in caller; U-0812
+004274d0,FUN_004274d0,frontend,C1,mapped,re/analysis/localization/004274d0.md,,,LOC_INIT_FN; copies DAT_007719e8 (cmd-line lang index from sub_00493900) → DAT_007f0f60; returns 1; U-0867
+004274e0,FUN_004274e0,frontend,C1,mapped,re/analysis/localization/004274e0.md,,,LOC_FN; switch(DAT_007f0f60)→.dat filename (0=english 1=french 2=German 3=Spanish 4=Italian 5=USA); loads via FUN_004cc230(2,1); reads 0x10000 into DAT_0066d828; sets DAT_0067d84c=1; U-0869; S-0860 S-0861 S-0862
+004cc230,FUN_004cc230,frontend,C1,mapped,re/analysis/localization/004cc230.md,,,stream-context open; param_1=type(1=file 2=PIZ 3=mem 4=cb) param_2=mode param_3=filename/descriptor; allocates via DAT_007d3ff8+0x118 vtable; PIZ base DAT_0061737c (mode=1); U-0868; S-0860 S-0861
+004cc160,FUN_004cc160,frontend,C1,mapped,re/analysis/localization/004cc160.md,,,stream-context close; 4-type dispatch; frees context via DAT_007d3ff8+0x11c if context[8]!=0; optional writeback of pos/base to param_2; S-0862
+00495110,FUN_00495110,util,C1,mapped,re/analysis/timer/0x00495110.md,,,snapshots FUN_004950b0()→DAT_007f1030; frame-time snapshot wrapper
+0049d080,FUN_0049d080,util,C1,mapped,re/analysis/timer/0x0049d080.md,,,fastcall; timeGetTime()-param_1[0x158]→overwrites param_1[0x158]; elapsed-duration helper; U-0672 U-0673
+005ab040,FUN_005ab040,util,C1,mapped,re/analysis/timer/0x005ab040.md,,,QPC/timeGetTime dispatcher; DAT_007dce00==1→QPC.LowPart else timeGetTime(); U-0674 U-0675
+00493f80,sub_00493f80,frontend,C1,new,re/analysis/intro_splash/0x00493f80.md,,,reads DAT_007719ec/f0/f4/f8 into two out-param pairs; caller divides pairs for aspect ratio; U-0813
+00493fc0,sub_00493fc0,frontend,C1,new,re/analysis/intro_splash/0x00493fc0.md,,,pure global reader: returns DAT_00771a18; caller pushes 2 floats but 5-byte body ignores them; U-0814 U-0815
+0049cfb0,FUN_0049cfb0,util,C1,mapped,re/analysis/timer/0x0049cfb0.md,,,fastcall struct init; timeGetTime→param_1+0x158; zeroes 22 fields 0xe8..0x154; sentinels -1000/-1/-418784; U-0676 U-0677 U-0678
+0049d270,FUN_0049d270,util,C1,mapped,re/analysis/timer/0x0049d270.md,,,fastcall; (timeGetTime-param_1[0xfc])*10000 EMA into param_1[0xf4]; raw into param_1[0xf8]; calls FUN_0049d1d0; S-0662; U-0679 U-0680
