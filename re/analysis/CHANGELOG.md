@@ -281,3 +281,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  0x0047c160  FUN_0047c160  C0->C1  camera_follow-20260502-2132: 140-byte camera-path node loop
 2026-05-02  0x00491490  FUN_00491490  C0->C1  camera_follow-20260502-2132: 18-byte mode dispatcher (DAT_007f108b flag)
 2026-05-02  physics_collision-20260502-1900  analysis  bucket=physics_collision  rvas=0x00492e90(C1),0x0047a020(C1)  COLLISION_FN inconclusive — BSP system entirely Lua setup code; RWP37Active vtable not traceable statically; D-1792 filed for Frida tracing; U-0642..0644 filed
+2026-05-02  sweep-20260502-2217  scribe-claim-sweep  buckets=7
