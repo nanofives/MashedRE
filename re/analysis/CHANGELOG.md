@@ -148,3 +148,16 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  004aaf90  _memset                     C0->C1  library VS; 4-byte-aligned fill; 0x1010101 replication; no callees (re/analysis/boot_crt_exit_d3/004aaf90.md)
 2026-05-02  004ac45c  ___crtMessageBoxA           C0->C1  library VS2003; lazy LoadLibrary(user32); MB_DEFAULT_DESKTOP_ONLY 0x40000; MB_SERVICE_NOTIFICATION 0x200000 (re/analysis/boot_crt_exit_d3/004ac45c.md)
 2026-05-02  save_gamesave-20260502-1854  session-analysis  bucket=save_gamesave  rvas=6  U-0287..U-0288  S-0280..S-0284  D-0760..D-0765
+2026-05-02  render_d3d9_device-20260502-1856  session-analysis  bucket=render_d3d9_device  rvas=12  U-0247 U-0248  D-0640..D-0646  cap_count=12
+2026-05-02  004c7a70  _rwDeviceSystemFn (D3D_INIT_FN)  C0  listing-only; FPO prologue; function undefined in Ghidra; 23-case switch; Direct3DCreate9@004c7e0b; CreateDevice via vtbl+0x40@004c82b6; U-0247 (re/analysis/render_d3d9_device/0x004c7a70.md)
+2026-05-02  004c8650  FUN_004c8650  C0->C1  structural read; render-state cache init; zeros 006181c8..d8 + array 007d40c0 (re/analysis/render_d3d9_device/0x004c8650.md)
+2026-05-02  004c8690  FUN_004c8690  C0->C1  structural read; constant pool create/reset; 007d4568 handle; 260-slot table 007d4158; callees 004cc7f0 004ccc50 (re/analysis/render_d3d9_device/0x004c8690.md)
+2026-05-02  004c8740  FUN_004c8740  C0->C1  structural read; MSAA enumeration; IDirect3D9::CheckDeviceMultiSampleType vtbl+0x2c; max type→006181b4 (re/analysis/render_d3d9_device/0x004c8740.md)
+2026-05-02  004c8800  FUN_004c8800  C0->C1  structural read; D3DPRESENT_PARAMETERS builder; GetWindowRect; IDirect3D9 vtbl+0x24/28/2c/30; depth formats 0x4b..0x50; windowed/FS paths (re/analysis/render_d3d9_device/0x004c8800.md)
+2026-05-02  004c8c70  FUN_004c8c70  C0->C1  structural read; D3D9 device teardown; IDirect3DDevice9 SetTexture/SetIndices/SetStreamSource/SetPixelShader/SetVertexDeclaration/SetVertexShader/Release; 5 callees (re/analysis/render_d3d9_device/0x004c8c70.md)
+2026-05-02  004c8e50  FUN_004c8e50  C0->C1  structural read; raster dispatch table init; 27 rwRASTERSYSTEM_* entries 0x02..0x1c; default FUN_005c9d00 (re/analysis/render_d3d9_device/0x004c8e50.md)
+2026-05-02  004cc820  FUN_004cc820  C0->C1  structural read; RwFreeListCreate; 6-param pool allocator; header layout [0..8]; pre-alloc; 007d45cc chain (re/analysis/render_d3d9_device/0x004cc820.md)
+2026-05-02  004cc9f0  FUN_004cc9f0  C0->C1  structural read; RwFreeListDestroy; unlinks from 007d45cc; frees blocks+header (re/analysis/render_d3d9_device/0x004cc9f0.md)
+2026-05-02  004dcf90  FUN_004dcf90  C0->C1  structural read; CPUID via EFLAGS bit-21; leaf1[+8] bit 23 (likely MMX); U-0248 (re/analysis/render_d3d9_device/0x004dcf90.md)
+2026-05-02  004dcff0  FUN_004dcff0  C0->C1  structural read; CPUID via EFLAGS bit-21; leaf1[+8] bits 25|26 (likely SSE|SSE2); U-0248 (re/analysis/render_d3d9_device/0x004dcff0.md)
+2026-05-02  004dd050  FUN_004dd050  C0->C1  structural read; CPUID via EFLAGS bit-21; leaf1[+8] bit 26 (likely SSE2); U-0248 (re/analysis/render_d3d9_device/0x004dd050.md)
