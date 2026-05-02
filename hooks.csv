@@ -26,3 +26,30 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004abe86,sub_004abe86,boot,C1,mapped,re/analysis/entry_callees/004abe86.md,,,callee of entry; __fastcall; GetModuleFileNameA->buf 00773c40; two-pass FUN_004abd1a; writes 007739b0/b4/cc
 004abf28,___crtGetEnvironmentStringsA,boot,C1,mapped,re/analysis/entry_callees/004abf28.md,,,library match VS2003; wide vs ANSI env-strings path; mode flag DAT_00773d48; WideCharToMultiByte
 004ac04a,sub_004ac04a,boot,C1,mapped,re/analysis/entry_callees/004ac04a.md,,,callee of entry; CRT file-handle table init; _malloc(0x480) blocks; GetStartupInfoA reserved2 inheritance; GetStdHandle 3x
+004a2c2f,FUN_004a2c2f,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a2c2f.md,,,calls FUN_004a2bf7; stores __ms_p5_mp_test_fdiv result to DAT_00773994; calls FUN_004a5de3
+004a3258,FUN_004a3258,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a3258.md,,,__lock(8); re-entry guard DAT_007739dc; atexit-list walk 008ab6cc/d0; fn-ptr tables 005ea05c+005ea068; calls ___crtExitProcess or FUN_004a77eb
+004a31b1,___crtExitProcess,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a31b1.md,,,library match VS2003; GetModuleHandleA(mscoree.dll)+GetProcAddress(CorExitProcess); ExitProcess fallback
+004a333c,__exit,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a333c.md,,,library match VS2003; single call to FUN_004a3258(_Code,1,0)
+004a40fe,___onexitinit,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a40fe.md,,,library match VS2003; _malloc(0x80); init DAT_008ab6cc/d0; returns 0x18 on alloc fail
+004a415e,_atexit,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a415e.md,,,library match VS2003; delegates to __onexit(0x004a4126); returns 0 on success -1 on fail
+00402750,sub_00402750,boot,C1,mapped,re/analysis/boot_app_init/00402750.md,,,depth-2 of FUN_00492370; calls FUN_004d8560 gate; loads PIZ/TXD assets via 57 callees; returns 0 or 1; U-0007 U-0008
+00402a40,sub_00402a40,boot,C1,mapped,re/analysis/boot_app_init/00402a40.md,,,depth-2 of FUN_00492370; teardown sequence; destroys DAT_00636ac8 via FUN_004c5930; 43 callees; void return
+00492270,sub_00492270,boot,C1,mapped,re/analysis/boot_app_init/00492270.md,,,depth-2 of FUN_00492370; FUN_00493710(0) gate; calls FUN_004921d0 + FUN_00428590; returns 0 or 1
+00492290,sub_00492290,boot,C1,mapped,re/analysis/boot_app_init/00492290.md,,,depth-2 of FUN_00492370; while(DAT_00828300==0 AND FUN_00499690()==0) loop; 6 calls per iteration; returns 1
+004924f0,sub_004924f0,boot,C1,mapped,re/analysis/boot_app_init/004924f0.md,,,depth-2 of FUN_00492370; zero-fills 0xdce9 DWORDs at DAT_007f0f60; nested data-array init loops; U-0009
+00493540,thunk_FUN_00495150,boot,C1,mapped,re/analysis/boot_app_init/00493540.md,,,4-byte thunk JMP→0x00495150; target: FUN_00499710x2→FUN_004960a0/004963b0; switch on DAT_007719e8; FUN_00498510; returns bool
+00493550,thunk_FUN_004938c0,boot,C1,mapped,re/analysis/boot_app_init/00493550.md,,,4-byte thunk JMP→0x004938c0; target: FUN_00558470/00550390/004c2f60/004c3040/004c3270; void
+00493560,thunk_FUN_004954f0,boot,C1,mapped,re/analysis/boot_app_init/00493560.md,,,4-byte thunk JMP→0x004954f0; target: FUN_00498bf0 gate ShowCursor(1); FUN_00498b60+thunks+FUN_00496010; returns 0
+00493900,sub_00493900,boot,C1,mapped,re/analysis/boot_app_init/00493900.md,,,depth-2 of FUN_00492370; tokenizes cmd-line on 0x20; sets globals DAT_006147bc/c0 DAT_007719e0/e4/e8 via -vs/-cs/-l args; S-0001 S-0002
+004963e0,sub_004963e0,boot,C1,mapped,re/analysis/boot_app_init/004963e0.md,,,depth-2 of FUN_00492370; if DAT_00772fbc non-null calls _fputs(param_1 DAT_00772fbc); void
+004996f0,sub_004996f0,boot,C1,mapped,re/analysis/boot_app_init/004996f0.md,,,depth-2 of FUN_00492370; ShowWindow+UpdateWindow on DAT_007e9584 (HWND); void
+00499ba0,sub_00499ba0,boot,C1,mapped,re/analysis/boot_app_init/00499ba0.md,,,depth-2 of FUN_00492370; CoInitialize+RegisterClassA("MASHED")+CreateWindowExA→DAT_007e9584; S-0003
+00499cc0,sub_00499cc0,boot,C1,mapped,re/analysis/boot_app_init/00499cc0.md,,,depth-2 of FUN_00492370; DestroyWindow(DAT_007e9584); returns DAT_007e95a8
+004c5930,sub_004c5930,boot,C1,mapped,re/analysis/boot_app_init/004c5930.md,,,depth-2 of FUN_00492370; linked-list traversal+unlink on param_1; vtable call +0x11c; U-0010 U-0011; S-0004 S-0005
+005c9d00,sub_005c9d00,boot,C1,mapped,re/analysis/boot_app_init/005c9d00.md,,,depth-2 of FUN_00492370; 2-byte function; returns 0 only
+004a467e,_calloc,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a467e.md,,,library match VS2003; SBH path (DAT_008aa6a0==3) or HeapAlloc(DAT_008aa69c,8); new-handler loop; SEH wrapped
+004a57e4,FUN_004a57e4,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a57e4.md,,,XOR seed init: GetSystemTime+GetPID+GetTID+GetTickCount+QueryPerfCounter XOR->DAT_00616038; fallback 0xbb40e64e
+004a774d,__mtinitlocks,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a774d.md,,,library match VS2003; 36-entry lock table 00616408 base 00773a08 storage; InitCritSec spincount=4000; returns 0/1
+004a87f7,FUN_004a87f7,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a87f7.md,,,calls __mtdeletelocks; TlsFree(DAT_00616658) if !=0xffffffff; resets to 0xffffffff
+004aa3e4,___heap_select,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aa3e4.md,,,library match VS2003; reads DAT_0077399c+DAT_007739a8; returns 1 if ==2&&>4 else 3; no callees
+004aa44f,___sbh_heap_init,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aa44f.md,,,library match VS2003; HeapAlloc(008aa69c,0,0x140); inits 6 SBH globals 008aa680-008aa694; writes param_1 to 008aa68c

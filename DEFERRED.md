@@ -13,21 +13,12 @@ A row goes into DEFERRED when:
 | ID | Title | Why deferred | Re-pickup when | Phase tag |
 |----|-------|--------------|----------------|-----------|
 | D-0001 | Depth-2 callees of entry+depth-1 subset (boot CRT chain) | Out of scope for this session; only entry+depth-1 targeted | boot subsystem sweep session opened for CRT init chain | boot |
-| D-0002 | 0x00402750 FUN_00402750 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0003 | 0x00402a40 FUN_00402a40 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0004 | 0x00492270 FUN_00492270 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0005 | 0x00492290 FUN_00492290 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0006 | 0x004924f0 FUN_004924f0 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0007 | 0x00493540 thunk_FUN_00495150 (→0x00495150) | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0008 | 0x00493550 thunk_FUN_004938c0 (→0x004938c0) | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0009 | 0x00493560 thunk_FUN_004954f0 (→0x004954f0) | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0010 | 0x00493900 FUN_00493900 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0011 | 0x004963e0 FUN_004963e0 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0012 | 0x004996f0 FUN_004996f0 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0013 | 0x00499ba0 FUN_00499ba0 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0014 | 0x00499cc0 FUN_00499cc0 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0015 | 0x004c5930 FUN_004c5930 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
-| D-0016 | 0x005c9d00 FUN_005c9d00 | depth-2 of FUN_00492370 | D-0001 re-pickup | boot |
+| D-0040 | depth-3 callees of 0x00402750: 004025f0,004026d0,00402f50,00403640,00404830,0040bb30,0040bb50,0040bbb0,004113b0,00412890,00418980,0041a1e0,0041b450,0041bec0,0041c100,0041cb10,0041d6e0,0041d8b0,0041db90,0041def0,0041eaa0,00420d00,00425bc0,004274d0,004274e0,004275d0,00427ca0,00428390,004283a0,00431b40,0045b350,0045bae0,004669b0,004671a0,00471eb0,004723d0,0047ba00,00484170,004841d0,004881d0,00494c80,00495280,004952f0,00495350,00496e40,00498bc0,00498bd0,00499ce0,004b3d80,004b6540,004b6560,004c2ed0,004c2f00,004caea0,004d8560,00558240 | depth-3 of 0x00492370; not recursed | boot subsystem depth-3 sweep session | boot |
+| D-0041 | depth-3 callees of 0x00402a40 (unique vs D-0040): 004014b0,004015a0,00403660,0040bd00,0040cf80,0040cfd0,004114c0,004189e0,0041a3d0,0041b660,0041c0e0,0041c2c0,0041ccf0,0041d890,0041da80,0041de70,0041e0d0,0041ffb0,00421590,00425ed0,00426ba0,00426c00,00427620,00428400,0042c2a0,0045b930,00467010,00467020,00467070,0047ba10,00484130,00489250,00494bc0,00494ef0,00494f20,00496ce0,004b4880,004b6550,005581f0 | depth-3 of 0x00492370; not recursed | boot subsystem depth-3 sweep session | boot |
+| D-0042 | depth-3 callees of 0x00492270+0x00492290+0x004924f0: 00428590,004921d0,00493710,004926c0,00492770,004929d0,00492d20,00492d30,00492e90,00493480,00499690,00431ae0,00431af0,00431b00,00431b10,00431d00 | depth-3 of 0x00492370; not recursed | boot subsystem depth-3 sweep session | boot |
+| D-0043 | depth-3 callees of thunk targets 0x00495150+0x004938c0+0x004954f0: 00495120,004955b0,004960a0,004963b0,00498510,00499710,004c2f60,004c3040,004c3270,00550390,00558470,00498b60,004963d0,00496010,004955c0,00498bf0 | depth-3 of 0x00492370 via thunks; not recursed | boot subsystem depth-3 sweep session | boot |
+| D-0044 | depth-3 callees of 0x00493900 (internal): 00499730,004a2be9,004a3ac9,004b302f | depth-3 of 0x00492370; not recursed; S-0001+S-0002 filed for key stubs | boot subsystem depth-3 sweep session | boot |
+| D-0045 | depth-3 callees of 0x00499ba0+0x004c5930: 00499890,004c5a60,004d8060 | depth-3 of 0x00492370; not recursed; S-0003+S-0004+S-0005 filed | boot subsystem depth-3 sweep session | boot |
 | D-0017 | 0x004a2c2f FUN_004a2c2f | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
 | D-0018 | 0x004a40fe ___onexitinit | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
 | D-0019 | 0x004a415e _atexit | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
@@ -56,7 +47,21 @@ A row goes into DEFERRED when:
 
 | ID | Title | Outcome | Date |
 |----|-------|---------|------|
-|    |       |         |      |
+| D-0002 | 0x00402750 FUN_00402750 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0003 | 0x00402a40 FUN_00402a40 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0004 | 0x00492270 FUN_00492270 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0005 | 0x00492290 FUN_00492290 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0006 | 0x004924f0 FUN_004924f0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0007 | 0x00493540 thunk_FUN_00495150 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0008 | 0x00493550 thunk_FUN_004938c0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0009 | 0x00493560 thunk_FUN_004954f0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0010 | 0x00493900 FUN_00493900 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0011 | 0x004963e0 FUN_004963e0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0012 | 0x004996f0 FUN_004996f0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0013 | 0x00499ba0 FUN_00499ba0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0014 | 0x00499cc0 FUN_00499cc0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0015 | 0x004c5930 FUN_004c5930 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0016 | 0x005c9d00 FUN_005c9d00 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
 
 ## Conventions
 
