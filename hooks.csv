@@ -41,7 +41,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00493550,thunk_FUN_004938c0,boot,C1,mapped,re/analysis/boot_app_init/00493550.md,,,4-byte thunk JMP→0x004938c0; target: FUN_00558470/00550390/004c2f60/004c3040/004c3270; void
 00493560,thunk_FUN_004954f0,boot,C1,mapped,re/analysis/boot_app_init/00493560.md,,,4-byte thunk JMP→0x004954f0; target: FUN_00498bf0 gate ShowCursor(1); FUN_00498b60+thunks+FUN_00496010; returns 0
 00493900,sub_00493900,boot,C1,mapped,re/analysis/boot_app_init/00493900.md,,,depth-2 of FUN_00492370; tokenizes cmd-line on 0x20; sets globals DAT_006147bc/c0 DAT_007719e0/e4/e8 via -vs/-cs/-l args; S-0001 S-0002
-004963e0,sub_004963e0,boot,C1,mapped,re/analysis/boot_app_init/004963e0.md,,,depth-2 of FUN_00492370; if DAT_00772fbc non-null calls _fputs(param_1 DAT_00772fbc); void
+004963e0,sub_004963e0,render,C1,mapped,re/analysis/rw_engine_init/004963e0.md,,,log writer; if DAT_00772fbc (FILE*) non-null calls _fputs; also boot context: re/analysis/boot_app_init/004963e0.md
 004996f0,sub_004996f0,boot,C1,mapped,re/analysis/boot_app_init/004996f0.md,,,depth-2 of FUN_00492370; ShowWindow+UpdateWindow on DAT_007e9584 (HWND); void
 00499ba0,sub_00499ba0,boot,C1,mapped,re/analysis/boot_app_init/00499ba0.md,,,depth-2 of FUN_00492370; CoInitialize+RegisterClassA("MASHED")+CreateWindowExA→DAT_007e9584; S-0003
 00499cc0,sub_00499cc0,boot,C1,mapped,re/analysis/boot_app_init/00499cc0.md,,,depth-2 of FUN_00492370; DestroyWindow(DAT_007e9584); returns DAT_007e95a8
@@ -59,5 +59,19 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00558470,sub_00558470,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00558470.md,,,callee-1 of FUN_004938c0; 2x vtable-ptr-dispatch via DAT_007d3ff8+0x10c; zeros DAT_007dc8b8/bc/ac; U-0088
 00550390,sub_00550390,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00550390.md,,,callee-2 of FUN_004938c0; linked-list traversal+vtable calls+DeleteCriticalSection(009124e0); S-0080; U-0089
 004c2f60,sub_004c2f60,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c2f60.md,,,callee-3 of FUN_004938c0; FUN_004c2c90(+0x10,0x12)+FUN_004d8060+FUN_004c2c90(+0x10,3); S-0081 S-0005; U-0090
-004c3040,sub_004c3040,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3040.md,,,callee-4 of FUN_004938c0; FUN_004c2c90(+4,1); copies 0x4b DWORDs to DAT_007d3ec8; frees old struct; S-0081; U-0091
-004c3270,sub_004c3270,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3270.md,,,callee-5 of FUN_004938c0; DAT_007d3ff4==0 check; calls FUN_004d7ca0+FUN_004ccf20; S-0082 S-0083; U-0092
+004c3040,sub_004c3040,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3040.md,,,callee-4 of FUN_004938c0 (teardown) + FUN_00493710 init path; FUN_004c2c90(+4,1); copies 0x4b DWORDs; S-0081; U-0091; see also re/analysis/rw_engine_init/004c3040.md
+004c3270,sub_004c3270,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3270.md,,,callee-5 of FUN_004938c0 (teardown) + FUN_00493710 init path; DAT_007d3ff4==0 check; S-0082 S-0083; U-0092; see also re/analysis/rw_engine_init/004c3270.md
+00493710,FUN_00493710,render,C1,mapped,re/analysis/rw_engine_init/00493710.md,,,RW_INIT_FN; sequential RwEngineInit→RtFSManagerOpen→RwEngineOpen→RwEngineStart chain; returns 1 on full success; U-0067 U-0068 U-0071; S-0060..S-0067
+0045b350,FUN_0045b350,render,C1,mapped,re/analysis/rw_engine_init/0045b350.md,,,zero-body function; body_start==body_end==0x0045b350; bare return; called from 004c32b0 and RW_INIT_FN success path; U-0069
+00493600,FUN_00493600,render,C1,mapped,re/analysis/rw_engine_init/00493600.md,,,calls FUN_004ce790 twice with (ptr-to-global fn-ptr label-addr) 3-arg pattern; returns bool; S-0068
+00493640,FUN_00493640,render,C1,mapped,re/analysis/rw_engine_init/00493640.md,,,18-call chain each checked non-zero; RenderwareAttachPlugins path; 18 depth-2 callees D-0244..D-0261
+004951e0,thunk_FUN_00495780,render,C1,mapped,re/analysis/rw_engine_init/004951e0.md,,,Ghidra thunk 4 bytes; decompiler shows FUN_004955d0 call; function_callees empty; U-0070
+004951f0,FUN_004951f0,render,C1,mapped,re/analysis/rw_engine_init/004951f0.md,,,reads DAT_006147bc+DAT_007719e0; ShowCursor(0) conditional; stores FUN_004cbb60 to DAT_00771e58; reads +0xC4+0xCC from DAT_00771e58
+00495270,FUN_00495270,render,C1,mapped,re/analysis/rw_engine_init/00495270.md,,,single-line wrapper; calls FUN_00499710; stores return to *param_1 (4-byte buffer for FUN_004c30b0 call)
+004a2cbd,FID_conflict:_wprintf,render,C1,mapped,re/analysis/rw_engine_init/004a2cbd.md,,,FidDB VS2003 _printf/_wprintf conflict; __cdecl variadic; lock+stbuf+FUN_004a504f+ftbuf; stdout target DAT_00616110
+004c2ed0,FUN_004c2ed0,render,C1,mapped,re/analysis/rw_engine_init/004c2ed0.md,,,FUN_004c2c90(DAT_007d3ff8+0x10 6 param_1 0 param_2); returns param_1 on success; called with (&local_18 (int)sVar1) from RW_INIT_FN
+004c2f00,FUN_004c2f00,render,C1,mapped,re/analysis/rw_engine_init/004c2f00.md,,,FUN_004c2c90(DAT_007d3ff8+0x10 10 &local_4 0 0); returns local_4 on success else 0xffffffff; result used as video mode short
+004c2fb0,FUN_004c2fb0,render,C1,mapped,re/analysis/rw_engine_init/004c2fb0.md,,,FUN_004c2c90(ids 2/3/17); FUN_004d8000(&DAT_00617fe0 DAT_007d3ff8); FUN_004cf160(*+0x10); writes +0x124=3 on success
+004c5c80,FUN_004c5c80,render,C1,mapped,re/analysis/rw_engine_init/004c5c80.md,,,writes param_1 to *(DAT_007d4054+0x10+DAT_007d3ff8); called as FUN_004c5c80(0) from RW_INIT_FN success path
+004c9eb0,FUN_004c9eb0,render,C1,mapped,re/analysis/rw_engine_init/004c9eb0.md,,,writes param_1 to DAT_006181c4; double-indirect dispatch DAT_007d4108+0x18/0x1c; 3-element loop at 005d8b80-005d8b88; called FUN_004c9eb0(0x3c)
+004c32b0,FUN_004c32b0,render,C1,mapped,re/analysis/rw_engine_init/004c32b0.md,,,RwEngineInit wrapper; sets DAT_007d3ff8; param_2&1 selects two globals; FUN_004d7de0×14 ids 0x401-0x412; sets [0x49]=1 on success; U-0071; D-0237..D-0243
