@@ -88,3 +88,5 @@ A row goes into DEFERRED when:
 - ID format: `D-NNNN`, monotonic, never reused.
 - Re-pickup condition must be **observable** (a phase exits, a feature ships, a tool gains a capability) — not "later" or "when I feel like it."
 - A DEFERRED row may reference S-NNNN or U-NNNN ids; in that case the original tracker entry stays, with a pointer to D-NNNN.
+| D-0280 | 0x00551510,0x004c2c90,0x004d8060(S-0005),0x004d7ca0,0x004ccf20 | depth-2 callees of FUN_004938c0 subset from rw_engine_teardown-20260502-1440 | pick up as bucket rw_engine_teardown-cont1; same depth; no further recursion | render |
+| D-0281 | 0x004954f0 FUN_004954f0 (HardwareExitApplication) and its callees: 0x00498bf0,ShowCursor,0x00498b60,0x0045b350,thunk_FUN_00496370,0x00496010,thunk_FUN_00495580 | sister function to FUN_004938c0; called by FUN_00492370 for hardware-layer teardown; not in rw_engine_teardown subset (callee of outer shell FUN_00492370, not of RW_TEAR_FN) | pick up as bucket rw_hw_teardown; after rw_engine_teardown-cont1 finishes; confirm if D3D teardown path is here | render |
