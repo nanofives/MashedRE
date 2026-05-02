@@ -7,12 +7,22 @@ When multiple Claude sessions / worktrees are active, each owns a set of subsyst
 
 Ownership prevents tracker conflicts on `hooks.csv` merges. Other sessions may *read* and *cite* an owned subsystem, but cannot change its rows.
 
-## Current allocation
+## Default policy (in effect now)
+
+Until parallelism actually starts, **the `main` worktree (single Claude session) implicitly owns every subsystem**. No branch claims are needed for solo work.
+
+A worktree only needs an explicit row in this file when:
+- A second Claude session is about to be opened.
+- A long-running sweep is going to land in its own branch and the user wants other sessions to leave that subsystem alone.
+
+This avoids ceremony when there's only one cook in the kitchen.
+
+## Current allocation (only fill in when ≥ 2 sessions active)
 
 | Subsystem | Owner (worktree / session) | Branch | Status |
 |-----------|----------------------------|--------|--------|
-| boot      | main                       | main   | unowned (default; main session takes it on startup) |
-| util      | main                       | main   | unowned (default) |
+| boot      | main (default)             | main   | active — first work landed: `entry` @ 0x004a4bb7 → C1 |
+| util      | main (default)             | main   | unowned |
 | audio     | (unassigned)               | —      | will become `phase5/audio` worktree when work begins |
 | ai        | (unassigned)               | —      | will become `phase5/ai` |
 | vehicle   | (unassigned)               | —      | will become `phase5/vehicle` |

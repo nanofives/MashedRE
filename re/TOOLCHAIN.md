@@ -20,20 +20,11 @@ MinGW gets you 90% there cheaply, but the failure mode of the remaining 10% is *
 
 Clang-cl works (it targets the MSVC ABI explicitly) but still requires the MSVC headers + linker, so the install footprint is the same as just using MSVC. No upside for solo work.
 
-## Install (one-time)
+## Install (already done — see `re/analysis/BUILD_SETUP.md`)
 
-1. Download **Visual Studio Build Tools 2022** from https://visualstudio.microsoft.com/downloads/.
-2. In the installer, select workload **"Desktop development with C++"**, then under "Individual components" check:
-   - MSVC v143 - VS 2022 C++ x64/x86 build tools (latest)
-   - Windows 11 SDK (latest)
-   - C++ ATL for v143 build tools (x86/x64) — only if we need ATL (probably not).
-3. Verify install:
-   ```cmd
-   "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
-   cl.exe /?
-   link.exe /?
-   ```
-4. The eventual `build.bat` will lazily call `vcvars32.bat` if `%VSCMD_VER%` isn't set.
+VS 2022 Build Tools are installed at `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools` (linker v14.44.35223.0, VS 17.14). The eventual `build.bat` will lazily call `vcvars32.bat` from that path if `%VSCMD_VER%` isn't set.
+
+If reinstalling on a fresh machine, the workload is **"Desktop development with C++"** plus components: MSVC v143 x64/x86 build tools (latest), Windows 11 SDK (latest). ATL not required.
 
 ## Compiler flags (when first hook lands)
 

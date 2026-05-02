@@ -8,3 +8,4 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 # scenario: the canonical Frida scenario used for diff (empty until C4)
 # frida_diff: ok|fail|na|pending
 # notes: free text; cite RVAs of related functions
+004a4bb7,entry,boot,C1,mapped,,,,PE entry point; symbol IMPORTED; MSVC EH symbols at 4a3d7e/4a8f33 confirm MSVC C++ compile; analysis at re/analysis/entry_point.md

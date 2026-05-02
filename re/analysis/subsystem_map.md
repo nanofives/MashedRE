@@ -10,8 +10,10 @@ For each subsystem: a short prose description of its role, the RVAs of its top e
 
 ### boot
 - **Role:** WinMain, command-line parsing, language selection, video config load, RenderWare engine init.
-- **Entry points:** TBD (Phase 1)
-- **Fingerprints:** strings `"RwEngineInit"`, `"videocfg.bin"`, language code constants from MashedRunner
+- **Entry points:**
+  - `entry` @ `0x004a4bb7` (PE OS entry — MSVC CRT startup; calls into WinMain)
+  - WinMain RVA: TBD (downstream of `entry`)
+- **Fingerprints:** strings `"RwEngineInit"`, `"videocfg.bin"`, language code constants from MashedRunner; MSVC EH runtime at `0x004a3d7e` / `0x004a8f33`.
 
 ### audio
 - **Role:** RenderWare audio (RWS) loading, sound playback, music
