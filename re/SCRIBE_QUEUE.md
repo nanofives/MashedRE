@@ -13,6 +13,11 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+```
+
+## Drained
+
+```
 2026-05-02  texture_loader-20260502-1900  bucket=texture_loader  rvas=0x0042a530,0x004b3d20,0x004b3d80
 2026-05-02  effects_particle-20260502-2135  bucket=effects_particle  rvas=0x00490500,0x00472650,0x00472690,0x004769a0,0x004769d0,0x004769f0,0x00476a30,0x00476a40,0x00476d00,0x00476df0,0x0048ebc0,0x0048ebf0,0x0048f290,0x0048f420,0x0048fe70,0x004a2c48
 2026-05-02  hud_ingame-20260502-2132  bucket=hud_ingame  rvas=0x0040dfc0,0x00403160,0x0041a3e0,0x0041b630,0x0041c0c0,0x0041c300,0x0041ccc0,0x0041d870,0x0041db80,0x0041ded0,0x0041e850,0x00426ba0,0x0042f500,0x0042f6a0
@@ -20,11 +25,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-02  audio_music-20260502-2145  bucket=audio_music  rvas=0x004623e0,0x0045da60,0x0045dd60,0x004631f0
 2026-05-02  game_state-20260502-2144  bucket=game_state  rvas=0x004929d0,0x0040b430,0x0040b540,0x0040b6d0,0x0040b6e0,0x0040b700,0x0040d440,0x0040e340,0x0040e350,0x0040e450,0x0040e460,0x0042b8d0,0x0042b8e0,0x0042b8f0,0x0042b910,0x0042b930,0x0042b940,0x0042c1c0,0x0042c1d0,0x0042c220
 2026-05-02  physics_collision-20260502-1900  bucket=physics_collision  rvas=0x00492e90,0x0047a020  notes=COLLISION_FN not found; BSP system mapped; Frida required for runtime path; D-1792 filed
-```
-
-## Drained
-
-```
 2026-05-02  audio_dsound-20260502-1942  bucket=audio_dsound  rvas=0x005b9f30,0x005a9e10,0x005aee20,0x005ba1d0,0x005bad30
 2026-05-02  render_d3d9_device-20260502-1856  bucket=render_d3d9_device  rvas=0x004c7a70,0x004c8650,0x004c8690,0x004c8740,0x004c8800,0x004c8c70,0x004c8e50,0x004cc820,0x004cc9f0,0x004dcf90,0x004dcff0,0x004dd050
 2026-05-02  boot_app_init-20260502-1724  bucket=boot_app_init  rvas=0x00402750,0x00402a40,0x00492270,0x00492290,0x004924f0,0x00493540,0x00493550,0x00493560,0x00493900,0x004963e0,0x004996f0,0x00499ba0,0x00499cc0,0x004c5930,0x005c9d00

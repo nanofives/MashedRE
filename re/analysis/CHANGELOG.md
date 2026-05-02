@@ -282,3 +282,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  0x00491490  FUN_00491490  C0->C1  camera_follow-20260502-2132: 18-byte mode dispatcher (DAT_007f108b flag)
 2026-05-02  physics_collision-20260502-1900  analysis  bucket=physics_collision  rvas=0x00492e90(C1),0x0047a020(C1)  COLLISION_FN inconclusive — BSP system entirely Lua setup code; RWP37Active vtable not traceable statically; D-1792 filed for Frida tracing; U-0642..0644 filed
 2026-05-02  sweep-20260502-2217  scribe-claim-sweep  buckets=7
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=texture_loader  rvas=3  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=texture_loader  writes=3  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=effects_particle  rvas=16  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=effects_particle  writes=16  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=hud_ingame  rvas=14  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=hud_ingame  writes=14  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=camera_follow  rvas=13  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=camera_follow  writes=13  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=audio_music  rvas=4  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=audio_music  writes=4  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=game_state  rvas=20  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=game_state  writes=20  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-claim  bucket=physics_collision  rvas=2  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release  bucket=physics_collision  writes=2  errors=0  (sweep)
+2026-05-02  sweep-20260502-2217  scribe-release-sweep  buckets=7  total_writes=72  errors=0  (queue empty)
