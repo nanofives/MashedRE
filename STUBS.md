@@ -289,3 +289,11 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0350 | 0x005bbdb0 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbdb0; buffer creation; called in both DirectSound init paths; depth-2 of entry |
 | S-0351 | 0x005bac00 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bac00; conditional callee when [ESI+0xc] nonzero; depth-2 of entry |
 | S-0352 | 0x005bbf30 | 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbf30; unconditional single-arg callee after FUN_005bac00; depth-2 of entry |
+| S-0600 | 0x0042a470 | 0x0042a530 FUN_0042a530 | render | passthrough | 2026-05-02 | FUN_0042a470; piz lookup; called 5x with type codes 1–5; depth-2 of FUN_0042a6b0; DEFERRED D-1720 |
+| S-0601 | 0x00496400 | 0x0042a530 FUN_0042a530 | render | passthrough | 2026-05-02 | FUN_00496400; printf-style debug logger; depth-2 of FUN_0042a6b0; DEFERRED D-1721 |
+| S-0602 | 0x004cf7d0 | 0x004b3d20 FUN_004b3d20 | render | passthrough | 2026-05-02 | FUN_004cf7d0; TXD stream reader called after RwStreamFindChunk(0x16); 513 bytes; depth-2 of FUN_0042a6b0; DEFERRED D-1722 |
+| S-0603 | 0x0054f8d0 | 0x004b3d80 FUN_004b3d80 | render | passthrough | 2026-05-02 | FUN_0054f8d0; DFF/clump stream reader called after RwStreamFindChunk(0x23); 1153 bytes; depth-2 of FUN_0042a6b0; DEFERRED D-1723 |
+| S-0540 | 0x0046d320 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d320; returns packed color/state int per (slot, index) pair; depth-2 of camera_follow |
+| S-0541 | 0x0046d360 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d360; returns validity flag per (slot, index) pair; depth-2 of camera_follow |
+| S-0542 | 0x0040aef0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0040aef0; per-slot update called once per outer loop iteration; depth-2 of camera_follow |
+| S-0543 | 0x0055dec0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0055dec0; reads state from DAT_0066d728 struct; returns 0x11 or 0x12 discriminant; depth-2 of camera_follow |

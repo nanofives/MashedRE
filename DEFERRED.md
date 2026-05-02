@@ -322,3 +322,10 @@ A row goes into DEFERRED when:
 | D-0949 | 0x005bbdb0 FUN_005bbdb0 | buffer creation; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0350 | audio_dsound-cont1 session | audio |
 | D-0950 | 0x005bac00 FUN_005bac00 | conditional callee; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0351 | audio_dsound-cont1 session | audio |
 | D-0951 | 0x005bbf30 FUN_005bbf30 | unconditional single-arg callee in LAB_005bad30; depth-2 of entry; S-0352 | audio_dsound-cont1 session | audio |
+| D-1720 | 0x0042a470 FUN_0042a470 | piz lookup; 5 type-codes tried; depth-2 of FUN_0042a6b0; S-0600 | texture_loader-cont1 session | render |
+| D-1721 | 0x00496400 FUN_00496400 | printf-style debug logger; depth-2 of FUN_0042a6b0; S-0601 | texture_loader-cont1 session | render |
+| D-1722 | 0x004cf7d0 FUN_004cf7d0 | TXD stream reader; called after FUN_004cc5e0(0x16); 513 bytes; candidate RwTexDictionaryStreamRead; S-0602 | texture_loader-cont1 session | render |
+| D-1723 | 0x0054f8d0 FUN_0054f8d0 | DFF/clump stream reader; called after FUN_004cc5e0(0x23); 1153 bytes; candidate RpClumpStreamRead; S-0603 | texture_loader-cont1 session | render |
+| D-1724 | 0x004cc230 FUN_004cc230 | RW stream open; called with (2,1,filename); also S-0281 S-0421; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
+| D-1725 | 0x004cc5e0 FUN_004cc5e0 | RW stream find chunk; called with (handle, 0x16 or 0x23, ...); also S-0422; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
+| D-1726 | 0x004cc160 FUN_004cc160 | RW stream close; called with (handle, 0); also S-0283 S-0424; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |

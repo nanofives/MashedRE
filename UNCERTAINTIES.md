@@ -201,3 +201,14 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0357 | 0x005bad30 | vtable+0x10 on IDirectSound8*: struct zeroed to 0x60 bytes with dwSize=0x60; DSCAPS or DSBCAPS ambiguous | confirm vtable+0x10 on IDirectSound8 resolves to GetCaps |
 | U-0358 | 0x005bad30 | FUN_005bbf30 (0x005bbf30): called unconditionally after FUN_005bac00; single arg; purpose unknown | decomp FUN_005bbf30 |
 | U-0359 | 0x005bad30 | return value EAX=[ESP+0xa0] at LAB_005baeca epilogue: stack slot value at that point untraced | caller context or Frida trace |
+| U-0547 | 0x0040b090 | FUN_0046d320 and FUN_0046d360 return packed 32-bit color/state tokens compared against 5 magic constants; semantic mapping of these tokens unknown | decomp FUN_0046d320 + FUN_0046d360 in camera_follow-cont1 |
+| U-0548 | 0x0040b090 | 0xBC23D70A at 0x0040b10b: as IEEE754 float = -0.01f, passed as int arg to FUN_0040ad40/FUN_0040ae30; types of those params unconfirmed | decomp depth-2 callees FUN_0040ad40/FUN_0040ae30 |
+| U-0549 | 0x0040b090 | DAT_0066d728 passed to FUN_0055dec0/FUN_004292d0/FUN_004292c0; struct layout and owner subsystem unidentified | xref DAT_0066d728 writers |
+| U-0607 | 0x0042a530 | param_1 type: &DAT_0067e1a8 in caller FUN_0042a6b0; struct layout of DAT_0067e1a8 not yet identified | inspect DAT_0067e1a8 in Ghidra; cross-check against piz asset context objects |
+| U-0608 | 0x0042a530 | piz type codes 1–5 meaning: FUN_0042a470 called with each; caller dispatches on return=1 vs other nonzero; semantics unknown without decomping FUN_0042a470 | decomp FUN_0042a470 (D-1720) |
+| U-0609 | 0x004b3d20 | param_1/param_2/param_3 passing into FUN_004b3d20: decompiler shows no params forwarded from FUN_0042a6b0 call site; may be decompiler artifact of stack frame | verify in listing view at 0x004b3d20 call sites |
+| U-0610 | 0x004b3d20 | FUN_004cf7d0 identity: called after RwStreamFindChunk(0x16); candidate is RwTexDictionaryStreamRead; unconfirmed | decomp FUN_004cf7d0 (D-1722); cross-check against librw src/basetexture.cpp |
+| U-0611 | 0x004b3d80 | same as U-0609 but for FUN_004b3d80 param passing | verify in listing view at 0x004b3d80 call sites |
+| U-0612 | 0x004b3d80 | FUN_0054f8d0 identity: called after RwStreamFindChunk(0x23); candidate is RpClumpStreamRead; unconfirmed; 1153 bytes consistent with full clump reader | decomp FUN_0054f8d0 (D-1723); cross-check against librw |
+| U-0550 | 0x0041e8c0 | DAT_0063d7e4 identity: holds base ptr whose +0x18 slot is called; struct type and owner unknown | xref DAT_0063d7e4 writers; identify vtable owner |
+| U-0551 | 0x0041e8c0 | CAMERA_FN passes (&DAT_00646e58, param_2) but decompiler shows 0 params due to jump-table confusion; real calling convention not confirmed | inspect listing at 0x0041e8c0 for actual instruction encoding |
