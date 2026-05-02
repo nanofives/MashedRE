@@ -28,3 +28,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-02  audio_rws_loader-20260502-1838  bucket=audio_rws_loader  rvas=005a7b60,004522d0,004cbd30,004cc050,005a79a0,005a7b40,005a7b50,005a7ee0,005ab380,005ab410,005abcf0,005abfa0,005ade10,005aea00,005aea10,005aea40,005aec00
 2026-05-02  input_lua-20260502-1902  bucket=input_lua  rvas=0x0047b9b0,0x0047b860,0x0047b880,0x0047b8d0
+2026-05-02  boot_crt_exit_d3-20260502-1854  bucket=boot_crt_exit_d3  rvas=0x004a2be9,0x004a2bf7,0x004a3440,0x004a34b0,0x004a4126,0x004a4728,0x004a5984,0x004a59bf,0x004a5de3,0x004a5e35,0x004a5f07,0x004a7796,0x004a77eb,0x004a787f,0x004aac76,0x004aaf72,0x004aaf90,0x004ac45c
