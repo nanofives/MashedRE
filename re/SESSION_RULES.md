@@ -12,6 +12,64 @@ Every RE session (single or parallel) loads this file before any work. The promp
 6. **No silent recursion.** Stay within the subset the prompt names. Deeper callees go in `DEFERRED.md`, not into this session's notes.
 7. **No tracker promotion on first pass.** First-pass sessions write C0/C1 rows only. Promotions to C2+ go through the `re-classify` skill in a separate session, with evidence (Frida diff, behavioral test).
 
+## Session sizing (RVA cap, split protocol)
+
+Sonnet 4.6 has a 200k-token context; auto-compaction kicks in around ~140k. Compaction is **silent** — earlier MCP tool output gets summarized, and the verify-then-cite rule cannot catch a session that doesn't notice its own facts were summarized away. For NO-GUESSING work this is the dominant hallucination risk. The countermeasure is a hard cap on RVAs per session.
+
+### Caps
+
+| Model | Hard cap | Soft target | Why |
+|---|---|---|---|
+| Sonnet 4.6 (200k context) | **20 RVAs** | 10–15 RVAs | Effective work budget after ~25k startup overhead and ~10k scribe overhead is ~105k. At 3k/RVA average + safety margin against 5–8k spikes on heavy decomps. |
+| Opus 4.7 (1M context) | **40 RVAs** | 25–30 RVAs | Context is not the limit — attention/state-tracking is. Past ~30 RVAs, Opus's procedural discipline starts to drift even without compaction. |
+
+### Pre-flight subset-size check (after `function_callees` returns the subset)
+
+```
+count = 1 (parent) + len(callees)
+if count > <hard_cap>:
+    SPLIT IMMEDIATELY — do not "push through" past the cap.
+    1. Keep parent + first (hard_cap − 1) callees in this session's bucket.
+    2. File the remaining (count − hard_cap) RVAs as a single DEFERRED row.
+    3. Surface to user verbatim:
+       "Subset of <count> RVAs exceeds the <model> cap of <hard_cap>.
+        Splitting: this session takes <parent + first N callees>;
+        remaining <M> RVAs filed as DEFERRED-<id> for next session."
+    4. Continue the work loop with the truncated subset only.
+```
+
+### Heavy-decomp adjustment (mid-loop)
+
+If `decomp_function` for a single RVA returns >5k tokens of output, count that RVA as **2** against the cap (it spent twice the context it should have). When the running total — counting heavy RVAs as 2 — reaches `hard_cap − 2`, stop the work loop early:
+
+1. Commit the partial subset (whatever .md notes + tracker rows you have).
+2. File the remaining un-decompiled RVAs as a DEFERRED row.
+3. Run the scribe step on the partial subset.
+4. End-of-session report includes `early-finish: yes (running count <n> at hard_cap−2; remaining filed as D-NNNN)`.
+
+Better to commit a partial session than to risk compaction-induced hallucinated facts in the second half.
+
+### Split bucket naming
+
+When a subset splits across sessions, never reuse the same bucket directory name (the per-RVA `.md` files would collide).
+
+- First session: `re/analysis/<base-bucket>/`
+- Second session (continuation): `re/analysis/<base-bucket>-cont1/`
+- Third: `re/analysis/<base-bucket>-cont2/`, etc.
+
+### DEFERRED row format for splits
+
+```
+D-NNNN <comma-separated RVAs> from session <SESSION_SHORT_ID> bucket <base-bucket>
+       — pick up as bucket <base-bucket>-cont<N>; same depth, no further recursion.
+```
+
+The `from session` and `pick up as` fields make the re-pickup unambiguous: the next session reads the DEFERRED row, knows exactly which RVAs to take and what bucket to put them in.
+
+### Scribe-commit noise
+
+Each session adds two scribe commits (`scribe: claim …` and `scribe: release …`) plus the analysis commit. A 40-RVA tree split into three Sonnet sessions is 9 commits before any sweep is "done." This is by design — the scribe pairs exist for the audit trail in `re/analysis/CHANGELOG.md`. **If you care about a clean log on `main`, squash before merging long-running feature branches** (`git rebase -i` collapsing scribe pairs into the analysis commit per session). Do **not** squash on `main` itself; the audit trail there is load-bearing for resolving "who wrote this plate comment when."
+
 ## Startup ritual
 
 a. **Anchor check.** `sha256sum original/MASHED.exe` must equal `BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E`. Mismatch → halt; the trackers' RVAs are invalid.
@@ -97,6 +155,17 @@ After the commit, immediately attempt the **post-analysis scribe step** (see bel
 Immediately after the analysis commit, every session attempts to push its findings into the master
 Ghidra project. This is a serial, immediate write — no polling, no retry loop.
 
+### Session-short-id (used in flag files, commit messages, and CHANGELOG rows)
+
+Construct **once at session start**, before any other scribe-related step, and reuse for every flag/commit/log entry in the session:
+
+```bash
+SESSION_SHORT_ID="<bucket>-$(date -u +%Y%m%d-%H%M)"
+# Example for the entry_callees bucket: entry_callees-20260502-1437
+```
+
+Format: `<bucket>-YYYYMMDD-HHMM`, UTC. Deterministic, no guessing, collision-free in practice (collisions only on same-bucket same-minute, which the lock check would catch anyway). Never invent a different format — `<sessionid>` and `<session-short-id>` are aliases for this one value.
+
 ### Lock check (do this first, before opening anything)
 
 ```bash
@@ -118,18 +187,34 @@ Only these write tools are appropriate for a first-pass C1 scribe session:
 
 | Tool | When | Content |
 |---|---|---|
-| `comment_set` (plate) | Every analyzed `FUN_XXXXXXXX` | One-sentence mechanical summary from the .md's first bullet. Do not paraphrase — copy the first bullet verbatim, shortened to ≤120 chars. Prefix with `[C1 YYYY-MM-DD]`. |
+| `comment_set` (plate) | Every analyzed `FUN_XXXXXXXX` | First bullet of the .md's `## Mechanical description`, copied **verbatim**, prefixed with `[C1 YYYY-MM-DD] `. **Truncation rule:** if the prefixed text exceeds 120 chars, cut at the last word boundary that fits and append `…`. Never paraphrase, reword, or summarize to compress — truncation is the only compression operation allowed. |
 | `bookmark_add` | Every analyzed RVA | Category `first-pass`, description `C1 YYYY-MM-DD session:<bucket>`. |
-| `function_rename` | Only if Ghidra still has `FUN_XXXXXXXX` AND the .md has a name confirmed by Ghidra's own library-match comment | Use the library-match name exactly as Ghidra labeled it. Never invent names. |
+| `function_rename` | Only if **all three** hold: (a) Ghidra still shows `FUN_XXXXXXXX` for this RVA; (b) `mcp__ghidra__comment_get` for this RVA returns a comment whose text begins with `Library Function:` (Ghidra's FidDB match marker); (c) that comment names a single concrete symbol. | Rename to **exactly** the symbol Ghidra named in the `Library Function:` comment. No prefix, no suffix, no namespace decoration. If conditions (a)–(c) are not all met, **skip the rename** for this RVA — do not invent a name from any other source. |
 
-**Not allowed at C1 scribe:** type annotations, struct layouts, parameter renames, calling-convention changes. Those require C2+ confidence.
+**Detecting a library-match (procedural):**
+
+```text
+comment = mcp__ghidra__comment_get(rva, comment_type="plate" or "pre")
+if comment is None or not comment.startswith("Library Function:"):
+    skip rename
+else:
+    name = comment.split(":", 1)[1].strip().split()[0]    # first token after the colon
+    mcp__ghidra__function_rename(rva, name)
+```
+
+If the FidDB match is ambiguous (e.g., "Library Function: foo OR bar"), treat as skip — never pick one.
+
+**Not allowed at C1 scribe:** type annotations, struct layouts, parameter renames, calling-convention changes, custom symbol creation, namespace moves. Those require C2+ confidence.
 
 ### Scribe execution
 
+`SESSION_SHORT_ID` is the value built once at session start (see "Session-short-id" above). Reuse it everywhere below — never construct a different id mid-scribe.
+
 ```
 1. bash scripts/ghidra_assert.sh scribe-check              # must be clear
-2. echo "master.WIP-<session-short-id>" > master.WIP-<session-short-id>
-   git add master.WIP-<session-short-id> && git commit -m "scribe: claim for <bucket> <date>"
+2. echo "master.WIP-$SESSION_SHORT_ID" > "master.WIP-$SESSION_SHORT_ID"
+   git add "master.WIP-$SESSION_SHORT_ID"
+   git commit -m "scribe: claim $SESSION_SHORT_ID"
 3. mcp__ghidra__project_program_open_existing
      project_location="C:/Users/maria/Desktop/Proyectos/Mashed"
      project_name="Mashed"
@@ -137,15 +222,25 @@ Only these write tools are appropriate for a first-pass C1 scribe session:
      read_only=false
 4. For each RVA in the session subset — in address order, one at a time:
      a. mcp__ghidra__function_at <rva>     ← confirm non-null before any write
-     b. mcp__ghidra__comment_set           ← plate comment (if FUN_XXXXXXXX)
+     b. mcp__ghidra__comment_set           ← plate comment (apply truncation rule above)
      c. mcp__ghidra__bookmark_add          ← first-pass bookmark
-     d. mcp__ghidra__function_rename       ← only if library-match name confirmed (see table above)
-5. mcp__ghidra__program_save
+     d. mcp__ghidra__comment_get <rva>     ← check for "Library Function:" prefix
+        → if matches, mcp__ghidra__function_rename to the FidDB-supplied name
+        → if no match or ambiguous, skip rename — never invent a name
+5. mcp__ghidra__program_save                ← NOT program_save_as
 6. mcp__ghidra__program_close
 7. bash scripts/ghidra_pool.sh sync
-8. git rm master.WIP-<session-short-id>
-   git commit -m "scribe: release for <bucket> <date>"
+8. git rm "master.WIP-$SESSION_SHORT_ID"
+   git commit -m "scribe: release $SESSION_SHORT_ID"
 ```
+
+**Flag-file contract:**
+
+- File name: `master.WIP-$SESSION_SHORT_ID` at repo root.
+- File contents: the literal string `master.WIP-$SESSION_SHORT_ID` (so `cat master.WIP-*` identifies the holder unambiguously). No newlines required, no trailing whitespace.
+- Lifetime: created in step 2, removed in step 8. Any `master.WIP-*` file present outside an active scribe step is stale → user runs `git rm` and resolves manually.
+
+**Branch-locality caveat (current limitation):** the flag is committed to the local branch. Two sessions on different worktrees / branches cannot see each other's flags until they fetch + rebase. **For solo or sequential master-edit work this is fine.** For parallel-fanout master writes this is a hole — TODO before fanout, the flag check needs to consult `origin/main` over the network. Document this in `re/analysis/CHANGELOG.md` if you ever run two scribe sessions in parallel — they may collide silently.
 
 If any MCP call in step 4 fails: halt, surface the error, do NOT continue to the next RVA. The partial
 writes already made are fine — they are safe to leave. The user decides whether to retry from the
@@ -278,18 +373,20 @@ Recommended model: <claude-sonnet-4-6 | claude-opus-4-7> at <minimal|low|medium|
 
 The user reads this line before launching the session and picks the model accordingly. The recommendation is a guideline, not a lock; the user can override.
 
-| Session type | Recommended model | Thinking | Why |
-|---|---|---|---|
-| First-pass discovery (mechanical decomp reads, C0/C1 only) | Sonnet 4.6 | medium | NO-GUESSING work is procedural; thinking only needs to fund self-discipline checks. |
-| Parallel fanout sweeps (subsystem coverage, C0/C1 only) | Sonnet 4.6 | medium | Same as above; cost dominates at scale. |
-| Confidence promotion (`re-classify` C2+, evidence weighing) | Opus 4.7 | high | Judging whether a Frida diff actually matches the decomp; tracker promotions are load-bearing. |
-| Hook authoring (`hook-author`, RH_ScopedInstall placement) | Opus 4.7 | medium | Calling-convention quirks, RVA-to-class mapping decisions; mistakes here corrupt the build. |
-| `diff-original` verification (Frida script + trace reading) | Sonnet 4.6 | medium | Mostly mechanical: run the script, diff the traces, report mismatches. |
-| Multi-session conflict resolution (tracker merges with diverging facts) | Opus 4.7 | high | Architecture / fact-merge judgment calls. |
-| Subsystem ownership planning (`SESSION_OWNERSHIP.md` carving) | Opus 4.7 | medium | One-shot architectural decision; cheap to do once well. |
-| `.piz` / `.rws` / `.txd` file-format work (pure parser code) | Sonnet 4.6 | low | Well-defined formats; deterministic transformations. |
-| Master-Ghidra scribe sessions (writing back symbols/types) | Opus 4.7 | medium | Last-writer-wins on master; errors are sticky. |
-| Question-answering against trackers / notes (no MCP, no decomp) | Sonnet 4.6 | low | Plain reading + summarization. |
+| Session type | Recommended model | Thinking | RVA cap (hard / soft) | Why |
+|---|---|---|---|---|
+| First-pass discovery (mechanical decomp reads, C0/C1 only) | Sonnet 4.6 | medium | 20 / 10–15 | NO-GUESSING work is procedural; thinking only needs to fund self-discipline checks. |
+| Parallel fanout sweeps (subsystem coverage, C0/C1 only) | Sonnet 4.6 | medium | 20 / 10–15 | Same as above; cost dominates at scale. |
+| Confidence promotion (`re-classify` C2+, evidence weighing) | Opus 4.7 | high | 10 / 3–5 | Per-RVA evidence work is heavy; promotions are load-bearing. |
+| Hook authoring (`hook-author`, RH_ScopedInstall placement) | Opus 4.7 | medium | 5 / 1–3 | One class per session typical; calling-convention quirks need attention. |
+| `diff-original` verification (Frida script + trace reading) | Sonnet 4.6 | medium | n/a (per hook, not per RVA) | One hook per session; bounded by Frida output, not RVA count. |
+| Multi-session conflict resolution (tracker merges with diverging facts) | Opus 4.7 | high | n/a (bounded by conflict set) | Architecture / fact-merge judgment calls. |
+| Subsystem ownership planning (`SESSION_OWNERSHIP.md` carving) | Opus 4.7 | medium | n/a (one-shot) | Architectural decision; cheap to do once well. |
+| `.piz` / `.rws` / `.txd` file-format work (pure parser code) | Sonnet 4.6 | low | n/a (per format, not per RVA) | Well-defined formats; deterministic transformations. |
+| Master-Ghidra scribe sessions (writing back symbols/types beyond C1) | Opus 4.7 | medium | 15 / 5–10 | Last-writer-wins on master; errors are sticky. |
+| Question-answering against trackers / notes (no MCP, no decomp) | Sonnet 4.6 | low | n/a | Plain reading + summarization. |
+
+The "n/a" sessions are bounded by their own scope (one hook, one format, one merge), not by RVA count. The RVA-capped sessions hard-fail-and-split if the subset returned by `function_callees` exceeds the cap; see § "Session sizing (RVA cap, split protocol)" above.
 
 **When to escalate** (override Sonnet → Opus for a session that would normally be Sonnet):
 - The subset includes a function the trackers already mark `[UNCERTAIN]` — judging what evidence would resolve it benefits from Opus reasoning.
@@ -316,6 +413,8 @@ These rules apply to all models, but Sonnet (and any model below Opus on procedu
 - Filling in a function's "purpose" when the decomp is hard. Hard decomp → `[UNCERTAIN U-NNNN]` + UNCERTAINTIES.md row. Not a guess.
 - Recursing into depth-2 callees because "they were short." Depth-2 goes in DEFERRED.md, full stop.
 - Self-correcting a wrong RVA citation by silently swapping it. If you cited an RVA that turns out null, halt and surface the error — do not quietly fix it.
+- **Continuing past the hard cap because "we're almost done."** The cap is the cap. At RVA 19 of a 22-RVA subset, file the remaining 3 as DEFERRED, commit, run scribe, end the session. Pushing through to "finish" is exactly when compaction triggers and earlier facts vanish silently. See § "Session sizing (RVA cap, split protocol)."
+- **Reusing a base-bucket name across split sessions.** `re/analysis/entry_callees/` and a continuation session writing to the same dir is a `.md`-file collision. Use `entry_callees-cont1`, `-cont2`, etc.
 
 **Opus-bound prompts** can omit the inlined Sonnet halts; the SESSION_RULES.md reference is enough.
 

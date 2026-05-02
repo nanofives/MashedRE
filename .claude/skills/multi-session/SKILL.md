@@ -112,24 +112,53 @@ bash scripts/ghidra_assert.sh scribe-check
   **Do not poll. Do not retry automatically.** The user reads the message and says "retry" when
   the lock is gone.
 
+### Session-short-id (used in flag files, commits, and CHANGELOG rows)
+
+Construct once at session start, reuse everywhere:
+
+```bash
+SESSION_SHORT_ID="<bucket>-$(date -u +%Y%m%d-%H%M)"
+# e.g. entry_callees-20260502-1437
+```
+
+Format: `<bucket>-YYYYMMDD-HHMM` UTC. Deterministic, no guessing. The terms `<sessionid>`, `<session-short-id>`, and `$SESSION_SHORT_ID` all refer to this single value — never construct an alternate form mid-scribe. Full definition + flag-file contract in `re/SESSION_RULES.md` § "Session-short-id" and § "Flag-file contract."
+
 ### Execution order (when lock is clear)
 
-1. **Claim flag** — `echo "" > master.WIP-<sessionid>`, `git add`, `git commit`.
-   Record in `re/analysis/CHANGELOG.md`: `YYYY-MM-DD <sessionid> scribe-claim bucket=<b> rvas=<n>`.
+1. **Claim flag** — file name AND contents are both `master.WIP-$SESSION_SHORT_ID`:
+   ```bash
+   echo "master.WIP-$SESSION_SHORT_ID" > "master.WIP-$SESSION_SHORT_ID"
+   git add "master.WIP-$SESSION_SHORT_ID"
+   git commit -m "scribe: claim $SESSION_SHORT_ID"
+   ```
+   Append to `re/analysis/CHANGELOG.md`: `YYYY-MM-DD $SESSION_SHORT_ID scribe-claim bucket=<b> rvas=<n>`.
 2. **Open master writable** — `mcp__ghidra__project_program_open_existing` with `read_only=false`
    against `Mashed.gpr` (project_location = `C:/Users/maria/Desktop/Proyectos/Mashed`). Never
    against a pool slot.
-3. **Write** — per-RVA, in address order, one at a time. Allowed writes depend on confidence level;
-   see `re/SESSION_RULES.md` § "What to write at C1" for the first-pass write list.
-   - Confirm `function_at <rva>` non-null before each write.
+3. **Write** — per-RVA, in address order, one at a time. Allowed writes at C1 depend on the table in
+   `re/SESSION_RULES.md` § "What to write at C1." For each RVA:
+   - Confirm `function_at <rva>` non-null before any write.
+   - Apply the plate-comment **truncation rule** (verbatim, ≤120 chars after the `[C1 YYYY-MM-DD] `
+     prefix, cut at last word boundary + `…`) — never paraphrase.
+   - For `function_rename`: only if `comment_get` returns a `Library Function:` FidDB match — never
+     invent names. Procedure in `re/SESSION_RULES.md` § "Detecting a library-match."
    - If any MCP write call fails: halt, surface error verbatim. Partial writes already applied are
      safe to leave. Do not continue to the next RVA without user approval.
-4. **Save** — `mcp__ghidra__program_save`.
+4. **Save** — `mcp__ghidra__program_save` (NOT `program_save_as`).
 5. **Close** — `mcp__ghidra__program_close`.
 6. **Sync** — `bash scripts/ghidra_pool.sh sync` — refreshes all unlocked slots and stamps
    `.last_master_sync`.
-7. **Release flag** — `git rm master.WIP-<sessionid>`, `git commit`.
-   Record in `re/analysis/CHANGELOG.md`: `YYYY-MM-DD <sessionid> scribe-release writes=<n> errors=<n>`.
+7. **Release flag**:
+   ```bash
+   git rm "master.WIP-$SESSION_SHORT_ID"
+   git commit -m "scribe: release $SESSION_SHORT_ID"
+   ```
+   Append to `re/analysis/CHANGELOG.md`: `YYYY-MM-DD $SESSION_SHORT_ID scribe-release writes=<n> errors=<n>`.
+
+**Branch-locality caveat:** the flag is committed to the local branch. Two sessions on different
+worktrees/branches do not see each other's flags until they fetch+rebase. Solo/sequential master
+work is fine. **Parallel-fanout master writes are not yet safe** — the flag check would need to
+consult `origin/main` over the network before claiming. TODO before fanout.
 
 Other sessions, after a sync lands on their branch, must `cleanup` + re-`acquire` so their slot's
 `.rep` mtime moves past `.last_master_sync`. The `staleness` assert catches them if they forget.
