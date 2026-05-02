@@ -18,6 +18,10 @@
 *.log
 *.csv.gz
 
+# --- Scribe-protocol runtime files (regenerated each session) ---
+/.last_master_sync
+/master.WIP-*
+
 # --- Build outputs ---
 /mashedmod/build/
 /mashedmod/src/mashed_re/build/
