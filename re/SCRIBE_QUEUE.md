@@ -15,6 +15,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-02  exception_filter-20260502-2221  bucket=exception_filter  rvas=0x004af2d4,0x004af31a,0x004af32d
 2026-05-02  memory_pool-20260502-2223  bucket=memory_pool  rvas=0x005208c0,0x00517250
+2026-05-02  localization-20260502-2227  bucket=localization  rvas=0x004274d0,0x004274e0,0x004cc230,0x004cc160
 ```
 
 ## Drained
