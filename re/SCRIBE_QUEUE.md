@@ -54,3 +54,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-02  settings_config-20260502-2222  bucket=settings_config  rvas=0x004963e0,0x00496400,0x00498910,0x00498950,0x004989b0,0x00499400,0x004a4541
 2026-05-02  render_d3d_reset-20260502-2221  bucket=render_d3d_reset  rvas=0x004c9cd0,0x004c9ad0,0x004dc970,0x004db3e0,0x004d1e30,0x004e0920,0x004d6200
 2026-05-02  intro_splash-20260502-2247  bucket=intro_splash  rvas=0x00495350,0x00492d20,0x00493f70,0x00493f80,0x00493fc0,0x00493fd0,0x00494460,0x00494480,0x00494a80,0x004c19f0,0x004c1a00,0x004c1bb0,0x004c1be0
+2026-05-02  render_lighting-20260502-2221  bucket=render_lighting  HALT=RpLight-anchors-absent  rvas=none  notes=no-scribe-writes-queued
