@@ -142,6 +142,20 @@ A row goes into DEFERRED when:
 | D-0569 | 0x004ad1e0 FUN_004ad1e0 | depth-3 callee of 0x004a504f (S-0214); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
 | D-0570 | 0x004cfa00 FUN_004cfa00 | depth-3 thunk target of 0x004c7a60 (S-0215); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
 | D-0571 | 0x004c7690 FUN_004c7690 | depth-3 callee of FUN_004cfa00 via 0x004c7a60 (S-0216); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
+| D-1240 | 0x004335f0 FUN_004335f0 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7a8 path); not recursed in hud_frontend-20260502-1944 | hud_frontend-cont1 session | frontend |
+| D-1241 | 0x0043a610 FUN_0043a610 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7d8 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1242 | 0x0042f0c0 FUN_0042f0c0 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7b0 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1243 | 0x0043af10 FUN_0043af10 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7f0 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1244 | 0x00434720 FUN_00434720 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7c8 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1245 | 0x00430b90 FUN_00430b90 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7f8 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1246 | 0x00431240 FUN_00431240 | depth-2 callee of FUN_0043bf30 (flag 0x0067e838 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1247 | 0x004314b0 FUN_004314b0 | depth-2 callee of FUN_0043bf30 (flag 0x0067e830 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1248 | 0x00431710 FUN_00431710 | depth-2 callee of FUN_0043bf30 (flag 0x0067e820 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1249 | 0x0043aa30 FUN_0043aa30 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7e0 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1250 | 0x0042fb70 FUN_0042fb70 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7e8 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1251 | 0x0042fe90 FUN_0042fe90 | depth-2 callee of FUN_0043bf30 (flag 0x0067e810 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1252 | 0x00430120 FUN_00430120 | depth-2 callee of FUN_0043bf30 (flag 0x0067e818 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-1253 | 0x00439210 FUN_00439210 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7b8 path); not recursed | hud_frontend-cont1 session | frontend |
 
 ## Cleared (delivered or rejected)
 

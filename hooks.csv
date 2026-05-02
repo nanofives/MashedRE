@@ -215,3 +215,23 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00425ab0,FUN_00425ab0,render,C1,mapped,re/analysis/track_loader/00425ab0.md,,,zeros 16 globals at DAT_008992a0..DAT_008994b8 in 8 pairs stride 0x4c
 004260e0,FUN_004260e0,render,C1,mapped,re/analysis/track_loader/004260e0.md,,,path builder: ToastArt[/|\]tracks[sep]param2[sep]param3[sep]param4 into DAT_008991e0; U-0430
 004262f0,FUN_004262f0,render,C1,mapped,re/analysis/track_loader/004262f0.md,,,processes DAT_00644370 64-byte records at DAT_00646c38 via DAT_00646e38->DAT_00657408 index
+00418560,FUN_00418560,ai,C1,mapped,re/analysis/ai_update/0x00418560.md,,,per-vehicle AI update: selects spline (race/inside/slow/cheat lines) by type; dispatches FUN_00416250 or FUN_00416a30; writes control output to 0x7f1038+slot*0x4c
+00407a40,FUN_00407a40,ai,C1,mapped,re/analysis/ai_update/0x00407a40.md,,,getter: returns DWORD at 0x8a9640 + param_1*0x30c (per-vehicle data, stride 780)
+0040e350,FUN_0040e350,ai,C1,mapped,re/analysis/ai_update/0x0040e350.md,,,getter: returns DAT_0063ba8c (game-mode global); compared to 5/4/9/8 by AI dispatcher
+0040e4a0,FUN_0040e4a0,ai,C1,mapped,re/analysis/ai_update/0x0040e4a0.md,,,getter: returns DAT_005f29b8 (elapsed-time global); used as countdown comparison value in AI mode-5 path
+00413fe0,FUN_00413fe0,ai,C1,mapped,re/analysis/ai_update/0x00413fe0.md,,,AI state reset: zeroes 12 DWORD fields for each of 4 vehicles at 0x89a4f0 stride 0x74; sets 0x8032d4+iter*0x14=1000
+0043c5b0,FUN_0043c5b0,frontend,C1,mapped,re/analysis/hud_frontend/0x0043c5b0.md,,,FRONTEND_FN: menu-item table iterator 0x00898aec..0x00899104 (52 bytes/entry); dispatches sprite/text/quad renderers; phase gated by DAT_0067eca4; U-0447 U-0448 U-0449
+0040bb50,FUN_0040bb50,frontend,C1,mapped,re/analysis/hud_frontend/0x0040bb50.md,,,asset lookup wrapper: calls FUN_004c5c00(DAT_0063b8fc param_1); 20 bytes; U-0450
+0042e3a0,FUN_0042e3a0,frontend,C1,mapped,re/analysis/hud_frontend/0x0042e3a0.md,,,menu chrome drawer: top/bottom bands (0,0)-(640,64) and (0,416)-(640,64) via Im2D; amber tick marks when DAT_0067f17c>9; scroll animation when screen-type==&DAT_005f6980
+0042e5b0,FUN_0042e5b0,frontend,C1,mapped,re/analysis/hud_frontend/0x0042e5b0.md,,,frontend background+logo animation renderer: fullscreen BG (512x512) + 512-frame cycle for logo/icon counters; slide-in panel via DAT_008990e0
+0042aad0,FUN_0042aad0,frontend,C1,mapped,re/analysis/hud_frontend/0x0042aad0.md,,,dim-setter: writes 0x30 to in_EAX+3; sets DAT_008990e4=1; 14 bytes; U-0452 U-0453
+0042aae0,FUN_0042aae0,frontend,C1,mapped,re/analysis/hud_frontend/0x0042aae0.md,,,RwIm2D fullscreen quad renderer: 4-vertex buffer 0x0067ec30; screen dims from DAT_0067ea54/56; alpha=DAT_0067eca8; U-0454 U-0455 U-0456
+0042b930,FUN_0042b930,frontend,C1,mapped,re/analysis/hud_frontend/0x0042b930.md,,,frontend sub-state getter: returns DAT_0067ecb0; 5 bytes; no side-effects
+00427e00,FUN_00427e00,frontend,C1,mapped,re/analysis/hud_frontend/0x00427e00.md,,,sprite draw (6 params: ID/X/Y/ARGB/scale/flags); pipeline: select→prepare→state9=2→presetup→pos→vtxcol→draw→cleanup; U-0451
+00428140,FUN_00428140,frontend,C1,mapped,re/analysis/hud_frontend/0x00428140.md,,,sprite draw with vertical alpha gradient (7 params: adds alpha-ramp param_7); dim-mode via DAT_008990e4; same pipeline as 0x00427e00
+0043bf30,FUN_0043bf30,frontend,C1,mapped,re/analysis/hud_frontend/0x0043bf30.md,,,frontend sub-menu dispatcher: 14 conditional calls based on global flags 0x0067e7a8..0x0067e838 region; all callees depth-2 (D-1240..D-1253)
+00472c60,FUN_00472c60,frontend,C1,mapped,re/analysis/hud_frontend/0x00472c60.md,,,RwIm2D filled-quad draw (x/y/w/h/ARGB); 4-vertex; coord-scaled by b8b0/b8c0×_005cd5a8/_005cc560; shared vertex buf 0x00898a20
+00472dc0,FUN_00472dc0,frontend,C1,mapped,re/analysis/hud_frontend/0x00472dc0.md,,,RwIm2D filled-triangle draw (x1/y1/x2/y2/x3/y3/ARGB); 3-vertex; same coord-scale pattern; prim-count=3
+00473540,FUN_00473540,frontend,C1,mapped,re/analysis/hud_frontend/0x00473540.md,,,RwIm2D gradient-quad draw (x/y/w/h/ARGB); 4-vertex; per-vertex ARGB split by byte-extraction pattern; U-0457
+004739f0,FUN_004739f0,frontend,C1,mapped,re/analysis/hud_frontend/0x004739f0.md,,,RwIm2D textured-quad draw (12 params: ptr/x/y/w/h/ARGB/UV×4/coordMode/blendMode); UV stored at vertex+20..+24; state9 conditional on param_12; U-0458 U-0459
+004a2c48,FUN_004a2c48,frontend,C1,mapped,re/analysis/hud_frontend/0x004a2c48.md,,,FPU rounding: ROUND(in_ST0) to 64-bit int with banker's rounding; 116 bytes; no callees; used as frame-counter source; U-0460

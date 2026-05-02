@@ -245,3 +245,24 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0429 | 0x00425bf0 | FUN_004262f0 | render | depth-2 | 2026-05-02 | FUN_00425bf0; called before 64-byte record loop; no visible args |
 | S-0430 | 0x00425c00 | FUN_004262f0 | render | depth-2 | 2026-05-02 | FUN_00425c00; called with 64-byte record pointer per iteration |
 | S-0431 | 0x00425b70 | FUN_004262f0 | render | depth-2 | 2026-05-02 | FUN_00425b70; called with (iteration_index, looked_up_uint32) per iteration |
+| S-0400 | 0x00416a30 | FUN_00418560 | ai | depth-1 | 2026-05-02 | FUN_00416a30; AI control step, mode 4/9 variant; args: (puVar9, param_1, EDI, 0x42c80000) |
+| S-0401 | 0x00416250 | FUN_00418560 | ai | depth-1 | 2026-05-02 | FUN_00416250; AI control step, normal mode (primary); args: (puVar9, param_1, EDI, 0x42c80000) |
+| S-0402 | 0x00417640 | FUN_00418560 | ai | depth-1 | 2026-05-02 | FUN_00417640; post-step processing; args: (param_1, EDI) |
+| S-0440 | 0x004c5c00 | 0x0040bb50 FUN_0040bb50 | frontend | passthrough | 2026-05-02 | FUN_004c5c00; asset lookup by name; called as (DAT_0063b8fc, param_1); depth-2 |
+| S-0441 | 0x00427680 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00427680; sprite position/scale setter; args (x, y, flags, scale); depth-2 |
+| S-0442 | 0x00427780 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00427780; sprite selector by ID; arg param_1; depth-2 |
+| S-0443 | 0x004277a0 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_004277a0; sprite render preparation (no args); depth-2 |
+| S-0444 | 0x00552750 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552750; render state pre-setup B (no args); depth-2 |
+| S-0445 | 0x00552d10 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552d10; render state pre-colour setup (no args); depth-2 |
+| S-0446 | 0x00552d70 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552d70; render state post-cleanup (no args); depth-2 |
+| S-0447 | 0x00556ca0 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00556ca0; sprite draw call; args (canvas, buf, scaled_size, auStack, canvas2); depth-2 |
+| S-0448 | 0x00556e90 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00556e90; vertex colour setter; args (canvas, color×4); depth-2 |
+| S-0449 | 0x0042d5a0 | 0x0042e3a0 FUN_0042e3a0 | frontend | passthrough | 2026-05-02 | FUN_0042d5a0; scroll/animation updater; arg=(accumulator-15000); depth-2 |
+| S-0450 | 0x00472f40 | 0x0042e3a0 FUN_0042e3a0 | frontend | passthrough | 2026-05-02 | FUN_00472f40; filled rect draw (top band?); args (x,y,w,h,argb); depth-2 |
+| S-0451 | 0x004730b0 | 0x0042e3a0 FUN_0042e3a0 | frontend | passthrough | 2026-05-02 | FUN_004730b0; filled rect draw (bottom band?); args (x,y,w,h,argb); depth-2 |
+| S-0452 | 0x0042e590 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_0042e590; animated logo draw; args (x,y,dim,dim,dim,color,frame_offset,sprite_idx,flag); depth-2 |
+| S-0453 | 0x00473c20 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00473c20; fullscreen BG draw with two texture sources; depth-2 |
+| S-0454 | 0x00473ee0 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00473ee0; slide-in panel draw; arg includes fVar1+base_Y_offset; depth-2 |
+| S-0455 | 0x00474890 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00474890; secondary logo/sprite submit; single int arg (uVar4); depth-2 |
+| S-0456 | 0x0042b8b0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8b0; returns short; used as X-axis screen dimension/scale; depth-2 |
+| S-0457 | 0x0042b8c0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8c0; returns short; used as Y-axis screen dimension/scale; depth-2 |
