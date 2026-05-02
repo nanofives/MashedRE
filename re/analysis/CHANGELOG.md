@@ -88,3 +88,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-1827  scribe-release  bucket=boot_app_init  writes=15  errors=0  (sweep)
 2026-05-02  sweep-20260502-1827  scribe-claim  bucket=boot_crt_exit  rvas=14  (sweep)
 2026-05-02  sweep-20260502-1827  scribe-release  bucket=boot_crt_exit  writes=14  errors=0  (sweep)
+2026-05-02  sweep-20260502-1827  scribe-claim  bucket=rw_engine_teardown  rvas=6  (sweep)
+2026-05-02  sweep-20260502-1827  scribe-release  bucket=rw_engine_teardown  writes=6  errors=0  (sweep)
