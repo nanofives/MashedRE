@@ -323,3 +323,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004af31a,LAB_004af31a,util,C0,new,re/analysis/exception_filter/0x004af31a.md,,,orphan register block; called from CRT init table at 0x005ea054; installs FUN_004af2d4 via SetUnhandledExceptionFilter; saves old filter to DAT_00773d74; U-0687
 004af32d,FUN_004af32d,util,C1,new,re/analysis/exception_filter/0x004af32d.md,,,CRT exit deregister shim; restores old filter from DAT_00773d74 via SetUnhandledExceptionFilter; called from CRT exit (FUN_004a3258)
 004950b0,FUN_004950b0,util,C1,mapped,re/analysis/timer/0x004950b0.md,,,QPC*3000000/QPF-freq; absolute-time-in-3MHz-units; U-0668 U-0669 S-0660 S-0661
+005208c0,FUN_005208c0,util,C1,new,re/analysis/memory_pool/005208c0.md,,,dispatch allocator: (alloc-obj ptr, size); dispatches _malloc OR fn-ptr at obj+0x1ec; 65 game-space callers; OOM via FUN_00517250; U-0847
+00517250,FUN_00517250,util,C1,new,re/analysis/memory_pool/00517250.md,,,OOM error dispatcher; error-cb at obj+0x40 then _longjmp(param_1,1) non-returning; U-0848 U-0849
+0049d240,FUN_0049d240,util,C1,mapped,re/analysis/timer/0x0049d240.md,,,fastcall; vtable call at *param_1+0xb4 then timeGetTime()→param_1[0x3f]; timestamp-save not frame-delta; U-0670 U-0671
+00495350,sub_00495350,frontend,C1,new,re/analysis/intro_splash/0x00495350.md,,,intro video sequence: loops 4 indexed videos (1-4) via FUN_00494a80; button-skippable scan at DAT_007f1502; 5ms frame sleep; U-0807 U-0808 U-0809 U-0810 S-0800..S-0812

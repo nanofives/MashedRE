@@ -357,3 +357,16 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0681 | 0x004af400 | 0x004af2d4 FUN_004af2d4 | util | passthrough | 2026-05-02 | _ValidateExecute; CRT IsBadCodePtr-style validator for function pointer; gates chain-to-old-filter path in FUN_004af2d4 |
 | S-0660 | 0x004a4170 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __alldiv; MSVC 64-bit integer division runtime helper embedded in binary |
 | S-0661 | 0x004a4220 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __allmul; MSVC 64-bit integer multiply runtime helper embedded in binary |
+| S-0800 | 0x00492d20 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00492d20; called each frame, no args, return discarded; tick/advance |
+| S-0801 | 0x00493f70 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493f70; video completion check; returns 0 when done |
+| S-0802 | 0x00493f80 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493f80; reads two floats (video dims) into out-params |
+| S-0803 | 0x00493fc0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493fc0; takes two floats; returns scale/aspect value |
+| S-0804 | 0x00493fd0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493fd0; render draw call; takes (render_target, float4_rect, float4_scale, 0, scale_val) |
+| S-0805 | 0x00494460 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494460; stops/closes current video stream; arg 0 |
+| S-0806 | 0x00494480 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494480; gates render/scan paths; arg 0; non-zero=active |
+| S-0807 | 0x00494a80 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494a80; starts video by index; args (0, index, 0) |
+| S-0808 | 0x00499710 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00499710; arg 0; return passed to FUN_004c1be0 |
+| S-0809 | 0x004c19f0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c19f0; takes render target; closes/submits render block |
+| S-0810 | 0x004c1a00 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1a00; takes render target; non-zero return gates draw call |
+| S-0811 | 0x004c1bb0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1bb0; takes (render_target, color_bytes_ptr, 1); sets render state |
+| S-0812 | 0x004c1be0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1be0; takes (render_target, FUN_00499710_result); purpose unknown |
