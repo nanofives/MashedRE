@@ -345,3 +345,5 @@ A row goes into DEFERRED when:
 | D-1661 | 0x00535700 FUN_00535700 | particle vertex buffer map/lock; (emitter, &ptr, channel_id, flags); depth-2 of FUN_00476df0; S-0596 | effects_particle-cont1 session | render |
 | D-1662 | 0x00535910 FUN_00535910 | particle vertex buffer unlock/draw; (emitter_ptr); depth-2 of FUN_00476df0; S-0597 | effects_particle-cont1 session | render |
 | D-1663 | 0x00538c80 FUN_00538c80 | world sector query with callback; depth-2 of FUN_0048fe70; S-0598 | effects_particle-cont1 session | render |
+| D-1600 | depth-2 callees of hud_ingame-20260502-2132 session: 0x004c1a00,0x004c1c80,0x004c19f0,0x00402fb0,0x00428760,0x0041c2d0,0x0041b340,0x0041bc50,0x0041c9a0,0x0041d410,0x0041de80,0x0041e630 (S-0561..S-0572) | session cap; depth-1 of hud_ingame functions | hud_ingame-cont1 session | hud |
+| D-1360 | 0x0042c280,0x0042c2d0,0x0042c2e0,0x0042c2f0,0x0042f500,0x0042f6a0,0x00432080,0x004331a0,0x00448700,0x004927c0,0x005c9d00 from session game_state-20260502-2144 bucket game_state — pick up as bucket game_state-cont1; same depth, no further recursion. S-0480..S-0490 |

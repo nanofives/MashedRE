@@ -265,3 +265,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-2140  scribe-release-sweep  buckets=2  total_writes=17  errors=0  (queue empty)
 2026-05-02 audio_music-20260502-2145 analysis bucket=audio_music rvas=4 (004623e0,0045da60,0045dd60,004631f0) stubs=S-0620..S-0631 uncertainties=U-0627..U-0641 deferred=D-1780..D-1791
 2026-05-02 effects_particle-20260502-2135 analysis bucket=effects_particle rvas=16
+2026-05-02 hud_ingame-20260502-2132 analysis bucket=hud_ingame rvas=14 (0040dfc0,00403160,0041a3e0,0041b630,0041c0c0,0041c300,0041ccc0,0041d870,0041db80,0041ded0,0041e850,00426ba0,0042f500,0042f6a0) stubs=S-0560..S-0572 uncertainties=U-0567..U-0579 deferred=D-1600
+2026-05-02 game_state-20260502-2144 analysis bucket=game_state rvas=20 (STATE_FN 0x004929d0 + callees 0x0040b430..0x0042c220) stubs=S-0480..S-0490 uncertainties=U-0487..U-0488 deferred=D-1360

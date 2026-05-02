@@ -320,3 +320,32 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0598 | 0x00538c80 | 0x0048fe70 FUN_0048fe70 | render | passthrough | 2026-05-02 | FUN_00538c80; world sector query with callback; (world_ptr, pos3, callback, out_ptr); D-1663 |
 | S-0549 | 0x0042b930 | 0x004671a0 FUN_004671a0 | render | passthrough | 2026-05-02 | FUN_0042b930; 5-byte getter; returns int state; discriminant 3 routes to FUN_0042f510; depth-2 of camera_follow |
 | S-0550 | 0x0042f510 | 0x004671a0 FUN_004671a0 | render | passthrough | 2026-05-02 | FUN_0042f510; 5-byte getter; alternative vehicle ptr when state==3 and param!=-1; depth-2 of camera_follow |
+| S-0551 | 0x00471780 | 0x00471ec0 FUN_00471ec0 | render | passthrough | 2026-05-02 | FUN_00471780; per-entry update in outer loop; takes param_1 (cam data) and iVar8 (entry ptr); depth-2 of camera_follow |
+| S-0552 | 0x00471ac0 | 0x00471ec0 FUN_00471ec0 | render | passthrough | 2026-05-02 | FUN_00471ac0; called when camera anim triggers; no args; returns; depth-2 of camera_follow |
+| S-0553 | 0x0047ce80 | 0x00471ec0 FUN_00471ec0 | render | passthrough | 2026-05-02 | FUN_0047ce80; returns ID from target object uVar4; depth-2 of camera_follow |
+| S-0554 | 0x0047ce00 | 0x00471ec0 FUN_00471ec0 | render | passthrough | 2026-05-02 | FUN_0047ce00; returns flags from target object uVar4 (bits 1,2,4 tested); depth-2 of camera_follow |
+| S-0555 | 0x0047bb10 | 0x0047c160 FUN_0047c160 | render | passthrough | 2026-05-02 | FUN_0047bb10; per-node computation; args: node ptr, iVar1+0x30, output ptr, validity ptr; depth-2 of camera_follow |
+| S-0560 | 0x004671a0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004671a0; camera/viewport handle getter; already in hooks.csv (render, camera_follow); depth-2 of FUN_00403160 |
+| S-0561 | 0x004c1a00 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004c1a00; camera begin-update; returns non-zero on success; depth-2 of FUN_00403160; DEFERRED D-1600 |
+| S-0562 | 0x004c1c80 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004c1c80; sets/restores viewport rectangle on camera handle; depth-2 of FUN_00403160; DEFERRED D-1600 |
+| S-0563 | 0x004c19f0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004c19f0; camera end-update/teardown; called with camera handle arg; depth-2 of FUN_00403160; DEFERRED D-1600 |
+| S-0564 | 0x00402fb0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_00402fb0; HUD draw body for sub-mode 0xb; no visible args; depth-2 of FUN_00403160; DEFERRED D-1600 |
+| S-0565 | 0x00428760 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_00428760; 2D draw with 4 float args (50.0,30.0,240.0,120.0); called only when DAT_00771964 != 0; depth-2 of FUN_00403160; DEFERRED D-1600 |
+| S-0566 | 0x0041c2d0 | 0x0041a3e0 FUN_0041a3e0 + 0x0041c300 FUN_0041c300 | hud | passthrough | 2026-05-02 | FUN_0041c2d0; shared HUD draw body for game-mode 10 (DAT_0063c628 guard) and game-mode 5 (DAT_0063cdbc guard); depth-2; DEFERRED D-1600 |
+| S-0567 | 0x0041b340 | 0x0041b630 FUN_0041b630 | hud | passthrough | 2026-05-02 | FUN_0041b340; per-entry HUD slot draw; called when entry+0x6c != 0; 4-entry loop base 0x0063c8d0; depth-2; DEFERRED D-1600 |
+| S-0568 | 0x0041bc50 | 0x0041c0c0 FUN_0041c0c0 | hud | passthrough | 2026-05-02 | FUN_0041bc50; per-entry HUD draw; always called (no guard); 2-entry loop base 0x0063cab8; depth-2; DEFERRED D-1600 |
+| S-0569 | 0x0041c9a0 | 0x0041ccc0 FUN_0041ccc0 | hud | passthrough | 2026-05-02 | FUN_0041c9a0; per-entry HUD draw; called when entry+0x110 != 0; 4-entry loop base 0x0063ce20; depth-2; DEFERRED D-1600 |
+| S-0570 | 0x0041d410 | 0x0041d870 FUN_0041d870 | hud | passthrough | 2026-05-02 | FUN_0041d410; per-entry HUD draw; always called (no guard); 2-entry loop base 0x0063d298; depth-2; DEFERRED D-1600 |
+| S-0571 | 0x0041de80 | 0x0041ded0 FUN_0041ded0 | hud | passthrough | 2026-05-02 | FUN_0041de80; HUD draw body for game-modes 4/7/8/9; receives param_1 (0 or 1); depth-2; DEFERRED D-1600 |
+| S-0572 | 0x0041e630 | 0x0041e850 FUN_0041e850 | hud | passthrough | 2026-05-02 | FUN_0041e630; HUD draw body for sub-mode 2; no args; depth-2; DEFERRED D-1600 |
+| S-0480 | 0x0042c280 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c280; called case 3 when FUN_0042c220 non-zero; D-1360 |
+| S-0481 | 0x0042c2d0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2d0; cases 1 and 4; get-value passed to FUN_0042b940; D-1360 |
+| S-0482 | 0x0042c2e0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2e0; cases 1 and 4; pending-event check; D-1360 |
+| S-0483 | 0x0042c2f0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2f0; called with arg 0 in cases 1 and 4; D-1360 |
+| S-0484 | 0x0042f500 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042f500; case 3 player-sort mode selector; D-1360 |
+| S-0485 | 0x0042f6a0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042f6a0; case 3 race-end check vs 0xb; D-1360 |
+| S-0486 | 0x00432080 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_00432080; case 3 trigger DAT_00771968=5 path; D-1360 |
+| S-0487 | 0x004331a0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_004331a0; case 3 race-end path with FUN_0042b910 result; D-1360 |
+| S-0488 | 0x00448700 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_00448700; case 3 final placement call (1, local_10[0]); D-1360 |
+| S-0489 | 0x004927c0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_004927c0; unconditional entry call; purpose not yet analyzed; D-1360 |
+| S-0490 | 0x005c9d00 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_005c9d00; case 3 end-of-race trigger input; D-1360 |
