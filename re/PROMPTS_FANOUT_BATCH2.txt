@@ -1,0 +1,745 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 2
+================================================================================
+
+Eight new self-contained prompts (J–Q) to launch while batch 1's sweep finishes
+or in fresh waves afterward. ID ranges start at U=0167 / D=0400 / S=0160 to
+avoid colliding with anything batch 1 might still be filing.
+
+If sessions C / F / G / H from batch 1 (boot_crt_env / audio_rws_loader /
+piz_validation / rws_inventory) have NOT been launched yet, those are still
+valid and disjoint from this batch — launch them in parallel with these.
+
+When batch 2's analysis sessions all push their queue rows, **relaunch the
+sweep prompt I from PROMPTS_FANOUT.txt** (with a fresh SESSION_SHORT_ID — it
+will pick up the new "Queued" rows automatically). That's prompt R below
+(same template, just a one-line note).
+
+Prompts in this batch:
+  J  boot_app_init_d3       Sonnet medium  — depth-3 of session A's deferred RVAs
+  K  boot_crt_exit_d3       Sonnet medium  — depth-3 of session B's deferred RVAs
+  L  rw_engine_init_d2      Sonnet medium  — depth-2 of session D's deferred RVAs
+  M  rw_engine_teardown_d2  Sonnet medium  — depth-2 of session E's deferred RVAs
+  N  render_d3d9_device     Sonnet medium  — anchor: D3D9 device creation
+  O  input_dinput           Sonnet medium  — anchor: DirectInput init
+  P  save_gamesave          Sonnet medium  — anchor: "gamesave.bin" string
+  Q  input_lua              Sonnet medium  — anchor: Lua API symbols (joypad remap)
+  R  sweep batch 2          Opus medium    — relaunch prompt I from batch 1
+
+ID ranges (no overlap with batch 1, no overlap within batch 2):
+
+  Session  Bucket                  U range      D range      S range
+  -------  ----------------------  -----------  -----------  -----------
+    J      boot_app_init_d3        0167..0186   0400..0459   0160..0179
+    K      boot_crt_exit_d3        0187..0206   0460..0519   0180..0199
+    L      rw_engine_init_d2       0207..0226   0520..0579   0200..0219
+    M      rw_engine_teardown_d2   0227..0246   0580..0639   0220..0239
+    N      render_d3d9_device      0247..0266   0640..0699   0240..0259
+    O      input_dinput            0267..0286   0700..0759   0260..0279
+    P      save_gamesave           0287..0306   0760..0819   0280..0299
+    Q      input_lua               0307..0326   0820..0879   0300..0319
+
+If a session would exhaust its allocation, it halts and asks for an extension.
+
+================================================================================
+=== PROMPT J — Boot CRT chain, AppInitialiseOnBootup depth-3 ===================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session J; depth-3 mechanical decomp under queue+sweep pattern.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern" and § "ID range allocation"). Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before any citation. Null → halt.
+3. No hedging, no inference, no naming from names. Forbidden words: "probably", "likely", "seems to", "appears to", "I think", "presumably", "must be", "is meant to", "is responsible for".
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="boot_app_init_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (read DEFERRED.md, take session A's range)
+Session A (boot_app_init) filed depth-2 DEFERRED rows in range D-0040..D-0099. Read DEFERRED.md fresh; collect every RVA from rows D-0040..D-0099 whose "Why deferred" cites a session A bucket (boot_app_init or boot_app_init-cont1). Take up to 18 RVAs in address order — that is THIS session's subset. Remainder, if any, files as a new DEFERRED row in your D range with re-pickup bucket boot_app_init_d3-cont1.
+
+If the count of D-0040..D-0099 RVAs is < 5, halt + surface "Session A's deferred range too small for an independent session — possibly batch 1 session A early-finished or skipped DEFERRED filing." User decides whether to merge with another batch 2 session.
+
+Bucket: re/analysis/boot_app_init_d3/
+ID-range: U=0167..0186  D=0400..0459  S=0160..0179
+Subsystem (hooks.csv column): boot
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+3. bash scripts/ghidra_assert.sh preflight "$SLOT" — all three pass.
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → must succeed.
+6. mcp__ghidra__ghidra_info → returned project path must contain $SLOT.
+
+## Work loop (strictly serial, cap_count starts at 0)
+For each RVA in the subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/boot_app_init_d3/<rva>.md per re/SESSION_RULES.md format (YAML frontmatter, ## Mechanical description, ## Constants, ## Uncertainties, ## Stubs encountered).
+  e. Add hooks.csv row: rva,name,boot,C1,mapped,re/analysis/boot_app_init_d3/<rva>.md,,,<short notes citing key facts>.
+  f. File any U-NNNN rows in U=0167..0186 for [UNCERTAIN] markers.
+  g. Add CHANGELOG row: "YYYY-MM-DD <rva> <name> C0->C1 <evidence>".
+  h. Self-check (in chat): function_at called this session? forbidden words? all constants cite addresses? mechanical not inferred from name? Fix before next.
+  i. cap_count >= 18 → EARLY-FINISH. Remaining RVAs → DEFERRED row in D=0400..0459, bucket boot_app_init_d3-cont1.
+
+After loop: file depth-4 DEFERRED rows for callees-of-callees not recursed into (use D=0400..0459).
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/boot_app_init_d3/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: boot/app_init depth-3 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep (NOT direct scribe)
+Append one row to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=boot_app_init_d3  rvas=<comma-separated list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: boot_app_init_d3 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly. DO NOT create master.WIP-*. DO NOT open master writable.
+
+## ANTI-PATTERNS (refuse)
+- Hedging language; trailing summary; depth-4 recursion mid-loop; wrong-RVA self-correction.
+- Pushing past hard cap of 20; pushing past early-finish (cap_count >= 18).
+- Reusing base-bucket name on continuation; IDs outside allocated range.
+- Renaming functions in this session — renames go through sweep.
+- Reading from a DEFERRED row whose "Why deferred" does NOT cite session A bucket — that belongs to a different session.
+
+## End-of-session report
+- Slot held: $SLOT
+- DEFERRED rows from D-0040..D-0099 picked up: <count>; remainder filed as new DEFERRED <ids>: <count>
+- Functions covered: <count>
+- New hooks.csv rows at C1: <count>
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n) — must stay within allocation
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- MCP failures: list verbatim or "none"
+- Observations: list or "none"
+- Scribe outcome: queued for sweep (re/SCRIBE_QUEUE.md row $SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT K — Boot CRT chain, exit/heap depth-3 ===============================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session K; depth-3 of session B's deferred range.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts as J: MCP-down stops; verify-then-cite; no hedging/inference/naming-from-names; one function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="boot_crt_exit_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition
+Session B (boot_crt_exit) filed depth-2 DEFERRED rows in D-0100..D-0159. Read DEFERRED.md fresh; take every RVA whose "Why deferred" cites session B bucket (boot_crt_exit or boot_crt_exit-cont1). Up to 18 in address order, remainder → new DEFERRED in D=0460..0519 with re-pickup bucket boot_crt_exit_d3-cont1.
+
+If count < 5: halt + surface "Session B's deferred range too small for independent session."
+
+Bucket: re/analysis/boot_crt_exit_d3/
+ID-range: U=0187..0206  D=0460..0519  S=0180..0199
+Subsystem: boot
+
+## Pre-flight asserts
+Same as J: SHA, slot acquire, preflight asserts, open read-only, health_ping, ghidra_info path contains slot.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA, in address order:
+  a. function_at; b. decomp_function (cap weight); c. function_callees (no recursion);
+  d. Write re/analysis/boot_crt_exit_d3/<rva>.md;
+  e. hooks.csv row (subsystem=boot);
+  f. U/S in U=0187..0206 / S=0180..0199;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0460..0519, bucket boot_crt_exit_d3-cont1.
+
+After loop: file depth-4 DEFERRED rows for unrecursed callees in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/boot_crt_exit_d3/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: boot/crt_exit depth-3 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=boot_crt_exit_d3  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: boot_crt_exit_d3 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones (hedging, recursion, cap, base-bucket, IDs out of range, renaming).
+- Reading from a DEFERRED row whose "Why deferred" does NOT cite session B bucket.
+
+## End-of-session report
+- Slot held; DEFERRED picked up; functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT L — RW engine init depth-2 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session L; walks deeper into RenderWare init internals from session D's deferred range.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md (especially § "Reference materials"), .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="rw_engine_init_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition
+Session D (rw_engine_init) filed depth-2 DEFERRED rows in D-0220..D-0279. Read DEFERRED.md fresh; take every RVA whose "Why deferred" cites session D bucket (rw_engine_init or rw_engine_init-cont1). Up to 18 in address order, remainder → new DEFERRED in D=0520..0579, bucket rw_engine_init_d2-cont1.
+
+If count < 5: halt + surface "Session D's deferred range too small."
+
+Bucket: re/analysis/rw_engine_init_d2/
+ID-range: U=0207..0226  D=0520..0579  S=0200..0219
+Subsystem: render
+
+External RW imports (RwEngineInit, RwEngineOpen, RpWorldPluginAttach, RtAnimInitialize, etc.) are NOT stubs — note as "EXTERNAL: <name>".
+
+## Reference consultation (FRAMING ONLY)
+When the .md mechanical description encounters a struct access whose offsets look like RW state (RwGlobals, RpWorldGlobals, plugin chains), consult re-references in priority order:
+  1. re-references/librw/src/ — engine semantics; MIT, may vendor with attribution.
+  2. re-references/criterion-rwg37/core/src/ — definitive engine source for tiebreak.
+  3. re-references/gta-reversed-modern/source/game_sa/RenderWare/rw/ — usage patterns only.
+
+Cross-check field offsets observed in MCP against these references. NEVER vendor offsets without MCP confirmation. NEVER cite an RVA from gta-reversed-modern.
+
+## Pre-flight asserts
+Same as J.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA, in address order:
+  a. function_at; b. decomp_function (cap weight); c. function_callees (no recursion);
+  d. Write re/analysis/rw_engine_init_d2/<rva>.md;
+  e. hooks.csv row (subsystem=render);
+  f. U/S in U=0207..0226 / S=0200..0219;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0520..0579, bucket rw_engine_init_d2-cont1.
+
+After loop: file depth-3 DEFERRED rows for unrecursed callees in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/rw_engine_init_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: RW engine init depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=rw_engine_init_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: rw_engine_init_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Treating "librw says this function does X" as evidence about Mashed function. librw is engine-side guarantee, not Mashed-side fact.
+- Citing an RVA from gta-reversed-modern.
+- Reading from a DEFERRED row whose "Why deferred" does NOT cite session D bucket.
+
+## End-of-session report
+- Slot held; DEFERRED picked up; functions covered; tracker counts; IDs used
+- External RW imports noted (not as stubs): list
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT M — RW engine teardown depth-2 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session M; walks deeper into RW teardown from session E's deferred range.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="rw_engine_teardown_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition
+Session E (rw_engine_teardown) filed depth-2 DEFERRED rows in D-0280..D-0339. Read DEFERRED.md fresh; take every RVA whose "Why deferred" cites session E bucket. Up to 18 in address order, remainder → new DEFERRED in D=0580..0639, bucket rw_engine_teardown_d2-cont1.
+
+If count < 5: halt + surface.
+
+NOTE: session E's RVAs included two functions (0x004c3040, 0x004c3270) that ALSO appear in session D's RW init subset. Their depth-2 callees may already be DEFERRED rows under session D. **Skip any RVA that is already drained into rw_engine_init_d2 by session L** — check re/SCRIBE_QUEUE.md drained section before claiming. If a row was drained by L, do NOT include it; note in end-of-session report as "shared-callee, deferred to L".
+
+Bucket: re/analysis/rw_engine_teardown_d2/
+ID-range: U=0227..0246  D=0580..0639  S=0220..0239
+Subsystem: render
+
+External RW imports → EXTERNAL: <name>.
+
+## Reference consultation (FRAMING ONLY)
+Same priority as L: librw → criterion-rwg37 → gta-reversed-modern. Cross-check, do not vendor without MCP confirmation, do not cite their RVAs.
+
+## Pre-flight asserts
+Same as J.
+
+## Work loop (cap_count=0)
+Same shape as L: function_at → decomp_function (weight) → function_callees (no recursion) → write .md → hooks.csv → U/S → CHANGELOG → self-check → cap check.
+
+After loop: depth-3 DEFERRED rows in D=0580..0639.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/rw_engine_teardown_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: RW engine teardown depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=rw_engine_teardown_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: rw_engine_teardown_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Decompiling an RVA that L already drained — check QUEUE.md drained section first.
+- Citing gta-reversed-modern RVAs; reading from a DEFERRED row not citing session E bucket.
+
+## End-of-session report
+- Slot held; DEFERRED picked up; shared-callee skips noted; functions covered
+- Tracker counts; IDs used; cap_count + early-finish
+- External RW imports noted
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT N — DirectX 9 device creation =======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session N; anchor-driven D3D9 device creation reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md (especially § "Reference materials"), .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="render_d3d9_device-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. mcp__ghidra__search_defined_strings — try in order, capturing all hits:
+     query="Direct3DCreate9"
+     query="d3d9.dll"
+     query="IDirect3D9"
+     query="IDirect3DDevice9"
+     query="D3DDEVTYPE_HAL"
+2. ALSO mcp__ghidra__external_imports_list — find the d3d9.dll-imported APIs (Direct3DCreate9 export). Capture each import RVA.
+3. For each anchor (string or import RVA), reference_to <addr> → candidate-callers set.
+4. Identify D3D_INIT_FN: the function that calls Direct3DCreate9 OR creates the IDirect3DDevice9 (calls IDirect3D9::CreateDevice). Heuristic: smallest enclosing function that contains both an external d3d9 call and field writes that look like device-handle storage (writes to globals near the call).
+5. If multiple candidates qualify equally, halt + surface ambiguity.
+6. function_callees D3D_INIT_FN → subset = D3D_INIT_FN + callees, capped 20 hard / 15 soft.
+
+If NO anchor produces hits: halt + surface "D3D9 anchors not found; need user direction (binary may use a different DX path or a wrapper DLL)."
+
+Bucket: re/analysis/render_d3d9_device/
+ID-range: U=0247..0266  D=0640..0699  S=0240..0259
+Subsystem: render
+
+External imports (Direct3DCreate9, GetAdapterDisplayMode, CheckDeviceType, etc.) are NOT stubs — note as "EXTERNAL: <name>".
+
+## Reference consultation (FRAMING ONLY)
+- D3D9 device-creation pattern: re-references/criterion-rwg37/core/driver/d3d9/d3d9device.c is the definitive RW-side D3D9 backend. Read this BEFORE describing what Mashed's D3D9 init does — it tells you what the standard call sequence looks like, so you can recognize Mashed's variant.
+- librw/src/d3d9/ has a clean reimplementation with comments.
+- Cross-check field offsets observed in MCP against these references. Never vendor without MCP confirmation; never cite their RVAs.
+
+## Pre-flight asserts
+Same as J (SHA, slot acquire, preflight, open read-only, health_ping, ghidra_info).
+
+## Work loop (cap_count=0, one RVA at a time)
+For D3D_INIT_FN first, then each callee in address order:
+  a. function_at; b. decomp_function (weight); c. function_callees (no recursion);
+  d. Write re/analysis/render_d3d9_device/<rva>.md;
+  e. hooks.csv row (subsystem=render);
+  f. U/S in U=0247..0266 / S=0240..0259;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0640..0699, bucket render_d3d9_device-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/render_d3d9_device/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: D3D9 device creation (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=render_d3d9_device  rvas=<D3D_INIT_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: render_d3d9_device for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking D3D_INIT_FN by guessing when no candidate satisfies the heuristic — halt and ask.
+- Confusing D3D9 device init with RW engine init (RW init might WRAP the D3D9 init; if RW init function is the D3D9 caller too, that's session D's territory — skip).
+- Citing criterion-rwg37 RVAs as Mashed RVAs.
+
+## End-of-session report
+- Slot held; D3D_INIT_FN identified (rva/name/size); anchor hits found
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External D3D imports noted (not as stubs)
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT O — DirectInput init ================================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session O; anchor-driven DirectInput init reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="input_dinput-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — try in order:
+     query="DirectInput8Create"
+     query="DirectInputCreate"
+     query="dinput8.dll"
+     query="GUID_SysKeyboard"
+     query="GUID_SysMouse"
+2. external_imports_list — find dinput8.dll / dinput.dll imports.
+3. For each anchor, reference_to → candidate-callers set.
+4. Identify INPUT_INIT_FN: smallest enclosing function that calls DirectInput8Create AND at least one SetCooperativeLevel / CreateDevice. If only DirectInput8Create has xrefs but no SetCooperativeLevel anchor exists, fall back to the function calling DirectInput8Create.
+5. If multiple equal candidates, halt + surface.
+6. function_callees INPUT_INIT_FN → subset = INPUT_INIT_FN + callees, capped 20/15.
+
+If no anchors hit: halt + surface "DirectInput anchors not found; possibly using legacy WinAPI or RawInput — need user direction."
+
+Bucket: re/analysis/input_dinput/
+ID-range: U=0267..0286  D=0700..0759  S=0260..0279
+Subsystem: input
+
+External imports (DirectInput8Create, IDirectInputDevice8::SetCooperativeLevel, GetDeviceState, etc.) are NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+DirectInput pattern is well-documented in MSDN-style references. NO local reference for DirectInput specifically — use only what MCP shows. If you're unsure what a struct access means, file [UNCERTAIN] rather than guessing from MSDN knowledge.
+
+## Pre-flight asserts
+Same as J.
+
+## Work loop (cap_count=0)
+Same shape: function_at → decomp_function (weight) → function_callees (no recursion) → write .md → hooks.csv (subsystem=input) → U/S in U=0267..0286 / S=0260..0279 → CHANGELOG → self-check → cap check (early-finish to D=0700..0759, bucket input_dinput-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/input_dinput/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: DirectInput init (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=input_dinput  rvas=<INPUT_INIT_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: input_dinput for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking INPUT_INIT_FN by guessing; using MSDN/training knowledge as evidence; citing imports as if they were Mashed RVAs.
+
+## End-of-session report
+- Slot held; INPUT_INIT_FN identified; anchor hits found
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External DirectInput imports noted
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT P — Save game ("gamesave.bin") ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session P; anchor-driven save-game subsystem reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="save_gamesave-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — capturing all hits:
+     query="gamesave.bin"
+     query="videocfg.bin"
+     query="GameSave"
+2. For each hit, reference_to → candidate-callers set.
+3. Identify SAVE_FN_GROUP: typically two functions, save and load. They share the gamesave.bin string. Capture both:
+     SAVE_LOAD_FN — the function that opens gamesave.bin for reading (calls fopen with "rb" or CreateFileA with GENERIC_READ).
+     SAVE_WRITE_FN — the function that opens it for writing.
+4. If only one of the two appears, take that one. If three or more functions reference the string, halt + surface for user direction.
+5. Subset = SAVE_LOAD_FN + SAVE_WRITE_FN + callees of both, deduplicated, capped 20/15.
+
+If no anchors hit: halt + surface "Save anchors not found; binary may save state through a different filename or registry."
+
+Bucket: re/analysis/save_gamesave/
+ID-range: U=0287..0306  D=0760..0819  S=0280..0299
+Subsystem: save
+
+External imports (CreateFileA, ReadFile, WriteFile, CloseHandle, fopen, fread, fwrite, fclose) are NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+SciLor's `re/prior_art/MashedTrainer/` mentions Mashed Fully Loaded memory map — game state pointer chains. **The save format is likely a serialization of in-memory game state**, so SAVE_LOAD_FN's struct accesses may match MashedTrainer's documented offsets. Read MashedTrainer source for pointer-chain hints; cross-check observed offsets in MCP. Never paste; never cite SciLor RVAs (they're for Fully Loaded — different binary).
+
+## Pre-flight asserts
+Same as J.
+
+## Work loop (cap_count=0)
+For SAVE_LOAD_FN, then SAVE_WRITE_FN, then their unique callees in address order:
+  a. function_at; b. decomp_function (weight); c. function_callees (no recursion);
+  d. Write re/analysis/save_gamesave/<rva>.md;
+  e. hooks.csv row (subsystem=save);
+  f. U/S in U=0287..0306 / S=0280..0299;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0760..0819, bucket save_gamesave-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/save_gamesave/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: save/gamesave.bin (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=save_gamesave  rvas=<SAVE_LOAD_FN, SAVE_WRITE_FN, callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: save_gamesave for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Treating SciLor's MashedTrainer offsets as evidence about THIS binary's offsets — Fully Loaded is a different release.
+- Picking SAVE_FN_GROUP by guessing if anchors are inconclusive.
+- Conflating gamesave.bin with videocfg.bin handlers — they may share a serialization helper but are distinct top-level functions; bucket each separately if both fit, else file the second as DEFERRED for save_gamesave-cont1.
+
+## End-of-session report
+- Slot held; SAVE_LOAD_FN / SAVE_WRITE_FN identified; anchor hits found
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External CRT/file imports noted
+- MCP failures; observations (especially: does the layout match anything in MashedTrainer?)
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT Q — Lua integration (joypad remap) ==================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session Q; anchor-driven Lua integration reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="input_lua-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — try in order:
+     query="lua_open"
+     query="lua_State"
+     query="luaL_openlibs"
+     query="luaL_loadfile"
+     query="lua_pcall"
+     query="luaL_register"
+     query="joypad"
+     query="JoypadRemap"
+     query=".lua"
+2. external_imports_list — look for `lua5.dll`, `lua5.1.dll`, `lualib.dll`, or any DLL with a `lua_` prefix.
+3. For each anchor, reference_to → candidate-callers.
+4. Identify LUA_INIT_FN: the function that calls lua_open / luaL_newstate AND loads at least one Lua script. If Lua is loaded once and then accessed elsewhere, the init function is the one with lua_open.
+5. If NO Lua anchors hit ANY string OR import: halt + surface "Lua not statically linked or not present; CLAUDE.md mentions Lua 5.x for joypad remap but anchors not found in MASHED.exe — possibly delivered via a sidecar DLL or via SciLor's MashedRunner. Need user direction."
+6. function_callees LUA_INIT_FN → subset = LUA_INIT_FN + callees, capped 20/15.
+
+Bucket: re/analysis/input_lua/
+ID-range: U=0307..0326  D=0820..0879  S=0300..0319
+Subsystem: input
+
+External imports (lua_open, luaL_loadfile, lua_pcall, etc.) are NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+Lua 5.x C API is documented in the Lua reference manual (lua.org). Use only what MCP shows; if you need to cite Lua API behavior, file an [UNCERTAIN] referring to the API name and which return-value contract you'd want to verify. Do NOT vendor Lua source.
+
+If MCP shows the binary has a vendored Lua interpreter (function bodies that match `lua_State`, `lua_TValue` accesses), the depth-2 callees of LUA_INIT_FN will be Lua-internal — file those as DEFERRED for a future bucket `input_lua-internals` rather than recursing.
+
+## Pre-flight asserts
+Same as J.
+
+## Work loop (cap_count=0)
+For LUA_INIT_FN first, then callees in address order:
+  a. function_at; b. decomp_function (weight); c. function_callees (no recursion);
+  d. Write re/analysis/input_lua/<rva>.md;
+  e. hooks.csv row (subsystem=input);
+  f. U/S in U=0307..0326 / S=0300..0319;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0820..0879, bucket input_lua-cont1.
+
+After loop: depth-2 DEFERRED rows in D range. If callees look like Lua interpreter internals (lua_*, luaH_*, luaO_*), file them as a SINGLE DEFERRED row "Lua interpreter internals — possibly vendored Lua 5.x source; pick up only if Mashed needs scriptable joypad remap rebuilt rather than wrapped" with re-pickup bucket input_lua_internals.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/input_lua/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: Lua/joypad-remap integration (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=input_lua  rvas=<LUA_INIT_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: input_lua for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Recursing into Lua interpreter internals — file them as a single DEFERRED, do not pick them off.
+- Treating Lua API documentation as evidence about Mashed code — it tells you the API contract, not what THIS Mashed function does.
+- Filing LUA_INIT_FN if Lua anchors are absent — halt instead and surface that Lua is likely sidecar/external.
+
+## End-of-session report
+- Slot held; LUA_INIT_FN identified (or "anchors absent — halted before subset"); anchor hits found
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External Lua imports noted
+- Lua-interpreter-internals DEFERRED row filed: yes/no
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT R — Sweep batch 2 (relaunch prompt I) ===============================
+================================================================================
+
+Use prompt I from PROMPTS_FANOUT.txt verbatim. The sweep template is bucket-agnostic — it walks every "Queued" row in re/SCRIBE_QUEUE.md regardless of which batch produced it. Construct a fresh SESSION_SHORT_ID at launch ("sweep-YYYYMMDD-HHMM" UTC) and the same outer-claim / drain-loop / outer-release flow handles batch 2's queued rows.
+
+PRECONDITIONS for launching prompt R:
+  - The previous (batch 1) sweep session has fully released its master.WIP-* flag and pushed; verify with `bash scripts/ghidra_assert.sh scribe-check` returning "ok".
+  - All batch 2 analysis sessions you launched (J–Q) have pushed their analysis commits AND their queue rows. Verify by reading re/SCRIBE_QUEUE.md "Queued" section and confirming each session's row is there.
+  - No master.WIP-* file exists in repo root.
+
+If multiple batch 2 sessions are still active when sweep R is ready to launch, you can either (a) wait for them to finish, or (b) launch sweep R early; it'll drain whatever's queued at that moment, and a third sweep can be launched later for any rows queued after R completed.
+
+================================================================================
+=== END OF BATCH 2 PROMPTS =====================================================
+================================================================================
+
+LAUNCH SEQUENCE GUIDANCE
+
+If batch 1 has completely settled (sweep released, no master.WIP-*):
+  Wave 1 (any 4–6 in parallel): J, K, L, M
+  Wave 2 (any 3–4 in parallel): N, O, P, Q
+  After all push: launch R (sweep)
+
+If batch 1's sweep is still running:
+  - You can still launch J–Q now; they queue, they don't write master.
+  - DO NOT launch R until the batch 1 sweep has released its flag — the
+    scribe-check pre-flight in R will halt and surface if the flag is held.
+
+If sessions C / F / G / H from batch 1 haven't been launched yet:
+  - They're still valid and disjoint from this batch. Launch alongside
+    any wave above.
+  - Their queue rows will be drained by the next sweep just like J–Q's.
+
+POOL SLOT BUDGET
+  - Total slots: 8 (MAX_SLOTS in ghidra_pool.sh).
+  - Sweep does NOT use a pool slot (opens master directly).
+  - Sonnet analysis sessions in this batch + un-launched batch 1 (J–Q + C/F):
+    up to 8 simultaneous. G, H, P consume no Ghidra slots if P is anchor-fail
+    (P uses MCP for anchor search; budget a slot for it).
+  - Practical cap: launch 6 simultaneous Ghidra-bound + 2 no-MCP (G, H) for
+    8 effective parallel sessions.
+
+ALL ID RANGES (cumulative across batches)
+
+  Batch 1:
+    A  boot_app_init        U=0007..0026   D=0040..0099   S=0001..0019
+    B  boot_crt_exit        U=0027..0046   D=0100..0159   S=0020..0039
+    C  boot_crt_env         U=0047..0066   D=0160..0219   S=0040..0059
+    D  rw_engine_init       U=0067..0086   D=0220..0279   S=0060..0079
+    E  rw_engine_teardown   U=0087..0106   D=0280..0339   S=0080..0099
+    F  audio_rws_loader     U=0107..0126   D=0340..0399   S=0100..0119
+    G  piz_validation       U=0127..0146     n/a          S=0120..0139
+    H  rws_inventory        U=0147..0166     n/a          S=0140..0159
+
+  Batch 2:
+    J  boot_app_init_d3     U=0167..0186   D=0400..0459   S=0160..0179
+    K  boot_crt_exit_d3     U=0187..0206   D=0460..0519   S=0180..0199
+    L  rw_engine_init_d2    U=0207..0226   D=0520..0579   S=0200..0219
+    M  rw_engine_teardown_d2 U=0227..0246  D=0580..0639   S=0220..0239
+    N  render_d3d9_device   U=0247..0266   D=0640..0699   S=0240..0259
+    O  input_dinput         U=0267..0286   D=0700..0759   S=0260..0279
+    P  save_gamesave        U=0287..0306   D=0760..0819   S=0280..0299
+    Q  input_lua            U=0307..0326   D=0820..0879   S=0300..0319
+
+  Next batch (when designed) starts at U=0327, D=0880, S=0320.
