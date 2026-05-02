@@ -1,0 +1,33 @@
+SFX.piz  version=3  entries=30  size=4552704
+  offset mode: raw
+  name                                                             offset     length         id
+  SHOCKWAVE.DFF                                                    0x1800     0x19b8     0x1dc6
+  HEMISPHERE.DFF                                                   0x3800     0x4fb0     0x22d4
+  TRI.DFF                                                          0x8800      0x298      0x7c0
+  XBOX/BADGES.TXD                                                  0x9000    0x180d8     0x266d
+  PS2/BADGES.TXD                                                  0x21800    0x12510     0x20c9
+  SPLASH.DFF                                                      0x34000      0x510     0x10d5
+  0.BUM                                                           0x34800     0xa800      0x405
+  1.BUM                                                           0x3f000     0xa800      0x405
+  2.BUM                                                           0x49800     0xa800      0x405
+  3.BUM                                                           0x54000     0xa800      0x405
+  4.BUM                                                           0x5e800     0xa800      0x405
+  5.BUM                                                           0x69000     0xa800      0x405
+  6.BUM                                                           0x73800     0xa800      0x405
+  7.BUM                                                           0x7e000     0xa800      0x405
+  8.BUM                                                           0x88800     0xa800      0x405
+  9.BUM                                                           0x93000     0xa800      0x405
+  10.BUM                                                          0x9d800     0xa800      0x5a7
+  11.BUM                                                          0xa8000     0xa800      0x5a8
+  12.BUM                                                          0xb2800     0xa800      0x5a9
+  13.BUM                                                          0xbd000     0xa800      0x5aa
+  14.BUM                                                          0xc7800     0xa800      0x5ab
+  15.BUM                                                          0xd2000     0xa800      0x5ac
+  16.BUM                                                          0xdc800     0xa800      0x5ad
+  FRESNEL.DDS                                                     0xe7000    0x40080     0x1532
+  SUN.PNG                                                        0x127800     0x1281      0x82b
+  TRACKIMAGES.TXD                                                0x129000   0x1deea8     0x2768
+  INTERFACE.TXD                                                  0x308000    0x56a00     0x1d2c
+  BADGES.TXD                                                     0x35f000    0x2876c     0x10d5
+  FX.TXD                                                         0x387800    0xc900c      0x604
+  CUP.DFF                                                        0x451000     0x6190      0x7d1

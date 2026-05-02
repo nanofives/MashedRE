@@ -1,0 +1,18 @@
+Panel.piz  version=3  entries=15  size=266240
+  offset mode: raw
+  name                                                             offset     length         id
+  PANEL.TXD                                                        0x1000    0x13eb8      0xe22
+  PANEL2.DFF                                                      0x15000     0x26fd      0xfac
+  PANEL1.DFF                                                      0x17800     0x26fd      0xfa7
+  PANEL0.DFF                                                      0x1a000     0x26fd      0xfa2
+  PANEL3.DFF                                                      0x1c800     0x26fd      0xfb1
+  ENDPOINTPANEL.TXD                                               0x1f000     0x6678     0x3541
+  ENDPOINTPANEL.DFF                                               0x25800     0x3740     0x3373
+  TEAM1PANEL.DFF                                                  0x29000     0x4359     0x210c
+  TEAM0PANEL.DFF                                                  0x2d800     0x4359     0x2108
+  TEAMEPPANEL.DFF                                                 0x32000     0x4e9a     0x263a
+  STARTLIGHTS.DFF                                                 0x37000     0x16ce     0x285d
+  STOPCLOCK2.DFF                                                  0x38800     0x3b3c     0x2041
+  KCPANEL.DFF                                                     0x3c800      0xd00     0x1433
+  RACEPANEL.DFF                                                   0x3d800     0x220e     0x1ce2
+  BTBPANEL.DFF                                                    0x40000      0xcfc     0x1816

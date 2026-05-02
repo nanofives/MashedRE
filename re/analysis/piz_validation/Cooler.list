@@ -1,0 +1,20 @@
+Cooler.piz  version=3  entries=17  size=5892096
+  offset mode: raw
+  name                                                             offset     length         id
+  DEBRIS0.DFF                                                      0x1800     0x89f9     0x1376
+  DEBRIS3.DFF                                                      0xa800     0x89f9     0x1388
+  DEBRIS1.DFF                                                     0x13800     0x89f9     0x137c
+  DEBRIS2.DFF                                                     0x1c800     0x89f9     0x1382
+  DEBRIS4.DFF                                                     0x25800     0x89f9     0x138e
+  DEBRIS5.DFF                                                     0x2e800     0x89f9     0x1394
+  COOLERARMS.DFF                                                  0x37800     0x9c11     0x2284
+  COOLER0.DFF                                                     0x41800    0xc7206     0x1373
+  COOLER1.DFF                                                    0x109000    0xc7206     0x1379
+  COOLER2.DFF                                                    0x1d0800    0xc7206     0x137f
+  COOLER3.DFF                                                    0x298000    0xc7206     0x1385
+  COOLER4.DFF                                                    0x35f800    0xc7206     0x138b
+  COOLER5.DFF                                                    0x427000    0xc7206     0x1391
+  COOLER.TXD                                                     0x4ee800    0x5c8dc     0x11e3
+  GHOST.DFF                                                      0x54b800    0x37786      0xda7
+  COOLERLIGHTS.DFF                                               0x583000     0x1893     0x2e29
+  PS2/COOLER.TXD                                                 0x585000    0x19020     0x22af

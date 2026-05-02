@@ -1,0 +1,5 @@
+Frontend.piz  version=3  entries=2  size=1257472
+  offset mode: raw
+  name                                                             offset     length         id
+  TEXTURES.TXD                                                     0x1000    0xfbce8     0x1ac2
+  MAIN.BSP                                                        0xfd000    0x35bf8      0xae1

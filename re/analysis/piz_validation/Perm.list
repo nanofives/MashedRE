@@ -1,0 +1,29 @@
+Perm.piz  version=3  entries=26  size=2025472
+  offset mode: raw
+  name                                                             offset     length         id
+  TOASTART/COMMON/PERM/COPTERS/COPTERS.TXD                         0x1800    0x25120    0x12351
+  TRAIN.DFF                                                       0x27000    0x10964      0xd5f
+  LORRY.DFF                                                       0x38000     0x2c44      0xdc5
+  BEST266.REP                                                     0x3b000    0x3eacc     0x1280
+  MAP_25.DFF                                                      0x7a000     0x194c      0xec5
+  MAP_11.DFF                                                      0x7c000     0x1e5c      0xead
+  MAP_2.DFF                                                       0x7e000     0x182c      0xc5e
+  MAP_0.DFF                                                       0x80000     0x1cf4      0xc56
+  MAP_26.DFF                                                      0x82000     0x236c      0xeca
+  MAP_3.DFF                                                       0x84800      0xdc4      0xc62
+  MAP_30.DFF                                                      0x85800      0xaf4      0xeb0
+  MAP_33.DFF                                                      0x86800     0x28c4      0xebf
+  MAP_34.DFF                                                      0x89800     0x194c      0xec4
+  MAP_36.DFF                                                      0x8b800     0x11b4      0xece
+  MAP_37.DFF                                                      0x8d000     0x21bc      0xed3
+  MAP_38.DFF                                                      0x8f800     0x263c      0xed8
+  MAP_39.DFF                                                      0x92000     0x16c4      0xedd
+  PS2.PNG                                                         0x93800    0x1fea1      0x791
+  XBOX.PNG                                                        0xb3800    0x1a2d6      0xaf5
+  BACKGROUND.PNG                                                  0xce000      0xb4f     0x23fe
+  SPLASH.BMP                                                      0xcf000    0xe3d38     0x1159
+  TOASTART/COMMON/PERM/COPTERS/CIVHUEY.DFF                       0x1b3000     0x6810    0x11ef1
+  TOASTART/COMMON/PERM/COPTERS/COPTER.DFF                        0x1ba000     0x5318    0x1122c
+  TOASTART/COMMON/PERM/COPTERS/JETRANGER.DFF                     0x1bf800     0x19e8    0x13dd8
+  TOASTART/COMMON/PERM/COPTERS/KTC_APACHE.DFF                    0x1c1800     0x9a30    0x1419c
+  PS2MULTI.PNG                                                   0x1cb800    0x22e63     0x199e

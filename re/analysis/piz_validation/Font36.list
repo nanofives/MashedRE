@@ -1,0 +1,29 @@
+Font36.piz  version=3  entries=26  size=1165312
+  offset mode: raw
+  name                                                             offset     length         id
+  ENGLISH.DAT                                                      0x1800     0x835a     0x1526
+  FRENCH.DAT                                                       0xa000     0x8c80     0x1106
+  GERMAN.DAT                                                      0x13000     0x9496     0x1126
+  ITALIAN.DAT                                                     0x1c800     0x93a4     0x14ea
+  JAPANESE.DAT                                                    0x26000     0x1f7a     0x1944
+  SPANISH.DAT                                                     0x28000     0x93ae     0x1522
+  USA.DAT                                                         0x31800     0x8360      0x78c
+  20NEUROX.RWF                                                    0x3a000     0x14b4     0x1aa5
+  FONT.TXD                                                        0x3b800    0x2d4a4      0xa8f
+  20NEUROPS2.RWF                                                  0x69000     0x14b4     0x22c1
+  DEFINES.TXT                                                     0x6a800     0x4ece     0x1671
+  MASHEDLOGO.PNG                                                  0x6f800     0xb244     0x22f6
+  PROLOGICII.BMP                                                  0x7b000     0x1076     0x2125
+  BIGE.BMP                                                        0x7c800      0x276      0xa46
+  LOOKUP.TXT                                                      0x7d000     0x157b     0x12a6
+  DOLBYDIG.BMP                                                    0x7e800     0x2436     0x18e0
+  FGDC20.RWF                                                      0x81000     0x14c9      0xf90
+  FGDC20.TXD                                                      0x82800    0x20488      0xf94
+  FGMC20.TXD                                                      0xa3000    0x20488      0xfa6
+  FGMC20.RWF                                                      0xc3800     0x14c9      0xfa2
+  XBOX/XBOXFGDC20.RWF                                             0xc5000     0x14b4     0x378c
+  XBOX/XBOXFGDC20.TXD                                             0xc6800    0x2af54     0x3799
+  MASHEDNEWLOGO.PNG                                               0xf1800     0x3c11     0x3391
+  TEST.ICO                                                        0xf5800     0x4b24      0xa07
+  PS2/PS2FGDC20.RWF                                               0xfa800     0x14b4     0x28e4
+  PS2/PS2FGDC20.TXD                                               0xfc000    0x20594     0x28ef

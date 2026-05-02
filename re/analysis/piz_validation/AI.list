@@ -1,0 +1,16 @@
+AI.piz  version=3  entries=13  size=962560
+  offset mode: raw
+  name                                                             offset     length         id
+  AI30.AI                                                          0x1000    0x11890      0x4f2
+  AI11.AI                                                         0x13000    0x11890      0x4f1
+  AI2.AI                                                          0x25000    0x11890      0x3a8
+  AI0.AI                                                          0x37000    0x11890      0x3a4
+  AI25.AI                                                         0x49000    0x11890      0x4ff
+  AI3.AI                                                          0x5b000    0x11890      0x3aa
+  AI34.AI                                                         0x6d000    0x11890      0x4fe
+  AI39.AI                                                         0x7f000    0x11890      0x50d
+  AI36.AI                                                         0x91000    0x11890      0x504
+  AI38.AI                                                         0xa3000    0x11890      0x50a
+  AI26.AI                                                         0xb5000    0x11890      0x502
+  AI33.AI                                                         0xc7000    0x11890      0x4fb
+  AI37.AI                                                         0xd9000    0x11890      0x507

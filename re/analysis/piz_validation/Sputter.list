@@ -1,0 +1,20 @@
+Sputter.piz  version=3  entries=17  size=5836800
+  offset mode: raw
+  name                                                             offset     length         id
+  SPUTTER.TXD                                                      0x1800    0x5c8e0     0x162d
+  SPUTTER0.DFF                                                    0x5e800    0xc0fe9     0x17cd
+  SPUTTER1.DFF                                                   0x11f800    0xc0fe9     0x17d4
+  SPUTTER2.DFF                                                   0x1e0800    0xc0fe9     0x17db
+  SPUTTER3.DFF                                                   0x2a1800    0xc0fe9     0x17e2
+  SPUTTER4.DFF                                                   0x362800    0xc0fe9     0x17e9
+  SPUTTER5.DFF                                                   0x423800    0xc0fe9     0x17f0
+  GHOST.DFF                                                      0x4e4800    0x3c04a      0xda7
+  DEBRIS1.DFF                                                    0x521000     0xc542     0x137c
+  DEBRIS2.DFF                                                    0x52d800     0xc542     0x1382
+  DEBRIS3.DFF                                                    0x53a000     0xc542     0x1388
+  DEBRIS4.DFF                                                    0x546800     0xc542     0x138e
+  DEBRIS5.DFF                                                    0x553000     0xc542     0x1394
+  DEBRIS0.DFF                                                    0x55f800     0xc542     0x1376
+  SPUTTERARMS.DFF                                                0x56c000     0x9c81     0x2841
+  SPUTTERLIGHTS.DFF                                              0x576000     0x10c3     0x34be
+  PS2/SPUTTER.TXD                                                0x577800    0x19024     0x2945

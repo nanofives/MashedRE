@@ -1,0 +1,22 @@
+LED.piz  version=3  entries=19  size=118784
+  offset mode: raw
+  name                                                             offset     length         id
+  LE9.LED                                                          0x1800     0x120c      0x562
+  LE1.LED                                                          0x3000     0x120c      0x552
+  LE11.LED                                                         0x4800     0x120c      0x6e8
+  LE2.LED                                                          0x6000     0x120c      0x554
+  LE25.LED                                                         0x7800     0x120c      0x6f6
+  LE30.LED                                                         0x9000     0x120c      0x6e9
+  LE34.LED                                                         0xa800     0x120c      0x6f5
+  LE6.LED                                                          0xc000     0x120c      0x55c
+  LE7.LED                                                          0xd800     0x120c      0x55e
+  LE0.LED                                                          0xf000     0x120c      0x550
+  LE3.LED                                                         0x10800     0x120c      0x556
+  LE33.LED                                                        0x12000     0x120c      0x6f2
+  LE36.LED                                                        0x13800     0x120c      0x6fb
+  LE37.LED                                                        0x15000     0x120c      0x6fe
+  LE38.LED                                                        0x16800     0x120c      0x701
+  LE34.LED_X                                                      0x18000     0x120c      0xd05
+  LE39.LED                                                        0x19800     0x120c      0x704
+  LE26.LED                                                        0x1b000     0x120c      0x6f9
+  VSSVER.SCC                                                      0x1c800      0x120     0x1155

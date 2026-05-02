@@ -1,0 +1,17 @@
+SuperG.piz  version=3  entries=14  size=2260992
+  offset mode: raw
+  name                                                             offset     length         id
+  COLLISIONS.BSP                                                   0x1000     0xe4fe     0x247e
+  GRAPHICS.BSP                                                     0xf800    0x78b0c     0x19d8
+  LAP.BSP                                                         0x88800     0x3a18      0x832
+  LIGHTS.DFF                                                      0x8c800      0x210     0x1114
+  REFLECTIONS.DFF                                                 0x8d000    0x2e838     0x28cf
+  SEA.DFF                                                         0xbc000     0x3a4c      0x7a3
+  SKY.DFF                                                         0xc0000      0x89c      0x7d9
+  COURSE.LUA                                                      0xc1000      0x54d     0x118d
+  LAPDATA.LUA                                                     0xc1800      0x170     0x1504
+  TEXTURES.TXD                                                    0xc2000   0x15aef8     0x1ac2
+  CAMMAN.DFF                                                     0x21d000     0x1720     0x1062
+  POWERUPS_GOLD.DFF                                              0x21e800     0x8263     0x34cb
+  H_ANIM_1.ANM                                                   0x227000      0x4c4     0x1795
+  H_ANIM_2.ANM                                                   0x227800      0x5c0     0x179c

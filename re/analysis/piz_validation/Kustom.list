@@ -1,0 +1,20 @@
+Kustom.piz  version=3  entries=17  size=4874240
+  offset mode: raw
+  name                                                             offset     length         id
+  GHOST.DFF                                                        0x1800    0x34162      0xda7
+  DEBRIS1.DFF                                                     0x36000     0x5686     0x137c
+  DEBRIS3.DFF                                                     0x3b800     0x5686     0x1388
+  DEBRIS4.DFF                                                     0x41000     0x5686     0x138e
+  DEBRIS5.DFF                                                     0x46800     0x5686     0x1394
+  DEBRIS0.DFF                                                     0x4c000     0x5686     0x1376
+  DEBRIS2.DFF                                                     0x51800     0x5686     0x1382
+  KUSTOM2.DFF                                                     0x57000    0xa1b39     0x13b4
+  KUSTOM0.DFF                                                     0xf9000    0xa1b39     0x13a8
+  KUSTOM1.DFF                                                    0x19b000    0xa1b39     0x13ae
+  KUSTOM3.DFF                                                    0x23d000    0xa1b39     0x13ba
+  KUSTOM4.DFF                                                    0x2df000    0xa1b39     0x13c0
+  KUSTOM5.DFF                                                    0x381000    0xa1b39     0x13c6
+  KUSTOMARMS.DFF                                                 0x423000     0xa0c9     0x22b9
+  KUSTOMLIGHTS.DFF                                               0x42d800     0x1f77     0x2e5e
+  KUSTOM.TXD                                                     0x42f800    0x5c8dc     0x1218
+  PS2/KUSTOM.TXD                                                 0x48c800    0x19020     0x2360

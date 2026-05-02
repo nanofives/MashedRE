@@ -1,0 +1,28 @@
+Storm.piz  version=3  entries=25  size=2754560
+  offset mode: raw
+  name                                                             offset     length         id
+  COLLISIONS.BSP                                                   0x1800    0x1717a     0x247e
+  GRAPHICS.BSP                                                    0x19000    0x6bd4c     0x19d8
+  LAP.BSP                                                         0x85000     0x271c      0x832
+  LIGHTS.DFF                                                      0x87800      0x210     0x1114
+  COURSE.LUA                                                      0x88000      0x523     0x118d
+  LAPDATA.LUA                                                     0x88800       0xf8     0x1504
+  TEXTURES.TXD                                                    0x89000   0x1fdb34     0x19a2
+  WATER.DFF                                                      0x287000     0x41f4      0xd78
+  WATER.UVA                                                      0x28b800      0x1e4      0xe26
+  SKY.DFF                                                        0x28c000     0x1768      0x7d9
+  ALPHA.DFF                                                      0x28d800     0x7e74      0xd40
+  WAVE1.SPL                                                      0x295800      0x148      0xd48
+  WAVE2.SPL                                                      0x296000       0xf4      0xd4c
+  WAVE3.SPL                                                      0x296800       0x64      0xd50
+  WAVE4.SPL                                                      0x297000       0x64      0xd54
+  WAVE5.SPL                                                      0x297800       0x64      0xd58
+  WAVE6.SPL                                                      0x298000       0x64      0xd5c
+  WAVE7.SPL                                                      0x298800       0x70      0xd60
+  WAVE8.SPL                                                      0x299000       0x7c      0xd64
+  WAVE9.SPL                                                      0x299800       0x70      0xd68
+  CAMMAN.DFF                                                     0x29a000     0x1720     0x1062
+  MIST.DFF                                                       0x29b800      0x5dc      0xa85
+  BUSH.MTS                                                       0x29c000      0x55c      0xb49
+  BUSH.DFF                                                       0x29c800      0x568      0xa6d
+  POWERUPS_GOLD.DFF                                              0x29d000     0x31b3     0x34cb

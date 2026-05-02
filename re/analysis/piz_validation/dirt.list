@@ -1,0 +1,31 @@
+dirt.piz  version=3  entries=28  size=425984
+  offset mode: raw
+  name                                                             offset     length         id
+  SANDSTWHEEL.PNG                                                  0x1800     0x364b     0x279a
+  DIRTADWHEEL.PNG                                                  0x5000     0x39c0     0x27e2
+  DIRTATMWHEEL.PNG                                                 0x9000     0x3552     0x2e28
+  DIRTBODY.PNG                                                     0xc800     0x2d6d     0x199c
+  DIRTBUWHEEL.PNG                                                  0xf800     0x3651     0x279b
+  DIRTSHWHEEL.PNG                                                 0x13000     0x364f     0x279e
+  DIRTSTWHEEL.PNG                                                 0x16800     0x3306     0x27da
+  EARTHADWHEEL.PNG                                                0x1a000     0x3e74     0x2d87
+  EARTHATMWHEEL.PNG                                               0x1e000     0x3d31     0x344a
+  EARTHBODY.PNG                                                   0x22000     0x367f     0x1e35
+  EARTHBUWHEEL.PNG                                                0x25800     0x3bc7     0x2d32
+  EARTHSHWHEEL.PNG                                                0x29800     0x3d82     0x2d39
+  EARTHSTWHEEL.PNG                                                0x2d800     0x3bf1     0x2d81
+  GRIMEADWHEEL.PNG                                                0x31800     0x3619     0x2ca5
+  GRIMEBODY.PNG                                                   0x35000     0x2d03     0x1e13
+  GRIMEBUWHEEL.PNG                                                0x38000     0x3621     0x2d10
+  GRIMESHWHEEL.PNG                                                0x3b800     0x3995     0x2d17
+  GRIMESTWHEEL.PNG                                                0x3f800     0x32d9     0x2d5f
+  SANDADWHEEL.PNG                                                 0x43000     0x3928     0x27a2
+  SANDATMWHEEL.PNG                                                0x47000     0x3861     0x2de8
+  SANDBODY.PNG                                                    0x4b000     0x2f9d     0x195c
+  SANDBUWHEEL.PNG                                                 0x4e000     0x3790     0x275b
+  SANDSHWHEEL.PNG                                                 0x51800     0x3ad4     0x275e
+  GRIMESPWHEEL.PNG                                                0x55800     0x379f     0x2d47
+  SANDSPWHEEL.PNG                                                 0x59000     0x3a4b     0x2786
+  DIRTSPWHEEL.PNG                                                 0x5d000     0x36ae     0x27c6
+  EARTHSPWHEEL.PNG                                                0x60800     0x3ee1     0x2d69
+  GRIMEATMWHEEL.PNG                                               0x64800     0x351f     0x3428

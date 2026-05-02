@@ -1,0 +1,20 @@
+Creeper.piz  version=3  entries=17  size=5728256
+  offset mode: raw
+  name                                                             offset     length         id
+  GHOST.DFF                                                        0x1800    0x361b2      0xda7
+  DEBRIS0.DFF                                                     0x38000     0x8461     0x1376
+  CREEPER0.DFF                                                    0x40800    0xc10fe     0x1772
+  CREEPER1.DFF                                                   0x102000    0xc10fe     0x1779
+  CREEPER2.DFF                                                   0x1c3800    0xc10fe     0x1780
+  CREEPER3.DFF                                                   0x285000    0xc10fe     0x1787
+  CREEPER4.DFF                                                   0x346800    0xc10fe     0x178e
+  CREEPER5.DFF                                                   0x408000    0xc10fe     0x1795
+  CREEPERARMS.DFF                                                0x4c9800     0xa0c9     0x27e6
+  CREEPER.TXD                                                    0x4d4000    0x5c8e0     0x15d2
+  DEBRIS1.DFF                                                    0x531000     0x8461     0x137c
+  DEBRIS2.DFF                                                    0x539800     0x8461     0x1382
+  DEBRIS3.DFF                                                    0x542000     0x8461     0x1388
+  DEBRIS4.DFF                                                    0x54a800     0x8461     0x138e
+  DEBRIS5.DFF                                                    0x553000     0x8461     0x1394
+  CREEPERLIGHTS.DFF                                              0x55b800     0x10bf     0x3463
+  PS2/CREEPER.TXD                                                0x55d000    0x19024     0x2826

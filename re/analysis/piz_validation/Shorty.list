@@ -1,0 +1,20 @@
+Shorty.piz  version=3  entries=17  size=6350848
+  offset mode: raw
+  name                                                             offset     length         id
+  GHOST.DFF                                                        0x1800    0x2f6d2      0xda7
+  DEBRIS1.DFF                                                     0x31000     0xcbf2     0x137c
+  DEBRIS3.DFF                                                     0x3e000     0xcbf2     0x1388
+  DEBRIS4.DFF                                                     0x4b000     0xcbf2     0x138e
+  DEBRIS5.DFF                                                     0x58000     0xcbf2     0x1394
+  DEBRIS0.DFF                                                     0x65000     0xcbf2     0x1376
+  DEBRIS2.DFF                                                     0x72000     0xcbf2     0x1382
+  SHORTY1.DFF                                                     0x7f000    0xd7789     0x13e3
+  SHORTY.TXD                                                     0x156800    0x5c8dc     0x124d
+  SHORTY0.DFF                                                    0x1b3800    0xd7789     0x13dd
+  SHORTY2.DFF                                                    0x28b000    0xd7789     0x13e9
+  SHORTY3.DFF                                                    0x362800    0xd7789     0x13ef
+  SHORTY4.DFF                                                    0x43a000    0xd7789     0x13f5
+  SHORTY5.DFF                                                    0x511800    0xd7789     0x13fb
+  SHORTYARMS.DFF                                                 0x5e9000     0xa0c9     0x22ee
+  SHORTYLIGHTS.DFF                                               0x5f3800     0x1157     0x2e93
+  PS2/SHORTY.TXD                                                 0x5f5000    0x19020     0x23ad

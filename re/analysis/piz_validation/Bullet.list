@@ -1,0 +1,20 @@
+Bullet.piz  version=3  entries=17  size=5443584
+  offset mode: raw
+  name                                                             offset     length         id
+  BULLET.TXD                                                       0x1800    0x5c8dc     0x11ed
+  BULLET0.DFF                                                     0x5e800    0xb494d     0x137d
+  BULLET1.DFF                                                    0x113800    0xb494d     0x1383
+  BULLET2.DFF                                                    0x1c8800    0xb494d     0x1389
+  BULLET3.DFF                                                    0x27d800    0xb494d     0x138f
+  BULLET4.DFF                                                    0x332800    0xb494d     0x1395
+  BULLET5.DFF                                                    0x3e7800    0xb48ed     0x139b
+  GHOST.DFF                                                      0x49c800    0x2de6a      0xda7
+  DEBRIS1.DFF                                                    0x4ca800     0xaf1a     0x137c
+  BULLETARMS.DFF                                                 0x4d5800     0x9c11     0x228e
+  DEBRIS0.DFF                                                    0x4df800     0xaf1a     0x1376
+  DEBRIS2.DFF                                                    0x4ea800     0xaf1a     0x1382
+  DEBRIS3.DFF                                                    0x4f5800     0xaf5a     0x1388
+  DEBRIS4.DFF                                                    0x500800     0xaefa     0x138e
+  DEBRIS5.DFF                                                    0x50b800     0xaf1a     0x1394
+  BULLETLIGHTS.DFF                                               0x516800      0xc27     0x2e33
+  PS2/BULLET.TXD                                                 0x517800    0x19020     0x22c9

@@ -1,0 +1,20 @@
+Formula.piz  version=3  entries=17  size=5056512
+  offset mode: raw
+  name                                                             offset     length         id
+  GHOST.DFF                                                        0x1800    0x2bd5f      0xda7
+  DEBRIS1.DFF                                                     0x2d800     0x7e49     0x137c
+  DEBRIS3.DFF                                                     0x35800     0x7e49     0x1388
+  DEBRIS4.DFF                                                     0x3d800     0x7e49     0x138e
+  DEBRIS5.DFF                                                     0x45800     0x7e49     0x1394
+  DEBRIS0.DFF                                                     0x4d800     0x7e49     0x1376
+  DEBRIS2.DFF                                                     0x55800     0x7e49     0x1382
+  FORMULA3.DFF                                                    0x5d800    0xa85c2     0x1787
+  FORMULA.TXD                                                    0x106000    0x5c8e0     0x15d2
+  FORMULA0.DFF                                                   0x163000    0xa85c2     0x1772
+  FORMULA1.DFF                                                   0x20b800    0xa85c2     0x1779
+  FORMULA2.DFF                                                   0x2b4000    0xa85c2     0x1780
+  FORMULA4.DFF                                                   0x35c800    0xa85c2     0x178e
+  FORMULA5.DFF                                                   0x405000    0xa85c2     0x1795
+  FORMULAARMS.DFF                                                0x4ad800     0xa0c1     0x27e6
+  FORMULALIGHTS.DFF                                              0x4b8000      0xb8f     0x3463
+  PS2/FORMULA.TXD                                                0x4b9000    0x19024     0x2866

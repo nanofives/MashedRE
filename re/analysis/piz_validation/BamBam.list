@@ -1,0 +1,20 @@
+BamBam.piz  version=3  entries=17  size=5617664
+  offset mode: raw
+  name                                                             offset     length         id
+  DEBRIS3.DFF                                                      0x1800     0x89ba     0x1388
+  DEBRIS0.DFF                                                      0xa800     0x89ba     0x1376
+  DEBRIS1.DFF                                                     0x13800     0x89ba     0x137c
+  DEBRIS4.DFF                                                     0x1c800     0x89ba     0x138e
+  DEBRIS5.DFF                                                     0x25800     0x89ba     0x1394
+  DEBRIS2.DFF                                                     0x2e800     0x89ba     0x1382
+  BAMBAMLIGHTS.DFF                                                0x37800      0xa6b     0x2d70
+  BAMBAM0.DFF                                                     0x38800    0xbe141     0x12ba
+  BAMBAM1.DFF                                                     0xf7000    0xbe141     0x12c0
+  BAMBAM2.DFF                                                    0x1b5800    0xbe141     0x12c6
+  BAMBAM3.DFF                                                    0x274000    0xbe141     0x12cc
+  BAMBAM4.DFF                                                    0x332800    0xbe141     0x12d2
+  BAMBAM5.DFF                                                    0x3f1000    0xbe141     0x12d8
+  BAMBAMARMS.DFF                                                 0x4af800     0x9c81     0x21cb
+  BAMBAM.TXD                                                     0x4b9800    0x5c8dc     0x112a
+  GHOST.DFF                                                      0x516800    0x2b3ff      0xda7
+  PS2/BAMBAM.TXD                                                 0x542000    0x19020     0x20e6

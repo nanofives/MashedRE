@@ -1,0 +1,20 @@
+Stallion.piz  version=3  entries=17  size=5654528
+  offset mode: raw
+  name                                                             offset     length         id
+  STALLION.TXD                                                     0x1800    0x5c8e4     0x1a53
+  STALLION0.DFF                                                   0x5e800    0xbd337     0x1c03
+  STALLION1.DFF                                                  0x11c000    0xbd337     0x1c0b
+  STALLION2.DFF                                                  0x1d9800    0xbd337     0x1c13
+  STALLION3.DFF                                                  0x297000    0xbd337     0x1c1b
+  STALLION4.DFF                                                  0x354800    0xbd337     0x1c23
+  STALLION5.DFF                                                  0x412000    0xbd337     0x1c2b
+  GHOST.DFF                                                      0x4cf800    0x2797f      0xda7
+  DEBRIS1.DFF                                                    0x4f7800     0xbd22     0x137c
+  DEBRIS3.DFF                                                    0x503800     0xbd22     0x1388
+  DEBRIS4.DFF                                                    0x50f800     0xbd22     0x138e
+  DEBRIS5.DFF                                                    0x51b800     0xbd22     0x1394
+  DEBRIS0.DFF                                                    0x527800     0xbd22     0x1376
+  DEBRIS2.DFF                                                    0x533800     0xbd22     0x1382
+  STALLIONARMS.DFF                                               0x53f800     0x9c85     0x2dda
+  STALLIONLIGHTS.DFF                                             0x549800     0x115b     0x3b2f
+  PS2/STALLION.TXD                                               0x54b000    0x19028     0x2ea7

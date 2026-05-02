@@ -1,0 +1,20 @@
+Shuriken.piz  version=3  entries=17  size=5183488
+  offset mode: raw
+  name                                                             offset     length         id
+  SHURIKEN.TXD                                                     0x1800    0x5c8e4     0x1a43
+  SHURIKEN0.DFF                                                   0x5e800    0xab4a7     0x1bf3
+  SHURIKEN1.DFF                                                  0x10a000    0xab4a7     0x1bfb
+  SHURIKEN2.DFF                                                  0x1b5800    0xab4a7     0x1c03
+  SHURIKEN3.DFF                                                  0x261000    0xab4a7     0x1c0b
+  SHURIKEN4.DFF                                                  0x30c800    0xab4a7     0x1c13
+  SHURIKEN5.DFF                                                  0x3b8000    0xab4a7     0x1c1b
+  GHOST.DFF                                                      0x463800    0x1d24f      0xda7
+  DEBRIS1.DFF                                                    0x481000     0xc77a     0x137c
+  DEBRIS2.DFF                                                    0x48d800     0xc77a     0x1382
+  DEBRIS3.DFF                                                    0x49a000     0xc77a     0x1388
+  DEBRIS4.DFF                                                    0x4a6800     0xc77a     0x138e
+  DEBRIS5.DFF                                                    0x4b3000     0xc77a     0x1394
+  DEBRIS0.DFF                                                    0x4bf800     0xc77a     0x1376
+  SHURIKENARMS.DFF                                               0x4cc000     0x9c85     0x2dca
+  SHURIKENLIGHTS.DFF                                             0x4d6000     0x1867     0x3b1f
+  PS2/SHURIKEN.TXD                                               0x4d8000    0x19028     0x2ea3
