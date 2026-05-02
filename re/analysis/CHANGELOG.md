@@ -233,3 +233,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  00417640  FUN_00417640  C0->C1  session ai_update-20260502-1952; depth-1 callee; post-step powerup override
 2026-05-02  00417da0  FUN_00417da0  C0->C1  session ai_update-20260502-1952; depth-1 callee; AI control step mode-8 variant
 2026-05-02  00426c00  FUN_00426c00  C0->C1  session ai_update-20260502-1952; depth-1 callee; powerup-state getter DAT_00644158
+2026-05-02  sweep-20260502-2109  scribe-claim-sweep  buckets=5  (render_d3d9_device deferred)
