@@ -23,7 +23,7 @@ C:\Users\maria\Desktop\Proyectos\Mashed\
 └── mashed_pool\                         # CLONES (read-only sessions consume these)
     ├── Mashed_pool0.gpr / .rep / .lock
     ├── Mashed_pool1.gpr / .rep / .lock
-    └── ...                              # up to MAX_SLOTS=8, created lazily
+    └── ...                              # up to MAX_SLOTS=16, created lazily
 ```
 
 The Ghidra binary lives in TD5RE (`C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC`) — **shared, do not duplicate**. Ghidra MCP is also shared from TD5RE (`ghidra-headless-mcp\`).
@@ -54,7 +54,7 @@ bash "C:/Users/maria/Desktop/Proyectos/Mashed/scripts/ghidra_pool.sh" release ${
 | Command | What it does |
 |---|---|
 | `init` | Verifies master exists; first-run setup |
-| `acquire` | Prints `Mashed_poolN`. Reuses unlocked slot if any; creates new slot otherwise. Hits `MAX_SLOTS=8` limit. |
+| `acquire` | Prints `Mashed_poolN`. Reuses unlocked slot if any; creates new slot otherwise. Hits `MAX_SLOTS=16` limit. |
 | `release [N]` | Clears lock files for slot N, or all slots if N omitted |
 | `sync` | Refreshes every unlocked slot from master `.rep` (run this after a GUI editing session) |
 | `status` | Prints pool state |

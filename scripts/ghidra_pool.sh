@@ -23,7 +23,7 @@ MASTER_GPR="$PROJECT_ROOT/Mashed.gpr"
 MASTER_REP="$PROJECT_ROOT/Mashed.rep"
 HEADLESS_GPR="$PROJECT_ROOT/Mashed_headless.gpr"
 POOL_DIR="$PROJECT_ROOT/mashed_pool"
-MAX_SLOTS=8
+MAX_SLOTS=16
 
 slot_gpr()  { echo "$POOL_DIR/Mashed_pool${1}.gpr"; }
 slot_rep()  { echo "$POOL_DIR/Mashed_pool${1}.rep"; }
