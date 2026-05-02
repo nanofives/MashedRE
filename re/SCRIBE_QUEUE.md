@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-02  texture_loader-20260502-1900  bucket=texture_loader  rvas=0x0042a530,0x004b3d20,0x004b3d80
 ```
 
 ## Drained
