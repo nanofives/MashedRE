@@ -452,6 +452,63 @@ After all parallel analysis sessions have committed and pushed, a single Opus sw
 - A queue file is monotonically appended; rebases compose cleanly because no two sessions touch the same row.
 - One sweep session means one master open/close cycle and one sync — minimal master churn, maximum auditability.
 
+## Pool-slot pre-assignment (parallel-fanout only)
+
+When multiple analysis sessions launch in parallel, **each prompt must hard-code its target `Mashed_poolN` slot** in the prompt body. Do **not** let parallel sessions race on `bash scripts/ghidra_pool.sh acquire` — simultaneous acquires hit a TOCTOU window where two sessions both see the same slot unlocked, both think they own it, and one wins the Ghidra `program_open_existing` lock while the other fails with `LockException`. The losing session then wastes tokens on diagnostic output before recovery.
+
+### How prompts must declare the slot
+
+Replace the dynamic acquire step:
+
+```bash
+SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+```
+
+with explicit pre-assignment:
+
+```bash
+SLOT="Mashed_pool<N>"   # pre-assigned for this prompt — do NOT change this value
+echo "$SLOT" > .pool_slot
+
+# Verify the slot is free; halt if not (do NOT auto-acquire a different slot).
+if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+  echo "ERROR: $SLOT is locked. Either wait for the holder to release, or relaunch this prompt with a different SLOT value." >&2
+  exit 1
+fi
+
+# If the slot does not exist yet, create it.
+if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+  bash scripts/ghidra_pool.sh add 1
+  # Re-check that ${SLOT}.gpr now exists; if not, halt.
+fi
+```
+
+### Allocation scheme (within a single launch wave)
+
+- Wave 1 sessions take consecutive slots starting at 0: `Mashed_pool0`, `Mashed_pool1`, `Mashed_pool2`, `Mashed_pool3`.
+- Wave 2 sessions continue: `Mashed_pool4`, `Mashed_pool5`, `Mashed_pool6`, `Mashed_pool7`.
+- Continuation prompts (`*-cont1`) reuse the parent's slot **only if** the parent has fully released it; otherwise pick the next free index above the current wave.
+- NO-MCP sessions (file-format work, sweep) do **not** get a slot.
+
+### Allocation scheme (across non-overlapping batches)
+
+If batch N has fully completed (all sweep done, slots released) before batch N+1 launches, slot indices can be reused. Slot uniqueness is required only **within a single live launch wave**.
+
+### Required in every fanout-batch file
+
+The header table at the top of each `PROMPTS_FANOUT_BATCH*.txt` must include a "Slot" column alongside the ID-range columns. Example:
+
+```
+Session  Bucket             Slot           U range      D range      S range
+S        render_frame       Mashed_pool0   0327..0346   0880..0939   0320..0339
+T        audio_dsound       Mashed_pool1   0347..0366   0940..0999   0340..0359
+...
+```
+
+### When NOT to pre-assign
+
+Ad-hoc one-off RE sessions (not part of a fanout batch) keep using `bash scripts/ghidra_pool.sh acquire` — there's no parallel race to worry about. The pre-assignment rule applies **only** to prompts intended for parallel-wave launch.
+
 ## ID range allocation (parallel-fanout only)
 
 When multiple analysis sessions run in parallel and all may file `U-NNNN` / `D-NNNN` / `S-NNNN` rows, **the prompt for each session pre-allocates an ID range**. The session never goes outside its allocation. If a session would exhaust its range, it halts and asks the user for an extension — does not silently overrun.
