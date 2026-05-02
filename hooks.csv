@@ -8,4 +8,21 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 # scenario: the canonical Frida scenario used for diff (empty until C4)
 # frida_diff: ok|fail|na|pending
 # notes: free text; cite RVAs of related functions
-004a4bb7,entry,boot,C1,mapped,,,,PE entry point; symbol IMPORTED; MSVC EH symbols at 4a3d7e/4a8f33 confirm MSVC C++ compile; analysis at re/analysis/entry_point.md
+004a4bb7,entry,boot,C1,mapped,re/analysis/entry_callees/004a4bb7.md,,,PE entry point; symbol IMPORTED; MSVC EH symbols at 4a3d7e/4a8f33 confirm MSVC C++ compile; depth-1 callees session 2026-05-02
+00492370,sub_00492370,boot,C1,mapped,re/analysis/entry_callees/00492370.md,,,callee of entry; 4-param; 3-phase init then teardown sequence; strings: AppInitialiseOnBootup/AppDestroy/SoftwareTidyUpBeforeExiting/HardwareExitApplication
+004a31f3,sub_004a31f3,boot,C1,mapped,re/analysis/entry_callees/004a31f3.md,,,callee of entry; iterates two fn-ptr tables 005ea03c+005ea000; registers 004a78f4 with _atexit; U-0003 U-0004
+004a332b,sub_004a332b,boot,C1,mapped,re/analysis/entry_callees/004a332b.md,,,callee of entry (no-return path); wrapper: forwards param_1 to FUN_004a3258 with two zero args
+004a334d,sub_004a334d,boot,C1,mapped,re/analysis/entry_callees/004a334d.md,,,callee of entry (normal-return path); wrapper: calls FUN_004a3258(0 0 1)
+004a3440,__chkstk,boot,C1,mapped,re/analysis/entry_callees/004a3440.md,,,library match VS2003 __chkstk; stack-probe loop; reads EAX for size; no callees
+004a4b6e,__amsg_exit,boot,C1,mapped,re/analysis/entry_callees/004a4b6e.md,,,library match VS2003 __amsg_exit; checks DAT_007739f0; calls FUN_004ab8d6 then exits via PTR 006160c4 with 0xff
+004a4b93,fast_error_exit,boot,C1,mapped,re/analysis/entry_callees/004a4b93.md,,,library match VS2003 _fast_error_exit; same shape as __amsg_exit but exits via ___crtExitProcess
+004a5984,__SEH_prolog,boot,C1,mapped,re/analysis/entry_callees/004a5984.md,,,library match VS __SEH_prolog; saves EBX/ESI/EDI/retaddr; installs ExceptionList frame; no callees
+004a59bf,__SEH_epilog,boot,C1,mapped,re/analysis/entry_callees/004a59bf.md,,,library match VS __SEH_epilog; restores ExceptionList from frame; no callees
+004a78b0,sub_004a78b0,boot,C1,mapped,re/analysis/entry_callees/004a78b0.md,,,callee of entry; iterates fn-ptr table at 005e7b84; decompiler shows zero-iteration loop U-0005
+004a8a04,sub_004a8a04,boot,C1,mapped,re/analysis/entry_callees/004a8a04.md,,,callee of entry; TlsAlloc+_calloc(1,0x88)+TlsSetValue; populates DWORD[0x22] block; writes DAT_00616658
+004aa3fe,__heap_init,boot,C1,mapped,re/analysis/entry_callees/004aa3fe.md,,,library match VS2003 __heap_init; HeapCreate(0x1000)+___heap_select+optional ___sbh_heap_init(0x3f8); U-0006
+004abbea,sub_004abbea,boot,C1,mapped,re/analysis/entry_callees/004abbea.md,,,callee of entry; byte-scan on DAT_008ab6c4 (GetCommandLineA result); returns byte ptr into string; checks 0x22 0x21
+004abc53,__setenvp,boot,C1,mapped,re/analysis/entry_callees/004abc53.md,,,library match VS2003 __setenvp; builds ptr array from DAT_007739e8 env strings; writes DAT_007739bc+DAT_008ab6c8
+004abe86,sub_004abe86,boot,C1,mapped,re/analysis/entry_callees/004abe86.md,,,callee of entry; __fastcall; GetModuleFileNameA->buf 00773c40; two-pass FUN_004abd1a; writes 007739b0/b4/cc
+004abf28,___crtGetEnvironmentStringsA,boot,C1,mapped,re/analysis/entry_callees/004abf28.md,,,library match VS2003; wide vs ANSI env-strings path; mode flag DAT_00773d48; WideCharToMultiByte
+004ac04a,sub_004ac04a,boot,C1,mapped,re/analysis/entry_callees/004ac04a.md,,,callee of entry; CRT file-handle table init; _malloc(0x480) blocks; GetStartupInfoA reserved2 inheritance; GetStdHandle 3x
