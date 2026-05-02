@@ -103,3 +103,23 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005aec00,FUN_005aec00,audio,C1,mapped,re/analysis/audio_rws_loader/005aec00.md,,,byte-reverse buffer in-place; param_2/2 swap iterations; endian correction
 00495530,FUN_00495530,input,C1,mapped,re/analysis/input_dinput/00495530.md,,,DirectInput8Create init wrapper; GetModuleHandleA(NULL) then DirectInput8Create(hmod,0x800@00495549,DAT_005d0a8c@00495544,DAT_00771e78@0049553f,0); ret 1 on success; U-0267 U-0268
 004987b0,FUN_004987b0,input,C1,mapped,re/analysis/input_dinput/004987b0.md,,,debug printf wrapper; 512-byte buf; FUN_004a42c5(buf,fmt,va)+OutputDebugStringA; cookie DAT_00616038@body; S-0260; D-0700
+004c2c90,FUN_004c2c90,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004c2c90.md,,,vtable dispatch param_1+4 with cmd ID param_2; switch cases 0xd-0x12; default path calls FUN_004d7ff0(0x18@004c2d38)+FUN_004d8480; U-0227 U-0228
+004ccf20,FUN_004ccf20,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004ccf20.md,,,doubly-linked-list teardown; outer loop on DAT_007d45cc; inner per-node vtable call +0x10c; conditional +0x11c; zeroes DAT_007d45fc+007d45f8; U-0229 U-0230 U-0231
+004d7ca0,FUN_004d7ca0,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004d7ca0.md,,,guards DAT_007d6c50; calls FUN_004ccce0; iterates array at DAT_007d6c54 freeing structs via vtable +0x11c/+0x10c; calls FUN_004cc9f0; returns 1; U-0232 U-0233 S-0222 S-0223
+004d8060,FUN_004d8060,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004d8060.md,,,linked-list iteration; reads head from param_1+0x14; calls fn ptr at node+0x24 with (param_2 *node node[1]); advance via node+0x34; returns param_1; U-0234
+00551510,FUN_00551510,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x00551510.md,,,dispatch on param_2; 1=call fn ptr at param_1+0x20 with param_1+0x50; 2=call fn ptr at param_1+0x24 with param_1+0x50; all indirect; U-0235
+004a2be9,__security_check_cookie,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a2be9.md,,,cookie@DAT_00616038; calls report_failure(004a2bb8) on mismatch; S-0180
+004a2bf7,FUN_004a2bf7,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a2bf7.md,,,writes 6 fn-ptrs to 006160d8..006160ec: __cfltcvt/__fassign/__forcdecpt + LAB labels; U-0187 U-0188
+004a34b0,_strncpy,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a34b0.md,,,library VS; dword-at-a-time with 0x7efefeff@body; null-detect; no callees
+004a4126,__onexit,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a4126.md,,,library VS2003; SEH frame; calls FUN_004a31e1+__onexit_lk+FUN_004a4158; returns __onexit_lk result; S-0181 S-0182 S-0183; U-0189 U-0190
+004a4728,FUN_004a4728,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a4728.md,,,8-byte wrapper; calls FUN_004a77eb(4)
+004a5de3,FUN_004a5de3,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a5de3.md,,,calls __controlfp(0x10000,0x30000)@body; S-0184
+004a5e35,__ms_p5_mp_test_fdiv,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a5e35.md,,,library VS2003; GetModuleHandleA(KERNEL32)+GetProcAddress(IsProcessorFeaturePresent); fallback __ms_p5_test_fdiv@004a5df5; S-0185
+004a5f07,___endstdio,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a5f07.md,,,library VS2003; __flushall unconditional; DAT_007739d4 guard for __fcloseall; S-0186 S-0187
+004a7796,__mtdeletelocks,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a7796.md,,,library VS; two-pass loop 006408..616528 step+8; pass1 deletes+frees non-pinned; pass2 deletes pinned(flag=1)
+004a77eb,FUN_004a77eb,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a77eb.md,,,LeaveCriticalSection(&DAT_00616408[param_1*2])
+004a787f,__lock,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004a787f.md,,,library VS2003; lazy-init via FUN_004a7800 if slot==0; __amsg_exit(0x11) on fail; EnterCriticalSection; S-0188
+004aac76,___sbh_alloc_block,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004aac76.md,,,library VS2003; SBH region/group scan+split; alloc from 008aa688 array; S-0189 S-0190; U-0191
+004aaf72,__callnewh,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004aaf72.md,,,library VS2003; calls DAT_00773c30 new-handler if non-null; returns 1 on handled
+004aaf90,_memset,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004aaf90.md,,,library VS; 4-byte-aligned fill with 0x1010101 replication; no callees
+004ac45c,___crtMessageBoxA,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004ac45c.md,,,library VS2003; lazy LoadLibrary(user32)+GetProcAddress; MB_DEFAULT_DESKTOP_ONLY(0x40000)/MB_SERVICE_NOTIFICATION(0x200000) via DAT_007739a8

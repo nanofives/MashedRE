@@ -72,3 +72,29 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0082 | 0x004d7ca0 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004d7ca0; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
 | S-0083 | 0x004ccf20 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004ccf20; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
 | S-0260 | 0x004a42c5 | 0x004987b0 FUN_004987b0 | input | passthrough | 2026-05-02 | FUN_004a42c5; varargs string formatter (3-arg: output_buf, format_ptr, va_list_ptr); depth-2 callee of FUN_004987b0; filed as D-0700 |
+| S-0100 | 0x004522d6 | 0x004522d0 FUN_004522d0 | audio | passthrough | 2026-05-02 | Indirect dispatch target through DAT_007d3ff8+0x10c; not statically traceable |
+| S-0101 | 0x004d7ff0 FUN_004d7ff0 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | Error-code constructor; called on short read and EOF; depth-2 of FUN_004cbd30 |
+| S-0102 | 0x004d8480 FUN_004d8480 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | Error dispatcher/logger; called after FUN_004d7ff0; depth-2 of FUN_004cbd30 |
+| S-0103 | 0x00550950 FUN_00550950 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | File-read wrapper (fread-level); cases 1+2 of stream dispatch; depth-2 of FUN_004cbd30 |
+| S-0104 | 0x00550af0 FUN_00550af0 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | EOF checker; called after short read or seek failure; also called from FUN_004cc050; depth-2 |
+| S-0105 | 0x005509b0 FUN_005509b0 | 0x004cc050 FUN_004cc050 | audio | passthrough | 2026-05-02 | File-seek wrapper (fseek-level); seek mode 1; depth-2 of FUN_004cc050 |
+| S-0106 | 0x005a7a40 FUN_005a7a40 | 0x005a79a0 FUN_005a79a0 | audio | passthrough | 2026-05-02 | Searches pool list for wave node match; depth-2 of FUN_005a79a0 |
+| S-0107 | 0x005ade90 FUN_005ade90 | 0x005a79a0 FUN_005a79a0 | audio | passthrough | 2026-05-02 | Resets embedded list head at param_1+0xc; depth-2 of FUN_005a79a0 |
+| S-0108 | 0x005a7ea0 FUN_005a7ea0 | 0x005a79a0 FUN_005a79a0 | audio | passthrough | 2026-05-02 | Final deallocation of audio object; depth-2 of FUN_005a79a0 |
+| S-0109 | 0x005ae0c0 FUN_005ae0c0 | 0x005a7ee0 FUN_005a7ee0 | audio | passthrough | 2026-05-02 | Initialises sub-structure at audio_obj+0x24; called conditionally on param_1[0] != 0; depth-2 |
+| S-0110 | 0x005ae010 FUN_005ae010 | 0x005a7ee0 FUN_005a7ee0 | audio | passthrough | 2026-05-02 | Links audio_obj with sub-structure at +0x24; depth-2 of FUN_005a7ee0 |
+| S-0111 | 0x005adfe0 FUN_005adfe0 | 0x005a7ee0 FUN_005a7ee0 | audio | passthrough | 2026-05-02 | Initialises sub-structure at audio_obj+0x34; depth-2 of FUN_005a7ee0 |
+| S-0112 | 0x005ac740 FUN_005ac740 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Cleans sub-structure at wave_node+0x10 or +0x2c; called twice; depth-2 of FUN_005abcf0 |
+| S-0113 | 0x005a7e70 FUN_005a7e70 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Unknown wave_node operation; depth-2 of FUN_005abcf0 |
+| S-0114 | 0x005ae030 FUN_005ae030 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Unknown wave_node operation; depth-2 of FUN_005abcf0 |
+| S-0115 | 0x005abcb0 FUN_005abcb0 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Final deallocation of wave_node; depth-2 of FUN_005abcf0 |
+| S-0116 | 0x005ac210 FUN_005ac210 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Creates wave object from 0x803 format data; depth-2 of FUN_005abfa0 |
+| S-0117 | 0x005adf30 FUN_005adf30 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Compares two format descriptors; used against DAT_005e6414 and DAT_005e6444; depth-2 |
+| S-0118 | 0x005aec30 FUN_005aec30 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Byte-swaps audio sample buffer; called when endian flag set and bit-depth > 8; depth-2 |
+| S-0119 | 0x005abd30 FUN_005abd30 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Feeds PCM chunk to audio system; depth-2 of FUN_005abfa0 |
+| S-0120 | 0x005abf80 FUN_005abf80 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Drain/flush audio system; called in loop while returns 1; depth-2 of FUN_005abfa0 |
+| S-0121 | 0x005ae920 FUN_005ae920 | 0x005ade10 FUN_005ade10 | audio | passthrough | 2026-05-02 | Returns list node to free pool at DAT_009146c0; depth-2 of FUN_005ade10 |
+| S-0220 | 0x004d7ff0 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d7ff0; called with (0x18, param_2) in default handler of FUN_004c2c90; depth-3; already D-0233, S-0101 |
+| S-0221 | 0x004d8480 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d8480; called with &uStack_8 in default handler of FUN_004c2c90; depth-3; already D-0234, S-0102 |
+| S-0222 | 0x004ccce0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004ccce0; called with (DAT_007d6c50, &LAB_004d7d70, DAT_007d6c50); depth-3; DEFERRED D-0580 |
+| S-0223 | 0x004cc9f0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004cc9f0; called with DAT_007d6c50 as single arg; depth-3; DEFERRED D-0581 |
