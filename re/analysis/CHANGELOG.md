@@ -222,3 +222,14 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  00473540  FUN_00473540          C0->C1  RwIm2D gradient-quad: 4-vert; split per-vertex ARGB; U-0457 (re/analysis/hud_frontend/0x00473540.md)
 2026-05-02  004739f0  FUN_004739f0          C0->C1  RwIm2D textured-quad: 12-param; UV at vert+20..+24; state9 conditional; U-0458 U-0459 (re/analysis/hud_frontend/0x004739f0.md)
 2026-05-02  004a2c48  FUN_004a2c48          C0->C1  FPU ROUND(ST0)->ulonglong; banker's rounding; no callees; frame-counter source; U-0460 (re/analysis/hud_frontend/0x004a2c48.md)
+2026-05-02  00418560  FUN_00418560  C0->C1  session ai_update-20260502-1952; decomp + depth-1 callees; per-vehicle AI dispatcher
+2026-05-02  00407a40  FUN_00407a40  C0->C1  session ai_update-20260502-1952; depth-1 callee of 00418560; getter 0x8a9640+v*0x30c
+2026-05-02  0040e350  FUN_0040e350  C0->C1  session ai_update-20260502-1952; depth-1 callee; game-mode getter DAT_0063ba8c
+2026-05-02  0040e4a0  FUN_0040e4a0  C0->C1  session ai_update-20260502-1952; depth-1 callee; elapsed-time getter DAT_005f29b8
+2026-05-02  00413fe0  FUN_00413fe0  C0->C1  session ai_update-20260502-1952; depth-1 callee; AI state reset 4 vehicles stride 0x74
+2026-05-02  00416250  FUN_00416250  C0->C1  session ai_update-20260502-1952; depth-1 callee; primary AI control step; behavior mode 0-10
+2026-05-02  00416a30  FUN_00416a30  C0->C1  session ai_update-20260502-1952; depth-1 callee; AI control step mode-4/9 variant
+2026-05-02  00417180  FUN_00417180  C0->C1  session ai_update-20260502-1952; depth-1 callee; AI spline-bank switcher
+2026-05-02  00417640  FUN_00417640  C0->C1  session ai_update-20260502-1952; depth-1 callee; post-step powerup override
+2026-05-02  00417da0  FUN_00417da0  C0->C1  session ai_update-20260502-1952; depth-1 callee; AI control step mode-8 variant
+2026-05-02  00426c00  FUN_00426c00  C0->C1  session ai_update-20260502-1952; depth-1 callee; powerup-state getter DAT_00644158

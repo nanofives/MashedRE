@@ -279,3 +279,34 @@ A row goes into DEFERRED when:
 | D-1301 | 10 depth-2 callees of FUN_00456760 (GatlingGun init): 0x0040bb30,0x0042a5d0,0x00474d60,0x00476cb0,0x004770c0,0x004b3fc0,0x004b5190,0x004b5240,0x004c5c80,0x004e6ab0,0x004e6e00 | depth-2; not recursed per session rules | powerups-cont1 | vehicle |
 | D-1302 | 9 depth-2 callees of FUN_004587a0 (PowerUpIcons init): 0x0040bb30,0x004770c0,0x004b3b70,0x004b3d80,0x004b3e40,0x004b6520,0x004b65a0,0x004b65b0,0x004c5c80 | depth-2; not recursed per session rules | powerups-cont1 | vehicle |
 | D-1303 | 9 depth-2 callees of FUN_00459290 (Laser/Lazer init): 0x0040bb30,0x00474d60,0x00476c10,0x00476cb0,0x004770c0,0x004b3bf0,0x004b3d80,0x004c57a0,0x004c5c80 | depth-2; not recursed per session rules | powerups-cont1 | vehicle |
+
+| D-1120 | 0x00408af0 FUN_00408af0 | depth-2 callee of FUN_00416250 (ai_update session); called as FUN_00408af0(param_2) → float array pointer used in mode-2 steering dot-product | ai_update-cont1 | ai |
+| D-1121 | 0x00414570 FUN_00414570 | depth-2 callee of FUN_00416250; called as FUN_00414570(spline,&local_24,&local_2c,vehicle_idx) → iVar5; highest-priority targeting decision | ai_update-cont1 | ai |
+| D-1122 | 0x004148b0 FUN_004148b0 | depth-2 callee of FUN_00416250; called in game-mode-6 branch when local_48==0; same 4-arg targeting signature | ai_update-cont1 | ai |
+| D-1123 | 0x00414a70 FUN_00414a70 | depth-2 callee of FUN_00416250; iVar5==2 causes immediate brake-return (param_3[4]=0,param_3[5]=0xff); iVar5==1 sets mode-3 | ai_update-cont1 | ai |
+| D-1124 | 0x00414c30 FUN_00414c30 | depth-2 callee of FUN_00416250; iVar5==2 AND FUN_00416060!=0 → mode-7 (partial throttle 0x40); iVar5==1 → mode-3 | ai_update-cont1 | ai |
+| D-1125 | 0x00414f00 FUN_00414f00 | depth-2 callee of FUN_00416250; gated on FUN_00426c00==0x21; on hit → mode-10 | ai_update-cont1 | ai |
+| D-1126 | 0x00415020 FUN_00415020 | depth-2 callee of FUN_00416250; called in game-mode-6 gate; takes param_2 only; on != 0 → mode-5 | ai_update-cont1 | ai |
+| D-1127 | 0x004150e0 FUN_004150e0 | depth-2 callee of FUN_00416250; takes (&local_1c,param_2); iVar5==1 → mode-9 (lateral brake adjustments) | ai_update-cont1 | ai |
+| D-1128 | 0x00415220 FUN_00415220 | depth-2 callee of FUN_00416250; 5-arg: (spline,&local_24,&local_2c,vehicle_idx,uVar6); vehicle-target AI; on hit → mode-8; gated by DAT_0088fc88[v*0x2d] != 0 | ai_update-cont1 | ai |
+| D-1129 | 0x00415880 FUN_00415880 | depth-2 callee of FUN_00416250; priority-2 targeting; gated by FUN_00415d00==0 to accept | ai_update-cont1 | ai |
+| D-1130 | 0x00415d00 FUN_00415d00 | depth-2 callee of FUN_00416250; called as FUN_00415d00(param_2) → suppresses mode-2 acceptance when != 0 | ai_update-cont1 | ai |
+| D-1131 | 0x00415e20 FUN_00415e20 | depth-2 callee of FUN_00416250; called as FUN_00415e20(param_2,local_24,local_20) → steering float (ST0); drives steer output bytes and speed-limit comparisons | ai_update-cont1 | ai |
+| D-1132 | 0x00416060 FUN_00416060 | depth-2 callee of FUN_00416250; called as FUN_00416060(&local_1c,&local_2c) → gate check used across all targeting decisions; on == 0, candidate target is discarded | ai_update-cont1 | ai |
+| D-1133 | 0x004161e0 FUN_004161e0 | depth-2 callee of FUN_00416250; called as FUN_004161e0(spline,&local_24,param_2); initialises target point index local_24 | ai_update-cont1 | ai |
+| D-1134 | 0x00443080 FUN_00443080 | depth-2 callee of FUN_00416250; called in game-mode-6 gate as FUN_00443080() → must return 0 to enable mode-6 path | ai_update-cont1 | ai |
+| D-1135 | 0x00443440 FUN_00443440 | depth-2 callee of FUN_00416250; called as FUN_00443440(spline,&local_1c,0x41200000,&local_40,0) → spline distance/progress float; 0x41200000=float 10.0 | ai_update-cont1 | ai |
+| D-1136 | 0x0046d4a0 FUN_0046d4a0 | depth-2 callee of FUN_00416250; called as FUN_0046d4a0(&local_30,param_2) → per-vehicle pointer into local_30; local_30+0x30 and +0x38 read as vehicle state | ai_update-cont1 | ai |
+| D-1137 | 0x0046d510 FUN_0046d510 | depth-2 callee of FUN_00416250; called as FUN_0046d510(&local_14,param_2) → 3-float vector into local_14/local_10/local_c; used in mode-2 dot-product | ai_update-cont1 | ai |
+| D-1138 | 0x0046d6a0 FUN_0046d6a0 | depth-2 callee of FUN_00416250; called as FUN_0046d6a0(&local_38,param_2) → float into local_38; compared against speed/change thresholds for brake override | ai_update-cont1 | ai |
+| D-1139 | 0x0046d6d0 FUN_0046d6d0 | depth-2 callee of FUN_00416250; called as FUN_0046d6d0(&local_3c,param_2) → float into local_3c; compared against _DAT_005cd0dc/_005cd0d8 in mode-9 branch | ai_update-cont1 | ai |
+
+| D-1140 | 0x00414030 FUN_00414030 | depth-2 callee of FUN_00417180; called as FUN_00414030(0xffffffff) on AI line-bank switches; return value via ECX/EDX; S-0403 | ai_update-cont1 | ai |
+| D-1141 | 0x00472650 FUN_00472650 | depth-2 callee of FUN_00417180; called as FUN_00472650(0, 0x3f800000); returns float10; compared against _DAT_005cc32c for random spline variation; S-0404 | ai_update-cont1 | ai |
+
+| D-1142 | 0x00452160 FUN_00452160 | depth-2 callee of FUN_00417640; called as FUN_00452160() → float array ptr (target vehicle position?); S-0405 | ai_update-cont1 | ai |
+| D-1143 | 0x00452ea0 FUN_00452ea0 | depth-2 callee of FUN_00417640; called as FUN_00452ea0(param_1) → per-vehicle powerup predicate; S-0406 | ai_update-cont1 | ai |
+| D-1144 | 0x00452eb0 FUN_00452eb0 | depth-2 callee of FUN_00417640; called as FUN_00452eb0() → float10; threshold gate; S-0407 | ai_update-cont1 | ai |
+| D-1145 | 0x0046d570 FUN_0046d570 | depth-2 callee of FUN_00417640; called as FUN_0046d570(&local_10,param_1) → float; distinct from FUN_0046d6d0; S-0408 | ai_update-cont1 | ai |
+| D-1146 | 0x004c3ac0 FUN_004c3ac0 | depth-2 callee of FUN_00417640; called as FUN_004c3ac0(&local_c) → in-place op on 3-float displacement; S-0409 | ai_update-cont1 | ai |
+| D-1147 | 0x00417cf0 FUN_00417cf0 | depth-2 callee of FUN_00417da0; replaces FUN_004148b0 in mode-8 variant targeting; same 4-arg signature; S-0410 | ai_update-cont1 | ai |

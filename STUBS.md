@@ -266,3 +266,13 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0455 | 0x00474890 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00474890; secondary logo/sprite submit; single int arg (uVar4); depth-2 |
 | S-0456 | 0x0042b8b0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8b0; returns short; used as X-axis screen dimension/scale; depth-2 |
 | S-0457 | 0x0042b8c0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8c0; returns short; used as Y-axis screen dimension/scale; depth-2 |
+
+| S-0403 | 0x00414030 FUN_00414030 | called with 0xffffffff on AI line-bank switches in FUN_00417180; return via ECX/EDX |
+| S-0404 | 0x00472650 FUN_00472650 | called as FUN_00472650(0, 0x3f800000) in FUN_00417180; returns float10; likely random [0,1.0] |
+
+| S-0405 | 0x00452160 FUN_00452160 | called as FUN_00452160() in FUN_00417640; returns float array ptr (target vehicle position?) |
+| S-0406 | 0x00452ea0 FUN_00452ea0 | called as FUN_00452ea0(param_1) in FUN_00417640; per-vehicle powerup predicate |
+| S-0407 | 0x00452eb0 FUN_00452eb0 | called as FUN_00452eb0() in FUN_00417640; returns float10; threshold gate |
+| S-0408 | 0x0046d570 FUN_0046d570 | called as FUN_0046d570(&local_10,param_1) in FUN_00417640; float result |
+| S-0409 | 0x004c3ac0 FUN_004c3ac0 | called as FUN_004c3ac0(&local_c) in FUN_00417640; in-place op on 3-float displacement |
+| S-0410 | 0x00417cf0 FUN_00417cf0 | called as FUN_00417cf0(param_1,&local_24,&local_2c,param_2) in FUN_00417da0 mode-6/local_48==0 branch; replaces FUN_004148b0 in mode-8 variant |

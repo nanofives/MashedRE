@@ -172,3 +172,19 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0458 | structural | 0x004739f0 FUN_004739f0 | UV layout: param_7..param_10 stored at vertex offsets +20..+24 in 28-byte struct; exact mapping of params to U/V per corner not confirmed | Vertex format declaration + caller context | Cross-check 0x00898a34..0x00898a8c assignment pattern against RW Im2DVertex UV layout | none |
 | U-0459 | semantic | 0x004739f0 FUN_004739f0 | param_11==2 mode scales only Y coords using _DAT_005ceac4 (distinct from _DAT_005cc560); the coordinate system this corresponds to unresolved | Caller context + decomp of _DAT_005ceac4 initialization | mcp__ghidra__reference_to 0x005ceac4 to find writer + caller analysis | none |
 | U-0460 | provenance | 0x004a2c48 FUN_004a2c48 | in_ST0 (FPU TOS float80) at entry: Ghidra does not show what value is pushed before call; in FUN_0042e5b0 result is masked &0x1ff suggesting a frame-time float | Caller instruction context + time-source identification | mcp__ghidra__listing_code_units_list around call site in FUN_0042e5b0 | none |
+
+| U-0413 | 0x00416250 | param_3 byte indices: 0/1=steer, 4=accel, 5=brake inferred from control patterns but byte-to-axis mapping unverified | cross-reference param_3 consumers in vehicle/input subsystem |
+| U-0414 | 0x00416250 | FUN_0046d6a0 result (local_38) and FUN_0046d6d0 result (local_3c): floats used in speed/brake thresholds; semantic names unknown | decomp FUN_0046d6a0/d6d0 |
+| U-0415 | 0x00416250 | DAT_0088fc88[param_2*0x2d]: non-zero enables vehicle-targeting AI; stride and field semantics unknown | trace in vehicle data struct |
+| U-0416 | 0x00416250 | behavior mode values 0..10: semantic names unknown; mode 7 and 5 show partial-throttle patterns | accumulate from targeting callee analysis |
+| U-0417 | 0x00416a30 | split between FUN_00416a30 (modes 4/9) and FUN_00416250 (other): modes 5/10 and FUN_004148b0 path absent in 00416a30; reason for split unknown | compare game-mode semantics |
+| U-0418 | 0x00417180 | FUN_00414030(0xffffffff): called on AI line-bank switches; return via ECX/EDX; purpose unknown | decomp FUN_00414030 |
+| U-0419 | 0x00417180 | FUN_00472650(0, 0x3f800000): returns float10; used in random spline variation; deterministic or RNG unknown | decomp FUN_00472650 |
+| U-0420 | 0x00417180 | switch timer threshold 9000: units (ms, frames, ticks?) unknown | correlate with DAT_007f1008 frame delta |
+| U-0421 | 0x00426c00 | DAT_00644158: callers check == 0x21; full enum/flag layout unknown | search all reads of 0x00644158 |
+| U-0422 | 0x00417640 | FUN_00452eb0() float10 threshold _DAT_005cc72c: semantic role unknown | decomp FUN_00452eb0 |
+| U-0423 | 0x00417640 | FUN_00452ea0(param_1): per-vehicle powerup predicate; meaning unknown | decomp FUN_00452ea0 |
+| U-0424 | 0x00417640 | FUN_00452160() → float ptr: target vehicle position array? | decomp FUN_00452160 |
+| U-0425 | 0x00417640 | FUN_0046d570(&local_10, param_1): float result distinct from FUN_0046d6d0; semantic unknown | decomp FUN_0046d570 |
+| U-0426 | 0x00417640 | FUN_004c3ac0(&local_c): in-place op on 3-float displacement; normalize/project/dot-product unknown | decomp FUN_004c3ac0 |
+| U-0427 | 0x00417da0 | FUN_00417cf0 vs FUN_004148b0: mode-8 variant uses different targeting; reason unknown | decomp both targeting callees |
