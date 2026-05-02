@@ -1,0 +1,9 @@
+[submodule "re/prior_art/MashedRunner"]
+	path = re/prior_art/MashedRunner
+	url = https://github.com/SciLor/MashedRunner.git
+[submodule "re/prior_art/MashedFileExtractor"]
+	path = re/prior_art/MashedFileExtractor
+	url = https://github.com/SciLor/MashedFileExtractor.git
+[submodule "re/prior_art/MashedTrainer"]
+	path = re/prior_art/MashedTrainer
+	url = https://github.com/SciLor/MashedTrainer.git

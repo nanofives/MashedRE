@@ -8,6 +8,14 @@
         "--ghidra-install-dir",
         "C:\\Users\\maria\\Desktop\\Proyectos\\TD5RE\\ghidra_12.0.3_PUBLIC"
       ]
+    },
+    "frida-game-hacking": {
+      "command": "py",
+      "args": [
+        "-3.12",
+        "-m",
+        "frida_game_hacking_mcp"
+      ]
     }
   }
 }

@@ -39,6 +39,7 @@
     ]
   },
   "enabledMcpjsonServers": [
-    "ghidra"
+    "ghidra",
+    "frida-game-hacking"
   ]
 }

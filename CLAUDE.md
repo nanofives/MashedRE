@@ -4,7 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project: Mashed RE
 
-Reverse-engineering and reimplementation of **Mashed: Fully Loaded** (Supersonic Software, 2004; published by Strategy First / Empire Interactive). The goal is a gta-reversed-style replacement DLL that reimplements the game's logic function-by-function, while keeping the original `MASHED.exe` as the bootstrap and asset host.
+Reverse-engineering and reimplementation of **Mashed: Fully Loaded** (Supersonic Software, 2004; published by Strategy First / Empire Interactive).
+
+**Project intent: greenfield source port** (re3 / TD5RE shape). The end state is a standalone `mashed_re.exe` that loads Mashed's data files and runs without `MASHED.exe`. The original is **only** used during development as the diffing reference.
+
+Two build targets share one source tree:
+- `mashed_re.exe` — shipping standalone (greenfield).
+- `mashed_re_dev.asi` — dev-only hook DLL injected into `MASHED.exe` via Ultimate-ASI-Loader, used for Frida-diff verification of new reimplementations against original behavior. Never shipped.
+
+See `re/INJECTION.md` for why we still need a hook harness during dev (it lets us test reversed code against real game state).
 
 ## Engine, anchors, and the "two Ghidra projects" arrangement
 
@@ -88,6 +96,23 @@ Every Ghidra session and every reversed function must follow this:
 ### Verification
 
 A hook is accepted only when the `diff-original` skill produces a clean Frida diff between original and modded behavior. Compile-passes-and-doesn't-crash is not acceptance.
+
+## Operating principles
+
+**Stop and ask.** When any of the following holds, **halt and ask the user** rather than infer or pick:
+- Two interpretations of a request both have material consequences.
+- A confidence promotion is missing required evidence (no Frida diff, no analysis note, etc.) — refuse, don't paper over.
+- An action is destructive or hard-to-reverse: `rm`, `git push --force`, master Ghidra writes while another session may be active, branch deletion, dependency removal.
+- A tracker conflict has substantive disagreement (not just an ID renumber).
+- A subsystem boundary is ambiguous when classifying a function.
+- A new MCP / dependency / build tool is needed but the user hasn't approved it.
+- Architecture-level decisions (greenfield vs hook, MSVC vs MinGW, renderer choice).
+
+**Cite, don't paraphrase.** Every claim about original behavior cites an RVA. Every constant cites its address. NO-GUESSING — `re/CONFIDENCE.md`.
+
+**Trackers are load-bearing.** Mutate `hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `DEFERRED.md` only via `re-classify`. Hand-edits drift.
+
+**Skills are entry points.** Use the skill catalog (below) by name; if no skill fits, ask before inventing a new one.
 
 ## Roadmap, DoD, and trackers
 

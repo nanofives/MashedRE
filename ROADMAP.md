@@ -83,20 +83,22 @@ The project is **DONE** (v1.0) when:
 - Every global accessed during boot has a documented type.
 - Frida boot trace runs and is checked into `verify/boot_trace_baseline.csv`.
 
-### Phase 4 — First runtime hook (target: 2 weeks)
-**Goal:** prove the gta-reversed-style hook system end-to-end on one small, isolated function. This is a process gate, not a content gate.
+### Phase 4 — Dev harness + standalone skeleton (target: 2–3 weeks)
+**Goal:** stand up *both* build targets (greenfield exe + dev-mode hook DLL) and prove the verification loop on one small function.
 **Activities:**
-- Stand up the MinGW build under `mashedmod/` (port TD5RE's build_standalone.bat shape).
-- Implement the inline-JMP hook installer + runtime-toggle registry.
-- Pick a tiny target function (typically a pure utility — string compare, math helper) and ship it through F-DoD.
+- Install MSVC Build Tools 2022 (x86); write `mashedmod/src/mashed_re/build.bat` calling `vcvars32.bat`.
+- Scaffold `mashed_re.exe` standalone: `WinMain`, empty event loop, exits cleanly.
+- Scaffold `mashed_re_dev.asi` with the inline-JMP hook installer + runtime toggle registry.
+- Drop Ultimate-ASI-Loader (`d3d9.dll`) into `original\`; install `.asi`; confirm game still runs.
+- Pick one leaf function (e.g., a math util) and ship it through F-DoD using the hook + Frida diff.
 **Exit criteria:**
-- `mashedmod/build/mashed_re.dll` builds cleanly.
-- DLL injects into `MASHED.exe` (via ASI loader OR custom launcher) and the game still runs.
+- `mashed_re.exe` builds and exits 0.
+- `mashed_re_dev.asi` builds, loads into `MASHED.exe`, game still runs.
 - One function is C4 in `hooks.csv` with a green Frida diff.
-- `hook-author` and `diff-original` skills are battle-tested and any rough edges fixed.
+- `hook-author` and `diff-original` skills exercised end-to-end.
 
 ### Phase 5 — Subsystem sweeps (target: 4–8 weeks each, parallelizable)
-**Goal:** progressively bring each subsystem to S-DoD.
+**Goal:** progressively reverse each subsystem and land its functions into the **standalone exe**, using the dev harness for verification.
 **Order (suggested, by isolation):**
 1. **Frontend / HUD** — most isolated, lowest blast radius.
 2. **Save / Load** — pure data, no rendering.
@@ -106,10 +108,15 @@ The project is **DONE** (v1.0) when:
 6. **AI** — depends on Vehicle, Track.
 7. **Track / World** — depends on Asset Phase 2.
 8. **Render** — touches everything; do last.
-**Exit criteria per subsystem:** S-DoD as defined above.
+**Per subsystem:** functions land in `mashed_re/<Subsystem>/`, hooks register them in the dev target only, the standalone exe links them directly. Hook-mode is gradually removed for any subsystem the standalone can run unaided.
+**Exit criteria per subsystem:** S-DoD as defined above; the standalone exe runs the canonical scenario for that subsystem with no hooks active.
 
-### Phase 6 — Standalone build (optional, target: open-ended)
-**Goal:** TD5RE-style: replace `MASHED.exe` itself with a standalone executable that links the modded code directly, no injection.
+### Phase 6 — Standalone v1 (target: when last subsystem is S-DONE)
+**Goal:** the standalone exe runs every track / vehicle / mode without `MASHED.exe`.
+**Activities:**
+- Decide renderer endgame: keep RenderWare 3 (if a build is licensable / available), or replace with a D3D11 backend like TD5RE's `ddraw_wrapper`.
+- Strip the dev harness from the build matrix.
+- Final pass on `STUBS.md` / `UNCERTAINTIES.md` — every row resolved or `wontfix`.
 **Exit criteria:** P-DoD.
 
 ## Per-phase rituals
@@ -121,4 +128,6 @@ The project is **DONE** (v1.0) when:
 
 ## Sizing reality check
 
-This roadmap describes ~6–18 months of solo work for a 2.8 MB binary. Mashed has ~2,000–4,000 functions (verify in Phase 1); a sustainable pace is 5–15 functions to C4 per week. Don't promise dates — promise phase exits.
+`MASHED.exe` has **5,800 functions** identified after auto-analysis (full inventory at `re/analysis/function_inventory.csv`). At a sustainable 5–15 functions to C4 per week, full C4 coverage is multi-year. **C4 is not the goal for every function** — the goal is **S-DoD** per subsystem, which typically needs 20–40% of a subsystem's functions at C4 (the public/cross-subsystem ones), with the rest at C2/C3 (correct-by-construction leaf utilities).
+
+Realistic horizon for a P-DoD shipping `mashed_re.exe`: 12–24 months solo, depending on how much of the renderer is rebuilt (RenderWare passthrough vs D3D11 replacement). Don't promise dates — promise phase exits.
