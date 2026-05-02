@@ -341,3 +341,7 @@ A row goes into DEFERRED when:
 | D-1789 | 0x0042f780 FUN_0042f780 | zero-arg bool; trigger check B channel DAT_00604e1c; depth-2 of audio_music; S-0629 | audio_music-cont1 session | audio |
 | D-1790 | 0x00432230 FUN_00432230 | zero-arg bool; trigger check channel DAT_00605918; depth-2 of audio_music; S-0630 | audio_music-cont1 session | audio |
 | D-1791 | 0x00432260 FUN_00432260 | zero-arg bool; trigger check musicloop1 (DAT_00605d24); depth-2 of audio_music; S-0631 | audio_music-cont1 session | audio |
+| D-1660 | 0x00534870 FUN_00534870 | RNG get-value; __thiscall from FUN_00472650; depth-2 of effects_particle; S-0595 | effects_particle-cont1 session | render |
+| D-1661 | 0x00535700 FUN_00535700 | particle vertex buffer map/lock; (emitter, &ptr, channel_id, flags); depth-2 of FUN_00476df0; S-0596 | effects_particle-cont1 session | render |
+| D-1662 | 0x00535910 FUN_00535910 | particle vertex buffer unlock/draw; (emitter_ptr); depth-2 of FUN_00476df0; S-0597 | effects_particle-cont1 session | render |
+| D-1663 | 0x00538c80 FUN_00538c80 | world sector query with callback; depth-2 of FUN_0048fe70; S-0598 | effects_particle-cont1 session | render |

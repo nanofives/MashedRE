@@ -311,3 +311,12 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0629 | 0x0042f780 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f780; zero-arg, returns int; boolean trigger check B for channel DAT_00604e1c; D-1789 |
 | S-0630 | 0x00432230 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00432230; zero-arg, returns int; boolean trigger check for channel DAT_00605918; D-1790 |
 | S-0631 | 0x00432260 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00432260; zero-arg, returns int; boolean trigger check for musicloop1 (DAT_00605d24); D-1791 |
+| S-0546 | 0x004c4d20 | 0x00426810 FUN_00426810 | render | passthrough | 2026-05-02 | FUN_004c4d20; builds rotation matrix from packed source (param_1+0x1060c); candidate RW math op; depth-2 of camera_follow |
+| S-0547 | 0x004c3dc0 | 0x00426810 FUN_00426810 | render | passthrough | 2026-05-02 | FUN_004c3dc0; transforms 3-float vector by matrix local_40; candidate RW vector transform; depth-2 of camera_follow |
+| S-0548 | 0x004c39b0 | 0x00426810 FUN_00426810 | render | passthrough | 2026-05-02 | FUN_004c39b0; in-place op on 3-float vector {local_64,0,local_5c}; candidate RW vector normalize; depth-2 of camera_follow |
+| S-0595 | 0x00534870 | 0x00472650 FUN_00472650 + 0x00472690 FUN_00472690 | render | passthrough | 2026-05-02 | FUN_00534870; RNG get-value; called as this-call from FUN_00472650 and no-arg from FUN_00472690; D-1660 |
+| S-0596 | 0x00535700 | 0x00476df0 FUN_00476df0 | render | passthrough | 2026-05-02 | FUN_00535700; particle vertex buffer map/lock; (emitter_ptr, &out_ptr, channel_id, flags); D-1661 |
+| S-0597 | 0x00535910 | 0x00476df0 FUN_00476df0 | render | passthrough | 2026-05-02 | FUN_00535910; particle vertex buffer unlock/draw-call; (emitter_ptr); D-1662 |
+| S-0598 | 0x00538c80 | 0x0048fe70 FUN_0048fe70 | render | passthrough | 2026-05-02 | FUN_00538c80; world sector query with callback; (world_ptr, pos3, callback, out_ptr); D-1663 |
+| S-0549 | 0x0042b930 | 0x004671a0 FUN_004671a0 | render | passthrough | 2026-05-02 | FUN_0042b930; 5-byte getter; returns int state; discriminant 3 routes to FUN_0042f510; depth-2 of camera_follow |
+| S-0550 | 0x0042f510 | 0x004671a0 FUN_004671a0 | render | passthrough | 2026-05-02 | FUN_0042f510; 5-byte getter; alternative vehicle ptr when state==3 and param!=-1; depth-2 of camera_follow |

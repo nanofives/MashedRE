@@ -259,3 +259,22 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0045dd60,FUN_0045dd60,audio,C1,mapped,re/analysis/audio_music/0045dd60.md,,,per-frame volume update; 5 excluded channels (DAT_00605db8/604eb0/604e1c/605bfc/605d24); music mute via DAT_0069049c; U-0631..U-0633 U-0640; S-0623..S-0625
 004631f0,FUN_004631f0,audio,C1,mapped,re/analysis/audio_music/004631f0.md,,,per-frame game-sound trigger; 5 channels inc musicloop1 (DAT_00605d24); U-0634..U-0636 U-0641; S-0626..S-0631
 00426780,sub_00426780,render,C1,unmapped,re/analysis/camera_follow/0x00426780.md,,,two-array updater: 64-entry loop at param_1+0x10110 and 8-entry loop at param_1+0x100f0; calls FUN_00475010 per active entry with time-delta float; U-0558 U-0559; S-0545
+00426810,sub_00426810,render,C1,unmapped,re/analysis/camera_follow/0x00426810.md,,,camera-path position lerp: reads vehicle sub-ptr+0x30+0x38 for alpha; lerps between param_1+0x105f8..0x10608 pairs; writes result to param_2+0x88 and FUN_004c1b10; U-0560..U-0563; S-0546..S-0548
+00490500,FUN_00490500,render,C1,mapped,re/analysis/effects_particle/0x00490500.md,,,per-frame effect ring buffer update; 3 loops (explosion/debris/slow-decay); 6 render pool flushes; U-0587 U-0588 U-0589; S-0595..S-0598
+00472650,FUN_00472650,render,C1,mapped,re/analysis/effects_particle/0x00472650.md,,,random float in [lo,hi]; __thiscall RNG range query; calls FUN_00534870; U-0590; S-0595
+00472690,FUN_00472690,render,C1,mapped,re/analysis/effects_particle/0x00472690.md,,,random int in [lo,hi]; calls FUN_00534870; S-0595
+004769a0,FUN_004769a0,render,C1,mapped,re/analysis/effects_particle/0x004769a0.md,,,set emitter position XYZ into globals 0x00692528/2c/30
+004769d0,FUN_004769d0,render,C1,mapped,re/analysis/effects_particle/0x004769d0.md,,,set emitter velocity XY into globals 0x006924dc/e0
+004769f0,FUN_004769f0,render,C1,mapped,re/analysis/effects_particle/0x004769f0.md,,,set emitter colour/alpha into global 0x00692554
+00476a30,FUN_00476a30,render,C1,mapped,re/analysis/effects_particle/0x00476a30.md,,,set emitter scalar (1 dword) into global 0x006924d8; U-0591
+00476a40,FUN_00476a40,render,C1,mapped,re/analysis/effects_particle/0x00476a40.md,,,set emitter RGBA (4 dwords) into globals 0x00692598/9c/a0/a4
+00476d00,FUN_00476d00,render,C1,mapped,re/analysis/effects_particle/0x00476d00.md,,,append one particle to render batch arrays (position/velocity/colour/matrix/scalar/RGBA/block); U-0592
+00476df0,FUN_00476df0,render,C1,mapped,re/analysis/effects_particle/0x00476df0.md,,,flush particle batch to GPU vertex buffers; map/unlock per channel; calls FUN_00535700/00535910; U-0593; S-0596 S-0597
+0048ebc0,FUN_0048ebc0,render,C1,mapped,re/analysis/effects_particle/0x0048ebc0.md,,,read ring entry intensity field; compute 8/value clamped to 8 (frame particle count)
+0048ebf0,FUN_0048ebf0,render,C1,mapped,re/analysis/effects_particle/0x0048ebf0.md,,,spawn fire-column burst into ring buffer slot; randomised velocity/position per particle
+0048f290,FUN_0048f290,render,C1,mapped,re/analysis/effects_particle/0x0048f290.md,,,spawn debris ring entry; LRU eviction at capacity 100; U-0594
+0048f420,FUN_0048f420,render,C1,mapped,re/analysis/effects_particle/0x0048f420.md,,,spawn slow-decay particle; LRU eviction at capacity 40; optional XZ jitter
+0048fe70,FUN_0048fe70,render,C1,mapped,re/analysis/effects_particle/0x0048fe70.md,,,world query at position via FUN_00538c80 callback; returns int result; U-0595; S-0598
+004a2c48,FUN_004a2c48,render,C1,mapped,re/analysis/effects_particle/0x004a2c48.md,,,FPU float-to-longlong with rounding; takes ST0 as implicit arg; prior C1 plate comment present
+00426ab0,sub_00426ab0,render,C1,unmapped,re/analysis/camera_follow/0x00426ab0.md,,,CAMERA_FN: per-frame; gets vehicle 0; runs path-node visibility; dispatches camera-path conditional (FUN_0041e9e0 gate); calls path-lerp FUN_00426810 and anim FUN_00471ec0; U-0564 U-0565
+004671a0,sub_004671a0,render,C1,unmapped,re/analysis/camera_follow/0x004671a0.md,,,vehicle-0 getter: if FUN_0042b930()==3 and param_1!=-1 returns FUN_0042f510(); else returns DAT_006905b0; U-0566; S-0549 S-0550
