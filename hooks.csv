@@ -1,0 +1,10 @@
+rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
+# RVA: 0x00xxxxxx (8-hex, no prefix in CSV — the 0x is implicit)
+# name: ClassName::Method or sub_RVA if not yet identified
+# subsystem: boot|audio|ai|vehicle|track|render|hud|frontend|input|save|net|util|unknown
+# confidence: C0|C1|C2|C3|C4 — see re/CONFIDENCE.md
+# status: mapped|wip|stubbed|impl|verified|wontfix
+# file: relative path to the .cpp implementing it (empty if not yet implemented)
+# scenario: the canonical Frida scenario used for diff (empty until C4)
+# frida_diff: ok|fail|na|pending
+# notes: free text; cite RVAs of related functions

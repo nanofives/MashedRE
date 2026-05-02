@@ -1,0 +1,44 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/maria/Desktop/Proyectos/Mashed/**)",
+      "Read(//c/Users/maria/Desktop/Proyectos/TD5RE/ghidra-headless-mcp/**)",
+      "Bash(bash \"C:/Users/maria/Desktop/Proyectos/Mashed/scripts/ghidra_pool.sh\":*)",
+      "Bash(pwsh -NoProfile -File \"C:/Users/maria/Desktop/Proyectos/Mashed/scripts/ghidra_pool.ps1\":*)",
+      "Bash(git -C *)",
+      "Bash(git status)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "PowerShell(Get-FileHash *)",
+      "PowerShell(Get-Item *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Format-Hex *)",
+      "Bash(py -3.12 -m pip list)",
+      "Bash(py -3.12 -m pip show *)",
+      "Bash(py -3.12 -V)",
+      "Bash(C:/Users/maria/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0/LocalCache/local-packages/Python313/Scripts/ghidra-headless-mcp.EXE --help)",
+      "mcp__ghidra__health_ping",
+      "mcp__ghidra__program_list_open",
+      "mcp__ghidra__project_program_open_existing",
+      "mcp__ghidra__decomp_function",
+      "mcp__ghidra__function_by_name",
+      "mcp__ghidra__function_at",
+      "mcp__ghidra__function_list",
+      "mcp__ghidra__function_callers",
+      "mcp__ghidra__function_callees",
+      "mcp__ghidra__listing_disassemble_range",
+      "mcp__ghidra__listing_disassemble_function",
+      "mcp__ghidra__listing_disassemble_seed",
+      "mcp__ghidra__listing_data_at",
+      "mcp__ghidra__symbol_by_name",
+      "mcp__ghidra__reference_to",
+      "mcp__ghidra__memory_read",
+      "mcp__ghidra__search_text",
+      "mcp__ghidra__search_instructions",
+      "mcp__ghidra__analysis_update_and_wait"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "ghidra"
+  ]
+}

@@ -1,0 +1,52 @@
+# --- The original game install — immutable, not in version control ---
+/original/
+
+# --- Ghidra master + clones (large, rebuildable from MASHED.exe) ---
+/Mashed.gpr
+/Mashed.lock
+/Mashed.lock~
+/Mashed.rep/
+/Mashed_headless.gpr
+/Mashed_headless.lock
+/Mashed_headless.lock~
+/Mashed_headless.rep/
+/mashed_pool/
+
+# --- Logs and runtime artifacts ---
+/log/
+/verify/snapshots/
+*.log
+*.csv.gz
+
+# --- Build outputs ---
+/mashedmod/build/
+/mashedmod/src/mashed_re/build/
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.exe
+*.exp
+*.pdb
+
+# --- Tool junk ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Account-scoped Claude memory — local only ---
+/memory/
+
+# --- Frida traces (regeneratable) ---
+*.frida.log
+diff_*.csv
+
+# --- Worktree skill state ---
+/.worktrees/
