@@ -50,3 +50,6 @@ diff_*.csv
 
 # --- Worktree skill state ---
 /.worktrees/
+
+# --- External tool clones (installed via pip -e; not committed) ---
+/tools/
