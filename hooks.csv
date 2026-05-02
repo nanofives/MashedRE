@@ -84,3 +84,22 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004ae29f,___crtInitCritSecAndSpinCount,boot,C1,mapped,re/analysis/boot_crt_env/004ae29f.md,,,library match VS2003; lazy-init proc-ptr DAT_00773d60@004ae2ab; fallback ___crtInitCritSecNoSpinCount@8@004ae2e1; S-0045
 004af2b6,___initmbctable,boot,C1,mapped,re/analysis/boot_crt_env/004af2b6.md,,,library match VS2003; once-init guard DAT_008ab6d4@004af2b6; calls __setmbcp(-3)@004af2bf; S-0046
 004affe0,FUN_004affe0,boot,C1,mapped,re/analysis/boot_crt_env/004affe0.md,,,wrapper: forwards param_1 to FUN_004affaf with args 0 and 4@004affe0; S-0047
+005a7b60,FUN_005a7b60,audio,C1,mapped,re/analysis/audio_rws_loader/005a7b60.md,,,AUDIO_LOAD_FN; 6-param RWS parser; reads 0x80a/0x80c/0x802 chunks; U-0107..U-0109; D-0340
+004522d0,FUN_004522d0,audio,C1,mapped,re/analysis/audio_rws_loader/004522d0.md,,,vtable dealloc trampoline DAT_007d3ff8+0x10c; jumptable not recoverable; S-0100; U-0110
+004cbd30,FUN_004cbd30,audio,C1,mapped,re/analysis/audio_rws_loader/004cbd30.md,,,RW stream read; 4 stream types (file/file/membuf/callback); S-0101..S-0104
+004cc050,FUN_004cc050,audio,C1,mapped,re/analysis/audio_rws_loader/004cc050.md,,,RW stream seek/skip; same 4-type dispatch as FUN_004cbd30; S-0105
+005a79a0,FUN_005a79a0,audio,C1,mapped,re/analysis/audio_rws_loader/005a79a0.md,,,audio object unlink+free; walks wave list; DAT_007dca7c pool; S-0106..S-0108; U-0113..U-0114
+005a7b40,FUN_005a7b40,audio,C1,mapped,re/analysis/audio_rws_loader/005a7b40.md,,,set/swap current audio context DAT_007dcabc
+005a7b50,FUN_005a7b50,audio,C1,mapped,re/analysis/audio_rws_loader/005a7b50.md,,,get current audio context DAT_007dcabc
+005a7ee0,FUN_005a7ee0,audio,C1,mapped,re/analysis/audio_rws_loader/005a7ee0.md,,,audio object init; empty wave list; inserts into DAT_007dca7c; S-0109..S-0111; U-0115..U-0116
+005ab380,FUN_005ab380,audio,C1,mapped,re/analysis/audio_rws_loader/005ab380.md,,,RWS 12-byte chunk header reader; FUN_004cbd30(stream,buf,0xc); RW version decode; U-0117
+005ab410,FUN_005ab410,audio,C1,mapped,re/analysis/audio_rws_loader/005ab410.md,,,RWS chunk type seeker; loops until type matches; version range 0x34fff..0x37002; U-0118
+005abcf0,FUN_005abcf0,audio,C1,mapped,re/analysis/audio_rws_loader/005abcf0.md,,,wave node destructor; vtable+0x10 callback + 5 cleanup calls; S-0112..S-0115; U-0119..U-0120
+005abfa0,FUN_005abfa0,audio,C1,mapped,re/analysis/audio_rws_loader/005abfa0.md,,,per-wave data loader; 0x803 format + 0x804 sample data chunks; S-0116..S-0119; U-0121..U-0123
+005ade10,FUN_005ade10,audio,C1,mapped,re/analysis/audio_rws_loader/005ade10.md,,,doubly-linked list remove-by-value; node pool at DAT_009146c0; U-0124
+005aea00,FUN_005aea00,audio,C1,mapped,re/analysis/audio_rws_loader/005aea00.md,,,vtable alloc trampoline DAT_007d3ff8+0x108; jumptable not recoverable; U-0125
+005aea10,FUN_005aea10,audio,C1,mapped,re/analysis/audio_rws_loader/005aea10.md,,,aligned alloc wrapper; size+4 bytes; stores base at aligned-4
+005aea40,FUN_005aea40,audio,C1,mapped,re/analysis/audio_rws_loader/005aea40.md,,,thin free wrapper; calls FUN_004522d0
+005aec00,FUN_005aec00,audio,C1,mapped,re/analysis/audio_rws_loader/005aec00.md,,,byte-reverse buffer in-place; param_2/2 swap iterations; endian correction
+00495530,FUN_00495530,input,C1,mapped,re/analysis/input_dinput/00495530.md,,,DirectInput8Create init wrapper; GetModuleHandleA(NULL) then DirectInput8Create(hmod,0x800@00495549,DAT_005d0a8c@00495544,DAT_00771e78@0049553f,0); ret 1 on success; U-0267 U-0268
+004987b0,FUN_004987b0,input,C1,mapped,re/analysis/input_dinput/004987b0.md,,,debug printf wrapper; 512-byte buf; FUN_004a42c5(buf,fmt,va)+OutputDebugStringA; cookie DAT_00616038@body; S-0260; D-0700

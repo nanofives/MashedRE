@@ -28,6 +28,7 @@ A row goes into DEFERRED when:
 | D-0166 | 0x004ae28f ___crtInitCritSecNoSpinCount@8 | depth-2 of ___crtInitCritSecAndSpinCount (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0167 | 0x004af166 __setmbcp | depth-2 of ___initmbctable (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0168 | 0x004affaf FUN_004affaf | depth-2 of FUN_004affe0 (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0700 | 0x004a42c5 FUN_004a42c5 | depth-2 of FUN_004987b0; varargs string formatter; not recursed per session rules; S-0260 | input_dinput-cont1 session | input |
 | D-0100 | 0x004a2bf7 FUN_004a2bf7 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
 | D-0101 | 0x004a5e35 __ms_p5_mp_test_fdiv | depth-3 of FUN_004a2c2f; return stored to DAT_00773994 | boot_crt_exit-cont1 session | boot |
 | D-0102 | 0x004a5de3 FUN_004a5de3 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |

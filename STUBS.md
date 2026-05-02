@@ -71,3 +71,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0081 | 0x004c2c90 | 0x004c2f60 sub_004c2f60 + 0x004c3040 sub_004c3040 | render | passthrough | 2026-05-02 | FUN_004c2c90; called with (DAT_007d3ff8+0x10,0x12/3,0,0,0) and (DAT_007d3ff8+4,1,0,0,0); likely core RW engine state-transition function; depth-2 of RW_TEAR_FN |
 | S-0082 | 0x004d7ca0 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004d7ca0; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
 | S-0083 | 0x004ccf20 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004ccf20; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
+| S-0260 | 0x004a42c5 | 0x004987b0 FUN_004987b0 | input | passthrough | 2026-05-02 | FUN_004a42c5; varargs string formatter (3-arg: output_buf, format_ptr, va_list_ptr); depth-2 callee of FUN_004987b0; filed as D-0700 |

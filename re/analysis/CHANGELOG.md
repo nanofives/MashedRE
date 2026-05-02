@@ -102,3 +102,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  004ae29f  ___crtInitCritSecAndSpinCount    C0->C1  library match VS2003; lazy-init DAT_00773d60@004ae2ab; fallback ___crtInitCritSecNoSpinCount@8@004ae2e1; S-0045 (re/analysis/boot_crt_env/004ae29f.md)
 2026-05-02  004af2b6  ___initmbctable                  C0->C1  library match VS2003; once-init guard DAT_008ab6d4@004af2b6; __setmbcp(-3)@004af2bf; S-0046 (re/analysis/boot_crt_env/004af2b6.md)
 2026-05-02  004affe0  FUN_004affe0                     C0->C1  structural read; 17-byte wrapper FUN_004affaf(param_1,0,4)@004affe8; S-0047 (re/analysis/boot_crt_env/004affe0.md)
+2026-05-02  00495530  FUN_00495530                     C0->C1  DirectInput8Create init wrapper; GetModuleHandleA(NULL)+DirectInput8Create; 0x800@00495549; DAT_005d0a8c@00495544; DAT_00771e78@0049553f; U-0267 U-0268 (re/analysis/input_dinput/00495530.md)
+2026-05-02  004987b0  FUN_004987b0                     C0->C1  debug printf wrapper; FUN_004a42c5(buf,fmt,va)+OutputDebugStringA; 512B local buf; cookie DAT_00616038@body; S-0260; D-0700 (re/analysis/input_dinput/004987b0.md)
