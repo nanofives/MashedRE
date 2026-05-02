@@ -223,3 +223,25 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0374 | 0x00493b40 | 0x00493b50 FUN_00493b50 | util | passthrough | 2026-05-02 | LAB_00493b40; code label (not a named function); indirect call target via PTR_FUN_006147dc (NT5+ code page path); returns UINT; depth-2 from FUN_004944c0 |
 | S-0375 | 0x0049ec10 | 0x00493c00 FUN_00493c00 | util | passthrough | 2026-05-02 | FUN_0049ec10; called with (&DAT_005cfaac, 0, param_2, param_3) from FUN_00493c00 and FUN_00494ac0; depth-2 from FUN_004944c0 |
 | S-0376 | 0x004a3b84 | 0x00493f00 FUN_00493f00 | util | passthrough | 2026-05-02 | FUN_004a3b84; called as vsnprintf-like formatter (buf, 0x3ff, fmt, va_args); depth-2 from FUN_004944c0 via FUN_00493f00 |
+| S-0460 | 0x004b6520 | 0x0045ba10 FUN_0045ba10 | vehicle | passthrough | 2026-05-02 | FUN_004b6520; no args; called in per-slot reset before field zeroing; depth-2 |
+| S-0461 | 0x0042a530 | 0x0042a6b0 FUN_0042a6b0 | vehicle | passthrough | 2026-05-02 | FUN_0042a530; TXD/DFF lookup; called with (&DAT_0067e1a8, &DAT_0067dfa8); returns 0/1/other; depth-2 |
+| S-0462 | 0x004b3d80 | 0x0042a6b0 FUN_0042a6b0 | vehicle | passthrough | 2026-05-02 | FUN_004b3d80; result returned when FUN_0042a530 returns 1; depth-2 |
+| S-0463 | 0x004b3d20 | 0x0042a6b0 FUN_0042a6b0 | vehicle | passthrough | 2026-05-02 | FUN_004b3d20; result returned when FUN_0042a530 returns non-0 non-1; depth-2 |
+| S-0464 | 0x0047b860 | 0x0047b9b0 FUN_0047b9b0 | vehicle | passthrough | 2026-05-02 | FUN_0047b860; Lua pre-execution setup; no args; depth-2 |
+| S-0465 | 0x0047b8d0 | 0x0047b9b0 FUN_0047b9b0 | vehicle | passthrough | 2026-05-02 | FUN_0047b8d0; Lua script executor; called with (filename, buf); depth-2 |
+| S-0466 | 0x0047b880 | 0x0047b9b0 FUN_0047b9b0 | vehicle | passthrough | 2026-05-02 | FUN_0047b880; Lua post-execution teardown; no args; depth-2 |
+| S-0467 | 0x004781b0 | 0x00411f30 FUN_00411f30 | vehicle | passthrough | 2026-05-02 | FUN_004781b0; DFF loader variant; called with ("LaserTower.dff", 0); differs from FUN_0042a5d0 usage; depth-2 |
+| S-0468 | 0x004b5320 | 0x00411f30 FUN_00411f30 | vehicle | passthrough | 2026-05-02 | FUN_004b5320; model flag/property setter; called with (uVar1, 0x40, 1); depth-2 |
+| S-0469 | 0x004b5580 | 0x00411f30 FUN_00411f30 | vehicle | passthrough | 2026-05-02 | FUN_004b5580; applies 4-byte color buffer to mesh; called with (uVar1, &local_408); depth-2 |
+| S-0420 | 0x004095a0 | FUN_00409710 | render | depth-2 | 2026-05-02 | FUN_004095a0; called with arg 1 before FUN_00495280 in line-exception loader |
+| S-0421 | 0x004cc230 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cc230; called with (2,1,ptr); returns handle-like int; shared by LED+AI piz loaders |
+| S-0422 | 0x004cc5e0 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cc5e0; called with (handle, chunk_id, &size, flags); chunk IDs 0x13269901/0x13269902 |
+| S-0423 | 0x004cbd30 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cbd30; called with (handle, dest_buf, size); reads chunk into float array |
+| S-0424 | 0x004cc160 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cc160; called with (handle, 0); closes chunk |
+| S-0425 | 0x004b3f90 | FUN_00412050 | render | depth-2 | 2026-05-02 | FUN_004b3f90; called with (DAT_0063bc40, &DAT_005cd004, 0, 0.1f, ~1.0f, 3.0f, index); U-0428 |
+| S-0426 | 0x0047fad0 | FUN_00412050 | render | depth-2 | 2026-05-02 | FUN_0047fad0; called on result of FUN_004b3f90; returns value stored in DAT_0063bb60 region |
+| S-0427 | 0x0047cdc0 | FUN_00412050 | render | depth-2 | 2026-05-02 | FUN_0047cdc0; called with (stored_value, 6.0f) twice per iter |
+| S-0428 | 0x00423480 | FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_00423480; called before piz open in AI data loader; no visible args |
+| S-0429 | 0x00425bf0 | FUN_004262f0 | render | depth-2 | 2026-05-02 | FUN_00425bf0; called before 64-byte record loop; no visible args |
+| S-0430 | 0x00425c00 | FUN_004262f0 | render | depth-2 | 2026-05-02 | FUN_00425c00; called with 64-byte record pointer per iteration |
+| S-0431 | 0x00425b70 | FUN_004262f0 | render | depth-2 | 2026-05-02 | FUN_00425b70; called with (iteration_index, looked_up_uint32) per iteration |
