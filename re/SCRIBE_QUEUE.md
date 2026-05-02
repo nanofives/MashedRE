@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-02  boot_crt_env-20260502-1734  bucket=boot_crt_env  rvas=0x004a45fb,0x004a460d,0x004a9410,0x004aaff0,0x004abd1a,0x004ac560,0x004ae29f,0x004af2b6,0x004affe0
 ```
 
 ## Drained
