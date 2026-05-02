@@ -219,3 +219,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0370 | 0x004e6920 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_004e6920; called with *piVar2 in teardown loop 2; depth-3 |
 | S-0371 | 0x004768c0 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_004768c0; called with &DAT_0x63bfd8; depth-3 |
 | S-0372 | 0x00418f40 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_00418f40; no args; last teardown call; depth-3 |
+| S-0373 | 0x00493ac0 | 0x00493b50 FUN_00493b50 | util | passthrough | 2026-05-02 | LAB_00493ac0; code label (not a named function); indirect call target via PTR_FUN_006147dc (pre-NT5/non-NT code page path); returns UINT; depth-2 from FUN_004944c0 |
+| S-0374 | 0x00493b40 | 0x00493b50 FUN_00493b50 | util | passthrough | 2026-05-02 | LAB_00493b40; code label (not a named function); indirect call target via PTR_FUN_006147dc (NT5+ code page path); returns UINT; depth-2 from FUN_004944c0 |
+| S-0375 | 0x0049ec10 | 0x00493c00 FUN_00493c00 | util | passthrough | 2026-05-02 | FUN_0049ec10; called with (&DAT_005cfaac, 0, param_2, param_3) from FUN_00493c00 and FUN_00494ac0; depth-2 from FUN_004944c0 |
+| S-0376 | 0x004a3b84 | 0x00493f00 FUN_00493f00 | util | passthrough | 2026-05-02 | FUN_004a3b84; called as vsnprintf-like formatter (buf, 0x3ff, fmt, va_args); depth-2 from FUN_004944c0 via FUN_00493f00 |

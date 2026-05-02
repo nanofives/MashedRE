@@ -179,3 +179,12 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004dcf90,FUN_004dcf90,render,C1,mapped,re/analysis/render_d3d9_device/0x004dcf90.md,,,CPUID feature check; EFLAGS bit-21 toggle; CPUID leaf1 result[+8] bit 23; likely MMX; U-0248
 004dcff0,FUN_004dcff0,render,C1,mapped,re/analysis/render_d3d9_device/0x004dcff0.md,,,CPUID feature check; EFLAGS bit-21 toggle; CPUID leaf1 result[+8] bits 25|26; likely SSE|SSE2; U-0248
 004dd050,FUN_004dd050,render,C1,mapped,re/analysis/render_d3d9_device/0x004dd050.md,,,CPUID feature check; EFLAGS bit-21 toggle; CPUID leaf1 result[+8] bit 26; likely SSE2; U-0248
+00493b50,FUN_00493b50,util,C1,mapped,re/analysis/video_mci/0x00493b50.md,,,OS-version check; sets PTR_FUN_006147dc (0x006147dc) via InterlockedExchange; NT5+ path=LAB_00493b40 pre-NT5=LAB_00493ac0; S-0373 S-0374
+00493bc0,FUN_00493bc0,util,C1,mapped,re/analysis/video_mci/0x00493bc0.md,,,MultiByteToWideChar wrapper; param4=codepage from PTR_FUN_006147dc; param3=bufsize; returns LPWSTR
+00493c00,FUN_00493c00,util,C1,mapped,re/analysis/video_mci/0x00493c00.md,,,"__thiscall ctor; vtable[0]=PTR_LAB_005cf9e8; sets offsets 0xc,0x10,0xe0,0xe4,0x160; calls FUN_0049ec10; S-0375"
+00493f00,FUN_00493f00,util,C1,mapped,re/analysis/video_mci/0x00493f00.md,,,Error reporter; vsnprintf-like into 1023-byte buf; MessageBoxA NULL/buf/MASHED/0x10; S-0376
+004944b0,FUN_004944b0,util,C1,mapped,re/analysis/video_mci/0x004944b0.md,,,Zero-write thunk; *param_1=0; U-0369
+004944c0,FUN_004944c0,util,C1,mapped,re/analysis/video_mci/0x004944c0.md,,,"VIDEO_PLAY_FN (DirectShow); takes int index into .mpg table 0x006147c4; CoCreateInstance; AddFilter TEXTURERENDERER; AddSourceFilter; Run() vtable[7] on IMediaControl; U-0367 U-0368"
+00494ac0,FUN_00494ac0,util,C1,mapped,re/analysis/video_mci/0x00494ac0.md,,,"__thiscall ctor; vtable[0]=PTR_LAB_005cfd70; same offsets 0xc,0x10,0xe0,0xe4,0x160 as FUN_00493c00; calls FUN_0049ec10; S-0375"
+00494c80,FUN_00494c80,util,C1,mapped,re/analysis/video_mci/0x00494c80.md,,,"VIDEO_PLAY_FIXED (DirectShow); hardcoded small.mpg (0x005cfcf0); no Run() call; graph setup only; U-0370"
+004a1790,FUN_004a1790,util,C1,mapped,re/analysis/video_mci/0x004a1790.md,,,COM Release helper; deref outer ptr then vtable[2](Release) if non-null; U-0371

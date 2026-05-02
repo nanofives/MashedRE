@@ -205,3 +205,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-1941  scribe-release  bucket=boot_app_init_d3  writes=18  errors=0  (sweep)
 2026-05-02  sweep-20260502-1941  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='no function found at 004c7a70 (FPO; expected per prior session)'
 2026-05-02  sweep-20260502-1941  scribe-release-sweep  buckets=6  total_writes=81  errors=1  (halted at render_d3d9_device; 1 bucket remains queued — needs function definitions before scribe can process)
+2026-05-02  video_mci-20260502-1943  analysis  bucket=video_mci  rvas=9  VIDEO_PLAY_FN=0x004944c0 (DirectShow/COM, not MCI); FUN_00494c80=small.mpg variant; 7 callees; U-0367..U-0371; S-0373..S-0376; D-1000..D-1002
