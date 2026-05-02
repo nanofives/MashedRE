@@ -100,6 +100,9 @@ cmd_release() {
 cmd_sync() {
     [[ ! -d "$POOL_DIR" ]] && { echo "ERROR: pool not initialized" >&2; exit 1; }
     echo "Syncing pool slots from master..."
+    # Stamp BEFORE the cp loop so any slot refreshed below has mtime > .last_master_sync.
+    # Locked slots keep their pre-sync mtime, which marks them stale to ghidra_assert.sh.
+    : > "$PROJECT_ROOT/.last_master_sync"
     local synced=0 skipped=0
     for gpr in "$POOL_DIR"/Mashed_pool*.gpr; do
         [[ -f "$gpr" ]] || continue
@@ -107,10 +110,10 @@ cmd_sync() {
         slot=$(echo "$gpr" | sed 's/.*pool\([0-9]*\).*/\1/')
         local rep="$(slot_rep "$slot")"
         if is_locked "$slot"; then
-            echo "  Slot $slot: LOCKED (skipped)"; ((skipped++))
+            echo "  Slot $slot: LOCKED (skipped)"; skipped=$((skipped+1))
         else
             echo "  Slot $slot: refreshing..."
-            rm -rf "$rep"; cp -r "$MASTER_REP" "$rep"; ((synced++))
+            rm -rf "$rep"; cp -r "$MASTER_REP" "$rep"; synced=$((synced+1))
         fi
     done
     rm -f "$PROJECT_ROOT/Mashed.lock" "$PROJECT_ROOT/Mashed.lock~"
@@ -148,7 +151,7 @@ cmd_cleanup() {
 
 cmd_add() {
     local n="${1:-1}"
-    for ((k=0; k<n; k++)); do
+    for ((k=0; k<n; k+=1)); do
         local idx
         if ! idx=$(next_free_index); then
             echo "ERROR: pool full ($MAX_SLOTS)" >&2; exit 1
