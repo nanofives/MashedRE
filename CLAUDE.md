@@ -89,14 +89,28 @@ Every Ghidra session and every reversed function must follow this:
 
 A hook is accepted only when the `diff-original` skill produces a clean Frida diff between original and modded behavior. Compile-passes-and-doesn't-crash is not acceptance.
 
+## Roadmap, DoD, and trackers
+
+- `ROADMAP.md` — phases (0..6), Definition of Done at function/subsystem/project levels.
+- `re\CONFIDENCE.md` — C0..C4 rubric; the only gate for status changes.
+- `hooks.csv` — every reverse-engineered function. One row per RVA. Single source of truth for project status.
+- `STUBS.md` — placeholder calls into not-yet-reversed functions. Blocks subsystem DoD until cleared.
+- `UNCERTAINTIES.md` — explicit knowledge holes with paths to resolution. Required for any `[UNCERTAIN]` marker in source/notes.
+- `DEFERRED.md` — work explicitly out of scope for now. Each row has a re-pickup condition.
+
+**Rule:** the four trackers are mutated only through the `re-classify` skill. Hand-edits drift.
+
 ## Skills (project-local)
 
 Loaded automatically from `.claude\skills\`:
 
-- **ghidra-pool** — manages on-demand Ghidra project clones for parallel sessions; entry point for any disassembly/decomp work.
+- **ghidra-pool** — on-demand Ghidra project clones; entry point for any disassembly/decomp work.
 - **piz** — extract/inspect `.piz` archives via `re\tools\piz_extract.py`.
-- **hook-author** — scaffold a new gta-reversed-style hook with proper RVA citations.
+- **hook-author** — scaffold a new gta-reversed-style hook with proper RVA citations + binary anchor verification.
 - **diff-original** — Frida-based behavioral diff between original and modded binary.
+- **re-classify** — promote/demote a function on the C0..C4 ladder; updates `hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `re/analysis/CHANGELOG.md` in one transaction. Refuses promotions that lack evidence.
+- **worktree** — git worktrees for isolated per-effort RE work; binds each worktree to a Ghidra pool slot.
+- **multi-session** — etiquette and conflict resolution when multiple Claude sessions run concurrently.
 
 ## Prior art (read-only, vendored under `re\prior_art\`)
 

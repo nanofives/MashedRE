@@ -63,11 +63,31 @@ Until verified, every numeric constant in reversed code must be cited against th
 5. Copy protection in `launch.exe` — the SciLor patch shows it's defeatable; document the exact patched bytes.
 6. Any RW custom plugins (Mashed-specific RW chunks in `.rws`)?
 
+## Tracker discipline (mandatory)
+
+The four trackers (`hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `DEFERRED.md`) are the project's load-bearing bookkeeping. **Mutate them only via the `re-classify` skill.** Direct edits skip the rubric and drift the project state.
+
+- Every function you touch in a session: `re-classify` it before ending the session, even if confidence didn't change (the `notes` field tracks what was looked at).
+- Every `[UNCERTAIN]` you drop: filed in `UNCERTAINTIES.md` before the session ends, with a path-to-resolution.
+- Every stub you leave: filed in `STUBS.md`, inline `// STUB S-NNNN` comment placed at the call site.
+- Every "we'll get to this later": filed in `DEFERRED.md` with a re-pickup condition. Never "later." Never "TODO." Always observable conditions.
+
+## Per-session workflow
+
+1. **Start**: `multi-session` skill loads — run startup protocol (identify worktree, take pool inventory, pull latest trackers, acquire slot).
+2. **Work**: `ghidra-pool` for queries, `hook-author` for scaffolds, `diff-original` for verification.
+3. **Classify**: `re-classify` after every function is touched, in real time. Don't batch — context is freshest at the moment of work.
+4. **End**: `multi-session` shutdown protocol (close programs, commit tracker updates, release slot).
+
 ## Things that will get an agent yelled at
 
 - Modifying anything under `original\` without explicit user permission.
 - Authoring a hook against an unverified binary version.
 - Using "probably", "likely", "seems to" in RE notes.
+- Promoting a function to C3+ without satisfying the rubric gate.
+- Editing `hooks.csv`/`STUBS.md`/`UNCERTAINTIES.md`/`DEFERRED.md` outside the `re-classify` skill.
+- Releasing a Ghidra pool slot that's bound to another worktree's `.pool_slot`.
+- Holding the master `Mashed.gpr` writable while another session is active.
 - Creating a new MCP server or skill that duplicates one in TD5RE.
 - Pulling a new dependency (header, library, build tool) for a single hook.
 - Writing comments that describe what code does instead of why a non-obvious decision was made.
