@@ -316,3 +316,5 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0042c1c0,FUN_0042c1c0,util,C1,mapped,re/analysis/game_state/0x0042c1c0.md,,,returns DAT_0067eab0; race-interruption flag gate (non-zero→phase 7 zero→phase 3); U-0502
 0042c1d0,FUN_0042c1d0,util,C1,mapped,re/analysis/game_state/0x0042c1d0.md,,,zeros 12 ints at DAT_0067ea10 (0x67ea10..0x67ea3f); called each case-3 frame; U-0503
 0042c220,FUN_0042c220,util,C1,mapped,re/analysis/game_state/0x0042c220.md,,,per-slot loop over DAT_007f1a14; calls FUN_0040e470 and thunk_FUN_00497450; writes DAT_0067ea10[slot]=1; S-0493 S-0494; U-0504
+00492e90,FUN_00492e90,boot,C1,mapped,re/analysis/physics_collision/00492e90.md,,,game logic tick; per-frame state machine on DAT_00771968; calls HUD render + renderer vtable + FUN_00433f40; perf-counter loop 0x00868320..0x869ca0; U-0642
+0047a020,FUN_0047a020,vehicle,C1,mapped,re/analysis/physics_collision/0047a020.md,,,BSP collision init; writes DAT_006bf1c8/006bf1cc; zeroes 32-entry prim table 0x0086cac0 (stride 0x110); runs COURSE.LUA via FUN_0047b9b0 with Lua C table at LAB_00440bc0; U-0643 U-0644

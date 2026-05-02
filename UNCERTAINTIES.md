@@ -289,3 +289,6 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0502 | 0x0042c1c0 | DAT_0067eab0: race-interruption flag; non-zero triggers phase 7 from case 3; zero triggers revert to phase 3 from case 7 | cross-ref all write sites of 0x0067eab0 |
 | U-0503 | 0x0042c1d0 | DAT_0067ea10 (12 ints at 0x0067ea10–0x0067ea3f): zeroed each case-3 frame by FUN_0042c1d0; indexed by DAT_007f1a14[i] in FUN_0042c220 | cross-ref read/write sites of the entire range |
 | U-0504 | 0x0042c220 | FUN_0040e470 and thunk_FUN_00497450: gate and test callees with unknown semantics; former takes slot index 0–3 latter takes DAT_007f1a14[i] value | decomp FUN_0040e470 (S-0493) and thunk_FUN_00497450 (S-0494) |
+| U-0642 | 0x00492e90 | FUN_00430b90 (1693 bytes) called in state 4 only when FUN_0042b930()==0x20; purpose of mode 0x20 and FUN_00430b90 unknown | decomp FUN_00430b90 and FUN_0042b930 |
+| U-0643 | 0x0047a020 | FUN_00478cb0(param_2): initializes BSP struct A (DAT_00644378); struct layout and init semantics unknown | decomp FUN_00478cb0 |
+| U-0644 | 0x0047a020 | FUN_0047b9b0: Lua script executor; takes (filename, out_ptr, Lua-C-table); exact protocol for registering BSP C functions and executing COURSE.LUA unknown | decomp FUN_0047b9b0 |

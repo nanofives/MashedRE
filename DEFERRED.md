@@ -373,3 +373,7 @@ A row goes into DEFERRED when:
 | D-1558 | 0x004910c0 | FUN_004910c0 | FUN_00491490 | depth-2 callee; camera mode B (DAT_007f108b!=0 path); purpose unknown | reverse FUN_00491490 fully first |
 | D-1559 | 0x0042b930 | FUN_0042b930 | FUN_004671a0,FUN_00467210 | depth-2 callee; returns state discriminant (3 = alt mode); S-0549 filed | reverse FUN_004671a0 or FUN_00467210 fully first |
 | D-1560 | 0x0042f510 | FUN_0042f510 | FUN_004671a0,FUN_00467210 | depth-2 callee; alt vehicle getter (state==3 && param_1!=-1); S-0550 filed | reverse FUN_004671a0 or FUN_00467210 fully first |
+| D-1792 | COLLISION_FN | unknown RVA | RWP37Active vtable | Runtime BSP collision test for vehicle-vs-track; statically linked in RWP37Active without Ghidra symbols; not reachable via static call graph from game loop | Frida hardware watchpoint on read to DAT_006bf1cc (0x006bf1cc) during live race; capture full call stack |
+| D-1793 | 0x0047b9b0 | FUN_0047b9b0 | FUN_0047a020 | Lua script executor that runs COURSE.LUA with BSP C functions; protocol unknown | decomp FUN_0047b9b0; U-0644 |
+| D-1794 | 0x00478cb0 | FUN_00478cb0 | FUN_0047a020 | BSP struct A initializer; struct layout unknown | decomp FUN_00478cb0; U-0643 |
+| D-1795 | 0x004715a0 | FUN_004715a0 | FUN_00426e10 | Physics scenario linker: populates scenario struct at 0x0086ece0 from BSP primitive table 0x0086cac0; calls FUN_0047ce40 per prim | reverse FUN_0047ce40; needs vehicle bucket |

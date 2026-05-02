@@ -45,3 +45,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-02  audio_music-20260502-2145  bucket=audio_music  rvas=0x004623e0,0x0045da60,0x0045dd60,0x004631f0
 2026-05-02  game_state-20260502-2144  bucket=game_state  rvas=0x004929d0,0x0040b430,0x0040b540,0x0040b6d0,0x0040b6e0,0x0040b700,0x0040d440,0x0040e340,0x0040e350,0x0040e450,0x0040e460,0x0042b8d0,0x0042b8e0,0x0042b8f0,0x0042b910,0x0042b930,0x0042b940,0x0042c1c0,0x0042c1d0,0x0042c220
+2026-05-02  physics_collision-20260502-1900  bucket=physics_collision  rvas=0x00492e90,0x0047a020  notes=COLLISION_FN not found; BSP system mapped; Frida required for runtime path; D-1792 filed
