@@ -123,3 +123,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004aaf72,__callnewh,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004aaf72.md,,,library VS2003; calls DAT_00773c30 new-handler if non-null; returns 1 on handled
 004aaf90,_memset,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004aaf90.md,,,library VS; 4-byte-aligned fill with 0x1010101 replication; no callees
 004ac45c,___crtMessageBoxA,boot,C1,mapped,re/analysis/boot_crt_exit_d3/004ac45c.md,,,library VS2003; lazy LoadLibrary(user32)+GetProcAddress; MB_DEFAULT_DESKTOP_ONLY(0x40000)/MB_SERVICE_NOTIFICATION(0x200000) via DAT_007739a8
+0047b9b0,FUN_0047b9b0,input,C1,mapped,re/analysis/input_lua/0047b9b0.md,,,LUA_INIT_FN: creates Lua state FUN_0047b860; indirect callback (*param_3)() at 0x00440bc0; loads+executes script FUN_0047b8d0; closes state FUN_0047b880; U-0307
+0047b860,FUN_0047b860,input,C1,mapped,re/analysis/input_lua/0047b860.md,,,Lua state creator: FUN_004b7330(0)->DAT_006bf1e0; FUN_004c0510(state); lua_open+openlibs; S-0300 S-0301; U-0308; D-0820
+0047b880,FUN_0047b880,input,C1,mapped,re/analysis/input_lua/0047b880.md,,,Lua state closer: FUN_004b7480(DAT_006bf1e0) then DAT_006bf1e0=0; lua_close; S-0302; D-0820
+0047b8d0,FUN_0047b8d0,input,C1,mapped,re/analysis/input_lua/0047b8d0.md,,,Lua file loader: fopen("rb"@0x005cf010) seek+read 32k buf; fread(buf,1,ftell,f); FUN_0047b8a0(buf,count,param_2); S-0303 S-0304; U-0309; D-0820
+00472380,FUN_00472380,render,C1,mapped,re/analysis/rw_engine_init_d2/00472380.md,,,calls FUN_004c2d90(0,4,cb,cb) then FUN_004e7d40(0x10,0x26990004,lbl,cb,lbl); result→DAT_0086ecd4; returns bool; S-0200 S-0201 U-0207 U-0208
