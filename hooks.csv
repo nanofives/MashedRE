@@ -53,3 +53,11 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004a87f7,FUN_004a87f7,boot,C1,mapped,re/analysis/boot_crt_exit/0x004a87f7.md,,,calls __mtdeletelocks; TlsFree(DAT_00616658) if !=0xffffffff; resets to 0xffffffff
 004aa3e4,___heap_select,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aa3e4.md,,,library match VS2003; reads DAT_0077399c+DAT_007739a8; returns 1 if ==2&&>4 else 3; no callees
 004aa44f,___sbh_heap_init,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aa44f.md,,,library match VS2003; HeapAlloc(008aa69c,0,0x140); inits 6 SBH globals 008aa680-008aa694; writes param_1 to 008aa68c
+004ab8d6,FUN_004ab8d6,boot,C1,mapped,re/analysis/boot_crt_exit/0x004ab8d6.md,,,table scan 00616890 for param_1; stderr path or MessageBoxA(0x12010) path; stack-cookie 00616038; SEH/chkstk wrapped
+004aba4d,__FF_MSGBANNER,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aba4d.md,,,library match VS2003; stderr-mode check (007739f0+006160c8); calls FUN_004ab8d6(0xfc) + fn-ptr 00773c38 + FUN_004ab8d6(0xff)
+004938c0,sub_004938c0,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004938c0.md,,,RW_TEAR_FN; SoftwareTidyUpBeforeExiting; 5 sequential void calls; called by FUN_00492370+thunk_00493550; U-0087
+00558470,sub_00558470,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00558470.md,,,callee-1 of FUN_004938c0; 2x vtable-ptr-dispatch via DAT_007d3ff8+0x10c; zeros DAT_007dc8b8/bc/ac; U-0088
+00550390,sub_00550390,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00550390.md,,,callee-2 of FUN_004938c0; linked-list traversal+vtable calls+DeleteCriticalSection(009124e0); S-0080; U-0089
+004c2f60,sub_004c2f60,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c2f60.md,,,callee-3 of FUN_004938c0; FUN_004c2c90(+0x10,0x12)+FUN_004d8060+FUN_004c2c90(+0x10,3); S-0081 S-0005; U-0090
+004c3040,sub_004c3040,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3040.md,,,callee-4 of FUN_004938c0; FUN_004c2c90(+4,1); copies 0x4b DWORDs to DAT_007d3ec8; frees old struct; S-0081; U-0091
+004c3270,sub_004c3270,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3270.md,,,callee-5 of FUN_004938c0; DAT_007d3ff4==0 check; calls FUN_004d7ca0+FUN_004ccf20; S-0082 S-0083; U-0092

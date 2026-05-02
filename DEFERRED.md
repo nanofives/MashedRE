@@ -19,20 +19,6 @@ A row goes into DEFERRED when:
 | D-0043 | depth-3 callees of thunk targets 0x00495150+0x004938c0+0x004954f0: 00495120,004955b0,004960a0,004963b0,00498510,00499710,004c2f60,004c3040,004c3270,00550390,00558470,00498b60,004963d0,00496010,004955c0,00498bf0 | depth-3 of 0x00492370 via thunks; not recursed | boot subsystem depth-3 sweep session | boot |
 | D-0044 | depth-3 callees of 0x00493900 (internal): 00499730,004a2be9,004a3ac9,004b302f | depth-3 of 0x00492370; not recursed; S-0001+S-0002 filed for key stubs | boot subsystem depth-3 sweep session | boot |
 | D-0045 | depth-3 callees of 0x00499ba0+0x004c5930: 00499890,004c5a60,004d8060 | depth-3 of 0x00492370; not recursed; S-0003+S-0004+S-0005 filed | boot subsystem depth-3 sweep session | boot |
-| D-0017 | 0x004a2c2f FUN_004a2c2f | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
-| D-0018 | 0x004a40fe ___onexitinit | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
-| D-0019 | 0x004a415e _atexit | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
-| D-0020 | 0x004a57e4 FUN_004a57e4 | depth-2 of FUN_004a31f3 | D-0001 re-pickup | boot |
-| D-0021 | 0x004a3258 FUN_004a3258 | depth-2 of FUN_004a332b + FUN_004a334d | D-0001 re-pickup | boot |
-| D-0022 | 0x004a333c __exit | depth-2 of __amsg_exit | D-0001 re-pickup | boot |
-| D-0023 | 0x004ab8d6 FUN_004ab8d6 | depth-2 of __amsg_exit + fast_error_exit | D-0001 re-pickup | boot |
-| D-0024 | 0x004aba4d __FF_MSGBANNER | depth-2 of __amsg_exit + fast_error_exit | D-0001 re-pickup | boot |
-| D-0025 | 0x004a31b1 ___crtExitProcess | depth-2 of fast_error_exit | D-0001 re-pickup | boot |
-| D-0026 | 0x004a467e _calloc | depth-2 of FUN_004a8a04 | D-0001 re-pickup | boot |
-| D-0027 | 0x004a774d __mtinitlocks | depth-2 of FUN_004a8a04 | D-0001 re-pickup | boot |
-| D-0028 | 0x004a87f7 FUN_004a87f7 | depth-2 of FUN_004a8a04 | D-0001 re-pickup | boot |
-| D-0029 | 0x004aa3e4 ___heap_select | depth-2 of __heap_init | D-0001 re-pickup | boot |
-| D-0030 | 0x004aa44f ___sbh_heap_init | depth-2 of __heap_init | D-0001 re-pickup | boot |
 | D-0031 | 0x004af2b6 ___initmbctable | depth-2 of FUN_004abbea + __setenvp + FUN_004abe86 | D-0001 re-pickup | boot |
 | D-0032 | 0x004affe0 FUN_004affe0 | depth-2 of FUN_004abbea | D-0001 re-pickup | boot |
 | D-0033 | 0x004a45fb _malloc | depth-2 of __setenvp + FUN_004abe86 + ___crtGetEnvironmentStringsA + FUN_004ac04a | D-0001 re-pickup | boot |
@@ -42,6 +28,26 @@ A row goes into DEFERRED when:
 | D-0037 | 0x004abd1a FUN_004abd1a | depth-2 of FUN_004abe86 | D-0001 re-pickup | boot |
 | D-0038 | 0x004aaff0 _memcpy | depth-2 of ___crtGetEnvironmentStringsA | D-0001 re-pickup | boot |
 | D-0039 | 0x004ae29f ___crtInitCritSecAndSpinCount | depth-2 of FUN_004ac04a | D-0001 re-pickup | boot |
+| D-0100 | 0x004a2bf7 FUN_004a2bf7 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
+| D-0101 | 0x004a5e35 __ms_p5_mp_test_fdiv | depth-3 of FUN_004a2c2f; return stored to DAT_00773994 | boot_crt_exit-cont1 session | boot |
+| D-0102 | 0x004a5de3 FUN_004a5de3 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
+| D-0103 | 0x004a5f07 ___endstdio | depth-3 of FUN_004a3258; fn-ptr table 005ea05c-005ea070 | boot_crt_exit-cont1 session | boot |
+| D-0104 | 0x004a77eb FUN_004a77eb | depth-3 of FUN_004a3258; called with arg 8 on param_3!=0 | boot_crt_exit-cont1 session | boot |
+| D-0105 | 0x004a787f __lock | depth-3 of FUN_004a3258+_calloc; lock indices 4+8 | boot_crt_exit-cont1 session | boot |
+| D-0106 | 0x004af32d FUN_004af32d | depth-3 of FUN_004a3258; fn-ptr table 005ea05c-005ea070 | boot_crt_exit-cont1 session | boot |
+| D-0107 | 0x004a4126 __onexit | depth-3 of _atexit; _atexit fully delegates to __onexit | boot_crt_exit-cont1 session | boot |
+| D-0108 | 0x004a4728 FUN_004a4728 | depth-3 of _calloc; called after ___sbh_alloc_block | boot_crt_exit-cont1 session | boot |
+| D-0109 | 0x004a5984 __SEH_prolog | depth-3 of _calloc; SEH frame setup | boot_crt_exit-cont1 session | boot |
+| D-0110 | 0x004a59bf __SEH_epilog | depth-3 of _calloc; SEH frame teardown | boot_crt_exit-cont1 session | boot |
+| D-0111 | 0x004aac76 ___sbh_alloc_block | depth-3 of _calloc; SBH allocator | boot_crt_exit-cont1 session | boot |
+| D-0112 | 0x004aaf72 __callnewh | depth-3 of _calloc; new-handler callback | boot_crt_exit-cont1 session | boot |
+| D-0113 | 0x004aaf90 _memset | depth-3 of _calloc; zero-fills SBH allocation | boot_crt_exit-cont1 session | boot |
+| D-0114 | 0x004a7796 __mtdeletelocks | depth-3 of FUN_004a87f7; deletes MT locks | boot_crt_exit-cont1 session | boot |
+| D-0115 | 0x004a2be9 __security_check_cookie | depth-3 of FUN_004ab8d6; stack-cookie injection | boot_crt_exit-cont1 session | boot |
+| D-0116 | 0x004a3440 __chkstk | depth-3 of FUN_004ab8d6; alloca_probe injection | boot_crt_exit-cont1 session | boot |
+| D-0117 | 0x004a34b0 _strncpy | depth-3 of FUN_004ab8d6; path truncation with "..." | boot_crt_exit-cont1 session | boot |
+| D-0118 | 0x004ac45c ___crtMessageBoxA | depth-3 of FUN_004ab8d6; messagebox display | boot_crt_exit-cont1 session | boot |
+| D-0119 | 0x004ac570 FUN_004ac570 | depth-3 of FUN_004ab8d6; called in VarArgs frame setup | boot_crt_exit-cont1 session | boot |
 
 ## Cleared (delivered or rejected)
 
@@ -62,6 +68,20 @@ A row goes into DEFERRED when:
 | D-0014 | 0x00499cc0 FUN_00499cc0 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
 | D-0015 | 0x004c5930 FUN_004c5930 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
 | D-0016 | 0x005c9d00 FUN_005c9d00 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
+| D-0017 | 0x004a2c2f FUN_004a2c2f | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0018 | 0x004a40fe ___onexitinit | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0019 | 0x004a415e _atexit | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0020 | 0x004a57e4 FUN_004a57e4 | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0021 | 0x004a3258 FUN_004a3258 | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0022 | 0x004a333c __exit | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0023 | 0x004ab8d6 FUN_004ab8d6 | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0024 | 0x004aba4d __FF_MSGBANNER | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0025 | 0x004a31b1 ___crtExitProcess | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0026 | 0x004a467e _calloc | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0027 | 0x004a774d __mtinitlocks | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0028 | 0x004a87f7 FUN_004a87f7 | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0029 | 0x004aa3e4 ___heap_select | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0030 | 0x004aa44f ___sbh_heap_init | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
 
 ## Conventions
 
