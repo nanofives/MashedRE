@@ -305,3 +305,4 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0808 | 0x00495350 | Scan at DAT_007f1502 / DAT_007f0ac2: parallel byte arrays stride 0x4c, 4 entries; `[-0x4c0]!=0 && [+0]==0` transition condition meaning unknown | cross-ref write sites of DAT_007f0ac2 and DAT_007f1502 |
 | U-0809 | 0x00495350 | FUN_00493f70(0): return 0 = video done; mechanism (MCI event, internal flag, hardware) unknown | decomp FUN_00493f70 |
 | U-0810 | 0x00495350 | Video index table: local_18={1,2,3,4} — mapping to specific movie filenames unconfirmed | decomp FUN_00494a80; inspect pointer table near 0x006147d4 |
+| U-0811 | 0x00492d20 | FUN_004967e0 (283 bytes): sole callee; purpose unknown from shim alone | decomp FUN_004967e0 |
