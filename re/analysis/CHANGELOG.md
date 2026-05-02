@@ -252,3 +252,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  005ba1d0  LAB_005ba1d0          C0->C1  unrecognized; DirectSound init path A; listing-only; U-0353..U-0355; S-0346..S-0351; D-0940 (re/analysis/audio_dsound/0x005ba1d0.md)
 2026-05-02  005bad30  LAB_005bad30          C0->C1  unrecognized; DirectSound init path B; listing-only; 459 bytes; U-0356..U-0359; S-0352; D-0941..D-0951 (re/analysis/audio_dsound/0x005bad30.md)
 2026-05-02  audio_dsound-20260502-1942  session-analysis  bucket=audio_dsound  rvas=5  slot=Mashed_pool1  U-0347..U-0359  S-0340..S-0352  D-0940..D-0951
+2026-05-02  sweep-20260502-2131  scribe-claim-sweep  buckets=1  (render_d3d9_device deferred)
