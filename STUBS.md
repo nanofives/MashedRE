@@ -47,6 +47,14 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0066 | 0x005584c0 | 0x00493710 FUN_00493710 (RW_INIT_FN) | render | passthrough | 2026-05-02 | FUN_005584c0; called once on success path; no visible args; DEFERRED rw_engine_init-cont1 |
 | S-0067 | 0x005c9d00 | 0x00493710 FUN_00493710 (RW_INIT_FN) | render | passthrough | 2026-05-02 | FUN_005c9d00; called 3× (twice with local_28, once with 0x200000); DEFERRED rw_engine_init-cont1 |
 | S-0068 | 0x004ce790 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-02 | FUN_004ce790; called twice with (ptr-to-global, fn-ptr, fn-ptr-or-label) 3-arg pattern; DEFERRED depth-2 |
+| S-0040 | 0x004a45cf | 0x004a45fb _malloc | boot | passthrough | 2026-05-02 | __nh_malloc; depth-2 of _malloc; DEFERRED D-0160 |
+| S-0041 | 0x004a4660 | 0x004a460d _free | boot | passthrough | 2026-05-02 | FUN_004a4660 unlock wrapper; depth-2 of _free; DEFERRED D-0161 |
+| S-0042 | 0x004a787f | 0x004a460d _free | boot | passthrough | 2026-05-02 | __lock; depth-2 of _free; DEFERRED D-0162 |
+| S-0043 | 0x004aa497 | 0x004a460d _free | boot | passthrough | 2026-05-02 | ___sbh_find_block; depth-2 of _free; DEFERRED D-0163 |
+| S-0044 | 0x004aa4c2 | 0x004a460d _free | boot | passthrough | 2026-05-02 | ___sbh_free_block; depth-2 of _free; DEFERRED D-0164 |
+| S-0045 | 0x004ae28f | 0x004ae29f ___crtInitCritSecAndSpinCount | boot | passthrough | 2026-05-02 | ___crtInitCritSecNoSpinCount@8; depth-2; DEFERRED D-0166 |
+| S-0046 | 0x004af166 | 0x004af2b6 ___initmbctable | boot | passthrough | 2026-05-02 | __setmbcp; depth-2 of ___initmbctable; DEFERRED D-0167 |
+| S-0047 | 0x004affaf | 0x004affe0 FUN_004affe0 | boot | passthrough | 2026-05-02 | FUN_004affaf; depth-2 of FUN_004affe0; DEFERRED D-0168 |
 
 ## Resolved stubs (audit trail — do not delete)
 

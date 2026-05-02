@@ -38,6 +38,7 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0069 | structural | 0x0045b350 FUN_0045b350 | body_start == body_end == 0x0045b350 (zero-length); decompiler emits bare return; may be single RET byte or Ghidra artifact | Listing at 0x0045b350 to see actual instruction | mcp__ghidra__listing_code_unit_at 0x0045b350 | none |
 | U-0070 | structural | 0x004951e0 thunk_FUN_00495780 | Ghidra name is thunk_FUN_00495780 but decompiler shows call to FUN_004955d0; function_callees returns empty despite decompiler call reference; actual thunk target unknown | Listing at 0x004951e0 to see jump/call instruction | mcp__ghidra__listing_code_unit_at 0x004951e0 | none |
 | U-0071 | structural | 0x004c32b0 FUN_004c32b0 | Calling site in RW_INIT_FN passes 2 args FUN_004c32b0(uVar2,uVar3) but Ghidra decompiler shows 3-param signature; third param may be implicit stack residue | Listing at CALL instruction in RW_INIT_FN body to count pushed args | mcp__ghidra__listing_code_unit_at at call site in 0x00493710 | none |
+| U-0047 | structural | 0x004abd1a FUN_004abd1a | Ghidra reports calling convention "unknown"; decompiler shows EAX and ESI as implicit input/output registers not matching standard cdecl/stdcall/fastcall/thiscall ABI | Instruction-level cross-check of every register used at entry vs caller call site | mcp__ghidra__function_callers 0x004abd1a then listing at each call site | none |
 
 ## Resolved (audit trail)
 

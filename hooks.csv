@@ -75,3 +75,12 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004c5c80,FUN_004c5c80,render,C1,mapped,re/analysis/rw_engine_init/004c5c80.md,,,writes param_1 to *(DAT_007d4054+0x10+DAT_007d3ff8); called as FUN_004c5c80(0) from RW_INIT_FN success path
 004c9eb0,FUN_004c9eb0,render,C1,mapped,re/analysis/rw_engine_init/004c9eb0.md,,,writes param_1 to DAT_006181c4; double-indirect dispatch DAT_007d4108+0x18/0x1c; 3-element loop at 005d8b80-005d8b88; called FUN_004c9eb0(0x3c)
 004c32b0,FUN_004c32b0,render,C1,mapped,re/analysis/rw_engine_init/004c32b0.md,,,RwEngineInit wrapper; sets DAT_007d3ff8; param_2&1 selects two globals; FUN_004d7de0×14 ids 0x401-0x412; sets [0x49]=1 on success; U-0071; D-0237..D-0243
+004a45fb,_malloc,boot,C1,mapped,re/analysis/boot_crt_env/004a45fb.md,,,library match VS2003; wrapper for __nh_malloc with _NhFlag from DAT_00773c34@004a45fb; D-0160
+004a460d,_free,boot,C1,mapped,re/analysis/boot_crt_env/004a460d.md,,,library match VS2003; SBH path (DAT_008aa6a0==3@004a4620) + HeapFree fallback (DAT_008aa69c@004a466c); lock-id=4; S-0041..S-0044
+004a9410,_strlen,boot,C1,mapped,re/analysis/boot_crt_env/004a9410.md,,,library match VS; dword-at-a-time 0x7efefeff@004a9442 + 0x81010100@004a9451; no callees
+004aaff0,_memcpy,boot,C1,mapped,re/analysis/boot_crt_env/004aaff0.md,,,library match VS2003; MOVSD.REP@004ab023 fast aligned path; backward-copy for _Src<_Dst overlap; no callees
+004abd1a,FUN_004abd1a,boot,C1,mapped,re/analysis/boot_crt_env/004abd1a.md,,,no callees; token parser; non-standard ABI EAX+ECX+ESI; char-class table 0x8aa341@004abd61; U-0047
+004ac560,FUN_004ac560,boot,C1,mapped,re/analysis/boot_crt_env/004ac560.md,,,7-byte thunk; PUSH EDI + JMP 0x004ac5d5@004ac565 into FUN_004ac570; D-0165
+004ae29f,___crtInitCritSecAndSpinCount,boot,C1,mapped,re/analysis/boot_crt_env/004ae29f.md,,,library match VS2003; lazy-init proc-ptr DAT_00773d60@004ae2ab; fallback ___crtInitCritSecNoSpinCount@8@004ae2e1; S-0045
+004af2b6,___initmbctable,boot,C1,mapped,re/analysis/boot_crt_env/004af2b6.md,,,library match VS2003; once-init guard DAT_008ab6d4@004af2b6; calls __setmbcp(-3)@004af2bf; S-0046
+004affe0,FUN_004affe0,boot,C1,mapped,re/analysis/boot_crt_env/004affe0.md,,,wrapper: forwards param_1 to FUN_004affaf with args 0 and 4@004affe0; S-0047

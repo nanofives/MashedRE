@@ -19,15 +19,15 @@ A row goes into DEFERRED when:
 | D-0043 | depth-3 callees of thunk targets 0x00495150+0x004938c0+0x004954f0: 00495120,004955b0,004960a0,004963b0,00498510,00499710,004c2f60,004c3040,004c3270,00550390,00558470,00498b60,004963d0,00496010,004955c0,00498bf0 | depth-3 of 0x00492370 via thunks; not recursed | boot subsystem depth-3 sweep session | boot |
 | D-0044 | depth-3 callees of 0x00493900 (internal): 00499730,004a2be9,004a3ac9,004b302f | depth-3 of 0x00492370; not recursed; S-0001+S-0002 filed for key stubs | boot subsystem depth-3 sweep session | boot |
 | D-0045 | depth-3 callees of 0x00499ba0+0x004c5930: 00499890,004c5a60,004d8060 | depth-3 of 0x00492370; not recursed; S-0003+S-0004+S-0005 filed | boot subsystem depth-3 sweep session | boot |
-| D-0031 | 0x004af2b6 ___initmbctable | depth-2 of FUN_004abbea + __setenvp + FUN_004abe86 | D-0001 re-pickup | boot |
-| D-0032 | 0x004affe0 FUN_004affe0 | depth-2 of FUN_004abbea | D-0001 re-pickup | boot |
-| D-0033 | 0x004a45fb _malloc | depth-2 of __setenvp + FUN_004abe86 + ___crtGetEnvironmentStringsA + FUN_004ac04a | D-0001 re-pickup | boot |
-| D-0034 | 0x004a460d _free | depth-2 of __setenvp + ___crtGetEnvironmentStringsA | D-0001 re-pickup | boot |
-| D-0035 | 0x004a9410 _strlen | depth-2 of __setenvp | D-0001 re-pickup | boot |
-| D-0036 | 0x004ac560 FUN_004ac560 | depth-2 of __setenvp | D-0001 re-pickup | boot |
-| D-0037 | 0x004abd1a FUN_004abd1a | depth-2 of FUN_004abe86 | D-0001 re-pickup | boot |
-| D-0038 | 0x004aaff0 _memcpy | depth-2 of ___crtGetEnvironmentStringsA | D-0001 re-pickup | boot |
-| D-0039 | 0x004ae29f ___crtInitCritSecAndSpinCount | depth-2 of FUN_004ac04a | D-0001 re-pickup | boot |
+| D-0160 | 0x004a45cf __nh_malloc | depth-2 of _malloc (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0161 | 0x004a4660 FUN_004a4660 | depth-2 of _free (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0162 | 0x004a787f __lock | depth-2 of _free (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0163 | 0x004aa497 ___sbh_find_block | depth-2 of _free (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0164 | 0x004aa4c2 ___sbh_free_block | depth-2 of _free (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0165 | 0x004ac570 FUN_004ac570 | depth-2 of FUN_004ac560 tail-call (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0166 | 0x004ae28f ___crtInitCritSecNoSpinCount@8 | depth-2 of ___crtInitCritSecAndSpinCount (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0167 | 0x004af166 __setmbcp | depth-2 of ___initmbctable (boot_crt_env session) | boot_crt_env-cont1 | boot |
+| D-0168 | 0x004affaf FUN_004affaf | depth-2 of FUN_004affe0 (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0100 | 0x004a2bf7 FUN_004a2bf7 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
 | D-0101 | 0x004a5e35 __ms_p5_mp_test_fdiv | depth-3 of FUN_004a2c2f; return stored to DAT_00773994 | boot_crt_exit-cont1 session | boot |
 | D-0102 | 0x004a5de3 FUN_004a5de3 | depth-3 of FUN_004a2c2f; not recursed | boot_crt_exit-cont1 session | boot |
@@ -128,6 +128,15 @@ A row goes into DEFERRED when:
 | D-0028 | 0x004a87f7 FUN_004a87f7 | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
 | D-0029 | 0x004aa3e4 ___heap_select | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
 | D-0030 | 0x004aa44f ___sbh_heap_init | analyzed C1 session boot_crt_exit-20260502-1733 | 2026-05-02 |
+| D-0031 | 0x004af2b6 ___initmbctable | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0032 | 0x004affe0 FUN_004affe0 | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0033 | 0x004a45fb _malloc | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0034 | 0x004a460d _free | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0035 | 0x004a9410 _strlen | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0036 | 0x004ac560 FUN_004ac560 | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0037 | 0x004abd1a FUN_004abd1a | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0038 | 0x004aaff0 _memcpy | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
+| D-0039 | 0x004ae29f ___crtInitCritSecAndSpinCount | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
 
 ## Conventions
 

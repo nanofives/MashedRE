@@ -93,3 +93,12 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-1827  scribe-claim  bucket=rw_engine_init  rvas=18  (sweep)
 2026-05-02  sweep-20260502-1827  scribe-release  bucket=rw_engine_init  writes=18  errors=0  (sweep)
 2026-05-02  sweep-20260502-1827  scribe-release-sweep  buckets=4  total_writes=53  errors=0
+2026-05-02  004a45fb  _malloc                          C0->C1  library match VS2003; __nh_malloc wrapper; DAT_00773c34 _NhFlag@004a45fb (re/analysis/boot_crt_env/004a45fb.md)
+2026-05-02  004a460d  _free                            C0->C1  library match VS2003; SBH mode DAT_008aa6a0@004a4620; lock-id=4@004a4629; HeapFree DAT_008aa69c@004a466c (re/analysis/boot_crt_env/004a460d.md)
+2026-05-02  004a9410  _strlen                          C0->C1  library match VS; dword-at-a-time 0x7efefeff@004a9442; no callees (re/analysis/boot_crt_env/004a9410.md)
+2026-05-02  004aaff0  _memcpy                          C0->C1  library match VS2003; MOVSD.REP@004ab023 + backward-copy; no callees (re/analysis/boot_crt_env/004aaff0.md)
+2026-05-02  004abd1a  FUN_004abd1a                     C0->C1  structural read; token parser; non-standard ABI EAX+ECX+ESI; char-class 0x8aa341@004abd61; U-0047 (re/analysis/boot_crt_env/004abd1a.md)
+2026-05-02  004ac560  FUN_004ac560                     C0->C1  structural read; 7-byte thunk JMP 0x004ac5d5@004ac565 into FUN_004ac570; D-0165 (re/analysis/boot_crt_env/004ac560.md)
+2026-05-02  004ae29f  ___crtInitCritSecAndSpinCount    C0->C1  library match VS2003; lazy-init DAT_00773d60@004ae2ab; fallback ___crtInitCritSecNoSpinCount@8@004ae2e1; S-0045 (re/analysis/boot_crt_env/004ae29f.md)
+2026-05-02  004af2b6  ___initmbctable                  C0->C1  library match VS2003; once-init guard DAT_008ab6d4@004af2b6; __setmbcp(-3)@004af2bf; S-0046 (re/analysis/boot_crt_env/004af2b6.md)
+2026-05-02  004affe0  FUN_004affe0                     C0->C1  structural read; 17-byte wrapper FUN_004affaf(param_1,0,4)@004affe8; S-0047 (re/analysis/boot_crt_env/004affe0.md)
