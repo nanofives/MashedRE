@@ -1,0 +1,845 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 3
+================================================================================
+
+Eight new self-contained prompts (S–Z) covering the next layer of subsystems
+now that boot/CRT, RW init/teardown, D3D9 device, DirectInput, save, and Lua
+are mapped. ID ranges start at U=0327 / D=0880 / S=0320 to avoid colliding
+with anything batch 1 or 2 might still be filing.
+
+Prompts in this batch:
+  S  render_frame      Sonnet medium  — anchor: per-frame RwCamera Begin/End
+  T  audio_dsound      Sonnet medium  — anchor: DirectSound init
+  U  video_mci         Sonnet medium  — anchor: MCI video player (mciSendString)
+  V  vehicle_update    Sonnet medium  — anchor: vehicle update tick (uncertain anchors → halt allowed)
+  W  ai_update         Sonnet medium  — anchor: AI/opponent update (uncertain anchors → halt allowed)
+  X  track_loader      Sonnet medium  — anchor: TRACKS\\ path string + .piz/.dff loader
+  Y  hud_frontend      Sonnet medium  — anchor: Frontend.piz path + menu string IDs
+  Z  powerups          Sonnet medium  — anchor: POWERUPS\\ filenames
+
+After all 8 push their queue rows, relaunch the sweep prompt I from
+PROMPTS_FANOUT.txt with a fresh SESSION_SHORT_ID. The sweep is bucket-agnostic.
+
+V, W, X, Y, Z anchors are speculative — these sessions are explicitly
+permitted to halt and surface "anchor inconclusive; need user direction"
+if the search_defined_strings hits don't converge. Halting on uncertainty
+is the correct behavior here, not failure. Better to file zero rows than
+to invent them.
+
+LAUNCH SEQUENCE GUIDANCE
+
+Wave 1 (4 in parallel, high-confidence anchors): S, T, U, X
+Wave 2 (4 in parallel, may halt early): V, W, Y, Z
+After all push: relaunch sweep I.
+
+Pool slot budget: 8 max. Sweep does not use a slot. All 8 of these are
+Ghidra-bound (no NO-MCP sessions in this batch), so cap at 6 simultaneous
+to leave headroom.
+
+ID ranges (no overlap with batches 1–2, no overlap within batch 3):
+
+  Session  Bucket             U range      D range      S range
+  -------  ----------------   -----------  -----------  -----------
+    S      render_frame       0327..0346   0880..0939   0320..0339
+    T      audio_dsound       0347..0366   0940..0999   0340..0359
+    U      video_mci          0367..0386   1000..1059   0360..0379
+    V      vehicle_update     0387..0406   1060..1119   0380..0399
+    W      ai_update          0407..0426   1120..1179   0400..0419
+    X      track_loader       0427..0446   1180..1239   0420..0439
+    Y      hud_frontend       0447..0466   1240..1299   0440..0459
+    Z      powerups           0467..0486   1300..1359   0460..0479
+
+If a session would exhaust its allocation, it halts and asks for an
+extension. Never silently overrun.
+
+================================================================================
+=== PROMPT S — Per-frame render path (RwCamera Begin/End) ======================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session S; anchor-driven per-frame render path.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "ID range allocation", § "Reference materials"). Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before any citation. Null → halt.
+3. No hedging, no inference, no naming from names. Forbidden words: "probably", "likely", "seems to", "appears to", "I think", "presumably", "must be", "is meant to", "is responsible for".
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="render_frame-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. mcp__ghidra__search_defined_strings — try in order, capturing all hits:
+     query="RwCameraBeginUpdate"
+     query="RwCameraEndUpdate"
+     query="RwRasterShowRaster"
+     query="RwCameraClear"
+2. external_imports_list / external_exports_list — find any RW camera functions imported.
+3. For each anchor, reference_to → candidate-callers set.
+4. Identify RENDER_FRAME_FN: the function that calls BOTH RwCameraBeginUpdate AND RwCameraEndUpdate (or the function that calls the wrapper that does — choose the smaller one). This is the per-frame render entry point. If multiple equal candidates, halt + surface ambiguity.
+5. function_callees RENDER_FRAME_FN → subset = RENDER_FRAME_FN + callees, capped 20 hard / 15 soft.
+
+If NO anchor hits: halt + surface "RW camera anchors not found; binary may inline RW renderer or use a different per-frame entry. Need user direction."
+
+Bucket: re/analysis/render_frame/
+ID-range: U=0327..0346  D=0880..0939  S=0320..0339
+Subsystem: render
+
+External RW imports (RwCameraBeginUpdate, RwCameraEndUpdate, RwRasterShowRaster, RwCameraClear, RpWorldRender, RwIm2DRenderTriangle, etc.) are NOT stubs — note as "EXTERNAL: <name>".
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/baseframe.cpp + basecamera.cpp + baseworld.cpp — engine semantics for the per-frame render contract.
+- criterion-rwg37/core/src/bacamera.c + bacamval.c — definitive camera Begin/EndUpdate semantics.
+- criterion-rwg37/core/driver/d3d9/d3d9device.c + d3d9rendst.c — D3D9 backend behavior during a frame.
+- gta-reversed-modern/source/game_sa/RenderWare/ for usage patterns only.
+
+Cross-check observed offsets against these. NEVER vendor without MCP confirmation. NEVER cite their RVAs.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+3. bash scripts/ghidra_assert.sh preflight "$SLOT" — all three pass.
+4. Open slot read-only via MCP (project_location=mashed_pool, project_name=$SLOT, MASHED.exe, read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For RENDER_FRAME_FN first, then each callee in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/render_frame/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,render,C1,mapped,re/analysis/render_frame/<rva>.md,,,<short notes>.
+  f. U/S in U=0327..0346 / S=0320..0339.
+  g. CHANGELOG row.
+  h. Self-check (in chat): function_at this session? forbidden words? cite addresses? mechanical not inferred? Fix before next.
+  i. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=0880..0939, bucket render_frame-cont1.
+
+After loop: file depth-2 DEFERRED rows for unrecursed callees in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/render_frame/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: per-frame render path (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=render_frame  rvas=<RENDER_FRAME_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: render_frame for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- All standard ones (hedging, recursion past depth 1, cap, base-bucket on continuation, IDs out of range, renaming).
+- Picking RENDER_FRAME_FN by guessing when no candidate calls BOTH Begin and End — halt instead.
+- Citing librw / criterion-rwg37 / gta-reversed-modern RVAs as Mashed RVAs.
+- Confusing per-frame render with one-time render setup (the function we want is called every frame; the setup is the one-time RW init bucket from D).
+
+## End-of-session report
+- Slot held: $SLOT
+- RENDER_FRAME_FN identified as: <rva> <name> <size_bytes>
+- Anchor hits found (per query)
+- Functions covered: <count>
+- New hooks.csv rows at C1: <count>
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n) — within allocation
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- External RW imports noted (not as stubs): list
+- MCP failures: list verbatim or "none"
+- Observations: list or "none"
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT T — DirectSound audio playback ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session T; anchor-driven DirectSound init.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="audio_dsound-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — try in order:
+     query="DirectSoundCreate"
+     query="DirectSoundCreate8"
+     query="dsound.dll"
+     query="IDirectSound"
+     query="IDirectSoundBuffer"
+     query="DSBUFFERDESC"
+2. external_imports_list — find dsound.dll imports.
+3. For each anchor, reference_to → candidate-callers.
+4. Identify DSOUND_INIT_FN: the function that calls DirectSoundCreate (or DirectSoundCreate8) AND SetCooperativeLevel. If only DirectSoundCreate has xrefs without a SetCooperativeLevel anchor, take the function calling DirectSoundCreate.
+5. If multiple equal candidates, halt + surface.
+6. function_callees DSOUND_INIT_FN → subset = DSOUND_INIT_FN + callees, capped 20/15.
+
+If NO anchors hit: halt + surface "DirectSound not used in MASHED.exe; audio likely routed through RWS audio middleware (session F territory) or another DLL. Need user direction."
+
+Bucket: re/analysis/audio_dsound/
+ID-range: U=0347..0366  D=0940..0999  S=0340..0359
+Subsystem: audio
+
+External imports (DirectSoundCreate, IDirectSound::CreateSoundBuffer, IDirectSoundBuffer::Lock/Unlock/Play, etc.) are NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+DirectSound API patterns: no local reference; use only what MCP shows. If you need to cite DirectSound API behavior, file [UNCERTAIN] noting the API name and contract in question. Do not vendor; do not consult MSDN as evidence about this binary.
+
+If RWS audio middleware (session F) wraps DirectSound under the hood, the analysis here may overlap with F's territory. Confirm via xrefs: if DSOUND_INIT_FN is also a callee of session F's AUDIO_LOAD_FN, halt + surface "audio_dsound and audio_rws_loader subsets overlap; need user direction whether to merge or proceed with deduplication."
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0)
+For DSOUND_INIT_FN first, then callees in address order:
+  a. function_at; b. decomp_function (weight); c. function_callees (no recursion);
+  d. Write re/analysis/audio_dsound/<rva>.md;
+  e. hooks.csv row (subsystem=audio);
+  f. U/S in U=0347..0366 / S=0340..0359;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0940..0999, bucket audio_dsound-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/audio_dsound/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: DirectSound init (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=audio_dsound  rvas=<DSOUND_INIT_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: audio_dsound for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Using MSDN / training knowledge of DirectSound as evidence about this binary.
+- Proceeding when DSOUND_INIT_FN is also a callee of session F's AUDIO_LOAD_FN — halt + surface overlap.
+
+## End-of-session report
+- Slot held; DSOUND_INIT_FN identified; anchor hits found
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External DirectSound imports noted
+- Overlap with session F detected: yes/no (and how resolved)
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT U — MCI video player ================================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session U; anchor-driven MCI video player.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="video_mci-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — try in order:
+     query="mciSendString"
+     query="mciSendCommand"
+     query="winmm.dll"
+     query=".avi"
+     query=".mpg"
+     query=".bik"
+     query="open"   (commonly part of MCI command strings — filter by xref count)
+2. external_imports_list — find winmm.dll mciSendString / mciSendCommand imports.
+3. For each anchor, reference_to → candidate-callers.
+4. Identify VIDEO_PLAY_FN: the function that calls mciSendString or mciSendCommand AND opens a video file path. If MCI is used minimally (single splash-screen play), the function may be small (under 20 lines decomp).
+5. If multiple equal candidates, halt + surface.
+6. function_callees VIDEO_PLAY_FN → subset = VIDEO_PLAY_FN + callees, capped 20/15.
+
+If NO anchors hit: halt + surface "MCI not used; video may be routed through DirectShow, Bink, or RW video plugin. Need user direction."
+
+Bucket: re/analysis/video_mci/
+ID-range: U=0367..0386  D=1000..1059  S=0360..0379
+Subsystem: util (video sits between render and frontend; util is the safest bucket)
+
+External imports (mciSendString, mciSendCommand) are NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+MCI command strings ("open <file> alias <name>", "play <name> wait", "close <name>") are documented at MSDN — but use only what MCP shows. Cite raw MCI command strings exactly as they appear in MASHED.exe; do not paraphrase.
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0)
+For VIDEO_PLAY_FN first, then callees in address order:
+  a. function_at; b. decomp_function (weight); c. function_callees (no recursion);
+  d. Write re/analysis/video_mci/<rva>.md;
+  e. hooks.csv row (subsystem=util);
+  f. U/S in U=0367..0386 / S=0360..0379;
+  g. CHANGELOG row;
+  h. Self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=1000..1059, bucket video_mci-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/video_mci/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: MCI video player (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=video_mci  rvas=<VIDEO_PLAY_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: video_mci for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Paraphrasing MCI command strings — copy verbatim or quote partial with "..." if too long.
+- Inferring "this plays the intro video" from filenames; describe what the function MECHANICALLY does (opens file path, sends mci command, sleeps/waits for completion, closes).
+
+## End-of-session report
+- Slot held; VIDEO_PLAY_FN identified; anchor hits found
+- MCI command strings observed (verbatim list)
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External winmm imports noted
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT V — Vehicle update tick =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session V; anchor-driven vehicle update — anchors are speculative, halt-on-uncertainty is correct.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Plus an extra: this session's anchors are SPECULATIVE — halting on inconclusive anchors is the CORRECT behavior, not a failure.
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_update-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven, multi-strategy)
+Try the following anchor strategies IN ORDER. Stop at the first one that converges on a single function meeting the criteria.
+
+Strategy 1 — string anchors:
+  search_defined_strings query="Vehicle"
+  search_defined_strings query="Car"
+  search_defined_strings query="VEHICLE"
+  search_defined_strings query="vehicle.dff"
+  search_defined_strings query="VehicleUpdate"
+  Filter to strings whose xref count is 1–10 (high-xref strings are noise).
+
+Strategy 2 — file-path anchors:
+  Read original/TOASTART/VEHICLES/ to enumerate vehicle .piz files.
+  search_defined_strings for each unique vehicle name observed in those archive paths.
+
+Strategy 3 — call-graph approach:
+  IF the per-frame render path has been mapped (session S, bucket render_frame),
+  the per-frame TICK function is its sibling — typically called from the same
+  parent function in alternating order with the render call. Read the bucket's
+  notes to identify the parent of RENDER_FRAME_FN; its other callees are
+  candidates for the game tick.
+
+Identify VEHICLE_UPDATE_FN: a function called per-frame (high call-count proxy: many xrefs from short stubby functions, or referenced from the per-frame parent) AND touching a struct array (writes through pointer arithmetic with stride > 0x40).
+
+If NONE of the three strategies converges on a single candidate, HALT and surface verbatim:
+  "Vehicle update anchor inconclusive after string / file-path / call-graph
+   strategies. Strategy 1 found <n1> candidate functions; strategy 2 found <n2>;
+   strategy 3 found <n3>. Need user direction on which RVA to anchor at, or
+   acknowledgment that vehicle update is too entangled with the per-frame tick
+   to bucket independently. Halting before any decomp."
+
+This halt is the SUCCESS path for an inconclusive session. File no rows. Empty queue. Empty .md output.
+
+If a candidate IS found: function_callees VEHICLE_UPDATE_FN → subset capped 20/15.
+
+Bucket: re/analysis/vehicle_update/
+ID-range: U=0387..0406  D=1060..1119  S=0380..0399
+Subsystem: vehicle
+
+External imports (RW math helpers, sqrt etc.) NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/baseframe.cpp for transform/matrix ops if vehicle uses RW frames.
+- gta-reversed-modern shows ONE game's vehicle code (CVehicle) for shape comparison only — Mashed's vehicle code is Supersonic's, not Rockstar's, so cite gta-reversed only for "this looks like a 4×4 matrix multiply" / "this looks like quaternion normalize" structural analogies, never for game-side semantics. NEVER cite gta-reversed RVAs.
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0, IF subset was found)
+Standard work loop. function_at → decomp_function (weight) → function_callees (no recursion) → write .md → hooks.csv (subsystem=vehicle) → U/S in U=0387..0406 / S=0380..0399 → CHANGELOG → self-check → cap check (early-finish to D=1060..1119, bucket vehicle_update-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown (whether a subset was found OR halted on inconclusive anchors)
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If subset was decompiled:
+  git add re/analysis/vehicle_update/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+  git commit -m "first pass: vehicle update (slot $SLOT, $SESSION_SHORT_ID)"
+  git pull --rebase
+  git push origin main
+  Append to SCRIBE_QUEUE.md "Queued": YYYY-MM-DD  $SESSION_SHORT_ID  bucket=vehicle_update  rvas=<list>
+  git add re/SCRIBE_QUEUE.md
+  git commit -m "queue: vehicle_update for sweep ($SESSION_SHORT_ID)"
+  git pull --rebase
+  git push origin main
+
+If halted on inconclusive anchors: NO commit, NO queue entry. Just release the slot and report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking VEHICLE_UPDATE_FN by guessing when no strategy converges. Halt is the right answer.
+- Treating the call-graph approach (strategy 3) as evidence when render_frame bucket has not been written yet (session S not done) — halt instead and surface "depends on session S; retry after batch 3 wave 1 sweeps."
+- Citing gta-reversed CVehicle code as evidence about Mashed vehicle behavior.
+
+## End-of-session report
+- Slot held: $SLOT
+- Anchor outcome: <found via strategy N | inconclusive — halted before decomp>
+- If found: VEHICLE_UPDATE_FN (rva/name/size); strategy that found it
+- If halted: per-strategy candidate counts, what evidence is missing
+- Functions covered: <count> (0 if halted)
+- Tracker counts; IDs used (within allocation; may be empty)
+- cap_count + early-finish
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID) | n/a — halted on inconclusive anchors
+
+================================================================================
+=== PROMPT W — AI / opponent update ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session W; anchor-driven AI update — anchors speculative, halt-on-uncertainty correct.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Plus: speculative anchors — halting is correct on inconclusive findings.
+
+## Session identifier
+SESSION_SHORT_ID="ai_update-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — string anchors:
+  search_defined_strings query="AI"          (filter: xref count 1–20; "AI" alone is noisy)
+  search_defined_strings query="ai_"
+  search_defined_strings query="Opponent"
+  search_defined_strings query="Bot"
+  search_defined_strings query="Driver"
+  search_defined_strings query="ai.lua"      (Mashed uses Lua per CLAUDE.md; AI scripts may be Lua)
+  search_defined_strings query="AI\\"
+  search_defined_strings query="ai_path"
+  search_defined_strings query="waypoint"
+  search_defined_strings query="WAYPOINT"
+
+Strategy 2 — file-path anchors:
+  ls original/TOASTART/AI*.piz (the AI.piz archive exists per memory; see project_piz_format.md).
+  Strings inside AI.piz (after extraction by piz_validation session G) may identify per-vehicle AI driver scripts. If AI.piz extraction has happened (re/analysis/piz_validation/AI.list exists), read its contents for filenames to anchor on.
+
+Strategy 3 — call-graph approach:
+  Sibling-of-vehicle-update: AI controls vehicles, so AI_UPDATE_FN is likely called once per AI-controlled vehicle, EITHER as a callee of VEHICLE_UPDATE_FN (if vehicle update walks vehicles and calls AI per vehicle) OR as a sibling at the per-frame parent level.
+  This depends on session V (vehicle_update) having found VEHICLE_UPDATE_FN. If V halted on inconclusive anchors, strategy 3 is unavailable for W; fall back to strategies 1 and 2 only.
+
+Identify AI_UPDATE_FN: a function called per-frame (or per-vehicle-per-frame) that touches per-driver state and selects a control input (steering / accel / brake delta). Heuristic for "control input output": writes to multiple float globals or struct fields.
+
+If NONE of the strategies converges: HALT verbatim:
+  "AI update anchor inconclusive: strategy 1 (<n1> candidates), strategy 2 (<n2>),
+   strategy 3 (<n3 or n/a>). Need user direction. Halting before any decomp."
+
+If a candidate IS found: function_callees AI_UPDATE_FN → subset capped 20/15.
+
+Bucket: re/analysis/ai_update/
+ID-range: U=0407..0426  D=1120..1179  S=0400..0419
+Subsystem: ai
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+No specific RW reference for racing AI. gta-reversed has CCarAI / CCarCtrl but those are SA-specific behaviors (traffic / wanted) and do NOT generalize to a racing game. Useful only as analogy for "this looks like a steering-PID controller" structural patterns, not for semantics.
+
+If AI_UPDATE_FN heavily uses Lua API calls (luaL_callmeta, lua_pcall), this overlaps session Q (input_lua) territory. Note in end-of-session report; halt + surface if 3+ Lua calls in AI_UPDATE_FN's body — likely the AI is scripted in Lua and the C code is just glue, in which case the C side is shallow and the real logic lives in `original/TOASTART/AI/*.lua` (data, not code-in-binary).
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0, IF subset found)
+Standard. function_at → decomp_function (weight) → function_callees (no recursion) → write .md → hooks.csv (subsystem=ai) → U/S in U=0407..0426 / S=0400..0419 → CHANGELOG → self-check → cap check (early-finish to D=1120..1179, bucket ai_update-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If subset was decompiled: standard commit + queue + push.
+If halted: no commit, no queue entry, just release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking AI_UPDATE_FN by guessing.
+- Treating gta-reversed CCarAI as evidence about Mashed's racing AI.
+- Decompiling Lua-glue C functions and reporting Lua-script semantics as "what this function does" — the C function dispatches to Lua; what Lua DOES is not in the binary.
+
+## End-of-session report
+- Slot held; anchor outcome (found via strategy N | inconclusive — halted)
+- If found: AI_UPDATE_FN (rva/name/size)
+- Lua-glue overlap detected: yes/no
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish
+- MCP failures; observations
+- Scribe outcome: queued | n/a — halted on inconclusive anchors
+
+================================================================================
+=== PROMPT X — Track / level loader ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session X; anchor-driven track loader.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="track_loader-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — try in order:
+     query="TRACKS\\"
+     query="TRACKS/"
+     query="track"           (xref-count filter)
+     query=".dff"
+     query=".bsp"
+     query="track.piz"       (or specific track names found in original/TOASTART/TRACKS/)
+2. From original/TOASTART/TRACKS/, list .piz files and try the literal filename strings (e.g., "circuit01.piz").
+3. For each anchor, reference_to → candidate-callers set.
+4. Identify TRACK_LOAD_FN: the function that opens a track .piz path (calls fopen / CreateFileA OR forwards a path to a known piz_extract function from session G's analysis). Heuristic: smaller of the candidates, takes a path string parameter, returns a pointer (track-handle).
+5. If multiple equal candidates, halt + surface ambiguity.
+6. function_callees TRACK_LOAD_FN → subset = TRACK_LOAD_FN + callees, capped 20/15.
+
+If NO anchors hit: halt + surface "Track loader anchors not found; tracks may load via the same .piz pipeline as other assets (session G output) without a track-specific entry. Need user direction."
+
+Bucket: re/analysis/track_loader/
+ID-range: U=0427..0446  D=1180..1239  S=0420..0439
+Subsystem: render (tracks are world/level data; render is the closest existing bucket — could split to a "level" subsystem in CLAUDE.md later)
+
+External imports (CRT file, Win32 file, RW model loader exports) NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librwgta/tools/storiesconv/ has DFF / TXD / IFP loaders — useful for shape if Mashed uses RW DFF for track geometry.
+- criterion-rwg37/world/baworld.c + babinwor.c for RW world (BSP) loading — definitive engine semantics if track is stored as RpWorld.
+- Cross-check observed file-format reads (chunk IDs, header magics) against these. Never paste; never cite their RVAs.
+
+If session G (piz_validation) has produced re/analysis/piz_validation/findings.md, read it for the .piz format facts established there — useful framing when this session sees Mashed code calling .piz extraction.
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0)
+For TRACK_LOAD_FN first, then callees in address order. Standard pattern. hooks.csv subsystem=render. U/S in U=0427..0446 / S=0420..0439. Cap check → DEFERRED in D=1180..1239, bucket track_loader-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/track_loader/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: track loader (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=track_loader  rvas=<TRACK_LOAD_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: track_loader for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Inferring "this is the track loader because the path string contains 'track'" without confirming the function actually opens a file or calls a known loader.
+- Citing librwgta/criterion-rwg37 RVAs as Mashed RVAs.
+- Confusing track loading with general .piz extraction (session G's domain) — the track loader is a CALLER of .piz extraction, not the extraction itself.
+
+## End-of-session report
+- Slot held; TRACK_LOAD_FN identified; anchor hits found
+- File-format reads observed (chunk IDs, magics)
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External imports noted
+- Cross-bucket call: does TRACK_LOAD_FN call any function in piz_validation/ tools? (yes/no)
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT Y — HUD / Frontend menu =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session Y; anchor-driven Frontend/HUD entry.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Speculative anchors — halt on inconclusive findings is correct.
+
+## Session identifier
+SESSION_SHORT_ID="hud_frontend-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — file-path anchors:
+  search_defined_strings query="Frontend.piz"
+  search_defined_strings query="FRONTEND\\"
+  search_defined_strings query="frontend"
+
+Strategy 2 — menu string anchors (player-visible UI text — HIGH SIGNAL because they appear once and are referenced once):
+  Read original/TOASTART/Frontend.piz contents (via piz_extract.py if not yet extracted; if session G has produced an inventory, use that to identify candidate menu texts).
+  search_defined_strings query="<some literal menu text>" — try 3–5 distinct phrases like "PRESS START", "CONTINUE", "OPTIONS", "EXIT", "Player 1".
+
+Strategy 3 — RW Im2D anchors (HUDs commonly use RW's 2D rendering):
+  search_defined_strings query="RwIm2DRenderTriangle"
+  search_defined_strings query="RwIm2DRenderLine"
+  external_imports_list — look for RwIm2D* exports.
+
+Identify FRONTEND_FN: a function that loads Frontend.piz (or wraps the menu state machine), called from the per-frame parent on the menu path (not the gameplay path).
+
+If NONE of the strategies converges, HALT verbatim:
+  "Frontend/HUD anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2>),
+   strategy 3 (<n3>). Need user direction. Halting before any decomp."
+
+If found: function_callees FRONTEND_FN → subset capped 20/15.
+
+Bucket: re/analysis/hud_frontend/
+ID-range: U=0447..0466  D=1240..1299  S=0440..0459
+Subsystem: frontend
+
+External RW Im2D imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/ for RW Im2D rendering primitives.
+- criterion-rwg37/core/src/baimmedi.c for RwIm2D semantics (RwIm2DRenderTriangle, etc.).
+- gta-reversed has its own HUD code (CHud) that's SA-specific — useful only as "this is what an RW-based HUD function shape looks like" structural analogy.
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0, IF subset found)
+Standard. function_at → decomp (weight) → callees (no recursion) → write .md → hooks.csv (subsystem=frontend) → U/S in U=0447..0466 / S=0440..0459 → CHANGELOG → self-check → cap check (early-finish to D=1240..1299, bucket hud_frontend-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found and decompiled:
+  git add re/analysis/hud_frontend/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+  git commit -m "first pass: HUD/frontend (slot $SLOT, $SESSION_SHORT_ID)"
+  git pull --rebase
+  git push origin main
+  Append SCRIBE_QUEUE.md row, commit, push.
+
+If halted on inconclusive: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Treating SA's CHud as evidence about Mashed.
+- Inferring "this draws the HUD" from a string match alone — confirm via mechanical description (calls RwIm2D primitives, reads HUD state struct, etc.).
+- Bucketing the in-game HUD and the menu Frontend together if they're separate functions — split into hud_frontend (this session) and a follow-up bucket; do not pre-emptively merge.
+
+## End-of-session report
+- Slot held; anchor outcome (found via strategy N | inconclusive — halted)
+- If found: FRONTEND_FN (rva/name/size); strategy
+- Menu strings observed (verbatim list, top 10)
+- Functions covered; tracker counts; IDs used
+- External RW imports noted
+- cap_count + early-finish
+- MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT Z — Powerups / weapons ==============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session Z; anchor-driven powerup system.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Speculative anchors — halt on inconclusive correct.
+
+## Session identifier
+SESSION_SHORT_ID="powerups-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — file-path anchors:
+  ls original/TOASTART/POWERUPS/ to enumerate powerup .piz files / asset names.
+  search_defined_strings query="POWERUPS\\"
+  search_defined_strings query="powerups"
+  For each unique powerup asset name observed, search_defined_strings on it.
+
+Strategy 2 — string anchors (game-mechanic vocabulary):
+  search_defined_strings query="Powerup"
+  search_defined_strings query="Weapon"
+  search_defined_strings query="Pickup"
+  search_defined_strings query="Missile"
+  search_defined_strings query="Mine"
+  search_defined_strings query="Boost"
+  Filter all by xref count 1–20.
+
+Strategy 3 — call-graph approach:
+  IF vehicle_update bucket exists (session V succeeded), the powerup system is likely called per-frame from VEHICLE_UPDATE_FN's callees — vehicles tick their powerup inventory each frame.
+
+Identify POWERUP_FN: a function that EITHER (a) loads a POWERUPS asset by path AND constructs a powerup instance, OR (b) updates a powerup's per-frame state (timer countdown, projectile motion).
+
+If NONE converges, HALT verbatim:
+  "Powerup anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2>),
+   strategy 3 (<n3 or n/a>). Need user direction. Halting before any decomp."
+
+If found: function_callees POWERUP_FN → subset capped 20/15.
+
+Bucket: re/analysis/powerups/
+ID-range: U=0467..0486  D=1300..1359  S=0460..0479
+Subsystem: vehicle (powerups are vehicle-mounted in Mashed)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+No useful local reference for racing-game powerups — they are pure Supersonic gameplay code. Cite ONLY what MCP shows. Do not import gta-reversed analogies (SA weapon system is wholly different).
+
+## Pre-flight asserts
+Same as S.
+
+## Work loop (cap_count=0, IF subset found)
+Standard. function_at → decomp (weight) → callees (no recursion) → write .md → hooks.csv (subsystem=vehicle) → U/S in U=0467..0486 / S=0460..0479 → CHANGELOG → self-check → cap check (early-finish to D=1300..1359, bucket powerups-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found and decompiled: standard commit + queue + push.
+If halted: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking POWERUP_FN by guessing.
+- Importing gta-reversed weapon-code analogies as evidence — Mashed's powerups are not GTA's weapons.
+- Recursing into per-powerup-type subroutines because "they're short" — depth-1 only; further levels go to DEFERRED for a powerups-types follow-up bucket.
+
+## End-of-session report
+- Slot held; anchor outcome (found via strategy N | inconclusive — halted)
+- If found: POWERUP_FN (rva/name/size)
+- Powerup asset names observed in MASHED.exe strings (verbatim list)
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish
+- MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== END OF BATCH 3 PROMPTS =====================================================
+================================================================================
+
+LAUNCH SEQUENCE GUIDANCE — DETAILED
+
+Wave 1 (high-confidence anchors, run in parallel):
+  S  render_frame      pool slot
+  T  audio_dsound      pool slot
+  U  video_mci         pool slot
+  X  track_loader      pool slot
+
+These four have clear API anchors (RW, DSound, MCI, file-path). Expected to
+land subsets cleanly with low halt rate.
+
+Wave 2 (speculative anchors, may halt):
+  V  vehicle_update    pool slot, may halt
+  W  ai_update         pool slot, may halt; benefits from V having succeeded
+  Y  hud_frontend      pool slot, may halt
+  Z  powerups          pool slot, may halt; benefits from V having succeeded
+
+Run wave 2 AFTER wave 1's analysis commits push (they may not need to wait
+for the sweep — only the analysis commits — because wave 2's anchors don't
+require Ghidra master writes from wave 1, only the published .md notes
+from wave 1).
+
+After all 8 push their analysis commits + queue rows, relaunch sweep prompt I
+from PROMPTS_FANOUT.txt with a fresh SESSION_SHORT_ID="sweep-YYYYMMDD-HHMM".
+
+Pool slot budget: 8 total. Sweep does not use a slot. Cap at 6 simultaneous
+to leave 2-slot headroom for ad-hoc work and potential cont-1 splits.
+
+ALL ID RANGES (cumulative across batches 1, 2, 3)
+
+  Batch 1:
+    A  boot_app_init        U=0007..0026   D=0040..0099   S=0001..0019
+    B  boot_crt_exit        U=0027..0046   D=0100..0159   S=0020..0039
+    C  boot_crt_env         U=0047..0066   D=0160..0219   S=0040..0059
+    D  rw_engine_init       U=0067..0086   D=0220..0279   S=0060..0079
+    E  rw_engine_teardown   U=0087..0106   D=0280..0339   S=0080..0099
+    F  audio_rws_loader     U=0107..0126   D=0340..0399   S=0100..0119
+    G  piz_validation       U=0127..0146     n/a          S=0120..0139
+    H  rws_inventory        U=0147..0166     n/a          S=0140..0159
+
+  Batch 2:
+    J  boot_app_init_d3     U=0167..0186   D=0400..0459   S=0160..0179
+    K  boot_crt_exit_d3     U=0187..0206   D=0460..0519   S=0180..0199
+    L  rw_engine_init_d2    U=0207..0226   D=0520..0579   S=0200..0219
+    M  rw_engine_teardown_d2 U=0227..0246  D=0580..0639   S=0220..0239
+    N  render_d3d9_device   U=0247..0266   D=0640..0699   S=0240..0259
+    O  input_dinput         U=0267..0286   D=0700..0759   S=0260..0279
+    P  save_gamesave        U=0287..0306   D=0760..0819   S=0280..0299
+    Q  input_lua            U=0307..0326   D=0820..0879   S=0300..0319
+
+  Batch 3:
+    S  render_frame         U=0327..0346   D=0880..0939   S=0320..0339
+    T  audio_dsound         U=0347..0366   D=0940..0999   S=0340..0359
+    U  video_mci            U=0367..0386   D=1000..1059   S=0360..0379
+    V  vehicle_update       U=0387..0406   D=1060..1119   S=0380..0399
+    W  ai_update            U=0407..0426   D=1120..1179   S=0400..0419
+    X  track_loader         U=0427..0446   D=1180..1239   S=0420..0439
+    Y  hud_frontend         U=0447..0466   D=1240..1299   S=0440..0459
+    Z  powerups             U=0467..0486   D=1300..1359   S=0460..0479
+
+  Next batch (when designed) starts at U=0487, D=1360, S=0480.
