@@ -274,3 +274,18 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0489 | 0x0040b430 | Array at 0x008a94f0 (4 entries) and accumulator 0x008a94fc: per-index structure matches per-player-slot counter but not confirmed | cross-ref callers and read sites of 0x008a94f0 |
 | U-0573 | DAT_007f108b | 0x00491490 | camera_follow | mode flag byte: zero = FUN_00491340 path, non-zero = FUN_004910c0 path; semantic unknown (candidate: debug/alternate camera mode) |
 | U-0574 | FUN_00491490 param drop | 0x00491490 | camera_follow | CAMERA_FN passes FUN_00467210(0) result to this function but decompiler shows void signature; param may be unused or decompiler dropped it |
+| U-0490 | 0x0040b540 | DAT_008a94e0 (source int array, 4 entries) and DAT_007f1a14 (stride-4 validity array, -1 marks inactive) element semantics not determined | cross-ref write sites of 0x008a94e0 and 0x007f1a14 |
+| U-0491 | 0x0040b6d0 | DAT_008a94e0 element semantics: same 4-entry int array read by FUN_0040b540; individual element meaning unknown | cross-ref write sites of 0x008a94e0 and callers of FUN_0040b6d0 |
+| U-0492 | 0x0040b6e0 | DAT_0063b8ec: conditionally incremented by param_1 delta; suppressed when FUN_0042f6a0==2 | cross-ref callers of FUN_0040b6e0 and write sites of 0x0063b8ec |
+| U-0493 | 0x0040b6e0 | Guard value 2 from FUN_0042f6a0 in FUN_0040b6e0 context: same function compared to 0xb and 9 in STATE_FN case 3 | decomp FUN_0042f6a0 (S-0485) |
+| U-0494 | 0x0040b700 | Four int arrays at 0x008a9530/40/50/60: per-slot structure inferred; semantic meaning unknown | cross-ref callers of FUN_0040b700 and write sites of these arrays |
+| U-0495 | 0x0040b700 | FUN_0040e340 return values 2/3/4: three-way dispatch key; meanings not determined | decomp FUN_0040e340 write sites and callers |
+| U-0496 | 0x0040d440 | DAT_0063ba7c and DAT_0063ba78: int globals; one is current track selection one is last-loaded; not confirmed by strings | cross-ref all write sites of both globals |
+| U-0497 | 0x0040e340 | DAT_008a94d0: dispatch key (values 2/3/4) used by FUN_0040b700; write sites and semantic unknown | cross-ref all write sites of 0x008a94d0 |
+| U-0498 | 0x0040e350 | DAT_0063ba8c: compared to 11 (0xb) and 9 in STATE_FN case 3 exit-code guard; int; meaning unknown | cross-ref write sites of 0x0063ba8c |
+| U-0499 | 0x0040e450 | DAT_0063b908: flag/counter; read by FUN_0040e450, written by FUN_0040e460; STATE_FN case 3 tests non-zero | cross-ref all write sites of 0x0063b908 |
+| U-0500 | 0x0042b8d0 | DAT_0067eca4: int with observed values 0, 2, 5; three predicate getters (FUN_0042b8d0/b8e0/b8f0); STATE_FN phase gates | cross-ref all write sites of 0x0067eca4 |
+| U-0501 | 0x0042b930 | DAT_0067ecb0: int; values 1 and 4 trigger STATE_FN case 1 phase transitions; lobby readiness unknown | cross-ref all write sites of 0x0067ecb0 |
+| U-0502 | 0x0042c1c0 | DAT_0067eab0: race-interruption flag; non-zero triggers phase 7 from case 3; zero triggers revert to phase 3 from case 7 | cross-ref all write sites of 0x0067eab0 |
+| U-0503 | 0x0042c1d0 | DAT_0067ea10 (12 ints at 0x0067ea10–0x0067ea3f): zeroed each case-3 frame by FUN_0042c1d0; indexed by DAT_007f1a14[i] in FUN_0042c220 | cross-ref read/write sites of the entire range |
+| U-0504 | 0x0042c220 | FUN_0040e470 and thunk_FUN_00497450: gate and test callees with unknown semantics; former takes slot index 0–3 latter takes DAT_007f1a14[i] value | decomp FUN_0040e470 (S-0493) and thunk_FUN_00497450 (S-0494) |

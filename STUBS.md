@@ -349,3 +349,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0488 | 0x00448700 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_00448700; case 3 final placement call (1, local_10[0]); D-1360 |
 | S-0489 | 0x004927c0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_004927c0; unconditional entry call; purpose not yet analyzed; D-1360 |
 | S-0490 | 0x005c9d00 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_005c9d00; case 3 end-of-race trigger input; D-1360 |
+| S-0491 | 0x00417740 | 0x0040b540 FUN_0040b540 | util | passthrough | 2026-05-02 | FUN_00417740; called i=0..3 when DAT_007f0fd0==4||7; return written to param_1[i] |
+| S-0492 | 0x0040d270 | 0x0040d440 FUN_0040d440 | util | passthrough | 2026-05-02 | FUN_0040d270; called with (PTR_PTR_005f2770, DAT_0063ba7c); course-load orchestrator seen during discovery traversal |
+| S-0493 | 0x0040e470 | 0x0042c220 FUN_0042c220 | util | passthrough | 2026-05-02 | FUN_0040e470; called per slot index 0–3; return==1 gates thunk call in FUN_0042c220 |
+| S-0494 | 0x00497450 | 0x0042c220 FUN_0042c220 | util | passthrough | 2026-05-02 | thunk_FUN_00497450; called with DAT_007f1a14[i] (0–11); return==0 triggers DAT_0067ea10 flag write |
