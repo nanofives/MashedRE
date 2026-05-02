@@ -258,3 +258,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-2131  scribe-release-sweep  buckets=0_full+1_partial  total_writes=3  errors=2  (audio_dsound partial; 0x005ba1d0+0x005bad30 + render_d3d9_device remain queued — all need function_create before next sweep)
 2026-05-02  fixup-20260502-2148  function_create  rvas=14  bucket=render_d3d9_device+audio_dsound_FPO  (disassemble_seed + function_create on FPO entries; ready for sweep)
 2026-05-02  sweep-20260502-2140  scribe-claim-sweep  buckets=2  (post-fixup)
+2026-05-02  sweep-20260502-2140  scribe-claim  bucket=audio_dsound  rvas=5  (sweep, post-fixup completion)
+2026-05-02  sweep-20260502-2140  scribe-release  bucket=audio_dsound  writes=5  errors=0  (sweep)
+2026-05-02  sweep-20260502-2140  scribe-claim  bucket=render_d3d9_device  rvas=12  (sweep, post-fixup)
+2026-05-02  sweep-20260502-2140  scribe-release  bucket=render_d3d9_device  writes=12  errors=0  (sweep)
+2026-05-02  sweep-20260502-2140  scribe-release-sweep  buckets=2  total_writes=17  errors=0  (queue empty)
