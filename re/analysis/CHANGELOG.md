@@ -300,3 +300,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  exception_filter-20260502-2221  analysis  bucket=exception_filter  rvas=3  slot=Mashed_pool2
 2026-05-02  localization-20260502-2227  analysis  bucket=localization  rvas=4  slot=Mashed_pool11  LOC_INIT_FN=0x004274d0  LOC_FN=0x004274e0
 2026-05-02  settings_config-20260502-2222  analysis  bucket=settings_config  rvas=7  slot=Mashed_pool9  CONFIG_LOAD_FN=0x00498950  CONFIG_SAVE_FN=0x004989b0  shared_helper_with_P=no (distinct: P uses FUN_004b3b70+custom_IO; this session uses _fsopen+CRT)  settings_buf=0x00773208 size=512
+2026-05-02  timer-20260502-2221  analysis  bucket=timer  rvas=11  slot=Mashed_pool4 (fallback: pool1/2/3 LockException)  TIMER_INIT_FN=0x00495120  TIMER_FN=0x00492d30  QPC_HELPER=0x004950b0  PROFILER=0x004926c0  DAT_QPF_LO=0x00771e70  DAT_QPF_HI=0x00771e74  DAT_FRAME_DELTA=0x007719a8  DAT_60F_AVG=0x0077197c

@@ -55,6 +55,14 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0045 | 0x004ae28f | 0x004ae29f ___crtInitCritSecAndSpinCount | boot | passthrough | 2026-05-02 | ___crtInitCritSecNoSpinCount@8; depth-2; DEFERRED D-0166 |
 | S-0046 | 0x004af166 | 0x004af2b6 ___initmbctable | boot | passthrough | 2026-05-02 | __setmbcp; depth-2 of ___initmbctable; DEFERRED D-0167 |
 | S-0047 | 0x004affaf | 0x004affe0 FUN_004affe0 | boot | passthrough | 2026-05-02 | FUN_004affaf; depth-2 of FUN_004affe0; DEFERRED D-0168 |
+| S-0700 | 0x(DAT_007d459c indirect) | 0x004c9cd0 RESET_FN | render | passthrough | 2026-05-02 | indirect callback via DAT_007d459c; called in RESET_FN after successful Reset(); DEFERRED D-2020 |
+| S-0701 | 0x004dc9e0 | 0x004c9ad0 FUN_004c9ad0 | render | passthrough | 2026-05-02 | FUN_004dc9e0; called in pre-reset resource release; unknown args; DEFERRED D-2020 |
+| S-0702 | 0x004cb8a0 | 0x004db3e0 FUN_004db3e0, 0x004e0920 FUN_004e0920 | render | passthrough | 2026-05-02 | FUN_004cb8a0; locks/creates vertex buffer from descriptor; shared across multiple callers; DEFERRED D-2020 |
+| S-0703 | 0x004cba80 | 0x004db3e0 FUN_004db3e0, 0x004e0920 FUN_004e0920 | render | passthrough | 2026-05-02 | FUN_004cba80; releases buffer object; shared across multiple callers; DEFERRED D-2020 |
+| S-0704 | 0x004d5480 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d5480; render state setter wrapper; called with (opcode, value) pairs; DEFERRED D-2020 |
+| S-0705 | 0x004d54f0 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d54f0; sampler state setter wrapper; called with (stage, state, value); DEFERRED D-2020 |
+| S-0706 | 0x004d5570 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d5570; texture stage state setter wrapper; called with (stage, state, value); DEFERRED D-2020 |
+| S-0707 | 0x004d53b0 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d53b0; state restore epilogue; no visible args; DEFERRED D-2020 |
 
 ## Resolved stubs (audit trail — do not delete)
 
@@ -386,3 +394,15 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0827 | 0x004c2ed0 FUN_004c2ed0 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with &local+DAT_00773200; writes result struct (bStack_50 flags display params); depth-2; DEFERRED D-2387 |
 | S-0815 | 0x00494320 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_00494320; 167 bytes; first cleanup step in video close sequence; depth-2; D-2322 |
 | S-0816 | 0x004c7650 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_004c7650; releases DAT_00771a18 video texture handle; depth-2; D-2323 |
+| S-0819 | 0x004c77c0 | 0x00494a80 FUN_00494a80 | frontend | passthrough | 2026-05-02 | FUN_004c77c0; 153 bytes; video texture allocator args(0,0,0,0x84); depth-2; D-2326 |
+| S-0667 | 0x004030d0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_004030d0; called in state-1 when FUN_0042b930==0x21 |
+| S-0668 | 0x004111c0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_004111c0; called with arg 50 (0x32) in loop for states 3 and 6 |
+| S-0669 | 0x0043d7c0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_0043d7c0; called unconditionally after switch post-branch |
+| S-0670 | 0x0043dfd0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_0043dfd0; called after case-4 branch and after switch exit |
+| S-0671 | 0x00496920 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_00496920; called with arg 5; return gates DAT_007719cc block |
+| S-0672 | 0x00498860 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_00498860; called with FUN_004671a0(0) result when DAT_007719cc==0 |
+| S-0820 | 0x004c7730 | 0x004c1be0 FUN_004c1be0 | frontend | passthrough | 2026-05-02 | FUN_004c7730; 46 bytes; receives inner render object and HWND; MCI draw? depth-2; D-2327 |
+| S-0640 | 0x004a2b60 FUN_004a2b60 | 0x00496490 FUN_00496490 | boot | passthrough | 2026-05-02 | sprintf variant; called FUN_004a2b60(buf "%.19s\n\n" uVar1); depth-2; also in D-2502 localization-cont1 |
+| S-0641 | 0x004a43b9 FUN_004a43b9 | 0x00496490 FUN_00496490 | boot | passthrough | 2026-05-02 | returns string from 16-byte buffer; 0x004a43b9..0x004a43d1; 24 bytes; depth-2; D-1840 |
+| S-0642 | 0x004a43d2 FUN_004a43d2 | 0x00496490 FUN_00496490 | boot | passthrough | 2026-05-02 | fills 16-byte buffer; 0x004a43d2..0x004a44e4; 274 bytes; depth-2; D-1840 |
+| S-0643 | 0x004a4368 _fclose | 0x00496470 FUN_00496470 | boot | passthrough | 2026-05-02 | FidDB-matched CRT _fclose; __cdecl; 0x004a4368..0x004a43ad; 69 bytes; depth-2; CRT out-of-scope |
