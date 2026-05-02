@@ -276,3 +276,16 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0408 | 0x0046d570 FUN_0046d570 | called as FUN_0046d570(&local_10,param_1) in FUN_00417640; float result |
 | S-0409 | 0x004c3ac0 FUN_004c3ac0 | called as FUN_004c3ac0(&local_c) in FUN_00417640; in-place op on 3-float displacement |
 | S-0410 | 0x00417cf0 FUN_00417cf0 | called as FUN_00417cf0(param_1,&local_24,&local_2c,param_2) in FUN_00417da0 mode-6/local_48==0 branch; replaces FUN_004148b0 in mode-8 variant |
+| S-0340 | 0x005a9e10 FUN_005a9e10 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | two-call dispatcher; depth-1 callee of FUN_005b9f30; RESOLVED: analyzed in audio_dsound-20260502-1942 |
+| S-0341 | 0x005aee20 FUN_005aee20 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | bit-scan-forward loop; depth-1 callee of FUN_005b9f30; RESOLVED: analyzed in audio_dsound-20260502-1942 |
+| S-0342 | 0x005ba780 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | LAB_005ba780; fn-ptr at struct+0x34; unrecognized body; depth-1 callee |
+| S-0343 | 0x005ba7f0 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | LAB_005ba7f0; fn-ptr at struct+0x30; unrecognized body; depth-1 callee |
+| S-0344 | 0x005adfe0 | 0x005a9e10 FUN_005a9e10 | audio | passthrough | 2026-05-02 | FUN_005adfe0; called as FUN_005adfe0(param_1, param_3); depth-2 of entry |
+| S-0345 | 0x005ae010 | 0x005a9e10 FUN_005a9e10 | audio | passthrough | 2026-05-02 | FUN_005ae010; called as FUN_005ae010(param_1, param_2); depth-2 of entry |
+| S-0346 | 0x005ba720 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | LAB_005ba720; early-exit check; depth-2 of entry |
+| S-0347 | 0x005bb000 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | FUN_005bb000; called before DirectSoundCreate8 with param1; depth-2 of entry |
+| S-0348 | 0x005ba760 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | LAB_005ba760; error cleanup on DirectSoundCreate8 fail + buffer fail; depth-2 of entry |
+| S-0349 | 0x005bbc10 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | FUN_005bbc10; format/caps query after vtable+0x18; depth-2 of entry |
+| S-0350 | 0x005bbdb0 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbdb0; buffer creation; called in both DirectSound init paths; depth-2 of entry |
+| S-0351 | 0x005bac00 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bac00; conditional callee when [ESI+0xc] nonzero; depth-2 of entry |
+| S-0352 | 0x005bbf30 | 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbf30; unconditional single-arg callee after FUN_005bac00; depth-2 of entry |

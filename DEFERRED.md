@@ -310,3 +310,15 @@ A row goes into DEFERRED when:
 | D-1145 | 0x0046d570 FUN_0046d570 | depth-2 callee of FUN_00417640; called as FUN_0046d570(&local_10,param_1) → float; distinct from FUN_0046d6d0; S-0408 | ai_update-cont1 | ai |
 | D-1146 | 0x004c3ac0 FUN_004c3ac0 | depth-2 callee of FUN_00417640; called as FUN_004c3ac0(&local_c) → in-place op on 3-float displacement; S-0409 | ai_update-cont1 | ai |
 | D-1147 | 0x00417cf0 FUN_00417cf0 | depth-2 callee of FUN_00417da0; replaces FUN_004148b0 in mode-8 variant targeting; same 4-arg signature; S-0410 | ai_update-cont1 | ai |
+| D-0940 | 0x005ba1d0 LAB_005ba1d0 body tail | Body extends beyond 471 code units; listing capped at 250; address range ~0x005ba4a0+ not analyzed | Re-run listing_code_units_list with extended range; file as D-0940 | audio |
+| D-0941 | 0x005adfe0 FUN_005adfe0 | depth-2 callee of FUN_005a9e10; called as FUN_005adfe0(param_1, param_3); S-0344 | audio_dsound-cont1 session | audio |
+| D-0942 | 0x005ae010 FUN_005ae010 | depth-2 callee of FUN_005a9e10; called as FUN_005ae010(param_1, param_2); S-0345 | audio_dsound-cont1 session | audio |
+| D-0943 | 0x005ba780 LAB_005ba780 | fn-ptr body at struct+0x34; depth-1 callee of FUN_005b9f30; unrecognized; S-0342 | audio_dsound-cont1 session | audio |
+| D-0944 | 0x005ba7f0 LAB_005ba7f0 | fn-ptr body at struct+0x30; depth-1 callee of FUN_005b9f30; unrecognized; S-0343 | audio_dsound-cont1 session | audio |
+| D-0945 | 0x005ba720 LAB_005ba720 | early-exit guard in LAB_005ba1d0; depth-2 of entry; S-0346 | audio_dsound-cont1 session | audio |
+| D-0946 | 0x005bb000 FUN_005bb000 | pre-DirectSoundCreate8 callee in LAB_005ba1d0; depth-2 of entry; S-0347 | audio_dsound-cont1 session | audio |
+| D-0947 | 0x005ba760 LAB_005ba760 | error-cleanup callee in LAB_005ba1d0; depth-2 of entry; S-0348 | audio_dsound-cont1 session | audio |
+| D-0948 | 0x005bbc10 FUN_005bbc10 | format/caps query in LAB_005ba1d0 after vtable+0x18; depth-2 of entry; S-0349 | audio_dsound-cont1 session | audio |
+| D-0949 | 0x005bbdb0 FUN_005bbdb0 | buffer creation; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0350 | audio_dsound-cont1 session | audio |
+| D-0950 | 0x005bac00 FUN_005bac00 | conditional callee; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0351 | audio_dsound-cont1 session | audio |
+| D-0951 | 0x005bbf30 FUN_005bbf30 | unconditional single-arg callee in LAB_005bad30; depth-2 of entry; S-0352 | audio_dsound-cont1 session | audio |

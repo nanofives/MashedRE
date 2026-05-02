@@ -246,3 +246,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-2109  scribe-release  bucket=track_loader  writes=16  errors=0  (sweep)
 2026-05-02  sweep-20260502-2109  scribe-halt  bucket=render_d3d9_device  rva=0x004c7a70  reason='no function found at 004c7a70 (FPO; expected; needs function_create before sweep)'
 2026-05-02  sweep-20260502-2109  scribe-release-sweep  buckets=5  total_writes=62  errors=1  (halted at render_d3d9_device — last bucket; only render_d3d9_device remains queued)
+2026-05-02  005b9f30  LAB_005b9f30          C0->C1  fn-ptr constructor; 4 fn-ptrs to audio obj; FUN_005a9e10 + FUN_005aee20 callees; U-0347..U-0350; S-0340..S-0343 (re/analysis/audio_dsound/0x005b9f30.md)
+2026-05-02  005a9e10  FUN_005a9e10          C0->C1  two-call dispatcher; 33 bytes; S-0344 S-0345; U-0351 (re/analysis/audio_dsound/0x005a9e10.md)
+2026-05-02  005aee20  FUN_005aee20          C0->C1  bit-scan-forward 0..31; 27 bytes; U-0352 (re/analysis/audio_dsound/0x005aee20.md)
+2026-05-02  005ba1d0  LAB_005ba1d0          C0->C1  unrecognized; DirectSound init path A; listing-only; U-0353..U-0355; S-0346..S-0351; D-0940 (re/analysis/audio_dsound/0x005ba1d0.md)
+2026-05-02  005bad30  LAB_005bad30          C0->C1  unrecognized; DirectSound init path B; listing-only; 459 bytes; U-0356..U-0359; S-0352; D-0941..D-0951 (re/analysis/audio_dsound/0x005bad30.md)
+2026-05-02  audio_dsound-20260502-1942  session-analysis  bucket=audio_dsound  rvas=5  slot=Mashed_pool1  U-0347..U-0359  S-0340..S-0352  D-0940..D-0951

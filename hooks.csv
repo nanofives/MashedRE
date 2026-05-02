@@ -241,3 +241,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00426c00,FUN_00426c00,ai,C1,mapped,re/analysis/ai_update/0x00426c00.md,,,getter: returns DAT_00644158 (powerup-state global); callers check == 0x21; U-0421
 00417640,FUN_00417640,ai,C1,mapped,re/analysis/ai_update/0x00417640.md,,,post-step powerup override: gates on FUN_00426c00==0x21 + mode!=10 + FUN_00452ea0; brakes when closing on target; U-0422..U-0426
 00417da0,FUN_00417da0,ai,C1,mapped,re/analysis/ai_update/0x00417da0.md,,,AI control step mode-8 variant: identical to FUN_00416250 except FUN_00417cf0 replaces FUN_004148b0 and no DAT_0089a368 debug override; U-0427
+005b9f30,LAB_005b9f30,audio,C1,mapped,re/analysis/audio_dsound/0x005b9f30.md,,,fn-ptr constructor: writes 4 ptrs (LAB_005ba1d0/005ba7f0/005ba780/005bad30) to audio obj struct+0x28..+0x3c; sets +0x40/+0x44/+0x46; U-0347..U-0350
+005a9e10,FUN_005a9e10,audio,C1,mapped,re/analysis/audio_dsound/0x005a9e10.md,,,two-call dispatcher: FUN_005adfe0(param_1 param_3) + FUN_005ae010(param_1 param_2); returns param_1; 33 bytes; U-0351
+005aee20,FUN_005aee20,audio,C1,mapped,re/analysis/audio_dsound/0x005aee20.md,,,bit-scan-forward loop 0..31; always called with 0x28 (lowest bit=3); decompiler types void but caller reads byte; 27 bytes; U-0352
+005ba1d0,LAB_005ba1d0,audio,C1,mapped,re/analysis/audio_dsound/0x005ba1d0.md,,,unrecognized; DirectSound init path A: pGUID=[ESI+0x4]; flag accumulation 0x20/0x40/0x4; vtable+0x18; buf-create; U-0353..U-0355
+005bad30,LAB_005bad30,audio,C1,mapped,re/analysis/audio_dsound/0x005bad30.md,,,unrecognized; DirectSound init path B: NULL GUID; hardcoded 0xbb80Hz/0x10-bit; GetCaps(vtable+0x10)+clamp; vtable+0x18; 459 bytes; U-0356..U-0359

@@ -188,3 +188,16 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-0425 | 0x00417640 | FUN_0046d570(&local_10, param_1): float result distinct from FUN_0046d6d0; semantic unknown | decomp FUN_0046d570 |
 | U-0426 | 0x00417640 | FUN_004c3ac0(&local_c): in-place op on 3-float displacement; normalize/project/dot-product unknown | decomp FUN_004c3ac0 |
 | U-0427 | 0x00417da0 | FUN_00417cf0 vs FUN_004148b0: mode-8 variant uses different targeting; reason unknown | decomp both targeting callees |
+| U-0347 | 0x005b9f30 | bit-probe on FUN_005aee20(0x28) return: 1<<(byte&0x1f) selects via DAT_00617ff8; table semantic unknown | inspect DAT_00617ff8 in Ghidra |
+| U-0348 | 0x005b9f30 | DAT_005e6e50: second arg to FUN_005a9e10; data region purpose unknown | inspect DAT_005e6e50 in Ghidra |
+| U-0349 | 0x005b9f30 | iVar2 from DAT_00617ff8 table: governs OR into struct+0x40 bits[31:28]; table index and values unknown | inspect DAT_00617ff8 |
+| U-0350 | 0x005b9f30 | struct at param_1: fn-ptrs at +0x28/+0x30/+0x34/+0x3c; Mashed audio class or RenderWare audio object? | find callers of FUN_005b9f30; cross-check RenderWare audio headers |
+| U-0351 | 0x005a9e10 | FUN_005adfe0 and FUN_005ae010: both receive same param_1 (struct ptr from FUN_005b9f30); semantics of both unknown | decomp FUN_005adfe0 and FUN_005ae010 |
+| U-0352 | 0x005aee20 | return mechanism: decompiler types void but caller reads byte; register holding bVar1 at RET unconfirmed | listing view of return instruction to confirm register |
+| U-0353 | 0x005ba1d0 | function end unknown; body extends beyond 471 code units; listing capped at 250; tail from ~0x005ba4a0 | re-run listing_code_units_list 0x005ba4a0..0x005bafff |
+| U-0354 | 0x005ba1d0 | vtable+0x18 call (at 0x005ba308): COM interface loaded from [[EBP+0x7c]]; assumed IDirectSound8* but unconfirmed | Frida diff or DX SDK cross-check |
+| U-0355 | 0x005ba1d0 | 0x5e6424 data pointer written to [ESP+0x20] (at 0x005ba3a6): region purpose unknown | inspect data at 0x005e6424 in Ghidra |
+| U-0356 | 0x005bad30 | ESI param2 struct type: fields at +0x0..+0x24 initialized with hardcoded defaults; struct layout unidentified | inspect callers of LAB_005bad30 via FUN_005b9f30 struct+0x3c |
+| U-0357 | 0x005bad30 | vtable+0x10 on IDirectSound8*: struct zeroed to 0x60 bytes with dwSize=0x60; DSCAPS or DSBCAPS ambiguous | confirm vtable+0x10 on IDirectSound8 resolves to GetCaps |
+| U-0358 | 0x005bad30 | FUN_005bbf30 (0x005bbf30): called unconditionally after FUN_005bac00; single arg; purpose unknown | decomp FUN_005bbf30 |
+| U-0359 | 0x005bad30 | return value EAX=[ESP+0xa0] at LAB_005baeca epilogue: stack slot value at that point untraced | caller context or Frida trace |
