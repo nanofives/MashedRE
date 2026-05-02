@@ -263,3 +263,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-02  sweep-20260502-2140  scribe-claim  bucket=render_d3d9_device  rvas=12  (sweep, post-fixup)
 2026-05-02  sweep-20260502-2140  scribe-release  bucket=render_d3d9_device  writes=12  errors=0  (sweep)
 2026-05-02  sweep-20260502-2140  scribe-release-sweep  buckets=2  total_writes=17  errors=0  (queue empty)
+2026-05-02 audio_music-20260502-2145 analysis bucket=audio_music rvas=4 (004623e0,0045da60,0045dd60,004631f0) stubs=S-0620..S-0631 uncertainties=U-0627..U-0641 deferred=D-1780..D-1791

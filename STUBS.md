@@ -297,3 +297,17 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0541 | 0x0046d360 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d360; returns validity flag per (slot, index) pair; depth-2 of camera_follow |
 | S-0542 | 0x0040aef0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0040aef0; per-slot update called once per outer loop iteration; depth-2 of camera_follow |
 | S-0543 | 0x0055dec0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0055dec0; reads state from DAT_0066d728 struct; returns 0x11 or 0x12 discriminant; depth-2 of camera_follow |
+| S-0544 | 0x004756e0 | 0x00426700 FUN_00426700 | render | passthrough | 2026-05-02 | FUN_004756e0; per-node callback called with two table lookups + node ptr + time-delta float + node[4]; depth-2 of camera_follow |
+| S-0545 | 0x00475010 | 0x00426780 FUN_00426780 | render | passthrough | 2026-05-02 | FUN_00475010; per-entry time-delta update; called with *piVar2 (handle/ptr) and float time delta; depth-2 of camera_follow |
+| S-0620 | 0x005a66d0 | 0x004623e0 FUN_004623e0 + 0x0045da60 + 0x0045dd60 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_005a66d0; (audio_obj_ptr, 0_or_1); stop/start on audio object; D-1780 |
+| S-0621 | 0x005a6dc0 | 0x004623e0 FUN_004623e0 + 0x0045dd60 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_005a6dc0; (sub_obj_ptr, param_type, flag, value); parameter setter on audio sub-object; D-1781 |
+| S-0622 | 0x0045e0f0 | 0x004623e0 FUN_004623e0 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_0045e0f0; (channel_index, volume_float); sets volume for channel in DAT_0068f640 array; D-1782 |
+| S-0623 | 0x00431b20 | 0x0045dd60 FUN_0045dd60 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_00431b20; zero-arg, returns float10; timing/delta or audio-frame getter; D-1783 |
+| S-0624 | 0x00432290 | 0x0045dd60 FUN_0045dd60 | audio | passthrough | 2026-05-02 | FUN_00432290; zero-arg, returns int; boolean condition governing music mute; D-1784 |
+| S-0625 | 0x005baf00 | 0x0045dd60 FUN_0045dd60 | audio | passthrough | 2026-05-02 | FUN_005baf00; (ptr, float); called with music global DAT_0069049c and 1.0f or 0.0f; D-1785 |
+| S-0626 | 0x00431b60 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00431b60; zero-arg, returns float10; similar pattern to FUN_00431b20; D-1786 |
+| S-0627 | 0x0042f760 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f760; zero-arg, returns int; boolean trigger check for channel DAT_00604eb0; D-1787 |
+| S-0628 | 0x0042f770 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f770; zero-arg, returns int; boolean trigger check A for channel DAT_00604e1c; D-1788 |
+| S-0629 | 0x0042f780 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f780; zero-arg, returns int; boolean trigger check B for channel DAT_00604e1c; D-1789 |
+| S-0630 | 0x00432230 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00432230; zero-arg, returns int; boolean trigger check for channel DAT_00605918; D-1790 |
+| S-0631 | 0x00432260 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00432260; zero-arg, returns int; boolean trigger check for musicloop1 (DAT_00605d24); D-1791 |

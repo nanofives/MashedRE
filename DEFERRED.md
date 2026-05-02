@@ -329,3 +329,15 @@ A row goes into DEFERRED when:
 | D-1724 | 0x004cc230 FUN_004cc230 | RW stream open; called with (2,1,filename); also S-0281 S-0421; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
 | D-1725 | 0x004cc5e0 FUN_004cc5e0 | RW stream find chunk; called with (handle, 0x16 or 0x23, ...); also S-0422; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
 | D-1726 | 0x004cc160 FUN_004cc160 | RW stream close; called with (handle, 0); also S-0283 S-0424; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
+| D-1780 | 0x005a66d0 FUN_005a66d0 | (audio_obj_ptr, 0_or_1) stop/start; depth-2 callee of audio_music bucket; S-0620 | audio_music-cont1 session | audio |
+| D-1781 | 0x005a6dc0 FUN_005a6dc0 | (sub_ptr, param_type, flag, value) param setter; depth-2 callee of audio_music bucket; S-0621 | audio_music-cont1 session | audio |
+| D-1782 | 0x0045e0f0 FUN_0045e0f0 | (channel_index, float) volume setter; depth-2 callee of audio_music bucket; S-0622 | audio_music-cont1 session | audio |
+| D-1783 | 0x00431b20 FUN_00431b20 | zero-arg float10 getter; depth-2 of audio_music; S-0623 | audio_music-cont1 session | audio |
+| D-1784 | 0x00432290 FUN_00432290 | zero-arg int condition; music-mute gate; depth-2 of audio_music; S-0624 | audio_music-cont1 session | audio |
+| D-1785 | 0x005baf00 FUN_005baf00 | (ptr, float) on DAT_0069049c; depth-2 of audio_music; S-0625 | audio_music-cont1 session | audio |
+| D-1786 | 0x00431b60 FUN_00431b60 | zero-arg float10 getter; depth-2 of audio_music; S-0626 | audio_music-cont1 session | audio |
+| D-1787 | 0x0042f760 FUN_0042f760 | zero-arg bool; trigger check channel DAT_00604eb0; depth-2 of audio_music; S-0627 | audio_music-cont1 session | audio |
+| D-1788 | 0x0042f770 FUN_0042f770 | zero-arg bool; trigger check A channel DAT_00604e1c; depth-2 of audio_music; S-0628 | audio_music-cont1 session | audio |
+| D-1789 | 0x0042f780 FUN_0042f780 | zero-arg bool; trigger check B channel DAT_00604e1c; depth-2 of audio_music; S-0629 | audio_music-cont1 session | audio |
+| D-1790 | 0x00432230 FUN_00432230 | zero-arg bool; trigger check channel DAT_00605918; depth-2 of audio_music; S-0630 | audio_music-cont1 session | audio |
+| D-1791 | 0x00432260 FUN_00432260 | zero-arg bool; trigger check musicloop1 (DAT_00605d24); depth-2 of audio_music; S-0631 | audio_music-cont1 session | audio |
