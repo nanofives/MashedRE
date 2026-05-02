@@ -418,6 +418,52 @@ These rules apply to all models, but Sonnet (and any model below Opus on procedu
 
 **Opus-bound prompts** can omit the inlined Sonnet halts; the SESSION_RULES.md reference is enough.
 
+## Parallel-fanout scribe-queue pattern
+
+When more than one analysis session runs in parallel, **none of them may attempt the post-analysis scribe step directly**. The branch-local `master.WIP-*` flag is invisible across worktrees that haven't fetched+rebased, so two parallel claimants would both see "no flag" and both write to master, last-writer-wins. Until the scribe-check is made `origin/main`-aware, the workaround is:
+
+### For each analysis session in the fanout
+
+Replace § "Post-analysis scribe step" with the following, only for the duration of the fanout:
+
+1. Complete the analysis loop and commit + push the analysis commit normally.
+2. **Do NOT** run `scribe-check`. **Do NOT** create a `master.WIP-*` flag. **Do NOT** open the master writable.
+3. Instead, append one row to `re/SCRIBE_QUEUE.md` (under the "Queued" heading):
+   ```
+   YYYY-MM-DD  $SESSION_SHORT_ID  bucket=<bucket>  rvas=<rva1>,<rva2>,...,<rvaN>
+   ```
+4. `git add re/SCRIBE_QUEUE.md && git commit -m "queue: <bucket> for sweep ($SESSION_SHORT_ID)"` and push.
+5. End-of-session report includes one extra line: `Scribe outcome: queued for sweep (see re/SCRIBE_QUEUE.md row $SESSION_SHORT_ID).`
+
+### One follow-up sweep session (Opus)
+
+After all parallel analysis sessions have committed and pushed, a single Opus sweep session:
+
+1. `git pull --rebase` to gather every queued row.
+2. Reads `re/SCRIBE_QUEUE.md`, processes each "Queued" row in order.
+3. Runs the standard scribe step from § "Post-analysis scribe step" **once**, with a single `master.WIP-*` flag covering the whole sweep. Per-bucket CHANGELOG rows are still written (one claim line + one release line per drained bucket, plus one outer scribe-claim/release pair for the sweep itself).
+4. Moves processed rows from "Queued" to "Drained" in `SCRIBE_QUEUE.md` after each bucket completes its writes.
+5. Reports any per-RVA write failures; halts the whole sweep on the first failure (do not skip and continue).
+
+### Why a queue and not a polling lock
+
+- Polling burns tokens.
+- Sequential per-session scribe attempts on `main` would still race on flag claim if all sessions have `git pull --rebase` lag.
+- A queue file is monotonically appended; rebases compose cleanly because no two sessions touch the same row.
+- One sweep session means one master open/close cycle and one sync — minimal master churn, maximum auditability.
+
+## ID range allocation (parallel-fanout only)
+
+When multiple analysis sessions run in parallel and all may file `U-NNNN` / `D-NNNN` / `S-NNNN` rows, **the prompt for each session pre-allocates an ID range**. The session never goes outside its allocation. If a session would exhaust its range, it halts and asks the user for an extension — does not silently overrun.
+
+Format in each prompt's "Subset" section:
+
+```
+ID-range: U=<start>..<end>  D=<start>..<end>  S=<start>..<end>
+```
+
+End-of-session report must include `IDs used: U-XXXX..U-XXXX (count), D-XXXX..D-XXXX (count), S-XXXX..S-XXXX (count)`.
+
 ## When to halt and ask
 
 - Anchor SHA-256 mismatch.
