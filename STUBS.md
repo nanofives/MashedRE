@@ -375,3 +375,14 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0861 | 0x00550bc0 FUN_00550bc0 | 0x004cc230 FUN_004cc230 | frontend | passthrough | 2026-05-02 | File open by name; called as FUN_00550bc0(filename); depth-2 of stream-open (type=1 branch) |
 | S-0862 | 0x00550910 FUN_00550910 | 0x004cc160 FUN_004cc160 | frontend | passthrough | 2026-05-02 | File close; called as FUN_00550910(file_handle); depth-2 of stream-close |
 | S-0662 | 0x0049d1d0 | 0x0049d270 FUN_0049d270 | util | passthrough | 2026-05-02 | FUN_0049d1d0; no-arg callee at end of FUN_0049d270; purpose unknown |
+| S-0814 | 0x004c75e0 | 0x00493fd0 FUN_00493fd0 | frontend | passthrough | 2026-05-02 | FUN_004c75e0; 26 bytes; fills two short[2] (viewport offsets); depth-2; D-2321 |
+| S-0820 | 0x004a42c5 FUN_004a42c5 | 0x00496400 FUN_00496400 | save | passthrough | 2026-05-02 | sprintf/vsprintf variant; args: (char* buf, char* fmt, va_args); depth-2 from CONFIG debug-logger; DEFERRED D-2380 |
+| S-0821 | 0x00498c00 FUN_00498c00 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called at start of video-settings dispatcher; role unknown; depth-2; DEFERRED D-2381 |
+| S-0822 | 0x00498a00 FUN_00498a00 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | subsystem name getter; populates 69-byte struct with a name string; called per subsystem in loop; depth-2; DEFERRED D-2382 |
+| S-0823 | 0x00498e40 FUN_00498e40 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called on CONFIG_LOAD_FN failure; return stored into DAT_00773200 (mode); default-settings init candidate; depth-2; DEFERRED D-2383 |
+| S-0824 | 0x00498ea0 FUN_00498ea0 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called immediately before CONFIG_SAVE_FN; role unknown; depth-2; DEFERRED D-2384 |
+| S-0825 | 0x004c2e70 FUN_004c2e70 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with DAT_0077340c (subsystem index); applies subsystem selection; depth-2; DEFERRED D-2385 |
+| S-0826 | 0x004c2f30 FUN_004c2f30 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with DAT_00773200 (mode index); applies mode selection; depth-2; DEFERRED D-2386 |
+| S-0827 | 0x004c2ed0 FUN_004c2ed0 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with &local+DAT_00773200; writes result struct (bStack_50 flags display params); depth-2; DEFERRED D-2387 |
+| S-0815 | 0x00494320 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_00494320; 167 bytes; first cleanup step in video close sequence; depth-2; D-2322 |
+| S-0816 | 0x004c7650 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_004c7650; releases DAT_00771a18 video texture handle; depth-2; D-2323 |
