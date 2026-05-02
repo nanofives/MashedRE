@@ -1,0 +1,910 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS
+================================================================================
+
+Nine self-contained prompts: A–F are Sonnet analysis sessions (run in parallel,
+each takes its own pool slot, queues for sweep instead of writing master itself),
+G–H are no-MCP file-format sessions (no Ghidra contention), and I is the single
+Opus sweep that drains everyone's queued work under one master claim.
+
+Recommended launch order:
+  Wave 1: A, B, C  (boot/CRT — proves protocol with overlapping subsystems)
+  Wave 2: D, E, F  (RW init, RW teardown, RWS audio — different subsystems)
+  Anytime: G, H    (no Ghidra needed; can overlap with any wave)
+  Last:    I       (only after A–F have all pushed their analysis + queue rows)
+
+You can launch all 8 (A–H) simultaneously if you trust the queue protocol — RVA
+subsets are mathematically disjoint by anchor strategy. Wave-of-3 is the
+debug-friendly default.
+
+Reference docs every prompt assumes are present and committed:
+  - CLAUDE.md
+  - re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern"
+    and § "ID range allocation")
+  - re/SCRIBE_QUEUE.md (the queue file)
+  - .claude/skills/ghidra-pool/SKILL.md
+  - .claude/skills/multi-session/SKILL.md
+
+================================================================================
+=== PROMPT A — Boot CRT chain, AppInitialiseOnBootup branch =====================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session A; mechanical decomp under queue+sweep pattern.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (no skimming) — pay particular attention to § "Parallel-fanout scribe-queue pattern" and § "ID range allocation". Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. If mcp__ghidra__health_ping fails or any required MCP call returns an error, halt and surface the error verbatim. Do NOT retry against re/prior_art/, re-references/, web search, or your own training knowledge. Never say "based on what I know about RenderWare/Mashed/this kind of function" — you do not know this binary; only MCP does.
+2. Verify-then-cite. Before any RVA appears in chat, notes, trackers, or the queue, you must have called mcp__ghidra__function_at or mcp__ghidra__listing_code_unit_at on that exact address in this session and gotten a non-null result. No rounding to a nearby valid address.
+3. No hedging, no inference, no naming from names. Forbidden words: "probably", "likely", "seems to", "appears to", "I think", "presumably", "must be", "is meant to", "is responsible for". A symbol named X is not evidence the function does X — only evidence someone called the symbol that.
+4. One function at a time. Complete the per-function loop (function_at → decomp_function → function_callees → write note → update trackers for that one RVA) before starting the next. Do not batch decomps.
+
+## Session identifier (build once, reuse everywhere)
+SESSION_SHORT_ID="boot_app_init-$(date -u +%Y%m%d-%H%M)"
+
+## Subset (D-0002..D-0016 from DEFERRED.md — depth-2 callees of FUN_00492370)
+RVAs (15, in address order — verify each is still present in DEFERRED.md before starting; if any was already drained by a prior session, skip it and reduce count):
+  0x00402750  0x00402a40
+  0x00492270  0x00492290  0x004924f0
+  0x00493540  0x00493550  0x00493560   (these three are thunks — function_at the thunk, then function_at the target the thunk forwards to; if the target is already in DEFERRED.md as its own row, decompile the target instead)
+  0x00493900
+  0x004963e0
+  0x004996f0
+  0x00499ba0  0x00499cc0
+  0x004c5930
+  0x005c9d00
+
+Bucket: re/analysis/boot_app_init/
+ID-range: U=0007..0026  D=0040..0099  S=0001..0019
+Subsystem (hooks.csv column): boot
+
+If function_callees on any RVA in the subset returns more total work than the cap permits, follow re/SESSION_RULES.md § "Session sizing" — split immediately, file the remainder as DEFERRED rows with re-pickup bucket boot_app_init-cont1.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+3. bash scripts/ghidra_assert.sh preflight "$SLOT" — all three asserts must pass.
+4. Open slot read-only via MCP:
+   mcp__ghidra__project_program_open_existing
+     project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool"
+     project_name="$SLOT"
+     program_name="MASHED.exe"
+     read_only=true
+5. mcp__ghidra__health_ping → must succeed.
+6. mcp__ghidra__ghidra_info → returned project path must contain $SLOT.
+Any failure → halt + surface verbatim.
+
+## Work loop (strictly serial, one RVA at a time, with cap enforcement)
+Track running cap_count, starting at 0. For each RVA in the subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva> → capture decomp.
+       if decomp output > 5k tokens: rva_weight = 2; else: rva_weight = 1.
+       cap_count += rva_weight.
+  c. function_callees <rva> → record names+RVAs only; do NOT recurse.
+  d. Write re/analysis/boot_app_init/<rva>.md per the format in re/SESSION_RULES.md § "Per-function output format" (YAML frontmatter, ## Mechanical description, ## Constants, ## Uncertainties, ## Stubs encountered).
+  e. Add the row to hooks.csv: rva,name,boot,C1,mapped,re/analysis/boot_app_init/<rva>.md,,,<short notes citing key facts>
+  f. File any U-NNNN rows in your allocated range (U=0007..0026) for [UNCERTAIN] markers. File any S-NNNN rows in your range (S=0001..0019) — though first-pass discovery rarely files stubs (those are for re-implementation source, not analysis notes).
+  g. Add a CHANGELOG row to re/analysis/CHANGELOG.md: "YYYY-MM-DD <rva> <name> C0->C1 <evidence>".
+  h. Self-check before moving on (write the answers to yourself in chat, one line each):
+       - Did I call function_at on this exact RVA in this session? (yes/no)
+       - Does my note contain any of: probably/likely/seems/appears/I think/presumably/must be/is meant to/is responsible for? (list any matches; rewrite mechanically)
+       - Does every constant in the note cite the Ghidra address it was read at?
+       - Did I describe what the function DOES, or what its NAME suggests it does?
+     If any check fails, fix the note before the next RVA.
+  i. Cap check: if cap_count >= 18, EARLY-FINISH NOW. File remaining RVAs as a DEFERRED row in your D range (D=0040..0099) with re-pickup bucket boot_app_init-cont1. Skip to the shutdown step.
+
+After all RVAs are done (or early-finish triggered): file the depth-2 DEFERRED rows for callees-of-callees you intentionally did not recurse into, using your D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/boot_app_init/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: boot/app_init depth-2 callees (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep (NOT direct scribe — this is a parallel-fanout session)
+Append one row to re/SCRIBE_QUEUE.md under the "Queued" heading:
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=boot_app_init  rvas=<comma-separated list of RVAs you actually decompiled this session>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: boot_app_init for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT attempt scribe-check. DO NOT create a master.WIP-* flag. DO NOT open the master writable. The Opus sweep session does that for everyone at once.
+
+## ANTI-PATTERNS (refuse)
+- Trailing summary like "in summary this subsystem does …".
+- Filling in a function's "purpose" when decomp is hard. → [UNCERTAIN].
+- Recursing into depth-2 because "they were short." → DEFERRED.
+- Silently swapping a wrong RVA. → halt + surface.
+- Continuing past the hard cap of 20 because "we're almost done." Cap is cap.
+- Continuing past the early-finish trigger (cap_count >= 18) because the next RVA "looks small."
+- Reusing the base-bucket name on a continuation. Use boot_app_init-cont1, -cont2.
+- Inventing a function name from a string or callee context. Library-match comment present, or skip the rename — and renames are SKIPPED in fanout sessions anyway (the sweep handles them).
+- Filing U/D/S IDs outside your allocated range.
+
+## End-of-session report
+- Slot held: $SLOT
+- Functions covered: <count> RVAs (target was 15)
+- New hooks.csv rows: <count> at C1
+- New STUBS rows: S-XXXX..S-XXXX (count)
+- New UNCERTAINTIES rows: U-XXXX..U-XXXX (count)
+- New DEFERRED rows: D-XXXX..D-XXXX (count)
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n) — must stay within allocation
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- MCP calls that failed: list verbatim, or "none"
+- Observations that warrant a follow-up question: list, or "none"
+- Scribe outcome: queued for sweep (see re/SCRIBE_QUEUE.md row $SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT B — Boot CRT chain, exit/heap branch ================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session B; mechanical decomp under queue+sweep pattern.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (no skimming) — pay particular attention to § "Parallel-fanout scribe-queue pattern" and § "ID range allocation". Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. If mcp__ghidra__health_ping fails or any required MCP call returns an error, halt and surface the error verbatim. Do NOT retry against re/prior_art/, re-references/, web search, or your own training knowledge. Never say "based on what I know about RenderWare/Mashed/this kind of function" — you do not know this binary; only MCP does.
+2. Verify-then-cite. Before any RVA appears in chat, notes, trackers, or the queue, you must have called mcp__ghidra__function_at or mcp__ghidra__listing_code_unit_at on that exact address in this session and gotten a non-null result. No rounding to a nearby valid address.
+3. No hedging, no inference, no naming from names. Forbidden words: "probably", "likely", "seems to", "appears to", "I think", "presumably", "must be", "is meant to", "is responsible for".
+4. One function at a time. Complete the per-function loop before starting the next.
+
+## Session identifier
+SESSION_SHORT_ID="boot_crt_exit-$(date -u +%Y%m%d-%H%M)"
+
+## Subset (D-0017..D-0030 from DEFERRED.md — CRT exit/heap depth-2 callees)
+RVAs (14, in address order):
+  0x004a2c2f
+  0x004a3258
+  0x004a31b1   (___crtExitProcess)
+  0x004a333c   (__exit)
+  0x004a40fe   (___onexitinit)
+  0x004a415e   (_atexit)
+  0x004a467e   (_calloc)
+  0x004a57e4
+  0x004a774d   (__mtinitlocks)
+  0x004a87f7
+  0x004aa3e4   (___heap_select)
+  0x004aa44f   (___sbh_heap_init)
+  0x004ab8d6
+  0x004aba4d   (__FF_MSGBANNER)
+
+Bucket: re/analysis/boot_crt_exit/
+ID-range: U=0027..0046  D=0100..0159  S=0020..0039
+Subsystem: boot
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+3. bash scripts/ghidra_assert.sh preflight "$SLOT" — all three asserts must pass.
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping must succeed.
+6. mcp__ghidra__ghidra_info — returned path must contain $SLOT.
+
+## Work loop (strictly serial, one RVA at a time)
+Track cap_count starting at 0. For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva> → capture decomp.
+       cap_count += (2 if decomp > 5k tokens else 1).
+  c. function_callees <rva> → record names+RVAs; do NOT recurse.
+  d. Write re/analysis/boot_crt_exit/<rva>.md per re/SESSION_RULES.md format.
+  e. Add hooks.csv row: rva,name,boot,C1,mapped,re/analysis/boot_crt_exit/<rva>.md,,,<notes>.
+  f. File U/S rows in allocated range only (U=0027..0046, S=0020..0039).
+  g. Add CHANGELOG row: "YYYY-MM-DD <rva> <name> C0->C1 <evidence>".
+  h. Self-check (in chat): function_at called? forbidden words in note? all constants cite addresses? mechanical not inferred? Fix before next RVA.
+  i. Cap check: cap_count >= 18 → EARLY-FINISH; file remaining as DEFERRED row in D=0100..0159, re-pickup bucket boot_crt_exit-cont1.
+
+After loop: file depth-2 DEFERRED rows in D range for callees-of-callees not recursed into.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/boot_crt_exit/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: boot/crt_exit depth-2 callees (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep (NOT direct scribe)
+Append one row to re/SCRIBE_QUEUE.md "Queued" section:
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=boot_crt_exit  rvas=<comma-separated list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: boot_crt_exit for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT attempt scribe-check. DO NOT create master.WIP-*. DO NOT open master writable.
+
+## ANTI-PATTERNS (refuse)
+- Hedging language; trailing summary; recursion into depth-2.
+- Silently swapping wrong RVA; pushing past cap; reusing base-bucket name on continuation.
+- IDs outside allocated range; renaming functions in this session (renames go through sweep).
+
+## End-of-session report
+- Slot held: $SLOT
+- Functions covered: <count> (target 14)
+- New hooks.csv rows: <count> at C1
+- New STUBS / UNCERTAINTIES / DEFERRED rows: counts + ID ranges
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n) — within allocation
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- MCP failures: list or "none"
+- Observations: list or "none"
+- Scribe outcome: queued for sweep (re/SCRIBE_QUEUE.md row $SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT C — Boot CRT chain, env/cmdline/file-handle branch ==================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session C; mechanical decomp under queue+sweep pattern.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (no skimming) — pay particular attention to § "Parallel-fanout scribe-queue pattern" and § "ID range allocation". Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior art / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before citation.
+3. No hedging, no inference, no naming from names. Forbidden words listed.
+4. One function at a time. Complete the per-function loop before next.
+
+## Session identifier
+SESSION_SHORT_ID="boot_crt_env-$(date -u +%Y%m%d-%H%M)"
+
+## Subset (D-0031..D-0039 from DEFERRED.md — env-strings, cmdline, file-handle CRT)
+RVAs (9, in address order — verify each is still in DEFERRED.md before starting):
+  0x004a45fb   (_malloc)
+  0x004a460d   (_free)
+  0x004a9410   (_strlen)
+  0x004ac560
+  0x004af2b6   (___initmbctable)
+  0x004affe0
+  (Plus any further D-0036..D-0039 entries pointing into env/cmdline/CRT-file chain — read DEFERRED.md fresh and confirm.)
+
+Bucket: re/analysis/boot_crt_env/
+ID-range: U=0047..0066  D=0160..0219  S=0040..0059
+Subsystem: boot
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+2. SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+3. bash scripts/ghidra_assert.sh preflight "$SLOT" — all three pass.
+4. Open slot read-only via MCP (project_location=mashed_pool, project_name=$SLOT, MASHED.exe, read_only=true).
+5. health_ping → ok.
+6. ghidra_info path contains $SLOT.
+
+## Work loop (one RVA at a time, cap_count starts at 0)
+For each RVA, in address order:
+  a. function_at <rva> → non-null; capture name/sig/size.
+  b. decomp_function <rva>; cap_count += (2 if >5k else 1).
+  c. function_callees <rva>; do not recurse.
+  d. Write re/analysis/boot_crt_env/<rva>.md per format.
+  e. hooks.csv row: rva,name,boot,C1,mapped,re/analysis/boot_crt_env/<rva>.md,,,<notes>.
+  f. U/S in allocated range (U=0047..0066, S=0040..0059).
+  g. CHANGELOG row.
+  h. Self-check (chat): function_at? forbidden words? cite addresses? mechanical not inferred? Fix before next.
+  i. cap_count >= 18 → EARLY-FINISH. File rest as DEFERRED in D=0160..0219, bucket boot_crt_env-cont1.
+
+After loop: file depth-2 DEFERRED rows for unrecursed callees in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/boot_crt_env/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: boot/crt_env depth-2 callees (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=boot_crt_env  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: boot_crt_env for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly. DO NOT create master.WIP-*. DO NOT open master writable.
+
+## ANTI-PATTERNS (refuse)
+- Hedging; trailing summary; depth-2 recursion; wrong-RVA self-correction.
+- Pushing past cap; reusing base-bucket name; IDs outside range; renaming.
+
+## End-of-session report
+- Slot held: $SLOT
+- Functions covered: <count> (target 9)
+- hooks.csv / STUBS / UNCERTAINTIES / DEFERRED counts
+- IDs used (must be within range)
+- cap_count + early-finish flag
+- MCP failures
+- Observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT D — RenderWare engine init ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session D; anchor-driven RW init reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "ID range allocation", § "Reference materials"), .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. Every RVA passes through function_at or listing_code_unit_at this session before any citation.
+3. No hedging, no inference, no naming from names.
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="rw_engine_init-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven — execute in order; only proceed if each step succeeds)
+The subset is NOT pre-listed because the RVAs are unknown until we anchor on RW symbols. Compute the subset as follows:
+
+1. mcp__ghidra__search_defined_strings query="RwEngineInit"
+   → expect at least one hit. If zero hits: halt + surface "RwEngineInit string anchor not found in this binary; need user direction." Do NOT speculate or pick another anchor without confirmation.
+
+2. For each string address returned, mcp__ghidra__reference_to <addr> → list every code reference. Expect 1–3 callers across all matches.
+
+3. For each unique caller RVA, mcp__ghidra__function_at <caller_rva> → identify the enclosing function (its starting RVA, name, size_bytes).
+
+4. Choose RW_INIT_FN: among the enclosing functions, the smallest-by-size_bytes one is the candidate "RW init wrapper" (game-side init wrappers tend to be tighter than the importing code path). Record RW_INIT_FN explicitly as one of your output facts. Do NOT proceed if multiple candidates have identical sizes — halt and surface the ambiguity.
+
+5. mcp__ghidra__function_callees RW_INIT_FN → record the full list verbatim. THIS list plus RW_INIT_FN itself is the candidate subset.
+
+6. Apply the cap (hard 20, soft 10–15):
+     count = 1 + len(callees)
+     if count > 20: take RW_INIT_FN + first 19 callees in address order; file the remainder as a DEFERRED row in your D range with re-pickup bucket rw_engine_init-cont1.
+     if count > 15: note "subset of <count> over soft target" in end-of-session report and watch for early-finish.
+     if count <= 15: take all.
+
+Bucket: re/analysis/rw_engine_init/
+ID-range: U=0067..0086  D=0220..0279  S=0060..0079
+Subsystem: render
+
+External RW imports encountered (RwEngineInit, RwEngineOpen, RwEngineStart, RtFSManagerOpen, RwEngineRegisterPlugin, etc.) are NOT stubs. Note them in the .md "## Stubs encountered" section as "EXTERNAL: <name>" so the sweep knows not to treat them as RVAs.
+
+## Reference consultation (FRAMING ONLY, never as evidence)
+When the .md mechanical description encounters a struct access whose offsets look like RW engine state (e.g., something that walks a chain of plugin registrations, or accesses fields that look like RwEngineInstance / RwGlobals):
+  - First read re-references/librw/src/ — look for matching code.
+  - Then re-references/criterion-rwg37/core/src/plcore/ for cross-checking.
+  - These tell you what the RW API GUARANTEES; they do not tell you what THIS Mashed code does. The mechanical description must still describe what the decomp shows, not what librw says it should do.
+  - NEVER vendor offsets without MCP-confirmed reads. NEVER cite an RVA from gta-reversed-modern; that's a critical hallucination.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe == BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+2. SLOT=$(bash scripts/ghidra_pool.sh acquire); echo "$SLOT" > .pool_slot
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location=mashed_pool, project_name=$SLOT, MASHED.exe, read_only=true).
+5. health_ping → ok.
+6. ghidra_info path contains $SLOT.
+
+## Work loop (after subset is established by steps 1–6 above)
+Track cap_count starting at 0. For RW_INIT_FN first, then each callee in address order:
+  a. function_at <rva> → non-null.
+  b. decomp_function <rva>; cap_count += (2 if >5k else 1).
+  c. function_callees <rva>; do not recurse.
+  d. Write re/analysis/rw_engine_init/<rva>.md per format.
+  e. hooks.csv row: rva,name,render,C1,mapped,re/analysis/rw_engine_init/<rva>.md,,,<notes>.
+  f. U/S in allocated range (U=0067..0086, S=0060..0079).
+  g. CHANGELOG row.
+  h. Self-check.
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED row in D=0220..0279, bucket rw_engine_init-cont1.
+
+After loop: file depth-2 DEFERRED rows for unrecursed callees in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/rw_engine_init/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: RW engine init wrapper + depth-1 callees (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=rw_engine_init  rvas=<RW_INIT_FN, callee1, callee2, ...>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: rw_engine_init for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- All standard ones (hedging, depth-2, cap, base-bucket, IDs out of range).
+- Picking an RW_INIT_FN candidate when multiple have equal size — halt instead.
+- Citing an RVA from gta-reversed-modern as if it were a Mashed RVA — that's a critical hallucination.
+- Treating "librw says this function does X" as evidence about what the Mashed function does — librw is engine-side guarantee, not Mashed-side fact.
+
+## End-of-session report
+- Slot held: $SLOT
+- RW_INIT_FN identified as: <rva> <name> <size_bytes>
+- String anchor hits found: <count>
+- Functions covered: <count> (RW_INIT_FN + callees)
+- hooks.csv / STUBS / UNCERTAINTIES / DEFERRED counts
+- IDs used (within allocated range)
+- cap_count + early-finish flag
+- External RW imports noted (not as stubs): list
+- MCP failures
+- Observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT E — RenderWare engine teardown ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session E; anchor-driven RW teardown reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts as session D: MCP-down stops; verify-then-cite; no hedging/inference/naming-from-names; one function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="rw_engine_teardown-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings query="RwEngineClose" — capture all hits.
+2. ALSO search_defined_strings query="RwEngineStop" and query="RwEngineTerm" — union all hits.
+3. For each hit, reference_to <addr> → list every code reference. Union into a candidate-callers set.
+4. For each unique caller RVA, function_at <caller> → identify enclosing function.
+5. Choose RW_TEAR_FN: the function that calls TWO OR MORE of (RwEngineClose / RwEngineStop / RwEngineTerm). If no single function calls multiple, take the function that calls RwEngineClose specifically. If multiple equal-priority candidates, halt and surface the ambiguity.
+6. function_callees RW_TEAR_FN → record verbatim. Subset = RW_TEAR_FN + callees, capped at 20 hard / 15 soft.
+
+If NO anchor produces hits: halt + surface "RW teardown string anchors not found; need user direction on which import to anchor against."
+
+Bucket: re/analysis/rw_engine_teardown/
+ID-range: U=0087..0106  D=0280..0339  S=0080..0099
+Subsystem: render
+
+External RW imports are NOT stubs — note as "EXTERNAL: <name>".
+
+## Reference consultation (FRAMING ONLY)
+- Engine teardown semantics: librw/src/ for RW engine lifecycle.
+- criterion-rwg37/core/src/ for definitive engine close/stop/term semantics.
+- Never paste; never cite their RVAs.
+
+## Pre-flight asserts
+Same as D (anchor SHA, slot acquire, preflight, open read-only, health_ping, ghidra_info).
+
+## Work loop
+Same shape as D. cap_count starts at 0. For RW_TEAR_FN first, then callees:
+  a. function_at; b. decomp_function (cap weight); c. function_callees (no recursion);
+  d. write re/analysis/rw_engine_teardown/<rva>.md;
+  e. hooks.csv row (subsystem=render);
+  f. U/S in U=0087..0106, S=0080..0099;
+  g. CHANGELOG row;
+  h. self-check;
+  i. cap_count >= 18 → EARLY-FINISH, remainder → DEFERRED in D=0280..0339, bucket rw_engine_teardown-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/rw_engine_teardown/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: RW engine teardown wrapper + depth-1 callees (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=rw_engine_teardown  rvas=<RW_TEAR_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: rw_engine_teardown for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking RW_TEAR_FN by guessing when no function calls 2+ teardown imports — halt and ask.
+- Confusing RW engine teardown with game-side shutdown (HardwareExitApplication etc.) — those are session E's neighbors but not the same subsystem; do not include them in this subset unless RW_TEAR_FN explicitly calls them.
+
+## End-of-session report
+- Slot held; RW_TEAR_FN (rva/name/size); anchors found
+- Functions covered; tracker counts
+- IDs used
+- cap_count + early-finish
+- External RW imports noted
+- MCP failures
+- Observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT F — RWS audio loader ================================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session F; anchor-driven audio loader reverse engineering.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts as A–E.
+
+## Session identifier
+SESSION_SHORT_ID="audio_rws_loader-$(date -u +%Y%m%d-%H%M)"
+
+## Subset definition (anchor-driven, may halt if inconclusive)
+1. search_defined_strings — try in order, capturing all hits:
+     query="RtFSManagerOpen"
+     query="RtFileOpen"
+     query="rwID_AUDIO"
+     query=".rws"
+     query="RWS\0"
+     query="RtAudio"
+2. ALSO search_constants for the RWS root section ID 0x0000000B (RW chunk type for audio). If the constant is present in too many places to be useful (>20 xrefs), filter to xrefs in code (not data).
+3. For each anchor address, reference_to → candidate-callers set.
+4. Identify AUDIO_LOAD_FN: the function that opens an audio file. Heuristic: it (a) takes a file path or handle as a parameter, AND (b) reads a 12-byte chunk header (or calls a function that does), AND (c) dispatches on the section ID.
+5. If no single function matches all three heuristic criteria, OR if multiple match equally, HALT and surface verbatim: "RWS loader anchor inconclusive; need user direction on which RW audio import to anchor against." Do NOT pick one to satisfy the prompt.
+6. function_callees AUDIO_LOAD_FN → subset = AUDIO_LOAD_FN + callees, capped 20/15.
+
+Bucket: re/analysis/audio_rws_loader/
+ID-range: U=0107..0126  D=0340..0399  S=0100..0119
+Subsystem: audio
+
+External RW imports are NOT stubs — note as "EXTERNAL: <name>".
+
+## Reference consultation (FRAMING ONLY)
+- RW chunk header parsing: re-references/criterion-rwg37/core/src/plcore/babinary.c (definitive).
+- RW section IDs: re-references/librw/src/ for the rwID_* enumeration.
+- RWS audio container layout: gtamods.com/wiki/RWS (bookmarked, not cloned — describe what you'd look up if you needed it).
+- Cross-check section IDs you observe in MCP against these references; never paste; never cite their RVAs.
+
+## Pre-flight asserts
+Same as D (anchor SHA, slot acquire, preflight, open read-only, health_ping, ghidra_info).
+
+## Work loop
+cap_count=0. For AUDIO_LOAD_FN first, then callees in address order:
+  a. function_at; b. decomp_function (weight); c. function_callees (no recursion);
+  d. write re/analysis/audio_rws_loader/<rva>.md;
+  e. hooks.csv row (subsystem=audio);
+  f. U/S in U=0107..0126, S=0100..0119;
+  g. CHANGELOG row;
+  h. self-check;
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=0340..0399, bucket audio_rws_loader-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/audio_rws_loader/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: RWS audio loader + depth-1 callees (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=audio_rws_loader  rvas=<AUDIO_LOAD_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: audio_rws_loader for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking AUDIO_LOAD_FN to satisfy the prompt when the heuristics don't converge — halt + ask.
+- Treating gtamods.com info as evidence about Mashed; it's a framing reference for RW format only.
+- Confusing RWS audio with RWS animation (`.anm`) — both share RW chunk-header structure; keep this session scoped to audio only.
+
+## End-of-session report
+- Slot held; AUDIO_LOAD_FN (rva/name/size); anchors that produced the candidate
+- Functions covered; tracker counts
+- IDs used
+- cap_count + early-finish
+- External RW imports noted
+- MCP failures
+- Observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT G — .piz parser cross-validation (NO MCP) ===========================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at low thinking. Reason: deterministic file-format work; no Ghidra; no decision branches that need reasoning.
+
+You are an analysis session in a parallel fanout. NO MCP. NO Ghidra. Pure file-format analysis using existing Python tools and the SciLor reference. You do not acquire a pool slot; you do not open Ghidra; you do not queue for scribe sweep (no Ghidra writes to make).
+
+Read CLAUDE.md and the WHOLE re/SESSION_RULES.md. The `.piz` skill in .claude/skills/piz/SKILL.md may be useful but is not strictly required.
+
+## SONNET HALTS (apply through the entire session)
+1. NO MCP. The Ghidra MCP server is NOT consulted in this session — there is no MASHED.exe code being analyzed; only data files. Do not health_ping, do not function_at, do not anything mcp__ghidra__*.
+2. Verify-then-cite for FILE bytes. Every claim about file structure must be backed by either (a) the running output of py -3.12 re/tools/piz_extract.py against a real file, or (b) a cited line in re/prior_art/MashedFileExtractor/FileFormats/PIZFile.cs, or (c) raw-byte inspection of an actual .piz file. NO inference about "what this byte must mean" without one of those three sources.
+3. No hedging, no inference. Forbidden words listed in SESSION_RULES.md.
+4. If our parser disagrees with PIZFile.cs on any structural fact, the ground truth is the binary file's actual bytes. Read the bytes directly with Python; do not pick a side without raw-byte evidence.
+
+## Session identifier
+SESSION_SHORT_ID="piz_validation-$(date -u +%Y%m%d-%H%M)"
+
+## Subset
+Cross-validate re/tools/piz_extract.py against re/prior_art/MashedFileExtractor/FileFormats/PIZFile.cs, with raw-byte verification on three sample files.
+
+Bucket: re/analysis/piz_validation/
+ID-range: U=0127..0146  S=0120..0139  (no DEFERRED needed for file-format work)
+Subsystem (for hooks.csv if applicable to any tool we ship): util
+
+## Pre-flight asserts (mandatory)
+1. py -3.12 --version succeeds.
+2. ls original/TOASTART/*.piz returns at least one file (the asset archives are present).
+3. ls re/tools/piz_extract.py exists.
+4. ls re/prior_art/MashedFileExtractor/FileFormats/PIZFile.cs exists.
+Any failure → halt + surface verbatim.
+
+## Work plan
+1. Enumerate every .piz file under original/TOASTART/ recursively. Record per-file: path, size, top-level entry count according to our parser. Output → re/analysis/piz_validation/inventory.md as a Markdown table (columns: path, size_bytes, entry_count, parser_status).
+
+2. For each .piz, run:
+     py -3.12 re/tools/piz_extract.py --list <path>  > re/analysis/piz_validation/<piz_basename>.list  2>&1
+   Capture stderr to the same file. If any file produces an exit code other than 0, note it in inventory.md's "parser_status" column verbatim.
+
+3. Read PIZFile.cs sections covering (in order):
+   - Header layout (magic, version, count fields)
+   - Per-entry record layout (offset, size, name, hash, flags)
+   - Compression/encryption (if any)
+   - Section-end / footer (if any)
+   For each section, write a one-paragraph "what PIZFile.cs claims" + "what our piz_extract.py claims" block in re/analysis/piz_validation/spec_diff.md. Cite PIZFile.cs line numbers; cite piz_extract.py line numbers where each claim lives.
+
+4. Pick three sample .piz files for byte-level verification:
+   - The smallest (lowest size_bytes from inventory.md)
+   - The largest
+   - The median (sort by size, take the middle one)
+   For each:
+     a. Read the first 256 bytes with Python (open(..., 'rb').read(256)).
+     b. Hexdump the bytes for the .md.
+     c. Identify each field per PIZFile.cs's claimed header layout; identify each field per piz_extract.py's claimed layout.
+     d. Where they agree, mark ✓. Where they disagree, mark ✗ and note which two of {PIZFile.cs, piz_extract.py, raw bytes} agree.
+   Output → re/analysis/piz_validation/byte_check.md.
+
+5. Compile re/analysis/piz_validation/findings.md with:
+   - Confirmed structure (PIZFile.cs and our parser AND raw bytes agree on)
+   - Discrepancies (PIZFile.cs vs our parser; piz_extract.py vs raw bytes; etc. — be explicit which two disagree)
+   - Open questions → file as U-NNNN rows in your allocated range (U=0127..0146)
+
+## Shutdown
+git add re/analysis/piz_validation/ UNCERTAINTIES.md
+git commit -m "piz cross-validation: SciLor PIZFile.cs vs piz_extract.py vs raw bytes ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+NO scribe-queue entry (this session has no Ghidra writes to schedule).
+
+## ANTI-PATTERNS (refuse)
+- Calling any mcp__ghidra__* tool. Wrong session.
+- Picking a side between PIZFile.cs and piz_extract.py without raw-byte evidence.
+- Skipping the byte-level check on the three samples.
+- Recording a "discrepancy" as an [UNCERTAIN] without naming exactly which two of the three sources disagree.
+
+## End-of-session report
+- Files inventoried: <count>
+- Parser-success rate: <X>/<count>
+- Confirmed structural facts: <count>
+- Discrepancies found: <count> (categorized: PIZ vs ours, ours vs bytes, PIZ vs bytes)
+- IDs used: U-XXXX..U-XXXX (n), S-XXXX..S-XXXX (n)
+- Scribe outcome: n/a — no Ghidra writes
+
+================================================================================
+=== PROMPT H — .rws audio container inventory (NO MCP) =========================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at low thinking. Reason: deterministic file enumeration + RW chunk-header parsing.
+
+You are an analysis session in a parallel fanout. NO MCP. NO Ghidra. Pure file-format work in Python, cross-referenced against re-references.
+
+Read CLAUDE.md and the WHOLE re/SESSION_RULES.md.
+
+## SONNET HALTS
+1. NO MCP. The Ghidra MCP server is NOT consulted. Do not call any mcp__ghidra__* tool.
+2. Verify-then-cite for FILE bytes. Every claim about RW chunk structure must come from (a) running rws_inspect.py against a real .rws file, (b) re-references/criterion-rwg37/core/src/plcore/babinary.c (the chunk reader), or (c) raw-byte inspection.
+3. No hedging, no inference. Forbidden words apply.
+4. RW section IDs are looked up in librw or criterion-rwg37; UNKNOWN section IDs go into a "Mysteries" section as U-NNNN — never guessed.
+
+## Session identifier
+SESSION_SHORT_ID="rws_inventory-$(date -u +%Y%m%d-%H%M)"
+
+## Subset
+Inventory every .rws file under original/toastaudio/. Build a histogram of RW section IDs encountered (RW chunks have a 12-byte header: 4-byte section ID, 4-byte size, 4-byte version stamp).
+
+Bucket: re/analysis/rws_inventory/
+ID-range: U=0147..0166  S=0140..0159
+Subsystem: audio
+
+## Pre-flight asserts
+1. py -3.12 --version succeeds.
+2. ls original/toastaudio recursively returns at least one .rws file.
+3. ls re-references/criterion-rwg37/core/src/plcore/babinary.c exists (read access).
+4. ls re-references/librw/src/ exists (read access).
+Any failure → halt + surface.
+
+## Work plan
+1. Write re/tools/rws_inspect.py (Python 3.12) with this contract:
+     usage: rws_inspect.py <path-to-rws-file>
+     output: CSV rows to stdout, one per chunk:
+             file,depth,section_id_hex,size,version,parent_section_id
+     Walks nested chunks recursively. The 12-byte header is:
+       - section_id: little-endian uint32
+       - size: little-endian uint32 (size of payload, not including header)
+       - version: little-endian uint32
+     A chunk's payload may itself contain sub-chunks if the section_id is one of the container types (Struct=0x0001, Extension=0x0003, etc.). For unknown section IDs, do NOT recurse — emit the chunk with depth and stop.
+     Errors (truncated file, malformed header) → emit one row with section_id=ERROR and size=<remaining bytes>; do not crash.
+
+2. Run rws_inspect.py against every .rws file under original/toastaudio/; redirect output (concatenated) to re/analysis/rws_inventory/all_chunks.csv. Include a header row.
+
+3. Build a histogram from all_chunks.csv: for each distinct section_id, count occurrences, sum bytes, count distinct files. Output as a Markdown table → re/analysis/rws_inventory/histogram.md (columns: section_id_hex, occurrence_count, total_bytes, distinct_files, identified_name, source).
+
+4. For each section_id in the histogram, identify it:
+   - First check re-references/librw/src/ — grep for the hex value in headers. The rwID_* enumeration lives in src/rwbase.h or similar; cite the file:line.
+   - If not in librw, check re-references/criterion-rwg37/core/src/plcore/babinary.c and the surrounding header files; cite the file:line.
+   - If neither has the ID, it goes into a "Mysteries" subsection of histogram.md and gets a U-NNNN row in your allocated range (U=0147..0166).
+
+5. Sanity check: section_id 0x0000000B is rwID_TEXDICTIONARY in graphics RW; for audio (RWS) it is the audio root container. The histogram should show 0x0000000B as one of the most common top-level (depth=0) IDs across the .rws files. If it is not, note this as an observation in histogram.md (do NOT mark it as an uncertainty unless you've confirmed the section ID for RWS audio differs from 0x0000000B by reading babinary.c).
+
+## Shutdown
+git add re/analysis/rws_inventory/ re/tools/rws_inspect.py UNCERTAINTIES.md
+git commit -m "rws inventory: chunk-ID histogram across original/toastaudio/ ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+NO scribe-queue entry.
+
+## ANTI-PATTERNS (refuse)
+- Calling any mcp__ghidra__* tool.
+- Guessing what a section_id means without finding it in librw or criterion-rwg37.
+- Recursing into a chunk whose section_id you have not identified as a container type — emit and stop.
+- Writing rws_inspect.py to crash on malformed files; the contract requires graceful error rows.
+
+## End-of-session report
+- .rws files inspected: <count>
+- Distinct section IDs found: <count>
+- IDs identified via librw: <count>
+- IDs identified via criterion-rwg37: <count>
+- IDs unidentified (filed as U-NNNN): <count>
+- Most common top-level section ID (and is it 0x0000000B as expected?)
+- IDs used: U-XXXX..U-XXXX (n), S-XXXX..S-XXXX (n)
+- Scribe outcome: n/a — no Ghidra writes
+
+================================================================================
+=== PROMPT I — Scribe sweep (Opus, runs LAST after A–F have all pushed) ========
+================================================================================
+
+Recommended model: claude-opus-4-7 at medium thinking. Reason: drains the queued scribe work from up to 6 parallel analysis sessions under a single master claim; per-RVA write decisions need attention.
+
+You are the scribe-sweep session draining the parallel-fanout queue. You are the ONLY session that should hold master.WIP-* during this sweep.
+
+Read CLAUDE.md, re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "Post-analysis scribe step", § "What to write at C1"), .claude/skills/multi-session/SKILL.md, .claude/skills/ghidra-pool/SKILL.md.
+
+## Session identifier
+SESSION_SHORT_ID="sweep-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-flight (mandatory, halt on any failure)
+1. git fetch origin && git pull --rebase  — gather every queued row from sessions A–F.
+2. cat re/SCRIBE_QUEUE.md and confirm the "Queued" section has rows. Empty → halt, report "no work queued; sweep cancelled."
+3. bash scripts/ghidra_assert.sh scribe-check — must show no flag held. If a stale flag is present from an aborted prior sweep, surface verbatim and stop; user decides whether to git rm it manually before retry.
+4. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+5. Anchor check + slot acquisition NOT needed for sweep — sweep opens the master, not a pool slot.
+
+## Outer claim (covers the whole sweep)
+echo "master.WIP-$SESSION_SHORT_ID" > "master.WIP-$SESSION_SHORT_ID"
+git add "master.WIP-$SESSION_SHORT_ID"
+git commit -m "scribe: claim sweep $SESSION_SHORT_ID"
+
+Append to re/analysis/CHANGELOG.md:
+  YYYY-MM-DD  $SESSION_SHORT_ID  scribe-claim-sweep  buckets=<count from QUEUE.md>
+
+git add re/analysis/CHANGELOG.md
+git commit -m "changelog: sweep $SESSION_SHORT_ID claim"
+git push origin main
+
+## Open master writable (ONCE, for the whole sweep)
+mcp__ghidra__project_program_open_existing
+  project_location="C:/Users/maria/Desktop/Proyectos/Mashed"
+  project_name="Mashed"
+  program_name="MASHED.exe"
+  read_only=false
+
+mcp__ghidra__health_ping → must succeed.
+mcp__ghidra__ghidra_info → returned project path must contain "Mashed" and NOT contain "Mashed_pool*" (would indicate wrong project — halt).
+
+## Drain loop (one queued row per iteration, in queue order)
+For each row in re/SCRIBE_QUEUE.md "Queued" section, top to bottom:
+
+  1. Parse the row: extract bucket, session_short_id, rvas list.
+
+  2. Append CHANGELOG row:
+       YYYY-MM-DD  $SESSION_SHORT_ID  scribe-claim  bucket=<bucket>  rvas=<count>  (sweep)
+
+  3. For each RVA in the row, in address order:
+     a. mcp__ghidra__function_at <rva> — confirm non-null. Null → halt the entire sweep, surface verbatim, do NOT skip and continue.
+     b. Read re/analysis/<bucket>/<rva>.md — extract the first bullet of "## Mechanical description" verbatim.
+     c. Apply the truncation rule:
+          plate = "[C1 YYYY-MM-DD] " + first_bullet
+          if len(plate) > 120: cut at last word boundary that fits within 120, append "…"
+          NEVER paraphrase to compress.
+     d. mcp__ghidra__comment_set
+          rva=<rva>
+          comment_type=plate
+          comment=<truncated plate text>
+     e. mcp__ghidra__bookmark_add
+          rva=<rva>
+          category="first-pass"
+          description="C1 YYYY-MM-DD session:<bucket> sweep:$SESSION_SHORT_ID"
+     f. mcp__ghidra__comment_get rva=<rva> comment_type=pre  (also try comment_type=plate)
+        If returned text starts with "Library Function:":
+          name = first whitespace-separated token after "Library Function:"
+          if ambiguous (multiple candidate symbols listed, e.g. "foo OR bar"): skip rename
+          else: mcp__ghidra__function_rename rva=<rva> new_name=<name>
+        else: skip rename — never invent a name.
+     g. If any of (a)–(f) returns an MCP error: halt the sweep, surface verbatim, do NOT continue to next RVA. Whatever's saved so far is safe; the user decides whether to (a) program_save now to persist current writes and release, or (b) close without saving and revert.
+
+  4. After all RVAs in the bucket complete:
+     - Append CHANGELOG row:
+         YYYY-MM-DD  $SESSION_SHORT_ID  scribe-release  bucket=<bucket>  writes=<rva count>  errors=0  (sweep)
+     - Move the queued row from "Queued" to "Drained" in re/SCRIBE_QUEUE.md. Do NOT delete; preserve audit trail.
+     - git add re/SCRIBE_QUEUE.md re/analysis/CHANGELOG.md
+     - git commit -m "scribe: drained <bucket> via sweep $SESSION_SHORT_ID"
+     - (Don't push yet — push once at the end of the whole sweep to keep network round-trips low.)
+
+  5. Continue to the next queued row.
+
+## After all queued rows drain
+mcp__ghidra__program_save  (NOT program_save_as)
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh sync  — refresh slots and stamp .last_master_sync.
+
+## Outer release
+git rm "master.WIP-$SESSION_SHORT_ID"
+
+Append final CHANGELOG row:
+  YYYY-MM-DD  $SESSION_SHORT_ID  scribe-release-sweep  buckets=<n>  total_writes=<m>  errors=<e>
+
+git add re/analysis/CHANGELOG.md
+git commit -m "scribe: release sweep $SESSION_SHORT_ID (drained <n> buckets, <m> RVAs)"
+git pull --rebase
+git push origin main
+
+## ANTI-PATTERNS (refuse)
+- Skipping a failed RVA and continuing to the next. The first failure halts the entire sweep.
+- Paraphrasing or rewriting a plate comment to fit 120 chars. Truncation only.
+- Inventing a function name when comment_get returns no "Library Function:" prefix. Skip the rename instead.
+- Calling program_save_as. Always program_save.
+- Releasing the master.WIP-* flag before program_close + sync complete.
+- Polling on the master lock. There IS no other lock — you're the sole holder.
+- Deleting drained rows from SCRIBE_QUEUE.md instead of moving them to "Drained".
+
+## End-of-session report
+- Buckets drained: <n>
+- Total RVAs written to master: <m>
+- Plate comments applied: <m>
+- First-pass bookmarks added: <m>
+- Library-match renames: <r> (out of <m> candidates)
+- MCP errors: <e>; if non-zero, list each verbatim
+- Sync outcome: <n> slots refreshed, <m> skipped (locked by other readers)
+- CHANGELOG rows appended: <claim_count> claim + <release_count> release + 2 outer = <total>
+- Scribe queue state: <q> remaining queued (should be 0 if all sessions A–F pushed before sweep started)
+
+================================================================================
+=== END OF FANOUT PROMPTS ======================================================
+================================================================================
+
+QUICK REFERENCE — ID range allocation across sessions (no overlap):
+
+  Session  Bucket               U range      D range      S range
+  -------  -------------------  -----------  -----------  -----------
+    A      boot_app_init        0007..0026   0040..0099   0001..0019
+    B      boot_crt_exit        0027..0046   0100..0159   0020..0039
+    C      boot_crt_env         0047..0066   0160..0219   0040..0059
+    D      rw_engine_init       0067..0086   0220..0279   0060..0079
+    E      rw_engine_teardown   0087..0106   0280..0339   0080..0099
+    F      audio_rws_loader     0107..0126   0340..0399   0100..0119
+    G      piz_validation       0127..0146     n/a        0120..0139
+    H      rws_inventory        0147..0166     n/a        0140..0159
+    I      sweep                  n/a          n/a          n/a
+
+If a session would exhaust its allocation, it halts and asks the user for an
+extension. Never silently overrun.
