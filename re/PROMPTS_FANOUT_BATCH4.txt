@@ -1,0 +1,871 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 4
+================================================================================
+
+Eight new prompts (AA–HH) covering state machine / physics / network / camera /
+in-game HUD / effects / textures / music. First batch using the **pre-assigned
+pool slot scheme** (per re/SESSION_RULES.md § "Pool-slot pre-assignment") —
+each prompt declares SLOT="Mashed_pool<N>" in its body so parallel sessions
+don't race on `acquire`.
+
+Prompts in this batch:
+  AA  game_state         Sonnet medium  — anchor: state-machine string IDs
+  BB  physics_collision  Sonnet medium  — anchor: RpCollision / collision strings
+  CC  network            Sonnet medium  — anchor: ws2_32 / WSAStartup (halt-allowed)
+  DD  camera_follow      Sonnet medium  — anchor: chase-cam / call-graph from render_frame
+  EE  hud_ingame         Sonnet medium  — anchor: lap/position/timer strings (NOT menu Frontend)
+  FF  effects_particle   Sonnet medium  — anchor: RpPrtStd / particle strings
+  GG  texture_loader     Sonnet medium  — anchor: RwTextureRead / TXD strings
+  HH  audio_music        Sonnet medium  — anchor: streaming/music strings (halt on F/T overlap)
+
+After all 8 push their queue rows, relaunch sweep prompt I (from
+PROMPTS_FANOUT.txt) with a fresh SESSION_SHORT_ID. Sweep is bucket-agnostic.
+
+CC and HH are explicitly halt-allowed (no multiplayer / overlap with audio
+buckets) — halting on inconclusive anchors is the success path.
+
+LAUNCH SEQUENCE GUIDANCE
+
+Wave 1 (4 in parallel, slots 0–3): AA, BB, CC, DD
+Wave 2 (4 in parallel, slots 4–7): EE, FF, GG, HH
+After all push: launch sweep I.
+
+Pool slots can be reused across non-overlapping waves. Within a wave, slots
+must be unique — and they ARE, because every prompt below pre-assigns its slot.
+
+ID ranges + slot assignments (no overlap with batches 1–3):
+
+  Session  Bucket              Slot           U range      D range      S range
+  -------  ------------------  -------------  -----------  -----------  -----------
+    AA     game_state          Mashed_pool0   0487..0506   1360..1419   0480..0499
+    BB     physics_collision   Mashed_pool1   0507..0526   1420..1479   0500..0519
+    CC     network             Mashed_pool2   0527..0546   1480..1539   0520..0539
+    DD     camera_follow       Mashed_pool3   0547..0566   1540..1599   0540..0559
+    EE     hud_ingame          Mashed_pool4   0567..0586   1600..1659   0560..0579
+    FF     effects_particle    Mashed_pool5   0587..0606   1660..1719   0580..0599
+    GG     texture_loader      Mashed_pool6   0607..0626   1720..1779   0600..0619
+    HH     audio_music         Mashed_pool7   0627..0646   1780..1839   0620..0639
+
+If a session would exhaust its allocation, it halts and asks for an extension.
+
+================================================================================
+=== PROMPT AA — Game state machine =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session AA; anchor-driven game state machine.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "Pool-slot pre-assignment", § "ID range allocation"). Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before any citation. Null → halt.
+3. No hedging, no inference, no naming from names. Forbidden words: "probably", "likely", "seems to", "appears to", "I think", "presumably", "must be", "is meant to", "is responsible for".
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="game_state-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot (do NOT change, do NOT call acquire)
+SLOT="Mashed_pool0"
+
+## Subset definition (anchor-driven)
+1. mcp__ghidra__search_defined_strings — try in order, capturing all hits:
+     query="STATE_"
+     query="GameState"
+     query="STATE_MENU"
+     query="STATE_RACE"
+     query="STATE_LOADING"
+     query="STATE_RESULTS"
+     query="GS_"
+     query="g_GameState"
+2. ALSO search_constants for small enum-like integer ranges if a single global is written with values 0–10 from many call sites (state-machine signature).
+3. For each anchor, reference_to → candidate-callers set.
+4. Identify STATE_FN: a function that branches on a state variable (switch or if-else chain reading a single global, dispatching to per-state update functions). Heuristic: reads one global, dispatches on its value, called from per-frame parent.
+5. If multiple equal candidates, halt + surface ambiguity.
+6. function_callees STATE_FN → subset = STATE_FN + per-state callees, capped 20 hard / 15 soft.
+
+If NO anchors hit: halt + surface "Game state machine anchors not found; state may be inlined into per-frame tick or distributed. Need user direction."
+
+Bucket: re/analysis/game_state/
+ID-range: U=0487..0506  D=1360..1419  S=0480..0499
+Subsystem: util (state machine spans subsystems; util is the safest bucket — could split later)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+No specific RW reference for game state machines (this is pure Supersonic gameplay code). Cite ONLY what MCP shows. Do not import gta-reversed analogies (SA's CGameLogic / CGame is wholly different shape).
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Either wait or relaunch with a different SLOT value." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+     # Verify mashed_pool/${SLOT}.gpr now exists; if not, halt.
+   fi
+
+3. bash scripts/ghidra_assert.sh preflight "$SLOT" — all three pass.
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For STATE_FN first, then each callee in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/game_state/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,util,C1,mapped,re/analysis/game_state/<rva>.md,,,<short notes>.
+  f. U/S in U=0487..0506 / S=0480..0499.
+  g. CHANGELOG row.
+  h. Self-check (in chat): function_at this session? forbidden words? cite addresses? mechanical not inferred? Fix before next.
+  i. cap_count >= 18 → EARLY-FINISH; remainder → DEFERRED in D=1360..1419, bucket game_state-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/game_state/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: game state machine (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=game_state  rvas=<STATE_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: game_state for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- All standard ones (hedging, recursion, cap, base-bucket, IDs out of range, renaming).
+- Picking STATE_FN by guessing when no candidate matches the dispatch heuristic — halt.
+- Treating gta-reversed CGameLogic / CGame as evidence about Mashed's state machine.
+- Calling ghidra_pool.sh acquire instead of using the pre-assigned SLOT.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- STATE_FN identified as: <rva> <name> <size_bytes>
+- Anchor hits found (per query)
+- State-name strings observed (verbatim list)
+- Functions covered: <count>
+- New hooks.csv rows at C1: <count>
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n) — within allocation
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- MCP failures: list verbatim or "none"
+- Observations: list or "none"
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT BB — RW collision / physics =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session BB; anchor-driven RW collision plugin or custom physics.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="physics_collision-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — RW collision plugin anchors:
+  search_defined_strings query="RpCollision"
+  search_defined_strings query="rwID_COLLISION"
+  search_defined_strings query="RpCollisionGeometry"
+  external_imports_list — look for RpCollision* exports.
+
+Strategy 2 — custom physics anchors:
+  search_defined_strings query="Collision"
+  search_defined_strings query="Physics"
+  search_defined_strings query="RigidBody"
+  search_defined_strings query="contact"
+  Filter by xref count 1–20.
+
+Strategy 3 — call-graph from session V:
+  IF vehicle_update bucket exists, the per-vehicle physics tick is a callee of VEHICLE_UPDATE_FN. Read re/analysis/vehicle_update/<rva>.md notes for callee RVAs that look like physics math (sqrt / dot product / matrix multiply patterns).
+
+Identify COLLISION_FN: a function that EITHER (a) is a RW RpCollision plugin glue function (calls RpCollision* APIs), OR (b) tests two volumes/geometries and returns a hit/no-hit boolean (typical signature: takes two pointers, returns int, body has float compares and dot products).
+
+If NONE converges: halt + surface "Collision/physics anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2>), strategy 3 (<n3 or n/a>). Need user direction."
+
+If found: function_callees COLLISION_FN → subset capped 20/15.
+
+Bucket: re/analysis/physics_collision/
+ID-range: U=0507..0526  D=1420..1479  S=0500..0519
+Subsystem: vehicle (collision is per-vehicle gameplay)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/ for RW collision plugin layout (if RW collision is used).
+- criterion-rwg37/collis/ — definitive RW collision plugin source. The DAS (Discrete Axis-Aligned Surface) tree, KD-tree, and contact-query code lives here.
+- Cross-check observed offsets against criterion-rwg37/collis/colldata.h struct shapes if Mashed uses RpCollision.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum check.
+2. Pre-assigned slot check (echo SLOT, check lock files, create slot if needed — same as AA).
+3. ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. health_ping.
+6. ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+For COLLISION_FN first, then callees in address order. Standard pattern. hooks.csv subsystem=vehicle. U/S in U=0507..0526 / S=0500..0519. Cap check → DEFERRED in D=1420..1479, bucket physics_collision-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found and decompiled:
+  git add re/analysis/physics_collision/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+  git commit -m "first pass: collision/physics (slot $SLOT, $SESSION_SHORT_ID)"
+  git pull --rebase
+  git push origin main
+  Append SCRIBE_QUEUE.md row, commit, push.
+
+If halted on inconclusive: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Citing criterion-rwg37/collis/ RVAs as Mashed RVAs.
+- Confusing collision detection (point-in-volume) with collision response (impulse/force application) — both may exist in different functions; bucket the detection here, file the response as DEFERRED for a sibling bucket.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found via strategy N | inconclusive — halted)
+- If found: COLLISION_FN (rva/name/size); strategy that found it
+- Uses RpCollision plugin: yes/no
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT CC — Network / multiplayer ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session CC; anchor-driven network init — halt-allowed if no multiplayer.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Plus: halting on "no multiplayer found" is the SUCCESS path, not a failure — Mashed may be single-player only or LAN-only.
+
+## Session identifier
+SESSION_SHORT_ID="network-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition (anchor-driven)
+1. external_imports_list — look for ws2_32.dll, wsock32.dll, dplayx.dll, dpnet.dll, dpnhpast.dll, hnetcfg.dll. Capture every Winsock/DirectPlay import.
+2. search_defined_strings — try in order:
+     query="WSAStartup"
+     query="ws2_32"
+     query="DirectPlay"
+     query="DPlayCreate"
+     query="socket"
+     query="connect"
+     query="bind"
+     query="listen"
+     query="Multiplayer"
+     query="LAN"
+     query="Network"
+3. For each import RVA + string anchor, reference_to → candidate-callers.
+4. Identify NET_INIT_FN: a function that calls WSAStartup OR DirectPlayCreate AND sets up a socket / DirectPlay session. If only sporadic socket usage exists (e.g., for crash reporting), THAT is not a multiplayer subsystem — halt.
+
+If NO Winsock or DirectPlay imports exist: halt + surface "Mashed has no networking imports — single-player only. No subset to decompile. End-of-session report filed; no commit, no queue."
+
+If imports exist but no clear NET_INIT_FN candidate: halt + surface "Networking imports present but no init function converges — possibly used only for support/telemetry, not gameplay. List candidate callers (<list>) for user review."
+
+If NET_INIT_FN found: function_callees NET_INIT_FN → subset capped 20/15.
+
+Bucket: re/analysis/network/
+ID-range: U=0527..0546  D=1480..1539  S=0520..0539
+Subsystem: net
+
+External imports (Winsock, DirectPlay APIs) NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- No useful local reference. Winsock / DirectPlay are MS APIs documented at MSDN — use only what MCP shows; cite raw API call sequences without paraphrasing intent.
+- If MASHED.exe uses RakNet or another middleware, the import-DLL list will reveal it; halt + surface for user direction in that case.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum check.
+2. Pre-assigned slot check (SLOT="Mashed_pool2").
+3. ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only.
+5. health_ping.
+6. ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, IF subset found)
+Standard. function_at → decomp (weight) → callees (no recursion) → write .md → hooks.csv (subsystem=net) → U/S in U=0527..0546 / S=0520..0539 → CHANGELOG → self-check → cap check (early-finish to D=1480..1539, bucket network-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found and decompiled: standard commit + queue + push.
+If halted (no networking, or inconclusive): no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Inferring "this is the multiplayer init" from a string match alone — confirm via mechanical description (calls WSAStartup, opens a socket, etc.).
+- Inventing networking content when imports are absent.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Network imports detected: yes/no (list verbatim if yes)
+- NET_INIT_FN identified: yes/no (rva/name/size if yes)
+- Functions covered: <count> (0 if halted)
+- Tracker counts; IDs used (within allocation; may be empty)
+- cap_count + early-finish
+- MCP failures; observations
+- Scribe outcome: queued | n/a — halted (single-player only) | n/a — halted (inconclusive)
+
+================================================================================
+=== PROMPT DD — Camera follow / chase logic ====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session DD; anchor-driven chase-cam.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="camera_follow-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — string anchors:
+  search_defined_strings query="Camera"
+  search_defined_strings query="ChaseCam"
+  search_defined_strings query="follow"
+  search_defined_strings query="cam_"
+  Filter by xref count 1–20.
+
+Strategy 2 — RW Camera anchors that are NOT BeginUpdate/EndUpdate (those belong to session S):
+  search_defined_strings query="RwCameraSetViewWindow"
+  search_defined_strings query="RwCameraSetFrame"
+  search_defined_strings query="RwFrameTransform"
+  external_imports_list — capture RwFrame*/RwCamera* imports beyond Begin/End.
+
+Strategy 3 — call-graph from session S:
+  IF render_frame bucket exists, RENDER_FRAME_FN's parent calls a "set up camera for this frame" function before the render. Read render_frame's notes; identify the function called immediately before RENDER_FRAME_FN by the per-frame parent. That's a candidate for CAMERA_FN.
+
+Identify CAMERA_FN: a function called per-frame (or per-state) that updates camera position/orientation by reading vehicle/player state. Heuristic: writes to RwFrame matrix fields, reads from a "target" (vehicle) struct.
+
+If NONE converges, halt + surface "Camera follow anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2>), strategy 3 (<n3 or n/a>). Need user direction."
+
+If found: function_callees CAMERA_FN → subset capped 20/15.
+
+Bucket: re/analysis/camera_follow/
+ID-range: U=0547..0566  D=1540..1599  S=0540..0559
+Subsystem: render
+
+External RW camera/frame imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/baseframe.cpp + basecamera.cpp for RwFrame transforms and RwCamera state.
+- criterion-rwg37/core/src/baframe.c + bacamera.c for definitive engine semantics on frame transforms.
+- gta-reversed-modern's CCamera is SA-specific (much heavier; supports cinematic/cutscene/etc.) but the matrix-math shape may rhyme.
+
+Cross-check matrix offsets observed in MCP against librw's RwMatrix layout. Never paste; never cite their RVAs.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum check.
+2. Pre-assigned slot check (SLOT="Mashed_pool3").
+3. ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only.
+5. health_ping.
+6. ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+For CAMERA_FN first, then callees in address order. Standard. hooks.csv subsystem=render. U/S in U=0547..0566 / S=0540..0559. Cap check → DEFERRED in D=1540..1599, bucket camera_follow-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/camera_follow/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: camera follow (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=camera_follow  rvas=<CAMERA_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: camera_follow for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Citing librw/criterion-rwg37/gta-reversed RVAs as Mashed RVAs.
+- Confusing camera setup (per-frame matrix update — this session) with camera mode switching (state-machine driven — possibly session AA territory). Bucket the matrix-update logic here; if a function is just a state-driven mode switch, file as DEFERRED for game_state-cont.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- CAMERA_FN identified (rva/name/size); strategy that found it
+- Anchor hits found
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External RW imports noted
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT EE — In-game HUD render =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session EE; anchor-driven in-game HUD (DISTINCT from menu Frontend).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Plus halt-allowed if anchors don't separate in-game HUD from menu Frontend (session Y).
+
+## Session identifier
+SESSION_SHORT_ID="hud_ingame-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — in-race HUD string anchors (player-visible during gameplay, NOT menu text):
+  search_defined_strings query="LAP"
+  search_defined_strings query="Lap"
+  search_defined_strings query="lap"
+  search_defined_strings query="POSITION"
+  search_defined_strings query="TIME"
+  search_defined_strings query="SPEED"
+  search_defined_strings query="MPH"
+  search_defined_strings query="KPH"
+  Filter by xref count 1–20.
+
+Strategy 2 — RwIm2D / 2D rendering, called from gameplay state (NOT menu state):
+  IF session AA succeeded, identify which state in STATE_FN's dispatch is the race state (likely contains "RACE" string or is the per-state callee that calls RENDER_FRAME_FN's parent's tick callee). The HUD render is called from within the race-state tick.
+
+Strategy 3 — call-graph from session S:
+  RENDER_FRAME_FN typically renders 3D first, then HUD overlay. The function called immediately AFTER RENDER_FRAME_FN's RpWorldRender call but BEFORE RwCameraEndUpdate is the HUD draw. Read render_frame notes for that order.
+
+Identify HUD_INGAME_FN: a function called per-frame from the race state, that calls RwIm2D primitives AND reads gameplay state (lap/time/position). MUST NOT be the menu Frontend (session Y); if anchor strings overlap with menu text, halt and surface.
+
+If anchors clash with hud_frontend (session Y) territory: halt + surface "in-game HUD anchors overlap menu Frontend (session Y); functions <list> appear in BOTH. Need user direction whether to merge or split."
+
+If no anchors converge: halt + surface "in-game HUD anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2 or n/a>), strategy 3 (<n3 or n/a>). Need user direction."
+
+If found: function_callees HUD_INGAME_FN → subset capped 20/15.
+
+Bucket: re/analysis/hud_ingame/
+ID-range: U=0567..0586  D=1600..1659  S=0560..0579
+Subsystem: hud
+
+External RW Im2D imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/ for RwIm2D primitives.
+- criterion-rwg37/core/src/baimmedi.c for RwIm2D semantics.
+- gta-reversed-modern's CHud as structural analogy only — Mashed's racing HUD is wholly different content from SA's combat HUD.
+
+## Pre-flight asserts
+Same shape (sha256, SLOT="Mashed_pool4", lock check, slot create if missing, preflight, open, health_ping, ghidra_info).
+
+## Work loop (cap_count=0)
+For HUD_INGAME_FN first, then callees in address order. Standard. hooks.csv subsystem=hud. U/S in U=0567..0586 / S=0560..0579. Cap check → DEFERRED in D=1600..1659, bucket hud_ingame-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found: standard commit + queue + push.
+If halted (overlap with Y or inconclusive): no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Decompiling a menu Frontend function thinking it's the in-game HUD — they are sibling subsystems but DISTINCT. If overlap detected, halt.
+- Inferring "this draws the lap counter" from a string match; confirm via mechanical description.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- HUD_INGAME_FN identified (rva/name/size); strategy
+- Overlap with hud_frontend (session Y) detected: yes/no
+- In-race strings observed (verbatim)
+- Functions covered; tracker counts; IDs used; cap_count + early-finish
+- External RW imports noted
+- MCP failures; observations
+- Scribe outcome: queued | n/a — halted on overlap | n/a — halted on inconclusive
+
+================================================================================
+=== PROMPT FF — Particle / effects system ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session FF; anchor-driven particle/effects.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="effects_particle-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — RW particle plugin anchors:
+  search_defined_strings query="rwID_PRTSTDGLOBALDATA"
+  search_defined_strings query="RpPrtStd"
+  search_defined_strings query="RpParticles"
+  search_defined_strings query="rwID_PARTICLES"
+  external_imports_list — look for RpPrtStd* exports.
+
+Strategy 2 — game-side effect anchors:
+  search_defined_strings query="Particle"
+  search_defined_strings query="Smoke"
+  search_defined_strings query="Spark"
+  search_defined_strings query="Explosion"
+  search_defined_strings query="Effect"
+  search_defined_strings query="Trail"
+  Filter by xref count 1–20.
+
+Strategy 3 — file-path / asset anchors:
+  ls original/TOASTART/ for any "EFFECTS" or "PARTICLES" subdirectory. Search those paths if present.
+
+Identify EFFECT_FN: a function that EITHER (a) glues RpPrtStd into the per-frame render (calls RpAtomicRender on a particle atomic), OR (b) updates a custom effect ring buffer (allocates from a pool of effect entries, ages them, removes expired ones).
+
+If NONE converges: halt + surface "Particle/effects anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2>), strategy 3 (<n3 or n/a>). Need user direction."
+
+If found: function_callees EFFECT_FN → subset capped 20/15.
+
+Bucket: re/analysis/effects_particle/
+ID-range: U=0587..0606  D=1660..1719  S=0580..0599
+Subsystem: render
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw and criterion-rwg37 may NOT include the RpPrtStd plugin source (it was a separate Criterion plugin). Check — if they do, use as cross-check; if not, this is one of the few cases where MCP-observed bytes ARE the only reference, and U-NNNN markers will be heavier than usual.
+- gta-reversed-modern uses RpPrtStd in some places — useful as structural analogy ONLY.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool5", lock check, slot create if missing, preflight, open, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+For EFFECT_FN first, then callees. Standard. hooks.csv subsystem=render. U/S in U=0587..0606 / S=0580..0599. Cap check → DEFERRED in D=1660..1719, bucket effects_particle-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found: standard commit + queue + push.
+If halted: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Picking an EFFECT_FN by guessing.
+- Citing gta-reversed RpPrtStd helper RVAs as Mashed RVAs.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found via strategy N | inconclusive — halted)
+- Uses RpPrtStd plugin: yes/no
+- If found: EFFECT_FN (rva/name/size)
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT GG — Texture loader (RW TXD) ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session GG; anchor-driven RW TXD texture loader.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts.
+
+## Session identifier
+SESSION_SHORT_ID="texture_loader-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool6"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings:
+     query=".txd"
+     query="TXD"
+     query="RwTextureRead"
+     query="RwTexDictionary"
+     query="RwTexDictionaryStreamRead"
+     query="rwID_TEXDICTIONARY"
+2. external_imports_list — capture RwTexture*, RwTexDictionary*, RwRaster* exports.
+3. For each anchor, reference_to → candidate-callers.
+4. Identify TXD_LOAD_FN: the function that opens a .txd file path AND calls RwTexDictionaryStreamRead. If only RwTextureRead is used (per-image-file textures, no TXD container), take the function calling RwTextureRead.
+5. If multiple equal candidates, halt + surface.
+6. function_callees TXD_LOAD_FN → subset capped 20/15.
+
+If NO anchors hit: halt + surface "Texture loader anchors not found; textures may be embedded in track data via session X. Need user direction."
+
+Bucket: re/analysis/texture_loader/
+ID-range: U=0607..0626  D=1720..1779  S=0600..0619
+Subsystem: render
+
+External RW texture imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librwgta/tools/storiesconv/ — the cleanest open-source RW TXD reader. Cross-check field offsets observed in MCP against this code; structural reference only. MIT, may vendor pieces with attribution if directly applicable.
+- criterion-rwg37/core/src/batextur.c + babintex.c — definitive RW texture / TXD chunk semantics.
+- librw/src/basetexture.cpp for engine-level texture lifecycle.
+
+If session H (rws_inventory) produced an audio-side chunk-ID histogram, review re/analysis/rws_inventory/histogram.md for any TXD-overlap section IDs (rwID_TEXDICTIONARY = 0x16 in graphics RW).
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool6", lock check, slot create if missing, preflight, open, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+For TXD_LOAD_FN first, then callees. Standard. hooks.csv subsystem=render. U/S in U=0607..0626 / S=0600..0619. Cap check → DEFERRED in D=1720..1779, bucket texture_loader-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/texture_loader/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: texture loader / RW TXD (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=texture_loader  rvas=<TXD_LOAD_FN + callees>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: texture_loader for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Citing librwgta/criterion-rwg37/gta-reversed RVAs as Mashed RVAs.
+- Confusing the TXD container loader with per-image format decoders (DXT/raw RGBA decoders are siblings, not children — file as DEFERRED for follow-up).
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- TXD_LOAD_FN identified (rva/name/size); anchor hits
+- TXD chunk IDs observed: list (cross-check against rws_inventory/histogram.md if present)
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT HH — Music streaming / wave audio ===================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session HH; anchor-driven streaming music — halt-allowed if overlaps with F or T.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+Same four halts. Plus halt-allowed on overlap with audio_rws_loader (F) or audio_dsound (T).
+
+## Session identifier
+SESSION_SHORT_ID="audio_music-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool7"
+
+## Subset definition (anchor-driven, halt-on-overlap)
+1. search_defined_strings — try in order:
+     query=".wav"
+     query=".mp3"
+     query=".ogg"
+     query=".bik"
+     query="Music"
+     query="MUSIC"
+     query="Streaming"
+     query="StreamSound"
+     query="BackgroundMusic"
+     query="BGM"
+     query="Track"        (filter — may overlap session X track loader)
+2. external_imports_list — find any audio middleware DLLs beyond dsound (e.g., dsound stream APIs, mmsystem PlaySound, custom ogg/mp3 codecs).
+3. ls original/ for any music asset folder ("MUSIC/", "TRACKS/" subfolder for audio not level — verify which TRACKS/ subdirectory holds music files).
+4. For each anchor, reference_to → candidate-callers.
+5. Identify MUSIC_FN: the function that loads / starts a music stream. MUST be distinct from session F's RWS audio loader and session T's DirectSound init. If candidate function is also a callee of either AUDIO_LOAD_FN (F) or DSOUND_INIT_FN (T), halt + surface overlap — bucket merging is the user's call, not this session's.
+
+If NO anchors hit: halt + surface "Music/streaming anchors not found; music may be routed through RWS audio (session F) without a streaming-specific entry. Need user direction."
+
+If overlap detected with F or T: halt + surface "audio_music overlaps with audio_rws_loader (F) and/or audio_dsound (T). Functions <list> appear in shared call paths. Need user direction whether to merge buckets or proceed with deduplication."
+
+If found AND no overlap: function_callees MUSIC_FN → subset capped 20/15.
+
+Bucket: re/analysis/audio_music/
+ID-range: U=0627..0646  D=1780..1839  S=0620..0639
+Subsystem: audio
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- criterion-rwg37/core/src/plcore/babinary.c for any RW chunk decoding if music uses RW container.
+- No specific local reference for ogg/mp3 — if Mashed uses one of those, the codec is likely vendored from libogg/libmpg or similar. MCP-observed bytes are the only ground truth.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool7", lock check, slot create if missing, preflight, open, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found and no overlap)
+Standard. function_at → decomp (weight) → callees (no recursion) → write .md → hooks.csv (subsystem=audio) → U/S in U=0627..0646 / S=0620..0639 → CHANGELOG → self-check → cap check (early-finish to D=1780..1839, bucket audio_music-cont1).
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found and decompiled: standard commit + queue + push.
+If halted (no anchors / overlap with F or T): no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Decompiling a function that's also in F or T's bucket — halt instead.
+- Inferring "this is the music streamer" from a filename match; confirm via mechanical description.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / inconclusive — halted / overlap with F or T — halted)
+- If found: MUSIC_FN (rva/name/size); strategy
+- If overlap: which session (F / T / both) and which functions overlap
+- Functions covered: <count> (0 if halted)
+- Tracker counts; IDs used; cap_count + early-finish
+- External imports noted; codec libraries detected (ogg/mpg/etc.)
+- MCP failures; observations
+- Scribe outcome: queued | n/a — halted (no anchors) | n/a — halted (overlap)
+
+================================================================================
+=== END OF BATCH 4 PROMPTS =====================================================
+================================================================================
+
+LAUNCH SEQUENCE GUIDANCE — DETAILED
+
+Wave 1 (high-confidence anchors, run in parallel, slots 0–3):
+  AA  game_state         pool0
+  BB  physics_collision  pool1
+  CC  network            pool2 (halt-allowed: no multiplayer)
+  DD  camera_follow      pool3
+
+Wave 2 (some halt-allowed, run in parallel, slots 4–7):
+  EE  hud_ingame         pool4 (halt on Y overlap)
+  FF  effects_particle   pool5
+  GG  texture_loader     pool6
+  HH  audio_music        pool7 (halt on F/T overlap)
+
+After all 8 push: relaunch sweep prompt I from PROMPTS_FANOUT.txt.
+
+POOL SLOT BUDGET
+  - Total slots: 8 (MAX_SLOTS in ghidra_pool.sh).
+  - This batch uses pool0..pool7 (all 8 slots). Sweep does not use a slot.
+  - If you launch wave 1 and wave 2 simultaneously (all 8 sessions in parallel),
+    every session has a unique pre-assigned slot — no race.
+  - If a slot is already locked when a session starts (e.g., a previous batch
+    didn't release cleanly), the session halts + surfaces the lock; user
+    runs `bash scripts/ghidra_pool.sh cleanup` to clear stale locks then
+    relaunches the affected prompt.
+
+ALL ID RANGES (cumulative across batches 1–4)
+
+  Batch 1:
+    A  boot_app_init        U=0007..0026   D=0040..0099   S=0001..0019
+    B  boot_crt_exit        U=0027..0046   D=0100..0159   S=0020..0039
+    C  boot_crt_env         U=0047..0066   D=0160..0219   S=0040..0059
+    D  rw_engine_init       U=0067..0086   D=0220..0279   S=0060..0079
+    E  rw_engine_teardown   U=0087..0106   D=0280..0339   S=0080..0099
+    F  audio_rws_loader     U=0107..0126   D=0340..0399   S=0100..0119
+    G  piz_validation       U=0127..0146     n/a          S=0120..0139
+    H  rws_inventory        U=0147..0166     n/a          S=0140..0159
+
+  Batch 2:
+    J  boot_app_init_d3     U=0167..0186   D=0400..0459   S=0160..0179
+    K  boot_crt_exit_d3     U=0187..0206   D=0460..0519   S=0180..0199
+    L  rw_engine_init_d2    U=0207..0226   D=0520..0579   S=0200..0219
+    M  rw_engine_teardown_d2 U=0227..0246  D=0580..0639   S=0220..0239
+    N  render_d3d9_device   U=0247..0266   D=0640..0699   S=0240..0259
+    O  input_dinput         U=0267..0286   D=0700..0759   S=0260..0279
+    P  save_gamesave        U=0287..0306   D=0760..0819   S=0280..0299
+    Q  input_lua            U=0307..0326   D=0820..0879   S=0300..0319
+
+  Batch 3:
+    S  render_frame         U=0327..0346   D=0880..0939   S=0320..0339
+    T  audio_dsound         U=0347..0366   D=0940..0999   S=0340..0359
+    U  video_mci            U=0367..0386   D=1000..1059   S=0360..0379
+    V  vehicle_update       U=0387..0406   D=1060..1119   S=0380..0399
+    W  ai_update            U=0407..0426   D=1120..1179   S=0400..0419
+    X  track_loader         U=0427..0446   D=1180..1239   S=0420..0439
+    Y  hud_frontend         U=0447..0466   D=1240..1299   S=0440..0459
+    Z  powerups             U=0467..0486   D=1300..1359   S=0460..0479
+
+  Batch 4 (THIS BATCH):
+    AA game_state           U=0487..0506   D=1360..1419   S=0480..0499  pool0
+    BB physics_collision    U=0507..0526   D=1420..1479   S=0500..0519  pool1
+    CC network              U=0527..0546   D=1480..1539   S=0520..0539  pool2
+    DD camera_follow        U=0547..0566   D=1540..1599   S=0540..0559  pool3
+    EE hud_ingame           U=0567..0586   D=1600..1659   S=0560..0579  pool4
+    FF effects_particle     U=0587..0606   D=1660..1719   S=0580..0599  pool5
+    GG texture_loader       U=0607..0626   D=1720..1779   S=0600..0619  pool6
+    HH audio_music          U=0627..0646   D=1780..1839   S=0620..0639  pool7
+
+  Next batch (when designed) starts at U=0647, D=1840, S=0640.
