@@ -350,3 +350,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  0054f8d0  FUN_0054f8d0  C0->C1  re/analysis/texture_loader_d2/0x0054f8d0.md  native-texture-bank-reader; corrects prior DFF/clump label  resolves:S-0603 D-1723  new:U-1270 U-1271 U-1272 U-1273  session:texture_loader_d2-20260503-0350
 2026-05-03  004b3d80  FUN_004b3d80  C1->C1(notes-correction)  corrected 'DFF/clump' to 'native-texture-bank'; S-0603 resolved  session:texture_loader_d2-20260503-0350
 2026-05-03  sweep-20260503-0725  scribe-claim-sweep  buckets=2  (race_results has 3 protected RVAs per row note)
+2026-05-03  sweep-20260503-0725  scribe-claim  bucket=race_results  rvas=14  (sweep)
+2026-05-03  sweep-20260503-0725  scribe-release  bucket=race_results  writes=11  bookmarks=14  errors=0  skipped_plates=3 (0x0040b6d0,0x0042f500,0x0042f6a0 prior C1 preserved per row note)
+2026-05-03  sweep-20260503-0725  scribe-claim  bucket=timer_d2  rvas=13  (sweep)
+2026-05-03  sweep-20260503-0725  scribe-release  bucket=timer_d2  writes=13  errors=0  (sweep)
+2026-05-03  sweep-20260503-0725  scribe-release-sweep  buckets=2  total_writes=24  bookmarks=27  errors=0  skipped_plates=3  (queue empty)
