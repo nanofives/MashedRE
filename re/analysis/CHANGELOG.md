@@ -349,3 +349,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  004cf7d0  FUN_004cf7d0  C0->C2  re/analysis/texture_loader_d2/0x004cf7d0.md  RwTexDictionaryStreamRead pattern; struct+dict+loop+AddTexture  resolves:S-0602 D-1722  new:U-1267 U-1268 U-1269  session:texture_loader_d2-20260503-0350
 2026-05-03  0054f8d0  FUN_0054f8d0  C0->C1  re/analysis/texture_loader_d2/0x0054f8d0.md  native-texture-bank-reader; corrects prior DFF/clump label  resolves:S-0603 D-1723  new:U-1270 U-1271 U-1272 U-1273  session:texture_loader_d2-20260503-0350
 2026-05-03  004b3d80  FUN_004b3d80  C1->C1(notes-correction)  corrected 'DFF/clump' to 'native-texture-bank'; S-0603 resolved  session:texture_loader_d2-20260503-0350
+2026-05-03  sweep-20260503-0725  scribe-claim-sweep  buckets=2  (race_results has 3 protected RVAs per row note)
