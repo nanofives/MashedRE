@@ -417,3 +417,19 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  0045d3a0  FUN_0045d3a0  C0->C1  re/analysis/timer_d2_cont1/0x0045d3a0.md  gated tick: loop FUN_0045d1e0 0..DAT_008aa254; FUN_004657b0; store  session:timer_d2_cont1-20260503-1824
 2026-05-03  0045d7a0  FUN_0045d7a0  C0->C1  re/analysis/timer_d2_cont1/0x0045d7a0.md  701b position-lerp+cross-product writes to iVar6 transform obj  session:timer_d2_cont1-20260503-1824
 2026-05-03  timer_d2_cont1-20260503-1824  EARLY-FINISH  cap_count=18 at RVA 18/39; 21 RVAs filed D-4720 (timer_d2_cont2); D-3282 re-deferred as D-4721 (Opus-only); slot=Mashed_pool5  session:timer_d2_cont1-20260503-1824
+2026-05-03  00426670  sub_00426670  C0->C1  re/analysis/render_frame_d3/00426670.md  WorldRenderDispatch_Begin; D-0880 resolved; D-5020 D-5021 spawned  session:render_frame_d3-20260503
+2026-05-03  0040de30  sub_0040de30  C0->C1  re/analysis/render_frame_d3/0040de30.md  MinimapCameraOrthoSetup; D-0881 resolved  session:render_frame_d3-20260503
+2026-05-03  0040df20  sub_0040df20  C0->C1  re/analysis/render_frame_d3/0040df20.md  MinimapCameraRestore; D-0882 resolved  session:render_frame_d3-20260503
+2026-05-03  0040df60  sub_0040df60  C0->C1  re/analysis/render_frame_d3/0040df60.md  ConditionalRenderSubPass; D-0883 resolved; D-5024 spawned  session:render_frame_d3-20260503
+2026-05-03  00404320  sub_00404320  C0->C1  re/analysis/render_frame_d3/00404320.md  PerModeRenderMachine; D-0884 resolved; D-5025..D-5029 spawned  session:render_frame_d3-20260503
+2026-05-03  00410b30  sub_00410b30  C0->C1  re/analysis/render_frame_d3/00410b30.md  InGameRenderDispatcher; D-0885 resolved; D-5037..D-5060 spawned (25 callees)  session:render_frame_d3-20260503
+2026-05-03  00426030  sub_00426030  C0->C1  re/analysis/render_frame_d3/00426030.md  WorldRenderPrePass; D-0886 resolved; D-5022 D-5023 spawned  session:render_frame_d3-20260503
+2026-05-03  004266b0  sub_004266b0  C0->C1  re/analysis/render_frame_d3/004266b0.md  WorldRenderDispatch_End; D-0887 resolved  session:render_frame_d3-20260503
+2026-05-03  00492440  sub_00492440  C0->C1  re/analysis/render_frame_d3/00492440.md  RenderStatsAccumulate (leaf/mapped); D-0888 resolved  session:render_frame_d3-20260503
+2026-05-03  00492e60  sub_00492e60  C0->C1  re/analysis/render_frame_d3/00492e60.md  SetDefaultViewWindow; D-0889 resolved  session:render_frame_d3-20260503
+2026-05-03  00433f40  sub_00433f40  C0->C1  re/analysis/render_frame_d3/00433f40.md  RaceEndFadeOverlay; D-0890 resolved; D-5030..D-5034 spawned  session:render_frame_d3-20260503
+2026-05-03  0042d390  GetRaceStateField  C0->C1  re/analysis/render_frame_d3/0042d390.md  trivial getter DAT_0067ea6c; D-0892 resolved  session:render_frame_d3-20260503
+2026-05-03  0042f530  sub_0042f530  C0->C1  re/analysis/render_frame_d3/0042f530.md  ViewportSetup; D-0893 resolved; D-5035 spawned  session:render_frame_d3-20260503
+2026-05-03  0042a9f0  GetFadeAlpha  C0->C1  re/analysis/render_frame_d3/0042a9f0.md  trivial getter (byte)DAT_0067eca8; D-0894 resolved  session:render_frame_d3-20260503
+2026-05-03  render_frame_d3-20260503  BATCH  14 C0→C1 promotions; 41 new D-5020..D-5060; 10 U-1707..U-1716; 13 S-1700..S-1712; slot=Mashed_pool13 (pool5 orphan-locked)  session:render_frame_d3-20260503
+2026-05-03  sweep-20260503-1853  scribe-claim-sweep  buckets=1  (replay_record skipped: no per-RVA files)
