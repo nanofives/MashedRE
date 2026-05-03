@@ -728,3 +728,55 @@
 0046d700,FUN_0046d700,vehicle,C1,new,re/analysis/vehicle_dynamics/0046d700.md,vehicle_dynamics-20260503-0000,,"reads 3-float vector at vehicle offset +0x9C8..+0x9D0 by vehicle index (0..15); leaf; U-1748"
 004c4680,FUN_004c4680,render,C1,new,re/analysis/vehicle_dynamics/004c4680.md,vehicle_dynamics-20260503-0000,,"matrix orthonormalize: 3-row normalize + cross-product orthogonalization; sets ORTHONORMAL type bits at param_1[3]; D-5140"
 004ccce0,FUN_004ccce0,render,C1,mapped,re/analysis/rw_engine_teardown_d3/0x004ccce0.md,,,bitmap-block linked-list iterator; alloc(vtable+0x108 flag=0x10000)+memcpy(node+8)+bit-scan(MSB first)+callback(addr param_3)+free(vtable+0x10c) per node; S-1680; U-1687 U-1688 U-1689 U-1690
+0043c000,FUN_0043c000,util,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,timer tick dispatcher; 19 slots at 0067e7a8-0067e838; state=1 fire+record, state=2 record-only; actions: FUN_004332a0(S-1640) FUN_0042f7b0(S-1641) FUN_0042c960(S-1642) FUN_0042fa00(S-1643); guard 0067e840==005d757c; U-1647 U-1648
+0043d2a0,FUN_0043d2a0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,screen push-pop; param_1=screen_id param_2=dir(0=push 1=pop 2=reload); stack at 0067e9f8*0x10; screen table at PTR_005f7638; slide display at 00898ac0; S-1644 S-1645 S-1646 S-1647 S-1648 S-1649; U-1649 U-1650
+00432800,FUN_00432800,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,menu option initializer; sets 12 avail flags at 0067ed84[slot*0x10]; switch on screen-ID(1/2/3/8/10/0x12/0x18/0x1c); cursor init at 0067ed80; S-1650; U-1649
+004325c0,FUN_004325c0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,menu slide anim tick; stride-0xd table at 00898ac0+0x10; color-tag encodes anim type(-0xfc0000=countdown -0xef/ee/ed/dd/f0=slide-in); returns 1 when all frozen
+0042b310,FUN_0042b310,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,input change detector btn0; per-player byte[+0] at 007f1044 stride 0x4c; processed at 007f1504; car state check via FUN_0040e470; returns 1 if any active unprocessed; U-1651
+0042b540,FUN_0042b540,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,input change detector btn1; per-player byte[+1] at 007f1045 stride 0x4c; processed at 007f1505; screen 0x13/0x1e early-out; U-1651
+0042aff0,FUN_0042aff0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,input change detector btn2 with hold-repeat; byte[+2] at 007f1046; timer acc _DAT_0067f1b0 on screens 6-7; threshold _005ccac0; reset to 0.2; U-1651
+0042b180,FUN_0042b180,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,input change detector btn3 with hold-repeat; byte[+3] at 007f1047; timer acc _DAT_0067f1b4; same repeat logic as FUN_0042aff0; U-1651
+0042b770,FUN_0042b770,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,input change detector btn5; byte[+5] at 007f1049; processed at 007f1509; no timer; U-1651
+0042b9e0,FUN_0042b9e0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,car-select confirm/assigner; collision check at 0067eaf0 stride-3; assigns player→car at 007f1a14/1a24/1a34/1a44; FUN_0040e480 activate; returns 0x1000 on success; U-1652 U-1653
+0042bb60,FUN_0042bb60,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,team balance checker; reads car IDs from 007f1a14(stride 0x10); team via 0067e938[carId*3]-1; 2/3/4-player split checks; 0x1000=balanced; U-1654
+00431b80,FUN_00431b80,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,car-select cursor mover; in_EAX=player index into 0067ea98; unaff_ESI=direction; wraps 1-6 or 0-6 skipping other players; U-1655
+004324a0,FUN_004324a0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,race start handler; screen guard(0x231/0x232/0x233/0x1c1); SP→FUN_0042c1f0+FUN_0042bf30(0x213); MP→FUN_0042c280/FUN_00432450; S-1651 S-1652 S-1653 S-1654; U-1656
+004322c0,FUN_004322c0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,MP track selection cursor move; increments 0067f17c(max=0xC); FUN_00430830 avail check; FUN_00430910 valid-option search; modes 3/4/5 call FUN_0042f6b0; S-1655 S-1656
+0042f400,FUN_0042f400,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,3-digit number formatter; FUN_00427780→text-vertex ptr; FUN_004a2b60 int→string; right-align 3 chars as shorts at +2/+4/+6; left-pad 0x30
+004323c0,FUN_004323c0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 135 bytes; D-4840; bucket game_mode_cont2
+0042ae10,FUN_0042ae10,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 156 bytes; D-4841; bucket game_mode_cont2
+0042aeb0,FUN_0042aeb0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 156 bytes; D-4842; bucket game_mode_cont2
+0042af50,FUN_0042af50,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 156 bytes; D-4843; bucket game_mode_cont2
+00430910,FUN_00430910,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0 and FUN_004322c0; 137 bytes; D-4844; bucket game_mode_cont2
+00429aa0,FUN_00429aa0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 134 bytes; D-4845; bucket game_mode_cont2
+0042aa00,FUN_0042aa00,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 168 bytes; D-4846; bucket game_mode_cont2
+0042ac90,FUN_0042ac90,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 126 bytes; D-4847; bucket game_mode_cont2
+0040b810,FUN_0040b810,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 124 bytes; D-4848; bucket game_mode_cont2
+0042b960,FUN_0042b960,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 115 bytes; D-4849; bucket game_mode_cont2
+0042f6b0,FUN_0042f6b0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 115 bytes; D-4850; bucket game_mode_cont2
+004307a0,FUN_004307a0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 116 bytes; D-4851; bucket game_mode_cont2
+0042f020,FUN_0042f020,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 98 bytes; D-4852; bucket game_mode_cont2
+00431d00,FUN_00431d00,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 97 bytes; D-4853; bucket game_mode_cont2
+004309b0,FUN_004309b0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 52 bytes; D-4854; bucket game_mode_cont2
+00492340,FUN_00492340,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 46 bytes; D-4855; bucket game_mode_cont2
+00430b60,FUN_00430b60,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 47 bytes; D-4856; bucket game_mode_cont2
+00409930,FUN_00409930,util,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 30 bytes; D-4857; bucket game_mode_cont2
+00409900,FUN_00409900,util,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 43 bytes; D-4858; bucket game_mode_cont2
+004098b0,FUN_004098b0,util,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 27 bytes; D-4859; bucket game_mode_cont2
+004298c0,FUN_004298c0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 27 bytes; D-4860; bucket game_mode_cont2
+0040acd0,FUN_0040acd0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 48 bytes; D-4861; bucket game_mode_cont2
+00414120,FUN_00414120,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 80 bytes; D-4862; bucket game_mode_cont2
+00422b30,FUN_00422b30,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 16 bytes; D-4863; bucket game_mode_cont2
+0046dc00,FUN_0046dc00,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 20 bytes; D-4864; bucket game_mode_cont2
+00495080,FUN_00495080,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 37 bytes; D-4865; bucket game_mode_cont2
+00494f30,FUN_00494f30,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 15 bytes; D-4866; bucket game_mode_cont2
+0040e480,FUN_0040e480,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 18 bytes; D-4867; bucket game_mode_cont2
+00492d30,FUN_00492d30,util,C0,deferred,,,,caller of FUN_0043dfd0; 265 bytes; D-4868; bucket game_mode_cont2
+00541b50,FUN_00541b50,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"LIGHT_FN; per-material specular env-map setup; reflection path: D3DTSS_TEXCOORDINDEX=D3DTCI_CAMERASPACEREFLECTIONVECTOR(0x30000) D3DTTFF_COUNT3; normal path: D3DTCI_CAMERASPACENORMAL(0x10000) D3DTTFF_COUNT2; uploads cam LTM rows (negated) via FUN_004cb330(SetTransform); U-1627"
+00541d40,FUN_00541d40,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"opaque shader render callback (RW pipeline node; 0 direct callers); SetVertexShader (vtable 0x170); calls FUN_00541b50 for env-map matrix; SetPixelShader (0x1ac); DrawPrimitive/DrawIndexedPrimitive; U-1628"
+005412d0,FUN_005412d0,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"alpha/transparent shader render callback; saves+disables D3DRS_LIGHTING(0x89); SetPixelShader(0x1ac); SetPixelShaderConstantF(0x1b4); calls FUN_00541b50; restores state; U-1629"
+004d5bc0,FUN_004d5bc0,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"D3D9 render state init; zeros state cache DAT_007d54b0 (0xd2 DWORDs); calls FUN_004d5480(0x89=D3DRS_LIGHTING,0) disabling fixed-function lighting; init loop calls SetTexture(0x104) per stage; U-1630"
+004d6e70,FUN_004d6e70,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"texture binder + sampler state setter; null param1→SetTexture(stage,0); else sets D3DSAMP_ADDRESSU/V from material flags; D3DSAMP_MIPFILTER from table at 0x005d8ca8; calls FUN_004d6ce0; U-1631"
+004cff00,FUN_004cff00,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"per-material reflectivity flag reader; returns *(byte*)(DAT_00911ae4+9+param_1)&0xf; non-zero = use reflection vector path in LIGHT_FN; U-1632"
+004c0ed0,FUN_004c0ed0,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"camera matrix accessor; returns RwCamera+0x50 (LTM start); lazy-updates dirty camera via FUN_004d8350 if flag at *(cam+0xa0)+3 bit0; U-1633"
+004cb330,FUN_004cb330,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"texture transform matrix cache; change-checks 0x40b-byte block at DAT_007d4158[state]; calls SetTransform(device,state,matrix) (vtable 0xb0); special case state=0x100 sets DAT_007d4154; U-1634"
