@@ -13,6 +13,8 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-03  game_mode-20260503-1622  bucket=game_mode  rvas=0x0043dfd0
+2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10
 ```
 
 ## Drained
@@ -63,3 +65,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-03  random_rng-20260503-0601  bucket=random_rng  rvas=0x00534920,0x004b44f0,0x004b4510
 2026-05-03  render_frame_tree_d2-20260503-0700  bucket=render_frame_tree_d2  rvas=0x004d80d0,0x004d8280,0x004d8300,0x004c0e50  notes=FRAME_UPDATE_FN(_rwFrameSyncDirty) found; D-2080 resolved; D-3460 (FUN_004c4600 matrix_math) filed; U-1187 U-1188 U-1189 added
+2026-05-03  race_state_d2-20260503-1737  bucket=race_state_d2  rvas=0x0042bf30,0x00496900,0x0042d3a0,0x004248b0  D-3113/3115/3116 analyzed; D-3117 corrected typo 004348b0→004248b0 then analyzed; D-3114 already mapped (race_results); U-1507..U-1511 added; S-1500 added; S-1066/1067 cleared S-1068 partial; no D-4420..4479 entries (all leaf functions)  pool=Mashed_pool7
