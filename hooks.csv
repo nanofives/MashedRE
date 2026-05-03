@@ -721,3 +721,6 @@
 005bbc10,FUN_005bbc10,audio,C1,mapped,re/analysis/audio_dsound_d2/0x005bbc10.md,,,format/caps query: FUN_005bbd50 + vtable+0x38 retry loop + vtable+0x14; clears S-0349
 005bbdb0,FUN_005bbdb0,audio,C1,mapped,re/analysis/audio_dsound_d2/0x005bbdb0.md,,,DirectSound buffer create wrapper; vtable+0xc CreateSoundBuffer-style; flags 0x88/0x8088; FUN_005bbed0; DAT_005d099c/005d1144; clears S-0350
 005bbf30,FUN_005bbf30,audio,C1,mapped,re/analysis/audio_dsound_d2/0x005bbf30.md,,,COM Release x3: vtable+0x8 on param_1[0] param_1[1] param_1[2]; clears S-0352
+00430290,Championship::Complete,save,C1,mapped,re/analysis/profile_career/00430290.md,,,modes 3/4/5=Bronze/Silver/Gold cup; marks track done in DAT_007f0a40 (13x48B table); counts completed tracks; posts trophy event via 0x0042a920; triggers autosave via 0x004099a0; U-1547 U-1548 U-1549 S-1540
+004099a0,Save::AutosaveTrigger,save,C1,mapped,re/analysis/profile_career/004099a0.md,,,checks DAT_008a95ac != 0; sets DAT_008a9584=4 DAT_008a9594=1 DAT_008a95b0=0; wprintf 'starting autosave'; U-1550 U-1551
+0042a920,Frontend::PostTrophyEvent,save,C1,mapped,re/analysis/profile_career/0042a920.md,,,writes DAT_00898ab0=0x40 (priority) + DAT_00899140=event_id; IDs 0x264-0x26a for cup milestones; consumer FUN_00448220; U-1552

@@ -515,3 +515,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1451 | 0x004e7420 FUN_004e7420 | 0x004b3bf0 0x004b3e40 0x004781b0 | vehicle | passthrough | 2026-05-03 | RW load atomic/clump from open stream; returns atomic ptr or 0 |
 | S-1452 | 0x004cc160 FUN_004cc160 | 0x004b3bf0 0x004b3e40 0x004781b0 0x004b3b70 | vehicle | passthrough | 2026-05-03 | RW stream close; args (stream, save_flag); 0 = close without save |
 | S-1453 | 0x004c0740 FUN_004c0740 | 0x004e7e30 0x004e69a0 | vehicle | passthrough | 2026-05-03 | set material/texture reference on RW object; args (obj, mat_or_null); used widely as ref-setter |
+| S-1540 | 0x0040dd60 FUN_0040dd60 | 0x00430290 | save | passthrough | 2026-05-03 | guard predicate in FUN_00430290; returns 0 to skip championship handler; semantics unknown (race-over? no-replay?) |
