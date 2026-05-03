@@ -421,3 +421,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0917 | 0x00474fd0 FUN_00474fd0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | sky dome frame builder; (clump); depth-2; D-2627 |
 | S-0918 | 0x00478200 FUN_00478200 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | course load error handler; (error_code); depth-2; D-2625 |
 | S-0919 | 0x0047bf70 FUN_0047bf70 | 0x0047c0f0 FUN_0047c0f0 | render | passthrough | 2026-05-03 | builds 0x56-dword collision sector record from RW world sector handle; depth-2; D-2640 |
+| S-1060 | 0x00427f00 FUN_00427f00 | 0x00427f00 TEXT_FN | hud | passthrough | 2026-05-03 | needs FUN_00427840 (byte->UTF16) FUN_00427680 (pos calc) FUN_00556ca0 (dispatch) before TEXT_FN can be implemented |
+| S-1061 | 0x00427ca0 FUN_00427ca0 | 0x00427ca0 HUD_text_init | hud | passthrough | 2026-05-03 | needs FUN_00552b60 FUN_0042a6b0 FUN_00556d70 before init can be fully implemented |
+| S-1062 | 0x00554940 LAB_00554940 | 0x00554940 per_glyph_render | hud | passthrough | 2026-05-03 | needs RW Im2D vtable call implementations (DAT_007d3ff8 dispatch methods) |
+| S-1063 | 0x00555360 FUN_00555360 | 0x00555360 font_sys_init | hud | passthrough | 2026-05-03 | needs thunk_FUN_004cc820 (alloc) FUN_004c5890 (font create) |
+| S-1064 | 0x00427ff0 FUN_00427ff0 | 0x00427ff0 DrawText_shadow | hud | passthrough | 2026-05-03 | FUN_00552840(param_7) role unknown; D-3100 |
+| S-1065 | 0x00555910 LAB_00555910 | 0x00555910 font_file_loader | hud | passthrough | 2026-05-03 | needs .met file parser internals (FUN_005507b0 + METRICS section handlers) |
