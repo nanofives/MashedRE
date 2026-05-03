@@ -342,10 +342,10 @@ A row goes into DEFERRED when:
 | D-1789 | 0x0042f780 FUN_0042f780 | zero-arg bool; trigger check B channel DAT_00604e1c; depth-2 of audio_music; S-0629 | audio_music-cont1 session | audio |
 | D-1790 | 0x00432230 FUN_00432230 | zero-arg bool; trigger check channel DAT_00605918; depth-2 of audio_music; S-0630 | audio_music-cont1 session | audio |
 | D-1791 | 0x00432260 FUN_00432260 | zero-arg bool; trigger check musicloop1 (DAT_00605d24); depth-2 of audio_music; S-0631 | audio_music-cont1 session | audio |
-| D-1660 | 0x00534870 FUN_00534870 | RNG get-value; __thiscall from FUN_00472650; depth-2 of effects_particle; S-0595 | effects_particle-cont1 session | render |
-| D-1661 | 0x00535700 FUN_00535700 | particle vertex buffer map/lock; (emitter, &ptr, channel_id, flags); depth-2 of FUN_00476df0; S-0596 | effects_particle-cont1 session | render |
-| D-1662 | 0x00535910 FUN_00535910 | particle vertex buffer unlock/draw; (emitter_ptr); depth-2 of FUN_00476df0; S-0597 | effects_particle-cont1 session | render |
-| D-1663 | 0x00538c80 FUN_00538c80 | world sector query with callback; depth-2 of FUN_0048fe70; S-0598 | effects_particle-cont1 session | render |
+| D-2800 | 0x00538d60 FUN_00538d60 | depth-3 callee of FUN_00538c80 case 1; geometry query handler; 0xB90 bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
+| D-2801 | 0x00539900 FUN_00539900 | depth-3 callee of FUN_00538c80 case 4; geometry query handler; 0x5BC bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
+| D-2802 | 0x00539ec0 FUN_00539ec0 | depth-3 callee of FUN_00538c80 cases 3 and 5; geometry query handler; 0x6F0 bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
+| D-2803 | 0x004e6100 FUN_004e6100 | depth-3 callee of FUN_00538c80 case 5; dereferences *param_2 and returns pointer to 4-DWORD block; 0x146 bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
 | D-1600 | depth-2 callees of hud_ingame-20260502-2132 session: 0x004c1a00,0x004c1c80,0x004c19f0,0x00402fb0,0x00428760,0x0041c2d0,0x0041b340,0x0041bc50,0x0041c9a0,0x0041d410,0x0041de80,0x0041e630 (S-0561..S-0572) | session cap; depth-1 of hud_ingame functions | hud_ingame-cont1 session | hud |
 | D-1360 | 0x0042c280,0x0042c2d0,0x0042c2e0,0x0042c2f0,0x0042f500,0x0042f6a0,0x00432080,0x004331a0,0x00448700,0x004927c0,0x005c9d00 from session game_state-20260502-2144 bucket game_state — pick up as bucket game_state-cont1; same depth, no further recursion. S-0480..S-0490 |
 

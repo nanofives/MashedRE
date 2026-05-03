@@ -324,3 +324,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  sweep-20260503-0553  scribe-release  bucket=intro_splash  writes=13  errors=0  (sweep)
 2026-05-03  sweep-20260503-0553  scribe-skip  bucket=render_lighting  reason=HALT=RpLight-anchors-absent  rvas=none  (sweep — moved to Drained without writes)
 2026-05-03  sweep-20260503-0553  scribe-release-sweep  buckets=8+1skipped  total_writes=52  errors=0  (queue empty; +2 inline function_create)
+2026-05-03  effects_particle_d2-20260503  session-complete  bucket=effects_particle_d2  rvas=4  (00534870 00535700 00535910 00538c80)  stubs-cleared=4  (S-0595 S-0596 S-0597 S-0598)  deferred-dropped=4  (D-1660..D-1663)  deferred-added=4  (D-2800..D-2803)  uncertainties-added=7  (U-0967..U-0973)  slot=Mashed_pool12  anchor=ok
