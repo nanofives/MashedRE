@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-03  race_results-20260503-0655  bucket=race_results  rvas=0x0040eee0,0x00408a50,0x00408a70,0x00408ad0,0x0040b290,0x0040b6d0,0x0040d590,0x0040e470,0x00422fd0,0x0042f500,0x0042f6a0,0x00431d80,0x0046c700,0x0046c7b0  note=0x0040b6d0/0x0042f500/0x0042f6a0 have prior plate comments (C1/C2) — sweep session must not overwrite higher-confidence entries
 ```
 
 ## Drained
