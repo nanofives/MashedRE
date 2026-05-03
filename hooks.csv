@@ -463,3 +463,36 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005551d0,FUN_005551d0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,alloc font render context; vtable+0x118(DAT_00912a08 0x30199); fills: [0]=1 [1]=1.0f [4e]=LAB_00554940; [9..48]=0xffffffff; [4d]=FUN_005c4ad0(0x20); returns ptr
 00554940,LAB_00554940,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,per-string glyph renderer; SUB ESP 0xC8 prologue; takes (ctx str_buf scale xy_coords style); iterates chars via byte indexing; calls RW Im2D vtable for each glyph; U-1067 U-1070
 00555910,LAB_00555910,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,font file loader / metrics parser; SUB ESP 0x188 prologue; stored at DAT_00913100; builds fonts\<name>.met path; parses METRICS1/2/3 sections; S-1065 U-1068
+0045e460,FUN_0045e460,audio,C1,mapped,re/analysis/audio_sfx_dispatch/0045e460.md,,,6-ch per-frame SFX dispatcher; reads pre-assigned indices from DAT_0088e670+{0x590/0x500/0x6b0/0x740/0x7d0/0x860}; guard DAT_0068f4c8/008aa254; stop+freq 0x46ac4400+vol+3D per ch; U-1073
+0045e990,FUN_0045e990,audio,C1,mapped,re/analysis/audio_sfx_dispatch/0045e990.md,,,8-ch per-frame SFX dispatcher; FUN_004b44f0 entity-count conditional; channels from DAT_0088e670 per-player offsets; stop+freq+vol+3D; U-1074
+00460270,FUN_00460270,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00460270.md,,,1-ch SFX dispatcher; index DAT_0088e670+0x470; speed-scaled vol via (local_8+base)*scale clamped; U-1075
+00462f50,FUN_00462f50,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00462f50.md,,,5-state hysteresis SFX; game state guard FUN_0040e350==5; float threshold DAT_005cd238/cd234/cd230; ch DAT_00605478 (state 3) / DAT_00604f44 (state 1); U-1076
+00463150,FUN_00463150,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00463150.md,,,1-ch randomized-pitch SFX; index DAT_00605bfc; freq = DAT_005ce6b8 - rand(0..0x459c4000); vol = DAT_006036c4*DAT_005ce988; U-1077
+00463590,FUN_00463590,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00463590.md,,,event-queue SFX; guard DAT_008aa254<2 + FUN_004115c0(DAT_006904e0); increments DAT_006904e0; index DAT_006053e4; freq 0x47188a00 vol 0.5; U-1078
+004633d0,FUN_004633d0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/004633d0.md,,,3-event race-SFX dispatcher; param_1=1 ch DAT_006059ac / param_1=2 ch DAT_00605918 speed-pitch / param_1=3 ch DAT_00605a40; counters DAT_00690524/28; U-1079
+004642f0,FUN_004642f0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/004642f0.md,,,per-vehicle 3-state impact SFX; state DAT_00690560+p1*4 {0=idle 1=trigger 2=fade}; vol DAT_006904a4+p1*4 decrements by DAT_005ce18c/frame; U-1080
+004644a0,FUN_004644a0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/004644a0.md,,,per-vehicle bump SFX; index DAT_0060575c+p1; speed threshold DAT_005cc55c; 3D pos via FUN_0045daf0; single-shot via DAT_00690500+p1*4 state; U-1081
+004645c0,FUN_004645c0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/004645c0.md,,,per-vehicle skid SFX; index DAT_00604a10+p1; slide-state FUN_0046cbb0(p1)==2 && count>0; 3D pos + freq 0x46ac4400 vol 0.8; else vol=0; U-1082
+00464670,FUN_00464670,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00464670.md,,,inter-entity collision SFX; 4-param(ent_a ent_b_float ent_b_int override_vol); both channels free guard; vol = max(speed_a,speed_b)*scale; rand pitch FUN_00472650(0..0x4509d000); U-1083
+00464a50,FUN_00464a50,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00464a50.md,,,proximity-sort 3-voice ambient/item SFX; FUN_00425ef0 entity count; bubble-sort by dist from camera; indices DAT_00604d88+0..2; DAT_00605b68 for local player; U-1084
+00464ca0,FUN_00464ca0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00464ca0.md,,,2-ch ambient SFX; ch DAT_0088e670+0x470 fixed freq 0x46ac4400; ch +0x620 sinusoidal freq fsin(DAT_005ce9c8)*DAT_005ce9c0+DAT_005ce6c8; pos FUN_0044c370; U-1085
+004652b0,FUN_004652b0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/004652b0.md,,,3-ch wind/speed SFX; +0x470 inv-speed vol; +0x590 clamped speed vol; +0x500 path-pos via FUN_005459c0(DAT_0068f618 10 blend); U-1086
+00465940,FUN_00465940,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00465940.md,,,4-slot resequenced SFX; game_state==3; iterates 4 slots at DAT_00604a10+4..7; stop+freq*scale+vol; 3D pos from param_2; U-1087
+00465c10,FUN_00465c10,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00465c10.md,,,per-entity specific-slot play; game_state==3; ch = DAT_00604570[p1*0x25]+p2; free-flag check; 3D pos FUN_0045daf0; freq 0x46ac4400 vol 1.0; U-1088
+00465ca0,FUN_00465ca0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00465ca0.md,,,per-entity SFX slot allocator; game_state==3; scans base=DAT_00604570[e*0x25] count=DAT_00604574[e*0x25]; picks first free ch; 3D pos+stop+freq+vol; p1==0x1c increments DAT_008aa2d0; U-1089
+00465e80,FUN_00465e80,audio,C1,mapped,re/analysis/audio_sfx_dispatch/00465e80.md,,,per-entity slot-play at specific slot with pos; game_state==3; ch = DAT_00604570[p1*0x25]+p3; free check; pos update + stop + freq 0x46ac4400 vol 1.0; U-1090
+004661a0,FUN_004661a0,audio,C1,mapped,re/analysis/audio_sfx_dispatch/004661a0.md,,,per-entity slot-stop; game_state==3; ch = DAT_00604570[p1*0x25]+p2; if playing: vol=0 + FUN_005a66d0(ch 0); U-1091
+0045efe0,FUN_0045efe0,audio,C0,deferred,,,,multi-ch SFX dispatcher; same structural pattern as 0045e460; full decompile pending; D-2985; bucket audio_sfx_dispatch-cont1
+0045f5f0,FUN_0045f5f0,audio,C0,deferred,,,,multi-ch SFX dispatcher; same structural pattern as 0045e460; full decompile pending; D-2986; bucket audio_sfx_dispatch-cont1
+0045faa0,FUN_0045faa0,audio,C0,deferred,,,,multi-ch SFX dispatcher; same structural pattern as 0045e460; full decompile pending; D-2987; bucket audio_sfx_dispatch-cont1
+0045ff50,FUN_0045ff50,audio,C0,deferred,,,,multi-ch SFX dispatcher; same structural pattern; full decompile pending; D-2988; bucket audio_sfx_dispatch-cont1
+00460350,FUN_00460350,audio,C0,deferred,,,,2715-byte multi-ch SFX dispatcher; likely per-vehicle engine loop; D-2989; bucket audio_sfx_dispatch-cont1
+00460df0,FUN_00460df0,audio,C0,deferred,,,,2134-byte multi-ch SFX dispatcher; full decompile needed; D-2990; bucket audio_sfx_dispatch-cont1
+00461650,FUN_00461650,audio,C0,deferred,,,,2103-byte multi-ch SFX dispatcher; full decompile needed; D-2991; bucket audio_sfx_dispatch-cont1
+00463640,FUN_00463640,audio,C0,deferred,,,,1520-byte multi-ch SFX dispatcher; full decompile needed; D-2992; bucket audio_sfx_dispatch-cont1
+00463c80,FUN_00463c80,audio,C0,deferred,,,,694-byte multi-ch SFX dispatcher; full decompile needed; D-2993; bucket audio_sfx_dispatch-cont1
+00463f40,FUN_00463f40,audio,C0,deferred,,,,681-byte multi-ch SFX dispatcher; full decompile needed; D-2994; bucket audio_sfx_dispatch-cont1
+00464e10,FUN_00464e10,audio,C0,deferred,,,,1182-byte multi-ch SFX dispatcher; full decompile needed; D-2995; bucket audio_sfx_dispatch-cont1
+00465a30,FUN_00465a30,audio,C0,deferred,,,,227-byte SFX dispatcher; likely variant of 00465940 4-slot resequenced; D-2996; bucket audio_sfx_dispatch-cont1
+00465b20,FUN_00465b20,audio,C0,deferred,,,,232-byte SFX dispatcher; likely variant of 00465940 4-slot resequenced; D-2997; bucket audio_sfx_dispatch-cont1
+004661f0,FUN_004661f0,audio,C0,deferred,,,,1976-byte multi-ch SFX dispatcher; full decompile needed; D-2998; bucket audio_sfx_dispatch-cont1
