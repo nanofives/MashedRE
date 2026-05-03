@@ -1,0 +1,839 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 8
+================================================================================
+
+Twelve prompts (SSS–DDDD) — eight depth-2 walks of batch-3/4/5/6 buckets not
+yet d2'd, plus four new gameplay-focused anchors (game mode, career, replay,
+vehicle damage). Slots pool0..pool11.
+
+Prompts in this batch:
+  SSS   audio_dsound_d2     Sonnet medium  — depth-2 of session T
+  TTT   video_mci_d2        Sonnet medium  — depth-2 of session U
+  UUU   vehicle_update_d2   Sonnet medium  — depth-2 of session V (halt if V halted)
+  VVV   ai_update_d2        Sonnet medium  — depth-2 of session W (halt if W halted)
+  WWW   powerups_d2         Sonnet medium  — depth-2 of session Z (halt if Z halted)
+  XXX   render_pipeline_d2  Sonnet medium  — depth-2 of session NN
+  YYY   font_text_d2        Sonnet medium  — depth-2 of session DDD
+  ZZZ   race_state_d2       Sonnet medium  — depth-2 of session CCC (halt if CCC halted)
+  AAAA  game_mode           Sonnet medium  — anchor: championship/single/time-trial
+  BBBB  profile_career      Sonnet medium  — anchor: career progression / unlocks
+  CCCC  replay_record       Sonnet medium  — anchor: replay record/playback (halt-allowed)
+  DDDD  vehicle_damage      Sonnet medium  — anchor: damage model / collision response
+
+After all 12 push their queue rows, relaunch sweep prompt I.
+
+LAUNCH SEQUENCE GUIDANCE
+
+Wave 1 (6 in parallel, slots 0–5): SSS, TTT, UUU, VVV, WWW, XXX
+Wave 2 (6 in parallel, slots 6–11): YYY, ZZZ, AAAA, BBBB, CCCC, DDDD
+
+Or all 12 simultaneously — pre-assigned slots prevent any race.
+
+ID ranges + slot assignments (no overlap with batches 1–7):
+
+  Session  Bucket               Slot           U range      D range      S range
+  -------  ------------------   -------------  -----------  -----------  -----------
+    SSS    audio_dsound_d2      Mashed_pool0   1367..1386   4000..4059   1360..1379
+    TTT    video_mci_d2         Mashed_pool1   1387..1406   4060..4119   1380..1399
+    UUU    vehicle_update_d2    Mashed_pool2   1407..1426   4120..4179   1400..1419
+    VVV    ai_update_d2         Mashed_pool3   1427..1446   4180..4239   1420..1439
+    WWW    powerups_d2          Mashed_pool4   1447..1466   4240..4299   1440..1459
+    XXX    render_pipeline_d2   Mashed_pool5   1467..1486   4300..4359   1460..1479
+    YYY    font_text_d2         Mashed_pool6   1487..1506   4360..4419   1480..1499
+    ZZZ    race_state_d2        Mashed_pool7   1507..1526   4420..4479   1500..1519
+    AAAA   game_mode            Mashed_pool8   1527..1546   4480..4539   1520..1539
+    BBBB   profile_career       Mashed_pool9   1547..1566   4540..4599   1540..1559
+    CCCC   replay_record        Mashed_pool10  1567..1586   4600..4659   1560..1579
+    DDDD   vehicle_damage       Mashed_pool11  1587..1606   4660..4719   1580..1599
+
+If a session would exhaust its allocation, it halts and asks for an extension.
+
+DEPTH-2 SESSIONS (SSS..ZZZ) — common subset-acquisition rule
+
+Identical to batches 6 and 7:
+
+  1. Read DEFERRED.md fresh.
+  2. Collect every RVA whose "Why deferred" cites the parent bucket name (or its -cont1 / -cont2 continuations).
+  3. Filter to RVAs not already drained by another session (check re/SCRIBE_QUEUE.md "Drained").
+  4. Take up to 18 in address order; remainder → DEFERRED row in this session's D range with re-pickup bucket <parent>_d2-cont1.
+  5. If count of eligible RVAs < 5 OR the parent halted on inconclusive anchors (no DEFERRED rows ever filed): halt + surface "parent's deferred range too small or parent halted on anchors. Need user direction."
+
+================================================================================
+=== PROMPT SSS — audio_dsound depth-2 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session SSS; depth-2 of session T (audio_dsound).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "Pool-slot pre-assignment", § "ID range allocation"). Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before citation. Null → halt.
+3. No hedging, no inference, no naming from names.
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="audio_dsound_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition (depth-2 acquisition)
+Parent: session T (audio_dsound). Apply the common acquisition rule from the batch header.
+
+Bucket: re/analysis/audio_dsound_d2/
+ID-range: U=1367..1386  D=4000..4059  S=1360..1379
+Subsystem: audio
+
+External DSound imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+DSound API at MSDN; cite ONLY MCP. Cross-check for overlap with sessions F (audio_rws_loader), HH (audio_music), and EEE (audio_voice from batch 6) — if any RVA appears in multiple buckets, halt + surface.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Either wait or relaunch with a different SLOT value." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/audio_dsound_d2/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,audio,C1,mapped,re/analysis/audio_dsound_d2/<rva>.md,,,<short notes>.
+  f. U/S in U=1367..1386 / S=1360..1379.
+  g. CHANGELOG row.
+  h. Self-check (in chat).
+  i. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=4000..4059, bucket audio_dsound_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/audio_dsound_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: audio_dsound depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=audio_dsound_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: audio_dsound_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- All standard ones (hedging, recursion, cap, base-bucket on continuation, IDs out of range, renaming).
+- Reading from a DEFERRED row whose "Why deferred" does NOT cite session T (audio_dsound) bucket.
+- Decompiling a previously-drained RVA — check SCRIBE_QUEUE.md "Drained" first.
+- Decompiling a function that is ALSO a callee of session F, HH, or EEE — halt + surface overlap instead.
+- Calling ghidra_pool.sh acquire instead of using the pre-assigned SLOT.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- DEFERRED rows from session T range picked up: <count>; remainder filed: <count>
+- Functions covered: <count>
+- Overlap with F / HH / EEE detected: yes/no, which functions
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n)
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT TTT — video_mci depth-2 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session TTT; depth-2 of session U (video_mci).
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="video_mci_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parent: session U (video_mci). Acquire DEFERRED rows citing video_mci bucket. Apply common rule.
+
+Bucket: re/analysis/video_mci_d2/
+ID-range: U=1387..1406  D=4060..4119  S=1380..1399
+Subsystem: util
+
+External MCI / winmm imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+MCI command strings — copy verbatim from MCP, do not paraphrase. MSDN documentation NOT used as evidence.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool1", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. function_at → decomp (weight) → callees (no recursion) → write .md → hooks.csv (subsystem=util) → U/S in U=1387..1406 / S=1380..1399 → CHANGELOG → self-check → cap check (early-finish to D=4060..4119, bucket video_mci_d2-cont1).
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name video_mci_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Reading DEFERRED rows not citing session U bucket. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions: slot, DEFERRED picked up, functions covered, tracker counts, IDs used, cap_count + early-finish, MCP failures, observations, scribe outcome.
+
+================================================================================
+=== PROMPT UUU — vehicle_update depth-2 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session UUU; depth-2 of session V (vehicle_update). High-priority gameplay subsystem walk.
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_update_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition
+Parent: session V (vehicle_update).
+
+**If session V halted on inconclusive anchors** (no DEFERRED rows filed under vehicle_update bucket): HALT + surface "session V halted; no depth-2 work available. Need user direction whether to re-anchor V with new strategies or skip this session." Do NOT pivot to a different bucket.
+
+Otherwise: Apply the common acquisition rule.
+
+Bucket: re/analysis/vehicle_update_d2/
+ID-range: U=1407..1426  D=4120..4179  S=1400..1419
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/baseframe.cpp + basecamera.cpp for transform/matrix ops if vehicle uses RW frames.
+- gta-reversed-modern's CVehicle is wholly different from Mashed — structural analogies only ("looks like quaternion normalize"), never as semantic evidence.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool2", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=vehicle. U/S in U=1407..1426 / S=1400..1419. Cap check → DEFERRED in D=4120..4179, bucket vehicle_update_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name vehicle_update_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones. Citing gta-reversed CVehicle code as evidence about Mashed. Pivoting if V halted. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions; note if V halted and this session also halted.
+
+================================================================================
+=== PROMPT VVV — ai_update depth-2 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session VVV; depth-2 of session W (ai_update). Halt-on-parent-halted.
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="ai_update_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition
+Parent: session W (ai_update).
+
+**If session W halted** (no DEFERRED rows filed under ai_update bucket): HALT + surface, do NOT pivot.
+
+Otherwise: Apply the common acquisition rule.
+
+Bucket: re/analysis/ai_update_d2/
+ID-range: U=1427..1446  D=4180..4239  S=1420..1439
+Subsystem: ai
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+No racing-AI specific reference. gta-reversed has CCarAI (traffic) — wholly different from racing AI; do NOT use as evidence.
+
+If AI is heavily Lua-glued (callees mostly call lua_pcall / luaL_callmeta), HALT + surface "AI logic lives in Lua scripts (data, not code-in-binary); the C side here is just glue. Need user direction whether to bucket the glue or stop."
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool3", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=ai. U/S in U=1427..1446 / S=1420..1439. Cap check → DEFERRED in D=4180..4239, bucket ai_update_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name ai_update_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard. Citing CCarAI as evidence. Decompiling Lua-script logic from binary RVAs. Pivoting if W halted. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions; note Lua-glue overlap if relevant.
+
+================================================================================
+=== PROMPT WWW — powerups depth-2 ==============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session WWW; depth-2 of session Z (powerups). Halt-on-parent-halted.
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="powerups_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition
+Parent: session Z (powerups).
+
+**If session Z halted**: HALT + surface, do NOT pivot.
+
+Otherwise: Apply the common acquisition rule.
+
+Bucket: re/analysis/powerups_d2/
+ID-range: U=1447..1466  D=4240..4299  S=1440..1459
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — powerups are wholly Supersonic gameplay code. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool4", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=vehicle. U/S in U=1447..1466 / S=1440..1459. Cap check → DEFERRED in D=4240..4299, bucket powerups_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name powerups_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard. Pivoting if Z halted. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT XXX — render_pipeline depth-2 =======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session XXX; depth-2 of session NN (render_pipeline). Small parent — may yield few RVAs.
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="render_pipeline_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition
+Parent: session NN (render_pipeline). NN may have produced only 1 .md file — its DEFERRED rows might be small. Apply the common acquisition rule; if eligible RVAs < 5, halt cleanly per rule.
+
+Bucket: re/analysis/render_pipeline_d2/
+ID-range: U=1467..1486  D=4300..4359  S=1460..1479
+Subsystem: render
+
+External RW pipeline imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/d3d9/ — RW pipeline structures for D3D9 backend.
+- criterion-rwg37/core/driver/d3d9/d3d92drend.c, d3d8convrt.c — pipeline creation patterns.
+- criterion-rwg37/world/bameshop.c — mesh / pipeline glue.
+Cross-check observed pipeline node structure offsets. Never paste.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool5", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=1467..1486 / S=1460..1479. Cap check → DEFERRED in D=4300..4359, bucket render_pipeline_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name render_pipeline_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Citing criterion-rwg37/librw RVAs as Mashed RVAs. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT YYY — font_text depth-2 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session YYY; depth-2 of session DDD (font_text from batch 6).
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="font_text_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool6"
+
+## Subset definition
+Parent: session DDD (font_text). Apply the common acquisition rule.
+
+Bucket: re/analysis/font_text_d2/
+ID-range: U=1487..1506  D=4360..4419  S=1480..1499
+Subsystem: hud
+
+External RwIm2D imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/ for RwIm2D primitives.
+- criterion-rwg37/core/src/baimmedi.c for definitive Im2D semantics.
+- No specific font-rendering reference — most racing-era games rolled their own bitmap-font renderer.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool6", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=hud. U/S in U=1487..1506 / S=1480..1499. Cap check → DEFERRED in D=4360..4419, bucket font_text_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name font_text_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT ZZZ — race_state depth-2 ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session ZZZ; depth-2 of session CCC (race_state from batch 6). Halt-on-parent-halted.
+
+[Same SONNET HALTS as SSS.]
+
+## Session identifier
+SESSION_SHORT_ID="race_state_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool7"
+
+## Subset definition
+Parent: session CCC (race_state from batch 6).
+
+**If session CCC halted**: HALT + surface, do NOT pivot.
+
+Otherwise: Apply the common acquisition rule.
+
+Bucket: re/analysis/race_state_d2/
+ID-range: U=1507..1526  D=4420..4479  S=1500..1519
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — race progression is wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool7", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=vehicle. U/S in U=1507..1526 / S=1500..1519. Cap check → DEFERRED in D=4420..4479, bucket race_state_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name race_state_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard. Pivoting if CCC halted. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT AAAA — Game mode (championship / single / time-trial) ===============
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session AAAA; anchor-driven game-mode selection.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="game_mode-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool8"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — string anchors:
+  search_defined_strings query="Championship"
+  search_defined_strings query="CHAMPIONSHIP"
+  search_defined_strings query="SingleRace"
+  search_defined_strings query="Single Race"
+  search_defined_strings query="TimeTrial"
+  search_defined_strings query="Time Trial"
+  search_defined_strings query="TIMETRIAL"
+  search_defined_strings query="Tournament"
+  search_defined_strings query="Mode_"
+  search_defined_strings query="GAMEMODE"
+  Filter by xref count 1–20.
+
+Strategy 2 — call-graph from Frontend (Y, hud_frontend):
+  IF hud_frontend bucket exists, the mode-select menu's per-button callback dispatches into game-mode setup. Read Y's callees.
+
+Strategy 3 — game_state (AA) state-name strings:
+  STATE_FN may have specific states named for modes. Cross-check.
+
+Identify MODE_FN: the function that initializes a game mode (sets the per-mode flags, picks a track-list, configures rules). Each mode (championship, single race, time trial) may have its own FN, OR a single dispatcher selecting on a mode-id parameter.
+
+If NONE converges: halt + surface "Game-mode anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2 or n/a>), strategy 3 (<n3 or n/a>). Need user direction. Halting."
+
+If found: function_callees MODE_FN → subset capped 20/15.
+
+Bucket: re/analysis/game_mode/
+ID-range: U=1527..1546  D=4480..4539  S=1520..1539
+Subsystem: util (mode logic spans frontend + race; util is the safest bucket — could split later)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — game-mode logic is wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool8", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=util. U/S in U=1527..1546 / S=1520..1539. Cap check → DEFERRED in D=4480..4539, bucket game_mode-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found: standard commit + queue + push.
+If halted: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones. Picking MODE_FN by guessing. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found via strategy N | inconclusive — halted)
+- If found: MODE_FN (rva/name/size); strategy
+- Mode strings observed (verbatim list)
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT BBBB — Profile / career / unlocks ===================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session BBBB; anchor-driven career mode / progression.
+
+[Same SONNET HALTS as AAAA.]
+
+## Session identifier
+SESSION_SHORT_ID="profile_career-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool9"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — string anchors:
+  search_defined_strings query="Career"
+  search_defined_strings query="CAREER"
+  search_defined_strings query="Profile"
+  search_defined_strings query="Progress"
+  search_defined_strings query="Unlock"
+  search_defined_strings query="UNLOCK"
+  search_defined_strings query="Earn"
+  search_defined_strings query="Trophy"
+  search_defined_strings query="Achievement"
+
+Strategy 2 — file-path anchors:
+  search_defined_strings query="profile.bin"
+  search_defined_strings query="career.bin"
+  search_defined_strings query="progress.bin"
+
+Strategy 3 — call-graph from session P (save_gamesave) or RR (settings_config):
+  IF gamesave.bin or videocfg.bin handlers exist, profile data may be embedded in one of them. Check P's analysis notes.
+
+Identify CAREER_FN: a function that loads/saves player profile, tracks unlocks, advances career progression.
+
+If NONE converges: halt + surface "Career/profile anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2>), strategy 3 (<n3 or n/a>). Need user direction. Halting."
+
+If found: function_callees CAREER_FN → subset capped 20/15.
+
+Bucket: re/analysis/profile_career/
+ID-range: U=1547..1566  D=4540..4599  S=1540..1559
+Subsystem: save (career persists; lives in save subsystem)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- session P notes for save-file format if profile is part of gamesave.bin.
+- session RR notes for config format if profile is part of videocfg.bin.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool9", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=save. U/S in U=1547..1566 / S=1540..1559. Cap check → DEFERRED in D=4540..4599, bucket profile_career-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted: no commit, no queue.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Re-decompiling P or RR territory if shared. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for new-anchor sessions; note shared-file overlap with P/RR if relevant.
+
+================================================================================
+=== PROMPT CCCC — Replay record / playback =====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session CCCC; anchor-driven replay system — halt-allowed if no replay.
+
+[Same SONNET HALTS as AAAA.]
+
+## Session identifier
+SESSION_SHORT_ID="replay_record-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool10"
+
+## Subset definition (anchor-driven, halt-allowed)
+1. search_defined_strings — try in order:
+     query="Replay"
+     query="REPLAY"
+     query="record"      (filter — high xref count typically; restrict to 1–20)
+     query="playback"
+     query="Ghost"
+     query="ghost"
+     query=".replay"
+     query=".ghost"
+     query=".rep"        (filter — also matches Ghidra .rep paths in error messages, be careful)
+2. file-path anchors: ls original/ for any "REPLAYS" or "GHOSTS" subdirectory.
+3. For each anchor, reference_to → candidate-callers.
+4. Identify REPLAY_FN: a function that records per-frame inputs (steering, accel, brake) into a buffer for later playback. Heuristic: writes per-frame to a circular buffer; reads from it on playback path.
+
+If NONE converges: halt + surface "Replay anchors not found; Mashed may have no replay system. Halting cleanly."
+
+If found: function_callees REPLAY_FN → subset capped 20/15.
+
+Bucket: re/analysis/replay_record/
+ID-range: U=1567..1586  D=4600..4659  S=1560..1579
+Subsystem: vehicle (replay records vehicle inputs)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — replay systems are wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool10", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=vehicle. U/S in U=1567..1586 / S=1560..1579. Cap check → DEFERRED in D=4600..4659, bucket replay_record-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted (no replay): no commit, release + report — confirming absence is itself useful for the greenfield port (we can drop the entire replay subsystem from `mashed_re.exe`).
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / halted-confirming-absent — both success paths)
+- If found: REPLAY_FN (rva/name/size); strategy
+- Replay format / file paths observed
+- Functions covered (0 if halted)
+- Tracker counts; IDs used (within allocation)
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted (no replay system — confirmed)
+
+================================================================================
+=== PROMPT DDDD — Vehicle damage model =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session DDDD; anchor-driven vehicle damage model.
+
+[Same SONNET HALTS as AAAA.]
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_damage-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool11"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — string anchors:
+  search_defined_strings query="Damage"
+  search_defined_strings query="DAMAGE"
+  search_defined_strings query="Health"
+  search_defined_strings query="HP"          (filter — too short, many matches)
+  search_defined_strings query="Wreck"
+  search_defined_strings query="Destroyed"
+  search_defined_strings query="Explode"
+  search_defined_strings query="Smoke"       (links to effects_particle FF)
+  Filter by xref count 1–20.
+
+Strategy 2 — call-graph from physics_collision (BB):
+  IF physics_collision bucket exists, COLLISION_FN's callers / siblings include the damage-application path.
+
+Strategy 3 — call-graph from vehicle_update (V):
+  IF vehicle_update bucket exists, VEHICLE_UPDATE_FN's callees include per-vehicle health/damage tick.
+
+Identify DAMAGE_FN: a function that applies damage to a vehicle (decreases health field, may transition to wreck state, may spawn smoke effect).
+
+If NONE converges: halt + surface "Damage anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2 or n/a>), strategy 3 (<n3 or n/a>). Need user direction. Halting."
+
+If overlap with BB (physics_collision) territory: halt + surface "vehicle_damage overlaps with physics_collision; functions <list> appear in BOTH. Need user direction whether to merge."
+
+If found AND no overlap: function_callees DAMAGE_FN → subset capped 20/15.
+
+Bucket: re/analysis/vehicle_damage/
+ID-range: U=1587..1606  D=4660..4719  S=1580..1599
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — damage modeling is wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool11", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found and no overlap)
+Standard. hooks.csv subsystem=vehicle. U/S in U=1587..1606 / S=1580..1599. Cap check → DEFERRED in D=4660..4719, bucket vehicle_damage-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found and no overlap: commit + queue + push. If halted: no commit, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Decompiling functions in BB territory. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for new-anchor sessions; note overlap with BB if relevant.
+
+================================================================================
+=== END OF BATCH 8 PROMPTS =====================================================
+================================================================================
+
+LAUNCH SEQUENCE GUIDANCE — DETAILED
+
+Wave 1 (6 in parallel, slots 0–5): SSS, TTT, UUU, VVV, WWW, XXX
+Wave 2 (6 in parallel, slots 6–11): YYY, ZZZ, AAAA, BBBB, CCCC, DDDD
+
+Or all 12 simultaneously — pre-assigned slots prevent any race.
+
+After all 12 push: relaunch sweep prompt I from PROMPTS_FANOUT.txt.
+
+POOL SLOT BUDGET (post-MAX_SLOTS=16)
+  - Total slots: 16. Batch uses pool0..pool11 (12 slots).
+  - pool12..pool15 reserved for cont-1 splits, ad-hoc, and parallel batch-9 prep.
+
+NOTE ON HALT-ON-PARENT-HALTED SESSIONS
+
+UUU (vehicle_update_d2), VVV (ai_update_d2), WWW (powerups_d2), and ZZZ
+(race_state_d2) explicitly halt if their batch-3/6 parent halted on
+inconclusive anchors. If any of V/W/Z/CCC halted previously, the
+corresponding d2 session here will surface a clean halt — that is the
+correct behavior, not a failure. Re-anchoring the parent (with new
+strategies based on what we've learned since) is a separate session,
+not this one.
+
+ALL ID RANGES (cumulative across batches 1–8)
+
+  Batch 1 (8 sessions):    U=0007..0166  D=0040..0399    S=0001..0159
+  Batch 2 (8 sessions):    U=0167..0326  D=0400..0879    S=0160..0319
+  Batch 3 (8 sessions):    U=0327..0486  D=0880..1359    S=0320..0479
+  Batch 4 (8 sessions):    U=0487..0646  D=1360..1839    S=0480..0639
+  Batch 5 (12 sessions):   U=0647..0886  D=1840..2559    S=0640..0879
+  Batch 6 (12 sessions):   U=0887..1126  D=2560..3279    S=0880..1119
+  Batch 7 (12 sessions):   U=1127..1366  D=3280..3999    S=1120..1359
+  Batch 8 (12 sessions):   U=1367..1606  D=4000..4719    S=1360..1599
+
+Detailed batch-8 table:
+
+  Session  Bucket               Slot           U range      D range      S range
+  -------  ------------------   -------------  -----------  -----------  -----------
+    SSS    audio_dsound_d2      Mashed_pool0   1367..1386   4000..4059   1360..1379
+    TTT    video_mci_d2         Mashed_pool1   1387..1406   4060..4119   1380..1399
+    UUU    vehicle_update_d2    Mashed_pool2   1407..1426   4120..4179   1400..1419
+    VVV    ai_update_d2         Mashed_pool3   1427..1446   4180..4239   1420..1439
+    WWW    powerups_d2          Mashed_pool4   1447..1466   4240..4299   1440..1459
+    XXX    render_pipeline_d2   Mashed_pool5   1467..1486   4300..4359   1460..1479
+    YYY    font_text_d2         Mashed_pool6   1487..1506   4360..4419   1480..1499
+    ZZZ    race_state_d2        Mashed_pool7   1507..1526   4420..4479   1500..1519
+    AAAA   game_mode            Mashed_pool8   1527..1546   4480..4539   1520..1539
+    BBBB   profile_career       Mashed_pool9   1547..1566   4540..4599   1540..1559
+    CCCC   replay_record        Mashed_pool10  1567..1586   4600..4659   1560..1579
+    DDDD   vehicle_damage       Mashed_pool11  1587..1606   4660..4719   1580..1599
+
+  Next batch (when designed) starts at U=1607, D=4720, S=1600.
