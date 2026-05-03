@@ -1,0 +1,358 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 13
+================================================================================
+
+Four prompts (CCCCC–FFFFF). This batch uses ONLY pool12..pool15 and a
+disjoint U/D/S ID range so it can be run in parallel with batches 10, 11, 12
+in separate Claude Code sessions / licenses without collision.
+
+Prompts in this batch:
+  CCCCC  hud_frontend_d3       Sonnet medium  — depth-3 of hud_frontend_d2 (batch 6)
+  DDDDD  hud_ingame_d3         Sonnet medium  — depth-3 of hud_ingame_d2 (batch 7)
+  EEEEE  font_text_d3          Sonnet medium  — depth-3 of font_text_d2 (batch 6)
+  FFFFF  launch_handshake      Sonnet medium  — anchor: launch.exe → MASHED.exe handshake / copy-protection (halt-allowed)
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — pre-assigned slots pool12..pool15. Independent of
+batches 10/11/12. NOTE: pool12..pool15 are the highest indices and were
+historically reserved for cont splits / ad-hoc; in this multi-batch
+scheme they are claimed by batch 13. While batch 13 is live, no other
+session may use these slots.
+
+ID ranges + slot assignments (no overlap with batches 1–12):
+
+  Session  Bucket               Slot           U range      D range      S range
+  -------  -------------------  -------------  -----------  -----------  -----------
+    CCCCC  hud_frontend_d3      Mashed_pool12  2087..2106   6160..6219   2080..2099
+    DDDDD  hud_ingame_d3        Mashed_pool13  2107..2126   6220..6279   2100..2119
+    EEEEE  font_text_d3         Mashed_pool14  2127..2146   6280..6339   2120..2139
+    FFFFF  launch_handshake     Mashed_pool15  2147..2166   6340..6399   2140..2159
+
+DEPTH-3 ACQUISITION RULE (CCCCC, DDDDD, EEEEE)
+
+Each depth-3 prompt picks up DEFERRED rows filed by the parent depth-2:
+
+  1. Read DEFERRED.md fresh.
+  2. Collect RVAs whose "Why deferred" cites the parent's d2 bucket name
+     (or -cont1/-cont2 continuations).
+  3. Filter to RVAs not in re/SCRIBE_QUEUE.md "Drained".
+  4. Take up to 18 in address order; remainder → DEFERRED in this
+     session's D range with bucket <parent>_d3-cont1.
+  5. If eligible < 5: halt + surface "parent's d2 deferred range too small."
+
+================================================================================
+=== PROMPT CCCCC — hud_frontend depth-3 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session CCCCC; depth-3 of hud_frontend_d2 (batch 6).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="hud_frontend_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: hud_frontend_d2. Apply common rule.
+
+Bucket: re/analysis/hud_frontend_d3/
+ID-range: U=2087..2106  D=6160..6219  S=2080..2099
+Subsystem: frontend
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — frontend logic is wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/hud_frontend_d3/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,frontend,C1,mapped,re/analysis/hud_frontend_d3/<rva>.md,,,<short notes>.
+  f. U/S in U=2087..2106 / S=2080..2099.
+  g. CHANGELOG row.
+  h. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=6160..6219, bucket hud_frontend_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/hud_frontend_d3/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: hud_frontend depth-3 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=hud_frontend_d3  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: hud_frontend_d3 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- Hedging, recursion past depth-3, exceeding cap, base-bucket reuse, IDs out of range, renaming.
+- Reading DEFERRED rows that don't cite hud_frontend_d2.
+- Calling ghidra_pool.sh acquire instead of using the pre-assigned SLOT.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT DDDDD — hud_ingame depth-3 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session DDDDD; depth-3 of hud_ingame_d2 (batch 7).
+
+[Same SONNET HALTS as CCCCC.]
+
+## Session identifier
+SESSION_SHORT_ID="hud_ingame_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: hud_ingame_d2. Apply common rule.
+
+Bucket: re/analysis/hud_ingame_d3/
+ID-range: U=2107..2126  D=6220..6279  S=2100..2119
+Subsystem: hud
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — HUD logic is wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=hud. U/S in U=2107..2126 / S=2100..2119. Cap check → DEFERRED in D=6220..6279, bucket hud_ingame_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name hud_ingame_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT EEEEE — font_text depth-3 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session EEEEE; depth-3 of font_text_d2 (batch 6).
+
+[Same SONNET HALTS as CCCCC.]
+
+## Session identifier
+SESSION_SHORT_ID="font_text_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: font_text_d2. Apply common rule.
+
+Bucket: re/analysis/font_text_d3/
+ID-range: U=2127..2146  D=6280..6339  S=2120..2139
+Subsystem: render
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw / criterion-rwg37 RtCharset (RW text) if observed.
+Cross-check observed offsets. Never paste.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=2127..2146 / S=2120..2139. Cap check → DEFERRED in D=6280..6339, bucket font_text_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name font_text_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT FFFFF — launch.exe → MASHED.exe handshake ===========================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session FFFFF; anchor-driven launch.exe handshake / copy-protection check inside MASHED.exe. Halt-allowed if MASHED.exe has no protection check.
+
+[Same SONNET HALTS as CCCCC.]
+
+## Session identifier
+SESSION_SHORT_ID="launch_handshake-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition (anchor-driven, halt-allowed)
+SciLor's MashedRunner documents that launch.exe (VB6 wrapper) performs a
+copy-protection check and then spawns MASHED.exe with specific CLI args.
+This session looks for the **MASHED.exe-side** of that handshake — what
+arguments / IPC / registry keys MASHED.exe consumes from launch.exe, and
+whether a protection check is duplicated inside MASHED.exe.
+
+This work is for the GREENFIELD port: identify what mashed_re.exe must
+emulate from launch.exe so it can run standalone without launch.exe.
+
+Strategy 1 — CLI / argv anchors:
+  search_defined_strings query="-language"
+  search_defined_strings query="-lang"
+  search_defined_strings query="-window"
+  search_defined_strings query="-fullscreen"
+  search_defined_strings query="-nointro"
+  search_defined_strings query="-nosplash"
+  search_defined_strings query="-debug"
+  external_imports_list — look for GetCommandLineA/W, CommandLineToArgvW.
+
+Strategy 2 — registry anchors:
+  search_defined_strings query="Software\\Empire"
+  search_defined_strings query="Software\\Strategy First"
+  search_defined_strings query="Software\\Supersonic"
+  search_defined_strings query="Software\\Mashed"
+  search_defined_strings query="HKEY_"
+  external_imports_list — RegOpenKeyExA/W, RegQueryValueExA/W.
+
+Strategy 3 — copy-protection signatures:
+  search_defined_strings query="StarForce"     (period CD-ROM protection)
+  search_defined_strings query="SafeDisc"
+  search_defined_strings query="securom"
+  search_defined_strings query="SECDRV"
+  search_defined_strings query="cdcheck"
+  search_defined_strings query="DVD"
+  search_defined_strings query="please insert"
+  external_imports_list — GetVolumeInformationA/W, GetDriveTypeA/W,
+  GetLogicalDrives, CreateFileA on \\.\CdRom*.
+
+Strategy 4 — IPC / mutex:
+  external_imports_list — CreateMutexA/W, OpenMutexA/W, CreateFileMappingA/W.
+  Mutexes named "MashedSingleInstance" or similar would be the
+  launch.exe-side handshake anchor.
+
+Strategy 5 — entry-point scan:
+  IF entry_callees bucket exists, the WinMain or _start callees include
+  argv parsing and any early-exit copy-protection check. Read entry_callees
+  notes for branches that exit before the main game loop.
+
+Identify HANDSHAKE_FN: function(s) that consume launch.exe's contract.
+
+If NONE converges OR all anchors absent: halt + surface "launch.exe handshake anchors absent in MASHED.exe — protection may live entirely in launch.exe (PE-level disc check), with MASHED.exe consuming only language CLI args. Halting cleanly. (This is a useful greenfield finding: mashed_re.exe needs only argv-language consumption, no protection bypass.)"
+
+If found: function_callees of the relevant handshake function(s) → subset capped 20/15. Also verify CLI param parsing: which exact strings does MASHED.exe accept, what registry keys does it read, what mutex (if any) does it create.
+
+Bucket: re/analysis/launch_handshake/
+ID-range: U=2147..2166  D=6340..6399  S=2140..2159
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- re/prior_art/MashedRunner/ — SciLor's documentation of launch.exe's CLI
+  params, language codes, registry keys, NoCD search-and-replace patterns.
+  Use as a checklist of what to look for in MASHED.exe; cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=util. U/S in U=2147..2166 / S=2140..2159. Cap check → DEFERRED in D=6340..6399, bucket launch_handshake-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push (and the per-RVA notes must
+include a "greenfield contract" section listing the exact CLI strings,
+registry keys, and mutex names mashed_re.exe must emulate). If halted:
+no commit, release + report. **A halt confirming "no protection check
+inside MASHED.exe" is the success path** — mashed_re.exe will need only
+argv-language consumption.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard.
+- Citing MashedRunner's findings as if they were MCP findings — every
+  argument string, registry key, mutex must be verified live in
+  MASHED.exe. Use MashedRunner only as a checklist.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / halted-confirming-no-internal-check)
+- If found: HANDSHAKE_FN(s) (rva/name/size); strategies that converged
+- CLI parameter strings observed (verbatim)
+- Registry keys read (verbatim)
+- Mutex / IPC names observed (verbatim)
+- Copy-protection signature strings observed (verbatim or "none")
+- Greenfield contract: exact list of what mashed_re.exe must consume
+  from argv / registry / IPC to run without launch.exe
+- Functions covered (0 if halted)
+- Tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== END OF BATCH 13 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool12..pool15 are reserved for batch 13.
+Independent of batches 10/11/12.
+
+ID RANGE SUMMARY
+
+  Batch 13 (4 sessions):   U=2087..2166  D=6160..6399    S=2080..2159
+
+POST-MULTI-BATCH
+
+After batches 10–13 all push their queue rows, relaunch sweep prompt I
+once. The sweep covers all 16 buckets in a single master open/close cycle.
+
+Next batch (when designed) starts at U=2167, D=6400, S=2160 and may
+reuse pool0..pool3 once batch 10 has fully released them.

@@ -1,0 +1,313 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 12
+================================================================================
+
+Four prompts (YYYY–BBBBB). This batch uses ONLY pool8..pool11 and a disjoint
+U/D/S ID range so it can be run in parallel with batches 10, 11, 13 in
+separate Claude Code sessions / licenses without collision.
+
+Prompts in this batch:
+  YYYY   video_mci_d3          Sonnet medium  — depth-3 of video_mci_d2 (batch 7)
+  ZZZZ   camera_follow_d3      Sonnet medium  — depth-3 of camera_follow_d2 (batch 7)
+  AAAAA  render_pipeline_d3    Sonnet medium  — depth-3 of render_pipeline_d2 (batch 7)
+  BBBBB  minimap_radar         Sonnet medium  — anchor: minimap / radar overlay (halt-allowed)
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — pre-assigned slots pool8..pool11. Independent of
+batches 10/11/13.
+
+ID ranges + slot assignments (no overlap with batches 1–11 or 13):
+
+  Session  Bucket                Slot           U range      D range      S range
+  -------  --------------------  -------------  -----------  -----------  -----------
+    YYYY   video_mci_d3          Mashed_pool8   2007..2026   5920..5979   2000..2019
+    ZZZZ   camera_follow_d3      Mashed_pool9   2027..2046   5980..6039   2020..2039
+    AAAAA  render_pipeline_d3    Mashed_pool10  2047..2066   6040..6099   2040..2059
+    BBBBB  minimap_radar         Mashed_pool11  2067..2086   6100..6159   2060..2079
+
+DEPTH-3 ACQUISITION RULE (YYYY, ZZZZ, AAAAA)
+
+Each depth-3 prompt picks up DEFERRED rows filed by the parent depth-2:
+
+  1. Read DEFERRED.md fresh.
+  2. Collect RVAs whose "Why deferred" cites the parent's d2 bucket name
+     (or -cont1/-cont2 continuations).
+  3. Filter to RVAs not in re/SCRIBE_QUEUE.md "Drained".
+  4. Take up to 18 in address order; remainder → DEFERRED in this
+     session's D range with bucket <parent>_d3-cont1.
+  5. If eligible < 5: halt + surface "parent's d2 deferred range too small."
+
+================================================================================
+=== PROMPT YYYY — video_mci depth-3 ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session YYYY; depth-3 of video_mci_d2 (batch 7).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="video_mci_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool8"
+
+## Subset definition
+Parent: video_mci_d2. Apply common rule.
+
+Bucket: re/analysis/video_mci_d3/
+ID-range: U=2007..2026  D=5920..5979  S=2000..2019
+Subsystem: video
+
+External MCI / WinMM imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- MSDN MCI command reference for mciSendCommand / mciSendString. Cite ONLY MCP for what Mashed does.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/video_mci_d3/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,video,C1,mapped,re/analysis/video_mci_d3/<rva>.md,,,<short notes>.
+  f. U/S in U=2007..2026 / S=2000..2019.
+  g. CHANGELOG row.
+  h. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=5920..5979, bucket video_mci_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/video_mci_d3/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: video_mci depth-3 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=video_mci_d3  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: video_mci_d3 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- Hedging, recursion past depth-3, exceeding cap, base-bucket reuse, IDs out of range, renaming.
+- Reading DEFERRED rows that don't cite video_mci_d2.
+- Calling ghidra_pool.sh acquire instead of using the pre-assigned SLOT.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT ZZZZ — camera_follow depth-3 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session ZZZZ; depth-3 of camera_follow_d2 (batch 7).
+
+[Same SONNET HALTS as YYYY.]
+
+## Session identifier
+SESSION_SHORT_ID="camera_follow_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool9"
+
+## Subset definition
+Parent: camera_follow_d2. Apply common rule.
+
+Bucket: re/analysis/camera_follow_d3/
+ID-range: U=2027..2046  D=5980..6039  S=2020..2039
+Subsystem: render
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/baseframe.cpp + criterion-rwg37/world/baframe.c for RwFrame / RwCamera math.
+Cross-check observed offsets. Never paste.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool9", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=2027..2046 / S=2020..2039. Cap check → DEFERRED in D=5980..6039, bucket camera_follow_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name camera_follow_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT AAAAA — render_pipeline depth-3 =====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session AAAAA; depth-3 of render_pipeline_d2 (batch 7).
+
+[Same SONNET HALTS as YYYY.]
+
+## Session identifier
+SESSION_SHORT_ID="render_pipeline_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool10"
+
+## Subset definition
+Parent: render_pipeline_d2. Apply common rule.
+
+Bucket: re/analysis/render_pipeline_d3/
+ID-range: U=2047..2066  D=6040..6099  S=2040..2059
+Subsystem: render
+
+External RW / D3D9 imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/d3d9/ + criterion-rwg37/core/driver/d3d9/ for D3D9 backend pipeline semantics.
+- gta-reversed-modern's RW pipeline usage for game-side framing only.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool10", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=2047..2066 / S=2040..2059. Cap check → DEFERRED in D=6040..6099, bucket render_pipeline_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name render_pipeline_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT BBBBB — Minimap / radar overlay =====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session BBBBB; anchor-driven minimap / radar HUD overlay. Halt-allowed if Mashed top-down view has no minimap.
+
+[Same SONNET HALTS as YYYY.]
+
+## Session identifier
+SESSION_SHORT_ID="minimap_radar-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool11"
+
+## Subset definition (anchor-driven, halt-allowed)
+Mashed has a top-down camera view, so a separate minimap may be redundant.
+This session determines whether one exists.
+
+Strategy 1 — string anchors:
+  search_defined_strings query="Minimap"
+  search_defined_strings query="MINIMAP"
+  search_defined_strings query="minimap"
+  search_defined_strings query="Radar"
+  search_defined_strings query="RADAR"
+  search_defined_strings query="radar"
+  search_defined_strings query="trackmap"
+  search_defined_strings query="TrackMap"
+
+Strategy 2 — file-path anchors:
+  search_defined_strings query="MINIMAP\\"
+  search_defined_strings query=".tga"          (filter — may be too noisy)
+  search_defined_strings query="map.txd"
+  search_defined_strings query="trackmap"
+
+Strategy 3 — hud_ingame call-graph:
+  IF hud_ingame bucket exists, MINIMAP_FN is one of HUD_INGAME_FN's per-frame
+  callees. Read HUD_INGAME's callee list for a render-quad-with-rotated-icon
+  pattern.
+
+Strategy 4 — race_state position icons:
+  IF race_state bucket exists, the per-vehicle world-position update may
+  feed into minimap icon placement.
+
+Identify MINIMAP_FN: a function that renders a 2D HUD overlay showing
+vehicle positions on the track.
+
+If NONE converges: halt + surface "Minimap/radar anchor inconclusive — Mashed's top-down camera may serve as its own map (no separate overlay). Halting cleanly. (Confirming absence saves the greenfield port from a minimap renderer.)"
+
+If found: function_callees MINIMAP_FN → subset capped 20/15.
+
+Bucket: re/analysis/minimap_radar/
+ID-range: U=2067..2086  D=6100..6159  S=2060..2079
+Subsystem: hud
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gta-reversed-modern's CRadar for *structural* analogy only — Mashed's racing context is different. Never cite SA RVAs.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool11", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=hud. U/S in U=2067..2086 / S=2060..2079. Cap check → DEFERRED in D=6100..6159, bucket minimap_radar-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted (no minimap, expected for top-down view): no commit, release + report. **Confirming absence is the success path.**
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Inferring minimap from CRadar analogy. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / halted-confirming-no-minimap)
+- If found: MINIMAP_FN (rva/name/size); strategy
+- Minimap-related strings observed (verbatim)
+- Functions covered (0 if halted)
+- Tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== END OF BATCH 12 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool8..pool11 are reserved for batch 12.
+Independent of batches 10/11/13.
+
+ID RANGE SUMMARY
+
+  Batch 12 (4 sessions):   U=2007..2086  D=5920..6159    S=2000..2079
