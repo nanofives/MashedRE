@@ -81,27 +81,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0083 | 0x004ccf20 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004ccf20; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
 | S-0260 | 0x004a42c5 | 0x004987b0 FUN_004987b0 | input | passthrough | 2026-05-02 | FUN_004a42c5; varargs string formatter (3-arg: output_buf, format_ptr, va_list_ptr); depth-2 callee of FUN_004987b0; filed as D-0700 |
 | S-0100 | 0x004522d6 | 0x004522d0 FUN_004522d0 | audio | passthrough | 2026-05-02 | Indirect dispatch target through DAT_007d3ff8+0x10c; not statically traceable |
-| S-0101 | 0x004d7ff0 FUN_004d7ff0 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | Error-code constructor; called on short read and EOF; depth-2 of FUN_004cbd30 |
-| S-0102 | 0x004d8480 FUN_004d8480 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | Error dispatcher/logger; called after FUN_004d7ff0; depth-2 of FUN_004cbd30 |
-| S-0103 | 0x00550950 FUN_00550950 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | File-read wrapper (fread-level); cases 1+2 of stream dispatch; depth-2 of FUN_004cbd30 |
-| S-0104 | 0x00550af0 FUN_00550af0 | 0x004cbd30 FUN_004cbd30 | audio | passthrough | 2026-05-02 | EOF checker; called after short read or seek failure; also called from FUN_004cc050; depth-2 |
-| S-0105 | 0x005509b0 FUN_005509b0 | 0x004cc050 FUN_004cc050 | audio | passthrough | 2026-05-02 | File-seek wrapper (fseek-level); seek mode 1; depth-2 of FUN_004cc050 |
-| S-0106 | 0x005a7a40 FUN_005a7a40 | 0x005a79a0 FUN_005a79a0 | audio | passthrough | 2026-05-02 | Searches pool list for wave node match; depth-2 of FUN_005a79a0 |
-| S-0107 | 0x005ade90 FUN_005ade90 | 0x005a79a0 FUN_005a79a0 | audio | passthrough | 2026-05-02 | Resets embedded list head at param_1+0xc; depth-2 of FUN_005a79a0 |
-| S-0108 | 0x005a7ea0 FUN_005a7ea0 | 0x005a79a0 FUN_005a79a0 | audio | passthrough | 2026-05-02 | Final deallocation of audio object; depth-2 of FUN_005a79a0 |
-| S-0109 | 0x005ae0c0 FUN_005ae0c0 | 0x005a7ee0 FUN_005a7ee0 | audio | passthrough | 2026-05-02 | Initialises sub-structure at audio_obj+0x24; called conditionally on param_1[0] != 0; depth-2 |
-| S-0110 | 0x005ae010 FUN_005ae010 | 0x005a7ee0 FUN_005a7ee0 | audio | passthrough | 2026-05-02 | Links audio_obj with sub-structure at +0x24; depth-2 of FUN_005a7ee0 |
-| S-0111 | 0x005adfe0 FUN_005adfe0 | 0x005a7ee0 FUN_005a7ee0 | audio | passthrough | 2026-05-02 | Initialises sub-structure at audio_obj+0x34; depth-2 of FUN_005a7ee0 |
-| S-0112 | 0x005ac740 FUN_005ac740 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Cleans sub-structure at wave_node+0x10 or +0x2c; called twice; depth-2 of FUN_005abcf0 |
-| S-0113 | 0x005a7e70 FUN_005a7e70 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Unknown wave_node operation; depth-2 of FUN_005abcf0 |
-| S-0114 | 0x005ae030 FUN_005ae030 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Unknown wave_node operation; depth-2 of FUN_005abcf0 |
-| S-0115 | 0x005abcb0 FUN_005abcb0 | 0x005abcf0 FUN_005abcf0 | audio | passthrough | 2026-05-02 | Final deallocation of wave_node; depth-2 of FUN_005abcf0 |
-| S-0116 | 0x005ac210 FUN_005ac210 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Creates wave object from 0x803 format data; depth-2 of FUN_005abfa0 |
-| S-0117 | 0x005adf30 FUN_005adf30 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Compares two format descriptors; used against DAT_005e6414 and DAT_005e6444; depth-2 |
-| S-0118 | 0x005aec30 FUN_005aec30 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Byte-swaps audio sample buffer; called when endian flag set and bit-depth > 8; depth-2 |
-| S-0119 | 0x005abd30 FUN_005abd30 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Feeds PCM chunk to audio system; depth-2 of FUN_005abfa0 |
-| S-0120 | 0x005abf80 FUN_005abf80 | 0x005abfa0 FUN_005abfa0 | audio | passthrough | 2026-05-02 | Drain/flush audio system; called in loop while returns 1; depth-2 of FUN_005abfa0 |
-| S-0121 | 0x005ae920 FUN_005ae920 | 0x005ade10 FUN_005ade10 | audio | passthrough | 2026-05-02 | Returns list node to free pool at DAT_009146c0; depth-2 of FUN_005ade10 |
 | S-0220 | 0x004d7ff0 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d7ff0; called with (0x18, param_2) in default handler of FUN_004c2c90; depth-3; already D-0233, S-0101 |
 | S-0221 | 0x004d8480 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d8480; called with &uStack_8 in default handler of FUN_004c2c90; depth-3; already D-0234, S-0102 |
 | S-0222 | 0x004ccce0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004ccce0; called with (DAT_007d6c50, &LAB_004d7d70, DAT_007d6c50); depth-3; DEFERRED D-0580 |
@@ -330,18 +309,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0554 | 0x0047ce00 | 0x00471ec0 FUN_00471ec0 | render | passthrough | 2026-05-02 | FUN_0047ce00; returns flags from target object uVar4 (bits 1,2,4 tested); depth-2 of camera_follow |
 | S-0555 | 0x0047bb10 | 0x0047c160 FUN_0047c160 | render | passthrough | 2026-05-02 | FUN_0047bb10; per-node computation; args: node ptr, iVar1+0x30, output ptr, validity ptr; depth-2 of camera_follow |
 | S-0560 | 0x004671a0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004671a0; camera/viewport handle getter; already in hooks.csv (render, camera_follow); depth-2 of FUN_00403160 |
-| S-0561 | 0x004c1a00 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004c1a00; camera begin-update; returns non-zero on success; depth-2 of FUN_00403160; DEFERRED D-1600 |
-| S-0562 | 0x004c1c80 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004c1c80; sets/restores viewport rectangle on camera handle; depth-2 of FUN_00403160; DEFERRED D-1600 |
-| S-0563 | 0x004c19f0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004c19f0; camera end-update/teardown; called with camera handle arg; depth-2 of FUN_00403160; DEFERRED D-1600 |
-| S-0564 | 0x00402fb0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_00402fb0; HUD draw body for sub-mode 0xb; no visible args; depth-2 of FUN_00403160; DEFERRED D-1600 |
-| S-0565 | 0x00428760 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_00428760; 2D draw with 4 float args (50.0,30.0,240.0,120.0); called only when DAT_00771964 != 0; depth-2 of FUN_00403160; DEFERRED D-1600 |
-| S-0566 | 0x0041c2d0 | 0x0041a3e0 FUN_0041a3e0 + 0x0041c300 FUN_0041c300 | hud | passthrough | 2026-05-02 | FUN_0041c2d0; shared HUD draw body for game-mode 10 (DAT_0063c628 guard) and game-mode 5 (DAT_0063cdbc guard); depth-2; DEFERRED D-1600 |
-| S-0567 | 0x0041b340 | 0x0041b630 FUN_0041b630 | hud | passthrough | 2026-05-02 | FUN_0041b340; per-entry HUD slot draw; called when entry+0x6c != 0; 4-entry loop base 0x0063c8d0; depth-2; DEFERRED D-1600 |
-| S-0568 | 0x0041bc50 | 0x0041c0c0 FUN_0041c0c0 | hud | passthrough | 2026-05-02 | FUN_0041bc50; per-entry HUD draw; always called (no guard); 2-entry loop base 0x0063cab8; depth-2; DEFERRED D-1600 |
-| S-0569 | 0x0041c9a0 | 0x0041ccc0 FUN_0041ccc0 | hud | passthrough | 2026-05-02 | FUN_0041c9a0; per-entry HUD draw; called when entry+0x110 != 0; 4-entry loop base 0x0063ce20; depth-2; DEFERRED D-1600 |
-| S-0570 | 0x0041d410 | 0x0041d870 FUN_0041d870 | hud | passthrough | 2026-05-02 | FUN_0041d410; per-entry HUD draw; always called (no guard); 2-entry loop base 0x0063d298; depth-2; DEFERRED D-1600 |
-| S-0571 | 0x0041de80 | 0x0041ded0 FUN_0041ded0 | hud | passthrough | 2026-05-02 | FUN_0041de80; HUD draw body for game-modes 4/7/8/9; receives param_1 (0 or 1); depth-2; DEFERRED D-1600 |
-| S-0572 | 0x0041e630 | 0x0041e850 FUN_0041e850 | hud | passthrough | 2026-05-02 | FUN_0041e630; HUD draw body for sub-mode 2; no args; depth-2; DEFERRED D-1600 |
 | S-0480 | 0x0042c280 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c280; called case 3 when FUN_0042c220 non-zero; D-1360 |
 | S-0481 | 0x0042c2d0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2d0; cases 1 and 4; get-value passed to FUN_0042b940; D-1360 |
 | S-0482 | 0x0042c2e0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2e0; cases 1 and 4; pending-event check; D-1360 |
@@ -405,3 +372,32 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1022 | 0x004a4e40 __aulldiv | 0x004a43d2 FUN_004a43d2 | boot | passthrough | 2026-05-03 | CRT 64-bit unsigned integer division runtime helper; body 0x004a4e40..0x004a4ea7; depth-3; D-2982 |
 | S-1023 | 0x004aa00c FUN_004aa00c | 0x004a43d2 FUN_004a43d2 | boot | passthrough | 2026-05-03 | zero-arg call at start of FUN_004a43d2; side effect unknown; body 0x004aa00c..0x004aa039; depth-3; D-2983 |
 | S-1024 | 0x004aa060 __aullrem | 0x004a43d2 FUN_004a43d2 | boot | passthrough | 2026-05-03 | CRT 64-bit unsigned integer remainder runtime helper; body 0x004aa060..0x004aa0d4; depth-3; D-2984 |
+| S-1040 | 0x0042bf30 FUN_0042bf30 | 0x0042c280 FUN_0042c280 | vehicle | passthrough | 2026-05-03 | called with (0x27f, 0xff210000, 0, 0, 0, 0); 6 hardcoded args; 112 bytes; depth-2; D-3040 |
+| S-1041 | 0x0042d3a0 FUN_0042d3a0 | 0x00432080 FUN_00432080 | vehicle | passthrough | 2026-05-03 | called on phase-transition success path; also called by FUN_004331a0; 52 bytes; depth-2; D-3041 |
+| S-1042 | 0x004248b0 FUN_004248b0 | 0x004331a0 FUN_004331a0 | vehicle | passthrough | 2026-05-03 | called at end of race-end init; no params; 367 bytes; depth-2; D-3042 |
+| S-1043 | 0x00424920 FUN_00424920 | 0x004331a0 FUN_004331a0 | vehicle | passthrough | 2026-05-03 | called after FUN_004248b0 in race-end init; no params; 607 bytes; depth-2; D-3043 |
+| S-1044 | 0x004464c0 FUN_004464c0 | 0x00448700 FUN_00448700 | vehicle | passthrough | 2026-05-03 | called 100 times with &DAT_00897fe0; 91 bytes; depth-2; D-3044 |
+| S-0980 | 0x005ade60 FUN_005ade60 | 0x005a7a40 FUN_005a7a40 | audio | passthrough | 2026-05-03 | List searcher in embedded list at obj+0x0c; depth-3 of FUN_005a7a40; D-2860 |
+| S-0981 | 0x005aeca0 FUN_005aeca0 | 0x005ae0c0 FUN_005ae0c0 | audio | passthrough | 2026-05-03 | Format-field pack/byte-swap helper; depth-3 of FUN_005ae0c0; D-2861 |
+| S-0982 | 0x005ae080 FUN_005ae080 | 0x005ae010 FUN_005ae010 | audio | passthrough | 2026-05-03 | Sub-struct A zero-init (audio_obj+0x24); depth-3 of FUN_005ae010 FUN_005ae030; D-2862 |
+| S-0983 | 0x005ae050 FUN_005ae050 | 0x005adfe0 FUN_005adfe0 | audio | passthrough | 2026-05-03 | Sub-struct B zero-init (audio_obj+0x34); depth-3 of FUN_005adfe0 FUN_005ae030; D-2863 |
+| S-0984 | 0x005aa060 FUN_005aa060 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Creates DirectSound buffer from stream data; depth-3 of FUN_005ac210; D-2864 |
+| S-0985 | 0x005aa0c0 FUN_005aa0c0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Async sound load callback dispatcher; depth-3 of FUN_005ac210; D-2865 |
+| S-0986 | 0x005aaac0 FUN_005aaac0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Resolves local_4c from LAB_005aaaa0; depth-3 of FUN_005ac210; D-2866 |
+| S-0987 | 0x005aba20 FUN_005aba20 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Wave_node field initialiser; depth-3 of FUN_005ac210; D-2867 |
+| S-0988 | 0x005ac7b0 FUN_005ac7b0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Wave_node post-init; wires format/extra-data into node; depth-3 of FUN_005ac210; D-2868 |
+| S-0989 | 0x005ac900 FUN_005ac900 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Format-object lookup by 16-byte descriptor; depth-3 of FUN_005ac210; D-2869 |
+| S-0990 | 0x005ac980 FUN_005ac980 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Registers/assigns default format to sound node; depth-3 of FUN_005ac210; D-2870 |
+| S-0991 | 0x005aca80 FUN_005aca80 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Get RWS chunk data size from parsed chunk header; depth-3 of FUN_005ac210; D-2871 |
+| S-0992 | 0x005acaa0 FUN_005acaa0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Parse RWS chunk header into local struct; depth-3 of FUN_005ac210; D-2872 |
+| S-0993 | 0x005acd10 FUN_005acd10 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Matches wave_node against chunk-header struct; depth-3 of FUN_005ac210; D-2873 |
+| S-0994 | 0x005ac5f0 FUN_005ac5f0 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Wave-state validator; checks sub-struct +0x10 vs streaming-cursor +0x2c; depth-3 of FUN_005abd30; D-2874 |
+| S-0995 | 0x005b3b30 FUN_005b3b30 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Compute streaming parameters from wave sub-struct; depth-3 of FUN_005abd30; D-2875 |
+| S-0996 | 0x005b3b60 FUN_005b3b60 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Finalize streaming descriptor; depth-3 of FUN_005abd30; D-2876 |
+| S-0997 | 0x005b3b80 FUN_005b3b80 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Fill streaming/loop buffer with PCM data; large PCM feeder 0x2d6 bytes; depth-3 of FUN_005abd30; D-2877 |
+| S-1000 | 0x0042bf30 FUN_0042bf30 | 0x0042c280 FUN_0042c280 | util | passthrough | 2026-05-03 | called with (0x27f, 0xff210000, 0, 0, 0, 0); pending-action packet setter; body 0x0042bf30..0x0042bfa0; D-2920 |
+| S-1001 | 0x0042d3a0 FUN_0042d3a0 | 0x00432080 FUN_00432080 | util | passthrough | 2026-05-03 | zeroes 13-entry 64-byte struct array 0x0067ed78..0x0067f0bc; shared callee with FUN_004331a0; D-2921 |
+| S-1002 | 0x004248b0 FUN_004248b0 | 0x004331a0 FUN_004331a0 | util | passthrough | 2026-05-03 | called after zero-clear block in race-end init; body 0x004248b0..0x0042491f (111 bytes); D-2922 |
+| S-1003 | 0x00424920 FUN_00424920 | 0x004331a0 FUN_004331a0 | util | passthrough | 2026-05-03 | called after FUN_004248b0 in race-end init; body 0x00424920..0x00424b7f (607 bytes); D-2923 |
+| S-1004 | 0x004464c0 FUN_004464c0 | 0x00448700 FUN_00448700 | util | passthrough | 2026-05-03 | array iterator via DAT_00898994 count; stride 0xd8; dispatches on type+4 values 0/1/2; called 100 times; D-2924 |
+| S-0920 | 0x00450b10 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-03 | FUN_00450b10; primitive rect draw; called from viewport-scaled rect draw with (texture_handle, x, y, w, h, 0xffffffff, uv_ptr); depth-3 of hud_ingame_d2; D-2680 |

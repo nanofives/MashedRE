@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-03  race_state-20260503-0600  bucket=race_state  rvas=0x0042c280,0x0042c2d0,0x0042c2e0,0x0042c2f0,0x00432080,0x004331a0,0x00448700,0x004927c0
 ```
 
 ## Drained
@@ -55,3 +56,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-02  video_mci-20260502-1943  bucket=video_mci  rvas=0x00493b50,0x00493bc0,0x00493c00,0x00493f00,0x004944b0,0x004944c0,0x00494ac0,0x00494c80,0x004a1790
 2026-05-02  track_loader-20260502-1943  bucket=track_loader  rvas=0x00426e10,0x004053d0,0x00409680,0x00409710,0x00412050,0x0041e870,0x0041e8b0,0x0041e970,0x0041e980,0x0041e9d0,0x0041ea90,0x004235b0,0x00423630,0x00425ab0,0x004260e0,0x004262f0
 ```
+2026-05-03  random_rng-20260503-0601  bucket=random_rng  rvas=0x00534920,0x004b44f0,0x004b4510
