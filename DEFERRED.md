@@ -592,3 +592,5 @@ A row goes into DEFERRED when:
 | D-4540 | 0x0040dd60 FUN_0040dd60 | guard predicate called at 0x00430292 inside FUN_00430290; returns 0 to bypass championship handler; 800B; semantics unknown; S-1540 | profile_career-cont1 | save |
 | D-4541 | 0x00448220 FUN_00448220 | 17KB frontend/career-menu function at entry 0x00448220 body 0x00434360-0x004486f2; reads unlock codes at 0x005cd92c; consumes DAT_00899140 event IDs 0x264-0x26a; U-1552 U-1553 | profile_career-cont1 | frontend |
 | D-4542 | 0x00410510 FUN_00410510 | race-end evaluator; ~800 bytes; returns winning car index or 0; called by FUN_00411170; many callees; determines whether championship handler fires | profile_career-cont1 | save |
+| D-5140 | 0x004c3b90 FUN_004c3b90 | depth-2 callee of FUN_004c4680 (matrix orthonormalize); reciprocal-sqrt or vector-magnitude-inverse utility; 86 bytes | vehicle_dynamics-cont1 | render |
+| D-5141 | 0x0046ef70 FUN_0046ef70 | contact/friction resolver; 1871 bytes; called by VehicleCollisionBroadPhase when contact active; likely spring/damper per-wheel force application; not callee of DYNAMICS_FN | vehicle_dynamics-cont1 | vehicle |
