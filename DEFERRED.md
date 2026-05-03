@@ -42,8 +42,8 @@ A row goes into DEFERRED when:
 | D-0470 | 0x004a7800 FUN_004a7800 | depth-4 of 0x004a787f __lock; lazy-init of lock slot | boot_crt_exit_d3-cont1 | boot |
 | D-0471 | 0x004aa7da ___sbh_alloc_new_region | depth-4 of 0x004aac76 ___sbh_alloc_block; allocates new SBH region | boot_crt_exit_d3-cont1 | boot |
 | D-0472 | 0x004aa891 ___sbh_alloc_new_group | depth-4 of 0x004aac76 ___sbh_alloc_block; initialises new SBH group | boot_crt_exit_d3-cont1 | boot |
-| D-0580 | 0x004ccce0 FUN_004ccce0 | depth-3 of 0x004d7ca0 FUN_004d7ca0; called with (DAT_007d6c50, &LAB_004d7d70, DAT_007d6c50); not recursed from rw_engine_teardown_d2 | rw_engine_teardown_d3 or dedicated session | render |
-| D-0581 | 0x004cc9f0 FUN_004cc9f0 | depth-3 of 0x004d7ca0 FUN_004d7ca0; called with DAT_007d6c50 as single arg; not recursed from rw_engine_teardown_d2 | rw_engine_teardown_d3 or dedicated session | render |
+| ~~D-0580~~ | ~~0x004ccce0 FUN_004ccce0~~ | RESOLVED 2026-05-03: analyzed in rw_engine_teardown_d3 session; see re/analysis/rw_engine_teardown_d3/0x004ccce0.md | — | render |
+| ~~D-0581~~ | ~~0x004cc9f0 FUN_004cc9f0~~ | RESOLVED 2026-05-03: already mapped in re/analysis/render_d3d9_device/0x004cc9f0.md prior to this session | — | render |
 | D-0281 | 0x004954f0 FUN_004954f0 (HardwareExitApplication) and its callees: 0x00498bf0,ShowCursor,0x00498b60,0x0045b350,thunk_FUN_00496370,0x00496010,thunk_FUN_00495580 | sister function to FUN_004938c0; called by FUN_00492370 for hardware-layer teardown; not in rw_engine_teardown subset (callee of outer shell FUN_00492370, not of RW_TEAR_FN) | pick up as bucket rw_hw_teardown; after rw_engine_teardown-cont1 finishes; confirm if D3D teardown path is here | render |
 | D-0220 | 0x004c9f50 FUN_004c9f50, 0x004c9f60 FUN_004c9f60 | early-finish from rw_engine_init-20260502-1734 (cap_count reached 18 at fn 18/20); depth-1 callees of 0x00493710 RW_INIT_FN | pick up as bucket rw_engine_init-cont1; depth-1 of RW_INIT_FN; no further recursion | render |
 | D-0221 | 0x004cbc60,0x004cbc70,0x004cbc80,0x004cbc90,0x00550350,0x00550390,0x005584c0,0x005c9d00 | subset cap-split from rw_engine_init-20260502-1734 (28 callees exceeded hard cap 20); depth-1 callees of 0x00493710 RW_INIT_FN (S-0060..S-0067 filed) | pick up as bucket rw_engine_init-cont1; depth-1 of RW_INIT_FN; no further recursion | render |
@@ -594,3 +594,33 @@ A row goes into DEFERRED when:
 | D-4542 | 0x00410510 FUN_00410510 | race-end evaluator; ~800 bytes; returns winning car index or 0; called by FUN_00411170; many callees; determines whether championship handler fires | profile_career-cont1 | save |
 | D-5140 | 0x004c3b90 FUN_004c3b90 | depth-2 callee of FUN_004c4680 (matrix orthonormalize); reciprocal-sqrt or vector-magnitude-inverse utility; 86 bytes | vehicle_dynamics-cont1 | render |
 | D-5141 | 0x0046ef70 FUN_0046ef70 | contact/friction resolver; 1871 bytes; called by VehicleCollisionBroadPhase when contact active; likely spring/damper per-wheel force application; not callee of DYNAMICS_FN | vehicle_dynamics-cont1 | vehicle |
+| D-4960 | 0x004d7d70 LAB_004d7d70 | depth-4 callee of FUN_004ccce0 (callback); unrecognized fn body; reads param_1+0x38 sub-struct; clears +0x10/+0x14; calls vtable+0x11c; S-1680; Ghidra has no FUN_ entry at this address | rw_engine_teardown_d3-cont1 | render |
+| D-4840 | 0x004323c0 FUN_004323c0 | depth-2 callee of FUN_0043dfd0; 135 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4841 | 0x0042ae10 FUN_0042ae10 | depth-2 callee of FUN_0043dfd0; 156 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4842 | 0x0042aeb0 FUN_0042aeb0 | depth-2 callee of FUN_0043dfd0; 156 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4843 | 0x0042af50 FUN_0042af50 | depth-2 callee of FUN_0043dfd0; 156 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4844 | 0x00430910 FUN_00430910 | depth-2 callee of FUN_0043dfd0 and FUN_004322c0; 137 bytes; S-1656; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4845 | 0x00429aa0 FUN_00429aa0 | depth-2 callee of FUN_0043dfd0; 134 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4846 | 0x0042aa00 FUN_0042aa00 | depth-2 callee of FUN_0043dfd0; 168 bytes; S-1655; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4847 | 0x0042ac90 FUN_0042ac90 | depth-2 callee of FUN_0043dfd0; 126 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4848 | 0x0040b810 FUN_0040b810 | depth-2 callee of FUN_0043dfd0; 124 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4849 | 0x0042b960 FUN_0042b960 | depth-2 callee of FUN_0043dfd0; 115 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4850 | 0x0042f6b0 FUN_0042f6b0 | depth-2 callee of FUN_0043dfd0; 115 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4851 | 0x004307a0 FUN_004307a0 | depth-2 callee of FUN_0043dfd0; 116 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4852 | 0x0042f020 FUN_0042f020 | depth-2 callee of FUN_0043dfd0; 98 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4853 | 0x00431d00 FUN_00431d00 | depth-2 callee of FUN_0043dfd0; 97 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4854 | 0x004309b0 FUN_004309b0 | depth-2 callee of FUN_0043dfd0; 52 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4855 | 0x00492340 FUN_00492340 | depth-2 callee of FUN_0043dfd0; 46 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4856 | 0x00430b60 FUN_00430b60 | depth-2 callee of FUN_0043dfd0; 47 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4857 | 0x00409930 FUN_00409930 | depth-2 callee of FUN_0043dfd0; 30 bytes; sub-cap in session GGGG | game_mode_cont2 | util |
+| D-4858 | 0x00409900 FUN_00409900 | depth-2 callee of FUN_0043dfd0; 43 bytes; sub-cap in session GGGG | game_mode_cont2 | util |
+| D-4859 | 0x004098b0 FUN_004098b0 | depth-2 callee of FUN_0043dfd0; 27 bytes; sub-cap in session GGGG | game_mode_cont2 | util |
+| D-4860 | 0x004298c0 FUN_004298c0 | depth-2 callee of FUN_0043dfd0; 27 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4861 | 0x0040acd0 FUN_0040acd0 | depth-2 callee of FUN_0043dfd0; 48 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4862 | 0x00414120 FUN_00414120 | depth-2 callee of FUN_0043dfd0; 80 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4863 | 0x00422b30 FUN_00422b30 | depth-2 callee of FUN_0043dfd0; 16 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4864 | 0x0046dc00 FUN_0046dc00 | depth-2 callee of FUN_0043dfd0; 20 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4865 | 0x00495080 FUN_00495080 | depth-2 callee of FUN_0043dfd0; 37 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4866 | 0x00494f30 FUN_00494f30 | depth-2 callee of FUN_0043dfd0; 15 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4867 | 0x0040e480 FUN_0040e480 | depth-2 callee of FUN_0043dfd0; 18 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
+| D-4868 | 0x00492d30 FUN_00492d30 | sole caller of FUN_0043dfd0; 265 bytes; not decompiled this session | game_mode_cont2 | util |

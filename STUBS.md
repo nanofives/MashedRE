@@ -516,3 +516,21 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1452 | 0x004cc160 FUN_004cc160 | 0x004b3bf0 0x004b3e40 0x004781b0 0x004b3b70 | vehicle | passthrough | 2026-05-03 | RW stream close; args (stream, save_flag); 0 = close without save |
 | S-1453 | 0x004c0740 FUN_004c0740 | 0x004e7e30 0x004e69a0 | vehicle | passthrough | 2026-05-03 | set material/texture reference on RW object; args (obj, mat_or_null); used widely as ref-setter |
 | S-1540 | 0x0040dd60 FUN_0040dd60 | 0x00430290 | save | passthrough | 2026-05-03 | guard predicate in FUN_00430290; returns 0 to skip championship handler; semantics unknown (race-over? no-replay?) |
+| S-1680 | 0x004d7d70 LAB_004d7d70 | 0x004d7ca0 FUN_004d7ca0 (via FUN_004ccce0 callback) | render | passthrough | 2026-05-03 | Unrecognized fn body (Ghidra label only, no FUN_ entry); 37 bytes; reads param_1+0x38 sub-struct; clears +0x10/+0x14 if non-zero; calls vtable DAT_007d3ff8+0x11c(param_1, param_2); deferred as D-4960 |
+| S-1640 | 0x004332a0 FUN_004332a0 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 0 (DAT_0067e7a8==1); fires when slot-0 timer completes; semantics unknown |
+| S-1641 | 0x0042f7b0 FUN_0042f7b0 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 6 (DAT_0067e7d8==1); fires when slot-6 timer completes; semantics unknown |
+| S-1642 | 0x0042c960 FUN_0042c960 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 4 (DAT_0067e7c8==1); fires when slot-4 timer completes; semantics unknown |
+| S-1643 | 0x0042fa00 FUN_0042fa00 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 7 (DAT_0067e7e0==1); fires when slot-7 timer completes; semantics unknown |
+| S-1644 | 0x00431f30 FUN_00431f30 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | screen history restore; called with param_1 on push-0, with history index on pop-1; semantics unknown |
+| S-1645 | 0x0042d3e0 FUN_0042d3e0 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | screen pre-init; called before stack push/pop in FUN_0043d2a0; semantics unknown |
+| S-1646 | 0x0042ad90 FUN_0042ad90 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | player port query; returns short; -1 if no player; called 2x per loop iteration in FUN_0043d2a0 |
+| S-1647 | 0x0042ac00 FUN_0042ac00 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | called 2x (push and pop branches) in FUN_0043d2a0; no visible args; role unknown |
+| S-1648 | 0x0042ac50 FUN_0042ac50 | 0x0043d2a0 FUN_0043d2a0 0x004325c0 FUN_004325c0 | frontend | passthrough | 2026-05-03 | position calculator for menu slide; returns int used as X/Y in slide table; called per visible entry |
+| S-1649 | 0x00432b30 FUN_00432b30 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | transition initiator; called at end of FUN_0043d2a0 with (short)sVar2 arg; starts actual screen transition |
+| S-1650 | 0x00492d10 FUN_00492d10 | 0x00432800 FUN_00432800 | frontend | passthrough | 2026-05-03 | multiplayer online check (case 8 in FUN_00432800); returns 1 if online mode active; otherwise clear DAT_0067ed8c |
+| S-1651 | 0x0042b930 FUN_0042b930 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | current screen type query; returns screen ID int; 0x21 and 1 skip race-start attempt |
+| S-1652 | 0x0042c1f0 FUN_0042c1f0 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | SP race-start prerequisite check; returns nonzero if race can begin |
+| S-1653 | 0x0042c1d0 FUN_0042c1d0 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | MP race-start prerequisite check; called before FUN_0042c220 in MP path |
+| S-1654 | 0x00432450 FUN_00432450 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | MP race transition; same 6-param signature as FUN_0042bf30; used for non-zero eab0 path |
+| S-1655 | 0x0042aa00 FUN_0042aa00 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | called first in FUN_004322c0 with arg 1; role unknown; may update track-display state |
+| S-1656 | 0x00430910 FUN_00430910 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | per-option validity check in track-selection loop; returns 0 if option valid; used to skip invalid indices |
