@@ -1,0 +1,831 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 6
+================================================================================
+
+Twelve prompts (UU–FFF) mixing depth-2 walks of high-value batch-3/4/5 buckets
+with four new subsystem anchors (race state, text rendering, audio voice
+management, RNG). All 12 use pre-assigned pool slots (pool0..pool11), with
+pool12..pool15 reserved for cont-1 splits and ad-hoc.
+
+Prompts in this batch:
+  UU   render_frame_d2       Sonnet medium  — depth-2 of session S
+  VV   track_loader_d2       Sonnet medium  — depth-2 of session X
+  WW   hud_ingame_d2         Sonnet medium  — depth-2 of session EE
+  XX   hud_frontend_d2       Sonnet medium  — depth-2 of session Y
+  YY   effects_particle_d2   Sonnet medium  — depth-2 of session FF
+  ZZ   audio_rws_loader_d2   Sonnet medium  — depth-2 of session F
+  AAA  game_state_d2         Sonnet medium  — depth-2 of session AA
+  BBB  window_msgpump_d2     Sonnet medium  — depth-2 of session II
+  CCC  race_state            Sonnet medium  — anchor: lap/countdown/finish
+  DDD  font_text             Sonnet medium  — anchor: text/font rendering
+  EEE  audio_voice           Sonnet medium  — anchor: DSound voice manager (halt on overlap)
+  FFF  random_rng            Sonnet medium  — anchor: PRNG / rand-wrapper
+
+After all 12 push their queue rows, relaunch sweep prompt I.
+
+LAUNCH SEQUENCE GUIDANCE
+
+Wave 1 (6 in parallel, slots 0–5): UU, VV, WW, XX, YY, ZZ
+Wave 2 (6 in parallel, slots 6–11): AAA, BBB, CCC, DDD, EEE, FFF
+
+Or all 12 simultaneously — pre-assigned slots prevent any race.
+
+ID ranges + slot assignments (no overlap with batches 1–5):
+
+  Session  Bucket                Slot            U range      D range      S range
+  -------  -------------------   --------------  -----------  -----------  -----------
+    UU     render_frame_d2       Mashed_pool0    0887..0906   2560..2619   0880..0899
+    VV     track_loader_d2       Mashed_pool1    0907..0926   2620..2679   0900..0919
+    WW     hud_ingame_d2         Mashed_pool2    0927..0946   2680..2739   0920..0939
+    XX     hud_frontend_d2       Mashed_pool3    0947..0966   2740..2799   0940..0959
+    YY     effects_particle_d2   Mashed_pool4    0967..0986   2800..2859   0960..0979
+    ZZ     audio_rws_loader_d2   Mashed_pool5    0987..1006   2860..2919   0980..0999
+    AAA    game_state_d2         Mashed_pool6    1007..1026   2920..2979   1000..1019
+    BBB    window_msgpump_d2     Mashed_pool7    1027..1046   2980..3039   1020..1039
+    CCC    race_state            Mashed_pool8    1047..1066   3040..3099   1040..1059
+    DDD    font_text             Mashed_pool9    1067..1086   3100..3159   1060..1079
+    EEE    audio_voice           Mashed_pool10   1087..1106   3160..3219   1080..1099
+    FFF    random_rng            Mashed_pool11   1107..1126   3220..3279   1100..1119
+
+If a session would exhaust its allocation, it halts and asks for an extension.
+
+DEPTH-2 SESSIONS (UU..BBB) — common subset-acquisition rule
+
+Each depth-2 prompt picks up the parent session's filed DEFERRED rows. The acquisition rule, identical for every depth-2 session in this batch:
+
+  1. Read DEFERRED.md fresh.
+  2. Collect every RVA whose "Why deferred" cites the parent bucket name (or any of its -cont1 / -cont2 continuation buckets).
+  3. Filter to RVAs not already drained by another session (check re/SCRIBE_QUEUE.md "Drained" section — if a row containing this RVA was drained by some prior bucket, skip it).
+  4. Take up to 18 in address order; remainder → new DEFERRED row in this session's D range with re-pickup bucket <parent>_d2-cont1.
+  5. If count of eligible RVAs < 5: halt + surface "parent's deferred range too small for an independent session — possibly the parent halted early or its callees were trivial. User decides whether to skip this session or merge into a sibling."
+
+================================================================================
+=== PROMPT UU — render_frame depth-2 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session UU; depth-2 of session S (render_frame).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "Pool-slot pre-assignment", § "ID range allocation"). Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before citation. Null → halt.
+3. No hedging, no inference, no naming from names.
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="render_frame_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition (depth-2 acquisition — see batch header)
+Parent: session S (render_frame).
+Read DEFERRED.md fresh; take RVAs whose "Why deferred" cites bucket render_frame (or render_frame-cont*). Apply the common acquisition rule from the batch header.
+
+Bucket: re/analysis/render_frame_d2/
+ID-range: U=0887..0906  D=2560..2619  S=0880..0899
+Subsystem: render
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/baseframe.cpp + basecamera.cpp + baseworld.cpp for engine semantics.
+- criterion-rwg37/core/src/bacamera.c, baworld.c, world/baworld.c for definitive engine behavior.
+- criterion-rwg37/core/driver/d3d9/ for D3D9 backend per-frame paths.
+Cross-check struct offsets observed in MCP. Never paste; never cite their RVAs.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Either wait or relaunch with a different SLOT value." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/render_frame_d2/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,render,C1,mapped,re/analysis/render_frame_d2/<rva>.md,,,<short notes>.
+  f. U/S in U=0887..0906 / S=0880..0899.
+  g. CHANGELOG row.
+  h. Self-check (in chat).
+  i. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=2560..2619, bucket render_frame_d2-cont1.
+
+After loop: depth-3 DEFERRED rows for unrecursed callees in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/render_frame_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: render_frame depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=render_frame_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: render_frame_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- All standard ones (hedging, recursion past depth 1, cap, base-bucket on continuation, IDs out of range, renaming).
+- Reading from a DEFERRED row whose "Why deferred" does NOT cite session S (render_frame) bucket.
+- Decompiling a previously-drained RVA — check SCRIBE_QUEUE.md "Drained" first.
+- Calling ghidra_pool.sh acquire instead of using the pre-assigned SLOT.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- DEFERRED rows from session S range picked up: <count>; remainder filed: <count>
+- Functions covered: <count>
+- IDs used: U-XXXX..U-XXXX (n), D-XXXX..D-XXXX (n), S-XXXX..S-XXXX (n)
+- Cap status: cap_count=<n>; early-finish=<yes|no>
+- MCP failures; observations
+- Scribe outcome: queued for sweep ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT VV — track_loader depth-2 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session VV; depth-2 of session X (track_loader).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="track_loader_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parent: session X (track_loader). Acquire DEFERRED rows citing track_loader bucket. Apply common rule.
+
+Bucket: re/analysis/track_loader_d2/
+ID-range: U=0907..0926  D=2620..2679  S=0900..0919
+Subsystem: render
+
+External RW / file-I/O imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librwgta/tools/storiesconv/ for DFF / TXD / IPL parsers.
+- criterion-rwg37/world/baworld.c + babinwor.c for RW world-binary semantics.
+- librw/src/streamread.cpp for chunk-stream reader.
+- session G's piz_validation findings (re/analysis/piz_validation/findings.md) for .piz format facts.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool1", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. function_at → decomp (weight) → callees (no recursion) → write .md → hooks.csv (subsystem=render) → U/S in U=0907..0926 / S=0900..0919 → CHANGELOG → self-check → cap check (early-finish to D=2620..2679, bucket track_loader_d2-cont1).
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/track_loader_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: track_loader depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=track_loader_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: track_loader_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones.
+- Reading DEFERRED rows that don't cite session X bucket.
+- Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- DEFERRED picked up; functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT WW — hud_ingame depth-2 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session WW; depth-2 of session EE (hud_ingame).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="hud_ingame_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition
+Parent: session EE (hud_ingame). Acquire DEFERRED rows citing hud_ingame bucket. Apply common rule.
+
+Bucket: re/analysis/hud_ingame_d2/
+ID-range: U=0927..0946  D=2680..2739  S=0920..0939
+Subsystem: hud
+
+External RwIm2D imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/ for RwIm2D primitives.
+- criterion-rwg37/core/src/baimmedi.c for definitive RwIm2D semantics.
+- gta-reversed-modern's CHud as structural analogy ONLY (Mashed's HUD is racing-specific).
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool2", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=hud. U/S in U=0927..0946 / S=0920..0939. Cap check → DEFERRED in D=2680..2739, bucket hud_ingame_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name hud_ingame_d2. Commit + push + queue + push.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Reading DEFERRED rows not citing session EE bucket. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- DEFERRED picked up; functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT XX — hud_frontend depth-2 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session XX; depth-2 of session Y (hud_frontend).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="hud_frontend_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition
+Parent: session Y (hud_frontend). Acquire DEFERRED rows citing hud_frontend bucket. Apply common rule.
+
+If session Y halted on inconclusive anchors (no DEFERRED rows filed): halt + surface "session Y halted; no depth-2 work to do. Need user direction whether to re-anchor session Y or skip this session." Do NOT pivot to a different bucket — that's a separate session.
+
+Bucket: re/analysis/hud_frontend_d2/
+ID-range: U=0947..0966  D=2740..2799  S=0940..0959
+Subsystem: frontend
+
+External RwIm2D imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+Same as WW (librw, criterion-rwg37, gta-reversed-modern as analogy only).
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool3", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=0947..0966 / S=0940..0959. Cap check → DEFERRED in D=2740..2799, bucket hud_frontend_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name hud_frontend_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Pivoting if session Y halted — file the halt and stop instead.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT YY — effects_particle depth-2 =======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session YY; depth-2 of session FF (effects_particle).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="effects_particle_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition
+Parent: session FF (effects_particle). Acquire DEFERRED rows citing effects_particle bucket. Apply common rule.
+
+Bucket: re/analysis/effects_particle_d2/
+ID-range: U=0967..0986  D=2800..2859  S=0960..0979
+Subsystem: render
+
+External RpPrtStd / RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw and criterion-rwg37 may NOT include RpPrtStd plugin source (separate Criterion plugin).
+- gta-reversed-modern uses RpPrtStd in some places — structural analogy only.
+- Expect heavy U-NNNN markers; particle plugin shape is less documented.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool4", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=0967..0986 / S=0960..0979. Cap check → DEFERRED in D=2800..2859, bucket effects_particle_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name effects_particle_d2.
+
+DO NOT scribe directly.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT ZZ — audio_rws_loader depth-2 =======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session ZZ; depth-2 of session F (audio_rws_loader).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_rws_loader_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition
+Parent: session F (audio_rws_loader). Acquire DEFERRED rows citing audio_rws_loader bucket. Apply common rule.
+
+Bucket: re/analysis/audio_rws_loader_d2/
+ID-range: U=0987..1006  D=2860..2919  S=0980..0999
+Subsystem: audio
+
+External RW audio imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- criterion-rwg37/core/src/plcore/babinary.c (RW chunk reader — definitive).
+- gtamods.com/wiki/RWS for byte-layout reference.
+- Cross-check section IDs observed in MCP against the rws_inventory output (re/analysis/rws_inventory/histogram.md from session H if present).
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool5", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=0987..1006 / S=0980..0999. Cap check → DEFERRED in D=2860..2919, bucket audio_rws_loader_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name audio_rws_loader_d2.
+
+DO NOT scribe directly.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT AAA — game_state depth-2 ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session AAA; depth-2 of session AA (game_state).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="game_state_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool6"
+
+## Subset definition
+Parent: session AA (game_state). Acquire DEFERRED rows citing game_state bucket. Apply common rule.
+
+Bucket: re/analysis/game_state_d2/
+ID-range: U=1007..1026  D=2920..2979  S=1000..1019
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+No specific RW reference for game state machines; cite ONLY MCP. Gameplay state code is wholly Supersonic.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool6", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=1007..1026 / S=1000..1019. Cap check → DEFERRED in D=2920..2979, bucket game_state_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name game_state_d2.
+
+DO NOT scribe directly.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT BBB — window_msgpump depth-2 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session BBB; depth-2 of session II (window_msgpump).
+
+[Same SONNET HALTS as UU.]
+
+## Session identifier
+SESSION_SHORT_ID="window_msgpump_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool7"
+
+## Subset definition
+Parent: session II (window_msgpump). Acquire DEFERRED rows citing window_msgpump bucket. Apply common rule.
+
+Bucket: re/analysis/window_msgpump_d2/
+ID-range: U=1027..1046  D=2980..3039  S=1020..1039
+Subsystem: boot
+
+External user32 imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+Win32 message-pump and WindowProc patterns are canonical; cite ONLY what MCP shows.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool7", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=boot. U/S in U=1027..1046 / S=1020..1039. Cap check → DEFERRED in D=2980..3039, bucket window_msgpump_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name window_msgpump_d2.
+
+DO NOT scribe directly.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT CCC — Race state machine ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session CCC; anchor-driven race-state (lap counting / countdown / finish).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="race_state-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool8"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — string anchors (race vocabulary):
+  search_defined_strings query="LAP"
+  search_defined_strings query="Lap"
+  search_defined_strings query="Countdown"
+  search_defined_strings query="Finish"
+  search_defined_strings query="3"     (filter heavily — countdown numerals as raw constants are noisy)
+  search_defined_strings query="GO!"
+  search_defined_strings query="CHECKPOINT"
+  search_defined_strings query="Position"
+  Filter all by xref count 1–20.
+
+Strategy 2 — call-graph from session AA (game_state):
+  IF game_state bucket exists, the RACE state's per-tick callee is RACE_STATE_FN. STATE_FN's dispatch table reveals it.
+
+Strategy 3 — siblings of vehicle_update (V):
+  IF vehicle_update bucket exists, RACE_STATE_FN is likely the parent of VEHICLE_UPDATE_FN (race tick updates each vehicle, then checks lap/checkpoint progress).
+
+Identify RACE_STATE_FN: a function called per-frame during race state, that updates lap timer, checks checkpoint crossings, detects race finish.
+
+If NONE converges: halt + surface "Race state anchor inconclusive: strategy 1 (<n1>), strategy 2 (<n2 or n/a>), strategy 3 (<n3 or n/a>). Need user direction. Halting."
+
+If found: function_callees RACE_STATE_FN → subset capped 20/15.
+
+Bucket: re/analysis/race_state/
+ID-range: U=1047..1066  D=3040..3099  S=1040..1059
+Subsystem: vehicle (race progression is per-vehicle gameplay)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+No specific reference for racing-game race-state machines. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool8", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=vehicle. U/S in U=1047..1066 / S=1040..1059. Cap check → DEFERRED in D=3040..3099, bucket race_state-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found: standard commit + queue + push.
+If halted: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- All standard ones. Picking RACE_STATE_FN by guessing. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found via strategy N | inconclusive — halted)
+- If found: RACE_STATE_FN (rva/name/size); strategy
+- Race-state strings observed (verbatim list)
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT DDD — Text / font rendering =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session DDD; anchor-driven text rendering (used by both HUD and Frontend).
+
+[Same SONNET HALTS as CCC.]
+
+## Session identifier
+SESSION_SHORT_ID="font_text-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool9"
+
+## Subset definition (anchor-driven)
+1. search_defined_strings — try in order:
+     query=".fnt"
+     query=".font"
+     query="font"
+     query="Font"
+     query="DrawText"
+     query="DrawString"
+     query="PrintString"
+     query="GetTextExtent"
+     query="MeasureText"
+2. external_imports_list — capture any GDI font imports (gdi32.dll: CreateFont, DrawText, GetTextExtent), or RW Im2D paths used for glyph quads.
+3. Look in original/TOASTART/ for any FONT or fonts subdirectory; capture filenames as additional anchor strings.
+4. For each anchor, reference_to → candidate-callers.
+5. Identify TEXT_FN: a function that draws a string given (x, y, format-string, args). Heuristic: takes a format string parameter, calls Im2D triangle/quad rendering for each glyph, advances per-character.
+6. If multiple equal candidates, halt + surface.
+7. function_callees TEXT_FN → subset capped 20/15.
+
+If NO anchors hit: halt + surface "Text rendering anchors not found; may be inlined or via RW debug-string. Need user direction."
+
+Bucket: re/analysis/font_text/
+ID-range: U=1067..1086  D=3100..3159  S=1060..1079
+Subsystem: hud (text is rendered via HUD/Im2D path)
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- librw/src/ for RwIm2D primitives.
+- criterion-rwg37/core/src/baimmedi.c for definitive Im2D semantics.
+- No specific font-rendering reference for racing-era games — most rolled their own bitmap-font renderer.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool9", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=hud. U/S in U=1067..1086 / S=1060..1079. Cap check → DEFERRED in D=3100..3159, bucket font_text-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name font_text.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Picking TEXT_FN by guessing. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- TEXT_FN identified (rva/name/size); anchor hits found
+- Font asset paths observed: list
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued ($SESSION_SHORT_ID)
+
+================================================================================
+=== PROMPT EEE — Audio voice / channel manager =================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session EEE; anchor-driven DSound voice manager — halt-allowed on overlap with F or T.
+
+[Same SONNET HALTS as CCC.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_voice-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool10"
+
+## Subset definition (anchor-driven, halt-on-overlap)
+1. search_defined_strings — try:
+     query="VoiceMgr"
+     query="VoiceManager"
+     query="ChannelMgr"
+     query="ChannelManager"
+     query="PlaySound"
+     query="StopSound"
+     query="MaxVoices"
+     query="MaxChannels"
+2. external_imports_list — focus on IDirectSoundBuffer8::Play / IDirectSound::CreateSoundBuffer (vtable methods); DirectSoundCreate8 was already covered by session T.
+3. For each anchor, reference_to → candidate-callers.
+4. Identify VOICE_FN: a function that allocates/recycles DirectSound buffers from a pool (calls CreateSoundBuffer when below cap, recycles oldest when at cap). Heuristic: maintains an array of buffer pointers; iterates to find a free slot or evict.
+5. If VOICE_FN is also a callee of session T's DSOUND_INIT_FN OR session F's AUDIO_LOAD_FN: halt + surface "audio_voice overlaps with audio_dsound (T) and/or audio_rws_loader (F); functions <list> appear in shared call paths. Need user direction whether to merge buckets or proceed with deduplication."
+6. If no clear candidate: halt + surface "Voice manager anchor inconclusive; voicing may be inlined into per-sound playback. Need user direction."
+
+If found AND no overlap: function_callees VOICE_FN → subset capped 20/15.
+
+Bucket: re/analysis/audio_voice/
+ID-range: U=1087..1106  D=3160..3219  S=1080..1099
+Subsystem: audio
+
+External DSound imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+DSound voice management is documented at MSDN. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool10", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found and no overlap)
+Standard. hooks.csv subsystem=audio. U/S in U=1087..1106 / S=1080..1099. Cap check → DEFERRED in D=3160..3219, bucket audio_voice-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+
+If found and no overlap: standard commit + queue + push.
+If halted: no commit, no queue, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Decompiling functions overlapping with F or T. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / inconclusive — halted / overlap with F or T — halted)
+- If found: VOICE_FN (rva/name/size); strategy
+- If overlap: which session, which functions
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT FFF — RNG / random number generator =================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session FFF; anchor-driven PRNG / rand wrapper.
+
+[Same SONNET HALTS as CCC.]
+
+## Session identifier
+SESSION_SHORT_ID="random_rng-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool11"
+
+## Subset definition (anchor-driven, multi-strategy)
+Strategy 1 — CRT rand callers:
+  search for the CRT _rand and _srand RVAs (likely already named by Ghidra's FidDB). reference_to those addresses to find game-side wrappers.
+
+Strategy 2 — string anchors:
+  search_defined_strings query="rand"
+  search_defined_strings query="srand"
+  search_defined_strings query="Random"
+  search_defined_strings query="RandomFloat"
+  search_defined_strings query="RandomRange"
+  Filter by xref count.
+
+Strategy 3 — common PRNG patterns:
+  Look for functions with the LCG signature (multiplier 1103515245 = 0x41C64E6D, increment 12345 = 0x3039) or Mersenne Twister constants (0x9908B0DF). search_constants for these values.
+
+Identify RNG_FN: the most-called wrapper. Often games define RandomFloat (0..1) or RandomRange (a, b) wrappers around _rand. Take the one with the most xrefs — that's the canonical Mashed RNG entry point.
+
+If NONE converges: halt + surface "RNG anchor inconclusive; Mashed may use _rand directly without wrappers. Need user direction."
+
+If found: function_callees RNG_FN → subset capped 20/15. NOTE: RNG wrappers are typically tiny (1-3 callees: _rand + multiply/divide). Subset will likely be small (3-8 RVAs); that's expected, not a halt condition.
+
+Bucket: re/analysis/random_rng/
+ID-range: U=1107..1126  D=3220..3279  S=1100..1119
+Subsystem: util
+
+External _rand / _srand imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- LCG / Mersenne Twister algorithms are textbook; cite ONLY MCP. Reference algorithm shapes only to recognize "this is an LCG", never to assert specific seed/multiplier values without observing them in MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool11", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=1107..1126 / S=1100..1119. Cap check → DEFERRED in D=3220..3279, bucket random_rng-cont1.
+
+(Likely won't hit cap — RNG is small. Expected: 3-8 functions.)
+
+After loop: depth-2 DEFERRED rows in D range (probably none for RNG).
+
+## Shutdown + Queue
+Standard. Bucket name random_rng.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Asserting specific PRNG constants without MCP observation. Calling ghidra_pool.sh acquire.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- RNG_FN identified (rva/name/size); strategy
+- PRNG algorithm detected (LCG / MT / unknown): observation
+- Multiplier / increment / seed-init constants observed: list
+- Functions covered; tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued ($SESSION_SHORT_ID)
+
+================================================================================
+=== END OF BATCH 6 PROMPTS =====================================================
+================================================================================
+
+LAUNCH SEQUENCE GUIDANCE — DETAILED
+
+Wave 1 (6 in parallel, slots 0–5): UU, VV, WW, XX, YY, ZZ (depth-2 walks)
+Wave 2 (6 in parallel, slots 6–11): AAA, BBB, CCC, DDD, EEE, FFF (more d2 + new anchors)
+
+Or all 12 simultaneously — pre-assigned slots prevent any race.
+
+After all 12 push: relaunch sweep prompt I from PROMPTS_FANOUT.txt with a fresh SESSION_SHORT_ID.
+
+POOL SLOT BUDGET (post-MAX_SLOTS=16 raise)
+  - Total slots: 16. Batch uses pool0..pool11 (12 slots).
+  - pool12..pool15 reserved for cont-1 splits, ad-hoc, and possible parallel batch-7 launch.
+
+ALL ID RANGES (cumulative across batches 1–6)
+
+  Batch 1 (8 sessions):    U=0007..0166  D=0040..0399    S=0001..0159
+  Batch 2 (8 sessions):    U=0167..0326  D=0400..0879    S=0160..0319
+  Batch 3 (8 sessions):    U=0327..0486  D=0880..1359    S=0320..0479
+  Batch 4 (8 sessions):    U=0487..0646  D=1360..1839    S=0480..0639   pool0..pool7
+  Batch 5 (12 sessions):   U=0647..0886  D=1840..2559    S=0640..0879   pool0..pool11
+  Batch 6 (12 sessions):   U=0887..1126  D=2560..3279    S=0880..1119   pool0..pool11
+
+Detailed batch-6 table:
+
+  Session  Bucket                Slot           U range      D range      S range
+  -------  -------------------   -------------  -----------  -----------  -----------
+    UU     render_frame_d2       Mashed_pool0   0887..0906   2560..2619   0880..0899
+    VV     track_loader_d2       Mashed_pool1   0907..0926   2620..2679   0900..0919
+    WW     hud_ingame_d2         Mashed_pool2   0927..0946   2680..2739   0920..0939
+    XX     hud_frontend_d2       Mashed_pool3   0947..0966   2740..2799   0940..0959
+    YY     effects_particle_d2   Mashed_pool4   0967..0986   2800..2859   0960..0979
+    ZZ     audio_rws_loader_d2   Mashed_pool5   0987..1006   2860..2919   0980..0999
+    AAA    game_state_d2         Mashed_pool6   1007..1026   2920..2979   1000..1019
+    BBB    window_msgpump_d2     Mashed_pool7   1027..1046   2980..3039   1020..1039
+    CCC    race_state            Mashed_pool8   1047..1066   3040..3099   1040..1059
+    DDD    font_text             Mashed_pool9   1067..1086   3100..3159   1060..1079
+    EEE    audio_voice           Mashed_pool10  1087..1106   3160..3219   1080..1099
+    FFF    random_rng            Mashed_pool11  1107..1126   3220..3279   1100..1119
+
+  Next batch (when designed) starts at U=1127, D=3280, S=1120.
