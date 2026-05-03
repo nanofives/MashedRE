@@ -471,3 +471,16 @@ A row goes into DEFERRED when:
 | D-2643 | 0x0045de80 FUN_0045de80 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0904; track audio secondary setup; (audio_dir, param_1) | track_loader_d2-cont1 | render |
 | D-2644 | 0x0045e2a0 FUN_0045e2a0 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0905; track-0 audio variant init | track_loader_d2-cont1 | render |
 | D-2645 | 0x0045e160 FUN_0045e160 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0906; track-0x24 (index 36) audio variant init | track_loader_d2-cont1 | render |
+| D-3100 | 0x00552840 FUN_00552840 | depth-2 callee of FUN_00427ff0 (font_text session); called with param_7; role of param_7 unknown; may be shadow-text offset or flash-state | font_text-cont1 | hud |
+| D-3101 | 0x00552a60 FUN_00552a60 | depth-2 callee of FUN_00552b60 (font subsystem init seq); last call in init chain; role unknown | font_text-cont1 | hud |
+| D-3102 | 0x00552c10 FUN_00552c10 | depth-2 callee of FUN_00552b60; position 6 of 7 in init chain; role unknown | font_text-cont1 | hud |
+| D-3103 | 0x005540d0 FUN_005540d0 | depth-2 callee of FUN_00552b60; position 2 of 7 in init chain; role unknown | font_text-cont1 | hud |
+| D-3104 | 0x005571e0 FUN_005571e0 | depth-2 callee of FUN_00552b60; position 5 of 7 in init chain; role unknown | font_text-cont1 | hud |
+| D-3105 | 0x00557250 FUN_00557250 | depth-2 callee of FUN_00552b60; first call in init chain; role unknown | font_text-cont1 | hud |
+| D-3106 | 0x00556d20 FUN_00556d20 | depth-2 callee of FUN_00552b60; position 3 of 7; role unknown | font_text-cont1 | hud |
+| D-3107 | 0x0042a6b0 FUN_0042a6b0 | depth-2 callee of FUN_00427ca0; called with &local_1c (font descriptor struct from DAT_005cd600) + 0 + 0; returns font handle stored in uVar1; role: font create from descriptor | font_text-cont1 | hud |
+| D-3108 | 0x005507b0 FUN_005507b0 | depth-2 callee of LAB_00555910 (.met parser); called during character metrics parse loop with (ESI, 0x617378); role in metrics parsing unknown | font_text-cont1 | hud |
+| D-3109 | 0x004c5890 FUN_004c5890 | depth-2 callee of FUN_00555360; result stored at DAT_00912a1c and DAT_00912a20; 0 params; role unknown; acts as default font factory | font_text-cont1 | hud |
+| D-3110 | 0x00555af0 FUN_00555af0 | depth-2 callee of LAB_00555910; called when METRICS1 lookup returns null (null-extension branch); 4 params including xy_coords font_ctx string_buf | font_text-cont1 | hud |
+| D-3111 | 0x00555ff0 FUN_00555ff0 | depth-2 callee of LAB_00555910; called when METRICS3 lookup succeeds; same 4-param signature as FUN_00555af0 | font_text-cont1 | hud |
+| D-3112 | 0x00552b90 FUN_00552b90 | depth-2 callee of FUN_00427620 (HUD text shutdown); font subsystem teardown counterpart to FUN_00552b60 | font_text-cont1 | hud |
