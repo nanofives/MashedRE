@@ -401,3 +401,23 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1003 | 0x00424920 FUN_00424920 | 0x004331a0 FUN_004331a0 | util | passthrough | 2026-05-03 | called after FUN_004248b0 in race-end init; body 0x00424920..0x00424b7f (607 bytes); D-2923 |
 | S-1004 | 0x004464c0 FUN_004464c0 | 0x00448700 FUN_00448700 | util | passthrough | 2026-05-03 | array iterator via DAT_00898994 count; stride 0xd8; dispatches on type+4 values 0/1/2; called 100 times; D-2924 |
 | S-0920 | 0x00450b10 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-03 | FUN_00450b10; primitive rect draw; called from viewport-scaled rect draw with (texture_handle, x, y, w, h, 0xffffffff, uv_ptr); depth-3 of hud_ingame_d2; D-2680 |
+| S-0900 | 0x004cc5e0 FUN_004cc5e0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | locale audio descriptor query; (descriptor, 0x809, 0, 0); depth-2 callee of course audio loader; D-2642 |
+| S-0901 | 0x005a6710 FUN_005a6710 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | RWS audio channel assignment; depth-2; D-2642 |
+| S-0902 | 0x005a7aa0 FUN_005a7aa0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | RWS audio stream handle getter; (stream, desc+iVar6); depth-2; D-2642 |
+| S-0903 | 0x005a7af0 FUN_005a7af0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | RWS audio stream count getter; (stream); returns DAT_00690478; depth-2; D-2642 |
+| S-0904 | 0x0045de80 FUN_0045de80 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | track audio secondary setup; (audio_dir_path, param_1); depth-2; D-2643 |
+| S-0905 | 0x0045e2a0 FUN_0045e2a0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | track-0 audio variant init; no params; depth-2; D-2644 |
+| S-0906 | 0x0045e160 FUN_0045e160 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | track-0x24 audio variant init; no params; depth-2; D-2645 |
+| S-0907 | 0x0047ce40 FUN_0047ce40 | 0x004715a0 FUN_004715a0 | render | passthrough | 2026-05-03 | AI polygon index resolver; takes raw polygon index; depth-2 of AI graph rebuild; D-2636 |
+| S-0908 | 0x004b5030 FUN_004b5030 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | reads polygon by colour-key index from AI binary blob; (blob, &key, buf, 2); depth-2; D-2637 |
+| S-0909 | 0x004b46b0 FUN_004b46b0 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | vertex in-triangle test; (vertex, triangle_verts); returns 0=outside; depth-2 |
+| S-0910 | 0x004785e0 FUN_004785e0 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | AI polygon-start flag setter; (1); depth-2; D-2638 |
+| S-0911 | 0x004783f0 FUN_004783f0 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | AI polygon array finalizer; (param_1); depth-2; D-2639 |
+| S-0912 | 0x0042a640 FUN_0042a640 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | BSP/world file loader; (name, 0, 0); depth-2 of course loader; D-2620 |
+| S-0913 | 0x0042a5d0 FUN_0042a5d0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | DFF/clump file loader; (name, 0, 0); depth-2 of course loader; D-2621 |
+| S-0914 | 0x0042a740 FUN_0042a740 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | UVA animation file loader; (name, &ver, &len); depth-2; D-2622 |
+| S-0915 | 0x0042a7f0 FUN_0042a7f0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | spline file loader; (name, 0, 0); depth-2; D-2623 |
+| S-0916 | 0x0042a860 FUN_0042a860 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | animation path file loader; (name, 0, 0); depth-2; D-2624 |
+| S-0917 | 0x00474fd0 FUN_00474fd0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | sky dome frame builder; (clump); depth-2; D-2627 |
+| S-0918 | 0x00478200 FUN_00478200 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | course load error handler; (error_code); depth-2; D-2625 |
+| S-0919 | 0x0047bf70 FUN_0047bf70 | 0x0047c0f0 FUN_0047c0f0 | render | passthrough | 2026-05-03 | builds 0x56-dword collision sector record from RW world sector handle; depth-2; D-2640 |
