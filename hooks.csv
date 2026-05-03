@@ -496,3 +496,60 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00465a30,FUN_00465a30,audio,C0,deferred,,,,227-byte SFX dispatcher; likely variant of 00465940 4-slot resequenced; D-2996; bucket audio_sfx_dispatch-cont1
 00465b20,FUN_00465b20,audio,C0,deferred,,,,232-byte SFX dispatcher; likely variant of 00465940 4-slot resequenced; D-2997; bucket audio_sfx_dispatch-cont1
 004661f0,FUN_004661f0,audio,C0,deferred,,,,1976-byte multi-ch SFX dispatcher; full decompile needed; D-2998; bucket audio_sfx_dispatch-cont1
+004335f0,FUN_004335f0,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x004335f0.md,,,car-selection/race-position HUD; MP/SP branch on FUN_00430760; 7-color inline table; DAT_0067eafc struct; D-1240 cleared; session hud_frontend_d2-20260503-0559
+0043a610,FUN_0043a610,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x0043a610.md,,,race-result scoreboard; 4 backdrop quads X=65/196.75/324.625/450.875; nested player-item loop; D-1241 cleared; session hud_frontend_d2-20260503-0559
+0042f0c0,FUN_0042f0c0,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x0042f0c0.md,,,options 3-row list (Difficulty/Steering/Camera); switch DAT_0067ea8c->0x3a/154/5f/60; D-1242 cleared; session hud_frontend_d2-20260503-0559
+0043af10,FUN_0043af10,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x0043af10.md,,,game-setup lobby; 7-row option loop; layout mode 0x18 vs other; powerup shadow; D-1243 cleared; session hud_frontend_d2-20260503-0559
+00434720,FUN_00434720,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00434720.md,,,championship/cup progress screen; lap-time format FUN_00430b30/0042d290/0042d300; star particles; text scroll; D-1244 cleared; session hud_frontend_d2-20260503-0559
+00430b90,FUN_00430b90,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00430b90.md,,,per-player progress bar set A; rects X=374.0; fill from DAT_007f0f04/00/08; D-1245 cleared; session hud_frontend_d2-20260503-0559
+00431240,FUN_00431240,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00431240.md,,,Y/N single option selector; text-width layout DAT_00898ab4/ab8; FUN_0040ad20 bool; D-1246 cleared; session hud_frontend_d2-20260503-0559
+004314b0,FUN_004314b0,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x004314b0.md,,,multi-option Y/N selector (2 or 4 items); DAT_005f6f90 sentinel; DAT_007f0f30 bool array; D-1247 cleared; session hud_frontend_d2-20260503-0559
+00431710,FUN_00431710,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00431710.md,,,per-player progress bar set B (speed/boost); reads DAT_0067eaa8; structurally identical to FUN_00430b90; D-1248 cleared; session hud_frontend_d2-20260503-0559
+0043aa30,FUN_0043aa30,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x0043aa30.md,,,team/co-op pairing screen; headers 0x9f/0xa0; 3-col layout inline/iStack_48/iStack_44; D-1249 cleared; session hud_frontend_d2-20260503-0559
+0042fb70,FUN_0042fb70,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x0042fb70.md,,,mini 3-row settings (track/player-count/music); arrow selectors; D-1250 cleared; session hud_frontend_d2-20260503-0559
+0042fe90,FUN_0042fe90,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x0042fe90.md,,,per-vehicle-type Y/N feature list; 14 entries DAT_00898b1c stride-0xd; dimmed DAT_0067ed44; D-1251 cleared; session hud_frontend_d2-20260503-0559
+00430120,FUN_00430120,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00430120.md,,,time-trial mode info panel; items 0x245/244/277/278 or 0x247; writes DAT_007f0fe8=0; D-1252 cleared; session hud_frontend_d2-20260503-0559
+00439210,FUN_00439210,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00439210.md,,,network lobby/player-slot list renderer; 13 slots; DAT_0067f17c cursor; FUN_00436810/0042ebe0 checks; D-1253 cleared; session hud_frontend_d2-20260503-0559
+00430760,FUN_00430760,frontend,C0,deferred,,,,depth-3 callee: multiplayer-mode boolean check; callers FUN_004335f0 FUN_00439210; D-2740; bucket hud_frontend_d2
+0042fab0,FUN_0042fab0,frontend,C0,deferred,,,,depth-3 callee: sprite ptr by slot index; callers FUN_004335f0 FUN_0043a610 FUN_00434720 FUN_0043aa30; D-2741; bucket hud_frontend_d2
+0042bcb0,FUN_0042bcb0,frontend,C0,deferred,,,,depth-3 callee: vehicle icon draw; callers FUN_004335f0 FUN_0043a610 FUN_0043aa30; D-2742; bucket hud_frontend_d2
+004282a0,FUN_004282a0,frontend,C0,deferred,,,,depth-3 callee: text size/width measurement; multiple callers in hud_frontend_d2; D-2743; bucket hud_frontend_d2
+00427ad0,FUN_00427ad0,frontend,C0,deferred,,,,depth-3 callee: icon draw 7-param variant; caller FUN_004335f0; D-2744; bucket hud_frontend_d2
+0042f8d0,FUN_0042f8d0,frontend,C0,deferred,,,,depth-3 callee: background rect/quad draw; callers FUN_0043a610 FUN_00434720 FUN_0043aa30; D-2745; bucket hud_frontend_d2
+0042ac00,FUN_0042ac00,frontend,C0,deferred,,,,depth-3 callee: player count / slot index getter; multiple callers in hud_frontend_d2; D-2746; bucket hud_frontend_d2
+00473870,FUN_00473870,frontend,C0,deferred,,,,depth-3 callee: sprite draw 7-param; multiple callers in hud_frontend_d2; D-2747; bucket hud_frontend_d2
+004368e0,FUN_004368e0,frontend,C0,deferred,,,,depth-3 callee: player alpha/color setup; callers FUN_0043af10 FUN_00439210; D-2748; bucket hud_frontend_d2
+0042ac50,FUN_0042ac50,frontend,C0,deferred,,,,depth-3 callee: layout Y base getter; multiple callers in hud_frontend_d2; D-2749; bucket hud_frontend_d2
+0042a940,FUN_0042a940,frontend,C0,deferred,,,,depth-3 callee: powerup sprite index by selection; caller FUN_0043af10; D-2750; bucket hud_frontend_d2
+00430830,FUN_00430830,frontend,C0,deferred,,,,depth-3 callee: split-screen track check; caller FUN_0043af10; D-2751; bucket hud_frontend_d2
+00458630,FUN_00458630,frontend,C0,deferred,,,,depth-3 callee: powerup sprite lookup by type; caller FUN_0043af10; D-2752; bucket hud_frontend_d2
+0040bb70,FUN_0040bb70,frontend,C0,deferred,,,,depth-3 callee: sprite lookup by name variant A; caller FUN_0043af10; D-2753; bucket hud_frontend_d2
+0040bb90,FUN_0040bb90,frontend,C0,deferred,,,,depth-3 callee: sprite lookup by name variant B; caller FUN_0043af10; D-2754; bucket hud_frontend_d2
+0040b620,FUN_0040b620,frontend,C0,deferred,,,,depth-3 callee: player mode/sort variant; caller FUN_00434720; D-2755; bucket hud_frontend_d2
+0040b460,FUN_0040b460,frontend,C0,deferred,,,,depth-3 callee: player data fetch; caller FUN_00434720; D-2756; bucket hud_frontend_d2
+0040e3a0,FUN_0040e3a0,frontend,C0,deferred,,,,depth-3 callee: player name/string data; caller FUN_00434720; D-2757; bucket hud_frontend_d2
+00430b30,FUN_00430b30,frontend,C0,deferred,,,,depth-3 callee: lap time getter (3 out-params); caller FUN_00434720; D-2758; bucket hud_frontend_d2
+0042d290,FUN_0042d290,frontend,C0,deferred,,,,depth-3 callee: lap time formatter; caller FUN_00434720; D-2759; bucket hud_frontend_d2
+0042d300,FUN_0042d300,frontend,C0,deferred,,,,depth-3 callee: lap time comparator; caller FUN_00434720; D-2760; bucket hud_frontend_d2
+00429870,FUN_00429870,frontend,C0,deferred,,,,depth-3 callee: race data getter A; caller FUN_00434720; D-2761; bucket hud_frontend_d2
+00429a30,FUN_00429a30,frontend,C0,deferred,,,,depth-3 callee: race data getter B; caller FUN_00434720; D-2762; bucket hud_frontend_d2
+00429a80,FUN_00429a80,frontend,C0,deferred,,,,depth-3 callee: race data getter C; caller FUN_00434720; D-2763; bucket hud_frontend_d2
+00429a90,FUN_00429a90,frontend,C0,deferred,,,,depth-3 callee: race data getter D; caller FUN_00434720; D-2764; bucket hud_frontend_d2
+00429a70,FUN_00429a70,frontend,C0,deferred,,,,depth-3 callee: race data getter E; caller FUN_00434720; D-2765; bucket hud_frontend_d2
+004736c0,FUN_004736c0,frontend,C0,deferred,,,,depth-3 callee: line/border renderer; caller FUN_00434720; D-2766; bucket hud_frontend_d2
+00428320,FUN_00428320,frontend,C0,deferred,,,,depth-3 callee: text width measurement (item-based); caller FUN_00434720; D-2767; bucket hud_frontend_d2
+0040b7a0,FUN_0040b7a0,frontend,C0,deferred,,,,depth-3 callee: hotkey string getter; caller FUN_00434720; D-2768; bucket hud_frontend_d2
+0040b7b0,FUN_0040b7b0,frontend,C0,deferred,,,,depth-3 callee: per-player hotkey getter; caller FUN_00434720; D-2769; bucket hud_frontend_d2
+0040b6b0,FUN_0040b6b0,frontend,C0,deferred,,,,depth-3 callee: vehicle data getter A; caller FUN_00434720; D-2770; bucket hud_frontend_d2
+0040b6c0,FUN_0040b6c0,frontend,C0,deferred,,,,depth-3 callee: vehicle data getter B; caller FUN_00434720; D-2771; bucket hud_frontend_d2
+00474e60,FUN_00474e60,frontend,C0,deferred,,,,depth-3 callee: float-to-x87-angle converter; caller FUN_00434720; D-2772; bucket hud_frontend_d2
+0040ad20,FUN_0040ad20,frontend,C0,deferred,,,,depth-3 callee: option state bool; caller FUN_00431240; D-2773; bucket hud_frontend_d2
+00436810,FUN_00436810,frontend,C0,deferred,,,,depth-3 callee: local player slot occupancy check; caller FUN_00439210; D-2774; bucket hud_frontend_d2
+0042ebe0,FUN_0042ebe0,frontend,C0,deferred,,,,depth-3 callee: AI/remote slot occupancy check; caller FUN_00439210; D-2775; bucket hud_frontend_d2
+0042ee40,FUN_0042ee40,frontend,C0,deferred,,,,depth-3 callee: vehicle sprite getter (slot type); caller FUN_00439210; D-2776; bucket hud_frontend_d2
+004391b0,FUN_004391b0,frontend,C0,deferred,,,,depth-3 callee: powerup/overlay sprite draw; caller FUN_00439210; D-2777; bucket hud_frontend_d2
+0042ef40,FUN_0042ef40,frontend,C0,deferred,,,,depth-3 callee: vehicle lock-state check; caller FUN_00439210; D-2778; bucket hud_frontend_d2
+00430a10,FUN_00430a10,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 0; caller FUN_00439210; D-2779; bucket hud_frontend_d2
+00430a60,FUN_00430a60,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 1; caller FUN_00439210; D-2780; bucket hud_frontend_d2
+00430ab0,FUN_00430ab0,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 2; caller FUN_00439210; D-2781; bucket hud_frontend_d2
+0042ee00,FUN_0042ee00,frontend,C0,deferred,,,,depth-3 callee: vehicle icon by unlock state; caller FUN_00439210; D-2782; bucket hud_frontend_d2
