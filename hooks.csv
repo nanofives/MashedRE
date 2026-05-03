@@ -558,21 +558,21 @@
 00430ab0,FUN_00430ab0,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 2; caller FUN_00439210; D-2781; bucket hud_frontend_d2
 0042ee00,FUN_0042ee00,frontend,C0,deferred,,,,depth-3 callee: vehicle icon by unlock state; caller FUN_00439210; D-2782; bucket hud_frontend_d2
 004671c0,GetOverlayCamera,render,C1,new,re/analysis/render_frame/004671c0.md,,,returns DAT_006905b4 (overlay/minimap RwCamera* global); paired with sub_004671a0 (primary cam); called from FUN_00492e90 per-frame render
-00426670,FUN_00426670,render,C0,deferred,,,,depth-2 callee of FUN_00492e90 (RENDER_FRAME_FN); called with primary camera before BeginUpdate; world scene render or camera setup entry; D-0880; bucket render_frame
-0040de30,FUN_0040de30,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; called with overlay camera; minimap/overhead render; D-0881; bucket render_frame
-0040df20,FUN_0040df20,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; overlay camera end block; D-0882; bucket render_frame
-0040df60,FUN_0040df60,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; inside primary BeginUpdate block; render sub-pass; D-0883; bucket render_frame
-00404320,FUN_00404320,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; inside primary BeginUpdate block; render sub-pass; D-0884; bucket render_frame
-00410b30,FUN_00410b30,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; HUD per-frame render inside primary BeginUpdate block; D-0885; bucket render_frame
-00426030,FUN_00426030,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; world render setup (no camera arg); called before BeginUpdate; D-0886; bucket render_frame
-004266b0,FUN_004266b0,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; camera post-render cleanup; called with primary camera at render block end; D-0887; bucket render_frame
-00492440,FUN_00492440,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; per-frame object update loop; iterates 0x00868320..0x869ca0 (step 0x44); D-0888; bucket render_frame
-00492e60,FUN_00492e60,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; fade/race-end states 1+4; 0x2b bytes; D-0889; bucket render_frame
-00433f40,FUN_00433f40,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; called in race-end states 1+4; results/finish screen; D-0890; bucket render_frame
+00426670,sub_00426670,render,C1,unmapped,re/analysis/render_frame_d3/00426670.md,,,WorldRenderDispatch_Begin; gate DAT_0066d704→select DAT_0066d700→FUN_004e4320(world_A/B camera); D-0880 resolved; D-5020; U-1707 U-1708
+0040de30,sub_0040de30,render,C1,unmapped,re/analysis/render_frame_d3/0040de30.md,,,MinimapCameraOrthoSetup; saves frame matrix+viewwindow+projection; sets ortho 0.6×0.45; calls WorldRenderDispatch_Begin; D-0881 resolved; U-1709
+0040df20,sub_0040df20,render,C1,unmapped,re/analysis/render_frame_d3/0040df20.md,,,MinimapCameraRestore; calls WorldRenderDispatch_End then restores projection+viewwindow+frame matrix from 0063b9a8/ac/b0+0063b928; D-0882 resolved
+0040df60,sub_0040df60,render,C1,unmapped,re/analysis/render_frame_d3/0040df60.md,,,ConditionalRenderSubPass; 3-gate: DAT_0063ba8c∈(4,7) && FUN_0042f6a0()∈(2,6) && DAT_007f0fd0∈{4,7,8,9,10}→FUN_00401f10; D-0883 resolved; D-5024; U-1713
+00404320,sub_00404320,render,C1,unmapped,re/analysis/render_frame_d3/00404320.md,,,PerModeRenderMachine; modes 5/8/9/10; EndUpdate+SetViewWindow(0.8)+BeginUpdate; dispatches FUN_00403d30/db0/ed0/fa0/4041c0; D-0884 resolved; D-5025..D-5029; U-1711
+00410b30,sub_00410b30,render,C1,unmapped,re/analysis/render_frame_d3/00410b30.md,,,InGameRenderDispatcher; player-cam setup+4-player pass+ghost+world+effects+HUD; 25 deferred callees; D-0885 resolved; D-5036..D-5060
+00426030,sub_00426030,render,C1,unmapped,re/analysis/render_frame_d3/00426030.md,,,WorldRenderPrePass; FUN_0041e9b0(DAT_00644158)+predicate FUN_0041ea10→FUN_0041e8f0(&DAT_00646e58)+set DAT_005f616c; D-0886 resolved; D-5022 D-5023; U-1712
+004266b0,sub_004266b0,render,C1,unmapped,re/analysis/render_frame_d3/004266b0.md,,,WorldRenderDispatch_End; mirror of 00426670 calling FUN_004e4350(world_A/B camera); D-0887 resolved; D-5021
+00492440,sub_00492440,render,C1,mapped,re/analysis/render_frame_d3/00492440.md,,,RenderStatsAccumulate; leaf; 60-frame rolling avg for A/B values at +0x2c/0x30→+0x34/0x38; max at +0x3c/0x40; called per-object over 0x868320..0x869ca0; D-0888 resolved; U-1710
+00492e60,sub_00492e60,render,C1,unmapped,re/analysis/render_frame_d3/00492e60.md,,,SetDefaultViewWindow; FUN_004671a0(0xffffffff)+RwCameraSetViewWindow(0.8,0.8); called from RaceEndFadeOverlay; D-0889 resolved; U-1714
+00433f40,sub_00433f40,render,C1,unmapped,re/analysis/render_frame_d3/00433f40.md,,,RaceEndFadeOverlay; guards DAT_0067eab0+DAT_0067eab8≥40; RGBA fade from progress; rect panels + text; D-0890 resolved; D-5030..D-5034
 00403050,FUN_00403050,frontend,C1,mapped,re/analysis/loading_screen/0x00403050.md,,,pre-race loading screen renderer; state-1 sub-state-0x21; draws DAT_00771964 texture + FUN_00402fb0 pulsing spinner (sprite 0x2A4); resolves:D-0891
-0042d390,FUN_0042d390,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 race; result <3 check; game state sub-query; D-0892; bucket render_frame
-0042f530,FUN_0042f530,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 music/race query; D-0893; bucket render_frame
-0042a9f0,FUN_0042a9f0,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 6 query result >200; 5 bytes; D-0894; bucket render_frame
+0042d390,GetRaceStateField,render,C1,mapped,re/analysis/render_frame_d3/0042d390.md,,,trivial getter; returns DAT_0067ea6c; 5 bytes; D-0892 resolved; U-1715
+0042f530,sub_0042f530,render,C1,unmapped,re/analysis/render_frame_d3/0042f530.md,,,ViewportSetup; computes viewport rect from screen dims+DAT_0067ed68; stores to DAT_00899150..5c; copies camera rasters via FUN_004c7760; D-0893 resolved; D-5035; U-1714 U-1716
+0042a9f0,GetFadeAlpha,render,C1,mapped,re/analysis/render_frame_d3/0042a9f0.md,,,trivial getter; returns (byte)DAT_0067eca8 (fade alpha 0-191); written by RaceEndFadeOverlay; D-0894 resolved
 0042c280,FUN_0042c280,race_state,C1,new,,race_state-20260503,,"27b stub; calls FUN_0042bf30(0x27f 0xff210000 0 0 0 0); S-1066"
 0042c2d0,FUN_0042c2d0,race_state,C1,new,,race_state-20260503,,"6b getter; return DAT_0067ecb4"
 0042c2e0,FUN_0042c2e0,race_state,C1,new,,race_state-20260503,,"6b getter; return DAT_0067ecb8"
@@ -848,3 +848,17 @@
 004c2e40,FUN_004c2e40,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e40.md,,,GetCurrentSubSystem: FUN_004c2c90 cmd 0xf; returns 0xffffffff on fail
 004c2ea0,FUN_004c2ea0,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2ea0.md,,,GetNumVideoModes: FUN_004c2c90 cmd 5; returns 0xffffffff on fail
 004c2f30,FUN_004c2f30,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2f30.md,,,UseVideoMode: FUN_004c2c90 cmd 7; selects mode by index
+004492b0,SkyDomeRender,render,C1,stub,re/analysis/sky_weather/SESSION_MMMM.md,,,SKY_FN; 0x004492b0-0x0044942a; positions sky clumps at camera via FUN_004491e0; disables z-write/fog; RpClumpRender([ESI+0x100f0]); unanalyzed in Ghidra needs function_create; S-1760; U-1767
+004491e0,SkyDomeUpdatePos,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,4-slot loop over param_1+0x100f0 sky clumps; calls FUN_004c15c0 (frame reset) + FUN_004c1520 (scale 180.0=0x43340000) + FUN_004c1340 (set pos to camera)
+0047ab30,SetupFog_Handler,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,COURSE.LUA Setup_Fog handler; 5 params; writes fog RGB to DAT_006bf1cc+0x1e8/1e9/1ea; near/far floats to +0x1ec/1f0
+0047abd0,ModifyFog_Handler,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,COURSE.LUA Modify_Fog handler; 6 params; writes to DAT_006bf1cc+0x1f4..+0x200
+0047a1e0,SkyFilename_Handler,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,COURSE.LUA Sky_Filename handler; pcVar5=(DAT_006bf1d4+1)*0x40+DAT_006bf1c8; DAT_006bf1d4++; queues sky DFF filename
+004914b0,RainRender,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,guarded by DAT_00771534; sets blend states; calls FUN_00499d90(DAT_00771530 0x380) for 896-particle draw
+00491070,RainColorInit,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,initialises rain RGBA globals; writes default colour+alpha to DAT cluster; called by rain init path
+004270f0,CourseRenderFrame,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,689-byte per-frame dispatch: sky dome then RpWorldForAllAtomics (BSP) then rain particles; vtable +0x1c/+0x20 dispatch
+00478cf0,CourseAssetDestroy,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,tears down sky clumps and course objects; iterates +0x100f0 slots; clears atomics at +0x10210
+00474fd0,GetFirstAtomicFromClump,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,walks clump atomic list; returns first atomic pointer; used during sky DFF load
+004e6680,RpClumpRender,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,iterates clump+8 atomic list; checks flags; calls renderCallBack(atomic) via puVar2[2]; RenderWare clump render
+004e5680,RpWorldForAllAtomicsCallback,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,callback adapter for RpWorldForAllAtomics BSP traversal; dispatches sector atomics to render pipeline
+0047b980,RegisterScriptCommand,track,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,COURSE.LUA command registrar; PUSH fn/PUSH str/CALL pattern at 0x00440bc0; registers ~24 sky/fog/rain/AI commands
+004924e0,FogColorGetter,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,5-byte getter; returns &DAT_006147b4 (fog colour global)

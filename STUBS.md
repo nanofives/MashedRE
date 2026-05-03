@@ -82,7 +82,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0081 | 0x004c2c90 | 0x004c2f60 sub_004c2f60 + 0x004c3040 sub_004c3040 | render | passthrough | 2026-05-02 | FUN_004c2c90; called with (DAT_007d3ff8+0x10,0x12/3,0,0,0) and (DAT_007d3ff8+4,1,0,0,0); likely core RW engine state-transition function; depth-2 of RW_TEAR_FN |
 | S-0082 | 0x004d7ca0 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004d7ca0; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
 | S-0083 | 0x004ccf20 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004ccf20; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
-| S-0260 | 0x004a42c5 | 0x004987b0 FUN_004987b0 | input | passthrough | 2026-05-02 | FUN_004a42c5; varargs string formatter (3-arg: output_buf, format_ptr, va_list_ptr); depth-2 callee of FUN_004987b0; filed as D-0700 |
 | S-0100 | 0x004522d6 | 0x004522d0 FUN_004522d0 | audio | passthrough | 2026-05-02 | Indirect dispatch target through DAT_007d3ff8+0x10c; not statically traceable |
 | S-0220 | 0x004d7ff0 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d7ff0; called with (0x18, param_2) in default handler of FUN_004c2c90; depth-3; already D-0233, S-0101 |
 | S-0221 | 0x004d8480 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d8480; called with &uStack_8 in default handler of FUN_004c2c90; depth-3; already D-0234, S-0102 |
@@ -104,23 +103,13 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0302 | 0x004b7480 | 0x0047b880 FUN_0047b880 | input | passthrough | 2026-05-02 | FUN_004b7480; called FUN_004b7480(DAT_006bf1e0); takes Lua state pointer; lua_close equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
 | S-0303 | 0x0047b8a0 | 0x0047b8d0 FUN_0047b8d0 | input | passthrough | 2026-05-02 | FUN_0047b8a0; called FUN_0047b8a0(buf, byte_count, param_2); Lua script executor; lua_dostring/lua_dobuffer equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
 | S-0304 | 0x004b6520 | 0x0047b8d0 FUN_0047b8d0 | input | passthrough | 2026-05-02 | FUN_004b6520; called FUN_004b6520(buf, 0x8000); wraps FUN_004b64e0(buf,0,len); zero-fill; depth-2 of LUA_INIT_FN; filed D-0820 |
-| S-0200 | 0x004c2d90 | 0x00472380 FUN_00472380 | render | passthrough | 2026-05-02 | FUN_004c2d90; called FUN_004c2d90(0,4,FUN_004d7ff0,FUN_004d7ff0); result gating further execution; depth-3 of rw_engine_init_d2 |
-| S-0201 | 0x004e7d40 | 0x00472380 FUN_00472380 | render | passthrough | 2026-05-02 | FUN_004e7d40; called FUN_004e7d40(0x10,0x26990004,&LAB_00472330,FUN_004d7ff0,&LAB_00472360); return→DAT_0086ecd4; depth-3 of rw_engine_init_d2 |
 | S-0280 | 0x00550b00 FUN_00550b00 | 0x00404f80 sub_00404f80 | save | passthrough | 2026-05-02 | file-exists check; single filename arg; depth-2 of gamesave.bin exists-predicate; DEFERRED D-0760 |
 | S-0281 | 0x004cc230 FUN_004cc230 | 0x004b3b70 sub_004b3b70 + 0x004b3bb0 sub_004b3bb0 | save | passthrough | 2026-05-02 | file-open; args (2, mode, filename); mode=1 read / mode=2 write; depth-2 of both file wrappers; DEFERRED D-0761 |
 | S-0282 | 0x004cbd30 FUN_004cbd30 | 0x004b3b70 sub_004b3b70 | save | passthrough | 2026-05-02 | read operation; args (handle, buffer, size); depth-2 of file-read wrapper; DEFERRED D-0762 |
 | S-0283 | 0x004cc160 FUN_004cc160 | 0x004b3b70 sub_004b3b70 + 0x004b3bb0 sub_004b3bb0 | save | passthrough | 2026-05-02 | close; args (handle, 0) in read path; args (write_result, 0) in write path U-0288; depth-2; DEFERRED D-0763 |
 | S-0284 | 0x004cbe80 FUN_004cbe80 | 0x004b3bb0 sub_004b3bb0 | save | passthrough | 2026-05-02 | write operation; args (handle, buffer, size, ESI_caller); 4th arg uncertain U-0287; depth-2 of file-write wrapper; DEFERRED D-0764 |
 | S-0202 | 0x00498950 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498950; called for saved-subsystem check; return non-zero copies DAT_0077338c/DAT_00773390; depth-3 of rw_engine_init_d2 |
-| S-0203 | 0x004989b0 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004989b0; called after FUN_00498ea0 before LAB_00499590; no args; depth-3 of rw_engine_init_d2 |
-| S-0204 | 0x00498a00 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498a00; called with &64-byte-buf; fills buffer; used in mode-name logging inner loop; depth-3 of rw_engine_init_d2 |
-| S-0205 | 0x00498c00 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498c00; called first in FUN_00499400; no args; depth-3 of rw_engine_init_d2 |
-| S-0206 | 0x00498e40 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498e40; called when param_1==0 and FUN_00498950==0; return stored to DAT_00773200; depth-3 of rw_engine_init_d2 |
-| S-0207 | 0x00498ea0 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_00498ea0; called after dialog path before LAB_00499590; no args; depth-3 of rw_engine_init_d2 |
-| S-0208 | 0x004c2e70 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004c2e70; called FUN_004c2e70(DAT_0077340c); depth-3 of rw_engine_init_d2; not in rw_engine_init session D |
 | S-0209 | 0x004c2f30 | 0x00499400 FUN_00499400 | render | passthrough | 2026-05-02 | FUN_004c2f30; called FUN_004c2f30(DAT_00773200); depth-3 of rw_engine_init_d2; not in rw_engine_init session D |
-| S-0215 | 0x004cfa00 | 0x004c7a60 thunk_FUN_004cfa00 | render | passthrough | 2026-05-02 | FUN_004cfa00; thunk target; zeros 512B at DAT_00911b00 then initializes D3D/RW format-cap table 0x911b50..0x911cd5; depth-3 |
-| S-0216 | 0x004c7690 | 0x004c7a60 thunk_FUN_004cfa00 | render | passthrough | 2026-05-02 | FUN_004c7690; called by FUN_004cfa00 with (0x24,0x40c,&LAB_004cfdd0,&LAB_004cfdf0,0); depth-3 |
 | S-0160 | 0x004e4860 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004e4860; called with (DAT_636560, DAT_636570) and (DAT_636560, DAT_63656c); depth-3 |
 | S-0161 | 0x004c0c20 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004c0c20; called with *(DAT_636570+4) if non-zero; depth-3 |
 | S-0162 | 0x004c0740 | 0x004014b0 FUN_004014b0 | boot | passthrough | 2026-05-02 | FUN_004c0740; called with (global, 0); depth-3 |
@@ -337,12 +326,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0862 | 0x00550910 FUN_00550910 | 0x004cc160 FUN_004cc160 | frontend | passthrough | 2026-05-02 | File close; called as FUN_00550910(file_handle); depth-2 of stream-close |
 | S-0662 | 0x0049d1d0 | 0x0049d270 FUN_0049d270 | util | passthrough | 2026-05-02 | FUN_0049d1d0; no-arg callee at end of FUN_0049d270; purpose unknown |
 | S-0814 | 0x004c75e0 | 0x00493fd0 FUN_00493fd0 | frontend | passthrough | 2026-05-02 | FUN_004c75e0; 26 bytes; fills two short[2] (viewport offsets); depth-2; D-2321 |
-| S-0820 | 0x004a42c5 FUN_004a42c5 | 0x00496400 FUN_00496400 | save | passthrough | 2026-05-02 | sprintf/vsprintf variant; args: (char* buf, char* fmt, va_args); depth-2 from CONFIG debug-logger; DEFERRED D-2380 |
-| S-0821 | 0x00498c00 FUN_00498c00 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called at start of video-settings dispatcher; role unknown; depth-2; DEFERRED D-2381 |
-| S-0822 | 0x00498a00 FUN_00498a00 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | subsystem name getter; populates 69-byte struct with a name string; called per subsystem in loop; depth-2; DEFERRED D-2382 |
-| S-0823 | 0x00498e40 FUN_00498e40 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called on CONFIG_LOAD_FN failure; return stored into DAT_00773200 (mode); default-settings init candidate; depth-2; DEFERRED D-2383 |
-| S-0824 | 0x00498ea0 FUN_00498ea0 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called immediately before CONFIG_SAVE_FN; role unknown; depth-2; DEFERRED D-2384 |
-| S-0825 | 0x004c2e70 FUN_004c2e70 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with DAT_0077340c (subsystem index); applies subsystem selection; depth-2; DEFERRED D-2385 |
 | S-0826 | 0x004c2f30 FUN_004c2f30 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with DAT_00773200 (mode index); applies mode selection; depth-2; DEFERRED D-2386 |
 | S-0827 | 0x004c2ed0 FUN_004c2ed0 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with &local+DAT_00773200; writes result struct (bStack_50 flags display params); depth-2; DEFERRED D-2387 |
 | S-0815 | 0x00494320 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_00494320; 167 bytes; first cleanup step in video close sequence; depth-2; D-2322 |
@@ -530,3 +513,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1610 | 0x004417e0 FUN_004417e0 | 0x0045d7a0 FUN_0045d7a0 | util | passthrough | 2026-05-03 | fills float triple local_64/60/5c in FUN_0045d7a0 |
 | S-1611 | 0x00472820 FUN_00472820 | 0x0045d7a0 FUN_0045d7a0 | util | passthrough | 2026-05-03 | validates float triple; returns 0 to zero it out |
 | S-1612 | 0x004728a0 FUN_004728a0 | 0x0045d7a0 FUN_0045d7a0 | util | passthrough | 2026-05-03 | validates 16-uint block local_40; returns 0 to default-init it |
+| S-1760 | 0x004492b0 SkyDomeRender | - | render | needs-fn-create | 2026-05-03 | SKY_FN; 378-byte function at 0x004492b0-0x0044942a; Ghidra has no function record; needs function_create in writable session before C2 work |
+| S-1761 | 0x00499d90 FUN_00499d90 | 0x004914b0 RainRender | render | passthrough | 2026-05-03 | called as FUN_00499d90(DAT_00771530, 0x380) in RainRender; likely low-level particle vertex-buffer flush; not yet analyzed |
+| S-1762 | 0x00491340 FUN_00491340 | 0x00491490 FUN_00491490 | render | passthrough | 2026-05-03 | rain update variant; dispatched by FUN_00491490 based on DAT_007f108b; not analyzed |
+| S-1763 | 0x0047a034 FUN_0047a034 | 0x0047a020 FUN_0047a020 | track | passthrough | 2026-05-03 | COURSE.LUA executor; writes DAT_006bf1cc (course description base pointer); 47 sky/fog handlers depend on this pointer |
