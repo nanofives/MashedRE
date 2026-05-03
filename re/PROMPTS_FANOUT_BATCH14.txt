@@ -1,0 +1,328 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 14
+================================================================================
+
+Four prompts (GGGGG–JJJJJ). REUSES pool0..pool3 from batch 10.
+
+⚠ LAUNCH GUARD (mandatory) ⚠
+
+DO NOT launch any prompt in this batch while batch 10 is still live.
+Verify before launching each session:
+
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+If `Mashed_pool0.lock` (GGGGG), `Mashed_pool1.lock` (HHHHH),
+`Mashed_pool2.lock` (IIIII), or `Mashed_pool3.lock` (JJJJJ) exists,
+its sibling batch-10 session has not finished. Wait for the analysis
+commit + queue commit to be pushed and the slot lock to disappear.
+
+Slot-sibling map:
+  Batch 10 QQQQ  vehicle_damage_d2   → Batch 14 GGGGG  (pool0)
+  Batch 10 RRRR  profile_career_d2   → Batch 14 HHHHH  (pool1)
+  Batch 10 SSSS  ai_update_d3        → Batch 14 IIIII  (pool2)
+  Batch 10 TTTT  split_screen        → Batch 14 JJJJJ  (pool3)
+
+Prompts in this batch:
+  GGGGG  vehicle_damage_d3   Sonnet medium  — depth-3 of QQQQ (vehicle_damage_d2)
+  HHHHH  profile_career_d3   Sonnet medium  — depth-3 of RRRR (profile_career_d2)
+  IIIII  audio_music_d2      Sonnet medium  — depth-2 of session GG (audio_music, batch 6)
+  JJJJJ  leaderboard         Sonnet medium  — anchor: high-score / leaderboard table (halt-allowed)
+
+ID ranges + slot assignments (no overlap with batches 1–13 or within batch 14):
+
+  Session  Bucket               Slot           U range      D range      S range
+  -------  -------------------  -------------  -----------  -----------  -----------
+    GGGGG  vehicle_damage_d3    Mashed_pool0   2167..2186   6400..6459   2160..2179
+    HHHHH  profile_career_d3    Mashed_pool1   2187..2206   6460..6519   2180..2199
+    IIIII  audio_music_d2       Mashed_pool2   2207..2226   6520..6579   2200..2219
+    JJJJJ  leaderboard          Mashed_pool3   2227..2246   6580..6639   2220..2239
+
+DEPTH-N ACQUISITION RULE (GGGGG, HHHHH, IIIII)
+
+Each depth-N prompt picks up DEFERRED rows filed by the parent:
+
+  1. Read DEFERRED.md fresh.
+  2. Collect every RVA whose "Why deferred" cites the parent's bucket name
+     (or its -cont1 / -cont2 continuations).
+  3. Filter to RVAs not already drained (re/SCRIBE_QUEUE.md "Drained").
+  4. Take up to 18 in address order; remainder → DEFERRED in this session's
+     D range with re-pickup bucket <parent>_dN-cont1.
+  5. If eligible RVAs < 5: halt + surface "parent's deferred range too
+     small for an independent session." Do NOT pivot.
+
+================================================================================
+=== PROMPT GGGGG — vehicle_damage depth-3 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session GGGGG; depth-3 of vehicle_damage_d2 (batch 10 QQQQ).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md (especially § "Parallel-fanout scribe-queue pattern", § "Pool-slot pre-assignment", § "ID range allocation"). Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS (apply through the entire session)
+1. MCP-down = stop. Halt + surface verbatim. No fallback to prior_art / re-references / web / training.
+2. Verify-then-cite. function_at / listing_code_unit_at on every RVA in this session before citation. Null → halt.
+3. No hedging, no inference, no naming from names.
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_damage_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition
+Parent: vehicle_damage_d2 (batch 10 QQQQ). Apply common acquisition rule against bucket vehicle_damage_d2.
+
+Bucket: re/analysis/vehicle_damage_d3/
+ID-range: U=2167..2186  D=6400..6459  S=2160..2179
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 10 sibling QQQQ may still be live — wait for its release before launching this prompt." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/vehicle_damage_d3/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/<rva>.md,,,<short notes>.
+  f. U/S in U=2167..2186 / S=2160..2179.
+  g. CHANGELOG row.
+  h. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=6400..6459, bucket vehicle_damage_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/vehicle_damage_d3/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: vehicle_damage depth-3 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=vehicle_damage_d3  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: vehicle_damage_d3 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- Hedging, recursion past depth-3, exceeding cap, base-bucket reuse, IDs out of range, renaming.
+- Reading DEFERRED rows that don't cite vehicle_damage_d2.
+- Calling ghidra_pool.sh acquire instead of using the pre-assigned SLOT.
+- Launching while batch 10 QQQQ slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT HHHHH — profile_career depth-3 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session HHHHH; depth-3 of profile_career_d2 (batch 10 RRRR).
+
+[Same SONNET HALTS as GGGGG.]
+
+## Session identifier
+SESSION_SHORT_ID="profile_career_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parent: profile_career_d2. Apply common rule.
+
+Bucket: re/analysis/profile_career_d3/
+ID-range: U=2187..2206  D=6460..6519  S=2180..2199
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool1", lock check (lock = batch 10 RRRR still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2187..2206 / S=2180..2199. Cap check → DEFERRED in D=6460..6519, bucket profile_career_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name profile_career_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 10 RRRR slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT IIIII — audio_music depth-2 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session IIIII; depth-2 of session GG (audio_music, batch 6).
+
+[Same SONNET HALTS as GGGGG.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_music_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition
+Parent: session GG (audio_music, batch 6). Apply common acquisition rule against bucket audio_music.
+
+Bucket: re/analysis/audio_music_d2/
+ID-range: U=2207..2226  D=6520..6579  S=2200..2219
+Subsystem: audio
+
+External RW audio / DirectSound imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RWS for chunk shapes.
+- librw / criterion-rwg37 if RW audio paths show up.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool2", lock check (lock = batch 10 SSSS still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=2207..2226 / S=2200..2219. Cap check → DEFERRED in D=6520..6579, bucket audio_music_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name audio_music_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 10 SSSS slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT JJJJJ — Leaderboard / high-score table ==============================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session JJJJJ; anchor-driven leaderboard / high-score table. Halt-allowed if Mashed only stores per-track best laps in profile (no global leaderboard).
+
+[Same SONNET HALTS as GGGGG.]
+
+## Session identifier
+SESSION_SHORT_ID="leaderboard-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition (anchor-driven, halt-allowed)
+Strategy 1 — string anchors:
+  search_defined_strings query="Leaderboard"
+  search_defined_strings query="LEADERBOARD"
+  search_defined_strings query="HighScore"
+  search_defined_strings query="High Score"
+  search_defined_strings query="HIGH SCORE"
+  search_defined_strings query="BestLap"
+  search_defined_strings query="Best Lap"
+  search_defined_strings query="BestTime"
+  search_defined_strings query="Best Time"
+  search_defined_strings query="ranking"
+  search_defined_strings query="Ranking"
+
+Strategy 2 — file-path anchors:
+  search_defined_strings query="scores.bin"
+  search_defined_strings query="leaderboard.bin"
+  search_defined_strings query="highscore"
+
+Strategy 3 — call-graph from save_gamesave / profile_career:
+  IF save_gamesave bucket exists, leaderboard data may serialize alongside
+  the profile. Look at the gamesave reader for a leaderboard chunk.
+  IF profile_career bucket exists, the championship-completion path may
+  write a high-score row.
+
+Strategy 4 — race_results call-graph:
+  race_results' end-of-race callees include the lap-time submission. If
+  there's a leaderboard, RACE_RESULTS_FN feeds it.
+
+Identify LEADERBOARD_FN: a function that maintains a sorted list of player times.
+
+If NONE converges: halt + surface "Leaderboard anchor inconclusive — Mashed may only store per-track bests in the profile (no separate leaderboard). Halting cleanly. (Confirming absence saves the greenfield port from a leaderboard system.)"
+
+If found: function_callees LEADERBOARD_FN → subset capped 20/15.
+
+Bucket: re/analysis/leaderboard/
+ID-range: U=2227..2246  D=6580..6639  S=2220..2239
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool3", lock check (lock = batch 10 TTTT still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=util. U/S in U=2227..2246 / S=2220..2239. Cap check → DEFERRED in D=6580..6639, bucket leaderboard-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted: no commit, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 10 TTTT slot is still locked.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found via strategy N | halted)
+- If found: LEADERBOARD_FN (rva/name/size); strategy
+- Leaderboard-related strings observed (verbatim)
+- Functions covered (0 if halted)
+- Tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== END OF BATCH 14 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool0..pool3, but ONLY after batch 10 has fully
+released those slots. Independent of batches 15/16/17 (those reuse
+pool4..pool15, gated on batches 11/12/13 respectively).
+
+ID RANGE SUMMARY
+
+  Batch 14 (4 sessions):   U=2167..2246  D=6400..6639    S=2160..2239

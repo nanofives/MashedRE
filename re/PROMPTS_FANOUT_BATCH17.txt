@@ -1,0 +1,339 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 17
+================================================================================
+
+Four prompts (SSSSS–VVVVV). REUSES pool12..pool15 from batch 13.
+
+⚠ LAUNCH GUARD (mandatory) ⚠
+
+DO NOT launch any prompt in this batch while batch 13 is still live.
+Verify before launching:
+
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 13 CCCCC  hud_frontend_d3   → Batch 17 SSSSS  (pool12)
+  Batch 13 DDDDD  hud_ingame_d3     → Batch 17 TTTTT  (pool13)
+  Batch 13 EEEEE  font_text_d3      → Batch 17 UUUUU  (pool14)
+  Batch 13 FFFFF  launch_handshake  → Batch 17 VVVVV  (pool15)
+
+Prompts in this batch:
+  SSSSS  input_lua_d2          Sonnet medium  — depth-2 of session Q (input_lua, batch 2)
+  TTTTT  audio_sfx_dispatch_d2 Sonnet medium  — depth-2 of audio_sfx_dispatch
+  UUUUU  game_state_d3         Sonnet medium  — depth-3 of game_state_d2 (batch 6)
+  VVVVV  title_screen          Sonnet medium  — anchor: title screen / attract mode (halt-allowed)
+
+ID ranges + slot assignments (no overlap with batches 1–16 or within batch 17):
+
+  Session  Bucket                 Slot           U range      D range      S range
+  -------  ---------------------  -------------  -----------  -----------  -----------
+    SSSSS  input_lua_d2           Mashed_pool12  2407..2426   7120..7179   2400..2419
+    TTTTT  audio_sfx_dispatch_d2  Mashed_pool13  2427..2446   7180..7239   2420..2439
+    UUUUU  game_state_d3          Mashed_pool14  2447..2466   7240..7299   2440..2459
+    VVVVV  title_screen           Mashed_pool15  2467..2486   7300..7359   2460..2479
+
+DEPTH-N ACQUISITION RULE (SSSSS, TTTTT, UUUUU)
+
+Same as batches 14/15/16.
+
+================================================================================
+=== PROMPT SSSSS — input_lua depth-2 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session SSSSS; depth-2 of session Q (input_lua, batch 2).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="input_lua_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: session Q (input_lua, batch 2). Apply common rule against bucket input_lua.
+
+Bucket: re/analysis/input_lua_d2/
+ID-range: U=2407..2426  D=7120..7179  S=2400..2419
+Subsystem: input
+
+External Lua imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- Lua 5.x reference manual (lua.org/manual/5.1/) for lua_State / luaL_* /
+  lua_pushinteger / lua_tonumber semantics. ONLY for framing. Cite MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 13 sibling CCCCC may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/input_lua_d2/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,input,C1,mapped,re/analysis/input_lua_d2/<rva>.md,,,<short notes>.
+  f. U/S in U=2407..2426 / S=2400..2419.
+  g. CHANGELOG row.
+  h. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=7120..7179, bucket input_lua_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/input_lua_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: input_lua depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=input_lua_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: input_lua_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- Hedging, recursion past depth-2, exceeding cap, base-bucket reuse, IDs out of range, renaming.
+- Reading DEFERRED rows that don't cite input_lua.
+- Calling ghidra_pool.sh acquire. Launching while batch 13 CCCCC slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT TTTTT — audio_sfx_dispatch depth-2 ==================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session TTTTT; depth-2 of audio_sfx_dispatch (existing bucket).
+
+[Same SONNET HALTS as SSSSS.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_sfx_dispatch_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: audio_sfx_dispatch (existing bucket). Apply common rule against bucket audio_sfx_dispatch.
+
+If the parent bucket has fewer than 5 DEFERRED rows: halt + surface "audio_sfx_dispatch deferred range too small for an independent d2 session."
+
+Bucket: re/analysis/audio_sfx_dispatch_d2/
+ID-range: U=2427..2446  D=7180..7239  S=2420..2439
+Subsystem: audio
+
+External RW audio / DirectSound imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RWS for RWS chunk shapes if SFX use RWS containers.
+- DirectSound docs at MSDN. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 13 DDDDD still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=2427..2446 / S=2420..2439. Cap check → DEFERRED in D=7180..7239, bucket audio_sfx_dispatch_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name audio_sfx_dispatch_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 13 DDDDD slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT UUUUU — game_state depth-3 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session UUUUU; depth-3 of game_state_d2 (batch 6).
+
+[Same SONNET HALTS as SSSSS.]
+
+## Session identifier
+SESSION_SHORT_ID="game_state_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: game_state_d2 (batch 6). Apply common rule.
+
+Bucket: re/analysis/game_state_d3/
+ID-range: U=2447..2466  D=7240..7299  S=2440..2459
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 13 EEEEE still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2447..2466 / S=2440..2459. Cap check → DEFERRED in D=7240..7299, bucket game_state_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name game_state_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 13 EEEEE slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT VVVVV — Title screen / attract mode =================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session VVVVV; anchor-driven title screen + attract-mode demo. Halt-allowed if title screen is just an MCI video with no interactive overlay.
+
+[Same SONNET HALTS as SSSSS.]
+
+## Session identifier
+SESSION_SHORT_ID="title_screen-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition (anchor-driven, halt-allowed)
+Strategy 1 — string anchors:
+  search_defined_strings query="Press Start"
+  search_defined_strings query="PRESS START"
+  search_defined_strings query="press start"
+  search_defined_strings query="Press any key"
+  search_defined_strings query="PRESS ANY KEY"
+  search_defined_strings query="Title"
+  search_defined_strings query="TITLE"
+  search_defined_strings query="title.piz"
+  search_defined_strings query="TITLE\\"
+  search_defined_strings query="attract"
+  search_defined_strings query="Attract"
+  search_defined_strings query="ATTRACT"
+  search_defined_strings query="demo"
+  search_defined_strings query="Demo"
+
+Strategy 2 — game_state call-graph:
+  IF game_state bucket exists, TITLE / ATTRACT are early-state entries.
+  Read game_state's state-machine table.
+
+Strategy 3 — intro_splash chain:
+  intro_splash bucket exists. Title screen typically follows the splash
+  sequence. Look for the post-splash transition target.
+
+Strategy 4 — video_mci anchor:
+  IF the title is just an MCI video on loop, video_mci callers from the
+  early game-state path will reveal it.
+
+Identify TITLE_FN: a function that handles title-screen rendering /
+attract-mode loop / "press start" detection.
+
+If title is a pure MCI video loop with no overlay logic: halt + surface
+"Title screen is an MCI video loop (see video_mci); no separate title_screen
+function needed. Halting cleanly."
+
+If NONE converges: halt + surface "Title screen anchor inconclusive."
+
+If found: function_callees TITLE_FN → subset capped 20/15.
+
+Bucket: re/analysis/title_screen/
+ID-range: U=2467..2486  D=7300..7359  S=2460..2479
+Subsystem: frontend
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 13 FFFFF still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=frontend. U/S in U=2467..2486 / S=2460..2479. Cap check → DEFERRED in D=7300..7359, bucket title_screen-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted: no commit, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 13 FFFFF slot is still locked.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / mci-video-loop / inconclusive)
+- If found: TITLE_FN (rva/name/size); strategy
+- Title-related strings observed (verbatim)
+- Functions covered (0 if halted)
+- Tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== END OF BATCH 17 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool12..pool15, but ONLY after batch 13 fully
+released. Independent of batches 14/15/16.
+
+ID RANGE SUMMARY
+
+  Batch 17 (4 sessions):   U=2407..2486  D=7120..7359    S=2400..2479
+
+CUMULATIVE ID RANGES (batches 1–17)
+
+  Batch 1  (8 sessions):    U=0007..0166  D=0040..0399    S=0001..0159
+  Batch 2  (8 sessions):    U=0167..0326  D=0400..0879    S=0160..0319
+  Batch 3  (8 sessions):    U=0327..0486  D=0880..1359    S=0320..0479
+  Batch 4  (8 sessions):    U=0487..0646  D=1360..1839    S=0480..0639
+  Batch 5  (12 sessions):   U=0647..0886  D=1840..2559    S=0640..0879
+  Batch 6  (12 sessions):   U=0887..1126  D=2560..3279    S=0880..1119
+  Batch 7  (12 sessions):   U=1127..1366  D=3280..3999    S=1120..1359
+  Batch 8  (12 sessions):   U=1367..1606  D=4000..4719    S=1360..1599
+  Batch 9  (12 sessions):   U=1607..1846  D=4720..5439    S=1600..1839
+  Batch 10 (4 sessions):    U=1847..1926  D=5440..5679    S=1840..1919
+  Batch 11 (4 sessions):    U=1927..2006  D=5680..5919    S=1920..1999
+  Batch 12 (4 sessions):    U=2007..2086  D=5920..6159    S=2000..2079
+  Batch 13 (4 sessions):    U=2087..2166  D=6160..6399    S=2080..2159
+  Batch 14 (4 sessions):    U=2167..2246  D=6400..6639    S=2160..2239
+  Batch 15 (4 sessions):    U=2247..2326  D=6640..6879    S=2240..2319
+  Batch 16 (4 sessions):    U=2327..2406  D=6880..7119    S=2320..2399
+  Batch 17 (4 sessions):    U=2407..2486  D=7120..7359    S=2400..2479
+
+  Next batch (when designed) starts at U=2487, D=7360, S=2480.

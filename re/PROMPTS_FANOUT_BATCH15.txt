@@ -1,0 +1,308 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 15
+================================================================================
+
+Four prompts (KKKKK–NNNNN). REUSES pool4..pool7 from batch 11.
+
+⚠ LAUNCH GUARD (mandatory) ⚠
+
+DO NOT launch any prompt in this batch while batch 11 is still live.
+Verify before launching:
+
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 11 UUUU  powerups_d3           → Batch 15 KKKKK  (pool4)
+  Batch 11 VVVV  track_loader_d3       → Batch 15 LLLLL  (pool5)
+  Batch 11 WWWW  effects_particle_d3   → Batch 15 MMMMM  (pool6)
+  Batch 11 XXXX  pause_menu            → Batch 15 NNNNN  (pool7)
+
+Prompts in this batch:
+  KKKKK  random_rng_d2     Sonnet medium  — depth-2 of session II (random_rng, batch 6)
+  LLLLL  localization_d2   Sonnet medium  — depth-2 of session N (localization, batch 2)
+  MMMMM  input_dinput_d2   Sonnet medium  — depth-2 of session P (input_dinput, batch 2)
+  NNNNN  credits_screen    Sonnet medium  — anchor: credits scroll (halt-allowed)
+
+ID ranges + slot assignments (no overlap with batches 1–14 or within batch 15):
+
+  Session  Bucket            Slot           U range      D range      S range
+  -------  ----------------  -------------  -----------  -----------  -----------
+    KKKKK  random_rng_d2     Mashed_pool4   2247..2266   6640..6699   2240..2259
+    LLLLL  localization_d2   Mashed_pool5   2267..2286   6700..6759   2260..2279
+    MMMMM  input_dinput_d2   Mashed_pool6   2287..2306   6760..6819   2280..2299
+    NNNNN  credits_screen    Mashed_pool7   2307..2326   6820..6879   2300..2319
+
+DEPTH-2 ACQUISITION RULE (KKKKK, LLLLL, MMMMM)
+
+  1. Read DEFERRED.md fresh.
+  2. Collect RVAs whose "Why deferred" cites the parent's bucket name (or
+     -cont1/-cont2 continuations).
+  3. Filter to RVAs not in re/SCRIBE_QUEUE.md "Drained".
+  4. Take up to 18; remainder → DEFERRED in this session's D range with
+     bucket <parent>_d2-cont1.
+  5. If eligible < 5: halt + surface "parent's deferred range too small."
+
+================================================================================
+=== PROMPT KKKKK — random_rng depth-2 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session KKKKK; depth-2 of session II (random_rng, batch 6).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="random_rng_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition
+Parent: session II (random_rng, batch 6). Apply common rule.
+
+Bucket: re/analysis/random_rng_d2/
+ID-range: U=2247..2266  D=6640..6699  S=2240..2259
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- MSVCRT rand/srand; observe LCG / Mersenne / xorshift constants ONLY via MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 11 sibling UUUU may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset, in address order:
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/random_rng_d2/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,util,C1,mapped,re/analysis/random_rng_d2/<rva>.md,,,<short notes>.
+  f. U/S in U=2247..2266 / S=2240..2259.
+  g. CHANGELOG row.
+  h. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=6640..6699, bucket random_rng_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/random_rng_d2/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: random_rng depth-2 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=random_rng_d2  rvas=<list>
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: random_rng_d2 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- Hedging, recursion past depth-2, exceeding cap, base-bucket reuse, IDs out of range, renaming.
+- Reading DEFERRED rows that don't cite random_rng.
+- Calling ghidra_pool.sh acquire. Launching while batch 11 UUUU slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT LLLLL — localization depth-2 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session LLLLL; depth-2 of session N (localization, batch 2).
+
+[Same SONNET HALTS as KKKKK.]
+
+## Session identifier
+SESSION_SHORT_ID="localization_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition
+Parent: session N (localization, batch 2). Apply common rule.
+
+Bucket: re/analysis/localization_d2/
+ID-range: U=2267..2286  D=6700..6759  S=2260..2279
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- re/prior_art/MashedRunner/ for SciLor's documented language codes; ONLY as a checklist. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool5", lock check (lock = batch 11 VVVV still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2267..2286 / S=2260..2279. Cap check → DEFERRED in D=6700..6759, bucket localization_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name localization_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Citing MashedRunner as MCP. Calling ghidra_pool.sh acquire. Launching while batch 11 VVVV slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT MMMMM — input_dinput depth-2 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session MMMMM; depth-2 of session P (input_dinput, batch 2).
+
+[Same SONNET HALTS as KKKKK.]
+
+## Session identifier
+SESSION_SHORT_ID="input_dinput_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool6"
+
+## Subset definition
+Parent: session P (input_dinput, batch 2). Apply common rule.
+
+Bucket: re/analysis/input_dinput_d2/
+ID-range: U=2287..2306  D=6760..6819  S=2280..2299
+Subsystem: input
+
+External DirectInput imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- MSDN DirectInput8 docs for IDirectInputDevice8 / IDirectInput8 method semantics; ONLY for framing. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool6", lock check (lock = batch 11 WWWW still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=input. U/S in U=2287..2306 / S=2280..2299. Cap check → DEFERRED in D=6760..6819, bucket input_dinput_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name input_dinput_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 11 WWWW slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT NNNNN — Credits screen ==============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session NNNNN; anchor-driven credits scroll. Halt-allowed if credits are a static image (no scroll function).
+
+[Same SONNET HALTS as KKKKK.]
+
+## Session identifier
+SESSION_SHORT_ID="credits_screen-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool7"
+
+## Subset definition (anchor-driven, halt-allowed)
+Strategy 1 — string anchors:
+  search_defined_strings query="Credits"
+  search_defined_strings query="CREDITS"
+  search_defined_strings query="credits"
+  search_defined_strings query="Supersonic"
+  search_defined_strings query="Empire Interactive"
+  search_defined_strings query="Strategy First"
+  search_defined_strings query="Programmer"
+  search_defined_strings query="Designer"
+  search_defined_strings query="Producer"
+  search_defined_strings query="Special Thanks"
+  search_defined_strings query="Director"
+
+Strategy 2 — file-path anchors:
+  search_defined_strings query="credits.piz"
+  search_defined_strings query="CREDITS\\"
+  search_defined_strings query="credits.txt"
+
+Strategy 3 — frontend call-graph:
+  IF hud_frontend bucket exists, the credits state is one of its menu
+  items. Look for a state-specific renderer that scrolls text.
+
+Identify CREDITS_FN: a function that scrolls credits text on screen.
+
+If NONE converges OR all anchors absent: halt + surface "Credits anchor inconclusive — credits may be a static MCI video (see video_mci) or a static image. Halting cleanly."
+
+If found: function_callees CREDITS_FN → subset capped 20/15.
+
+Bucket: re/analysis/credits_screen/
+ID-range: U=2307..2326  D=6820..6879  S=2300..2319
+Subsystem: frontend
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool7", lock check (lock = batch 11 XXXX still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=frontend. U/S in U=2307..2326 / S=2300..2319. Cap check → DEFERRED in D=6820..6879, bucket credits_screen-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted: no commit, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 11 XXXX slot is still locked.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / halted)
+- If found: CREDITS_FN (rva/name/size); strategy
+- Credits-related strings observed (verbatim, top 20)
+- Functions covered (0 if halted)
+- Tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== END OF BATCH 15 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool4..pool7, but ONLY after batch 11 fully
+released those slots. Independent of batches 14/16/17.
+
+ID RANGE SUMMARY
+
+  Batch 15 (4 sessions):   U=2247..2326  D=6640..6879    S=2240..2319
