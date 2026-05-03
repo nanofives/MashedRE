@@ -569,3 +569,11 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0042d390,FUN_0042d390,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 race; result <3 check; game state sub-query; D-0892; bucket render_frame
 0042f530,FUN_0042f530,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 music/race query; D-0893; bucket render_frame
 0042a9f0,FUN_0042a9f0,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 6 query result >200; 5 bytes; D-0894; bucket render_frame
+0042c280,FUN_0042c280,race_state,C1,new,,race_state-20260503,,"27b stub; calls FUN_0042bf30(0x27f 0xff210000 0 0 0 0); S-1066"
+0042c2d0,FUN_0042c2d0,race_state,C1,new,,race_state-20260503,,"6b getter; return DAT_0067ecb4"
+0042c2e0,FUN_0042c2e0,race_state,C1,new,,race_state-20260503,,"6b getter; return DAT_0067ecb8"
+0042c2f0,FUN_0042c2f0,race_state,C1,new,,race_state-20260503,,"10b setter; DAT_0067ecb8=param_1"
+00432080,FUN_00432080,race_state,C1,new,,race_state-20260503,,"417b trigger scan; modes 1/2/0x1000/default-10; DAT_0067f19c=2+handle on fire; resolves U-1009; S-1067"
+004331a0,FUN_004331a0,race_state,C1,new,,race_state-20260503,,"152b race init; DAT_0067eca4=1; 4x210.0f at 0x0067ebb0..bc; zeros ~10 globals + 80b REP STOSD; resolves U-1010; tail FUN_00424920; S-1068"
+00448700,FUN_00448700,race_state,C1,new,,race_state-20260503,,"43b; 100-loop FUN_004464c0(0x00897fe0); then DAT_00897ffc=p1 DAT_00898000=p2; resolves U-1012; S-1069"
+004927c0,FUN_004927c0,race_state,C0,new,,race_state-20260503,,"unrecognized DataDB; U-1013 U-1014 open; Frida required; S-1070"

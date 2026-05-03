@@ -542,3 +542,8 @@ A row goes into DEFERRED when:
 | D-0892 | 0x0042d390 FUN_0042d390 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in state 3 (race); returns int checked <3; game state sub-query | render_frame-cont1 | render |
 | D-0893 | 0x0042f530 FUN_0042f530 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; state 3 race loop; int checked !=0; game state/music query | render_frame-cont1 | render |
 | D-0894 | 0x0042a9f0 FUN_0042a9f0 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; used in state 6 to check >200; 5-byte function; game state query | render_frame-cont1 | render |
+| D-3113 | 0x0042bf30 FUN_0042bf30 | race_state-20260503 | callee of FUN_0042c280; called with 6 hardcoded args (0x27f, 0xff210000, 0, 0, 0, 0); role unknown | race_state-cont1 | race_state |
+| D-3114 | 0x0040e470 FUN_0040e470 | race_state-20260503 | per-slot player check; called with slot-index 0..3 from FUN_00432080 PATH_2 and FUN_0042c220; returns 1 when slot is active | race_state-cont1 | race_state |
+| D-3115 | 0x00496900 FUN_00496900 | race_state-20260503 | called with player index int from FUN_00432080 PATH_2; returns 0 on success; deeper race-state query; role unknown | race_state-cont1 | race_state |
+| D-3116 | 0x0042d3a0 FUN_0042d3a0 | race_state-20260503 | shared pre-commit sub; called by both FUN_00432080 and FUN_004331a0 before trigger commit block; role unknown | race_state-cont1 | race_state |
+| D-3117 | 0x004348b0 FUN_004348b0 | race_state-20260503 | called in FUN_004331a0 before tail-call to FUN_00424920; pre-tail init role unknown | race_state-cont1 | race_state |

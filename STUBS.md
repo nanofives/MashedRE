@@ -427,3 +427,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1063 | 0x00555360 FUN_00555360 | 0x00555360 font_sys_init | hud | passthrough | 2026-05-03 | needs thunk_FUN_004cc820 (alloc) FUN_004c5890 (font create) |
 | S-1064 | 0x00427ff0 FUN_00427ff0 | 0x00427ff0 DrawText_shadow | hud | passthrough | 2026-05-03 | FUN_00552840(param_7) role unknown; D-3100 |
 | S-1065 | 0x00555910 LAB_00555910 | 0x00555910 font_file_loader | hud | passthrough | 2026-05-03 | needs .met file parser internals (FUN_005507b0 + METRICS section handlers) |
+| S-1066 | 0x0042c280 FUN_0042c280 | 0x0042c280 FUN_0042c280 | race_state | passthrough | 2026-05-03 | calls FUN_0042bf30(0x27f 0xff210000 0 0 0 0); role of FUN_0042bf30 unknown; D-3113 |
+| S-1067 | 0x00432080 FUN_00432080 | 0x00432080 trigger_scan | race_state | passthrough | 2026-05-03 | needs FUN_0040e470 (slot check D-3114) + FUN_0042d3a0 (pre-commit D-3116) + FUN_00496900 (D-3115) |
+| S-1068 | 0x004331a0 FUN_004331a0 | 0x004331a0 race_init | race_state | passthrough | 2026-05-03 | needs FUN_0042d3a0 (D-3116) + FUN_004348b0 (D-3117) + FUN_00424920 (S-1003 U-1011) |
+| S-1069 | 0x00448700 FUN_00448700 | 0x00448700 FUN_00448700 | race_state | passthrough | 2026-05-03 | depends on FUN_004464c0 (S-1004 still open); 100-loop semantics unclear until FUN_004464c0 mapped |
+| S-1070 | 0x004927c0 FUN_004927c0 | 0x004927c0 race_complete | race_state | passthrough | 2026-05-03 | unrecognized DataDB; U-1013 U-1014 need Frida before analysis can proceed |
