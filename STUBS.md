@@ -250,15 +250,13 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0456 | 0x0042b8b0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8b0; returns short; used as X-axis screen dimension/scale; depth-2 |
 | S-0457 | 0x0042b8c0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8c0; returns short; used as Y-axis screen dimension/scale; depth-2 |
 
-| S-0403 | 0x00414030 FUN_00414030 | called with 0xffffffff on AI line-bank switches in FUN_00417180; return via ECX/EDX |
-| S-0404 | 0x00472650 FUN_00472650 | called as FUN_00472650(0, 0x3f800000) in FUN_00417180; returns float10; likely random [0,1.0] |
-
-| S-0405 | 0x00452160 FUN_00452160 | called as FUN_00452160() in FUN_00417640; returns float array ptr (target vehicle position?) |
-| S-0406 | 0x00452ea0 FUN_00452ea0 | called as FUN_00452ea0(param_1) in FUN_00417640; per-vehicle powerup predicate |
-| S-0407 | 0x00452eb0 FUN_00452eb0 | called as FUN_00452eb0() in FUN_00417640; returns float10; threshold gate |
-| S-0408 | 0x0046d570 FUN_0046d570 | called as FUN_0046d570(&local_10,param_1) in FUN_00417640; float result |
-| S-0409 | 0x004c3ac0 FUN_004c3ac0 | called as FUN_004c3ac0(&local_c) in FUN_00417640; in-place op on 3-float displacement |
-| S-0410 | 0x00417cf0 FUN_00417cf0 | called as FUN_00417cf0(param_1,&local_24,&local_2c,param_2) in FUN_00417da0 mode-6/local_48==0 branch; replaces FUN_004148b0 in mode-8 variant |
+| S-1420 | 0x004a3384 FUN_004a3384 | FUN_00414570 FUN_0046d570 FUN_00415e20 | ai | passthrough | 2026-05-03 | math: likely acos(double); result scaled by _DAT_005cc970 for game-angle units; used in bearing calculations |
+| S-1421 | 0x004c3bf0 FUN_004c3bf0 | FUN_00415d00 FUN_00416060 | ai | passthrough | 2026-05-03 | 2D vector length: returns float10 magnitude of (x,0,z) or similar; used for ray-march termination |
+| S-1422 | 0x004c39b0 FUN_004c39b0 | FUN_00414570 FUN_00415880 FUN_0046d570 | ai | passthrough | 2026-05-03 | 3-vector normalize: writes unit vector in-place; used throughout AI targeting for direction checks |
+| S-1423 | 0x00426bb0 FUN_00426bb0 | FUN_00414570 FUN_00415880 | ai | passthrough | 2026-05-03 | returns int; result 5-iVar3 used as lap-progress threshold; likely total-laps or rank count |
+| S-1424 | 0x00534870 FUN_00534870 | FUN_00472650 | ai | passthrough | 2026-05-03 | PRNG state getter: takes rng context param; returns 32-bit integer used for random float generation |
+| S-1425 | 0x004671a0 FUN_004671a0 | FUN_00443440 | ai | passthrough | 2026-05-03 | debug draw segment: called when param_5!=0 in FUN_00443440; draws spline lookahead line; returns handle |
+| S-1426 | 0x004b55a0 FUN_004b55a0 | FUN_00443440 | ai | passthrough | 2026-05-03 | debug draw release: frees/submits draw object returned by FUN_004671a0; paired with FUN_004671a0 |
 | S-0340 | 0x005a9e10 FUN_005a9e10 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | two-call dispatcher; depth-1 callee of FUN_005b9f30; RESOLVED: analyzed in audio_dsound-20260502-1942 |
 | S-0341 | 0x005aee20 FUN_005aee20 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | bit-scan-forward loop; depth-1 callee of FUN_005b9f30; RESOLVED: analyzed in audio_dsound-20260502-1942 |
 | S-0342 | 0x005ba780 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | LAB_005ba780; fn-ptr at struct+0x34; unrecognized body; depth-1 callee |
@@ -472,3 +470,17 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1571 | 0x0041a960 FUN_0041a960 | 0x00411ce0 Ghost::SetupRender | vehicle | passthrough | 2026-05-03 | ghost renderer initialisation; called when DAT_0063bb10 or DAT_0063bb0c is non-null |
 | S-1572 | 0x00546e70 FUN_00546e70 | 0x00482c10 Replay::ReadFrame | vehicle | passthrough | 2026-05-03 | compute slerp interpolation between two adjacent frame node quaternions |
 | S-1573 | 0x00482ae0 FUN_00482ae0 | 0x00482c10 Replay::ReadFrame | vehicle | passthrough | 2026-05-03 | quaternion blend helper; called with interpolation factor t and two matrix outputs |
+| S-1480 | 0x005c4d30 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-03 | glyph-data block accessor; depth-2 font_text_d2 |
+| S-1480 | 0x00552d10 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-03 | render-matrix setup before Im2D quad emission |
+| S-1480 | 0x00552df0 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-03 | set draw position (called twice: xy and z) |
+| S-1480 | 0x00552da0 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-03 | set draw color/alpha param |
+| S-1480 | 0x00552e40 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-03 | begin-render / Im2D batch flush |
+| S-1481 | 0x005551d0 | 0x00555910 LAB_00555910 | hud | passthrough | 2026-05-03 | entry guard / current-name getter; U-1490; D-4362 |
+| S-1481 | 0x00550a20 | 0x00555910 LAB_00555910 | hud | passthrough | 2026-05-03 | VFS read-line (buf, size, filehandle) |
+| S-1481 | 0x00550580 | 0x005507b0 FUN_005507b0 | hud | passthrough | 2026-05-03 | VFS file-open implementation; D-4365 |
+| S-1482 | 0x00553f40 | 0x005540d0 FUN_005540d0 | hud | passthrough | 2026-05-03 | glyph-data upload/lock; recursive on node[5] |
+| S-1482 | 0x005c4c60 | 0x00553f40 FUN_00553f40 | hud | passthrough | 2026-05-03 | resize/alloc cnt×0x18 Im2D vertex buffer |
+| S-1482 | 0x0055deb0 | 0x00553f40 FUN_00553f40 | hud | passthrough | 2026-05-03 | get vertex count from glyph-data block |
+| S-1483 | 0x004c4a50 | 0x004c4d20 FUN_004c4d20 | hud | passthrough | 2026-05-03 | angle-axis matrix builder; D-4364 |
+| S-1485 | 0x00556e90 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-03 | set font-style RGBA color |
+| S-1485 | 0x00557110 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-03 | set font-style secondary param to zero |

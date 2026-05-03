@@ -355,3 +355,35 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  sweep-20260503-0725  scribe-claim  bucket=timer_d2  rvas=13  (sweep)
 2026-05-03  sweep-20260503-0725  scribe-release  bucket=timer_d2  writes=13  errors=0  (sweep)
 2026-05-03  sweep-20260503-0725  scribe-release-sweep  buckets=2  total_writes=24  bookmarks=27  errors=0  skipped_plates=3  (queue empty)
+2026-05-03  0049ec10  FUN_0049ec10  C0->C1  re/analysis/video_mci_d2/0x0049ec10.md  __thiscall ctor; vtable[0]+7 slots; calls FUN_0049dd60+FUN_0049cfb0; min obj 0x128b  resolves:S-0375 D-1000  new:S-1380 U-1387  session:video_mci_d2-20260503
+2026-05-03  004a3b84  FUN_004a3b84  C0->C1  re/analysis/video_mci_d2/0x004a3b84.md  vsnprintf-impl via fake FILE (_flag=0x42); FUN_004a504f core  resolves:S-0376 D-1001  session:video_mci_d2-20260503
+2026-05-03  00493ac0  LAB_00493ac0  C0->C1  re/analysis/video_mci_d2/0x00493ac0.md  pre-NT5 code-page: GetThreadLocale+GetLocaleInfoA(0x1004)+atoi; fallback GetACP  resolves:S-0373 D-1002  session:video_mci_d2-20260503
+2026-05-03  00493b40  LAB_00493b40  C0->C1  re/analysis/video_mci_d2/0x00493ac0.md  NT5+ code-page: MOV EAX,3 (CP_THREAD_ACP); RET  resolves:S-0374  session:video_mci_d2-20260503
+2026-05-03  00408af0  FUN_00408af0  C0->C1  re/analysis/ai_update_d2/0x00408af0.md  heading/vel float3 getter (+0x9c stride-0x30c)  resolves:D-1120  session:ai_update_d2-20260503-1322
+2026-05-03  00414030  FUN_00414030  C0->C1  re/analysis/ai_update_d2/0x00414030.md  AI spline-bank timer reset  resolves:D-1140 S-0403  session:ai_update_d2-20260503-1322
+2026-05-03  00414570  FUN_00414570  C0->C1  re/analysis/ai_update_d2/0x00414570.md  ahead-in-race targeting (progress diff+angle)  resolves:D-1121  new:D-4180..4199 U-1427..1436  session:ai_update_d2-20260503-1322
+2026-05-03  004148b0  FUN_004148b0  C0->C1  re/analysis/ai_update_d2/0x004148b0.md  leader-ranking AI timer  resolves:D-1122  session:ai_update_d2-20260503-1322
+2026-05-03  00414a70  FUN_00414a70  C0->C1  re/analysis/ai_update_d2/0x00414a70.md  closest-vehicle targeting (returns 1/2)  resolves:D-1123  session:ai_update_d2-20260503-1322
+2026-05-03  00414c30  FUN_00414c30  C0->C1  re/analysis/ai_update_d2/0x00414c30.md  obstacle-avoidance targeting  resolves:D-1124  session:ai_update_d2-20260503-1322
+2026-05-03  00414f00  FUN_00414f00  C0->C1  re/analysis/ai_update_d2/0x00414f00.md  powerup-seek targeting  resolves:D-1125  session:ai_update_d2-20260503-1322
+2026-05-03  00415020  FUN_00415020  C0->C1  re/analysis/ai_update_d2/0x00415020.md  frustration timer (72000-frame mode-5 gate)  resolves:D-1126  session:ai_update_d2-20260503-1322
+2026-05-03  004150e0  FUN_004150e0  C0->C1  re/analysis/ai_update_d2/0x004150e0.md  track lateral-zone query (tile grid)  resolves:D-1127  new:U-1427  session:ai_update_d2-20260503-1322
+2026-05-03  00415220  FUN_00415220  C0->C1  re/analysis/ai_update_d2/0x00415220.md  AI powerup-activation (13-case switch)  resolves:D-1128  new:U-1429 U-1430  session:ai_update_d2-20260503-1322
+2026-05-03  00415880  FUN_00415880  C0->C1  re/analysis/ai_update_d2/0x00415880.md  ram-from-behind targeting (latch)  resolves:D-1129  session:ai_update_d2-20260503-1322
+2026-05-03  00415d00  FUN_00415d00  C0->C1  re/analysis/ai_update_d2/0x00415d00.md  wall-ahead trajectory check  resolves:D-1130  session:ai_update_d2-20260503-1322
+2026-05-03  00415e20  FUN_00415e20  C0->C1  re/analysis/ai_update_d2/0x00415e20.md  steering angle calculator (ST0 return)  resolves:D-1131  new:U-1428  session:ai_update_d2-20260503-1322
+2026-05-03  00416060  FUN_00416060  C0->C1  re/analysis/ai_update_d2/0x00416060.md  line-of-sight check (ray-march)  resolves:D-1132  session:ai_update_d2-20260503-1322
+2026-05-03  004161e0  FUN_004161e0  C0->C1  re/analysis/ai_update_d2/0x004161e0.md  spline target-point init  resolves:D-1133  session:ai_update_d2-20260503-1322
+2026-05-03  00417cf0  FUN_00417cf0  C0->C1  re/analysis/ai_update_d2/0x00417cf0.md  angle-gated targeting mode-8 variant  resolves:D-1147 S-0410  session:ai_update_d2-20260503-1322
+2026-05-03  00443080  FUN_00443080  C0->C1  re/analysis/ai_update_d2/0x00443080.md  mode-6 gate flag getter (DAT_00897ffc)  resolves:D-1134  new:U-1432  session:ai_update_d2-20260503-1322
+2026-05-03  00443440  FUN_00443440  C0->C1  re/analysis/ai_update_d2/0x00443440.md  spline progress+curvature calculator  resolves:D-1135  session:ai_update_d2-20260503-1322
+2026-05-03  0046d4a0  FUN_0046d4a0  C0->C1  re/analysis/ai_update_d2/0x0046d4a0.md  vehicle struct pointer (base 0x881ec8 stride 0x341)  resolves:D-1136  new:U-1431  session:ai_update_d2-20260503-1322
+2026-05-03  0046d510  FUN_0046d510  C0->C1  re/analysis/ai_update_d2/0x0046d510.md  vehicle velocity getter (matrix-transformed)  resolves:D-1137  session:ai_update_d2-20260503-1322
+2026-05-03  0046d570  FUN_0046d570  C0->C1  re/analysis/ai_update_d2/0x0046d570.md  vehicle forward-angle projection  resolves:D-1145 S-0408  session:ai_update_d2-20260503-1322
+2026-05-03  0046d6a0  FUN_0046d6a0  C0->C1  re/analysis/ai_update_d2/0x0046d6a0.md  physics scalar getter (base 0x8820ac stride 0xd04)  resolves:D-1138  new:U-1434  session:ai_update_d2-20260503-1322
+2026-05-03  0046d6d0  FUN_0046d6d0  C0->C1  re/analysis/ai_update_d2/0x0046d6d0.md  vehicle spline-progress rate (+0xbc stride 0x341)  resolves:D-1139  session:ai_update_d2-20260503-1322
+2026-05-03  00452160  FUN_00452160  C0->C1  re/analysis/ai_update_d2/0x00452160.md  powerup target position getter  resolves:D-1142 S-0405  session:ai_update_d2-20260503-1322
+2026-05-03  00452ea0  FUN_00452ea0  C0->C1  re/analysis/ai_update_d2/0x00452ea0.md  per-vehicle powerup-active flag  resolves:D-1143 S-0406  session:ai_update_d2-20260503-1322
+2026-05-03  00452eb0  FUN_00452eb0  C0->C1  re/analysis/ai_update_d2/0x00452eb0.md  powerup pursuit range getter  resolves:D-1144 S-0407  session:ai_update_d2-20260503-1322
+2026-05-03  00472650  FUN_00472650  C0->C1  re/analysis/ai_update_d2/0x00472650.md  random float [min,max) via PRNG FUN_00534870  resolves:D-1141 S-0404  session:ai_update_d2-20260503-1322
+2026-05-03  004c3ac0  FUN_004c3ac0  C0->C1  re/analysis/ai_update_d2/0x004c3ac0.md  fast 3-vector magnitude (two-level sqrt table)  resolves:D-1146 S-0409  session:ai_update_d2-20260503-1322
