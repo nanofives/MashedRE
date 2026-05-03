@@ -780,3 +780,52 @@
 004cff00,FUN_004cff00,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"per-material reflectivity flag reader; returns *(byte*)(DAT_00911ae4+9+param_1)&0xf; non-zero = use reflection vector path in LIGHT_FN; U-1632"
 004c0ed0,FUN_004c0ed0,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"camera matrix accessor; returns RwCamera+0x50 (LTM start); lazy-updates dirty camera via FUN_004d8350 if flag at *(cam+0xa0)+3 bit0; U-1633"
 004cb330,FUN_004cb330,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"texture transform matrix cache; change-checks 0x40b-byte block at DAT_007d4158[state]; calls SetTransform(device,state,matrix) (vtable 0xb0); special case state=0x100 sets DAT_007d4154; U-1634"
+005ade60,FUN_005ade60,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ade60.md,,,circular-list index-search: fwd-scan param_1+4 compare node+8==param_2; returns 0-based idx or -1; S-0980; D-2860
+005aeca0,FUN_005aeca0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aeca0.md,,,endian-swap field packer: 1/2/4-byte dispatch bswap16/bswap32 into *param_1 advances ptr; S-0981; D-2861
+005ae080,FUN_005ae080,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae080.md,,,sub-struct A pool-return: if *param_1!=NULL and bit0(param_1[2]) → FUN_005ae920(DAT_007dda28); clears bit0; S-0982; D-2862
+005ae050,FUN_005ae050,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae050.md,,,sub-struct B heap-free: if *(param_1+4)!=NULL and bit1(*(param_1+8)) → FUN_004522d0; clears bit1; S-0983; D-2863
+005aa060,FUN_005aa060,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aa060.md,,,saves 16B from *param_2; FUN_005aa0c0(param_1 &param_2 LAB_005aa1e0 &local_10 1); stores result in *param_3; S-0984; D-2864; U-1727
+005aa0c0,FUN_005aa0c0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aa0c0.md,,,recursive tree-walk predicate search: NULL→DAT_009146fc root; param_5=1 tests root; param_1[4] child list node=childptr-6; returns first (*param_3)(root node param_4)==1; S-0985; D-2865
+005aaac0,FUN_005aaac0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aaac0.md,,,circular-list walker stop-on-zero: iterates DAT_007dccf0; calls (*param_1)(node-1 param_2); stops on 0; S-0986; D-2866
+005aba20,FUN_005aba20,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aba20.md,,,wave_node alloc+init: resolves output fmt FUN_005acd10/FUN_005ac980; allocs FUN_005ae800 or external; zero-inits FUN_005ae0b0; copies 28B src+out fmt+ext; vtable fn check; S-0987; D-2867; U-1728 U-1729
+005ac7b0,FUN_005ac7b0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ac7b0.md,,,dual sub-struct init: FUN_005ae010(param_1 param_2) then FUN_005adfe0(param_1 param_3); returns param_1 if both ok else 0; S-0988; D-2868
+005ac900,FUN_005ac900,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ac900.md,,,dispatcher stub: FUN_005aa0c0(0 0 LAB_005ac930 &local_8 1); returns local_4 written by inline callback; S-0989; D-2869; U-1730
+005ac980,FUN_005ac980,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ac980.md,,,format-desc copy w/ optional zero-init: param_3≠0 clears 9 fields; copies subset fields param_1→param_2 w/ bit0/bit2 flag propagation; S-0990; D-2870
+005aca80,FUN_005aca80,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aca80.md,,,chunk size calculator: base 0x1c→0x2c if +4 non-null; adds *(+0x14) if +0x10 non-null; S-0991; D-2871
+005acaa0,FUN_005acaa0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005acaa0.md,,,bidirectional fmt-desc pack/unpack: param_3=0 reads param_2→param_1; ≠0 writes param_1→param_2; param_4≠0 bswap per field; calls FUN_005acd60 on deserialise; S-0992; D-2872; U-1731
+005acd10,FUN_005acd10,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005acd10.md,,,fmt-array linear search: iterates param_1+0x28 array (count@+0x24); FUN_005ac9e0 per entry; returns 1 on match; S-0993; D-2873
+005ac5f0,FUN_005ac5f0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ac5f0.md,,,fmt-desc equality: FUN_005adf30(param_1[1] param_2[1]); checks fields[0] +0x0c +0x0d flags&0xfd; returns 1 if equal; S-0994; D-2874
+005b3b30,FUN_005b3b30,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3b30.md,,,thin wrapper: FUN_005b3a00(p1 p2 p4 p3 &p3); return p3; S-0995; D-2875
+005b3b60,FUN_005b3b60,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3b60.md,,,thin wrapper: FUN_005b3a00(p1 p2 p3 0 0); void; S-0996; D-2876
+005b3b80,FUN_005b3b80,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3b80.md,,,PCM fmt-conversion pipeline: fast-path direct copy if fmts equal; FUN_005b3760 chain; vtable converters temp-buf mgmt; returns output size; S-0997; D-2877; U-1732 U-1733
+005acd60,FUN_005acd60,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005acd60.md,,,9-entry fmt table scanner at PTR_DAT_00633674; FUN_005adf30 compare; returns match or NULL; U-1734
+005ac9e0,FUN_005ac9e0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ac9e0.md,,,fmt-entry match: channel byte +0xc byte range-check FUN_005adf30 fmt-key flag bit0; returns 0/1; leaf
+005ae0b0,FUN_005ae0b0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae0b0.md,,,3-field zero-init: param_1[2]=param_1[1]=*param_1=0; leaf; 14 bytes
+005a7b00,FUN_005a7b00,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005a7b00.md,,,audio context insert: FUN_005a7a40 already-present check; if not FUN_005addd0(param_1+0xc param_2); returns param_1 on success
+005aea50,FUN_005aea50,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aea50.md,,,vtable alloc trampoline DAT_007d3ff8+0x114; jumptable not recoverable; U-1735
+005b3a00,FUN_005b3a00,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3a00.md,,,streaming size calculator: FUN_005ac5f0 fast-path; else FUN_005b36f0+FUN_005b3760 chain; iterates vtable converters; returns output size; optionally stores context in *param_5
+005ae650,FUN_005ae650,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae650.md,,,pool constructor: 6-param(elem_size count align pre_alloc hdr flags); allocs hdr from DAT_007ddab0 or FUN_005aea00; N bitmap blocks; DAT_007dda80 list; U-1736
+005ae800,FUN_005ae800,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae800.md,,,bitmap pool alloc: scans blocks for free bit; if none FUN_005aea00 new block; marks bit; returns aligned addr
+005b36f0,FUN_005b36f0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b36f0.md,,,fmt-table lookup 51 entries PTR_PTR_00634550: param_2=1→source entry 0→output entry; FUN_005ac9e0 match; returns ptr or 0
+005b3760,FUN_005b3760,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3760.md,,,conversion-chain builder LRU cache: 51 converters PTR_PTR_00634550; 5-entry cache DAT_007ddb30; recursive BFS; DAT_007ddcac idx; U-1737 U-1738
+005addd0,FUN_005addd0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005addd0.md,,,DLL insert: FUN_005ae800(DAT_009146c0 0x30804); node[2]=param_2; inserts at head of *param_1; counterpart to FUN_005ade10
+005ae780,FUN_005ae780,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae780.md,,,pool destructor: drains block list param_1+0x10 via FUN_004522d0; heap-frees pool hdr or DAT_007ddab0 pool via FUN_005ae920
+005aa1e0,FUN_005aa1e0,audio,C0,stub,re/analysis/audio_rws_loader_d3/005aa1e0.md,,,inline callback passed from FUN_005aa060; no Ghidra function body; S-1720; D-5080
+0040ab40,FUN_0040ab40,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ab40.md,,,state-machine dispatcher on DAT_008a9584; 4 inner switch vars; calls FUN_00409970/409930/42c1a0/45b350; S-1600 S-1601 S-1602; U-1607
+0040ac80,FUN_0040ac80,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ac80.md,,,second dispatcher on same 6-var state cluster (0x008a9584..9598); non-contiguous body; calls FUN_0042c1a0; U-1608
+0040b810,FUN_0040b810,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040b810.md,,,zeroes 21 globals across 0x008a94f0/9530/9540 blocks + 0x0063b8ec; overlapping syms; U-1609 U-1610
+0040de10,FUN_0040de10,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040de10.md,,,calls FUN_0040ddb0+Replay::StartLap; writes 1→DAT_0063ba8c; calls FUN_00405420; S-1603
+0040e360,FUN_0040e360,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040e360.md,,,1-param setter: DAT_0063ba8c = param_1
+0040e370,FUN_0040e370,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040e370.md,,,bool getter: param_1 in 0..3; returns *(*(PTR_PTR_005f2770)+param_1*4+0x34)!=0; U-1611
+00422b30,FUN_00422b30,util,C1,mapped,re/analysis/timer_d2_cont1/0x00422b30.md,,,memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612
+00429aa0,FUN_00429aa0,util,C1,mapped,re/analysis/timer_d2_cont1/0x00429aa0.md,,,reads FUN_00430820 predicate; two paths fill 0x0067d990/998/9a0 from different tables; S-1604 S-1605; U-1613 U-1614
+0042af50,FUN_0042af50,util,C1,mapped,re/analysis/timer_d2_cont1/0x0042af50.md,,,three-path function: guard; DAT_007f1a0c==0x1000 path walks char array 0x007f1501 stride 0x4c; else walks int-index array 0x007f1a14; U-1615 U-1616
+0042b900,FUN_0042b900,util,C1,mapped,re/analysis/timer_d2_cont1/0x0042b900.md,,,getter: returns DAT_0067eca4
+0042b950,FUN_0042b950,util,C1,mapped,re/analysis/timer_d2_cont1/0x0042b950.md,,,setter: writes 0x1000 to DAT_007f1a0c (discriminant for FUN_0042af50)
+0042c150,FUN_0042c150,util,C1,mapped,re/analysis/timer_d2_cont1/0x0042c150.md,,,counts non-zero ints in 12 slots at 0x0067ea10..3f; if any nonzero: writes 0xff→DAT_0067eab4; U-1617
+00431b50,FUN_00431b50,util,C1,mapped,re/analysis/timer_d2_cont1/0x00431b50.md,,,FPU: returns fsin(DAT_007f0f04 * _DAT_005cd8f0) as float10; U-1618
+00431b60,FUN_00431b60,util,C1,mapped,re/analysis/timer_d2_cont1/0x00431b60.md,,,FPU: returns fsin(DAT_007f0f08 * _DAT_005cd8f0) as float10; sibling +4 of FUN_00431b50
+00432290,FUN_00432290,util,C1,mapped,re/analysis/timer_d2_cont1/0x00432290.md,,,predicate: DAT_0067eab0!=0 && DAT_0067eabc in {0xFF210000 0xFF220000}; U-1619
+0045c480,FUN_0045c480,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045c480.md,,,zero-init: 11 scatter globals + 0x24-dword loop at 0x0088f5e0 + _DAT_008aa2ec; overlapping syms; U-1620
+0045d3a0,FUN_0045d3a0,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045d3a0.md,,,gated by FUN_0042f6a0!=2; calls FUN_0045c810+d330+loop-d1e0+004657b0; stores FUN_0040e350→DAT_0088fbc0; S-1606..S-1609
+0045d7a0,FUN_0045d7a0,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045d7a0.md,,,701b; copies 16-uint block via FUN_00467210; position lerp/assign to 0x008a968X cluster; cross-product writes to iVar6 obj offsets; S-1610..S-1612; U-1621 U-1622

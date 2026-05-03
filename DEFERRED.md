@@ -1,4 +1,4 @@
-﻿# Deferred
+# Deferred
 
 Things deliberately not being worked on right now. Each row has a rationale and a re-pickup condition. Pure dumping ground; no analysis, no code lives here.
 
@@ -436,24 +436,6 @@ A row goes into DEFERRED when:
 | D-2201 | 0x0047aaa0 (Lights_Filename global ptr) | Lights_Filename config key registered by switch-case config fn at ~0x0043dfd0; consumer function that reads 0x0047aaa0 and loads the light file not traced; file format unknown; from session render_lighting-20260502-2221 | pick up as bucket render_lighting-cont1; reference_to 0x0047aaa0 to find reader; decomp reader function | n/a |
 | D-2324 | 0x004942b0 | FUN_004942b0 | FUN_00494480 | depth-2; 109 bytes; advance/tick call | decomp FUN_004942b0; pick up as intro_splash-cont1 |
 | D-2325 | 0x004938e0 | FUN_004938e0 | FUN_00494480 | depth-2; 27 bytes; receives video texture handle | decomp FUN_004938e0; pick up as intro_splash-cont1 |
-| D-2860 | 0x005ade60 FUN_005ade60 | depth-3 of FUN_005a7a40 (audio_rws_loader_d2 session); S-0980; list searcher in embedded list at obj+0x0c; called by pool-list-searcher | audio_rws_loader_d2-cont1 | audio |
-| D-2861 | 0x005aeca0 FUN_005aeca0 | depth-3 of FUN_005ae0c0 (audio_rws_loader_d2 session); S-0981; format-field pack/byte-swap helper; 3 calls from format-descriptor copy | audio_rws_loader_d2-cont1 | audio |
-| D-2862 | 0x005ae080 FUN_005ae080 | depth-3 of FUN_005ae010+FUN_005ae030 (audio_rws_loader_d2 session); S-0982; sub-struct A zero-init (audio_obj+0x24) | audio_rws_loader_d2-cont1 | audio |
-| D-2863 | 0x005ae050 FUN_005ae050 | depth-3 of FUN_005adfe0+FUN_005ae030 (audio_rws_loader_d2 session); S-0983; sub-struct B zero-init (audio_obj+0x34) | audio_rws_loader_d2-cont1 | audio |
-| D-2864 | 0x005aa060 FUN_005aa060 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0984; creates DirectSound buffer from stream data; called when param_1 bit3 set and no external sound pointer | audio_rws_loader_d2-cont1 | audio |
-| D-2865 | 0x005aa0c0 FUN_005aa0c0 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0985; async sound load callback dispatcher; called via LAB_005ac770 when param_3 != 0 but param_2 == NULL | audio_rws_loader_d2-cont1 | audio |
-| D-2866 | 0x005aaac0 FUN_005aaac0 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0986; resolves local_4c/param_3 from LAB_005aaaa0; called after DSound buffer path | audio_rws_loader_d2-cont1 | audio |
-| D-2867 | 0x005aba20 FUN_005aba20 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0987; wave_node field initialiser; receives (format_ptr,count,chunk_hdr,section_id,mono_flag,node); 0x182 bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2868 | 0x005ac7b0 FUN_005ac7b0 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0988; wave_node post-init; wires format and extra-data pointers into node; 0x2f bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2869 | 0x005ac900 FUN_005ac900 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0989; format-object lookup by 16-byte descriptor; called from sound-data parse path | audio_rws_loader_d2-cont1 | audio |
-| D-2870 | 0x005ac980 FUN_005ac980 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0990; registers default format or assigns format to sound node; called when FUN_005adf30 returns 0 | audio_rws_loader_d2-cont1 | audio |
-| D-2871 | 0x005aca80 FUN_005aca80 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0991; get RWS chunk data size from parsed chunk header; 0x20 bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2872 | 0x005acaa0 FUN_005acaa0 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0992; parse RWS chunk header into local struct; reads 12-byte chunk header (id+size+version) from stream; 0x62 bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2873 | 0x005acd10 FUN_005acd10 | depth-3 of FUN_005ac210 (audio_rws_loader_d2 session); S-0993; matches wave_node against a chunk-header struct; called to associate sound bank entry with chunk; 0x4a bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2874 | 0x005ac5f0 FUN_005ac5f0 | depth-3 of FUN_005abd30 (audio_rws_loader_d2 session); S-0994; wave-state validator; checks wave sub-struct at param_1+0x10 vs streaming-cursor at param_1+0x2c; 0x5b bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2875 | 0x005b3b30 FUN_005b3b30 | depth-3 of FUN_005abd30 (audio_rws_loader_d2 session); S-0995; compute streaming parameters from wave sub-struct; fills local_1c fields; 0x26 bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2876 | 0x005b3b60 FUN_005b3b60 | depth-3 of FUN_005abd30 (audio_rws_loader_d2 session); S-0996; finalize streaming descriptor; 0x1c bytes | audio_rws_loader_d2-cont1 | audio |
-| D-2877 | 0x005b3b80 FUN_005b3b80 | depth-3 of FUN_005abd30 (audio_rws_loader_d2 session); S-0997; fill streaming/loop buffer with PCM data; 0x2d6 bytes; large PCM feeder | audio_rws_loader_d2-cont1 | audio |
 | D-3040 | 0x0042bf30 | FUN_0042bf30 | FUN_0042c280 | depth-2; 112 bytes; called with (0x27f, 0xff210000, 0, 0, 0, 0); from session race_state-20260503-0600 bucket race_state | pick up as bucket race_state-cont1; same depth; no further recursion |
 | D-3041 | 0x0042d3a0 | FUN_0042d3a0 | FUN_00432080 FUN_004331a0 | depth-2; 52 bytes; called on phase-transition success; from session race_state-20260503-0600 bucket race_state | pick up as bucket race_state-cont1; same depth; no further recursion |
 | D-3042 | 0x004248b0 | FUN_004248b0 | FUN_004331a0 | depth-2; 367 bytes; called at end of race-end init; from session race_state-20260503-0600 bucket race_state | pick up as bucket race_state-cont1; same depth; no further recursion |
@@ -624,3 +606,4 @@ A row goes into DEFERRED when:
 | D-4866 | 0x00494f30 FUN_00494f30 | depth-2 callee of FUN_0043dfd0; 15 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
 | D-4867 | 0x0040e480 FUN_0040e480 | depth-2 callee of FUN_0043dfd0; 18 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
 | D-4868 | 0x00492d30 FUN_00492d30 | sole caller of FUN_0043dfd0; 265 bytes; not decompiled this session | game_mode_cont2 | util |
+| D-5080 | 0x005aa1e0 FUN_005aa1e0 | depth-4 of FUN_005aa060 (audio_rws_loader_d3 session); S-1720; inline callback at LAB_005aa1e0; no Ghidra function body; tree-walk predicate callback | audio_rws_loader_d3-cont1 | audio |

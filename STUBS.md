@@ -1,4 +1,4 @@
-﻿# Stubs
+# Stubs
 
 Every time a reimplementation calls a function that has not itself been reversed, the placeholder is recorded here. **Stubs block S-DoD.** A subsystem cannot be marked DONE while it has open stubs.
 
@@ -367,24 +367,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1042 | 0x004248b0 FUN_004248b0 | 0x004331a0 FUN_004331a0 | vehicle | passthrough | 2026-05-03 | called at end of race-end init; no params; 367 bytes; depth-2; D-3042 |
 | S-1043 | 0x00424920 FUN_00424920 | 0x004331a0 FUN_004331a0 | vehicle | passthrough | 2026-05-03 | called after FUN_004248b0 in race-end init; no params; 607 bytes; depth-2; D-3043 |
 | S-1044 | 0x004464c0 FUN_004464c0 | 0x00448700 FUN_00448700 | vehicle | passthrough | 2026-05-03 | called 100 times with &DAT_00897fe0; 91 bytes; depth-2; D-3044 |
-| S-0980 | 0x005ade60 FUN_005ade60 | 0x005a7a40 FUN_005a7a40 | audio | passthrough | 2026-05-03 | List searcher in embedded list at obj+0x0c; depth-3 of FUN_005a7a40; D-2860 |
-| S-0981 | 0x005aeca0 FUN_005aeca0 | 0x005ae0c0 FUN_005ae0c0 | audio | passthrough | 2026-05-03 | Format-field pack/byte-swap helper; depth-3 of FUN_005ae0c0; D-2861 |
-| S-0982 | 0x005ae080 FUN_005ae080 | 0x005ae010 FUN_005ae010 | audio | passthrough | 2026-05-03 | Sub-struct A zero-init (audio_obj+0x24); depth-3 of FUN_005ae010 FUN_005ae030; D-2862 |
-| S-0983 | 0x005ae050 FUN_005ae050 | 0x005adfe0 FUN_005adfe0 | audio | passthrough | 2026-05-03 | Sub-struct B zero-init (audio_obj+0x34); depth-3 of FUN_005adfe0 FUN_005ae030; D-2863 |
-| S-0984 | 0x005aa060 FUN_005aa060 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Creates DirectSound buffer from stream data; depth-3 of FUN_005ac210; D-2864 |
-| S-0985 | 0x005aa0c0 FUN_005aa0c0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Async sound load callback dispatcher; depth-3 of FUN_005ac210; D-2865 |
-| S-0986 | 0x005aaac0 FUN_005aaac0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Resolves local_4c from LAB_005aaaa0; depth-3 of FUN_005ac210; D-2866 |
-| S-0987 | 0x005aba20 FUN_005aba20 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Wave_node field initialiser; depth-3 of FUN_005ac210; D-2867 |
-| S-0988 | 0x005ac7b0 FUN_005ac7b0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Wave_node post-init; wires format/extra-data into node; depth-3 of FUN_005ac210; D-2868 |
-| S-0989 | 0x005ac900 FUN_005ac900 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Format-object lookup by 16-byte descriptor; depth-3 of FUN_005ac210; D-2869 |
-| S-0990 | 0x005ac980 FUN_005ac980 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Registers/assigns default format to sound node; depth-3 of FUN_005ac210; D-2870 |
-| S-0991 | 0x005aca80 FUN_005aca80 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Get RWS chunk data size from parsed chunk header; depth-3 of FUN_005ac210; D-2871 |
-| S-0992 | 0x005acaa0 FUN_005acaa0 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Parse RWS chunk header into local struct; depth-3 of FUN_005ac210; D-2872 |
-| S-0993 | 0x005acd10 FUN_005acd10 | 0x005ac210 FUN_005ac210 | audio | passthrough | 2026-05-03 | Matches wave_node against chunk-header struct; depth-3 of FUN_005ac210; D-2873 |
-| S-0994 | 0x005ac5f0 FUN_005ac5f0 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Wave-state validator; checks sub-struct +0x10 vs streaming-cursor +0x2c; depth-3 of FUN_005abd30; D-2874 |
-| S-0995 | 0x005b3b30 FUN_005b3b30 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Compute streaming parameters from wave sub-struct; depth-3 of FUN_005abd30; D-2875 |
-| S-0996 | 0x005b3b60 FUN_005b3b60 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Finalize streaming descriptor; depth-3 of FUN_005abd30; D-2876 |
-| S-0997 | 0x005b3b80 FUN_005b3b80 | 0x005abd30 FUN_005abd30 | audio | passthrough | 2026-05-03 | Fill streaming/loop buffer with PCM data; large PCM feeder 0x2d6 bytes; depth-3 of FUN_005abd30; D-2877 |
 | S-1000 | 0x0042bf30 FUN_0042bf30 | 0x0042c280 FUN_0042c280 | util | passthrough | 2026-05-03 | called with (0x27f, 0xff210000, 0, 0, 0, 0); pending-action packet setter; body 0x0042bf30..0x0042bfa0; D-2920 |
 | S-1001 | 0x0042d3a0 FUN_0042d3a0 | 0x00432080 FUN_00432080 | util | passthrough | 2026-05-03 | zeroes 13-entry 64-byte struct array 0x0067ed78..0x0067f0bc; shared callee with FUN_004331a0; D-2921 |
 | S-1002 | 0x004248b0 FUN_004248b0 | 0x004331a0 FUN_004331a0 | util | passthrough | 2026-05-03 | called after zero-clear block in race-end init; body 0x004248b0..0x0042491f (111 bytes); D-2922 |
@@ -534,3 +516,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1654 | 0x00432450 FUN_00432450 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | MP race transition; same 6-param signature as FUN_0042bf30; used for non-zero eab0 path |
 | S-1655 | 0x0042aa00 FUN_0042aa00 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | called first in FUN_004322c0 with arg 1; role unknown; may update track-display state |
 | S-1656 | 0x00430910 FUN_00430910 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | per-option validity check in track-selection loop; returns 0 if option valid; used to skip invalid indices |
+| S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | audio | passthrough | 2026-05-03 | inline callback at LAB_005aa1e0; no Ghidra function body; passed as code ptr to FUN_005aa0c0; D-5080 |
