@@ -1,4 +1,4 @@
-rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
+﻿rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 # RVA: 0x00xxxxxx (8-hex, no prefix in CSV — the 0x is implicit)
 # name: ClassName::Method or sub_RVA if not yet identified
 # subsystem: boot|audio|ai|vehicle|track|render|hud|frontend|input|save|net|util|unknown
@@ -248,8 +248,11 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005bad30,LAB_005bad30,audio,C1,mapped,re/analysis/audio_dsound/0x005bad30.md,,,unrecognized; DirectSound init path B: NULL GUID; hardcoded 0xbb80Hz/0x10-bit; GetCaps(vtable+0x10)+clamp; vtable+0x18; 459 bytes; U-0356..U-0359
 0042a470,FUN_0042a470,render,C1,mapped,re/analysis/texture_loader_d2/0x0042a470.md,,,platform-prefixed path builder; switch(param_3){1=no-prefix,2=ps2/,3=xbox/,4=pc/,5=gamecube/}; appends prefix+filename to static buf DAT_0067daa8 via vtable+0xcc/+0xd4; existence-tests via thunk_FUN_00550b00; copies to param_1 if non-null; returns 1=found 0=not
 0042a530,FUN_0042a530,render,C1,mapped,re/analysis/texture_loader/0x0042a530.md,,,piz searcher: tries type codes 4/1/3/2/5 via FUN_0042a470; returns first nonzero code or 0; U-0607 U-0608
-004b3d20,FUN_004b3d20,render,C1,mapped,re/analysis/texture_loader/0x004b3d20.md,,,stream-read TXD path: FUN_004cc230(2,1)+FUN_004cc5e0(0x16)+FUN_004cf7d0+FUN_004cc160; returns TXD ptr or 0; U-0609 U-0610; S-0602
-004b3d80,FUN_004b3d80,render,C1,mapped,re/analysis/texture_loader/0x004b3d80.md,,,stream-read DFF/clump path: FUN_004cc230(2,1)+FUN_004cc5e0(0x23)+FUN_0054f8d0+FUN_004cc160; returns clump ptr or 0; U-0611 U-0612; S-0603
+004cc5e0,FUN_004cc5e0,render,C2,mapped,re/analysis/texture_loader_d2/0x004cc5e0.md,,,RwStreamFindChunk: scans stream for chunk matching type param_2; skips via FUN_004cc050; validates version [0x35000..0x37002] at 0x004cc637/0x004cc645; outputs size+version; returns 1=found 0=not; U-1274 U-1275
+004cf7d0,FUN_004cf7d0,render,C2,mapped,re/analysis/texture_loader_d2/0x004cf7d0.md,,,RwTexDictionaryStreamRead: FindChunk(1)+read-struct+platform-filter+Create(0x004c5890)+loop-FindChunk(0x15)+vtable[0xb0]+AddTexture(0x004c5bc0); returns dict ptr; U-1267 U-1268 U-1269
+004b3d20,FUN_004b3d20,render,C1,mapped,re/analysis/texture_loader/0x004b3d20.md,,,stream-read TXD path: FUN_004cc230(2,1)+FUN_004cc5e0(0x16)+FUN_004cf7d0+FUN_004cc160; returns TXD ptr or 0; U-0609 U-0610
+0054f8d0,FUN_0054f8d0,render,C1,mapped,re/analysis/texture_loader_d2/0x0054f8d0.md,,,NATIVE-TEXTURE-BANK-READER (NOT RpClumpStreamRead): 4-byte header(count+flags); simple=loop FUN_0054fd60; complex=LOD raster array+FUN_004cee90+FUN_004c77c0+mip-upload; chunk types 0x18(image) 0x06(shape); caller FUN_004b3d80 after FindChunk(0x23); U-1270 U-1271 U-1272 U-1273
+004b3d80,FUN_004b3d80,render,C1,mapped,re/analysis/texture_loader/0x004b3d80.md,,,stream-read native-texture-bank path: FUN_004cc230(2,1)+FUN_004cc5e0(0x23)+FUN_0054f8d0+FUN_004cc160; returns texture-bank ptr or 0 (NOT clump); U-0611 U-0612
 004b44f0,FUN_004b44f0,util,C1,mapped,re/analysis/random_rng/0x004b44f0.md,,,RandomInt(lo hi); FUN_00534870()%(hi-lo+1)+lo; modulo bias not corrected; 10 callers 0x0045cd30..0x004661f0
 004b4510,FUN_004b4510,util,C1,mapped,re/analysis/random_rng/0x004b4510.md,,,RandomFloat(lo hi) __thiscall; (hi-lo)*(FUN_00534870()&0x7fffffff)*DAT_005cd314(0x30000000=2^-31)+lo; 6 callers 0x00419a00..0x004764f0
 0040b090,sub_0040b090,render,C1,unmapped,re/analysis/camera_follow/0x0040b090.md,,,per-slot camera dispatch: reads state via FUN_0055dec0; 4-player outer loop; color-token inner dispatch to 3 sub-handlers; U-0547 U-0548 U-0549; S-0540..S-0543
@@ -605,3 +608,13 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00431d80,FUN_00431d80,frontend,C1,new,re/analysis/race_results/00431d80.md,race_results-20260503-0655,,5b getter; returns DAT_0067ea7c (tiebreak-enable flag mode-4/code-6); U-1305
 0046c700,FUN_0046c700,frontend,C1,new,re/analysis/race_results/0046c700.md,race_results-20260503-0655,,43b incrementer; DAT_008820b0[param_1*0xd04]+=param_2; max idx 15; U-1306
 0046c7b0,FUN_0046c7b0,frontend,C1,new,re/analysis/race_results/0046c7b0.md,race_results-20260503-0655,,25b getter; returns DAT_008815a4[param_1*0x341]; 1=active car
+0043d7c0,FUN_0043d7c0,util,C1,mapped,re/analysis/timer_d2/0x0043d7c0.md,timer_d2-20260503-0656,,transition-dispatch state machine; DAT_0067eabc codes; PostQuitMessage on -0x800000; S-1134..S-1139 D-3281; U-1133..U-1135
+0043dfd0,FUN_0043dfd0,util,C0,mapped,re/analysis/timer_d2/0x0043dfd0.md,timer_d2-20260503-0656,,10969 bytes; 63 callees; decomp 30839 tokens exceeded read buffer; C0 only; D-3282; U-1136
+0045d3f0,FUN_0045d3f0,util,C1,mapped,re/analysis/timer_d2/0x0045d3f0.md,timer_d2-20260503-0656,,52b; takes int param_1; DAT_006904e8/ec dual guard; calls FUN_00550be0(when param_1==0)+FUN_005a60b0; sets ec=1; U-1137 U-1138
+0045d430,FUN_0045d430,util,C1,mapped,re/analysis/timer_d2/0x0045d430.md,timer_d2-20260503-0656,,38b void; DAT_006904ec==1 guard; calls FUN_005a60e0; resets ec=0; complement to 0x0045d3f0; U-1139
+00466b50,FUN_00466b50,util,C1,mapped,re/analysis/timer_d2/0x00466b50.md,timer_d2-20260503-0656,,1076b audio-tick dispatcher; 8-case state machine via FUN_00492d10; DAT_006904e8 gate; 29 callees already tracked; D-3283 for 26 new; U-1140..U-1142
+00496920,FUN_00496920,util,C1,mapped,re/analysis/timer_d2/0x00496920.md,timer_d2-20260503-0656,,11b; returns DAT_00772ffc[param_1]; table lookup; called with arg 5 by timer tick; U-1143
+00496930,FUN_00496930,util,C1,mapped,re/analysis/timer_d2/0x00496930.md,timer_d2-20260503-0656,,11b; returns DAT_00773030[param_1*4]; table lookup; called with args 3/4 by timer; complement to FUN_00496920; U-1144
+00498860,FUN_00498860,util,C1,mapped,re/analysis/timer_d2/0x00498860.md,timer_d2-20260503-0656,,170b; builds sanitized time-string via FUN_004a43d2/43b9; format=%.19s.%hu; chars replaced:space/:/. -> _; indirect vtable call DAT_007d3ff8+0xd4; U-1145 U-1146
+004a4170,__alldiv,util,C1,mapped,re/analysis/timer_d2/0x004a4170.md,timer_d2-20260503-0656,,169b MSVC VS2003 embedded CRT helper; signed 64-bit division; no callees; not a stub
+004a4220,__allmul,util,C1,mapped,re/analysis/timer_d2/0x004a4220.md,timer_d2-20260503-0656,,51b MSVC VS2003 embedded CRT helper; signed 64-bit multiply; no callees; not a stub

@@ -340,3 +340,12 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  sweep-20260503-0649  scribe-claim  bucket=track_loader_d2  rvas=16  (sweep)
 2026-05-03  sweep-20260503-0649  scribe-release  bucket=track_loader_d2  writes=16  errors=0  (sweep)
 2026-05-03  sweep-20260503-0649  scribe-release-sweep  buckets=3  total_writes=31  errors=0  (queue empty)
+2026-05-03  exception_filter_d2-20260503  session-complete  bucket=exception_filter_d2  rvas=0  deferred-kept=1  (D-1960 pickup-condition-unmet: CRT reimplementation not required)  slot=Mashed(master,read-only;pool1-lock-stale)  anchor=ok  note=early-finish/cap_count=0
+2026-05-03  0042a470  FUN_0042a470  C0->C1  re/analysis/texture_loader_d2/0x0042a470.md  strings:ps2/xbox/pc/gamecube/  caller:0042a530  resolves:S-0600 D-1720  session:texture_loader_d2-20260503-0350
+2026-05-03  00496400  sub_00496400  C1(existing)->C1  already-mapped-save  resolves:S-0601 D-1721  session:texture_loader_d2-20260503-0350
+2026-05-03  004cc230  FUN_004cc230  C1(existing)->C1  already-mapped-frontend  resolves:S-0421 D-1724  session:texture_loader_d2-20260503-0350
+2026-05-03  004cc160  FUN_004cc160  C1(existing)->C1  already-mapped-frontend  resolves:S-0424 D-1726  session:texture_loader_d2-20260503-0350
+2026-05-03  004cc5e0  FUN_004cc5e0  C0->C2  re/analysis/texture_loader_d2/0x004cc5e0.md  RwStreamFindChunk pattern; version-range [0x35000..0x37002]  resolves:S-0422 D-1725  new:U-1274 U-1275  session:texture_loader_d2-20260503-0350
+2026-05-03  004cf7d0  FUN_004cf7d0  C0->C2  re/analysis/texture_loader_d2/0x004cf7d0.md  RwTexDictionaryStreamRead pattern; struct+dict+loop+AddTexture  resolves:S-0602 D-1722  new:U-1267 U-1268 U-1269  session:texture_loader_d2-20260503-0350
+2026-05-03  0054f8d0  FUN_0054f8d0  C0->C1  re/analysis/texture_loader_d2/0x0054f8d0.md  native-texture-bank-reader; corrects prior DFF/clump label  resolves:S-0603 D-1723  new:U-1270 U-1271 U-1272 U-1273  session:texture_loader_d2-20260503-0350
+2026-05-03  004b3d80  FUN_004b3d80  C1->C1(notes-correction)  corrected 'DFF/clump' to 'native-texture-bank'; S-0603 resolved  session:texture_loader_d2-20260503-0350

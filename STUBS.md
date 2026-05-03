@@ -1,4 +1,4 @@
-# Stubs
+﻿# Stubs
 
 Every time a reimplementation calls a function that has not itself been reversed, the placeholder is recorded here. **Stubs block S-DoD.** A subsystem cannot be marked DONE while it has open stubs.
 
@@ -221,10 +221,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0468 | 0x004b5320 | 0x00411f30 FUN_00411f30 | vehicle | passthrough | 2026-05-02 | FUN_004b5320; model flag/property setter; called with (uVar1, 0x40, 1); depth-2 |
 | S-0469 | 0x004b5580 | 0x00411f30 FUN_00411f30 | vehicle | passthrough | 2026-05-02 | FUN_004b5580; applies 4-byte color buffer to mesh; called with (uVar1, &local_408); depth-2 |
 | S-0420 | 0x004095a0 | FUN_00409710 | render | depth-2 | 2026-05-02 | FUN_004095a0; called with arg 1 before FUN_00495280 in line-exception loader |
-| S-0421 | 0x004cc230 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cc230; called with (2,1,ptr); returns handle-like int; shared by LED+AI piz loaders |
-| S-0422 | 0x004cc5e0 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cc5e0; called with (handle, chunk_id, &size, flags); chunk IDs 0x13269901/0x13269902 |
 | S-0423 | 0x004cbd30 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cbd30; called with (handle, dest_buf, size); reads chunk into float array |
-| S-0424 | 0x004cc160 | FUN_00409710/FUN_004235b0 | render | depth-2 | 2026-05-02 | FUN_004cc160; called with (handle, 0); closes chunk |
 | S-0425 | 0x004b3f90 | FUN_00412050 | render | depth-2 | 2026-05-02 | FUN_004b3f90; called with (DAT_0063bc40, &DAT_005cd004, 0, 0.1f, ~1.0f, 3.0f, index); U-0428 |
 | S-0426 | 0x0047fad0 | FUN_00412050 | render | depth-2 | 2026-05-02 | FUN_0047fad0; called on result of FUN_004b3f90; returns value stored in DAT_0063bb60 region |
 | S-0427 | 0x0047cdc0 | FUN_00412050 | render | depth-2 | 2026-05-02 | FUN_0047cdc0; called with (stored_value, 6.0f) twice per iter |
@@ -276,9 +273,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0350 | 0x005bbdb0 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbdb0; buffer creation; called in both DirectSound init paths; depth-2 of entry |
 | S-0351 | 0x005bac00 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bac00; conditional callee when [ESI+0xc] nonzero; depth-2 of entry |
 | S-0352 | 0x005bbf30 | 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbf30; unconditional single-arg callee after FUN_005bac00; depth-2 of entry |
-| S-0601 | 0x00496400 | 0x0042a530 FUN_0042a530 | render | passthrough | 2026-05-02 | FUN_00496400; printf-style debug logger; depth-2 of FUN_0042a6b0; DEFERRED D-1721 |
-| S-0602 | 0x004cf7d0 | 0x004b3d20 FUN_004b3d20 | render | passthrough | 2026-05-02 | FUN_004cf7d0; TXD stream reader called after RwStreamFindChunk(0x16); 513 bytes; depth-2 of FUN_0042a6b0; DEFERRED D-1722 |
-| S-0603 | 0x0054f8d0 | 0x004b3d80 FUN_004b3d80 | render | passthrough | 2026-05-02 | FUN_0054f8d0; DFF/clump stream reader called after RwStreamFindChunk(0x23); 1153 bytes; depth-2 of FUN_0042a6b0; DEFERRED D-1723 |
 | S-0540 | 0x0046d320 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d320; returns packed color/state int per (slot, index) pair; depth-2 of camera_follow |
 | S-0541 | 0x0046d360 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d360; returns validity flag per (slot, index) pair; depth-2 of camera_follow |
 | S-0542 | 0x0040aef0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0040aef0; per-slot update called once per outer loop iteration; depth-2 of camera_follow |
@@ -458,3 +452,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1286 | 0x0045ba00 FUN_0045ba00 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called with (car_idx,2); constant 2 matches FUN_0040e470 sub-state value; depth-2 from car-eliminator |
 | S-1287 | 0x0046c5c0 FUN_0046c5c0 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | first call in car-eliminate sequence; single car_idx arg; depth-2 from car-eliminator |
 | S-1288 | 0x0046c790 FUN_0046c790 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called with (car_idx,1); second call in car-eliminate sequence; depth-2 from car-eliminator |
+| S-1134 | 0x0043d2a0 FUN_0043d2a0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called with 2-arg pairs (0,2),(7,0),(1,0); central transition handler |
+| S-1135 | 0x0042ae10 FUN_0042ae10 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called with arg 0 in inner-switch cases 1,2,9,0xb,0xc; return gates state changes |
+| S-1136 | 0x0042aeb0 FUN_0042aeb0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called in cases 1,2,9; non-zero result sets DAT_0067eac5 and DAT_0067f1a0 |
+| S-1137 | 0x0042bf30 FUN_0042bf30 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | 6-arg call; two sites: DAT_0067ece8..ed04 and DAT_0067e918..e92c |
+| S-1138 | 0x004298c0 FUN_004298c0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called in transition paths -0xdc0000 and -0xe20000 |
+| S-1139 | 0x00413f90 FUN_00413f90 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | returns pointer used with DAT_0067f17c×0x30 stride; -0xd80000 player init |

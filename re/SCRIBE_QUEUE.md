@@ -14,6 +14,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-03  race_results-20260503-0655  bucket=race_results  rvas=0x0040eee0,0x00408a50,0x00408a70,0x00408ad0,0x0040b290,0x0040b6d0,0x0040d590,0x0040e470,0x00422fd0,0x0042f500,0x0042f6a0,0x00431d80,0x0046c700,0x0046c7b0  note=0x0040b6d0/0x0042f500/0x0042f6a0 have prior plate comments (C1/C2) — sweep session must not overwrite higher-confidence entries
+2026-05-03  timer_d2-20260503-0656  bucket=timer_d2  rvas=0x004030d0,0x004111c0,0x0043d7c0,0x0043dfd0,0x0045d3f0,0x0045d430,0x00466b50,0x00496920,0x00496930,0x00498860,0x0049d1d0,0x004a4170,0x004a4220  S-1120..S-1139 U-1127..U-1146 D-3280..D-3283  note=0x0043dfd0 is C0 (decomp too large); U-0680 resolved by 0x0049d1d0; S+U ranges exhausted — any continuation needs extended ranges  pool=Mashed_pool15
 ```
 
 ## Drained

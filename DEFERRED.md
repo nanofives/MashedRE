@@ -1,4 +1,4 @@
-# Deferred
+﻿# Deferred
 
 Things deliberately not being worked on right now. Each row has a rationale and a re-pickup condition. Pure dumping ground; no analysis, no code lives here.
 
@@ -366,13 +366,6 @@ A row goes into DEFERRED when:
 | D-0949 | 0x005bbdb0 FUN_005bbdb0 | buffer creation; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0350 | audio_dsound-cont1 session | audio |
 | D-0950 | 0x005bac00 FUN_005bac00 | conditional callee; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0351 | audio_dsound-cont1 session | audio |
 | D-0951 | 0x005bbf30 FUN_005bbf30 | unconditional single-arg callee in LAB_005bad30; depth-2 of entry; S-0352 | audio_dsound-cont1 session | audio |
-| D-1720 | 0x0042a470 FUN_0042a470 | piz lookup; 5 type-codes tried; depth-2 of FUN_0042a6b0; S-0600 | texture_loader-cont1 session | render |
-| D-1721 | 0x00496400 FUN_00496400 | printf-style debug logger; depth-2 of FUN_0042a6b0; S-0601 | texture_loader-cont1 session | render |
-| D-1722 | 0x004cf7d0 FUN_004cf7d0 | TXD stream reader; called after FUN_004cc5e0(0x16); 513 bytes; candidate RwTexDictionaryStreamRead; S-0602 | texture_loader-cont1 session | render |
-| D-1723 | 0x0054f8d0 FUN_0054f8d0 | DFF/clump stream reader; called after FUN_004cc5e0(0x23); 1153 bytes; candidate RpClumpStreamRead; S-0603 | texture_loader-cont1 session | render |
-| D-1724 | 0x004cc230 FUN_004cc230 | RW stream open; called with (2,1,filename); also S-0281 S-0421; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
-| D-1725 | 0x004cc5e0 FUN_004cc5e0 | RW stream find chunk; called with (handle, 0x16 or 0x23, ...); also S-0422; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
-| D-1726 | 0x004cc160 FUN_004cc160 | RW stream close; called with (handle, 0); also S-0283 S-0424; depth-2 of FUN_004b3d20 and FUN_004b3d80 | texture_loader-cont1 session | render |
 | D-1780 | 0x005a66d0 FUN_005a66d0 | (audio_obj_ptr, 0_or_1) stop/start; depth-2 callee of audio_music bucket; S-0620 | audio_music-cont1 session | audio |
 | D-1781 | 0x005a6dc0 FUN_005a6dc0 | (sub_ptr, param_type, flag, value) param setter; depth-2 callee of audio_music bucket; S-0621 | audio_music-cont1 session | audio |
 | D-1782 | 0x0045e0f0 FUN_0045e0f0 | (channel_index, float) volume setter; depth-2 callee of audio_music bucket; S-0622 | audio_music-cont1 session | audio |
@@ -558,3 +551,16 @@ A row goes into DEFERRED when:
 | D-3766 | 0x0045ba00 FUN_0045ba00 | depth-2 callee of FUN_00422fd0; called (car,2); S-1286; from session race_results-20260503-0655 | pick up as bucket race_results-cont1; same depth; no further recursion | frontend |
 | D-3767 | 0x0046c5c0 FUN_0046c5c0 | depth-2 callee of FUN_00422fd0; first in eliminate sequence; S-1287; from session race_results-20260503-0655 | pick up as bucket race_results-cont1; same depth; no further recursion | frontend |
 | D-3768 | 0x0046c790 FUN_0046c790 | depth-2 callee of FUN_00422fd0; second in eliminate sequence; S-1288; from session race_results-20260503-0655 | pick up as bucket race_results-cont1; same depth; no further recursion | frontend |
+| D-3281 | (bulk) 0x0040ab40,0x0040ac80,0x0040b810,0x0040de10,0x0040e360,0x00422b30,0x00429aa0,0x0042af50,0x0042b950,0x0042c150,0x0046dc00,0x00493570,0x00493580 | util/multi | from session timer_d2-20260503-0656 (FUN_0043d7c0 secondary callees); S range exhausted; pick up per-subsystem or in timer_d2-cont1 | timer_d2 |
+| D-3282 | 0x0043dfd0 | FUN_0043dfd0 | util | from session timer_d2-20260503-0656; decomp 63977 chars / 30839 tokens exceeded read buffer; C0 only; requires dedicated large-function session (Opus recommended); 63 callees unprocessed | timer_d2 |
+| D-3700 | 0x004c5890 FUN_004c5890 | RwTexDictionaryCreate candidate; allocates with type-hint 0x30016; sets *result=6; links into doubly-linked list at DAT_007d4054; 151 bytes | texture_loader_d2-cont1 session | render |
+| D-3701 | 0x004cee90 FUN_004cee90 | native raster reader; reads struct chunk(type=1) then 0x10 bytes; allocates with type-hint 0x30018; fills width/height/type/pixels fields; reads pixel rows + palette; 319 bytes | texture_loader_d2-cont1 session | render |
+| D-3702 | 0x004c77c0 FUN_004c77c0 | RwRasterCreate candidate; called as (width, height, depth, flags); 153 bytes; used in 0x0054f8d0 and 0x0054fd60 for hardware raster allocation | texture_loader_d2-cont1 session | render |
+| D-3703 | 0x00550130 FUN_00550130 | called after FindChunk(0x06) in 0x0054f8d0; returns struct ptr; caller reads +0x50/+0x0c/+0x10; 532 bytes; purpose unclear | texture_loader_d2-cont1 session | render |
+| D-3704 | 0x004cbd30 FUN_004cbd30 | stream read bytes candidate (RwStreamRead); called as (stream, dest, size); returns bytes read; 317 bytes | texture_loader_d2-cont1 session | render |
+| D-3705 | 0x004cc400 FUN_004cc400 | chunk header reader; called by FUN_004cc5e0 as (stream, &type, &size, &version, 0); assumed 12-byte header; needs verify | texture_loader_d2-cont1 session | render |
+| D-3706 | 0x004cc050 FUN_004cc050 | chunk body skip; called by FUN_004cc5e0 as (stream, size); advances stream position | texture_loader_d2-cont1 session | render |
+| D-3707 | 0x004cefd0 FUN_004cefd0 | raster post-load processor; called in 0x004cee90 and 0x0054f8d0 if (*raster & 2) == 0; 447 bytes; meaning unclear | texture_loader_d2-cont1 session | render |
+| D-3708 | 0x004c5bc0 FUN_004c5bc0 | RwTexDictionaryAddTexture candidate; called as (dict, texture) in both 0x004cf7d0 and 0x0054fd60; 57 bytes | texture_loader_d2-cont1 session | render |
+| D-3709 | 0x004e1b60 FUN_004e1b60 | event dispatcher; called with (event_obj, stream, data_ptr); event objects DAT_00618138/DAT_00618150; 298 bytes; U-1269 | texture_loader_d2-cont1 session | render |
+| D-3283 | (bulk) 0x0040e370,0x0042b900,0x00431b50,0x00431b60,0x00432290,0x0045c480,0x0045d3a0,0x0045d7a0,0x0045db50,0x0045dbe0,0x0045dc80,0x0045df70,0x0045dfc0,0x00462520,0x004627b0,0x00462dd0,0x00462ec0,0x00463590,0x00463640,0x004647f0,0x004648b0,0x00492d10,0x004d8560,0x005a89a0,0x005a89b0,0x005a89c0 | util/audio | from session timer_d2-20260503-0656 (FUN_00466b50 untracked callees); S range exhausted; pick up in audio_tick_d3 or dedicated sessions | timer_d2 |
