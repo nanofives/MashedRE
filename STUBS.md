@@ -68,7 +68,10 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 
 | ID | RVA | Caller | Resolved date | Resolution |
 |----|-----|--------|---------------|------------|
-|    |     |        |               |            |
+| S-0373 | 0x00493ac0 LAB_00493ac0 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; pre-NT5 code-page path; GetThreadLocale→GetLocaleInfoA(0x1004)→atoi; fallback GetACP |
+| S-0374 | 0x00493b40 LAB_00493b40 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; NT5+ code-page path; MOV EAX,3 (CP_THREAD_ACP); RET |
+| S-0375 | 0x0049ec10 FUN_0049ec10 | 0x00493c00 FUN_00493c00 | 2026-05-03 | C1 analyzed video_mci_d2; __thiscall ctor; vtable[0]+7 offsets; calls FUN_0049dd60+FUN_0049cfb0 |
+| S-0376 | 0x004a3b84 FUN_004a3b84 | 0x00493f00 FUN_00493f00 | 2026-05-03 | C1 analyzed video_mci_d2; vsnprintf-impl via fake FILE (_flag=0x42); calls FUN_004a504f |
 
 ## Conventions
 
@@ -206,10 +209,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0370 | 0x004e6920 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_004e6920; called with *piVar2 in teardown loop 2; depth-3 |
 | S-0371 | 0x004768c0 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_004768c0; called with &DAT_0x63bfd8; depth-3 |
 | S-0372 | 0x00418f40 | 0x004189e0 thunk_FUN_004196f0 | boot | passthrough | 2026-05-02 | FUN_00418f40; no args; last teardown call; depth-3 |
-| S-0373 | 0x00493ac0 | 0x00493b50 FUN_00493b50 | util | passthrough | 2026-05-02 | LAB_00493ac0; code label (not a named function); indirect call target via PTR_FUN_006147dc (pre-NT5/non-NT code page path); returns UINT; depth-2 from FUN_004944c0 |
-| S-0374 | 0x00493b40 | 0x00493b50 FUN_00493b50 | util | passthrough | 2026-05-02 | LAB_00493b40; code label (not a named function); indirect call target via PTR_FUN_006147dc (NT5+ code page path); returns UINT; depth-2 from FUN_004944c0 |
-| S-0375 | 0x0049ec10 | 0x00493c00 FUN_00493c00 | util | passthrough | 2026-05-02 | FUN_0049ec10; called with (&DAT_005cfaac, 0, param_2, param_3) from FUN_00493c00 and FUN_00494ac0; depth-2 from FUN_004944c0 |
-| S-0376 | 0x004a3b84 | 0x00493f00 FUN_00493f00 | util | passthrough | 2026-05-02 | FUN_004a3b84; called as vsnprintf-like formatter (buf, 0x3ff, fmt, va_args); depth-2 from FUN_004944c0 via FUN_00493f00 |
 | S-0460 | 0x004b6520 | 0x0045ba10 FUN_0045ba10 | vehicle | passthrough | 2026-05-02 | FUN_004b6520; no args; called in per-slot reset before field zeroing; depth-2 |
 | S-0461 | 0x0042a530 | 0x0042a6b0 FUN_0042a6b0 | vehicle | passthrough | 2026-05-02 | FUN_0042a530; TXD/DFF lookup; called with (&DAT_0067e1a8, &DAT_0067dfa8); returns 0/1/other; depth-2 |
 | S-0462 | 0x004b3d80 | 0x0042a6b0 FUN_0042a6b0 | vehicle | passthrough | 2026-05-02 | FUN_004b3d80; result returned when FUN_0042a530 returns 1; depth-2 |
@@ -458,3 +457,18 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1137 | 0x0042bf30 FUN_0042bf30 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | 6-arg call; two sites: DAT_0067ece8..ed04 and DAT_0067e918..e92c |
 | S-1138 | 0x004298c0 FUN_004298c0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called in transition paths -0xdc0000 and -0xe20000 |
 | S-1139 | 0x00413f90 FUN_00413f90 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | returns pointer used with DAT_0067f17c×0x30 stride; -0xd80000 player init |
+| S-1380 | 0x0049dd60 FUN_0049dd60 | 0x0049ec10 FUN_0049ec10 | util | passthrough | 2026-05-03 | 4-arg base/ancestor ctor; called as FUN_0049dd60(param_2,param_3,param_4,param_5) from FUN_0049ec10 __thiscall ctor; depth-3 from video_mci ctors; D-4060 |
+| S-1560 | 0x00482860 FUN_00482860 | 0x00482930 Replay::New | vehicle | passthrough | 2026-05-03 | called at end of Replay::New and from StartLap on DAT_0063bb14; internal replay reset/rewind |
+| S-1561 | 0x00483a30 FUN_00483a30 | 0x00411750 Replay::StartLap | vehicle | passthrough | 2026-05-03 | rewind DAT_0063bb10 to beginning of replay for playback; also called from LapFinish |
+| S-1562 | 0x00483a40 FUN_00483a40 | 0x004114e0 Replay::Cleanup | vehicle | passthrough | 2026-05-03 | replay object destructor/free; called on both DAT_0063bb04 and DAT_0063bb08 |
+| S-1563 | 0x0046d4a0 FUN_0046d4a0 | 0x00411600 Replay::RecordFrame | vehicle | passthrough | 2026-05-03 | returns vehicle state struct ptr for player index 0; also called from LapFinish |
+| S-1564 | 0x00546b10 FUN_00546b10 | 0x004829d0 Replay::WriteFrame | vehicle | passthrough | 2026-05-03 | copies quaternion from vehicle state struct into frame node +0x00..+0x0f |
+| S-1565 | 0x00483ca0 FUN_00483ca0 | 0x004117b0 Replay::Save | vehicle | passthrough | 2026-05-03 | serializes replay object DAT_0063bb10 into global buffer &DAT_008a94a8 |
+| S-1566 | 0x004cc230 FUN_004cc230 | 0x00483d10 Replay::Load | vehicle | passthrough | 2026-05-03 | open stream for reading (mode 3,1); part of replay file I/O trio |
+| S-1567 | 0x004cbd30 FUN_004cbd30 | 0x00483d10 Replay::Load | vehicle | passthrough | 2026-05-03 | read N bytes from stream into buffer; used for both 0x19c header and frame array |
+| S-1568 | 0x004cc160 FUN_004cc160 | 0x00483d10 Replay::Load | vehicle | passthrough | 2026-05-03 | close stream and release; called on both success and failure paths |
+| S-1569 | 0x0041a9b0 FUN_0041a9b0 | 0x00411ae0 Ghost::PlaybackTick | vehicle | passthrough | 2026-05-03 | setup ghost vehicle transform matrix from interpolated replay frame data |
+| S-1570 | 0x0041ad00 FUN_0041ad00 | 0x00411ae0 Ghost::PlaybackTick | vehicle | passthrough | 2026-05-03 | apply ghost vehicle transform matrix to scene/render list |
+| S-1571 | 0x0041a960 FUN_0041a960 | 0x00411ce0 Ghost::SetupRender | vehicle | passthrough | 2026-05-03 | ghost renderer initialisation; called when DAT_0063bb10 or DAT_0063bb0c is non-null |
+| S-1572 | 0x00546e70 FUN_00546e70 | 0x00482c10 Replay::ReadFrame | vehicle | passthrough | 2026-05-03 | compute slerp interpolation between two adjacent frame node quaternions |
+| S-1573 | 0x00482ae0 FUN_00482ae0 | 0x00482c10 Replay::ReadFrame | vehicle | passthrough | 2026-05-03 | quaternion blend helper; called with interpolation factor t and two matrix outputs |
