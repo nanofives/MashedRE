@@ -276,7 +276,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0350 | 0x005bbdb0 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbdb0; buffer creation; called in both DirectSound init paths; depth-2 of entry |
 | S-0351 | 0x005bac00 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bac00; conditional callee when [ESI+0xc] nonzero; depth-2 of entry |
 | S-0352 | 0x005bbf30 | 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbf30; unconditional single-arg callee after FUN_005bac00; depth-2 of entry |
-| S-0600 | 0x0042a470 | 0x0042a530 FUN_0042a530 | render | passthrough | 2026-05-02 | FUN_0042a470; piz lookup; called 5x with type codes 1–5; depth-2 of FUN_0042a6b0; DEFERRED D-1720 |
 | S-0601 | 0x00496400 | 0x0042a530 FUN_0042a530 | render | passthrough | 2026-05-02 | FUN_00496400; printf-style debug logger; depth-2 of FUN_0042a6b0; DEFERRED D-1721 |
 | S-0602 | 0x004cf7d0 | 0x004b3d20 FUN_004b3d20 | render | passthrough | 2026-05-02 | FUN_004cf7d0; TXD stream reader called after RwStreamFindChunk(0x16); 513 bytes; depth-2 of FUN_0042a6b0; DEFERRED D-1722 |
 | S-0603 | 0x0054f8d0 | 0x004b3d80 FUN_004b3d80 | render | passthrough | 2026-05-02 | FUN_0054f8d0; DFF/clump stream reader called after RwStreamFindChunk(0x23); 1153 bytes; depth-2 of FUN_0042a6b0; DEFERRED D-1723 |
@@ -432,3 +431,30 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1068 | 0x004331a0 FUN_004331a0 | 0x004331a0 race_init | race_state | passthrough | 2026-05-03 | needs FUN_0042d3a0 (D-3116) + FUN_004348b0 (D-3117) + FUN_00424920 (S-1003 U-1011) |
 | S-1069 | 0x00448700 FUN_00448700 | 0x00448700 FUN_00448700 | race_state | passthrough | 2026-05-03 | depends on FUN_004464c0 (S-1004 still open); 100-loop semantics unclear until FUN_004464c0 mapped |
 | S-1070 | 0x004927c0 FUN_004927c0 | 0x004927c0 race_complete | race_state | passthrough | 2026-05-03 | unrecognized DataDB; U-1013 U-1014 need Frida before analysis can proceed |
+| S-1160 | 0x004cc820 FUN_004cc820 | 0x004cc7f0 FUN_004cc7f0 | render | passthrough | 2026-05-03 | depth-3 callee; 6-arg call; 4th/5th args are literals 1 and 0; D-3400 |
+| S-1161 | 0x004dcaa0 FUN_004dcaa0 | 0x004dc9e0 FUN_004dc9e0 | render | passthrough | 2026-05-03 | depth-3 callee; called as FUN_004dcaa0(0x40000, out_ptr); likely CreateVertexBuffer helper; D-3401 |
+| S-1162 | DAT_007d46e0 | 0x004d1d70 FUN_004d1d70 | render | global | 2026-05-03 | D3D resource tracking linked-list head; node layout unknown |
+| S-1163 | DAT_00911ae4 | 0x004d1d70 FUN_004d1d70 | render | global | 2026-05-03 | base pointer for D3D resource lookup array; array element layout unknown |
+| S-1120 | 0x0042b950 FUN_0042b950 | 0x004030d0 FUN_004030d0 | util | passthrough | 2026-05-03 | called unconditionally after FUN_00472640(0); depth-2 from timer |
+| S-1121 | 0x0043df00 FUN_0043df00 | 0x004030d0 FUN_004030d0 | util | passthrough | 2026-05-03 | called when DAT_00636af8==0 and accumulator overflow; depth-2 from timer |
+| S-1122 | 0x00472640 FUN_00472640 | 0x004030d0 FUN_004030d0 | util | passthrough | 2026-05-03 | called with arg 0 after accumulator add; depth-2 from timer |
+| S-1123 | 0x0040fc00 FUN_0040fc00 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called at end of cases 3–7 and 10; ~1kb; role in state machine unknown |
+| S-1124 | 0x0055dec0 FUN_0055dec0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | returns mode value; result 5 or 6 gates FUN_004292d0/FUN_004292c0 path |
+| S-1125 | 0x0042aab0 FUN_0042aab0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called unconditionally in case 2 (in-race tick) |
+| S-1126 | 0x00426c30 FUN_00426c30 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called in shared code path after FUN_0040e590 |
+| S-1127 | 0x00426c70 FUN_00426c70 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called in case 8; role unknown |
+| S-1128 | 0x00422b10 FUN_00422b10 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called in case 1 after wprintf("start of race") |
+| S-1129 | 0x00426c10 FUN_00426c10 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called in case 1 with dereferenced player pointer from PTR_PTR_005f2770 |
+| S-1130 | 0x004292c0 FUN_004292c0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called with &DAT_0066d728 on stack (mode-5/6 path after FUN_004292d0) |
+| S-1131 | 0x004292d0 FUN_004292d0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called immediately before FUN_004292c0 in mode-5/6 path |
+| S-1132 | 0x0040ddb0 FUN_0040ddb0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called in case 9; DAT_0063ba8c set to 10 after return |
+| S-1133 | 0x0040e590 FUN_0040e590 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | first call in shared code path; ~3kb function |
+| S-1280 | 0x004a2c48 FUN_004a2c48 | 0x00408a70 FUN_00408a70 | frontend | passthrough | 2026-05-03 | called at entry of put-precisepos setter; return value written to 4 per-car struct fields; semantics unknown |
+| S-1281 | 0x0040e340 FUN_0040e340 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | active-car counter; returns 4 when all 4 cars active; depth-2 from score-updater |
+| S-1282 | 0x0040e350 FUN_0040e350 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | game-state query; result compared to {1,2,3,4,5} to gate event-buffer append; depth-2 from score-updater |
+| S-1283 | 0x0040e370 FUN_0040e370 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | per-car active check; non-zero=active; depth-2 from score-updater |
+| S-1284 | 0x004189f0 thunk_FUN_00419760 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | thunk→FUN_00419760; called with (car_idx,1) when FUN_0040e470==1 and DAT_007f0fd0!=7; depth-2 from car-eliminator |
+| S-1285 | 0x004215c0 FUN_004215c0 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called twice: (car,50.0f,0) and (car,50.0f,1); role unknown; depth-2 from car-eliminator |
+| S-1286 | 0x0045ba00 FUN_0045ba00 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called with (car_idx,2); constant 2 matches FUN_0040e470 sub-state value; depth-2 from car-eliminator |
+| S-1287 | 0x0046c5c0 FUN_0046c5c0 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | first call in car-eliminate sequence; single car_idx arg; depth-2 from car-eliminator |
+| S-1288 | 0x0046c790 FUN_0046c790 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called with (car_idx,1); second call in car-eliminate sequence; depth-2 from car-eliminator |

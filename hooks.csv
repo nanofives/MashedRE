@@ -246,7 +246,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005aee20,FUN_005aee20,audio,C1,mapped,re/analysis/audio_dsound/0x005aee20.md,,,bit-scan-forward loop 0..31; always called with 0x28 (lowest bit=3); decompiler types void but caller reads byte; 27 bytes; U-0352
 005ba1d0,LAB_005ba1d0,audio,C1,mapped,re/analysis/audio_dsound/0x005ba1d0.md,,,unrecognized; DirectSound init path A: pGUID=[ESI+0x4]; flag accumulation 0x20/0x40/0x4; vtable+0x18; buf-create; U-0353..U-0355
 005bad30,LAB_005bad30,audio,C1,mapped,re/analysis/audio_dsound/0x005bad30.md,,,unrecognized; DirectSound init path B: NULL GUID; hardcoded 0xbb80Hz/0x10-bit; GetCaps(vtable+0x10)+clamp; vtable+0x18; 459 bytes; U-0356..U-0359
-0042a530,FUN_0042a530,render,C1,mapped,re/analysis/texture_loader/0x0042a530.md,,,piz searcher: tries type codes 4/1/3/2/5 via FUN_0042a470; returns first nonzero code or 0; U-0607 U-0608; S-0600 S-0601
+0042a470,FUN_0042a470,render,C1,mapped,re/analysis/texture_loader_d2/0x0042a470.md,,,platform-prefixed path builder; switch(param_3){1=no-prefix,2=ps2/,3=xbox/,4=pc/,5=gamecube/}; appends prefix+filename to static buf DAT_0067daa8 via vtable+0xcc/+0xd4; existence-tests via thunk_FUN_00550b00; copies to param_1 if non-null; returns 1=found 0=not
+0042a530,FUN_0042a530,render,C1,mapped,re/analysis/texture_loader/0x0042a530.md,,,piz searcher: tries type codes 4/1/3/2/5 via FUN_0042a470; returns first nonzero code or 0; U-0607 U-0608
 004b3d20,FUN_004b3d20,render,C1,mapped,re/analysis/texture_loader/0x004b3d20.md,,,stream-read TXD path: FUN_004cc230(2,1)+FUN_004cc5e0(0x16)+FUN_004cf7d0+FUN_004cc160; returns TXD ptr or 0; U-0609 U-0610; S-0602
 004b3d80,FUN_004b3d80,render,C1,mapped,re/analysis/texture_loader/0x004b3d80.md,,,stream-read DFF/clump path: FUN_004cc230(2,1)+FUN_004cc5e0(0x23)+FUN_0054f8d0+FUN_004cc160; returns clump ptr or 0; U-0611 U-0612; S-0603
 004b44f0,FUN_004b44f0,util,C1,mapped,re/analysis/random_rng/0x004b44f0.md,,,RandomInt(lo hi); FUN_00534870()%(hi-lo+1)+lo; modulo bias not corrected; 10 callers 0x0045cd30..0x004661f0
@@ -577,3 +578,30 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004331a0,FUN_004331a0,race_state,C1,new,,race_state-20260503,,"152b race init; DAT_0067eca4=1; 4x210.0f at 0x0067ebb0..bc; zeros ~10 globals + 80b REP STOSD; resolves U-1010; tail FUN_00424920; S-1068"
 00448700,FUN_00448700,race_state,C1,new,,race_state-20260503,,"43b; 100-loop FUN_004464c0(0x00897fe0); then DAT_00897ffc=p1 DAT_00898000=p2; resolves U-1012; S-1069"
 004927c0,FUN_004927c0,race_state,C0,new,,race_state-20260503,,"unrecognized DataDB; U-1013 U-1014 open; Frida required; S-1070"
+004cc7f0,FUN_004cc7f0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"33b VD wrapper; calls FUN_004cc820(p1 p2 p3 1 0 p4) with literals 1/0 injected; S-1160 D-3400"
+004ccc50,FUN_004ccc50,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"137b VB pool walker; doubly-linked list; frees checksum-zero nodes via DAT_007d3ff8+0x10c; promotes non-zero to head; returns stride*freed_count"
+004ccde0,FUN_004ccde0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"50b; iterates DAT_007d45cc list calling FUN_004ccc50(node-7); sums freed counts"
+004d1d70,FUN_004d1d70,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"161b D3D resource release by type-byte; list at DAT_007d46e0; array at DAT_00911ae4; switch on node+0x20 (0/1/2/4/5); format guard 0x45..0x51; U-1167 U-1168; S-1162 S-1163"
+004db550,FUN_004db550,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"87b; releases DAT_007d70ac (FUN_004cba80); DAT_007d70a0 (vtable+8 if DAT_007d7098!=0); DAT_007d70a8 (vtable+8); U-1169"
+004dc8e0,FUN_004dc8e0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"140b 4-slot render-target teardown; clears DAT_007d70cc/dc/ec arrays; if DAT_00911fbc&0x10000 releases DAT_007d70c0 list; U-1170"
+004e08b0,FUN_004e08b0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"97b; vtable+8 release DAT_007d710c; 3x FUN_004cba80 on DAT_007d7118/7114/7110"
+004dc9e0,FUN_004dc9e0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"186b VB re-create after reset; 0x40000=256KB; if DAT_00911fbc&0x10000: 4-slot else 1-slot; calls FUN_004dcaa0; U-1170; S-1161 D-3401"
+004cb8a0,FUN_004cb8a0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"479b VD create/cache; D3DDECL_END=0x11; cache at DAT_007d414c (0xc stride); CreateVertexDeclaration via DAT_007d4110+0x158; DAT_007d4144 count DAT_007d4148 cap"
+004cba80,FUN_004cba80,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"75b VD cache release; searches DAT_007d414c by ptr; calls vtable+8 Release; zeroes slot on refcount==0"
+004d5480,FUN_004d5480,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"66b deferred SetRenderState setter; desired at DAT_007d57f8[state*2]; dirty at +4; queue at DAT_007d5168; count DAT_007d6c14"
+004d54f0,FUN_004d54f0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"89b deferred SetTextureStageState setter; idx=state+stage*0x21 (33/stage); cache DAT_007d4720; queue DAT_007d62a8/ac; count DAT_007d6c18"
+004d5570,FUN_004d5570,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"62b direct SetSamplerState setter; idx=state+sampler*0xe (14/sampler); cache DAT_007d4f60; DAT_007d4110+0x114 = IDirect3DDevice9::SetSamplerState"
+004d53b0,FUN_004d53b0,render,C1,new,,render_d3d_reset_d2-20260503-0351,,"194b RS+TSS state flush; drains DAT_007d6c14 RS queue (shadow DAT_007d54b0; vtable+0xe4=SetRenderState) and DAT_007d6c18 TSS queue (shadow DAT_007d5e88; vtable+0x10c=SetTextureStageState)"
+004030d0,FUN_004030d0,util,C1,mapped,re/analysis/timer_d2/0x004030d0.md,timer_d2-20260503-0656,,float accumulator update + stride array scan; early-exit via FUN_0042c1c0; 3 new stubs S-1120..S-1122
+004111c0,FUN_004111c0,util,C1,mapped,re/analysis/timer_d2/0x004111c0.md,timer_d2-20260503-0656,,race-phase state machine (11 states); DAT_0063ba8c dispatcher; 13730 bytes; 58 bulk callees D-3280; S-1123..S-1133
+0040eee0,FUN_0040eee0,frontend,C1,new,re/analysis/race_results/0040eee0.md,race_results-20260503-0655,,3356b race-scoring callback; (car_idx score_delta); branches DAT_008a94d0 2/3/4; debug loser/winner prints; U-1287..U-1291
+00408a50,FUN_00408a50,frontend,C1,new,re/analysis/race_results/00408a50.md,race_results-20260503-0655,,16b getter; returns *(float*)(DAT_008a96e8+param_1*0x30c); per-car precisepos read; U-1292
+00408a70,FUN_00408a70,frontend,C1,new,re/analysis/race_results/00408a70.md,race_results-20260503-0655,,95b setter; writes precisepos+4 fields to per-car 0x30c struct at DAT_008a9640; S-1280; U-1293 U-1294
+00408ad0,FUN_00408ad0,frontend,C1,new,re/analysis/race_results/00408ad0.md,race_results-20260503-0655,,16b getter; returns *(float*)(DAT_008a96ec+param_1*0x30c) struct-offset 0xac; used in tiebreak; U-1295
+0040b290,FUN_0040b290,frontend,C1,new,re/analysis/race_results/0040b290.md,race_results-20260503-0655,,409b score-updater; delta→DAT_008a94e0[i]; mode-filter DAT_007f0fd0; event circ-buffer; S-1281..S-1283; U-1296..U-1299
+0040d590,FUN_0040d590,frontend,C1,new,re/analysis/race_results/0040d590.md,race_results-20260503-0655,,849b 3-way tiebreak sort; FUN_00408ad0 float compare; assigns -delta/delta/delta*2 to 3rd/2nd/1st
+0040e470,FUN_0040e470,frontend,C1,new,re/analysis/race_results/0040e470.md,race_results-20260503-0655,,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300
+00422fd0,FUN_00422fd0,frontend,C1,new,re/analysis/race_results/00422fd0.md,race_results-20260503-0655,,98b car-eliminator; calls 5 fns incl FUN_004215c0(x 50.0f 0/1); S-1284..S-1288; U-1301..U-1303
+00431d80,FUN_00431d80,frontend,C1,new,re/analysis/race_results/00431d80.md,race_results-20260503-0655,,5b getter; returns DAT_0067ea7c (tiebreak-enable flag mode-4/code-6); U-1305
+0046c700,FUN_0046c700,frontend,C1,new,re/analysis/race_results/0046c700.md,race_results-20260503-0655,,43b incrementer; DAT_008820b0[param_1*0xd04]+=param_2; max idx 15; U-1306
+0046c7b0,FUN_0046c7b0,frontend,C1,new,re/analysis/race_results/0046c7b0.md,race_results-20260503-0655,,25b getter; returns DAT_008815a4[param_1*0x341]; 1=active car
