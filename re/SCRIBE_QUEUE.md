@@ -61,3 +61,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-02  track_loader-20260502-1943  bucket=track_loader  rvas=0x00426e10,0x004053d0,0x00409680,0x00409710,0x00412050,0x0041e870,0x0041e8b0,0x0041e970,0x0041e980,0x0041e9d0,0x0041ea90,0x004235b0,0x00423630,0x00425ab0,0x004260e0,0x004262f0
 ```
 2026-05-03  random_rng-20260503-0601  bucket=random_rng  rvas=0x00534920,0x004b44f0,0x004b4510
+2026-05-03  render_frame_tree_d2-20260503-0700  bucket=render_frame_tree_d2  rvas=0x004d80d0,0x004d8280,0x004d8300,0x004c0e50  notes=FRAME_UPDATE_FN(_rwFrameSyncDirty) found; D-2080 resolved; D-3460 (FUN_004c4600 matrix_math) filed; U-1187 U-1188 U-1189 added
