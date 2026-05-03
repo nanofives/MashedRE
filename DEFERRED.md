@@ -320,10 +320,10 @@ A row goes into DEFERRED when:
 | ~~D-1002~~ | ~~LAB_00493ac0 + LAB_00493b40~~ | ~~analyzed C1 session video_mci_d2-20260503; S-0373/S-0374 resolved~~ | ~~video_mci-cont1~~ | ~~util~~ |
 | D-4060 | 0x0049dd60 FUN_0049dd60 | depth-3 callee of FUN_0049ec10 (0x0049ec10); called as FUN_0049dd60(param_2,param_3,param_4,param_5); likely base/ancestor ctor taking 4 args; not decomped; S-1380 | video_mci_d2-cont1 | util |
 | ~~D-1180~~ | ~~drained by track_loader_d2-20260503-0302~~ | ~~all 20 RVAs processed (4 already mapped, 16 newly mapped)~~ | ~~track_loader-cont1~~ | ~~render~~ |
-| D-1300 | 14 depth-2 callees of FUN_004548e0 (DepthCharge init): 0x0042a5d0,0x004548a0,0x004b3f90,0x004b3fc0,0x004b5190,0x004b5240,0x004b6520,0x004c0b30,0x004c1040,0x004c39b0,0x004c5c80,0x004e69a0,0x004e6ab0,0x004e7e30 | depth-2; not recursed per session rules | powerups-cont1; same depth, no further recursion | vehicle |
-| D-1301 | 10 depth-2 callees of FUN_00456760 (GatlingGun init): 0x0040bb30,0x0042a5d0,0x00474d60,0x00476cb0,0x004770c0,0x004b3fc0,0x004b5190,0x004b5240,0x004c5c80,0x004e6ab0,0x004e6e00 | depth-2; not recursed per session rules | powerups-cont1 | vehicle |
-| D-1302 | 9 depth-2 callees of FUN_004587a0 (PowerUpIcons init): 0x0040bb30,0x004770c0,0x004b3b70,0x004b3d80,0x004b3e40,0x004b6520,0x004b65a0,0x004b65b0,0x004c5c80 | depth-2; not recursed per session rules | powerups-cont1 | vehicle |
-| D-1303 | 9 depth-2 callees of FUN_00459290 (Laser/Lazer init): 0x0040bb30,0x00474d60,0x00476c10,0x00476cb0,0x004770c0,0x004b3bf0,0x004b3d80,0x004c57a0,0x004c5c80 | depth-2; not recursed per session rules | powerups-cont1 | vehicle |
+| ~~D-1300~~ | ~~14 depth-2 callees of FUN_004548e0 (DepthCharge init)~~ | ~~drained by powerups_d2-20260503; all 14 RVAs mapped; new stubs S-1440..S-1453; D-4240..D-4243~~ | ~~powerups_d2~~ | ~~vehicle~~ |
+| ~~D-1301~~ | ~~10 depth-2 callees of FUN_00456760 (GatlingGun init)~~ | ~~drained by powerups_d2-20260503; all unique RVAs mapped (7 shared with D-1300 already handled)~~ | ~~powerups_d2~~ | ~~vehicle~~ |
+| ~~D-1302~~ | ~~9 depth-2 callees of FUN_004587a0 (PowerUpIcons init)~~ | ~~drained by powerups_d2-20260503; all unique RVAs mapped~~ | ~~powerups_d2~~ | ~~vehicle~~ |
+| ~~D-1303~~ | ~~9 depth-2 callees of FUN_00459290 (Laser/Lazer init)~~ | ~~drained by powerups_d2-20260503; all unique RVAs mapped~~ | ~~powerups_d2~~ | ~~vehicle~~ |
 
 | D-4180 | 0x00408a50 FUN_00408a50 | depth-3 callee of FUN_00414570/FUN_00414a70/FUN_00415880; called as FUN_00408a50(vehicle_idx) → race-progress float; used as per-vehicle ordering metric | ai_update_d2-cont1 | ai |
 | D-4181 | 0x00442cc0 FUN_00442cc0 | depth-3 callee of FUN_004148b0/FUN_00414c30/FUN_00415020/FUN_00415220; called as FUN_00442cc0(vehicle_idx) → progress variant distinct from FUN_0046d6d0; == 0.0 means last-place | ai_update_d2-cont1 | ai |
@@ -569,3 +569,23 @@ A row goes into DEFERRED when:
 | D-4363 | (quad) 0x00552d10 0x00552df0 0x00552da0 0x00552e40 | Im2D render-state setters called from LAB_00554940; address scope outside hud core | Resolve in im2d / render_pipeline depth session | hud |
 | D-4364 | 0x004c4a50 FUN_004c4a50 | Angle-axis matrix builder called from FUN_004c4d20; deeper render-math; separate scope | Resolve in render_pipeline or rw_math depth session | render |
 | D-4365 | 0x00550580 FUN_00550580 | VFS file-open implementation; separate filesystem/io subsystem | Resolve in dedicated vfs / filesystem session | io |
+| D-4000 | 0x005aabe0 FUN_005aabe0 | depth-3 callee of FUN_005ba720/FUN_005ba760; result gates CoInitialize; S-1360 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4001 | 0x005bc860 FUN_005bc860 | depth-3 callee of FUN_005ba720; called after CoInitialize; S-1361 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4002 | 0x005bc880 FUN_005bc880 | depth-3 callee of FUN_005ba760; 11-byte body; called when check<2; S-1362 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4003 | 0x005baf40 FUN_005baf40 | depth-3 callee of LAB_005ba780; called (EDI,0x0) after FUN_005bb000; S-1363 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4004 | 0x005aaa00 FUN_005aaa00 | depth-3 callee of LAB_005ba780; called (EAX,0,0) when [ESI+0xf4]!=0; S-1364 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4005 | 0x005aab70 FUN_005aab70 | depth-3 callee of LAB_005ba7f0; called at entry (EDI, 0x1); S-1365 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4006 | 0x005baa60 FUN_005baa60 | depth-3 callee of LAB_005ba7f0 + FUN_005bac00; motion-state processing or similar; S-1366 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4007 | 0x005bc750 FUN_005bc750 | depth-3 callee of LAB_005ba7f0; called when [EDI+0x78] bit 0x8 set and bits 0x7 clear; S-1367 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4008 | 0x005aea50 FUN_005aea50 | depth-3 callee of FUN_005bb000; allocator (1, size, 0x3080c); streaming buffer alloc; S-1368 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4009 | 0x005aeea0 FUN_005aeea0 | depth-3 callee of FUN_005bb000; event/handle init (param+0x3d, 0, 1); S-1369 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4010 | 0x005aef00 FUN_005aef00 | depth-3 callee of FUN_005bb000; thread creation (param+0x3e, LAB_005bb380, 0xf, 0x1000); S-1370 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4011 | 0x005aef30 FUN_005aef30 | depth-3 callee of FUN_005bb000; thread start/bind (param+0x3e, param+0x27); S-1371 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4012 | 0x005bc470 FUN_005bc470 | depth-3 callee of FUN_005bb000; streaming format path (DAT_005d098c, format, param+0x2a); S-1372 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4013 | 0x005bc640 FUN_005bc640 | depth-3 callee of FUN_005bb000; streaming teardown helper (param+0x2a); S-1373 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4014 | 0x005bbd50 FUN_005bbd50 | depth-3 callee of FUN_005bbc10; returns COM interface from (param_1, param_5); S-1374 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4015 | 0x005bbed0 FUN_005bbed0 | depth-3 callee of FUN_005bbdb0; post-CreateSoundBuffer; takes (param_6, param_3, unaff_retaddr); S-1375 | audio_dsound_d2-cont1 or audio sweep session | audio |
+| D-4240 | 0x004547c0 FUN_004547c0 | depth-3 callee of FUN_004548a0; per-entry activator for DepthCharge struct-A (stride 0x2c, 0x00688240..0x006882f0); ESI-implicit; role unknown; S-1441 | powerups_d2-cont1 | vehicle |
+| D-4241 | 0x00454170 FUN_00454170 | depth-3 callee of FUN_004548a0; per-entry activator for DepthCharge struct-B (stride 0x44, 0x00688020..0x00688240); ESI-implicit; role unknown; S-1441 | powerups_d2-cont1 | vehicle |
+| D-4242 | 0x00534b60 FUN_00534b60 | depth-3 callee of FUN_004770c0; particle/effect system allocate: (count, rw_flags, 0); result stored at param_1[1]; S-1444 | powerups_d2-cont1 | vehicle |
+| D-4243 | 0x004e6d80+0x004c0870+0x004d8060+0x004e6920+0x004e6fe0+0x004e4d90+0x004e68a0+0x004c0790+0x004c0a60+0x004e6710+0x004c0de0+0x004e6f80+0x004e6d00+0x004e4440 | depth-3 callees of FUN_004e6ab0 (RW hierarchy instantiate); all RW hierarchy-management internals; not recursed | powerups_d2-cont1 | vehicle |

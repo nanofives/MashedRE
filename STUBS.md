@@ -484,3 +484,34 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1483 | 0x004c4a50 | 0x004c4d20 FUN_004c4d20 | hud | passthrough | 2026-05-03 | angle-axis matrix builder; D-4364 |
 | S-1485 | 0x00556e90 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-03 | set font-style RGBA color |
 | S-1485 | 0x00557110 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-03 | set font-style secondary param to zero |
+| S-1360 | 0x005aabe0 | 0x005ba720 FUN_005ba720 + 0x005ba760 FUN_005ba760 | audio | passthrough | 2026-05-03 | FUN_005aabe0; called with *param_1; return value gates CoInitialize/CoUninitialize; audio_dsound_d2 |
+| S-1361 | 0x005bc860 | 0x005ba720 FUN_005ba720 | audio | passthrough | 2026-05-03 | FUN_005bc860; called after CoInitialize; failure triggers CoUninitialize+return 0; audio_dsound_d2 |
+| S-1362 | 0x005bc880 | 0x005ba760 FUN_005ba760 | audio | passthrough | 2026-05-03 | FUN_005bc880; 11 bytes; called only when FUN_005aabe0(*param_1)<2; audio_dsound_d2 |
+| S-1363 | 0x005baf40 | 0x005ba780 LAB_005ba780 | audio | passthrough | 2026-05-03 | FUN_005baf40; called with (EDI, 0x0); role unknown; audio_dsound_d2 |
+| S-1364 | 0x005aaa00 | 0x005ba780 LAB_005ba780 | audio | passthrough | 2026-05-03 | FUN_005aaa00; called with (EAX, 0, 0) when [ESI+0xf4]!=0; audio_dsound_d2 |
+| S-1365 | 0x005aab70 | 0x005ba7f0 LAB_005ba7f0 | audio | passthrough | 2026-05-03 | FUN_005aab70; called at entry with (EDI, 0x1); audio_dsound_d2 |
+| S-1366 | 0x005baa60 | 0x005ba7f0 LAB_005ba7f0 + 0x005bac00 FUN_005bac00 | audio | passthrough | 2026-05-03 | FUN_005baa60; called with ([EDI+0x80], [EDI+0x78], &[EDI+0x44]) or 3-arg variant; audio_dsound_d2 |
+| S-1367 | 0x005bc750 | 0x005ba7f0 LAB_005ba7f0 | audio | passthrough | 2026-05-03 | FUN_005bc750; called with ([EDI+0xa8], &[EDI+0x44]) when bit 0x8 set and bits 0x7 clear; audio_dsound_d2 |
+| S-1368 | 0x005aea50 | 0x005bb000 FUN_005bb000 | audio | passthrough | 2026-05-03 | FUN_005aea50; called with (1, size, 0x3080c); allocator for streaming buffer; audio_dsound_d2 |
+| S-1369 | 0x005aeea0 | 0x005bb000 FUN_005bb000 | audio | passthrough | 2026-05-03 | FUN_005aeea0; called with (param_1+0x3d, 0, 1); likely event/handle init; audio_dsound_d2 |
+| S-1370 | 0x005aef00 | 0x005bb000 FUN_005bb000 | audio | passthrough | 2026-05-03 | FUN_005aef00; called with (param_1+0x3e, &LAB_005bb380, 0xf, 0x1000); likely thread creation; audio_dsound_d2 |
+| S-1371 | 0x005aef30 | 0x005bb000 FUN_005bb000 | audio | passthrough | 2026-05-03 | FUN_005aef30; called with (param_1+0x3e, param_1+0x27); likely thread start/bind; audio_dsound_d2 |
+| S-1372 | 0x005bc470 | 0x005bb000 FUN_005bb000 | audio | passthrough | 2026-05-03 | FUN_005bc470; called with (&DAT_005d098c, format_struct, param_1+0x2a); bit-8 streaming path; audio_dsound_d2 |
+| S-1373 | 0x005bc640 | 0x005bb000 FUN_005bb000 | audio | passthrough | 2026-05-03 | FUN_005bc640; called with (param_1+0x2a) on streaming buffer teardown; audio_dsound_d2 |
+| S-1374 | 0x005bbd50 | 0x005bbc10 FUN_005bbc10 | audio | passthrough | 2026-05-03 | FUN_005bbd50; called with (param_1, param_5); returns COM interface ptr; audio_dsound_d2 |
+| S-1375 | 0x005bbed0 | 0x005bbdb0 FUN_005bbdb0 | audio | passthrough | 2026-05-03 | FUN_005bbed0; called after vtable+0xc succeeds with (param_6, param_3, unaff_retaddr); audio_dsound_d2 |
+| S-1440 | 0x004c0e50 FUN_004c0e50 | 0x004b3bf0 FUN_004b3bf0 | vehicle | passthrough | 2026-05-03 | init material/geometry ref after model load; called on *(atomic+4) result of FUN_004e7420 |
+| S-1441 | 0x004547c0 FUN_004547c0 | 0x004548a0 FUN_004548a0 | vehicle | passthrough | 2026-05-03 | per-entry activator for DepthCharge struct-A (stride 0x2c, 0x00688240..0x006882f0); ESI-implicit; D-4240 |
+| S-1441 | 0x00454170 FUN_00454170 | 0x004548a0 FUN_004548a0 | vehicle | passthrough | 2026-05-03 | per-entry activator for DepthCharge struct-B (stride 0x44, 0x00688020..0x00688240); ESI-implicit; D-4241 |
+| S-1442 | 0x004b64e0 FUN_004b64e0 | 0x004b6520 FUN_004b6520 | vehicle | passthrough | 2026-05-03 | underlying 3-arg memset impl: (dst, val=0, size); thin wrapper over CRT memset |
+| S-1443 | 0x004e66d0 FUN_004e66d0 | 0x004b3fc0 0x004b3f90 0x004b5320 0x004b5580 0x00474d60 | vehicle | passthrough | 2026-05-03 | RW ForAll dispatcher: (obj, callback, userdata); iterates sub-objects calling callback; core RW ForAll pattern |
+| S-1444 | 0x00534b60 FUN_00534b60 | 0x004770c0 FUN_004770c0 | vehicle | passthrough | 2026-05-03 | particle-system allocate; args (count, rw_flags, 0); returns particle system handle; D-4242 |
+| S-1445 | 0x004c0b70 FUN_004c0b70 | 0x004c0b30 FUN_004c0b30 | vehicle | passthrough | 2026-05-03 | post-alloc init for RW type 0x3000e object; called immediately after vtable alloc |
+| S-1446 | 0x004c0ad0 FUN_004c0ad0 | 0x004c1040 FUN_004c1040 | vehicle | passthrough | 2026-05-03 | propagate root-frame reference through children; called per child during RW frame reparent |
+| S-1447 | 0x004e67b0 FUN_004e67b0 | 0x004e69a0 FUN_004e69a0 | vehicle | passthrough | 2026-05-03 | pool/heap allocator for RW sub-object (atomic/light) slots; returns ptr or NULL |
+| S-1448 | 0x004ce2d0 FUN_004ce2d0 | 0x004781b0 FUN_004781b0 | vehicle | passthrough | 2026-05-03 | pre-seek on existing RW stream object; called when param_2!=0 in FUN_004781b0 |
+| S-1449 | 0x004cc230 FUN_004cc230 | 0x004b3bf0 0x004b3e40 0x004781b0 0x004b3b70 | vehicle | passthrough | 2026-05-03 | RW stream open; args (mode, type, ptr); mode 2=file mode 3=memory; returns stream handle or 0 |
+| S-1450 | 0x004cc5e0 FUN_004cc5e0 | 0x004b3bf0 0x004b3e40 0x004781b0 | vehicle | passthrough | 2026-05-03 | RW stream chunk seek; args (stream, chunk_type, p3, p4); seeks to chunk of given type |
+| S-1451 | 0x004e7420 FUN_004e7420 | 0x004b3bf0 0x004b3e40 0x004781b0 | vehicle | passthrough | 2026-05-03 | RW load atomic/clump from open stream; returns atomic ptr or 0 |
+| S-1452 | 0x004cc160 FUN_004cc160 | 0x004b3bf0 0x004b3e40 0x004781b0 0x004b3b70 | vehicle | passthrough | 2026-05-03 | RW stream close; args (stream, save_flag); 0 = close without save |
+| S-1453 | 0x004c0740 FUN_004c0740 | 0x004e7e30 0x004e69a0 | vehicle | passthrough | 2026-05-03 | set material/texture reference on RW object; args (obj, mat_or_null); used widely as ref-setter |

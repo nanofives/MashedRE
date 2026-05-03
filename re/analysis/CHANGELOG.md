@@ -387,3 +387,13 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  00452eb0  FUN_00452eb0  C0->C1  re/analysis/ai_update_d2/0x00452eb0.md  powerup pursuit range getter  resolves:D-1144 S-0407  session:ai_update_d2-20260503-1322
 2026-05-03  00472650  FUN_00472650  C0->C1  re/analysis/ai_update_d2/0x00472650.md  random float [min,max) via PRNG FUN_00534870  resolves:D-1141 S-0404  session:ai_update_d2-20260503-1322
 2026-05-03  004c3ac0  FUN_004c3ac0  C0->C1  re/analysis/ai_update_d2/0x004c3ac0.md  fast 3-vector magnitude (two-level sqrt table)  resolves:D-1146 S-0409  session:ai_update_d2-20260503-1322
+2026-05-03  005ba720  FUN_005ba720  C0->C1  re/analysis/audio_dsound_d2/0x005ba720.md  COM init guard CoInitialize/CoUninitialize  resolves:D-0945 S-0346  session:audio_dsound_d2-20260503-1735
+2026-05-03  005ba760  FUN_005ba760  C0->C1  re/analysis/audio_dsound_d2/0x005ba760.md  COM cleanup FUN_005bc880+CoUninitialize jumptable-warn  resolves:D-0947 S-0348  session:audio_dsound_d2-20260503-1735
+2026-05-03  005ba780  LAB_005ba780  C0->C1  re/analysis/audio_dsound_d2/0x005ba780.md  fn-ptr struct+0x34 no-Ghidra-fn 0x6f-bytes 3-vtable+0x8  resolves:D-0943 S-0342  session:audio_dsound_d2-20260503-1735
+2026-05-03  005ba7f0  LAB_005ba7f0  C0->C1  re/analysis/audio_dsound_d2/0x005ba7f0.md  fn-ptr struct+0x30 no-Ghidra-fn 0x24f-bytes flags-dispatch FPU switch-table  resolves:D-0944 S-0343  session:audio_dsound_d2-20260503-1735
+2026-05-03  005bac00  FUN_005bac00  C0->C1  re/analysis/audio_dsound_d2/0x005bac00.md  3x vtable+0x14 6-unreachable-blocks  resolves:D-0950 S-0351  session:audio_dsound_d2-20260503-1735
+2026-05-03  005bb000  FUN_005bb000  C0->C1  re/analysis/audio_dsound_d2/0x005bb000.md  DSoundBuffer init/teardown WaitForSingleObject  resolves:D-0946 S-0347  session:audio_dsound_d2-20260503-1735
+2026-05-03  005bbc10  FUN_005bbc10  C0->C1  re/analysis/audio_dsound_d2/0x005bbc10.md  format/caps query vtable+0x38-retry vtable+0x14  resolves:D-0948 S-0349  session:audio_dsound_d2-20260503-1735
+2026-05-03  005bbdb0  FUN_005bbdb0  C0->C1  re/analysis/audio_dsound_d2/0x005bbdb0.md  CreateSoundBuffer-wrapper vtable+0xc flags-0x88/0x8088  resolves:D-0949 S-0350  session:audio_dsound_d2-20260503-1735
+2026-05-03  005bbf30  FUN_005bbf30  C0->C1  re/analysis/audio_dsound_d2/0x005bbf30.md  COM-Release-x3 vtable+0x8 on param_1[0..2]  resolves:D-0951 S-0352  session:audio_dsound_d2-20260503-1735
+2026-05-03  audio_dsound_d2-20260503-1735  OVERLAP  D-0941 0x005adfe0 + D-0942 0x005ae010 already at C1 in audio_rws_loader_d2; not re-decompiled  session:audio_dsound_d2-20260503-1735
