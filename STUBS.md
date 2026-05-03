@@ -403,6 +403,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0672 | 0x00498860 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_00498860; called with FUN_004671a0(0) result when DAT_007719cc==0 |
 | S-0820 | 0x004c7730 | 0x004c1be0 FUN_004c1be0 | frontend | passthrough | 2026-05-02 | FUN_004c7730; 46 bytes; receives inner render object and HWND; MCI draw? depth-2; D-2327 |
 | S-0640 | 0x004a2b60 FUN_004a2b60 | 0x00496490 FUN_00496490 | boot | passthrough | 2026-05-02 | sprintf variant; called FUN_004a2b60(buf "%.19s\n\n" uVar1); depth-2; also in D-2502 localization-cont1 |
-| S-0641 | 0x004a43b9 FUN_004a43b9 | 0x00496490 FUN_00496490 | boot | passthrough | 2026-05-02 | returns string from 16-byte buffer; 0x004a43b9..0x004a43d1; 24 bytes; depth-2; D-1840 |
-| S-0642 | 0x004a43d2 FUN_004a43d2 | 0x00496490 FUN_00496490 | boot | passthrough | 2026-05-02 | fills 16-byte buffer; 0x004a43d2..0x004a44e4; 274 bytes; depth-2; D-1840 |
 | S-0643 | 0x004a4368 _fclose | 0x00496470 FUN_00496470 | boot | passthrough | 2026-05-02 | FidDB-matched CRT _fclose; __cdecl; 0x004a4368..0x004a43ad; 69 bytes; depth-2; CRT out-of-scope |
+| S-1020 | 0x004a9858 FUN_004a9858 | 0x004a43b9 FUN_004a43b9 | boot | passthrough | 2026-05-03 | time-struct ptr → struct tm* converter; body 0x004a9858..0x004a9a57 (512 bytes); depth-3 of WM_CREATE chain; D-2980 |
+| S-1021 | 0x004a974d FUN_004a974d | 0x004a43b9 FUN_004a43b9 | boot | passthrough | 2026-05-03 | struct-tm-like int → char* date string (asctime-style 26 chars); body 0x004a974d..0x004a9857 (267 bytes); depth-3 of WM_CREATE chain; D-2981 |
+| S-1022 | 0x004a4e40 __aulldiv | 0x004a43d2 FUN_004a43d2 | boot | passthrough | 2026-05-03 | CRT 64-bit unsigned integer division runtime helper; body 0x004a4e40..0x004a4ea7; depth-3; D-2982 |
+| S-1023 | 0x004aa00c FUN_004aa00c | 0x004a43d2 FUN_004a43d2 | boot | passthrough | 2026-05-03 | zero-arg call at start of FUN_004a43d2; side effect unknown; body 0x004aa00c..0x004aa039; depth-3; D-2983 |
+| S-1024 | 0x004aa060 __aullrem | 0x004a43d2 FUN_004a43d2 | boot | passthrough | 2026-05-03 | CRT 64-bit unsigned integer remainder runtime helper; body 0x004aa060..0x004aa0d4; depth-3; D-2984 |

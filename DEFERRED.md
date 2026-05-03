@@ -161,6 +161,7 @@ A row goes into DEFERRED when:
 
 | ID | Title | Outcome | Date |
 |----|-------|---------|------|
+| D-1840 | 0x004a43b9 FUN_004a43b9 + 0x004a43d2 FUN_004a43d2 | analyzed C1 session window_msgpump_d2; depth-3 callees deferred D-2980..D-2984 | 2026-05-03 |
 | D-0002 | 0x00402750 FUN_00402750 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
 | D-0003 | 0x00402a40 FUN_00402a40 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
 | D-0004 | 0x00492270 FUN_00492270 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
@@ -407,7 +408,11 @@ A row goes into DEFERRED when:
 | D-2022 | 0x004cb8a0,0x004cba80 | depth-2 callees shared by 004db3e0 and 004e0920; S-0702/S-0703 filed; lock/create VB and release-buffer wrappers | pick up as bucket render_d3d_reset-cont1 |
 | D-2023 | 0x004d5480,0x004d54f0,0x004d5570,0x004d53b0 | depth-2 callees of 004d6200 (RS cache reset); S-0704..S-0707 filed; render/sampler/TSS state setter wrappers and state-restore epilogue | pick up as bucket render_d3d_reset-cont1; shared with D3D9 state-machine bucket |
 | D-2327 | 0x004c7730 | FUN_004c7730 | FUN_004c1be0 | depth-2; 46 bytes; receives inner render object and HWND; likely MCI draw | decomp FUN_004c7730; pick up as intro_splash-cont1 |
-| D-1840 | 0x004a43b9 0x004a43d2 | FUN_004a43b9 FUN_004a43d2 | FUN_00496490 | depth-2 from WM_CREATE handler; FUN_004a43b9 returns string (24 bytes); FUN_004a43d2 fills 16-byte buffer (274 bytes); logged via FUN_004963e0; from session window_msgpump-20260502-2232 bucket window_msgpump | pick up as bucket window_msgpump-cont1; same depth; no further recursion |
+| D-2980 | 0x004a9858 FUN_004a9858 | depth-3 callee of 0x004a43b9 FUN_004a43b9; time-struct ptr → struct tm* converter; body 0x004a9858..0x004a9a57 (512 bytes); S-1020 | pick up as bucket window_msgpump_d2-cont1; no further recursion | boot |
+| D-2981 | 0x004a974d FUN_004a974d | depth-3 callee of 0x004a43b9 FUN_004a43b9; struct-tm-like int → char* date string formatter (asctime-style, 26 chars); body 0x004a974d..0x004a9857 (267 bytes); S-1021 | pick up as bucket window_msgpump_d2-cont1; no further recursion | boot |
+| D-2982 | 0x004a4e40 __aulldiv | depth-3 callee of 0x004a43d2 FUN_004a43d2; CRT 64-bit unsigned division runtime helper; body 0x004a4e40..0x004a4ea7; S-1022 | pick up as bucket window_msgpump_d2-cont1; CRT intrinsic | boot |
+| D-2983 | 0x004aa00c FUN_004aa00c | depth-3 callee of 0x004a43d2 FUN_004a43d2; zero-arg call at start of time-struct init; body 0x004aa00c..0x004aa039; S-1023 | pick up as bucket window_msgpump_d2-cont1; no further recursion | boot |
+| D-2984 | 0x004aa060 __aullrem | depth-3 callee of 0x004a43d2 FUN_004a43d2; CRT 64-bit unsigned remainder runtime helper; body 0x004aa060..0x004aa0d4; S-1024 | pick up as bucket window_msgpump_d2-cont1; CRT intrinsic | boot |
 | D-2200 | n/a (not found) | LIGHT_SETUP_FN not identified in render_lighting-20260502-2221 session; RpLight anchors absent from MASHED.exe (no imports, no strings, no FidDB matches); nodeD3D9SubmitNoLight.csl at 0x00618598 suggests custom D3D9 pipeline bypassing RW world lights; from session render_lighting-20260502-2221 | pick up as bucket render_lighting-cont1; try constant search for rpLIGHTAMBIENT=1/rpLIGHTDIRECTIONAL=2 arguments or trace Lights_Filename consumer from 0x0047aaa0 | n/a |
 | D-2201 | 0x0047aaa0 (Lights_Filename global ptr) | Lights_Filename config key registered by switch-case config fn at ~0x0043dfd0; consumer function that reads 0x0047aaa0 and loads the light file not traced; file format unknown; from session render_lighting-20260502-2221 | pick up as bucket render_lighting-cont1; reference_to 0x0047aaa0 to find reader; decomp reader function | n/a |
 | D-2324 | 0x004942b0 | FUN_004942b0 | FUN_00494480 | depth-2; 109 bytes; advance/tick call | decomp FUN_004942b0; pick up as intro_splash-cont1 |
