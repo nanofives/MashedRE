@@ -433,3 +433,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  0042a9f0  GetFadeAlpha  C0->C1  re/analysis/render_frame_d3/0042a9f0.md  trivial getter (byte)DAT_0067eca8; D-0894 resolved  session:render_frame_d3-20260503
 2026-05-03  render_frame_d3-20260503  BATCH  14 C0→C1 promotions; 41 new D-5020..D-5060; 10 U-1707..U-1716; 13 S-1700..S-1712; slot=Mashed_pool13 (pool5 orphan-locked)  session:render_frame_d3-20260503
 2026-05-03  sweep-20260503-1853  scribe-claim-sweep  buckets=1  (replay_record skipped: no per-RVA files)
+2026-05-03  sweep-20260503-1853  scribe-claim  bucket=game_mode  rvas=1  (sweep)
+2026-05-03  sweep-20260503-1853  scribe-release  bucket=game_mode  writes=0_plates,1_bookmarks  errors=0  (sweep; plate-skipped:C0)
+2026-05-03  sweep-20260503-1853  scribe-release-sweep  buckets=1  total_writes=0_plates,1_bookmarks  errors=0

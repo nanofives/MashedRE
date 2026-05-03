@@ -13,8 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-03  game_mode-20260503-1622  bucket=game_mode  rvas=0x0043dfd0
-2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10
+2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 ```
 
 ## Drained
@@ -67,5 +66,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-03  render_frame_tree_d2-20260503-0700  bucket=render_frame_tree_d2  rvas=0x004d80d0,0x004d8280,0x004d8300,0x004c0e50  notes=FRAME_UPDATE_FN(_rwFrameSyncDirty) found; D-2080 resolved; D-3460 (FUN_004c4600 matrix_math) filed; U-1187 U-1188 U-1189 added
 2026-05-03  race_state_d2-20260503-1737  bucket=race_state_d2  rvas=0x0042bf30,0x00496900,0x0042d3a0,0x004248b0  D-3113/3115/3116 analyzed; D-3117 corrected typo 004348b0→004248b0 then analyzed; D-3114 already mapped (race_results); U-1507..U-1511 added; S-1500 added; S-1066/1067 cleared S-1068 partial; no D-4420..4479 entries (all leaf functions)  pool=Mashed_pool7
 2026-05-03  audio_dsound_d2-20260503-1735  bucket=audio_dsound_d2  rvas=0x005ba720,0x005ba760,0x005ba780,0x005ba7f0,0x005bac00,0x005bb000,0x005bbc10,0x005bbdb0,0x005bbf30  note=D-0941/D-0942 skipped (already C1 in audio_rws_loader_d2); U-range exhausted (U-1367..U-1386 full); pool=Mashed_pool1
+2026-05-03  game_mode-20260503-1622  bucket=game_mode  rvas=0x0043dfd0  note=plate-skipped:C0 (preserved prior timer_d2 plate "decomp too large"); bookmark added; library-rename skipped (no "Library Function:" prefix); via sweep-20260503-1853
 2026-05-03  vehicle_dynamics-20260503-0000  bucket=vehicle_dynamics  rvas=0x0046e9e0,0x0046d700,0x004c4680
 2026-05-03  timer_d2_cont1-20260503-1824  bucket=timer_d2_cont1  rvas=0x0040ab40,0x0040ac80,0x0040b810,0x0040de10,0x0040e360,0x0040e370,0x00422b30,0x00429aa0,0x0042af50,0x0042b900,0x0042b950,0x0042c150,0x00431b50,0x00431b60,0x00432290,0x0045c480,0x0045d3a0,0x0045d7a0
