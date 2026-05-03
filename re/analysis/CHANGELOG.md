@@ -333,3 +333,10 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  hud_frontend_d2-20260503-0559  batch  C0->C1  14 functions cleared from D-1240..D-1253 (hud_frontend-cont1 bucket): 004335f0 0043a610 0042f0c0 0043af10 00434720 00430b90 00431240 004314b0 00431710 0043aa30 0042fb70 0042fe90 00430120 00439210; D-1240..D-1253 cleared; D-2740..D-2782 depth-3 deferred (43 callees); slot=Mashed_pool15; anchor=ok
 2026-05-03  0x004671c0  GetOverlayCamera  C0->C1  render_frame-20260503-0611: trivial getter returns DAT_006905b4; paired with GetCamera(0x004671a0); used as overlay camera in FUN_00492e90
 2026-05-03  sweep-20260503-0649  scribe-claim-sweep  buckets=3
+2026-05-03  sweep-20260503-0649  scribe-claim  bucket=render_frame  rvas=1  (sweep)
+2026-05-03  sweep-20260503-0649  scribe-release  bucket=render_frame  writes=1  errors=0  (sweep)
+2026-05-03  sweep-20260503-0649  scribe-claim  bucket=hud_ingame_d2  rvas=14  (sweep)
+2026-05-03  sweep-20260503-0649  scribe-release  bucket=hud_ingame_d2  writes=14  errors=0  (sweep)
+2026-05-03  sweep-20260503-0649  scribe-claim  bucket=track_loader_d2  rvas=16  (sweep)
+2026-05-03  sweep-20260503-0649  scribe-release  bucket=track_loader_d2  writes=16  errors=0  (sweep)
+2026-05-03  sweep-20260503-0649  scribe-release-sweep  buckets=3  total_writes=31  errors=0  (queue empty)
