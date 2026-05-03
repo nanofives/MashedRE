@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-03  render_frame-20260503-0611  bucket=render_frame  rvas=0x004671c0  D-0880..D-0894  pool=Mashed_pool14
 2026-05-03  race_state-20260503-0600  bucket=race_state  rvas=0x0042c280,0x0042c2d0,0x0042c2e0,0x0042c2f0,0x00432080,0x004331a0,0x00448700,0x004927c0
 2026-05-03  hud_ingame_d2-20260503  bucket=hud_ingame_d2  rvas=0x004c1c80,0x00402fb0,0x00428760,0x0041c2d0,0x0041b340,0x0041bc50,0x0041c9a0,0x0041d410,0x0041de80,0x0041e630,0x00428610,0x004c0e50,0x0042b8b0,0x0042b8c0  stubs_cleared=S-0561..S-0572  deferred_added=D-2680  pool=Mashed_pool3
 2026-05-03  track_loader_d2-20260503-0302  bucket=track_loader_d2  rvas=0x00426cd0,0x0042a8d0,0x0042f510,0x00462950,0x004715a0,0x00478660,0x00479330,0x0047a0f0,0x0047c0b0,0x0047c0f0,0x00480340,0x00491780,0x004924c0,0x00495280,0x004952f0,0x004c1b10  D1180_drained  S-0900..S-0919  U-0907..U-0912  D-2620..D-2645  pool=Mashed_pool13

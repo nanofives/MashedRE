@@ -142,25 +142,68 @@ A row goes into DEFERRED when:
 | D-0569 | 0x004ad1e0 FUN_004ad1e0 | depth-3 callee of 0x004a504f (S-0214); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
 | D-0570 | 0x004cfa00 FUN_004cfa00 | depth-3 thunk target of 0x004c7a60 (S-0215); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
 | D-0571 | 0x004c7690 FUN_004c7690 | depth-3 callee of FUN_004cfa00 via 0x004c7a60 (S-0216); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
-| D-1240 | 0x004335f0 FUN_004335f0 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7a8 path); not recursed in hud_frontend-20260502-1944 | hud_frontend-cont1 session | frontend |
-| D-1241 | 0x0043a610 FUN_0043a610 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7d8 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1242 | 0x0042f0c0 FUN_0042f0c0 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7b0 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1243 | 0x0043af10 FUN_0043af10 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7f0 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1244 | 0x00434720 FUN_00434720 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7c8 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1245 | 0x00430b90 FUN_00430b90 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7f8 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1246 | 0x00431240 FUN_00431240 | depth-2 callee of FUN_0043bf30 (flag 0x0067e838 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1247 | 0x004314b0 FUN_004314b0 | depth-2 callee of FUN_0043bf30 (flag 0x0067e830 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1248 | 0x00431710 FUN_00431710 | depth-2 callee of FUN_0043bf30 (flag 0x0067e820 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1249 | 0x0043aa30 FUN_0043aa30 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7e0 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1250 | 0x0042fb70 FUN_0042fb70 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7e8 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1251 | 0x0042fe90 FUN_0042fe90 | depth-2 callee of FUN_0043bf30 (flag 0x0067e810 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1252 | 0x00430120 FUN_00430120 | depth-2 callee of FUN_0043bf30 (flag 0x0067e818 path); not recursed | hud_frontend-cont1 session | frontend |
-| D-1253 | 0x00439210 FUN_00439210 | depth-2 callee of FUN_0043bf30 (flag 0x0067e7b8 path); not recursed | hud_frontend-cont1 session | frontend |
+| D-2740 | 0x00430760 FUN_00430760 | depth-3 callee of FUN_004335f0/FUN_00439210; not recursed in hud_frontend_d2 | hud_frontend_d3 sweep session | frontend |
+| D-2741 | 0x0042fab0 FUN_0042fab0 | depth-3 callee of FUN_004335f0/FUN_0043a610/FUN_00434720/FUN_0043aa30; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2742 | 0x0042bcb0 FUN_0042bcb0 | depth-3 callee of FUN_004335f0/FUN_0043a610/FUN_0043aa30; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2743 | 0x004282a0 FUN_004282a0 | depth-3 callee: text size/width; multiple callers in hud_frontend_d2; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2744 | 0x00427ad0 FUN_00427ad0 | depth-3 callee of FUN_004335f0; icon draw 7-param variant; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2745 | 0x0042f8d0 FUN_0042f8d0 | depth-3 callee of FUN_0043a610/FUN_00434720/FUN_0043aa30; background rect draw; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2746 | 0x0042ac00 FUN_0042ac00 | depth-3 callee: player count / slot index getter; multiple callers; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2747 | 0x00473870 FUN_00473870 | depth-3 callee: sprite draw 7-param; multiple callers; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2748 | 0x004368e0 FUN_004368e0 | depth-3 callee of FUN_0043af10/FUN_00439210; player alpha/color setup; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2749 | 0x0042ac50 FUN_0042ac50 | depth-3 callee: layout Y base getter; multiple callers; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2750 | 0x0042a940 FUN_0042a940 | depth-3 callee of FUN_0043af10; powerup sprite index by selection; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2751 | 0x00430830 FUN_00430830 | depth-3 callee of FUN_0043af10; split-screen track check; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2752 | 0x00458630 FUN_00458630 | depth-3 callee of FUN_0043af10; powerup sprite lookup by type; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2753 | 0x0040bb70 FUN_0040bb70 | depth-3 callee of FUN_0043af10; sprite lookup by name variant A; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2754 | 0x0040bb90 FUN_0040bb90 | depth-3 callee of FUN_0043af10; sprite lookup by name variant B; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2755 | 0x0040b620 FUN_0040b620 | depth-3 callee of FUN_00434720; player mode/sort variant; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2756 | 0x0040b460 FUN_0040b460 | depth-3 callee of FUN_00434720; player data fetch; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2757 | 0x0040e3a0 FUN_0040e3a0 | depth-3 callee of FUN_00434720; player name/string data; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2758 | 0x00430b30 FUN_00430b30 | depth-3 callee of FUN_00434720; lap time getter (3 out-params); not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2759 | 0x0042d290 FUN_0042d290 | depth-3 callee of FUN_00434720; lap time formatter; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2760 | 0x0042d300 FUN_0042d300 | depth-3 callee of FUN_00434720; lap time comparator; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2761 | 0x00429870 FUN_00429870 | depth-3 callee of FUN_00434720; race data getter A; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2762 | 0x00429a30 FUN_00429a30 | depth-3 callee of FUN_00434720; race data getter B; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2763 | 0x00429a80 FUN_00429a80 | depth-3 callee of FUN_00434720; race data getter C; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2764 | 0x00429a90 FUN_00429a90 | depth-3 callee of FUN_00434720; race data getter D; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2765 | 0x00429a70 FUN_00429a70 | depth-3 callee of FUN_00434720; race data getter E; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2766 | 0x004736c0 FUN_004736c0 | depth-3 callee of FUN_00434720; line/border renderer; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2767 | 0x00428320 FUN_00428320 | depth-3 callee of FUN_00434720; text width measurement (item-based); not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2768 | 0x0040b7a0 FUN_0040b7a0 | depth-3 callee of FUN_00434720; hotkey string getter; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2769 | 0x0040b7b0 FUN_0040b7b0 | depth-3 callee of FUN_00434720; per-player hotkey getter; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2770 | 0x0040b6b0 FUN_0040b6b0 | depth-3 callee of FUN_00434720; vehicle data getter A; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2771 | 0x0040b6c0 FUN_0040b6c0 | depth-3 callee of FUN_00434720; vehicle data getter B; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2772 | 0x00474e60 FUN_00474e60 | depth-3 callee of FUN_00434720; float-to-x87-angle converter (fsin/fcos prep); not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2773 | 0x0040ad20 FUN_0040ad20 | depth-3 callee of FUN_00431240; option state bool; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2774 | 0x00436810 FUN_00436810 | depth-3 callee of FUN_00439210; local player slot occupancy check; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2775 | 0x0042ebe0 FUN_0042ebe0 | depth-3 callee of FUN_00439210; AI/remote slot occupancy check; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2776 | 0x0042ee40 FUN_0042ee40 | depth-3 callee of FUN_00439210; vehicle sprite getter (slot type); not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2777 | 0x004391b0 FUN_004391b0 | depth-3 callee of FUN_00439210; powerup/overlay sprite draw; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2778 | 0x0042ef40 FUN_0042ef40 | depth-3 callee of FUN_00439210; vehicle lock-state check; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2779 | 0x00430a10 FUN_00430a10 | depth-3 callee of FUN_00439210; get player at slot type 0; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2780 | 0x00430a60 FUN_00430a60 | depth-3 callee of FUN_00439210; get player at slot type 1; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2781 | 0x00430ab0 FUN_00430ab0 | depth-3 callee of FUN_00439210; get player at slot type 2; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-2782 | 0x0042ee00 FUN_0042ee00 | depth-3 callee of FUN_00439210; vehicle icon by unlock state; not recursed | hud_frontend_d3 sweep session | frontend |
 
 ## Cleared (delivered or rejected)
 
 | ID | Title | Outcome | Date |
 |----|-------|---------|------|
+| D-1240 | 0x004335f0 FUN_004335f0 | analyzed C1 session hud_frontend_d2-20260503-0559; depth-3 callees D-2740..D-2782 | 2026-05-03 |
+| D-1241 | 0x0043a610 FUN_0043a610 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1242 | 0x0042f0c0 FUN_0042f0c0 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1243 | 0x0043af10 FUN_0043af10 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1244 | 0x00434720 FUN_00434720 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1245 | 0x00430b90 FUN_00430b90 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1246 | 0x00431240 FUN_00431240 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1247 | 0x004314b0 FUN_004314b0 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1248 | 0x00431710 FUN_00431710 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1249 | 0x0043aa30 FUN_0043aa30 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1250 | 0x0042fb70 FUN_0042fb70 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1251 | 0x0042fe90 FUN_0042fe90 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1252 | 0x00430120 FUN_00430120 | analyzed C1 session hud_frontend_d2-20260503-0559 | 2026-05-03 |
+| D-1253 | 0x00439210 FUN_00439210 | analyzed C1 session hud_frontend_d2-20260503-0559; depth-3 callees D-2774..D-2782 | 2026-05-03 |
 | D-1840 | 0x004a43b9 FUN_004a43b9 + 0x004a43d2 FUN_004a43d2 | analyzed C1 session window_msgpump_d2; depth-3 callees deferred D-2980..D-2984 | 2026-05-03 |
 | D-0002 | 0x00402750 FUN_00402750 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
 | D-0003 | 0x00402a40 FUN_00402a40 | analyzed C1 boot_app_init session boot_app_init-20260502-1724 | 2026-05-02 |
@@ -484,3 +527,18 @@ A row goes into DEFERRED when:
 | D-3110 | 0x00555af0 FUN_00555af0 | depth-2 callee of LAB_00555910; called when METRICS1 lookup returns null (null-extension branch); 4 params including xy_coords font_ctx string_buf | font_text-cont1 | hud |
 | D-3111 | 0x00555ff0 FUN_00555ff0 | depth-2 callee of LAB_00555910; called when METRICS3 lookup succeeds; same 4-param signature as FUN_00555af0 | font_text-cont1 | hud |
 | D-3112 | 0x00552b90 FUN_00552b90 | depth-2 callee of FUN_00427620 (HUD text shutdown); font subsystem teardown counterpart to FUN_00552b60 | font_text-cont1 | hud |
+| D-0880 | 0x00426670 FUN_00426670 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90 (RENDER_FRAME_FN); called with primary camera; role: camera setup or world geometry render entry point; called before FUN_004c1a00 (BeginUpdate) | render_frame-cont1 | render |
+| D-0881 | 0x0040de30 FUN_0040de30 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called with overlay camera; renders minimap/overhead geometry | render_frame-cont1 | render |
+| D-0882 | 0x0040df20 FUN_0040df20 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called with overlay camera at end of overlay block; role unknown | render_frame-cont1 | render |
+| D-0883 | 0x0040df60 FUN_0040df60 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; inside BeginUpdate block of primary camera; render sub-pass | render_frame-cont1 | render |
+| D-0884 | 0x00404320 FUN_00404320 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; inside BeginUpdate block; render sub-pass | render_frame-cont1 | render |
+| D-0885 | 0x00410b30 FUN_00410b30 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; inside BeginUpdate block of primary camera; per-frame HUD render | render_frame-cont1 | render |
+| D-0886 | 0x00426030 FUN_00426030 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called before BeginUpdate with no camera arg; world render setup | render_frame-cont1 | render |
+| D-0887 | 0x004266b0 FUN_004266b0 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called with primary camera at end of render block; camera post-render cleanup | render_frame-cont1 | render |
+| D-0888 | 0x00492440 FUN_00492440 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; iterates array 0x00868320..0x869ca0 (step 0x44, ~100 entries); per-frame object update loop | render_frame-cont1 | render |
+| D-0889 | 0x00492e60 FUN_00492e60 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in fade/race-end states (1 and 4); role unknown; very small (0x2b bytes) | render_frame-cont1 | render |
+| D-0890 | 0x00433f40 FUN_00433f40 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in race-end states (cases 1 and 4); results or finish screen render | render_frame-cont1 | render |
+| D-0891 | 0x00403050 FUN_00403050 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in state 1 when sub-state==0x21; role unknown | render_frame-cont1 | render |
+| D-0892 | 0x0042d390 FUN_0042d390 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in state 3 (race); returns int checked <3; game state sub-query | render_frame-cont1 | render |
+| D-0893 | 0x0042f530 FUN_0042f530 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; state 3 race loop; int checked !=0; game state/music query | render_frame-cont1 | render |
+| D-0894 | 0x0042a9f0 FUN_0042a9f0 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; used in state 6 to check >200; 5-byte function; game state query | render_frame-cont1 | render |

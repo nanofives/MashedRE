@@ -553,3 +553,19 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00430a60,FUN_00430a60,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 1; caller FUN_00439210; D-2780; bucket hud_frontend_d2
 00430ab0,FUN_00430ab0,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 2; caller FUN_00439210; D-2781; bucket hud_frontend_d2
 0042ee00,FUN_0042ee00,frontend,C0,deferred,,,,depth-3 callee: vehicle icon by unlock state; caller FUN_00439210; D-2782; bucket hud_frontend_d2
+004671c0,GetOverlayCamera,render,C1,new,re/analysis/render_frame/004671c0.md,,,returns DAT_006905b4 (overlay/minimap RwCamera* global); paired with sub_004671a0 (primary cam); called from FUN_00492e90 per-frame render
+00426670,FUN_00426670,render,C0,deferred,,,,depth-2 callee of FUN_00492e90 (RENDER_FRAME_FN); called with primary camera before BeginUpdate; world scene render or camera setup entry; D-0880; bucket render_frame
+0040de30,FUN_0040de30,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; called with overlay camera; minimap/overhead render; D-0881; bucket render_frame
+0040df20,FUN_0040df20,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; overlay camera end block; D-0882; bucket render_frame
+0040df60,FUN_0040df60,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; inside primary BeginUpdate block; render sub-pass; D-0883; bucket render_frame
+00404320,FUN_00404320,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; inside primary BeginUpdate block; render sub-pass; D-0884; bucket render_frame
+00410b30,FUN_00410b30,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; HUD per-frame render inside primary BeginUpdate block; D-0885; bucket render_frame
+00426030,FUN_00426030,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; world render setup (no camera arg); called before BeginUpdate; D-0886; bucket render_frame
+004266b0,FUN_004266b0,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; camera post-render cleanup; called with primary camera at render block end; D-0887; bucket render_frame
+00492440,FUN_00492440,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; per-frame object update loop; iterates 0x00868320..0x869ca0 (step 0x44); D-0888; bucket render_frame
+00492e60,FUN_00492e60,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; fade/race-end states 1+4; 0x2b bytes; D-0889; bucket render_frame
+00433f40,FUN_00433f40,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; called in race-end states 1+4; results/finish screen; D-0890; bucket render_frame
+00403050,FUN_00403050,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 1 sub-state==0x21 branch; D-0891; bucket render_frame
+0042d390,FUN_0042d390,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 race; result <3 check; game state sub-query; D-0892; bucket render_frame
+0042f530,FUN_0042f530,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 music/race query; D-0893; bucket render_frame
+0042a9f0,FUN_0042a9f0,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 6 query result >200; 5 bytes; D-0894; bucket render_frame
