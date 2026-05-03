@@ -569,7 +569,7 @@
 00492440,FUN_00492440,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; per-frame object update loop; iterates 0x00868320..0x869ca0 (step 0x44); D-0888; bucket render_frame
 00492e60,FUN_00492e60,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; fade/race-end states 1+4; 0x2b bytes; D-0889; bucket render_frame
 00433f40,FUN_00433f40,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; called in race-end states 1+4; results/finish screen; D-0890; bucket render_frame
-00403050,FUN_00403050,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 1 sub-state==0x21 branch; D-0891; bucket render_frame
+00403050,FUN_00403050,frontend,C1,mapped,re/analysis/loading_screen/0x00403050.md,,,pre-race loading screen renderer; state-1 sub-state-0x21; draws DAT_00771964 texture + FUN_00402fb0 pulsing spinner (sprite 0x2A4); resolves:D-0891
 0042d390,FUN_0042d390,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 race; result <3 check; game state sub-query; D-0892; bucket render_frame
 0042f530,FUN_0042f530,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 3 music/race query; D-0893; bucket render_frame
 0042a9f0,FUN_0042a9f0,render,C0,deferred,,,,depth-2 callee of FUN_00492e90; state 6 query result >200; 5 bytes; D-0894; bucket render_frame
@@ -829,3 +829,22 @@
 0045c480,FUN_0045c480,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045c480.md,,,zero-init: 11 scatter globals + 0x24-dword loop at 0x0088f5e0 + _DAT_008aa2ec; overlapping syms; U-1620
 0045d3a0,FUN_0045d3a0,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045d3a0.md,,,gated by FUN_0042f6a0!=2; calls FUN_0045c810+d330+loop-d1e0+004657b0; stores FUN_0040e350→DAT_0088fbc0; S-1606..S-1609
 0045d7a0,FUN_0045d7a0,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045d7a0.md,,,701b; copies 16-uint block via FUN_00467210; position lerp/assign to 0x008a968X cluster; cross-product writes to iVar6 obj offsets; S-1610..S-1612; U-1621 U-1622
+004c2d90,FUN_004c2d90,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2d90.md,,,plugin-registry wrapper for DAT_00617fe0; delegates to FUN_004d7de0; S-0200
+004e7d40,FUN_004e7d40,render,C1,mapped,re/analysis/rw_engine_init_d3/004e7d40.md,,,plugin-registry wrapper for DAT_00618664; delegates to FUN_004d7de0; S-0201
+004a42c5,FUN_004a42c5,render,C1,mapped,re/analysis/rw_engine_init_d3/004a42c5.md,,,vsprintf(buf fmt va_list) via stack-FILE+FUN_004a504f; S-0260 S-0820
+004a2b60,FUN_004a2b60,render,C1,mapped,re/analysis/rw_engine_init_d3/004a2b60.md,,,sprintf(buf fmt ...) variadic via stack-FILE+FUN_004a504f; caller va_list
+004ad1e0,FUN_004ad1e0,render,C1,mapped,re/analysis/rw_engine_init_d3/004ad1e0.md,,,fatal CRT abort: __amsg_exit(2); called from FUN_004a504f error path
+00498a00,FUN_00498a00,render,C1,mapped,re/analysis/rw_engine_init_d3/00498a00.md,,,display mode name formatter: width x height x depth + flag text via FUN_004a2b60; U-1667; S-0204 S-0822
+00498c00,FUN_00498c00,render,C1,mapped,re/analysis/rw_engine_init_d3/00498c00.md,,,D3D subsystem+mode enumeration init; allocs 3 parallel arrays (0x50-byte subsys-info 4-byte mode-counts 0x18-byte mode-structs); restores state; S-0205 S-0821
+00498e40,FUN_00498e40,render,C1,mapped,re/analysis/rw_engine_init_d3/00498e40.md,,,default mode finder: first mode >=640x480 with non-zero flags; returns index; S-0206 S-0823
+00498ea0,FUN_00498ea0,render,C1,mapped,re/analysis/rw_engine_init_d3/00498ea0.md,,,snapshot renderer selection to globals; saves subsystem+mode; vtable+0xCC dispatch; writes width/height/depth/fullscreen; S-0207 S-0824
+004c2e70,FUN_004c2e70,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e70.md,,,SetSubSystem wrapper: FUN_004c2c90 cmd 0x10; S-0208 S-0825
+004cfa00,FUN_004cfa00,render,C1,mapped,re/analysis/rw_engine_init_d3/004cfa00.md,,,RW/D3D pixel-format cap table init; FUN_004c7690 plugin reg (ID 0x40c); zeroes 0x200B@0x911b00; fills 0x911b50..0x911cd5 with RW raster format entries; U-1669; S-0215
+004c7690,FUN_004c7690,render,C1,mapped,re/analysis/rw_engine_init_d3/004c7690.md,,,plugin-registry wrapper for DAT_00618180; delegates to FUN_004d7de0; S-0216
+004d7de0,FUN_004d7de0,render,C1,mapped,re/analysis/rw_engine_init_d3/004d7de0.md,,,RwPluginRegistryAddPlugin core; linked-list node alloc+append; DAT_007d6c50..58; U-1668
+004c2d70,FUN_004c2d70,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2d70.md,,,getter DAT_007d3ff4 (RW plugin state guard)
+004c2de0,FUN_004c2de0,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2de0.md,,,GetNumSubSystems: FUN_004c2c90 cmd 0xd
+004c2e10,FUN_004c2e10,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e10.md,,,GetSubSystemInfo: FUN_004c2c90 cmd 0xe; fills 0x50-byte struct
+004c2e40,FUN_004c2e40,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e40.md,,,GetCurrentSubSystem: FUN_004c2c90 cmd 0xf; returns 0xffffffff on fail
+004c2ea0,FUN_004c2ea0,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2ea0.md,,,GetNumVideoModes: FUN_004c2c90 cmd 5; returns 0xffffffff on fail
+004c2f30,FUN_004c2f30,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2f30.md,,,UseVideoMode: FUN_004c2c90 cmd 7; selects mode by index

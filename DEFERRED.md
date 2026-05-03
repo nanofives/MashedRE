@@ -497,7 +497,7 @@ A row goes into DEFERRED when:
 | D-0888 | 0x00492440 FUN_00492440 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; iterates array 0x00868320..0x869ca0 (step 0x44, ~100 entries); per-frame object update loop | render_frame-cont1 | render |
 | D-0889 | 0x00492e60 FUN_00492e60 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in fade/race-end states (1 and 4); role unknown; very small (0x2b bytes) | render_frame-cont1 | render |
 | D-0890 | 0x00433f40 FUN_00433f40 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in race-end states (cases 1 and 4); results or finish screen render | render_frame-cont1 | render |
-| D-0891 | 0x00403050 FUN_00403050 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in state 1 when sub-state==0x21; role unknown | render_frame-cont1 | render |
+| D-0891 | ~~0x00403050 FUN_00403050~~ | ~~render_frame-20260503-0611~~ | CLEARED loading_screen-20260503; promoted C0→C1 frontend; pre-race loading screen renderer | — | — |
 | D-0892 | 0x0042d390 FUN_0042d390 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in state 3 (race); returns int checked <3; game state sub-query | render_frame-cont1 | render |
 | D-0893 | 0x0042f530 FUN_0042f530 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; state 3 race loop; int checked !=0; game state/music query | render_frame-cont1 | render |
 | D-0894 | 0x0042a9f0 FUN_0042a9f0 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; used in state 6 to check >200; 5-byte function; game state query | render_frame-cont1 | render |
@@ -607,3 +607,5 @@ A row goes into DEFERRED when:
 | D-4867 | 0x0040e480 FUN_0040e480 | depth-2 callee of FUN_0043dfd0; 18 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
 | D-4868 | 0x00492d30 FUN_00492d30 | sole caller of FUN_0043dfd0; 265 bytes; not decompiled this session | game_mode_cont2 | util |
 | D-5080 | 0x005aa1e0 FUN_005aa1e0 | depth-4 of FUN_005aa060 (audio_rws_loader_d3 session); S-1720; inline callback at LAB_005aa1e0; no Ghidra function body; tree-walk predicate callback | audio_rws_loader_d3-cont1 | audio |
+| D-4720 | (bulk) 0x0045db50,0x0045dbe0,0x0045dc80,0x0045df70,0x0045dfc0,0x00462520,0x004627b0,0x00462dd0,0x00462ec0,0x00463590,0x00463640,0x004647f0,0x004648b0,0x0046dc00,0x00492d10,0x00493570,0x00493580,0x004d8560,0x005a89a0,0x005a89b0,0x005a89c0 | from session timer_d2_cont1-20260503-1824; early-finish at cap_count=18; pick up as bucket timer_d2_cont2; same depth-2 | timer_d2_cont2 | util/audio |
+| D-4721 | 0x0043dfd0 FUN_0043dfd0 | re-defer from D-3282: decomp 63977 chars / ~30839 tokens; C0 note exists in timer_d2 bucket; requires dedicated Opus session; 63 callees unprocessed | timer_d2_opus | util |

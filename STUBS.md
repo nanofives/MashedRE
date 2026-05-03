@@ -517,3 +517,16 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1655 | 0x0042aa00 FUN_0042aa00 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | called first in FUN_004322c0 with arg 1; role unknown; may update track-display state |
 | S-1656 | 0x00430910 FUN_00430910 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | per-option validity check in track-selection loop; returns 0 if option valid; used to skip invalid indices |
 | S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | audio | passthrough | 2026-05-03 | inline callback at LAB_005aa1e0; no Ghidra function body; passed as code ptr to FUN_005aa0c0; D-5080 |
+| S-1600 | 0x00409930 FUN_00409930 | 0x0040ab40 FUN_0040ab40 | util | passthrough | 2026-05-03 | called in case 6 of FUN_0040ab40 alongside FUN_0042c1a0 |
+| S-1601 | 0x00409970 FUN_00409970 | 0x0040ab40 FUN_0040ab40 | util | passthrough | 2026-05-03 | called on sub-state 7/8 in multiple cases of FUN_0040ab40 |
+| S-1602 | 0x0042c1a0 FUN_0042c1a0 | 0x0040ab40 0x0040ac80 | util | passthrough | 2026-05-03 | called on case 6 and case 4 range-guarded paths; shared by two state dispatchers |
+| S-1603 | 0x00405420 FUN_00405420 | 0x0040de10 FUN_0040de10 | util | passthrough | 2026-05-03 | called after Replay::StartLap and DAT_0063ba8c=1 in FUN_0040de10 |
+| S-1604 | 0x00430820 FUN_00430820 | 0x00429aa0 FUN_00429aa0 | util | passthrough | 2026-05-03 | predicate; non-zero selects table at 0x00614720 over flat arrays |
+| S-1605 | 0x00430790 FUN_00430790 | 0x00429aa0 FUN_00429aa0 | util | passthrough | 2026-05-03 | index provider; called 3× per FUN_00429aa0 invocation |
+| S-1606 | 0x0045c810 FUN_0045c810 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | first call in FUN_0045d3a0 before mode-2 guard |
+| S-1607 | 0x0045d330 FUN_0045d330 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | called once before the per-count loop in FUN_0045d3a0 |
+| S-1608 | 0x0045d1e0 FUN_0045d1e0 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | loop body called for each index 0..(DAT_008aa254-1) |
+| S-1609 | 0x004657b0 FUN_004657b0 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | called after per-count loop before FUN_0040e350 store |
+| S-1610 | 0x004417e0 FUN_004417e0 | 0x0045d7a0 FUN_0045d7a0 | util | passthrough | 2026-05-03 | fills float triple local_64/60/5c in FUN_0045d7a0 |
+| S-1611 | 0x00472820 FUN_00472820 | 0x0045d7a0 FUN_0045d7a0 | util | passthrough | 2026-05-03 | validates float triple; returns 0 to zero it out |
+| S-1612 | 0x004728a0 FUN_004728a0 | 0x0045d7a0 FUN_0045d7a0 | util | passthrough | 2026-05-03 | validates 16-uint block local_40; returns 0 to default-init it |

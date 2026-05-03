@@ -397,3 +397,23 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  005bbdb0  FUN_005bbdb0  C0->C1  re/analysis/audio_dsound_d2/0x005bbdb0.md  CreateSoundBuffer-wrapper vtable+0xc flags-0x88/0x8088  resolves:D-0949 S-0350  session:audio_dsound_d2-20260503-1735
 2026-05-03  005bbf30  FUN_005bbf30  C0->C1  re/analysis/audio_dsound_d2/0x005bbf30.md  COM-Release-x3 vtable+0x8 on param_1[0..2]  resolves:D-0951 S-0352  session:audio_dsound_d2-20260503-1735
 2026-05-03  audio_dsound_d2-20260503-1735  OVERLAP  D-0941 0x005adfe0 + D-0942 0x005ae010 already at C1 in audio_rws_loader_d2; not re-decompiled  session:audio_dsound_d2-20260503-1735
+2026-05-03  00403050  FUN_00403050  C0->C1  re/analysis/loading_screen/0x00403050.md  pre-race loading screen renderer; state-1 sub-state-0x21; sprite 0x2A4 pulsing spinner  resolves:D-0891  session:loading_screen-20260503
+2026-05-03  0040ab40  FUN_0040ab40  C0->C1  re/analysis/timer_d2_cont1/0x0040ab40.md  state-machine dispatcher 6-var cluster 0x008a9584..9598  session:timer_d2_cont1-20260503-1824
+2026-05-03  0040ac80  FUN_0040ac80  C0->C1  re/analysis/timer_d2_cont1/0x0040ac80.md  second dispatcher same 6-var cluster non-contiguous  session:timer_d2_cont1-20260503-1824
+2026-05-03  0040b810  FUN_0040b810  C0->C1  re/analysis/timer_d2_cont1/0x0040b810.md  zeroes 21 globals 0x008a94f0/9530/9540+0x0063b8ec  session:timer_d2_cont1-20260503-1824
+2026-05-03  0040de10  FUN_0040de10  C0->C1  re/analysis/timer_d2_cont1/0x0040de10.md  calls S-1132+Replay::StartLap+S-1603 writes 0x0063ba8c=1  session:timer_d2_cont1-20260503-1824
+2026-05-03  0040e360  FUN_0040e360  C0->C1  re/analysis/timer_d2_cont1/0x0040e360.md  setter DAT_0063ba8c=param_1  session:timer_d2_cont1-20260503-1824
+2026-05-03  0040e370  FUN_0040e370  C0->C1  re/analysis/timer_d2_cont1/0x0040e370.md  bool getter PTR_PTR_005f2770+param_1*4+0x34  session:timer_d2_cont1-20260503-1824
+2026-05-03  00422b30  FUN_00422b30  C0->C1  re/analysis/timer_d2_cont1/0x00422b30.md  memset 0x138 dwords at 0x00899e80  session:timer_d2_cont1-20260503-1824
+2026-05-03  00429aa0  FUN_00429aa0  C0->C1  re/analysis/timer_d2_cont1/0x00429aa0.md  two-path table-fill 0x0067d990/998/9a0  session:timer_d2_cont1-20260503-1824
+2026-05-03  0042af50  FUN_0042af50  C0->C1  re/analysis/timer_d2_cont1/0x0042af50.md  three-path char-array walk or int-index walk  session:timer_d2_cont1-20260503-1824
+2026-05-03  0042b900  FUN_0042b900  C0->C1  re/analysis/timer_d2_cont1/0x0042b900.md  getter DAT_0067eca4  session:timer_d2_cont1-20260503-1824
+2026-05-03  0042b950  FUN_0042b950  C0->C1  re/analysis/timer_d2_cont1/0x0042b950.md  setter DAT_007f1a0c=0x1000  session:timer_d2_cont1-20260503-1824
+2026-05-03  0042c150  FUN_0042c150  C0->C1  re/analysis/timer_d2_cont1/0x0042c150.md  counts nonzero ints 0x0067ea10..3f; if any: 0x0067eab4=0xff  session:timer_d2_cont1-20260503-1824
+2026-05-03  00431b50  FUN_00431b50  C0->C1  re/analysis/timer_d2_cont1/0x00431b50.md  fsin(DAT_007f0f04*_DAT_005cd8f0) float10  session:timer_d2_cont1-20260503-1824
+2026-05-03  00431b60  FUN_00431b60  C0->C1  re/analysis/timer_d2_cont1/0x00431b60.md  fsin(DAT_007f0f08*_DAT_005cd8f0) float10 sibling+4  session:timer_d2_cont1-20260503-1824
+2026-05-03  00432290  FUN_00432290  C0->C1  re/analysis/timer_d2_cont1/0x00432290.md  predicate DAT_0067eab0!=0 && DAT_0067eabc in {FF210000,FF220000}  session:timer_d2_cont1-20260503-1824
+2026-05-03  0045c480  FUN_0045c480  C0->C1  re/analysis/timer_d2_cont1/0x0045c480.md  zero-init scatter globals + 0x24-dword block 0x0088f5e0  session:timer_d2_cont1-20260503-1824
+2026-05-03  0045d3a0  FUN_0045d3a0  C0->C1  re/analysis/timer_d2_cont1/0x0045d3a0.md  gated tick: loop FUN_0045d1e0 0..DAT_008aa254; FUN_004657b0; store  session:timer_d2_cont1-20260503-1824
+2026-05-03  0045d7a0  FUN_0045d7a0  C0->C1  re/analysis/timer_d2_cont1/0x0045d7a0.md  701b position-lerp+cross-product writes to iVar6 transform obj  session:timer_d2_cont1-20260503-1824
+2026-05-03  timer_d2_cont1-20260503-1824  EARLY-FINISH  cap_count=18 at RVA 18/39; 21 RVAs filed D-4720 (timer_d2_cont2); D-3282 re-deferred as D-4721 (Opus-only); slot=Mashed_pool5  session:timer_d2_cont1-20260503-1824
