@@ -436,3 +436,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-03  sweep-20260503-1853  scribe-claim  bucket=game_mode  rvas=1  (sweep)
 2026-05-03  sweep-20260503-1853  scribe-release  bucket=game_mode  writes=0_plates,1_bookmarks  errors=0  (sweep; plate-skipped:C0)
 2026-05-03  sweep-20260503-1853  scribe-release-sweep  buckets=1  total_writes=0_plates,1_bookmarks  errors=0
+2026-05-05  00420050  FUN_00420050->PerPlayerViewportRender  C0->C1  re/analysis/split_screen/00420050.md  per-player render; stride 0x2AC; player index 0..3; D-5038 cleared  session:split_screen-20260505
+2026-05-05  0042f660  DefaultViewportCameraInit  C0->C1  re/analysis/split_screen/0042f660.md  creates global camera DAT_0067f190; near=0.1f far=180.0f; calls ViewportSetup  session:split_screen-20260505
+2026-05-05  0041faf0  VehicleShadowRender  C0->C1  re/analysis/split_screen/0041faf0.md  vehicle shadow billboard; guarded +0x294 bit6; per-player from PerPlayerViewportRender  session:split_screen-20260505
+2026-05-05  0041fcc0  TireMarkRender  C0->C1  re/analysis/split_screen/0041fcc0.md  tire-mark decal; wheel transform via +0x26c; colour table DAT_005f5fe8/6088  session:split_screen-20260505
+2026-05-05  0042c960  CameraTransitionStateMachine  C0->C1  re/analysis/split_screen/0042c960.md  camera-transition slider DAT_0067ed68; S-1642 cleared; U-1716 resolved  session:split_screen-20260505
+2026-05-05  split_screen-20260505  BATCH  5 C0->C1 promotions; 5 new D-5620..D-5624; 6 new U-1907..U-1912; 1 S-1642 cleared; U-1716 resolved; FOUND: split-screen IS present (4-player loop in InGameRenderDispatcher); SPLIT_FN=sub_00410b30; strategy=render_frame_call_graph  session:split_screen-20260505
