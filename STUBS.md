@@ -540,3 +540,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1867 | 0x0045bf30 FUN_0045bf30 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | race-end teardown B; no params; also called from FUN_0040cfd0 seq init |
 | S-1868 | 0x00441990 FUN_00441990 | 0x00448220 Frontend::PostRaceResultCamera | frontend | passthrough | 2026-05-05 | alternative result handler when DAT_007f1a50==1; sole caller FUN_00448220 early-out path; D-5500 |
 | S-1869 | 0x00446520 FUN_00446520 | 0x00448220 Frontend::PostRaceResultCamera | frontend | passthrough | 2026-05-05 | main result display state machine; called with (&DAT_00897fe0, param_3) on race states 6/7/-1; D-5501 |
+| S-1840 | 0x0046cbb0 FUN_0046cbb0 | 0x0040e180 FUN_0040e180 / 0x00410d10 FUN_00410d10 | vehicle | passthrough | 2026-05-05 | per-car state reader; (car,&state_out,&extra_out); state==0 not-destroyed; analyzed this session (see 0x0046cbb0.md) |
+| S-1841 | 0x004922e0 FUN_004922e0 | 0x00410d10 FUN_00410d10 | vehicle | passthrough | 2026-05-05 | hit-sound/particle trigger; args (car 3 10 0x80); analyzed this session (see 0x004922e0.md) |
+| S-1842 | 0x0040e350 FUN_0040e350 | 0x004922e0 FUN_004922e0 | vehicle | passthrough | 2026-05-05 | no-arg getter; return checked ==6 in FUN_004922e0; purpose unknown; D-5446 |

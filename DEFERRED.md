@@ -367,7 +367,7 @@ A row goes into DEFERRED when:
 | D-1545 | 0x004a2c48 | FUN_004a2c48 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
 | D-1546 | 0x004924c0 | FUN_004924c0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
 | D-1547 | 0x004c1b10 | FUN_004c1b10 | FUN_00426810 | depth-2 callee; receives interpolated Y/Z; candidate position setter | reverse FUN_00426810 fully first |
-| D-1548 | 0x0040e180 | FUN_0040e180 | FUN_00471ec0 | depth-2 callee; populates timing struct at local_24 | reverse FUN_00471ec0 fully first |
+| D-1548 | ~~0x0040e180 FUN_0040e180~~ | ~~FUN_00471ec0~~ | CLEARED vehicle_damage_d2-20260505; C1/mapped CollisionPair_FindMaxDist; no dependency on FUN_00471ec0 confirmed | — | — |
 | D-1549 | 0x00407a40 | FUN_00407a40 | FUN_00471ec0 | depth-2 callee; returns frame counter / tick A from timing struct | reverse FUN_00471ec0 fully first |
 | D-1550 | 0x00407a20 | FUN_00407a20 | FUN_00471ec0 | depth-2 callee; returns tick B from timing struct | reverse FUN_00471ec0 fully first |
 | D-1551 | 0x0047ce80 | FUN_0047ce80 | FUN_00471ec0 | depth-2 callee; returns ID from target object (inner loop B) | reverse FUN_00471ec0 fully first |
@@ -645,3 +645,10 @@ A row goes into DEFERRED when:
 | D-5502 | 0x00429a70 FUN_00429a70 | race data getter C; used alongside 0x00429a80/90 in FUN_00448220 unlock-code generation; depth-2 of FUN_00434720; S-1875 | profile_career_d2-cont1 | frontend |
 | D-5503 | DAT_0063b900..0x0063bb00 | race-state memory block; contains 0063ba8c (race state), 0063b90c (concluded flag), 0063b910 (700.0f), 0063b914 (winner idx), 0063b918/1c (zeros); full layout not yet mapped; needed for U-1871 U-1872 | profile_career_d2-cont1 | save |
 | D-5504 | 0x0046d4a0+0x0046b4f0+0x0046d510+0x00442e00 | camera-follow callees in FUN_00448220: FUN_0046d4a0 (vehicle state ptr), FUN_0046b4f0 (vehicle data float pairs), FUN_0046d510 (velocity), FUN_00442e00 (camera render setup); all vehicle subsystem; S-1873 S-1874 | profile_career_d2-cont1 | vehicle |
+| D-5440 | 0x00405890 FUN_00405890 | depth-2 callee of FUN_00410d10 (DAMAGE_FN); called in mode-5 path when car-0 is valid; returns end-condition result; no params; 25 bytes; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5441 | 0x00408a50 FUN_00408a50 | depth-2 callee of FUN_00410d10; per-car float reader; (car_idx) → float; called when all active cars == 0; U-1852; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5442 | 0x00408a70 FUN_00408a70 | depth-2 callee of FUN_00410d10; writer of per-car float value; (slot_idx, float_val); called 4× with max FUN_00408a50 value when all cars invalid; U-1852; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5443 | 0x0040e340 FUN_0040e340 | depth-2 callee of FUN_00410d10; no-arg getter; returns car/player count used in mode-7 loop bound (size 5 bytes); from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5444 | 0x00417730 FUN_00417730 | depth-2 callee of FUN_00410d10; per-car float read; (car_idx) → float; compared against _DAT_005cc31c/_DAT_005cc574 in modes 4/7/8/9/10; size 11 bytes; U-1849 U-1850; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5445 | 0x00423b20 FUN_00423b20 | depth-2 callee of FUN_00410d10; called in mode-9 path as FUN_00423b20(1); non-zero return causes early-out return 1; size 16 bytes; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5446 | 0x0040e350 FUN_0040e350 | depth-2 callee of FUN_004922e0 (hit-sound trigger); no-arg getter; return compared ==6; S-1842; U-1858; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
