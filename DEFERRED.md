@@ -325,26 +325,6 @@ A row goes into DEFERRED when:
 | ~~D-1302~~ | ~~9 depth-2 callees of FUN_004587a0 (PowerUpIcons init)~~ | ~~drained by powerups_d2-20260503; all unique RVAs mapped~~ | ~~powerups_d2~~ | ~~vehicle~~ |
 | ~~D-1303~~ | ~~9 depth-2 callees of FUN_00459290 (Laser/Lazer init)~~ | ~~drained by powerups_d2-20260503; all unique RVAs mapped~~ | ~~powerups_d2~~ | ~~vehicle~~ |
 
-| D-4180 | 0x00408a50 FUN_00408a50 | depth-3 callee of FUN_00414570/FUN_00414a70/FUN_00415880; called as FUN_00408a50(vehicle_idx) → race-progress float; used as per-vehicle ordering metric | ai_update_d2-cont1 | ai |
-| D-4181 | 0x00442cc0 FUN_00442cc0 | depth-3 callee of FUN_004148b0/FUN_00414c30/FUN_00415020/FUN_00415220; called as FUN_00442cc0(vehicle_idx) → progress variant distinct from FUN_0046d6d0; == 0.0 means last-place | ai_update_d2-cont1 | ai |
-| D-4182 | 0x00414300 FUN_00414300 | depth-3 callee of FUN_00414a70/FUN_00414c30; called as FUN_00414300(v,own_pos,param2,target_pos,scale,param3) → steer/target calculator; return non-0 on success | ai_update_d2-cont1 | ai |
-| D-4183 | 0x00484c70 FUN_00484c70 | depth-3 callee of FUN_00414c30; called as FUN_00484c70(&count) → array ptr; count=local_5c; iterates world objects (obstacles/triggers) stride 0x8C | ai_update_d2-cont1 | ai |
-| D-4184 | 0x00443d10 FUN_00443d10 | depth-3 callee of FUN_00415d00/FUN_00416060; called as FUN_00443d10(x,z) → char track-tile type; 0=wall 3=boundary; used in both ray-march checks | ai_update_d2-cont1 | ai |
-| D-4185 | 0x00443dc0 FUN_00443dc0 | depth-3 callee of FUN_004161e0; called as FUN_00443dc0(spline,&pos,out_idx,vehicle_idx,1,0); initialises closest spline-point index | ai_update_d2-cont1 | ai |
-| D-4186 | 0x00417730 FUN_00417730 | depth-3 callee of FUN_00417cf0; called as FUN_00417730(vehicle_idx) → "race angle" float; used for angular-difference gating in mode-8 variant targeting | ai_update_d2-cont1 | ai |
-| D-4187 | 0x0046cc10 FUN_0046cc10 | depth-3 callee of FUN_00415880; called as FUN_0046cc10(&local_34,vehicle_idx) → state code; == 4 required for ram-from-behind latch | ai_update_d2-cont1 | ai |
-| D-4188 | 0x00443300 FUN_00443300 | depth-3 callee of FUN_00443440; called as FUN_00443300(spline,idx,t,&out_xz) → interpolated XZ point on spline segment; foundational for spline-progress calculation | ai_update_d2-cont1 | ai |
-| D-4189 | 0x0046c7b0 FUN_0046c7b0 | depth-3 callee of FUN_00414570/FUN_00415880; called as FUN_0046c7b0(vehicle_idx) → non-zero if vehicle alive/present; distinct from FUN_0040e470 active-state check | ai_update_d2-cont1 | ai |
-| D-4190 | 0x0046cbb0 FUN_0046cbb0 | depth-3 callee of FUN_00414570/FUN_00415880; called as FUN_0046cbb0(vehicle_idx,&local_30,local_24) → local_30=0 if not in spinout; gate for targeting | ai_update_d2-cont1 | ai |
-| D-4191 | 0x004233e0 FUN_004233e0 | depth-3 callee of FUN_00443440; called as FUN_004233e0(dx,dz) → float10 heading angle; used to compute tangent angle for curvature calculation | ai_update_d2-cont1 | ai |
-| D-4192 | 0x004c3df0 FUN_004c3df0 | depth-3 callee of FUN_0046d510; called as FUN_004c3df0(vel_field,matrix,1,struct_base) → transforms velocity float3 by DAT_00614708 matrix | ai_update_d2-cont1 | ai |
-| D-4193 | 0x00415200 FUN_00415200 | depth-3 callee of FUN_00415220; guard in powerup-activation cases 7/9/0xb/0x10/0x11; non-zero required to proceed | ai_update_d2-cont1 | ai |
-| D-4194 | 0x0045a0f0 FUN_0045a0f0 | depth-3 callee of FUN_00415220; called as FUN_0045a0f0(fVar2) → vehicle check; case 9 armed-state clears if non-zero; case 0xb gate | ai_update_d2-cont1 | ai |
-| D-4195 | 0x00415190 FUN_00415190 | depth-3 callee of FUN_00415220; called as FUN_00415190(fVar2,float_min,float_max) → 0/1; track range check using float bounds; gates cases 10/0xb/0xc/0x10/0x11 | ai_update_d2-cont1 | ai |
-| D-4196 | 0x00455b40 FUN_00455b40 | depth-3 callee of FUN_00415220; called as FUN_00455b40(fVar2) → non-zero required in case 0xb path | ai_update_d2-cont1 | ai |
-| D-4197 | 0x0041f030 FUN_0041f030 | depth-3 callee of FUN_00414c30; called as FUN_0041f030(param_4,local_30) in type-0x15 trigger path; role unknown | ai_update_d2-cont1 | ai |
-| D-4198 | 0x0048a630 FUN_0048a630 | depth-3 callee of FUN_00414c30; called as FUN_0048a630(local_20,local_30) → 0/1 collision/proximity check for type-0x15 trigger activation | ai_update_d2-cont1 | ai |
-| D-4199 | 0x00414490 FUN_00414490 | depth-3 callee of FUN_00414c30; called as FUN_00414490(v,own,param2,obj_pos,scale,param3) → alt targeting in bomb-type path; returns 1 on hit then checks height diff | ai_update_d2-cont1 | ai |
 | D-0940 | 0x005ba1d0 LAB_005ba1d0 body tail | Body extends beyond 471 code units; listing capped at 250; address range ~0x005ba4a0+ not analyzed | Re-run listing_code_units_list with extended range; file as D-0940 | audio |
 | D-0941 | 0x005adfe0 FUN_005adfe0 | depth-2 callee of FUN_005a9e10; called as FUN_005adfe0(param_1, param_3); S-0344 | audio_dsound-cont1 session | audio |
 | D-0942 | 0x005ae010 FUN_005ae010 | depth-2 callee of FUN_005a9e10; called as FUN_005ae010(param_1, param_2); S-0345 | audio_dsound-cont1 session | audio |
@@ -486,21 +466,21 @@ A row goes into DEFERRED when:
 | D-3110 | 0x00555af0 FUN_00555af0 | depth-2 callee of LAB_00555910; called when METRICS1 lookup returns null (null-extension branch); 4 params including xy_coords font_ctx string_buf | font_text-cont1 | hud |
 | D-3111 | 0x00555ff0 FUN_00555ff0 | depth-2 callee of LAB_00555910; called when METRICS3 lookup succeeds; same 4-param signature as FUN_00555af0 | font_text-cont1 | hud |
 | D-3112 | 0x00552b90 FUN_00552b90 | depth-2 callee of FUN_00427620 (HUD text shutdown); font subsystem teardown counterpart to FUN_00552b60 | font_text-cont1 | hud |
-| D-0880 | 0x00426670 FUN_00426670 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90 (RENDER_FRAME_FN); called with primary camera; role: camera setup or world geometry render entry point; called before FUN_004c1a00 (BeginUpdate) | render_frame-cont1 | render |
-| D-0881 | 0x0040de30 FUN_0040de30 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called with overlay camera; renders minimap/overhead geometry | render_frame-cont1 | render |
-| D-0882 | 0x0040df20 FUN_0040df20 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called with overlay camera at end of overlay block; role unknown | render_frame-cont1 | render |
-| D-0883 | 0x0040df60 FUN_0040df60 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; inside BeginUpdate block of primary camera; render sub-pass | render_frame-cont1 | render |
-| D-0884 | 0x00404320 FUN_00404320 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; inside BeginUpdate block; render sub-pass | render_frame-cont1 | render |
-| D-0885 | 0x00410b30 FUN_00410b30 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; inside BeginUpdate block of primary camera; per-frame HUD render | render_frame-cont1 | render |
-| D-0886 | 0x00426030 FUN_00426030 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called before BeginUpdate with no camera arg; world render setup | render_frame-cont1 | render |
-| D-0887 | 0x004266b0 FUN_004266b0 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called with primary camera at end of render block; camera post-render cleanup | render_frame-cont1 | render |
-| D-0888 | 0x00492440 FUN_00492440 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; iterates array 0x00868320..0x869ca0 (step 0x44, ~100 entries); per-frame object update loop | render_frame-cont1 | render |
-| D-0889 | 0x00492e60 FUN_00492e60 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in fade/race-end states (1 and 4); role unknown; very small (0x2b bytes) | render_frame-cont1 | render |
-| D-0890 | 0x00433f40 FUN_00433f40 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in race-end states (cases 1 and 4); results or finish screen render | render_frame-cont1 | render |
+| D-0880 | ~~0x00426670 sub_00426670~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped WorldRenderDispatch_Begin; spawned D-5020 | — | — |
+| D-0881 | ~~0x0040de30 sub_0040de30~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped MinimapCameraOrthoSetup | — | — |
+| D-0882 | ~~0x0040df20 sub_0040df20~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped MinimapCameraRestore | — | — |
+| D-0883 | ~~0x0040df60 sub_0040df60~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped ConditionalRenderSubPass; spawned D-5024 | — | — |
+| D-0884 | ~~0x00404320 sub_00404320~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped PerModeRenderMachine; spawned D-5025..D-5029 | — | — |
+| D-0885 | ~~0x00410b30 sub_00410b30~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped InGameRenderDispatcher; spawned D-5036..D-5060 | — | — |
+| D-0886 | ~~0x00426030 sub_00426030~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped WorldRenderPrePass; spawned D-5022 D-5023 | — | — |
+| D-0887 | ~~0x004266b0 sub_004266b0~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped WorldRenderDispatch_End; spawned D-5021 | — | — |
+| D-0888 | ~~0x00492440 sub_00492440~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/mapped RenderStatsAccumulate (leaf) | — | — |
+| D-0889 | ~~0x00492e60 sub_00492e60~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped SetDefaultViewWindow | — | — |
+| D-0890 | ~~0x00433f40 sub_00433f40~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped RaceEndFadeOverlay; spawned D-5030..D-5034 | — | — |
 | D-0891 | ~~0x00403050 FUN_00403050~~ | ~~render_frame-20260503-0611~~ | CLEARED loading_screen-20260503; promoted C0→C1 frontend; pre-race loading screen renderer | — | — |
-| D-0892 | 0x0042d390 FUN_0042d390 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; called in state 3 (race); returns int checked <3; game state sub-query | render_frame-cont1 | render |
-| D-0893 | 0x0042f530 FUN_0042f530 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; state 3 race loop; int checked !=0; game state/music query | render_frame-cont1 | render |
-| D-0894 | 0x0042a9f0 FUN_0042a9f0 | render_frame-20260503-0611 | depth-2 callee of FUN_00492e90; used in state 6 to check >200; 5-byte function; game state query | render_frame-cont1 | render |
+| D-0892 | ~~0x0042d390 GetRaceStateField~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/mapped trivial getter DAT_0067ea6c | — | — |
+| D-0893 | ~~0x0042f530 sub_0042f530~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/unmapped ViewportSetup; spawned D-5035 | — | — |
+| D-0894 | ~~0x0042a9f0 GetFadeAlpha~~ | ~~render_frame-20260503-0611~~ | CLEARED render_frame_d3-20260503; C1/mapped trivial getter (byte)DAT_0067eca8 | — | — |
 | D-3113 | 0x0042bf30 FUN_0042bf30 | race_state-20260503 | callee of FUN_0042c280; called with 6 hardcoded args (0x27f, 0xff210000, 0, 0, 0, 0); role unknown | race_state-cont1 | race_state |
 | D-3114 | 0x0040e470 FUN_0040e470 | race_state-20260503 | per-slot player check; called with slot-index 0..3 from FUN_00432080 PATH_2 and FUN_0042c220; returns 1 when slot is active | race_state-cont1 | race_state |
 | D-3115 | 0x00496900 FUN_00496900 | race_state-20260503 | called with player index int from FUN_00432080 PATH_2; returns 0 on success; deeper race-state query; role unknown | race_state-cont1 | race_state |
@@ -609,3 +589,54 @@ A row goes into DEFERRED when:
 | D-5080 | 0x005aa1e0 FUN_005aa1e0 | depth-4 of FUN_005aa060 (audio_rws_loader_d3 session); S-1720; inline callback at LAB_005aa1e0; no Ghidra function body; tree-walk predicate callback | audio_rws_loader_d3-cont1 | audio |
 | D-4720 | (bulk) 0x0045db50,0x0045dbe0,0x0045dc80,0x0045df70,0x0045dfc0,0x00462520,0x004627b0,0x00462dd0,0x00462ec0,0x00463590,0x00463640,0x004647f0,0x004648b0,0x0046dc00,0x00492d10,0x00493570,0x00493580,0x004d8560,0x005a89a0,0x005a89b0,0x005a89c0 | from session timer_d2_cont1-20260503-1824; early-finish at cap_count=18; pick up as bucket timer_d2_cont2; same depth-2 | timer_d2_cont2 | util/audio |
 | D-4721 | 0x0043dfd0 FUN_0043dfd0 | re-defer from D-3282: decomp 63977 chars / ~30839 tokens; C0 note exists in timer_d2 bucket; requires dedicated Opus session; 63 callees unprocessed | timer_d2_opus | util |
+| D-5020 | 0x004e4320 FUN_004e4320 | depth-3 callee of sub_00426670 (WorldRenderDispatch_Begin); args (world_ptr camera); RpWorldRender-family entry | render_frame_d3-cont1 | render |
+| D-5021 | 0x004e4350 FUN_004e4350 | depth-3 callee of sub_004266b0 (WorldRenderDispatch_End); same arg pattern; paired end to FUN_004e4320 | render_frame_d3-cont1 | render |
+| D-5022 | 0x0041ea10 FUN_0041ea10 | depth-3 predicate of sub_00426030 (WorldRenderPrePass); no args; result gates FUN_0041e8f0 | render_frame_d3-cont1 | render |
+| D-5023 | 0x0041e8f0 FUN_0041e8f0 | depth-3 callee of sub_00426030; called with &DAT_00646e58 when FUN_0041ea10≠0 | render_frame_d3-cont1 | render |
+| D-5024 | 0x00401f10 FUN_00401f10 | depth-3 callee of sub_0040df60; conditional render sub-pass; fires when DAT_0063ba8c∈(4,7) + state 3-5 + mode∈{4,7,8,9,10} | render_frame_d3-cont1 | render |
+| D-5025 | 0x00403d30 FUN_00403d30 | depth-3 callee of sub_00404320; per-mode render mode 9 state 3-5 | render_frame_d3-cont1 | render |
+| D-5026 | 0x00403db0 FUN_00403db0 | depth-3 callee of sub_00404320; per-mode render mode 8 state 3-5 | render_frame_d3-cont1 | render |
+| D-5027 | 0x00403ed0 FUN_00403ed0 | depth-3 callee of sub_00404320; per-mode render mode 5 state 3-5 | render_frame_d3-cont1 | render |
+| D-5028 | 0x00403fa0 FUN_00403fa0 | depth-3 callee of sub_00404320; per-entry render mode 10 state 6; loop over 0x636b88 stride 20 bytes; DAT_005d757c < entry[4] guard | render_frame_d3-cont1 | render |
+| D-5029 | 0x004041c0 FUN_004041c0 | depth-3 callee of sub_00404320; state-6 render pass (modes 5/8/9 fallthrough) | render_frame_d3-cont1 | render |
+| D-5030 | 0x0042c010 FUN_0042c010 | depth-3 callee of sub_00433f40 (RaceEndFadeOverlay); screen-space rect fill; args (x1 y1 x2 y2 color) floats | render_frame_d3-cont1 | render |
+| D-5031 | 0x0042c090 FUN_0042c090 | depth-3 callee of sub_00433f40; rect outline or simple fill; 1 color arg | render_frame_d3-cont1 | render |
+| D-5032 | 0x004278d0 FUN_004278d0 | depth-3 callee of sub_00433f40; track/level number display; 1 int (track id) | render_frame_d3-cont1 | render |
+| D-5033 | 0x00427990 FUN_00427990 | depth-3 callee of sub_00433f40; text render for special track 0x27b; 6+ args | render_frame_d3-cont1 | render |
+| D-5034 | 0x00427be0 FUN_00427be0 | depth-3 callee of sub_00433f40; formatted text to buffer; args (buf color float_scale) | render_frame_d3-cont1 | render |
+| D-5035 | 0x004c7760 FUN_004c7760 | depth-3 callee of sub_0042f530 (ViewportSetup); raster copy src camera+0x60/0x64→dest camera rasters; RW API | render_frame_d3-cont1 | render |
+| D-5036 | 0x004270f0 CourseRenderFrame | already mapped — recorded for completeness; callee of sub_00410b30 | — | — |
+| D-5037 | 0x004725c0 FUN_004725c0 | depth-3 callee of sub_00410b30; unknown; called immediately after player-camera setup | render_frame_d3-cont1 | render |
+| D-5038 | ~~0x00420050 FUN_00420050~~ | ~~depth-3 callee of sub_00410b30; per-player render pass; called 4× with (i, camera)~~ | CLEARED split_screen-20260505; C1/mapped PerPlayerViewportRender | — |
+| D-5039 | 0x0041ebb0 FUN_0041ebb0 | depth-3 callee of sub_00410b30; world render with camera arg (*DAT_007d3ff8) | render_frame_d3-cont1 | render |
+| D-5040 | 0x004219c0 FUN_004219c0 | depth-3 callee of sub_00410b30; unknown render call | render_frame_d3-cont1 | render |
+| D-5041 | 0x00425e40 FUN_00425e40 | depth-3 callee of sub_00410b30; called when DAT_007f0fd0≠5 | render_frame_d3-cont1 | render |
+| D-5042 | 0x00426640 FUN_00426640 | depth-3 callee of sub_00410b30; called with player camera (PTR_PTR_005f2770[DAT_0063ba78]) | render_frame_d3-cont1 | render |
+| D-5043 | 0x0040bde0 FUN_0040bde0 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5044 | 0x004891f0 FUN_004891f0 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5045 | 0x00475e50 FUN_00475e50 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5046 | 0x00475d30 FUN_00475d30 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5047 | 0x00477810 FUN_00477810 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5048 | 0x00477a10 FUN_00477a10 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5049 | 0x004189c0 FUN_004189c0 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5050 | 0x0048fd70 FUN_0048fd70 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5051 | 0x0045b990 FUN_0045b990 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5052 | 0x00413a00 FUN_00413a00 | depth-3 callee of sub_00410b30; called with primary player camera (FUN_004671a0(0)) | render_frame_d3-cont1 | render |
+| D-5053 | 0x00413a40 FUN_00413a40 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5054 | 0x004072e0 FUN_004072e0 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5055 | 0x00404650 FUN_00404650 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5056 | 0x0047b9e0 FUN_0047b9e0 | depth-3 callee of sub_00410b30; post-effects; conditional (state≠7 && DAT_007f0f3c≠0); called with camera | render_frame_d3-cont1 | render |
+| D-5057 | 0x00448730 FUN_00448730 | depth-3 callee of sub_00410b30; HUD/frontend layer | render_frame_d3-cont1 | render |
+| D-5058 | 0x00490490 FUN_00490490 | depth-3 callee of sub_00410b30; unknown | render_frame_d3-cont1 | render |
+| D-5059 | 0x00403910 FUN_00403910 | depth-3 callee of sub_00410b30; conditional (mode≠9 && mode≠10 && DAT_007f0f30≠0) | render_frame_d3-cont1 | render |
+| D-5060 | 0x00429e10 FUN_00429e10 | depth-3 callee of sub_00410b30; race overlay when FUN_00426ba0≠0 | render_frame_d3-cont1 | render |
+| D-5560 | 0x004c3b30 FUN_004c3b30 | depth-4 callee of FUN_00414300; fast sqrt via two-level lookup table at DAT_007d3ff8/ffc; used for pursuit-lead normalization | ai_update_d3-cont1 | ai |
+| D-5561 | 0x00416230 FUN_00416230 | depth-4 callee of FUN_00443dc0; called as FUN_00416230(param_4,iVar8==0); writes vehicle lookahead-index commitment; ~17 bytes | ai_update_d3-cont1 | ai |
+| D-5562 | 0x004b55a0 FUN_004b55a0 | depth-4 callee of FUN_00443dc0; render submit/draw call; large function 0x1A4 bytes; used for debug waypoint rendering | ai_update_d3-cont1 | render |
+| D-5563 | 0x004c3bf0 FUN_004c3bf0 | depth-4 callee of FUN_00443dc0; 2D vector distance / magnitude; ~100 bytes; pair with FUN_004c3c60 normalizer | ai_update_d3-cont1 | ai |
+| D-5564 | 0x004c3c60 FUN_004c3c60 | depth-4 callee of FUN_00443dc0; 2D vector normalizer; called as FUN_004c3c60(&vec,&vec) (in-place); ~249 bytes | ai_update_d3-cont1 | ai |
+| D-5620 | 0x0041f8f0 FUN_0041f8f0 | depth-2 callee of PerPlayerViewportRender (0x00420050); unknown pre-render step; ~250 bytes; called before shadow/tire-mark | split_screen-cont1 | render |
+| D-5621 | 0x004228f0 FUN_004228f0 | depth-2 callee of PerPlayerViewportRender; per-player mirror/reflection pass; called as FUN_004228f0(playerIndex, device) | split_screen-cont1 | render |
+| D-5622 | 0x00426060 FUN_00426060 | depth-2 callee of PerPlayerViewportRender; 5-byte getter; returns world render target (derefs DAT or global) | split_screen-cont1 | render |
+| D-5623 | 0x004260c0 FUN_004260c0 | depth-2 callee of PerPlayerViewportRender; 5-byte getter; returns render condition flag | split_screen-cont1 | render |
+| D-5624 | 0x004e4900 FUN_004e4900 | depth-2 callee of PerPlayerViewportRender; fog/scale matrix transform; called as FUN_004e4900(fog_obj, float4*) twice per player | split_screen-cont1 | render |

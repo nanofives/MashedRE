@@ -862,3 +862,76 @@
 004e5680,RpWorldForAllAtomicsCallback,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,callback adapter for RpWorldForAllAtomics BSP traversal; dispatches sector atomics to render pipeline
 0047b980,RegisterScriptCommand,track,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,COURSE.LUA command registrar; PUSH fn/PUSH str/CALL pattern at 0x00440bc0; registers ~24 sky/fog/rain/AI commands
 004924e0,FogColorGetter,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,5-byte getter; returns &DAT_006147b4 (fog colour global)
+004e4320,FUN_004e4320,render,C0,deferred,,,,depth-3 callee of sub_00426670 (WorldRenderDispatch_Begin); args (world_ptr camera); RpWorldRender-family; D-5020; bucket render_frame_d3-cont1
+004e4350,FUN_004e4350,render,C0,deferred,,,,depth-3 callee of sub_004266b0 (WorldRenderDispatch_End); same arg pattern; paired with FUN_004e4320; D-5021; bucket render_frame_d3-cont1
+0041ea10,FUN_0041ea10,render,C0,deferred,,,,depth-3 predicate of sub_00426030 (WorldRenderPrePass); no args; gates FUN_0041e8f0; D-5022; bucket render_frame_d3-cont1
+0041e8f0,FUN_0041e8f0,render,C0,deferred,,,,depth-3 callee of sub_00426030; called &DAT_00646e58 when FUN_0041ea10≠0; D-5023; bucket render_frame_d3-cont1
+00401f10,FUN_00401f10,render,C0,deferred,,,,depth-3 callee of sub_0040df60; conditional render sub-pass modes 4/7/8/9/10 player-count 5-6 state 3-5; D-5024; bucket render_frame_d3-cont1
+00403d30,FUN_00403d30,render,C0,deferred,,,,depth-3 callee of sub_00404320; per-mode render mode 9 state 3-5; D-5025; bucket render_frame_d3-cont1
+00403db0,FUN_00403db0,render,C0,deferred,,,,depth-3 callee of sub_00404320; per-mode render mode 8 state 3-5; D-5026; bucket render_frame_d3-cont1
+00403ed0,FUN_00403ed0,render,C0,deferred,,,,depth-3 callee of sub_00404320; per-mode render mode 5 state 3-5; D-5027; bucket render_frame_d3-cont1
+00403fa0,FUN_00403fa0,render,C0,deferred,,,,depth-3 callee of sub_00404320; per-entry render mode 10 state 6 loop over 0x636b88 stride 20 conditional DAT_005d757c<entry[4]; D-5028; bucket render_frame_d3-cont1
+004041c0,FUN_004041c0,render,C0,deferred,,,,depth-3 callee of sub_00404320; state-6 render pass modes 5/8/9 fallthrough; D-5029; bucket render_frame_d3-cont1
+0042c010,FUN_0042c010,render,C0,deferred,,,,depth-3 callee of sub_00433f40; screen-space rect fill; args (x1 y1 x2 y2 color); D-5030; bucket render_frame_d3-cont1
+0042c090,FUN_0042c090,render,C0,deferred,,,,depth-3 callee of sub_00433f40; rect outline or fill; 1 color arg; D-5031; bucket render_frame_d3-cont1
+004278d0,FUN_004278d0,render,C0,deferred,,,,depth-3 callee of sub_00433f40; track/level number display; 1 int arg; D-5032; bucket render_frame_d3-cont1
+00427990,FUN_00427990,render,C0,deferred,,,,depth-3 callee of sub_00433f40; text render for special track 0x27b; 6+ args; D-5033; bucket render_frame_d3-cont1
+00427be0,FUN_00427be0,render,C0,deferred,,,,depth-3 callee of sub_00433f40; formatted text to buffer; args (buf color float); D-5034; bucket render_frame_d3-cont1
+004c7760,FUN_004c7760,render,C0,deferred,,,,depth-3 callee of sub_0042f530; raster copy src camera+0x60/0x64→dest; RW API; D-5035; bucket render_frame_d3-cont1
+004725c0,FUN_004725c0,render,C0,deferred,,,,depth-3 callee of sub_00410b30 (InGameRenderDispatcher); unknown; D-5037; bucket render_frame_d3-cont1
+00420050,PerPlayerViewportRender,render,C1,mapped,re/analysis/split_screen/00420050.md,split_screen-20260505,,per-player scene render; param_1=playerIndex 0..3; stride 0x2AC per-player struct at DAT_0063dc38; active flag at +0x3C bit3; clump at +0x4C; shadow+tiremark+world+clump per player; D-5038 cleared; U-1907 U-1908 U-1910
+0041ebb0,FUN_0041ebb0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; world render with camera; D-5039; bucket render_frame_d3-cont1
+004219c0,FUN_004219c0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5040; bucket render_frame_d3-cont1
+00425e40,FUN_00425e40,render,C0,deferred,,,,depth-3 callee of sub_00410b30; called when mode≠5; D-5041; bucket render_frame_d3-cont1
+00426640,FUN_00426640,render,C0,deferred,,,,depth-3 callee of sub_00410b30; called with player camera; D-5042; bucket render_frame_d3-cont1
+0040bde0,FUN_0040bde0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5043; bucket render_frame_d3-cont1
+004891f0,FUN_004891f0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5044; bucket render_frame_d3-cont1
+00475e50,FUN_00475e50,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5045; bucket render_frame_d3-cont1
+00475d30,FUN_00475d30,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5046; bucket render_frame_d3-cont1
+00477810,FUN_00477810,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5047; bucket render_frame_d3-cont1
+00477a10,FUN_00477a10,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5048; bucket render_frame_d3-cont1
+004189c0,FUN_004189c0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5049; bucket render_frame_d3-cont1
+0048fd70,FUN_0048fd70,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5050; bucket render_frame_d3-cont1
+0045b990,FUN_0045b990,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5051; bucket render_frame_d3-cont1
+00413a00,FUN_00413a00,render,C0,deferred,,,,depth-3 callee of sub_00410b30; called with primary player camera; D-5052; bucket render_frame_d3-cont1
+00413a40,FUN_00413a40,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5053; bucket render_frame_d3-cont1
+004072e0,FUN_004072e0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5054; bucket render_frame_d3-cont1
+00404650,FUN_00404650,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5055; bucket render_frame_d3-cont1
+0047b9e0,FUN_0047b9e0,render,C0,deferred,,,,depth-3 callee of sub_00410b30; post-effects conditional (state≠7 && DAT_007f0f3c≠0); D-5056; bucket render_frame_d3-cont1
+00448730,FUN_00448730,render,C0,deferred,,,,depth-3 callee of sub_00410b30; HUD/frontend layer; D-5057; bucket render_frame_d3-cont1
+00490490,FUN_00490490,render,C0,deferred,,,,depth-3 callee of sub_00410b30; unknown; D-5058; bucket render_frame_d3-cont1
+00403910,FUN_00403910,render,C0,deferred,,,,depth-3 callee of sub_00410b30; conditional mode≠9&&≠10&&DAT_007f0f30≠0; D-5059; bucket render_frame_d3-cont1
+00429e10,FUN_00429e10,render,C0,deferred,,,,depth-3 callee of sub_00410b30; race overlay when FUN_00426ba0≠0; D-5060; bucket render_frame_d3-cont1
+00408a50,FUN_00408a50,ai,C1,mapped,re/analysis/ai_update_d3/0x00408a50.md,,,race-progress float getter: *(float*)(&DAT_008a96e8 + v*0x30c); field +0xa8 in per-vehicle block; depth-3 from ai_update_d2-cont1
+00442cc0,FUN_00442cc0,ai,C1,mapped,re/analysis/ai_update_d3/0x00442cc0.md,,,progress variant getter: DAT_008989b0[v*4]; returns 0.0 (last-place) for v>=4; distinct from FUN_0046d6d0
+00414300,FUN_00414300,ai,C1,mapped,re/analysis/ai_update_d3/0x00414300.md,,,pursuit-lead calculator: foot-of-perp from target onto travel line; radius gate; velocity dot check; writes lead point to param_6; D-5560
+00484c70,FUN_00484c70,ai,C1,mapped,re/analysis/ai_update_d3/0x00484c70.md,,,world-objects array getter: *param_1=DAT_006e70d8 (count); returns &DAT_006dccb8 (base); stride 0x8C per object in caller
+00443d10,FUN_00443d10,ai,C1,mapped,re/analysis/ai_update_d3/0x00443d10.md,,,track tile-type lookup (world XZ): 128x128 coarse grid DAT_007f1a9c + 8x8 sub-cell DAT_007f9a9c; x87 FPU args; returns 0xff if OOB
+00443dc0,FUN_00443dc0,ai,C1,mapped,re/analysis/ai_update_d3/0x00443dc0.md,,,spline lookahead target finder: nearest point binary-search; 16-step forward walk; wall-check inline; debug render; writes XZ to param_3; U-1887 U-1888; D-5561..D-5564
+00417730,FUN_00417730,ai,C1,mapped,re/analysis/ai_update_d3/0x00417730.md,,,race-angle float getter: (&DAT_0089a880)[v] as float; one float per vehicle; used in mode-8 dead-zone gate
+0046cc10,FUN_0046cc10,ai,C1,mapped,re/analysis/ai_update_d3/0x0046cc10.md,,,vehicle state-code getter: bounds-checks v<=0xf; pops state via FUN_004a2c48; caller FUN_00415880 requires code==4 for ram latch; U-1889
+00443300,FUN_00443300,ai,C1,mapped,re/analysis/ai_update_d3/0x00443300.md,,,Catmull-Rom spline interpolation: 4 control points with wraparound; t clamped [0,1]; outputs XZ float2; foundational for FUN_00443440 and FUN_00443dc0
+0046c7b0,FUN_0046c7b0,ai,C1,mapped,re/analysis/ai_update_d3/0x0046c7b0.md,,,entity alive/present flag getter: DAT_008815a4[v*0x341]; 0=dead 0xffffffff=OOB; distinct from FUN_0040e470 active-state check
+0046cbb0,FUN_0046cbb0,ai,C1,mapped,re/analysis/ai_update_d3/0x0046cbb0.md,,,spinout-state getter: *param_2=DAT_00881f90[v*0x341] (spinout flag); *param_3=DAT_00881f94[v*0xd04]; U-1890
+004233e0,FUN_004233e0,ai,C1,mapped,re/analysis/ai_update_d3/0x004233e0.md,,,heading angle atan2: fpatan(dx/dz); converts to game-angle units via scale+offset; handles special cases; used for spline curvature
+004c3df0,FUN_004c3df0,ai,C1,mapped,re/analysis/ai_update_d3/0x004c3df0.md,,,velocity transform vtable dispatch: *(*(DAT_007d3ffc+0x14+DAT_007d3ff8))(args); RW object method at slot +0x14; U-1891
+00415200,FUN_00415200,ai,C1,mapped,re/analysis/ai_update_d3/0x00415200.md,,,vehicle-0 last-place guard: FUN_00442cc0(0)==0.0 → return 1; gates powerup cases 7/9/0xb/0x10/0x11 in FUN_00415220
+0045a0f0,FUN_0045a0f0,ai,C1,mapped,re/analysis/ai_update_d3/0x0045a0f0.md,,,vehicle powerup-state field getter: DAT_0068ba00[v*0x16]; no bounds check; case 9 armed-clear gate in FUN_00415220; U-1892
+00415190,FUN_00415190,ai,C1,mapped,re/analysis/ai_update_d3/0x00415190.md,,,track progress range check: if v is last-place finds active vehicle; checks its progress in [min,max); gates powerup cases 10/0xb/0xc/0x10/0x11
+00455b40,FUN_00455b40,ai,C1,mapped,re/analysis/ai_update_d3/0x00455b40.md,,,powerup table getter: DAT_006885e0[param_1*0x2c]; no bounds check; case 0xb gate in FUN_00415220; U-1893
+0041f030,FUN_0041f030,ai,C1,mapped,re/analysis/ai_update_d3/0x0041f030.md,,,trigger struct reader: DAT_0063dc38[param_1*0x2ac+0x38..44] → 4 DWORDs; type-0x15 trigger path in FUN_00414c30; U-1894
+0048a630,FUN_0048a630,ai,C1,mapped,re/analysis/ai_update_d3/0x0048a630.md,,,sphere-vs-AABB overlap test: param_1=AABB float[6]; param_2=center+radius float[4]; returns 1 on overlap; type-0x15 trigger activation
+00414490,FUN_00414490,ai,C1,mapped,re/analysis/ai_update_d3/0x00414490.md,,,velocity-gated alt targeting: exclusion gate for bomb/deathmatch modes; no-powerup check; dot(norm_vel norm_delta)>threshold; writes target to param_6
+0042f660,DefaultViewportCameraInit,render,C1,mapped,re/analysis/split_screen/0042f660.md,split_screen-20260505,,creates/retrieves global camera DAT_0067f190; sets near=0.1f far=180.0f; calls ViewportSetup; called from FUN_00492e90 case-1
+0041faf0,VehicleShadowRender,render,C1,mapped,re/analysis/split_screen/0041faf0.md,split_screen-20260505,,renders ground-projected vehicle shadow billboard; guarded by player+0x294 bit 0x40; reads shadow+body matrices; colour alpha from FUN_004a2c48; renders via FUN_004769f0/476a10/476d00; called per player from PerPlayerViewportRender
+0041fcc0,TireMarkRender,render,C1,mapped,re/analysis/split_screen/0041fcc0.md,split_screen-20260505,,renders tire-mark skid decal; reads wheel transform at +0x26c; colour table at DAT_005f5fe8/6088 (12-byte RGB stride); called per player from PerPlayerViewportRender
+0042c960,CameraTransitionStateMachine,render,C1,mapped,re/analysis/split_screen/0042c960.md,split_screen-20260505,,large camera/intro-sequence state machine; switch on DAT_0067ea6c; writes DAT_0067ed68 transition slider (0x15e→0→0); handles multiplayer mode DAT_0067e9fc==2; S-1642 cleared; U-1909
+0041f8f0,FUN_0041f8f0,render,C0,deferred,,,,depth-2 callee of PerPlayerViewportRender; unknown; D-5620; bucket split_screen-cont1
+004228f0,FUN_004228f0,render,C0,deferred,,,,depth-2 callee of PerPlayerViewportRender; per-player mirror/reflection pass; called with (playerIndex,device); D-5621; bucket split_screen-cont1
+00426060,FUN_00426060,render,C0,deferred,,,,depth-2 callee of PerPlayerViewportRender; 5-byte getter; returns world render target; D-5622; bucket split_screen-cont1
+004260c0,FUN_004260c0,render,C0,deferred,,,,depth-2 callee of PerPlayerViewportRender; 5-byte getter; returns render condition flag; D-5623; bucket split_screen-cont1
+004e4900,FUN_004e4900,render,C0,deferred,,,,depth-2 callee of PerPlayerViewportRender; fog/scale matrix transform; called with (fog_obj, float4*); D-5624; bucket split_screen-cont1
+0040dd60,Race::GuardConcludedAndP1Won,save,C1,mapped,re/analysis/profile_career_d2/FUN_0040dd60.md,,,23B: returns ((DAT_0063b90c==1)?0xFFFFFFFF:0)&DAT_007f0fcc; non-zero iff race concluded AND player-0 won; resolves D-4540 S-1540
+00410510,Race::EvaluateResult,save,C1,mapped,re/analysis/profile_career_d2/FUN_00410510.md,,,820B race-end evaluator; sets DAT_0063b90c=1+DAT_0063ba8c=0xb on conclusion; winner 1-based or -1 draw or 0 pending; DAT_007f0fcc=1 iff P0 won; switch DAT_007f0fd0; U-1867..U-1872; S-1860..S-1867; resolves D-4542
+00448220,Frontend::PostRaceResultCamera,frontend,C1,mapped,re/analysis/profile_career_d2/FUN_00448220.md,,,1234B; post-race camera follow + mode-2 unlock-code generator at DAT_00899100; body 0x00434360-0x004486f2 entry 0x00448220; resolves U-1553 partial; U-1870 U-1873; S-1868 S-1869; D-5500..D-5504; resolves D-4541
+0040e4b0,Race::GetSoleFinishedPlayer,util,C1,mapped,re/analysis/profile_career_d2/FUN_00448220.md,,,72B; iterates 4 slots via PTR_PTR_005f2770+0x34..0x44; counts FUN_0046c7b0==1; returns index iff count==1 else -1; callee of FUN_00448220 camera-follow path
