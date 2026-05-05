@@ -484,7 +484,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1680 | 0x004d7d70 LAB_004d7d70 | 0x004d7ca0 FUN_004d7ca0 (via FUN_004ccce0 callback) | render | passthrough | 2026-05-03 | Unrecognized fn body (Ghidra label only, no FUN_ entry); 37 bytes; reads param_1+0x38 sub-struct; clears +0x10/+0x14 if non-zero; calls vtable DAT_007d3ff8+0x11c(param_1, param_2); deferred as D-4960 |
 | S-1640 | 0x004332a0 FUN_004332a0 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 0 (DAT_0067e7a8==1); fires when slot-0 timer completes; semantics unknown |
 | S-1641 | 0x0042f7b0 FUN_0042f7b0 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 6 (DAT_0067e7d8==1); fires when slot-6 timer completes; semantics unknown |
-| S-1642 | 0x0042c960 FUN_0042c960 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 4 (DAT_0067e7c8==1); fires when slot-4 timer completes; semantics unknown |
+| S-1642 | ~~0x0042c960 FUN_0042c960~~ | ~~0x0043c000 FUN_0043c000~~ | render | CLEARED | split_screen-20260505 | CameraTransitionStateMachine; camera/intro-sequence state machine; DAT_0067ed68 transition slider; DAT_0067e9fc mode handler |
 | S-1643 | 0x0042fa00 FUN_0042fa00 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 7 (DAT_0067e7e0==1); fires when slot-7 timer completes; semantics unknown |
 | S-1644 | 0x00431f30 FUN_00431f30 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | screen history restore; called with param_1 on push-0, with history index on pop-1; semantics unknown |
 | S-1645 | 0x0042d3e0 FUN_0042d3e0 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | screen pre-init; called before stack push/pop in FUN_0043d2a0; semantics unknown |
@@ -517,3 +517,26 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1761 | 0x00499d90 FUN_00499d90 | 0x004914b0 RainRender | render | passthrough | 2026-05-03 | called as FUN_00499d90(DAT_00771530, 0x380) in RainRender; likely low-level particle vertex-buffer flush; not yet analyzed |
 | S-1762 | 0x00491340 FUN_00491340 | 0x00491490 FUN_00491490 | render | passthrough | 2026-05-03 | rain update variant; dispatched by FUN_00491490 based on DAT_007f108b; not analyzed |
 | S-1763 | 0x0047a034 FUN_0047a034 | 0x0047a020 FUN_0047a020 | track | passthrough | 2026-05-03 | COURSE.LUA executor; writes DAT_006bf1cc (course description base pointer); 47 sky/fog handlers depend on this pointer |
+| S-1700 | 0x004e4320 FUN_004e4320 | 0x00426670 sub_00426670 | render | passthrough | 2026-05-03 | WorldRenderDispatch_Begin callee; args (world_ptr camera); RpWorldRender-family; D-5020 |
+| S-1701 | 0x004e4350 FUN_004e4350 | 0x004266b0 sub_004266b0 | render | passthrough | 2026-05-03 | WorldRenderDispatch_End callee; paired end to FUN_004e4320; D-5021 |
+| S-1702 | 0x0041ea10 FUN_0041ea10 | 0x00426030 sub_00426030 | render | passthrough | 2026-05-03 | WorldRenderPrePass predicate; no args; gates FUN_0041e8f0; D-5022 |
+| S-1703 | 0x0041e8f0 FUN_0041e8f0 | 0x00426030 sub_00426030 | render | passthrough | 2026-05-03 | WorldRenderPrePass setup; called with &DAT_00646e58; D-5023 |
+| S-1704 | 0x00401f10 FUN_00401f10 | 0x0040df60 sub_0040df60 | render | passthrough | 2026-05-03 | conditional render sub-pass modes 4/7/8/9/10 + player-count 5-6 + state 3-5; D-5024 |
+| S-1705 | 0x00403d30 FUN_00403d30 | 0x00404320 sub_00404320 | render | passthrough | 2026-05-03 | PerModeRenderMachine mode-9 state-3/4/5 renderer; D-5025 |
+| S-1706 | 0x00403fa0 FUN_00403fa0 | 0x00404320 sub_00404320 | render | passthrough | 2026-05-03 | mode-10 state-6 per-entry render loop over 0x636b88; D-5028 |
+| S-1707 | 0x0042c010 FUN_0042c010 | 0x00433f40 sub_00433f40 | render | passthrough | 2026-05-03 | screen-space rect fill (x1 y1 x2 y2 color); RaceEndFadeOverlay; D-5030 |
+| S-1708 | 0x004c7760 FUN_004c7760 | 0x0042f530 sub_0042f530 | render | passthrough | 2026-05-03 | raster copy src camera+0x60/0x64 → dest; ViewportSetup; D-5035 |
+| S-1709 | 0x00420050 FUN_00420050 | 0x00410b30 sub_00410b30 | render | passthrough | 2026-05-03 | per-player render pass; 4× loop (i camera); D-5038 |
+| S-1710 | 0x0041ebb0 FUN_0041ebb0 | 0x00410b30 sub_00410b30 | render | passthrough | 2026-05-03 | world render with camera arg; InGameRenderDispatcher; D-5039 |
+| S-1711 | 0x00413a00 FUN_00413a00 | 0x00410b30 sub_00410b30 | render | passthrough | 2026-05-03 | render callee; called with primary player camera; D-5052 |
+| S-1712 | 0x00448730 FUN_00448730 | 0x00410b30 sub_00410b30 | render | passthrough | 2026-05-03 | HUD/frontend layer in InGameRenderDispatcher; D-5057 |
+| S-1860 | 0x0046cbb0 FUN_0046cbb0 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | 3-param: reads DAT_00881f90[param_1*0x341] (DNF-flag) and [+1] (lap-count) for player; returns 1 if param_1<16; check local_c==0 follows in callers |
+| S-1861 | 0x00405890 FUN_00405890 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | mode-5 all-targets-hit predicate: returns (DAT_0063a5d4 == DAT_0063a5d0); false if DAT_0063a5d0==0 |
+| S-1862 | 0x00417730 FUN_00417730 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | player score/time float getter: returns (float10)(float)(&DAT_0089a880)[param_1]; array at 0x0089a880 |
+| S-1863 | 0x00417740 FUN_00417740 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | 15B; calls FUN_004a2c48 (x87 ROUND); probable round/rank getter for modes 4/7; Ghidra shows void but caller uses int return; U-1869 |
+| S-1864 | 0x0044df80 FUN_0044df80 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | called when FUN_00426c00()==0x26 at race conclusion; 0x50 bytes; purpose unknown |
+| S-1865 | 0x00458f80 FUN_00458f80 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | race-end state setter; param_1=0; 0x18 bytes |
+| S-1866 | 0x0045bed0 FUN_0045bed0 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | race-end teardown A; no params; also called from FUN_0040cfd0 seq init |
+| S-1867 | 0x0045bf30 FUN_0045bf30 | 0x00410510 Race::EvaluateResult | save | passthrough | 2026-05-05 | race-end teardown B; no params; also called from FUN_0040cfd0 seq init |
+| S-1868 | 0x00441990 FUN_00441990 | 0x00448220 Frontend::PostRaceResultCamera | frontend | passthrough | 2026-05-05 | alternative result handler when DAT_007f1a50==1; sole caller FUN_00448220 early-out path; D-5500 |
+| S-1869 | 0x00446520 FUN_00446520 | 0x00448220 Frontend::PostRaceResultCamera | frontend | passthrough | 2026-05-05 | main result display state machine; called with (&DAT_00897fe0, param_3) on race states 6/7/-1; D-5501 |
