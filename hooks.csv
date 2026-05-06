@@ -995,6 +995,7 @@
 004282a0,FUN_004282a0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x004282a0.md,,,text width getter (float10): FUN_005554d0 + scale/div formula; U-2092; S-2089; D-2743 cleared
 00428320,FUN_00428320,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00428320.md,,,text width variant B (FUN_00427840 setup); param_1 unused; U-2092 U-2093; S-2090 S-2089; D-2767 cleared
 00429870,FUN_00429870,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429870.md,,,two time-record composite compare (int*60+int+float); U-2094; D-2761 cleared
+004299d0,TimeRecord::WriteTrackBest,util,C2,new,re/analysis/leaderboard/0x004299d0.md,,,writes per-track best-lap time (min/sec/frac) to 007f0db4/0de8/0e1c via FUN_00430790 index; 83b; caller: Replay::CreateOrLoad 00411d90; U-2227; S-1605(FUN_00430790); leaderboard-20260506-JJJJJ
 00429a30,FUN_00429a30,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a30.md,,,writes time-record A into 3 arrays via FUN_00430790 index; U-2095; S-2091(S-1605); D-2762 cleared
 00429a70,FUN_00429a70,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a70.md,,,indexed float read DAT_0067d99c[param_1]; D-2765 cleared
 00429a80,FUN_00429a80,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a80.md,,,indexed read DAT_0067d98c[param_1]; D-2763 cleared
@@ -1011,3 +1012,20 @@
 004c5010,RwMatrixScale,render,C2,mapped,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RW SDK RwMatrixScale(mat, scale, combineOp); modes 0=replace 1=preconcat 2=postconcat; confirmed from decomp"
 004c51a0,RwMatrixTranslate,render,C2,mapped,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RW SDK RwMatrixTranslate(mat, trans, combineOp); modes 0=replace 1=preconcat 2=postconcat; confirmed from decomp"
 0049dd60,FUN_0049dd60,video,C1,mapped,re/analysis/video_mci_d3/0x0049dd60.md,video_mci_d3-20260506-0512,,247b __thiscall ctor-base; sets vtable[0]=0x5d0dc0 +0x0c=0x5d0d84 +0x10=0x5cf9d0; calls FUN_004a0ef0 then 3x FUN_004a1160 on offsets 0x54/0x58/0x5c; 3x InitializeCriticalSection; SetEvent on this->0x5c; RET 0x10 (4 stack args but only 3 used); S-2000 S-2001 U-2007; resolves D-4060 S-1380
+005a66d0,FUN_005a66d0,audio,C1,mapped,re/analysis/audio_music_d2/005a66d0.md,,,play/stop audio obj+0x28; param_2=0→play(FUN_005a7520 arg1); param_2!=0→stop+write DAT_007dca50→obj+0x54; U-2207 U-2208; S-2200; resolves S-0620
+005a6dc0,FUN_005a6dc0,audio,C1,mapped,re/analysis/audio_music_d2/005a6dc0.md,,,null-guard wrapper; calls FUN_005a6d60(p1 p2 p3 &p4); p4 passed by addr from caller stack; U-2209; S-2201; resolves S-0621
+0045e0f0,FUN_0045e0f0,audio,C1,mapped,re/analysis/audio_music_d2/0045e0f0.md,,,per-channel volume setter; clamps to [005d757c..005cc320]; writes obj+0x40 + FUN_005a6dc0(sub 5 1 vol) + DAT_0068f644[ch*2]; U-2210; resolves S-0622
+00431b20,FUN_00431b20,audio,C1,mapped,re/analysis/audio_music_d2/00431b20.md,,,returns fsin(DAT_007f0f00 * _DAT_005cd8f0) as float10; phase-channel A; U-2211; resolves S-0623
+005baf00,FUN_005baf00,audio,C1,mapped,re/analysis/audio_music_d2/005baf00.md,,,music group volume setter; writes param_2→param_1+0x38; circular list walk: set node+0x14 bit6; secondary ptr+0x30; U-2212 U-2213 U-2214; resolves S-0625
+0042f760,FUN_0042f760,audio,C1,mapped,re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md,,,returns DAT_0067f19c; channel-B trigger flag getter; U-2215; resolves S-0627
+0042f770,FUN_0042f770,audio,C1,mapped,re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md,,,returns DAT_0067f1a0; channel-C trigger-A flag getter; U-2215; resolves S-0628
+0042f780,FUN_0042f780,audio,C1,mapped,re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md,,,returns DAT_0067f1a4; channel-C trigger-B flag getter; U-2215; resolves S-0629
+00432230,FUN_00432230,audio,C1,mapped,re/analysis/audio_music_d2/00432230_00432260.md,,,predicate: array[DAT_0067e9f8*0x40 at 0067ed3c]==0x13 && field+4==1; channel-D trigger; U-2216..U-2219; resolves S-0630
+00432260,FUN_00432260,audio,C1,mapped,re/analysis/audio_music_d2/00432230_00432260.md,,,predicate: same state==0x13 but sub-state==2; musicloop1 trigger; U-2216..U-2219; resolves S-0631
+00405890,FUN_00405890,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00405890.md,vehicle_damage_d3-20260506-1244,,mode-5 end-condition: (DAT_0063a5d4==DAT_0063a5d0) if DAT_0063a5d0!=0; 26 bytes; U-2167 U-2168
+00408a50,FUN_00408a50,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00408a50.md,vehicle_damage_d3-20260506-1244,,per-car float reader: *(float*)(DAT_008a96e8+v*0x30c); field+0xa8; depth-3 vehicle_damage; prior C1 race_results ai_update_d3
+00408a70,FUN_00408a70,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00408a70.md,vehicle_damage_d3-20260506-1244,,per-car precisepos setter: writes float+rounded to 5 fields stride-0x30c block at 0x8a9640; wprintf debug; 95 bytes; U-2169 U-2170
+0040e340,FUN_0040e340,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x0040e340.md,vehicle_damage_d3-20260506-1244,,no-arg getter: returns DAT_008a94d0; car/player count loop bound in FUN_00410d10 mode-7; 6 bytes; U-2171
+0040e350,FUN_0040e350,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x0040e350.md,vehicle_damage_d3-20260506-1244,,no-arg getter: returns DAT_0063ba8c; guard ==6 in FUN_004922e0; 6 bytes; U-2172; resolves S-1842
+00417730,FUN_00417730,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00417730.md,vehicle_damage_d3-20260506-1244,,per-car float getter: *(float*)(DAT_0089a880+v*4); flat float array; thresholds in FUN_00410d10 modes 4/7/8/9/10; U-2173 U-2174
+00423b20,FUN_00423b20,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00423b20.md,vehicle_damage_d3-20260506-1244,,per-index dword getter: *(dword*)(DAT_008995ec+v*0x138); mode-9 race-end guard(v=1); 16 bytes; U-2175 U-2176

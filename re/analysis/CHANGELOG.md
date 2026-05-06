@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-06  004299d0  TimeRecord::WriteTrackBest  C0->C2  Ghidra decomp; leaderboard-20260506-JJJJJ; re/analysis/leaderboard/0x004299d0.md; U-2227 filed
 
 Format: `YYYY-MM-DD  RVA  name  oldC->newC  evidence`
 
@@ -462,3 +463,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  sweep-20260506-0544  scribe-claim  bucket=powerups_d3  rvas=17  (sweep)
 2026-05-06  sweep-20260506-0544  scribe-release  bucket=powerups_d3  writes=17_plates,17_bookmarks  errors=0  (sweep)
 2026-05-06  sweep-20260506-0544  scribe-release-sweep  buckets=2  total_writes=19_plates,19_bookmarks  errors=0
+2026-05-06  vehicle_damage_d3-20260506-1244  BATCH  7 C1 rows (00405890 00408a50 00408a70 0040e340 0040e350 00417730 00423b20); cleared D-5440..D-5446 (7 deferred); resolved S-1842; new U-2167..U-2176 (10); slot=Mashed_pool0; cap_count=7; early-finish=no  session:vehicle_damage_d3-20260506-1244

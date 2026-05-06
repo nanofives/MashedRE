@@ -265,18 +265,18 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0543 | 0x0055dec0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0055dec0; reads state from DAT_0066d728 struct; returns 0x11 or 0x12 discriminant; depth-2 of camera_follow |
 | S-0544 | 0x004756e0 | 0x00426700 FUN_00426700 | render | passthrough | 2026-05-02 | FUN_004756e0; per-node callback called with two table lookups + node ptr + time-delta float + node[4]; depth-2 of camera_follow |
 | S-0545 | 0x00475010 | 0x00426780 FUN_00426780 | render | passthrough | 2026-05-02 | FUN_00475010; per-entry time-delta update; called with *piVar2 (handle/ptr) and float time delta; depth-2 of camera_follow |
-| S-0620 | 0x005a66d0 | 0x004623e0 FUN_004623e0 + 0x0045da60 + 0x0045dd60 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_005a66d0; (audio_obj_ptr, 0_or_1); stop/start on audio object; D-1780 |
-| S-0621 | 0x005a6dc0 | 0x004623e0 FUN_004623e0 + 0x0045dd60 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_005a6dc0; (sub_obj_ptr, param_type, flag, value); parameter setter on audio sub-object; D-1781 |
-| S-0622 | 0x0045e0f0 | 0x004623e0 FUN_004623e0 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_0045e0f0; (channel_index, volume_float); sets volume for channel in DAT_0068f640 array; D-1782 |
-| S-0623 | 0x00431b20 | 0x0045dd60 FUN_0045dd60 + 0x004631f0 | audio | passthrough | 2026-05-02 | FUN_00431b20; zero-arg, returns float10; timing/delta or audio-frame getter; D-1783 |
-| S-0624 | 0x00432290 | 0x0045dd60 FUN_0045dd60 | audio | passthrough | 2026-05-02 | FUN_00432290; zero-arg, returns int; boolean condition governing music mute; D-1784 |
-| S-0625 | 0x005baf00 | 0x0045dd60 FUN_0045dd60 | audio | passthrough | 2026-05-02 | FUN_005baf00; (ptr, float); called with music global DAT_0069049c and 1.0f or 0.0f; D-1785 |
-| S-0626 | 0x00431b60 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00431b60; zero-arg, returns float10; similar pattern to FUN_00431b20; D-1786 |
-| S-0627 | 0x0042f760 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f760; zero-arg, returns int; boolean trigger check for channel DAT_00604eb0; D-1787 |
-| S-0628 | 0x0042f770 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f770; zero-arg, returns int; boolean trigger check A for channel DAT_00604e1c; D-1788 |
-| S-0629 | 0x0042f780 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_0042f780; zero-arg, returns int; boolean trigger check B for channel DAT_00604e1c; D-1789 |
-| S-0630 | 0x00432230 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00432230; zero-arg, returns int; boolean trigger check for channel DAT_00605918; D-1790 |
-| S-0631 | 0x00432260 | 0x004631f0 FUN_004631f0 | audio | passthrough | 2026-05-02 | FUN_00432260; zero-arg, returns int; boolean trigger check for musicloop1 (DAT_00605d24); D-1791 |
+| S-0620 | 0x005a66d0 | 0x004623e0 FUN_004623e0 + 0x0045da60 + 0x0045dd60 + 0x004631f0 | audio | resolved | 2026-05-06 | FUN_005a66d0; play/stop dispatcher; param_2=0→play, param_2!=0→stop+DAT_007dca50→+0x54; re/analysis/audio_music_d2/005a66d0.md; U-2207 S-2200 |
+| S-0621 | 0x005a6dc0 | 0x004623e0 FUN_004623e0 + 0x0045dd60 + 0x004631f0 | audio | resolved | 2026-05-06 | FUN_005a6dc0; null-guard wrapper for FUN_005a6d60; param_4 by address; re/analysis/audio_music_d2/005a6dc0.md; U-2209 S-2201 |
+| S-0622 | 0x0045e0f0 | 0x004623e0 FUN_004623e0 + 0x004631f0 | audio | resolved | 2026-05-06 | FUN_0045e0f0; per-channel volume setter; clamp + obj+0x40 + FUN_005a6dc0(5,1,vol) + DAT_0068f644; re/analysis/audio_music_d2/0045e0f0.md; U-2210 |
+| S-0623 | 0x00431b20 | 0x0045dd60 FUN_0045dd60 + 0x004631f0 | audio | resolved | 2026-05-06 | FUN_00431b20; fsin(DAT_007f0f00*_DAT_005cd8f0) float10; phase-channel A; re/analysis/audio_music_d2/00431b20.md; U-2211 |
+| S-0624 | 0x00432290 | 0x0045dd60 FUN_0045dd60 | audio | resolved | 2026-05-06 | FUN_00432290; already in hooks.csv via timer_d2_cont1; DAT_0067eab0!=0 && DAT_0067eabc in {0xFF210000 0xFF220000}; U-1619 |
+| S-0625 | 0x005baf00 | 0x0045dd60 FUN_0045dd60 | audio | resolved | 2026-05-06 | FUN_005baf00; music group volume; +0x38=vol; circular list: node+0x14|=0x40; secondary+0x30=vol; re/analysis/audio_music_d2/005baf00.md; U-2212..U-2214 |
+| S-0626 | 0x00431b60 | 0x004631f0 FUN_004631f0 | audio | resolved | 2026-05-06 | FUN_00431b60; already in hooks.csv via timer_d2_cont1; fsin(DAT_007f0f08*_DAT_005cd8f0); phase-channel B |
+| S-0627 | 0x0042f760 | 0x004631f0 FUN_004631f0 | audio | resolved | 2026-05-06 | FUN_0042f760; returns DAT_0067f19c; channel-B trigger flag; re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md; U-2215 |
+| S-0628 | 0x0042f770 | 0x004631f0 FUN_004631f0 | audio | resolved | 2026-05-06 | FUN_0042f770; returns DAT_0067f1a0; channel-C trigger-A flag; U-2215 |
+| S-0629 | 0x0042f780 | 0x004631f0 FUN_004631f0 | audio | resolved | 2026-05-06 | FUN_0042f780; returns DAT_0067f1a4; channel-C trigger-B flag; U-2215 |
+| S-0630 | 0x00432230 | 0x004631f0 FUN_004631f0 | audio | resolved | 2026-05-06 | FUN_00432230; state[idx*0x40+0]==0x13 && sub-state==1; channel-D trigger; re/analysis/audio_music_d2/00432230_00432260.md; U-2216..U-2219 |
+| S-0631 | 0x00432260 | 0x004631f0 FUN_004631f0 | audio | resolved | 2026-05-06 | FUN_00432260; same state==0x13 but sub-state==2; musicloop1 trigger; U-2216..U-2219 |
 | S-0546 | 0x004c4d20 | 0x00426810 FUN_00426810 | render | passthrough | 2026-05-02 | FUN_004c4d20; builds rotation matrix from packed source (param_1+0x1060c); candidate RW math op; depth-2 of camera_follow |
 | S-0547 | 0x004c3dc0 | 0x00426810 FUN_00426810 | render | passthrough | 2026-05-02 | FUN_004c3dc0; transforms 3-float vector by matrix local_40; candidate RW vector transform; depth-2 of camera_follow |
 | S-0548 | 0x004c39b0 | 0x00426810 FUN_00426810 | render | passthrough | 2026-05-02 | FUN_004c39b0; in-place op on 3-float vector {local_64,0,local_5c}; candidate RW vector normalize; depth-2 of camera_follow |
@@ -525,7 +525,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1869 | 0x00446520 FUN_00446520 | 0x00448220 Frontend::PostRaceResultCamera | frontend | passthrough | 2026-05-05 | main result display state machine; called with (&DAT_00897fe0, param_3) on race states 6/7/-1; D-5501 |
 | S-1840 | 0x0046cbb0 FUN_0046cbb0 | 0x0040e180 FUN_0040e180 / 0x00410d10 FUN_00410d10 | vehicle | passthrough | 2026-05-05 | per-car state reader; (car,&state_out,&extra_out); state==0 not-destroyed; analyzed this session (see 0x0046cbb0.md) |
 | S-1841 | 0x004922e0 FUN_004922e0 | 0x00410d10 FUN_00410d10 | vehicle | passthrough | 2026-05-05 | hit-sound/particle trigger; args (car 3 10 0x80); analyzed this session (see 0x004922e0.md) |
-| S-1842 | 0x0040e350 FUN_0040e350 | 0x004922e0 FUN_004922e0 | vehicle | passthrough | 2026-05-05 | no-arg getter; return checked ==6 in FUN_004922e0; purpose unknown; D-5446 |
+| S-1842 | 0x0040e350 FUN_0040e350 | 0x004922e0 FUN_004922e0 | vehicle | resolved | 2026-05-06 | no-arg getter; RESOLVED vehicle_damage_d3-20260506-1244: returns DAT_0063ba8c; gate ==6 in FUN_004922e0; re/analysis/vehicle_damage_d3/0x0040e350.md; U-2172 |
 | U-1947 | 0x004b3c60 FUN_004b3c60 | 0x0042a640 FUN_0042a640 | render | passthrough | 2026-05-06 | BSP/RpWorld stream reader; called after piz lookup succeeds; depth-3 of track_loader_d3; D-5740 |
 | U-1948 | 0x00558df0 FUN_00558df0 | 0x0042a740 FUN_0042a740 | render | passthrough | 2026-05-06 | UVAnim chunk loader; (plugin_ptr, stream) → anim handle; depth-3; D-5741 |
 | U-1949 | 0x004b3cc0 FUN_004b3cc0 | 0x0042a7f0 FUN_0042a7f0 | render | passthrough | 2026-05-06 | spline stream reader; depth-3 of track_loader_d3; D-5742 |
@@ -572,3 +572,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2087 | 0x005555b0 FUN_005555b0 | 0x00427ad0 FUN_00427ad0 | frontend | passthrough | 2026-05-06 | main sprite draw call; 6 args: (DAT_0067d838, 512B stack buf, scaled param_7, &local_214, 1, DAT_0067d83c); depth-4 of FUN_00427ad0 |
 | S-2089 | 0x005554d0 FUN_005554d0 | 0x004282a0 FUN_004282a0 / 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | text width measurement; (DAT_0067d838, 1024B stack buf, param_2*scale); returns float10; depth-4 |
 | S-2090 | 0x00427840 FUN_00427840 | 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | font setup variant B; no args; replaces FUN_00427780+FUN_004277a0 pair; depth-4 of FUN_00428320 |
+| S-2200 | 0x005a7520 | 0x005a66d0 FUN_005a66d0 | audio | passthrough | 2026-05-06 | FUN_005a7520; (ptr, mode); mode 0→FUN_005a7560 (stop?), 1→FUN_005a7460 (play?), 2→FUN_005a75b0 (conditional); depth-3 of audio_music; D-6520 |
+| S-2201 | 0x005a6d60 | 0x005a6dc0 FUN_005a6dc0 | audio | passthrough | 2026-05-06 | FUN_005a6d60; (param_1, param_2, param_3, &param_4); actual audio parameter setter; param_4 by address; depth-3 of audio_music; D-6521 |
