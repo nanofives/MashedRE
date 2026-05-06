@@ -501,3 +501,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  0x00428d30  FUN_00428d30  C0->C1  title_screen-20260506-VVVVV; lobby renderer 1291b; S-2464 S-2465 S-2466; plate re/analysis/title_screen/0x00428d30.md
 2026-05-06  0x00427c90  FUN_00427c90  C0->C1  title_screen-20260506-VVVVV; assets-ready getter 5b; returns DAT_0067d84c; plate re/analysis/title_screen/0x00427c90.md
 2026-05-06  0x00428390  FUN_00428390  C0->C1  title_screen-20260506-VVVVV; state setter 9b; DAT_0067d960=param_1; plate re/analysis/title_screen/0x00428390.md
+2026-05-06  audio_music_d3-20260506-1930  scribe-queued  bucket=audio_music_d3  rvas=2
