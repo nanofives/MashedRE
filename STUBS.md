@@ -580,3 +580,14 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2363 | 0x005c318c __rt_probe_read4@4 | 0x005c1ea0 _longjmp | boot | passthrough | 2026-05-06 | readable probe for _Buf[0x20]; called at 0x005c1ec4; returns 0 if address unreadable; depth-3 of memory_pool root; D-7003 |
 | S-2320 | 0x00550980 FUN_00550980 | 0x004cbe80 FUN_004cbe80 | save | passthrough | 2026-05-06 | 4-arg fwrite-style call; (buf, 1, size, file_handle); case 1/2 file path of stream-write; depth-3 from save_gamesave; DEFERRED D-6880 |
 | S-2380 | 0x0040e170 FUN_0040e170 | 0x0043df00 FUN_0043df00 | frontend | passthrough | 2026-05-06 | 9-byte function; called with arg 0; depth-1 callee of frontend game-session initializer; D-7060 |
+| S-2400 | 0x004b7a70 FUN_004b7a70 | 0x0047b8a0 FUN_0047b8a0 | input | passthrough | 2026-05-06 | internal; depth-3 from input_lua root; only callee of 0x0047b8a0; not external import; D-7120 |
+| S-2401 | 0x004ba1b0 FUN_004ba1b0 | 0x004b7330 FUN_004b7330 | input | passthrough | 2026-05-06 | allocator; args (0,0,0x70); depth-3; also called by 0x004b7480; D-7121 |
+| S-2402 | 0x004b7be0 FUN_004b7be0 | 0x004b7330 FUN_004b7330 | input | passthrough | 2026-05-06 | receives (block, &LAB_004b73e0, &stack+4); fail triggers FUN_004b7480; depth-3; D-7122 |
+| S-2403 | 0x004c06c0 FUN_004c06c0 | 0x004c0510 FUN_004c0510 | input | passthrough | 2026-05-06 | args (param_1, &PTR_PTR_005d8a70, 0x17); depth-3; D-7123 |
+| S-2404 | 0x004b7200 thunk_FUN_004b7fd0 | 0x004c0510 FUN_004c0510 | input | passthrough | 2026-05-06 | thunk to FUN_004b7fd0; args (param_1, &LAB_004c0560, 0); depth-3; D-7124 |
+| S-2405 | 0x004b9730 FUN_004b9730 | 0x004c0510 FUN_004c0510 | input | passthrough | 2026-05-06 | args (param_1, 2, &PTR_DAT_00617530); depth-3; D-7125 |
+| S-2406 | 0x004b7140 FUN_004b7140 | 0x004c0510 FUN_004c0510 | input | passthrough | 2026-05-06 | args (param_1, 0x54442d18, 0x400921fb); depth-3; D-7126 |
+| S-2407 | 0x004b7250 FUN_004b7250 | 0x004c0510 FUN_004c0510 | input | passthrough | 2026-05-06 | args (param_1, &DAT_00617f34); depth-3; D-7127 |
+| S-2408 | 0x004ba210 FUN_004ba210 | 0x004b7480 FUN_004b7480 | input | passthrough | 2026-05-06 | args (param_1, 1); depth-3; D-7128 |
+| S-2409 | 0x004b9850 FUN_004b9850 | 0x004b7480 FUN_004b7480 | input | passthrough | 2026-05-06 | args (param_1); depth-3; D-7129 |
+| S-2410 | 0x004b64e0 FUN_004b64e0 | 0x004b6520 FUN_004b6520 | input | passthrough | 2026-05-06 | receives (param_1, 0, param_2); 57 bytes; depth-3; D-7130 |

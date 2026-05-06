@@ -487,3 +487,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  sweep-20260506-1624  scribe-claim  bucket=intro_splash_d2  rvas=7  (sweep)
 2026-05-06  sweep-20260506-1624  scribe-release  bucket=intro_splash_d2  writes=7_plates,7_bookmarks  errors=0  (sweep)
 2026-05-06  sweep-20260506-1624  scribe-release-sweep  buckets=3  total_writes=11_plates,11_bookmarks  errors=0
+2026-05-06  0047b8a0  FUN_0047b8a0  C0->C1  structural read; input_lua_d2-20260506-1854; Lua exec wrapper; FUN_004b7a70(DAT_006bf1e0,p1,p2,0); cond write to *p3; returns iVar1==0; S-2400 U-2407 (re/analysis/input_lua_d2/0x0047b8a0.md)
+2026-05-06  004b7330  FUN_004b7330  C0->C1  structural read; input_lua_d2-20260506-1854; alloc 0x70 block; zero-init 16 fields; sentinels +0x4c/+0x58=0xffffffff +0x5c=0x7ffffffd +0x60=0x70 +0x6c=1; setup via FUN_004b7be0; fail→FUN_004b7480; +0x5c=+0x60*2; S-2401 S-2402 U-2408..U-2411 (re/analysis/input_lua_d2/0x004b7330.md)
+2026-05-06  004c0510  FUN_004c0510  C0->C1  structural read; input_lua_d2-20260506-1854; 5-call sequential chain into param_1; FUN_004c06c0+thunk_FUN_004b7fd0+FUN_004b9730+FUN_004b7140(0x54442d18,0x400921fb)+FUN_004b7250; S-2403..S-2407 U-2412 U-2413 (re/analysis/input_lua_d2/0x004c0510.md)
+2026-05-06  004b7480  FUN_004b7480  C0->C1  structural read; input_lua_d2-20260506-1854; teardown; FUN_004ba210(1)+FUN_004b9850; arith updates on +0x60 via 5x FUN_004ba1b0 pattern; S-2408 S-2409 U-2414..U-2417 (re/analysis/input_lua_d2/0x004b7480.md)
+2026-05-06  004b6520  FUN_004b6520  C0->C1  structural read; input_lua_d2-20260506-1854; 20-byte wrapper; FUN_004b64e0(param_1,0,param_2); S-2410 U-2418 (re/analysis/input_lua_d2/0x004b6520.md)
