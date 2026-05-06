@@ -308,6 +308,7 @@
 0040b6d0,FUN_0040b6d0,util,C1,mapped,re/analysis/game_state/0x0040b6d0.md,,,returns (&DAT_008a94e0)[param_1]; getter for same array as FUN_0040b540; U-0491
 0040b6e0,FUN_0040b6e0,util,C1,mapped,re/analysis/game_state/0x0040b6e0.md,,,adds param_1 to DAT_0063b8ec if FUN_0042f6a0()!=2; S-0485 guard; U-0492 U-0493
 0040b700,FUN_0040b700,util,C1,mapped,re/analysis/game_state/0x0040b700.md,,,increments one of 4 per-slot int arrays (0x8a9530/40/50/60) based on FUN_0040e340 result and param_2; U-0494 U-0495
+0040d270,Course::Finish,util,C1,new,re/analysis/leaderboard/0x0040d270.md,,,course finish/transition handler; car-finish + lap-routing (440b); tail: Replay::CreateOrLoad (00411d90) + DAT_0063ba8c=1; caller: FUN_0040d440 row 311; S-2225 S-2226; U-2229; leaderboard-20260506-JJJJJ
 0040d440,FUN_0040d440,util,C1,mapped,re/analysis/game_state/0x0040d440.md,,,calls FUN_0040d270(PTR_PTR_005f2770 DAT_0063ba7c); writes DAT_0063ba78=DAT_0063ba7c; S-0492; U-0496
 0040e340,FUN_0040e340,util,C1,mapped,re/analysis/game_state/0x0040e340.md,,,returns DAT_008a94d0; getter for dispatch key (values 2/3/4) used by FUN_0040b700; U-0497
 0040e350,FUN_0040e350,util,C1,mapped,re/analysis/game_state/0x0040e350.md,,,returns DAT_0063ba8c; compared to 0xb and 9 in STATE_FN case 3; U-0498
