@@ -467,3 +467,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  00429310  TimeTrial::Tick  C0->C1  string xref "time trial time is %f"; leaderboard-20260506-JJJJJ; re/analysis/leaderboard/0x00429310.md; S-2220 U-2228 filed
 2026-05-06  0040d270  Course::Finish  C0->C1  xref from FUN_0040d440 row 311; tail=Replay::CreateOrLoad; leaderboard-20260506-JJJJJ; re/analysis/leaderboard/0x0040d270.md; S-2225 S-2226 U-2229 filed
 2026-05-06  sweep-20260506-1326  scribe-claim-sweep  buckets=2  rvas=13
+2026-05-06  sweep-20260506-1326  scribe-claim  bucket=profile_career_d3  rvas=6  (sweep)
+2026-05-06  sweep-20260506-1326  scribe-release  bucket=profile_career_d3  writes=6_plates,6_bookmarks  errors=0  (sweep)
+2026-05-06  sweep-20260506-1326  scribe-claim  bucket=vehicle_damage_d3  rvas=7  (sweep)
+2026-05-06  sweep-20260506-1326  scribe-release  bucket=vehicle_damage_d3  writes=7_plates,7_bookmarks  errors=0  (sweep; 0x00408a50/0x00408a70 overwrite prior race_results plates)
+2026-05-06  sweep-20260506-1326  scribe-release-sweep  buckets=2  total_writes=13_plates,13_bookmarks  errors=0

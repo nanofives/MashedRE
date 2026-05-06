@@ -13,9 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-06  profile_career_d3-20260506-1249  bucket=profile_career_d3  rvas=0x00441990,0x00446520,0x00429a70,0x0046b4f0,0x0046d510,0x00442e00  S-2180..S-2192  U-2187..U-2197  D-6460..D-6483  pool=Mashed_pool3
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-06  vehicle_damage_d3-20260506-1244  bucket=vehicle_damage_d3  rvas=0x00405890,0x00408a50,0x00408a70,0x0040e340,0x0040e350,0x00417730,0x00423b20
 ```
 
 ## Drained
@@ -76,3 +74,5 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-06  hud_frontend_d3-20260506-0511  bucket=hud_frontend_d3  rvas=0x0040ad20,0x0040b460,0x0040b620,0x0040b6b0,0x0040b6c0,0x0040b7a0,0x0040b7b0,0x0040bb70,0x0040bb90,0x0040e3a0,0x00427ad0,0x004282a0,0x00428320,0x00429870,0x00429a30,0x00429a70,0x00429a80,0x00429a90  S-2087,S-2089,S-2090  U-2087..U-2095  D-6160..D-6184  pool=Mashed_pool12
 2026-05-06  launch_handshake-20260506  bucket=launch_handshake  rvas=0x000955d0,0x00095780  U-0070=resolved  pool=Mashed_pool15  note=queue used bare offsets; sweep-20260506-0544 corrected to MASHED.exe VAs 0x004955d0 and 0x00495780 before writing
 2026-05-06  powerups_d3-20260506-0504  bucket=powerups_d3  rvas=0x00454170,0x004547c0,0x00534b60,0x004c0790,0x004c0870,0x004c0a60,0x004c0de0,0x004d8060,0x004e4440,0x004e4d90,0x004e68a0,0x004e6710,0x004e6920,0x004e6d00,0x004e6d80,0x004e6f80,0x004e6fe0  S-1920..S-1930  U-1927..U-1945  D-5680..D-5686  pool=Mashed_pool4  drained-by=sweep-20260506-0544; 17 plates, 17 bookmarks (0x004d8060 plate overwrote prior rw_engine_teardown_d2 plate)
+2026-05-06  profile_career_d3-20260506-1249  bucket=profile_career_d3  rvas=0x00441990,0x00446520,0x00429a70,0x0046b4f0,0x0046d510,0x00442e00  S-2180..S-2192  U-2187..U-2197  D-6460..D-6483  pool=Mashed_pool3  drained-by=sweep-20260506-1326; 6 plates, 6 bookmarks
+2026-05-06  vehicle_damage_d3-20260506-1244  bucket=vehicle_damage_d3  rvas=0x00405890,0x00408a50,0x00408a70,0x0040e340,0x0040e350,0x00417730,0x00423b20  drained-by=sweep-20260506-1326; 7 plates, 7 bookmarks; 0x00408a50 and 0x00408a70 plates overwrote prior race_results plates
