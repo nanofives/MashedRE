@@ -530,3 +530,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  004b53b0  FUN_004b53b0  stub->C1  track_loader_d4-20260506-2007; bounding sphere 430b; max-sq-dist; sqrt; re/analysis/track_loader_d4/0x004b53b0.md
 2026-05-06  004c3d90  FUN_004c3d90  stub->C1  track_loader_d4-20260506-2007; dispatch shim 42b; DAT_007d3ffc+0xc+DAT_007d3ff8; re/analysis/track_loader_d4/0x004c3d90.md
 2026-05-06  00546380  FUN_00546380  stub->C1  track_loader_d4-20260506-2007; waypoint set ctor 426b; type 1/2; FUN_00545340 init; re/analysis/track_loader_d4/0x00546380.md
+2026-05-06  sweep-20260506-2157  scribe-claim  bucket=sweep-multi rvas=23 (input_lua_d2=5, audio_music_d3=2, track_loader_d4=16; replay_record HOLD-skipped)
