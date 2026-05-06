@@ -13,10 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-06  options_menu-20260506  bucket=options_menu  rvas=0x00431d90,0x00431f30,0x0043df00  S-2380  U-2387..U-2389  D-7060  pool=Mashed_pool0  anchor=FUN_0043d2a0(C1,game_mode_cont1);OPTIONS_FN=page_id_10;strategy=hud_frontend_call_graph
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-06  memory_pool_d2-20260506-1512  bucket=memory_pool_d2  rvas=0x005c1ea0  S-2360..S-2363  U=none  D-7000..D-7003  pool=Mashed_pool10
-2026-05-06  intro_splash_d2-20260506  bucket=intro_splash_d2  rvas=0x004c75e0,0x00494320,0x004c7650,0x004942b0,0x004938e0,0x004c77c0,0x004c7730  S-0814..S-0820-resolved  S-2340..S-2341  U-2347..U-2361  D-2321..D-2327-cleared  D-6940..D-6941  pool=Mashed_pool9
 ```
 
 ## Drained
@@ -81,3 +78,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-06  vehicle_damage_d3-20260506-1244  bucket=vehicle_damage_d3  rvas=0x00405890,0x00408a50,0x00408a70,0x0040e340,0x0040e350,0x00417730,0x00423b20  drained-by=sweep-20260506-1326; 7 plates, 7 bookmarks; 0x00408a50 and 0x00408a70 plates overwrote prior race_results plates
 2026-05-06  localization_d2-20260506  bucket=localization_d2  rvas=0x0042c300,0x0042c3c0,0x0042c7c0,0x00429660,0x0040dc80,0x0040dc90,0x00429620,0x00429300  U-2267..U-2279  D-6700..D-6703  pool=Mashed_pool5
 2026-05-06  save_gamesave_d2-20260506-1508  bucket=save_gamesave_d2  rvas=0x004cbe80,0x00550b00
+2026-05-06  options_menu-20260506  bucket=options_menu  rvas=0x00431d90,0x00431f30,0x0043df00  S-2380  U-2387..U-2389  D-7060  pool=Mashed_pool0  drained-by=sweep-20260506-1624; 3 plates, 3 bookmarks
+2026-05-06  memory_pool_d2-20260506-1512  bucket=memory_pool_d2  rvas=0x005c1ea0  S-2360..S-2363  U=none  D-7000..D-7003  pool=Mashed_pool10  drained-by=sweep-20260506-1624; 1 plate, 1 bookmark; library_match=_longjmp (already named in Ghidra, no rename needed)
+2026-05-06  intro_splash_d2-20260506  bucket=intro_splash_d2  rvas=0x004c75e0,0x00494320,0x004c7650,0x004942b0,0x004938e0,0x004c77c0,0x004c7730  S-0814..S-0820-resolved  S-2340..S-2341  U-2347..U-2361  D-2321..D-2327-cleared  D-6940..D-6941  pool=Mashed_pool9  drained-by=sweep-20260506-1624; 7 plates, 7 bookmarks

@@ -480,3 +480,10 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  0x00431d90  FUN_00431d90  C0->C1  options_menu-20260506; panel-flag mass-clear; plate re/analysis/options_menu/0x00431d90.md
 2026-05-06  0x00431f30  FUN_00431f30  C0->C1  options_menu-20260506; page-ID dispatch switch; param_1=10=options page; plate re/analysis/options_menu/0x00431f30.md
 2026-05-06  0x0043df00  FUN_0043df00  C0->C1  options_menu-20260506; frontend game-session initializer; S-2380 U-2387..U-2389; plate re/analysis/options_menu/0x0043df00.md2026-05-06  sweep-20260506-1624  scribe-claim-sweep  buckets=3  rvas=11  (replay_record skipped: still HOLD)
+2026-05-06  sweep-20260506-1624  scribe-claim  bucket=options_menu  rvas=3  (sweep)
+2026-05-06  sweep-20260506-1624  scribe-release  bucket=options_menu  writes=3_plates,3_bookmarks  errors=0  (sweep)
+2026-05-06  sweep-20260506-1624  scribe-claim  bucket=memory_pool_d2  rvas=1  (sweep)
+2026-05-06  sweep-20260506-1624  scribe-release  bucket=memory_pool_d2  writes=1_plate,1_bookmark  errors=0  (sweep; _longjmp already named via library match)
+2026-05-06  sweep-20260506-1624  scribe-claim  bucket=intro_splash_d2  rvas=7  (sweep)
+2026-05-06  sweep-20260506-1624  scribe-release  bucket=intro_splash_d2  writes=7_plates,7_bookmarks  errors=0  (sweep)
+2026-05-06  sweep-20260506-1624  scribe-release-sweep  buckets=3  total_writes=11_plates,11_bookmarks  errors=0
