@@ -35,20 +35,6 @@ Depth-4 deferred callees from game_state_d3 session UUUUU:
 
 ---
 
-## intro_splash_d2-cont1  [queued 2026-05-06]
-
-**Bucket:** re/analysis/intro_splash_d3/
-**Parent:** intro_splash_d2 (D=6940..6941, bucket intro_splash_d2-cont1)
-**Subsystem:** frontend
-
-Depth-3 deferred callees from intro_splash_d2 session PPPPP:
-
-| D | Address | Description |
-|---|---------|-------------|
-| D-6940 | 0x004d8000 | FUN_004d8000 — list insertion function (82b); called from FUN_004c77c0 as `FUN_004d8000(&DAT_00618180, alloc_result)` on successful video texture allocation; referenced in rw_engine_init and powerups contexts; S-2340 |
-| D-6941 | 0x004d8c40 | FUN_004d8c40 — no-arg function (117b); called immediately before vtable slot 38 dispatch in FUN_004c7730; purpose unknown; S-2341 |
-
----
 
 ## leaderboard-cont1  [queued 2026-05-06]
 

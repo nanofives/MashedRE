@@ -1000,6 +1000,7 @@
 00427ad0,FUN_00427ad0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00427ad0.md,,,7-param icon draw wrapper; scale x4+FUN_005555b0; U-2091; S-2083..S-2088; D-2744 cleared
 004282a0,FUN_004282a0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x004282a0.md,,,text width getter (float10): FUN_005554d0 + scale/div formula; U-2092; S-2089; D-2743 cleared
 00428320,FUN_00428320,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00428320.md,,,text width variant B (FUN_00427840 setup); param_1 unused; U-2092 U-2093; S-2090 S-2089; D-2767 cleared
+004288a0,FUN_004288a0,frontend,C1,new,re/analysis/title_screen_d2/0x004288a0.md,,,menu layout renderer; image+7 sprites; DAT_0067d964 256x128@(320,100); sprites 0x1e5..0x1eb; inline 24x24 icon DAT_0067d970; all callees C1; S-2461 cleared; title_screen_d2-20260506
 00429870,FUN_00429870,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429870.md,,,two time-record composite compare (int*60+int+float); U-2094; D-2761 cleared
 004299d0,TimeRecord::WriteTrackBest,util,C2,new,re/analysis/leaderboard/0x004299d0.md,,,writes per-track best-lap time (min/sec/frac) to 007f0db4/0de8/0e1c via FUN_00430790 index; 83b; caller: Replay::CreateOrLoad 00411d90; U-2227; S-1605(FUN_00430790); leaderboard-20260506-JJJJJ
 00429a30,FUN_00429a30,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a30.md,,,writes time-record A into 3 arrays via FUN_00430790 index; U-2095; S-2091(S-1605); D-2762 cleared
@@ -1087,3 +1088,8 @@
 00495830,FUN_00495830,input,C1,new,re/analysis/input_dinput_d3/00495830.md,,,strcpy from joypad_struct[param_1] (base DAT_00771eb4 stride 0x448) to param_2; bounds-check param_1<DAT_00772fac; returns 1/0; U-2589; S-2283
 004971b0,FUN_004971b0,input,C1,new,re/analysis/input_dinput_d3/004971b0.md,,,controller config loader; formats "contcfg%d.bin" via FUN_00497190; fopen via FUN_004a4541(DAT_005cf010); fread 0x200b→DAT_007e95c0+EAX×0x80; register-conv EAX=slot; U-2587 U-2588 U-2590; S-2284
 00497190,FUN_00497190,input,C1,new,re/analysis/input_dinput_d3/00497190.md,,,sprintf "contcfg%d.bin"→DAT_007730e4 via FUN_004a2b60; returns ptr; implicit EAX slot index (U-2588); callee of FUN_004971b0
+00445aa0,FUN_00445aa0,util,C1,new,re/analysis/game_state_d4/0x00445aa0.md,,,type-0 entry-handler (dispatch from FUN_004464c0); timestep*vel*angle*matrix update; param_1 mistyped float=entry ptr; S-2440 resolved; new S-2500 S-2501; U-2507 U-2508 U-2509
+00441d40,FUN_00441d40,util,C1,new,re/analysis/game_state_d4/0x00441d40.md,,,type-1 entry-handler; PD yaw+pitch toward interpolated target; weight=100 when FUN_00408a50 in [+0xd0..+0xd4]; secondary matrix when param_1+8!=1 with hardcoded (0;0.1741;0.2713); S-2441 resolved; S-2500; U-2509 U-2510
+00442440,FUN_00442440,util,C1,new,re/analysis/game_state_d4/0x00442440.md,,,type-2 entry-handler; snaps 16-float matrix from FUN_0046d4a0(FUN_0040dc90()); matrix-vec multiply on current pos; velocity step by _DAT_005cc33c; weight=0; S-2442 resolved; U-2511 U-2512
+00441c80,FUN_00441c80,util,C0,deferred,,,, interpolated XYZ getter; reads two vehicle slots via FUN_0046d4a0; lerp by _DAT_005cc32c; callers: 00445aa0+00441d40; S-2500; D-7420
+004430a0,FUN_004430a0,util,C0,deferred,,,, 9B setter DAT_00897fe0=param_1; called with 0 in FUN_00445aa0 player-slot loop (40 entries; stride 0x4c); S-2501; D-7421

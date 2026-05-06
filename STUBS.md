@@ -558,6 +558,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1928 | 0x004e8ea0 FUN_004e8ea0 | 0x004e68a0 FUN_004e68a0 / 0x004e6920 FUN_004e6920 | gameplay | passthrough | 2026-05-06 | called with old *(param_1+0x18) on field change; depth-4; D-5685 |
 | S-1929 | 0x004d8bd0 FUN_004d8bd0 | 0x004e6920 FUN_004e6920 | gameplay | passthrough | 2026-05-06 | called with *(param_1+0x14); depth-4 of FUN_004e6920; D-5686 |
 | S-1930 | 0x004d8000 FUN_004d8000 | 0x004e6d80 FUN_004e6d80 | gameplay | passthrough | 2026-05-06 | list insert; called with (&DAT_0061867c puVar2); depth-4; also in DEFERRED D-0231 D-0526 |
+| S-2340 | 0x004d8000 FUN_004d8000 | 0x004c77c0 FUN_004c77c0 | frontend | passthrough | 2026-05-06 | find-in-list + secondary dispatch; called with (&DAT_00618180 alloc_result) on video texture alloc; see also S-1930; resolved intro_splash_d3 2026-05-06; D-6940 |
+| S-2341 | 0x004d8c40 FUN_004d8c40 | 0x004c7730 FUN_004c7730 | frontend | passthrough | 2026-05-06 | doubly-linked list splice + swap + counter clear; called before vtable slot 38 dispatch; single caller; resolved intro_splash_d3 2026-05-06; D-6941 |
 | S-2000 | 0x004a0ef0 FUN_004a0ef0 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2) from FUN_0049dd60 before vtable writes; depth-4 from video_mci; D-5920 |
 | S-2001 | 0x004a1160 FUN_004a1160 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 27b __thiscall; called 3x on &this+0x54/0x58/0x5c with args 0/1/1; result at 0x5c used as HANDLE in SetEvent; depth-4 from video_mci; D-5921 |
 | S-1960 | 0x004e5fc0 FUN_004e5fc0 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | called when *(atomic+0x4c) & 2; 0x13D bytes; depth-4 of effects_particle; U-1967 |
@@ -601,3 +603,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2464 | 0x0040d250 FUN_0040d250 | 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | lobby visual element (gradient/line/logo path); depth-2 of title_screen; D-7304 |
 | S-2465 | 0x00401ee0 FUN_00401ee0 | 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | lobby visual element; depth-2 of title_screen; D-7305 |
 | S-2466 | 0x0042f0b0 FUN_0042f0b0 | 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | lobby UI sub-renderer at (347.5, 168.0); depth-2 of title_screen; D-7306 |
+| S-2500 | 0x00441c80 FUN_00441c80 | 0x00445aa0 FUN_00445aa0 / 0x00441d40 FUN_00441d40 | util | passthrough | 2026-05-06 | interpolated XYZ getter; reads two vehicle slot positions via FUN_0046d4a0; lerp by _DAT_005cc32c; also calls FUN_0040e180 for default slots; body 0xb2 bytes; D-7420 |
+| S-2501 | 0x004430a0 FUN_004430a0 | 0x00445aa0 FUN_00445aa0 | util | passthrough | 2026-05-06 | 9B setter: DAT_00897fe0 = param_1; called with 0 in 40-entry player-slot loop (stride 0x4c; DAT_007f1042..0x7f12a2); D-7421 |

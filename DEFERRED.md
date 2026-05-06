@@ -264,6 +264,8 @@ A row goes into DEFERRED when:
 | D-0118 | 0x004ac45c ___crtMessageBoxA | analyzed C1 session boot_crt_exit_d3-20260502-1854 | 2026-05-02 |
 | D-0119 | 0x004ac570 FUN_004ac570 | superseded by D-0460; not taken due to cap | 2026-05-02 |
 | D-0280 | 0x00551510,0x004c2c90,0x004d8060,0x004d7ca0,0x004ccf20 | analyzed C1 session rw_engine_teardown_d2-20260502-1854 (all 5 RVAs) | 2026-05-02 |
+| D-6940 | 0x004d8000 FUN_004d8000 | analyzed C1 session intro_splash_d3-20260506 (S-2340 resolved; find-in-list + secondary dispatch) | 2026-05-06 |
+| D-6941 | 0x004d8c40 FUN_004d8c40 | analyzed C1 session intro_splash_d3-20260506 (S-2341 resolved; doubly-linked list splice + swap + counter clear; resolves U-2360) | 2026-05-06 |
 
 ## Conventions
 
