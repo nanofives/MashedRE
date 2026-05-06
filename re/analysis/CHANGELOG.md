@@ -476,3 +476,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  sweep-20260506-1326  scribe-release  bucket=vehicle_damage_d3  writes=7_plates,7_bookmarks  errors=0  (sweep; 0x00408a50/0x00408a70 overwrite prior race_results plates)
 2026-05-06  sweep-20260506-1326  scribe-release-sweep  buckets=2  total_writes=13_plates,13_bookmarks  errors=0
 2026-05-06  save_gamesave_d2-20260506-1508  analysis  bucket=save_gamesave_d2  rvas=5  new=2(004cbe80,00550b00)  xref=3(004cbd30,004cc160,004cc230)  stubs_cleared=S-0280..S-0284  stubs_added=S-2320  U_added=U-2327..U-2332  D_added=D-6880  slot=Mashed_pool8
+
+2026-05-06  0x00431d90  FUN_00431d90  C0->C1  options_menu-20260506; panel-flag mass-clear; plate re/analysis/options_menu/0x00431d90.md
+2026-05-06  0x00431f30  FUN_00431f30  C0->C1  options_menu-20260506; page-ID dispatch switch; param_1=10=options page; plate re/analysis/options_menu/0x00431f30.md
+2026-05-06  0x0043df00  FUN_0043df00  C0->C1  options_menu-20260506; frontend game-session initializer; S-2380 U-2387..U-2389; plate re/analysis/options_menu/0x0043df00.md

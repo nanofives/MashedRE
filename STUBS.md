@@ -579,3 +579,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2362 | 0x004a4066 FUN_004a4066 | 0x005c1ea0 _longjmp | boot | passthrough | 2026-05-06 | called at 0x005c1ef5 with arg 0 before register restore; thread/signal state reset; depth-3 of memory_pool root; D-7002 |
 | S-2363 | 0x005c318c __rt_probe_read4@4 | 0x005c1ea0 _longjmp | boot | passthrough | 2026-05-06 | readable probe for _Buf[0x20]; called at 0x005c1ec4; returns 0 if address unreadable; depth-3 of memory_pool root; D-7003 |
 | S-2320 | 0x00550980 FUN_00550980 | 0x004cbe80 FUN_004cbe80 | save | passthrough | 2026-05-06 | 4-arg fwrite-style call; (buf, 1, size, file_handle); case 1/2 file path of stream-write; depth-3 from save_gamesave; DEFERRED D-6880 |
+| S-2380 | 0x0040e170 FUN_0040e170 | 0x0043df00 FUN_0043df00 | frontend | passthrough | 2026-05-06 | 9-byte function; called with arg 0; depth-1 callee of frontend game-session initializer; D-7060 |

@@ -696,3 +696,5 @@ A row goes into DEFERRED when:
 | D-6702 | 0x00424eb0 FUN_00424eb0 | caller of FUN_0040dc90; body 00424eb0..004252be (0x40e B); pickup condition: localization_d2-cont1 session | 2026-05-06 |
 | D-6703 | 0x00442440 FUN_00442440 | caller of FUN_0040dc90; body 00442440..004425c6 (0x186 B); HUD/name-label context; pickup condition: localization_d2-cont1 session | 2026-05-06 |
 | D-6880 | 0x00550980 FUN_00550980 | depth-3 callee of FUN_004cbe80 (save_gamesave_d2); 4-arg fwrite-style; S-2320; bucket save_gamesave_d2-cont1; pickup condition: save_gamesave_d2-cont1 session | 2026-05-06 |
+
+| D-7060 | 0x0040e170 FUN_0040e170 | depth-1 callee of FUN_0043df00 (options_menu); 9 bytes; S-2380; pickup condition: options_menu-cont1 session | 2026-05-06 |
