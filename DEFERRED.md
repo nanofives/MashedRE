@@ -167,6 +167,10 @@ A row goes into DEFERRED when:
 | D-6182 | 0x00473870 FUN_00473870 | hud_frontend_d3 early-finish; was D-2747; sprite draw 7-param | hud_frontend_d3-cont1 sweep session | frontend |
 | D-6183 | 0x004736c0 FUN_004736c0 | hud_frontend_d3 early-finish; was D-2766; line/border renderer | hud_frontend_d3-cont1 sweep session | frontend |
 | D-6184 | 0x00474e60 FUN_00474e60 | hud_frontend_d3 early-finish; was D-2772; float-to-x87-angle converter | hud_frontend_d3-cont1 sweep session | frontend |
+| D-7000 | 0x004a3f90 __global_unwind2 | depth-3 callee of _longjmp (S-2360); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
+| D-7001 | 0x004a3fd2 __local_unwind2 | depth-3 callee of _longjmp (S-2361); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
+| D-7002 | 0x004a4066 FUN_004a4066 | depth-3 callee of _longjmp (S-2362); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
+| D-7003 | 0x005c318c __rt_probe_read4@4 | depth-3 callee of _longjmp (S-2363); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
 
 ## Cleared (delivered or rejected)
 
@@ -687,3 +691,8 @@ A row goes into DEFERRED when:
 | D-2780 | 0x00430a60 FUN_00430a60 | not analyzed; early-finish; re-filed as D-6175 | 2026-05-06 |
 | D-2781 | 0x00430ab0 FUN_00430ab0 | not analyzed; early-finish; re-filed as D-6176 | 2026-05-06 |
 | D-2782 | 0x0042ee00 FUN_0042ee00 | not analyzed; early-finish; re-filed as D-6167 | 2026-05-06 |
+| D-6700 | 0x004295a0 FUN_004295a0 | caller of FUN_0040dc80 in name-label render cluster; body 004295a0..0042961c (0x7c B); bucket localization_d2-cont1; pickup condition: localization_d2-cont1 session | 2026-05-06 |
+| D-6701 | 0x00429bd0 FUN_00429bd0 | caller of FUN_0040dc80 in name-label render cluster; body 00429bd0..00429e0e (0x23e B); bucket localization_d2-cont1; pickup condition: localization_d2-cont1 session | 2026-05-06 |
+| D-6702 | 0x00424eb0 FUN_00424eb0 | caller of FUN_0040dc90; body 00424eb0..004252be (0x40e B); pickup condition: localization_d2-cont1 session | 2026-05-06 |
+| D-6703 | 0x00442440 FUN_00442440 | caller of FUN_0040dc90; body 00442440..004425c6 (0x186 B); HUD/name-label context; pickup condition: localization_d2-cont1 session | 2026-05-06 |
+| D-6880 | 0x00550980 FUN_00550980 | depth-3 callee of FUN_004cbe80 (save_gamesave_d2); 4-arg fwrite-style; S-2320; bucket save_gamesave_d2-cont1; pickup condition: save_gamesave_d2-cont1 session | 2026-05-06 |
