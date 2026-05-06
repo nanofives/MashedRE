@@ -14,6 +14,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
+2026-05-06  memory_pool_d2-20260506-1512  bucket=memory_pool_d2  rvas=0x005c1ea0  S-2360..S-2363  U=none  D-7000..D-7003  pool=Mashed_pool10
 ```
 
 ## Drained
@@ -76,3 +77,5 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-06  powerups_d3-20260506-0504  bucket=powerups_d3  rvas=0x00454170,0x004547c0,0x00534b60,0x004c0790,0x004c0870,0x004c0a60,0x004c0de0,0x004d8060,0x004e4440,0x004e4d90,0x004e68a0,0x004e6710,0x004e6920,0x004e6d00,0x004e6d80,0x004e6f80,0x004e6fe0  S-1920..S-1930  U-1927..U-1945  D-5680..D-5686  pool=Mashed_pool4  drained-by=sweep-20260506-0544; 17 plates, 17 bookmarks (0x004d8060 plate overwrote prior rw_engine_teardown_d2 plate)
 2026-05-06  profile_career_d3-20260506-1249  bucket=profile_career_d3  rvas=0x00441990,0x00446520,0x00429a70,0x0046b4f0,0x0046d510,0x00442e00  S-2180..S-2192  U-2187..U-2197  D-6460..D-6483  pool=Mashed_pool3  drained-by=sweep-20260506-1326; 6 plates, 6 bookmarks
 2026-05-06  vehicle_damage_d3-20260506-1244  bucket=vehicle_damage_d3  rvas=0x00405890,0x00408a50,0x00408a70,0x0040e340,0x0040e350,0x00417730,0x00423b20  drained-by=sweep-20260506-1326; 7 plates, 7 bookmarks; 0x00408a50 and 0x00408a70 plates overwrote prior race_results plates
+2026-05-06  localization_d2-20260506  bucket=localization_d2  rvas=0x0042c300,0x0042c3c0,0x0042c7c0,0x00429660,0x0040dc80,0x0040dc90,0x00429620,0x00429300  U-2267..U-2279  D-6700..D-6703  pool=Mashed_pool5
+2026-05-06  save_gamesave_d2-20260506-1508  bucket=save_gamesave_d2  rvas=0x004cbe80,0x00550b00
