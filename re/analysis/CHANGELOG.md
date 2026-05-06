@@ -535,3 +535,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  input_lua_d2-20260506-1854  scribe-release bucket=input_lua_d2 writes=10 errors=0  drained-by=sweep-20260506-2157; 5 plates, 5 bookmarks, 0 renames
 2026-05-06  audio_music_d3-20260506-1930  scribe-claim  bucket=audio_music_d3 rvas=2
 2026-05-06  audio_music_d3-20260506-1930  scribe-release bucket=audio_music_d3 writes=4 errors=0  drained-by=sweep-20260506-2157; 2 plates, 2 bookmarks, 0 renames
+2026-05-06  track_loader_d4-20260506-2007  scribe-claim  bucket=track_loader_d4 rvas=16
+2026-05-06  track_loader_d4-20260506-2007  scribe-release bucket=track_loader_d4 writes=32 errors=0  drained-by=sweep-20260506-2157; 16 plates, 16 bookmarks, 0 renames; 0x00479030 listing-level (no function object)
