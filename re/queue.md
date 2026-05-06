@@ -130,3 +130,64 @@ Depth-3 deferred callees from input_dinput session MMMMM:
 | D-6765 | 0x004a2c48 | FUN_004a2c48 — button state byte reader (called by FUN_00497310 analog path + FUN_00496530) |
 | D-6766 | 0x00495ee0 | LAB_00495ee0 — EnumDevices callback; Ghidra label only; needs function_create first |
 
+
+## librw_plugin_compat  [queued 2026-05-06]
+
+**Bucket:** re/analysis/librw_plugin_compat/
+**Parent:** rw_engine_init/004c32b0 (C1 mapped)
+**Subsystem:** render
+**Driver:** librw integration feasibility study
+
+Goal: validate per-plugin offset compatibility between Mashed's RW plugin registry and librw before committing to librw-as-RW-substitute strategy.
+
+Mashed registers 14 plugins at FUN_004c32b0 via FUN_004d7de0 calls. The (size, id) pairs from re/analysis/rw_engine_init/004c32b0.md:
+
+| Slot | Size  | ID    | Notes |
+|------|-------|-------|-------|
+| 1    | 8     | 0x40f | |
+| 2    | 0x18  | 0x401 | |
+| 3    | 0     | 0x40d | size-0; sentinel? |
+| 4    | 0x18  | 0x402 | |
+| 5    | 4     | 0x403 | |
+| 6    | 4     | 0x404 | |
+| 7    | 4     | 0x405 | |
+| 8    | 0x220 | 0x406 | largest — likely vehicle/track data |
+| 9    | 100   | 0x407 | |
+| 10   | 0x34  | 0x408 | |
+| 11   | 0x60  | 0x409 | |
+| 12   | 4     | 0x412 | |
+| 13   | 0x74  | 0x40a | |
+| 14   | 0x28  | 0x40b | |
+
+**Tasks:**
+1. For each ID in `0x401..0x40f` and `0x412`: identify the plugin name from RW SDK conventions (these are toolkit-range plugin IDs).
+2. Cross-check librw source (`librw/src/`) for each ID: present? same size? same constructor/destructor pattern?
+3. Identify which IDs are RW-standard (matfx/anim/skin/etc.) vs Mashed-specific extensions.
+4. Output: a compat matrix `(id, size, mashed_callbacks, librw_match, gap_action)` to seal the librw decision.
+
+**Blocks:** any decision to vendor librw as a dependency.
+
+---
+
+## piz_fsmanager_handler  [queued 2026-05-06]
+
+**Bucket:** re/analysis/piz_fsmanager_handler/
+**Parent:** launch_handshake (FUN_004955d0 = HardwareInstallFileSystem, C1)
+**Subsystem:** util
+**Driver:** librw integration feasibility study
+
+Goal: trace Mashed's RtFSManager file-system handler to determine whether `.piz` archive reads route through the FSManager VFS layer (clean shim point) or are bolted in elsewhere.
+
+**Known anchors:**
+- `FUN_004955d0` (HardwareInstallFileSystem, 0x004955d0) — installs an FS handler via `FUN_00551190(0x14, ...)` for cwd and per-drive (re/analysis/launch_handshake/0x000955d0.md).
+- `FUN_00551190` is RW's RtFSManager install routine; first arg `0x14` is the FS type/size descriptor.
+- `&PTR_DAT_005cfee0` is passed as third arg — this is the FS handler vtable (open/read/close/etc.).
+
+**Tasks:**
+1. Decompile `PTR_DAT_005cfee0` as an RtFSManager FS handler vtable; enumerate function pointers (open/close/read/write/seek/stat/etc.).
+2. For each vtable entry, identify the implementation function and check whether it dispatches to `.piz` archive reader (re/tools/piz_extract.py shows the format).
+3. Determine: is `.piz` reading (a) inside the FS handler vtable (clean shim), or (b) called separately from game code (more invasive shim).
+4. If (a): document the FS handler signature so a librw-side stub can call into our `.piz` reader.
+5. If (b): identify each `.piz` open/read site and assess refactor cost.
+
+**Blocks:** librw integration design; cannot decide on `RtFSManager` shim approach without knowing the call graph.
