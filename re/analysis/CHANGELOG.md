@@ -493,3 +493,11 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  004b7480  FUN_004b7480  C0->C1  structural read; input_lua_d2-20260506-1854; teardown; FUN_004ba210(1)+FUN_004b9850; arith updates on +0x60 via 5x FUN_004ba1b0 pattern; S-2408 S-2409 U-2414..U-2417 (re/analysis/input_lua_d2/0x004b7480.md)
 2026-05-06  004b6520  FUN_004b6520  C0->C1  structural read; input_lua_d2-20260506-1854; 20-byte wrapper; FUN_004b64e0(param_1,0,param_2); S-2410 U-2418 (re/analysis/input_lua_d2/0x004b6520.md)
 2026-05-06  audio_sfx_dispatch-20260506  analysis  bucket=audio_sfx_dispatch  rvas=8  new=8(004669b0,0045d460,004627f0,004625b0,00462dd0,005a6710,0045e040,00466a50)  U_added=U-2487..U-2494  D_added=D-7360..D-7375(16)  slot=Mashed_pool4  cap_count=10  early-finish=no  session=audio_sfx_dispatch-20260506
+2026-05-06  title_screen-20260506-VVVVV  analysis  bucket=title_screen  rvas=7  new=7(00428a30,00429240,00429290,00428bf0,00428d30,00427c90,00428390)  stubs_added=S-2460..S-2466  U_added=U-2467..U-2470  D_added=D-7300..D-7306  slot=Mashed_pool15  cap_count=0  early-finish=no  session=title_screen-20260506-VVVVV
+2026-05-06  0x00428a30  FUN_00428a30  C0->C1  title_screen-20260506-VVVVV; TITLE_FN; title screen renderer; string 0x222 at (580.0,140.0); attract timer 24M ticks→DAT_0067d960=1; S-2460 S-2461 S-2462 U-2467 U-2470; plate re/analysis/title_screen/0x00428a30.md
+2026-05-06  0x00429240  FUN_00429240  C0->C1  title_screen-20260506-VVVVV; state dispatcher 50b; switch DAT_0067d960; plate re/analysis/title_screen/0x00429240.md
+2026-05-06  0x00429290  FUN_00429290  C0->C1  title_screen-20260506-VVVVV; per-frame tick 39b; called ×3 from FUN_004669b0; plate re/analysis/title_screen/0x00429290.md
+2026-05-06  0x00428bf0  FUN_00428bf0  C0->C1  title_screen-20260506-VVVVV; attract mode renderer 312b; S-2463 U-2469; plate re/analysis/title_screen/0x00428bf0.md
+2026-05-06  0x00428d30  FUN_00428d30  C0->C1  title_screen-20260506-VVVVV; lobby renderer 1291b; S-2464 S-2465 S-2466; plate re/analysis/title_screen/0x00428d30.md
+2026-05-06  0x00427c90  FUN_00427c90  C0->C1  title_screen-20260506-VVVVV; assets-ready getter 5b; returns DAT_0067d84c; plate re/analysis/title_screen/0x00427c90.md
+2026-05-06  0x00428390  FUN_00428390  C0->C1  title_screen-20260506-VVVVV; state setter 9b; DAT_0067d960=param_1; plate re/analysis/title_screen/0x00428390.md

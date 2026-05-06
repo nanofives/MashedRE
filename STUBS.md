@@ -591,3 +591,10 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2408 | 0x004ba210 FUN_004ba210 | 0x004b7480 FUN_004b7480 | input | passthrough | 2026-05-06 | args (param_1, 1); depth-3; D-7128 |
 | S-2409 | 0x004b9850 FUN_004b9850 | 0x004b7480 FUN_004b7480 | input | passthrough | 2026-05-06 | args (param_1); depth-3; D-7129 |
 | S-2410 | 0x004b64e0 FUN_004b64e0 | 0x004b6520 FUN_004b6520 | input | passthrough | 2026-05-06 | receives (param_1, 0, param_2); 57 bytes; depth-3; D-7130 |
+| S-2460 | 0x00428450 FUN_00428450 | 0x00428a30 FUN_00428a30 / 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | ticker/overlay; args (0x20, 0xffffffe0) in title context, (0x10, 0x100) in lobby context; depth-2 of title_screen; D-7300 |
+| S-2461 | 0x004288a0 FUN_004288a0 | 0x00428a30 FUN_00428a30 | frontend | passthrough | 2026-05-06 | dark/blank screen renderer; called when DAT_0067d84c==0 (assets not ready); depth-2 of title_screen; D-7301 |
+| S-2462 | 0x00428320 FUN_00428320 | 0x00428a30 FUN_00428a30 / 0x00428bf0 FUN_00428bf0 | frontend | passthrough | 2026-05-06 | text renderer; renders build date "Jun 14 2004, 11:39:38" and string 0x222; depth-2 of title_screen; D-7302 |
+| S-2463 | 0x0042e590 FUN_0042e590 | 0x00428bf0 FUN_00428bf0 | frontend | passthrough | 2026-05-06 | sprite draw; car sprite at (320.0, 260.0) in attract renderer; sprite table structure unknown; depth-2 of title_screen; D-7303 |
+| S-2464 | 0x0040d250 FUN_0040d250 | 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | lobby visual element (gradient/line/logo path); depth-2 of title_screen; D-7304 |
+| S-2465 | 0x00401ee0 FUN_00401ee0 | 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | lobby visual element; depth-2 of title_screen; D-7305 |
+| S-2466 | 0x0042f0b0 FUN_0042f0b0 | 0x00428d30 FUN_00428d30 | frontend | passthrough | 2026-05-06 | lobby UI sub-renderer at (347.5, 168.0); depth-2 of title_screen; D-7306 |

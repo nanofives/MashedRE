@@ -1071,3 +1071,10 @@
 005a6710,FUN_005a6710,audio,C1,new,re/analysis/audio_sfx_dispatch/005a6710.md,,,Virtual voice SFX entry binder; p1=voice node p2=entry; sets +0x50=entry; copies freq +0x3c from entry+0x2c if +0x84==0; sends control-code 9; U-2492
 0045e040,FUN_0045e040,audio,C1,new,re/analysis/audio_sfx_dispatch/0045e040.md,,,Course audio teardown; unlinks course voices (DAT_0068fc84..DAT_0088e674); destroys course SFX dict DAT_0068f62c; clears waypoints DAT_0068f618; U-2493
 00466a50,FUN_00466a50,audio,C1,new,re/analysis/audio_sfx_dispatch/00466a50.md,,,Full sound engine shutdown; destroys PERMDICT/virtual/physical voices/DS device/output node in sequence; counterpart to U-2487; U-2494
+00428a30,FUN_00428a30,frontend,C1,new,re/analysis/title_screen/0x00428a30.md,,,TITLE_FN; title screen renderer; string 0x222 at (580.0 140.0); build date "Jun 14 2004 11:39:38"; 24M-tick attract timer→DAT_0067d960=1; gated by DAT_0067d84c; S-2460 S-2461 S-2462 U-2467 U-2470
+00429240,FUN_00429240,frontend,C1,new,re/analysis/title_screen/0x00429240.md,,,State dispatcher 50b; switch(DAT_0067d960): 0→FUN_00428a30 1→FUN_00428bf0 3→FUN_00428d30
+00429290,FUN_00429290,frontend,C1,new,re/analysis/title_screen/0x00429290.md,,,Per-frame tick 39b; frame-begin+input-poll+state-dispatch+audio-tick+frame-end; called x3 from FUN_004669b0 during audio init
+00428bf0,FUN_00428bf0,frontend,C1,new,re/analysis/title_screen/0x00428bf0.md,,,Attract mode renderer 312b; car sprite (320.0 260.0); string 0x222 (580.0 140.0); no timer; S-2463 U-2469
+00428d30,FUN_00428d30,frontend,C1,new,re/analysis/title_screen/0x00428d30.md,,,Lobby renderer 1291b; gradients+border+logo+car-slot DAT_00771964+FUN_0042f0b0(347.5 168.0); S-2464 S-2465 S-2466 U-2470
+00427c90,FUN_00427c90,frontend,C1,new,re/analysis/title_screen/0x00427c90.md,,,Assets-ready getter 5b; returns DAT_0067d84c
+00428390,FUN_00428390,frontend,C1,new,re/analysis/title_screen/0x00428390.md,,,State setter 9b; DAT_0067d960=param_1; called from FUN_00402750 as FUN_00428390(3)
