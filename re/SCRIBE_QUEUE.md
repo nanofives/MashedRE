@@ -14,7 +14,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-06  audio_music_d3-20260506-1930  bucket=audio_music_d3  rvas=0x005a7520,0x005a6d60  S-2560..S-2562  U-2567  D-7600..D-7602  pool=Mashed_pool12
 2026-05-06  track_loader_d4-20260506-2007  bucket=track_loader_d4  rvas=004b3c60,00558df0,004b3cc0,004b3de0,00479030,00474fb0,00474f30,0047f4c0,0047d080,0047d100,00487280,0047be80,0047bcc0,004b53b0,004c3d90,00546380  S-2480..S-2499  U-2487..U-2506  D-7360..D-7367  drained-from=queue.md/track_loader_d3-cont1  pool=Mashed_pool12
 ```
 
@@ -22,6 +21,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-06  input_lua_d2-20260506-1854  bucket=input_lua_d2  rvas=0x0047b8a0,0x004b7330,0x004c0510,0x004b7480,0x004b6520  S-2400..S-2410  U-2407..U-2418  D-7120..D-7130  pool=Mashed_pool12  drained-by=sweep-20260506-2157; 5 plates, 5 bookmarks, 0 renames
+2026-05-06  audio_music_d3-20260506-1930  bucket=audio_music_d3  rvas=0x005a7520,0x005a6d60  S-2560..S-2562  U-2567  D-7600..D-7602  pool=Mashed_pool12  drained-by=sweep-20260506-2157; 2 plates, 2 bookmarks, 0 renames
 2026-05-03  race_results-20260503-0655  bucket=race_results  rvas=0x0040eee0,0x00408a50,0x00408a70,0x00408ad0,0x0040b290,0x0040b6d0,0x0040d590,0x0040e470,0x00422fd0,0x0042f500,0x0042f6a0,0x00431d80,0x0046c700,0x0046c7b0  note=0x0040b6d0/0x0042f500/0x0042f6a0 plates preserved (skipped overwrite per row note)
 2026-05-03  timer_d2-20260503-0656  bucket=timer_d2  rvas=0x004030d0,0x004111c0,0x0043d7c0,0x0043dfd0,0x0045d3f0,0x0045d430,0x00466b50,0x00496920,0x00496930,0x00498860,0x0049d1d0,0x004a4170,0x004a4220  S-1120..S-1139 U-1127..U-1146 D-3280..D-3283  note=0x0043dfd0 is C0 (decomp too large); U-0680 resolved by 0x0049d1d0; S+U ranges exhausted — any continuation needs extended ranges  pool=Mashed_pool15
 2026-05-03  render_frame-20260503-0611  bucket=render_frame  rvas=0x004671c0  D-0880..D-0894  pool=Mashed_pool14
