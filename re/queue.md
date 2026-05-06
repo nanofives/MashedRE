@@ -97,25 +97,6 @@ Depth-4 callees from track_loader_d3. All 16 stubs deferred:
 
 ---
 
-## input_dinput_d2-cont1  [queued 2026-05-06]
-
-**Bucket:** re/analysis/input_dinput_d3/
-**Parent:** input_dinput_d2 (D=6760..6766, bucket input_dinput_d2-cont1)
-**Subsystem:** input
-
-Depth-3 deferred callees from input_dinput session MMMMM:
-
-| D | Address | Description |
-|---|---------|-------------|
-| D-6760 | 0x004972b0 | FUN_004972b0 — called 3rd each frame in FUN_004967e0 before keyboard read; purpose unknown |
-| D-6761 | 0x0045b350 | FUN_0045b350 — called 2nd each frame; cross-subsystem RVA range; purpose unknown |
-| D-6762 | 0x00499720 | FUN_00499720 — HINSTANCE getter (called by FUN_00498510 for LoadStringA) |
-| D-6763 | 0x00495830 | FUN_00495830 — per-slot default button mapping setup (called by FUN_00498510) |
-| D-6764 | 0x004971b0 | FUN_004971b0 — saved config comparison per slot (called by FUN_00498510) |
-| D-6765 | 0x004a2c48 | FUN_004a2c48 — button state byte reader (called by FUN_00497310 analog path + FUN_00496530) |
-| D-6766 | 0x00495ee0 | LAB_00495ee0 — EnumDevices callback; Ghidra label only; needs function_create first |
-
-
 ## librw_plugin_compat  [queued 2026-05-06]
 
 **Bucket:** re/analysis/librw_plugin_compat/

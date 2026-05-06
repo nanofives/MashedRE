@@ -734,3 +734,4 @@ A row goes into DEFERRED when:
 | D-7600 | 0x005a7460 FUN_005a7460 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-1 branch); 0xb8 bytes; S-2560; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
 | D-7601 | 0x005a7560 FUN_005a7560 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-0 branch); 0x4d bytes; S-2561; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
 | D-7602 | 0x005a75b0 FUN_005a75b0 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-2 branch, bit-0@param_1+0xc gated); 0x250 bytes; S-2562; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
+| D-7660 | 0x00495ee0 LAB_00495ee0 | EnumDevices callback; Ghidra sees LAB only — function body not defined; first instruction MOV EAX,[ESP+8] (U-2299); needs function_create on a read-write slot before analysis | acquire RW slot; function_create 0x00495ee0; then decomp | input |
