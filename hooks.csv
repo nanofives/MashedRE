@@ -1078,3 +1078,5 @@
 00428d30,FUN_00428d30,frontend,C1,new,re/analysis/title_screen/0x00428d30.md,,,Lobby renderer 1291b; gradients+border+logo+car-slot DAT_00771964+FUN_0042f0b0(347.5 168.0); S-2464 S-2465 S-2466 U-2470
 00427c90,FUN_00427c90,frontend,C1,new,re/analysis/title_screen/0x00427c90.md,,,Assets-ready getter 5b; returns DAT_0067d84c
 00428390,FUN_00428390,frontend,C1,new,re/analysis/title_screen/0x00428390.md,,,State setter 9b; DAT_0067d960=param_1; called from FUN_00402750 as FUN_00428390(3)
+005a7520,FUN_005a7520,audio,C1,new,re/analysis/audio_music_d3/005a7520.md,,,3-way mode dispatcher; mode 0→FUN_005a7560(S-2561); mode 1→FUN_005a7460(S-2560); mode 2→FUN_005a75b0(bit-0@param_1+0xc)(S-2562); D-7600 D-7601 D-7602; resolves S-2200
+005a6d60,FUN_005a6d60,audio,C1,new,re/analysis/audio_music_d3/005a6d60.md,,,indirect dispatch via 8-byte fn-ptr table; ECX=*(param_1[1]+4)+param_2*8; entry={fptr,word16}; calls fn(*param_1,word16,param_4); returns param_1 or 0; param_3 unused; U-2209 U-2210 U-2567; resolves S-2201

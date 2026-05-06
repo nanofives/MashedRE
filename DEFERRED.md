@@ -731,3 +731,6 @@ A row goes into DEFERRED when:
 | D-7304 | 0x0040d250 FUN_0040d250 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); lobby visual element (gradient/line/logo); S-2464; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
 | D-7305 | 0x00401ee0 FUN_00401ee0 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); lobby visual element; S-2465; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
 | D-7306 | 0x0042f0b0 FUN_0042f0b0 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); UI sub-renderer at (347.5, 168.0); S-2466; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
+| D-7600 | 0x005a7460 FUN_005a7460 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-1 branch); 0xb8 bytes; S-2560; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
+| D-7601 | 0x005a7560 FUN_005a7560 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-0 branch); 0x4d bytes; S-2561; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
+| D-7602 | 0x005a75b0 FUN_005a75b0 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-2 branch, bit-0@param_1+0xc gated); 0x250 bytes; S-2562; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |

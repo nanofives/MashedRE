@@ -68,21 +68,6 @@ Depth-2 deferred callees from leaderboard session JJJJJ:
 
 ---
 
-## audio_music_d2-cont1  [queued 2026-05-06]
-
-**Bucket:** re/analysis/audio_music_d3/
-**Parent:** audio_music_d2 (D-6520..D-6521, bucket audio_music_d2-cont1)
-**Subsystem:** audio
-
-Depth-3 callees from audio_music_d2. All items deferred:
-
-| D | Address | Description |
-|---|---------|-------------|
-| D-6520 | 0x005a7520 | Audio state dispatcher: mode 0→FUN_005a7560, 1→FUN_005a7460, 2→FUN_005a75b0 (conditional on node+0xc bit-0) |
-| D-6521 | 0x005a6d60 | Actual audio parameter setter (4 args; param_4 by address); resolve U-2209 U-2210 |
-
----
-
 ## track_loader_d3-cont1  [queued 2026-05-06]
 
 **Bucket:** re/analysis/track_loader_d4/  
