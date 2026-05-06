@@ -448,3 +448,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-05  0046cbb0  FUN_0046cbb0  C0->C1  re/analysis/vehicle_damage_d2/0x0046cbb0.md  47b; per-car state reader (car,&state_out,&extra_out); base DAT_00881f90 stride 0xd04; state 0=alive 2=slide  session:vehicle_damage_d2-20260505
 2026-05-05  004922e0  FUN_004922e0  C0->C1  re/analysis/vehicle_damage_d2/0x004922e0.md  81b hit-sound/particle trigger; car→player via DAT_007f1a14; writes 4 fields to DAT_007f1058 stride 0x4c  session:vehicle_damage_d2-20260505
 2026-05-05  vehicle_damage_d2-20260505  BATCH  5 C0->C1 promotions; 3 new S-1840..S-1842; 14 new U-1847..U-1860; 7 new D-5440..D-5446; 1 D-1548 cleared; slot=Mashed_pool2 (pool0/pool1 locked at JVM level)  session:vehicle_damage_d2-20260505
+2026-05-06  sweep-20260506-0458  scribe-claim-sweep  buckets=1  rvas=5
