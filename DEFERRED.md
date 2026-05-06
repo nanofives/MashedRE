@@ -516,8 +516,8 @@ A row goes into DEFERRED when:
 | D-4540 | 0x0040dd60 FUN_0040dd60 | RESOLVED profile_career_d2 2026-05-05: fully reversed C1; ((DAT_0063b90c==1)?0xFFFFFFFF:0)&DAT_007f0fcc; S-1540 cleared | resolved | save |
 | D-4541 | 0x00448220 FUN_00448220 | RESOLVED profile_career_d2 2026-05-05: post-race camera+unlock-code C1 mapped; deeper callees in D-5500..D-5504; U-1553 resolved; U-1870 U-1873 new | resolved-partial | frontend |
 | D-4542 | 0x00410510 FUN_00410510 | RESOLVED profile_career_d2 2026-05-05: race-end evaluator C1 mapped; 820B; U-1867..U-1872; S-1860..S-1867 | resolved | save |
-| D-5140 | 0x004c3b90 FUN_004c3b90 | depth-2 callee of FUN_004c4680 (matrix orthonormalize); reciprocal-sqrt or vector-magnitude-inverse utility; 86 bytes | vehicle_dynamics-cont1 | render |
-| D-5141 | 0x0046ef70 FUN_0046ef70 | contact/friction resolver; 1871 bytes; called by VehicleCollisionBroadPhase when contact active; likely spring/damper per-wheel force application; not callee of DYNAMICS_FN | vehicle_dynamics-cont1 | vehicle |
+| D-5140 | 0x004c3b90 FUN_004c3b90 | RESOLVED vehicle_dynamics-20260506-expand: fast reciprocal-sqrt via LUT; C1 new re/analysis/vehicle_dynamics/004c3b90.md | resolved | render |
+| D-5141 | 0x0046ef70 FUN_0046ef70 | RESOLVED vehicle_dynamics-20260506-expand: wheel contact spring/damper resolver; 1871b; C1 new re/analysis/vehicle_dynamics/0046ef70.md; U-2629 U-2630 U-2631; S-2623 | resolved | vehicle |
 | D-4960 | 0x004d7d70 LAB_004d7d70 | depth-4 callee of FUN_004ccce0 (callback); unrecognized fn body; reads param_1+0x38 sub-struct; clears +0x10/+0x14; calls vtable+0x11c; S-1680; Ghidra has no FUN_ entry at this address | rw_engine_teardown_d3-cont1 | render |
 | D-4840 | 0x004323c0 FUN_004323c0 | depth-2 callee of FUN_0043dfd0; 135 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
 | D-4841 | 0x0042ae10 FUN_0042ae10 | depth-2 callee of FUN_0043dfd0; 156 bytes; sub-cap in session GGGG | game_mode_cont2 | frontend |
@@ -737,3 +737,45 @@ A row goes into DEFERRED when:
 | D-7601 | 0x005a7560 FUN_005a7560 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-0 branch); 0x4d bytes; S-2561; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
 | D-7602 | 0x005a75b0 FUN_005a75b0 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-2 branch, bit-0@param_1+0xc gated); 0x250 bytes; S-2562; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
 | D-7660 | 0x00495ee0 LAB_00495ee0 | EnumDevices callback; Ghidra sees LAB only — function body not defined; first instruction MOV EAX,[ESP+8] (U-2299); needs function_create on a read-write slot before analysis | acquire RW slot; function_create 0x00495ee0; then decomp | input |
+| D-7780 | 0x0046f6c0 FUN_0046f6c0 | post-integration substep fn; 3580 bytes; called as FUN_0046f6c0(1) after each substep in FUN_004709a0; callee of VehicleCollisionBroadPhase outer loop; S-2620; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | vehicle |
+| D-7781 | 0x00469aa0 FUN_00469aa0 | collision condition check; 847 bytes; returns int used to break substep loop in FUN_004709a0; S-2621; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | vehicle |
+| D-7782 | 0x00469df0 FUN_00469df0 | collision pair detection/resolution; 5062 bytes; called when vehicles within proximity radius; args (veh_idx, substep_count); S-2622; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | vehicle |
+| D-7783 | 0x004c39b0 FUN_004c39b0 | vector normalize; 270 bytes; callee of FUN_0046ef70 (wheel contact resolver); normalizes secondary contact normal and lateral dir; S-2623; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | render |
+| D-7784 | 0x00413c70 FUN_00413c70 | 4-channel effect/audio trigger; 58 bytes; called as FUN_00413c70(i,3,0) x4 from FUN_00467300 (collision win trigger); channel=0..3 code=3; S-2624; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | audio |
+| D-7540 | 0x004c52f0 FUN_004c52f0 | depth-4 callee of FUN_004c1480 (S-2543); called as FUN_004c52f0(param_1+0x10, param_2, param_3); purpose unknown; likely RW matrix or frame operation; size unknown; bucket title_screen_d2-cont1 | title_screen_d2 session | render |
+| D-7720 | 0x00403250 FUN_00403250 | depth-2 callee of Race::Tick (0040fc00) case-0xb; called with DAT_007f1004; 582b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7721 | 0x004039f0 FUN_004039f0 | depth-2 callee of Race::Tick case-10 when FUN_0040e350==6; 378b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7722 | 0x00406ce0 FUN_00406ce0 | depth-2 callee of Race::Tick when DAT_007f0fd0==5; ~1403b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7723 | 0x0040ce00 FUN_0040ce00 | depth-2 callee of Race::Tick general update sequence; 125b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7724 | 0x0040d470 FUN_0040d470 | depth-2 callee of Race::Tick; arg 0; ~284b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7725 | 0x0040da50 FUN_0040da50 | depth-2 callee of Race::Tick general; ~274b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7726 | 0x0040dba0 FUN_0040dba0 | depth-2 callee of Race::Tick general; 40b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7727 | 0x0040e350 FUN_0040e350 | depth-2 callee of Race::Tick case-10; tiny getter (5b); return checked against 6; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7728 | 0x00412f30 FUN_00412f30 | depth-2 callee of Race::Tick; arg from FUN_00467210(0); ~1744b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7729 | 0x00413f20 FUN_00413f20 | depth-2 callee of Race::Tick; mode7+ branch; 42b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7730 | 0x004189a0 FUN_004189a0 | depth-2 callee of Race::Tick general; 24b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7731 | 0x0041a250 FUN_0041a250 | depth-2 callee of Race::Tick case-10; ~377b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7732 | 0x0041b540 FUN_0041b540 | depth-2 callee of Race::Tick non-ghost branch 1; 229b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7733 | 0x0041c090 FUN_0041c090 | depth-2 callee of Race::Tick ghost branch 1; 45b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7734 | 0x0041c180 FUN_0041c180 | depth-2 callee of Race::Tick case-5; ~310b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7735 | 0x0041cc50 FUN_0041cc50 | depth-2 callee of Race::Tick non-ghost branch 2; 100b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7736 | 0x0041d830 FUN_0041d830 | depth-2 callee of Race::Tick ghost branch 2; 58b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7737 | 0x0041d930 FUN_0041d930 | depth-2 callee of Race::Tick general; ~335b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7738 | 0x0041dca0 FUN_0041dca0 | depth-2 callee of Race::Tick cases 4/7/8/9; ~207b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7739 | 0x0041e6c0 FUN_0041e6c0 | depth-2 callee of Race::Tick case-2; ~384b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7740 | 0x004215a0 FUN_004215a0 | depth-2 callee of Race::Tick general; 23b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7741 | 0x004222d0 FUN_004222d0 | depth-2 callee of Race::Tick general; 28b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7742 | 0x00425a40 FUN_00425a40 | depth-2 callee of Race::Tick pause handler (DAT_005f29c0!=0); 103b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7743 | 0x00425d50 FUN_00425d50 | depth-2 callee of Race::Tick general; ~235b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7744 | 0x00426ab0 FUN_00426ab0 | depth-2 callee of Race::Tick; arg=car ptr from 0x005f2770 array; ~131b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7745 | 0x0045bba0 FUN_0045bba0 | depth-2 callee of Race::Tick general; entry 0045bba0 body 00453f60; ~965b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7746 | 0x00467210 FUN_00467210 | depth-2 callee of Race::Tick; called twice arg 0; result passed to FUN_00412f30+FUN_00488e70; 53b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7747 | 0x00475c10 FUN_00475c10 | depth-2 callee of Race::Tick physics/track; ~273b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7748 | 0x00476440 FUN_00476440 | depth-2 callee of Race::Tick physics; ~146b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7749 | 0x004777d0 FUN_004777d0 | depth-2 callee of Race::Tick physics; 58b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7750 | 0x00477920 FUN_00477920 | depth-2 callee of Race::Tick physics; ~230b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7751 | 0x00485070 FUN_00485070 | depth-2 callee of Race::Tick general; 51b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7752 | 0x00488e70 FUN_00488e70 | depth-2 callee of Race::Tick; arg from FUN_00467210(0); ~887b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7753 | 0x00490380 FUN_00490380 | depth-2 callee of Race::Tick general; ~271b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7754 | 0x00490500 FUN_00490500 | depth-2 callee of Race::Tick general (large); ~2371b; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
+| D-7755 | 0x00496930 FUN_00496930 | depth-2 callee of Race::Tick; button state reader (11b); called with 5+6 for pause toggle; bucket leaderboard_d3-cont1 | leaderboard_d3 session | util |
