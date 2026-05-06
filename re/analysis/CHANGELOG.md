@@ -457,3 +457,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  powerups_d3-20260506-0504  BATCH  17 analyzed (16 new C1 rows; 0x004d8060 already C1); cleared D-4240..D-4243 S-1444; new S-1920..S-1930 (11); new U-1927..U-1945 (19); new D-5680..D-5686 (7); slot=Mashed_pool4; cap_count=17  session:powerups_d3-20260506-0504
 2026-05-06  hud_frontend_d3-20260506-0511  BATCH  18 C0->C1 promotions (0040ad20 0040b460 0040b620 0040b6b0 0040b6c0 0040b7a0 0040b7b0 0040bb70 0040bb90 0040e3a0 00427ad0 004282a0 00428320 00429870 00429a30 00429a70 00429a80 00429a90); cleared D-2740..D-2782 (43 deferred, 18 analyzed + 25 re-filed D-6160..D-6184); new S-2087 S-2089 S-2090 (3 new stubs; 9 others already tracked); new U-2087..U-2095 (9); new D-6160..D-6184 (25, hud_frontend_d3-cont1); early-finish at cap=18; slot=Mashed_pool12  session:hud_frontend_d3-20260506-0511
 2026-05-06  sweep-20260506-0544  scribe-claim-sweep  buckets=2  rvas=19  (launch_handshake VAs corrected from bare offsets)
+2026-05-06  sweep-20260506-0544  scribe-claim  bucket=launch_handshake  rvas=2  (sweep; VAs corrected from bare offsets)
+2026-05-06  sweep-20260506-0544  scribe-release  bucket=launch_handshake  writes=2_plates,2_bookmarks  errors=0  (sweep)
+2026-05-06  sweep-20260506-0544  scribe-claim  bucket=powerups_d3  rvas=17  (sweep)
+2026-05-06  sweep-20260506-0544  scribe-release  bucket=powerups_d3  writes=17_plates,17_bookmarks  errors=0  (sweep)
+2026-05-06  sweep-20260506-0544  scribe-release-sweep  buckets=2  total_writes=19_plates,19_bookmarks  errors=0
