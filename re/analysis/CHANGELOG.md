@@ -2,6 +2,9 @@
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 2026-05-06  004299d0  TimeRecord::WriteTrackBest  C0->C2  Ghidra decomp; leaderboard-20260506-JJJJJ; re/analysis/leaderboard/0x004299d0.md; U-2227 filed
+2026-05-06  0042d5a0  FUN_0042d5a0  stub->C1  Ghidra decomp; credits_screen-NNNNN; re/analysis/credits_screen/0x0042d5a0.md; U-2177 U-2178 U-2179 filed; S-0449 cleared
+2026-05-06  00472f40  FUN_00472f40  stub->C1  Ghidra decomp; credits_screen-NNNNN; re/analysis/credits_screen/0x00472f40.md; S-0450 cleared
+2026-05-06  004730b0  FUN_004730b0  stub->C1  Ghidra decomp; credits_screen-NNNNN; re/analysis/credits_screen/0x004730b0.md; S-0451 cleared
 
 Format: `YYYY-MM-DD  RVA  name  oldC->newC  evidence`
 

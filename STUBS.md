@@ -229,9 +229,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0446 | 0x00552d70 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552d70; render state post-cleanup (no args); depth-2 |
 | S-0447 | 0x00556ca0 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00556ca0; sprite draw call; args (canvas, buf, scaled_size, auStack, canvas2); depth-2 |
 | S-0448 | 0x00556e90 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00556e90; vertex colour setter; args (canvas, color×4); depth-2 |
-| S-0449 | 0x0042d5a0 | 0x0042e3a0 FUN_0042e3a0 | frontend | passthrough | 2026-05-02 | FUN_0042d5a0; scroll/animation updater; arg=(accumulator-15000); depth-2 |
-| S-0450 | 0x00472f40 | 0x0042e3a0 FUN_0042e3a0 | frontend | passthrough | 2026-05-02 | FUN_00472f40; filled rect draw (top band?); args (x,y,w,h,argb); depth-2 |
-| S-0451 | 0x004730b0 | 0x0042e3a0 FUN_0042e3a0 | frontend | passthrough | 2026-05-02 | FUN_004730b0; filled rect draw (bottom band?); args (x,y,w,h,argb); depth-2 |
 | S-0452 | 0x0042e590 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_0042e590; animated logo draw; args (x,y,dim,dim,dim,color,frame_offset,sprite_idx,flag); depth-2 |
 | S-0453 | 0x00473c20 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00473c20; fullscreen BG draw with two texture sources; depth-2 |
 | S-0454 | 0x00473ee0 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00473ee0; slide-in panel draw; arg includes fVar1+base_Y_offset; depth-2 |
