@@ -14,6 +14,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-06  launch_handshake-20260506  bucket=launch_handshake  rvas=0x000955d0,0x00095780  U-0070=resolved  pool=Mashed_pool15  note=HardwareInstallFileSystem+bool-wrapper; no new S/U/D IDs consumed; greenfield-contract documented in notes.md
+2026-05-06  powerups_d3-20260506-0504  bucket=powerups_d3  rvas=0x00454170,0x004547c0,0x00534b60,0x004c0790,0x004c0870,0x004c0a60,0x004c0de0,0x004d8060,0x004e4440,0x004e4d90,0x004e68a0,0x004e6710,0x004e6920,0x004e6d00,0x004e6d80,0x004e6f80,0x004e6fe0  S-1920..S-1930  U-1927..U-1945  D-5680..D-5686  pool=Mashed_pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 ```
 
@@ -71,3 +72,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-05  vehicle_damage_d2-20260505  bucket=vehicle_damage_d2  rvas=0x0040e180,0x00410d10,0x00442df0,0x0046cbb0,0x004922e0  S-1840..S-1842  U-1847..U-1860  D-5440..D-5446  D-1548-cleared  pool=Mashed_pool2  drained-by=sweep-20260506-0458; 5 plates, 5 bookmarks, 0 renames
 2026-05-03  vehicle_dynamics-20260503-0000  bucket=vehicle_dynamics  rvas=0x0046e9e0,0x0046d700,0x004c4680
 2026-05-03  timer_d2_cont1-20260503-1824  bucket=timer_d2_cont1  rvas=0x0040ab40,0x0040ac80,0x0040b810,0x0040de10,0x0040e360,0x0040e370,0x00422b30,0x00429aa0,0x0042af50,0x0042b900,0x0042b950,0x0042c150,0x00431b50,0x00431b60,0x00432290,0x0045c480,0x0045d3a0,0x0045d7a0
+2026-05-06  video_mci_d3-20260506-0512  bucket=video_mci_d3  rvas=0x0049dd60
