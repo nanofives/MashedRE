@@ -479,4 +479,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-05-06  0x00431d90  FUN_00431d90  C0->C1  options_menu-20260506; panel-flag mass-clear; plate re/analysis/options_menu/0x00431d90.md
 2026-05-06  0x00431f30  FUN_00431f30  C0->C1  options_menu-20260506; page-ID dispatch switch; param_1=10=options page; plate re/analysis/options_menu/0x00431f30.md
-2026-05-06  0x0043df00  FUN_0043df00  C0->C1  options_menu-20260506; frontend game-session initializer; S-2380 U-2387..U-2389; plate re/analysis/options_menu/0x0043df00.md
+2026-05-06  0x0043df00  FUN_0043df00  C0->C1  options_menu-20260506; frontend game-session initializer; S-2380 U-2387..U-2389; plate re/analysis/options_menu/0x0043df00.md2026-05-06  sweep-20260506-1624  scribe-claim-sweep  buckets=3  rvas=11  (replay_record skipped: still HOLD)
