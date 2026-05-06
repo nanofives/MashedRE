@@ -318,7 +318,7 @@ A row goes into DEFERRED when:
 | ~~D-1000~~ | ~~0x0049ec10 FUN_0049ec10~~ | ~~analyzed C1 session video_mci_d2-20260503~~ | ~~video_mci-cont1~~ | ~~util~~ |
 | ~~D-1001~~ | ~~0x004a3b84 FUN_004a3b84~~ | ~~analyzed C1 session video_mci_d2-20260503~~ | ~~video_mci-cont1~~ | ~~util~~ |
 | ~~D-1002~~ | ~~LAB_00493ac0 + LAB_00493b40~~ | ~~analyzed C1 session video_mci_d2-20260503; S-0373/S-0374 resolved~~ | ~~video_mci-cont1~~ | ~~util~~ |
-| D-4060 | 0x0049dd60 FUN_0049dd60 | depth-3 callee of FUN_0049ec10 (0x0049ec10); called as FUN_0049dd60(param_2,param_3,param_4,param_5); likely base/ancestor ctor taking 4 args; not decomped; S-1380 | video_mci_d2-cont1 | util |
+| ~~D-4060~~ | ~~0x0049dd60 FUN_0049dd60~~ | **RESOLVED 2026-05-06** video_mci_d3-20260506-0512; analyzed in re/analysis/video_mci_d3/0x0049dd60.md | video_mci_d3 | util |
 | ~~D-1180~~ | ~~drained by track_loader_d2-20260503-0302~~ | ~~all 20 RVAs processed (4 already mapped, 16 newly mapped)~~ | ~~track_loader-cont1~~ | ~~render~~ |
 | ~~D-1300~~ | ~~14 depth-2 callees of FUN_004548e0 (DepthCharge init)~~ | ~~drained by powerups_d2-20260503; all 14 RVAs mapped; new stubs S-1440..S-1453; D-4240..D-4243~~ | ~~powerups_d2~~ | ~~vehicle~~ |
 | ~~D-1301~~ | ~~10 depth-2 callees of FUN_00456760 (GatlingGun init)~~ | ~~drained by powerups_d2-20260503; all unique RVAs mapped (7 shared with D-1300 already handled)~~ | ~~powerups_d2~~ | ~~vehicle~~ |
@@ -426,33 +426,7 @@ A row goes into DEFERRED when:
 | D-2922 | 0x004248b0 FUN_004248b0 | depth-3 callee of FUN_004331a0; 111 bytes; called after zero-clear block in race-end init; S-1002; from game_state_d2 session | pick up as bucket game_state_d2-cont1; no further recursion | util |
 | D-2923 | 0x00424920 FUN_00424920 | depth-3 callee of FUN_004331a0; 607 bytes; called after FUN_004248b0 in race-end init; S-1003; from game_state_d2 session | pick up as bucket game_state_d2-cont1; no further recursion | util |
 | D-2924 | 0x004464c0 FUN_004464c0 | depth-3 callee of FUN_00448700; array iterator via DAT_00898994; stride 0xd8; type dispatch on +4 (0/1/2); called 100 times; S-1004; from game_state_d2 session | pick up as bucket game_state_d2-cont1; no further recursion | util |
-| D-2680 | 0x00450b10 FUN_00450b10 | FUN_00428610 | depth-3 callee of viewport-scaled rect draw; 7-param primitive draw (texture_handle, x, y, w, h, color, uv_ptr); from hud_ingame_d2-20260503 session | hud_ingame_d2-cont1 | hud |
-| D-2620 | 0x0042a640 FUN_0042a640 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0912; BSP/world file loader; used for main BSP + collision BSPs + AI data BSPs + anim BSPs | track_loader_d2-cont1 | render |
-| D-2621 | 0x0042a5d0 FUN_0042a5d0 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0913; DFF/clump file loader; loads scene models + sky dome DFFs | track_loader_d2-cont1 | render |
-| D-2622 | 0x0042a740 FUN_0042a740 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0914; UVA animation file loader; (name, &ver, &len); up to 8 per track | track_loader_d2-cont1 | render |
-| D-2623 | 0x0042a7f0 FUN_0042a7f0 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0915; spline file loader; up to 0x10 per track | track_loader_d2-cont1 | render |
-| D-2624 | 0x0042a860 FUN_0042a860 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0916; animation path/general anim file loader; camera path + 8 general anims | track_loader_d2-cont1 | render |
-| D-2625 | 0x00478200 FUN_00478200 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0918; course load error handler; called with code 0 (BSP fail) or code 2 (collision BSP fail) | track_loader_d2-cont1 | render |
-| D-2626 | 0x004790e0 FUN_004790e0 | depth-3 callee of FUN_00479330 (track_loader_d2 session); course post-load setup; called once after all assets loaded | track_loader_d2-cont1 | render |
-| D-2627 | 0x00474fd0 FUN_00474fd0 | depth-3 callee of FUN_00479330 (track_loader_d2 session); S-0917; sky dome frame builder; called per sky dome clump and per animation clump node | track_loader_d2-cont1 | render |
-| D-2628 | 0x00426060 FUN_00426060 | depth-3 callee of FUN_00480340 (track_loader_d2 session); pre-physics init step 1; called at "Initialize CALLED" preamble; returns uVar1 used as physics world handle | track_loader_d2-cont1 | render |
-| D-2629 | 0x00426070 FUN_00426070 | depth-3 callee of FUN_00480340 (track_loader_d2 session); pre-physics init step 2; called immediately after FUN_00426060 | track_loader_d2-cont1 | render |
-| D-2630 | 0x0047f840 FUN_0047f840 | depth-3 callee of FUN_00480340 (track_loader_d2 session); physics world pre-init; called in preamble before scene-object loop | track_loader_d2-cont1 | render |
-| D-2631 | 0x0047f940 FUN_0047f940 | depth-3 callee of FUN_00480340 (track_loader_d2 session); cylinder physics body creator; (dff, mts, DAT_006ce274, uVar1, idx, handle) | track_loader_d2-cont1 | render |
-| D-2632 | 0x0047fc40 FUN_0047fc40 | depth-3 callee of FUN_00480340 (track_loader_d2 session); box physics body creator; same 6-arg signature as FUN_0047f940 | track_loader_d2-cont1 | render |
-| D-2633 | 0x0047fe00 FUN_0047fe00 | depth-3 callee of FUN_00480340 (track_loader_d2 session); physics body type 3 (mesh?); (dff, mts, DAT_006ce274, uVar1, idx) — 5 args | track_loader_d2-cont1 | render |
-| D-2634 | 0x0047ff70 FUN_0047ff70 | depth-3 callee of FUN_00480340 (track_loader_d2 session); physics body type 4 (mesh?); same 5-arg signature | track_loader_d2-cont1 | render |
-| D-2635 | 0x00480100 FUN_00480100 | depth-3 callee of FUN_00480340 (track_loader_d2 session); scene physics post-init; called after scene-object loop; "numscenePobjects=%d" | track_loader_d2-cont1 | render |
-| D-2636 | 0x0047ce40 FUN_0047ce40 | depth-3 callee of FUN_004715a0 (track_loader_d2 session); S-0907; AI polygon index resolver; called once per sub-polygon per AI node rebuild | track_loader_d2-cont1 | render |
-| D-2637 | 0x004b5030 FUN_004b5030 | depth-3 callee of FUN_00478660 (track_loader_d2 session); S-0908; reads polygon by colour-key from AI binary blob; (blob, &key, buf, 2) | track_loader_d2-cont1 | render |
-| D-2638 | 0x004785e0 FUN_004785e0 | depth-3 callee of FUN_00478660 (track_loader_d2 session); S-0910; AI polygon-start flag setter; called with (1) per polygon | track_loader_d2-cont1 | render |
-| D-2639 | 0x004783f0 FUN_004783f0 | depth-3 callee of FUN_00478660 (track_loader_d2 session); S-0911; AI polygon array finalizer; (param_1) after all polygons processed | track_loader_d2-cont1 | render |
-| D-2640 | 0x0047bf70 FUN_0047bf70 | depth-3 callee of FUN_0047c0f0 (track_loader_d2 session); S-0919; builds 0x56-dword collision sector record from RW world sector handle | track_loader_d2-cont1 | render |
-| D-2641 | 0x00491590 FUN_00491590 | depth-3 callee of FUN_00491780 (track_loader_d2 session); actual dispatch body gated by DAT_00771534; purpose unknown | track_loader_d2-cont1 | render |
-| D-2642 | 0x004cc5e0 FUN_004cc5e0 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0900; locale audio descriptor query; (descriptor, 0x809, 0, 0) | track_loader_d2-cont1 | render |
-| D-2643 | 0x0045de80 FUN_0045de80 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0904; track audio secondary setup; (audio_dir, param_1) | track_loader_d2-cont1 | render |
-| D-2644 | 0x0045e2a0 FUN_0045e2a0 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0905; track-0 audio variant init | track_loader_d2-cont1 | render |
-| D-2645 | 0x0045e160 FUN_0045e160 | depth-3 callee of FUN_00462950 (track_loader_d2 session); S-0906; track-0x24 (index 36) audio variant init | track_loader_d2-cont1 | render |
+| D-2680 | ~~0x00450b10 FUN_00450b10~~ | ~~FUN_00428610~~ | CLEARED hud_ingame_d3; C1/new Im2DTexturedQuad leaf; callees=0 | — | — |
 | D-3100 | 0x00552840 FUN_00552840 | depth-2 callee of FUN_00427ff0 (font_text session); called with param_7; role of param_7 unknown; may be shadow-text offset or flash-state | font_text-cont1 | hud |
 | D-3101 | 0x00552a60 FUN_00552a60 | depth-2 callee of FUN_00552b60 (font subsystem init seq); last call in init chain; role unknown | font_text-cont1 | hud |
 | D-3102 | 0x00552c10 FUN_00552c10 | depth-2 callee of FUN_00552b60; position 6 of 7 in init chain; role unknown | font_text-cont1 | hud |
@@ -547,10 +521,10 @@ A row goes into DEFERRED when:
 | D-4013 | 0x005bc640 FUN_005bc640 | depth-3 callee of FUN_005bb000; streaming teardown helper (param+0x2a); S-1373 | audio_dsound_d2-cont1 or audio sweep session | audio |
 | D-4014 | 0x005bbd50 FUN_005bbd50 | depth-3 callee of FUN_005bbc10; returns COM interface from (param_1, param_5); S-1374 | audio_dsound_d2-cont1 or audio sweep session | audio |
 | D-4015 | 0x005bbed0 FUN_005bbed0 | depth-3 callee of FUN_005bbdb0; post-CreateSoundBuffer; takes (param_6, param_3, unaff_retaddr); S-1375 | audio_dsound_d2-cont1 or audio sweep session | audio |
-| D-4240 | 0x004547c0 FUN_004547c0 | depth-3 callee of FUN_004548a0; per-entry activator for DepthCharge struct-A (stride 0x2c, 0x00688240..0x006882f0); ESI-implicit; role unknown; S-1441 | powerups_d2-cont1 | vehicle |
-| D-4241 | 0x00454170 FUN_00454170 | depth-3 callee of FUN_004548a0; per-entry activator for DepthCharge struct-B (stride 0x44, 0x00688020..0x00688240); ESI-implicit; role unknown; S-1441 | powerups_d2-cont1 | vehicle |
-| D-4242 | 0x00534b60 FUN_00534b60 | depth-3 callee of FUN_004770c0; particle/effect system allocate: (count, rw_flags, 0); result stored at param_1[1]; S-1444 | powerups_d2-cont1 | vehicle |
-| D-4243 | 0x004e6d80+0x004c0870+0x004d8060+0x004e6920+0x004e6fe0+0x004e4d90+0x004e68a0+0x004c0790+0x004c0a60+0x004e6710+0x004c0de0+0x004e6f80+0x004e6d00+0x004e4440 | depth-3 callees of FUN_004e6ab0 (RW hierarchy instantiate); all RW hierarchy-management internals; not recursed | powerups_d2-cont1 | vehicle |
+| ~~D-4240~~ | ~~0x004547c0 FUN_004547c0~~ | ~~drained by powerups_d3-20260506-0504; analyzed as EDI-implicit struct-A reset~~ | ~~powerups_d2-cont1~~ | ~~vehicle~~ |
+| ~~D-4241~~ | ~~0x00454170 FUN_00454170~~ | ~~drained by powerups_d3-20260506-0504; analyzed as ESI-implicit struct-B zero+teardown~~ | ~~powerups_d2-cont1~~ | ~~vehicle~~ |
+| ~~D-4242~~ | ~~0x00534b60 FUN_00534b60~~ | ~~drained by powerups_d3-20260506-0504; analyzed as flags normalizer→FUN_00534d00; clears S-1444~~ | ~~powerups_d2-cont1~~ | ~~vehicle~~ |
+| ~~D-4243~~ | ~~14 RW hierarchy internals~~ | ~~drained by powerups_d3-20260506-0504; all 14 analyzed (13 new C1 rows; 0x004d8060 already C1); depth-4 in D-5680..D-5686~~ | ~~powerups_d2-cont1~~ | ~~vehicle~~ |
 | D-4540 | 0x0040dd60 FUN_0040dd60 | RESOLVED profile_career_d2 2026-05-05: fully reversed C1; ((DAT_0063b90c==1)?0xFFFFFFFF:0)&DAT_007f0fcc; S-1540 cleared | resolved | save |
 | D-4541 | 0x00448220 FUN_00448220 | RESOLVED profile_career_d2 2026-05-05: post-race camera+unlock-code C1 mapped; deeper callees in D-5500..D-5504; U-1553 resolved; U-1870 U-1873 new | resolved-partial | frontend |
 | D-4542 | 0x00410510 FUN_00410510 | RESOLVED profile_career_d2 2026-05-05: race-end evaluator C1 mapped; 820B; U-1867..U-1872; S-1860..S-1867 | resolved | save |
@@ -652,3 +626,39 @@ A row goes into DEFERRED when:
 | D-5444 | 0x00417730 FUN_00417730 | depth-2 callee of FUN_00410d10; per-car float read; (car_idx) → float; compared against _DAT_005cc31c/_DAT_005cc574 in modes 4/7/8/9/10; size 11 bytes; U-1849 U-1850; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
 | D-5445 | 0x00423b20 FUN_00423b20 | depth-2 callee of FUN_00410d10; called in mode-9 path as FUN_00423b20(1); non-zero return causes early-out return 1; size 16 bytes; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
 | D-5446 | 0x0040e350 FUN_0040e350 | depth-2 callee of FUN_004922e0 (hit-sound trigger); no-arg getter; return compared ==6; S-1842; U-1858; from session vehicle_damage_d2-20260505 | vehicle_damage_d2-cont1 | vehicle |
+| D-5740 | 0x004b3c60 FUN_004b3c60 | depth-4 callee of FUN_0042a640 (track_loader_d3 session); U-1947; BSP/RpWorld stream reader | track_loader_d3-cont1 | render |
+| D-5741 | 0x00558df0 FUN_00558df0 | depth-4 callee of FUN_0042a740 (track_loader_d3 session); U-1948; UVAnim chunk loader; (plugin_ptr, stream) | track_loader_d3-cont1 | render |
+| D-5742 | 0x004b3cc0 FUN_004b3cc0 | depth-4 callee of FUN_0042a7f0 (track_loader_d3 session); U-1949; spline stream reader | track_loader_d3-cont1 | render |
+| D-5743 | 0x004b3de0 FUN_004b3de0 | depth-4 callee of FUN_0042a860 (track_loader_d3 session); U-1950; animation stream reader | track_loader_d3-cont1 | render |
+| D-5744 | 0x00479030 FUN_00479030 | depth-4 callee of FUN_004790e0 (track_loader_d3 session); U-1951; course post-load callback table | track_loader_d3-cont1 | render |
+| D-5745 | 0x00474fb0 FUN_00474fb0 | depth-4 callee of FUN_00474fd0 (track_loader_d3 session); U-1952; DFF clump node iterator; (clump, callback_struct) | track_loader_d3-cont1 | render |
+| D-5746 | 0x00474f30 FUN_00474f30 | depth-4 callee of FUN_00474fd0 (track_loader_d3 session); U-1953; sky dome per-node callback; processes one RpFrame | track_loader_d3-cont1 | render |
+| D-5747 | 0x0047f4c0 FUN_0047f4c0 | depth-4 callee of FUN_0047f840 (track_loader_d3 session); U-1954; physics world constructor; (scale:1.0f) | track_loader_d3-cont1 | render |
+| D-5748 | 0x0047d080 FUN_0047d080 | depth-4 callee of FUN_00480100 (track_loader_d3 session); U-1955; activate physics body slot; (idx, 1) | track_loader_d3-cont1 | render |
+| D-5749 | 0x0047d100 FUN_0047d100 | depth-4 callee of FUN_00480100 (track_loader_d3 session); U-1956; secondary enable physics body; (idx, 1) | track_loader_d3-cont1 | render |
+| D-5750 | 0x00487280 FUN_00487280 | depth-4 callee of FUN_00480100 (track_loader_d3 session); U-1957; broadphase body registration; (bvh, transform, bounds, out, slot) | track_loader_d3-cont1 | render |
+| D-5751 | 0x0047be80 FUN_0047be80 | depth-4 callee of FUN_0047bf70 (track_loader_d3 session); U-1958; triangle mesh init; (tri_count) | track_loader_d3-cont1 | render |
+| D-5752 | 0x0047bcc0 FUN_0047bcc0 | depth-4 callee of FUN_0047bf70 (track_loader_d3 session); U-1959; collect portal/neighbor list; (&list_ptr, chain_head) | track_loader_d3-cont1 | render |
+| D-5753 | 0x004b53b0 FUN_004b53b0 | depth-4 callee of FUN_0047bf70 (track_loader_d3 session); U-1960; bounding sphere builder; (out+0x4e, bounding_data, count) | track_loader_d3-cont1 | render |
+| D-5754 | 0x004c3d90 FUN_004c3d90 | depth-4 callee of FUN_0047bf70 (track_loader_d3 session); U-1961; sector bounding geometry builder; (out+0x24, mesh_chunk, vertex_info, flags) | track_loader_d3-cont1 | render |
+| D-5755 | 0x00546380 FUN_00546380 | depth-4 callee of FUN_0045e2a0 (track_loader_d3 session); U-1962; audio waypoint set constructor; (count, type, points_array) | track_loader_d3-cont1 | render |
+| D-6280 | LAB_00554940 remaining per-char Im2D emission loop (0x00554df0..0x00555130, ~250 instructions) | Cap: full quad UV + remaining vertices + loop-back; U-2128 U-2129 U-2130 U-2131 U-2133 | font_text_d4 | hud |
+| D-6281 | LAB_00555910 METRICS1/2/3 section parsers (carried from D-4361) | Needs .met file sample for cross-check | after font36.piz extracted | hud |
+| D-6282 | Glyph entry full struct (offsets +0x00, +0x10..+0x13, +0x18..+0x1f; stride 32); U-2129 | Requires listing of all remaining quad vertices in D-6280 | font_text_d4 | hud |
+| D-6283 | Vertex format fields +0x0c..+0x17 (z, rhw, 8 unknown bytes); U-2130 | listing_code_units_list 0x00554b70..0x00554b82 for missing vertex writes | font_text_d4 | hud |
+| D-6284 | FUN_004c4600 matrix multiply (4 args: dst, src1, src2, scale); S-2124 | Deeper render-math scope; separate session | render_pipeline or rw_math depth session | render |
+| D-6285 | FUN_004c4dc0 matrix invert/copy into DAT_00912b58; S-2125 | Render math scope | render_pipeline depth session | render |
+| D-6286 | FUN_004c0ed0 camera view matrix getter (cam+4 field); S-2126 | Camera/render scope | camera_follow or render_pipeline session | render |
+| D-6287 | FUN_00552d70 FontMatrix_Pop (counterpart to FontMatrix_Push 0x00552d10); S-2127 | Quick: decomp_function 0x00552d70 | font_text_d4 session | hud |
+| D-6288 | FUN_004cd070 FUN_004cd170 FUN_004cd140 Im2D batch calls; S-2120 S-2121 S-2122 | Im2D subsystem scope | im2d/render_pipeline depth session | hud |
+| D-6289 | FUN_005c4ad0 glyph data buffer alloc (0x20 bytes, type 0x30190); S-2123 | Allocator scope; decomp_function 0x005c4ad0 | font_text_d4 session | hud |
+| D-6290 | ESI prologue trace in LAB_00554940 to confirm ESI source struct; U-2131 | listing_code_units_list 0x00554940..0x00554965 | font_text_d4 session | hud |
+| D-5920 | 0x004a0ef0 FUN_004a0ef0 | depth-4 callee of FUN_0049dd60; 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2); called before vtable writes; S-2000; from session video_mci_d3-20260506-0512 | video_mci_d4 | video |
+| D-5921 | 0x004a1160 FUN_004a1160 | depth-4 callee of FUN_0049dd60; 27b __thiscall; called 3x on offsets 0x54/0x58/0x5c with args 0/1/1; result at 0x5c used as HANDLE in SetEvent; S-2001; from session video_mci_d3-20260506-0512 | video_mci_d4 | video |
+| D-5680 | 0x004c1210,0x004c15c0,0x004e43b0 | depth-4 callees of FUN_00454170; S-1920..S-1922; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-5681 | 0x004e4800 FUN_004e4800 | depth-4 callee of FUN_004547c0; S-1923; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-5682 | 0x00534d00 FUN_00534d00 | depth-4 callee of FUN_00534b60; actual particle allocator; S-1924; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-5683 | 0x004c0910 FUN_004c0910 | depth-4 callee of FUN_004c0870; called (param_1 0); S-1925; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-5684 | 0x004c0d70 FUN_004c0d70 | depth-4 callee of FUN_004c0de0; per-child teardown; S-1926; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-5685 | 0x004e8e90,0x004e8ea0 | depth-4 callees of FUN_004e68a0/FUN_004e6920; on-field-change actions; S-1927..S-1928; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-5686 | 0x004d8bd0 FUN_004d8bd0 | depth-4 callee of FUN_004e6920; S-1929; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |

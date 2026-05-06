@@ -356,26 +356,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1003 | 0x00424920 FUN_00424920 | 0x004331a0 FUN_004331a0 | util | passthrough | 2026-05-03 | called after FUN_004248b0 in race-end init; body 0x00424920..0x00424b7f (607 bytes); D-2923 |
 | S-1004 | 0x004464c0 FUN_004464c0 | 0x00448700 FUN_00448700 | util | passthrough | 2026-05-03 | array iterator via DAT_00898994 count; stride 0xd8; dispatches on type+4 values 0/1/2; called 100 times; D-2924 |
 | S-0920 | 0x00450b10 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-03 | FUN_00450b10; primitive rect draw; called from viewport-scaled rect draw with (texture_handle, x, y, w, h, 0xffffffff, uv_ptr); depth-3 of hud_ingame_d2; D-2680 |
-| S-0900 | 0x004cc5e0 FUN_004cc5e0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | locale audio descriptor query; (descriptor, 0x809, 0, 0); depth-2 callee of course audio loader; D-2642 |
 | S-0901 | 0x005a6710 FUN_005a6710 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | RWS audio channel assignment; depth-2; D-2642 |
 | S-0902 | 0x005a7aa0 FUN_005a7aa0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | RWS audio stream handle getter; (stream, desc+iVar6); depth-2; D-2642 |
 | S-0903 | 0x005a7af0 FUN_005a7af0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | RWS audio stream count getter; (stream); returns DAT_00690478; depth-2; D-2642 |
-| S-0904 | 0x0045de80 FUN_0045de80 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | track audio secondary setup; (audio_dir_path, param_1); depth-2; D-2643 |
-| S-0905 | 0x0045e2a0 FUN_0045e2a0 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | track-0 audio variant init; no params; depth-2; D-2644 |
-| S-0906 | 0x0045e160 FUN_0045e160 | 0x00462950 FUN_00462950 | render | passthrough | 2026-05-03 | track-0x24 audio variant init; no params; depth-2; D-2645 |
-| S-0907 | 0x0047ce40 FUN_0047ce40 | 0x004715a0 FUN_004715a0 | render | passthrough | 2026-05-03 | AI polygon index resolver; takes raw polygon index; depth-2 of AI graph rebuild; D-2636 |
-| S-0908 | 0x004b5030 FUN_004b5030 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | reads polygon by colour-key index from AI binary blob; (blob, &key, buf, 2); depth-2; D-2637 |
-| S-0909 | 0x004b46b0 FUN_004b46b0 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | vertex in-triangle test; (vertex, triangle_verts); returns 0=outside; depth-2 |
-| S-0910 | 0x004785e0 FUN_004785e0 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | AI polygon-start flag setter; (1); depth-2; D-2638 |
-| S-0911 | 0x004783f0 FUN_004783f0 | 0x00478660 FUN_00478660 | render | passthrough | 2026-05-03 | AI polygon array finalizer; (param_1); depth-2; D-2639 |
-| S-0912 | 0x0042a640 FUN_0042a640 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | BSP/world file loader; (name, 0, 0); depth-2 of course loader; D-2620 |
-| S-0913 | 0x0042a5d0 FUN_0042a5d0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | DFF/clump file loader; (name, 0, 0); depth-2 of course loader; D-2621 |
-| S-0914 | 0x0042a740 FUN_0042a740 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | UVA animation file loader; (name, &ver, &len); depth-2; D-2622 |
-| S-0915 | 0x0042a7f0 FUN_0042a7f0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | spline file loader; (name, 0, 0); depth-2; D-2623 |
-| S-0916 | 0x0042a860 FUN_0042a860 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | animation path file loader; (name, 0, 0); depth-2; D-2624 |
-| S-0917 | 0x00474fd0 FUN_00474fd0 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | sky dome frame builder; (clump); depth-2; D-2627 |
-| S-0918 | 0x00478200 FUN_00478200 | 0x00479330 FUN_00479330 | render | passthrough | 2026-05-03 | course load error handler; (error_code); depth-2; D-2625 |
-| S-0919 | 0x0047bf70 FUN_0047bf70 | 0x0047c0f0 FUN_0047c0f0 | render | passthrough | 2026-05-03 | builds 0x56-dword collision sector record from RW world sector handle; depth-2; D-2640 |
 | S-1060 | 0x00427f00 FUN_00427f00 | 0x00427f00 TEXT_FN | hud | passthrough | 2026-05-03 | needs FUN_00427840 (byte->UTF16) FUN_00427680 (pos calc) FUN_00556ca0 (dispatch) before TEXT_FN can be implemented |
 | S-1061 | 0x00427ca0 FUN_00427ca0 | 0x00427ca0 HUD_text_init | hud | passthrough | 2026-05-03 | needs FUN_00552b60 FUN_0042a6b0 FUN_00556d70 before init can be fully implemented |
 | S-1062 | 0x00554940 LAB_00554940 | 0x00554940 per_glyph_render | hud | passthrough | 2026-05-03 | needs RW Im2D vtable call implementations (DAT_007d3ff8 dispatch methods) |
@@ -420,7 +403,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1137 | 0x0042bf30 FUN_0042bf30 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | 6-arg call; two sites: DAT_0067ece8..ed04 and DAT_0067e918..e92c |
 | S-1138 | 0x004298c0 FUN_004298c0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called in transition paths -0xdc0000 and -0xe20000 |
 | S-1139 | 0x00413f90 FUN_00413f90 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | returns pointer used with DAT_0067f17c×0x30 stride; -0xd80000 player init |
-| S-1380 | 0x0049dd60 FUN_0049dd60 | 0x0049ec10 FUN_0049ec10 | util | passthrough | 2026-05-03 | 4-arg base/ancestor ctor; called as FUN_0049dd60(param_2,param_3,param_4,param_5) from FUN_0049ec10 __thiscall ctor; depth-3 from video_mci ctors; D-4060 |
+| ~~S-1380~~ | ~~0x0049dd60 FUN_0049dd60~~ | ~~0x0049ec10 FUN_0049ec10~~ | util | **RESOLVED 2026-05-06** video_mci_d3-20260506-0512 | 2026-05-03 | 4-arg base/ancestor ctor; analyzed in video_mci_d3; see re/analysis/video_mci_d3/0x0049dd60.md |
 | S-1560 | 0x00482860 FUN_00482860 | 0x00482930 Replay::New | vehicle | passthrough | 2026-05-03 | called at end of Replay::New and from StartLap on DAT_0063bb14; internal replay reset/rewind |
 | S-1561 | 0x00483a30 FUN_00483a30 | 0x00411750 Replay::StartLap | vehicle | passthrough | 2026-05-03 | rewind DAT_0063bb10 to beginning of replay for playback; also called from LapFinish |
 | S-1562 | 0x00483a40 FUN_00483a40 | 0x004114e0 Replay::Cleanup | vehicle | passthrough | 2026-05-03 | replay object destructor/free; called on both DAT_0063bb04 and DAT_0063bb08 |
@@ -470,7 +453,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1441 | 0x00454170 FUN_00454170 | 0x004548a0 FUN_004548a0 | vehicle | passthrough | 2026-05-03 | per-entry activator for DepthCharge struct-B (stride 0x44, 0x00688020..0x00688240); ESI-implicit; D-4241 |
 | S-1442 | 0x004b64e0 FUN_004b64e0 | 0x004b6520 FUN_004b6520 | vehicle | passthrough | 2026-05-03 | underlying 3-arg memset impl: (dst, val=0, size); thin wrapper over CRT memset |
 | S-1443 | 0x004e66d0 FUN_004e66d0 | 0x004b3fc0 0x004b3f90 0x004b5320 0x004b5580 0x00474d60 | vehicle | passthrough | 2026-05-03 | RW ForAll dispatcher: (obj, callback, userdata); iterates sub-objects calling callback; core RW ForAll pattern |
-| S-1444 | 0x00534b60 FUN_00534b60 | 0x004770c0 FUN_004770c0 | vehicle | passthrough | 2026-05-03 | particle-system allocate; args (count, rw_flags, 0); returns particle system handle; D-4242 |
+| S-1444 | ~~0x00534b60 FUN_00534b60~~ | ~~0x004770c0 FUN_004770c0~~ | vehicle | CLEARED | powerups_d3-20260506-0504 | flags normalizer + allocator call; analyzed in powerups_d3 |
 | S-1445 | 0x004c0b70 FUN_004c0b70 | 0x004c0b30 FUN_004c0b30 | vehicle | passthrough | 2026-05-03 | post-alloc init for RW type 0x3000e object; called immediately after vtable alloc |
 | S-1446 | 0x004c0ad0 FUN_004c0ad0 | 0x004c1040 FUN_004c1040 | vehicle | passthrough | 2026-05-03 | propagate root-frame reference through children; called per child during RW frame reparent |
 | S-1447 | 0x004e67b0 FUN_004e67b0 | 0x004e69a0 FUN_004e69a0 | vehicle | passthrough | 2026-05-03 | pool/heap allocator for RW sub-object (atomic/light) slots; returns ptr or NULL |
@@ -543,3 +526,40 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1840 | 0x0046cbb0 FUN_0046cbb0 | 0x0040e180 FUN_0040e180 / 0x00410d10 FUN_00410d10 | vehicle | passthrough | 2026-05-05 | per-car state reader; (car,&state_out,&extra_out); state==0 not-destroyed; analyzed this session (see 0x0046cbb0.md) |
 | S-1841 | 0x004922e0 FUN_004922e0 | 0x00410d10 FUN_00410d10 | vehicle | passthrough | 2026-05-05 | hit-sound/particle trigger; args (car 3 10 0x80); analyzed this session (see 0x004922e0.md) |
 | S-1842 | 0x0040e350 FUN_0040e350 | 0x004922e0 FUN_004922e0 | vehicle | passthrough | 2026-05-05 | no-arg getter; return checked ==6 in FUN_004922e0; purpose unknown; D-5446 |
+| U-1947 | 0x004b3c60 FUN_004b3c60 | 0x0042a640 FUN_0042a640 | render | passthrough | 2026-05-06 | BSP/RpWorld stream reader; called after piz lookup succeeds; depth-3 of track_loader_d3; D-5740 |
+| U-1948 | 0x00558df0 FUN_00558df0 | 0x0042a740 FUN_0042a740 | render | passthrough | 2026-05-06 | UVAnim chunk loader; (plugin_ptr, stream) → anim handle; depth-3; D-5741 |
+| U-1949 | 0x004b3cc0 FUN_004b3cc0 | 0x0042a7f0 FUN_0042a7f0 | render | passthrough | 2026-05-06 | spline stream reader; depth-3 of track_loader_d3; D-5742 |
+| U-1950 | 0x004b3de0 FUN_004b3de0 | 0x0042a860 FUN_0042a860 | render | passthrough | 2026-05-06 | animation stream reader; depth-3 of track_loader_d3; D-5743 |
+| U-1951 | 0x00479030 FUN_00479030 | 0x004790e0 FUN_004790e0 | render | passthrough | 2026-05-06 | course post-load callback table; depth-4 callee of course post-load thunk; D-5744 |
+| U-1952 | 0x00474fb0 FUN_00474fb0 | 0x00474fd0 FUN_00474fd0 | render | passthrough | 2026-05-06 | DFF clump node iterator; (clump, callback_struct); depth-3 of sky dome builder; D-5745 |
+| U-1953 | 0x00474f30 FUN_00474f30 | 0x00474fd0 FUN_00474fd0 | render | passthrough | 2026-05-06 | sky dome per-node callback; processes one RpFrame; depth-3; D-5746 |
+| U-1954 | 0x0047f4c0 FUN_0047f4c0 | 0x0047f840 FUN_0047f840 | render | passthrough | 2026-05-06 | physics world constructor; (scale:1.0f) → world handle; depth-3 of physics init; D-5747 |
+| U-1955 | 0x0047d080 FUN_0047d080 | 0x00480100 FUN_00480100 | render | passthrough | 2026-05-06 | activate physics body slot; (idx, 1); depth-3 of physics post-init; D-5748 |
+| U-1956 | 0x0047d100 FUN_0047d100 | 0x00480100 FUN_00480100 | render | passthrough | 2026-05-06 | secondary enable physics body; (idx, 1); depth-3; D-5749 |
+| U-1957 | 0x00487280 FUN_00487280 | 0x00480100 FUN_00480100 | render | passthrough | 2026-05-06 | broadphase body registration; (bvh, transform, bounds, out, slot); depth-3; D-5750 |
+| U-1958 | 0x0047be80 FUN_0047be80 | 0x0047bf70 FUN_0047bf70 | render | passthrough | 2026-05-06 | triangle mesh init; (tri_count); depth-3 of collision sector builder; D-5751 |
+| U-1959 | 0x0047bcc0 FUN_0047bcc0 | 0x0047bf70 FUN_0047bf70 | render | passthrough | 2026-05-06 | collect portal/neighbor list; (&list_ptr, chain_head); depth-3; D-5752 |
+| U-1960 | 0x004b53b0 FUN_004b53b0 | 0x0047bf70 FUN_0047bf70 | render | passthrough | 2026-05-06 | bounding sphere builder; (out+0x4e, bounding_data, count); depth-3; D-5753 |
+| U-1961 | 0x004c3d90 FUN_004c3d90 | 0x0047bf70 FUN_0047bf70 | render | passthrough | 2026-05-06 | sector bounding geometry builder; (out+0x24, mesh_chunk, vertex_info, flags); depth-3; D-5754 |
+| U-1962 | 0x00546380 FUN_00546380 | 0x0045e2a0 FUN_0045e2a0 | render | passthrough | 2026-05-06 | audio waypoint set constructor; (count, type, points_array) → handle → DAT_0068f618; depth-3; D-5755 |
+| S-2120 | 0x004cd070 FUN_004cd070 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-06 | Im2D render-primitive flush; called with (base_ptr, ptr, count, 5=TRISTRIP) @ 0x00554afa; D-6288 |
+| S-2121 | 0x004cd170 FUN_004cd170 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-06 | Im2D secondary batch call; called with (EBX, 0x912700, 3) @ 0x00554b0e; D-6288 |
+| S-2122 | 0x004cd140 FUN_004cd140 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-06 | Im2D begin/reset; no args @ 0x00554b16; D-6288 |
+| S-2123 | 0x005c4ad0 FUN_005c4ad0 | 0x005551d0 FontCtx_Alloc | hud | passthrough | 2026-05-06 | alloc glyph data buffer (0x20 bytes, type 0x30190); distinct from 0x005c4d30; D-6289 |
+| S-2124 | 0x004c4600 FUN_004c4600 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | matrix multiply/compose; called as FUN_004c4600(dst, src1, src2, scale); D-6284 |
+| S-2125 | 0x004c4dc0 FUN_004c4dc0 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | matrix invert or copy into DAT_00912b58; D-6285 |
+| S-2126 | 0x004c0ed0 FUN_004c0ed0 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | camera view matrix getter; takes cam+4 field; returns RwMatrix*; D-6286 |
+| S-2127 | 0x00552d70 FUN_00552d70 | 0x00427f00 FUN_00427f00 | hud | passthrough | 2026-05-06 | FontMatrix_Pop (counterpart to FontMatrix_Push); called @ 0x00427fc9 after draw; D-6287 |
+| S-1920 | 0x004c1210 FUN_004c1210 | 0x00454170 FUN_00454170 | gameplay | passthrough | 2026-05-06 | conditional call; arg = ESI+0x34; called if *(ESI[0xd]+4) non-zero; depth-4 of FUN_00454170; D-5680 |
+| S-1921 | 0x004c15c0 FUN_004c15c0 | 0x00454170 FUN_00454170 | gameplay | passthrough | 2026-05-06 | called twice; args ESI+0x34 and ESI+0x38; depth-4 of FUN_00454170; D-5680 |
+| S-1922 | 0x004e43b0 FUN_004e43b0 | 0x00454170 FUN_00454170 | gameplay | passthrough | 2026-05-06 | called if FUN_004e4440 returns non-zero; args (return-value ESI+0x30); depth-4; D-5680 |
+| S-1923 | 0x004e4800 FUN_004e4800 | 0x004547c0 FUN_004547c0 | gameplay | passthrough | 2026-05-06 | called with *(EDI+0x20); conditional; depth-4 of FUN_004547c0; D-5681 |
+| S-1924 | 0x00534d00 FUN_00534d00 | 0x00534b60 FUN_00534b60 | gameplay | passthrough | 2026-05-06 | actual particle allocator; called with (param_1 normalizedFlags param_3 &DAT_00623c78); depth-4; D-5682 |
+| S-1925 | 0x004c0910 FUN_004c0910 | 0x004c0870 FUN_004c0870 | gameplay | passthrough | 2026-05-06 | called with (param_1 0); returns object handle used for DLL insert; depth-4; D-5683 |
+| S-1926 | 0x004c0d70 FUN_004c0d70 | 0x004c0de0 FUN_004c0de0 | gameplay | passthrough | 2026-05-06 | per-child teardown call in FUN_004c0de0 child-iteration loop; depth-4; D-5684 |
+| S-1927 | 0x004e8e90 FUN_004e8e90 | 0x004e68a0 FUN_004e68a0 | gameplay | passthrough | 2026-05-06 | called with new value param_2 when *(param_1+0x18) changes; depth-4 of FUN_004e68a0; D-5685 |
+| S-1928 | 0x004e8ea0 FUN_004e8ea0 | 0x004e68a0 FUN_004e68a0 / 0x004e6920 FUN_004e6920 | gameplay | passthrough | 2026-05-06 | called with old *(param_1+0x18) on field change; depth-4; D-5685 |
+| S-1929 | 0x004d8bd0 FUN_004d8bd0 | 0x004e6920 FUN_004e6920 | gameplay | passthrough | 2026-05-06 | called with *(param_1+0x14); depth-4 of FUN_004e6920; D-5686 |
+| S-1930 | 0x004d8000 FUN_004d8000 | 0x004e6d80 FUN_004e6d80 | gameplay | passthrough | 2026-05-06 | list insert; called with (&DAT_0061867c puVar2); depth-4; also in DEFERRED D-0231 D-0526 |
+| S-2000 | 0x004a0ef0 FUN_004a0ef0 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2) from FUN_0049dd60 before vtable writes; depth-4 from video_mci; D-5920 |
+| S-2001 | 0x004a1160 FUN_004a1160 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 27b __thiscall; called 3x on &this+0x54/0x58/0x5c with args 0/1/1; result at 0x5c used as HANDLE in SetEvent; depth-4 from video_mci; D-5921 |

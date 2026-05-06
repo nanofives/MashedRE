@@ -452,3 +452,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  sweep-20260506-0458  scribe-claim  bucket=vehicle_damage_d2  rvas=5  (sweep)
 2026-05-06  sweep-20260506-0458  scribe-release  bucket=vehicle_damage_d2  writes=5_plates,5_bookmarks  errors=0  (sweep)
 2026-05-06  sweep-20260506-0458  scribe-release-sweep  buckets=1  total_writes=5_plates,5_bookmarks  errors=0
+2026-05-06  track_loader_d3-20260506  BATCH  27 C0->C1 promotions; cleared S-0900 S-0904..S-0919 (17 stubs); cleared D-2620..D-2645 (26 deferred); 16 new U-1947..U-1962; 16 new D-5740..D-5755; bucket track_loader_d3-cont1; slot=Mashed_pool0; corrections: S-0909 was float3 eq-check (not in-triangle), S-0910 was cross-product (not flag-setter)  session:track_loader_d3-20260506
+2026-05-06  0049dd60  FUN_0049dd60  C0->C1  re/analysis/video_mci_d3/0x0049dd60.md  247b __thiscall ctor-base; vtable writes; 3x FUN_004a1160 on offsets 0x54/0x58/0x5c; 3x InitializeCriticalSection; SetEvent on this->0x5c; resolves D-4060 S-1380; new S-2000 S-2001 U-2007 D-5920 D-5921  session:video_mci_d3-20260506-0512
+2026-05-06  powerups_d3-20260506-0504  BATCH  17 analyzed (16 new C1 rows; 0x004d8060 already C1); cleared D-4240..D-4243 S-1444; new S-1920..S-1930 (11); new U-1927..U-1945 (19); new D-5680..D-5686 (7); slot=Mashed_pool4; cap_count=17  session:powerups_d3-20260506-0504

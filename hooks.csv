@@ -940,3 +940,56 @@
 00442df0,FUN_00442df0,vehicle,C1,mapped,re/analysis/vehicle_damage_d2/0x00442df0.md,vehicle_damage_d2-20260505,,6b stub; returns (float10)DAT_00898980; collision impact float; writer unresolved (no static xref); U-1854
 0046cbb0,FUN_0046cbb0,vehicle,C1,mapped,re/analysis/vehicle_damage_d2/0x0046cbb0.md,vehicle_damage_d2-20260505,,47b; out (*param_2=state *param_3=secondary) from per-car struct DAT_00881f90 stride 0xd04; guard param_1<=0xf; state 0=alive 2=slide; U-1855..U-1857
 004922e0,FUN_004922e0,vehicle,C1,mapped,re/analysis/vehicle_damage_d2/0x004922e0.md,vehicle_damage_d2-20260505,,81b hit-sound/particle trigger; maps car→player via DAT_007f1a14; writes 4 fields to per-player block at DAT_007f1058 stride 0x4c (trigger=1 type=param2 val=param3 intensity=param4); guard: FUN_0040e350()==6; U-1858..U-1860; S-1842; D-5446
+
+00450b10,FUN_00450b10,hud,C1,new,re/analysis/hud_ingame_d3/0x00450b10.md,,,Im2D textured quad draw; leaf; static buf 0x00898a20 4 verts stride 0x1c; vtable DAT_007d3ff8; D-2680 cleared hud_ingame_d3
+00428450,FUN_00428450,hud,C1,new,re/analysis/hud_ingame_d3/0x00428450.md,,,spinning-coin animator; sin(DAT_0067d974) width oscillation; UV flip at threshold; calls FUN_00450b10; U-2107; 4 unknown callers0042a640,FUN_0042a640,render,C1,new,re/analysis/track_loader_d3/0042a640.md,,,BSP world file loader; appends .bsp; FUN_0042a530 piz lookup + FUN_004b3c60; clears S-0912 D-2620; U-1947
+0042a5d0,FUN_0042a5d0,render,C1,new,re/analysis/track_loader_d3/0042a5d0.md,,,DFF clump file loader; appends .dff; FUN_0042a530 + FUN_004b3bf0; clears S-0913 D-2621
+0042a740,FUN_0042a740,render,C1,new,re/analysis/track_loader_d3/0042a740.md,,,UVA animation file loader; appends .uva; FUN_004cc230+FUN_004cc5e0(0x2b)+FUN_00558df0+FUN_004cc160; clears S-0914 D-2622; U-1948
+0042a7f0,FUN_0042a7f0,render,C1,new,re/analysis/track_loader_d3/0042a7f0.md,,,Spline file loader; appends .spl; FUN_0042a530 + FUN_004b3cc0; clears S-0915 D-2623; U-1949
+0042a860,FUN_0042a860,render,C1,new,re/analysis/track_loader_d3/0042a860.md,,,Animation path file loader; appends .anm; FUN_0042a530 + FUN_004b3de0; clears S-0916 D-2624; U-1950
+00478200,FUN_00478200,render,C1,new,re/analysis/track_loader_d3/00478200.md,,,Course load fatal error: log + FUN_004a332b no-return exit; clears S-0918 D-2625
+004790e0,FUN_004790e0,render,C1,new,re/analysis/track_loader_d3/004790e0.md,,,Course post-load thunk: (course, 0x479030, 0) → FUN_004e5c70; clears D-2626; U-1951
+00474fd0,FUN_00474fd0,render,C1,new,re/analysis/track_loader_d3/00474fd0.md,,,Sky dome clump node iterator wrapper; FUN_00474f30 callback; FUN_00474fb0(clump,&cb); clears S-0917 D-2627; U-1952 U-1953
+00426060,FUN_00426060,render,C1,new,re/analysis/track_loader_d3/00426060_00426070.md,,,Getter: returns DAT_0065742c (physics world handle 1); clears D-2628
+00426070,FUN_00426070,render,C1,new,re/analysis/track_loader_d3/00426060_00426070.md,,,Getter: returns DAT_00656ee8 (physics world handle 2); clears D-2629
+0047f840,FUN_0047f840,render,C1,new,re/analysis/track_loader_d3/0047f840.md,,,Physics world lazy-init: FUN_0047f4c0(1.0f); gravity (0 -9.8 0); DAT_006ce274; clears D-2630; U-1954
+0047f940,FUN_0047f940,render,C1,new,re/analysis/track_loader_d3/0047f940_0047fc40_0047fe00_0047ff70.md,,,Cylinder physics body creator; DAT_0086cb90/94 stride 0x110; FUN_0055e440; DAT_006c71d8; clears D-2631
+0047fc40,FUN_0047fc40,render,C1,new,re/analysis/track_loader_d3/0047f940_0047fc40_0047fe00_0047ff70.md,,,Box physics body creator; half-extents DAT_0086cb84/88/8c; FUN_0055c810; clears D-2632
+0047fe00,FUN_0047fe00,render,C1,new,re/analysis/track_loader_d3/0047f940_0047fc40_0047fe00_0047ff70.md,,,Sphere physics body creator; radius DAT_0086cba0; FUN_0055c540; clears D-2633
+0047ff70,FUN_0047ff70,render,C1,new,re/analysis/track_loader_d3/0047f940_0047fc40_0047fe00_0047ff70.md,,,Cone/capsule physics body creator; radii DAT_0086cb98/9c; FUN_00562fd0; clears D-2634
+00480100,FUN_00480100,render,C1,new,re/analysis/track_loader_d3/00480100.md,,,Physics body post-init; FUN_0047d080/d100; broadphase DAT_0080332c; clears D-2635; U-1955 U-1956 U-1957
+0047ce40,FUN_0047ce40,render,C1,new,re/analysis/track_loader_d3/0047ce40.md,,,Physics body slot lookup by polygon ID; scan DAT_006c6b90[0..199]; returns idx or -1; clears S-0907 D-2636
+004b5030,FUN_004b5030,render,C1,new,re/analysis/track_loader_d3/004b5030.md,,,AI blob chunk query; FUN_004e5c70(blob LAB_004b4eb0 key); clears S-0908 D-2637
+004b46b0,FUN_004b46b0,render,C1,new,re/analysis/track_loader_d3/004b46b0.md,,,Float3 vector equality check; returns 1 if XYZ equal (stub desc was wrong: not in-triangle); clears S-0909
+004785e0,FUN_004785e0,render,C1,new,re/analysis/track_loader_d3/004785e0.md,,,Triangle cross-product (v2-v0)x(v1-v0); optional normalize FUN_004c39b0 (stub desc was wrong); clears S-0910 D-2638
+004783f0,FUN_004783f0,render,C1,new,re/analysis/track_loader_d3/004783f0.md,,,AI polygon heading angle calc; chain FUN_00409300/330; atan2 FUN_004a3384; dist+angle at stride 0x200; clears S-0911 D-2639
+0047bf70,FUN_0047bf70,render,C1,new,re/analysis/track_loader_d3/0047bf70.md,,,Collision sector record builder from RpWorldSector; tri indices+portals+bounds; clears S-0919 D-2640; U-1958 U-1959 U-1960 U-1961
+00491590,FUN_00491590,render,C1,new,re/analysis/track_loader_d3/00491590.md,,,Rain particle field init; alloc 0x7000+0x2a00; 896 particles; RainColorInit; clears D-2641
+004cc5e0,FUN_004cc5e0,render,C1,new,re/analysis/track_loader_d3/004cc5e0.md,,,RWS chunk scanner by ID; size guard 0x35000..0x37002; clears S-0900 D-2642
+0045de80,FUN_0045de80,render,C1,new,re/analysis/track_loader_d3/0045de80.md,,,Track audio zone-to-channel mapper; DAT_0068d56c; PTR_DAT_00612f30[slot]; 40 channels; clears S-0904 D-2643
+0045e2a0,FUN_0045e2a0,render,C1,new,re/analysis/track_loader_d3/0045e2a0_0045e160.md,,,Track-0 audio waypoint init; 15 pts type 2; FUN_00546380→DAT_0068f618; clears S-0905 D-2644; U-1962
+0045e160,FUN_0045e160,render,C1,new,re/analysis/track_loader_d3/0045e2a0_0045e160.md,,,Track-0x24 audio waypoint init; 11 pts type 1; FUN_00546380→DAT_0068f618; clears S-0906 D-2645
+00454170,FUN_00454170,gameplay,C1,mapped,re/analysis/powerups_d3/0x00454170.md,,,ESI-implicit struct-B zero+teardown: clears +0..+0c +28..+40; calls FUN_004c15c0(×2) FUN_004c1210 FUN_004e4440+FUN_004e43b0; S-1920..S-1922
+004547c0,FUN_004547c0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004547c0.md,,,EDI-implicit: loop×2 check EDI[0/1] non-zero→zero+FUN_00454170; zero EDI+8..+10; FUN_004b6520; zero +24+28; FUN_004e4800+FUN_004e45b0; S-1923
+00534b60,FUN_00534b60,gameplay,C1,mapped,re/analysis/powerups_d3/0x00534b60.md,,,flags normalizer: multi-bit mask/clear/set on param_2; calls FUN_00534d00(param_1 flags param_3 &DAT_00623c78); clears S-1444; S-1924
+004c0790,FUN_004c0790,gameplay,C1,mapped,re/analysis/powerups_d3/0x004c0790.md,,,DLL node unlink: if param_1+4≠0 splice out param_1 from doubly-linked list; fields +4+8+0c
+004c0870,FUN_004c0870,gameplay,C1,mapped,re/analysis/powerups_d3/0x004c0870.md,,,lookup via FUN_004c0910; if found: clear bits 0-1 at +3; conditional DLL insert of sub-obj +0xa0 into global list 0x7d40b4; set bits; S-1925 U-1933..U-1934
+004c0a60,FUN_004c0a60,gameplay,C1,mapped,re/analysis/powerups_d3/0x004c0a60.md,,,propagate root-ref (+0xa0): if no parent self-ref; if parent copy parent root; iterate children via FUN_004c0ad0; fields +4+98+9c+a0; U-1935
+004c0de0,FUN_004c0de0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004c0de0.md,,,teardown: iterate+FUN_004c0d70 all children; FUN_004d8060 list; DLL unlink if bits set; vtable dispatch 0x7d3ff8+0x11c; S-1926 U-1936..U-1937
+004e4440,FUN_004e4440,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e4440.md,,,table lookup: return *(DAT_007d7170 + param_1); 13 bytes; U-1938
+004e4d90,FUN_004e4d90,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e4d90.md,,,FUN_004d8060 list; FUN_004c0790 unlink; vtable dispatch 0x7d3ff8+0x11c+0x7d71a0; returns 1
+004e68a0,FUN_004e68a0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e68a0.md,,,set field +0x18: if changed call FUN_004e8e90/FUN_004e8ea0; copy 4 dwords from param_2+0x5c sub-obj; FUN_004e4440+FUN_004c0e50 path; S-1927..S-1928 U-1940..U-1941
+004e6710,FUN_004e6710,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6710.md,,,circular intrusive list ForAll: head at param_1+0x18; container offset (-4-DAT_007d722c); callback(obj param_3); U-1942
+004e6920,FUN_004e6920,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6920.md,,,FUN_004d8060+FUN_004d8bd0+FUN_004e8ea0; clear +0x18; FUN_004e4440+FUN_004c0e50 path; FUN_004c0790; vtable 0x7d3ff8+0x11c+0x7d7200; S-1929 U-1943
+004e6d00,FUN_004e6d00,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6d00.md,,,DLL unlink+zero node at (DAT_007d7230+param_1); then FUN_004e4d90; U-1944
+004e6d80,FUN_004e6d80,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6d80.md,,,alloc type 0x30010 via fn-ptr; init 3 circular sentinels; store FUN_004d7ff0 at +0x28; FUN_004d8000 list insert; S-1930 U-1945
+004e6f80,FUN_004e6f80,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6f80.md,,,DLL insert: node at param_2+0x40/+0x44 inserted after param_1+8; back-ref param_1→param_2+0x3c
+004e6fe0,FUN_004e6fe0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6fe0.md,,,DLL unlink+zero node at (DAT_007d7230+param_2); return param_1; same as FUN_004e6d00 but no FUN_004e4d90 tail call
+005551d0,FontCtx_Alloc,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,Alloc font ctx from 0x30199 pool; ctx+0x138=&LAB_00554940; ctx+0x24..0x123=0xFFFF ASCII advance sentinels; ctx+0x134=glyph buf; D-4362 resolved
+00552d10,FontMatrix_Push,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,Save/copy font ctx matrix to next stack slot; max 31 levels; D-4363 resolved; S-2126
+00552df0,FontCtx_SetTranslation,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RwMatrixTranslate(cur_ctx, {x,y,0}, preconcat=1); clears DAT_00912bd8; D-4363 resolved"
+00552da0,FontCtx_SetScale,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RwMatrixScale(cur_ctx, {sx,sy,1.0f}, preconcat=1); clears DAT_00912bd8; D-4363 resolved"
+00552e40,FontCtx_FlushMatrix,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,Dirty-gated matrix compose; returns &DAT_00912b98; U-2132 U-2134; S-2124 S-2125 S-2126; D-4363 resolved
+004c5010,RwMatrixScale,render,C2,mapped,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RW SDK RwMatrixScale(mat, scale, combineOp); modes 0=replace 1=preconcat 2=postconcat; confirmed from decomp"
+004c51a0,RwMatrixTranslate,render,C2,mapped,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RW SDK RwMatrixTranslate(mat, trans, combineOp); modes 0=replace 1=preconcat 2=postconcat; confirmed from decomp"
+0049dd60,FUN_0049dd60,video,C1,mapped,re/analysis/video_mci_d3/0x0049dd60.md,video_mci_d3-20260506-0512,,247b __thiscall ctor-base; sets vtable[0]=0x5d0dc0 +0x0c=0x5d0d84 +0x10=0x5cf9d0; calls FUN_004a0ef0 then 3x FUN_004a1160 on offsets 0x54/0x58/0x5c; 3x InitializeCriticalSection; SetEvent on this->0x5c; RET 0x10 (4 stack args but only 3 used); S-2000 S-2001 U-2007; resolves D-4060 S-1380
