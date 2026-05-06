@@ -981,6 +981,24 @@
 004e68a0,FUN_004e68a0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e68a0.md,,,set field +0x18: if changed call FUN_004e8e90/FUN_004e8ea0; copy 4 dwords from param_2+0x5c sub-obj; FUN_004e4440+FUN_004c0e50 path; S-1927..S-1928 U-1940..U-1941
 004e6710,FUN_004e6710,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6710.md,,,circular intrusive list ForAll: head at param_1+0x18; container offset (-4-DAT_007d722c); callback(obj param_3); U-1942
 004e6920,FUN_004e6920,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6920.md,,,FUN_004d8060+FUN_004d8bd0+FUN_004e8ea0; clear +0x18; FUN_004e4440+FUN_004c0e50 path; FUN_004c0790; vtable 0x7d3ff8+0x11c+0x7d7200; S-1929 U-1943
+0040ad20,FUN_0040ad20,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040ad20.md,,,global read DAT_008a95ac; no callees; D-2773 cleared
+0040b460,FUN_0040b460,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b460.md,,,4-elem sort+permutation; mode override DAT_007f0fd0==4/7/9; U-2087 U-2088; S-2080(S-0491); D-2756 cleared
+0040b620,FUN_0040b620,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b620.md,,,4-elem descending bubble-sort permutation; DAT_008a9530 vs -100 sentinel; U-2089; D-2755 cleared
+0040b6b0,FUN_0040b6b0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b6b0.md,,,indexed read DAT_008a9530[param_1]; D-2770 cleared
+0040b6c0,FUN_0040b6c0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b6c0.md,,,indexed read DAT_008a94f0[param_1]; D-2771 cleared
+0040b7a0,FUN_0040b7a0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b7a0.md,,,global read DAT_0063b8ec; D-2768 cleared
+0040b7b0,FUN_0040b7b0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b7b0.md,,,4-case array selector dispatch (DAT_008a9530/40/50/60); U-2090; D-2769 cleared
+0040bb70,FUN_0040bb70,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040bb70.md,,,wrapper: FUN_004c5c00(DAT_0063b900 param_1); S-2081(S-0440); D-2753 cleared
+0040bb90,FUN_0040bb90,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040bb90.md,,,wrapper: FUN_004c5c00(DAT_0063b904 param_1); offset+4 variant; S-2081; D-2754 cleared
+0040e3a0,FUN_0040e3a0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040e3a0.md,,,6-entry RGBA table by selector; noreturn FUN_004a332b on default; S-2082(S-0326); D-2757 cleared
+00427ad0,FUN_00427ad0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00427ad0.md,,,7-param icon draw wrapper; scale x4+FUN_005555b0; U-2091; S-2083..S-2088; D-2744 cleared
+004282a0,FUN_004282a0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x004282a0.md,,,text width getter (float10): FUN_005554d0 + scale/div formula; U-2092; S-2089; D-2743 cleared
+00428320,FUN_00428320,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00428320.md,,,text width variant B (FUN_00427840 setup); param_1 unused; U-2092 U-2093; S-2090 S-2089; D-2767 cleared
+00429870,FUN_00429870,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429870.md,,,two time-record composite compare (int*60+int+float); U-2094; D-2761 cleared
+00429a30,FUN_00429a30,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a30.md,,,writes time-record A into 3 arrays via FUN_00430790 index; U-2095; S-2091(S-1605); D-2762 cleared
+00429a70,FUN_00429a70,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a70.md,,,indexed float read DAT_0067d99c[param_1]; D-2765 cleared
+00429a80,FUN_00429a80,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a80.md,,,indexed read DAT_0067d98c[param_1]; D-2763 cleared
+00429a90,FUN_00429a90,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x00429a90.md,,,indexed read DAT_0067d994[param_1]; D-2764 cleared
 004e6d00,FUN_004e6d00,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6d00.md,,,DLL unlink+zero node at (DAT_007d7230+param_1); then FUN_004e4d90; U-1944
 004e6d80,FUN_004e6d80,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6d80.md,,,alloc type 0x30010 via fn-ptr; init 3 circular sentinels; store FUN_004d7ff0 at +0x28; FUN_004d8000 list insert; S-1930 U-1945
 004e6f80,FUN_004e6f80,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6f80.md,,,DLL insert: node at param_2+0x40/+0x44 inserted after param_1+8; back-ref param_1→param_2+0x3c

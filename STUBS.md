@@ -563,3 +563,12 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1930 | 0x004d8000 FUN_004d8000 | 0x004e6d80 FUN_004e6d80 | gameplay | passthrough | 2026-05-06 | list insert; called with (&DAT_0061867c puVar2); depth-4; also in DEFERRED D-0231 D-0526 |
 | S-2000 | 0x004a0ef0 FUN_004a0ef0 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2) from FUN_0049dd60 before vtable writes; depth-4 from video_mci; D-5920 |
 | S-2001 | 0x004a1160 FUN_004a1160 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 27b __thiscall; called 3x on &this+0x54/0x58/0x5c with args 0/1/1; result at 0x5c used as HANDLE in SetEvent; depth-4 from video_mci; D-5921 |
+| S-1960 | 0x004e5fc0 FUN_004e5fc0 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | called when *(atomic+0x4c) & 2; 0x13D bytes; depth-4 of effects_particle; U-1967 |
+| S-1961 | 0x004c0b10 FUN_004c0b10 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | test on secondary object *(atomic+4); 0x10 bytes; returns int; triggers update path; U-1968 |
+| S-1962 | 0x004c0ed0 FUN_004c0ed0 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | get float* (matrix) from *(atomic+4); 0x1E bytes; U-1969 |
+| S-1963 | 0x004c3d60 FUN_004c3d60 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | matrix concat (3-arg: out ptr+0x2c, in1 ptr+0x1c, in2 frame-matrix); 0x25 bytes; U-1970 |
+| S-1964 | 0x00547bf0 FUN_00547bf0 | 0x00539900 FUN_00539900 | render | passthrough | 2026-05-06 | AABB vs triangle pre-test (4 args: query_desc v0 v1 v2); 0x5AE bytes; U-1976 |
+| S-1965 | 0x00547450 FUN_00547450 | 0x00539ec0 FUN_00539ec0 | render | passthrough | 2026-05-06 | sphere vs triangle intersection (6 args including out-ptrs for normal+dist); 0x39E bytes; U-1978 |
+| S-2087 | 0x005555b0 FUN_005555b0 | 0x00427ad0 FUN_00427ad0 | frontend | passthrough | 2026-05-06 | main sprite draw call; 6 args: (DAT_0067d838, 512B stack buf, scaled param_7, &local_214, 1, DAT_0067d83c); depth-4 of FUN_00427ad0 |
+| S-2089 | 0x005554d0 FUN_005554d0 | 0x004282a0 FUN_004282a0 / 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | text width measurement; (DAT_0067d838, 1024B stack buf, param_2*scale); returns float10; depth-4 |
+| S-2090 | 0x00427840 FUN_00427840 | 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | font setup variant B; no args; replaces FUN_00427780+FUN_004277a0 pair; depth-4 of FUN_00428320 |

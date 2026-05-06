@@ -142,49 +142,31 @@ A row goes into DEFERRED when:
 | D-0569 | 0x004ad1e0 FUN_004ad1e0 | depth-3 callee of 0x004a504f (S-0214); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
 | D-0570 | 0x004cfa00 FUN_004cfa00 | depth-3 thunk target of 0x004c7a60 (S-0215); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
 | D-0571 | 0x004c7690 FUN_004c7690 | depth-3 callee of FUN_004cfa00 via 0x004c7a60 (S-0216); not recursed | rw_engine_init_d2-cont1 depth-3 sweep | render |
-| D-2740 | 0x00430760 FUN_00430760 | depth-3 callee of FUN_004335f0/FUN_00439210; not recursed in hud_frontend_d2 | hud_frontend_d3 sweep session | frontend |
-| D-2741 | 0x0042fab0 FUN_0042fab0 | depth-3 callee of FUN_004335f0/FUN_0043a610/FUN_00434720/FUN_0043aa30; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2742 | 0x0042bcb0 FUN_0042bcb0 | depth-3 callee of FUN_004335f0/FUN_0043a610/FUN_0043aa30; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2743 | 0x004282a0 FUN_004282a0 | depth-3 callee: text size/width; multiple callers in hud_frontend_d2; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2744 | 0x00427ad0 FUN_00427ad0 | depth-3 callee of FUN_004335f0; icon draw 7-param variant; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2745 | 0x0042f8d0 FUN_0042f8d0 | depth-3 callee of FUN_0043a610/FUN_00434720/FUN_0043aa30; background rect draw; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2746 | 0x0042ac00 FUN_0042ac00 | depth-3 callee: player count / slot index getter; multiple callers; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2747 | 0x00473870 FUN_00473870 | depth-3 callee: sprite draw 7-param; multiple callers; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2748 | 0x004368e0 FUN_004368e0 | depth-3 callee of FUN_0043af10/FUN_00439210; player alpha/color setup; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2749 | 0x0042ac50 FUN_0042ac50 | depth-3 callee: layout Y base getter; multiple callers; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2750 | 0x0042a940 FUN_0042a940 | depth-3 callee of FUN_0043af10; powerup sprite index by selection; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2751 | 0x00430830 FUN_00430830 | depth-3 callee of FUN_0043af10; split-screen track check; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2752 | 0x00458630 FUN_00458630 | depth-3 callee of FUN_0043af10; powerup sprite lookup by type; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2753 | 0x0040bb70 FUN_0040bb70 | depth-3 callee of FUN_0043af10; sprite lookup by name variant A; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2754 | 0x0040bb90 FUN_0040bb90 | depth-3 callee of FUN_0043af10; sprite lookup by name variant B; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2755 | 0x0040b620 FUN_0040b620 | depth-3 callee of FUN_00434720; player mode/sort variant; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2756 | 0x0040b460 FUN_0040b460 | depth-3 callee of FUN_00434720; player data fetch; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2757 | 0x0040e3a0 FUN_0040e3a0 | depth-3 callee of FUN_00434720; player name/string data; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2758 | 0x00430b30 FUN_00430b30 | depth-3 callee of FUN_00434720; lap time getter (3 out-params); not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2759 | 0x0042d290 FUN_0042d290 | depth-3 callee of FUN_00434720; lap time formatter; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2760 | 0x0042d300 FUN_0042d300 | depth-3 callee of FUN_00434720; lap time comparator; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2761 | 0x00429870 FUN_00429870 | depth-3 callee of FUN_00434720; race data getter A; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2762 | 0x00429a30 FUN_00429a30 | depth-3 callee of FUN_00434720; race data getter B; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2763 | 0x00429a80 FUN_00429a80 | depth-3 callee of FUN_00434720; race data getter C; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2764 | 0x00429a90 FUN_00429a90 | depth-3 callee of FUN_00434720; race data getter D; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2765 | 0x00429a70 FUN_00429a70 | depth-3 callee of FUN_00434720; race data getter E; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2766 | 0x004736c0 FUN_004736c0 | depth-3 callee of FUN_00434720; line/border renderer; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2767 | 0x00428320 FUN_00428320 | depth-3 callee of FUN_00434720; text width measurement (item-based); not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2768 | 0x0040b7a0 FUN_0040b7a0 | depth-3 callee of FUN_00434720; hotkey string getter; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2769 | 0x0040b7b0 FUN_0040b7b0 | depth-3 callee of FUN_00434720; per-player hotkey getter; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2770 | 0x0040b6b0 FUN_0040b6b0 | depth-3 callee of FUN_00434720; vehicle data getter A; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2771 | 0x0040b6c0 FUN_0040b6c0 | depth-3 callee of FUN_00434720; vehicle data getter B; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2772 | 0x00474e60 FUN_00474e60 | depth-3 callee of FUN_00434720; float-to-x87-angle converter (fsin/fcos prep); not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2773 | 0x0040ad20 FUN_0040ad20 | depth-3 callee of FUN_00431240; option state bool; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2774 | 0x00436810 FUN_00436810 | depth-3 callee of FUN_00439210; local player slot occupancy check; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2775 | 0x0042ebe0 FUN_0042ebe0 | depth-3 callee of FUN_00439210; AI/remote slot occupancy check; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2776 | 0x0042ee40 FUN_0042ee40 | depth-3 callee of FUN_00439210; vehicle sprite getter (slot type); not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2777 | 0x004391b0 FUN_004391b0 | depth-3 callee of FUN_00439210; powerup/overlay sprite draw; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2778 | 0x0042ef40 FUN_0042ef40 | depth-3 callee of FUN_00439210; vehicle lock-state check; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2779 | 0x00430a10 FUN_00430a10 | depth-3 callee of FUN_00439210; get player at slot type 0; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2780 | 0x00430a60 FUN_00430a60 | depth-3 callee of FUN_00439210; get player at slot type 1; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2781 | 0x00430ab0 FUN_00430ab0 | depth-3 callee of FUN_00439210; get player at slot type 2; not recursed | hud_frontend_d3 sweep session | frontend |
-| D-2782 | 0x0042ee00 FUN_0042ee00 | depth-3 callee of FUN_00439210; vehicle icon by unlock state; not recursed | hud_frontend_d3 sweep session | frontend |
+| D-6160 | 0x0042a940 FUN_0042a940 | hud_frontend_d3 early-finish (cap=18); was D-2750; powerup sprite index by selection | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6161 | 0x0042ac00 FUN_0042ac00 | hud_frontend_d3 early-finish; was D-2746; player count / slot index getter | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6162 | 0x0042ac50 FUN_0042ac50 | hud_frontend_d3 early-finish; was D-2749; layout Y base getter | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6163 | 0x0042bcb0 FUN_0042bcb0 | hud_frontend_d3 early-finish; was D-2742; depth-3 of FUN_004335f0/FUN_0043a610/FUN_0043aa30 | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6164 | 0x0042d290 FUN_0042d290 | hud_frontend_d3 early-finish; was D-2759; lap time formatter | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6165 | 0x0042d300 FUN_0042d300 | hud_frontend_d3 early-finish; was D-2760; lap time comparator | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6166 | 0x0042ebe0 FUN_0042ebe0 | hud_frontend_d3 early-finish; was D-2775; AI/remote slot occupancy check | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6167 | 0x0042ee00 FUN_0042ee00 | hud_frontend_d3 early-finish; was D-2782; vehicle icon by unlock state | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6168 | 0x0042ee40 FUN_0042ee40 | hud_frontend_d3 early-finish; was D-2776; vehicle sprite getter (slot type) | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6169 | 0x0042ef40 FUN_0042ef40 | hud_frontend_d3 early-finish; was D-2778; vehicle lock-state check | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6170 | 0x0042f8d0 FUN_0042f8d0 | hud_frontend_d3 early-finish; was D-2745; background rect draw | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6171 | 0x0042fab0 FUN_0042fab0 | hud_frontend_d3 early-finish; was D-2741; depth-3 of FUN_004335f0/FUN_0043a610/FUN_00434720/FUN_0043aa30 | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6172 | 0x00430760 FUN_00430760 | hud_frontend_d3 early-finish; was D-2740; depth-3 of FUN_004335f0/FUN_00439210 | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6173 | 0x00430830 FUN_00430830 | hud_frontend_d3 early-finish; was D-2751; split-screen track check | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6174 | 0x00430a10 FUN_00430a10 | hud_frontend_d3 early-finish; was D-2779; get player at slot type 0 | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6175 | 0x00430a60 FUN_00430a60 | hud_frontend_d3 early-finish; was D-2780; get player at slot type 1 | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6176 | 0x00430ab0 FUN_00430ab0 | hud_frontend_d3 early-finish; was D-2781; get player at slot type 2 | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6177 | 0x00430b30 FUN_00430b30 | hud_frontend_d3 early-finish; was D-2758; lap time getter (3 out-params) | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6178 | 0x004368e0 FUN_004368e0 | hud_frontend_d3 early-finish; was D-2748; player alpha/color setup | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6179 | 0x00436810 FUN_00436810 | hud_frontend_d3 early-finish; was D-2774; local player slot occupancy check | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6180 | 0x004391b0 FUN_004391b0 | hud_frontend_d3 early-finish; was D-2777; powerup/overlay sprite draw | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6181 | 0x00458630 FUN_00458630 | hud_frontend_d3 early-finish; was D-2752; powerup sprite lookup by type | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6182 | 0x00473870 FUN_00473870 | hud_frontend_d3 early-finish; was D-2747; sprite draw 7-param | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6183 | 0x004736c0 FUN_004736c0 | hud_frontend_d3 early-finish; was D-2766; line/border renderer | hud_frontend_d3-cont1 sweep session | frontend |
+| D-6184 | 0x00474e60 FUN_00474e60 | hud_frontend_d3 early-finish; was D-2772; float-to-x87-angle converter | hud_frontend_d3-cont1 sweep session | frontend |
 
 ## Cleared (delivered or rejected)
 
@@ -662,3 +644,46 @@ A row goes into DEFERRED when:
 | D-5684 | 0x004c0d70 FUN_004c0d70 | depth-4 callee of FUN_004c0de0; per-child teardown; S-1926; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
 | D-5685 | 0x004e8e90,0x004e8ea0 | depth-4 callees of FUN_004e68a0/FUN_004e6920; on-field-change actions; S-1927..S-1928; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
 | D-5686 | 0x004d8bd0 FUN_004d8bd0 | depth-4 callee of FUN_004e6920; S-1929; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| D-2743 | 0x004282a0 FUN_004282a0 | analyzed C1 session hud_frontend_d3-20260506-0511; text width/size getter; S-2089 S-2083 S-2084 | 2026-05-06 |
+| D-2744 | 0x00427ad0 FUN_00427ad0 | analyzed C1 session hud_frontend_d3-20260506-0511; 7-param icon draw wrapper; S-2083..S-2088 depth-4 filed | 2026-05-06 |
+| D-2753 | 0x0040bb70 FUN_0040bb70 | analyzed C1 session hud_frontend_d3-20260506-0511; thin wrapper: FUN_004c5c00(DAT_0063b900, param_1); S-2081 | 2026-05-06 |
+| D-2754 | 0x0040bb90 FUN_0040bb90 | analyzed C1 session hud_frontend_d3-20260506-0511; thin wrapper: FUN_004c5c00(DAT_0063b904, param_1); S-2081 | 2026-05-06 |
+| D-2755 | 0x0040b620 FUN_0040b620 | analyzed C1 session hud_frontend_d3-20260506-0511; 4-element descending bubble-sort (permutation array); U-2089 | 2026-05-06 |
+| D-2756 | 0x0040b460 FUN_0040b460 | analyzed C1 session hud_frontend_d3-20260506-0511; 4-element bubble-sort + mode override; U-2087 U-2088; S-2080 | 2026-05-06 |
+| D-2757 | 0x0040e3a0 FUN_0040e3a0 | analyzed C1 session hud_frontend_d3-20260506-0511; 6-entry RGBA color table by selector; S-2082 | 2026-05-06 |
+| D-2761 | 0x00429870 FUN_00429870 | analyzed C1 session hud_frontend_d3-20260506-0511; two composite time-record comparison; U-2094 | 2026-05-06 |
+| D-2762 | 0x00429a30 FUN_00429a30 | analyzed C1 session hud_frontend_d3-20260506-0511; writes time-record A into 3 arrays by FUN_00430790 index; U-2095; S-2091 | 2026-05-06 |
+| D-2763 | 0x00429a80 FUN_00429a80 | analyzed C1 session hud_frontend_d3-20260506-0511; indexed read from DAT_0067d98c array | 2026-05-06 |
+| D-2764 | 0x00429a90 FUN_00429a90 | analyzed C1 session hud_frontend_d3-20260506-0511; indexed read from DAT_0067d994 array | 2026-05-06 |
+| D-2765 | 0x00429a70 FUN_00429a70 | analyzed C1 session hud_frontend_d3-20260506-0511; indexed float read from DAT_0067d99c array | 2026-05-06 |
+| D-2767 | 0x00428320 FUN_00428320 | analyzed C1 session hud_frontend_d3-20260506-0511; text width measurement variant B; U-2093 U-2092; S-2090 S-2089 | 2026-05-06 |
+| D-2768 | 0x0040b7a0 FUN_0040b7a0 | analyzed C1 session hud_frontend_d3-20260506-0511; global read DAT_0063b8ec | 2026-05-06 |
+| D-2769 | 0x0040b7b0 FUN_0040b7b0 | analyzed C1 session hud_frontend_d3-20260506-0511; 4-case selector array dispatch; U-2090 | 2026-05-06 |
+| D-2770 | 0x0040b6b0 FUN_0040b6b0 | analyzed C1 session hud_frontend_d3-20260506-0511; indexed read from DAT_008a9530 array | 2026-05-06 |
+| D-2771 | 0x0040b6c0 FUN_0040b6c0 | analyzed C1 session hud_frontend_d3-20260506-0511; indexed read from DAT_008a94f0 array | 2026-05-06 |
+| D-2773 | 0x0040ad20 FUN_0040ad20 | analyzed C1 session hud_frontend_d3-20260506-0511; global read DAT_008a95ac | 2026-05-06 |
+| D-2740 | 0x00430760 FUN_00430760 | not analyzed; early-finish hud_frontend_d3; re-filed as D-6172 for hud_frontend_d3-cont1 | 2026-05-06 |
+| D-2741 | 0x0042fab0 FUN_0042fab0 | not analyzed; early-finish hud_frontend_d3; re-filed as D-6171 | 2026-05-06 |
+| D-2742 | 0x0042bcb0 FUN_0042bcb0 | not analyzed; early-finish; re-filed as D-6163 | 2026-05-06 |
+| D-2745 | 0x0042f8d0 FUN_0042f8d0 | not analyzed; early-finish; re-filed as D-6170 | 2026-05-06 |
+| D-2746 | 0x0042ac00 FUN_0042ac00 | not analyzed; early-finish; re-filed as D-6161 | 2026-05-06 |
+| D-2747 | 0x00473870 FUN_00473870 | not analyzed; early-finish; re-filed as D-6182 | 2026-05-06 |
+| D-2748 | 0x004368e0 FUN_004368e0 | not analyzed; early-finish; re-filed as D-6178 | 2026-05-06 |
+| D-2749 | 0x0042ac50 FUN_0042ac50 | not analyzed; early-finish; re-filed as D-6162 | 2026-05-06 |
+| D-2750 | 0x0042a940 FUN_0042a940 | not analyzed; early-finish; re-filed as D-6160 | 2026-05-06 |
+| D-2751 | 0x00430830 FUN_00430830 | not analyzed; early-finish; re-filed as D-6173 | 2026-05-06 |
+| D-2752 | 0x00458630 FUN_00458630 | not analyzed; early-finish; re-filed as D-6181 | 2026-05-06 |
+| D-2758 | 0x00430b30 FUN_00430b30 | not analyzed; early-finish; re-filed as D-6177 | 2026-05-06 |
+| D-2759 | 0x0042d290 FUN_0042d290 | not analyzed; early-finish; re-filed as D-6164 | 2026-05-06 |
+| D-2760 | 0x0042d300 FUN_0042d300 | not analyzed; early-finish; re-filed as D-6165 | 2026-05-06 |
+| D-2766 | 0x004736c0 FUN_004736c0 | not analyzed; early-finish; re-filed as D-6183 | 2026-05-06 |
+| D-2772 | 0x00474e60 FUN_00474e60 | not analyzed; early-finish; re-filed as D-6184 | 2026-05-06 |
+| D-2774 | 0x00436810 FUN_00436810 | not analyzed; early-finish; re-filed as D-6179 | 2026-05-06 |
+| D-2775 | 0x0042ebe0 FUN_0042ebe0 | not analyzed; early-finish; re-filed as D-6166 | 2026-05-06 |
+| D-2776 | 0x0042ee40 FUN_0042ee40 | not analyzed; early-finish; re-filed as D-6168 | 2026-05-06 |
+| D-2777 | 0x004391b0 FUN_004391b0 | not analyzed; early-finish; re-filed as D-6180 | 2026-05-06 |
+| D-2778 | 0x0042ef40 FUN_0042ef40 | not analyzed; early-finish; re-filed as D-6169 | 2026-05-06 |
+| D-2779 | 0x00430a10 FUN_00430a10 | not analyzed; early-finish; re-filed as D-6174 | 2026-05-06 |
+| D-2780 | 0x00430a60 FUN_00430a60 | not analyzed; early-finish; re-filed as D-6175 | 2026-05-06 |
+| D-2781 | 0x00430ab0 FUN_00430ab0 | not analyzed; early-finish; re-filed as D-6176 | 2026-05-06 |
+| D-2782 | 0x0042ee00 FUN_0042ee00 | not analyzed; early-finish; re-filed as D-6167 | 2026-05-06 |
