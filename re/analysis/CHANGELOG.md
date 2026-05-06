@@ -502,3 +502,31 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-06  0x00427c90  FUN_00427c90  C0->C1  title_screen-20260506-VVVVV; assets-ready getter 5b; returns DAT_0067d84c; plate re/analysis/title_screen/0x00427c90.md
 2026-05-06  0x00428390  FUN_00428390  C0->C1  title_screen-20260506-VVVVV; state setter 9b; DAT_0067d960=param_1; plate re/analysis/title_screen/0x00428390.md
 2026-05-06  audio_music_d3-20260506-1930  scribe-queued  bucket=audio_music_d3  rvas=2
+2026-05-06  004288a0  FUN_004288a0  C0->C1  title_screen_d2-20260506; menu layout renderer; 8 elements (image+7 sprites); re/analysis/title_screen_d2/0x004288a0.md; S-2461 cleared
+2026-05-06  00428450  FUN_00428450  stub-S-2460-cleared  title_screen_d2-20260506; already C1 (hud_ingame_d3); D-7300 resolved; U-2470 resolved (param_1=X_offset param_2=Y_offset)
+2026-05-06  00428320  FUN_00428320  stub-S-2462-cleared  title_screen_d2-20260506; already C1 (hud_frontend_d3); D-7302 resolved
+2026-05-06  0042e590  FUN_0042e590  C0->C1  title_screen_d2-20260506; 2-insn wrapper→FUN_0040bb70(C1)→FUN_004c5c00 string search; re/analysis/title_screen_d2/0x0042e590.md; U-2547 filed; S-2463 cleared; S-2540 new
+2026-05-06  0040d250  FUN_0040d250  C0->C1  title_screen_d2-20260506; indexed ptr dereference getter 16b; re/analysis/title_screen_d2/0x0040d250.md; S-2464 cleared
+2026-05-06  00401ee0  FUN_00401ee0  C0->C1  title_screen_d2-20260506; object-select+RW-matrix+RpClumpRender chain; re/analysis/title_screen_d2/0x00401ee0.md; U-2548 filed; S-2465 cleared; S-2541..S-2544 new
+2026-05-06  0042f0b0  FUN_0042f0b0  C0->C1  title_screen_d2-20260506; int getter DAT_0067f17c+0x49; re/analysis/title_screen_d2/0x0042f0b0.md; S-2466 cleared
+2026-05-06  004c5c00  FUN_004c5c00  C0->C1  title_screen_d2-20260506; case-insensitive linked-list string search 114b; re/analysis/title_screen_d2/0x0042e590.md (inline); S-2540
+2026-05-06  00401570  FUN_00401570  C0->C1  title_screen_d2-20260506; table scan 36b; re/analysis/title_screen_d2/0x00401ee0.md (inline); S-2541
+2026-05-06  00401da0  FUN_00401da0  C0->C1  title_screen_d2-20260506; RW matrix setup+dirty 308b; re/analysis/title_screen_d2/0x00401ee0.md (inline); S-2542 S-2543
+2026-05-06  00426cf0  FUN_00426cf0  C0->C1  title_screen_d2-20260506; addr getter 5b; re/analysis/title_screen_d2/0x00401ee0.md (inline); S-2544
+2026-05-06  004c1480  FUN_004c1480  C0->C1  title_screen_d2-20260506; RW frame dirty-list insert 145b; re/analysis/title_screen_d2/0x00401ee0.md (inline); S-2543; D-7540 new (FUN_004c52f0)
+2026-05-06  004b3c60  FUN_004b3c60  stub->C1  track_loader_d4-20260506-2007; BSP stream reader 81b; chunk 0xb; S-2480..S-2483 U-2487 U-2488; re/analysis/track_loader_d4/0x004b3c60.md
+2026-05-06  00558df0  FUN_00558df0  stub->C1  track_loader_d4-20260506-2007; UVAnim loader 577b; S-2484..S-2494 U-2489 U-2490; re/analysis/track_loader_d4/0x00558df0.md
+2026-05-06  004b3cc0  FUN_004b3cc0  stub->C1  track_loader_d4-20260506-2007; spline stream reader 81b; chunk 0xc; S-2495 U-2491; re/analysis/track_loader_d4/0x004b3cc0.md
+2026-05-06  004b3de0  FUN_004b3de0  stub->C1  track_loader_d4-20260506-2007; anim stream reader 81b; chunk 0x1b; S-2496 U-2492; re/analysis/track_loader_d4/0x004b3de0.md
+2026-05-06  00479030  LAB_00479030  stub->C0  track_loader_d4-20260506-2007; post-load callback 174b; no Ghidra fn object; needs function_create; U-2493 U-2494; re/analysis/track_loader_d4/0x00479030.md
+2026-05-06  00474fb0  FUN_00474fb0  stub->C1  track_loader_d4-20260506-2007; DFF clump iterator 27b; &LAB_00474f90 callback; U-2495 U-2496; re/analysis/track_loader_d4/0x00474fb0.md
+2026-05-06  00474f30  FUN_00474f30  stub->C1  track_loader_d4-20260506-2007; per-node callback 31b; FUN_00552020 test; U-2497; re/analysis/track_loader_d4/0x00474f30.md
+2026-05-06  0047f4c0  FUN_0047f4c0  stub->C1  track_loader_d4-20260506-2007; physics world ctor 522b; AABB ±1000.0f; U-2498 U-2499; re/analysis/track_loader_d4/0x0047f4c0.md
+2026-05-06  0047d080  FUN_0047d080  stub->C1  track_loader_d4-20260506-2007; activate physics body 104b; DAT_006c71d8 array; U-2500 U-2501; re/analysis/track_loader_d4/0x0047d080.md
+2026-05-06  0047d100  FUN_0047d100  stub->C1  track_loader_d4-20260506-2007; secondary enable 35b; FUN_004b5240 no-arg; U-2502; re/analysis/track_loader_d4/0x0047d100.md
+2026-05-06  00487280  FUN_00487280  stub->C1  track_loader_d4-20260506-2007; broadphase registration 2678b; 14 callees; U-2503 U-2504; re/analysis/track_loader_d4/0x00487280.md
+2026-05-06  0047be80  FUN_0047be80  stub->C1  track_loader_d4-20260506-2007; triangle normal calc 234b; __fastcall; cross product; U-2505; re/analysis/track_loader_d4/0x0047be80.md
+2026-05-06  0047bcc0  FUN_0047bcc0  stub->C1  track_loader_d4-20260506-2007; half-edge adj builder 433b; in_EAX=tri_count; U-2506; re/analysis/track_loader_d4/0x0047bcc0.md
+2026-05-06  004b53b0  FUN_004b53b0  stub->C1  track_loader_d4-20260506-2007; bounding sphere 430b; max-sq-dist; sqrt; re/analysis/track_loader_d4/0x004b53b0.md
+2026-05-06  004c3d90  FUN_004c3d90  stub->C1  track_loader_d4-20260506-2007; dispatch shim 42b; DAT_007d3ffc+0xc+DAT_007d3ff8; re/analysis/track_loader_d4/0x004c3d90.md
+2026-05-06  00546380  FUN_00546380  stub->C1  track_loader_d4-20260506-2007; waypoint set ctor 426b; type 1/2; FUN_00545340 init; re/analysis/track_loader_d4/0x00546380.md

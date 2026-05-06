@@ -622,3 +622,23 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2622 | 0x00469df0 FUN_00469df0 | 0x004709a0 FUN_004709a0 | vehicle | passthrough | 2026-05-06 | collision pair detection/resolution; args (veh_b_idx, substep_count); 5062 bytes; D-7782 |
 | S-2623 | 0x004c39b0 FUN_004c39b0 | 0x0046ef70 FUN_0046ef70 | vehicle | passthrough | 2026-05-06 | vector normalize; args (&dst_float3, &src_float3); 270 bytes; D-7783 |
 | S-2624 | 0x00413c70 FUN_00413c70 | 0x00467300 FUN_00467300 | vehicle | passthrough | 2026-05-06 | 4-channel effect trigger; args (channel=0..3, code=3, 0); 58 bytes; D-7784 |
+| S-2480 | 0x004cc230 FUN_004cc230 | 0x004b3c60 FUN_004b3c60 | render | passthrough | 2026-05-06 | stream open/setup; args (2, 1, param_1); depth-5 of track_loader_d4; D-5740 D-5742 D-5743 |
+| S-2481 | 0x004cc5e0 FUN_004cc5e0 | 0x004b3c60 FUN_004b3c60 | render | passthrough | 2026-05-06 | chunk reader; args (stream, chunk_id, out_data, out_size); depth-5 of track_loader_d4; D-5740 D-5741 D-5742 D-5743 |
+| S-2482 | 0x004e99b0 FUN_004e99b0 | 0x004b3c60 FUN_004b3c60 | render | passthrough | 2026-05-06 | data processor called on successful chunk read; arg (stream); depth-5 of track_loader_d4; D-5740 |
+| S-2483 | 0x004cc160 FUN_004cc160 | 0x004b3c60 FUN_004b3c60 | render | passthrough | 2026-05-06 | stream close/cleanup; args (stream, 0); depth-5 of track_loader_d4; D-5740 D-5742 D-5743 |
+| S-2484 | 0x004cbd30 FUN_004cbd30 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | called (stream, &param_2, local_c) after struct chunk read; depth-5 of track_loader_d4; D-5741 |
+| S-2485 | 0x004d7ff0 FUN_004d7ff0 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | error code builder; args (0x80000013, size) or (1); depth-5 of track_loader_d4; D-5741 D-5755 |
+| S-2486 | 0x004d8480 FUN_004d8480 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | error frame dispatcher; arg (&error_frame); depth-5 of track_loader_d4; D-5741 D-5755 |
+| S-2487 | 0x0055deb0 FUN_0055deb0 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list size/count getter; depth-5 of track_loader_d4; D-5741 |
+| S-2488 | 0x0055dec0 FUN_0055dec0 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list begin iterator; depth-5 of track_loader_d4; D-5741 D-5747 D-5748 |
+| S-2489 | 0x005c4ad0 FUN_005c4ad0 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | secondary alloc (4 bytes) with flags; depth-5 of track_loader_d4; D-5741 |
+| S-2490 | 0x005c4bb0 FUN_005c4bb0 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list element accessor by index; depth-5 of track_loader_d4; D-5741 |
+| S-2491 | 0x005c4d20 FUN_005c4d20 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list shrink by count; depth-5 of track_loader_d4; D-5741 |
+| S-2492 | 0x005c4d50 FUN_005c4d50 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list free/clear; depth-5 of track_loader_d4; D-5741 |
+| S-2493 | 0x005c4df0 FUN_005c4df0 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list element by index (end-relative); depth-5 of track_loader_d4; D-5741 |
+| S-2494 | 0x005c4e10 FUN_005c4e10 | 0x00558df0 FUN_00558df0 | render | passthrough | 2026-05-06 | list end iterator; depth-5 of track_loader_d4; D-5741 |
+| S-2495 | 0x00545260 FUN_00545260 | 0x004b3cc0 FUN_004b3cc0 | render | passthrough | 2026-05-06 | spline data processor; arg (stream); depth-5 of track_loader_d4; D-5742 |
+| S-2496 | 0x0052daf0 FUN_0052daf0 | 0x004b3de0 FUN_004b3de0 | render | passthrough | 2026-05-06 | animation data processor; arg (stream); depth-5 of track_loader_d4; D-5743 |
+| S-2497 | 0x00543dc0 FUN_00543dc0 | 0x00479030 LAB_00479030 | render | passthrough | 2026-05-06 | post-load query/init; args (0x0, ESI); depth-5 of track_loader_d4; D-5744 |
+| S-2498 | 0x004b4550 FUN_004b4550 | 0x00479030 LAB_00479030 | render | passthrough | 2026-05-06 | sphere center computation; also callee of D-5753 FUN_004b53b0; depth-5 of track_loader_d4; D-5744 D-5753 |
+| S-2499 | 0x00543da0 FUN_00543da0 | 0x00479030 LAB_00479030 | render | passthrough | 2026-05-06 | attribute setter; args (ESI, 0x5ceb8c, 2, 4, EDI); depth-5 of track_loader_d4; D-5744 |
