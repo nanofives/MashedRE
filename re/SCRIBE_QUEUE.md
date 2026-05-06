@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-06  profile_career_d3-20260506-1249  bucket=profile_career_d3  rvas=0x00441990,0x00446520,0x00429a70,0x0046b4f0,0x0046d510,0x00442e00  S-2180..S-2192  U-2187..U-2197  D-6460..D-6483  pool=Mashed_pool3
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 2026-05-06  vehicle_damage_d3-20260506-1244  bucket=vehicle_damage_d3  rvas=0x00405890,0x00408a50,0x00408a70,0x0040e340,0x0040e350,0x00417730,0x00423b20
 ```
