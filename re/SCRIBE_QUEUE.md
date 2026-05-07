@@ -15,7 +15,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  S-2920..S-2928  U-2927..U-2931  D-8680..D-8688  pool=Mashed_pool4  note=pool14-stale-lock-pivoted-to-pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-07  render_pipeline_d2-20260507  bucket=render_pipeline_d2  rvas=0x004c30b0  pool=Mashed_pool5
 2026-05-07  audio_sfx_dispatch_d2-20260507  bucket=audio_sfx_dispatch_d2  rvas=0x0045efe0,0x0045f5f0,0x0045faa0,0x0045ff50,0x00460350,0x00460df0,0x00461650,0x00463640,0x00463c80,0x00463f40,0x00464e10,0x00465a30,0x00465b20,0x004661f0  S-2420..S-2433  U-2427..U-2440  D-none  pool=Mashed_pool13  note=14 C1 plates; 0 deferred; clears D-2985..D-2998 from audio_sfx_dispatch-cont1
 2026-05-07  render_pipeline_d3-20260507  bucket=render_pipeline_d3  rvas=0x004c4600,0x004c4a50,0x004c4dc0,0x004c4eb0,0x004c5010,0x004c51a0,0x00552d10,0x00552da0,0x00552df0,0x00552e40  pool=Mashed_pool10
 2026-05-07  rw_engine_init_d3-20260507  bucket=rw_engine_init_d3  rvas=0x00498a00,0x00498c00,0x00498e40,0x00498ea0,0x004a2b60,0x004a42c5,0x004ad1e0,0x004c2d70,0x004c2d90,0x004c2de0,0x004c2e10,0x004c2e40,0x004c2e70,0x004c2ea0,0x004c2f30,0x004c7690,0x004cfa00,0x004d7de0,0x004e7d40  pool=Mashed_pool15
@@ -34,6 +33,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-07  render_pipeline_d2-20260507  bucket=render_pipeline_d2  rvas=0x004c30b0  pool=Mashed_pool5  drained-by=sweep-20260507-2002; 1 plate, 1 bookmark, 0 renames
 2026-05-07  render_frame_d3-20260507  bucket=render_frame_d3  rvas=0x00403050,0x00404320,0x0040de30,0x0040df20,0x0040df60,0x00410b30,0x00426030,0x00426670,0x004266b0,0x0042a9f0,0x0042d390,0x0042f530,0x00433f40,0x00492440,0x00492e60  pool=Mashed_pool13  drained-by=sweep-20260507-2002; 15 plates, 15 bookmarks, 0 renames
 2026-05-07  render_d3d_reset_d2-20260507  bucket=render_d3d_reset_d2  rvas=0x004cb8a0,0x004cba80,0x004cc7f0,0x004ccc50,0x004ccde0,0x004d1d70,0x004d53b0,0x004d5480,0x004d54f0,0x004d5570,0x004db550,0x004dc8e0,0x004dc9e0,0x004e08b0  pool=Mashed_pool3  drained-by=sweep-20260507-2002; 14 plates, 14 bookmarks, 0 renames
 2026-05-07  input_dinput_d2-20260507  bucket=input_dinput_d2  rvas=0x00495120,0x00495150,0x00495270,0x00495520,0x00495580,0x004955b0,0x004955d0,0x00495790,0x004957a0,0x00495870,0x00495e80,0x00495fe0,0x00496010,0x00496040,0x004960a0,0x004960e0,0x00496100,0x00496320,0x00496370,0x004963b0,0x004963e0,0x00496400,0x00496470,0x00496490,0x00496530,0x004967e0,0x00497310,0x00497450,0x00498510,0x00499710  pool=Mashed_pool6  drained-by=sweep-20260507-2002; 30 plates, 30 bookmarks, 0 renames
