@@ -13,7 +13,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-07  sky_weather_d2-20260507  bucket=sky_weather_d2  rvas=0x00499d90,0x00489240,0x0047a020,0x00410b30,0x004917a0,0x004917c0,0x00491860,0x00491900,0x004919b0,0x00491a10,0x00491a70,0x00451060  S-2820..S-2828  U-2827..U-2829  D-8380..D-8385  pool=Mashed_pool13
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 2026-05-07  race_results_d2-20260507-1904  bucket=race_results_d2  rvas=0x004189f0,0x004215c0,0x0045ba00,0x0046c5c0,0x0046c790  S-2860..S-2861  U-2867..U-2872  D-8500..D-8501  D-3760..D-3768-cleared  pool=Mashed_pool2
 ```
@@ -21,6 +20,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-07  sky_weather_d2-20260507  bucket=sky_weather_d2  rvas=0x00499d90,0x00489240,0x0047a020,0x00410b30,0x004917a0,0x004917c0,0x00491860,0x00491900,0x004919b0,0x00491a10,0x00491a70,0x00451060  S-2820..S-2828  U-2827..U-2829  D-8380..D-8385  pool=Mashed_pool13  drained-by=sweep-20260507-1913; 5 plates, 5 bookmarks, 7 listing-level C0 plates (no Ghidra func objects), 0 renames; extracted from SESSION_END.md
 2026-05-07  physics_collision_d2-20260507-0106  bucket=physics_collision_d2  rvas=0x0047b9b0,0x00478cb0,0x004715a0  S-2640..S-2643  U-2647..U-2651  D-7840..D-7843  pool=Mashed_pool12  drained-by=sweep-20260507-0133; 3 plates, 3 bookmarks, 0 renames
 2026-05-06  input_lua_d2-20260506-1854  bucket=input_lua_d2  rvas=0x0047b8a0,0x004b7330,0x004c0510,0x004b7480,0x004b6520  S-2400..S-2410  U-2407..U-2418  D-7120..D-7130  pool=Mashed_pool12  drained-by=sweep-20260506-2157; 5 plates, 5 bookmarks, 0 renames
 2026-05-06  audio_music_d3-20260506-1930  bucket=audio_music_d3  rvas=0x005a7520,0x005a6d60  S-2560..S-2562  U-2567  D-7600..D-7602  pool=Mashed_pool12  drained-by=sweep-20260506-2157; 2 plates, 2 bookmarks, 0 renames

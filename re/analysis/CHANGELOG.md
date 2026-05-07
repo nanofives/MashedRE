@@ -543,3 +543,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  physics_collision_d2-20260507-0106  scribe-release  bucket=physics_collision_d2  writes=6  errors=0
 2026-05-07  sweep-20260507-0133  scribe-skip  bucket=replay_record reason="HOLD missing-per-rva-files" (left in Queued; not drained)
 2026-05-07  sweep-20260507-0133  scribe-release bucket=sweep-multi writes=6 errors=0 buckets_drained=1 buckets_skipped=1 (physics_collision_d2=6)
+2026-05-07  sweep-20260507-1913  scribe-claim  buckets=1 queued, 1 skipped-HOLD
+2026-05-07  sweep-20260507-1913  scribe-release  bucket=sky_weather_d2  writes=12  errors=0
