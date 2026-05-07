@@ -42,3 +42,8 @@
 | D-6481 | 004b4cd0 | FUN_004b4cd0 | util | 56B; bezier path query; callee of FUN_00446520 branch A | profile_career_d4 |
 | D-6482 | 0045bfe0 | FUN_0045bfe0 | util | 5B; bezier locate; callee of FUN_00446520 branch A | profile_career_d4 |
 | D-6483 | 0045c350 | FUN_0045c350 | util | 302B; bezier interpolate; callee of FUN_00446520 branch A | profile_career_d4 |
+| D-7120 | 004ba1b0 | FUN_004ba1b0 | input | Lua allocator stub (S-2401): called with args (0,0,0x70); decompile and classify | input_lua_d3 |
+| D-7121 | 004b7be0 | FUN_004b7be0 | input | Lua stub (S-2402): receives (block, label_addr, stack_slot); failure triggers FUN_004b7480; decompile | input_lua_d3 |
+| D-7122 | 004ba210 | FUN_004ba210 | input | Lua stub (S-2408): called with (param_1, 1); decompile and classify | input_lua_d3 |
+| D-7123 | 004b9850 | FUN_004b9850 | input | Lua stub (S-2409): called with (param_1); decompile and classify | input_lua_d3 |
+| D-7124 | 004b64e0 | FUN_004b64e0 | input | Lua stub (S-2410): wrapper — receives (param_1, 0, param_2); decompile and classify | input_lua_d3 |
