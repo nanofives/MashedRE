@@ -570,3 +570,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=title_screen_d2  writes=5  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=track_loader_d3  writes=19  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=vehicle_dynamics  writes=4  errors=0
+2026-05-07  sweep-20260507-2002  scribe-release  bucket=vehicle_update_d2  writes=10  errors=0
