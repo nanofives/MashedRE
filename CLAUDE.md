@@ -136,6 +136,7 @@ Loaded automatically from `.claude\skills\`:
 - **re-classify** — promote/demote a function on the C0..C4 ladder; updates `hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `re/analysis/CHANGELOG.md` in one transaction. Refuses promotions that lack evidence.
 - **worktree** — git worktrees for isolated per-effort RE work; binds each worktree to a Ghidra pool slot.
 - **multi-session** — etiquette and conflict resolution when multiple Claude sessions run concurrently.
+- **sweep** — drain all queued rows in `re/SCRIBE_QUEUE.md` into the master Ghidra project (the follow-up Opus scribe session after a parallel fanout).
 
 ## Prior art (read-only, vendored under `re\prior_art\`)
 
