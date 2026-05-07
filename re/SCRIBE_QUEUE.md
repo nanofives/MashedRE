@@ -15,7 +15,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  S-2920..S-2928  U-2927..U-2931  D-8680..D-8688  pool=Mashed_pool4  note=pool14-stale-lock-pivoted-to-pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-07  title_screen_d2-20260507  bucket=title_screen_d2  rvas=0x00401ee0,0x0040d250,0x004288a0,0x0042e590,0x0042f0b0  pool=Mashed_pool15
 2026-05-07  track_loader_d3-20260507  bucket=track_loader_d3  rvas=0x0042a5d0,0x0042a640,0x0042a740,0x0042a7f0,0x0042a860,0x0045de80,0x00474fd0,0x00478200,0x004783f0,0x004785e0,0x004790e0,0x0047bf70,0x0047ce40,0x0047f840,0x00480100,0x00491590,0x004b46b0,0x004b5030,0x004cc5e0  pool=Mashed_pool0
 2026-05-07  vehicle_dynamics_d2-20260507  bucket=vehicle_dynamics  rvas=0x00467300,0x0046ef70,0x004709a0,0x004c3b90  pool=Mashed_pool11
 2026-05-07  vehicle_update_d2-20260507  bucket=vehicle_update_d2  rvas=0x0040fc00,0x00420230,0x00422ba0,0x00425a40,0x0046da80,0x00470670,0x004709a0,0x00470c70,0x00480720,0x00480b70  pool=Mashed_pool2
@@ -27,6 +26,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-07  title_screen_d2-20260507  bucket=title_screen_d2  rvas=0x00401ee0,0x0040d250,0x004288a0,0x0042e590,0x0042f0b0  pool=Mashed_pool15  drained-by=sweep-20260507-2002; 5 plates, 5 bookmarks, 0 renames
 2026-05-07  texture_loader_d3-20260507  bucket=texture_loader_d3  rvas=0x004c5890,0x004c5bc0,0x004c77c0,0x004cbd30,0x004cc050,0x004cc400,0x004cc4f0,0x004cdd60,0x004cee90,0x004cefd0,0x004e1b60,0x00550130  pool=Mashed_pool0  drained-by=sweep-20260507-2002; 12 plates, 12 bookmarks, 0 renames
 2026-05-07  texture_loader_d2-20260507  bucket=texture_loader_d2  rvas=0x0042a470,0x004cc5e0,0x004cf7d0,0x0054f8d0  pool=Mashed_pool14  drained-by=sweep-20260507-2002; 4 plates, 4 bookmarks, 0 renames
 2026-05-07  rw_engine_teardown_d3-20260507  bucket=rw_engine_teardown_d3  rvas=0x004ccce0  pool=Mashed_pool10  drained-by=sweep-20260507-2002; 1 plate, 1 bookmark, 0 renames
