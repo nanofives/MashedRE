@@ -15,13 +15,13 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  S-2920..S-2928  U-2927..U-2931  D-8680..D-8688  pool=Mashed_pool4  note=pool14-stale-lock-pivoted-to-pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-07  video_mci_d2-20260507  bucket=video_mci_d2  rvas=0x00493ac0,0x0049ec10,0x004a3b84  pool=Mashed_pool1
-2026-05-07  window_fullscreen-20260507  bucket=window_fullscreen  rvas=0x00498bf0  pool=Mashed_pool10
 ```
 
 ## Drained
 
 ```
+2026-05-07  window_fullscreen-20260507  bucket=window_fullscreen  rvas=0x00498bf0  pool=Mashed_pool10  drained-by=sweep-20260507-2002; 1 plate, 1 bookmark, 0 renames
+2026-05-07  video_mci_d2-20260507  bucket=video_mci_d2  rvas=0x00493ac0,0x0049ec10,0x004a3b84  pool=Mashed_pool1  drained-by=sweep-20260507-2002; 3 plates, 2 bookmarks, 1 listing-level C0 plate (0x00493ac0 — no Ghidra function object), 0 renames
 2026-05-07  vehicle_update_d3-20260507  bucket=vehicle_update_d3  rvas=0x00467350,0x00467650,0x00468980,0x0046dc20,0x0046ddb0,0x0046f6c0,0x0047eb30,0x004809e0  pool=Mashed_pool14  drained-by=sweep-20260507-2002; 8 plates, 8 bookmarks, 0 renames
 2026-05-07  vehicle_update_d2-20260507  bucket=vehicle_update_d2  rvas=0x0040fc00,0x00420230,0x00422ba0,0x00425a40,0x0046da80,0x00470670,0x004709a0,0x00470c70,0x00480720,0x00480b70  pool=Mashed_pool2  drained-by=sweep-20260507-2002; 10 plates, 10 bookmarks, 0 renames
 2026-05-07  vehicle_dynamics_d2-20260507  bucket=vehicle_dynamics  rvas=0x00467300,0x0046ef70,0x004709a0,0x004c3b90  pool=Mashed_pool11  drained-by=sweep-20260507-2002; 4 plates, 4 bookmarks, 0 renames

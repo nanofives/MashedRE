@@ -572,3 +572,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=vehicle_dynamics  writes=4  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=vehicle_update_d2  writes=10  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=vehicle_update_d3  writes=8  errors=0
+2026-05-07  sweep-20260507-2002  scribe-release  bucket=video_mci_d2  writes=3  errors=0
+2026-05-07  sweep-20260507-2002  scribe-release  bucket=window_fullscreen  writes=1  errors=0
