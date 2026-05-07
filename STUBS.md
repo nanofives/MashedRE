@@ -642,3 +642,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2497 | 0x00543dc0 FUN_00543dc0 | 0x00479030 LAB_00479030 | render | passthrough | 2026-05-06 | post-load query/init; args (0x0, ESI); depth-5 of track_loader_d4; D-5744 |
 | S-2498 | 0x004b4550 FUN_004b4550 | 0x00479030 LAB_00479030 | render | passthrough | 2026-05-06 | sphere center computation; also callee of D-5753 FUN_004b53b0; depth-5 of track_loader_d4; D-5744 D-5753 |
 | S-2499 | 0x00543da0 FUN_00543da0 | 0x00479030 LAB_00479030 | render | passthrough | 2026-05-06 | attribute setter; args (ESI, 0x5ceb8c, 2, 4, EDI); depth-5 of track_loader_d4; D-5744 |
+| S-2640 | 0x0047b860 FUN_0047b860 | 0x0047b9b0 FUN_0047b9b0 | physics | passthrough | 2026-05-07 | pre-setup call before (*param_3)(); 21 bytes; depth-2 callee of 0047b9b0; D-7840 physics_collision_d2 |
+| S-2641 | 0x0047b8d0 FUN_0047b8d0 | 0x0047b9b0 FUN_0047b9b0 | physics | passthrough | 2026-05-07 | main executor body (script, buf); 167 bytes; depth-2 callee of 0047b9b0; D-7841 physics_collision_d2 |
+| S-2642 | 0x0047b880 FUN_0047b880 | 0x0047b9b0 FUN_0047b9b0 | physics | passthrough | 2026-05-07 | post-call teardown; 24 bytes; depth-2 callee of 0047b9b0; D-7842 physics_collision_d2 |
+| S-2643 | 0x0047ce40 FUN_0047ce40 | 0x004715a0 FUN_004715a0 | physics | passthrough | 2026-05-07 | vol-index → handle mapper; 36 bytes; depth-2 callee of 004715a0; D-7843 physics_collision_d2 |

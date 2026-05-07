@@ -787,3 +787,7 @@ A row goes into DEFERRED when:
 | D-7365 | 0x0057c210,0x00559ee0,0x00559c40,0x004b5240 | depth-5 of track_loader_d4: physics body ops (D-5748 D-5749 callees); bucket track_loader_d5/physics_body_ops | track_loader_d4-20260506-2007 session done | render |
 | D-7366 | 0x004260b0,0x004c0ed0,0x004c4dc0,0x00547230,0x00538c80,0x0045c110,0x0045c030,0x004726f0,0x004c39b0,0x004c45f0,0x004c3df0,0x004a3384,0x004c5010,0x004c51a0 | depth-5 of track_loader_d4: broadphase registration callees (D-5750 all 14); bucket track_loader_d5/broadphase_ops | track_loader_d4-20260506-2007 session done | render |
 | D-7367 | 0x004c3b30,0x0047bc90 | depth-5 of track_loader_d4: triangle mesh sub-layer (D-5751 D-5752 callees); FUN_004c3b30=sqrtf-like; FUN_0047bc90=half-edge matcher; bucket track_loader_d5/tri_mesh_ops | track_loader_d4-20260506-2007 session done | render |
+| D-7840 | 0x0047b860 FUN_0047b860 | depth-2 callee of 0047b9b0 (physics_collision_d2); 21 bytes; pre-setup; S-2640 | physics_collision_d2-cont1 | physics |
+| D-7841 | 0x0047b8d0 FUN_0047b8d0 | depth-2 callee of 0047b9b0 (physics_collision_d2); 167 bytes; main Lua executor body; S-2641; U-2648 | physics_collision_d2-cont1 | physics |
+| D-7842 | 0x0047b880 FUN_0047b880 | depth-2 callee of 0047b9b0 (physics_collision_d2); 24 bytes; teardown; S-2642 | physics_collision_d2-cont1 | physics |
+| D-7843 | 0x0047ce40 FUN_0047ce40 | depth-2 callee of 004715a0 (physics_collision_d2); 36 bytes; volume index→handle mapper; S-2643; U-2650 | physics_collision_d2-cont1 | physics |
