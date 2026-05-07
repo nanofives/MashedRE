@@ -15,7 +15,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  S-2920..S-2928  U-2927..U-2931  D-8680..D-8688  pool=Mashed_pool4  note=pool14-stale-lock-pivoted-to-pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-07  effects_particle_d3-20260507  bucket=effects_particle_d3  rvas=0x004e6100,0x00538d60,0x00539900,0x00539ec0  pool=Mashed_pool2
 2026-05-07  game_state_d3-20260507  bucket=game_state_d3  rvas=0x004248b0,0x00424920,0x0042bf30,0x0042d3a0,0x004464c0  pool=Mashed_pool0
 2026-05-07  game_state_d4-20260507  bucket=game_state_d4  rvas=0x00441d40,0x00442440,0x00445aa0  pool=Mashed_pool10
 2026-05-07  hud_frontend_d2-20260507  bucket=hud_frontend_d2  rvas=0x0042f0c0,0x0042fb70,0x0042fe90,0x00430120,0x00430b90,0x00431240,0x004314b0,0x00431710,0x004335f0,0x00434720,0x00439210,0x0043a610,0x0043aa30,0x0043af10  pool=Mashed_pool15
@@ -42,6 +41,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-07  effects_particle_d3-20260507  bucket=effects_particle_d3  rvas=0x004e6100,0x00538d60,0x00539900,0x00539ec0  pool=Mashed_pool2  drained-by=sweep-20260507-2002; 4 plates, 4 bookmarks, 0 renames
 2026-05-07  race_results_d2-20260507-1904  bucket=race_results_d2  rvas=0x004189f0,0x004215c0,0x0045ba00,0x0046c5c0,0x0046c790  S-2860..S-2861  U-2867..U-2872  D-8500..D-8501  D-3760..D-3768-cleared  pool=Mashed_pool2  drained-by=sweep-20260507-1913; 5 plates, 5 bookmarks, 0 renames
 2026-05-07  sky_weather_d2-20260507  bucket=sky_weather_d2  rvas=0x00499d90,0x00489240,0x0047a020,0x00410b30,0x004917a0,0x004917c0,0x00491860,0x00491900,0x004919b0,0x00491a10,0x00491a70,0x00451060  S-2820..S-2828  U-2827..U-2829  D-8380..D-8385  pool=Mashed_pool13  drained-by=sweep-20260507-1913; 5 plates, 5 bookmarks, 7 listing-level C0 plates (no Ghidra func objects), 0 renames; extracted from SESSION_END.md
 2026-05-07  physics_collision_d2-20260507-0106  bucket=physics_collision_d2  rvas=0x0047b9b0,0x00478cb0,0x004715a0  S-2640..S-2643  U-2647..U-2651  D-7840..D-7843  pool=Mashed_pool12  drained-by=sweep-20260507-0133; 3 plates, 3 bookmarks, 0 renames
