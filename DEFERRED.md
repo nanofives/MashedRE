@@ -588,11 +588,18 @@ A row goes into DEFERRED when:
 | D-5562 | 0x004b55a0 FUN_004b55a0 | depth-4 callee of FUN_00443dc0; render submit/draw call; large function 0x1A4 bytes; used for debug waypoint rendering | ai_update_d3-cont1 | render |
 | D-5563 | 0x004c3bf0 FUN_004c3bf0 | depth-4 callee of FUN_00443dc0; 2D vector distance / magnitude; ~100 bytes; pair with FUN_004c3c60 normalizer | ai_update_d3-cont1 | ai |
 | D-5564 | 0x004c3c60 FUN_004c3c60 | depth-4 callee of FUN_00443dc0; 2D vector normalizer; called as FUN_004c3c60(&vec,&vec) (in-place); ~249 bytes | ai_update_d3-cont1 | ai |
-| D-5620 | 0x0041f8f0 FUN_0041f8f0 | depth-2 callee of PerPlayerViewportRender (0x00420050); unknown pre-render step; ~250 bytes; called before shadow/tire-mark | split_screen-cont1 | render |
-| D-5621 | 0x004228f0 FUN_004228f0 | depth-2 callee of PerPlayerViewportRender; per-player mirror/reflection pass; called as FUN_004228f0(playerIndex, device) | split_screen-cont1 | render |
-| D-5622 | 0x00426060 FUN_00426060 | depth-2 callee of PerPlayerViewportRender; 5-byte getter; returns world render target (derefs DAT or global) | split_screen-cont1 | render |
-| D-5623 | 0x004260c0 FUN_004260c0 | depth-2 callee of PerPlayerViewportRender; 5-byte getter; returns render condition flag | split_screen-cont1 | render |
-| D-5624 | 0x004e4900 FUN_004e4900 | depth-2 callee of PerPlayerViewportRender; fog/scale matrix transform; called as FUN_004e4900(fog_obj, float4*) twice per player | split_screen-cont1 | render |
+| ~~D-5620~~ | ~~0x0041f8f0 FUN_0041f8f0~~ | RESOLVED split_screen_d2-20260507-1852: C1; ESI-based per-player render-pass setup; see re/analysis/split_screen_d2/0041f8f0.md | — | render |
+| ~~D-5621~~ | ~~0x004228f0 FUN_004228f0~~ | RESOLVED split_screen_d2-20260507-1852: C1; per-player geometry batch draw with alpha blend; see re/analysis/split_screen_d2/004228f0.md | — | render |
+| ~~D-5622~~ | ~~0x00426060 FUN_00426060~~ | RESOLVED split_screen_d2-20260507-1852: C1 confirmed; returns DAT_0065742c; pre-existing analysis at re/analysis/track_loader_d3/00426060_00426070.md | — | render |
+| ~~D-5623~~ | ~~0x004260c0 FUN_004260c0~~ | RESOLVED split_screen_d2-20260507-1852: C1; returns DAT_00657490; see re/analysis/split_screen_d2/004260c0.md | — | render |
+| ~~D-5624~~ | ~~0x004e4900 FUN_004e4900~~ | RESOLVED split_screen_d2-20260507-1852: C1; writes float4 to param_1+0x18..+0x24, sets uniform-scale byte at +3; see re/analysis/split_screen_d2/004e4900.md | — | render |
+| D-8440 | 0x004c1340 FUN_004c1340 | depth-3 of PerPlayerViewportRender via 0x0041f8f0; set-pos-to-camera (also ref'd in SkyDomeUpdatePos); split_screen_d2 | split_screen_d2-cont1 | render |
+| D-8441 | 0x004b42c0 FUN_004b42c0 | depth-3 of PerPlayerViewportRender via 0x0041f8f0; called as FUN_004b42c0(cam, player_pos_ptr, &DAT_006146fc) | split_screen_d2-cont1 | render |
+| D-8442 | 0x004c1680 FUN_004c1680 | depth-3 of PerPlayerViewportRender via 0x0041f8f0; 1-arg camera setup call | split_screen_d2-cont1 | render |
+| D-8443 | 0x00422ac0,0x00422af0 FUN_00422ac0/af0 | depth-3 pair via 0x0041f8f0; render-state setup: 00422ac0(ESI+0x290, color_block); 00422af0(ESI+0x290, cam_handle) | split_screen_d2-cont1 | render |
+| D-8444 | 0x00422570 FUN_00422570 | depth-3 via 0x0041f8f0; 3-arg call (ESI+0x290, *(*(ESI+0x26c)+4)+0x10, uVar3) | split_screen_d2-cont1 | render |
+| D-8445 | 0x00426e00 FUN_00426e00 | depth-3 via 0x0041f8f0; no-arg getter; return value cast to float10 then scaled by ESI+0x288 and ESI+0x284 | split_screen_d2-cont1 | render |
+| D-8446 | 0x004cd070,0x004cd2d0,0x004cd140 FUN_004cdXXX | depth-3 draw/flush cluster via 0x004228f0; 004cd070(buf,count*3,0,0x19) then 004cd2d0(3)+004cd140() on non-zero | split_screen_d2-cont1 | render |
 | D-5500 | 0x00441990 FUN_00441990 | alternative result handler in FUN_00448220 when DAT_007f1a50==1; sole caller FUN_00448220; size unknown; needed to understand DAT_007f1a50 semantics (U-1870); S-1868 | profile_career_d2-cont1 | frontend |
 | D-5501 | 0x00446520 FUN_00446520 | main result display state machine; called from FUN_00448220 via LAB_004483a3 on race states 6/7/-1; receives &DAT_00897fe0+param_3; needed for U-1552 (priority 0x40 in DAT_00898ab0); S-1869 | profile_career_d2-cont1 | frontend |
 | D-5502 | 0x00429a70 FUN_00429a70 | race data getter C; used alongside 0x00429a80/90 in FUN_00448220 unlock-code generation; depth-2 of FUN_00434720; S-1875 | profile_career_d2-cont1 | frontend |
