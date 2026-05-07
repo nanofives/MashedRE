@@ -1205,3 +1205,31 @@
 004cd070,FUN_004cd070,render,C0,deferred,,,,depth-3 of PerPlayerViewportRender via 0x004228f0; draw-primitive call args (buf,count*3,0,0x19); D-8446; bucket split_screen_d2-cont1
 004cd2d0,FUN_004cd2d0,render,C0,deferred,,,,depth-3 of PerPlayerViewportRender via 0x004228f0; post-draw flush arg=3; called when 004cd070 returns non-zero; D-8446; bucket split_screen_d2-cont1
 004cd140,FUN_004cd140,render,C0,deferred,,,,depth-3 of PerPlayerViewportRender via 0x004228f0; post-draw flush no-arg; called after 004cd2d0; D-8446; bucket split_screen_d2-cont1
+004d8430,sub_004d8430 (rwID_ERRORMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40f; size=8; LAB_ label not FUN_; U-2887
+004d8470,sub_004d8470 (rwID_ERRORMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40f; size=8; LAB_ label not FUN_; U-2887
+004c3e90,sub_004c3e90 (rwID_VECTORMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x401; size=0x18; LAB_ label not FUN_; U-2887
+004c3e20,sub_004c3e20 (rwID_VECTORMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x401; size=0x18; LAB_ label not FUN_; U-2887
+004d9030,sub_004d9030 (rwID_COLORMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40d; size=0; LAB_ label not FUN_; U-2887
+004d9040,sub_004d9040 (rwID_COLORMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40d; size=0; LAB_ label not FUN_; U-2887
+004c4470,sub_004c4470 (rwID_MATRIXMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x402; size=0x18; LAB_ label not FUN_; U-2887
+004c4430,sub_004c4430 (rwID_MATRIXMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x402; size=0x18; LAB_ label not FUN_; U-2887
+004c07b0,sub_004c07b0 (rwID_FRAMEMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x403; size=4 (librw=0 mismatch); LAB_ label not FUN_; U-2887; U-2888
+004c0830,sub_004c0830 (rwID_FRAMEMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x403; size=4 (librw=0 mismatch); LAB_ label not FUN_; U-2887; U-2888
+004cbca0,sub_004cbca0 (rwID_STREAMMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x404; size=4; LAB_ label not FUN_; U-2887
+004cbd00,sub_004cbd00 (rwID_STREAMMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x404; size=4; LAB_ label not FUN_; U-2887
+004c1980,sub_004c1980 (rwID_CAMERAMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x405; size=4; LAB_ label not FUN_; U-2887
+004c1940,sub_004c1940 (rwID_CAMERAMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x405; size=4; LAB_ label not FUN_; U-2887
+004cd900,sub_004cd900 (rwID_IMAGEMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x406; size=0x220 (librw=0x84 mismatch); LAB_ label not FUN_; U-2887; U-2889
+004cdb60,sub_004cdb60 (rwID_IMAGEMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x406; size=0x220 (librw=0x84 mismatch); LAB_ label not FUN_; U-2887; U-2889
+004c78e0,sub_004c78e0 (rwID_RASTERMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x407; size=0x64 (librw=0x84 mismatch); LAB_ label not FUN_; U-2887; U-2890
+004c78a0,sub_004c78a0 (rwID_RASTERMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x407; size=0x64 (librw=0x84 mismatch); LAB_ label not FUN_; U-2887; U-2890
+004c5f60,sub_004c5f60 (rwID_TEXTUREMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x408; size=0x34 (librw=0x28 mismatch); LAB_ label not FUN_; U-2887; U-2891
+004c5e00,sub_004c5e00 (rwID_TEXTUREMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x408; size=0x34 (librw=0x28 mismatch); LAB_ label not FUN_; U-2887; U-2891
+004d8530,sub_004d8530 (rwID_PIPEMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x409; size=0x60; LAB_ label not FUN_; U-2887
+004d8550,sub_004d8550 (rwID_PIPEMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x409; size=0x60; LAB_ label not FUN_; U-2887
+004d8fa0,sub_004d8fa0 (rwID_CHUNKGROUPMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x412; size=4; LAB_ label not FUN_; U-2887
+004d9000,sub_004d9000 (rwID_CHUNKGROUPMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x412; size=4; LAB_ label not FUN_; U-2887
+004cd850,sub_004cd850 (rwID_IMMEDIATEMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40a; size=0x74; LAB_ label not FUN_; U-2887
+004cd810,sub_004cd810 (rwID_IMMEDIATEMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40a; size=0x74; LAB_ label not FUN_; U-2887
+004d8a80,sub_004d8a80 (rwID_RESOURCESMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40b; size=0x28; LAB_ label not FUN_; U-2887
+004d8b70,sub_004d8b70 (rwID_RESOURCESMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40b; size=0x28; LAB_ label not FUN_; U-2887

@@ -547,3 +547,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  sweep-20260507-1913  scribe-release  bucket=sky_weather_d2  writes=12  errors=0
 2026-05-07  sweep-20260507-1913  scribe-release  bucket=race_results_d2  writes=5  errors=0
 2026-05-07  sweep-20260507-1913  scribe-release  buckets=2 drained  errors=0
+2026-05-07 librw_plugin_compat-20260507-1950 analysis bucket=librw_plugin_compat rvas=28 (callback addresses) + FUN_004d7de0 (re-read; already C1) U-2887..U-2891 D-8560 slot=Mashed_pool12

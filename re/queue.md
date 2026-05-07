@@ -59,41 +59,13 @@ Depth-2 deferred callees from leaderboard session JJJJJ:
 
 ---
 
-## librw_plugin_compat  [queued 2026-05-06]
+## librw_plugin_compat  [COMPLETED 2026-05-07 — session librw_plugin_compat-20260507-1950]
 
-**Bucket:** re/analysis/librw_plugin_compat/
-**Parent:** rw_engine_init/004c32b0 (C1 mapped)
-**Subsystem:** render
-**Driver:** librw integration feasibility study
-
-Goal: validate per-plugin offset compatibility between Mashed's RW plugin registry and librw before committing to librw-as-RW-substitute strategy.
-
-Mashed registers 14 plugins at FUN_004c32b0 via FUN_004d7de0 calls. The (size, id) pairs from re/analysis/rw_engine_init/004c32b0.md:
-
-| Slot | Size  | ID    | Notes |
-|------|-------|-------|-------|
-| 1    | 8     | 0x40f | |
-| 2    | 0x18  | 0x401 | |
-| 3    | 0     | 0x40d | size-0; sentinel? |
-| 4    | 0x18  | 0x402 | |
-| 5    | 4     | 0x403 | |
-| 6    | 4     | 0x404 | |
-| 7    | 4     | 0x405 | |
-| 8    | 0x220 | 0x406 | largest — likely vehicle/track data |
-| 9    | 100   | 0x407 | |
-| 10   | 0x34  | 0x408 | |
-| 11   | 0x60  | 0x409 | |
-| 12   | 4     | 0x412 | |
-| 13   | 0x74  | 0x40a | |
-| 14   | 0x28  | 0x40b | |
-
-**Tasks:**
-1. For each ID in `0x401..0x40f` and `0x412`: identify the plugin name from RW SDK conventions (these are toolkit-range plugin IDs).
-2. Cross-check librw source (`librw/src/`) for each ID: present? same size? same constructor/destructor pattern?
-3. Identify which IDs are RW-standard (matfx/anim/skin/etc.) vs Mashed-specific extensions.
-4. Output: a compat matrix `(id, size, mashed_callbacks, librw_match, gap_action)` to seal the librw decision.
-
-**Blocks:** any decision to vendor librw as a dependency.
+REPORT.md written to re/analysis/librw_plugin_compat/REPORT.md.
+14/14 plugin IDs identified (all rwVENDORID_CRITERIONINT range). 4 present in librw (all size-mismatched). 10 absent.
+Decision: librw-as-substitute NOT viable as-is. 14 stubs required.
+Gating next step: D-8560 (decompile 28 callbacks) → bucket librw_plugin_compat-cont1.
+IDs used: U-2887..U-2891, D-8560. Scribe queued.
 
 ---
 
