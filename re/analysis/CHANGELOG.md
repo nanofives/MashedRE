@@ -563,3 +563,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=render_pipeline_d2  writes=1  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=audio_sfx_dispatch_d2  writes=14  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=render_pipeline_d3  writes=10  errors=0
+2026-05-07  sweep-20260507-2002  scribe-release  bucket=rw_engine_init_d3  writes=19  errors=0
