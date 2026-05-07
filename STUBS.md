@@ -389,11 +389,11 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1281 | 0x0040e340 FUN_0040e340 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | active-car counter; returns 4 when all 4 cars active; depth-2 from score-updater |
 | S-1282 | 0x0040e350 FUN_0040e350 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | game-state query; result compared to {1,2,3,4,5} to gate event-buffer append; depth-2 from score-updater |
 | S-1283 | 0x0040e370 FUN_0040e370 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | per-car active check; non-zero=active; depth-2 from score-updater |
-| S-1284 | 0x004189f0 thunk_FUN_00419760 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | thunk→FUN_00419760; called with (car_idx,1) when FUN_0040e470==1 and DAT_007f0fd0!=7; depth-2 from car-eliminator |
-| S-1285 | 0x004215c0 FUN_004215c0 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called twice: (car,50.0f,0) and (car,50.0f,1); role unknown; depth-2 from car-eliminator |
-| S-1286 | 0x0045ba00 FUN_0045ba00 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called with (car_idx,2); constant 2 matches FUN_0040e470 sub-state value; depth-2 from car-eliminator |
-| S-1287 | 0x0046c5c0 FUN_0046c5c0 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | first call in car-eliminate sequence; single car_idx arg; depth-2 from car-eliminator |
-| S-1288 | 0x0046c790 FUN_0046c790 | 0x00422fd0 FUN_00422fd0 | frontend | passthrough | 2026-05-03 | called with (car_idx,1); second call in car-eliminate sequence; depth-2 from car-eliminator |
+| ~~S-1284~~ | ~~0x004189f0 thunk_FUN_00419760~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/004189f0.md |
+| ~~S-1285~~ | ~~0x004215c0 FUN_004215c0~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/004215c0.md |
+| ~~S-1286~~ | ~~0x0045ba00 FUN_0045ba00~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/0045ba00.md |
+| ~~S-1287~~ | ~~0x0046c5c0 FUN_0046c5c0~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/0046c5c0.md |
+| ~~S-1288~~ | ~~0x0046c790 FUN_0046c790~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/0046c790.md |
 | S-1134 | 0x0043d2a0 FUN_0043d2a0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called with 2-arg pairs (0,2),(7,0),(1,0); central transition handler |
 | S-1135 | 0x0042ae10 FUN_0042ae10 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called with arg 0 in inner-switch cases 1,2,9,0xb,0xc; return gates state changes |
 | S-1136 | 0x0042aeb0 FUN_0042aeb0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-03 | called in cases 1,2,9; non-zero result sets DAT_0067eac5 and DAT_0067f1a0 |
@@ -646,3 +646,26 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2641 | 0x0047b8d0 FUN_0047b8d0 | 0x0047b9b0 FUN_0047b9b0 | physics | passthrough | 2026-05-07 | main executor body (script, buf); 167 bytes; depth-2 callee of 0047b9b0; D-7841 physics_collision_d2 |
 | S-2642 | 0x0047b880 FUN_0047b880 | 0x0047b9b0 FUN_0047b9b0 | physics | passthrough | 2026-05-07 | post-call teardown; 24 bytes; depth-2 callee of 0047b9b0; D-7842 physics_collision_d2 |
 | S-2643 | 0x0047ce40 FUN_0047ce40 | 0x004715a0 FUN_004715a0 | physics | passthrough | 2026-05-07 | vol-index → handle mapper; 36 bytes; depth-2 callee of 004715a0; D-7843 physics_collision_d2 |
+| S-2625 | 0x0046c5f0 FUN_0046c5f0 | 0x0046ddb0 VehicleWheelForceIntegrator / 0x0046f6c0 VehicleWheelContactSolver | vehicle | passthrough | 2026-05-06 | wheel state sync helper; no visible params; called from 3+ vehicle functions; purpose unknown; D-7962 |
+| S-2626 | 0x0047d3c0 FUN_0047d3c0 | 0x0047eb30 VehiclePhysicsWorldStep | vehicle | passthrough | 2026-05-06 | RWP37 physics world step; args (worldPtr, dt); RpWorldStepSimulation equivalent; D-7961 |
+| S-2627 | 0x0047ea40 FUN_0047ea40 | 0x0047eb30 VehiclePhysicsWorldStep | vehicle | passthrough | 2026-05-06 | physics step completion flag; arg (step_result); returns non-zero when step produced result; D-7961 |
+| S-2628 | 0x0046cb30 FUN_0046cb30 | 0x0047eb30 VehiclePhysicsWorldStep | vehicle | passthrough | 2026-05-06 | vehicle body position getter; arg (&out_float3, vehicleIdx); fills position XYZ; D-7963 |
+| S-2629 | 0x004c52f0 FUN_004c52f0 | 0x0046f6c0 VehicleWheelContactSolver | vehicle | passthrough | 2026-05-06 | set rotation on RW matrix; args (matrix, rotation_matrix, 2); axis-angle apply; D-7964 |
+| S-2630 | 0x0046d4d0 FUN_0046d4d0 | 0x0047eb30 VehiclePhysicsWorldStep | vehicle | passthrough | 2026-05-06 | apply updated matrix to vehicle rigid body; args (vehicleIdx, matrix_ptr); D-7965 |
+| S-2631 | 0x00442ce0 FUN_00442ce0 | 0x0046ddb0 VehicleWheelForceIntegrator | vehicle | passthrough | 2026-05-06 | vehicle speed modifier; args (vehicleIdx, float, float); returns multiplier; D-7963 |
+| S-2632 | 0x00442c80 FUN_00442c80 | 0x0046ddb0 VehicleWheelForceIntegrator | vehicle | passthrough | 2026-05-06 | vehicle crowding state check; arg (vehicleIdx); returns bool/int; D-7963 |
+| S-2633 | 0x004a3384 FUN_004a3384 | 0x00468980 VehicleAeroStabilizer / 0x0046f6c0 VehicleWheelContactSolver | vehicle | passthrough | 2026-05-06 | FP acos/atan approximation; arg (double); returns float10; ~50 bytes; D-7966 |
+| S-2634 | 0x0046cc40 FUN_0046cc40 | 0x0046f6c0 VehicleWheelContactSolver | vehicle | passthrough | 2026-05-06 | wheel contact sub-helper; no visible params; called once in VehicleWheelContactSolver; purpose unknown; D-7966 |
+| S-2660 | 0x004c5800 FUN_004c5800 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTexDictionarySetCurrent candidate: setter for current TXD context; called with NULL to clear then with saved ptr to restore; D-7900 |
+| S-2661 | 0x004c5820 FUN_004c5820 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTexDictionaryGetCurrent candidate: getter returning saved TXD context ptr; result stored for later restore; D-7901 |
+| S-2662 | 0x004c5830 FUN_004c5830 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTextureSetCurrent candidate (or similar): setter for current texture context; D-7902 |
+| S-2663 | 0x004c5850 FUN_004c5850 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTextureGetCurrent candidate: getter returning saved texture ptr; D-7903 |
+| S-2664 | 0x004c5a00 FUN_004c5a00 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTexture create-from-stream (main allocate+init step); 90 bytes; D-7904 |
+| S-2665 | 0x004c5ae0 FUN_004c5ae0 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTexture post-process step 1; 109 bytes; purpose unknown; D-7905 |
+| S-2666 | 0x004c5b50 FUN_004c5b50 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | RwTexture post-process step 2; 109 bytes; purpose unknown; D-7906 |
+| S-2667 | 0x004d8810 FUN_004d8810 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | state check called twice in texture stream reader; non-zero result required to proceed; 608 bytes; D-7907 |
+| S-2668 | 0x004e1df0 FUN_004e1df0 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | error cleanup path in texture stream reader; called on FUN_004c5a00 failure; 112 bytes; D-7908 |
+| S-2669 | 0x004cdd60 FUN_004cdd60 | 0x004cee90 FUN_004cee90 | render | passthrough | 2026-05-06 | RwImageAllocatePixels candidate: alloc pixel+palette buffer; stride computation; sets img+0x10/+0x14/+0x18; D-7909 |
+| S-2670 | 0x004cc4f0 FUN_004cc4f0 | 0x004cc400 FUN_004cc400 | render | passthrough | 2026-05-06 | RW chunk type validator: returns 1 for known types {5..0xb,0xe..0x10,0x12,0x14,0x1a}; now in hooks.csv C1 — clear stub |
+| S-2860 | 0x00419760 FUN_00419760 | 0x004189f0 thunk_FUN_00419760 | frontend | passthrough | 2026-05-07 | thunkee of 004189f0; 112 bytes; not yet in hooks.csv; D-8500 |
+| S-2861 | 0x00420de0 FUN_00420de0 | 0x004215c0 FUN_004215c0 | frontend | passthrough | 2026-05-07 | sole callee of 004215c0; receives param_2 (50.0f or 0/1 from parent caller); 30 bytes; D-8501 |
