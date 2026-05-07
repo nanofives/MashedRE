@@ -15,7 +15,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  S-2920..S-2928  U-2927..U-2931  D-8680..D-8688  pool=Mashed_pool4  note=pool14-stale-lock-pivoted-to-pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-07  hud_frontend_d2-20260507  bucket=hud_frontend_d2  rvas=0x0042f0c0,0x0042fb70,0x0042fe90,0x00430120,0x00430b90,0x00431240,0x004314b0,0x00431710,0x004335f0,0x00434720,0x00439210,0x0043a610,0x0043aa30,0x0043af10  pool=Mashed_pool15
 2026-05-07  input_dinput_d2-20260507  bucket=input_dinput_d2  rvas=0x00495120,0x00495150,0x00495270,0x00495520,0x00495580,0x004955b0,0x004955d0,0x00495790,0x004957a0,0x00495870,0x00495e80,0x00495fe0,0x00496010,0x00496040,0x004960a0,0x004960e0,0x00496100,0x00496320,0x00496370,0x004963b0,0x004963e0,0x00496400,0x00496470,0x00496490,0x00496530,0x004967e0,0x00497310,0x00497450,0x00498510,0x00499710  pool=Mashed_pool6
 2026-05-07  render_d3d_reset_d2-20260507  bucket=render_d3d_reset_d2  rvas=0x004cb8a0,0x004cba80,0x004cc7f0,0x004ccc50,0x004ccde0,0x004d1d70,0x004d53b0,0x004d5480,0x004d54f0,0x004d5570,0x004db550,0x004dc8e0,0x004dc9e0,0x004e08b0  pool=Mashed_pool3
 2026-05-07  render_frame_d3-20260507  bucket=render_frame_d3  rvas=0x00403050,0x00404320,0x0040de30,0x0040df20,0x0040df60,0x00410b30,0x00426030,0x00426670,0x004266b0,0x0042a9f0,0x0042d390,0x0042f530,0x00433f40,0x00492440,0x00492e60  pool=Mashed_pool13
@@ -38,6 +37,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-07  hud_frontend_d2-20260507  bucket=hud_frontend_d2  rvas=0x0042f0c0,0x0042fb70,0x0042fe90,0x00430120,0x00430b90,0x00431240,0x004314b0,0x00431710,0x004335f0,0x00434720,0x00439210,0x0043a610,0x0043aa30,0x0043af10  pool=Mashed_pool15  drained-by=sweep-20260507-2002; 14 plates, 14 bookmarks, 0 renames
 2026-05-07  loading_screen-20260507  bucket=loading_screen  rvas=0x00403050  pool=Mashed_pool14  drained-by=sweep-20260507-2002; 1 plate, 1 bookmark, 0 renames
 2026-05-07  hud_ingame_d3-20260507  bucket=hud_ingame_d3  rvas=0x00428450,0x00450b10  pool=Mashed_pool13  drained-by=sweep-20260507-2002; 2 plates, 2 bookmarks, 0 renames
 2026-05-07  game_state_d4-20260507  bucket=game_state_d4  rvas=0x00441d40,0x00442440,0x00445aa0  pool=Mashed_pool10  drained-by=sweep-20260507-2002; 3 plates, 3 bookmarks, 0 renames

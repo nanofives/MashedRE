@@ -556,3 +556,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=game_state_d4  writes=3  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=hud_ingame_d3  writes=2  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=loading_screen  writes=1  errors=0
+2026-05-07  sweep-20260507-2002  scribe-release  bucket=hud_frontend_d2  writes=14  errors=0
