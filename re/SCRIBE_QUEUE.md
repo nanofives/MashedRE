@@ -15,7 +15,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  S-2920..S-2928  U-2927..U-2931  D-8680..D-8688  pool=Mashed_pool4  note=pool14-stale-lock-pivoted-to-pool4
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-07  audio_music_d2-20260507  bucket=audio_music_d2  rvas=0x00431b20,0x0045e0f0,0x005a66d0,0x005a6dc0,0x005baf00  pool=Mashed_pool2
 2026-05-07  effects_particle_d3-20260507  bucket=effects_particle_d3  rvas=0x004e6100,0x00538d60,0x00539900,0x00539ec0  pool=Mashed_pool2
 2026-05-07  game_state_d3-20260507  bucket=game_state_d3  rvas=0x004248b0,0x00424920,0x0042bf30,0x0042d3a0,0x004464c0  pool=Mashed_pool0
 2026-05-07  game_state_d4-20260507  bucket=game_state_d4  rvas=0x00441d40,0x00442440,0x00445aa0  pool=Mashed_pool10
