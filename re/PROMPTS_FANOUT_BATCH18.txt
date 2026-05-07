@@ -1,0 +1,284 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 18
+================================================================================
+
+Four prompts (WWWWW–ZZZZZ). REUSES pool12..pool15 from batch 17.
+
+⚠ LAUNCH GUARD (mandatory) ⚠
+
+DO NOT launch any prompt in this batch while batch 17 is still live.
+Verify before launching:
+
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 17 SSSSS  input_lua_d2          → Batch 18 WWWWW  (pool12)
+  Batch 17 TTTTT  audio_sfx_dispatch_d2 → Batch 18 XXXXX  (pool13)
+  Batch 17 UUUUU  game_state_d3         → Batch 18 YYYYY  (pool14)
+  Batch 17 VVVVV  title_screen          → Batch 18 ZZZZZ  (pool15)
+
+Prompts in this batch (ALL drain queued items from re/queue.md):
+  WWWWW  track_loader_d4    Sonnet medium  — depth-4 of track_loader_d3 (16 deferred RVAs)
+  XXXXX  game_state_d4      Sonnet medium  — depth-4 of game_state_d3 (3 deferred RVAs)
+  YYYYY  intro_splash_d3    Sonnet medium  — depth-3 of intro_splash_d2 (2 deferred RVAs)
+  ZZZZZ  title_screen_d2    Sonnet medium  — depth-2 of title_screen (7 deferred RVAs)
+
+ID ranges + slot assignments (no overlap with batches 1–17 or within batch 18):
+
+  Session  Bucket             Slot           U range      D range      S range
+  -------  -----------------  -------------  -----------  -----------  -----------
+    WWWWW  track_loader_d4    Mashed_pool12  2487..2506   7360..7419   2480..2499
+    XXXXX  game_state_d4      Mashed_pool13  2507..2526   7420..7479   2500..2519
+    YYYYY  intro_splash_d3    Mashed_pool14  2527..2546   7480..7539   2520..2539
+    ZZZZZ  title_screen_d2    Mashed_pool15  2547..2566   7540..7599   2540..2559
+
+DEPTH-N ACQUISITION RULE (all four)
+
+Same as batches 14/15/16/17 — pre-assigned slot, do NOT call ghidra_pool.sh acquire.
+
+================================================================================
+=== PROMPT WWWWW — track_loader depth-4 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session WWWWW; depth-4 drain of track_loader_d3-cont1 (D-5740..D-5755).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md. Read re/queue.md section "track_loader_d3-cont1" — that is your subset.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="track_loader_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: track_loader_d3 (queued cont1 in re/queue.md). Drain D-5740..D-5755 (16 RVAs verbatim from queue.md).
+
+Bucket: re/analysis/track_loader_d4/
+ID-range: U=2487..2506  D=7360..7419  S=2480..2499
+Subsystem: render
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RenderWare_binary_stream_file for chunk shapes if BSP/UVAnim/Spline parsers cite RW IDs.
+- gta-reversed-modern/source/RenderWare/ for RpWorld / RpClump / RtAnim shapes if pertinent.
+ONLY for framing. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. Pre-assigned slot check (do NOT call ghidra_pool.sh acquire):
+   echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 17 sibling SSSSS may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP (project_location="C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool", project_name="$SLOT", program_name="MASHED.exe", read_only=true).
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, one RVA at a time)
+For each RVA in subset (D-5740..D-5755 in queue.md table order):
+  a. function_at <rva> → confirm non-null; capture name, signature, size_bytes.
+  b. decomp_function <rva>; cap_count += (2 if decomp output > 5k tokens else 1).
+  c. function_callees <rva>; do NOT recurse.
+  d. Write re/analysis/track_loader_d4/<rva>.md per re/SESSION_RULES.md format.
+  e. hooks.csv row: rva,name,render,C1,mapped,re/analysis/track_loader_d4/<rva>.md,,,<short notes>.
+  f. U/S in U=2487..2506 / S=2480..2499.
+  g. CHANGELOG row.
+  h. cap_count >= 18 → EARLY-FINISH. Remainder → DEFERRED in D=7360..7419, bucket track_loader_d4-cont1.
+
+After loop: depth-5 DEFERRED rows in D range.
+
+## Shutdown
+mcp__ghidra__program_close
+bash scripts/ghidra_pool.sh release "${SLOT#Mashed_pool}"
+rm .pool_slot
+git add re/analysis/track_loader_d4/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "first pass: track_loader depth-4 (slot $SLOT, $SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+## Queue for scribe sweep
+Append to re/SCRIBE_QUEUE.md "Queued":
+  YYYY-MM-DD  $SESSION_SHORT_ID  bucket=track_loader_d4  rvas=<list>  drained-from=queue.md/track_loader_d3-cont1
+git add re/SCRIBE_QUEUE.md
+git commit -m "queue: track_loader_d4 for sweep ($SESSION_SHORT_ID)"
+git pull --rebase
+git push origin main
+
+After successful drain: remove the "track_loader_d3-cont1" section from re/queue.md (separate commit "queue: drain track_loader_d3-cont1").
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS (refuse)
+- Hedging, recursion past depth-4, exceeding cap, base-bucket reuse, IDs out of range, renaming.
+- Reading DEFERRED rows that don't cite track_loader.
+- Calling ghidra_pool.sh acquire. Launching while batch 17 SSSSS slot is still locked.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT XXXXX — game_state depth-4 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session XXXXX; depth-4 drain of game_state_d3-cont1 (D-7240..D-7242, only 3 RVAs — extend with depth-3 leaves of UUUUU output if cap allows).
+
+[Same SONNET HALTS as WWWWW.]
+
+## Session identifier
+SESSION_SHORT_ID="game_state_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: game_state_d3 (queued cont1 in re/queue.md). Drain D-7240..D-7242 (3 RVAs).
+
+If batch 17 UUUUU produced its own DEFERRED rows in D=7240..7299, also drain those (same parent bucket).
+
+Bucket: re/analysis/game_state_d4/
+ID-range: U=2507..2526  D=7420..7479  S=2500..2519
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 17 TTTTT still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2507..2526 / S=2500..2519. Cap check → DEFERRED in D=7420..7479, bucket game_state_d4-cont1.
+
+After loop: depth-5 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name game_state_d4. Then remove "game_state_d3-cont1" from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 17 TTTTT slot is still locked.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT YYYYY — intro_splash depth-3 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session YYYYY; depth-3 drain of intro_splash_d2-cont1 (D-6940..D-6941).
+
+[Same SONNET HALTS as WWWWW.]
+
+## Session identifier
+SESSION_SHORT_ID="intro_splash_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: intro_splash_d2 (queued cont1 in re/queue.md). Drain D-6940..D-6941 (2 RVAs).
+
+If parent bucket has additional unmapped depth-3 leaves not in queue.md, optionally extend up to cap.
+
+Bucket: re/analysis/intro_splash_d3/
+ID-range: U=2527..2546  D=7480..7539  S=2520..2539
+Subsystem: frontend
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 17 UUUUU still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=2527..2546 / S=2520..2539. Cap check → DEFERRED in D=7480..7539, bucket intro_splash_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name intro_splash_d3. Then remove "intro_splash_d2-cont1" from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 17 UUUUU slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT ZZZZZ — title_screen depth-2 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session ZZZZZ; depth-2 drain of title_screen-cont1 (D-7300..D-7306).
+
+[Same SONNET HALTS as WWWWW.]
+
+## Session identifier
+SESSION_SHORT_ID="title_screen_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: title_screen (queued cont1 in re/queue.md). Drain D-7300..D-7306 (7 RVAs).
+
+Bucket: re/analysis/title_screen_d2/
+ID-range: U=2547..2566  D=7540..7599  S=2540..2559
+Subsystem: frontend
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 17 VVVVV still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=2547..2566 / S=2540..2559. Cap check → DEFERRED in D=7540..7599, bucket title_screen_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name title_screen_d2. Then remove "title_screen-cont1" from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 17 VVVVV slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== END OF BATCH 18 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool12..pool15, but ONLY after batch 17 fully
+released.
+
+ID RANGE SUMMARY
+
+  Batch 18 (4 sessions):   U=2487..2566  D=7360..7599    S=2480..2559
+
+CUMULATIVE ID RANGES (batches 1–18)
+
+  Batches 1–17 (96 sessions):  U=0007..2486  D=0040..7359  S=0001..2479
+  Batch 18 (4 sessions):       U=2487..2566  D=7360..7599  S=2480..2559
+
+  Next batch starts at U=2567, D=7600, S=2560.

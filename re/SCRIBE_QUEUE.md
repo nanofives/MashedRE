@@ -14,6 +14,29 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
+2026-05-07  audio_music_d2-20260507  bucket=audio_music_d2  rvas=0x00431b20,0x0045e0f0,0x005a66d0,0x005a6dc0,0x005baf00  pool=Mashed_pool2
+2026-05-07  effects_particle_d3-20260507  bucket=effects_particle_d3  rvas=0x004e6100,0x00538d60,0x00539900,0x00539ec0  pool=Mashed_pool2
+2026-05-07  game_state_d3-20260507  bucket=game_state_d3  rvas=0x004248b0,0x00424920,0x0042bf30,0x0042d3a0,0x004464c0  pool=Mashed_pool0
+2026-05-07  game_state_d4-20260507  bucket=game_state_d4  rvas=0x00441d40,0x00442440,0x00445aa0  pool=Mashed_pool10
+2026-05-07  hud_frontend_d2-20260507  bucket=hud_frontend_d2  rvas=0x0042f0c0,0x0042fb70,0x0042fe90,0x00430120,0x00430b90,0x00431240,0x004314b0,0x00431710,0x004335f0,0x00434720,0x00439210,0x0043a610,0x0043aa30,0x0043af10  pool=Mashed_pool15
+2026-05-07  hud_ingame_d3-20260507  bucket=hud_ingame_d3  rvas=0x00428450,0x00450b10  pool=Mashed_pool13
+2026-05-07  input_dinput_d2-20260507  bucket=input_dinput_d2  rvas=0x00495120,0x00495150,0x00495270,0x00495520,0x00495580,0x004955b0,0x004955d0,0x00495790,0x004957a0,0x00495870,0x00495e80,0x00495fe0,0x00496010,0x00496040,0x004960a0,0x004960e0,0x00496100,0x00496320,0x00496370,0x004963b0,0x004963e0,0x00496400,0x00496470,0x00496490,0x00496530,0x004967e0,0x00497310,0x00497450,0x00498510,0x00499710  pool=Mashed_pool6
+2026-05-07  loading_screen-20260507  bucket=loading_screen  rvas=0x00403050  pool=Mashed_pool14
+2026-05-07  render_d3d_reset_d2-20260507  bucket=render_d3d_reset_d2  rvas=0x004cb8a0,0x004cba80,0x004cc7f0,0x004ccc50,0x004ccde0,0x004d1d70,0x004d53b0,0x004d5480,0x004d54f0,0x004d5570,0x004db550,0x004dc8e0,0x004dc9e0,0x004e08b0  pool=Mashed_pool3
+2026-05-07  render_frame_d3-20260507  bucket=render_frame_d3  rvas=0x00403050,0x00404320,0x0040de30,0x0040df20,0x0040df60,0x00410b30,0x00426030,0x00426670,0x004266b0,0x0042a9f0,0x0042d390,0x0042f530,0x00433f40,0x00492440,0x00492e60  pool=Mashed_pool13
+2026-05-07  render_pipeline_d2-20260507  bucket=render_pipeline_d2  rvas=0x004c30b0  pool=Mashed_pool5
+2026-05-07  render_pipeline_d3-20260507  bucket=render_pipeline_d3  rvas=0x004c4600,0x004c4a50,0x004c4dc0,0x004c4eb0,0x004c5010,0x004c51a0,0x00552d10,0x00552da0,0x00552df0,0x00552e40  pool=Mashed_pool10
+2026-05-07  rw_engine_init_d3-20260507  bucket=rw_engine_init_d3  rvas=0x00498a00,0x00498c00,0x00498e40,0x00498ea0,0x004a2b60,0x004a42c5,0x004ad1e0,0x004c2d70,0x004c2d90,0x004c2de0,0x004c2e10,0x004c2e40,0x004c2e70,0x004c2ea0,0x004c2f30,0x004c7690,0x004cfa00,0x004d7de0,0x004e7d40  pool=Mashed_pool15
+2026-05-07  rw_engine_teardown_d3-20260507  bucket=rw_engine_teardown_d3  rvas=0x004ccce0  pool=Mashed_pool10
+2026-05-07  texture_loader_d2-20260507  bucket=texture_loader_d2  rvas=0x0042a470,0x004cc5e0,0x004cf7d0,0x0054f8d0  pool=Mashed_pool14
+2026-05-07  texture_loader_d3-20260507  bucket=texture_loader_d3  rvas=0x004c5890,0x004c5bc0,0x004c77c0,0x004cbd30,0x004cc050,0x004cc400,0x004cc4f0,0x004cdd60,0x004cee90,0x004cefd0,0x004e1b60,0x00550130  pool=Mashed_pool0
+2026-05-07  title_screen_d2-20260507  bucket=title_screen_d2  rvas=0x00401ee0,0x0040d250,0x004288a0,0x0042e590,0x0042f0b0  pool=Mashed_pool15
+2026-05-07  track_loader_d3-20260507  bucket=track_loader_d3  rvas=0x0042a5d0,0x0042a640,0x0042a740,0x0042a7f0,0x0042a860,0x0045de80,0x00474fd0,0x00478200,0x004783f0,0x004785e0,0x004790e0,0x0047bf70,0x0047ce40,0x0047f840,0x00480100,0x00491590,0x004b46b0,0x004b5030,0x004cc5e0  pool=Mashed_pool0
+2026-05-07  vehicle_dynamics_d2-20260507  bucket=vehicle_dynamics  rvas=0x00467300,0x0046ef70,0x004709a0,0x004c3b90  pool=Mashed_pool11
+2026-05-07  vehicle_update_d2-20260507  bucket=vehicle_update_d2  rvas=0x0040fc00,0x00420230,0x00422ba0,0x00425a40,0x0046da80,0x00470670,0x004709a0,0x00470c70,0x00480720,0x00480b70  pool=Mashed_pool2
+2026-05-07  vehicle_update_d3-20260507  bucket=vehicle_update_d3  rvas=0x00467350,0x00467650,0x00468980,0x0046dc20,0x0046ddb0,0x0046f6c0,0x0047eb30,0x004809e0  pool=Mashed_pool14
+2026-05-07  video_mci_d2-20260507  bucket=video_mci_d2  rvas=0x00493ac0,0x0049ec10,0x004a3b84  pool=Mashed_pool1
+2026-05-07  window_fullscreen-20260507  bucket=window_fullscreen  rvas=0x00498bf0  pool=Mashed_pool10
 ```
 
 ## Drained

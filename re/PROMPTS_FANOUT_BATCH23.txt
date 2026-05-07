@@ -1,0 +1,295 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 23
+================================================================================
+
+Four prompts (Q6–T6). REUSES pool12..pool15 from batch 22.
+
+⚠ LAUNCH GUARD ⚠ — DO NOT launch while batch 22 is still live.
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 22 M6  piz_validation_d2  → Batch 23 Q6  (pool12)
+  Batch 22 N6  sky_weather_d2     → Batch 23 R6  (pool13)
+  Batch 22 O6  split_screen_d2    → Batch 23 S6  (pool14)
+  Batch 22 P6  race_results_d2    → Batch 23 T6  (pool15)
+
+Prompts in this batch (DRIVERS + d3 of batch-17 children):
+  Q6  librw_plugin_compat   Sonnet medium  — driver: queue.md "librw_plugin_compat" — RW plugin ID compat matrix vs librw
+  R6  piz_fsmanager_handler Sonnet medium  — driver: queue.md "piz_fsmanager_handler" — RtFSManager VFS vtable trace
+  S6  input_lua_d3          Sonnet medium  — depth-3 of input_lua_d2 (batch 17 SSSSS leaves)
+  T6  audio_sfx_dispatch_d3 Sonnet medium  — depth-3 of audio_sfx_dispatch_d2 (batch 17 TTTTT leaves)
+
+ID ranges + slot assignments:
+
+  Session  Bucket                 Slot           U range      D range      S range
+  -------  ---------------------  -------------  -----------  -----------  -----------
+    Q6     librw_plugin_compat    Mashed_pool12  2887..2906   8560..8619   2880..2899
+    R6     piz_fsmanager_handler  Mashed_pool13  2907..2926   8620..8679   2900..2919
+    S6     input_lua_d3           Mashed_pool14  2927..2946   8680..8739   2920..2939
+    T6     audio_sfx_dispatch_d3  Mashed_pool15  2947..2966   8740..8799   2940..2959
+
+DEPTH-N ACQUISITION RULE — same as batches 14..22.
+
+NOTE: Q6 and R6 are DRIVER tasks (no parent-bucket DEFERRED drain). They
+produce structured analysis docs rather than per-RVA hooks.csv rows. Their
+work-loop differs — read their prompt sections.
+
+================================================================================
+=== PROMPT Q6 — librw_plugin_compat (driver) ===================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout DRIVER session Q6; produces librw-vs-Mashed plugin-ID compatibility matrix to gate the librw integration decision.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md. Read re/queue.md section "librw_plugin_compat" — that is your full task spec.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="librw_plugin_compat-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Task (read queue.md first)
+Produce re/analysis/librw_plugin_compat/REPORT.md containing the compat matrix:
+
+  | id    | mashed_size | mashed_callbacks (RVAs) | rw_standard_name | librw_present | librw_size | gap_action |
+
+Inputs:
+- re/analysis/rw_engine_init/004c32b0.md (the 14 (size, id) pairs and FUN_004d7de0 calls).
+- librw source tree — locate via `find ~ -path '*librw/src*' -name '*.c' -o -name '*.h' 2>/dev/null` or ask the user for path if not vendored. If librw is not present locally: halt + surface "librw not vendored; need user to point to source path before driver Q6 can complete."
+
+Bucket: re/analysis/librw_plugin_compat/
+ID-range: U=2887..2906  D=8560..8619  S=2880..2899
+Subsystem: render
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/List_of_RenderWare_plugin_IDs for the 0x401..0x40f range. Cite MCP for everything Mashed-side.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 22 sibling M6 may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop
+For each of the 14 plugin slots in re/analysis/rw_engine_init/004c32b0.md:
+  a. Decompile FUN_004d7de0 call site to capture (size, id, ctor, dtor, copy) callback RVAs.
+  b. function_at each callback RVA to confirm and capture signature.
+  c. Look up id in librw source: present / absent / different size / different signature.
+  d. Append a row to REPORT.md compat matrix.
+  e. cap_count += 1 per id.
+
+Plus: write a "Decision summary" block at the end of REPORT.md:
+  - Number of standard RW plugins matched cleanly.
+  - Number of Mashed-specific extensions (no librw equivalent).
+  - Recommendation: librw-as-substitute viable / partial / not viable.
+  - List of stubs librw would need on the Mashed side.
+
+If unable to obtain librw source: REPORT.md still produced for the Mashed
+side; librw column = "PENDING_USER_INPUT"; surface the halt message above.
+
+## hooks.csv
+Each callback RVA confirmed gets a hooks.csv row, subsystem=render, status=C1, file=re/analysis/librw_plugin_compat/REPORT.md (one report covers many).
+
+## U/S/D
+U/S in U=2887..2906 / S=2880..2899. Cap check → DEFERRED in D=8560..8619, bucket librw_plugin_compat-cont1.
+
+## Shutdown
+Standard.
+git add re/analysis/librw_plugin_compat/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "driver: librw_plugin_compat compat matrix (slot $SLOT, $SESSION_SHORT_ID)"
+
+After successful production: remove "librw_plugin_compat" section from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 22 M6 slot is still locked.
+- Faking librw side of the matrix without source. Hedging.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Plugin IDs analyzed (count + list of (size, id))
+- librw source path used (or PENDING_USER_INPUT)
+- Compat-matrix row count
+- Decision summary verdict
+- Tracker counts; IDs used; cap_count
+- Scribe outcome: queued | n/a — driver
+
+================================================================================
+=== PROMPT R6 — piz_fsmanager_handler (driver) =================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout DRIVER session R6; traces RtFSManager VFS handler vtable to determine .piz shim point.
+
+[Same SONNET HALTS as Q6.]
+
+## Session identifier
+SESSION_SHORT_ID="piz_fsmanager_handler-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Task (read queue.md first)
+Produce re/analysis/piz_fsmanager_handler/REPORT.md.
+
+Inputs:
+- re/analysis/launch_handshake/0x000955d0.md — HardwareInstallFileSystem (FUN_004955d0).
+- &PTR_DAT_005cfee0 — third arg to FUN_00551190; treat as FS handler vtable.
+- FUN_00551190 — RW RtFSManager install routine.
+
+Bucket: re/analysis/piz_fsmanager_handler/
+ID-range: U=2907..2926  D=8620..8679  S=2900..2919
+Subsystem: util
+
+## Reference consultation (FRAMING ONLY)
+- RW RtFSManager API conventions — open/close/read/write/seek/tell/eof/stat. Cite MCP for everything binary-side.
+- re/prior_art/MashedFileExtractor/FileFormats/PIZFile.cs for .piz format reference.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 22 N6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop
+1. listing_data_at &PTR_DAT_005cfee0 → enumerate vtable entries (function pointers).
+2. For each entry, function_at the pointer → confirm function exists; decomp_function for shape.
+3. For each vtable function, function_callees → trace whether it dispatches into .piz code path.
+4. Mark each entry: (rw_standard | mashed_piz_dispatch | other).
+5. Append per-entry row to REPORT.md:
+
+  | offset | function_rva | name | role (open/close/read/...) | calls_piz | notes |
+
+Plus: "Shim verdict" block at end:
+  - Path A (clean shim — all .piz reads go through this vtable) — list functions to reimplement
+  - Path B (partial — some .piz reads bypass FSManager) — list bypass sites
+  - Path C (no .piz integration via FSManager) — list separate .piz call sites
+
+## hooks.csv
+Each vtable function confirmed gets a hooks.csv row, subsystem=util, status=C1, file=re/analysis/piz_fsmanager_handler/REPORT.md.
+
+## U/S/D
+U/S in U=2907..2926 / S=2900..2919. Cap check → DEFERRED in D=8620..8679, bucket piz_fsmanager_handler-cont1.
+
+## Shutdown
+Standard.
+git add re/analysis/piz_fsmanager_handler/ hooks.csv STUBS.md UNCERTAINTIES.md DEFERRED.md re/analysis/CHANGELOG.md
+git commit -m "driver: piz_fsmanager_handler vtable trace (slot $SLOT, $SESSION_SHORT_ID)"
+
+After successful production: remove "piz_fsmanager_handler" section from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 22 N6 slot is still locked.
+- Hedging on shim verdict — if evidence is incomplete, mark UNCERTAIN and stop, do NOT guess.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Vtable entries enumerated (count + offsets)
+- Functions confirmed C1
+- Shim verdict (A/B/C)
+- Tracker counts; IDs used; cap_count
+- Scribe outcome: queued | n/a — driver
+
+================================================================================
+=== PROMPT S6 — input_lua depth-3 ==============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session S6; depth-3 of input_lua_d2 (batch 17 SSSSS DEFERRED leaves).
+
+[Same SONNET HALTS as Q6.]
+
+## Session identifier
+SESSION_SHORT_ID="input_lua_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: input_lua_d2 (batch 17 SSSSS). Apply common rule against bucket input_lua_d2.
+
+If parent has fewer than 5 DEFERRED rows: halt + surface "input_lua_d2 deferred range too small."
+
+Bucket: re/analysis/input_lua_d3/
+ID-range: U=2927..2946  D=8680..8739  S=2920..2939
+Subsystem: input
+
+External Lua imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- Lua 5.x reference manual (lua.org/manual/5.1/). Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 22 O6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=input. U/S in U=2927..2946 / S=2920..2939. Cap → DEFERRED in D=8680..8739, bucket input_lua_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name input_lua_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 22 O6 slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT T6 — audio_sfx_dispatch depth-3 =====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session T6; depth-3 of audio_sfx_dispatch_d2 (batch 17 TTTTT DEFERRED leaves).
+
+[Same SONNET HALTS as Q6.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_sfx_dispatch_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: audio_sfx_dispatch_d2 (batch 17 TTTTT). Apply common rule against bucket audio_sfx_dispatch_d2.
+
+If parent has fewer than 5 DEFERRED rows: halt + surface "audio_sfx_dispatch_d2 deferred range too small."
+
+Bucket: re/analysis/audio_sfx_dispatch_d3/
+ID-range: U=2947..2966  D=8740..8799  S=2940..2959
+Subsystem: audio
+
+External RW audio / DirectSound imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RWS for chunk shapes; DirectSound docs at MSDN. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 22 P6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=2947..2966 / S=2940..2959. Cap → DEFERRED in D=8740..8799, bucket audio_sfx_dispatch_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name audio_sfx_dispatch_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 22 P6 slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== END OF BATCH 23 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 4 in parallel after batch 22 fully released.
+
+ID RANGE SUMMARY
+  Batch 23 (4 sessions):   U=2887..2966  D=8560..8799    S=2880..2959
+  Next batch starts at U=2967, D=8800, S=2960.

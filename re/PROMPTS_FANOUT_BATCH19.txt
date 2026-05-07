@@ -1,0 +1,252 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 19
+================================================================================
+
+Four prompts (A6–D6). REUSES pool12..pool15 from batch 18.
+
+⚠ LAUNCH GUARD (mandatory) ⚠
+
+DO NOT launch any prompt in this batch while batch 18 is still live.
+Verify before launching:
+
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 18 WWWWW  track_loader_d4  → Batch 19 A6  (pool12)
+  Batch 18 XXXXX  game_state_d4    → Batch 19 B6  (pool13)
+  Batch 18 YYYYY  intro_splash_d3  → Batch 19 C6  (pool14)
+  Batch 18 ZZZZZ  title_screen_d2  → Batch 19 D6  (pool15)
+
+Prompts in this batch:
+  A6  audio_music_d3       Sonnet medium  — depth-3 drain of audio_music_d2-cont1 (2 deferred RVAs)
+  B6  input_dinput_d3      Sonnet medium  — depth-3 drain of input_dinput_d2-cont1 (7 deferred RVAs)
+  C6  leaderboard_d2       Sonnet medium  — depth-2 drain of leaderboard-cont1 (5 deferred RVAs)
+  D6  vehicle_dynamics_d2  Sonnet medium  — depth-2 of vehicle_dynamics (only d1 exists)
+
+ID ranges + slot assignments (no overlap with batches 1–18 or within batch 19):
+
+  Session  Bucket               Slot           U range      D range      S range
+  -------  -------------------  -------------  -----------  -----------  -----------
+    A6     audio_music_d3       Mashed_pool12  2567..2586   7600..7659   2560..2579
+    B6     input_dinput_d3      Mashed_pool13  2587..2606   7660..7719   2580..2599
+    C6     leaderboard_d2       Mashed_pool14  2607..2626   7720..7779   2600..2619
+    D6     vehicle_dynamics_d2  Mashed_pool15  2627..2646   7780..7839   2620..2639
+
+DEPTH-N ACQUISITION RULE
+
+Same as batches 14..18 — pre-assigned slot, do NOT call ghidra_pool.sh acquire.
+
+================================================================================
+=== PROMPT A6 — audio_music depth-3 ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session A6; depth-3 drain of audio_music_d2-cont1 (D-6520..D-6521).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md. Read re/queue.md section "audio_music_d2-cont1" — that is your subset.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="audio_music_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: audio_music_d2 (queued cont1 in re/queue.md). Drain D-6520..D-6521 (2 RVAs).
+
+Bucket: re/analysis/audio_music_d3/
+ID-range: U=2567..2586  D=7600..7659  S=2560..2579
+Subsystem: audio
+
+External RW audio imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RWS for chunk shapes if music dispatcher cites RWS streams.
+- DirectSound docs at MSDN. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 18 sibling WWWWW may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then
+     bash scripts/ghidra_pool.sh add 1
+   fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=2567..2586 / S=2560..2579. Cap check → DEFERRED in D=7600..7659, bucket audio_music_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name audio_music_d3. Then remove "audio_music_d2-cont1" from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 18 WWWWW slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT B6 — input_dinput depth-3 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session B6; depth-3 drain of input_dinput_d2-cont1 (D-6760..D-6766).
+
+[Same SONNET HALTS as A6.]
+
+## Session identifier
+SESSION_SHORT_ID="input_dinput_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: input_dinput_d2 (queued cont1 in re/queue.md). Drain D-6760..D-6766 (7 RVAs).
+
+D-6766 (LAB_00495ee0) requires `function_create` first per queue.md note. If the slot is read-only and create is unavailable, halt + surface "input_dinput d3 needs RW slot to materialize EnumDevices callback" and skip that one row only.
+
+Bucket: re/analysis/input_dinput_d3/
+ID-range: U=2587..2606  D=7660..7719  S=2580..2599
+Subsystem: input
+
+External DirectInput imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- DirectInput8 docs at MSDN — IDirectInput8 / IDirectInputDevice8 / DIENUMDEVICESCALLBACK. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 18 XXXXX still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=input. U/S in U=2587..2606 / S=2580..2599. Cap check → DEFERRED in D=7660..7719, bucket input_dinput_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name input_dinput_d3. Then remove "input_dinput_d2-cont1" from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 18 XXXXX slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT C6 — leaderboard depth-2 ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session C6; depth-2 drain of leaderboard-cont1 (D-6580..D-6584).
+
+[Same SONNET HALTS as A6.]
+
+## Session identifier
+SESSION_SHORT_ID="leaderboard_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: leaderboard (queued cont1 in re/queue.md). Drain D-6580..D-6584 (5 RVAs).
+
+D-6581 (Race main tick, ~30 callees) is broad — analyze function itself but DO NOT recurse into its callees; defer them in this session's D range as bucket leaderboard_d3.
+
+Bucket: re/analysis/leaderboard_d2/
+ID-range: U=2607..2626  D=7720..7779  S=2600..2619
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 18 YYYYY still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2607..2626 / S=2600..2619. Cap check → DEFERRED in D=7720..7779, bucket leaderboard_d3.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name leaderboard_d2. Then remove "leaderboard-cont1" from re/queue.md.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 18 YYYYY slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT D6 — vehicle_dynamics depth-2 =======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session D6; depth-2 of vehicle_dynamics (only d1 exists, ready for expansion).
+
+[Same SONNET HALTS as A6.]
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_dynamics_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: vehicle_dynamics (existing bucket, batch ?). Apply common rule: take that bucket's DEFERRED rows, scoped to vehicle_dynamics, capped 20.
+
+If parent bucket has fewer than 5 DEFERRED rows: halt + surface "vehicle_dynamics deferred range too small for an independent d2 session."
+
+Bucket: re/analysis/vehicle_dynamics_d2/
+ID-range: U=2627..2646  D=7780..7839  S=2620..2639
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 18 ZZZZZ still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=vehicle. U/S in U=2627..2646 / S=2620..2639. Cap check → DEFERRED in D=7780..7839, bucket vehicle_dynamics_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name vehicle_dynamics_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 18 ZZZZZ slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== END OF BATCH 19 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool12..pool15, only after batch 18 fully released.
+
+ID RANGE SUMMARY
+
+  Batch 19 (4 sessions):   U=2567..2646  D=7600..7839    S=2560..2639
+
+  Next batch starts at U=2647, D=7840, S=2640.

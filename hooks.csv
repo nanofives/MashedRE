@@ -1233,3 +1233,23 @@
 004cd810,sub_004cd810 (rwID_IMMEDIATEMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40a; size=0x74; LAB_ label not FUN_; U-2887
 004d8a80,sub_004d8a80 (rwID_RESOURCESMODULE ctor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40b; size=0x28; LAB_ label not FUN_; U-2887
 004d8b70,sub_004d8b70 (rwID_RESOURCESMODULE dtor),render,C1,mapped,re/analysis/librw_plugin_compat/REPORT.md,,,plugin id=0x40b; size=0x28; LAB_ label not FUN_; U-2887
+00150c30,RtFSHandler::GetFileSlot,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x14; slot lookup index*0x60+base; no Win32; see re/analysis/piz_fsmanager_handler/REPORT.md
+00151290,RtFSHandler::Destroy,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x18; replaces arg with slot_array; tail-calls RW free via DAT_007d3ff8+0x10c; see re/analysis/piz_fsmanager_handler/REPORT.md
+00150c50,RtFSHandler::Open,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x28; path normalize 0x100-byte buf + FUN_00551410/FUN_00551460; see re/analysis/piz_fsmanager_handler/REPORT.md
+00150d80,RtFSHandler::Close,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x2c; slot[+0x20]=1; CloseHandle([0x005cc088]) on slot[+0x40]; see re/analysis/piz_fsmanager_handler/REPORT.md
+00150da0,RtFSHandler::ReadAsync,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x30; CreateEventA[0x005cc08c]+ReadFile[0x005cc1a4]+GetLastError[0x005cc0cc]; OVERLAPPED; see re/analysis/piz_fsmanager_handler/REPORT.md
+00150f20,RtFSHandler::WriteAsync,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x34; CreateEventA[0x005cc08c]+WriteFile[0x005cc1a0]+GetLastError[0x005cc0cc]; OVERLAPPED; see re/analysis/piz_fsmanager_handler/REPORT.md
+00151050,RtFSHandler::Seek,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x38; SetFilePointer[0x005cc17c]; mode map 1->0 2->1 other->2; handle at slot+0x40; see re/analysis/piz_fsmanager_handler/REPORT.md
+00151090,RtFSHandler::Poll,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x3c; GetOverlappedResult; handles 0x3e4 ERROR_IO_INCOMPLETE 0x3e5 ERROR_IO_PENDING; see re/analysis/piz_fsmanager_handler/REPORT.md
+00151180,RtFSHandler::Cancel,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x40; slot[+0x20]=1; no OS call; see re/analysis/piz_fsmanager_handler/REPORT.md
+001514e0,RtFSHandler::IsEOF,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x44; compares slot[+0x8] pos vs slot[+0x0/+0x4] bounds; returns 1 at EOF; see re/analysis/piz_fsmanager_handler/REPORT.md
+001512b0,RtFSHandler::GetStatus,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x48; if slot[+0x20]!=1 call Poll(slot 0); return slot[+0x20]; see re/analysis/piz_fsmanager_handler/REPORT.md
+001512d0,RtFSHandler::Stat,util,C1,mapped,,,,piz_fsmanager_handler vtable+0x4c; GetFileAttributesA[0x005cc1b4]; return 0 if INVALID_FILE_ATTRIBUTES; see re/analysis/piz_fsmanager_handler/REPORT.md
+00151190,RtFSHandler::Install,util,C1,mapped,,,,FUN_00551190; allocates 0x5c-byte handler struct + 0x14*0x60 slot array; populates 12 vtable fn ptrs; calls FUN_00551330; see re/analysis/piz_fsmanager_handler/REPORT.md
+001504d0,RtFSManager::FindHandler,util,C1,mapped,,,,FUN_005504d0; walks linked list DAT_007dc754 comparing name via RW vtable DAT_007d3ff8+0xe8; see re/analysis/piz_fsmanager_handler/REPORT.md
+000b6710,PizWin32Open,util,C1,mapped,,,,FUN_004b6710; BYPASS SITE: CreateFileA(path GENERIC_READ OPEN_EXISTING FILE_FLAG_OVERLAPPED); handle->DAT_007d3e48; alt path via FUN_004a4541 when DAT_007d3e50&1; see re/analysis/piz_fsmanager_handler/REPORT.md
+000b67e0,PizWin32Read,util,C1,mapped,,,,FUN_004b67e0; BYPASS SITE: ReadFile+GetOverlappedResult async loop on DAT_007d3e48; alt path fseek/fread when DAT_007d3e50&1; see re/analysis/piz_fsmanager_handler/REPORT.md
+000b6940,PizOpenAndParse,util,C1,mapped,,,,FUN_004b6940; reads piz header+directory into DAT_0090dac0; calls PizWin32Open+PizWin32Read; separate from RW VFS; see re/analysis/piz_fsmanager_handler/REPORT.md
+000b6570,PizOpen,util,C1,mapped,,,,FUN_004b6570; thin bool wrapper for PizOpenAndParse; see re/analysis/piz_fsmanager_handler/REPORT.md
+00095280,OpenPizFile,util,C1,mapped,,,,FUN_00495280; path-normalize via FUN_00402b70; logs Opening piz file %s; calls PizOpen; see re/analysis/piz_fsmanager_handler/REPORT.md
+000952f0,ClosePizFile,util,C1,mapped,,,,FUN_004952f0; logs Closing piz file %s; calls thunk_FUN_004b67a0; see re/analysis/piz_fsmanager_handler/REPORT.md

@@ -1,0 +1,217 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 21
+================================================================================
+
+Four prompts (I6–L6). REUSES pool12..pool15 from batch 20.
+
+⚠ LAUNCH GUARD ⚠ — DO NOT launch while batch 20 is still live.
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 20 E6  physics_collision_d2  → Batch 21 I6  (pool12)
+  Batch 20 F6  texture_loader_d3     → Batch 21 J6  (pool13)
+  Batch 20 G6  vehicle_update_d3     → Batch 21 K6  (pool14)
+  Batch 20 H6  minimap_radar_d2      → Batch 21 L6  (pool15)
+
+Prompts in this batch (more under-covered subsystems):
+  I6  cheat_codes_d2     Sonnet medium  — depth-2 of cheat_codes (only d1 exists)
+  J6  debug_overlay_d2   Sonnet medium  — depth-2 of debug_overlay (only d1 exists)
+  K6  loading_screen_d2  Sonnet medium  — depth-2 of loading_screen (only d1 exists)
+  L6  random_rng_d2      Sonnet medium  — depth-2 of random_rng (only d1 exists)
+
+ID ranges + slot assignments:
+
+  Session  Bucket             Slot           U range      D range      S range
+  -------  -----------------  -------------  -----------  -----------  -----------
+    I6     cheat_codes_d2     Mashed_pool12  2727..2746   8080..8139   2720..2739
+    J6     debug_overlay_d2   Mashed_pool13  2747..2766   8140..8199   2740..2759
+    K6     loading_screen_d2  Mashed_pool14  2767..2786   8200..8259   2760..2779
+    L6     random_rng_d2      Mashed_pool15  2787..2806   8260..8319   2780..2799
+
+DEPTH-N ACQUISITION RULE — same as batches 14..20.
+
+================================================================================
+=== PROMPT I6 — cheat_codes depth-2 ============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session I6; depth-2 of cheat_codes.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="cheat_codes_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: cheat_codes (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/cheat_codes_d2/
+ID-range: U=2727..2746  D=8080..8139  S=2720..2739
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 20 sibling E6 may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2727..2746 / S=2720..2739. Cap → DEFERRED in D=8080..8139, bucket cheat_codes_d2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name cheat_codes_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 20 E6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT J6 — debug_overlay depth-2 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session J6; depth-2 of debug_overlay.
+
+[Same SONNET HALTS as I6.]
+
+## Session identifier
+SESSION_SHORT_ID="debug_overlay_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: debug_overlay (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/debug_overlay_d2/
+ID-range: U=2747..2766  D=8140..8199  S=2740..2759
+Subsystem: util
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 20 F6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2747..2766 / S=2740..2759. Cap → DEFERRED in D=8140..8199, bucket debug_overlay_d2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name debug_overlay_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 20 F6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT K6 — loading_screen depth-2 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session K6; depth-2 of loading_screen.
+
+[Same SONNET HALTS as I6.]
+
+## Session identifier
+SESSION_SHORT_ID="loading_screen_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: loading_screen (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/loading_screen_d2/
+ID-range: U=2767..2786  D=8200..8259  S=2760..2779
+Subsystem: frontend
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 20 G6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=2767..2786 / S=2760..2779. Cap → DEFERRED in D=8200..8259, bucket loading_screen_d2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name loading_screen_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 20 G6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT L6 — random_rng depth-2 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session L6; depth-2 of random_rng.
+
+[Same SONNET HALTS as I6.]
+
+## Session identifier
+SESSION_SHORT_ID="random_rng_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: random_rng (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/random_rng_d2/
+ID-range: U=2787..2806  D=8260..8319  S=2780..2799
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 20 H6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2787..2806 / S=2780..2799. Cap → DEFERRED in D=8260..8319, bucket random_rng_d2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name random_rng_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 20 H6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== END OF BATCH 21 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 4 in parallel after batch 20 fully released.
+
+ID RANGE SUMMARY
+  Batch 21 (4 sessions):   U=2727..2806  D=8080..8319    S=2720..2799
+  Next batch starts at U=2807, D=8320, S=2800.

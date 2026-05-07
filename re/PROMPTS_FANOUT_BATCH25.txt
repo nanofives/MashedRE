@@ -1,0 +1,270 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 25
+================================================================================
+
+Four prompts (Y6–BB6). REUSES pool12..pool15 from batch 24.
+
+⚠ LAUNCH GUARD ⚠ — DO NOT launch while batch 24 is still live.
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 24 U6  game_state_d5         → Batch 25 Y6   (pool12)
+  Batch 24 V6  boot_app_init_d2      → Batch 25 Z6   (pool13)
+  Batch 24 W6  settings_config_d3    → Batch 25 AA6  (pool14)
+  Batch 24 X6  window_fullscreen_d2  → Batch 25 BB6  (pool15)
+
+Prompts in this batch (deep d4 + new anchor):
+  Y6   menu_state            Sonnet medium  — ANCHOR-DRIVEN: front-end menu state machine (halt-allowed)
+  Z6   ai_update_d4          Sonnet medium  — depth-4 of ai_update_d3
+  AA6  effects_particle_d4   Sonnet medium  — depth-4 of effects_particle_d3
+  BB6  audio_rws_loader_d4   Sonnet medium  — depth-4 of audio_rws_loader_d3
+
+ID ranges + slot assignments:
+
+  Session  Bucket               Slot           U range      D range      S range
+  -------  -------------------  -------------  -----------  -----------  -----------
+    Y6     menu_state           Mashed_pool12  3047..3066   9040..9099   3040..3059
+    Z6     ai_update_d4         Mashed_pool13  3067..3086   9100..9159   3060..3079
+    AA6    effects_particle_d4  Mashed_pool14  3087..3106   9160..9219   3080..3099
+    BB6    audio_rws_loader_d4  Mashed_pool15  3107..3126   9220..9279   3100..3119
+
+DEPTH-N ACQUISITION RULE — same as batches 14..24.
+
+================================================================================
+=== PROMPT Y6 — menu_state (anchor-driven) =====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session Y6; anchor-driven front-end menu state machine. Halt-allowed if no separate menu_state machinery beyond options_menu / title_screen.
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="menu_state-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition (anchor-driven, halt-allowed)
+Strategy 1 — string anchors:
+  search_defined_strings query="MENU"
+  search_defined_strings query="Menu"
+  search_defined_strings query="MainMenu"
+  search_defined_strings query="MAIN_MENU"
+  search_defined_strings query="frontend"
+  search_defined_strings query="Frontend"
+  search_defined_strings query="FRONTEND"
+  search_defined_strings query="GameSelect"
+  search_defined_strings query="ModeSelect"
+  search_defined_strings query="VehicleSelect"
+  search_defined_strings query="TrackSelect"
+
+Strategy 2 — game_state callers:
+  Use game_state_d3/d4/d5 results to find a menu-state subtree (state IDs branching to options/profile/title/race entries).
+
+Strategy 3 — title_screen → menu transition:
+  title_screen_d2 (batch 18 ZZZZZ) revealed lobby renderers. The function transitioning lobby → main menu is the MENU_STATE_FN candidate.
+
+Identify MENU_STATE_FN: a function that drives the front-end menu state machine
+(menu page transitions, selection focus, confirm/back input dispatch).
+
+If the front-end is just options_menu + title_screen with no separate
+machinery: halt + surface "Menu state subsumed by options_menu / title_screen;
+no independent menu_state function found. Halting cleanly."
+
+If NONE converges: halt + surface "Menu state anchor inconclusive."
+
+If found: function_callees MENU_STATE_FN → subset capped 20/15.
+
+Bucket: re/analysis/menu_state/
+ID-range: U=3047..3066  D=9040..9099  S=3040..3059
+Subsystem: frontend
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 24 sibling U6 may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0, IF found)
+Standard. hooks.csv subsystem=frontend. U/S in U=3047..3066 / S=3040..3059. Cap → DEFERRED in D=9040..9099, bucket menu_state-cont1.
+
+After loop: depth-2 DEFERRED rows in D range.
+
+## Shutdown
+Standard. If found: commit + queue + push. If halted: no commit, release + report.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 24 U6 slot is still locked.
+
+## End-of-session report
+- Slot held: $SLOT (pre-assigned)
+- Anchor outcome (found / subsumed / inconclusive)
+- If found: MENU_STATE_FN (rva/name/size); strategy
+- Menu-related strings observed (verbatim)
+- Functions covered (0 if halted)
+- Tracker counts; IDs used
+- cap_count + early-finish; MCP failures; observations
+- Scribe outcome: queued | n/a — halted
+
+================================================================================
+=== PROMPT Z6 — ai_update depth-4 ==============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session Z6; depth-4 of ai_update_d3.
+
+[Same SONNET HALTS as Y6.]
+
+## Session identifier
+SESSION_SHORT_ID="ai_update_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: ai_update_d3 (existing bucket; recall fanout produced D-4180..D-4199). Apply common rule.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "ai_update_d3 deferred range too small for d4."
+
+Bucket: re/analysis/ai_update_d4/
+ID-range: U=3067..3086  D=9100..9159  S=3060..3079
+Subsystem: ai
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 24 V6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=ai. U/S in U=3067..3086 / S=3060..3079. Cap → DEFERRED in D=9100..9159, bucket ai_update_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name ai_update_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 24 V6 slot is still locked.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT AA6 — effects_particle depth-4 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session AA6; depth-4 of effects_particle_d3.
+
+[Same SONNET HALTS as Y6.]
+
+## Session identifier
+SESSION_SHORT_ID="effects_particle_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: effects_particle_d3 (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/effects_particle_d4/
+ID-range: U=3087..3106  D=9160..9219  S=3080..3099
+Subsystem: render
+
+External RW particle imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RpPrtStd for particle plugin chunk shapes if applicable. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 24 W6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=3087..3106 / S=3080..3099. Cap → DEFERRED in D=9160..9219, bucket effects_particle_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name effects_particle_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 24 W6 slot is still locked.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT BB6 — audio_rws_loader depth-4 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session BB6; depth-4 of audio_rws_loader_d3.
+
+[Same SONNET HALTS as Y6.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_rws_loader_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: audio_rws_loader_d3 (existing bucket; session KKKK had 31 functions). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/audio_rws_loader_d4/
+ID-range: U=3107..3126  D=9220..9279  S=3100..3119
+Subsystem: audio
+
+External RW audio imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RWS for chunk shapes. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 24 X6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=3107..3126 / S=3100..3119. Cap → DEFERRED in D=9220..9279, bucket audio_rws_loader_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name audio_rws_loader_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 24 X6 slot is still locked.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== END OF BATCH 25 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 4 in parallel after batch 24 fully released.
+
+ID RANGE SUMMARY
+  Batch 25 (4 sessions):   U=3047..3126  D=9040..9279    S=3040..3119
+
+CUMULATIVE ID RANGES (batches 1–25)
+  Batches 1–17 (96 sessions):  U=0007..2486  D=0040..7359  S=0001..2479
+  Batch 18 (4 sessions):       U=2487..2566  D=7360..7599  S=2480..2559
+  Batch 19 (4 sessions):       U=2567..2646  D=7600..7839  S=2560..2639
+  Batch 20 (4 sessions):       U=2647..2726  D=7840..8079  S=2640..2719
+  Batch 21 (4 sessions):       U=2727..2806  D=8080..8319  S=2720..2799
+  Batch 22 (4 sessions):       U=2807..2886  D=8320..8559  S=2800..2879
+  Batch 23 (4 sessions):       U=2887..2966  D=8560..8799  S=2880..2959
+  Batch 24 (4 sessions):       U=2967..3046  D=8800..9039  S=2960..3039
+  Batch 25 (4 sessions):       U=3047..3126  D=9040..9279  S=3040..3119
+
+  Next batch (when designed) starts at U=3127, D=9280, S=3120.

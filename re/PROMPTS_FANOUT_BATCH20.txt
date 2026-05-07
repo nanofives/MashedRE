@@ -1,0 +1,245 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 20
+================================================================================
+
+Four prompts (E6–H6). REUSES pool12..pool15 from batch 19.
+
+⚠ LAUNCH GUARD (mandatory) ⚠
+
+DO NOT launch any prompt in this batch while batch 19 is still live.
+Verify before launching:
+
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 19 A6  audio_music_d3       → Batch 20 E6  (pool12)
+  Batch 19 B6  input_dinput_d3      → Batch 20 F6  (pool13)
+  Batch 19 C6  leaderboard_d2       → Batch 20 G6  (pool14)
+  Batch 19 D6  vehicle_dynamics_d2  → Batch 20 H6  (pool15)
+
+Prompts in this batch (broaden coverage of under-covered subsystems):
+  E6  physics_collision_d2  Sonnet medium  — depth-2 of physics_collision (only d1 exists)
+  F6  texture_loader_d3     Sonnet medium  — depth-3 of texture_loader_d2
+  G6  vehicle_update_d3     Sonnet medium  — depth-3 of vehicle_update_d2
+  H6  minimap_radar_d2      Sonnet medium  — depth-2 of minimap_radar (only d1 exists)
+
+ID ranges + slot assignments:
+
+  Session  Bucket                Slot           U range      D range      S range
+  -------  --------------------  -------------  -----------  -----------  -----------
+    E6     physics_collision_d2  Mashed_pool12  2647..2666   7840..7899   2640..2659
+    F6     texture_loader_d3     Mashed_pool13  2667..2686   7900..7959   2660..2679
+    G6     vehicle_update_d3     Mashed_pool14  2687..2706   7960..8019   2680..2699
+    H6     minimap_radar_d2      Mashed_pool15  2707..2726   8020..8079   2700..2719
+
+DEPTH-N ACQUISITION RULE — same as batches 14..19, pre-assigned slot, do NOT call acquire.
+
+================================================================================
+=== PROMPT E6 — physics_collision depth-2 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session E6; depth-2 of physics_collision (only d1 exists; queue.md note: COLLISION_FN not found, BSP system mapped, D-1792 filed).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="physics_collision_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: physics_collision (existing bucket). Apply common rule against bucket physics_collision.
+
+If the parent bucket has fewer than 5 DEFERRED rows: halt + surface "physics_collision deferred range too small for an independent d2 session." (Per re/SCRIBE_QUEUE.md, D-1792 was filed; check for additional callees of FUN_00492e90 and FUN_0047a020.)
+
+Bucket: re/analysis/physics_collision_d2/
+ID-range: U=2647..2666  D=7840..7899  S=2640..2659
+Subsystem: physics
+
+External RW collision imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/Collision_File for collision shape conventions if BSP/sphere/box anchors appear. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 19 sibling A6 may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=physics. U/S in U=2647..2666 / S=2640..2659. Cap check → DEFERRED in D=7840..7899, bucket physics_collision_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name physics_collision_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 19 A6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT F6 — texture_loader depth-3 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session F6; depth-3 of texture_loader_d2.
+
+[Same SONNET HALTS as E6.]
+
+## Session identifier
+SESSION_SHORT_ID="texture_loader_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: texture_loader_d2 (existing bucket). Apply common rule.
+
+Bucket: re/analysis/texture_loader_d3/
+ID-range: U=2667..2686  D=7900..7959  S=2660..2679
+Subsystem: render
+
+External RW texture / D3D9 imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RenderWare_binary_stream_file (TXD chunk shapes); D3D9 IDirect3DTexture9 docs. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 19 B6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=2667..2686 / S=2660..2679. Cap check → DEFERRED in D=7900..7959, bucket texture_loader_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name texture_loader_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 19 B6 slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT G6 — vehicle_update depth-3 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session G6; depth-3 of vehicle_update_d2.
+
+[Same SONNET HALTS as E6.]
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_update_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: vehicle_update_d2 (existing bucket). Apply common rule.
+
+Bucket: re/analysis/vehicle_update_d3/
+ID-range: U=2687..2706  D=7960..8019  S=2680..2699
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — wholly Supersonic. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 19 C6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=vehicle. U/S in U=2687..2706 / S=2680..2699. Cap check → DEFERRED in D=7960..8019, bucket vehicle_update_d3-cont1.
+
+After loop: depth-4 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name vehicle_update_d3.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 19 C6 slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT H6 — minimap_radar depth-2 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session H6; depth-2 of minimap_radar (only d1 exists).
+
+[Same SONNET HALTS as E6.]
+
+## Session identifier
+SESSION_SHORT_ID="minimap_radar_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: minimap_radar (existing bucket). Apply common rule.
+
+If parent bucket has fewer than 5 DEFERRED rows: halt + surface "minimap_radar deferred range too small for an independent d2 session."
+
+Bucket: re/analysis/minimap_radar_d2/
+ID-range: U=2707..2726  D=8020..8079  S=2700..2719
+Subsystem: hud
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 19 D6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=hud. U/S in U=2707..2726 / S=2700..2719. Cap check → DEFERRED in D=8020..8079, bucket minimap_radar_d2-cont1.
+
+After loop: depth-3 DEFERRED rows in D range.
+
+## Shutdown + Queue
+Standard. Bucket name minimap_radar_d2.
+
+DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 19 D6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== END OF BATCH 20 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE
+
+All 4 in parallel — slots pool12..pool15, only after batch 19 fully released.
+
+ID RANGE SUMMARY
+
+  Batch 20 (4 sessions):   U=2647..2726  D=7840..8079    S=2640..2719
+
+  Next batch starts at U=2727, D=8080, S=2720.

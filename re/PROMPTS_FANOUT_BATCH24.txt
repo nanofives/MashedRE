@@ -1,0 +1,222 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 24
+================================================================================
+
+Four prompts (U6–X6). REUSES pool12..pool15 from batch 23.
+
+⚠ LAUNCH GUARD ⚠ — DO NOT launch while batch 23 is still live.
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 23 Q6  librw_plugin_compat   → Batch 24 U6  (pool12)
+  Batch 23 R6  piz_fsmanager_handler → Batch 24 V6  (pool13)
+  Batch 23 S6  input_lua_d3          → Batch 24 W6  (pool14)
+  Batch 23 T6  audio_sfx_dispatch_d3 → Batch 24 X6  (pool15)
+
+Prompts in this batch (deeper chains + remaining gaps):
+  U6  game_state_d5         Sonnet medium  — depth-5 of game_state_d4 (batch 18 XXXXX leaves)
+  V6  boot_app_init_d2      Sonnet medium  — depth-2 of boot_app_init (d1 only; d3 exists but d2 missing)
+  W6  settings_config_d3    Sonnet medium  — depth-3 of settings_config_d2
+  X6  window_fullscreen_d2  Sonnet medium  — depth-2 of window_fullscreen (only d1 exists)
+
+ID ranges + slot assignments:
+
+  Session  Bucket                Slot           U range      D range      S range
+  -------  --------------------  -------------  -----------  -----------  -----------
+    U6     game_state_d5         Mashed_pool12  2967..2986   8800..8859   2960..2979
+    V6     boot_app_init_d2      Mashed_pool13  2987..3006   8860..8919   2980..2999
+    W6     settings_config_d3    Mashed_pool14  3007..3026   8920..8979   3000..3019
+    X6     window_fullscreen_d2  Mashed_pool15  3027..3046   8980..9039   3020..3039
+
+DEPTH-N ACQUISITION RULE — same as batches 14..23.
+
+================================================================================
+=== PROMPT U6 — game_state depth-5 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session U6; depth-5 of game_state_d4 (batch 18 XXXXX DEFERRED leaves).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="game_state_d5-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: game_state_d4 (batch 18 XXXXX). Apply common rule.
+
+If parent has fewer than 5 DEFERRED rows: halt + surface "game_state_d4 deferred range too small."
+
+Bucket: re/analysis/game_state_d5/
+ID-range: U=2967..2986  D=8800..8859  S=2960..2979
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 23 sibling Q6 may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=2967..2986 / S=2960..2979. Cap → DEFERRED in D=8800..8859, bucket game_state_d5-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name game_state_d5. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 23 Q6 slot is still locked.
+
+## End-of-session report
+Standard for d5 sessions.
+
+================================================================================
+=== PROMPT V6 — boot_app_init depth-2 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session V6; depth-2 of boot_app_init (gap: d1 and d3 exist, d2 missing).
+
+[Same SONNET HALTS as U6.]
+
+## Session identifier
+SESSION_SHORT_ID="boot_app_init_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: boot_app_init (existing bucket). Apply common rule, scoped to depth-2 callees that are NOT already covered by boot_app_init_d3.
+
+If parent's d2-only DEFERRED set has fewer than 5 rows: halt + surface "boot_app_init depth-2 already absorbed by d3 sweep."
+
+Bucket: re/analysis/boot_app_init_d2/
+ID-range: U=2987..3006  D=8860..8919  S=2980..2999
+Subsystem: boot
+
+External Win32 / RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- Win32 WinMain / CreateWindow conventions if window creation appears. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 23 R6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=boot. U/S in U=2987..3006 / S=2980..2999. Cap → DEFERRED in D=8860..8919, bucket boot_app_init_d2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name boot_app_init_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 23 R6 slot is still locked.
+- Re-analyzing functions already in boot_app_init_d3.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== PROMPT W6 — settings_config depth-3 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session W6; depth-3 of settings_config_d2.
+
+[Same SONNET HALTS as U6.]
+
+## Session identifier
+SESSION_SHORT_ID="settings_config_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: settings_config_d2 (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/settings_config_d3/
+ID-range: U=3007..3026  D=8920..8979  S=3000..3019
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None — videocfg.bin / gamesave.bin are Mashed-specific. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 23 S6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3007..3026 / S=3000..3019. Cap → DEFERRED in D=8920..8979, bucket settings_config_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name settings_config_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 23 S6 slot is still locked.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT X6 — window_fullscreen depth-2 ======================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session X6; depth-2 of window_fullscreen (only d1 exists).
+
+[Same SONNET HALTS as U6.]
+
+## Session identifier
+SESSION_SHORT_ID="window_fullscreen_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: window_fullscreen (existing bucket). Apply common rule. Halt if <5 DEFERRED.
+
+Bucket: re/analysis/window_fullscreen_d2/
+ID-range: U=3027..3046  D=8980..9039  S=3020..3039
+Subsystem: window
+
+External Win32 / D3D9 imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- Win32 ChangeDisplaySettings / IDirect3DDevice9::Reset docs at MSDN. Cite MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 23 T6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=window. U/S in U=3027..3046 / S=3020..3039. Cap → DEFERRED in D=8980..9039, bucket window_fullscreen_d2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name window_fullscreen_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 23 T6 slot is still locked.
+
+## End-of-session report
+Standard for d2 sessions.
+
+================================================================================
+=== END OF BATCH 24 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 4 in parallel after batch 23 fully released.
+
+ID RANGE SUMMARY
+  Batch 24 (4 sessions):   U=2967..3046  D=8800..9039    S=2960..3039
+  Next batch starts at U=3047, D=9040, S=3040.
