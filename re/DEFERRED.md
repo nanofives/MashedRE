@@ -47,3 +47,12 @@
 | D-7122 | 004ba210 | FUN_004ba210 | input | Lua stub (S-2408): called with (param_1, 1); decompile and classify | input_lua_d3 |
 | D-7123 | 004b9850 | FUN_004b9850 | input | Lua stub (S-2409): called with (param_1); decompile and classify | input_lua_d3 |
 | D-7124 | 004b64e0 | FUN_004b64e0 | input | Lua stub (S-2410): wrapper — receives (param_1, 0, param_2); decompile and classify | input_lua_d3 |
+| D-8680 | 004b7b00 | FUN_004b7b00 | input | error handler (lua_State, error_string); from FUN_004ba1b0 on size>0xfffffffc; decompile and classify | input_lua_d4 |
+| D-8681 | 004b7ba0 | FUN_004b7ba0 | input | error handler (lua_State, int=4); from FUN_004ba1b0 on failed realloc; decompile and classify | input_lua_d4 |
+| D-8682 | 004b7c70 | FUN_004b7c70 | input | longjmp error-path cleanup called from FUN_004b7be0; decompile and classify | input_lua_d4 |
+| D-8683 | 004ba3e0 | FUN_004ba3e0 | input | lua_State sub-init 1 (param_1, param_2); from FUN_004ba210; decompile and classify | input_lua_d4 |
+| D-8684 | 004ba470 | FUN_004ba470 | input | lua_State sub-init 2 (param_1); from FUN_004ba210; decompile and classify | input_lua_d4 |
+| D-8685 | 004ba310 | FUN_004ba310 | input | lua_State sub-init 3 (param_1, param_2); from FUN_004ba210; decompile and classify | input_lua_d4 |
+| D-8686 | 004ba2d0 | FUN_004ba2d0 | input | lua_State sub-init 4 (param_1); from FUN_004ba210; decompile and classify | input_lua_d4 |
+| D-8687 | 004ba250 | FUN_004ba250 | input | lua_State sub-init 5 (param_1); from FUN_004ba210; decompile and classify | input_lua_d4 |
+| D-8688 | 004ba290 | FUN_004ba290 | input | lua_State sub-init 6 (param_1); from FUN_004ba210; decompile and classify | input_lua_d4 |

@@ -1253,3 +1253,8 @@
 000b6570,PizOpen,util,C1,mapped,,,,FUN_004b6570; thin bool wrapper for PizOpenAndParse; see re/analysis/piz_fsmanager_handler/REPORT.md
 00095280,OpenPizFile,util,C1,mapped,,,,FUN_00495280; path-normalize via FUN_00402b70; logs Opening piz file %s; calls PizOpen; see re/analysis/piz_fsmanager_handler/REPORT.md
 000952f0,ClosePizFile,util,C1,mapped,,,,FUN_004952f0; logs Closing piz file %s; calls thunk_FUN_004b67a0; see re/analysis/piz_fsmanager_handler/REPORT.md
+004ba1b0,FUN_004ba1b0,input,C1,mapped,re/analysis/input_lua_d3/0x004ba1b0.md,,,lua_Alloc callback: free(size=0)/realloc/error; S-2920 S-2921 U-2927 U-2928 D-8680 D-8681
+004b7be0,FUN_004b7be0,input,C1,mapped,re/analysis/input_lua_d3/0x004b7be0.md,,,luaD_rawrunprotected: __setjmp3+(*param_2)(L ud) protected call; S-2922 U-2929 U-2930 U-2931 D-8682
+004ba210,FUN_004ba210,input,C1,mapped,re/analysis/input_lua_d3/0x004ba210.md,,,lua_State init dispatcher: 6 sequential sub-init calls; S-2923..S-2928 U-2932 D-8683..D-8688
+004b9850,FUN_004b9850,input,C1,mapped,re/analysis/input_lua_d3/0x004b9850.md,,,Lua GC block teardown: *(+0x60)-=(+0x38++0x2c)*4; free +0x34 +0x40 via FUN_004ba1b0
+004b64e0,FUN_004b64e0,input,C1,mapped,re/analysis/input_lua_d3/0x004b64e0.md,,,inline memset: word-fill then byte-fill; leaf; no calls
