@@ -558,3 +558,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=loading_screen  writes=1  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=hud_frontend_d2  writes=14  errors=0
 2026-05-07  sweep-20260507-2002  scribe-release  bucket=input_dinput_d2  writes=30  errors=0
+2026-05-07  sweep-20260507-2002  scribe-release  bucket=render_d3d_reset_d2  writes=14  errors=0
