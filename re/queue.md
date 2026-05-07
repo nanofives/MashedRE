@@ -67,27 +67,3 @@ Decision: librw-as-substitute NOT viable as-is. 14 stubs required.
 Gating next step: D-8560 (decompile 28 callbacks) → bucket librw_plugin_compat-cont1.
 IDs used: U-2887..U-2891, D-8560. Scribe queued.
 
----
-
-## piz_fsmanager_handler  [queued 2026-05-06]
-
-**Bucket:** re/analysis/piz_fsmanager_handler/
-**Parent:** launch_handshake (FUN_004955d0 = HardwareInstallFileSystem, C1)
-**Subsystem:** util
-**Driver:** librw integration feasibility study
-
-Goal: trace Mashed's RtFSManager file-system handler to determine whether `.piz` archive reads route through the FSManager VFS layer (clean shim point) or are bolted in elsewhere.
-
-**Known anchors:**
-- `FUN_004955d0` (HardwareInstallFileSystem, 0x004955d0) — installs an FS handler via `FUN_00551190(0x14, ...)` for cwd and per-drive (re/analysis/launch_handshake/0x000955d0.md).
-- `FUN_00551190` is RW's RtFSManager install routine; first arg `0x14` is the FS type/size descriptor.
-- `&PTR_DAT_005cfee0` is passed as third arg — this is the FS handler vtable (open/read/close/etc.).
-
-**Tasks:**
-1. Decompile `PTR_DAT_005cfee0` as an RtFSManager FS handler vtable; enumerate function pointers (open/close/read/write/seek/stat/etc.).
-2. For each vtable entry, identify the implementation function and check whether it dispatches to `.piz` archive reader (re/tools/piz_extract.py shows the format).
-3. Determine: is `.piz` reading (a) inside the FS handler vtable (clean shim), or (b) called separately from game code (more invasive shim).
-4. If (a): document the FS handler signature so a librw-side stub can call into our `.piz` reader.
-5. If (b): identify each `.piz` open/read site and assess refactor cost.
-
-**Blocks:** librw integration design; cannot decide on `RtFSManager` shim approach without knowing the call graph.
