@@ -594,3 +594,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  005baf60  FUN_005baf60  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005baf60.md
 2026-05-08  005baf90  FUN_005baf90  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005baf90.md; U-0361 filed
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=leaderboard_d3  writes=31  errors=0  note=0x00412f30 written with [C0] prefix (function object exists; analysis C0 due to size cap)
+2026-05-08  sweep-20260508-0358  scribe-release  bucket=hud_frontend_d4  writes=0  errors=0  note=all 18 RVAs missing per-RVA .md files (only notes.md present)
