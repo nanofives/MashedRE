@@ -14,12 +14,12 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-2026-05-08  audio_dsound-20260508-0406  bucket=audio_dsound_d4  rvas=0x005ba1d0(tail),0x005c7990,0x005bc400,0x005bbfc0,0x005baf60,0x005baf90  S-3190  U-0360..U-0363  D-0940-resolved  D-0952  pool=Mashed_pool1  note=D-0940 tail fully analyzed (0x005ba4a0–0x005ba716, 211 code units); 5 new C1 plates; S-3190=FUN_005aa560 depth-2 stub; 4 new uncertainties
 ```
 
 ## Drained
 
 ```
+2026-05-08  audio_dsound-20260508-0406  bucket=audio_dsound_d4  rvas=0x005ba1d0(tail),0x005c7990,0x005bc400,0x005bbfc0,0x005baf60,0x005baf90  S-3190  U-0360..U-0363  D-0940-resolved  D-0952  pool=Mashed_pool1  note=D-0940 tail fully analyzed (0x005ba4a0–0x005ba716, 211 code units); 5 new C1 plates; S-3190=FUN_005aa560 depth-2 stub; 4 new uncertainties  drained-by=sweep-20260508-0603; 6 plates, 6 bookmarks, 0 renames; tail plate written at function start (overwrites prior d1 head plate)
 2026-05-08  audio_dsound_d3-20260508  bucket=audio_dsound_d3  rvas=0x005aabe0,0x005bc860,0x005bc880,0x005baf40,0x005aaa00,0x005aab70,0x005baa60,0x005bc750,0x005aeea0,0x005aef00,0x005aef30,0x005bc470,0x005bc640,0x005bbd50,0x005bbed0  S-3180..S-3189  U-3187..U-3196  D-none  pool=Mashed_pool15  drained-by=sweep-20260508-0358; 15 plates, 15 bookmarks, 0 renames
 2026-05-07  game_state_d5-20260507  bucket=game_state_d5  rvas=0x00441c80,0x004430a0,0x004102f0,0x004430b0,0x0046baa0  S-2500..S-2501-resolved  S-2929..S-2930  U-3010..U-3013  D-8689..D-8690  pool=Mashed_pool1  drained-by=sweep-20260508-0358; 5 plates, 5 bookmarks, 0 renames
 2026-05-08  game_state_d5-cont1-20260508-0324  bucket=game_state_d5-cont1  rvas=0x00405460,0x0040e590  S-2929..S-2930-resolved  S-2960..S-2975  U-2967..U-2974  D-8800..D-8815  pool=Mashed_pool12  drained-by=sweep-20260508-0358; 2 plates, 2 bookmarks, 0 renames
