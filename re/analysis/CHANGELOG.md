@@ -619,3 +619,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x00480720 FUN_00480720; vehicle_update/00480720.md cross-refs vehicle_update_d2
 2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x004809e0 FUN_004809e0; vehicle_update/004809e0.md cross-refs vehicle_update_d3
 2026-05-08  vehicle_update-20260508-0613  D-1060..D-1062 filed; cap split (23>20); vehicle_update-cont1 pickup
+2026-05-08 track_loader-20260508-0616 first-pass bucket=track_loader rvas=20 slot=Mashed_pool3

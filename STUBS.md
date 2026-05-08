@@ -716,3 +716,15 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0382 | 0x004215c0 FUN_004215c0 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | vehicle speed/parameter setter; called twice with 0x42480000 (50.0f) for axes 0 and 1 |
 | S-0383 | 0x0045ba00 FUN_0045ba00 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | powerup state reset with mode 2 |
 | S-0384 | 0x00419760 thunk_FUN_00419760 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | player control enable thunk; called when FUN_0040e470(param_1)==1 and mode!=7 |
+| S-3200 | 0x004095a0 FUN_004095a0 | 0x00409710 FUN_00409710 | render | passthrough | 2026-05-08 | called as FUN_004095a0(1) before opening led.piz; 1-arg setup; track_loader |
+| S-3201 | 0x004cc230 FUN_004cc230 | 0x00409710 FUN_00409710; 0x004235b0 FUN_004235b0 | render | passthrough | 2026-05-08 | called as FUN_004cc230(2,1,&DAT_0063b7f0/00644110); returns handle; track_loader |
+| S-3202 | 0x004cc5e0 FUN_004cc5e0 | 0x00409710 FUN_00409710; 0x004235b0 FUN_004235b0 | render | passthrough | 2026-05-08 | called as FUN_004cc5e0(handle,id,&out1,out2); returns int; id=0x13269901/0x13269902; track_loader |
+| S-3203 | 0x004cbd30 FUN_004cbd30 | 0x00409710 FUN_00409710; 0x004235b0 FUN_004235b0 | render | passthrough | 2026-05-08 | called as FUN_004cbd30(handle,&buf,size); reads data into float array; track_loader |
+| S-3204 | 0x004cc160 FUN_004cc160 | 0x00409710 FUN_00409710; 0x004235b0 FUN_004235b0 | render | passthrough | 2026-05-08 | called as FUN_004cc160(handle,0); close/release handle; track_loader |
+| S-3205 | 0x004b3f90 FUN_004b3f90 | 0x00412050 FUN_00412050 | render | passthrough | 2026-05-08 | 7-arg call (handle,ptr,0,0.1f,~1.0f,3.0f,index); returns object; track_loader |
+| S-3206 | 0x0047fad0 FUN_0047fad0 | 0x00412050 FUN_00412050 | render | passthrough | 2026-05-08 | 1-arg; wraps FUN_004b3f90 result; track_loader |
+| S-3207 | 0x0047cdc0 FUN_0047cdc0 | 0x00412050 FUN_00412050 | render | passthrough | 2026-05-08 | 2-arg (result_ptr, 6.0f); called twice per iteration; track_loader |
+| S-3208 | 0x00423480 FUN_00423480 | 0x004235b0 FUN_004235b0 | render | passthrough | 2026-05-08 | no-arg setup call before opening ai.piz; track_loader |
+| S-3209 | 0x00425bf0 FUN_00425bf0 | 0x004262f0 FUN_004262f0 | render | passthrough | 2026-05-08 | no-arg call before loop in FUN_004262f0; track_loader |
+| S-3210 | 0x00425c00 FUN_00425c00 | 0x004262f0 FUN_004262f0 | render | passthrough | 2026-05-08 | 1-arg (ptr to 64-byte entry); per-element op; track_loader |
+| S-3211 | 0x00425b70 FUN_00425b70 | 0x004262f0 FUN_004262f0 | render | passthrough | 2026-05-08 | 2-arg (index, lookup_result); per-element op; track_loader |
