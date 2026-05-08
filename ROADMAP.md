@@ -83,19 +83,19 @@ The project is **DONE** (v1.0) when:
 - Every global accessed during boot has a documented type.
 - Frida boot trace runs and is checked into `verify/boot_trace_baseline.csv`.
 
-### Phase 4 — Dev harness + standalone skeleton (target: 2–3 weeks)
+### Phase 4 — Dev harness + standalone skeleton (in-progress, started 2026-05-08; target: 2–3 weeks)
 **Goal:** stand up *both* build targets (greenfield exe + dev-mode hook DLL) and prove the verification loop on one small function.
 **Activities:**
-- Install MSVC Build Tools 2022 (x86); write `mashedmod/src/mashed_re/build.bat` calling `vcvars32.bat`.
-- Scaffold `mashed_re.exe` standalone: `WinMain`, empty event loop, exits cleanly.
-- Scaffold `mashed_re_dev.asi` with the inline-JMP hook installer + runtime toggle registry.
-- Drop Ultimate-ASI-Loader (`d3d9.dll`) into `original\`; install `.asi`; confirm game still runs.
-- Pick one leaf function (e.g., a math util) and ship it through F-DoD using the hook + Frida diff.
+- ✅ Install MSVC Build Tools 2022 (x86); write `mashedmod/build.bat` calling `vcvars32.bat`. (2026-05-08)
+- ✅ Scaffold `mashed_re.exe` standalone: `WinMain`, empty event loop, exits cleanly. (2026-05-08)
+- ✅ Scaffold `mashed_re_dev.asi` with `DllMain` + `InjectHooks()` bootstrap stub. (2026-05-08; inline-JMP installer + runtime toggle registry pending — added when leaf function is picked)
+- ⏳ Drop Ultimate-ASI-Loader (`d3d9.dll`) into `original\`; install `.asi`; confirm game still runs.
+- ⏳ Pick one leaf function (e.g., a math util) and ship it through F-DoD using the hook + Frida diff.
 **Exit criteria:**
-- `mashed_re.exe` builds and exits 0.
-- `mashed_re_dev.asi` builds, loads into `MASHED.exe`, game still runs.
-- One function is C4 in `hooks.csv` with a green Frida diff.
-- `hook-author` and `diff-original` skills exercised end-to-end.
+- ✅ `mashed_re.exe` builds and exits 0. (verified 2026-05-08: x86, Subsystem 2/Windows GUI, exit code 0)
+- 🟡 `mashed_re_dev.asi` builds (verified 2026-05-08: x86 DLL); loading into MASHED.exe pending ASI-Loader install.
+- ⏳ One function is C4 in `hooks.csv` with a green Frida diff.
+- ⏳ `hook-author` and `diff-original` skills exercised end-to-end.
 
 ### Phase 5 — Subsystem sweeps (target: 4–8 weeks each, parallelizable)
 **Goal:** progressively reverse each subsystem and land its functions into the **standalone exe**, using the dev harness for verification.

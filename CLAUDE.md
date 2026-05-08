@@ -67,7 +67,7 @@ Do not move or delete anything in `original\` without explicit user permission.
 - **Ghidra 12.0.3** — shared install at `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra_12.0.3_PUBLIC` (do not duplicate).
 - **Ghidra MCP** — `mrphrazer/ghidra-headless-mcp`, shared install at `C:\Users\maria\Desktop\Proyectos\TD5RE\ghidra-headless-mcp\`. Wired via `.mcp.json`.
 - **Python 3.12** invoked as `py -3.12` for tooling and the MCP server.
-- **MinGW** (32-bit i686) — to be vendored under `mashedmod\deps\mingw\` (mirroring TD5RE) when DLL build starts. Not yet installed.
+- **MSVC Build Tools 2022 (x86)** — installed at `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools`. Activated via `VC\Auxiliary\Build\vcvars32.bat`. `cl.exe 19.44+` produces both targets via `mashedmod\build.bat`. Choice locked 2026-05-08: chosen over MinGW for ABI compatibility with the original MSVC-built MASHED.exe (cleaner `__thiscall`, vtable layout, exception handling for hook surfaces).
 - **Frida** for runtime tracing / behavioral diffs. Already installed via the user's Python.
 
 ## Workflow conventions
