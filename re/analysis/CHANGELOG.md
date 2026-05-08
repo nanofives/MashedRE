@@ -661,3 +661,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=boot_app_init_d5  writes=36  errors=0
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=boot_app_init_d2-cont1_a  writes=19  errors=0  note=bookmarks only (19 collision RVAs); plates authoritative from boot_app_init_d5
 2026-05-08  sweep-20260508-1728  scribe-release  buckets=6 drained  errors=0  sync=12/16 (4 skipped: pool1,pool2,pool3,pool12 file-busy/Windows)
+2026-05-08  sweep-20260508-1737  scribe-claim  buckets=2 queued, 1 skipped-HOLD
+2026-05-08  sweep-20260508-1737  scribe-release  bucket=input_lua_d4  writes=15  errors=0
