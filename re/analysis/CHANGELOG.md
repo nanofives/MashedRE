@@ -654,3 +654,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  boot_app_init_d4-20260508-1650  first-pass  bucket=boot_app_init_d4  rvas=20  C1  pool=Mashed_pool0  S-3212..S-3219  U-3222..U-3226  D-9520  drift-skip=D-8862,D-8864,D-8909
 2026-05-08  sweep-20260508-1728  scribe-claim  buckets=4 queued, 1 skipped-HOLD
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=game_state_d5-cont2  writes=16  errors=0
+2026-05-08  sweep-20260508-1728  scribe-release  bucket=hud_frontend_d4  writes=18  errors=0
