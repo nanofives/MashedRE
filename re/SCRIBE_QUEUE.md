@@ -15,6 +15,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ```
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 2026-05-08  powerups_d4-20260508-1823  bucket=powerups_d4  rvas=0x004c1210,0x004c15c0,0x004e43b0,0x004e4800,0x00534d00,0x004c0910,0x004c0d70,0x004e8e90,0x004e8ea0,0x004d8bd0  S-3520..S-3525  U-3527..U-3537  D-10480..D-10483  clears=D-5680..D-5686,S-1920..S-1930  pool=Mashed_pool5  note=10 C1 plates; S-1930 drift-cleared (004d8000 already C1 intro_splash_d3); pool4-stale-lock fallback to pool5
+2026-05-08  c0_promotion_render_a-20260508-1600  bucket=c0_promotion_render_a  rvas=0x00403910,0x00404650,0x004072e0,0x0040bde0,0x00413a00,0x00413a40,0x004189c0,0x00422ac0,0x00422af0,0x00426640,0x00426e00,0x00448730,0x0045b990,0x00475d30,0x00475e50,0x00477810  S-3540..S-3559  U-3547  D-10540..D-10541  pool=Mashed_pool11  note=16 render C1 plates; 17 drift-skipped (render_frame_d4); 2 deferred >800B (D-10540 00422570, D-10541 00429e10); S-range exhausted mid-0040bde0 (3 callees + 10 later callees without IDs); pool5-stale-lock fallback to pool11
 ```
 
 ## Drained
