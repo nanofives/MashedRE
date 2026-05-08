@@ -587,3 +587,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=render_frame_d4  writes=20  errors=0
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=settings_config_d3  writes=8  errors=0  note=0x004991f0 written as listing-level (no Ghidra function object — C0 plate)
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=ai_update_d4  writes=5  errors=0  note=CONFLICT D-6461 vs 0x004c3b30 noted (analysis authoritative; D-6461 clear via re-classify)
+2026-05-08  005ba1d0  FUN_005ba1d0  tail-analyzed  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005ba1d0_tail.md; D-0940 resolved; D-0952 filed; U-0363 filed
+2026-05-08  005c7990  FUN_005c7990  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005c7990.md; S-3190 filed
+2026-05-08  005bc400  FUN_005bc400  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005bc400.md; U-0360 filed
+2026-05-08  005bbfc0  FUN_005bbfc0  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005bbfc0.md; U-0362 filed
+2026-05-08  005baf60  FUN_005baf60  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005baf60.md
+2026-05-08  005baf90  FUN_005baf90  C0->C1  audio_dsound-20260508-0406 (audio_dsound_d4); re/analysis/audio_dsound_d4/0x005baf90.md; U-0361 filed

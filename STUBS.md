@@ -697,6 +697,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3187 | 0x005be0f0 FUN_005be0f0 | 0x005bc470 FUN_005bc470 | audio | passthrough | 2026-05-08 | called as FUN_005be0f0(0,param_3+2) and FUN_005be0f0(0,param_3+8,0); slot init; audio_dsound_d3 |
 | S-3188 | 0x005be160 FUN_005be160 | 0x005bc640 FUN_005bc640 | audio | passthrough | 2026-05-08 | called as FUN_005be160(param_1+2) and FUN_005be160(param_1+8); slot cleanup; audio_dsound_d3 |
 | S-3189 | 0x005aef70 LAB_005aef70 | 0x005aef30 FUN_005aef30 | audio | passthrough | 2026-05-08 | _beginthread target; thread wrapper proc; receives thread-descriptor ptr as arg; dispatches to [1] proc; audio_dsound_d3 |
+| S-3190 | 0x005aa560 FUN_005aa560 | 0x005c7990 FUN_005c7990 | audio | passthrough | 2026-05-08 | called as FUN_005aa560(&DAT_007de1c0,0,p2,p1,p3,p4); 567 bytes (005aa560–005aa797); depth-2 from 005ba1d0 tail; D-0952; audio_dsound_d4 |
 | S-3120 | 0x00412130 FUN_00412130 | 0x00401f10 FUN_00401f10 | render | passthrough | 2026-05-08 | called as count getter; return used as loop bound for second sub-array at DAT_00636ac0+0x50; render_frame_d4 |
 | S-3121 | 0x004e6680 FUN_004e6680 | 0x00401f10 FUN_00401f10; 0x004725c0 FUN_004725c0 | render | passthrough | 2026-05-08 | per-element op on pointer arrays at DAT_00636ac0+0x40/+0x50 and DAT_0069150c; render_frame_d4 |
 | S-3122 | 0x00427e00 FUN_00427e00 | 0x00403fa0 FUN_00403fa0; 0x004041c0 FUN_004041c0 | render | passthrough | 2026-05-08 | 6-arg sprite/text draw (id, x, y, color, scale, mode); render_frame_d4 |

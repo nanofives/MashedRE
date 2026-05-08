@@ -248,8 +248,13 @@
 005b9f30,LAB_005b9f30,audio,C1,mapped,re/analysis/audio_dsound/0x005b9f30.md,,,fn-ptr constructor: writes 4 ptrs (LAB_005ba1d0/005ba7f0/005ba780/005bad30) to audio obj struct+0x28..+0x3c; sets +0x40/+0x44/+0x46; U-0347..U-0350
 005a9e10,FUN_005a9e10,audio,C1,mapped,re/analysis/audio_dsound/0x005a9e10.md,,,two-call dispatcher: FUN_005adfe0(param_1 param_3) + FUN_005ae010(param_1 param_2); returns param_1; 33 bytes; U-0351
 005aee20,FUN_005aee20,audio,C1,mapped,re/analysis/audio_dsound/0x005aee20.md,,,bit-scan-forward loop 0..31; always called with 0x28 (lowest bit=3); decompiler types void but caller reads byte; 27 bytes; U-0352
-005ba1d0,LAB_005ba1d0,audio,C1,mapped,re/analysis/audio_dsound/0x005ba1d0.md,,,unrecognized; DirectSound init path A: pGUID=[ESI+0x4]; flag accumulation 0x20/0x40/0x4; vtable+0x18; buf-create; U-0353..U-0355
+005ba1d0,FUN_005ba1d0,audio,C1,mapped,re/analysis/audio_dsound/0x005ba1d0.md,,,DirectSound init path A: pGUID=[ESI+0x4]; flag accumulation 0x20/0x40/0x4; vtable+0x18; buf-create; tail=re/analysis/audio_dsound_d4/0x005ba1d0_tail.md; D-0940 resolved; U-0353..U-0355 U-0363
 005bad30,LAB_005bad30,audio,C1,mapped,re/analysis/audio_dsound/0x005bad30.md,,,unrecognized; DirectSound init path B: NULL GUID; hardcoded 0xbb80Hz/0x10-bit; GetCaps(vtable+0x10)+clamp; vtable+0x18; 459 bytes; U-0356..U-0359
+005baf60,FUN_005baf60,audio,C1,mapped,re/analysis/audio_dsound_d4/0x005baf60.md,,,audio buffer field setter: +0x74=param_2; +0x78|=0x100; cond write to [+0x11c]+0x38; audio_dsound_d4
+005baf90,FUN_005baf90,audio,C1,mapped,re/analysis/audio_dsound_d4/0x005baf90.md,,,vtable+0x20 caller on +0x7c (IDirectSound8*); unconditional return 1; U-0361; audio_dsound_d4
+005bbfc0,FUN_005bbfc0,audio,C1,mapped,re/analysis/audio_dsound_d4/0x005bbfc0.md,,,QI+vtable+0x14 secondary init; IID=DAT_005d09bc; vtable+0x14 with DAT_005e7100; U-0362; audio_dsound_d4
+005bc400,FUN_005bc400,audio,C1,mapped,re/analysis/audio_dsound_d4/0x005bc400.md,,,double-QI chain: QI(DAT_005d09dc)→*param_2; QI(DAT_005d09bc)→*(param_2+1); returns 1/0; U-0360; audio_dsound_d4
+005c7990,FUN_005c7990,audio,C1,mapped,re/analysis/audio_dsound_d4/0x005c7990.md,,,thin wrapper: FUN_005aa560(&DAT_007de1c0,0,p2,p1,p3,p4); p1/p2 swap; S-3190 filed; audio_dsound_d4
 0042a470,FUN_0042a470,render,C1,mapped,re/analysis/texture_loader_d2/0x0042a470.md,,,platform-prefixed path builder; switch(param_3){1=no-prefix,2=ps2/,3=xbox/,4=pc/,5=gamecube/}; appends prefix+filename to static buf DAT_0067daa8 via vtable+0xcc/+0xd4; existence-tests via thunk_FUN_00550b00; copies to param_1 if non-null; returns 1=found 0=not
 0042a530,FUN_0042a530,render,C1,mapped,re/analysis/texture_loader/0x0042a530.md,,,piz searcher: tries type codes 4/1/3/2/5 via FUN_0042a470; returns first nonzero code or 0; U-0607 U-0608
 004cc5e0,FUN_004cc5e0,render,C2,mapped,re/analysis/texture_loader_d2/0x004cc5e0.md,,,RwStreamFindChunk: scans stream for chunk matching type param_2; skips via FUN_004cc050; validates version [0x35000..0x37002] at 0x004cc637/0x004cc645; outputs size+version; returns 1=found 0=not; U-1274 U-1275
@@ -1107,42 +1112,42 @@
 0041f320,Car::GetState,util,C1,new,re/analysis/leaderboard_d2/0x0041f320.md,,,per-car state array reader (11b); DAT_0063d830[param_1]; callee of Course::ValidateCarsFinished; leaderboard_d2-20260506
 0041efc0,Car::GetLapProgress,util,C1,new,re/analysis/leaderboard_d2/0x0041efc0.md,,,per-car lap/progress field reader (22b); DAT_0063dc48[param_1*0x2ac].ptr->+0x80; stride 0x2ac=684b; callee of Course::ValidateCarsFinished; leaderboard_d2-20260506
 004103a0,TimeTrial::LapFinishProcessor,util,C1,new,re/analysis/leaderboard_d2/0x004103a0.md,,,lap-finish/race-completion monitor (359b); gates: FUN_00429860(S-2603)+FUN_00430820(S-2604); mode2→FUN_0040e560; lap-time FUN_0041da90(S-2605); complete→FUN_00429840(1)+FUN_00411d60(S-2606)+mode=6; FUN_00411ae0(0 0); sole caller of D-6580; leaderboard_d2-20260506
-00403250,FUN_00403250,util,C0,deferred,,,, TT tick dispatcher (582b); Race::Tick case-0xb with DAT_007f1004; D-7720; leaderboard_d3-cont1
-004039f0,FUN_004039f0,util,C0,deferred,,,, unknown (378b); Race::Tick case-10 when FUN_0040e350==6; D-7721; leaderboard_d3-cont1
-00406ce0,FUN_00406ce0,util,C0,deferred,,,, unknown (~1403b); Race::Tick when DAT_007f0fd0==5; D-7722; leaderboard_d3-cont1
-0040ce00,FUN_0040ce00,util,C0,deferred,,,, unknown update (125b); Race::Tick; D-7723; leaderboard_d3-cont1
-0040d470,FUN_0040d470,util,C0,deferred,,,, unknown update (~284b); Race::Tick arg 0; D-7724; leaderboard_d3-cont1
-0040da50,FUN_0040da50,util,C0,deferred,,,, unknown update (~274b); Race::Tick; D-7725; leaderboard_d3-cont1
-0040dba0,FUN_0040dba0,util,C0,deferred,,,, unknown update (40b); Race::Tick; D-7726; leaderboard_d3-cont1
-0040e350,FUN_0040e350,util,C0,deferred,,,, unknown getter (5b); Race::Tick case-10; return vs 6; D-7727; leaderboard_d3-cont1
-00412f30,FUN_00412f30,util,C0,deferred,,,, unknown (~1744b); Race::Tick; arg from FUN_00467210(0); D-7728; leaderboard_d3-cont1
-00413f20,FUN_00413f20,util,C0,deferred,,,, unknown (42b); Race::Tick mode7+ branch; D-7729; leaderboard_d3-cont1
-004189a0,FUN_004189a0,util,C0,deferred,,,, unknown (24b); Race::Tick; D-7730; leaderboard_d3-cont1
-0041a250,FUN_0041a250,util,C0,deferred,,,, unknown (~377b); Race::Tick case-10; D-7731; leaderboard_d3-cont1
-0041b540,FUN_0041b540,util,C0,deferred,,,, unknown (229b); Race::Tick non-ghost branch 1; D-7732; leaderboard_d3-cont1
-0041c090,FUN_0041c090,util,C0,deferred,,,, unknown (45b); Race::Tick ghost branch 1; D-7733; leaderboard_d3-cont1
-0041c180,FUN_0041c180,util,C0,deferred,,,, unknown (~310b); Race::Tick case-5; D-7734; leaderboard_d3-cont1
-0041cc50,FUN_0041cc50,util,C0,deferred,,,, unknown (100b); Race::Tick non-ghost branch 2; D-7735; leaderboard_d3-cont1
-0041d830,FUN_0041d830,util,C0,deferred,,,, unknown (58b); Race::Tick ghost branch 2; D-7736; leaderboard_d3-cont1
-0041d930,FUN_0041d930,util,C0,deferred,,,, unknown (~335b); Race::Tick; D-7737; leaderboard_d3-cont1
-0041dca0,FUN_0041dca0,util,C0,deferred,,,, unknown (~207b); Race::Tick cases 4/7/8/9; D-7738; leaderboard_d3-cont1
-0041e6c0,FUN_0041e6c0,util,C0,deferred,,,, unknown (~384b); Race::Tick case-2; D-7739; leaderboard_d3-cont1
-004215a0,FUN_004215a0,util,C0,deferred,,,, unknown (23b); Race::Tick; D-7740; leaderboard_d3-cont1
-004222d0,FUN_004222d0,util,C0,deferred,,,, unknown (28b); Race::Tick; D-7741; leaderboard_d3-cont1
-00425a40,FUN_00425a40,util,C0,deferred,,,, unknown (103b); Race::Tick pause handler (DAT_005f29c0!=0); D-7742; leaderboard_d3-cont1
-00425d50,FUN_00425d50,util,C0,deferred,,,, unknown (~235b); Race::Tick; D-7743; leaderboard_d3-cont1
-00426ab0,FUN_00426ab0,util,C0,deferred,,,, unknown (~131b); Race::Tick; arg=car ptr from 0x005f2770 array; D-7744; leaderboard_d3-cont1
-0045bba0,FUN_0045bba0,util,C0,deferred,,,, unknown (~965b); Race::Tick; entry 0045bba0 body 00453f60; D-7745; leaderboard_d3-cont1
-00467210,FUN_00467210,util,C0,deferred,,,, unknown (53b); Race::Tick; called twice arg 0; result to FUN_00412f30+FUN_00488e70; D-7746; leaderboard_d3-cont1
-00475c10,FUN_00475c10,util,C0,deferred,,,, unknown (~273b); Race::Tick physics/track; D-7747; leaderboard_d3-cont1
-00476440,FUN_00476440,util,C0,deferred,,,, unknown (~146b); Race::Tick physics; D-7748; leaderboard_d3-cont1
-004777d0,FUN_004777d0,util,C0,deferred,,,, unknown (58b); Race::Tick physics; D-7749; leaderboard_d3-cont1
-00477920,FUN_00477920,util,C0,deferred,,,, unknown (~230b); Race::Tick physics; D-7750; leaderboard_d3-cont1
-00485070,FUN_00485070,util,C0,deferred,,,, unknown (51b); Race::Tick; D-7751; leaderboard_d3-cont1
-00488e70,FUN_00488e70,util,C0,deferred,,,, unknown (~887b); Race::Tick; arg from FUN_00467210(0); D-7752; leaderboard_d3-cont1
-00490380,FUN_00490380,util,C0,deferred,,,, unknown (~271b); Race::Tick; D-7753; leaderboard_d3-cont1
-00490500,FUN_00490500,util,C0,deferred,,,, unknown (~2371b); Race::Tick (large); D-7754; leaderboard_d3-cont1
-00496930,FUN_00496930,util,C0,deferred,,,, button state reader (11b); Race::Tick; called with 5+6 for pause toggle; D-7755; leaderboard_d3-cont1
+00403250,FUN_00403250,util,C1,new,re/analysis/leaderboard_d3/0x00403250.md,,, lap/round timer transition trigger (582b); accumulates float param_1; 8-player button scan (stride 0x4c); auto-advance on max time or any player trigger; D-7720
+004039f0,FUN_004039f0,util,C1,new,re/analysis/leaderboard_d3/0x004039f0.md,,, countdown timer with 6-slot bonus table (378b); decrements 007f0fe4 by dt; normalizes 0..1; expiry triggers position effect; 6 entries with timed bonus window; D-7721
+00406ce0,FUN_00406ce0,util,C1,new,re/analysis/leaderboard_d3/0x00406ce0.md,,, crowd/actor animation loop (~1403b); DAT_0063a5d0 entries stride 236b; anim step+RW frame update+velocity blend; matrix concat via FUN_004c4dc0; D-7722
+0040ce00,FUN_0040ce00,util,C1,new,re/analysis/leaderboard_d3/0x0040ce00.md,,, physics/simulation dispatch hub (125b); guard 0063b8f4; increments 0063b8f0; dispatches 22 update functions incl. 00490500/00490380/00475c10/00476440/004777d0; D-7723
+0040d470,FUN_0040d470,util,C1,new,re/analysis/leaderboard_d3/0x0040d470.md,,, vehicle camera matrix update (~284b); 4-car data collect; mode-toggle dispatch FUN_004671a0+FUN_00448220/FUN_004414b0; optional 6-float matrix scale by 005cc33c; D-7724
+0040da50,FUN_0040da50,util,C1,new,re/analysis/leaderboard_d3/0x0040da50.md,,, per-player HUD/state update (~274b); 4 players 007f1a14; FUN_0046c7b0/0046c770 active check; DAT_0063bc44[i] from FUN_00426c00 switch; FUN_0041eeb0; D-7725
+0040dba0,FUN_0040dba0,util,C1,new,re/analysis/leaderboard_d3/0x0040dba0.md,,, two-condition dispatch (40b); FUN_0042f6a0 in 3..5 AND 007f0fd0==4 or 7..10; calls FUN_004019d0; D-7726
+0040e350,FUN_0040e350,util,C1,mapped,re/analysis/game_state/0x0040e350.md,,, game-mode getter (5b); returns DAT_0063ba8c; resolved-by-prior (D-7727 duplicate of rows 221/318/1036)
+00412f30,FUN_00412f30,util,C0,deferred,re/analysis/leaderboard_d3/0x00412f30.md,,, listing-level only (~1744b); exceeds 1500b cap; init: 007f101c & 0x1f player mask; deferred to leaderboard_d4-cont1; D-9340
+00413f20,FUN_00413f20,util,C1,new,re/analysis/leaderboard_d3/0x00413f20.md,,, zero-fill 240 bytes at 0063bc60 (42b); nested loop 4×5×3 uint32; mode7+ branch reset; D-7729
+004189a0,FUN_004189a0,util,C1,new,re/analysis/leaderboard_d3/0x004189a0.md,,, game_mode==6 conditional dispatch (24b); FUN_0042fe50 check; calls FUN_0041a180 in replay; D-7730
+0041a250,FUN_0041a250,util,C1,new,re/analysis/leaderboard_d3/0x0041a250.md,,, case-10 RW billboard update (~377b); (-0.48,-0.35) transform; color 005cd074; frame-counter G/R bytes via FUN_004a2c48×2; FUN_004039e0 alpha; D-7731
+0041b540,FUN_0041b540,util,C1,new,re/analysis/leaderboard_d3/0x0041b540.md,,, non-ghost branch 1 (229b); 5 init calls on 0063c8xx; boolean cascade 6 guards; 4 entries stride 116b active at +0x6c; FUN_0041af50; counter 0063cab0; D-7732
+0041c090,FUN_0041c090,util,C1,new,re/analysis/leaderboard_d3/0x0041c090.md,,, ghost branch 1 (45b); FUN_0040b930+FUN_0041b7a0 loop 2 entries stride 364b; counter 0063cda0; D-7733
+0041c180,FUN_0041c180,util,C1,new,re/analysis/leaderboard_d3/0x0041c180.md,,, case-5 RW billboard update (~310b); (-0.48,-0.35) transform on 0063cdb8; color 005cd074; FUN_004077e0 negated alpha on 0063cda8+4; D-7734
+0041cc50,FUN_0041cc50,util,C1,new,re/analysis/leaderboard_d3/0x0041cc50.md,,, non-ghost branch 2 (100b); 5 init calls on 0063cdxx; 4 entries stride 276b active at +0x110; FUN_0041c410; counter 0063d270; D-7735
+0041d830,FUN_0041d830,util,C1,new,re/analysis/leaderboard_d3/0x0041d830.md,,, ghost branch 2 (58b); FUN_0040b930+FUN_0040b540+FUN_0041ce00 loop 2 entries stride 352b; counter 0063d558; D-7736
+0041d930,FUN_0041d930,util,C1,new,re/analysis/leaderboard_d3/0x0041d930.md,,, sliding UI Y-lerp (~335b); DAT_0063d588 time drive; Y=(0063d588-005cd22c)*005cc564+005cd228; RW frame 0063d580; color 005cd118; D-7737
+0041dca0,FUN_0041dca0,util,C1,new,re/analysis/leaderboard_d3/0x0041dca0.md,,, cases 4/7/8/9 RW brightness ramp (~207b); 4-step alpha from 0063d5ec vs thresholds; flash via 007f101c&0x10; D-7738
+0041e6c0,FUN_0041e6c0,util,C1,new,re/analysis/leaderboard_d3/0x0041e6c0.md,,, case-2 mode-conditional billboard (~384b); mode7:(0.35,0.25) scale 005cc348; else:(-0.375,-0.3) scale 005cd118; FUN_0041e1e0+FUN_0041e4b0; D-7739
+004215a0,FUN_004215a0,util,C1,new,re/analysis/leaderboard_d3/0x004215a0.md,,, 4-entry loop 0063e4b8 stride 36b FUN_00420e00 (23b); D-7740
+004222d0,FUN_004222d0,util,C1,new,re/analysis/leaderboard_d3/0x004222d0.md,,, 4-entry loop 0063fb90 stride 520b FUN_00422290 (28b); D-7741
+00425a40,FUN_00425a40,util,C1,new,re/analysis/leaderboard_d3/0x00425a40.md,,, pause/online-gate update (103b); online guard 007f1a50==1+007f1a54==4; FUN_00424eb0+FUN_00470c70+FUN_00422ba0+FUN_004252c0; returns 0/1; D-7742
+00425d50,FUN_00425d50,util,C1,new,re/analysis/leaderboard_d3/0x00425d50.md,,, 8-entry animated object loop 0x8992a4 stride 76b (~235b); advance time+wrap; FUN_004752f0 anim frame; FUN_004c1480 RW; FUN_00425ca0×2; D-7743
+00426ab0,sub_00426ab0,render,C1,unmapped,re/analysis/camera_follow/0x00426ab0.md,,, resolved-by-prior (D-7744 duplicate; camera_follow C1 row 289)
+0045bba0,FUN_0045bba0,util,C1,new,re/analysis/leaderboard_d3/0x0045bba0.md,,, powerup/vehicle collision dispatch (~965b); 4-player velocity delta; replay state machine 2→3; FUN_004b4b60 collision; 100-entry deferred queue drain; D-7745
+00467210,sub_00467210,render,C1,unmapped,re/analysis/camera_follow/0x00467210.md,,, resolved-by-prior (D-7746 duplicate; camera_follow C1 row 291)
+00475c10,FUN_00475c10,util,C1,new,re/analysis/leaderboard_d3/0x00475c10.md,,, skid mark segment manager (~273b); DAT_0069160c segments; frame-lifetime expiry; alpha fade; FUN_004769f0+00476a10+00476d00; D-7747
+00476440,FUN_00476440,util,C1,new,re/analysis/leaderboard_d3/0x00476440.md,,, animation time advance 16 entries stride 216b (~146b); accumulate dt; normalized ratio pfVar2[1]; FUN_00476df0 ×5; D-7748
+004777d0,FUN_004777d0,util,C1,new,re/analysis/leaderboard_d3/0x004777d0.md,,, physics active-object dispatch (58b); 2×16 entries stride 92b; active at +0x58; FUN_00477490; D-7749
+00477920,FUN_00477920,util,C1,new,re/analysis/leaderboard_d3/0x00477920.md,,, particle/debris color timing (~230b); 256 entries bitfield 006bf198; time ratio; RGBA alpha from frame counter; FUN_004778e0 expire; D-7750
+00485070,FUN_00485070,util,C1,new,re/analysis/leaderboard_d3/0x00485070.md,,, double-buffer swap (51b); 006e70c8 dispatch FUN_00484f70/FUN_00484de0; copy 006e70cc→006e70d8; zero 006e70cc/006e70d4; D-7751
+00488e70,FUN_00488e70,util,C1,new,re/analysis/leaderboard_d3/0x00488e70.md,,, dynamic VB fill shadow/reflection (~887b); 128 entries; FUN_00535700 stream ptrs; position+UV+color+normal per vertex; FUN_00535910 submit; D-7752
+00490380,FUN_00490380,util,C1,new,re/analysis/leaderboard_d3/0x00490380.md,,, sine-wave oscillating particle update (~271b); 38 entries stride 80b; sin(t*freq)*amp; state 1→2→3→dead; RW color+rot+translate; D-7753
+00490500,FUN_00490500,render,C1,mapped,re/analysis/effects_particle/0x00490500.md,,, resolved-by-prior (D-7754 duplicate; effects_particle C1 row 273)
+00496930,FUN_00496930,util,C1,mapped,re/analysis/timer_d2/0x00496930.md,,, resolved-by-prior (D-7755 duplicate; timer_d2 C1 row 623)
 0042e590,FUN_0042e590,frontend,C1,new,re/analysis/title_screen_d2/0x0042e590.md,,,2-insn wrapper→FUN_0040bb70(callee C1)→FUN_004c5c00 string search; [UNCERTAIN U-2547] string key from untracked register; S-2463 cleared; title_screen_d2-20260506
 0040d250,FUN_0040d250,frontend,C1,new,re/analysis/title_screen_d2/0x0040d250.md,,,"indexed ptr dereference: **(undefined4**)(PTR_PTR_005f2770 + DAT_0063ba7c*4); 16b; S-2464 cleared; title_screen_d2-20260506"
 00401ee0,FUN_00401ee0,frontend,C1,new,re/analysis/title_screen_d2/0x00401ee0.md,,,object-select+RW-matrix+RpClumpRender chain; FUN_00401570 table-scan→DAT_00636ac0; FUN_00401da0 builds RW transform; RpClumpRender(C1); [UNCERTAIN U-2548] RpClumpRender arg not visible; S-2465 cleared; S-2541 S-2542 S-2543 S-2544; title_screen_d2-20260506
