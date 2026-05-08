@@ -629,3 +629,25 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1445  scribe-release  bucket=vehicle_update  writes=20  errors=0  note=9 cross-ref RVAs plated from "Called from..." line per user direction (overwrites prior UUU-session plates from 2026-05-03)
 2026-05-08  sweep-20260508-1445  scribe-release  bucket=track_loader  writes=19  errors=0  note=misplaced row (was outside code block at line 129 of pre-sweep tree); relocated to ## Drained; 16/19 RVAs overwrite prior plates from 2026-05-02 drain (0x00426cd0, 0x0042a8d0, 0x0042f510 are new this row)
 2026-05-08  sweep-20260508-1445  scribe-release  buckets=4 drained  errors=0  note=boot_app_init_d2 (20), window_fullscreen_d2 (1), vehicle_update (20), track_loader-misplaced (19); replay_record HOLD silently skipped; pool-sync 14 refreshed / 2 skipped (Mashed_pool12+15 still locked — stale locks from analysis sessions per user)
+2026-05-08  deferred_audit-20260508  audit-cycle-1  total=125 cleared=21 kept=102 followup=2  drift_rate=16.8%
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2985 (0045efe0) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2986 (0045f5f0) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2987 (0045faa0) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2988 (0045ff50) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2989 (00460350) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2990 (00460df0) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2991 (00461650) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2992 (00463640) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2993 (00463c80) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2994 (00463f40) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2995 (00464e10) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2996 (00465a30) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2997 (00465b20) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-2998 (004661f0) → covered by audio_sfx_dispatch_d2
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-6473 (00405890) → covered by vehicle_damage_d3
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7120 (004ba1b0) → covered by input_lua_d3
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7121 (004b7be0) → covered by input_lua_d3
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7122 (004ba210) → covered by input_lua_d3
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7123 (004b9850) → covered by input_lua_d3
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7124 (004b64e0) → covered by input_lua_d3
+2026-05-08  deferred_audit-20260508  DEFERRED clear: D-8862 (00494c80) → covered by video_mci

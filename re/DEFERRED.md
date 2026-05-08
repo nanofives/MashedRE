@@ -4,20 +4,6 @@
 
 | ID | RVA | Name | Subsystem | Pickup condition | Bucket |
 |---|---|---|---|---|---|
-| D-2985 | 0045efe0 | FUN_0045efe0 | audio | Decompile and confirm pattern; classify per-ch SFX dispatcher | audio_sfx_dispatch-cont1 |
-| D-2986 | 0045f5f0 | FUN_0045f5f0 | audio | Decompile and confirm pattern; classify per-ch SFX dispatcher | audio_sfx_dispatch-cont1 |
-| D-2987 | 0045faa0 | FUN_0045faa0 | audio | Decompile and confirm pattern; classify per-ch SFX dispatcher | audio_sfx_dispatch-cont1 |
-| D-2988 | 0045ff50 | FUN_0045ff50 | audio | Decompile and confirm pattern; classify per-ch SFX dispatcher | audio_sfx_dispatch-cont1 |
-| D-2989 | 00460350 | FUN_00460350 | audio | 2715-byte dispatcher; likely per-vehicle engine loop; full decompile needed | audio_sfx_dispatch-cont1 |
-| D-2990 | 00460df0 | FUN_00460df0 | audio | 2134-byte dispatcher; full decompile needed | audio_sfx_dispatch-cont1 |
-| D-2991 | 00461650 | FUN_00461650 | audio | 2103-byte dispatcher; full decompile needed | audio_sfx_dispatch-cont1 |
-| D-2992 | 00463640 | FUN_00463640 | audio | 1520-byte dispatcher; decompile and classify | audio_sfx_dispatch-cont1 |
-| D-2993 | 00463c80 | FUN_00463c80 | audio | 694-byte dispatcher; decompile and classify | audio_sfx_dispatch-cont1 |
-| D-2994 | 00463f40 | FUN_00463f40 | audio | 681-byte dispatcher; decompile and classify | audio_sfx_dispatch-cont1 |
-| D-2995 | 00464e10 | FUN_00464e10 | audio | 1182-byte dispatcher; decompile and classify | audio_sfx_dispatch-cont1 |
-| D-2996 | 00465a30 | FUN_00465a30 | audio | 227-byte; likely variant of 00465940 (4-slot resequenced SFX) | audio_sfx_dispatch-cont1 |
-| D-2997 | 00465b20 | FUN_00465b20 | audio | 232-byte; likely variant of 00465940 (4-slot resequenced SFX) | audio_sfx_dispatch-cont1 |
-| D-2998 | 004661f0 | FUN_004661f0 | audio | 1976-byte dispatcher; full decompile needed | audio_sfx_dispatch-cont1 |
 | D-6460 | 004c1c10 | FUN_004c1c10 | util | 101B; callee of FUN_00441990 — takes *(param_1+0x84) and int 2; decompile and classify | profile_career_d4 |
 | D-6462 | 00441760 | FUN_00441760 | util | 116B; camera apply — final call in FUN_00441990 and FUN_00442e00 and FUN_00446520 | profile_career_d4 |
 | D-6463 | 0041ef60 | FUN_0041ef60 | util | 20B; called 4× per-player in FUN_00446520 entry loop; decompile | profile_career_d4 |
@@ -30,7 +16,6 @@
 | D-6470 | 00442a60 | FUN_00442a60 | util | 530B; side-effect call in FUN_00446520 branch B; decompile | profile_career_d4 |
 | D-6471 | 004a3384 | FUN_004a3384 | util | 8B; acos-like double→float10; callee of FUN_00446520 | profile_career_d4 |
 | D-6472 | 004a3620 | FUN_004a3620 | util | 78B; atan-like float→float10; callee of FUN_00446520 | profile_career_d4 |
-| D-6473 | 00405890 | FUN_00405890 | util | 25B; mode-5 spectator predicate; callee of FUN_00446520 branch A | profile_career_d4 |
 | D-6474 | 00407600 | FUN_00407600 | util | 28B; returns float* position for mode-5; callee of FUN_00446520 branch A | profile_career_d4 |
 | D-6475 | 0041f120 | FUN_0041f120 | util | 149B; per-player loop setup — takes (index, 0); callee of FUN_00446520 | profile_career_d4 |
 | D-6476 | 004427c0 | FUN_004427c0 | util | 597B; else-branch camera handler in FUN_00446520; decompile | profile_career_d4 |
@@ -41,11 +26,6 @@
 | D-6481 | 004b4cd0 | FUN_004b4cd0 | util | 56B; bezier path query; callee of FUN_00446520 branch A | profile_career_d4 |
 | D-6482 | 0045bfe0 | FUN_0045bfe0 | util | 5B; bezier locate; callee of FUN_00446520 branch A | profile_career_d4 |
 | D-6483 | 0045c350 | FUN_0045c350 | util | 302B; bezier interpolate; callee of FUN_00446520 branch A | profile_career_d4 |
-| D-7120 | 004ba1b0 | FUN_004ba1b0 | input | Lua allocator stub (S-2401): called with args (0,0,0x70); decompile and classify | input_lua_d3 |
-| D-7121 | 004b7be0 | FUN_004b7be0 | input | Lua stub (S-2402): receives (block, label_addr, stack_slot); failure triggers FUN_004b7480; decompile | input_lua_d3 |
-| D-7122 | 004ba210 | FUN_004ba210 | input | Lua stub (S-2408): called with (param_1, 1); decompile and classify | input_lua_d3 |
-| D-7123 | 004b9850 | FUN_004b9850 | input | Lua stub (S-2409): called with (param_1); decompile and classify | input_lua_d3 |
-| D-7124 | 004b64e0 | FUN_004b64e0 | input | Lua stub (S-2410): wrapper — receives (param_1, 0, param_2); decompile and classify | input_lua_d3 |
 | D-8680 | 004b7b00 | FUN_004b7b00 | input | error handler (lua_State, error_string); from FUN_004ba1b0 on size>0xfffffffc; decompile and classify | input_lua_d4 |
 | D-8681 | 004b7ba0 | FUN_004b7ba0 | input | error handler (lua_State, int=4); from FUN_004ba1b0 on failed realloc; decompile and classify | input_lua_d4 |
 | D-8682 | 004b7c70 | FUN_004b7c70 | input | longjmp error-path cleanup called from FUN_004b7be0; decompile and classify | input_lua_d4 |
@@ -73,7 +53,6 @@
 | D-8815 | 0048f740 | FUN_0048f740 | util | no-arg init B; 0x30 bytes; callee of FUN_0040e590; pick up as game_state_d5-cont2 | game_state_d5-cont2 |
 | D-8860 | 004b6540 | thunk_FUN_004b6640 | boot | thunk; called by FUN_00402750 with PIZ-mode selector result; decompile target FUN_004b6640 and classify | boot_app_init_d2-cont1 |
 | D-8861 | 004b6560 | thunk_FUN_004b6610 | boot | thunk; called by FUN_00402750 with (FUN_00429290 ptr, 0); decompile target FUN_004b6610 and classify | boot_app_init_d2-cont1 |
-| D-8862 | 00494c80 | FUN_00494c80 | boot | called by FUN_00402750 with arg 0 after intro video; decompile and classify | boot_app_init_d2-cont1 |
 | D-8863 | 004283a0 | FUN_004283a0 | boot | called by FUN_00402750 no args; result chain to FUN_004671a0; decompile and classify | boot_app_init_d2-cont1 |
 | D-8864 | 00427ca0 | FUN_00427ca0 | boot | called by FUN_00402750 no args; result passed to FUN_004671a0 call; decompile and classify | boot_app_init_d2-cont1 |
 | D-8865 | 004275d0 | FUN_004275d0 | boot | called by FUN_00402750 with FUN_004671a0 result; decompile and classify | boot_app_init_d2-cont1 |
