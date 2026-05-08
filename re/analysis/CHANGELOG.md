@@ -627,3 +627,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1445  scribe-release  bucket=boot_app_init_d2  writes=20  errors=0
 2026-05-08  sweep-20260508-1445  scribe-release  bucket=window_fullscreen_d2  writes=1  errors=0  note=plate sourced from `## Purpose` step 1 (file uses C2-format, no `## Mechanical description` section)
 2026-05-08  sweep-20260508-1445  scribe-release  bucket=vehicle_update  writes=20  errors=0  note=9 cross-ref RVAs plated from "Called from..." line per user direction (overwrites prior UUU-session plates from 2026-05-03)
+2026-05-08  sweep-20260508-1445  scribe-release  bucket=track_loader  writes=19  errors=0  note=misplaced row (was outside code block at line 129 of pre-sweep tree); relocated to ## Drained; 16/19 RVAs overwrite prior plates from 2026-05-02 drain (0x00426cd0, 0x0042a8d0, 0x0042f510 are new this row)
