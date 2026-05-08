@@ -1,0 +1,445 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 27
+================================================================================
+
+Six prompts (GG6–LL6). NEW size — fanout grows from 4→6 per batch.
+
+Strategic shift: 4 drain sessions on the real DEFERRED backlog (~99 unmapped
+rows across 4 buckets) PLUS 2 "rethink existing" sessions —
+  KK6  recovers the 18 stranded hud_frontend_d4 analyses (notes.md → per-RVA files)
+  LL6  audits DEFERRED.md against hooks.csv and clears tracker drift (≥19 rows)
+
+Drift discovered before drafting this batch:
+  D-2985..D-2998  (audio_sfx_dispatch-cont1, 14 rows) — all already C1 in hooks.csv
+                  via audio_sfx_dispatch_d2 (drained 2026-05-07). Bucket exhausted.
+  D-7120..D-7124  (input_lua_d3, 5 rows) — all already C1. Bucket exhausted.
+  D-6473          (0x00405890, profile_career_d4) — already C1 via vehicle_damage_d3.
+  D-8862..D-8864  (boot_app_init_d2-cont1) — already C1 in hooks.csv (3 rows).
+
+⚠ LAUNCH GUARD ⚠ — DO NOT launch any session whose pool slot is currently locked.
+  Confirmed locked at draft time (2026-05-08):
+    Mashed_pool12.lock — orphaned from batch 26 CC6 OR an in-flight successor
+    Mashed_pool15.lock — window_fullscreen_d2-20260508-1346 may still be live
+  Batch 27 deliberately uses pool0..pool5 to avoid these.
+
+  Per-session check before launch:
+    ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot assignments (batch 27 uses fresh pool0..pool5 — no sibling reuse):
+  GG6  boot_app_init_d4         Mashed_pool0
+  HH6  profile_career_d4        Mashed_pool1
+  II6  game_state_d5_cont2      Mashed_pool2
+  JJ6  input_lua_d4             Mashed_pool3
+  KK6  hud_frontend_d4_repair   Mashed_pool4
+  LL6  deferred_audit           Mashed_pool5
+
+Prompts in this batch (depth + workload):
+  GG6  boot_app_init_d4         Sonnet medium  — depth-4 of boot_app_init_d2 (54 unmapped, biggest pool)
+  HH6  profile_career_d4        Sonnet medium  — first depth-4 (22 unmapped from FUN_00446520 callee tree)
+  II6  game_state_d5_cont2      Sonnet medium  — drains the 14 remaining game_state_d5-cont2 rows (D-8800..D-8815 minus 2 already analyzed)
+  JJ6  input_lua_d4             Sonnet medium  — Lua state init deep tree (9 unmapped: D-8680..D-8688)
+  KK6  hud_frontend_d4_repair   Sonnet small   — extract 18 RVAs from hud_frontend_d4/notes.md into per-RVA files; re-queue for sweep. NO new decompilation.
+  LL6  deferred_audit           Sonnet small   — verify every DEFERRED.md row against hooks.csv; clear drift via re-classify. Read-only Ghidra for confirmation only.
+
+ID ranges + slot assignments:
+
+  Session  Bucket                       Slot           U range      D range      S range
+  -------  ---------------------------  -------------  -----------  -----------  -----------
+    GG6    boot_app_init_d4             Mashed_pool0   3207..3226   9520..9579   3200..3219
+    HH6    profile_career_d4            Mashed_pool1   3227..3246   9580..9639   3220..3239
+    II6    game_state_d5_cont2          Mashed_pool2   3247..3266   9640..9699   3240..3259
+    JJ6    input_lua_d4                 Mashed_pool3   3267..3286   9700..9759   3260..3279
+    KK6    hud_frontend_d4_repair       Mashed_pool4   3287..3306   9760..9819   3280..3299
+    LL6    deferred_audit               Mashed_pool5   3307..3326   9820..9879   3300..3319
+
+DEPTH-N ACQUISITION RULE — same as batches 14..26 (pre-assigned slot, no acquire).
+
+================================================================================
+=== PROMPT GG6 — boot_app_init depth-4 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session GG6; depth-4 of boot_app_init_d2 (54 truly-unmapped DEFERRED rows in `boot_app_init_d2-cont1` after drift correction — the largest backlog in the project).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="boot_app_init_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition
+Parent: boot_app_init_d2 (queued 2026-05-08; D-8860..D-8916 filed for `boot_app_init_d2-cont1`). Apply common rule against bucket boot_app_init_d2-cont1.
+
+DEFERRED.md currently lists 57 rows tagged `boot_app_init_d2-cont1`. Drift-audit before draft confirms 3 of them (RVAs 0x00494c80, 0x004283a0 area — see drift list at top of file) are already C1 in hooks.csv. Skip those if encountered. Cap is 0 — drain everything in U/S range that remains.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "boot_app_init_d2 deferred range exhausted."
+
+Bucket: re/analysis/boot_app_init_d4/
+ID-range: U=3207..3226  D=9520..9579  S=3200..3219
+Subsystem: boot
+
+External Win32/COM imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Drift-skip step
+Before processing each D-row from boot_app_init_d2-cont1, run:
+  grep -i "^${RVA}," hooks.csv
+If a C1+ row already exists, skip that D-row and note it in SESSION_END.md "drift-skipped" list (so the LL6 audit session can clear them in DEFERRED.md).
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=boot. U/S in U=3207..3226 / S=3200..3219. Cap → DEFERRED in D=9520..9579, bucket boot_app_init_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name boot_app_init_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+- Re-analyzing functions already covered by boot_app_init, boot_app_init_d2, boot_app_init_d3.
+- Marking Win32/COM imports as STUBS — they are external imports.
+- Spending the whole session on one >1500-byte function — split it into a C0 plate + DEFERRED row and move on.
+
+## End-of-session report
+Standard for d4 sessions. Add a "drift-skipped" section listing any D-rows already covered.
+
+================================================================================
+=== PROMPT HH6 — profile_career depth-4 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session HH6; first depth-4 of profile_career chain (22 truly-unmapped DEFERRED rows D-6460..D-6483 in `profile_career_d4` after drift correction; D-6473=0x00405890 already C1 via vehicle_damage_d3, skip it).
+
+[Same SONNET HALTS as GG6.]
+
+## Session identifier
+SESSION_SHORT_ID="profile_career_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parent: profile_career_d3 (filed D-6460..D-6483 for `profile_career_d4`; this is the FUN_00446520 callee tree — camera apply, bezier path eval, mode-5 spectator handlers). Apply common rule.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "profile_career_d3 deferred range exhausted."
+
+Bucket: re/analysis/profile_career_d4/
+ID-range: U=3227..3246  D=9580..9639  S=3220..3239
+Subsystem: util
+
+External imports NOT stubs.
+
+Note: many of these are tiny (5–25 bytes) — bezier predicates, time getters, frame setters. Some are mid-size (200–600 bytes) camera-path handlers. Apply the same one-function-at-a-time rule.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool1", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as GG6. D-6473 (0x00405890) is known drift — skip and report.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3227..3246 / S=3220..3239. Cap → DEFERRED in D=9580..9639, bucket profile_career_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name profile_career_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard.
+- Re-analyzing functions already covered by profile_career, profile_career_d2, profile_career_d3, race_results, race_state, vehicle_damage_d3.
+
+## End-of-session report
+Standard for d4 sessions. Add "drift-skipped" section.
+
+================================================================================
+=== PROMPT II6 — game_state_d5_cont2 drain =====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session II6; drains the 14 remaining game_state_d5-cont2 rows. Two of the 16 (0x00404fa0 and 0x00408b00) already have per-RVA files in re/analysis/game_state_d5-cont2/ from a partial earlier attempt — skip them.
+
+[Same SONNET HALTS as GG6.]
+
+## Session identifier
+SESSION_SHORT_ID="game_state_d5_cont2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition
+Parent bucket: game_state_d5-cont2 (D-8800..D-8815). Apply common rule.
+
+Pre-existing per-RVA files in re/analysis/game_state_d5-cont2/:
+  0x00404fa0.md  0x00408b00.md
+Do not re-analyze; verify they exist and surface them in SESSION_END.md "carry-forward" list (so the sweep handles them too).
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "game_state_d5-cont2 deferred range exhausted."
+
+Bucket dir: re/analysis/game_state_d5-cont2/  (existing dir; add to it)
+ID-range: U=3247..3266  D=9640..9699  S=3240..3259
+Subsystem: util
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool2", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3247..3266 / S=3240..3259. Cap → DEFERRED in D=9640..9699, bucket game_state_d5-cont2-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name game_state_d5-cont2. DO NOT scribe directly. SCRIBE_QUEUE row must include the 2 carry-forward RVAs in the rva list so the sweep writes them.
+
+## ANTI-PATTERNS
+- Standard.
+- Re-analyzing functions already covered by game_state, game_state_d2..d5, game_state_d5-cont1.
+- Re-decompiling 0x00404fa0 or 0x00408b00 (already done).
+
+## End-of-session report
+Standard. Add "carry-forward" section listing the 2 pre-existing RVAs.
+
+================================================================================
+=== PROMPT JJ6 — input_lua depth-4 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session JJ6; depth-4 of input_lua chain (9 truly-unmapped DEFERRED rows D-8680..D-8688 in `input_lua_d4` — Lua-state sub-init / longjmp error-path tree). Note: D-7120..D-7124 (input_lua_d3) are tracker drift (already C1) — LL6 will clear them.
+
+[Same SONNET HALTS as GG6.]
+
+## Session identifier
+SESSION_SHORT_ID="input_lua_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition
+Parent: input_lua_d3 (filed D-8680..D-8688 for `input_lua_d4`). Apply common rule.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "input_lua_d3 deferred range exhausted."
+
+Bucket: re/analysis/input_lua_d4/
+ID-range: U=3267..3286  D=9700..9759  S=3260..3279
+Subsystem: input
+
+External Lua-runtime imports NOT stubs (treat as standard library calls).
+
+## Reference consultation (FRAMING ONLY)
+- Lua 5.x reference manual at lua.org/manual/5.x/ for state-init shape (lua_State, lua_newstate, lua_close). Cite ONLY MCP for everything binary-side.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool3", lock check, slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=input. U/S in U=3267..3286 / S=3260..3279. Cap → DEFERRED in D=9700..9759, bucket input_lua_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name input_lua_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard.
+- Re-analyzing functions already covered by input_lua, input_lua_d2, input_lua_d3.
+- Marking Lua runtime symbols as STUBS — they are part of the embedded Lua 5.x runtime in MASHED.exe.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT KK6 — hud_frontend_d4 REPAIR (extract notes.md → per-RVA files) =====
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: file-extraction repair, not new decompilation. The hud_frontend_d4-20260508 session wrote 18 analyses into re/analysis/hud_frontend_d4/notes.md but never split into per-RVA files; the sweep recorded "0 plates" as a result. This session recovers that work.
+
+Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, and .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md, .claude/skills/sweep/SKILL.md (for the per-RVA file format the sweep expects).
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Do NOT decompile any function — extract from notes.md verbatim. 3. If notes.md content for an RVA is incomplete/missing, mark that RVA "REPAIR-INCOMPLETE" in SESSION_END and skip it; do not paper over.
+
+## Session identifier
+SESSION_SHORT_ID="hud_frontend_d4_repair-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition
+Source: re/analysis/hud_frontend_d4/notes.md (already exists; produced by hud_frontend_d4-20260508).
+Target: 18 per-RVA .md files in re/analysis/hud_frontend_d4/, one per:
+  0x0042a940 0x0042ac00 0x0042ac50 0x0042bcb0 0x0042d290 0x0042d300
+  0x0042ebe0 0x0042ee00 0x0042ee40 0x0042ef40 0x0042f8d0 0x0042fab0
+  0x00430760 0x00430830 0x00430a10 0x00430a60 0x00430ab0 0x00430b30
+
+Each per-RVA file must follow the format that the sweep skill expects (see .claude/skills/sweep/SKILL.md and any existing per-RVA file in a recently drained bucket like leaderboard_d3 for the canonical shape: ## Header, ## Decompilation, ## Citations, ## Classification).
+
+ID-range: U=3287..3306  D=9760..9819  S=3280..3299  (only used if new uncertainties surface during extraction)
+Subsystem: frontend
+
+## Pre-flight asserts
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ]; then echo "ERROR: $SLOT locked"; exit 1; fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. Open slot read-only via MCP — used ONLY for citation verification (no decompilation).
+4. mcp__ghidra__health_ping → ok.
+5. Verify re/analysis/hud_frontend_d4/notes.md exists and contains 18 "### 0x" headers. If <18, halt and surface count.
+
+## Work loop
+For each of the 18 RVAs:
+  1. Locate the "### 0x<RVA>" section in notes.md.
+  2. Read its ```c block (the analysis decompilation).
+  3. Read the U-id and confidence assertion (e.g., "U-3167 | C1").
+  4. Cross-check against MCP: mcp__ghidra__function_at <RVA> to confirm the function exists in master Ghidra.
+  5. Write re/analysis/hud_frontend_d4/0x<RVA>.md with:
+     - Header citing RVA + caller chain (already in notes.md)
+     - Decompilation block (verbatim from notes.md — no edits)
+     - Classification: C1 (per the original session's claim, repeating the U-id)
+     - Citation: re/analysis/hud_frontend_d4/notes.md as the source
+  6. If the notes.md section is empty or stub-shaped (e.g., "TODO" or fewer than 5 lines), file as REPAIR-INCOMPLETE and skip.
+
+NO new decompilation. NO new uncertainties unless extraction reveals a contradiction.
+
+## Shutdown + Queue
+Standard. Bucket name hud_frontend_d4_repair. SCRIBE_QUEUE row must list ALL 18 RVAs (or fewer if any were REPAIR-INCOMPLETE — list those in SESSION_END "incomplete" section).
+
+This is a one-shot session. No cont1 — if any RVAs are REPAIR-INCOMPLETE, the user decides whether to re-run hud_frontend_d4 from scratch or accept partial recovery.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Decompiling any function from scratch — the analysis exists in notes.md; copy it verbatim with citation.
+- Adding new uncertainties that aren't visible in notes.md — speculation is forbidden.
+- Editing hud_frontend_d4/notes.md (read-only source).
+- Re-running this session if it succeeds (bucket name marks it idempotent).
+
+## End-of-session report
+Sections:
+  - "Recovered" — list of RVAs successfully extracted with citations.
+  - "REPAIR-INCOMPLETE" — list of RVAs whose notes.md content was inadequate.
+  - "Drift" — anything found during MCP cross-check that contradicts notes.md.
+  - SCRIBE_QUEUE row.
+
+================================================================================
+=== PROMPT LL6 — DEFERRED tracker audit ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: tracker reconciliation — verify every DEFERRED.md row against hooks.csv and clear drift via re-classify. Confirmed drift before launch: ≥19 rows in 4 buckets. This session locks in the tracker quality required before further fanout cycles.
+
+Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/re-classify/SKILL.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. Re-classify is the ONLY way to mutate trackers. Manual edits to DEFERRED.md/hooks.csv/STUBS.md/UNCERTAINTIES.md are forbidden in this session.
+2. Refuse to clear a D-row unless the corresponding RVA has a C1+ row in hooks.csv with a per-RVA .md file path that resolves on disk. "C1 placeholder with no file" is NOT sufficient evidence.
+3. If a clear is refused, surface the row in the "needs-followup" list — do not paper over.
+
+## Session identifier
+SESSION_SHORT_ID="deferred_audit-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition
+Source: re/DEFERRED.md (124 rows at draft time).
+For each row:
+  1. Extract RVA.
+  2. grep -E "^${RVA}," hooks.csv. If C1/C2/C3/C4: candidate clear.
+  3. Verify the file column points to an existing path on disk.
+  4. If both checks pass: clear via re-classify ("DEFERRED clear: D-XXXX → covered by <bucket>").
+  5. If hooks.csv shows C0 or empty: NOT a clear; row stays.
+  6. If hooks.csv has C1+ but the file doesn't exist: needs-followup (probably hud_frontend_d4 stranded analysis — KK6 may resolve).
+
+Pre-confirmed drift to clear (saves cycles):
+  D-2985..D-2998  (audio_sfx_dispatch-cont1, 14 rows) → covered by audio_sfx_dispatch_d2
+  D-7120..D-7124  (input_lua_d3, 5 rows) → covered by input_lua_d3 sweep
+  D-6473          (profile_career_d4, 1 row, RVA=0x00405890) → covered by vehicle_damage_d3
+
+Plus any additional drift found during the audit pass.
+
+ID-range: U=3307..3326  D=9820..9879  S=3300..3319  (only used if new uncertainties surface — e.g., a hooks.csv row points to a missing per-RVA file)
+Subsystem: util (audit notes go to a "deferred_audit" bucket, not a domain subsystem)
+
+## Pre-flight asserts
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ]; then echo "ERROR: $SLOT locked"; exit 1; fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. Open slot read-only via MCP — used ONLY for verifying that any "needs-followup" RVAs actually exist as Ghidra functions.
+4. mcp__ghidra__health_ping → ok.
+
+## Work loop
+For each row in DEFERRED.md (in order):
+  1. Coverage check (above).
+  2. If clear: invoke re-classify with the clear action; record in SESSION_END "cleared" list.
+  3. If row stays: record in "kept" list with reason.
+  4. If needs-followup: record in "followup" list with the broken evidence path.
+
+After the row pass:
+  5. Compute drift rate (cleared / total) and surface as a metric.
+  6. Propose ONE concrete change to re/SESSION_RULES.md or .claude/skills/sweep/SKILL.md to prevent future drift (e.g., "sweep should clear DEFERRED rows whose RVA promotes to C1+ during the same sweep cycle"). Surface the proposal in SESSION_END — do not edit the rules file in this session.
+
+## Bucket dir + per-row files
+Bucket: re/analysis/deferred_audit/
+Write a single SESSION_END.md with the audit log (no per-RVA files needed; this is a tracker session).
+
+## Shutdown + Queue
+NO sweep queue entry — re-classify already mutated trackers in-process. The sweep would no-op for this bucket. Instead, record completion in re/analysis/CHANGELOG.md as "audit-cycle-1".
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Editing DEFERRED.md/hooks.csv/STUBS.md/UNCERTAINTIES.md outside re-classify.
+- Clearing a D-row whose hooks.csv match is C0 or whose file path doesn't resolve.
+- Editing re/SESSION_RULES.md or skill files (only propose changes — user decides).
+- Spending session cycles re-decompiling DEFERRED RVAs — this is a verification pass.
+
+## End-of-session report
+Sections:
+  - "Cleared" — D-IDs cleared, with covered-by attribution.
+  - "Kept" — D-IDs that survived audit (truly unmapped or C0 placeholders).
+  - "Followup" — D-IDs with broken evidence (hooks.csv claims C1 but file missing).
+  - "Drift rate" — cleared / total %.
+  - "Proposed rule change" — ONE concrete sweep/skill improvement.
+  - CHANGELOG row (NO SCRIBE_QUEUE row).
+
+================================================================================
+=== END OF BATCH 27 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 6 in parallel after pool0..pool5 confirmed free.
+
+ID RANGE SUMMARY
+  Batch 27 (6 sessions):   U=3207..3326  D=9520..9879    S=3200..3319
+
+CUMULATIVE ID RANGES (batches 1–27)
+  Batches 1–17 (96 sessions):  U=0007..2486  D=0040..7359  S=0001..2479
+  Batch 18 (4 sessions):       U=2487..2566  D=7360..7599  S=2480..2559
+  Batch 19 (4 sessions):       U=2567..2646  D=7600..7839  S=2560..2639
+  Batch 20 (4 sessions):       U=2647..2726  D=7840..8079  S=2640..2719
+  Batch 21 (4 sessions):       U=2727..2806  D=8080..8319  S=2720..2799
+  Batch 22 (4 sessions):       U=2807..2886  D=8320..8559  S=2800..2879
+  Batch 23 (4 sessions):       U=2887..2966  D=8560..8799  S=2880..2959
+  Batch 24 (4 sessions):       U=2967..3046  D=8800..9039  S=2960..3039
+  Batch 25 (4 sessions):       U=3047..3126  D=9040..9279  S=3040..3119
+  Batch 26 (4 sessions):       U=3127..3206  D=9280..9519  S=3120..3199
+  Batch 27 (6 sessions):       U=3207..3326  D=9520..9879  S=3200..3319
+
+  Next batch (when designed) starts at U=3327, D=9880, S=3320.
+
+POST-BATCH-27 EXPECTED STATE
+  - DEFERRED.md drained from 124 → roughly 20–30 rows (depends on cont1 fallout from GG6/HH6/II6/JJ6).
+  - hud_frontend_d4 yields 18 C1 plates after KK6 + sweep.
+  - Tracker drift policy: LL6 surfaces a proposed sweep-skill rule change for the user to ratify.

@@ -35,7 +35,10 @@
       "mcp__ghidra__memory_read",
       "mcp__ghidra__search_text",
       "mcp__ghidra__search_instructions",
-      "mcp__ghidra__analysis_update_and_wait"
+      "mcp__ghidra__analysis_update_and_wait",
+      "Bash(git stash *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   },
   "enabledMcpjsonServers": [

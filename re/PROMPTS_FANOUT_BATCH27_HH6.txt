@@ -1,0 +1,62 @@
+================================================================================
+=== PROMPT HH6 — profile_career depth-4 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session HH6; first depth-4 of profile_career chain (22 truly-unmapped DEFERRED rows D-6460..D-6483 in `profile_career_d4` after drift correction; D-6473=0x00405890 already C1 via vehicle_damage_d3, skip it).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="profile_career_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parent: profile_career_d3 (filed D-6460..D-6483 for `profile_career_d4`; this is the FUN_00446520 callee tree — camera apply, bezier path eval, mode-5 spectator handlers). Apply common rule.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "profile_career_d3 deferred range exhausted."
+
+Bucket: re/analysis/profile_career_d4/
+ID-range: U=3227..3246  D=9580..9639  S=3220..3239
+Subsystem: util
+
+External imports NOT stubs.
+
+Note: many of these are tiny (5–25 bytes) — bezier predicates, time getters, frame setters. Some are mid-size (200–600 bytes) camera-path handlers. Apply the same one-function-at-a-time rule.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Drift-skip step
+Before processing each D-row from profile_career_d4 backlog, run:
+  grep -i "^${RVA}," hooks.csv
+If a C1+ row already exists, skip that D-row and note it in SESSION_END.md "drift-skipped" list. D-6473 (0x00405890) is known drift — skip and report.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3227..3246 / S=3220..3239. Cap → DEFERRED in D=9580..9639, bucket profile_career_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name profile_career_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+- Re-analyzing functions already covered by profile_career, profile_career_d2, profile_career_d3, race_results, race_state, vehicle_damage_d3.
+
+## End-of-session report
+Standard for d4 sessions. Add "drift-skipped" section.

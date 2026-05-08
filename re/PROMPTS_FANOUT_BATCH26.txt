@@ -1,0 +1,257 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 26
+================================================================================
+
+Four prompts (CC6–FF6). REUSES pool12..pool15 from batch 25.
+
+⚠ LAUNCH GUARD ⚠ — DO NOT launch while batch 25 is still live.
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot-sibling map:
+  Batch 25 Y6   menu_state            → Batch 26 CC6  (pool12)
+  Batch 25 Z6   ai_update_d4          → Batch 26 DD6  (pool13)
+  Batch 25 AA6  effects_particle_d4   → Batch 26 EE6  (pool14)
+  Batch 25 BB6  audio_rws_loader_d4   → Batch 26 FF6  (pool15)
+
+Yield rationale (why these four — top of the unmapped DEFERRED backlog):
+  CC6  render_frame_d4   — render_frame_d3-cont1 has 39 unmapped DEFERRED rows (largest pool)
+  DD6  leaderboard_d3    — leaderboard_d3-cont1 has 37 unmapped DEFERRED rows; D-7720..D-7764 (Race::Tick depth-2)
+  EE6  hud_frontend_d4   — hud_frontend_d3-cont1 has 26 unmapped DEFERRED rows
+  FF6  audio_dsound_d3   — audio_dsound_d2-cont1 has 16 unmapped DEFERRED rows
+
+Prompts in this batch (deepest unmapped chains):
+  CC6  render_frame_d4   Sonnet medium  — depth-4 of render_frame_d3
+  DD6  leaderboard_d3    Sonnet medium  — depth-3 of leaderboard_d2 (Race::Tick callee tree)
+  EE6  hud_frontend_d4   Sonnet medium  — depth-4 of hud_frontend_d3
+  FF6  audio_dsound_d3   Sonnet medium  — depth-3 of audio_dsound_d2
+
+ID ranges + slot assignments:
+
+  Session  Bucket             Slot           U range      D range      S range
+  -------  -----------------  -------------  -----------  -----------  -----------
+    CC6    render_frame_d4    Mashed_pool12  3127..3146   9280..9339   3120..3139
+    DD6    leaderboard_d3     Mashed_pool13  3147..3166   9340..9399   3140..3159
+    EE6    hud_frontend_d4    Mashed_pool14  3167..3186   9400..9459   3160..3179
+    FF6    audio_dsound_d3    Mashed_pool15  3187..3206   9460..9519   3180..3199
+
+DEPTH-N ACQUISITION RULE — same as batches 14..25.
+
+================================================================================
+=== PROMPT CC6 — render_frame depth-4 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session CC6; depth-4 of render_frame_d3 (39 unmapped DEFERRED rows in the cont1 range — the largest unmapped pool in the project).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="render_frame_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool12"
+
+## Subset definition
+Parent: render_frame_d3 (existing bucket; drained by sweep-20260507-2002, 15 plates). Apply common rule against bucket render_frame_d3-cont1.
+
+DEFERRED.md currently lists 39 rows tagged for `render_frame_d3-cont1` (D-5020..D-5022 confirmed prefix; full set is the subset of `render_frame_d3-cont1` rows in the render subsystem). Cap is 0 — drain everything that fits in the U/S range.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "render_frame_d3 deferred range exhausted."
+
+Bucket: re/analysis/render_frame_d4/
+ID-range: U=3127..3146  D=9280..9339  S=3120..3139
+Subsystem: render
+
+External RW/D3D9 imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- gtamods.com/wiki/RpWorld for world-render dispatch shapes if applicable. Cite ONLY MCP for everything binary-side.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Batch 25 sibling Y6 may still be live — wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=render. U/S in U=3127..3146 / S=3120..3139. Cap → DEFERRED in D=9280..9339, bucket render_frame_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name render_frame_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 25 Y6 slot is still locked.
+- Re-analyzing functions already covered by render_frame, render_frame_d3, render_frame_tree_d2.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT DD6 — leaderboard depth-3 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session DD6; depth-3 of leaderboard_d2 (Race::Tick depth-2 callee tree, 37 unmapped DEFERRED rows D-7720..D-7764 in `leaderboard_d3-cont1`).
+
+[Same SONNET HALTS as CC6.]
+
+## Session identifier
+SESSION_SHORT_ID="leaderboard_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool13"
+
+## Subset definition
+Parent: leaderboard_d2 (existing bucket; SESSION_END 2026-05-06 deferred 37 Race::Tick callees as `leaderboard_d3-cont1`). Apply common rule.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "leaderboard_d2 deferred range exhausted."
+
+Bucket: re/analysis/leaderboard_d3/
+ID-range: U=3147..3166  D=9340..9399  S=3140..3159
+Subsystem: util
+
+External imports NOT stubs.
+
+Note: the 37 DEFERRED rows here are mostly mid-size Race::Tick branch handlers
+(40b–1700b). Some are large enough to halt mid-decompilation; mark those C0
+listing-level and DEFER to leaderboard_d4-cont1 rather than spending the entire
+session on a single function. Apply the same one-function-at-a-time rule.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool13", lock check (lock = batch 25 Z6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3147..3166 / S=3140..3159. Cap → DEFERRED in D=9340..9399, bucket leaderboard_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name leaderboard_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 25 Z6 slot is still locked.
+- Re-analyzing functions already covered by leaderboard, leaderboard_d2, race_state, race_state_d2, race_results, race_results_d2.
+- Spending the whole session on one >1500-byte Race::Tick branch — split it into a C0 plate + DEFERRED row and move on.
+
+## End-of-session report
+Standard for d3 sessions. Include a "branch coverage map" section enumerating which Race::Tick case-X branches were resolved vs. still-deferred, since this is the first time the d2 cont1 hits a session.
+
+================================================================================
+=== PROMPT EE6 — hud_frontend depth-4 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session EE6; depth-4 of hud_frontend_d3 (26 unmapped DEFERRED rows D-6160..D-6185 in `hud_frontend_d3-cont1` — early-finish fallout from the d3 cap=18).
+
+[Same SONNET HALTS as CC6.]
+
+## Session identifier
+SESSION_SHORT_ID="hud_frontend_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool14"
+
+## Subset definition
+Parent: hud_frontend_d3 (existing bucket). Apply common rule against bucket hud_frontend_d3-cont1. The d3 session capped at 18 functions; the cont1 set is the early-finish remainder (powerup sprite indices, layout getters, slot-by-player getters).
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "hud_frontend_d3 deferred range exhausted."
+
+Bucket: re/analysis/hud_frontend_d4/
+ID-range: U=3167..3186  D=9400..9459  S=3160..3179
+Subsystem: frontend
+
+External RW imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool14", lock check (lock = batch 25 AA6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=3167..3186 / S=3160..3179. Cap → DEFERRED in D=9400..9459, bucket hud_frontend_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name hud_frontend_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 25 AA6 slot is still locked.
+- Re-analyzing functions already covered by hud_frontend, hud_frontend_d2, hud_frontend_d3.
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT FF6 — audio_dsound depth-3 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session FF6; depth-3 of audio_dsound_d2 (16 unmapped DEFERRED rows D-4000..D-4015 in `audio_dsound_d2-cont1` — depth-3 callees of FUN_005ba720/FUN_005ba760 around CoInitialize / DirectSoundCreate).
+
+[Same SONNET HALTS as CC6.]
+
+## Session identifier
+SESSION_SHORT_ID="audio_dsound_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool15"
+
+## Subset definition
+Parent: audio_dsound_d2 (existing bucket). Apply common rule against bucket audio_dsound_d2-cont1.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "audio_dsound_d2 deferred range exhausted."
+
+Bucket: re/analysis/audio_dsound_d3/
+ID-range: U=3187..3206  D=9460..9519  S=3180..3199
+Subsystem: audio
+
+External DirectSound / COM / DSOUND.DLL imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- DirectSound / IDirectSound8 / IDirectSoundBuffer8 docs at MSDN for vtable shapes. Cite MCP for everything binary-side.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool15", lock check (lock = batch 25 BB6 still live → halt), slot create if missing, preflight, open read-only, health_ping, ghidra_info.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=audio. U/S in U=3187..3206 / S=3180..3199. Cap → DEFERRED in D=9460..9519, bucket audio_dsound_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name audio_dsound_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire. Launching while batch 25 BB6 slot is still locked.
+- Re-analyzing functions already covered by audio_dsound, audio_dsound_d2.
+- Marking COM imports (CoInitialize, IID_*, etc.) as STUBS — they are external imports.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== END OF BATCH 26 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 4 in parallel after batch 25 fully released.
+
+ID RANGE SUMMARY
+  Batch 26 (4 sessions):   U=3127..3206  D=9280..9519    S=3120..3199
+
+CUMULATIVE ID RANGES (batches 1–26)
+  Batches 1–17 (96 sessions):  U=0007..2486  D=0040..7359  S=0001..2479
+  Batch 18 (4 sessions):       U=2487..2566  D=7360..7599  S=2480..2559
+  Batch 19 (4 sessions):       U=2567..2646  D=7600..7839  S=2560..2639
+  Batch 20 (4 sessions):       U=2647..2726  D=7840..8079  S=2640..2719
+  Batch 21 (4 sessions):       U=2727..2806  D=8080..8319  S=2720..2799
+  Batch 22 (4 sessions):       U=2807..2886  D=8320..8559  S=2800..2879
+  Batch 23 (4 sessions):       U=2887..2966  D=8560..8799  S=2880..2959
+  Batch 24 (4 sessions):       U=2967..3046  D=8800..9039  S=2960..3039
+  Batch 25 (4 sessions):       U=3047..3126  D=9040..9279  S=3040..3119
+  Batch 26 (4 sessions):       U=3127..3206  D=9280..9519  S=3120..3199
+
+  Next batch (when designed) starts at U=3207, D=9520, S=3200.

@@ -1,0 +1,64 @@
+================================================================================
+=== PROMPT GG6 — boot_app_init depth-4 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session GG6; depth-4 of boot_app_init_d2 (54 truly-unmapped DEFERRED rows in `boot_app_init_d2-cont1` after drift correction — the largest backlog in the project).
+
+You are an analysis session in a parallel fanout. Read CLAUDE.md, then the WHOLE re/SESSION_RULES.md. Then .claude/skills/ghidra-pool/SKILL.md and .claude/skills/multi-session/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop. 2. Verify-then-cite. 3. No hedging/inference/naming-from-names. 4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="boot_app_init_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition
+Parent: boot_app_init_d2 (queued 2026-05-08; D-8860..D-8916 filed for `boot_app_init_d2-cont1`). Apply common rule against bucket boot_app_init_d2-cont1.
+
+DEFERRED.md currently lists 57 rows tagged `boot_app_init_d2-cont1`. Drift-audit before draft confirms 3 of them are already C1 in hooks.csv. Skip those if encountered. Cap is 0 — drain everything in U/S range that remains.
+
+If parent has fewer than 5 unmapped DEFERRED rows: halt + surface "boot_app_init_d2 deferred range exhausted."
+
+Bucket: re/analysis/boot_app_init_d4/
+ID-range: U=3207..3226  D=9520..9579  S=3200..3219
+Subsystem: boot
+
+External Win32/COM imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ] || [ -f "mashed_pool/${SLOT}.lock~" ]; then
+     echo "ERROR: $SLOT is locked. Wait." >&2; exit 1
+   fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Open slot read-only via MCP.
+5. mcp__ghidra__health_ping → ok.
+6. mcp__ghidra__ghidra_info path contains $SLOT.
+
+## Drift-skip step
+Before processing each D-row from boot_app_init_d2-cont1, run:
+  grep -i "^${RVA}," hooks.csv
+If a C1+ row already exists, skip that D-row and note it in SESSION_END.md "drift-skipped" list (so the LL6 audit session can clear them in DEFERRED.md).
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=boot. U/S in U=3207..3226 / S=3200..3219. Cap → DEFERRED in D=9520..9579, bucket boot_app_init_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name boot_app_init_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Standard. Calling ghidra_pool.sh acquire.
+- Re-analyzing functions already covered by boot_app_init, boot_app_init_d2, boot_app_init_d3.
+- Marking Win32/COM imports as STUBS — they are external imports.
+- Spending the whole session on one >1500-byte function — split it into a C0 plate + DEFERRED row and move on.
+
+## End-of-session report
+Standard for d4 sessions. Add a "drift-skipped" section listing any D-rows already covered.

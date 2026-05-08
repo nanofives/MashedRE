@@ -620,3 +620,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x004809e0 FUN_004809e0; vehicle_update/004809e0.md cross-refs vehicle_update_d3
 2026-05-08  vehicle_update-20260508-0613  D-1060..D-1062 filed; cap split (23>20); vehicle_update-cont1 pickup
 2026-05-08 track_loader-20260508-0616 first-pass bucket=track_loader rvas=20 slot=Mashed_pool3
+
+2026-05-08  004c3b30  FUN_004c3b30  C0->C1  re/analysis/ai_update_d4/0x004c3b30.md; D-6461 cleared (conflict profile_career_d4 vs ai_update_d4; ai_update_d4 authoritative)
+2026-05-08  004c75e0  FUN_004c75e0  C0->C1  re/analysis/intro_splash_d2/0x004c75e0.md; hooks.csv gap filled; U-2347 filed (intro_splash_d2 uncertainty not previously in master tracker); resolves U-3071 tracker inconsistency

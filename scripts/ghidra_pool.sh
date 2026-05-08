@@ -31,6 +31,9 @@ slot_lock() { echo "$POOL_DIR/Mashed_pool${1}.lock"; }
 
 is_locked() { [[ -f "$(slot_lock "$1")" ]]; }
 
+# Strip "Mashed_pool" prefix so both "0" and "Mashed_pool0" are accepted.
+normalize_slot() { echo "${1#Mashed_pool}"; }
+
 next_free_index() {
     for i in $(seq 0 $((MAX_SLOTS - 1))); do
         if [[ ! -f "$(slot_gpr "$i")" ]]; then
@@ -70,27 +73,41 @@ cmd_init() {
     cmd_status
 }
 
-cmd_acquire() {
-    [[ ! -d "$POOL_DIR" ]] && { mkdir -p "$POOL_DIR"; }
+_try_acquire() {
     for gpr in "$POOL_DIR"/Mashed_pool*.gpr; do
         [[ -f "$gpr" ]] || continue
         local slot
         slot=$(echo "$gpr" | sed 's/.*pool\([0-9]*\).*/\1/')
-        if ! is_locked "$slot"; then echo "Mashed_pool${slot}"; exit 0; fi
+        if ! is_locked "$slot"; then echo "Mashed_pool${slot}"; return 0; fi
     done
     local idx
-    if ! idx=$(next_free_index); then
-        echo "ERROR: All $MAX_SLOTS slots exist and are LOCKED. Run release/cleanup or raise MAX_SLOTS." >&2
-        exit 1
-    fi
+    if ! idx=$(next_free_index); then return 1; fi
     create_slot "$idx"
     echo "Mashed_pool${idx}"
+    return 0
+}
+
+cmd_acquire() {
+    [[ ! -d "$POOL_DIR" ]] && { mkdir -p "$POOL_DIR"; }
+    local result
+    if result=$(_try_acquire); then
+        echo "$result"; exit 0
+    fi
+    # All MAX_SLOTS exist and are locked — auto-cleanup stale locks then retry once.
+    echo "WARNING: all $MAX_SLOTS slots locked; running cleanup and retrying..." >&2
+    cmd_cleanup >&2
+    if result=$(_try_acquire); then
+        echo "$result"; exit 0
+    fi
+    echo "ERROR: All $MAX_SLOTS slots still locked after cleanup. Run 'ghidra_pool.sh status' to inspect." >&2
+    exit 1
 }
 
 cmd_release() {
     if [[ -n "${1:-}" ]]; then
-        rm -f "$(slot_lock "$1")" "$(slot_lock "$1")~"
-        echo "Released slot $1"
+        local idx; idx=$(normalize_slot "$1")
+        rm -f "$(slot_lock "$idx")" "$(slot_lock "$idx")~"
+        echo "Released slot $idx"
     else
         rm -f "$POOL_DIR"/*.lock "$POOL_DIR"/*.lock~ 2>/dev/null || true
         echo "Released all pool slots"
@@ -164,6 +181,7 @@ cmd_add() {
 cmd_remove() {
     local i="${1:-}"
     [[ -z "$i" ]] && { echo "Usage: ghidra_pool.sh remove <N>" >&2; exit 1; }
+    i=$(normalize_slot "$i")
     if is_locked "$i"; then echo "ERROR: slot $i is LOCKED" >&2; exit 1; fi
     rm -f "$(slot_gpr "$i")"
     rm -rf "$(slot_rep "$i")"
