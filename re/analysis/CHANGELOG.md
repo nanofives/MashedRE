@@ -585,3 +585,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=game_state_d5  writes=5  errors=0
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=game_state_d5-cont1  writes=2  errors=0
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=render_frame_d4  writes=20  errors=0
+2026-05-08  sweep-20260508-0358  scribe-release  bucket=settings_config_d3  writes=8  errors=0  note=0x004991f0 written as listing-level (no Ghidra function object — C0 plate)
