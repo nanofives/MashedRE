@@ -1437,3 +1437,23 @@
 00468d80,FUN_00468d80,vehicle,C0,stub,,,,no-arg; callee of FUN_00469aa0 (vehicle_dynamics_d2); no analysis; S-3440
 004694e0,FUN_004694e0,vehicle,C0,stub,,,,no-arg; callee of FUN_00469aa0 (vehicle_dynamics_d2); no analysis; S-3441
 004c4dc0,FUN_004c4dc0,vehicle,C0,stub,,,,2-param (contact vec, geometry slot ptr); callee of FUN_00469df0 (vehicle_dynamics_d2); no analysis; S-3442
+0040ddb0,FUN_0040ddb0,util,C1,new,re/analysis/timer_d3/0x0040ddb0.md,,,calls FUN_00417750+FUN_00426c50(table[DAT_0063ba78])+FUN_00475a60+FUN_0045bf30+thunk_00475ef0+FUN_004046a0; aggregator; U-3467
+00413f90,FUN_00413f90,util,C1,new,re/analysis/timer_d3/0x00413f90.md,,,returns &DAT_005f2b10; trivial address-of getter; U-3468
+0042c1a0,FUN_0042c1a0,util,C1,new,re/analysis/timer_d3/0x0042c1a0.md,,,state transition DAT_0067eab0: 2→3; paired with getter FUN_0042c1c0; U-3469
+00430790,FUN_00430790,util,C1,new,re/analysis/timer_d3/0x00430790.md,,,returns DAT_0067f17c; getter; U-3470
+00430820,FUN_00430820,util,C1,new,re/analysis/timer_d3/0x00430820.md,,,returns DAT_0067ed6c; getter; initialized to 0 by FUN_0043df00; U-3471
+00493570,FUN_00493570,util,C1,new,re/analysis/timer_d3/0x00493570.md,,,sets DAT_0077196c=1; flag setter; 3-word cluster at 0x00771968; U-3472
+00493580,FUN_00493580,util,C1,new,re/analysis/timer_d3/0x00493580.md,,,sets DAT_00771970=1; flag setter; adjacent to U-3472 (+4); U-3473
+00498810,FUN_00498810,util,C1,new,re/analysis/timer_d3/0x00498810.md,,,implicit EAX param; reads EAX+0x60 struct; FUN_004cdca0(+0x0c,+0x10,0x20)→lock/operate/unlock; [UNCERTAIN] purpose; U-3474
+00492d10,FUN_00492d10,util,C1,new,re/analysis/timer_d3/0x00492d10.md,,,returns DAT_00771968; getter for 3-word cluster base at 0x00771968; U-3475
+004417e0,FUN_004417e0,util,C1,new,re/analysis/timer_d3/0x004417e0.md,,,fills 3-elem array from inner-struct offsets +0x40/+0x44/+0x48 via FUN_004671a0(0)->+4; U-3476
+0045c810,FUN_0045c810,util,C1,new,re/analysis/timer_d3/0x0045c810.md,,,increments DAT_0068d54c; counter increment; U-3477
+0045d1e0,FUN_0045d1e0,util,C1,new,re/analysis/timer_d3/0x0045d1e0.md,,,index-based; guards DAT_0088f0c0[i]==1 && DAT_008aa2e0[i]==0; calls FUN_0045c880/cd30/4656e0/cbe0; U-3478
+0045d330,FUN_0045d330,util,C1,new,re/analysis/timer_d3/0x0045d330.md,,,state-dispatch via FUN_0040e350; states 7/11: fill 4-word array 0x0068d53c via FUN_004b44f0(0,250); U-3479
+00472640,FUN_00472640,util,C1,new,re/analysis/timer_d3/0x00472640.md,,,sets DAT_0086ecc8=param_1; trivial setter; U-3480
+0040e170,FUN_0040e170,util,C1,new,re/analysis/timer_d3/0x0040e170.md,,,sets DAT_0063ba7c=param_1; called with 0 by FUN_0043df00; U-3481
+00431b30,FUN_00431b30,util,C1,new,re/analysis/timer_d3/0x00431b30.md,,,returns DAT_0067eaa8 as float10 (x87 extended); getter; U-3482
+0045db50,FUN_0045db50,util,C1,new,re/analysis/timer_d3/0x0045db50.md,,,float slider DAT_0068fc8c: dir0=dec/1=inc/2=zero/3=fast-dec; clamp [0.0,1.0]; sibling FUN_0045dbe0; U-3483
+0045dbe0,FUN_0045dbe0,util,C1,new,re/analysis/timer_d3/0x0045dbe0.md,,,float slider DAT_0068fcbc: dir0=dec/1=inc/2=zero; clamp; then FUN_004943f0(scale*val) if FUN_00493f70(0)!=0; U-3484
+004657b0,FUN_004657b0,util,C1,new,re/analysis/timer_d3/0x004657b0.md,,,6-entity per-frame audio/effect tick; state 6=active(FUN_0045da90) 3=cleanup(FUN_0045c850); sets DAT_006036cc=0.65f/1.0f; U-3485
+00472820,FUN_00472820,util,C1,new,re/analysis/timer_d3/0x00472820.md,,,validates float[3]: all finite(FUN_004a3907) AND mag²-threshold; [UNCERTAIN] Ghidra x87 compare artifact; U-3486
