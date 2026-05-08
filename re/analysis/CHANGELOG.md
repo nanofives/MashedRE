@@ -597,3 +597,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=hud_frontend_d4  writes=0  errors=0  note=all 18 RVAs missing per-RVA .md files (only notes.md present)
 2026-05-08  sweep-20260508-0603  scribe-claim  buckets=1 queued, 1 skipped-HOLD
 2026-05-08  sweep-20260508-0603  scribe-release  bucket=audio_dsound_d4  writes=6  errors=0  note=D-0940 tail plate written at function start (overwrites prior d1 head plate)
+2026-05-08  sweep-20260508-0603  scribe-release  buckets=1 drained  errors=0
