@@ -579,3 +579,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-05-07  sweep-20260507-2353  scribe-claim  buckets=17 queued, 1 skipped-HOLD
 2026-05-07  sweep-20260507-2353  scribe-release  buckets=0 drained (no-op: sweep-20260507-2002 had already completed all 17 drainable buckets; 1 HOLD replay_record)  errors=0
+
+2026-05-08  sweep-20260508-0358  scribe-claim  buckets=8 queued, 1 skipped-HOLD
+2026-05-08  sweep-20260508-0358  scribe-release  bucket=audio_dsound_d3  writes=15  errors=0
