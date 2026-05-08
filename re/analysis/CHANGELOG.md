@@ -584,3 +584,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=audio_dsound_d3  writes=15  errors=0
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=game_state_d5  writes=5  errors=0
 2026-05-08  sweep-20260508-0358  scribe-release  bucket=game_state_d5-cont1  writes=2  errors=0
+2026-05-08  sweep-20260508-0358  scribe-release  bucket=render_frame_d4  writes=20  errors=0
