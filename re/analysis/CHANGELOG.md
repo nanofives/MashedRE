@@ -663,3 +663,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1728  scribe-release  buckets=6 drained  errors=0  sync=12/16 (4 skipped: pool1,pool2,pool3,pool12 file-busy/Windows)
 2026-05-08  sweep-20260508-1737  scribe-claim  buckets=2 queued, 1 skipped-HOLD
 2026-05-08  sweep-20260508-1737  scribe-release  bucket=input_lua_d4  writes=15  errors=0
+
+2026-05-08  sweep-20260508-1737  scribe-release  bucket=c0_promotion_frontend_a  writes=18  errors=0
