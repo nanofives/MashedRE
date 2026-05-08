@@ -13,7 +13,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-07  game_state_d5-20260507  bucket=game_state_d5  rvas=0x00441c80,0x004430a0,0x004102f0,0x004430b0,0x0046baa0  S-2500..S-2501-resolved  S-2929..S-2930  U-3010..U-3013  D-8689..D-8690  pool=Mashed_pool1
 2026-05-08  game_state_d5-cont1-20260508-0324  bucket=game_state_d5-cont1  rvas=0x00405460,0x0040e590  S-2929..S-2930-resolved  S-2960..S-2975  U-2967..U-2974  D-8800..D-8815  pool=Mashed_pool12
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 2026-05-08  render_frame_d4-20260508-0332  bucket=render_frame_d4  rvas=0x004e4320,0x004e4350,0x0041ea10,0x0041e8f0,0x00401f10,0x00403d30,0x00403db0,0x00403ed0,0x00403fa0,0x004041c0,0x0042c010,0x0042c090,0x004278d0,0x00427990,0x00427be0,0x004c7760,0x004725c0,0x0041ebb0,0x004219c0,0x00425e40  S-3120..S-3132  U-3127..U-3140  D-9280  pool=Mashed_pool12  note=20 C1 plates; 13 stubs; 14 uncertainties; D-5020..D-5041 cleared; D-9280 filed for remaining 19 RVAs as render_frame_d4-cont1
@@ -27,6 +26,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-08  audio_dsound_d3-20260508  bucket=audio_dsound_d3  rvas=0x005aabe0,0x005bc860,0x005bc880,0x005baf40,0x005aaa00,0x005aab70,0x005baa60,0x005bc750,0x005aeea0,0x005aef00,0x005aef30,0x005bc470,0x005bc640,0x005bbd50,0x005bbed0  S-3180..S-3189  U-3187..U-3196  D-none  pool=Mashed_pool15  drained-by=sweep-20260508-0358; 15 plates, 15 bookmarks, 0 renames
+2026-05-07  game_state_d5-20260507  bucket=game_state_d5  rvas=0x00441c80,0x004430a0,0x004102f0,0x004430b0,0x0046baa0  S-2500..S-2501-resolved  S-2929..S-2930  U-3010..U-3013  D-8689..D-8690  pool=Mashed_pool1  drained-by=sweep-20260508-0358; 5 plates, 5 bookmarks, 0 renames
 2026-05-07  input_lua_d3-20260507-1700  bucket=input_lua_d3  rvas=0x004ba1b0,0x004b7be0,0x004ba210,0x004b9850,0x004b64e0  pool=Mashed_pool4  drained-by=sweep-20260507-2002; 5 plates, 5 bookmarks, 0 renames
 2026-05-07  window_fullscreen-20260507  bucket=window_fullscreen  rvas=0x00498bf0  pool=Mashed_pool10  drained-by=sweep-20260507-2002; 1 plate, 1 bookmark, 0 renames
 2026-05-07  video_mci_d2-20260507  bucket=video_mci_d2  rvas=0x00493ac0,0x0049ec10,0x004a3b84  pool=Mashed_pool1  drained-by=sweep-20260507-2002; 3 plates, 2 bookmarks, 1 listing-level C0 plate (0x00493ac0 — no Ghidra function object), 0 renames
