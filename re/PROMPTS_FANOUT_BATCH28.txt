@@ -112,6 +112,8 @@ Standard for d5 sessions. Add "drift-skipped" section.
 === PROMPT NN6 — profile_career depth-5 ========================================
 ================================================================================
 
+⚠ CANCELLED 2026-05-08 — profile_career_d4 produced zero cont1 DEFERRED rows (22 plates cleared D-6460..D-6483 with no overflow). Pre-flight halt confirmed by NN6 run. Slot Mashed_pool1 and ID range U=3347..3366 / D=9940..9999 / S=3340..3359 are permanently voided for this batch. Do NOT run.
+
 Recommended model: claude-sonnet-4-6 at medium thinking. Reason: depth-5 of profile_career_d4 (drains profile_career_d4-cont1 — fallout from batch 27 HH6).
 
 [SONNET HALTS as MM6.]
