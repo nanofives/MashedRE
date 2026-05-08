@@ -671,3 +671,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1859  scribe-release  bucket=c0_promotion_render_a  writes=16  errors=0
 2026-05-08  sweep-20260508-1859  scribe-release  bucket=vehicle_dynamics_d2  writes=2  errors=0
 2026-05-08  sweep-20260508-1859  scribe-release  bucket=timer_d3  writes=20  errors=0
+2026-05-08  sweep-20260508-1859  scribe-release  buckets=4 drained  errors=0  sync=partial (pool12 file-busy/Windows)
