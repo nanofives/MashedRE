@@ -655,3 +655,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1728  scribe-claim  buckets=4 queued, 1 skipped-HOLD
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=game_state_d5-cont2  writes=16  errors=0
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=hud_frontend_d4  writes=18  errors=0
+2026-05-08  sweep-20260508-1728  scribe-release  bucket=profile_career_d4  writes=22  errors=0  note=plate text from REPORT.md (no per-RVA files); hooks.csv already C1/C2 from session
