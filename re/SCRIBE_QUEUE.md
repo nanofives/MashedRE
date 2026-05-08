@@ -13,6 +13,8 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-07  game_state_d5-20260507  bucket=game_state_d5  rvas=0x00441c80,0x004430a0,0x004102f0,0x004430b0,0x0046baa0  S-2500..S-2501-resolved  S-2929..S-2930  U-3010..U-3013  D-8689..D-8690  pool=Mashed_pool1
+2026-05-08  game_state_d5-cont1-20260508-0324  bucket=game_state_d5-cont1  rvas=0x00405460,0x0040e590  S-2929..S-2930-resolved  S-2960..S-2975  U-2967..U-2974  D-8800..D-8815  pool=Mashed_pool12
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 2026-05-08  settings_config_d3-20260508-0019  bucket=settings_config_d3  rvas=0x004a504f,0x004c2f00,0x004991f0,0x00498d20,0x00498f60,0x00499170,0x00499740,0x00498d60  U-3007..U-3009  D-none  pool=Mashed_pool7  note=8 C1 plates; 0 deferred; U-0828 resolved (004991f0 confirmed function); DEFERRED.md discrepancy documented in SESSION_END.md (D-3580..D-3585 were never written — d2 bucket was never scribed)
 2026-05-07  ai_update_d4-20260507  bucket=ai_update_d4  rvas=0x004c3b30,0x00416230,0x004c3bf0,0x004c3c60,0x004b55a0  S-none  U-3067..U-3071  D-none  pool=Mashed_pool13  note=5 C1 plates; 0 deferred; clears D-5560..D-5564 from ai_update_d3 SESSION_END (those rows unscribed — not yet in DEFERRED.md); CONFLICT D-6461 vs 0x004c3b30 (sweep must resolve); U-3071 flags FUN_004c75e0 absent from hooks.csv
