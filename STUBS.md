@@ -728,3 +728,11 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3209 | 0x00425bf0 FUN_00425bf0 | 0x004262f0 FUN_004262f0 | render | passthrough | 2026-05-08 | no-arg call before loop in FUN_004262f0; track_loader |
 | S-3210 | 0x00425c00 FUN_00425c00 | 0x004262f0 FUN_004262f0 | render | passthrough | 2026-05-08 | 1-arg (ptr to 64-byte entry); per-element op; track_loader |
 | S-3211 | 0x00425b70 FUN_00425b70 | 0x004262f0 FUN_004262f0 | render | passthrough | 2026-05-08 | 2-arg (index, lookup_result); per-element op; track_loader |
+| S-3212 | 0x00550430 FUN_00550430 | 0x004b6640 FUN_004b6640 | boot | passthrough | 2026-05-08 | no-arg call after FUN_00551330 in FUN_004b6640; boot_app_init_d4 |
+| S-3213 | 0x005504d0 FUN_005504d0 | 0x004b6640 FUN_004b6640 | boot | passthrough | 2026-05-08 | called with PTR_DAT_006172f0; first call in FUN_004b6640; boot_app_init_d4 |
+| S-3214 | 0x00551330 FUN_00551330 | 0x004b6640 FUN_004b6640 | boot | passthrough | 2026-05-08 | called with (puVar1, 2, PTR_DAT_006172f0, PTR_DAT_006172f4); boot_app_init_d4 |
+| S-3215 | 0x00427580 FUN_00427580 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | no-arg tail call in FUN_004275d0; boot_app_init_d4 |
+| S-3216 | 0x00552920 FUN_00552920 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | called with FUN_00553ef0() result; boot_app_init_d4 |
+| S-3217 | 0x00553cf0 FUN_00553cf0 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | called with (FUN_00553ef0 result, &DAT_0067d828); boot_app_init_d4 |
+| S-3218 | 0x00553e80 FUN_00553e80 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | called with FUN_00553ef0() result; boot_app_init_d4 |
+| S-3219 | 0x00553ef0 FUN_00553ef0 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | no-arg handle getter; return used as arg to S-3216/S-3217/S-3218; boot_app_init_d4 |

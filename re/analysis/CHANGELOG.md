@@ -651,3 +651,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7123 (004b9850) → covered by input_lua_d3
 2026-05-08  deferred_audit-20260508  DEFERRED clear: D-7124 (004b64e0) → covered by input_lua_d3
 2026-05-08  deferred_audit-20260508  DEFERRED clear: D-8862 (00494c80) → covered by video_mci
+2026-05-08  boot_app_init_d4-20260508-1650  first-pass  bucket=boot_app_init_d4  rvas=20  C1  pool=Mashed_pool0  S-3212..S-3219  U-3222..U-3226  D-9520  drift-skip=D-8862,D-8864,D-8909
