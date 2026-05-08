@@ -759,3 +759,23 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3440 | 0x00468d80 FUN_00468d80 | 0x00469aa0 FUN_00469aa0 | vehicle | passthrough | 2026-05-08 | no-arg; callee of vehicle contact history update (vehicle_dynamics_d2) |
 | S-3441 | 0x004694e0 FUN_004694e0 | 0x00469aa0 FUN_00469aa0 | vehicle | passthrough | 2026-05-08 | no-arg; callee of vehicle contact history update (vehicle_dynamics_d2) |
 | S-3442 | 0x004c4dc0 FUN_004c4dc0 | 0x00469df0 FUN_00469df0 | vehicle | passthrough | 2026-05-08 | 2-param (contact vec, geometry slot ptr); callee of vehicle-vehicle collision impulse (vehicle_dynamics_d2) |
+| S-3540 | 0x004938e0 FUN_004938e0 | 0x00403910 FUN_00403910 | render | passthrough | 2026-05-08 | no-arg callee; called with (DAT_00636b78, DAT_00636b70); c0_promotion_render_a |
+| S-3541 | 0x004036a0 FUN_004036a0 | 0x00403910 FUN_00403910 | render | passthrough | 2026-05-08 | called with (0, DAT_00636b78); c0_promotion_render_a |
+| S-3542 | 0x0041f290 FUN_0041f290 | 0x00404650 FUN_00404650 | render | passthrough | 2026-05-08 | called with (0, 0x16); result used as arg to FUN_004c1480; c0_promotion_render_a |
+| S-3543 | 0x0048ad50 FUN_0048ad50 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 1st callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3544 | 0x00487de0 FUN_00487de0 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 2nd callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3545 | 0x00406130 FUN_00406130 | 0x004072e0 FUN_004072e0 | render | passthrough | 2026-05-08 | no-arg; called unconditionally at top of FUN_004072e0; c0_promotion_render_a |
+| S-3546 | 0x004b59c0 FUN_004b59c0 | 0x004072e0 FUN_004072e0 | render | passthrough | 2026-05-08 | called with (puVar2, puVar2+0xc, &local_4) inside conditional branch; c0_promotion_render_a |
+| S-3547 | 0x0048e7b0 FUN_0048e7b0 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 3rd callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3548 | 0x00457610 FUN_00457610 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 4th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3549 | 0x00475d30 FUN_00475d30 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 5th callee in 18-callee render dispatch; also promoted to C1 in c0_promotion_render_a |
+| S-3550 | 0x00486f50 FUN_00486f50 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 6th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3551 | 0x00486220 FUN_00486220 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 7th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3552 | 0x0048fce0 FUN_0048fce0 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 8th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3553 | 0x0048fd40 FUN_0048fd40 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 9th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3554 | 0x0048fd10 FUN_0048fd10 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 10th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3555 | 0x00475e50 FUN_00475e50 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 11th callee in 18-callee render dispatch; also promoted to C1 in c0_promotion_render_a |
+| S-3556 | 0x00477810 FUN_00477810 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 12th callee in 18-callee render dispatch; also promoted to C1 in c0_promotion_render_a |
+| S-3557 | 0x0048fd70 FUN_0048fd70 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 13th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3558 | 0x00490490 FUN_00490490 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 14th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3559 | 0x0048baf0 FUN_0048baf0 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 15th callee in 18-callee render dispatch; c0_promotion_render_a |

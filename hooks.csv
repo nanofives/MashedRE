@@ -1457,3 +1457,19 @@
 0045dbe0,FUN_0045dbe0,util,C1,new,re/analysis/timer_d3/0x0045dbe0.md,,,float slider DAT_0068fcbc: dir0=dec/1=inc/2=zero; clamp; then FUN_004943f0(scale*val) if FUN_00493f70(0)!=0; U-3484
 004657b0,FUN_004657b0,util,C1,new,re/analysis/timer_d3/0x004657b0.md,,,6-entity per-frame audio/effect tick; state 6=active(FUN_0045da90) 3=cleanup(FUN_0045c850); sets DAT_006036cc=0.65f/1.0f; U-3485
 00472820,FUN_00472820,util,C1,new,re/analysis/timer_d3/0x00472820.md,,,validates float[3]: all finite(FUN_004a3907) AND mag²-threshold; [UNCERTAIN] Ghidra x87 compare artifact; U-3486
+00403910,FUN_00403910,render,C1,new,re/analysis/c0_promotion_render_a/0x00403910.md,,,guards DAT_00636b70!=NULL; vtable[0x48/0x88] on *DAT_00636b70/*DAT_00636b74; FUN_004938e0/004036a0; vtable[0x8] on piVar2 (decompiler shows 0x0 — [UNCERTAIN]); U-3547
+00404650,FUN_00404650,render,C1,new,re/analysis/c0_promotion_render_a/0x00404650.md,,,triple guard DAT_007f0fd0==10 && DAT_00636c00!=0 && DAT_005d757c<DAT_007f0fe4; FUN_0041f290(0,0x16); FUN_004c1480(*(DAT_00636c00+4),result,0); FUN_004e6680(DAT_00636c00)
+004072e0,FUN_004072e0,render,C1,new,re/analysis/c0_promotion_render_a/0x004072e0.md,,,FUN_00406130(); loop 0..DAT_0063a5d0 stride 0xec from DAT_00639dfc; on iVar1==DAT_0063a5d8: color 0xff0408c2; vtable[0x20/0x48] renders; inner loop 0..9
+0040bde0,FUN_0040bde0,render,C1,new,re/analysis/c0_promotion_render_a/0x0040bde0.md,,,guards DAT_0063b8f4!=0; 18 fixed no-arg render callees in sequence; writes _DAT_0063b8f0=0 after all calls
+00413a00,FUN_00413a00,render,C1,new,re/analysis/c0_promotion_render_a/0x00413a00.md,,,sets DAT_008a94a0=0; loop 0..DAT_0063bc58 calling FUN_004128f0(0x3fcccccd approx 1.6f); reset+populate
+00413a40,FUN_00413a40,render,C1,new,re/analysis/c0_promotion_render_a/0x00413a40.md,,,guards DAT_008a94a0!=0; vtable[0x20/0x24/0x34] render-state sequence; save/restore states 0x14/0xe; draw vtable[0x34](3,&DAT_00828320,count*4,&DAT_0089d4a0,count*6)
+004189c0,FUN_004189c0,render,C1,new,re/analysis/c0_promotion_render_a/0x004189c0.md,,,FUN_0040e350(); if==6: FUN_0042fe50(); if!=0: FUN_00419530(); 3-level guard chain
+00422ac0,FUN_00422ac0,render,C1,new,re/analysis/c0_promotion_render_a/0x00422ac0.md,,,writes 4 dwords from param_2 to DAT_006412e8+param_1*0xf40 at offsets 0/4/8/12; per-slot 4-word store
+00422af0,FUN_00422af0,render,C1,new,re/analysis/c0_promotion_render_a/0x00422af0.md,,,writes param_2 to DAT_00641320+param_1*0xf40; 1-word per-slot setter; stride 0xf40
+00426640,FUN_00426640,render,C1,new,re/analysis/c0_promotion_render_a/0x00426640.md,,,guards DAT_0066d704!=0; FUN_0041e9b0(param_1); FUN_0041ea70(); if!=0: FUN_0041e950()
+00426e00,FUN_00426e00,render,C1,new,re/analysis/c0_promotion_render_a/0x00426e00.md,,,returns _DAT_00644368 as float10 (x87 extended); trivial getter; Ghidra symbol overlap
+00448730,FUN_00448730,render,C1,new,re/analysis/c0_promotion_render_a/0x00448730.md,,,FUN_00432ad0(); _DAT_007f0f7c+=_DAT_005cc320; FUN_004430c0(DAT_00896498); if DAT_007f1a50!=0: FUN_00444ff0()
+0045b990,FUN_0045b990,render,C1,new,re/analysis/c0_promotion_render_a/0x0045b990.md,,,FUN_0045a130(); FUN_00458b10(); loop 0..DAT_005f9bd8 calling fn-ptr table PTR_FUN_005f99b8 stride 0x10
+00475d30,FUN_00475d30,render,C1,new,re/analysis/c0_promotion_render_a/0x00475d30.md,,,vtable[0x20](8,0) bracket; loop 0..DAT_0069160c calling FUN_004770a0(iVar2+DAT_00691608) stride 0x40; vtable[0x20](8,1)
+00475e50,FUN_00475e50,render,C1,new,re/analysis/c0_promotion_render_a/0x00475e50.md,,,vtable[0x20](8,0) bracket; 5 fixed FUN_004770a0 calls at DAT_00691618/00692418/00691658/00692458/00692498
+00477810,FUN_00477810,render,C1,new,re/analysis/c0_promotion_render_a/0x00477810.md,,,vtable[0x20](8,0) bracket; two loops (base DAT_00692bb8->0x693178 & DAT_006925b8->0x692b78 stride 0x5c) calling FUN_00477500 on flag@+0x58
