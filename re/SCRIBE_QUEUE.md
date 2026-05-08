@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-08  hud_frontend_d4_repair-20260508-1654  bucket=hud_frontend_d4  rvas=0x0042a940,0x0042ac00,0x0042ac50,0x0042bcb0,0x0042d290,0x0042d300,0x0042ebe0,0x0042ee00,0x0042ee40,0x0042ef40,0x0042f8d0,0x0042fab0,0x00430760,0x00430830,0x00430a10,0x00430a60,0x00430ab0,0x00430b30  S-3160..S-3161  U-3167..U-3184  pool=Mashed_pool4(verify-only)  note=repair extraction from notes.md; 18 per-RVA .md files now present; re-queue of drained-with-0-plates row (sweep-20260508-0358)
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
 ```
 
