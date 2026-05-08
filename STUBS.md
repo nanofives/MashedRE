@@ -687,3 +687,26 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2973 | 0x004704c0 FUN_004704c0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | 6-arg vehicle-placement call; 0x1AA bytes; D-8813 |
 | S-2974 | 0x0048f680 FUN_0048f680 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; called after FUN_00429820; 0x20 bytes; D-8814 |
 | S-2975 | 0x0048f740 FUN_0048f740 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; called after FUN_0048f680; 0x30 bytes; D-8815 |
+| S-3180 | 0x005adef0 FUN_005adef0 | 0x005aabe0 FUN_005aabe0 | audio | passthrough | 2026-05-08 | called as FUN_005adef0(&DAT_007dccf0,&LAB_005aac00,param_1); return value used as ref-count by callers; audio_dsound_d3 |
+| S-3181 | 0x005ae250 FUN_005ae250 | 0x005bc860 FUN_005bc860 | audio | passthrough | 2026-05-08 | called as FUN_005ae250(0x12,8,1,0,&DAT_007ddfec); tracker/pool init; audio_dsound_d3 |
+| S-3182 | 0x005ae330 FUN_005ae330 | 0x005bc880 FUN_005bc880 | audio | passthrough | 2026-05-08 | called as FUN_005ae330(&DAT_007ddfec); counterpart to FUN_005ae250; audio_dsound_d3 |
+| S-3183 | 0x005aacf0 FUN_005aacf0 | 0x005aaa00 FUN_005aaa00 | audio | passthrough | 2026-05-08 | called twice: (param_1,1) and (param_1,2) when +0x1c bit0x1 set; audio_dsound_d3 |
+| S-3184 | 0x005a9f60 FUN_005a9f60 | 0x005aaa00 FUN_005aaa00 | audio | passthrough | 2026-05-08 | final teardown call (param_1,param_2,param_3); audio_dsound_d3 |
+| S-3185 | 0x005bc190 FUN_005bc190 | 0x005baa60 FUN_005baa60 | audio | passthrough | 2026-05-08 | called as FUN_005bc190(param_3,local_48); transforms param_3 → 4-float buffer; audio_dsound_d3 |
+| S-3186 | 0x005bc450 FUN_005bc450 | 0x005bc470 FUN_005bc470 + 0x005bc640 FUN_005bc640 | audio | passthrough | 2026-05-08 | prep/cleanup call; no-arg in FUN_005bc470; with param_1 in FUN_005bc640; audio_dsound_d3 |
+| S-3187 | 0x005be0f0 FUN_005be0f0 | 0x005bc470 FUN_005bc470 | audio | passthrough | 2026-05-08 | called as FUN_005be0f0(0,param_3+2) and FUN_005be0f0(0,param_3+8,0); slot init; audio_dsound_d3 |
+| S-3188 | 0x005be160 FUN_005be160 | 0x005bc640 FUN_005bc640 | audio | passthrough | 2026-05-08 | called as FUN_005be160(param_1+2) and FUN_005be160(param_1+8); slot cleanup; audio_dsound_d3 |
+| S-3189 | 0x005aef70 LAB_005aef70 | 0x005aef30 FUN_005aef30 | audio | passthrough | 2026-05-08 | _beginthread target; thread wrapper proc; receives thread-descriptor ptr as arg; dispatches to [1] proc; audio_dsound_d3 |
+| S-3120 | 0x00412130 FUN_00412130 | 0x00401f10 FUN_00401f10 | render | passthrough | 2026-05-08 | called as count getter; return used as loop bound for second sub-array at DAT_00636ac0+0x50; render_frame_d4 |
+| S-3121 | 0x004e6680 FUN_004e6680 | 0x00401f10 FUN_00401f10; 0x004725c0 FUN_004725c0 | render | passthrough | 2026-05-08 | per-element op on pointer arrays at DAT_00636ac0+0x40/+0x50 and DAT_0069150c; render_frame_d4 |
+| S-3122 | 0x00427e00 FUN_00427e00 | 0x00403fa0 FUN_00403fa0; 0x004041c0 FUN_004041c0 | render | passthrough | 2026-05-08 | 6-arg sprite/text draw (id, x, y, color, scale, mode); render_frame_d4 |
+| S-3123 | 0x00472b10 FUN_00472b10 | 0x0042c010 FUN_0042c010 | render | passthrough | 2026-05-08 | 6-arg rect/quad draw (0, x1_scaled, y1_scaled, x2_scaled, y2_scaled, color); render_frame_d4 |
+| S-3124 | 0x004273e0 FUN_004273e0 | 0x0042c090 FUN_0042c090 | render | passthrough | 2026-05-08 | line draw 5-arg (x1, y1, x2, y2, color_ptr); renders outline segments; render_frame_d4 |
+| S-3125 | 0x00427780 FUN_00427780 | 0x004278d0 FUN_004278d0; 0x00427990 FUN_00427990 | render | passthrough | 2026-05-08 | 1-arg; receives track/level id (param_1); font/context setup step 1; render_frame_d4 |
+| S-3126 | 0x004277a0 FUN_004277a0 | 0x004278d0 FUN_004278d0; 0x00427990 FUN_00427990 | render | passthrough | 2026-05-08 | no args; font/context setup step 2; paired with S-3125; render_frame_d4 |
+| S-3127 | 0x00556e90 FUN_00556e90 | 0x004278d0 FUN_004278d0; 0x00427990 FUN_00427990; 0x00427be0 FUN_00427be0 | render | passthrough | 2026-05-08 | 5 args (handle, ptr×4 repeated); font color/parameter setter; render_frame_d4 |
+| S-3128 | 0x005555b0 FUN_005555b0 | 0x004278d0 FUN_004278d0; 0x00427990 FUN_00427990; 0x00427be0 FUN_00427be0 | render | passthrough | 2026-05-08 | 6 args (handle, buf, float_scale, data_ptr, align, handle2); string format+render; render_frame_d4 |
+| S-3129 | 0x00427840 FUN_00427840 | 0x00427be0 FUN_00427be0 | render | passthrough | 2026-05-08 | no args; combined font/context setup (replaces S-3125+S-3126 pair); render_frame_d4 |
+| S-3130 | 0x004770a0 FUN_004770a0 | 0x0041ebb0 FUN_0041ebb0 | render | passthrough | 2026-05-08 | 1-arg; object handle; paired complement to FUN_00476df0 (C1 effects_particle); called after render-state-8 disable; render_frame_d4 |
+| S-3131 | 0x00421720 FUN_00421720 | 0x004219c0 FUN_004219c0 | render | passthrough | 2026-05-08 | no args; called per 0x208-byte entry in array 0x0063fb90..0x006403b0; 4 iterations; render_frame_d4 |
+| S-3132 | 0x004c1b40 FUN_004c1b40 | 0x00425e40 FUN_00425e40 | render | passthrough | 2026-05-08 | 2 args (RW_device_ptr, uVar1 from FUN_004e6100); result gates 3-vtable dispatch; render_frame_d4 |
