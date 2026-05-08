@@ -824,3 +824,6 @@ A row goes into DEFERRED when:
 | D-5039 | 0x0041ebb0 FUN_0041ebb0 | analyzed C1 session render_frame_d4-20260508-0332; S-3130 | 2026-05-08 |
 | D-5040 | 0x004219c0 FUN_004219c0 | analyzed C1 session render_frame_d4-20260508-0332; S-3131; U-3139 | 2026-05-08 |
 | D-5041 | 0x00425e40 FUN_00425e40 | analyzed C1 session render_frame_d4-20260508-0332; S-3132; U-3140 | 2026-05-08 |
+| D-1060 | Cap-split remainder: 0x00480b70 FUN_00480b70 (VehicleWheelParticles) | vehicle_update subset 23 RVAs > Sonnet cap 20; analysis notes in vehicle_update_d2/00480b70.md (U-1414) | vehicle_update-cont1 session; tracker rows from this session needed | vehicle |
+| D-1061 | Cap-split remainder: 0x004a2c48 FUN_004a2c48 | vehicle_update subset 23 RVAs > Sonnet cap 20; new function not previously analyzed | vehicle_update-cont1 session | vehicle |
+| D-1062 | Cap-split remainder: 0x004c3ac0 FUN_004c3ac0 | vehicle_update subset 23 RVAs > Sonnet cap 20; new function; called from FUN_00470c70 substep loop to read float fields piVar14+0x268 and piVar14+0x26b | vehicle_update-cont1 session | vehicle |

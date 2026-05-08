@@ -1303,3 +1303,23 @@
 0041ebb0,FUN_0041ebb0,render,C1,mapped,re/analysis/render_frame_d4/0x0041ebb0.md,,,FUN_00476df0×2 + RW-state-8-off + FUN_004770a0×2 + RW-state-8-on; S-3130; render_frame_d4
 004219c0,FUN_004219c0,render,C1,mapped,re/analysis/render_frame_d4/0x004219c0.md,,,Copy *DAT_007d3ff8→DAT_006403b0; loop FUN_00421720 4× over 0x208-byte entries; S-3131; render_frame_d4
 00425e40,FUN_00425e40,render,C1,mapped,re/analysis/render_frame_d4/0x00425e40.md,,,8-entry table loop: FUN_004e6100+004c1b40 gate 3-vtable+0x48 dispatches per entry; S-3132; render_frame_d4
+00470c70,FUN_00470c70,vehicle,C1,mapped,re/analysis/vehicle_update/00470c70.md,,,VEHICLE_UPDATE_FN; 16-vehicle dispatcher; stride 0x341; substep param_1+dt param_2; calls FUN_00467350+FUN_0047eb30 pre-loop; U-0387..U-0390
+00408a50,FUN_00408a50,vehicle,C1,mapped,re/analysis/vehicle_update/00408a50.md,,,per-car float getter DAT_008a96e8+param_1*0x30c; stride 0x30c; sort key for 4-vehicle bubble sort; U-0391
+0040e340,FUN_0040e340,vehicle,C1,mapped,re/analysis/vehicle_update/0040e340.md,,,getter returns DAT_008a94d0; used as vehicle count upper bound; U-0392
+0040e350,FUN_0040e350,vehicle,C1,mapped,re/analysis/vehicle_update/0040e350.md,,,getter returns DAT_0063ba8c; game/race state discriminator; values 6/10/11 enable input; U-0393
+0040e370,FUN_0040e370,vehicle,C1,mapped,re/analysis/vehicle_update/0040e370.md,,,bool: PTR_PTR_005f2770+param_1*4+0x34 != 0; returns false if param_1>3; U-0394
+0040e470,FUN_0040e470,vehicle,C1,mapped,re/analysis/vehicle_update/0040e470.md,,,raw getter: PTR_PTR_005f2770+param_1*4+0x34; 1=player 2+=AI; U-0394
+00413c70,FUN_00413c70,vehicle,C1,mapped,re/analysis/vehicle_update/00413c70.md,,,race-event/state write; DAT_0063bc68[i*3]=param_3; inits timer at DAT_0063bc60[i*3]=0x3c23d70a if zero; U-0395
+00422fd0,FUN_00422fd0,vehicle,C1,mapped,re/analysis/vehicle_update/00422fd0.md,,,vehicle reset: FUN_0046c5c0+FUN_0046c790(1)+FUN_004215c0(50f)*2+FUN_0045ba00(2); S-0380..S-0384; U-0396
+0042fe70,FUN_0042fe70,vehicle,C1,mapped,re/analysis/vehicle_update/0042fe70.md,,,getter returns DAT_0067ea80; selects timeout 900k/1800k/3600k for DAT_007f1018; U-0397
+00443080,FUN_00443080,vehicle,C1,mapped,re/analysis/vehicle_update/00443080.md,,,getter returns DAT_00897ffc; when 1 overrides input to neutral AI block; U-0398
+00467350,FUN_00467350,vehicle,C1,mapped,re/analysis/vehicle_update/00467350.md,,,cross-ref to vehicle_update_d3/00467350.md; once-per-tick pre-loop call with substep count
+0046c7b0,FUN_0046c7b0,vehicle,C1,mapped,re/analysis/vehicle_update/0046c7b0.md,,,vehicle slot getter DAT_008815a4+param_1*0x341; returns -1 if >15
+0046da80,FUN_0046da80,vehicle,C1,mapped,re/analysis/vehicle_update/0046da80.md,,,cross-ref to vehicle_update_d2/0046da80.md (VehicleTrackInteraction U-1413)
+0046dc20,FUN_0046dc20,vehicle,C1,mapped,re/analysis/vehicle_update/0046dc20.md,,,cross-ref to vehicle_update_d3/0046dc20.md; out-of-bounds/speed-kill step
+0046f6c0,FUN_0046f6c0,vehicle,C1,mapped,re/analysis/vehicle_update/0046f6c0.md,,,cross-ref to vehicle_update_d3/0046f6c0.md; checkpoint/track-query flush
+00470670,FUN_00470670,vehicle,C1,mapped,re/analysis/vehicle_update/00470670.md,,,cross-ref to vehicle_update_d2/00470670.md (VehicleControlUpdate U-1408)
+004709a0,FUN_004709a0,vehicle,C1,mapped,re/analysis/vehicle_update/004709a0.md,,,cross-ref to vehicle_update_d2/004709a0.md (VehicleCollisionBroadPhase U-1409)
+0047eb30,FUN_0047eb30,vehicle,C1,mapped,re/analysis/vehicle_update/0047eb30.md,,,cross-ref to vehicle_update_d3/0047eb30.md; once-per-tick post-FUN_00467350 call
+00480720,FUN_00480720,vehicle,C1,mapped,re/analysis/vehicle_update/00480720.md,,,cross-ref to vehicle_update_d2/00480720.md (VehicleSpeedCorrection U-1410)
+004809e0,FUN_004809e0,vehicle,C1,mapped,re/analysis/vehicle_update/004809e0.md,,,cross-ref to vehicle_update_d3/004809e0.md; final-frame per-vehicle step

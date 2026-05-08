@@ -598,3 +598,24 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-0603  scribe-claim  buckets=1 queued, 1 skipped-HOLD
 2026-05-08  sweep-20260508-0603  scribe-release  bucket=audio_dsound_d4  writes=6  errors=0  note=D-0940 tail plate written at function start (overwrites prior d1 head plate)
 2026-05-08  sweep-20260508-0603  scribe-release  buckets=1 drained  errors=0
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x00470c70 FUN_00470c70 (VEHICLE_UPDATE_FN); re/analysis/vehicle_update/00470c70.md; U-0387..U-0390 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x00408a50 FUN_00408a50; re/analysis/vehicle_update/00408a50.md; U-0391 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x0040e340 FUN_0040e340; re/analysis/vehicle_update/0040e340.md; U-0392 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x0040e350 FUN_0040e350; re/analysis/vehicle_update/0040e350.md; U-0393 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x0040e370 FUN_0040e370; re/analysis/vehicle_update/0040e370.md; U-0394 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x0040e470 FUN_0040e470; re/analysis/vehicle_update/0040e470.md; U-0394 (shared)
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x00413c70 FUN_00413c70; re/analysis/vehicle_update/00413c70.md; U-0395 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x00422fd0 FUN_00422fd0; re/analysis/vehicle_update/00422fd0.md; S-0380..S-0384 filed; U-0396 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x0042fe70 FUN_0042fe70; re/analysis/vehicle_update/0042fe70.md; U-0397 filed
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x00443080 FUN_00443080; re/analysis/vehicle_update/00443080.md; U-0398 filed
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x00467350 FUN_00467350; vehicle_update/00467350.md cross-refs vehicle_update_d3
+2026-05-08  vehicle_update-20260508-0613  C0->C1  0x0046c7b0 FUN_0046c7b0; re/analysis/vehicle_update/0046c7b0.md
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x0046da80 FUN_0046da80; vehicle_update/0046da80.md cross-refs vehicle_update_d2
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x0046dc20 FUN_0046dc20; vehicle_update/0046dc20.md cross-refs vehicle_update_d3
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x0046f6c0 FUN_0046f6c0; vehicle_update/0046f6c0.md cross-refs vehicle_update_d3
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x00470670 FUN_00470670; vehicle_update/00470670.md cross-refs vehicle_update_d2
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x004709a0 FUN_004709a0; vehicle_update/004709a0.md cross-refs vehicle_update_d2
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x0047eb30 FUN_0047eb30; vehicle_update/0047eb30.md cross-refs vehicle_update_d3
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x00480720 FUN_00480720; vehicle_update/00480720.md cross-refs vehicle_update_d2
+2026-05-08  vehicle_update-20260508-0613  C1(xref)  0x004809e0 FUN_004809e0; vehicle_update/004809e0.md cross-refs vehicle_update_d3
+2026-05-08  vehicle_update-20260508-0613  D-1060..D-1062 filed; cap split (23>20); vehicle_update-cont1 pickup

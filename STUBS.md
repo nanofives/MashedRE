@@ -711,3 +711,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3130 | 0x004770a0 FUN_004770a0 | 0x0041ebb0 FUN_0041ebb0 | render | passthrough | 2026-05-08 | 1-arg; object handle; paired complement to FUN_00476df0 (C1 effects_particle); called after render-state-8 disable; render_frame_d4 |
 | S-3131 | 0x00421720 FUN_00421720 | 0x004219c0 FUN_004219c0 | render | passthrough | 2026-05-08 | no args; called per 0x208-byte entry in array 0x0063fb90..0x006403b0; 4 iterations; render_frame_d4 |
 | S-3132 | 0x004c1b40 FUN_004c1b40 | 0x00425e40 FUN_00425e40 | render | passthrough | 2026-05-08 | 2 args (RW_device_ptr, uVar1 from FUN_004e6100); result gates 3-vtable dispatch; render_frame_d4 |
+| S-0380 | 0x0046c5c0 FUN_0046c5c0 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | vehicle state clear; called first in vehicle reset sequence |
+| S-0381 | 0x0046c790 FUN_0046c790 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | vehicle activate with flag 1 |
+| S-0382 | 0x004215c0 FUN_004215c0 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | vehicle speed/parameter setter; called twice with 0x42480000 (50.0f) for axes 0 and 1 |
+| S-0383 | 0x0045ba00 FUN_0045ba00 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | powerup state reset with mode 2 |
+| S-0384 | 0x00419760 thunk_FUN_00419760 | 0x00422fd0 FUN_00422fd0 | vehicle | passthrough | 2026-05-08 | player control enable thunk; called when FUN_0040e470(param_1)==1 and mode!=7 |
