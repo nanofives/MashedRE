@@ -1,0 +1,398 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 29  [PROVISIONAL]
+================================================================================
+
+Six prompts (SS6–XX6). Batch 29 is **PROVISIONAL** — drafted two batches ahead
+of current state, before the empirical fallout from batches 27 and 28 is known.
+
+Provisionality means:
+  - Each session has a hard parent-readiness preflight that halts if its parent
+    chain isn't where this batch assumes.
+  - The C0 promotion session (XX6) is independent of batch 27/28 outcomes
+    (its source is the existing 51 C0 render placeholders in hooks.csv) and
+    can launch standalone.
+  - If you reach this point in the queue and want to substitute different
+    targets, the slot/ID-range scaffolding here is reusable — only the
+    "Subset definition" + "Subsystem" sections need swapping.
+
+Strategic shape (assumes batches 27 + 28 landed):
+  5 sessions  open NEW depth-2 / depth-3 chains in subsystems where prior
+              fanouts left clear callee trees:
+                vehicle_dynamics  (1 dir, 7 RVAs analyzed → first d2)
+                timer             (3 dirs, 42 RVAs → first d3)
+                save_gamesave     (2 dirs, 11 RVAs → first d3)
+                intro_splash      (2 dirs, 9 RVAs → first d3)
+                powerups          (3 dirs, lots → first d4)
+  1 session   C0 → C1 promotion sweep on render C0 placeholders
+              (continues the LL6/RR6 "rethink existing" thread)
+
+⚠ DEPENDENCY ORDER ⚠ — DO NOT launch batch 29 until:
+  1. Batches 27 and 28 have all reached SESSION_END.
+  2. /sweep has fully drained their queue rows.
+  3. Pool slots 0..5 are unlocked.
+
+Pre-launch checks per session:
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+Slot assignments (uses pool0..pool5):
+
+  SS6  vehicle_dynamics_d2          Mashed_pool0
+  TT6  timer_d3                     Mashed_pool1
+  UU6  save_gamesave_d3             Mashed_pool2
+  VV6  intro_splash_d3              Mashed_pool3
+  WW6  powerups_d4                  Mashed_pool4
+  XX6  c0_promotion_render_a        Mashed_pool5
+
+Prompts in this batch:
+  SS6  vehicle_dynamics_d2          Sonnet medium  — first depth-2 (no prior d2 dir)
+  TT6  timer_d3                     Sonnet medium  — first depth-3 (timer + timer_d2 + timer_d2_cont1 → callees)
+  UU6  save_gamesave_d3             Sonnet medium  — first depth-3
+  VV6  intro_splash_d3              Sonnet medium  — first depth-3
+  WW6  powerups_d4                  Sonnet medium  — first depth-4
+  XX6  c0_promotion_render_a        Sonnet medium  — promote 18 C0 render placeholder plates to C1 (independent of 27/28)
+
+ID ranges + slot assignments:
+
+  Session  Bucket                       Slot           U range      D range          S range
+  -------  ---------------------------  -------------  -----------  ---------------  -----------
+    SS6    vehicle_dynamics_d2          Mashed_pool0   3447..3466   10240..10299     3440..3459
+    TT6    timer_d3                     Mashed_pool1   3467..3486   10300..10359     3460..3479
+    UU6    save_gamesave_d3             Mashed_pool2   3487..3506   10360..10419     3480..3499
+    VV6    intro_splash_d3              Mashed_pool3   3507..3526   10420..10479     3500..3519
+    WW6    powerups_d4                  Mashed_pool4   3527..3546   10480..10539     3520..3539
+    XX6    c0_promotion_render_a        Mashed_pool5   3547..3566   10540..10599     3540..3559
+
+DEPTH-N ACQUISITION RULE — same as batches 14..28.
+
+================================================================================
+=== PROMPT SS6 — vehicle_dynamics first depth-2 ================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session SS6; first depth-2 of vehicle_dynamics. Parent (re/analysis/vehicle_dynamics/) has 7 analyzed RVAs across two prior sessions but no d2 dir yet — the callee trees of those 7 functions are unmapped territory.
+
+[SONNET HALTS as in batch 27 GG6.]
+
+## Session identifier
+SESSION_SHORT_ID="vehicle_dynamics_d2-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition
+Parent: vehicle_dynamics (re/analysis/vehicle_dynamics/, 7 RVAs). Apply common rule by enumerating callees of those 7 RVAs that are NOT yet C1+ in hooks.csv.
+
+If fewer than 5 unmapped callees can be identified across the 7 parent RVAs: halt + surface "vehicle_dynamics callee tree exhausted."
+
+Bucket: re/analysis/vehicle_dynamics_d2/  (new)
+ID-range: U=3447..3466  D=10240..10299  S=3440..3459
+Subsystem: vehicle
+
+External imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+None. Cite ONLY MCP.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ]; then echo "ERROR: $SLOT locked"; exit 1; fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Verify re/analysis/vehicle_dynamics/ exists with ≥5 RVA files. Otherwise halt.
+5. Open slot read-only via MCP. health_ping. ghidra_info contains $SLOT.
+
+## Drift-skip step
+For each candidate callee RVA: grep -i "^${RVA}," hooks.csv. Skip if already C1+.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=vehicle. U/S in U=3447..3466 / S=3440..3459. Cap → DEFERRED in D=10240..10299, bucket vehicle_dynamics_d2-cont1.
+
+Enumerate callees with mcp__ghidra__function_callees on each parent RVA (0x00467300, 0x0046d700, 0x0046e9e0, 0x0046ef70, 0x004709a0, 0x004c3b90, 0x004c4680). Build a uniqued list of unmapped callees in RVA order.
+
+## Shutdown + Queue
+Standard. Bucket name vehicle_dynamics_d2. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by vehicle_dynamics, vehicle_update, vehicle_update_d2/d3, vehicle_damage, vehicle_damage_d2/d3.
+
+## End-of-session report
+Standard for d2 sessions. Add "callee enumeration" section showing how many uncovered callees were found per parent RVA.
+
+================================================================================
+=== PROMPT TT6 — timer first depth-3 ===========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: first depth-3 of timer chain. Parents (timer + timer_d2 + timer_d2_cont1) have 42 analyzed RVAs across 3 dirs; their callees are largely unmapped.
+
+[SONNET HALTS as SS6.]
+
+## Session identifier
+SESSION_SHORT_ID="timer_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parents: timer, timer_d2, timer_d2_cont1 (3 dirs, ~42 RVAs total). Apply common rule against uncovered callees.
+
+If fewer than 5 unmapped callees identifiable: halt + surface "timer callee tree exhausted."
+
+Bucket: re/analysis/timer_d3/  (new)
+ID-range: U=3467..3486  D=10300..10359  S=3460..3479
+Subsystem: util
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool1", lock check, slot create if missing, preflight, parent-dirs check, open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as SS6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3467..3486 / S=3460..3479. Cap → DEFERRED in D=10300..10359, bucket timer_d3-cont1.
+
+Enumerate callees across all 3 parent dirs.
+
+## Shutdown + Queue
+Standard. Bucket name timer_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by timer, timer_d2, timer_d2_cont1.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT UU6 — save_gamesave first depth-3 ===================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: first depth-3 of save_gamesave chain. Parents (save_gamesave + save_gamesave_d2) have 11 analyzed RVAs.
+
+[SONNET HALTS as SS6.]
+
+## Session identifier
+SESSION_SHORT_ID="save_gamesave_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition
+Parents: save_gamesave + save_gamesave_d2 (~11 RVAs). Apply common rule against uncovered callees.
+
+If fewer than 5 unmapped callees identifiable: halt + surface "save_gamesave callee tree exhausted."
+
+Bucket: re/analysis/save_gamesave_d3/  (new)
+ID-range: U=3487..3506  D=10360..10419  S=3480..3499
+Subsystem: save
+
+External Win32 file/registry imports NOT stubs.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool2", lock check, slot create if missing, preflight, parent-dirs check, open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as SS6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=save. U/S in U=3487..3506 / S=3480..3499. Cap → DEFERRED in D=10360..10419, bucket save_gamesave_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name save_gamesave_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by save_gamesave, save_gamesave_d2.
+- Marking Win32 file/registry imports as STUBS.
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT VV6 — intro_splash first depth-3 ====================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: first depth-3 of intro_splash chain. Parents (intro_splash + intro_splash_d2) have ~9 analyzed RVAs.
+
+[SONNET HALTS as SS6.]
+
+## Session identifier
+SESSION_SHORT_ID="intro_splash_d3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition
+Parents: intro_splash + intro_splash_d2 (~9 RVAs). Apply common rule against uncovered callees.
+
+If fewer than 5 unmapped callees identifiable: halt + surface "intro_splash callee tree exhausted."
+
+Bucket: re/analysis/intro_splash_d3/  (new)
+ID-range: U=3507..3526  D=10420..10479  S=3500..3519
+Subsystem: frontend
+
+External RW/D3D9 imports NOT stubs.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool3", lock check, slot create if missing, preflight, parent-dirs check, open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as SS6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=3507..3526 / S=3500..3519. Cap → DEFERRED in D=10420..10479, bucket intro_splash_d3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name intro_splash_d3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by intro_splash, intro_splash_d2, video_mci, video_mci_d2/d3 (videos play during intro — they overlap).
+
+## End-of-session report
+Standard for d3 sessions.
+
+================================================================================
+=== PROMPT WW6 — powerups first depth-4 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: first depth-4 of powerups chain. Parents (powerups + powerups_d2 + powerups_d3) have ~28 analyzed RVAs across 3 dirs.
+
+[SONNET HALTS as SS6.]
+
+## Session identifier
+SESSION_SHORT_ID="powerups_d4-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition
+Parents: powerups + powerups_d2 + powerups_d3 (~28 RVAs). Apply common rule against uncovered callees.
+
+If fewer than 5 unmapped callees identifiable: halt + surface "powerups callee tree exhausted."
+
+Bucket: re/analysis/powerups_d4/  (new)
+ID-range: U=3527..3546  D=10480..10539  S=3520..3539
+Subsystem: gameplay
+
+External imports NOT stubs.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool4", lock check, slot create if missing, preflight, parent-dirs check, open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as SS6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=gameplay. U/S in U=3527..3546 / S=3520..3539. Cap → DEFERRED in D=10480..10539, bucket powerups_d4-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name powerups_d4. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by powerups, powerups_d2, powerups_d3, vehicle_damage, vehicle_damage_d2/d3 (powerups → vehicle damage shares callees).
+
+## End-of-session report
+Standard for d4 sessions.
+
+================================================================================
+=== PROMPT XX6 — C0 → C1 promotion sweep (render, set A) =======================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: hooks.csv has 51 C0 render placeholder plates. This session promotes a curated subset (≤18) to C1 by decompiling each with MCP and writing per-RVA evidence files. Independent of batch 27/28 outcomes — can launch standalone.
+
+Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md, .claude/skills/sweep/SKILL.md, .claude/skills/re-classify/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop.
+2. Verify-then-cite. Every C1 promotion needs decomp output cited by RVA in the per-RVA file.
+3. No hedging/inference/naming-from-names. The C0 placeholder's existing description is NOT evidence — only fresh decomp counts.
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="c0_promotion_render_a-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition
+Source: hooks.csv rows where confidence=C0 AND subsystem=render.
+
+Selection rule (do this at start of session):
+  1. Filter hooks.csv to confidence=C0 AND subsystem=render.
+  2. Drop any RVA that already appears as C1+ in another row (drift — log to "skipped-drift").
+  3. Drop any RVA whose existing C0 row note suggests >800-byte function (defer to a separate large-function session).
+  4. Pick the first 18 remaining rows in RVA order. Output the selected list before starting.
+
+Bucket: re/analysis/c0_promotion_render_a/
+ID-range: U=3547..3566  D=10540..10599  S=3540..3559
+Subsystem: render
+
+External RW/D3D9 imports NOT stubs.
+
+## Pre-flight asserts
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ]; then echo "ERROR: $SLOT locked"; exit 1; fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. Open slot read-only via MCP.
+4. mcp__ghidra__health_ping → ok.
+
+## Work loop
+For each selected RVA (≤18):
+  1. mcp__ghidra__function_at <RVA> — confirm it exists.
+  2. mcp__ghidra__decomp_function <RVA> — get decomp.
+  3. Cite each constant/offset/call by RVA in the per-RVA file.
+  4. Surface any [UNCERTAIN] markers as new U-rows in U=3547..3566.
+  5. Write re/analysis/c0_promotion_render_a/0x<RVA>.md (sweep-format).
+  6. Mark "ready for C0→C1 promotion" in the per-RVA file.
+
+If decomp fails or function is too large (>800 bytes): mark "DEFER" and file in D=10540..10599, bucket c0_promotion_render_a-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name c0_promotion_render_a. SCRIBE_QUEUE row lists all promoted RVAs.
+
+The sweep should detect that these RVAs are C0 in hooks.csv and the per-RVA evidence promotes them to C1.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Promoting an RVA whose decomp wasn't actually obtained.
+- Carrying over the C0 placeholder's existing description as evidence.
+- Skipping the drift-detection step.
+
+## End-of-session report
+Sections:
+  - "Promoted" — RVAs with C1-quality evidence.
+  - "Skipped-drift" — RVAs already C1+ elsewhere.
+  - "Deferred-large" — RVAs >800 bytes, filed for c0_promotion_render_a-cont1.
+  - SCRIBE_QUEUE row.
+
+================================================================================
+=== END OF BATCH 29 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 6 in parallel after batches 27 + 28 fully landed.
+
+XX6 (c0_promotion_render_a) is independent of 27/28 and can run earlier if
+desired (e.g., as a side-channel session while 27 or 28 is mid-flight, on a
+free pool slot).
+
+ID RANGE SUMMARY
+  Batch 29 (6 sessions):   U=3447..3566  D=10240..10599   S=3440..3559
+
+CUMULATIVE ID RANGES (batches 1–29)
+  Batches 1–17 (96 sessions):  U=0007..2486  D=0040..7359    S=0001..2479
+  Batches 18–26 (4× each):     U=2487..3206  D=7360..9519    S=2480..3199
+  Batch 27 (6 sessions):       U=3207..3326  D=9520..9879    S=3200..3319
+  Batch 28 (6 sessions):       U=3327..3446  D=9880..10239   S=3320..3439
+  Batch 29 (6 sessions):       U=3447..3566  D=10240..10599  S=3440..3559
+
+  Next batch (when designed) starts at U=3567, D=10600, S=3560.
+
+POST-BATCH-29 EXPECTED STATE
+  - DEFERRED.md should be near-zero unmapped (cont1 chains will keep refilling, but
+    no >5-row backlog should remain in any single bucket if drift policy holds).
+  - hooks.csv C0 count drops from 132 to ≤96 (RR6 + XX6 promote 36 plates total).
+  - Subsystem coverage broadens via the 5 new depth-N first-pass sessions
+    (vehicle_dynamics, timer, save_gamesave, intro_splash, powerups).

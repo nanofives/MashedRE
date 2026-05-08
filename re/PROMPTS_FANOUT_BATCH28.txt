@@ -1,0 +1,388 @@
+================================================================================
+MASHED RE — PARALLEL FANOUT PROMPTS, BATCH 28
+================================================================================
+
+Six prompts (MM6–RR6). Continues the 6-per-batch sizing introduced in batch 27.
+
+Strategic shape:
+  4 sessions  drain the cont1 buckets that batch 27's GG6/HH6/II6/JJ6 will produce
+              (depth-5 of boot_app_init / profile_career / game_state / input_lua)
+  1 session   depth-5 of hud_frontend (assumes KK6 from batch 27 succeeded)
+  1 session   C0 → C1 promotion sweep on frontend C0 placeholders
+              (continues the "rethink existing" thread from batch 27 LL6)
+
+⚠ DEPENDENCY ORDER ⚠ — DO NOT launch batch 28 until:
+  1. Batch 27 GG6/HH6/II6/JJ6/KK6/LL6 have all reached SESSION_END.
+  2. The follow-up /sweep has drained their queue rows.
+  3. hooks.csv reflects the new C1 plates.
+  4. DEFERRED.md reflects LL6's drift clears.
+  5. Pool slots 0..5 are unlocked.
+
+Pre-launch checks per session:
+  ls mashed_pool/Mashed_pool<N>.lock 2>/dev/null && echo "BUSY — wait" || echo "free"
+
+  Each session also runs a parent-readiness check at preflight time (see below)
+  and HALTS if its parent hasn't been drained or has <5 unmapped DEFERRED rows.
+
+Slot assignments (uses fresh pool0..pool5 — same slot map as batch 27 to keep
+sibling pairing simple; lock check enforces serialization):
+
+  MM6  boot_app_init_d5            Mashed_pool0
+  NN6  profile_career_d5           Mashed_pool1
+  OO6  game_state_d5-cont3         Mashed_pool2
+  PP6  input_lua_d5                Mashed_pool3
+  QQ6  hud_frontend_d5             Mashed_pool4
+  RR6  c0_promotion_frontend_a     Mashed_pool5
+
+Prompts in this batch:
+  MM6  boot_app_init_d5            Sonnet medium  — depth-5 of boot_app_init_d4 (drains boot_app_init_d4-cont1)
+  NN6  profile_career_d5           Sonnet medium  — depth-5 of profile_career_d4 (drains profile_career_d4-cont1)
+  OO6  game_state_d5-cont3         Sonnet medium  — drains game_state_d5-cont2-cont1
+  PP6  input_lua_d5                Sonnet medium  — depth-5 of input_lua_d4 (drains input_lua_d4-cont1)
+  QQ6  hud_frontend_d5             Sonnet medium  — depth-5 of hud_frontend_d4; drains hud_frontend_d4-cont1 (7 rows pre-filed) + new depth-5 callees of the 18 RVAs KK6 recovered
+  RR6  c0_promotion_frontend_a     Sonnet medium  — promote 18 C0 frontend placeholder plates to C1
+
+ID ranges + slot assignments:
+
+  Session  Bucket                       Slot           U range      D range        S range
+  -------  ---------------------------  -------------  -----------  -------------  -----------
+    MM6    boot_app_init_d5             Mashed_pool0   3327..3346   9880..9939     3320..3339
+    NN6    profile_career_d5            Mashed_pool1   3347..3366   9940..9999     3340..3359
+    OO6    game_state_d5-cont3          Mashed_pool2   3367..3386   10000..10059   3360..3379
+    PP6    input_lua_d5                 Mashed_pool3   3387..3406   10060..10119   3380..3399
+    QQ6    hud_frontend_d5              Mashed_pool4   3407..3426   10120..10179   3400..3419
+    RR6    c0_promotion_frontend_a      Mashed_pool5   3427..3446   10180..10239   3420..3439
+
+DEPTH-N ACQUISITION RULE — same as batches 14..27.
+
+================================================================================
+=== PROMPT MM6 — boot_app_init depth-5 =========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: parallel-fanout first-pass session MM6; depth-5 of boot_app_init_d4 (drains boot_app_init_d4-cont1 — fallout from batch 27 GG6).
+
+[SONNET HALTS as in batch 27 GG6.]
+
+## Session identifier
+SESSION_SHORT_ID="boot_app_init_d5-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool0"
+
+## Subset definition
+Parent: boot_app_init_d4 (must exist in re/analysis/ — produced by batch 27 GG6 + sweep). Apply common rule against bucket boot_app_init_d4-cont1.
+
+If boot_app_init_d4/ does not exist OR boot_app_init_d4-cont1 has fewer than 5 unmapped DEFERRED rows: halt + surface "boot_app_init_d4 not ready / range exhausted."
+
+Bucket: re/analysis/boot_app_init_d5/
+ID-range: U=3327..3346  D=9880..9939  S=3320..3339
+Subsystem: boot
+
+External Win32/COM imports NOT stubs.
+
+## Pre-flight asserts (mandatory)
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ]; then echo "ERROR: $SLOT locked. Wait." >&2; exit 1; fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. bash scripts/ghidra_assert.sh preflight "$SLOT".
+4. Verify re/analysis/boot_app_init_d4/ exists. Otherwise halt.
+5. Verify DEFERRED.md has ≥5 rows tagged `boot_app_init_d4-cont1`. Otherwise halt + "range exhausted."
+6. Open slot read-only via MCP. health_ping. ghidra_info contains $SLOT.
+
+## Drift-skip step
+Same pattern as batch 27 — for each cont1 D-row, grep hooks.csv first. Skip already-C1 rows.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=boot. U/S in U=3327..3346 / S=3320..3339. Cap → DEFERRED in D=9880..9939, bucket boot_app_init_d5-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name boot_app_init_d5. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by boot_app_init, boot_app_init_d2, boot_app_init_d3, boot_app_init_d4.
+- Marking Win32/COM imports as STUBS — they are external imports.
+- Spending the whole session on one >1500-byte function — split + DEFERRED.
+
+## End-of-session report
+Standard for d5 sessions. Add "drift-skipped" section.
+
+================================================================================
+=== PROMPT NN6 — profile_career depth-5 ========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: depth-5 of profile_career_d4 (drains profile_career_d4-cont1 — fallout from batch 27 HH6).
+
+[SONNET HALTS as MM6.]
+
+## Session identifier
+SESSION_SHORT_ID="profile_career_d5-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool1"
+
+## Subset definition
+Parent: profile_career_d4 (must exist; produced by batch 27 HH6 + sweep). Apply common rule against bucket profile_career_d4-cont1.
+
+If profile_career_d4/ does not exist OR profile_career_d4-cont1 has fewer than 5 unmapped DEFERRED rows: halt + surface "profile_career_d4 not ready / range exhausted."
+
+Bucket: re/analysis/profile_career_d5/
+ID-range: U=3347..3366  D=9940..9999  S=3340..3359
+Subsystem: util
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool1", lock check, slot create if missing, preflight, parent-dir check, parent-DEFERRED count check (≥5), open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as MM6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3347..3366 / S=3340..3359. Cap → DEFERRED in D=9940..9999, bucket profile_career_d5-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name profile_career_d5. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by profile_career, profile_career_d2/d3/d4, race_results, race_state.
+
+## End-of-session report
+Standard for d5 sessions.
+
+================================================================================
+=== PROMPT OO6 — game_state_d5-cont2 depth-2 ===================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: drains game_state_d5-cont2-cont1 — fallout from batch 27 II6.
+
+[SONNET HALTS as MM6.]
+
+## Session identifier
+SESSION_SHORT_ID="game_state_d5-cont3-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool2"
+
+## Subset definition
+Parent bucket: game_state_d5-cont2-cont1 (filed by II6's cap-overflow). Apply common rule.
+
+If game_state_d5-cont2-cont1 has fewer than 5 unmapped DEFERRED rows: halt + surface "game_state_d5-cont2 deferred range exhausted." (This may happen if II6 fully drained cont2.)
+
+Bucket dir: re/analysis/game_state_d5-cont3/  (new)
+ID-range: U=3367..3386  D=10000..10059  S=3360..3379
+Subsystem: util
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool2", lock check, slot create if missing, preflight, parent-DEFERRED count check (≥5), open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as MM6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=util. U/S in U=3367..3386 / S=3360..3379. Cap → DEFERRED in D=10000..10059, bucket game_state_d5-cont3-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name game_state_d5-cont3. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing game_state, game_state_d2..d5, game_state_d5-cont1, game_state_d5-cont2.
+
+## End-of-session report
+Standard. Reflect cont3 vs cont1 distinction clearly in the SCRIBE_QUEUE row.
+
+================================================================================
+=== PROMPT PP6 — input_lua depth-5 =============================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: depth-5 of input_lua_d4 (drains input_lua_d4-cont1 — fallout from batch 27 JJ6).
+
+[SONNET HALTS as MM6.]
+
+## Session identifier
+SESSION_SHORT_ID="input_lua_d5-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool3"
+
+## Subset definition
+Parent: input_lua_d4 (must exist; produced by batch 27 JJ6 + sweep). Apply common rule against bucket input_lua_d4-cont1.
+
+If input_lua_d4/ does not exist OR input_lua_d4-cont1 has fewer than 5 unmapped DEFERRED rows: halt + surface "input_lua_d4 not ready / range exhausted."
+
+Bucket: re/analysis/input_lua_d5/
+ID-range: U=3387..3406  D=10060..10119  S=3380..3399
+Subsystem: input
+
+External Lua-runtime imports NOT stubs.
+
+## Reference consultation (FRAMING ONLY)
+- Lua 5.x reference manual at lua.org/manual/5.x/. Cite ONLY MCP for binary-side.
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool3", lock check, slot create if missing, preflight, parent-dir check, parent-DEFERRED count check (≥5), open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as MM6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=input. U/S in U=3387..3406 / S=3380..3399. Cap → DEFERRED in D=10060..10119, bucket input_lua_d5-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name input_lua_d5. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing input_lua, input_lua_d2/d3/d4.
+- Marking Lua runtime symbols as STUBS.
+
+## End-of-session report
+Standard for d5 sessions.
+
+================================================================================
+=== PROMPT QQ6 — hud_frontend depth-5 ==========================================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: depth-5 of hud_frontend_d4 — REQUIRES batch 27 KK6 (hud_frontend_d4_repair) to have succeeded so the 18 RVAs are C1 in hooks.csv. Drains hud_frontend_d4-cont1 (7 rows pre-filed) + adds new depth-5 callees of the 18 KK6-recovered functions.
+
+[SONNET HALTS as MM6.]
+
+## Session identifier
+SESSION_SHORT_ID="hud_frontend_d5-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool4"
+
+## Subset definition
+Parent: hud_frontend_d4 (must have ≥18 C1 rows in hooks.csv with bucket=hud_frontend_d4_repair OR hud_frontend_d4). Apply common rule against bucket hud_frontend_d4-cont1.
+
+If KK6 was REPAIR-INCOMPLETE (i.e. fewer than 18 hud_frontend_d4 C1 rows in hooks.csv): halt + surface "hud_frontend_d4 not ready — KK6 must succeed first."
+
+If hud_frontend_d4-cont1 has fewer than 5 unmapped DEFERRED rows AND there are no uncovered direct callees of the 18 d4 functions: halt + surface "hud_frontend_d4 deferred range exhausted."
+
+Bucket: re/analysis/hud_frontend_d5/
+ID-range: U=3407..3426  D=10120..10179  S=3400..3419
+Subsystem: frontend
+
+## Pre-flight asserts
+sha256, SLOT="Mashed_pool4", lock check, slot create if missing, preflight, parent-readiness check (≥18 hud_frontend_d4 C1 rows), open read-only, health_ping, ghidra_info.
+
+## Drift-skip step
+Same as MM6.
+
+## Work loop (cap_count=0)
+Standard. hooks.csv subsystem=frontend. U/S in U=3407..3426 / S=3400..3419. Cap → DEFERRED in D=10120..10179, bucket hud_frontend_d5-cont1.
+
+When picking depth-5 candidates beyond the 7 cont1 rows, use mcp__ghidra__function_callees on each of the 18 KK6-recovered RVAs to enumerate uncovered callees.
+
+## Shutdown + Queue
+Standard. Bucket name hud_frontend_d5. DO NOT scribe directly.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Re-analyzing functions covered by hud_frontend, hud_frontend_d2/d3/d4.
+- Launching while hud_frontend_d4 lacks ≥18 C1 rows.
+
+## End-of-session report
+Standard for d5 sessions. Note KK6's recovery status confirmed.
+
+================================================================================
+=== PROMPT RR6 — C0 → C1 promotion sweep (frontend, set A) =====================
+================================================================================
+
+Recommended model: claude-sonnet-4-6 at medium thinking. Reason: hooks.csv has 68 C0 frontend placeholder plates with caller-chain notes but no decompilation. This session promotes a curated subset (≤18) of them to C1 by decompiling each with MCP and writing per-RVA evidence files.
+
+This is the second "rethink existing" session (after batch 27 LL6). Subsequent batches can run RR6-equivalent sessions for render (51 C0) and util (11 C0).
+
+Read CLAUDE.md, the WHOLE re/SESSION_RULES.md, .claude/skills/ghidra-pool/SKILL.md, .claude/skills/multi-session/SKILL.md, .claude/skills/sweep/SKILL.md, .claude/skills/re-classify/SKILL.md.
+
+## SONNET HALTS
+1. MCP-down = stop.
+2. Verify-then-cite. Every C1 promotion needs decomp output cited by RVA in the per-RVA file.
+3. No hedging/inference/naming-from-names. The C0 placeholder's existing description is NOT evidence — only fresh decomp counts.
+4. One function at a time.
+
+## Session identifier
+SESSION_SHORT_ID="c0_promotion_frontend_a-$(date -u +%Y%m%d-%H%M)"
+
+## Pre-assigned pool slot
+SLOT="Mashed_pool5"
+
+## Subset definition
+Source: hooks.csv rows where confidence=C0 AND subsystem=frontend.
+
+Selection rule (do this at start of session):
+  1. Filter hooks.csv to confidence=C0 AND subsystem=frontend.
+  2. Drop any RVA that already appears as C1+ in another row (drift — log to "skipped-drift").
+  3. Drop any RVA whose existing C0 row note suggests >800-byte function (defer those to a separate large-function session).
+  4. Pick the first 18 remaining rows in RVA order. Output the selected list before starting the work loop.
+
+Bucket: re/analysis/c0_promotion_frontend_a/
+ID-range: U=3427..3446  D=10180..10239  S=3420..3439
+Subsystem: frontend
+
+## Pre-flight asserts
+1. sha256sum original/MASHED.exe must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E. Mismatch → halt.
+2. echo "$SLOT" > .pool_slot
+   if [ -f "mashed_pool/${SLOT}.lock" ]; then echo "ERROR: $SLOT locked. Wait."; exit 1; fi
+   if [ ! -f "mashed_pool/${SLOT}.gpr" ]; then bash scripts/ghidra_pool.sh add 1; fi
+3. Open slot read-only via MCP.
+4. mcp__ghidra__health_ping → ok.
+
+## Work loop
+For each selected RVA (≤18):
+  1. mcp__ghidra__function_at <RVA> — confirm it exists.
+  2. mcp__ghidra__decomp_function <RVA> — get decomp.
+  3. Cite each constant/offset/call by RVA in the per-RVA file.
+  4. Surface any [UNCERTAIN] markers as new U-rows in U=3427..3446.
+  5. Write re/analysis/c0_promotion_frontend_a/0x<RVA>.md (sweep-format).
+  6. Mark "ready for C0→C1 promotion" in the per-RVA file (the sweep handles the actual hooks.csv update).
+
+If decomp fails or function is too large (>800 bytes): mark "DEFER" and file in D=10180..10239, bucket c0_promotion_frontend_a-cont1.
+
+## Shutdown + Queue
+Standard. Bucket name c0_promotion_frontend_a. SCRIBE_QUEUE row lists all promoted RVAs.
+
+The sweep should detect that these RVAs are C0 in hooks.csv and the per-RVA evidence promotes them to C1.
+
+## ANTI-PATTERNS
+- Calling ghidra_pool.sh acquire.
+- Promoting an RVA whose decomp wasn't actually obtained.
+- Carrying over the C0 placeholder's existing description as if it were evidence — write fresh evidence from decomp.
+- Skipping the drift-detection step (some C0 rows may have been C1-superseded elsewhere).
+
+## End-of-session report
+Sections:
+  - "Promoted" — RVAs with C1-quality evidence.
+  - "Skipped-drift" — RVAs already C1+ elsewhere.
+  - "Deferred-large" — RVAs >800 bytes, filed for c0_promotion_frontend_a-cont1.
+  - SCRIBE_QUEUE row.
+
+================================================================================
+=== END OF BATCH 28 PROMPTS ====================================================
+================================================================================
+
+LAUNCH GUIDANCE — all 6 in parallel after:
+  - Batch 27 has fully landed (sweep complete, drift cleared).
+  - Pool slots 0..5 confirmed unlocked.
+  - hud_frontend_d4 has ≥18 C1 rows (KK6 success precondition for QQ6).
+
+ID RANGE SUMMARY
+  Batch 28 (6 sessions):   U=3327..3446  D=9880..10239   S=3320..3439
+
+CUMULATIVE ID RANGES (batches 1–28)
+  Batches 1–17 (96 sessions):  U=0007..2486  D=0040..7359    S=0001..2479
+  Batch 18 (4 sessions):       U=2487..2566  D=7360..7599    S=2480..2559
+  Batch 19 (4 sessions):       U=2567..2646  D=7600..7839    S=2560..2639
+  Batch 20 (4 sessions):       U=2647..2726  D=7840..8079    S=2640..2719
+  Batch 21 (4 sessions):       U=2727..2806  D=8080..8319    S=2720..2799
+  Batch 22 (4 sessions):       U=2807..2886  D=8320..8559    S=2800..2879
+  Batch 23 (4 sessions):       U=2887..2966  D=8560..8799    S=2880..2959
+  Batch 24 (4 sessions):       U=2967..3046  D=8800..9039    S=2960..3039
+  Batch 25 (4 sessions):       U=3047..3126  D=9040..9279    S=3040..3119
+  Batch 26 (4 sessions):       U=3127..3206  D=9280..9519    S=3120..3199
+  Batch 27 (6 sessions):       U=3207..3326  D=9520..9879    S=3200..3319
+  Batch 28 (6 sessions):       U=3327..3446  D=9880..10239   S=3320..3439
+
+  Next batch (when designed) starts at U=3447, D=10240, S=3440.
