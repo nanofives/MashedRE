@@ -624,3 +624,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  004c3b30  FUN_004c3b30  C0->C1  re/analysis/ai_update_d4/0x004c3b30.md; D-6461 cleared (conflict profile_career_d4 vs ai_update_d4; ai_update_d4 authoritative)
 2026-05-08  004c75e0  FUN_004c75e0  C0->C1  re/analysis/intro_splash_d2/0x004c75e0.md; hooks.csv gap filled; U-2347 filed (intro_splash_d2 uncertainty not previously in master tracker); resolves U-3071 tracker inconsistency
 2026-05-08  sweep-20260508-1445  scribe-claim  buckets=4 queued (boot_app_init_d2, window_fullscreen_d2, vehicle_update, track_loader-misplaced), 1 skipped-HOLD (replay_record)
+2026-05-08  sweep-20260508-1445  scribe-release  bucket=boot_app_init_d2  writes=20  errors=0
