@@ -14,6 +14,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ```
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
+2026-05-08  powerups_d4-20260508-1823  bucket=powerups_d4  rvas=0x004c1210,0x004c15c0,0x004e43b0,0x004e4800,0x00534d00,0x004c0910,0x004c0d70,0x004e8e90,0x004e8ea0,0x004d8bd0  S-3520..S-3525  U-3527..U-3537  D-10480..D-10483  clears=D-5680..D-5686,S-1920..S-1930  pool=Mashed_pool5  note=10 C1 plates; S-1930 drift-cleared (004d8000 already C1 intro_splash_d3); pool4-stale-lock fallback to pool5
 ```
 
 ## Drained
@@ -136,3 +137,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-07  split_screen_d2-20260507-1852  bucket=split_screen_d2  rvas=0x0041f8f0,0x004228f0,0x00426060,0x004260c0,0x004e4900  U-2847..U-2848  D-5620..D-5624-cleared  D-8440..D-8446  pool=Mashed_pool1
 2026-05-07  librw_plugin_compat-20260507-1950  bucket=librw_plugin_compat  rvas=0x004d8430,0x004d8470,0x004c3e90,0x004c3e20,0x004d9030,0x004d9040,0x004c4470,0x004c4430,0x004c07b0,0x004c0830,0x004cbca0,0x004cbd00,0x004c1980,0x004c1940,0x004cd900,0x004cdb60,0x004c78e0,0x004c78a0,0x004c5f60,0x004c5e00,0x004d8530,0x004d8550,0x004d8fa0,0x004d9000,0x004cd850,0x004cd810,0x004d8a80,0x004d8b70  U-2887..U-2891  D-8560  pool=Mashed_pool12
 ```
+2026-05-08  vehicle_dynamics_d2-20260508  bucket=vehicle_dynamics_d2  rvas=0x00469aa0,0x00469df0  U-3447..U-3448  S-3440..S-3442  pool=Mashed_pool4  note=callee-tree-exhausted(2-of-5-threshold); both from parent 0x004709a0

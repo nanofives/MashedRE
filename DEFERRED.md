@@ -644,13 +644,17 @@ A row goes into DEFERRED when:
 | D-6290 | ESI prologue trace in LAB_00554940 to confirm ESI source struct; U-2131 | listing_code_units_list 0x00554940..0x00554965 | font_text_d4 session | hud |
 | D-5920 | 0x004a0ef0 FUN_004a0ef0 | depth-4 callee of FUN_0049dd60; 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2); called before vtable writes; S-2000; from session video_mci_d3-20260506-0512 | video_mci_d4 | video |
 | D-5921 | 0x004a1160 FUN_004a1160 | depth-4 callee of FUN_0049dd60; 27b __thiscall; called 3x on offsets 0x54/0x58/0x5c with args 0/1/1; result at 0x5c used as HANDLE in SetEvent; S-2001; from session video_mci_d3-20260506-0512 | video_mci_d4 | video |
-| D-5680 | 0x004c1210,0x004c15c0,0x004e43b0 | depth-4 callees of FUN_00454170; S-1920..S-1922; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
-| D-5681 | 0x004e4800 FUN_004e4800 | depth-4 callee of FUN_004547c0; S-1923; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
-| D-5682 | 0x00534d00 FUN_00534d00 | depth-4 callee of FUN_00534b60; actual particle allocator; S-1924; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
-| D-5683 | 0x004c0910 FUN_004c0910 | depth-4 callee of FUN_004c0870; called (param_1 0); S-1925; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
-| D-5684 | 0x004c0d70 FUN_004c0d70 | depth-4 callee of FUN_004c0de0; per-child teardown; S-1926; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
-| D-5685 | 0x004e8e90,0x004e8ea0 | depth-4 callees of FUN_004e68a0/FUN_004e6920; on-field-change actions; S-1927..S-1928; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
-| D-5686 | 0x004d8bd0 FUN_004d8bd0 | depth-4 callee of FUN_004e6920; S-1929; from session powerups_d3-20260506-0504 | powerups_d3-cont1 | gameplay |
+| ~~D-5680~~ | ~~0x004c1210,0x004c15c0,0x004e43b0~~ | ~~drained by powerups_d4-20260508-1823; all 3 analyzed C1~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| ~~D-5681~~ | ~~0x004e4800 FUN_004e4800~~ | ~~drained by powerups_d4-20260508-1823; analyzed C1~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| ~~D-5682~~ | ~~0x00534d00 FUN_00534d00~~ | ~~drained by powerups_d4-20260508-1823; analyzed C1; depth-5 in D-10480~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| ~~D-5683~~ | ~~0x004c0910 FUN_004c0910~~ | ~~drained by powerups_d4-20260508-1823; analyzed C1; depth-5 in D-10481~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| ~~D-5684~~ | ~~0x004c0d70 FUN_004c0d70~~ | ~~drained by powerups_d4-20260508-1823; analyzed C1~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| ~~D-5685~~ | ~~0x004e8e90,0x004e8ea0~~ | ~~drained by powerups_d4-20260508-1823; both analyzed C1; depth-5 in D-10482~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| ~~D-5686~~ | ~~0x004d8bd0 FUN_004d8bd0~~ | ~~drained by powerups_d4-20260508-1823; analyzed C1; depth-5 in D-10483~~ | ~~powerups_d3-cont1~~ | ~~gameplay~~ |
+| D-10480 | 0x004e8090,0x00535330 | depth-5 callees of FUN_00534d00; S-3520 S-3521; from session powerups_d4-20260508-1823 | powerups_d4-cont1 | gameplay |
+| D-10481 | 0x004d8090 FUN_004d8090 | depth-5 callee of FUN_004c0910; list notify on clone; called (&DAT_00617f78 new_node original_node); S-3522; from session powerups_d4-20260508-1823 | powerups_d4-cont1 | gameplay |
+| D-10482 | 0x004f0c10,0x004f3b60 | depth-5 callees of FUN_004e8ea0; S-3523 S-3524; from session powerups_d4-20260508-1823 | powerups_d4-cont1 | gameplay |
+| D-10483 | 0x004e2ff0 FUN_004e2ff0 | depth-5 callee of FUN_004d8bd0; particle descriptor allocator-free; S-3525; from session powerups_d4-20260508-1823 | powerups_d4-cont1 | gameplay |
 | D-2743 | 0x004282a0 FUN_004282a0 | analyzed C1 session hud_frontend_d3-20260506-0511; text width/size getter; S-2089 S-2083 S-2084 | 2026-05-06 |
 | D-2744 | 0x00427ad0 FUN_00427ad0 | analyzed C1 session hud_frontend_d3-20260506-0511; 7-param icon draw wrapper; S-2083..S-2088 depth-4 filed | 2026-05-06 |
 | D-2753 | 0x0040bb70 FUN_0040bb70 | analyzed C1 session hud_frontend_d3-20260506-0511; thin wrapper: FUN_004c5c00(DAT_0063b900, param_1); S-2081 | 2026-05-06 |

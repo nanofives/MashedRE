@@ -547,17 +547,23 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2125 | 0x004c4dc0 FUN_004c4dc0 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | matrix invert or copy into DAT_00912b58; D-6285 |
 | S-2126 | 0x004c0ed0 FUN_004c0ed0 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | camera view matrix getter; takes cam+4 field; returns RwMatrix*; D-6286 |
 | S-2127 | 0x00552d70 FUN_00552d70 | 0x00427f00 FUN_00427f00 | hud | passthrough | 2026-05-06 | FontMatrix_Pop (counterpart to FontMatrix_Push); called @ 0x00427fc9 after draw; D-6287 |
-| S-1920 | 0x004c1210 FUN_004c1210 | 0x00454170 FUN_00454170 | gameplay | passthrough | 2026-05-06 | conditional call; arg = ESI+0x34; called if *(ESI[0xd]+4) non-zero; depth-4 of FUN_00454170; D-5680 |
-| S-1921 | 0x004c15c0 FUN_004c15c0 | 0x00454170 FUN_00454170 | gameplay | passthrough | 2026-05-06 | called twice; args ESI+0x34 and ESI+0x38; depth-4 of FUN_00454170; D-5680 |
-| S-1922 | 0x004e43b0 FUN_004e43b0 | 0x00454170 FUN_00454170 | gameplay | passthrough | 2026-05-06 | called if FUN_004e4440 returns non-zero; args (return-value ESI+0x30); depth-4; D-5680 |
-| S-1923 | 0x004e4800 FUN_004e4800 | 0x004547c0 FUN_004547c0 | gameplay | passthrough | 2026-05-06 | called with *(EDI+0x20); conditional; depth-4 of FUN_004547c0; D-5681 |
-| S-1924 | 0x00534d00 FUN_00534d00 | 0x00534b60 FUN_00534b60 | gameplay | passthrough | 2026-05-06 | actual particle allocator; called with (param_1 normalizedFlags param_3 &DAT_00623c78); depth-4; D-5682 |
-| S-1925 | 0x004c0910 FUN_004c0910 | 0x004c0870 FUN_004c0870 | gameplay | passthrough | 2026-05-06 | called with (param_1 0); returns object handle used for DLL insert; depth-4; D-5683 |
-| S-1926 | 0x004c0d70 FUN_004c0d70 | 0x004c0de0 FUN_004c0de0 | gameplay | passthrough | 2026-05-06 | per-child teardown call in FUN_004c0de0 child-iteration loop; depth-4; D-5684 |
-| S-1927 | 0x004e8e90 FUN_004e8e90 | 0x004e68a0 FUN_004e68a0 | gameplay | passthrough | 2026-05-06 | called with new value param_2 when *(param_1+0x18) changes; depth-4 of FUN_004e68a0; D-5685 |
-| S-1928 | 0x004e8ea0 FUN_004e8ea0 | 0x004e68a0 FUN_004e68a0 / 0x004e6920 FUN_004e6920 | gameplay | passthrough | 2026-05-06 | called with old *(param_1+0x18) on field change; depth-4; D-5685 |
-| S-1929 | 0x004d8bd0 FUN_004d8bd0 | 0x004e6920 FUN_004e6920 | gameplay | passthrough | 2026-05-06 | called with *(param_1+0x14); depth-4 of FUN_004e6920; D-5686 |
-| S-1930 | 0x004d8000 FUN_004d8000 | 0x004e6d80 FUN_004e6d80 | gameplay | passthrough | 2026-05-06 | list insert; called with (&DAT_0061867c puVar2); depth-4; also in DEFERRED D-0231 D-0526 |
+| ~~S-1920~~ | ~~0x004c1210 FUN_004c1210~~ | ~~0x00454170 FUN_00454170~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; detach-from-parent + root propagation~~ |
+| ~~S-1921~~ | ~~0x004c15c0 FUN_004c15c0~~ | ~~0x00454170 FUN_00454170~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; identity-matrix frame reset~~ |
+| ~~S-1922~~ | ~~0x004e43b0 FUN_004e43b0~~ | ~~0x00454170 FUN_00454170~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; detach geometry + release list refs~~ |
+| ~~S-1923~~ | ~~0x004e4800 FUN_004e4800~~ | ~~0x004547c0 FUN_004547c0~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; table lookup DAT_007d7174+param_1~~ |
+| ~~S-1924~~ | ~~0x00534d00 FUN_00534d00~~ | ~~0x00534b60 FUN_00534b60~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; particle system constructor; depth-5 D-10480~~ |
+| ~~S-1925~~ | ~~0x004c0910 FUN_004c0910~~ | ~~0x004c0870 FUN_004c0870~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; deep-clone frame node tree; depth-5 D-10481~~ |
+| ~~S-1926~~ | ~~0x004c0d70 FUN_004c0d70~~ | ~~0x004c0de0 FUN_004c0de0~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; recursive frame node destructor~~ |
+| ~~S-1927~~ | ~~0x004e8e90 FUN_004e8e90~~ | ~~0x004e68a0 FUN_004e68a0~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; AddRef increment~~ |
+| ~~S-1928~~ | ~~0x004e8ea0 FUN_004e8ea0~~ | ~~0x004e68a0 FUN_004e68a0 / 0x004e6920 FUN_004e6920~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; Release/decref+destructor; depth-5 D-10482~~ |
+| ~~S-1929~~ | ~~0x004d8bd0 FUN_004d8bd0~~ | ~~0x004e6920 FUN_004e6920~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; particle descriptor destructor; depth-5 D-10483~~ |
+| ~~S-1930~~ | ~~0x004d8000 FUN_004d8000~~ | ~~0x004e6d80 FUN_004e6d80~~ | ~~gameplay~~ | ~~resolved intro_splash_d3 (drift skip)~~ | ~~2026-05-06~~ | ~~already C1 in hooks.csv before powerups_d4 ran; drift-cleared~~ |
+| S-3520 | 0x004e8090 FUN_004e8090 | 0x00534d00 FUN_00534d00 | gameplay | passthrough | 2026-05-08 | frame secondary init; called with (**(iVar4+0x18+0x20), 0) after particle spawn succeeds; depth-5; D-10480 |
+| S-3521 | 0x00535330 FUN_00535330 | 0x00534d00 FUN_00534d00 | gameplay | passthrough | 2026-05-08 | alternate particle type setup (path B: pcVar2==0 no 0x20000000 flag); called (piVar5 param_2 param_3); depth-5; D-10480 |
+| S-3522 | 0x004d8090 FUN_004d8090 | 0x004c0910 FUN_004c0910 | gameplay | passthrough | 2026-05-08 | list notify on clone; called (&DAT_00617f78 new_node original_node); depth-5; D-10481 |
+| S-3523 | 0x004f0c10 FUN_004f0c10 | 0x004e8ea0 FUN_004e8ea0 | gameplay | passthrough | 2026-05-08 | releases resource at param_1+0x54; called with (*(param_1+0x54)); depth-5; D-10482 |
+| S-3524 | 0x004f3b60 FUN_004f3b60 | 0x004e8ea0 FUN_004e8ea0 | gameplay | passthrough | 2026-05-08 | teardown of sub-object at param_1+0x20; called with (param_1+0x20); depth-5; D-10482 |
+| S-3525 | 0x004e2ff0 FUN_004e2ff0 | 0x004d8bd0 FUN_004d8bd0 | gameplay | passthrough | 2026-05-08 | particle descriptor allocator-free; called with (param_1); depth-5; D-10483 |
 | S-2340 | 0x004d8000 FUN_004d8000 | 0x004c77c0 FUN_004c77c0 | frontend | passthrough | 2026-05-06 | find-in-list + secondary dispatch; called with (&DAT_00618180 alloc_result) on video texture alloc; see also S-1930; resolved intro_splash_d3 2026-05-06; D-6940 |
 | S-2341 | 0x004d8c40 FUN_004d8c40 | 0x004c7730 FUN_004c7730 | frontend | passthrough | 2026-05-06 | doubly-linked list splice + swap + counter clear; called before vtable slot 38 dispatch; single caller; resolved intro_splash_d3 2026-05-06; D-6941 |
 | S-2000 | 0x004a0ef0 FUN_004a0ef0 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2) from FUN_0049dd60 before vtable writes; depth-4 from video_mci; D-5920 |
@@ -750,3 +756,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3431 | 0x004a2b60 FUN_004a2b60 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | takes 3 args; semantics unknown; c0_promotion_frontend_a |
 | S-3432 | 0x004a2c48 FUN_004a2c48 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | no args; returns int; semantics unknown; c0_promotion_frontend_a |
 | S-3433 | 0x0040bb50 FUN_0040bb50 | 0x0042ee00 FUN_0042ee00 | frontend | passthrough | 2026-05-08 | no args; return passed through; semantics unknown; c0_promotion_frontend_a |
+| S-3440 | 0x00468d80 FUN_00468d80 | 0x00469aa0 FUN_00469aa0 | vehicle | passthrough | 2026-05-08 | no-arg; callee of vehicle contact history update (vehicle_dynamics_d2) |
+| S-3441 | 0x004694e0 FUN_004694e0 | 0x00469aa0 FUN_00469aa0 | vehicle | passthrough | 2026-05-08 | no-arg; callee of vehicle contact history update (vehicle_dynamics_d2) |
+| S-3442 | 0x004c4dc0 FUN_004c4dc0 | 0x00469df0 FUN_00469df0 | vehicle | passthrough | 2026-05-08 | 2-param (contact vec, geometry slot ptr); callee of vehicle-vehicle collision impulse (vehicle_dynamics_d2) |
