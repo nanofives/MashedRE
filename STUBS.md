@@ -736,3 +736,17 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3217 | 0x00553cf0 FUN_00553cf0 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | called with (FUN_00553ef0 result, &DAT_0067d828); boot_app_init_d4 |
 | S-3218 | 0x00553e80 FUN_00553e80 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | called with FUN_00553ef0() result; boot_app_init_d4 |
 | S-3219 | 0x00553ef0 FUN_00553ef0 | 0x004275d0 FUN_004275d0 | boot | passthrough | 2026-05-08 | no-arg handle getter; return used as arg to S-3216/S-3217/S-3218; boot_app_init_d4 |
+| S-3420 | 0x0042bfb0 FUN_0042bfb0 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with IDs 0x1b5-0x2a3 and 0xff460000 as args; c0_promotion_frontend_a |
+| S-3421 | 0x005c9d00 FUN_005c9d00 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | return used as bool; c0_promotion_frontend_a |
+| S-3422 | 0x004d8560 FUN_004d8560 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (0); queried up to 3x in sequence; c0_promotion_frontend_a |
+| S-3423 | 0x00409a80 FUN_00409a80 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
+| S-3424 | 0x0042c1a0 FUN_0042c1a0 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
+| S-3425 | 0x0045b350 FUN_0045b350 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
+| S-3426 | 0x004099e0 FUN_004099e0 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
+| S-3427 | 0x0040ce80 FUN_0040ce80 | 0x0042a940 FUN_0042a940 | frontend | passthrough | 2026-05-08 | takes param_1, return used as int key in table search; c0_promotion_frontend_a |
+| S-3428 | 0x0040e470 FUN_0040e470 | 0x0042ae10 FUN_0042ae10 | frontend | passthrough | 2026-05-08 | takes int index, return compared to 2; c0_promotion_frontend_a |
+| S-3429 | 0x004c5c00 FUN_004c5c00 | 0x0042bcb0 FUN_0042bcb0 | frontend | passthrough | 2026-05-08 | FUN_004c5c00(DAT_00636ac8, local_14); returns pointer; c0_promotion_frontend_a |
+| S-3430 | 0x004b5750 FUN_004b5750 | 0x0042bcb0 FUN_0042bcb0 | frontend | passthrough | 2026-05-08 | drawing call; coordinate order and uVar4 meaning unknown; c0_promotion_frontend_a |
+| S-3431 | 0x004a2b60 FUN_004a2b60 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | takes 3 args; semantics unknown; c0_promotion_frontend_a |
+| S-3432 | 0x004a2c48 FUN_004a2c48 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | no args; returns int; semantics unknown; c0_promotion_frontend_a |
+| S-3433 | 0x0040bb50 FUN_0040bb50 | 0x0042ee00 FUN_0042ee00 | frontend | passthrough | 2026-05-08 | no args; return passed through; semantics unknown; c0_promotion_frontend_a |

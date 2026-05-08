@@ -527,15 +527,15 @@
 00439210,FUN_00439210,frontend,C1,mapped,re/analysis/hud_frontend_d2/0x00439210.md,,,network lobby/player-slot list renderer; 13 slots; DAT_0067f17c cursor; FUN_00436810/0042ebe0 checks; D-1253 cleared; session hud_frontend_d2-20260503-0559
 00430760,FUN_00430760,frontend,C0,deferred,,,,depth-3 callee: multiplayer-mode boolean check; callers FUN_004335f0 FUN_00439210; D-2740; bucket hud_frontend_d2
 0042fab0,FUN_0042fab0,frontend,C0,deferred,,,,depth-3 callee: sprite ptr by slot index; callers FUN_004335f0 FUN_0043a610 FUN_00434720 FUN_0043aa30; D-2741; bucket hud_frontend_d2
-0042bcb0,FUN_0042bcb0,frontend,C0,deferred,,,,depth-3 callee: vehicle icon draw; callers FUN_004335f0 FUN_0043a610 FUN_0043aa30; D-2742; bucket hud_frontend_d2
+0042bcb0,FUN_0042bcb0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042bcb0.md,,5-param sprite draw; transforms param_2/3 with float scale constants; lookup via FUN_004c5c00; calls FUN_004b5750; D-2742 cleared
 004282a0,FUN_004282a0,frontend,C0,deferred,,,,depth-3 callee: text size/width measurement; multiple callers in hud_frontend_d2; D-2743; bucket hud_frontend_d2
 00427ad0,FUN_00427ad0,frontend,C0,deferred,,,,depth-3 callee: icon draw 7-param variant; caller FUN_004335f0; D-2744; bucket hud_frontend_d2
 0042f8d0,FUN_0042f8d0,frontend,C0,deferred,,,,depth-3 callee: background rect/quad draw; callers FUN_0043a610 FUN_00434720 FUN_0043aa30; D-2745; bucket hud_frontend_d2
-0042ac00,FUN_0042ac00,frontend,C0,deferred,,,,depth-3 callee: player count / slot index getter; multiple callers in hud_frontend_d2; D-2746; bucket hud_frontend_d2
+0042ac00,FUN_0042ac00,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ac00.md,,__fastcall; counts 0xFF060000-delimited groups in int* array; terminates on 0xFF070000; D-2746 cleared
 00473870,FUN_00473870,frontend,C0,deferred,,,,depth-3 callee: sprite draw 7-param; multiple callers in hud_frontend_d2; D-2747; bucket hud_frontend_d2
 004368e0,FUN_004368e0,frontend,C0,deferred,,,,depth-3 callee: player alpha/color setup; callers FUN_0043af10 FUN_00439210; D-2748; bucket hud_frontend_d2
-0042ac50,FUN_0042ac50,frontend,C0,deferred,,,,depth-3 callee: layout Y base getter; multiple callers in hud_frontend_d2; D-2749; bucket hud_frontend_d2
-0042a940,FUN_0042a940,frontend,C0,deferred,,,,depth-3 callee: powerup sprite index by selection; caller FUN_0043af10; D-2750; bucket hud_frontend_d2
+0042ac50,FUN_0042ac50,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ac50.md,,__fastcall; 0xf0 minus even/odd spacing formula from in_EAX + param_1; 48 bytes; D-2749 cleared
+0042a940,FUN_0042a940,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042a940.md,,linear table search at 0x5f6748 via FUN_0040ce80; stride 3; D-2750 cleared
 00430830,FUN_00430830,frontend,C0,deferred,,,,depth-3 callee: split-screen track check; caller FUN_0043af10; D-2751; bucket hud_frontend_d2
 00458630,FUN_00458630,frontend,C0,deferred,,,,depth-3 callee: powerup sprite lookup by type; caller FUN_0043af10; D-2752; bucket hud_frontend_d2
 0040bb70,FUN_0040bb70,frontend,C0,deferred,,,,depth-3 callee: sprite lookup by name variant A; caller FUN_0043af10; D-2753; bucket hud_frontend_d2
@@ -544,8 +544,8 @@
 0040b460,FUN_0040b460,frontend,C0,deferred,,,,depth-3 callee: player data fetch; caller FUN_00434720; D-2756; bucket hud_frontend_d2
 0040e3a0,FUN_0040e3a0,frontend,C0,deferred,,,,depth-3 callee: player name/string data; caller FUN_00434720; D-2757; bucket hud_frontend_d2
 00430b30,FUN_00430b30,frontend,C0,deferred,,,,depth-3 callee: lap time getter (3 out-params); caller FUN_00434720; D-2758; bucket hud_frontend_d2
-0042d290,FUN_0042d290,frontend,C0,deferred,,,,depth-3 callee: lap time formatter; caller FUN_00434720; D-2759; bucket hud_frontend_d2
-0042d300,FUN_0042d300,frontend,C0,deferred,,,,depth-3 callee: lap time comparator; caller FUN_00434720; D-2760; bucket hud_frontend_d2
+0042d290,FUN_0042d290,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042d290.md,,two-dispatch formatter: param_1/FUN_004a2c48 result each formatted via FUN_004a2b60 with <10 or >=10 path; D-2759 cleared
+0042d300,FUN_0042d300,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042d300.md,,subtracts param_2 from param_1; decomposes diff into sign/minutes/seconds/centiseconds; 128 bytes; D-2760 cleared
 00429870,FUN_00429870,frontend,C0,deferred,,,,depth-3 callee: race data getter A; caller FUN_00434720; D-2761; bucket hud_frontend_d2
 00429a30,FUN_00429a30,frontend,C0,deferred,,,,depth-3 callee: race data getter B; caller FUN_00434720; D-2762; bucket hud_frontend_d2
 00429a80,FUN_00429a80,frontend,C0,deferred,,,,depth-3 callee: race data getter C; caller FUN_00434720; D-2763; bucket hud_frontend_d2
@@ -560,14 +560,14 @@
 00474e60,FUN_00474e60,frontend,C0,deferred,,,,depth-3 callee: float-to-x87-angle converter; caller FUN_00434720; D-2772; bucket hud_frontend_d2
 0040ad20,FUN_0040ad20,frontend,C0,deferred,,,,depth-3 callee: option state bool; caller FUN_00431240; D-2773; bucket hud_frontend_d2
 00436810,FUN_00436810,frontend,C0,deferred,,,,depth-3 callee: local player slot occupancy check; caller FUN_00439210; D-2774; bucket hud_frontend_d2
-0042ebe0,FUN_0042ebe0,frontend,C0,deferred,,,,depth-3 callee: AI/remote slot occupancy check; caller FUN_00439210; D-2775; bucket hud_frontend_d2
-0042ee40,FUN_0042ee40,frontend,C0,deferred,,,,depth-3 callee: vehicle sprite getter (slot type); caller FUN_00439210; D-2776; bucket hud_frontend_d2
+0042ebe0,FUN_0042ebe0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ebe0.md,,iterates 0x7f0a48 stride 0x78 (4x); dispatch param_1 10/11/12 checks field chains; returns bool; D-2775 cleared
+0042ee40,FUN_0042ee40,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ee40.md,,outer switch DAT_0067e9fc (2..10); calls FUN_0040bb90 for param_1 in {0,1,2}; >=1000 adjust for cases 3-5; D-2776 cleared
 004391b0,FUN_004391b0,frontend,C0,deferred,,,,depth-3 callee: powerup/overlay sprite draw; caller FUN_00439210; D-2777; bucket hud_frontend_d2
 0042ef40,FUN_0042ef40,frontend,C0,deferred,,,,depth-3 callee: vehicle lock-state check; caller FUN_00439210; D-2778; bucket hud_frontend_d2
 00430a10,FUN_00430a10,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 0; caller FUN_00439210; D-2779; bucket hud_frontend_d2
 00430a60,FUN_00430a60,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 1; caller FUN_00439210; D-2780; bucket hud_frontend_d2
 00430ab0,FUN_00430ab0,frontend,C0,deferred,,,,depth-3 callee: get player at slot type 2; caller FUN_00439210; D-2781; bucket hud_frontend_d2
-0042ee00,FUN_0042ee00,frontend,C0,deferred,,,,depth-3 callee: vehicle icon by unlock state; caller FUN_00439210; D-2782; bucket hud_frontend_d2
+0042ee00,FUN_0042ee00,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ee00.md,,returns FUN_0040bb50() for param_1 in {0,1,2} else 0; same callee all 3 cases; D-2782 cleared
 004671c0,GetOverlayCamera,render,C1,new,re/analysis/render_frame/004671c0.md,,,returns DAT_006905b4 (overlay/minimap RwCamera* global); paired with sub_004671a0 (primary cam); called from FUN_00492e90 per-frame render
 00426670,sub_00426670,render,C1,unmapped,re/analysis/render_frame_d3/00426670.md,,,WorldRenderDispatch_Begin; gate DAT_0066d704→select DAT_0066d700→FUN_004e4320(world_A/B camera); D-0880 resolved; D-5020; U-1707 U-1708
 0040de30,sub_0040de30,render,C1,unmapped,re/analysis/render_frame_d3/0040de30.md,,,MinimapCameraOrthoSetup; saves frame matrix+viewwindow+projection; sets ortho 0.6×0.45; calls WorldRenderDispatch_Begin; D-0881 resolved; U-1709
@@ -755,15 +755,15 @@
 004322c0,FUN_004322c0,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,MP track selection cursor move; increments 0067f17c(max=0xC); FUN_00430830 avail check; FUN_00430910 valid-option search; modes 3/4/5 call FUN_0042f6b0; S-1655 S-1656
 0042f400,FUN_0042f400,frontend,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,3-digit number formatter; FUN_00427780→text-vertex ptr; FUN_004a2b60 int→string; right-align 3 chars as shorts at +2/+4/+6; left-pad 0x30
 004323c0,FUN_004323c0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 135 bytes; D-4840; bucket game_mode_cont2
-0042ae10,FUN_0042ae10,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 156 bytes; D-4841; bucket game_mode_cont2
-0042aeb0,FUN_0042aeb0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 156 bytes; D-4842; bucket game_mode_cont2
+0042ae10,FUN_0042ae10,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ae10.md,,guards 0x67eab0/e7c8/898ab0; searches char tables 0x7f1042/1502 stride 0x4c; D-4841 cleared
+0042aeb0,FUN_0042aeb0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042aeb0.md,,variant of FUN_0042ae10 at base+1: 0x7f1043/1503; missing e7c8 guard; D-4842 cleared
 0042af50,FUN_0042af50,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 156 bytes; D-4843; bucket game_mode_cont2
 00430910,FUN_00430910,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0 and FUN_004322c0; 137 bytes; D-4844; bucket game_mode_cont2
 00429aa0,FUN_00429aa0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 134 bytes; D-4845; bucket game_mode_cont2
-0042aa00,FUN_0042aa00,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 168 bytes; D-4846; bucket game_mode_cont2
-0042ac90,FUN_0042ac90,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 126 bytes; D-4847; bucket game_mode_cont2
+0042aa00,FUN_0042aa00,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042aa00.md,,frame cursor search via DAT_0067e9f8*0x40; wraps by param_1; returns when valid; D-4846 cleared
+0042ac90,FUN_0042ac90,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042ac90.md,,linked-group walker via 0x67ed38 slot; skips cursor+1 groups; sentinels 0xFF04/05/06/140000; D-4847 cleared
 0040b810,FUN_0040b810,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 124 bytes; D-4848; bucket game_mode_cont2
-0042b960,FUN_0042b960,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 115 bytes; D-4849; bucket game_mode_cont2
+0042b960,FUN_0042b960,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0042b960.md,,init: scans 0x7f1042/1502 table to set 0x7f1a14; writes -1 sentinels 1a24/34/44; 0x7f1a0c=1; calls FUN_0040e480 x4; D-4849 cleared
 0042f6b0,FUN_0042f6b0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 115 bytes; D-4850; bucket game_mode_cont2
 004307a0,FUN_004307a0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 116 bytes; D-4851; bucket game_mode_cont2
 0042f020,FUN_0042f020,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 98 bytes; D-4852; bucket game_mode_cont2
@@ -774,14 +774,14 @@
 00409930,FUN_00409930,util,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 30 bytes; D-4857; bucket game_mode_cont2
 00409900,FUN_00409900,util,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 43 bytes; D-4858; bucket game_mode_cont2
 004098b0,FUN_004098b0,util,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 27 bytes; D-4859; bucket game_mode_cont2
-004298c0,FUN_004298c0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 27 bytes; D-4860; bucket game_mode_cont2
-0040acd0,FUN_0040acd0,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 48 bytes; D-4861; bucket game_mode_cont2
-00414120,FUN_00414120,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 80 bytes; D-4862; bucket game_mode_cont2
+004298c0,FUN_004298c0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x004298c0.md,,zeroes 4 globals: 0x67d99c/d994/d98c/8991bc; 27 bytes
+0040acd0,FUN_0040acd0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0040acd0.md,,goto-linked state-machine; 48-byte body no callees; outer switch DAT_008a9584 (1..6)
+00414120,FUN_00414120,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x00414120.md,,zeroes 0x89a37c/78/80; copies 0x9c bytes 005f2a70->0089a384; zeros 0089a420; 80 bytes
 00422b30,FUN_00422b30,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 16 bytes; D-4863; bucket game_mode_cont2
 0046dc00,FUN_0046dc00,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 20 bytes; D-4864; bucket game_mode_cont2
 00495080,FUN_00495080,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 37 bytes; D-4865; bucket game_mode_cont2
 00494f30,FUN_00494f30,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 15 bytes; D-4866; bucket game_mode_cont2
-0040e480,FUN_0040e480,frontend,C0,deferred,,,,depth-2 callee of FUN_0043dfd0; 18 bytes; D-4867; bucket game_mode_cont2
+0040e480,FUN_0040e480,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0040e480.md,,indexed store: *(PTR_PTR_005f2770+param_1*4+0x34)=param_2; 18 bytes
 00492d30,FUN_00492d30,util,C0,deferred,,,,caller of FUN_0043dfd0; 265 bytes; D-4868; bucket game_mode_cont2
 00541b50,FUN_00541b50,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"LIGHT_FN; per-material specular env-map setup; reflection path: D3DTSS_TEXCOORDINDEX=D3DTCI_CAMERASPACEREFLECTIONVECTOR(0x30000) D3DTTFF_COUNT3; normal path: D3DTCI_CAMERASPACENORMAL(0x10000) D3DTTFF_COUNT2; uploads cam LTM rows (negated) via FUN_004cb330(SetTransform); U-1627"
 00541d40,FUN_00541d40,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"opaque shader render callback (RW pipeline node; 0 direct callers); SetVertexShader (vtable 0x170); calls FUN_00541b50 for env-map matrix; SetPixelShader (0x1ac); DrawPrimitive/DrawIndexedPrimitive; U-1628"

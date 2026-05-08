@@ -656,3 +656,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=game_state_d5-cont2  writes=16  errors=0
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=hud_frontend_d4  writes=18  errors=0
 2026-05-08  sweep-20260508-1728  scribe-release  bucket=profile_career_d4  writes=22  errors=0  note=plate text from REPORT.md (no per-RVA files); hooks.csv already C1/C2 from session
+2026-05-08  sweep-20260508-1728  scribe-release  bucket=boot_app_init_d4  writes=20  errors=0
+2026-05-08  c0_promotion_frontend_a-20260508-1724  C0->C1 promotion: 18 frontend functions  bucket=c0_promotion_frontend_a  rvas=0x0040acd0,0x0040e480,0x00414120,0x004298c0,0x0042a940,0x0042aa00,0x0042ac00,0x0042ac50,0x0042ac90,0x0042ae10,0x0042aeb0,0x0042b960,0x0042bcb0,0x0042d290,0x0042d300,0x0042ebe0,0x0042ee00,0x0042ee40  S-3420..S-3433(14 new stubs)  U-3427..U-3465(39 new uncertainties)  pool=Mashed_pool5  slot=76ac32e35c08438c842e3b3605a9c60b
