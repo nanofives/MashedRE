@@ -669,3 +669,21 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2670 | 0x004cc4f0 FUN_004cc4f0 | 0x004cc400 FUN_004cc400 | render | passthrough | 2026-05-06 | RW chunk type validator: returns 1 for known types {5..0xb,0xe..0x10,0x12,0x14,0x1a}; now in hooks.csv C1 — clear stub |
 | S-2860 | 0x00419760 FUN_00419760 | 0x004189f0 thunk_FUN_00419760 | frontend | passthrough | 2026-05-07 | thunkee of 004189f0; 112 bytes; not yet in hooks.csv; D-8500 |
 | S-2861 | 0x00420de0 FUN_00420de0 | 0x004215c0 FUN_004215c0 | frontend | passthrough | 2026-05-07 | sole callee of 004215c0; receives param_2 (50.0f or 0/1 from parent caller); 30 bytes; D-8501 |
+| ~~S-2929~~ | ~~0x00405460 FUN_00405460~~ | ~~0x004102f0 FUN_004102f0~~ | util | ~~passthrough~~ | 2026-05-07 | RESOLVED 2026-05-08 game_state_d5-cont1: analyzed C1; re/analysis/game_state_d5-cont1/0x00405460.md |
+| ~~S-2930~~ | ~~0x0040e590 FUN_0040e590~~ | ~~0x004102f0 FUN_004102f0~~ | util | ~~passthrough~~ | 2026-05-07 | RESOLVED 2026-05-08 game_state_d5-cont1: analyzed C1; re/analysis/game_state_d5-cont1/0x0040e590.md |
+| S-2960 | 0x00404fa0 FUN_00404fa0 | 0x00405460 FUN_00405460 | util | passthrough | 2026-05-08 | spline matrix eval; 1068 bytes; 3 args (64b out-buf, spline-obj ptr, float t); D-8800 |
+| S-2961 | 0x00408b00 FUN_00408b00 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | grid-pos lookup; 0x1D2 bytes; args (pos-handle, start-idx, player-count, &local_34, &local_40); D-8801 |
+| S-2962 | 0x00409290 FUN_00409290 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | writes starting-pos handle to &DAT_0063ba80; 0x6D bytes; D-8802 |
+| S-2963 | 0x0040b250 FUN_0040b250 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg pre-placement call; 0x33 bytes; D-8803 |
+| S-2964 | 0x0040b410 FUN_0040b410 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | player readiness code getter; 0xB bytes; returns 0/1/2/0xffffffff/0xfffffffe; D-8804 |
+| S-2965 | 0x0041ede0 FUN_0041ede0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx,0,0); zeroing-loop call; 0x6F bytes; D-8805 |
+| S-2966 | 0x0041ee50 FUN_0041ee50 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx,0,0); zeroing-loop call after S-2965; 0x58 bytes; D-8806 |
+| S-2967 | 0x0041ef80 FUN_0041ef80 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx,0); first call in zeroing loop; 0x36 bytes; D-8807 |
+| S-2968 | 0x0041f000 FUN_0041f000 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx, score-array ptr); 0x24 bytes; D-8808 |
+| S-2969 | 0x00429820 FUN_00429820 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; first call after mod-12 counter; 0x14 bytes; D-8809 |
+| S-2970 | 0x0046b1c0 FUN_0046b1c0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx, score-array ptr); 0x329 bytes; D-8810 |
+| S-2971 | 0x0046b540 FUN_0046b540 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx); called after FUN_0046b1c0; 0x157 bytes; D-8811 |
+| S-2972 | 0x0046c6d0 FUN_0046c6d0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx, &out_score); writes score; 0x23 bytes; D-8812 |
+| S-2973 | 0x004704c0 FUN_004704c0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | 6-arg vehicle-placement call; 0x1AA bytes; D-8813 |
+| S-2974 | 0x0048f680 FUN_0048f680 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; called after FUN_00429820; 0x20 bytes; D-8814 |
+| S-2975 | 0x0048f740 FUN_0048f740 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; called after FUN_0048f680; 0x30 bytes; D-8815 |
