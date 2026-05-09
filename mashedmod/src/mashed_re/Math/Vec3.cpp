@@ -11,7 +11,7 @@
 static constexpr std::uintptr_t kRwGlobalsBase   = 0x007d3ff8;
 static constexpr std::uintptr_t kRwSqrtTableSlot = 0x007d3ffc;
 
-extern "C" float __cdecl Vec3Magnitude(const float* v) {
+extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
     const float sq = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
     if (sq == 0.0f) {
         return 0.0f;
