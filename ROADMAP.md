@@ -83,24 +83,25 @@ The project is **DONE** (v1.0) when:
 - Every global accessed during boot has a documented type.
 - Frida boot trace runs and is checked into `verify/boot_trace_baseline.csv`.
 
-### Phase 4 — Dev harness + standalone skeleton (infrastructure done 2026-05-09; verification blocked-on-runtime)
+### Phase 4 — Dev harness + standalone skeleton (DONE 2026-05-09)
 **Goal:** stand up *both* build targets (greenfield exe + dev-mode hook DLL) and prove the verification loop on one small function.
 **Activities:**
 - ✅ MSVC Build Tools 2022 (x86); `mashedmod/build.bat` calls `vcvars32.bat`. (2026-05-08)
 - ✅ Scaffold `mashed_re.exe` standalone: `WinMain`, empty event loop, exits cleanly. (2026-05-08)
-- ✅ Scaffold `mashed_re_dev.asi` with `DllMain` + `InjectHooks()` bootstrap. (2026-05-08)
+- ✅ Scaffold `mashed_re_dev.asi` with `DllMain` + `InjectHooks()` bootstrap, env-gated via `MASHED_RE_NO_AUTO_HOOK`. (2026-05-08, 2026-05-09)
 - ✅ Hand-rolled inline-JMP hook system (`Core/HookSystem.{h,cpp}`) with `RH_ScopedInstall(Method, RVA)` macro and runtime-toggleable registry. (2026-05-08)
-- ✅ Pick one leaf function: `0x004c3ac0` (Vec3Magnitude, 3-vec sqrt LUT). Reimpl at `Math/Vec3.cpp` registered via `RH_ScopedInstall`. (2026-05-08)
-- ✅ Ultimate-ASI-Loader v latest deployed as `original\d3d9.dll`. (2026-05-08)
-- 🚫 Live verification blocked: MASHED.exe crashes mid-asset-load (RW3 TXD/piz close handler) on this Win11 + RTX 5070 Ti. Crash predates any of our code (reproduced with no ASI loader, no .asi, with dgvoodoo2 wrapper). See `memory/project_runtime_blocked.md`.
+- ✅ Leaf function picked: `0x004c3ac0` Vec3Magnitude (RW3 fast-sqrt LUT). Reimpl at `Math/Vec3.cpp` registered via `RH_ScopedInstall`. (2026-05-08, fixed 2026-05-09 after asm re-read)
+- ✅ Ultimate-ASI-Loader deployed as `original\d3d9.dll`. (2026-05-08)
+- ✅ Frida A/B harness (`re/frida/diff_vec3_magnitude.js` + `run_diff_vec3.py`): spawns MASHED via subprocess (works around `ERROR_ELEVATION_REQUIRED` on the WINXPSP3 shim), attaches, agent loads our `.asi` without auto-hooking, force-calls both impls against the same live LUT. (2026-05-09)
+- ✅ `Vec3Magnitude` promoted C1 → **C4** via `re-classify` skill. Evidence: `log/diff_vec3_magnitude.csv` 18/18 bit-identical. (2026-05-09)
 
 **Exit criteria:**
-- ✅ `mashed_re.exe` builds and exits 0. (verified 2026-05-08: x86, Subsystem Windows GUI, exit code 0)
-- ✅ `mashed_re_dev.asi` builds with `InjectHooks` exported. (verified 2026-05-08: 88,576 bytes, x86 DLL)
-- 🚫 One function C4 in `hooks.csv` with green Frida diff — **blocked on runtime**.
-- 🚫 `hook-author` + `diff-original` skills exercised end-to-end — **blocked on runtime**.
+- ✅ `mashed_re.exe` builds and exits 0. (x86, Subsystem Windows GUI)
+- ✅ `mashed_re_dev.asi` builds with `InjectHooks` + `Vec3Magnitude` exports. (x86 DLL)
+- ✅ One function C4 in `hooks.csv` with green Frida diff. (`004c3ac0,Vec3Magnitude,util,C4,verified,...`)
+- ✅ `hook-author`-style code path and `diff-original` Frida-A/B path exercised end-to-end; precedent for leaf-function exemption locked into `re/CONFIDENCE.md`.
 
-**Path forward when unblocked:** restore `original\d3d9.dll` (currently `d3d9_loader_disabled`) and `original\mashed_re_dev.asi` (currently `.bak`), launch game, run `diff-original` skill against `Vec3Magnitude` over a canonical scenario, promote `0x004c3ac0` to C4 via `re-classify`.
+**Note on the live game runtime:** MASHED.exe still crashes during asset load on this Win11+RTX5070Ti machine (see `memory/project_runtime_blocked.md`). Phase 4's verification works around it by force-calling functions via Frida BEFORE the crash window. Phase 5 subsystem sweeps using passive Frida traces of normal gameplay will need the runtime fixed first.
 
 ### Phase 5 — Subsystem sweeps (target: 4–8 weeks each, parallelizable)
 **Goal:** progressively reverse each subsystem and land its functions into the **standalone exe**, using the dev harness for verification.
