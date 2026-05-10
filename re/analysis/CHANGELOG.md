@@ -674,3 +674,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-08  sweep-20260508-1859  scribe-release  buckets=4 drained  errors=0  sync=partial (pool12 file-busy/Windows)
 2026-05-09  004c3ac0  Vec3Magnitude  C1->C4  Frida A/B 18/18 bit-identical (log/diff_vec3_magnitude.csv); reimpl mashedmod/src/mashed_re/Math/Vec3.cpp; hook RH_ScopedInstall; subsystem ai->util; leaf-exemption applied per CONFIDENCE.md
 2026-05-09  004c3ac0  Vec3Magnitude  C4<-C3  demotion: synthetic Frida-A/B with hook bypass is implementation-correctness, not canonical-scenario verification per C4 gate; user pushback on overclaim; leaf-exemption clarified as C2->C3 only
+2026-05-09  004c3ac0  Vec3Magnitude  hook-installer-verified  HookSystem::InstallAll patches 0x004c3ac0 with E9 rel32 to reimpl correctly; Interceptor confirms 5/5 calls route through reimpl; outputs 5/5 correct via patched entry (log/verify_hook_install_vec3.txt); confidence stays C3 — no canonical-scenario evidence yet

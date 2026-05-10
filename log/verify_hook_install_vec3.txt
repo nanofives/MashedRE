@@ -1,0 +1,28 @@
+=== verify_hook_install_vec3 report ===
+
+target address: 0x004c3ac0
+PRE  bytes:     8b 44 24 04 d9 40 04 d9
+asi base:       0x6b630000
+reimpl addr:    0x6b631690
+POST bytes:     e9 cb db 16 6b 40 04 d9
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6b16dbcb  expected 0x6b16dbcb  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  5 / 5
+
+per-vector results:
+  [OK] v=(0, 0, 0)  expected=0  got=0  err=
+  [OK] v=(3, 4, 0)  expected=5  got=5  err=
+  [OK] v=(1, 1, 1)  expected=1.7320507764816284  got=1.7320507764816284  err=
+  [OK] v=(2, 3, 6)  expected=7  got=7  err=
+  [OK] v=(10, 0, 0)  expected=10  got=10  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 5x as expected
+  + all 5 magnitudes match expected values
+FAIL:
+  (none)
