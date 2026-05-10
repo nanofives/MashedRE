@@ -26,6 +26,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\dll_main.cpp" ^
     "%SRC%\Core\HookSystem.cpp" ^
     "%SRC%\Math\Vec3.cpp" ^
+    "%SRC%\Math\RwSqrt.cpp" ^
     /link /DLL
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 

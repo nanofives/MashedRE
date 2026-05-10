@@ -1,0 +1,28 @@
+=== verify_hook_install_invsqrt report ===
+
+target address: 0x004c3b90
+PRE  bytes:     8b 44 24 04 89 44 24 04
+asi base:       0x6b9c0000
+reimpl addr:    0x6b9c1720
+POST bytes:     e9 8b db 4f 6b 44 24 04
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6b4fdb8b  expected 0x6b4fdb8b  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  5 / 5
+
+per-input results (only checking no-crash + finite output; bit-identity in run_diff_invsqrt.py):
+  [OK] input=0  got=0  err=
+  [OK] input=1  got=1  err=
+  [OK] input=4  got=0.5  err=
+  [OK] input=0.25  got=2  err=
+  [OK] input=100  got=0.10000000149011612  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 5x as expected
+  + all 5 calls returned without exception
+FAIL:
+  (none)
