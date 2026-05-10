@@ -11,6 +11,7 @@
 import csv
 import os
 import struct
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -65,20 +66,33 @@ def main():
     if not AGENT_JS.exists():
         sys.exit(f"agent script not found at {AGENT_JS}")
 
-    print(f"spawning {MASHED_EXE}")
-    device = frida.get_local_device()
-    pid = device.spawn(
+    # Frida.spawn fails (ERROR_ELEVATION_REQUIRED 0x2e4) under the WINXPSP3
+    # AppCompat shim, even from an elevated shell. Launch via subprocess so
+    # standard CreateProcess applies the shim correctly, then attach by PID.
+    print(f"spawning {MASHED_EXE} via subprocess")
+    env = {**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'}
+    proc = subprocess.Popen(
         [str(MASHED_EXE)],
         cwd=str(MASHED_EXE.parent),
-        env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'},
+        env=env,
     )
+    pid = proc.pid
     print(f"  pid = {pid}")
 
-    session = device.attach(pid)
+    # Attach as soon as the process is ready — small delay lets the loader
+    # map the image, but well before RwEngineStart populates the LUT.
+    time.sleep(0.2)
+    device = frida.get_local_device()
+    try:
+        session = device.attach(pid)
+    except Exception as e:
+        print(f"attach failed: {e}")
+        try: proc.kill()
+        except Exception: pass
+        return 4
     script = session.create_script(AGENT_JS.read_text(encoding='utf-8'))
     script.on('message', on_message)
     script.load()
-    device.resume(pid)
 
     timeout_s = 30
     deadline = time.time() + timeout_s
@@ -90,7 +104,11 @@ def main():
     except Exception:
         pass
     try:
-        device.kill(pid)
+        proc.kill()
+    except Exception:
+        pass
+    try:
+        proc.wait(timeout=3)
     except Exception:
         pass
 

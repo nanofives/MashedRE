@@ -21,6 +21,7 @@ Every row in `hooks.csv` carries a confidence label `C0..C4`. Promotion is one-w
 - Sign and width of every operand is correct (signed/unsigned, 8/16/32/64-bit).
 - Field offsets cited (`+0xNN`) for every struct access, even if the struct is not yet named.
 - **Promotion to C3 requires:** semantics are inferred and verified. The function has a real name. Every field has a name (or is explicitly marked `[UNCERTAIN]` with the marker recorded in `UNCERTAINTIES.md`). At least one caller and one callee are themselves at C2 or higher (no semantic inferences from islands).
+- **Leaf-function exemption:** a function with `callees_depth1: []` (pure leaf — no callees) cannot satisfy the "one callee at C2+" half of this rule. The rule is N/A for such leaves *if and only if* the function will be promoted with a green Frida-A/B diff in the same transaction (i.e., direct ground-truth anchor replaces the structural anchor the rule normally provides). Precedent: `0x004c3ac0` `Vec3Magnitude` (2026-05-09).
 
 ### C3 — Understood
 - The function's purpose is stated in plain prose at the top of `re/analysis/<subsystem>/<func>.md`, with citations.
