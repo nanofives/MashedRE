@@ -83,25 +83,28 @@ The project is **DONE** (v1.0) when:
 - Every global accessed during boot has a documented type.
 - Frida boot trace runs and is checked into `verify/boot_trace_baseline.csv`.
 
-### Phase 4 — Dev harness + standalone skeleton (DONE 2026-05-09)
+### Phase 4 — Dev harness + standalone skeleton (PARTIAL — infrastructure done 2026-05-09; full verification blocked-on-runtime)
 **Goal:** stand up *both* build targets (greenfield exe + dev-mode hook DLL) and prove the verification loop on one small function.
 **Activities:**
 - ✅ MSVC Build Tools 2022 (x86); `mashedmod/build.bat` calls `vcvars32.bat`. (2026-05-08)
-- ✅ Scaffold `mashed_re.exe` standalone: `WinMain`, empty event loop, exits cleanly. (2026-05-08)
-- ✅ Scaffold `mashed_re_dev.asi` with `DllMain` + `InjectHooks()` bootstrap, env-gated via `MASHED_RE_NO_AUTO_HOOK`. (2026-05-08, 2026-05-09)
-- ✅ Hand-rolled inline-JMP hook system (`Core/HookSystem.{h,cpp}`) with `RH_ScopedInstall(Method, RVA)` macro and runtime-toggleable registry. (2026-05-08)
-- ✅ Leaf function picked: `0x004c3ac0` Vec3Magnitude (RW3 fast-sqrt LUT). Reimpl at `Math/Vec3.cpp` registered via `RH_ScopedInstall`. (2026-05-08, fixed 2026-05-09 after asm re-read)
-- ✅ Ultimate-ASI-Loader deployed as `original\d3d9.dll`. (2026-05-08)
-- ✅ Frida A/B harness (`re/frida/diff_vec3_magnitude.js` + `run_diff_vec3.py`): spawns MASHED via subprocess (works around `ERROR_ELEVATION_REQUIRED` on the WINXPSP3 shim), attaches, agent loads our `.asi` without auto-hooking, force-calls both impls against the same live LUT. (2026-05-09)
-- ✅ `Vec3Magnitude` promoted C1 → **C4** via `re-classify` skill. Evidence: `log/diff_vec3_magnitude.csv` 18/18 bit-identical. (2026-05-09)
+- ✅ `mashed_re.exe` standalone scaffold (WinMain → exit 0). (2026-05-08)
+- ✅ `mashed_re_dev.asi` scaffold with env-gated `InjectHooks()`. (2026-05-08, 2026-05-09)
+- ✅ Hand-rolled inline-JMP hook system (`Core/HookSystem.{h,cpp}`) with `RH_ScopedInstall` macro + runtime-toggleable registry. (2026-05-08)
+- ✅ Leaf function picked + reimplemented: `0x004c3ac0` Vec3Magnitude. (2026-05-08, asm-corrected 2026-05-09)
+- ✅ Ultimate-ASI-Loader deployed. (2026-05-08)
+- ✅ Frida force-call harness: bit-identical implementation diff (18/18 vectors against live LUT) — hook-bypass mode (env var). (2026-05-09)
+- 🟡 Vec3Magnitude promoted to **C3** in `hooks.csv` — math verified, build clean, hook code present and registered, but inline-JMP patch was **never live-installed** during the test (we deliberately suppressed it for an A/B isolation), and no canonical scenario was exercised because the game crashes early.
+- 🚫 C4 promotion blocked: the C4 gate requires a "Frida CSV diff between original and modded behavior on at least one canonical scenario" — that requires either the game running to a real call site, or a deliberate hook-installed force-call test that exercises the patcher itself. Neither is possible until either (a) the runtime is fixed (see `memory/project_runtime_blocked.md`) or (b) we add a separate harness that installs the hook AND verifies the JMP redirect via Frida.Interceptor before forcing a call.
 
-**Exit criteria:**
-- ✅ `mashed_re.exe` builds and exits 0. (x86, Subsystem Windows GUI)
-- ✅ `mashed_re_dev.asi` builds with `InjectHooks` + `Vec3Magnitude` exports. (x86 DLL)
-- ✅ One function C4 in `hooks.csv` with green Frida diff. (`004c3ac0,Vec3Magnitude,util,C4,verified,...`)
-- ✅ `hook-author`-style code path and `diff-original` Frida-A/B path exercised end-to-end; precedent for leaf-function exemption locked into `re/CONFIDENCE.md`.
+**Exit criteria status:**
+- ✅ `mashed_re.exe` builds and exits 0.
+- ✅ `mashed_re_dev.asi` builds with all required exports.
+- 🟡 Reimpl bit-identical vs original on synthetic input domain (C3 evidence) — full C4 (canonical scenario, hook installed) still pending.
+- 🟡 Frida A/B harness exists and works — but only validates the implementation, not the patcher.
 
-**Note on the live game runtime:** MASHED.exe still crashes during asset load on this Win11+RTX5070Ti machine (see `memory/project_runtime_blocked.md`). Phase 4's verification works around it by force-calling functions via Frida BEFORE the crash window. Phase 5 subsystem sweeps using passive Frida traces of normal gameplay will need the runtime fixed first.
+**Path to a real C4 demo (in priority order):**
+1. Fix the Mashed runtime so the game reaches main menu / a track. C4 then comes from passive Frida tracing during natural play.
+2. Or: write a hook-installed force-call test — install `Vec3Magnitude` hook normally, then use `Frida.Interceptor.attach` at `0x004c3ac0` to verify the JMP redirect routes through our code before calling the function. This proves the patcher works without needing canonical gameplay.
 
 ### Phase 5 — Subsystem sweeps (target: 4–8 weeks each, parallelizable)
 **Goal:** progressively reverse each subsystem and land its functions into the **standalone exe**, using the dev harness for verification.
