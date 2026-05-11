@@ -29,6 +29,23 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
   - `Mashed_headless.gpr` / `Mashed_headless.rep` — optional dedicated headless target for the MCP server.
   Pool slots `mashed_pool/Mashed_poolN` are read-only clones, created on demand by the `ghidra-pool` skill.
 
+## Runtime state (what it takes to boot Mashed on this hardware)
+
+Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean checkout becomes bootable only after applying:
+
+1. **Five on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
+   - `scripts/patch_mashed_skip_powerups.py` — NOPs a powerups call sequence (now known-unnecessary but harmless; was solving a Frida-phantom bug).
+   - `scripts/patch_mashed_show_windowed.py` — unhides `[Window]` entries in the video selector.
+   - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
+   - `scripts/patch_mashed_skip_selector.py` — silent video selector.
+   - `scripts/patch_mashed_skip_controller_dialog.py` — silent controller selector.
+2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600 windowed).
+3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
+
+End state: double-click `MASHED.exe` → main menu in a window, no dialogs, no flicker, no audio, ~5 s boot.
+
+If the SHA-256 of `MASHED.exe` no longer matches the version anchor *and* `MASHED.exe.unpatched` exists, the patches are already applied — that is expected; do not "fix" it by reverting. The anchor is preserved on `.unpatched`.
+
 ## Layout
 
 ```
@@ -53,7 +70,8 @@ Mashed\
 │       └── MashedTrainer\         # Only public memory map (Fully Loaded only)
 ├── mashed_pool\                   # Ghidra clones (created on demand by the skill)
 ├── ghidra-headless-mcp\           # NOT here — shared from TD5RE\ghidra-headless-mcp\
-├── scripts\                       # ghidra_pool.sh + .ps1 wrapper
+├── scripts\                       # ghidra_pool.{sh,ps1}, patch_mashed_*.py (5 patches),
+│   └── canonical\                 # known-good videocfg.bin variants
 ├── .claude\                       # Settings, skills, slash commands
 ├── .mcp.json                      # Wires the Ghidra MCP from the TD5RE shared install
 ├── log\                           # Build logs, Frida traces, diff CSVs
@@ -69,6 +87,50 @@ Do not move or delete anything in `original\` without explicit user permission.
 - **Python 3.12** invoked as `py -3.12` for tooling and the MCP server.
 - **MSVC Build Tools 2022 (x86)** — installed at `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools`. Activated via `VC\Auxiliary\Build\vcvars32.bat`. `cl.exe 19.44+` produces both targets via `mashedmod\build.bat`. Choice locked 2026-05-08: chosen over MinGW for ABI compatibility with the original MSVC-built MASHED.exe (cleaner `__thiscall`, vtable layout, exception handling for hook surfaces).
 - **Frida** for runtime tracing / behavioral diffs. Already installed via the user's Python.
+
+## Common commands
+
+All commands run from the repo root (`C:\Users\maria\Desktop\Proyectos\Mashed`).
+
+```powershell
+# Build both targets (mashed_re.exe + mashed_re_dev.asi). Internally calls vcvars32.bat.
+mashedmod\build.bat
+
+# Apply the five binary patches to original\MASHED.exe (idempotent; skip if .unpatched
+# is missing because that means a fresh original/ has not been backed up yet).
+py -3.12 scripts\patch_mashed_skip_powerups.py
+py -3.12 scripts\patch_mashed_show_windowed.py
+py -3.12 scripts\patch_mashed_skip_audio_com.py
+py -3.12 scripts\patch_mashed_skip_selector.py
+py -3.12 scripts\patch_mashed_skip_controller_dialog.py
+
+# Acquire / release a Ghidra pool slot (use the skill rather than calling this directly
+# unless you know what you're doing — the skill handles lock hygiene).
+pwsh scripts\ghidra_pool.ps1 acquire
+pwsh scripts\ghidra_pool.ps1 release <slot>
+
+# Frida — main-menu invocation counter (no Interceptor; behavioral observation only).
+py -3.12 re\frida\auto_count_at_menu.py
+
+# Frida — A/B path1 diff for one hook (driven by hooks_registry.py).
+py -3.12 re\frida\run_diff.py <hook_name>
+
+# Frida — path2 installer verification for one hook.
+py -3.12 re\frida\run_verify_hook.py <hook_name>
+
+# Frida — exception-handler SIGSEGV catcher (use this for any new crash work, NOT
+# Interceptor traces — see "Frida overhead on hot paths" below).
+py -3.12 re\frida\poll_attach_catch_crash.py
+```
+
+### Frida hook verification flow
+
+`re\frida\hooks_registry.py` is the single source of truth for hook test vectors. To verify a new hook:
+1. Add an entry to `HOOKS` in `hooks_registry.py` (RVA, export name, signature, arg type, test inputs).
+2. Run `run_diff.py <hook_name>` for bit-identity A/B vs the original (path1).
+3. Run `run_verify_hook.py <hook_name>` to confirm the inline-JMP redirect actually installed (path2).
+
+Do not add new one-off `.js` or `.py` harnesses for verification — extend the registry instead.
 
 ## Workflow conventions
 
@@ -97,6 +159,19 @@ Every Ghidra session and every reversed function must follow this:
 
 A hook is accepted only when the `diff-original` skill produces a clean Frida diff between original and modded behavior. Compile-passes-and-doesn't-crash is not acceptance.
 
+### Frida overhead on hot paths
+
+Frida `Interceptor.attach` on hot paths (>1000 calls/s) destabilizes Mashed in ~6 seconds — the process drifts and either crashes or hangs. Empirically observed at the main menu where `FastSqrt` fires ~2,700/s and `FastInvSqrt` ~900/s (see `log/auto_count_at_menu.txt`).
+
+Rules:
+- For hot-path verification, use **behavioral observation**: `Module.load` the .asi, watch the game for N seconds with **no** `Interceptor`, confirm no visual/crash regression.
+- If you must trace a hot function, **sample one function at a time** and keep the run short.
+- For crash investigation, use `re/frida/poll_attach_catch_crash.py` (an exception-handler-based EIP catcher), not `Interceptor` traces.
+
+### Confidence promotion (NO overclaiming)
+
+Synthetic Frida A/B with the hook bypassed (env-var disabled) is **C3** evidence at best — it proves the implementation is bit-identical, not that the patcher works. **C4 demands a canonical-scenario run with the hook actually installed.** This rule has been violated before; refuse C4 promotions that lack canonical-scenario evidence with the inline-JMP live.
+
 ## Operating principles
 
 **Stop and ask.** When any of the following holds, **halt and ask the user** rather than infer or pick:
@@ -115,6 +190,8 @@ A hook is accepted only when the `diff-original` skill produces a clean Frida di
 **Skills are entry points.** Use the skill catalog (below) by name; if no skill fits, ask before inventing a new one.
 
 ## Roadmap, DoD, and trackers
+
+**Current phase:** Phase 4 closing / Phase 5 opening (as of 2026-05-11). Three C3 hooks landed during Phase 4 (`Vec3Magnitude` 0x004c3ac0, `FastSqrt` 0x004c3b30, `FastInvSqrt` 0x004c3b90); their C4 promotion is the final gate before Phase 5 — Frontend/HUD sweep — begins in earnest.
 
 - `ROADMAP.md` — phases (0..6), Definition of Done at function/subsystem/project levels.
 - `re\CONFIDENCE.md` — C0..C4 rubric; the only gate for status changes.
