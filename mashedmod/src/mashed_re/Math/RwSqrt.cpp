@@ -63,3 +63,36 @@ extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
 }
 
 RH_ScopedInstall(FastInvSqrt, 0x004c3b90);
+
+// Mashed RE - Fast sqrt (single float) primitive.
+// Original: 0x004c3b30  FUN_004c3b30  ai_update_d4  C1 -> C3
+//
+// Same LUT family. Disasm at 0x004c3b30..0x004c3b83 mirrors Vec3Magnitude's
+// inner step exactly — LUT root at offset +0 inside RW globals, no NOT
+// before the right-shift. Difference from Vec3Magnitude is that this
+// function takes the squared value as a parameter (caller does the
+// sum-of-squares); FastSqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]) would behave
+// identically to Vec3Magnitude(v).
+extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
+    std::uint32_t bits;
+    static_assert(sizeof(bits) == sizeof(x), "float must be 32-bit");
+    std::memcpy(&bits, &x, sizeof(bits));
+
+    if (bits == 0u) {
+        return 0.0f;
+    }
+
+    const std::uint32_t biased     = bits + 0x800u;
+    const std::uint32_t rw_globals = *reinterpret_cast<std::uint32_t*>(kRwGlobalsBase);
+    const std::uint32_t rw_offset  = *reinterpret_cast<std::uint32_t*>(kRwSqrtTableSlot);
+    const auto*  lut_root          = *reinterpret_cast<std::uint32_t**>(rw_globals + rw_offset);
+    const std::uint32_t mantissa   = lut_root[(biased >> 12) & 0xfffu];
+    const std::uint32_t exp_corr   = (biased >> 1) & 0x3fc00000u;
+    const std::uint32_t result_bits = mantissa + exp_corr;
+
+    float result;
+    std::memcpy(&result, &result_bits, sizeof(result));
+    return result;
+}
+
+RH_ScopedInstall(FastSqrt, 0x004c3b30);
