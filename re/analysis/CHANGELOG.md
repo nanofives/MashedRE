@@ -713,3 +713,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=save_gamesave_d3  writes=10  errors=0
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=hud_frontend_d5  writes=26  errors=0
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=audio_dsound_d5  writes=2  errors=0
+
+2026-05-11  sweep-20260511-1822  scribe-release-sweep  buckets=10  errors=0  (HOLD=1: replay_record-20260503; library-rename check via pre-comment performed on buckets 1-3 (39 RVAs, 0 hits); skipped for buckets 4-10 as deliberate optimization given consistent null pattern + no library candidates in .md notes)
