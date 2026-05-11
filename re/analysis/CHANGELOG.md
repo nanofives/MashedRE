@@ -712,3 +712,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=frontend_promote_menus_a  writes=38  errors=0
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=save_gamesave_d3  writes=10  errors=0
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=hud_frontend_d5  writes=26  errors=0
+2026-05-11  sweep-20260511-1822  scribe-release  bucket=audio_dsound_d5  writes=2  errors=0
