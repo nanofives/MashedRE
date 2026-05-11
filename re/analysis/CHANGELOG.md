@@ -677,3 +677,26 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-09  004c3ac0  Vec3Magnitude  hook-installer-verified  HookSystem::InstallAll patches 0x004c3ac0 with E9 rel32 to reimpl correctly; Interceptor confirms 5/5 calls route through reimpl; outputs 5/5 correct via patched entry (log/verify_hook_install_vec3.txt); confidence stays C3 — no canonical-scenario evidence yet
 2026-05-09  004c3b90  FastInvSqrt  C1->C3  Frida path1 18/18 bit-identical (log/diff_fast_invsqrt.csv); path2 hook-installer opcode/rel32/interceptor all PASS (log/verify_hook_install_invsqrt.txt); reimpl mashedmod/src/mashed_re/Math/RwSqrt.cpp; hook RH_ScopedInstall; subsystem render->util; leaf-exemption applied per CONFIDENCE.md
 2026-05-09  004c3b30  FastSqrt  C1->C3  Frida path1 18/18 bit-identical (log/diff_fast_sqrt.csv); path2 hook-installer opcode/rel32/interceptor all PASS (log/verify_hook_install_sqrt.txt); reimpl mashedmod/src/mashed_re/Math/RwSqrt.cpp; hook RH_ScopedInstall; subsystem ai->util; leaf-exemption applied per CONFIDENCE.md
+2026-05-11  004c3ac0  Vec3Magnitude  C3->C4  canonical-scenario evidence gap (called out in 2026-05-09 demotion) now closed: log/observe_hooks_at_menu.txt — hook installed (Frida byte-verified E9+rel32 0x6cc8dc0b) during 10s main-menu observation with ~1,800 natural invocations of Vec3Magnitude, no crash, no rollback, bytes still patched at end; combined with path1 (log/diff_vec3_magnitude.csv 18/18) and path2 (log/verify_hook_install_vec3.txt opcode+rel32+interceptor 5/5); scenario=main_menu_idle_10s_2026-05-11
+2026-05-11  004c3b30  FastSqrt  C3->C4  canonical-scenario evidence: log/observe_hooks_at_menu.txt — hook installed (Frida byte-verified E9+rel32 0x6cc8dc5b) during 10s main-menu observation with ~27,000 natural invocations of FastSqrt, no crash, no rollback; combined with path1 (log/diff_fast_sqrt.csv 18/18 bit-identical) and path2 (log/verify_hook_install_sqrt.txt opcode+rel32+interceptor 5/5); scenario=main_menu_idle_10s_2026-05-11
+2026-05-11  004c3b90  FastInvSqrt  C3->C4  canonical-scenario evidence: log/observe_hooks_at_menu.txt — hook installed (Frida byte-verified E9+rel32 0x6cc8dbab) during 10s main-menu observation with ~9,000 natural invocations of FastInvSqrt, no crash, no rollback; combined with path1 (log/diff_fast_invsqrt.csv 18/18 bit-identical) and path2 (log/verify_hook_install_invsqrt.txt opcode+rel32+interceptor 5/5); scenario=main_menu_idle_10s_2026-05-11
+2026-05-11  0042a940  FUN_0042a940  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042a940.md
+2026-05-11  0042aa00  FUN_0042aa00  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042aa00.md
+2026-05-11  0042aad0  FUN_0042aad0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042aad0.md
+2026-05-11  0042aae0  FUN_0042aae0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042aae0.md
+2026-05-11  0042ac00  FUN_0042ac00  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042ac00.md
+2026-05-11  0042ac50  FUN_0042ac50  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042ac50.md
+2026-05-11  0042ac90  FUN_0042ac90  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042ac90.md
+2026-05-11  0042ae10  FUN_0042ae10  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042ae10.md
+2026-05-11  0042aeb0  FUN_0042aeb0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042aeb0.md
+2026-05-11  0042aff0  FUN_0042aff0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042aff0.md
+2026-05-11  0042b180  FUN_0042b180  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b180.md
+2026-05-11  0042b310  FUN_0042b310  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b310.md; U-3556 filed
+2026-05-11  0042b540  FUN_0042b540  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b540.md
+2026-05-11  0042b770  FUN_0042b770  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b770.md
+2026-05-11  0042b930  FUN_0042b930  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b930.md
+2026-05-11  0042b960  FUN_0042b960  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b960.md; U-3557 filed
+2026-05-11  0042b9e0  FUN_0042b9e0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042b9e0.md
+2026-05-11  0042bb60  FUN_0042bb60  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042bb60.md
+2026-05-11  0042bcb0  FUN_0042bcb0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042bcb0.md
+2026-05-11  hud_frontend_d5-20260511-1710  13 RVAs C1  0x004368e0 0x00436810 0x004391b0 0x00458630 0x00473870 0x004736c0 0x00474e60 0x00427f00 0x0042e8b0 0x0042ed70 0x00430670 0x004309b0 0x004a2b60  U-3407..U-3423 filed  D-6178..D-6184 cleared  pool=Mashed_pool4

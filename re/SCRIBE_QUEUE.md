@@ -13,9 +13,12 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-11  hud_ingame_promote_c2-20260511  bucket=hud_ingame_promote_c2  rvas=0x0040dfc0,0x00403160,0x0041a3e0,0x0041b630,0x0041c0c0,0x0041c300,0x0041ccc0,0x0041d870,0x0041db80,0x0041ded0,0x0041e850,0x00426ba0,0x0042f500,0x0042f6a0,0x00428450,0x00450b10  pool=Mashed_pool3  note=16 C1→C2 promotions; corrected 0040dfc0 dispatch tree (C1 error in {7}-branch); no new S/U/D; hud_state_draft.md written for session-6
 2026-05-03  replay_record-20260503  bucket=replay_record  rvas=0x00411350,0x00411530,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411870,0x00411ae0,0x00411ce0,0x00411d60,0x00411d90,0x00411170,0x00482930,0x004829d0,0x00482c10,0x00483d10  S-1560..S-1573  U-1567..U-1569  D-4600..D-4607  pool=Mashed_pool10  HOLD=missing-per-rva-files (sweep-20260503-1853 skipped: only notes.md present)
-```
-
+2026-05-11  frontend_promote_menus_b  bucket=frontend_promote_menus_b  rvas=0x0040b460,0x0040b620,0x0040b6b0,0x0040b7a0,0x0040b7b0,0x0040bb70,0x0040bb90,0x0040e3a0,0x00427ad0,0x004282a0,0x00428320,0x00429870,0x00429a30,0x00429a70,0x00429a80,0x00429a90,0x0042f8d0,0x0042fab0,0x00430760,0x00430830  pool=master(read-only)  note=19 C2 + 1 C1; 20 per-RVA .md files in re/analysis/frontend_promote_menus_b/; hooks.csv rows promoted; [UNCERTAIN] 0x0042fab0 decompiler artifact (all switch cases call callee with no visible arg)
+2026-05-11  frontend_unmapped_a-20260511  bucket=frontend_unmapped_a  rvas=0x0042c1f0,0x0042c510,0x0042d3e0,0x0042d420,0x0042d4a0,0x0042d560,0x0042e8b0,0x0042ed70,0x0042f520,0x0042f7a0,0x0042f7b0,0x0042fa00,0x0042fe30,0x0042fe50,0x0042fe80  S-3560..S-3564  U-3548..U-3555  pool=Mashed_pool2  note=15 C1 plates; range 0x0042c000-0x0042ffff; 9 already-mapped skipped (prefix-grep mismatch); GhostMode::Clear named at 0x0042f7a0
+2026-05-11  frontend_promote_menus_a-20260511  bucket=frontend_promote_menus_a  rvas=0x0042a940,0x0042aa00,0x0042aad0,0x0042aae0,0x0042ac00,0x0042ac50,0x0042ac90,0x0042ae10,0x0042aeb0,0x0042aff0,0x0042b180,0x0042b310,0x0042b540,0x0042b770,0x0042b930,0x0042b960,0x0042b9e0,0x0042bb60,0x0042bcb0  U-3556..U-3557  pool=Mashed_pool0  note=19 C1->C2 promotions; range 0x0042a000-0x0042bfff; button-detector family (btn0/1/2/3/5) + cursor/team-balance/car-select/sprite-draw; 0x0042b930 has duplicate row (frontend+util) in hooks.csv — user cleanup needed
+```n
 ## Drained
 
 ```
@@ -140,3 +143,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-07  split_screen_d2-20260507-1852  bucket=split_screen_d2  rvas=0x0041f8f0,0x004228f0,0x00426060,0x004260c0,0x004e4900  U-2847..U-2848  D-5620..D-5624-cleared  D-8440..D-8446  pool=Mashed_pool1
 2026-05-07  librw_plugin_compat-20260507-1950  bucket=librw_plugin_compat  rvas=0x004d8430,0x004d8470,0x004c3e90,0x004c3e20,0x004d9030,0x004d9040,0x004c4470,0x004c4430,0x004c07b0,0x004c0830,0x004cbca0,0x004cbd00,0x004c1980,0x004c1940,0x004cd900,0x004cdb60,0x004c78e0,0x004c78a0,0x004c5f60,0x004c5e00,0x004d8530,0x004d8550,0x004d8fa0,0x004d9000,0x004cd850,0x004cd810,0x004d8a80,0x004d8b70  U-2887..U-2891  D-8560  pool=Mashed_pool12
 ```
+2026-05-11  hud_frontend_d5-20260511-1710  bucket=hud_frontend_d5  rvas=0x004368e0,0x00436810,0x004391b0,0x00458630,0x00473870,0x004736c0,0x00474e60,0x00427f00,0x0042e8b0,0x0042ed70,0x00430670,0x004309b0,0x004a2b60  U-3407..U-3423  clears=D-6178..D-6184  pool=Mashed_pool4
