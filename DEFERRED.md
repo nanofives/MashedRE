@@ -28,7 +28,6 @@ A row goes into DEFERRED when:
 | D-0166 | 0x004ae28f ___crtInitCritSecNoSpinCount@8 | depth-2 of ___crtInitCritSecAndSpinCount (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0167 | 0x004af166 __setmbcp | depth-2 of ___initmbctable (boot_crt_env session) | boot_crt_env-cont1 | boot |
 | D-0168 | 0x004affaf FUN_004affaf | depth-2 of FUN_004affe0 (boot_crt_env session) | boot_crt_env-cont1 | boot |
-| D-0700 | 0x004a42c5 FUN_004a42c5 | depth-2 of FUN_004987b0; varargs string formatter; not recursed per session rules; S-0260 | input_dinput-cont1 session | input |
 | D-0460 | 0x004ac570 FUN_004ac570 | depth-3 of FUN_004ab8d6; supersedes D-0119; not taken in boot_crt_exit_d3 (cap 18) | pick up as bucket boot_crt_exit_d3-cont1; no further recursion | boot |
 | D-0461 | 0x004af32d FUN_004af32d | depth-3 of FUN_004a3258; supersedes D-0106; not taken in boot_crt_exit_d3 (cap 18) | pick up as bucket boot_crt_exit_d3-cont1; no further recursion | boot |
 | D-0462 | 0x004a2bb8 report_failure | depth-4 of 0x004a2be9 __security_check_cookie; not recursed | boot_crt_exit_d3-cont1 or dedicated boot session | boot |
@@ -269,6 +268,12 @@ A row goes into DEFERRED when:
 | D-0280 | 0x00551510,0x004c2c90,0x004d8060,0x004d7ca0,0x004ccf20 | analyzed C1 session rw_engine_teardown_d2-20260502-1854 (all 5 RVAs) | 2026-05-02 |
 | D-6940 | 0x004d8000 FUN_004d8000 | analyzed C1 session intro_splash_d3-20260506 (S-2340 resolved; find-in-list + secondary dispatch) | 2026-05-06 |
 | D-6941 | 0x004d8c40 FUN_004d8c40 | analyzed C1 session intro_splash_d3-20260506 (S-2341 resolved; doubly-linked list splice + swap + counter clear; resolves U-2360) | 2026-05-06 |
+
+## Closed Sessions (never opened — no DEFERRED ID)
+
+| Session | Reason | Date |
+|---------|--------|------|
+| input_lua_d5 | No cont1 work; input_lua_d4 consumed all 9 DEFERRED targets with cap_count=0 and left no continuation rows. Lua VM surface (alloc, state init/teardown, GC sweep, error handlers, protected calls) fully mapped through d4. Lua 5.0 confirmed. | 2026-05-08 |
 
 ## Conventions
 
@@ -715,22 +720,6 @@ A row goes into DEFERRED when:
 | D-7128 | 0x004ba210 FUN_004ba210 | depth-3 callee of 0x004b7480 (input_lua_d2); S-2408; args (param_1, 1); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
 | D-7129 | 0x004b9850 FUN_004b9850 | depth-3 callee of 0x004b7480 (input_lua_d2); S-2409; args (param_1); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
 | D-7130 | 0x004b64e0 FUN_004b64e0 | depth-3 callee of 0x004b6520 (input_lua_d2); S-2410; receives (param_1, 0, param_2); 57 bytes; pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7360 | 0x004627b0 FUN_004627b0 | depth-2 callee of FUN_00462dd0 (audio_sfx_dispatch U-2491); audio-available check; called before stream creation; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7361 | 0x005a7f70 FUN_005a7f70 | depth-2 callee of FUN_00462dd0 (audio_sfx_dispatch U-2491); RWS audio stream creator; args (DAT_0069049c,0,0,0,0); bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7362 | 0x005a8890 FUN_005a8890 | depth-2 callee of FUN_00462dd0 (audio_sfx_dispatch U-2491); attaches localized path ptr to stream; args (stream, &path_ptr); bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7363 | 0x00462ec0 FUN_00462ec0 | depth-2 callee of FUN_00466a50 (audio_sfx_dispatch U-2494); stream teardown; called during full engine shutdown; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7364 | 0x005a73b0 FUN_005a73b0 | depth-2 callee of FUN_00466a50 (audio_sfx_dispatch U-2494); audio node system cleanup; no-arg; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7365 | 0x005b8570 FUN_005b8570 | depth-2 callee of FUN_0045d460 (audio_sfx_dispatch U-2488); physical voice object creator; args (DAT_0069049c,0,2,0,0); bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7366 | 0x005a71f0 FUN_005a71f0 | depth-2 callee of FUN_0045d460 (audio_sfx_dispatch U-2488); registers voice array to audio system; args (DAT_0069049c,&DAT_0068fcd0,DAT_006904a0); bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7367 | 0x005a6280 FUN_005a6280 | depth-2 callee of FUN_0045d460 (audio_sfx_dispatch U-2488); virtual voice node creator; args all 0; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7368 | 0x005a6df0 FUN_005a6df0 | depth-2 callee of FUN_005a6710 (audio_sfx_dispatch U-2492); audio node control code dispatcher; args (node,code,1,value); observed codes 9; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7369 | 0x005a5f00 FUN_005a5f00 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); RWS audio engine creator; args (0,1); result stored at DAT_00632ba0; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7370 | 0x005a6110 FUN_005a6110 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); audio engine secondary init; no-arg; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7371 | 0x005bbb20 FUN_005bbb20 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); DirectSound environment init; no-arg; counterpart FUN_005bbb70 in U-2494; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7372 | 0x004624c0 FUN_004624c0 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); audio pre-device init; no-arg; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7373 | 0x005a9e40 FUN_005a9e40 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); audio output attach; called with result of FUN_005aa060; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7374 | 0x005a8e70 FUN_005a8e70 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); typed audio node creator; args (4,0,0); result = output mixing node at DAT_0068f61c; bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
-| D-7375 | 0x005baf60 FUN_005baf60 | depth-2 callee of FUN_004627f0 (audio_sfx_dispatch U-2489); audio device channel count setter; args (DAT_0069049c,4); bucket audio_sfx_dispatch-cont1 | audio_sfx_dispatch-cont1 session | audio |
 | D-7300 | 0x00428450 FUN_00428450 | depth-2 callee of FUN_00428a30 and FUN_00428d30 (title_screen); ticker/overlay; args (0x20,0xffffffe0) in title vs (0x10,0x100) in lobby; S-2460; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
 | D-7301 | 0x004288a0 FUN_004288a0 | depth-2 callee of FUN_00428a30 (title_screen); dark/blank screen renderer when DAT_0067d84c==0; S-2461; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
 | D-7302 | 0x00428320 FUN_00428320 | depth-2 callee of FUN_00428a30 and FUN_00428bf0 (title_screen); text renderer; renders build date + string 0x222; S-2462; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
