@@ -1,0 +1,4 @@
+final counts after 25s at main menu:
+  Vec3Magnitude       1076
+  FastSqrt            16140
+  FastInvSqrt         5364
