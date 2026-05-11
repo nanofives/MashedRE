@@ -703,3 +703,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-11  audio_dsound_d5-20260511  005aa560  FUN_005aa560  C0->C1  audio_dsound_d5; re/analysis/audio_dsound_d5/0x005aa560.md; S-3190 resolved; D-0952(phantom) resolved; S-3565..S-3570 filed; U-3424..U-3427 filed
 
 2026-05-11  sweep-20260511-1822  scribe-claim-sweep  buckets=10  rvas=130  (replay_record-20260503 skipped: HOLD=missing-per-rva-files, superseded by replay_record-20260511-1200)
+2026-05-11  sweep-20260511-1822  scribe-release  bucket=input_dinput_d3  writes=16  errors=0
