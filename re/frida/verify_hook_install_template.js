@@ -1,9 +1,14 @@
-// Frida agent: verify the inline-JMP hook installer end-to-end on FastInvSqrt.
-// Sibling of verify_hook_install_vec3.js — same checks, different RVA + signature.
+// Generic hook-installer verification agent. CONFIG injected at $CONFIG$.
+//
+// Spawns with auto-hook ENABLED (no MASHED_RE_NO_AUTO_HOOK). Verifies that
+// HookSystem::InstallAll() patches CONFIG.target_rva with E9 rel32 -> our
+// exported reimpl, that the rel32 math is correct, and that calls to the
+// patched RVA route through our reimpl (counted via Interceptor.attach).
 'use strict';
 
-const ASI_PATH        = 'C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\mashedmod\\build\\mashed_re_dev.asi';
-const TARGET_ADDR     = ptr('0x004c3b90');
+const CONFIG = $CONFIG$;
+const ASI_PATH        = CONFIG.asi_path;
+const TARGET_ADDR     = ptr(CONFIG.target_rva);
 const LUT_BASE_ADDR   = ptr('0x007d3ff8');
 const LUT_OFFSET_ADDR = ptr('0x007d3ffc');
 
@@ -13,12 +18,12 @@ function bytesHex(p, n) {
     return arr.join(' ');
 }
 
-function readInvSqrtLutRoot() {
+function readLutRoot(delta) {
     try {
         const base = LUT_BASE_ADDR.readU32();
         if (base === 0) return null;
         const off = LUT_OFFSET_ADDR.readU32();
-        const lutPtr = ptr(base + off + 4).readU32();
+        const lutPtr = ptr(base + off + delta).readU32();
         if (lutPtr === 0) return null;
         return lutPtr;
     } catch (e) {
@@ -27,15 +32,25 @@ function readInvSqrtLutRoot() {
 }
 
 function pollLutThenRun(triesLeft) {
-    if (readInvSqrtLutRoot() !== null) {
+    if (readLutRoot(CONFIG.lut_root_delta) !== null) {
         runVerification();
         return;
     }
     if (triesLeft <= 0) {
-        send({ type: 'error', msg: 'Inv-sqrt LUT root never populated within 10s' });
+        send({ type: 'error', msg: 'LUT root never populated within 10s' });
         return;
     }
     setTimeout(function () { pollLutThenRun(triesLeft - 1); }, 200);
+}
+
+function callFn(fn, input, buf) {
+    if (CONFIG.arg_type === 'vec3_ptr') {
+        buf.writeFloat(input[0]);
+        buf.add(4).writeFloat(input[1]);
+        buf.add(8).writeFloat(input[2]);
+        return fn(buf);
+    }
+    return fn(input);
 }
 
 function runVerification() {
@@ -47,21 +62,22 @@ function runVerification() {
         Module.load(ASI_PATH);
         module = Process.findModuleByName('mashed_re_dev.asi');
         if (module === null) {
-            send({ type: 'error', msg: 'Module.load succeeded but findModuleByName returned null' });
+            send({ type: 'error', msg: 'findModuleByName returned null after Module.load' });
             return;
         }
     } catch (e) {
         send({ type: 'error', msg: 'Module.load failed: ' + e.message });
         return;
     }
-    const reimplAddr = module.findExportByName('FastInvSqrt');
+    const reimplAddr = module.findExportByName(CONFIG.export);
     if (reimplAddr === null) {
-        send({ type: 'error', msg: 'FastInvSqrt export not found in .asi' });
+        send({ type: 'error', msg: CONFIG.export + ' export not found in .asi' });
         return;
     }
     send({ type: 'asi_loaded',
            module_base: module.base.toString(),
-           reimpl_addr: reimplAddr.toString() });
+           reimpl_addr: reimplAddr.toString(),
+           export_name: CONFIG.export });
 
     const postBytes = bytesHex(TARGET_ADDR, 8);
     const opcode = TARGET_ADDR.readU8();
@@ -83,26 +99,22 @@ function runVerification() {
         onEnter: function () { reimplEntries++; }
     });
 
-    // Force-call the patched entry. Original is non-deterministic vs analytic
-    // 1/sqrt (LUT approximation), so we don't compare to expected analytic
-    // values — we just confirm the call doesn't crash and the interceptor
-    // fires once per call. The diff harness (run_diff_invsqrt.py) already
-    // proved bit-identity vs original.
-    const FastInvSqrtPatched = new NativeFunction(TARGET_ADDR, 'float', ['float'], 'mscdecl');
-    const inputs = [0.0, 1.0, 4.0, 0.25, 100.0];
+    const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
+    const buf = (CONFIG.arg_type === 'vec3_ptr') ? Memory.alloc(12) : null;
     const results = [];
     const beforeCount = reimplEntries;
-    for (let i = 0; i < inputs.length; i++) {
+    for (let i = 0; i < CONFIG.tests.length; i++) {
+        const t = CONFIG.tests[i];
         let got, err = null;
-        try { got = FastInvSqrtPatched(inputs[i]); } catch (e) { got = null; err = e.message; }
-        results.push({ idx: i, input: inputs[i], got: got, err: err });
+        try { got = callFn(Patched, t, buf); } catch (e) { got = null; err = e.message; }
+        results.push({ idx: i, input: t, got: got, err: err });
     }
     const afterCount = reimplEntries;
 
     send({ type: 'results',
            reimpl_calls_observed: afterCount - beforeCount,
-           reimpl_calls_expected: inputs.length,
+           reimpl_calls_expected: CONFIG.tests.length,
            cases: results });
 }
 
-pollLutThenRun(50);
+pollLutThenRun(150);
