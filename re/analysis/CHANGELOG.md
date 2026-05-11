@@ -700,3 +700,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-11  0042bb60  FUN_0042bb60  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042bb60.md
 2026-05-11  0042bcb0  FUN_0042bcb0  C1->C2  Ghidra decomp; frontend_promote_menus_a; re/analysis/frontend_promote_menus_a/0x0042bcb0.md
 2026-05-11  hud_frontend_d5-20260511-1710  13 RVAs C1  0x004368e0 0x00436810 0x004391b0 0x00458630 0x00473870 0x004736c0 0x00474e60 0x00427f00 0x0042e8b0 0x0042ed70 0x00430670 0x004309b0 0x004a2b60  U-3407..U-3423 filed  D-6178..D-6184 cleared  pool=Mashed_pool4
+2026-05-11  audio_dsound_d5-20260511  005aa560  FUN_005aa560  C0->C1  audio_dsound_d5; re/analysis/audio_dsound_d5/0x005aa560.md; S-3190 resolved; D-0952(phantom) resolved; S-3565..S-3570 filed; U-3424..U-3427 filed
