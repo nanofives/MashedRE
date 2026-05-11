@@ -1,0 +1,18 @@
+{
+  "kind": "crash",
+  "type": "access-violation",
+  "address": "0x5bc76c",
+  "eax": "0x0",
+  "ebx": "0x7dccf8",
+  "ecx": "0x2c3d0f4",
+  "edx": "0x1af50c",
+  "esi": "0x6cf01be4",
+  "edi": "0x2c3d0b0",
+  "ebp": "0x8a",
+  "esp": "0x1af500",
+  "eip": "0x5bc76c",
+  "bytes_before_eip": "44 24 00 00 00 00 00 52 8b 00 68 ac 09 5d 00 50",
+  "bytes_at_eip": "8b 08 ff 11 85 c0 7d 06 33 c0 83 c4 34 c3 8b 44",
+  "mem_address": "0x0",
+  "mem_op": "read"
+}

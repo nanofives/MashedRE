@@ -1,0 +1,28 @@
+=== verify_hook_install report (fast_inv_sqrt) ===
+
+target address: 0x004c3b90  export: FastInvSqrt
+PRE  bytes:     8b 44 24 04 89 44 24 04
+asi base:       0x6bdd0000
+reimpl addr:    0x6bdd1740
+POST bytes:     e9 ab db 90 6b 44 24 04
+opcode:         0xe9  expected 0xe9  -> OK
+rel32:          0x6b90dbab  expected 0x6b90dbab  -> OK
+bytes changed:  True
+
+interceptor entries (reimpl):  5 / 5
+
+per-input results:
+  [OK] input=0  got=0  err=
+  [OK] input=1  got=1  err=
+  [OK] input=4  got=0.5  err=
+  [OK] input=0.25  got=2  err=
+  [OK] input=100  got=0.10000000149011612  err=
+
+PASS:
+  + opcode == 0xE9
+  + rel32 matches reimpl - target - 5
+  + first 8 bytes mutated by patcher
+  + reimpl interceptor fired 5x as expected
+  + all 5 calls returned without exception
+FAIL:
+  (none)
