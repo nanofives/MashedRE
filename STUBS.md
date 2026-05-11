@@ -779,3 +779,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3557 | 0x0048fd70 FUN_0048fd70 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 13th callee in 18-callee render dispatch; c0_promotion_render_a |
 | S-3558 | 0x00490490 FUN_00490490 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 14th callee in 18-callee render dispatch; c0_promotion_render_a |
 | S-3559 | 0x0048baf0 FUN_0048baf0 | 0x0040bde0 FUN_0040bde0 | render | passthrough | 2026-05-08 | no-arg; 15th callee in 18-callee render dispatch; c0_promotion_render_a |
+| S-3560 | 0x004c1a40 FUN_004c1a40 | 0x0042d560 FUN_0042d560 / 0x0042f660 FUN_0042f660 | render | passthrough | 2026-05-11 | 2-arg: sets float field on object; near-clip or min-range; frontend_unmapped_a |
+| S-3561 | 0x004c1d30 FUN_004c1d30 | 0x0042d420 FUN_0042d420 | render | passthrough | 2026-05-11 | no-arg alloc; returns object handle or 0; frontend_unmapped_a |
+| S-3562 | 0x004c0740 FUN_004c0740 | 0x0042d420 FUN_0042d420 | render | passthrough | 2026-05-11 | 2-arg: (object, uVar2); sets field on object; frontend_unmapped_a |
+| S-3563 | 0x00474890 FUN_00474890 | 0x0042e8b0 FUN_0042e8b0 | frontend | passthrough | 2026-05-11 | 1-arg: takes return value of FUN_0042e590; role not read; frontend_unmapped_a |
+| S-3564 | 0x00423b40..0x00424070 (14 fns) | 0x0042c510 FUN_0042c510 | vehicle | passthrough | 2026-05-11 | 14-way AI/track slot dispatch table cases 0..13; per-node-type slot handlers; frontend_unmapped_a |

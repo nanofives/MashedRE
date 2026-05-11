@@ -160,13 +160,13 @@ A row goes into DEFERRED when:
 | D-6175 | 0x00430a60 FUN_00430a60 | hud_frontend_d3 early-finish; was D-2780; get player at slot type 1 | hud_frontend_d3-cont1 sweep session | frontend |
 | D-6176 | 0x00430ab0 FUN_00430ab0 | hud_frontend_d3 early-finish; was D-2781; get player at slot type 2 | hud_frontend_d3-cont1 sweep session | frontend |
 | D-6177 | 0x00430b30 FUN_00430b30 | hud_frontend_d3 early-finish; was D-2758; lap time getter (3 out-params) | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6178 | 0x004368e0 FUN_004368e0 | hud_frontend_d3 early-finish; was D-2748; player alpha/color setup | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6179 | 0x00436810 FUN_00436810 | hud_frontend_d3 early-finish; was D-2774; local player slot occupancy check | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6180 | 0x004391b0 FUN_004391b0 | hud_frontend_d3 early-finish; was D-2777; powerup/overlay sprite draw | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6181 | 0x00458630 FUN_00458630 | hud_frontend_d3 early-finish; was D-2752; powerup sprite lookup by type | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6182 | 0x00473870 FUN_00473870 | hud_frontend_d3 early-finish; was D-2747; sprite draw 7-param | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6183 | 0x004736c0 FUN_004736c0 | hud_frontend_d3 early-finish; was D-2766; line/border renderer | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6184 | 0x00474e60 FUN_00474e60 | hud_frontend_d3 early-finish; was D-2772; float-to-x87-angle converter | hud_frontend_d3-cont1 sweep session | frontend |
+| ~~D-6178~~ | ~~0x004368e0 FUN_004368e0~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x004368e0.md | — | frontend |
+| ~~D-6179~~ | ~~0x00436810 FUN_00436810~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x00436810.md | — | frontend |
+| ~~D-6180~~ | ~~0x004391b0 FUN_004391b0~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x004391b0.md | — | frontend |
+| ~~D-6181~~ | ~~0x00458630 FUN_00458630~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x00458630.md | — | frontend |
+| ~~D-6182~~ | ~~0x00473870 FUN_00473870~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x00473870.md | — | frontend |
+| ~~D-6183~~ | ~~0x004736c0 FUN_004736c0~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x004736c0.md | — | frontend |
+| ~~D-6184~~ | ~~0x00474e60 FUN_00474e60~~ | RESOLVED 2026-05-11: analyzed C1 session hud_frontend_d5-20260511-1710; see re/analysis/hud_frontend_d5/0x00474e60.md | — | frontend |
 | D-7000 | 0x004a3f90 __global_unwind2 | depth-3 callee of _longjmp (S-2360); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
 | D-7001 | 0x004a3fd2 __local_unwind2 | depth-3 callee of _longjmp (S-2361); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
 | D-7002 | 0x004a4066 FUN_004a4066 | depth-3 callee of _longjmp (S-2362); not recursed in memory_pool_d2 | memory_pool_d2-cont1 sweep session | boot |
