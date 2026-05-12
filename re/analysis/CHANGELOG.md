@@ -742,3 +742,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-0445  scribe-release-sweep  buckets=4 drained  rvas=55  errors=0  (HOLD=1: replay_record-20260503; library-rename check via pre-comment performed on 3 RVAs in bucket 1 (0 hits); skipped for remaining 52 RVAs as consistent FUN_ pattern with no library candidates in .md notes; queue-mandated S-3600/S-3601→S-3612/S-3613 renumber in vehicle_damage_d4/0x00419760.md applied)
 2026-05-12  sweep-20260512-1354  scribe-claim  buckets=2 queued, 1 skipped-HOLD
 2026-05-12  sweep-20260512-1354  scribe-release  bucket=effects_particle_d4  writes=3  errors=0
+2026-05-12  sweep-20260512-1354  scribe-release  bucket=ai_path_following  writes=7  errors=0
