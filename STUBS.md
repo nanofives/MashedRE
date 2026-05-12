@@ -543,8 +543,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2121 | 0x004cd170 FUN_004cd170 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-06 | Im2D secondary batch call; called with (EBX, 0x912700, 3) @ 0x00554b0e; D-6288 |
 | S-2122 | 0x004cd140 FUN_004cd140 | 0x00554940 LAB_00554940 | hud | passthrough | 2026-05-06 | Im2D begin/reset; no args @ 0x00554b16; D-6288 |
 | S-2123 | 0x005c4ad0 FUN_005c4ad0 | 0x005551d0 FontCtx_Alloc | hud | passthrough | 2026-05-06 | alloc glyph data buffer (0x20 bytes, type 0x30190); distinct from 0x005c4d30; D-6289 |
-| S-2124 | 0x004c4600 FUN_004c4600 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | matrix multiply/compose; called as FUN_004c4600(dst, src1, src2, scale); D-6284 |
-| S-2125 | 0x004c4dc0 FUN_004c4dc0 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | matrix invert or copy into DAT_00912b58; D-6285 |
+| ~~S-2124~~ | ~~0x004c4600 FUN_004c4600~~ | ~~0x00552e40 FontCtx_FlushMatrix~~ | ~~render~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-06~~ | ~~RwMatrixMultiply; C1 new; render_pipeline_d3/004c4600.md~~ |
+| ~~S-2125~~ | ~~0x004c4dc0 FUN_004c4dc0~~ | ~~0x00552e40 FontCtx_FlushMatrix~~ | ~~render~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-06~~ | ~~RwMatrixInvert; C1 new; render_pipeline_d3/004c4dc0.md~~ |
 | S-2126 | 0x004c0ed0 FUN_004c0ed0 | 0x00552e40 FontCtx_FlushMatrix | render | passthrough | 2026-05-06 | camera view matrix getter; takes cam+4 field; returns RwMatrix*; D-6286 |
 | S-2127 | 0x00552d70 FUN_00552d70 | 0x00427f00 FUN_00427f00 | hud | passthrough | 2026-05-06 | FontMatrix_Pop (counterpart to FontMatrix_Push); called @ 0x00427fc9 after draw; D-6287 |
 | ~~S-1920~~ | ~~0x004c1210 FUN_004c1210~~ | ~~0x00454170 FUN_00454170~~ | ~~gameplay~~ | ~~resolved powerups_d4-20260508-1823~~ | ~~2026-05-06~~ | ~~analyzed C1; detach-from-parent + root propagation~~ |
@@ -765,9 +765,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3431 | 0x004a2b60 FUN_004a2b60 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | takes 3 args; semantics unknown; c0_promotion_frontend_a |
 | S-3432 | 0x004a2c48 FUN_004a2c48 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | no args; returns int; semantics unknown; c0_promotion_frontend_a |
 | S-3433 | 0x0040bb50 FUN_0040bb50 | 0x0042ee00 FUN_0042ee00 | frontend | passthrough | 2026-05-08 | no args; return passed through; semantics unknown; c0_promotion_frontend_a |
-| S-3440 | 0x00468d80 FUN_00468d80 | 0x00469aa0 FUN_00469aa0 | vehicle | passthrough | 2026-05-08 | no-arg; callee of vehicle contact history update (vehicle_dynamics_d2) |
-| S-3441 | 0x004694e0 FUN_004694e0 | 0x00469aa0 FUN_00469aa0 | vehicle | passthrough | 2026-05-08 | no-arg; callee of vehicle contact history update (vehicle_dynamics_d2) |
-| S-3442 | 0x004c4dc0 FUN_004c4dc0 | 0x00469df0 FUN_00469df0 | vehicle | passthrough | 2026-05-08 | 2-param (contact vec, geometry slot ptr); callee of vehicle-vehicle collision impulse (vehicle_dynamics_d2) |
+| ~~S-3440~~ | ~~0x00468d80 FUN_00468d80~~ | ~~0x00469aa0 FUN_00469aa0~~ | ~~vehicle~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-08~~ | ~~VehicleTerrainContactSolver; C1 new; vehicle_dynamics_d3/00468d80.md~~ |
+| ~~S-3441~~ | ~~0x004694e0 FUN_004694e0~~ | ~~0x00469aa0 FUN_00469aa0~~ | ~~vehicle~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-08~~ | ~~VehicleObjectContactSolver; C1 new; vehicle_dynamics_d3/004694e0.md~~ |
+| ~~S-3442~~ | ~~0x004c4dc0 FUN_004c4dc0~~ | ~~0x00469df0 FUN_00469df0~~ | ~~vehicle~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-08~~ | ~~RwMatrixInvert; C1 new; render_pipeline_d3/004c4dc0.md~~ |
 | S-3540 | 0x004938e0 FUN_004938e0 | 0x00403910 FUN_00403910 | render | passthrough | 2026-05-08 | no-arg callee; called with (DAT_00636b78, DAT_00636b70); c0_promotion_render_a |
 | S-3541 | 0x004036a0 FUN_004036a0 | 0x00403910 FUN_00403910 | render | passthrough | 2026-05-08 | called with (0, DAT_00636b78); c0_promotion_render_a |
 | S-3542 | 0x0041f290 FUN_0041f290 | 0x00404650 FUN_00404650 | render | passthrough | 2026-05-08 | called with (0, 0x16); result used as arg to FUN_004c1480; c0_promotion_render_a |
@@ -793,3 +793,46 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3562 | 0x004c0740 FUN_004c0740 | 0x0042d420 FUN_0042d420 | render | passthrough | 2026-05-11 | 2-arg: (object, uVar2); sets field on object; frontend_unmapped_a |
 | S-3563 | 0x00474890 FUN_00474890 | 0x0042e8b0 FUN_0042e8b0 | frontend | passthrough | 2026-05-11 | 1-arg: takes return value of FUN_0042e590; role not read; frontend_unmapped_a |
 | S-3564 | 0x00423b40..0x00424070 (14 fns) | 0x0042c510 FUN_0042c510 | vehicle | passthrough | 2026-05-11 | 14-way AI/track slot dispatch table cases 0..13; per-node-type slot handlers; frontend_unmapped_a |
+
+
+| S-3571 | 0x004b6fc0 FUN_004b6fc0 | 0x0047a1b0..0x0047aa50 (18 Lua C handlers) | track | passthrough | 2026-05-11 | Lua C arg-count / arg-index getter; shared callee of all COURSE.LUA course-config handlers; track_collision_geometry_s14 |
+| S-3572 | 0x004b70d0 FUN_004b70d0 | 0x0047a1b0..0x0047aa50 (18 Lua C handlers) | track | passthrough | 2026-05-11 | Lua C string arg getter; shared callee of all COURSE.LUA course-config handlers; track_collision_geometry_s14 |
+| S-3573 | 0x004b7090 FUN_004b7090 | 0x0047a280..0x0047aa20 (multi-arg handlers) | track | passthrough | 2026-05-11 | Lua C number arg getter; used in two-arg path of counter-indexed filename handlers; track_collision_geometry_s14 |
+| S-3574 | 0x0042f6a0 FUN_0042f6a0 | 0x0040d040 0x0040d110 | track | passthrough | 2026-05-12 | game mode getter; called to detect modes 10/6 (tournament) and 0xb; track_world_initial_sweep |
+| S-3575 | 0x0041f320 FUN_0041f320 | 0x0040d040 0x0040cf80 | track | passthrough | 2026-05-12 | player active check; returns nonzero if player slot in use; track_world_initial_sweep |
+| S-3576 | 0x0041efc0 FUN_0041efc0 | 0x0040d040 | track | passthrough | 2026-05-12 | player current track group getter; compared against candidate group in cache check; track_world_initial_sweep |
+| S-3577 | 0x0045b350 FUN_0045b350 | 0x0040d110 0x0040cf80 | track | passthrough | 2026-05-12 | audio reinit; called at start of post-load setup and during player teardown; track_world_initial_sweep |
+| S-3578 | 0x0041a8d0 FUN_0041a8d0 | 0x0040d110 | track | passthrough | 2026-05-12 | race start init; takes start-params struct (RGB+alpha+yaw) and track base; track_world_initial_sweep |
+| S-3579 | 0x004220d0 FUN_004220d0 | 0x0040d110 | track | passthrough | 2026-05-12 | track assignments array setter; receives local_10[16] per-player absolute track IDs; track_world_initial_sweep |
+| S-3580 | 0x00404e00 FUN_00404e00 | 0x0040cea0 | track | passthrough | 2026-05-12 | track-name to handle A lookup; used for surface TXD; track_world_initial_sweep |
+| S-3581 | 0x00404e20 FUN_00404e20 | 0x0040cea0 | track | passthrough | 2026-05-12 | track-name+group to handle B lookup; used for surface TXD variant; track_world_initial_sweep |
+| S-3582 | 0x004c5cb0 FUN_004c5cb0 | 0x0040cea0 | track | passthrough | 2026-05-12 | TXD/model handle lookup from piz; called with handle+0; track_world_initial_sweep |
+| S-3583 | 0x0041ecc0 FUN_0041ecc0 | 0x0040cea0 | track | passthrough | 2026-05-12 | per-player surface handle assignment; args: player, handleA, handleB; track_world_initial_sweep |
+| S-3584 | 0x0041a980 FUN_0041a980 | 0x0040cf80 | track | passthrough | 2026-05-12 | vehicle reset; called when any player active during pre-reload teardown; track_world_initial_sweep |
+| S-3585 | 0x00422140 FUN_00422140 | 0x0040cf80 | track | passthrough | 2026-05-12 | player state clear; called during pre-reload teardown; track_world_initial_sweep |
+| S-3586 | 0x0041ec00 FUN_0041ec00 | 0x0040cf80 | track | passthrough | 2026-05-12 | per-player teardown; called for each of 4 players during pre-reload; track_world_initial_sweep |
+| S-3587 | 0x0040cf40 FUN_0040cf40 | 0x0040cf80 | track | passthrough | 2026-05-12 | teardown completion finalizer; called after all 4 players torn down; track_world_initial_sweep |
+| S-3588 | 0x00490000 FUN_00490000 | 0x0040cfd0 | track | passthrough | 2026-05-12 | physics world teardown step 1; first call in track-world teardown; track_world_initial_sweep |
+| S-3589 | 0x0045bed0 FUN_0045bed0 | 0x0040cfd0 | track | passthrough | 2026-05-12 | audio stop step 1; called in track-world teardown; track_world_initial_sweep |
+| S-3590 | 0x0045bf30 FUN_0045bf30 | 0x0040cfd0 | track | passthrough | 2026-05-12 | audio stop step 2; called in track-world teardown; track_world_initial_sweep |
+| S-3591 | 0x00426b40 FUN_00426b40 | 0x0040cfd0 | track | passthrough | 2026-05-12 | track state clear by ID; receives current track ID from FUN_00426c00; track_world_initial_sweep |
+| S-3592 | 0x004725f0 FUN_004725f0 | 0x0040cfd0 | track | passthrough | 2026-05-12 | physics teardown step 2; called in track-world teardown; track_world_initial_sweep |
+| S-3593 | 0x00405400 FUN_00405400 | 0x0040cfd0 | track | passthrough | 2026-05-12 | subsystem clear called after DAT_0080332c cleared; track_world_initial_sweep |
+| S-3594 | 0x00484c90 FUN_00484c90 | 0x0040cfd0 | track | passthrough | 2026-05-12 | subsystem teardown step 4; called in track-world teardown; track_world_initial_sweep |
+| S-3595 | 0x00471df0 FUN_00471df0 | 0x0040cfd0 | track | passthrough | 2026-05-12 | subsystem teardown step 5; called in track-world teardown; track_world_initial_sweep |
+| S-3596 | 0x00458c70 FUN_00458c70 | 0x004264d0 0x00426340 | track | passthrough | 2026-05-12 | cleanup before Lua load; called before FUN_0042fe30 and FUN_004074a0; track_world_initial_sweep |
+| S-3597 | 0x00426460 FUN_00426460 | 0x004264d0 | track | passthrough | 2026-05-12 | powerups_gold.dff post-load hook; called only when DFF exists; track_world_initial_sweep |
+| S-3598 | 0x004e6e00 FUN_004e6e00 | 0x004264d0 | track | passthrough | 2026-05-12 | DFF load completion handler; called with medal rank; track_world_initial_sweep |
+| S-3599 | 0x0047a130 FUN_0047a130 | 0x004264d0 | track | passthrough | 2026-05-12 | Lua script execute; called with resolved lua filename; track_world_initial_sweep |
+| S-3600 | 0x0042a470 FUN_0042a470 | 0x004264d0 0x00426340 | track | passthrough | 2026-05-12 | Lua file load; 3 args (0, filename, 1); returns handle or 0; track_world_initial_sweep |
+| S-3601 | 0x004074a0 FUN_004074a0 | 0x00426340 0x0040d270 | track | passthrough | 2026-05-12 | pre-Lua init step; called before piz open in FUN_00426340 and in FUN_0040d270 non-ghost path; track_world_initial_sweep |
+| S-3602 | 0x004073b0 FUN_004073b0 | 0x00426340 | track | passthrough | 2026-05-12 | Lua environment execute; called after KTCScript.lua registered; track_world_initial_sweep |
+| S-3603 | 0x0041f330 FUN_0041f330 | 0x00420420 0x00420230 | track | passthrough | 2026-05-12 | vehicle name getter; returns current vehicle name string; track_world_initial_sweep |
+| S-3604 | 0x0042a6b0 FUN_0042a6b0 | 0x00420420 | track | passthrough | 2026-05-12 | vehicle piz load; takes path+name+0; stores to DAT_0063d7e8; track_world_initial_sweep |
+| S-3605 | 0x004c5c80 FUN_004c5c80 | 0x00420420 | track | passthrough | 2026-05-12 | set active piz context; called with vehicle handle; track_world_initial_sweep |
+| S-3606 | 0x004b3fc0 FUN_004b3fc0 | 0x00420420 | track | passthrough | 2026-05-12 | BSP sector list builder; args: sector clump, output array; returns count; track_world_initial_sweep |
+| S-3607 | 0x004c15c0 FUN_004c15c0 | 0x00420420 | track | passthrough | 2026-05-12 | vehicle slot handle getter; reads DAT_0063d840[playerIdx]; track_world_initial_sweep |
+| S-3608 | 0x00420290 FUN_00420290 | 0x00420420 | track | passthrough | 2026-05-12 | player speed/position init; args: playerIdx, 0x3f800000 (1.0f); track_world_initial_sweep |
+| S-3609 | 0x0041fe10 FUN_0041fe10 | 0x00420420 | track | passthrough | 2026-05-12 | vehicle context finalize; called at end of sector loop; track_world_initial_sweep |
+| S-3610 | 0x004260b0 FUN_004260b0 | 0x00420420 | track | passthrough | 2026-05-12 | physics world handle getter A; result stored in DAT_0063d850; track_world_initial_sweep |
+| S-3611 | 0x004260a0 FUN_004260a0 | 0x00420420 | track | passthrough | 2026-05-12 | physics world handle getter B; result stored in _DAT_0063d7ec; track_world_initial_sweep |

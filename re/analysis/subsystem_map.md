@@ -31,9 +31,14 @@ For each subsystem: a short prose description of its role, the RVAs of its top e
 - **Fingerprints:** vehicle model paths, physics constants
 
 ### track
-- **Role:** Track loading, geometry, checkpoints
-- **Entry points:** TBD
-- **Fingerprints:** strings referencing track names (Arctic, City, Egypt…)
+- **Role:** Track loading, geometry, checkpoints, per-player track assignment, Lua scripted course events
+- **Entry points:**
+  - `FUN_0040d440` @ `0x0040d440` — Course::LoadCurrent (no args; loads `DAT_0063ba7c`-indexed track; sole public entry)
+  - `FUN_0040d270` @ `0x0040d270` — Course::Load (table, idx; full orchestrator; called only from FUN_0040d440)
+  - `FUN_00426340` @ `0x00426340` — KTCScript.lua loader (registers COURSE.LUA Lua command block at LAB_00440bc0)
+  - `FUN_004264d0` @ `0x004264d0` — Track powerups loader (per-track powerups_gold.lua or powerups.lua)
+  - `FUN_00420420` @ `0x00420420` — Per-player vehicle+checkpoint init (stride 0x2AC; BSP sectors)
+- **Fingerprints:** strings `"toastart/tracks/"` (0x005cd4c0), `"LAPDATA.LUA"` (0x005cd578), `"COURSE.LUA"` (0x005cd584), `"TOTALNUMTRACKS-3=%d\n"` (0x005cd8b0), `"course LoadTime is %u (%.3f)\n"` (0x005ccd48), `"KTCScript.lua"` (embedded in FUN_00426340)
 
 ### render
 - **Role:** RenderWare → D3D9 rendering pipeline
