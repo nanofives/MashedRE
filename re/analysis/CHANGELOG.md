@@ -925,3 +925,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-2139  scribe-release  bucket=audio_promote_c2_rws_loader-20260512  writes=20  errors=0
 2026-05-12  sweep-20260512-2139  scribe-release  buckets=1 drained  errors=0
 2026-05-12  sweep-20260512-1900  scribe-claim  buckets=3 queued, 1 skipped-HOLD
+2026-05-12  sweep-20260512-2201  scribe-claim  buckets=2 queued, 1 skipped-HOLD
