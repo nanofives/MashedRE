@@ -1,6 +1,51 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-12  sweep-20260512-2139  scribe-claim  buckets=1 queued, 1 skipped-HOLD (replay_record-20260503)
+2026-05-12  005ae010  FUN_005ae010  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_cont1/0x005ae010.md; sub-struct A device-handle linker; U-0142 open; dup d2 row removed
+2026-05-12  005ae030  FUN_005ae030  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_cont1/0x005ae030.md; combined sub-struct cleanup; no new U; dup d2 row removed
+2026-05-12  005ae050  FUN_005ae050  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae050.md; sub-struct B heap-free; no U filed
+2026-05-12  005ae080  FUN_005ae080  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae080.md; sub-struct A pool-return (DAT_007dda28); no U filed
+2026-05-12  005ae0b0  FUN_005ae0b0  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae0b0.md; 3-field zero-init leaf; no U filed
+2026-05-12  005ae0c0  FUN_005ae0c0  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_cont1/0x005ae0c0.md; WAVEFORMATEX-like 16-byte copy/byte-swap; U-0140 U-0141 open; U-0992 resolved; dup d2 row removed
+2026-05-12  005ae650  FUN_005ae650  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae650.md; 6-param bitmap pool constructor; U-1736 open
+2026-05-12  005ae780  FUN_005ae780  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae780.md; bitmap pool destructor; no U filed
+2026-05-12  005ae800  FUN_005ae800  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae800.md; bitmap pool allocator; no U filed
+2026-05-12  005ae920  FUN_005ae920  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d2/005ae920.md; fixed-size pool free with bitmap tracking; no U filed
+2026-05-12  005aea00  FUN_005aea00  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader/005aea00.md; JMP trampoline vtable+0x108; U-0125 partially resolved (call-conv confirmed void(void); runtime target still open)
+2026-05-12  005aea10  FUN_005aea10  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader/005aea10.md; aligned-alloc wrapper (size+4; stores base at aligned-4); no U filed
+2026-05-12  005aea40  FUN_005aea40  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader/005aea40.md; thin free wrapper over FUN_004522d0; no U filed
+2026-05-12  005aea50  FUN_005aea50  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005aea50.md; JMP trampoline vtable+0x114; U-1735 open
+2026-05-12  005aec00  FUN_005aec00  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader/005aec00.md; in-place byte-reverse buffer; leaf; no U filed
+2026-05-12  005aec30  FUN_005aec30  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_cont1/0x005aec30.md; PCM endian-swap 16/32-bit; no U filed; dup d2 row removed
+2026-05-12  005aeca0  FUN_005aeca0  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005aeca0.md; endian-swap field packer 1/2/4-byte; clears U-0992; no remaining U filed
+2026-05-12  005aee20  FUN_005aee20  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_dsound/0x005aee20.md; bit-scan-forward loop; U-0352 open (return register)
+2026-05-12  005aeea0  FUN_005aeea0  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_dsound_d3/0x005aeea0.md; CreateSemaphoreA wrapper; no U filed
+2026-05-12  005aef00  FUN_005aef00  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_dsound_d3/0x005aef00.md; thread descriptor struct init (5 fields); no U filed
+2026-05-12  004c2c90  FUN_004c2c90  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2c90.md; RW driver-system dispatcher; 13 callers; U-0227 U-0228 pre-filed
+2026-05-12  004c2d70  FUN_004c2d70  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2d70.md; leaf getter DAT_007d3ff4 RW plugin frozen-gate
+2026-05-12  004c2d90  FUN_004c2d90  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2d90.md; RwEngineRegisterPlugin shim &DAT_00617fe0; 17 callers; S-0200 pre-filed
+2026-05-12  004c2de0  FUN_004c2de0  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2de0.md; cmd 0x0d wrapper GetNumSubSystems
+2026-05-12  004c2e10  FUN_004c2e10  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2e10.md; cmd 0x0e wrapper GetSubSystemInfo
+2026-05-12  004c2e40  FUN_004c2e40  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2e40.md; cmd 0x0f wrapper GetCurrentSubSystem
+2026-05-12  004c2e70  FUN_004c2e70  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2e70.md; cmd 0x10 wrapper SetSubSystem; S-0208 S-0825 pre-filed
+2026-05-12  004c2ea0  FUN_004c2ea0  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2ea0.md; cmd 0x05 wrapper GetNumVideoModes
+2026-05-12  004c2ed0  FUN_004c2ed0  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2ed0.md; cmd 0x06 wrapper GetVideoModeInfo
+2026-05-12  004c2f00  FUN_004c2f00  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2f00.md; cmd 0x0a wrapper GetCurrentVideoMode
+2026-05-12  004c2f30  FUN_004c2f30  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2f30.md; cmd 0x07 wrapper UseVideoMode
+2026-05-12  004c2f60  FUN_004c2f60  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2f60.md; engine-stop sequence cmd 0x12+0x03 + FUN_004d8060; state field +0x124:=2; U-0090 pre-filed (now closeable); S-0081 S-0005 pre-filed
+2026-05-12  004c2fb0  FUN_004c2fb0  C1->C2  render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2fb0.md; engine-start sequence cmd 0x02+0x11 + FUN_004d8000 + FUN_004cf160; state field +0x124:=3
+2026-05-12  0041e870  FUN_0041e870  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e870.md; scan-all setter; U-3213 (pre-filed); dup row removed
+2026-05-12  0041e8b0  FUN_0041e8b0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e8b0.md; indirect dispatch +0x14; U-0429 refined U-3214 (pre-filed); dup row removed
+2026-05-12  0041e970  FUN_0041e970  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e970.md; indirect dispatch +0x44; U-3214 (pre-filed); dup row removed
+2026-05-12  0041e980  FUN_0041e980  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e980.md; scan-first getter; U-3213 (pre-filed); dup row removed
+2026-05-12  0041e9d0  FUN_0041e9d0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e9d0.md; getter +0x14; leaf; U-3214 parent; dup row removed
+2026-05-12  0041ea90  FUN_0041ea90  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041ea90.md; getter +0x44; leaf; U-3214 parent; dup row removed
+2026-05-12  0041e8c0  sub_0041e8c0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e8c0.md; indirect dispatch +0x18; U-0550 U-0551 (pre-filed)
+2026-05-12  0041e9b0  sub_0041e9b0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e9b0.md; bool comparator +0x10; U-0552 U-0553 (pre-filed)
+2026-05-12  0041e9e0  sub_0041e9e0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e9e0.md; getter +0x18 dual-role; U-0554 (pre-filed)
+2026-05-12  0041e8f0  FUN_0041e8f0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041e8f0.md; indirect dispatch +0x24; U-3128 (pre-filed)
+2026-05-12  0041ebb0  FUN_0041ebb0  C1->C2  render_promote_c2_track_node-20260512; re/analysis/render_promote_c2_track_node/0x0041ebb0.md; 6-call RW-state sequence; S-3130 (pre-filed)
 2026-05-11  0046c7b0  FUN_0046c7b0  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046c7b0.md; leaf getter; no U filed
 2026-05-11  0046cbb0  FUN_0046cbb0  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046cbb0.md; U-1855 U-1856 U-1857 (pre-filed); leaf getter
 2026-05-11  0046d700  FUN_0046d700  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046d700.md; U-1748 (pre-filed); leaf getter
@@ -834,3 +879,49 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-1805  scribe-release  bucket=rw_engine_init_d2_cont1_a  writes=2  errors=0
 2026-05-12  sweep-20260512-1805  scribe-release  bucket=timer_d3_cont1_a  writes=19  errors=0  drift-skipped=1(0x00419760)
 2026-05-12  sweep-20260512-1805  scribe-release  buckets=2 drained, 1 skipped-HOLD  errors=0
+2026-05-12  00427620  FontText_HudShutdown  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00427620.md
+2026-05-12  00427680  FontText_ComputeScreenXY  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00427680.md; U-2127 open (EDI write)
+2026-05-12  00427780  FontText_StringTableLookup  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00427780.md
+2026-05-12  00427840  FontText_UTF16WidenCopy  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00427840.md; U-1069 open
+2026-05-12  00427ca0  FontText_HudInit  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00427ca0.md
+2026-05-12  00427ff0  FontText_DrawTextRotated  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00427ff0.md
+2026-05-12  00552750  FontCtx_ResetTransform  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552750.md
+2026-05-12  00552840  FontCtx_SetRotation  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552840.md
+2026-05-12  00552a60  FontSys_SetActiveCamera  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552a60.md
+2026-05-12  00552b60  FontSys_InitSeq  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552b60.md
+2026-05-12  00552c10  FontSys_InitRenderState  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552c10.md
+2026-05-12  00552d10  FontMatrix_Push  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552d10.md
+2026-05-12  00552da0  FontCtx_SetScale  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552da0.md
+2026-05-12  00552df0  FontCtx_SetTranslation  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552df0.md
+2026-05-12  00552e40  FontCtx_FlushMatrix  C1->C2  hud_promote_c2_b; re/analysis/hud_promote_c2_b/0x00552e40.md; U-2132 open (naming); callers enumerated (resolved U-2134)
+2026-05-12  00426030  FUN_00426030  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426030.md  WorldRenderPrePass shape documented
+2026-05-12  00426060  FUN_00426060  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426060.md  trivial getter DAT_0065742c
+2026-05-12  00426070  FUN_00426070  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426070.md  trivial getter DAT_00656ee8
+2026-05-12  004260c0  FUN_004260c0  C1->C2  re/analysis/render_promote_c2_track_loader/0x004260c0.md  trivial getter DAT_00657490 U-3660
+2026-05-12  004260e0  FUN_004260e0  C1->C2  re/analysis/render_promote_c2_track_loader/0x004260e0.md  path builder; existing U-3218 retained
+2026-05-12  004262f0  FUN_004262f0  C1->C2  re/analysis/render_promote_c2_track_loader/0x004262f0.md  record processor; 4 callees enumerated
+2026-05-12  00426640  FUN_00426640  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426640.md  render guard; 3 callees
+2026-05-12  00426670  FUN_00426670  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426670.md  WorldRenderDispatch_Begin
+2026-05-12  004266b0  FUN_004266b0  C1->C2  re/analysis/render_promote_c2_track_loader/0x004266b0.md  WorldRenderDispatch_End
+2026-05-12  00426700  FUN_00426700  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426700.md  camera node iterator U-3661
+2026-05-12  00426780  FUN_00426780  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426780.md  camera array updater U-3661
+2026-05-12  00426810  sub_00426810  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426810.md  camera path lerp U-3662
+2026-05-12  00426ab0  sub_00426ab0  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426ab0.md  CAMERA_FN per-frame orchestrator
+2026-05-12  00426cd0  FUN_00426cd0  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426cd0.md  track slot reset; 6 dwords → 0xFFFFFFFF
+2026-05-12  00426e00  FUN_00426e00  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426e00.md  trivial getter DAT_00644368 float10 U-3663
+2026-05-12  00426e10  FUN_00426e10  C1->C2  re/analysis/render_promote_c2_track_loader/0x00426e10.md  TRACK_LOAD_FN 722 bytes; 35 callees documented
+2026-05-12  00467300  VehicleCollisionWinTrigger  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00467300.md
+2026-05-12  00467350  VehicleSlipTimerTick  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00467350.md; U-3662 U-3663 open
+2026-05-12  00467650  VehicleWheelDrivetrainUpdate  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00467650.md; U-3657 U-3658 open; resolves U-3564
+2026-05-12  00468980  VehicleAeroStabilizer  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00468980.md; U-3658 open; resolves U-3565
+2026-05-12  00468b40  VehicleContactHistoryLookup  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00468b40.md
+2026-05-12  00468d80  VehicleTerrainContactSolver  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00468d80.md
+2026-05-12  004694e0  VehicleObjectContactSolver  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/004694e0.md
+2026-05-12  00469aa0  VehicleContactScanUpdate  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00469aa0.md; U-3660 U-3661 open
+2026-05-12  00469df0  VehicleVehicleCollisionImpulse  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00469df0.md
+2026-05-12  0047eb30  VehiclePhysicsWorldStep  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/0047eb30.md; U-3659 open
+2026-05-12  00480720  VehicleRespawnPlace  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/00480720.md
+2026-05-12  004809e0  VehicleRespawnTeleport  C1->C2  vehicle_promote_c2_b; re/analysis/vehicle_promote_c2_b/004809e0.md
+2026-05-12  sweep-20260512-2139  scribe-release  bucket=audio_promote_c2_rws_loader-20260512  writes=20  errors=0
+2026-05-12  sweep-20260512-2139  scribe-release  buckets=1 drained  errors=0
+2026-05-12  sweep-20260512-1900  scribe-claim  buckets=3 queued, 1 skipped-HOLD
