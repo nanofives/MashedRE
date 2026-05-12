@@ -928,3 +928,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-2201  scribe-claim  buckets=2 queued, 1 skipped-HOLD
 2026-05-12  sweep-20260512-2201  scribe-release  bucket=render_promote_c2_track_node  writes=11  errors=0
 2026-05-12  sweep-20260512-2201  scribe-release  bucket=render_promote_c2_rw_plugin  writes=13  errors=0
+2026-05-12  sweep-20260512-2201  scribe-release  buckets=2 drained  errors=0
