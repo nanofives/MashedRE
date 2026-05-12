@@ -2,6 +2,10 @@
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 2026-05-12  sweep-20260512-2139  scribe-claim  buckets=1 queued, 1 skipped-HOLD (replay_record-20260503)
+2026-05-12  004929d0  FUN_004929d0  C1->C2  game_state_sentinel_diff-20260512; re/analysis/game_state/0x004929d0.md; drift-correction (analysis already C2-quality with full mechanical case-by-case dispatch + constants + U-0487/U-0488); promoted to satisfy caller-at-C2+ gate for leaf C3 promotions below
+2026-05-12  0042c2d0  GetDat0067ecb4  C2->C3  game_state_sentinel_diff-20260512; mashedmod/src/mashed_re/GameState/StateAccessors.cpp; trivial getter MOV EAX,[0x67ecb4]; 10/10 bit-identical sentinel-write Frida force-call A/B via run_diff_parallel.py (log/diff_get_dat_0067ecb4.csv); pure-leaf exemption; resolves S-0481; dups removed (race_state vehicle C1)
+2026-05-12  0042c2e0  GetDat0067ecb8  C2->C3  game_state_sentinel_diff-20260512; mashedmod/src/mashed_re/GameState/StateAccessors.cpp; trivial getter MOV EAX,[0x67ecb8]; 10/10 bit-identical sentinel-write; pure-leaf exemption; paired with setter 0x0042c2f0 (still C2); resolves S-0482; dups removed
+2026-05-12  0042f500  GetDat0067ea64  C2->C3  game_state_sentinel_diff-20260512; mashedmod/src/mashed_re/GameState/StateAccessors.cpp; trivial getter MOV EAX,[0x67ea64]; 10/10 bit-identical sentinel-write; pure-leaf exemption; resolves S-0484; dup removed (hud C2 — hud_ingame_promote_c2 plate preserved); also called from HUD chain
 2026-05-12  005ae010  FUN_005ae010  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_cont1/0x005ae010.md; sub-struct A device-handle linker; U-0142 open; dup d2 row removed
 2026-05-12  005ae030  FUN_005ae030  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_cont1/0x005ae030.md; combined sub-struct cleanup; no new U; dup d2 row removed
 2026-05-12  005ae050  FUN_005ae050  C1->C2  audio_promote_c2_rws_loader-20260512; re/analysis/audio_rws_loader_d3/005ae050.md; sub-struct B heap-free; no U filed
@@ -929,3 +933,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-2201  scribe-release  bucket=render_promote_c2_track_node  writes=11  errors=0
 2026-05-12  sweep-20260512-2201  scribe-release  bucket=render_promote_c2_rw_plugin  writes=13  errors=0
 2026-05-12  sweep-20260512-2201  scribe-release  buckets=2 drained  errors=0
+2026-05-12  render_frame_d4_cont1  no-op  all 19 RVAs (D-5042..D-5060) already C1 in hooks.csv; D-5042..D-5060 and D-9280 rows absent from DEFERRED.md (resolved by prior sessions: c0_promotion_render_a, render_c0_promote_b, render_c0_promote_c, split_screen); session declared superseded before MCP open
