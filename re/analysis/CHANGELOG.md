@@ -744,3 +744,84 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-1354  scribe-release  bucket=effects_particle_d4  writes=3  errors=0
 2026-05-12  sweep-20260512-1354  scribe-release  bucket=ai_path_following  writes=7  errors=0
 2026-05-12  sweep-20260512-1354  scribe-release-sweep  buckets=2 drained  rvas=10  errors=0  (HOLD=1: replay_record-20260503)
+2026-05-12  0040ad20  FUN_0040ad20  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d3/0x0040ad20.md; leaf getter; no U filed
+2026-05-12  0040b6c0  FUN_0040b6c0  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d3/0x0040b6c0.md; leaf array indexer; no U filed
+2026-05-12  0040b810  FUN_0040b810  C0->C2  frontend_c0_promote; re/analysis/timer_d2_cont1/0x0040b810.md; global-zero init; U-1609 U-1610 (pre-filed)
+2026-05-12  00422b30  FUN_00422b30  C0->C2  frontend_c0_promote; re/analysis/timer_d2_cont1/0x00422b30.md; memset 1248 bytes; U-1612 (pre-filed)
+2026-05-12  00429aa0  FUN_00429aa0  C0->C2  frontend_c0_promote; re/analysis/timer_d2_cont1/0x00429aa0.md; two-path table fill; S-1604 S-1605 (pre-filed); U-1613 U-1614 (pre-filed)
+2026-05-12  0042af50  FUN_0042af50  C0->C2  frontend_c0_promote; re/analysis/timer_d2_cont1/0x0042af50.md; guard+two-path check; U-1615 U-1616 (pre-filed)
+2026-05-12  0042ef40  FUN_0042ef40  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d4/0x0042ef40.md; vehicle unlock flag check; U-3176 (pre-filed)
+2026-05-12  0042f020  FUN_0042f020  C0->C2  frontend_c0_promote; re/analysis/frontend_c0_promote/0x0042f020.md; vehicle flag clear __fastcall; U-3594 filed
+2026-05-12  0042f6b0  FUN_0042f6b0  C0->C2  frontend_c0_promote; re/analysis/frontend_c0_promote/0x0042f6b0.md; mode-index to game-mode mapper; U-3595 filed
+2026-05-12  004307a0  FUN_004307a0  C0->C2  frontend_c0_promote; re/analysis/frontend_c0_promote/0x004307a0.md; elapsed-time vs threshold; U-3596 U-3597 filed
+2026-05-12  004309b0  FUN_004309b0  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d5/0x004309b0.md; game-mode-to-index mapper; no new U filed
+2026-05-12  00430910  FUN_00430910  C0->C2  frontend_c0_promote; re/analysis/frontend_c0_promote/0x00430910.md; option-mode compatibility check; U-3598 U-3599 filed
+2026-05-12  00430a10  FUN_00430a10  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d4/0x00430a10.md; slot-type-0 mapper; no U filed
+2026-05-12  00430a60  FUN_00430a60  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d4/0x00430a60.md; slot-type-1 mapper; no U filed
+2026-05-12  00430ab0  FUN_00430ab0  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d4/0x00430ab0.md; slot-type-2 mapper; no U filed
+2026-05-12  00430b30  FUN_00430b30  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d4/0x00430b30.md; thiscall lap-time getter; no U filed
+2026-05-12  00430b60  FUN_00430b60  C0->C2  frontend_c0_promote; re/analysis/frontend_c0_promote/0x00430b60.md; active-slot counter; U-3600 filed
+2026-05-12  004323c0  FUN_004323c0  C0->C2  frontend_c0_promote; re/analysis/frontend_c0_promote/0x004323c0.md; backward cursor nav; U-3601 U-3602 filed
+2026-05-12  004368e0  FUN_004368e0  C0->C1  frontend_c0_promote; re/analysis/hud_frontend_d5/0x004368e0.md; large HUD draw dispatch; C2 deferred (function too large for full trace in this session); U-3407..U-3409 (pre-filed)
+2026-05-12  00436810  FUN_00436810  C0->C2  frontend_c0_promote; re/analysis/hud_frontend_d5/0x00436810.md; local player slot occupancy; U-3410 U-3411 (pre-filed)
+2026-05-12  00401f10  FUN_00401f10  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  00403910  FUN_00403910  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  00403d30  FUN_00403d30  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  00403db0  FUN_00403db0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  00403ed0  FUN_00403ed0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  00403fa0  FUN_00403fa0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  004041c0  FUN_004041c0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  00404650  FUN_00404650  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  004072e0  FUN_004072e0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  0040bde0  FUN_0040bde0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  00413a00  FUN_00413a00  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  00413a40  FUN_00413a40  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  004189c0  FUN_004189c0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at c0_promotion_render_a
+2026-05-12  0041e8f0  FUN_0041e8f0  C0->C1  render_c0_promote_a  data-drift-fix; U-3128 [UNCERTAIN indirect dispatch]; C1 plate at render_frame_d4
+2026-05-12  0041ea10  FUN_0041ea10  C0->C2  render_c0_promote_a  leaf getter (*(DAT_0063d7e4+0x24)); no callees; shape fully documented; render_frame_d4
+2026-05-12  0041ebb0  FUN_0041ebb0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  004219c0  FUN_004219c0  C0->C1  render_c0_promote_a  data-drift-fix: caller-chain to render; C1 plate at render_frame_d4
+2026-05-12  00422570  FUN_00422570  C0->C1  render_c0_promote_a  new analysis: per-player viewport render helper; plate at render_c0_promote_a
+2026-05-12  00422ac0  FUN_00422ac0  C0->C2  render_c0_promote_a  leaf 4-dword setter (DAT_006412e8+idx*0xf40); no callees; shape fully documented; c0_promotion_render_a
+2026-05-12  00422af0  FUN_00422af0  C0->C2  render_c0_promote_a  leaf 1-dword setter (DAT_00641320+idx*0xf40); no callees; shape fully documented; c0_promotion_render_a
+2026-05-12  00425e40  FUN_00425e40  C0->C1  re/analysis/render_frame_d4/0x00425e40.md
+2026-05-12  00426640  FUN_00426640  C0->C1  re/analysis/c0_promotion_render_a/0x00426640.md
+2026-05-12  00426e00  FUN_00426e00  C0->C1  re/analysis/c0_promotion_render_a/0x00426e00.md
+2026-05-12  004278d0  FUN_004278d0  C0->C1  re/analysis/render_frame_d4/0x004278d0.md
+2026-05-12  00427990  FUN_00427990  C0->C1  re/analysis/render_frame_d4/0x00427990.md
+2026-05-12  00427be0  FUN_00427be0  C0->C1  re/analysis/render_frame_d4/0x00427be0.md
+2026-05-12  00429e10  FUN_00429e10  C0->C1  re/analysis/render_c0_promote_b/0x00429e10.md
+2026-05-12  0042c010  FUN_0042c010  C0->C1  re/analysis/render_frame_d4/0x0042c010.md
+2026-05-12  0042c090  FUN_0042c090  C0->C1  re/analysis/render_frame_d4/0x0042c090.md
+2026-05-12  00448730  FUN_00448730  C0->C1  re/analysis/c0_promotion_render_a/0x00448730.md
+2026-05-12  0045b990  FUN_0045b990  C0->C1  re/analysis/c0_promotion_render_a/0x0045b990.md
+2026-05-12  004725c0  FUN_004725c0  C0->C1  re/analysis/render_frame_d4/0x004725c0.md
+2026-05-12  00475d30  FUN_00475d30  C0->C1  re/analysis/c0_promotion_render_a/0x00475d30.md
+2026-05-12  00475e50  FUN_00475e50  C0->C1  re/analysis/c0_promotion_render_a/0x00475e50.md
+2026-05-12  00477810  FUN_00477810  C0->C1  re/analysis/c0_promotion_render_a/0x00477810.md
+2026-05-12  00477a10  FUN_00477a10  C0->C1  re/analysis/render_c0_promote_b/0x00477a10.md
+2026-05-12  00479030  LAB_00479030  C0->C1  re/analysis/track_loader_d4/0x00479030.md
+2026-05-12  0047b9e0  FUN_0047b9e0  C0->C1  re/analysis/render_c0_promote_b/0x0047b9e0.md
+2026-05-12  004891f0  FUN_004891f0  C0->C1  re/analysis/render_c0_promote_b/0x004891f0.md
+2026-05-12  0048fd70  FUN_0048fd70  C0->C1  re/analysis/render_c0_promote_b/0x0048fd70.md
+2026-05-12  00490490  FUN_00490490  C0->C1  re/analysis/render_c0_promote_c/0x00490490.md
+2026-05-12  004b42c0  FUN_004b42c0  C0->C1  re/analysis/render_c0_promote_c/0x004b42c0.md
+2026-05-12  004c1340  FUN_004c1340  C0->C1  re/analysis/render_c0_promote_c/0x004c1340.md
+2026-05-12  004c1680  FUN_004c1680  C0->C1  re/analysis/render_c0_promote_c/0x004c1680.md
+2026-05-12  004c7760  FUN_004c7760  C0->C1  re/analysis/render_c0_promote_c/0x004c7760.md
+2026-05-12  004c7a70  _rwDeviceSystemFn  C0->C1  re/analysis/render_c0_promote_c/0x004c7a70.md
+2026-05-12  004cd070  FUN_004cd070  C0->C1  re/analysis/render_c0_promote_c/0x004cd070.md
+2026-05-12  004cd140  FUN_004cd140  C0->C1  re/analysis/render_c0_promote_c/0x004cd140.md
+2026-05-12  004cd2d0  FUN_004cd2d0  C0->C1  re/analysis/render_c0_promote_c/0x004cd2d0.md
+2026-05-12  004e4320  FUN_004e4320  C0->C1  re/analysis/render_c0_promote_c/0x004e4320.md
+2026-05-12  004e4350  FUN_004e4350  C0->C1  re/analysis/render_c0_promote_c/0x004e4350.md
+2026-05-12  004c35f0  FUN_004c35f0  new->C1  re/analysis/render_c0_promote_c/0x004c35f0.md
+2026-05-12  004c40b0  FUN_004c40b0  new->C1  re/analysis/render_c0_promote_c/0x004c40b0.md
+2026-05-12  004c45f0  FUN_004c45f0  new->C1  re/analysis/render_c0_promote_c/0x004c45f0.md
+2026-05-12  004c90a0  FUN_004c90a0  new->C1  re/analysis/render_c0_promote_c/0x004c90a0.md
+2026-05-12  004cfe20  FUN_004cfe20  new->C1  re/analysis/render_c0_promote_c/0x004cfe20.md
+2026-05-12  004d40c0  FUN_004d40c0  new->C1  re/analysis/render_c0_promote_c/0x004d40c0.md
+2026-05-12  004d40d0  FUN_004d40d0  new->C1  re/analysis/render_c0_promote_c/0x004d40d0.md
+2026-05-12  004dcd50  FUN_004dcd50  new->C1  re/analysis/render_c0_promote_c/0x004dcd50.md
+2026-05-12  004dd0b0  FUN_004dd0b0  new->C1  re/analysis/render_c0_promote_c/0x004dd0b0.md
+2026-05-12  sweep-20260512-1513  scribe-claim  buckets=4 queued, 1 skipped-HOLD
