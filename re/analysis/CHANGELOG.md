@@ -737,3 +737,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-0445  scribe-release  bucket=track_world_initial_sweep  writes=18  errors=0
 2026-05-12  sweep-20260512-0445  scribe-release  bucket=vehicle_promote_c2  writes=12  errors=0
 2026-05-12  sweep-20260512-0445  scribe-release  bucket=vehicle_damage_d4  writes=5  errors=0  (S-3600/S-3601 renumbered to S-3612/S-3613 in 0x00419760.md per queue note; collision with track_world_initial_sweep-claimed S-3600..S-3611)
+2026-05-12  sweep-20260512-0445  scribe-release  bucket=track_collision_geometry  writes=20  errors=0
