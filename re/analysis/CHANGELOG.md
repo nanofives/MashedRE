@@ -828,3 +828,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-1513  scribe-release  bucket=render_c0_promote_a  writes=20  errors=0
 2026-05-12  sweep-20260512-1513  scribe-release  bucket=physics_collision_d4_breadth  writes=2  errors=0
 2026-05-12  sweep-20260512-1513  scribe-release  bucket=util_c0_promote  writes=20  errors=0
+2026-05-12  sweep-20260512-1513  scribe-release  bucket=render_c0_promote_c  writes=20  errors=0
