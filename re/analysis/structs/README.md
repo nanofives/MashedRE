@@ -14,6 +14,9 @@
 | [rwim2d_vertex_buffer.md](rwim2d_vertex_buffer.md) | 0x00898a20 | Shared RwIm2DVertex[4] buffer used by all Im2D draw helpers; RW device vtable offsets |
 | [lobby_slot_array.md](lobby_slot_array.md) | 0x007f0a44 / 0x007f0e50 / 0x008989e0 / 0x007e96fc | Lobby/player-slot-state array, vehicle unlock flag table, lap-time records, input-device type table |
 | [hud_ingame_element.md](hud_ingame_element.md) | 0x0063cab8 / 0x0063ce20 / 0x0063d298 | HUD ingame element structs (3 variants: stride 0x16C, 0x114, 0x160) |
+| [rw_plugin_registry.md](rw_plugin_registry.md) | 0x007d3ff8 / 0x007d3ff4 / 0x00617fe0 | RW engine state struct extended layout (+0x10 dispatcher / +0xCC error callback / +0x124 state); engine-level RwPluginRegistry global |
+| [audio_allocator.md](audio_allocator.md) | 0x007dda80 / 0x007ddab0 / 0x007dda28 | AudioBitmapPool header (9×u32), AudioAllocBlock layout, AudioSubStructA/B (at audio_obj+0x24/+0x34); vtable alloc/dealloc trampolines at DAT_007d3ff8+0x108/0x10c/0x114 |
+| [track_node_record.md](track_node_record.md) | 0x005f33f8 (array) / 0x0063d7e4 (active ptr) | 0x48-byte track descriptor record; stride 72b; +0x10 int id; +0x14/+0x18/+0x24/+0x44 nullable fn-ptrs; U-3213/3214/3128 open |
 
 ---
 
@@ -21,7 +24,9 @@
 
 | Address | Struct/field | File |
 |---------|-------------|------|
-| 0x007d3ff8 | `g_rwDevice` — RW engine vtable ptr | [rwim2d_vertex_buffer.md](rwim2d_vertex_buffer.md) |
+| 0x00617fe0 | `g_rwEnginePlugins` — engine-level RwPluginRegistry instance (14 slots) | [rw_plugin_registry.md](rw_plugin_registry.md) |
+| 0x007d3ff4 | `g_rwPluginRegistryFrozen` — registration-freeze gate | [rw_plugin_registry.md](rw_plugin_registry.md) |
+| 0x007d3ff8 | `g_rwDevice` — RW engine vtable ptr (extended layout: +0x10/+0xCC/+0x124) | [rwim2d_vertex_buffer.md](rwim2d_vertex_buffer.md), [rw_plugin_registry.md](rw_plugin_registry.md) |
 | 0x007e96fc | `g_inputDeviceTypes` — per-player device array (stride 0x80) | [lobby_slot_array.md](lobby_slot_array.md) |
 | 0x007f0a44 | `g_lobbySlotArray` — per-slot state (stride 0xc) | [lobby_slot_array.md](lobby_slot_array.md) |
 | 0x007f0e50 | `g_vehicleUnlockTable` — byte flags, stride 0xc | [lobby_slot_array.md](lobby_slot_array.md) |

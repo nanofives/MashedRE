@@ -1,3 +1,4 @@
+rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 # RVA: 0x00xxxxxx (8-hex, no prefix in CSV — the 0x is implicit)
 # name: ClassName::Method or sub_RVA if not yet identified
 # subsystem: boot|audio|ai|vehicle|track|render|hud|frontend|input|save|net|util|unknown
@@ -58,7 +59,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004938c0,sub_004938c0,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004938c0.md,,,RW_TEAR_FN; SoftwareTidyUpBeforeExiting; 5 sequential void calls; called by FUN_00492370+thunk_00493550; U-0087
 00558470,sub_00558470,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00558470.md,,,callee-1 of FUN_004938c0; 2x vtable-ptr-dispatch via DAT_007d3ff8+0x10c; zeros DAT_007dc8b8/bc/ac; U-0088
 00550390,sub_00550390,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00550390.md,,,callee-2 of FUN_004938c0; linked-list traversal+vtable calls+DeleteCriticalSection(009124e0); S-0080; U-0089
-004c2f60,sub_004c2f60,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c2f60.md,,,"callee-3 of FUN_004938c0; FUN_004c2c90(+0x10,0x12)+FUN_004d8060+FUN_004c2c90(+0x10,3); S-0081 S-0005; U-0090"
+004c2f60,FUN_004c2f60,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2f60.md,,,"engine-stop: dispatcher cmds 0x12+0x03 (driver-system @+0x10) + FUN_004d8060(&DAT_00617fe0); state field +0x124:=2 on cmd-3 success; sole caller FUN_004938c0; S-0081 S-0005; U-0090"
 004c3040,sub_004c3040,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3040.md,,,"callee-4 of FUN_004938c0 (teardown) + FUN_00493710 init path; FUN_004c2c90(+4,1); copies 0x4b DWORDs; S-0081; U-0091; see also re/analysis/rw_engine_init/004c3040.md"
 004c3270,sub_004c3270,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004c3270.md,,,callee-5 of FUN_004938c0 (teardown) + FUN_00493710 init path; DAT_007d3ff4==0 check; S-0082 S-0083; U-0092; see also re/analysis/rw_engine_init/004c3270.md
 00493710,FUN_00493710,render,C1,mapped,re/analysis/rw_engine_init/00493710.md,,,RW_INIT_FN; sequential RwEngineInit→RtFSManagerOpen→RwEngineOpen→RwEngineStart chain; returns 1 on full success; U-0067 U-0068 U-0071; S-0060..S-0067
@@ -69,9 +70,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004951f0,FUN_004951f0,render,C1,mapped,re/analysis/rw_engine_init/004951f0.md,,,reads DAT_006147bc+DAT_007719e0; ShowCursor(0) conditional; stores FUN_004cbb60 to DAT_00771e58; reads +0xC4+0xCC from DAT_00771e58
 00495270,FUN_00495270,render,C1,mapped,re/analysis/rw_engine_init/00495270.md,,,single-line wrapper; calls FUN_00499710; stores return to *param_1 (4-byte buffer for FUN_004c30b0 call)
 004a2cbd,FID_conflict:_wprintf,render,C1,mapped,re/analysis/rw_engine_init/004a2cbd.md,,,FidDB VS2003 _printf/_wprintf conflict; __cdecl variadic; lock+stbuf+FUN_004a504f+ftbuf; stdout target DAT_00616110
-004c2ed0,FUN_004c2ed0,render,C1,mapped,re/analysis/rw_engine_init/004c2ed0.md,,,FUN_004c2c90(DAT_007d3ff8+0x10 6 param_1 0 param_2); returns param_1 on success; called with (&local_18 (int)sVar1) from RW_INIT_FN
-004c2f00,FUN_004c2f00,render,C1,mapped,re/analysis/rw_engine_init/004c2f00.md,,,FUN_004c2c90(DAT_007d3ff8+0x10 10 &local_4 0 0); returns local_4 on success else 0xffffffff; result used as video mode short
-004c2fb0,FUN_004c2fb0,render,C1,mapped,re/analysis/rw_engine_init/004c2fb0.md,,,FUN_004c2c90(ids 2/3/17); FUN_004d8000(&DAT_00617fe0 DAT_007d3ff8); FUN_004cf160(*+0x10); writes +0x124=3 on success
+004c2ed0,FUN_004c2ed0,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2ed0.md,,,"GetVideoModeInfo wrapper: FUN_004c2c90 cmd 0x06; returns param_1 (out-buf) on success / 0 on fail; 5 callers incl FUN_00493710 RW init"
+004c2f00,FUN_004c2f00,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2f00.md,,,"GetCurrentVideoMode wrapper: FUN_004c2c90 cmd 0x0a; returns local_4 on success / 0xffffffff on fail; 5 callers"
+004c2fb0,FUN_004c2fb0,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2fb0.md,,,"engine-start: dispatcher cmd 0x02 Open + FUN_004d8000(&DAT_00617fe0) + FUN_004cf160(*+0x10) + cmd 0x11 Finalize; state field +0x124:=3 on success; rollback cmd 0x03 on registry-open fail; sole caller FUN_00493710"
 004c5c80,FUN_004c5c80,render,C1,mapped,re/analysis/rw_engine_init/004c5c80.md,,,writes param_1 to *(DAT_007d4054+0x10+DAT_007d3ff8); called as FUN_004c5c80(0) from RW_INIT_FN success path
 004c9eb0,FUN_004c9eb0,render,C1,mapped,re/analysis/rw_engine_init/004c9eb0.md,,,writes param_1 to DAT_006181c4; double-indirect dispatch DAT_007d4108+0x18/0x1c; 3-element loop at 005d8b80-005d8b88; called FUN_004c9eb0(0x3c)
 004c32b0,FUN_004c32b0,render,C1,mapped,re/analysis/rw_engine_init/004c32b0.md,,,RwEngineInit wrapper; sets DAT_007d3ff8; param_2&1 selects two globals; FUN_004d7de0×14 ids 0x401-0x412; sets [0x49]=1 on success; U-0071; D-0237..D-0243
@@ -97,13 +98,13 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005abcf0,FUN_005abcf0,audio,C1,mapped,re/analysis/audio_rws_loader/005abcf0.md,,,wave node destructor; vtable+0x10 callback + 5 cleanup calls; S-0112..S-0115; U-0119..U-0120
 005abfa0,FUN_005abfa0,audio,C1,mapped,re/analysis/audio_rws_loader/005abfa0.md,,,per-wave data loader; 0x803 format + 0x804 sample data chunks; S-0116..S-0119; U-0121..U-0123
 005ade10,FUN_005ade10,audio,C1,mapped,re/analysis/audio_rws_loader/005ade10.md,,,doubly-linked list remove-by-value; node pool at DAT_009146c0; U-0124
-005aea00,FUN_005aea00,audio,C1,mapped,re/analysis/audio_rws_loader/005aea00.md,,,vtable alloc trampoline DAT_007d3ff8+0x108; jumptable not recoverable; U-0125
-005aea10,FUN_005aea10,audio,C1,mapped,re/analysis/audio_rws_loader/005aea10.md,,,aligned alloc wrapper; size+4 bytes; stores base at aligned-4
-005aea40,FUN_005aea40,audio,C1,mapped,re/analysis/audio_rws_loader/005aea40.md,,,thin free wrapper; calls FUN_004522d0
-005aec00,FUN_005aec00,audio,C1,mapped,re/analysis/audio_rws_loader/005aec00.md,,,byte-reverse buffer in-place; param_2/2 swap iterations; endian correction
+005aea00,FUN_005aea00,audio,C2,mapped,re/analysis/audio_rws_loader/005aea00.md,,,vtable alloc trampoline DAT_007d3ff8+0x108; jumptable not recoverable; U-0125
+005aea10,FUN_005aea10,audio,C2,mapped,re/analysis/audio_rws_loader/005aea10.md,,,aligned alloc wrapper; size+4 bytes; stores base at aligned-4
+005aea40,FUN_005aea40,audio,C2,mapped,re/analysis/audio_rws_loader/005aea40.md,,,thin free wrapper; calls FUN_004522d0
+005aec00,FUN_005aec00,audio,C2,mapped,re/analysis/audio_rws_loader/005aec00.md,,,byte-reverse buffer in-place; param_2/2 swap iterations; endian correction
 00495530,FUN_00495530,input,C1,mapped,re/analysis/input_dinput/00495530.md,,,"DirectInput8Create init wrapper; GetModuleHandleA(NULL) then DirectInput8Create(hmod,0x800@00495549,DAT_005d0a8c@00495544,DAT_00771e78@0049553f,0); ret 1 on success; U-0267 U-0268"
 004987b0,FUN_004987b0,input,C1,mapped,re/analysis/input_dinput/004987b0.md,,,"debug printf wrapper; 512-byte buf; FUN_004a42c5(buf,fmt,va)+OutputDebugStringA; cookie DAT_00616038@body; S-0260; D-0700"
-004c2c90,FUN_004c2c90,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004c2c90.md,,,vtable dispatch param_1+4 with cmd ID param_2; switch cases 0xd-0x12; default path calls FUN_004d7ff0(0x18@004c2d38)+FUN_004d8480; U-0227 U-0228
+004c2c90,FUN_004c2c90,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2c90.md,,,"driver-system dispatcher: indirect-call *(param_1+0x4)(cmd,out,in1,in2) then switch on cmd providing defaults (0xd/0xf write defaults; 0xe error callback @DAT_007d3ff8+0xCC on idx==0; 0x10 success-if-idx==0; 0x11/0x12 noop-success); default path FUN_004d7ff0(0x18,cmd)+FUN_004d8480; 13 callers; U-0227 U-0228; S-0220 S-0221"
 004ccf20,FUN_004ccf20,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004ccf20.md,,,doubly-linked-list teardown; outer loop on DAT_007d45cc; inner per-node vtable call +0x10c; conditional +0x11c; zeroes DAT_007d45fc+007d45f8; U-0229 U-0230 U-0231
 004d7ca0,FUN_004d7ca0,render,C1,mapped,re/analysis/rw_engine_teardown_d2/0x004d7ca0.md,,,guards DAT_007d6c50; calls FUN_004ccce0; iterates array at DAT_007d6c54 freeing structs via vtable +0x11c/+0x10c; calls FUN_004cc9f0; returns 1; U-0232 U-0233 S-0222 S-0223
 004d8000,FUN_004d8000,frontend,C1,mapped,re/analysis/intro_splash_d3/0x004d8000.md,,,find-in-list then secondary dispatch; walk main list (param_1+0x10) via node+0x30 calling comparator at node+0x20 (param_2 node[0] node[4]); on match walk secondary via node+0x34 calling node+0x24; returns 0 on match param_1 on miss; 20 callers 004c0910..004ea213; S-2340 S-1930
@@ -205,12 +206,12 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00409680,FUN_00409680,render,C1,mapped,re/analysis/track_loader/00409680.md,,,fills 0x480 floats at DAT_0063a5f0 with -1.0f (0xbf800000)
 00409710,FUN_00409710,render,C1,mapped,re/analysis/track_loader/00409710.md,,,loads line-exception data from d:\ToastArt\common\led.piz; chunk 0x13269901 into DAT_0063a5f0; returns 0/1
 00412050,FUN_00412050,render,C1,mapped,re/analysis/track_loader/00412050.md,,,6-iter loop iVar4=0xcafe..0xcb0a; FUN_004b3f90 twice per iter; fills DAT_0063bb60 stride 0xb; U-0428
-0041e870,FUN_0041e870,render,C1,mapped,re/analysis/track_loader/0041e870.md,,,scans 0x48-byte records at s_training_005f33f8; stores last [+0x10]==param_1 to DAT_0063d7e4
-0041e8b0,FUN_0041e8b0,render,C1,mapped,re/analysis/track_loader/0041e8b0.md,,,dispatches *(*(DAT_0063d7e4+0x14)); jumptable unrecovered; U-0429
-0041e970,FUN_0041e970,render,C1,mapped,re/analysis/track_loader/0041e970.md,,,dispatches *(*(DAT_0063d7e4+0x44)); jumptable unrecovered; U-0429
-0041e980,FUN_0041e980,render,C1,mapped,re/analysis/track_loader/0041e980.md,,,scan records at s_training_005f33f8; returns first [+0x10]==param_1 else NULL
-0041e9d0,FUN_0041e9d0,render,C1,mapped,re/analysis/track_loader/0041e9d0.md,,,getter: returns *(DAT_0063d7e4+0x14)
-0041ea90,FUN_0041ea90,render,C1,mapped,re/analysis/track_loader/0041ea90.md,,,getter: returns *(DAT_0063d7e4+0x44)
+0041e870,FUN_0041e870,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041e870.md,,,scan-all: finds LAST record where +0x10==param_1; stores to DAT_0063d7e4; U-3213; track_node
+0041e8b0,FUN_0041e8b0,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041e8b0.md,,,indirect dispatch DAT_0063d7e4+0x14; guard via FUN_0041e9d0; U-0429 U-3214; track_node
+0041e970,FUN_0041e970,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041e970.md,,,indirect dispatch DAT_0063d7e4+0x44; guard via FUN_0041ea90; U-3214; track_node
+0041e980,FUN_0041e980,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041e980.md,,,scan-first: returns first record ptr where +0x10==param_1 or NULL; U-3213; track_node
+0041e9d0,FUN_0041e9d0,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041e9d0.md,,,getter: *(DAT_0063d7e4+0x14); guard for FUN_0041e8b0 dispatch; U-3214; track_node
+0041ea90,FUN_0041ea90,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041ea90.md,,,getter: *(DAT_0063d7e4+0x44); guard for FUN_0041e970 dispatch; U-3214; track_node
 004235b0,FUN_004235b0,render,C1,mapped,re/analysis/track_loader/004235b0.md,,,loads AI data from d:\ToastArt\Common\ai.piz; chunk 0x13269902 into DAT_007f1a9c; returns 0/1
 00423630,FUN_00423630,render,C1,mapped,re/analysis/track_loader/00423630.md,,,clears DAT_007f1a9c+DAT_007f9a9c (0x8000 bytes each) with 0xffffffff; zeros DAT_00801a9c DAT_007f1a54 DAT_007f1a64
 00425ab0,FUN_00425ab0,render,C1,mapped,re/analysis/track_loader/00425ab0.md,,,zeros 16 globals at DAT_008992a0..DAT_008994b8 in 8 pairs stride 0x4c
@@ -247,7 +248,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00417da0,FUN_00417da0,ai,C1,mapped,re/analysis/ai_update/0x00417da0.md,,,AI control step mode-8 variant: identical to FUN_00416250 except FUN_00417cf0 replaces FUN_004148b0 and no DAT_0089a368 debug override; U-0427
 005b9f30,LAB_005b9f30,audio,C1,mapped,re/analysis/audio_dsound/0x005b9f30.md,,,fn-ptr constructor: writes 4 ptrs (LAB_005ba1d0/005ba7f0/005ba780/005bad30) to audio obj struct+0x28..+0x3c; sets +0x40/+0x44/+0x46; U-0347..U-0350
 005a9e10,FUN_005a9e10,audio,C1,mapped,re/analysis/audio_dsound/0x005a9e10.md,,,two-call dispatcher: FUN_005adfe0(param_1 param_3) + FUN_005ae010(param_1 param_2); returns param_1; 33 bytes; U-0351
-005aee20,FUN_005aee20,audio,C1,mapped,re/analysis/audio_dsound/0x005aee20.md,,,bit-scan-forward loop 0..31; always called with 0x28 (lowest bit=3); decompiler types void but caller reads byte; 27 bytes; U-0352
+005aee20,FUN_005aee20,audio,C2,mapped,re/analysis/audio_dsound/0x005aee20.md,,,bit-scan-forward loop 0..31; always called with 0x28 (lowest bit=3); decompiler types void but caller reads byte; 27 bytes; U-0352
 005ba1d0,FUN_005ba1d0,audio,C1,mapped,re/analysis/audio_dsound/0x005ba1d0.md,,,DirectSound init path A: pGUID=[ESI+0x4]; flag accumulation 0x20/0x40/0x4; vtable+0x18; buf-create; tail=re/analysis/audio_dsound_d4/0x005ba1d0_tail.md; D-0940 resolved; U-0353..U-0355 U-0363
 005bad30,LAB_005bad30,audio,C1,mapped,re/analysis/audio_dsound/0x005bad30.md,,,unrecognized; DirectSound init path B: NULL GUID; hardcoded 0xbb80Hz/0x10-bit; GetCaps(vtable+0x10)+clamp; vtable+0x18; 459 bytes; U-0356..U-0359
 005baf60,FUN_005baf60,audio,C1,mapped,re/analysis/audio_dsound_d4/0x005baf60.md,,,audio buffer field setter: +0x74=param_2; +0x78|=0x100; cond write to [+0x11c]+0x38; audio_dsound_d4
@@ -266,9 +267,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004b44f0,FUN_004b44f0,util,C1,mapped,re/analysis/random_rng/0x004b44f0.md,,,RandomInt(lo hi); FUN_00534870()%(hi-lo+1)+lo; modulo bias not corrected; 10 callers 0x0045cd30..0x004661f0
 004b4510,FUN_004b4510,util,C1,mapped,re/analysis/random_rng/0x004b4510.md,,,RandomFloat(lo hi) __thiscall; (hi-lo)*(FUN_00534870()&0x7fffffff)*DAT_005cd314(0x30000000=2^-31)+lo; 6 callers 0x00419a00..0x004764f0
 0040b090,sub_0040b090,render,C1,unmapped,re/analysis/camera_follow/0x0040b090.md,,,per-slot camera dispatch: reads state via FUN_0055dec0; 4-player outer loop; color-token inner dispatch to 3 sub-handlers; U-0547 U-0548 U-0549; S-0540..S-0543
-0041e8c0,sub_0041e8c0,render,C1,unmapped,re/analysis/camera_follow/0x0041e8c0.md,,,8-byte indirect dispatch: calls fn-ptr at *(DAT_0063d7e4)+0x18; tail-call jmp; no static callees; U-0550 U-0551
-0041e9b0,sub_0041e9b0,render,C1,unmapped,re/analysis/camera_follow/0x0041e9b0.md,,,bool comparator: *(DAT_0063d7e4+0x10)==param_1; return discarded by caller; same object as FUN_0041e8c0; U-0552 U-0553
-0041e9e0,sub_0041e9e0,render,C1,unmapped,re/analysis/camera_follow/0x0041e9e0.md,,,getter: returns *(DAT_0063d7e4+0x18); same BASE as FUN_0041e8c0; dual-role fn-ptr/mode-flag field; U-0554
+0041e8c0,sub_0041e8c0,render,C2,unmapped,re/analysis/render_promote_c2_track_node/0x0041e8c0.md,,,indirect dispatch *(DAT_0063d7e4+0x18); tail-call; U-0550 U-0551; track_node/camera_follow
+0041e9b0,sub_0041e9b0,render,C2,unmapped,re/analysis/render_promote_c2_track_node/0x0041e9b0.md,,,bool comparator *(DAT_0063d7e4+0x10)==param_1; return discarded; U-0552 U-0553; track_node/camera_follow
+0041e9e0,sub_0041e9e0,render,C2,unmapped,re/analysis/render_promote_c2_track_node/0x0041e9e0.md,,,getter *(DAT_0063d7e4+0x18); dual-role fn-ptr/mode flag; U-0554; track_node/camera_follow
 00426700,sub_00426700,render,C1,unmapped,re/analysis/camera_follow/0x00426700.md,,,node-list iterator: converts param_3 int-ticks to float; iterates nodes at param_2+0x74 stride 12; calls FUN_004756e0 per node with two lookup-table entries; U-0555 U-0556 U-0557; S-0544
 004623e0,FUN_004623e0,audio,C1,mapped,re/analysis/audio_music/004623e0.md,,,MUSIC_FN; music-channel play/stop/volume keyed on DAT_00605db8 index; DAT_0068f640 stride-8 obj array; U-0627..U-0629 U-0637; S-0620..S-0622
 0045da60,FUN_0045da60,audio,C1,mapped,re/analysis/audio_music/0045da60.md,,,stop-all-SFX except music channel; iterates 0..199 skipping DAT_00605db8; U-0630 U-0639; S-0620
@@ -400,19 +401,15 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005a7a40,FUN_005a7a40,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005a7a40.md,,,pool-object list searcher; FUN_005ade60 at obj+0x0c; returns obj or NULL; D-2860; D-0345
 005ade90,FUN_005ade90,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ade90.md,,,doubly-linked list drainer; each node returned via FUN_005ae920(DAT_009146c0); U-0990; D-0346
 005a7ea0,FUN_005a7ea0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005a7ea0.md,,,audio object destructor; +0x1b bit0=pool-return(DAT_007dca84) bit2=no-free else heap-free; U-0991; D-0347
-005ae0c0,FUN_005ae0c0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ae0c0.md,,,16-byte format descriptor copy/endian-swap via FUN_005aeca0; swap_flag!=NULL activates field packing; D-2861; U-0992; D-0348
-005ae010,FUN_005ae010,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ae010.md,,,sub-struct A init; FUN_005ae080 zero-init then [0]=param_2 [2].bit0=0; D-2862; D-0349
 005adfe0,FUN_005adfe0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005adfe0.md,,,sub-struct B init; FUN_005ae050 zero-init then +4=param_2 +8.bit1=0; D-2863; D-0350
 005ac740,FUN_005ac740,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ac740.md,,,wave_node partial cleanup; if not borrowed(+0x18.bit1): frees ptr at +0x10; zeroes +0x10 +0x14; D-0351
 005a7e70,FUN_005a7e70,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005a7e70.md,,,visitor over audio-object circular list at DAT_007dca7c; calls FUN_005ade10(node-4 param_1) per node; U-0993; D-0352
-005ae030,FUN_005ae030,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ae030.md,,,combined zero-init for sub-structs A+B; calls FUN_005ae080+FUN_005ae050; D-2862 D-2863; D-0353
 005abcb0,FUN_005abcb0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005abcb0.md,,,wave_node destructor; +0x54 bit0=pool-return(sub.+0x3c or DAT_007dd634) bit2=no-free else heap; U-0994; D-0354
 005ac210,FUN_005ac210,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ac210.md,,,"wave_node factory; parses RWS 0x803 chunk; allocs via FUN_005aea00(size,0x30806); D-2864..D-2873; U-0995 U-0996; D-0355"
 005adf30,FUN_005adf30,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005adf30.md,,,16-byte format descriptor memcmp; returns -1/0/+1; D-0356
-005aec30,FUN_005aec30,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005aec30.md,,,PCM endian-swap in-place; 16-bit or 32-bit samples; bswap16/bswap32; D-0357
 005abd30,FUN_005abd30,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005abd30.md,,,PCM chunk feeder; vtable+0x14=feed_pcm; double-buffered streaming via FUN_005abf80; D-2874..D-2877; U-0997; D-0358
 005abf80,FUN_005abf80,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005abf80.md,,,audio drain/pump vtable+0x1c dispatch; indirect-jump unrecovered; U-0998; D-0359
-005ae920,FUN_005ae920,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005ae920.md,,,pool-allocator free; bitmap-tracked fixed-size blocks; optional compaction via FUN_004522d0; D-0360
+005ae920,FUN_005ae920,audio,C2,mapped,re/analysis/audio_rws_loader_d2/005ae920.md,,,pool-allocator free; bitmap-tracked fixed-size blocks; optional compaction via FUN_004522d0; D-0360
 0042c280,FUN_0042c280,vehicle,C1,mapped,re/analysis/race_state/0x0042c280.md,,,calls FUN_0042bf30(0x27f 0xff210000 0 0 0 0); no-param void; STATE_FN case-3 path when FUN_0042c220 non-zero; S-1040; U-1048
 0042c2d0,FUN_0042c2d0,vehicle,C1,mapped,re/analysis/race_state/0x0042c2d0.md,,,getter: returns DAT_0067ecb4; 5 bytes; U-1051
 0042c2e0,FUN_0042c2e0,vehicle,C1,mapped,re/analysis/race_state/0x0042c2e0.md,,,getter: returns DAT_0067ecb8; 5 bytes; paired with setter FUN_0042c2f0; U-1051
@@ -463,13 +460,13 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0042b8b0,FUN_0042b8b0,hud,C1,new,re/analysis/hud_ingame_d2/0x0042b8b0.md,,,screen width getter; returns DAT_0067ea54 (uint16); 6 bytes; no callees
 0042b8c0,FUN_0042b8c0,hud,C1,new,re/analysis/hud_ingame_d2/0x0042b8c0.md,,,screen height getter; returns DAT_0067ea56 (uint16); 6 bytes; no callees
 00427f00,FUN_00427f00,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,TEXT_FN: DrawTextDirect(char* text x y color scale align); FUN_00427840 byte->UTF16 to stack buf; FUN_00427680 screen pos; FUN_00556ca0 dispatch->ctx+0x138; callers: FUN_004335f0 FUN_00434720 FUN_004368e0; S-1060 U-1069 U-1071
-00427ca0,FUN_00427ca0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,HUD text subsystem init; calls FUN_00552b60; creates 4 style objects via FUN_00556d70; calls FUN_0042a6b0+FUN_00556cc0; S-1061
-00427620,FUN_00427620,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,HUD text subsystem shutdown; destroys DAT_0067d838 via FUN_00555830; FUN_00556e40 on 4 style objects; FUN_00552b90
-00427680,FUN_00427680,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,text screen-position calc(x/y/align/scale->screen xy pair); reads DAT_0067d838 text width via FUN_005554d0 for align modes 1/2; result via ESI out-ptr
-00427780,FUN_00427780,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,string table lookup by index; returns &DAT_0066d828 + *(int*)(&DAT_0066d828 + idx*4); used by FUN_00427e00 FUN_00427ff0 FUN_00428140
-00427840,FUN_00427840,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,byte->UTF-16 string copy; fastcall EAX=src ECX=dest; calls vtable+0xf4 for length then copies byte->ushort; U-1069
-00427ff0,FUN_00427ff0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,DrawText with extra param (7p vs 6p); adds FUN_00552840(param_7) between pos-calc and draw; role of param_7 unknown; S-1064 U-1065
-00552b60,FUN_00552b60,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,font subsystem init sequence; sets DAT_00912bdc=0; calls FUN_00557250 FUN_005540d0 FUN_00556d20 FUN_00555360 FUN_005571e0 FUN_00552c10 FUN_00552a60
+00427ca0,FontText_HudInit,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427ca0.md,,,C1->C2 hud_promote_c2_b; 4-phase init: FontSys_InitSeq+font select+ctx alloc+4 style objs; zeroes 0067d828..d834
+00427620,FontText_HudShutdown,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427620.md,,,C1->C2 hud_promote_c2_b; teardown seq 7-step: FUN_00555830+FUN_00556e40x4+FUN_00556cd0+FUN_00552b90
+00427680,FontText_ComputeScreenXY,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427680.md,,,C1->C2 hud_promote_c2_b; 4p float: x y align scale; ESI=float[2] out; align 0=left 1=center 2=right; U-2127
+00427780,FontText_StringTableLookup,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427780.md,,,C1->C2 hud_promote_c2_b; &DAT_0066d828+*(int*)(DAT_0066d828+idx*4)
+00427840,FontText_UTF16WidenCopy,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427840.md,,,C1->C2 hud_promote_c2_b; fastcall EAX=src ECX=dst; vtable+0xf4 len; byte->ushort loop; U-1069
+00427ff0,FontText_DrawTextRotated,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427ff0.md,,,C1->C2 hud_promote_c2_b; 7p draw with Z-rotation param_7; full matrix pipeline: Push+Reset+Translate+Rotate+Draw+Pop
+00552b60,FontSys_InitSeq,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552b60.md,,,C1->C2 hud_promote_c2_b; 8-step seq: DAT_00912bdc=0 then 7 alloc/init calls
 00555360,FUN_00555360,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,font system init: allocs ctx 0x144B->DAT_00912a08; allocs 0xC->DAT_00912a14; buf->DAT_00912a0c; copies fonts\ into buf; fills char-width table DAT_00912704; sets DAT_00913100=LAB_00555910; S-1063 U-1072
 005554d0,FUN_005554d0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,text width calc(font_ctx byte* str float scale); ASCII advance ctx+0x24[char*2]; extended via ctx+0x12c table; returns sum*scale; U-1070
 00556ca0,FUN_00556ca0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,text draw dispatcher; tail-call thunk to *(param_1+0x138)(args); WARNING: Ghidra treats indirect jmp as call; passes all args through to LAB_00554940
@@ -657,24 +654,24 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00482c10,Replay::ReadFrame,vehicle,C1,new,re/analysis/replay_record/notes.md,replay_record-20260503,,traverses linked list to find bracket nodes for time; SLERP via S-1572/S-1573; outputs 16-float transform matrix (4x4) to param_2; 930 bytes; U-1567 S-1572 S-1573
 00483d10,Replay::Load,vehicle,C1,new,re/analysis/replay_record/notes.md,replay_record-20260503,,searches DAT_008a94a8 buffer for magic=0x10b+player_id; reads 0x19c header then (cnt+2)*0x24 frame array via stream API; rebuilds linked list in-place; S-1566 S-1567 S-1568
 004c30b0,FUN_004c30b0,render,C1,mapped,re/analysis/render_pipeline_d2/004c30b0.md,render_pipeline_d2-20260503,,",RwEngineOpen wrapper; requires globals[0x49]==1; allocs 0x12c (0x4b dwords) via vtable[0x42]; copies template from DAT_007d3ec8; FUN_004c2c90 cmd-ids 0/4/0xb; sets [0x49]=2 on success; callees D-0229 D-0232..D-0234"
-00427840,FontText_UTF16WidenCopy,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,fastcall EAX=src ECX=dest; vtable+0xf4 len; byte→ushort widen; U-1069 confirmed
-00427680,FontText_ComputeScreenXY,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,ESI implicit float[2] output; align 1=center 2=right; FUN_0042b8b0/c0 screen dims; U-1487
+00427840,FontText_UTF16WidenCopy,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427840.md,,,C1->C2 hud_promote_c2_b; fastcall EAX=src ECX=dst; vtable+0xf4 len; byte->ushort loop; U-1069
+00427680,FontText_ComputeScreenXY,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427680.md,,,C1->C2 hud_promote_c2_b; 4p float: x y align scale; ESI=float[2] out; align 0=left 1=center 2=right; U-2127
 00556ca0,FontCtx_DrawDispatchThunk,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,thin vtable thunk; calls *(param_1+0x138)(); Ghidra indirect-jump artifact
-00552840,FontCtx_SetRotation,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,"axis=(0,0,1) Z-rotation; angle_deg via FUN_004c4d20; resets dirty flags; S-1064 resolved"
-00552b60,FontSys_InitSeq,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,7-step init sequencer; sets DAT_00912bdc=0; calls FUN_00557250..FUN_00552a60
+00552840,FontCtx_SetRotation,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552840.md,,,C1->C2 hud_promote_c2_b; axis=(0,0,1) Z-rot; FUN_004c4d20 preconcat mode=1; zeroes 00912bd8+bec
+00552b60,FontSys_InitSeq,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552b60.md,,,C1->C2 hud_promote_c2_b; 8-step seq: DAT_00912bdc=0 then 7 alloc/init calls
 00557250,FontSys_AllocObjects,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,allocs 8-byte→DAT_00912a34 and 0x14-byte→DAT_00912a38 via thunk_FUN_004cc820; type 0x40190
 005540d0,FontCanvas_Init,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,plugin obj 0x1c→DAT_00912a24; 7-dword anchor node→DAT_00912a28; FUN_00553f40 twice; U-1488
 00556d20,FontSys_AllocVertexBuf,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,0x2400-byte Im2D vertex ring buf→DAT_00912a04; 0x78-byte style container→DAT_00912a00
 005571e0,FontSys_AllocScratchBuf,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,0x100-byte scratch buf→DAT_00912a2c; type 0x401a3
-00552c10,FontSys_InitRenderState,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,master state init; font-ctx array base; 256-short char-glyph table; 31 ptr slots zeroed; U-1493
-00552a60,FontSys_SetActiveCamera,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,viewport dims from cam+0x60; aspect ratio→DAT_00912c00/c04; sentinel swap at cam+0x1c
-00427780,FontText_StringTableLookup,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,packed string table; return base+base[index*4]; FUN_00427e00 callee
+00552c10,FontSys_InitRenderState,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552c10.md,,,C1->C2 hud_promote_c2_b; master state init: ctx stack; char-glyph table 00912500[256]; 31 ptr slots; scale/flag globals
+00552a60,FontSys_SetActiveCamera,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552a60.md,,,C1->C2 hud_promote_c2_b; param=cam*; reads cam+0x60 viewport; stores dims to 00912b08/0c/10/14; aspect ratio to 00912c00/04; sentinel cam+0x1c
+00427780,FontText_StringTableLookup,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427780.md,,,C1->C2 hud_promote_c2_b; &DAT_0066d828+*(int*)(DAT_0066d828+idx*4)
 00553f40,FontGlyph_UploadData,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,copies node[1]×0x18 bytes Im2D verts; marks slot -1 (resident); recurses node[5] linked list
 00556d70,FontStyle_Alloc,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,0x78-byte style obj from DAT_00912a00 pool; white RGBA; scale=0.5f; count=1
 005507b0,VFS_Open,io,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,"RW VFS open; parses mode ""r""/""w""/""b""/""a""/""+"" into flags; resolves FS handler via DAT_007dc754 list; D-4365"
 004c4d20,RwMatrix_SetRotAxisAngle,render,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,normalizes axis; sin/cos(deg*pi/180); calls FUN_004c4a50; S-1483; constant at 0x005cd7a8=pi/180
 004c57a0,FontCtxMatrix_AllocInit,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,allocs identity-matrix obj via vtable+0x118; type 0x3000d; implicit EAX return; U-1493
-00552750,FontCtx_ResetTransform,hud,C1,stub,re/analysis/font_text_d2/font_text_d2-20260503.md,font_text_d2-20260503-1620,,zeros 3x3 transform+translation offsets 0x00..0x38 of font_ctx; OR flags|=0x20003; resets dirty flags
+00552750,FontCtx_ResetTransform,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552750.md,,,C1->C2 hud_promote_c2_b; identity RwMatrix on cur ctx; OR flags|=0x20003; zeroes 00912bd8+bec
 00408af0,FUN_00408af0,ai,C1,mapped,re/analysis/ai_update_d2/0x00408af0.md,,,getter: returns &DAT_008a96dc + param_1*0x30c (vehicle heading/velocity float3; offset +0x9c from 0x30c-stride array)
 00414030,FUN_00414030,ai,C1,mapped,re/analysis/ai_update_d2/0x00414030.md,,,AI spline-bank timer reset: sets DAT_008032d4[v*5]=1000; param=-1 resets all 5 slots
 00414570,FUN_00414570,ai,C1,mapped,re/analysis/ai_update_d2/0x00414570.md,,,ahead-in-race targeting: finds vehicle ahead on spline within 2.0 progress; angle-gates via acos; writes adjusted target to param_3; returns 1 on hit
@@ -792,9 +789,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004c0ed0,FUN_004c0ed0,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,camera matrix accessor; returns RwCamera+0x50 (LTM start); lazy-updates dirty camera via FUN_004d8350 if flag at *(cam+0xa0)+3 bit0; U-1633
 004cb330,FUN_004cb330,render,C1,new,re/analysis/render_lighting_alt/render_lighting_alt-20260503.md,,,"texture transform matrix cache; change-checks 0x40b-byte block at DAT_007d4158[state]; calls SetTransform(device,state,matrix) (vtable 0xb0); special case state=0x100 sets DAT_007d4154; U-1634"
 005ade60,FUN_005ade60,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ade60.md,,,circular-list index-search: fwd-scan param_1+4 compare node+8==param_2; returns 0-based idx or -1; S-0980; D-2860
-005aeca0,FUN_005aeca0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aeca0.md,,,endian-swap field packer: 1/2/4-byte dispatch bswap16/bswap32 into *param_1 advances ptr; S-0981; D-2861
-005ae080,FUN_005ae080,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae080.md,,,sub-struct A pool-return: if *param_1!=NULL and bit0(param_1[2]) → FUN_005ae920(DAT_007dda28); clears bit0; S-0982; D-2862
-005ae050,FUN_005ae050,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae050.md,,,sub-struct B heap-free: if *(param_1+4)!=NULL and bit1(*(param_1+8)) → FUN_004522d0; clears bit1; S-0983; D-2863
+005aeca0,FUN_005aeca0,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005aeca0.md,,,endian-swap field packer: 1/2/4-byte dispatch bswap16/bswap32 into *param_1 advances ptr; S-0981; D-2861
+005ae080,FUN_005ae080,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae080.md,,,sub-struct A pool-return: if *param_1!=NULL and bit0(param_1[2]) → FUN_005ae920(DAT_007dda28); clears bit0; S-0982; D-2862
+005ae050,FUN_005ae050,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae050.md,,,sub-struct B heap-free: if *(param_1+4)!=NULL and bit1(*(param_1+8)) → FUN_004522d0; clears bit1; S-0983; D-2863
 005aa060,FUN_005aa060,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aa060.md,,,saves 16B from *param_2; FUN_005aa0c0(param_1 &param_2 LAB_005aa1e0 &local_10 1); stores result in *param_3; S-0984; D-2864; U-1727
 005aa0c0,FUN_005aa0c0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aa0c0.md,,,recursive tree-walk predicate search: NULL→DAT_009146fc root; param_5=1 tests root; param_1[4] child list node=childptr-6; returns first (*param_3)(root node param_4)==1; S-0985; D-2865
 005aaac0,FUN_005aaac0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aaac0.md,,,circular-list walker stop-on-zero: iterates DAT_007dccf0; calls (*param_1)(node-1 param_2); stops on 0; S-0986; D-2866
@@ -811,16 +808,16 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005b3b80,FUN_005b3b80,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3b80.md,,,PCM fmt-conversion pipeline: fast-path direct copy if fmts equal; FUN_005b3760 chain; vtable converters temp-buf mgmt; returns output size; S-0997; D-2877; U-1732 U-1733
 005acd60,FUN_005acd60,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005acd60.md,,,9-entry fmt table scanner at PTR_DAT_00633674; FUN_005adf30 compare; returns match or NULL; U-1734
 005ac9e0,FUN_005ac9e0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ac9e0.md,,,fmt-entry match: channel byte +0xc byte range-check FUN_005adf30 fmt-key flag bit0; returns 0/1; leaf
-005ae0b0,FUN_005ae0b0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae0b0.md,,,3-field zero-init: param_1[2]=param_1[1]=*param_1=0; leaf; 14 bytes
+005ae0b0,FUN_005ae0b0,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae0b0.md,,,3-field zero-init: param_1[2]=param_1[1]=*param_1=0; leaf; 14 bytes
 005a7b00,FUN_005a7b00,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005a7b00.md,,,audio context insert: FUN_005a7a40 already-present check; if not FUN_005addd0(param_1+0xc param_2); returns param_1 on success
-005aea50,FUN_005aea50,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005aea50.md,,,vtable alloc trampoline DAT_007d3ff8+0x114; jumptable not recoverable; U-1735
+005aea50,FUN_005aea50,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005aea50.md,,,vtable alloc trampoline DAT_007d3ff8+0x114; jumptable not recoverable; U-1735
 005b3a00,FUN_005b3a00,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3a00.md,,,streaming size calculator: FUN_005ac5f0 fast-path; else FUN_005b36f0+FUN_005b3760 chain; iterates vtable converters; returns output size; optionally stores context in *param_5
-005ae650,FUN_005ae650,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae650.md,,,pool constructor: 6-param(elem_size count align pre_alloc hdr flags); allocs hdr from DAT_007ddab0 or FUN_005aea00; N bitmap blocks; DAT_007dda80 list; U-1736
-005ae800,FUN_005ae800,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae800.md,,,bitmap pool alloc: scans blocks for free bit; if none FUN_005aea00 new block; marks bit; returns aligned addr
+005ae650,FUN_005ae650,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae650.md,,,pool constructor: 6-param(elem_size count align pre_alloc hdr flags); allocs hdr from DAT_007ddab0 or FUN_005aea00; N bitmap blocks; DAT_007dda80 list; U-1736
+005ae800,FUN_005ae800,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae800.md,,,bitmap pool alloc: scans blocks for free bit; if none FUN_005aea00 new block; marks bit; returns aligned addr
 005b36f0,FUN_005b36f0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b36f0.md,,,fmt-table lookup 51 entries PTR_PTR_00634550: param_2=1→source entry 0→output entry; FUN_005ac9e0 match; returns ptr or 0
 005b3760,FUN_005b3760,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3760.md,,,conversion-chain builder LRU cache: 51 converters PTR_PTR_00634550; 5-entry cache DAT_007ddb30; recursive BFS; DAT_007ddcac idx; U-1737 U-1738
 005addd0,FUN_005addd0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005addd0.md,,,DLL insert: FUN_005ae800(DAT_009146c0 0x30804); node[2]=param_2; inserts at head of *param_1; counterpart to FUN_005ade10
-005ae780,FUN_005ae780,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005ae780.md,,,pool destructor: drains block list param_1+0x10 via FUN_004522d0; heap-frees pool hdr or DAT_007ddab0 pool via FUN_005ae920
+005ae780,FUN_005ae780,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae780.md,,,pool destructor: drains block list param_1+0x10 via FUN_004522d0; heap-frees pool hdr or DAT_007ddab0 pool via FUN_005ae920
 005aa1e0,FUN_005aa1e0,audio,C0,stub,re/analysis/audio_rws_loader_d3/005aa1e0.md,,,inline callback passed from FUN_005aa060; no Ghidra function body; S-1720; D-5080
 0040ab40,FUN_0040ab40,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ab40.md,,,state-machine dispatcher on DAT_008a9584; 4 inner switch vars; calls FUN_00409970/409930/42c1a0/45b350; S-1600 S-1601 S-1602; U-1607
 0040ac80,FUN_0040ac80,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ac80.md,,,second dispatcher on same 6-var state cluster (0x008a9584..9598); non-contiguous body; calls FUN_0042c1a0; U-1608
@@ -840,7 +837,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0045c480,FUN_0045c480,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045c480.md,,,zero-init: 11 scatter globals + 0x24-dword loop at 0x0088f5e0 + _DAT_008aa2ec; overlapping syms; U-1620
 0045d3a0,FUN_0045d3a0,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045d3a0.md,,,gated by FUN_0042f6a0!=2; calls FUN_0045c810+d330+loop-d1e0+004657b0; stores FUN_0040e350→DAT_0088fbc0; S-1606..S-1609
 0045d7a0,FUN_0045d7a0,util,C1,mapped,re/analysis/timer_d2_cont1/0x0045d7a0.md,,,701b; copies 16-uint block via FUN_00467210; position lerp/assign to 0x008a968X cluster; cross-product writes to iVar6 obj offsets; S-1610..S-1612; U-1621 U-1622
-004c2d90,FUN_004c2d90,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2d90.md,,,plugin-registry wrapper for DAT_00617fe0; delegates to FUN_004d7de0; S-0200
+004c2d90,FUN_004c2d90,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2d90.md,,,"RwEngineRegisterPlugin shim: FUN_004d7de0(&DAT_00617fe0,size,id,ctor,dtor,0); 4 args forwarded; copy slot hard-coded 0; 17 callers; S-0200"
 004e7d40,FUN_004e7d40,render,C1,mapped,re/analysis/rw_engine_init_d3/004e7d40.md,,,plugin-registry wrapper for DAT_00618664; delegates to FUN_004d7de0; S-0201
 004a42c5,FUN_004a42c5,render,C1,mapped,re/analysis/rw_engine_init_d3/004a42c5.md,,,vsprintf(buf fmt va_list) via stack-FILE+FUN_004a504f; S-0260 S-0820
 004a2b60,FUN_004a2b60,render,C1,mapped,re/analysis/rw_engine_init_d3/004a2b60.md,,,sprintf(buf fmt ...) variadic via stack-FILE+FUN_004a504f; caller va_list
@@ -849,16 +846,16 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00498c00,FUN_00498c00,render,C1,mapped,re/analysis/rw_engine_init_d3/00498c00.md,,,D3D subsystem+mode enumeration init; allocs 3 parallel arrays (0x50-byte subsys-info 4-byte mode-counts 0x18-byte mode-structs); restores state; S-0205 S-0821
 00498e40,FUN_00498e40,render,C1,mapped,re/analysis/rw_engine_init_d3/00498e40.md,,,default mode finder: first mode >=640x480 with non-zero flags; returns index; S-0206 S-0823
 00498ea0,FUN_00498ea0,render,C1,mapped,re/analysis/rw_engine_init_d3/00498ea0.md,,,snapshot renderer selection to globals; saves subsystem+mode; vtable+0xCC dispatch; writes width/height/depth/fullscreen; S-0207 S-0824
-004c2e70,FUN_004c2e70,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e70.md,,,SetSubSystem wrapper: FUN_004c2c90 cmd 0x10; S-0208 S-0825
+004c2e70,FUN_004c2e70,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2e70.md,,,"SetSubSystem wrapper: FUN_004c2c90 cmd 0x10; returns bool; idx-0 forces success via dispatcher fallback; 3 callers; S-0208 S-0825"
 004cfa00,FUN_004cfa00,render,C1,mapped,re/analysis/rw_engine_init_d3/004cfa00.md,,,RW/D3D pixel-format cap table init; FUN_004c7690 plugin reg (ID 0x40c); zeroes 0x200B@0x911b00; fills 0x911b50..0x911cd5 with RW raster format entries; U-1669; S-0215
 004c7690,FUN_004c7690,render,C1,mapped,re/analysis/rw_engine_init_d3/004c7690.md,,,plugin-registry wrapper for DAT_00618180; delegates to FUN_004d7de0; S-0216
 004d7de0,FUN_004d7de0,render,C1,mapped,re/analysis/rw_engine_init_d3/004d7de0.md,,,RwPluginRegistryAddPlugin core; linked-list node alloc+append; DAT_007d6c50..58; U-1668
-004c2d70,FUN_004c2d70,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2d70.md,,,getter DAT_007d3ff4 (RW plugin state guard)
-004c2de0,FUN_004c2de0,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2de0.md,,,GetNumSubSystems: FUN_004c2c90 cmd 0xd
-004c2e10,FUN_004c2e10,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e10.md,,,GetSubSystemInfo: FUN_004c2c90 cmd 0xe; fills 0x50-byte struct
-004c2e40,FUN_004c2e40,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2e40.md,,,GetCurrentSubSystem: FUN_004c2c90 cmd 0xf; returns 0xffffffff on fail
-004c2ea0,FUN_004c2ea0,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2ea0.md,,,GetNumVideoModes: FUN_004c2c90 cmd 5; returns 0xffffffff on fail
-004c2f30,FUN_004c2f30,render,C1,mapped,re/analysis/rw_engine_init_d3/004c2f30.md,,,UseVideoMode: FUN_004c2c90 cmd 7; selects mode by index
+004c2d70,FUN_004c2d70,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2d70.md,,,"leaf getter: returns DAT_007d3ff4 (RW plugin-registry frozen gate); 5 bytes; sole caller FUN_004d7de0 (registerPlugin gate)"
+004c2de0,FUN_004c2de0,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2de0.md,,,"GetNumSubSystems wrapper: FUN_004c2c90 cmd 0x0d; local_4 pre-init=1 (dispatcher fallback); sole caller FUN_00498c00"
+004c2e10,FUN_004c2e10,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2e10.md,,,"GetSubSystemInfo wrapper: FUN_004c2c90 cmd 0x0e; returns param_1 on success / 0 on fail; idx==0 triggers dispatcher error callback; sole caller FUN_00498c00"
+004c2e40,FUN_004c2e40,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2e40.md,,,"GetCurrentSubSystem wrapper: FUN_004c2c90 cmd 0x0f; returns local_4 / 0xffffffff on fail; dispatcher writes 0 fallback; sole caller FUN_00498c00"
+004c2ea0,FUN_004c2ea0,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2ea0.md,,,"GetNumVideoModes wrapper: FUN_004c2c90 cmd 0x05; returns local_4 / 0xffffffff on fail; no dispatcher fallback; sole caller FUN_00498c00"
+004c2f30,FUN_004c2f30,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2f30.md,,,"UseVideoMode wrapper: FUN_004c2c90 cmd 0x07; returns bool; no dispatcher fallback; 2 callers (FUN_00498c00, FUN_00499400)"
 004492b0,SkyDomeRender,render,C1,stub,re/analysis/sky_weather/SESSION_MMMM.md,,,SKY_FN; 0x004492b0-0x0044942a; positions sky clumps at camera via FUN_004491e0; disables z-write/fog; RpClumpRender([ESI+0x100f0]); unanalyzed in Ghidra needs function_create; S-1760; U-1767
 004491e0,SkyDomeUpdatePos,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,4-slot loop over param_1+0x100f0 sky clumps; calls FUN_004c15c0 (frame reset) + FUN_004c1520 (scale 180.0=0x43340000) + FUN_004c1340 (set pos to camera)
 0047ab30,SetupFog_Handler,render,C1,mapped,re/analysis/sky_weather/SESSION_MMMM.md,,,COURSE.LUA Setup_Fog handler; 5 params; writes fog RGB to DAT_006bf1cc+0x1e8/1e9/1ea; near/far floats to +0x1ec/1f0
@@ -999,10 +996,10 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004e6f80,FUN_004e6f80,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6f80.md,,,DLL insert: node at param_2+0x40/+0x44 inserted after param_1+8; back-ref param_1→param_2+0x3c
 004e6fe0,FUN_004e6fe0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6fe0.md,,,DLL unlink+zero node at (DAT_007d7230+param_2); return param_1; same as FUN_004e6d00 but no FUN_004e4d90 tail call
 005551d0,FontCtx_Alloc,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,Alloc font ctx from 0x30199 pool; ctx+0x138=&LAB_00554940; ctx+0x24..0x123=0xFFFF ASCII advance sentinels; ctx+0x134=glyph buf; D-4362 resolved
-00552d10,FontMatrix_Push,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,Save/copy font ctx matrix to next stack slot; max 31 levels; D-4363 resolved; S-2126
-00552df0,FontCtx_SetTranslation,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RwMatrixTranslate(cur_ctx, {x,y,0}, preconcat=1); clears DAT_00912bd8; D-4363 resolved"
-00552da0,FontCtx_SetScale,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RwMatrixScale(cur_ctx, {sx,sy,1.0f}, preconcat=1); clears DAT_00912bd8; D-4363 resolved"
-00552e40,FontCtx_FlushMatrix,hud,C1,stub,re/analysis/font_text_d3/font_text_d3-20260506.md,,,Dirty-gated matrix compose; returns &DAT_00912b98; U-2132 U-2134; S-2124 S-2125 S-2126; D-4363 resolved
+00552d10,FontMatrix_Push,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552d10.md,,,C1->C2 hud_promote_c2_b; stack inc+lazy alloc+64-byte ctx copy; max 31 levels; returns bool
+00552df0,FontCtx_SetTranslation,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552df0.md,,,C1->C2 hud_promote_c2_b; RwMatrixTranslate(ctx,{x,y,0},preconcat=1); zeroes 00912bd8+bec
+00552da0,FontCtx_SetScale,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552da0.md,,,C1->C2 hud_promote_c2_b; RwMatrixScale(ctx,{sx,sy,1.0f},preconcat=1); zeroes 00912bd8+bec
+00552e40,FontCtx_FlushMatrix,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552e40.md,,,C1->C2 hud_promote_c2_b; dirty-gated compose; caches to 00912b18/b58; composes+view every call; returns &00912b98; U-2132; callers: 00552890 00552920 005572c0
 004c5010,RwMatrixScale,render,C2,mapped,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RW SDK RwMatrixScale(mat, scale, combineOp); modes 0=replace 1=preconcat 2=postconcat; confirmed from decomp"
 004c51a0,RwMatrixTranslate,render,C2,mapped,re/analysis/font_text_d3/font_text_d3-20260506.md,,,"RW SDK RwMatrixTranslate(mat, trans, combineOp); modes 0=replace 1=preconcat 2=postconcat; confirmed from decomp"
 0049dd60,FUN_0049dd60,video,C1,mapped,re/analysis/video_mci_d3/0x0049dd60.md,video_mci_d3-20260506-0512,,247b __thiscall ctor-base; sets vtable[0]=0x5d0dc0 +0x0c=0x5d0d84 +0x10=0x5cf9d0; calls FUN_004a0ef0 then 3x FUN_004a1160 on offsets 0x54/0x58/0x5c; 3x InitializeCriticalSection; SetEvent on this->0x5c; RET 0x10 (4 stack args but only 3 used); S-2000 S-2001 U-2007; resolves D-4060 S-1380
@@ -1142,7 +1139,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004709a0,VehicleCollisionBroadPhase,vehicle,C2,mapped,re/analysis/vehicle_dynamics/004709a0.md,vehicle_dynamics-20260506-expand,,VehicleCollisionBroadPhase outer loop; 704b; 16 vehicles; 2 substeps; calls 0046e9e0+0046ef70+00469df0; slot stride 0xD04; contact buf at +0x24A; position +0x256; S-2620 S-2621 S-2622 D-7780 D-7781 D-7782; U-2627 U-2628; C2 plate: re/analysis/vehicle_promote_c2/004709a0.md
 0046ef70,FUN_0046ef70,vehicle,C2,mapped,re/analysis/vehicle_dynamics/0046ef70.md,vehicle_dynamics-20260506-expand,,wheel contact spring/damper resolver; 1871b; implicit EDI=vehicle struct; 24-entry contact iter stride 0x40b; writes angular vel +0x144 linear vel +0x9B0 contact flag +0xB20; resolves D-5141; U-2629 U-2630 U-2631; S-2623; C2 plate: re/analysis/vehicle_promote_c2/0046ef70.md
 004c3b90,FastInvSqrt,util,C4,verified,mashedmod/src/mashed_re/Math/RwSqrt.cpp,main_menu_idle_10s_2026-05-11,log/diff_fast_invsqrt.csv;log/verify_hook_install_invsqrt.txt;log/observe_hooks_at_menu.txt,"RW3 fast inv-sqrt LUT primitive; bit_cast<float>(LUT_root_invsqrt[idx]+(~biased>>1)&0x3fc00000) per asm 0x4c3bcb..0x4c3be6 (Ghidra pseudocode misleading); LUT root at +4 inside RW globals (vs +0 for sqrt); path1 A/B 18/18 bit-identical; path2 hook-installer opcode/rel32/interceptor all PASS; canonical-scenario 2026-05-11: hook installed (Frida byte-verified E9+rel32 0x6cc8dbab) during 10s main-menu observation with ~9,000 natural invocations, no crash, no rollback; subsystem render->util; analysis re/analysis/vehicle_dynamics/004c3b90.md"
-00467300,FUN_00467300,vehicle,C1,new,re/analysis/vehicle_dynamics/00467300.md,vehicle_dynamics-20260506-expand,,"collision win trigger; 73b; guard: player+has-contact; FUN_00413c70(i,3,0) x4; DAT_007f0fd4=vehicle DAT_007f0fdc=6000; U-2632; S-2624 D-7784"
+00467300,VehicleCollisionWinTrigger,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00467300.md,vehicle_dynamics-20260506-expand,,"collision win trigger; 73b; guard: player+has-contact; FUN_00413c70(i,3,0) x4; DAT_007f0fd4=vehicle DAT_007f0fdc=6000; U-2632; S-2624 D-7784"
 004b3c60,FUN_004b3c60,render,C1,mapped,re/analysis/track_loader_d4/0x004b3c60.md,,,"stream reader 3-arg; FUN_004cc230(2,1,p1); chunk 0xb via FUN_004cc5e0; FUN_004e99b0; FUN_004cc160 close; S-2480 S-2481 S-2482 S-2483 U-2487 U-2488; D-5740 track_loader_d4-20260506-2007"
 00558df0,FUN_00558df0,render,C1,mapped,re/analysis/track_loader_d4/0x00558df0.md,,,577b UVAnim chunk loader; chunk ID 1; DAT_007d3ff8 alloc; link+iter loop; S-2484..S-2494 U-2489 U-2490; D-5741 track_loader_d4-20260506-2007
 004b3cc0,FUN_004b3cc0,render,C1,mapped,re/analysis/track_loader_d4/0x004b3cc0.md,,,81b spline stream reader; chunk ID 0xc; processor FUN_00545260; S-2495 U-2491; D-5742 track_loader_d4-20260506-2007
@@ -1163,13 +1160,13 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00478cb0,FUN_00478cb0,physics,C1,new,re/analysis/physics_collision_d2/00478cb0.md,,,BSP struct A zeroing: dword-stride loop zeroes 0x2ae0 (10976) bytes at param_1; loop count 0xab8=2744; leaf; no callees; physics_collision_d2-20260507-0106
 004715a0,FUN_004715a0,physics,C1,new,re/analysis/physics_collision_d2/004715a0.md,,,Physics scenario BSP linker: 8-scenario outer loop stride 0x2510; 3 phases: prim vol IDs+handles; sub-obj prim handles; entry flag init; FUN_0047ce40 vol-ID→handle; U-2650 U-2651; D-7843 physics_collision_d2-20260507-0106; [CONFLICT: existing render row at track_loader_d2/004715a0.md labels same fn as AI pathfinding graph rebuild — same data structures observed]
 0046ddb0,VehicleWheelForceIntegrator,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046ddb0.md,,,U-2687 U-3563; wheel drive torque + steer angle + spring forces; EDI=vehicle ptr; param_1=dt_ms; C2 plate: re/analysis/vehicle_promote_c2/0046ddb0.md
-00467650,VehicleWheelDrivetrainUpdate,vehicle,C1,new,re/analysis/vehicle_update_d3/00467650.md,,,U-2688; gear CVT speed caps + wheel-contact friction + boost injection; ESI=vehicle ptr
-00468980,VehicleAeroStabilizer,vehicle,C1,new,re/analysis/vehicle_update_d3/00468980.md,,,U-2689; airborne pitch stabilization; zeros angular vel when just-landed
-004809e0,VehicleRespawnTeleport,vehicle,C1,new,re/analysis/vehicle_update_d3/004809e0.md,,,U-2690; teleports vehicle to track respawn node; clears respawn flag; timer=600
+00467650,VehicleWheelDrivetrainUpdate,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00467650.md,,,U-2688; gear CVT speed caps + wheel-contact friction + boost injection; ESI=vehicle ptr
+00468980,VehicleAeroStabilizer,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00468980.md,,,U-2689; airborne pitch stabilization; zeros angular vel when just-landed
+004809e0,VehicleRespawnTeleport,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/004809e0.md,,,U-2690; teleports vehicle to track respawn node; clears respawn flag; timer=600
 0046f6c0,VehicleWheelContactSolver,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046f6c0.md,,,U-2691; classifies 4-wheel contact states 0/1/2; position+orientation correction; clears S-2620; C2 plate: re/analysis/vehicle_promote_c2/0046f6c0.md
 0046dc20,VehicleOOBDebugDraw,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046dc20.md,,,U-2692; emits red debug marker type-6 for OOB vehicles in race modes only; C2 plate: re/analysis/vehicle_promote_c2/0046dc20.md
-00467350,VehicleSlipTimerTick,vehicle,C1,new,re/analysis/vehicle_update_d3/00467350.md,,,U-2693; decrements 6 per-vehicle slip cooldown timers; emits alignment-debug glyph type-7
-0047eb30,VehiclePhysicsWorldStep,vehicle,C1,new,re/analysis/vehicle_update_d3/0047eb30.md,,,U-2694; RWP37 physics world step + per-vehicle RW frame pos/orient sync
+00467350,VehicleSlipTimerTick,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00467350.md,,,U-2693; decrements 6 per-vehicle slip cooldown timers; emits alignment-debug glyph type-7
+0047eb30,VehiclePhysicsWorldStep,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/0047eb30.md,,,U-2694; RWP37 physics world step + per-vehicle RW frame pos/orient sync
 004c5890,FUN_004c5890,render,C2,new,re/analysis/texture_loader_d3/0x004c5890.md,,,RwTexDictionaryCreate: alloc type-hint 0x30016; *result=6 (rwTEXDICTIONARY); links into global TXD list at DAT_007d4054; init circular sentinel at +0x08; notify event DAT_00618150
 004c5bc0,FUN_004c5bc0,render,C2,new,re/analysis/texture_loader_d3/0x004c5bc0.md,,,RwTexDictionaryAddTexture: unlinks texture from any prev dict list then inserts into dict texturesInDict (RwLLLink at texture+0x08); owner back-link at texture+0x04
 004c77c0,FUN_004c77c0,render,C2,new,re/analysis/texture_loader_d3/0x004c77c0.md,,,RwRasterCreate: alloc type-hint 0x30407; +0x0c=width +0x10=height +0x14=depth; platform create via vtable+0x58; notify DAT_00618180 on success; dealloc via vtable+0x11c on fail
@@ -1255,8 +1252,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005aab70,FUN_005aab70,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005aab70.md,,,vtable+0x30 walker: dispatch self+child list; returns null if any call null; clears S-1365 D-4005
 005baa60,FUN_005baa60,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005baa60.md,,,3D audio position/orient setter: 3-way bit dispatch; vtable+0x10 with 3 GUID variants; FUN_005bc190; clears S-1366 D-4006; U-3192
 005bc750,FUN_005bc750,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005bc750.md,,,DS buffer format check/reset: vtable[0] GetFormat; vtable+0xc; vtable+0x8 Release; decompiler stack warn; clears S-1367 D-4007; U-3194
-005aeea0,FUN_005aeea0,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005aeea0.md,,,"CreateSemaphoreA(NULL,param_2,param_3,NULL); stores handle at *param_1; branchless return; clears S-1369 D-4009"
-005aef00,FUN_005aef00,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005aef00.md,,,thread descriptor init: [0]=0 [1]=proc [2]=0 [3]=priority [4]=stack_size; clears S-1370 D-4010
+005aeea0,FUN_005aeea0,audio,C2,mapped,re/analysis/audio_dsound_d3/0x005aeea0.md,,,"CreateSemaphoreA(NULL,param_2,param_3,NULL); stores handle at *param_1; branchless return; clears S-1369 D-4009"
+005aef00,FUN_005aef00,audio,C2,mapped,re/analysis/audio_dsound_d3/0x005aef00.md,,,thread descriptor init: [0]=0 [1]=proc [2]=0 [3]=priority [4]=stack_size; clears S-1370 D-4010
 005aef30,FUN_005aef30,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005aef30.md,,,"__beginthread(LAB_005aef70,stack_size,param_1)+SetThreadPriority; clears S-1371 D-4011"
 005bc470,FUN_005bc470,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005bc470.md,,,COM audio device init: CoCreateInstance+QI+vtable+0x20/+0x24; FUN_005bc450 FUN_005be0f0; clears S-1372 D-4012; U-3195 U-3196
 005bc640,FUN_005bc640,audio,C1,mapped,re/analysis/audio_dsound_d3/0x005bc640.md,,,COM audio device teardown: Release x2; vtable+0x40; FUN_005be160 x2; FUN_005bc450; clears S-1373 D-4013
@@ -1282,27 +1279,18 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00422fd0,FUN_00422fd0,vehicle,C1,mapped,re/analysis/vehicle_update/00422fd0.md,,,vehicle reset: FUN_0046c5c0+FUN_0046c790(1)+FUN_004215c0(50f)*2+FUN_0045ba00(2); S-0380..S-0384; U-0396
 0042fe70,FUN_0042fe70,vehicle,C1,mapped,re/analysis/vehicle_update/0042fe70.md,,,getter returns DAT_0067ea80; selects timeout 900k/1800k/3600k for DAT_007f1018; U-0397
 00443080,FUN_00443080,vehicle,C1,mapped,re/analysis/vehicle_update/00443080.md,,,getter returns DAT_00897ffc; when 1 overrides input to neutral AI block; U-0398
-00467350,FUN_00467350,vehicle,C1,mapped,re/analysis/vehicle_update/00467350.md,,,cross-ref to vehicle_update_d3/00467350.md; once-per-tick pre-loop call with substep count
 0046c7b0,FUN_0046c7b0,vehicle,C2,mapped,re/analysis/vehicle_update/0046c7b0.md,,,vehicle slot getter DAT_008815a4+param_1*0x341; returns -1 if >15; C2 plate: re/analysis/vehicle_promote_c2/0046c7b0.md
 0046da80,VehicleTrackInteraction,vehicle,C2,mapped,re/analysis/vehicle_update_d2/0046da80.md,,,wheel-contact + RW scene query + track-waypoint interaction; 349b; U-1413; C2 plate: re/analysis/vehicle_promote_c2/0046da80.md
 0046dc20,VehicleOOBDebugDraw,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046dc20.md,,,dup-row: canonical is row 1189; C2 promoted 2026-05-11
 0046f6c0,VehicleWheelContactSolver,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046f6c0.md,,,dup-row: canonical is row 1188; C2 promoted 2026-05-11
 00470670,VehicleControlUpdate,vehicle,C2,mapped,re/analysis/vehicle_update_d2/00470670.md,,,control input → throttle/brake forces; 817b; U-1408 U-3564 U-3565; C2 plate: re/analysis/vehicle_promote_c2/00470670.md
 004709a0,VehicleCollisionBroadPhase,vehicle,C2,mapped,re/analysis/vehicle_dynamics/004709a0.md,,,dup-row: canonical is row 1161; C2 promoted 2026-05-11
-0047eb30,FUN_0047eb30,vehicle,C1,mapped,re/analysis/vehicle_update/0047eb30.md,,,cross-ref to vehicle_update_d3/0047eb30.md; once-per-tick post-FUN_00467350 call
-00480720,FUN_00480720,vehicle,C1,mapped,re/analysis/vehicle_update/00480720.md,,,cross-ref to vehicle_update_d2/00480720.md (VehicleSpeedCorrection U-1410)
-004809e0,FUN_004809e0,vehicle,C1,mapped,re/analysis/vehicle_update/004809e0.md,,,cross-ref to vehicle_update_d3/004809e0.md; final-frame per-vehicle step
+00480720,VehicleRespawnPlace,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00480720.md,,,cross-ref to vehicle_update_d2/00480720.md (VehicleSpeedCorrection U-1410)
 00426e10,FUN_00426e10,render,C1,mapped,re/analysis/track_loader/0x00426e10.md,,,TRACK_LOAD_FN: takes track index; builds toastart/tracks/<name>.piz path; opens piz; loads COURSE.LUA LAPDATA.LUA AI LED data; 36 callees (17 deferred D-9520); track_loader
 004053d0,FUN_004053d0,render,C1,mapped,re/analysis/track_loader/0x004053d0.md,,,3-global setter DAT_00639d70/74/78; clears if param_1=0; track_loader
 00409680,FUN_00409680,render,C1,mapped,re/analysis/track_loader/0x00409680.md,,,fills 1152 floats at DAT_0063a5f0 with -1.0f (0xbf800000); line-exceptions reset; track_loader
 00409710,FUN_00409710,render,C1,mapped,re/analysis/track_loader/0x00409710.md,,,opens led.piz; extracts record 0x13269901 into DAT_0063a5f0; returns 0/1; track_loader
 00412050,FUN_00412050,render,C1,mapped,re/analysis/track_loader/0x00412050.md,,,6-iter loop over DAT_0063bb60 (stride 44); calls FUN_004b3f90×2 FUN_0047fad0×2 FUN_0047cdc0×2 per iter; track_loader
-0041e870,FUN_0041e870,render,C1,mapped,re/analysis/track_loader/0x0041e870.md,,,searches 72-byte record array at 0x005f33f8 for int==param_1 at +0x10; stores last match in DAT_0063d7e4; track_loader
-0041e8b0,FUN_0041e8b0,render,C1,mapped,re/analysis/track_loader/0x0041e8b0.md,,,vtable dispatch via DAT_0063d7e4+0x14; 8 bytes; indirect jump; track_loader
-0041e970,FUN_0041e970,render,C1,mapped,re/analysis/track_loader/0x0041e970.md,,,vtable dispatch via DAT_0063d7e4+0x44; 8 bytes; indirect jump; track_loader
-0041e980,FUN_0041e980,render,C1,mapped,re/analysis/track_loader/0x0041e980.md,,,searches 72-byte record array at 0x005f33f8 for int==param_1 at +0x10; returns first match ptr or NULL; track_loader
-0041e9d0,FUN_0041e9d0,render,C1,mapped,re/analysis/track_loader/0x0041e9d0.md,,,getter: returns *(DAT_0063d7e4+0x14); 8 bytes; track_loader
-0041ea90,FUN_0041ea90,render,C1,mapped,re/analysis/track_loader/0x0041ea90.md,,,getter: returns *(DAT_0063d7e4+0x44); 8 bytes; track_loader
 004235b0,FUN_004235b0,render,C1,mapped,re/analysis/track_loader/0x004235b0.md,,,opens ai.piz; extracts record 0x13269902 into DAT_007f1a9c; returns 0/1; track_loader
 00423630,FUN_00423630,render,C1,mapped,re/analysis/track_loader/0x00423630.md,,,fills 2×32KB at DAT_007f1a9c and DAT_007f9a9c with 0xffffffff; zeroes DAT_007f1a54/64; track_loader
 00425ab0,FUN_00425ab0,render,C1,mapped,re/analysis/track_loader/0x00425ab0.md,,,zeros 8 pairs of dwords at stride 0x4c starting at DAT_008992a0; track_loader
@@ -1401,10 +1389,10 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004e8e90,FUN_004e8e90,gameplay,C1,new,re/analysis/powerups_d4/0x004e8e90.md,,,AddRef: *(short*)(param_1+0xe) += 1; 8 bytes; S-1927 cleared
 004e8ea0,FUN_004e8ea0,gameplay,C1,new,re/analysis/powerups_d4/0x004e8ea0.md,,,Release/decref: if refcount<=1 full destructor (FUN_004d8bd0+0x58; FUN_004f0c10+0x54; FUN_004d8060 from 6186d0; FUN_004f3b60+0x20; vtable+0x10c self); else decrement; S-1928 cleared; S-3523 S-3524; U-3534 U-3535
 004d8bd0,FUN_004d8bd0,gameplay,C1,new,re/analysis/powerups_d4/0x004d8bd0.md,,,particle descriptor destructor: cleanup callback+0x14; null back-ref+0x10; DLL unlink; global counter -= +0x08; FUN_004e2ff0 free or vtable+0x10c; S-1929 cleared; S-3525; U-3536 U-3537
-00469aa0,FUN_00469aa0,vehicle,C1,new,re/analysis/vehicle_dynamics_d2/00469aa0.md,vehicle_dynamics_d2-20260508,,shift+clear 3 contact-manifold history slots (stride 0x90 ints from 0x4CC); RW dispatch x2 (FUN_004c3d90); FUN_00468d80+FUN_004694e0 (S-3440 S-3441); scans 18 contact slots at 0x4AC; enqueues event type=3 to ring DAT_007e9de4; writes active-count to [0x27b]; returns contact-found flag; U-3447
-00469df0,FUN_00469df0,vehicle,C1,new,re/analysis/vehicle_dynamics_d2/00469df0.md,vehicle_dynamics_d2-20260508,,__thiscall; vehicle-vehicle convex-hull contact+impulse: 2-pass 4-halfplane SAT; centroid accumulation; COR impulse via FUN_004c3ac0 magnitudes; applies to [0x26c] linear velocity; sets [0x2BC]=0x1e0 bounce timer; angular impulse via FUN_004c4dc0 (S-3442); enqueues event type=4; returns param_3==0; U-3448
-00468d80,FUN_00468d80,vehicle,C0,stub,,,,no-arg; callee of FUN_00469aa0 (vehicle_dynamics_d2); no analysis; S-3440
-004694e0,FUN_004694e0,vehicle,C0,stub,,,,no-arg; callee of FUN_00469aa0 (vehicle_dynamics_d2); no analysis; S-3441
+00469aa0,VehicleContactScanUpdate,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00469aa0.md,vehicle_dynamics_d2-20260508,,shift+clear 3 contact-manifold history slots (stride 0x90 ints from 0x4CC); RW dispatch x2 (FUN_004c3d90); FUN_00468d80+FUN_004694e0 (S-3440 S-3441); scans 18 contact slots at 0x4AC; enqueues event type=3 to ring DAT_007e9de4; writes active-count to [0x27b]; returns contact-found flag; U-3447
+00469df0,VehicleVehicleCollisionImpulse,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00469df0.md,vehicle_dynamics_d2-20260508,,__thiscall; vehicle-vehicle convex-hull contact+impulse: 2-pass 4-halfplane SAT; centroid accumulation; COR impulse via FUN_004c3ac0 magnitudes; applies to [0x26c] linear velocity; sets [0x2BC]=0x1e0 bounce timer; angular impulse via FUN_004c4dc0 (S-3442); enqueues event type=4; returns param_3==0; U-3448
+00468d80,VehicleTerrainContactSolver,vehicle,C2,stub,re/analysis/vehicle_promote_c2_b/00468d80.md,,,no-arg; callee of FUN_00469aa0 (vehicle_dynamics_d2); no analysis; S-3440
+004694e0,VehicleObjectContactSolver,vehicle,C2,stub,re/analysis/vehicle_promote_c2_b/004694e0.md,,,no-arg; callee of FUN_00469aa0 (vehicle_dynamics_d2); no analysis; S-3441
 004c4dc0,FUN_004c4dc0,vehicle,C0,stub,,,,"2-param (contact vec, geometry slot ptr); callee of FUN_00469df0 (vehicle_dynamics_d2); no analysis; S-3442"
 0040ddb0,FUN_0040ddb0,util,C1,new,re/analysis/timer_d3/0x0040ddb0.md,,,calls FUN_00417750+FUN_00426c50(table[DAT_0063ba78])+FUN_00475a60+FUN_0045bf30+thunk_00475ef0+FUN_004046a0; aggregator; U-3467
 00413f90,FUN_00413f90,util,C1,new,re/analysis/timer_d3/0x00413f90.md,,,returns &DAT_005f2b10; trivial address-of getter; U-3468
@@ -1533,7 +1521,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00468d80,FUN_00468d80,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00468d80.md,vehicle_dynamics_d3-20260512,,VehicleTerrainContactSolver; 1876b; outer DAT_0088e60c terrain entries x 18 slots; plane-normal depth; FUN_004c4d20 90deg rotation; event type=6 ring DAT_007e9de4; FUN_00468b40 history lookup; U-3573 U-3574 U-3577; clears S-3440
 004694e0,FUN_004694e0,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/004694e0.md,vehicle_dynamics_d3-20260512,,VehicleObjectContactSolver; 1467b; dynamic object list DAT_006e87b8/DAT_006fa0f8; vehicle-ID match entry[0xE]; modifies param_1[0x26c..0x26e] linear vel; FUN_00485420 object pos; U-3575; clears S-3441
 004c4dc0,RwMatrixInvert,vehicle,C1,new,re/analysis/render_pipeline_d3/004c4dc0.md,vehicle_dynamics_d3-20260512,,dup-row: canonical is tracker-fix row above; clears S-3442 S-2125
-00468b40,FUN_00468b40,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00468b40.md,vehicle_dynamics_d3-20260512,,VehicleContactHistoryLookup; 52b; scans 32 entries at vehicle+0xBFC; active flags at +0x80; compares entry[0x34] vs slot ID; returns 0/1
+00468b40,VehicleContactHistoryLookup,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00468b40.md,vehicle_dynamics_d3-20260512,,VehicleContactHistoryLookup; 52b; scans 32 entries at vehicle+0xBFC; active flags at +0x80; compares entry[0x34] vs slot ID; returns 0/1
 00485360,FUN_00485360,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00485360.md,vehicle_dynamics_d3-20260512,,DynamicObjectList_GetCount; 5b leaf; returns DAT_006fa0f8; U-3575
 00485370,FUN_00485370,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00485370.md,vehicle_dynamics_d3-20260512,,DynamicObjectList_GetBase; 5b leaf; returns &DAT_006e87b8; U-3575
 00485420,FUN_00485420,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00485420.md,vehicle_dynamics_d3-20260512,,PhysicsObject_GetWorldPosition; 58b; FUN_00485340 validate + FUN_00485380 state + state+0x60 pos ptr; 3-float out; U-3576
@@ -1605,9 +1593,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00413a00,FUN_00413a00,render,C1,new,re/analysis/c0_promotion_render_a/0x00413a00.md,,,sets DAT_008a94a0=0; loop 0..DAT_0063bc58 calling FUN_004128f0(0x3fcccccd approx 1.6f); reset+populate
 00413a40,FUN_00413a40,render,C1,new,re/analysis/c0_promotion_render_a/0x00413a40.md,,,"guards DAT_008a94a0!=0; vtable[0x20/0x24/0x34] render-state sequence; save/restore states 0x14/0xe; draw vtable[0x34](3,&DAT_00828320,count*4,&DAT_0089d4a0,count*6)"
 004189c0,FUN_004189c0,render,C1,new,re/analysis/c0_promotion_render_a/0x004189c0.md,,,FUN_0040e350(); if==6: FUN_0042fe50(); if!=0: FUN_00419530(); 3-level guard chain
-0041e8f0,FUN_0041e8f0,render,C1,mapped,re/analysis/render_frame_d4/0x0041e8f0.md,,,Indirect call via (**(code**)(DAT_0063d7e4+0x24))(); jumptable unresolved; U-3128; render_frame_d4
+0041e8f0,FUN_0041e8f0,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041e8f0.md,,,indirect dispatch *(DAT_0063d7e4+0x24); U-3128; track_node/render_frame_d4
 0041ea10,FUN_0041ea10,render,C2,mapped,re/analysis/render_frame_d4/0x0041ea10.md,,,Pure getter: returns *(DAT_0063d7e4+0x24); render_frame_d4
-0041ebb0,FUN_0041ebb0,render,C1,mapped,re/analysis/render_frame_d4/0x0041ebb0.md,,,FUN_00476df0×2 + RW-state-8-off + FUN_004770a0×2 + RW-state-8-on; S-3130; render_frame_d4
+0041ebb0,FUN_0041ebb0,render,C2,mapped,re/analysis/render_promote_c2_track_node/0x0041ebb0.md,,,FUN_00476df0×2 + RW-state-8-off + FUN_004770a0×2 + RW-state-8-on; S-3130; track_node/render_frame_d4
 004219c0,FUN_004219c0,render,C1,mapped,re/analysis/render_frame_d4/0x004219c0.md,,,Copy *DAT_007d3ff8→DAT_006403b0; loop FUN_00421720 4× over 0x208-byte entries; S-3131; render_frame_d4
 00422570,FUN_00422570,render,C1,new,re/analysis/render_c0_promote_a/00422570_FUN_00422570.md,,,depth-3 of PerPlayerViewportRender via 0x0041f8f0; 3-arg call; D-8444; bucket split_screen_d2-cont1
 00422ac0,FUN_00422ac0,render,C2,mapped,re/analysis/c0_promotion_render_a/0x00422ac0.md,,,writes 4 dwords from param_2 to DAT_006412e8+param_1*0xf40 at offsets 0/4/8/12; per-slot 4-word store
@@ -1640,16 +1628,16 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005a7a40,FUN_005a7a40,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005a7a40.md,,,pool-list searcher; calls FUN_005ade60(param_1+0xc,param_2); returns param_1 if found else 0; D-0345; U-0160
 005ade90,FUN_005ade90,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005ade90.md,,,list drain; unlinks all nodes and returns each to free pool DAT_009146c0 via FUN_005ae920; D-0346; U-0160
 005a7ea0,FUN_005a7ea0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005a7ea0.md,,,audio object final dealloc; FUN_005ae030 then flag dispatch: pool DAT_007dca84 / no-free / heap-free; flags at +0x1b; D-0347; U-0160
-005ae0c0,FUN_005ae0c0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005ae0c0.md,,,WAVEFORMATEX-like 16-byte copy/byte-swap; param_3!=NULL triggers FUN_005aeca0 byte-swap path; D-0348; U-0160..U-0160
-005ae010,FUN_005ae010,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005ae010.md,,,links audio sub-struct[0] with device handle; releases old via FUN_005ae080; clears owned-flag bit 0; D-0349; U-0160
+005ae0c0,FUN_005ae0c0,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005ae0c0.md,,,WAVEFORMATEX-like 16-byte copy/byte-swap; param_3!=NULL triggers FUN_005aeca0 byte-swap path; D-0348; U-0160..U-0160
+005ae010,FUN_005ae010,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005ae010.md,,,links audio sub-struct[0] with device handle; releases old via FUN_005ae080; clears owned-flag bit 0; D-0349; U-0160
 005adfe0,FUN_005adfe0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005adfe0.md,,,links audio sub-struct+4 with buffer ptr; releases old via FUN_005ae050; clears owned-flag bit 1 at +8; D-0350; U-0160
 005ac740,FUN_005ac740,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005ac740.md,,,wave_node sub-struct cleanup; frees +0x10 buffer if bit1@+0x18 clear; clears +0x10/+0x14; D-0351; U-0160
 005a7e70,FUN_005a7e70,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005a7e70.md,,,iterates audio pool list DAT_007dca7c; calls FUN_005ade10(node-4,param_1) per node; D-0352; U-0160
-005ae030,FUN_005ae030,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005ae030.md,,,combined sub-struct cleanup; FUN_005ae080 (release handle) + FUN_005ae050 (free buffer); called by FUN_005a7ea0; D-0353
+005ae030,FUN_005ae030,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005ae030.md,,,combined sub-struct cleanup; FUN_005ae080 (release handle) + FUN_005ae050 (free buffer); called by FUN_005a7ea0; D-0353
 005abcb0,FUN_005abcb0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005abcb0.md,,,wave node final dealloc; flags at +0x54: bit0=pool→DAT_007dd634 or per-instance pool via +0xc+0x3c; bit2=no-free; D-0354; U-0160..U-0160
 005ac210,FUN_005ac210,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005ac210.md,,,wave object creator from 0x803 chunk; 803-byte body; parses format/channel/codec via param_5 flags; allocates via FUN_005aea00(sz,0x30806); D-0355; U-0154..U-0156
 005adf30,FUN_005adf30,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005adf30.md,,,16-byte lexicographic memcmp; returns -1/0/1; D-0356
-005aec30,FUN_005aec30,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005aec30.md,,,in-place byte-swap; param_3=2 swap ushorts; param_3=4 bswap uint32; D-0357
+005aec30,FUN_005aec30,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005aec30.md,,,in-place byte-swap; param_3=2 swap ushorts; param_3=4 bswap uint32; D-0357
 005abd30,FUN_005abd30,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005abd30.md,,,PCM chunk feeder; vtable call *(*(param_1+0xc)+0x14); optional FUN_005b3b{30,60,80} format conversion path; D-0358; U-0157..U-0159
 005abf80,FUN_005abf80,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005abf80.md,,,audio drain/flush vtable dispatch *(*(param_1+0xc)+0x1c); polled in loop while non-zero; D-0359; U-0160
 0041cb80,sub_0041cb80,util,C1,mapped,re/analysis/timer_d3_cont1_b/0x0041cb80.md,,,init loop: calls FUN_0040e340/FUN_0040b890 once; iterates 0x0063ce20 stride 0x114 x46 calling FUN_0041c380; caller=FUN_004111c0
@@ -1697,3 +1685,19 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041b510,FUN_0041b510,util,C1,new,re/analysis/timer_d3_cont1_a/0x0041b510.md,timer_d3_cont1_a-20260512,,10-byte leaf setter; DAT_0063cab0=0; D-10317
 0041bf20,FUN_0041bf20,util,C1,new,re/analysis/timer_d3_cont1_a/0x0041bf20.md,timer_d3_cont1_a-20260512,,225b two-record init at DAT_0063cab8 stride 0x16c (range 0x63cd90); FUN_004b6520(rec,0x10) zero-init; four per-slot fix-ups storing 0/1/2/3 indexed by DAT_007f1a18/28/38/48 with DAT_007f1a14/24/34/44 != -1 guards; counter at +0xc bumped; U-3651; S-3680..S-3681; D-10318
 0041c010,FUN_0041c010,util,C1,new,re/analysis/timer_d3_cont1_a/0x0041c010.md,timer_d3_cont1_a-20260512,,116b copies 24 bytes of (0.45,0.33,1.0)/(-0.45,0.33,1.0) to &DAT_005f334c; iterates 2 records at DAT_0063cab8 stride 0x16c calling FUN_0041b770; _DAT_0063cda0=0; U-3652; S-3682; D-10319
+00426030,FUN_00426030,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426030.md,render_promote_c2_track_loader-20260512,,WorldRenderPrePass: FUN_0041e9b0(DAT_00644158)+FUN_0041ea10()→if!=0: FUN_0041e8f0(&DAT_00646e58)+DAT_005f616c=1; 1 caller FUN_00492e90
+00426060,FUN_00426060,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426060.md,render_promote_c2_track_loader-20260512,,trivial getter: returns DAT_0065742c (physics world handle A); 5 bytes; 6 callers
+00426070,FUN_00426070,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426070.md,render_promote_c2_track_loader-20260512,,trivial getter: returns DAT_00656ee8 (physics world handle B); 5 bytes; 5 callers
+004260c0,FUN_004260c0,render,C2,new,re/analysis/render_promote_c2_track_loader/0x004260c0.md,render_promote_c2_track_loader-20260512,,trivial getter: returns DAT_00657490; 5 bytes; 2 callers; U-3653
+004260e0,FUN_004260e0,render,C2,new,re/analysis/render_promote_c2_track_loader/0x004260e0.md,render_promote_c2_track_loader-20260512,,path builder: inline concat ToastArt[sep]tracks[sep]param2[sep]param3+param4 into DAT_008991e0; no callees; 1 caller FUN_00426e10; U-3218
+004262f0,FUN_004262f0,render,C2,new,re/analysis/render_promote_c2_track_loader/0x004262f0.md,render_promote_c2_track_loader-20260512,,record processor: loops DAT_00644370 entries at 0x40-stride DAT_00646c38; FUN_00425bf0+FUN_00425c00+FUN_00425b70+FUN_004952f0; 1 caller FUN_00426e10
+00426640,FUN_00426640,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426640.md,render_promote_c2_track_loader-20260512,,DAT_0066d704 guard; FUN_0041e9b0(param_1); FUN_0041ea70()→if!=0: FUN_0041e950(); 1 caller FUN_00410b30
+00426670,FUN_00426670,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426670.md,render_promote_c2_track_loader-20260512,,WorldRenderDispatch_Begin: DAT_0066d704 guard; DAT_0066d700 select world-A/B; FUN_004e4320(handle,param_1); 2 callers
+004266b0,FUN_004266b0,render,C2,new,re/analysis/render_promote_c2_track_loader/0x004266b0.md,render_promote_c2_track_loader-20260512,,WorldRenderDispatch_End: mirror of 00426670 calling FUN_004e4350; 2 callers
+00426700,FUN_00426700,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426700.md,render_promote_c2_track_loader-20260512,,camera path node iterator: tick→float; loops *(param_2+0xd0) nodes at param_2+0x74 stride 0xc; calls FUN_004756e0 per node; U-3654
+00426780,FUN_00426780,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426780.md,render_promote_c2_track_loader-20260512,,camera array updater: 64-entry loop param_1+0x10110 + 8-entry loop param_1+0x100f0; FUN_00475010 per active entry; U-3654
+00426810,sub_00426810,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426810.md,render_promote_c2_track_loader-20260512,,camera path lerp: reads *(param_2+4) sub-ptr; guard 3 bytes @param_1+0x10600..02; lerps 0x105f8/fc→0x10604/08 by dot-product alpha; writes param_2+0x88; U-3655
+00426ab0,sub_00426ab0,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426ab0.md,render_promote_c2_track_loader-20260512,,CAMERA_FN: per-frame; FUN_004671a0+FUN_0047c160+FUN_0040b090; path arrays FUN_00426780+FUN_00426700; lerp FUN_00426810; anim FUN_00471ec0; 1 caller FUN_0040fc00
+00426cd0,FUN_00426cd0,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426cd0.md,render_promote_c2_track_loader-20260512,,slot reset: writes 0xFFFFFFFF to 6 dwords at DAT_0066d6e4..0x0066d6fb; returns 1; 1 caller FUN_00426e10
+00426e00,FUN_00426e00,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426e00.md,render_promote_c2_track_loader-20260512,,trivial getter: returns DAT_00644368 as float10 (x87 extended); 6 bytes; 1 caller FUN_0041f8f0; U-3656
+00426e10,FUN_00426e10,render,C2,new,re/analysis/render_promote_c2_track_loader/0x00426e10.md,render_promote_c2_track_loader-20260512,,TRACK_LOAD_FN: builds piz path; opens piz; loads COURSE.LUA+LAPDATA.LUA+physics+AI; sets DAT_0066d704=1; 35 callees; 1 caller FUN_0040d020

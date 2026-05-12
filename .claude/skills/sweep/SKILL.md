@@ -9,6 +9,16 @@ The sweep is a single Opus session that drains every "Queued" row in `re/SCRIBE_
 
 **Recommended model:** `claude-opus-4-7` at medium thinking. Reason: last-writer-wins on master; correctness matters more than speed.
 
+## Commit policy (always commit, never ask)
+
+When the user invokes the sweep, **assume no other session is running in parallel**. The sweep owns the working tree for its duration. Every commit step in this skill (claim, per-bucket drain, release) must be executed without asking for confirmation. The default "ask before commit" reflex does not apply here — the sweep protocol is *defined* by its commit sequence, so skipping or deferring a commit breaks the protocol.
+
+Concretely:
+- Never ask "should I commit?" or "want me to commit these changes?" at any point during the sweep.
+- Stage and commit per the steps below as soon as each step's prerequisites are met.
+- If a commit fails for a real reason (hook error, conflict), surface the error verbatim and halt — but do not interpret "do you want me to commit?" as a valid recovery path.
+- The only thing that halts the sweep mid-flight is an MCP failure, an anchor mismatch, a pre-existing `master.WIP-*` flag, or an unresolvable git error. None of those are commit-confirmation prompts.
+
 ## Pre-conditions (check before starting)
 
 1. **No live fanout sessions.** Verify that no `mashed_pool/Mashed_pool*.lock` files exist for slots referenced by Queued rows. If any slot is still locked, halt — the analysis session may still be running.
