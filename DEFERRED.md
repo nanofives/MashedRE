@@ -899,3 +899,7 @@ A row goes into DEFERRED when:
 | D-10375 | 0x005a89c0 FUN_005a89c0 | timer_d3 session cap; 76 unmapped callees exceeded 20-slot U-range | timer_d3-cont2 session | util |
 | D-10540 | 0x00422570 FUN_00422570 | c0_promotion_render_a session cap; function size 889 bytes exceeds 800-byte threshold | c0_promotion_render_a-cont1 session | render |
 | D-10541 | 0x00429e10 FUN_00429e10 | c0_promotion_render_a session cap; function size 1593 bytes exceeds 800-byte threshold | c0_promotion_render_a-cont1 session | render |
+
+| D-10542 | 0x004b6fc0 FUN_004b6fc0 | Lua C API wrapper (arg-count getter); needs input_lua session to establish Lua 5.x C API binding | input_lua session | track |
+| D-10543 | 0x004b70d0 FUN_004b70d0 | Lua C API wrapper (string arg getter); needs input_lua session to establish Lua 5.x C API binding | input_lua session | track |
+| D-10544 | 0x004b7090 FUN_004b7090 | Lua C API wrapper (number arg getter); needs input_lua session to establish Lua 5.x C API binding | input_lua session | track |

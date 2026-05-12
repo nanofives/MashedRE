@@ -1,7 +1,22 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-11  0046c7b0  FUN_0046c7b0  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046c7b0.md; leaf getter; no U filed
+2026-05-11  0046cbb0  FUN_0046cbb0  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046cbb0.md; U-1855 U-1856 U-1857 (pre-filed); leaf getter
+2026-05-11  0046d700  FUN_0046d700  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046d700.md; U-1748 (pre-filed); leaf getter
+2026-05-11  0046da80  VehicleTrackInteraction  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046da80.md; U-1413 filed; FUN_0046c5f0 inline marker added
+2026-05-11  0046dc20  VehicleOOBDebugDraw  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046dc20.md; U-2692 filed; local_40 inline marker added
+2026-05-11  0046ddb0  VehicleWheelForceIntegrator  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046ddb0.md; U-2687 U-3563 filed; inline markers added
+2026-05-11  0046e9e0  FUN_0046e9e0  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046e9e0.md; U-1747 U-1748 (pre-filed)
+2026-05-11  0046ef70  FUN_0046ef70  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046ef70.md; U-2629 U-2630 U-2631 (pre-filed); S-2623
+2026-05-11  0046f6c0  VehicleWheelContactSolver  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/0046f6c0.md; U-2691 filed; S-2625 S-2633 S-2634
+2026-05-11  004709a0  VehicleCollisionBroadPhase  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/004709a0.md; U-2627 U-2628 (pre-filed); S-2620 S-2621 S-2622; dup-rows cleaned
+2026-05-11  00470670  VehicleControlUpdate  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/00470670.md; U-1408 U-3564 U-3565 filed; inline markers added
+2026-05-11  00470c70  FUN_00470c70  C1->C2  vehicle_promote_c2-20260511; re/analysis/vehicle_promote_c2/00470c70.md; U-0387 U-0388 U-0389 U-0390 (pre-filed)
 2026-05-06  004299d0  TimeRecord::WriteTrackBest  C0->C2  Ghidra decomp; leaderboard-20260506-JJJJJ; re/analysis/leaderboard/0x004299d0.md; U-2227 filed
+2026-05-12  D-7840..D-7843  FUN_0047b860/b8d0/b880/0047ce40  REPAIR+VOID  rows restored then immediately removed: all 4 RVAs already in hooks.csv (input×3, render×1); no deferred work existed
+2026-05-12  0047ce40  FUN_0047ce40  render->physics  subsystem corrected; DAT_006c6b90[0..199] linear scan is physics body slot lookup; track_loader_d3/0047ce40.md unchanged
+2026-05-12  004b6520  FUN_004b6520  duplicate-removed  vehicle row (powerups_d2) dropped; input row (input_lua_d2) kept as authoritative; both were C1 mapped
 2026-05-06  0042d5a0  FUN_0042d5a0  stub->C1  Ghidra decomp; credits_screen-NNNNN; re/analysis/credits_screen/0x0042d5a0.md; U-2177 U-2178 U-2179 filed; S-0449 cleared
 2026-05-06  00472f40  FUN_00472f40  stub->C1  Ghidra decomp; credits_screen-NNNNN; re/analysis/credits_screen/0x00472f40.md; S-0450 cleared
 2026-05-06  004730b0  FUN_004730b0  stub->C1  Ghidra decomp; credits_screen-NNNNN; re/analysis/credits_screen/0x004730b0.md; S-0451 cleared
@@ -715,3 +730,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-11  sweep-20260511-1822  scribe-release  bucket=audio_dsound_d5  writes=2  errors=0
 
 2026-05-11  sweep-20260511-1822  scribe-release-sweep  buckets=10  errors=0  (HOLD=1: replay_record-20260503; library-rename check via pre-comment performed on buckets 1-3 (39 RVAs, 0 hits); skipped for buckets 4-10 as deliberate optimization given consistent null pattern + no library candidates in .md notes)
+
+2026-05-11  track_collision_geometry_s14  bucket=track_collision_geometry  rvas=0x00547bf0,0x00547450,0x0047a1b0,0x0047a280,0x0047a320,0x0047a3a0,0x0047a4a0,0x0047a540,0x0047a580,0x0047a5b0,0x0047a5e0,0x0047a610,0x0047a6b0,0x0047a6f0,0x0047a720,0x0047a790,0x0047a880,0x0047a8b0,0x0047aa20,0x0047aa50  S-3571..S-3573  U-3568..U-3572  D-10542..D-10544  S-1964-cleared  S-1965-cleared  pool=Mashed_pool13  struct=re/analysis/structs/bsp_struct_a.md  notes=AABB-vs-tri-SAT+sphere-vs-tri+18-COURSE.LUA-Lua-C-filename-handlers; BSP-struct-A slot-map first-pass

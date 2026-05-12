@@ -1,0 +1,304 @@
+================================================================================
+BATCH D — AI breadth + dependency-cluster drains
+================================================================================
+
+Six parallel sessions. Pool slots pre-assigned. Run after Batch C's scribe
+sweep has drained.
+
+This batch closes the oldest open dependency cluster (rw_engine_init cont1
+backlog from 2026-05-02, ~44 deferred entries) and extends AI from 58 rows.
+
+Sessions 20 and 21 are INVESTIGATIONS first — AI entry points are not yet
+identified, so the sessions discover entry points before sweeping.
+
+All sessions follow re/SESSION_RULES.md.
+
+
+
+================================================================================
+Session 19 — ai_update_d5  (FIRST-PASS C0/C1 sweep)
+================================================================================
+
+Pool slot:   Mashed_pool2 (rotated from Batch A)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/ai_update_d5/
+
+# Mission
+Extend AI coverage from the 5 ai_update_d4 plates. Focus on the per-tick AI
+update loop and its depth-2 callees.
+
+# Inputs
+- ai_update_d4 plates at RVAs 0x004c3b30, 0x00416230, 0x004c3bf0, 0x004c3c60,
+  0x004b55a0.
+- function_callees depth-1 from each. Subtract hooks.csv.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool2.
+2. Build candidate set from d4 callees minus hooks.csv. Cap 20.
+3. Per-RVA C1 plates per re/SESSION_RULES.md format.
+4. Identify the per-AI-driver state struct (the equivalent of vehicle state
+   but with AI-specific fields like target waypoint, current strategy,
+   panic level). Cross-link to vehicle struct if shared.
+5. File stubs/uncertainties/deferrals.
+6. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 C1 hooks.csv rows (subsystem=ai)
+- Possibly re/analysis/structs/ai_driver_state.md
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- The callee tree is shallow (<5 unmapped callees total) — signal that AI
+  surface is wider than depth here. Consider re-prioritizing toward path
+  following (session 20) instead of pushing depth.
+
+
+
+================================================================================
+Session 20 — ai_path_following  (INVESTIGATION → first-pass)
+================================================================================
+
+Pool slot:   Mashed_pool3 (rotated from Batch A)
+Model:       Sonnet 4.6 — hard cap 20 RVAs (sweep phase only)
+Bucket dir:  re/analysis/ai_path_following/
+
+# Mission
+Identify and map the AI waypoint / path-following code. Likely lives near
+the AI.piz consumers (the .AI script format files) and reads track-side
+checkpoint data (from session 13).
+
+# Decision protocol — entry-point discovery FIRST
+1. Read prior_art/MashedFileExtractor's AI script format hints.
+2. search_defined_strings for "path", "waypoint", ".AI", "AI_", "node",
+   "follow".
+3. Cross-reference: look for AI functions that READ from track-state
+   globals (the DAT_ addresses session 13 / 14 identified for track).
+4. Look at the ai_update_d4/d5 plates' callees — which ones read coords
+   and write to a "next target" field of the AI driver state?
+5. Candidate entry points: the function(s) that compute "where this AI
+   driver wants to go next."
+6. If you find ≥1 candidate → PROCEED to sweep.
+7. If nothing surfaces → file as DEFERRED with re-pickup condition "after
+   AI driver state struct is fully documented in session 19."
+
+# Sweep path
+8. Startup with $SLOT=Mashed_pool3.
+9. From each candidate entry point: callees_depth1. Build subset. Cap 20.
+10. Per-RVA C1 plates.
+11. Document the path-following state (per-AI: current waypoint index,
+    next waypoint pointer, distance-along-path, side-of-path).
+12. Shutdown + scribe-queue append.
+
+# Output
+- EITHER: closure with DEFERRED row + REPORT.md explaining what was searched
+- OR: ≤20 per-RVA .md files + ≤20 C1 hooks.csv rows + Queued row
+
+# STOP-AND-ASK if
+- Path-following appears to be implemented inside the .AI scripts (data,
+  not code) — that would change the analysis target entirely. Confirm
+  before treating the .AI script interpreter as the path-following code.
+
+
+
+================================================================================
+Session 21 — ai_powerup_decisions  (INVESTIGATION → first-pass)
+================================================================================
+
+Pool slot:   Mashed_pool4 (rotated from Batch A)
+Model:       Sonnet 4.6 — hard cap 20 RVAs (sweep phase)
+Bucket dir:  re/analysis/ai_powerup_decisions/
+
+# Mission
+Map the AI side of powerup-use decisions. Mashed is a combat racer — AI
+drivers shoot powerups at the player and use defensive powerups. Find the
+code that decides WHEN AND WHICH.
+
+# Decision protocol — entry-point discovery FIRST
+1. Read re/analysis/powerups_d3 / powerups_d4 / powerups_d4_repair plates
+   (the player-side powerup dispatch is largely mapped). Look for callers
+   that aren't the player input pipeline.
+2. The AI side should call into the SAME powerup-fire/use functions, but
+   driven by AI logic instead of button presses. Find the AI callers.
+3. xrefs_to on the powerup-fire entry points from powerups_d3/d4 plates —
+   filter out callers in subsystem=input.
+4. Candidate entry points: the non-input callers of powerup-fire.
+5. If ≥1 candidate → PROCEED.
+6. If nothing → file as DEFERRED; AI may use a separate event/queue system
+   that needs to be discovered first.
+
+# Sweep path
+7. Startup with $SLOT=Mashed_pool4.
+8. From each candidate: callees_depth1. Cap 20.
+9. Per-RVA C1 plates.
+10. Document the AI decision parameters (distance to target, target's
+    facing, current powerup inventory, AI difficulty level).
+11. Shutdown + scribe-queue append.
+
+# Output
+- EITHER: closure + DEFERRED row
+- OR: ≤20 per-RVA .md files + ≤20 C1 hooks.csv rows + Queued row
+
+# STOP-AND-ASK if
+- The xrefs reveal AI uses a different powerup-fire path than the player
+  (different fire-function entry point). Confirm whether that's a separate
+  subsystem to map.
+
+
+
+================================================================================
+Session 22 — rw_engine_init_cont1  (FIRST-PASS C0/C1 sweep, large drain)
+================================================================================
+
+Pool slot:   Mashed_pool5 (rotated from Batch A)
+Model:       Sonnet 4.6 — hard cap 20 RVAs PER SESSION (this drain may need
+             multiple cont sessions; we run one in this batch)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/rw_engine_init_cont1/
+
+# Mission
+Drain the OLDEST open dependency cluster in DEFERRED.md: D-0220..D-0263,
+~44 entries from rw_engine_init-20260502-1734's cap-splits. Take the first
+20 in this session; the remaining ~24 will need a cont2 in a future batch.
+
+# Inputs
+- DEFERRED.md rows D-0220..D-0263.
+- Existing rw_engine_init + rw_engine_init_d2 + d3 plates for context on
+  what these callees were called from.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool5.
+2. Read D-0220..D-0263 in order. Pick the first 20 RVAs.
+3. Per-RVA C1 plates per re/SESSION_RULES.md format. Note in each plate
+   which parent function called it (from the DEFERRED row's description).
+4. Mark the 20 drained D-rows as resolved in DEFERRED.md.
+5. Re-file the remaining (D-0220..D-0263 minus the 20 done) as new D-rows
+   for rw_engine_init_cont2 (next batch's pickup).
+6. Shutdown + scribe-queue append. Note `clears=<the 20 D-row IDs>`.
+
+# Output
+- 20 per-RVA .md files in re/analysis/rw_engine_init_cont1/
+- 20 C1 hooks.csv rows
+- 20 D-rows marked resolved; remaining re-filed as rw_engine_init_cont2
+- Queued row in SCRIBE_QUEUE.md (large drain — note it explicitly)
+
+# STOP-AND-ASK if
+- An RVA in D-0220..D-0263 is already in hooks.csv (drift since 2026-05-02
+  — likely; the cluster has been deferred for over a week). Handle via
+  drift-clear: skip the RVA, mark the D-row obsolete-superseded.
+
+
+
+================================================================================
+Session 23 — rw_engine_teardown_cont1  (FIRST-PASS, stub resolution)
+================================================================================
+
+Pool slot:   Mashed_pool6 (rotated from Batch B)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/rw_engine_teardown_cont1/
+
+# Mission
+Drain S-0080..S-0083 (rw_engine_teardown stubs) and their paired DEFERRED
+rows. Convert the stub passthroughs to real C1 plates.
+
+# Inputs
+- STUBS.md rows S-0080 (0x00551510), S-0081 (0x004c2c90), S-0082 (0x004d7ca0),
+  S-0083 (0x004ccf20).
+- Their depth-2 stub rows S-0220 (0x004d7ff0), S-0221 (0x004d8480),
+  S-0222 (0x004ccce0), S-0223 (0x004cc9f0). The DEFERRED rows D-0580 and
+  D-0581 are marked resolved already — verify, don't redo.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool6.
+2. Analyze S-0080..S-0083 (4 RVAs) and the depth-2 S-0220..S-0223 (4 more) =
+   8 base RVAs. Cap 20 leaves room for 12 more depth-3 callees.
+3. Per-RVA C1 plates.
+4. Mark stubs as resolved in STUBS.md (move to "Resolved stubs" section
+   with date and resolution note).
+5. Mark any open D-rows for these RVAs as resolved.
+6. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 C1 hooks.csv rows
+- STUBS.md updated: S-0080..S-0083, S-0220..S-0223 marked resolved
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- An S-row's RVA decomp doesn't match the stub's documented behavior
+  (the stub note may be wrong; verify before "resolving" with bad data).
+
+
+
+================================================================================
+Session 24 — effects_particle_d4  (FIRST-PASS C0/C1 sweep)
+================================================================================
+
+Pool slot:   Mashed_pool7 (rotated from Batch B)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/effects_particle_d4/
+
+# Mission
+Effects subsystem currently has 4 d3 rows. Extend depth-1 callees into a
+C1 layer, identify the particle emitter struct. Effects are visible during
+gameplay (sparks, smoke, explosions from powerups) so this is gameplay-
+visible mapping.
+
+# Inputs
+- effects_particle + effects_particle_d3 plates' RVAs.
+- function_callees depth-1 from those.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool7.
+2. Build candidate set (callees minus hooks.csv). Cap 20.
+3. Per-RVA C1 plates.
+4. Identify the particle emitter struct (position, velocity, color, lifetime,
+   texture id, blend mode). Draft re/analysis/structs/particle_emitter.md.
+5. Note the linkage to powerups_d3/d4 — explosion effects are spawned by
+   powerup-detonate paths.
+6. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 C1 hooks.csv rows
+- re/analysis/structs/particle_emitter.md (initial draft)
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- The particle system is more than one struct (separate code paths for
+  smoke vs sparks vs explosions). Document each separately.
+
+
+
+================================================================================
+END OF BATCH PLANS
+================================================================================
+
+After Batch D's scribe sweep, expected end state vs starting state:
+
+  Subsystem    Start rows    Expected delta    Expected end
+  ----------   ----------    --------------    ------------
+  frontend     188 (50 C0)   +20 maps,         ~210, mostly C1/C2
+                             +30 promotions
+  hud          67            +7 maps,          ~74, mostly C1/C2
+                             +16 promotions
+  save         20            +20 maps          ~40
+  input        21            +20–40 maps       40–60
+  audio        158           +30 maps          ~190
+  track        1             +20 maps          ~20+
+  physics      3             +20 maps          ~23
+  vehicle      113           +20 maps,         ~133, with C2 cluster
+                             +20 promotions
+  ai           58            +30–50 maps       ~90–110
+  render       408           +44 maps (init    ~450
+                             cont1 drain)
+
+Plus 6 new struct documentation files in re/analysis/structs/.
+Plus ~50 open D-rows resolved.
+Plus 8 stub rows resolved.
+
+P-DoD progress: frontend approaches S-DoD (will need C3 promotion +
+canonical-scenario verification next, which is the Frida-diff path).
