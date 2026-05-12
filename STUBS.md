@@ -833,3 +833,72 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3609 | 0x0041fe10 FUN_0041fe10 | 0x00420420 | track | passthrough | 2026-05-12 | vehicle context finalize; called at end of sector loop; track_world_initial_sweep |
 | S-3610 | 0x004260b0 FUN_004260b0 | 0x00420420 | track | passthrough | 2026-05-12 | physics world handle getter A; result stored in DAT_0063d850; track_world_initial_sweep |
 | S-3611 | 0x004260a0 FUN_004260a0 | 0x00420420 | track | passthrough | 2026-05-12 | physics world handle getter B; result stored in _DAT_0063d7ec; track_world_initial_sweep |
+| S-3614 | 0x0041ea70 FUN_0041ea70 | 0x00426640 | render | passthrough | 2026-05-12 | callee of FUN_00426640 (DAT_0066d704 guard path); called when FUN_0041ea70()==0; c0_promotion_render_a S-ID gap resolved |
+| S-3615 | 0x0041e950 FUN_0041e950 | 0x00426640 | render | passthrough | 2026-05-12 | callee of FUN_00426640; called unconditionally after FUN_0041e9b0; c0_promotion_render_a S-ID gap resolved |
+| S-3616 | 0x00432ad0 FUN_00432ad0 | 0x00448730 | render | passthrough | 2026-05-12 | first callee of FUN_00448730 (HUD/frontend layer); no args; c0_promotion_render_a S-ID gap resolved |
+| S-3617 | 0x004430c0 FUN_004430c0 | 0x00448730 | render | passthrough | 2026-05-12 | second callee of FUN_00448730; 1 arg (DAT_00896498); c0_promotion_render_a S-ID gap resolved |
+| S-3618 | 0x00477500 FUN_00477500 | 0x00477810 | render | passthrough | 2026-05-12 | callee of FUN_00477810; called when element+0x58 != 0; no args; c0_promotion_render_a S-ID gap resolved |
+| S-3619 | 0x0041e140 FUN_0041e140 | 0x00429e10 | render | passthrough | 2026-05-12 | no-arg gate in FUN_00429e10 Path-A; result checked == 0; not in hooks.csv; render_c0_promote_b |
+| S-3620 | 0x00429bd0 FUN_00429bd0 | 0x00429e10 | render | passthrough | 2026-05-12 | C0/deferred; called with uVar4 (0 or 1) in FUN_00429e10 Path-B race-mode sub-cases; render_c0_promote_b |
+| S-3621 | 0x004295a0 FUN_004295a0 | 0x00429e10 | render | passthrough | 2026-05-12 | C0/deferred; called in FUN_00429e10 Path-B cases 5/9/10; render_c0_promote_b |
+| S-3622 | 0x004778e0 FUN_004778e0 | 0x00477a10 | render | passthrough | 2026-05-12 | callee of FUN_00477a10; called when visibility check==0 AND piVar3[1]!=0; not in hooks.csv; render_c0_promote_b |
+| S-3623 | 0x004cd2d0 FUN_004cd2d0 | 0x00477a10 | render | passthrough | 2026-05-12 | C0/deferred; called with arg=4 after FUN_004cd070 returns nonzero in FUN_00477a10 loop; render_c0_promote_b |
+| S-3624 | 0x00496c10 FUN_00496c10 | 0x0047b9e0 | render | passthrough | 2026-05-12 | 2-arg passthrough target of FUN_0047b9e0; not in hooks.csv; render_c0_promote_b |
+| S-3625 | 0x00494fd0 FUN_00494fd0 | 0x00495080 FUN_00495080 | frontend | passthrough | 2026-05-12 | called from FUN_00495080 with transformed-float arg and param_2; not yet reversed; game_mode_cont2 |
+| S-3626 | 0x004173a0 FUN_004173a0 | 0x004046a0 | util | passthrough | 2026-05-12 | float10 result; used as multiplier in FUN_004046a0 axis-calc; timer_d3_cont1_a |
+| S-3627 | 0x00426c00 FUN_00426c00 | 0x004046a0 | util | passthrough | 2026-05-12 | int discriminant; switch cases 0xb/0x1a/0x27 in FUN_004046a0; also used at FUN_004117b0; timer_d3_cont1_a |
+| S-3628 | 0x00426cf0 FUN_00426cf0 | 0x004046a0 | util | passthrough | 2026-05-12 | int pointer/handle; indexed via (iVar3+iVar6*4-4) in FUN_004046a0; timer_d3_cont1_a |
+| S-3629 | 0x00406370 FUN_00406370 | 0x004073b0 | util | passthrough | 2026-05-12 | no-arg sub-init called before record sweep; timer_d3_cont1_a |
+| S-3630 | 0x004b47e0 FUN_004b47e0 | 0x004073b0 | util | passthrough | 2026-05-12 | (local_40, puVar1[-1], 0); writes into local_40 scratch; timer_d3_cont1_a |
+| S-3631 | 0x004c1480 FUN_004c1480 | 0x004073b0 | util | passthrough | 2026-05-12 | (*(puVar1[-0x30]+4), local_40, 0); consumes scratch from FUN_004b47e0; timer_d3_cont1_a |
+| S-3632 | 0x0047d180 FUN_0047d180 | 0x004073b0 | util | passthrough | 2026-05-12 | (puVar1[-0x23], local_40); third in record-process chain; timer_d3_cont1_a |
+| S-3633 | 0x0040e340 FUN_0040e340 | 0x0040b180 | util | passthrough | 2026-05-12 | no-arg int getter; consumed in FUN_0040b180 (==2,==3) and FUN_0041b4d0 (return stored to DAT_0063c89c); timer_d3_cont1_a |
+| S-3634 | 0x00412190 FUN_00412190 | 0x0040bd80 | util | passthrough | 2026-05-12 | via thunk_FUN_00412190 @ 0x00412880; no-arg in dispatcher; timer_d3_cont1_a |
+| S-3635 | 0x004904d0 FUN_004904d0 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3636 | 0x0048f260 FUN_0048f260 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3637 | 0x0048f680 FUN_0048f680 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3638 | 0x0048f740 FUN_0048f740 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3639 | 0x00475a60 FUN_00475a60 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3640 | 0x00475ef0 FUN_00475ef0 | 0x0040bd80 | util | passthrough | 2026-05-12 | via thunk_FUN_00475ef0 @ 0x00476430; no-arg in dispatcher; timer_d3_cont1_a |
+| S-3641 | 0x00477730 FUN_00477730 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3642 | 0x0048ade0 FUN_0048ade0 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3643 | 0x00487df0 FUN_00487df0 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3644 | 0x00486f90 FUN_00486f90 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3645 | 0x00486270 FUN_00486270 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3646 | 0x0048a5d0 FUN_0048a5d0 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3647 | 0x0048bb70 FUN_0048bb70 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; timer_d3_cont1_a |
+| S-3648 | 0x00421080 FUN_00421080 | 0x0040bd80 | util | passthrough | 2026-05-12 | no-arg sub-init in 17-call dispatcher; last in chain; timer_d3_cont1_a |
+| S-3649 | 0x0041d910 FUN_0041d910 | 0x0040dbd0 | util | passthrough | 2026-05-12 | pre-dispatch action; no args; timer_d3_cont1_a |
+| S-3650 | 0x0042f6a0 FUN_0042f6a0 | 0x0040dbd0 | util | passthrough | 2026-05-12 | switch discriminant; also used in FUN_0040b180/FUN_00410860/FUN_00414060; not in hooks.csv yet; timer_d3_cont1_a |
+| S-3651 | 0x0041e080 FUN_0041e080 | 0x0040dbd0 | util | passthrough | 2026-05-12 | case-2 action in FUN_0040dbd0; timer_d3_cont1_a |
+| S-3652 | 0x0041b520 FUN_0041b520 | 0x0040dbd0 | util | passthrough | 2026-05-12 | default-tail action in FUN_0040dbd0; timer_d3_cont1_a |
+| S-3653 | 0x004117b0 FUN_004117b0 | 0x0040de00 | save | passthrough | 2026-05-12 | thunk target body of thunk_FUN_004117b0 @ 0x0040de00; one-shot replay save; timer_d3_cont1_a |
+| S-3654 | 0x00430820 FUN_00430820 | 0x004117b0 | save | passthrough | 2026-05-12 | pre-write gate in replay save body; result checked == 0; timer_d3_cont1_a |
+| S-3655 | 0x00483ca0 FUN_00483ca0 | 0x004117b0 | save | passthrough | 2026-05-12 | replay_write(handle, DAT_008a94a8) in replay save body; timer_d3_cont1_a |
+| S-3656 | 0x004099a0 FUN_004099a0 | 0x004117b0 | save | passthrough | 2026-05-12 | post-save action in replay save body; no args; timer_d3_cont1_a |
+| S-3657 | 0x00429b30 FUN_00429b30 | 0x00410860 | util | passthrough | 2026-05-12 | no-arg called at FUN_00410860 entry after DAT_007f1014 bool; timer_d3_cont1_a |
+| S-3658 | 0x004a2c48 FUN_004a2c48 | 0x00410860 | util | passthrough | 2026-05-12 | clock/tick getter; result stored to DAT_0063ba80 in FUN_00410860 and used as index in FUN_00414180; timer_d3_cont1_a |
+| S-3659 | 0x0042aab0 FUN_0042aab0 | 0x00410860 | util | passthrough | 2026-05-12 | first call inside trigger block (DAT_005f29b8>199 AND bVar1); timer_d3_cont1_a |
+| S-3660 | 0x00429860 FUN_00429860 | 0x00410860 | util | passthrough | 2026-05-12 | called when FUN_0042f6a0==2; result compared with 0xb; timer_d3_cont1_a |
+| S-3661 | 0x0043aee0 FUN_0043aee0 | 0x00410860 | util | passthrough | 2026-05-12 | called on FUN_00429860==0xb path; timer_d3_cont1_a |
+| S-3662 | 0x00448700 FUN_00448700 | 0x00410860 | util | passthrough | 2026-05-12 | called with (1,iVar3-1) on trigger path or (0,0) on else path; timer_d3_cont1_a |
+| S-3663 | 0x0040e460 FUN_0040e460 | 0x00410860 | util | passthrough | 2026-05-12 | called with (1) on trigger path; timer_d3_cont1_a |
+| S-3664 | 0x00424b80 FUN_00424b80 | 0x00410860 | util | passthrough | 2026-05-12 | called in else path of trigger block; no args; timer_d3_cont1_a |
+| S-3665 | 0x0041eda0 FUN_0041eda0 | 0x00410860 | util | passthrough | 2026-05-12 | called with (loop_idx,1) for non-sentinel slots in loop D; timer_d3_cont1_a |
+| S-3666 | 0x00413fa0 FUN_00413fa0 | 0x00414060 | util | passthrough | 2026-05-12 | int return; uses param_1 of FUN_00414060; timer_d3_cont1_a |
+| S-3667 | 0x00431d80 FUN_00431d80 | 0x00414060 | util | passthrough | 2026-05-12 | int return on case 6 path; multiplied by _DAT_005cd088; timer_d3_cont1_a |
+| S-3668 | 0x0042fe80 FUN_0042fe80 | 0x00414060 | util | passthrough | 2026-05-12 | int return on case 10 path; multiplied by _DAT_005cd088; timer_d3_cont1_a |
+| S-3669 | 0x00472650 FUN_00472650 | 0x00414180 | util | passthrough | 2026-05-12 | (float,float) writer; called per-record with pair from DAT_005f2d80[iVar2*8..iVar2*8+4]; timer_d3_cont1_a |
+| S-3670 | 0x0040e4b0 FUN_0040e4b0 | 0x00414220 | util | passthrough | 2026-05-12 | int return; -1 sentinel = early-out; timer_d3_cont1_a |
+| S-3671 | 0x0040e470 FUN_0040e470 | 0x00414220 | util | passthrough | 2026-05-12 | int return; (i) returning 1 marks winner index; timer_d3_cont1_a |
+| S-3672 | 0x004194f0 FUN_004194f0 | 0x00418990 | util | passthrough | 2026-05-12 | thunk target body of thunk_FUN_004194f0 @ 0x00418990; record-sweep over 0x6c and 0x54 stride tables; timer_d3_cont1_a |
+| S-3673 | 0x00418a30 FUN_00418a30 | 0x00418990 | util | passthrough | 2026-05-12 | loop-1 iterator; pointer return; record stride 0x6c bytes; timer_d3_cont1_a |
+| S-3674 | 0x00418e30 FUN_00418e30 | 0x00418990 | util | passthrough | 2026-05-12 | between-loops action 1 (post-loop-1 cleanup); timer_d3_cont1_a |
+| S-3675 | 0x00418e50 FUN_00418e50 | 0x00418990 | util | passthrough | 2026-05-12 | between-loops action 2 (pre-loop-2 setup); timer_d3_cont1_a |
+| S-3676 | 0x004190f0 FUN_004190f0 | 0x00418990 | util | passthrough | 2026-05-12 | loop-2 iterator; pointer return; record stride 0x54 bytes; timer_d3_cont1_a |
+| S-3677 | 0x0040b890 FUN_0040b890 | 0x0041b4d0 | util | passthrough | 2026-05-12 | no-arg getter; result stored to DAT_0063c8c4; timer_d3_cont1_a |
+| S-3678 | 0x0041adb0 FUN_0041adb0 | 0x0041b4d0 | util | passthrough | 2026-05-12 | invoked once per 0x74-byte record; uses global cursor; timer_d3_cont1_a |
+| S-3679 | 0x004b6520 FUN_004b6520 | 0x0041bf20 | util | passthrough | 2026-05-12 | (ptr,0x10) — likely zero-init/memset of first 16 bytes of 0x16c-byte record; also used by input_lua_d2; timer_d3_cont1_a |
+| S-3680 | 0x0041b720 FUN_0041b720 | 0x0041bf20 | util | passthrough | 2026-05-12 | iterator returning pointer; loop terminates when iVar1+0x16c >= 0x63cd90; record stride 0x16c; timer_d3_cont1_a |
+| S-3681 | 0x0041b770 FUN_0041b770 | 0x0041c010 | util | passthrough | 2026-05-12 | invoked once per 0x16c-byte record without args; uses global cursor (same table as FUN_0041bf20 / FUN_0041b720); timer_d3_cont1_a |
+| S-3682 | (id-rename-padding) | n/a | util | id-rename-padding | 2026-05-12 | placeholder reserved after S-3625 collision-shift (concurrent session took S-3625); timer_d3_cont1_a |
