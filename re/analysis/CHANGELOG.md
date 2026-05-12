@@ -833,3 +833,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-1805  scribe-claim  buckets=2 queued, 1 skipped-HOLD
 2026-05-12  sweep-20260512-1805  scribe-release  bucket=rw_engine_init_d2_cont1_a  writes=2  errors=0
 2026-05-12  sweep-20260512-1805  scribe-release  bucket=timer_d3_cont1_a  writes=19  errors=0  drift-skipped=1(0x00419760)
+2026-05-12  sweep-20260512-1805  scribe-release  buckets=2 drained, 1 skipped-HOLD  errors=0
