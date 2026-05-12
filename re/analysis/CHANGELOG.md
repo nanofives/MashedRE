@@ -734,3 +734,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-11  track_collision_geometry_s14  bucket=track_collision_geometry  rvas=0x00547bf0,0x00547450,0x0047a1b0,0x0047a280,0x0047a320,0x0047a3a0,0x0047a4a0,0x0047a540,0x0047a580,0x0047a5b0,0x0047a5e0,0x0047a610,0x0047a6b0,0x0047a6f0,0x0047a720,0x0047a790,0x0047a880,0x0047a8b0,0x0047aa20,0x0047aa50  S-3571..S-3573  U-3568..U-3572  D-10542..D-10544  S-1964-cleared  S-1965-cleared  pool=Mashed_pool13  struct=re/analysis/structs/bsp_struct_a.md  notes=AABB-vs-tri-SAT+sphere-vs-tri+18-COURSE.LUA-Lua-C-filename-handlers; BSP-struct-A slot-map first-pass
 
 2026-05-12  sweep-20260512-0445  scribe-claim  buckets=4 queued, 1 skipped-HOLD  rvas=55  (HOLD=1: replay_record-20260503, superseded by replay_record-20260511-1200)
+2026-05-12  sweep-20260512-0445  scribe-release  bucket=track_world_initial_sweep  writes=18  errors=0
