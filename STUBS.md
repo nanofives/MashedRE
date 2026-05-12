@@ -72,21 +72,21 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0374 | 0x00493b40 LAB_00493b40 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; NT5+ code-page path; MOV EAX,3 (CP_THREAD_ACP); RET |
 | S-0375 | 0x0049ec10 FUN_0049ec10 | 0x00493c00 FUN_00493c00 | 2026-05-03 | C1 analyzed video_mci_d2; __thiscall ctor; vtable[0]+7 offsets; calls FUN_0049dd60+FUN_0049cfb0 |
 | S-0376 | 0x004a3b84 FUN_004a3b84 | 0x00493f00 FUN_00493f00 | 2026-05-03 | C1 analyzed video_mci_d2; vsnprintf-impl via fake FILE (_flag=0x42); calls FUN_004a504f |
+| S-0080 | 0x00551510 FUN_00551510 | 0x00550390 FUN_00550390 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; RW plugin dispatch; dispatches fn ptrs at param_1+0x20/+0x24 with (param_1+0x50); see re/analysis/rw_engine_teardown_d2/0x00551510.md |
+| S-0081 | 0x004c2c90 FUN_004c2c90 | 0x004c2f60 + 0x004c3040 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; RW engine state-transition dispatcher; switch on param_2 (0xd..0x12); default calls FUN_004d7ff0+FUN_004d8480; see re/analysis/rw_engine_teardown_d2/0x004c2c90.md |
+| S-0082 | 0x004d7ca0 FUN_004d7ca0 | 0x004c3270 FUN_004c3270 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; render context teardown; iterates DAT_007d6c54 array, unlinks nodes, calls FUN_004ccce0+FUN_004cc9f0; see re/analysis/rw_engine_teardown_d2/0x004d7ca0.md |
+| S-0083 | 0x004ccf20 FUN_004ccf20 | 0x004c3270 FUN_004c3270 | 2026-05-12 | C1 analyzed rw_engine_teardown_d2; free-list/pool block teardown; walks DAT_007d45cc doubly-linked list, frees all blocks via vtable+0x10c/+0x11c, zeros DAT_007d45fc; see re/analysis/rw_engine_teardown_d2/0x004ccf20.md |
+| S-0220 | 0x004d7ff0 FUN_004d7ff0 | 0x004c2c90 FUN_004c2c90 | 2026-05-12 | C1 analyzed audio_rws_loader_d2; 4-byte identity function; returns param_1 unchanged (MOV EAX,[ESP+4]; RET); see re/analysis/audio_rws_loader_d2/004d7ff0.md |
+| S-0221 | 0x004d8480 FUN_004d8480 | 0x004c2c90 FUN_004c2c90 | 2026-05-12 | C1 analyzed audio_rws_loader_d2; first-error recorder; stores {uint,uint} at DAT_007d3ff8[DAT_007d6c5c] if slot empty (first=0, second=0x80000000); see re/analysis/audio_rws_loader_d2/004d8480.md |
+| S-0222 | 0x004ccce0 FUN_004ccce0 | 0x004d7ca0 FUN_004d7ca0 | 2026-05-12 | C1 analyzed rw_engine_teardown_d3; RwFreeListForAllUsed equivalent; iterates pool block bitmap, calls param_2(element_addr, param_3) per set bit; D-0580 resolved; see re/analysis/rw_engine_teardown_d3/0x004ccce0.md |
+| S-0223 | 0x004cc9f0 FUN_004cc9f0 | 0x004d7ca0 FUN_004d7ca0 | 2026-05-12 | C1 analyzed render_d3d9_device; RwFreeListDestroy equivalent; unlinks from global chain at DAT_007d45cc, walks+frees internal free list, frees header; D-0581 resolved; see re/analysis/render_d3d9_device/0x004cc9f0.md |
 
 ## Conventions
 
 - ID format: `S-NNNN`, monotonic, never reused.
 - Every stub must have a corresponding `// STUB S-NNNN` comment in source.
 - `re-classify` skill writes new rows; `hook-author` skill enforces that no new C3 row in `hooks.csv` lands while the function still has unresolved stubs.
-| S-0080 | 0x00551510 | 0x00550390 sub_00550390 | render | passthrough | 2026-05-02 | FUN_00551510; called as FUN_00551510(node_ptr, 2) per list-node iteration; depth-2 of RW_TEAR_FN |
-| S-0081 | 0x004c2c90 | 0x004c2f60 sub_004c2f60 + 0x004c3040 sub_004c3040 | render | passthrough | 2026-05-02 | FUN_004c2c90; called with (DAT_007d3ff8+0x10,0x12/3,0,0,0) and (DAT_007d3ff8+4,1,0,0,0); likely core RW engine state-transition function; depth-2 of RW_TEAR_FN |
-| S-0082 | 0x004d7ca0 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004d7ca0; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
-| S-0083 | 0x004ccf20 | 0x004c3270 sub_004c3270 | render | passthrough | 2026-05-02 | FUN_004ccf20; called when DAT_007d3ff4==0 in final teardown step; depth-2 of RW_TEAR_FN |
 | S-0100 | 0x004522d6 | 0x004522d0 FUN_004522d0 | audio | passthrough | 2026-05-02 | Indirect dispatch target through DAT_007d3ff8+0x10c; not statically traceable |
-| S-0220 | 0x004d7ff0 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d7ff0; called with (0x18, param_2) in default handler of FUN_004c2c90; depth-3; already D-0233, S-0101 |
-| S-0221 | 0x004d8480 | 0x004c2c90 FUN_004c2c90 | render | passthrough | 2026-05-02 | FUN_004d8480; called with &uStack_8 in default handler of FUN_004c2c90; depth-3; already D-0234, S-0102 |
-| S-0222 | 0x004ccce0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004ccce0; called with (DAT_007d6c50, &LAB_004d7d70, DAT_007d6c50); depth-3; DEFERRED D-0580 |
-| S-0223 | 0x004cc9f0 | 0x004d7ca0 FUN_004d7ca0 | render | passthrough | 2026-05-02 | FUN_004cc9f0; called with DAT_007d6c50 as single arg; depth-3; DEFERRED D-0581 |
 | S-0180 | 0x004a2bb8 | 0x004a2be9 __security_check_cookie | boot | passthrough | 2026-05-02 | report_failure; depth-4 of boot_crt_exit_d3; D-0462 |
 | S-0181 | 0x004a31e1 | 0x004a4126 __onexit | boot | passthrough | 2026-05-02 | FUN_004a31e1; called before __onexit_lk; role unknown; depth-4; D-0463 |
 | S-0182 | 0x004a407e | 0x004a4126 __onexit | boot | passthrough | 2026-05-02 | __onexit_lk; core logic of __onexit; depth-4; D-0464 |
@@ -568,10 +568,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2341 | 0x004d8c40 FUN_004d8c40 | 0x004c7730 FUN_004c7730 | frontend | passthrough | 2026-05-06 | doubly-linked list splice + swap + counter clear; called before vtable slot 38 dispatch; single caller; resolved intro_splash_d3 2026-05-06; D-6941 |
 | S-2000 | 0x004a0ef0 FUN_004a0ef0 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 93b __thiscall; receives (param_3, param_4, &this+0x7c, param_2) from FUN_0049dd60 before vtable writes; depth-4 from video_mci; D-5920 |
 | S-2001 | 0x004a1160 FUN_004a1160 | 0x0049dd60 FUN_0049dd60 | video | passthrough | 2026-05-06 | 27b __thiscall; called 3x on &this+0x54/0x58/0x5c with args 0/1/1; result at 0x5c used as HANDLE in SetEvent; depth-4 from video_mci; D-5921 |
-| S-1960 | 0x004e5fc0 FUN_004e5fc0 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | called when *(atomic+0x4c) & 2; 0x13D bytes; depth-4 of effects_particle; U-1967 |
-| S-1961 | 0x004c0b10 FUN_004c0b10 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | test on secondary object *(atomic+4); 0x10 bytes; returns int; triggers update path; U-1968 |
 | S-1962 | 0x004c0ed0 FUN_004c0ed0 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | get float* (matrix) from *(atomic+4); 0x1E bytes; U-1969 |
-| S-1963 | 0x004c3d60 FUN_004c3d60 | 0x004e6100 FUN_004e6100 | render | passthrough | 2026-05-06 | matrix concat (3-arg: out ptr+0x2c, in1 ptr+0x1c, in2 frame-matrix); 0x25 bytes; U-1970 |
 | S-1964 | 0x00547bf0 FUN_00547bf0 | 0x00539900 FUN_00539900 | render | passthrough | 2026-05-06 | AABB vs triangle pre-test (4 args: query_desc v0 v1 v2); 0x5AE bytes; U-1976 |
 | S-1965 | 0x00547450 FUN_00547450 | 0x00539ec0 FUN_00539ec0 | render | passthrough | 2026-05-06 | sphere vs triangle intersection (6 args including out-ptrs for normal+dist); 0x39E bytes; U-1978 |
 | S-2087 | 0x005555b0 FUN_005555b0 | 0x00427ad0 FUN_00427ad0 | frontend | passthrough | 2026-05-06 | main sprite draw call; 6 args: (DAT_0067d838, 512B stack buf, scaled param_7, &local_214, 1, DAT_0067d83c); depth-4 of FUN_00427ad0 |

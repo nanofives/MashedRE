@@ -903,3 +903,47 @@ A row goes into DEFERRED when:
 | D-10542 | 0x004b6fc0 FUN_004b6fc0 | Lua C API wrapper (arg-count getter); needs input_lua session to establish Lua 5.x C API binding | input_lua session | track |
 | D-10543 | 0x004b70d0 FUN_004b70d0 | Lua C API wrapper (string arg getter); needs input_lua session to establish Lua 5.x C API binding | input_lua session | track |
 | D-10544 | 0x004b7090 FUN_004b7090 | Lua C API wrapper (number arg getter); needs input_lua session to establish Lua 5.x C API binding | input_lua session | track |
+
+| D-10545 | 0x00549640 FUN_00549640 | remainder from D-0255; not analyzed in rw_engine_init_cont1-20260512 (cap=20 reached earlier) | pick up as bucket rw_engine_init_cont2; depth-2 of 0x00493640; no further recursion | render |
+| D-10546 | 0x005578a0 FUN_005578a0 | remainder from D-0256; not analyzed in rw_engine_init_cont1-20260512 (cap=20 reached earlier) | pick up as bucket rw_engine_init_cont2; depth-2 of 0x00493640; no further recursion | render |
+| D-10547 | 0x005515a0 FUN_005515a0 | remainder from D-0257; not analyzed in rw_engine_init_cont1-20260512 (cap=20 reached earlier) | pick up as bucket rw_engine_init_cont2; depth-2 of 0x00493640; no further recursion | render |
+| D-10548 | 0x0052d8e0 FUN_0052d8e0 | remainder from D-0258; not analyzed in rw_engine_init_cont1-20260512 (cap=20 reached earlier); result NOT checked in caller | pick up as bucket rw_engine_init_cont2; depth-2 of 0x00493640; no further recursion | render |
+| D-10549 | 0x0057c270 FUN_0057c270 | remainder from D-0259; not analyzed in rw_engine_init_cont1-20260512 (cap=20 reached earlier) | pick up as bucket rw_engine_init_cont2; depth-2 of 0x00493640; no further recursion | render |
+| D-10550 | 0x00561ee0 FUN_00561ee0 | remainder from D-0260; not analyzed in rw_engine_init_cont1-20260512 (cap=20 reached earlier) | pick up as bucket rw_engine_init_cont2; depth-2 of 0x00493640; no further recursion | render |
+
+| D-0222 | 0x004ce790 | analyzed C1 session rw_engine_init_cont1-20260512; also clears D-0524 (same RVA) | 2026-05-12 |
+| D-0230 | 0x004cf160 | analyzed C1 session rw_engine_init_cont1-20260512; also clears D-0525 (same RVA) | 2026-05-12 |
+| D-0231 | 0x004d8000 | drift-clear: already in hooks.csv as C1 (intro_splash_d3 session); obsolete-superseded | 2026-05-12 |
+| D-0233 | 0x004d7ff0 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0234 | 0x004d8480 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0235 | 0x004d7ca0 | drift-clear: already in hooks.csv as C1 (rw_engine_teardown_d2 session); obsolete-superseded | 2026-05-12 |
+| D-0236 | 0x004ccf20 | drift-clear: already in hooks.csv as C1 (rw_engine_teardown_d2 session); obsolete-superseded | 2026-05-12 |
+| D-0238 | 0x004cc7e0 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0239 | 0x004cce20 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0240 | 0x004d7c60 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0241 | 0x004d7de0 | analyzed C1 session rw_engine_init_cont1-20260512 (had prior Ghidra C1 comment from 2026-05-07) | 2026-05-12 |
+| D-0242 | 0x004d8560 | analyzed C1 session rw_engine_init_cont1-20260512 (had prior Ghidra C1 comment from 2026-05-08) | 2026-05-12 |
+| D-0243 | 0x004d8570 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0244 | 0x004e5d30 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0245 | 0x00543e50 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0246 | 0x0053eaa0 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0247 | 0x0053d0b0 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0248 | 0x00538600 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0249 | 0x00534a80 | analyzed C1 session rw_engine_init_cont1-20260512 | 2026-05-12 |
+| D-0250 | 0x00534920 | drift-clear: already in hooks.csv as C1 (random_rng session); obsolete-superseded | 2026-05-12 |
+| D-0251 | 0x00546530 | analyzed C1 session rw_engine_init_cont1-20260512 (replacement for drift D-0250) | 2026-05-12 |
+| D-0252 | 0x005336d0 | analyzed C1 session rw_engine_init_cont1-20260512 (replacement for drift D-0250) | 2026-05-12 |
+| D-0253 | 0x0052e310 | analyzed C1 session rw_engine_init_cont1-20260512 (replacement for drift D-0250) | 2026-05-12 |
+| D-0254 | 0x00544d20 | analyzed C1 session rw_engine_init_cont1-20260512 (replacement for drift D-0250) | 2026-05-12 |
+| D-10560 | 0x0041ea80 FUN_0041ea80 | Lap-line gate check; callee of FUN_00426c90 (ai_update_d5) | ai_update_d6 or track subsystem session | ai |
+| D-10561 | 0x0041e960 FUN_0041e960 | Lap-line update action; callee of FUN_00426c90 (ai_update_d5) | ai_update_d6 or track subsystem session | ai |
+| D-10562 | 0x00422b50 FUN_00422b50 | Delta applier for entity damage/velocity; callee of FUN_0046d780 and FUN_00422ba0 (ai_update_d5) | ai_update_d6 | ai |
+| D-10563 | 0x00423040 FUN_00423040 | Replay pre-step sub-1; callee of FUN_00423b00 (ai_update_d5) | replay subsystem session | ai |
+| D-10564 | 0x00423270 FUN_00423270 | Replay pre-step sub-2; callee of FUN_00423b00 (ai_update_d5) | replay subsystem session | ai |
+| D-10565 | 0x00423320 FUN_00423320 | Replay pre-step sub-3; callee of FUN_00423b00 (ai_update_d5) | replay subsystem session | ai |
+| D-10566 | 0x0046cbe0 FUN_0046cbe0 | Spinout/state setter; callee of FUN_00422ba0 type-6 event handler (ai_update_d5) | ai_update_d6 | ai |
+| D-10567 | 0x0044e0a0 FUN_0044e0a0 | Physics impulse applier; callee of FUN_00422ba0 type-10 event handler (ai_update_d5) | ai_update_d6 | ai |
+| D-10568 | 0x004219f0 FUN_004219f0 | Type-9 event handler; callee of FUN_00422ba0 (ai_update_d5); payload from DAT_007ea9e8 | ai_update_d6 | ai |
+| D-10569 | 0x0047cea0 FUN_0047cea0 | Explosion radius effect; callee of FUN_00422ba0 type-8 event (ai_update_d5) | ai_update_d6 | render |
+| D-10570 | 0x00415860 FUN_00415860 | Player interaction callback; callee of FUN_004252c0 on scored interaction (ai_update_d5) | ai_update_d6 | ai |
+| D-10571 | 0x00426cc0 FUN_00426cc0 | Vehicle orientation/matrix getter; callee of FUN_004252c0 velocity dot-product path (ai_update_d5) | ai_update_d6 | vehicle |
