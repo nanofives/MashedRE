@@ -944,3 +944,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  sweep-20260513-0123  scribe-release  buckets=2 drained (rw_engine_init_cont1_b drift-skip + timer_d3_cont1_b 15-RVA)  errors=0; pool-sync=9 refreshed (0/1/3/10/11/12/13/14/15) 1 skipped-locked (pool2) 1 partial-busy (pool4); concurrent-activity-observed=3 new Queued rows appeared during sweep (timer_d3_cont2, boot_crt_exit_d3_cont1, boot_crt_env_cont1) plus pre-existing track_loader_d3_cont1 row in Drained without drained-by — all left for next sweep; multi-session pre-condition violated (sessions kept claiming Mashed_pool1 etc. without master.WIP lock — surfaced in end-of-session report)
 2026-05-13  sweep-20260513-1628  scribe-claim  buckets=4 queued, 1 skipped-HOLD
 2026-05-13  sweep-20260513-1628  scribe-release  bucket=timer_d3_cont2  writes=19  errors=0
+2026-05-13  sweep-20260513-1628  scribe-release  bucket=boot_crt_exit_d3_cont1  writes=19  errors=0
