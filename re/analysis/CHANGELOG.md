@@ -957,3 +957,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  sweep-20260513-1921  scribe-release  bucket=boot_subsystem_d3  writes=18  errors=0  drift-skip=4
 2026-05-13  sweep-20260513-1921  scribe-release  bucket=fun_00471ec0_callees  writes=20  errors=0
 2026-05-13  sweep-20260513-1921  scribe-release  bucket=settings_config_d2_cont1  writes=14  errors=0
+2026-05-13  sweep-20260513-1921  scribe-release  buckets=3 drained  errors=0  sync=partial(slot6-busy)
