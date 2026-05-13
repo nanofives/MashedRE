@@ -935,3 +935,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260512-2201  scribe-release  buckets=2 drained  errors=0
 2026-05-12  render_frame_d4_cont1  no-op  all 19 RVAs (D-5042..D-5060) already C1 in hooks.csv; D-5042..D-5060 and D-9280 rows absent from DEFERRED.md (resolved by prior sessions: c0_promotion_render_a, render_c0_promote_b, render_c0_promote_c, split_screen); session declared superseded before MCP open
 2026-05-12  sweep-20260513-0032  scribe-claim  buckets=2 queued, 1 skipped-HOLD; supersedes stale sweep-20260513-0003 (claim file rm'd, never reached release)
+2026-05-12  sweep-20260513-0032  scribe-release  bucket=texture_loader_d3_cont1  writes=9  errors=0
