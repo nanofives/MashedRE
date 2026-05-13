@@ -951,3 +951,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  sweep-20260513-1825  scribe-claim  buckets=3 queued (2 normal + 1 drift-skip), 1 skipped-HOLD
 2026-05-13  sweep-20260513-1825  scribe-release  bucket=random_rng_d2  writes=20  errors=0
 2026-05-13  sweep-20260513-1825  scribe-release  bucket=title_screen_cont1  writes=0  errors=0  drift-skip
+2026-05-13  sweep-20260513-1825  scribe-release  bucket=split_screen_d2_cont1  writes=19  errors=0
