@@ -940,3 +940,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260513-0032  scribe-release  buckets=2 drained  errors=0; pool-sync=14 refreshed, 2 skipped (pool2/pool4 stale locks from concurrent fanouts — slots not referenced by Queued rows, surfaced in end-of-session report)
 2026-05-13  sweep-20260513-0123  scribe-claim  buckets=3 queued, 1 skipped-HOLD (replay_record-20260503), 1 drift-skip-no-rvas (rw_engine_init_cont1_b)
 2026-05-13  sweep-20260513-0123  scribe-release  bucket=rw_engine_init_cont1_b  writes=0  errors=0  (drift-skip honored, rvas=(none))
+2026-05-13  sweep-20260513-0123  scribe-release  bucket=timer_d3_cont1_b  writes=15  errors=0
