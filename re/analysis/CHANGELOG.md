@@ -937,3 +937,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-12  sweep-20260513-0032  scribe-claim  buckets=2 queued, 1 skipped-HOLD; supersedes stale sweep-20260513-0003 (claim file rm'd, never reached release)
 2026-05-12  sweep-20260513-0032  scribe-release  bucket=texture_loader_d3_cont1  writes=9  errors=0
 2026-05-12  sweep-20260513-0032  scribe-release  bucket=audio_dsound_cont1  writes=6  errors=0
+2026-05-12  sweep-20260513-0032  scribe-release  buckets=2 drained  errors=0; pool-sync=14 refreshed, 2 skipped (pool2/pool4 stale locks from concurrent fanouts — slots not referenced by Queued rows, surfaced in end-of-session report)
