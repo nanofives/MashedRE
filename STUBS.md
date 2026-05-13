@@ -47,14 +47,14 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0066 | 0x005584c0 | 0x00493710 FUN_00493710 (RW_INIT_FN) | render | passthrough | 2026-05-02 | FUN_005584c0; called once on success path; no visible args; DEFERRED rw_engine_init-cont1 |
 | S-0067 | 0x005c9d00 | 0x00493710 FUN_00493710 (RW_INIT_FN) | render | passthrough | 2026-05-02 | FUN_005c9d00; called 3× (twice with local_28, once with 0x200000); DEFERRED rw_engine_init-cont1 |
 | S-0068 | 0x004ce790 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-02 | FUN_004ce790; called twice with (ptr-to-global, fn-ptr, fn-ptr-or-label) 3-arg pattern; DEFERRED depth-2 |
-| S-0040 | 0x004a45cf | 0x004a45fb _malloc | boot | passthrough | 2026-05-02 | __nh_malloc; depth-2 of _malloc; DEFERRED D-0160 |
-| S-0041 | 0x004a4660 | 0x004a460d _free | boot | passthrough | 2026-05-02 | FUN_004a4660 unlock wrapper; depth-2 of _free; DEFERRED D-0161 |
-| S-0042 | 0x004a787f | 0x004a460d _free | boot | passthrough | 2026-05-02 | __lock; depth-2 of _free; DEFERRED D-0162 |
-| S-0043 | 0x004aa497 | 0x004a460d _free | boot | passthrough | 2026-05-02 | ___sbh_find_block; depth-2 of _free; DEFERRED D-0163 |
-| S-0044 | 0x004aa4c2 | 0x004a460d _free | boot | passthrough | 2026-05-02 | ___sbh_free_block; depth-2 of _free; DEFERRED D-0164 |
-| S-0045 | 0x004ae28f | 0x004ae29f ___crtInitCritSecAndSpinCount | boot | passthrough | 2026-05-02 | ___crtInitCritSecNoSpinCount@8; depth-2; DEFERRED D-0166 |
-| S-0046 | 0x004af166 | 0x004af2b6 ___initmbctable | boot | passthrough | 2026-05-02 | __setmbcp; depth-2 of ___initmbctable; DEFERRED D-0167 |
-| S-0047 | 0x004affaf | 0x004affe0 FUN_004affe0 | boot | passthrough | 2026-05-02 | FUN_004affaf; depth-2 of FUN_004affe0; DEFERRED D-0168 |
+| ~~S-0040~~ | ~~0x004a45cf~~ | ~~0x004a45fb _malloc~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: __nh_malloc C1 at re/analysis/boot_crt_env_cont1/0x004a45cf.md |
+| ~~S-0041~~ | ~~0x004a4660~~ | ~~0x004a460d _free~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: FUN_004a4660 C1 at re/analysis/boot_crt_env_cont1/0x004a4660.md |
+| ~~S-0042~~ | ~~0x004a787f~~ | ~~0x004a460d _free~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: drift-skip; __lock already C1 in boot_crt_exit_d3 |
+| ~~S-0043~~ | ~~0x004aa497~~ | ~~0x004a460d _free~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: ___sbh_find_block C1 at re/analysis/boot_crt_env_cont1/0x004aa497.md |
+| ~~S-0044~~ | ~~0x004aa4c2~~ | ~~0x004a460d _free~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: ___sbh_free_block C1 at re/analysis/boot_crt_env_cont1/0x004aa4c2.md |
+| ~~S-0045~~ | ~~0x004ae28f~~ | ~~0x004ae29f ___crtInitCritSecAndSpinCount~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: ___crtInitCritSecNoSpinCount@8 C1 at re/analysis/boot_crt_env_cont1/0x004ae28f.md |
+| ~~S-0046~~ | ~~0x004af166~~ | ~~0x004af2b6 ___initmbctable~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: __setmbcp C1 at re/analysis/boot_crt_env_cont1/0x004af166.md |
+| ~~S-0047~~ | ~~0x004affaf~~ | ~~0x004affe0 FUN_004affe0~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: FUN_004affaf C1 at re/analysis/boot_crt_env_cont1/0x004affaf.md |
 | S-0700 | 0x(DAT_007d459c indirect) | 0x004c9cd0 RESET_FN | render | passthrough | 2026-05-02 | indirect callback via DAT_007d459c; called in RESET_FN after successful Reset(); DEFERRED D-2020 |
 | S-0701 | 0x004dc9e0 | 0x004c9ad0 FUN_004c9ad0 | render | passthrough | 2026-05-02 | FUN_004dc9e0; called in pre-reset resource release; unknown args; DEFERRED D-2020 |
 | S-0702 | 0x004cb8a0 | 0x004db3e0 FUN_004db3e0, 0x004e0920 FUN_004e0920 | render | passthrough | 2026-05-02 | FUN_004cb8a0; locks/creates vertex buffer from descriptor; shared across multiple callers; DEFERRED D-2020 |
@@ -95,7 +95,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0185 | 0x004a5df5 | 0x004a5e35 __ms_p5_mp_test_fdiv | boot | passthrough | 2026-05-02 | __ms_p5_test_fdiv; fallback FPU test; depth-4; D-0467 |
 | S-0186 | 0x004a9744 | 0x004a5f07 ___endstdio | boot | passthrough | 2026-05-02 | __flushall; unconditional flush; depth-4; D-0468 |
 | S-0187 | 0x004ad351 | 0x004a5f07 ___endstdio | boot | passthrough | 2026-05-02 | __fcloseall; conditional close; depth-4; D-0469 |
-| S-0188 | 0x004a7800 | 0x004a787f __lock | boot | passthrough | 2026-05-02 | FUN_004a7800; lazy init of lock slot; depth-4; D-0470 |
+| ~~S-0188~~ | ~~0x004a7800~~ | ~~0x004a787f __lock~~ | boot | resolved | 2026-05-12 | RESOLVED boot_crt_env_cont1: FUN_004a7800 C1 at re/analysis/boot_crt_env_cont1/0x004a7800.md |
 | S-0189 | 0x004aa7da | 0x004aac76 ___sbh_alloc_block | boot | passthrough | 2026-05-02 | ___sbh_alloc_new_region; allocates new SBH region; depth-4; D-0471 |
 | S-0190 | 0x004aa891 | 0x004aac76 ___sbh_alloc_block | boot | passthrough | 2026-05-02 | ___sbh_alloc_new_group; initialises new SBH group; depth-4; D-0472 |
 | S-0300 | 0x004b7330 | 0x0047b860 FUN_0047b860 | input | passthrough | 2026-05-02 | FUN_004b7330; called FUN_004b7330(0); returns ptr stored in DAT_006bf1e0; lua_open/lua_newstate equivalent; depth-2 of LUA_INIT_FN; filed D-0820 |
@@ -245,17 +245,17 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1426 | 0x004b55a0 FUN_004b55a0 | FUN_00443440 | ai | passthrough | 2026-05-03 | debug draw release: frees/submits draw object returned by FUN_004671a0; paired with FUN_004671a0 |
 | S-0340 | 0x005a9e10 FUN_005a9e10 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | two-call dispatcher; depth-1 callee of FUN_005b9f30; RESOLVED: analyzed in audio_dsound-20260502-1942 |
 | S-0341 | 0x005aee20 FUN_005aee20 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | bit-scan-forward loop; depth-1 callee of FUN_005b9f30; RESOLVED: analyzed in audio_dsound-20260502-1942 |
-| S-0342 | 0x005ba780 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | LAB_005ba780; fn-ptr at struct+0x34; unrecognized body; depth-1 callee |
-| S-0343 | 0x005ba7f0 | 0x005b9f30 LAB_005b9f30 | audio | passthrough | 2026-05-02 | LAB_005ba7f0; fn-ptr at struct+0x30; unrecognized body; depth-1 callee |
-| S-0344 | 0x005adfe0 | 0x005a9e10 FUN_005a9e10 | audio | passthrough | 2026-05-02 | FUN_005adfe0; called as FUN_005adfe0(param_1, param_3); depth-2 of entry |
-| S-0345 | 0x005ae010 | 0x005a9e10 FUN_005a9e10 | audio | passthrough | 2026-05-02 | FUN_005ae010; called as FUN_005ae010(param_1, param_2); depth-2 of entry |
-| S-0346 | 0x005ba720 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | LAB_005ba720; early-exit check; depth-2 of entry |
-| S-0347 | 0x005bb000 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | FUN_005bb000; called before DirectSoundCreate8 with param1; depth-2 of entry |
-| S-0348 | 0x005ba760 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | LAB_005ba760; error cleanup on DirectSoundCreate8 fail + buffer fail; depth-2 of entry |
-| S-0349 | 0x005bbc10 | 0x005ba1d0 LAB_005ba1d0 | audio | passthrough | 2026-05-02 | FUN_005bbc10; format/caps query after vtable+0x18; depth-2 of entry |
-| S-0350 | 0x005bbdb0 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbdb0; buffer creation; called in both DirectSound init paths; depth-2 of entry |
-| S-0351 | 0x005bac00 | 0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bac00; conditional callee when [ESI+0xc] nonzero; depth-2 of entry |
-| S-0352 | 0x005bbf30 | 0x005bad30 LAB_005bad30 | audio | passthrough | 2026-05-02 | FUN_005bbf30; unconditional single-arg callee after FUN_005bac00; depth-2 of entry |
+| ~~S-0342~~ | ~~0x005ba780~~ | ~~0x005b9f30 LAB_005b9f30~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~LAB_005ba780; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005ba780.md~~ |
+| ~~S-0343~~ | ~~0x005ba7f0~~ | ~~0x005b9f30 LAB_005b9f30~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~LAB_005ba7f0; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005ba7f0.md~~ |
+| ~~S-0344~~ | ~~0x005adfe0~~ | ~~0x005a9e10 FUN_005a9e10~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005adfe0; RESOLVED audio_rws_loader_cont1; C1 re/analysis/audio_rws_loader_cont1/0x005adfe0.md~~ |
+| ~~S-0345~~ | ~~0x005ae010~~ | ~~0x005a9e10 FUN_005a9e10~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005ae010; RESOLVED audio_rws_loader_cont1; C2 re/analysis/audio_rws_loader_cont1/0x005ae010.md~~ |
+| ~~S-0346~~ | ~~0x005ba720~~ | ~~0x005ba1d0 LAB_005ba1d0~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~LAB_005ba720; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005ba720.md~~ |
+| ~~S-0347~~ | ~~0x005bb000~~ | ~~0x005ba1d0 LAB_005ba1d0~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005bb000; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005bb000.md~~ |
+| ~~S-0348~~ | ~~0x005ba760~~ | ~~0x005ba1d0 LAB_005ba1d0~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~LAB_005ba760; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005ba760.md~~ |
+| ~~S-0349~~ | ~~0x005bbc10~~ | ~~0x005ba1d0 LAB_005ba1d0~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005bbc10; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005bbc10.md~~ |
+| ~~S-0350~~ | ~~0x005bbdb0~~ | ~~0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005bbdb0; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005bbdb0.md~~ |
+| ~~S-0351~~ | ~~0x005bac00~~ | ~~0x005ba1d0 LAB_005ba1d0 + 0x005bad30 LAB_005bad30~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005bac00; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005bac00.md~~ |
+| ~~S-0352~~ | ~~0x005bbf30~~ | ~~0x005bad30 LAB_005bad30~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-02~~ | ~~FUN_005bbf30; RESOLVED audio_dsound_d2; C1 re/analysis/audio_dsound_d2/0x005bbf30.md~~ |
 | S-0540 | 0x0046d320 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d320; returns packed color/state int per (slot, index) pair; depth-2 of camera_follow |
 | S-0541 | 0x0046d360 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0046d360; returns validity flag per (slot, index) pair; depth-2 of camera_follow |
 | S-0542 | 0x0040aef0 | 0x0040b090 FUN_0040b090 | render | passthrough | 2026-05-02 | FUN_0040aef0; per-slot update called once per outer loop iteration; depth-2 of camera_follow |
@@ -286,10 +286,10 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0555 | 0x0047bb10 | 0x0047c160 FUN_0047c160 | render | passthrough | 2026-05-02 | FUN_0047bb10; per-node computation; args: node ptr, iVar1+0x30, output ptr, validity ptr; depth-2 of camera_follow |
 | S-0560 | 0x004671a0 | 0x00403160 FUN_00403160 | hud | passthrough | 2026-05-02 | FUN_004671a0; camera/viewport handle getter; already in hooks.csv (render, camera_follow); depth-2 of FUN_00403160 |
 | S-0480 | 0x0042c280 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c280; called case 3 when FUN_0042c220 non-zero; D-1360 |
-| S-0481 | 0x0042c2d0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2d0; cases 1 and 4; get-value passed to FUN_0042b940; D-1360 |
-| S-0482 | 0x0042c2e0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2e0; cases 1 and 4; pending-event check; D-1360 |
+| S-0481 | 0x0042c2d0 | 0x004929d0 FUN_004929d0 | util | RESOLVED 2026-05-12 | 2026-05-02 | GetDat0067ecb4 promoted C2→C3 (game_state_sentinel_diff-20260512); reimpl mashed_re/GameState/StateAccessors.cpp |
+| S-0482 | 0x0042c2e0 | 0x004929d0 FUN_004929d0 | util | RESOLVED 2026-05-12 | 2026-05-02 | GetDat0067ecb8 promoted C2→C3 (game_state_sentinel_diff-20260512); reimpl mashed_re/GameState/StateAccessors.cpp |
 | S-0483 | 0x0042c2f0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042c2f0; called with arg 0 in cases 1 and 4; D-1360 |
-| S-0484 | 0x0042f500 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042f500; case 3 player-sort mode selector; D-1360 |
+| S-0484 | 0x0042f500 | 0x004929d0 FUN_004929d0 | util | RESOLVED 2026-05-12 | 2026-05-02 | GetDat0067ea64 promoted C2→C3 (game_state_sentinel_diff-20260512); reimpl mashed_re/GameState/StateAccessors.cpp |
 | S-0485 | 0x0042f6a0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_0042f6a0; case 3 race-end check vs 0xb; D-1360 |
 | S-0486 | 0x00432080 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_00432080; case 3 trigger DAT_00771968=5 path; D-1360 |
 | S-0487 | 0x004331a0 | 0x004929d0 FUN_004929d0 | util | passthrough | 2026-05-02 | FUN_004331a0; case 3 race-end path with FUN_0042b910 result; D-1360 |
@@ -576,9 +576,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2090 | 0x00427840 FUN_00427840 | 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | font setup variant B; no args; replaces FUN_00427780+FUN_004277a0 pair; depth-4 of FUN_00428320 |
 | S-2200 | 0x005a7520 | 0x005a66d0 FUN_005a66d0 | audio | resolved | 2026-05-06 | FUN_005a7520; 3-way mode dispatcher; re/analysis/audio_music_d3/005a7520.md; D-7600 D-7601 D-7602 |
 | S-2201 | 0x005a6d60 | 0x005a6dc0 FUN_005a6dc0 | audio | resolved | 2026-05-06 | FUN_005a6d60; indirect dispatch via 8-byte fn-ptr table; re/analysis/audio_music_d3/005a6d60.md; U-2567 |
-| S-2560 | 0x005a7460 FUN_005a7460 | 0x005a7520 FUN_005a7520 | audio | passthrough | 2026-05-06 | mode-1 branch target; 0xb8 bytes; depth-4 of audio_music; D-7600 |
-| S-2561 | 0x005a7560 FUN_005a7560 | 0x005a7520 FUN_005a7520 | audio | passthrough | 2026-05-06 | mode-0 branch target; 0x4d bytes; depth-4 of audio_music; D-7601 |
-| S-2562 | 0x005a75b0 FUN_005a75b0 | 0x005a7520 FUN_005a7520 | audio | passthrough | 2026-05-06 | mode-2 branch target (bit-0@param_1+0xc gated); 0x250 bytes; depth-4 of audio_music; D-7602 |
+| S-2560 | 0x005a7460 FUN_005a7460 | 0x005a7520 FUN_005a7520 | audio | resolved | 2026-05-12 | audio_music_cont1; priority-queue dequeue+sub-obj stop; re/analysis/audio_music_cont1/0x005a7460.md; U-3674 U-3675 U-3676 |
+| S-2561 | 0x005a7560 FUN_005a7560 | 0x005a7520 FUN_005a7520 | audio | resolved | 2026-05-12 | audio_music_cont1; optional dequeue+priority recompute+sorted insert; re/analysis/audio_music_cont1/0x005a7560.md; U-3676 |
+| S-2562 | 0x005a75b0 FUN_005a75b0 | 0x005a7520 FUN_005a7520 | audio | resolved | 2026-05-12 | audio_music_cont1; priority score compute+sorted list insert/reposition; re/analysis/audio_music_cont1/0x005a75b0.md; U-3677 U-3678 |
 | S-2220 | 0x00430b00 TimeDisplay::SetEntry | 0x00429310 TimeTrial::Tick | util | resolved | 2026-05-06 | HUD time display entry setter (47b); array 0x008989e0 stride 0xc; index=(param_2+param_1*2)*0xc; writes (frac sec min); leaderboard_d2-20260506 |
 | S-2225 | 0x0042f790 GhostMode::IsActive | 0x0040d270 Course::Finish | util | resolved | 2026-05-06 | ghost mode flag getter (5b); returns DAT_0067ea70; leaderboard_d2-20260506 |
 | S-2226 | 0x0040d040 Course::ValidateCarsFinished | 0x0040d270 Course::Finish | util | resolved | 2026-05-06 | car finish validator (200b); loop 4 cars; FUN_0041f320(state)+FUN_0041efc0(lap); modes 10+6 use FUN_00431d70; U-2607; leaderboard_d2-20260506 |
@@ -674,31 +674,31 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2861 | 0x00420de0 FUN_00420de0 | 0x004215c0 FUN_004215c0 | frontend | passthrough | 2026-05-07 | sole callee of 004215c0; receives param_2 (50.0f or 0/1 from parent caller); 30 bytes; D-8501 |
 | ~~S-2929~~ | ~~0x00405460 FUN_00405460~~ | ~~0x004102f0 FUN_004102f0~~ | util | ~~passthrough~~ | 2026-05-07 | RESOLVED 2026-05-08 game_state_d5-cont1: analyzed C1; re/analysis/game_state_d5-cont1/0x00405460.md |
 | ~~S-2930~~ | ~~0x0040e590 FUN_0040e590~~ | ~~0x004102f0 FUN_004102f0~~ | util | ~~passthrough~~ | 2026-05-07 | RESOLVED 2026-05-08 game_state_d5-cont1: analyzed C1; re/analysis/game_state_d5-cont1/0x0040e590.md |
-| S-2960 | 0x00404fa0 FUN_00404fa0 | 0x00405460 FUN_00405460 | util | passthrough | 2026-05-08 | spline matrix eval; 1068 bytes; 3 args (64b out-buf, spline-obj ptr, float t); D-8800 |
-| S-2961 | 0x00408b00 FUN_00408b00 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | grid-pos lookup; 0x1D2 bytes; args (pos-handle, start-idx, player-count, &local_34, &local_40); D-8801 |
-| S-2962 | 0x00409290 FUN_00409290 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | writes starting-pos handle to &DAT_0063ba80; 0x6D bytes; D-8802 |
-| S-2963 | 0x0040b250 FUN_0040b250 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg pre-placement call; 0x33 bytes; D-8803 |
-| S-2964 | 0x0040b410 FUN_0040b410 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | player readiness code getter; 0xB bytes; returns 0/1/2/0xffffffff/0xfffffffe; D-8804 |
-| S-2965 | 0x0041ede0 FUN_0041ede0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx,0,0); zeroing-loop call; 0x6F bytes; D-8805 |
-| S-2966 | 0x0041ee50 FUN_0041ee50 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx,0,0); zeroing-loop call after S-2965; 0x58 bytes; D-8806 |
-| S-2967 | 0x0041ef80 FUN_0041ef80 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx,0); first call in zeroing loop; 0x36 bytes; D-8807 |
-| S-2968 | 0x0041f000 FUN_0041f000 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx, score-array ptr); 0x24 bytes; D-8808 |
-| S-2969 | 0x00429820 FUN_00429820 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; first call after mod-12 counter; 0x14 bytes; D-8809 |
-| S-2970 | 0x0046b1c0 FUN_0046b1c0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx, score-array ptr); 0x329 bytes; D-8810 |
-| S-2971 | 0x0046b540 FUN_0046b540 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx); called after FUN_0046b1c0; 0x157 bytes; D-8811 |
-| S-2972 | 0x0046c6d0 FUN_0046c6d0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | args (player_idx, &out_score); writes score; 0x23 bytes; D-8812 |
-| S-2973 | 0x004704c0 FUN_004704c0 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | 6-arg vehicle-placement call; 0x1AA bytes; D-8813 |
-| S-2974 | 0x0048f680 FUN_0048f680 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; called after FUN_00429820; 0x20 bytes; D-8814 |
-| S-2975 | 0x0048f740 FUN_0048f740 | 0x0040e590 FUN_0040e590 | util | passthrough | 2026-05-08 | no-arg; called after FUN_0048f680; 0x30 bytes; D-8815 |
+| ~~S-2960~~ | ~~0x00404fa0 FUN_00404fa0~~ | ~~0x00405460 FUN_00405460~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x00404fa0.md |
+| ~~S-2961~~ | ~~0x00408b00 FUN_00408b00~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x00408b00.md |
+| ~~S-2962~~ | ~~0x00409290 FUN_00409290~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x00409290.md |
+| ~~S-2963~~ | ~~0x0040b250 FUN_0040b250~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0040b250.md |
+| ~~S-2964~~ | ~~0x0040b410 FUN_0040b410~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0040b410.md |
+| ~~S-2965~~ | ~~0x0041ede0 FUN_0041ede0~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0041ede0.md |
+| ~~S-2966~~ | ~~0x0041ee50 FUN_0041ee50~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0041ee50.md |
+| ~~S-2967~~ | ~~0x0041ef80 FUN_0041ef80~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0041ef80.md |
+| ~~S-2968~~ | ~~0x0041f000 FUN_0041f000~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: timer_d3_cont1_b-20260512; C1 re/analysis/timer_d3_cont1_b/0x0041f000.md (drift) |
+| ~~S-2969~~ | ~~0x00429820 FUN_00429820~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x00429820.md |
+| ~~S-2970~~ | ~~0x0046b1c0 FUN_0046b1c0~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: timer_d3_cont1_b-20260512; C1 re/analysis/timer_d3_cont1_b/0x0046b1c0.md (drift) |
+| ~~S-2971~~ | ~~0x0046b540 FUN_0046b540~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: timer_d3_cont1_b-20260512; C1 re/analysis/timer_d3_cont1_b/0x0046b540.md (drift) |
+| ~~S-2972~~ | ~~0x0046c6d0 FUN_0046c6d0~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0046c6d0.md |
+| ~~S-2973~~ | ~~0x004704c0 FUN_004704c0~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x004704c0.md |
+| ~~S-2974~~ | ~~0x0048f680 FUN_0048f680~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0048f680.md |
+| ~~S-2975~~ | ~~0x0048f740 FUN_0048f740~~ | ~~0x0040e590 FUN_0040e590~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x0048f740.md |
 | S-3180 | 0x005adef0 FUN_005adef0 | 0x005aabe0 FUN_005aabe0 | audio | passthrough | 2026-05-08 | called as FUN_005adef0(&DAT_007dccf0,&LAB_005aac00,param_1); return value used as ref-count by callers; audio_dsound_d3 |
 | S-3181 | 0x005ae250 FUN_005ae250 | 0x005bc860 FUN_005bc860 | audio | passthrough | 2026-05-08 | called as FUN_005ae250(0x12,8,1,0,&DAT_007ddfec); tracker/pool init; audio_dsound_d3 |
 | S-3182 | 0x005ae330 FUN_005ae330 | 0x005bc880 FUN_005bc880 | audio | passthrough | 2026-05-08 | called as FUN_005ae330(&DAT_007ddfec); counterpart to FUN_005ae250; audio_dsound_d3 |
-| S-3183 | 0x005aacf0 FUN_005aacf0 | 0x005aaa00 FUN_005aaa00 | audio | passthrough | 2026-05-08 | called twice: (param_1,1) and (param_1,2) when +0x1c bit0x1 set; audio_dsound_d3 |
-| S-3184 | 0x005a9f60 FUN_005a9f60 | 0x005aaa00 FUN_005aaa00 | audio | passthrough | 2026-05-08 | final teardown call (param_1,param_2,param_3); audio_dsound_d3 |
-| S-3185 | 0x005bc190 FUN_005bc190 | 0x005baa60 FUN_005baa60 | audio | passthrough | 2026-05-08 | called as FUN_005bc190(param_3,local_48); transforms param_3 → 4-float buffer; audio_dsound_d3 |
-| S-3186 | 0x005bc450 FUN_005bc450 | 0x005bc470 FUN_005bc470 + 0x005bc640 FUN_005bc640 | audio | passthrough | 2026-05-08 | prep/cleanup call; no-arg in FUN_005bc470; with param_1 in FUN_005bc640; audio_dsound_d3 |
-| S-3187 | 0x005be0f0 FUN_005be0f0 | 0x005bc470 FUN_005bc470 | audio | passthrough | 2026-05-08 | called as FUN_005be0f0(0,param_3+2) and FUN_005be0f0(0,param_3+8,0); slot init; audio_dsound_d3 |
-| S-3188 | 0x005be160 FUN_005be160 | 0x005bc640 FUN_005bc640 | audio | passthrough | 2026-05-08 | called as FUN_005be160(param_1+2) and FUN_005be160(param_1+8); slot cleanup; audio_dsound_d3 |
+| ~~S-3183~~ | ~~0x005aacf0 FUN_005aacf0~~ | ~~0x005aaa00 FUN_005aaa00~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-08~~ | ~~called twice: (param_1,1) and (param_1,2) when +0x1c bit0x1 set; audio_dsound_d3~~ | RESOLVED: audio_dsound_cont1-20260512; C1 re/analysis/audio_dsound_cont1/0x005aacf0.md |
+| ~~S-3184~~ | ~~0x005a9f60 FUN_005a9f60~~ | ~~0x005aaa00 FUN_005aaa00~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-08~~ | ~~final teardown call (param_1,param_2,param_3); audio_dsound_d3~~ | RESOLVED: audio_dsound_cont1-20260512; C1 re/analysis/audio_dsound_cont1/0x005a9f60.md |
+| ~~S-3185~~ | ~~0x005bc190 FUN_005bc190~~ | ~~0x005baa60 FUN_005baa60~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-08~~ | ~~called as FUN_005bc190(param_3,local_48); transforms param_3 → 4-float buffer; audio_dsound_d3~~ | RESOLVED: audio_dsound_cont1-20260512; C1 re/analysis/audio_dsound_cont1/0x005bc190.md |
+| ~~S-3186~~ | ~~0x005bc450 FUN_005bc450~~ | ~~0x005bc470 FUN_005bc470 + 0x005bc640 FUN_005bc640~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-08~~ | ~~prep/cleanup call; no-arg in FUN_005bc470; with param_1 in FUN_005bc640; audio_dsound_d3~~ | RESOLVED: audio_dsound_cont1-20260512; C1 re/analysis/audio_dsound_cont1/0x005bc450.md |
+| ~~S-3187~~ | ~~0x005be0f0 FUN_005be0f0~~ | ~~0x005bc470 FUN_005bc470~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-08~~ | ~~called as FUN_005be0f0(0,param_3+2) and FUN_005be0f0(0,param_3+8,0); slot init; audio_dsound_d3~~ | RESOLVED: audio_dsound_cont1-20260512; C1 re/analysis/audio_dsound_cont1/0x005be0f0.md |
+| ~~S-3188~~ | ~~0x005be160 FUN_005be160~~ | ~~0x005bc640 FUN_005bc640~~ | ~~audio~~ | ~~passthrough~~ | ~~2026-05-08~~ | ~~called as FUN_005be160(param_1+2) and FUN_005be160(param_1+8); slot cleanup; audio_dsound_d3~~ | RESOLVED: audio_dsound_cont1-20260512; C1 re/analysis/audio_dsound_cont1/0x005be160.md |
 | S-3189 | 0x005aef70 LAB_005aef70 | 0x005aef30 FUN_005aef30 | audio | passthrough | 2026-05-08 | _beginthread target; thread wrapper proc; receives thread-descriptor ptr as arg; dispatches to [1] proc; audio_dsound_d3 |
 | S-3190 | 0x005aa560 FUN_005aa560 | 0x005c7990 FUN_005c7990 | audio | passthrough | 2026-05-08 | called as FUN_005aa560(&DAT_007de1c0,0,p2,p1,p3,p4); 567 bytes (005aa560–005aa797); depth-2 from 005ba1d0 tail; D-0952; audio_dsound_d4 | RESOLVED: analyzed in audio_dsound_d5-20260511; C1 plate at re/analysis/audio_dsound_d5/0x005aa560.md |
 | S-3565 | 0x005aad40 FUN_005aad40 | 0x005aa560 FUN_005aa560 | audio | passthrough | 2026-05-11 | called at 0x005aa593 with no args when param_2 is null; returns default context ptr; audio_dsound_d5 |
@@ -902,3 +902,25 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3680 | 0x0041b720 FUN_0041b720 | 0x0041bf20 | util | passthrough | 2026-05-12 | iterator returning pointer; loop terminates when iVar1+0x16c >= 0x63cd90; record stride 0x16c; timer_d3_cont1_a |
 | S-3681 | 0x0041b770 FUN_0041b770 | 0x0041c010 | util | passthrough | 2026-05-12 | invoked once per 0x16c-byte record without args; uses global cursor (same table as FUN_0041bf20 / FUN_0041b720); timer_d3_cont1_a |
 | S-3682 | (id-rename-padding) | n/a | util | id-rename-padding | 2026-05-12 | placeholder reserved after S-3625 collision-shift (concurrent session took S-3625); timer_d3_cont1_a |
+| S-3683 | 0x005aac20 FUN_005aac20 | 0x005aacf0 FUN_005aacf0 | audio | passthrough | 2026-05-12 | called as FUN_005aac20(param_1, index, param_2); per-slot unlink/release in batch iterator; depth-4 callee; audio_dsound_cont1 |
+| S-3684 | 0x005aa7e0 FUN_005aa7e0 | 0x005a9f60 FUN_005a9f60 | audio | passthrough | 2026-05-12 | called as FUN_005aa7e0(type_ptr, sub_type_3bit, &self); returns int offset for ptr computation; type-hierarchy walk; depth-4 callee; audio_dsound_cont1 |
+| S-3685 | 0x005ae400 FUN_005ae400 | 0x005a9f60 FUN_005a9f60 | audio | passthrough | 2026-05-12 | single-arg free; called when sign bit of *(type_ptr+0xc) set; third free path after bitmap-pool and heap; depth-4 callee; audio_dsound_cont1 |
+| S-3686 | 0x005bf610 FUN_005bf610 | 0x005be0f0 FUN_005be0f0 | audio | passthrough | 2026-05-12 | called as FUN_005bf610(param_2, context); allocator returning object ptr; depth-4 callee; audio_dsound_cont1 |
+| S-3687 | 0x005be140 FUN_005be140 | 0x005be160 FUN_005be160 | audio | passthrough | 2026-05-12 | called as FUN_005be140(param_1, 0, 0); 3-arg teardown step A; conditional on [+4]==1; depth-4 callee; audio_dsound_cont1 |
+| S-3688 | 0x005be190 FUN_005be190 | 0x005be160 FUN_005be160 | audio | passthrough | 2026-05-12 | called as FUN_005be190(param_1); teardown step B after FUN_005be140; conditional on [+4]==1; depth-4 callee; audio_dsound_cont1 |
+| S-3689 | 0x005bf690 FUN_005bf690 | 0x005be160 FUN_005be160 | audio | passthrough | 2026-05-12 | called as FUN_005bf690(param_1); unconditional free/dtor; last call in FUN_005be160; depth-4 callee; audio_dsound_cont1 |
+| S-3690 | 0x00550580 FUN_00550580 | 0x005507b0 VFS_Open | io | passthrough | 2026-05-12 | VFS file-open implementation; called as FUN_00550580(handler, path, flags, 0, 0); counterpart to VFS_FileExists (FUN_00550b00); font_text_cont1 |
+| S-3691 | 0x004c5ca0 FUN_004c5ca0 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | RwTexDictionaryGetCurrent(); returns current active TXD; save half of TXD save/restore pair with FUN_004c5c80; font_text_cont1 |
+| S-3692 | 0x004c5cb0 FUN_004c5cb0 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | RwTexDictionaryFindNamedTexture(name, buf); looks up texture by name in current TXD; returns tex dict entry ptr or NULL; font_text_cont1 |
+| S-3693 | 0x004ce2d0 FUN_004ce2d0 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | called as FUN_004ce2d0(DAT_00912a0c); purpose uncertain — RW stream seek or reset; appears in audio/boot contexts as "optional pre-seek"; font_text_cont1 |
+| S-3694 | 0x00550a20 FUN_00550a20 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | VFS_ReadLine(buf, size, ctx); reads next line from open file into buf; returns 0 at EOF; called in .met parse loop; font_text_cont1 |
+| S-3695 | 0x005c4c60 FUN_005c4c60 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | GlyphBuf_Resize(handle, count, type); resizes glyph data block in font ctx; font_text_cont1 |
+| S-3696 | 0x005c4d30 FUN_005c4d30 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | GlyphBuf_GetBase(handle) → ptr; returns base pointer to resized glyph data buffer; font_text_cont1 |
+| S-3697 | 0x004cdca0 FUN_004cdca0 | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud | passthrough | 2026-05-12 | RwImageCreate(width, height, depth); allocates RwImage struct; called with atlas tex dims + 0x20; font_text_cont1 |
+| S-3698 | 0x004cdd00 FUN_004cdd00 | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud | passthrough | 2026-05-12 | RwImageDestroy(img*); frees scan image after atlas glyph extraction complete; font_text_cont1 |
+| S-3699 | 0x004d52d0 FUN_004d52d0 | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud | passthrough | 2026-05-12 | called as FUN_004d52d0(img, *piVar8); binds texture pixels to scan image (RwTextureGetRaster or similar); font_text_cont1 |
+| S-3700 | 0x005c4d50 FUN_005c4d50 | 0x00554050 FontCanvas_Shutdown | hud | passthrough | 2026-05-12 | GlyphBuf_SpecialFree(); no-arg free; called when font_canvas_node[1]==-1 (special case); font_text_cont1 |
+| S-3701 | 0x00553e80 FUN_00553e80 | 0x00554050 FontCanvas_Shutdown | hud | passthrough | 2026-05-12 | FontChain_FreeList(node*); recursive free of remaining glyph node linked list; font_text_cont1 |
+| S-3702 | 0x004c5770 FUN_004c5770 | 0x00552b90 FontSys_Shutdown | hud | passthrough | 2026-05-12 | FontCtx_Free(ctx*); frees individual font context object from 32-slot stack; font_text_cont1 |
+| S-3703 | 0x00555830 FUN_00555830 | 0x00555280 FontSys_ShutdownContextPool | hud | passthrough | 2026-05-12 | FontObj_Free(obj*); frees font object node[1] during context pool teardown; also called in FontText_HudShutdown (FUN_00427620); font_text_cont1 |
+| S-3704 | 0x0055dca0 FUN_0055dca0 | 0x0055dc70 FUN_0055dc70 | physics | passthrough | 2026-05-12 | BVH/physics struct initializer; 8-field 0x20-byte init: [0]=FUN_00559b50 result [1]=FUN_0055f450 result [2][5]=two arrays of (capacity*4) bytes [6]=param+4 [7]=calloc'd param+4 * 8 bytes (zero 8-byte pairs); track_loader_d3_cont1 |
