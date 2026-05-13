@@ -958,3 +958,25 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  sweep-20260513-1921  scribe-release  bucket=fun_00471ec0_callees  writes=20  errors=0
 2026-05-13  sweep-20260513-1921  scribe-release  bucket=settings_config_d2_cont1  writes=14  errors=0
 2026-05-13  sweep-20260513-1921  scribe-release  buckets=3 drained  errors=0  sync=partial(slot6-busy)
+2026-05-13  005ab380  FUN_005ab380  C1->C2  promote_c2_audio_rws/005ab380.md
+2026-05-13  005ab410  FUN_005ab410  C1->C2  promote_c2_audio_rws/005ab410.md
+2026-05-13  005aba20  FUN_005aba20  C1->C2  promote_c2_audio_rws/005aba20.md  U-3025 U-3026
+2026-05-13  005abcb0  FUN_005abcb0  C1->C2  promote_c2_audio_rws/005abcb0.md
+2026-05-13  005abcf0  FUN_005abcf0  C1->C2  promote_c2_audio_rws/005abcf0.md  U-3027 U-3028
+2026-05-13  005abd30  FUN_005abd30  C1->C2  promote_c2_audio_rws/005abd30.md
+2026-05-13  005abf80  FUN_005abf80  C1->C2  promote_c2_audio_rws/005abf80.md
+2026-05-13  005abfa0  FUN_005abfa0  C1->C2  promote_c2_audio_rws/005abfa0.md  U-3029
+2026-05-13  005ac210  FUN_005ac210  C1->C2  promote_c2_audio_rws/005ac210.md  U-3030 U-3031
+2026-05-13  005ac5f0  FUN_005ac5f0  C1->C2  promote_c2_audio_rws/005ac5f0.md
+2026-05-13  005ac740  FUN_005ac740  C1->C2  promote_c2_audio_rws/005ac740.md
+2026-05-13  005ac7b0  FUN_005ac7b0  C1->C2  promote_c2_audio_rws/005ac7b0.md
+2026-05-13  005ac900  FUN_005ac900  C1->C2  promote_c2_audio_rws/005ac900.md
+2026-05-13  005ac980  FUN_005ac980  C1->C2  promote_c2_audio_rws/005ac980.md
+2026-05-13  005ac9e0  FUN_005ac9e0  C1->C2  promote_c2_audio_rws/005ac9e0.md
+2026-05-13  005aca80  FUN_005aca80  C1->C2  promote_c2_audio_rws/005aca80.md
+2026-05-13  005acaa0  FUN_005acaa0  C1->C2  promote_c2_audio_rws/005acaa0.md  U-3032
+2026-05-13  005acd10  FUN_005acd10  C1->C2  promote_c2_audio_rws/005acd10.md
+2026-05-13  005acd60  FUN_005acd60  C1->C2  promote_c2_audio_rws/005acd60.md
+2026-05-13  005addd0  FUN_005addd0  C1->C2  promote_c2_audio_rws/005addd0.md
+2026-05-13  sweep-20260513-2055  scribe-claim  buckets=0 queued, 1 skipped-HOLD
+2026-05-13  sweep-20260513-2055  scribe-release  buckets=0 drained  errors=0  sync=ok(4-locked-slots-skipped)
