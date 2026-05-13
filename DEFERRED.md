@@ -44,31 +44,31 @@ A row goes into DEFERRED when:
 | ~~D-0580~~ | ~~0x004ccce0 FUN_004ccce0~~ | RESOLVED 2026-05-03: analyzed in rw_engine_teardown_d3 session; see re/analysis/rw_engine_teardown_d3/0x004ccce0.md | — | render |
 | ~~D-0581~~ | ~~0x004cc9f0 FUN_004cc9f0~~ | RESOLVED 2026-05-03: already mapped in re/analysis/render_d3d9_device/0x004cc9f0.md prior to this session | — | render |
 | D-0281 | 0x004954f0 FUN_004954f0 (HardwareExitApplication) and its callees: 0x00498bf0,ShowCursor,0x00498b60,0x0045b350,thunk_FUN_00496370,0x00496010,thunk_FUN_00495580 | sister function to FUN_004938c0; called by FUN_00492370 for hardware-layer teardown; not in rw_engine_teardown subset (callee of outer shell FUN_00492370, not of RW_TEAR_FN) | pick up as bucket rw_hw_teardown; after rw_engine_teardown-cont1 finishes; confirm if D3D teardown path is here | render |
-| D-0220 | 0x004c9f50 FUN_004c9f50, 0x004c9f60 FUN_004c9f60 | early-finish from rw_engine_init-20260502-1734 (cap_count reached 18 at fn 18/20); depth-1 callees of 0x00493710 RW_INIT_FN | pick up as bucket rw_engine_init-cont1; depth-1 of RW_INIT_FN; no further recursion | render |
-| D-0221 | 0x004cbc60,0x004cbc70,0x004cbc80,0x004cbc90,0x00550350,0x00550390,0x005584c0,0x005c9d00 | subset cap-split from rw_engine_init-20260502-1734 (28 callees exceeded hard cap 20); depth-1 callees of 0x00493710 RW_INIT_FN (S-0060..S-0067 filed) | pick up as bucket rw_engine_init-cont1; depth-1 of RW_INIT_FN; no further recursion | render |
-| D-0222 | 0x004ce790 FUN_004ce790 | depth-2 of 0x00493600 FUN_00493600; called twice with (ptr-to-global, fn-ptr, fn-ptr-or-label) pattern | rw_engine_init-cont1 sweep or rw_plugin_reg session | render |
-| D-0223 | 0x00496400 FUN_00496400 | depth-2 of 0x004951f0 FUN_004951f0; called with log string args | rw_engine_init-cont1 | render |
-| D-0224 | 0x00498b60 FUN_00498b60 | depth-2 of 0x004951f0 FUN_004951f0; called on failure path | rw_engine_init-cont1 | render |
-| D-0225 | 0x00498bf0 FUN_00498bf0 | depth-2 of 0x004951f0 FUN_004951f0; result checked; if non-zero calls ShowCursor(0) | rw_engine_init-cont1 | render |
-| D-0226 | 0x00499400 FUN_00499400 | depth-2 of 0x004951f0 FUN_004951f0; called with DAT_006147bc as arg | rw_engine_init-cont1 | render |
-| D-0227 | 0x004cbb60 FUN_004cbb60 | depth-2 of 0x004951f0 FUN_004951f0; return stored to DAT_00771e58; dereffed at +0xC4 and +0xCC | rw_engine_init-cont1 | render |
-| D-0228 | 0x00499710 FUN_00499710 | depth-2 of 0x00495270 FUN_00495270; return value forwarded via *param_1 to FUN_004c30b0 | rw_engine_init-cont1 | render |
-| D-0229 | 0x004c2c90 FUN_004c2c90 | depth-2 of 004c2ed0+004c2f00+004c2fb0+004c3040+004c30b0; also S-0081 from rw_engine_teardown; called with (DAT_007d3ff8+0x10, id, ...) pattern; ids seen: 0,2,3,4,6,10,11,17,0xb,0x12 | rw_engine_init-cont1 | render |
-| D-0230 | 0x004cf160 FUN_004cf160 | depth-2 of 0x004c2fb0 FUN_004c2fb0; receives *(DAT_007d3ff8+0x10) dereference as arg | rw_engine_init-cont1 | render |
-| D-0231 | 0x004d8000 FUN_004d8000 | depth-2 of 0x004c2fb0 FUN_004c2fb0; called with (&DAT_00617fe0, DAT_007d3ff8); result checked | rw_engine_init-cont1 | render |
-| D-0232 | 0x004cae90 FUN_004cae90 | depth-2 of 0x004c30b0 FUN_004c30b0; result checked; gating further execution | rw_engine_init-cont1 | render |
-| D-0233 | 0x004d7ff0 FUN_004d7ff0 | depth-2 of 0x004c30b0 FUN_004c30b0; called with HRESULT-style codes 0x80000001/0x80000013/0x80000016 | rw_engine_init-cont1 | render |
-| D-0234 | 0x004d8480 FUN_004d8480 | depth-2 of 0x004c30b0 FUN_004c30b0; called with &local_8 on error paths | rw_engine_init-cont1 | render |
-| D-0235 | 0x004d7ca0 FUN_004d7ca0 | depth-2 of 004c3270+004c32b0; also S-0082 from rw_engine_teardown | rw_engine_init-cont1 | render |
-| D-0236 | 0x004ccf20 FUN_004ccf20 | depth-2 of 004c3270+004c32b0; also S-0083 from rw_engine_teardown | rw_engine_init-cont1 | render |
-| D-0237 | 0x004c7a60 thunk_FUN_004cfa00 | depth-2 of 0x004c32b0 FUN_004c32b0; called after all FUN_004d7de0 plugin-reg calls succeed | rw_engine_init-cont1 | render |
-| D-0238 | 0x004cc7e0 FUN_004cc7e0 | depth-2 of 0x004c32b0 FUN_004c32b0; called with bVar17 (param_2&1 result) | rw_engine_init-cont1 | render |
-| D-0239 | 0x004cce20 FUN_004cce20 | depth-2 of 0x004c32b0 FUN_004c32b0; called with param_1 | rw_engine_init-cont1 | render |
-| D-0240 | 0x004d7c60 FUN_004d7c60 | depth-2 of 0x004c32b0 FUN_004c32b0; result checked | rw_engine_init-cont1 | render |
-| D-0241 | 0x004d7de0 FUN_004d7de0 | depth-2 of 0x004c32b0 FUN_004c32b0; called 14× with (&DAT_00617fe0, size, id, cb1, cb2, 0) pattern; ids 0x401–0x40f + 0x412 | rw_engine_init-cont1 | render |
-| D-0242 | 0x004d8560 FUN_004d8560 | depth-2 of 0x004c32b0 FUN_004c32b0; no args; result OR'd with FUN_004d7de0 results | rw_engine_init-cont1 | render |
-| D-0243 | 0x004d8570 FUN_004d8570 | depth-2 of 0x004c32b0 FUN_004c32b0; result checked for non-zero before main work | rw_engine_init-cont1 | render |
-| D-0244 | 0x004e5d30 FUN_004e5d30 | depth-2 of 0x00493640 FUN_00493640; first in plugin-chain | rw_engine_init-cont1 | render |
+| ~~D-0220~~ | ~~0x004c9f50 FUN_004c9f50, 0x004c9f60 FUN_004c9f60~~ | RESOLVED 2026-05-12: both analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/rw_engine_init_d2/004c9f50.md + 004c9f60.md | — | render |
+| ~~D-0221~~ | ~~0x004cbc60,0x004cbc70,0x004cbc80,0x004cbc90,0x00550350,0x00550390,0x005584c0,0x005c9d00~~ | RESOLVED 2026-05-12: 0x004cbc60/70/80/90 analyzed in rw_engine_init_d2; 0x00550350+0x005584c0 in rw_engine_init_d2_cont1_a; 0x00550390 in rw_engine_teardown; 0x005c9d00 drift-skip (game_state_d2 C2); all 8 confirmed via D-0520..D-0523 | — | render |
+| ~~D-0222~~ | ~~0x004ce790 FUN_004ce790~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_cont1-20260512; re/analysis/rw_engine_init_cont1/004ce790.md | — | render |
+| ~~D-0223~~ | ~~0x00496400 FUN_00496400~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/settings_config/00496400.md | — | render |
+| ~~D-0224~~ | ~~0x00498b60 FUN_00498b60~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/rw_engine_init_d2/00498b60.md | — | render |
+| ~~D-0225~~ | ~~0x00498bf0 FUN_00498bf0~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/rw_engine_init_d2/00498bf0.md | — | render |
+| ~~D-0226~~ | ~~0x00499400 FUN_00499400~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/rw_engine_init_d2/00499400.md | — | render |
+| ~~D-0227~~ | ~~0x004cbb60 FUN_004cbb60~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/rw_engine_init_d2/004cbb60.md | — | render |
+| ~~D-0228~~ | ~~0x00499710 FUN_00499710~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_d2-20260502-1905; re/analysis/rw_engine_init_d2/00499710.md | — | render |
+| ~~D-0229~~ | ~~0x004c2c90 FUN_004c2c90~~ | RESOLVED 2026-05-12: drift-skip; already C2 in render_promote_c2_rw_plugin-20260512; re/analysis/render_promote_c2_rw_plugin/0x004c2c90.md | — | render |
+| ~~D-0230~~ | ~~0x004cf160 FUN_004cf160~~ | RESOLVED 2026-05-12: analyzed C1 in rw_engine_init_cont1-20260512; re/analysis/rw_engine_init_cont1/004cf160.md | — | render |
+| ~~D-0231~~ | ~~0x004d8000 FUN_004d8000~~ | RESOLVED 2026-05-12: drift-clear; already C1 in intro_splash_d3 session; re/analysis/intro_splash_d3/0x004d8000.md | — | render |
+| ~~D-0232~~ | ~~0x004cae90 FUN_004cae90~~ | RESOLVED 2026-05-02: C1 in rw_engine_init_d2-20260502-1905; see re/analysis/rw_engine_init_d2/004cae90.md | — | render |
+| ~~D-0233~~ | ~~0x004d7ff0 FUN_004d7ff0~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/004d7ff0.md | — | render |
+| ~~D-0234~~ | ~~0x004d8480 FUN_004d8480~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/ | — | render |
+| ~~D-0235~~ | ~~0x004d7ca0 FUN_004d7ca0~~ | RESOLVED 2026-05-12: drift-clear; C1 in rw_engine_teardown_d2; see re/analysis/rw_engine_teardown_d2/0x004d7ca0.md | — | render |
+| ~~D-0236~~ | ~~0x004ccf20 FUN_004ccf20~~ | RESOLVED 2026-05-12: drift-clear; C1 in rw_engine_teardown_d2; see re/analysis/rw_engine_teardown_d2/0x004ccf20.md | — | render |
+| ~~D-0237~~ | ~~0x004c7a60 thunk_FUN_004cfa00~~ | RESOLVED 2026-05-02: C1 thunk in rw_engine_init_d2-20260502-1905; see re/analysis/rw_engine_init_d2/004c7a60.md | — | render |
+| ~~D-0238~~ | ~~0x004cc7e0 FUN_004cc7e0~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/004cc7e0.md | — | render |
+| ~~D-0239~~ | ~~0x004cce20 FUN_004cce20~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/004cce20.md | — | render |
+| ~~D-0240~~ | ~~0x004d7c60 FUN_004d7c60~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/004d7c60.md | — | render |
+| ~~D-0241~~ | ~~0x004d7de0 FUN_004d7de0~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512 (had prior C1 Ghidra comment 2026-05-07); see re/analysis/rw_engine_init_cont1/004d7de0.md | — | render |
+| ~~D-0242~~ | ~~0x004d8560 FUN_004d8560~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512 (had prior C1 Ghidra comment 2026-05-08); see re/analysis/rw_engine_init_cont1/004d8560.md | — | render |
+| ~~D-0243~~ | ~~0x004d8570 FUN_004d8570~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/004d8570.md | — | render |
+| ~~D-0244~~ | ~~0x004e5d30 FUN_004e5d30~~ | RESOLVED 2026-05-12: C1 in rw_engine_init_cont1-20260512; see re/analysis/rw_engine_init_cont1/004e5d30.md | — | render |
 | D-0245 | 0x00543e50 FUN_00543e50 | depth-2 of 0x00493640 FUN_00493640 | rw_engine_init-cont1 | render |
 | D-0246 | 0x0053eaa0 FUN_0053eaa0 | depth-2 of 0x00493640 FUN_00493640 | rw_engine_init-cont1 | render |
 | D-0247 | 0x0053d0b0 FUN_0053d0b0 | depth-2 of 0x00493640 FUN_00493640 | rw_engine_init-cont1 | render |
@@ -232,7 +232,7 @@ A row goes into DEFERRED when:
 | D-0038 | 0x004aaff0 _memcpy | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
 | D-0039 | 0x004ae29f ___crtInitCritSecAndSpinCount | analyzed C1 session boot_crt_env-20260502-1734 | 2026-05-02 |
 | D-0220 | 0x004c9f50+0x004c9f60 | analyzed C1 session rw_engine_init_d2-20260502-1905 (both RVAs) | 2026-05-02 |
-| D-0221 | 0x004cbc60+0x004cbc70+0x004cbc80+0x004cbc90 analyzed; 0x00550350+0x00550390+0x005584c0+0x005c9d00 → D-0520..D-0523 | partial pickup rw_engine_init_d2-20260502-1905 | 2026-05-02 |
+| D-0221 | all 8 RVAs resolved: 0x004cbc60/70/80/90 in rw_engine_init_d2-20260502-1905; 0x00550350+0x005584c0 in rw_engine_init_d2_cont1_a; 0x00550390 in rw_engine_teardown; 0x005c9d00 drift-skip game_state_d2; full close via rw_engine_init_cont1_a-20260512 | fully resolved 2026-05-12 | 2026-05-02/2026-05-12 |
 | D-0223 | 0x00496400 | analyzed C1 session rw_engine_init_d2-20260502-1905 | 2026-05-02 |
 | D-0224 | 0x00498b60 | analyzed C1 session rw_engine_init_d2-20260502-1905 | 2026-05-02 |
 | D-0225 | 0x00498bf0 | analyzed C1 session rw_engine_init_d2-20260502-1905 | 2026-05-02 |
@@ -323,29 +323,29 @@ A row goes into DEFERRED when:
 
 | ~~D-0940~~ | ~~0x005ba1d0 FUN_005ba1d0 body tail~~ | ~~Body extends beyond 471 code units; listing capped at 250; address range ~0x005ba4a0+ not analyzed~~ | ~~Resolved: audio_dsound_d4 session 2026-05-08; tail 0x005ba4a0–0x005ba716 fully analyzed; re/analysis/audio_dsound_d4/0x005ba1d0_tail.md~~ | ~~audio~~ |
 | D-0952 | 0x005aa560 FUN_005aa560 | depth-2 callee of FUN_005ba1d0 tail via FUN_005c7990; 567 bytes (005aa560–005aa797); S-3190; pickup condition: audio_dsound_d4-cont1 | audio_dsound_d4-cont1 session | audio |
-| D-0941 | 0x005adfe0 FUN_005adfe0 | depth-2 callee of FUN_005a9e10; called as FUN_005adfe0(param_1, param_3); S-0344 | audio_dsound-cont1 session | audio |
-| D-0942 | 0x005ae010 FUN_005ae010 | depth-2 callee of FUN_005a9e10; called as FUN_005ae010(param_1, param_2); S-0345 | audio_dsound-cont1 session | audio |
-| D-0943 | 0x005ba780 LAB_005ba780 | fn-ptr body at struct+0x34; depth-1 callee of FUN_005b9f30; unrecognized; S-0342 | audio_dsound-cont1 session | audio |
-| D-0944 | 0x005ba7f0 LAB_005ba7f0 | fn-ptr body at struct+0x30; depth-1 callee of FUN_005b9f30; unrecognized; S-0343 | audio_dsound-cont1 session | audio |
-| D-0945 | 0x005ba720 LAB_005ba720 | early-exit guard in LAB_005ba1d0; depth-2 of entry; S-0346 | audio_dsound-cont1 session | audio |
-| D-0946 | 0x005bb000 FUN_005bb000 | pre-DirectSoundCreate8 callee in LAB_005ba1d0; depth-2 of entry; S-0347 | audio_dsound-cont1 session | audio |
-| D-0947 | 0x005ba760 LAB_005ba760 | error-cleanup callee in LAB_005ba1d0; depth-2 of entry; S-0348 | audio_dsound-cont1 session | audio |
-| D-0948 | 0x005bbc10 FUN_005bbc10 | format/caps query in LAB_005ba1d0 after vtable+0x18; depth-2 of entry; S-0349 | audio_dsound-cont1 session | audio |
-| D-0949 | 0x005bbdb0 FUN_005bbdb0 | buffer creation; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0350 | audio_dsound-cont1 session | audio |
-| D-0950 | 0x005bac00 FUN_005bac00 | conditional callee; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0351 | audio_dsound-cont1 session | audio |
-| D-0951 | 0x005bbf30 FUN_005bbf30 | unconditional single-arg callee in LAB_005bad30; depth-2 of entry; S-0352 | audio_dsound-cont1 session | audio |
-| D-1780 | 0x005a66d0 FUN_005a66d0 | (audio_obj_ptr, 0_or_1) stop/start; depth-2 callee of audio_music bucket; S-0620 | audio_music-cont1 session | audio |
-| D-1781 | 0x005a6dc0 FUN_005a6dc0 | (sub_ptr, param_type, flag, value) param setter; depth-2 callee of audio_music bucket; S-0621 | audio_music-cont1 session | audio |
-| D-1782 | 0x0045e0f0 FUN_0045e0f0 | (channel_index, float) volume setter; depth-2 callee of audio_music bucket; S-0622 | audio_music-cont1 session | audio |
-| D-1783 | 0x00431b20 FUN_00431b20 | zero-arg float10 getter; depth-2 of audio_music; S-0623 | audio_music-cont1 session | audio |
-| D-1784 | 0x00432290 FUN_00432290 | zero-arg int condition; music-mute gate; depth-2 of audio_music; S-0624 | audio_music-cont1 session | audio |
-| D-1785 | 0x005baf00 FUN_005baf00 | (ptr, float) on DAT_0069049c; depth-2 of audio_music; S-0625 | audio_music-cont1 session | audio |
-| D-1786 | 0x00431b60 FUN_00431b60 | zero-arg float10 getter; depth-2 of audio_music; S-0626 | audio_music-cont1 session | audio |
-| D-1787 | 0x0042f760 FUN_0042f760 | zero-arg bool; trigger check channel DAT_00604eb0; depth-2 of audio_music; S-0627 | audio_music-cont1 session | audio |
-| D-1788 | 0x0042f770 FUN_0042f770 | zero-arg bool; trigger check A channel DAT_00604e1c; depth-2 of audio_music; S-0628 | audio_music-cont1 session | audio |
-| D-1789 | 0x0042f780 FUN_0042f780 | zero-arg bool; trigger check B channel DAT_00604e1c; depth-2 of audio_music; S-0629 | audio_music-cont1 session | audio |
-| D-1790 | 0x00432230 FUN_00432230 | zero-arg bool; trigger check channel DAT_00605918; depth-2 of audio_music; S-0630 | audio_music-cont1 session | audio |
-| D-1791 | 0x00432260 FUN_00432260 | zero-arg bool; trigger check musicloop1 (DAT_00605d24); depth-2 of audio_music; S-0631 | audio_music-cont1 session | audio |
+| ~~D-0941~~ | ~~0x005adfe0 FUN_005adfe0~~ | ~~depth-2 callee of FUN_005a9e10; called as FUN_005adfe0(param_1, param_3); S-0344~~ | ~~Resolved: already mapped in audio_rws_loader_cont1 session; C1 plate at re/analysis/audio_rws_loader_cont1/0x005adfe0.md~~ | ~~audio~~ |
+| ~~D-0942~~ | ~~0x005ae010 FUN_005ae010~~ | ~~depth-2 callee of FUN_005a9e10; called as FUN_005ae010(param_1, param_2); S-0345~~ | ~~Resolved: already mapped in audio_rws_loader_cont1 session; C2 plate at re/analysis/audio_rws_loader_cont1/0x005ae010.md~~ | ~~audio~~ |
+| ~~D-0943~~ | ~~0x005ba780 LAB_005ba780~~ | ~~fn-ptr body at struct+0x34; depth-1 callee of FUN_005b9f30; unrecognized; S-0342~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005ba780.md; clears S-0342~~ | ~~audio~~ |
+| ~~D-0944~~ | ~~0x005ba7f0 LAB_005ba7f0~~ | ~~fn-ptr body at struct+0x30; depth-1 callee of FUN_005b9f30; unrecognized; S-0343~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005ba7f0.md; clears S-0343~~ | ~~audio~~ |
+| ~~D-0945~~ | ~~0x005ba720 LAB_005ba720~~ | ~~early-exit guard in LAB_005ba1d0; depth-2 of entry; S-0346~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005ba720.md; clears S-0346~~ | ~~audio~~ |
+| ~~D-0946~~ | ~~0x005bb000 FUN_005bb000~~ | ~~pre-DirectSoundCreate8 callee in LAB_005ba1d0; depth-2 of entry; S-0347~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005bb000.md; clears S-0347~~ | ~~audio~~ |
+| ~~D-0947~~ | ~~0x005ba760 LAB_005ba760~~ | ~~error-cleanup callee in LAB_005ba1d0; depth-2 of entry; S-0348~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005ba760.md; clears S-0348~~ | ~~audio~~ |
+| ~~D-0948~~ | ~~0x005bbc10 FUN_005bbc10~~ | ~~format/caps query in LAB_005ba1d0 after vtable+0x18; depth-2 of entry; S-0349~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005bbc10.md; clears S-0349~~ | ~~audio~~ |
+| ~~D-0949~~ | ~~0x005bbdb0 FUN_005bbdb0~~ | ~~buffer creation; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0350~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005bbdb0.md; clears S-0350~~ | ~~audio~~ |
+| ~~D-0950~~ | ~~0x005bac00 FUN_005bac00~~ | ~~conditional callee; shared depth-2 callee of LAB_005ba1d0 and LAB_005bad30; S-0351~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005bac00.md; clears S-0351~~ | ~~audio~~ |
+| ~~D-0951~~ | ~~0x005bbf30 FUN_005bbf30~~ | ~~unconditional single-arg callee in LAB_005bad30; depth-2 of entry; S-0352~~ | ~~Resolved: mapped in audio_dsound_d2 session; C1 plate at re/analysis/audio_dsound_d2/0x005bbf30.md; clears S-0352~~ | ~~audio~~ |
+| ~~D-1780~~ | ~~0x005a66d0 FUN_005a66d0~~ | ~~(audio_obj_ptr, 0_or_1) stop/start; depth-2 callee of audio_music bucket; S-0620~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/005a66d0.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1781~~ | ~~0x005a6dc0 FUN_005a6dc0~~ | ~~(sub_ptr, param_type, flag, value) param setter; depth-2 callee of audio_music bucket; S-0621~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/005a6dc0.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1782~~ | ~~0x0045e0f0 FUN_0045e0f0~~ | ~~(channel_index, float) volume setter; depth-2 callee of audio_music bucket; S-0622~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/0045e0f0.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1783~~ | ~~0x00431b20 FUN_00431b20~~ | ~~zero-arg float10 getter; depth-2 of audio_music; S-0623~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/00431b20.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1784~~ | ~~0x00432290 FUN_00432290~~ | ~~zero-arg int condition; music-mute gate; depth-2 of audio_music; S-0624~~ | ~~Resolved: timer_d2_cont1 (cross-session); drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1785~~ | ~~0x005baf00 FUN_005baf00~~ | ~~(ptr, float) on DAT_0069049c; depth-2 of audio_music; S-0625~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/005baf00.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1786~~ | ~~0x00431b60 FUN_00431b60~~ | ~~zero-arg float10 getter; depth-2 of audio_music; S-0626~~ | ~~Resolved: timer_d2_cont1 (cross-session); drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1787~~ | ~~0x0042f760 FUN_0042f760~~ | ~~zero-arg bool; trigger check channel DAT_00604eb0; depth-2 of audio_music; S-0627~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1788~~ | ~~0x0042f770 FUN_0042f770~~ | ~~zero-arg bool; trigger check A channel DAT_00604e1c; depth-2 of audio_music; S-0628~~ | ~~Resolved: audio_music_d2-20260506; same plate as D-1787; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1789~~ | ~~0x0042f780 FUN_0042f780~~ | ~~zero-arg bool; trigger check B channel DAT_00604e1c; depth-2 of audio_music; S-0629~~ | ~~Resolved: audio_music_d2-20260506; same plate as D-1787; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1790~~ | ~~0x00432230 FUN_00432230~~ | ~~zero-arg bool; trigger check channel DAT_00605918; depth-2 of audio_music; S-0630~~ | ~~Resolved: audio_music_d2-20260506; C1 plate re/analysis/audio_music_d2/00432230_00432260.md; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
+| ~~D-1791~~ | ~~0x00432260 FUN_00432260~~ | ~~zero-arg bool; trigger check musicloop1 (DAT_00605d24); depth-2 of audio_music; S-0631~~ | ~~Resolved: audio_music_d2-20260506; same plate as D-1790; drift-resolved audio_music_cont1-20260512~~ | ~~audio~~ |
 | D-2800 | 0x00538d60 FUN_00538d60 | depth-3 callee of FUN_00538c80 case 1; geometry query handler; 0xB90 bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
 | D-2801 | 0x00539900 FUN_00539900 | depth-3 callee of FUN_00538c80 case 4; geometry query handler; 0x5BC bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
 | D-2802 | 0x00539ec0 FUN_00539ec0 | depth-3 callee of FUN_00538c80 cases 3 and 5; geometry query handler; 0x6F0 bytes; from session effects_particle_d2 bucket effects_particle_d2 | pick up as bucket effects_particle_d2-cont1; no further recursion required | render |
@@ -727,9 +727,9 @@ A row goes into DEFERRED when:
 | D-7304 | 0x0040d250 FUN_0040d250 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); lobby visual element (gradient/line/logo); S-2464; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
 | D-7305 | 0x00401ee0 FUN_00401ee0 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); lobby visual element; S-2465; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
 | D-7306 | 0x0042f0b0 FUN_0042f0b0 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); UI sub-renderer at (347.5, 168.0); S-2466; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7600 | 0x005a7460 FUN_005a7460 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-1 branch); 0xb8 bytes; S-2560; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
-| D-7601 | 0x005a7560 FUN_005a7560 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-0 branch); 0x4d bytes; S-2561; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
-| D-7602 | 0x005a75b0 FUN_005a75b0 | depth-4 callee of FUN_005a7520 (audio_music_d3 mode-2 branch, bit-0@param_1+0xc gated); 0x250 bytes; S-2562; bucket audio_music_d3-cont1 | audio_music_d3 session | audio |
+| ~~D-7600~~ | ~~0x005a7460 FUN_005a7460~~ | ~~depth-4 callee of FUN_005a7520 (audio_music_d3 mode-1 branch); 0xb8 bytes; S-2560; bucket audio_music_d3-cont1~~ | ~~Resolved: audio_music_cont1-20260512; C1 plate re/analysis/audio_music_cont1/0x005a7460.md; S-2560 resolved~~ | ~~audio~~ |
+| ~~D-7601~~ | ~~0x005a7560 FUN_005a7560~~ | ~~depth-4 callee of FUN_005a7520 (audio_music_d3 mode-0 branch); 0x4d bytes; S-2561; bucket audio_music_d3-cont1~~ | ~~Resolved: audio_music_cont1-20260512; C1 plate re/analysis/audio_music_cont1/0x005a7560.md; S-2561 resolved~~ | ~~audio~~ |
+| ~~D-7602~~ | ~~0x005a75b0 FUN_005a75b0~~ | ~~depth-4 callee of FUN_005a7520 (audio_music_d3 mode-2 branch, bit-0@param_1+0xc gated); 0x250 bytes; S-2562; bucket audio_music_d3-cont1~~ | ~~Resolved: audio_music_cont1-20260512; C1 plate re/analysis/audio_music_cont1/0x005a75b0.md; S-2562 resolved~~ | ~~audio~~ |
 | D-7660 | 0x00495ee0 LAB_00495ee0 | EnumDevices callback; Ghidra sees LAB only — function body not defined; first instruction MOV EAX,[ESP+8] (U-2299); needs function_create on a read-write slot before analysis | acquire RW slot; function_create 0x00495ee0; then decomp | input |
 | D-7780 | 0x0046f6c0 FUN_0046f6c0 | post-integration substep fn; 3580 bytes; called as FUN_0046f6c0(1) after each substep in FUN_004709a0; callee of VehicleCollisionBroadPhase outer loop; S-2620; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | vehicle |
 | D-7781 | 0x00469aa0 FUN_00469aa0 | collision condition check; 847 bytes; returns int used to break substep loop in FUN_004709a0; S-2621; bucket vehicle_dynamics_d2-cont1 | vehicle_dynamics_d2-cont1 | vehicle |
@@ -756,16 +756,16 @@ A row goes into DEFERRED when:
 | D-7964 | 0x004c52f0 FUN_004c52f0 | RW matrix rotation setter; args (matrix, rot_matrix, 2); 145b callee of VehicleWheelContactSolver; S-2543 also references it; S-2629; vehicle_update_d3-cont1 | vehicle_update_d3 session | render |
 | D-7965 | 0x0046d4d0 FUN_0046d4d0 | apply matrix to vehicle rigid body; args (vehicleIdx, matrix_ptr); callee of VehiclePhysicsWorldStep; S-2630; vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
 | D-7966 | 0x004a3384 FUN_004a3384 + 0x0046cc40 FUN_0046cc40 | acos/atan FP approx (S-2633) + wheel contact sub-helper (S-2634); callees of VehicleAeroStabilizer+VehicleWheelContactSolver; vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
-| D-7900 | 0x004c5800 FUN_004c5800 | RwTexDictionarySetCurrent candidate; called (NULL) to clear then (saved_ptr) to restore in texture stream reader; 25 bytes | texture_loader_d3-cont1 session | render |
-| D-7901 | 0x004c5820 FUN_004c5820 | RwTexDictionaryGetCurrent candidate; getter returns current TXD ptr; result saved before stream read; 15 bytes | texture_loader_d3-cont1 session | render |
-| D-7902 | 0x004c5830 FUN_004c5830 | texture context setter (RwTextureSetCurrent candidate); called with NULL/saved_ptr; 25 bytes | texture_loader_d3-cont1 session | render |
-| D-7903 | 0x004c5850 FUN_004c5850 | texture context getter; result saved for restore; 15 bytes | texture_loader_d3-cont1 session | render |
-| D-7904 | 0x004c5a00 FUN_004c5a00 | RwTexture create-from-stream main step; called after context save in FUN_00550130; 90 bytes | texture_loader_d3-cont1 session | render |
-| D-7905 | 0x004c5ae0 FUN_004c5ae0 | RwTexture post-process step 1; called after FUN_004c5a00 in FUN_00550130; 109 bytes; purpose unknown | texture_loader_d3-cont1 session | render |
-| D-7906 | 0x004c5b50 FUN_004c5b50 | RwTexture post-process step 2; called after FUN_004c5ae0 in FUN_00550130; 109 bytes; purpose unknown | texture_loader_d3-cont1 session | render |
-| D-7907 | 0x004d8810 FUN_004d8810 | state check called twice in FUN_00550130; non-zero required; 608 bytes; probably subsystem-ready guard | texture_loader_d3-cont1 session | render |
-| D-7908 | 0x004e1df0 FUN_004e1df0 | error path cleanup in FUN_00550130 on texture create failure; 112 bytes | texture_loader_d3-cont1 session | render |
-| D-7909 | 0x004cdd60 FUN_004cdd60 | RwImageAllocatePixels candidate; stride+alloc+palette setup; 188 bytes; now in hooks.csv C1; depth-4 decomp to confirm alloc type | texture_loader_d3-cont1 session | render |
+| ~~D-7900~~ | ~~0x004c5800~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTexDictionarySetCurrent | texture_loader_d3-cont1 session | render |
+| ~~D-7901~~ | ~~0x004c5820~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTexDictionaryGetCurrent | texture_loader_d3-cont1 session | render |
+| ~~D-7902~~ | ~~0x004c5830~~ | DRAINED texture_loader_d3_cont1-20260512: C1 texture plugin slot setter +0x20 | texture_loader_d3-cont1 session | render |
+| ~~D-7903~~ | ~~0x004c5850~~ | DRAINED texture_loader_d3_cont1-20260512: C1 texture plugin slot getter +0x20 | texture_loader_d3-cont1 session | render |
+| ~~D-7904~~ | ~~0x004c5a00~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTextureCreate | texture_loader_d3-cont1 session | render |
+| ~~D-7905~~ | ~~0x004c5ae0~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTextureSetName | texture_loader_d3-cont1 session | render |
+| ~~D-7906~~ | ~~0x004c5b50~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTextureSetMaskName | texture_loader_d3-cont1 session | render |
+| ~~D-7907~~ | ~~0x004d8810~~ | DRAINED texture_loader_d3_cont1-20260512: C1 native raster stream reader (not state guard; resolves U-2676) | texture_loader_d3-cont1 session | render |
+| ~~D-7908~~ | ~~0x004e1df0~~ | DRAINED texture_loader_d3_cont1-20260512: C2 extension chunk drain / error cleanup | texture_loader_d3-cont1 session | render |
+| ~~D-7909~~ | ~~0x004cdd60~~ | DRAINED texture_loader_d3_cont1-20260512: C1 (existing) alloc path confirmed; RwImage layout fully mapped | texture_loader_d3-cont1 session | render |
 | D-8260 | 0x0045cd30 FUN_0045cd30 | caller of FUN_004b44f0 (RandomInt) ×5 call sites; 562 bytes (0x0045cd30–0x0045cf62); not in hooks.csv | random_rng_d2 | audio |
 | D-8261 | 0x0045d330 FUN_0045d330 | caller of FUN_004b44f0 (RandomInt) ×1; 102 bytes (0x0045d330–0x0045d396); not in hooks.csv | random_rng_d2 | audio |
 | D-8262 | 0x00421d20 FUN_00421d20 | caller of FUN_004b4510 (RandomFloat) ×11 call sites; 938 bytes (0x00421d20–0x004220ca); not in hooks.csv | random_rng_d2 | util |
