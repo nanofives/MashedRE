@@ -39,6 +39,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\TimerReset.cpp" ^
     "%SRC%\Frontend\MenuNav.cpp" ^
     "%SRC%\Frontend\FrontendState.cpp" ^
+    "%SRC%\Frontend\FrontendNav.cpp" ^
+    "%SRC%\Frontend\GameModeInit.cpp" ^
     /link /DLL
     /link /DLL
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

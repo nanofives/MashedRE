@@ -124,6 +124,7 @@ def main():
     if 'alloc_rva' in hook:
         config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
 
+
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     csv_out = LOG_DIR / f'diff_{name}.csv'
 
