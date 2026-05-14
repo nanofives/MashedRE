@@ -1049,3 +1049,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0046dc00  EntityFieldSet  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_EntityFieldSet.csv; pure leaf; leaf-exemption; U-3645 U-3646 open blocks:none
 2026-05-14  00492340  CarSlotInit  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_CarSlotInit.csv; pure leaf; leaf-exemption; U-3643 U-3644 open blocks:none
 2026-05-14  frida-sweep-20260514-2020  frida-sweep-release  branches=10 merged  integration-diff=GREEN-37/38  hooks=38  note=menu_entry_get crash-equality exception documented
+2026-05-14  0042b310  FUN_0042b310  C2->REFUSED  c3-batch-d-s4; D-10585; inline U-3445/U-1651/U-3556 unresolved; gate: C3 semantics+callee evidence missing
+2026-05-14  0042b540  FUN_0042b540  C2->REFUSED  c3-batch-d-s4; D-10586; same inline U-3445/U-1651/U-3556 as 0x0042b310; structurally identical
+2026-05-14  0042b9e0  FUN_0042b9e0  C2->REFUSED  c3-batch-d-s4; D-10587; inline U-1652/U-1653/U-3557 unresolved
+2026-05-14  00403160  FUN_00403160  C2->REFUSED  c3-batch-d-s4; D-10588; all 6 depth-1 callees C1; callee gate fails
