@@ -980,3 +980,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  005addd0  FUN_005addd0  C1->C2  promote_c2_audio_rws/005addd0.md
 2026-05-13  sweep-20260513-2055  scribe-claim  buckets=0 queued, 1 skipped-HOLD
 2026-05-13  sweep-20260513-2055  scribe-release  buckets=0 drained  errors=0  sync=ok(4-locked-slots-skipped)
+2026-05-14  frida-sweep-20260514-2020  frida-sweep-claim  branches=10 queued
