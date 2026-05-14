@@ -88,4 +88,135 @@ HOOKS = {
         ],
         'path2_tests': [0.0, 1.0, 4.0, 0.25, 100.0],
     },
+
+    # game_state_d2 trivial getters. Each is `MOV EAX, [imm32]; RET` — pure
+    # read of a u32 global. `arg_type='none'` calls the function with no args.
+    # `tests` is a list of dummy iteration markers; we just want N independent
+    # calls so we can confirm orig and reimpl both read the same address (and
+    # so any tearing under a concurrent write would surface as a mismatch).
+    # `lut_root_delta` is unused for these (kept for harness uniformity).
+    'get_dat_0067ecb4': {
+        'rva':            0x0042c2d0,
+        'export':         'GetDat0067ecb4',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ecb4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    'get_dat_0067ecb8': {
+        'rva':            0x0042c2e0,
+        'export':         'GetDat0067ecb8',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ecb8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    'get_dat_0067ea64': {
+        'rva':            0x0042f500,
+        'export':         'GetDat0067ea64',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ea64,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session 88 — c3_vehicle_state  (C2→C3, 5 candidates)
+    # VehicleState.cpp — pure-leaf vehicle field getters/predicates
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0046c7b0  VehicleSlotGetter
+    # Returns DAT_008815a4[idx*0x341] or 0xffffffff if idx > 15.
+    # Non-trivial: OOB inputs return a specific sentinel.
+    'vehicle_slot_getter': {
+        'rva':            0x0046c7b0,
+        'export':         'VehicleSlotGetter',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 5, 10, 15, 16, 17, 100, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16, 255],
+    },
+
+    # 0x0046c770  VehicleDestructionStateGetter
+    # Returns DAT_008815b0[idx*0x341] or 0xffffffff if idx > 15.
+    # U-3605 is about value semantics only (not offset/stride).
+    'vehicle_destruction_state_getter': {
+        'rva':            0x0046c770,
+        'export':         'VehicleDestructionStateGetter',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 15, 16, 100, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16],
+    },
+
+    # 0x0046c6d0  VehicleEntitySlotRead
+    # Returns 1 (in-range, writes *param_2) or 0 (OOB).  OOB gate at > 15.
+    # The out-ptr write is from BSS (zero); return-value IS the non-trivial part.
+    'vehicle_entity_slot_read': {
+        'rva':            0x0046c6d0,
+        'export':         'VehicleEntitySlotRead',
+        'signature':      {'ret': 'int32', 'args': ['int32', 'pointer']},
+        'arg_type':       'int_with_out_ptr',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 14, 15, 16, 17, 100, 255],
+        'path2_tests':    [0, 15, 16],
+    },
+
+    # 0x0046dbe0  VehicleRacePositionGet
+    # Returns DAT_008815a8[param_1*0x341] — no OOB guard.
+    # write_global_call_int0: write sentinel to DAT_008815a8, call fn(0),
+    # verify return == sentinel.  Non-trivial: varying sentinels give varying output.
+    'vehicle_race_position_get': {
+        'rva':            0x0046dbe0,
+        'export':         'VehicleRacePositionGet',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'write_global_call_int0',
+        'target_global':  0x008815a8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x42424242, 0xDEADBEEF,
+                           0x80000001, 0x3F800000, 0xFFFFFFFF, 0x0000007B],
+        'path2_tests':    [0x42424242, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00468b40  VehicleContactHistoryLookup
+    # Scans 32-slot contact table at vehicle+0xBFC; active flag at piVar1[0x20].
+    # contact_history: allocates fake vehicle struct + geom entry, provides
+    # match/miss/inactive test cases for a non-trivial domain.
+    'vehicle_contact_history_lookup': {
+        'rva':            0x00468b40,
+        'export':         'VehicleContactHistoryLookup',
+        'signature':      {'ret': 'int32', 'args': ['int32', 'int32']},
+        'arg_type':       'contact_history',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'slot_contact_id': 0xABCDEF01, 'slot_active': 1, 'geom_contact_id': 0xABCDEF01},
+            {'slot_contact_id': 0xABCDEF01, 'slot_active': 1, 'geom_contact_id': 0x12345678},
+            {'slot_contact_id': 0xABCDEF01, 'slot_active': 0, 'geom_contact_id': 0xABCDEF01},
+            {'slot_contact_id': 0x00000000, 'slot_active': 1, 'geom_contact_id': 0x00000000},
+            {'slot_contact_id': 0xFFFFFFFF, 'slot_active': 1, 'geom_contact_id': 0xFFFFFFFF},
+            {'slot_contact_id': 0xDEADBEEF, 'slot_active': 1, 'geom_contact_id': 0xDEADBEEF},
+            {'slot_contact_id': 0x00000001, 'slot_active': 1, 'geom_contact_id': 0x00000002},
+        ],
+        'path2_tests': [
+            {'slot_contact_id': 0xABCDEF01, 'slot_active': 1, 'geom_contact_id': 0xABCDEF01},
+            {'slot_contact_id': 0xABCDEF01, 'slot_active': 1, 'geom_contact_id': 0x12345678},
+            {'slot_contact_id': 0xABCDEF01, 'slot_active': 0, 'geom_contact_id': 0xABCDEF01},
+        ],
+    },
 }

@@ -16,6 +16,10 @@ const TARGET_ADDR     = ptr(CONFIG.target_rva);
 const LUT_BASE_ADDR   = ptr('0x007d3ff8');
 const LUT_OFFSET_ADDR = ptr('0x007d3ffc');
 
+// contact_history buffers — allocated on demand in runDiff
+let vehicleBuf = null;
+let geomBuf    = null;
+
 function readLutRoot(delta) {
     try {
         const base = LUT_BASE_ADDR.readU32();
@@ -49,11 +53,49 @@ function pollLutThenRun(triesLeft) {
 }
 
 function callFn(fn, input, buf) {
+    if (CONFIG.arg_type === 'none') {
+        // Zero-arg getter / void invocation. `input` is a dummy iteration
+        // marker; we just call the function repeatedly to confirm stable
+        // bit-identical output between original and reimpl.
+        return fn();
+    }
+    if (CONFIG.arg_type === 'read_global') {
+        // Drive the target global with a sentinel value `input`, then call
+        // the zero-arg getter. Proves orig and reim read the SAME address
+        // (otherwise the sentinel write only affects one). Caller must save
+        // and restore the global outside this loop.
+        ptr(CONFIG.target_global).writeU32(input >>> 0);
+        return fn();
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
         buf.add(8).writeFloat(input[2]);
         return fn(buf);
+    }
+    // int_scalar — single uint32 arg, any integer return type
+    if (CONFIG.arg_type === 'int_scalar') {
+        return fn(input >>> 0);
+    }
+    // int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value
+    if (CONFIG.arg_type === 'int_with_out_ptr') {
+        return fn(input >>> 0, buf);
+    }
+    // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
+    // Use for getters where non-trivial domain requires injecting known values.
+    if (CONFIG.arg_type === 'write_global_call_int0') {
+        ptr(CONFIG.target_global).writeU32(input >>> 0);
+        return fn(0);
+    }
+    // contact_history — set up slot 0 of a fake vehicle contact table, call fn(geom, vehicle)
+    // input: { slot_contact_id, slot_active, geom_contact_id }
+    if (CONFIG.arg_type === 'contact_history') {
+        vehicleBuf.add(0xBFC).writeU32(0);
+        vehicleBuf.add(0xC7C).writeU32(0);
+        vehicleBuf.add(0xBFC).writeU32(input.slot_contact_id >>> 0);
+        vehicleBuf.add(0xC7C).writeU32(input.slot_active ? 1 : 0);
+        geomBuf.add(0x34).writeU32(input.geom_contact_id >>> 0);
+        return fn(geomBuf.toInt32(), vehicleBuf.toInt32());
     }
     // float_scalar
     return fn(input);
@@ -85,16 +127,42 @@ function runDiff() {
     const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
 
-    const buf = (CONFIG.arg_type === 'vec3_ptr') ? Memory.alloc(12) : null;
+    const buf = (['vec3_ptr', 'int_with_out_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12) : null;
+
+    // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).
+    if (CONFIG.arg_type === 'contact_history') {
+        vehicleBuf = Memory.alloc(0xC80);
+        geomBuf    = Memory.alloc(0x40);
+    }
+
+    // For 'read_global' and 'write_global_call_int0', save and restore the target global so
+    // we don't leave a sentinel in game-state memory after the test.
+    let savedGlobal = null;
+    if (CONFIG.arg_type === 'read_global' || CONFIG.arg_type === 'write_global_call_int0') {
+        try { savedGlobal = ptr(CONFIG.target_global).readU32(); }
+        catch (e) { send({ type: 'error', msg: 'failed reading target_global: ' + e.message }); return; }
+    }
+
     const results = [];
-    for (let i = 0; i < CONFIG.tests.length; i++) {
-        const t = CONFIG.tests[i];
-        let orig, reim, errOrig = null, errReim = null;
-        try { orig = callFn(Orig,   t, buf); } catch (e) { orig = null; errOrig = e.message; }
-        try { reim = callFn(Reimpl, t, buf); } catch (e) { reim = null; errReim = e.message; }
-        results.push({ idx: i, input: t, original: orig, reimpl: reim,
-                       match: (orig !== null && reim !== null && orig === reim),
-                       err_original: errOrig, err_reimpl: errReim });
+    try {
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            let orig, reim, errOrig = null, errReim = null;
+            // For 'read_global' we write the sentinel BEFORE each call so the
+            // global has the right value when the function reads it; the
+            // write is repeated for both orig and reim in case orig somehow
+            // mutated the field.
+            try { orig = callFn(Orig,   t, buf); } catch (e) { orig = null; errOrig = e.message; }
+            try { reim = callFn(Reimpl, t, buf); } catch (e) { reim = null; errReim = e.message; }
+            results.push({ idx: i, input: t, original: orig, reimpl: reim,
+                           match: (orig !== null && reim !== null && orig === reim),
+                           err_original: errOrig, err_reimpl: errReim });
+        }
+    } finally {
+        if (savedGlobal !== null) {
+            try { ptr(CONFIG.target_global).writeU32(savedGlobal); }
+            catch (e) { /* best effort — process is about to exit anyway */ }
+        }
     }
     send({ type: 'results', data: results });
 }
