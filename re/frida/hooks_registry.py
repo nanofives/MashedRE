@@ -220,6 +220,50 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-a-s4 — frontend_c0_promote (C2→C3, 3 of 4 candidates)
+    # FrontendState.cpp — pure-leaf frontend global accessors
+    # Note: 0x0042f020 (VehicleFlagClear) REFUSED — __fastcall with EAX
+    #       implicit arg not supported by NativeFunction('mscdecl') harness.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00430b60  MenuSlotCount
+    # Returns char count (0..4) of non-(-1) slot globals at
+    # DAT_007f1a14/24/34/44 (stride 0x10). Pure read, no side-effects.
+    'menu_slot_count': {
+        'rva':            0x00430b60,
+        'export':         'MenuSlotCount',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042f6b0  MenuModeSync
+    # void(void): switch on DAT_0067f184 → writes DAT_0067e9fc. Default no-op.
+    'menu_mode_sync': {
+        'rva':            0x0042f6b0,
+        'export':         'MenuModeSync',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00430910  MenuOptionSlotGet
+    # int(void): reads game mode + option/row index; returns 0 or table value.
+    'menu_option_slot_get': {
+        'rva':            0x00430910,
+        'export':         'MenuOptionSlotGet',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x00417730  VehicleRaceAngleGet
     # Per-car float getter: *(float*)(DAT_0089a880 + carIdx * 4). Pure leaf, 11 bytes.
     # int_scalar: passes carIdx as uint32, returns float in ST0.
@@ -247,6 +291,128 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
         'path2_tests':    [0, 15, 16, 255],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-a-s2 — frontend_menus_a small leaves (C2→C3)
+    # MenuGetters.cpp — pure-leaf menu global getter, sentinel scanner,
+    # and cursor stepper.
+    # 0x0042ac50 (MenuCenterCalc) REFUSED — ECX+EAX dual-register ABI not
+    #   supported by NativeFunction harness.
+
+    # 0x0042b930  MenuAlphaGet
+    # Returns DAT_0067ecb0 (uint32_t global, pure read, no side-effects).
+    # 5 bytes: MOV EAX, [0x0067ecb0]; RET.
+    # read_global: write sentinel, call fn(), verify return == sentinel.
+    # ref: re/analysis/frontend_promote_menus_a/0x0042b930.md
+    'menu_alpha_get': {
+        'rva':            0x0042b930,
+        'export':         'MenuAlphaGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ecb0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00FF00FF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # Session c3-batch-a-s2 — frontend_menus_a small leaves (C2→C3)
+    # MenuGetters.cpp — pure-leaf menu sentinel scanner + cursor stepper
+    # 0x0042ac50 (MenuCenterCalc) REFUSED — ECX+EAX dual-register ABI not
+    #   supported by NativeFunction harness (same reason as VehicleFlagClear).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ac00  MenuGroupCount
+    # int __fastcall FUN_0042ac00(int /*unused*/, int* param_2)
+    # Scans sentinel-delimited int array; counts 0xFF060000 groups before
+    # 0xFF070000 terminator. ECX (param_1) unused. EDX = param_2.
+    # arg_type: sentinel_array_ptr — writes array into 256B buf, calls
+    #   fn(0, buf) with fastcall for orig (ECX=0, EDX=buf) and cdecl for
+    #   reimpl (stack: [0, buf]).
+    # ref: re/analysis/frontend_promote_menus_a/0x0042ac00.md
+    # U-3439 (ECX unused), U-3440 (sentinel semantics) — do not affect correctness.
+    'menu_group_count': {
+        'rva':                    0x0042ac00,
+        'export':                 'MenuGroupCount',
+        'signature':              {'ret': 'int32', 'args': ['int32', 'pointer']},
+        'arg_type':               'sentinel_array_ptr',
+        'orig_calling_convention':   'fastcall',
+        'reimpl_calling_convention': 'mscdecl',
+        'lut_root_delta': 0,
+        # Each test is a list of int32 values (as Python ints).
+        # 0xFF060000 = group delimiter; 0xFF070000 = end-of-array terminator.
+        # Expected results annotated in comments.
+        'path1_tests': [
+            [0xFF070000],                                                # 0: immediate terminator → 0
+            [0xFF060000, 0xFF070000],                                    # 1: one delimiter → 1
+            [0x00000001, 0xFF070000],                                    # 0: no delimiter → 0
+            [0x00000001, 0xFF060000, 0xFF070000],                        # 1: one delimiter after data → 1
+            [0xFF060000, 0x00000001, 0xFF060000, 0xFF070000],            # 2
+            [0xFF060000, 0xFF060000, 0xFF070000],                        # 2: two adjacent delimiters → 2
+            [0x00000001, 0x00000002, 0xFF060000, 0x00000003, 0xFF060000, 0xFF070000],  # 2
+            [0x00000001, 0x00000002, 0x00000003, 0xFF070000],            # 0: only data, no delimiters → 0
+            [0xFF060000, 0x00000001, 0x00000002, 0xFF060000, 0x00000004, 0xFF060000, 0xFF070000],  # 3
+            [0xFF060000, 0xFF060000, 0xFF060000, 0xFF070000],            # 3: three adjacent → 3
+            [0x00000064, 0x000000C8, 0x0000012C, 0x00000190, 0xFF070000],  # 0: all data → 0
+        ],
+        'path2_tests': [
+            [0xFF070000],
+            [0xFF060000, 0xFF070000],
+            [0x00000001, 0xFF060000, 0xFF070000],
+        ],
+    },
+
+    # 0x0042aa00  MenuCursorStep
+    # void FUN_0042aa00(int param_1)  __cdecl
+    # Advances cursor at 0x0067ed40+slot*0x40 by param_1 with wrap;
+    # checks validity byte; writes 0xffffffff on exhaustion.
+    # arg_type: void_step_global — preps slot 0 globals from raw_bytes,
+    #   calls fn(step), returns cursor readback from 0x0067ed40 (as int32).
+    # raw_bytes layout: bytes 0..3 = limit as LE int32; byte N = validity
+    #   byte for cursor N (read at 0x0067ed74+N for slot 0).
+    # ref: re/analysis/frontend_promote_menus_a/0x0042aa00.md
+    # U-3436/3437/3438 (slot range, array semantics, step source) — don't
+    #   affect bit-identity correctness; limits and validity encoded in tests.
+    'menu_cursor_step': {
+        'rva':            0x0042aa00,
+        'export':         'MenuCursorStep',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'void_step_global',
+        'lut_root_delta': 0,
+        # raw_bytes[0..3] = limit LE int32; raw_bytes[N] = validity[N].
+        # validity[N] == 1 → valid entry; else invalid.
+        # Return value: cursor at 0x0067ed40 after call (-1 = exhausted).
+        'path1_tests': [
+            # limit=0 → immediate -1
+            {'raw_bytes': [0,0,0,0],              'initial_cursor': 0,  'step':  1},  # → -1
+            # limit=1, val[0]=raw[0]=1=valid; step+1: wrap 0, valid → 0
+            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step':  1},  # → 0
+            # limit=1, step-1: wrap to 0, valid → 0
+            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step': -1},  # → 0
+            # limit=2, val[0]=2≠1,val[1]=0≠1 → exhausted → -1
+            {'raw_bytes': [2,0,0,0, 0,0],         'initial_cursor': 0,  'step':  1},  # → -1
+            # limit=5, valid@4 (raw[4]=1), init=0, step+1: →1,→2,→3,→4 valid → 4
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 0,  'step':  1},  # → 4
+            # limit=5, valid@4, init=4, step-1: →3,→2,→1,→0(val=5≠1),→4 valid → 4
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 4,  'step': -1},  # → 4
+            # limit=5, no valid (raw[4]=0) → exhausted → -1
+            {'raw_bytes': [5,0,0,0, 0,0],         'initial_cursor': 2,  'step':  1},  # → -1
+            # limit=5, valid@4, init=4, step+1: →5==limit→wrap 0,val=5≠1,→1,→2,→3,→4 valid → 4
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 4,  'step':  1},  # → 4
+            # limit=6, valid@5 (raw[5]=1), init=0, step+1: →1,→2,→3,→4,→5 valid → 5
+            {'raw_bytes': [6,0,0,0, 0,1, 0],      'initial_cursor': 0,  'step':  1},  # → 5
+            # limit=6, valid@4 (raw[4]=1), init=5, step-1: →4 valid → 4
+            {'raw_bytes': [6,0,0,0, 1,0, 0],      'initial_cursor': 5,  'step': -1},  # → 4
+            # limit=3, no valid entries → exhausted → -1
+            {'raw_bytes': [3,0,0,0, 0,0,0],       'initial_cursor': 1,  'step':  1},  # → -1
+        ],
+        'path2_tests': [
+            {'raw_bytes': [0,0,0,0],              'initial_cursor': 0,  'step':  1},
+            {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step':  1},
+            {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 0,  'step':  1},
+        ],
     },
 
     # 0x0046cbb0  VehicleCarStateRead

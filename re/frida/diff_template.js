@@ -107,6 +107,48 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'idx_out2') {
         return fn(input >>> 0, buf, buf.add(4));
     }
+    // sentinel_array_ptr — original is __fastcall(ECX=0, EDX=ptr); reimpl is __cdecl(0, ptr).
+    // input: array of int32 values terminated by 0xFF070000 (e.g. [0xFF060000, 0xFF070000]).
+    // Writes the array into buf. For orig, calls via a hand-written thunk that sets ECX=0
+    // and EDX=buf before jumping to the target. For reimpl, calls as cdecl(0, buf).
+    // Used for MenuGroupCount (0x0042ac00).
+    if (CONFIG.arg_type === 'sentinel_array_ptr') {
+        const arr = input;  // array of int32 values
+        for (let k = 0; k < arr.length; k++) {
+            buf.add(k * 4).writeS32(arr[k] | 0);
+        }
+        // The fn wrapper is invoked via callFn(Orig/Reimpl, ...).
+        // For orig (fastcall): fn is the origFastcallThunk (set up in runDiff).
+        // For reimpl (cdecl): fn is the NativeFunction directly.
+        // We pass the buf as first positional arg; the calling convention decides
+        // how it's delivered. For cdecl reimpl, fn(0, buf) is correct.
+        // For orig, we use the thunk stored at origThunk.
+        return fn(0, buf);
+    }
+    // void_step_global — fn(int_step); void return; reads cursor side-effect from global.
+    // Preps game globals for slot 0 (slotOff40=0, slotOff10=0):
+    //   input.raw_bytes: flat byte array written starting at 0x0067ed74.
+    //     Bytes [0..3] form the LE int32 limit field at 0x0067ed74.
+    //     Bytes [N] at offset N are the validity byte for cursor value N
+    //     (since validity is read at 0x0067ed74 + cursor for slot 0).
+    //   input.initial_cursor: written to 0x0067ed40 before the call.
+    //   input.step: passed as param_1 to fn.
+    // Writes DAT_0067e9f8=0 (slot 0). Calls fn(step). Returns cursor at
+    // 0x0067ed40 after the call (as int32, compared between orig/reimpl).
+    // Used for MenuCursorStep (0x0042aa00).
+    if (CONFIG.arg_type === 'void_step_global') {
+        const raw  = input.raw_bytes;
+        const init = input.initial_cursor;
+        const step = input.step;
+        // slot 0
+        ptr(0x0067e9f8).writeS32(0);
+        for (let k = 0; k < raw.length; k++) {
+            ptr(0x0067ed74 + k).writeU8(raw[k] >>> 0);
+        }
+        ptr(0x0067ed40).writeS32(init);
+        fn(step);
+        return ptr(0x0067ed40).readS32();
+    }
     // float_scalar
     return fn(input);
 }
@@ -134,10 +176,15 @@ function runDiff() {
            reimpl_addr: '0x' + reimplAddr.toString(16),
            export_name: CONFIG.export });
 
-    const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
-    const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
+    const callConv      = CONFIG.calling_convention || 'mscdecl';
+    const origCallConv  = CONFIG.orig_calling_convention  || callConv;
+    const reimplCallConv = CONFIG.reimpl_calling_convention || callConv;
+    const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
+    const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
-    const buf = (['vec3_ptr', 'int_with_out_ptr', 'out3_idx', 'idx_out2'].includes(CONFIG.arg_type)) ? Memory.alloc(12) : null;
+    const buf = (['vec3_ptr', 'int_with_out_ptr', 'out3_idx', 'idx_out2'].includes(CONFIG.arg_type))
+        ? Memory.alloc(12)
+        : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
 
     // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).
     if (CONFIG.arg_type === 'contact_history') {
