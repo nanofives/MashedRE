@@ -47,7 +47,6 @@
 #                                 for functions that don't use the LUT)
 #   path1_tests       list       inputs for the A/B diff harness. Shape depends
 #                                on arg_type (see above).
-}
 #   path2_tests       list       inputs for the hook-installer harness.
 #                                Same shape as path1_tests, typically smaller.
 #                                Verify path checks no-crash + interceptor count;
@@ -325,7 +324,6 @@ HOOKS = {
 
 # arg_type='none': call 10x at quiescent state; verify bit-identical
     # return value between original and reimpl each iteration.
-}
     'menu_slot_count': {
         'rva':            0x00430b60,
         'export':         'MenuSlotCount',
@@ -344,7 +342,6 @@ HOOKS = {
     # arg_type='none': both orig and reimpl return undefined; undefined===undefined
     # is true — proves no crash and export is present. Mapping correctness is
     # verified by literal switch implementation matching the analysis note.
-}
     'menu_mode_sync': {
         'rva':            0x0042f6b0,
         'export':         'MenuModeSync',
@@ -361,7 +358,6 @@ HOOKS = {
 # int(void): reads DAT_0067e9fc (game mode), DAT_0067f184 (option index),
     # DAT_0067f17c (row index). Returns 0 for excluded combos or table value.
     # Pure read. arg_type='none': call 10x at quiescent state; compare returns.
-}
     'menu_option_slot_get': {
         'rva':            0x00430910,
         'export':         'MenuOptionSlotGet',
@@ -521,8 +517,9 @@ HOOKS = {
             {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step':  1},
             {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 0,  'step':  1},
         ],
+    },
 
-# Session c3-batch-a-s3 — frontend_menus_a medium batch
+    # Session c3-batch-a-s3 — frontend_menus_a medium batch
     # MenuNav.cpp — menu navigation helpers (C2→C3)
     # ─────────────────────────────────────────────────────────────────────
 
@@ -586,8 +583,9 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
+    },
 
-# Session c3-batch-a-s5 — frontend_c0_promote + game_mode_cont2
+    # Session c3-batch-a-s5 — frontend_c0_promote + game_mode_cont2
     # FrontendNav.cpp / GameModeInit.cpp
     # ─────────────────────────────────────────────────────────────────────
 
@@ -685,7 +683,6 @@ HOOKS = {
             {'idx': 0, 'guard_val': 1},
             {'idx': 1, 'guard_val': 1},
         ],
-}
     },
 
     # 0x0046cbb0  VehicleCarStateRead
@@ -700,8 +697,9 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
         'path2_tests':    [0, 15, 16, 255],
+    },
 
-# ── Session 89: 5 util pure-function C2→C3 promotions ─────────────────────
+    # ── Session 89: 5 util pure-function C2→C3 promotions ─────────────────────
 
     'timer_get_base_ptr': {
         'rva':            0x00413f90,
@@ -769,7 +767,6 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3],
         'path2_tests': [0, 1, 2, 3],
-}
     },
 
 # ── Session 85 audio leaves (C2→C3) ──────────────────────────────────────
@@ -1089,5 +1086,4 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
-}
 }
