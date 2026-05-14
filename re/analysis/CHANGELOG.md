@@ -1003,3 +1003,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  0046c7b0  VehicleSlotGetter                C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 11/11 GREEN log/diff_vehicle_slot_getter.csv; leaf-exemption; caller FUN_00410860 C2
 2026-05-13  0046dbe0  VehicleRacePositionGet           C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 8/8 GREEN log/diff_vehicle_race_position_get.csv; leaf-exemption; caller VehicleRubberBandSpeedModifier C2
 2026-05-13  00468b40  VehicleContactHistoryLookup      C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 7/7 GREEN log/diff_vehicle_contact_history_lookup.csv; leaf-exemption; caller FUN_0046cc40 C2
+2026-05-14  0046d700  VehicleVec3At9C8Get              C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 9/9 GREEN log/diff_vehicle_vec3_at_9c8_get.csv; leaf-exemption; caller FUN_0046e9e0 C2
+2026-05-14  00417730  VehicleRaceAngleGet              C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 7/7 GREEN log/diff_vehicle_race_angle_get.csv; leaf-exemption; callers FUN_004177b0+FUN_00417cf0 ai/C2

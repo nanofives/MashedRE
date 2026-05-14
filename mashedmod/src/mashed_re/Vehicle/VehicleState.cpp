@@ -22,6 +22,12 @@ static constexpr std::uintptr_t kEntityBase_8820b0  = 0x008820b0u;
 static constexpr std::uint32_t  kDWordStride         = 0x341u;
 static constexpr std::uint32_t  kByteStride          = 0xD04u;
 
+static constexpr std::uintptr_t kVehicleBase_881f68 = 0x00881f68u;
+static constexpr std::uintptr_t kVehicleBase_881f6c = 0x00881f6cu;
+static constexpr std::uintptr_t kVehicleBase_881f70 = 0x00881f70u;
+static constexpr std::uintptr_t kVehicleBase_881f90 = 0x00881f90u;
+static constexpr std::uintptr_t kVehicleBase_881f94 = 0x00881f94u;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046c7b0  VehicleSlotGetter
 // Ghidra decomp:
@@ -97,3 +103,56 @@ extern "C" __declspec(dllexport) int __cdecl VehicleContactHistoryLookup(int par
     return 1;
 }
 RH_ScopedInstall(VehicleContactHistoryLookup, 0x00468b40);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x0046d700  VehicleVec3At9C8Get
+// Ghidra decomp:
+//   if (0xf < param_2) return 0;
+//   param_1[0] = (&DAT_00881f68)[param_2 * 0x341];
+//   param_1[1] = (&DAT_00881f6c)[param_2 * 0x341];
+//   param_1[2] = (&DAT_00881f70)[param_2 * 0x341];
+//   return 1;
+// param_1 = out buffer (3 DWORDs at +0x9C8/+0x9CC/+0x9D0 in per-vehicle block)
+// param_2 = vehicle index 0..15  (U-1748: direction type unconfirmed)
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) int __cdecl VehicleVec3At9C8Get(std::uint32_t* outVec, std::uint32_t vehicleIdx) {
+    if (vehicleIdx > 0xfu) return 0;
+    outVec[0] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f68)[vehicleIdx * kDWordStride];
+    outVec[1] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f6c)[vehicleIdx * kDWordStride];
+    outVec[2] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f70)[vehicleIdx * kDWordStride];
+    return 1;
+}
+RH_ScopedInstall(VehicleVec3At9C8Get, 0x0046d700);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x0046cbb0  VehicleCarStateRead
+// Ghidra decomp:
+//   if (0xf < param_1) return 0;
+//   *param_2 = (&DAT_00881f90)[param_1 * 0x341];
+//   *param_3 = *(undefined4*)(&DAT_00881f94 + param_1 * 0xd04);
+//   return 1;
+// param_1 = car index 0..15; param_2 = out: state field (0=alive, 2=slide per callers);
+// param_3 = out: secondary field (U-1856: purpose unconfirmed)
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) int __cdecl VehicleCarStateRead(std::uint32_t carIdx, std::uint32_t* outState, std::uint32_t* outSecondary) {
+    if (carIdx > 0xfu) return 0;
+    *outState     = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f90)[carIdx * kDWordStride];
+    *outSecondary = *reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f94 + carIdx * kByteStride);
+    return 1;
+}
+RH_ScopedInstall(VehicleCarStateRead, 0x0046cbb0);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x00417730  VehicleRaceAngleGet
+// Ghidra decomp:
+//   EAX = [ESP+4];  ST0 = *(float*)(EAX*4 + 0x0089a880);  RET
+// Reads a per-car float from flat array DAT_0089a880 (stride 4 bytes, indexed by carIdx).
+// Called by ai_path_following functions as a "race angle" metric.
+// U-2173: float semantic unknown.  U-2174: array element count unknown.
+// ─────────────────────────────────────────────────────────────────────────────
+static constexpr std::uintptr_t kCarRaceArrayBase = 0x0089a880u;
+
+extern "C" __declspec(dllexport) float __cdecl VehicleRaceAngleGet(int carIdx) {
+    return *reinterpret_cast<const float*>(kCarRaceArrayBase + carIdx * 4u);
+}
+RH_ScopedInstall(VehicleRaceAngleGet, 0x00417730);

@@ -219,4 +219,47 @@ HOOKS = {
             {'slot_contact_id': 0xABCDEF01, 'slot_active': 0, 'geom_contact_id': 0xABCDEF01},
         ],
     },
+
+    # 0x00417730  VehicleRaceAngleGet
+    # Per-car float getter: *(float*)(DAT_0089a880 + carIdx * 4). Pure leaf, 11 bytes.
+    # int_scalar: passes carIdx as uint32, returns float in ST0.
+    # Callers FUN_004177b0 and FUN_00417cf0 (both ai/C2).
+    # U-2173 (semantic) and U-2174 (structural count) are filed; do not affect correctness.
+    'vehicle_race_angle_get': {
+        'rva':            0x00417730,
+        'export':         'VehicleRaceAngleGet',
+        'signature':      {'ret': 'float', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 5, 10, 15],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x0046d700  VehicleVec3At9C8Get
+    # Reads 3-DWORD vector at per-vehicle offsets +0x9C8/+0x9CC/+0x9D0.
+    # out3_idx: 12-byte buf as first arg, vehicleIdx as second; compares return value (0/1).
+    # U-1748 is open: direction type unconfirmed — does not affect offset/bounds correctness.
+    'vehicle_vec3_at_9c8_get': {
+        'rva':            0x0046d700,
+        'export':         'VehicleVec3At9C8Get',
+        'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type':       'out3_idx',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16, 255],
+    },
+
+    # 0x0046cbb0  VehicleCarStateRead
+    # Reads 2 DWORD fields (state + secondary) from per-car struct at stride 0xD04.
+    # idx_out2: carIdx first, two 4-byte out-slots in shared buf; compares return value (0/1).
+    # U-1855/1856/1857 are in uncertainties section only; bounds logic is deterministic.
+    'vehicle_car_state_read': {
+        'rva':            0x0046cbb0,
+        'export':         'VehicleCarStateRead',
+        'signature':      {'ret': 'int32', 'args': ['uint32', 'pointer', 'pointer']},
+        'arg_type':       'idx_out2',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16, 255],
+    },
 }

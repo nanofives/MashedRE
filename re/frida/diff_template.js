@@ -97,6 +97,16 @@ function callFn(fn, input, buf) {
         geomBuf.add(0x34).writeU32(input.geom_contact_id >>> 0);
         return fn(geomBuf.toInt32(), vehicleBuf.toInt32());
     }
+    // out3_idx — fn(out_buf_ptr, uint32_idx); buf is first arg (12 bytes); returns fn return value.
+    // Used for functions like VehicleVec3At9C8Get where output buffer precedes the index arg.
+    if (CONFIG.arg_type === 'out3_idx') {
+        return fn(buf, input >>> 0);
+    }
+    // idx_out2 — fn(uint32_idx, out_ptr1, out_ptr2); two 4-byte out-slots in shared buf.
+    // Returns fn return value. Used for functions like VehicleCarStateRead.
+    if (CONFIG.arg_type === 'idx_out2') {
+        return fn(input >>> 0, buf, buf.add(4));
+    }
     // float_scalar
     return fn(input);
 }
@@ -127,7 +137,7 @@ function runDiff() {
     const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
 
-    const buf = (['vec3_ptr', 'int_with_out_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12) : null;
+    const buf = (['vec3_ptr', 'int_with_out_ptr', 'out3_idx', 'idx_out2'].includes(CONFIG.arg_type)) ? Memory.alloc(12) : null;
 
     // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).
     if (CONFIG.arg_type === 'contact_history') {
