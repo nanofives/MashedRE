@@ -1018,3 +1018,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0042f6b0  MenuModeSync        C2->C3  c3/batch-a-s4; FrontendState.cpp; 115b leaf; switch DAT_0067f184->DAT_0067e9fc 9 cases; A/B 10/10 GREEN log/diff_menu_mode_sync.csv; leaf-exemption; U-3595 open (semantic)
 2026-05-14  00430910  MenuOptionSlotGet   C2->C3  c3/batch-a-s4; FrontendState.cpp; 137b leaf; mode-gated table read DAT_007f0a40; A/B 10/10 GREEN log/diff_menu_option_slot_get.csv; leaf-exemption; U-3598 U-3599 open (semantic)
 2026-05-14  0042f020  VehicleFlagClear    REFUSED  c3/batch-a-s4; __fastcall EAX implicit arg; NativeFunction('mscdecl') harness cannot support; remains C2; U-3594 open
+2026-05-13  0042f6a0  GetRaceSubMode       C2->C3  path1 8/8 GREEN diff_get_race_sub_mode.csv; path2 opcode+rel32+bytes OK interceptor 3/3; leaf-exemption; caller FUN_004929d0(C2)
+2026-05-13  005c9d00  GetRaceEndTrigger    C2->C3  path1 8/8 GREEN diff_get_race_end_trigger.csv; path2 opcode+rel32+bytes OK (3-byte reimpl bypasses Frida interceptor — JMP patch verified); leaf-exemption; caller FUN_004929d0(C2)
+2026-05-13  0041f1c0  GetEventFlag         C2->C3  path1 14/14 GREEN diff_get_event_flag.csv; path2 opcode+rel32+bytes OK interceptor 5/5; leaf-exemption; callers FUN_00424eb0 FUN_00412f30(both C2); U-3711 U-3712 filed
+2026-05-13  0041f090  GetPlayerStateBits   C2->C3  path1 8/8 GREEN diff_get_player_state_bits.csv; path2 opcode+rel32+bytes OK interceptor 4/4; leaf-exemption; callers FUN_00424eb0 FUN_00412f30(both C2); U-3713 filed
+2026-05-13  00413f90  FUN_00413f90(TimerGetBasePtr) C2->C3 REFUSED: callers 0x0043d7c0 0x0043dfd0 both C1; no C2+ caller satisfies gate; stays C2 until a caller promotes

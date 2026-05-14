@@ -4,10 +4,17 @@
 //   asi_path        string
 //   target_rva      string ("0x004c3ac0")
 //   export          string
-//   signature       { ret: "float", args: ["float" | "pointer"] }
-//   arg_type        "float_scalar" | "vec3_ptr"
+//   signature       { ret: "float"|"uint32"|"pointer"|"void",
+//                      args: ["float"|"int"|"pointer"|...] }
+//   arg_type        "float_scalar" | "vec3_ptr" | "void" | "int_scalar" |
+//                   "int_pair" | "int_ptr2_out"
 //   lut_root_delta  number  (0 or 4 — offset for LUT readiness poll)
-//   tests           array of either floats (scalar) or [x,y,z] tuples (vec3)
+//   tests           array; shape depends on arg_type:
+//                     float_scalar / int_scalar: flat list of values
+//                     vec3_ptr:     list of [x,y,z] tuples
+//                     int_pair:     list of [a,b] pairs
+//                     void:         list of nulls/zeros (length = call count)
+//                     int_ptr2_out: flat list of ints (player indices)
 'use strict';
 
 const CONFIG = $CONFIG$;
@@ -72,6 +79,21 @@ function callFn(fn, input, buf) {
         buf.add(4).writeFloat(input[1]);
         buf.add(8).writeFloat(input[2]);
         return fn(buf);
+    }
+    // void — no args, no return value of interest
+    if (CONFIG.arg_type === 'void') {
+        return fn();
+    }
+    // int_pair — two uint32 args
+    if (CONFIG.arg_type === 'int_pair') {
+        return fn(input[0], input[1]);
+    }
+    // int_ptr2_out — fn(uint32, out_ptr1, out_ptr2); two 4-byte out-slots; returns packed u32
+    if (CONFIG.arg_type === 'int_ptr2_out') {
+        buf.writeU32(0);
+        buf.add(4).writeU32(0);
+        fn(input, buf, buf.add(4));
+        return (buf.readU32() & 0x3f) | ((buf.add(4).readU32() & 0x3f) << 8);
     }
     // int_scalar — single uint32 arg, any integer return type
     if (CONFIG.arg_type === 'int_scalar') {
@@ -182,9 +204,9 @@ function runDiff() {
     const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
-    const buf = (['vec3_ptr', 'int_with_out_ptr', 'out3_idx', 'idx_out2'].includes(CONFIG.arg_type))
-        ? Memory.alloc(12)
-        : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
+    const buf = (['vec3_ptr', 'out3_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
+              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
 
     // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).
     if (CONFIG.arg_type === 'contact_history') {
@@ -211,8 +233,12 @@ function runDiff() {
             // mutated the field.
             try { orig = callFn(Orig,   t, buf); } catch (e) { orig = null; errOrig = e.message; }
             try { reim = callFn(Reimpl, t, buf); } catch (e) { reim = null; errReim = e.message; }
-            results.push({ idx: i, input: t, original: orig, reimpl: reim,
-                           match: (orig !== null && reim !== null && orig === reim),
+            const origN = (orig !== null && orig !== undefined) ?
+                (typeof orig === 'object' ? orig.toString() : orig) : null;
+            const reimN = (reim !== null && reim !== undefined) ?
+                (typeof reim === 'object' ? reim.toString() : reim) : null;
+            results.push({ idx: i, input: t, original: origN, reimpl: reimN,
+                           match: (origN !== null && reimN !== null && origN === reimN),
                            err_original: errOrig, err_reimpl: errReim });
         }
     } finally {
