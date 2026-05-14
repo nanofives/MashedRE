@@ -1,11 +1,13 @@
 ---
-name: sweep
-description: Run the parallel-fanout scribe sweep — drain all "Queued" rows in re/SCRIBE_QUEUE.md into the master Ghidra project. This is the follow-up Opus session that runs after one or more parallel analysis sessions have queued their buckets. Triggers on "run the sweep", "run sweep", "drain the queue", "process the scribe queue", "scribe the queued sessions".
+name: ghidra-sweep
+description: Run the parallel-fanout SCRIBE sweep — drain all "Queued" rows in re/SCRIBE_QUEUE.md into the master Ghidra project. This is the follow-up Opus session that runs after one or more parallel Ghidra-discovery sessions have queued their buckets. Triggers on "run the ghidra sweep", "run the scribe sweep", "drain the scribe queue", "process the scribe queue", "scribe the queued sessions", and legacy "run sweep" / "run the sweep" when only SCRIBE_QUEUE.md has work. Counterpart: frida-sweep (drains PROMOTION_QUEUE.md after C3 batches).
 ---
 
-# sweep — scribe-queue drain session
+# ghidra-sweep — SCRIBE_QUEUE drain session
 
-The sweep is a single Opus session that drains every "Queued" row in `re/SCRIBE_QUEUE.md` into the master Ghidra project in one serial pass. It replaces the per-session scribe step that parallel-fanout sessions are not allowed to run directly (see `re/SESSION_RULES.md` § "Parallel-fanout scribe-queue pattern").
+The Ghidra sweep is a single Opus session that drains every "Queued" row in `re/SCRIBE_QUEUE.md` into the master Ghidra project in one serial pass. It replaces the per-session scribe step that parallel-fanout sessions are not allowed to run directly (see `re/SESSION_RULES.md` § "Parallel-fanout scribe-queue pattern").
+
+**Not interchangeable with `frida-sweep`** (the merge-and-verify sweep that drains `re/PROMOTION_QUEUE.md` after a C3 batch). They write to different queues, use different tooling, and never overlap. If both queues have work, run `ghidra-sweep` first (its outputs may unblock C3 candidates), then `frida-sweep`.
 
 **Recommended model:** `claude-opus-4-7` at medium thinking. Reason: last-writer-wins on master; correctness matters more than speed.
 

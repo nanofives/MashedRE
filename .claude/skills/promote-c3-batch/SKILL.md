@@ -1,0 +1,268 @@
+---
+name: promote-c3-batch
+description: Generate a parallel-fanout batch file of Claude Code prompts that drive C2→C3 promotions for Mashed RE. Each session is bounded so it finishes before the conversation auto-compacts. Triggers on "generate a c3 batch", "plan a c3 fanout", "make a promotion batch", "batch of promotion prompts", "fan out the C3 work".
+---
+
+# promote-c3-batch — generate parallel C3-promotion batch prompts
+
+This skill is **planning-only**. It produces a text file (analog of `batch_h.txt` for Ghidra discovery) containing N self-contained Claude Code prompts. Each prompt drives one parallel Sonnet 4.6 session that promotes a handful of C2 functions to C3. The skill does **not** execute the prompts — the user pastes each session block into a separate Claude session.
+
+The C2→C3 step is mechanical for most candidates (read analysis note → author small reimpl → diff via Frida → re-classify). What makes it parallelizable is `scripts/frida_pool.sh` + `re/frida/run_diff_parallel.py` (already built) plus per-session worktree isolation (already supported by the `worktree` skill).
+
+## When to invoke
+
+- "Generate a C3 batch of N sessions"
+- "Plan a fanout for the next batch of util C2 leaves"
+- "Make me a promotion batch for the frontend C2 cluster"
+- After a successful pilot batch, when scaling to more candidates
+
+## Inputs
+
+The skill needs to know:
+- **N sessions** (**default 6** — the standing batch shape; cap at 8 if the user explicitly asks).
+- **Max functions per session** (default 5; hard cap 8 — see § "Why 5/8" below).
+- **Subsystem filter** (optional; e.g., `util`, `util,frontend`). Defaults to "any C2 function with a known signature."
+- **Complexity profile** (optional): `pure-leaves` (default for first batches), `near-leaves` (one callee that must be at C2+), or `mixed`.
+
+If a parameter is missing, prefer the conservative default — never balloon a session to a complexity the cap can't absorb.
+
+**Standard batch shape: 6 sessions × 5 candidates = 30 promotions per batch.** This is the production cadence; the skill produces a batch of this shape unless the user overrides. A 30-promotion batch matches one productive parallel-fanout afternoon and aligns with the Ghidra-discovery batch sizing (`batch_h.txt` has 6 sessions too).
+
+## Why 5 / 8 (the per-session cap)
+
+Each C2→C3 promotion costs the worker session roughly **10–15k tokens**: read analysis note, scan existing similar hook, write a small `.cpp`, edit `build.bat`, edit `hooks_registry.py`, build, run `run_diff_parallel.py`, then a ~5–10k transaction in re-classify (hooks.csv slice reads + multiple Edits across hooks.csv / STUBS.md / CHANGELOG / analysis note frontmatter).
+
+Sonnet 4.6 effective working budget before auto-compact is ≈150k tokens. With ~13k of fixed startup context (CLAUDE.md + CONFIDENCE.md + this skill's prompt + hooks_registry inspection), a session has ≈137k usable. That fits:
+
+- **5 functions** = 75k → 88k total → ~50k headroom (preferred default; survives one drift-promote or struct-doc detour)
+- **8 functions** = 120k → 133k → ~17k headroom (hard cap; no room for surprises)
+
+Beyond 8, compaction is likely mid-session. A compaction in the middle of a re-classify transaction is a recipe for tracker drift, so the cap is firm.
+
+## Model declaration (per session)
+
+| Role | Model | Reason |
+|---|---|---|
+| Per-session worker | **Sonnet 4.6** (`claude-sonnet-4-6`) | C2→C3 authoring is mechanical: read note, copy template, paste address, run harness. Sonnet handles it cleanly and is ~4× cheaper than Opus. |
+| End-of-batch merge / promotion-queue sweep | Opus 4.7 (`claude-opus-4-7`) | Only invoked if a sweep is needed (rare for C3 — see § "When sweep is needed"). |
+| Caller drift-promote (if needed mid-session) | Sonnet 4.6 | Inline within the same session. Use Opus only if the caller turns out to be > 200 lines of decomp with semantic puzzles. |
+
+Always write the model id verbatim into the batch row (`Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap N RVAs`). Future-you will thank current-you when comparing token spend across batches.
+
+## Candidate selection algorithm
+
+1. **Pull C2 rows from `hooks.csv`** in the requested subsystem(s):
+   ```bash
+   awk -F',' 'NR>1 && $4=="C2" && $3 ~ /^(util|frontend)$/ {print $1","$2","$6}' hooks.csv
+   ```
+2. **Drop candidates that are already C3+** in any other row (drift detection — see today's session for an example: same RVA appearing 3x with different confidences).
+3. **Filter for hook-author viability** by reading the analysis note frontmatter:
+   - `callees_depth1: []` (pure leaf) → ideal
+   - `callees_depth1: [...]` with each callee at C2+ in hooks.csv → acceptable
+   - `callees_depth1: [...]` with any callee at C0/C1 → defer (would need depth-first promotion first)
+   - `size_bytes` > 200 → defer to a separate "complex C3" batch with smaller per-session counts
+   - Has unresolved `[UNCERTAIN]` markers in the body (not in the `## Uncertainties` section, but inline in the description) → defer
+4. **Check the caller-at-C2+ gate** (per `re/CONFIDENCE.md`): look up the candidate's noted callers in `hooks.csv`. If at least one caller is C2+, the gate passes. If all callers are C1, flag the session for a drift-promote step (acceptable for 1–2 callers per session; if more, split the session).
+5. **Cluster by subsystem** so each session reuses the same subdirectory in `mashed_re/`. This minimizes `build.bat` merge surface and lets the session reuse one C++ file for multiple hooks.
+6. **Balance load**: aim for similar `total_size_bytes` per session, not just function count. Many tiny leaves + one mid-size dispatcher is fine; eight near-cap-size functions is not.
+
+## Worktree binding
+
+Each session block must include worktree-acquire commands at the top so two sessions never edit the same `build.bat`/`hooks_registry.py`. The `worktree` skill handles the heavy lifting:
+
+```bash
+NAME=c3-batch-<id>-session-<n>
+BRANCH=c3/batch-<id>-session-<n>
+git worktree add ".worktrees/$NAME" -b "$BRANCH"
+cd ".worktrees/$NAME"
+# Frida pool is shared across worktrees — slots are PID-based.
+# Each session acquires its own slot at diff time, not at session start.
+```
+
+Worktrees merge back to main via the user-driven sweep at end-of-batch (see § "When sweep is needed").
+
+## Pool slot semantics
+
+- **Ghidra slots are NOT needed** for C2→C3 work. The analysis is already done (the function is at C2; the note exists). No fresh decomp work means no Ghidra writeback.
+- **Frida pool slots ARE needed** for the diff step. The `run_diff_parallel.py` runner acquires them per hook via `scripts/frida_pool.sh acquire`. Sessions don't pre-allocate — they queue. With 4 pool slots and **6 sessions** each verifying ~5 hooks at the verify step, the worst case is ~30 diffs wanting slots near-simultaneously — pool queues them, each diff is ~2s, total drain is ~15s. No need to grow `MAX_SLOTS` past 4 unless you observe sessions stalling on slot acquire.
+
+## End-of-batch merge — invoke the `frida-sweep` skill
+
+For any batch with N≥3 sessions (and definitely for the default N=6), the merge step lives in its own skill: **`frida-sweep`**. Do not inline the merge recipe here.
+
+After the user has run every session in the batch and each session has:
+1. Committed its worktree branch (`c3/batch-<id>-s<N>`)
+2. Appended a queue row to `re/PROMOTION_QUEUE.md`
+
+…the next step is to invoke `frida-sweep` (Sonnet 4.6) from the main worktree:
+
+> "run the frida sweep" / "drain the promotion queue" / "merge the c3 batch"
+
+That skill:
+- Merges every queued branch onto main, resolving the three known text-file conflicts (`build.bat`, `hooks_registry.py`, `CHANGELOG.md`) mechanically.
+- Rebuilds the canonical `mashed_re_dev.asi` from the merged state.
+- Runs `run_diff_parallel.py` against ALL promoted hooks in the merged build — the integration diff that catches cross-hook regressions (symbol clashes, overlapping JMP patches, struct-definition drift, include ordering).
+- Commits the merge only if every hook is GREEN.
+
+A batch that has not been run through `frida-sweep` is **not landed**. Sessions' per-worktree commits are not visible on main until the sweep merges them.
+
+### When `frida-sweep` is NOT needed
+
+- Single-session work — that session ran `re-classify` directly on main (or a one-off branch); no fanout, no merge.
+- N=2 batches with strong subsystem separation (different `<Subsystem>/` dirs). Try a plain `git merge` first; only invoke `frida-sweep` if conflicts surface.
+
+For the default N=6 batch: always invoke `frida-sweep`.
+
+## Session block template
+
+The skill emits one of these per session. Substitute placeholders.
+
+```
+================================================================================
+Session <N> — <subsystem>_c3_<seq>  (C2→C3, <K>-function batch)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: <K>)
+Worktree:    .worktrees/c3-batch-<id>-s<N>/  (branch c3/batch-<id>-s<N>)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id:    c3-batch-<id>
+
+# Mission
+Promote <K> C2 functions to C3 by authoring their reimpl in mashed_re_dev.asi,
+running run_diff_parallel.py for bit-identical verification, and applying
+re-classify transactionally. Stay inside this worktree. Do not touch main.
+
+# Candidates (read each analysis note BEFORE authoring)
+| RVA        | Ghidra name      | Analysis note                                | Reimpl name (suggested) | Notes |
+|------------|------------------|----------------------------------------------|-------------------------|-------|
+| 0x00xxxxxx | FUN_00xxxxxx     | re/analysis/<sub>/<file>.md                  | <ReimplName>            | <leaf? signature? gate flag?> |
+| ...        | ...              | ...                                          | ...                     | ...   |
+
+# Pre-flight checklist
+1. Confirm worktree binding:  `git worktree list | grep c3-batch-<id>-s<N>`
+2. Anchor check:              `sha256sum original/MASHED.exe` matches
+                              BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+3. Build baseline:            `mashedmod\build.bat` must succeed on a clean
+                              worktree before you add any new hook (catches
+                              merge breakage from main).
+4. Caller-at-C2+ gate:        For each candidate, check the analysis note's
+                              `callers_noted` field. Cross-check each caller
+                              RVA in hooks.csv. If any caller is C1 with full
+                              C2-quality analysis (mechanical decomp, U-IDs,
+                              constants), do an in-session drift-promote
+                              C1→C2 of that caller before promoting the leaf.
+
+# Per-function workflow (repeat for each RVA, then commit ONCE at the end)
+1. Read re/analysis/<sub>/<rva>.md end-to-end. Confirm:
+   - callees_depth1 is [] (or all callees at C2+).
+   - signature is one of: float(float), float(pointer), uint32(), void(uint32),
+     or another already supported by re/frida/diff_template.js.
+   - No unresolved inline [UNCERTAIN] markers in the body.
+2. If the signature is NOT in the supported set, STOP and queue a
+   note in PROMOTION_QUEUE.md asking the user to extend the harness.
+   Do NOT invent a new arg_type in this session.
+3. Author the reimpl:
+   - File: mashedmod/src/mashed_re/<Subsystem>/<Cluster>.cpp
+     (one file per cluster of related hooks, not per RVA; matches the
+     existing Math/RwSqrt.cpp pattern).
+   - Copy the comment header style from existing C3+ hooks (cite RVA, cite
+     disasm bytes, cite the no-guessing source-of-truth lines).
+   - extern "C" __declspec(dllexport) <ret> __cdecl <Name>(<args>) { … }
+   - RH_ScopedInstall(<Name>, 0x00xxxxxx);
+4. Wire build:
+   - Append `"%SRC%\<Subsystem>\<Cluster>.cpp" ^` to mashedmod\build.bat.
+   - Append a hooks_registry.py entry with the right arg_type and a
+     non-trivial input domain (≥10 test vectors for scalar; ≥10 sentinels
+     for read_global; cover edge cases — 0, MAX, sign bit, alternating bits).
+5. Build: `cmd /c mashedmod\build.bat > log\build_<rva>.txt 2>&1`. Halt on failure.
+
+# Batch verification (run ONCE after all K hooks authored)
+1. scripts/frida_pool.sh cleanup
+2. py -3.12 re/frida/run_diff_parallel.py <hook1> <hook2> ... <hookK>
+3. Expect all GREEN with 100% bit-identical match counts. If any RED:
+   debug the failing hook (NOT the others), re-build, re-run.
+4. cat log/diff_<hook>.csv for each — confirm match column is all True.
+
+# Promotion transaction (run re-classify ONCE per batch, not per RVA)
+Invoke re-classify with all K RVAs in one call. The skill validates the
+gates and applies tracker mutations transactionally:
+- hooks.csv: dedupe stale rows; write fresh C3 row per RVA.
+- STUBS.md: resolve any stubs the new hooks close (S-IDs cited from the
+  caller's analysis note).
+- CHANGELOG: one line per RVA; lead with the drift-promote line if any.
+- Analysis note frontmatter: bump confidence to C3 (or C2 for drift caller).
+
+# Commit policy (this worktree only)
+- One commit at the end of the per-function loop (NOT per function — keep
+  the worktree git history clean).
+- Commit message: `c3: <subsystem> batch <id> session <N> — <K> hooks, evidence cited`
+- Do NOT merge to main from this session. Branch merge is the user's call.
+
+# Output (what the next sweep / user-merge consumes)
+- Worktree branch c3/batch-<id>-s<N> with one commit on top of main containing:
+  - New mashed_re/<Subsystem>/<Cluster>.cpp file(s)
+  - build.bat additions
+  - hooks_registry.py additions
+  - hooks.csv / STUBS.md / CHANGELOG.md updates
+  - Analysis note frontmatter bumps
+- One row appended to re/PROMOTION_QUEUE.md (relative to project root) of
+  the form:
+    YYYY-MM-DD  c3-batch-<id>-s<N>  rvas=0x<a>,0x<b>,...  branch=c3/batch-<id>-s<N>  evidence=log/diff_<hook>.csv;...  note=<one-line>
+
+# STOP-AND-ASK if
+- Anchor mismatch on MASHED.exe.
+- Baseline build fails on clean worktree (main is broken — escalate).
+- A candidate's analysis note describes a function very different from
+  what hooks.csv says (drift on the note; flag and skip rather than
+  promoting).
+- More than 2 candidates in this session need caller drift-promote (split
+  the session; do the drift-promotes in a dedicated pass).
+- Any C2 candidate's analysis note has `[UNCERTAIN]` markers in the body
+  that are NOT yet filed in UNCERTAINTIES.md (file them first, then
+  decide whether to defer the candidate).
+```
+
+## Skill execution workflow
+
+When invoked:
+
+1. **Parse the request** (sessions, per-session cap, subsystem filter, complexity).
+2. **Pull C2 candidates** via the `awk` query above, then read enough analysis notes to apply the viability filter. For large filter sets, sample first — don't read 200 notes serially. Use Glob/Grep to surface candidates by markers (`callees_depth1: \[\]` for pure leaves).
+3. **Score candidates** by:
+   - signature compatibility with the existing harness (highest priority)
+   - caller-at-C2+ (yes = +2, drift-eligible = +1, no = exclude)
+   - size_bytes (≤50 = +2, ≤200 = +1, >200 = exclude unless special)
+   - subsystem cohesion (prefer grouping with same-cluster siblings)
+4. **Assign** top-scoring candidates to sessions, respecting the per-session cap. Aim for similar total complexity per session.
+5. **Emit `c3_batch_<id>.txt`** at the project root. `<id>` = next unused letter (`a`, `b`, …) — match the existing `batch_h.txt` pattern but in its own namespace.
+6. **Report to the user**:
+   - File path
+   - N sessions × K candidates each (= total to promote)
+   - List of candidates included
+   - List of viable candidates DEFERRED (so the user knows what's left)
+   - One-line invocation reminder: "open N Claude Code sessions, paste session block <i> into session <i>, run."
+
+## Output file naming
+
+- First C3 batch: `c3_batch_a.txt`
+- Second:        `c3_batch_b.txt`
+- ...
+- These live at the **project root** alongside the Ghidra-discovery `batch_<letter>.txt` files. Do not interleave the letter spaces — Ghidra uses `batch_*.txt`, C3 promotions use `c3_batch_*.txt`. Two namespaces, no collision.
+
+## Anti-patterns the skill must reject
+
+- Putting more than 8 RVAs in one session — that's the compaction-risk line.
+- Mixing complexity tiers within one session (3 trivial leaves + 1 200-line dispatcher) — uneven session lengths cause the rest of the fanout to wait.
+- Including candidates whose analysis note doesn't exist or hasn't been read end-to-end — speculation, not promotion.
+- Recommending Opus for a routine batch — that's a 4× cost increase for no measurable quality gain on mechanical C2→C3 work. Save Opus for the sweep, the hard-call sessions, and the gate-edge cases.
+- Emitting a batch that requires sweep coordination as the default — the C3 path should self-classify per-worktree; sweep is the exception.
+- Failing to declare the worktree branch name in every session block. Sessions that share branches will collide on commit.
+
+## Default batch + scale guidance
+
+**Production default: N=6, K=5** (`c3_batch_<id>.txt` with 6 sessions of 5 candidates each = 30 promotions). Wall time ~45-60 min of human-attended parallel Claude work = roughly 5 hrs serial equivalent. This is the cadence to run weekly until each subsystem's C2 backlog is drained.
+
+**If a first-ever pilot is requested explicitly**, the user can ask for N=2 K=4 (8 promotions, faster validation), but the default produced when the user just says "make a c3 batch" is **always 6×5**. Do not silently shrink the batch — if candidates run low (fewer than 30 viable C2 leaves remain in the requested subsystems), produce a partial batch and report exactly which sessions are short.
+
+C2 backlog (snapshot 2026-05-12): util 27 (24 after today's session), frontend 66, render 54, hud 36, vehicle 30, audio 20 → ~213 promotions = ~7 batches at the 6×5 cadence.
