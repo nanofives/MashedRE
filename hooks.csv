@@ -607,7 +607,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00408ad0,FUN_00408ad0,frontend,C1,new,re/analysis/race_results/00408ad0.md,race_results-20260503-0655,,16b getter; returns *(float*)(DAT_008a96ec+param_1*0x30c) struct-offset 0xac; used in tiebreak; U-1295
 0040b290,FUN_0040b290,frontend,C1,new,re/analysis/race_results/0040b290.md,race_results-20260503-0655,,409b score-updater; delta→DAT_008a94e0[i]; mode-filter DAT_007f0fd0; event circ-buffer; S-1281..S-1283; U-1296..U-1299
 0040d590,FUN_0040d590,frontend,C1,new,re/analysis/race_results/0040d590.md,race_results-20260503-0655,,849b 3-way tiebreak sort; FUN_00408ad0 float compare; assigns -delta/delta/delta*2 to 3rd/2nd/1st
-0040e470,FUN_0040e470,frontend,C1,new,re/analysis/race_results/0040e470.md,race_results-20260503-0655,,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300
+0040e470,FUN_0040e470,frontend,C2,mapped,re/analysis/race_results/0040e470.md,race_results-20260503-0655,,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promoted C1→C2 c3-batch-a-s1 (Why C2 block added; cross-session agreement)
 00422fd0,FUN_00422fd0,frontend,C1,new,re/analysis/race_results/00422fd0.md,race_results-20260503-0655,,98b car-eliminator; calls 5 fns incl FUN_004215c0(x 50.0f 0/1); S-1284..S-1288; U-1301..U-1303
 00431d80,FUN_00431d80,frontend,C1,new,re/analysis/race_results/00431d80.md,race_results-20260503-0655,,5b getter; returns DAT_0067ea7c (tiebreak-enable flag mode-4/code-6); U-1305
 0046c700,FUN_0046c700,frontend,C1,new,re/analysis/race_results/0046c700.md,race_results-20260503-0655,,43b incrementer; DAT_008820b0[param_1*0xd04]+=param_2; max idx 15; U-1306
@@ -754,7 +754,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00429aa0,FUN_00429aa0,frontend,C2,mapped,re/analysis/timer_d2_cont1/0x00429aa0.md,,,FUN_00430820 predicate; two paths fill 0x0067d990/998/9a0 from different tables; S-1604 S-1605; U-1613 U-1614; D-4845 cleared; session frontend_c0_promote
 0042aa00,FUN_0042aa00,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042aa00.md,,cursor advance+wrap with validity scan; slot=DAT_0067e9f8; stride-64 cursor/limit stride-16 validity; D-4846 cleared; U-3436 U-3437 U-3438,
 0042ac90,FUN_0042ac90,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042ac90.md,,linked-group walker via 0x67ed38 slot; skips cursor+1 groups; sentinels 0xFF04/05/06/140000; D-4847 cleared; U-3443 U-3444,
-0040b810,FUN_0040b810,frontend,C2,mapped,re/analysis/timer_d2_cont1/0x0040b810.md,,,zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; D-4848 cleared; session frontend_c0_promote
+0040b810,TimerGlobalsReset,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/TimerReset.cpp,,log/diff_timer_globals_reset.csv,zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x008a9550; c3-batch-a-s1
 0042b960,FUN_0042b960,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042b960.md,,scan 0x7f1042/1502 to find first valid entry → 0x7f1a14; init -1 sentinels; 0x7f1a0c=1; calls FUN_0040e480 x4; D-4849 cleared; U-3450 U-3451 U-3549,
 0042f6b0,MenuModeSync,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendState.cpp,c3/batch-a-s4,log/diff_menu_mode_sync.csv,115b pure leaf; switch(DAT_0067f184 0..11 absent 4/6/7)->DAT_0067e9fc; default no-op; A/B 10/10 GREEN; leaf-exemption; U-3595 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x0042f6b0.md
 004307a0,FUN_004307a0,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x004307a0.md,,,elapsed-time vs threshold check: reads 3-float table DAT_00614718[DAT_0067f17c*0xc]; calls 00429a70/80/90; U-3596 U-3597; D-4851 cleared; session frontend_c0_promote
@@ -769,7 +769,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004298c0,FUN_004298c0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x004298c0.md,,zeroes 4 globals: 0x67d99c/d994/d98c/8991bc; 27 bytes,
 0040acd0,FUN_0040acd0,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x0040acd0.md,,goto-linked state-machine; 48-byte body no callees; outer switch DAT_008a9584 (1..6),
 00414120,FUN_00414120,frontend,C1,mapped,re/analysis/c0_promotion_frontend_a/0x00414120.md,,zeroes 0x89a37c/78/80; copies 0x9c bytes 005f2a70->0089a384; zeros 0089a420; 80 bytes,
-00422b30,FUN_00422b30,frontend,C2,mapped,re/analysis/timer_d2_cont1/0x00422b30.md,,,memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612; D-4863 cleared; session frontend_c0_promote
+00422b30,TimerArrayClear,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/TimerReset.cpp,,log/diff_timer_array_clear.csv,memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x00899e80; c3-batch-a-s1
 0046dc00,FUN_0046dc00,frontend,C2,mapped,re/analysis/game_mode_cont2/0x0046dc00.md,,,indexed store *(0x8815a8+param_1*0xd04)=param_2; stride 0xd04 matches entity struct (ai_update_d5); callers FUN_0043dfd0+FUN_0043d7c0+FUN_0043df00; D-4864; U-3645 U-3646
 00495080,FUN_00495080,frontend,C2,mapped,re/analysis/game_mode_cont2/0x00495080.md,,,wrapper: FUN_00494fd0(param_1*2+_DAT_005cc32c, param_2); caller FUN_0043dfd0; D-4865; S-3626 U-3647
 00494f30,FUN_00494f30,frontend,C2,mapped,re/analysis/game_mode_cont2/0x00494f30.md,,,snapshot: DAT_00771a50=DAT_00771a54=FUN_00493fc0()→DAT_00771a18; caller FUN_0043dfd0; D-4866; U-3648
@@ -816,11 +816,11 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005aa1e0,FUN_005aa1e0,audio,C0,stub,re/analysis/audio_rws_loader_d3/005aa1e0.md,,,inline callback passed from FUN_005aa060; no Ghidra function body; S-1720; D-5080
 0040ab40,FUN_0040ab40,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ab40.md,,,state-machine dispatcher on DAT_008a9584; 4 inner switch vars; calls FUN_00409970/409930/42c1a0/45b350; S-1600 S-1601 S-1602; U-1607
 0040ac80,FUN_0040ac80,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ac80.md,,,second dispatcher on same 6-var state cluster (0x008a9584..9598); non-contiguous body; calls FUN_0042c1a0; U-1608
-0040b810,FUN_0040b810,util,C2,mapped,re/analysis/timer_d2_cont1/0x0040b810.md,,,zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; D-4848 cleared; session frontend_c0_promote
+0040b810,TimerGlobalsReset,util,C3,impl,mashedmod/src/mashed_re/Frontend/TimerReset.cpp,,log/diff_timer_globals_reset.csv,zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x008a9550; c3-batch-a-s1
 0040de10,FUN_0040de10,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040de10.md,,,calls FUN_0040ddb0+Replay::StartLap; writes 1→DAT_0063ba8c; calls FUN_00405420; S-1603
 0040e360,FUN_0040e360,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040e360.md,,,1-param setter: DAT_0063ba8c = param_1
 0040e370,FUN_0040e370,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040e370.md,,,bool getter: param_1 in 0..3; returns *(*(PTR_PTR_005f2770)+param_1*4+0x34)!=0; U-1611
-00422b30,FUN_00422b30,util,C2,mapped,re/analysis/timer_d2_cont1/0x00422b30.md,,,memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612; D-4863 cleared; session frontend_c0_promote
+00422b30,TimerArrayClear,util,C3,impl,mashedmod/src/mashed_re/Frontend/TimerReset.cpp,,log/diff_timer_array_clear.csv,memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x00899e80; c3-batch-a-s1
 00429aa0,FUN_00429aa0,util,C2,mapped,re/analysis/timer_d2_cont1/0x00429aa0.md,,,FUN_00430820 predicate; two paths fill 0x0067d990/998/9a0 from different tables; S-1604 S-1605; U-1613 U-1614; D-4845 cleared; session frontend_c0_promote
 0042af50,FUN_0042af50,util,C2,mapped,re/analysis/timer_d2_cont1/0x0042af50.md,,,guard+two-path check: DAT_007f1a0c==0x1000 walks char array 0x007f1501; else walks int-index array 0x007f1a14; U-1615 U-1616; D-4843 cleared; session frontend_c0_promote
 0042b900,FUN_0042b900,util,C1,mapped,re/analysis/timer_d2_cont1/0x0042b900.md,,,getter: returns DAT_0067eca4
