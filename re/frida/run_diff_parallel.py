@@ -76,7 +76,7 @@ def main(argv):
 
     t0 = time.time()
     results = []
-    with ThreadPoolExecutor(max_workers=len(hooks)) as ex:
+    with ThreadPoolExecutor(max_workers=4) as ex:  # 4 = frida pool size
         futures = {ex.submit(run_one, h): h for h in hooks}
         for fut in as_completed(futures):
             hook = futures[fut]

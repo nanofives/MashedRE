@@ -94,15 +94,9 @@ function callFn(fn, input, buf) {
         return fn();
     }
     if (CONFIG.arg_type === 'read_global') {
-        // Drive the target global with a sentinel value `input`, then call
-        // the zero-arg getter. Proves orig and reim read the SAME address
-        // (otherwise the sentinel write only affects one). Caller must save
-        // and restore the global outside this loop.
-        return fn();
-    }
-    if (CONFIG.arg_type === 'read_global') {
         ptr(CONFIG.target_global).writeU32(input >>> 0);
         return fn();
+    }
     // ── Simple scalar types ───────────────────────────────────────────────────
     if (CONFIG.arg_type === 'float_scalar') {
         return fn(input);
@@ -203,6 +197,7 @@ function callFn(fn, input, buf) {
         ptr(0x0067ed40).writeS32(init);
         fn(step);
         return ptr(0x0067ed40).readS32();
+    }
     // entity_field_set — fn(int param_1, uint32 param_2): void write to global array.
     // input: [param_1, param_2].  Calls fn, then reads back the written address as uint32.
     // Address: CONFIG.target_global + param_1 * CONFIG.entity_byte_stride.
@@ -393,7 +388,7 @@ function runDiff() {
     const Orig   = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, origCallConv);
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
-    const buf = (['vec3_ptr', 'out3_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
+    const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
 
@@ -411,9 +406,6 @@ function runDiff() {
         catch (e) { send({ type: 'error', msg: 'failed reading target_global: ' + e.message }); return; }
     }
 
-
-    // Allocate buffers for the active arg_type.
-    const buf = (['vec3_ptr', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12) : null;
     if (CONFIG.arg_type === 'transform_point' || CONFIG.arg_type === 'transform_vector') {
         xformBufs = { out: Memory.alloc(12), in: Memory.alloc(12), mat: Memory.alloc(64) };
     }
@@ -513,13 +505,6 @@ function runDiff() {
     }
 
     // ── standard scalar / vec3 / read_global / none loop ────────────────────
-    const buf = (CONFIG.arg_type === 'vec3_ptr') ? Memory.alloc(12) : null;
-
-    let savedGlobal = null;
-    if (CONFIG.arg_type === 'read_global') {
-        try { savedGlobal = ptr(CONFIG.target_global).readU32(); }
-        catch (e) { send({ type: 'error', msg: 'failed reading target_global: ' + e.message }); return; }
-    }
     try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
@@ -564,17 +549,12 @@ function runDiff() {
                 (typeof reim === 'object' ? reim.toString() : reim) : null;
             results.push({ idx: i, input: t, original: origN, reimpl: reimN,
                            match: (origN !== null && reimN !== null && origN === reimN),
-            try { orig = callFn(Orig,   t, buf); } catch (e) { orig = null; errOrig = e.message; }
-            try { reim = callFn(Reimpl, t, buf); } catch (e) { reim = null; errReim = e.message; }
-            results.push({ idx: i, input: t, original: orig, reimpl: reim,
-                           match: (orig !== null && reim !== null && orig === reim),
                            err_original: errOrig, err_reimpl: errReim });
         }
     } finally {
         if (savedGlobal !== null) {
             try { ptr(CONFIG.target_global).writeU32(savedGlobal); }
             catch (e) { /* best effort — process is about to exit anyway */ }
-            catch (e) { /* best effort */ }
         }
     }
     send({ type: 'results', data: results });
