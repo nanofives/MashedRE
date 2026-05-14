@@ -17,12 +17,27 @@ from pathlib import Path
 
 import frida
 
-ROOT = Path(__file__).resolve().parent.parent.parent
+_SCRIPT_ROOT = Path(__file__).resolve().parent.parent.parent
+
+# When running from a worktree (.worktrees/<name>/), original/ is in the
+# main repo root (two levels up from .worktrees/).
+def _find_original(script_root: Path) -> Path:
+    candidate = script_root / 'original' / 'MASHED.exe'
+    if candidate.exists():
+        return candidate
+    # Walk up: worktree is at <main>/.worktrees/<name>/
+    parent = script_root.parent.parent
+    candidate2 = parent / 'original' / 'MASHED.exe'
+    if candidate2.exists():
+        return candidate2
+    return candidate  # let the later check produce a clear error
+
+ROOT = _SCRIPT_ROOT
 
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS
 
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
+MASHED_EXE = _find_original(ROOT)
 ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'diff_template.js'
 LOG_DIR    = ROOT / 'log'
@@ -57,8 +72,15 @@ def on_message(message, data):
 
 
 def float_bits(f):
-    if f is None: return None
-    return struct.unpack('<I', struct.pack('<f', float(f)))[0]
+    """Return the IEEE-754 bit pattern of a scalar float result, or None.
+    For non-numeric values (e.g. packed bit strings from output-buffer arg_types)
+    this returns None so the CSV shows the raw string in the value column."""
+    if f is None:
+        return None
+    try:
+        return struct.unpack('<I', struct.pack('<f', float(f)))[0]
+    except (ValueError, TypeError):
+        return None  # output-buffer types return a comma-separated bit string
 
 
 def main():

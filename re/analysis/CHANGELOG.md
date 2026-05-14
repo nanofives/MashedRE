@@ -980,3 +980,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  005addd0  FUN_005addd0  C1->C2  promote_c2_audio_rws/005addd0.md
 2026-05-13  sweep-20260513-2055  scribe-claim  buckets=0 queued, 1 skipped-HOLD
 2026-05-13  sweep-20260513-2055  scribe-release  buckets=0 drained  errors=0  sync=ok(4-locked-slots-skipped)
+
+2026-05-14  004c3730  RwV3dTransformPoint   C2->C3  c3_render_math-20260514 log/diff_rw_v3d_transform_point.csv (14 cases GREEN)
+2026-05-14  004c3880  RwV3dTransformVector  C2->C3  c3_render_math-20260514 log/diff_rw_v3d_transform_vector.csv (10 cases GREEN)
+2026-05-14  004c3bf0  Vec2Length            C2->C3  c3_render_math-20260514 log/diff_vec2_length.csv (14 cases GREEN)
+2026-05-14  004c3c60  Vec2Normalize         C2->C3  c3_render_math-20260514 log/diff_vec2_normalize.csv (10 cases GREEN); stubs S-3705 S-3706
+2026-05-14  004c5010  RwMatrixScale         C2->C3  c3_render_math-20260514 log/diff_rw_matrix_scale.csv (11 cases GREEN)
