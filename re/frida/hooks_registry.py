@@ -262,4 +262,85 @@ HOOKS = {
         'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
         'path2_tests':    [0, 15, 16, 255],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-a-s6 — frontend_menus_a larger + game_mode (C2->C3)
+    # MenuButtonDetect.cpp + GameModeCarSelect.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042b770  MenuButtonDetectE
+    # Simplified button-detector: checks active byte col+5 AND !processed col+5.
+    # No timer, no screen-type check. Returns 1 (change) or 0.
+    # arg_type='none': called 10x at quiescent main menu; both paths must
+    # agree on 0 (no button pressed). U-3445 (callee semantics) is in
+    # Uncertainties section only.
+    'menu_button_detect_e': {
+        'rva':            0x0042b770,
+        'export':         'MenuButtonDetectE',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042b310  MenuButtonDetectC
+    # Full button-detector: col+0 with screen-type early-return (0x13/0x1e).
+    # Zeros _DAT_0067f1b8 when no active input detected. Returns 0 or 1.
+    # arg_type='none': called 10x at quiescent main menu; both paths agree
+    # on 0. U-3445 (callee semantics) and U-3556 (screen IDs) are in
+    # Uncertainties only.
+    'menu_button_detect_c': {
+        'rva':            0x0042b310,
+        'export':         'MenuButtonDetectC',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042b960  CarSlotInit1P
+    # void: scans char table pair, inits slot sentinels, sets mode=1, calls
+    # FUN_0040e480 x4. Returns void (wrapped as uint32 0 for registry compat).
+    # arg_type='none': called 5x at quiescent main menu (both paths must not
+    # crash and agree on void/0). Global side-effects observed indirectly.
+    'car_slot_init_1p': {
+        'rva':            0x0042b960,
+        'export':         'CarSlotInit1P',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042b9e0  CarSlotAssign
+    # Car-selection confirm: resets slots, counts valid options, detects
+    # collision, assigns car IDs. Returns 0x1000/0/1.
+    # arg_type='none': called 10x at quiescent main menu; original and reimpl
+    # must agree. Returns 1 (auto-confirm: <2 valid car options) at menu.
+    'car_slot_assign': {
+        'rva':            0x0042b9e0,
+        'export':         'CarSlotAssign',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00431d00  CarSelectReset
+    # void: writes 7 globals, calls FUN_00431b80 x3 (chained). Returns void.
+    # arg_type='none': called 5x at quiescent main menu; both paths must not
+    # crash and agree on void/0. Global side-effects (ea74..eaac) observed.
+    'car_select_reset': {
+        'rva':            0x00431d00,
+        'export':         'CarSelectReset',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
