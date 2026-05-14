@@ -1049,3 +1049,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0046dc00  EntityFieldSet  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_EntityFieldSet.csv; pure leaf; leaf-exemption; U-3645 U-3646 open blocks:none
 2026-05-14  00492340  CarSlotInit  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_CarSlotInit.csv; pure leaf; leaf-exemption; U-3643 U-3644 open blocks:none
 2026-05-14  frida-sweep-20260514-2020  frida-sweep-release  branches=10 merged  integration-diff=GREEN-37/38  hooks=38  note=menu_entry_get crash-equality exception documented
+2026-05-14  0040b6b0  ModeScoreGetBySlot  C2->C3  c3-batch-b-s1; mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp; pure leaf; leaf-exemption; Frida A/B GREEN 11/11 log/diff_mode_score_get_by_slot.csv
+2026-05-14  0040b7a0  HotkeyStringBaseGet  C2->C3  c3-batch-b-s1; mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp; pure leaf; leaf-exemption; Frida A/B GREEN 10/10 log/diff_hotkey_string_base_get.csv
+2026-05-14  0040b7b0  PlayerHotkeyTableGet  C2->C3  c3-batch-b-s1; mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp; pure leaf; leaf-exemption; Frida A/B GREEN 18/18 log/diff_player_hotkey_table_get.csv; NOTE: registry used int_pair (existing) in place of non-existent int_int_scalar
+2026-05-14  00429870  LapTimeALessThanB  C2->C3  c3-batch-b-s1; mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp; pure leaf; leaf-exemption; Frida A/B GREEN 10/10 log/diff_lap_time_a_less_than_b.csv
+2026-05-14  00429a70  LapFracGetBySlot  C2->C3  c3-batch-b-s1; mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp; pure leaf; leaf-exemption; Frida A/B GREEN 10/10 log/diff_lap_frac_get_by_slot.csv
+2026-05-14  00429a80  LapLapsGetBySlot  C2->C3  c3-batch-b-s1; mashedmod/src/mashed_re/Frontend/MenuScoreGetters.cpp; pure leaf; leaf-exemption; Frida A/B GREEN 10/10 log/diff_lap_laps_get_by_slot.csv
