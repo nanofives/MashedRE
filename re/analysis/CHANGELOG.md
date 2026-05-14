@@ -980,3 +980,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  005addd0  FUN_005addd0  C1->C2  promote_c2_audio_rws/005addd0.md
 2026-05-13  sweep-20260513-2055  scribe-claim  buckets=0 queued, 1 skipped-HOLD
 2026-05-13  sweep-20260513-2055  scribe-release  buckets=0 drained  errors=0  sync=ok(4-locked-slots-skipped)
+2026-05-13  0042f6a0  GetRaceSubMode       C2->C3  path1 8/8 GREEN diff_get_race_sub_mode.csv; path2 opcode+rel32+bytes OK interceptor 3/3; leaf-exemption; caller FUN_004929d0(C2)
+2026-05-13  005c9d00  GetRaceEndTrigger    C2->C3  path1 8/8 GREEN diff_get_race_end_trigger.csv; path2 opcode+rel32+bytes OK (3-byte reimpl bypasses Frida interceptor — JMP patch verified); leaf-exemption; caller FUN_004929d0(C2)
+2026-05-13  0041f1c0  GetEventFlag         C2->C3  path1 14/14 GREEN diff_get_event_flag.csv; path2 opcode+rel32+bytes OK interceptor 5/5; leaf-exemption; callers FUN_00424eb0 FUN_00412f30(both C2); U-3711 U-3712 filed
+2026-05-13  0041f090  GetPlayerStateBits   C2->C3  path1 8/8 GREEN diff_get_player_state_bits.csv; path2 opcode+rel32+bytes OK interceptor 4/4; leaf-exemption; callers FUN_00424eb0 FUN_00412f30(both C2); U-3713 filed
+2026-05-13  00413f90  FUN_00413f90(TimerGetBasePtr) C2->C3 REFUSED: callers 0x0043d7c0 0x0043dfd0 both C1; no C2+ caller satisfies gate; stays C2 until a caller promotes

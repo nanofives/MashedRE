@@ -50,6 +50,21 @@ function callFn(fn, input, buf) {
         buf.add(8).writeFloat(input[2]);
         return fn(buf);
     }
+    if (CONFIG.arg_type === 'void') {
+        return fn();
+    }
+    if (CONFIG.arg_type === 'int_scalar') {
+        return fn(input);
+    }
+    if (CONFIG.arg_type === 'int_pair') {
+        return fn(input[0], input[1]);
+    }
+    if (CONFIG.arg_type === 'int_ptr2_out') {
+        buf.writeU32(0);
+        buf.add(4).writeU32(0);
+        fn(input, buf, buf.add(4));
+        return (buf.readU32() & 0x3f) | ((buf.add(4).readU32() & 0x3f) << 8);
+    }
     return fn(input);
 }
 
@@ -100,7 +115,10 @@ function runVerification() {
     });
 
     const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
-    const buf = (CONFIG.arg_type === 'vec3_ptr') ? Memory.alloc(12) : null;
+    let bufBytes = 0;
+    if (CONFIG.arg_type === 'vec3_ptr')      bufBytes = 12;
+    else if (CONFIG.arg_type === 'int_ptr2_out') bufBytes = 8;
+    const buf = bufBytes > 0 ? Memory.alloc(bufBytes) : null;
     const results = [];
     const beforeCount = reimplEntries;
     for (let i = 0; i < CONFIG.tests.length; i++) {

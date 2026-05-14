@@ -58,7 +58,16 @@ def on_message(message, data):
 
 def float_bits(f):
     if f is None: return None
-    return struct.unpack('<I', struct.pack('<f', float(f)))[0]
+    try:
+        return struct.unpack('<I', struct.pack('<f', float(f)))[0]
+    except (OverflowError, struct.error, ValueError, TypeError):
+        # Non-float return value (uint32, pointer string '0x…', packed int…)
+        if isinstance(f, str) and f.startswith('0x'):
+            return int(f, 16) & 0xffffffff
+        try:
+            return int(f) & 0xffffffff
+        except (ValueError, TypeError):
+            return None
 
 
 def main():
