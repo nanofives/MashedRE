@@ -2034,3 +2034,23 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00449880,FUN_00449880,particle,C1,unmapped,,,,fills 256-float array DAT_00683ec8 with reset height value; called from smoke init
 00449b30,FUN_00449b30,particle,C1,unmapped,,,,"smoke particle system init: alloc pool, bind 'smoke' texture, 2197 particles, 256 emitters"
 00449bb0,FUN_00449bb0,particle,C1,unmapped,,,,"car shadow billboard init: bind 'car_shadow' texture, 2060 max, 80 instances"
+00490000,FUN_00490000,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490000.md,,,clump-pool clear: iterates 120-entry DAT_0086a4ac stride 0x14; calls FUN_004e8090(slot,0); caller FUN_0040cfd0
+00490020,FUN_00490020,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490020.md,,,particle spawn into clump pool: position/velocity/scale/clump; param_4=1/2 fetches player bone pos via FUN_0041f290
+00490e50,FUN_00490e50,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490e50.md,,,LineRain fatal error handler: formatted log + FUN_004a332b(-1) no-return; names the subsystem via string literal
+00490e70,FUN_00490e70,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490e70.md,,,LineRain param init (defaults): byte colours + float ranges + velocity; U-3705 DAT_00771538/3c purpose
+00490f50,FUN_00490f50,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490f50.md,,,LineRain SetHeadColour: writes 4 bytes to DAT_00616030..33
+00490f80,FUN_00490f80,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490f80.md,,,LineRain SetTailColour: writes 4 bytes to DAT_00616034..37
+00490fb0,FUN_00490fb0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490fb0.md,,,LineRain SetSpawnRegion: X/Z range + Y pair
+00490ff0,FUN_00490ff0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490ff0.md,,,LineRain SetCameraScale: _DAT_006146b0/b4 velocity scale
+00491010,FUN_00491010,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491010.md,,,LineRain SetScale: _DAT_006146b8/bc width range 3.0f..6.0f
+00491030,FUN_00491030,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491030.md,,,LineRain SetRenderColours: 6-float cluster at 006146d0..e4
+004910c0,FUN_004910c0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x004910c0.md,,,LineRain per-frame update (random respawn): 4x224 particles camera-space via FUN_004671a0/FUN_00467210; called by FUN_00491490=RainRender
+00491340,FUN_00491340,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491340.md,,,LineRain per-frame update (table respawn): DAT_0077152c vec3 table; lifetime>7; no callers visible
+00491530,FUN_00491530,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491530.md,,,LineRain teardown: free DAT_00771530+DAT_0077152c via vtable[0x10c]; caller FUN_00426b40
+00491b20,FUN_00491b20,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491b20.md,,,spark/lightning register bolt source: max 8 entries stride 0x38 at DAT_00771558; no callers visible
+00491bd0,FUN_00491bd0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491bd0.md,,,spark clear vertex buffer: DAT_00869ca0 0x4000 bytes stride 0x20
+00491c00,FUN_00491c00,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491c00.md,,,spark init: alloc 0x4000 + FUN_00534b60(0x200,0x80007) point-sprites + white texture fill; no callers visible
+00491e50,FUN_00491e50,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491e50.md,,,spark spawn into free slot: EAX=buffer EDI=10-float descriptor; sets pos/vel; conv [UNCERTAIN]
+00491f00,FUN_00491f00,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491f00.md,,,spark per-frame update + vertex stream build: proximity spawn if <_DAT_005cf694 from param_1+0x40; 3-stream age-based colour/UV; caller FUN_00448ef0
+00492170,FUN_00492170,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00492170.md,,,spark teardown: free geometry + buffer + render entry; no callers visible
+004921b0,FUN_004921b0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x004921b0.md,,,spark render dispatch: vtable[0x48] on DAT_00771724 if active-count>0; no callers visible
