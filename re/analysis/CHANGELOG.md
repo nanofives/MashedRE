@@ -1029,3 +1029,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  005aec00  AudioByteReverse      C2->C3  log/diff_audio_byte_reverse.csv session-85
 2026-05-13  005aee20  AudioBitScanForward   C2->C3  log/diff_audio_bit_scan_forward.csv session-85; U-0352 resolved
 2026-05-13  005aec30  AudioByteSwapBuffer   C2->C3  log/diff_audio_byte_swap_buffer.csv session-85
+
+2026-05-14  004c3730  RwV3dTransformPoint   C2->C3  c3_render_math-20260514 log/diff_rw_v3d_transform_point.csv (14 cases GREEN)
+2026-05-14  004c3880  RwV3dTransformVector  C2->C3  c3_render_math-20260514 log/diff_rw_v3d_transform_vector.csv (10 cases GREEN)
+2026-05-14  004c3bf0  Vec2Length            C2->C3  c3_render_math-20260514 log/diff_vec2_length.csv (14 cases GREEN)
+2026-05-14  004c3c60  Vec2Normalize         C2->C3  c3_render_math-20260514 log/diff_vec2_normalize.csv (10 cases GREEN); stubs S-3705 S-3706
+2026-05-14  004c5010  RwMatrixScale         C2->C3  c3_render_math-20260514 log/diff_rw_matrix_scale.csv (11 cases GREEN)
