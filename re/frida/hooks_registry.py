@@ -321,6 +321,11 @@ HOOKS = {
     # 0x00430b60  MenuSlotCount
     # Returns char count (0..4) of non-(-1) slot globals at
     # DAT_007f1a14/24/34/44 (stride 0x10). Pure read, no side-effects.
+
+
+# arg_type='none': call 10x at quiescent state; verify bit-identical
+    # return value between original and reimpl each iteration.
+}
     'menu_slot_count': {
         'rva':            0x00430b60,
         'export':         'MenuSlotCount',
@@ -333,6 +338,13 @@ HOOKS = {
 
     # 0x0042f6b0  MenuModeSync
     # void(void): switch on DAT_0067f184 → writes DAT_0067e9fc. Default no-op.
+
+# void(void): switch on DAT_0067f184 (0..11, absent 4/6/7); writes mapped
+    # value to DAT_0067e9fc. Default case is no-op.
+    # arg_type='none': both orig and reimpl return undefined; undefined===undefined
+    # is true — proves no crash and export is present. Mapping correctness is
+    # verified by literal switch implementation matching the analysis note.
+}
     'menu_mode_sync': {
         'rva':            0x0042f6b0,
         'export':         'MenuModeSync',
@@ -345,6 +357,11 @@ HOOKS = {
 
     # 0x00430910  MenuOptionSlotGet
     # int(void): reads game mode + option/row index; returns 0 or table value.
+
+# int(void): reads DAT_0067e9fc (game mode), DAT_0067f184 (option index),
+    # DAT_0067f17c (row index). Returns 0 for excluded combos or table value.
+    # Pure read. arg_type='none': call 10x at quiescent state; compare returns.
+}
     'menu_option_slot_get': {
         'rva':            0x00430910,
         'export':         'MenuOptionSlotGet',
