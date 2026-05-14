@@ -967,3 +967,4 @@ A row goes into DEFERRED when:
 | ~~D-10582~~ | ~~0x004cfa00 FUN_004cfa00~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/004cfa00.md) | — | render |
 | ~~D-10583~~ | ~~0x004c7690 FUN_004c7690~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/004c7690.md) | — | render |
 | D-10584 | 0x004840b0 FUN_004840b0 | 0 callers; dead-code body-ptr getter mirroring FUN_004840d0 but for DAT_006ce82c slot; re-pickup if caller discovered | re/analysis/breadth_unmapped_0048x/0x004840b0.md | vehicle |
+| D-10585 | 0x00450b10 FUN_00450b10 HudIm2DTexQuad | refused c3-batch-d-s1: signature void(int,f,f,f,f,uint,ptr) not supported by diff_template.js (7 mixed args; no matching arg_type); re-pickup when a new arg_type (e.g. im2d_quad) is added to diff_template.js | add im2d_quad arg_type to diff_template.js + hooks_registry.py | hud |

@@ -1049,3 +1049,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0046dc00  EntityFieldSet  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_EntityFieldSet.csv; pure leaf; leaf-exemption; U-3645 U-3646 open blocks:none
 2026-05-14  00492340  CarSlotInit  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_CarSlotInit.csv; pure leaf; leaf-exemption; U-3643 U-3644 open blocks:none
 2026-05-14  frida-sweep-20260514-2020  frida-sweep-release  branches=10 merged  integration-diff=GREEN-37/38  hooks=38  note=menu_entry_get crash-equality exception documented
+2026-05-14  0042ebe0  FrontendPlayerSlotCheck  C2->C3  c3-batch-d-s1; mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp; pure leaf; leaf-exemption; Frida A/B 12/12 GREEN log/diff_frontend_player_slot_check.csv; drift-promoted caller 00439210 C1->C2
+2026-05-14  0042f7b0  FrontendCursorUpdate  C2->C3  c3-batch-d-s1; mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp; pure leaf; leaf-exemption; Frida A/B 10/10 GREEN log/diff_frontend_cursor_update.csv; drift-promoted caller 0043c000 C1->C2
