@@ -980,3 +980,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  005addd0  FUN_005addd0  C1->C2  promote_c2_audio_rws/005addd0.md
 2026-05-13  sweep-20260513-2055  scribe-claim  buckets=0 queued, 1 skipped-HOLD
 2026-05-13  sweep-20260513-2055  scribe-release  buckets=0 drained  errors=0  sync=ok(4-locked-slots-skipped)
+
+2026-05-13  005aea10  AudioAlignedAlloc     C2->C3  log/diff_audio_aligned_alloc.csv session-85
+2026-05-13  005aea40  AudioAlignedFree      C2->C3  log/diff_audio_aligned_free.csv session-85
+2026-05-13  005aec00  AudioByteReverse      C2->C3  log/diff_audio_byte_reverse.csv session-85
+2026-05-13  005aee20  AudioBitScanForward   C2->C3  log/diff_audio_bit_scan_forward.csv session-85; U-0352 resolved
+2026-05-13  005aec30  AudioByteSwapBuffer   C2->C3  log/diff_audio_byte_swap_buffer.csv session-85
