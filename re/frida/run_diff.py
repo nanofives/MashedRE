@@ -74,11 +74,20 @@ def on_message(message, data):
 def value_bits(v, ret_kind):
     """Return raw bit representation as u32 for CSV display. For 'float' returns
     the IEEE-754 bit pattern (so 1.0f shows 0x3f800000). For integer returns
-    (uint32, int32, etc) it's just the value masked to u32."""
+    (uint32, int32, etc) it's just the value masked to u32. Output-buffer
+    arg_types (transform_point, matrix_scale, vec2_normalize, etc.) return
+    comma-separated bit strings — those get None here so the CSV bits column
+    stays empty while the value column shows the full string."""
     if v is None: return None
     if ret_kind == 'float':
-        return struct.unpack('<I', struct.pack('<f', float(v)))[0]
-    return int(v) & 0xffffffff
+        try:
+            return struct.unpack('<I', struct.pack('<f', float(v)))[0]
+        except (ValueError, TypeError):
+            return None
+    try:
+        return int(v) & 0xffffffff
+    except (ValueError, TypeError):
+        return None  # comma-separated output-buffer string
 def float_bits(f):
     """Return the IEEE-754 bit pattern of a scalar float result, or None.
     For non-numeric values (e.g. packed bit strings from output-buffer arg_types)
