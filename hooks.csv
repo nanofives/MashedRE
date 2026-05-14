@@ -1975,3 +1975,42 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00404820,FUN_00404820,hud,C1,mapped,,,, free scene at DAT_00636c00 via FUN_004e6e00; 1 caller FUN_0045b930
 00404e00,FUN_00404e00,vehicle,C1,mapped,,,, GetDirtBodyName(idx): lookup DAT_00639cc8→PTR_s_DirtBody_005ea0b8
 00404e20,FUN_00404e20,vehicle,C1,mapped,,,, GetDirtAdWheelName(body,wheel): 2D table DAT_00636c08 stride 0x4e
+00500c48,FUN_00500c48,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00500c48.md,,,D3DX9 vertex decl semantic name parser (POSITION/BLENDWEIGHT/etc)
+005010f1,FUN_005010f1,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x005010f1.md,,,D3DX9 shader opcode destination-param token parser; modifier table PTR_DAT_005db9f0
+00501ce4,FUN_00501ce4,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00501ce4.md,,,D3DX9 shader instruction token encoder; output buffer param_1[0x16]
+0050272a,FUN_0050272a,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050272a.md,,,D3DX9 shader debug info builder; magic 0x47554244 GUBD
+00502e9e,FUN_00502e9e,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00502e9e.md,,,D3DX9 shader assembler register-name parser; table PTR_DAT_005dd0d0 21 entries
+005033f4,FUN_005033f4,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x005033f4.md,,,D3DX9 YACC grammar action dispatcher; switch on production rule 0x00..0x3f+
+00503a3a,FUN_00503a3a,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00503a3a.md,,,D3DX9 YACC parser yyparse; 296-state LALR
+00504008,FUN_00504008,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00504008.md,,,D3DXAssembleShader entry; GetProcAddress(Direct3DShaderValidatorCreate9)
+0050570a,FUN_0050570a,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050570a.md,,,D3DX9 vertex skinning 12-param; single-bone + multi-bone paths; bone stride 0x40
+0050706f,FUN_0050706f,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050706f.md,,,D3DX9 vertex skinning 4-wide SIMD 6-param; 4-vertex unrolled loop
+00508772,FUN_00508772,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00508772.md,,,D3DX9 rotation matrix from unit quaternion; rsqrtss Newton-Raphson normalise
+0050a41e,FUN_0050a41e,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050a41e.md,,,D3DX9 quaternion squad/catmull-rom; asin + sin helpers
+0050b6ff,FUN_0050b6ff,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050b6ff.md,,,D3DX9 4x4 rotation matrix from quaternion SRT; 3 branches identity/rotation/full-SRT
+0050c897,FUN_0050c897,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050c897.md,,,D3DX9 Euler angles to rotation matrix; 3x sin/cos
+0050d089,FUN_0050d089,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050d089.md,,,D3DX9 rotation matrix from quaternion variant 2; PackedSwapDWords pattern
+0050e1dd,FUN_0050e1dd,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050e1dd.md,,,D3DX9 matrix inverse alternate path PackedFloatingNegAccumulate
+0050e8b7,FUN_0050e8b7,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050e8b7.md,,,D3DX9 matrix inverse cofactor method; singularity -> null return
+0050ef6d,FUN_0050ef6d,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050ef6d.md,,,D3DX9 Vec3 homogeneous transform; 4x4 matrix x vec3 + W-divide
+0050eff8,FUN_0050eff8,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050eff8.md,,,D3DX9 4x4 matrix multiply; param_1 = param_2 x param_3
+005112c9,FUN_005112c9,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x005112c9.md,,,D3DX9 shader assembler source parameter binding; error 0xb56 register > 8191
+00480b70,FUN_00480b70,vehicle,C1,mapped,,,, wheel-contact particle emitter: DAT_0088173c stride 0xd04 contact flags; DAT_007f1038+veh*0x13 geo; emits via FUN_0055b650
+00481780,FUN_00481780,vehicle,C1,mapped,,,, body velocity accumulator: adds param_1[0..2]*DAT_005cf230 to stride-0x20 velocity slot
+00481810,FUN_00481810,vehicle,C1,mapped,,,, contact-set query: returns 0/1; checks bit body+0x24+0x60; outputs float[3] pair
+004818d0,FUN_004818d0,vehicle,C1,mapped,,,, velocity cap + over-speed trigger: compares vel_sq vs DAT_005cc990; sets flags 8/2 DAT_006c9438; explosion if DAT_006c6b90[i]>149999
+00481a30,FUN_00481a30,vehicle,C1,mapped,,,, per-frame vehicle water/zone loop: iterates DAT_006c6eb0 vehicles; water-zone proximity; calls FUN_004818d0+FUN_00487280 broadphase
+00481d90,FUN_00481d90,vehicle,C1,mapped,,,, vehicle body activation: bounds [0,199] DAT_006c71d8; FUN_0047d080/FUN_0055ac50/ac00/ad30/b650
+00481e00,FUN_00481e00,vehicle,C1,mapped,,,, cone-direction sample builder + multi-ray cast: lazy-inits 120-sample table DAT_006ce278; sweeps via FUN_0055c000; 1 caller FUN_004826d0
+00482030,FUN_00482030,vehicle,C1,mapped,,,, sub-strip UV coordinate generator: quadrant-based (u,v) from strip index and count; 4 cases; 1 caller FUN_00482140
+004820e0,FUN_004820e0,vehicle,C1,mapped,,,, 2D direction-to-UV mapper: FUN_005c1cb7 hypot; remaps to [0,1] with DAT_005cc32c bias; 1 caller FUN_00482140
+00482140,FUN_00482140,vehicle,C1,mapped,,,, collision mesh strip builder: struct 9 fields; FUN_004e8c70 alloc; RwV3dNormalize FUN_004c39b0; UVs via FUN_00482030/004820e0; 1 caller FUN_004826d0
+00482820,FUN_00482820,vehicle,C1,mapped,,,, physics contact callback registrar: FUN_0055dec0 source; registers 3 callbacks LAB_004827a0/4827c0/482800; 1 caller FUN_0047f450
+00482900,FUN_00482900,vehicle,C1,mapped,,,, Replay::GetSize: frame_count*36+412; FUN_004a2c48 frame count; 3 callers
+00483a70,FUN_00483a70,render,C1,mapped,,,, damage tube segment renderer: 10 segments; FUN_00482ae0 spline; FUN_004b59c0 draw; alternating colour bands; 1 caller FUN_00411ce0
+00483ed0,FUN_00483ed0,vehicle,C1,mapped,,,, create physics joint+2 shapes: FUN_004c77c0x2 shapes; FUN_004c0b30 body; FUN_004c1d30 joint; stiffness=0.1f limit=300.0f; 1 caller FUN_00484000
+00483fa0,FUN_00483fa0,vehicle,C1,mapped,,,, destroy physics joint+shapes: frees body/shapes/joint+composite; 1 caller FUN_00484060
+00484000,FUN_00484000,vehicle,C1,mapped,,,, allocate joint slot: guards pool[4] DAT_006ce81c/82c; calls FUN_00483ed0; 0 callers
+00484060,FUN_00484060,vehicle,C1,mapped,,,, free joint slot: guards pool[4] DAT_006ce81c/82c; calls FUN_00483fa0; zeros slot; 0 callers
+004840d0,FUN_004840d0,vehicle,C1,mapped,,,, joint pointer getter: bounds [0,3]; returns DAT_006ce81c[param_1]; 2 callers
+004840f0,FUN_004840f0,vehicle,C1,mapped,,,, record array pointer+count setter: fastcall; DAT_006cec40[param_2]=ptr; counts 4B entries until null quad into DAT_006ce840[param_2]; 1 caller
