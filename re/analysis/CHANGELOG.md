@@ -1006,3 +1006,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0046d700  VehicleVec3At9C8Get              C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 9/9 GREEN log/diff_vehicle_vec3_at_9c8_get.csv; leaf-exemption; caller FUN_0046e9e0 C2
 2026-05-14  00417730  VehicleRaceAngleGet              C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 7/7 GREEN log/diff_vehicle_race_angle_get.csv; leaf-exemption; callers FUN_004177b0+FUN_00417cf0 ai/C2
 2026-05-14  sweep-20260514-0512  scribe-claim  buckets=2 queued, 0 skipped-HOLD
+
+2026-05-14  sweep-20260514-1847  scribe-claim  buckets=5 queued, 0 skipped-HOLD
