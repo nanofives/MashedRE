@@ -465,7 +465,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00427ff0,FontText_DrawTextRotated,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00427ff0.md,,,C1->C2 hud_promote_c2_b; 7p draw with Z-rotation param_7; full matrix pipeline: Push+Reset+Translate+Rotate+Draw+Pop
 00552b60,FontSys_InitSeq,hud,C2,mapped,re/analysis/hud_promote_c2_b/0x00552b60.md,,,C1->C2 hud_promote_c2_b; 8-step seq: DAT_00912bdc=0 then 7 alloc/init calls
 00555360,FUN_00555360,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,font system init: allocs ctx 0x144B->DAT_00912a08; allocs 0xC->DAT_00912a14; buf->DAT_00912a0c; copies fonts\ into buf; fills char-width table DAT_00912704; sets DAT_00913100=LAB_00555910; S-1063 U-1072
-005554d0,FUN_005554d0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,text width calc(font_ctx byte* str float scale); ASCII advance ctx+0x24[char*2]; extended via ctx+0x12c table; returns sum*scale; U-1070
+005554d0,FUN_005554d0,hud,C2,mapped,re/analysis/promote_c2_hud_ingame/0x005554d0.md,,,string-width accumulator: ASCII advance ctx+0x24[char*2]; extended ctx+0x12c table; per-char kerning ctx+0x0c; returns sum*scale; tracker-drift from C1 -- C2 plate confirmed 2026-05-14; U-1070
 00556ca0,FUN_00556ca0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,text draw dispatcher; tail-call thunk to *(param_1+0x138)(args); WARNING: Ghidra treats indirect jmp as call; passes all args through to LAB_00554940
 00556cc0,FUN_00556cc0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,SetCurrentFont: DAT_00912a20=param_1; 9 bytes
 00556cd0,FUN_00556cd0,hud,C1,new,re/analysis/font_text/font_text-20260503.md,,,GetCurrentFont: returns DAT_00912a20; 13 bytes
@@ -1138,7 +1138,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00490380,FUN_00490380,util,C1,new,re/analysis/leaderboard_d3/0x00490380.md,,, sine-wave oscillating particle update (~271b); 38 entries stride 80b; sin(t*freq)*amp; state 1→2→3→dead; RW color+rot+translate; D-7753
 00490500,FUN_00490500,render,C1,mapped,re/analysis/effects_particle/0x00490500.md,,, resolved-by-prior (D-7754 duplicate; effects_particle C1 row 273)
 00496930,FUN_00496930,util,C1,mapped,re/analysis/timer_d2/0x00496930.md,,, resolved-by-prior (D-7755 duplicate; timer_d2 C1 row 623)
-0042e590,FUN_0042e590,frontend,C2,mapped,re/analysis/promote_c2_frontend_menus/0x0042e590.md,,,sprite-slot resolver: table_0x5f79d8[slot+2*frame]->FUN_0040bb70 tail-call; U-2547 resolved; promote_c2_frontend_menus-20260513
+0042e590,SpriteAnimFrameThunk,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/SpriteDispatch.cpp,,,asm-confirmed tail-call thunk: idx=sprite_slot+2*DAT_0067f17c; sprite_ptr_table[0x5f79d8][idx]; overwrites arg1; tail-calls FUN_0040bb70; U-2547 resolved; callee 0x0040bb70 C2+; caller 0x0042e5b0 C2+; c3-batch-b-s5 2026-05-14
 0040d250,FUN_0040d250,frontend,C1,new,re/analysis/title_screen_d2/0x0040d250.md,,,indexed ptr dereference: **(undefined4**)(PTR_PTR_005f2770 + DAT_0063ba7c*4); 16b; S-2464 cleared; title_screen_d2-20260506
 00401ee0,FUN_00401ee0,frontend,C1,new,re/analysis/title_screen_d2/0x00401ee0.md,,,object-select+RW-matrix+RpClumpRender chain; FUN_00401570 table-scan→DAT_00636ac0; FUN_00401da0 builds RW transform; RpClumpRender(C1); [UNCERTAIN U-2548] RpClumpRender arg not visible; S-2465 cleared; S-2541 S-2542 S-2543 S-2544; title_screen_d2-20260506
 0042f0b0,FUN_0042f0b0,frontend,C2,mapped,re/analysis/promote_c2_frontend_menus/0x0042f0b0.md,,,int getter: DAT_0067f17c+0x49; 8b; promote_c2_frontend_menus-20260513
