@@ -966,3 +966,4 @@ A row goes into DEFERRED when:
 | ~~D-10581~~ | ~~0x004ad1e0 FUN_004ad1e0~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/004ad1e0.md) | — | render |
 | ~~D-10582~~ | ~~0x004cfa00 FUN_004cfa00~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/004cfa00.md) | — | render |
 | ~~D-10583~~ | ~~0x004c7690 FUN_004c7690~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/004c7690.md) | — | render |
+| D-10584 | 0x004840b0 FUN_004840b0 | 0 callers; dead-code body-ptr getter mirroring FUN_004840d0 but for DAT_006ce82c slot; re-pickup if caller discovered | re/analysis/breadth_unmapped_0048x/0x004840b0.md | vehicle |
