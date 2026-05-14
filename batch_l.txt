@@ -1,0 +1,286 @@
+================================================================================
+BATCH L — DEFERRED cont-drain (smallest buckets) + first struct-extract slot
+================================================================================
+
+Six parallel sessions. Pool slots pre-assigned (skip locked 2/4 — fall back).
+
+PREREQUISITE: batch_k must be fully drained by ghidra-sweep before batch_l starts.
+
+This batch drains the smallest remaining unresolved cont-drain buckets (6 rows
+each) and dedicates Session 72 to a struct-extract pass (no RVA cap; consumes
+the C1 plates accumulated across batches H/I/J/K to draft S-DoD-blocking
+struct docs).
+
+After this batch, the cont-drain queue should be near-exhausted. The next
+batch (batch_m) likely pivots to either:
+  - Unmapped Ghidra function_list expansion (Phase 1 breadth), OR
+  - C1→C2 promote-c2 batch (Phase 1→2 transition).
+
+All sessions follow re/SESSION_RULES.md § "Parallel-fanout scribe-queue pattern".
+
+
+
+================================================================================
+Session 67 — vehicle_update_d3  (FIRST-PASS, ~6+14 cont-drain)
+================================================================================
+
+Pool slot:   Mashed_pool0 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (target: 20)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/vehicle_update_d3_cont/
+
+# Mission
+DEFERRED.md has ~6 unresolved rows tagged `vehicle_update_d3 session`.
+Drain all + ~14 depth-1 fill from the vehicle dynamics call tree.
+
+# Inputs
+```bash
+grep -E "^\| D-[0-9]+ \|" DEFERRED.md | grep -v "RESOLVED" | grep -v '~~' \
+    | awk -F'|' '$5 ~ /vehicle_update_d3/ {print $2, $3}' | head -25
+```
+
+# Workflow
+Same shape. Bucket dir `vehicle_update_d3_cont/`. Cross-reference
+re/analysis/vehicle_update/, vehicle_update_d2/, vehicle_update_d3/,
+vehicle_dynamics_d2/, vehicle_dynamics_d3/.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 new C1 rows (subsystem=vehicle/physics)
+- ~6 DEFERRED rows RESOLVED
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- Vehicle dynamics state-struct fields surface across ≥3 plates — note
+  the offsets but don't author the struct doc here (Session 72 handles
+  it once the C1 base is wider).
+
+
+
+================================================================================
+Session 68 — settings_config_d2_cont1  (FIRST-PASS, ~6+14 cont-drain)
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (target: 20)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/settings_config_d2_cont1/
+
+# Mission
+DEFERRED.md has ~6 unresolved rows tagged `settings_config_d2-cont1`. Drain
+all + ~14 depth-1 fill.
+
+# Inputs
+```bash
+grep -E "^\| D-[0-9]+ \|" DEFERRED.md | grep -v "RESOLVED" | grep -v '~~' \
+    | awk -F'|' '$5 ~ /settings_config_d2-cont1/ {print $2, $3}' | head -25
+```
+
+# Workflow
+Same shape. Bucket dir `settings_config_d2_cont1/`. Cross-reference
+re/analysis/settings_config/, settings_config_d2/, settings_config_d3/.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 new C1 rows (subsystem=save/util)
+- ~6 DEFERRED rows RESOLVED
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- The bucket overlaps with the `videocfg.bin` parser or `gamesave.bin`
+  serialization — note any cross-subsystem implications.
+
+
+
+================================================================================
+Session 69 — boot_subsystem_d3  (FIRST-PASS, ~6+14 cont-drain)
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (target: 20)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/boot_subsystem_d3/
+
+# Mission
+DEFERRED.md has ~6 unresolved rows tagged `boot subsystem depth-3 sweep
+session`. Drain all + ~14 depth-1 fill.
+
+# Inputs
+```bash
+grep -E "^\| D-[0-9]+ \|" DEFERRED.md | grep -v "RESOLVED" | grep -v '~~' \
+    | awk -F'|' '$5 ~ /boot subsystem depth-3/ {print $2, $3}' | head -25
+```
+
+# Workflow
+Same shape. Bucket dir `boot_subsystem_d3/`. Cross-reference
+re/analysis/boot_app_init/, entry_callees/, boot_crt_env/, boot_crt_exit/.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 new C1 rows (subsystem=boot)
+- ~6 DEFERRED rows RESOLVED
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- Heavy MSVC CRT library matches (likely) — note library matches, do NOT
+  rename in this session.
+
+
+
+================================================================================
+Session 70 — fun_00471ec0_callees  (FIRST-PASS, ~6+14 cont-drain)
+================================================================================
+
+Pool slot:   Mashed_pool5 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (target: 20)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/fun_00471ec0_callees/
+
+# Mission
+DEFERRED.md has ~6 unresolved rows where the bucket tag mentions
+`FUN_00471ec0`. These are likely depth-2 callees of that function (camera
+or hud-related; verify upfront). Drain all + ~14 depth-1 fill.
+
+# Inputs
+```bash
+grep -E "^\| D-[0-9]+ \|" DEFERRED.md | grep -v "RESOLVED" | grep -v '~~' \
+    | awk -F'|' '$5 ~ /FUN_00471ec0/ {print $2, $3}' | head -25
+```
+
+# Workflow
+1. Confirm 0x00471ec0 is in hooks.csv — get its current subsystem and
+   role from the plate.
+2. Drain the deferred callees.
+3. Walk depth-1.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 new C1 rows (subsystem TBD per parent)
+- ~6 DEFERRED rows RESOLVED
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- 0x00471ec0 is not in hooks.csv (the parent must be mapped first) — halt
+  and surface; the user may need to promote the parent before this session.
+
+
+
+================================================================================
+Session 71 — fun_00426810_callees  (FIRST-PASS, ~6+14 cont-drain)
+================================================================================
+
+Pool slot:   Mashed_pool6 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (target: 20)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/fun_00426810_callees/
+
+# Mission
+DEFERRED.md has ~6 unresolved rows where the bucket tag mentions
+`FUN_00426810`. Drain all + ~14 depth-1 fill.
+
+# Inputs
+```bash
+grep -E "^\| D-[0-9]+ \|" DEFERRED.md | grep -v "RESOLVED" | grep -v '~~' \
+    | awk -F'|' '$5 ~ /FUN_00426810/ {print $2, $3}' | head -25
+```
+
+# Workflow
+Same as Session 70 with 0x00426810 as the parent.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 new C1 rows (subsystem TBD per parent)
+- ~6 DEFERRED rows RESOLVED
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- Same as Session 70 — parent must be mapped first.
+
+
+
+================================================================================
+Session 72 — struct_extract_phase5_pt2  (DOCUMENTATION ONLY, no RVA cap)
+================================================================================
+
+Pool slot:   Mashed_pool7 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — no RVA cap (struct documentation)
+Skill used:  struct-extract
+Bucket dir:  re/analysis/structs/
+
+# Mission
+By the time batch_l runs, batches H/I/J/K will have produced ~400 new C1
+plates. This session consolidates field-level offsets across them to draft
+S-DoD-blocking struct docs. This is the continuation of batch_h Session 48
+(struct_extract_phase5_pt1).
+
+# Prerequisites
+This session MUST run AFTER Sessions 67-71 commit their plates (so the
+struct evidence is wider). Run as the last session in batch_l.
+
+# Target structs (priority order — re-verify against re/analysis/structs/
+# REPORT_phase5.md to find what's still uncovered after batch_h Session 48)
+1. **vehicle_dynamics_state** — the runtime state struct read by every
+   vehicle-physics callee. Across batches H-K we have ~50 vehicle/physics
+   plates citing DAT_ offsets; consolidate.
+2. **camera_state** — camera_follow has 10+ plates; consolidate offsets.
+3. **race_state** — referenced by leaderboard, race-end, AI. Wide span
+   across game_state_d2 / d5 plates.
+4. **boot_crt_globals** — MSVC CRT environment globals consumed by boot
+   chain (DAT_006XXXXX cluster).
+5. **font_atlas** — drafted in batch_i Session 54; verify and extend.
+6. **txd_texture** — drafted in batch_h Session 47; verify and extend.
+
+# Inputs
+- ALL per-RVA .md files in re/analysis/* (especially recent batch_i/j/k
+  bucket dirs). Grep them for DAT_ references and offset citations.
+- Existing struct files in re/analysis/structs/ — amend, don't rewrite.
+- ROADMAP.md § "S-DoD" for the field-by-field RVA citation requirement.
+
+# Workflow
+1. Acquire $SLOT=Mashed_pool7.
+2. Read re/analysis/structs/REPORT_phase5.md (if it exists from batch_h
+   Session 48) to find what's missing.
+3. For each target struct:
+   a. Grep all per-RVA .md files for the DAT_ root candidate.
+   b. Cluster offsets/widths/signs; cross-validate across ≥3 callers.
+   c. Document offset, width, sign, first read RVA + cite, first write
+      RVA + cite, tentative semantic name (only if multiple callers
+      agree), [UNCERTAIN U-NNNN] if disagreement.
+   d. Write or amend re/analysis/structs/<struct_name>.md.
+4. NO hooks.csv mutations. NO scribe-queue row (no master writes for
+   struct docs — they're git-tracked .md files, not Ghidra plates).
+5. Commit at end.
+
+# Output
+- ≥3 new or amended struct files in re/analysis/structs/
+- Updated re/analysis/structs/REPORT_phase5.md summarizing:
+  - struct → DAT_ root → field count → confidence level
+  - which subsystems' S-DoD this unblocks
+  - any U-IDs filed for unresolved fields
+
+# STOP-AND-ASK if
+- A struct has fewer than 3 cross-references in plates — defer with a
+  re-pickup condition ("after subsystem reaches N C1 rows").
+- The same DAT_ root is referenced as DIFFERENT struct shapes from
+  different subsystems — union or aliased global; design decision needed.
+
+
+
+================================================================================
+END OF BATCH L
+================================================================================
+
+Expected end state (after sweep + struct session):
+- ~5 cont buckets drained (vehicle_update_d3, settings_config_d2_cont1,
+  boot_subsystem_d3, FUN_00471ec0 callees, FUN_00426810 callees)
+- ~30 DEFERRED rows resolved + ~70 depth-1 discoveries
+- ~100 new C1 plates + ~3 new struct docs
+- Phase 1 cont-drain backlog near-exhausted
+
+Phase transition note: after batch_l, the DEFERRED.md cont-drain set is
+mostly empty. Next batches should:
+  - Pull unmapped RVAs from Ghidra `function_list` (Phase 1 breadth) — ~4,100
+    function objects still not in hooks.csv, OR
+  - Start C1→C2 promote-c2 batches (1,442 C1 rows available; Phase 1→2
+    transition)
+Discuss with user before generating batch_m to align on direction.

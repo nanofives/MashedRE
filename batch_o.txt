@@ -1,0 +1,332 @@
+================================================================================
+BATCH O — promote-c3 wave 1 (Frida-side C2→C3, parallel-fanout)
+================================================================================
+
+Six parallel sessions. Each session is a WORKTREE (not a Ghidra pool slot)
+— Frida hooks build their own `mashed_re_dev.asi` and run a per-hook
+A/B diff against MASHED.exe in isolation. The Frida pool is parallel-safe
+(per memory: 3-up parallel hook diffs proven at 2.1 s wall time; MASHED.exe
+has no single-instance mutex — extends to 6-up).
+
+PREREQUISITE: batch_n fully drained by ghidra-sweep before batch_o starts.
+The C2 backlog after M+N sweep is ~476 rows; this batch consumes 30 of
+them across 6 sessions × 5 candidates each.
+
+Each session's deliverable:
+  1. 5 hook implementations under
+     `mashedmod/src/mashed_re/<Subsystem>/<Class>.cpp`
+  2. Each registered via `RH_ScopedInstall(Method, 0xRVA)` in `InjectHooks()`.
+  3. 5 rows in `re/frida/hooks_registry.py` (RVA, export name, signature,
+     arg types, test inputs).
+  4. 5 path1 diffs via `py -3.12 re/frida/run_diff.py <hook>` — bit-identity
+     A/B against the original.
+  5. 5 path2 installer verifications via
+     `py -3.12 re/frida/run_verify_hook.py <hook>` — confirm inline-JMP
+     installs.
+  6. hooks.csv `confidence` flipped C2→C3; `frida_diff` field populated
+     with `log/diff_<hook>.csv`; `status` flipped to `mapped`.
+  7. Queued row in `re/PROMOTION_QUEUE.md` per the format in that file.
+  8. ONE commit at session end on branch `c3/batch-o-sN` (where N is the
+     session number 85-90).
+
+C3 candidate selection criteria (apply STRICTLY):
+  - Pure: no side effects on globals; no writes to DAT_ outside [local
+    scope]; no calls into the runtime that mutate observable state.
+  - Leaf-y: callees must be C3+ already (FastSqrt, FastInvSqrt,
+    Vec3Magnitude qualify as established C3) OR be inlined-trivial.
+  - Deterministic given inputs: no time reads, no RNG, no thread-local
+    indices that vary across runs.
+  - Frida-hookable signature: __cdecl or __stdcall preferred; __thiscall
+    OK with explicit EAX-this in registry; void(void) acceptable but
+    test inputs reduce to "call once and observe globals" — narrow A/B
+    surface so do this last.
+  - C2 row has a complete `## Why C2` block (constants cited at RVA, no
+    [UNCERTAIN] in the body of the function — uncertainties in the
+    `## Open uncertainties` section are OK if the function still
+    behaves deterministically).
+
+REFUSE C3 promotion on a candidate where any of the criteria fails;
+substitute the next candidate from the subsystem's C2 backlog.
+
+After all 6 sessions commit, the user runs `frida-sweep` (or this opens
+a foreground review) to merge the 6 worktree branches onto main, resolve
+the predictable text-file conflicts (hooks.csv, hooks_registry.py,
+re/PROMOTION_QUEUE.md), rebuild the canonical `.asi`, and run the
+integration A/B against ALL 30 hooks at once.
+
+
+
+================================================================================
+Session 85 — c3_audio_leaves  (C2→C3, 5 candidates)
+================================================================================
+
+Worktree branch: c3/batch-o-s85
+Pool slot:       Mashed_pool0 for Ghidra cross-ref reads only (no writes)
+Model:           Sonnet 4.6 (claude-sonnet-4-6)
+Skill used:      hook-author + diff-original + re-classify
+
+# Mission
+Promote 5 audio C2 functions to C3. Audio has cleanly-shaped leaves —
+pure transforms with no global side effects — that A/B well.
+
+# Candidates (pre-vetted, drift-skip+substitute if any has degraded)
+| RVA        | Function           | Why C3-friendly |
+|------------|--------------------|----------------|
+| 0x005aea10 | aligned_alloc_wrap | pure: size+4, stores base at aligned-4; void*(size_t) |
+| 0x005aea40 | thin_free_wrap     | pure trampoline to FUN_004522d0; void(void*) |
+| 0x005aec00 | byte_reverse       | in-place buffer endian-swap; void(buf, len) |
+| 0x005aee20 | bit_scan_forward   | pure 0..31 bit scan loop; always called with 0x28; int(uint32) |
+| (substitute) | (audio C2 leaf from batch_m Session 73/77 output) | |
+
+# Test vectors (for hooks_registry.py)
+- aligned_alloc_wrap: call with (0, 1, 16, 1024, 4096); record returned ptr alignment + tag-4-bytes.
+- thin_free_wrap: pair with allocs above; check no exception.
+- byte_reverse: input buffers [0x01..0x10] of lengths {0, 1, 2, 4, 8, 16}.
+- bit_scan_forward: inputs {0x28, 0x01, 0x80000000, 0xFFFFFFFF, 0x00010000}.
+
+# Workflow
+1. Open `c3/batch-o-s85` worktree.
+2. For each of the 5 RVAs:
+   a. Read the C2 plate; confirm pure/leaf/deterministic.
+   b. Author the hook (gta-reversed style) under
+      `mashedmod/src/mashed_re/Audio/AudioMemory.cpp` (or shared file).
+   c. Add to `InjectHooks()` with `RH_ScopedInstall`.
+   d. Append row to `re/frida/hooks_registry.py`.
+3. Build via `mashedmod\build.bat`.
+4. `py -3.12 re/frida/run_diff.py <hook>` per RVA — must show byte-identity.
+5. `py -3.12 re/frida/run_verify_hook.py <hook>` per RVA — confirm install.
+6. Flip hooks.csv C2→C3 (via re-classify skill). Populate frida_diff col.
+7. Append Queued row to re/PROMOTION_QUEUE.md.
+8. One commit at session end.
+
+# STOP-AND-ASK if
+- A path1 diff shows mismatched bytes — fix the implementation; do NOT
+  promote on a failing diff (NO overclaiming per CLAUDE.md).
+- A function's byte sequence in MASHED.exe differs from the version
+  anchor — abort the session (binary drift) and surface.
+- The build fails — fix and retry; do NOT skip.
+
+
+
+================================================================================
+Session 86 — c3_render_math  (C2→C3, 5 candidates)
+================================================================================
+
+Worktree branch: c3/batch-o-s86
+
+# Mission
+Promote 5 render math primitives to C3. Continues the Vec3Magnitude /
+FastSqrt / FastInvSqrt chain (the 3 existing C3 hooks).
+
+# Candidates (pre-vetted)
+| RVA        | Function           | Why C3-friendly |
+|------------|--------------------|----------------|
+| 0x004c39b0 | RwV3dNormalize     | dot+FastInvSqrt; pure; void(RwV3d*) |
+| 0x004c52f0 | RwMatrixCombine    | 3-mode matrix multiply; pure if dst≠src or aliased-safe; reviewed |
+| 0x004b42c0 | CameraLookAt       | cross-product look-at on RwFrame; pure on output frame |
+| (sub 1) | (math leaf C2 from batch_m Session 75 / Session 78) | — |
+| (sub 2) | (math leaf C2 from batch_m Session 75 / Session 78) | — |
+
+# Test vectors
+- RwV3dNormalize: 5 vectors {(1,0,0), (0,1,0), (1,1,1), (3,4,12), (0,0,0)};
+  expect last to return zero-or-NaN gracefully.
+- RwMatrixCombine: identity × identity, translate × rotate-Y, all 3 modes.
+- CameraLookAt: 3 (eye, target, up) triplets in normal range + 1 colinear
+  eye/up (degenerate, expect [UNCERTAIN] handling note).
+
+# Workflow
+Same shape as Session 85. Hook files under
+`mashedmod/src/mashed_re/RenderWare/` (RwMath.cpp / RwMatrix.cpp).
+
+# STOP-AND-ASK if
+- RwMatrixCombine's mode 2 (or mode 1) reveals a code path that aliases
+  dst/src in a way the C2 plate didn't note — file [UNCERTAIN U-XXXX]
+  and either narrow the test inputs to non-aliased OR skip this
+  candidate.
+- Diff fails — fix; do not promote.
+
+
+
+================================================================================
+Session 87 — c3_hud_getters  (C2→C3, 5 candidates)
+================================================================================
+
+Worktree branch: c3/batch-o-s87
+
+# Mission
+Promote 5 HUD pure-getter functions to C3. HUD has the highest C2-leaf
+density of any subsystem (35 C2 rows; many are pure getters reading a
+DAT_ slot).
+
+# Candidates (pre-vetted)
+| RVA        | Function             | Why C3-friendly |
+|------------|----------------------|----------------|
+| 0x00426ba0 | hud_draw_enable_get  | pure getter DAT_0066d704; 5 bytes; uint32(void) |
+| 0x0042f6a0 | hud_submode_get      | pure getter DAT_0067e9fc; 5 bytes; uint32(void) |
+| 0x0042b930 | frontend_alpha_get   | pure getter DAT_0067ecb0; 5 bytes (frontend-tagged but pure) |
+| (sub 1) | (hud C2 pure-getter from batch_m Session 76 output) | — |
+| (sub 2) | (hud C2 pure-getter from batch_m Session 76 output) | — |
+
+# Test vectors
+- Pure getters: call 100× at quiescent main menu; record returned value.
+  A/B must show identical sequence original-vs-modded.
+- For DAT_ that the game writes at startup but not during the menu,
+  expect a constant return — that's the easiest possible diff.
+
+# Workflow
+Same shape as Session 85. Hook files under
+`mashedmod/src/mashed_re/Hud/HudState.cpp`.
+
+# STOP-AND-ASK if
+- A "pure getter" turns out to perform a memcpy or otherwise modify
+  state — file [UNCERTAIN] and substitute.
+- More than 1 candidate is already C3 (drift) — substitute the next
+  hud C2 leaf.
+
+
+
+================================================================================
+Session 88 — c3_vehicle_state  (C2→C3, 5 candidates)
+================================================================================
+
+Worktree branch: c3/batch-o-s88
+
+# Mission
+Promote 5 vehicle pure-getter/predicate functions to C3.
+
+# Candidates (selection at session start from batch_m Session 74 output)
+At session start, run:
+```bash
+awk -F, '$4=="C2" && $3=="vehicle"' hooks.csv | head -10
+```
+Pick 5 that meet the pure/leaf/deterministic gate. Prefer getters
+returning a single DAT_ field and predicates returning bool — those
+A/B cleanly. Avoid anything that walks the per-car block (stride 0x300+
+state object) until a struct-driven C3 batch.
+
+# Test vectors
+- Getter: call 100× quiescent; constant return.
+- Predicate: call with 5 distinct preconditions (set up via Frida
+  pre-call DAT_ writes if needed, otherwise observational at menu).
+
+# Workflow
+Same shape as Session 85. Hook files under
+`mashedmod/src/mashed_re/Vehicle/VehicleState.cpp`.
+
+# STOP-AND-ASK if
+- batch_m Session 74 didn't actually promote 5+ pure-leaf candidates —
+  pivot to vehicle_damage_d4 plates already C2 in master.
+- A candidate reads a struct field whose offset is [UNCERTAIN U-XXXX]
+  in the C2 plate — skip (the field offset is part of the C2 evidence,
+  so an open U on it means C3 isn't earned).
+
+
+
+================================================================================
+Session 89 — c3_util_pure  (C2→C3, 5 candidates)
+================================================================================
+
+Worktree branch: c3/batch-o-s89
+
+# Mission
+Promote 5 util pure-function candidates to C3.
+
+# Candidates (selection at session start from batch_m Session 80 / batch_l output)
+```bash
+awk -F, '$4=="C2" && $3=="util"' hooks.csv | head -10
+```
+Candidates from random_rng_d2 (e.g., FUN_004764e0 arg-reorder-thunk if
+it survives the criteria) and timer_d3 leaf getters are likely starting
+points. The clamp-vector wrapper FUN_00476880 is a strong candidate
+once promoted to C2.
+
+# Test vectors
+Per-candidate. Random-related candidates need DETERMINISTIC seed setup
+in Frida — verify the RNG state global is queryable + writable from a
+Frida script before committing this session; if not, skip RNG
+candidates and pick pure transforms instead.
+
+# Workflow
+Same shape as Session 85. Hook files under
+`mashedmod/src/mashed_re/Util/<Module>.cpp` per candidate.
+
+# STOP-AND-ASK if
+- An RNG candidate's seed state isn't reachable from Frida — pivot to
+  non-RNG util leaves.
+- A candidate is actually inlined-only in MASHED.exe (no exported
+  call-site that survives optimization) — skip; Frida hook needs a
+  real call site.
+
+
+
+================================================================================
+Session 90 — c3_frontend_leaf  (C2→C3, 5 candidates)
+================================================================================
+
+Worktree branch: c3/batch-o-s90
+
+# Mission
+Promote 5 frontend pure-getter/predicate functions to C3. Frontend has
+66 C2 rows (the largest C2 backlog) — lots of menu-state predicates.
+
+# Candidates (selection at session start)
+```bash
+awk -F, '$4=="C2" && $3=="frontend"' hooks.csv | head -15
+```
+Look at frontend_promote_menus_a/b plates — many of the
+btn-detector / cursor-state / team-balance helpers are pure on observable
+state. The `FUN_0042b930` pure-getter is already pre-assigned to Session
+87 (hud-tagged dup) — exclude.
+
+# Test vectors
+- Menu state queried 100× while paused at title screen.
+- Button-detector candidates: feed 5 controller-state vectors via
+  hooks_registry test-input field.
+
+# Workflow
+Same shape as Session 85. Hook files under
+`mashedmod/src/mashed_re/Frontend/<Module>.cpp`.
+
+# STOP-AND-ASK if
+- A candidate calls into a font-render helper that's still C1/C2 —
+  skip (callee must be C3+ for the pure/leaf gate).
+- More than 2 candidates depend on Lua input state — skip; Lua-input
+  C3 needs its own batch after the Lua binding layer is C2-saturated.
+
+
+
+================================================================================
+END OF BATCH O
+================================================================================
+
+Expected end state (after frida-sweep-batch-o):
+
+  Subsystem   Delta            Cumulative
+  ----------  ---------------  -----------
+  audio       +5 C2→C3         5  C3
+  render      +5 C2→C3         8  C3 (incl. existing 3)
+  hud         +5 C2→C3         5  C3
+  vehicle     +5 C2→C3         5  C3
+  util        +5 C2→C3         5  C3
+  frontend    +5 C2→C3         5  C3
+  TOTAL                        ≥33 C3 (10× the current 3)
+
+Each C3 hook ships in mashed_re_dev.asi for canonical-scenario testing;
+the C4 promotion (canonical-scenario run with inline-JMP live) remains
+USER-DRIVEN — refuse to claim C4 on synthetic-Frida-only evidence per
+CLAUDE.md.
+
+Parallelism: Frida pool memory confirms 3-up runs; 6-up extrapolates
+linearly given MASHED.exe has no single-instance mutex. Wall-time
+target: ≤ 5 minutes per session × 6 sessions parallel = ~5-10 minutes
+to drain the batch.
+
+Hot-path warning: NO `Interceptor.attach` traces in this batch. The
+run_diff.py harness uses Module-load + observation, not Interceptor on
+hot paths. If a candidate fires >1000×/s in the chosen scenario, narrow
+the test scenario.
+
+Sweep prerequisite: `frida-sweep` skill drains re/PROMOTION_QUEUE.md;
+the integration Frida diff runs against ALL 30 hooks. If integration
+fails on any single hook, the failing branch does NOT merge; surface
+for diagnosis before continuing.

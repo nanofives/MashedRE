@@ -504,6 +504,72 @@ HOOKS = {
             {'raw_bytes': [1,0,0,0],              'initial_cursor': 0,  'step':  1},
             {'raw_bytes': [5,0,0,0, 1,0],         'initial_cursor': 0,  'step':  1},
         ],
+
+# Session c3-batch-a-s3 — frontend_menus_a medium batch
+    # MenuNav.cpp — menu navigation helpers (C2→C3)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ac90  MenuEntryGet
+    # Traverses active slot's entry array; skips (cursor+1) groups via 0xFF040000
+    # terminators; stops at 0xFF05/14/060000 sentinels; returns value or 0xffffffff.
+    # Pure read-only. arg_type='none': called 10x at quiescent main menu;
+    # orig and reimpl must return identical sequence.
+    'menu_entry_get': {
+        'rva':            0x0042ac90,
+        'export':         'MenuEntryGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042bb60  MenuTeamBalance
+    # Clears and rebuilds 4 team-result fields from slot indices + team table.
+    # Returns int balance code: 0x1000=balanced, 0=unbalanced, 1=one-team,
+    # 2/3=partial, -1=unknown. Side-effect writes are visible to both paths.
+    # arg_type='none': called 10x; both paths write same globals so return is
+    # deterministic and must be bit-identical.
+    'menu_team_balance': {
+        'rva':            0x0042bb60,
+        'export':         'MenuTeamBalance',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042aff0  MenuButtonDetectA
+    # Detects button-press event at byte-col +2 (0x7f1046); hold-repeat timer
+    # for screens 6-7; callee FUN_0040e470 (C2 drift-promoted) filters AI slots.
+    # Returns 1 (change detected) or 0.
+    # arg_type='none': called 10x at quiescent main menu (no inputs → returns 0
+    # each time; both paths must agree). U-3445 (callee semantics) is in
+    # Uncertainties section only and does not affect the mechanical reimpl.
+    'menu_button_detect_a': {
+        'rva':            0x0042aff0,
+        'export':         'MenuButtonDetectA',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042b180  MenuButtonDetectB
+    # Sister of MenuButtonDetectA: byte-col +3 (0x7f1047), processed col +5
+    # (0x7f1507), hold timer _DAT_0067f1b4. Structurally identical.
+    # Same quiescent-menu call pattern, 10x.
+    'menu_button_detect_b': {
+        'rva':            0x0042b180,
+        'export':         'MenuButtonDetectB',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+}
     },
 
     # 0x0046cbb0  VehicleCarStateRead
