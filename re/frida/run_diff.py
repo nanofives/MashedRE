@@ -94,6 +94,10 @@ def main():
         config['orig_calling_convention'] = hook['orig_calling_convention']
     if 'reimpl_calling_convention' in hook:
         config['reimpl_calling_convention'] = hook['reimpl_calling_convention']
+    if 'alloc_tag' in hook:
+        config['alloc_tag'] = hook['alloc_tag']
+    if 'alloc_rva' in hook:
+        config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     csv_out = LOG_DIR / f'diff_{name}.csv'

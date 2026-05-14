@@ -1023,3 +1023,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  0041f1c0  GetEventFlag         C2->C3  path1 14/14 GREEN diff_get_event_flag.csv; path2 opcode+rel32+bytes OK interceptor 5/5; leaf-exemption; callers FUN_00424eb0 FUN_00412f30(both C2); U-3711 U-3712 filed
 2026-05-13  0041f090  GetPlayerStateBits   C2->C3  path1 8/8 GREEN diff_get_player_state_bits.csv; path2 opcode+rel32+bytes OK interceptor 4/4; leaf-exemption; callers FUN_00424eb0 FUN_00412f30(both C2); U-3713 filed
 2026-05-13  00413f90  FUN_00413f90(TimerGetBasePtr) C2->C3 REFUSED: callers 0x0043d7c0 0x0043dfd0 both C1; no C2+ caller satisfies gate; stays C2 until a caller promotes
+
+2026-05-13  005aea10  AudioAlignedAlloc     C2->C3  log/diff_audio_aligned_alloc.csv session-85
+2026-05-13  005aea40  AudioAlignedFree      C2->C3  log/diff_audio_aligned_free.csv session-85
+2026-05-13  005aec00  AudioByteReverse      C2->C3  log/diff_audio_byte_reverse.csv session-85
+2026-05-13  005aee20  AudioBitScanForward   C2->C3  log/diff_audio_bit_scan_forward.csv session-85; U-0352 resolved
+2026-05-13  005aec30  AudioByteSwapBuffer   C2->C3  log/diff_audio_byte_swap_buffer.csv session-85

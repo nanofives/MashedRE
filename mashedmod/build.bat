@@ -32,6 +32,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Util\TimerState.cpp" ^
     "%SRC%\Util\GameStateGetters.cpp" ^
     "%SRC%\Util\EventTable.cpp" ^
+    "%SRC%\Audio\AudioMemory.cpp" ^
     /link /DLL
     /link /DLL
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
