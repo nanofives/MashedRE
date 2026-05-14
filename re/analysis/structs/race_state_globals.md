@@ -122,6 +122,77 @@ Used by FUN_00403250 (lap/round timer trigger, Race::Tick case-0xb). These are s
 
 ---
 
+---
+
+## Leaderboard entry array (batch_m/n evidence)
+
+**Evidence sources:** leaderboard_d3 plates, game_state_d5_cont2 plates.
+
+| Address | Stride | Count | Notes |
+|---------|--------|-------|-------|
+| `0x0063e4b8` | 0x24 (36 bytes) | 4 | Leaderboard entry array; entries at 0x0063e4b8, 0x0063e4dc, 0x0063e500, 0x0063e524. Layout of each 36-byte entry not yet characterized (U-3829). |
+
+Range: `0x0063e4b8..0x0063e548` (4 × 36 bytes).
+
+---
+
+## Race timer state pair
+
+| Address | Width | Notes |
+|---------|-------|-------|
+| `DAT_008991b0` | 4 | Race timer / state pair field A; zeroed at race init |
+| `DAT_008991b4` | 4 | Race timer / state pair field B; zeroed at race init |
+
+---
+
+## Grid placement state (batch_n evidence)
+
+Observed in FUN_004266f0 and surrounding callers.
+
+| Address | Width | Type | Notes |
+|---------|-------|------|-------|
+| `DAT_0063a5e4` | 4 | int32 | Rolling grid-slot counter, range 0..param_3−1 |
+| `DAT_0063a5e0` | 4 | int32 | Previous-frame ID (frame-change detection) |
+| `DAT_007f0fec` | 4 | int32 | Current frame ID |
+| `DAT_0063ba80` | 4 | ptr/idx | Starting-position handle; written by FUN_00409290 |
+| `DAT_0063b9b8` | ptr | ptr | Starting-position table; indexed [iVar12 + DAT_008a94b0 × 4] |
+| `DAT_008a94b0` | 4 | int32 | Modulo-12 counter (race cycle counter) |
+| `DAT_008a94d0` | 4 | int32 | Player count selector (values 1..4) |
+| `DAT_008a94c0` | 4×4 | int32[4] | Per-player slot index array; set to 0xffffffff when active |
+
+---
+
+## Per-track array resets at race init (batch_n evidence)
+
+Five arrays zeroed or re-initialised during race start. All evidence from timer_d3_cont1_b / game_state plates.
+
+| Address | Stride | Entry count | Size | Notes |
+|---------|--------|-------------|------|-------|
+| `DAT_0076a100` | 0x38 (56 bytes) | 256 | 0x3800 bytes | Race-phase working array A; zeroed at race init |
+| `DAT_00769f50` | 0x24 (36 bytes) | 9 | 0x144 bytes | Race-phase working array B; zeroed at race init |
+| `DAT_00766a00` | 0x20 (32 bytes) | 40 | 0x500 bytes | Race-phase working array C; zeroed at race init |
+| `DAT_00770718` | 0x24 (36 bytes) | 60 | 0x870 bytes | Race-phase working array D; zeroed at race init |
+| `DAT_00766f40` | 0x30 (48 bytes) | 256 | 0x3000 bytes | Race-phase working array E; zeroed at race init |
+
+Internal layouts of these arrays not yet characterized (all entries [UNCERTAIN U-3830..U-3834]).
+
+---
+
+## Per-slot activity flags (split_screen_viewport cross-reference)
+
+`DAT_0063dc74` carries OR-mask flags for a per-slot entry within the split-screen viewport struct (base `DAT_0063dc38`, stride 0x2AC). Offset within entry = 0x3c. These flags are race-activity signals, not viewport geometry:
+
+| Bit | Meaning | Evidence |
+|-----|---------|---------|
+| 0x08 | set by FUN_0041eda0 | timer_d3_cont1_b plate |
+| 0x10 | request flag A | game_state plate |
+| 0x20 | request flag B | game_state plate |
+| 0x400 | active/invisible flag | game_state plate |
+| 0x1000 | latched flag A (can cascade from 0x10) | game_state plate |
+| 0x2000 | latched flag B (can cascade from 0x20) | game_state plate |
+
+---
+
 ## Open uncertainties
 
 | U-ID | Address | Gap |
@@ -132,3 +203,5 @@ Used by FUN_00403250 (lap/round timer trigger, Race::Tick case-0xb). These are s
 | U-1508 | 0x0067ea5c / 0x0067ead4 | What sets ea5c? What does ead4=1 trigger? |
 | U-1510 | 0x008994c0 | Source struct at 0x008994c0, stride 0x138 — layout unknown |
 | U-1511 | 0x00899a40 | Dest snapshot buffer at 0x00899a40, stride 0x138 — layout unknown |
+| U-3829 | 0x0063e4b8 | Leaderboard entry (36-byte stride) — internal field layout not yet characterized |
+| U-3830..U-3834 | DAT_0076a100 / 769f50 / 766a00 / 770718 / 766f40 | Per-track reset arrays — internal layout not characterized |

@@ -56,9 +56,14 @@ def on_message(message, data):
         print('  [agent]', payload)
 
 
-def float_bits(f):
-    if f is None: return None
-    return struct.unpack('<I', struct.pack('<f', float(f)))[0]
+def value_bits(v, ret_kind):
+    """Return raw bit representation as u32 for CSV display. For 'float' returns
+    the IEEE-754 bit pattern (so 1.0f shows 0x3f800000). For integer returns
+    (uint32, int32, etc) it's just the value masked to u32."""
+    if v is None: return None
+    if ret_kind == 'float':
+        return struct.unpack('<I', struct.pack('<f', float(v)))[0]
+    return int(v) & 0xffffffff
 
 
 def main():
@@ -78,6 +83,17 @@ def main():
         'lut_root_delta': hook['lut_root_delta'],
         'tests':          hook['path1_tests'],
     }
+    # Optional fields — only forwarded if present in the registry entry.
+    if 'target_global' in hook:
+        config['target_global'] = f"0x{hook['target_global']:08x}"
+    if 'entity_byte_stride' in hook:
+        config['entity_byte_stride'] = hook['entity_byte_stride']
+    if 'calling_convention' in hook:
+        config['calling_convention'] = hook['calling_convention']
+    if 'orig_calling_convention' in hook:
+        config['orig_calling_convention'] = hook['orig_calling_convention']
+    if 'reimpl_calling_convention' in hook:
+        config['reimpl_calling_convention'] = hook['reimpl_calling_convention']
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     csv_out = LOG_DIR / f'diff_{name}.csv'
@@ -130,6 +146,7 @@ def main():
         print("\nTIMEOUT.")
         return 3
 
+    ret_kind = hook['signature']['ret']  # 'float', 'uint32', etc.
     mismatches = 0
     with csv_out.open('w', newline='', encoding='utf-8') as fh:
         w = csv.writer(fh)
@@ -138,11 +155,11 @@ def main():
                     'reimpl',   'reimpl_bits',
                     'match', 'err_original', 'err_reimpl'])
         for r in results_received:
-            ob, rb = float_bits(r['original']), float_bits(r['reimpl'])
+            ob, rb = value_bits(r['original'], ret_kind), value_bits(r['reimpl'], ret_kind)
             ob_s = f"0x{ob:08x}" if ob is not None else ''
             rb_s = f"0x{rb:08x}" if rb is not None else ''
             inp = r['input']
-            inp_repr = json.dumps(inp) if isinstance(inp, list) else inp
+            inp_repr = json.dumps(inp) if isinstance(inp, (list, dict)) else inp
             w.writerow([r['idx'], inp_repr,
                         r['original'], ob_s,
                         r['reimpl'],   rb_s,

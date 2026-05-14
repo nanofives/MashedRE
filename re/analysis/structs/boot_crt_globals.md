@@ -81,6 +81,89 @@ Static read-only data cluster at 0x00616d24..0x00616d70. VS2003 locale internals
 
 ---
 
+## atexit Handler Table — `DAT_008ab6d0` / `DAT_008ab6cc` (resolves U-3728)
+
+**Evidence sources:** boot_crt_exit_d3_cont1 plates, promote_c2_boot_crt plates.
+
+| Address | Type | Name | Notes |
+|---------|------|------|-------|
+| `DAT_008ab6d0` | fn ptr[] | `__atexit_table_base` | atexit function pointer array; base address of `__onexit` registration array; first cite 0x004a407e |
+| `DAT_008ab6cc` | fn ptr* | `__atexit_write_ptr` | Write pointer into the array; incremented after each `__onexit` append; managed under lock 8 |
+
+**Realloc strategy:** `__msize(DAT_008ab6d0)` used to check capacity. Growth: doubles by +0x800 bytes; falls back to +0x10 bytes on failure. Lock 8 is held across the full read-check-write sequence. Accessed by `__onexit_lk` at 0x004a407e.
+
+**U-3728 RESOLVED.** atexit table is at `DAT_008ab6d0`; write cursor at `DAT_008ab6cc`.
+
+---
+
+## SBH Region Table — `DAT_008aa688` extended layout
+
+**Evidence sources:** promote_c2_boot_crt plates, boot_crt_env_cont1 plates.
+
+Extended from the base cluster; region table is a separate struct array:
+
+| Address | Type | Notes |
+|---------|------|-------|
+| `DAT_008aa680` | ptr | Free-region pointer; used in `___sbh_free_block` |
+| `DAT_008aa684` | int | Current region count; read by `___sbh_find_block` at 0x004aa4a0 |
+| `DAT_008aa688` | struct ptr[] | SBH region table base; stride **0x14** (20 bytes) per region; first cite 0x004aa49d |
+| `DAT_008aa694` | int | Max region count (capacity check at 0x004aa4d7 in `___sbh_alloc_new_region`) |
+| `DAT_008aa698` | int | Page index tracker; used in `___sbh_free_block` for VirtualFree page decommit |
+
+### SBH Region Header layout (stride 0x14 bytes per entry, base: DAT_008aa688)
+
+| Offset | Width | Tentative name | Notes |
+|--------|-------|----------------|-------|
+| +0x00 | 4 | `region_field0` | Region slot field 0 |
+| +0x04 | 4 | `region_field1` | Region slot field 1 |
+| +0x08 | 4 | `region_va_base` | Virtual address base for this 1 MB region block |
+| +0x0c | 4 | `region_va_range_start` | VA range start; used in `___sbh_find_block` pointer membership test |
+| +0x10 | 4 | `region_meta_ptr` | Header pointer to SBH group metadata (free-list heads + bitmaps for this region) |
+
+**SBH constants:**
+- Region size: 0x100000 (1 MB)
+- Group size per region: 0x8000 (32 KB); allocated via VirtualAlloc in `___sbh_alloc_new_group`
+- Groups per region: 32 (= 0x100000 / 0x8000)
+- Free-list head count per group: 0x40 (64 bins); stride 0x8 each (doubly-linked)
+- Free-list base within group: `entry[0x10] + 0x144`
+- Bin lookup formula: `(block_size >> 4) − 1`, capped at 0x3f (in `___sbh_free_block`)
+
+---
+
+## CRT File Handle Blocks — `DAT_008aa580` cluster
+
+**Evidence sources:** promote_c2_boot_crt plates.
+
+| Address | Type | Notes |
+|---------|------|-------|
+| `DAT_008aa580` | ptr[] | Block array base; array of pointers, each pointing to a 0x480-byte block of 32 handle slots |
+| `DAT_008aa560` | int | Total slots tracker; incremented by 0x20 per new block allocation |
+
+**Per-block layout:**
+- Block size: 0x480 bytes = 32 slots × 0x24 bytes per slot
+- Slot stride: 0x24 (36 bytes)
+- Slot +0x00 (4 bytes): in-use marker; 0xFFFFFFFF = occupied
+- Slot +0x02 (1 byte): init flag bit 0; 0 = free; incremented on init
+- Slot +0x0c (0x18 bytes): CRITICAL_SECTION; target of `___crtInitCritSecAndSpinCount` at per-slot CritSec init
+
+---
+
+## CRT Security Error Handler — `DAT_007739f4`
+
+**Evidence sources:** boot_crt_exit_d3_cont1 plates.
+
+| Address | Type | Notes |
+|---------|------|-------|
+| `DAT_007739f4` | fn ptr | Custom security error handler; non-NULL → call handler; NULL → fall back to MessageBox |
+
+Default behavior (no handler): displays one of two messages:
+- param_1 == 1: "A buffer overrun has been detected…"
+- other: "A security error of unknown cause…"
+
+Exit: calls `__exit(3)` → `ExitProcess(3)`.
+
+---
+
 ## S-DoD impact
 
 These globals block the following S-DoD gates:
@@ -92,10 +175,19 @@ These globals block the following S-DoD gates:
 
 ---
 
+## S-DoD update (session 96)
+
+| Subsystem | Gate | Status |
+|-----------|------|--------|
+| boot_crt_exit | S-DoD #3 | **Substantially met** — atexit table located (U-3728 resolved), CRT security handler documented, file handle block layout complete |
+| boot_crt_env | S-DoD #3 | **Substantially met** (unchanged from phase 5 — SBH extended with region header layout) |
+
+---
+
 ## Uncertainties
 
 | ID | Question |
 |----|---------|
 | U-3726 | `DAT_00616d68` — exact flag bit layout for char-class categories (4 categories confirmed, bit positions not decoded) |
 | U-3727 | `DAT_00773d70` — exact role; appears to be an SBCS-forcing override flag but not confirmed |
-| U-3728 | atexit table global (`DAT_00616xxx`) — not yet located; expected as array of fn ptrs managed by `__onexit`/`__atexit` |
+| ~~U-3728~~ | **RESOLVED (session 96):** atexit table at `DAT_008ab6d0`; write cursor at `DAT_008ab6cc` |

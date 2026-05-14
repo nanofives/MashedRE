@@ -213,7 +213,10 @@ Loaded automatically from `.claude\skills\`:
 - **re-classify** — promote/demote a function on the C0..C4 ladder; updates `hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `re/analysis/CHANGELOG.md` in one transaction. Refuses promotions that lack evidence.
 - **worktree** — git worktrees for isolated per-effort RE work; binds each worktree to a Ghidra pool slot.
 - **multi-session** — etiquette and conflict resolution when multiple Claude sessions run concurrently.
-- **sweep** — drain all queued rows in `re/SCRIBE_QUEUE.md` into the master Ghidra project (the follow-up Opus scribe session after a parallel fanout).
+- **discover-c1-batch** — generates a Ghidra-side parallel-fanout batch file (`batch_<letter>.txt`) of Claude Code prompts for C0→C1 discovery, C1→C2 mechanical promotion, DEFERRED drains, and struct-extraction sessions (default 6 sessions × 20 RVAs = ~120 RVAs per batch). Pairs with `ghidra-sweep`. Trigger: "make a ghidra batch" / "plan a c1 fanout" / "drain DEFERRED into a batch".
+- **ghidra-sweep** — drain all queued rows in `re/SCRIBE_QUEUE.md` into the master Ghidra project (the follow-up Opus session after a `discover-c1-batch` fanout). Trigger: "run the ghidra sweep" / "drain the scribe queue".
+- **promote-c3-batch** — generates a Frida-side parallel-fanout batch file (`c3_batch_<letter>.txt`) of Claude Code prompts for C2→C3 promotion sessions (default 6 sessions × 5 candidates = 30 promotions). Pairs with `frida-sweep`. Trigger: "make a c3 batch" / "plan a c3 fanout".
+- **frida-sweep** — drain all queued rows in `re/PROMOTION_QUEUE.md` (the follow-up Sonnet session after a `promote-c3-batch` fanout). Merges N worktree branches, resolves the three predictable text-file conflicts, rebuilds the canonical `.asi`, and runs the integration Frida diff against every promoted hook. Trigger: "run the frida sweep" / "merge the c3 batch" / "drain the promotion queue".
 
 ## Prior art (read-only, vendored under `re\prior_art\`)
 

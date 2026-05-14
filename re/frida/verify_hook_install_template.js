@@ -50,6 +50,15 @@ function callFn(fn, input, buf) {
         buf.add(8).writeFloat(input[2]);
         return fn(buf);
     }
+    if (CONFIG.arg_type === 'int_with_out_ptr') {
+        return fn(input >>> 0, buf);
+    }
+    if (CONFIG.arg_type === 'out3_idx') {
+        return fn(buf, input >>> 0);
+    }
+    if (CONFIG.arg_type === 'idx_out2') {
+        return fn(input >>> 0, buf, buf.add(4));
+    }
     return fn(input);
 }
 
@@ -100,7 +109,9 @@ function runVerification() {
     });
 
     const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
-    const buf = (CONFIG.arg_type === 'vec3_ptr') ? Memory.alloc(12) : null;
+    const buf = (['vec3_ptr', 'out3_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
+              : (['int_with_out_ptr', 'idx_out2'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : null;
     const results = [];
     const beforeCount = reimplEntries;
     for (let i = 0; i < CONFIG.tests.length; i++) {

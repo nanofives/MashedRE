@@ -981,3 +981,40 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-13  sweep-20260513-2055  scribe-claim  buckets=0 queued, 1 skipped-HOLD
 2026-05-13  sweep-20260513-2055  scribe-release  buckets=0 drained  errors=0  sync=ok(4-locked-slots-skipped)
 2026-05-14  frida-sweep-20260514-2020  frida-sweep-claim  branches=10 queued
+2026-05-13  004a3440  __chkstk               C1->C2  FidDB VS2003 single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a4b6e  __amsg_exit            C1->C2  FidDB VS2003 single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a4b93  fast_error_exit        C1->C2  FidDB VS2003 _fast_error_exit single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a5984  __SEH_prolog           C1->C2  FidDB VS single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a59bf  __SEH_epilog           C1->C2  FidDB VS single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004aa3fe  __heap_init            C1->C2  FidDB VS2003 single match; decomp verified pool4 promote_c2_boot_crt; U-0006 carried
+2026-05-13  004abc53  __setenvp              C1->C2  FidDB VS2003 single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004abf28  ___crtGetEnvironmentStringsA  C1->C2  FidDB VS2003 single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a31b1  ___crtExitProcess      C1->C2  FidDB VS2003 single match; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a4bb7  entry                  C1->C2  PE entry; decomp verified pool4 promote_c2_boot_crt; U-0001 U-0002 carried
+2026-05-13  004a31f3  FUN_004a31f3           C1->C2  CRT pre-init dispatch; decomp verified pool4 promote_c2_boot_crt; U-0003 U-0004 carried
+2026-05-13  004a332b  FUN_004a332b           C1->C2  exit wrapper (param_1,0,0); decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a334d  FUN_004a334d           C1->C2  exit wrapper (0,0,1); decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a78b0  FUN_004a78b0           C1->C2  CRT pre-init loop 005e7b84; decomp verified pool4 promote_c2_boot_crt; U-0005 carried
+2026-05-13  004a8a04  FUN_004a8a04           C1->C2  TLS+MT init; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004abbea  FUN_004abbea           C1->C2  cmdline arg-start scan; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004abe86  FUN_004abe86           C1->C2  argc/argv init __fastcall; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004ac04a  FUN_004ac04a           C1->C2  CRT file-handle table init; decomp verified pool4 promote_c2_boot_crt
+2026-05-13  004a2c2f  FUN_004a2c2f           C1->C2  FPU/CPU detect wrapper; decomp verified pool4 promote_c2_boot_crt; U-0027 carried
+2026-05-13  004a3258  FUN_004a3258           C1->C2  CRT exit core; decomp verified pool4 promote_c2_boot_crt; U-0028 U-0029 carried
+2026-05-13  0046c7b0  VehicleSlotGetter                C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 11/11 GREEN log/diff_vehicle_slot_getter.csv; leaf-exemption; caller FUN_00410860 C2
+2026-05-13  0046dbe0  VehicleRacePositionGet           C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 8/8 GREEN log/diff_vehicle_race_position_get.csv; leaf-exemption; caller VehicleRubberBandSpeedModifier C2
+2026-05-13  00468b40  VehicleContactHistoryLookup      C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 7/7 GREEN log/diff_vehicle_contact_history_lookup.csv; leaf-exemption; caller FUN_0046cc40 C2
+2026-05-14  0046d700  VehicleVec3At9C8Get              C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 9/9 GREEN log/diff_vehicle_vec3_at_9c8_get.csv; leaf-exemption; caller FUN_0046e9e0 C2
+2026-05-14  00417730  VehicleRaceAngleGet              C2->C3  c3/batch-o-s88; VehicleState.cpp; A/B 7/7 GREEN log/diff_vehicle_race_angle_get.csv; leaf-exemption; callers FUN_004177b0+FUN_00417cf0 ai/C2
+2026-05-14  sweep-20260514-0512  scribe-claim  buckets=2 queued, 0 skipped-HOLD
+2026-05-14  sweep-20260514-1847  scribe-claim  buckets=5 queued, 0 skipped-HOLD
+2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0040x  writes=20  errors=0
+2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0049x  writes=20  errors=0
+2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0048x  writes=19  errors=0
+2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0044x  writes=20  errors=0
+2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_005xx  writes=20  errors=0
+2026-05-14  sweep-20260514-1847  scribe-release  buckets=5 drained  errors=0
+2026-05-14  00430b60  MenuSlotCount       C2->C3  c3/batch-a-s4; FrontendState.cpp; 47b leaf; counts non-(-1) DAT_007f1a14/24/34/44; A/B 10/10 GREEN log/diff_menu_slot_count.csv; leaf-exemption; U-3600 open (semantic)
+2026-05-14  0042f6b0  MenuModeSync        C2->C3  c3/batch-a-s4; FrontendState.cpp; 115b leaf; switch DAT_0067f184->DAT_0067e9fc 9 cases; A/B 10/10 GREEN log/diff_menu_mode_sync.csv; leaf-exemption; U-3595 open (semantic)
+2026-05-14  00430910  MenuOptionSlotGet   C2->C3  c3/batch-a-s4; FrontendState.cpp; 137b leaf; mode-gated table read DAT_007f0a40; A/B 10/10 GREEN log/diff_menu_option_slot_get.csv; leaf-exemption; U-3598 U-3599 open (semantic)
+2026-05-14  0042f020  VehicleFlagClear    REFUSED  c3/batch-a-s4; __fastcall EAX implicit arg; NativeFunction('mscdecl') harness cannot support; remains C2; U-3594 open

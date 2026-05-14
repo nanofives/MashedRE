@@ -217,7 +217,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00425ab0,FUN_00425ab0,render,C1,mapped,re/analysis/track_loader/00425ab0.md,,,zeros 16 globals at DAT_008992a0..DAT_008994b8 in 8 pairs stride 0x4c
 004260e0,FUN_004260e0,render,C1,mapped,re/analysis/track_loader/004260e0.md,,,path builder: ToastArt[/|\]tracks[sep]param2[sep]param3[sep]param4 into DAT_008991e0; U-0430
 004262f0,FUN_004262f0,render,C1,mapped,re/analysis/track_loader/004262f0.md,,,processes DAT_00644370 64-byte records at DAT_00646c38 via DAT_00646e38->DAT_00657408 index
-00418560,FUN_00418560,ai,C1,mapped,re/analysis/ai_update/0x00418560.md,,,per-vehicle AI update: selects spline (race/inside/slow/cheat lines) by type; dispatches FUN_00416250 or FUN_00416a30; writes control output to 0x7f1038+slot*0x4c
+00418560,FUN_00418560,ai,C2,mapped,re/analysis/ai_update/0x00418560.md,,,per-vehicle AI update: selects spline (race/inside/slow/cheat lines) by type; dispatches FUN_00416250 or FUN_00416a30; writes control output to 0x7f1038+slot*0x4c
 00407a40,FUN_00407a40,ai,C1,mapped,re/analysis/ai_update/0x00407a40.md,,,"getter: returns DWORD at 0x8a9640 + param_1*0x30c (per-vehicle data, stride 780)"
 0040e350,FUN_0040e350,ai,C1,mapped,re/analysis/ai_update/0x0040e350.md,,,getter: returns DAT_0063ba8c (game-mode global); compared to 5/4/9/8 by AI dispatcher
 0040e4a0,FUN_0040e4a0,ai,C1,mapped,re/analysis/ai_update/0x0040e4a0.md,,,getter: returns DAT_005f29b8 (elapsed-time global); used as countdown comparison value in AI mode-5 path
@@ -242,10 +242,10 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004a2c48,FUN_004a2c48,frontend,C1,mapped,re/analysis/hud_frontend/0x004a2c48.md,,,FPU rounding: ROUND(in_ST0) to 64-bit int with banker's rounding; 116 bytes; no callees; used as frame-counter source; U-0460
 00416250,FUN_00416250,ai,C1,mapped,re/analysis/ai_update/0x00416250.md,,,primary AI control step: spline-distance via FUN_00443440(f10.0); behavior mode 0-10 decision tree; writes steer/accel/brake to param_3[0/1/4/5]; stores mode to 0x89a52c+v*0x74
 00416a30,FUN_00416a30,ai,C1,mapped,re/analysis/ai_update/0x00416a30.md,,,AI control step mode-4/9 variant: near-identical to FUN_00416250 but omits modes 5/10 and bomb-target path; no behavior-mode commit to 0x89a52c; U-0417
-00417180,FUN_00417180,ai,C1,mapped,re/analysis/ai_update/0x00417180.md,,,AI spline-bank switcher: advances spline index; cycles type 0/1/2/3 on count-check failure; switch timer up to 9000 (DAT_007f1008/frame); random variation via FUN_00472650; U-0418 U-0419 U-0420
+00417180,FUN_00417180,ai,C2,mapped,re/analysis/ai_update/0x00417180.md,,,AI spline-bank switcher: advances spline index; cycles type 0/1/2/3 on count-check failure; switch timer up to 9000 (DAT_007f1008/frame); random variation via FUN_00472650; U-0418 U-0419 U-0420
 00426c00,FUN_00426c00,ai,C1,mapped,re/analysis/ai_update/0x00426c00.md,,,getter: returns DAT_00644158 (powerup-state global); callers check == 0x21; U-0421
-00417640,FUN_00417640,ai,C1,mapped,re/analysis/ai_update/0x00417640.md,,,post-step powerup override: gates on FUN_00426c00==0x21 + mode!=10 + FUN_00452ea0; brakes when closing on target; U-0422..U-0426
-00417da0,FUN_00417da0,ai,C1,mapped,re/analysis/ai_update/0x00417da0.md,,,AI control step mode-8 variant: identical to FUN_00416250 except FUN_00417cf0 replaces FUN_004148b0 and no DAT_0089a368 debug override; U-0427
+00417640,FUN_00417640,ai,C2,mapped,re/analysis/ai_update/0x00417640.md,,,post-step powerup override: gates on FUN_00426c00==0x21 + mode!=10 + FUN_00452ea0; brakes when closing on target; U-0422..U-0426
+00417da0,FUN_00417da0,ai,C2,mapped,re/analysis/ai_update/0x00417da0.md,,,AI control step mode-8 variant: identical to FUN_00416250 except FUN_00417cf0 replaces FUN_004148b0 and no DAT_0089a368 debug override; U-0427
 005b9f30,LAB_005b9f30,audio,C1,mapped,re/analysis/audio_dsound/0x005b9f30.md,,,fn-ptr constructor: writes 4 ptrs (LAB_005ba1d0/005ba7f0/005ba780/005bad30) to audio obj struct+0x28..+0x3c; sets +0x40/+0x44/+0x46; U-0347..U-0350
 005a9e10,FUN_005a9e10,audio,C2,mapped,re/analysis/audio_dsound/0x005a9e10.md;re/analysis/promote_c2_audio_dsound/0x005a9e10.md,,,two-call dispatcher: FUN_005adfe0(param_1 param_3) + FUN_005ae010(param_1 param_2); returns param_1; 33 bytes; U-0351
 005aee20,FUN_005aee20,audio,C2,mapped,re/analysis/audio_dsound/0x005aee20.md,,,bit-scan-forward loop 0..31; always called with 0x28 (lowest bit=3); decompiler types void but caller reads byte; 27 bytes; U-0352
@@ -682,7 +682,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00415e20,FUN_00415e20,ai,C1,mapped,re/analysis/ai_update_d2/0x00415e20.md,,,steering angle calculator: acos of bearing-to-target vs heading; returns angle [0 2pi] via ST0; drives steer output in FUN_00416250; U-1428
 00416060,FUN_00416060,ai,C1,mapped,re/analysis/ai_update_d2/0x00416060.md,,,line-of-sight check: ray-march from pos_a to pos_b sampling tile grid; returns 0 if wall/boundary (type 0 or 3) blocks line; 1 if clear
 004161e0,FUN_004161e0,ai,C1,mapped,re/analysis/ai_update_d2/0x004161e0.md,,,spline target-point init: reads vehicle x/z; calls FUN_00443dc0 to find closest spline point; writes index to *param_2
-00417cf0,FUN_00417cf0,ai,C1,mapped,re/analysis/ai_update_d2/0x00417cf0.md,,,angle-gated targeting (mode-8 variant): FUN_00417730 race-angle diff; dead-zone [_DAT_005cd0ec 005cd0fc]; returns 1+pos if outside dead-zone
+00417cf0,FUN_00417cf0,ai,C2,mapped,re/analysis/ai_update_d2/0x00417cf0.md,,,angle-gated targeting (mode-8 variant): FUN_00417730 race-angle diff; dead-zone [_DAT_005cd0ec 005cd0fc]; returns 1+pos if outside dead-zone
 00443080,FUN_00443080,ai,C1,mapped,re/analysis/ai_update_d2/0x00443080.md,,,getter: returns DAT_00897ffc; must be non-zero to enable mode-6 targeting branch in FUN_00416250; U-1432
 00443440,FUN_00443440,ai,C1,mapped,re/analysis/ai_update_d2/0x00443440.md,,,spline progress+curvature: finds closest point (binary-search refined); walks lookahead_dist ahead; returns segment progress fraction; writes curvature to *param_4
 0046d4a0,FUN_0046d4a0,ai,C1,mapped,re/analysis/ai_update_d2/0x0046d4a0.md,,,vehicle struct pointer getter: base 0x881ec8 stride 0x341; sub-object offset via field at +0x80 *0x10; callers read +0x30/+0x38 as x/z pos
@@ -728,7 +728,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004099a0,Save::AutosaveTrigger,save,C2,mapped,re/analysis/profile_career/004099a0.md,promote_c2_save_replay-20260513,2026-05-13,checks DAT_008a95ac != 0; sets DAT_008a9584=4 DAT_008a9594=1 DAT_008a95b0=0; wprintf 'starting autosave'; U-1550 U-1551
 0042a920,Frontend::PostTrophyEvent,save,C1,mapped,re/analysis/profile_career/0042a920.md,,,writes DAT_00898ab0=0x40 (priority) + DAT_00899140=event_id; IDs 0x264-0x26a for cup milestones; consumer FUN_00448220; U-1552
 0046e9e0,FUN_0046e9e0,vehicle,C2,mapped,re/analysis/vehicle_dynamics/0046e9e0.md,vehicle_dynamics-20260503-0000,,per-substep rigid body integration; throttle/torque→velocity EBX[0xc..0xe]; rotation matrix update EBX[0..10] cross-product; angular velocity damp; U-1747 U-1748; C2 plate: re/analysis/vehicle_promote_c2/0046e9e0.md
-0046d700,FUN_0046d700,vehicle,C2,mapped,re/analysis/vehicle_dynamics/0046d700.md,vehicle_dynamics-20260503-0000,,reads 3-float vector at vehicle offset +0x9C8..+0x9D0 by vehicle index (0..15); leaf; U-1748; C2 plate: re/analysis/vehicle_promote_c2/0046d700.md
+0046d700,VehicleVec3At9C8Get,vehicle,C3,mapped,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3-batch-o-s88,log/diff_vehicle_vec3_at_9c8_get.csv,leaf; 3-DWORD vector getter at +0x9C8/+0x9CC/+0x9D0; 9/9 Frida A/B GREEN; U-1748 open (direction type); C2 plate: re/analysis/vehicle_promote_c2/0046d700.md
 004c4680,FUN_004c4680,render,C1,new,re/analysis/vehicle_dynamics/004c4680.md,vehicle_dynamics-20260503-0000,,matrix orthonormalize: 3-row normalize + cross-product orthogonalization; sets ORTHONORMAL type bits at param_1[3]; D-5140
 004ccce0,FUN_004ccce0,render,C1,mapped,re/analysis/rw_engine_teardown_d3/0x004ccce0.md,,,bitmap-block linked-list iterator; alloc(vtable+0x108 flag=0x10000)+memcpy(node+8)+bit-scan(MSB first)+callback(addr param_3)+free(vtable+0x10c) per node; S-1680; U-1687 U-1688 U-1689 U-1690
 0043c000,FUN_0043c000,util,C1,mapped,re/analysis/game_mode_cont1/notes.md,game_mode_cont1-20260503,,"timer tick dispatcher; 19 slots at 0067e7a8-0067e838; state=1 fire+record, state=2 record-only; actions: FUN_004332a0(S-1640) FUN_0042f7b0(S-1641) FUN_0042c960(S-1642) FUN_0042fa00(S-1643); guard 0067e840==005d757c; U-1647 U-1648"
@@ -750,19 +750,19 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0042ae10,FUN_0042ae10,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042ae10.md,,readiness check: path A stride-0x4c char scan at 0x7f1502; path B car-index+FUN_0040e470 check; D-4841 cleared; U-3445 U-3446 U-3447 U-3448,
 0042aeb0,FUN_0042aeb0,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042aeb0.md,,variant of FUN_0042ae10: table base+1 (0x7f1043/1503); no e7c8 guard; D-4842 cleared; U-3445 U-3446,
 0042af50,FUN_0042af50,frontend,C2,mapped,re/analysis/timer_d2_cont1/0x0042af50.md,,,guard+two-path check: DAT_007f1a0c==0x1000 walks char array 0x007f1501; else walks int-index array 0x007f1a14; U-1615 U-1616; D-4843 cleared; session frontend_c0_promote
-00430910,FUN_00430910,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x00430910.md,,,option-mode compatibility check: switch(DAT_0067e9fc) excludes invalid DAT_0067f184 vals; reads DAT_007f0a40; leaf; U-3598 U-3599; D-4844 cleared; session frontend_c0_promote
+00430910,MenuOptionSlotGet,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendState.cpp,c3/batch-a-s4,log/diff_menu_option_slot_get.csv,137b pure leaf; switch(DAT_0067e9fc) exclusion gate then (&DAT_007f0a40)[optIdx+rowIdx*0xc]; A/B 10/10 GREEN; leaf-exemption; U-3598 U-3599 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x00430910.md
 00429aa0,FUN_00429aa0,frontend,C2,mapped,re/analysis/timer_d2_cont1/0x00429aa0.md,,,FUN_00430820 predicate; two paths fill 0x0067d990/998/9a0 from different tables; S-1604 S-1605; U-1613 U-1614; D-4845 cleared; session frontend_c0_promote
 0042aa00,FUN_0042aa00,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042aa00.md,,cursor advance+wrap with validity scan; slot=DAT_0067e9f8; stride-64 cursor/limit stride-16 validity; D-4846 cleared; U-3436 U-3437 U-3438,
 0042ac90,FUN_0042ac90,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042ac90.md,,linked-group walker via 0x67ed38 slot; skips cursor+1 groups; sentinels 0xFF04/05/06/140000; D-4847 cleared; U-3443 U-3444,
 0040b810,FUN_0040b810,frontend,C2,mapped,re/analysis/timer_d2_cont1/0x0040b810.md,,,zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; D-4848 cleared; session frontend_c0_promote
 0042b960,FUN_0042b960,frontend,C2,mapped,re/analysis/frontend_promote_menus_a/0x0042b960.md,,scan 0x7f1042/1502 to find first valid entry → 0x7f1a14; init -1 sentinels; 0x7f1a0c=1; calls FUN_0040e480 x4; D-4849 cleared; U-3450 U-3451 U-3549,
-0042f6b0,FUN_0042f6b0,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x0042f6b0.md,,,mode-index to game-mode mapper: switch(DAT_0067f184)->DAT_0067e9fc; leaf; U-3595; D-4850 cleared; session frontend_c0_promote
+0042f6b0,MenuModeSync,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendState.cpp,c3/batch-a-s4,log/diff_menu_mode_sync.csv,115b pure leaf; switch(DAT_0067f184 0..11 absent 4/6/7)->DAT_0067e9fc; default no-op; A/B 10/10 GREEN; leaf-exemption; U-3595 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x0042f6b0.md
 004307a0,FUN_004307a0,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x004307a0.md,,,elapsed-time vs threshold check: reads 3-float table DAT_00614718[DAT_0067f17c*0xc]; calls 00429a70/80/90; U-3596 U-3597; D-4851 cleared; session frontend_c0_promote
 0042f020,FUN_0042f020,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x0042f020.md,,,vehicle flag clear: __fastcall switch(param_1) zeroes byte DAT_007f0e50+in_EAX*0xc; leaf; U-3594; D-4852 cleared; session frontend_c0_promote
 00431d00,FUN_00431d00,frontend,C2,mapped,re/analysis/game_mode_cont2/0x00431d00.md,,,7-global init + FUN_00431b80 x3; car-select state reset; callers FUN_0043dfd0+FUN_004924f0; D-4853; U-3641 U-3642
 004309b0,FUN_004309b0,frontend,C2,mapped,re/analysis/hud_frontend_d5/0x004309b0.md,,,game-mode-to-index mapper: mode 2->0 3->1 4->2 5->5 6..9->3 10->11; leaf; D-4854 cleared; session frontend_c0_promote
 00492340,FUN_00492340,frontend,C2,mapped,re/analysis/game_mode_cont2/0x00492340.md,,,player-entry init: stride-0x4c array at 0x7f1058; guard [+4]; writes [0]=1 [+c]=10 [+10]=3 [+14]=0xff; caller FUN_0043dfd0; D-4855; U-3643 U-3644
-00430b60,FUN_00430b60,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x00430b60.md,,,active-slot counter: counts non-(-1) among DAT_007f1a14/24/34/44; returns char; leaf; U-3600; D-4856 cleared; session frontend_c0_promote
+00430b60,MenuSlotCount,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendState.cpp,c3/batch-a-s4,log/diff_menu_slot_count.csv,47b pure leaf; counts non-(-1) among DAT_007f1a14/24/34/44 (stride 0x10); returns char 0..4; A/B 10/10 GREEN; leaf-exemption; U-3600 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x00430b60.md
 00409930,FUN_00409930,util,C2,mapped,re/analysis/util_c0_promote/0x00409930.md,util_c0_promote-20260512,,30b; pure setter: DAT_008a9584=3 DAT_008a9590=1 DAT_008a95b0=0; loading state-3 entry; callers FUN_0043dfd0+FUN_0040ab40; D-4857
 00409900,FUN_00409900,util,C2,mapped,re/analysis/util_c0_promote/0x00409900.md,util_c0_promote-20260512,,"43b; wprintf(""Load start\n"") + DAT_008a9584=2 DAT_008a958c=1 DAT_008a95b0=0; loading state-2 entry; caller FUN_0043dfd0; D-4858"
 004098b0,FUN_004098b0,util,C2,mapped,re/analysis/util_c0_promote/0x004098b0.md,util_c0_promote-20260512,,27b; pure setter: DAT_008a9584=1 DAT_008a9588=1 DAT_008a95b0=0 DAT_008a95ac=0; loading state-1 entry; caller FUN_0043dfd0; D-4859
@@ -894,18 +894,18 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00484c70,FUN_00484c70,ai,C1,mapped,re/analysis/ai_update_d3/0x00484c70.md,,,world-objects array getter: *param_1=DAT_006e70d8 (count); returns &DAT_006dccb8 (base); stride 0x8C per object in caller
 00443d10,FUN_00443d10,ai,C1,mapped,re/analysis/ai_update_d3/0x00443d10.md,,,track tile-type lookup (world XZ): 128x128 coarse grid DAT_007f1a9c + 8x8 sub-cell DAT_007f9a9c; x87 FPU args; returns 0xff if OOB
 00443dc0,FUN_00443dc0,ai,C1,mapped,re/analysis/ai_update_d3/0x00443dc0.md,,,spline lookahead target finder: nearest point binary-search; 16-step forward walk; wall-check inline; debug render; writes XZ to param_3; U-1887 U-1888; D-5561..D-5564
-00417730,FUN_00417730,ai,C1,mapped,re/analysis/ai_update_d3/0x00417730.md,,,race-angle float getter: (&DAT_0089a880)[v] as float; one float per vehicle; used in mode-8 dead-zone gate
+00417730,FUN_00417730,ai,C2,mapped,re/analysis/ai_update_d3/0x00417730.md,,,race-angle float getter: (&DAT_0089a880)[v] as float; one float per vehicle; used in mode-8 dead-zone gate
 0046cc10,FUN_0046cc10,ai,C1,mapped,re/analysis/ai_update_d3/0x0046cc10.md,,,vehicle state-code getter: bounds-checks v<=0xf; pops state via FUN_004a2c48; caller FUN_00415880 requires code==4 for ram latch; U-1889
 00443300,FUN_00443300,ai,C1,mapped,re/analysis/ai_update_d3/0x00443300.md,,,"Catmull-Rom spline interpolation: 4 control points with wraparound; t clamped [0,1]; outputs XZ float2; foundational for FUN_00443440 and FUN_00443dc0"
 0046c7b0,FUN_0046c7b0,ai,C1,mapped,re/analysis/ai_update_d3/0x0046c7b0.md,,,entity alive/present flag getter: DAT_008815a4[v*0x341]; 0=dead 0xffffffff=OOB; distinct from FUN_0040e470 active-state check
 0046cbb0,FUN_0046cbb0,ai,C1,mapped,re/analysis/ai_update_d3/0x0046cbb0.md,,,spinout-state getter: *param_2=DAT_00881f90[v*0x341] (spinout flag); *param_3=DAT_00881f94[v*0xd04]; U-1890
-004233e0,FUN_004233e0,ai,C1,mapped,re/analysis/ai_update_d3/0x004233e0.md,,,heading angle atan2: fpatan(dx/dz); converts to game-angle units via scale+offset; handles special cases; used for spline curvature
+004233e0,FUN_004233e0,ai,C2,mapped,re/analysis/ai_update_d3/0x004233e0.md,,,heading angle atan2: fpatan(dx/dz); converts to game-angle units via scale+offset; handles special cases; used for spline curvature
 004c3df0,FUN_004c3df0,ai,C1,mapped,re/analysis/ai_update_d3/0x004c3df0.md,,,velocity transform vtable dispatch: *(*(DAT_007d3ffc+0x14+DAT_007d3ff8))(args); RW object method at slot +0x14; U-1891
 00415200,FUN_00415200,ai,C1,mapped,re/analysis/ai_update_d3/0x00415200.md,,,vehicle-0 last-place guard: FUN_00442cc0(0)==0.0 → return 1; gates powerup cases 7/9/0xb/0x10/0x11 in FUN_00415220
 0045a0f0,FUN_0045a0f0,ai,C1,mapped,re/analysis/ai_update_d3/0x0045a0f0.md,,,vehicle powerup-state field getter: DAT_0068ba00[v*0x16]; no bounds check; case 9 armed-clear gate in FUN_00415220; U-1892
 00415190,FUN_00415190,ai,C1,mapped,re/analysis/ai_update_d3/0x00415190.md,,,"track progress range check: if v is last-place finds active vehicle; checks its progress in [min,max); gates powerup cases 10/0xb/0xc/0x10/0x11"
 00455b40,FUN_00455b40,ai,C1,mapped,re/analysis/ai_update_d3/0x00455b40.md,,,powerup table getter: DAT_006885e0[param_1*0x2c]; no bounds check; case 0xb gate in FUN_00415220; U-1893
-0041f030,FUN_0041f030,ai,C1,mapped,re/analysis/ai_update_d3/0x0041f030.md,,,trigger struct reader: DAT_0063dc38[param_1*0x2ac+0x38..44] → 4 DWORDs; type-0x15 trigger path in FUN_00414c30; U-1894
+0041f030,FUN_0041f030,ai,C2,mapped,re/analysis/ai_update_d3/0x0041f030.md,,,trigger struct reader: DAT_0063dc38[param_1*0x2ac+0x38..44] → 4 DWORDs; type-0x15 trigger path in FUN_00414c30; U-1894
 0048a630,FUN_0048a630,ai,C1,mapped,re/analysis/ai_update_d3/0x0048a630.md,,,sphere-vs-AABB overlap test: param_1=AABB float[6]; param_2=center+radius float[4]; returns 1 on overlap; type-0x15 trigger activation
 00414490,FUN_00414490,ai,C1,mapped,re/analysis/ai_update_d3/0x00414490.md,,,velocity-gated alt targeting: exclusion gate for bomb/deathmatch modes; no-powerup check; dot(norm_vel norm_delta)>threshold; writes target to param_6
 0042f660,DefaultViewportCameraInit,render,C1,mapped,re/analysis/split_screen/0042f660.md,split_screen-20260505,,creates/retrieves global camera DAT_0067f190; sets near=0.1f far=180.0f; calls ViewportSetup; called from FUN_00492e90 case-1
@@ -1013,7 +1013,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00408a70,FUN_00408a70,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00408a70.md,vehicle_damage_d3-20260506-1244,,per-car precisepos setter: writes float+rounded to 5 fields stride-0x30c block at 0x8a9640; wprintf debug; 95 bytes; U-2169 U-2170
 0040e340,FUN_0040e340,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x0040e340.md,vehicle_damage_d3-20260506-1244,,no-arg getter: returns DAT_008a94d0; car/player count loop bound in FUN_00410d10 mode-7; 6 bytes; U-2171
 0040e350,FUN_0040e350,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x0040e350.md,vehicle_damage_d3-20260506-1244,,no-arg getter: returns DAT_0063ba8c; guard ==6 in FUN_004922e0; 6 bytes; U-2172; resolves S-1842
-00417730,FUN_00417730,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00417730.md,vehicle_damage_d3-20260506-1244,,per-car float getter: *(float*)(DAT_0089a880+v*4); flat float array; thresholds in FUN_00410d10 modes 4/7/8/9/10; U-2173 U-2174
+00417730,VehicleRaceAngleGet,vehicle,C3,mapped,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3-batch-o-s88,log/diff_vehicle_race_angle_get.csv,leaf; per-car float at DAT_0089a880+carIdx*4; 7/7 Frida A/B GREEN; U-2173 U-2174 filed; callers FUN_004177b0+FUN_00417cf0 (both ai/C2)
 00423b20,FUN_00423b20,vehicle,C1,mapped,re/analysis/vehicle_damage_d3/0x00423b20.md,vehicle_damage_d3-20260506-1244,,per-index dword getter: *(dword*)(DAT_008995ec+v*0x138); mode-9 race-end guard(v=1); 16 bytes; U-2175 U-2176
 00429310,TimeTrial::Tick,util,C1,new,re/analysis/leaderboard/0x00429310.md,,,per-frame time trial tick (mode==2); sector counter 008991bc 1..11; sector 11+state==6→Replay::LapFinish(1)+state 7; per-tick TimeFormat to 0067d99c/994/98c; 643b; caller: FUN_0040fc00; S-2220; U-2228; leaderboard-20260506-JJJJJ
 00441990,FUN_00441990,util,C1,mapped,re/analysis/profile_career_d3/FUN_00441990.md,profile_career_d3-20260506-1249,,406B; sets camera struct +0x38=azimuth +0x34=elevation +0x3c=0 +0x40..48=pos +0x58=4.0f; 15.0f Y-offset; calls FUN_004c1c10+FUN_00441760; S-2180 S-2181 S-2182; U-2187 U-2188; resolves D-5500
@@ -1274,7 +1274,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00422fd0,FUN_00422fd0,vehicle,C1,mapped,re/analysis/vehicle_update/00422fd0.md,,,vehicle reset: FUN_0046c5c0+FUN_0046c790(1)+FUN_004215c0(50f)*2+FUN_0045ba00(2); S-0380..S-0384; U-0396
 0042fe70,FUN_0042fe70,vehicle,C1,mapped,re/analysis/vehicle_update/0042fe70.md,,,getter returns DAT_0067ea80; selects timeout 900k/1800k/3600k for DAT_007f1018; U-0397
 00443080,FUN_00443080,vehicle,C1,mapped,re/analysis/vehicle_update/00443080.md,,,getter returns DAT_00897ffc; when 1 overrides input to neutral AI block; U-0398
-0046c7b0,FUN_0046c7b0,vehicle,C2,mapped,re/analysis/vehicle_update/0046c7b0.md,,,vehicle slot getter DAT_008815a4+param_1*0x341; returns -1 if >15; C2 plate: re/analysis/vehicle_promote_c2/0046c7b0.md
+0046c7b0,VehicleSlotGetter,vehicle,C3,impl,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3/batch-o-s88,log/diff_vehicle_slot_getter.csv,25b pure leaf; DAT_008815a4[idx*0x341] or 0xffffffff OOB; A/B 11/11 GREEN; leaf exemption; caller FUN_00410860 C2; analysis re/analysis/vehicle_promote_c2/0046c7b0.md
 0046da80,VehicleTrackInteraction,vehicle,C2,mapped,re/analysis/vehicle_update_d2/0046da80.md,,,wheel-contact + RW scene query + track-waypoint interaction; 349b; U-1413; C2 plate: re/analysis/vehicle_promote_c2/0046da80.md
 0046dc20,VehicleOOBDebugDraw,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046dc20.md,,,dup-row: canonical is row 1189; C2 promoted 2026-05-11
 0046f6c0,VehicleWheelContactSolver,vehicle,C2,mapped,re/analysis/vehicle_update_d3/0046f6c0.md,,,dup-row: canonical is row 1188; C2 promoted 2026-05-11
@@ -1485,7 +1485,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0047aa50,FUN_0047aa50,track,C2,new,re/analysis/track_collision_geometry/0x0047aa50.md,,,Lua C handler: filename group base 0x91 counter DAT_006bf1cc+0x1d4; 77b; track_collision_geometry_s14
 00419760,FUN_00419760,vehicle,C2,mapped,re/analysis/vehicle_damage_d4/0x00419760.md,vehicle_damage_d4-20260512,,112b eliminated-car spectator-slot setup; param_2==0→reset-only; param_2==1→reset+init+link; skin DAT_005f3298[DAT_007f1a1c[car*4]*4]; player-slot DAT_007f1a14[car*4]; linked-list DAT_0063bf30 stride 0x54; resolves S-2860; U-3600..U-3602; C2 plate: re/analysis/promote_c2_vehicle_dynamics/00419760.md
 00420de0,FUN_00420de0,vehicle,C2,mapped,re/analysis/vehicle_damage_d4/0x00420de0.md,vehicle_damage_d4-20260512,,30b __fastcall float-accumulator with 50.0f cap; *(float*)(param_2+param_1*4)+=param_3; clamp to _DAT_005cd120=50.0f (confirmed); called via FUN_004215c0; resolves S-2861; U-3603 U-3604; C2 plate: re/analysis/promote_c2_vehicle_dynamics/00420de0.md
-0046c770,FUN_0046c770,vehicle,C2,mapped,re/analysis/vehicle_damage_d4/0x0046c770.md,vehicle_damage_d4-20260512,,25b destruction-state getter; DAT_008815b0[car*0x341]; offset +0xC in per-car block (FUN_0046c790 writer; FUN_00422fd0 writes 1); sole caller FUN_0040da50; U-3605; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0046c770.md
+0046c770,VehicleDestructionStateGetter,vehicle,C3,impl,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3/batch-o-s88,log/diff_vehicle_destruction_state_getter.csv,25b pure leaf; DAT_008815b0[car*0x341] or 0xffffffff OOB; A/B 8/8 GREEN; path2 PASS; U-3605 semantic-only; analysis re/analysis/promote_c2_vehicle_dynamics/0046c770.md
 00418a30,FUN_00418a30,vehicle,C2,mapped,re/analysis/vehicle_damage_d4/0x00418a30.md,vehicle_damage_d4-20260512,,49b spectator-slot reset; EAX='this'; reads EAX[0x14] as skin-table idx; writes handles from DAT_005f32b0/b4[idx*8]; zeroes +0x34..+0x4c; sets +0x64=0xffffffff; U-3606..U-3608; C2 plate: re/analysis/promote_c2_vehicle_dynamics/00418a30.md
 00418de0,FUN_00418de0,vehicle,C2,mapped,re/analysis/vehicle_damage_d4/0x00418de0.md,vehicle_damage_d4-20260512,,"72b spectator-slot additional init; EAX='this'; zeroes +0x44/48/50/54/58/5c; FUN_00413c70(EAX+0x4c,2,0); FUN_004661a0(0x14,0..3); U-3609..U-3611; C2 plate: re/analysis/promote_c2_vehicle_dynamics/00418de0.md"
 0040d440,FUN_0040d440,track,C1,new,re/analysis/track_world_initial_sweep/0040d440.md,,,Course::LoadCurrent: calls FUN_0040d270(PTR_PTR_005f2770 DAT_0063ba7c); saves DAT_0063ba7c→DAT_0063ba78; track_world_initial_sweep
@@ -1512,7 +1512,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00468d80,FUN_00468d80,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00468d80.md,vehicle_dynamics_d3-20260512,,VehicleTerrainContactSolver; 1876b; outer DAT_0088e60c terrain entries x 18 slots; plane-normal depth; FUN_004c4d20 90deg rotation; event type=6 ring DAT_007e9de4; FUN_00468b40 history lookup; U-3573 U-3574 U-3577; clears S-3440
 004694e0,FUN_004694e0,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/004694e0.md,vehicle_dynamics_d3-20260512,,VehicleObjectContactSolver; 1467b; dynamic object list DAT_006e87b8/DAT_006fa0f8; vehicle-ID match entry[0xE]; modifies param_1[0x26c..0x26e] linear vel; FUN_00485420 object pos; U-3575; clears S-3441
 004c4dc0,RwMatrixInvert,vehicle,C1,new,re/analysis/render_pipeline_d3/004c4dc0.md,vehicle_dynamics_d3-20260512,,dup-row: canonical is tracker-fix row above; clears S-3442 S-2125
-00468b40,VehicleContactHistoryLookup,vehicle,C2,mapped,re/analysis/vehicle_promote_c2_b/00468b40.md,vehicle_dynamics_d3-20260512,,VehicleContactHistoryLookup; 52b; scans 32 entries at vehicle+0xBFC; active flags at +0x80; compares entry[0x34] vs slot ID; returns 0/1
+00468b40,VehicleContactHistoryLookup,vehicle,C3,impl,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3/batch-o-s88,log/diff_vehicle_contact_history_lookup.csv,52b leaf; piVar1=(int*)(vehicle+0xBFC); piVar1[0x20]=active flag; *piVar1==*(int*)(geom+0x34)=contact-ID match; A/B 7/7 GREEN; leaf exemption; caller FUN_0046cc40 C2; analysis re/analysis/vehicle_promote_c2_b/00468b40.md
 00485360,FUN_00485360,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00485360.md,vehicle_dynamics_d3-20260512,,DynamicObjectList_GetCount; 5b leaf; returns DAT_006fa0f8; U-3575
 00485370,FUN_00485370,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00485370.md,vehicle_dynamics_d3-20260512,,DynamicObjectList_GetBase; 5b leaf; returns &DAT_006e87b8; U-3575
 00485420,FUN_00485420,vehicle,C1,new,re/analysis/vehicle_dynamics_d3/00485420.md,vehicle_dynamics_d3-20260512,,PhysicsObject_GetWorldPosition; 58b; FUN_00485340 validate + FUN_00485380 state + state+0x60 pos ptr; 3-float out; U-3576
@@ -1538,13 +1538,13 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005336d0,FUN_005336d0,render,C1,new,re/analysis/rw_engine_init_cont1/005336d0.md,rw_engine_init_cont1-20260512,,plugin registrar ID 0x11e; FUN_004c1710+FUN_005c4780; handle DAT_00912468; D-0252
 0052e310,FUN_0052e310,render,C1,new,re/analysis/rw_engine_init_cont1/0052e310.md,rw_engine_init_cont1-20260512,,plugin registrar ID 0x116; 7 registrations FUN_004e7d40/da0/dd0/df0/FUN_004e8f50/80; always returns 1; handles DAT_007dc500/504/508; D-0253
 00544d20,FUN_00544d20,render,C1,new,re/analysis/rw_engine_init_cont1/00544d20.md,rw_engine_init_cont1-20260512,,plugin registrar ID 0x105; FUN_004c2d90+FUN_004e7d40+FUN_004e8f50+FUN_004e8f80; handles DAT_007dc66c/670; D-0254
-00418860,FUN_00418860,ai,C1,mapped,re/analysis/ai_path_following/0x00418860.md,,,AI tick loop: guards DAT_00801ca0>3; iterates 4 AI slots; calls FUN_004177b0 then FUN_00418560 per vehicle; mode-7 forces extra step on vehicle 0; U-3612 U-3613 U-3614
-004177b0,FUN_004177b0,ai,C1,mapped,re/analysis/ai_path_following/0x004177b0.md,,,AI pre-tick: updates DAT_0089a880 race-angle array; mode-4/9 speed rubber-banding; slow-line toggle timer 180000 ticks; probability tables DAT_005f30a0/005f3180; U-3615..U-3619
-00444b60,FUN_00444b60,ai,C1,mapped,re/analysis/ai_path_following/0x00444b60.md,,,spline debug visualizer: world-to-screen XZ projection; Catmull-Rom curve render; calls FUN_00443dc0 with debug=1 for lookahead marker; uses _DAT_007f1a58/_005cd050 transform
-00444ff0,FUN_00444ff0,ai,C1,mapped,re/analysis/ai_path_following/0x00444ff0.md,,,AI debug overlay: renders current debug spline via FUN_00444b60; sub-mode labels (race/inside/slow/cheat lines + danger/save data); lap-frame tracker; tile-map display; called from FUN_00448730 when DAT_007f1a50!=0; U-3620..U-3623
-00423670,FUN_00423670,ai,C1,mapped,re/analysis/ai_path_following/0x00423670.md,,,spline editor input handler: runtime point insert/delete; snaps XZ to vehicle-0 pos; saves/clears AI data; nav keys cycle type/index/point; calls FUN_00423540 on save confirm
-00423480,FUN_00423480,ai,C1,mapped,re/analysis/ai_path_following/0x00423480.md,,,AI filename generator: formats AI%%d.AI with FUN_00426c00 track index; appends to DAT_0064410c path buffer; returns DAT_00644110
-00423540,FUN_00423540,ai,C1,mapped,re/analysis/ai_path_following/0x00423540.md,,,AI data saver: writes 0x11884-byte block from DAT_007f1a9c with magic 0x13269902 to AI%%d.AI; pair of FUN_004235b0 loader; U-3624 U-3625
+00418860,FUN_00418860,ai,C2,mapped,re/analysis/ai_path_following/0x00418860.md,,,AI tick loop: guards DAT_00801ca0>3; iterates 4 AI slots; calls FUN_004177b0 then FUN_00418560 per vehicle; mode-7 forces extra step on vehicle 0; U-3612 U-3613 U-3614
+004177b0,FUN_004177b0,ai,C2,mapped,re/analysis/ai_path_following/0x004177b0.md,,,AI pre-tick: updates DAT_0089a880 race-angle array; mode-4/9 speed rubber-banding; slow-line toggle timer 180000 ticks; probability tables DAT_005f30a0/005f3180; U-3615..U-3619
+00444b60,FUN_00444b60,ai,C2,mapped,re/analysis/ai_path_following/0x00444b60.md,,,spline debug visualizer: world-to-screen XZ projection; Catmull-Rom curve render; calls FUN_00443dc0 with debug=1 for lookahead marker; uses _DAT_007f1a58/_005cd050 transform
+00444ff0,FUN_00444ff0,ai,C2,mapped,re/analysis/ai_path_following/0x00444ff0.md,,,AI debug overlay: renders current debug spline via FUN_00444b60; sub-mode labels (race/inside/slow/cheat lines + danger/save data); lap-frame tracker; tile-map display; called from FUN_00448730 when DAT_007f1a50!=0; U-3620..U-3623
+00423670,FUN_00423670,ai,C2,mapped,re/analysis/ai_path_following/0x00423670.md,,,spline editor input handler: runtime point insert/delete; snaps XZ to vehicle-0 pos; saves/clears AI data; nav keys cycle type/index/point; calls FUN_00423540 on save confirm
+00423480,FUN_00423480,ai,C2,mapped,re/analysis/ai_path_following/0x00423480.md,,,AI filename generator: formats AI%%d.AI with FUN_00426c00 track index; appends to DAT_0064410c path buffer; returns DAT_00644110
+00423540,FUN_00423540,ai,C2,mapped,re/analysis/ai_path_following/0x00423540.md,,,AI data saver: writes 0x11884-byte block from DAT_007f1a9c with magic 0x13269902 to AI%%d.AI; pair of FUN_004235b0 loader; U-3624 U-3625
 004e5fc0,FUN_004e5fc0,render,C1,new,re/analysis/effects_particle_d4/0x004e5fc0.md,,,keyframe animation update for atomic: lerps XYZ+scale between keyframe[+0x50] and [+0x52] using t=*(+0x5c)**(+0x58); clears *(+0x4c) bit1; sets *(+3) bit0 dirty; 0x13D bytes; leaf; clears S-1960; U-3578 U-3579 U-3580
 004c0b10,FUN_004c0b10,render,C1,new,re/analysis/effects_particle_d4/0x004c0b10.md,,,frame dirty-state predicate: returns *(*(param_1+0xa0)+3) & 3; low-2-bit flag test; 0x10 bytes; leaf; clears S-1961; U-3581
 004c3d60,FUN_004c3d60,render,C1,new,re/analysis/effects_particle_d4/0x004c3d60.md,,,"RW engine vtable matrix dispatch: calls *(DAT_007d3ffc+8+DAT_007d3ff8)(out,in1,in2); returns param_1; 0x25 bytes; leaf; clears S-1963; U-3582 U-3583"
@@ -1560,7 +1560,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0045c010,PowerupPickupWrapper,powerups,C1,new,re/analysis/ai_powerup_decisions/0x0045c010.md,ai_powerup_decisions-20260512,,thin wrapper → FUN_0045bfa0 (PowerupSlotActivate); called from FUN_0045bba0 on pickup button
 00429860,FUN_00429860,ai,C1,new,re/analysis/ai_update_d5/0x00429860.md,,,race-state flag getter: returns DAT_008991bc; 5 bytes; gate for FUN_004103a0 race tick; paired with FUN_00429840; U-3587
 00429840,FUN_00429840,ai,C1,new,re/analysis/ai_update_d5/0x00429840.md,,,race-state latch setter: writes DAT_008991bc=param_1 only if param_1==0 or current==0; 23 bytes; 0xb=lap-complete; U-3587
-0041da90,FUN_0041da90,ai,C1,new,re/analysis/ai_update_d5/0x0041da90.md,,,delta-time output getter: copies DAT_0063d588 to *param_1; 16 bytes; U-3585
+0041da90,FUN_0041da90,ai,C2,new,re/analysis/ai_update_d5/0x0041da90.md,,,delta-time output getter: copies DAT_0063d588 to *param_1; 16 bytes; U-3585
 00426c90,FUN_00426c90,ai,C1,new,re/analysis/ai_update_d5/0x00426c90.md,,,lap-line conditional: if FUN_0041ea80()!=0 call FUN_0041e960; 22 bytes; D-10560 D-10561; U-3588
 0046c750,FUN_0046c750,ai,C1,new,re/analysis/ai_update_d5/0x0046c750.md,,,entity velocity counter getter: *(DAT_00882194+param_1*0xd04); bounds <=0xf; 24 bytes; U-3586
 0046c730,FUN_0046c730,ai,C1,new,re/analysis/ai_update_d5/0x0046c730.md,,,entity damage-state getter: *(DAT_00882198+param_1*0xd04); bounds <=0xf; 24 bytes; U-3586
@@ -1770,7 +1770,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041ee50,FUN_0041ee50,util,C1,new,re/analysis/game_state_d5_cont2/0x0041ee50.md,game_state_d5_cont2-20260512,,per-slot flag set; 88b; DAT_0063dc74+param1*0x2ac; param2→bit0x1000 param3→bit0x2000; direct (no cascade); D-8806
 0041ef80,FUN_0041ef80,util,C1,new,re/analysis/game_state_d5_cont2/0x0041ef80.md,game_state_d5_cont2-20260512,,per-slot flag set; 54b; DAT_0063dc74+param1*0x2ac; param2→bit0x400; no cascade; D-8807
 00429820,FUN_00429820,util,C1,new,re/analysis/game_state_d5_cont2/0x00429820.md,game_state_d5_cont2-20260512,,clear two globals; 20b; DAT_008991b0=0 DAT_008991b4=0; caller FUN_0040e590; D-8809
-0046c6d0,FUN_0046c6d0,vehicle,C2,new,re/analysis/game_state_d5_cont2/0x0046c6d0.md,game_state_d5_cont2-20260512,,entity slot reader; 35b; param1<16: reads DAT_008820b0+param1*0xD04 to *param2 returns 1; else returns 0; D-8812; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0046c6d0.md
+0046c6d0,VehicleEntitySlotRead,vehicle,C3,impl,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3/batch-o-s88,log/diff_vehicle_entity_slot_read.csv,35b pure leaf; DAT_008820b0+idx*0xD04 to *param2 returns 1; OOB returns 0; A/B 9/9 GREEN; path2 PASS; verify_template extended int_with_out_ptr; analysis re/analysis/promote_c2_vehicle_dynamics/0046c6d0.md
 004704c0,FUN_004704c0,vehicle,C2,new,re/analysis/game_state_d5_cont2/0x004704c0.md,game_state_d5_cont2-20260512,,vehicle entity init/spawn; 682b; slot<16; clears collision tables 0x00881a4c(18x0x40) and 0x0088178c(4x0xC4); zeros physics fields; OR flags 0x20003; matrix via FUN_004c51a0/4c4d20; calls VehicleWheelContactSolver/FUN_0047ea60/FUN_0041eda0/FUN_0046baa0; returns 1; D-8813; C2 plate: re/analysis/promote_c2_vehicle_dynamics/004704c0.md
 0048f680,FUN_0048f680,util,C1,new,re/analysis/game_state_d5_cont2/0x0048f680.md,game_state_d5_cont2-20260512,,array zero; 32b; DAT_0076a100 stride 0x38 count 256; callers FUN_0040bd80+FUN_0040e590; D-8814
 0048f740,FUN_0048f740,util,C1,new,re/analysis/game_state_d5_cont2/0x0048f740.md,game_state_d5_cont2-20260512,,array cluster zero; 48b; calls FUN_0048f710+6b0+6e0 then zeros DAT_00766f40 stride 0x30 count 256; callers FUN_0040bd80+FUN_0040e590; D-8815
@@ -1881,14 +1881,14 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00421960,FUN_00421960,util,C1,new,re/analysis/random_rng_d2/0x00421960.md,random_rng_d2-20260513,,,audio entity activate; FUN_0055dec0(DAT_006ce274) → handle; FUN_00559c40(handle); 29 bytes; depth-1-fill
 004b4550,FUN_004b4550,util,C1,new,re/analysis/random_rng_d2/0x004b4550.md,random_rng_d2-20260513,,,3D point centroid calculator; sum param_3 vec3s then divide by count; 4-unrolled inner loop; depth-1-fill
 0041f260,FUN_0041f260,util,C1,new,re/analysis/random_rng_d2/0x0041f260.md,random_rng_d2-20260513,,,per-slot world-matrix copy; reads 16 dwords from *(*(0063dc4c+param_1*0x2ac)+4)+0x10; copies to param_2; depth-1-fill
-0041ea80,FUN_0041ea80,ai,C1,new,re/analysis/ai_update_d6/0x0041ea80.md,,,lap-line gate check: returns *(DAT_0063d7e4+0x40); 8 bytes; track-descriptor object; D-10560 resolved
-0041e960,FUN_0041e960,ai,C1,new,re/analysis/ai_update_d6/0x0041e960.md,,,lap-line vtable dispatch: calls **(DAT_0063d7e4+0x40)(); 8 bytes; U-3703; D-10561 resolved
-00422b50,FUN_00422b50,ai,C1,new,re/analysis/ai_update_d6/0x00422b50.md,,,vehicle damage delta accum: DAT_008995bc[p1*0x4e]+=p2; non-player subtracts rand(0,300.0f); 74b; D-10562 resolved
+0041ea80,FUN_0041ea80,ai,C2,new,re/analysis/ai_update_d6/0x0041ea80.md,,,lap-line gate check: returns *(DAT_0063d7e4+0x40); 8 bytes; track-descriptor object; D-10560 resolved
+0041e960,FUN_0041e960,ai,C2,new,re/analysis/ai_update_d6/0x0041e960.md,,,lap-line vtable dispatch: calls **(DAT_0063d7e4+0x40)(); 8 bytes; U-3703; D-10561 resolved
+00422b50,FUN_00422b50,ai,C2,new,re/analysis/ai_update_d6/0x00422b50.md,,,vehicle damage delta accum: DAT_008995bc[p1*0x4e]+=p2; non-player subtracts rand(0,300.0f); 74b; D-10562 resolved
 0047cea0,FUN_0047cea0,render,C1,new,re/analysis/ai_update_d6/0x0047cea0.md,,,explosion radius physics: bounds-check p1<200; DAT_006c71d8 slot; FUN_0057c210+0055ac50+ac00+ad30+b650; 126b; U-3706; D-10569 resolved
 00415860,FUN_00415860,ai,C1,new,re/analysis/ai_update_d6/0x00415860.md,,,player interaction cooldown: DAT_0089a508[p1*0x1d]=30000; 17b; D-10570 resolved
 00426cc0,FUN_00426cc0,vehicle,C1,new,re/analysis/ai_update_d6/0x00426cc0.md,,,vehicle state matrix base getter: &DAT_00663658+p1*0x4c; 12b; D-10571 resolved
 0048aa20,FUN_0048aa20,render,C1,new,re/analysis/ai_update_d6/0x0048aa20.md,,,physics body spawn thunk: forwards 6 params+1.0f to FUN_0048a850; 43b; depth-1-fill
-004219a0,FUN_004219a0,ai,C1,new,re/analysis/ai_update_d6/0x004219a0.md,,,powerup slot null-guard: EAX-based; if *(EAX+0x10)!=0 && *(sub+0x24)!=0 call FUN_00421980; 19b; depth-1-fill
+004219a0,FUN_004219a0,ai,C2,new,re/analysis/ai_update_d6/0x004219a0.md,,,powerup slot null-guard: EAX-based; if *(EAX+0x10)!=0 && *(sub+0x24)!=0 call FUN_00421980; 19b; depth-1-fill
 00487020,FUN_00487020,render,C1,new,re/analysis/ai_update_d6/0x00487020.md,,,surface constraint applicator: Bezier::GetLocate+Interpolate; builds constraint via FUN_004b5080; applies FUN_00486610; 283b; U-3707; depth-1-fill
 0057c210,FUN_0057c210,render,C1,new,re/analysis/ai_update_d6/0x0057c210.md,,,physics world body pointer lookup: *(DAT_007dc8d8+p1); 13b; depth-1-fill
 0055ac50,FUN_0055ac50,render,C1,new,re/analysis/ai_update_d6/0x0055ac50.md,,,physics joint constraint toggle: bitfield at *(p1+0x60)/(p1+100); vtable deactivate callback; 196b; depth-1-fill
@@ -1941,7 +1941,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004c52f0,RwMatrixCombine,render,C1,new,re/analysis/vehicle_update_d3_cont/004c52f0.md,vehicle_update_d3_cont-20260513,,3-mode 4x4 matrix combiner: 0=copy 1=pre-mul 2=post-mul; identity flag at DAT_007d4028+4+DAT_007d3ff8 bit 0x20000; multiply via fn ptr at +8; D-7964 resolved
 0046d4d0,VehiclePhysicsMatrixSet,vehicle,C2,new,re/analysis/vehicle_update_d3_cont/0046d4d0.md,vehicle_update_d3_cont-20260513,,writes 4x4 matrix (64b) to vehicle[param_1]+0xA20 and +0xA60 (stride 0xD04 base 0x008815a8); bounds check param_1>15; D-7965 resolved; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0046d4d0.md
 0047e9c0,PhysicsSceneInitSequence,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/0047e9c0.md,vehicle_update_d3_cont-20260513,,12-call physics scene init; uses scene+0x8c and scene+0x90 sub-objects; S-3724..S-3729
-0046dbe0,VehicleGetField0,vehicle,C2,new,re/analysis/vehicle_update_d3_cont/0046dbe0.md,vehicle_update_d3_cont-20260513,,reads vehicle[param_1]+0x000 (race position int 0..3); base DAT_008815a8 stride 0xD04; 16b leaf; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0046dbe0.md
+0046dbe0,VehicleRacePositionGet,vehicle,C3,impl,mashedmod/src/mashed_re/Vehicle/VehicleState.cpp,c3/batch-o-s88,log/diff_vehicle_race_position_get.csv,16b pure leaf; DAT_008815a8[param_1*0x341] no OOB guard; A/B 8/8 GREEN (sentinel-write slot0); leaf exemption; caller VehicleRubberBandSpeedModifier 00442ce0 C2; analysis re/analysis/promote_c2_vehicle_dynamics/0046dbe0.md
 0047d240,VehiclePhysicsBodyPlace,vehicle,C2,new,re/analysis/vehicle_update_d3_cont/0047d240.md,vehicle_update_d3_cont-20260513,,position physics body at XYZ; transform node: +0x30=X +0x34=Y +0x38=Z; Y=-10f on init; body from DAT_006c9a78[idx]; S-3730..S-3735; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0047d240.md
 0055c810,PhysicsBodySetLinearVelocity,vehicle,C2,new,re/analysis/vehicle_update_d3_cont/0055c810.md,vehicle_update_d3_cont-20260513,,sets body+0x40/44/48 = XYZ linear velocity; calls FUN_0055c380 prep; S-3736; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0055c810.md
 0055c4f0,PhysicsBodySetFriction,vehicle,C2,new,re/analysis/vehicle_update_d3_cont/0055c4f0.md,vehicle_update_d3_cont-20260513,,recursive compound setter; type8=recurse on children stride 0x60; else body+0x50=friction scalar; called with 0.45f; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0055c4f0.md
@@ -1955,3 +1955,102 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0057c220,RWP37WorldSlotAssign,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/0057c220.md,vehicle_update_d3_cont-20260513,,assigns body to world slot; registry at DAT_007dc8d8+param_1; maintains back-links via body+0x30 and *(body+0x10)+8; S-3733
 00559c40,PhysicsSceneBodyRegister,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/00559c40.md,vehicle_update_d3_cont-20260513,,large (0x293b); registers body in scene slot bitfield; scene[0x16] slot bitmap; body+8=slot ushort; body+9=scene; activity flag DAT_007dc8c0; S-3745
 0055ae70,PhysicsSceneBodySetShapeFlags,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/0055ae70.md,vehicle_update_d3_cont-20260513,,sets shape flags for body slot in scene; active bitfield at scene[0x1a]; get/clear/apply shape data; mode-dependent shapeIdx (1 or vehicleIdx+2); S-3746 S-3747
+00401000,FUN_00401000,hud,C1,mapped,,,, cup trophy init — creates cup.dff clump + particles at DAT_00636560..636574
+004011f0,FUN_004011f0,hud,C1,mapped,,,, cup trophy per-frame transform update; called from FUN_004013f0
+00401340,FUN_00401340,hud,C1,mapped,,,, cup color-by-game-mode setter; spin speed = -DAT_007f0ff0*scale
+004013f0,FUN_004013f0,hud,C1,mapped,,,, cup trophy render: push-update-draw-pop on DAT_007d3ff8 world context
+00401630,FUN_00401630,track,C1,mapped,,,," LoadMapModel(idx): formats ""map_%d.dff"" and calls FUN_004b3bf0"
+00401690,FUN_00401690,render,C1,mapped,,,, AABB + inv-radius from mesh; ESI=this struct[1..13]; calls Vec3Magnitude 004c3ac0
+004019d0,FUN_004019d0,render,C1,mapped,,,, race track VFX marker position update; iterates DAT_00636ac0 particle array
+00401fe0,FUN_00401fe0,render,C1,mapped,,,, create triangle geometry (3v/1t) in XZ plane via FUN_004e8c70
+00402240,FUN_00402240,render,C1,mapped,,,, create triangle atomic: wraps FUN_00401fe0 into clump via FUN_004e6d80
+004022a0,FUN_004022a0,render,C1,mapped,,,, create quad geometry (4v/2t) in XZ plane via FUN_004e8c70
+00402590,FUN_00402590,render,C1,mapped,,,, create quad atomic: wraps FUN_004022a0 into clump via FUN_004e6d80
+00402b70,FUN_00402b70,util,C1,mapped,,,, path normaliser: 8.3 uppercase; strips PS2/XBOX/PLATFORM dirs; max 6 levels
+00402f80,FUN_00402f80,hud,C1,mapped,,,, cup float init: DAT_00636aec=60.0 DAT_00636af4=40.0
+004034a0,FUN_004034a0,render,C1,mapped,,,, D3D9 cap check (NONPOW2CONDITIONAL + STRETCHRECT); creates RT at DAT_00636b70
+004036a0,FUN_004036a0,render,C1,mapped,,,, screen-quad blit __thiscall: 4 verts from UV→screen + vtable SetRS/DrawPrim
+004039e0,FUN_004039e0,render,C1,mapped,,,, getter: returns float10 DAT_005ea0a8; 1 caller FUN_0041a250
+00403c60,FUN_00403c60,hud,C1,mapped,,,, CupVFXSplash: 4x FUN_00427ad0 with sprite IDs 554/555 at fixed screen pos
+00404820,FUN_00404820,hud,C1,mapped,,,, free scene at DAT_00636c00 via FUN_004e6e00; 1 caller FUN_0045b930
+00404e00,FUN_00404e00,vehicle,C1,mapped,,,, GetDirtBodyName(idx): lookup DAT_00639cc8→PTR_s_DirtBody_005ea0b8
+00404e20,FUN_00404e20,vehicle,C1,mapped,,,, GetDirtAdWheelName(body,wheel): 2D table DAT_00636c08 stride 0x4e
+00500c48,FUN_00500c48,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00500c48.md,,,D3DX9 vertex decl semantic name parser (POSITION/BLENDWEIGHT/etc)
+005010f1,FUN_005010f1,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x005010f1.md,,,D3DX9 shader opcode destination-param token parser; modifier table PTR_DAT_005db9f0
+00501ce4,FUN_00501ce4,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00501ce4.md,,,D3DX9 shader instruction token encoder; output buffer param_1[0x16]
+0050272a,FUN_0050272a,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050272a.md,,,D3DX9 shader debug info builder; magic 0x47554244 GUBD
+00502e9e,FUN_00502e9e,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00502e9e.md,,,D3DX9 shader assembler register-name parser; table PTR_DAT_005dd0d0 21 entries
+005033f4,FUN_005033f4,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x005033f4.md,,,D3DX9 YACC grammar action dispatcher; switch on production rule 0x00..0x3f+
+00503a3a,FUN_00503a3a,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00503a3a.md,,,D3DX9 YACC parser yyparse; 296-state LALR
+00504008,FUN_00504008,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00504008.md,,,D3DXAssembleShader entry; GetProcAddress(Direct3DShaderValidatorCreate9)
+0050570a,FUN_0050570a,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050570a.md,,,D3DX9 vertex skinning 12-param; single-bone + multi-bone paths; bone stride 0x40
+0050706f,FUN_0050706f,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050706f.md,,,D3DX9 vertex skinning 4-wide SIMD 6-param; 4-vertex unrolled loop
+00508772,FUN_00508772,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00508772.md,,,D3DX9 rotation matrix from unit quaternion; rsqrtss Newton-Raphson normalise
+0050a41e,FUN_0050a41e,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050a41e.md,,,D3DX9 quaternion squad/catmull-rom; asin + sin helpers
+0050b6ff,FUN_0050b6ff,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050b6ff.md,,,D3DX9 4x4 rotation matrix from quaternion SRT; 3 branches identity/rotation/full-SRT
+0050c897,FUN_0050c897,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050c897.md,,,D3DX9 Euler angles to rotation matrix; 3x sin/cos
+0050d089,FUN_0050d089,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050d089.md,,,D3DX9 rotation matrix from quaternion variant 2; PackedSwapDWords pattern
+0050e1dd,FUN_0050e1dd,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050e1dd.md,,,D3DX9 matrix inverse alternate path PackedFloatingNegAccumulate
+0050e8b7,FUN_0050e8b7,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050e8b7.md,,,D3DX9 matrix inverse cofactor method; singularity -> null return
+0050ef6d,FUN_0050ef6d,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050ef6d.md,,,D3DX9 Vec3 homogeneous transform; 4x4 matrix x vec3 + W-divide
+0050eff8,FUN_0050eff8,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x0050eff8.md,,,D3DX9 4x4 matrix multiply; param_1 = param_2 x param_3
+005112c9,FUN_005112c9,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x005112c9.md,,,D3DX9 shader assembler source parameter binding; error 0xb56 register > 8191
+00480b70,FUN_00480b70,vehicle,C1,mapped,,,, wheel-contact particle emitter: DAT_0088173c stride 0xd04 contact flags; DAT_007f1038+veh*0x13 geo; emits via FUN_0055b650
+00481780,FUN_00481780,vehicle,C1,mapped,,,, body velocity accumulator: adds param_1[0..2]*DAT_005cf230 to stride-0x20 velocity slot
+00481810,FUN_00481810,vehicle,C1,mapped,,,, contact-set query: returns 0/1; checks bit body+0x24+0x60; outputs float[3] pair
+004818d0,FUN_004818d0,vehicle,C1,mapped,,,, velocity cap + over-speed trigger: compares vel_sq vs DAT_005cc990; sets flags 8/2 DAT_006c9438; explosion if DAT_006c6b90[i]>149999
+00481a30,FUN_00481a30,vehicle,C1,mapped,,,, per-frame vehicle water/zone loop: iterates DAT_006c6eb0 vehicles; water-zone proximity; calls FUN_004818d0+FUN_00487280 broadphase
+00481d90,FUN_00481d90,vehicle,C1,mapped,,,, vehicle body activation: bounds [0,199] DAT_006c71d8; FUN_0047d080/FUN_0055ac50/ac00/ad30/b650
+00481e00,FUN_00481e00,vehicle,C1,mapped,,,, cone-direction sample builder + multi-ray cast: lazy-inits 120-sample table DAT_006ce278; sweeps via FUN_0055c000; 1 caller FUN_004826d0
+00482030,FUN_00482030,vehicle,C1,mapped,,,, sub-strip UV coordinate generator: quadrant-based (u,v) from strip index and count; 4 cases; 1 caller FUN_00482140
+004820e0,FUN_004820e0,vehicle,C1,mapped,,,, 2D direction-to-UV mapper: FUN_005c1cb7 hypot; remaps to [0,1] with DAT_005cc32c bias; 1 caller FUN_00482140
+00482140,FUN_00482140,vehicle,C1,mapped,,,, collision mesh strip builder: struct 9 fields; FUN_004e8c70 alloc; RwV3dNormalize FUN_004c39b0; UVs via FUN_00482030/004820e0; 1 caller FUN_004826d0
+00482820,FUN_00482820,vehicle,C1,mapped,,,, physics contact callback registrar: FUN_0055dec0 source; registers 3 callbacks LAB_004827a0/4827c0/482800; 1 caller FUN_0047f450
+00482900,FUN_00482900,vehicle,C1,mapped,,,, Replay::GetSize: frame_count*36+412; FUN_004a2c48 frame count; 3 callers
+00483a70,FUN_00483a70,render,C1,mapped,,,, damage tube segment renderer: 10 segments; FUN_00482ae0 spline; FUN_004b59c0 draw; alternating colour bands; 1 caller FUN_00411ce0
+00483ed0,FUN_00483ed0,vehicle,C1,mapped,,,, create physics joint+2 shapes: FUN_004c77c0x2 shapes; FUN_004c0b30 body; FUN_004c1d30 joint; stiffness=0.1f limit=300.0f; 1 caller FUN_00484000
+00483fa0,FUN_00483fa0,vehicle,C1,mapped,,,, destroy physics joint+shapes: frees body/shapes/joint+composite; 1 caller FUN_00484060
+00484000,FUN_00484000,vehicle,C1,mapped,,,, allocate joint slot: guards pool[4] DAT_006ce81c/82c; calls FUN_00483ed0; 0 callers
+00484060,FUN_00484060,vehicle,C1,mapped,,,, free joint slot: guards pool[4] DAT_006ce81c/82c; calls FUN_00483fa0; zeros slot; 0 callers
+004840d0,FUN_004840d0,vehicle,C1,mapped,,,, joint pointer getter: bounds [0,3]; returns DAT_006ce81c[param_1]; 2 callers
+004840f0,FUN_004840f0,vehicle,C1,mapped,,,, record array pointer+count setter: fastcall; DAT_006cec40[param_2]=ptr; counts 4B entries until null quad into DAT_006ce840[param_2]; 1 caller
+00441490,FUN_00441490,camera,C1,unmapped,,,,cleanup for DAT_006831c0 object; no direct callers
+004414b0,FUN_004414b0,camera,C1,unmapped,,,,camera tilt/zoom update from keyboard+gamepad axis input; caller FUN_0040d470
+00441b30,FUN_00441b30,camera,C1,unmapped,,,,camera entity struct init from config block; caller CameraPath::InitForTrack
+00442410,FUN_00442410,camera,C1,unmapped,,,,array index getter: &DAT_008964fc + n*0xd8
+00442420,FUN_00442420,camera,C1,unmapped,,,,array float getter: *(float*)(&DAT_00896570 + n*0xd8)
+00443090,FUN_00443090,unknown,C1,unmapped,,,,trivial getter returns &DAT_00897ff0; caller FUN_004847d0
+004430c0,FUN_004430c0,frontend,C1,unmapped,,,,conditional frontend action: if param1&&frontend_alpha_get()==3 call FUN_0042f520
+004430e0,FUN_004430e0,render,C1,unmapped,,,,D3D draw-primitive call: 6 floats + packed RGBA; writes verts to DAT_00828328 buffer
+00443210,FUN_00443210,render,C1,unmapped,,,,draws colored diamond/cross marker via two FUN_004430e0 calls; caller FUN_00444ff0
+00448770,FUN_00448770,render,C1,unmapped,,,,init 3 RW frame slots from *(param1+0x1011c) -> DAT_00896490
+00448820,FUN_00448820,render,C1,unmapped,,,,init 5 RW child frame slots from *(param1+0x1012c) -> DAT_00896460
+00448880,FUN_00448880,render,C1,unmapped,,,,init 3 RW child frame slots from *(param1+0x10128) -> DAT_00896480
+00448cb0,FUN_00448cb0,render,C1,unmapped,,,,orbital animation tick for DAT_00896490 3-slot array; sin/cos; advances 3 angle globals
+00448dc0,FUN_00448dc0,render,C1,unmapped,,,,per-frame update for DAT_00896460 5-slot array via FUN_00442410/FUN_00442420
+00448e20,FUN_00448e20,render,C1,unmapped,,,,orbital animation tick for DAT_00896480 3-slot array; mirror of FUN_00448cb0
+00448ef0,FUN_00448ef0,render,C1,unmapped,,,,tick dispatcher: calls FUN_00448cb0+e20+dc0 then sinusoidal bob on DAT_008962e0[DAT_00683248]
+004495d0,FUN_004495d0,unknown,C1,unmapped,,,,getter: *(int*)(DAT_00896278+4)+0x40; caller FUN_00460350
+00449880,FUN_00449880,particle,C1,unmapped,,,,fills 256-float array DAT_00683ec8 with reset height value; called from smoke init
+00449b30,FUN_00449b30,particle,C1,unmapped,,,,"smoke particle system init: alloc pool, bind 'smoke' texture, 2197 particles, 256 emitters"
+00449bb0,FUN_00449bb0,particle,C1,unmapped,,,,"car shadow billboard init: bind 'car_shadow' texture, 2060 max, 80 instances"
+00490000,FUN_00490000,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490000.md,,,clump-pool clear: iterates 120-entry DAT_0086a4ac stride 0x14; calls FUN_004e8090(slot,0); caller FUN_0040cfd0
+00490020,FUN_00490020,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490020.md,,,particle spawn into clump pool: position/velocity/scale/clump; param_4=1/2 fetches player bone pos via FUN_0041f290
+00490e50,FUN_00490e50,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490e50.md,,,LineRain fatal error handler: formatted log + FUN_004a332b(-1) no-return; names the subsystem via string literal
+00490e70,FUN_00490e70,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490e70.md,,,LineRain param init (defaults): byte colours + float ranges + velocity; U-3705 DAT_00771538/3c purpose
+00490f50,FUN_00490f50,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490f50.md,,,LineRain SetHeadColour: writes 4 bytes to DAT_00616030..33
+00490f80,FUN_00490f80,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490f80.md,,,LineRain SetTailColour: writes 4 bytes to DAT_00616034..37
+00490fb0,FUN_00490fb0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490fb0.md,,,LineRain SetSpawnRegion: X/Z range + Y pair
+00490ff0,FUN_00490ff0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00490ff0.md,,,LineRain SetCameraScale: _DAT_006146b0/b4 velocity scale
+00491010,FUN_00491010,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491010.md,,,LineRain SetScale: _DAT_006146b8/bc width range 3.0f..6.0f
+00491030,FUN_00491030,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491030.md,,,LineRain SetRenderColours: 6-float cluster at 006146d0..e4
+004910c0,FUN_004910c0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x004910c0.md,,,LineRain per-frame update (random respawn): 4x224 particles camera-space via FUN_004671a0/FUN_00467210; called by FUN_00491490=RainRender
+00491340,FUN_00491340,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491340.md,,,LineRain per-frame update (table respawn): DAT_0077152c vec3 table; lifetime>7; no callers visible
+00491530,FUN_00491530,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491530.md,,,LineRain teardown: free DAT_00771530+DAT_0077152c via vtable[0x10c]; caller FUN_00426b40
+00491b20,FUN_00491b20,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491b20.md,,,spark/lightning register bolt source: max 8 entries stride 0x38 at DAT_00771558; no callers visible
+00491bd0,FUN_00491bd0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491bd0.md,,,spark clear vertex buffer: DAT_00869ca0 0x4000 bytes stride 0x20
+00491c00,FUN_00491c00,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491c00.md,,,spark init: alloc 0x4000 + FUN_00534b60(0x200,0x80007) point-sprites + white texture fill; no callers visible
+00491e50,FUN_00491e50,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491e50.md,,,spark spawn into free slot: EAX=buffer EDI=10-float descriptor; sets pos/vel; conv [UNCERTAIN]
+00491f00,FUN_00491f00,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00491f00.md,,,spark per-frame update + vertex stream build: proximity spawn if <_DAT_005cf694 from param_1+0x40; 3-stream age-based colour/UV; caller FUN_00448ef0
+00492170,FUN_00492170,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x00492170.md,,,spark teardown: free geometry + buffer + render entry; no callers visible
+004921b0,FUN_004921b0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x004921b0.md,,,spark render dispatch: vtable[0x48] on DAT_00771724 if active-count>0; no callers visible
