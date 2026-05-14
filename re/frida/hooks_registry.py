@@ -1086,4 +1086,26 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-d-s3 — hud_ingame_promote_c2 (C2->C3)
+    # HudDispatch.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0040dfc0  HudIngameDispatch
+    # void: top-level HUD in-game dispatcher. Two-stage guard (draw-enable +
+    # race-state 5-7), then double switch (sub-mode / game-mode). 13 callees
+    # all C2+. Called at main menu with DAT_0063ba8c < 5 -> returns immediately
+    # via guard 2 (returns void; wrapped as uint32 0 for registry compat).
+    # arg_type='none': both paths must agree on void/0 at quiescent main menu.
+    # Evidence: log/diff_hud_ingame_dispatch.csv
+    'hud_ingame_dispatch': {
+        'rva':            0x0040dfc0,
+        'export':         'HudIngameDispatch',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }

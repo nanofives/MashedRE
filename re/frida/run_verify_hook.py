@@ -22,7 +22,21 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS
 
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
+
+def _find_original(script_root: Path) -> Path:
+    """Locate original/MASHED.exe: handles both main-repo and worktree invocations."""
+    candidate = script_root / 'original' / 'MASHED.exe'
+    if candidate.exists():
+        return candidate
+    # Walk up: worktree is at <main>/.worktrees/<name>/
+    parent = script_root.parent.parent
+    candidate2 = parent / 'original' / 'MASHED.exe'
+    if candidate2.exists():
+        return candidate2
+    return candidate  # let the later check produce a clear error
+
+
+MASHED_EXE = _find_original(ROOT)
 ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'verify_hook_install_template.js'
 LOG_DIR    = ROOT / 'log'
