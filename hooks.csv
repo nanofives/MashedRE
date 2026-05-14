@@ -310,7 +310,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041ded0,sub_0041ded0,hud,C2,mapped,re/analysis/hud_ingame_promote_c2/0x0041ded0.md,,,guard int32_t DAT_0063d5e8≠0→FUN_0041de80(param_1); param_1=1(modes 4/7/9) or 0(mode 8); undefined4 passthrough
 0041e850,sub_0041e850,hud,C2,mapped,re/analysis/hud_ingame_promote_c2/0x0041e850.md,,,guard int32_t DAT_0063d7e0≠0→FUN_0041e630; sub-mode 2; called identically in both DAT_0063ba8c branches
 00426ba0,sub_00426ba0,hud,C2,mapped,re/analysis/hud_ingame_promote_c2/0x00426ba0.md,,,getter: returns undefined4 DAT_0066d704; HUD draw-enable flag; 5 bytes; no side-effects
-0042f6a0,sub_0042f6a0,hud,C2,mapped,re/analysis/hud_ingame_promote_c2/0x0042f6a0.md,,,getter: returns undefined4 DAT_0067e9fc; game sub-mode; switch cases 2/3/4/5/6/10/0xb in HUD_INGAME_FN; 5 bytes
+# 0042f6a0 stale-C2 row removed 2026-05-14 c3-batch-c-s3: canonical C3 row at GetRaceSubMode/util below
 004929d0,FUN_004929d0,util,C2,mapped,re/analysis/game_state/0x004929d0.md,,,STATE_FN: switch(DAT_00771968) 7 cases; session-phase dispatcher; calls course-load in case 2; U-0487 U-0488; S-0480..S-0490; [drift-corrected 2026-05-12: existing analysis is full C2 mechanical-case-by-case; promoted to satisfy caller-at-C2+ gate for game_state_d2 leaf C3 promotions]
 0040b430,FUN_0040b430,util,C1,mapped,re/analysis/game_state/0x0040b430.md,,,adds param_2 to int array at 0x008a94f0[param_1]; overflow to 0x008a94fc if param_1>3; U-0489
 0x00491490,FUN_00491490,C1,render,re/analysis/camera_follow/0x00491490.md,,,,
@@ -551,9 +551,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0040b7a0,FUN_0040b7a0,frontend,C2,mapped,re/analysis/frontend_promote_menus_b/0040b7a0.md,,,returns DAT_0063b8ec (hotkey string base getter); D-2768 cleared; session frontend_promote_menus_b
 0040b7b0,FUN_0040b7b0,frontend,C2,mapped,re/analysis/frontend_promote_menus_b/0040b7b0.md,,,per-player hotkey getter: switch(param_2 0-3) → 4 arrays DAT_008a9530/9560/9540/9550; D-2769 cleared; session frontend_promote_menus_b
 0040b6b0,FUN_0040b6b0,frontend,C2,mapped,re/analysis/frontend_promote_menus_b/0040b6b0.md,,,returns DAT_008a9530[param_1] (mode-score getter by slot); D-2770 cleared; session frontend_promote_menus_b
-0040b6c0,FUN_0040b6c0,frontend,C2,mapped,re/analysis/hud_frontend_d3/0x0040b6c0.md,,,indexed read DAT_008a94f0[param_1]; leaf; D-2771 cleared; session frontend_c0_promote
+0040b6c0,FrontendArrayGet,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendAccessors.cpp,c3-batch-c-s3,log/diff_frontend_array_get.csv,indexed read DAT_008a94f0[param_1]; leaf; leaf-exemption; A/B 12/12 GREEN; c3-batch-c-s3 2026-05-14
 00474e60,FUN_00474e60,frontend,C0,deferred,,,,depth-3 callee: float-to-x87-angle converter; caller FUN_00434720; D-2772; bucket hud_frontend_d2
-0040ad20,FUN_0040ad20,frontend,C2,mapped,re/analysis/hud_frontend_d3/0x0040ad20.md,,,pure getter DAT_008a95ac; leaf; D-2773 cleared; session frontend_c0_promote
+0040ad20,FrontendGlobalGet,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendAccessors.cpp,c3-batch-c-s3,log/diff_frontend_global_get.csv,pure getter DAT_008a95ac; leaf; leaf-exemption; A/B 10/10 GREEN; c3-batch-c-s3 2026-05-14
 00436810,FUN_00436810,frontend,C2,mapped,re/analysis/hud_frontend_d5/0x00436810.md,,,local player slot occupancy: param_1==12->false; mode0 non-zero DAT_007f0a7c rows; modeN type-2 DAT_007f0a74; U-3410 U-3411; D-2774 cleared; session frontend_c0_promote
 0042ebe0,FUN_0042ebe0,frontend,C2,mapped,re/analysis/promote_c2_frontend_menus/0x0042ebe0.md,,iterates 0x7f0a48 stride 0x78 (4x); dispatch param_1 10/11/12 checks field chains; returns bool; D-2775 cleared,"player-slot fullness check: iterates 0x7f0a48 stride 0x1e0; param_1 {10,11,12} dispatch; returns bool; promote_c2_frontend_menus-20260513"
 0042ee40,FUN_0042ee40,frontend,C2,mapped,re/analysis/promote_c2_frontend_menus/0x0042ee40.md,,outer switch DAT_0067e9fc (2..10); calls FUN_0040bb90 for param_1 in {0,outer switch DAT_0067e9fc (2..10); FUN_0040bb90 dispatch; >=1000 offset adjust; promote_c2_frontend_menus-20260513
@@ -772,7 +772,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004307a0,FUN_004307a0,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x004307a0.md,,,elapsed-time vs threshold check: reads 3-float table DAT_00614718[DAT_0067f17c*0xc]; calls 00429a70/80/90; U-3596 U-3597; D-4851 cleared; session frontend_c0_promote
 0042f020,FUN_0042f020,frontend,C2,mapped,re/analysis/frontend_c0_promote/0x0042f020.md,,,vehicle flag clear: __fastcall switch(param_1) zeroes byte DAT_007f0e50+in_EAX*0xc; leaf; U-3594; D-4852 cleared; session frontend_c0_promote
 00431d00,FUN_00431d00,frontend,C2,mapped,re/analysis/game_mode_cont2/0x00431d00.md,,,7-global init + FUN_00431b80 x3; car-select state reset; callers FUN_0043dfd0+FUN_004924f0; D-4853; U-3641 U-3642; C3-attempt blocked: FUN_00431b80 hangs at quiescent state (ESI=0→infinite loop); see U-1655
-004309b0,FUN_004309b0,frontend,C2,mapped,re/analysis/hud_frontend_d5/0x004309b0.md,,,game-mode-to-index mapper: mode 2->0 3->1 4->2 5->5 6..9->3 10->11; leaf; D-4854 cleared; session frontend_c0_promote
+004309b0,FrontendModeIndex,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendMode.cpp,c3-batch-c-s3,log/diff_frontend_mode_index.csv,game-mode-to-index mapper: mode 2->0 3->1 4->2 5->5 6..9->3 10->11; leaf; leaf-exemption; A/B 10/10 GREEN; c3-batch-c-s3 2026-05-14
 00492340,FUN_00492340,frontend,C2,mapped,re/analysis/game_mode_cont2/0x00492340.md,,,player-entry init: stride-0x4c array at 0x7f1058; guard [+4]; writes [0]=1 [+c]=10 [+10]=3 [+14]=0xff; caller FUN_0043dfd0; D-4855; U-3643 U-3644
 00430b60,MenuSlotCount,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/FrontendState.cpp,c3/batch-a-s4,log/diff_menu_slot_count.csv,47b pure leaf; counts non-(-1) among DAT_007f1a14/24/34/44 (stride 0x10); returns char 0..4; A/B 10/10 GREEN; leaf-exemption; U-3600 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x00430b60.md
 00492340,CarSlotInit,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/GameModeInit.cpp,c3/batch-a-s5,log/diff_CarSlotInit.csv,46b pure leaf; guard 0x7f105c+idx*0x4c; writes [0]=1 [+c]=10 [+10]=3 [+14]=0xff; A/B 10/10 GREEN; leaf-exemption; U-3643 U-3644 open (structural/semantic blocks:none); analysis re/analysis/game_mode_cont2/0x00492340.md
@@ -982,11 +982,11 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004e68a0,FUN_004e68a0,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e68a0.md,,,set field +0x18: if changed call FUN_004e8e90/FUN_004e8ea0; copy 4 dwords from param_2+0x5c sub-obj; FUN_004e4440+FUN_004c0e50 path; S-1927..S-1928 U-1940..U-1941
 004e6710,FUN_004e6710,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6710.md,,,circular intrusive list ForAll: head at param_1+0x18; container offset (-4-DAT_007d722c); callback(obj param_3); U-1942
 004e6920,FUN_004e6920,gameplay,C1,mapped,re/analysis/powerups_d3/0x004e6920.md,,,FUN_004d8060+FUN_004d8bd0+FUN_004e8ea0; clear +0x18; FUN_004e4440+FUN_004c0e50 path; FUN_004c0790; vtable 0x7d3ff8+0x11c+0x7d7200; S-1929 U-1943
-0040ad20,FUN_0040ad20,frontend,C2,mapped,re/analysis/hud_frontend_d3/0x0040ad20.md,,,pure getter DAT_008a95ac; leaf; D-2773 cleared; session frontend_c0_promote
+# 0040ad20 duplicate C2 row removed 2026-05-14 c3-batch-c-s3: promoted to C3 above (FrontendGlobalGet)
 0040b460,FUN_0040b460,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b460.md,,,4-elem sort+permutation; mode override DAT_007f0fd0==4/7/9; U-2087 U-2088; S-2080(S-0491); D-2756 cleared
 0040b620,FUN_0040b620,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b620.md,,,4-elem descending bubble-sort permutation; DAT_008a9530 vs -100 sentinel; U-2089; D-2755 cleared
 0040b6b0,FUN_0040b6b0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b6b0.md,,,indexed read DAT_008a9530[param_1]; D-2770 cleared
-0040b6c0,FUN_0040b6c0,frontend,C2,mapped,re/analysis/hud_frontend_d3/0x0040b6c0.md,,,indexed read DAT_008a94f0[param_1]; leaf; D-2771 cleared; session frontend_c0_promote
+# 0040b6c0 duplicate C2 row removed 2026-05-14 c3-batch-c-s3: promoted to C3 above (FrontendArrayGet)
 0040b7a0,FUN_0040b7a0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b7a0.md,,,global read DAT_0063b8ec; D-2768 cleared
 0040b7b0,FUN_0040b7b0,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040b7b0.md,,,4-case array selector dispatch (DAT_008a9530/40/50/60); U-2090; D-2769 cleared
 0040bb70,FUN_0040bb70,frontend,C1,mapped,re/analysis/hud_frontend_d3/0x0040bb70.md,,,wrapper: FUN_004c5c00(DAT_0063b900 param_1); S-2081(S-0440); D-2753 cleared
@@ -1454,7 +1454,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0042e8b0,FUN_0042e8b0,frontend,C1,new,re/analysis/hud_frontend_d5/0x0042e8b0.md,hud_frontend_d5-20260511-1710,,phase-cycling sprite animator: 0x1ff-phase index; fade in/out iVar5/iVar6 α; sprite A at phase 0xe0..0x1e0; sprite B at alternate phase; 4 bg rects via FUN_00472c60; DAT_008990e0+=0x20; U-3418 U-3419
 0042ed70,FUN_0042ed70,frontend,C2,mapped,re/analysis/promote_c2_frontend_menus/0x0042ed70.md,hud_frontend_d5-20260511-1710,,trig-adjusted text draw: FUN_004282a0 width; fsin/fcos; FUN_00427ff0; promote_c2_frontend_menus-20260513
 00430670,FUN_00430670,frontend,C1,new,re/analysis/hud_frontend_d5/0x00430670.md,hud_frontend_d5-20260511-1710,,player slot resolver: mode10→nth non-zero in DAT_0067ea98; else FUN_00413f90+stride 0x30; resolves collision when entry==DAT_007f1a1c; returns slot or -1; U-3422 U-3423
-004309b0,FUN_004309b0,frontend,C2,mapped,re/analysis/hud_frontend_d5/0x004309b0.md,hud_frontend_d5-20260511-1710,,game-mode-to-index mapper: mode 2->0 3->1 4->2 5->5 6..9->3 10->11; leaf; D-4854 cleared; session frontend_c0_promote
+# 004309b0 duplicate C2 row removed 2026-05-14 c3-batch-c-s3: promoted to C3 above (FrontendModeIndex)
 004a2b60,FUN_004a2b60,frontend,C1,new,re/analysis/hud_frontend_d5/0x004a2b60.md,hud_frontend_d5-20260511-1710,,vsprintf-style formatter: fake FILE on stack (cnt=0x7fffffff flag=0x42) → FUN_004a504f; null-terminates output; returns char count
 004627b0,FUN_004627b0,audio,C1,new,re/analysis/audio_sfx_dispatch_d3/0x004627b0.md,,,audio device state check: switch DAT_00773920; returns 1 for cases 2/3/4/7 else 0; no side effects; D-7380
 005a7f70,FUN_005a7f70,audio,C1,new,re/analysis/audio_sfx_dispatch_d3/0x005a7f70.md,,,"RWS stream node constructor wrapper: calls FUN_005aa560(&DAT_007dcae8,...) with arg swap; D-7381"

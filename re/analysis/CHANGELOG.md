@@ -1049,3 +1049,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0046dc00  EntityFieldSet  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_EntityFieldSet.csv; pure leaf; leaf-exemption; U-3645 U-3646 open blocks:none
 2026-05-14  00492340  CarSlotInit  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_CarSlotInit.csv; pure leaf; leaf-exemption; U-3643 U-3644 open blocks:none
 2026-05-14  frida-sweep-20260514-2020  frida-sweep-release  branches=10 merged  integration-diff=GREEN-37/38  hooks=38  note=menu_entry_get crash-equality exception documented
+2026-05-14  0042f6a0  GetRaceSubMode/HudSubModeGet  C3(already)->C3  c3-batch-c-s3: stale C2 row (hud/sub_0042f6a0) removed; HudSubModeGet is second export for already-C3 RVA; Frida A/B 10/10 GREEN (log/diff_hud_sub_mode_get.csv); no tracker action needed; frida-sweep to resolve duplicate impl
+2026-05-14  0040ad20  FrontendGlobalGet  C2->C3  c3-batch-c-s3; Frontend/FrontendAccessors.cpp; pure getter DAT_008a95ac; leaf-exemption; Frida A/B 10/10 GREEN (log/diff_frontend_global_get.csv)
+2026-05-14  0040b6c0  FrontendArrayGet  C2->C3  c3-batch-c-s3; Frontend/FrontendAccessors.cpp; indexed read DAT_008a94f0[param_1]; leaf-exemption; Frida A/B 12/12 GREEN (log/diff_frontend_array_get.csv)
+2026-05-14  004309b0  FrontendModeIndex  C2->C3  c3-batch-c-s3; Frontend/FrontendMode.cpp; 52b switch mode-2→index; leaf-exemption; Frida A/B 10/10 GREEN (log/diff_frontend_mode_index.csv)
+2026-05-14  00436810  FUN_00436810  DEFERRED->DEFERRED  c3-batch-c-s3: refused C2->C3; [UNCERTAIN U-3410 U-3411] unresolved in body; semantic/structural uncertainties block gate

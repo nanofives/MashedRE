@@ -1086,4 +1086,75 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-c-s3 — hud+frontend getters batch-c (C2→C3, 4 candidates)
+    # HUD/HudDispatch.cpp, Frontend/FrontendAccessors.cpp, Frontend/FrontendMode.cpp
+    # Pure-leaf HUD sub-mode and Frontend global/array/mode-index getters.
+    # Candidate 0x00436810 DEFERRED — U-3410/U-3411 unresolved.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042f6a0  HudSubModeGet
+    # Returns DAT_0067e9fc (uint32_t global). 5 bytes: MOV EAX,[imm32]; RET.
+    # Used as switch discriminant in FUN_0040dfc0 (per-frame HUD dispatch).
+    # read_global: write sentinel, call fn(), verify return == sentinel.
+    # ref: re/analysis/hud_ingame_promote_c2/0x0042f6a0.md
+    'hud_sub_mode_get': {
+        'rva':            0x0042f6a0,
+        'export':         'HudSubModeGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067e9fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000002],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0040ad20  FrontendGlobalGet
+    # Returns DAT_008a95ac (uint32_t global). 6 bytes: MOV EAX,[imm32]; RET.
+    # read_global: write sentinel, call fn(), verify return == sentinel.
+    # ref: re/analysis/hud_frontend_d3/0x0040ad20.md
+    'frontend_global_get': {
+        'rva':            0x0040ad20,
+        'export':         'FrontendGlobalGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x008a95ac,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00FF00FF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0040b6c0  FrontendArrayGet
+    # Returns DAT_008a94f0[param_1] — indexed 4-byte read. 11 bytes.
+    # No bounds check in original; int_scalar: pass index, compare return.
+    # ref: re/analysis/hud_frontend_d3/0x0040b6c0.md
+    'frontend_array_get': {
+        'rva':            0x0040b6c0,
+        'export':         'FrontendArrayGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1],
+        'path2_tests':    [0, 1, 2, 9],
+    },
+
+    # 0x004309b0  FrontendModeIndex
+    # int(void): reads DAT_0067e9fc, computes (mode-2), switch → mapped index.
+    # 52 bytes. Cases: 0→0, 1→1, 2→2, 3→5, 4..7→3, 8→11, default→(mode-2).
+    # arg_type='none': called 10x at quiescent state; compare return value.
+    # ref: re/analysis/hud_frontend_d5/0x004309b0.md
+    'frontend_mode_index': {
+        'rva':            0x004309b0,
+        'export':         'FrontendModeIndex',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
