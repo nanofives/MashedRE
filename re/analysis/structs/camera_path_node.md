@@ -151,6 +151,133 @@ Scene root global: `DAT_00646e58` (returned by FUN_00426020; passed as scene/cam
 
 ---
 
+---
+
+## RwCamera additional fields (batch_m evidence, render_frame plates)
+
+New fields observed in FUN_0042f530 (raster copy) and FUN_0040de30/FUN_0040df20 (viewport save/restore).
+
+| Offset | Width | Type | First RVA | Tentative name |
+|--------|-------|------|-----------|----------------|
+| +0x60 | 4 | ptr | FUN_0042f530 (copied via FUN_004c7760 src field) | Frame-buffer RwRaster ptr — set to output raster handle; first cite 0x0042f550 |
+| +0x64 | 4 | ptr | FUN_0042f530 (copied via FUN_004c7760 z-buf field) | Z-buffer RwRaster ptr — set to depth raster handle; first cite 0x0042f558 |
+
+These two new fields extend the existing RwCamera table. `FUN_0042f530` copies the camera's raster pair from `DAT_0067f190` (source camera pointer) via the FUN_004c7760 vtable call.
+
+Frame matrix save buffer: `DAT_0063b928` (64 bytes, 16 DWORDs) holds saved frame +0x10..+0x4f matrix during viewport push/pop (FUN_0040de30/FUN_0040df20). Paired saves: projection type at `DAT_0063b9a8`, view-window X/Y at `DAT_0063b9ac`/`DAT_0063b9b0`.
+
+---
+
+## D3D9 Device Globals Cluster (batch_m evidence, promote_c2_render_d3d9 plates)
+
+**Evidence sources:** FUN_004c8650, FUN_004c8690, FUN_004c8740, FUN_004c8800, FUN_004c8c70, FUN_004c8e50, FUN_004cc820, FUN_004cc9f0, FUN_004dcf90, FUN_004dcff0, FUN_004dd050
+
+### IDirect3D device pointers
+
+| Address | Type | Tentative name | Notes |
+|---------|------|----------------|-------|
+| `DAT_007d4110` | IDirect3DDevice9* | `g_d3dDevice` | Core device pointer; set NULL on shutdown; first cite 0x004c8c70 |
+| `DAT_007d4108` | IDirect3D9* | `g_d3d` | D3D interface; used for GetDeviceCaps in FUN_004c8740 |
+| `DAT_007d410c` | UINT | `g_adapterIndex` | Adapter ordinal; passed to capability checks |
+| `DAT_007d4104` | HWND | `g_hwnd_d3d` | Window handle; passed to GetWindowRect in FUN_004c8800 |
+| `DAT_007d4120` | int | `g_deviceActive` | Non-zero = device alive; zeroed on shutdown |
+| `DAT_007d4124` | int | `g_stencilPresent` | 1 = depth/stencil format includes stencil component |
+| `DAT_007d4128` | ptr | `g_d3dResource0` | D3D resource handle; released on shutdown |
+| `DAT_007d4130` | ptr | `g_d3dResource1` | D3D resource handle; released on shutdown |
+
+### Render target table
+
+| Address | Type | Tentative name | Notes |
+|---------|------|----------------|-------|
+| `DAT_007d4144` | int | `g_rtCount` | Render-target count |
+| `DAT_007d4148` | int | `g_rtAuxCount` | Render-target aux count |
+| `DAT_007d414c` | ptr | `g_rtArrayBase` | Render-target array base ptr |
+
+### Constant buffer pool
+
+| Address | Type | Tentative name | Notes |
+|---------|------|----------------|-------|
+| `DAT_007d4154` | int | `g_cbDirtyCounter` | Reset/dirty counter; zeroed on entry to constant-buffer pool init |
+| `DAT_007d4158` | dword[260] | `g_cbSlotTable` | Constant-buffer slot table (0x410 bytes = 260 DWORDs) |
+| `DAT_007d4568` | ptr | `g_cbPoolHandle` | NULL = not created yet |
+| `DAT_007d456c` | ptr | `g_cbPoolAux` | Zeroed on shutdown |
+| `DAT_007d4570` | ptr | `g_cbResource` | Additional D3D resource ptr; released on shutdown |
+| `DAT_007d458c` | int | `g_sseFtzFlag` | MXCSR bit 15 control |
+
+### D3D capability / device-type globals
+
+| Address | Type | Tentative name | Notes |
+|---------|------|----------------|-------|
+| `DAT_006181b0` | D3DDEVTYPE | `g_d3dDevType` | HAL=1, SW=3; from FUN_004c8740 |
+| `DAT_006181b4` | UINT | `g_msaaMaxType` | Max D3DMULTISAMPLE_TYPE supported |
+| `DAT_006181b8` | UINT | `g_msaaQualityCount` | MSAA quality count |
+| `DAT_006181bc` | UINT | `g_msaaQualityPlusOne` | Quality levels count + 1 |
+| `DAT_006181c0` | UINT | `g_msaaAltCount` | Alternate MSAA count |
+| `DAT_006181c4` | UINT | `g_refreshRateCap` | Max refresh rate cap |
+
+### D3DPRESENT_PARAMETERS staging globals
+
+| Address | Type | Notes |
+|---------|------|-------|
+| `DAT_009120e0` | UINT | Back-buffer width |
+| `DAT_009120e4` | UINT | Back-buffer height |
+| `DAT_009120e8` | D3DFORMAT | Back-buffer format |
+| `DAT_009120f0` | D3DMULTISAMPLE_TYPE | Multisample type |
+| `DAT_009120f4` | UINT | Multisample quality − 1 |
+| `DAT_009120f8` | D3DSWAPEFFECT | 1=DISCARD, 2=FLIP, 3=COPY/windowed |
+| `DAT_00912100` | BOOL | Windowed flag |
+| `DAT_00912104` | UINT | Presentation flag (= 1) |
+| `DAT_00912108` | D3DFORMAT | Depth/stencil format |
+| `DAT_00912110` | UINT | Refresh rate |
+| `DAT_00912114` | DWORD | Presentation flags (0x80000000 observed) |
+
+### D3D vtable offset table (via DAT_007d3ff8 / DAT_007d3ffc)
+
+`DAT_007d3ffc` holds a fixed byte offset added to `DAT_007d3ff8` to reach the sqrt/inv-sqrt/transform fn-ptr sub-table:
+- `*(DAT_007d3ffc + DAT_007d3ff8)` — sqrt mantissa lookup table (FUN_004c3bf0)
+- `*(DAT_007d3ffc + 4 + DAT_007d3ff8)` — inv-sqrt mantissa lookup table (FUN_004c3c60)
+- `*(DAT_007d3ffc + 0x08 + DAT_007d3ff8)` — fn-ptr A: point transform (FUN_004c3730; candidate RwV3dTransformPoints)
+- `*(DAT_007d3ffc + 0x0c + DAT_007d3ff8)` — fn-ptr B: vector transform (FUN_004c3880; candidate RwV3dTransformVector)
+- `*(DAT_007d3ffc + 0x10 + DAT_007d3ff8)` — fn-ptr C: public trampoline (FUN_004c3dc0)
+
+Additional IDirect3DDevice9 vtable slots called by FUN_004c8c70 and surrounding plates:
+
+| Vtable byte offset | Candidate D3D method | Evidence RVA |
+|--------------------|---------------------|--------------|
+| +0x68 | CreateVertexBuffer | 0x004dcaa0 |
+| +0x104 | SetTexture | 0x004c8c70 |
+| +0x108 | Pool alloc (internal) | 0x004cc820 |
+| +0x10c | Pool free (internal) | 0x004cc9f0 |
+| +0x118 | Pool alloc (secondary) | 0x004cc820 |
+| +0x11c | Pool free (secondary) | 0x004dcff0 |
+| +0x15c | SetPixelShader | 0x004c8c70 |
+| +0x170 | SetVertexDeclaration | 0x004c8c70 |
+| +0x190 | SetStreamSource | 0x004c8c70 |
+| +0x1a0 | SetVertexShader | 0x004c8c70 |
+| +0x1ac | SetIndices | 0x004c8c70 |
+
+---
+
+## RwFreeList struct (batch_m evidence, promote_c2_render_d3d9 plates)
+
+**Evidence sources:** FUN_004cc820 (alloc), FUN_004cc9f0 (free), FUN_004ccba0 (init).
+
+Global free-list chain head: `DAT_007d45cc`. Secondary pool allocator: `DAT_007d45fc` (or NULL). Pre-alloc enable flag: `DAT_006182b0` (0 = disable).
+
+| Offset | Width | Tentative name | Notes |
+|--------|-------|----------------|-------|
+| +0x00 | 4 | `elemSize` | Aligned element size |
+| +0x04 | 4 | `elemsPerBlock` | param_2 at alloc |
+| +0x08 | 4 | `bitmapRowStride` | `(elemsPerBlock + 7) / 8` |
+| +0x0c | 4 | `alignment` | Alignment requirement |
+| +0x10 | 4 | `freeHead` | Free-block list head (sentinel node; initially points to itself) |
+| +0x14 | 4 | `freePrev` | Prev-ptr in doubly-linked sentinel |
+| +0x18 | 1 | `flags` | bit 0 = caller-supplied header; bit 1 = pool-freelist mode |
+| +0x1c | 4 | `globalNext` | Next in global free-list chain |
+| +0x20 | 4 | `globalPrev` | Back-link in global free-list chain |
+
+---
+
 ## Open uncertainties
 
 | U-ID | Gap |

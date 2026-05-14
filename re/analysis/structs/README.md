@@ -17,6 +17,12 @@
 | [rw_plugin_registry.md](rw_plugin_registry.md) | 0x007d3ff8 / 0x007d3ff4 / 0x00617fe0 | RW engine state struct extended layout (+0x10 dispatcher / +0xCC error callback / +0x124 state); engine-level RwPluginRegistry global |
 | [audio_allocator.md](audio_allocator.md) | 0x007dda80 / 0x007ddab0 / 0x007dda28 | AudioBitmapPool header (9×u32), AudioAllocBlock layout, AudioSubStructA/B (at audio_obj+0x24/+0x34); vtable alloc/dealloc trampolines at DAT_007d3ff8+0x108/0x10c/0x114 |
 | [track_node_record.md](track_node_record.md) | 0x005f33f8 (array) / 0x0063d7e4 (active ptr) | 0x48-byte track descriptor record; stride 72b; +0x10 int id; +0x14/+0x18/+0x24/+0x44 nullable fn-ptrs; U-3213/3214/3128 open |
+| [race_state_globals.md](race_state_globals.md) | 0x0067e844..0x0067f19c (static BSS) | Race trigger/arm/timer state, transition block, leaderboard entry array (stride 0x24), grid placement state, 5 per-track reset arrays (0x0076xxxx); U-1073/U-1075/U-1508/U-3829..3834 open |
+| [camera_path_node.md](camera_path_node.md) | various (passed by ptr) | RwCamera struct (+0x04/+0x14/+0x60/+0x64/+0x68/+0x80/+0x84/+0x94×6planes), RwFrame hierarchy (+0x03/+0x10/+0x50/+0x98/+0x9c), camera path struct, path node stride 0x24, cam-anim tables; D3D9 device globals cluster (DAT_007d4104..7d458c); RwFreeList struct (+0x00..+0x20) |
+| [audio_rws_engine.md](audio_rws_engine.md) | 0x007dc94c / 0x0068f640 / 0x0069049c | RWS audio node globals: engine init flag, 4 per-type node descriptors (DAT_007dcae8/dc980/dde70/dcb78), 200-channel static DSound pool, stream path layout, channel struct partial (+0x30/+0x34/+0x3c/+0x58-60) |
+| [rw_engine_init_config.md](rw_engine_init_config.md) | 0x00773200..0x00773920 | Display-mode selection globals (fullscreen flag, current mode/subsystem indices, subsystem name table), mode table layout (stride 0x14), CRT error flag at 0x007739f0; U-3029 open |
+| [input_state.md](input_state.md) | DAT_007e95c0 / DAT_007730b0 / Lua_State | Controller config struct (4 slots × 0x200 bytes), device-type array (stride 0x80), key-table ptrs, Lua_State layout (11 offsets), TObject slot layout (16 bytes), render config getters |
+| [frontend_menu_state.md](frontend_menu_state.md) | DAT_0067ed40 / DAT_007f0a48 / DAT_00898ac0 | Menu cursor/limit arrays (stride 0x40), menu entry validity (stride 0x10), player slot struct (stride 0x1e0/480 bytes), menu entry array (52-byte stride, 30 entries), score/rank arrays; U-3836..3838 open |
 
 ---
 
