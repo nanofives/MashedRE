@@ -13,12 +13,12 @@ A row goes into DEFERRED when:
 | ID | Title | Why deferred | Re-pickup when | Phase tag |
 |----|-------|--------------|----------------|-----------|
 | D-0001 | Depth-2 callees of entry+depth-1 subset (boot CRT chain) | Out of scope for this session; only entry+depth-1 targeted | boot subsystem sweep session opened for CRT init chain | boot |
-| D-0040 | depth-3 callees of 0x00402750: 004025f0,004026d0,00402f50,00403640,00404830,0040bb30,0040bb50,0040bbb0,004113b0,00412890,00418980,0041a1e0,0041b450,0041bec0,0041c100,0041cb10,0041d6e0,0041d8b0,0041db90,0041def0,0041eaa0,00420d00,00425bc0,004274d0,004274e0,004275d0,00427ca0,00428390,004283a0,00431b40,0045b350,0045bae0,004669b0,004671a0,00471eb0,004723d0,0047ba00,00484170,004841d0,004881d0,00494c80,00495280,004952f0,00495350,00496e40,00498bc0,00498bd0,00499ce0,004b3d80,004b6540,004b6560,004c2ed0,004c2f00,004caea0,004d8560,00558240 | depth-3 of 0x00492370; not recursed | boot subsystem depth-3 sweep session | boot |
-| D-0041 | depth-3 callees of 0x00402a40 (unique vs D-0040): 004014b0,004015a0,00403660,0040bd00,0040cf80,0040cfd0,004114c0,004189e0,0041a3d0,0041b660,0041c0e0,0041c2c0,0041ccf0,0041d890,0041da80,0041de70,0041e0d0,0041ffb0,00421590,00425ed0,00426ba0,00426c00,00427620,00428400,0042c2a0,0045b930,00467010,00467020,00467070,0047ba10,00484130,00489250,00494bc0,00494ef0,00494f20,00496ce0,004b4880,004b6550,005581f0 | depth-3 of 0x00492370; not recursed | boot subsystem depth-3 sweep session | boot |
-| D-0042 | depth-3 callees of 0x00492270+0x00492290+0x004924f0: 00428590,004921d0,00493710,004926c0,00492770,004929d0,00492d20,00492d30,00492e90,00493480,00499690,00431ae0,00431af0,00431b00,00431b10,00431d00 | depth-3 of 0x00492370; not recursed | boot subsystem depth-3 sweep session | boot |
-| D-0043 | depth-3 callees of thunk targets 0x00495150+0x004938c0+0x004954f0: 00495120,004955b0,004960a0,004963b0,00498510,00499710,004c2f60,004c3040,004c3270,00550390,00558470,00498b60,004963d0,00496010,004955c0,00498bf0 | depth-3 of 0x00492370 via thunks; not recursed | boot subsystem depth-3 sweep session | boot |
-| D-0044 | depth-3 callees of 0x00493900 (internal): 00499730,004a2be9,004a3ac9,004b302f | depth-3 of 0x00492370; not recursed; S-0001+S-0002 filed for key stubs | boot subsystem depth-3 sweep session | boot |
-| D-0045 | depth-3 callees of 0x00499ba0+0x004c5930: 00499890,004c5a60,004d8060 | depth-3 of 0x00492370; not recursed; S-0003+S-0004+S-0005 filed | boot subsystem depth-3 sweep session | boot |
+| ~~D-0040~~ | ~~depth-3 callees of 0x00402750 (56 RVAs)~~ | RESOLVED 2026-05-13: all 56 RVAs C1+; final 2 (00496e40/004caea0) added boot_subsystem_d3; remainder covered across boot_app_init_d3/d4/d5 sessions | — | boot |
+| ~~D-0041~~ | ~~depth-3 callees of 0x00402a40 (39 RVAs)~~ | RESOLVED 2026-05-13: all 39 RVAs C1+; 0041de70 in boot_app_init_d5; remainder covered across boot_app_init_d3/d4/d5 sessions | — | boot |
+| ~~D-0042~~ | ~~depth-3 callees of 0x00492270+0x00492290+0x004924f0~~ | RESOLVED 2026-05-13: all 16 RVAs C1+; 00428590/004921d0/004926c0/00492770/00493480/00431ae0/af0/b00/b10 added boot_subsystem_d3; remainder already covered | — | boot |
+| ~~D-0043~~ | ~~depth-3 callees of thunk targets 0x00495150+0x004938c0+0x004954f0~~ | RESOLVED 2026-05-13: all 16 RVAs C1+; 004955b0/004960a0/004963b0/00498510/00496010 added boot_subsystem_d3; remainder already covered | — | boot |
+| ~~D-0044~~ | ~~depth-3 callees of 0x00493900 (internal): 00499730,004a2be9,004a3ac9,004b302f~~ | RESOLVED 2026-05-13: all 4 RVAs C1+; 00499730/004a3ac9/004b302f added boot_subsystem_d3; 004a2be9 already covered | — | boot |
+| ~~D-0045~~ | ~~depth-3 callees of 0x00499ba0+0x004c5930: 00499890,004c5a60,004d8060~~ | RESOLVED 2026-05-13: all 3 RVAs C1+; 00499890/004c5a60 added boot_subsystem_d3; 004d8060 already covered | — | boot |
 | ~~D-0160~~ | ~~0x004a45cf __nh_malloc~~ | RESOLVED 2026-05-12: C1 in boot_crt_env_cont1; re/analysis/boot_crt_env_cont1/0x004a45cf.md | — | boot |
 | ~~D-0161~~ | ~~0x004a4660 FUN_004a4660~~ | RESOLVED 2026-05-12: C1 in boot_crt_env_cont1; re/analysis/boot_crt_env_cont1/0x004a4660.md | — | boot |
 | ~~D-0162~~ | ~~0x004a787f __lock~~ | RESOLVED 2026-05-12: drift-skip; already C1 in boot_crt_exit_d3 (re/analysis/boot_crt_exit_d3/004a787f.md) before this session | — | boot |
@@ -152,7 +152,7 @@ A row goes into DEFERRED when:
 | D-6168 | 0x0042ee40 FUN_0042ee40 | hud_frontend_d3 early-finish; was D-2776; vehicle sprite getter (slot type) | hud_frontend_d3-cont1 sweep session | frontend |
 | ~~D-6169~~ | ~~0x0042ef40 FUN_0042ef40~~ | RESOLVED 2026-05-12: C2 session frontend_c0_promote; see re/analysis/hud_frontend_d4/0x0042ef40.md | — | frontend |
 | D-6170 | 0x0042f8d0 FUN_0042f8d0 | hud_frontend_d3 early-finish; was D-2745; background rect draw | hud_frontend_d3-cont1 sweep session | frontend |
-| D-6171 | 0x0042fab0 FUN_0042fab0 | hud_frontend_d3 early-finish; was D-2741; depth-3 of FUN_004335f0/FUN_0043a610/FUN_00434720/FUN_0043aa30 | hud_frontend_d3-cont1 sweep session | frontend |
+| ~~D-6171~~ | ~~0x0042fab0 FUN_0042fab0~~ | RESOLVED 2026-05-13: C2 promote_c2_frontend_menus; tail-call dispatch; each case MOVs slot-ptr then JMPs FUN_0040bb90. See re/analysis/promote_c2_frontend_menus/0x0042fab0.md | — | frontend |
 | D-6172 | 0x00430760 FUN_00430760 | hud_frontend_d3 early-finish; was D-2740; depth-3 of FUN_004335f0/FUN_00439210 | hud_frontend_d3-cont1 sweep session | frontend |
 | D-6173 | 0x00430830 FUN_00430830 | hud_frontend_d3 early-finish; was D-2751; split-screen track check | hud_frontend_d3-cont1 sweep session | frontend |
 | ~~D-6174~~ | ~~0x00430a10 FUN_00430a10~~ | RESOLVED 2026-05-12: C2 session frontend_c0_promote; see re/analysis/hud_frontend_d4/0x00430a10.md | — | frontend |
@@ -302,14 +302,14 @@ A row goes into DEFERRED when:
 | ~~D-0359~~ | ~~0x005abf80 FUN_005abf80~~ | RESOLVED 2026-05-12: analyzed C1 in audio_rws_loader_cont1 session; see re/analysis/audio_rws_loader_cont1/0x005abf80.md | — | audio |
 | D-0360 | 0x005ae920 FUN_005ae920 | depth-2 of FUN_005ade10 (audio_rws_loader session); S-0121; returns node to free pool DAT_009146c0; overflowed from audio_rws_loader_cont1 (cap=20) | audio_rws_loader-cont2 | audio |
 | D-0820 | 0x004b7330 FUN_004b7330 + 0x004c0510 FUN_004c0510 + 0x004b7480 FUN_004b7480 + 0x0047b8a0 FUN_0047b8a0 + 0x004b6520 FUN_004b6520 | Lua interpreter internals — possibly vendored Lua 5.x source; pick up only if Mashed needs scriptable joypad remap rebuilt rather than wrapped | DRAINED by input_lua_d2-20260506-1854 (all 5 RVAs analyzed at C1; depth-3 callees filed D-7120..D-7130); S-0300..S-0304; U-0307 U-0308 | input |
-| D-0640 | 0x004c35f0 FUN_004c35f0 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0641 | 0x004c40b0 FUN_004c40b0 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0642 | 0x004cfe20 FUN_004cfe20 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0643 | 0x004d5bc0 FUN_004d5bc0 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0644 | 0x004db3e0 FUN_004db3e0 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0645 | 0x004dcd50 FUN_004dcd50 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0646 | 0x005cb404 FUN_005cb404 | depth-2 callee of _rwDeviceSystemFn (render_d3d9_device session); identified from switch-body listing scan; not decomped (outside subset cap) | render_d3d9_device-cont1 | render |
-| D-0400 | Remaining 116 depth-3 RVAs from D-0040..D-0045 not reached in boot_app_init_d3 session (cap=18): 00412890,0041a1e0,0041b450,0041bec0,0041c100,0041cb10,0041d6e0,0041d8b0,0041db90,0041def0,0041eaa0,00420d00,00425bc0,004274d0,004274e0,004275d0,00427ca0,00428390,004283a0,00431b40,0045b350,0045bae0,004669b0,004671a0,00471eb0,004723d0,0047ba00,00484170,004841d0,004881d0,00494c80,00495280,004952f0,00495350,00496e40,00498bc0,00498bd0,00499ce0,004b3d80,004b6540,004b6560,004c2ed0,004c2f00,004caea0,004d8560,00558240,0041a3d0,0041b660,0041c0e0,0041c2c0,0041ccf0,0041d890,0041da80,0041de70,0041e0d0,0041ffb0,00421590,00425ed0,00426ba0,00426c00,00427620,00428400,0042c2a0,0045b930,00467010,00467020,00467070,0047ba10,00484130,00489250,00494bc0,00494ef0,00494f20,00496ce0,004b4880,004b6550,005581f0,00428590,004921d0,00493710,004926c0,00492770,004929d0,00492d20,00492d30,00492e90,00493480,00499690,00431ae0,00431af0,00431b00,00431b10,00431d00,00495120,004955b0,004960a0,004963b0,00498510,00499710,004c2f60,004c3040,004c3270,00550390,00558470,00498b60,004963d0,00496010,004955c0,00498bf0,00499730,004a2be9,004a3ac9,004b302f,00499890,004c5a60,004d8060 | cap reached in boot_app_init_d3-20260502-1859; note: 0x00412890 missed due to sort error — include as first target | boot subsystem depth-3 sweep session (boot_app_init_d3-cont1) | boot |
+| ~~D-0640~~ | ~~0x004c35f0 FUN_004c35f0~~ | RESOLVED 2026-05-13: DRIFT — already C1 from render_c0_promote_c-20260512; see re/analysis/render_c0_promote_c/0x004c35f0.md | — | render |
+| ~~D-0641~~ | ~~0x004c40b0 FUN_004c40b0~~ | RESOLVED 2026-05-13: DRIFT — already C1 from render_c0_promote_c-20260512; see re/analysis/render_c0_promote_c/0x004c40b0.md | — | render |
+| ~~D-0642~~ | ~~0x004cfe20 FUN_004cfe20~~ | RESOLVED 2026-05-13: DRIFT — already C1 from render_c0_promote_c-20260512; see re/analysis/render_c0_promote_c/0x004cfe20.md | — | render |
+| ~~D-0643~~ | ~~0x004d5bc0 FUN_004d5bc0~~ | RESOLVED 2026-05-13: DRIFT — already C1 from render_lighting_alt; see re/analysis/render_lighting_alt/render_lighting_alt-20260503.md | — | render |
+| ~~D-0644~~ | ~~0x004db3e0 FUN_004db3e0~~ | RESOLVED 2026-05-13: DRIFT — already C1 from render_d3d_reset; see re/analysis/render_d3d_reset/004db3e0.md | — | render |
+| ~~D-0645~~ | ~~0x004dcd50 FUN_004dcd50~~ | RESOLVED 2026-05-13: DRIFT — already C1 from render_c0_promote_c-20260512; see re/analysis/render_c0_promote_c/0x004dcd50.md | — | render |
+| ~~D-0646~~ | ~~0x005cb404 FUN_005cb404~~ | RESOLVED 2026-05-13: new C1 plate in render_d3d9_device_cont1; FPU CW save-and-set; see re/analysis/render_d3d9_device_cont1/0x005cb404.md | — | render |
+| ~~D-0400~~ | ~~Remaining 116 depth-3 RVAs from D-0040..D-0045~~ | RESOLVED 2026-05-13: all 116 RVAs C1+; final coverage completed across boot_app_init_d4/d5, settings_config_d2_cont1, and boot_subsystem_d3 sessions | — | boot |
 | D-0401 | Depth-4 callees encountered as stubs during boot_app_init_d3-20260502-1859 session (S-0160..S-0179, S-0305..S-0372 — 88 stubs total); not recursed into | depth-4; out of scope for depth-3 session | boot subsystem depth-4 sweep session (boot_app_init_d4) | boot |
 | ~~D-1000~~ | ~~0x0049ec10 FUN_0049ec10~~ | ~~analyzed C1 session video_mci_d2-20260503~~ | ~~video_mci-cont1~~ | ~~util~~ |
 | ~~D-1001~~ | ~~0x004a3b84 FUN_004a3b84~~ | ~~analyzed C1 session video_mci_d2-20260503~~ | ~~video_mci-cont1~~ | ~~util~~ |
@@ -358,12 +358,12 @@ A row goes into DEFERRED when:
 |---|---|---|---|---|---|
 | D-1540 | 0x004756e0 | FUN_004756e0 | FUN_00426700 | depth-2 callee; camera path node per-tick updater; purpose unknown | reverse FUN_00426700 fully first |
 | D-1541 | 0x00475010 | FUN_00475010 | FUN_00426780 | depth-2 callee; camera path entry time-delta processor; purpose unknown | reverse FUN_00426780 fully first |
-| D-1542 | 0x004c4d20 | FUN_004c4d20 | FUN_00426810 | depth-2 callee; called in lerp path; candidate RW math or position helper | reverse FUN_00426810 fully first |
-| D-1543 | 0x004c3dc0 | FUN_004c3dc0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
-| D-1544 | 0x004c39b0 | FUN_004c39b0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
-| D-1545 | 0x004a2c48 | FUN_004a2c48 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
-| D-1546 | 0x004924c0 | FUN_004924c0 | FUN_00426810 | depth-2 callee; called in lerp path | reverse FUN_00426810 fully first |
-| D-1547 | 0x004c1b10 | FUN_004c1b10 | FUN_00426810 | depth-2 callee; receives interpolated Y/Z; candidate position setter | reverse FUN_00426810 fully first |
+| ~~D-1542~~ | ~~0x004c4d20 FUN_004c4d20~~ | RESOLVED 2026-05-13: drift-confirmed C1 as RwMatrix_SetRotAxisAngle; hooks.csv row from font_text_d2-20260503; fun_00426810_callees | — | render |
+| ~~D-1543~~ | ~~0x004c3dc0 FUN_004c3dc0~~ | RESOLVED 2026-05-13: drift-confirmed C1; render-path fn-C dispatcher; hooks.csv row from render_d3d9_device_cont1-20260513; fun_00426810_callees | — | render |
+| ~~D-1544~~ | ~~0x004c39b0 FUN_004c39b0~~ | RESOLVED 2026-05-13: drift-confirmed C1 as RwV3dNormalize; hooks.csv row from powerups_d2; fun_00426810_callees | — | render |
+| ~~D-1545~~ | ~~0x004a2c48 FUN_004a2c48~~ | RESOLVED 2026-05-13: drift-confirmed C1; FPU banker's rounding; hooks.csv row from hud_frontend; fun_00426810_callees | — | frontend |
+| ~~D-1546~~ | ~~0x004924c0 FUN_004924c0~~ | RESOLVED 2026-05-13: drift-confirmed C1; 3-byte global setter; hooks.csv row from track_loader_d2; fun_00426810_callees | — | render |
+| ~~D-1547~~ | ~~0x004c1b10 FUN_004c1b10~~ | RESOLVED 2026-05-13: drift-confirmed C1; RW world-sector clip setter; hooks.csv row from track_loader_d2; fun_00426810_callees | — | render |
 | D-1548 | ~~0x0040e180 FUN_0040e180~~ | ~~FUN_00471ec0~~ | CLEARED vehicle_damage_d2-20260505; C1/mapped CollisionPair_FindMaxDist; no dependency on FUN_00471ec0 confirmed | — | — |
 | D-1549 | 0x00407a40 | FUN_00407a40 | FUN_00471ec0 | depth-2 callee; returns frame counter / tick A from timing struct | reverse FUN_00471ec0 fully first |
 | D-1550 | 0x00407a20 | FUN_00407a20 | FUN_00471ec0 | depth-2 callee; returns tick B from timing struct | reverse FUN_00471ec0 fully first |
@@ -457,12 +457,12 @@ A row goes into DEFERRED when:
 | D-3115 | 0x00496900 FUN_00496900 | race_state-20260503 | called with player index int from FUN_00432080 PATH_2; returns 0 on success; deeper race-state query; role unknown | race_state-cont1 | race_state |
 | D-3116 | 0x0042d3a0 FUN_0042d3a0 | race_state-20260503 | shared pre-commit sub; called by both FUN_00432080 and FUN_004331a0 before trigger commit block; role unknown | race_state-cont1 | race_state |
 | D-3117 | 0x004348b0 FUN_004348b0 | race_state-20260503 | called in FUN_004331a0 before tail-call to FUN_00424920; pre-tail init role unknown | race_state-cont1 | race_state |
-| D-3580 | 0x004a504f FUN_004a504f | depth-3 callee of FUN_004a42c5 (sprintf_to_buf); CRT _output format engine compiled into binary; from session settings_config_d2-20260503 bucket settings_config_d2 | pick up as bucket settings_config_d2-cont1; no further recursion | save |
-| D-3581 | 0x004c2e40 FUN_004c2e40 | depth-3 callee of FUN_00498c00 (VideoModeTableInit); no-arg; returns default subsystem index; role [UNCERTAIN]; from session settings_config_d2-20260503 | pick up as bucket settings_config_d2-cont1; no further recursion | save |
-| D-3582 | 0x004c2f00 FUN_004c2f00 | depth-3 callee of FUN_00498c00; no-arg; returns default mode index; [OVERLAP: also re/DEFERRED D-0040 depth-3 of boot session]; from session settings_config_d2-20260503 | pick up as bucket settings_config_d2-cont1; no further recursion | save |
-| D-3583 | 0x004c2de0 FUN_004c2de0 | depth-3 callee of FUN_00498c00; no-arg; returns total display subsystem count; from session settings_config_d2-20260503 | pick up as bucket settings_config_d2-cont1; no further recursion | save |
-| D-3584 | 0x004c2e10 FUN_004c2e10 | depth-3 callee of FUN_00498c00; args (dest_ptr, subsystem_idx); populates 0x50-byte subsystem-info struct; from session settings_config_d2-20260503 | pick up as bucket settings_config_d2-cont1; no further recursion | save |
-| D-3585 | 0x004c2ea0 FUN_004c2ea0 | depth-3 callee of FUN_00498c00; no-arg; called after FUN_004c2e70(i); returns mode count for currently-selected subsystem; from session settings_config_d2-20260503 | pick up as bucket settings_config_d2-cont1; no further recursion | save |
+| ~~D-3580~~ | ~~0x004a504f FUN_004a504f~~ | RESOLVED 2026-05-13: C1 render in rw_engine_init_d2; pre-empted by rw_engine_init sessions before this bucket ran | — | save |
+| ~~D-3581~~ | ~~0x004c2e40 FUN_004c2e40~~ | RESOLVED 2026-05-13: C2 render in render_promote_c2_rw_plugin (GetCurrentSubSystem wrapper) | — | save |
+| ~~D-3582~~ | ~~0x004c2f00 FUN_004c2f00~~ | RESOLVED 2026-05-13: C2 render in render_promote_c2_rw_plugin (GetCurrentVideoMode wrapper) | — | save |
+| ~~D-3583~~ | ~~0x004c2de0 FUN_004c2de0~~ | RESOLVED 2026-05-13: C2 render in render_promote_c2_rw_plugin (GetNumSubSystems wrapper) | — | save |
+| ~~D-3584~~ | ~~0x004c2e10 FUN_004c2e10~~ | RESOLVED 2026-05-13: C2 render in render_promote_c2_rw_plugin (GetSubSystemInfo wrapper) | — | save |
+| ~~D-3585~~ | ~~0x004c2ea0 FUN_004c2ea0~~ | RESOLVED 2026-05-13: C2 render in render_promote_c2_rw_plugin (GetNumVideoModes wrapper) | — | save |
 | D-3400 | 0x004cc820 FUN_004cc820 | depth-3 callee of 0x004cc7f0 FUN_004cc7f0; 6-arg call: (p1,p2,p3,1,0,p4); role unknown; S-1160 | pick up as bucket render_d3d_reset_d2-cont1; no further recursion | render |
 | D-3401 | 0x004dcaa0 FUN_004dcaa0 | depth-3 callee of 0x004dc9e0 FUN_004dc9e0; called as FUN_004dcaa0(0x40000, out_ptr); likely CreateVertexBuffer wrapper; S-1161 | pick up as bucket render_d3d_reset_d2-cont1; no further recursion | render |
 | D-3280 | (bulk) 0x00401570,0x004046a0,0x004073b0,0x00407a60,0x0040b180,0x0040bd80,0x0040d470,0x0040dbd0,0x0040de00,0x0040e480,0x0040fc00,0x004102f0,0x004103a0,0x00410860,0x00411170,0x00414060,0x00414180,0x00414220,0x00418990,0x00419760,0x0041b4d0,0x0041b510,0x0041bf20,0x0041c010,0x0041cb80,0x0041cbc0,0x0041d730,0x0041d820,0x0041e130,0x0041eda0,0x0041f000,0x00420d40,0x00422120,0x004222c0,0x00425b10,0x00426630,0x004266f0,0x00476430,0x004425d0,0x00458bf0,0x00459560,0x0045b9d0,0x0045ba00,0x0045be90,0x0045bed0,0x0046b1c0,0x0046b540,0x0046c5c0,0x00471ac0,0x00471cf0,0x00475a60,0x00477730,0x00477b40,0x00480100,0x00484c90,0x0048f260,0x004904d0,0x004a2cbd | util/multi | from session timer_d2-20260503-0656 (FUN_004111c0 bulk callees); pick up as race_state_machine-d3 or per-subsystem sessions; race/AI/physics/render/audio callees outside timer scope | timer_d2 |
@@ -478,14 +478,14 @@ A row goes into DEFERRED when:
 | D-3281 | (bulk) 0x0040ab40,0x0040ac80,0x0040b810,0x0040de10,0x0040e360,0x00422b30,0x00429aa0,0x0042af50,0x0042b950,0x0042c150,0x0046dc00,0x00493570,0x00493580 | util/multi | from session timer_d2-20260503-0656 (FUN_0043d7c0 secondary callees); S range exhausted; pick up per-subsystem or in timer_d2-cont1 | timer_d2 |
 | D-3282 | 0x0043dfd0 | FUN_0043dfd0 | util | from session timer_d2-20260503-0656; decomp 63977 chars / 30839 tokens exceeded read buffer; C0 only; requires dedicated large-function session (Opus recommended); 63 callees unprocessed | timer_d2 |
 | D-3283 | (bulk) 0x0040e370,0x0042b900,0x00431b50,0x00431b60,0x00432290,0x0045c480,0x0045d3a0,0x0045d7a0,0x0045db50,0x0045dbe0,0x0045dc80,0x0045df70,0x0045dfc0,0x00462520,0x004627b0,0x00462dd0,0x00462ec0,0x00463590,0x00463640,0x004647f0,0x004648b0,0x00492d10,0x004d8560,0x005a89a0,0x005a89b0,0x005a89c0 | util/audio | from session timer_d2-20260503-0656 (FUN_00466b50 untracked callees); S range exhausted; pick up in audio_tick_d3 or dedicated sessions | timer_d2 |
-| D-4600 | 0x00482860 FUN_00482860 | replay object internal reset (rewind to head, zero write cursor, clear started flag); 50-100 bytes; needed for full lap-cycle reset understanding | replay_record-cont1 session | vehicle |
-| D-4601 | 0x00483a30 FUN_00483a30 | replay rewind to start for ghost playback; sets read cursor to head node; needed to understand how ghost replays beginning-of-lap | replay_record-cont1 session | vehicle |
-| D-4602 | 0x00483a40 FUN_00483a40 | replay object destructor/free; releases linked list and struct; needed for lifecycle and greenfield allocation model | replay_record-cont1 session | vehicle |
-| D-4603 | 0x0046d4a0 FUN_0046d4a0 | vehicle state getter; returns ptr to struct holding quaternion at some offset and xyz at +0x30..+0x38; needed to map vehicle struct layout for replay port | replay_record-cont1 session | vehicle |
-| D-4604 | 0x00546b10 FUN_00546b10 | RW quaternion copier from vehicle struct to replay frame node +0x00; needed to identify quaternion source offset in vehicle struct | replay_record-cont1 session | vehicle |
-| D-4605 | 0x00483ca0 FUN_00483ca0 | serialize replay object to binary buffer (write path for .rep files); counterpart to Replay::Load (0x00483d10); needed to complete .rep file format spec | replay_record-cont1 session | vehicle |
-| D-4606 | (trio) 0x004cc230 0x004cbd30 0x004cc160 | custom stream open/read/close API used for replay .rep file I/O; confirm these are wrappers around fopen/fread/fclose or a custom VFS | replay_record-cont1 session | vehicle |
-| D-4607 | 0x0041a9b0 0x0041ad00 0x0041a960 | ghost car rendering trio: setup-transform, apply-transform, renderer-init; needed for ghost car visual in greenfield port | replay_record-cont1 session | vehicle |
+| ~~D-4600~~ | 0x00482860 FUN_00482860 | replay object internal reset (rewind to head, zero write cursor, clear started flag); 50-100 bytes; needed for full lap-cycle reset understanding | replay_record-cont1 session | vehicle |
+| ~~D-4601~~ | 0x00483a30 FUN_00483a30 | replay rewind to start for ghost playback; sets read cursor to head node; needed to understand how ghost replays beginning-of-lap | replay_record-cont1 session | vehicle |
+| ~~D-4602~~ | 0x00483a40 FUN_00483a40 | replay object destructor/free; releases linked list and struct; needed for lifecycle and greenfield allocation model | replay_record-cont1 session | vehicle |
+| ~~D-4603~~ | 0x0046d4a0 FUN_0046d4a0 | vehicle state getter; returns ptr to struct holding quaternion at some offset and xyz at +0x30..+0x38; needed to map vehicle struct layout for replay port | replay_record-cont1 session | vehicle |
+| ~~D-4604~~ | 0x00546b10 FUN_00546b10 | RW quaternion copier from vehicle struct to replay frame node +0x00; needed to identify quaternion source offset in vehicle struct | replay_record-cont1 session | vehicle |
+| ~~D-4605~~ | 0x00483ca0 FUN_00483ca0 | serialize replay object to binary buffer (write path for .rep files); counterpart to Replay::Load (0x00483d10); needed to complete .rep file format spec | replay_record-cont1 session | vehicle |
+| ~~D-4606~~ | (trio) 0x004cc230 0x004cbd30 0x004cc160 | custom stream open/read/close API used for replay .rep file I/O; confirm these are wrappers around fopen/fread/fclose or a custom VFS | replay_record-cont1 session | vehicle |
+| ~~D-4607~~ | 0x0041a9b0 0x0041ad00 0x0041a960 | ghost car rendering trio: setup-transform, apply-transform, renderer-init; needed for ghost car visual in greenfield port | replay_record-cont1 session | vehicle |
 | D-4360 | 0x00554940 LAB_00554940 (per-char Im2D emission loop, 0x00554a5b onward, ~400 instrs remaining) | Full Im2D quad construction requires Im2D vertex struct layout; separate depth-3 scope needed | After Im2D vertex layout confirmed from librw cross-check | hud |
 | D-4361 | 0x00555910 LAB_00555910 (METRICS1/2/3 section parsers, 0x00555a04+) | Parsing logic needs .met file sample for cross-check; font36.piz extraction first | After .met file extracted from font36.piz via piz skill | hud |
 | D-4362 | 0x005551d0 FUN_005551d0 | U-1490: role as LAB_00555910 entry guard unknown; guards entire .met loader | Decompile in next font_text_d2-cont1 or dedicated depth-3 session | hud |
@@ -601,13 +601,13 @@ A row goes into DEFERRED when:
 | ~~D-5622~~ | ~~0x00426060 FUN_00426060~~ | RESOLVED split_screen_d2-20260507-1852: C1 confirmed; returns DAT_0065742c; pre-existing analysis at re/analysis/track_loader_d3/00426060_00426070.md | — | render |
 | ~~D-5623~~ | ~~0x004260c0 FUN_004260c0~~ | RESOLVED split_screen_d2-20260507-1852: C1; returns DAT_00657490; see re/analysis/split_screen_d2/004260c0.md | — | render |
 | ~~D-5624~~ | ~~0x004e4900 FUN_004e4900~~ | RESOLVED split_screen_d2-20260507-1852: C1; writes float4 to param_1+0x18..+0x24, sets uniform-scale byte at +3; see re/analysis/split_screen_d2/004e4900.md | — | render |
-| D-8440 | 0x004c1340 FUN_004c1340 | depth-3 of PerPlayerViewportRender via 0x0041f8f0; set-pos-to-camera (also ref'd in SkyDomeUpdatePos); split_screen_d2 | split_screen_d2-cont1 | render |
-| D-8441 | 0x004b42c0 FUN_004b42c0 | depth-3 of PerPlayerViewportRender via 0x0041f8f0; called as FUN_004b42c0(cam, player_pos_ptr, &DAT_006146fc) | split_screen_d2-cont1 | render |
-| D-8442 | 0x004c1680 FUN_004c1680 | depth-3 of PerPlayerViewportRender via 0x0041f8f0; 1-arg camera setup call | split_screen_d2-cont1 | render |
-| D-8443 | 0x00422ac0,0x00422af0 FUN_00422ac0/af0 | depth-3 pair via 0x0041f8f0; render-state setup: 00422ac0(ESI+0x290, color_block); 00422af0(ESI+0x290, cam_handle) | split_screen_d2-cont1 | render |
-| D-8444 | 0x00422570 FUN_00422570 | depth-3 via 0x0041f8f0; 3-arg call (ESI+0x290, *(*(ESI+0x26c)+4)+0x10, uVar3) | split_screen_d2-cont1 | render |
-| D-8445 | 0x00426e00 FUN_00426e00 | depth-3 via 0x0041f8f0; no-arg getter; return value cast to float10 then scaled by ESI+0x288 and ESI+0x284 | split_screen_d2-cont1 | render |
-| D-8446 | 0x004cd070,0x004cd2d0,0x004cd140 FUN_004cdXXX | depth-3 draw/flush cluster via 0x004228f0; 004cd070(buf,count*3,0,0x19) then 004cd2d0(3)+004cd140() on non-zero | split_screen_d2-cont1 | render |
+| ~~D-8440~~ | ~~0x004c1340 FUN_004c1340~~ | RESOLVED split_screen_d2_cont1-20260513: C1 RwFrameTranslate; see re/analysis/split_screen_d2_cont1/0x004c1340.md | — | render |
+| ~~D-8441~~ | ~~0x004b42c0 FUN_004b42c0~~ | RESOLVED split_screen_d2_cont1-20260513: C1 CameraLookAt; see re/analysis/split_screen_d2_cont1/0x004b42c0.md | — | render |
+| ~~D-8442~~ | ~~0x004c1680 FUN_004c1680~~ | RESOLVED split_screen_d2_cont1-20260513: C1 RwFrameUpdateObjects; see re/analysis/split_screen_d2_cont1/0x004c1680.md | — | render |
+| ~~D-8443~~ | ~~0x00422ac0,0x00422af0 FUN_00422ac0/af0~~ | RESOLVED split_screen_d2_cont1-20260513: C2 PerPlayerTextureArraySet + C2 PerPlayerCameraHandleSet; see re/analysis/split_screen_d2_cont1/0x00422ac0.md + 0x00422af0.md | — | render |
+| ~~D-8444~~ | ~~0x00422570 FUN_00422570~~ | RESOLVED split_screen_d2_cont1-20260513: C1 PerPlayerGroundTriangleCollect; see re/analysis/split_screen_d2_cont1/0x00422570.md | — | render |
+| ~~D-8445~~ | ~~0x00426e00 FUN_00426e00~~ | RESOLVED split_screen_d2_cont1-20260513: C1 GlobalViewScaleGet returns _DAT_00644368; see re/analysis/split_screen_d2_cont1/0x00426e00.md | — | render |
+| ~~D-8446~~ | ~~0x004cd070,0x004cd2d0,0x004cd140 FUN_004cdXXX~~ | RESOLVED split_screen_d2_cont1-20260513: C1 RwRenderPrimitiveSubmit + RwRenderIndexedSubmit + RwRenderCommandBufferReset; see re/analysis/split_screen_d2_cont1/0x004cd070.md + 0x004cd2d0.md + 0x004cd140.md | — | render |
 | D-5500 | 0x00441990 FUN_00441990 | alternative result handler in FUN_00448220 when DAT_007f1a50==1; sole caller FUN_00448220; size unknown; needed to understand DAT_007f1a50 semantics (U-1870); S-1868 | profile_career_d2-cont1 | frontend |
 | D-5501 | 0x00446520 FUN_00446520 | main result display state machine; called from FUN_00448220 via LAB_004483a3 on race states 6/7/-1; receives &DAT_00897fe0+param_3; needed for U-1552 (priority 0x40 in DAT_00898ab0); S-1869 | profile_career_d2-cont1 | frontend |
 | D-5502 | 0x00429a70 FUN_00429a70 | race data getter C; used alongside 0x00429a80/90 in FUN_00448220 unlock-code generation; depth-2 of FUN_00434720; S-1875 | profile_career_d2-cont1 | frontend |
@@ -679,7 +679,7 @@ A row goes into DEFERRED when:
 | D-2771 | 0x0040b6c0 FUN_0040b6c0 | analyzed C1 session hud_frontend_d3-20260506-0511; indexed read from DAT_008a94f0 array | 2026-05-06 |
 | D-2773 | 0x0040ad20 FUN_0040ad20 | analyzed C1 session hud_frontend_d3-20260506-0511; global read DAT_008a95ac | 2026-05-06 |
 | D-2740 | 0x00430760 FUN_00430760 | not analyzed; early-finish hud_frontend_d3; re-filed as D-6172 for hud_frontend_d3-cont1 | 2026-05-06 |
-| D-2741 | 0x0042fab0 FUN_0042fab0 | not analyzed; early-finish hud_frontend_d3; re-filed as D-6171 | 2026-05-06 |
+| ~~D-2741~~ | ~~0x0042fab0 FUN_0042fab0~~ | RESOLVED 2026-05-13: re-filed as D-6171; see D-6171 resolution | — |
 | D-2742 | 0x0042bcb0 FUN_0042bcb0 | not analyzed; early-finish; re-filed as D-6163 | 2026-05-06 |
 | D-2745 | 0x0042f8d0 FUN_0042f8d0 | not analyzed; early-finish; re-filed as D-6170 | 2026-05-06 |
 | D-2746 | 0x0042ac00 FUN_0042ac00 | not analyzed; early-finish; re-filed as D-6161 | 2026-05-06 |
@@ -709,24 +709,25 @@ A row goes into DEFERRED when:
 | D-6703 | 0x00442440 FUN_00442440 | caller of FUN_0040dc90; body 00442440..004425c6 (0x186 B); HUD/name-label context; pickup condition: localization_d2-cont1 session | 2026-05-06 |
 | D-6880 | 0x00550980 FUN_00550980 | depth-3 callee of FUN_004cbe80 (save_gamesave_d2); 4-arg fwrite-style; S-2320; bucket save_gamesave_d2-cont1; pickup condition: save_gamesave_d2-cont1 session | 2026-05-06 |
 
-| D-7060 | 0x0040e170 FUN_0040e170 | depth-1 callee of FUN_0043df00 (options_menu); 9 bytes; S-2380; pickup condition: options_menu-cont1 session | 2026-05-06 || D-7120 | 0x004b7a70 FUN_004b7a70 | depth-3 callee of 0x0047b8a0 (input_lua_d2); S-2400; only callee of exec wrapper; pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7121 | 0x004ba1b0 FUN_004ba1b0 | depth-3 callee of 0x004b7330 and 0x004b7480 (input_lua_d2); S-2401; allocator (args 0,0,0x70 or varied); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7122 | 0x004b7be0 FUN_004b7be0 | depth-3 callee of 0x004b7330 (input_lua_d2); S-2402; receives (block, &label, &stack); fail→FUN_004b7480; pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7123 | 0x004c06c0 FUN_004c06c0 | depth-3 callee of 0x004c0510 (input_lua_d2); S-2403; args (param_1, &PTR_PTR_005d8a70, 0x17); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7124 | 0x004b7200 thunk_FUN_004b7fd0 | depth-3 callee of 0x004c0510 (input_lua_d2); S-2404; thunk to FUN_004b7fd0; args (param_1, &LAB_004c0560, 0); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7125 | 0x004b9730 FUN_004b9730 | depth-3 callee of 0x004c0510 (input_lua_d2); S-2405; args (param_1, 2, &PTR_DAT_00617530); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7126 | 0x004b7140 FUN_004b7140 | depth-3 callee of 0x004c0510 (input_lua_d2); S-2406; args (param_1, 0x54442d18, 0x400921fb); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7127 | 0x004b7250 FUN_004b7250 | depth-3 callee of 0x004c0510 (input_lua_d2); S-2407; args (param_1, &DAT_00617f34); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7128 | 0x004ba210 FUN_004ba210 | depth-3 callee of 0x004b7480 (input_lua_d2); S-2408; args (param_1, 1); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7129 | 0x004b9850 FUN_004b9850 | depth-3 callee of 0x004b7480 (input_lua_d2); S-2409; args (param_1); pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7130 | 0x004b64e0 FUN_004b64e0 | depth-3 callee of 0x004b6520 (input_lua_d2); S-2410; receives (param_1, 0, param_2); 57 bytes; pick up as input_lua_d2-cont1 | input_lua_d2-cont1 session | input |
-| D-7300 | 0x00428450 FUN_00428450 | depth-2 callee of FUN_00428a30 and FUN_00428d30 (title_screen); ticker/overlay; args (0x20,0xffffffe0) in title vs (0x10,0x100) in lobby; S-2460; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7301 | 0x004288a0 FUN_004288a0 | depth-2 callee of FUN_00428a30 (title_screen); dark/blank screen renderer when DAT_0067d84c==0; S-2461; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7302 | 0x00428320 FUN_00428320 | depth-2 callee of FUN_00428a30 and FUN_00428bf0 (title_screen); text renderer; renders build date + string 0x222; S-2462; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7303 | 0x0042e590 FUN_0042e590 | depth-2 callee of FUN_00428bf0 (title_screen attract renderer); sprite draw at (320.0, 260.0); sprite table structure unknown; S-2463; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7304 | 0x0040d250 FUN_0040d250 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); lobby visual element (gradient/line/logo); S-2464; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7305 | 0x00401ee0 FUN_00401ee0 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); lobby visual element; S-2465; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
-| D-7306 | 0x0042f0b0 FUN_0042f0b0 | depth-2 callee of FUN_00428d30 (title_screen lobby renderer); UI sub-renderer at (347.5, 168.0); S-2466; bucket title_screen-cont1 | title_screen-cont1 session | frontend |
+| D-7060 | 0x0040e170 FUN_0040e170 | depth-1 callee of FUN_0043df00 (options_menu); 9 bytes; S-2380; pickup condition: options_menu-cont1 session | 2026-05-06 |
+| ~~D-7120~~ | ~~0x004b7a70 FUN_004b7a70~~ | RESOLVED 2026-05-12: C1 in input_lua_d2_cont1; re/analysis/input_lua_d2_cont1/0x004b7a70.md | — | input |
+| ~~D-7121~~ | ~~0x004ba1b0 FUN_004ba1b0~~ | RESOLVED 2026-05-12: C1 in input_lua_d3 (confirmed by input_lua_d2_cont1); re/analysis/input_lua_d3/0x004ba1b0.md | — | input |
+| ~~D-7122~~ | ~~0x004b7be0 FUN_004b7be0~~ | RESOLVED 2026-05-12: C1 in input_lua_d3 (confirmed by input_lua_d2_cont1); re/analysis/input_lua_d3/0x004b7be0.md | — | input |
+| ~~D-7123~~ | ~~0x004c06c0 FUN_004c06c0~~ | RESOLVED 2026-05-12: C1 in input_lua_d2_cont1; re/analysis/input_lua_d2_cont1/0x004c06c0.md | — | input |
+| ~~D-7124~~ | ~~0x004b7200 thunk_FUN_004b7fd0~~ | RESOLVED 2026-05-12: C1 in input_lua_d2_cont1; re/analysis/input_lua_d2_cont1/0x004b7200.md | — | input |
+| ~~D-7125~~ | ~~0x004b9730 FUN_004b9730~~ | RESOLVED 2026-05-12: C1 in input_lua_d2_cont1; re/analysis/input_lua_d2_cont1/0x004b9730.md | — | input |
+| ~~D-7126~~ | ~~0x004b7140 FUN_004b7140~~ | RESOLVED 2026-05-12: C1 in input_lua_d2_cont1; re/analysis/input_lua_d2_cont1/0x004b7140.md | — | input |
+| ~~D-7127~~ | ~~0x004b7250 FUN_004b7250~~ | RESOLVED 2026-05-12: C1 in input_lua_d2_cont1; re/analysis/input_lua_d2_cont1/0x004b7250.md | — | input |
+| ~~D-7128~~ | ~~0x004ba210 FUN_004ba210~~ | RESOLVED 2026-05-12: C1 in input_lua_d3 (confirmed by input_lua_d2_cont1); re/analysis/input_lua_d3/0x004ba210.md | — | input |
+| ~~D-7129~~ | ~~0x004b9850 FUN_004b9850~~ | RESOLVED 2026-05-12: C1 in input_lua_d3 (confirmed by input_lua_d2_cont1); re/analysis/input_lua_d3/0x004b9850.md | — | input |
+| ~~D-7130~~ | ~~0x004b64e0 FUN_004b64e0~~ | RESOLVED 2026-05-12: C1 in input_lua_d3 (confirmed by input_lua_d2_cont1); re/analysis/input_lua_d3/0x004b64e0.md | — | input |
+| ~~D-7300~~ | ~~0x00428450 FUN_00428450~~ | RESOLVED 2026-05-13: drift-skip; already C2 in hud_ingame_promote_c2 (re/analysis/hud_ingame_promote_c2/0x00428450.md); confirmed title_screen_cont1 | — | frontend |
+| ~~D-7301~~ | ~~0x004288a0 FUN_004288a0~~ | RESOLVED 2026-05-13: drift-skip; C1 in title_screen_d2 (re/analysis/title_screen_d2/0x004288a0.md); confirmed title_screen_cont1 | — | frontend |
+| ~~D-7302~~ | ~~0x00428320 FUN_00428320~~ | RESOLVED 2026-05-13: drift-skip; already C2 in frontend_promote_menus_b (re/analysis/frontend_promote_menus_b/00428320.md); confirmed title_screen_cont1 | — | frontend |
+| ~~D-7303~~ | ~~0x0042e590 FUN_0042e590~~ | RESOLVED 2026-05-13: drift-skip; C1 in title_screen_d2 (re/analysis/title_screen_d2/0x0042e590.md); confirmed title_screen_cont1 | — | frontend |
+| ~~D-7304~~ | ~~0x0040d250 FUN_0040d250~~ | RESOLVED 2026-05-13: drift-skip; C1 in title_screen_d2 (re/analysis/title_screen_d2/0x0040d250.md); confirmed title_screen_cont1 | — | frontend |
+| ~~D-7305~~ | ~~0x00401ee0 FUN_00401ee0~~ | RESOLVED 2026-05-13: drift-skip; C1 in title_screen_d2 (re/analysis/title_screen_d2/0x00401ee0.md); confirmed title_screen_cont1 | — | frontend |
+| ~~D-7306~~ | ~~0x0042f0b0 FUN_0042f0b0~~ | RESOLVED 2026-05-13: drift-skip; C1 in title_screen_d2 (re/analysis/title_screen_d2/0x0042f0b0.md); confirmed title_screen_cont1 | — | frontend |
 | ~~D-7600~~ | ~~0x005a7460 FUN_005a7460~~ | ~~depth-4 callee of FUN_005a7520 (audio_music_d3 mode-1 branch); 0xb8 bytes; S-2560; bucket audio_music_d3-cont1~~ | ~~Resolved: audio_music_cont1-20260512; C1 plate re/analysis/audio_music_cont1/0x005a7460.md; S-2560 resolved~~ | ~~audio~~ |
 | ~~D-7601~~ | ~~0x005a7560 FUN_005a7560~~ | ~~depth-4 callee of FUN_005a7520 (audio_music_d3 mode-0 branch); 0x4d bytes; S-2561; bucket audio_music_d3-cont1~~ | ~~Resolved: audio_music_cont1-20260512; C1 plate re/analysis/audio_music_cont1/0x005a7560.md; S-2561 resolved~~ | ~~audio~~ |
 | ~~D-7602~~ | ~~0x005a75b0 FUN_005a75b0~~ | ~~depth-4 callee of FUN_005a7520 (audio_music_d3 mode-2 branch, bit-0@param_1+0xc gated); 0x250 bytes; S-2562; bucket audio_music_d3-cont1~~ | ~~Resolved: audio_music_cont1-20260512; C1 plate re/analysis/audio_music_cont1/0x005a75b0.md; S-2562 resolved~~ | ~~audio~~ |
@@ -750,12 +751,12 @@ A row goes into DEFERRED when:
 | D-7841 | 0x0047b8d0 FUN_0047b8d0 | depth-2 callee of 0047b9b0 (physics_collision_d2); 167 bytes; main Lua executor body; S-2641; U-2648 | physics_collision_d2-cont1 | physics |
 | D-7842 | 0x0047b880 FUN_0047b880 | depth-2 callee of 0047b9b0 (physics_collision_d2); 24 bytes; teardown; S-2642 | physics_collision_d2-cont1 | physics |
 | D-7843 | 0x0047ce40 FUN_0047ce40 | depth-2 callee of 004715a0 (physics_collision_d2); 36 bytes; volume index→handle mapper; S-2643; U-2650 | physics_collision_d2-cont1 | physics |
-| D-7961 | 0x0047d3c0 FUN_0047d3c0 | VehiclePhysicsWorldStep callee; RWP37 physics world step; args (world, dt); ~large; S-2626 S-2627; vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
-| D-7962 | 0x0046c5f0 FUN_0046c5f0 | wheel state sync; no visible params; called from VehicleWheelForceIntegrator + VehicleWheelContactSolver + VehicleWheelDrivetrainUpdate; S-2625; vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
-| D-7963 | 0x00442ce0 FUN_00442ce0 + 0x00442c80 FUN_00442c80 + 0x0046cb30 FUN_0046cb30 | VehicleWheelForceIntegrator callees: speed modifier (S-2631) + crowding bool (S-2632) + body position getter (S-2628); vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
-| D-7964 | 0x004c52f0 FUN_004c52f0 | RW matrix rotation setter; args (matrix, rot_matrix, 2); 145b callee of VehicleWheelContactSolver; S-2543 also references it; S-2629; vehicle_update_d3-cont1 | vehicle_update_d3 session | render |
-| D-7965 | 0x0046d4d0 FUN_0046d4d0 | apply matrix to vehicle rigid body; args (vehicleIdx, matrix_ptr); callee of VehiclePhysicsWorldStep; S-2630; vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
-| D-7966 | 0x004a3384 FUN_004a3384 + 0x0046cc40 FUN_0046cc40 | acos/atan FP approx (S-2633) + wheel contact sub-helper (S-2634); callees of VehicleAeroStabilizer+VehicleWheelContactSolver; vehicle_update_d3-cont1 | vehicle_update_d3 session | vehicle |
+| ~~D-7961~~ | ~~0x0047d3c0 + 0x0047ea40~~ | RESOLVED vehicle_update_d3_cont-20260513: C1 VehiclePhysicsWorldCreate + PhysicsSceneStepWrapper; re/analysis/vehicle_update_d3_cont/0047d3c0.md + 0047ea40.md; S-2626 S-2627 resolved | vehicle_update_d3 session | vehicle |
+| ~~D-7962~~ | ~~0x0046c5f0~~ | RESOLVED vehicle_update_d3_cont-20260513: drift-skip; already C1 in physics_collision_d4_breadth as triangle-face-normal-helper; S-2625 resolved | vehicle_update_d3 session | vehicle |
+| ~~D-7963~~ | ~~0x00442ce0 + 0x00442c80 + 0x0046cb30~~ | RESOLVED vehicle_update_d3_cont-20260513: C1 VehicleRubberBandSpeedModifier (new) + drift C2 util_c0_promote + drift C1 profile_career_d4; S-2628 S-2631 S-2632 resolved | vehicle_update_d3 session | vehicle |
+| ~~D-7964~~ | ~~0x004c52f0~~ | RESOLVED vehicle_update_d3_cont-20260513: C1 RwMatrixCombine (3-mode matrix combiner, not rotation-only); re/analysis/vehicle_update_d3_cont/004c52f0.md; S-2629 resolved | vehicle_update_d3 session | render |
+| ~~D-7965~~ | ~~0x0046d4d0~~ | RESOLVED vehicle_update_d3_cont-20260513: C1 VehiclePhysicsMatrixSet; writes 4x4 matrix to vehicle[n]+0xA20 and +0xA60 (stride 0xD04 base 0x008815a8); re/analysis/vehicle_update_d3_cont/0046d4d0.md; S-2630 resolved | vehicle_update_d3 session | vehicle |
+| ~~D-7966~~ | ~~0x004a3384 + 0x0046cc40~~ | RESOLVED vehicle_update_d3_cont-20260513: drift-skip; both already C1 in profile_career_d4 (CRT::acos) and physics_collision_d4_breadth (WheelTerrainContactClassifier); S-2633 S-2634 resolved | vehicle_update_d3 session | vehicle |
 | ~~D-7900~~ | ~~0x004c5800~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTexDictionarySetCurrent | texture_loader_d3-cont1 session | render |
 | ~~D-7901~~ | ~~0x004c5820~~ | DRAINED texture_loader_d3_cont1-20260512: C2 RwTexDictionaryGetCurrent | texture_loader_d3-cont1 session | render |
 | ~~D-7902~~ | ~~0x004c5830~~ | DRAINED texture_loader_d3_cont1-20260512: C1 texture plugin slot setter +0x20 | texture_loader_d3-cont1 session | render |
@@ -766,13 +767,13 @@ A row goes into DEFERRED when:
 | ~~D-7907~~ | ~~0x004d8810~~ | DRAINED texture_loader_d3_cont1-20260512: C1 native raster stream reader (not state guard; resolves U-2676) | texture_loader_d3-cont1 session | render |
 | ~~D-7908~~ | ~~0x004e1df0~~ | DRAINED texture_loader_d3_cont1-20260512: C2 extension chunk drain / error cleanup | texture_loader_d3-cont1 session | render |
 | ~~D-7909~~ | ~~0x004cdd60~~ | DRAINED texture_loader_d3_cont1-20260512: C1 (existing) alloc path confirmed; RwImage layout fully mapped | texture_loader_d3-cont1 session | render |
-| D-8260 | 0x0045cd30 FUN_0045cd30 | caller of FUN_004b44f0 (RandomInt) ×5 call sites; 562 bytes (0x0045cd30–0x0045cf62); not in hooks.csv | random_rng_d2 | audio |
-| D-8261 | 0x0045d330 FUN_0045d330 | caller of FUN_004b44f0 (RandomInt) ×1; 102 bytes (0x0045d330–0x0045d396); not in hooks.csv | random_rng_d2 | audio |
-| D-8262 | 0x00421d20 FUN_00421d20 | caller of FUN_004b4510 (RandomFloat) ×11 call sites; 938 bytes (0x00421d20–0x004220ca); not in hooks.csv | random_rng_d2 | util |
-| D-8263 | 0x004219f0 FUN_004219f0 | caller of FUN_004b4510 (RandomFloat) ×1; 154 bytes (0x004219f0–0x00421a8a); not in hooks.csv | random_rng_d2 | util |
-| D-8264 | 0x0044e0a0 FUN_0044e0a0 | caller of FUN_004b4510 (RandomFloat) ×1; 238 bytes (0x0044e0a0–0x0044e18e); not in hooks.csv | random_rng_d2 | util |
-| D-8265 | 0x004762c0 FUN_004762c0 | caller of FUN_004b4510 (RandomFloat) ×2 call sites; 92 bytes (0x004762c0–0x0047631c); not in hooks.csv | random_rng_d2 | util |
-| D-8266 | 0x004764f0 FUN_004764f0 | caller of FUN_004b4510 (RandomFloat) ×5 call sites; 346 bytes (0x004764f0–0x0047664a); not in hooks.csv | random_rng_d2 | util |
+| ~~D-8260~~ | ~~0x0045cd30 FUN_0045cd30~~ | RESOLVED random_rng_d2-20260513: C1 audio — track state update; RandomInt(0,6/12/17) for track index when iVar4==13/25/35; re/analysis/random_rng_d2/0x0045cd30.md | random_rng_d2 | audio |
+| ~~D-8261~~ | ~~0x0045d330 FUN_0045d330~~ | RESOLVED random_rng_d2-20260513: C1 audio — state reset; mode==7/0xb fills 4×int at 0x0068d53c with RandomInt(0,250); re/analysis/random_rng_d2/0x0045d330.md | random_rng_d2 | audio |
+| ~~D-8262~~ | ~~0x00421d20 FUN_00421d20~~ | RESOLVED random_rng_d2-20260513: C1 util — particle effect spawner; 11× RandomFloat per slot in 10-slot loop; re/analysis/random_rng_d2/0x00421d20.md | random_rng_d2 | util |
+| ~~D-8263~~ | ~~0x004219f0 FUN_004219f0~~ | RESOLVED random_rng_d2-20260513: C1 util — particle effect deactivate by entity ID; RandomFloat(0.5,1.0) on deactivated slot; re/analysis/random_rng_d2/0x004219f0.md | random_rng_d2 | util |
+| ~~D-8264~~ | ~~0x0044e0a0 FUN_0044e0a0~~ | RESOLVED random_rng_d2-20260513: C1 util — object impulse; RandomFloat(-50,50) as x-component of impulse; re/analysis/random_rng_d2/0x0044e0a0.md | random_rng_d2 | util |
+| ~~D-8265~~ | ~~0x004762c0 FUN_004762c0~~ | RESOLVED random_rng_d2-20260513: C1 util — random unit-sphere direction vector; z=RandomFloat(-1,1) angle=RandomFloat(0,π); azimuth [0,π] only; re/analysis/random_rng_d2/0x004762c0.md | random_rng_d2 | util |
+| ~~D-8266~~ | ~~0x004764f0 FUN_004764f0~~ | RESOLVED random_rng_d2-20260513: C1 util — particle emitter init; 5 slots; 6×RandomFloat(-1,1) per slot + normalize; re/analysis/random_rng_d2/0x004764f0.md | random_rng_d2 | util |
 | D-7910 | loading_screen_d2 bucket | depth-2 pass has no work: parent session (2026-05-03) closed with all callees (0x00402fb0, 0x00428760) already at C1; no stub/uncertainty/deferred IDs in range D-8200..8259 / U-2767..2786 / S-2760..2779 | re-open if a new caller of 0x00403050 or 0x00403160 surfaces with un-mapped callees | frontend |
 | D-8500 | 0x00419760 FUN_00419760 | thunkee of 0x004189f0; 112 bytes; not in hooks.csv; called with (car_idx,1) from FUN_00422fd0 via thunk; S-2860 | pick up as bucket race_results_d2-cont1; same depth; no further recursion | frontend |
 | D-8501 | 0x00420de0 FUN_00420de0 | sole callee of 0x004215c0; receives param_2 (50.0f or 0/1); 30 bytes; not in hooks.csv; S-2861 | pick up as bucket race_results_d2-cont1; same depth; no further recursion | frontend |
@@ -941,18 +942,18 @@ A row goes into DEFERRED when:
 | D-10548 | 0x0052d8e0 | drift-clear: C1 in rw_engine_init_d2_cont1_b session (hook rows 1661); re/analysis/rw_engine_init_d2_cont1_b/0052d8e0.md | 2026-05-12 |
 | D-10549 | 0x0057c270 | drift-clear: C1 in rw_engine_init_d2_cont1_b session (hook rows 1662); re/analysis/rw_engine_init_d2_cont1_b/0057c270.md | 2026-05-12 |
 | D-10550 | 0x00561ee0 | drift-clear: C1 in rw_engine_init_d2_cont1_b session (hook rows 1663); re/analysis/rw_engine_init_d2_cont1_b/00561ee0.md | 2026-05-12 |
-| D-10560 | 0x0041ea80 FUN_0041ea80 | Lap-line gate check; callee of FUN_00426c90 (ai_update_d5) | ai_update_d6 or track subsystem session | ai |
-| D-10561 | 0x0041e960 FUN_0041e960 | Lap-line update action; callee of FUN_00426c90 (ai_update_d5) | ai_update_d6 or track subsystem session | ai |
-| D-10562 | 0x00422b50 FUN_00422b50 | Delta applier for entity damage/velocity; callee of FUN_0046d780 and FUN_00422ba0 (ai_update_d5) | ai_update_d6 | ai |
+| ~~D-10560~~ | ~~0x0041ea80 FUN_0041ea80~~ | RESOLVED 2026-05-13: C1 in ai_update_d6; re/analysis/ai_update_d6/0x0041ea80.md | — | ai |
+| ~~D-10561~~ | ~~0x0041e960 FUN_0041e960~~ | RESOLVED 2026-05-13: C1 in ai_update_d6; re/analysis/ai_update_d6/0x0041e960.md | — | ai |
+| ~~D-10562~~ | ~~0x00422b50 FUN_00422b50~~ | RESOLVED 2026-05-13: C1 in ai_update_d6; re/analysis/ai_update_d6/0x00422b50.md | — | ai |
 | D-10563 | 0x00423040 FUN_00423040 | Replay pre-step sub-1; callee of FUN_00423b00 (ai_update_d5) | replay subsystem session | ai |
 | D-10564 | 0x00423270 FUN_00423270 | Replay pre-step sub-2; callee of FUN_00423b00 (ai_update_d5) | replay subsystem session | ai |
 | D-10565 | 0x00423320 FUN_00423320 | Replay pre-step sub-3; callee of FUN_00423b00 (ai_update_d5) | replay subsystem session | ai |
-| D-10566 | 0x0046cbe0 FUN_0046cbe0 | Spinout/state setter; callee of FUN_00422ba0 type-6 event handler (ai_update_d5) | ai_update_d6 | ai |
-| D-10567 | 0x0044e0a0 FUN_0044e0a0 | Physics impulse applier; callee of FUN_00422ba0 type-10 event handler (ai_update_d5) | ai_update_d6 | ai |
-| D-10568 | 0x004219f0 FUN_004219f0 | Type-9 event handler; callee of FUN_00422ba0 (ai_update_d5); payload from DAT_007ea9e8 | ai_update_d6 | ai |
-| D-10569 | 0x0047cea0 FUN_0047cea0 | Explosion radius effect; callee of FUN_00422ba0 type-8 event (ai_update_d5) | ai_update_d6 | render |
-| D-10570 | 0x00415860 FUN_00415860 | Player interaction callback; callee of FUN_004252c0 on scored interaction (ai_update_d5) | ai_update_d6 | ai |
-| D-10571 | 0x00426cc0 FUN_00426cc0 | Vehicle orientation/matrix getter; callee of FUN_004252c0 velocity dot-product path (ai_update_d5) | ai_update_d6 | vehicle |
+| ~~D-10566~~ | ~~0x0046cbe0 FUN_0046cbe0~~ | RESOLVED 2026-05-13: drift-skip; already C2 in util_c0_promote-20260512 | — | vehicle |
+| ~~D-10567~~ | ~~0x0044e0a0 FUN_0044e0a0~~ | RESOLVED 2026-05-13: drift-skip; already C1 in random_rng_d2-20260513 (re/analysis/random_rng_d2/0x0044e0a0.md) | — | ai |
+| ~~D-10568~~ | ~~0x004219f0 FUN_004219f0~~ | RESOLVED 2026-05-13: drift-skip; already C1 in random_rng_d2-20260513 (re/analysis/random_rng_d2/0x004219f0.md) | — | ai |
+| ~~D-10569~~ | ~~0x0047cea0 FUN_0047cea0~~ | RESOLVED 2026-05-13: C1 in ai_update_d6; re/analysis/ai_update_d6/0x0047cea0.md | — | render |
+| ~~D-10570~~ | ~~0x00415860 FUN_00415860~~ | RESOLVED 2026-05-13: C1 in ai_update_d6; re/analysis/ai_update_d6/0x00415860.md | — | ai |
+| ~~D-10571~~ | ~~0x00426cc0 FUN_00426cc0~~ | RESOLVED 2026-05-13: C1 in ai_update_d6; re/analysis/ai_update_d6/0x00426cc0.md | — | vehicle |
 | ~~D-10572~~ | ~~0x00498c00 FUN_00498c00~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/00498c00.md) | — | render |
 | ~~D-10573~~ | ~~0x00498e40 FUN_00498e40~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/00498e40.md) | — | render |
 | ~~D-10574~~ | ~~0x00498ea0 FUN_00498ea0~~ | RESOLVED 2026-05-13: drift-skip; already C1 in rw_engine_init_d3 (re/analysis/rw_engine_init_d3/00498ea0.md) | — | render |
