@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-14  breadth_unmapped_0040x-20260514  bucket=breadth_unmapped_0040x  rvas=0x00401000,0x004011f0,0x00401340,0x004013f0,0x00401630,0x00401690,0x004019d0,0x00401fe0,0x00402240,0x004022a0,0x00402590,0x00402b70,0x00402f80,0x004034a0,0x004036a0,0x004039e0,0x00403c60,0x00404820,0x00404e00,0x00404e20  pool=Mashed_pool1  new-plates=20  promotions=20xC0->C1  note=20 first-pass C1 plates in 0x0040xxxx unmapped gap; cluster 1: cup-trophy system (00401000 CupInit/004011f0 CupUpdate/00401340 CupSetColor/004013f0 CupRender/00402f80 CupFloatInit/00403c60 CupVFXSplash) all sharing globals 0x00636560..0x00636574; cluster 2: primitive geometry factories (00401fe0 triangle-geometry/00402240 triangle-atomic/004022a0 quad-geometry/00402590 quad-atomic); cluster 3: util (00402b70 PathNormalizer PIZ-style 8.3 with PS2/XBOX/PLATFORM strip); cluster 4: render (004034a0 D3D9 back-buffer cap check + RT create, 004036a0 screen-quad blit __thiscall); cluster 5: track (00401630 LoadMapModel); cluster 6: render/mesh (00401690 AABB+inverse-radius from mesh __thiscall ESI, calls Vec3Magnitude 004c3ac0); cluster 7: VFX (004019d0 race track marker VFX update on DAT_00636ac0); singletons: 004039e0 getter DAT_005ea0a8, 00404820 FreeScene(DAT_00636c00), 00404e00 GetDirtBodyName(idx), 00404e20 GetDirtAdWheelName(body,wheel stride=0x4e)
 ```
 ## Drained
 
