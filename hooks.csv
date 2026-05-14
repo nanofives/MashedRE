@@ -1959,7 +1959,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004011f0,FUN_004011f0,hud,C1,mapped,,,, cup trophy per-frame transform update; called from FUN_004013f0
 00401340,FUN_00401340,hud,C1,mapped,,,, cup color-by-game-mode setter; spin speed = -DAT_007f0ff0*scale
 004013f0,FUN_004013f0,hud,C1,mapped,,,, cup trophy render: push-update-draw-pop on DAT_007d3ff8 world context
-00401630,FUN_00401630,track,C1,mapped,,,, LoadMapModel(idx): formats "map_%d.dff" and calls FUN_004b3bf0
+00401630,FUN_00401630,track,C1,mapped,,,," LoadMapModel(idx): formats ""map_%d.dff"" and calls FUN_004b3bf0"
 00401690,FUN_00401690,render,C1,mapped,,,, AABB + inv-radius from mesh; ESI=this struct[1..13]; calls Vec3Magnitude 004c3ac0
 004019d0,FUN_004019d0,render,C1,mapped,,,, race track VFX marker position update; iterates DAT_00636ac0 particle array
 00401fe0,FUN_00401fe0,render,C1,mapped,,,, create triangle geometry (3v/1t) in XZ plane via FUN_004e8c70
@@ -2014,3 +2014,23 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00484060,FUN_00484060,vehicle,C1,mapped,,,, free joint slot: guards pool[4] DAT_006ce81c/82c; calls FUN_00483fa0; zeros slot; 0 callers
 004840d0,FUN_004840d0,vehicle,C1,mapped,,,, joint pointer getter: bounds [0,3]; returns DAT_006ce81c[param_1]; 2 callers
 004840f0,FUN_004840f0,vehicle,C1,mapped,,,, record array pointer+count setter: fastcall; DAT_006cec40[param_2]=ptr; counts 4B entries until null quad into DAT_006ce840[param_2]; 1 caller
+00441490,FUN_00441490,camera,C1,unmapped,,,,cleanup for DAT_006831c0 object; no direct callers
+004414b0,FUN_004414b0,camera,C1,unmapped,,,,camera tilt/zoom update from keyboard+gamepad axis input; caller FUN_0040d470
+00441b30,FUN_00441b30,camera,C1,unmapped,,,,camera entity struct init from config block; caller CameraPath::InitForTrack
+00442410,FUN_00442410,camera,C1,unmapped,,,,array index getter: &DAT_008964fc + n*0xd8
+00442420,FUN_00442420,camera,C1,unmapped,,,,array float getter: *(float*)(&DAT_00896570 + n*0xd8)
+00443090,FUN_00443090,unknown,C1,unmapped,,,,trivial getter returns &DAT_00897ff0; caller FUN_004847d0
+004430c0,FUN_004430c0,frontend,C1,unmapped,,,,conditional frontend action: if param1&&frontend_alpha_get()==3 call FUN_0042f520
+004430e0,FUN_004430e0,render,C1,unmapped,,,,D3D draw-primitive call: 6 floats + packed RGBA; writes verts to DAT_00828328 buffer
+00443210,FUN_00443210,render,C1,unmapped,,,,draws colored diamond/cross marker via two FUN_004430e0 calls; caller FUN_00444ff0
+00448770,FUN_00448770,render,C1,unmapped,,,,init 3 RW frame slots from *(param1+0x1011c) -> DAT_00896490
+00448820,FUN_00448820,render,C1,unmapped,,,,init 5 RW child frame slots from *(param1+0x1012c) -> DAT_00896460
+00448880,FUN_00448880,render,C1,unmapped,,,,init 3 RW child frame slots from *(param1+0x10128) -> DAT_00896480
+00448cb0,FUN_00448cb0,render,C1,unmapped,,,,orbital animation tick for DAT_00896490 3-slot array; sin/cos; advances 3 angle globals
+00448dc0,FUN_00448dc0,render,C1,unmapped,,,,per-frame update for DAT_00896460 5-slot array via FUN_00442410/FUN_00442420
+00448e20,FUN_00448e20,render,C1,unmapped,,,,orbital animation tick for DAT_00896480 3-slot array; mirror of FUN_00448cb0
+00448ef0,FUN_00448ef0,render,C1,unmapped,,,,tick dispatcher: calls FUN_00448cb0+e20+dc0 then sinusoidal bob on DAT_008962e0[DAT_00683248]
+004495d0,FUN_004495d0,unknown,C1,unmapped,,,,getter: *(int*)(DAT_00896278+4)+0x40; caller FUN_00460350
+00449880,FUN_00449880,particle,C1,unmapped,,,,fills 256-float array DAT_00683ec8 with reset height value; called from smoke init
+00449b30,FUN_00449b30,particle,C1,unmapped,,,,"smoke particle system init: alloc pool, bind 'smoke' texture, 2197 particles, 256 emitters"
+00449bb0,FUN_00449bb0,particle,C1,unmapped,,,,"car shadow billboard init: bind 'car_shadow' texture, 2060 max, 80 instances"
