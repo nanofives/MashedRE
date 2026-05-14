@@ -1086,4 +1086,64 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-b-s4 — frontend_promote_menus_b (C2→C3, 3 of 6)
+    # MenuScoreSort.cpp + MenuRaceEnd.cpp
+    #
+    # NOT registered (callee gate failures or unsupported arg_type):
+    #   0x0040b460  SlotSortByScoreWithModeOverride — REFUSED: callee 0x00417740 C0 (STUB S-0491)
+    #   0x00429a30  LapTimeStoreToPlayerArrays — BLOCKED: callee 0x00430790 C1 with open U-3470
+    #   0x0040e3a0  PlayerColorTableGet — OMITTED: (int, byte*) signature not supported by
+    #                harness (pointer out-param needs custom arg_type)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00430830  SplitScreenTrackAssignment
+    # uint32 FUN_00430830(int param_1) — pure leaf, no callees.
+    # Switch on DAT_0067e9fc (game mode) returns from per-slot layout arrays.
+    # Returns 0 for default/unsupported modes.
+    # int_scalar: pass slot index; at main-menu quiescent state (mode typically
+    # 2), returns DAT_007f0a44[param_1 * 0xc]. Both paths must agree.
+    # ref: re/analysis/frontend_promote_menus_b/00430830.md
+    'split_screen_track_assignment': {
+        'rva':            0x00430830,
+        'export':         'SplitScreenTrackAssignment',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x0042fe30  RaceEndFlagIfEndMode
+    # uint32 FUN_0042fe30(void) — calls GetRaceSubMode()==0xb -> return 1, else DAT_0067ea74.
+    # arg_type='none': called 10x at quiescent main menu (mode != 0xb at menu).
+    # Both paths must return the same value (DAT_0067ea74 at menu state).
+    # Callee GetRaceSubMode (0x0042f6a0) is C3.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042fe30.md
+    'race_end_flag_if_end_mode': {
+        'rva':            0x0042fe30,
+        'export':         'RaceEndFlagIfEndMode',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042fe50  RaceEndAltFlagIfEndMode
+    # uint32 FUN_0042fe50(void) — complement of RaceEndFlagIfEndMode.
+    # Returns DAT_0067ea78 when GetRaceSubMode()!=0xb, else 0.
+    # arg_type='none': called 10x at quiescent main menu; both paths must agree.
+    # Callee GetRaceSubMode (0x0042f6a0) is C3.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042fe50.md
+    'race_end_alt_flag_if_end_mode': {
+        'rva':            0x0042fe50,
+        'export':         'RaceEndAltFlagIfEndMode',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
