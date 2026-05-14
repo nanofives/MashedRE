@@ -220,6 +220,58 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-a-s4 — frontend_c0_promote (C2→C3, 3 of 4 candidates)
+    # FrontendState.cpp — pure-leaf frontend global accessors
+    # Note: 0x0042f020 (VehicleFlagClear) REFUSED — __fastcall with EAX
+    #       implicit arg not supported by NativeFunction('mscdecl') harness.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00430b60  MenuSlotCount
+    # Returns char count (0..4) of non-(-1) slot globals at
+    # DAT_007f1a14/24/34/44 (stride 0x10). Pure read, no side-effects.
+    # arg_type='none': call 10x at quiescent state; verify bit-identical
+    # return value between original and reimpl each iteration.
+    'menu_slot_count': {
+        'rva':            0x00430b60,
+        'export':         'MenuSlotCount',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042f6b0  MenuModeSync
+    # void(void): switch on DAT_0067f184 (0..11, absent 4/6/7); writes mapped
+    # value to DAT_0067e9fc. Default case is no-op.
+    # arg_type='none': both orig and reimpl return undefined; undefined===undefined
+    # is true — proves no crash and export is present. Mapping correctness is
+    # verified by literal switch implementation matching the analysis note.
+    'menu_mode_sync': {
+        'rva':            0x0042f6b0,
+        'export':         'MenuModeSync',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00430910  MenuOptionSlotGet
+    # int(void): reads DAT_0067e9fc (game mode), DAT_0067f184 (option index),
+    # DAT_0067f17c (row index). Returns 0 for excluded combos or table value.
+    # Pure read. arg_type='none': call 10x at quiescent state; compare returns.
+    'menu_option_slot_get': {
+        'rva':            0x00430910,
+        'export':         'MenuOptionSlotGet',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x00417730  VehicleRaceAngleGet
     # Per-car float getter: *(float*)(DAT_0089a880 + carIdx * 4). Pure leaf, 11 bytes.
     # int_scalar: passes carIdx as uint32, returns float in ST0.

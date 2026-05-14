@@ -29,6 +29,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Math\RwSqrt.cpp" ^
     "%SRC%\GameState\StateAccessors.cpp" ^
     "%SRC%\Vehicle\VehicleState.cpp" ^
+    "%SRC%\Frontend\FrontendState.cpp" ^
     /link /DLL
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 

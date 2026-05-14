@@ -1014,3 +1014,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0044x  writes=20  errors=0
 2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_005xx  writes=20  errors=0
 2026-05-14  sweep-20260514-1847  scribe-release  buckets=5 drained  errors=0
+2026-05-14  00430b60  MenuSlotCount       C2->C3  c3/batch-a-s4; FrontendState.cpp; 47b leaf; counts non-(-1) DAT_007f1a14/24/34/44; A/B 10/10 GREEN log/diff_menu_slot_count.csv; leaf-exemption; U-3600 open (semantic)
+2026-05-14  0042f6b0  MenuModeSync        C2->C3  c3/batch-a-s4; FrontendState.cpp; 115b leaf; switch DAT_0067f184->DAT_0067e9fc 9 cases; A/B 10/10 GREEN log/diff_menu_mode_sync.csv; leaf-exemption; U-3595 open (semantic)
+2026-05-14  00430910  MenuOptionSlotGet   C2->C3  c3/batch-a-s4; FrontendState.cpp; 137b leaf; mode-gated table read DAT_007f0a40; A/B 10/10 GREEN log/diff_menu_option_slot_get.csv; leaf-exemption; U-3598 U-3599 open (semantic)
+2026-05-14  0042f020  VehicleFlagClear    REFUSED  c3/batch-a-s4; __fastcall EAX implicit arg; NativeFunction('mscdecl') harness cannot support; remains C2; U-3594 open
