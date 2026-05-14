@@ -1014,3 +1014,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0044x  writes=20  errors=0
 2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_005xx  writes=20  errors=0
 2026-05-14  sweep-20260514-1847  scribe-release  buckets=5 drained  errors=0
+2026-05-14  0040e470  FUN_0040e470            C1->C2  drift-promote c3-batch-a-s1; 14b getter *(PTR_PTR_005f2770+param_1*4+0x34); Why C2 block added race_results/0040e470.md; cross-session decomp agreement; U-1300 open
+2026-05-14  00422b30  TimerArrayClear         C2->C3  c3-batch-a-s1; TimerReset.cpp; A/B 10/10 GREEN void_write_observe 0x00899e80; leaf-exemption; U-1612 open (array purpose)
+2026-05-14  0040b810  TimerGlobalsReset       C2->C3  c3-batch-a-s1; TimerReset.cpp; A/B 10/10 GREEN void_write_observe 0x008a9550; leaf-exemption; U-1609 U-1610 open
+2026-05-14  0042af50  FUN_0042af50            REFUSED C2->C3  c3-batch-a-s1; gate fail: no caller at C2+ (callers 0x0043d7c0 C1, 0x0043dfd0 C1); callee gate passes (0x0040e470 now C2); Frida A/B 10/10 GREEN on file; promote when one caller reaches C2
+2026-05-14  00429aa0  FUN_00429aa0            REFUSED C2->C3  c3-batch-a-s1; all three callees C1 (0x00430820, 0x00430790, 0x004a2c48)

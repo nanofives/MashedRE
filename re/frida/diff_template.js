@@ -158,6 +158,34 @@ function runDiff() {
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             let orig, reim, errOrig = null, errReim = null;
+
+            // void_write_observe — void(void) functions that write to globals.
+            // Strategy: write sentinel `t` to target_global, call fn (void),
+            // then read target_global back as the observable. The observed
+            // read-back is compared between orig and reimpl.
+            // This detects whether both functions write the same value to the
+            // same address; the sentinel also confirms the function actually
+            // touches that address (if it doesn't, the sentinel survives).
+            if (CONFIG.arg_type === 'void_write_observe') {
+                const gaddr = ptr(CONFIG.target_global);
+                let origRead = null, reimRead = null;
+                try {
+                    gaddr.writeU32(t >>> 0);
+                    Orig();
+                    origRead = gaddr.readU32();
+                } catch (e) { errOrig = e.message; }
+                try {
+                    gaddr.writeU32(t >>> 0);
+                    Reimpl();
+                    reimRead = gaddr.readU32();
+                } catch (e) { errReim = e.message; }
+                results.push({ idx: i, input: t,
+                               original: origRead, reimpl: reimRead,
+                               match: (origRead !== null && reimRead !== null && origRead === reimRead),
+                               err_original: errOrig, err_reimpl: errReim });
+                continue;
+            }
+
             // For 'read_global' we write the sentinel BEFORE each call so the
             // global has the right value when the function reads it; the
             // write is repeated for both orig and reim in case orig somehow

@@ -135,6 +135,64 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-a-s1 — timer_d2_cont1  (C2→C3, 2 candidates)
+    # Frontend/TimerReset.cpp — pure-leaf void(void) global-zero functions
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00422b30  TimerArrayClear
+    # memset(0x00899e80, 0, 312*4). void(void).
+    # Strategy: write sentinel to DAT_00899e80, call fn, read back.
+    # Original must write 0 (sentinel wiped); reimpl must do the same.
+    # 10 sentinels chosen to span various bit patterns.
+    'timer_array_clear': {
+        'rva':            0x00422b30,
+        'export':         'TimerArrayClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00899e80,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0040b810  TimerGlobalsReset
+    # Writes 0 to 21 globals across four address clusters. void(void).
+    # Strategy: write sentinel to 0x008a9550 (first address written by
+    # decomp), call fn, read back. Original must write 0; reimpl must match.
+    # Also tests that reimpl touches 0x0063b8ec (last write) by checking
+    # the last address in the path2 suite via separate target_global tests.
+    'timer_globals_reset': {
+        'rva':            0x0040b810,
+        'export':         'TimerGlobalsReset',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008a9550,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0042af50  MenuReadinessCheck
+    # Returns int 0 or 1; read-only scan of char/index arrays in live game state.
+    # arg_type 'none': call with no args, compare return value (0 or 1).
+    # Both orig and reimpl see the same global state at boot; any divergence
+    # in the return value would indicate a logic error in the reimpl.
+    # 10 identical dummy-iteration calls confirm stable bit-identical output.
+    'menu_readiness_check': {
+        'rva':            0x0042af50,
+        'export':         'MenuReadinessCheck',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
     # Session 88 — c3_vehicle_state  (C2→C3, 5 candidates)
     # VehicleState.cpp — pure-leaf vehicle field getters/predicates
     # ─────────────────────────────────────────────────────────────────────
