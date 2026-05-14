@@ -249,6 +249,107 @@ HOOKS = {
         'path2_tests':    [0, 15, 16, 255],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-a-s5 — frontend_c0_promote + game_mode_cont2
+    # FrontendNav.cpp / GameModeInit.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004323c0  MenuCursorBack
+    # Backward 2D cursor nav: decrements DAT_0067f17c, searches backward via
+    # FUN_00430830/FUN_00430910, syncs mode via FUN_0042f6b0.
+    # cursor_back: inject {row,col,flag,mp_flag}, call fn, read back row+col.
+    'menu_cursor_back': {
+        'rva':            0x004323c0,
+        'export':         'MenuCursorBack',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'cursor_back',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # { row, col, flag, mp_flag }
+            # SP mode (min=1): row>0, col=min → should quickly return.
+            {'row': 2,  'col': 1, 'flag': 0, 'mp_flag': 0},
+            {'row': 3,  'col': 1, 'flag': 0, 'mp_flag': 0},
+            # SP mode: row>0, col>min → inner loop navigates.
+            {'row': 3,  'col': 3, 'flag': 0, 'mp_flag': 0},
+            {'row': 5,  'col': 5, 'flag': 0, 'mp_flag': 0},
+            {'row': 2,  'col': 2, 'flag': 0, 'mp_flag': 0},
+            # MP mode (min=3): row>0, col=min(3).
+            {'row': 2,  'col': 3, 'flag': 0, 'mp_flag': 1},
+            {'row': 4,  'col': 3, 'flag': 0, 'mp_flag': 1},
+            # MP mode: row>0, col>min.
+            {'row': 3,  'col': 5, 'flag': 0, 'mp_flag': 1},
+            # row=0 clamp case.
+            {'row': 1,  'col': 1, 'flag': 0, 'mp_flag': 0},
+            {'row': 1,  'col': 3, 'flag': 0, 'mp_flag': 1},
+        ],
+        'path2_tests': [
+            {'row': 2,  'col': 1, 'flag': 0, 'mp_flag': 0},
+            {'row': 3,  'col': 3, 'flag': 0, 'mp_flag': 0},
+            {'row': 2,  'col': 3, 'flag': 0, 'mp_flag': 1},
+        ],
+    },
+
+    # 0x0046dc00  EntityFieldSet
+    # Writes param_2 to (&DAT_008815a8)[param_1 * 0x341].
+    # entity_field_set: call fn(p1, p2), read back 0x8815a8 + p1*0xd04.
+    'entity_field_set': {
+        'rva':            0x0046dc00,
+        'export':         'EntityFieldSet',
+        'signature':      {'ret': 'uint32', 'args': ['int32', 'uint32']},
+        'arg_type':       'entity_field_set',
+        'target_global':  0x008815a8,
+        'entity_byte_stride': 0xd04,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [param_1, param_2]
+            [0, 0],
+            [0, 1],
+            [0, 0xdeadbeef],
+            [0, 0xffffffff],
+            [1, 0],
+            [1, 0x12345678],
+            [2, 0],
+            [2, 0xabcdef],
+            [2, 0xcafebabe],
+            [3, 0],
+        ],
+        'path2_tests': [
+            [0, 0xdeadbeef],
+            [1, 0x12345678],
+            [2, 0xcafebabe],
+        ],
+    },
+
+    # 0x00492340  CarSlotInit
+    # Guard at element[param_1][+4] of 0x7f1058 (stride 0x4c). If non-zero:
+    # writes 1/3/10/0xff to fields +0/+0x10/+0xc/+0x14.
+    # car_slot_init: inject guard_val, call fn(idx), read back 4 fields packed.
+    'car_slot_init': {
+        'rva':            0x00492340,
+        'export':         'CarSlotInit',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'car_slot_init',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # { idx, guard_val }  — guard_val=0 → no write; guard_val!=0 → write 4 fields
+            {'idx': 0, 'guard_val': 0},
+            {'idx': 0, 'guard_val': 1},
+            {'idx': 1, 'guard_val': 0},
+            {'idx': 1, 'guard_val': 1},
+            {'idx': 2, 'guard_val': 0},
+            {'idx': 2, 'guard_val': 1},
+            {'idx': 3, 'guard_val': 0},
+            {'idx': 3, 'guard_val': 1},
+            {'idx': 0, 'guard_val': 0xffffffff},
+            {'idx': 1, 'guard_val': 0xdeadbeef},
+        ],
+        'path2_tests': [
+            {'idx': 0, 'guard_val': 0},
+            {'idx': 0, 'guard_val': 1},
+            {'idx': 1, 'guard_val': 1},
+        ],
+    },
+
     # 0x0046cbb0  VehicleCarStateRead
     # Reads 2 DWORD fields (state + secondary) from per-car struct at stride 0xD04.
     # idx_out2: carIdx first, two 4-byte out-slots in shared buf; compares return value (0/1).

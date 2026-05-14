@@ -86,6 +86,8 @@ def main():
     # Optional fields — only forwarded if present in the registry entry.
     if 'target_global' in hook:
         config['target_global'] = f"0x{hook['target_global']:08x}"
+    if 'entity_byte_stride' in hook:
+        config['entity_byte_stride'] = hook['entity_byte_stride']
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     csv_out = LOG_DIR / f'diff_{name}.csv'

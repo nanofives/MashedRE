@@ -1014,3 +1014,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_0044x  writes=20  errors=0
 2026-05-14  sweep-20260514-1847  scribe-release  bucket=breadth_unmapped_005xx  writes=20  errors=0
 2026-05-14  sweep-20260514-1847  scribe-release  buckets=5 drained  errors=0
+2026-05-14  004323c0  MenuCursorBack  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/FrontendNav.cpp; Frida A/B 10/10 GREEN log/diff_MenuCursorBack.csv; callees 0x00430830/0x0042f6b0/0x00430910 at C2+; U-3601 U-3602 open blocks:none
+2026-05-14  0046dc00  EntityFieldSet  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_EntityFieldSet.csv; pure leaf; leaf-exemption; U-3645 U-3646 open blocks:none
+2026-05-14  00492340  CarSlotInit  C2->C3  c3/batch-a-s5; mashedmod/src/mashed_re/Frontend/GameModeInit.cpp; Frida A/B 10/10 GREEN log/diff_CarSlotInit.csv; pure leaf; leaf-exemption; U-3643 U-3644 open blocks:none
