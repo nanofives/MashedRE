@@ -286,6 +286,13 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'uint32_scalar') {
         return fn(input >>> 0);
     }
+    // write_global_setter — void(uint32) setter: call fn(input), read back target_global.
+    // Used for trivial setters like TimerStateSet that write param_1 to a fixed global.
+    // The read-back value is returned as the comparable observable.
+    if (CONFIG.arg_type === 'write_global_setter') {
+        fn(input >>> 0);
+        return ptr(CONFIG.target_global).readU32();
+    }
     // float_scalar (default)
     if (CONFIG.arg_type === 'vec2_ptr') {
         buf.writeFloat(input[0]);
@@ -398,10 +405,12 @@ function runDiff() {
         geomBuf    = Memory.alloc(0x40);
     }
 
-    // For 'read_global' and 'write_global_call_int0', save and restore the target global so
-    // we don't leave a sentinel in game-state memory after the test.
+    // For 'read_global', 'write_global_call_int0', 'write_global_setter', and
+    // 'void_write_observe', save and restore the target global so we don't
+    // leave a sentinel in game-state memory.
     let savedGlobal = null;
-    if (CONFIG.arg_type === 'read_global' || CONFIG.arg_type === 'write_global_call_int0') {
+    if (CONFIG.arg_type === 'read_global' || CONFIG.arg_type === 'write_global_call_int0' ||
+        CONFIG.arg_type === 'write_global_setter' || CONFIG.arg_type === 'void_write_observe') {
         try { savedGlobal = ptr(CONFIG.target_global).readU32(); }
         catch (e) { send({ type: 'error', msg: 'failed reading target_global: ' + e.message }); return; }
     }

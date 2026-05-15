@@ -1016,7 +1016,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005a6dc0,FUN_005a6dc0,audio,C1,mapped,re/analysis/audio_music_d2/005a6dc0.md,,,null-guard wrapper; calls FUN_005a6d60(p1 p2 p3 &p4); p4 passed by addr from caller stack; U-2209; S-2201; resolves S-0621
 0045e0f0,FUN_0045e0f0,audio,C1,mapped,re/analysis/audio_music_d2/0045e0f0.md,,,per-channel volume setter; clamps to [005d757c..005cc320]; writes obj+0x40 + FUN_005a6dc0(sub 5 1 vol) + DAT_0068f644[ch*2]; U-2210; resolves S-0622
 00431b20,FUN_00431b20,audio,C1,mapped,re/analysis/audio_music_d2/00431b20.md,,,returns fsin(DAT_007f0f00 * _DAT_005cd8f0) as float10; phase-channel A; U-2211; resolves S-0623
-005baf00,FUN_005baf00,audio,C1,mapped,re/analysis/audio_music_d2/005baf00.md,,,music group volume setter; writes param_2→param_1+0x38; circular list walk: set node+0x14 bit6; secondary ptr+0x30; U-2212 U-2213 U-2214; resolves S-0625
+005baf00,MusicGroupVolumeSet,audio,C2,impl,mashedmod/src/mashed_re/Audio/AudioMusic.cpp,,log/diff_music_group_volume_set.csv,music group volume setter; writes param_2→param_1+0x38; circular list walk: set node+0x14 bit6; secondary ptr+0x30; U-2212 U-2213 U-2214; resolves S-0625; leaf-exemption: no callees; C3 gated on caller 0x0045dd60 reaching C2+
 0042f760,FUN_0042f760,audio,C1,mapped,re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md,,,returns DAT_0067f19c; channel-B trigger flag getter; U-2215; resolves S-0627
 0042f770,FUN_0042f770,audio,C1,mapped,re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md,,,returns DAT_0067f1a0; channel-C trigger-A flag getter; U-2215; resolves S-0628
 0042f780,FUN_0042f780,audio,C1,mapped,re/analysis/audio_music_d2/0042f760_0042f770_0042f780.md,,,returns DAT_0067f1a4; channel-C trigger-B flag getter; U-2215; resolves S-0629
@@ -1648,8 +1648,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041cb80,sub_0041cb80,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041cb80.md,promote_c2_util_timer-20260513,,init loop: calls FUN_0040e340/FUN_0040b890 once; iterates 0x0063ce20 stride 0x114 x46 calling FUN_0041c380; caller=FUN_004111c0
 0041cbc0,sub_0041cbc0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041cbc0.md,promote_c2_util_timer-20260513,,float-table init: writes 4x3 float groups to 0x005f337c; zeroes 0x0063d270; caller=FUN_004111c0
 0041d730,sub_0041d730,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d730.md,promote_c2_util_timer-20260513,,player-slot assignment init: zeroes 0x0063d298 slots stride 0x160; checks 007f1a14/18/24/28/34/38/44/48 pairs; caller=FUN_004111c0
-0041d820,sub_0041d820,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d820.md,promote_c2_util_timer-20260513,,trivial: DAT_0063d558=0; caller=FUN_004111c0
-0041e130,sub_0041e130,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041e130.md,promote_c2_util_timer-20260513,,setter: DAT_0063d7e0=param_1; callers=FUN_004111c0 FUN_0040e560
+0041d820,TimerFlagClear,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0063d558=0; Frida A/B GREEN 10/10; U-3715; caller=FUN_004111c0
+0041e130,TimerStateSet,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0063d7e0=param_1; Frida A/B GREEN 10/10; U-3716; callers=FUN_004111c0 FUN_0040e560
 0041eda0,sub_0041eda0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041eda0.md,promote_c2_util_timer-20260513,,bitfield set/clear bit3 at 0x0063dc74+param1*0x2ac; callers=FUN_004111c0 FUN_0040be50 FUN_00410860 FUN_004704c0
 0041f000,sub_0041f000,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041f000.md,promote_c2_util_timer-20260513,,copy 6 dwords from 0x0063dc10+param1*0x2ac to *param2; callers=FUN_004111c0 FUN_0040e590
 00420d40,sub_00420d40,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00420d40.md,promote_c2_util_timer-20260513,,array clear: zeroes 6-element x0x24 block at 0x0063e4b8 via FUN_004b6520+manual; caller=FUN_004111c0
@@ -1657,8 +1657,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004222c0,thunk_FUN_00422120,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x004222c0.md,promote_c2_util_timer-20260513,,confirmed thunk of 0x00422120; caller=FUN_004111c0
 00422b10,sub_00422b10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00422b10.md,promote_c2_util_timer-20260513,,zero-fill 0x4e0 bytes at 0x008994c0 (0x138 dwords); caller=FUN_004111c0
 00425b10,sub_00425b10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00425b10.md,promote_c2_util_timer-20260513,,zero 8 globals stride 0x4c at 0x008992a0..0x008994b4; caller=FUN_004111c0
-00426630,sub_00426630,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426630.md,promote_c2_util_timer-20260513,,setter: DAT_0066d6fc=param_1; caller=FUN_004111c0
-004266f0,sub_004266f0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x004266f0.md,promote_c2_util_timer-20260513,,setter: DAT_0066d700=param_1; caller=FUN_004111c0
+00426630,PitchParamSet,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0066d6fc=param_1; Frida A/B GREEN 10/10; U-3717; caller=FUN_004111c0
+004266f0,PitchParam2Set,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0066d700=param_1; Frida A/B GREEN 10/10; U-3718; caller=FUN_004111c0
 00426c10,sub_00426c10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c10.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea40 gate; if nonzero calls FUN_0041e920(&0x00646e58)+FUN_00480100; caller=FUN_004111c0
 00426c30,sub_00426c30,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c30.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea30 gate; if nonzero calls FUN_0041e910; caller=FUN_004111c0
 00426c70,sub_00426c70,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c70.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea50 gate; if nonzero calls FUN_0041e930; caller=FUN_004111c0

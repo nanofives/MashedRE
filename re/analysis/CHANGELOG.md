@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  005baf00  MusicGroupVolumeSet  C1->C2  c3-batch-f-s13; re/analysis/audio_music_d2/005baf00.md; impl=mashedmod/src/mashed_re/Audio/AudioMusic.cpp; Frida diff GREEN 10/10 log/diff_music_group_volume_set.csv; C3 refused: caller 0x0045dd60 is C1 (caller gate not met); leaf-callee-exemption applies
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
@@ -1122,3 +1123,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  0041d820  TimerFlagClear  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_timer_flag_clear.csv; U-3715 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  0041e130  TimerStateSet  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_timer_state_set.csv; U-3716 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  00426630  PitchParamSet  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_pitch_param_set.csv; U-3717 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  004266f0  PitchParam2Set  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_pitch_param2_set.csv; U-3718 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
