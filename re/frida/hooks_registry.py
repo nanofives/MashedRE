@@ -1833,4 +1833,77 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-e-s1 — save_gamesave core (C2→C3, 4 candidates)
+    # Save/GameSave.cpp — save-status setter, load, write, file-exists
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004099e0  SaveStatusClear
+    # void(uint32_t param_1): writes param_1 to DAT_008a95a0.
+    # Pure 10-byte leaf. Called with 0 after both load and write.
+    # Strategy: int_write_observe — call fn(input), read back DAT_008a95a0.
+    # Both orig and reimpl must leave the same value in the global.
+    # 10 sentinels covering 0, 1, max, and canonical bit patterns.
+    'save_status_clear': {
+        'rva':            0x004099e0,
+        'export':         'SaveStatusClear',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'int_write_observe',
+        'target_global':  0x008a95a0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xFFFFFFFF, 0x80000000, 0x12345678,
+                           0x55555555, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x00404e50  SaveLoad
+    # int(void): calls FUN_004b3b70(gamesave.bin, buf, size) then
+    #   SaveStatusClear(0). Always returns 0.
+    # Strategy: none — call 1x at quiescent LUT-ready state.
+    # crash_equal_ok: FUN_004b3b70 may raise if VFS not yet open; if both
+    # sides fail identically, that still proves the reimpl has the same ABI.
+    # Return must be 0 for both orig and reimpl when VFS is ready.
+    # 2 iteration markers minimise hang risk while still covering orig/reimpl paths.
+    'save_load': {
+        'rva':            0x00404e50,
+        'export':         'SaveLoad',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1],
+        'path2_tests':    [0],
+    },
+
+    # 0x00404f50  SaveWrite
+    # int(void): calls FUN_004b3bb0(gamesave.bin, buf, size) then
+    #   SaveStatusClear(0). Always returns 0.
+    # Mirror of SaveLoad. Same test strategy and crash_equal_ok rationale.
+    'save_write': {
+        'rva':            0x00404f50,
+        'export':         'SaveWrite',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1],
+        'path2_tests':    [0],
+    },
+
+    # 0x00404f80  SaveFileExists
+    # int(void): calls FUN_00550b00(gamesave.bin); normalizes via NEG/SBB/NEG.
+    # Returns 1 if gamesave.bin exists, 0 otherwise.
+    # Strategy: none — call 10x at quiescent state; both must return identical
+    # value. At main menu the file either exists or does not; both paths agree.
+    'save_file_exists': {
+        'rva':            0x00404f80,
+        'export':         'SaveFileExists',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }

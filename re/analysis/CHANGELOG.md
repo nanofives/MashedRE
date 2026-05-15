@@ -1122,3 +1122,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  0x004099e0  SaveStatusClear  C2->C3  log/diff_save_status_clear.csv  10/0 GREEN  leaf-exemption  c3-batch-e-s1
+2026-05-15  0x00404e50  SaveLoad  C2->C3  log/diff_save_load.csv  2/0 GREEN  c3-batch-e-s1
+2026-05-15  0x00404f50  SaveWrite  C2->C3  log/diff_save_write.csv  2/0 GREEN  c3-batch-e-s1
+2026-05-15  0x00404f80  SaveFileExists  C2->C3  log/diff_save_file_exists.csv  10/0 GREEN  c3-batch-e-s1
