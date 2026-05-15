@@ -22,11 +22,12 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 
 
-2026-05-15  batch-q-s16  rvas=0x00474890,0x00429a90,0x0042e8b0,0x00427e00  branch=discovery/batch-q-s16  level=c2  evidence=.worktrees/batch-q-s16/re/analysis/hud_frontend_d3/0x00474890.md;.worktrees/batch-q-s16/re/analysis/frontend_unmapped_a/0x0042e8b0.md;.worktrees/batch-q-s16/re/analysis/hud_frontend/0x00427e00.md  note=3 C1->C2 promotions; 0x00429a90 DRIFT-SKIP (already C3 LapSecsGetBySlot); 0x00427e00 repeat of s4 (same RVA)
+
 ```
 ## Drained
 
 ```
+2026-05-15  batch-q-s16  rvas=0x00474890,0x00429a90,0x0042e8b0,0x00427e00  branch=discovery/batch-q-s16  level=c2  evidence=.worktrees/batch-q-s16/re/analysis/hud_frontend_d3/0x00474890.md;.worktrees/batch-q-s16/re/analysis/frontend_unmapped_a/0x0042e8b0.md;.worktrees/batch-q-s16/re/analysis/hud_frontend/0x00427e00.md  note=3 C1->C2 promotions; 0x00429a90 DRIFT-SKIP (already C3 LapSecsGetBySlot); 0x00427e00 repeat of s4 (same RVA)  drained-by=sweep-20260515-1312; 3 plates, 3 bookmarks, 0 renames
 2026-05-15  batch-q-s15  rvas=0x00473ee0,0x00429a30,0x00429a70,0x00429a80  branch=discovery/batch-q-s15  level=c2  evidence=.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00473ee0.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a30.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a70.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a80.md  note=4 C1->C2 promotions hud_frontend_d3 cluster  drained-by=sweep-20260515-1312; 4 plates, 4 bookmarks, 0 renames
 2026-05-15  batch-q-s14  rvas=0x00473c20,0x00429290,0x00429870,0x004298c0  branch=discovery/batch-q-s14  level=c2  evidence=.worktrees/batch-q-s14/re/analysis/hud_frontend_d3/0x00473c20.md;.worktrees/batch-q-s14/re/analysis/title_screen/0x00429290.md;.worktrees/batch-q-s14/re/analysis/hud_frontend_d3/0x00429870.md;.worktrees/batch-q-s14/re/analysis/c0_promotion_frontend_a/0x004298c0.md  note=4 C1->C2 promotions hud_frontend_d3+title_screen+c0_promotion cluster  drained-by=sweep-20260515-1312; 4 plates, 4 bookmarks, 0 renames
 2026-05-15  batch-q-s13  rvas=0x004726f0,0x00428bf0,0x00428d30,0x00429240  branch=discovery/batch-q-s13  level=c2  evidence=.worktrees/batch-q-s13/re/analysis/hud_frontend_d3/0x004726f0.md;.worktrees/batch-q-s13/re/analysis/title_screen/0x00428bf0.md;.worktrees/batch-q-s13/re/analysis/title_screen/0x00428d30.md;.worktrees/batch-q-s13/re/analysis/title_screen/0x00429240.md  note=4 C1->C2 promotions hud_frontend_d3+title_screen dispatch cluster  drained-by=sweep-20260515-1312; 4 plates, 4 bookmarks, 0 renames
