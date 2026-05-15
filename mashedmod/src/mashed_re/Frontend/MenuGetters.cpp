@@ -122,4 +122,6 @@ extern "C" __declspec(dllexport) void __cdecl MenuCursorStep(int param_1) {
     *reinterpret_cast<std::uint32_t*>(0x0067ed40u + slotOff40) = 0xFFFFFFFFu;
 }
 
-RH_ScopedInstall(MenuCursorStep, 0x0042aa00);
+// RH_ScopedInstall(MenuCursorStep, 0x0042aa00);
+// Disabled: integration diff RED (2026-05-15). Validity-address formula
+// 0x0067ed84+cursor+slot*0x10-0x10 doesn't match original; Ghidra re-check needed.

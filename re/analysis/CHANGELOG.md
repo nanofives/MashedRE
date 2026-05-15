@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
+2026-05-15  0042aa00  MenuCursorStep  C2(no-change)  integration-diff-RED: validity-addr formula 0x0067ed84+cursor+slot*0x10-0x10 doesn't match original; per-session GREEN was false positive (test vectors covered wrong memory region); RH_ScopedInstall disabled; Ghidra re-investigation needed before C3 retry
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-claim  branches=18 queued
 2026-05-14  004c5c00  FUN_004c5c00  C1->C2  sprite_gate_c3-20260514; re/analysis/sprite_gate_c3/0x004c5c00.md; drift-promote: case-insensitive linked-list string search (114b leaf); mechanical description complete from title_screen_d2 depth-3 trace; S-2540 cleared
 2026-05-14  0040bb50  FUN_0040bb50  C1->C2  sprite_gate_c3-20260514; re/analysis/hud_frontend/0x0040bb50.md; drift-promote: FUN_004c5c00(DAT_0063b8fc param_1) forwarder (20b); U-0450 cleared; caller-gate for SpriteSlotGate now open
