@@ -1,6 +1,12 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  005abcb0  AudioWaveNodeFree          C2->C3  c3-batch-f-s7; mashedmod/src/mashed_re/Audio/AudioRws.cpp; crash_equal_ok GREEN 10/10 log/diff_audio_wave_node_free.csv; caller=005abcf0(C2); callee=005ae920(C2); U-0994 open (Uncertainties section)
+2026-05-15  005ac740  AudioSubStructBufCleanup   C2->C3  c3-batch-f-s7; mashedmod/src/mashed_re/Audio/AudioRws.cpp; crash_equal_ok GREEN 10/10 log/diff_audio_sub_struct_buf_cleanup.csv; caller=005abcf0(C2); callee=004522d0(C1 prec-AudioAlignedFree)
+2026-05-15  005ac900  AudioContextLookup         C2->C3  c3-batch-f-s7; mashedmod/src/mashed_re/Audio/AudioRws.cpp; crash_equal_ok GREEN 10/10 log/diff_audio_context_lookup.csv; caller=005ac210(C2); callee=005aa0c0(C2 drift-promote); U-1730 open (Uncertainties section)
+2026-05-15  005ae650  AudioPoolConstruct         C2->C3  c3-batch-f-s7 STRUCT-GAP; mashedmod/src/mashed_re/Audio/AudioRws.cpp; crash_equal_ok GREEN 10/10 log/diff_audio_pool_construct.csv; caller=005aba20(C2); callee=005aea00(C2); U-1736 open (Uncertainties section)
+2026-05-15  005aa0c0  FUN_005aa0c0  C1->C2  drift-promote c3-batch-f-s7; mechanical decomp complete audio_rws_loader_d3/005aa0c0.md; callee of AudioContextLookup 0x005ac900
+2026-05-15  005baf00  MusicGroupVolumeSet  C1->C2  c3-batch-f-s13; re/analysis/audio_music_d2/005baf00.md; impl=mashedmod/src/mashed_re/Audio/AudioMusic.cpp; Frida diff GREEN 10/10 log/diff_music_group_volume_set.csv; C3 refused: caller 0x0045dd60 is C1 (caller gate not met); leaf-callee-exemption applies
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
