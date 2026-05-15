@@ -1119,3 +1119,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/title_screen/c0_promotion(s14)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
+2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
