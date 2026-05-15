@@ -1177,8 +1177,7 @@ HOOKS = {
     # arg_type='read_global': write game mode to 0x0067e9fc then call fn() -> int.
     'hud_slot_type_player0': {
         'rva':            0x00430a10,
-        'export':         'HudSlotTypePlayer0',
-        'signature':      {'ret': 'uint32', 'args': []},
+        'export':         'HudSlotTypePlayer0',        'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'read_global',
         'target_global':  0x0067e9fc,
         'lut_root_delta': 0,
@@ -1297,8 +1296,7 @@ HOOKS = {
         'export':         'FrontendGlobalGet',
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'read_global',
-        'target_global':  0x008a95ac,
-        'lut_root_delta': 0,
+        'target_global':  0x008a95ac,        'lut_root_delta': 0,
         'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
                            0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
                            0xAAAAAAAA, 0x00FF00FF],
@@ -1547,4 +1545,100 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
         'path2_tests':    [0, 1, 2, 3],
     },
+
+    # Session c3-batch-b-s2 — frontend batch b session 2 (C2→C3, 6 candidates)
+    # MenuScoreGetters.cpp + MenuInit.cpp
+    # SlotSortByModeScore (0x0040b620) OMITTED — arg_type 'void_out_ptr'
+    #   (pass ptr, call, readback 4-element array) not supported by harness.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00429a90  LapSecsGetBySlot
+    # Returns (&DAT_0067d994)[param_1] — indexed read of lap-time seconds
+    # component by slot. 12-byte body. Same indexed-array pattern as other
+    # lap time getters.
+    # int_scalar: passes param_1 as int, reads back return value.
+    # ref: re/analysis/frontend_promote_menus_b/00429a90.md
+    'lap_secs_get_by_slot': {
+        'rva':            0x00429a90,
+        'export':         'LapSecsGetBySlot',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00430760  IsMultiplayerMode
+    # Returns 1 if DAT_0067e9fc in {2, 3, 4, 5, 10}; else 0.
+    # 38-byte body. Multi-mode boolean check on game mode global at 0x0067e9fc.
+    # read_global: write sentinel, call fn(), verify return.
+    # 10 dummy-marker tests (game-mode global at quiescent main-menu = 1 → 0).
+    # ref: re/analysis/frontend_promote_menus_b/00430760.md
+    'is_multiplayer_mode': {
+        'rva':            0x00430760,
+        'export':         'IsMultiplayerMode',        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067e9fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x00000004, 0x00000005, 0x00000009, 0x0000000A,
+                           0x0000000B, 0x00000000],
+        'path2_tests':    [0x00000001, 0x00000002, 0x0000000A],
+    },
+
+    # 0x0042fe80  GetRaceEndFlag
+    # 5-byte body: MOV EAX, [0x0067ea90]; RET.
+    # Pure getter of DAT_0067ea90 (race-end flag / slot gate).
+    # read_global: write sentinel, call fn(), verify return == sentinel.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042fe80.md
+    'get_race_end_flag': {
+        'rva':            0x0042fe80,
+        'export':         'GetRaceEndFlag',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ea90,        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00FF00FF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0042f0b0  GetFrameCounterPlus73
+    # 8-byte body: MOV EAX, [0x0067f17c]; ADD EAX, 0x49; RET.
+    # Returns animation frame counter (DAT_0067f17c) + 73 (0x49 cited at 0x0042f0b4).
+    # read_global: write sentinel, call fn(), verify return == sentinel + 73.
+    # Note: harness checks exact return value — we write known sentinel to
+    # 0x0067f17c, reimpl returns sentinel+0x49; orig does the same.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042f0b0.md
+    'get_frame_counter_plus73': {
+        'rva':            0x0042f0b0,
+        'export':         'GetFrameCounterPlus73',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067f17c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000064, 0x000003E8,
+                           0x7FFFFF00, 0xFFFFFF80, 0x00001000, 0x00010000,
+                           0x12345678, 0xDEADB000],
+        'path2_tests':    [0x00000001, 0x00000064, 0x00001000],
+    },
+
+    # 0x0042d3e0  MenuEntryArrayInit
+    # 58-byte body. Zeroes 14 selected offsets per entry across 30 entries
+    # of a 52-byte struct array at 0x00898ac0..0x008990dc.
+    # void_write_observe: write sentinel to DAT_00898ac0 (array base, first
+    # dword of entry[0] = offset -4 relative to loop ptr start), call fn(),
+    # read back to verify sentinel was zeroed.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042d3e0.md
+    'menu_entry_array_init': {
+        'rva':            0x0042d3e0,
+        'export':         'MenuEntryArrayInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00898ac0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],    },
 }
