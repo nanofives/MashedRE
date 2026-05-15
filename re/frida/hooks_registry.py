@@ -1450,4 +1450,101 @@ HOOKS = {
             {'depth': 31},
         ],
     },
+
+    # Session c3-batch-b-s1 — frontend_score_getters (C2->C3, 6 candidates)
+    # Frontend/MenuScoreGetters.cpp — pure-leaf indexed reads + global getters
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0040b6b0  ModeScoreGetBySlot
+    # Returns DAT_008a9530[param_1] — per-slot mode-score array element.
+    # arg_type='int_scalar': single int index, returns uint32.
+    'mode_score_get_by_slot': {
+        'rva':            0x0040b6b0,
+        'export':         'ModeScoreGetBySlot',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x0040b7a0  HotkeyStringBaseGet
+    # Returns DAT_0063b8ec — hotkey string base global. No args.
+    # arg_type='read_global': write sentinel, call, read back.
+    'hotkey_string_base_get': {
+        'rva':            0x0040b7a0,
+        'export':         'HotkeyStringBaseGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0063b8ec,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0040b7b0  PlayerHotkeyTableGet
+    # 4-table dispatch: returns array[param_1] for table selected by param_2 (0-3).
+    # arg_type='int_pair': two int args [param_1, param_2].
+    # NOTE: 'int_int_scalar' does not exist in registry; using 'int_pair' instead.
+    'player_hotkey_table_get': {
+        'rva':            0x0040b7b0,
+        'export':         'PlayerHotkeyTableGet',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0], [1, 0], [2, 0], [3, 0],
+            [0, 1], [1, 1], [2, 1], [3, 1],
+            [0, 2], [1, 2], [2, 2], [3, 2],
+            [0, 3], [1, 3], [2, 3], [3, 3],
+            [0, 4], [1, 5],
+        ],
+        'path2_tests': [
+            [0, 0], [1, 1], [2, 2], [3, 3], [0, 4],
+        ],
+    },
+
+    # 0x00429870  LapTimeALessThanB
+    # Reads 6 globals, computes time_A and time_B, returns 1 if A < B else 0.
+    # No args. arg_type='read_global': sentinel-write to DAT_0067d98c, call, check.
+    'lap_time_a_less_than_b': {
+        'rva':            0x00429870,
+        'export':         'LapTimeALessThanB',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067d98c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x0000000a, 0x0000000f, 0xDEADBEEF, 0x00000005,
+                           0x00000000, 0x00000007],
+        'path2_tests':    [0x00000000, 0x00000001, 0x00000002],
+    },
+
+    # 0x00429a70  LapFracGetBySlot
+    # Returns (float)DAT_0067d99c[param_1] — indexed float read, lap frac array.
+    # arg_type='int_scalar': single int index, returns float.
+    'lap_frac_get_by_slot': {
+        'rva':            0x00429a70,
+        'export':         'LapFracGetBySlot',
+        'signature':      {'ret': 'float', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00429a80  LapLapsGetBySlot
+    # Returns DAT_0067d98c[param_1] — indexed read of lap laps array.
+    # arg_type='int_scalar': single int index, returns uint32.
+    'lap_laps_get_by_slot': {
+        'rva':            0x00429a80,
+        'export':         'LapLapsGetBySlot',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
 }

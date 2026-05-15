@@ -49,6 +49,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\FrontendMode.cpp" ^
     "%SRC%\HUD\HudDispatch.cpp" ^
     "%SRC%\HUD\FontCtx.cpp" ^
+    "%SRC%\Frontend\MenuScoreGetters.cpp" ^
     /link /DLL
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 
