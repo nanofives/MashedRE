@@ -1122,3 +1122,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  0x004a31f3  CrtPreInit  C2->C3  Frida A/B GREEN 10/10 log/diff_crt_pre_init.csv; fn-ptr table dispatch; atexit; RH_ScopedInstall Boot/CrtStartup.cpp
+2026-05-15  0x004a3258  CrtExitCore  C2->C3  Frida A/B GREEN 10/10 crash_equal_ok log/diff_crt_exit_core.csv; lock+atexit+exit-tables; RH_ScopedInstall Boot/CrtStartup.cpp
