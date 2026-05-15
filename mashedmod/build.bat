@@ -33,6 +33,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Util\GameStateGetters.cpp" ^
     "%SRC%\Util\EventTable.cpp" ^
     "%SRC%\Audio\AudioMemory.cpp" ^
+    "%SRC%\Audio\AudioDSound.cpp" ^
     "%SRC%\Math\RwV3dTransform.cpp" ^
     "%SRC%\Math\RwV2d.cpp" ^
     "%SRC%\Math\RwMatrixScale.cpp" ^

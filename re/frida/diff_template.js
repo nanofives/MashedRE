@@ -504,6 +504,78 @@ function runDiff() {
         return;
     }
 
+    // ── buf_field_set ────────────────────────────────────────────────────────
+    // For AudioBufFieldSet (0x005baf60): fn(ptr, int) writes param_2 to buf+0x74,
+    // ORs 0x100 into buf+0x78. Bit 3 of buf+0x78 stays clear (buf is zeroed each
+    // test) so the conditional COM branch is never taken.
+    // Observable: (buf+0x74 readback as U32) XOR (buf+0x78 readback as U32) packed.
+    // Both orig and reimpl must produce identical readbacks.
+    if (CONFIG.arg_type === 'buf_field_set') {
+        const bsz = CONFIG.buf_size || 0x120;
+        const fldBuf = Memory.alloc(bsz);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const val = CONFIG.tests[i] | 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Zero-out the buffer before each call so +0x78 bit 3 stays clear.
+            Memory.protect(fldBuf, bsz, 'rw-');
+            for (let k = 0; k < bsz; k++) fldBuf.add(k).writeU8(0);
+            try {
+                Orig(fldBuf, val);
+                const f74 = fldBuf.add(0x74).readU32();
+                const f78 = fldBuf.add(0x78).readU32();
+                origV = ((f74 >>> 0) ^ ((f78 >>> 0) << 1)) >>> 0;
+            } catch(e) { errO = e.message; }
+            // Re-zero before reimpl call.
+            for (let k = 0; k < bsz; k++) fldBuf.add(k).writeU8(0);
+            try {
+                Reimpl(fldBuf, val);
+                const f74 = fldBuf.add(0x74).readU32();
+                const f78 = fldBuf.add(0x78).readU32();
+                reimV = ((f74 >>> 0) ^ ((f78 >>> 0) << 1)) >>> 0;
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: val,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── semaphore_create ─────────────────────────────────────────────────────
+    // For AudioSemaphoreCreate (0x005aeea0): fn(ptr, int initial, int max).
+    // Creates anonymous semaphore; stores HANDLE at *ptr.
+    // Observable: whether the handle stored at *ptr is non-null (1 = success, 0 = fail).
+    // We deliberately leak the handles (no CloseHandle) to keep the handler simple.
+    // Both paths must agree on success/failure for each (initial, max) pair.
+    if (CONFIG.arg_type === 'semaphore_create') {
+        var hBuf = Memory.alloc(4);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t2 = CONFIG.tests[i];
+            var initialCount = t2[0] | 0;
+            var maxCount     = t2[1] | 0;
+            var origV = null, reimV = null, errO2 = null, errR2 = null;
+            try {
+                hBuf.writeU32(0);
+                Orig(hBuf, initialCount, maxCount);
+                var hO = hBuf.readU32();
+                origV = (hO !== 0) ? 1 : 0;
+            } catch(e2) { errO2 = e2.message; }
+            try {
+                hBuf.writeU32(0);
+                Reimpl(hBuf, initialCount, maxCount);
+                var hR = hBuf.readU32();
+                reimV = (hR !== 0) ? 1 : 0;
+            } catch(e3) { errR2 = e3.message; }
+            results.push({ idx: i, input: JSON.stringify(t2),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO2, err_reimpl: errR2 });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── font_ctx_float2 ──────────────────────────────────────────────────────
     // For FontCtx_SetScale / FontCtx_SetTranslation: fn(float sx, float sy) → uint32.
     // Strategy: for each test {sx, sy}, write sentinel 0xDEADBEEF to dirty-flag

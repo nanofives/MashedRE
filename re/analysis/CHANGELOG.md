@@ -1122,3 +1122,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+
+2026-05-15  005baf60  AudioBufFieldSet  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_buf_field_set.csv; STRUCT GAP +0x74/+0x78/+0x11c flagged; U-3710 open
+2026-05-15  005baf90  AudioDSoundRelease  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_dsound_release.csv; U-0361 open (vtable slot semantic)
+2026-05-15  005bc400  AudioDSoundQIChain  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_dsound_qi_chain.csv; U-0360 open (IID at 005d09dc)
+2026-05-15  005aeea0  AudioSemaphoreCreate  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_semaphore_create.csv; pure Win32 leaf; leaf-exemption applied

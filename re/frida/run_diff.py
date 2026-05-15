@@ -135,6 +135,10 @@ def main():
         config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
     if 'crash_equal_ok' in hook:
         config['crash_equal_ok'] = hook['crash_equal_ok']
+    if 'buf_size' in hook:
+        config['buf_size'] = hook['buf_size']
+    if 'field_offsets' in hook:
+        config['field_offsets'] = hook['field_offsets']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
