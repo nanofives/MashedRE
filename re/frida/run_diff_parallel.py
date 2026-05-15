@@ -38,8 +38,13 @@ def pool(cmd, *args):
     return out.strip()
 
 
-def run_one(hook_name):
+LAUNCH_STAGGER_S = 5  # seconds between successive MASHED.exe spawns
+
+
+def run_one(hook_name, stagger_index=0):
     """Acquire slot, run run_diff.py, release slot. Returns (hook, slot, rc, took, log_path)."""
+    if stagger_index > 0:
+        time.sleep(stagger_index * LAUNCH_STAGGER_S)
     t0 = time.time()
     slot = pool('acquire')
     log_path = LOG_DIR / f'parallel_diff_{hook_name}.log'
@@ -77,7 +82,7 @@ def main(argv):
     t0 = time.time()
     results = []
     with ThreadPoolExecutor(max_workers=4) as ex:  # 4 = frida pool size
-        futures = {ex.submit(run_one, h): h for h in hooks}
+        futures = {ex.submit(run_one, h, i): h for i, h in enumerate(hooks)}
         for fut in as_completed(futures):
             hook = futures[fut]
             try:

@@ -9,6 +9,7 @@
 import csv
 import json
 import os
+import shutil
 import struct
 import subprocess
 import sys
@@ -150,6 +151,12 @@ def main():
     # setup_mashed_compat.ps1 / README. The RUNASINVOKER token in that layer
     # suppresses the elevation that WIN98RTM/HIGHDPIAWARE would otherwise
     # trigger, so subprocess.Popen works from a non-elevated shell.
+    # Always enforce windowed 800x600 before spawn so concurrent sessions don't
+    # fight over fullscreen and cause flickering on the host display.
+    _canonical_cfg = ROOT / 'scripts' / 'canonical' / 'videocfg_windowed.bin'
+    if _canonical_cfg.exists():
+        shutil.copy2(str(_canonical_cfg), str(MASHED_EXE.parent / 'videocfg.bin'))
+
     env = {**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'}
     proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env)
     print(f"  pid = {proc.pid}")
