@@ -1102,3 +1102,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0042b540  FUN_0042b540  C2->REFUSED  c3-batch-d-s4; D-10586; same inline U-3445/U-1651/U-3556 as 0x0042b310; structurally identical
 2026-05-14  0042b9e0  FUN_0042b9e0  C2->REFUSED  c3-batch-d-s4; D-10587; inline U-1652/U-1653/U-3557 unresolved
 2026-05-14  00403160  FUN_00403160  C2->REFUSED  c3-batch-d-s4; D-10588; all 6 depth-1 callees C1; callee gate fails
+2026-05-15  sweep-20260515-1312  scribe-claim  buckets=16 queued, 0 skipped-HOLD
+2026-05-15  sweep-20260515-1312  scribe-release  bucket=race_results/title_screen_d2(s1)  writes=4  errors=0
