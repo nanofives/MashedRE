@@ -1833,4 +1833,86 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-e-s12 — timer_d3_cont1_b clear/init cluster (C2->C3)
+    # Util/TimerInit.cpp — pure-leaf zeroing + thunk functions
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00422b10  TimerArrayZero
+    # Pure leaf; zeroes 0x138 (312) dwords = 0x4e0 (1248) bytes at 0x008994c0.
+    # Strategy: write sentinel to 0x008994c0, call fn, read back first dword.
+    # Both original and reimpl must write 0 (sentinel overwritten).
+    # Also check offset[311] (last dword at 0x008994c0 + 0x4dc) to confirm
+    # the full range is cleared.
+    # ref: re/analysis/timer_d3_cont1_b/0x00422b10.md
+    'timer_array_zero': {
+        'rva':            0x00422b10,
+        'export':         'TimerArrayZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008994c0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00425b10  PlayerSlotZero
+    # Pure leaf; writes 0 to 8 globals at stride 0x4c from 0x008992a0.
+    # Strategy: write sentinel to first address (0x008992a0), call fn, read back.
+    # Both original and reimpl must write 0 (sentinel overwritten).
+    # 10 sentinel values confirm write for each call.
+    # ref: re/analysis/timer_d3_cont1_b/0x00425b10.md
+    'player_slot_zero': {
+        'rva':            0x00425b10,
+        'export':         'PlayerSlotZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008992a0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004222c0  TimerInitThunk
+    # 4-byte thunk of FUN_00422120 (0x00422120, C2).
+    # Strategy: 'none' — call 10x at quiescent main menu; both original and
+    # reimpl delegate to 0x00422120 and produce same side-effects.
+    # FUN_00422120 iterates 0x0063fb90 stride 0x208 x4 calling FUN_00421c50;
+    # at main menu the loop body is deterministic (same state both paths).
+    # ref: re/analysis/timer_d3_cont1_b/0x004222c0.md
+    'timer_init_thunk': {
+        'rva':            0x004222c0,
+        'export':         'TimerInitThunk',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041cbc0  FloatTableInit
+    # Pure leaf; copies 12 hardcoded floats (4 groups × 3) to 0x005f337c.
+    # Also zeroes DAT_0063d270.
+    # Strategy: void_write_observe on 0x005f337c (first float of group 0).
+    # Write sentinel to 0x005f337c, call fn, read back.
+    # Both original and reimpl overwrite with 0x3ef5c28f — A/B match.
+    # 10 distinct sentinel values confirm write determinism.
+    # ref: re/analysis/timer_d3_cont1_b/0x0041cbc0.md
+    'float_table_init': {
+        'rva':            0x0041cbc0,
+        'export':         'FloatTableInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x005f337c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
 }

@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  00422b10  TimerArrayZero  C2->C3  c3-batch-e-s12; mashedmod/src/mashed_re/Util/TimerInit.cpp; leaf-exemption; diff GREEN 10/10 log/diff_timer_array_zero.csv; U-3715 filed
+2026-05-15  00425b10  PlayerSlotZero  C2->C3  c3-batch-e-s12; mashedmod/src/mashed_re/Util/TimerInit.cpp; leaf-exemption; diff GREEN 10/10 log/diff_player_slot_zero.csv; U-3716 U-3717 filed
+2026-05-15  004222c0  TimerInitThunk  C2->C3  c3-batch-e-s12; mashedmod/src/mashed_re/Util/TimerInit.cpp; thunk of 0x00422120 (C2); diff GREEN 10/10 log/diff_timer_init_thunk.csv
+2026-05-15  0041cbc0  FloatTableInit  C2->C3  c3-batch-e-s12; mashedmod/src/mashed_re/Util/TimerInit.cpp; leaf-exemption; diff GREEN 10/10 log/diff_float_table_init.csv; U-3718 U-3719 filed
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed

@@ -1646,7 +1646,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005abd30,FUN_005abd30,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005abd30.md,,,C2: PCM chunk feeder; vtable[+0x14] dispatch; optional fmt-conversion path via 005b3b{30,60,80}; drain-pump loop; U-0997,60,80} format conversion path; D-0358; U-0157..U-0159
 005abf80,FUN_005abf80,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005abf80.md,,,C2: audio drain/pump vtable[+0x1c] dispatch; unrecovered indirect jump; callers loop while non-zero return; U-0998
 0041cb80,sub_0041cb80,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041cb80.md,promote_c2_util_timer-20260513,,init loop: calls FUN_0040e340/FUN_0040b890 once; iterates 0x0063ce20 stride 0x114 x46 calling FUN_0041c380; caller=FUN_004111c0
-0041cbc0,sub_0041cbc0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041cbc0.md,promote_c2_util_timer-20260513,,float-table init: writes 4x3 float groups to 0x005f337c; zeroes 0x0063d270; caller=FUN_004111c0
+0041cbc0,FloatTableInit,util,C3,impl,mashedmod/src/mashed_re/Util/TimerInit.cpp,,pending,float-table init: writes 4x3 float groups to 0x005f337c; zeroes 0x0063d270; leaf-exemption; diff GREEN 10/10 log/diff_float_table_init.csv; U-3718 U-3719; caller=FUN_004111c0
 0041d730,sub_0041d730,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d730.md,promote_c2_util_timer-20260513,,player-slot assignment init: zeroes 0x0063d298 slots stride 0x160; checks 007f1a14/18/24/28/34/38/44/48 pairs; caller=FUN_004111c0
 0041d820,sub_0041d820,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d820.md,promote_c2_util_timer-20260513,,trivial: DAT_0063d558=0; caller=FUN_004111c0
 0041e130,sub_0041e130,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041e130.md,promote_c2_util_timer-20260513,,setter: DAT_0063d7e0=param_1; callers=FUN_004111c0 FUN_0040e560
@@ -1654,9 +1654,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041f000,sub_0041f000,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041f000.md,promote_c2_util_timer-20260513,,copy 6 dwords from 0x0063dc10+param1*0x2ac to *param2; callers=FUN_004111c0 FUN_0040e590
 00420d40,sub_00420d40,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00420d40.md,promote_c2_util_timer-20260513,,array clear: zeroes 6-element x0x24 block at 0x0063e4b8 via FUN_004b6520+manual; caller=FUN_004111c0
 00422120,sub_00422120,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00422120.md,promote_c2_util_timer-20260513,,init loop: iterates 0x0063fb90 stride 0x208 x4 calling FUN_00421c50; caller=FUN_004111c0
-004222c0,thunk_FUN_00422120,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x004222c0.md,promote_c2_util_timer-20260513,,confirmed thunk of 0x00422120; caller=FUN_004111c0
-00422b10,sub_00422b10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00422b10.md,promote_c2_util_timer-20260513,,zero-fill 0x4e0 bytes at 0x008994c0 (0x138 dwords); caller=FUN_004111c0
-00425b10,sub_00425b10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00425b10.md,promote_c2_util_timer-20260513,,zero 8 globals stride 0x4c at 0x008992a0..0x008994b4; caller=FUN_004111c0
+004222c0,TimerInitThunk,util,C3,impl,mashedmod/src/mashed_re/Util/TimerInit.cpp,,pending,confirmed thunk of 0x00422120 (C2); diff GREEN 10/10 log/diff_timer_init_thunk.csv; caller=FUN_004111c0
+00422b10,TimerArrayZero,util,C3,impl,mashedmod/src/mashed_re/Util/TimerInit.cpp,,pending,zero-fill 0x4e0 bytes at 0x008994c0 (0x138 dwords); leaf-exemption; diff GREEN 10/10 log/diff_timer_array_zero.csv; U-3715; caller=FUN_004111c0
+00425b10,PlayerSlotZero,util,C3,impl,mashedmod/src/mashed_re/Util/TimerInit.cpp,,pending,zero 8 globals stride 0x4c at 0x008992a0..0x008994b4; leaf-exemption; diff GREEN 10/10 log/diff_player_slot_zero.csv; U-3716 U-3717; caller=FUN_004111c0
 00426630,sub_00426630,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426630.md,promote_c2_util_timer-20260513,,setter: DAT_0066d6fc=param_1; caller=FUN_004111c0
 004266f0,sub_004266f0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x004266f0.md,promote_c2_util_timer-20260513,,setter: DAT_0066d700=param_1; caller=FUN_004111c0
 00426c10,sub_00426c10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c10.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea40 gate; if nonzero calls FUN_0041e920(&0x00646e58)+FUN_00480100; caller=FUN_004111c0
