@@ -245,6 +245,21 @@ function callFn(fn, input, buf) {
         // Pack outRow and outCol into a comparable uint32 (low 16 bits each).
         return ((outRow & 0xffff) * 0x10000 + (outCol & 0xffff)) >>> 0;
     }
+    // ptr_nonnull_check — fn(void) -> pointer.
+    // Compares null/non-null status of the returned pointer: both sides must
+    // agree on null (0) or non-null (1).  Used for functions that return freshly
+    // allocated memory at non-deterministic addresses (e.g. ___crtGetEnvironmentStringsA)
+    // where pointer equality is meaningless but null/non-null is the observable.
+    // `input` is an optional mode-flag value to pre-write to CONFIG.target_global
+    // before each call (resets cached state so the function re-runs its detection).
+    if (CONFIG.arg_type === 'ptr_nonnull_check') {
+        if (CONFIG.target_global) {
+            ptr(CONFIG.target_global).writeU32(input >>> 0);
+        }
+        const p = fn();
+        return (p && !p.isNull()) ? 1 : 0;
+    }
+
     // car_slot_init — fn(int param_1): conditional void struct initialiser.
     // input: { idx, guard_val } — param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val.
     // Calls fn(idx), then reads back the 4 fields (offsets +0, +0xC, +0x10, +0x14) packed as

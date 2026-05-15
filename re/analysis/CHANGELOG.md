@@ -1,6 +1,9 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  004aaff0  _memcpy  C1->C2  batch-e-s9 drift-promote; re/analysis/boot_crt_env/004aaff0.md; FidDB VS2003 single match; no callees; all consts cited; leaf function; callee gate for CrtGetEnvStrings(0x004abf28)
+2026-05-15  004abc53  __setenvp  C2->C3  batch-e-s9; mashedmod/src/mashed_re/Boot/CrtEnvArgv.cpp; RH_ScopedInstall(CrtSetEnvp,0x004abc53); Frida diff 10/10 GREEN log/diff_crt_set_envp.csv; callee _strlen(0x004a9410) C2; caller entry(0x004a4bb7) C2
+2026-05-15  004abf28  ___crtGetEnvironmentStringsA  C2->C3  batch-e-s9; mashedmod/src/mashed_re/Boot/CrtEnvArgv.cpp; RH_ScopedInstall(CrtGetEnvStrings,0x004abf28); Frida diff 10/10 GREEN log/diff_crt_get_env_strings.csv; callee _memcpy(0x004aaff0) C2 (drift); caller entry(0x004a4bb7) C2
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
@@ -1122,3 +1125,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+
+2026-05-15  004a9410  _strlen  C1->C2  evidence=re/analysis/boot_crt_env/004a9410.md  drift-promote: pure leaf, full mechanical desc, no uncertainties, no stubs, Ghidra FidDB single-match VS
