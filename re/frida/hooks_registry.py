@@ -167,6 +167,29 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-c-s2 — hud_ingame_dispatch  (C2→C3, 1 candidate)
+    # HUD/HudDispatch.cpp — pure-leaf uint32(void) global-read function
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00426ba0  HudDrawEnabled
+    # Returns DAT_0066d704 as uint32. void(void) pure leaf.
+    # Strategy: write sentinel values to 0x0066d704, call orig and reimpl
+    # independently, compare return values. Both must read the same address.
+    # 10 sentinels covering 0, 1, max, and bit-pattern variants.
+    'hud_draw_enabled': {
+        'rva':            0x00426ba0,
+        'export':         'HudDrawEnabled',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0066d704,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-a-s1 — timer_d2_cont1  (C2→C3, 2 candidates)
     # Frontend/TimerReset.cpp — pure-leaf void(void) global-zero functions
     # ─────────────────────────────────────────────────────────────────────
@@ -1085,5 +1108,109 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-b-s3 — sprite gate + HUD slot type mappers
+    # SpriteGate.cpp
+    # Drift-promotes: 0x004c5c00 C1->C2, 0x0040bb50 C1->C2
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0040bb70  SpriteLookupTableA
+    # 20-byte forwarder: calls FUN_004c5c00(DAT_0063b900, key_ptr).
+    # arg_type='int_scalar': pass string VA as int32 (ASLR disabled on 2004 exe).
+    # "Button" at 0x005cda7c, "SemiC" at 0x005cc414 (found via binary search).
+    # Both orig and reimpl call through to original FUN_004c5c00 with same key.
+    # DAT_0063b900 (sprite table A head) is NULL at RW-init time; both crash at
+    # node+8 offset identically. crash_equal_ok=True counts same-error as GREEN.
+    'sprite_lookup_table_a': {
+        'rva':            0x0040bb70,
+        'export':         'SpriteLookupTableA',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x005cda7c, 0x005cc414,  # "Button", "SemiC"
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414],
+        'path2_tests':    [0x005cda7c, 0x005cc414, 0x005cda7c],
+    },
+
+    # 0x0040bb90  SpriteLookupTableB
+    # 20-byte forwarder: calls FUN_004c5c00(DAT_0063b904, key_ptr).
+    # Same crash-equal design as SpriteLookupTableA; different table root.
+    'sprite_lookup_table_b': {
+        'rva':            0x0040bb90,
+        'export':         'SpriteLookupTableB',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414],
+        'path2_tests':    [0x005cda7c, 0x005cc414, 0x005cda7c],
+    },
+
+    # 0x0042ee00  SpriteSlotGate
+    # 59-byte slot gate: slot in {0,1,2} -> FUN_0040bb50(); else returns 0.
+    # arg_type='int_scalar': test with out-of-range slots (>= 3) -> both return
+    # NULL (0); slots 0/1/2 both call original FUN_0040bb50 via original VA.
+    # Out-of-range cases (slot=3,4,5,99) are the deterministic ones (return 0).
+    'sprite_slot_gate': {
+        'rva':            0x0042ee00,
+        'export':         'SpriteSlotGate',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [3, 4, 5, 99, 3, 4, 5, 3, 4, 99],
+        'path2_tests':    [3, 4, 99],
+    },
+
+    # 0x00430a10  HudSlotTypePlayer0
+    # Pure leaf: reads DAT_0067e9fc (game mode), returns slot-type code for player 0.
+    # Mode 2->0, 3/4/5->1, 6/7/8/9->3, 10->11, other->0.
+    # arg_type='read_global': write game mode to 0x0067e9fc then call fn() -> int.
+    'hud_slot_type_player0': {
+        'rva':            0x00430a10,
+        'export':         'HudSlotTypePlayer0',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067e9fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [2, 3, 4, 5, 6, 7, 8, 9, 10, 0],
+        'path2_tests':    [2, 3, 10],
+    },
+
+    # 0x00430a60  HudSlotTypePlayer1
+    # Pure leaf: reads DAT_0067e9fc, returns slot-type code for player 1.
+    # Mode 3/4/5->2, 2/6/7/8/9/10->0, other->0.
+    'hud_slot_type_player1': {
+        'rva':            0x00430a60,
+        'export':         'HudSlotTypePlayer1',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067e9fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [2, 3, 4, 5, 6, 7, 8, 9, 10, 0],
+        'path2_tests':    [2, 3, 10],
+    },
+
+    # 0x00430ab0  HudSlotTypePlayer2
+    # Pure leaf: reads DAT_0067e9fc, returns slot-type code for player 2.
+    # Mode 3/4/5->5, 2/6/7/8/9/10->0, other->0.
+    'hud_slot_type_player2': {
+        'rva':            0x00430ab0,
+        'export':         'HudSlotTypePlayer2',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067e9fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [2, 3, 4, 5, 6, 7, 8, 9, 10, 0],
+        'path2_tests':    [2, 3, 10],
     },
 }

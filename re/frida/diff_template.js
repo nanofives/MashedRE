@@ -547,8 +547,10 @@ function runDiff() {
                 (typeof orig === 'object' ? orig.toString() : orig) : null;
             const reimN = (reim !== null && reim !== undefined) ?
                 (typeof reim === 'object' ? reim.toString() : reim) : null;
+            // crash_equal_ok: if both sides throw the same error string, count as match.
+            const crashEqual = CONFIG.crash_equal_ok && errOrig !== null && errReim !== null && errOrig === errReim;
             results.push({ idx: i, input: t, original: origN, reimpl: reimN,
-                           match: (origN !== null && reimN !== null && origN === reimN),
+                           match: crashEqual || (origN !== null && reimN !== null && origN === reimN),
                            err_original: errOrig, err_reimpl: errReim });
         }
     } finally {

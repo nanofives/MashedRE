@@ -132,6 +132,8 @@ def main():
         config['alloc_tag'] = hook['alloc_tag']
     if 'alloc_rva' in hook:
         config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
+    if 'crash_equal_ok' in hook:
+        config['crash_equal_ok'] = hook['crash_equal_ok']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
