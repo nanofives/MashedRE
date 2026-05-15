@@ -504,6 +504,33 @@ function runDiff() {
         return;
     }
 
+    // ── fmt_key_compare ──────────────────────────────────────────────────────
+    // For AudioFmtKeyCompare: fn(byte* a, byte* b) → int (-1/0/+1).
+    // Each test is { a: [16 bytes], b: [16 bytes] }.
+    // Allocates a 32-byte scratch buffer; writes a to [0..15], b to [16..31].
+    // Calls fn(buf, buf+16) for both Orig and Reimpl; compares return int.
+    if (CONFIG.arg_type === 'fmt_key_compare') {
+        const fkBuf = Memory.alloc(32);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const aBytes = t.a;
+            const bBytes = t.b;
+            for (let j = 0; j < 16; j++) {
+                fkBuf.add(j).writeU8(aBytes[j] >>> 0);
+                fkBuf.add(16 + j).writeU8(bBytes[j] >>> 0);
+            }
+            let orig = 0, reim = 0, errO = null, errR = null;
+            try { orig = Orig(fkBuf, fkBuf.add(16));   orig = orig | 0; } catch(e) { errO = e.message; }
+            try { reim = Reimpl(fkBuf, fkBuf.add(16)); reim = reim | 0; } catch(e) { errR = e.message; }
+            const match = (errO === null && errR === null && orig === reim);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: orig, reimpl: reim, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── font_ctx_float2 ──────────────────────────────────────────────────────
     // For FontCtx_SetScale / FontCtx_SetTranslation: fn(float sx, float sy) → uint32.
     // Strategy: for each test {sx, sy}, write sentinel 0xDEADBEEF to dirty-flag
