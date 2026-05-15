@@ -454,6 +454,76 @@ function runDiff() {
         return;
     }
 
+    // ── endian_pack ──────────────────────────────────────────────────────────
+    // Tests AudioFieldEndianPack-style fn(int **out_ptr_ptr, uint *src, int size).
+    // For each test {src_val, size}: allocate an 8-byte output buffer, write src_val
+    // into a 4-byte source slot; construct a pointer-to-pointer (out_ptr_ptr) and
+    // call fn. Read the output buffer bytes as a fingerprint and compare orig/reimpl.
+    // The out buffer is reset to 0 before each call.
+    if (CONFIG.arg_type === 'endian_pack') {
+        const outBufA   = Memory.alloc(16);
+        const outBufB   = Memory.alloc(16);
+        const ptrSlotA  = Memory.alloc(4);
+        const ptrSlotB  = Memory.alloc(4);
+        const srcSlotA  = Memory.alloc(4);
+        const srcSlotB  = Memory.alloc(4);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t       = CONFIG.tests[i];
+            var srcVal  = t.src_val >>> 0;
+            var size    = t.size | 0;
+            // Reset output buffers.
+            for (var j = 0; j < 8; j++) { outBufA.add(j).writeU8(0); outBufB.add(j).writeU8(0); }
+            ptrSlotA.writePointer(outBufA);
+            ptrSlotB.writePointer(outBufB);
+            srcSlotA.writeU32(srcVal);
+            srcSlotB.writeU32(srcVal);
+            var errO = null, errR = null;
+            try { Orig(ptrSlotA, srcSlotA, size); }   catch(e) { errO = e.message; }
+            try { Reimpl(ptrSlotB, srcSlotB, size); } catch(e) { errR = e.message; }
+            var fA = bufFingerprint(outBufA, 4);
+            var fB = bufFingerprint(outBufB, 4);
+            var match = (!errO && !errR && fA === fB);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: fA, reimpl: fB, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── wavefmt_copy ─────────────────────────────────────────────────────────
+    // Tests AudioWaveFmtCopy-style fn(src_ptr, dst_ptr, swap_flag) -> src_ptr.
+    // For each test {src:[16 bytes], swap}: write src data into srcBuf,
+    // zero dstBuf, call fn, fingerprint dstBuf (16 bytes). Compare orig/reimpl.
+    if (CONFIG.arg_type === 'wavefmt_copy') {
+        const srcBufA = Memory.alloc(16);
+        const srcBufB = Memory.alloc(16);
+        const dstBufA = Memory.alloc(16);
+        const dstBufB = Memory.alloc(16);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t    = CONFIG.tests[i];
+            var src  = t.src || [];
+            var swap = t.swap | 0;
+            for (var j = 0; j < 16; j++) {
+                srcBufA.add(j).writeU8(src[j] | 0);
+                srcBufB.add(j).writeU8(src[j] | 0);
+                dstBufA.add(j).writeU8(0);
+                dstBufB.add(j).writeU8(0);
+            }
+            var errO = null, errR = null;
+            try { Orig(srcBufA, dstBufA, swap ? dstBufA : ptr(0)); }   catch(e) { errO = e.message; }
+            try { Reimpl(srcBufB, dstBufB, swap ? dstBufB : ptr(0)); } catch(e) { errR = e.message; }
+            var fA = bufFingerprint(dstBufA, 16);
+            var fB = bufFingerprint(dstBufB, 16);
+            var match = (!errO && !errR && fA === fB);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: fA, reimpl: fB, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── alloc_check ──────────────────────────────────────────────────────────
     // Call(size, tag) for each test; encode result as (align_mod4 * 256 + header_diff).
     // A correct aligned alloc with 4-byte aligned heap returns result = 4.
