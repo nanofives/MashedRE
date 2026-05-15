@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  005bbfc0  AudioDSoundSecondaryInit  C2->C3  c3-batch-f-s9; Frida diff GREEN 10/10; orig=reimpl=196608 (3 vtable calls + return 0); U-0362 dead branch Frida-confirmed; mashedmod/src/mashed_re/Audio/AudioDSound.cpp
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
@@ -1122,3 +1123,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  005aef00  AudioThreadDescInit  C2->C3  log/diff_audio_thread_desc_init.csv; pure leaf 5-field write; 10/10 GREEN; c3-batch-f-s9
+
+2026-05-15  005a9e10  AudioSubStructTwoCallInit  C2->C3  log/diff_audio_sub_struct_two_call_init.csv; two-call dispatcher 10/10 GREEN; U-0351 callee-semantic open; c3-batch-f-s9
+2026-05-15  005ade90  AudioListDrain2  C2->C3  log/diff_audio_list_drain2.csv; empty-drain 10/10 GREEN; harness-limited pool uninit; U-0990 pool-node-type open; c3-batch-f-s9
