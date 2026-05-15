@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  frida-sweep-20260515-0105  frida-sweep-claim  branches=18 queued
 2026-05-14  004c5c00  FUN_004c5c00  C1->C2  sprite_gate_c3-20260514; re/analysis/sprite_gate_c3/0x004c5c00.md; drift-promote: case-insensitive linked-list string search (114b leaf); mechanical description complete from title_screen_d2 depth-3 trace; S-2540 cleared
 2026-05-14  0040bb50  FUN_0040bb50  C1->C2  sprite_gate_c3-20260514; re/analysis/hud_frontend/0x0040bb50.md; drift-promote: FUN_004c5c00(DAT_0063b8fc param_1) forwarder (20b); U-0450 cleared; caller-gate for SpriteSlotGate now open
 2026-05-14  0040bb70  SpriteLookupTableA  C2->C3  sprite_gate_c3-20260514; mashedmod/src/mashed_re/Frontend/SpriteGate.cpp; 20b forwarder FUN_004c5c00(DAT_0063b900 key); diff GREEN 10/10 crash-equal (table unpopulated at RW-init; both crash identically at node+8); crash_equal_ok harness extension
