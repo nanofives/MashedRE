@@ -105,15 +105,29 @@ def find_main_window(pid: int, verbose: bool = False):
     return wins[0]['hwnd'] if wins else None
 
 ROOT       = Path(__file__).resolve().parent.parent.parent
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
-ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
+
+def _resolve_repo_root(candidate: Path) -> Path:
+    """Walk up from worktree root to find the main repo (which has original/ and mashedmod/)."""
+    p = candidate
+    for _ in range(4):
+        if (p / 'original' / 'MASHED.exe').exists():
+            return p
+        p = p.parent
+    return candidate  # fallback
+
+REPO_ROOT  = _resolve_repo_root(ROOT)
+MASHED_EXE = REPO_ROOT / 'original' / 'MASHED.exe'
+ASI_PATH   = REPO_ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'observe_hooks_template.js'
-OUT_FILE   = ROOT / 'log' / 'observe_hooks_at_menu.txt'
+LOG_DIR    = REPO_ROOT / 'log'
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+OUT_FILE   = LOG_DIR / 'observe_main_menu_idle_10s_c4-batch-a-s2.txt'
 
 HOOKS = [
-    {'name': 'Vec3Magnitude', 'rva': '0x004c3ac0', 'export': 'Vec3Magnitude'},
-    {'name': 'FastSqrt',      'rva': '0x004c3b30', 'export': 'FastSqrt'},
-    {'name': 'FastInvSqrt',   'rva': '0x004c3b90', 'export': 'FastInvSqrt'},
+    {'name': 'RwMatrixScale',       'rva': '0x004c5010', 'export': 'RwMatrixScale'},
+    {'name': 'FrontendGlobalGet',   'rva': '0x0040ad20', 'export': 'FrontendGlobalGet'},
+    {'name': 'FrontendArrayGet',    'rva': '0x0040b6c0', 'export': 'FrontendArrayGet'},
+    {'name': 'HotkeyStringBaseGet', 'rva': '0x0040b7a0', 'export': 'HotkeyStringBaseGet'},
 ]
 
 state = {'pre_snapshot': None, 'post_snapshot': None, 'errors': [], 'done': False}
@@ -166,7 +180,7 @@ def main():
     if not MASHED_EXE.exists(): sys.exit(f"missing {MASHED_EXE}")
     if not ASI_PATH.exists():   sys.exit(f"missing {ASI_PATH} — run mashedmod\\build.bat")
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    log = ROOT / 'original' / 'mashed.log'
+    log = REPO_ROOT / 'original' / 'mashed.log'
     if log.exists(): log.unlink()
 
     print(f"spawning {MASHED_EXE} ({'minimized' if not args.no_minimize else 'normal'})")
