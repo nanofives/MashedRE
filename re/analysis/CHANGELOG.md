@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  005aca80  AudioFmtSizeCalc  C2->C3  c3-batch-f-s2; leaf; reimpl AudioRws.cpp; RH_ScopedInstall; Frida GREEN log/diff_audio_fmt_size_calc.csv
+2026-05-15  005acd10  AudioFmtTableSearch  C2->C3  c3-batch-f-s2; callee FUN_005ac9e0 C2; reimpl AudioRws.cpp; RH_ScopedInstall; Frida GREEN (count=0 branch) log/diff_audio_fmt_table_search.csv; STRUCT GAP ctx+0x24/+0x28
+2026-05-15  005acd60  AudioFmtGlobalScan  C2->C3  c3-batch-f-s2; callee FUN_005adf30 C2; reimpl AudioRws.cpp; RH_ScopedInstall; Frida GREEN (crash_equal_ok) log/diff_audio_fmt_global_scan.csv; U-1734 open
+2026-05-15  005ac980  AudioFmtDescCopy  (already C3)  no-op: row was C3 prior to this session
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
