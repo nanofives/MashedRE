@@ -1122,3 +1122,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  004a78b0  CrtPreInitLoop  C2->C3  c3-batch-e-s8; Boot/CrtInit.cpp; void leaf; no callees (leaf-exemption); caller entry(004a4bb7) C2; path2 JMP GREEN (log/verify_hook_install_crt_pre_init_loop.txt); path1 harness-limited (void return EAX noise; both sides no-crash); U-0005 open structural/none

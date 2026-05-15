@@ -1833,4 +1833,27 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ── Session c3-batch-e-s8: Boot/CrtInit C2→C3 promotions ────────────────
+
+    # 0x004a78b0  CrtPreInitLoop
+    # Zero-slot fn-ptr table iterator. SEH frame present; loop body unreachable
+    # as decompiled (start == end == 0x005e7b84 → zero iterations).
+    # [UNCERTAIN U-0005] Decompiler may have collapsed two distinct table
+    #   pointers into the same symbol; reproduced as-is.
+    # Original returns void; we declare ret='uint32' for harness compat
+    # (EAX will be whatever it was — both sides return the same EAX because the
+    # loop body is unreachable and the function is side-effect-free at the main
+    # menu).  arg_type='none': harness calls with no args, compares EAX.
+    # 10 calls at quiescent main menu; side-effect-free.
+    'crt_pre_init_loop': {
+        'rva':            0x004a78b0,
+        'export':         'CrtPreInitLoop',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        # 10 dummy markers; input is ignored for 'none' arg_type.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1, 2],
+    },
 }
