@@ -6,6 +6,11 @@
 #   - All 5 disk patches applied (so MASHED boots to main menu without dialogs).
 #   - original/videocfg.bin pinned to a windowed mode.
 #   - pycaw + comtypes (per-app mute via Windows Core Audio API).
+#
+# Optional CLI args:
+#   --hooks=name1,name2,...   Comma-separated registry key names from hooks_registry.py
+#                             (snake_case). Overrides the hardcoded HOOKS dict above.
+#   --scenario=tag            Arbitrary tag appended to output filename for this run.
 import argparse
 import os
 import subprocess
@@ -21,6 +26,8 @@ from pycaw.pycaw import AudioUtilities
 ROOT       = Path(__file__).resolve().parent.parent.parent
 MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
 OUT_FILE   = ROOT / 'log' / 'auto_count_at_menu.txt'
+
+sys.path.insert(0, str(ROOT / 're' / 'frida'))
 
 HOOKS = {
     'Vec3Magnitude':  '0x004c3ac0',
@@ -64,13 +71,36 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--seconds', type=int, default=30, help='how long to idle at main menu')
     parser.add_argument('--no-mute', action='store_true')
+    parser.add_argument('--hooks', type=str, default=None,
+                        help='Comma-separated registry key names (snake_case) from hooks_registry.py')
+    parser.add_argument('--scenario', type=str, default=None,
+                        help='Scenario tag appended to output file name')
     args = parser.parse_args()
+
+    # Resolve --hooks if provided
+    global HOOKS, OUT_FILE
+    if args.hooks:
+        from hooks_registry import HOOKS as REG_HOOKS
+        requested = [h.strip() for h in args.hooks.split(',') if h.strip()]
+        resolved = {}
+        for name in requested:
+            if name not in REG_HOOKS:
+                sys.exit(f"--hooks: unknown hook {name!r}; registered: {', '.join(REG_HOOKS.keys())}")
+            entry = REG_HOOKS[name]
+            export_name = entry.get('export', name)
+            resolved[export_name] = f"0x{entry['rva']:08x}"
+        HOOKS = resolved
+
+    if args.scenario:
+        OUT_FILE = ROOT / 'log' / f'auto_count_at_menu_{args.scenario}.txt'
 
     if not MASHED_EXE.exists():
         sys.exit(f"missing {MASHED_EXE}")
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     log = ROOT / 'original' / 'mashed.log'
-    if log.exists(): log.unlink()
+    if log.exists():
+        try: log.unlink()
+        except PermissionError: pass  # locked by a previous MASHED instance; harmless
 
     print(f"spawning {MASHED_EXE}")
     proc = subprocess.Popen(
