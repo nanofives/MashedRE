@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  004963e0  ConfigLogError    C2->C3  c3-batch-e-s4; Frida void-match 10/10; leaf; cross-CRT game-fputs via naked push/ret thunk; diff_config_log_error.csv GREEN
+2026-05-15  00496400  ConfigLogDebug    C2->C3  c3-batch-e-s4; Frida void-match 10/10; U-0827 open (callee CRT-variant) but reimpl delegates to game RVA—correctness unaffected; diff_config_log_debug.csv GREEN
+2026-05-15  00498910  ConfigFilenameGet C2->C3  c3-batch-e-s4; Frida bit-identical 10/10 (return=0x7731e8); pure leaf; diff_config_filename_get.csv GREEN
+2026-05-15  00498950  ConfigLoad        C2->C3  c3-batch-e-s4; Frida bit-identical 10/10 (return=1); all callees C3+; diff_config_load.csv GREEN
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed

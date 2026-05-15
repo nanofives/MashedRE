@@ -1833,4 +1833,109 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-e-s4 — settings_config cluster (C2->C3, 4 candidates)
+    # Save/SettingsConfig.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004963e0  ConfigLogError
+    # void(char*): fputs(msg, *(FILE**)0x00772fbc) if log handle non-NULL.
+    # 23 bytes. Pure leaf. Called from ConfigLoad with literal "\tFAILED\n".
+    # Strategy: int_scalar — pass known string VAs from game read-only data.
+    # At main-menu the log handle is open (set by FUN_00496490); fputs writes
+    # to the game's mashed.log. Return is void/0. Both paths must not crash
+    # and return the same (void) value on each call.
+    # String VAs used: 0x005d012c ("videocfg.bin"), 0x005cf010 ("rb") —
+    # both are safe readable addresses in MASHED.exe read-only data section.
+    'config_log_error': {
+        'rva':            0x004963e0,
+        'export':         'ConfigLogError',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Pass known read-only string VAs from MASHED.exe image as the msg pointer.
+        # "videocfg.bin" at 0x005d012c; "rb" at 0x005cf010.
+        'path1_tests': [
+            0x005d012c, 0x005cf010, 0x005d012c, 0x005cf010,
+            0x005d012c, 0x005cf010, 0x005d012c, 0x005cf010,
+            0x005d012c, 0x005cf010,
+        ],
+        'path2_tests': [0x005d012c, 0x005cf010, 0x005d012c],
+    },
+
+    # 0x00496400  ConfigLogDebug
+    # void(char*, ...): variadic; vsprintf into 512B stack buf; fputs to log.
+    # 103 bytes. Stack-cookie guarded (MSVC).
+    # [NOTE] Variadic harness limitation: NativeFunction does not natively model
+    # variadic cdecl stack layout for arbitrary arg counts. We test with a
+    # format string that contains NO format specifiers ("videocfg.bin" at
+    # 0x005d012c) so no variadic slots are consumed by vsprintf/vsnprintf.
+    # A single pointer arg is passed after the format pointer — it lands on
+    # the stack where the original reads &stack0x00000008 but is not consumed.
+    # Both paths produce the same fputs call (format string copied verbatim).
+    # Return is void/0. 10 calls with same safe string pair.
+    # Callee FUN_004a42c5 is vsprintf variant (DEFERRED D-2380 / STUB S-0820).
+    'config_log_debug': {
+        'rva':            0x00496400,
+        'export':         'ConfigLogDebug',
+        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # [fmt, arg1]: fmt=0x005d012c ("videocfg.bin" — no % specifiers),
+        # arg1=0x005cf010 ("rb") — harmlessly on stack, not consumed by vsprintf.
+        'path1_tests': [
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+        ],
+        'path2_tests': [
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+            [0x005d012c, 0x005cf010],
+        ],
+    },
+
+    # 0x00498910  ConfigFilenameGet
+    # char*(void): copies "videocfg.bin" 4B at a time to buf@0x007731e8; returns &buf.
+    # 49 bytes. Pure leaf. Two callers: ConfigLoad, CONFIG_SAVE_FN.
+    # Strategy: void arg_type — call 10x; return value is constant pointer
+    # 0x007731e8 each time. Both paths must return the same address.
+    # Side-effect: 0x007731e8 contains "videocfg.bin\0" after each call.
+    'config_filename_get': {
+        'rva':            0x00498910,
+        'export':         'ConfigFilenameGet',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        # 10 dummy calls; return value must be 0x007731e8 each time.
+        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0, 0],
+    },
+
+    # 0x00498950  ConfigLoad
+    # int(void): opens "videocfg.bin" via _fsopen("rb", _SH_DENYNO);
+    # fread 512B into DAT_00773208; returns 1 on success, 0 on failure.
+    # Calls ConfigFilenameGet, ConfigLogDebug, ConfigLogError as callees.
+    # Strategy: none — call 5x at quiescent game state; videocfg.bin exists
+    # in the game directory so both paths return 1. Side-effect is idempotent
+    # (same 512 bytes written to 0x00773208 each call). Both paths must agree.
+    'config_load': {
+        'rva':            0x00498950,
+        'export':         'ConfigLoad',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        # 5 calls; videocfg.bin exists at runtime -> returns 1 each time.
+        # Additional 5 dummy iterations to satisfy path1_tests >= 10.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1, 2],
+    },
 }

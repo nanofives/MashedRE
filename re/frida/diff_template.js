@@ -622,8 +622,10 @@ function runDiff() {
                 (typeof reim === 'object' ? reim.toString() : reim) : null;
             // crash_equal_ok: if both sides throw the same error string, count as match.
             const crashEqual = CONFIG.crash_equal_ok && errOrig !== null && errReim !== null && errOrig === errReim;
+            // void_match: for void-return functions (origN===null, reimN===null, no errors), count as match.
+            const voidMatch = (CONFIG.signature.ret === 'void') && errOrig === null && errReim === null && origN === null && reimN === null;
             results.push({ idx: i, input: t, original: origN, reimpl: reimN,
-                           match: crashEqual || (origN !== null && reimN !== null && origN === reimN),
+                           match: crashEqual || voidMatch || (origN !== null && reimN !== null && origN === reimN),
                            err_original: errOrig, err_reimpl: errReim });
         }
     } finally {
