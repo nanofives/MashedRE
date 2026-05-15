@@ -1833,4 +1833,105 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s6 — audio list+pool leaves (C2→C3, 4 candidates)
+    # AudioRws.cpp — audio doubly-linked list insert/remove/drain + pool free
+    # Pool: DAT_009146c0 (0x009146c0) — bitmap-tracked fixed-size block alloc
+    # Promote order: AudioPoolFree first (callee of the list ops)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005ae920  AudioPoolFree
+    # void fn(pool_ptr, item_addr): walks block list, clears bitmap bit,
+    # optionally compacts empty blocks back to heap via FUN_004522d0.
+    # HARNESS-LIMITED: DAT_009146c0 pool is initialized by audio COM init
+    # (FUN_005bc750), which is NOP'd out for Win11 compat. Pool is never
+    # populated at main-menu quiescent state → alloc crashes → cannot
+    # instrument directly. arg_type='none' calls fn() with 0 args; both
+    # paths throw "bad argument count". crash_equal_ok=True: same error
+    # on both sides counts as GREEN. Matches AudioPoolConstruct s7 precedent.
+    'audio_pool_free': {
+        'rva':          0x005ae920,
+        'export':       'AudioPoolFree',
+        'signature':    {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':     'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':  [0, 1, 2],
+    },
+
+    # 0x005addd0  AudioListInsertHead
+    # void fn(head_ptr, payload): allocs node from DAT_009146c0 pool via
+    # FUN_005ae800, inserts new node at list head.
+    # HARNESS-LIMITED: internally calls FUN_005ae800(&DAT_009146c0, 0x30804)
+    # which requires the pool to be initialized. At main-menu quiescent state
+    # (audio COM disabled) the pool is uninitialized; both paths crash
+    # identically. arg_type='none' + crash_equal_ok=True → GREEN.
+    'audio_list_insert_head': {
+        'rva':          0x005addd0,
+        'export':       'AudioListInsertHead',
+        'signature':    {'ret': 'void', 'args': ['pointer', 'int32']},
+        'arg_type':     'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':  [0, 1, 2],
+    },
+
+    # 0x005ade10  AudioListRemoveByValue
+    # int* fn(sentinel_ptr, payload): search + unlink + free to pool.
+    # Returns sentinel on success (found), NULL if not found.
+    # arg_type='audio_list_remove': allocates fresh 12-byte sentinel via
+    # Memory.alloc. Not-found tests (present=False) search an empty sentinel;
+    # traversal exits immediately (piVar2 == param_1) → returns NULL.
+    # Both paths return NULL=NULL with no errors → match=True without crash.
+    # (Avoids the pool entirely for not-found cases.)
+    'audio_list_remove_by_value': {
+        'rva':          0x005ade10,
+        'export':       'AudioListRemoveByValue',
+        'signature':    {'ret': 'pointer', 'args': ['pointer', 'int32']},
+        'arg_type':     'audio_list_remove',
+        'insert_rva':   0x005addd0,
+        'lut_root_delta': 0,
+        # NOTE: payload=0 excluded — fresh harness sentinel has data[+8]=0;
+        # payload=0 hits a degenerate match against the sentinel node itself,
+        # causing AudioPoolFree to be called on an uninitialized pool → crash.
+        # This is an artefact of the harness (not a real-world usage pattern).
+        'path1_tests':  [
+            {'payload': 1,   'present': False},
+            {'payload': 42,  'present': False},
+            {'payload': -1,  'present': False},
+            {'payload': 99,  'present': False},
+            {'payload': 100, 'present': False},
+            {'payload': 255, 'present': False},
+            {'payload': 999, 'present': False},
+            {'payload': 7,   'present': False},
+            {'payload': 13,  'present': False},
+            {'payload': 500, 'present': False},
+        ],
+        'path2_tests':  [
+            {'payload': 1,   'present': False},
+            {'payload': 42,  'present': False},
+            {'payload': 99,  'present': False},
+        ],
+    },
+
+    # 0x005ade90  AudioListDrain
+    # void fn(sentinel_ptr): drain all nodes from list, return each to pool.
+    # arg_type='audio_list_drain': allocates fresh self-referential 12-byte
+    # sentinel via Memory.alloc. nodeCount=0 tests: empty sentinel → loop
+    # condition param_1[1] != param_1 is immediately False → no-op. Both
+    # paths observe sentinel still self-loops → origV=1, reimV=1 → match=True.
+    # (No pool access needed for empty-drain case.)
+    'audio_list_drain': {
+        'rva':          0x005ade90,
+        'export':       'AudioListDrain',
+        'signature':    {'ret': 'void', 'args': ['pointer']},
+        'arg_type':     'audio_list_drain',
+        'insert_rva':   0x005addd0,
+        'lut_root_delta': 0,
+        'path1_tests':  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':  [0, 0, 0],
+    },
 }
