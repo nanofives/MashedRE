@@ -1800,4 +1800,37 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+
+    # Session c3-batch-b-s6 — VehicleUnlockFlagGet (C2->C3)
+    # VehicleMeta.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ef40  VehicleUnlockFlagGet
+    # Pure leaf: reads byte from DAT_007f0e50 + param_1*0xc at a byte-offset
+    # selected by param_2 switch; returns 1 if byte == 0x01, else 0.
+    # Array is zero-initialized before game-mode selection → all tests return
+    # 0 at quiescent main-menu state. A/B identity guaranteed (both read 0x00
+    # from the same global array).
+    # [UNCERTAIN U-3176] No bounds check on param_1 — reproduced as-is.
+    # arg_type='int_pair': passes [param_1, param_2] directly.
+    'vehicle_unlock_flag_get': {
+        'rva':            0x0042ef40,
+        'export':         'VehicleUnlockFlagGet',
+        'signature':      {'ret': 'int32', 'args': ['int', 'int']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # Test vectors: (vehicle_index, slot_type)
+        # slot_type values: 2(default), 3, 4, 5, 10 and 1000-offset variants.
+        'path1_tests': [
+            [0, 2],   [0, 3],   [0, 4],   [0, 5],   [0, 10],
+            [1, 2],   [1, 3],   [1, 4],   [1, 5],   [1, 10],
+            [0, 0x3e9], [0, 0x3ea], [0, 0x3ed], [0, 0x3f3],
+            [1, 0x3e9], [1, 0x3ea], [1, 0x3ed], [1, 0x3f3],
+            [2, 2],   [3, 2],
+        ],
+        'path2_tests': [
+            [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
+        ],
+    },
 }
