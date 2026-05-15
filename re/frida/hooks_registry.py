@@ -1697,4 +1697,41 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
-    },}
+    },
+
+    # Session c3-batch-b-s5 — Frontend sprite dispatch + time decompose
+    # SpriteDispatch.cpp + MenuTime.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042fab0  SpriteSlotDispatch
+    # Assembly-confirmed 10-way dispatch: MOV [ESP+4], slot_ptr; JMP FUN_0040bb90.
+    # Slot 0 -> ptr 0x5cd898; slot 9 -> ptr 0x5cd838 (stride mostly 0xc).
+    # arg_type='int_scalar': passes slot index (0–9 + out-of-range) as int32.
+    # Default case (out of range 0–9): no-op return; both paths must agree (void).
+    # Call with void wrapper: treat 'void' ret as uint32 for harness compatibility.
+    'sprite_slot_dispatch': {
+        'rva':            0x0042fab0,
+        'export':         'SpriteSlotDispatch',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1],
+        'path2_tests':    [0, 1, 9],
+    },
+
+    # 0x0042e590  SpriteAnimFrameThunk
+    # Assembly-confirmed tail-call thunk: computes idx = sprite_slot + 2*DAT_0067f17c,
+    # looks up sprite_ptr_table[idx] at 0x5f79d8, overwrites first arg, JMP FUN_0040bb70.
+    # arg_type='int_scalar': passes sprite_slot as int32; FUN_0040bb70 receives
+    # live game state for remaining args (x1/y1/x2/y2/color/uv/frame/flag).
+    # Both orig and reimpl call FUN_0040bb70 with the same transformed first arg.
+    'sprite_anim_frame_thunk': {
+        'rva':            0x0042e590,
+        'export':         'SpriteAnimFrameThunk',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+}
