@@ -1854,12 +1854,20 @@ HOOKS = {
         'signature':      {'ret': 'int32', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
+        # At quiescent main-menu state: DAT_007dc75c != 0 (VFS active; confirmed by
+        # first diff attempt which showed Branch A is taken).
+        # Use known game string VAs (no ':' in content):
+        #   0x005cda7c: "Button"  (confirmed valid from SpriteLookupTableA tests)
+        #   0x005cc414: "SemiC"   (confirmed valid from SpriteLookupTableA tests)
+        # scan_fn scans for ':'; finds none → default obj dispatch → vtable[0x13].
+        # Both orig and reimpl call same vtable fn on same obj → bit-identical return.
+        # arg_type='int_scalar': passes the VA directly (ASLR disabled; fixed VAs).
         'path1_tests': [
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0,
+            0x005cda7c, 0x005cc414, 0x005cda7c, 0x005cc414, 0x005cda7c,
+            0x005cc414, 0x005cda7c, 0x005cc414, 0x005cda7c, 0x005cc414,
         ],
         'path2_tests': [
-            0, 0, 0,
+            0x005cda7c, 0x005cc414, 0x005cda7c,
         ],
     },
 
