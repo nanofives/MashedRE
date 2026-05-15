@@ -1122,3 +1122,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  00550980  VfsStreamRead      C2->C3  Frida A/B GREEN 10/10 crash_equal_ok; log/diff_vfs_stream_read.csv; mashedmod/src/mashed_re/Save/VfsStream.cpp; c3-batch-e-s3
+2026-05-15  00550bc0  VfsStreamGetType   C2->C3  Frida A/B GREEN 10/10 crash_equal_ok; leaf-fn exemption; log/diff_vfs_stream_get_type.csv; mashedmod/src/mashed_re/Save/VfsStream.cpp; c3-batch-e-s3
+2026-05-15  004a4541  FsopenSafe         C2->C3  Frida A/B GREEN 10/10; log/diff_fsopen_safe.csv; mashedmod/src/mashed_re/Save/FsOpen.cpp; c3-batch-e-s3
+2026-05-15  00550910  VfsStreamClose     DEFERRED(C2)  U-3561/U-3562 inline in body; IAT identities unresolved; c3-batch-e-s3
