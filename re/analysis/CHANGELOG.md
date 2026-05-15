@@ -1112,3 +1112,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend/hud_frontend_d3(s7)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/race_results_d2(s8)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend/title_screen_d2/localization(s9)  writes=4  errors=0
+2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d5/hud_frontend_d3/title_screen(s10)  writes=4  errors=0
