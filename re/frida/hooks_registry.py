@@ -1214,19 +1214,17 @@ HOOKS = {
         'path2_tests':    [2, 3, 10],
     },
 
-    # Session c3-batch-c-s1 — hud_ingame_promote_c2 (C2→C3, 3 candidates)
+    # Session c3-batch-c-s1 — hud_ingame_promote_c2 (C2->C3, 3 candidates)
     # HUD/HudDispatch.cpp — game-mode router wrappers for in-game HUD draw
-    # Callees 0x0041c2d0 and 0x0041bc50 drift-promoted C1→C2 (budget used).
+    # Callees 0x0041c2d0 and 0x0041bc50 drift-promoted C1->C2 (budget used).
     # Refused: 0x0041b630 (needs 0x0041b340 C1), 0x0041ccc0 (needs 0x0041c9a0 C1).
     # ─────────────────────────────────────────────────────────────────────
 
     # 0x0041a3e0  HudDispatchMode10
-    # void(void): reads int32_t at DAT_0063c628; if non-zero → calls FUN_0041c2d0.
+    # void(void): reads int32_t at DAT_0063c628; if non-zero -> calls FUN_0041c2d0.
     # 19 bytes. Game-mode 10 HUD draw path.
     # arg_type='none': called 10x at quiescent main menu; array 0x0063c628 is 0
-    # at menu → guard fails safely → no crash. Both paths return void/0.
-    # Call-context observations: flag at 0x0063c628 == 0 (menu), FUN_0041c2d0 NOT
-    # called, no vtable dispatch, no side effects. Stable across 10 iterations.
+    # at menu -> guard fails safely -> no crash. Both paths return void/0.
     'hud_dispatch_mode10': {
         'rva':            0x0041a3e0,
         'export':         'HudDispatchMode10',
@@ -1238,12 +1236,10 @@ HOOKS = {
     },
 
     # 0x0041c300  HudDispatchMode5
-    # void(void): reads int32_t at DAT_0063cdbc; if non-zero → calls FUN_0041c2d0.
+    # void(void): reads int32_t at DAT_0063cdbc; if non-zero -> calls FUN_0041c2d0.
     # 19 bytes. Game-mode 5 HUD draw path (parallel to HudDispatchMode10).
     # arg_type='none': called 10x at quiescent main menu; flag 0x0063cdbc == 0
-    # at menu → guard fails safely → no crash. Both paths return void/0.
-    # Call-context observations: flag at 0x0063cdbc == 0 (menu), FUN_0041c2d0 NOT
-    # called, no vtable dispatch, no side effects. Stable across 10 iterations.
+    # at menu -> guard fails safely -> no crash. Both paths return void/0.
     'hud_dispatch_mode5': {
         'rva':            0x0041c300,
         'export':         'HudDispatchMode5',
@@ -1257,18 +1253,81 @@ HOOKS = {
     # 0x0041c0c0  HudDispatchSlot2
     # void(void): 2-entry unconditional loop, base 0x0063cab8, stride 0x16c.
     # Calls FUN_0041bc50 each iteration (unconditional).
-    # 28 bytes. {5,6}-path when FUN_0042f500() != 0 AND DAT_007f0fd0 != 2.
-    # arg_type='none': called 10x at quiescent main menu. FUN_0041bc50 itself
-    # guards each of its 29 render slots with a non-zero check — all are 0 at
-    # menu → inner guards fail safely → no crash. Both paths return void/0.
-    # Call-context observations: 2 loop iterations execute; FUN_0041bc50 called
-    # twice; all 29 guard fields in each entry are 0 at menu → no vtable
-    # dispatch fired; struct stride 0x16c confirmed (0x0063cab8 + 0x16c = 0x0063cc24,
-    # + 0x16c = 0x0063cd90 = exclusive end). Stable across 10 iterations.
+    # 28 bytes. Stable across 10 quiescent-menu iterations.
     'hud_dispatch_slot2': {
         'rva':            0x0041c0c0,
         'export':         'HudDispatchSlot2',
         'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # Session c3-batch-c-s3 — hud+frontend getters batch-c (C2->C3, 4 candidates)
+    # HUD/HudDispatch.cpp, Frontend/FrontendAccessors.cpp, Frontend/FrontendMode.cpp
+    # Pure-leaf HUD sub-mode and Frontend global/array/mode-index getters.
+    # Candidate 0x00436810 DEFERRED -- U-3410/U-3411 unresolved.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042f6a0  HudSubModeGet
+    # Returns DAT_0067e9fc (uint32_t global). 5 bytes: MOV EAX,[imm32]; RET.
+    # Used as switch discriminant in FUN_0040dfc0 (per-frame HUD dispatch).
+    # read_global: write sentinel, call fn(), verify return == sentinel.
+    # ref: re/analysis/hud_ingame_promote_c2/0x0042f6a0.md
+    'hud_sub_mode_get': {
+        'rva':            0x0042f6a0,
+        'export':         'HudSubModeGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067e9fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000002],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0040ad20  FrontendGlobalGet
+    # Returns DAT_008a95ac (uint32_t global). 6 bytes: MOV EAX,[imm32]; RET.
+    # read_global: write sentinel, call fn(), verify return == sentinel.
+    # ref: re/analysis/hud_frontend_d3/0x0040ad20.md
+    'frontend_global_get': {
+        'rva':            0x0040ad20,
+        'export':         'FrontendGlobalGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x008a95ac,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00FF00FF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0040b6c0  FrontendArrayGet
+    # Returns DAT_008a94f0[param_1] -- indexed 4-byte read. 11 bytes.
+    # No bounds check in original; int_scalar: pass index, compare return.
+    # ref: re/analysis/hud_frontend_d3/0x0040b6c0.md
+    'frontend_array_get': {
+        'rva':            0x0040b6c0,
+        'export':         'FrontendArrayGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1],
+        'path2_tests':    [0, 1, 2, 9],
+    },
+
+    # 0x004309b0  FrontendModeIndex
+    # int(void): reads DAT_0067e9fc, computes (mode-2), switch -> mapped index.
+    # 52 bytes. Cases: 0->0, 1->1, 2->2, 3->5, 4..7->3, 8->11, default->(mode-2).
+    # arg_type='none': called 10x at quiescent state; compare return value.
+    # ref: re/analysis/hud_frontend_d5/0x004309b0.md
+    'frontend_mode_index': {
+        'rva':            0x004309b0,
+        'export':         'FrontendModeIndex',
+        'signature':      {'ret': 'int32', 'args': []},
         'arg_type':       'none',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

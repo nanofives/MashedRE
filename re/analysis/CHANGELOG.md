@@ -1068,3 +1068,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-14  0041c0c0  HudDispatchSlot2  C2->C3  c3-batch-c-s1; mashedmod/src/mashed_re/HUD/HudDispatch.cpp; 2-entry loop 0x0063cab8 stride 0x16c → FUN_0041bc50 (EAX-thiscall trampoline); caller 0040dfc0 C2; callee 0041bc50 C2 (drift); Frida GREEN 10/10 log/diff_hud_dispatch_slot2.csv; no UNCERTAIN
 2026-05-14  0041b630  sub_0041b630  C2->C3 REFUSED  c3-batch-c-s1; callee 0041b340 C1 (drift-promote budget exhausted; 2 drift-promotes used for 0041c2d0+0041bc50)
 2026-05-14  0041ccc0  sub_0041ccc0  C2->C3 REFUSED  c3-batch-c-s1; callee 0041c9a0 C1 (drift-promote budget exhausted; 2 drift-promotes used for 0041c2d0+0041bc50)
+2026-05-14  0042f6a0  GetRaceSubMode/HudSubModeGet  C3(already)->C3  c3-batch-c-s3: stale C2 row (hud/sub_0042f6a0) removed; HudSubModeGet is second export for already-C3 RVA; Frida A/B 10/10 GREEN (log/diff_hud_sub_mode_get.csv); no tracker action needed; frida-sweep to resolve duplicate impl
+2026-05-14  0040ad20  FrontendGlobalGet  C2->C3  c3-batch-c-s3; Frontend/FrontendAccessors.cpp; pure getter DAT_008a95ac; leaf-exemption; Frida A/B 10/10 GREEN (log/diff_frontend_global_get.csv)
+2026-05-14  0040b6c0  FrontendArrayGet  C2->C3  c3-batch-c-s3; Frontend/FrontendAccessors.cpp; indexed read DAT_008a94f0[param_1]; leaf-exemption; Frida A/B 12/12 GREEN (log/diff_frontend_array_get.csv)
+2026-05-14  004309b0  FrontendModeIndex  C2->C3  c3-batch-c-s3; Frontend/FrontendMode.cpp; 52b switch mode-2→index; leaf-exemption; Frida A/B 10/10 GREEN (log/diff_frontend_mode_index.csv)
+2026-05-14  00436810  FUN_00436810  DEFERRED->DEFERRED  c3-batch-c-s3: refused C2->C3; [UNCERTAIN U-3410 U-3411] unresolved in body; semantic/structural uncertainties block gate

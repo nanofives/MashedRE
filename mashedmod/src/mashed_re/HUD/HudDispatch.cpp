@@ -139,3 +139,16 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl HudDispatchSlot2() {
 }
 
 RH_ScopedInstall(HudDispatchSlot2, 0x0041c0c0);
+
+// ---------------------------------------------------------------------------
+// 0x0042f6a0  HudSubModeGet  (export alias for GetRaceSubMode)
+// Returns DAT_0067e9fc (uint32_t global). 5 bytes: MOV EAX,[imm32]; RET.
+// Used as switch discriminant in FUN_0040dfc0 (per-frame HUD dispatch).
+// RH_ScopedInstall omitted: hook already installed via GetRaceSubMode (c3-batch-o-s89).
+// ref: re/analysis/hud_ingame_promote_c2/0x0042f6a0.md
+// ---------------------------------------------------------------------------
+// 0x0042f6a0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl HudSubModeGet() {
+    // 0x0067e9fc: game sub-mode global; primary HUD dispatch discriminant
+    return *reinterpret_cast<const std::uint32_t*>(0x0067e9fcu);
+}

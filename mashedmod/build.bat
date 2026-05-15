@@ -45,6 +45,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\GameModeCarSelect.cpp" ^
     "%SRC%\Frontend\MenuGetters.cpp" ^
     "%SRC%\Frontend\SpriteGate.cpp" ^
+    "%SRC%\Frontend\FrontendAccessors.cpp" ^
+    "%SRC%\Frontend\FrontendMode.cpp" ^
     "%SRC%\HUD\HudDispatch.cpp" ^
     /link /DLL
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
