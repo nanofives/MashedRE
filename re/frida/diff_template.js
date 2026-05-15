@@ -577,6 +577,105 @@ function runDiff() {
         return;
     }
 
+    // ── audio_sub_struct_link ────────────────────────────────────────────────
+    // For AudioSubStructLinkDevice / AudioSubStructLinkBuffer:
+    //   fn(uint32* buf, uint32 param2) -> uint32*
+    // Strategy: allocate a fresh 12-byte scratch buffer (zeroed), call fn(buf, param2),
+    // then read back 3 DWORDs [0..2] as a bit-packed string for comparison.
+    // Both orig and reimpl receive an identical zeroed buffer (no prior state to worry about).
+    // With *buf == 0 on entry the cleanup callee (FUN_005ae080 / FUN_005ae050) is a no-op.
+    // input: uint32 value for param2.
+    if (CONFIG.arg_type === 'audio_sub_struct_link') {
+        const sbuf = Memory.alloc(12);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const param2 = CONFIG.tests[i] >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Zero the buffer before each orig call.
+            sbuf.writeU32(0); sbuf.add(4).writeU32(0); sbuf.add(8).writeU32(0);
+            try {
+                Orig(sbuf, param2);
+                origV = [sbuf.readU32(), sbuf.add(4).readU32(), sbuf.add(8).readU32()].join(',');
+            } catch(e) { errO = e.message; }
+            // Zero again before reimpl call.
+            sbuf.writeU32(0); sbuf.add(4).writeU32(0); sbuf.add(8).writeU32(0);
+            try {
+                Reimpl(sbuf, param2);
+                reimV = [sbuf.readU32(), sbuf.add(4).readU32(), sbuf.add(8).readU32()].join(',');
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: param2,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_sub_struct_zero ────────────────────────────────────────────────
+    // For AudioSubStructZeroInit: fn(uint32* buf) -> void
+    // Strategy: fill a 12-byte scratch buffer with the sentinel pattern for each test,
+    // call fn(buf), read back 3 DWORDs. With correct impl all 3 should be 0.
+    // input: uint32 sentinel to fill fields [0..2] with before the call.
+    if (CONFIG.arg_type === 'audio_sub_struct_zero') {
+        const sbuf = Memory.alloc(12);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const sentinel = CONFIG.tests[i] >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Fill with sentinel before orig.
+            sbuf.writeU32(sentinel); sbuf.add(4).writeU32(sentinel); sbuf.add(8).writeU32(sentinel);
+            try {
+                Orig(sbuf);
+                origV = [sbuf.readU32(), sbuf.add(4).readU32(), sbuf.add(8).readU32()].join(',');
+            } catch(e) { errO = e.message; }
+            // Fill with sentinel before reimpl.
+            sbuf.writeU32(sentinel); sbuf.add(4).writeU32(sentinel); sbuf.add(8).writeU32(sentinel);
+            try {
+                Reimpl(sbuf);
+                reimV = [sbuf.readU32(), sbuf.add(4).readU32(), sbuf.add(8).readU32()].join(',');
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: sentinel,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_sub_struct_dual ────────────────────────────────────────────────
+    // For AudioSubStructDualInit: fn(uint32 param1, uint32 param2, uint32 param3) -> uint32
+    // param1 is a pointer to a 12-byte sub-struct (allocated here).
+    // Strategy: allocate 12-byte buffer, pass its address as param1.
+    // Both paths get a fresh zeroed buffer. Compare return value (ptr or 0).
+    // A non-null return encodes param1's address — normalize to 1 (non-zero) vs 0.
+    // input: { p2, p3 } — param2 and param3 values.
+    if (CONFIG.arg_type === 'audio_sub_struct_dual') {
+        const sbuf = Memory.alloc(12);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const p2 = t.p2 >>> 0;
+            const p3 = t.p3 >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            sbuf.writeU32(0); sbuf.add(4).writeU32(0); sbuf.add(8).writeU32(0);
+            try {
+                const r = Orig(sbuf.toInt32(), p2, p3);
+                // Return is param1 (non-zero) or 0 — normalize: 1 if non-zero, 0 if zero.
+                origV = (r !== 0 && r !== null) ? 1 : 0;
+            } catch(e) { errO = e.message; }
+            sbuf.writeU32(0); sbuf.add(4).writeU32(0); sbuf.add(8).writeU32(0);
+            try {
+                const r = Reimpl(sbuf.toInt32(), p2, p3);
+                reimV = (r !== 0 && r !== null) ? 1 : 0;
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── standard scalar / vec3 / read_global / none loop ────────────────────
     try {
         for (let i = 0; i < CONFIG.tests.length; i++) {

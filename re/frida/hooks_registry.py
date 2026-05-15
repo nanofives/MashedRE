@@ -1833,4 +1833,135 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s4 — audio_rws sub-struct link/init  (C2→C3, 4 hooks)
+    # Audio/AudioRws.cpp — leaf link/init primitives on 3-DWORD sub-struct
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005ae010  AudioSubStructLinkDevice  (31 bytes)
+    # fn(uint32* param_1, uint32 param_2) -> uint32*
+    # Calls FUN_005ae080(param_1) (no-op when *param_1 == 0), then:
+    #   param_1[0] = param_2;  param_1[2] &= 0xfffffffe;  return param_1.
+    # arg_type='audio_sub_struct_link': alloc 12-byte buf, zero, call fn(buf, val),
+    #   read back [0],[1],[2] as comma-joined uint32 string. Both paths match = GREEN.
+    # STRUCT GAP note: audio obj sub-struct layout at +0x24 partially known (U-0142).
+    'audio_sub_struct_link_device': {
+        'rva':            0x005ae010,
+        'export':         'AudioSubStructLinkDevice',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'uint32']},
+        'arg_type':       'audio_sub_struct_link',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0x00000002,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0xFFFFFFFF,
+            0x80000000,
+            0x55555555,
+            0xAAAAAAAA,
+        ],
+        'path2_tests': [
+            0x00000000,
+            0xDEADBEEF,
+            0xFFFFFFFF,
+        ],
+    },
+
+    # 0x005adfe0  AudioSubStructLinkBuffer  (32 bytes)
+    # fn(uint32* param_1, uint32 param_2) -> uint32*
+    # Calls FUN_005ae050(param_1) (no-op when param_1[1] == 0), then:
+    #   param_1[1] = param_2;  param_1[2] &= 0xfffffffd;  return param_1.
+    # Same arg_type strategy as AudioSubStructLinkDevice.
+    # STRUCT GAP note: sub-struct at +0x34 (U-0143).
+    'audio_sub_struct_link_buffer': {
+        'rva':            0x005adfe0,
+        'export':         'AudioSubStructLinkBuffer',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'uint32']},
+        'arg_type':       'audio_sub_struct_link',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0x00000002,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0xFFFFFFFF,
+            0x80000000,
+            0x55555555,
+            0xAAAAAAAA,
+        ],
+        'path2_tests': [
+            0x00000000,
+            0xDEADBEEF,
+            0xFFFFFFFF,
+        ],
+    },
+
+    # 0x005ae0b0  AudioSubStructZeroInit  (14 bytes)
+    # fn(uint32* param_1) -> void
+    # Pure leaf. Zeros param_1[2], param_1[1], param_1[0] in reverse order.
+    # arg_type='audio_sub_struct_zero': fill buf with sentinel, call fn(buf),
+    #   read back all 3 DWORDs — both paths must return '0,0,0'.
+    'audio_sub_struct_zero_init': {
+        'rva':            0x005ae0b0,
+        'export':         'AudioSubStructZeroInit',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'audio_sub_struct_zero',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0xFFFFFFFF,
+            0x80000000,
+            0x55555555,
+            0xAAAAAAAA,
+            0x3F800000,
+        ],
+        'path2_tests': [
+            0x00000000,
+            0xDEADBEEF,
+            0xFFFFFFFF,
+        ],
+    },
+
+    # 0x005ac7b0  AudioSubStructDualInit  (~50 bytes)
+    # fn(uint32 param_1, uint32 param_2, uint32 param_3) -> uint32
+    # param_1 is a pointer to a 12-byte sub-struct (passed as int).
+    # Calls AudioSubStructLinkDevice(param_1, param_2), then if non-null,
+    # AudioSubStructLinkBuffer(param_1, param_3). Returns param_1 if both OK, 0 if either fails.
+    # arg_type='audio_sub_struct_dual': allocate 12-byte buf, pass as param_1;
+    #   normalize return: 1 if non-zero, 0 if zero. Both paths must agree.
+    # With zeroed input buf the callees are no-ops on cleanup; both link calls succeed.
+    'audio_sub_struct_dual_init': {
+        'rva':            0x005ac7b0,
+        'export':         'AudioSubStructDualInit',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']},
+        'arg_type':       'audio_sub_struct_dual',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'p2': 0x00000000, 'p3': 0x00000000},
+            {'p2': 0x00000001, 'p3': 0x00000001},
+            {'p2': 0xDEADBEEF, 'p3': 0xCAFEBABE},
+            {'p2': 0x12345678, 'p3': 0x87654321},
+            {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
+            {'p2': 0x80000000, 'p3': 0x00000001},
+            {'p2': 0x00000001, 'p3': 0x80000000},
+            {'p2': 0x55555555, 'p3': 0xAAAAAAAA},
+            {'p2': 0x00000002, 'p3': 0x00000003},
+            {'p2': 0x3F800000, 'p3': 0x40000000},
+        ],
+        'path2_tests': [
+            {'p2': 0x00000000, 'p3': 0x00000000},
+            {'p2': 0xDEADBEEF, 'p3': 0xCAFEBABE},
+            {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
+        ],
+    },
 }

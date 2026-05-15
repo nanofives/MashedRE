@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  0x005ae010  AudioSubStructLinkDevice   C2->C3  log/diff_audio_sub_struct_link_device.csv 10/10 GREEN; c3-batch-f-s4; U-0142 open (structural; sub-struct layout partial)
+2026-05-15  0x005adfe0  AudioSubStructLinkBuffer   C2->C3  log/diff_audio_sub_struct_link_buffer.csv 10/10 GREEN; c3-batch-f-s4; U-0143 open (structural; sub-struct parent relationship)
+2026-05-15  0x005ae0b0  AudioSubStructZeroInit     C2->C3  log/diff_audio_sub_struct_zero_init.csv 10/10 GREEN; c3-batch-f-s4; leaf-exemption applied
+2026-05-15  0x005ac7b0  AudioSubStructDualInit     C2->C3  log/diff_audio_sub_struct_dual_init.csv 10/10 GREEN; c3-batch-f-s4; callees C3 (this session)
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
