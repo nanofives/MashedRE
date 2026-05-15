@@ -1833,4 +1833,32 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s13 — audio_music_d2 (C1->C3, 1 candidate)
+    # Audio/AudioMusic.cpp — music group volume setter
+    # REFUSED: 0x005a75b0 (inline UNCERTAIN in body), 0x005a7520 (callees C1),
+    #          0x005a6d60 (indirect fn-ptr dispatch; not testable without live audio)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005baf00  MusicGroupVolumeSet
+    # void(ptr param_1, float param_2):
+    #   Stores param_2 as float to param_1+0x38 (volume field).
+    #   Walks empty-or-non-empty circular linked list at param_1+0x0c;
+    #   sets bit 6 (0x40) of node+0x14 on each node.
+    #   Also copies param_2 raw bits to *(param_1+0x11c)+0x30 if secondary != 0.
+    # Strategy (music_vol_set):
+    #   Allocate 0x120-byte scratch struct; set up empty circular list sentinel;
+    #   secondary ptr = 0. Call fn(struct, float). Read back struct+0x38 as u32
+    #   (= IEEE-754 bit pattern of the written float). Both paths must match.
+    #   10 float inputs covering 0, 1, negatives, fringe FP values.
+    'music_group_volume_set': {
+        'rva':            0x005baf00,
+        'export':         'MusicGroupVolumeSet',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'float']},
+        'arg_type':       'music_vol_set',
+        'lut_root_delta': 0,
+        'path1_tests':    [0.0, 1.0, 0.5, -1.0, 0.25, 0.75, -0.5, 2.0, 0.001, 100.0],
+        'path2_tests':    [0.0, 1.0, 0.5],
+    },
 }

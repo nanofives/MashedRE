@@ -577,6 +577,62 @@ function runDiff() {
         return;
     }
 
+    // ── music_vol_set ────────────────────────────────────────────────────────
+    // For MusicGroupVolumeSet (0x005baf00): void(ptr param_1, float param_2).
+    // Strategy:
+    //   For each test float `t`:
+    //     1. Allocate a 0x120-byte scratch struct as param_1.
+    //     2. Set up empty circular list: *(struct+0x0c) = struct+0x0c (sentinel = self).
+    //     3. Set struct+0x11c = 0 (no secondary object).
+    //     4. Write sentinel dword 0xDEADBEEF to struct+0x38 (will be overwritten by fn).
+    //     5. Call fn(struct, t).
+    //     6. Observable: struct+0x38 read as uint32 (float bit pattern of t).
+    //   With an empty list the loop body never executes.
+    //   Secondary propagation is skipped (ptr = 0).
+    //   Both orig and reimpl must write the same bit pattern of `t` to +0x38.
+    if (CONFIG.arg_type === 'music_vol_set') {
+        const STRUCT_SIZE = 0x120;
+        const structBufO = Memory.alloc(STRUCT_SIZE);
+        const structBufR = Memory.alloc(STRUCT_SIZE);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];  // float value
+            let origV = null, reimV = null, errO = null, errR = null;
+
+            // Setup: empty circular list + no secondary
+            function setupStruct(sb) {
+                // Zero entire struct
+                Memory.protect(sb, STRUCT_SIZE, 'rw-');
+                for (let off = 0; off < STRUCT_SIZE; off += 4) {
+                    sb.add(off).writeU32(0);
+                }
+                // Circular list sentinel: *(sb+0x0c) = sb+0x0c
+                sb.add(0x0c).writePointer(sb.add(0x0c));
+                // No secondary: sb+0x11c = 0 (already zeroed)
+                // Write sentinel to volume field
+                sb.add(0x38).writeU32(0xDEADBEEF);
+            }
+
+            setupStruct(structBufO);
+            try {
+                Orig(structBufO, t);
+                origV = structBufO.add(0x38).readU32();
+            } catch(e) { errO = e.message; }
+
+            setupStruct(structBufR);
+            try {
+                Reimpl(structBufR, t);
+                reimV = structBufR.add(0x38).readU32();
+            } catch(e) { errR = e.message; }
+
+            const match = (errO === null && errR === null && origV === reimV);
+            results.push({ idx: i, input: t,
+                           original: origV, reimpl: reimV, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── standard scalar / vec3 / read_global / none loop ────────────────────
     try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
