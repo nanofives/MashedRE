@@ -24,15 +24,29 @@ import psutil
 from pycaw.pycaw import AudioUtilities
 
 ROOT       = Path(__file__).resolve().parent.parent.parent
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
-OUT_FILE   = ROOT / 'log' / 'auto_count_at_menu.txt'
+
+
+def _find_original(script_root: Path) -> Path:
+    candidate = script_root / 'original' / 'MASHED.exe'
+    if candidate.exists():
+        return candidate
+    parent = script_root.parent.parent
+    candidate2 = parent / 'original' / 'MASHED.exe'
+    if candidate2.exists():
+        return candidate2
+    return candidate
+
+
+MASHED_EXE = _find_original(ROOT)
+OUT_FILE   = ROOT / 'log' / 'observe_cold_boot_to_menu_c4-batch-a-s14.txt'
 
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 
 HOOKS = {
-    'Vec3Magnitude':  '0x004c3ac0',
-    'FastSqrt':       '0x004c3b30',
-    'FastInvSqrt':    '0x004c3b90',
+    'GetEventFlag':        '0x0041f1c0',
+    'GetPlayerStateBits':  '0x0041f090',
+    'CarSlotInit':         '0x00492340',
+    'EntityFieldSet':      '0x0046dc00',
 }
 
 AGENT_JS = '''
@@ -156,7 +170,9 @@ def main():
         print("  agent never ready"); proc.kill(); return 5
 
     print(f"  hooks instrumented; idling at main menu for {args.seconds}s")
-    print(f"  {'t':>4s}  {'Vec3Mag':>10s}  {'FastSqrt':>10s}  {'FastInvSqrt':>13s}")
+    hook_names = list(HOOKS.keys())
+    header = "  {:>4s}".format('t') + ''.join(f"  {n:>18s}" for n in hook_names)
+    print(header)
     last = {k: 0 for k in HOOKS}
     start = time.time()
     while time.time() - start < args.seconds:
@@ -165,7 +181,8 @@ def main():
         try:
             snap = script.exports_sync.snapshot()
             elapsed = int(time.time() - start)
-            print(f"  {elapsed:>4d}  {snap.get('Vec3Magnitude',0):>10d}  {snap.get('FastSqrt',0):>10d}  {snap.get('FastInvSqrt',0):>13d}")
+            row = f"  {elapsed:>4d}" + ''.join(f"  {snap.get(n,0):>18d}" for n in hook_names)
+            print(row)
             last = snap
         except Exception as e:
             print(f"  snapshot err: {e}"); break
