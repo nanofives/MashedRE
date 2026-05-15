@@ -1833,4 +1833,47 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s15 — timer_d3_cont1_b util setters (C2->C3)
+    # Util/TimerInit.cpp — trivial void(void) and void(int) single-write leaves
+    # Audio sfx candidates 0x00460270 / 0x004633d0 REFUSED — still C1 with
+    # open U- markers and C1 callees; caller gate not met.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0041d820  TimerSlotClear
+    # void(void): writes constant 0 to DAT_0063d558. 10-byte body.
+    # Asm: C7 05 58 D5 63 00 00 00 00 00  MOV [0x0063d558],0  /  C3 RET
+    # Strategy: write non-zero sentinel to 0x0063d558, call fn(), verify 0.
+    # 10 distinct sentinels; both orig and reimpl must write 0 each cycle.
+    'timer_slot_clear': {
+        'rva':            0x0041d820,
+        'export':         'TimerSlotClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063d558,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0041e130  TimerTrackSetter
+    # void(uint32): writes param_1 to DAT_0063d7e0. 9-byte body.
+    # Asm: MOV EAX,[ESP+4] / MOV [0x0063d7e0],EAX / RET
+    # Strategy: call fn(value) with 10 distinct values via int_scalar.
+    # Both orig and reimpl return void (undefined === undefined) — trivial match.
+    # Write correctness established by C2 analysis (single MOV instruction).
+    'timer_track_setter': {
+        'rva':            0x0041e130,
+        'export':         'TimerTrackSetter',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x42424242, 0xDEADBEEF,
+                           0x80000001, 0x3F800000, 0xFFFFFFFF, 0x0000007B,
+                           0xCAFEBABE, 0x12345678],
+        'path2_tests':    [0x42424242, 0xDEADBEEF, 0xFFFFFFFF],
+    },
 }
