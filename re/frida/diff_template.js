@@ -504,6 +504,79 @@ function runDiff() {
         return;
     }
 
+    // ── font_ctx_float2 ──────────────────────────────────────────────────────
+    // For FontCtx_SetScale / FontCtx_SetTranslation: fn(float sx, float sy) → uint32.
+    // Strategy: for each test {sx, sy}, write sentinel 0xDEADBEEF to dirty-flag
+    // DAT_00912bd8, call fn(sx,sy), read back dirty flag (must be 0 if fn worked).
+    // Also read back the uint32 return value (must be 1).
+    // Observable = (ret << 16) | dirtyFlagReadback. Both paths must match.
+    // Dirty flag is restored to its pre-test value after each pair.
+    if (CONFIG.arg_type === 'font_ctx_float2') {
+        const pDirty = ptr('0x00912bd8');
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const sx = t[0], sy = t[1];
+            let origV = null, reimV = null, errO = null, errR = null;
+            const savedDirty = pDirty.readU32();
+            try {
+                pDirty.writeU32(0xDEADBEEF);
+                const ret = Orig(sx, sy);
+                const df  = pDirty.readU32();
+                origV = (((ret >>> 0) & 0xffff) << 16) | (df & 0xffff);
+            } catch(e) { errO = e.message; }
+            pDirty.writeU32(savedDirty);
+            try {
+                pDirty.writeU32(0xDEADBEEF);
+                const ret = Reimpl(sx, sy);
+                const df  = pDirty.readU32();
+                reimV = (((ret >>> 0) & 0xffff) << 16) | (df & 0xffff);
+            } catch(e) { errR = e.message; }
+            pDirty.writeU32(savedDirty);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── font_matrix_push ─────────────────────────────────────────────────────
+    // For FontMatrix_Push: fn(void) → bool.
+    // Strategy: for each test depth_val, write depth to DAT_00912b04, call fn,
+    // read back bool return value and new depth. Pack into uint32 for comparison.
+    // Observable = (retBool & 1) | ((new_depth & 0xff) << 8).
+    // depth is restored after each pair.
+    if (CONFIG.arg_type === 'font_matrix_push') {
+        const pDepth = ptr('0x00912b04');
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];  // { depth } — initial depth to inject
+            const testDepth = (t.depth | 0) >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            const savedDepth = pDepth.readU32();
+            try {
+                pDepth.writeU32(testDepth);
+                const ret = Orig();
+                const newDepth = pDepth.readU32();
+                origV = ((ret ? 1 : 0)) | ((newDepth & 0xff) << 8);
+            } catch(e) { errO = e.message; }
+            pDepth.writeU32(savedDepth);
+            try {
+                pDepth.writeU32(testDepth);
+                const ret = Reimpl();
+                const newDepth = pDepth.readU32();
+                reimV = ((ret ? 1 : 0)) | ((newDepth & 0xff) << 8);
+            } catch(e) { errR = e.message; }
+            pDepth.writeU32(savedDepth);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── standard scalar / vec3 / read_global / none loop ────────────────────
     try {
         for (let i = 0; i < CONFIG.tests.length; i++) {

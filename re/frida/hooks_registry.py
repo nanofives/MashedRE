@@ -1333,4 +1333,121 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # Session c3-batch-c-s6 — hud_promote_c2_b font sys state (C2->C3)
+    # HUD/FontCtx.cpp — font matrix stack + render-state init + ctx ops
+    # Drift-promote: 0x004c57a0 C1->C2
+    # FlushMatrix (0x00552e40) EXCLUDED — Frida not run, S-2126 open.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00552da0  FontCtx_SetScale
+    # fn(float sx, float sy) -> uint32(1).
+    # Applies RwMatrixScale(ctx, {sx,sy,1}, preconcat=1); zeroes DAT_00912bd8+bec.
+    # Observable: return value (1) and dirty-flag DAT_00912bd8 (must be 0 after).
+    # Strategy: font_ctx_float2 -- write 0xDEADBEEF to dirty flag, call fn(sx,sy),
+    # read back (ret<<16)|dirty. Both paths must produce (0x0001<<16)|0x0000.
+    # 10 (sx,sy) pairs covering zero, identity, scale-up, negative, small, large.
+    'font_ctx_set_scale': {
+        'rva':            0x00552da0,
+        'export':         'FontCtx_SetScale',
+        'signature':      {'ret': 'uint32', 'args': ['float', 'float']},
+        'arg_type':       'font_ctx_float2',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0.0,   0.0  ],
+            [1.0,   1.0  ],
+            [2.0,   0.5  ],
+            [-1.0, -1.0  ],
+            [0.001, 0.001],
+            [100.0, 100.0],
+            [0.5,   2.0  ],
+            [-2.0,  3.0  ],
+            [1.5,   1.5  ],
+            [0.25,  4.0  ],
+        ],
+        'path2_tests': [
+            [0.0,  0.0],
+            [1.0,  1.0],
+            [2.0,  0.5],
+        ],
+    },
+
+    # 0x00552df0  FontCtx_SetTranslation
+    # fn(float x, float y) -> uint32(1).
+    # Applies RwMatrixTranslate(ctx, {x,y,0}, preconcat=1); zeroes DAT_00912bd8+bec.
+    # Observable: return value (1) and dirty-flag DAT_00912bd8 (must be 0 after).
+    # Strategy: font_ctx_float2 -- same as SetScale above.
+    # 10 (x,y) pairs covering zero, unit, positive, negative, large, small.
+    'font_ctx_set_translation': {
+        'rva':            0x00552df0,
+        'export':         'FontCtx_SetTranslation',
+        'signature':      {'ret': 'uint32', 'args': ['float', 'float']},
+        'arg_type':       'font_ctx_float2',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0.0,   0.0  ],
+            [1.0,   0.0  ],
+            [0.0,   1.0  ],
+            [100.0, 200.0],
+            [-50.0, -75.0],
+            [0.5,   0.5  ],
+            [800.0, 600.0],
+            [-0.1,  0.1  ],
+            [1e-4,  1e-4 ],
+            [1e4,   1e4  ],
+        ],
+        'path2_tests': [
+            [0.0,   0.0  ],
+            [1.0,   0.0  ],
+            [100.0, 200.0],
+        ],
+    },
+
+    # 0x00552c10  FontSys_InitRenderState
+    # fn(void) -> uint32(1).
+    # Master font render-state initialiser: allocs ctx slot-0, identity table
+    # (256 shorts), 31 ptr-slot clears, 18 float globals, aspect ratio defaults.
+    # Observable: return value (must be 1). Side-effects too broad to inject;
+    # use 'none' -- call 10x at quiescent main menu, confirm both return 1.
+    # Idempotent: calling it repeatedly resets the same state each time.
+    'font_sys_init_render_state': {
+        'rva':            0x00552c10,
+        'export':         'FontSys_InitRenderState',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00552d10  FontMatrix_Push
+    # fn(void) -> bool.
+    # Stack overflow guard (depth < 31); increment depth; lazy-alloc; 64-byte copy.
+    # Observable: return bool and new stack depth.
+    # Strategy: font_matrix_push -- inject depth, call, read back (ret|(new_depth<<8)).
+    # Test depths: 0 (normal), 1, 5, 29, 30 (at max-1), 31 (overflow -> false).
+    'font_matrix_push': {
+        'rva':            0x00552d10,
+        'export':         'FontMatrix_Push',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'font_matrix_push',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'depth': 0},
+            {'depth': 1},
+            {'depth': 5},
+            {'depth': 10},
+            {'depth': 28},
+            {'depth': 29},
+            {'depth': 30},
+            {'depth': 31},
+            {'depth': 0},
+            {'depth': 15},
+        ],
+        'path2_tests': [
+            {'depth': 0},
+            {'depth': 30},
+            {'depth': 31},
+        ],
+    },
 }
