@@ -156,6 +156,17 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'idx_out2') {
         return fn(input >>> 0, buf, buf.add(4));
     }
+    // int_out24 — fn(int32_idx, out_ptr); 24-byte output buffer; returns fingerprint of 6 dwords.
+    // Used for SlotDataCopy (0x0041f000): copies 6 dwords from live game state to *param_2.
+    if (CONFIG.arg_type === 'int_out24') {
+        for (var j = 0; j < 6; j++) buf.add(j * 4).writeU32(0);
+        fn(input | 0, buf);
+        return [
+            buf.readU32(),        buf.add(4).readU32(),
+            buf.add(8).readU32(), buf.add(12).readU32(),
+            buf.add(16).readU32(),buf.add(20).readU32(),
+        ].join(',');
+    }
     // sentinel_array_ptr — original is __fastcall(ECX=0, EDX=ptr); reimpl is __cdecl(0, ptr).
     // input: array of int32 values terminated by 0xFF070000 (e.g. [0xFF060000, 0xFF070000]).
     // Writes the array into buf. For orig, calls via a hand-written thunk that sets ECX=0
@@ -390,7 +401,8 @@ function runDiff() {
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
-              : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
+              : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
+              : (CONFIG.arg_type === 'int_out24') ? Memory.alloc(24) : null;
 
     // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).
     if (CONFIG.arg_type === 'contact_history') {
