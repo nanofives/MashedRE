@@ -1833,4 +1833,29 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-e-s14 — timer_d3_cont1_b init loop (C2->C3)
+    # Util/TimerSubarrayInit.cpp — 4-iteration loop, callee FUN_00421c50 C0
+    # DRIFT-PROMOTE: outer loop structure confirmed; callee opaque but called
+    # via original RVA so both paths share the same callee implementation.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00422120  TimerSubarrayInit
+    # void(void): iterates ptr 0x0063fb90..0x006403b0 stride 0x208 (4 iters),
+    # calling FUN_00421c50() each pass. Callee FUN_00421c50 is C0/opaque.
+    # Drift-promote: reimpl calls original FUN_00421c50 via VA 0x00421c50;
+    # both paths invoke the same callee => side-effects are identical.
+    # arg_type='none': call 5x at quiescent main menu; both must not crash
+    # and return void. Writing sentinels to 0x0063fb90 would corrupt game
+    # state (callee reads that range); observe stable no-crash agreement only.
+    'timer_subarray_init': {
+        'rva':            0x00422120,
+        'export':         'TimerSubarrayInit',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
 }
