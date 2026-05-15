@@ -44,6 +44,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\MenuButtonDetect.cpp" ^
     "%SRC%\Frontend\GameModeCarSelect.cpp" ^
     "%SRC%\Frontend\MenuGetters.cpp" ^
+<<<<<<< HEAD
     "%SRC%\Frontend\SpriteGate.cpp" ^
     "%SRC%\Frontend\FrontendAccessors.cpp" ^
     "%SRC%\Frontend\FrontendMode.cpp" ^
@@ -55,6 +56,10 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\MenuRaceEnd.cpp" ^    "%SRC%\Frontend\TextMeasure.cpp" ^
     "%SRC%\Frontend\SpriteDispatch.cpp" ^
     "%SRC%\Frontend\MenuTime.cpp" ^    /link /DLL
+=======
+    "%SRC%\Frontend\MenuHelpers.cpp" ^
+    /link /DLL
+>>>>>>> c3/batch-d-s1
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 
 echo === Build OK ===

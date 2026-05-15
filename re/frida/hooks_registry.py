@@ -1734,4 +1734,49 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
         'path2_tests':    [0, 1, 2],
     },
+
+
+    # Session c3-batch-d-s1 — frontend_menus large functions (C2->C3)
+    # MenuHelpers.cpp: FrontendPlayerSlotCheck, FrontendCursorUpdate
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ebe0  FrontendPlayerSlotCheck
+    # bool(int param_1): player-slot fullness checker; dispatch key {10,11,12}.
+    # Iterates 0x7f0a48 stride 0x1e0; returns (enableFlag != 0) && !bVar1.
+    # arg_type='int_scalar': pass param_1 as uint32; compare bool return (0/1).
+    # Only valid dispatch keys {10,11,12} are tested — the original behaviour
+    # for other values is undefined (the dispatch table has no other active
+    # slots at main menu and enableFlag reads outside meaningful range).
+    # At quiescent main menu, player-slot array is initialised; function must
+    # return same value from both original and reimpl.
+    'frontend_player_slot_check': {
+        'rva':            0x0042ebe0,
+        'export':         'FrontendPlayerSlotCheck',
+        'signature':      {'ret': 'uint32', 'args': ['int']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [10, 11, 12, 10, 11, 12, 10, 11, 12, 10, 11, 12],
+        'path2_tests':    [10, 11, 12],
+    },
+
+    # 0x0042f7b0  FrontendCursorUpdate
+    # void(void): 4-player cursor updater; release-edge detection on d-pad.
+    # Guard: DAT_0067eab0 != 0 => immediate return without touching cursor state.
+    # Strategy: void_write_observe on 0x0067eab0.
+    #   Write sentinel t to DAT_0067eab0 (non-zero => early return).
+    #   Call fn (void). Read back DAT_0067eab0.
+    #   Since guard != 0, both orig and reimpl exit without writing to 0x0067eab0,
+    #   so read-back == sentinel t in both cases => match.
+    #   Sentinels are all non-zero so the guard fires and cursor state is not mutated.
+    'frontend_cursor_update': {
+        'rva':            0x0042f7b0,
+        'export':         'FrontendCursorUpdate',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0067eab0,
+        'lut_root_delta': 0,
+        # 10 non-zero sentinels: guard fires, fn returns early, readback == sentinel.
+        'path1_tests':    [1, 2, 3, 4, 5, 0xDEADBEEF, 0xFF, 0x100, 0x7FFFFFFF, 0xCAFEBABE],
+        'path2_tests':    [1, 2, 3],
+    },
 }
