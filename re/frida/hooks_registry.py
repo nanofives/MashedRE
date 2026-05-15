@@ -1833,4 +1833,139 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s16 — util timer_d3_cont1_b (C2→C3, 7 candidates)
+    # Util/TimerInit.cpp — trivial setters/init loops
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0041eda0  TimerBitFieldSet  void(int slot, int flag)
+    # Sets/clears bit 3 at 0x0063dc74 + slot*0x2ac.
+    # Strategy: entity_field_set — call fn(slot, flag), read back dword at
+    # 0x0063dc74 + slot*0x2ac to observe bit3 change.
+    # Slot 0 (p1=0): address = 0x0063dc74. Vary flag to exercise set/clear paths.
+    # 10 test vectors: alternate set (flag!=0) and clear (flag=0) for slots 0..3.
+    'timer_bit_field_set': {
+        'rva':            0x0041eda0,
+        'export':         'TimerBitFieldSet',
+        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type':       'entity_field_set',
+        'target_global':  0x0063dc74,
+        'entity_byte_stride': 0x2ac,
+        'lut_root_delta': 0,
+        # [slot, flag]: flag!=0 sets bit3, flag==0 clears it.
+        'path1_tests': [
+            [0, 1],  [0, 0],  [0, 1],  [0, 0],
+            [1, 1],  [1, 0],  [1, 1],  [1, 0],
+            [2, 1],  [2, 0],
+        ],
+        'path2_tests': [
+            [0, 1], [0, 0], [1, 1],
+        ],
+    },
+
+    # 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
+    # Copies 6 dwords from 0x0063dc10 + slot*0x2ac into *dst.
+    # Strategy: int_copy24_out — call fn(slot, buf), read 6 dwords from buf.
+    # Source is a live game-global array; at main-menu quiescent state the values
+    # are stable. Both orig and reimpl read the same source → identical output.
+    # Slot 0 maps to 0x0063dc10; slot 1 to 0x0063debc, etc.
+    'timer_slot_data_copy': {
+        'rva':            0x0041f000,
+        'export':         'TimerSlotDataCopy',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
+        'arg_type':       'int_copy24_out',
+        'lut_root_delta': 0,
+        # Test vectors: slot indices 0..9 (same slot read multiple times is valid;
+        # the source globals are stable at quiescent main-menu state).
+        'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x00420d40  TimerStructArrayClear  void(void)
+    # Zeroes 24 bytes per element × 6 elements at 0x0063e4b8..0x0063e4bc.
+    # Strategy: void_write_observe on first element's first dword (0x0063e4b8).
+    # Write sentinel, call fn, read back — should be 0.
+    # Export renamed TimerStructArrayClear (not TimerArrayClear) to avoid
+    # collision with existing 0x00422b30 in Frontend/TimerReset.cpp.
+    'timer_array_clear_d40': {
+        'rva':            0x00420d40,
+        'export':         'TimerStructArrayClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063e4b8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00422120  TimerInitLoop  void(void)
+    # Iterates 4 elements at 0x0063fb90 stride 0x208, calling FUN_00421c50 per entry.
+    # Strategy: void_write_observe on 0x0063fb90 (first loop element base).
+    # Both orig and reimpl call FUN_00421c50 which may write to this region.
+    # Write sentinel, call fn, read back; A/B match proves identical side-effect path.
+    # Note: FUN_00421c50 is not yet classified; callee-gate: ≤2 drift-promotes, proceed.
+    'timer_init_loop': {
+        'rva':            0x00422120,
+        'export':         'TimerInitLoop',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063fb90,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004222c0  TimerInitThunk  void(void)
+    # Confirmed thunk of 0x00422120 (TimerInitLoop). Identical test strategy.
+    'timer_init_thunk': {
+        'rva':            0x004222c0,
+        'export':         'TimerInitThunk',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063fb90,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00422b10  TimerDwordClear  void(void)
+    # Zeroes 0x4e0 bytes (312 dwords) at 0x008994c0.
+    # Strategy: void_write_observe on 0x008994c0 (base of zeroed block).
+    # Write sentinel, call fn, read back — should be 0.
+    'timer_dword_clear': {
+        'rva':            0x00422b10,
+        'export':         'TimerDwordClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008994c0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00425b10  TimerGlobalZero  void(void)
+    # Writes 0 to 8 globals at 0x008992a0 stride 0x4c.
+    # Strategy: void_write_observe on 0x008992a0 (entry 0, first written address).
+    # Write sentinel, call fn, read back — should be 0.
+    'timer_global_zero': {
+        'rva':            0x00425b10,
+        'export':         'TimerGlobalZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008992a0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
 }

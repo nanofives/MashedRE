@@ -1650,7 +1650,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041d730,sub_0041d730,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d730.md,promote_c2_util_timer-20260513,,player-slot assignment init: zeroes 0x0063d298 slots stride 0x160; checks 007f1a14/18/24/28/34/38/44/48 pairs; caller=FUN_004111c0
 0041d820,sub_0041d820,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d820.md,promote_c2_util_timer-20260513,,trivial: DAT_0063d558=0; caller=FUN_004111c0
 0041e130,sub_0041e130,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041e130.md,promote_c2_util_timer-20260513,,setter: DAT_0063d7e0=param_1; callers=FUN_004111c0 FUN_0040e560
-0041eda0,sub_0041eda0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041eda0.md,promote_c2_util_timer-20260513,,bitfield set/clear bit3 at 0x0063dc74+param1*0x2ac; callers=FUN_004111c0 FUN_0040be50 FUN_00410860 FUN_004704c0
+0041eda0,TimerBitFieldSet,util,C3,impl,mashedmod/src/mashed_re/Util/TimerInit.cpp,c3-batch-f-s16,log/diff_timer_bit_field_set.csv,bitfield set/clear bit3 at 0x0063dc74+param1*0x2ac; GREEN 10/10; U-3715 U-3716; callers=FUN_004111c0 FUN_0040be50 FUN_00410860(C2) FUN_004704c0(C2)
 0041f000,sub_0041f000,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041f000.md,promote_c2_util_timer-20260513,,copy 6 dwords from 0x0063dc10+param1*0x2ac to *param2; callers=FUN_004111c0 FUN_0040e590
 00420d40,sub_00420d40,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00420d40.md,promote_c2_util_timer-20260513,,array clear: zeroes 6-element x0x24 block at 0x0063e4b8 via FUN_004b6520+manual; caller=FUN_004111c0
 00422120,sub_00422120,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00422120.md,promote_c2_util_timer-20260513,,init loop: iterates 0x0063fb90 stride 0x208 x4 calling FUN_00421c50; caller=FUN_004111c0

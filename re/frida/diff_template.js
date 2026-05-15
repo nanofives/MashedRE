@@ -21,6 +21,7 @@
 //                 | "uint32_scalar"      -- call(uint32) -> uint8/uint32
 //                 | "bytes_inplace"      -- call(ptr, len) in-place; compare buffer
 //                 | "bytes_inplace_3"    -- call(ptr, len, width) in-place; compare buffer
+//                 | "int_copy24_out"     -- call(int slot, 24B-buf); compare 6 dwords of output
 //                 | "alloc_check"        -- call(size, tag) -> ptr; verify alignment+header
 //                 | "free_via_alloc"     -- alloc via alloc_rva then free via hook; no-crash
 //   lut_root_delta  number  (0 or 4 — offset for LUT readiness poll)
@@ -129,6 +130,15 @@ function callFn(fn, input, buf) {
     // int_with_out_ptr — uint32 arg + 4-byte output buffer; returns function's return value
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
+    }
+    // int_copy24_out — void(int slot, int* dst): copies 24 bytes (6 dwords) to output buffer.
+    // input: int slot index. Calls fn(slot, buf), then reads back first 6 dwords
+    // from buf and returns them as a comma-separated hex string for A/B comparison.
+    if (CONFIG.arg_type === 'int_copy24_out') {
+        fn(input | 0, buf);
+        const parts = [];
+        for (let k = 0; k < 6; k++) { parts.push(buf.add(k * 4).readU32()); }
+        return parts.join(',');
     }
     // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
     // Use for getters where non-trivial domain requires injecting known values.
@@ -390,6 +400,7 @@ function runDiff() {
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (CONFIG.arg_type === 'int_copy24_out') ? Memory.alloc(24)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
 
     // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).

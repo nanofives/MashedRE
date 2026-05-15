@@ -1122,3 +1122,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+
+2026-05-15  0x0041eda0  TimerBitFieldSet  C2->C3  evidence=log/diff_timer_bit_field_set.csv(GREEN 10/10)  file=mashedmod/src/mashed_re/Util/TimerInit.cpp  U-3715 U-3716 filed
