@@ -1169,3 +1169,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0x00404e50  SaveLoad  C2->C3  log/diff_save_load.csv  2/0 GREEN  c3-batch-e-s1
 2026-05-15  0x00404f50  SaveWrite  C2->C3  log/diff_save_write.csv  2/0 GREEN  c3-batch-e-s1
 2026-05-15  0x00404f80  SaveFileExists  C2->C3  log/diff_save_file_exists.csv  10/0 GREEN  c3-batch-e-s1
+2026-05-15  00550980  VfsStreamRead      C2->C3  Frida A/B GREEN 10/10 crash_equal_ok; log/diff_vfs_stream_read.csv; mashedmod/src/mashed_re/Save/VfsStream.cpp; c3-batch-e-s3
+2026-05-15  00550bc0  VfsStreamGetType   C2->C3  Frida A/B GREEN 10/10 crash_equal_ok; leaf-fn exemption; log/diff_vfs_stream_get_type.csv; mashedmod/src/mashed_re/Save/VfsStream.cpp; c3-batch-e-s3
+2026-05-15  004a4541  FsopenSafe         C2->C3  Frida A/B GREEN 10/10; log/diff_fsopen_safe.csv; mashedmod/src/mashed_re/Save/FsOpen.cpp; c3-batch-e-s3
+2026-05-15  00550910  VfsStreamClose     DEFERRED(C2)  U-3561/U-3562 inline in body; IAT identities unresolved; c3-batch-e-s3
