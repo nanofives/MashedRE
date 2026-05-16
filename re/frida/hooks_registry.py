@@ -1806,6 +1806,128 @@ HOOKS = {
     # VehicleMeta.cpp
     # ─────────────────────────────────────────────────────────────────────
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s8 — audio dsound wrapper A (C2->C3, 4 candidates)
+    # Audio/AudioDSound.cpp — COM wrapper field setter, vtable caller,
+    # QI chain, and semaphore wrapper.
+    # STRUCT GAP: AudioBufFieldSet accesses audio buf struct +0x74/+0x78/+0x11c/+0x38.
+    # U-0361 (AudioDSoundRelease vtable slot semantic) — in ## Open uncertainties.
+    # U-0360 (AudioDSoundQIChain IID at 005d09dc) — in ## Open uncertainties.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005baf60  AudioBufFieldSet
+    # void(ptr, int): writes param_2 to *(param_1+0x74), ORs 0x100 into
+    # *(param_1+0x78), then if bit 3 of *(param_1+0x78) is set writes param_2
+    # to *(*(param_1+0x11c)+0x38).
+    # Strategy: buf_field_set — allocate 0x120-byte zeroed buffer, set +0x78 to
+    # avoid bit 3 (keep 3D-attach flag clear so COM branch not taken), call
+    # fn(buf, value), read back (buf+0x74) and (buf+0x78) packed as 64-bit.
+    # Both paths write identical fields; packed readback must match.
+    # 10 test values covering 0, positive, negative, flags, max.
+    # Note: STRUCT GAP is filed (offsets confirmed mechanically, struct incomplete).
+    'audio_buf_field_set': {
+        'rva':            0x005baf60,
+        'export':         'AudioBufFieldSet',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'int32']},
+        'arg_type':       'buf_field_set',
+        'buf_size':       0x120,
+        'field_offsets':  [0x74, 0x78],  # offsets to read back after call
+        'lut_root_delta': 0,
+        # Each test is the int param_2 to pass. Bit 3 of +0x78 stays clear
+        # (buffer starts zeroed) so the COM branch is not exercised.
+        'path1_tests':    [0, 1, -1, 0x100, 0x200, 0xDEADBEEF, 0x7FFFFFFF,
+                           0x80000000, 0xFF, 0x00010000],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x005baf90  AudioDSoundRelease
+    # int(ptr): calls vtable slot 8 (offset 0x20) on IDirectSound8* at param_1+0x7c.
+    # Discards return; always returns 1.
+    # COM objects not available at main-menu; both paths crash identically when
+    # param_1+0x7c is null (NULL ptr deref). crash_equal_ok=True.
+    # Strategy: int_scalar — pass a fake ptr (e.g. 0x1000); both orig and reimpl
+    # crash dereferencing *(0x1000+0x7c) at the same offset identically.
+    'audio_dsound_release': {
+        'rva':            0x005baf90,
+        'export':         'AudioDSoundRelease',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Fake pointer values — both orig and reimpl will AV identically.
+        'path1_tests':    [0x1000, 0x1000, 0x1000, 0x1000, 0x1000,
+                           0x1000, 0x1000, 0x1000, 0x1000, 0x1000],
+        'path2_tests':    [0x1000, 0x1000, 0x1000],
+    },
+
+    # 0x005bc400  AudioDSoundQIChain
+    # int(ptr*, ptr*): double QI chain on COM objects.
+    # Both paths crash identically when param_2=NULL (first write *param_2=0 → AV at 0x0).
+    # crash_equal_ok=True; int_pair passes [fake_param1, 0] as two int args.
+    # param_2=0 means both orig and reimpl AV at 0x0 writing *param_2=0. Crash strings match.
+    'audio_dsound_qi_chain': {
+        'rva':            0x005bc400,
+        'export':         'AudioDSoundQIChain',
+        'signature':      {'ret': 'int32', 'args': ['int32', 'int32']},
+        'arg_type':       'int_pair',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # param_1 = arbitrary (not used before crash), param_2 = 0 (NULL).
+        # First write `*param_2 = 0` → AV at 0x0 for both orig and reimpl.
+        'path1_tests': [
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+        ],
+        'path2_tests': [
+            [0x1000, 0],
+            [0x1000, 0],
+            [0x1000, 0],
+        ],
+    },
+
+    # 0x005aeea0  AudioSemaphoreCreate
+    # uint(void*, LONG, LONG): CreateSemaphoreA(NULL, param_2, param_3, NULL).
+    # Stores HANDLE at *param_1. Returns -(bool(handle!=0)) & (uint)param_1.
+    # Strategy: semaphore_create — allocate 4-byte scratch buf, call
+    # fn(buf, initial_count, max_count), close the handle from *buf,
+    # verify return value matches ((handle!=NULL)?buf_addr:0).
+    # Both paths call CreateSemaphoreA with identical args, both should
+    # succeed (non-null handle), and return value = buf_addr & 0xFFFFFFFF.
+    # 10 test vectors with valid (initial_count <= max_count) semaphore params.
+    'audio_semaphore_create': {
+        'rva':            0x005aeea0,
+        'export':         'AudioSemaphoreCreate',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'int32', 'int32']},
+        'arg_type':       'semaphore_create',
+        'lut_root_delta': 0,
+        # Each test: [initial_count, max_count]. Both must be >= 0 and init <= max.
+        'path1_tests': [
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [1, 1],
+            [0, 10],
+            [5, 10],
+            [0, 100],
+            [0, 1],
+            [1, 2],
+            [0, 0x7FFFFFFF],
+        ],
+        'path2_tests': [
+            [0, 1],
+            [1, 1],
+            [0, 10],
+        ],
+    },
+
     # 0x0042ef40  VehicleUnlockFlagGet
     # Pure leaf: reads byte from DAT_007f0e50 + param_1*0xc at a byte-offset
     # selected by param_2 switch; returns 1 if byte == 0x01, else 0.

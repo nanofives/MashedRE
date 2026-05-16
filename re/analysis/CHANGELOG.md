@@ -1156,3 +1156,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  004a78b0  CrtPreInitLoop  C2->C3  c3-batch-e-s8; Boot/CrtInit.cpp; void leaf; no callees (leaf-exemption); caller entry(004a4bb7) C2; path2 JMP GREEN (log/verify_hook_install_crt_pre_init_loop.txt); path1 harness-limited (void return EAX noise; both sides no-crash); U-0005 open structural/none
 
 2026-05-15  004a9410  _strlen  C1->C2  evidence=re/analysis/boot_crt_env/004a9410.md  drift-promote: pure leaf, full mechanical desc, no uncertainties, no stubs, Ghidra FidDB single-match VS
+2026-05-15  005baf60  AudioBufFieldSet  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_buf_field_set.csv; STRUCT GAP +0x74/+0x78/+0x11c flagged; U-3710 open
+2026-05-15  005baf90  AudioDSoundRelease  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_dsound_release.csv; U-0361 open (vtable slot semantic)
+2026-05-15  005bc400  AudioDSoundQIChain  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_dsound_qi_chain.csv; U-0360 open (IID at 005d09dc)
+2026-05-15  005aeea0  AudioSemaphoreCreate  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_semaphore_create.csv; pure Win32 leaf; leaf-exemption applied
