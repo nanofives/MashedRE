@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  sweep-20260516-0352  scribe-release  buckets=13 drained  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_d3d9_window  writes=1  errors=0  note=partial; 6 RVAs deferred
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_panel_piz_callees  writes=7  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_piz_loader  writes=6  errors=0
