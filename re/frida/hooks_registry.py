@@ -1834,7 +1834,6 @@ HOOKS = {
         ],
     },
 
-
     # Session c3-batch-e-s2 — VfsFileExists + AutosaveTrigger (C2->C3)
     # Save/GameSaveVFS.cpp
     # ─────────────────────────────────────────────────────────────────────────
@@ -1886,5 +1885,93 @@ HOOKS = {
         # 5 calls at quiescent menu; DAT_008a95ac==0 → early return; both return 0.
         'path1_tests':    [0, 1, 2, 3, 4],
         'path2_tests':    [0, 1, 2],
+    },
+
+    # ---------------------------------------------------------------------------
+    # Boot/CrtCompilerSupport.cpp — FidDB-identified MSVC CRT compiler support.
+    # All four are C2-ceiling functions; C3 evidence is FidDB single-match only.
+    # ---------------------------------------------------------------------------
+
+    # 0x004a4b93  CrtFastErrorExit (_fast_error_exit / fast_error_exit)
+    # void(uint32) — checks banner flag at 0x007739f0; if 1 calls __FF_MSGBANNER;
+    # forwards param_1 to FUN_004ab8d6; terminates via ___crtExitProcess(0xFF).
+    # arg_type='int_scalar': passes the error code as a uint32.
+    # Note: function does not return (calls ExitProcess); harness must not wait
+    # for a return value.  At quiescent state the banner flag is 0, so
+    # __FF_MSGBANNER is not called — the function races to ExitProcess(0xFF).
+    # Frida can Intercept this (it has a conventional cdecl prologue), but calling
+    # it during a diff run would terminate the process.  Mark harness-limited.
+    'crt_fast_error_exit': {
+        'rva':            0x004a4b93,
+        'export':         'CrtFastErrorExit',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        # Harness-limited: calling this function terminates the host process.
+        # C3 evidence: FidDB single-match VS2003 _fast_error_exit +
+        # decompilation verified structurally identical to __amsg_exit except
+        # exit path goes directly to ___crtExitProcess(0xFF) (not PTR___exit).
+        'path1_tests': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        'path2_tests': [1, 2],
+    },
+
+    # 0x004a3440  CrtStackProbe (__chkstk)
+    # void(void) [implicit EAX = stack size] — page-probe loop.
+    # Non-standard ABI; cannot be hooked via Frida Interceptor without stack
+    # corruption.  C3 evidence: FidDB single-match VS2003 __chkstk +
+    # decompilation matches page-probe pattern (threshold 0x1000, step 0x1000).
+    'crt_stack_probe': {
+        'rva':            0x004a3440,
+        'export':         'CrtStackProbe',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        # Harness-limited: implicit EAX argument; Frida Interceptor cannot hook
+        # without corrupting the stack-probe frame.
+        # C3 evidence: FidDB single-match VS2003 __chkstk; decompilation matches
+        # VS2003 page-probe body exactly (threshold 0x1000 @ 0x004a3440).
+        'path1_tests': [0x1000, 0x2000, 0x3000, 0x4000,
+                        0x800, 0x100, 0x10, 0x1, 0xFFF, 0xFFFF],
+        'path2_tests': [0x1000, 0x800],
+    },
+
+    # 0x004a5984  CrtSehProlog (__SEH_prolog)
+    # void(undefined4, int) — saves EBX/ESI/EDI/retaddr; installs ExceptionList.
+    # Compiler-injected SEH infrastructure; non-standard ABI; cannot be hooked
+    # via Frida Interceptor without corrupting the SEH chain.
+    # C3 evidence: FidDB single-match VS __SEH_prolog +
+    # decompilation matches (saves 4 regs at computed offsets; links ExceptionList).
+    'crt_seh_prolog': {
+        'rva':            0x004a5984,
+        'export':         'CrtSehProlog',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        # Harness-limited: compiler-injected SEH prolog; Frida Interceptor would
+        # corrupt the ExceptionList chain.
+        # C3 evidence: FidDB single-match VS __SEH_prolog; decompilation saves
+        # EBX@+0xc, ESI@+0x8, EDI@+0x4, retaddr@+0x0; installs ExceptionList.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1],
+    },
+
+    # 0x004a59bf  CrtSehEpilog (__SEH_epilog)
+    # void(void) — restores ExceptionList from EBP[-4]; writes retaddr.
+    # Compiler-injected SEH teardown; non-standard ABI; cannot be hooked via
+    # Frida Interceptor without corrupting the SEH chain.
+    # C3 evidence: FidDB single-match VS __SEH_epilog +
+    # decompilation matches (reads EBP[-4] → ExceptionList; writes retaddr to *EBP).
+    'crt_seh_epilog': {
+        'rva':            0x004a59bf,
+        'export':         'CrtSehEpilog',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        # Harness-limited: compiler-injected SEH epilog; hooking would corrupt
+        # the SEH chain.
+        # C3 evidence: FidDB single-match VS __SEH_epilog; decompilation reads
+        # ExceptionList from EBP[-4] and restores it, then writes retaddr.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1],
     },
 }

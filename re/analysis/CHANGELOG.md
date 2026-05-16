@@ -1128,3 +1128,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3(s15)  writes=4  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  bucket=hud_frontend_d3/frontend_unmapped_a/hud_frontend(s16)  writes=3  errors=0
 2026-05-15  sweep-20260515-1312  scribe-release  buckets=16 drained  errors=0  sync=partial(12/16 ok; slots 2,3,5,7 stale-locked by batch-q Python MCP servers)
+2026-05-15  004a4b93  CrtFastErrorExit  C2->C3  FidDB VS2003 _fast_error_exit; reimpl Boot/CrtCompilerSupport.cpp; harness-limited (process-terminating); caller entry C2 + callee ___crtExitProcess C2
+2026-05-15  004a3440  CrtStackProbe     C2->C3  FidDB VS2003 __chkstk; reimpl Boot/CrtCompilerSupport.cpp naked __asm; harness-limited (implicit EAX ABI); pure leaf + FidDB identity; caller entry C2
+2026-05-15  004a5984  CrtSehProlog      C2->C3  FidDB VS MSVC __SEH_prolog; reimpl Boot/CrtCompilerSupport.cpp naked __asm; harness-limited (compiler-injected non-standard ABI); pure leaf + FidDB identity; caller entry C2
+2026-05-15  004a59bf  CrtSehEpilog      C2->C3  FidDB VS MSVC __SEH_epilog; reimpl Boot/CrtCompilerSupport.cpp naked __asm; harness-limited (compiler-injected non-standard ABI); pure leaf + FidDB identity; caller entry C2
