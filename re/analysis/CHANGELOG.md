@@ -1211,3 +1211,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+
+2026-05-16  0042aad0  MenuDimSet  C3-REFUSED  caller-gate: FUN_0043c5b0 (only caller) is C1; leaf exemption covers callee-side only; D-8917 filed; reimpl+hook ready in MenuChrome.cpp; session c3-batch-g-s1
+2026-05-16  0042aae0  MenuIm2DQuad  C3-REFUSED  caller-gate: FUN_0043c5b0 (only caller) is C1; path1 10/10 GREEN; D-8918 filed; reimpl+hook ready in MenuChrome.cpp; session c3-batch-g-s1
+2026-05-16  0042e3a0  FUN_0042e3a0  C3-REFUSED  callee-gate: 0x00427e00/0x00472f40/0x004730b0/0x00472c60 all C1; D-8919 filed; session c3-batch-g-s1
+2026-05-16  0042e5b0  FUN_0042e5b0  C3-REFUSED  callee-gate: 0x00473c20/0x00474890/0x00473ee0 untracked; 0x004a2c48 C1; D-8920 filed; session c3-batch-g-s1
