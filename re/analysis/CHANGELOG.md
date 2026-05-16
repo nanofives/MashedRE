@@ -1233,5 +1233,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-16  0042ac00  MenuGroupCount  C2->C3  Frida GREEN 11/11 log/diff_menu_group_count.csv; leaf-exemption; U-3439 U-3440 registered; session c3-batch-g-s5
 2026-05-16  0042aae0  MenuIm2DQuad  C3-REFUSED  caller-gate: FUN_0043c5b0 (only caller) is C1; path1 10/10 GREEN; D-8918 filed; reimpl+hook ready in MenuChrome.cpp; session c3-batch-g-s1
 2026-05-16  0042aad0  MenuDimSet  C3-REFUSED  caller-gate: FUN_0043c5b0 (only caller) is C1; leaf exemption covers callee-side only; D-8917 filed; reimpl+hook ready in MenuChrome.cpp; session c3-batch-g-s1
+2026-05-16  00429a30  FUN_00429a30  deferred  C3 refused: FUN_00430790 C1; U-2095 open; D-10700; session c3-batch-g-s8
+2026-05-16  00428320  FUN_00428320  deferred  C3 refused: caller gate fails — FUN_00428a30 C1 FUN_00428bf0 C1; callee gate PASSES; impl in TextMeasure.cpp; D-10699; session c3-batch-g-s8
+2026-05-16  004282a0  FUN_004282a0  deferred  C3 refused: FUN_004277a0 not in hooks.csv (1 unknown callee); no Frida arg_type for (uint32,float) render-context fn; D-10698; session c3-batch-g-s8
+2026-05-16  00427ad0  FUN_00427ad0  deferred  C3 refused: callee gate fails — FUN_004277a0/FUN_00556e90/FUN_005555b0/FUN_00552d70 not in hooks.csv; D-10697; session c3-batch-g-s8
 2026-05-16  00427620  FontText_HudShutdown  deferred  C3 refused: callee gate fails (FUN_00555830 C1 FUN_00556e40 C1 FUN_00556cd0 C1 FUN_00552b90 C1); D-8917; session c3-batch-g-s13
 2026-05-16  0040e470  CarSlotStateGet  C2->C3  c3-batch-g-s7; Frontend/RaceResults.cpp; RH_ScopedInstall(CarSlotStateGet,0x0040e470); Frida path1 GREEN 10/10 int_scalar log/diff_car_slot_state_get.csv; path2 inline-JMP PASS 4/4 log/verify_hook_install_car_slot_state_get.txt; leaf-exemption (no callees); callers MenuButtonDetectA/B C3; U-1300 semantic-only blocks=none
