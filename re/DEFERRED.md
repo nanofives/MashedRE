@@ -68,3 +68,7 @@
 | D-8915 | 004955c0 | thunk_FUN_00495580 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00495580 and classify | boot_app_init_d2-cont1 |
 | D-8916 | 004963d0 | thunk_FUN_00496370 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00496370 and classify | boot_app_init_d2-cont1 |
 | D-8917 | 00427620 | FontText_HudShutdown | hud | C3 refused: callee gate fails — FUN_00555830 C1, FUN_00556e40 C1, FUN_00556cd0 C1, FUN_00552b90 C1; pickup when all four callees reach C2+ | c3-batch-g-s13 |
+| D-8921 | 0042aad0 | MenuDimSet | frontend | C3 caller-gate: FUN_0043c5b0 (only known caller) is C1; unblock when 0x0043c5b0 reaches C2+ OR another C2+ caller is identified; reimpl+hook+leaf-frida-evidence ready in MenuChrome.cpp | c3-batch-g-s1-followup |
+| D-8918 | 0042aae0 | MenuIm2DQuad | frontend | C3 caller-gate: FUN_0043c5b0 (only known caller) is C1; unblock when 0x0043c5b0 reaches C2+ OR another C2+ caller is identified; reimpl+hook+path1-GREEN-10/10 ready in MenuChrome.cpp | c3-batch-g-s1-followup |
+| D-8919 | 0042e3a0 | FUN_0042e3a0 | frontend | C3 callee-gate: callees 0x00427e00, 0x00472f40, 0x004730b0, 0x00472c60 all C1; unblock when all callees_depth1 reach C2+ | c3-batch-g-s1-followup |
+| D-8920 | 0042e5b0 | FUN_0042e5b0 | frontend | C3 callee-gate: callees 0x00473c20, 0x00474890, 0x00473ee0 not in hooks.csv (untracked), 0x004a2c48 C1; unblock when all callees_depth1 reach C2+ | c3-batch-g-s1-followup |

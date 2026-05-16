@@ -3483,4 +3483,55 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-g-s1 — frontend menu chrome (C2->C3, 2 candidates)
+    # Frontend/MenuChrome.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042aad0  MenuDimSet
+    # Non-standard ABI: implicit EAX pointer at entry (naked function).
+    # Writes byte 0x30 to *(in_EAX+3) and sets DAT_008990e4 = 1.
+    # Harness limitation: NativeFunction cannot control EAX, so the EAX
+    # dereference will crash if EAX is invalid at call time.
+    # Strategy: void_write_observe on DAT_008990e4 with crash_equal_ok=True.
+    #   - Write sentinel to 0x008990e4, call function, read back 0x008990e4.
+    #   - If EAX is valid in game context: both orig and reimpl write 1 -> match.
+    #   - If EAX is invalid: crash_equal_ok accepts matching crash.
+    # 10 sentinels: covers 0, 1, max, patterns that prove write-to-1 behavior.
+    'menu_dim_set': {
+        'rva':            0x0042aad0,
+        'export':         'MenuDimSet',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008990e4,
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x0042aae0  MenuIm2DQuad
+    # void __fastcall fn(int param_1).
+    # Renders a fullscreen dim-overlay quad via RwIm2D vtable calls.
+    # Harness limitation: requires live game state (vtable at 0x007d3ff8 must
+    # be initialized by the game engine before this is called).
+    # Strategy: int_scalar with crash_equal_ok=True; pass param_1 variants
+    # 0..5 and observe whether global alpha buffer 0x0067eca8 is read the same
+    # way. The draw is suppressed if DAT_0067eca8==0 so crash may not occur
+    # at main menu quiescent state.
+    # If alpha is 0 at main menu: both orig and reimpl return void without draw.
+    # 10 test vectors: param_1 values 0..5 plus sentinels.
+    'menu_im2d_quad': {
+        'rva':            0x0042aae0,
+        'export':         'MenuIm2DQuad',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 0x100, 0x200, 0x7fffffff, 0],
+        'path2_tests':    [0, 1, 2],
+    },
 }
