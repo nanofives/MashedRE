@@ -63,7 +63,6 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\MenuTime.cpp" ^
     "%SRC%\Frontend\MenuHelpers.cpp" ^
     "%SRC%\Frontend\VehicleMeta.cpp" ^
-    "%SRC%\Frontend\ChampionshipMode.cpp" ^
     "%SRC%\Save\GameSaveVFS.cpp" ^
     "%SRC%\Boot\CrtCompilerSupport.cpp" ^
     "%SRC%\Boot\CrtInit.cpp" ^

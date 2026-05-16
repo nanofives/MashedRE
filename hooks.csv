@@ -604,7 +604,9 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00408ad0,FUN_00408ad0,frontend,C1,new,re/analysis/race_results/00408ad0.md,race_results-20260503-0655,,16b getter; returns *(float*)(DAT_008a96ec+param_1*0x30c) struct-offset 0xac; used in tiebreak; U-1295
 0040b290,FUN_0040b290,frontend,C1,new,re/analysis/race_results/0040b290.md,race_results-20260503-0655,,409b score-updater; delta→DAT_008a94e0[i]; mode-filter DAT_007f0fd0; event circ-buffer; S-1281..S-1283; U-1296..U-1299
 0040d590,FUN_0040d590,frontend,C1,new,re/analysis/race_results/0040d590.md,race_results-20260503-0655,,849b 3-way tiebreak sort; FUN_00408ad0 float compare; assigns -delta/delta/delta*2 to 3rd/2nd/1st
-0040e470,CarSlotStateGet,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/ChampionshipMode.cpp,c3-batch-g-s10,log/diff_car_slot_state_get.csv,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); pure leaf; U-1300 semantic-only; C2->C3 2026-05-16 c3-batch-g-s10 GREEN 10/10
+0040e470,FUN_0040e470,frontend,C2,mapped,re/analysis/race_results/0040e470.md,race_results-20260503-0655,,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promoted C1→C2 c3-batch-a-s1 (Why C2 block added; cross-session agreement)
+0040e470,FUN_0040e470,frontend,C2,drift-promoted,re/analysis/race_results/0040e470.md,race_results-20260503-0655,,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promote 2026-05-14 c3-batch-a-s3
+0040e470,FUN_0040e470,frontend,C2,new,re/analysis/race_results/0040e470.md,race_results-20260503-0655,,14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promoted C1->C2 by c3-batch-a-s6 2026-05-14
 00422fd0,FUN_00422fd0,frontend,C1,new,re/analysis/race_results/00422fd0.md,race_results-20260503-0655,,98b car-eliminator; calls 5 fns incl FUN_004215c0(x 50.0f 0/1); S-1284..S-1288; U-1301..U-1303
 00431d80,FUN_00431d80,frontend,C1,new,re/analysis/race_results/00431d80.md,race_results-20260503-0655,,5b getter; returns DAT_0067ea7c (tiebreak-enable flag mode-4/code-6); U-1305
 0046c700,FUN_0046c700,frontend,C1,new,re/analysis/race_results/0046c700.md,race_results-20260503-0655,,43b incrementer; DAT_008820b0[param_1*0xd04]+=param_2; max idx 15; U-1306
@@ -1281,7 +1283,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0040e340,FUN_0040e340,vehicle,C1,mapped,re/analysis/vehicle_update/0040e340.md,,,getter returns DAT_008a94d0; used as vehicle count upper bound; U-0392
 0040e350,FUN_0040e350,vehicle,C1,mapped,re/analysis/vehicle_update/0040e350.md,,,getter returns DAT_0063ba8c; game/race state discriminator; values 6/10/11 enable input; U-0393
 0040e370,FUN_0040e370,vehicle,C1,mapped,re/analysis/vehicle_update/0040e370.md,,,bool: PTR_PTR_005f2770+param_1*4+0x34 != 0; returns false if param_1>3; U-0394
-0040e470,CarSlotStateGet,vehicle,C3,impl,mashedmod/src/mashed_re/Frontend/ChampionshipMode.cpp,c3-batch-g-s10,log/diff_car_slot_state_get.csv,vehicle-subsystem duplicate row; canonical at frontend row; C2->C3 2026-05-16 c3-batch-g-s10
+0040e470,FUN_0040e470,vehicle,C2,drift-promoted,re/analysis/vehicle_update/0040e470.md,,,raw getter: PTR_PTR_005f2770+param_1*4+0x34; 1=player 2+=AI; U-0394; drift-promote 2026-05-14 c3-batch-a-s3
 00413c70,FUN_00413c70,vehicle,C1,mapped,re/analysis/vehicle_update/00413c70.md,,,race-event/state write; DAT_0063bc68[i*3]=param_3; inits timer at DAT_0063bc60[i*3]=0x3c23d70a if zero; U-0395
 00422fd0,FUN_00422fd0,vehicle,C1,mapped,re/analysis/vehicle_update/00422fd0.md,,,vehicle reset: FUN_0046c5c0+FUN_0046c790(1)+FUN_004215c0(50f)*2+FUN_0045ba00(2); S-0380..S-0384; U-0396
 0042fe70,FUN_0042fe70,vehicle,C1,mapped,re/analysis/vehicle_update/0042fe70.md,,,getter returns DAT_0067ea80; selects timeout 900k/1800k/3600k for DAT_007f1018; U-0397
