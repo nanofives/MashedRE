@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-15  batch-q-s97  bucket=promote_c2_winmain_init  rvas=0x00493710,0x00492770,0x00499690,0x004926c0,0x00493480,0x00492d20  level=c2  note=6 C1->C2 promotions boot/winmain-init chain; 0x00492d30 DRIFT-SKIP (already C2, duplicate C1 row removed from hooks.csv); Win32 msgpump 0x00499690 promoted on FidDB identification  evidence=re/analysis/rw_engine_init/00493710.md;re/analysis/boot_subsystem_d3/0x00492770.md;re/analysis/window_msgpump/00499690.md;re/analysis/boot_subsystem_d3/0x004926c0.md;re/analysis/boot_subsystem_d3/0x00493480.md;re/analysis/intro_splash/0x00492d20.md
 
 
 
