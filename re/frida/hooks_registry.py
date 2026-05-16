@@ -3758,4 +3758,56 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session ma2-frida-s2 — Boot/Window cluster (C2→C3, 2 of 6 candidates)
+    # Boot/Window.cpp — window-show + msgpump from the main game loop.
+    # Refused: 0x00499ba0 (Window_Create — destructive 3-arg), 0x00499cc0
+    #          (Window_Destroy — terminates game), 0x00499820 (Window_WndProc
+    #          — needs 4-arg WNDPROC harness), 0x00496490 (Window_WmCreate
+    #          — three callees still C1).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004996f0  WindowShow
+    # void __cdecl WindowShow(int nCmdShow)
+    # ShowWindow(DAT_007e9584, nCmdShow); UpdateWindow(DAT_007e9584).
+    # Both orig and reimpl invoke the same user32.dll APIs against the same
+    # global HWND (DAT_007e9584), already created by the boot path. ShowWindow
+    # on an already-visible window with SW_SHOW/SW_NORMAL is a no-op; reimpl
+    # wrapper returns void → void_match counts as GREEN.
+    # Test domain: standard SW_* command codes.
+    'window_show': {
+        'rva':            0x004996f0,
+        'export':         'WindowShow',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # SW_HIDE=0, SW_SHOWNORMAL=1, SW_SHOWMINIMIZED=2, SW_SHOWMAXIMIZED=3,
+        # SW_SHOWNOACTIVATE=4, SW_SHOW=5, SW_MINIMIZE=6, SW_SHOWMINNOACTIVE=7,
+        # SW_SHOWNA=8, SW_RESTORE=9. Avoid SW_HIDE first to keep the window
+        # visible during the test sequence; end with SW_SHOWNORMAL.
+        'path1_tests':    [1, 5, 4, 8, 9, 9, 5, 4, 8, 1],
+        'path2_tests':    [1, 5, 9],
+    },
+
+    # 0x00499690  WindowMsgPump
+    # int __cdecl WindowMsgPump(void)  (bool return)
+    # Single-iteration Win32 pump: PeekMessageA(MSG buf at 0x007e95a0, NULL, 0,
+    # 0, PM_REMOVE). On message: short-circuits with quit-flag return if
+    # MSG.message == WM_QUIT (0x12); else TranslateMessage + DispatchMessageA.
+    # On no message: WaitMessage() only if DAT_0077391c == 0 (window inactive).
+    # Always returns DAT_00773918 != 0 (the quit flag).
+    # Frida agent thread owns no message queue → PeekMessageA returns 0 on
+    # both sides; main-menu state has DAT_0077391c == 1 (active) so WaitMessage
+    # is skipped; both sides then return DAT_00773918 (== 0 at quiescent menu).
+    # 10 calls give 10x bit-identical 0.
+    'window_msg_pump': {
+        'rva':            0x00499690,
+        'export':         'WindowMsgPump',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
