@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_rws_audio_loader  writes=7  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_rw_render_submit  writes=5  errors=0  note=2 drift-already-c2
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_launch_handshake  writes=6  errors=0  note=1 drift-skip
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_rw_state  writes=5  errors=0  note=2 drift-skip
