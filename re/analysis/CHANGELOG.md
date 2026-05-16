@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  ma1-ghidra-s2  C1->C2 batch  bucket=promote_c2_window_wndproc  rvas=0x00499ba0,0x004996f0,0x00499cc0,0x00499820,0x00496490,0x00496470,0x004960e0,0x004963b0  count=8  resolved=U-0647,S-0003,S-0640,S-0641,S-0642  new=U-3870,S-3920,S-3921  carried=U-0648,S-0643  pool=Mashed_pool1
 2026-05-16  ma1-ghidra-s1  promote_c2_winmain_chain  c1->c2  rvas=00492370,00492270,00492290,004924f0,004921d0,00428590,00492e90,00493600  pool=Mashed_pool0(contended,used-pool6-readonly)  stubs-filed=S-3902..S-3908(7)  uncertainties-open=U-0009 U-0642  notes=8/8 promoted; bookmark step skipped due to pool0 channel-lock contention with parallel MCP session
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
 2026-05-16  0x0041ccc0  HudSlotLoopCcc0  C2->C3  evidence=log/diff_hud_slot_loop_ccc0.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041c9a0 (__thiscall via EAX); session=c3-batch-g-s11

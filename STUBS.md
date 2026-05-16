@@ -1008,3 +1008,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3906 | 0x004935a0 FUN_004935a0 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
 | S-3907 | 0x004935d0 FUN_004935d0 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
 | S-3908 | 0x00513f90 FUN_00513f90 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
+| S-3920 | 0x00495520 FUN_00495520 | 0x004963b0 FUN_004963b0 | input | passthrough | 2026-05-16 | IDirectInput8 interface getter; called by FUN_004963b0; not recursed; ma1-ghidra-s2 |
+| S-3921 | 0x00496320 FUN_00496320 | 0x004963b0 FUN_004963b0 | input | passthrough | 2026-05-16 | DInput device create/enumerate (param_1 -> int); not recursed; ma1-ghidra-s2 |
