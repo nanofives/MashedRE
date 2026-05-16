@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  0042af50  FUN_0042af50  deferred  C3 refused: open U-1615 U-1616 (char array element count / int index array size); D-10697; session c3-batch-g-s6
+2026-05-16  0042ed70  FUN_0042ed70  deferred  C3 refused: open U-3420 U-3421 (FUN_0042b8c0 4-arg x87 value flow; fsin/fcos angle operand); D-10698; session c3-batch-g-s6
+2026-05-16  0042ee40  FUN_0042ee40  deferred  C3 refused: callee 0x0040bb90 still C1; D-10699; session c3-batch-g-s6
+2026-05-16  00436810  FUN_00436810  deferred  C3 refused: open U-3410 U-3411 (6-probe loop offset meanings; player-type value 2); D-10700; session c3-batch-g-s6
