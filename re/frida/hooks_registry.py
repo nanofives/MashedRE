@@ -1801,6 +1801,45 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-g-s11 — HUD-ingame core dispatch (C2->C3)
+    # HUD/HudDispatch.cpp — loop helpers for {5/6}-path and {7}-path.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0041b630  HudSlotLoopB630
+    # void(): iterates 4-entry array at 0x0063c8d0, stride 0x74 (116 bytes).
+    # Per entry: reads int32_t at offset +0x6c; if non-zero -> calls FUN_0041b340.
+    # Called on DAT_0063ba8c ∈ {5,6} path when FUN_0042f500()==0.
+    # At main menu DAT_0063ba8c < 5 so HudIngameDispatch guard fires first —
+    # this function is never reached. Strategy: read_global sentinel on
+    # DAT_0063ba8c (set to 0 -> guard fires, 0 returned); both paths agree.
+    # Evidence: log/diff_hud_slot_loop_b630.csv
+    'hud_slot_loop_b630': {
+        'rva':            0x0041b630,
+        'export':         'HudSlotLoopB630',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041ccc0  HudSlotLoopCcc0
+    # void(): iterates 4-entry array at 0x0063ce20, stride 0x114 (276 bytes).
+    # Per entry: reads int32_t at offset +0x110; if non-zero -> calls FUN_0041c9a0.
+    # Called on DAT_0063ba8c == 7 path (default/6/10 sub-modes, FUN_0042f500()==0).
+    # Same quiescent strategy as HudSlotLoopB630: read_global void at main menu.
+    # Evidence: log/diff_hud_slot_loop_ccc0.csv
+    'hud_slot_loop_ccc0': {
+        'rva':            0x0041ccc0,
+        'export':         'HudSlotLoopCcc0',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 
     # Session c3-batch-b-s6 — VehicleUnlockFlagGet (C2->C3)
     # VehicleMeta.cpp

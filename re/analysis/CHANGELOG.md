@@ -1,6 +1,12 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0x0040dfc0  HudIngameDispatch  C2->C3  evidence=log/diff_hud_ingame_dispatch.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; session=c3-batch-g-s11
+2026-05-16  0x0041b340  FUN_0041b340  C1->C2  drift-promotion; analysis note hud_ingame_d2/0x0041b340.md complete all offsets cited no UNCERTAIN; unblocks 0x0041b630 caller-gate; session=c3-batch-g-s11
+2026-05-16  0x0041b630  HudSlotLoopB630  C2->C3  evidence=log/diff_hud_slot_loop_b630.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041b340 (__thiscall via EAX); session=c3-batch-g-s11
+2026-05-16  0x0041c9a0  FUN_0041c9a0  C1->C2  drift-promotion; analysis note hud_ingame_d2/0x0041c9a0.md complete all offsets cited no UNCERTAIN; unblocks 0x0041ccc0 caller-gate; session=c3-batch-g-s11
+2026-05-16  0x0041ccc0  HudSlotLoopCcc0  C2->C3  evidence=log/diff_hud_slot_loop_ccc0.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041c9a0 (__thiscall via EAX); session=c3-batch-g-s11
+2026-05-16  0x00403160  sub_00403160  C3-REFUSED  caller-gate: 5 callees C1 (004c19f0 004c1a00 004c1c80 00402fb0 00428760); per prompt rule (>=2 C1 callees → refuse); deferred D-10699; session=c3-batch-g-s11
 2026-05-16  sweep-20260516-0352  scribe-release  buckets=13 drained  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_d3d9_window  writes=1  errors=0  note=partial; 6 RVAs deferred
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_panel_piz_callees  writes=7  errors=0
