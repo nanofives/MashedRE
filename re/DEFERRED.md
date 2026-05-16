@@ -80,3 +80,6 @@
 | D-10750 | 0042fe30 | RaceEndFlagIfEndMode | frontend | C3 refused c3-batch-g-s9: caller gate fails — callers 0x0040d270 and 0x004264d0 are both C1; pickup when one caller reaches C2+ | c3-batch-g-s9 |
 | D-10751 | 0042fe50 | RaceEndAltFlagIfEndMode | frontend | C3 refused c3-batch-g-s9: caller gate fails — callers 0x004189a0 and 0x004189c0 are both C1; pickup when one caller reaches C2+ | c3-batch-g-s9 |
 | D-10752 | 0042d5a0 | FUN_0042d5a0 | frontend | C3 refused c3-batch-g-s9: callee gate fails — callee FUN_00427e00 is C1; pickup when callee FUN_00427e00 reaches C2+ | c3-batch-g-s9 |
+| D-10753 | 00431b80 | FUN_00431b80 | frontend | C3 refused: ESI=0 infinite-loop at quiescent main menu (car-select cursor mover; requires specific in_EAX+ESI calling convention at car-select state); retry when runtime can reach car-select screen | c3-batch-g-s10 |
+| D-10754 | 00431d00 | FUN_00431d00 | frontend | C3 refused: depends on FUN_00431b80 (D-8918); FUN_00431b80 hangs at quiescent state ESI=0; both blocked until car-select runtime reachable | c3-batch-g-s10 |
+| D-10755 | 00430b30 | FUN_00430b30 | frontend | C3 refused: __thiscall in_EAX calling convention not supported by diff_template.js harness (confirmed no thiscall_eax arg_type exists); retry after D-10637-family harness gap resolved | c3-batch-g-s10 |
