@@ -17,7 +17,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0002 | 0x004a3ac9 | 0x00493900 sub_00493900 | boot | passthrough | 2026-05-02 | strtok-like tokenizer; takes (str, delimiter); depth-3 |
 | S-0003 | 0x00499890 | 0x00499ba0 sub_00499ba0 | boot | passthrough | 2026-05-02 | Called after CreateWindowExA; no visible args; depth-3 |
 | S-0004 | 0x004c5a60 | 0x004c5930 sub_004c5930 | boot | passthrough | 2026-05-02 | Linked-list traversal helper; takes (ptr-2, 0); depth-3 |
-| S-0005 | 0x004d8060 | 0x004c5930 sub_004c5930 | boot | passthrough | 2026-05-02 | Called with (&DAT_00618150, param_1); depth-3 |
 | S-0020 | 0x004a2bf7 | 0x004a2c2f FUN_004a2c2f | boot | passthrough | 2026-05-02 | depth-3 of FUN_004a2c2f callee |
 | S-0021 | 0x004a5e35 | 0x004a2c2f FUN_004a2c2f | boot | passthrough | 2026-05-02 | __ms_p5_mp_test_fdiv; depth-3; return stored to DAT_00773994 |
 | S-0022 | 0x004a5de3 | 0x004a2c2f FUN_004a2c2f | boot | passthrough | 2026-05-02 | depth-3 of FUN_004a2c2f callee |
@@ -969,3 +968,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3747 | 0x00565200 FUN_00565200 + 0x00565260 FUN_00565260 | 0x0055ae70 PhysicsSceneBodySetShapeFlags | vehicle | passthrough | 2026-05-13 | get/clear old shape data pair; args (scene, slot, data_out) / (scene, slot); vehicle_update_d3_cont |
 | S-3748 | 0x004d7ff0 FUN_004d7ff0 | 0x004c3c60 Vec2Normalize | render | passthrough | 2026-05-14 | RW error code passthrough (C1); called with error code 0x19 when magnitude < epsilon; identity-like fn (returns param_1); c3_render_math |
 | S-3749 | 0x004d8480 FUN_004d8480 | 0x004c3c60 Vec2Normalize | render | passthrough | 2026-05-14 | RW first-error recorder (C1); called with &local_min_val when magnitude < epsilon; stores {uint,uint} at DAT_007d3ff8[DAT_007d6c5c] if slot empty; c3_render_math |
+| S-3770 | 0x004d40d0 FUN_004d40d0 | 0x004cd070 FUN_004cd070 | render | passthrough | 2026-05-16 | RW plugin dispatcher (3-arg: ptr header flag); C1; called with flag=1 from 004cd070 and flag=0 from 004cd2d0; promote_c2_rw_render_submit |
+| S-3771 | 0x004d40c0 FUN_004d40c0 | 0x004cd2d0 FUN_004cd2d0 | render | passthrough | 2026-05-16 | 5-byte getter: returns DAT_007d4710 (current RW pipeline ptr); C1; promote_c2_rw_render_submit |
+| S-3780 | 0x00558180 FUN_00558180 | 0x00558240 FUN_00558240 | render | passthrough | 2026-05-16 | layout/fill-init; called as FUN_00558180(local_1c, &param_2); result used as fill source uVar3; promote_c2_rw_state |
+| S-3781 | 0x00558400 FUN_00558400 | 0x00558240 FUN_00558240 | render | passthrough | 2026-05-16 | fill operation; called as FUN_00558400(uVar3, local_1c, offset, pitch) per block; promote_c2_rw_state |
