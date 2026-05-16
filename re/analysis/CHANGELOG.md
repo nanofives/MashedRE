@@ -28,6 +28,7 @@ Append-only log of confidence promotions and demotions, written by the `re-class
 2026-05-15  005ac900  AudioContextLookup         C2->C3  c3-batch-f-s7; mashedmod/src/mashed_re/Audio/AudioRws.cpp; crash_equal_ok GREEN 10/10 log/diff_audio_context_lookup.csv; caller=005ac210(C2); callee=005aa0c0(C2 drift-promote); U-1730 open (Uncertainties section)
 2026-05-15  005ae650  AudioPoolConstruct         C2->C3  c3-batch-f-s7 STRUCT-GAP; mashedmod/src/mashed_re/Audio/AudioRws.cpp; crash_equal_ok GREEN 10/10 log/diff_audio_pool_construct.csv; caller=005aba20(C2); callee=005aea00(C2); U-1736 open (Uncertainties section)
 2026-05-15  005aa0c0  FUN_005aa0c0  C1->C2  drift-promote c3-batch-f-s7; mechanical decomp complete audio_rws_loader_d3/005aa0c0.md; callee of AudioContextLookup 0x005ac900
+2026-05-15  005bbfc0  AudioDSoundSecondaryInit  C2->C3  c3-batch-f-s9; Frida diff GREEN 10/10; orig=reimpl=196608 (3 vtable calls + return 0); U-0362 dead branch Frida-confirmed; mashedmod/src/mashed_re/Audio/AudioDSound.cpp
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued
 2026-05-15  frida-sweep-20260515-0105  frida-sweep-release  branches=18  integration-diff=GREEN(30/36,6-harness-limited:void/custom-argtype)  hooks=36(diffed)  note=MenuCursorStep(0x0042aa00) RH_ScopedInstall disabled: validity-addr formula mismatch vs original; Ghidra re-check needed
@@ -1160,3 +1161,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  005baf90  AudioDSoundRelease  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_dsound_release.csv; U-0361 open (vtable slot semantic)
 2026-05-15  005bc400  AudioDSoundQIChain  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_dsound_qi_chain.csv; U-0360 open (IID at 005d09dc)
 2026-05-15  005aeea0  AudioSemaphoreCreate  C2->C3  c3-batch-f-s8; mashedmod/src/mashed_re/Audio/AudioDSound.cpp; Frida GREEN log/diff_audio_semaphore_create.csv; pure Win32 leaf; leaf-exemption applied
+2026-05-15  005aef00  AudioThreadDescInit  C2->C3  log/diff_audio_thread_desc_init.csv; pure leaf 5-field write; 10/10 GREEN; c3-batch-f-s9
+2026-05-15  005a9e10  AudioSubStructTwoCallInit  C2->C3  log/diff_audio_sub_struct_two_call_init.csv; two-call dispatcher 10/10 GREEN; U-0351 callee-semantic open; c3-batch-f-s9
+2026-05-15  005ade90  AudioListDrain2  C2->C3  log/diff_audio_list_drain2.csv; empty-drain 10/10 GREEN; harness-limited pool uninit; U-0990 pool-node-type open; c3-batch-f-s9
