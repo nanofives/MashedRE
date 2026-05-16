@@ -18,6 +18,7 @@ if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 echo === Building mashed_re.exe ===
 cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "%SRC%\exe_main.cpp" ^
+    "%SRC%\Piz\PizReader.cpp" ^
     /link /SUBSYSTEM:WINDOWS user32.lib
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 

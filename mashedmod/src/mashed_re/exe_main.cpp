@@ -1,8 +1,13 @@
 // Mashed RE — standalone executable.
 // Milestone A (done): opens a real Win32 window, runs a message pump, exits cleanly.
-// Milestone B0 (this revision): adds a D3D9 device and clears the backbuffer to a
-//                               teal color every frame. Still no assets, no menu,
-//                               no RenderWare.
+// Milestone B0 (done): adds a D3D9 device and clears the backbuffer to a
+//                      teal color every frame.
+// Milestone B1 (this revision): loads original/TOASTART/Common/Frontend.piz at
+//                               startup via Piz/PizReader (C++ port of
+//                               re/tools/piz_extract.py), writes a directory
+//                               listing to mashed_re.log next to the exe, and
+//                               appends the entry count to the window title.
+//                               Still no menu draw, no asset use beyond load.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -45,6 +50,9 @@
 #include <windows.h>
 #include <d3d9.h>
 #include <cstdint>
+#include <cstdio>
+
+#include "Piz/PizReader.h"
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "d3d9.lib")
@@ -67,7 +75,19 @@ D3DPRESENT_PARAMETERS g_pp         = {};
 constexpr int   kWidth         = 800;
 constexpr int   kHeight        = 600;
 constexpr char  kClassName[]   = "MashedRE";
-constexpr char  kWindowTitle[] = "Mashed RE (Milestone B0 - D3D9 clear)";
+
+// Path to one Mashed asset archive. Resolved relative to the exe's working
+// directory (Mashed itself does the same — TOASTART/Common/* paths). For B1 we
+// pick Frontend.piz because it's the menu's asset bundle; once Milestone B
+// proper starts drawing menus we'll already have its blobs in hand.
+constexpr char  kFrontendPiz[] = "original/TOASTART/Common/Frontend.piz";
+
+// Log path next to the exe.
+constexpr char  kLogPath[]     = "mashed_re.log";
+
+// Window title is built dynamically once Piz load completes.
+char            g_windowTitle[256] = "Mashed RE (Milestone B1 - loading...)";
+mashed_re::Piz::Archive g_frontend_piz;
 
 // Distinctive teal clear color so we can confirm visually that D3D9 init
 // worked. RGB(40, 80, 120) reads as a muted dark teal — clearly not the
@@ -177,9 +197,61 @@ bool RenderFrame() {
     return SUCCEEDED(hr);
 }
 
+// Load Frontend.piz at startup and write a directory listing to mashed_re.log.
+// Updates g_windowTitle with a status string. Returns true if the archive was
+// loaded with at least one entry; false otherwise (we don't bail the exe on
+// failure — Milestone B1's contract is "try to load and report", not "must
+// have assets to start").
+bool LoadFrontendPiz() {
+    std::FILE* log = std::fopen(kLogPath, "w");
+
+    bool ok = g_frontend_piz.Load(kFrontendPiz);
+    if (!ok) {
+        std::snprintf(g_windowTitle, sizeof(g_windowTitle),
+                      "Mashed RE (Milestone B1 - %s: %s)",
+                      kFrontendPiz, g_frontend_piz.last_error());
+        if (log) {
+            std::fprintf(log, "Frontend.piz LOAD FAILED: %s\n", g_frontend_piz.last_error());
+            std::fclose(log);
+        }
+        return false;
+    }
+
+    std::snprintf(g_windowTitle, sizeof(g_windowTitle),
+                  "Mashed RE (Milestone B1 - Frontend.piz: %u entries, %s mode)",
+                  g_frontend_piz.count(),
+                  g_frontend_piz.mode() == mashed_re::Piz::OffsetMode::Raw ? "raw" : "sector");
+
+    if (log) {
+        std::fprintf(log, "Frontend.piz loaded OK\n");
+        std::fprintf(log, "  path:    %s\n", kFrontendPiz);
+        std::fprintf(log, "  size:    %zu bytes\n", g_frontend_piz.data_size());
+        std::fprintf(log, "  version: %u\n", g_frontend_piz.version());
+        std::fprintf(log, "  entries: %u\n", g_frontend_piz.count());
+        std::fprintf(log, "  mode:    %s\n",
+                     g_frontend_piz.mode() == mashed_re::Piz::OffsetMode::Raw ? "raw" : "sector");
+        std::fprintf(log, "\n");
+        std::fprintf(log, "  %-60s %10s %10s %10s\n", "name", "offset", "length", "id");
+        std::fprintf(log, "  %-60s %10s %10s %10s\n",
+                     "------------------------------------------------------------",
+                     "----------", "----------", "----------");
+        for (std::uint32_t i = 0; i < g_frontend_piz.count(); ++i) {
+            const auto& e = g_frontend_piz.entry(i);
+            std::fprintf(log, "  %-60s 0x%08X 0x%08X 0x%08X\n",
+                         e.name, e.offset_bytes, e.length, e.id);
+        }
+        std::fclose(log);
+    }
+    return true;
+}
+
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+    // Try to load the frontend asset archive before opening the window so the
+    // initial title reflects load state. Failure is non-fatal.
+    (void)LoadFrontendPiz();
+
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
     wc.cbSize        = sizeof(wc);
@@ -199,7 +271,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     g_hwnd = CreateWindowExA(
         0,
         kClassName,
-        kWindowTitle,
+        g_windowTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         rect.right - rect.left,
