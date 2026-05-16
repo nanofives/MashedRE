@@ -542,6 +542,47 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-g-s5 — menu state machine helpers (C2→C3, 3 of 4 candidates)
+    # Frontend/MenuStateMachine.cpp
+    # 0x0042ac50 (MenuCenterCalc) REFUSED — ECX+EAX dual-register ABI not
+    #   supported by NativeFunction harness. D-10639 filed (re/DEFERRED.md;
+    #   corrects prior draft's D-10637 miscite — D-10637 tracks a different gap).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ae10  MenuReadinessCheckA
+    # void(): reads guard globals (DAT_0067eab0 != 2 AND e7c8 == 0 AND 898ab0 != 0),
+    # then path A (stride-0x4c char scan at 0x7f1502) or path B (car-index array).
+    # Returns 0 (not ready) or 1 (ready).
+    # arg_type='none': called 10x at quiescent main menu; DAT_0067eab0=0 at menu
+    # (not 2), guard2 (e7c8) may vary — both paths return same value deterministically.
+    # U-3445/U-3446/U-3447/U-3448 registered; do not affect bit-identity correctness.
+    'menu_readiness_check_a': {
+        'rva':            0x0042ae10,
+        'export':         'MenuReadinessCheckA',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042aeb0  MenuReadinessCheckB
+    # void(): structural variant of MenuReadinessCheckA — omits e7c8 guard;
+    # table bases +1 byte (0x7f1503 vs 0x7f1502, 0x7f1043 vs 0x7f1042).
+    # Returns 0 (not ready) or 1 (ready).
+    # arg_type='none': called 10x at quiescent main menu; both paths must agree.
+    # U-3445/U-3446 registered; do not affect bit-identity correctness.
+    'menu_readiness_check_b': {
+        'rva':            0x0042aeb0,
+        'export':         'MenuReadinessCheckB',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # Session c3-batch-a-s3 — frontend_menus_a medium batch
     # MenuNav.cpp — menu navigation helpers (C2→C3)
     # ─────────────────────────────────────────────────────────────────────
