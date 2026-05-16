@@ -23,7 +23,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 
 
-2026-05-16  promote_c2_d3d9_window-20260516-partial  bucket=promote_c2_d3d9_window  rvas=0x00499890  level=c2  note=1 of 7 RVAs captured (stream timeout); LogOSVersion C1->C2 (GetVersionExA wrapper; OS-code enum 1-7; DAT_00773920); 6 remaining RVAs need re-run; U-3013 carried
 
 ```
 ## Drained
@@ -41,6 +40,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-16  promote_c2_txd_loader-20260516-0308  bucket=promote_c2_txd_loader  rvas=0x004b3d80,0x004b6540,0x004b6560,0x004b6610,0x004b6640,0x004b302f  level=c2  note=6 C1->C2 promotions; drained-by=sweep-20260516-0352; 6 plates, 6 bookmarks, 0 renames (__stricmp already FidDB-named)
 2026-05-16  promote_c2_piz_loader-20260516  bucket=promote_c2_piz_loader  rvas=0x004283a0,0x004671a0,0x00494c80,0x00495280,0x004952f0,0x00495350  level=c2  note=6 C1->C2 promotions; drained-by=sweep-20260516-0352; 6 plates, 6 bookmarks, 0 renames
 2026-05-16  promote_c2_panel_piz_callees-20260516  bucket=promote_c2_panel_piz_callees  rvas=0x00412890,0x0041c100,0x0041d8b0,0x0041db90,0x0041eaa0,0x00420d00,0x00471df0  level=c2  note=7 C2 promotions; drained-by=sweep-20260516-0352; 7 plates, 7 bookmarks, 0 renames
+2026-05-16  promote_c2_d3d9_window-20260516-partial  bucket=promote_c2_d3d9_window  rvas=0x00499890  level=c2  note=1 of 7 RVAs (partial session); drained-by=sweep-20260516-0352; 1 plate, 1 bookmark, 0 renames
 2026-05-15  batch-q-s97  bucket=promote_c2_winmain_init  rvas=0x00493710,0x00492770,0x00499690,0x004926c0,0x00493480,0x00492d20  level=c2  note=6 C1->C2 promotions boot/winmain-init chain; 0x00492d30 DRIFT-SKIP (already C2, duplicate C1 row removed from hooks.csv); Win32 msgpump 0x00499690 promoted on FidDB identification  evidence=re/analysis/rw_engine_init/00493710.md;re/analysis/boot_subsystem_d3/0x00492770.md;re/analysis/window_msgpump/00499690.md;re/analysis/boot_subsystem_d3/0x004926c0.md;re/analysis/boot_subsystem_d3/0x00493480.md;re/analysis/intro_splash/0x00492d20.md  drained-by=sweep-20260516-0237; 6 plates, 6 bookmarks, 0 renames
 2026-05-15  batch-q-s16  rvas=0x00474890,0x00429a90,0x0042e8b0,0x00427e00  branch=discovery/batch-q-s16  level=c2  evidence=.worktrees/batch-q-s16/re/analysis/hud_frontend_d3/0x00474890.md;.worktrees/batch-q-s16/re/analysis/frontend_unmapped_a/0x0042e8b0.md;.worktrees/batch-q-s16/re/analysis/hud_frontend/0x00427e00.md  note=3 C1->C2 promotions; 0x00429a90 DRIFT-SKIP (already C3 LapSecsGetBySlot); 0x00427e00 repeat of s4 (same RVA)  drained-by=sweep-20260515-1312; 3 plates, 3 bookmarks, 0 renames
 2026-05-15  batch-q-s15  rvas=0x00473ee0,0x00429a30,0x00429a70,0x00429a80  branch=discovery/batch-q-s15  level=c2  evidence=.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00473ee0.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a30.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a70.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a80.md  note=4 C1->C2 promotions hud_frontend_d3 cluster  drained-by=sweep-20260515-1312; 4 plates, 4 bookmarks, 0 renames
