@@ -45,6 +45,12 @@ const LUT_OFFSET_ADDR = ptr('0x007d3ffc');
 // contact_history buffers — allocated on demand in runDiff
 let vehicleBuf = null;
 let geomBuf    = null;
+// fmt_desc_ptr / fmt_desc_copy / fmt_table_search / fmt_global_scan buffers
+let fmtSrcBuf     = null;  // 0x20-byte source fmt-desc
+let fmtDstBuf     = null;  // 0x20-byte dest fmt-desc
+let fmtCtxBuf     = null;  // 0x30-byte fake audio context
+let fmtEntryPtrBuf = null; // 4-byte pointer slot (array[0])
+let fmtKeyBuf     = null;  // 16-byte format key
 // Output-buffer types — allocated once, reused per call.
 let xformBufs = null;   // transform_point / transform_vector: { out, in, mat }
 let v2nBufs   = null;   // vec2_normalize:  { out, in }
@@ -367,6 +373,61 @@ function callFn(fn, input, buf) {
         return out.join(',');
     }
 
+    // fmt_desc_ptr — fn(ptr_to_fmt_desc) -> int32.
+    // input: { f04, f10, f14 } — u32 values written to struct offsets.
+    // buf must be pre-allocated (0x20 bytes); zeroed then fields written.
+    if (CONFIG.arg_type === 'fmt_desc_ptr') {
+        // Zero 0x20 bytes then write test fields
+        for (var fz = 0; fz < 0x20; fz++) buf.add(fz).writeU8(0);
+        buf.add(0x04).writeU32(input.f04 >>> 0);
+        buf.add(0x10).writeU32(input.f10 >>> 0);
+        buf.add(0x14).writeU32(input.f14 >>> 0);
+        return fn(buf);
+    }
+    // fmt_desc_copy — fn(src_ptr, dst_ptr, zero_init) -> void.
+    // input: { f00, f04, f05, f10, zero_init } — src field values; zero_init flag.
+    // Uses two 0x20-byte buffers (fmtSrcBuf, fmtDstBuf).
+    // Returns packed u32: dst[+0x04] ^ dst[+0x0c] ^ dst[+0x0d] ^ dst[+0x18].
+    if (CONFIG.arg_type === 'fmt_desc_copy') {
+        for (var fs = 0; fs < 0x20; fs++) { fmtSrcBuf.add(fs).writeU8(0); fmtDstBuf.add(fs).writeU8(0); }
+        fmtSrcBuf.add(0x00).writeU32(input.f00 >>> 0);
+        // Write f04 as u32 first (low byte at +0x04)
+        fmtSrcBuf.add(0x04).writeU32(input.f04 >>> 0);
+        fmtSrcBuf.add(0x05).writeU8((input.f05 >>> 0) & 0xff);
+        fmtSrcBuf.add(0x10).writeU8((input.f10 >>> 0) & 0xff);
+        fn(fmtSrcBuf, fmtDstBuf, input.zero_init | 0);
+        // Observable: 4 written dst fields packed
+        const d04 = fmtDstBuf.add(0x04).readU32();
+        const d0c = fmtDstBuf.add(0x0c).readU8();
+        const d0d = fmtDstBuf.add(0x0d).readU8();
+        const d18 = fmtDstBuf.add(0x18).readU8();
+        return ((d04 & 0xffff) ^ ((d0c & 0xff) << 16) ^ ((d0d & 0xff) << 20) ^ ((d18 & 0xff) << 24)) >>> 0;
+    }
+    // fmt_table_search — fn(ctx_ptr, desc_ptr) -> uint32 (1 match, 0 no-match).
+    // input: { count, entry_ptr } — writes count at ctx+0x24, ptr at ctx+0x28.
+    // fmtCtxBuf is a 0x30-byte fake audio context.
+    if (CONFIG.arg_type === 'fmt_table_search') {
+        for (var fc = 0; fc < 0x30; fc++) fmtCtxBuf.add(fc).writeU8(0);
+        fmtCtxBuf.add(0x24).writeU32(input.count >>> 0);
+        // array base: store pointer to fmtEntryPtrBuf (which holds entry_ptr)
+        if (input.count > 0) {
+            fmtEntryPtrBuf.writePointer(ptr(input.entry_ptr >>> 0));
+            fmtCtxBuf.add(0x28).writePointer(fmtEntryPtrBuf);
+        }
+        return fn(fmtCtxBuf, ptr(0));
+    }
+    // fmt_global_scan — fn(key_ptr) -> pointer.
+    // input: array of 16 u8 bytes forming the format key.
+    // Returns pointer value as uint32 (comparable; NULL=0).
+    if (CONFIG.arg_type === 'fmt_global_scan') {
+        for (var fk = 0; fk < 16; fk++) fmtKeyBuf.add(fk).writeU8(0);
+        for (var ki = 0; ki < 16 && ki < input.length; ki++) {
+            fmtKeyBuf.add(ki).writeU8(input[ki] & 0xff);
+        }
+        var pRet = fn(fmtKeyBuf);
+        // Return the pointer value as a comparable uint32
+        return pRet ? parseInt(pRet.toString(), 16) : 0;
+    }
     // Fallback: float_scalar
     return fn(input);
 }
@@ -413,7 +474,9 @@ function runDiff() {
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
-              : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256) : null;
+              : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
+              : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
+              : null;
 
     // contact_history: allocate fake vehicle struct (0xC80 bytes) and geom entry (0x40 bytes).
     if (CONFIG.arg_type === 'contact_history') {
