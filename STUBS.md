@@ -1015,3 +1015,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3835 | 0x00495790 FUN_00495790 | 0x00498510 FUN_00498510 | input | passthrough | 2026-05-16 | joypad device count getter; no args; depth-1 callee of 00498510 controller-select setup; ma1-ghidra-s3 |
 | S-3836 | 0x00495e80 FUN_00495e80 | 0x00496010 FUN_00496010 | input | passthrough | 2026-05-16 | DInput device release-all (no args); depth-1 callee of 00496010 joypad shutdown; ma1-ghidra-s3 |
 | S-3837 | 0x004c7650 FUN_004c7650 | 0x004c5a60 FUN_004c5a60 | render | passthrough | 2026-05-16 | RW data-buffer free: takes (ptr); depth-1 callee of 004c5a60 refcounted release; existing S-0177/S-0816 cover other callers; ma1-ghidra-s3 |
+| S-3922 | 0x004e8090 FUN_004e8090 | 0x004881d0 FUN_004881d0 | boot | passthrough | 2026-05-16 | called on param_1!=0 path with (**(DAT_007030a8+0x18+0x20), param_1); not yet reversed; ma1-ghidra-s4 promote_c2_boot_teardown |
+| S-3923 | 0x004880a0 FUN_004880a0 | 0x004881d0 FUN_004881d0 | boot | passthrough | 2026-05-16 | called unconditionally at end of once-block with (param_1); not yet reversed; ma1-ghidra-s4 promote_c2_boot_teardown |
