@@ -2077,3 +2077,4 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004921b0,FUN_004921b0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x004921b0.md,,,spark render dispatch: vtable[0x48] on DAT_00771724 if active-count>0; no callers visible
 
 00471df0,FUN_00471df0,boot,C2,new,re/analysis/promote_c2_panel_piz_callees/00471df0.md,promote_c2_panel_piz_callees-20260516,,two-region zero/sentinel reset (DAT_0069064c..690aac stride 0x8c + DAT_0086ed20..8815a0 stride 0x2510); thunk-called from boot init+track teardown; S-3832 U-3800
+0040e470,CarSlotStateGet,frontend,C3,impl,mashedmod/src/mashed_re/Frontend/RaceResults.cpp,,log/diff_car_slot_state_get.csv,14b leaf getter returns *(PTR_PTR_005f2770+param_1*4+0x34); Frida path1 GREEN 10/10 int_scalar; path2 inline-JMP PASS 4/4; leaf-exemption (no callees); callers MenuButtonDetectA/B C3; U-1300 semantic-only blocks=none; c3-batch-g-s7 2026-05-16

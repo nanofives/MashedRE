@@ -1211,3 +1211,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  0040e470  CarSlotStateGet  C2->C3  c3-batch-g-s7; Frontend/RaceResults.cpp; RH_ScopedInstall(CarSlotStateGet,0x0040e470); Frida path1 GREEN 10/10 int_scalar log/diff_car_slot_state_get.csv; path2 inline-JMP PASS 4/4 log/verify_hook_install_car_slot_state_get.txt; leaf-exemption (no callees); callers MenuButtonDetectA/B C3; U-1300 semantic-only blocks=none

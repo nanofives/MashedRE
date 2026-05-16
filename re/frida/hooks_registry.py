@@ -3483,4 +3483,35 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-g-s7 — race_results slot-state getters (C2→C3)
+    # Frontend/RaceResults.cpp
+    #
+    # NOT registered (caller-gate / sig failures):
+    #   0x0040b460  SlotSortByScoreWithModeOverride — REFUSED: callee 0x00417740 not C2
+    #   0x0040e3a0  PlayerColorTableGet — already in MenuScoreSort.cpp;
+    #                (int, byte*) sig unsupported (pointer out-param needs custom arg_type)
+    #   0x0040e480  CarSlotStateSet — DEFERRED: no viable non-destructive diff arg_type
+    #                for double-deref setter (entity_field_set reads wrong address for PTR_PTR)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0040e470  CarSlotStateGet
+    # uint32 FUN_0040e470(int param_1) — 14-byte leaf getter, no callees.
+    # Returns *(PTR_PTR_005f2770 + param_1*4 + 0x34).
+    # At quiescent main menu, PTR_PTR_005f2770 is initialised; reads slot state.
+    # At menu, only indices 0-3 are valid; caller FUN_0042b770 uses this to
+    # skip AI-controlled slots (result == 2).
+    # int_scalar: pass slot index 0-3 (10 tests including repeats for coverage);
+    # both orig and reimpl must return same value from live game state.
+    # ref: re/analysis/race_results/0040e470.md
+    'car_slot_state_get': {
+        'rva':            0x0040e470,
+        'export':         'CarSlotStateGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
 }
