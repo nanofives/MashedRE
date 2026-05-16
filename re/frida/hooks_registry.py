@@ -3474,4 +3474,13 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
+    'timer_subarray_init': {
+        'rva':            0x00422120,
+        'export':         'TimerSubarrayInit',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
 }
