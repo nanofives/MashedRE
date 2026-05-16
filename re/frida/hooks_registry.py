@@ -1997,4 +1997,50 @@ HOOKS = {
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests': [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-e-s9 — boot_crt_env  (C2→C3, 2 candidates)
+    # Boot/CrtEnvArgv.cpp — CRT startup env-string functions
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004abc53  CrtSetEnvp  (__setenvp, Visual Studio 2003 Release)
+    # Takes no args; returns int (0 on success, -1 on failure).
+    # At main-menu time DAT_007739e8 is already NULL (freed during startup),
+    # so every re-call immediately returns -1. Both orig and reimpl must
+    # return -1 identically — 10 calls confirm stable bit-identical output.
+    # lut_root_delta=0 (no LUT; poll just confirms game is past init).
+    'crt_set_envp': {
+        'rva':            0x004abc53,
+        'export':         'CrtSetEnvp',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004abf28  CrtGetEnvStrings  (___crtGetEnvironmentStringsA, Visual Studio 2003 Release)
+    # Takes no args; returns LPVOID (malloc'd ANSI env block, or NULL on failure).
+    # At main-menu time DAT_00773d48 is already 1 (wide path succeeded at startup).
+    # Re-calling the function: re-fetches GetEnvironmentStringsW, converts, returns
+    # a new allocation.  Pointer values differ between orig and reimpl calls (different
+    # heap addresses), so we compare null/non-null (1=non-null, 0=null) using
+    # ptr_nonnull_check.  target_global=0x00773d48 lets each test pre-write the
+    # mode flag to exercise different code paths (0=detect, 1=wide, 2=ANSI).
+    'crt_get_env_strings': {
+        'rva':            0x004abf28,
+        'export':         'CrtGetEnvStrings',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'ptr_nonnull_check',
+        'target_global':  0x00773d48,
+        'lut_root_delta': 0,
+        # Pre-write values for DAT_00773d48 before each call.
+        # 0 → detection path (calls GetEnvironmentStringsW, may set to 1 or 2)
+        # 1 → wide path  (calls GetEnvironmentStringsW again, converts)
+        # 2 → ANSI path  (calls GetEnvironmentStrings ANSI, copies)
+        # 0 again × 8 → repeatedly exercise detection path
+        # Both orig and reimpl must return non-null (1) for all paths.
+        'path1_tests':    [0, 1, 2, 0, 1, 2, 0, 1, 2, 0],
+        'path2_tests':    [0, 1, 2],
+    },
 }
