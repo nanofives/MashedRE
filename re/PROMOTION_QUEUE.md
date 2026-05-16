@@ -16,7 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
-
+2026-05-16  c3-batch-g-s13  rvas=  branch=c3/batch-g-s13  evidence=none  note=0/4 FontText C2->C3; all refused with D-rows: 0x00427620 D-8917 (callees C1, teardown-fn-not-testable-live, prior Sonnet pass); 0x00427680 D-8918 (harness gap: ESI-implicit-out, U-2127 unresolved); 0x00427840 D-8919 (harness gap: EAX-implicit fastcall variant, U-1069 unresolved); 0x00427ff0 D-8920 (harness gap: 7-arg sig + state-mutating font calls at main-menu + open [UNCERTAIN] on 4277a0); CHANGELOG appended
 ```
 
 ## Merged

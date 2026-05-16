@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  00427620  FontText_HudShutdown  deferred  C3 refused c3-batch-g-s13 (prior Sonnet pass): 4/4 callees C1 (FUN_00555830 FUN_00556e40 FUN_00556cd0 FUN_00552b90) — fails C2+ callee gate; teardown-only fn not safely callable at main-menu; D-8917
+2026-05-16  00427680  FontText_ComputeScreenXY  deferred  C3 refused c3-batch-g-s13: harness gap (ESI-implicit-output 2-float buffer not supported in diff_template.js) + U-2127 unresolved + depends on live font ctx DAT_0067d838; D-8918
+2026-05-16  00427840  FontText_UTF16WidenCopy  deferred  C3 refused c3-batch-g-s13: harness gap (EAX-implicit-source-ptr fastcall variant not supported in diff_template.js) + U-1069 unresolved + live vtable read on DAT_007d3ff8+0xf4; D-8919
+2026-05-16  00427ff0  FontText_DrawTextRotated  deferred  C3 refused c3-batch-g-s13: harness gap (7-arg signature not supported in diff_template.js) + open [UNCERTAIN] on callee FUN_004277a0 + state-mutates live font ctx (Push/Pop/Translate/Rotate) on DAT_007d3ff8/DAT_0067d838/DAT_0067d83c at main-menu; D-8920
