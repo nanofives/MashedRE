@@ -56,7 +56,8 @@ extern "C" __declspec(dllexport) void __cdecl SlotDataCopy(int param_1, int* par
     }
 }
 
-RH_ScopedInstall(SlotDataCopy, 0x0041f000);
+// RH_ScopedInstall(SlotDataCopy, 0x0041f000);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x0041f000)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041eda0  SlotBitSet  void(int param_1, int param_2)
@@ -78,7 +79,8 @@ extern "C" __declspec(dllexport) void __cdecl SlotBitSet(int param_1, int param_
     }
 }
 
-RH_ScopedInstall(SlotBitSet, 0x0041eda0);
+// RH_ScopedInstall(SlotBitSet, 0x0041eda0);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x0041eda0)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00420d40  SlotArrayClear  void(void)
@@ -106,4 +108,5 @@ extern "C" __declspec(dllexport) void __cdecl SlotArrayClear() {
     }
 }
 
-RH_ScopedInstall(SlotArrayClear, 0x00420d40);
+// RH_ScopedInstall(SlotArrayClear, 0x00420d40);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x00420d40)

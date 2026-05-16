@@ -32,7 +32,8 @@ extern "C" __declspec(dllexport) void __cdecl TimerFlagClear() {
     *reinterpret_cast<std::uint32_t*>(kTimerFlag0063d558) = 0u;
 }
 
-RH_ScopedInstall(TimerFlagClear, 0x0041d820);
+// RH_ScopedInstall(TimerFlagClear, 0x0041d820);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x0041d820)
 
 // ── 0x0041e130 ───────────────────────────────────────────────────────────────
 // TimerStateSet — writes param_1 to DAT_0063d7e0.
@@ -45,7 +46,8 @@ extern "C" __declspec(dllexport) void __cdecl TimerStateSet(std::uint32_t param_
     *reinterpret_cast<std::uint32_t*>(kTimerState0063d7e0) = param_1;
 }
 
-RH_ScopedInstall(TimerStateSet, 0x0041e130);
+// RH_ScopedInstall(TimerStateSet, 0x0041e130);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x0041e130)
 
 // ── 0x00426630 ───────────────────────────────────────────────────────────────
 // PitchParamSet — writes param_1 to DAT_0066d6fc.

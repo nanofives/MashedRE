@@ -58,3 +58,4 @@ diff_*.csv
 # --- External tool clones (installed via pip -e; not committed) ---
 /tools/
 __pycache__/
+.tmp_sweep/

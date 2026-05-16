@@ -362,5 +362,6 @@ extern "C" __declspec(dllexport) void __cdecl AudioListDrain2(int* param_1)
     }
 }
 
-RH_ScopedInstall(AudioListDrain2, 0x005ade90);
+// RH_ScopedInstall(AudioListDrain2, 0x005ade90);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x005ade90)
 

@@ -41,4 +41,5 @@ extern "C" __declspec(dllexport) void __cdecl TimerSubarrayInit() {
     }
 }
 
-RH_ScopedInstall(TimerSubarrayInit, 0x00422120);
+// RH_ScopedInstall(TimerSubarrayInit, 0x00422120);  // first-wins; superseded
+// (// frida-sweep first-wins (TimerInit.cpp/AudioRws.cpp registered first): 0x00422120)
