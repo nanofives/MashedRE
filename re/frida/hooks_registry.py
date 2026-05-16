@@ -1066,6 +1066,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # 0x0042b540  MenuButtonDetectD
+    # Structural sibling of MenuButtonDetectC: col+1 (0x7f1045/0x7f1505).
+    # No-input flag: _DAT_0067f1bc. Screen-type early-return logic identical.
+    # arg_type='none': called 10x at quiescent main menu; both paths agree on 0.
+    # U-3445 (callee), U-1651 (record width), U-3556 (screen IDs) carried forward.
+    'menu_button_detect_d': {
+        'rva':            0x0042b540,
+        'export':         'MenuButtonDetectD',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x0042b960  CarSlotInit1P
     # void: scans char table pair, inits slot sentinels, sets mode=1, calls
     # FUN_0040e480 x4. Returns void (wrapped as uint32 0 for registry compat).
