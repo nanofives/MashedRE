@@ -3628,6 +3628,8 @@ HOOKS = {
         'crash_equal_ok': True,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 0x100, 0x200, 0x7fffffff, 0],
         'path2_tests':    [0, 1, 2],
+    },
+
     # ─────────────────────────────────────────────────────────────────────────
     # Session c3-batch-g-s7 — race_results slot-state getters (C2→C3)
     # Frontend/RaceResults.cpp
@@ -3657,6 +3659,8 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
         'path2_tests':    [0, 1, 2, 3],
+    },
+
     # Session c3-batch-g-s14 — FontSys+HudDispatch+RW-release (C2->C3)
     # HUD/FontCtx.cpp — FontSys init sequence
     # HUD/HudDispatch.cpp — EAX-thiscall vtable dispatcher
@@ -3676,6 +3680,11 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # Session c3-batch-g-s15 — carry-overs from batch-d/c
     # MenuButtonDetect.cpp — trivial uint16 screen-dimension getters (C2→C3)
     # ─────────────────────────────────────────────────────────────────────
@@ -3691,7 +3700,6 @@ HOOKS = {
         'export':         'ScreenWidthGet',
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
-}
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
@@ -3712,6 +3720,11 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x0042b8c0  ScreenHeightGet
     # Returns DAT_0067ea56 as uint16_t in EAX. 6-byte leaf. No callees.
     # Strategy: arg_type='none' — call 10x at quiescent main menu state; both
@@ -3723,7 +3736,6 @@ HOOKS = {
         'export':         'ScreenHeightGet',
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
-}
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
@@ -3745,7 +3757,5 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
-}
     },
-}
 }
