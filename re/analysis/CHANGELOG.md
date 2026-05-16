@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0041d870  sub_0041d870  C2->DEFERRED(D-10698)  c3-batch-g-s12; caller-gate: callee FUN_0041d410 (0x0041d410) is C1; pickup when callee reaches C2+
+2026-05-16  0041db80  sub_0041db80  C2->DEFERRED(D-10699)  c3-batch-g-s12; U-0579 (structural body-bounds) + U-3585 (semantic DAT_0063d588 type) both open; pickup when both resolved
+2026-05-16  0041ded0  sub_0041ded0  C2->DEFERRED(D-10700)  c3-batch-g-s12; caller-gate: callee FUN_0041de80 (0x0041de80) is C1; pickup when callee reaches C2+
+2026-05-16  0041e850  sub_0041e850  C2->DEFERRED(D-10701)  c3-batch-g-s12; caller-gate: callee FUN_0041e630 (0x0041e630) is C1; pickup when callee reaches C2+
 2026-05-16  sweep-20260516-0352  scribe-release  buckets=13 drained  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_d3d9_window  writes=1  errors=0  note=partial; 6 RVAs deferred
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_panel_piz_callees  writes=7  errors=0
@@ -1211,3 +1215,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  0042d290  FUN_0042d290  deferred  C3 refused (caller gate): callee FUN_004a2b60 is C1; D-10697; session c3-batch-g-s3
