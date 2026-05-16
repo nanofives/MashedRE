@@ -2596,4 +2596,155 @@ HOOKS = {
         'path1_tests':  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':  [0, 0, 0],
     },
+    'audio_wave_node_free': {
+        'rva':            0x005abcb0,
+        'export':         'AudioWaveNodeFree',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x005ac740  AudioSubStructBufCleanup
+    # void(int param_1): audio sub-struct buffer cleanup.
+    # bit1@+0x18 guards free; always zeroes +0x10 and +0x14.
+    # Callee: FUN_004522d0 (heap free).
+    # crash_equal_ok: param_1=0 -> read byte *(0+0x18) -> null-deref; both crash equally.
+    'audio_sub_struct_buf_cleanup': {
+        'rva':            0x005ac740,
+        'export':         'AudioSubStructBufCleanup',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x005ac900  AudioContextLookup
+    # uint32(uint32 param_1): context-lookup dispatcher.
+    # Calls FUN_005aa0c0(0, 0, LAB_005ac930, &local_8, 1).
+    # Result via local_4 written by inline callback LAB_005ac930 (U-1730).
+    # Callee FUN_005aa0c0 drift-promoted C1->C2 (mechanical decomp only).
+    # crash_equal_ok: audio context tree (DAT_009146fc) may be NULL at menu;
+    #   if non-NULL the callback at LAB_005ac930 is an inline code region —
+    #   calling it as a fn ptr may crash. Both orig and reimpl crash equally.
+    'audio_context_lookup': {
+        'rva':            0x005ac900,
+        'export':         'AudioContextLookup',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x005ae650  AudioPoolConstruct  [STRUCT GAP: DAT_007ddab0 U-1736]
+    # uint32*(int, uint, uint, int, uint*, uint32): bitmap pool constructor.
+    # 6-param: elem_size, bit_count, align, pre_alloc, hdr, flags.
+    # Pool header layout: 9 fields x 4B; circular block list; DAT_007dda80 list.
+    # Callee: FUN_005aea00 (raw alloc trampoline).
+    # STRUCT GAP: DAT_007ddab0 secondary pool role unclear (U-1736).
+    # crash_equal_ok: calling via int_scalar passes only one arg (the rest default 0);
+    #   FUN_005aea00 may crash on null ctx. Both orig and reimpl crash equally.
+    'audio_pool_construct': {
+        'rva':            0x005ae650,
+        'export':         'AudioPoolConstruct',
+        'signature':      {'ret': 'pointer', 'args': ['int32', 'uint32', 'uint32', 'int32', 'pointer', 'uint32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # Session c3-batch-b-s6 — VehicleUnlockFlagGet (C2->C3)
+    # VehicleMeta.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ef40  VehicleUnlockFlagGet
+    # Pure leaf: reads byte from DAT_007f0e50 + param_1*0xc at a byte-offset
+    # selected by param_2 switch; returns 1 if byte == 0x01, else 0.
+    # Array is zero-initialized before game-mode selection → all tests return
+    # 0 at quiescent main-menu state. A/B identity guaranteed (both read 0x00
+    # from the same global array).
+    # [UNCERTAIN U-3176] No bounds check on param_1 — reproduced as-is.
+    # arg_type='int_pair': passes [param_1, param_2] directly.
+    'audio_dsound_secondary_init': {
+        'rva':            0x005bbfc0,
+        'export':         'AudioDSoundSecondaryInit',
+        'signature':      {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':       'dsound_secondary_init',
+        'lut_root_delta': 0,
+        # Each test is a dummy iteration index; the arg_type builds its own COM stub.
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005aef00  AudioThreadDescInit
+    # fn(uint32_t* buf, p2, p3, p4) -> void.
+    # Writes: buf[0]=0 (handle), buf[1]=p2 (proc), buf[2]=0, buf[3]=p3 (prio), buf[4]=p4 (stack).
+    # thread_desc_init: 20-byte scratch buf; fill sentinel; call; read 5 fields; compare.
+    # Test vectors: varied proc ptrs, priorities, stack sizes from analysis note.
+    'audio_thread_desc_init': {
+        'rva':            0x005aef00,
+        'export':         'AudioThreadDescInit',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32', 'uint32']},
+        'arg_type':       'thread_desc_init',
+        'lut_root_delta': 0,
+        # Each test: [p2=proc_ptr, p3=priority, p4=stack_size]
+        'path1_tests': [
+            [0x005bb380, 0x0000000f, 0x00001000],  # canonical: LAB_005bb380, THREAD_PRIO_TC, 4096
+            [0x00000000, 0x00000000, 0x00000000],  # all zero
+            [0xDEADBEEF, 0x00000001, 0x00000400],  # sentinel proc, prio=1, stack=1024
+            [0x005bb380, 0x00000002, 0x00002000],  # prio=2, stack=8192
+            [0x00400000, 0x0000000f, 0x00010000],  # base addr proc, max prio, large stack
+            [0xCAFEBABE, 0x00000000, 0x00001000],  # exotic proc, prio=0
+            [0x005bb380, 0x0000000f, 0xFFFFFFFF],  # max stack_size
+            [0x00000001, 0x0000000f, 0x00001000],  # minimal proc ptr
+            [0x7FFFFFFF, 0x0000000f, 0x00000100],  # signed-max proc
+            [0x005bb380, 0x000000FF, 0x00001000],  # large priority value
+        ],
+        'path2_tests': [
+            [0x005bb380, 0x0000000f, 0x00001000],
+            [0x00000000, 0x00000000, 0x00000000],
+            [0xDEADBEEF, 0x00000001, 0x00000400],
+        ],
+    },
+
+    # 0x005a9e10  AudioSubStructTwoCallInit
+    # fn(void* p1, void* p2, void* p3) -> p1.
+    # Calls FUN_005adfe0(p1,p3) then FUN_005ae010(p1,p2); returns p1 unchanged.
+    # sub_struct_dispatcher: 3 scratch bufs; verify return == BUF0 addr (1=correct, 0=wrong).
+    # Both paths route through same original callees; key assertion is return==param_1.
+    # U-0351 (semantic role of p2/p3) does not affect bit-identity of return value.
+    'audio_sub_struct_two_call_init': {
+        'rva':            0x005a9e10,
+        'export':         'AudioSubStructTwoCallInit',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'pointer']},
+        'arg_type':       'sub_struct_dispatcher',
+        'lut_root_delta': 0,
+        # Each test is a dummy iteration index; bufs are rebuilt each call.
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005ade90  AudioListDrain2
+    # void fn(sentinel_ptr): drain all nodes from list, return each to pool.
+    # Second implementation (C3 target for c3-batch-f-s9); same RVA as AudioListDrain.
+    # audio_list_drain: build sentinel + N nodes via FUN_005addd0 (insert_rva); drain;
+    # verify sentinel self-loops (1=empty, 0=not drained).
+    'audio_list_drain2': {
+        'rva':          0x005ade90,
+        'export':       'AudioListDrain2',
+        'signature':    {'ret': 'void', 'args': ['pointer']},
+        'arg_type':     'audio_list_drain',
+        'insert_rva':   0x005addd0,
+        'lut_root_delta': 0,
+        'path1_tests':  [0, 1, 2, 3, 5, 1, 3, 2, 0, 1],
+        'path2_tests':  [0, 1, 2],
+    },
 }
