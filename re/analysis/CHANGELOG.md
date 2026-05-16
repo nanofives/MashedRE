@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-15  005ae920  AudioPoolFree  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 crash_equal_ok (pool uninitialized; both paths crash identically); callee 004522d0 C1 flagged (vtable trampoline; callee-gate exception noted); U-0124 partially resolved
+2026-05-15  005addd0  AudioListInsertHead  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 crash_equal_ok (pool alloc crashes; both paths crash identically); callee AudioPoolFree now C3; callee FUN_005ae800 C2
+2026-05-15  005ade10  AudioListRemoveByValue  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 not-found path (payload=0 excluded; degenerate sentinel-match crash); loop order fixed (data-read before sentinel-check per 0x005ade1d); U-0124 partially resolved
+2026-05-15  005ade90  AudioListDrain  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 empty-drain path (nodeCount=0; no pool access); STRUCT GAP U-0990 U-0138 open (node type at DAT_009146c0 unknown; does not block drain correctness); dedup row 1634 retained
 2026-05-15  005baf00  MusicGroupVolumeSet  C1->C2  c3-batch-f-s13; re/analysis/audio_music_d2/005baf00.md; impl=mashedmod/src/mashed_re/Audio/AudioMusic.cpp; Frida diff GREEN 10/10 log/diff_music_group_volume_set.csv; C3 refused: caller 0x0045dd60 is C1 (caller gate not met); leaf-callee-exemption applies
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-release  branches=16  integration-diff=N/A(c4-sweep-no-new-code)  hooks=26  note=26/62 hooks C3->C4; 36 refused/deferred (D-10601..10637 renumbered); harness gaps: double-patch-crash, read_global/none/font_* callFn, key-send missing, audio COM neutralized
 2026-05-15  frida-sweep-20260515-1412  frida-sweep-claim  branches=16 queued

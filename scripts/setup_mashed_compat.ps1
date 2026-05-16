@@ -10,12 +10,18 @@
 #   RUNASINVOKER                  - tell Windows to NOT elevate, ever
 #   WIN98RTM                      - Win98 emulation (RW3-friendly)
 #   HIGHDPIAWARE                  - prevent auto-DPI-scale
-#   DISABLEDXMAXIMIZEDWINDOWEDMODE - disable DWM maximized-windowed D3D9
 #   EMULATEHEAP                   - XP-style heap (helps some 2000s games)
+#
+# DROPPED 2026-05-15:
+#   DISABLEDXMAXIMIZEDWINDOWEDMODE  conflicts with mashedmod d3d9_shim
+#     (AcLayers's d3d9 export hooks deadlock against our proxy at
+#     process init; see mashedmod/src/d3d9_shim/d3d9_shim.cpp). The
+#     proxy forces Windowed=TRUE at CreateDevice anyway, which is what
+#     this shim was working around.
 
 $mashedPath = (Resolve-Path "$PSScriptRoot\..\original\MASHED.exe").Path
 $layersKey  = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"
-$layer      = "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE DISABLEDXMAXIMIZEDWINDOWEDMODE EMULATEHEAP"
+$layer      = "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP"
 
 if (-not (Test-Path $layersKey)) {
     New-Item -Path $layersKey -Force | Out-Null

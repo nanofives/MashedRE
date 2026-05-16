@@ -97,7 +97,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005ab410,FUN_005ab410,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005ab410.md,,,C2: RWS chunk-type seeker; loops skipping chunks via FUN_004cc050; version range 0x35000..0x37002; U-0118
 005abcf0,FUN_005abcf0,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005abcf0.md,,,C2: wave_node full destructor; vtable[+0x10] cb; FUN_005ac740×2; FUN_005a7e70; FUN_005ae030; FUN_005abcb0; U-3027 U-3028
 005abfa0,FUN_005abfa0,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005abfa0.md,,,C2: per-wave data loader; reads 0x803 fmt + 0x804 PCM; chunked PCM feed loop via FUN_005abd30; U-0121 U-0122 U-0123 U-3029
-005ade10,FUN_005ade10,audio,C2,mapped,re/analysis/audio_rws_loader/005ade10.md;re/analysis/promote_c2_audio_dsound/0x005ade10.md,,,doubly-linked list remove-by-value; node pool at DAT_009146c0; U-0124
+005ade10,AudioListRemoveByValue,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioRws.cpp,,log/diff_audio_list_remove_by_value.csv,doubly-linked list remove-by-value; node pool at DAT_009146c0; U-0124 partial-resolved by 005ae920 node-layout; Frida GREEN 10/10 not-found path; c3-batch-f-s6
 005aea00,FUN_005aea00,audio,C2,mapped,re/analysis/audio_rws_loader/005aea00.md,,,vtable alloc trampoline DAT_007d3ff8+0x108; jumptable not recoverable; U-0125
 005aea10,AudioAlignedAlloc,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioMemory.cpp,,log/diff_audio_aligned_alloc.csv,alloc size+4; 4-byte-align; store raw base at *(aligned-4); Frida alloc_check diff 5/5 GREEN session 85
 005aea40,AudioAlignedFree,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioMemory.cpp,,log/diff_audio_aligned_free.csv,recover raw base from *(ptr-4); forward to 004522d0 vtable dealloc; Frida free_via_alloc diff 4/4 GREEN session 85
@@ -397,7 +397,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00550af0,FUN_00550af0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/00550af0.md,,,RWS stream EOF/status check; vtable+0x44; indirect-jump unrecovered; U-0989; D-0343
 005509b0,FUN_005509b0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005509b0.md,,,RWS stream seek; whence map 0to1 1to2 2to3; buffer-state invalidation at +0x18/+0x20/+0x28; D-0344
 005a7a40,FUN_005a7a40,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005a7a40.md,,,pool-object list searcher; FUN_005ade60 at obj+0x0c; returns obj or NULL; D-2860; D-0345
-005ade90,FUN_005ade90,audio,C2,mapped,re/analysis/audio_rws_loader_d2/005ade90.md;re/analysis/promote_c2_audio_dsound/0x005ade90.md,,,doubly-linked list drainer; each node returned via FUN_005ae920(DAT_009146c0); U-0990; D-0346
+005ade90,AudioListDrain,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioRws.cpp,,log/diff_audio_list_drain.csv,list drain; unlinks all nodes via FUN_005ae920 per node; STRUCT GAP U-0990 U-0138 node-type open; Frida GREEN 10/10 empty-drain; c3-batch-f-s6
 005a7ea0,FUN_005a7ea0,audio,C1,mapped,re/analysis/audio_rws_loader_d2/005a7ea0.md,,,audio object destructor; +0x1b bit0=pool-return(DAT_007dca84) bit2=no-free else heap-free; U-0991; D-0347
 005adfe0,FUN_005adfe0,audio,C2,mapped,re/analysis/audio_rws_loader_d2/005adfe0.md;re/analysis/promote_c2_audio_dsound/0x005adfe0.md,,,sub-struct B init; FUN_005ae050 zero-init then +4=param_2 +8.bit1=0; D-2863; D-0350
 005ac740,FUN_005ac740,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005ac740.md,,,C2: audio sub-struct buffer cleanup; bit1@+0x18 guards free; zeroes +0x10 +0x14
@@ -407,7 +407,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005adf30,FUN_005adf30,audio,C2,mapped,re/analysis/audio_rws_loader_d2/005adf30.md;re/analysis/promote_c2_audio_dsound/0x005adf30.md,,,16-byte format descriptor memcmp; returns -1/0/+1; D-0356
 005abd30,FUN_005abd30,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005abd30.md,,,C2: PCM chunk feeder; vtable[+0x14] dispatch; optional fmt-conversion path via 005b3b{30,60,80}; drain-pump loop; U-0997
 005abf80,FUN_005abf80,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005abf80.md,,,C2: audio drain/pump vtable[+0x1c] dispatch; unrecovered indirect jump; callers loop while non-zero return; U-0998
-005ae920,FUN_005ae920,audio,C2,mapped,re/analysis/audio_rws_loader_d2/005ae920.md,,,pool-allocator free; bitmap-tracked fixed-size blocks; optional compaction via FUN_004522d0; D-0360
+005ae920,AudioPoolFree,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioRws.cpp,,log/diff_audio_pool_free.csv,pool-allocator free; bitmap-tracked fixed-size blocks; optional compaction via FUN_004522d0; callee 004522d0 C1 (vtable trampoline; callee-gate flagged); Frida GREEN 10/10 crash_equal_ok; c3-batch-f-s6
 0042c280,FUN_0042c280,vehicle,C1,mapped,re/analysis/race_state/0x0042c280.md,,,calls FUN_0042bf30(0x27f 0xff210000 0 0 0 0); no-param void; STATE_FN case-3 path when FUN_0042c220 non-zero; S-1040; U-1048
 0042c2f0,FUN_0042c2f0,vehicle,C1,mapped,re/analysis/race_state/0x0042c2f0.md,,,setter: DAT_0067ecb8=param_1; 9 bytes; paired getter FUN_0042c2e0; U-1051
 00432080,FUN_00432080,vehicle,C1,mapped,re/analysis/race_state/0x00432080.md,,,phase-transition check: guards DAT_0067eca4; dispatches on DAT_007f1a0c (1/2/0x1000); checks A/B byte arrays base 0x7f1041/0x7f1501 stride 0x4c; calls FUN_0042d3a0 on success; returns 0 or 1; S-0493 S-1041; U-1049 U-1052 U-1053
@@ -825,7 +825,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 005ae800,FUN_005ae800,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae800.md,,,bitmap pool alloc: scans blocks for free bit; if none FUN_005aea00 new block; marks bit; returns aligned addr
 005b36f0,FUN_005b36f0,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b36f0.md,,,fmt-table lookup 51 entries PTR_PTR_00634550: param_2=1→source entry 0→output entry; FUN_005ac9e0 match; returns ptr or 0
 005b3760,FUN_005b3760,audio,C1,mapped,re/analysis/audio_rws_loader_d3/005b3760.md,,,conversion-chain builder LRU cache: 51 converters PTR_PTR_00634550; 5-entry cache DAT_007ddb30; recursive BFS; DAT_007ddcac idx; U-1737 U-1738
-005addd0,FUN_005addd0,audio,C2,mapped,re/analysis/promote_c2_audio_rws/005addd0.md,,,C2: doubly-linked list insert at head; alloc from DAT_009146c0 pool; node[0]=fwd, node[1]=back-to-head, node[2]=payload
+005addd0,AudioListInsertHead,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioRws.cpp,,log/diff_audio_list_insert_head.csv,doubly-linked list insert at head; alloc from DAT_009146c0 pool via FUN_005ae800; node[0]=fwd, node[1]=back-to-head, node[2]=payload; Frida GREEN 10/10 crash_equal_ok; c3-batch-f-s6
 005ae780,FUN_005ae780,audio,C2,mapped,re/analysis/audio_rws_loader_d3/005ae780.md,,,pool destructor: drains block list param_1+0x10 via FUN_004522d0; heap-frees pool hdr or DAT_007ddab0 pool via FUN_005ae920
 005aa1e0,FUN_005aa1e0,audio,C0,stub,re/analysis/audio_rws_loader_d3/005aa1e0.md,,,inline callback passed from FUN_005aa060; no Ghidra function body; S-1720; D-5080
 0040ab40,FUN_0040ab40,util,C1,mapped,re/analysis/timer_d2_cont1/0x0040ab40.md,,,state-machine dispatcher on DAT_008a9584; 4 inner switch vars; calls FUN_00409970/409930/42c1a0/45b350; S-1600 S-1601 S-1602; U-1607
@@ -1631,7 +1631,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00550af0,FUN_00550af0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x00550af0.md,,,EOF checker; vtable dispatch *(*(param_1+0x38)+0x44)(); unrecovered jumptable; D-0343; U-0160
 005509b0,FUN_005509b0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005509b0.md,,,file-seek vtable wrapper; translates {0→1,1→2,2→3} seek modes; resets +0x18/+0x20/+0x28 state; D-0344; U-0160
 005a7a40,FUN_005a7a40,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005a7a40.md,,,pool-list searcher; calls FUN_005ade60(param_1+0xc,param_2); returns param_1 if found else 0; D-0345; U-0160
-005ade90,FUN_005ade90,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005ade90.md;re/analysis/promote_c2_audio_dsound/0x005ade90.md,,,list drain; unlinks all nodes and returns each to free pool DAT_009146c0 via FUN_005ae920; D-0346; U-0160
+005ade90,AudioListDrain,audio,C3,impl,mashedmod/src/mashed_re/Audio/AudioRws.cpp,,log/diff_audio_list_drain.csv,DEDUP: see row 400; list drain via FUN_005ae920; STRUCT GAP U-0990 U-0138; c3-batch-f-s6
 005a7ea0,FUN_005a7ea0,audio,C1,mapped,re/analysis/audio_rws_loader_cont1/0x005a7ea0.md,,,audio object final dealloc; FUN_005ae030 then flag dispatch: pool DAT_007dca84 / no-free / heap-free; flags at +0x1b; D-0347; U-0160
 005ae0c0,FUN_005ae0c0,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005ae0c0.md,,,WAVEFORMATEX-like 16-byte copy/byte-swap; param_3!=NULL triggers FUN_005aeca0 byte-swap path; D-0348; U-0160..U-0160
 005ae010,FUN_005ae010,audio,C2,mapped,re/analysis/audio_rws_loader_cont1/0x005ae010.md,,,links audio sub-struct[0] with device handle; releases old via FUN_005ae080; clears owned-flag bit 0; D-0349; U-0160

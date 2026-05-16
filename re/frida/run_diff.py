@@ -135,6 +135,10 @@ def main():
         config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
     if 'crash_equal_ok' in hook:
         config['crash_equal_ok'] = hook['crash_equal_ok']
+    if 'pool_addr' in hook:
+        config['pool_addr_str'] = f"0x{hook['pool_addr']:08x}"
+    if 'insert_rva' in hook:
+        config['insert_rva_str'] = f"0x{hook['insert_rva']:08x}"
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)

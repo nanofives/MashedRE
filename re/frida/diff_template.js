@@ -136,6 +136,14 @@ function callFn(fn, input, buf) {
         ptr(CONFIG.target_global).writeU32(input >>> 0);
         return fn(0);
     }
+    // void_setter_observe — call fn(input) [void return], then read target_global and return it.
+    // Use for void(uint32) setters that write param_1 directly to a global.
+    // Strategy: call fn(value), read back target_global. Both orig and reimpl must
+    // have written `value` to target_global.
+    if (CONFIG.arg_type === 'void_setter_observe') {
+        fn(input >>> 0);
+        return ptr(CONFIG.target_global).readU32();
+    }
     // contact_history — set up slot 0 of a fake vehicle contact table, call fn(geom, vehicle)
     // input: { slot_contact_id, slot_active, geom_contact_id }
     if (CONFIG.arg_type === 'contact_history') {
@@ -398,10 +406,11 @@ function runDiff() {
         geomBuf    = Memory.alloc(0x40);
     }
 
-    // For 'read_global' and 'write_global_call_int0', save and restore the target global so
-    // we don't leave a sentinel in game-state memory after the test.
+    // For 'read_global', 'write_global_call_int0', and 'void_setter_observe', save and
+    // restore the target global so we don't leave a sentinel in game-state memory after the test.
     let savedGlobal = null;
-    if (CONFIG.arg_type === 'read_global' || CONFIG.arg_type === 'write_global_call_int0') {
+    if (CONFIG.arg_type === 'read_global' || CONFIG.arg_type === 'write_global_call_int0'
+        || CONFIG.arg_type === 'void_setter_observe') {
         try { savedGlobal = ptr(CONFIG.target_global).readU32(); }
         catch (e) { send({ type: 'error', msg: 'failed reading target_global: ' + e.message }); return; }
     }
@@ -577,6 +586,289 @@ function runDiff() {
         return;
     }
 
+    // ── thread_desc_init ────────────────────────────────────────────────────
+    // For AudioThreadDescInit (0x005aef00): fn(uint32_t* buf, p2, p3, p4).
+    // Writes 5 uint32 fields: buf[0]=0, buf[1]=p2, buf[2]=0, buf[3]=p3, buf[4]=p4.
+    // input: [p2, p3, p4] — the three scalar arguments after the pointer.
+    // Strategy: allocate 5x4=20 byte scratch buf; fill with sentinel 0xDEAD????;
+    // call fn(buf, p2, p3, p4); read back 5 fields; return packed fingerprint.
+    // Both orig and reimpl must produce identical field values.
+    if (CONFIG.arg_type === 'thread_desc_init') {
+        const STRUCT_BUF = Memory.alloc(20);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i]; // [p2, p3, p4]
+            const p2 = t[0] >>> 0, p3 = t[1] >>> 0, p4 = t[2] >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            function readFields(b) {
+                const f0 = b.readU32();
+                const f1 = b.add(4).readU32();
+                const f2 = b.add(8).readU32();
+                const f3 = b.add(12).readU32();
+                const f4 = b.add(16).readU32();
+                return [f0, f1, f2, f3, f4].join(',');
+            }
+            try {
+                // fill sentinel
+                for (let k = 0; k < 5; k++) STRUCT_BUF.add(k*4).writeU32(0xDEADBEEF);
+                Orig(STRUCT_BUF, p2, p3, p4);
+                origV = readFields(STRUCT_BUF);
+            } catch(e) { errO = e.message; }
+            try {
+                for (let k = 0; k < 5; k++) STRUCT_BUF.add(k*4).writeU32(0xDEADBEEF);
+                Reimpl(STRUCT_BUF, p2, p3, p4);
+                reimV = readFields(STRUCT_BUF);
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── sub_struct_dispatcher ────────────────────────────────────────────────
+    // For AudioSubStructTwoCallInit (0x005a9e10): fn(p1, p2, p3) -> p1.
+    // Calls FUN_005adfe0(p1,p3) and FUN_005ae010(p1,p2); returns p1 unchanged.
+    // input: ignored (we use 3 separate scratch buffers each call).
+    // Strategy: allocate 3 scratch buffers, call fn(b0, b1, b2); compare return
+    // address == b0 address (return value must equal first arg).
+    // Both paths route through same original callees; assertion is return==param_1.
+    if (CONFIG.arg_type === 'sub_struct_dispatcher') {
+        const BUF0 = Memory.alloc(64);
+        const BUF1 = Memory.alloc(64);
+        const BUF2 = Memory.alloc(64);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let origV = null, reimV = null, errO = null, errR = null;
+            const b0i = BUF0.toInt32() >>> 0;
+            try {
+                // zero bufs before each call
+                for (let k = 0; k < 64; k += 4) { BUF0.add(k).writeU32(0); BUF1.add(k).writeU32(0); BUF2.add(k).writeU32(0); }
+                const retO = Orig(BUF0, BUF1, BUF2);
+                // encode: 1 if return addr == BUF0 addr, else 0; always 1 for correct impl
+                const retOInt = retO ? (parseInt(retO.toString(), 16) >>> 0) : 0;
+                origV = (retOInt === b0i) ? 1 : 0;
+            } catch(e) { errO = e.message; }
+            try {
+                for (let k = 0; k < 64; k += 4) { BUF0.add(k).writeU32(0); BUF1.add(k).writeU32(0); BUF2.add(k).writeU32(0); }
+                const retR = Reimpl(BUF0, BUF1, BUF2);
+                const retRInt = retR ? (parseInt(retR.toString(), 16) >>> 0) : 0;
+                reimV = (retRInt === b0i) ? 1 : 0;
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── dsound_secondary_init ────────────────────────────────────────────────
+    // For AudioDSoundSecondaryInit (0x005bbfc0): fn(void** ppUnk) -> int.
+    // Calls vtable[0] (QI), vtable[5] (secondary init), vtable[2] (Release).
+    // Strategy: build fake IUnknown with 6-slot vtable; stubs anchored in array
+    // to prevent GC. Observable: return value (0) packed with stub call count.
+    if (CONFIG.arg_type === 'dsound_secondary_init') {
+        let dsDsCallCount = 0;
+        const _dsDsStubs = [];  // GC anchors for NativeCallback objects
+
+        const VTBL_DS   = Memory.alloc(24);  // 6 vtable slots x 4 bytes
+        const OBJ_DS    = Memory.alloc(4);   // object[0] = vtable ptr
+        const PPUNK_DS  = Memory.alloc(4);   // ppUnk = &OBJ_DS
+
+        // Generic 1-arg stub: return 0, increment counter.
+        const dsStub1 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'mscdecl');
+        // Generic 2-arg stub.
+        const dsStub2 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer'], 'mscdecl');
+        // Generic 4-arg stub (slot 5: this, arg2, arg3, arg4).
+        const dsStub4 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer', 'pointer', 'pointer'], 'mscdecl');
+        // QI stub (slot 0, 3 args): writes null to ppOut output slot; returns 0.
+        const dsDsQiStub = new NativeCallback(function(self, iid, ppOut) {
+            dsDsCallCount++;
+            if (ppOut && !ppOut.isNull()) ppOut.writeU32(0);
+            return 0;
+        }, 'int32', ['pointer', 'pointer', 'pointer'], 'mscdecl');
+        _dsDsStubs.push(dsStub1, dsStub2, dsStub4, dsDsQiStub);
+
+        VTBL_DS.add(0 * 4).writeU32(dsDsQiStub.toInt32()); // slot 0: QI (3 args)
+        VTBL_DS.add(1 * 4).writeU32(dsStub1.toInt32());    // slot 1: AddRef (1 arg: this)
+        VTBL_DS.add(2 * 4).writeU32(dsStub1.toInt32());    // slot 2: Release (1 arg: this)
+        VTBL_DS.add(3 * 4).writeU32(dsStub2.toInt32());    // slot 3: unused
+        VTBL_DS.add(4 * 4).writeU32(dsStub2.toInt32());    // slot 4: unused
+        VTBL_DS.add(5 * 4).writeU32(dsStub4.toInt32());    // slot 5: secondary init (4 args)
+
+        OBJ_DS.writeU32(VTBL_DS.toInt32());
+        PPUNK_DS.writeU32(OBJ_DS.toInt32());
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let origV = null, reimV = null, errO = null, errR = null;
+            OBJ_DS.writeU32(VTBL_DS.toInt32());
+            PPUNK_DS.writeU32(OBJ_DS.toInt32());
+            dsDsCallCount = 0;
+            try {
+                const ret = Orig(PPUNK_DS);
+                const cnt = dsDsCallCount;
+                origV = ((ret >>> 0) & 0xffff) | ((cnt & 0xff) << 16);
+            } catch(e) { errO = e.message; }
+            OBJ_DS.writeU32(VTBL_DS.toInt32());
+            PPUNK_DS.writeU32(OBJ_DS.toInt32());
+            dsDsCallCount = 0;
+            try {
+                const ret = Reimpl(PPUNK_DS);
+                const cnt = dsDsCallCount;
+                reimV = ((ret >>> 0) & 0xffff) | ((cnt & 0xff) << 16);
+            } catch(e) { errR = e.message; }
+            OBJ_DS.writeU32(VTBL_DS.toInt32());
+            PPUNK_DS.writeU32(OBJ_DS.toInt32());
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_pool_free ──────────────────────────────────────────────────────
+    // AudioPoolFree(0x005ae920): fn(pool_ptr, item_addr) → void.
+    // Allocate a node via FUN_005ae800(&DAT_009146c0, tag), then free it.
+    // Success = 1 (no crash), 0 on crash. Both orig and reimpl must return 1.
+    // CONFIG: alloc_rva_str (005ae800), alloc_tag (0x30804), pool_addr_str (009146c0).
+    if (CONFIG.arg_type === 'audio_pool_free') {
+        var poolPtr    = ptr(CONFIG.pool_addr_str);
+        var allocRva   = ptr(CONFIG.alloc_rva_str);
+        var allocTag   = (CONFIG.alloc_tag | 0);
+        var AllocFn    = new NativeFunction(allocRva, 'pointer', ['pointer', 'int32'], 'mscdecl');
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var orig = 0, reim = 0, errO = null, errR = null;
+            var pO = null, pR = null;
+            try { pO = AllocFn(poolPtr, allocTag); } catch(e) { errO = 'alloc_O:' + e.message; }
+            try { pR = AllocFn(poolPtr, allocTag); } catch(e) { errR = 'alloc_R:' + e.message; }
+            try {
+                if (pO && !pO.isNull()) { Orig(poolPtr, pO); orig = 1; }
+            } catch(e) { errO = e.message; }
+            try {
+                if (pR && !pR.isNull()) { Reimpl(poolPtr, pR); reim = 1; }
+            } catch(e) { errR = e.message; }
+            var match = (errO === null && errR === null && orig === reim);
+            results.push({ idx: i, input: i,
+                           original: orig, reimpl: reim, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_list_insert ────────────────────────────────────────────────────
+    // AudioListInsertHead(0x005addd0): fn(head_ptr, payload) → void.
+    // Build a self-referential 12-byte sentinel in fresh memory (isolated from
+    // live game state), call fn(sentinel, payload), read back new head node[2].
+    // Observable = payload at node[+8]; -1 if alloc failed (pool not ready).
+    if (CONFIG.arg_type === 'audio_list_insert') {
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var payload = CONFIG.tests[i] | 0;
+            var origV = null, reimV = null, errO = null, errR = null;
+            var sentO = Memory.alloc(12);
+            sentO.writePointer(sentO); sentO.add(4).writePointer(sentO); sentO.add(8).writeS32(0);
+            var sentR = Memory.alloc(12);
+            sentR.writePointer(sentR); sentR.add(4).writePointer(sentR); sentR.add(8).writeS32(0);
+            try {
+                Orig(sentO, payload);
+                var newHead = sentO.readPointer();
+                origV = (newHead && !newHead.isNull() && !newHead.equals(sentO))
+                      ? newHead.add(8).readS32() : -1;
+            } catch(e) { errO = e.message; }
+            try {
+                Reimpl(sentR, payload);
+                var newHead2 = sentR.readPointer();
+                reimV = (newHead2 && !newHead2.isNull() && !newHead2.equals(sentR))
+                       ? newHead2.add(8).readS32() : -1;
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: payload,
+                           original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_list_remove ────────────────────────────────────────────────────
+    // AudioListRemoveByValue(0x005ade10): fn(sentinel_ptr, payload) → int*.
+    // Build a fresh sentinel, optionally insert a node via the ORIGINAL
+    // FUN_005addd0 (insert_rva_str), then call orig/reimpl to remove.
+    // Observable: 1 if found (non-NULL return), 0 if not found (NULL).
+    if (CONFIG.arg_type === 'audio_list_remove') {
+        var insertRva = ptr(CONFIG.insert_rva_str);
+        var InsertFn = new NativeFunction(insertRva, 'void', ['pointer', 'int32'], 'mscdecl');
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var payload = t.payload | 0;
+            var present = t.present ? true : false;
+            var origV = null, reimV = null, errO = null, errR = null;
+            var sentO = Memory.alloc(12);
+            sentO.writePointer(sentO); sentO.add(4).writePointer(sentO); sentO.add(8).writeS32(0);
+            var sentR = Memory.alloc(12);
+            sentR.writePointer(sentR); sentR.add(4).writePointer(sentR); sentR.add(8).writeS32(0);
+            if (present) {
+                try { InsertFn(sentO, payload); } catch(e) { errO = 'ins_O:' + e.message; }
+                try { InsertFn(sentR, payload); } catch(e) { errR = 'ins_R:' + e.message; }
+            }
+            try {
+                var retO = Orig(sentO, payload);
+                origV = (retO && !retO.isNull()) ? 1 : 0;
+            } catch(e) { errO = e.message; }
+            try {
+                var retR = Reimpl(sentR, payload);
+                reimV = (retR && !retR.isNull()) ? 1 : 0;
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_list_drain ──────────────────────────────────────────────────────
+    // AudioListDrain(0x005ade90): fn(sentinel_ptr) → void.
+    // Build a fresh sentinel, insert N nodes via FUN_005addd0 (original),
+    // call orig/reimpl to drain.
+    // Observable: 1 = sentinel self-loops (empty) after drain, 0 = not empty.
+    if (CONFIG.arg_type === 'audio_list_drain') {
+        var insertRva2 = ptr(CONFIG.insert_rva_str);
+        var InsertFn2 = new NativeFunction(insertRva2, 'void', ['pointer', 'int32'], 'mscdecl');
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var nodeCount = CONFIG.tests[i] | 0;
+            var origV = null, reimV = null, errO = null, errR = null;
+            var sentO2 = Memory.alloc(12);
+            sentO2.writePointer(sentO2); sentO2.add(4).writePointer(sentO2); sentO2.add(8).writeS32(0);
+            var sentR2 = Memory.alloc(12);
+            sentR2.writePointer(sentR2); sentR2.add(4).writePointer(sentR2); sentR2.add(8).writeS32(0);
+            for (var k = 0; k < nodeCount; k++) {
+                if (errO === null) try { InsertFn2(sentO2, k + 1); } catch(e) { errO = 'ins_O:' + e.message; }
+                if (errR === null) try { InsertFn2(sentR2, k + 1); } catch(e) { errR = 'ins_R:' + e.message; }
+            }
+            try {
+                Orig(sentO2);
+                origV = sentO2.readPointer().equals(sentO2) ? 1 : 0;
+            } catch(e) { errO = e.message; }
+            try {
+                Reimpl(sentR2);
+                reimV = sentR2.readPointer().equals(sentR2) ? 1 : 0;
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: nodeCount,
+                           original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── standard scalar / vec3 / read_global / none loop ────────────────────
     try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
@@ -622,8 +914,10 @@ function runDiff() {
                 (typeof reim === 'object' ? reim.toString() : reim) : null;
             // crash_equal_ok: if both sides throw the same error string, count as match.
             const crashEqual = CONFIG.crash_equal_ok && errOrig !== null && errReim !== null && errOrig === errReim;
+            // void_match: for void-return functions (origN===null, reimN===null, no errors), count as match.
+            const voidMatch = (CONFIG.signature.ret === 'void') && errOrig === null && errReim === null && origN === null && reimN === null;
             results.push({ idx: i, input: t, original: origN, reimpl: reimN,
-                           match: crashEqual || (origN !== null && reimN !== null && origN === reimN),
+                           match: crashEqual || voidMatch || (origN !== null && reimN !== null && origN === reimN),
                            err_original: errOrig, err_reimpl: errReim });
         }
     } finally {

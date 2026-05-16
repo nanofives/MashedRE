@@ -39,10 +39,20 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean ch
    - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
    - `scripts/patch_mashed_skip_selector.py` — silent video selector.
    - `scripts/patch_mashed_skip_controller_dialog.py` — silent controller selector.
-2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600 windowed).
+2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600).
 3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
+   Must NOT include `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed
+   (the AcLayers d3d9 hooks deadlock against our proxy at process init).
+4. **d3d9 shim** built and deployed via `mashedmod\build_d3d9_shim.bat`. This proxy
+   intercepts `IDirect3D9::CreateDevice` to force `Windowed=TRUE`+640×480 — without
+   it, MASHED runs fullscreen, and the resolution-mode switch between launches
+   causes monitor flicker. 640×480 matches the lowest fullscreen mode so HUD/
+   sprite assets render without stretching. The build script auto-copies
+   `SysWOW64\d3d9.dll` to `original\d3d9_real.dll` (one-time; loader-dedup
+   workaround).
 
-End state: double-click `MASHED.exe` → main menu in a window, no dialogs, no flicker, no audio, ~5 s boot.
+End state: double-click `MASHED.exe` → main menu in a windowed 800×600 D3D9 backbuffer,
+no dialogs, no monitor mode switch, no flicker, no audio, ~5 s boot.
 
 If the SHA-256 of `MASHED.exe` no longer matches the version anchor *and* `MASHED.exe.unpatched` exists, the patches are already applied — that is expected; do not "fix" it by reverting. The anchor is preserved on `.unpatched`.
 
