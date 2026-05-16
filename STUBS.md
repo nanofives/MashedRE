@@ -1001,3 +1001,10 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3830 | 0x0042b930 FUN_0042b930 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg int return; value compared to 3; not recursed; promote_c2_piz_loader |
 | S-3831 | 0x0042f510 FUN_0042f510 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg undefined4 return; alternate vehicle/object getter; not recursed; promote_c2_piz_loader |
 | S-3832 | 0x00471530 FUN_00471530 | 0x00471df0 FUN_00471df0 | boot | passthrough | 2026-05-16 | depth-2 callee; deferred per session rules; promote_c2_panel_piz_callees |
+| S-3902 | 0x00467110 FUN_00467110 | 0x004921d0 FUN_004921d0 | render | passthrough | 2026-05-16 | viewport-dim setter: (width, height) → void; called once during display init; not recursed; promote_c2_winmain_chain |
+| S-3903 | 0x0042b890 FUN_0042b890 | 0x004921d0 FUN_004921d0 | render | passthrough | 2026-05-16 | screen-width store: (width) → void; pairs with FUN_0042b8a0; not recursed; promote_c2_winmain_chain |
+| S-3904 | 0x0042b8a0 FUN_0042b8a0 | 0x004921d0 FUN_004921d0 | render | passthrough | 2026-05-16 | screen-height store: (height) → void; pairs with FUN_0042b890; not recursed; promote_c2_winmain_chain |
+| S-3905 | 0x004b3eb0 FUN_004b3eb0 | 0x004921d0 FUN_004921d0 | render | passthrough | 2026-05-16 | RW TXD loader: (ptr, len, 0, 0) → TXD*; loads RWTEXDICTIONARY from resource; not recursed; promote_c2_winmain_chain |
+| S-3906 | 0x004935a0 FUN_004935a0 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
+| S-3907 | 0x004935d0 FUN_004935d0 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
+| S-3908 | 0x00513f90 FUN_00513f90 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
