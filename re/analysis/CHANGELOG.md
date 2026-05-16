@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  00427ad0  FUN_00427ad0  deferred  C3 refused: callee gate fails — FUN_004277a0/FUN_00556e90/FUN_005555b0/FUN_00552d70 not in hooks.csv; D-10697; session c3-batch-g-s8
+2026-05-16  004282a0  FUN_004282a0  deferred  C3 refused: FUN_004277a0 not in hooks.csv (1 unknown callee); no Frida arg_type for (uint32,float) render-context fn; D-10698; session c3-batch-g-s8
+2026-05-16  00428320  FUN_00428320  deferred  C3 refused: caller gate fails — FUN_00428a30 C1 FUN_00428bf0 C1; callee gate PASSES; impl in TextMeasure.cpp; D-10699; session c3-batch-g-s8
+2026-05-16  00429a30  FUN_00429a30  deferred  C3 refused: FUN_00430790 C1; U-2095 open; D-10700; session c3-batch-g-s8
