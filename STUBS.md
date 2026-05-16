@@ -972,3 +972,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3771 | 0x004d40c0 FUN_004d40c0 | 0x004cd2d0 FUN_004cd2d0 | render | passthrough | 2026-05-16 | 5-byte getter: returns DAT_007d4710 (current RW pipeline ptr); C1; promote_c2_rw_render_submit |
 | S-3780 | 0x00558180 FUN_00558180 | 0x00558240 FUN_00558240 | render | passthrough | 2026-05-16 | layout/fill-init; called as FUN_00558180(local_1c, &param_2); result used as fill source uVar3; promote_c2_rw_state |
 | S-3781 | 0x00558400 FUN_00558400 | 0x00558240 FUN_00558240 | render | passthrough | 2026-05-16 | fill operation; called as FUN_00558400(uVar3, local_1c, offset, pitch) per block; promote_c2_rw_state |
+| S-3820 | 0x004ac869 FUN_004ac869 | 0x004b302f __stricmp | util | passthrough | 2026-05-16 | unmatched callee inside __stricmp body; CRT internal not resolved by FidDB; depth-2 of promote_c2_txd_loader |
