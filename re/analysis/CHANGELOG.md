@@ -1226,7 +1226,10 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  00552e40  FontCtx_FlushMatrix  refused  C3 refused: caller gate fails (callers 00552890+00552920+005572c0 all C0/untracked); Frida GREEN 10/10 crash_equal_ok log/diff_font_ctx_flush_matrix.csv on file; impl committed; session c3-batch-g-s14
 2026-05-16  00552e40  FontCtx_FlushMatrix  C3 REFUSED  c3-batch-g-s14; Frida 10/10 GREEN crash_equal_ok (access violation 0x14 cam null; both sides identical); caller gate fails: callers 00552890 00552920 005572c0 all C0; promote one caller to C2 first
+2026-05-16  00552b60  FontSys_InitSeq  refused  C3 refused: Frida diff impossible at quiescent main menu (7 alloc/init callees deadlock past 60s, TIMEOUT 2x); impl committed HUD/FontCtx.cpp; duplicate-row drift removed; session c3-batch-g-s14
+2026-05-16  004c5a60  FUN_004c5a60  deferred  C3 deferred: callee gate fails (callees 004d8060+004c7650 both C1); no impl attempted; session c3-batch-g-s14
 2026-05-16  00436810  FUN_00436810  deferred  C3 refused: open U-3410 U-3411 (6-probe loop offset meanings; player-type value 2); D-10700; session c3-batch-g-s6
 2026-05-16  00431d00  FUN_00431d00  deferred  C3 refused: callee FUN_00431b80 blocks (D-8918); D-8919; session c3-batch-g-s10
 2026-05-16  00431b80  FUN_00431b80  deferred  C3 refused: ESI=0 infinite-loop at quiescent main-menu (in_EAX+ESI convention; car-select state required); D-8918; session c3-batch-g-s10
@@ -1260,5 +1263,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-16  00427680  FontText_ComputeScreenXY  deferred  C3 refused c3-batch-g-s13: harness gap (ESI-implicit-output 2-float buffer not supported in diff_template.js) + U-2127 unresolved + depends on live font ctx DAT_0067d838; D-8918
 2026-05-16  00427620  FontText_HudShutdown  deferred  C3 refused: callee gate fails (FUN_00555830 C1 FUN_00556e40 C1 FUN_00556cd0 C1 FUN_00552b90 C1); D-8917; session c3-batch-g-s13
 2026-05-16  00427620  FontText_HudShutdown  deferred  C3 refused c3-batch-g-s13 (prior Sonnet pass): 4/4 callees C1 (FUN_00555830 FUN_00556e40 FUN_00556cd0 FUN_00552b90) — fails C2+ callee gate; teardown-only fn not safely callable at main-menu; D-8917
+2026-05-16  0041c2d0  FUN_0041c2d0  C2->C3  Frida GREEN 10/10 crash_equal_ok log/diff_hud_dispatch_draw4.csv; __declspec(naked) EAX-thiscall impl HUD/HudDispatch.cpp; leaf-exempt (vtable-only callees_depth1=[]); callers 0041a3e0+0041c300 both C3; session c3-batch-g-s14
 2026-05-16  0040e470  CarSlotStateGet  drift-skip  s10 drift-skip per s7 conflict resolution (s7 keeps the C3 landing); Frida GREEN 10/10 evidence preserved at log/diff_car_slot_state_get.csv; session c3-batch-g-s10
 2026-05-16  0040e470  CarSlotStateGet  C2->C3  c3-batch-g-s7; Frontend/RaceResults.cpp; RH_ScopedInstall(CarSlotStateGet,0x0040e470); Frida path1 GREEN 10/10 int_scalar log/diff_car_slot_state_get.csv; path2 inline-JMP PASS 4/4 log/verify_hook_install_car_slot_state_get.txt; leaf-exemption (no callees); callers MenuButtonDetectA/B C3; U-1300 semantic-only blocks=none

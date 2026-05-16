@@ -306,3 +306,56 @@ extern "C" __declspec(dllexport) void __cdecl HudSlotLoopCcc0() {
 }
 
 RH_ScopedInstall(HudSlotLoopCcc0, 0x0041ccc0);
+
+// ---------------------------------------------------------------------------
+// FUN_0041c2d0  --  0x0041c2d0
+//
+// Original: FUN_0041c2d0 (34 bytes, 0x0041c2d0–0x0041c2f2)
+// EAX-thiscall vtable dispatcher. Object pointer arrives in EAX (register
+// convention, not stack). Dispatches vtable[0x48] (18th slot = Draw/Render)
+// unconditionally on four member objects at EAX+0xc, EAX+4, EAX+0, EAX+8.
+// Dispatch order: EAX[3]→EAX[1]→EAX[0]→EAX[2] (offsets 12,4,0,8).
+// No guards. Shared by two game modes: mode-10 (sub_0041a3e0) and mode-5
+// (sub_0041c300), both called only when their respective enable guards are
+// non-zero (DAT_0063c628, DAT_0063cdbc).
+// Verification: crash_equal_ok=True — calling without valid EAX (EAX=0)
+// causes identical null-deref crash on both original and reimpl.
+// ref: re/analysis/promote_c2_hud_ingame/0x0041c2d0.md
+// ---------------------------------------------------------------------------
+
+// 0x0041c2d0
+// EAX-thiscall: object ptr passed in EAX, not on stack.
+// We implement via __declspec(naked) + inline asm to preserve the calling
+// convention exactly: EAX is the object base; vtable[0x48] on EAX[3/1/0/2].
+extern "C" __declspec(dllexport) __declspec(naked)
+void __cdecl FUN_0041c2d0()
+{
+    __asm {
+        // EAX = object ptr (passed by caller in EAX convention)
+        // Dispatch order: EAX[3]=*(EAX+0xc), EAX[1]=*(EAX+4), EAX[0]=*(EAX), EAX[2]=*(EAX+8)
+        // Each: load member ptr, call vtable[0x48](member_ptr)
+        // 0x0041c2d0: *(*(EAX+0xc) + 0x48)(*(EAX+0xc))
+        mov ecx, dword ptr [eax + 0x0c]  // EAX[3]
+        mov edx, dword ptr [ecx]         // vtable ptr of member[3]
+        push ecx                         // arg: member ptr
+        call dword ptr [edx + 0x48]      // vtable[0x48]
+        // 0x0041c2da: *(*(EAX+4) + 0x48)(*(EAX+4))
+        mov ecx, dword ptr [eax + 0x04]  // EAX[1]
+        mov edx, dword ptr [ecx]
+        push ecx
+        call dword ptr [edx + 0x48]
+        // 0x0041c2e2: *(*EAX + 0x48)(*EAX)
+        mov ecx, dword ptr [eax]         // EAX[0]
+        mov edx, dword ptr [ecx]
+        push ecx
+        call dword ptr [edx + 0x48]
+        // 0x0041c2ea: *(*(EAX+8) + 0x48)(*(EAX+8))
+        mov ecx, dword ptr [eax + 0x08]  // EAX[2]
+        mov edx, dword ptr [ecx]
+        push ecx
+        call dword ptr [edx + 0x48]
+        ret
+    }
+}
+
+RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);
