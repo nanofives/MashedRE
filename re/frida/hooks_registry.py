@@ -3676,6 +3676,22 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
+    # Session c3-batch-g-s15 — carry-overs from batch-d/c
+    # MenuButtonDetect.cpp — trivial uint16 screen-dimension getters (C2→C3)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042b8b0  ScreenWidthGet
+    # Returns DAT_0067ea54 as uint16_t in EAX. 6-byte leaf. No callees.
+    # Strategy: arg_type='none' — call 10x at quiescent main menu state; both
+    # orig and reimpl read 0x0067ea54 and return the live screen pixel width.
+    # ret='uint32' (Frida reads full EAX; upper 16 bits zero after MOVZX).
+    # Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8b0.md
+    'screen_width_get': {
+        'rva':            0x0042b8b0,
+        'export':         'ScreenWidthGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+}
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
@@ -3696,6 +3712,18 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
+    # 0x0042b8c0  ScreenHeightGet
+    # Returns DAT_0067ea56 as uint16_t in EAX. 6-byte leaf. No callees.
+    # Strategy: arg_type='none' — call 10x at quiescent main menu state; both
+    # orig and reimpl read 0x0067ea56 and return the live screen pixel height.
+    # ret='uint32' (Frida reads full EAX; upper 16 bits zero after MOVZX).
+    # Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8c0.md
+    'screen_height_get': {
+        'rva':            0x0042b8c0,
+        'export':         'ScreenHeightGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+}
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
@@ -3719,4 +3747,5 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
 }
     },
+}
 }
