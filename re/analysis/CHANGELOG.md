@@ -1187,3 +1187,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041e130  TimerStateSet  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_timer_state_set.csv; U-3716 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
 2026-05-15  00426630  PitchParamSet  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_pitch_param_set.csv; U-3717 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
 2026-05-15  004266f0  PitchParam2Set  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_pitch_param2_set.csv; U-3718 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  004b6520  ZeroFillWrapper  C1->C2  drift-promote: memset wrapper; impl in Util/TimerSlot.cpp; session c3-batch-e-s13
+2026-05-15  0041eda0  SlotBitSet  C2->C3  Frida GREEN 10/10 log/diff_slot_bit_set.csv; leaf; U-3715 U-3716 filed; session c3-batch-e-s13
+2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
+2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
+2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13

@@ -3422,4 +3422,56 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
+    'slot_data_copy': {
+        'rva':            0x0041f000,
+        'export':         'SlotDataCopy',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
+        'arg_type':       'int_out24',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041eda0  SlotBitSet  void(int param_1, int param_2)
+    # target = 0x0063dc74 + param_1 * 0x2ac.
+    # if param_2 != 0: *target |= 0x8; else: *target &= ~0x8.
+    # arg_type='entity_field_set': fn(param_1, param_2), reads back
+    # target_global + param_1 * entity_byte_stride as observable uint32.
+    # Note: bit 3 of the target dword must survive; we read it back via
+    # entity_field_set (which reads CONFIG.target_global + p1*stride).
+    'slot_bit_set': {
+        'rva':            0x0041eda0,
+        'export':         'SlotBitSet',
+        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type':       'entity_field_set',
+        'target_global':  0x0063dc74,
+        'entity_byte_stride': 0x2ac,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0],  [0, 1],  [1, 0],  [1, 1],
+            [2, 0],  [2, 1],  [3, 0],  [3, 1],
+            [0, 0xff], [1, 0],
+        ],
+        'path2_tests': [
+            [0, 0], [0, 1], [1, 0],
+        ],
+    },
+
+    # 0x00420d40  SlotArrayClear  void(void)
+    # 6-iter loop over [0x0063e4c4, 0x0063e554) stride 0x24.
+    # Per iter: memset(ptr-0xc, 0, 8); ptr[-1]=0; *ptr=0; ptr[1]=0; ptr[2]=0.
+    # arg_type='void_write_observe': write sentinel to 0x0063e4c4 (ptr[0]),
+    # call fn, read back — if fn works correctly it will write 0 there.
+    'slot_array_clear': {
+        'rva':            0x00420d40,
+        'export':         'SlotArrayClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063e4c4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
 }
