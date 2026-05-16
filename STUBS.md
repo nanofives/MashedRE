@@ -979,4 +979,25 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3891 | 0x00550390 FUN_00550390 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #2 in teardown sequence; not reversed; promote_c2_launch_handshake |
 | S-3892 | 0x004c2f60 FUN_004c2f60 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #3 in teardown sequence; not reversed; promote_c2_launch_handshake |
 | S-3893 | 0x004c3040 FUN_004c3040 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #4 in teardown sequence; not reversed; promote_c2_launch_handshake |
-| S-3894 | 0x004c3270 FUN_004c3270 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #5 in teardown sequence; not reversed; promote_c2_launch_handshake |
+| S-3894 | 0x004c3270 FUN_004c3270 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #5 in teardown sequence; not reversed; promote_c2_launch_handshake || S-3810 | 0x00402b70 FUN_00402b70 | 0x00495280 FUN_00495280 | boot | passthrough | 2026-05-16 | path builder: takes (char* dst64, src_path) → produces processed path in dst; not recursed; promote_c2_piz_loader |
+| S-3811 | 0x004963e0 FUN_004963e0 | 0x00495280 FUN_00495280 | boot | passthrough | 2026-05-16 | log/print (single string arg); not recursed; promote_c2_piz_loader |
+| S-3812 | 0x00496400 FUN_00496400 | 0x00495280 FUN_00495280 | boot | passthrough | 2026-05-16 | formatted log/print (format + varargs); not recursed; promote_c2_piz_loader |
+| S-3813 | 0x004b6570 FUN_004b6570 | 0x00495280 FUN_00495280 | boot | passthrough | 2026-05-16 | piz file open: (const char* path) → int (0=fail, non-zero=handle/success); not recursed; promote_c2_piz_loader |
+| S-3814 | 0x00494a80 FUN_00494a80 | 0x00495350 sub_00495350 | boot | passthrough | 2026-05-16 | indexed video loader: (int, int index, int) → void; not recursed; promote_c2_piz_loader |
+| S-3815 | 0x00493f80 FUN_00493f80 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | dimension query: (&float, &float) → void; not recursed; promote_c2_piz_loader |
+| S-3816 | 0x00492d20 FUN_00492d20 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | no-arg call, purpose unknown; not recursed; promote_c2_piz_loader |
+| S-3817 | 0x00494480 FUN_00494480 | 0x00495350 sub_00495350 | boot | passthrough | 2026-05-16 | input/button check: (int) → int; not recursed; promote_c2_piz_loader |
+| S-3818 | 0x004c1bb0 FUN_004c1bb0 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | render/state call: (uVar2, &local_44, 1); not recursed; promote_c2_piz_loader |
+| S-3819 | 0x004c1a00 FUN_004c1a00 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | state query: (uVar2) → int; not recursed; promote_c2_piz_loader |
+| S-3821 | 0x004944b0 FUN_004944b0 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | called twice at entry, no args; purpose unknown; not recursed; promote_c2_piz_loader |
+| S-3822 | 0x00494ac0 FUN_00494ac0 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | allocator/ctor-style: (int 0, CHAR** out) → int; creates texture renderer object; not recursed; promote_c2_piz_loader |
+| S-3823 | 0x00493bc0 FUN_00493bc0 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | ANSI-to-wide string converter: (dst, src, len+1, codepage) → wchar_t*; not recursed; promote_c2_piz_loader |
+| S-3824 | 0x00493f00 FUN_00493f00 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | error logger: (format, HRESULT) → void; not recursed; promote_c2_piz_loader |
+| S-3825 | 0x004a1790 FUN_004a1790 | 0x00494c80 FUN_00494c80 | boot | passthrough | 2026-05-16 | called in pairs at exit paths; purpose unknown; not recursed; promote_c2_piz_loader |
+| S-3826 | 0x004b65c0 FUN_004b65c0 | 0x004952f0 FUN_004952f0 | boot | passthrough | 2026-05-16 | piz name getter: (char* dst) → void; writes current piz name into buffer; not recursed; promote_c2_piz_loader |
+| S-3827 | 0x004b6590 thunk_FUN_004b67a0 | 0x004952f0 FUN_004952f0 | boot | passthrough | 2026-05-16 | piz close: no args, acts on implicit global piz handle; not recursed; promote_c2_piz_loader |
+| S-3828 | 0x004ce2d0 FUN_004ce2d0 | 0x004283a0 FUN_004283a0 | boot | passthrough | 2026-05-16 | called with literal address 0x005cc4de; purpose unknown; not recursed; promote_c2_piz_loader |
+| S-3829 | 0x004c5cb0 FUN_004c5cb0 | 0x004283a0 FUN_004283a0 | boot | passthrough | 2026-05-16 | name-to-handle lookup: (const char* name, int 0) → handle; not recursed; promote_c2_piz_loader |
+| S-3830 | 0x0042b930 FUN_0042b930 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg int return; value compared to 3; not recursed; promote_c2_piz_loader |
+| S-3831 | 0x0042f510 FUN_0042f510 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg undefined4 return; alternate vehicle/object getter; not recursed; promote_c2_piz_loader |
+| S-3832 | 0x00471530 FUN_00471530 | 0x00471df0 FUN_00471df0 | boot | passthrough | 2026-05-16 | depth-2 callee; deferred per session rules; promote_c2_panel_piz_callees |
