@@ -2,13 +2,23 @@
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 2026-05-16  0x004c5a60  FUN_004c5a60  C1->C2  ma1-ghidra-s3 refcounted RW release (120b; list 00618138 + vtable[007d3ff8+0x11c] dtor); S-3837 filed; U-3874 filed; bookmark added
+2026-05-16  0x004b6480  FUN_004b6480  C1->C2  88b leaf bit-array clear (REP STOSD/STOSB + sub-byte mask); plate re/analysis/promote_c2_dinput_init/004b6480.md; session=ma1-ghidra-s7
+2026-05-16  0x00499720  FUN_00499720  C1->C2  5b leaf HINSTANCE getter (DAT_007e9580); paired w/ FUN_00499710 HWND getter; plate re/analysis/promote_c2_dinput_init/00499720.md; session=ma1-ghidra-s7
+2026-05-16  0x004987b0  FUN_004987b0  C1->C2  89b debug printf wrapper (vsprintf+OutputDebugStringA, /GS); plate re/analysis/promote_c2_dinput_init/004987b0.md; session=ma1-ghidra-s7
 2026-05-16  0x00498510  FUN_00498510  C1->C2  ma1-ghidra-s3 controller-select dialog setup (664b; 6-region table + entry-table loop + DialogBoxParamA(0x67)); S-3835 filed; U-3870 filed; dup-row at hooks.csv:1923 noted but left alone; bookmark added
+2026-05-16  0x004972b0  FUN_004972b0  C1->C2  88b per-frame joypad axis snapshot + keyboard read; plate re/analysis/promote_c2_dinput_init/004972b0.md; 3 callees (00495790/004957a0/00496100) have d2 notes but lack hooks.csv rows — filed as D-10770..D-10772 tracker-gap follow-ups; session=ma1-ghidra-s7
+2026-05-16  0x004971b0  FUN_004971b0  C1->C2  114b controller config file loader; plate re/analysis/promote_c2_dinput_init/004971b0.md; U-2590 RESOLVED (DAT_005cf010="rb"); U-2587/2588 carried; session=ma1-ghidra-s7
+2026-05-16  0x00497190  FUN_00497190  C1->C2  24b filename formatter "contcfg%d.bin" via FUN_004a2b60; plate re/analysis/promote_c2_dinput_init/00497190.md; session=ma1-ghidra-s7
 2026-05-16  0x00496e40  FUN_00496e40  C1->C2 REFUSED  ma1-ghidra-s3 dual async-worker init: 7/7 internal callees unmapped > 5-threshold; deferred D-10770; bookmark added (REFUSED category)
 2026-05-16  0x004960a0  FUN_004960a0  C1->C2  ma1-ghidra-s3 DInput device init (49b; deadzone=0x10, axis-thresh=0.35f); S-3833 S-3834 filed; U-3872 U-3873 filed; bookmark added
 2026-05-16  0x00496010  FUN_00496010  C1->C2  ma1-ghidra-s3 DInput/joypad shutdown (45b; zero 0x1120b + 4 globals); S-3836 filed; bookmark added
+2026-05-16  0x00495830  FUN_00495830  C1->C2  52b leaf strcpy from joypad_struct[slot] (stride 0x448); plate re/analysis/promote_c2_dinput_init/00495830.md; U-2589 carried; session=ma1-ghidra-s7
 2026-05-16  0x004955b0  FUN_004955b0  C1->C2  ma1-ghidra-s3 thin bool wrapper of FUN_00495530 (11b); U-3871 filed; bookmark added
+2026-05-16  0x004955b0  FUN_004955b0  C1->C2  11b bool predicate wrapping FUN_00495530 (this session's C2); plate re/analysis/promote_c2_dinput_init/004955b0.md; session=ma1-ghidra-s7
+2026-05-16  0x00495530  FUN_00495530  C1->C2  DI8Create wrapper; plate re/analysis/promote_c2_dinput_init/00495530.md; U-0267+U-0268 RESOLVED (DAT_005d0a8c bytes 30 80 79 bf 3a 48 a2 4d aa 99 5d 64 ed 36 97 00 = IID_IDirectInput8A); session=ma1-ghidra-s7
 2026-05-16  0x00493640  FUN_00493640  C1->C2  ma1-ghidra-s3 RW init step (18-call ladder); 171b; all 18 callees C1 in hooks.csv; no new STUBS; bookmark added
 2026-05-16  0x0045b350  FUN_0045b350  C1->C2  ma1-ghidra-s3 bare RET (1 byte 0xC3) confirmed via listing_code_unit_at; 33 callers; leaf; U-0069 RESOLVED; bookmark added
+2026-05-16  ma1-ghidra-s7  ghidra-s7-release  8/8 input C1->C2 promoted (DirectInput init foothold for input subsystem); resolves U-0267,U-0268,U-2590; 3 D-rows filed for tracker gaps; bookmarks deferred (pool6 acquired read-only); session=ma1-ghidra-s7
 2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00498bf0 FUN_00498bf0  C1->C2  5b getter DAT_00773204 (cursor/display gate); ShowCursor(0) caller-gate; analysis=re/analysis/promote_c2_video_display/00498bf0.md
 2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00498bd0 FUN_00498bd0  C1->C2  5b getter DAT_0061602c (render height); sibling of 0x00498bc0; analysis=re/analysis/promote_c2_video_display/00498bd0.md
 2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00467110 FUN_00467110  new->C2  first-analysis; alt-camera-triple init DAT_006905b0/b4/b8; sibling of FUN_0042d560+FUN_0042f660; S-3833 S-3834 filed
