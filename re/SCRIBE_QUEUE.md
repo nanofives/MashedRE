@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-16  promote_c2_save_load_io-20260516-0311  bucket=promote_c2_save_load_io  rvas=0x004b3b70,0x004b3bb0,0x00550910,0x00404ee0,0x00404e80,0x004989b0,0x0040dd60  level=c2  note=ALL 7 DRIFT-SKIP; all already C2 from promote_c2_save_replay-20260513; no new plates/tracker rows; U-0287 U-0288 U-3561 U-3562 still open in UNCERTAINTIES.md; no scribe writes needed
 
 
 
