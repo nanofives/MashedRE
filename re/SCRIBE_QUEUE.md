@@ -13,7 +13,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-15  batch-q-s97  bucket=promote_c2_winmain_init  rvas=0x00493710,0x00492770,0x00499690,0x004926c0,0x00493480,0x00492d20  level=c2  note=6 C1->C2 promotions boot/winmain-init chain; 0x00492d30 DRIFT-SKIP (already C2, duplicate C1 row removed from hooks.csv); Win32 msgpump 0x00499690 promoted on FidDB identification  evidence=re/analysis/rw_engine_init/00493710.md;re/analysis/boot_subsystem_d3/0x00492770.md;re/analysis/window_msgpump/00499690.md;re/analysis/boot_subsystem_d3/0x004926c0.md;re/analysis/boot_subsystem_d3/0x00493480.md;re/analysis/intro_splash/0x00492d20.md
 
 
 
@@ -28,6 +27,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-15  batch-q-s97  bucket=promote_c2_winmain_init  rvas=0x00493710,0x00492770,0x00499690,0x004926c0,0x00493480,0x00492d20  level=c2  note=6 C1->C2 promotions boot/winmain-init chain; 0x00492d30 DRIFT-SKIP (already C2, duplicate C1 row removed from hooks.csv); Win32 msgpump 0x00499690 promoted on FidDB identification  evidence=re/analysis/rw_engine_init/00493710.md;re/analysis/boot_subsystem_d3/0x00492770.md;re/analysis/window_msgpump/00499690.md;re/analysis/boot_subsystem_d3/0x004926c0.md;re/analysis/boot_subsystem_d3/0x00493480.md;re/analysis/intro_splash/0x00492d20.md  drained-by=sweep-20260516-0237; 6 plates, 6 bookmarks, 0 renames
 2026-05-15  batch-q-s16  rvas=0x00474890,0x00429a90,0x0042e8b0,0x00427e00  branch=discovery/batch-q-s16  level=c2  evidence=.worktrees/batch-q-s16/re/analysis/hud_frontend_d3/0x00474890.md;.worktrees/batch-q-s16/re/analysis/frontend_unmapped_a/0x0042e8b0.md;.worktrees/batch-q-s16/re/analysis/hud_frontend/0x00427e00.md  note=3 C1->C2 promotions; 0x00429a90 DRIFT-SKIP (already C3 LapSecsGetBySlot); 0x00427e00 repeat of s4 (same RVA)  drained-by=sweep-20260515-1312; 3 plates, 3 bookmarks, 0 renames
 2026-05-15  batch-q-s15  rvas=0x00473ee0,0x00429a30,0x00429a70,0x00429a80  branch=discovery/batch-q-s15  level=c2  evidence=.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00473ee0.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a30.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a70.md;.worktrees/batch-q-s15/re/analysis/hud_frontend_d3/0x00429a80.md  note=4 C1->C2 promotions hud_frontend_d3 cluster  drained-by=sweep-20260515-1312; 4 plates, 4 bookmarks, 0 renames
 2026-05-15  batch-q-s14  rvas=0x00473c20,0x00429290,0x00429870,0x004298c0  branch=discovery/batch-q-s14  level=c2  evidence=.worktrees/batch-q-s14/re/analysis/hud_frontend_d3/0x00473c20.md;.worktrees/batch-q-s14/re/analysis/title_screen/0x00429290.md;.worktrees/batch-q-s14/re/analysis/hud_frontend_d3/0x00429870.md;.worktrees/batch-q-s14/re/analysis/c0_promotion_frontend_a/0x004298c0.md  note=4 C1->C2 promotions hud_frontend_d3+title_screen+c0_promotion cluster  drained-by=sweep-20260515-1312; 4 plates, 4 bookmarks, 0 renames
