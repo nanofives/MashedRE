@@ -3885,6 +3885,13 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'read_global',
         'target_global':  0x007e9580,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
     # Session c3-batch ma2-frida-s6 — Boot/VideoConfig.cpp
     #   Video config getters + display dim helpers + RW driver-system wrapper.
     #   4 C2 → C3 candidates promoted (2 of the 6 batch candidates deferred:
@@ -3940,7 +3947,6 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'read_global',
         'target_global':  0x00773204,
-}
         'lut_root_delta': 0,
         'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
                            0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
@@ -4001,6 +4007,11 @@ HOOKS = {
         'export':         'RwInitNullStub',
         'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x004c2f00  RwEngineGetCurrentMode
     # fn(void) -> uint32: calls dispatcher cmd 0x0a (driver-system) via
     # FUN_004c2c90 with DAT_007d3ff8+0x10. Returns current video mode index
@@ -4018,7 +4029,6 @@ HOOKS = {
         'export':         'RwEngineGetCurrentMode',
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
-}
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
