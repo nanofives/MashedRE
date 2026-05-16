@@ -3256,4 +3256,58 @@ HOOKS = {
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests': [0, 1, 2],
     },
+    'crt_pre_init': {
+        'rva':            0x004a31f3,
+        'export':         'CrtPreInit',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        # 10 dummy test inputs (arg_type='void' ignores input; we just want 10 calls).
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x004a3258  CrtExitCore
+    # void(uint, int, int): CRT exit core — acquires lock 8, walks atexit list,
+    # runs exit tables, calls ___crtExitProcess or FUN_004a77eb.
+    # HARNESS-LIMITED: calling this will terminate the process (TerminateProcess or
+    # ExitProcess). crash_equal_ok=True: if both original and reimpl crash with the
+    # same Frida error, the test passes as bit-identical behavior.
+    # Strategy: pass exit_code=0x42, skip_atexit=1 (skip atexit walk), use_unlock_path=0
+    # (calls ___crtExitProcess). Both should crash with the same error.
+    # Single int arg via int_scalar; signature matches first param only.
+    'crt_exit_core': {
+        'rva':            0x004a3258,
+        'export':         'CrtExitCore',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'int32', 'int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        # int_scalar passes the single int as first arg; remaining args are 0 (cdecl default).
+        # exit_code variants: all crash the process identically on both paths.
+        'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
+        'path2_tests':    [0x00, 0x01, 0x02],
+    },
+
+    # 0x004a4bb7  WinMainEntry
+    # int(void): PE entry point — full CRT startup sequence.
+    # HARNESS-LIMITED: cannot be safely called from within a running process.
+    # [UNCERTAIN U-0001] pre-GetVersionExA 4-byte write.
+    # [UNCERTAIN U-0002] PE header parse branch result (local_20).
+    # DRIFT-RISK: SEH frame magic bytes and PE header branch prevent 100%
+    # bit-identical diff.
+    # Strategy: call once with no args; both original and reimpl will attempt
+    # re-init (heap double-init, second WinMain call, etc.) and crash the same way.
+    # crash_equal_ok=True handles the crash-match case.
+    'win_main_entry': {
+        'rva':            0x004a4bb7,
+        'export':         'WinMainEntry',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        # 10 dummy calls; arg_type='void' ignores input.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
 }

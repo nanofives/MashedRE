@@ -1177,3 +1177,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  00550bc0  VfsStreamGetType   C2->C3  Frida A/B GREEN 10/10 crash_equal_ok; leaf-fn exemption; log/diff_vfs_stream_get_type.csv; mashedmod/src/mashed_re/Save/VfsStream.cpp; c3-batch-e-s3
 2026-05-15  004a4541  FsopenSafe         C2->C3  Frida A/B GREEN 10/10; log/diff_fsopen_safe.csv; mashedmod/src/mashed_re/Save/FsOpen.cpp; c3-batch-e-s3
 2026-05-15  00550910  VfsStreamClose     DEFERRED(C2)  U-3561/U-3562 inline in body; IAT identities unresolved; c3-batch-e-s3
+2026-05-15  0x004a31f3  CrtPreInit  C2->C3  Frida A/B GREEN 10/10 log/diff_crt_pre_init.csv; fn-ptr table dispatch; atexit; RH_ScopedInstall Boot/CrtStartup.cpp
+2026-05-15  0x004a3258  CrtExitCore  C2->C3  Frida A/B GREEN 10/10 crash_equal_ok log/diff_crt_exit_core.csv; lock+atexit+exit-tables; RH_ScopedInstall Boot/CrtStartup.cpp
