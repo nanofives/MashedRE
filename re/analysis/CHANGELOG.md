@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  00430830  SplitScreenTrackAssignment  C2->C3  SALVAGE c3-batch-g-s9; leaf-exemption (no callees); caller MenuCursorBack 0x004323c0 C3; Frida A/B 10/10 GREEN log/diff_split_screen_track_assignment.csv + path2 4/4 OK log/verify_hook_install_split_screen_track_assignment.txt; impl mashedmod/src/mashed_re/Frontend/MenuScoreSort.cpp from merged c3-batch-b-s4
+2026-05-16  0042fe30  RaceEndFlagIfEndMode  deferred  C3 refused c3-batch-g-s9: caller gate fails — callers 0x0040d270 0x004264d0 both C1; D-10750 filed
+2026-05-16  0042fe50  RaceEndAltFlagIfEndMode  deferred  C3 refused c3-batch-g-s9: caller gate fails — callers 0x004189a0 0x004189c0 both C1; D-10751 filed
+2026-05-16  0042d5a0  FUN_0042d5a0  deferred  C3 refused c3-batch-g-s9: callee gate fails — callee FUN_00427e00 C1; D-10752 filed

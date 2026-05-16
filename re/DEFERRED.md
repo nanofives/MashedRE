@@ -67,3 +67,6 @@
 | D-8914 | 00428400 | FUN_00428400 | boot | called by FUN_00402a40, no args; decompile and classify | boot_app_init_d2-cont1 |
 | D-8915 | 004955c0 | thunk_FUN_00495580 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00495580 and classify | boot_app_init_d2-cont1 |
 | D-8916 | 004963d0 | thunk_FUN_00496370 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00496370 and classify | boot_app_init_d2-cont1 |
+| D-10750 | 0042fe30 | RaceEndFlagIfEndMode | frontend | C3 refused c3-batch-g-s9: caller gate fails — callers 0x0040d270 and 0x004264d0 are both C1; pickup when one caller reaches C2+ | c3-batch-g-s9 |
+| D-10751 | 0042fe50 | RaceEndAltFlagIfEndMode | frontend | C3 refused c3-batch-g-s9: caller gate fails — callers 0x004189a0 and 0x004189c0 are both C1; pickup when one caller reaches C2+ | c3-batch-g-s9 |
+| D-10752 | 0042d5a0 | FUN_0042d5a0 | frontend | C3 refused c3-batch-g-s9: callee gate fails — callee FUN_00427e00 is C1; pickup when callee FUN_00427e00 reaches C2+ | c3-batch-g-s9 |
