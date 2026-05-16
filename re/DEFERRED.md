@@ -67,3 +67,4 @@
 | D-8914 | 00428400 | FUN_00428400 | boot | called by FUN_00402a40, no args; decompile and classify | boot_app_init_d2-cont1 |
 | D-8915 | 004955c0 | thunk_FUN_00495580 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00495580 and classify | boot_app_init_d2-cont1 |
 | D-8916 | 004963d0 | thunk_FUN_00496370 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00496370 and classify | boot_app_init_d2-cont1 |
+| D-8917 | 00427620 | FontText_HudShutdown | hud | C3 refused: callee gate fails — FUN_00555830 C1, FUN_00556e40 C1, FUN_00556cd0 C1, FUN_00552b90 C1; pickup when all four callees reach C2+ | c3-batch-g-s13 |
