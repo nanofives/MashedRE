@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  0042b8b0  ScreenWidthGet  C1->C3  Frida GREEN 10/10 log/diff_screen_width_get.csv; leaf-exemption; no callees; caller FUN_00428450 C2; session c3-batch-g-s15
+2026-05-16  0042b8c0  ScreenHeightGet  C1->C3  Frida GREEN 10/10 log/diff_screen_height_get.csv; leaf-exemption; no callees; caller FUN_00428450 C2; session c3-batch-g-s15
+2026-05-16  00450b10  FUN_00450b10  deferred  C3 refused: 7-arg mixed sig (int + 4 float + uint + UV-ptr) lacks diff_template.js handler; D-10650 (harness_gap_d3); session c3-batch-g-s15
+2026-05-16  004307a0  FUN_004307a0  deferred  C3 refused: callee FUN_004a2c48 C1 (caller-gate fail); D-10651 (harness_gap_d3); session c3-batch-g-s15

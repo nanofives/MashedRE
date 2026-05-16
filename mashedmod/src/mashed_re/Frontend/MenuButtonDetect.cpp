@@ -433,3 +433,39 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotAssign() {
 }
 
 RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);
+
+// ---------------------------------------------------------------------------
+// 0x0042b8b0  ScreenWidthGet
+//
+// Returns DAT_0067ea54 (uint16_t) — current screen pixel width.
+// 6-byte leaf getter. No callees.
+// Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8b0.md
+// ---------------------------------------------------------------------------
+
+// Screen dimension globals (uint16_t each)
+static constexpr std::uintptr_t kScreenWidth  = 0x0067ea54; // uint16_t pixel width
+static constexpr std::uintptr_t kScreenHeight = 0x0067ea56; // uint16_t pixel height
+
+// 0x0042b8b0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenWidthGet() {
+    return static_cast<std::uint32_t>(
+        *reinterpret_cast<std::uint16_t*>(kScreenWidth));
+}
+
+RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);
+
+// ---------------------------------------------------------------------------
+// 0x0042b8c0  ScreenHeightGet
+//
+// Returns DAT_0067ea56 (uint16_t) — current screen pixel height.
+// 6-byte leaf getter. No callees.
+// Analysis: re/analysis/promote_c2_hud_ingame/0x0042b8c0.md
+// ---------------------------------------------------------------------------
+
+// 0x0042b8c0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenHeightGet() {
+    return static_cast<std::uint32_t>(
+        *reinterpret_cast<std::uint16_t*>(kScreenHeight));
+}
+
+RH_ScopedInstall(ScreenHeightGet, 0x0042b8c0);
