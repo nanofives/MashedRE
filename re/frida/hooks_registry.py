@@ -1833,4 +1833,58 @@ HOOKS = {
             [0, 2], [0, 3], [1, 4], [1, 5], [0, 10],
         ],
     },
+
+
+    # Session c3-batch-e-s2 — VfsFileExists + AutosaveTrigger (C2->C3)
+    # Save/GameSaveVFS.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00550b00  VfsFileExists
+    # ~186 bytes. int(char*). VFS file-exists router.
+    # Branch A (DAT_007dc75c != 0): colon-scan → linked-list lookup → vtable[0x13](obj, filename).
+    # Branch B (DAT_007dc75c == 0): if DAT_007dc768==NULL → return 0; else call (*cb)(6) → 0.
+    # At quiescent main-menu state: DAT_007dc75c is likely 0 (VFS not active) → Branch B.
+    # Branch B never dereferences param_1, so passing 0 or any pointer is safe at menu.
+    # arg_type='int_scalar': passes filename pointer VA as int32 (ASLR disabled; fixed VAs).
+    # At menu: both orig and reimpl → Branch B → return 0 (bit-identical).
+    # Test vectors: 10x calls with 0 (null ptr); safe because Branch B never deref param_1.
+    'vfs_file_exists': {
+        'rva':            0x00550b00,
+        'export':         'VfsFileExists',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # At quiescent main-menu state: DAT_007dc75c != 0 (VFS active; confirmed by
+        # first diff attempt which showed Branch A is taken).
+        # Use known game string VAs (no ':' in content):
+        #   0x005cda7c: "Button"  (confirmed valid from SpriteLookupTableA tests)
+        #   0x005cc414: "SemiC"   (confirmed valid from SpriteLookupTableA tests)
+        # scan_fn scans for ':'; finds none → default obj dispatch → vtable[0x13].
+        # Both orig and reimpl call same vtable fn on same obj → bit-identical return.
+        # arg_type='int_scalar': passes the VA directly (ASLR disabled; fixed VAs).
+        'path1_tests': [
+            0x005cda7c, 0x005cc414, 0x005cda7c, 0x005cc414, 0x005cda7c,
+            0x005cc414, 0x005cda7c, 0x005cc414, 0x005cda7c, 0x005cc414,
+        ],
+        'path2_tests': [
+            0x005cda7c, 0x005cc414, 0x005cda7c,
+        ],
+    },
+
+    # 0x004099a0  AutosaveTrigger
+    # ~54 bytes. void(void). Sets 3 globals + wprintf when autosave context set.
+    # Guard: if DAT_008a95ac == 0 → return immediately (no side effects).
+    # At quiescent main-menu state: DAT_008a95ac == 0 → guard fires → both return void/0.
+    # arg_type='none': called 5x; both paths return void/0 at quiescent state.
+    # Globals observed side-channel: DAT_008a9584, DAT_008a9594, DAT_008a95b0 unchanged.
+    'autosave_trigger': {
+        'rva':            0x004099a0,
+        'export':         'AutosaveTrigger',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        # 5 calls at quiescent menu; DAT_008a95ac==0 → early return; both return 0.
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
 }
