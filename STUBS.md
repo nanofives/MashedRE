@@ -973,3 +973,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3780 | 0x00558180 FUN_00558180 | 0x00558240 FUN_00558240 | render | passthrough | 2026-05-16 | layout/fill-init; called as FUN_00558180(local_1c, &param_2); result used as fill source uVar3; promote_c2_rw_state |
 | S-3781 | 0x00558400 FUN_00558400 | 0x00558240 FUN_00558240 | render | passthrough | 2026-05-16 | fill operation; called as FUN_00558400(uVar3, local_1c, offset, pitch) per block; promote_c2_rw_state |
 | S-3820 | 0x004ac869 FUN_004ac869 | 0x004b302f __stricmp | util | passthrough | 2026-05-16 | unmatched callee inside __stricmp body; CRT internal not resolved by FidDB; depth-2 of promote_c2_txd_loader |
+| S-3900 | 0x00496ec0 FUN_00496ec0 | 0x00497060 FUN_00497060 | render | passthrough | 2026-05-16 | initialises 13-entry local_80 array; passed to FUN_00497000 for projection matrix; promote_c2_input_lua |
+| S-3901 | 0x004ed6ba thunk_FUN_004ed6ad | 0x00497060 FUN_00497060 | render | passthrough | 2026-05-16 | thunk to FUN_004ed6ad; matrix operation on two 64-byte local buffers; promote_c2_input_lua |

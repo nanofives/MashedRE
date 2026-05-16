@@ -38,10 +38,10 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00492270,sub_00492270,boot,C1,mapped,re/analysis/boot_app_init/00492270.md,,,depth-2 of FUN_00492370; FUN_00493710(0) gate; calls FUN_004921d0 + FUN_00428590; returns 0 or 1
 00492290,sub_00492290,boot,C1,mapped,re/analysis/boot_app_init/00492290.md,,,depth-2 of FUN_00492370; while(DAT_00828300==0 AND FUN_00499690()==0) loop; 6 calls per iteration; returns 1
 004924f0,sub_004924f0,boot,C1,mapped,re/analysis/boot_app_init/004924f0.md,,,depth-2 of FUN_00492370; zero-fills 0xdce9 DWORDs at DAT_007f0f60; nested data-array init loops; U-0009
-00493540,thunk_FUN_00495150,boot,C1,mapped,re/analysis/boot_app_init/00493540.md,,,4-byte thunk JMP→0x00495150; target: FUN_00499710x2→FUN_004960a0/004963b0; switch on DAT_007719e8; FUN_00498510; returns bool
-00493550,thunk_FUN_004938c0,boot,C1,mapped,re/analysis/boot_app_init/00493550.md,,,4-byte thunk JMP→0x004938c0; target: FUN_00558470/00550390/004c2f60/004c3040/004c3270; void
-00493560,thunk_FUN_004954f0,boot,C1,mapped,re/analysis/boot_app_init/00493560.md,,,4-byte thunk JMP→0x004954f0; target: FUN_00498bf0 gate ShowCursor(1); FUN_00498b60+thunks+FUN_00496010; returns 0
-00493900,sub_00493900,boot,C1,mapped,re/analysis/boot_app_init/00493900.md,,,depth-2 of FUN_00492370; tokenizes cmd-line on 0x20; sets globals DAT_006147bc/c0 DAT_007719e0/e4/e8 via -vs/-cs/-l args; S-0001 S-0002
+00493540,thunk_FUN_00495150,boot,C2,mapped,re/analysis/promote_c2_launch_handshake/00493540.md,,,4-byte thunk JMP to 0x00495150; reads DAT_007719e8 (lang) + DAT_006147c0 (cs); switch 1to2..5to1; returns (DAT_007719e4==0)
+00493550,thunk_FUN_004938c0,boot,C2,mapped,re/analysis/promote_c2_launch_handshake/00493550.md,,,4-byte thunk JMP to 0x004938c0; 5 sequential void calls; void; target also has plate in rw_engine_teardown
+00493560,thunk_FUN_004954f0,boot,C2,mapped,re/analysis/promote_c2_launch_handshake/00493560.md,,,4-byte thunk JMP to 0x004954f0; FUN_00498bf0 gate ShowCursor(1); FUN_00498b60+thunks+FUN_00496010; returns 0
+00493900,sub_00493900,boot,C2,mapped,re/analysis/promote_c2_launch_handshake/00493900.md,,,tokenizes cmd-line on 0x20; -vs0/1 sets DAT_006147bc+007719e0; -cs0/1 sets DAT_006147c0+007719e4; -l0..-l5 sets DAT_007719e8; returns 1
 004963e0,sub_004963e0,render,C2,mapped,re/analysis/rw_engine_init/004963e0.md,promote_c2_save_replay-20260513,2026-05-13,log writer; if DAT_00772fbc (FILE*) non-null calls _fputs; also boot context: re/analysis/boot_app_init/004963e0.md
 004996f0,sub_004996f0,boot,C1,mapped,re/analysis/boot_app_init/004996f0.md,,,depth-2 of FUN_00492370; ShowWindow+UpdateWindow on DAT_007e9584 (HWND); void
 00499ba0,sub_00499ba0,boot,C1,mapped,re/analysis/boot_app_init/00499ba0.md,,,"depth-2 of FUN_00492370; CoInitialize+RegisterClassA(""MASHED"")+CreateWindowExA→DAT_007e9584; S-0003"
@@ -56,7 +56,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004aa44f,___sbh_heap_init,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aa44f.md,,,"library match VS2003; HeapAlloc(008aa69c,0,0x140); inits 6 SBH globals 008aa680-008aa694; writes param_1 to 008aa68c"
 004ab8d6,FUN_004ab8d6,boot,C1,mapped,re/analysis/boot_crt_exit/0x004ab8d6.md,,,table scan 00616890 for param_1; stderr path or MessageBoxA(0x12010) path; stack-cookie 00616038; SEH/chkstk wrapped
 004aba4d,__FF_MSGBANNER,boot,C1,mapped,re/analysis/boot_crt_exit/0x004aba4d.md,,,library match VS2003; stderr-mode check (007739f0+006160c8); calls FUN_004ab8d6(0xfc) + fn-ptr 00773c38 + FUN_004ab8d6(0xff)
-004938c0,sub_004938c0,render,C1,unmapped,re/analysis/rw_engine_teardown/0x004938c0.md,,,RW_TEAR_FN; SoftwareTidyUpBeforeExiting; 5 sequential void calls; called by FUN_00492370+thunk_00493550; U-0087
+004938c0,sub_004938c0,render,C2,mapped,re/analysis/promote_c2_launch_handshake/004938c0.md,,,5 sequential void calls: FUN_00558470/00550390/004c2f60/004c3040/004c3270; void; target of thunk_00493550; S-3890..S-3894
 00558470,sub_00558470,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00558470.md,,,callee-1 of FUN_004938c0; 2x vtable-ptr-dispatch via DAT_007d3ff8+0x10c; zeros DAT_007dc8b8/bc/ac; U-0088
 00550390,sub_00550390,render,C1,unmapped,re/analysis/rw_engine_teardown/0x00550390.md,,,callee-2 of FUN_004938c0; linked-list traversal+vtable calls+DeleteCriticalSection(009124e0); S-0080; U-0089
 004c2f60,FUN_004c2f60,render,C2,mapped,re/analysis/render_promote_c2_rw_plugin/0x004c2f60.md,,,engine-stop: dispatcher cmds 0x12+0x03 (driver-system @+0x10) + FUN_004d8060(&DAT_00617fe0); state field +0x124:=2 on cmd-3 success; sole caller FUN_004938c0; S-0081 S-0005; U-0090
@@ -1915,7 +1915,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004c4a50,FUN_004c4a50,render,C1,new,re/analysis/fun_00426810_callees/0x004c4a50.md,fun_00426810_callees-20260513,,,Rodrigues rotation builder: (matrix,axis,1-cos,sin,mode); mode 0=replace 1=preconcat 2=postconcat; orthonormal flag 0x20000; error str 0061811c; caller FUN_004c4d20; depth-1-fill of fun_00426810_callees
 004982a0,FUN_004982a0,input,C2,new,re/analysis/promote_c2_video_cfg/004982a0.md,,,ControllerPlayerDialog: DialogBoxParamA(id=0x68) confirmed at 004982a0; backup/restore 0x200b slot config; confirm→FUN_00497230; DAT_007730b0=slot; U-3010
 00498510,FUN_00498510,input,C1,new,re/analysis/settings_config_d2_cont1/00498510.md,,,ControllerDialogInit: builds 6-ptr key table 00773098-ac; LoadStringA base+0x82a/+0x834; enumerates joypad slots via FUN_00495790/FUN_00495830; optional DialogBoxParamA(id=0x67); U-3011
-00498bc0,FUN_00498bc0,render,C1,new,re/analysis/settings_config_d2_cont1/00498bc0.md,,,5b getter: returns DAT_00616028 (render width); caller FUN_004921d0
+00498bc0,FUN_00498bc0,render,C2,mapped,re/analysis/promote_c2_launch_handshake/00498bc0.md,,,5b getter: returns DAT_00616028 (render width); no callees
 00498bd0,FUN_00498bd0,render,C1,new,re/analysis/settings_config_d2_cont1/00498bd0.md,,,5b getter: returns DAT_0061602c (render height); caller FUN_004921d0
 00498be0,FUN_00498be0,render,C1,new,re/analysis/settings_config_d2_cont1/00498be0.md,,,5b getter: returns DAT_00773414 (render bit depth); caller FUN_004921d0
 00499730,FUN_00499730,boot,C1,new,re/analysis/settings_config_d2_cont1/00499730.md,,,5b ptr-getter: returns &DAT_00773818; sole caller FUN_00493900 boot cmd-line parser; U-3012
