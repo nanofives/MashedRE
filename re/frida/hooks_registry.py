@@ -3832,6 +3832,12 @@ HOOKS = {
         'rva':            0x00499690,
         'export':         'WindowMsgPump',
         'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # Session c3-batch-ma2-frida-s4 — boot teardown + COM release
     # Boot/Teardown.cpp — HardwareExitApplication helpers (FUN_00402a40 callees)
     # 5 of 6 candidates REFUSED: 0x00494bc0 (live COM Release destroys D3D
@@ -3851,6 +3857,12 @@ HOOKS = {
         'rva':            0x00494ef0,
         'export':         'ThunkVideoStateGet',
         'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # Session ma2-frida-s7 — DirectInput init chain (C2→C3, 6 candidates)
     # Input/DirectInput.cpp
     # First C3 promotions for the input subsystem.
@@ -3932,11 +3944,12 @@ HOOKS = {
         'rva':            0x0045b350,
         'export':         'RwInitNullStub',
         'signature':      {'ret': 'void', 'args': []},
-}
         'arg_type':       'none',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
+    },
+
     # Session ma2-frida-s5 — Boot/FrameDispatch  (C2→C3, 5 candidates)
     # FrameDispatch.cpp — direct callees of per-frame tick FUN_00492e90.
     # ─────────────────────────────────────────────────────────────────────
@@ -4109,6 +4122,6 @@ HOOKS = {
             [0x10000,  0xDEADBEEF],
             [0x40000000, 0x11223344],
         ],
-}
     },
 }
+
