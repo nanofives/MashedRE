@@ -3856,5 +3856,99 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
+    # Session ma2-frida-s5 — Boot/FrameDispatch  (C2→C3, 5 candidates)
+    # FrameDispatch.cpp — direct callees of per-frame tick FUN_00492e90.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042b8d0  StatePhaseIsIdle
+    # int(void) — `return DAT_0067eca4 == 0;` (13-byte pure-leaf predicate).
+    # arg_type='read_global': write sentinel to 0x0067eca4 before each call;
+    # both orig and reimpl observe identical state-phase value → identical
+    # int return (0 or 1). 10 sentinels exercise both branches (==0 and !=0).
+    'state_phase_is_idle': {
+        'rva':            0x0042b8d0,
+        'export':         'StatePhaseIsIdle',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067eca4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x00000004, 0x00000005, 0x0000000F, 0x80000000,
+                           0xDEADBEEF, 0xFFFFFFFF],
+        'path2_tests':    [0x00000000, 0x00000005, 0xDEADBEEF],
+    },
+
+    # 0x0042b8f0  StatePhaseIsFinal
+    # int(void) — `return DAT_0067eca4 == 5;` (14-byte pure-leaf predicate).
+    # arg_type='read_global': write sentinel to 0x0067eca4 before each call;
+    # both orig and reimpl observe identical state-phase value → identical
+    # int return (0 or 1). 10 sentinels exercise both branches (==5 and !=5).
+    'state_phase_is_final': {
+        'rva':            0x0042b8f0,
+        'export':         'StatePhaseIsFinal',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067eca4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000005, 0x00000000, 0x00000001, 0x00000002,
+                           0x00000003, 0x00000004, 0x00000006, 0x80000005,
+                           0xDEADBEEF, 0xFFFFFFFF],
+        'path2_tests':    [0x00000005, 0x00000000, 0xDEADBEEF],
+    },
+
+    # 0x0042f510  Vehicle0HandleGet
+    # uint32(void) — `return DAT_0067f190;` (5-byte pure-leaf getter).
+    # arg_type='read_global': write sentinel to 0x0067f190; both sides
+    # return the sentinel verbatim.
+    'vehicle0_handle_get': {
+        'rva':            0x0042f510,
+        'export':         'Vehicle0HandleGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067f190,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00498bf0  DisplayActiveFlagGet
+    # uint32(void) — `return DAT_00773204;` (5-byte pure-leaf getter).
+    # Caller FUN_004951f0 checks: if non-zero, calls ShowCursor(0).
+    # arg_type='read_global': write sentinel to 0x00773204; both sides
+    # return the sentinel verbatim.
+    'display_active_flag_get': {
+        'rva':            0x00498bf0,
+        'export':         'DisplayActiveFlagGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00773204,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x004c19f0  RwVtableSlot07Call
+    # void(int param_1) — `(**(code **)(param_1 + 0x1c))();` indirect vtable.
+    # Ghidra can't recover the jumptable (10 bytes, indirect call).
+    # arg_type='int_scalar' + crash_equal_ok=True: passing a non-mappable
+    # int (e.g. 0, 1, fake ptrs) causes both orig and reimpl to dereference
+    # [scalar+0x1c] then call through — both SIGSEGV identically when the
+    # memory at that address is unmapped.
+    'rw_vtable_slot07_call': {
+        'rva':            0x004c19f0,
+        'export':         'RwVtableSlot07Call',
+        'signature':      {'ret': 'void', 'args': ['int']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x00000004, 0x00000005, 0x00000006, 0x00000007,
+                           0xDEADBEEF, 0xCAFEBABE],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+}
     },
 }
