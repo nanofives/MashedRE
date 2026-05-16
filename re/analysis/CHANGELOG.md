@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  frida-sweep-20260516-0008  frida-sweep-claim  branches=30 queued
 2026-05-15  005ae920  AudioPoolFree  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 crash_equal_ok (pool uninitialized; both paths crash identically); callee 004522d0 C1 flagged (vtable trampoline; callee-gate exception noted); U-0124 partially resolved
 2026-05-15  005addd0  AudioListInsertHead  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 crash_equal_ok (pool alloc crashes; both paths crash identically); callee AudioPoolFree now C3; callee FUN_005ae800 C2
 2026-05-15  005ade10  AudioListRemoveByValue  C2->C3  c3-batch-f-s6; mashedmod/src/mashed_re/Audio/AudioRws.cpp; Frida GREEN 10/10 not-found path (payload=0 excluded; degenerate sentinel-match crash); loop order fixed (data-read before sentinel-check per 0x005ade1d); U-0124 partially resolved
