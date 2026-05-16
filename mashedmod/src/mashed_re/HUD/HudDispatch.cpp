@@ -217,3 +217,92 @@ LAB_0040e0db:
 }
 
 RH_ScopedInstall(HudIngameDispatch, 0x0040dfc0);
+
+// ---------------------------------------------------------------------------
+// 0x0041b630  HudSlotLoopB630
+//
+// Called from HudIngameDispatch on the DAT_0063ba8c ∈ {5,6} path when
+// FUN_0042f500() returns 0, or on the default/goto path with FUN_0042f500()==0.
+//
+// Iterates 4 entries of the array at 0x0063c8d0 with stride 0x74 (116 bytes).
+// Per entry: reads int32_t at offset +0x6c; if non-zero → calls FUN_0041b340.
+// Loop condition: (int32_t)puVar1 < 0x63caa0  (pointer-as-int32 comparison).
+//
+// FUN_0041b340 is __thiscall-via-EAX: the original loop emits
+//   0x0041b63d  MOV EAX, ESI         ; this = current entry pointer
+//   0x0041b63f  CALL 0x0041b340
+// so the callee reads the per-entry pointer from EAX. We replicate the
+// MOV EAX,<entry> with inline asm before each call. Without it the callee
+// reads garbage EAX → crash in production (the synthetic main-menu diff
+// would still pass because the +0x6c flags are 0 at the menu and the
+// callee branch is never taken — see precedent in GameModeCarSelect.cpp
+// for the asm thunk pattern used here).
+//
+// Struct accesses:
+//   Base 0x0063c8d0 + n*0x74, offset +0x6c: int32_t enable flag.
+// ---------------------------------------------------------------------------
+
+// 0x0041b630
+extern "C" __declspec(dllexport) void __cdecl HudSlotLoopB630() {
+    std::uint8_t* puVar1 = reinterpret_cast<std::uint8_t*>(0x0063c8d0u);
+    constexpr std::uintptr_t kCallee0041b340 = 0x0041b340u;
+    do {
+        if (*reinterpret_cast<const std::int32_t*>(puVar1 + 0x6c) != 0) {
+            // Replicate 0x0041b63d..0x0041b643: MOV EAX, ESI ; CALL 0x0041b340
+            const std::uintptr_t fn_addr = kCallee0041b340;
+            std::uint8_t* entry = puVar1;
+            __asm {
+                mov eax, entry
+                mov ecx, fn_addr
+                call ecx
+            }
+        }
+        puVar1 += 0x74;
+    } while (reinterpret_cast<std::int32_t>(puVar1) < static_cast<std::int32_t>(0x0063caa0u));
+}
+
+RH_ScopedInstall(HudSlotLoopB630, 0x0041b630);
+
+// ---------------------------------------------------------------------------
+// 0x0041ccc0  HudSlotLoopCcc0
+//
+// Called from HudIngameDispatch on the DAT_0063ba8c == 7 path for
+// default/fallthrough/case 6/case 10 sub-modes when FUN_0042f500() returns 0
+// or (sub-mode 6/10 and DAT_007f0fd0 == 2).
+//
+// Iterates 4 entries of the array at 0x0063ce20 with stride 0x114 (276 bytes).
+// Per entry: reads int32_t at offset +0x110; if non-zero → calls FUN_0041c9a0.
+// Loop condition: (int32_t)puVar1 < 0x63d270  (pointer-as-int32 comparison).
+//
+// FUN_0041c9a0 is __thiscall-via-EAX (same convention as FUN_0041b340 in
+// HudSlotLoopB630); the original loop emits
+//   0x0041ccd0  MOV EAX, ESI         ; this = current entry pointer
+//   0x0041ccd2  CALL 0x0041c9a0
+// We replicate the EAX setup with inline asm; see HudSlotLoopB630 for the
+// rationale on why a plain C call would crash in production despite passing
+// the synthetic main-menu diff.
+//
+// Struct accesses:
+//   Base 0x0063ce20 + n*0x114, offset +0x110: int32_t enable flag.
+// ---------------------------------------------------------------------------
+
+// 0x0041ccc0
+extern "C" __declspec(dllexport) void __cdecl HudSlotLoopCcc0() {
+    std::uint8_t* puVar1 = reinterpret_cast<std::uint8_t*>(0x0063ce20u);
+    constexpr std::uintptr_t kCallee0041c9a0 = 0x0041c9a0u;
+    do {
+        if (*reinterpret_cast<const std::int32_t*>(puVar1 + 0x110) != 0) {
+            // Replicate 0x0041ccd0..0x0041ccd6: MOV EAX, ESI ; CALL 0x0041c9a0
+            const std::uintptr_t fn_addr = kCallee0041c9a0;
+            std::uint8_t* entry = puVar1;
+            __asm {
+                mov eax, entry
+                mov ecx, fn_addr
+                call ecx
+            }
+        }
+        puVar1 += 0x114;
+    } while (reinterpret_cast<std::int32_t>(puVar1) < static_cast<std::int32_t>(0x0063d270u));
+}
+
+RH_ScopedInstall(HudSlotLoopCcc0, 0x0041ccc0);
