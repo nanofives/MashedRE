@@ -1,0 +1,593 @@
+================================================================================
+C3 BATCH G — Frontend menu cluster (64 RVAs)
+           Standalone-exe critical path: FUN_0043c5b0 callees + HUD-ingame +
+           Font system + menu state machine + game-mode + carry-overs
+================================================================================
+Generated: 2026-05-15
+Batch id:  c3-batch-g
+Branches:  c3/batch-g-s1 .. c3/batch-g-s16
+Total:     64 C2 -> C3 promotions
+Shape:     K=4 per session x 16 sessions
+
+PASTE THIS ENTIRE FILE INTO A SINGLE CLAUDE CODE SESSION AT THE REPO ROOT
+(C:\Users\maria\Desktop\Proyectos\Mashed). That session runs the pre-flight,
+then launches 16 sub-agents IN ONE MESSAGE via the Agent tool. Each agent works
+in its own git worktree, promotes its 4 RVAs from C2 to C3 (Frida bit-identity
+diff), commits to its branch, and returns a one-line QUEUE-ROW summary. The
+driver collects rows and appends them to re/PROMOTION_QUEUE.md.
+
+PREREQUISITE: batch_q `ghidra-sweep` should have landed first. Several
+sessions depend on caller-gate satisfied by batch_q raising boot + frame-
+dispatch + frontend-draw callees to C2. If batch_q has NOT been swept,
+sessions marked [BATCH-Q DEPENDENT] in their candidate notes may need to
+STOP-AND-ASK on the first refused caller-gate.
+
+NOTE ON BUILD.BAT: Frontend/*.cpp paths are already wired from c3-batch-a..e
+work. HUD/*.cpp (FontCtx.cpp, HudDispatch.cpp) likewise. Agents that author
+into NEW .cpp files (e.g. MenuChrome.cpp, MenuStateMachine.cpp) MUST append
+the new path to mashedmod\build.bat. Agents must NOT re-add existing .cpp
+files that are already present.
+
+NOTE ON HARNESS GAPS: Several candidates (s15/s16 especially) depend on
+re/frida/diff_template.js + verify_hook_install_template.js extensions that
+are filed as D-10601..D-10637 in re/DEFERRED.md (void_out_ptr, read_global,
+dict/void-2arg callFn, none arg_type, key-send capability). Sessions
+allowed to refuse with explicit D-row note if harness gap is the blocker.
+
+================================================================================
+ORCHESTRATOR INSTRUCTIONS (read before doing anything)
+================================================================================
+
+You are the orchestrator for c3-batch-g. You do NOT author hooks yourself. You:
+  1. Run the pre-flight (below) yourself.
+  2. Launch 16 sub-agents IN ONE MESSAGE via 16 Agent tool calls.
+  3. Collect their QUEUE-ROW lines, append to re/PROMOTION_QUEUE.md.
+
+Agent tool settings for every sub-agent call:
+    subagent_type:     "general-purpose"
+    model:             "sonnet"
+    run_in_background: false
+    description:       "c3-batch-g-s<N>"
+    prompt:            <the corresponding AGENT N block below, verbatim>
+
+# PRE-FLIGHT (orchestrator runs these YOURSELF, do not delegate)
+  1. Confirm working directory: C:\Users\maria\Desktop\Proyectos\Mashed
+  2. git status                       -- working tree clean (no in-progress merges)
+  3. powershell -Command "Get-FileHash original\MASHED.exe -Algorithm SHA256"
+     -- must match BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+        OR original\MASHED.exe.unpatched must exist (patches applied -- also fine)
+  4. git fetch
+  5. git log --oneline -5             -- confirm on latest commit
+  6. Verify re/PROMOTION_QUEUE.md exists and contains a "## Queued" section
+  7. Verify batch_q sweep has landed (look for s97..s112 rows in
+     re/SCRIBE_QUEUE.md under "## Drained"). If batch_q is still queued,
+     WARN the user before proceeding — several sessions will hit caller-gate
+     refusals; the batch is still useful but yield will be lower.
+  8. STOP-AND-ASK if any pre-flight check fails. Do not proceed silently.
+
+# LAUNCH
+Send ONE message with 16 Agent tool calls (Agents 1..16, in that order).
+The Agent tool API will run them concurrently.
+
+# POST-RUN (after all 16 agents return)
+  1. For each agent's return text, find the line starting "QUEUE-ROW:" and
+     strip that prefix.
+  2. Append the 16 lines, in s1..s16 order, under "## Queued" in
+     re/PROMOTION_QUEUE.md (just before the closing fence).
+  3. Aggregate the agents' GREEN/RED counts and print:
+       "c3-batch-g complete: X/16 sessions GREEN, Y/64 RVAs at C3,
+        Z RVAs refused/deferred, evidence in log/diff_*.csv"
+  4. If ANY agent FAILED outright (returned an error rather than QUEUE-ROW),
+     do NOT append any rows. Report the failure verbatim and stop. The user
+     will inspect.
+  5. Do NOT run frida-sweep -- that is the user's call once they confirm the
+     batch landed cleanly.
+
+================================================================================
+AGENT PROMPTS (one Agent tool call per block, verbatim)
+================================================================================
+
+--------------------------------------------------------------------------------
+AGENT 1 -- c3-batch-g-s1 (4 RVAs, menu chrome + BG-logo cluster)
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-g-s1
+for the Mashed RE project. Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) -- hard cap 8 RVAs (this session: 4)
+Worktree: .worktrees/c3-batch-g-s1/  (branch c3/batch-g-s1)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared (no pre-allocation needed)
+
+# MISSION
+Promote 4 frontend-draw direct callees to C3. These are anchors of
+FUN_0043c5b0 (3,301-byte menu draw) chrome/background rendering — the
+dim setter, the fullscreen Im2D quad, the menu chrome band drawer, and
+the BG/logo animator. All four are C2 with mechanical-decomp analysis
+notes. Stay inside your worktree. Do not touch main.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                       | Size  | Sig                          | Notes                                                              |
+|---|------------|--------------|-----------------------------------------------------|-------|------------------------------|--------------------------------------------------------------------|
+| 1 | 0x0042aad0 | FUN_0042aad0 | re/analysis/frontend_promote_menus_a/0x0042aad0.md | ~14b  | uint32(uint32)               | dim-setter: writes 0x30 to in_EAX+3; sets DAT_008990e4=1; U-0452/3 |
+| 2 | 0x0042aae0 | FUN_0042aae0 | re/analysis/frontend_promote_menus_a/0x0042aae0.md | ~250b | void(int)                    | RwIm2D fullscreen quad; buf 0x0067ec30; dims DAT_0067ea54/56       |
+| 3 | 0x0042e3a0 | FUN_0042e3a0 | re/analysis/promote_c2_frontend_menus/0x0042e3a0.md | ~180b | void()                       | menu chrome: Im2D bands + credits scroll + amber ticks DAT_0067f17c>9 |
+| 4 | 0x0042e5b0 | FUN_0042e5b0 | re/analysis/promote_c2_frontend_menus/0x0042e5b0.md | ~220b | void(int)                    | BG/logo animator: 512-frame cycle; 2-sprite cross-fade FUN_0042e590 (C4) |
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-g-s1" -b "c3/batch-g-s1"
+  cd ".worktrees\c3-batch-g-s1"
+
+# PRE-FLIGHT (inside the worktree)
+  1. Anchor: powershell -Command "Get-FileHash original\MASHED.exe -Algorithm SHA256"
+     Must match BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+     OR confirm original\MASHED.exe.unpatched exists.
+  2. Baseline build: cmd /c mashedmod\build.bat > log\build_baseline_s1.txt 2>&1
+     Must succeed before authoring any hook. STOP-AND-ASK if it fails.
+
+# CALLER GATE
+For each candidate, check callees in hooks.csv:
+  - 0x0042aad0: pure leaf (no callees) -- no gate
+  - 0x0042aae0: callee vtable at DAT_007d3ff8+0x20 -- C2-vtable-cite OK
+  - 0x0042e3a0: callees FUN_00427e00 (C2 after batch_q s103) [BATCH-Q DEPENDENT]
+  - 0x0042e5b0: callee FUN_0042e590 (SpriteAnimFrameThunk C4) -- gate OK
+If 0x00427e00 still C1: STOP-AND-ASK; the batch_q sweep was prerequisite.
+
+# PER-FUNCTION WORKFLOW
+For each candidate:
+  1. Read the analysis note end-to-end. Confirm callees_depth1 all C2+ and
+     no inline [UNCERTAIN] markers in the body.
+  2. Author the reimpl:
+     File: mashedmod/src/mashed_re/Frontend/MenuChrome.cpp (create; new file)
+     Style: copy from mashedmod/src/mashed_re/Frontend/SpriteDispatch.cpp.
+  3. Wire build: append "%SRC%\Frontend\MenuChrome.cpp" ^ to mashedmod\build.bat.
+  4. Append hooks_registry.py entries with >=10 test vectors per hook.
+     For 0042aad0: scalar input domain {0, MAX, sign bit, alt bits, 10 random}.
+     For 0042aae0: int variants {0..5} + sentinels; observe writes to 0067ec30 buffer.
+     For 0042e3a0/e5b0: read_global sentinel pattern (observe DAT_0067eca4/eca8 reads).
+  5. Build: cmd /c mashedmod\build.bat > log\build_<rva>.txt 2>&1.
+
+# BATCH VERIFICATION
+  1. py -3.12 re/frida/run_diff_parallel.py MenuDimSet MenuIm2DQuad MenuChromeBands MenuBgLogoAnim
+  2. All must be GREEN (or crash_equal_ok for non-quiescent state hooks).
+  3. cat log/diff_<hook>.csv per hook.
+
+# PROMOTION TRANSACTION
+Invoke re-classify skill ONCE for all successfully verified hooks.
+
+# COMMIT (this worktree only)
+  git add -A
+  git commit -m "c3: frontend menu chrome+BG c3-batch-g-s1 -- 4 hooks"
+
+# RETURN
+Emit EXACTLY one line at the end:
+  QUEUE-ROW: 2026-05-15  c3-batch-g-s1  rvas=0x0042aad0,0x0042aae0,0x0042e3a0,0x0042e5b0  branch=c3/batch-g-s1  evidence=log/diff_MenuDimSet.csv;log/diff_MenuIm2DQuad.csv;log/diff_MenuChromeBands.csv;log/diff_MenuBgLogoAnim.csv  note=4 frontend menu chrome+BG-logo C2->C3
+
+# STOP-AND-ASK if anchor mismatch / baseline build fails / >2 drift-promotes needed / inline [UNCERTAIN] / 2 fix attempts fail.
+
+--------------------------------------------------------------------------------
+AGENT 2 -- c3-batch-g-s2 (4 RVAs, button detectors + car-select cluster)
+--------------------------------------------------------------------------------
+
+Follow the same pattern as AGENT 1. Specific candidates and branch below.
+
+Worktree: .worktrees/c3-batch-g-s2/  (branch c3/batch-g-s2)
+Mission: button detectors (sibling of C4 0x0042b310/aff0/b180/b770) + car-select
+         confirm. Already-C4 menu_button_detect_a/b/c/e proved the pattern;
+         these are the remaining C2 siblings.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                       | Size | Sig            | Notes                                                                  |
+|---|------------|--------------|-----------------------------------------------------|------|----------------|------------------------------------------------------------------------|
+| 1 | 0x0042b540 | FUN_0042b540 | re/analysis/frontend_promote_menus_a/0x0042b540.md | ~60b | int(uint32)    | btn1 detector: byte[+1]/0x7f1045+processed; same screen check as b310 |
+| 2 | 0x0042b9e0 | FUN_0042b9e0 | re/analysis/frontend_promote_menus_a/0x0042b9e0.md | ~180b | int()         | car-select confirm/assigner; returns 0x1000 on success                |
+| 3 | 0x0042b960 | FUN_0042b960 | re/analysis/frontend_promote_menus_a/0x0042b960.md | ~50b | int()          | CarSlotAssign / 1P car-slot init sibling                              |
+| 4 | 0x0042bcb0 | FUN_0042bcb0 | re/analysis/c0_promotion_frontend_a/0x0042bcb0.md  | ~130b| void(int,float,float,int,int) | 5-param sprite draw; FUN_004c5c00 (C2) + FUN_004b5750 (C1) |
+
+Worktree setup: git worktree add ".worktrees/c3-batch-g-s2" -b "c3/batch-g-s2"
+
+File: mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp (already exists from c3-batch-a-s3).
+Append btn1 detector (0x0042b540) to that file; new car-select goes to
+mashedmod/src/mashed_re/Frontend/CarSelect.cpp (create if absent; wire in build.bat).
+Sprite draw (0x0042bcb0) goes to existing SpriteDispatch.cpp.
+
+Callee gate:
+  - 0x0042b540: same gate as siblings (C4) -- OK
+  - 0x0042b9e0: FUN_00429a30 (C2 after batch_q s107/108?) ; FUN_00417740 (C2 batch-q-s11 already)
+  - 0x0042b960: similar gate, callees in vehicle/frontend C2
+  - 0x0042bcb0: FUN_004c5c00 (C2 already from batch-q-s3); FUN_004b5750 (C1 -- DRIFT-PROMOTE inline if simple)
+
+Suggested names: MenuBtn1Detect, CarSelectConfirm, CarSlotAssign, MenuSpriteDraw5Param.
+
+Test vectors (>=10 per hook): button-detect scalar inputs; sprite-draw 5-tuple
+  (slot in {0..3}, x/y in screen range, screen_id in {0..0x20}, flags 0/1).
+
+Batch verify: py -3.12 re/frida/run_diff_parallel.py MenuBtn1Detect CarSelectConfirm CarSlotAssign MenuSpriteDraw5Param
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s2  rvas=0x0042b540,0x0042b9e0,0x0042b960,0x0042bcb0  branch=c3/batch-g-s2  evidence=log/diff_MenuBtn1Detect.csv;log/diff_CarSelectConfirm.csv;log/diff_CarSlotAssign.csv;log/diff_MenuSpriteDraw5Param.csv  note=4 frontend button-detect+car-select+sprite C2->C3
+
+--------------------------------------------------------------------------------
+AGENT 3 -- c3-batch-g-s3 (4 RVAs, sprite-draw + HUD helpers)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s3/  (branch c3/batch-g-s3)
+Mission: sprite-draw and HUD-frontend helpers used pervasively by both
+         frontend menus and HUD-ingame paused-menu overlay.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig                  | Notes                                  |
+|---|------------|--------------|------------------------------------------------|------|----------------------|----------------------------------------|
+| 1 | 0x0042d290 | FUN_0042d290 | re/analysis/promote_c2_frontend_menus/0x0042d290.md | ~80b | void(int,int)   | HUD/frontend sprite helper; callee FUN_004a2b60 C1 -- caller gate dep |
+| 2 | 0x0042d300 | FUN_0042d300 | re/analysis/c0_promotion_frontend_a/0x0042d300.md | ~120b| void(out_ptr,...) | multi-output-ptr; harness ext needed (D-row if blocked) |
+| 3 | 0x0042f8d0 | FUN_0042f8d0 | re/analysis/promote_c2_frontend_menus/0x0042f8d0.md | ~70b | uint32()      | frontend helper; callee FUN_00472c60 C1 (-> C2 after batch_q s105) |
+| 4 | 0x0042f0c0 | FUN_0042f0c0 | re/analysis/promote_c2_frontend_menus/0x0042f0c0.md | ~60b | uint32(int)   | frontend helper                        |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s3" -b "c3/batch-g-s3"
+
+File: mashedmod/src/mashed_re/Frontend/FrontendHelpers.cpp (create new).
+Wire build: append "%SRC%\Frontend\FrontendHelpers.cpp" ^.
+
+Callee gate: 0042d290 BLOCKED if FUN_004a2b60 still C1 (file D-row + refuse).
+             0042d300 BLOCKED if void_out_ptr arg_type still unsupported (file D-row + refuse).
+
+Test vectors (>=10): scalar args + sentinel writes for read_global pattern.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s3  rvas=0x0042d290,0x0042d300,0x0042f8d0,0x0042f0c0  branch=c3/batch-g-s3  evidence=...  note=N/4 frontend helpers C2->C3; <list refused>
+
+--------------------------------------------------------------------------------
+AGENT 4 -- c3-batch-g-s4 (4 RVAs, frontend helpers set 1)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s4/  (branch c3/batch-g-s4)
+Mission: remaining frontend helpers in 0x0042fxxx range.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig          | Notes                                  |
+|---|------------|--------------|------------------------------------------------|------|--------------|----------------------------------------|
+| 1 | 0x0042fb70 | FUN_0042fb70 | re/analysis/c0_promotion_frontend_a/0x0042fb70.md | ~250b | void()    | 7-callee dispatcher; was c3-batch-d-s6 refused |
+| 2 | 0x0042fe90 | FUN_0042fe90 | re/analysis/c0_promotion_frontend_a/0x0042fe90.md | ~220b | void()    | 7-callee dispatcher; was c3-batch-d-s6 refused |
+| 3 | 0x0042a940 | FUN_0042a940 | re/analysis/frontend_promote_menus_a/0x0042a940.md | ~70b | int()       | frontend leaf helper                   |
+| 4 | 0x00439210 | FUN_00439210 | re/analysis/frontend_unmapped_a/0x00439210.md   | ~80b | void(int)   | frontend state helper                  |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s4" -b "c3/batch-g-s4"
+
+File: existing FrontendHelpers.cpp from s3 (the orchestrator must serialise
+s3 and s4 if they touch the same file -- or use distinct cluster files).
+RECOMMEND: s4 authors into mashedmod/src/mashed_re/Frontend/FrontendDispatch.cpp.
+
+Callee gate: 0042fb70/fe90 callees -- both blocked in c3-batch-d-s6 due to
+7-C1 callees each. After batch_q sweep, these should be C2 -- verify and
+proceed. If still C1: refuse 1-2 candidates, file D-rows, promote the rest.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s4  rvas=...  branch=c3/batch-g-s4  evidence=...  note=N/4 frontend dispatchers C2->C3
+
+--------------------------------------------------------------------------------
+AGENT 5 -- c3-batch-g-s5 (4 RVAs, menu state machine, set 1)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s5/  (branch c3/batch-g-s5)
+Mission: menu state-machine helpers in 0x0042axxx range (frontend_promote_menus_a
+         siblings of already-C3 functions).
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig         | Notes                                       |
+|---|------------|--------------|------------------------------------------------|------|-------------|---------------------------------------------|
+| 1 | 0x0042ac00 | FUN_0042ac00 | re/analysis/frontend_promote_menus_a/0x0042ac00.md | ~70b | int()    | menu state helper; runtime cannot reach menu state previously (per c3-batch-a-s2) |
+| 2 | 0x0042ac50 | FUN_0042ac50 | re/analysis/frontend_promote_menus_a/0x0042ac50.md | ~50b | int()    | menu state helper; EAX ABI refused in c3-batch-a-s2 -- re-check |
+| 3 | 0x0042ae10 | FUN_0042ae10 | re/analysis/frontend_promote_menus_a/0x0042ae10.md | ~80b | void()    | menu state helper                           |
+| 4 | 0x0042aeb0 | FUN_0042aeb0 | re/analysis/frontend_promote_menus_a/0x0042aeb0.md | ~60b | void()    | menu state helper                           |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s5" -b "c3/batch-g-s5"
+
+File: mashedmod/src/mashed_re/Frontend/MenuStateMachine.cpp (new).
+Wire build accordingly.
+
+NOTE on EAX ABI (0042ac50): if signature is __fastcall with EAX-in,
+this is a harness gap (D-10637 family). Refuse with D-row + harness-fix note.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s5  rvas=...  branch=c3/batch-g-s5  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 6 -- c3-batch-g-s6 (4 RVAs, menu state machine, set 2)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s6/  (branch c3/batch-g-s6)
+Mission: more menu state-machine + paused-menu helpers.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig       | Notes                                       |
+|---|------------|--------------|------------------------------------------------|------|-----------|---------------------------------------------|
+| 1 | 0x0042af50 | FUN_0042af50 | re/analysis/frontend_promote_menus_a/0x0042af50.md | ~50b | void() | no caller at C2+ in c3-batch-a-s1 (-> may be lifted by batch_q) |
+| 2 | 0x0042ed70 | FUN_0042ed70 | re/analysis/c0_promotion_frontend_a/0x0042ed70.md | ~90b | int()   | callee FUN_00427ff0 C1 (c3-batch-b-s6 refused) |
+| 3 | 0x0042ee40 | FUN_0042ee40 | re/analysis/c0_promotion_frontend_a/0x0042ee40.md | ~100b| int()   | caller-gate refused in c3-batch-d-s2 -- batch_q dep |
+| 4 | 0x00436810 | FUN_00436810 | re/analysis/frontend_unmapped_a/0x00436810.md   | ~110b| int()   | U-3410/U-3411 open (c3-batch-c-s3 deferred); resolve inline if simple |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s6" -b "c3/batch-g-s6"
+
+File: existing MenuStateMachine.cpp from s5, or new MenuPaused.cpp.
+Orchestrator must ensure s5 and s6 do NOT share files (parallel worktree
+commits with same path produce merge conflicts during frida-sweep).
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s6  rvas=...  branch=c3/batch-g-s6  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 7 -- c3-batch-g-s7 (4 RVAs, race-results / score helpers, set 1)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s7/  (branch c3/batch-g-s7)
+Mission: race_results + score-display helpers (0x0040bxxx + 0x0040exxx).
+         These are the lap-time / placement getters that feed the results
+         screen. Were previously refused in c4-batch-a-s5 because results
+         screen wasn't displayed during main_menu_idle scenario.
+
+# CANDIDATES
+| # | RVA        | Ghidra name      | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|------------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x0040b460 | FUN_0040b460     | re/analysis/hud_frontend_d3/0x0040b460.md     | ~50b | int(int)     | refused c3-batch-b-s4 (callee 0x00417740 was C0; now C2 via batch-q-s11) |
+| 2 | 0x0040e3a0 | FUN_0040e3a0     | re/analysis/hud_frontend_d3/0x0040e3a0.md     | ~70b | int()        | C2 today; impl-only C2 (unsupported sig — re-check after harness fix) |
+| 3 | 0x0040e480 | FUN_0040e480     | re/analysis/c0_promotion_frontend_a/0x0040e480.md | ~40b | int()    | leaf-cleanup target                          |
+| 4 | 0x0040e470 | FUN_0040e470     | re/analysis/race_results/0040e470.md          | ~30b | int()        | drift-promoted to C2 in c3-batch-a — finish C3 |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s7" -b "c3/batch-g-s7"
+
+File: mashedmod/src/mashed_re/Frontend/RaceResults.cpp (new).
+
+Test vectors: scalar int domain {0, MAX, sign bit, alt bits, 10 random} +
+read_global sentinels.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s7  rvas=0x0040b460,0x0040e3a0,0x0040e480,0x0040e470  branch=c3/batch-g-s7  evidence=...  note=4 race_results C2->C3
+
+--------------------------------------------------------------------------------
+AGENT 8 -- c3-batch-g-s8 (4 RVAs, race-results / score helpers, set 2)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s8/  (branch c3/batch-g-s8)
+Mission: race-results sprite/sort helpers (sprite-table + score-sort path).
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|--------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x00427ad0 | FUN_00427ad0 | re/analysis/hud_frontend_d3/0x00427ad0.md     | ~120b| void(int)    | sprite-table helper (4/6 callees not in hooks.csv -- batch-q-s10 lifted them) |
+| 2 | 0x00428320 | FUN_00428320 | re/analysis/hud_frontend_d3/0x00428320.md     | ~80b | int()        | sprite/font dispatcher; caller-gate refused c3-batch-b-s5 (callers C1) |
+| 3 | 0x00429a30 | FUN_00429a30 | re/analysis/hud_frontend_d3/0x00429a30.md     | ~90b | int()        | callee 0x00430790 C1+U-3470 (c3-batch-b-s4 refused; batch_q may clear) |
+| 4 | 0x004282a0 | FUN_004282a0 | re/analysis/hud_frontend_d3/0x004282a0.md     | ~110b| int()        | callee 0x004277a0 missing in c3-batch-b-s5; verify post batch_q |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s8" -b "c3/batch-g-s8"
+
+File: mashedmod/src/mashed_re/Frontend/SpriteTable.cpp (new) for 00427ad0/0042820,
+      mashedmod/src/mashed_re/Frontend/RaceResults.cpp continues for 00428320/00429a30.
+If s7 also uses RaceResults.cpp, orchestrator MUST serialise file edits or
+split-file across worktrees.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s8  rvas=...  branch=c3/batch-g-s8  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 9 -- c3-batch-g-s9 (4 RVAs, game-mode helpers, set 1)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s9/  (branch c3/batch-g-s9)
+Mission: game-mode / mode-pick helpers (0x0042dxxx + 0x0042fxxx + 0x0043xxx).
+
+# CANDIDATES
+| # | RVA        | Ghidra name      | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|------------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x0042d5a0 | FUN_0042d5a0     | re/analysis/promote_c2_frontend_menus/0x0042d5a0.md | ~70b | void(int)| game-mode helper                            |
+| 2 | 0x0042fe30 | RaceEndFlagIfEndMode | re/analysis/frontend_promote_menus_b/0x0042fe30.md | ~30b | int() | already C3? drift-check; promote if not |
+| 3 | 0x0042fe50 | RaceEndAltFlagIfEndMode | re/analysis/frontend_promote_menus_b/0x0042fe50.md | ~30b | int() | already C3? drift-check; promote if not |
+| 4 | 0x00430830 | SplitScreenTrackAssignment | re/analysis/frontend_promote_menus_b/0x00430830.md | ~140b | int(int) | already C3 from c3-batch-b-s4? confirm |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s9" -b "c3/batch-g-s9"
+
+File: mashedmod/src/mashed_re/Frontend/GameMode.cpp (new).
+
+DRIFT-CHECK FIRST: read hooks.csv for each RVA. If already C3 in another row,
+skip (count as drift-skip in note). If C2 in current row but C3 elsewhere,
+mark as drift-deepen.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s9  rvas=...  branch=c3/batch-g-s9  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 10 -- c3-batch-g-s10 (4 RVAs, game-mode helpers, set 2)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s10/  (branch c3/batch-g-s10)
+Mission: remaining game-mode helpers + cleanup.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|--------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x00431b80 | FUN_00431b80 | re/analysis/c0_promotion_frontend_a/0x00431b80.md | ~190b| void()  | drift-promoted in c3-batch-a-s6; infinite-loop ESI=0 at quiescent state |
+| 2 | 0x00431d00 | FUN_00431d00 | re/analysis/c0_promotion_frontend_a/0x00431d00.md | ~110b| void()  | skipped in c3-batch-a-s6 (runtime); retry post batch_q              |
+| 3 | 0x00430b30 | FUN_00430b30 | re/analysis/frontend_promote_menus_b/0x00430b30.md | ~80b | int(int) | thiscall in_EAX skipped c3-batch-b-s5 (harness gap) |
+| 4 | 0x0040e470 | FUN_0040e470 | re/analysis/race_results/0040e470.md          | ~30b | int()        | (drift-check w/s7; if s7 promotes, skip here) |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s10" -b "c3/batch-g-s10"
+
+File: continue GameMode.cpp from s9 (if no file collision) or new ChampionshipMode.cpp.
+
+NOTE: 0x00430b30 thiscall in_EAX is a harness gap. Refuse with D-row if not
+extended; do NOT invent an arg_type.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s10  rvas=...  branch=c3/batch-g-s10  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 11 -- c3-batch-g-s11 (4 RVAs, HUD-ingame core dispatch)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s11/  (branch c3/batch-g-s11)
+Mission: HUD-ingame dispatcher core. Anchor: FUN_0040dfc0 (HUD_INGAME_FN,
+C2 — per-frame HUD draw). This session promotes the dispatcher + its
+direct guard callees. Critical for menu-overlay paused-HUD draw path.
+
+# CANDIDATES
+| # | RVA        | Ghidra name      | Analysis note                                  | Size  | Sig         | Notes                                       |
+|---|------------|------------------|------------------------------------------------|-------|-------------|---------------------------------------------|
+| 1 | 0x0040dfc0 | HUD_INGAME_FN    | re/analysis/hud_ingame_promote_c2/0x0040dfc0.md | ~700b | void()   | per-frame HUD draw; 2-way DAT_0063ba8c (5/6 vs 7); refused c3-batch-d-s3 |
+| 2 | 0x00403160 | sub_00403160     | re/analysis/hud_ingame/0x00403160.md           | ~140b | void(int) | HUD-ingame helper                            |
+| 3 | 0x0041b630 | sub_0041b630     | re/analysis/hud_ingame_d3/0x0041b630.md         | ~110b | int()     | refused c3-batch-c-s1 (callee gate budget)   |
+| 4 | 0x0041ccc0 | sub_0041ccc0     | re/analysis/hud_ingame_d3/0x0041ccc0.md         | ~120b | int()     | refused c3-batch-c-s1 (callee gate budget)   |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s11" -b "c3/batch-g-s11"
+
+File: existing mashedmod/src/mashed_re/HUD/HudDispatch.cpp (already exists from c3-batch-c).
+Note: c3-batch-c-s1 author already touched HudDispatch.cpp; this session ADDS to it.
+
+CRITICAL: c4-batch-a-s10 reported that HudDispatch.cpp refactor REMOVED
+HudDispatchMode10/Slot2/Mode5 exports (D-10619..D-10621). Before authoring,
+check whether the working-tree HudDispatch.cpp has the absorbed exports
+or the per-mode exports. Match the existing style.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s11  rvas=0x0040dfc0,0x00403160,0x0041b630,0x0041ccc0  branch=c3/batch-g-s11  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 12 -- c3-batch-g-s12 (4 RVAs, HUD-ingame remainder)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s12/  (branch c3/batch-g-s12)
+Mission: HUD-ingame remaining C2 leaves.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|--------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x0041d870 | sub_0041d870 | re/analysis/hud_ingame_d3/0x0041d870.md       | ~90b | void()    | HUD-ingame helper                            |
+| 2 | 0x0041db80 | sub_0041db80 | re/analysis/hud_ingame_d3/0x0041db80.md       | ~110b| void()    | HUD-ingame helper                            |
+| 3 | 0x0041ded0 | sub_0041ded0 | re/analysis/hud_ingame_d3/0x0041ded0.md       | ~80b | int()        | HUD-ingame helper                            |
+| 4 | 0x0041e850 | sub_0041e850 | re/analysis/hud_ingame_d3/0x0041e850.md       | ~70b | int()        | HUD-ingame helper                            |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s12" -b "c3/batch-g-s12"
+
+File: existing HudDispatch.cpp or new HudIngameHelpers.cpp.
+Orchestrator must serialise file edits with s11 if same file.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s12  rvas=...  branch=c3/batch-g-s12  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 13 -- c3-batch-g-s13 (4 RVAs, FontText / font system)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s13/  (branch c3/batch-g-s13)
+Mission: FontText / font-system helpers. Anchor: existing
+mashedmod/src/mashed_re/HUD/FontCtx.cpp (C3+ from c3-batch-c-s5/s6).
+Promote the FontText callees that FUN_0043c5b0 menu draw uses.
+
+# CANDIDATES
+| # | RVA        | Ghidra name              | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|--------------------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x00427620 | FontText_HudShutdown     | re/analysis/hud_frontend/0x00427620.md         | ~50b | void()    | C2 today                                     |
+| 2 | 0x00427680 | FontText_ComputeScreenXY | re/analysis/hud_frontend/0x00427680.md         | ~80b | void(int,float,float,float*,float*) | C2; U-2127 ESI-implicit in c3-batch-c-s4 |
+| 3 | 0x00427840 | FontText_UTF16WidenCopy  | re/analysis/hud_frontend/0x00427840.md         | ~90b | void(char*,wchar_t*,int) | C2; U-1069 fastcall in c3-batch-c-s4 |
+| 4 | 0x00427ff0 | FontText_DrawTextRotated | re/analysis/hud_frontend/0x00427ff0.md         | ~250b| void(7-args)  | 7-param sig refused in c3-batch-c-s5 |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s13" -b "c3/batch-g-s13"
+
+File: mashedmod/src/mashed_re/HUD/FontText.cpp (new).
+Wire build accordingly.
+
+NOTE: 7-param sig (00427ff0) and fastcall (00427840) are harness gaps —
+refuse with D-row + harness-fix note if not extended. U-2127 (ESI-implicit)
+also a harness gap.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s13  rvas=...  branch=c3/batch-g-s13  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 14 -- c3-batch-g-s14 (4 RVAs, FontText + HUD dispatch follow-up)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s14/  (branch c3/batch-g-s14)
+Mission: remaining FontText / FontSys + the absorbed HudDispatch dispatch.
+
+# CANDIDATES
+| # | RVA        | Ghidra name      | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|------------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x00552b60 | FontSys_InitSeq  | re/analysis/font_sys/0x00552b60.md             | ~120b| void()    | FontSys init sequence                        |
+| 2 | 0x00552e40 | FontSys_FlushMatrix | re/analysis/font_sys/0x00552e40.md          | ~80b | void()    | S-2126 stub; c3-batch-c-s6 EXCLUDED due to camera-null at boot |
+| 3 | 0x004c5a60 | FUN_004c5a60     | re/analysis/boot_app_init/004c5a60.md          | ~60b | void(int) | refcounted-RW-release; drift-deepen + promote |
+| 4 | 0x0041c2d0 | FUN_0041c2d0     | re/analysis/hud_ingame_d3/0x0041c2d0.md         | ~100b| void()    | drift-promote in c3-batch-c-s1 -> finish C3   |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s14" -b "c3/batch-g-s14"
+
+File: existing FontCtx.cpp + HudDispatch.cpp.
+Orchestrator must serialise with s13 and s11/s12.
+
+NOTE: 00552e40 needs camera-non-null state to validate. Use crash_equal_ok
+harness extension (proven in c3-batch-c-s6) — both paths crash identically
+at boot when camera is null.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s14  rvas=...  branch=c3/batch-g-s14  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 15 -- c3-batch-g-s15 (4 RVAs, carry-overs from c3-batch-d/c)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s15/  (branch c3/batch-g-s15)
+Mission: candidates explicitly refused in earlier batches due to caller-gate
+         or inline [UNCERTAIN] — retry post batch_q sweep.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Size | Sig          | Notes                                       |
+|---|------------|--------------|------------------------------------------------|------|--------------|---------------------------------------------|
+| 1 | 0x0042b8b0 | FUN_0042b8b0 | re/analysis/frontend_promote_menus_a/0x0042b8b0.md | ~70b | int()  | drift-promoted C1->C2 in c3-batch-d-s2; promote C3 now |
+| 2 | 0x0042b8c0 | FUN_0042b8c0 | re/analysis/frontend_promote_menus_a/0x0042b8c0.md | ~70b | int()  | drift-promoted C1->C2 in c3-batch-d-s2; promote C3 now |
+| 3 | 0x00450b10 | FUN_00450b10 | re/analysis/frontend_unmapped_a/0x00450b10.md  | ~280b| 7-args     | 7-arg mixed sig refused c3-batch-d-s1 (harness gap); RETRY ONLY IF harness extended |
+| 4 | 0x004307a0 | FUN_004307a0 | re/analysis/c0_promotion_frontend_a/0x004307a0.md | ~150b| int()    | callees 0x004a2c48/0x00429a70/80/90 C1 (c3-batch-a-s5 escalated); batch_q dep |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s15" -b "c3/batch-g-s15"
+
+File: existing Frontend/*.cpp depending on cluster. Author into
+mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp for 0042b8b0/c0.
+
+NOTE: 00450b10 is conditional on harness extension. If the 7-arg sig
+infrastructure isn't in re/frida/diff_template.js by session start, refuse
+with D-10620 note and proceed with the other 3.
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s15  rvas=...  branch=c3/batch-g-s15  evidence=...
+
+--------------------------------------------------------------------------------
+AGENT 16 -- c3-batch-g-s16 (4 RVAs, carry-overs needing Ghidra re-check)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/c3-batch-g-s16/  (branch c3/batch-g-s16)
+Mission: candidates that explicitly need Ghidra-side investigation BEFORE
+         retry. Several were refused in the last frida-sweep for non-harness
+         reasons (formula mismatch, double-patch crash, missing harness ABI).
+         This session checks each precondition; if NOT met, refuses with
+         explicit note.
+
+# CANDIDATES
+| # | RVA        | Ghidra name      | Analysis note                                  | Size | Sig         | Notes                                       |
+|---|------------|------------------|------------------------------------------------|------|-------------|---------------------------------------------|
+| 1 | 0x0040b620 | SlotSortByModeScore | re/analysis/frontend_promote_menus_b/0x0040b620.md | ~120b | void(out_ptr) | c3-batch-b-s2 refused: void_out_ptr unsupported. RETRY ONLY IF harness extended |
+| 2 | 0x0042aa00 | MenuCursorStep   | re/analysis/frontend_promote_menus_a/0x0042aa00.md | ~150b | void(int) | frida-sweep-20260515-0105 RED: validity-addr formula 0x0067ed84+cursor+slot*0x10-0x10 mismatch. RETRY ONLY IF Ghidra re-investigation completed (formula update in plate). |
+| 3 | 0x004c5a60 | FUN_004c5a60     | (drift-check w/s14)                            | ~60b | void(int)  | (s14 promotes this — drift-skip here) |
+| 4 | 0x0042b770 | FUN_0042b770     | re/analysis/frontend_promote_menus_a/0x0042b770.md | ~70b | int()  | ALREADY C4 from c4-batch-a-s8 — drift-skip; included as canary if all 3 above refused |
+
+Worktree: git worktree add ".worktrees/c3-batch-g-s16" -b "c3/batch-g-s16"
+
+File: existing Frontend/*.cpp.
+
+CRITICAL: this session expected to refuse 2-3 of 4 candidates. The note
+should explicitly cite each refusal reason + the precondition that would
+unblock it (harness extension RVA-cite OR Ghidra plate update).
+
+QUEUE-ROW: 2026-05-15  c3-batch-g-s16  rvas=...  branch=c3/batch-g-s16  evidence=...  note=N/4 promoted; <list refused with preconditions>
+
+================================================================================
+EXPECTED YIELD
+================================================================================
+
+Best-case (batch_q swept, harness extensions landed, no Ghidra drift):
+  ~50/64 C3 promotions, ~10 refused with explicit D-rows for harness/Ghidra
+  follow-up, ~4 drift-skipped.
+
+Realistic (batch_q swept, harness gaps still present):
+  ~38/64 C3 promotions, ~20 refused (harness-gap or caller-gate), ~6 drift-
+  skipped. Sessions s3/s5/s10/s13/s15/s16 most at risk for partial yield.
+
+Pessimistic (batch_q NOT swept):
+  ~25/64. Caller-gate refusals dominate. Recommend NOT running this batch
+  in that state — wait for batch_q sweep first.
+
+After this batch: 54 + ~38 = ~92 frontend/HUD C3 hooks. Combined with the
+already-C4 cluster (16), the menu-draw + HUD-ingame surface is ~70%
+coverage by RVA count and ~50% by reachable-from-FUN_0043c5b0 callgraph.
+That's the precondition for the standalone-exe menu-draw scaffolding pass.

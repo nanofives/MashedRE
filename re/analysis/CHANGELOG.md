@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  frida-sweep-20260516-2316  frida-sweep-release  branches=8 merged  integration-diff=GREEN  hooks=19  c3-promotions=19
 2026-05-16  0x004b6480  BitArrayClear  C2->C3  ma2-frida-s7 88b leaf bit-array clear (REP STOSD/STOSB + AND-mask tail); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 14/14 bytes_inplace log/diff_bit_array_clear.csv; leaf-exemption
 2026-05-16  0x00499720  GetInputHinst  C2->C3  ma2-frida-s7 5b leaf HINSTANCE getter; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 read_global log/diff_get_input_hinst.csv; leaf-exemption
 2026-05-16  0x00495830  JoypadStrcpy  C2->C3  ma2-frida-s7 52b leaf bounds-checked strcpy; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 OOB log/diff_joypad_strcpy.csv; leaf-exemption; U-2589 carried (non-blocker)

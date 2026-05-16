@@ -1,0 +1,390 @@
+================================================================================
+MILESTONE A - BATCH 2: boot chain C2->C3 (Opus, Frida-verified)
+              Target: standalone-exe blank-window critical path
+================================================================================
+Generated: 2026-05-16
+Batch id:  ma2-frida
+Branches:  c3/ma2-frida-s1 .. c3/ma2-frida-s8
+Total:     ~48 C2->C3 promotions (8 sessions x 6 candidates)
+Shape:     Opus 4.7; per-session bounded by build+diff cycle time
+
+PREREQUISITE: milestone_a_batch1_ghidra.txt must be DRAINED (ghidra-sweep
+              completed). This batch relies on the C2 floor that batch1 lifts.
+              If batch1 is not yet swept, this batch will hit caller-gate
+              refusals throughout.
+
+PURPOSE — STAND THE BOOT CHAIN UP AT C3 SO exe_main.cpp CAN CALL INTO IT
+
+A C2->C3 promotion is verification-driven:
+  1. Re-read C2 plate; confirm callees all C2+ (caller-gate)
+  2. Author the C++ reimpl in mashedmod/src/mashed_re/<Subsystem>/<File>.cpp
+  3. Add hooks_registry.py entry with >=10 test vectors
+  4. Build mashed_re_dev.asi via mashedmod\build.bat
+  5. Run Frida A/B diff via run_diff.py -- must be GREEN (or crash_equal_ok)
+  6. Flip hooks.csv confidence C2 -> C3 via re-classify skill
+
+PASTE THIS ENTIRE FILE INTO A SINGLE OPUS CLAUDE CODE SESSION AT THE REPO ROOT.
+
+================================================================================
+ORCHESTRATOR INSTRUCTIONS (run as Opus)
+================================================================================
+
+Agent tool settings for EVERY sub-agent call:
+    subagent_type:     "general-purpose"
+    model:             "opus"
+    run_in_background: false
+    description:       "ma2-frida-s<N>"
+    prompt:            <the corresponding AGENT N block below, verbatim>
+
+# PRE-FLIGHT (orchestrator runs these YOURSELF)
+  1. Confirm working directory: C:\Users\maria\Desktop\Proyectos\Mashed
+  2. git status                       -- working tree clean
+  3. Anchor: Get-FileHash original\MASHED.exe.unpatched -Algorithm SHA256
+     Must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+  4. git fetch && git log --oneline -3
+  5. **CONFIRM batch1 swept** -- look for ma1-ghidra-s1..s8 rows in
+     re/SCRIBE_QUEUE.md under "## Drained". If still under "## Queued",
+     WARN the user and pause for confirmation.
+  6. Verify re/PROMOTION_QUEUE.md has a "## Queued" section.
+  7. Baseline build clean on main:
+       cmd /c mashedmod\build.bat > log\ma2_frida_baseline.txt 2>&1
+       cp mashedmod\build\mashed_re_dev.asi original\mashed_re_dev.asi
+  8. bash scripts/frida_pool.sh cleanup
+
+# LAUNCH
+Send ONE message with 8 Agent tool calls (Agents 1..8). They run concurrently.
+
+# POST-RUN
+  1. Strip "QUEUE-ROW:" prefix from each agent's return.
+  2. Append 8 lines, in s1..s8 order, under "## Queued" in re/PROMOTION_QUEUE.md.
+  3. Print summary: "ma2-frida complete: X/8 sessions GREEN, Y/~48 RVAs at C3".
+  4. Do NOT auto-run frida-sweep -- user invokes /frida-sweep after review.
+
+================================================================================
+AGENT PROMPTS (one Agent tool call per block, verbatim)
+================================================================================
+
+--------------------------------------------------------------------------------
+AGENT 1 -- ma2-frida-s1 (6 RVAs, WinMain/entry chain C2->C3)
+--------------------------------------------------------------------------------
+
+You are an Opus 4.7 sub-agent running C2->C3 promotion session ma2-frida-s1
+for the Mashed RE project. Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Worktree: .worktrees/ma2-frida-s1/  (branch c3/ma2-frida-s1)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared (no pre-allocation)
+
+# MISSION
+Promote 6 WinMain entry-chain functions C2->C3. These are the top-level
+orchestrators; once they're C3, exe_main.cpp can call into them as the
+real boot sequence.
+
+# CANDIDATES (verify each is C2+ in hooks.csv before authoring; if still
+# C1, refuse with D-row citing batch1 not landed)
+| # | RVA        | Likely name (rename via re-classify if Ghidra still has FUN_)  | Notes                              |
+|---|------------|-----------------------------------------------------------------|------------------------------------|
+| 1 | 0x00492370 | Boot_AppLifecycle (3-phase init+teardown)                       | top-level orchestrator             |
+| 2 | 0x00492270 | Boot_AppInitGate                                                | FUN_00493710(0) gate, returns 0/1  |
+| 3 | 0x00492290 | Boot_MainLoop                                                   | while(exit==0 AND pump==0)         |
+| 4 | 0x004924f0 | Boot_DataArrayInit                                              | zero-fills 0xdce9 DWORDs           |
+| 5 | 0x00492770 | Boot_MainLoopInit                                               | DAT_00828300=0 etc                 |
+| 6 | 0x004926c0 | Boot_FrameTickQPC                                               | QPC sample + input toggle + 60fps avg |
+
+# WORKTREE
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/ma2-frida-s1" -b "c3/ma2-frida-s1"
+  cd ".worktrees\ma2-frida-s1"
+
+# PRE-FLIGHT
+  1. Anchor: Get-FileHash original\MASHED.exe.unpatched -Algorithm SHA256
+  2. cmd /c mashedmod\build.bat > log\build_baseline_s1.txt 2>&1
+     Must succeed. STOP-AND-ASK if it fails.
+
+# CALLER-GATE / CALLEE-GATE
+For each candidate:
+  - Read existing analysis note + C2 Why-block (added by batch1)
+  - Use mcp__ghidra__function_callees (or grep hooks.csv) to list direct callees
+  - If ANY callee is C1, refuse with D-row "callee 0xXXXX C1; pickup post next batch"
+  - If callers are unknown (no C2+ caller), accept leaf-exemption ONLY if function
+    is genuinely leaf-like; otherwise refuse with caller-gate D-row
+
+# PER-FUNCTION WORKFLOW (for each passing candidate)
+  1. Read analysis note + Why C2 block end-to-end.
+  2. Author reimpl using hook-author skill:
+     - File: mashedmod/src/mashed_re/Boot/AppLifecycle.cpp (create new; wire build.bat)
+     - Style: match existing Boot/CrtStartup.cpp; one function per RVA;
+       inline `// 0x00xxxxxx` above each function; RH_ScopedInstall in InjectHooks()
+  3. Wire build: append "%SRC%\Boot\AppLifecycle.cpp" ^ to mashedmod\build.bat (once)
+  4. Add hooks_registry.py entries with >=10 test vectors per hook.
+     - Most boot functions are no-arg; use read_global sentinel pattern
+     - For hot-path functions (0x00492e90 frame tick equivalent), use
+       crash_equal_ok=True if function depends on game state
+  5. Build: cmd /c mashedmod\build.bat > log\build_<rva>.txt 2>&1
+  6. Copy: cp mashedmod\build\mashed_re_dev.asi original\mashed_re_dev.asi
+  7. py -3.12 re/frida/run_diff.py <hook_name>  -- must be GREEN
+  8. Invoke re-classify skill: confidence C2 -> C3
+
+# REFUSAL CRITERIA
+  - Any callee still C1
+  - Frida diff RED (not crash_equal_ok)
+  - Function semantics require runtime state not present at main-menu
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot AppLifecycle ma2-frida-s1 -- N hooks C2->C3"
+
+# RETURN
+Emit EXACTLY one line:
+  QUEUE-ROW: 2026-05-16  ma2-frida-s1  rvas=<promoted RVAs>  branch=c3/ma2-frida-s1  evidence=<log/diff_*.csv;...>  note=<N>/6 boot lifecycle C2->C3; <refused list with D-rows>
+
+# STOP-AND-ASK if: baseline build fails / >2 attempts to fix one Frida diff fail.
+
+--------------------------------------------------------------------------------
+AGENT 2 -- ma2-frida-s2 (6 RVAs, window + WNDPROC C2->C3)
+--------------------------------------------------------------------------------
+
+Same shape as Agent 1.
+Worktree: .worktrees/ma2-frida-s2/  (branch c3/ma2-frida-s2)
+
+# MISSION
+Window creation + message-pump + WNDPROC dispatch. Once these are C3, exe_main.cpp
+has everything it needs to open the actual Win32 window and drain its messages.
+
+# CANDIDATES
+| # | RVA        | Likely name                                | Notes                                     |
+|---|------------|--------------------------------------------|-------------------------------------------|
+| 1 | 0x00499ba0 | Window_Create (CoInit+RegClass+CreateWindowEx) | top-level window setup                |
+| 2 | 0x004996f0 | Window_Show (ShowWindow + UpdateWindow)    | shows the window                          |
+| 3 | 0x00499cc0 | Window_Destroy (DestroyWindow)             | clean teardown                            |
+| 4 | 0x00499690 | Window_MsgPump (already C2)                | PeekMessageA loop -- DRIFT-CHECK first    |
+| 5 | 0x00499820 | Window_WndProc (switch on uMsg)            | tail-JMP to DefWindowProcA                |
+| 6 | 0x00496490 | Window_WmCreate (opens mashed.log)         | WM_CREATE handler                         |
+
+# FILE
+  mashedmod/src/mashed_re/Boot/Window.cpp (create new; wire build.bat)
+
+# TEST VECTOR NOTES
+  - Window_Create / Window_Show: these mutate live HWND state; use crash_equal_ok
+    with arg_type='none' and trust that calling at quiescent main-menu state is
+    safe (both sides interact with the same DAT_007e9584 HWND)
+  - Window_MsgPump: arg_type='none', read_global sentinel for DAT_00773918
+  - Window_WndProc: needs WNDPROC signature (HWND, UINT, WPARAM, LPARAM);
+    if harness doesn't support it, use intercept_module_function instead
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot Window ma2-frida-s2 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s2  rvas=<promoted>  branch=c3/ma2-frida-s2  evidence=<logs>  note=<N>/6 window+wndproc C2->C3; <refused>
+
+--------------------------------------------------------------------------------
+AGENT 3 -- ma2-frida-s3 (6 RVAs, RW/D3D9 engine init C2->C3)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/ma2-frida-s3/  (branch c3/ma2-frida-s3)
+
+# MISSION
+RenderWare engine init chain + display init. After these are C3, exe_main.cpp
+can spin up the rendering device.
+
+# CANDIDATES
+| # | RVA        | Likely name                            | Notes                                  |
+|---|------------|----------------------------------------|----------------------------------------|
+| 1 | 0x00493710 | RwEngineInitWrap                       | render C2 today; verify in hooks.csv   |
+| 2 | 0x00493600 | RwEngineInitStep                       |                                        |
+| 3 | 0x00493640 | RwEngineInitStep2                      |                                        |
+| 4 | 0x004921d0 | Display_Init (video mode + texdict)    | LARGE; if too big, refuse and split    |
+| 5 | 0x00498510 | D3D9_DeviceHelper                      |                                        |
+| 6 | 0x004955b0 | RW_TeardownHelper                      |                                        |
+
+# FILE
+  mashedmod/src/mashed_re/Boot/RwEngineInit.cpp (create new; wire build.bat)
+
+# TEST VECTOR NOTES
+  - Most RW init functions are called once at boot; calling at quiescent main-menu
+    will hit already-initialized state and may be no-op. Use crash_equal_ok=True
+    and accept "both sides idempotent at quiescent state" as GREEN.
+  - For Display_Init: if it's too large (>500b) and you can't author it cleanly
+    in one session, refuse with D-row "split into sub-functions first".
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot RW+D3D9 init ma2-frida-s3 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s3  rvas=<promoted>  branch=c3/ma2-frida-s3  evidence=<logs>  note=<N>/6 RW+D3D9 init C2->C3; <refused>
+
+--------------------------------------------------------------------------------
+AGENT 4 -- ma2-frida-s4 (6 RVAs, boot teardown + COM release C2->C3)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/ma2-frida-s4/  (branch c3/ma2-frida-s4)
+
+# MISSION
+Boot teardown + COM release. Required for clean exit; called during
+HardwareExitApplication. Easy targets (mostly thunks and small functions).
+
+# CANDIDATES
+| # | RVA        | Likely name                            | Notes                                  |
+|---|------------|----------------------------------------|----------------------------------------|
+| 1 | 0x00494bc0 | Boot_ReleaseAllCom                     | COM Release x6 on 6 objects            |
+| 2 | 0x00494ef0 | thunk -> FUN_00493f70                  | 4B thunk, trivial                      |
+| 3 | 0x00494f20 | thunk -> FUN_00494460                  | 4B thunk, trivial                      |
+| 4 | 0x004955c0 | thunk -> FUN_00495580                  | 4B thunk, trivial                      |
+| 5 | 0x004963d0 | thunk -> FUN_00496370                  | 4B thunk, trivial                      |
+| 6 | 0x00489250 | Boot_PairFree                          | 2x pair-free release                   |
+
+# FILE
+  mashedmod/src/mashed_re/Boot/Teardown.cpp (create new; wire build.bat)
+
+# THUNK NOTE
+For thunks: the reimpl is literally `return TargetFn();` (or void wrapper).
+Test vectors: just call 10x with no args; both sides should produce identical
+return value (or both no-op).
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot teardown+COM ma2-frida-s4 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s4  rvas=<promoted>  branch=c3/ma2-frida-s4  evidence=<logs>  note=<N>/6 teardown C2->C3; <refused>
+
+--------------------------------------------------------------------------------
+AGENT 5 -- ma2-frida-s5 (6 RVAs, frame dispatch + per-frame helpers C2->C3)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/ma2-frida-s5/  (branch c3/ma2-frida-s5)
+
+# MISSION
+Frame dispatch entry + 5 of its direct callees. After this, exe_main.cpp can
+call FrameDispatch() once per iteration of its main loop.
+
+# CANDIDATES
+Pick from C2 functions in re/analysis/physics_collision/ + frame dispatch
+neighborhood. After batch1 ma1-ghidra-s5, several callees of 0x00492e90
+should now be C2 -- pick 5 of them plus 0x00492e90 itself.
+
+| # | RVA        | Likely name                                                | Notes |
+|---|------------|------------------------------------------------------------|-------|
+| 1 | 0x00492e90 | FrameDispatch (game-logic tick)                           | HOT PATH; use crash_equal_ok |
+| 2..6 | (pick 5)  | direct callees of 0x00492e90 now at C2 (post batch1 s5)   | grep hooks.csv: callee RVAs that became C2 in ma1-ghidra-s5 |
+
+# FILE
+  mashedmod/src/mashed_re/Boot/FrameDispatch.cpp (create new; wire build.bat)
+
+# HOT-PATH WARNING
+0x00492e90 is the per-frame tick. Frida Interceptor on hot paths destabilizes
+Mashed (~6s before crash per CLAUDE.md). For its Frida diff:
+  - Use arg_type='none', crash_equal_ok=True
+  - Call ONCE per test, not 10x -- the harness already spawns fresh for each
+  - If multiple-call mode is required, drop test count to 3
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot FrameDispatch ma2-frida-s5 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s5  rvas=<promoted>  branch=c3/ma2-frida-s5  evidence=<logs>  note=<N>/6 frame dispatch C2->C3; <refused>
+
+--------------------------------------------------------------------------------
+AGENT 6 -- ma2-frida-s6 (6 RVAs, video config + display dim C2->C3)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/ma2-frida-s6/  (branch c3/ma2-frida-s6)
+
+# MISSION
+Video config getters + display dim helpers. Mostly leaf getters with simple sigs.
+
+# CANDIDATES (verify each is C2 post batch1 ma1-ghidra-s6)
+| # | RVA        | Notes                                  |
+|---|------------|----------------------------------------|
+| 1 | 0x00498bc0 | Video_DimGetterA                      |
+| 2 | 0x00498bd0 | Video_DimGetterB                      |
+| 3 | 0x00498bf0 | Display_ShowCursorGate                 |
+| 4 | 0x00498b60 | Display_Helper                         |
+| 5 | 0x004c2f00 | Video_ModeLookup                       |
+| 6 | 0x004c2ed0 | Video_ModeInfo                         |
+
+# FILE
+  mashedmod/src/mashed_re/Boot/VideoConfig.cpp (create new; wire build.bat)
+
+# TEST VECTOR NOTES
+Most are leaf getters; arg_type depends on signature:
+  - no-arg: 'none' with read_global sentinel
+  - int-in: 'int_scalar' with domain {0, 1, MAX, sign-bit, alt-bits, 5 random}
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot VideoConfig ma2-frida-s6 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s6  rvas=<promoted>  branch=c3/ma2-frida-s6  evidence=<logs>  note=<N>/6 video+display C2->C3; <refused>
+
+--------------------------------------------------------------------------------
+AGENT 7 -- ma2-frida-s7 (6 RVAs, DirectInput init C2->C3)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/ma2-frida-s7/  (branch c3/ma2-frida-s7)
+
+# MISSION
+DirectInput initialization chain. First C3 promotions for the input subsystem
+(currently 0 at C3+).
+
+# CANDIDATES (verify each is C2 post batch1 ma1-ghidra-s7)
+Pick 6 from the set ma1-ghidra-s7 lifted to C2. Include at minimum:
+  - 0x0045b350 (input init top)
+  - 0x00497230 (input C2 today)
+  - 0x00499720 (input device helper)
+  - 3 more direct callees of those, post-batch1
+
+# FILE
+  mashedmod/src/mashed_re/Input/DirectInput.cpp (create new dir + file; wire build.bat)
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Input DirectInput ma2-frida-s7 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s7  rvas=<promoted>  branch=c3/ma2-frida-s7  evidence=<logs>  note=<N>/6 DirectInput C2->C3; <refused>
+
+--------------------------------------------------------------------------------
+AGENT 8 -- ma2-frida-s8 (6 RVAs, settings/registry + boot misc C2->C3)
+--------------------------------------------------------------------------------
+
+Worktree: .worktrees/ma2-frida-s8/  (branch c3/ma2-frida-s8)
+
+# MISSION
+Settings/registry IO + remaining boot misc. Rounds out the C3 floor for the
+boot subsystem.
+
+# CANDIDATES (verify each is C2 post batch1 ma1-ghidra-s8)
+Pick 6 from the set ma1-ghidra-s8 lifted to C2. Mix of:
+  - Settings load/save (1-2)
+  - Registry IO (1-2)
+  - Boot misc helpers (2-3)
+
+# FILE
+  mashedmod/src/mashed_re/Boot/Settings.cpp (create new; wire build.bat)
+  (or split into Settings.cpp + RegistryIo.cpp if the functions don't share state)
+
+# COMMIT
+  git add -A
+  git commit -m "c3: Boot Settings ma2-frida-s8 -- N hooks C2->C3"
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma2-frida-s8  rvas=<promoted>  branch=c3/ma2-frida-s8  evidence=<logs>  note=<N>/6 settings+misc C2->C3; <refused>
+
+================================================================================
+EXPECTED YIELD
+================================================================================
+
+Best case (batch1 fully drained, no harness gaps): 40/48 C3 promotions.
+Realistic: 25-35/48; some refusals from runtime gates (functions that can't be
+  diffed at quiescent main-menu) and harness gaps (unsupported sigs).
+Pessimistic (batch1 NOT drained): 12-18/48; widespread caller-gate refusals.
+
+POST-BATCH:
+  1. User runs /frida-sweep to merge the 8 branches.
+  2. Once sweep is GREEN-for-promotions, run milestone_a_wire_exe.txt to
+     write the actual exe_main.cpp.

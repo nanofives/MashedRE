@@ -1,0 +1,379 @@
+================================================================================
+MILESTONE A - BATCH 1: boot chain C1->C2 (Opus, Ghidra-side mechanical)
+              Target: standalone-exe blank-window critical path
+================================================================================
+Generated: 2026-05-16
+Batch id:  ma1-ghidra
+Branches:  discovery/ma1-ghidra-s1 .. discovery/ma1-ghidra-s8
+Total:     ~64 C1->C2 promotions (8 sessions x ~8 candidates)
+Shape:     Opus 4.7; each session ~8 RVAs with deep reasoning per RVA
+
+PURPOSE — RAISE C2 FLOOR ON THE BLANK-WINDOW CRITICAL PATH
+
+Standalone target needs WinMain to open a Win32 window, init RenderWare/D3D9,
+drain message pump, exit cleanly. Today most callees on that path are C1. This
+batch lifts boot/window/render-init/frame-dispatch callees to C2 so milestone_a
+batch2 can promote them to C3 with proper caller-gate satisfaction.
+
+A C1->C2 promotion is mechanical:
+  1. Read existing C1 plate + Ghidra decomp
+  2. Assemble a `## Why C2` block citing constants/offsets at exact RVA
+  3. List explicit [UNCERTAIN] tags with U-IDs
+  4. File new stubs (S-IDs) for unmapped callees
+  5. Flip hooks.csv confidence C1->C2
+
+Same per-session shape as batch_q.
+
+PASTE THIS ENTIRE FILE INTO A SINGLE CLAUDE CODE SESSION AT THE REPO ROOT
+(C:\Users\maria\Desktop\Proyectos\Mashed). That session runs the pre-flight,
+then launches 8 sub-agents IN ONE MESSAGE via the Agent tool.
+
+================================================================================
+ORCHESTRATOR INSTRUCTIONS (run as Opus)
+================================================================================
+
+Agent tool settings for EVERY sub-agent call:
+    subagent_type:     "general-purpose"
+    model:             "opus"
+    run_in_background: false
+    description:       "ma1-ghidra-s<N>"
+    prompt:            <the corresponding AGENT N block below, verbatim>
+
+# PRE-FLIGHT (orchestrator runs these YOURSELF, do not delegate)
+  1. Confirm working directory: C:\Users\maria\Desktop\Proyectos\Mashed
+  2. git status                       -- working tree clean (or only known noise)
+  3. Get-FileHash original\MASHED.exe.unpatched -Algorithm SHA256
+     -- must match BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+  4. git fetch && git log --oneline -3
+  5. Verify re/SCRIBE_QUEUE.md exists and has a "## Queued" section
+  6. Verify no other ghidra-sweep is active (.ghidra_master.lock absent)
+
+# LAUNCH
+Send ONE message with 8 Agent tool calls (Agents 1..8). They run concurrently.
+
+# POST-RUN
+  1. Strip "QUEUE-ROW:" prefix from each agent's return.
+  2. Append the 8 lines, in s1..s8 order, under "## Queued" in re/SCRIBE_QUEUE.md.
+  3. Print summary: "ma1-ghidra complete: X/8 sessions GREEN, Y/~64 RVAs at C2".
+  4. Do NOT auto-run ghidra-sweep -- user invokes after review.
+
+================================================================================
+AGENT PROMPTS (one Agent tool call per block, verbatim)
+================================================================================
+
+--------------------------------------------------------------------------------
+AGENT 1 -- ma1-ghidra-s1 (8 RVAs, WinMain/entry top-level chain)
+--------------------------------------------------------------------------------
+
+You are an Opus 4.7 sub-agent running C1->C2 promotion session ma1-ghidra-s1
+for the Mashed RE project. Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Worktree: .worktrees/ma1-ghidra-s1/  (branch discovery/ma1-ghidra-s1)
+Pool slot: Mashed_pool0 (pre-assigned)
+Skills: ghidra-pool, re-classify
+
+# MISSION
+Promote 8 top-level boot RVAs from C1 to C2. These are the WinMain entry-chain
+and its 3-phase dispatcher.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note (read first)                     | Notes                                        |
+|---|------------|--------------|------------------------------------------------|----------------------------------------------|
+| 1 | 0x00492370 | sub_00492370 | re/analysis/entry_callees/00492370.md         | 4-param 3-phase init+teardown sequence       |
+| 2 | 0x00492270 | sub_00492270 | re/analysis/boot_app_init/00492270.md         | FUN_00493710(0) gate; returns 0/1            |
+| 3 | 0x00492290 | sub_00492290 | re/analysis/boot_app_init/00492290.md         | main loop while(exit==0 AND pump==0)         |
+| 4 | 0x004924f0 | sub_004924f0 | re/analysis/boot_app_init/004924f0.md         | zero-fills 0xdce9 DWORDs at DAT_007f0f60     |
+| 5 | 0x004921d0 | FUN_004921d0 | re/analysis/boot_subsystem_d3/0x004921d0.md   | display init (LARGE); video mode + texdict   |
+| 6 | 0x00428590 | FUN_00428590 | re/analysis/boot_subsystem_d3/0x00428590.md   | callee of 0x00492270                         |
+| 7 | 0x00492e90 | FUN_00492e90 | re/analysis/physics_collision/00492e90.md     | per-frame game-logic tick (HOT PATH)         |
+| 8 | 0x00493600 | FUN_00493600 | re/analysis/rw_engine_init/00493600.md        | RW engine init step                          |
+
+# WORKTREE + POOL
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/ma1-ghidra-s1" -b "discovery/ma1-ghidra-s1"
+  cd ".worktrees\ma1-ghidra-s1"
+  pwsh ..\..\scripts\ghidra_pool.ps1 acquire Mashed_pool0
+
+# PRE-FLIGHT
+  Get-FileHash original\MASHED.exe.unpatched -Algorithm SHA256
+  must equal BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+# PER-FUNCTION WORKFLOW
+For each candidate:
+  1. Read analysis note end-to-end.
+  2. mcp__ghidra__decomp_function (or open program 0 if not loaded).
+  3. Append a `## Why C2` block to the analysis note that:
+     - Cites every constant/offset/DAT_xxxxxxxx with exact in-function RVA
+     - Lists each callee with its hooks.csv confidence
+     - Marks unresolved [UNCERTAIN U-NNNN] for unclear data flow
+     - Files new stubs S-NNNN for unmapped callees (append to STUBS.md)
+  4. mcp__ghidra__bookmark_add ("C2 promotion ma1-ghidra-s1")
+  5. Update hooks.csv confidence C1 -> C2 via re-classify skill (or direct edit
+     if re-classify refuses for unrelated reasons).
+
+# REFUSAL CRITERIA (file as deferred, do not force C2)
+  - Body has inline [UNCERTAIN] not resolvable from code alone
+  - >5 callees are stubs/missing (caller-gate-like for C2)
+  - Function is a giant unpatterned dispatcher (>500b)
+  - For each refusal: append a row to re/DEFERRED.md with re-pickup condition
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s1 boot chain C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool0
+
+# RETURN
+Emit EXACTLY one line:
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s1  bucket=promote_c2_winmain_chain  rvas=<promoted RVAs>  level=c2  pool=Mashed_pool0  note=<N>/8 boot-chain C1->C2; <refused list>
+
+# STOP-AND-ASK if: anchor mismatch / pool acquire fails / >3 refusals.
+
+--------------------------------------------------------------------------------
+AGENT 2 -- ma1-ghidra-s2 (8 RVAs, window create/show/destroy + WNDPROC)
+--------------------------------------------------------------------------------
+
+Same shape as Agent 1. Pool slot Mashed_pool1.
+Worktree: .worktrees/ma1-ghidra-s2/  (branch discovery/ma1-ghidra-s2)
+
+# MISSION
+Window-management chain: create/show/destroy + WNDPROC + message handlers.
+Load-bearing for opening the actual visible window.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Notes                                                  |
+|---|------------|--------------|------------------------------------------------|--------------------------------------------------------|
+| 1 | 0x00499ba0 | sub_00499ba0 | re/analysis/boot_app_init/00499ba0.md         | CoInitialize+RegisterClassA("MASHED")+CreateWindowExA |
+| 2 | 0x004996f0 | sub_004996f0 | re/analysis/boot_app_init/004996f0.md         | ShowWindow+UpdateWindow on DAT_007e9584 (HWND)        |
+| 3 | 0x00499cc0 | sub_00499cc0 | re/analysis/boot_app_init/00499cc0.md         | DestroyWindow(DAT_007e9584)                            |
+| 4 | 0x00499820 | sub_00499820 | re/analysis/window_msgpump/00499820.md         | WNDPROC switch (WM_CREATE/DESTROY/ACTIVATE/KEYDOWN)   |
+| 5 | 0x00496490 | sub_00496490 | re/analysis/window_msgpump/00496490.md         | WM_CREATE: opens mashed.log                            |
+| 6 | 0x00496470 | sub_00496470 | re/analysis/window_msgpump/00496470.md         | WM_DESTROY: fclose mashed.log                          |
+| 7 | 0x004960e0 | sub_004960e0 | re/analysis/window_msgpump/004960e0.md         | WM_ACTIVATE: vtable dispatch                           |
+| 8 | 0x004963b0 | FUN_004963b0 | re/analysis/boot_subsystem_d3/0x004963b0.md   | log/diagnostic helper                                  |
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s2 window+wndproc C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool1
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s2  bucket=promote_c2_window_wndproc  rvas=<promoted>  level=c2  pool=Mashed_pool1  note=<N>/8 window+wndproc C1->C2; <refused list>
+
+--------------------------------------------------------------------------------
+AGENT 3 -- ma1-ghidra-s3 (8 RVAs, D3D9/RW engine init chain)
+--------------------------------------------------------------------------------
+
+Pool slot Mashed_pool2.
+Worktree: .worktrees/ma1-ghidra-s3/  (branch discovery/ma1-ghidra-s3)
+
+# MISSION
+D3D9 + RenderWare engine init. Sets up the rendering device before any frame can be drawn.
+
+# CANDIDATES
+| # | RVA        | Ghidra name  | Analysis note                                  | Notes                                          |
+|---|------------|--------------|------------------------------------------------|------------------------------------------------|
+| 1 | 0x00493640 | FUN_00493640 | re/analysis/rw_engine_init/00493640.md         | RW init step                                   |
+| 2 | 0x0045b350 | FUN_0045b350 | re/analysis/rw_engine_init/0045b350.md         | RW input init                                  |
+| 3 | 0x00498510 | FUN_00498510 | re/analysis/boot_subsystem_d3/0x00498510.md   | D3D init helper                                |
+| 4 | 0x00496e40 | FUN_00496e40 | re/analysis/boot_subsystem_d3/0x00496e40.md   | dual async-worker init                         |
+| 5 | 0x004955b0 | FUN_004955b0 | re/analysis/boot_subsystem_d3/0x004955b0.md   | init/teardown helper                           |
+| 6 | 0x00496010 | FUN_00496010 | re/analysis/boot_subsystem_d3/0x00496010.md   | boot helper                                    |
+| 7 | 0x004960a0 | FUN_004960a0 | re/analysis/boot_subsystem_d3/0x004960a0.md   | boot helper                                    |
+| 8 | 0x004c5a60 | FUN_004c5a60 | re/analysis/boot_subsystem_d3/0x004c5a60.md   | refcounted RW release (c3-batch-g-s14 carry-over) |
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s3 D3D9+RW init C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool2
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s3  bucket=promote_c2_rw_d3d9_init  rvas=<promoted>  level=c2  pool=Mashed_pool2  note=<N>/8 RW+D3D9 init C1->C2; <refused list>
+
+--------------------------------------------------------------------------------
+AGENT 4 -- ma1-ghidra-s4 (8 RVAs, boot teardown + COM release thunks)
+--------------------------------------------------------------------------------
+
+Pool slot Mashed_pool3.
+Worktree: .worktrees/ma1-ghidra-s4/  (branch discovery/ma1-ghidra-s4)
+
+# MISSION
+Boot teardown / COM-release chain. Runs during SoftwareTidyUpBeforeExiting +
+HardwareExitApplication sequences (strings cited in 0x00492370 plate).
+
+# CANDIDATES
+| # | RVA        | Ghidra name              | Analysis note                                  | Notes                              |
+|---|------------|--------------------------|------------------------------------------------|------------------------------------|
+| 1 | 0x00494bc0 | FUN_00494bc0             | re/analysis/boot_app_init_d5/0x00494bc0.md     | COM Release x6 on 00771a48/3c/40/.. |
+| 2 | 0x00494ef0 | thunk_FUN_00493f70       | re/analysis/boot_app_init_d5/0x00494ef0.md     | 4B thunk to 0x00493f70             |
+| 3 | 0x00494f20 | thunk_FUN_00494460       | re/analysis/boot_app_init_d5/0x00494f20.md     | 4B thunk to 0x00494460             |
+| 4 | 0x004955c0 | thunk_FUN_00495580       | re/analysis/boot_app_init_d5/0x004955c0.md     | 4B thunk to 0x00495580             |
+| 5 | 0x004963d0 | thunk_FUN_00496370       | re/analysis/boot_app_init_d5/0x004963d0.md     | 4B thunk to 0x00496370             |
+| 6 | 0x00489250 | FUN_00489250             | re/analysis/boot_app_init_d5/0x00489250.md     | 2x pair-free release               |
+| 7 | 0x00496ce0 | FUN_00496ce0             | re/analysis/boot_app_init_d5/0x00496ce0.md     | release helper                     |
+| 8 | 0x004881d0 | FUN_004881d0             | re/analysis/boot_app_init_d4/0x004881d0.md     | once-guard init helper             |
+
+# NOTE ON THUNKS (#2..#5)
+Each thunk is a 4-byte JMP to its target. "Why C2" for a thunk is:
+  "4-byte unconditional JMP to FUN_XXXXXX (currently at confidence Y); behavior
+   inherits the target's behavior; no local state. Eligible for C2 as soon as
+   target reaches C1+ with a plate."
+If the target is already C2+, also drift-promote the thunk to C2.
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s4 boot teardown+COM C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool3
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s4  bucket=promote_c2_boot_teardown  rvas=<promoted>  level=c2  pool=Mashed_pool3  note=<N>/8 boot teardown C1->C2; <refused list>
+
+--------------------------------------------------------------------------------
+AGENT 5 -- ma1-ghidra-s5 (8 RVAs, frame dispatch direct callees)
+--------------------------------------------------------------------------------
+
+Pool slot Mashed_pool4.
+Worktree: .worktrees/ma1-ghidra-s5/  (branch discovery/ma1-ghidra-s5)
+
+# MISSION
+Per-frame dispatch callees. After window opens and main loop starts, these run
+every frame. The dispatcher (0x00492e90) is on Agent 1; this session lifts its
+direct callees so 0x00492e90 has a clean callee-gate for batch2's C3 promotion.
+
+# CANDIDATES
+Use mcp__ghidra__function_callees on 0x00492e90 to list direct callees, then
+pick 8 that are currently C1 in hooks.csv (skip C2+ as drift). Promote each
+to C2.
+
+Suggested seeds (verify each in hooks.csv first; substitute if already C2):
+  - FUN_00433f40 (mentioned in 0x00492e90 plate as direct callee)
+  - HUD render dispatcher (the HUD_INGAME_FN 0x0040dfc0 is already C3)
+  - renderer vtable callee(s)
+  - perf-counter helpers (0x00868320 area)
+
+# WORKFLOW
+Same as Agent 1. For each picked C1 RVA, read existing analysis note (or write
+one if missing), assemble Why C2, file U/S rows, update hooks.csv.
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s5 frame dispatch callees C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool4
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s5  bucket=promote_c2_frame_dispatch_callees  rvas=<promoted>  level=c2  pool=Mashed_pool4  note=<N>/8 frame dispatch callees C1->C2; <refused list>
+
+--------------------------------------------------------------------------------
+AGENT 6 -- ma1-ghidra-s6 (8 RVAs, video config + display dim chain)
+--------------------------------------------------------------------------------
+
+Pool slot Mashed_pool5.
+Worktree: .worktrees/ma1-ghidra-s6/  (branch discovery/ma1-ghidra-s6)
+
+# MISSION
+Video config + display dimension getters. Required for WinMain to know the
+window size and video mode before window creation.
+
+# CANDIDATES (verify in hooks.csv; substitute if already C2+)
+| # | RVA        | Notes                                                                    |
+|---|------------|--------------------------------------------------------------------------|
+| 1 | 0x00498bc0 | Video dim getter (called from 0x004921d0)                               |
+| 2 | 0x00498bd0 | Video dim getter sibling                                                 |
+| 3 | 0x00498bf0 | Display gate (ShowCursor gate, cited in 0x00493560 thunk plate)         |
+| 4 | 0x00498b60 | Display helper                                                           |
+| 5 | 0x004c2f00 | Video-mode lookup                                                        |
+| 6 | 0x004c2ed0 | Video-mode info                                                          |
+| 7 | 0x004997b0 | RWTEXDICTIONARY constructor (0x194; cited in 0x004921d0 plate)          |
+| 8 | 0x00467110 | Default viewport camera init (cited in 0x004921d0 plate)                 |
+
+If any analysis note is missing, write one as part of the C2 promotion. Use
+mcp__ghidra__decomp_function + mcp__ghidra__function_callees to map structure.
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s6 video config + display C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool5
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s6  bucket=promote_c2_video_display  rvas=<promoted>  level=c2  pool=Mashed_pool5  note=<N>/8 video+display C1->C2; <refused list>
+
+--------------------------------------------------------------------------------
+AGENT 7 -- ma1-ghidra-s7 (8 RVAs, DirectInput init chain)
+--------------------------------------------------------------------------------
+
+Pool slot Mashed_pool6.
+Worktree: .worktrees/ma1-ghidra-s7/  (branch discovery/ma1-ghidra-s7)
+
+# MISSION
+DirectInput initialization. The input subsystem currently has 0 C3+ functions;
+this session establishes the foothold.
+
+# CANDIDATES
+Use mcp__ghidra__function_callees on the input init top-level (look at
+re/analysis/input_dinput_d3/0045b350.md for entry). Identify 8 C1 functions
+in the init chain.
+
+Suggested seeds (verify in hooks.csv):
+  - 0x0045b350 (analysis re/analysis/input_dinput_d3/0045b350.md)
+  - 0x00499720 (analysis re/analysis/input_dinput_d3/00499720.md)
+  - Direct callees of those (use function_callees MCP)
+
+If any analysis note is missing, write one. This subsystem is shallow on prior
+work; expect to spend more time on each function than other sessions.
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s7 DirectInput init C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool6
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s7  bucket=promote_c2_dinput_init  rvas=<promoted>  level=c2  pool=Mashed_pool6  note=<N>/8 DirectInput init C1->C2; <refused list>
+
+--------------------------------------------------------------------------------
+AGENT 8 -- ma1-ghidra-s8 (8 RVAs, settings/registry + boot misc)
+--------------------------------------------------------------------------------
+
+Pool slot Mashed_pool7.
+Worktree: .worktrees/ma1-ghidra-s8/  (branch discovery/ma1-ghidra-s8)
+
+# MISSION
+Settings persistence (registry IO) + remaining boot misc. Picks up loose ends
+in the boot subsystem to round out the C2 floor.
+
+# CANDIDATES
+Use Ghidra MCP at slot 7. Look for:
+
+  1. Registry IO functions: search hooks.csv for boot RVAs containing "Reg" /
+     "RegOpenKey" / "RegQuery" references; pick 3-4 C1 functions
+  2. Settings load/save: re/analysis/settings_config_d2*/ notes; pick 2-3
+  3. Boot fillers: any 2-3 remaining boot C1 functions that are direct callees
+     of already-C2 functions in re/analysis/boot_subsystem_d3/ but not covered
+     by s1..s7 above
+
+Use function_callers MCP to walk up from C2 boot functions to find leaf-ish C1
+candidates.
+
+# COMMIT
+  git add -A
+  git commit -m "discovery: ma1-ghidra-s8 settings + boot misc C1->C2 -- N functions"
+  pwsh ..\..\scripts\ghidra_pool.ps1 release Mashed_pool7
+
+# RETURN
+  QUEUE-ROW: 2026-05-16  ma1-ghidra-s8  bucket=promote_c2_settings_boot_misc  rvas=<promoted>  level=c2  pool=Mashed_pool7  note=<N>/8 settings+boot misc C1->C2; <refused list>
+
+================================================================================
+EXPECTED YIELD
+================================================================================
+
+Best case: 56-64/64 C1->C2 promotions; few refusals (mostly thunks + already-
+  documented plates).
+Realistic: 45-55/64; some sessions hit big-dispatcher refusals or unresolved
+  [UNCERTAIN] markers.
+Worst case: 30-40/64; would indicate the boot chain has more deep uncertainties
+  than expected and merits a deeper sweep.
+
+POST-BATCH NEXT STEPS:
+  1. Review the 8 QUEUE-ROW lines.
+  2. Run ghidra-sweep skill to drain ma1-ghidra-s1..s8 from re/SCRIBE_QUEUE.md
+     into master Mashed.gpr (writes plates, bookmarks, renames).
+  3. After sweep completes, run milestone_a_batch2_frida.txt (the C2->C3 batch).
+  4. After batch2 frida-sweep, run milestone_a_wire_exe.txt (single-session
+     prompt that writes exe_main.cpp).

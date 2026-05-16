@@ -1,0 +1,223 @@
+================================================================================
+MILESTONE A - STEP 3: Wire exe_main.cpp (single-session Opus prompt)
+              Target: mashed_re.exe opens a blank Win32 window and exits cleanly
+================================================================================
+Generated: 2026-05-16
+
+PREREQUISITES:
+  - milestone_a_batch1_ghidra.txt drained (ghidra-sweep completed)
+  - milestone_a_batch2_frida.txt drained (frida-sweep completed)
+  - Boot subsystem has ~30-50 C3+ functions across:
+      Boot/AppLifecycle.cpp, Boot/Window.cpp, Boot/RwEngineInit.cpp,
+      Boot/Teardown.cpp, Boot/FrameDispatch.cpp, Boot/VideoConfig.cpp,
+      Boot/Settings.cpp, Input/DirectInput.cpp
+
+PURPOSE — REPLACE mashedmod/src/mashed_re/exe_main.cpp WITH A REAL WINMAIN
+
+Today exe_main.cpp is literally:
+  int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) { return 0; }
+
+This session writes a real WinMain that:
+  1. Parses command-line (calls Boot/AppLifecycle cmdline parser)
+  2. Loads video config (calls Boot/VideoConfig)
+  3. Creates the Win32 window (calls Boot/Window)
+  4. Initializes RenderWare engine (calls Boot/RwEngineInit)
+  5. Enters main loop (calls Boot/AppLifecycle main-loop driver)
+  6. Per-frame: pumps messages, calls FrameDispatch
+  7. On exit: tears down (calls Boot/Teardown)
+
+THE WINDOW WILL BE BLANK (no menu drawn -- that's milestone B). But it will:
+  - Be a real Win32 window owned by mashed_re.exe (not MASHED.exe)
+  - Have a working WNDPROC that responds to WM_DESTROY
+  - Drain its message pump
+  - Exit cleanly on Alt+F4 / close button
+
+PASTE THIS ENTIRE FILE INTO A SINGLE OPUS CLAUDE CODE SESSION AT THE REPO ROOT.
+
+================================================================================
+SESSION INSTRUCTIONS
+================================================================================
+
+You are an Opus 4.7 session writing exe_main.cpp for the Mashed RE standalone
+executable. Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+
+# WORKTREE
+Work directly on main (not in a worktree). This is a focused single-file change
+that doesn't conflict with anything; no parallel branches involved.
+
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git status                     -- confirm clean working tree
+  git log --oneline -3
+
+If working tree has uncommitted changes, ASK USER to commit/stash first.
+
+# STEP 1 — INVENTORY WHAT'S AVAILABLE
+Catalogue the C3+ Boot/Input functions and which symbols they export.
+  grep -E "^004[89]" hooks.csv | awk -F',' '($4=="C3"||$4=="C4") {print}'
+  ls mashedmod/src/mashed_re/Boot/
+  ls mashedmod/src/mashed_re/Input/  (may not exist yet)
+
+For each existing Boot/*.cpp, read it to find:
+  - extern "C" __declspec(dllexport) declarations
+  - The RVA being hooked (from the `// 0x00xxxxxx` comments)
+  - The exported symbol name
+
+Build a manifest in your head (or write to log/milestone_a_inventory.txt) of:
+  - boot-chain symbol -> RVA -> file -> signature
+
+# STEP 2 — DETERMINE WINMAIN'S OWN RVA AND SIGNATURE
+The original MASHED.exe WinMain:
+  - Is the binary's WinMainCRTStartup callee
+  - Has the standard signature: int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+  - Calls the entry chain via 0x00492370 (sub_00492370) per existing plates
+
+Find WinMain's RVA:
+  grep -i "winmain\|entry" hooks.csv | head -5
+  grep "entry_point" re/analysis/ -lir | head -3
+
+If WinMain itself isn't in hooks.csv, that's OK -- we're not hooking it, we're
+WRITING ours from scratch. Just confirm the chain it calls (0x00492370 is the
+known top-level orchestrator).
+
+# STEP 3 — DESIGN THE NEW exe_main.cpp
+The new exe_main.cpp structure:
+
+```cpp
+// Mashed RE -- standalone executable.
+// Milestone A: opens a real Win32 window that drains its message pump.
+// No menu rendering yet (that's milestone B).
+#include <windows.h>
+
+// Forward-decls for the C3+ Boot functions we'll call.
+// These are exported from the Boot/*.cpp files compiled into mashed_re.exe.
+namespace mashed_re::Boot {
+    bool ParseCommandLine(LPSTR cmdline);  // wraps 0x00493900 logic
+    bool LoadVideoConfig();                 // wraps video-config load
+    bool CreateMainWindow(HINSTANCE);       // wraps 0x00499ba0
+    bool ShowMainWindow();                  // wraps 0x004996f0
+    bool InitRwEngine();                    // wraps 0x00493710 + 00493600 + 00493640
+    void DestroyMainWindow();               // wraps 0x00499cc0
+    void ReleaseCom();                      // wraps 0x00494bc0
+    bool MainLoopInit();                    // wraps 0x00492770
+    bool PumpMessages();                    // wraps 0x00499690 (returns true if quit)
+    void FrameTick();                       // wraps 0x004926c0 (QPC frame tick)
+    void FrameDispatch();                   // wraps 0x00492e90 (per-frame game tick)
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpCmdLine, int) {
+    using namespace mashed_re::Boot;
+
+    if (!ParseCommandLine(lpCmdLine)) return 1;
+    if (!LoadVideoConfig())           return 2;
+    if (!CreateMainWindow(hInstance)) return 3;
+    if (!ShowMainWindow())            return 4;
+    if (!InitRwEngine())              return 5;
+    if (!MainLoopInit())              return 6;
+
+    // Main loop. For milestone A, we just drain messages and tick the frame;
+    // FrameDispatch will execute the game's per-frame logic against whatever
+    // global state has been initialized so far. Most of that state is null/zero
+    // because we haven't loaded assets, so FrameDispatch may early-return.
+    // That's fine -- the window will still be blank but visible.
+    while (!PumpMessages()) {
+        FrameTick();
+        FrameDispatch();
+    }
+
+    // Teardown.
+    DestroyMainWindow();
+    ReleaseCom();
+    return 0;
+}
+```
+
+The exact function names in the namespace will depend on what the C3+ Boot
+files actually export. Map them to the structure above. If a function doesn't
+exist yet, leave a `// TODO: not-yet-promoted` stub.
+
+# STEP 4 — WIRE THE FUNCTION DECLARATIONS
+For each function called from WinMain, the actual exported symbol may be the
+raw FUN_NNNNNNNN or a renamed symbol like Boot_AppLifecycle. Find the actual
+symbols by reading the Boot/*.cpp headers, then either:
+  (a) Add `extern "C" int CalleeName();` declarations at the top of exe_main.cpp, OR
+  (b) Create a new header mashedmod/src/mashed_re/Boot/BootApi.h that declares
+      all the boot-chain entry points used by exe_main.cpp, and #include it.
+
+OPTION (b) IS PREFERRED. Write Boot/BootApi.h with proper extern "C" declarations.
+
+# STEP 5 — VERIFY exe_main.cpp COMPILES INTO mashed_re.exe
+The build.bat compiles BOTH targets (mashed_re.exe + mashed_re_dev.asi).
+Check what sources each target uses:
+  cat mashedmod\build.bat | head -100
+
+If exe_main.cpp is only compiled into mashed_re.exe (not the .asi), and the
+Boot/*.cpp files are compiled into both, then the linker will resolve the
+function calls correctly when building mashed_re.exe.
+
+If the Boot/*.cpp files are NOT compiled into mashed_re.exe today (only into
+the .asi), update build.bat to include them in the exe target too.
+
+# STEP 6 — BUILD AND TEST
+  cmd /c mashedmod\build.bat > log\milestone_a_build.txt 2>&1
+
+Verify:
+  - mashedmod\build\mashed_re.exe exists
+  - mashedmod\build\mashed_re_dev.asi exists (still works)
+  - No linker errors
+
+# STEP 7 — RUN mashed_re.exe
+Copy a fresh mashed_re.exe to a test directory next to the assets:
+  mkdir -Force C:\Temp\mashed_re_test
+  cp mashedmod\build\mashed_re.exe C:\Temp\mashed_re_test\
+  cp -r original\TOASTART C:\Temp\mashed_re_test\
+  cp original\videocfg.bin C:\Temp\mashed_re_test\
+  (etc -- any data files the boot chain expects)
+
+Then run it:
+  cd C:\Temp\mashed_re_test
+  .\mashed_re.exe
+
+Observe:
+  - Does a window open?
+  - What's its title (should be "MASHED" if we wired RegisterClassA correctly)?
+  - Does it respond to clicks on the close button?
+  - Does it exit with code 0?
+
+If the window opens and closes cleanly, MILESTONE A IS DONE.
+
+If it crashes:
+  - Capture the crash log (mashed.log or stderr)
+  - Identify which boot step failed (return code 1..6 from WinMain)
+  - File a follow-up D-row for whichever boot function is the blocker
+  - Document the gap in re/analysis/milestone_a_results.md
+
+# STEP 8 — COMMIT
+  git add mashedmod/src/mashed_re/exe_main.cpp \
+          mashedmod/src/mashed_re/Boot/BootApi.h \
+          mashedmod/build.bat \
+          log/milestone_a_build.txt
+  git commit -m "milestone-a: wire exe_main.cpp boot chain (blank window MVP)"
+
+# STEP 9 — REPORT
+Print a final summary:
+  - Did mashed_re.exe build cleanly? [yes/no]
+  - Did it run and open a window? [yes/no]
+  - Window behavior: [blank/error dialog/crash/closed cleanly]
+  - Which boot functions were wired (list of RVAs + C3+ source files)
+  - Which boot functions are STILL needed (gap list with RVAs and current confidence)
+  - Whether MILESTONE A is achieved or still gated on specific work
+
+# DO NOT
+  - Add any FrontendDraw / HUD calls (that's milestone B)
+  - Add any audio init (orthogonal; can come later)
+  - Add any asset-load runtime code (Python tools exist; C++ port is a separate effort)
+  - Try to make the window draw anything beyond what FrameDispatch happens to do
+    against null game state
+
+# STOP-AND-ASK if:
+  - The build chain rejects exe_main.cpp's calls to Boot/* exports (means the
+    exports are mangled or visibility-wrong; needs interface fix)
+  - mashed_re.exe crashes immediately on launch without producing any log
+    (needs debugger attach to diagnose; out of scope for this session)
+  - You need to make architectural decisions about how mashed_re.exe loads
+    data files (asset path resolution, current-dir vs install-dir)
