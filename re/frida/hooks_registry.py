@@ -3362,6 +3362,33 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
+    # 0x004955b0  DInputInitPredicate
+    # uint8(void): thin bool wrapper around 0x00495530 (DI8Create wrapper, C2).
+    #   int iVar1 = FUN_00495530();
+    #   return iVar1 != 0;
+    # 11-byte body (0x004955b0..0x004955bb). Sole callee is the IDirectInput8A
+    # creation wrapper, which calls DirectInput8Create(NULL_hinst, 0x0800,
+    # IID_IDirectInput8A, &DAT_00771e78, NULL) and returns 1/0.
+    #
+    # Idempotency strategy: at quiescent main-menu, DirectInput8Create is
+    # already-succeeded; re-issuing it overwrites DAT_00771e78 with a fresh
+    # IDirectInput8A* on each call. Both original and reimpl perform the same
+    # write sequence, so the predicate return is bit-identical (== 1) on every
+    # call. If DI8Create fails for any reason on either side, crash_equal_ok
+    # accepts matching crash strings as GREEN. Reference:
+    # re/analysis/boot_subsystem_d3/0x004955b0.md
+    'dinput_init_predicate': {
+        'rva':            0x004955b0,
+        'export':         'DInputInitPredicate',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        # 10 dummy calls; arg_type='void' ignores input.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
     # 0x004a3258  CrtExitCore
     # void(uint, int, int): CRT exit core — acquires lock 8, walks atexit list,
     # runs exit tables, calls ___crtExitProcess or FUN_004a77eb.

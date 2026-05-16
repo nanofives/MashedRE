@@ -68,6 +68,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Save\GameSaveVFS.cpp" ^
     "%SRC%\Boot\CrtCompilerSupport.cpp" ^
     "%SRC%\Boot\CrtInit.cpp" ^
+    "%SRC%\Boot\RwEngineInit.cpp" ^
     "%SRC%\Save\GameSave.cpp" ^
     "%SRC%\Save\VfsStream.cpp" ^
     "%SRC%\Save\FsOpen.cpp" ^
