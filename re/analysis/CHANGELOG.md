@@ -9,6 +9,13 @@ Append-only log of confidence promotions and demotions, written by the `re-class
 2026-05-16  0x004955b0  FUN_004955b0  C1->C2  ma1-ghidra-s3 thin bool wrapper of FUN_00495530 (11b); U-3871 filed; bookmark added
 2026-05-16  0x00493640  FUN_00493640  C1->C2  ma1-ghidra-s3 RW init step (18-call ladder); 171b; all 18 callees C1 in hooks.csv; no new STUBS; bookmark added
 2026-05-16  0x0045b350  FUN_0045b350  C1->C2  ma1-ghidra-s3 bare RET (1 byte 0xC3) confirmed via listing_code_unit_at; 33 callers; leaf; U-0069 RESOLVED; bookmark added
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00498bf0 FUN_00498bf0  C1->C2  5b getter DAT_00773204 (cursor/display gate); ShowCursor(0) caller-gate; analysis=re/analysis/promote_c2_video_display/00498bf0.md
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00498bd0 FUN_00498bd0  C1->C2  5b getter DAT_0061602c (render height); sibling of 0x00498bc0; analysis=re/analysis/promote_c2_video_display/00498bd0.md
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00467110 FUN_00467110  new->C2  first-analysis; alt-camera-triple init DAT_006905b0/b4/b8; sibling of FUN_0042d560+FUN_0042f660; S-3833 S-3834 filed
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042f660 DefaultViewportCameraInit  C1->C2  drift-promotion; existing split_screen plate already C2-grade; S-3560 cited (FUN_004c1a40)
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042d560 FUN_0042d560  C1->C2  drift-promotion; existing frontend_unmapped_a plate already C2-grade; S-3560 cited
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042b8a0 FUN_0042b8a0  new->C2  first-analysis; 11b setter DAT_0067ea56 (2-byte render-height copy)
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042b890 FUN_0042b890  new->C2  first-analysis; 11b setter DAT_0067ea54 (2-byte render-width copy)
 2026-05-16  ma1-ghidra-s2  C1->C2 batch  bucket=promote_c2_window_wndproc  rvas=0x00499ba0,0x004996f0,0x00499cc0,0x00499820,0x00496490,0x00496470,0x004960e0,0x004963b0  count=8  resolved=U-0647,S-0003,S-0640,S-0641,S-0642  new=U-3870,S-3920,S-3921  carried=U-0648,S-0643  pool=Mashed_pool1
 2026-05-16  ma1-ghidra-s1  promote_c2_winmain_chain  c1->c2  rvas=00492370,00492270,00492290,004924f0,004921d0,00428590,00492e90,00493600  pool=Mashed_pool0(contended,used-pool6-readonly)  stubs-filed=S-3902..S-3908(7)  uncertainties-open=U-0009 U-0642  notes=8/8 promoted; bookmark step skipped due to pool0 channel-lock contention with parallel MCP session
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
