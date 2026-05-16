@@ -3758,4 +3758,89 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch ma2-frida-s6 — Boot/VideoConfig.cpp
+    #   Video config getters + display dim helpers + RW driver-system wrapper.
+    #   4 C2 → C3 candidates promoted (2 of the 6 batch candidates deferred:
+    #   0x00498b60 destructive teardown; 0x004c2ed0 needs wide out-buffer harness)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00498bc0  VideoGetRenderWidth
+    # Pure leaf: returns DAT_00616028 (render width in pixels).
+    # MOV EAX, [0x00616028] / RET. Strategy: read_global — write sentinel
+    # values into 0x00616028, call fn(), confirm both paths read the same
+    # address and return the same bytes. 10 sentinels covering 0, 1, max,
+    # high-bit, alt-bits and random patterns.
+    # Analysis: re/analysis/promote_c2_launch_handshake/00498bc0.md
+    'video_get_render_width': {
+        'rva':            0x00498bc0,
+        'export':         'VideoGetRenderWidth',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00616028,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000320],  # 0x320 == 800 (canonical width)
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x00498bd0  VideoGetRenderHeight
+    # Pure leaf: returns DAT_0061602c (render height in pixels).
+    # MOV EAX, [0x0061602c] / RET. Sibling of VideoGetRenderWidth at +4.
+    # Same read_global strategy; 10 sentinels.
+    # Analysis: re/analysis/promote_c2_video_display/00498bd0.md
+    'video_get_render_height': {
+        'rva':            0x00498bd0,
+        'export':         'VideoGetRenderHeight',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0061602c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000258],  # 0x258 == 600 (canonical height)
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x00498bf0  DisplayGetCursorGate
+    # Pure leaf: returns DAT_00773204 (cursor-visibility / display-active gate).
+    # MOV EAX, [0x00773204] / RET. FUN_004951f0 uses non-zero return to gate
+    # ShowCursor(0). Same read_global strategy; 10 sentinels.
+    # Analysis: re/analysis/promote_c2_video_display/00498bf0.md
+    'display_get_cursor_gate': {
+        'rva':            0x00498bf0,
+        'export':         'DisplayGetCursorGate',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00773204,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x004c2f00  RwEngineGetCurrentMode
+    # fn(void) -> uint32: calls dispatcher cmd 0x0a (driver-system) via
+    # FUN_004c2c90 with DAT_007d3ff8+0x10. Returns current video mode index
+    # or 0xffffffff on failure. Stable at quiescent main menu since the RW
+    # driver context (DAT_007d3ff8) is already initialized — that's the same
+    # global the harness polls via lut_root_delta=0.
+    # arg_type='none': dummy iteration markers; both orig and reimpl must
+    # produce identical return values across 10 successive calls. The reimpl
+    # forwards to the same dispatcher RVA so the result is by construction
+    # the same (we test that argument marshalling and result handling are
+    # bit-identical, not the dispatcher itself which is already C2-mapped).
+    # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2f00.md
+    'rw_engine_get_current_mode': {
+        'rva':            0x004c2f00,
+        'export':         'RwEngineGetCurrentMode',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
