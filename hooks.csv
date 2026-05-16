@@ -2077,3 +2077,5 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004921b0,FUN_004921b0,render,C1,mapped,re/analysis/breadth_unmapped_0049x/0x004921b0.md,,,spark render dispatch: vtable[0x48] on DAT_00771724 if active-count>0; no callers visible
 
 00471df0,FUN_00471df0,boot,C2,new,re/analysis/promote_c2_panel_piz_callees/00471df0.md,promote_c2_panel_piz_callees-20260516,,two-region zero/sentinel reset (DAT_0069064c..690aac stride 0x8c + DAT_0086ed20..8815a0 stride 0x2510); thunk-called from boot init+track teardown; S-3832 U-3800
+0042b540,FUN_0042b540,frontend,C3,hooked,re/analysis/frontend_promote_menus_a/0x0042b540.md,c3-batch-g-s2,mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp,btn1 detector: active byte[+1]/0x7f1045 + processed; same screen check as b310; U-1651 U-3445 U-3548; C3 evidence: log/diff_menu_button_detect_d.csv 10/10 GREEN 2026-05-16
+0042bcb0,FUN_0042bcb0,frontend,C2,deferred,re/analysis/c0_promotion_frontend_a/0x0042bcb0.md,,5-param sprite draw; C3 refused: callee FUN_004b5750 (0x004b5750) C0 non-trivial (vtable textured-quad renderer S-3161/S-3430); re-pickup when 0x004b5750 reaches C2; D-filed c3-batch-g-s2 2026-05-16
