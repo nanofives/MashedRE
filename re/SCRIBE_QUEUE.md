@@ -13,7 +13,6 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
-2026-05-16  ma1-ghidra-s1  bucket=promote_c2_winmain_chain  rvas=0x00492370,0x00492270,0x00492290,0x004924f0,0x004921d0,0x00428590,0x00492e90,0x00493600  level=c2  pool=Mashed_pool0  note=8/8 boot-chain C1->C2; no refusals; stubs S-3902..S-3908 filed; bookmark step skipped (pool0 channel-lock contention, used pool6 read-only for decompilation)
 2026-05-16  ma1-ghidra-s2  bucket=promote_c2_window_wndproc  rvas=0x00499ba0,0x004996f0,0x00499cc0,0x00499820,0x00496490,0x00496470,0x004960e0,0x004963b0  level=c2  pool=Mashed_pool1  note=8/8 window+wndproc+DInput-wrapper C1->C2; U-0647 RESOLVED; S-0003/S-0640/S-0641/S-0642 RESOLVED; new stubs S-3920/S-3921; U-3870 filed
 2026-05-16  ma1-ghidra-s3  bucket=promote_c2_rw_d3d9_init  rvas=0x00493640,0x0045b350,0x00498510,0x004955b0,0x00496010,0x004960a0,0x004c5a60  level=c2  pool=Mashed_pool2  note=7/8 D3D9+RW init C1->C2; refused=0x00496e40 (D-10770: 7/7 callees unmapped); U-0069 RESOLVED; 5 new stubs S-3833..S-3837; tracker-drift noted: 0x00498510 dup rows (1923/1949)
 2026-05-16  ma1-ghidra-s4  bucket=promote_c2_boot_teardown  rvas=0x00494bc0,0x00489250,0x00496ce0,0x004881d0,0x00494ef0,0x00494f20  level=c2  pool=Mashed_pool3  note=6/8 boot teardown C1->C2; refused thunks 0x004955c0(D-10762) + 0x004963d0(D-10763) (targets have no plate); S-3902/S-3903 filed; U-3861 carries
@@ -25,6 +24,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Drained
 
 ```
+2026-05-16  ma1-ghidra-s1  bucket=promote_c2_winmain_chain  rvas=0x00492370,0x00492270,0x00492290,0x004924f0,0x004921d0,0x00428590,0x00492e90,0x00493600  level=c2  pool=Mashed_pool0  note=8/8 boot-chain C1->C2  drained-by=sweep-20260516-2149; 8 plates, 8 bookmarks, 0 renames
 2026-05-16  promote_c2_rw_engine_init-20260516-0306  bucket=promote_c2_rw_engine_init  rvas=0x004caea0,0x004cc230,0x004cc160,0x004cbe80,0x004c2c90,0x004c2d90,0x004cf160  level=c2  drift-skip=0x004c2c90,0x004c2d90  promoted=0x004caea0,0x004cc230,0x004cc160,0x004cbe80,0x004cf160  S-3750,S-3751  U-3720..U-3724  pool=Mashed_pool0  note=5 C1->C2 promotions; drained-by=sweep-20260516-0352; 5 plates, 5 bookmarks, 0 renames
 2026-05-16  promote_c2_save_load_io-20260516-0311  bucket=promote_c2_save_load_io  rvas=0x004b3b70,0x004b3bb0,0x00550910,0x00404ee0,0x00404e80,0x004989b0,0x0040dd60  level=c2  note=ALL 7 DRIFT-SKIP; drained-by=sweep-20260516-0352; 0 plates, 0 bookmarks, 0 renames (no writes needed)
 2026-05-16  promote_c2_perm_piz_callees-20260516-0309  bucket=promote_c2_perm_piz_callees  rvas=0x00404830,0x00425bc0,0x004025f0,0x00403640,0x0047ba00,0x004669b0,0x004113b0  level=c2  note=7 C1->C2 promotions; drained-by=sweep-20260516-0352; 7 plates, 7 bookmarks, 0 renames
