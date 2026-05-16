@@ -1010,3 +1010,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3908 | 0x00513f90 FUN_00513f90 | 0x00493600 FUN_00493600 | render | passthrough | 2026-05-16 | fn-ptr arg to FUN_004ce790; registered as callback; not directly called by 0x00493600 body; not recursed; promote_c2_winmain_chain |
 | S-3920 | 0x00495520 FUN_00495520 | 0x004963b0 FUN_004963b0 | input | passthrough | 2026-05-16 | IDirectInput8 interface getter; called by FUN_004963b0; not recursed; ma1-ghidra-s2 |
 | S-3921 | 0x00496320 FUN_00496320 | 0x004963b0 FUN_004963b0 | input | passthrough | 2026-05-16 | DInput device create/enumerate (param_1 -> int); not recursed; ma1-ghidra-s2 |
+| S-3833 | 0x00495520 FUN_00495520 | 0x004960a0 FUN_004960a0 | input | passthrough | 2026-05-16 | IDirectInput8 getter; called result discarded; depth-1 callee of 004960a0 DInput device init; ma1-ghidra-s3 |
+| S-3834 | 0x00496040 FUN_00496040 | 0x004960a0 FUN_004960a0 | input | passthrough | 2026-05-16 | DInput device open/create; predicate (returns 0 to short-circuit caller); depth-1 callee of 004960a0; ma1-ghidra-s3 |
+| S-3835 | 0x00495790 FUN_00495790 | 0x00498510 FUN_00498510 | input | passthrough | 2026-05-16 | joypad device count getter; no args; depth-1 callee of 00498510 controller-select setup; ma1-ghidra-s3 |
+| S-3836 | 0x00495e80 FUN_00495e80 | 0x00496010 FUN_00496010 | input | passthrough | 2026-05-16 | DInput device release-all (no args); depth-1 callee of 00496010 joypad shutdown; ma1-ghidra-s3 |
+| S-3837 | 0x004c7650 FUN_004c7650 | 0x004c5a60 FUN_004c5a60 | render | passthrough | 2026-05-16 | RW data-buffer free: takes (ptr); depth-1 callee of 004c5a60 refcounted release; existing S-0177/S-0816 cover other callers; ma1-ghidra-s3 |

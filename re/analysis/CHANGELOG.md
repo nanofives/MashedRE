@@ -1,6 +1,14 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0x004c5a60  FUN_004c5a60  C1->C2  ma1-ghidra-s3 refcounted RW release (120b; list 00618138 + vtable[007d3ff8+0x11c] dtor); S-3837 filed; U-3874 filed; bookmark added
+2026-05-16  0x00498510  FUN_00498510  C1->C2  ma1-ghidra-s3 controller-select dialog setup (664b; 6-region table + entry-table loop + DialogBoxParamA(0x67)); S-3835 filed; U-3870 filed; dup-row at hooks.csv:1923 noted but left alone; bookmark added
+2026-05-16  0x00496e40  FUN_00496e40  C1->C2 REFUSED  ma1-ghidra-s3 dual async-worker init: 7/7 internal callees unmapped > 5-threshold; deferred D-10770; bookmark added (REFUSED category)
+2026-05-16  0x004960a0  FUN_004960a0  C1->C2  ma1-ghidra-s3 DInput device init (49b; deadzone=0x10, axis-thresh=0.35f); S-3833 S-3834 filed; U-3872 U-3873 filed; bookmark added
+2026-05-16  0x00496010  FUN_00496010  C1->C2  ma1-ghidra-s3 DInput/joypad shutdown (45b; zero 0x1120b + 4 globals); S-3836 filed; bookmark added
+2026-05-16  0x004955b0  FUN_004955b0  C1->C2  ma1-ghidra-s3 thin bool wrapper of FUN_00495530 (11b); U-3871 filed; bookmark added
+2026-05-16  0x00493640  FUN_00493640  C1->C2  ma1-ghidra-s3 RW init step (18-call ladder); 171b; all 18 callees C1 in hooks.csv; no new STUBS; bookmark added
+2026-05-16  0x0045b350  FUN_0045b350  C1->C2  ma1-ghidra-s3 bare RET (1 byte 0xC3) confirmed via listing_code_unit_at; 33 callers; leaf; U-0069 RESOLVED; bookmark added
 2026-05-16  ma1-ghidra-s2  C1->C2 batch  bucket=promote_c2_window_wndproc  rvas=0x00499ba0,0x004996f0,0x00499cc0,0x00499820,0x00496490,0x00496470,0x004960e0,0x004963b0  count=8  resolved=U-0647,S-0003,S-0640,S-0641,S-0642  new=U-3870,S-3920,S-3921  carried=U-0648,S-0643  pool=Mashed_pool1
 2026-05-16  ma1-ghidra-s1  promote_c2_winmain_chain  c1->c2  rvas=00492370,00492270,00492290,004924f0,004921d0,00428590,00492e90,00493600  pool=Mashed_pool0(contended,used-pool6-readonly)  stubs-filed=S-3902..S-3908(7)  uncertainties-open=U-0009 U-0642  notes=8/8 promoted; bookmark step skipped due to pool0 channel-lock contention with parallel MCP session
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
