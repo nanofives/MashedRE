@@ -1,4 +1,4 @@
-# Scribe Queue
+﻿# Scribe Queue
 
 Buckets queued for the parallel-fanout sweep. See `re/SESSION_RULES.md` § "Parallel-fanout scribe-queue pattern" for the protocol.
 
@@ -29,6 +29,8 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 
 2026-05-16  promote_c2_rw_state-20260516-0307  bucket=promote_c2_rw_state  rvas=0x004d8000,0x004d8060,0x004d8480,0x004d7ff0,0x00558240  level=c2  drift-skip=0x0041e870,0x0041ebb0  S-cleared=S-0005  new-S=S-3780,S-3781  pool=Mashed_pool3  note=5 C1->C2 promotions (list-dispatch/secondary-list-iter/first-error-recorder/identity-passthrough/tex-fill-init); S-0005 cleared (004d8060 fully described); dim formula resolved to 128 for 00558240; 2 drift-skip (0041e870/0041ebb0 already C2)
+2026-05-16  promote_c2_launch_handshake-20260516-0311  bucket=promote_c2_launch_handshake  rvas=0x00493900,0x00499690,0x00498bc0,0x00493540,0x00493550,0x00493560,0x004938c0  level=c2  drift-skip=0x00499690  promoted=0x00493900,0x00498bc0,0x00493540,0x00493550,0x00493560,0x004938c0  S-3890..S-3894  U-3860  pool=Mashed_pool14  note=6 C1->C2 promotions (cmdline-tokenizer/-vs/-cs/-l globals; GetRenderWidth getter; 3 thunks; teardown-seq body); 1 drift-skip (0x00499690 already C2)
+
 ```
 ## Drained
 
@@ -246,3 +248,4 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-14  breadth_unmapped_0044x-20260514  bucket=breadth_unmapped_0044x  rvas=0x00441490,0x004414b0,0x00441b30,0x00442410,0x00442420,0x00443090,0x004430c0,0x004430e0,0x00443210,0x00448770,0x00448820,0x00448880,0x00448cb0,0x00448dc0,0x00448e20,0x00448ef0,0x004495d0,0x00449880,0x00449b30,0x00449bb0  pool=unknown(tracker-repair)  new-plates=20  promotions=20xC0->C1  source-commit=006e00c  drained-by=sweep-20260514-1847; 20 plates, 20 bookmarks, 0 renames; camera (5) + render (8 incl orbital tick triple) + particle (3 smoke/car_shadow/reset-fill) + frontend (1) + unknown (2) clusters (batch_p session 92); library-rename skipped (game-specific code)
 2026-05-14  breadth_unmapped_005xx-20260514  bucket=breadth_unmapped_005xx  rvas=0x00500c48,0x005010f1,0x00501ce4,0x0050272a,0x00502e9e,0x005033f4,0x00503a3a,0x00504008,0x0050570a,0x0050706f,0x00508772,0x0050a41e,0x0050b6ff,0x0050c897,0x0050d089,0x0050e1dd,0x0050e8b7,0x0050ef6d,0x0050eff8,0x005112c9  new-plates=20(breadth_unmapped_005xx/)  U-019..U-023  pool=Mashed_pool2  source-commit=756aa32  drained-by=sweep-20260514-1847; 20 plates, 20 bookmarks, 0 renames; D3DX9 statically linked code (shader assembler pipeline + math primitives — quat/rotation/skinning/matrix-inverse/mat-mul); library-rename skipped (comment_get type=pre returned null on 0x00504008 D3DXAssembleShader entry — no FidDB Library Function hints in this slice)
 2026-05-16  promote_c2_rw_render_submit-20260516-0307  bucket=promote_c2_rw_render_submit  rvas=0x004cd070,0x004cd2d0,0x004cd140,0x004cc7f0,0x004cd060  drift-already-c2=0x004cc050,0x004cbd30  level=c2  stubs=S-3770(FUN_004d40d0),S-3771(FUN_004d40c0)  new-U=U-3740(004cd060-name-proximity),U-3741(004cd2d0-default-fallthrough-carried)  pool=Mashed_pool2(read-only)  note=5 C1->C2 promotions (Im3D submit cluster + VB-cache wrapper + allocator getter) + 2 drift-already-C2 (RwStreamSkip 004cc050 + RwStreamRead 004cbd30); tag=0x24 confirmed as sizeof(Im3DVertex) per librw d3d/rwd3d.h; primtype switch 1..5 matches RwPrimitiveType; FUN_004cd070=Im3D vertex-staging FUN_004cd2d0=primtype-dispatch FUN_004cd140=staging-reset FUN_004cc7f0=pool-create-wrapper FUN_004cd060=allocator-slot-getter
+2026-05-16  promote_c2_rws_audio_loader-20260516-0309  bucket=promote_c2_rws_audio_loader  rvas=0x005aac20,0x005aa7e0,0x005ae400,0x005bf610,0x005be140,0x005be190,0x005bf690  level=c2  note=7 C1->C2 promotions (audio batch-drain/list-unlink/offset-compute/COM-Release callees); clears S-3683..S-3689; D-10692..D-10696 filed for depth-2 callees

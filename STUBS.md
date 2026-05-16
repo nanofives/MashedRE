@@ -1,4 +1,4 @@
-# Stubs
+﻿# Stubs
 
 Every time a reimplementation calls a function that has not itself been reversed, the placeholder is recorded here. **Stubs block S-DoD.** A subsystem cannot be marked DONE while it has open stubs.
 
@@ -901,13 +901,13 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3680 | 0x0041b720 FUN_0041b720 | 0x0041bf20 | util | passthrough | 2026-05-12 | iterator returning pointer; loop terminates when iVar1+0x16c >= 0x63cd90; record stride 0x16c; timer_d3_cont1_a |
 | S-3681 | 0x0041b770 FUN_0041b770 | 0x0041c010 | util | passthrough | 2026-05-12 | invoked once per 0x16c-byte record without args; uses global cursor (same table as FUN_0041bf20 / FUN_0041b720); timer_d3_cont1_a |
 | S-3682 | (id-rename-padding) | n/a | util | id-rename-padding | 2026-05-12 | placeholder reserved after S-3625 collision-shift (concurrent session took S-3625); timer_d3_cont1_a |
-| S-3683 | 0x005aac20 FUN_005aac20 | 0x005aacf0 FUN_005aacf0 | audio | passthrough | 2026-05-12 | called as FUN_005aac20(param_1, index, param_2); per-slot unlink/release in batch iterator; depth-4 callee; audio_dsound_cont1 |
-| S-3684 | 0x005aa7e0 FUN_005aa7e0 | 0x005a9f60 FUN_005a9f60 | audio | passthrough | 2026-05-12 | called as FUN_005aa7e0(type_ptr, sub_type_3bit, &self); returns int offset for ptr computation; type-hierarchy walk; depth-4 callee; audio_dsound_cont1 |
-| S-3685 | 0x005ae400 FUN_005ae400 | 0x005a9f60 FUN_005a9f60 | audio | passthrough | 2026-05-12 | single-arg free; called when sign bit of *(type_ptr+0xc) set; third free path after bitmap-pool and heap; depth-4 callee; audio_dsound_cont1 |
-| S-3686 | 0x005bf610 FUN_005bf610 | 0x005be0f0 FUN_005be0f0 | audio | passthrough | 2026-05-12 | called as FUN_005bf610(param_2, context); allocator returning object ptr; depth-4 callee; audio_dsound_cont1 |
-| S-3687 | 0x005be140 FUN_005be140 | 0x005be160 FUN_005be160 | audio | passthrough | 2026-05-12 | called as FUN_005be140(param_1, 0, 0); 3-arg teardown step A; conditional on [+4]==1; depth-4 callee; audio_dsound_cont1 |
-| S-3688 | 0x005be190 FUN_005be190 | 0x005be160 FUN_005be160 | audio | passthrough | 2026-05-12 | called as FUN_005be190(param_1); teardown step B after FUN_005be140; conditional on [+4]==1; depth-4 callee; audio_dsound_cont1 |
-| S-3689 | 0x005bf690 FUN_005bf690 | 0x005be160 FUN_005be160 | audio | passthrough | 2026-05-12 | called as FUN_005bf690(param_1); unconditional free/dtor; last call in FUN_005be160; depth-4 callee; audio_dsound_cont1 |
+| S-3683 | 0x005aac20 FUN_005aac20 | 0x005aacf0 FUN_005aacf0 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5aac20.md |
+| S-3684 | 0x005aa7e0 FUN_005aa7e0 | 0x005a9f60 FUN_005a9f60 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5aa7e0.md |
+| S-3685 | 0x005ae400 FUN_005ae400 | 0x005a9f60 FUN_005a9f60 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5ae400.md |
+| S-3686 | 0x005bf610 FUN_005bf610 | 0x005be0f0 FUN_005be0f0 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5bf610.md |
+| S-3687 | 0x005be140 FUN_005be140 | 0x005be160 FUN_005be160 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5be140.md |
+| S-3688 | 0x005be190 FUN_005be190 | 0x005be160 FUN_005be160 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5be190.md |
+| S-3689 | 0x005bf690 FUN_005bf690 | 0x005be160 FUN_005be160 | audio | resolved | 2026-05-16 | resolved by promote_c2_rws_audio_loader (session promote_c2_rws_audio_loader-20260516-0309); promoted C1->C2; see re/analysis/promote_c2_rws_audio_loader/5bf690.md |
 | S-3690 | 0x00550580 FUN_00550580 | 0x005507b0 VFS_Open | io | passthrough | 2026-05-12 | VFS file-open implementation; called as FUN_00550580(handler, path, flags, 0, 0); counterpart to VFS_FileExists (FUN_00550b00); font_text_cont1 |
 | S-3691 | 0x004c5ca0 FUN_004c5ca0 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | RwTexDictionaryGetCurrent(); returns current active TXD; save half of TXD save/restore pair with FUN_004c5c80; font_text_cont1 |
 | S-3692 | 0x004c5cb0 FUN_004c5cb0 | 0x00555af0 FontCtx_LoadMetrics_Met | hud | passthrough | 2026-05-12 | RwTexDictionaryFindNamedTexture(name, buf); looks up texture by name in current TXD; returns tex dict entry ptr or NULL; font_text_cont1 |
@@ -975,3 +975,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3820 | 0x004ac869 FUN_004ac869 | 0x004b302f __stricmp | util | passthrough | 2026-05-16 | unmatched callee inside __stricmp body; CRT internal not resolved by FidDB; depth-2 of promote_c2_txd_loader |
 | S-3900 | 0x00496ec0 FUN_00496ec0 | 0x00497060 FUN_00497060 | render | passthrough | 2026-05-16 | initialises 13-entry local_80 array; passed to FUN_00497000 for projection matrix; promote_c2_input_lua |
 | S-3901 | 0x004ed6ba thunk_FUN_004ed6ad | 0x00497060 FUN_00497060 | render | passthrough | 2026-05-16 | thunk to FUN_004ed6ad; matrix operation on two 64-byte local buffers; promote_c2_input_lua |
+| S-3890 | 0x00558470 FUN_00558470 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #1 in teardown sequence; not reversed; promote_c2_launch_handshake |
+| S-3891 | 0x00550390 FUN_00550390 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #2 in teardown sequence; not reversed; promote_c2_launch_handshake |
+| S-3892 | 0x004c2f60 FUN_004c2f60 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #3 in teardown sequence; not reversed; promote_c2_launch_handshake |
+| S-3893 | 0x004c3040 FUN_004c3040 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #4 in teardown sequence; not reversed; promote_c2_launch_handshake |
+| S-3894 | 0x004c3270 FUN_004c3270 | 0x004938c0 FUN_004938c0 | render | new | 2026-05-16 | void call #5 in teardown sequence; not reversed; promote_c2_launch_handshake |

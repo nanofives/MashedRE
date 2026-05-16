@@ -1,4 +1,4 @@
-# Uncertainties
+﻿# Uncertainties
 
 Every `[UNCERTAIN]` marker dropped in an analysis note or comment gets one row here. Uncertainties are not bugs — they are explicit holes in our knowledge with a path-to-resolution. Knowledge gaps without rows here are **invisible** and forbidden.
 
@@ -1173,3 +1173,4 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-3740 | semantic | promote_c2_rw_render_submit: 0x004cd060 FUN_004cd060 | The prompt labels this RVA "RW render-prim sibling" based on address proximity to 004cd070; MCP decomp shows an allocator-slot getter (returns DAT_007d3ff8+0x108). The semantic relationship to the Im3D render-submit cluster is not established by decomp alone | mcp__ghidra__function_callers 0x004cd060; cross-check callers against 004cd070/004cd2d0 call sites | none |
 | U-3741 | structural | promote_c2_rw_render_submit: 0x004cd2d0 FUN_004cd2d0 | Default-case fall-through (U-3634 carried forward): FUN_004d40d0 is called with iVar3+0x20 uninitialized when param_1 is out of range 1..5. Whether this is dead code, a sentinel, or a latent original-game bug is not determinable from static analysis alone | Frida runtime trace with param_1 out-of-range | mcp__frida__hook 0x004cd2d0 with param_1=0 or param_1=6 | none |
 | U-3790 | semantic | promote_c2_txd_loader: 0x004b302f __stricmp | FUN_004ac869 (0x004ac869) is an unmatched callee inside __stricmp body; likely CRT internal but FidDB did not resolve it; identity unknown | Decomp FUN_004ac869; check FidDB comment | mcp__ghidra__decomp_function 0x004ac869 | none |
+| U-3860 | semantic | promote_c2_launch_handshake: 0x004938c0 FUN_004938c0 | The 5 callees (FUN_00558470, FUN_00550390, FUN_004c2f60, FUN_004c3040, FUN_004c3270) are not reversed; their individual roles in the teardown sequence are unknown | decomp_function each of the 5 callees | mcp__ghidra__decomp_function 0x00558470 etc. | none |
