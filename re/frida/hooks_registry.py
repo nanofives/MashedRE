@@ -2878,4 +2878,34 @@ HOOKS = {
         'path1_tests':    [0.0, 1.0, 0.5, -1.0, 0.25, 0.75, -0.5, 2.0, 0.001, 100.0],
         'path2_tests':    [0.0, 1.0, 0.5],
     },
+    'timer_slot_clear': {
+        'rva':            0x0041d820,
+        'export':         'TimerSlotClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063d558,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0041e130  TimerTrackSetter
+    # void(uint32): writes param_1 to DAT_0063d7e0. 9-byte body.
+    # Asm: MOV EAX,[ESP+4] / MOV [0x0063d7e0],EAX / RET
+    # Strategy: call fn(value) with 10 distinct values via int_scalar.
+    # Both orig and reimpl return void (undefined === undefined) — trivial match.
+    # Write correctness established by C2 analysis (single MOV instruction).
+    'timer_track_setter': {
+        'rva':            0x0041e130,
+        'export':         'TimerTrackSetter',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x42424242, 0xDEADBEEF,
+                           0x80000001, 0x3F800000, 0xFFFFFFFF, 0x0000007B,
+                           0xCAFEBABE, 0x12345678],
+        'path2_tests':    [0x42424242, 0xDEADBEEF, 0xFFFFFFFF],
+    },
 }

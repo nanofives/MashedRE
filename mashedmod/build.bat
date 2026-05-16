@@ -32,6 +32,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Util\TimerState.cpp" ^
     "%SRC%\Util\GameStateGetters.cpp" ^
     "%SRC%\Util\EventTable.cpp" ^
+    "%SRC%\Util\TimerInit.cpp" ^
     "%SRC%\Audio\AudioMemory.cpp" ^
     "%SRC%\Audio\AudioRws.cpp" ^
     "%SRC%\Audio\AudioDSound.cpp" ^
