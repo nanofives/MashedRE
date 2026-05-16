@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  ma1-ghidra-s2  C1->C2 batch  bucket=promote_c2_window_wndproc  rvas=0x00499ba0,0x004996f0,0x00499cc0,0x00499820,0x00496490,0x00496470,0x004960e0,0x004963b0  count=8  resolved=U-0647,S-0003,S-0640,S-0641,S-0642  new=U-3870,S-3920,S-3921  carried=U-0648,S-0643  pool=Mashed_pool1
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
 2026-05-16  0x0041ccc0  HudSlotLoopCcc0  C2->C3  evidence=log/diff_hud_slot_loop_ccc0.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041c9a0 (__thiscall via EAX); session=c3-batch-g-s11
 2026-05-16  0x0041c9a0  FUN_0041c9a0  C1->C2  drift-promotion; analysis note hud_ingame_d2/0x0041c9a0.md complete all offsets cited no UNCERTAIN; unblocks 0x0041ccc0 caller-gate; session=c3-batch-g-s11

@@ -1001,3 +1001,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3830 | 0x0042b930 FUN_0042b930 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg int return; value compared to 3; not recursed; promote_c2_piz_loader |
 | S-3831 | 0x0042f510 FUN_0042f510 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg undefined4 return; alternate vehicle/object getter; not recursed; promote_c2_piz_loader |
 | S-3832 | 0x00471530 FUN_00471530 | 0x00471df0 FUN_00471df0 | boot | passthrough | 2026-05-16 | depth-2 callee; deferred per session rules; promote_c2_panel_piz_callees |
+| S-3920 | 0x00495520 FUN_00495520 | 0x004963b0 FUN_004963b0 | input | passthrough | 2026-05-16 | IDirectInput8 interface getter; called by FUN_004963b0; not recursed; ma1-ghidra-s2 |
+| S-3921 | 0x00496320 FUN_00496320 | 0x004963b0 FUN_004963b0 | input | passthrough | 2026-05-16 | DInput device create/enumerate (param_1 -> int); not recursed; ma1-ghidra-s2 |
