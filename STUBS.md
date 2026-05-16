@@ -1001,3 +1001,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3830 | 0x0042b930 FUN_0042b930 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg int return; value compared to 3; not recursed; promote_c2_piz_loader |
 | S-3831 | 0x0042f510 FUN_0042f510 | 0x004671a0 sub_004671a0 | render | passthrough | 2026-05-16 | no-arg undefined4 return; alternate vehicle/object getter; not recursed; promote_c2_piz_loader |
 | S-3832 | 0x00471530 FUN_00471530 | 0x00471df0 FUN_00471df0 | boot | passthrough | 2026-05-16 | depth-2 callee; deferred per session rules; promote_c2_panel_piz_callees |
+| S-3910 | 0x00473870 FUN_00473870 | 0x00430b90 FUN_00430b90 | frontend | passthrough | 2026-05-16 | arrow-draw 7-param right-side variant of FUN_00473540/FUN_004739f0 family; signature: (uVar7 = FUN_0040bb50("Arrow", x_right, y, w, h, color, 1)) handle; not recursed; ma1-ghidra-s5 |
