@@ -3371,4 +3371,55 @@ HOOKS = {
                            0x7FFFFFFF, 0x0000002A],
         'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
     },
+    'timer_array_zero': {
+        'rva':            0x00422b10,
+        'export':         'TimerArrayZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008994c0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00425b10  PlayerSlotZero
+    # Pure leaf; writes 0 to 8 globals at stride 0x4c from 0x008992a0.
+    # Strategy: write sentinel to first address (0x008992a0), call fn, read back.
+    # Both original and reimpl must write 0 (sentinel overwritten).
+    # 10 sentinel values confirm write for each call.
+    # ref: re/analysis/timer_d3_cont1_b/0x00425b10.md
+    'player_slot_zero': {
+        'rva':            0x00425b10,
+        'export':         'PlayerSlotZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008992a0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004222c0  TimerInitThunk
+    # 4-byte thunk of FUN_00422120 (0x00422120, C2).
+    # Strategy: 'none' — call 10x at quiescent main menu; both original and
+    # reimpl delegate to 0x00422120 and produce same side-effects.
+    # FUN_00422120 iterates 0x0063fb90 stride 0x208 x4 calling FUN_00421c50;
+    # at main menu the loop body is deterministic (same state both paths).
+    # ref: re/analysis/timer_d3_cont1_b/0x004222c0.md
+    'float_table_init': {
+        'rva':            0x0041cbc0,
+        'export':         'FloatTableInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x005f337c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
 }
