@@ -1357,7 +1357,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00420d00,FUN_00420d00,boot,C2,new,re/analysis/promote_c2_panel_piz_callees/00420d00.md,promote_c2_panel_piz_callees-20260516,,FUN_004b6520(&DAT_0063e4b8 0x90); writes 0/1/2/3 to 4 globals at stride 0x24; U-3226
 00412890,FUN_00412890,boot,C2,new,re/analysis/promote_c2_panel_piz_callees/00412890.md,promote_c2_panel_piz_callees-20260516,,"fills short[] index buffer DAT_0089d4a2..0x8a94a2 (stride 6 shorts; pattern sVar3*4+{0 1 3 0 2 3}); FUN_0040bb30(""headlight"")→DAT_0063bc54"
 00471eb0,thunk_FUN_00471df0,boot,C1,new,re/analysis/boot_app_init_d5/0x00471eb0.md,,,4B thunk → FUN_00471df0; S-3320
-00494ef0,thunk_FUN_00493f70,boot,C2,mapped,re/analysis/boot_app_init_d5/0x00494ef0.md,promote_c2_boot_teardown,,ma1-ghidra-s4: 5B E9 JMP thunk → FUN_00493f70 (C1+plate intro_splash); drift-eligible per thunk rule; S-3321; 3 callers FUN_00402a40+FUN_0043dfd0+FUN_00473c20
+00494ef0,ThunkVideoStateGet,boot,C3,impl,mashedmod/src/mashed_re/Boot/Teardown.cpp,promote_c2_boot_teardown,log/diff_thunk_video_state_get.csv,ma2-frida-s4: thunk wraps pure read of DAT_00771a04; Frida A/B 10/10 bit-identical GREEN at quiescent main menu (returns 0); 3 callers FUN_00402a40+FUN_0043dfd0+FUN_00473c20; S-3321 (target stub) remains
 00494f20,thunk_FUN_00494460,boot,C2,mapped,re/analysis/boot_app_init_d5/0x00494f20.md,promote_c2_boot_teardown,,ma1-ghidra-s4: 5B E9 JMP thunk → FUN_00494460 (C1+plate intro_splash); drift-eligible per thunk rule; S-3322
 00421590,thunk_FUN_004210f0,boot,C1,new,re/analysis/boot_app_init_d5/0x00421590.md,,,4B thunk → FUN_004210f0; S-3323
 0047ba10,thunk_FUN_00496970,boot,C1,new,re/analysis/boot_app_init_d5/0x0047ba10.md,,,4B thunk → FUN_00496970; S-3324

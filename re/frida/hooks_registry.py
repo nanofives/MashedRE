@@ -3758,4 +3758,30 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-ma2-frida-s4 — boot teardown + COM release
+    # Boot/Teardown.cpp — HardwareExitApplication helpers (FUN_00402a40 callees)
+    # 5 of 6 candidates REFUSED: 0x00494bc0 (live COM Release destroys D3D
+    # interfaces), 0x00489250 (live free destroys RW frames), 0x00494f20
+    # (close-video destroys live state on first call so 10x diff diverges),
+    # 0x004955c0 + 0x004963d0 (thunk targets FUN_00495580 / FUN_00496370 not
+    # yet C1+plated). See re/DEFERRED.md D-10774..D-10778.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00494ef0  ThunkVideoStateGet — thunk → FUN_00493f70 (intro_splash video flag read)
+    # 5-byte E9 JMP at 0x00494ef0 → 0x00493f70.  Target body is
+    # `return DAT_00771a04;` (pure global reader; plate at
+    # re/analysis/intro_splash/0x00493f70.md).  Read-only, safe to invoke 10x
+    # at quiescent main menu — both orig and reimpl deref the same address.
+    # arg_type='none': zero-arg call, compare uint32 return value.
+    'thunk_video_state_get': {
+        'rva':            0x00494ef0,
+        'export':         'ThunkVideoStateGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
