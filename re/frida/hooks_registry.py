@@ -2019,6 +2019,27 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-f-s3 — audio sub-struct lifecycle cluster (C2->C3, 4)
+    # Audio/AudioRws.cpp
+    # Pool-return/heap-free/combined-cleanup leaves + 16-byte fmt-key comparator.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005ae080  AudioSubStructAFree
+    # int*(int*): if *param_1!=0 and bit0(param_1[2]) → pool-return FUN_005ae920;
+    # clear bit0. Returns param_1.
+    # At quiescent main menu audio sub-structs have null data pointers; guard
+    # fails safely (no pool-return triggered). Use 'none' (10 no-crash checks).
+    'audio_sub_struct_a_free': {
+        'rva':            0x005ae080,
+        'export':         'AudioSubStructAFree',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x004abf28  CrtGetEnvStrings  (___crtGetEnvironmentStringsA, Visual Studio 2003 Release)
     # Takes no args; returns LPVOID (malloc'd ANSI env block, or NULL on failure).
     # At main-menu time DAT_00773d48 is already 1 (wide path succeeded at startup).
@@ -2190,6 +2211,82 @@ HOOKS = {
             [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
             [1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
             [0xFF,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+        ],
+    },
+
+    # 0x005ae050  AudioSubStructBFree
+    # int(int): if *(int*)(param+4)!=0 and bit1(*(uint*)(param+8)) → heap-free;
+    # clear bit1. Returns param_1.
+    # At quiescent main menu audio sub-structs have null data pointers; guard
+    # fails safely. Use 'none' (10 no-crash checks).
+    'audio_sub_struct_b_free': {
+        'rva':            0x005ae050,
+        'export':         'AudioSubStructBFree',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005ae030  AudioSubStructCleanup
+    # int(int): calls AudioSubStructAFree + AudioSubStructBFree in sequence.
+    # Same quiescent-menu guard logic — both sub-callees are guarded at their
+    # entry; null data pointer makes them no-ops. Use 'none' (10 no-crash checks).
+    'audio_sub_struct_cleanup': {
+        'rva':            0x005ae030,
+        'export':         'AudioSubStructCleanup',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005adf30  AudioFmtKeyCompare
+    # int(byte*, byte*): 16-byte lexicographic memcmp returning -1/0/+1.
+    # Pure: no side effects, no callees, no globals.
+    # arg_type='fmt_key_compare': allocates 32-byte scratch, writes a+b patterns,
+    # calls fn(buf, buf+16), compares int return. 15 test vectors: 5 equal pairs,
+    # 5 a<b pairs, 5 a>b pairs, covering various byte-position differences.
+    'audio_fmt_key_compare': {
+        'rva':            0x005adf30,
+        'export':         'AudioFmtKeyCompare',
+        'signature':      {'ret': 'int32', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_key_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # Equal pairs (expect 0)
+            {'a': [0x00]*16, 'b': [0x00]*16},
+            {'a': [0xFF]*16, 'b': [0xFF]*16},
+            {'a': [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,
+                   0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10],
+             'b': [0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,
+                   0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10]},
+            {'a': [0xAA,0xBB,0xCC,0xDD,0xEE,0xFF,0x11,0x22,
+                   0x33,0x44,0x55,0x66,0x77,0x88,0x99,0x00],
+             'b': [0xAA,0xBB,0xCC,0xDD,0xEE,0xFF,0x11,0x22,
+                   0x33,0x44,0x55,0x66,0x77,0x88,0x99,0x00]},
+            {'a': [0x7F]*16, 'b': [0x7F]*16},
+            # a < b pairs (expect -1): first byte difference, a[i] < b[i]
+            {'a': [0x00]*16, 'b': [0x01] + [0x00]*15},
+            {'a': [0x01,0x00] + [0x00]*14, 'b': [0x01,0x01] + [0x00]*14},
+            {'a': [0xFE]*16, 'b': [0xFE]*15 + [0xFF]},
+            {'a': [0x10,0x20,0x30] + [0x00]*13,
+             'b': [0x10,0x20,0x31] + [0x00]*13},
+            {'a': [0x00]*15 + [0x00], 'b': [0x00]*15 + [0x01]},
+            # a > b pairs (expect +1): first byte difference, a[i] > b[i]
+            {'a': [0x01] + [0x00]*15, 'b': [0x00]*16},
+            {'a': [0x01,0x01] + [0x00]*14, 'b': [0x01,0x00] + [0x00]*14},
+            {'a': [0xFF]*16, 'b': [0xFF]*15 + [0xFE]},
+            {'a': [0x10,0x20,0x31] + [0x00]*13,
+             'b': [0x10,0x20,0x30] + [0x00]*13},
+            {'a': [0x00]*15 + [0x01], 'b': [0x00]*15 + [0x00]},
+        ],
+        'path2_tests': [
+            {'a': [0x00]*16, 'b': [0x00]*16},
+            {'a': [0x01] + [0x00]*15, 'b': [0x00]*16},
+            {'a': [0x00]*16, 'b': [0x01] + [0x00]*15},
         ],
     },
 }
