@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0x00494ef0  ThunkVideoStateGet  C2->C3  ma2-frida-s4 thunk wraps pure read of DAT_00771a04; Frida A/B 10/10 GREEN at quiescent main menu (log/diff_thunk_video_state_get.csv); reimpl mashedmod/src/mashed_re/Boot/Teardown.cpp; refused 5/6: 0x00494bc0+0x00489250+0x00494f20 unsafe to invoke live (D-10774..D-10776), 0x004955c0+0x004963d0 targets not C1+plated (D-10777..D-10778)
 2026-05-16  frida-sweep-20260516-2316  frida-sweep-claim  branches=8 queued
 2026-05-16  sweep-20260516-2149  scribe-release  buckets=8 drained  errors=0  total-plates=63  total-bookmarks=63  total-renames=0
 2026-05-16  sweep-20260516-2149  scribe-release  bucket=promote_c2_settings_dialog  writes=8  errors=0
