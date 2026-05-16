@@ -1948,7 +1948,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00431af0,FUN_00431af0,boot,C1,new,re/analysis/boot_subsystem_d3/0x00431af0.md,,,DAT_007f0f08=0x3f333333 (0.7f); 10b setter; paired with 00431ae0/b00/b10
 00431b00,FUN_00431b00,boot,C1,new,re/analysis/boot_subsystem_d3/0x00431b00.md,,,DAT_007f0f00=0x3f333333 (0.7f); 10b setter; paired with 00431ae0/af0/b10
 00431b10,FUN_00431b10,boot,C1,new,re/analysis/boot_subsystem_d3/0x00431b10.md,,,DAT_007f0f10=2; 10b int setter; 007f0f00..0f10 cluster
-004955b0,FUN_004955b0,input,C2,new,re/analysis/boot_subsystem_d3/0x004955b0.md,,,bool wrapper: FUN_00495530()!=0; 11b; DInput init predicate; depth-3 via thunk 00495150; sole callee FUN_00495530 C1; U-3871; promoted ma1-ghidra-s3
+004955b0,DInputInitPredicate,input,C3,impl,mashedmod/src/mashed_re/Boot/RwEngineInit.cpp,quiescent_menu,log/diff_dinput_init_predicate.csv,bool wrapper: FUN_00495530()!=0; 11b; DInput init predicate; depth-3 via thunk 00495150; sole callee FUN_00495530 C2 (DI8Create); caller 00495150 C2; Frida A/B 10/10 GREEN; ma2-frida-s3 2026-05-16
 00495150,FUN_00495150,input,C2,new,re/analysis/promote_c2_video_cfg/00495150.md,,,DInput init seq: QPC+DI8+joypad+kbd+remap; switch DAT_007719e8(0-5); returns DAT_007719e4==0; 6 callees confirmed; U-2293 U-2294 U-2295 U-2298
 004960a0,FUN_004960a0,input,C1,new,re/analysis/boot_subsystem_d3/0x004960a0.md,,,DInput device init: validate DI; DAT_00772fb0=param_1; FUN_00496040; DAT_00771e80=0x10 deadzone; DAT_00772fa8=0x3eb33333(0.35f); returns 0/1
 004963b0,FUN_004963b0,input,C2,mapped,re/analysis/boot_subsystem_d3/0x004963b0.md,ma1-ghidra-s2,2026-05-16,DInput device create: DAT_00772fb4=FUN_00495520(); FUN_00496320(param_1)!=0; 29b; S-3920 S-3921 (callees unmapped)
