@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  sweep-20260516-2149  scribe-release  bucket=promote_c2_rw_d3d9_init  writes=7  errors=0
 2026-05-16  sweep-20260516-2149  scribe-release  bucket=promote_c2_window_wndproc  writes=8  errors=0
 2026-05-16  sweep-20260516-2149  scribe-release  bucket=promote_c2_winmain_chain  writes=8  errors=0
 2026-05-16  sweep-20260516-2149  scribe-claim  buckets=8 queued, 0 skipped-HOLD
