@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  0041c2d0  FUN_0041c2d0  C2->C3  Frida GREEN 10/10 crash_equal_ok log/diff_hud_dispatch_draw4.csv; __declspec(naked) EAX-thiscall impl HUD/HudDispatch.cpp; leaf-exempt (vtable-only callees_depth1=[]); callers 0041a3e0+0041c300 both C3; session c3-batch-g-s14
+2026-05-16  00552e40  FontCtx_FlushMatrix  refused  C3 refused: caller gate fails (callers 00552890+00552920+005572c0 all C0/untracked); Frida GREEN 10/10 crash_equal_ok log/diff_font_ctx_flush_matrix.csv on file; impl committed; session c3-batch-g-s14
+2026-05-16  00552b60  FontSys_InitSeq  refused  C3 refused: Frida diff impossible at quiescent main menu (7 alloc/init callees deadlock past 60s, TIMEOUT 2x); impl committed HUD/FontCtx.cpp; duplicate-row drift removed; session c3-batch-g-s14
+2026-05-16  004c5a60  FUN_004c5a60  deferred  C3 deferred: callee gate fails (callees 004d8060+004c7650 both C1); no impl attempted; session c3-batch-g-s14

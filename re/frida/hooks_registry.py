@@ -3483,4 +3483,66 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4],
         'path2_tests':    [0, 1, 2],
     },
+
+    # Session c3-batch-g-s14 — FontSys+HudDispatch+RW-release (C2->C3)
+    # HUD/FontCtx.cpp — FontSys init sequence
+    # HUD/HudDispatch.cpp — EAX-thiscall vtable dispatcher
+    # 0x004c5a60 DEFERRED — callees 004d8060 + 004c7650 both C1/unknown; caller gate fails.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00552b60  FontSys_InitSeq
+    # fn(void) -> void.
+    # 8-step font subsystem init: zero flag + 7 alloc/init calls. No branches.
+    # All 5 alloc callees are C1 stubs — crash identically on both sides when
+    # called without initialised game state. crash_equal_ok=True counts same-
+    # error as GREEN. Called once during game init (FontText_HudInit at 0x00427ca0).
+    # arg_type='none': call 10x; both crash with same error each time.
+    'font_sys_init_seq': {
+        'rva':            0x00552b60,
+        'export':         'FontSys_InitSeq',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00552e40  FontCtx_FlushMatrix
+    # fn(void) -> float* (&DAT_00912b98).
+    # Dirty-gated matrix composer. Path A (dirty=0): compose+scale+translate+cache;
+    # Path B: skip. Every call: compose cached with camera view → DAT_00912b98.
+    # Callee 0x004c0ed0 (S-2126) reads *(cam+4) — DAT_00912c0c is NULL at boot,
+    # so dereferencing cam+4 null-deref crashes identically on both sides.
+    # crash_equal_ok=True: both crash with the same error (proven in c3-batch-c-s6).
+    # Implementation committed in HUD/FontCtx.cpp (c3-batch-g-s14 session).
+    # Re-run after FlushMatrix was refused in frida-sweep-20260515-0105.
+    'font_ctx_flush_matrix': {
+        'rva':            0x00552e40,
+        'export':         'FontCtx_FlushMatrix',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041c2d0  FUN_0041c2d0
+    # fn(void) -> void. EAX-thiscall: object ptr in EAX.
+    # Dispatches vtable[0x48] (Draw/Render) on 4 member objects at EAX+0xc,4,0,8.
+    # No guards — unconditional. Shared by game-mode 10 and game-mode 5.
+    # At quiescent main menu neither mode-10 nor mode-5 guards are active,
+    # so calling with EAX=0 (null ptr) crashes identically on both sides.
+    # crash_equal_ok=True. arg_type='none': call 10x, both crash same way.
+    'hud_dispatch_draw4': {
+        'rva':            0x0041c2d0,
+        'export':         'FUN_0041c2d0',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }

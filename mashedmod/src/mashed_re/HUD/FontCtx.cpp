@@ -423,3 +423,72 @@ float* __cdecl FontCtx_FlushMatrix()
 }
 
 RH_ScopedInstall(FontCtx_FlushMatrix, 0x00552e40);
+
+// ---------------------------------------------------------------------------
+// FontSys_InitSeq  --  0x00552b60
+//
+// Original: FUN_00552b60 (44 bytes, 0x00552b60–0x00552b8c)
+// 8-step font subsystem initialisation sequence. No branches.
+// Callees (in order):
+//   0x00557250  FontSys_AllocObjects    (C1 stub — crashes if game state not ready)
+//   0x005540d0  FontCanvas_Init         (C1 stub — crashes if game state not ready)
+//   0x00556d20  FontSys_AllocVertexBuf  (C1 stub — crashes if game state not ready)
+//   0x00555360  FontCtx_AllocPrimary    (C1 stub — crashes if game state not ready)
+//   0x005571e0  FontSys_AllocScratchBuf (C1 stub — crashes if game state not ready)
+//   0x00552c10  FontSys_InitRenderState (C3 — in this file)
+//   0x00552a60  FontSys_SetActiveCamera (C3 — param_1=0 from no PUSH before CALL)
+// Verification: crash_equal_ok=True — all C1 callees crash identically on both
+// original and reimpl when called without initialised game state (quiescent boot).
+// ref: re/analysis/hud_promote_c2_b/0x00552b60.md
+// ---------------------------------------------------------------------------
+
+// Raw callee function pointers (C1 stubs — only used at game init, crash_equal_ok)
+typedef void (__cdecl *PFN_FontSysAllocObjects)();
+typedef void (__cdecl *PFN_FontCanvasInit)();
+typedef void (__cdecl *PFN_FontSysAllocVertexBuf)();
+typedef void (__cdecl *PFN_FontCtxAllocPrimary)();
+typedef void (__cdecl *PFN_FontSysAllocScratchBuf)();
+typedef void (__cdecl *PFN_FontSysSetActiveCamera)(std::int32_t param_1);
+
+static const PFN_FontSysAllocObjects    g_AllocObjects   = reinterpret_cast<PFN_FontSysAllocObjects>   (0x00557250u);
+static const PFN_FontCanvasInit         g_CanvasInit     = reinterpret_cast<PFN_FontCanvasInit>        (0x005540d0u);
+static const PFN_FontSysAllocVertexBuf  g_AllocVertexBuf = reinterpret_cast<PFN_FontSysAllocVertexBuf> (0x00556d20u);
+static const PFN_FontCtxAllocPrimary    g_AllocPrimary   = reinterpret_cast<PFN_FontCtxAllocPrimary>   (0x00555360u);
+static const PFN_FontSysAllocScratchBuf g_AllocScratchBuf= reinterpret_cast<PFN_FontSysAllocScratchBuf>(0x005571e0u);
+static const PFN_FontSysSetActiveCamera g_SetActiveCamera= reinterpret_cast<PFN_FontSysSetActiveCamera>(0x00552a60u);
+
+// DAT_00912bdc: font system init-state flag (zeroed at entry of this function)
+// 0x00552b60 (step 1): DAT_00912bdc = 0
+static std::uint32_t* const g_FontInitFlag = reinterpret_cast<std::uint32_t*>(0x00912bdcu);
+
+// 0x00552b60
+extern "C" __declspec(dllexport)
+void __cdecl FontSys_InitSeq()
+{
+    // 0x00552b60: DAT_00912bdc = 0  — zero font system init-state flag
+    *g_FontInitFlag = 0u;
+
+    // 0x00552b69: FUN_00557250() — FontSys_AllocObjects
+    g_AllocObjects();
+
+    // 0x00552b6e: FUN_005540d0() — FontCanvas_Init
+    g_CanvasInit();
+
+    // 0x00552b73: FUN_00556d20() — FontSys_AllocVertexBuf
+    g_AllocVertexBuf();
+
+    // 0x00552b78: FUN_00555360() — FontCtx_AllocPrimary
+    g_AllocPrimary();
+
+    // 0x00552b7d: FUN_005571e0() — FontSys_AllocScratchBuf
+    g_AllocScratchBuf();
+
+    // 0x00552b82: FUN_00552c10() — FontSys_InitRenderState
+    FontSys_InitRenderState();
+
+    // 0x00552b87: FUN_00552a60() with no pushed arg -> param_1 = 0
+    // Resets DAT_00912c0c = 0 (active camera ptr)
+    g_SetActiveCamera(0);
+}
+
+RH_ScopedInstall(FontSys_InitSeq, 0x00552b60);
