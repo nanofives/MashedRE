@@ -2407,4 +2407,109 @@ HOOKS = {
             {'p2': 0xFFFFFFFF, 'p3': 0xFFFFFFFF},
         ],
     },
+    'audio_pool_block_alloc': {
+        'rva':            0x005ae800,
+        'export':         'AudioPoolBlockAlloc',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # All tests pass null (0) as param_1; both sides crash at *(0+0x10).
+        # 10 repetitions confirm error-string stability.
+        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0, 0],
+    },
+
+    # 0x005ae780  AudioPoolDestroy
+    # Drains block list at param_1+0x10 via RawFree (0x004522d0); then frees
+    # pool header via DAT_007ddab0 secondary pool or RawFree. Skips header free
+    # if bit-0 of *(param_1+0x18) is set (externally-owned header).
+    # crash_equal_ok: null param_1 causes identical crash on both sides
+    # at *(0+0x10) = invalid read.
+    'audio_pool_destroy': {
+        'rva':            0x005ae780,
+        'export':         'AudioPoolDestroy',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0, 0],
+    },
+
+    # 0x005aeca0  AudioFieldEndianPack
+    # Writes 1, 2, or 4 bytes from *param_2 into **param_1 with big->little endian
+    # byte reversal; advances *param_1 by field size. Pure arithmetic leaf.
+    # arg_type='endian_pack': allocates fresh output buffer + ptr-to-ptr + src slot;
+    # calls fn(ptrSlot, srcSlot, size); compares output buffer fingerprint.
+    'audio_field_endian_pack': {
+        'rva':            0x005aeca0,
+        'export':         'AudioFieldEndianPack',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer', 'int32']},
+        'arg_type':       'endian_pack',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'src_val': 0x12,             'size': 1},  # 1-byte: low byte 0x12
+            {'src_val': 0xAB,             'size': 1},  # 1-byte: 0xAB
+            {'src_val': 0xFF,             'size': 1},  # 1-byte: 0xFF
+            {'src_val': 0x1234,           'size': 2},  # 2-byte: swap 0x34 0x12
+            {'src_val': 0xABCD,           'size': 2},  # 2-byte: swap 0xCD 0xAB
+            {'src_val': 0x0001,           'size': 2},  # 2-byte: 0x01 0x00
+            {'src_val': 0x12345678,       'size': 4},  # 4-byte: bswap32
+            {'src_val': 0xDEADBEEF,       'size': 4},  # 4-byte: bswap32
+            {'src_val': 0x00000001,       'size': 4},  # 4-byte: bswap32 -> 0x01000000
+            {'src_val': 0xFF000000,       'size': 4},  # 4-byte: bswap32 -> 0x000000FF
+        ],
+        'path2_tests': [
+            {'src_val': 0x12, 'size': 1},
+            {'src_val': 0x1234, 'size': 2},
+            {'src_val': 0x12345678, 'size': 4},
+        ],
+    },
+
+    # 0x005ae0c0  AudioWaveFmtCopy
+    # Copies a 16-byte WAVEFORMATEX-like descriptor from param_1 to param_2.
+    # param_3==NULL -> direct 4-DWORD copy; param_3!=NULL -> byte-swap path
+    # via AudioFieldEndianPack calls. Returns param_1.
+    # arg_type='wavefmt_copy': allocates src+dst 16-byte bufs, writes test src,
+    # calls fn(src, dst, swap_flag), compares dst fingerprint.
+    'audio_wave_fmt_copy': {
+        'rva':            0x005ae0c0,
+        'export':         'AudioWaveFmtCopy',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'pointer']},
+        'arg_type':       'wavefmt_copy',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # No-swap path (swap=0): direct DWORD copy
+            {'src': [0x01,0x00,0x01,0x00, 0x44,0xAC,0x00,0x00,
+                     0x88,0x58,0x01,0x00, 0x02,0x00,0x10,0x00], 'swap': 0},
+            {'src': [0xFF,0xFE,0xFD,0xFC, 0xFB,0xFA,0xF9,0xF8,
+                     0xF7,0xF6,0xF5,0xF4, 0xF3,0xF2,0xF1,0xF0], 'swap': 0},
+            {'src': [0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,
+                     0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00], 'swap': 0},
+            {'src': [0xDE,0xAD,0xBE,0xEF, 0xCA,0xFE,0xBA,0xBE,
+                     0x12,0x34,0x56,0x78, 0x9A,0xBC,0xDE,0xF0], 'swap': 0},
+            {'src': [0x00,0x01,0x02,0x03, 0x04,0x05,0x06,0x07,
+                     0x08,0x09,0x0A,0x0B, 0x0C,0x0D,0x0E,0x0F], 'swap': 0},
+            # Swap path (swap=1): byte-swap first 8 bytes
+            {'src': [0x01,0x00,0x01,0x00, 0x44,0xAC,0x00,0x00,
+                     0x88,0x58,0x01,0x00, 0x02,0x00,0x10,0x00], 'swap': 1},
+            {'src': [0xFF,0xFE,0xFD,0xFC, 0xFB,0xFA,0xF9,0xF8,
+                     0xF7,0xF6,0xF5,0xF4, 0xF3,0xF2,0xF1,0xF0], 'swap': 1},
+            {'src': [0xDE,0xAD,0xBE,0xEF, 0xCA,0xFE,0xBA,0xBE,
+                     0x12,0x34,0x56,0x78, 0x9A,0xBC,0xDE,0xF0], 'swap': 1},
+            {'src': [0x00,0x01,0x02,0x03, 0x04,0x05,0x06,0x07,
+                     0x08,0x09,0x0A,0x0B, 0x0C,0x0D,0x0E,0x0F], 'swap': 1},
+            {'src': [0xAA,0xBB,0xCC,0xDD, 0xEE,0xFF,0x11,0x22,
+                     0x33,0x44,0x55,0x66, 0x77,0x88,0x99,0x00], 'swap': 1},
+        ],
+        'path2_tests': [
+            {'src': [0x01,0x00,0x01,0x00, 0x44,0xAC,0x00,0x00,
+                     0x88,0x58,0x01,0x00, 0x02,0x00,0x10,0x00], 'swap': 0},
+            {'src': [0x01,0x00,0x01,0x00, 0x44,0xAC,0x00,0x00,
+                     0x88,0x58,0x01,0x00, 0x02,0x00,0x10,0x00], 'swap': 1},
+            {'src': [0xDE,0xAD,0xBE,0xEF, 0xCA,0xFE,0xBA,0xBE,
+                     0x12,0x34,0x56,0x78, 0x9A,0xBC,0xDE,0xF0], 'swap': 0},
+        ],
+    },
 }
