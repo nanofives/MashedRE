@@ -1179,3 +1179,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  00550910  VfsStreamClose     DEFERRED(C2)  U-3561/U-3562 inline in body; IAT identities unresolved; c3-batch-e-s3
 2026-05-15  0x004a31f3  CrtPreInit  C2->C3  Frida A/B GREEN 10/10 log/diff_crt_pre_init.csv; fn-ptr table dispatch; atexit; RH_ScopedInstall Boot/CrtStartup.cpp
 2026-05-15  0x004a3258  CrtExitCore  C2->C3  Frida A/B GREEN 10/10 crash_equal_ok log/diff_crt_exit_core.csv; lock+atexit+exit-tables; RH_ScopedInstall Boot/CrtStartup.cpp
+2026-05-15  0041d820  TimerFlagClear  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_timer_flag_clear.csv; U-3715 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  0041e130  TimerStateSet  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_timer_state_set.csv; U-3716 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  00426630  PitchParamSet  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_pitch_param_set.csv; U-3717 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp
+2026-05-15  004266f0  PitchParam2Set  C2->C3  c3-batch-e-s11; leaf-exemption; Frida A/B GREEN 10/10 log/diff_pitch_param2_set.csv; U-3718 filed; mashedmod/src/mashed_re/Util/TimerSetters.cpp

@@ -3310,4 +3310,65 @@ HOOKS = {
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
     },
+    'timer_flag_clear': {
+        'rva':            0x0041d820,
+        'export':         'TimerFlagClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063d558,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0041e130  TimerStateSet
+    # void(uint32): writes param_1 to DAT_0063d7e0. 9 bytes.
+    # Strategy: write_global_setter — call fn(test_value), read back 0x0063d7e0.
+    # Both orig and reimpl must produce identical readback (== test_value).
+    'timer_state_set': {
+        'rva':            0x0041e130,
+        'export':         'TimerStateSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'write_global_setter',
+        'target_global':  0x0063d7e0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xFFFFFFFF, 0x80000000, 0x00000064,
+                           0x7FFFFFFF, 0x0000002A],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x00426630  PitchParamSet
+    # void(uint32): writes param_1 to DAT_0066d6fc. 9 bytes.
+    # Strategy: write_global_setter — call fn(test_value), read back 0x0066d6fc.
+    'pitch_param_set': {
+        'rva':            0x00426630,
+        'export':         'PitchParamSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'write_global_setter',
+        'target_global':  0x0066d6fc,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xFFFFFFFF, 0x80000000, 0x00000064,
+                           0x7FFFFFFF, 0x0000002A],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x004266f0  PitchParam2Set
+    # void(uint32): writes param_1 to DAT_0066d700 (sibling of PitchParamSet; +4). 9 bytes.
+    # Strategy: write_global_setter — call fn(test_value), read back 0x0066d700.
+    'pitch_param2_set': {
+        'rva':            0x004266f0,
+        'export':         'PitchParam2Set',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'write_global_setter',
+        'target_global':  0x0066d700,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xFFFFFFFF, 0x80000000, 0x00000064,
+                           0x7FFFFFFF, 0x0000002A],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
 }

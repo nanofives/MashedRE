@@ -1648,8 +1648,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0041cb80,sub_0041cb80,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041cb80.md,promote_c2_util_timer-20260513,,init loop: calls FUN_0040e340/FUN_0040b890 once; iterates 0x0063ce20 stride 0x114 x46 calling FUN_0041c380; caller=FUN_004111c0
 0041cbc0,sub_0041cbc0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041cbc0.md,promote_c2_util_timer-20260513,,float-table init: writes 4x3 float groups to 0x005f337c; zeroes 0x0063d270; caller=FUN_004111c0
 0041d730,sub_0041d730,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d730.md,promote_c2_util_timer-20260513,,player-slot assignment init: zeroes 0x0063d298 slots stride 0x160; checks 007f1a14/18/24/28/34/38/44/48 pairs; caller=FUN_004111c0
-0041d820,sub_0041d820,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041d820.md,promote_c2_util_timer-20260513,,trivial: DAT_0063d558=0; caller=FUN_004111c0
-0041e130,sub_0041e130,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041e130.md,promote_c2_util_timer-20260513,,setter: DAT_0063d7e0=param_1; callers=FUN_004111c0 FUN_0040e560
+0041d820,TimerFlagClear,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0063d558=0; Frida A/B GREEN 10/10; U-3715; caller=FUN_004111c0
+0041e130,TimerStateSet,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0063d7e0=param_1; Frida A/B GREEN 10/10; U-3716; callers=FUN_004111c0 FUN_0040e560
 0041eda0,TimerBitFieldSet,util,C3,impl,mashedmod/src/mashed_re/Util/TimerInit.cpp,c3-batch-f-s16,log/diff_timer_bit_field_set.csv,bitfield set/clear bit3 at 0x0063dc74+param1*0x2ac; GREEN 10/10; U-3715 U-3716; callers=FUN_004111c0 FUN_0040be50 FUN_00410860(C2) FUN_004704c0(C2)
 0041f000,sub_0041f000,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x0041f000.md,promote_c2_util_timer-20260513,,copy 6 dwords from 0x0063dc10+param1*0x2ac to *param2; callers=FUN_004111c0 FUN_0040e590
 00420d40,sub_00420d40,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00420d40.md,promote_c2_util_timer-20260513,,array clear: zeroes 6-element x0x24 block at 0x0063e4b8 via FUN_004b6520+manual; caller=FUN_004111c0
@@ -1657,8 +1657,8 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004222c0,thunk_FUN_00422120,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x004222c0.md,promote_c2_util_timer-20260513,,confirmed thunk of 0x00422120; caller=FUN_004111c0
 00422b10,sub_00422b10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00422b10.md,promote_c2_util_timer-20260513,,zero-fill 0x4e0 bytes at 0x008994c0 (0x138 dwords); caller=FUN_004111c0
 00425b10,sub_00425b10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00425b10.md,promote_c2_util_timer-20260513,,zero 8 globals stride 0x4c at 0x008992a0..0x008994b4; caller=FUN_004111c0
-00426630,sub_00426630,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426630.md,promote_c2_util_timer-20260513,,setter: DAT_0066d6fc=param_1; caller=FUN_004111c0
-004266f0,sub_004266f0,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x004266f0.md,promote_c2_util_timer-20260513,,setter: DAT_0066d700=param_1; caller=FUN_004111c0
+00426630,PitchParamSet,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0066d6fc=param_1; Frida A/B GREEN 10/10; U-3717; caller=FUN_004111c0
+004266f0,PitchParam2Set,util,C3,impl,mashedmod/src/mashed_re/Util/TimerSetters.cpp,c3-batch-e-s11,pending,leaf-exemption; DAT_0066d700=param_1; Frida A/B GREEN 10/10; U-3718; caller=FUN_004111c0
 00426c10,sub_00426c10,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c10.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea40 gate; if nonzero calls FUN_0041e920(&0x00646e58)+FUN_00480100; caller=FUN_004111c0
 00426c30,sub_00426c30,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c30.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea30 gate; if nonzero calls FUN_0041e910; caller=FUN_004111c0
 00426c70,sub_00426c70,util,C2,mapped,re/analysis/timer_d3_cont1_b/0x00426c70.md,promote_c2_util_timer-20260513,,conditional dispatch: FUN_0041ea50 gate; if nonzero calls FUN_0041e930; caller=FUN_004111c0
