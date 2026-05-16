@@ -71,6 +71,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Boot\Window.cpp" ^
     "%SRC%\Boot\RwEngineInit.cpp" ^
     "%SRC%\Boot\Teardown.cpp" ^
+    "%SRC%\Boot\VideoConfig.cpp" ^
     "%SRC%\Save\GameSave.cpp" ^
     "%SRC%\Save\VfsStream.cpp" ^
     "%SRC%\Save\FsOpen.cpp" ^
