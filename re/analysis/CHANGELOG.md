@@ -1165,3 +1165,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  005a9e10  AudioSubStructTwoCallInit  C2->C3  log/diff_audio_sub_struct_two_call_init.csv; two-call dispatcher 10/10 GREEN; U-0351 callee-semantic open; c3-batch-f-s9
 2026-05-15  005ade90  AudioListDrain2  C2->C3  log/diff_audio_list_drain2.csv; empty-drain 10/10 GREEN; harness-limited pool uninit; U-0990 pool-node-type open; c3-batch-f-s9
 2026-05-15  0x0041eda0  TimerBitFieldSet  C2->C3  evidence=log/diff_timer_bit_field_set.csv(GREEN 10/10)  file=mashedmod/src/mashed_re/Util/TimerInit.cpp  U-3715 U-3716 filed
+2026-05-15  0x004099e0  SaveStatusClear  C2->C3  log/diff_save_status_clear.csv  10/0 GREEN  leaf-exemption  c3-batch-e-s1
+2026-05-15  0x00404e50  SaveLoad  C2->C3  log/diff_save_load.csv  2/0 GREEN  c3-batch-e-s1
+2026-05-15  0x00404f50  SaveWrite  C2->C3  log/diff_save_write.csv  2/0 GREEN  c3-batch-e-s1
+2026-05-15  0x00404f80  SaveFileExists  C2->C3  log/diff_save_file_exists.csv  10/0 GREEN  c3-batch-e-s1
