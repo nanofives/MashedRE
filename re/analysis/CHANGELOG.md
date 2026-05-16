@@ -1,6 +1,16 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0x00495530  FUN_00495530  C1->C2  DI8Create wrapper; plate re/analysis/promote_c2_dinput_init/00495530.md; U-0267+U-0268 RESOLVED (DAT_005d0a8c bytes 30 80 79 bf 3a 48 a2 4d aa 99 5d 64 ed 36 97 00 = IID_IDirectInput8A); session=ma1-ghidra-s7
+2026-05-16  0x004955b0  FUN_004955b0  C1->C2  11b bool predicate wrapping FUN_00495530 (this session's C2); plate re/analysis/promote_c2_dinput_init/004955b0.md; session=ma1-ghidra-s7
+2026-05-16  0x00499720  FUN_00499720  C1->C2  5b leaf HINSTANCE getter (DAT_007e9580); paired w/ FUN_00499710 HWND getter; plate re/analysis/promote_c2_dinput_init/00499720.md; session=ma1-ghidra-s7
+2026-05-16  0x00497190  FUN_00497190  C1->C2  24b filename formatter "contcfg%d.bin" via FUN_004a2b60; plate re/analysis/promote_c2_dinput_init/00497190.md; session=ma1-ghidra-s7
+2026-05-16  0x00495830  FUN_00495830  C1->C2  52b leaf strcpy from joypad_struct[slot] (stride 0x448); plate re/analysis/promote_c2_dinput_init/00495830.md; U-2589 carried; session=ma1-ghidra-s7
+2026-05-16  0x004971b0  FUN_004971b0  C1->C2  114b controller config file loader; plate re/analysis/promote_c2_dinput_init/004971b0.md; U-2590 RESOLVED (DAT_005cf010="rb"); U-2587/2588 carried; session=ma1-ghidra-s7
+2026-05-16  0x004b6480  FUN_004b6480  C1->C2  88b leaf bit-array clear (REP STOSD/STOSB + sub-byte mask); plate re/analysis/promote_c2_dinput_init/004b6480.md; session=ma1-ghidra-s7
+2026-05-16  0x004987b0  FUN_004987b0  C1->C2  89b debug printf wrapper (vsprintf+OutputDebugStringA, /GS); plate re/analysis/promote_c2_dinput_init/004987b0.md; session=ma1-ghidra-s7
+2026-05-16  0x004972b0  FUN_004972b0  C1->C2  88b per-frame joypad axis snapshot + keyboard read; plate re/analysis/promote_c2_dinput_init/004972b0.md; 3 callees (00495790/004957a0/00496100) have d2 notes but lack hooks.csv rows — filed as D-10770..D-10772 tracker-gap follow-ups; session=ma1-ghidra-s7
+2026-05-16  ma1-ghidra-s7  ghidra-s7-release  8/8 input C1->C2 promoted (DirectInput init foothold for input subsystem); resolves U-0267,U-0268,U-2590; 3 D-rows filed for tracker gaps; bookmarks deferred (pool6 acquired read-only); session=ma1-ghidra-s7
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
 2026-05-16  0x0041ccc0  HudSlotLoopCcc0  C2->C3  evidence=log/diff_hud_slot_loop_ccc0.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041c9a0 (__thiscall via EAX); session=c3-batch-g-s11
 2026-05-16  0x0041c9a0  FUN_0041c9a0  C1->C2  drift-promotion; analysis note hud_ingame_d2/0x0041c9a0.md complete all offsets cited no UNCERTAIN; unblocks 0x0041ccc0 caller-gate; session=c3-batch-g-s11
