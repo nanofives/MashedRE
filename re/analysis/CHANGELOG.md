@@ -1324,3 +1324,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-16  00494f20  thunk_FUN_00494460  C1->C2  ma1-ghidra-s4 promote_c2_boot_teardown; 5B E9 JMP -> FUN_00494460 (C1+plate intro_splash); drift-eligible per thunk rule
 2026-05-16  004955c0  thunk_FUN_00495580  refused  ma1-ghidra-s4 C1->C2 REFUSED: target FUN_00495580 not in hooks.csv and no plate at re/analysis/**/0x00495580.md; D-10762; thunk drift rule requires target at C1+ with plate
 2026-05-16  004963d0  thunk_FUN_00496370  refused  ma1-ghidra-s4 C1->C2 REFUSED: target FUN_00496370 not in hooks.csv and no plate at re/analysis/**/0x00496370.md; D-10763; thunk drift rule requires target at C1+ with plate
+2026-05-16  ma2-frida-s8  refused-promote-batch  buckets=settings_dialog  count=8  reason=Win32 dialog handlers not testable via standard Frida path1 A/B  D-10780..D-10787
