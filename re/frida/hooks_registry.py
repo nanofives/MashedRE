@@ -2869,4 +2869,13 @@ HOOKS = {
         'path1_tests':  [0, 1, 2, 3, 5, 1, 3, 2, 0, 1],
         'path2_tests':  [0, 1, 2],
     },
+    'music_group_volume_set': {
+        'rva':            0x005baf00,
+        'export':         'MusicGroupVolumeSet',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'float']},
+        'arg_type':       'music_vol_set',
+        'lut_root_delta': 0,
+        'path1_tests':    [0.0, 1.0, 0.5, -1.0, 0.25, 0.75, -0.5, 2.0, 0.001, 100.0],
+        'path2_tests':    [0.0, 1.0, 0.5],
+    },
 }
