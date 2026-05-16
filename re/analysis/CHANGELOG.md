@@ -1164,3 +1164,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  005aef00  AudioThreadDescInit  C2->C3  log/diff_audio_thread_desc_init.csv; pure leaf 5-field write; 10/10 GREEN; c3-batch-f-s9
 2026-05-15  005a9e10  AudioSubStructTwoCallInit  C2->C3  log/diff_audio_sub_struct_two_call_init.csv; two-call dispatcher 10/10 GREEN; U-0351 callee-semantic open; c3-batch-f-s9
 2026-05-15  005ade90  AudioListDrain2  C2->C3  log/diff_audio_list_drain2.csv; empty-drain 10/10 GREEN; harness-limited pool uninit; U-0990 pool-node-type open; c3-batch-f-s9
+2026-05-15  0x0041eda0  TimerBitFieldSet  C2->C3  evidence=log/diff_timer_bit_field_set.csv(GREEN 10/10)  file=mashedmod/src/mashed_re/Util/TimerInit.cpp  U-3715 U-3716 filed
