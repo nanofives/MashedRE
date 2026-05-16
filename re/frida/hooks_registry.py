@@ -3758,4 +3758,171 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session ma2-frida-s7 — DirectInput init chain (C2→C3, 6 candidates)
+    # Input/DirectInput.cpp
+    # First C3 promotions for the input subsystem.
+    #
+    # Refused this session:
+    #   - 0x00497190 (contcfg filename formatter): implicit EAX arg
+    #     (U-2588) — same dual-register ABI problem as MenuCenterCalc.
+    #   - 0x00497230 (SaveControllerConfig): implicit EAX arg (U-3015)
+    #     + file I/O side effects.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00499720  GetInputHinst
+    # Pure leaf: `MOV EAX, [DAT_007e9580]; RET`. 5 bytes.
+    # arg_type='read_global': write sentinel to DAT_007e9580, call fn(), verify
+    # return == sentinel. Bit-identical on every call between orig and reimpl.
+    # 10 sentinels covering 0, 1, max, bit-patterns.
+    'get_input_hinst': {
+        'rva':            0x00499720,
+        'export':         'GetInputHinst',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007e9580,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x00495530  CreateDInputObject
+    # Wrapper that calls dinput8!DirectInput8Create. 70 bytes.
+    # arg_type='none': both sides log "Creating DInput object", call
+    # GetModuleHandleA + DirectInput8Create with identical args, branch on
+    # HRESULT. At quiescent main menu DInput is already initialized, so the
+    # external call returns the same HRESULT on each invocation. Return value
+    # comparison (1 success / 0 failure) is bit-identical between orig+reimpl.
+    # Side effect: each call overwrites DAT_00771e78 with a new IDirectInput8A*
+    # — affects subsequent test calls equally on both sides.
+    'create_dinput_object': {
+        'rva':            0x00495530,
+        'export':         'CreateDInputObject',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        # crash_equal_ok=True: at quiescent main menu, calling this re-enters
+        # DirectInput8Create against an already-initialized state. The dinput8
+        # IAT path raises a structured exception via the OS DInput8 cleanup
+        # logic — both sides hit it identically (both invoke the same external
+        # entry point with identical arg layouts), so a same-error pair counts
+        # as bit-identical for diff purposes.
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004955b0  CreateDInputObjectBool
+    # 11-byte bool wrapper: returns FUN_00495530() != 0.
+    # arg_type='none': same testing strategy as the inner function — bit-
+    # identical return on both sides since both call the same target.
+    'create_dinput_object_bool': {
+        'rva':            0x004955b0,
+        'export':         'CreateDInputObjectBool',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        # crash_equal_ok=True: this bool wrapper calls 0x00495530 which raises
+        # a structured exception when re-invoked against an already-initialized
+        # DirectInput state. Same reasoning as create_dinput_object above.
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0045b350  RwInitNullStub
+    # 1-byte bare RET (0xC3). 33 callers in binary; functions as null callback.
+    # arg_type='none' + signature void(void). Both sides do nothing and return
+    # nothing — trivially bit-identical.
+    'rw_init_null_stub': {
+        'rva':            0x0045b350,
+        'export':         'RwInitNullStub',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004b6480  BitArrayClear
+    # void(byte* buf, uint count_bits). REP STOSD/STOSB leaf clearing first N
+    # bits of a byte buffer. 88 bytes.
+    # arg_type='bytes_inplace': allocates 256B bufA/bufB, fills both from
+    # test.init, calls fn(buf, len), compares fingerprints of both buffers.
+    # `len` is interpreted as count_BITS (not bytes); both orig and reimpl
+    # apply the same algorithm so fingerprints must match exactly.
+    # Tests cover: 0 bits, sub-byte (1..7), single byte (8), multi-byte fast
+    # path with leftover bytes and sub-byte tails.
+    'bit_array_clear': {
+        'rva':         0x004b6480,
+        'export':      'BitArrayClear',
+        'signature':   {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type':    'bytes_inplace',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # All-0xFF init; len = N bits; bits 0..N-1 cleared.
+            {'init': [0xFF] * 32, 'len': 0},   # no-op
+            {'init': [0xFF] * 32, 'len': 1},   # 1 sub-byte bit
+            {'init': [0xFF] * 32, 'len': 7},   # 7 sub-byte bits
+            {'init': [0xFF] * 32, 'len': 8},   # exactly 1 byte fast path
+            {'init': [0xFF] * 32, 'len': 9},   # 1 byte + 1 sub-byte
+            {'init': [0xFF] * 32, 'len': 15},  # 1 byte + 7 sub-byte
+            {'init': [0xFF] * 32, 'len': 16},  # 2 bytes
+            {'init': [0xFF] * 32, 'len': 31},  # 3 bytes + 7 sub-byte
+            {'init': [0xFF] * 32, 'len': 32},  # exactly 4 bytes = 1 dword
+            {'init': [0xFF] * 32, 'len': 33},  # 4 bytes + 1 sub-byte
+            {'init': [0xFF] * 32, 'len': 64},  # 8 bytes = 2 dwords
+            {'init': [0xFF] * 32, 'len': 100}, # 12 bytes + 4 sub-byte
+            {'init': [0x55] * 32, 'len': 13},  # alternating-bit init
+            {'init': [0xAA] * 32, 'len': 24},  # alternating-bit init
+        ],
+        'path2_tests': [
+            {'init': [0xFF] * 32, 'len': 0},
+            {'init': [0xFF] * 32, 'len': 8},
+            {'init': [0xFF] * 32, 'len': 33},
+        ],
+    },
+
+    # 0x00495830  JoypadStrcpy
+    # int(int slot_idx, int dst_ptr). Bounds-checked strcpy from
+    # &DAT_00771eb4 + slot_idx * 0x448 to dst_ptr. 52 bytes.
+    # arg_type='int_pair': exercises ONLY the early-exit paths since the
+    # success path requires both sides to write to the *same* dest buffer.
+    # Tests verify:
+    #   - dst_ptr == 0     → return 0 (the dst!=0 guard at 0x0049583x).
+    #   - slot_idx >= count → return 0 (the slot bound guard).
+    # At quiescent main menu, DAT_00772fac (joypad count) reflects EnumDevices
+    # output. Both sides read the same global, so both must return 0 for
+    # OOB inputs. We pass huge slot indices and/or NULL dst to force the
+    # early-out unconditionally regardless of joypad-count state.
+    'joypad_strcpy': {
+        'rva':            0x00495830,
+        'export':         'JoypadStrcpy',
+        'signature':      {'ret': 'int32', 'args': ['int32', 'int32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # Each test = [slot_idx, dst_ptr]. All inputs designed to hit early-out.
+        # dst_ptr=0 forces the second guard; huge slot_idx forces the first.
+        # Both guards return 0 → bit-identical on both sides.
+        'path1_tests': [
+            [0,          0],          # dst=NULL → 0
+            [1,          0],          # dst=NULL → 0
+            [100,        0],          # dst=NULL → 0
+            [0x7FFFFFFF, 0],          # dst=NULL → 0 (also huge slot)
+            [0x10000,    0],          # dst=NULL → 0 (also huge slot)
+            [0x10000,    0xDEADBEEF], # huge slot → 0 (slot check is first)
+            [0x7FFFFFFF, 0xCAFEBABE], # huge slot → 0
+            [0x40000000, 0x11223344], # huge slot → 0
+            [0x10000,    1],          # huge slot → 0
+            [0x20000,    2],          # huge slot → 0
+        ],
+        'path2_tests': [
+            [0,        0],
+            [0x10000,  0xDEADBEEF],
+            [0x40000000, 0x11223344],
+        ],
+    },
 }

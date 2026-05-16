@@ -1,6 +1,12 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0x00495830  JoypadStrcpy  C2->C3  ma2-frida-s7 52b leaf bounds-checked strcpy; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 OOB log/diff_joypad_strcpy.csv; leaf-exemption; U-2589 carried (non-blocker)
+2026-05-16  0x004b6480  BitArrayClear  C2->C3  ma2-frida-s7 88b leaf bit-array clear (REP STOSD/STOSB + AND-mask tail); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 14/14 bytes_inplace log/diff_bit_array_clear.csv; leaf-exemption
+2026-05-16  0x0045b350  RwInitNullStub  C2->C3  ma2-frida-s7 1b bare RET (0xC3); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 none log/diff_rw_init_null_stub.csv; leaf-exemption; 33 callers in binary
+2026-05-16  0x004955b0  CreateDInputObjectBool  C2->C3  ma2-frida-s7 11b bool wrapper for 0x00495530 (also promoted this session); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 (crash_equal_ok) log/diff_create_dinput_object_bool.csv; U-3871 RESOLVED
+2026-05-16  0x00495530  CreateDInputObject  C2->C3  ma2-frida-s7 DI8Create wrapper; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; callees=FUN_004987b0(C2)+GetModuleHandleA+DirectInput8Create; Frida A/B GREEN 10/10 (crash_equal_ok at quiescent menu) log/diff_create_dinput_object.csv
+2026-05-16  0x00499720  GetInputHinst  C2->C3  ma2-frida-s7 5b leaf HINSTANCE getter; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 read_global log/diff_get_input_hinst.csv; leaf-exemption
 2026-05-16  sweep-20260516-2149  scribe-release  buckets=8 drained  errors=0  total-plates=63  total-bookmarks=63  total-renames=0
 2026-05-16  sweep-20260516-2149  scribe-release  bucket=promote_c2_settings_dialog  writes=8  errors=0
 2026-05-16  sweep-20260516-2149  scribe-release  bucket=promote_c2_dinput_init  writes=8  errors=0
