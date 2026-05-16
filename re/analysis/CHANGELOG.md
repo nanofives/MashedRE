@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  00439210  FUN_00439210  C2->C3 REFUSED  c3-batch-g-s4: 11+ depth-1 callees uncatalogued — callee gate not met; 5626b body unsafe to author; D-10700
+2026-05-16  0042fe90  FUN_0042fe90  C2->C3 REFUSED  c3-batch-g-s4: callee gate failed — 6/10 callees C1 (same set as 0042fb70); D-10698
+2026-05-16  0042fb70  FUN_0042fb70  C2->C3 REFUSED  c3-batch-g-s4: callee gate failed — 6/10 callees C1 (0x004739f0,0x00473870,0x00427e00,0x004a2c48,0x0042b8b0,0x0042b8c0); D-10697
+2026-05-16  0042a940  FUN_0042a940  C2->C3 REFUSED  c3-batch-g-s4: (1) U-3434+U-3435 open structural uncertainties; (2) sole callee 0x0040ce80 C0 — callee gate not met; D-10699
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-claim  branches=16 queued
 2026-05-16  sweep-20260516-0352  scribe-release  buckets=13 drained  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_d3d9_window  writes=1  errors=0  note=partial; 6 RVAs deferred
