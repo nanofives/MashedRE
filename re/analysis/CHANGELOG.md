@@ -1,6 +1,13 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00498bd0 FUN_00498bd0  C1->C2  5b getter DAT_0061602c (render height); sibling of 0x00498bc0; analysis=re/analysis/promote_c2_video_display/00498bd0.md
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00498bf0 FUN_00498bf0  C1->C2  5b getter DAT_00773204 (cursor/display gate); ShowCursor(0) caller-gate; analysis=re/analysis/promote_c2_video_display/00498bf0.md
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042f660 DefaultViewportCameraInit  C1->C2  drift-promotion; existing split_screen plate already C2-grade; S-3560 cited (FUN_004c1a40)
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042d560 FUN_0042d560  C1->C2  drift-promotion; existing frontend_unmapped_a plate already C2-grade; S-3560 cited
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x00467110 FUN_00467110  new->C2  first-analysis; alt-camera-triple init DAT_006905b0/b4/b8; sibling of FUN_0042d560+FUN_0042f660; S-3833 S-3834 filed
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042b890 FUN_0042b890  new->C2  first-analysis; 11b setter DAT_0067ea54 (2-byte render-width copy)
+2026-05-16  ma1-ghidra-s6  promote_c2_video_display  0x0042b8a0 FUN_0042b8a0  new->C2  first-analysis; 11b setter DAT_0067ea56 (2-byte render-height copy)
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
 2026-05-16  0x0041ccc0  HudSlotLoopCcc0  C2->C3  evidence=log/diff_hud_slot_loop_ccc0.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041c9a0 (__thiscall via EAX); session=c3-batch-g-s11
 2026-05-16  0x0041c9a0  FUN_0041c9a0  C1->C2  drift-promotion; analysis note hud_ingame_d2/0x0041c9a0.md complete all offsets cited no UNCERTAIN; unblocks 0x0041ccc0 caller-gate; session=c3-batch-g-s11
