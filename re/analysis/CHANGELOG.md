@@ -1,6 +1,14 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-16  0x00498c00  VideoModeTableInit  C1->C2  promote_c2_settings_dialog/00498c00.md; settings_config_d2 plate 2026-05-03; prior U-resolutions FUN_004c2e40 (render C1 GetCurrentSubSystem) FUN_004c2f00 (render C2 RW_GetCurrentMode); sole caller VideoSettingsDispatcher 0x00499400; session=ma1-ghidra-s8
+2026-05-16  0x00499400  VideoSettingsDispatcher  C1->C2  promote_c2_settings_dialog/00499400.md; settings_config plate 2026-05-02; STUBs S-0821..S-0827 all resolved; U-0828/0829/0830 resolved; duplicate row at hooks.csv line 135 render is tracker drift not touched this session; session=ma1-ghidra-s8
+2026-05-16  0x004991f0  VideoSettingsDlgProc  C0->C2  promote_c2_settings_dialog/004991f0.md; settings_config_d3 plate 2026-05-08; new hooks.csv row (was unmapped); resolves U-0828 (true function entry confirmed); U-3007 U-3008 open carried forward; session=ma1-ghidra-s8
+2026-05-16  0x00498f60  VideoDialogInit  C0->C2  promote_c2_settings_dialog/00498f60.md; settings_config_d3 plate 2026-05-08; new hooks.csv row; 7 control labels + 4 checkbox states + 2 combos populated; no UNCERTAIN; session=ma1-ghidra-s8
+2026-05-16  0x00498d60  PopulateModeCombo  C0->C2  promote_c2_settings_dialog/00498d60.md; settings_config_d3 plate 2026-05-08; new hooks.csv row; mode filter flags!=0 + width>0x27f + height>0x1df; U-3009 open carried forward; session=ma1-ghidra-s8
+2026-05-16  0x00498d20  ReadModeFromCombo  C0->C2  promote_c2_settings_dialog/00498d20.md; settings_config_d3 plate 2026-05-08; new hooks.csv row; CB_GETCURSEL+CB_GETITEMDATA on control 0x3e9 -> DAT_00773200; no UNCERTAIN; session=ma1-ghidra-s8
+2026-05-16  0x00499170  SubsystemSelectionChanged  C0->C2  promote_c2_settings_dialog/00499170.md; settings_config_d3 plate 2026-05-08; new hooks.csv row; RW_SetSubSystem + PopulateModeCombo + RW_GetCurrentMode; no UNCERTAIN; session=ma1-ghidra-s8
+2026-05-16  0x00499740  SetControlTextFromResource  C0->C2  promote_c2_settings_dialog/00499740.md; settings_config_d3 plate 2026-05-08; new hooks.csv row; LoadStringA+SetWindowTextA helper; no UNCERTAIN; session=ma1-ghidra-s8
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-release  branches=16 merged  integration-diff=GREEN-for-promotions(12/12)-RED-for-1-refused-evidence-hook(menu_dim_set,harness-config-followup)  hooks=15  c3-promotions=12  d-row-renumberings=21
 2026-05-16  0x0041ccc0  HudSlotLoopCcc0  C2->C3  evidence=log/diff_hud_slot_loop_ccc0.csv (10/10 GREEN); impl=HUD/HudDispatch.cpp; inline asm replicates MOV EAX,ESI before CALL 0x0041c9a0 (__thiscall via EAX); session=c3-batch-g-s11
 2026-05-16  0x0041c9a0  FUN_0041c9a0  C1->C2  drift-promotion; analysis note hud_ingame_d2/0x0041c9a0.md complete all offsets cited no UNCERTAIN; unblocks 0x0041ccc0 caller-gate; session=c3-batch-g-s11
