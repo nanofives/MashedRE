@@ -67,3 +67,6 @@
 | D-8914 | 00428400 | FUN_00428400 | boot | called by FUN_00402a40, no args; decompile and classify | boot_app_init_d2-cont1 |
 | D-8915 | 004955c0 | thunk_FUN_00495580 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00495580 and classify | boot_app_init_d2-cont1 |
 | D-8916 | 004963d0 | thunk_FUN_00496370 | boot | thunk; target callee of 0x00493560 (cleanup/teardown path); decompile target FUN_00496370 and classify | boot_app_init_d2-cont1 |
+| D-8918 | 00431b80 | FUN_00431b80 | frontend | C3 refused: ESI=0 infinite-loop at quiescent main menu (car-select cursor mover; requires specific in_EAX+ESI calling convention at car-select state); retry when runtime can reach car-select screen | c3-batch-g-s10 |
+| D-8919 | 00431d00 | FUN_00431d00 | frontend | C3 refused: depends on FUN_00431b80 (D-8918); FUN_00431b80 hangs at quiescent state ESI=0; both blocked until car-select runtime reachable | c3-batch-g-s10 |
+| D-8920 | 00430b30 | FUN_00430b30 | frontend | C3 refused: __thiscall in_EAX calling convention not supported by diff_template.js harness (confirmed no thiscall_eax arg_type exists); retry after D-10637-family harness gap resolved | c3-batch-g-s10 |

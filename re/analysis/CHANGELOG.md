@@ -1211,3 +1211,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-15  0041f000  SlotDataCopy  C2->C3  Frida GREEN 10/10 log/diff_slot_data_copy.csv; leaf; U-3717 filed; bug fix (removed spurious deref); session c3-batch-e-s13
 2026-05-15  00420d40  SlotArrayClear  C2->C3  Frida GREEN 10/10 log/diff_slot_array_clear.csv; callee ZeroFillWrapper C2; U-3718 U-3719 filed; session c3-batch-e-s13
 2026-05-15  0041cb80  sub_0041cb80  deferred  C3 refused: callees FUN_0040b890 FUN_0041c380 not in hooks.csv; D-10638; session c3-batch-e-s13
+2026-05-16  0040e470  CarSlotStateGet  C2->C3  Frida GREEN 10/10 log/diff_car_slot_state_get.csv; pure leaf; U-1300 semantic-only pre-existing; impl ChampionshipMode.cpp; session c3-batch-g-s10
+2026-05-16  00431b80  FUN_00431b80  deferred  C3 refused: ESI=0 infinite-loop at quiescent main-menu (in_EAX+ESI convention; car-select state required); D-8918; session c3-batch-g-s10
+2026-05-16  00431d00  FUN_00431d00  deferred  C3 refused: callee FUN_00431b80 blocks (D-8918); D-8919; session c3-batch-g-s10
+2026-05-16  00430b30  FUN_00430b30  deferred  C3 refused: __thiscall in_EAX not supported in diff_template.js harness; D-8920 (D-10637 family); session c3-batch-g-s10

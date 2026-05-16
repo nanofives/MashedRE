@@ -1066,6 +1066,29 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-g-s10 — game-mode set2 helpers (ChampionshipMode.cpp)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0040e470  CarSlotStateGet
+    # Pure 14-byte getter. Returns *(*(uint32_t**)0x005f2770 + param_1*4 + 0x34).
+    # param_1 = car/player slot index (0-3). Table pointer is non-null at
+    # main menu (confirmed: CarSlotInit1P/CarSlotAssign both write via
+    # FUN_0040e480 at quiescent main menu without crashing, implying the
+    # outer PTR_PTR_005f2770 is initialized at game startup).
+    # int_scalar: pass slot index 0-3 directly, compare return DWORD.
+    # U-1300 (value 2 semantics) is in Uncertainties section only.
+    # ref: re/analysis/race_results/0040e470.md
+    'car_slot_state_get': {
+        'rva':            0x0040e470,
+        'export':         'CarSlotStateGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
     # 0x0042b960  CarSlotInit1P
     # void: scans char table pair, inits slot sentinels, sets mode=1, calls
     # FUN_0040e480 x4. Returns void (wrapped as uint32 0 for registry compat).
