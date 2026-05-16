@@ -11,6 +11,10 @@ Append-only log of confidence promotions and demotions, written by the `re-class
 2026-05-16  0042fe90  FUN_0042fe90  C2->C3 REFUSED  c3-batch-g-s4: callee gate failed — 6/10 callees C1 (same set as 0042fb70); D-10698
 2026-05-16  0042fb70  FUN_0042fb70  C2->C3 REFUSED  c3-batch-g-s4: callee gate failed — 6/10 callees C1 (0x004739f0,0x00473870,0x00427e00,0x004a2c48,0x0042b8b0,0x0042b8c0); D-10697
 2026-05-16  0042a940  FUN_0042a940  C2->C3 REFUSED  c3-batch-g-s4: (1) U-3434+U-3435 open structural uncertainties; (2) sole callee 0x0040ce80 C0 — callee gate not met; D-10699
+2026-05-16  0041e850  sub_0041e850  C2->DEFERRED(D-10701)  c3-batch-g-s12; caller-gate: callee FUN_0041e630 (0x0041e630) is C1; pickup when callee reaches C2+
+2026-05-16  0041ded0  sub_0041ded0  C2->DEFERRED(D-10700)  c3-batch-g-s12; caller-gate: callee FUN_0041de80 (0x0041de80) is C1; pickup when callee reaches C2+
+2026-05-16  0041db80  sub_0041db80  C2->DEFERRED(D-10699)  c3-batch-g-s12; U-0579 (structural body-bounds) + U-3585 (semantic DAT_0063d588 type) both open; pickup when both resolved
+2026-05-16  0041d870  sub_0041d870  C2->DEFERRED(D-10698)  c3-batch-g-s12; caller-gate: callee FUN_0041d410 (0x0041d410) is C1; pickup when callee reaches C2+
 2026-05-16  frida-sweep-20260516-1701  frida-sweep-claim  branches=16 queued
 2026-05-16  sweep-20260516-0352  scribe-release  buckets=13 drained  errors=0
 2026-05-16  sweep-20260516-0352  scribe-release  bucket=promote_c2_d3d9_window  writes=1  errors=0  note=partial; 6 RVAs deferred
@@ -1239,6 +1243,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-16  0042e3a0  FUN_0042e3a0  C3-REFUSED  callee-gate: 0x00427e00/0x00472f40/0x004730b0/0x00472c60 all C1; D-8919 filed; session c3-batch-g-s1
 2026-05-16  0042d5a0  FUN_0042d5a0  deferred  C3 refused c3-batch-g-s9: callee gate fails — callee FUN_00427e00 C1; D-10752 filed
 2026-05-16  0042d5a0  FUN_0042d5a0  NOT ATTEMPTED  c3-batch-g-s9; callee gate blocks: callee FUN_00427e00 (0x00427e00) is C1; credits sprite-timeline renderer; re-pickup when FUN_00427e00 is C2+
+2026-05-16  0042d290  FUN_0042d290  deferred  C3 refused (caller gate): callee FUN_004a2b60 is C1; D-10697; session c3-batch-g-s3
 2026-05-16  0042af50  FUN_0042af50  deferred  C3 refused: open U-1615 U-1616 (char array element count / int index array size); D-10697; session c3-batch-g-s6
 2026-05-16  0042aeb0  MenuReadinessCheckB  C2->C3  Frida GREEN 10/10 log/diff_menu_readiness_check_b.csv; impl mashedmod/src/mashed_re/Frontend/MenuStateMachine.cpp; structural variant of 0x0042ae10 (byte column +1); callee 0x0040e470 C2; callers 0x0043d7c0 C1; U-3445 U-3446 registered; session c3-batch-g-s5
 2026-05-16  0042ae10  MenuReadinessCheckA  C2->C3  Frida GREEN 10/10 log/diff_menu_readiness_check_a.csv; impl mashedmod/src/mashed_re/Frontend/MenuStateMachine.cpp; callee 0x0040e470 C2; callers 0x0043d7c0/0x0043dfd0 C1 (caller-chain precedent: MenuButtonDetectA c3-batch-a-s3 same callee); U-3445 U-3446 U-3447 U-3448 registered (do not block correctness); session c3-batch-g-s5
