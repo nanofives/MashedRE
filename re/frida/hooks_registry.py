@@ -4309,6 +4309,8 @@ HOOKS = {
         # All 6 valid indices, then repeats for stability.
         'path1_tests':    [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5],
         'path2_tests':    [0, 1, 2, 3, 4, 5],
+    },
+
     # ─────────────────────────────────────────────────────────────────────
     # Session ma3-frida-s7 — Frontend game-mode dispatch (C2->C3)
     # FrontendDispatch.cpp: FrontendModeDispatch
