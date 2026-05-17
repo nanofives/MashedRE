@@ -13,6 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 ```
+2026-05-17  batch_s-s3  bucket=cluster_0051_first_pass  rvas=0x0051028b,0x0051036d,0x0051037a,0x00510388,0x0051039a,0x005104bb,0x005104fc,0x00510507,0x00510521,0x0051054e,0x00510583,0x005105a2,0x005105b6,0x005105dd,0x005105f8,0x0051061f,0x00510677,0x005106f9,0x005107c7,0x005107df,0x0051085a,0x0051085b,0x00510886,0x005108c2,0x0051094d,0x00510986,0x00510b70,0x00510ba9,0x00510be1,0x00510c27,0x00510c62,0x00510d27,0x00510d43,0x00510d65,0x00510d87,0x00510da9,0x00510dc5,0x00510de1,0x00510df9,0x00510e2f,0x00510f66,0x00510f72,0x0051105d,0x00511112,0x0051120b,0x005115aa,0x005115e6,0x00511636,0x0051167d,0x00511741,0x00511774,0x005117ba,0x00511841,0x0051185d,0x00511879,0x005118cd,0x00511918,0x0051196e,0x005119dc,0x00511a4e  level=c1  pool=Mashed_pool2  note=60/60 first-pass C0->C1; cluster is mostly Mashed effect/shader-compiler frontend (Variant tag system + AST walkers + shader-state nodes + string-pool intern) — NOT RW callbacks as predicted; substantive functions ~25/60, tiny ctors/dtors/thunks ~35/60; vtables at 0x005de528/538/548/558/568/578/67c/68c are the Variant class hierarchy; 0x0051039a is a D3DX file-mapping loader (HRESULTs 0x8876086c, 0x88760b59); shader-register validator strings "boolean constant register" and "integer constant register" at 0x00511112 confirm subsystem identity
 ```
 ## Drained
 
