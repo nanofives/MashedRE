@@ -1070,9 +1070,13 @@ function runDiff() {
                     Reimpl();
                     reimRead = gaddr.readU32();
                 } catch (e) { errReim = e.message; }
+                // crash_equal_ok: if both sides throw the same error string, count as match
+                // (e.g. functions with implicit EAX pointer that crash identically in
+                // NativeFunction context where EAX isn't controllable).
+                const crashEqualVWO = CONFIG.crash_equal_ok && errOrig !== null && errReim !== null && errOrig === errReim;
                 results.push({ idx: i, input: t,
                                original: origRead, reimpl: reimRead,
-                               match: (origRead !== null && reimRead !== null && origRead === reimRead),
+                               match: crashEqualVWO || (origRead !== null && reimRead !== null && origRead === reimRead),
                                err_original: errOrig, err_reimpl: errReim });
                 continue;
             }
