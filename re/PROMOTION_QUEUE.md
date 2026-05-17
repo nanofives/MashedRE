@@ -16,8 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
-
-```
+2026-05-17  c3-batch-h-s3  rvas=  branch=c3/batch-h-s3  evidence=  note=0/12 frontend large-MULTI C2->C3 — STOP-AND-ASK halt; 10/12 fail callee-gate (drift-promote needed on 0x00417740 not-in-csv, 0x004277a0 not-in-csv, 0x00472c60 C1, 0x00430790 C1, 0x00427e00 C1, 0x004739f0 C1, 0x00473870 C1, 0x004a2c48 C1, 0x00473c20/0x0042e590/0x00474890/0x00473ee0 not-in-csv); 3/12 refused (0x00439210 5626 bytes 21+ callees; 0x00431b80 non-std in_EAX/unaff_ESI ABI; 0x004cc230 vtable+stubs S-0860/S-0861); only 0x00428320 marginally tractable but float10 return is harness-unsupported; baseline build GREEN
 
 ## Merged
 
