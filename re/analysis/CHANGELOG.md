@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-17  0x0040e3a0  PlayerColorTableGet  C2->C3 REFUSED  ma3-frida-s5: caller-gate fails (FUN_0040e590 C1, FUN_00434720 C1; callee FUN_004a332b C2 passes; leaf-exemption N/A — has callee); Frida path1 GREEN 12/12 (log/diff_player_color_table_get.csv); new arg_type `int_outbuf4` added to diff_template.js; impl + RH_ScopedInstall ready in MenuScoreSort.cpp; D-10807 filed; pickup when caller reaches C2+
+2026-05-17  ma3-frida-s5  c3-batch  candidates=5 promoted=0 refused=1 blocked=4  notes: 0040e3a0 caller-gate refused (D-10807); 004282a0 callee-gate blocked (FUN_004277a0 no plate); 00427ad0 callee-gate blocked (4 callees no plate); 00428320 caller-gate blocked precedent (refused c3-batch-g-s8 D-10699); 0042ed70 chain-blocked on 004282a0
 2026-05-16  frida-sweep-20260516-2316  frida-sweep-release  branches=8 merged  integration-diff=GREEN  hooks=19  c3-promotions=19
 2026-05-16  0x004b6480  BitArrayClear  C2->C3  ma2-frida-s7 88b leaf bit-array clear (REP STOSD/STOSB + AND-mask tail); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 14/14 bytes_inplace log/diff_bit_array_clear.csv; leaf-exemption
 2026-05-16  0x00499720  GetInputHinst  C2->C3  ma2-frida-s7 5b leaf HINSTANCE getter; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 read_global log/diff_get_input_hinst.csv; leaf-exemption

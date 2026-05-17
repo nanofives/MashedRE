@@ -4207,4 +4207,27 @@ HOOKS = {
             [0x40000000, 0x11223344],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session ma3-frida-s5 — Frontend text+sprite carry-over from c3-batch-g-s8
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0040e3a0  PlayerColorTableGet
+    # void(int idx, byte* out_buf4) — 141-byte switch writing 4 RGBA bytes.
+    # Indices 0..5 produce fixed color bytes; default (>=6) invokes abort
+    # FUN_004a332b(-14) — non-returning. Implementation in MenuScoreSort.cpp.
+    # arg_type='int_outbuf4': allocate 4-byte buf, call fn(idx, buf), compare
+    # 4-byte fingerprint. Tests only valid indices 0..5 (default path is abort).
+    # Pure function — no game state dependency; safe at any time.
+    # ref: re/analysis/frontend_promote_menus_b/0040e3a0.md
+    'player_color_table_get': {
+        'rva':            0x0040e3a0,
+        'export':         'PlayerColorTableGet',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
+        'arg_type':       'int_outbuf4',
+        'lut_root_delta': 0,
+        # All 6 valid indices, then repeats for stability.
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5],
+        'path2_tests':    [0, 1, 2, 3, 4, 5],
+    },
 }
