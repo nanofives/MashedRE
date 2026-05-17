@@ -761,6 +761,38 @@ function runDiff() {
         return;
     }
 
+    // ── int_outbuf4 ──────────────────────────────────────────────────────────
+    // For PlayerColorTableGet-style: fn(int idx, byte* out_buf4) — void return,
+    // writes 4 bytes into out_buf4. Each test is a single integer index.
+    // Strategy: allocate two 4-byte buffers (one per path), zero each before
+    // each call, call fn(idx, buf), read back 4 bytes as packed uint32
+    // (little-endian fingerprint). Both paths must produce identical output.
+    if (CONFIG.arg_type === 'int_outbuf4') {
+        const ioBufA = Memory.alloc(4);
+        const ioBufB = Memory.alloc(4);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const idx = CONFIG.tests[i] | 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Zero both buffers before each call.
+            ioBufA.writeU32(0);
+            ioBufB.writeU32(0);
+            try {
+                Orig(idx, ioBufA);
+                origV = ioBufA.readU32();
+            } catch(e) { errO = e.message; }
+            try {
+                Reimpl(idx, ioBufB);
+                reimV = ioBufB.readU32();
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: idx,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── thread_desc_init ────────────────────────────────────────────────────
     // For AudioThreadDescInit (0x005aef00): fn(uint32_t* buf, p2, p3, p4).
     // Writes 5 uint32 fields: buf[0]=0, buf[1]=p2, buf[2]=0, buf[3]=p3, buf[4]=p4.
