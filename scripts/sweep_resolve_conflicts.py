@@ -159,21 +159,67 @@ def resolve_build_bat(path):
 
 
 def resolve_hooks_registry(path):
-    """Union dict entries; preserve closing brace."""
+    """Union dict entries.
+
+    Two distinct conflict patterns matter:
+
+      (a) Conflict in the MIDDLE of the HOOKS dict (between two existing entries).
+          Both sides end with `},\\n` for the new entry. Just concatenate; the
+          HOOKS-closing `}` is outside the conflict region.
+
+      (b) Conflict at the END of the HOOKS dict (the new entry was the last one
+          on its side). Either or both sides end with a bare `}` (the HOOKS-
+          closing brace itself). Strip the trailing `}` from one side so we
+          don't end up with two HOOKS-closing braces.
+
+    The old implementation always stripped trailing `}` from both sides and
+    appended one back, which corrupts pattern (a) by producing a stray `}` in
+    the middle of the dict (turned the next entry into invalid syntax).
+
+    After resolving, we validate the whole file with ast.parse. If it doesn't
+    parse, we restore the original text and raise so the sweep halts cleanly
+    instead of producing a broken commit.
+    """
     text = read_text(path)
+    original = text
+
+    def ends_with_top_close(s):
+        # Top-level HOOKS-closing brace appears as `\n}` (column 0) at the very
+        # end, optionally followed by whitespace. A `},` (entry close) does NOT
+        # match this.
+        return bool(re.search(r"\n\}\s*$", s))
 
     def resolve_one(match):
         head = match.group(1)
         incoming = match.group(2)
-        # Strip trailing closing-brace lines from one side to avoid duplicates.
-        # Both sides typically end with `}\n` for the registry dict.
-        head_stripped = re.sub(r"\n\}\s*\n*$", "\n", head)
-        incoming_stripped = re.sub(r"\n\}\s*\n*$", "\n", incoming)
-        # If both blocks ended with `}`, retain only one at the end.
-        return head_stripped + incoming_stripped + "}\n"
+        head_closes   = ends_with_top_close(head)
+        incoming_closes = ends_with_top_close(incoming)
+
+        if head_closes or incoming_closes:
+            # Pattern (b): strip the HOOKS-closing brace from BOTH if present,
+            # then append one back.
+            head_clean     = re.sub(r"\n\}\s*\n*$", "\n", head)
+            incoming_clean = re.sub(r"\n\}\s*\n*$", "\n", incoming)
+            return head_clean + incoming_clean + "}\n"
+        # Pattern (a): mid-dict conflict — both sides already terminate their
+        # entries with `},`. Concatenate verbatim.
+        return head + incoming
 
     resolved = CONFLICT_RE.sub(resolve_one, text)
     write_text(path, resolved)
+
+    # Validate by Python AST parse. If it doesn't parse, restore and raise.
+    try:
+        import ast as _ast
+        _ast.parse(resolved)
+    except SyntaxError as e:
+        # Roll back so the sweep doesn't commit a broken file.
+        write_text(path, original)
+        raise RuntimeError(
+            f"resolve_hooks_registry produced an unparseable file "
+            f"(SyntaxError at line {e.lineno}: {e.msg}); reverted. "
+            f"Manual repair needed before retrying the sweep."
+        )
     return {}
 
 
