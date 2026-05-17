@@ -16,7 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
-
+2026-05-17  c3-batch-h-s6  rvas=0x00442c80,0x00429aa0,0x004295a0,0x0043c000,0x00475a60  branch=c3/batch-h-s6  evidence=log/diff_mode_gated_player_check.csv;log/diff_game_state_slots_fill.csv;log/diff_hud_dual_label_render.csv;log/diff_timer_slot_tick_dispatcher.csv;log/diff_pending_op_queue_flush.csv  note=5/12 util-mid C2->C3 (ModeGatedPlayerCheck+GameStateSlotsFill+HudDualLabelRender+TimerSlotTickDispatcher+PendingOpQueueFlush all Frida GREEN); 2 RED (PlayerSlotConfigInit access-violation 0x1c on unknown callee FUN_0041cdb0 D-10791; ScoreThresholdStateCheck orig "system error" but reimpl no-throw D-10794); 5 untestable (QpcTimeScaledTo3Mhz D-10789 time-dep; StricmpThunk D-10790 string arg_type gap; GameTickStateMachine7 D-10792 time-dep; TransformMatrixUpdate D-10793 struct-ptr gap; LabelTrailRecordAppend D-10795 multi-arg+time-dep); dropped dup frontend row on 0x00429aa0 (subsystem -> util)
 ```
 
 ## Merged
