@@ -16,12 +16,21 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
-2026-05-17  ma3-frida-s6  rvas=  branch=c3/ma3-frida-s6  evidence=DEFERRED.md:D-10697,D-10698,D-10708,D-10714+0040b620-harness-gap  note=0/5 race+score C2->C3; all 5 refused on drift-check (no gate lifted by batch1) — 0x0040b620 void_out_ptr harness gap unchanged; 0x0040b460 callee 0x00417740 still C0; 0x00429a30 callee 0x00430790 still C1 (U-2095 open); 0x0042fe30 callers 0x0040d270/0x004264d0 still C1; 0x0042fe50 callers 0x004189a0/0x004189c0 still C1
+
 ```
 
 ## Merged
 
 ```
+2026-05-17  b5/atlas  rvas=  branch=b5/atlas  evidence=log/milestone_b5_screenshot.png  note=standalone exe-side: atlas view renders all 8 Frontend.piz textures as 4x2 grid  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s1  rvas=0x0042aad0,0x0042aae0  branch=c3/ma3-frida-s1  evidence=log/diff_menu_dim_set.csv;log/diff_menu_im2d_quad.csv  note=2/5 menu chrome C2->C3 (MenuDimSet+MenuIm2DQuad GREEN); harness extended (void_write_observe+crash_equal_ok); U-3876 filed  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s2  rvas=0x0042b930,0x0040b810,0x00422b30,0x0042f6b0,0x00430b60  branch=c3/ma3-frida-s2  evidence=5 diff_*.csv GREEN  note=1 new C3 (MenuAlphaGet) + 4 stale C2 dups drained (already C3 re-verified GREEN)  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s3  rvas=0x0042af50  branch=c3/ma3-frida-s3  evidence=log/diff_menu_readiness_check_c.csv  note=1/4 menu nav C2->C3 (MenuReadinessCheckC GREEN); 3 refused (EAX/ESI ABI harness gap)  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s4  rvas=0x0042b9e0,0x0042b960,0x0042bb60  branch=c3/ma3-frida-s4  evidence=3 diff_*.csv GREEN  note=3/5 drift-repair (re-confirmed C3); 2/5 already C4  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s5  rvas=0x0040e3a0  branch=c3/ma3-frida-s5  evidence=log/diff_player_color_table_get.csv  note=PlayerColorTableGet GREEN but C3-REFUSED on caller-gate (D-10807); new int_outbuf4 harness arg_type added  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s6  rvas=  branch=c3/ma3-frida-s6  evidence=  note=0/5 race+score C2->C3; all 5 refused on drift-check  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s7  rvas=0x0042ee40  branch=c3/ma3-frida-s7  evidence=log/diff_frontend_mode_dispatch.csv  note=1/5 game-mode C2->C3 (FrontendModeDispatch GREEN 14/14)  drained-by=frida-sweep-20260517-0424
+2026-05-17  ma3-frida-s8  rvas=0x0042d300,0x00436810  branch=c3/ma3-frida-s8  evidence=log/diff_time_diff_decompose.csv;log/diff_local_player_slot_check.csv  note=2/5 frontend helpers C2->C3; new time_diff_decompose harness arg_type added  drained-by=frida-sweep-20260517-0424
 2026-05-16  ma2-frida-s1  rvas=  branch=c3/ma2-frida-s1  evidence=DEFERRED.md:D-10721..D-10726  note=0/6 boot lifecycle C2->C3; all refused (top-level orchestrators non-reentrant)  drained-by=frida-sweep-20260516-2316
 2026-05-16  ma2-frida-s2  rvas=0x004996f0,0x00499690  branch=c3/ma2-frida-s2  evidence=log/diff_window_show.csv;log/diff_window_msg_pump.csv  note=2/6 Boot/Window C2->C3 (WindowShow + WindowMsgPump GREEN)  drained-by=frida-sweep-20260516-2316
 2026-05-16  ma2-frida-s3  rvas=0x004955b0  branch=c3/ma2-frida-s3  evidence=log/diff_dinput_init_predicate.csv  note=1/6 RW+D3D9 init C2->C3 (DInputInitPredicate)  drained-by=frida-sweep-20260516-2316
