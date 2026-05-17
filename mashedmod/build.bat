@@ -21,7 +21,8 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "%SRC%\Piz\PizReader.cpp" ^
     "%SRC%\Rws\RwsChunkWalker.cpp" ^
     "%SRC%\Txd\TxdDecoder.cpp" ^
-    /link /SUBSYSTEM:WINDOWS user32.lib
+    "%SRC%\D3d9Render\QuadRenderer.cpp" ^
+    /link /SUBSYSTEM:WINDOWS user32.lib d3d9.lib
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
 echo === Building mashed_re_dev.asi ===
