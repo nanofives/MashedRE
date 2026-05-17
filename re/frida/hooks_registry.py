@@ -4341,4 +4341,131 @@ HOOKS = {
             0, 1, 2, 1000, -1,
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-h-s5 — util small leaves+near-leaves (C2->C3)
+    # Util/UtilBatch_h5.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042c2f0  SetDat0067ecb8  void(uint32 param_1)
+    # 9-byte setter: *0x0067ecb8 = param_1.
+    # arg_type='void_setter_observe': write value via fn, read back target_global.
+    'set_dat_0067ecb8': {
+        'rva':            0x0042c2f0,
+        'export':         'SetDat0067ecb8',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0067ecb8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x004098b0  LoadingState1Enter  void(void)
+    # 27-byte pure 4-global setter:
+    #   DAT_008a9584=1, DAT_008a9588=1, DAT_008a95b0=0, DAT_008a95ac=0
+    # arg_type='void_write_observe' on DAT_008a9584 (state enum, first write).
+    'loading_state1_enter': {
+        'rva':            0x004098b0,
+        'export':         'LoadingState1Enter',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008a9584,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000002, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00409930  LoadingState3Enter  void(void)
+    # 30-byte pure 3-global setter:
+    #   DAT_008a9584=3, DAT_008a9590=1, DAT_008a95b0=0
+    # arg_type='void_write_observe' on DAT_008a9584 (state enum write).
+    'loading_state3_enter': {
+        'rva':            0x00409930,
+        'export':         'LoadingState3Enter',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008a9584,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00409900  LoadingState2Enter  void(void)
+    # 43-byte: wprintf("Load start\n") + 3-global setter
+    #   DAT_008a9584=2, DAT_008a958c=1, DAT_008a95b0=0
+    # arg_type='void_write_observe' on DAT_008a9584 (state enum).
+    # wprintf is the only callee — IAT call, same in both paths.
+    'loading_state2_enter': {
+        'rva':            0x00409900,
+        'export':         'LoadingState2Enter',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008a9584,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000003, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00426c10  TimerDispatch10  void(void)
+    # 27-byte conditional dispatcher: gate FUN_0041ea40; on nonzero calls
+    # FUN_0041e920(0x00646e58) + FUN_00480100.
+    # arg_type='none': call 10x at quiescent main menu; both orig and reimpl
+    # call same callees in same order, observe stability.
+    # Caller=FUN_004111c0 (init only); at main menu state is post-init quiescent.
+    # crash_equal_ok=True since callees are C0 and may have undefined behavior
+    # outside init context — both paths share that risk identically.
+    'timer_dispatch_10': {
+        'rva':            0x00426c10,
+        'export':         'TimerDispatch10',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00426c30  TimerDispatch30  void(void)
+    # 22-byte conditional dispatcher: gate FUN_0041ea30; on nonzero calls
+    # FUN_0041e910. Sibling of TimerDispatch10/70.
+    'timer_dispatch_30': {
+        'rva':            0x00426c30,
+        'export':         'TimerDispatch30',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00426c70  TimerDispatch70  void(void)
+    # 22-byte conditional dispatcher: gate FUN_0041ea50; on nonzero calls
+    # FUN_0041e930. Sibling of TimerDispatch10/30.
+    'timer_dispatch_70': {
+        'rva':            0x00426c70,
+        'export':         'TimerDispatch70',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x0041cb80  TimerArrayInit46 — REFUSED.
+    # 53-byte init function with implicit-pointer register convention for
+    # the per-element callee FUN_0041c380 (ESI loaded at 0x0041cb95, kept
+    # live across each CALL). A C++ fn-ptr reimpl cannot reliably set ESI,
+    # so the diff would not be bit-identical. Same impedance as
+    # 0x00422120 TimerInitLoop (refused below).
 }
