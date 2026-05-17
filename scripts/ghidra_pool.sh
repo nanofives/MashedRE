@@ -9,6 +9,8 @@
 # Usage:
 #   ghidra_pool.sh init              — One-time setup of pool dir; verify master exists
 #   ghidra_pool.sh acquire           — Print first available slot name; create if needed
+#   ghidra_pool.sh acquire <N>       — Acquire specifically slot N (creates it if absent;
+#                                       fails if it's currently locked)
 #   ghidra_pool.sh release [N]       — Clear lock files for slot N (or all if omitted)
 #   ghidra_pool.sh sync              — Refresh all unlocked slots from master
 #   ghidra_pool.sh status            — Show pool state
@@ -87,16 +89,53 @@ _try_acquire() {
     return 0
 }
 
+_acquire_specific() {
+    # Acquire a specific slot by index. Creates the slot if absent. Fails (exit 1)
+    # if the slot is currently locked.
+    local i="$1"
+    local lock="$(slot_lock "$i")"
+    local gpr="$(slot_gpr "$i")"
+    if is_locked "$i"; then
+        echo "ERROR: slot $i is currently LOCKED ($lock exists)" >&2
+        return 1
+    fi
+    if [[ ! -f "$gpr" ]]; then
+        create_slot "$i"
+    fi
+    # Stake the lock so concurrent acquires don't grab the same slot.
+    : > "$lock"
+    echo "Mashed_pool${i}"
+}
+
 cmd_acquire() {
     [[ ! -d "$POOL_DIR" ]] && { mkdir -p "$POOL_DIR"; }
+    # If a slot was explicitly requested (`acquire 3` or `acquire Mashed_pool3`),
+    # honour it. This was previously ignored — sub-agents that wanted slot N got
+    # whatever the first-free pick was, defeating the per-session slot
+    # pre-assignment used by parallel-fanout batches.
+    if [[ -n "${1:-}" ]]; then
+        local idx; idx=$(normalize_slot "$1")
+        if [[ ! "$idx" =~ ^[0-9]+$ ]] || (( idx < 0 )) || (( idx >= MAX_SLOTS )); then
+            echo "ERROR: invalid slot index '$1' (must be 0..$((MAX_SLOTS - 1)))" >&2
+            exit 1
+        fi
+        if _acquire_specific "$idx"; then exit 0; fi
+        exit 1
+    fi
     local result
     if result=$(_try_acquire); then
+        # Also stake the lock so a subsequent acquire-without-args doesn't
+        # hand out the same slot.
+        local idx; idx=$(normalize_slot "$result")
+        : > "$(slot_lock "$idx")"
         echo "$result"; exit 0
     fi
     # All MAX_SLOTS exist and are locked — auto-cleanup stale locks then retry once.
     echo "WARNING: all $MAX_SLOTS slots locked; running cleanup and retrying..." >&2
     cmd_cleanup >&2
     if result=$(_try_acquire); then
+        local idx; idx=$(normalize_slot "$result")
+        : > "$(slot_lock "$idx")"
         echo "$result"; exit 0
     fi
     echo "ERROR: All $MAX_SLOTS slots still locked after cleanup. Run 'ghidra_pool.sh status' to inspect." >&2
@@ -190,7 +229,7 @@ cmd_remove() {
 
 case "${1:-status}" in
     init)    cmd_init ;;
-    acquire) cmd_acquire ;;
+    acquire) cmd_acquire "${2:-}" ;;
     release) cmd_release "${2:-}" ;;
     sync)    cmd_sync ;;
     status)  cmd_status ;;
