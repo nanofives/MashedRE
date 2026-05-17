@@ -7,14 +7,17 @@
 //                      re/tools/piz_extract.py), writes a directory
 //                      listing to mashed_re.log next to the exe, and
 //                      appends the entry count to the window title.
-// Milestone B2 (this revision): extracts the TEXTURES.TXD blob from the loaded
-//                               Frontend.piz to extracted/TEXTURES.TXD next to
-//                               the exe, walks its RWS chunk tree via
-//                               Rws/RwsChunkWalker, appends the tree to
-//                               mashed_re.log, and surfaces the chunk count in
-//                               the window title. Still no actual texture
-//                               decode / D3D9 texture / quad render -- those
-//                               are B3 and B4.
+// Milestone B2 (done): extracts the TEXTURES.TXD blob from the loaded
+//                      Frontend.piz to extracted/TEXTURES.TXD next to the exe,
+//                      walks its RWS chunk tree via Rws/RwsChunkWalker, and
+//                      appends the tree to mashed_re.log.
+// Milestone B3 (this revision): decodes the proprietary chunk-0x23 TXD format
+//                               via Txd/TxdDecoder, emits a per-texture table
+//                               (name, w, h, bpp, format, mip count, palette
+//                               status) to mashed_re.log, and reflects the
+//                               decoded texture count in the window title.
+//                               Still no D3D9 texture upload / quad render --
+//                               that's Milestone B4.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -61,6 +64,7 @@
 
 #include "Piz/PizReader.h"
 #include "Rws/RwsChunkWalker.h"
+#include "Txd/TxdDecoder.h"
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "d3d9.lib")
@@ -339,11 +343,66 @@ bool ExtractAndWalkTexturesTxd() {
         std::fclose(log);
     }
 
-    // Refine window title to include chunk count.
+    // Refine window title to include chunk count (B2 line; B3 overwrites it
+    // below if decode succeeds).
     std::snprintf(g_windowTitle, sizeof(g_windowTitle),
                   "Mashed RE (Milestone B2 - %u piz entries, TEXTURES.TXD = %u chunks)",
                   g_frontend_piz.count(), ctx.total);
     return result >= 0;
+}
+
+// B3: Decode the proprietary chunk-0x23 TXD container from TEXTURES.TXD into a
+// flat list of Texture records and dump a per-texture summary to mashed_re.log.
+// Refines the window title to include the decoded texture count.
+bool DecodeAndDumpTexturesTxd() {
+    if (!g_frontend_piz.valid() || g_frontend_piz.count() == 0) return false;
+
+    constexpr std::uint32_t kEntryIdx = 0; // entry 0 = TEXTURES.TXD (verified in B1)
+    std::uint32_t length = 0;
+    const std::uint8_t* bytes = g_frontend_piz.blob(kEntryIdx, &length);
+    if (!bytes) return false;
+
+    static mashed_re::Txd::Dictionary dict;
+    bool ok = dict.Decode(bytes, length);
+
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (log) {
+        std::fprintf(log, "\nTXD decode (Milestone B3):\n");
+        if (!ok) {
+            std::fprintf(log, "  FAILED: %s\n", dict.last_error());
+            std::fclose(log);
+            return false;
+        }
+        std::fprintf(log, "  OK: %u textures, deviceId=%u\n",
+                     dict.count(), dict.device_id());
+        std::fprintf(log, "\n");
+        std::fprintf(log,
+            "  %-3s %-20s %5s %5s %4s %-5s %4s %-7s\n",
+            "#", "name", "w", "h", "bpp", "fmt", "mips", "palette");
+        std::fprintf(log,
+            "  %-3s %-20s %5s %5s %4s %-5s %4s %-7s\n",
+            "---", "--------------------", "-----", "-----",
+            "----", "-----", "----", "-------");
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& t = dict.texture(i);
+            const auto fmt = t.format();
+            const std::uint8_t* pal = t.mip_count ? t.mips[0].palette : nullptr;
+            std::fprintf(log,
+                "  %-3u %-20s %5u %5u %4u %-5s %4u %-7s\n",
+                i, t.name, t.width(), t.height(), t.depth(),
+                mashed_re::Txd::PixelFormatName(fmt),
+                t.mip_count, pal ? "yes" : "-");
+        }
+        std::fclose(log);
+    }
+
+    if (!ok) return false;
+
+    // Refine window title with decoded texture count.
+    std::snprintf(g_windowTitle, sizeof(g_windowTitle),
+                  "Mashed RE (Milestone B3 - %u textures decoded)",
+                  dict.count());
+    return true;
 }
 
 }  // namespace
@@ -354,8 +413,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     if (LoadFrontendPiz()) {
         // On success, also extract TEXTURES.TXD and walk its RWS chunk tree.
         // Both write to mashed_re.log; ExtractAndWalkTexturesTxd refines the
-        // window title further.
-        (void)ExtractAndWalkTexturesTxd();
+        // window title.
+        if (ExtractAndWalkTexturesTxd()) {
+            // B3: decode the TXD into a flat Texture array and log per-
+            // texture metadata. Refines the window title with the decoded
+            // texture count.
+            (void)DecodeAndDumpTexturesTxd();
+        }
     }
 
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
