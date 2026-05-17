@@ -4207,4 +4207,35 @@ HOOKS = {
             [0x40000000, 0x11223344],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session ma3-frida-s7 — Frontend game-mode dispatch (C2->C3)
+    # FrontendDispatch.cpp: FrontendModeDispatch
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042ee40  FrontendModeDispatch
+    # 204-byte dispatcher: outer switch DAT_0067e9fc (2..10); forwards param_1
+    # to FUN_0040bb90 (SpriteLookupTableB) on match, returns 0 otherwise.
+    # Cases 3-5 have a >999 -> -1000 param_1 adjustment + range filter {0,1,2}.
+    # Cases 6-9 require param_1==0. Cases 2 and 10 always forward.
+    # All paths terminate in FUN_0040bb90 (C4) or return 0, so crash-equal.
+    # arg_type='int_scalar': passes int32 param_1.
+    # Game-state dependent (reads DAT_0067e9fc): both sides see same live state.
+    'frontend_mode_dispatch': {
+        'rva':            0x0042ee40,
+        'export':         'FrontendModeDispatch',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Cover all branches: small {0,1,2}, mid range, >999 adjustment boundary,
+        # default-miss (negative, large), and duplicates for stability.
+        'path1_tests': [
+            0, 1, 2, 3, 100, 999, 1000, 1001, 1002,
+            -1, 0x10000, 0, 1, 2,
+        ],
+        'path2_tests': [
+            0, 1, 2, 1000, -1,
+        ],
+    },
 }
