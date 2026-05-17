@@ -8,6 +8,7 @@
 // Functions in this file:
 //   0x0042ae10  MenuReadinessCheckA -- void() readiness check; path A/B char table scan
 //   0x0042aeb0  MenuReadinessCheckB -- void() readiness check; variant of A: +1 byte offset, no e7c8 guard
+//   0x0042af50  MenuReadinessCheckC -- void() readiness check; variant of A: -1 byte offset rel. A (col+1 vs col+2)
 //
 // Note: 0x0042ac00 (MenuGroupCount) already implemented in MenuGetters.cpp (prior session).
 // Note: 0x0042ac50 (MenuCenterCalc) REFUSED: implicit EAX register arg not supported by
@@ -259,3 +260,115 @@ extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckB() {
 }
 
 RH_ScopedInstall(MenuReadinessCheckB, 0x0042aeb0);
+
+// ---------------------------------------------------------------------------
+// MenuReadinessCheckC  --  0x0042af50
+//
+// Original: FUN_0042af50 (156 bytes, 0x0042af50..0x0042afec)
+// Signature: undefined4 FUN_0042af50(void)
+//   Returns: 0 (not ready) or 1 (ready)
+//   Side-effects: none (read-only)
+//
+// Structural variant of FUN_0042ae10 (MenuReadinessCheckA). Differences:
+//   1. Table bases shifted -1 byte rel. A: 0x7f1501 (vs 0x7f1502), 0x7f1041 (vs 0x7f1042)
+//   2. Path A upper bound 0x7f1760 (vs 0x7f1761)
+//   3. Same e7c8 guard as A (unlike B which omits it)
+//   4. Same dispatch selector and callee (FUN_0040e470) as A and B
+//
+// Guard:
+//   if (DAT_0067eab0 != 2 AND DAT_0067e7c8 == 0 AND DAT_00898ab0 != 0): return 0
+//
+// Path A (when DAT_007f1a0c == 0x1000):
+//   pcVar1 = &DAT_007f1501  (table B-1 base, col+1 of the 0x4c-stride record)
+//   pcVar1 - 0x4c0 = 0x007f1041  (table A-1 base, col+0)
+//   Loop while *(char*)(pcVar1 - 0x4c0) == '\0' OR *pcVar1 != '\0':
+//     pcVar1 += 0x4c
+//     if pcVar1 > 0x7f1760: return 0
+//   return 1
+//
+// Path B (when DAT_007f1a0c != 0x1000):
+//   piVar3 = &DAT_007f1a14; iVar4 = 0
+//   Loop while any:
+//     *piVar3 == -1, OR FUN_0040e470(iVar4) == 2, OR
+//     *(char*)(0x007f1041 + *piVar3 * 0x4c) == '\0', OR
+//     *(char*)(0x007f1501 + *piVar3 * 0x4c) != '\0':
+//     piVar3 += 4; iVar4 += 1   [piVar3 is int*, += 4 advances 16 bytes]
+//     if piVar3 > 0x7f1a53: return 0
+//   return 1
+//
+// Memory accesses at (all within 0x0042af50):
+//   0x0067eab0 -- mode/state guard checked != 2
+//   0x0067e7c8 -- guard checked == 0
+//   0x00898ab0 -- guard checked != 0
+//   0x007f1a0c -- dispatch selector (0x1000 = Path A)
+//   0x007f1501 -- char table B-1 base (path A)
+//   0x007f1041 -- char table A-1 base = 0x7f1501 - 0x4c0 (path A + path B)
+//   0x4c (76)  -- entry stride
+//   0x7f1760   -- path A upper bound
+//   0x007f1a14 -- path B int* base
+//   0x7f1a53   -- path B upper bound
+//
+// Callee:
+//   0x0040e470 FUN_0040e470 (C2) -- car-state query [UNCERTAIN U-1615/U-1616]
+//
+// ref: re/analysis/timer_d2_cont1/0x0042af50.md
+// U-1615 (two char arrays at 0x7f1041 and 0x7f1501, purpose unknown),
+// U-1616 (int index array at 0x7f1a14 — element count unknown)
+// ---------------------------------------------------------------------------
+
+// 0x0042af50
+extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckC() {
+    // Guard: if (mode != 2 AND e7c8 == 0 AND 898ab0 != 0): not ready
+    std::int32_t mode   = *reinterpret_cast<std::int32_t*>(0x0067eab0u);
+    std::int32_t guard2 = *reinterpret_cast<std::int32_t*>(0x0067e7c8u);
+    std::int32_t guard3 = *reinterpret_cast<std::int32_t*>(0x00898ab0u);
+
+    if (mode != 2 && guard2 == 0 && guard3 != 0) {
+        return 0;
+    }
+
+    std::int32_t dispatch = *reinterpret_cast<std::int32_t*>(0x007f1a0cu);
+
+    if (dispatch == 0x1000) {
+        // Path A: table B-1 base = 0x7f1501; table A-1 base = 0x7f1041
+        const std::int8_t* pcVar1 = reinterpret_cast<const std::int8_t*>(0x007f1501u);
+
+        while (true) {
+            if (*reinterpret_cast<const std::int8_t*>(
+                    reinterpret_cast<std::uintptr_t>(pcVar1) - 0x4c0u) == '\0'
+                || *pcVar1 != '\0') {
+                pcVar1 += 0x4c;
+                if (reinterpret_cast<std::uintptr_t>(pcVar1) > 0x007f1760u) {
+                    return 0;
+                }
+            } else {
+                return 1;
+            }
+        }
+    } else {
+        // Path B: same int* base as A and B; -1 byte column rel. A (col+1/col+0)
+        const std::int32_t* piVar3 = reinterpret_cast<const std::int32_t*>(0x007f1a14u);
+        int iVar4 = 0;
+
+        while (true) {
+            bool cond = (*piVar3 == -1)
+                     || (CallFun0040e470(iVar4) == 2)  // [UNCERTAIN U-1615]
+                     || (*reinterpret_cast<const std::int8_t*>(
+                             0x007f1041u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) == '\0')
+                     || (*reinterpret_cast<const std::int8_t*>(
+                             0x007f1501u + static_cast<std::uint32_t>(*piVar3) * 0x4cu) != '\0');
+
+            if (!cond) {
+                return 1;
+            }
+
+            piVar3 += 4;
+            iVar4 += 1;
+            if (reinterpret_cast<std::uintptr_t>(piVar3) > 0x007f1a53u) {
+                return 0;
+            }
+        }
+    }
+}
+
+RH_ScopedInstall(MenuReadinessCheckC, 0x0042af50);

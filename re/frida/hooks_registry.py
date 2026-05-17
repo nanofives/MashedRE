@@ -583,6 +583,28 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session ma3-frida-s3 — menu readiness third variant (carry-over from c3-batch-g)
+    # Frontend/MenuStateMachine.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042af50  MenuReadinessCheckC
+    # void(): structural variant of MenuReadinessCheckA — same e7c8 guard as A;
+    # table bases -1 byte rel. A (0x7f1501 vs 0x7f1502, 0x7f1041 vs 0x7f1042).
+    # Path A upper bound 0x7f1760 (vs 0x7f1761 in A).
+    # Returns 0 (not ready) or 1 (ready). Same callee FUN_0040e470 (C2).
+    # arg_type='none': called 10x at quiescent main menu; both paths must agree.
+    # U-1615/U-1616 registered; do not affect bit-identity correctness.
+    'menu_readiness_check_c': {
+        'rva':            0x0042af50,
+        'export':         'MenuReadinessCheckC',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # Session c3-batch-a-s3 — frontend_menus_a medium batch
     # MenuNav.cpp — menu navigation helpers (C2→C3)
     # ─────────────────────────────────────────────────────────────────────
