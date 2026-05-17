@@ -1,8 +1,8 @@
-// Mashed RE - Milestone B4 D3D9 textured-quad renderer.
+// Mashed RE - Milestone B4/B5 D3D9 textured-quad renderer.
 // See QuadRenderer.h for scope. Implementation notes:
 //
 // * Vertex format: D3DFVF_XYZRHW | D3DFVF_TEX1. XYZRHW lets us skip the
-//   world/view/proj pipeline entirely — coordinates are post-transform
+//   world/view/proj pipeline entirely - coordinates are post-transform
 //   screen-space pixels. rhw=1.0 disables perspective divide.
 //
 // * Triangle strip layout (4 verts):
@@ -21,6 +21,11 @@
 //
 // * Mip chain: B3's decoder pre-builds 7-9 mips per Frontend texture; we
 //   pass them all to CreateTexture (Levels=mip_count) and LockRect each.
+//
+// * B5 atlas: a single shared vertex buffer is re-locked + filled per
+//   RenderAt() call. This is cheap (4 verts, 96 bytes) and avoids having
+//   to manage one VB per slot. SetTexture() switches the slot for each
+//   draw.
 
 #include "QuadRenderer.h"
 
@@ -55,23 +60,44 @@ bool QuadRenderer::Init(IDirect3DDevice9* device, int bb_w, int bb_h) {
 }
 
 void QuadRenderer::Shutdown() {
-    SafeRelease(m_tex);
+    for (std::uint32_t i = 0; i < kMaxSlots; ++i) {
+        SafeRelease(m_textures[i]);
+        m_tex_w[i] = 0;
+        m_tex_h[i] = 0;
+    }
     SafeRelease(m_vb);
     m_device = nullptr;
 }
 
-bool QuadRenderer::BuildQuadVB(std::uint32_t tex_w, std::uint32_t tex_h) {
-    SafeRelease(m_vb);
-
-    // Center the quad in the backbuffer. If the texture is larger than the
-    // backbuffer (it isn't for any Frontend.piz B3 texture, max 256x256), it
-    // will be clipped — acceptable for B4.
+bool QuadRenderer::BuildQuadVBCentered(std::uint32_t tex_w, std::uint32_t tex_h) {
     const float quad_w = static_cast<float>(tex_w);
     const float quad_h = static_cast<float>(tex_h);
-    const float x0     = (static_cast<float>(m_bb_width)  - quad_w) * 0.5f;
-    const float y0     = (static_cast<float>(m_bb_height) - quad_h) * 0.5f;
-    const float x1     = x0 + quad_w;
-    const float y1     = y0 + quad_h;
+    const float cx = static_cast<float>(m_bb_width)  * 0.5f;
+    const float cy = static_cast<float>(m_bb_height) * 0.5f;
+    return BuildQuadVBAt(cx, cy, quad_w, quad_h);
+}
+
+bool QuadRenderer::BuildQuadVBAt(float cx, float cy, float w, float h) {
+    // (Re)create the VB lazily. We keep one VB for the lifetime of the
+    // renderer; subsequent calls just re-lock and rewrite the 4 verts.
+    if (!m_vb) {
+        HRESULT hr = m_device->CreateVertexBuffer(
+            sizeof(Vert) * 4,
+            D3DUSAGE_WRITEONLY,
+            kVertFvf,
+            D3DPOOL_MANAGED,
+            &m_vb,
+            nullptr);
+        if (FAILED(hr) || !m_vb) {
+            m_last_error = "CreateVertexBuffer failed";
+            return false;
+        }
+    }
+
+    const float x0 = cx - w * 0.5f;
+    const float y0 = cy - h * 0.5f;
+    const float x1 = x0 + w;
+    const float y1 = y0 + h;
 
     // D3D9 pixel-center convention requires a -0.5 offset for crisp 1:1
     // texel-to-pixel mapping with XYZRHW. Without it the quad samples halfway
@@ -87,23 +113,10 @@ bool QuadRenderer::BuildQuadVB(std::uint32_t tex_w, std::uint32_t tex_h) {
         { x1 + ox,        y1 + oy,       0.f, 1.f,  1.f,  1.f },  // 3 BR
     };
 
-    HRESULT hr = m_device->CreateVertexBuffer(
-        sizeof(verts),
-        D3DUSAGE_WRITEONLY,
-        kVertFvf,
-        D3DPOOL_MANAGED,
-        &m_vb,
-        nullptr);
-    if (FAILED(hr) || !m_vb) {
-        m_last_error = "CreateVertexBuffer failed";
-        return false;
-    }
-
     void* locked = nullptr;
-    hr = m_vb->Lock(0, sizeof(verts), &locked, 0);
+    HRESULT hr = m_vb->Lock(0, sizeof(verts), &locked, 0);
     if (FAILED(hr) || !locked) {
         m_last_error = "VB Lock failed";
-        SafeRelease(m_vb);
         return false;
     }
     std::memcpy(locked, verts, sizeof(verts));
@@ -111,8 +124,10 @@ bool QuadRenderer::BuildQuadVB(std::uint32_t tex_w, std::uint32_t tex_h) {
     return true;
 }
 
-bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
+bool QuadRenderer::UploadIntoTextureSlot(std::uint32_t slot,
+                                         const mashed_re::Txd::Texture& tex) {
     if (!m_device) { m_last_error = "not initialised"; return false; }
+    if (slot >= kMaxSlots) { m_last_error = "slot out of range"; return false; }
     if (tex.mip_count == 0) { m_last_error = "texture has no mips"; return false; }
 
     const auto fmt = tex.format();
@@ -126,7 +141,7 @@ bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
         return false;
     }
 
-    SafeRelease(m_tex);
+    SafeRelease(m_textures[slot]);
 
     const std::uint32_t base_w = tex.mips[0].width;
     const std::uint32_t base_h = tex.mips[0].height;
@@ -140,9 +155,9 @@ bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
         0,                       // usage
         D3DFMT_A8R8G8B8,
         D3DPOOL_MANAGED,
-        &m_tex,
+        &m_textures[slot],
         nullptr);
-    if (FAILED(hr) || !m_tex) {
+    if (FAILED(hr) || !m_textures[slot]) {
         m_last_error = "CreateTexture failed";
         return false;
     }
@@ -151,10 +166,10 @@ bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
         const auto& mip = tex.mips[level];
 
         D3DLOCKED_RECT lr;
-        hr = m_tex->LockRect(level, &lr, nullptr, 0);
+        hr = m_textures[slot]->LockRect(level, &lr, nullptr, 0);
         if (FAILED(hr)) {
             m_last_error = "LockRect failed";
-            SafeRelease(m_tex);
+            SafeRelease(m_textures[slot]);
             return false;
         }
 
@@ -191,8 +206,8 @@ bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
             }
             if (!pal) {
                 m_last_error = "PAL8 mip missing palette";
-                m_tex->UnlockRect(level);
-                SafeRelease(m_tex);
+                m_textures[slot]->UnlockRect(level);
+                SafeRelease(m_textures[slot]);
                 return false;
             }
             for (std::uint32_t y = 0; y < mip.height; ++y) {
@@ -211,28 +226,33 @@ bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
                 dst_row += lr.Pitch;
             }
         }
-        m_tex->UnlockRect(level);
+        m_textures[slot]->UnlockRect(level);
     }
 
-    m_tex_w = base_w;
-    m_tex_h = base_h;
-
-    if (!BuildQuadVB(base_w, base_h)) {
-        // BuildQuadVB sets m_last_error
-        SafeRelease(m_tex);
-        return false;
-    }
-
+    m_tex_w[slot] = base_w;
+    m_tex_h[slot] = base_h;
     m_last_error = "ok";
     return true;
 }
 
-void QuadRenderer::Render() {
-    if (!m_device || !m_tex || !m_vb) return;
+bool QuadRenderer::UploadFromTexture(const mashed_re::Txd::Texture& tex) {
+    if (!UploadIntoTextureSlot(0, tex)) return false;
+    if (!BuildQuadVBCentered(m_tex_w[0], m_tex_h[0])) {
+        SafeRelease(m_textures[0]);
+        return false;
+    }
+    return true;
+}
 
-    m_device->SetRenderState(D3DRS_LIGHTING,        FALSE);
-    m_device->SetRenderState(D3DRS_ZENABLE,         FALSE);
-    m_device->SetRenderState(D3DRS_CULLMODE,        D3DCULL_NONE);
+bool QuadRenderer::UploadFromTextureToSlot(std::uint32_t slot,
+                                           const mashed_re::Txd::Texture& tex) {
+    return UploadIntoTextureSlot(slot, tex);
+}
+
+void QuadRenderer::SetCommonRenderStates() {
+    m_device->SetRenderState(D3DRS_LIGHTING,         FALSE);
+    m_device->SetRenderState(D3DRS_ZENABLE,          FALSE);
+    m_device->SetRenderState(D3DRS_CULLMODE,         D3DCULL_NONE);
     m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
     m_device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -249,8 +269,27 @@ void QuadRenderer::Render() {
     m_device->SetTextureStageState(1, D3DTSS_COLOROP,   D3DTOP_DISABLE);
     m_device->SetTextureStageState(1, D3DTSS_ALPHAOP,   D3DTOP_DISABLE);
 
-    m_device->SetTexture(0, m_tex);
     m_device->SetFVF(kVertFvf);
+}
+
+void QuadRenderer::Render() {
+    if (!m_device || !m_textures[0] || !m_vb) return;
+
+    SetCommonRenderStates();
+    m_device->SetTexture(0, m_textures[0]);
+    m_device->SetStreamSource(0, m_vb, 0, sizeof(Vert));
+    m_device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+}
+
+void QuadRenderer::RenderAt(std::uint32_t slot, float cx, float cy,
+                            float w, float h) {
+    if (!m_device) return;
+    if (slot >= kMaxSlots || !m_textures[slot]) return;
+
+    if (!BuildQuadVBAt(cx, cy, w, h)) return;
+
+    SetCommonRenderStates();
+    m_device->SetTexture(0, m_textures[slot]);
     m_device->SetStreamSource(0, m_vb, 0, sizeof(Vert));
     m_device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
