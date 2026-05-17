@@ -84,6 +84,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Util\TimerSetters.cpp" ^
     "%SRC%\Util\TimerSlot.cpp" ^
     "%SRC%\Frontend\MenuStateMachine.cpp" ^
+    "%SRC%\Frontend\FrontendDispatch.cpp" ^
     "%SRC%\Boot\FrameDispatch.cpp" ^
     "%SRC%\Input\DirectInput.cpp" ^
     /link /DLL
