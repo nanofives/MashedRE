@@ -2,12 +2,19 @@
 // Milestone A (done): opens a real Win32 window, runs a message pump, exits cleanly.
 // Milestone B0 (done): adds a D3D9 device and clears the backbuffer to a
 //                      teal color every frame.
-// Milestone B1 (this revision): loads original/TOASTART/Common/Frontend.piz at
-//                               startup via Piz/PizReader (C++ port of
-//                               re/tools/piz_extract.py), writes a directory
-//                               listing to mashed_re.log next to the exe, and
-//                               appends the entry count to the window title.
-//                               Still no menu draw, no asset use beyond load.
+// Milestone B1 (done): loads original/TOASTART/Common/Frontend.piz at
+//                      startup via Piz/PizReader (C++ port of
+//                      re/tools/piz_extract.py), writes a directory
+//                      listing to mashed_re.log next to the exe, and
+//                      appends the entry count to the window title.
+// Milestone B2 (this revision): extracts the TEXTURES.TXD blob from the loaded
+//                               Frontend.piz to extracted/TEXTURES.TXD next to
+//                               the exe, walks its RWS chunk tree via
+//                               Rws/RwsChunkWalker, appends the tree to
+//                               mashed_re.log, and surfaces the chunk count in
+//                               the window title. Still no actual texture
+//                               decode / D3D9 texture / quad render -- those
+//                               are B3 and B4.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -53,6 +60,7 @@
 #include <cstdio>
 
 #include "Piz/PizReader.h"
+#include "Rws/RwsChunkWalker.h"
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "d3d9.lib")
@@ -245,12 +253,110 @@ bool LoadFrontendPiz() {
     return true;
 }
 
+// Write the blob backing entry `i` of the loaded Frontend.piz to disk at
+// `out_path`. Returns true on success.
+bool ExtractBlobToFile(std::uint32_t entry_index, const char* out_path) {
+    if (!g_frontend_piz.valid()) return false;
+    std::uint32_t length = 0;
+    const std::uint8_t* bytes = g_frontend_piz.blob(entry_index, &length);
+    if (!bytes) return false;
+
+    std::FILE* fp = std::fopen(out_path, "wb");
+    if (!fp) return false;
+    std::size_t wrote = std::fwrite(bytes, 1, length, fp);
+    std::fclose(fp);
+    return wrote == length;
+}
+
+// Counter context for the walker callback.
+struct ChunkCounter {
+    std::FILE*    log;
+    std::uint32_t total;
+    std::uint32_t containers;
+};
+
+bool ChunkCallback(const mashed_re::Rws::ChunkInfo& info, void* user) {
+    auto* ctx = static_cast<ChunkCounter*>(user);
+    ctx->total += 1;
+    if (mashed_re::Rws::IsKnownContainer(info.section_id)) ctx->containers += 1;
+    if (ctx->log) {
+        const char* name = mashed_re::Rws::IdName(info.section_id);
+        // Indent two spaces per depth level for readability.
+        for (std::uint32_t d = 0; d < info.depth; ++d) std::fputs("  ", ctx->log);
+        std::fprintf(ctx->log,
+                     "[%u] 0x%08X (%s) size=0x%08X version=0x%08X @ 0x%08zX\n",
+                     info.depth, info.section_id,
+                     name ? name : "?", info.size, info.version,
+                     info.offset_in_buffer);
+    }
+    return true;
+}
+
+// Extracts TEXTURES.TXD (Frontend.piz entry 0) to extracted/TEXTURES.TXD next
+// to the exe, then walks its RWS chunk tree and appends the result to the
+// existing mashed_re.log. Updates g_windowTitle with the chunk count.
+// Returns true if extraction + walk succeeded.
+bool ExtractAndWalkTexturesTxd() {
+    if (!g_frontend_piz.valid() || g_frontend_piz.count() == 0) return false;
+
+    // Sanity: entry 0 in Frontend.piz is TEXTURES.TXD (verified in B1 log).
+    constexpr std::uint32_t kEntryIdx = 0;
+    const char* kOutDir  = "extracted";
+    const char* kOutPath = "extracted/TEXTURES.TXD";
+
+    CreateDirectoryA(kOutDir, nullptr); // OK if it already exists
+
+    if (!ExtractBlobToFile(kEntryIdx, kOutPath)) {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log, "\nTEXTURES.TXD extract FAILED to %s\n", kOutPath);
+            std::fclose(log);
+        }
+        return false;
+    }
+
+    std::uint32_t length = 0;
+    const std::uint8_t* bytes = g_frontend_piz.blob(kEntryIdx, &length);
+    if (!bytes) return false;
+
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (log) {
+        std::fprintf(log, "\nTEXTURES.TXD extracted to %s (%u bytes)\n", kOutPath, length);
+        std::fprintf(log, "RWS chunk tree:\n");
+    }
+
+    ChunkCounter ctx{};
+    ctx.log = log;
+    std::int32_t result = mashed_re::Rws::Walk(bytes, length, ChunkCallback, &ctx);
+
+    if (log) {
+        if (result < 0) {
+            std::fprintf(log, "\n  ! walk reported parse error\n");
+        } else {
+            std::fprintf(log, "\n  total chunks: %u (containers: %u)\n",
+                         ctx.total, ctx.containers);
+        }
+        std::fclose(log);
+    }
+
+    // Refine window title to include chunk count.
+    std::snprintf(g_windowTitle, sizeof(g_windowTitle),
+                  "Mashed RE (Milestone B2 - %u piz entries, TEXTURES.TXD = %u chunks)",
+                  g_frontend_piz.count(), ctx.total);
+    return result >= 0;
+}
+
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // Try to load the frontend asset archive before opening the window so the
     // initial title reflects load state. Failure is non-fatal.
-    (void)LoadFrontendPiz();
+    if (LoadFrontendPiz()) {
+        // On success, also extract TEXTURES.TXD and walk its RWS chunk tree.
+        // Both write to mashed_re.log; ExtractAndWalkTexturesTxd refines the
+        // window title further.
+        (void)ExtractAndWalkTexturesTxd();
+    }
 
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
