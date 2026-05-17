@@ -16,7 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
-
+2026-05-17  ma3-frida-s6  rvas=  branch=c3/ma3-frida-s6  evidence=DEFERRED.md:D-10697,D-10698,D-10708,D-10714+0040b620-harness-gap  note=0/5 race+score C2->C3; all 5 refused on drift-check (no gate lifted by batch1) — 0x0040b620 void_out_ptr harness gap unchanged; 0x0040b460 callee 0x00417740 still C0; 0x00429a30 callee 0x00430790 still C1 (U-2095 open); 0x0042fe30 callers 0x0040d270/0x004264d0 still C1; 0x0042fe50 callers 0x004189a0/0x004189c0 still C1
 ```
 
 ## Merged
