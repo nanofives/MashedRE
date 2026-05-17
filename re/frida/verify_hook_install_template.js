@@ -62,6 +62,20 @@ function callFn(fn, input, buf) {
         fn(input, buf, buf.add(4));
         return (buf.readU32() & 0x3f) | ((buf.add(4).readU32() & 0x3f) << 8);
     }
+    if (CONFIG.arg_type === 'time_diff_decompose') {
+        const ta = input[0] | 0;
+        const tb = input[1] | 0;
+        buf.writeU32(0);
+        buf.add(4).writeS32(0);
+        buf.add(8).writeS32(0);
+        buf.add(12).writeU32(0);
+        fn(ta, tb, buf, buf.add(4), buf.add(8), buf.add(12));
+        const sign = buf.readU32() >>> 0;
+        const mn   = buf.add(4).readS32();
+        const sc   = buf.add(8).readS32();
+        const csec = buf.add(12).readU32() >>> 0;
+        return [sign, mn, sc, '0x' + csec.toString(16)].join(',');
+    }
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
     }
@@ -123,6 +137,7 @@ function runVerification() {
     const Patched = new NativeFunction(TARGET_ADDR, CONFIG.signature.ret, CONFIG.signature.args, 'mscdecl');
     const buf = (['vec3_ptr', 'out3_idx'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : null;
     const results = [];
     const beforeCount = reimplEntries;
