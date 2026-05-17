@@ -16,13 +16,16 @@
 //                      bpp, format, mip count, palette status) to
 //                      mashed_re.log, and reflects the decoded texture count
 //                      in the window title.
-// Milestone B4 (this revision): uploads one decoded ARGB8888 texture
-//                               (default: "Shad_car", 256x256) to a D3D9
-//                               IDirect3DTexture9 via D3d9Render/QuadRenderer
-//                               and draws it as a centered screen-space quad
-//                               every frame on top of the teal clear.
-//                               Window title updates with the chosen texture
-//                               name + dimensions for visual confirmation.
+// Milestone B4 (done): uploaded one decoded ARGB8888/PAL8 texture (default:
+//                      "main", 256x256) to a D3D9 IDirect3DTexture9 via
+//                      D3d9Render/QuadRenderer and drew it as a centered
+//                      screen-space quad each frame on top of the teal clear.
+// Milestone B5 (this revision): uploads ALL 8 decoded Frontend.piz textures
+//                               into QuadRenderer slots 0..7 and draws them
+//                               as a fixed 4x2 atlas in the 800x600 window
+//                               (160x160 content per cell, cell pitch 200x270,
+//                               row 0 starts at y=50, row 1 at y=320).
+//                               Window title reflects atlas mode.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -114,25 +117,32 @@ mashed_re::Piz::Archive g_frontend_piz;
 // for the lifetime of the program — which it does.
 mashed_re::Txd::Dictionary g_txd;
 
-// B4 — D3D9 textured-quad renderer. Built after device init; uploads one
-// decoded TXD texture once and draws it each frame.
+// B4/B5 — D3D9 textured-quad renderer. Built after device init; uploads
+// decoded TXD textures and draws them each frame. B5 fills slots 0..N-1 with
+// every texture in g_txd.
 mashed_re::D3d9Render::QuadRenderer g_quad_renderer;
 
-// Name of the TXD entry we display. Selected for B4: 256x256 PAL8, the
-// largest paletted texture in Frontend.piz and almost certainly the
-// main-menu background art. Empirically chosen over ARGB candidates because:
-//   * Shad_car (256x256 ARGB) is a car-shadow alpha mask: RGB == 0
-//     throughout, renders as a solid black square (verified).
-//   * Gravel (128x128 ARGB) is a 1-bit-RGB detail texture: only pure black
-//     and pure white pixels, renders as monochrome noise (verified).
-//   * rendergs (64x32 ARGB) is grayscale UI: R == G == B per pixel
-//     (verified), renders as a tiny grey thumbnail.
-//   * `main` (256x256 PAL8) uses a full RGB palette and is a real
-//     visual texture.
+// B5 — atlas layout constants. The 8 Frontend.piz textures fit into a 4x2
+// grid in the 800x600 backbuffer. Cell pitch is 200 px horizontally and
+// 270 px vertically; content is a square of kAtlasContentSize px regardless
+// of source aspect, so all textures render at the same on-screen size for
+// visual comparison.
 //
-// B4 supports both ARGB8888 and Paletted8 in the QuadRenderer — palette
-// expansion was added as a stretch goal once the ARGB path was proven.
-constexpr char  kTextureToShow[] = "main";
+// Cell center x: (col * 200) + 100        -> 100, 300, 500, 700
+// Cell center y: 50 + (row * 270) + 100   -> 150, 420
+//
+// Row 0 content occupies y = 70..230 (160 px high, centered on 150),
+// row 1 content occupies y = 340..500. Both fit comfortably in 0..600.
+constexpr std::uint32_t kAtlasCols        = 4;
+constexpr std::uint32_t kAtlasRows        = 2;
+constexpr float         kAtlasCellPitchX  = 200.f;
+constexpr float         kAtlasCellPitchY  = 270.f;
+constexpr float         kAtlasOriginX     = 100.f;     // center of col 0
+constexpr float         kAtlasOriginY     = 150.f;     // center of row 0
+constexpr float         kAtlasContentSize = 160.f;
+
+// B5 — uploaded slot count, set once at startup by UploadAllTexturesForAtlas().
+std::uint32_t g_atlas_slot_count = 0;
 
 // Distinctive teal clear color so we can confirm visually that D3D9 init
 // worked. RGB(40, 80, 120) reads as a muted dark teal — clearly not the
@@ -235,9 +245,17 @@ bool RenderFrame() {
 
     g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
     g_device->BeginScene();
-    // B4: draw the uploaded TXD texture as a centered screen-space quad on
-    // top of the teal clear. No-op if no texture was uploaded.
-    g_quad_renderer.Render();
+    // B5: draw an atlas of all uploaded TXD textures in a 4x2 grid. Each
+    // cell is kAtlasContentSize x kAtlasContentSize centered on its grid
+    // position. No-op if zero slots were uploaded.
+    for (std::uint32_t slot = 0; slot < g_atlas_slot_count; ++slot) {
+        const std::uint32_t col = slot % kAtlasCols;
+        const std::uint32_t row = slot / kAtlasCols;
+        const float cx = kAtlasOriginX + static_cast<float>(col) * kAtlasCellPitchX;
+        const float cy = kAtlasOriginY + static_cast<float>(row) * kAtlasCellPitchY;
+        g_quad_renderer.RenderAt(slot, cx, cy,
+                                 kAtlasContentSize, kAtlasContentSize);
+    }
     g_device->EndScene();
 
     hr = g_device->Present(nullptr, nullptr, nullptr, nullptr);
@@ -443,87 +461,64 @@ bool DecodeAndDumpTexturesTxd() {
     return true;
 }
 
-// B4: locate `kTextureToShow` in the decoded dictionary, upload it via
-// QuadRenderer, and update the window title. Called once after D3D9 init
-// (g_device must be valid). Returns true on success.
-bool UploadTextureForRender() {
+// B5: upload every decoded TXD texture into a separate QuadRenderer slot so
+// the frame loop can draw them all as an atlas. Stops at kMaxSlots (8 cells
+// for the 4x2 layout). Per-texture upload failures are logged but don't
+// abort the rest. Updates g_atlas_slot_count + window title.
+bool UploadAllTexturesForAtlas() {
     if (!g_device || !g_txd.valid()) return false;
 
-    const mashed_re::Txd::Texture* picked = nullptr;
-    for (std::uint32_t i = 0; i < g_txd.count(); ++i) {
-        if (std::strcmp(g_txd.texture(i).name, kTextureToShow) == 0) {
-            picked = &g_txd.texture(i);
-            break;
-        }
-    }
-
     std::FILE* log = std::fopen(kLogPath, "a");
-    if (!picked) {
-        if (log) {
-            std::fprintf(log, "\nMilestone B4: texture '%s' not found in TXD\n",
-                         kTextureToShow);
-            std::fclose(log);
-        }
-        return false;
+    if (log) {
+        std::fprintf(log, "\nMilestone B5: uploading %u textures for atlas\n",
+                     g_txd.count());
     }
 
     if (!g_quad_renderer.Init(g_device, kWidth, kHeight)) {
         if (log) {
-            std::fprintf(log, "\nMilestone B4: QuadRenderer.Init failed: %s\n",
+            std::fprintf(log, "\nMilestone B5: QuadRenderer.Init failed: %s\n",
                          g_quad_renderer.last_error());
             std::fclose(log);
         }
         return false;
     }
-    if (!g_quad_renderer.UploadFromTexture(*picked)) {
-        if (log) {
+
+    const std::uint32_t cap = kAtlasCols * kAtlasRows;
+    std::uint32_t uploaded = 0;
+    for (std::uint32_t i = 0; i < g_txd.count() && i < cap; ++i) {
+        const auto& tex = g_txd.texture(i);
+        if (g_quad_renderer.UploadFromTextureToSlot(i, tex)) {
+            ++uploaded;
+            if (log) {
+                std::fprintf(log,
+                             "  slot %u: '%s' %ux%u %s mips=%u OK\n",
+                             i, tex.name, tex.width(), tex.height(),
+                             mashed_re::Txd::PixelFormatName(tex.format()),
+                             tex.mip_count);
+            }
+        } else if (log) {
             std::fprintf(log,
-                         "\nMilestone B4: UploadFromTexture('%s') failed: %s\n",
-                         kTextureToShow, g_quad_renderer.last_error());
-            std::fclose(log);
+                         "  slot %u: '%s' %ux%u %s upload FAILED: %s\n",
+                         i, tex.name, tex.width(), tex.height(),
+                         mashed_re::Txd::PixelFormatName(tex.format()),
+                         g_quad_renderer.last_error());
         }
-        return false;
     }
+
+    g_atlas_slot_count = uploaded;
 
     if (log) {
         std::fprintf(log,
-                     "\nMilestone B4: uploaded '%s' %ux%u %s as IDirect3DTexture9 with %u mips\n",
-                     picked->name, picked->width(), picked->height(),
-                     mashed_re::Txd::PixelFormatName(picked->format()),
-                     picked->mip_count);
-        // Debug: dump the first 8 pixels of mip 0 raw bytes (R,G,B,A each
-        // 0..255) so we can sanity-check the source data.
-        if (picked->mip_count > 0 && picked->mips[0].pixels) {
-            const auto& m0 = picked->mips[0];
-            std::fprintf(log,
-                         "  mip0 stride=%u w=%u h=%u depth=%u pixel_bytes=%u\n",
-                         m0.stride, m0.width, m0.height, m0.depth, m0.pixel_bytes);
-            std::fprintf(log, "  first 8 source pixels (R G B A):\n");
-            for (std::uint32_t i = 0; i < 8 && i < m0.width; ++i) {
-                std::fprintf(log, "    [%u] %3u %3u %3u %3u\n", i,
-                             m0.pixels[i*4 + 0], m0.pixels[i*4 + 1],
-                             m0.pixels[i*4 + 2], m0.pixels[i*4 + 3]);
-            }
-            // Also dump 8 pixels from the middle row to catch patterns.
-            const std::uint32_t mid_row = m0.height / 2;
-            const std::uint8_t* row = m0.pixels + mid_row * m0.stride;
-            std::fprintf(log, "  middle row (y=%u) first 8 pixels (R G B A):\n",
-                         mid_row);
-            for (std::uint32_t i = 0; i < 8 && i < m0.width; ++i) {
-                std::fprintf(log, "    [%u] %3u %3u %3u %3u\n", i,
-                             row[i*4 + 0], row[i*4 + 1],
-                             row[i*4 + 2], row[i*4 + 3]);
-            }
-        }
+                     "  Milestone B5: %u/%u textures uploaded into atlas\n",
+                     uploaded, g_txd.count());
         std::fclose(log);
     }
 
     std::snprintf(g_windowTitle, sizeof(g_windowTitle),
-                  "Mashed RE (Milestone B4 - showing '%s' %ux%u %s)",
-                  picked->name, picked->width(), picked->height(),
-                  mashed_re::Txd::PixelFormatName(picked->format()));
+                  "Mashed RE (Milestone B5 - atlas: %u textures)",
+                  uploaded);
     if (g_hwnd) SetWindowTextA(g_hwnd, g_windowTitle);
-    return true;
+    return uploaded > 0;
 }
 
 }  // namespace
@@ -585,10 +580,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         return 3;
     }
 
-    // B4: now that D3D9 is up and the TXD is decoded, upload one texture and
-    // refine the window title. Failure is non-fatal — the frame loop still
-    // runs and shows a teal clear, just without the textured quad on top.
-    (void)UploadTextureForRender();
+    // B5: now that D3D9 is up and the TXD is decoded, upload every texture
+    // into a QuadRenderer slot for the 4x2 atlas. Failure is non-fatal — the
+    // frame loop still runs and shows a teal clear, just without quads on top.
+    (void)UploadAllTexturesForAtlas();
 
     // Main loop: pump messages + render until the user closes the window or
     // hits ESC, or the device gets into an unrecoverable state.
