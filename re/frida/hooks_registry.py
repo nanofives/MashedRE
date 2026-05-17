@@ -4341,4 +4341,55 @@ HOOKS = {
             0, 1, 2, 1000, -1,
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session pizwin32-bypass-20260517 — Compat/PizWin32Bypass.cpp
+    # Win32-layer bypass for the .piz CreateFileA/ReadFile pair.
+    # Both are harness-limited: file-I/O side effects + non-standard ABI
+    # (FUN_004b6710 passes the path via EAX, not the stack), so synthetic
+    # Frida A/B diffing would corrupt process state. C3 evidence comes from
+    # canonical-scenario runtime verification (boot-to-menu + track load).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004b6710  PizWin32Open_Compat
+    # Original passes path in EAX (register-passing convention). Replacement
+    # drops FILE_FLAG_NO_BUFFERING from CreateFileA flags to fix 4 KB-sector
+    # crash on modern Advanced Format drives. Alt-path (DAT_007d3e50 & 1) is
+    # preserved verbatim. Returns 1 on success, 0 on failure.
+    # ref: re/analysis/fun_004b6940_scoping/REPORT.md
+    'piz_win32_open_compat': {
+        'rva':            0x004b6710,
+        'export':         'PizWin32Open_Compat',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        # Harness-limited: EAX-passing convention + CreateFileA side effect
+        # would crash the diff harness. C3 evidence: decompiler-cited 1:1
+        # port of FUN_004b6710 except for the documented flag drop, plus
+        # canonical boot + track-load smoke test under the live inline-JMP.
+        'path1_tests': [0],
+        'path2_tests': [0],
+    },
+
+    # 0x004b67e0  PizWin32Read_Compat
+    # __cdecl(DWORD offset, void* buf, size_t size, LPDWORD outBytes). Mirrors
+    # FUN_004b67e0 1:1 — including alt-path fseek/fread branch, OVERLAPPED
+    # setup, progress-callback dispatch in the poll loop, and the
+    # ERROR_HANDLE_EOF / success exit conditions. No buffer/alignment tricks
+    # needed because the companion Open_Compat dropped NO_BUFFERING.
+    # ref: re/analysis/fun_004b6940_scoping/REPORT.md
+    'piz_win32_read_compat': {
+        'rva':            0x004b67e0,
+        'export':         'PizWin32Read_Compat',
+        'signature':      {'ret': 'void',
+                            'args': ['uint32', 'pointer', 'uint32', 'pointer']},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        # Harness-limited: ReadFile side effect + reliance on a live piz
+        # handle in DAT_007d3e48. C3 evidence: decompiler-cited 1:1 port of
+        # FUN_004b67e0, plus canonical track-load smoke test confirming the
+        # downstream FUN_004b6940 returns 1 (success).
+        'path1_tests': [0],
+        'path2_tests': [0],
+    },
 }
