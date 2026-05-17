@@ -1,6 +1,11 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-17  0x0042b930  MenuAlphaGet  C2->C3  ma3-frida-s2 5b leaf getter returns DAT_0067ecb0; reimpl mashedmod/src/mashed_re/Frontend/MenuGetters.cpp; Frida A/B GREEN 10/10 read_global log/diff_menu_alpha_get.csv; leaf-exemption; U-0501 open (semantic-only carried)
+2026-05-17  0x0040b810  TimerGlobalsReset  C3==C3  ma3-frida-s2 drained dup C2 frontend row (tracker drift from frontend_c0_promote); re-verified A/B GREEN 10/10 log/diff_timer_globals_reset.csv (canonical row 767 unchanged)
+2026-05-17  0x00422b30  TimerArrayClear  C3==C3  ma3-frida-s2 drained dup C2 frontend row (tracker drift from frontend_c0_promote); re-verified A/B GREEN 10/10 log/diff_timer_array_clear.csv (canonical row 785 unchanged)
+2026-05-17  0x0042f6b0  MenuModeSync  C3==C3  ma3-frida-s2 drained dup C2 frontend row (tracker drift from frontend_c0_promote); re-verified A/B GREEN 10/10 log/diff_menu_mode_sync.csv (canonical row 770 unchanged)
+2026-05-17  0x00430b60  MenuSlotCount  C3==C3  ma3-frida-s2 drained dup C2 frontend row (tracker drift from frontend_c0_promote); re-verified A/B GREEN 10/10 log/diff_menu_slot_count.csv (canonical row 777 unchanged)
 2026-05-16  frida-sweep-20260516-2316  frida-sweep-release  branches=8 merged  integration-diff=GREEN  hooks=19  c3-promotions=19
 2026-05-16  0x004b6480  BitArrayClear  C2->C3  ma2-frida-s7 88b leaf bit-array clear (REP STOSD/STOSB + AND-mask tail); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 14/14 bytes_inplace log/diff_bit_array_clear.csv; leaf-exemption
 2026-05-16  0x00499720  GetInputHinst  C2->C3  ma2-frida-s7 5b leaf HINSTANCE getter; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 read_global log/diff_get_input_hinst.csv; leaf-exemption
