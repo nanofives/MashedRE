@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-17  0x0042d300  TimeDiffDecompose  C2->C3  ma3-frida-s8 pure-leaf time-delta decomposer (signed centisecond diff -> sign/min/sec/csec out-ptrs); impl already on file mashedmod/src/mashed_re/Frontend/MenuTime.cpp; new harness arg_type time_diff_decompose (16B buf, 4 outs); Frida A/B 15/15 GREEN log/diff_time_diff_decompose.csv; leaf-exemption
+2026-05-17  0x00436810  LocalPlayerSlotCheck  C2->C3  ma3-frida-s8 local-player slot-occupancy gate (param_1==12 fast-false; SP=non-zero count at DAT_007f0a7c; MP=type-2 count at DAT_007f0a74); reimpl mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp; callee IsMultiplayerMode C3; U-3410 U-3411 preserved (literal offsets/value reproduced exactly per NO-GUESSING); int return (low-byte ABI for orig bool); Frida A/B 18/18 GREEN log/diff_local_player_slot_check.csv
 2026-05-16  frida-sweep-20260516-2316  frida-sweep-release  branches=8 merged  integration-diff=GREEN  hooks=19  c3-promotions=19
 2026-05-16  0x004b6480  BitArrayClear  C2->C3  ma2-frida-s7 88b leaf bit-array clear (REP STOSD/STOSB + AND-mask tail); reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 14/14 bytes_inplace log/diff_bit_array_clear.csv; leaf-exemption
 2026-05-16  0x00499720  GetInputHinst  C2->C3  ma2-frida-s7 5b leaf HINSTANCE getter; reimpl mashedmod/src/mashed_re/Input/DirectInput.cpp; Frida A/B GREEN 10/10 read_global log/diff_get_input_hinst.csv; leaf-exemption

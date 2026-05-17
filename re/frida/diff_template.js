@@ -128,6 +128,23 @@ function callFn(fn, input, buf) {
         fn(input, buf, buf.add(4));
         return (buf.readU32() & 0x3f) | ((buf.add(4).readU32() & 0x3f) << 8);
     }
+    // time_diff_decompose — fn(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec).
+    // void return; four out-ptrs in a single 16-byte buf. input: [time_a, time_b].
+    // Observable: comma-separated fingerprint string of sign|min|sec|csec_bits (IEEE-754 u32).
+    if (CONFIG.arg_type === 'time_diff_decompose') {
+        const ta = input[0] | 0;
+        const tb = input[1] | 0;
+        buf.writeU32(0);            // sign_out
+        buf.add(4).writeS32(0);     // min_out
+        buf.add(8).writeS32(0);     // sec_out
+        buf.add(12).writeU32(0);    // csec_out (float bits)
+        fn(ta, tb, buf, buf.add(4), buf.add(8), buf.add(12));
+        const sign = buf.readU32() >>> 0;
+        const mn   = buf.add(4).readS32();
+        const sc   = buf.add(8).readS32();
+        const csec = buf.add(12).readU32() >>> 0;  // raw float bits
+        return [sign, mn, sc, '0x' + csec.toString(16)].join(',');
+    }
     // int_scalar — single uint32 arg, any integer return type
     if (CONFIG.arg_type === 'int_scalar') {
         return fn(input >>> 0);
@@ -474,6 +491,7 @@ function runDiff() {
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
               : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
               : null;

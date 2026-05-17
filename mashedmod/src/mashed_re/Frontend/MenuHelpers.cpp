@@ -207,3 +207,95 @@ extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
 }
 
 RH_ScopedInstall(FrontendCursorUpdate, 0x0042f7b0);
+
+// ---------------------------------------------------------------------------
+// LocalPlayerSlotCheck  --  0x00436810
+//
+// Original: FUN_00436810 (193 bytes, 0x00436810..0x004368d1)
+// Callee depth-1: 0x00430760 IsMultiplayerMode (C3).
+//
+// Mechanical behavior (from re/analysis/hud_frontend_d5/0x00436810.md):
+//   - param_1 == 12 (0xc): immediately returns false.
+//   - Otherwise, calls IsMultiplayerMode():
+//     * SP branch (IsMultiplayerMode()==0):
+//         walks DAT_007f0a7c upward in stride 0x48 ints (0x120 bytes),
+//         counting non-zero entries at six int-offsets per block
+//         [-0xc, 0, +0xc, +0x18, +0x24, +0x30]; loop terminates when
+//         piVar3 >= 0x007f0cbc. Returns (param_1 <= iVar2 - 1).
+//     * MP branch (IsMultiplayerMode()!=0):
+//         walks DAT_007f0a74 upward in stride 0x48 ints; for each block,
+//         counts entries equal to 2 at the same six offsets; terminates
+//         when piVar3 >= 0x007f0cb4. If (&DAT_007f0a44)[param_1*0xc] != 0,
+//         returns (param_1 <= iVar2); else returns false.
+//
+// Uncertainties (preserved literal; see hud_frontend_d5/0x00436810.md):
+//   U-3410: meaning of the 6 probe offsets within the 0x48-stride block.
+//   U-3411: meaning of the value `2` tested in the MP branch.
+// Per the NO-GUESSING rule, the offsets and the literal `== 2` test are
+// reproduced exactly as in the original.
+//
+// ref: re/analysis/hud_frontend_d5/0x00436810.md
+// ---------------------------------------------------------------------------
+
+extern "C" std::uint32_t __cdecl IsMultiplayerMode();
+
+// 0x00436810
+// Return type is `int` (not `bool`) to match the harness comparison: the
+// original returns via SETLE/SETcc which sets only the low byte of EAX,
+// leaving the upper 24 bits undefined.  Returning `int` from C++ generates
+// a XOR-and-set sequence that zeroes the full register, but the harness
+// then compares the full 32-bit return.  We coerce to (int) so both sides
+// produce the same value for the false (==12) path where the original
+// only writes the low byte.
+extern "C" __declspec(dllexport) int __cdecl LocalPlayerSlotCheck(int param_1) {
+    // 0x00436815: guard — slot index 12 always returns false.
+    if (param_1 == 0xc) {
+        return 0;
+    }
+    // 0x00436820: branch on IsMultiplayerMode() return value.
+    if (IsMultiplayerMode() == 0u) {
+        // ─── SP branch ────────────────────────────────────────────────
+        // 0x0043684d: piVar3 = &DAT_007f0a7c (int32*).
+        // 0x0043686c: stride = 0x48 ints (0x120 bytes).
+        // 0x00436870: terminate when piVar3 >= 0x007f0cbc.
+        std::int32_t* piVar3 = reinterpret_cast<std::int32_t*>(0x007f0a7cu);
+        int iVar2 = 0;
+        while (reinterpret_cast<std::uintptr_t>(piVar3) < 0x007f0cbcu) {
+            // 6 probes per block at int-offsets [-0xc, 0, +0xc, +0x18, +0x24, +0x30].
+            // [U-3410] meaning of offsets unresolved; reproduced literally.
+            if (piVar3[-0xc] != 0) iVar2++;
+            if (piVar3[0]    != 0) iVar2++;
+            if (piVar3[0xc]  != 0) iVar2++;
+            if (piVar3[0x18] != 0) iVar2++;
+            if (piVar3[0x24] != 0) iVar2++;
+            if (piVar3[0x30] != 0) iVar2++;
+            piVar3 += 0x48;  // stride in ints (= 0x120 bytes)
+        }
+        return param_1 <= iVar2 - 1;
+    }
+
+    // ─── MP branch ────────────────────────────────────────────────────
+    // 0x004368a0: piVar3 = &DAT_007f0a74 (int32*).
+    // 0x004368b9: stride = 0x48 ints.
+    // 0x004368bd: terminate when piVar3 >= 0x007f0cb4.
+    std::int32_t* piVar3 = reinterpret_cast<std::int32_t*>(0x007f0a74u);
+    int iVar2 = 0;
+    while (reinterpret_cast<std::uintptr_t>(piVar3) < 0x007f0cb4u) {
+        // [U-3411] meaning of `== 2` unresolved; reproduced literally.
+        if (piVar3[-0xc] == 2) iVar2++;
+        if (piVar3[0]    == 2) iVar2++;
+        if (piVar3[0xc]  == 2) iVar2++;
+        if (piVar3[0x18] == 2) iVar2++;
+        if (piVar3[0x24] == 2) iVar2++;
+        if (piVar3[0x30] == 2) iVar2++;
+        piVar3 += 0x48;
+    }
+    // 0x004368c2: (&DAT_007f0a44)[param_1 * 0xc] != 0 gate.
+    std::int32_t* slotTypeBase = reinterpret_cast<std::int32_t*>(0x007f0a44u);
+    if (slotTypeBase[param_1 * 0xc] != 0) {
+        return param_1 <= iVar2;
+    }
+    return false;
+}
+
+RH_ScopedInstall(LocalPlayerSlotCheck, 0x00436810);

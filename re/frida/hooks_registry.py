@@ -375,6 +375,64 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # 0x0042d300  TimeDiffDecompose
+    # void(int time_a, int time_b, u32* sign, int* min, int* sec, float* csec).
+    # Pure leaf — no callees. Decomposes signed centisecond delta into sign+m+s+csec.
+    # arg_type 'time_diff_decompose': 16-byte buffer holds 4 out fields.
+    # Leaf-exemption applies (C2->C3 only; not C4).
+    'time_diff_decompose': {
+        'rva':            0x0042d300,
+        'export':         'TimeDiffDecompose',
+        'signature':      {'ret': 'void',
+                            'args': ['int32', 'int32', 'pointer', 'pointer', 'pointer', 'pointer']},
+        'arg_type':       'time_diff_decompose',
+        'lut_root_delta': 0,
+        # Inputs: [time_a, time_b] in centiseconds.
+        'path1_tests': [
+            [0,       0     ],   # equal     -> sign=2, m=0,  s=0,    csec=0.0
+            [100,     0     ],   # a > b 1s  -> sign=0, m=0,  s=1,    csec=0.0
+            [0,       100   ],   # b > a 1s  -> sign=1, m=0,  s=1,    csec=0.0
+            [6000,    0     ],   # a > b 1m  -> sign=0, m=1,  s=0,    csec=0.0
+            [6050,    0     ],   # 1m 0s 50c -> sign=0, m=1,  s=0,    csec=50.0
+            [6101,    0     ],   # 1m 1s 1c  -> sign=0, m=1,  s=1,    csec=1.0
+            [0,       6101  ],   # -1m1s1c   -> sign=1, m=1,  s=1,    csec=1.0
+            [60000,   0     ],   # 10m 0s 0c -> sign=0, m=10, s=0,    csec=0.0
+            [9999,    0     ],   # 1m 39s 99c
+            [12345,   6789  ],   # mixed
+            [99999,   12345 ],   # large
+            [1,       0     ],   # tiny diff
+            [0,       1     ],   # tiny neg
+            [123456,  123456],   # equal nonzero
+            [10000,   5500  ],   # 0m 45s 0c
+        ],
+        'path2_tests': [
+            [0,       0    ],
+            [6101,    0    ],
+            [0,       6101 ],
+            [60000,   0    ],
+            [12345,   6789 ],
+        ],
+    },
+
+    # 0x00436810  LocalPlayerSlotCheck
+    # bool(int slot_idx). Reads BSS slot arrays at DAT_007f0a7c (SP) /
+    # DAT_007f0a74 (MP) and counts non-zero / type-2 entries; compares
+    # slot_idx against the count. param_1 == 12 always returns false.
+    # Callee: IsMultiplayerMode (C3, 0x00430760). Non-leaf C3 candidate.
+    # At quiescent main menu, SP path is taken; arrays are mostly zero so
+    # iVar2 ~= 0 and the function returns true only for slot_idx <= -1.
+    # arg_type 'int_scalar': returns bool as int.
+    'local_player_slot_check': {
+        'rva':            0x00436810,
+        'export':         'LocalPlayerSlotCheck',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Cover guard (12), boundary (0..15) and a few past-range values.
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 100, 0xffffffff],
+        'path2_tests':    [0, 1, 12, 13],
+    },
+
     # 0x00430910  MenuOptionSlotGet
     # int(void): reads game mode + option/row index; returns 0 or table value.
 

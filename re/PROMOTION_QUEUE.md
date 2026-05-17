@@ -16,7 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
-
+2026-05-17  ma3-frida-s8  rvas=0x0042d300,0x00436810  branch=c3/ma3-frida-s8  evidence=log/diff_time_diff_decompose.csv;log/diff_local_player_slot_check.csv  note=2/5 frontend helpers C2->C3 (TimeDiffDecompose + LocalPlayerSlotCheck GREEN); 3 refused on caller/callee gate (0x0042d5a0 callee 0x00427e00 C1 with 8 STUBs; 0x0042d290 both callees C1 not drift-promotable cleanly in-session; 0x0042bcb0 callee 0x004b5750 C0 same blocker as c3-batch-g-s2); new harness arg_type time_diff_decompose added (16B 4-out-ptr); duplicate hooks.csv row for 0x00436810 collapsed at line 1450
 ```
 
 ## Merged
