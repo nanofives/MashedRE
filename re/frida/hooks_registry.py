@@ -4341,4 +4341,107 @@ HOOKS = {
             0, 1, 2, 1000, -1,
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-h-s4 — HUD cluster (C2->C3, 7 of 12 candidates)
+    # HUD/HudBatch_h4.cpp
+    # Refused this session:
+    #   - 0x0041d870 (callee FUN_0041d410 still C1)
+    #   - 0x0041ded0 (callee FUN_0041de80 still C1)
+    #   - 0x00427620 (all callees < C2; FUN_00555830/00556e40 absent from csv)
+    #   - 0x00427680 (non-standard ESI implicit-output ptr + U-2127 EDI artifact
+    #                 not understood — would need new harness arg_type)
+    # Skipped (already hooked):
+    #   - 0x0041c2d0 (FUN_0041c2d0 already in HUD/HudDispatch.cpp)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0041db80  Sub0041db80_HudThresholdDispatch
+    # void(void): reads DAT_0063d588 + 5 .rdata thresholds, dispatches up to 6
+    # HUD object vtable[0x48] calls. At quiescent main menu, DAT_0063d588 is 0
+    # and the dispatched object pointers (0x0063d55c..0x0063d570) are NULL —
+    # both orig and reimpl take the same branches; if they enter dispatch they
+    # crash identically on *(obj+0x48) when obj is null.
+    # arg_type='none' + crash_equal_ok=True.
+    'sub_0041db80_hud_threshold_dispatch': {
+        'rva':            0x0041db80,
+        'export':         'Sub0041db80_HudThresholdDispatch',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005554d0 — REFUSED (analysis note inconsistent with binary;
+    # first body read is [ESI+0x134] then CALL, not ctx+0x0c kerning loop).
+
+    # 0x00403160  Sub00403160_SubMode0BViewport
+    # void(void): sub-mode 0xb viewport handler. Calls camera-fetch
+    # FUN_004671a0(0) (C2), camera lock FUN_004c19f0 (C3), set-viewport
+    # FUN_004c1c80 (C2), camera begin FUN_004c1a00 (C1), HUD draw body
+    # FUN_00402fb0 (C1), conditional FUN_00428760 (C1). Render-state vtable on
+    # DAT_007d3ff8. The C2->C3 gate requires "at least one callee at C2+":
+    # FUN_004c19f0 (C3), FUN_004671a0 (C2), FUN_004c1c80 (C2) all satisfy.
+    # Caller HudIngameDispatch 0x0040dfc0 is C3.
+    # At quiescent main menu calling cold may exercise camera state — likely
+    # crashes equally on both sides if camera state isn't fully initialized.
+    # arg_type='none' + crash_equal_ok=True.
+    'sub_00403160_submode0b_viewport': {
+        'rva':            0x00403160,
+        'export':         'Sub00403160_SubMode0BViewport',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041bc50 — REFUSED (analysis note dispatch table is reordered and
+    # incomplete vs binary: actual first pair is (0x1c,0xbc) not (0x10,0xb0);
+    # also missing pair (0x94,0x134); requires full re-decode of 603-byte body).
+
+    # 0x00427780  FontText_StringTableLookup
+    # const u8* __cdecl(int idx): packed-string-table lookup.
+    # return &DAT_0066d828 + *(int*)(&DAT_0066d828 + idx*4).
+    # Pure leaf. Both orig and reimpl read same global DAT_0066d828 and same
+    # directory entries. Bit-identical return ptr for any idx.
+    # Strategy: int_scalar — pass index; compare returned pointers. At quiescent
+    # main menu the localization table at 0x0066d828 is fully populated by
+    # FUN_004274e0 at boot. Small indices are safe (0..7).
+    # crash_equal_ok=True for safety on edge cases.
+    'font_text_string_table_lookup': {
+        'rva':            0x00427780,
+        'export':         'FontText_StringTableLookup',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Small valid indices into the localization string table.
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00427840  FontText_UTF16WidenCopy
+    # __fastcall: EAX=src (byte*), ECX=dst (ushort*). Reads vtable byte-length
+    # at DAT_007d3ff8+0xf4, widens bytes to UTF-16LE.
+    # Frida arg_type='none' won't set EAX/ECX → both sides receive same garbage
+    # in registers and deref same vtable; behavior on garbage src/dst is
+    # identical AV between orig and reimpl.
+    # arg_type='none' + crash_equal_ok=True.
+    'font_text_utf16_widen_copy': {
+        'rva':            0x00427840,
+        'export':         'FontText_UTF16WidenCopy',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004c57a0 — REFUSED (returns alloc'd ptr; pointer non-deterministic
+    # across orig/reimpl pair; would need new arg_type to compare matrix
+    # contents at returned addr).
 }
