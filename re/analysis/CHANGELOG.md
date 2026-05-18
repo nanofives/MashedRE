@@ -1460,3 +1460,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-0514  scribe-claim  buckets=4 queued, 0 skipped-HOLD
 2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_005b_first_pass  writes=60  errors=0
 2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_004f_first_pass  writes=60  errors=0
+2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_0055_first_pass  writes=60  errors=0  splits=4(rtfs_manager,anim_channel,vector_path,vector_font)
