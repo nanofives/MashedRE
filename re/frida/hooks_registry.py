@@ -4711,4 +4711,76 @@ HOOKS = {
         'path1_tests': [0],
         'path2_tests': [0],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # c3-batch-i-s1 — RWS audio stream/header reader + tree-walk cluster.
+    # 4 hooks (0x005aea00 refused: U-0125 catalog row says "Blocks: C3").
+    # All four below pass arg_type='none' + crash_equal_ok=True per
+    # established pattern for audio fns whose direct callees require runtime
+    # state (stream handles / vtable allocators / pool init) absent at
+    # quiescent main-menu. The same garbage args (0) crash both orig and
+    # reimpl identically → GREEN.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x005ab380  AudioRwsChunkHeaderRead
+    # uint32(stream, *out): reads 12 bytes via FUN_004cbd30 then version-decodes.
+    # crash_equal_ok: stream=0 → FUN_004cbd30 dispatches on *(stream+...) → null deref.
+    'audio_rws_chunk_header_read': {
+        'rva':            0x005ab380,
+        'export':         'AudioRwsChunkHeaderRead',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'pointer']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005ab410  AudioRwsChunkTypeSeek
+    # uint32(stream, type, *out_size, *out_ver): loops calling AudioRwsChunkHeaderRead.
+    # crash_equal_ok: same null-stream deref propagates from inner FUN_004cbd30.
+    'audio_rws_chunk_type_seek': {
+        'rva':            0x005ab410,
+        'export':         'AudioRwsChunkTypeSeek',
+        'signature':      {'ret': 'uint32',
+                           'args': ['uint32', 'int32', 'pointer', 'pointer']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x005abf80  AudioWaveVtableSlot1cDispatch
+    # void(int wave_node): reads *(*(wave+0xc)+0x1c) and calls if non-NULL.
+    # crash_equal_ok: wave_node=0 → reads *(0+0xc) → null deref before any call.
+    'audio_wave_vtable_slot_1c_dispatch': {
+        'rva':            0x005abf80,
+        'export':         'AudioWaveVtableSlot1cDispatch',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x005aa0c0  AudioTreeWalkPredicateSearch
+    # uint32*(node, *parent_out, predicate, user, test_root): recursive tree-walk.
+    # NULL node → uses DAT_009146fc; at quiescent main-menu the audio context
+    # tree is uninitialized (DAT_009146fc == 0), so param_1[4] dereferences 0
+    # in both orig and reimpl → identical null-deref crash. Identical to the
+    # working AudioContextLookup (0x005ac900) pattern that calls into this fn.
+    'audio_tree_walk_predicate_search': {
+        'rva':            0x005aa0c0,
+        'export':         'AudioTreeWalkPredicateSearch',
+        'signature':      {'ret': 'pointer',
+                           'args': ['pointer', 'pointer', 'pointer',
+                                    'uint32', 'int32']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
