@@ -4338,7 +4338,6 @@ HOOKS = {
         ],
     },
 
-<<<<<<< HEAD
     # Session c3-batch-h-s5 — util small leaves+near-leaves (C2->C3)
     # Util/UtilBatch_h5.cpp
     # ─────────────────────────────────────────────────────────────────────
