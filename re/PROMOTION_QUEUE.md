@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-17  c3-batch-i-s2  rvas=  branch=c3/batch-i-s2  evidence=  note=0/5 audio_rws fmt + dialog C2->C3 (HALT 5 refusals >= 3-threshold); 3 audio_rws comparators (0x005ac5f0/0x005ac9e0/0x005acaa0) need new arg_types (skill: do NOT invent — queue harness-extension); 0x005abfa0 is the orchestrator 5-arg loader with 12 callees + live game stream — not synthetically reproducible (per session STOP-AND-ASK); 0x00498d20 ReadModeFromCombo HWND-via-EAX __fastcall (same harness gap as ma2-frida-s8 settings dialog, ma3-frida-s3 EAX/ESI ABI gap); all callees verified C2+ in hooks.csv — promotions blocked solely by harness, NOT by analysis or callee-gate
 ```
 
 ## Merged
