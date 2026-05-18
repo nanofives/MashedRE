@@ -77,8 +77,9 @@ The skill pulls candidates from several sources depending on requested work type
    awk -F',' 'NR>1 && $4=="C0" && $6=="" {print $1","$2","$3}' hooks.csv
    ```
 2. Or `function_list` from Ghidra MCP minus already-mapped RVAs (only if `hooks.csv` C0 set is exhausted).
-3. Filter for "has at least one xref" (drop dead code / unreferenced stubs).
-4. Cluster by xref proximity — RVAs in the same call tree go to the same session so the bucket name reflects a coherent cluster.
+3. **Filter out candidates in known CRT bands.** The MSVC CRT static-linkage residue lives at `0x004a0000..0x004b3fff` (calibrated against batch_s session 1: the bucket `0x004b0068..0x004b3a60` turned out to be 100% CRT, with 29 of 60 RVAs already attesting FidDB names in Ghidra). See § "CRT-band exclusion" below for the full recipe. Drop candidates in these ranges from first-pass buckets entirely.
+4. Filter for "has at least one xref" (drop dead code / unreferenced stubs).
+5. Cluster by xref proximity — RVAs in the same call tree go to the same session so the bucket name reflects a coherent cluster.
 
 ### cont
 1. Grep `DEFERRED.md` for the specified bucket-cont tag:
@@ -99,6 +100,44 @@ The skill pulls candidates from several sources depending on requested work type
 2. Or accept the user's explicit list of struct names.
 3. Cross-reference S-DoD requirement #3 from `ROADMAP.md` — prioritize structs that gate subsystem S-DoD.
 
+## CRT-band exclusion
+
+The MSVC CRT static-linkage residue inside MASHED.exe occupies an address range that is almost entirely Ghidra-FidDB-attested library code (`_strncpy`, `_ftol2`, `__crt*`, `___security_init_cookie`, etc.). Spending a worker session "discovering" this is wasted budget — Ghidra already knows.
+
+**Calibrated CRT bands (as of 2026-05-17):**
+
+| Range | Status | Source |
+|---|---|---|
+| `0x004a0000..0x004b3fff` | CRT-dense; assume residue unless proven otherwise | batch_s session 1 hit 100% CRT in `0x004b0068..0x004b3a60` (29/60 RVAs had FidDB names) |
+| Real game code in `0x004b*` | Starts ~`0x004b4000` | Same post-mortem; verified by xrefs from RW frames |
+
+**Pre-filter recipe.** Before assigning RVAs to first-pass sessions:
+
+1. **Range short-circuit.** Any candidate in `0x004a0000..0x004b3fff` is suspect. Drop unless the user has explicitly asked to "drain the CRT residue" (which is a different work shape: bulk-rename + library-tag, not C0→C1 discovery).
+2. **Ghidra FidDB attestation check.** For each remaining candidate, hit Ghidra MCP:
+   ```
+   mcp__ghidra__function_at(<rva>)   # returns the function record incl. signature + tags
+   ```
+   If the response includes a name matching any CRT prefix (regex `^(___|__|_crt|_strncpy|_strcpy|_strcmp|_strlen|_memcpy|_memset|_memmove|_ftol|_fdiv|_alloca|_sprintf|_vsprintf|_setjmp|_longjmp)`) OR a `Library Function: <foo>` tag — exclude. The candidate is already classified by FidDB; running a worker session on it is duplicate work.
+3. **Bucket veto.** If after applying steps 1+2, more than **30%** of a proposed bucket falls in the CRT band, refuse the bucket and re-pick from a different address range. A CRT-dense bucket cannot be salvaged by trimming individual RVAs — the xref cluster itself is library code.
+
+The CRT band is allowed to be the subject of a dedicated "library-tag drain" session (different work shape), but those prompts come from a separate generator, not this skill.
+
+## Subsystem prediction is best-effort
+
+Subsystem labels assigned at batch-generation time are educated guesses based on adjacent code; sessions routinely discover the actual subsystem mid-decomp. The 2026-05-17 batch_s post-mortem showed 3 of 4 first-pass buckets reclassified their subsystem during the run:
+
+- audio → shader-compiler
+- audio → csl-pipeline
+- audio → bimodal-qhull + mixer split
+
+**Rules for the generator:**
+
+1. **Do not hard-claim a subsystem in the session prompt.** Phrase the bucket as "cluster anchored at RVA X" or "first-pass bucket at 0x00xxxxxx", not "audio bucket".
+2. **Provide the working hypothesis as a *hint*, not as a label.** Example session-block prose: "Working hypothesis based on adjacent xrefs: audio. Confirm or reclassify during decomp; report reclassification in the SCRIBE_QUEUE row's `note=` field."
+3. **Require sessions to report reclassification.** The session's SCRIBE_QUEUE row must include `subsystem_observed=<X>` if it differs from the bucket's nominal subsystem. ghidra-sweep will reconcile.
+4. **Do not auto-rename the bucket directory** based on the hypothesis. Use a neutral name (e.g., `re/analysis/bucket_004b4000/`) and let ghidra-sweep rename to the observed subsystem after the queue drains.
+
 ## Ghidra pool slot binding
 
 Each session block pre-declares a Ghidra pool slot. The skill assigns them 0..N-1 (or N-1..N-K skipping known-locked slots — read `mashed_pool/Mashed_pool*.lock` to check).
@@ -108,6 +147,23 @@ Pool slot:   Mashed_pool3 (pre-assigned — do not call ghidra_pool.sh acquire)
 ```
 
 Sessions consume their pre-assigned slot directly. If the slot turns out to be stale-locked, the session falls back to `ghidra_pool.sh acquire` and records the actual slot in its queue row. Pre-assignment is a hint, not a contract.
+
+### `.pool_slot` collision in parallel-fanout (2026-05-17 batch_s s2)
+
+batch_s session 2 reported a collision on the project-root `.pool_slot` marker file: two parallel sessions on the same checkout overwrote each other's slot record, and the `ghidra-pool` assert (`recorded slot matches owned slot`) tripped on whichever lost the race.
+
+Two acceptable fixes; the generator must apply **one** of them in every session block:
+
+1. **Per-session `.pool_slot` naming (preferred).** Each session block sets `POOL_SLOT_FILE=.pool_slot_session_<id>_s<N>` and exports it before invoking `ghidra_pool.sh` / `ghidra-pool` skill. The skill consumes the env var if set; falls back to `.pool_slot` otherwise. Recipe in the session block:
+   ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_<batch-id>_s<N>"
+   ```
+2. **Slot-match assert exemption.** If the session block declares `PARALLEL_FANOUT=1` in its env, the ghidra-pool skill's slot-match assert is downgraded to a warning. Recipe:
+   ```bash
+   export PARALLEL_FANOUT=1
+   ```
+
+Generator preference is option (1); it's more deterministic and doesn't weaken the assert. Use option (2) only when sessions explicitly need to share a working directory (rare for discover-c1-batch, since each session has its own bucket directory anyway).
 
 **No worktrees** for Ghidra-side fanout. Git isn't the conflict surface — Ghidra's `.gpr` locking is, and per-session `.md` files in distinct bucket dirs don't conflict. The only shared file each session touches is `re/SCRIBE_QUEUE.md` (append-only Queued section); merges of "two sessions appended different rows" usually go clean, and the sweep handles cleanup either way.
 
