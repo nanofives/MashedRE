@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-17  frida-sweep-20260517-2121  frida-sweep-claim  branches=4 queued (c3/batch-h-s3..s6); zero-yield rows=2 (s1,s2)
 2026-05-17  frida-sweep-20260517-0424  frida-sweep-release  branches=9 merged  integration-diff=GREEN  hooks=15  c3-promotions=7-new+drift-cleanups+3-harness-extensions+b5-atlas
 2026-05-17  0x00436810  LocalPlayerSlotCheck  C2->C3  ma3-frida-s8 local-player slot-occupancy gate (param_1==12 fast-false; SP=non-zero count at DAT_007f0a7c; MP=type-2 count at DAT_007f0a74); reimpl mashedmod/src/mashed_re/Frontend/MenuHelpers.cpp; callee IsMultiplayerMode C3; U-3410 U-3411 preserved (literal offsets/value reproduced exactly per NO-GUESSING); int return (low-byte ABI for orig bool); Frida A/B 18/18 GREEN log/diff_local_player_slot_check.csv
 2026-05-17  0x00430b60  MenuSlotCount  C3==C3  ma3-frida-s2 drained dup C2 frontend row (tracker drift from frontend_c0_promote); re-verified A/B GREEN 10/10 log/diff_menu_slot_count.csv (canonical row 777 unchanged)
