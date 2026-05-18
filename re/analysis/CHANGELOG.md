@@ -1377,3 +1377,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-17  ma3-frida-s3  refused-promote-batch  rvas=00431b80;00431d00;00429aa0  reasons=ESI=0-infinite-loop(register-ABI-harness-gap);depends-on-00431b80;callee-gate-3-C1-callees  D-10753-amended;D-10754-amended;D-10788-new  note=1/4 menu nav C2->C3 (MenuReadinessCheckC); 0042ac90 already C3 (skipped); 3 refused
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=cluster_004e_first_pass  writes=60  errors=0
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=cluster_0051_first_pass  writes=60  errors=0
+2026-05-17  sweep-20260518-0007  scribe-release  bucket=cluster_005a_first_pass  writes=60  errors=0
