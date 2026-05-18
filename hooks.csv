@@ -2250,3 +2250,403 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00489240,SkySecondaryDispatch,sky,C1,new,re/analysis/cluster_0048_first_pass/0x00489240.md,,,"cluster_0048_first_pass batch_u-s4; sky-secondary-dispatch; vtable[0x12] @DAT_007030ac+0x48; ghost-rename reconciled by sweep-20260518-0514 (Ghidra function renamed FUN_00489240 -> SkySecondaryDispatch matching plate from 2026-05-07)"
 00489290,FUN_00489290,particle,C1,new,re/analysis/cluster_0048_first_pass/0x00489290.md,,,"cluster_0048_first_pass batch_u-s4; init particle-pool free-list at DAT_00703170..DAT_00705a10 stride 0x1a (~25 slots)"
 004892c0,FUN_004892c0,particle,C1,new,re/analysis/cluster_0048_first_pass/0x004892c0.md,,,"cluster_0048_first_pass batch_u-s4; allocate particle emitter from pool (DAT_00703170 free-list); allocates particle storage via FUN_00474db0(max,0x30); sets default blend 0x817 if param_4==0; called by FUN_00485d90"
+00405400,FUN_00405400,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405400.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405430,FUN_00405430,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405430.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405540,FUN_00405540,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405540.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405730,FUN_00405730,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405730.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405780,FUN_00405780,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405780.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004058b0,FUN_004058b0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004058b0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004058c0,FUN_004058c0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004058c0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004058e0,FUN_004058e0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004058e0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405920,FUN_00405920,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405920.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405ab0,FUN_00405ab0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405ab0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00405f60,FUN_00405f60,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00405f60.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406070,FUN_00406070,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406070.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406130,FUN_00406130,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406130.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406160,FUN_00406160,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406160.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406370,FUN_00406370,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406370.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406410,FUN_00406410,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406410.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004064c0,FUN_004064c0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004064c0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406950,FUN_00406950,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406950.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004069d0,FUN_004069d0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004069d0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00406ae0,FUN_00406ae0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00406ae0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004074a0,FUN_004074a0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004074a0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407550,FUN_00407550,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407550.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407580,FUN_00407580,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407580.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004075a0,FUN_004075a0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004075a0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004075b0,FUN_004075b0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004075b0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407620,FUN_00407620,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407620.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407640,FUN_00407640,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407640.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004077e0,FUN_004077e0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004077e0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407800,FUN_00407800,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407800.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407a00,FUN_00407a00,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407a00.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407a20,FUN_00407a20,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407a20.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407b00,FUN_00407b00,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407b00.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407b70,FUN_00407b70,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407b70.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407be0,FUN_00407be0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407be0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407cd0,FUN_00407cd0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407cd0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407d70,FUN_00407d70,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407d70.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407db0,FUN_00407db0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407db0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00407e20,FUN_00407e20,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00407e20.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00408590,FUN_00408590,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00408590.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00408610,FUN_00408610,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00408610.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00409300,FUN_00409300,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00409300.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00409330,FUN_00409330,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00409330.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004093b0,FUN_004093b0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004093b0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004095a0,FUN_004095a0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004095a0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004096a0,FUN_004096a0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004096a0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00409790,FUN_00409790,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00409790.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004098a0,FUN_004098a0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004098a0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+004098d0,FUN_004098d0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x004098d0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00409950,FUN_00409950,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00409950.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00409970,FUN_00409970,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00409970.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00409a80,FUN_00409a80,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00409a80.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ad40,FUN_0040ad40,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ad40.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ad90,FUN_0040ad90,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ad90.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ae30,FUN_0040ae30,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ae30.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040aef0,FUN_0040aef0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040aef0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040b420,FUN_0040b420,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040b420.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040b890,FUN_0040b890,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040b890.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040b8e0,FUN_0040b8e0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040b8e0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040b930,FUN_0040b930,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040b930.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040b970,FUN_0040b970,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040b970.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040b9a0,FUN_0040b9a0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040b9a0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ba00,FUN_0040ba00,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ba00.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ba60,FUN_0040ba60,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ba60.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040baa0,FUN_0040baa0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040baa0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040bae0,FUN_0040bae0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040bae0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040be50,FUN_0040be50,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040be50.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040c5b0,FUN_0040c5b0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040c5b0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040c690,FUN_0040c690,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040c690.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ca00,FUN_0040ca00,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ca00.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040cd90,thunk_FUN_00425ef0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040cd90.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040cda0,FUN_0040cda0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040cda0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040ce80,FUN_0040ce80,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040ce80.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040cf40,FUN_0040cf40,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040cf40.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040d430,FUN_0040d430,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040d430.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040d8f0,FUN_0040d8f0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040d8f0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040dc70,FUN_0040dc70,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040dc70.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040dcb0,FUN_0040dcb0,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040dcb0.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0040e500,FUN_0040e500,gameplay,C1,mapped,re/analysis/bucket_00405400/0x0040e500.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00412010,FUN_00412010,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00412010.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+00412100,FUN_00412100,gameplay,C1,mapped,re/analysis/bucket_00405400/0x00412100.md,batch-t-s1,,"batch_t s1 MULTI[copters-helicopter-npcs,projectile-smoke,ai-pathfinding,led-loader,score-rank,hud-vfx]"
+0048ad50,FUN_0048ad50,particle,C1,mapped,re/analysis/bucket_0048ad50/0048ad50.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048ade0,FUN_0048ade0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048ade0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048ae00,FUN_0048ae00,particle,C1,mapped,re/analysis/bucket_0048ad50/0048ae00.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048af70,FUN_0048af70,particle,C1,mapped,re/analysis/bucket_0048ad50/0048af70.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048aff0,FUN_0048aff0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048aff0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048b230,FUN_0048b230,particle,C1,mapped,re/analysis/bucket_0048ad50/0048b230.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048b440,FUN_0048b440,particle,C1,mapped,re/analysis/bucket_0048ad50/0048b440.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048b650,FUN_0048b650,particle,C1,mapped,re/analysis/bucket_0048ad50/0048b650.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048b7c0,FUN_0048b7c0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048b7c0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048b960,FUN_0048b960,particle,C1,mapped,re/analysis/bucket_0048ad50/0048b960.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048baf0,FUN_0048baf0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048baf0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048bb70,FUN_0048bb70,particle,C1,mapped,re/analysis/bucket_0048ad50/0048bb70.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048bbe0,FUN_0048bbe0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048bbe0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048bc10,FUN_0048bc10,particle,C1,mapped,re/analysis/bucket_0048ad50/0048bc10.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048cee0,FUN_0048cee0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048cee0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048cf70,FUN_0048cf70,particle,C1,mapped,re/analysis/bucket_0048ad50/0048cf70.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048cf90,FUN_0048cf90,particle,C1,mapped,re/analysis/bucket_0048ad50/0048cf90.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048d0f0,FUN_0048d0f0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048d0f0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048d140,FUN_0048d140,particle,C1,mapped,re/analysis/bucket_0048ad50/0048d140.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048d360,FUN_0048d360,particle,C1,mapped,re/analysis/bucket_0048ad50/0048d360.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048d540,FUN_0048d540,particle,C1,mapped,re/analysis/bucket_0048ad50/0048d540.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048d720,FUN_0048d720,particle,C1,mapped,re/analysis/bucket_0048ad50/0048d720.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048d900,FUN_0048d900,particle,C1,mapped,re/analysis/bucket_0048ad50/0048d900.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048db20,FUN_0048db20,particle,C1,mapped,re/analysis/bucket_0048ad50/0048db20.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048dd40,FUN_0048dd40,particle,C1,mapped,re/analysis/bucket_0048ad50/0048dd40.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048df60,FUN_0048df60,particle,C1,mapped,re/analysis/bucket_0048ad50/0048df60.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048e180,FUN_0048e180,particle,C1,mapped,re/analysis/bucket_0048ad50/0048e180.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048e360,FUN_0048e360,particle,C1,mapped,re/analysis/bucket_0048ad50/0048e360.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048e5f0,FUN_0048e5f0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048e5f0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048e7b0,FUN_0048e7b0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048e7b0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048e820,FUN_0048e820,particle,C1,mapped,re/analysis/bucket_0048ad50/0048e820.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048eac0,FUN_0048eac0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048eac0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048f590,FUN_0048f590,particle,C1,mapped,re/analysis/bucket_0048ad50/0048f590.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048f780,FUN_0048f780,particle,C1,mapped,re/analysis/bucket_0048ad50/0048f780.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048f8a0,FUN_0048f8a0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048f8a0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048f9f0,FUN_0048f9f0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048f9f0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048fb10,FUN_0048fb10,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fb10.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048fce0,FUN_0048fce0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fce0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048fd10,FUN_0048fd10,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fd10.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048fd40,FUN_0048fd40,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fd40.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048fdd0,FUN_0048fdd0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fdd0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048fef0,FUN_0048fef0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fef0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048ff20,FUN_0048ff20,particle,C1,mapped,re/analysis/bucket_0048ad50/0048ff20.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048ffd0,FUN_0048ffd0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048ffd0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c5d0,FUN_0049c5d0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c5d0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c620,FUN_0049c620,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c620.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c690,FUN_0049c690,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c690.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c6a0,FUN_0049c6a0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c6a0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c6b0,FUN_0049c6b0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c6b0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c6d0,FUN_0049c6d0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c6d0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c6e0,FUN_0049c6e0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c6e0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c750,FUN_0049c750,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c750.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c770,FUN_0049c770,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c770.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c800,FUN_0049c800,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c800.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c810,FUN_0049c810,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c810.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c840,FUN_0049c840,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c840.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c900,FUN_0049c900,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c900.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c930,FUN_0049c930,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c930.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049c990,FUN_0049c990,particle,C1,mapped,re/analysis/bucket_0048ad50/0049c990.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049ca00,FUN_0049ca00,particle,C1,mapped,re/analysis/bucket_0048ad50/0049ca00.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049ca60,FUN_0049ca60,particle,C1,mapped,re/analysis/bucket_0048ad50/0049ca60.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cb00,FUN_0049cb00,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cb00.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cb20,FUN_0049cb20,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cb20.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cbd0,FUN_0049cbd0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cbd0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cc40,FUN_0049cc40,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cc40.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cc80,FUN_0049cc80,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cc80.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049ccd0,FUN_0049ccd0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049ccd0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cd70,FUN_0049cd70,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cd70.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049ce10,FUN_0049ce10,particle,C1,mapped,re/analysis/bucket_0048ad50/0049ce10.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049ceb0,FUN_0049ceb0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049ceb0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049cf00,FUN_0049cf00,particle,C1,mapped,re/analysis/bucket_0048ad50/0049cf00.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049d0a0,FUN_0049d0a0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049d0a0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049d1d0,FUN_0049d1d0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049d1d0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049d200,FUN_0049d200,particle,C1,mapped,re/analysis/bucket_0048ad50/0049d200.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049d920,FUN_0049d920,particle,C1,mapped,re/analysis/bucket_0048ad50/0049d920.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049d960,FUN_0049d960,particle,C1,mapped,re/analysis/bucket_0048ad50/0049d960.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049d9a0,FUN_0049d9a0,particle,C1,mapped,re/analysis/bucket_0048ad50/0049d9a0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049da20,FUN_0049da20,particle,C1,mapped,re/analysis/bucket_0048ad50/0049da20.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049da90,FUN_0049da90,particle,C1,mapped,re/analysis/bucket_0048ad50/0049da90.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0049db00,FUN_0049db00,particle,C1,mapped,re/analysis/bucket_0048ad50/0049db00.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+004e1ce0,FUN_004e1ce0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e1ce0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e1d20,FUN_004e1d20,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e1d20.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e1e70,FUN_004e1e70,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e1e70.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2030,FUN_004e2030,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2030.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2090,FUN_004e2090,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2090.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2420,FUN_004e2420,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2420.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2470,FUN_004e2470,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2470.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2500,FUN_004e2500,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2500.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2530,FUN_004e2530,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2530.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2650,FUN_004e2650,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2650.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2930,FUN_004e2930,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2930.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2b60,FUN_004e2b60,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2b60.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2bf0,FUN_004e2bf0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2bf0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2fa0,FUN_004e2fa0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2fa0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e2ff0,FUN_004e2ff0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e2ff0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e3160,FUN_004e3160,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e3160.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e33c0,FUN_004e33c0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e33c0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e3410,FUN_004e3410,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e3410.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e3470,FUN_004e3470,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e3470.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4130,FUN_004e4130,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4130.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e41b0,FUN_004e41b0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e41b0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e42a0,FUN_004e42a0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e42a0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e42d0,FUN_004e42d0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e42d0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4300,FUN_004e4300,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4300.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4380,FUN_004e4380,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4380.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4450,FUN_004e4450,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4450.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e45b0,FUN_004e45b0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e45b0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e47b0,FUN_004e47b0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e47b0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4810,FUN_004e4810,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4810.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4860,FUN_004e4860,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4860.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e48e0,FUN_004e48e0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e48e0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4b90,FUN_004e4b90,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4b90.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4bd0,FUN_004e4bd0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4bd0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4c00,FUN_004e4c00,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4c00.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4c30,FUN_004e4c30,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4c30.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4dd0,FUN_004e4dd0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4dd0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4ec0,FUN_004e4ec0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4ec0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e4f70,FUN_004e4f70,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e4f70.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5020,FUN_004e5020,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5020.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5190,FUN_004e5190,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5190.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e51e0,FUN_004e51e0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e51e0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5280,FUN_004e5280,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5280.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5300,FUN_004e5300,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5300.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e55d0,FUN_004e55d0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e55d0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5660,FUN_004e5660,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5660.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5700,FUN_004e5700,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5700.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5820,FUN_004e5820,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5820.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5840,FUN_004e5840,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5840.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5850,FUN_004e5850,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5850.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5bf0,FUN_004e5bf0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5bf0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5c30,FUN_004e5c30,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5c30.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5c70,FUN_004e5c70,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5c70.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5cd0,FUN_004e5cd0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5cd0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5d00,FUN_004e5d00,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5d00.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5ef0,FUN_004e5ef0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5ef0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5f30,FUN_004e5f30,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5f30.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e5f90,FUN_004e5f90,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e5f90.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6100,FUN_004e6100,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6100.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e62f0,FUN_004e62f0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e62f0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6470,FUN_004e6470,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6470.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e65c0,FUN_004e65c0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e65c0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6650,FUN_004e6650,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6650.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e66d0,FUN_004e66d0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e66d0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6760,FUN_004e6760,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6760.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e67b0,FUN_004e67b0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e67b0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6880,FUN_004e6880,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6880.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6e00,FUN_004e6e00,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6e00.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e6fb0,FUN_004e6fb0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e6fb0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7010,FUN_004e7010,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7010.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7060,FUN_004e7060,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7060.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7420,FUN_004e7420,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7420.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7cc0,FUN_004e7cc0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7cc0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7d70,FUN_004e7d70,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7d70.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7da0,FUN_004e7da0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7da0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7dd0,FUN_004e7dd0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7dd0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7df0,FUN_004e7df0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7df0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7e10,FUN_004e7e10,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7e10.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7e50,FUN_004e7e50,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7e50.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7e90,FUN_004e7e90,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7e90.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+004e7fa0,FUN_004e7fa0,render,C1,mapped,re/analysis/bucket_004e1ce0/0x004e7fa0.md,batch-t-s3,,batch_t s3 RW scenegraph CORE (RpWorld/RpClump/RpAtomic/RpLight/RwFrame); RW 3.7.0.2 version anchor; 26 RW renames applied in master Ghidra
+00583f10,FUN_00583f10,util,C1,mapped,re/analysis/bucket_00583f10/0x00583f10.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00583f80,FUN_00583f80,util,C1,mapped,re/analysis/bucket_00583f10/0x00583f80.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584070,FUN_00584070,util,C1,mapped,re/analysis/bucket_00583f10/0x00584070.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584230,FUN_00584230,util,C1,mapped,re/analysis/bucket_00583f10/0x00584230.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584430,FUN_00584430,util,C1,mapped,re/analysis/bucket_00583f10/0x00584430.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005846e0,FUN_005846e0,util,C1,mapped,re/analysis/bucket_00583f10/0x005846e0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584880,FUN_00584880,util,C1,mapped,re/analysis/bucket_00583f10/0x00584880.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584950,FUN_00584950,util,C1,mapped,re/analysis/bucket_00583f10/0x00584950.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584c50,FUN_00584c50,util,C1,mapped,re/analysis/bucket_00583f10/0x00584c50.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584d80,FUN_00584d80,util,C1,mapped,re/analysis/bucket_00583f10/0x00584d80.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00584f40,FUN_00584f40,util,C1,mapped,re/analysis/bucket_00583f10/0x00584f40.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00585380,FUN_00585380,util,C1,mapped,re/analysis/bucket_00583f10/0x00585380.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00585660,FUN_00585660,util,C1,mapped,re/analysis/bucket_00583f10/0x00585660.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00585890,FUN_00585890,util,C1,mapped,re/analysis/bucket_00583f10/0x00585890.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00585b60,FUN_00585b60,util,C1,mapped,re/analysis/bucket_00583f10/0x00585b60.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00585d70,FUN_00585d70,util,C1,mapped,re/analysis/bucket_00583f10/0x00585d70.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00585ee0,FUN_00585ee0,util,C1,mapped,re/analysis/bucket_00583f10/0x00585ee0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586040,FUN_00586040,util,C1,mapped,re/analysis/bucket_00583f10/0x00586040.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586190,FUN_00586190,util,C1,mapped,re/analysis/bucket_00583f10/0x00586190.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586340,FUN_00586340,util,C1,mapped,re/analysis/bucket_00583f10/0x00586340.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586640,FUN_00586640,util,C1,mapped,re/analysis/bucket_00583f10/0x00586640.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005868a0,FUN_005868a0,util,C1,mapped,re/analysis/bucket_00583f10/0x005868a0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586b90,FUN_00586b90,util,C1,mapped,re/analysis/bucket_00583f10/0x00586b90.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586d90,FUN_00586d90,util,C1,mapped,re/analysis/bucket_00583f10/0x00586d90.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00586e80,FUN_00586e80,util,C1,mapped,re/analysis/bucket_00583f10/0x00586e80.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005870c0,FUN_005870c0,util,C1,mapped,re/analysis/bucket_00583f10/0x005870c0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00587370,FUN_00587370,util,C1,mapped,re/analysis/bucket_00583f10/0x00587370.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005874f0,FUN_005874f0,util,C1,mapped,re/analysis/bucket_00583f10/0x005874f0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00587ad0,FUN_00587ad0,util,C1,mapped,re/analysis/bucket_00583f10/0x00587ad0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00587c20,FUN_00587c20,util,C1,mapped,re/analysis/bucket_00583f10/0x00587c20.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00587d30,FUN_00587d30,util,C1,mapped,re/analysis/bucket_00583f10/0x00587d30.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00587e00,FUN_00587e00,util,C1,mapped,re/analysis/bucket_00583f10/0x00587e00.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005882e0,FUN_005882e0,util,C1,mapped,re/analysis/bucket_00583f10/0x005882e0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00588440,FUN_00588440,util,C1,mapped,re/analysis/bucket_00583f10/0x00588440.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005885a0,FUN_005885a0,util,C1,mapped,re/analysis/bucket_00583f10/0x005885a0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005886e0,FUN_005886e0,util,C1,mapped,re/analysis/bucket_00583f10/0x005886e0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005888f0,FUN_005888f0,util,C1,mapped,re/analysis/bucket_00583f10/0x005888f0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00588a90,FUN_00588a90,util,C1,mapped,re/analysis/bucket_00583f10/0x00588a90.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00588ce0,FUN_00588ce0,util,C1,mapped,re/analysis/bucket_00583f10/0x00588ce0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00588e70,FUN_00588e70,util,C1,mapped,re/analysis/bucket_00583f10/0x00588e70.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589080,FUN_00589080,util,C1,mapped,re/analysis/bucket_00583f10/0x00589080.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005893a0,FUN_005893a0,util,C1,mapped,re/analysis/bucket_00583f10/0x005893a0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589500,FUN_00589500,util,C1,mapped,re/analysis/bucket_00583f10/0x00589500.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589650,FUN_00589650,util,C1,mapped,re/analysis/bucket_00583f10/0x00589650.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589740,FUN_00589740,util,C1,mapped,re/analysis/bucket_00583f10/0x00589740.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589890,FUN_00589890,util,C1,mapped,re/analysis/bucket_00583f10/0x00589890.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005898d0,FUN_005898d0,util,C1,mapped,re/analysis/bucket_00583f10/0x005898d0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589b00,FUN_00589b00,util,C1,mapped,re/analysis/bucket_00583f10/0x00589b00.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589dc0,FUN_00589dc0,util,C1,mapped,re/analysis/bucket_00583f10/0x00589dc0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589e20,FUN_00589e20,util,C1,mapped,re/analysis/bucket_00583f10/0x00589e20.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00589fa0,FUN_00589fa0,util,C1,mapped,re/analysis/bucket_00583f10/0x00589fa0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058d6d0,FUN_0058d6d0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058d6d0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058d810,FUN_0058d810,util,C1,mapped,re/analysis/bucket_00583f10/0x0058d810.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058e7b0,FUN_0058e7b0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058e7b0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058e940,FUN_0058e940,util,C1,mapped,re/analysis/bucket_00583f10/0x0058e940.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058ed00,FUN_0058ed00,util,C1,mapped,re/analysis/bucket_00583f10/0x0058ed00.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058edf0,FUN_0058edf0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058edf0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058ee20,FUN_0058ee20,util,C1,mapped,re/analysis/bucket_00583f10/0x0058ee20.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058ee50,FUN_0058ee50,util,C1,mapped,re/analysis/bucket_00583f10/0x0058ee50.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f010,FUN_0058f010,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f010.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f0a0,FUN_0058f0a0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f0a0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f140,FUN_0058f140,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f140.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f160,FUN_0058f160,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f160.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f240,FUN_0058f240,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f240.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f360,FUN_0058f360,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f360.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f3f0,FUN_0058f3f0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f3f0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f520,FUN_0058f520,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f520.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f6a0,FUN_0058f6a0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f6a0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058f8e0,FUN_0058f8e0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058f8e0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058fa50,FUN_0058fa50,util,C1,mapped,re/analysis/bucket_00583f10/0x0058fa50.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058fae0,FUN_0058fae0,util,C1,mapped,re/analysis/bucket_00583f10/0x0058fae0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+0058fd40,FUN_0058fd40,util,C1,mapped,re/analysis/bucket_00583f10/0x0058fd40.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005901f0,FUN_005901f0,util,C1,mapped,re/analysis/bucket_00583f10/0x005901f0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005903e0,FUN_005903e0,util,C1,mapped,re/analysis/bucket_00583f10/0x005903e0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005905d0,FUN_005905d0,util,C1,mapped,re/analysis/bucket_00583f10/0x005905d0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00590900,FUN_00590900,util,C1,mapped,re/analysis/bucket_00583f10/0x00590900.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00590930,FUN_00590930,util,C1,mapped,re/analysis/bucket_00583f10/0x00590930.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00590dc0,FUN_00590dc0,util,C1,mapped,re/analysis/bucket_00583f10/0x00590dc0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+00591020,FUN_00591020,util,C1,mapped,re/analysis/bucket_00583f10/0x00591020.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005913c0,FUN_005913c0,util,C1,mapped,re/analysis/bucket_00583f10/0x005913c0.md,batch-t-s5,,batch_t s5 third-party qhull 2002.1 library-residue; library-tag drain candidate
+005c7070,FUN_005c7070,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7070.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7330,FUN_005c7330,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7330.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7500,FUN_005c7500,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7500.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7570,FUN_005c7570,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7570.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c75b0,FUN_005c75b0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c75b0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c75c0,FUN_005c75c0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c75c0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7a90,FUN_005c7a90,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7a90.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7ee0,FUN_005c7ee0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7ee0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7f80,FUN_005c7f80,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7f80.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7fb0,FUN_005c7fb0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7fb0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c7fe0,FUN_005c7fe0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c7fe0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c8120,FUN_005c8120,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c8120.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c88b0,FUN_005c88b0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c88b0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c8910,FUN_005c8910,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c8910.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c8980,FUN_005c8980,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c8980.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c8eb0,FUN_005c8eb0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c8eb0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c90a0,FUN_005c90a0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c90a0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9120,FUN_005c9120,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9120.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c91f0,FUN_005c91f0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c91f0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9220,thunk_FUN_005abcf0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9220.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9380,FUN_005c9380,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9380.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c93a0,FUN_005c93a0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c93a0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9490,FUN_005c9490,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9490.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c94c0,FUN_005c94c0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c94c0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c95b0,FUN_005c95b0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c95b0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9680,FUN_005c9680,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9680.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c96d0,FUN_005c96d0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c96d0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c96e0,FUN_005c96e0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c96e0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9730,FUN_005c9730,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9730.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9740,FUN_005c9740,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9740.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9770,FUN_005c9770,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9770.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c98d0,FUN_005c98d0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c98d0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005c9d10,FUN_005c9d10,audio,C1,mapped,re/analysis/bucket_005c7070/0x005c9d10.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca2d0,__aullshr,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca2d0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca2f0,Unwind@005ca2f0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca2f0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca2f8,Unwind@005ca2f8,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca2f8.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca300,Unwind@005ca300,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca300.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca320,Unwind@005ca320,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca320.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca340,Unwind@005ca340,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca340.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca360,Unwind@005ca360,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca360.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca368,Unwind@005ca368,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca368.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca380,Unwind@005ca380,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca380.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3a0,Unwind@005ca3a0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3a0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3a8,Unwind@005ca3a8,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3a8.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3b3,Unwind@005ca3b3,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3b3.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3d0,Unwind@005ca3d0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3d0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3d8,Unwind@005ca3d8,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3d8.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3e3,Unwind@005ca3e3,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3e3.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3ee,Unwind@005ca3ee,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3ee.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca3f9,Unwind@005ca3f9,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca3f9.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca404,Unwind@005ca404,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca404.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca412,Unwind@005ca412,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca412.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca430,Unwind@005ca430,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca430.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca438,Unwind@005ca438,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca438.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca450,Unwind@005ca450,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca450.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca470,Unwind@005ca470,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca470.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca478,Unwind@005ca478,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca478.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca490,Unwind@005ca490,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca490.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca498,Unwind@005ca498,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca498.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca4a0,Unwind@005ca4a0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca4a0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca4a8,Unwind@005ca4a8,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca4a8.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca4c0,Unwind@005ca4c0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca4c0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca4c8,Unwind@005ca4c8,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca4c8.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca4e0,Unwind@005ca4e0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca4e0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca500,Unwind@005ca500,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca500.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca520,Unwind@005ca520,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca520.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca540,Unwind@005ca540,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca540.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca560,Unwind@005ca560,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca560.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca580,Unwind@005ca580,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca580.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca5a0,Unwind@005ca5a0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca5a0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca5c0,Unwind@005ca5c0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca5c0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca5c8,Unwind@005ca5c8,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca5c8.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca5e0,Unwind@005ca5e0,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca5e0.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca600,Unwind@005ca600,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca600.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca620,Unwind@005ca620,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca620.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca640,Unwind@005ca640,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca640.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005ca680,Unwind@005ca680,audio,C1,mapped,re/analysis/bucket_005c7070/0x005ca680.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005cb000,FUN_005cb000,audio,C1,mapped,re/analysis/bucket_005c7070/0x005cb000.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005cb07f,FUN_005cb07f,audio,C1,mapped,re/analysis/bucket_005c7070/0x005cb07f.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
+005cb0ef,FUN_005cb0ef,audio,C1,mapped,re/analysis/bucket_005c7070/0x005cb0ef.md,batch-t-s6,,"batch_t s6 MULTI[audio-dll-mixer,rw-v3d-vector,msvc-seh-funclets,crt-fiddb]; 3 RW V3dTransform renames at 0x005cb000/07f/0ef"
