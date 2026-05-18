@@ -3676,15 +3676,11 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
-    'timer_subarray_init': {
-        'rva':            0x00422120,
-        'export':         'TimerSubarrayInit',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'none',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4],
-        'path2_tests':    [0, 1, 2],
-    },
+    # 'timer_subarray_init' was a duplicate entry for 0x00422120 added by
+    # c3_batch_h-s5 (flagged in frida-sweep-20260517-2121 release notes).
+    # The canonical entry for that RVA is 'timer_init_loop' above
+    # (arg_type='void_write_observe' on 0x0063fb90).  Removed during the
+    # TimerInitLoop naked-wrapper fix (feature/timer-init-naked).
 
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-g-s1 — frontend menu chrome (C2->C3, 2 candidates)

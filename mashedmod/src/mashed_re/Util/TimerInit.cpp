@@ -127,30 +127,52 @@ RH_ScopedInstall(TimerStructArrayClear, 0x00420d40);
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00422120  TimerInitLoop  void(void)
 //
-// Iterates ~4 elements of a 0x208-stride array starting at 0x0063fb90,
-// calling FUN_00421c50 each pass (no explicit args visible in decomp):
-//   ptr from 0x0063fb90; while ptr < 0x006403b0; ptr += 0x208.
+// Iterates 4 elements of a 0x208-stride array starting at 0x0063fb90,
+// calling FUN_00421c50 each pass.  ptr from 0x0063fb90 advances by 0x208 per
+// iteration while ptr < 0x006403b0.
 // Iteration count: (0x006403b0 - 0x0063fb90) / 0x208 = 4.
 //
-// FUN_00421c50 accesses the same global range implicitly (no ptr arg in decomp).
-// The callee is classified C2 (drift-promote: C1/unclassified in hooks.csv).
-// We call it directly by RVA here.
+// Exact asm (0x00422120 – 0x0042213c, 29 bytes):
+//   0x00422120  PUSH ESI                       ; save callee-saved ESI
+//   0x00422121  MOV  ESI, 0x0063fb90           ; loop ptr
+//   0x00422126  MOV  EAX, ESI                  ; <-- callee arg via EAX (non-standard)
+//   0x00422128  CALL 0x00421c50
+//   0x0042212d  ADD  ESI, 0x208
+//   0x00422133  CMP  ESI, 0x006403b0
+//   0x00422139  JL   0x00422126
+//   0x0042213b  POP  ESI
+//   0x0042213c  RET
+//
+// Non-standard ABI for the callee (FUN_00421c50): it takes its per-element
+// pointer in EAX, not on the stack.  FUN_00421c50's first executable line is
+// MOV ESI, EAX, after which it touches param+0x10, param+0xf0, param+0xf4
+// (verified: FUN_00421c10 dereferences at those offsets).
+//
+// A plain C++ `callee()` cannot set EAX deterministically — under MSVC the
+// in-register arg is whatever happens to be in EAX at the call site, which
+// is undefined behaviour and causes FUN_00421c50 / FUN_00421c10 to read/write
+// garbage memory.  We therefore replicate the original prologue/epilogue
+// exactly via __declspec(naked) + inline-asm, matching the original
+// instruction stream byte-for-byte.  This is the canonical pattern for
+// ESI/EAX-passing callee chains in this codebase; future RVAs that hit the
+// same impedance (e.g. 0x0041cb80) should adopt the same approach.
+//
+// ref: re/analysis/timer_d3_cont1_b/0x00422120.md
 // ─────────────────────────────────────────────────────────────────────────────
-static constexpr std::uintptr_t kTimerInitLoopBase   = 0x0063fb90;
-static constexpr std::uintptr_t kTimerInitLoopBound  = 0x006403b0;
-static constexpr std::uint32_t  kTimerInitLoopStride = 0x00000208;
-
-// FUN_00421c50 — callee, no visible args in decomp; declared as void(void) cdecl.
-// Drift-promote: not yet in hooks.csv; callee-gate permits proceed (≤2 C1/unclassified).
-typedef void (__cdecl* TimerInitCallee_t)();
-static constexpr std::uintptr_t kTimerInitCallee_RVA = 0x00421c50;
-
-extern "C" __declspec(dllexport) void __cdecl TimerInitLoop() {
-    auto callee = reinterpret_cast<TimerInitCallee_t>(kTimerInitCallee_RVA);
-    for (std::uintptr_t ptr = kTimerInitLoopBase;
-         ptr < kTimerInitLoopBound;
-         ptr += kTimerInitLoopStride) {
-        callee();
+// 0x00422120
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl TimerInitLoop() {
+    __asm {
+        push    esi                         // 0x00422120: PUSH ESI
+        mov     esi, 0x0063fb90             // 0x00422121: loop base
+    timer_init_loop_body:
+        mov     eax, esi                    // 0x00422126: arg-in-EAX for FUN_00421c50
+        mov     ecx, 0x00421c50             // direct absolute-addr call (orig used
+        call    ecx                         //   E8 rel32, equivalent end-state here)
+        add     esi, 0x00000208             // 0x0042212d: advance ptr
+        cmp     esi, 0x006403b0             // 0x00422133: loop bound (exclusive)
+        jl      timer_init_loop_body        // 0x00422139: JL back to MOV EAX,ESI
+        pop     esi                         // 0x0042213b: POP ESI
+        ret                                 // 0x0042213c: RET
     }
 }
 
