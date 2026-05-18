@@ -23,6 +23,7 @@
 | [rw_engine_init_config.md](rw_engine_init_config.md) | 0x00773200..0x00773920 | Display-mode selection globals (fullscreen flag, current mode/subsystem indices, subsystem name table), mode table layout (stride 0x14), CRT error flag at 0x007739f0; U-3029 open |
 | [input_state.md](input_state.md) | DAT_007e95c0 / DAT_007730b0 / Lua_State | Controller config struct (4 slots × 0x200 bytes), device-type array (stride 0x80), key-table ptrs, Lua_State layout (11 offsets), TObject slot layout (16 bytes), render config getters |
 | [frontend_menu_state.md](frontend_menu_state.md) | DAT_0067ed40 / DAT_007f0a48 / DAT_00898ac0 | Menu cursor/limit arrays (stride 0x40), menu entry validity (stride 0x10), player slot struct (stride 0x1e0/480 bytes), menu entry array (52-byte stride, 30 entries), score/rank arrays; U-3836..3838 open |
+| [../promote_c2_vehicle_lowrva/STRUCTS.md](../promote_c2_vehicle_lowrva/STRUCTS.md) | DAT_0063bb04 / PTR_PTR_005f2770 / DAT_008a9640 / DAT_008994c0 / DAT_0067eab0 / DAT_0067ebb0 | batch_t-s5 — six shapes filed inline: §1 ReplayBuffer (singleton + offsets +0x174/+0x17c/+0x180/+0x194), §2 PerCarState (4-car table + world coords), §3 PerCarRaceProgress (stride 0x30c float), §4 PerCarSnapshot (stride 0x138 7-dword copy), §5 RaceTransitionParams (6-param block), §6 RaceFinalizeState (80-byte clear, 4× 210.0f writes) — drained by sweep-20260518-0247 |
 
 ---
 
