@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-18  c3-batch-j-s4  rvas=  branch=c3/batch-j-s4  evidence=  note=zero-yield-halt-row; 0/10 vehicle damage+physics+update_d3; 5 implementations authored and compiled GREEN (Damage_j4.cpp + Physics_j4.cpp) but no Frida diff path available with existing arg_types (HALT triggered at 3+ refusals per session prompt); refusals — 0x0046c5f0 EAX+ESI custom calling conv (new arg_type needed); 0x0046c7d0 callee-gate (3 [UNCERTAIN] callees FUN_004c39b0/FUN_004a3384/FUN_004093b0); 0x0046ddb0 callee-gate + still C1 + 3104b (U-2687/U-3563 unresolved FUN_00442ce0/FUN_00442c80); 0x0046f6c0 callee-gate (S-2629/S-2633/S-2634 stubs) + 3580b; 0x0046dc20 bare uncatalogued structural U-2692 (uninitialised local_40); 0x00420de0 new arg_type needed (fastcall idx+ptr+float); 0x0046cbe0 new arg_type needed (3-arg int dispatcher); 0x00467300 new arg_type needed (paired global setup+observe); 0x00418de0 eax_implicit_ptr SCRATCH=64 too small for +0x44..+0x5c writes (need 128B scratch); 0x00419760 has same EAX-implicit issue via sub-call to FUN_00418de0; reimpls authored remain compilable for future batches once harness extends
 ```
 
 ## Merged
