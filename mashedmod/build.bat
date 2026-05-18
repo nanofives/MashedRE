@@ -40,6 +40,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Util\TimerInit.cpp" ^
     "%SRC%\Audio\AudioMemory.cpp" ^
     "%SRC%\Audio\AudioRws.cpp" ^
+    "%SRC%\Audio\RwsStream_i1.cpp" ^
     "%SRC%\Audio\AudioDSound.cpp" ^
     "%SRC%\Audio\AudioMusic.cpp" ^
     "%SRC%\Math\RwV3dTransform.cpp" ^
