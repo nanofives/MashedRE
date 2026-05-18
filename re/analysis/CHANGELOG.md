@@ -1485,3 +1485,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_00405400  writes=80  errors=0
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_004e1ce0  writes=81  renames=26 (RW RpWorld/RpAtomic/RpClump/RpLight/RwFrame catalog matches)  errors=0
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_00583f10  writes=80  renames=0 (library-residue qhull 2002.1; rename deferred to library-tag drain)  errors=0
+2026-05-18  sweep-20260518-1448  scribe-release  buckets=6 drained (5 productive + 1 halt-row; 401 plates total)  errors=0  renames=29 (3 RW V3d in s6 + 26 RW scenegraph in s3)  sync=partial (slots 0/2/3/5/6/10-15 LOCKED by JVM-orphan-held .lock~ from prior session; slot 1 attempted but busy; will sync on next /mcp restart)
