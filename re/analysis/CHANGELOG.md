@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-17  frida-sweep-20260517-2121  frida-sweep-release  branches=4 merged (c3/batch-h-s3..s6) + zero-yield-rows=2 (s1,s2) + drift-promotions=2 (0x0042b930+0x0042fe50)  integration-diff=GREEN 19/19  hooks=19 (17 c2->c3 from h-batch + 2 s1 drift wins)
 2026-05-17  0x0042b930  MenuAlphaGet  C2(drift)->C3  c3-batch-h-s1 drift cleanup; canonical row was C2 in hooks.csv despite CHANGELOG row promoting it 2026-05-17 ma3-frida-s2; landed by frida-sweep-20260517-2121 with c3-batch-h-s1 evidence log/diff_menu_alpha_get.csv (10/10 GREEN); leaf-exemption; U-0501 open semantic-only
 2026-05-17  0x0042fe50  RaceEndAltFlagIfEndMode  C2->C3  c3-batch-h-s1 drift cleanup; caller-gate now satisfied (FUN_004189c0 reached C2 in promote_c2_render_lowrva ghidra-sweep 2026-05-17, lifting c3-batch-g-s9 D-10751 refusal); landed by frida-sweep-20260517-2121 via c3-batch-h-s1 evidence log/diff_race_end_alt_flag_if_end_mode.csv (10/10 GREEN); impl mashedmod/src/mashed_re/Frontend/MenuRaceEnd.cpp from c3-batch-g-s9
 2026-05-17  0x0042fe30  RaceEndFlagIfEndMode  C2->C3 NOT APPLIED  c3-batch-h-s1 listed as drift win but caller-gate still fails (callers 0040d270 + 004264d0 both C1 in track subsystem); frida-sweep-20260517-2121 refused per NO-OVERCLAIMING despite GREEN diff log/diff_race_end_flag_if_end_mode.csv 10/10 — D-10750 still applies; re-pickup when one caller reaches C2+
