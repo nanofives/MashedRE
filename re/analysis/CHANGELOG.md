@@ -1489,3 +1489,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-1729  scribe-claim  buckets=5 queued, 0 skipped-HOLD, 1 HALT-row-drain
 2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_0057bf30  writes=8  renames=0 (RW-style game-code; rename TBD pending caller-side analysis per session note)  errors=0
 2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_00516bb0  writes=0  renames=0 (HALT-row; library residue libpng+zlib — no per-RVA plates)  errors=0
+2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_00489940  writes=80  renames=0 (22 VFX game-code + 49 DirectShow strmbase candidates not FidDB-attested + 9 drift-skip; rename deferred to library-tag drain)  errors=0
