@@ -83,6 +83,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Save\FsOpen.cpp" ^
     "%SRC%\Save\SettingsConfig.cpp" ^
     "%SRC%\Save\SettingsAndIO_i3.cpp" ^
+    "%SRC%\Save\SettingsCfg_i4.cpp" ^
     "%SRC%\Boot\CrtStartup.cpp" ^
     "%SRC%\Util\TimerSetters.cpp" ^
     "%SRC%\Util\TimerSlot.cpp" ^
