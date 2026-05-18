@@ -1,6 +1,11 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-18  d11007-drift-cleanup  subsystem-reclass  group=render_midrva  rows=37 reclassed (render->{ai×3, camera×4, physics×10, track×12, util×3}), kept-audited=7; evidence=re/analysis/promote_c2_render_midrva/*.md subsystem_observed frontmatter
+2026-05-18  d11007-drift-cleanup  subsystem-reclass  group=cluster_004d_rw_error  rows=2 canonical kept (render), 4 audio-tagged dup C1 rows removed (0x004d7ff0 ×2, 0x004d8480 ×2); evidence=FUN_004c2c90 C2 + Vec2Normalize C4
+2026-05-18  d11007-drift-cleanup  dup-consolidation  group=vehicle_lowrva  rows=15 sibling C1 rows removed across 9 RVAs (0x00408a50, 0x00408a70, 0x0040e340, 0x0040e350, 0x0040e370, 0x00422fd0, 0x0042c280, 0x00432080, 0x004331a0); canonical C2 rows at re/analysis/promote_c2_vehicle_lowrva/ kept
+2026-05-18  d11007-drift-cleanup  audit-noop  group=cluster_0049  7-row sample audit (0x00491490 0x00493390 0x004935a0 0x004942b0 0x004943f0 0x00494ee0 0x004954f0); scribe-assigned subsystem tags match plate evidence; no bulk reclass needed
+2026-05-18  d11007-drift-cleanup  deferred-close  D-11007 RESOLVED; 56 row edits (37 reclass + 19 dup-removals); refused-C3=0
 2026-05-18  frida-sweep-20260518-0304  frida-sweep-release  branches=4 merged (s1=3 GREEN, s2=0/5 zero-yield, s3=5 GREEN, s4=1 new C3 + 1 drift-fix)  integration-diff=GREEN  hooks=10/10  conflicts={build.bat=1, hooks_registry.py=3-region, CHANGELOG.md=1, PROMOTION_QUEUE.md=3, DEFERRED.md=1 (D-11007 collision renumber 11010-11012)}; U-2587 RESOLVED side-finding
 2026-05-18  frida-sweep-20260518-0304  frida-sweep-claim  branches=4 queued (c3/batch-i-s1, c3/batch-i-s2 [zero-yield], c3/batch-i-s3, c3/batch-i-s4)
 2026-05-18  sweep-20260518-0247  scribe-claim  buckets=6 queued, 0 skipped-HOLD (cluster_005c row reconciled from misplaced Drained back to Queued)
