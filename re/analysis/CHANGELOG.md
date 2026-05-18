@@ -1430,3 +1430,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=cluster_005a_first_pass  writes=60  errors=0
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=promote_c2_render_lowrva  writes=31  errors=0
 2026-05-17  sweep-20260518-0007  scribe-release  buckets=4 drained  errors=0
+2026-05-17  0x00422120  TimerInitLoop  C2->C3  feature/timer-init-naked: __declspec(naked) wrapper fixes silently-broken c3_batch_h-s5 callee() impl (EAX-arg ABI); Frida path1 GREEN 10/10 log/diff_timer_init_loop.csv; U-3877 U-3878 filed
