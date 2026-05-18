@@ -1484,3 +1484,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_0051e6f0 (HALT-libpng-zlib)  writes=0  errors=0  note=halt-row (level=halt, 0 per-RVA plates; only _BUCKET_HALT.md in bucket dir; library-residue libpng 2002.x + zlib, recommend FidDB bulk-name + DEFERRED library-tag drain)
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_00405400  writes=80  errors=0
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_004e1ce0  writes=81  renames=26 (RW RpWorld/RpAtomic/RpClump/RpLight/RwFrame catalog matches)  errors=0
+2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_00583f10  writes=80  renames=0 (library-residue qhull 2002.1; rename deferred to library-tag drain)  errors=0
