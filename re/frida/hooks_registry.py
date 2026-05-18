@@ -5041,4 +5041,142 @@ HOOKS = {
             { 'a': {'f00': 1}, 'b': {'f00': 2} },
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-j-s3 — vehicle Replay/TimeTrial + damping
+    # Vehicle/Replay_j3.cpp + Vehicle/MiscDamping_j3.cpp
+    # 8 of 10 candidates promoted; 0x00411350 and 0x00411530 refused
+    # (FPU-implicit / 5-arg 3-out-ptr — no current arg_type).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0046c570  VehicleDampVec3  (newly-unblocked candidate)
+    # Reads-multiplies-writes three floats at globals 0x00881f50/54/58 plus
+    # per-vehicle stride 0x341 dwords (0xd04 bytes), scaling by float at
+    # 0x005ce264.  Returns constant 1.  Pure leaf.
+    # arg_type vec3_global_mul_observe (added by D-11011 / harness commit 656273b).
+    # crash_equal_ok=True because at quiescent menu the damping scalar global
+    # may be 0.0; both sides operate deterministically regardless.
+    'vehicle_damp_vec3': {
+        'rva':            0x0046c570,
+        'export':         'VehicleDampVec3',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'vec3_global_mul_observe',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'target_global_base':   0x00881f50,
+        'target_global_stride': 0xd04,
+        'path1_tests': [
+            { 'idx': 0, 'vec3': [0.0,  0.0,  0.0]  },
+            { 'idx': 0, 'vec3': [1.0,  0.0,  0.0]  },
+            { 'idx': 0, 'vec3': [0.0,  1.0,  0.0]  },
+            { 'idx': 0, 'vec3': [0.0,  0.0,  1.0]  },
+            { 'idx': 0, 'vec3': [1.0,  1.0,  1.0]  },
+            { 'idx': 0, 'vec3': [-1.0, -1.0, -1.0] },
+            { 'idx': 0, 'vec3': [3.0,  4.0,  0.0]  },
+            { 'idx': 0, 'vec3': [100.0, 100.0, 100.0] },
+            { 'idx': 0, 'vec3': [0.001, 0.001, 0.001] },
+            { 'idx': 0, 'vec3': [1e6,  -1e6, 1e6]  },
+        ],
+        'path2_tests': [
+            { 'idx': 0, 'vec3': [1.0, 1.0, 1.0] },
+            { 'idx': 0, 'vec3': [3.0, 4.0, 0.0] },
+            { 'idx': 0, 'vec3': [0.0, 0.0, 0.0] },
+        ],
+    },
+
+    # 0x00411580  ReplayGetBestTime
+    # if DAT_0063bb10==0 OR best-buf+0x17c+idx*4 == 0  -> return 0;
+    # else delegates to FUN_00411530 (refused: stays at original RVA), returns 1.
+    # At quiescent menu DAT_0063bb10==0 so always returns 0 — both paths agree.
+    'replay_get_best_time': {
+        'rva':            0x00411580,
+        'export':         'ReplayGetBestTime',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004115c0  ReplayGetCurrentTime
+    # Structurally identical to ReplayGetBestTime; consumes DAT_0063bb14.
+    # U-1078 catalogued (audio_sfx_dispatch xref) — meaning-only, does not
+    # affect mechanical correctness.
+    'replay_get_current_time': {
+        'rva':            0x004115c0,
+        'export':         'ReplayGetCurrentTime',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004114e0  ReplayCleanup
+    # void(void); frees both replay heap blocks via FUN_00483a40 and zeroes
+    # three control globals.  At quiescent menu both heap pointers are null
+    # so only the three zero stores happen — deterministic both ways.
+    'replay_cleanup': {
+        'rva':            0x004114e0,
+        'export':         'ReplayCleanup',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00411600  ReplayRecordFrame
+    # void(int); per-frame writer.  Mode-gated to Time-Trial (FUN_0042f6a0()==2);
+    # at quiescent menu mode != 2 so early-out.  Both A/B paths return after
+    # the single comparison call.
+    'replay_record_frame': {
+        'rva':            0x00411600,
+        'export':         'ReplayRecordFrame',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00411750  ReplayStartLap
+    # void(void); mode-gated to Time-Trial; at quiescent menu early-out.
+    'replay_start_lap': {
+        'rva':            0x00411750,
+        'export':         'ReplayStartLap',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004117b0  ReplaySave
+    # void(void); save-once latch + null best-buf gate.  Second call returns
+    # via the latch; first call at quiescent menu (DAT_0063bb10==0) falls
+    # through to set the latch only — no disk IO touched.
+    'replay_save': {
+        'rva':            0x004117b0,
+        'export':         'ReplaySave',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00411170  TimeTrialRecordPlayback
+    # void(int); per-frame state-6 dispatcher.  Calls RecordFrame +
+    # PlaybackTick (both mode-gated, early-out at menu) then DAMAGE_FN.
+    # DAMAGE_FN early-out short-circuits the rest at menu.
+    'time_trial_record_playback': {
+        'rva':            0x00411170,
+        'export':         'TimeTrialRecordPlayback',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }

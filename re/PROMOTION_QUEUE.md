@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-18  c3-batch-j-s3  rvas=0x0046c570,0x00411580,0x004115c0,0x004114e0,0x00411600,0x00411750,0x004117b0,0x00411170  branch=c3/batch-j-s3  evidence=log/diff_vehicle_damp_vec3.csv;log/diff_replay_get_best_time.csv;log/diff_replay_get_current_time.csv;log/diff_replay_cleanup.csv;log/diff_replay_record_frame.csv;log/diff_replay_start_lap.csv;log/diff_replay_save.csv;log/diff_time_trial_record_playback.csv  note=8/10 vehicle replay+damping C2->C3; Vehicle/Replay_j3.cpp (7 Replay/TimeTrial helpers) + Vehicle/MiscDamping_j3.cpp (VehicleDampVec3 newly-unblocked via vec3_global_mul_observe arg_type D-11011); all 8 Frida path1 GREEN 10/10; U-3879 filed (cosmetic — vector-kind unknown); 2 refused: 0x00411350 TimeFormat (implicit-ST0 FPU input) + 0x00411530 GetTimeAtIdx (5-arg 3-out-ptr shape) — both need harness arg_type extensions; vec3_global_mul_observe arg_type validated end-to-end on real reimpl (not stub) — captures in-place 3-float mul, fingerprint matches orig bit-identically (e.g. [1,0,0]*0.838 -> 1062836634)
 ```
 
 ## Merged
