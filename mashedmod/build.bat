@@ -16,85 +16,90 @@ call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
 echo === Building mashed_re.exe ===
+pushd "%SRC%"
 cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
-    "%SRC%\exe_main.cpp" ^
-    "%SRC%\Piz\PizReader.cpp" ^
-    "%SRC%\Rws\RwsChunkWalker.cpp" ^
-    "%SRC%\Txd\TxdDecoder.cpp" ^
-    "%SRC%\D3d9Render\QuadRenderer.cpp" ^
+    "exe_main.cpp" ^
+    "Piz\PizReader.cpp" ^
+    "Rws\RwsChunkWalker.cpp" ^
+    "Txd\TxdDecoder.cpp" ^
+    "D3d9Render\QuadRenderer.cpp" ^
     /link /SUBSYSTEM:WINDOWS user32.lib d3d9.lib
+popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
 echo === Building mashed_re_dev.asi ===
+pushd "%SRC%"
 cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
-    "%SRC%\dll_main.cpp" ^
-    "%SRC%\Core\HookSystem.cpp" ^
-    "%SRC%\Math\Vec3.cpp" ^
-    "%SRC%\Math\RwSqrt.cpp" ^
-    "%SRC%\GameState\StateAccessors.cpp" ^
-    "%SRC%\Vehicle\VehicleState.cpp" ^
-    "%SRC%\Util\TimerState.cpp" ^
-    "%SRC%\Util\TimerSubarrayInit.cpp" ^
-    "%SRC%\Util\GameStateGetters.cpp" ^
-    "%SRC%\Util\EventTable.cpp" ^
-    "%SRC%\Util\TimerInit.cpp" ^
-    "%SRC%\Audio\AudioMemory.cpp" ^
-    "%SRC%\Audio\AudioRws.cpp" ^
-    "%SRC%\Audio\RwsStream_i1.cpp" ^
-    "%SRC%\Audio\AudioDSound.cpp" ^
-    "%SRC%\Audio\AudioMusic.cpp" ^
-    "%SRC%\Math\RwV3dTransform.cpp" ^
-    "%SRC%\Math\RwV2d.cpp" ^
-    "%SRC%\Math\RwMatrixScale.cpp" ^
-    "%SRC%\Frontend\TimerReset.cpp" ^
-    "%SRC%\Frontend\MenuNav.cpp" ^
-    "%SRC%\Frontend\FrontendState.cpp" ^
-    "%SRC%\Frontend\FrontendNav.cpp" ^
-    "%SRC%\Frontend\GameModeInit.cpp" ^
-    "%SRC%\Frontend\MenuButtonDetect.cpp" ^
-    "%SRC%\Frontend\GameModeCarSelect.cpp" ^
-    "%SRC%\Frontend\MenuGetters.cpp" ^
-    "%SRC%\Frontend\SpriteGate.cpp" ^
-    "%SRC%\Frontend\FrontendAccessors.cpp" ^
-    "%SRC%\Frontend\FrontendMode.cpp" ^
-    "%SRC%\HUD\HudDispatch.cpp" ^
-    "%SRC%\HUD\FontCtx.cpp" ^
-    "%SRC%\HUD\HudBatch_h4.cpp" ^
-    "%SRC%\Frontend\MenuScoreGetters.cpp" ^
-    "%SRC%\Frontend\MenuInit.cpp" ^
-    "%SRC%\Frontend\MenuScoreSort.cpp" ^
-    "%SRC%\Frontend\MenuRaceEnd.cpp" ^
-    "%SRC%\Frontend\TextMeasure.cpp" ^
-    "%SRC%\Frontend\SpriteDispatch.cpp" ^
-    "%SRC%\Frontend\MenuTime.cpp" ^
-    "%SRC%\Frontend\MenuHelpers.cpp" ^
-    "%SRC%\Frontend\VehicleMeta.cpp" ^
-    "%SRC%\Frontend\MenuChrome.cpp" ^
-    "%SRC%\Frontend\RaceResults.cpp" ^
-    "%SRC%\Save\GameSaveVFS.cpp" ^
-    "%SRC%\Boot\CrtCompilerSupport.cpp" ^
-    "%SRC%\Boot\CrtInit.cpp" ^
-    "%SRC%\Boot\Window.cpp" ^
-    "%SRC%\Boot\RwEngineInit.cpp" ^
-    "%SRC%\Boot\Teardown.cpp" ^
-    "%SRC%\Boot\VideoConfig.cpp" ^
-    "%SRC%\Save\GameSave.cpp" ^
-    "%SRC%\Save\VfsStream.cpp" ^
-    "%SRC%\Save\FsOpen.cpp" ^
-    "%SRC%\Save\SettingsConfig.cpp" ^
-    "%SRC%\Save\SettingsAndIO_i3.cpp" ^
-    "%SRC%\Save\SettingsCfg_i4.cpp" ^
-    "%SRC%\Boot\CrtStartup.cpp" ^
-    "%SRC%\Util\TimerSetters.cpp" ^
-    "%SRC%\Util\TimerSlot.cpp" ^
-    "%SRC%\Util\UtilBatch_h5.cpp" ^
-    "%SRC%\Util\UtilMid_h6.cpp" ^
-    "%SRC%\Frontend\MenuStateMachine.cpp" ^
-    "%SRC%\Frontend\FrontendDispatch.cpp" ^
-    "%SRC%\Boot\FrameDispatch.cpp" ^
-    "%SRC%\Input\DirectInput.cpp" ^
-    "%SRC%\Compat\PizWin32Bypass.cpp" ^
+    "dll_main.cpp" ^
+    "Core\HookSystem.cpp" ^
+    "Math\Vec3.cpp" ^
+    "Math\RwSqrt.cpp" ^
+    "GameState\StateAccessors.cpp" ^
+    "Vehicle\VehicleState.cpp" ^
+    "Util\TimerState.cpp" ^
+    "Util\TimerSubarrayInit.cpp" ^
+    "Util\GameStateGetters.cpp" ^
+    "Util\EventTable.cpp" ^
+    "Util\TimerInit.cpp" ^
+    "Audio\AudioMemory.cpp" ^
+    "Audio\AudioRws.cpp" ^
+    "Audio\RwsStream_i1.cpp" ^
+    "Audio\AudioDSound.cpp" ^
+    "Audio\AudioMusic.cpp" ^
+    "Math\RwV3dTransform.cpp" ^
+    "Math\RwV2d.cpp" ^
+    "Math\RwMatrixScale.cpp" ^
+    "Frontend\TimerReset.cpp" ^
+    "Frontend\MenuNav.cpp" ^
+    "Frontend\FrontendState.cpp" ^
+    "Frontend\FrontendNav.cpp" ^
+    "Frontend\GameModeInit.cpp" ^
+    "Frontend\MenuButtonDetect.cpp" ^
+    "Frontend\GameModeCarSelect.cpp" ^
+    "Frontend\MenuGetters.cpp" ^
+    "Frontend\SpriteGate.cpp" ^
+    "Frontend\FrontendAccessors.cpp" ^
+    "Frontend\FrontendMode.cpp" ^
+    "HUD\HudDispatch.cpp" ^
+    "HUD\FontCtx.cpp" ^
+    "HUD\HudBatch_h4.cpp" ^
+    "Frontend\MenuScoreGetters.cpp" ^
+    "Frontend\MenuInit.cpp" ^
+    "Frontend\MenuScoreSort.cpp" ^
+    "Frontend\MenuRaceEnd.cpp" ^
+    "Frontend\TextMeasure.cpp" ^
+    "Frontend\SpriteDispatch.cpp" ^
+    "Frontend\MenuTime.cpp" ^
+    "Frontend\MenuHelpers.cpp" ^
+    "Frontend\VehicleMeta.cpp" ^
+    "Frontend\MenuChrome.cpp" ^
+    "Frontend\RaceResults.cpp" ^
+    "Save\GameSaveVFS.cpp" ^
+    "Boot\CrtCompilerSupport.cpp" ^
+    "Boot\CrtInit.cpp" ^
+    "Boot\Window.cpp" ^
+    "Boot\RwEngineInit.cpp" ^
+    "Boot\Teardown.cpp" ^
+    "Boot\VideoConfig.cpp" ^
+    "Save\GameSave.cpp" ^
+    "Save\VfsStream.cpp" ^
+    "Save\FsOpen.cpp" ^
+    "Save\SettingsConfig.cpp" ^
+    "Save\SettingsAndIO_i3.cpp" ^
+    "Save\SettingsCfg_i4.cpp" ^
+    "Boot\CrtStartup.cpp" ^
+    "Util\TimerSetters.cpp" ^
+    "Util\TimerSlot.cpp" ^
+    "Util\UtilBatch_h5.cpp" ^
+    "Util\UtilMid_h6.cpp" ^
+    "Frontend\MenuStateMachine.cpp" ^
+    "Frontend\FrontendDispatch.cpp" ^
+    "Boot\FrameDispatch.cpp" ^
+    "Input\DirectInput.cpp" ^
+    "Compat\PizWin32Bypass.cpp" ^
+    "Harness\HarnessStubs.cpp" ^
     /link /DLL
+popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 
 echo === Build OK ===

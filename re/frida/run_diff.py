@@ -139,6 +139,11 @@ def main():
         config['pool_addr_str'] = f"0x{hook['pool_addr']:08x}"
     if 'insert_rva' in hook:
         config['insert_rva_str'] = f"0x{hook['insert_rva']:08x}"
+    # vec3_global_mul_observe — base addr + stride for the per-index vec3.
+    if 'target_global_base' in hook:
+        config['target_global_base'] = f"0x{hook['target_global_base']:08x}"
+    if 'target_global_stride' in hook:
+        config['target_global_stride'] = hook['target_global_stride']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)

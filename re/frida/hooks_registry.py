@@ -4891,4 +4891,131 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # feature/harness-arg-types — verification entries for the 4 new arg_types.
+    # These point at synthetic JMP-thunk exports in HarnessStubs.cpp which
+    # forward to live RVAs; the diff is bit-identical by construction. The
+    # purpose is to exercise the arg_type plumbing end-to-end. DO NOT promote
+    # any of these RVAs to C3 on the strength of this evidence — real impls
+    # are required.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # eax_implicit_ptr — exercises the RWX trampoline that seeds EAX=ptr
+    # before JMPing to the target (0x00497190 — contcfg filename formatter).
+    # Test inputs are integer placeholders; the harness allocates a 64-byte
+    # zeroed scratch buffer per test and seeds EAX with that buffer's address.
+    # crash_equal_ok=True because the target writes through EAX+offsets via
+    # FUN_004a2b60's sprintf wrapper, which expects a valid destination — our
+    # scratch buffers are zeroed but live, so writes should succeed; the
+    # symmetric thunk on both sides ensures any crash is identical.
+    'harness_test_eax_implicit_ptr': {
+        'rva':            0x00497190,
+        'export':         'HarnessEaxImplicitPtrStub',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'eax_implicit_ptr',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # eax_implicit_int — same trampoline mechanism with raw int values in EAX.
+    # Reuses 0x00497190 as the underlying target; harness packs each test
+    # integer directly into EAX (no scratch buffer).
+    'harness_test_eax_implicit_int': {
+        'rva':            0x00497190,
+        'export':         'HarnessEaxImplicitIntStub',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'eax_implicit_int',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # vec3_global_mul_observe — 3-float global mutate-and-observe.
+    # Target: 0x0046c570 VehicleDampVec3 — scales globals[0x00881f50/54/58 +
+    # idx*0x341*4] by _DAT_005ce264.
+    # Stride: per-vehicle struct stride = 0x341 dwords = 0x341 * 4 = 0xd04 bytes.
+    # crash_equal_ok=True because the damping scalar global must be primed by
+    # the runtime; at quiescent main menu it may be 0.0 (no damping) which is
+    # still a deterministic op on both sides.
+    'harness_test_vec3_global_mul': {
+        'rva':            0x0046c570,
+        'export':         'HarnessVec3GlobalMulStub',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'vec3_global_mul_observe',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'target_global_base':   0x00881f50,
+        'target_global_stride': 0xd04,
+        'path1_tests': [
+            { 'idx': 0, 'vec3': [0.0,  0.0,  0.0]  },
+            { 'idx': 0, 'vec3': [1.0,  0.0,  0.0]  },
+            { 'idx': 0, 'vec3': [0.0,  1.0,  0.0]  },
+            { 'idx': 0, 'vec3': [0.0,  0.0,  1.0]  },
+            { 'idx': 0, 'vec3': [1.0,  1.0,  1.0]  },
+            { 'idx': 0, 'vec3': [-1.0, -1.0, -1.0] },
+            { 'idx': 0, 'vec3': [3.0,  4.0,  0.0]  },
+            { 'idx': 0, 'vec3': [100.0, 100.0, 100.0] },
+            { 'idx': 0, 'vec3': [0.001, 0.001, 0.001] },
+            { 'idx': 0, 'vec3': [1e6,  -1e6, 1e6]  },
+        ],
+        'path2_tests': [
+            { 'idx': 0, 'vec3': [1.0, 1.0, 1.0] },
+            { 'idx': 0, 'vec3': [3.0, 4.0, 0.0] },
+            { 'idx': 0, 'vec3': [0.0, 0.0, 0.0] },
+        ],
+    },
+
+    # fmt_desc_pair_compare — 2-arg fmt-desc equality predicate.
+    # Target: 0x005ac5f0 AudioFmtDescEqual (already C3 via a different
+    # arg_type — this verifies the generic pair-compare plumbing).
+    # 10 test pairs covering equal-input, single-field-difference, and full-
+    # mismatch shapes.
+    'harness_test_fmt_desc_pair': {
+        'rva':            0x005ac5f0,
+        'export':         'HarnessFmtDescPairStub',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        'path1_tests': [
+            # equal inputs
+            { 'a': {'f00': 0x11111111, 'f04': 0x22222222, 'f0c': 0x33333333, 'f18': 0x00000000},
+              'b': {'f00': 0x11111111, 'f04': 0x22222222, 'f0c': 0x33333333, 'f18': 0x00000000} },
+            # +0x00 differs
+            { 'a': {'f00': 0x11111111, 'f04': 0x22222222},
+              'b': {'f00': 0x22222222, 'f04': 0x22222222} },
+            # +0x04 fmt-key field differs
+            { 'a': {'f04': 0xAAAAAAAA},
+              'b': {'f04': 0xBBBBBBBB} },
+            # +0x0c byte differs
+            { 'a': {'f00': 1, 'f04': 0, 'f0c': 0x12345678},
+              'b': {'f00': 1, 'f04': 0, 'f0c': 0x87654321} },
+            # +0x18 flags differ but only bit1 (masked off by 0xfd)
+            { 'a': {'f18': 0x02},
+              'b': {'f18': 0x00} },
+            # +0x18 flags differ in a non-masked bit
+            { 'a': {'f18': 0x01},
+              'b': {'f18': 0x00} },
+            # all zero
+            { 'a': {}, 'b': {} },
+            # large values
+            { 'a': {'f00': 0xFFFFFFFF, 'f04': 0xFFFFFFFF},
+              'b': {'f00': 0xFFFFFFFF, 'f04': 0xFFFFFFFF} },
+            # high-bit set
+            { 'a': {'f00': 0x80000000},
+              'b': {'f00': 0x80000000} },
+            # repeated equal
+            { 'a': {'f00': 0xDEADBEEF, 'f04': 0xCAFEBABE},
+              'b': {'f00': 0xDEADBEEF, 'f04': 0xCAFEBABE} },
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {} },
+            { 'a': {'f00': 1}, 'b': {'f00': 1} },
+            { 'a': {'f00': 1}, 'b': {'f00': 2} },
+        ],
+    },
 }
