@@ -51,20 +51,102 @@ Always write the model id verbatim into the batch row (`Model: Sonnet 4.6 (claud
 
 ## Candidate selection algorithm
 
+**All filter steps below run at batch-generation time, not at worker-session time.** The 2026-05-17 c3_batch_h post-mortem showed that mentioning these filters in prose without applying them programmatically produced sessions full of un-promotable RVAs (3 of 6 sessions landed 0 promotions). Each step has a runnable recipe — use it before emitting the batch file.
+
 1. **Pull C2 rows from `hooks.csv`** in the requested subsystem(s):
    ```bash
    awk -F',' 'NR>1 && $4=="C2" && $3 ~ /^(util|frontend)$/ {print $1","$2","$6}' hooks.csv
    ```
 2. **Drop candidates that are already C3+** in any other row (drift detection — see today's session for an example: same RVA appearing 3x with different confidences).
-3. **Filter for hook-author viability** by reading the analysis note frontmatter:
-   - `callees_depth1: []` (pure leaf) → ideal
-   - `callees_depth1: [...]` with each callee at C2+ in hooks.csv → acceptable
-   - `callees_depth1: [...]` with any callee at C0/C1 → defer (would need depth-first promotion first)
-   - `size_bytes` > 200 → defer to a separate "complex C3" batch with smaller per-session counts
-   - Has unresolved `[UNCERTAIN]` markers in the body (not in the `## Uncertainties` section, but inline in the description) → defer
-4. **Check the caller-at-C2+ gate** (per `re/CONFIDENCE.md`): look up the candidate's noted callers in `hooks.csv`. If at least one caller is C2+, the gate passes. If all callers are C1, flag the session for a drift-promote step (acceptable for 1–2 callers per session; if more, split the session).
-5. **Cluster by subsystem** so each session reuses the same subdirectory in `mashed_re/`. This minimizes `build.bat` merge surface and lets the session reuse one C++ file for multiple hooks.
-6. **Balance load**: aim for similar `total_size_bytes` per session, not just function count. Many tiny leaves + one mid-size dispatcher is fine; eight near-cap-size functions is not.
+
+3. **Stale-impl-row filter (tracker drift, NOT a C3 candidate).** A row marked C2 in hooks.csv but with an existing reimpl on disk + a GREEN diff CSV in `log/` is tracker drift — the prior re-classify transaction never landed. Surface separately and skip from the batch:
+   ```bash
+   # rva is like 0x00xxxxxx
+   for rva in <candidate_list>; do
+     rva_no_prefix=${rva#0x}
+     has_impl=$(grep -rl "$rva_no_prefix" mashedmod/src/ 2>/dev/null | head -1)
+     has_diff=$(ls log/diff_*${rva_no_prefix}*.csv 2>/dev/null | head -1)
+     if [[ -n "$has_impl" && -n "$has_diff" ]]; then
+       echo "DRIFT $rva impl=$has_impl diff=$has_diff"
+     fi
+   done
+   ```
+   Emit a separate "tracker-drift" report alongside the batch file. The user runs a single `re-classify` pass on those rows rather than burning worker sessions on no-op "promotions".
+
+4. **Inline-`[UNCERTAIN]`-in-body filter.** A `[UNCERTAIN]` marker anywhere in the note body OUTSIDE the `## Uncertainties` collected-items section is a hard refusal per the `re-classify` rubric. Markers inside `## Uncertainties` are legitimate (the catalog of known holes); inline markers in `## Mechanical description`, `## Constants`, etc. are not.
+   ```bash
+   # Returns 0 (and prints the path) if the note has inline UNCERTAIN outside ## Uncertainties.
+   awk '
+     /^## Uncertainties[[:space:]]*$/ {in_unc=1; next}
+     /^## / && in_unc {in_unc=0}
+     !in_unc && /\[UNCERTAIN\]/ {found=1}
+     END {exit !found}
+   ' "$note_path" && echo "DEFER inline-uncertain: $note_path"
+   ```
+   This was the single largest source of refusals in c3_batch_h: session 2 lost 5/5 candidates to inline-UNCERTAIN body markers.
+
+5. **Depth-1-callee-at-C2+ gate.** Per `re/CONFIDENCE.md`, C3 requires every depth-1 callee at C2 or above. Read `callees_depth1` from the note frontmatter, then verify each against `hooks.csv`:
+   ```bash
+   # Pull callees_depth1 from the note frontmatter (single-line YAML list).
+   callees=$(awk '/^callees_depth1:/{sub(/^callees_depth1:[[:space:]]*/,""); gsub(/[\[\]"]/,""); print; exit}' "$note_path")
+   for c in $(echo "$callees" | tr ',' ' '); do
+     [[ -z "$c" ]] && continue
+     row=$(grep "^$c," hooks.csv | head -1)
+     conf=$(echo "$row" | awk -F',' '{print $4}')
+     case "$conf" in
+       C2|C3|C4) ;;  # ok
+       *) echo "DEFER callee-gate: $note_path callee=$c conf=${conf:-MISSING}" ;;
+     esac
+   done
+   ```
+   c3_batch_h session 3 lost 9 of 12 candidates here (depth-1 callees still C1). Catching this at batch-generation time saves the entire session.
+
+6. **Harness arg_type compatibility filter.** The candidate's signature must already be expressible in `re/frida/diff_template.js`. Authoring a new arg_type belongs in a dedicated harness-extension session, NOT inside a promotion batch.
+   ```bash
+   # Pull the currently-supported arg_types directly from the harness (source of truth — list grows per-batch).
+   supported=$(grep -oE "arg_type === '[a-z_0-9]+'" re/frida/diff_template.js \
+                 | sort -u | sed -E "s/arg_type === '([^']+)'/\1/")
+   # For each candidate, read its frontmatter signature_arg_type (or arg_type) field.
+   note_arg_type=$(awk '/^(arg_type|signature_arg_type):/{print $2; exit}' "$note_path")
+   echo "$supported" | grep -qx "$note_arg_type" \
+     || echo "DEFER unsupported-arg-type: $note_path arg_type=$note_arg_type"
+   ```
+   c3_batch_h refusals in this bucket included ECX+EAX dual-register, ESI-implicit, FPU-6-arg-with-x87, long-double return, and struct-ptr-returning alloc — none of those have a harness entry yet. Queue a harness-extension session first if the candidate is otherwise viable.
+
+7. **Filter for size & misc viability:**
+   - `size_bytes` > 200 → defer to a separate "complex C3" batch with smaller per-session counts.
+   - Note body describes a function very different from what hooks.csv says → defer (the note has drift; flag for re-discover).
+
+8. **Caller-at-C2+ gate** (per `re/CONFIDENCE.md`): look up the candidate's noted callers in `hooks.csv`. If at least one caller is C2+, the gate passes. If all callers are C1, flag the session for an in-session drift-promote step (acceptable for 1–2 callers per session; if more, split the session).
+9. **Cluster by subsystem** so each session reuses the same subdirectory in `mashed_re/`. This minimizes `build.bat` merge surface and lets the session reuse one C++ file for multiple hooks.
+10. **Balance load**: aim for similar `total_size_bytes` per session, not just function count. Many tiny leaves + one mid-size dispatcher is fine; eight near-cap-size functions is not.
+
+## Pre-flight viability matrix
+
+Each filter above rejects a specific failure mode. Run the recipes, log how many candidates each filter eliminates, and only then commit to the batch shape. If a single filter rejects > 50% of an initial bucket, the bucket is the wrong shape — re-pick from a different subsystem before emitting.
+
+| Filter | Rejects | c3_batch_h calibration (2026-05-17) | Action on hit |
+|---|---|---|---|
+| (2) Already-C3+ duplicate row | Stale row from a prior promotion | Low rate but always present | Drop silently |
+| (3) Stale-impl + GREEN diff in `log/` | Tracker drift (re-classify never landed) | s1: 3 RVAs (entire session was tracker-fix material) | Emit to tracker-drift report; NOT to the batch |
+| (4) Inline `[UNCERTAIN]` outside `## Uncertainties` | C3 rubric refusal | s2: 5 of 5 candidates (whole session lost) | Defer to a "needs uncertainty-resolution pass" |
+| (5) Depth-1 callee < C2 | C3 rubric refusal | s3: 9 of 12 candidates | Defer; queue a callee-first promotion |
+| (6) `arg_type` absent from `diff_template.js` | Harness can't diff the candidate | s4: ~7 candidates across signatures | Queue a harness-extension session FIRST |
+
+**Aggregate calibration.** c3_batch_h fielded ~30 candidates across 6 sessions; the upgraded filter set would have rejected roughly 15 of them before reaching any worker, and sessions 2/3/4 (which landed 0 promotions) would have been re-bucketed instead of run.
+
+## Subsystem yield expectations
+
+Expected C3 yield (promotions / candidates ever-attempted) varies sharply by subsystem maturity. Use this table at batch-generation time to size the batch — over-pull from low-yield subsystems if the user asks for them, and warn explicitly when the batch is front-loaded with a low-yield bucket.
+
+| Subsystem | Expected yield | Notes |
+|---|---|---|
+| util-small (leaf math, small inlines) | ~67% | Highest. Pure leaves dominate. Default first-batch target. |
+| util-mid (small dispatchers, glue) | ~42% | Callee-gate starts mattering. Expect about half to defer. |
+| HUD | ~33% | Struct-write patterns; `arg_type` often needs `entity_field_set`-class extensions. |
+| frontend | ~0% on c3_batch_h baseline | Deep struct chains, inline `[UNCERTAIN]` density high. Treat as C2-readiness work, not C3 work, until the analysis notes mature. |
+
+When the user requests a "frontend C3 batch", cite this yield expectation back and propose a 2-session pilot before committing to N=6.
 
 ## Worktree binding
 
