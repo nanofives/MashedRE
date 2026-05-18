@@ -2184,6 +2184,29 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # Session c3-batch-i-s4 — Settings/video-config CONFIG_SAVE_FN (C2->C3)
+    # Save/SettingsCfg_i4.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004989b0  ConfigSave
+    # ~76 bytes. int(void). Writes 512 bytes from global settings buffer at
+    # 0x00773208 to "videocfg.bin" via game CRT _fsopen("wb")/_fwrite/_fclose.
+    # Returns 1 on file-open success, 0 on failure.
+    # At quiescent main-menu state, videocfg.bin exists+writable; both orig and
+    # reimpl hit the success path → return 1 → bit-identical.
+    # arg_type='none': 5 calls (file-write side effect is identical between both
+    # paths — both write the same 512 bytes from the same global buffer).
+    # Side effect: rewrites videocfg.bin (same canonical 800x600 contents).
+    'config_save': {
+        'rva':            0x004989b0,
+        'export':         'ConfigSave',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # ---------------------------------------------------------------------------
     # Boot/CrtCompilerSupport.cpp — FidDB-identified MSVC CRT compiler support.
     # All four are C2-ceiling functions; C3 evidence is FidDB single-match only.

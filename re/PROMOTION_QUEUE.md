@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-17  c3-batch-i-s4  rvas=0x004989b0  branch=c3/batch-i-s4  evidence=log/diff_config_save.csv  note=1/5 mixed C2->C3 (ConfigSave GREEN 10/0); 4 refused: 0x00550b00 DRIFT-SKIP (already C3 in c3-batch-e-s2 Save/GameSaveVFS.cpp VfsFileExists; hooks.csv row 1050 stale at C2); 0x004971b0 REFUSE harness-gap (implicit-EAX slot index — same blocker as 0x00497190 refused in ma2-frida-s7 U-2588); 0x0046c570 REFUSE harness-gap (3-float global-mul-observe arg_type does not exist; no bounds check + side effects on per-vehicle floats make int_scalar weak); 0x0046dc20 REFUSE U-2692 structural (reads 16 DWORDs of uninitialised stack from caller frame — A/B is non-deterministic by construction)
 ```
 
 ## Merged
