@@ -50,11 +50,35 @@ Sonnet 4.6 working budget ≈ 150k tokens before compact. With ~12k of fixed sta
 - **20 RVAs** = 70-100k → 82-112k total → ~30-50k headroom (preferred default; matches batch_h.txt usage and proven across many batches)
 - **24 RVAs** = 84-120k → 96-132k → ~5-15k headroom (hard cap; risky if any RVA expands to >5k due to large decomp + many callees)
 
-Beyond 24, compaction during MCP work is nearly guaranteed, which is bad: a compacted session loses bucket context and can write inconsistent plates. The cap is firm.
+Beyond 24 on Sonnet, compaction during MCP work is nearly guaranteed, which is bad: a compacted session loses bucket context and can write inconsistent plates. The cap is firm for Sonnet.
 
 For **promote-c2** work (deeper analysis per function), cap drops to **15 RVAs**. C1→C2 is heavier per function (full decomp read, struct-offset chasing, drift-correction of stale rows). 15 keeps the budget comfortable.
 
 For **struct** sessions: no RVA cap. The work is markdown authoring + grep across existing plates. Cap is implicit (a session naturally finishes after 3-5 struct docs).
+
+### Opus 1M caps (C1 brute-force mode, 2026-05-18)
+
+When the user passes `--model opus` (or the work shape is "C1 brute-force"), the per-session cap rises:
+
+- **first-pass on Opus 1M: 80 RVAs (hard cap 100)** — Opus 1M has ~6× Sonnet's working budget. 80 RVAs × 4k tokens per RVA = 320k → with ~30k of fixed startup context, total ≈350k → ~650k headroom remains, well clear of compaction. The hard cap of 100 leaves ~500k headroom for cross-RVA shared-context buildup (typical when clustering by call-graph proximity).
+- **promote-c2 on Opus 1M: 60 RVAs (hard cap 80)** — heavier per-RVA cost (~6k tokens) so a more conservative ratio.
+- **struct on Opus 1M: no cap** — same as Sonnet; the work is naturally session-bounded.
+
+**Standard batch shape on Opus 1M: 6 sessions × 80 RVAs = 480 RVAs per batch.** This is ~4× the Sonnet cadence (120/batch). At this rate, the ~2,500-RVA "real game code" residue (after Levers 1+3 pre-filter — see "Pre-filter levers" below) drains in 5–6 batches.
+
+**Cost calibration.** Opus 4.7 input/output rate is ~5× Sonnet 4.6. But because Opus reads the bucket context once and amortizes across 80 RVAs instead of 20, per-RVA token cost is only ~1.5–2× Sonnet's. Net: Opus 1M C1 brute-force runs roughly 2× the wall-clock-equivalent throughput for ~1.6× the cost-per-RVA — favorable when the goal is "drain the C0 pool in weeks not months."
+
+**When NOT to use Opus 1M:** small DEFERRED-drain sessions (cont-buckets with <20 RVAs), promote-c2 work that touches < 30 candidates, or any session where the per-RVA cost is genuinely Sonnet-tractable. The Opus 1M shape is for **bulk drain** of a large pool; small targeted sessions stay on Sonnet.
+
+### Pre-filter levers (run BEFORE any Claude session)
+
+Before generating a brute-force batch, drain the trivial cases mechanically so the worker sessions only see "real game code":
+
+1. **Lever 1 — RW string-anchor sweep.** `re/tools/rw_string_anchor_scan.py` pulls all `Rw*`/`Rt*`/`Rp*`/`rwID_*`/`_rw*`-shaped strings from MASHED.exe rdata, xrefs each via Ghidra MCP, and emits a proposal TSV the user reviews before any function-rename writeback. Expected yield: 80–150 functions named.
+2. **Lever 2 — RW signature match against librw / gta-reversed-modern.** `re/tools/rw_signature_match.py` hashes the first-N opcodes of each `Rw*`/`Rp*` function in `re/prior_art/renderware/{librw,gta-reversed-modern}` and brute-greps MASHED.exe `.text` for matches. Proposal-output only. Expected yield: 300–500.
+3. **Lever 3 — Ghidra FidDB library-tag drain.** One dedicated session that bulk-renames any function with a `Library Function:` tag in Ghidra. Pure MCP scripting; no decomp reading per RVA. Expected yield: 200–400 CRT renames.
+
+Running all three drops the brute-force pool from ~3,800 unmapped to ~2,500–2,800 of real game code. Levers 1+2 are read-only proposals you review before any Ghidra writeback; Lever 3 is bulk-rename, deferred to its own sweep.
 
 ## Model declaration (per session)
 

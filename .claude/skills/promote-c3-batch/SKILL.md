@@ -132,8 +132,28 @@ Each filter above rejects a specific failure mode. Run the recipes, log how many
 | (4) Inline `[UNCERTAIN]` outside `## Uncertainties` | C3 rubric refusal | s2: 5 of 5 candidates (whole session lost) | Defer to a "needs uncertainty-resolution pass" |
 | (5) Depth-1 callee < C2 | C3 rubric refusal | s3: 9 of 12 candidates | Defer; queue a callee-first promotion |
 | (6) `arg_type` absent from `diff_template.js` | Harness can't diff the candidate | s4: ~7 candidates across signatures | Queue a harness-extension session FIRST |
+| (v4-a) Signature-unsupported phrase in body | Harness can't diff (sig.-level) | c3_batch_j: 6 of 9 s3/s4 refusals had detectable phrases (`__fastcall`, `EAX-implicit`, `in_EAX`, `EAX+ESI`, `5-arg`) | Queue a harness-extension session FIRST |
+| (v4-b) Live-state side-effect call | Synthetic Frida call corrupts game state | c3_batch_j s6: 4 of 5 refused candidates (DialogBoxParam, fopen/fwrite/fclose, CloseHandle) | Defer; can never be diffed via synthetic harness |
+| (v4-c) Tighter callee regex | v3 missed RVAs embedded in `FUN_xxxxxxxx`-style mentions (\b doesn't fire on `_`-boundary). The 0x004669b0 note had 4 C1 callees v3 silently dropped. | c3_batch_j: 36 of 107 v3-passes additionally rejected once `FUN_/DAT_/LAB_` prefixes are recognized | Defer; queue a callee-first promotion |
+| (v4-d) `Blocks: <C-level>` honoring | Catalogued U-IDs with `Blocks: C3` cannot be C3-promoted regardless of where the marker sits in the note | c3-batch-i-s1: 0x005aea00 lost to U-0125 Blocks=C3 (worker-side); v4 catches this at filter time | Defer until the U-ID is resolved |
 
 **Aggregate calibration.** c3_batch_h fielded ~30 candidates across 6 sessions; the upgraded filter set would have rejected roughly 15 of them before reaching any worker, and sessions 2/3/4 (which landed 0 promotions) would have been re-bucketed instead of run.
+
+**c3_batch_j calibration (filter v4, 2026-05-18).** v4 ran against the same 197-candidate C2 pool that v3 saw, and yielded **68 passes** vs v3's **122** — a 44% tightening. Of v3's 107 unpromoted-after-c3_batch_j passes, v4 newly rejects 53: 36 callee-gate (the `FUN_xxx` regex fix), 9 signature-unsupported, 8 live-state-side-effect. Catch-rate on 12 known-bad RVAs from c3_batch_j_s3/s4/s6 refusals: **9 of 12 (75%)**. The remaining 3 leaks (0x0046cbe0, 0x00467300, 0x004960e0) are clean-noted candidates whose harness-incompatibility isn't visible in the note text — worker-session refusal still catches them, but at the cost of one candidate slot.
+
+### Filter v4 — runnable artifact
+
+The viability filter is implemented at `re/analysis/plans/c3_filter_v4.py`. Run before emitting any batch from this skill:
+
+```bash
+py -3.12 re/analysis/plans/c3_filter_v4.py \
+    --subsystems audio,save,vehicle,input,boot \
+    --out-prefix c3_batch_<id>
+```
+
+It writes `re/analysis/plans/c3_batch_<id>_passed.tsv` (the worker-eligible pool) and `..._rejected.tsv` (with one-line reasons per RVA, for the skill's deferred-report).
+
+v4 supersedes v3's `c3_batch_j_filter.py` — keep v3 around for historical comparison but emit batches from v4 going forward. v4 adds four checks v3 over-permitted on, summarized as rows (v4-a..v4-d) in the matrix above.
 
 ## Subsystem yield expectations
 

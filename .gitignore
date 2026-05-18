@@ -59,3 +59,9 @@ diff_*.csv
 /tools/
 __pycache__/
 .tmp_sweep/
+
+# --- Vendored RW reference clones (large; reproduce via two `git clone --depth 1`) ---
+# librw:               https://github.com/aap/librw.git           (MIT)
+# gta-reversed-modern: https://github.com/gta-reversed/gta-reversed-modern.git
+# Consumer:            re/tools/rw_catalog_extract.py
+/re/prior_art/renderware/
