@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-18  c3-batch-j-s1  rvas=0x005ac5f0,0x005ac9e0  branch=c3/batch-j-s1  evidence=log/diff_audio_fmt_desc_equal.csv;log/diff_audio_fmt_entry_match.csv  note=2/10 audio RWS fmt comparators C2->C3 (AudioFmtDescEqual+AudioFmtEntryMatch); cluster Audio/RwsFmt_j1.cpp; both 10/10 GREEN via new arg_type=fmt_desc_pair_compare (commit 656273b); 1 drift-skip 0x005ab410 (already C3 in c3-batch-i-s1 RwsStream_i1.cpp); 7 refused — 0x005acaa0(~620B dense serialise/deserialise body too dense for single session), 0x005abcf0(callee 005a7e70 C1), 0x005abfa0(STOP-AND-ASK per batch header; 12+ callees MULTI), 0x005abd30(callees 005b3b30/60/80 C1 + U-0997 multi), 0x005aba20(callees 005a7b50/005a7b00/005b3b60 C1 + multi-vtable), 0x005ac210(complex multi-page factory, many indirect callees), 0x004522d0(vtable trampoline U-0110 signature unknown not statically resolvable); halt-threshold-exceeded note: 7 refusals > 3 — completed only the 2 genuinely-tractable unblocked targets per batch intent
 ```
 
 ## Merged
