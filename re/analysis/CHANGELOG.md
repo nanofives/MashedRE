@@ -1477,3 +1477,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_0055_first_pass  writes=60  errors=0  splits=4(rtfs_manager,anim_channel,vector_path,vector_font)
 2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_0048_first_pass  writes=60  errors=0  renames=1(FUN_00489240->SkySecondaryDispatch drift-reconciled)  splits=5(smplfzx,world_objects,debug_overlay,particle,sky,render_thunk)  hooks-csv-row-update=0x00489240
 2026-05-18  sweep-20260518-0514  scribe-release  buckets=4 drained (cluster_005b/004f/0055/0048; total 240 plates + 240 bookmarks + 1 rename) drift-cleanups=2 (FUN_00489240->SkySecondaryDispatch + 0x0040bb50 boot-dup row removed from hooks.csv); sync=partial (slots 1/2/3 refreshed; 0/5/10-15 LOCKED by JVM-orphan-held .lock~ — will sync next /mcp restart); errors=0
+
+2026-05-18  sweep-20260518-1448  scribe-claim  buckets=5 queued, 1 halt (s4 libpng-libpng-zlib), 0 skipped-HOLD
+2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_0048ad50  writes=80  errors=0
