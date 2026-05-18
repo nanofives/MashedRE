@@ -1,0 +1,469 @@
+================================================================================
+batch_t — Ghidra-side fanout (upgraded discover-c1-batch skill calibration)
+Generated: 2026-05-18 by discover-c1-batch skill (post-merge a0d6a37)
+================================================================================
+
+CONTEXT
+-------
+- N sessions: 6
+- Mix: 4 first-pass + 2 promote-c2
+- K_first_pass: 60 RVAs/session (3x standard 20-RVA cap; upsized for Opus 1M)
+- K_promote_c2: 40 RVAs/session (2.7x standard 15-RVA cap; upsized for Opus 1M)
+- Total: 240 first-pass + 80 promote-c2 = 320 RVAs in this batch
+- Worker model: Opus 4.7 (claude-opus-4-7[1m]) — 1M-context override
+- Sweep model:  Opus 4.7 (claude-opus-4-7[1m]) — same; correctness > speed
+
+UPGRADED-SKILL CALIBRATION TEST
+-------------------------------
+This is the first batch generated under the upgraded discover-c1-batch skill
+(merged into main at a0d6a37 / chore/skill-upgrades). The upgrades applied
+this batch:
+
+1. **CRT-band exclusion (0x004a0000..0x004b3fff).** batch_s session 1 wasted
+   a 60-RVA session on the bucket 0x004b0068..0x004b3a60 which turned out to
+   be 100% statically-linked MSVC CRT residue (29/60 already FidDB-named in
+   Ghidra). The upgraded skill now refuses any first-pass bucket where >30%
+   of candidates fall in 0x004a0000..0x004b3fff.
+
+   Naive picker outcome: would have picked top-density 0x004a (302) +
+                         0x004b0-3 (304) = 606 candidates, ~100% CRT, ZERO yield.
+   Upgraded picker:      eliminates 368 CRT-band RVAs from selection.
+                         All 4 chosen first-pass buckets: 0/60 in CRT band.
+
+2. **Subsystem-prediction caveat.** batch_s post-mortem showed 3 of 4 first-
+   pass buckets reclassified their subsystem mid-decomp (audio -> shader-
+   compiler / csl-pipeline / bimodal-qhull+mixer). Bucket names this batch
+   use RVA-anchored neutral form (cluster_004b4_first_pass, cluster_005c_
+   first_pass, etc.), NOT subsystem hypotheses. Sessions report the observed
+   subsystem in the SCRIBE_QUEUE row's `subsystem_observed=` field; ghidra-
+   sweep reconciles.
+
+3. **Per-session .pool_slot naming.** batch_s session 2 reported a `.pool_
+   slot` marker collision (two parallel sessions on the same checkout
+   overwrote each other's slot record). Each session this batch exports
+   POOL_SLOT_FILE=.pool_slot_session_t_s<N> before invoking ghidra_pool.sh
+   or the ghidra-pool skill. Recipe in every session block below.
+
+Calibration metric to report post-sweep:
+- Fraction of plates that flag library-family fingerprint (target: <10%)
+- Fraction of buckets that reclassify subsystem (acceptable: high; that is
+  what the neutral naming is for)
+- Whether any .pool_slot collision recurs (target: 0)
+- Whether any session compacts mid-bucket at 60-RVA cap (signal to dial back)
+
+CANDIDATE-POOL SNAPSHOT (2026-05-18 0007 — post batch_s sweep)
+--------------------------------------------------------------
+- Inventory total:              5,800 functions
+- Mapped (hooks.csv any conf):  1,884 rows (C0..C4)
+- Unmapped:                     3,986 (still 68.7% of binary)
+- C1 backlog (unique RVAs):     1,404 — render 391, util 268, audio 158,
+                                  boot 132, vehicle 127, frontend 105,
+                                  ai 61, hud 42, input 33, gameplay 26
+
+POOL SLOT PRE-ASSIGNMENT
+------------------------
+Session 1 → Mashed_pool0   .pool_slot_session_t_s1
+Session 2 → Mashed_pool1   .pool_slot_session_t_s2
+Session 3 → Mashed_pool2   .pool_slot_session_t_s3
+Session 4 → Mashed_pool3   .pool_slot_session_t_s4
+Session 5 → Mashed_pool4   .pool_slot_session_t_s5
+Session 6 → Mashed_pool5   .pool_slot_session_t_s6
+(All slots 0..15 verified clean before generation; check `mashed_pool/
+Mashed_pool*.lock` is empty before launching the fanout.)
+
+BUCKET OVERVIEW (subsystem labels are TENTATIVE — agent MUST report
+                  `subsystem_observed=` in queue row if it differs)
+------------------------------------------------------------------
+| # | Bucket                              | RVAs | Tentative hypothesis              |
+|---|-------------------------------------|------|-----------------------------------|
+| 1 | cluster_004b4_first_pass            |  60  | Game code piz-adjacent (was s1's  |
+|   | (0x004b4000..0x004b6b20)            |      | redirect zone, immediately POST-  |
+|   |                                     |      | CRT — verified 0/60 in CRT band)  |
+| 2 | cluster_005c_first_pass             |  60  | High-RVA tail — historically RW   |
+|   | (0x005c0140..0x005c281e)            |      | callbacks / STL / audio post-qhull|
+| 3 | cluster_0049_first_pass             |  60  | Input/DirectInput-adjacent (recent|
+|   | (0x00491490..0x0049b300)            |      | C2 sweep landed DInput at 0x00495)|
+| 4 | cluster_004d_first_pass             |  60  | Mid-binary code (unknown — possibly|
+|   | (0x004d0290..0x004d7480)            |      | RW middleware or AI inner loops)  |
+| 5 | promote_c2_vehicle_lowrva           |  40  | Vehicle C1 backlog (lowest 40)    |
+|   | (0x004039c0..0x00442df0)            |      |                                   |
+| 6 | promote_c2_render_midrva            |  40  | Render C1 backlog at 0x00471xxx..|
+|   | (0x004715a0..0x00480100)            |      | 0x00480xxx (lowrva drained by s5) |
+
+================================================================================
+Session 1 — cluster_004b4_first_pass  (FIRST-PASS, 60-RVA discovery)
+================================================================================
+
+Pool slot:   Mashed_pool0 (pre-assigned — do not call ghidra_pool.sh acquire)
+Pool slot file: .pool_slot_session_t_s1 (per-session, to avoid collision)
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 60 RVAs (this session: 60)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/cluster_004b4_first_pass/
+Drains to:   re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+
+# Mission
+First-pass C0->C1 discovery of 60 unmapped functions in the 0x004b4000..
+0x004b6b20 range. This range sits IMMEDIATELY POST-CRT (the upgraded skill's
+CRT band ends at 0x004b3fff). batch_s session 1 hit the CRT residue at
+0x004b0068..0x004b3a60 (100% library); these 60 RVAs are the GAME-CODE
+neighbors and have never been swept. The piz_fsmanager handlers at 0x004b6710,
+0x004b67e0, 0x004b6940 are in this range — strong hint that this is the
+piz/RW VFS frontier — but DO NOT hard-claim "piz" subsystem; report the
+observed subsystem in the queue row.
+
+Working hypothesis (TENTATIVE): piz/RW middleware glue. Confirm or reclassify
+during decomp; report reclassification in SCRIBE_QUEUE row's
+`subsystem_observed=` field.
+
+# Inputs
+- DEFERRED.md rows: none (fresh first-pass)
+- hooks.csv rows: 60 new rows (C0->C1)
+- Adjacent buckets to cross-reference:
+  - re/analysis/piz_fsmanager_handler/REPORT.md (0x004b6710, 0x004b67e0, 0x004b6940 are nearby)
+  - re/analysis/fun_004b6940_scoping/REPORT.md (today's scoping note)
+- batch_s session 1 post-mortem: 0x004b0068..0x004b3a60 was 100% CRT;
+  the band 0x004b4000+ is the NEXT band over and is expected to be game code.
+
+# Workflow
+1. ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_t_s1"
+   ```
+2. Pre-flight asserts: `bash scripts/ghidra_assert.sh preflight Mashed_pool0`.
+3. mcp__ghidra__project_program_open_existing with Mashed_pool0, read_only=true.
+4. For each RVA (60 total):
+   a. mcp__ghidra__function_at <rva> — confirm function exists.
+   b. mcp__ghidra__decomp_function — pull body.
+   c. mcp__ghidra__function_callers — note callers (cap at depth 1).
+   d. Write re/analysis/cluster_004b4_first_pass/<rva>.md with:
+      - frontmatter: rva, name_in_ghidra, size_bytes, confidence: C1,
+        subsystem: <observed — not hypothesis>, callees_depth1: [...],
+        callers_noted: [...], opened_in_slot: Mashed_pool0,
+        session_date: 2026-05-18
+      - ## Mechanical description (decomp bullets, NO speculation)
+      - ## Constants (every constant + Ghidra address)
+      - ## Uncertainties (file U-IDs)
+      - ## Stubs encountered (file S-IDs)
+5. Append a row to re/SCRIBE_QUEUE.md including `subsystem_observed=<X>`.
+6. Commit once at end (NOT per RVA) with msg
+   "discover-c1: cluster_004b4_first_pass — 60 plates".
+
+# Candidates (60 RVAs)
+004b4000, 004b4010, 004b4050, 004b4080, 004b40c0, 004b40f0, 004b4120, 004b4130,
+004b4140, 004b4150, 004b41b0, 004b41f0, 004b4230, 004b4270, 004b4280, 004b4650,
+004b47c0, 004b47e0, 004b48e0, 004b4a80, 004b4ad0, 004b4b20, 004b4b60, 004b4c80,
+004b4d10, 004b4e20, 004b4e70, 004b5080, 004b51d0, 004b5260, 004b52c0, 004b52f0,
+004b5350, 004b5360, 004b5370, 004b5380, 004b5390, 004b53a0, 004b55a0, 004b5750,
+004b59c0, 004b5af0, 004b5d90, 004b60c0, 004b61c0, 004b6570, 004b6590, 004b65c0,
+004b65e0, 004b6700, 004b6710, 004b6770, 004b67a0, 004b67e0, 004b68e0, 004b68f0,
+004b6940, 004b6b00, 004b6b10, 004b6b20
+
+# STOP-AND-ASK if
+- A candidate is a library function (memcpy, _ftol2, RW primitive) — note + skip.
+- Decomp is too ambiguous to transcribe mechanically — [UNCERTAIN] + file U-ID; don't block.
+- The session approaches 800K tokens used — checkpoint commit, report partial.
+- >30% of bucket turns out to be library (would mean CRT band actually extends
+  past 0x004b3fff; raise filter recalibration).
+
+================================================================================
+Session 2 — cluster_005c_first_pass  (FIRST-PASS, 60-RVA discovery)
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Pool slot file: .pool_slot_session_t_s2
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 60 RVAs (this session: 60)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/cluster_005c_first_pass/
+Drains to:   re/SCRIBE_QUEUE.md
+
+# Mission
+First-pass discovery of 60 unmapped functions in the 0x005c0140..0x005c281e
+range (low-RVA portion of the 199-RVA 0x005c block). This is the high-RVA
+tail of the binary — historically these contain RW callbacks, STL-template-
+instantiation residue, and post-qhull audio/middleware functions.
+
+Working hypothesis (TENTATIVE): RW callback frames or STL residue. The 0x005a
+band immediately below this was confirmed to be qhull-FidDB (statically-linked
+2002.1) in the 2026-05-17 ghidra-bulk session. 0x005c may be a different
+library or the start of real audio/RW code. Confirm via decomp.
+
+# Inputs
+- DEFERRED.md rows: none
+- hooks.csv rows: 60 new rows (C0->C1)
+- Adjacent buckets to cross-reference:
+  - re/analysis/ (any 005a-* qhull notes from ghidra-bulk-20260517)
+
+# Workflow
+1. ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_t_s2"
+   ```
+2. Pre-flight asserts: `bash scripts/ghidra_assert.sh preflight Mashed_pool1`.
+3. mcp__ghidra__project_program_open_existing with Mashed_pool1.
+4. Same per-RVA loop as Session 1; bucket dir
+   re/analysis/cluster_005c_first_pass/.
+5. Append SCRIBE_QUEUE row with `subsystem_observed=<X>`.
+6. Commit msg "discover-c1: cluster_005c_first_pass — 60 plates".
+
+# Candidates (60 RVAs)
+005c0140, 005c01f0, 005c0250, 005c02a0, 005c02c0, 005c0320, 005c0360, 005c0490,
+005c0600, 005c06e0, 005c0730, 005c07f0, 005c0c20, 005c0c90, 005c0d40, 005c0dc0,
+005c0e00, 005c0e40, 005c0e70, 005c0ec0, 005c0ef0, 005c1140, 005c1380, 005c13c0,
+005c1420, 005c1480, 005c14c0, 005c1520, 005c1540, 005c1770, 005c17d0, 005c1920,
+005c1926, 005c192c, 005c1a40, 005c1cb7, 005c1cd4, 005c1d63, 005c1da2, 005c1dac,
+005c1dd3, 005c1e27, 005c1e31, 005c1f1c, 005c1f97, 005c2025, 005c2090, 005c21ba,
+005c21e2, 005c228e, 005c229b, 005c22bd, 005c2300, 005c2435, 005c2470, 005c24e0,
+005c2770, 005c278f, 005c27e6, 005c281e
+
+# STOP-AND-ASK if
+- Bucket fingerprints as library family (>30% with version literals, qh_*,
+  _FreeImage_*, RW_*, etc.) — note in plate, do NOT rename (rename = sweep job).
+- Multiple candidates share an obvious struct shape (>= 3 callers agree on
+  offsets) — file a struct doc in re/analysis/structs/.
+
+================================================================================
+Session 3 — cluster_0049_first_pass  (FIRST-PASS, 60-RVA discovery)
+================================================================================
+
+Pool slot:   Mashed_pool2 (pre-assigned)
+Pool slot file: .pool_slot_session_t_s3
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 60 RVAs (this session: 60)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/cluster_0049_first_pass/
+Drains to:   re/SCRIBE_QUEUE.md
+
+# Mission
+First-pass discovery of 60 unmapped functions in the 0x00491490..0x0049b300
+range. The 0x00495xxx sub-band was recently swept (DirectInput init reached
+C2 via ma1-ghidra-s7 on 2026-05-16: 0x00495530 CreateDInputObject,
+0x004955b0 CreateDInputObjectBool, 0x004960a0 DInputDeviceInit, 0x00496010
+DInput/joypad shutdown). The unmapped neighbors in 0x00491xxx..0x0049bxxx
+likely include adjacent input glue and other code that the input-focused
+sweep didn't touch.
+
+Working hypothesis (TENTATIVE): input/DirectInput-adjacent — but 0x0049[3-4]
+and 0x0049[a-b] could be entirely different code (RW init, ABI thunks).
+Confirm and report observed subsystem.
+
+# Inputs
+- DEFERRED.md rows: none
+- hooks.csv rows: 60 new rows (C0->C1)
+- Adjacent buckets to cross-reference:
+  - re/analysis/promote_c2_dinput_init/ (drained 2026-05-16)
+  - re/analysis/promote_c2_settings_dialog/ (drained 2026-05-16; 0x00498xxx)
+  - re/analysis/promote_c2_boot_teardown/ (drained 2026-05-16; some 0x00489xxx)
+
+# Workflow
+1. ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_t_s3"
+   ```
+2. Same shape as Session 1; bucket dir
+   re/analysis/cluster_0049_first_pass/.
+
+# Candidates (60 RVAs)
+00491490, 00493390, 00493590, 004935a0, 004935d0, 004938e0, 00493c60, 004942b0,
+00494320, 004943d0, 004943f0, 00494480, 00494820, 00494b20, 00494b65, 00494c60,
+00494ee0, 00494f40, 00494fd0, 004954f0, 00495520, 00495580, 004955d0, 00495780,
+00495790, 004957a0, 00495870, 00495e80, 00495fe0, 00496040, 00496100, 00496320,
+00496370, 00496530, 004967e0, 00496910, 00496940, 00496970, 004969a0, 00496c10,
+00496d00, 00496d20, 00496d60, 00496db0, 00496ec0, 00497450, 00497470, 004974b0,
+00497b10, 00497b60, 00499d90, 0049a0a0, 0049a0e0, 0049a150, 0049a2e0, 0049a730,
+0049a740, 0049aae0, 0049ab10, 0049b300
+
+# STOP-AND-ASK if
+- A candidate is already plated as C1+ in hooks.csv (drift-skip and report).
+- 0x00495[5-9]xxx candidates look like dup DInput init code already drained
+  in promote_c2_dinput_init (D-row filed by ma1-ghidra-s7) — note and skip.
+
+================================================================================
+Session 4 — cluster_004d_first_pass  (FIRST-PASS, 60-RVA discovery)
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Pool slot file: .pool_slot_session_t_s4
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 60 RVAs (this session: 60)
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/cluster_004d_first_pass/
+Drains to:   re/SCRIBE_QUEUE.md
+
+# Mission
+First-pass discovery of 60 unmapped functions in the 0x004d0290..0x004d7480
+range. The 0x004d band has 139 unmapped — moderately dense, spread thinly
+across sub-bands (no single 0x004d? sub-band exceeds 18 RVAs). Bodies here
+range from 67 bytes (0x004d1d20) to 1735 bytes (0x004d1640), so a mix of
+trivial wrappers and substantive functions.
+
+Working hypothesis (TENTATIVE): unknown — possibly RW middleware (Rt*FS),
+AI inner loops, or game-mode logic. Subsystem genuinely unclear; report
+observed.
+
+# Inputs
+- DEFERRED.md rows: none
+- hooks.csv rows: 60 new rows (C0->C1)
+- Adjacent buckets to cross-reference:
+  - none direct — the 0x004d band has had limited prior sweeps. Check
+    hooks.csv for any 0x004d? mapped rows for context.
+
+# Workflow
+1. ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_t_s4"
+   ```
+2. Same shape as Session 1; bucket dir
+   re/analysis/cluster_004d_first_pass/.
+
+# Candidates (60 RVAs)
+004d0290, 004d0660, 004d07b0, 004d0d00, 004d1020, 004d1640, 004d1d20, 004d2340,
+004d2980, 004d2c80, 004d2e30, 004d3090, 004d3510, 004d38b0, 004d38f0, 004d3950,
+004d39b0, 004d3a10, 004d3a60, 004d3ab0, 004d3b00, 004d3d50, 004d3db0, 004d3e90,
+004d4170, 004d41e0, 004d4250, 004d42b0, 004d4310, 004d4380, 004d4910, 004d4a20,
+004d4bf0, 004d4dd0, 004d4f00, 004d4f90, 004d5190, 004d52d0, 004d5310, 004d5340,
+004d54d0, 004d5550, 004d55b0, 004d6910, 004d6b90, 004d6c40, 004d6c90, 004d6ce0,
+004d6e60, 004d7100, 004d71f0, 004d7200, 004d7250, 004d72a0, 004d72f0, 004d7340,
+004d7390, 004d73e0, 004d7430, 004d7480
+
+# STOP-AND-ASK if
+- The bucket fragments into 3+ distinct subsystems within the 60 RVAs (i.e.,
+  no coherent cluster) — file a note for ghidra-sweep so it splits the
+  bucket dir at write time.
+
+================================================================================
+Session 5 — promote_c2_vehicle_lowrva  (PROMOTE-C2, 40-RVA bucket)
+================================================================================
+
+Pool slot:   Mashed_pool4 (pre-assigned)
+Pool slot file: .pool_slot_session_t_s5
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 40 RVAs (this session: 40)
+Skill used:  parallel-fanout promote-c2
+Bucket dir:  re/analysis/promote_c2_vehicle_lowrva/
+Drains to:   re/SCRIBE_QUEUE.md
+
+# Mission
+Promote 40 vehicle-subsystem C1 rows to C2 by reading each function's decomp
+end-to-end and writing a mechanical-description plate. These are the lowest-
+RVA vehicle rows currently at C1 (range 0x004039c0..0x00442df0 — spans the
+0x0040xxx..0x00442xxx vehicle backbone). Vehicle has 127 unique C1 rows; this
+bucket drains the first ~31% and unblocks several C3 caller-gates that depend
+on vehicle C2 callees (frida-sweep notes from 2026-05-17 cite multiple C3
+refusals due to vehicle-callee C1).
+
+# Inputs
+- DEFERRED.md: none (these are settled C1 rows, all > 7 days old per the
+  skill's settling criterion)
+- hooks.csv: 40 rows updated C1->C2
+- Adjacent buckets to cross-reference:
+  - any prior promote_c2_vehicle_* dirs (none drained yet; this is the
+    first vehicle promote-c2 bucket)
+
+# Workflow
+1. ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_t_s5"
+   ```
+2. Pre-flight asserts: `bash scripts/ghidra_assert.sh preflight Mashed_pool4`.
+3. mcp__ghidra__project_program_open_existing with Mashed_pool4.
+4. For each RVA:
+   a. Read existing C1 plate (file path in hooks.csv $6).
+   b. mcp__ghidra__decomp_function — pull full body (read end-to-end).
+   c. Cross-check existing plate's mechanical description against the decomp.
+      If the existing plate has [UNCERTAIN] markers, attempt to resolve them;
+      if you can't, leave them and file a U-ID.
+   d. Write or update re/analysis/promote_c2_vehicle_lowrva/<rva>.md with:
+      - frontmatter (promoted_from: C1, confidence: C2)
+      - ## Mechanical description (full, not just bullets)
+      - ## Constants (all of them, RVA-cited)
+      - ## Struct offsets (if any clear shape emerges; cross-reference 3+ callers)
+      - ## Uncertainties / Stubs
+   e. Update the corresponding hooks.csv row: $4 C2, $6 -> new plate path,
+      $9 -> drift-tagged old C1 file ref preserved as
+      `promoted_from=<old_path>`.
+5. Append row to re/SCRIBE_QUEUE.md including `subsystem_observed=` if any
+   candidate turns out NOT to be vehicle (frontend/util boundary at 0x0042xxx).
+6. Drift-detect: if any candidate already has a C2+ row in hooks.csv (dup),
+   skip and report.
+
+# Candidates (40 RVAs)
+004039c0, 00404e00, 00404e20, 00405890, 00408a50, 00408a70, 0040e180, 0040e340,
+0040e350, 0040e370, 00410d10, 00411170, 00411350, 004114e0, 00411530, 00411580,
+004115c0, 00411600, 00411750, 004117b0, 00411870, 00411ae0, 00411ce0, 00411d60,
+00411d90, 00411f30, 00413c70, 00422fd0, 00423b20, 004248b0, 00426cc0, 0042a6b0,
+0042bf30, 0042c280, 0042c510, 0042d3a0, 0042fe70, 00432080, 004331a0, 00442df0
+
+# STOP-AND-ASK if
+- A function exceeds 500 lines of decomp with cross-subsystem implications —
+  Opus 4.7 can handle it but the plate may not fit; consider splitting.
+- >5 candidates share a struct shape — file a single struct doc instead of
+  5+ per-RVA struct-offsets sections.
+- 0x0042xxx candidates flip to frontend/util — frequently the frontend/vehicle
+  boundary is fuzzy at 0x0042xxx; report subsystem_observed correction.
+
+================================================================================
+Session 6 — promote_c2_render_midrva  (PROMOTE-C2, 40-RVA bucket)
+================================================================================
+
+Pool slot:   Mashed_pool5 (pre-assigned)
+Pool slot file: .pool_slot_session_t_s6
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 40 RVAs (this session: 40)
+Skill used:  parallel-fanout promote-c2
+Bucket dir:  re/analysis/promote_c2_render_midrva/
+Drains to:   re/SCRIBE_QUEUE.md
+
+# Mission
+Promote 40 render-subsystem C1 rows to C2 in the 0x004715a0..0x00480100 range.
+This is the mid-RVA render band (batch_s session 5 drained the lowrva band
+0x00401f10..0x004266b0). 391 unique render C1 rows project-wide — this bucket
+drains ~10% of the backlog and targets a coherent address range likely to
+contain related primitive functions (RW callback wrappers, render-state setters).
+
+# Inputs
+- DEFERRED.md: none
+- hooks.csv: 40 rows updated C1->C2
+- Adjacent buckets to cross-reference:
+  - re/analysis/promote_c2_render_lowrva/ (drained 2026-05-17 by batch_s s5)
+  - re/analysis/promote_c2_rw_render_submit/ (drained 2026-05-16)
+
+# Workflow
+1. ```bash
+   export POOL_SLOT_FILE=".pool_slot_session_t_s6"
+   ```
+2. Same shape as Session 5; bucket dir
+   re/analysis/promote_c2_render_midrva/.
+
+# Candidates (40 RVAs)
+004715a0, 00471ac0, 00471cf0, 00471ec0, 00472380, 004725c0, 00472650, 00472690,
+00474f30, 00474fb0, 00474fd0, 00478200, 004783f0, 004785e0, 00478660, 00478cf0,
+00479030, 004790e0, 00479330, 0047a0f0, 0047a1e0, 0047ab30, 0047abd0, 0047b9e0,
+0047bcc0, 0047be80, 0047bf70, 0047c0b0, 0047c0f0, 0047c160, 0047cea0, 0047d080,
+0047d100, 0047f4c0, 0047f840, 0047f940, 0047fc40, 0047fe00, 0047ff70, 00480100
+
+# STOP-AND-ASK if
+- A function turns out to be an RW library wrapper (D3D9 thunk, RW state
+  setter that's already known) — note library match in plate, do NOT rename
+  in this session (rename = sweep job).
+
+================================================================================
+END OF BATCH batch_t
+================================================================================
+
+Post-batch:
+1. Each session commits to main (Ghidra fanout uses no worktrees per skill).
+2. The user runs `ghidra-sweep` (Opus 4.7) from main worktree to drain
+   SCRIBE_QUEUE into the master Mashed.gpr project (plates, bookmarks,
+   renames). DO NOT generate batch_u before this sweep completes — overlapping
+   sessions on same RVAs cause drift.
+3. Expected wall time: ~2-3 hours human-attended parallel work for 6 sessions.
+4. Expected yield (calibration-aware):
+   - First-pass: ~95% per session if CRT-band filter held; if any bucket
+     turns out >30% library, signal a filter refinement for next batch.
+   - Promote-c2: ~85% per session (drift-skip dups, structural-placeholder defers)
+   - Total promotions target: ~225-240 RVAs C0->C1, ~65-70 C1->C2.
+
+Calibration metrics to report back to discover-c1-batch maintainers:
+- Library-fingerprint rate per bucket (target <10% in any single bucket)
+- Subsystem-observed deltas (how many buckets reclassified, into which subsystems)
+- Any .pool_slot collision incidents (target: 0)
+- Any session compacting mid-bucket at 60-RVA cap (signal to dial back)
+
+After this batch lands:
+- C1 surface mapping: ~+225 = 1,629 unique row count (target)
+- C2 mid-tier:        ~+65  = ~ project-total raise
+- Remaining unmapped: 3,986 -> ~3,761 (still ~65% of binary)
+- The 4 first-pass buckets are deliberately spread (post-CRT 0x004b4, deep
+  0x005c, input-adjacent 0x0049, unknown 0x004d) to maximize cluster diversity
+  and exercise the upgraded subsystem-prediction caveat under varied conditions.
