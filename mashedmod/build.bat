@@ -38,6 +38,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Vehicle\VehicleState.cpp" ^
     "Vehicle\MiscDamping_j3.cpp" ^
     "Vehicle\Replay_j3.cpp" ^
+    "Vehicle\Damage_j4.cpp" ^
+    "Vehicle\Physics_j4.cpp" ^
     "Util\TimerState.cpp" ^
     "Util\TimerSubarrayInit.cpp" ^
     "Util\GameStateGetters.cpp" ^
