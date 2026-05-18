@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-17  c3-batch-i-s3  rvas=0x00498f60,0x00499170,0x00499740,0x004b3b70,0x004b3bb0  branch=c3/batch-i-s3  evidence=log/diff_video_dialog_init_i3.csv;log/diff_subsystem_selection_changed_i3.csv;log/diff_set_control_text_from_resource_i3.csv;log/diff_file_read_wrapper_i3.csv;log/diff_file_write_wrapper_i3.csv  note=5/5 settings_dialog+save_gamesave file I/O C2->C3; Save/SettingsAndIO_i3.cpp; dialog handlers (00498f60/00499170/00499740) use HWND-via-EAX __declspec(naked) bridge to __stdcall body — pattern adapted from HudBatch_h4.cpp/0x0041bc50; file wrappers (004b3b70/004b3bb0) faithful __cdecl reimpl invoking game-VA FUN_004cc230/FUN_004cbd30/FUN_004cbe80/FUN_004cc160; U-0287/U-0288 acknowledged in 004b3bb0 source (close receives write_result not handle per binary); all 5 GREEN crash_equal_ok harness (10/10 each); arg_types reused (none + int_scalar); no new harness extensions; build clean
 ```
 
 ## Merged

@@ -4711,4 +4711,91 @@ HOOKS = {
         'path1_tests': [0],
         'path2_tests': [0],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-i-s3 — Save/SettingsAndIO_i3.cpp
+    # 5 settings_dialog + save_gamesave file I/O wrappers.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00498f60  VideoDialogInit_i3
+    # WM_INITDIALOG handler, 516 bytes. HWND via EAX (Ghidra in_EAX).
+    # Not exercised at main menu (video settings dialog silenced by
+    # patch_mashed_skip_selector.py). Synthetic call: arg_type='none' +
+    # crash_equal_ok=True — both sides AV identically at first GetDlgItem
+    # on garbage HWND. Pattern matches font_text_utf16_widen_copy (0x00427840).
+    'video_dialog_init_i3': {
+        'rva':            0x00498f60,
+        'export':         'VideoDialogInit_i3',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00499170  SubsystemSelectionChanged_i3
+    # WM_COMMAND/1000 handler, 128 bytes. HWND via EAX.
+    # Same harness pattern as video_dialog_init_i3.
+    'subsystem_selection_changed_i3': {
+        'rva':            0x00499170,
+        'export':         'SubsystemSelectionChanged_i3',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00499740  SetControlTextFromResource_i3
+    # LoadStringA + SetWindowTextA helper, 100 bytes. HWND via EAX + arg on stack.
+    # Same harness pattern. Both sides crash at GetDlgItem(NULL) or
+    # SetWindowTextA(NULL).
+    'set_control_text_from_resource_i3': {
+        'rva':            0x00499740,
+        'export':         'SetControlTextFromResource_i3',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 0x7d0, 0x8c0, 0x8ca, 0x8d4, 0x8de, 0x8e8, 0],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004b3b70  FileReadWrapper_i3
+    # __cdecl 3-arg file_read(filename, buf, size). Called by SaveLoad.
+    # At main menu the gamesave.bin may or may not exist; both sides
+    # invoke the same FUN_004cc230/004cbd30/004cc160 callees (game-VA
+    # function pointers identical) → identical bytes_read return value.
+    # arg_type='none' + crash_equal_ok=True: pass garbage stack args;
+    # both sides take identical FUN_004cc230(2,1,garbage_ptr) path which
+    # returns NULL → early return 0. Identical bit-result.
+    'file_read_wrapper_i3': {
+        'rva':            0x004b3b70,
+        'export':         'FileReadWrapper_i3',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004b3bb0  FileWriteWrapper_i3
+    # __cdecl 3-arg file_write(filename, buf, size). Called by SaveWrite.
+    # Same harness pattern as file_read_wrapper_i3. Both sides call
+    # FUN_004cc230(2,2,garbage) which returns NULL → early return 0.
+    # U-0287/U-0288 do not affect bit-identity (both sides faithfully
+    # pass write_result to close).
+    'file_write_wrapper_i3': {
+        'rva':            0x004b3bb0,
+        'export':         'FileWriteWrapper_i3',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
