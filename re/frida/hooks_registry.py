@@ -5179,4 +5179,108 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-j-s5 — settings dialog + boot CRT + input dinput
+    # 5 hooks: 1 dialog (EAX-implicit HWND), 1 input (EAX-implicit slot int),
+    # 3 boot CRT (1 leaf + 2 trivial wrappers). 5 candidates refused/deferred:
+    #   - 0x00498d60 PopulateModeCombo  (REFUSE: no internal callee at C2+)
+    #   - 0x004991f0 VideoSettingsDlgProc (DEFER: STOP-AND-ASK budget split)
+    #   - 0x00499400 VideoSettingsDispatcher (DEFER: STOP-AND-ASK budget split)
+    #   - 0x00550910 FUN_00550910        (REFUSE: no internal C2+ callee, IAT semantics block validation)
+    #   - 0x004a4bb7 entry               (REFUSE: PE entry; cannot hook loader execution)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00498d20  ReadModeFromCombo_j5
+    # 53-byte WM_COMMAND IDOK / CBN_SELCHANGE handler. HWND via EAX (Ghidra
+    # in_EAX). Calls GetDlgItem + 2x SendMessageA, writes DAT_00773200.
+    # Not exercised at main menu (video settings dialog silenced). Synthetic
+    # call: both sides crash identically on GetDlgItem(NULL_HWND). Pattern
+    # matches video_dialog_init_i3 / subsystem_selection_changed_i3.
+    'read_mode_from_combo_j5': {
+        'rva':            0x00498d20,
+        'export':         'ReadModeFromCombo_j5',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004971b0  ControllerConfigLoad_j5
+    # 114-byte per-slot controller config loader. Slot index in EAX
+    # (in_EAX). Calls FUN_00497190 (filename formatter, EAX-implicit chain),
+    # ConfigLogDebug, FsopenSafe, _fread, _fclose.
+    # arg_type='eax_implicit_int' exercises the harness RWX trampoline (commit
+    # 656273b): each test integer is seeded into EAX before JMPing to the
+    # target. Returns 1 on success, 0 on file-not-found.
+    # At quiescent main menu, contcfg0.bin..contcfg9.bin may or may not exist;
+    # both sides take identical paths through FsopenSafe (same game RVA
+    # 0x004a4541) -> _fread of game-CRT static buffer at DAT_007e95c0+EAX*0x80.
+    # crash_equal_ok=True covers the case where _fsopen succeeds but _fread
+    # tries to write into the same DAT_007e95c0+EAX*0x80 buffer on both sides
+    # (identical destination, identical bytes_read).
+    'controller_config_load_j5': {
+        'rva':            0x004971b0,
+        'export':         'ControllerConfigLoad_j5',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'eax_implicit_int',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Slot indices: cover 0..9 (DAT_007e95c0 is 0x200-aligned; per-slot
+        # stride 0x80; valid slots typically 0..3 per U-2587 hypothesis (a))
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004a31b1  CrtExitProcess_j5
+    # FidDB-matched ___crtExitProcess (VS2003). Leaf with only Win32 externals
+    # (GetModuleHandleA/GetProcAddress/ExitProcess). No globals.
+    # HARNESS-LIMITED: calling this would terminate the process via
+    # ExitProcess. Same pattern as crt_exit_core (0x004a3258): declare a
+    # 3-arg signature so the int_scalar harness path's 1-arg call triggers
+    # "bad argument count" identically on both sides → crash_equal_ok=True
+    # registers GREEN without actually invoking ExitProcess.
+    'crt_exit_process_j5': {
+        'rva':            0x004a31b1,
+        'export':         'CrtExitProcess_j5',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'int32', 'int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
+        'path2_tests':    [0x00, 0x01, 0x02],
+    },
+
+    # 0x004a332b  CrtExitNoReturn_j5
+    # Trivial wrapper: tail-calls CrtExitCore(param_1, 0, 0).
+    # Same HARNESS-LIMITED pattern (declare 3-arg signature; the int_scalar
+    # call passes 1 arg; both sides fail with "bad argument count" before
+    # the bytes ever execute).
+    'crt_exit_no_return_j5': {
+        'rva':            0x004a332b,
+        'export':         'CrtExitNoReturn_j5',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'int32', 'int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
+        'path2_tests':    [0x00, 0x01, 0x02],
+    },
+
+    # 0x004a334d  CrtExitNormal_j5
+    # Trivial wrapper: tail-calls CrtExitCore(0, 0, 1). Zero args.
+    # Same HARNESS-LIMITED pattern: declare 3-arg signature so int_scalar's
+    # 1-arg call mismatches and both sides bail before ExitProcess fires.
+    'crt_exit_normal_j5': {
+        'rva':            0x004a334d,
+        'export':         'CrtExitNormal_j5',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'int32', 'int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
+        'path2_tests':    [0x00, 0x01, 0x02],
+    },
 }

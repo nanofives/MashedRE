@@ -89,7 +89,9 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Save\SettingsConfig.cpp" ^
     "Save\SettingsAndIO_i3.cpp" ^
     "Save\SettingsCfg_i4.cpp" ^
+    "Save\SettingsDialog_j5.cpp" ^
     "Boot\CrtStartup.cpp" ^
+    "Boot\Boot_j5.cpp" ^
     "Util\TimerSetters.cpp" ^
     "Util\TimerSlot.cpp" ^
     "Util\UtilBatch_h5.cpp" ^
@@ -98,6 +100,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\FrontendDispatch.cpp" ^
     "Boot\FrameDispatch.cpp" ^
     "Input\DirectInput.cpp" ^
+    "Input\DInput_j5.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
     "Harness\HarnessStubs.cpp" ^
     /link /DLL
