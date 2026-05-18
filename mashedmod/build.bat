@@ -46,6 +46,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Audio\AudioMemory.cpp" ^
     "Audio\AudioRws.cpp" ^
     "Audio\RwsStream_i1.cpp" ^
+    "Audio\RwsFmt_j1.cpp" ^
     "Audio\AudioDSound.cpp" ^
     "Audio\AudioMusic.cpp" ^
     "Math\RwV3dTransform.cpp" ^

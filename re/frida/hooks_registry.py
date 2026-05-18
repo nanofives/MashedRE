@@ -2609,6 +2609,107 @@ HOOKS = {
             {'a': [0x00]*16, 'b': [0x01] + [0x00]*15},
         ],
     },
+
+    # 0x005ac5f0  AudioFmtDescEqual  (c3-batch-j-s1)
+    # int(int* a, int* b): 5-field AND equality comparator on fmt-descriptor pairs.
+    # Fields compared: +0x00 (u32 direct), +0x04 (16B fmt-key via FUN_005adf30),
+    # +0x0c (s8), +0x0d (s8), +0x18 (u8 masked with 0xfd — bit1 ignored).
+    # Returns 1 iff all match, 0 otherwise.
+    # arg_type='fmt_desc_pair_compare' (2-arg form): allocates two 0x40 scratch
+    # buffers, writes per-test field map, calls fn(bufA, bufB), packs return +
+    # both buffer fingerprints. crash_equal_ok protects the FUN_005adf30 callee
+    # path which dereferences param_1[1]/param_2[1] (potential null deref on
+    # zero-init buffers).
+    'audio_fmt_desc_equal': {
+        'rva':            0x005ac5f0,
+        'export':         'AudioFmtDescEqual',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # equal full descriptors (return 1 if FUN_005adf30 reaches w/o crash;
+            # but both halves of the compare run against same scratch shape so
+            # crash_equal_ok keeps these GREEN even if the key-ptr deref AVs)
+            { 'a': {'f00': 0x11111111, 'f04': 0x22222222, 'f0c': 0x33333333, 'f18': 0x00000000},
+              'b': {'f00': 0x11111111, 'f04': 0x22222222, 'f0c': 0x33333333, 'f18': 0x00000000} },
+            # +0x00 differs
+            { 'a': {'f00': 0x11111111}, 'b': {'f00': 0x22222222} },
+            # +0x04 fmt-key field differs
+            { 'a': {'f04': 0xAAAAAAAA}, 'b': {'f04': 0xBBBBBBBB} },
+            # +0x0c low-byte differs
+            { 'a': {'f00': 1, 'f04': 0, 'f0c': 0x12345678},
+              'b': {'f00': 1, 'f04': 0, 'f0c': 0x87654321} },
+            # +0x18 flags differ but only bit1 (masked off by 0xfd) — same equivalence class
+            { 'a': {'f18': 0x02}, 'b': {'f18': 0x00} },
+            # +0x18 flags differ in a non-masked bit (bit0)
+            { 'a': {'f18': 0x01}, 'b': {'f18': 0x00} },
+            # all-zero
+            { 'a': {}, 'b': {} },
+            # large values
+            { 'a': {'f00': 0xFFFFFFFF, 'f04': 0xFFFFFFFF},
+              'b': {'f00': 0xFFFFFFFF, 'f04': 0xFFFFFFFF} },
+            # high-bit set
+            { 'a': {'f00': 0x80000000}, 'b': {'f00': 0x80000000} },
+            # repeated equal (smoke)
+            { 'a': {'f00': 0xDEADBEEF, 'f04': 0xCAFEBABE},
+              'b': {'f00': 0xDEADBEEF, 'f04': 0xCAFEBABE} },
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {} },
+            { 'a': {'f00': 1}, 'b': {'f00': 1} },
+            { 'a': {'f00': 1}, 'b': {'f00': 2} },
+        ],
+    },
+
+    # 0x005ac9e0  AudioFmtEntryMatch  (c3-batch-j-s1)
+    # int(u32* entry, u32* candidate): 6-condition match predicate for fmt-table
+    # entries against a candidate descriptor.
+    # cnd1: entry+0x05 (s8 channel) == cand+0x0d (s8 channel)
+    # cnd2: entry+0x04 (s8 fmt-char) == cand+0x0c (s8 fmt-char)
+    # cnd3: entry+0x08 (u32 min-rate) <= cand+0x00 (u32 rate)
+    # cnd4: cand+0x00 (u32 rate)     <= entry+0x0c (u32 max-rate)
+    # cnd5: FUN_005adf30(cand+0x04, entry+0x00) == 0  — 16-byte key compare
+    # cnd6: ((entry+0x10 ^ cand+0x18) & 1) == 0      — flag bit0 agreement
+    # arg_type='fmt_desc_pair_compare' (2-arg form). crash_equal_ok protects
+    # the key-ptr deref path inside FUN_005adf30.
+    'audio_fmt_entry_match': {
+        'rva':            0x005ac9e0,
+        'export':         'AudioFmtEntryMatch',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # equal full match (key-ptr deref crash → both sides crash equal)
+            { 'a': {'f00': 0x11111111, 'f04': 0x11, 'f05': 0x22, 'f08': 0x100, 'f0c': 0xFFFFFFFF, 'f10': 0x00},
+              'b': {'f00': 0x500, 'f04': 0x22222222, 'f0c': 0x11, 'f18': 0x00} },
+            # cnd1 mismatch (channel byte differs)
+            { 'a': {'f05': 0xAA}, 'b': {'f0d': 0xBB} },
+            # cnd2 mismatch (fmt-char differs)
+            { 'a': {'f04': 0x10}, 'b': {'f0c': 0x20} },
+            # cnd3 mismatch: cand+0x00 < entry+0x08 (min-rate)
+            { 'a': {'f08': 0x1000}, 'b': {'f00': 0x0500} },
+            # cnd4 mismatch: cand+0x00 > entry+0x0c (max-rate)
+            { 'a': {'f08': 0x0000, 'f0c': 0x0500}, 'b': {'f00': 0x1000} },
+            # cnd3 boundary: equal min-rate
+            { 'a': {'f08': 0x100, 'f0c': 0x1000}, 'b': {'f00': 0x100} },
+            # cnd4 boundary: equal max-rate
+            { 'a': {'f08': 0x100, 'f0c': 0x1000}, 'b': {'f00': 0x1000} },
+            # cnd6 flag bit0 mismatch
+            { 'a': {'f10': 0x01}, 'b': {'f18': 0x00} },
+            # cnd6 flag bit0 match (both bit0 set)
+            { 'a': {'f10': 0x01}, 'b': {'f18': 0x01} },
+            # all-zero (cnd3/4 trivially satisfied — but cnd5 key-deref may AV)
+            { 'a': {}, 'b': {} },
+        ],
+        'path2_tests': [
+            { 'a': {}, 'b': {} },
+            { 'a': {'f05': 0x10}, 'b': {'f0d': 0x20} },
+            { 'a': {'f08': 0x100, 'f0c': 0x1000}, 'b': {'f00': 0x500} },
+        ],
+    },
+
     'audio_sub_struct_link_device': {
         'rva':            0x005ae010,
         'export':         'AudioSubStructLinkDevice',
