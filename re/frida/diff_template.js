@@ -32,8 +32,17 @@
 //   arg_type        "float_scalar" | "vec3_ptr" | "vec2_ptr" |
 //                   "transform_point" | "transform_vector" |
 //                   "vec2_normalize" | "matrix_scale"
+//                 | "eax_implicit_ptr"          -- EAX-implicit pointer arg
+//                 | "eax_implicit_int"          -- EAX-implicit integer arg
+//                 | "vec3_global_mul_observe"   -- 3-float global read/mul/write
+//                 | "fmt_desc_pair_compare"     -- 2- or 4-arg fmt-desc comparator
 //   lut_root_delta  number  (0 or 4 — offset for LUT readiness poll)
 //   tests           array whose element shape depends on arg_type
+//
+// New (feature/harness-arg-types) — extra CONFIG fields:
+//   target_global_base    string (hex addr) — used by vec3_global_mul_observe
+//   target_global_stride  number (per-index byte stride) — same
+//
 'use strict';
 
 const CONFIG = $CONFIG$;
@@ -1088,6 +1097,239 @@ function runDiff() {
             results.push({ idx: i, input: nodeCount,
                            original: origV, reimpl: reimV,
                            match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── eax_implicit_ptr / eax_implicit_int ─────────────────────────────────
+    // Build a small RWX thunk that seeds EAX=imm32 then JMPs to the target.
+    // Layout (10 bytes):
+    //   B8 ?? ?? ?? ?? mov eax, imm32   ; bytes [0..4]; imm32 patched per iter
+    //   FF 25 ?? ?? ?? ?? jmp [memptr]   ; would be 6 more, but easier:
+    //   E9 ?? ?? ?? ?? jmp rel32         ; bytes [5..9]; rel32 patched per target
+    // Since the orig and reimpl have different absolute addresses, we allocate
+    // ONE thunk per side and emit a fresh rel32 for each. The MOV imm32 byte
+    // window (offset 1..4) is rewritten before each call.
+    //
+    // The target functions consume EAX (Ghidra's `in_EAX`) but otherwise take
+    // no stack args and use bare `RET`. After the original function returns,
+    // EAX holds the result, which Frida's NativeFunction(thunk, ret_type, [])
+    // captures as the integer/pointer return value.
+    //
+    // CONFIG.signature must declare ret type but EMPTY args list:
+    //   {'ret': 'uint32', 'args': []}  — int and pointer both go through EAX.
+    //
+    // input vector: a list of uint32 sentinels (test_values seeded into EAX).
+    // For eax_implicit_ptr, sentinels are addresses of small pre-allocated
+    // scratch buffers (so dereferences inside the target don't AV). The
+    // harness allocates N scratch buffers (32 bytes each) and rewrites the
+    // input list so each test value points to a fresh buffer of zeroed data.
+    if (CONFIG.arg_type === 'eax_implicit_ptr' || CONFIG.arg_type === 'eax_implicit_int') {
+        // Allocate scratch buffers for ptr mode (32-byte each, zero-init).
+        const isPtr   = (CONFIG.arg_type === 'eax_implicit_ptr');
+        const SCRATCH = 64;  // each scratch buffer
+
+        // Build a per-side trampoline:  B8 imm32 (mov eax,X)  E9 rel32 (jmp tgt)
+        // Total 10 bytes. We use one trampoline per side because the rel32 is
+        // computed once per target absolute address.
+        function buildTrampoline(targetAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 10, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putBytes([0xB8, 0x00, 0x00, 0x00, 0x00]);  // mov eax, 0 (patched)
+                w.putJmpAddress(targetAddr);                  // jmp rel32 -> target
+                w.flush();
+            });
+            return code;
+        }
+        const trampO = buildTrampoline(TARGET_ADDR);
+        const trampR = buildTrampoline(reimplAddr);
+        const FnO = new NativeFunction(trampO, CONFIG.signature.ret, [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, CONFIG.signature.ret, [], 'mscdecl');
+
+        // For ptr mode, pre-allocate fresh scratch buffers (one per test).
+        const scratchBufs = [];
+        if (isPtr) {
+            for (let i = 0; i < CONFIG.tests.length; i++) {
+                const b = Memory.alloc(SCRATCH);
+                // Zero out the buffer (32 bytes worth covers most struct prefixes).
+                for (let k = 0; k < SCRATCH; k += 4) b.add(k).writeU32(0);
+                scratchBufs.push(b);
+            }
+        }
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let eaxVal;
+            if (isPtr) {
+                // Use the scratch buffer address as the EAX value; the raw test
+                // entry is recorded as the input marker only.
+                eaxVal = parseInt(scratchBufs[i].toString(), 16) >>> 0;
+            } else {
+                eaxVal = (CONFIG.tests[i] >>> 0);
+            }
+            // Patch imm32 at offset 1 of each trampoline.
+            trampO.add(1).writeU32(eaxVal);
+            trampR.add(1).writeU32(eaxVal);
+
+            let origV = null, reimV = null, errO = null, errR = null;
+            try {
+                const r = FnO();
+                origV = (r === undefined || r === null) ? 0
+                      : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0)
+                      : (r >>> 0);
+            } catch (e) { errO = e.message; }
+            try {
+                const r = FnR();
+                reimV = (r === undefined || r === null) ? 0
+                      : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0)
+                      : (r >>> 0);
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: CONFIG.tests[i],
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── vec3_global_mul_observe ─────────────────────────────────────────────
+    // For functions that read a 3-float vec3 from globals, mutate, write back.
+    // Example: 0x0046c570 reads 3 floats at base+stride*idx and multiplies by
+    // a damping scalar global.
+    //
+    // CONFIG.target_global_base   string (hex addr, e.g. '0x00881f50')
+    // CONFIG.target_global_stride int    (per-index stride in BYTES)
+    // CONFIG.signature.args       ['int32']  (the index argument)
+    //
+    // Each test: { idx, vec3: [x,y,z] }.
+    // Strategy: write test vec3 to globals[idx*stride+0/4/8], save original,
+    // call fn(idx), read back globals as 3 u32 fingerprints, restore originals.
+    // Both orig and reimpl must produce identical post-call globals.
+    if (CONFIG.arg_type === 'vec3_global_mul_observe') {
+        const base   = ptr(CONFIG.target_global_base);
+        const stride = (CONFIG.target_global_stride | 0);
+        const Fn1arg = CONFIG.signature.args.length === 1;
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t   = CONFIG.tests[i];
+            const idx = t.idx | 0;
+            const v   = t.vec3;
+            const gx  = base.add(idx * stride + 0);
+            const gy  = base.add(idx * stride + 4);
+            const gz  = base.add(idx * stride + 8);
+            // Save current values so we can restore between orig and reimpl.
+            const sx = gx.readU32(), sy = gy.readU32(), sz = gz.readU32();
+            let origV = null, reimV = null, errO = null, errR = null;
+            try {
+                gx.writeFloat(v[0]); gy.writeFloat(v[1]); gz.writeFloat(v[2]);
+                if (Fn1arg) { Orig(idx); } else { Orig(); }
+                origV = [gx.readU32(), gy.readU32(), gz.readU32()].join(',');
+            } catch (e) { errO = e.message; }
+            // Restore so reimpl sees the same starting state.
+            gx.writeU32(sx); gy.writeU32(sy); gz.writeU32(sz);
+            try {
+                gx.writeFloat(v[0]); gy.writeFloat(v[1]); gz.writeFloat(v[2]);
+                if (Fn1arg) { Reimpl(idx); } else { Reimpl(); }
+                reimV = [gx.readU32(), gy.readU32(), gz.readU32()].join(',');
+            } catch (e) { errR = e.message; }
+            // Final restore.
+            gx.writeU32(sx); gy.writeU32(sy); gz.writeU32(sz);
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── fmt_desc_pair_compare ───────────────────────────────────────────────
+    // For audio_rws fmt comparator/transformer functions. Generalises:
+    //   0x005ac5f0 fn(int* a, int* b)            -> 0/1 match
+    //   0x005ac9e0 fn(u32* entry, u32* candidate) -> 0/1 match
+    //   0x005acaa0 fn(u32* dst, u32* src, p3, p4) -> dst|null (pack/unpack)
+    //
+    // Each test: { a: {fNN: u32, ...}, b: {fNN: u32, ...}, p3?: int, p4?: int }.
+    // The harness allocates two 0x20-byte scratch buffers (or 4 for 005acaa0
+    // when extra-data fixup might write off the end — capped at 0x40).
+    // Field writes: each key in `a`/`b` of the form `fXX` -> writes a u32 at
+    // offset 0xXX in the corresponding buffer (parsed via parseInt(key.slice(1),16)).
+    // Calls fn(aBuf, bBuf [, p3, p4]) then returns a packed fingerprint:
+    //   For 2-arg form (signature.args.length == 2): (retU32 << 24) ^
+    //     bufA fingerprint ^ (bufB fingerprint << 8) -- both buffers since
+    //     some comparators may set flag bits in either side.
+    //   For 4-arg form: same shape, with p3/p4 routed through.
+    if (CONFIG.arg_type === 'fmt_desc_pair_compare') {
+        const SZ = 0x40;  // 64-byte buffers — generous; covers fmt-desc + ext
+        const bufA = Memory.alloc(SZ);
+        const bufB = Memory.alloc(SZ);
+        const argc = CONFIG.signature.args.length;
+        // For 4-arg pack/unpack form, dst[+0x18] may have flags from prior
+        // calls; we zero both bufs before EACH call to prevent cross-iter
+        // contamination.
+        function fillBuf(b, fields) {
+            for (let k = 0; k < SZ; k += 4) b.add(k).writeU32(0);
+            if (fields) {
+                for (const key of Object.keys(fields)) {
+                    if (!key.startsWith('f')) continue;
+                    const off = parseInt(key.slice(1), 16);
+                    if (Number.isNaN(off) || off + 4 > SZ) continue;
+                    b.add(off).writeU32(fields[key] >>> 0);
+                }
+            }
+        }
+        function fingerprint(b) {
+            let fp = 0;
+            for (let k = 0; k < SZ; k += 4) {
+                fp = ((fp * 31) ^ b.add(k).readU32()) >>> 0;
+            }
+            return fp;
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            // ── orig call ──
+            try {
+                fillBuf(bufA, t.a);
+                fillBuf(bufB, t.b);
+                let ret;
+                if (argc === 4) {
+                    ret = Orig(bufA, bufB, (t.p3 | 0), (t.p4 | 0));
+                } else {
+                    ret = Orig(bufA, bufB);
+                }
+                const retU = (ret === null || ret === undefined) ? 0
+                           : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                           : (ret >>> 0);
+                origV = [(retU & 0xffff).toString(16),
+                         fingerprint(bufA).toString(16),
+                         fingerprint(bufB).toString(16)].join(',');
+            } catch (e) { errO = e.message; }
+            // ── reimpl call ──
+            try {
+                fillBuf(bufA, t.a);
+                fillBuf(bufB, t.b);
+                let ret;
+                if (argc === 4) {
+                    ret = Reimpl(bufA, bufB, (t.p3 | 0), (t.p4 | 0));
+                } else {
+                    ret = Reimpl(bufA, bufB);
+                }
+                const retU = (ret === null || ret === undefined) ? 0
+                           : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                           : (ret >>> 0);
+                reimV = [(retU & 0xffff).toString(16),
+                         fingerprint(bufA).toString(16),
+                         fingerprint(bufB).toString(16)].join(',');
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
         }
         send({ type: 'results', data: results });
