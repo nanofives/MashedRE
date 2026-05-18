@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-18  frida-sweep-20260518-0304  frida-sweep-release  branches=4 merged (s1=3 GREEN, s2=0/5 zero-yield, s3=5 GREEN, s4=1 new C3 + 1 drift-fix)  integration-diff=GREEN  hooks=10/10  conflicts={build.bat=1, hooks_registry.py=3-region, CHANGELOG.md=1, PROMOTION_QUEUE.md=3, DEFERRED.md=1 (D-11007 collision renumber 11010-11012)}; U-2587 RESOLVED side-finding
 2026-05-18  frida-sweep-20260518-0304  frida-sweep-claim  branches=4 queued (c3/batch-i-s1, c3/batch-i-s2 [zero-yield], c3/batch-i-s3, c3/batch-i-s4)
 2026-05-18  sweep-20260518-0247  scribe-claim  buckets=6 queued, 0 skipped-HOLD (cluster_005c row reconciled from misplaced Drained back to Queued)
 2026-05-18  sweep-20260518-0247  scribe-release  bucket=cluster_004b4_first_pass  writes=60  errors=0
