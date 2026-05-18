@@ -1492,3 +1492,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_00489940  writes=80  renames=0 (22 VFX game-code + 49 DirectShow strmbase candidates not FidDB-attested + 9 drift-skip; rename deferred to library-tag drain)  errors=0
 2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_00412130  writes=80  renames=0 (HUD weapons-VFX + ParticleEmitters game-code; no FidDB attestation)  errors=0
 2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_004ddfb0  writes=80  renames=0 (RenderWare D3D9 driver; no FidDB attestation present in batch)  errors=0
+2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_005c1d63  writes=80  renames=0 (33 FidDB-attested MSVC CRT entries pre-renamed by Ghidra analyzer; 23 CRT-internal + 24 game-code remain FUN_xxx)  errors=0
