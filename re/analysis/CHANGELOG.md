@@ -1459,3 +1459,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-17  c3-batch-i-s1  refused-promote-batch  rvas=005ab410;005aea00  reasons=only-static-caller-005a7b60-is-C1(needs-caller-at-C2+);U-0125-catalog-Blocks-C3-DAT_007d3ff8-runtime-only-target  note=3/5 promoted to C3; 2 refused with explicit unblock conditions.
 2026-05-18  sweep-20260518-0514  scribe-claim  buckets=4 queued, 0 skipped-HOLD
 2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_005b_first_pass  writes=60  errors=0
+2026-05-18  sweep-20260518-0514  scribe-release  bucket=cluster_004f_first_pass  writes=60  errors=0
