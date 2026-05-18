@@ -4342,7 +4342,6 @@ HOOKS = {
         ],
     },
 
-    # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-h-s5 — util small leaves+near-leaves (C2->C3)
     # Util/UtilBatch_h5.cpp
     # ─────────────────────────────────────────────────────────────────────
@@ -4468,4 +4467,117 @@ HOOKS = {
     # live across each CALL). A C++ fn-ptr reimpl cannot reliably set ESI,
     # so the diff would not be bit-identical. Same impedance as
     # 0x00422120 TimerInitLoop (refused below).
+    # Session c3-batch-h-s6 — Util mid-size (Opus 4.7 1M, 2026-05-17)
+    # UtilMid_h6.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00442c80  ModeGatedPlayerCheck
+    # 62-byte mode-gated player float compare. Returns 1 iff
+    #   FUN_0040e350()==6 AND DAT_007f0fd0 not in {4,8,9}
+    #   AND DAT_008989b0[param_1*4] > _DAT_005cc9b8.
+    # At main menu: FUN_0040e350 returns mode!=6 → both sides return 0.
+    # arg_type='int_scalar': passes int32 player_idx.
+    'mode_gated_player_check': {
+        'rva':            0x00442c80,
+        'export':         'ModeGatedPlayerCheck',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 0, 1, 2, 3],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00429aa0  GameStateSlotsFill
+    # 134-byte predicate-gated slot fill. Writes 3 globals via either
+    # FUN_00430790-keyed FUN_004a2c48 record (path A) or table lookup
+    # (path B). All callees C1+. Return void; bit-identity on side-effect
+    # equality (both sides drive same originals → same writes).
+    # arg_type='none': called 10x at quiescent main menu.
+    'game_state_slots_fill': {
+        'rva':            0x00429aa0,
+        'export':         'GameStateSlotsFill',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041d730  PlayerSlotConfigInit
+    # 225-byte slot init loop. Zeros [0x0063d298,0x0063d558) stride 0x160,
+    # then iterates 4 config pairs; at menu all pair-firsts are -1 → no
+    # writes besides the initial zero-fill (idempotent).
+    # arg_type='none': called 5x at quiescent main menu.
+    'player_slot_config_init': {
+        'rva':            0x0041d730,
+        'export':         'PlayerSlotConfigInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004295a0  HudDualLabelRender
+    # ~124-byte HUD label render. Calls FUN_0040dc80 (C1) twice and
+    # FUN_00427e00 (C1) twice with constant args. Void return; side-effects
+    # delegated to originals.
+    # arg_type='none': called 5x at quiescent main menu.
+    'hud_dual_label_render': {
+        'rva':            0x004295a0,
+        'export':         'HudDualLabelRender',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0043c000  TimerSlotTickDispatcher
+    # 1450-byte 19-slot timer tick. Guard global == DAT_005d757c gates reset
+    # mode; otherwise per-slot state 1/2 record frame counter + optional
+    # action. At quiescent menu all slot states are 0 → both sides clear
+    # counters identically.
+    # arg_type='none': called 10x at quiescent main menu.
+    'timer_slot_tick_dispatcher': {
+        'rva':            0x0043c000,
+        'export':         'TimerSlotTickDispatcher',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00475a60  PendingOpQueueFlush
+    # 74-byte queue drain. Reads count at 0x0069160c; at menu count==0 →
+    # loop body doesn't fire. Both sides observe empty queue.
+    # arg_type='none': called 10x at quiescent main menu.
+    'pending_op_queue_flush': {
+        'rva':            0x00475a60,
+        'export':         'PendingOpQueueFlush',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00410860  ScoreThresholdStateCheck
+    # 591-byte score/timeout state-machine. At menu: PTR_PTR_005f2770 may
+    # be null → both paths crash same way → crash_equal_ok=True. If running
+    # safely, all sentinels are -1 → bVar1 stays false → no trigger block.
+    # arg_type='none': called 5x at quiescent main menu.
+    'score_threshold_state_check': {
+        'rva':            0x00410860,
+        'export':         'ScoreThresholdStateCheck',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
 }
