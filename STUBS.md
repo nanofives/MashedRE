@@ -219,21 +219,21 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0400 | 0x00416a30 | FUN_00418560 | ai | depth-1 | 2026-05-02 | FUN_00416a30; AI control step, mode 4/9 variant; args: (puVar9, param_1, EDI, 0x42c80000) |
 | S-0401 | 0x00416250 | FUN_00418560 | ai | depth-1 | 2026-05-02 | FUN_00416250; AI control step, normal mode (primary); args: (puVar9, param_1, EDI, 0x42c80000) |
 | S-0402 | 0x00417640 | FUN_00418560 | ai | depth-1 | 2026-05-02 | FUN_00417640; post-step processing; args: (param_1, EDI) |
-| S-0440 | 0x004c5c00 | 0x0040bb50 FUN_0040bb50 | frontend | passthrough | 2026-05-02 | FUN_004c5c00; asset lookup by name; called as (DAT_0063b8fc, param_1); depth-2 |
-| S-0441 | 0x00427680 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00427680; sprite position/scale setter; args (x, y, flags, scale); depth-2 |
-| S-0442 | 0x00427780 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00427780; sprite selector by ID; arg param_1; depth-2 |
+| ~~S-0440~~ | ~~0x004c5c00~~ | ~~0x0040bb50 FUN_0040bb50~~ | frontend | **cleared** 2026-05-17 | callee 0x004c5c00 now C2 in frontend (drift-skip; case-insensitive linked-list string search); frontend_s_dod_audit_20260517 |
+| ~~S-0441~~ | ~~0x00427680~~ | ~~0x00427e00 FUN_00427e00~~ | frontend | **cleared** 2026-05-17 | callee 0x00427680 now C2 in hud (FontText_ComputeScreenXY; hud_promote_c2_b); frontend_s_dod_audit_20260517 |
+| ~~S-0442~~ | ~~0x00427780~~ | ~~0x00427e00 FUN_00427e00~~ | frontend | **cleared** 2026-05-17 | callee 0x00427780 now C3 in hud (FontText_StringTableLookup; impl in HudBatch_h4); frontend_s_dod_audit_20260517 |
 | S-0443 | 0x004277a0 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_004277a0; sprite render preparation (no args); depth-2 |
-| S-0444 | 0x00552750 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552750; render state pre-setup B (no args); depth-2 |
-| S-0445 | 0x00552d10 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552d10; render state pre-colour setup (no args); depth-2 |
+| ~~S-0444~~ | ~~0x00552750~~ | ~~0x00427e00 FUN_00427e00~~ | frontend | **cleared** 2026-05-17 | callee 0x00552750 now C2 in hud (FontCtx_ResetTransform); frontend_s_dod_audit_20260517 |
+| ~~S-0445~~ | ~~0x00552d10~~ | ~~0x00427e00 FUN_00427e00~~ | frontend | **cleared** 2026-05-17 | callee 0x00552d10 now C3 in hud (FontMatrix_Push); frontend_s_dod_audit_20260517 |
 | S-0446 | 0x00552d70 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00552d70; render state post-cleanup (no args); depth-2 |
 | S-0447 | 0x00556ca0 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00556ca0; sprite draw call; args (canvas, buf, scaled_size, auStack, canvas2); depth-2 |
 | S-0448 | 0x00556e90 | 0x00427e00 FUN_00427e00 | frontend | passthrough | 2026-05-02 | FUN_00556e90; vertex colour setter; args (canvas, color×4); depth-2 |
-| S-0452 | 0x0042e590 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_0042e590; animated logo draw; args (x,y,dim,dim,dim,color,frame_offset,sprite_idx,flag); depth-2 |
+| ~~S-0452~~ | ~~0x0042e590~~ | ~~0x0042e5b0 FUN_0042e5b0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042e590 now C4 in frontend (SpriteAnimFrameThunk); frontend_s_dod_audit_20260517 |
 | S-0453 | 0x00473c20 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00473c20; fullscreen BG draw with two texture sources; depth-2 |
 | S-0454 | 0x00473ee0 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00473ee0; slide-in panel draw; arg includes fVar1+base_Y_offset; depth-2 |
 | S-0455 | 0x00474890 | 0x0042e5b0 FUN_0042e5b0 | frontend | passthrough | 2026-05-02 | FUN_00474890; secondary logo/sprite submit; single int arg (uVar4); depth-2 |
-| S-0456 | 0x0042b8b0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8b0; returns short; used as X-axis screen dimension/scale; depth-2 |
-| S-0457 | 0x0042b8c0 | 0x00472c60 FUN_00472c60 | frontend | passthrough | 2026-05-02 | FUN_0042b8c0; returns short; used as Y-axis screen dimension/scale; depth-2 |
+| ~~S-0456~~ | ~~0x0042b8b0~~ | ~~0x00472c60 FUN_00472c60~~ | frontend | **cleared** 2026-05-17 | callee 0x0042b8b0 now C3 in hud (ScreenWidthGet; c3-batch-g-s15); frontend_s_dod_audit_20260517 |
+| ~~S-0457~~ | ~~0x0042b8c0~~ | ~~0x00472c60 FUN_00472c60~~ | frontend | **cleared** 2026-05-17 | callee 0x0042b8c0 now C3 in hud (ScreenHeightGet; c3-batch-g-s15); frontend_s_dod_audit_20260517 |
 
 | S-1420 | 0x004a3384 FUN_004a3384 | FUN_00414570 FUN_0046d570 FUN_00415e20 | ai | passthrough | 2026-05-03 | math: likely acos(double); result scaled by _DAT_005cc970 for game-angle units; used in bearing calculations |
 | S-1421 | 0x004c3bf0 FUN_004c3bf0 | FUN_00415d00 FUN_00416060 | ai | passthrough | 2026-05-03 | 2D vector length: returns float10 magnitude of (x,0,z) or similar; used for ray-march termination |
@@ -303,7 +303,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0681 | 0x004af400 | 0x004af2d4 FUN_004af2d4 | util | passthrough | 2026-05-02 | _ValidateExecute; CRT IsBadCodePtr-style validator for function pointer; gates chain-to-old-filter path in FUN_004af2d4 |
 | S-0660 | 0x004a4170 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __alldiv; MSVC 64-bit integer division runtime helper embedded in binary |
 | S-0661 | 0x004a4220 | 0x004950b0 FUN_004950b0 | util | passthrough | 2026-05-02 | __allmul; MSVC 64-bit integer multiply runtime helper embedded in binary |
-| S-0800 | 0x00492d20 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00492d20; called each frame, no args, return discarded; tick/advance |
+| ~~S-0800~~ | ~~0x00492d20~~ | ~~0x00495350 FUN_00495350~~ | frontend | **cleared** 2026-05-17 | callee 0x00492d20 now C2 in frontend (sub_00492d20; INTRO_FN frame-tick shim); frontend_s_dod_audit_20260517 |
 | S-0801 | 0x00493f70 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493f70; video completion check; returns 0 when done |
 | S-0802 | 0x00493f80 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493f80; reads two floats (video dims) into out-params |
 | S-0803 | 0x00493fc0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00493fc0; takes two floats; returns scale/aspect value |
@@ -311,22 +311,22 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0805 | 0x00494460 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494460; stops/closes current video stream; arg 0 |
 | S-0806 | 0x00494480 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494480; gates render/scan paths; arg 0; non-zero=active |
 | S-0807 | 0x00494a80 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00494a80; starts video by index; args (0, index, 0) |
-| S-0808 | 0x00499710 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_00499710; arg 0; return passed to FUN_004c1be0 |
-| S-0809 | 0x004c19f0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c19f0; takes render target; closes/submits render block |
+| ~~S-0808~~ | ~~0x00499710~~ | ~~0x00495350 FUN_00495350~~ | frontend | **cleared** 2026-05-17 | callee 0x00499710 now C2 in render (HWND getter; settings_dialog plate); frontend_s_dod_audit_20260517 |
+| ~~S-0809~~ | ~~0x004c19f0~~ | ~~0x00495350 FUN_00495350~~ | frontend | **cleared** 2026-05-17 | callee 0x004c19f0 now C3 in frontend (RwVtableSlot07Call; ma2-frida-s5); frontend_s_dod_audit_20260517 |
 | S-0810 | 0x004c1a00 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1a00; takes render target; non-zero return gates draw call |
 | S-0811 | 0x004c1bb0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1bb0; takes (render_target, color_bytes_ptr, 1); sets render state |
 | S-0812 | 0x004c1be0 | 0x00495350 FUN_00495350 | frontend | passthrough | 2026-05-02 | FUN_004c1be0; takes (render_target, FUN_00499710_result); purpose unknown |
 | S-0813 | 0x004967e0 | 0x00492d20 FUN_00492d20 | frontend | passthrough | 2026-05-02 | FUN_004967e0; 283 bytes; sole callee of shim FUN_00492d20; depth-2 from INTRO_FN; D-2320 |
 | S-0860 | 0x005507b0 FUN_005507b0 | 0x004cc230 FUN_004cc230 | frontend | passthrough | 2026-05-02 | PIZ archive file-open; called as FUN_005507b0(filename, piz_base); depth-2 of stream-open (localization path) |
-| S-0861 | 0x00550bc0 FUN_00550bc0 | 0x004cc230 FUN_004cc230 | frontend | passthrough | 2026-05-02 | File open by name; called as FUN_00550bc0(filename); depth-2 of stream-open (type=1 branch) |
-| S-0862 | 0x00550910 FUN_00550910 | 0x004cc160 FUN_004cc160 | frontend | passthrough | 2026-05-02 | File close; called as FUN_00550910(file_handle); depth-2 of stream-close |
+| ~~S-0861~~ | ~~0x00550bc0 FUN_00550bc0~~ | ~~0x004cc230 FUN_004cc230~~ | frontend | **cleared** 2026-05-17 | callee 0x00550bc0 now C3 in save (VfsStreamGetType; c3-batch-e-s3); frontend_s_dod_audit_20260517 |
+| ~~S-0862~~ | ~~0x00550910 FUN_00550910~~ | ~~0x004cc160 FUN_004cc160~~ | frontend | **cleared** 2026-05-17 | callee 0x00550910 now C2 in save (FUN_00550910 — file close; c3-batch-e-s3 deferral noted); frontend_s_dod_audit_20260517 |
 | S-0662 | 0x0049d1d0 | 0x0049d270 FUN_0049d270 | util | passthrough | 2026-05-02 | FUN_0049d1d0; no-arg callee at end of FUN_0049d270; purpose unknown |
 | S-0814 | 0x004c75e0 | 0x00493fd0 FUN_00493fd0 | frontend | passthrough | 2026-05-02 | FUN_004c75e0; 26 bytes; fills two short[2] (viewport offsets); depth-2; D-2321 |
 | S-0826 | 0x004c2f30 FUN_004c2f30 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with DAT_00773200 (mode index); applies mode selection; depth-2; DEFERRED D-2386 |
 | S-0827 | 0x004c2ed0 FUN_004c2ed0 | 0x00499400 FUN_00499400 | save | passthrough | 2026-05-02 | called after save with &local+DAT_00773200; writes result struct (bStack_50 flags display params); depth-2; DEFERRED D-2387 |
 | S-0815 | 0x00494320 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_00494320; 167 bytes; first cleanup step in video close sequence; depth-2; D-2322 |
 | S-0816 | 0x004c7650 | 0x00494460 FUN_00494460 | frontend | passthrough | 2026-05-02 | FUN_004c7650; releases DAT_00771a18 video texture handle; depth-2; D-2323 |
-| S-0819 | 0x004c77c0 | 0x00494a80 FUN_00494a80 | frontend | passthrough | 2026-05-02 | FUN_004c77c0; 153 bytes; video texture allocator args(0,0,0,0x84); depth-2; D-2326 |
+| ~~S-0819~~ | ~~0x004c77c0~~ | ~~0x00494a80 FUN_00494a80~~ | frontend | **cleared** 2026-05-17 | callee 0x004c77c0 now C2 in render (video texture allocator analyzed intro_splash_d3 2026-05-06); frontend_s_dod_audit_20260517 |
 | S-0667 | 0x004030d0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_004030d0; called in state-1 when FUN_0042b930==0x21 |
 | S-0668 | 0x004111c0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_004111c0; called with arg 50 (0x32) in loop for states 3 and 6 |
 | S-0669 | 0x0043d7c0 | 0x00492d30 FUN_00492d30 | util | passthrough | 2026-05-02 | FUN_0043d7c0; called unconditionally after switch post-branch |
@@ -384,10 +384,10 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1131 | 0x004292d0 FUN_004292d0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called immediately before FUN_004292c0 in mode-5/6 path |
 | S-1132 | 0x0040ddb0 FUN_0040ddb0 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | called in case 9; DAT_0063ba8c set to 10 after return |
 | S-1133 | 0x0040e590 FUN_0040e590 | 0x004111c0 FUN_004111c0 | util | passthrough | 2026-05-03 | first call in shared code path; ~3kb function |
-| S-1280 | 0x004a2c48 FUN_004a2c48 | 0x00408a70 FUN_00408a70 | frontend | passthrough | 2026-05-03 | called at entry of put-precisepos setter; return value written to 4 per-car struct fields; semantics unknown |
-| S-1281 | 0x0040e340 FUN_0040e340 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | active-car counter; returns 4 when all 4 cars active; depth-2 from score-updater |
-| S-1282 | 0x0040e350 FUN_0040e350 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | game-state query; result compared to {1,2,3,4,5} to gate event-buffer append; depth-2 from score-updater |
-| S-1283 | 0x0040e370 FUN_0040e370 | 0x0040b290 FUN_0040b290 | frontend | passthrough | 2026-05-03 | per-car active check; non-zero=active; depth-2 from score-updater |
+| ~~S-1280~~ | ~~0x004a2c48 FUN_004a2c48~~ | ~~0x00408a70 FUN_00408a70~~ | frontend | **cleared** 2026-05-17 | drift-skip: C1 in hud_frontend (FPU round-to-i64) + render (effects_particle plate); frontend_s_dod_audit_20260517 |
+| ~~S-1281~~ | ~~0x0040e340 FUN_0040e340~~ | ~~0x0040b290 FUN_0040b290~~ | frontend | **cleared** 2026-05-17 | drift-skip: C1 in game_state (returns DAT_008a94d0; vehicle count getter; U-0497); frontend_s_dod_audit_20260517 |
+| ~~S-1282~~ | ~~0x0040e350 FUN_0040e350~~ | ~~0x0040b290 FUN_0040b290~~ | frontend | **cleared** 2026-05-17 | drift-skip: C1 in game_state (returns DAT_0063ba8c; game-mode getter; U-0498); frontend_s_dod_audit_20260517 |
+| ~~S-1283~~ | ~~0x0040e370 FUN_0040e370~~ | ~~0x0040b290 FUN_0040b290~~ | frontend | **cleared** 2026-05-17 | drift-skip: C1 in timer_d2_cont1 (per-slot bool getter PTR_PTR_005f2770+slot*4+0x34; U-1611); frontend_s_dod_audit_20260517 |
 | ~~S-1284~~ | ~~0x004189f0 thunk_FUN_00419760~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/004189f0.md |
 | ~~S-1285~~ | ~~0x004215c0 FUN_004215c0~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/004215c0.md |
 | ~~S-1286~~ | ~~0x0045ba00 FUN_0045ba00~~ | CLEARED race_results_d2-20260507-1904: C1/new re/analysis/race_results_d2/0045ba00.md |
@@ -466,18 +466,18 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1642 | ~~0x0042c960 FUN_0042c960~~ | ~~0x0043c000 FUN_0043c000~~ | render | CLEARED | split_screen-20260505 | CameraTransitionStateMachine; camera/intro-sequence state machine; DAT_0067ed68 transition slider; DAT_0067e9fc mode handler |
 | S-1643 | 0x0042fa00 FUN_0042fa00 | 0x0043c000 FUN_0043c000 | util | passthrough | 2026-05-03 | timer action for slot 7 (DAT_0067e7e0==1); fires when slot-7 timer completes; semantics unknown |
 | S-1644 | 0x00431f30 FUN_00431f30 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | screen history restore; called with param_1 on push-0, with history index on pop-1; semantics unknown |
-| S-1645 | 0x0042d3e0 FUN_0042d3e0 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | screen pre-init; called before stack push/pop in FUN_0043d2a0; semantics unknown |
+| ~~S-1645~~ | ~~0x0042d3e0 FUN_0042d3e0~~ | ~~0x0043d2a0 FUN_0043d2a0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042d3e0 now C3 in frontend (MenuEntryArrayInit); frontend_s_dod_audit_20260517 |
 | S-1646 | 0x0042ad90 FUN_0042ad90 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | player port query; returns short; -1 if no player; called 2x per loop iteration in FUN_0043d2a0 |
-| S-1647 | 0x0042ac00 FUN_0042ac00 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | called 2x (push and pop branches) in FUN_0043d2a0; no visible args; role unknown |
-| S-1648 | 0x0042ac50 FUN_0042ac50 | 0x0043d2a0 FUN_0043d2a0 0x004325c0 FUN_004325c0 | frontend | passthrough | 2026-05-03 | position calculator for menu slide; returns int used as X/Y in slide table; called per visible entry |
+| ~~S-1647~~ | ~~0x0042ac00 FUN_0042ac00~~ | ~~0x0043d2a0 FUN_0043d2a0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042ac00 now C3 in frontend (MenuGroupCount; c3-batch-g-s5); frontend_s_dod_audit_20260517 |
+| ~~S-1648~~ | ~~0x0042ac50 FUN_0042ac50~~ | ~~0x0043d2a0 FUN_0043d2a0 0x004325c0 FUN_004325c0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042ac50 now C2 in frontend (position calculator for menu slide); frontend_s_dod_audit_20260517 |
 | S-1649 | 0x00432b30 FUN_00432b30 | 0x0043d2a0 FUN_0043d2a0 | frontend | passthrough | 2026-05-03 | transition initiator; called at end of FUN_0043d2a0 with (short)sVar2 arg; starts actual screen transition |
 | S-1650 | 0x00492d10 FUN_00492d10 | 0x00432800 FUN_00432800 | frontend | passthrough | 2026-05-03 | multiplayer online check (case 8 in FUN_00432800); returns 1 if online mode active; otherwise clear DAT_0067ed8c |
-| S-1651 | 0x0042b930 FUN_0042b930 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | current screen type query; returns screen ID int; 0x21 and 1 skip race-start attempt |
+| ~~S-1651~~ | ~~0x0042b930 FUN_0042b930~~ | ~~0x004324a0 FUN_004324a0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042b930 now C3 in frontend (MenuAlphaGet; c3-batch-h-s1+ma3-frida-s2; canonical row); frontend_s_dod_audit_20260517 |
 | S-1652 | 0x0042c1f0 FUN_0042c1f0 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | SP race-start prerequisite check; returns nonzero if race can begin |
 | S-1653 | 0x0042c1d0 FUN_0042c1d0 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | MP race-start prerequisite check; called before FUN_0042c220 in MP path |
 | S-1654 | 0x00432450 FUN_00432450 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | MP race transition; same 6-param signature as FUN_0042bf30; used for non-zero eab0 path |
-| S-1655 | 0x0042aa00 FUN_0042aa00 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | called first in FUN_004322c0 with arg 1; role unknown; may update track-display state |
-| S-1656 | 0x00430910 FUN_00430910 | 0x004322c0 FUN_004322c0 | frontend | passthrough | 2026-05-03 | per-option validity check in track-selection loop; returns 0 if option valid; used to skip invalid indices |
+| ~~S-1655~~ | ~~0x0042aa00 FUN_0042aa00~~ | ~~0x004322c0 FUN_004322c0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042aa00 now C2 in frontend (track-display state update); frontend_s_dod_audit_20260517 |
+| ~~S-1656~~ | ~~0x00430910 FUN_00430910~~ | ~~0x004322c0 FUN_004322c0~~ | frontend | **cleared** 2026-05-17 | callee 0x00430910 now C3 in frontend (MenuOptionSlotGet); frontend_s_dod_audit_20260517 |
 | S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | audio | passthrough | 2026-05-03 | inline callback at LAB_005aa1e0; no Ghidra function body; passed as code ptr to FUN_005aa0c0; D-5080 |
 | S-1600 | 0x00409930 FUN_00409930 | 0x0040ab40 FUN_0040ab40 | util | passthrough | 2026-05-03 | called in case 6 of FUN_0040ab40 alongside FUN_0042c1a0 |
 | S-1601 | 0x00409970 FUN_00409970 | 0x0040ab40 FUN_0040ab40 | util | passthrough | 2026-05-03 | called on sub-state 7/8 in multiple cases of FUN_0040ab40 |
@@ -571,8 +571,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1964 | 0x00547bf0 FUN_00547bf0 | 0x00539900 FUN_00539900 | render | passthrough | 2026-05-06 | AABB vs triangle pre-test (4 args: query_desc v0 v1 v2); 0x5AE bytes; U-1976 |
 | S-1965 | 0x00547450 FUN_00547450 | 0x00539ec0 FUN_00539ec0 | render | passthrough | 2026-05-06 | sphere vs triangle intersection (6 args including out-ptrs for normal+dist); 0x39E bytes; U-1978 |
 | S-2087 | 0x005555b0 FUN_005555b0 | 0x00427ad0 FUN_00427ad0 | frontend | passthrough | 2026-05-06 | main sprite draw call; 6 args: (DAT_0067d838, 512B stack buf, scaled param_7, &local_214, 1, DAT_0067d83c); depth-4 of FUN_00427ad0 |
-| S-2089 | 0x005554d0 FUN_005554d0 | 0x004282a0 FUN_004282a0 / 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | text width measurement; (DAT_0067d838, 1024B stack buf, param_2*scale); returns float10; depth-4 |
-| S-2090 | 0x00427840 FUN_00427840 | 0x00428320 FUN_00428320 | frontend | passthrough | 2026-05-06 | font setup variant B; no args; replaces FUN_00427780+FUN_004277a0 pair; depth-4 of FUN_00428320 |
+| ~~S-2089~~ | ~~0x005554d0 FUN_005554d0~~ | ~~0x004282a0 FUN_004282a0 / 0x00428320 FUN_00428320~~ | frontend | **cleared** 2026-05-17 | callee 0x005554d0 now C2 in hud (text width measurement); frontend_s_dod_audit_20260517 |
+| ~~S-2090~~ | ~~0x00427840 FUN_00427840~~ | ~~0x00428320 FUN_00428320~~ | frontend | **cleared** 2026-05-17 | callee 0x00427840 now C3 in hud (FontText_UTF16WidenCopy; c3-batch-h-s4 impl HudBatch_h4); frontend_s_dod_audit_20260517 |
 | S-2200 | 0x005a7520 | 0x005a66d0 FUN_005a66d0 | audio | resolved | 2026-05-06 | FUN_005a7520; 3-way mode dispatcher; re/analysis/audio_music_d3/005a7520.md; D-7600 D-7601 D-7602 |
 | S-2201 | 0x005a6d60 | 0x005a6dc0 FUN_005a6dc0 | audio | resolved | 2026-05-06 | FUN_005a6d60; indirect dispatch via 8-byte fn-ptr table; re/analysis/audio_music_d3/005a6d60.md; U-2567 |
 | S-2560 | 0x005a7460 FUN_005a7460 | 0x005a7520 FUN_005a7520 | audio | resolved | 2026-05-12 | audio_music_cont1; priority-queue dequeue+sub-obj stop; re/analysis/audio_music_cont1/0x005a7460.md; U-3674 U-3675 U-3676 |
@@ -612,7 +612,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | ~~S-2464~~ | ~~0x0040d250 FUN_0040d250~~ | ~~0x00428d30~~ | frontend | **cleared** 2026-05-06 | C1 mapped title_screen_d2; indexed ptr dereference getter; re/analysis/title_screen_d2/0x0040d250.md |
 | ~~S-2465~~ | ~~0x00401ee0 FUN_00401ee0~~ | ~~0x00428d30~~ | frontend | **cleared** 2026-05-06 | C1 mapped title_screen_d2; object-select+RW-matrix+RpClumpRender; re/analysis/title_screen_d2/0x00401ee0.md |
 | ~~S-2466~~ | ~~0x0042f0b0 FUN_0042f0b0~~ | ~~0x00428d30~~ | frontend | **cleared** 2026-05-06 | C1 mapped title_screen_d2; int getter DAT_0067f17c+73; re/analysis/title_screen_d2/0x0042f0b0.md |
-| S-2540 | 0x004c5c00 FUN_004c5c00 | 0x0040bb70 FUN_0040bb70 / 0x0042e590 FUN_0042e590 | frontend | passthrough | 2026-05-06 | case-insensitive linked-list string search; iterates list@param_1+8; returns node-8 on match; 114b; depth-3 of title_screen_d2; D-7303 chain |
+| ~~S-2540~~ | ~~0x004c5c00 FUN_004c5c00~~ | ~~0x0040bb70 FUN_0040bb70 / 0x0042e590 FUN_0042e590~~ | frontend | **cleared** 2026-05-17 | callee 0x004c5c00 now C2 in frontend (case-insensitive linked-list string search); frontend_s_dod_audit_20260517 |
 | S-2541 | 0x00401570 FUN_00401570 | 0x00401ee0 FUN_00401ee0 | frontend | passthrough | 2026-05-06 | table scan: iterates DAT_00636578 stride 0x68 (13 entries) matching entry[0x38]==param_1; result→DAT_00636ac0; 36b; depth-3 of title_screen_d2; D-7305 |
 | S-2542 | 0x00401da0 FUN_00401da0 | 0x00401ee0 FUN_00401ee0 | frontend | passthrough | 2026-05-06 | RW matrix setup+dirty for DAT_00636ac0 object; identity+translate+rotAxisAngle(-30+accum)+scale+translate; calls FUN_004c1480; 308b; depth-3 of title_screen_d2; D-7305 |
 | S-2543 | 0x004c1480 FUN_004c1480 | 0x00401da0 FUN_00401da0 | render | passthrough | 2026-05-06 | calls FUN_004c52f0(param_1+0x10); links param_1+0xa0 into dirty list@DAT_007d3ff8+0xbc; sets flag bits 3 and 0xc; 145b; depth-4; D-7540 |
@@ -669,8 +669,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-2668 | 0x004e1df0 FUN_004e1df0 | 0x00550130 FUN_00550130 | render | passthrough | 2026-05-06 | error cleanup path in texture stream reader; called on FUN_004c5a00 failure; 112 bytes; D-7908 |
 | S-2669 | 0x004cdd60 FUN_004cdd60 | 0x004cee90 FUN_004cee90 | render | passthrough | 2026-05-06 | RwImageAllocatePixels candidate: alloc pixel+palette buffer; stride computation; sets img+0x10/+0x14/+0x18; D-7909 |
 | S-2670 | 0x004cc4f0 FUN_004cc4f0 | 0x004cc400 FUN_004cc400 | render | passthrough | 2026-05-06 | RW chunk type validator: returns 1 for known types {5..0xb,0xe..0x10,0x12,0x14,0x1a}; now in hooks.csv C1 — clear stub |
-| S-2860 | 0x00419760 FUN_00419760 | 0x004189f0 thunk_FUN_00419760 | frontend | passthrough | 2026-05-07 | thunkee of 004189f0; 112 bytes; not yet in hooks.csv; D-8500 |
-| S-2861 | 0x00420de0 FUN_00420de0 | 0x004215c0 FUN_004215c0 | frontend | passthrough | 2026-05-07 | sole callee of 004215c0; receives param_2 (50.0f or 0/1 from parent caller); 30 bytes; D-8501 |
+| ~~S-2860~~ | ~~0x00419760 FUN_00419760~~ | ~~0x004189f0 thunk_FUN_00419760~~ | frontend | **cleared** 2026-05-17 | callee 0x00419760 now C2 in vehicle (thunkee of 004189f0; D-8500 carry-forward); frontend_s_dod_audit_20260517 |
+| ~~S-2861~~ | ~~0x00420de0 FUN_00420de0~~ | ~~0x004215c0 FUN_004215c0~~ | frontend | **cleared** 2026-05-17 | callee 0x00420de0 now C2 in vehicle (sole callee of 004215c0; D-8501 carry-forward); frontend_s_dod_audit_20260517 |
 | ~~S-2929~~ | ~~0x00405460 FUN_00405460~~ | ~~0x004102f0 FUN_004102f0~~ | util | ~~passthrough~~ | 2026-05-07 | RESOLVED 2026-05-08 game_state_d5-cont1: analyzed C1; re/analysis/game_state_d5-cont1/0x00405460.md |
 | ~~S-2930~~ | ~~0x0040e590 FUN_0040e590~~ | ~~0x004102f0 FUN_004102f0~~ | util | ~~passthrough~~ | 2026-05-07 | RESOLVED 2026-05-08 game_state_d5-cont1: analyzed C1; re/analysis/game_state_d5-cont1/0x0040e590.md |
 | ~~S-2960~~ | ~~0x00404fa0 FUN_00404fa0~~ | ~~0x00405460 FUN_00405460~~ | util | ~~passthrough~~ | 2026-05-08 | RESOLVED: game_state_d5_cont2-20260512; C1 re/analysis/game_state_d5_cont2/0x00404fa0.md |
@@ -748,19 +748,19 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3261 | 0x004b9630 FUN_004b9630 | 0x004ba4f0 FUN_004ba4f0 | input | passthrough | 2026-05-08 | get type/tag index from TValue; called from callgcTM (FUN_004ba4f0) to index GC tag-method table; Lua 5.0; input_lua_d4 [SCRIBE GAP: missing from sweep-20260508-1737] |
 | S-3262 | 0x004beef0 FUN_004beef0 | 0x004bef20 FUN_004bef20 | input | passthrough | 2026-05-08 | compute instruction array byte size (sizecode×sizeof(Instruction)); called from luaF_freeproto (FUN_004bef20) to subtract from totalbytes; Lua 5.0; input_lua_d4 [SCRIBE GAP: missing from sweep-20260508-1737] |
 | S-3420 | 0x0042bfb0 FUN_0042bfb0 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with IDs 0x1b5-0x2a3 and 0xff460000 as args; c0_promotion_frontend_a |
-| S-3421 | 0x005c9d00 FUN_005c9d00 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | return used as bool; c0_promotion_frontend_a |
+| ~~S-3421~~ | ~~0x005c9d00 FUN_005c9d00~~ | ~~0x0040acd0 FUN_0040acd0~~ | frontend | **cleared** 2026-05-17 | callee 0x005c9d00 now C3 in util (GetRaceEndTrigger); frontend_s_dod_audit_20260517 |
 | S-3422 | 0x004d8560 FUN_004d8560 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (0); queried up to 3x in sequence; c0_promotion_frontend_a |
 | S-3423 | 0x00409a80 FUN_00409a80 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
 | S-3424 | 0x0042c1a0 FUN_0042c1a0 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
-| S-3425 | 0x0045b350 FUN_0045b350 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
-| S-3426 | 0x004099e0 FUN_004099e0 | 0x0040acd0 FUN_0040acd0 | frontend | passthrough | 2026-05-08 | called with (param_1); c0_promotion_frontend_a |
+| ~~S-3425~~ | ~~0x0045b350 FUN_0045b350~~ | ~~0x0040acd0 FUN_0040acd0~~ | frontend | **cleared** 2026-05-17 | callee 0x0045b350 now C3 in render (RwInitNullStub; ma2-frida-s7); frontend_s_dod_audit_20260517 |
+| ~~S-3426~~ | ~~0x004099e0 FUN_004099e0~~ | ~~0x0040acd0 FUN_0040acd0~~ | frontend | **cleared** 2026-05-17 | callee 0x004099e0 now C3 in save (SaveStatusClear; c3-batch-e-s1); frontend_s_dod_audit_20260517 |
 | S-3427 | 0x0040ce80 FUN_0040ce80 | 0x0042a940 FUN_0042a940 | frontend | passthrough | 2026-05-08 | takes param_1, return used as int key in table search; c0_promotion_frontend_a |
-| S-3428 | 0x0040e470 FUN_0040e470 | 0x0042ae10 FUN_0042ae10 | frontend | passthrough | 2026-05-08 | takes int index, return compared to 2; c0_promotion_frontend_a |
-| S-3429 | 0x004c5c00 FUN_004c5c00 | 0x0042bcb0 FUN_0042bcb0 | frontend | passthrough | 2026-05-08 | FUN_004c5c00(DAT_00636ac8, local_14); returns pointer; c0_promotion_frontend_a |
+| ~~S-3428~~ | ~~0x0040e470 FUN_0040e470~~ | ~~0x0042ae10 FUN_0042ae10~~ | frontend | **cleared** 2026-05-17 | callee 0x0040e470 now C3 in vehicle (CarSlotStateGet; c3-batch-g-s7); frontend_s_dod_audit_20260517 |
+| ~~S-3429~~ | ~~0x004c5c00 FUN_004c5c00~~ | ~~0x0042bcb0 FUN_0042bcb0~~ | frontend | **cleared** 2026-05-17 | callee 0x004c5c00 now C2 in frontend (case-insensitive linked-list string search); frontend_s_dod_audit_20260517 |
 | S-3430 | 0x004b5750 FUN_004b5750 | 0x0042bcb0 FUN_0042bcb0 | frontend | passthrough | 2026-05-08 | drawing call; coordinate order and uVar4 meaning unknown; c0_promotion_frontend_a |
 | S-3431 | 0x004a2b60 FUN_004a2b60 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | takes 3 args; semantics unknown; c0_promotion_frontend_a |
 | S-3432 | 0x004a2c48 FUN_004a2c48 | 0x0042d290 FUN_0042d290 | frontend | passthrough | 2026-05-08 | no args; returns int; semantics unknown; c0_promotion_frontend_a |
-| S-3433 | 0x0040bb50 FUN_0040bb50 | 0x0042ee00 FUN_0042ee00 | frontend | passthrough | 2026-05-08 | no args; return passed through; semantics unknown; c0_promotion_frontend_a |
+| ~~S-3433~~ | ~~0x0040bb50 FUN_0040bb50~~ | ~~0x0042ee00 FUN_0042ee00~~ | frontend | **cleared** 2026-05-17 | callee 0x0040bb50 now C2 in frontend; frontend_s_dod_audit_20260517 |
 | ~~S-3440~~ | ~~0x00468d80 FUN_00468d80~~ | ~~0x00469aa0 FUN_00469aa0~~ | ~~vehicle~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-08~~ | ~~VehicleTerrainContactSolver; C1 new; vehicle_dynamics_d3/00468d80.md~~ |
 | ~~S-3441~~ | ~~0x004694e0 FUN_004694e0~~ | ~~0x00469aa0 FUN_00469aa0~~ | ~~vehicle~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-08~~ | ~~VehicleObjectContactSolver; C1 new; vehicle_dynamics_d3/004694e0.md~~ |
 | ~~S-3442~~ | ~~0x004c4dc0 FUN_004c4dc0~~ | ~~0x00469df0 FUN_00469df0~~ | ~~vehicle~~ | ~~resolved vehicle_dynamics_d3-20260512~~ | ~~2026-05-08~~ | ~~RwMatrixInvert; C1 new; render_pipeline_d3/004c4dc0.md~~ |
