@@ -1379,3 +1379,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=cluster_0051_first_pass  writes=60  errors=0
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=cluster_005a_first_pass  writes=60  errors=0
 2026-05-17  sweep-20260518-0007  scribe-release  bucket=promote_c2_render_lowrva  writes=31  errors=0
+2026-05-17  sweep-20260518-0007  scribe-release  buckets=4 drained  errors=0
