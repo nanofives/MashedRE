@@ -20,7 +20,7 @@ A function is **DONE** only when ALL of these hold:
 
 ### S-DoD — subsystem level (e.g. AI, Audio, Vehicle, HUD, Frontend)
 A subsystem is **DONE** when:
-1. Every function reachable from the subsystem entry points is at C3 or higher (≥ 90% at C4).
+1. Every function reachable from the subsystem entry points is at **C3 or higher** (≥ 90%), with **≥ 50% at C4**. (Revised 2026-05-17 from the original "≥ 90% C4" target. Calibration: even Boot, the most-advanced subsystem at audit time, sat at ~30% C4 with ~5 C4 promotions per observation sweep. The original target was multi-year per subsystem, blocking Phase 6 indefinitely. The revised target keeps C3 as the rigor floor — every callable function correct-by-construction — while making C4 a quality marker for the public/cross-subsystem surface, not an exhaustive demand on every leaf.)
 2. The subsystem can run **with all original-fallback hooks disabled** for one full canonical scenario without crash, hang, or visible regression.
 3. All shared structs touched by the subsystem are documented in `re/analysis/structs/` with **field-by-field** RVA citations for first read/write of each field.
 4. Any custom asset format (e.g., `.piz`, `gamesave.bin` for the save subsystem) has a round-trip parser+writer in `re/tools/` with a byte-identical re-encode test.
