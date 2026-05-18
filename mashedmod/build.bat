@@ -58,6 +58,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "%SRC%\Frontend\FrontendMode.cpp" ^
     "%SRC%\HUD\HudDispatch.cpp" ^
     "%SRC%\HUD\FontCtx.cpp" ^
+    "%SRC%\HUD\HudBatch_h4.cpp" ^
     "%SRC%\Frontend\MenuScoreGetters.cpp" ^
     "%SRC%\Frontend\MenuInit.cpp" ^
     "%SRC%\Frontend\MenuScoreSort.cpp" ^
