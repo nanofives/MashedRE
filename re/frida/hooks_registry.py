@@ -4735,6 +4735,29 @@ HOOKS = {
         'path2_tests': [0],
     },
 
+    # 0x004b6770  PizWin32Close_Compat
+    # Fixes U-42 (cluster_004b4_first_pass/004b6770.md): the original Win32
+    # branch at 0x004b6792..0x004b679f closes DAT_007d3e48 but does not null
+    # it, unlike the stdio branch at 0x004b6779..0x004b6791 which does
+    # (MOV dword ptr [0x007d3e48], 0 at 0x004b6787). Latent today because the
+    # sole caller FUN_004b67a0 clears the handle itself at 0x004b67d1; we
+    # close the asymmetry defensively so the function is self-consistent.
+    # arg_type='harness_limited': calling this synthetically would CloseHandle
+    # on whatever HANDLE happens to be in DAT_007d3e48 at the time, which is
+    # a real OS HANDLE if a .piz is open — corrupting process state. Same
+    # rationale as piz_win32_open_compat / piz_win32_read_compat above. C3
+    # promotion is gated on a canonical-scenario observation (open + close +
+    # re-open a .piz with the hook installed and verify no stale-handle AV).
+    'piz_win32_close_compat': {
+        'rva':            0x004b6770,
+        'export':         'PizWin32Close_Compat',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        'path1_tests': [0],
+        'path2_tests': [0],
+    },
+
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-i-s3 — Save/SettingsAndIO_i3.cpp
     # 5 settings_dialog + save_gamesave file I/O wrappers.
