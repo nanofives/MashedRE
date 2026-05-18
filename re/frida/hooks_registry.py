@@ -4338,6 +4338,7 @@ HOOKS = {
         ],
     },
 
+<<<<<<< HEAD
     # Session c3-batch-h-s5 — util small leaves+near-leaves (C2->C3)
     # Util/UtilBatch_h5.cpp
     # ─────────────────────────────────────────────────────────────────────
@@ -4678,5 +4679,37 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4],
         'path2_tests':    [0, 1, 2],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session pizwin32-bypass-20260517 — Compat/PizWin32Bypass.cpp
+    # Win32-layer bypass for the .piz CreateFileA/ReadFile pair.
+    # Both are harness-limited: file-I/O side effects + non-standard ABI
+    # (FUN_004b6710 passes the path via EAX, not the stack), so synthetic
+    # Frida A/B diffing would corrupt process state. C3 evidence comes from
+    # canonical-scenario runtime verification (boot-to-menu + track load).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004b6710  PizWin32Open_Compat
+    'piz_win32_open_compat': {
+        'rva':            0x004b6710,
+        'export':         'PizWin32Open_Compat',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        'path1_tests': [0],
+        'path2_tests': [0],
+    },
+
+    # 0x004b67e0  PizWin32Read_Compat
+    'piz_win32_read_compat': {
+        'rva':            0x004b67e0,
+        'export':         'PizWin32Read_Compat',
+        'signature':      {'ret': 'void',
+                            'args': ['uint32', 'pointer', 'uint32', 'pointer']},
+        'arg_type':       'harness_limited',
+        'lut_root_delta': 0,
+        'path1_tests': [0],
+        'path2_tests': [0],
     },
 }
