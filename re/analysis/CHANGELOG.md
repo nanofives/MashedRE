@@ -1481,3 +1481,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-1448  scribe-claim  buckets=5 queued, 1 halt (s4 libpng-libpng-zlib), 0 skipped-HOLD
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_0048ad50  writes=80  errors=0
 2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_005c7070  writes=80  renames=3 (RwV3dTransformPoints/Vectors/Point at 0x005cb000/07f/0ef)  errors=0
+2026-05-18  sweep-20260518-1448  scribe-release  bucket=bucket_0051e6f0 (HALT-libpng-zlib)  writes=0  errors=0  note=halt-row (level=halt, 0 per-RVA plates; only _BUCKET_HALT.md in bucket dir; library-residue libpng 2002.x + zlib, recommend FidDB bulk-name + DEFERRED library-tag drain)
