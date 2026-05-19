@@ -1517,3 +1517,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-19  sweep-20260519-1818  scribe-release  bucket=bucket_00554010  writes=82  renames=0  errors=0
 2026-05-19  sweep-20260519-1818  scribe-release  bucket=bucket_00565d50  writes=80  renames=0  errors=0
 2026-05-19  sweep-20260519-1818  scribe-release  bucket=bucket_005a5020  writes=80  renames=0  errors=0
+2026-05-19  sweep-20260519-1818  scribe-release  buckets=6 drained (484 plates, 482 bookmarks, 0 renames; 2 C0-listing plates at 0x004660fa+0x00565cce padding bytes; 67 queue-row-claimed RVAs in bucket_00565d50 had no matching .md but were superseded by 67 dir-extras from the agent — batch-y-s5 agent drifted from candidate list, all 80 actually-plated functions covered)  errors=0  sync=partial (slots 1/10 LOCKED skipped, slot 11 partial-refresh blocked on busy db.57.gbf/tmp12044365867512143779.ps, slot 0 refreshed; sync pattern matches previous sweep)
