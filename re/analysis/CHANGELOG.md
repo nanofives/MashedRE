@@ -1496,3 +1496,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-18  sweep-20260518-1729  scribe-release  buckets=6 drained (5 productive + 1 HALT-row; 328 plates, 328 bookmarks; 0 renames — FidDB-attested CRT entries already pre-renamed by Ghidra analyzer)  errors=0  sync=partial (slots 0/1/2/10-15 LOCKED by JVM-orphan .lock from prior sessions; slot 4 partial-refresh blocked on busy db.53.gbf/tmp*.ps; will sync on next /mcp restart)
 2026-05-19  sweep-20260519-0330  scribe-claim  buckets=6 queued, 0 skipped-HOLD
 2026-05-19  sweep-20260519-0330  scribe-release  bucket=bucket_0041e140  writes=80  renames=0  errors=0
+2026-05-19  sweep-20260519-0330  scribe-release  bucket=bucket_00474d80  writes=80  renames=0  errors=0
