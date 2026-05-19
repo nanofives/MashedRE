@@ -1505,3 +1505,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-19  sweep-20260519-1404  scribe-claim  buckets=4 queued + 2 misfiled-undrained (s1 005a6f30, s5 00452ec0 — under ## Drained but no drained-by= tag; will be properly drained this sweep), 0 skipped-HOLD
 2026-05-19  sweep-20260519-1404  scribe-release  bucket=bucket_00452ec0  writes=80  renames=0  errors=0
 2026-05-19  sweep-20260519-1404  scribe-release  bucket=bucket_004b4a80  writes=80  renames=0  errors=0
+2026-05-19  sweep-20260519-1404  scribe-release  bucket=bucket_004c4270  writes=80  renames=0  errors=0
