@@ -1502,3 +1502,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-19  sweep-20260519-0330  scribe-release  bucket=bucket_005ae170  writes=80  renames=0  errors=0
 2026-05-19  sweep-20260519-0330  scribe-release  bucket=bucket_004fcb51  writes=80  renames=0  errors=0
 2026-05-19  sweep-20260519-0330  scribe-release  buckets=6 drained (6 productive; 480 plates, 480 bookmarks, 0 renames — no FidDB Library Function attestations matched the single-line pattern in these 6 buckets)  errors=0  sync=partial (slots 0/1/2/3/10-15 LOCKED by JVM-orphan .lock from prior sessions; slot 4 partial-refresh blocked on busy db.53.gbf/tmp*.ps; pool sync will retry on next /mcp restart)
+2026-05-19  sweep-20260519-1404  scribe-claim  buckets=4 queued + 2 misfiled-undrained (s1 005a6f30, s5 00452ec0 — under ## Drained but no drained-by= tag; will be properly drained this sweep), 0 skipped-HOLD
