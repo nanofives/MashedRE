@@ -5384,4 +5384,99 @@ HOOKS = {
         'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
         'path2_tests':    [0x00, 0x01, 0x02],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-k-s2 — Frontend/SpriteCluster_k2.cpp
+    # 4 frontend sprite-gate / HUD leaf cluster functions (C2→C3).
+    # NOT registered: 0x0040e480 CarSlotStateSet (already in RaceResults.cpp;
+    #   Frida diff DEFERRED — no non-destructive arg_type for PTR_PTR double-deref).
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004c5c00  LinkedListStringSearch
+    # 114-byte pure leaf: case-insensitive doubly-linked-list string search.
+    # Signature: void*(int list_head_ptr, const char* key)
+    # param_1 = list head pointer (global like DAT_0063b8fc/b900/b904).
+    # param_2 = search key string pointer.
+    # Returns node-8 on match, NULL on miss.
+    # arg_type='int_pair': pass [list_head_ptr_value, string_VA] as two ints.
+    # Both DAT_0063b8fc and the string VAs live in .data/.rdata; at init time
+    # DAT_0063b8fc may be 0 → crash identically on both sides at *(0+8).
+    # crash_equal_ok=True: same-crash counts GREEN.
+    # Tests: list head = DAT_0063b8fc (0x0063b8fc dereferenced live value) passed
+    # as the raw int; string = known .rdata literal VAs.
+    # "Button" at 0x005cda7c, "SemiC" at 0x005cc414 (from sprite_lookup_table_a).
+    'linked_list_string_search': {
+        'rva':            0x004c5c00,
+        'export':         'LinkedListStringSearch',
+        'signature':      {'ret': 'pointer', 'args': ['int32', 'int32']},
+        'arg_type':       'int_pair',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            [0x0063b8fc, 0x005cda7c],   # DAT_0063b8fc, "Button"
+            [0x0063b8fc, 0x005cc414],   # DAT_0063b8fc, "SemiC"
+            [0x0063b900, 0x005cda7c],   # DAT_0063b900, "Button"
+            [0x0063b900, 0x005cc414],   # DAT_0063b900, "SemiC"
+            [0x0063b904, 0x005cda7c],   # DAT_0063b904, "Button"
+            [0x0063b904, 0x005cc414],   # DAT_0063b904, "SemiC"
+            [0x0063b8fc, 0x005cda7c],   # repeat
+            [0x0063b8fc, 0x005cc414],   # repeat
+            [0x0063b900, 0x005cda7c],   # repeat
+            [0x0063b904, 0x005cc414],   # repeat
+        ],
+        'path2_tests':    [
+            [0x0063b8fc, 0x005cda7c],
+            [0x0063b900, 0x005cc414],
+            [0x0063b904, 0x005cda7c],
+        ],
+    },
+
+    # 0x0040bb50  SpriteLookupC
+    # 20-byte forwarder: calls FUN_004c5c00(DAT_0063b8fc, param_1).
+    # Signature: void*(const char* key)
+    # param_1 = key string pointer (passed as int32 — ASLR disabled on 2004 exe).
+    # At init time DAT_0063b8fc may be 0 → crash identically on both sides.
+    # crash_equal_ok=True: same-crash counts GREEN.
+    # Tests: known .rdata string VAs same as sprite_lookup_table_a.
+    'sprite_lookup_c': {
+        'rva':            0x0040bb50,
+        'export':         'SpriteLookupC',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x005cda7c, 0x005cc414,   # "Button", "SemiC"
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414,
+                           0x005cda7c, 0x005cc414],
+        'path2_tests':    [0x005cda7c, 0x005cc414, 0x005cda7c],
+    },
+
+    # 0x00430b90  ProgressBarSetA
+    # 1693-byte per-player progress bar renderer (set A). void(void).
+    # Draws 4 player-slot bars + Arrow sprites at X=374.0/461.0.
+    # DAT_0067e7f8/e7fc gate early-exit.
+    # At quiescent main menu: render-state vtable at DAT_007d3ff8 may be
+    # uninitialised → both sides crash identically at *(drv_base+0x20).
+    # crash_equal_ok=True. arg_type='none'.
+    'progress_bar_set_a': {
+        'rva':            0x00430b90,
+        'export':         'ProgressBarSetA',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00439210  LobbySlotListRender — REFUSED this session.
+    # ~5626-byte renderer. Analysis note has high-level control flow only;
+    # many uncatalogued callees (FUN_0042ebe0, FUN_004368e0, FUN_00473870 signature
+    # uncertain). My approximated reimpl may crash at a different callee than the
+    # original → crash-address mismatch → RED. Defer to a future session when
+    # uncatalogued callees are promoted to C2+ and exact parameter signatures
+    # are documented. [UNCERTAIN U-k2-01] filed.
+    # Re-pickup condition: callees 0x0042ebe0, 0x004368e0 at C2+.
 }
