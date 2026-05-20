@@ -5466,6 +5466,36 @@ HOOKS = {
         'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-k-s4 — hud_text_cluster_k4 (C2->C3, 1 of 5 promoted)
+    # HUD/TextCluster_k4.cpp — font context reset transform
+    # Refusals this session:
+    #   0x004c1c80 — callee FUN_004c0e50 C1 (batch drift: described as pure leaf
+    #               but analysis note shows guarded conditional callee)
+    #   0x00427680 — repeat refusal from HudBatch_h4 (ESI implicit ptr + U-2127;
+    #               needs new arg_type in diff_template.js)
+    #   0x00450b10 — 7-arg mixed signature; live-renderer vtable callee; no arg_type
+    #   0x00428450 — calls Im2D draw vtable path; spin-angle accumulator; no arg_type
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00552750  FontCtx_ResetTransform
+    # fn(void) -> uint32(1). Pure leaf; no callees (callees_depth1: []).
+    # Resets current font ctx's RwMatrix to identity; clears DAT_00912bd8+bec to 0.
+    # Observable: return value (must be 1) — same observable pattern as
+    # FontSys_InitRenderState (0x00552c10) which also uses arg_type='none'.
+    # Idempotent: calling repeatedly resets same state each time.
+    # Leaf-exemption applies for C2->C3 (pure leaf, no callees).
+    # Note: DAT_00912bd8 side-effect is not directly observable with 'none' arg_type;
+    # the return-value check (1 each call) is the primary evidence. Consistent with
+    # the FontSys_InitRenderState precedent in this batch.
+    # 10 calls at quiescent main menu; both paths must return 1 each time.
+    'font_ctx_reset_transform': {
+        'rva':            0x00552750,
+        'export':         'FontCtx_ResetTransform',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],

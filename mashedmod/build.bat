@@ -109,6 +109,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Harness\HarnessStubs.cpp" ^
     "Frontend\Leaves_k3.cpp" ^
     "Util\UtilLeaves_k3.cpp" ^
+    "HUD\TextCluster_k4.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
