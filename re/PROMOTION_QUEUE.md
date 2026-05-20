@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-k-s1  rvas=0x0042b960  branch=c3/batch-k-s1  evidence=log/diff_car_slot_init_1p.csv  note=1/5 frontend menu-cluster C2->C3; CarSlotInit1P (Frontend/MenuButtonDetect.cpp); 4 refused/deferred: 0x0042aa00 RED-diff known (validity-address drift; Ghidra re-check needed per 2026-05-15 comment), 0x0042ed70 DEFERRED (6-arg mixed void no arg_type), 0x004307a0 DEFERRED callee-gate (0x004a2c48 drifted C2->C1), 0x00428320 DEFERRED (font ctx required no arg_type); HALT threshold 4>=3; refusal row per c3-batch-j-s4 precedent
 ```
 
 ## Merged
