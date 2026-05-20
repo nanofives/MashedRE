@@ -5466,6 +5466,9 @@ HOOKS = {
         'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'none',
         'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
     },
 
     # ─────────────────────────────────────────────────────────────────────
