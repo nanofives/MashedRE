@@ -40,6 +40,10 @@ BANDS = [
     (0x004b4a80, 0x004c4000, "lua-5.0",
      "batch-x-s2 extended (lstate/lgc/lvm/lapi/ltable/lstring/lmem/llex/"
      "lobject/lopcodes/lzio/ldebug/lparser/lundump/lfunc/lcode)"),
+    (0x004ec000, 0x004fc9e1, "d3dx9-psgp",
+     "batch-aa-s1+s2 finding (Pentium-Specific Geometry Pipeline; dispatcher "
+     "FUN_004fbe7a queries HKLM\\Software\\Microsoft\\Direct3D + CPUID; "
+     "71-entry function table at PTR_FUN_006187a8 with SSE/SSE2/3DNow! variants)"),
     (0x004fcb51, 0x005112ca, "d3dx9-hlsl-shader-compiler",
      "batch-w-s4 preprocessor+byacc-parser+lexer+diagnostics+symbol-hashtable "
      "+ pre-batch breadth_unmapped_005xx assembler+math-primitives"),
