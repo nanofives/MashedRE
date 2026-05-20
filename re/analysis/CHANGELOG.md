@@ -1528,3 +1528,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-20  sweep-20260520-0604  scribe-claim  buckets=3 queued, 0 skipped-HOLD
 2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_00489450  writes=19  renames=0  errors=0
 2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_004ee461  writes=0  renames=0  errors=0
+2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_004fcac3  writes=54  renames=0  errors=0
