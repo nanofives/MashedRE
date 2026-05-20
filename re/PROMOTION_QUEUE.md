@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-k-s4  rvas=0x00552750  branch=c3/batch-k-s4  evidence=log/diff_font_ctx_reset_transform.csv  note=1/5 HUD text-cluster C2->C3; FontCtx_ResetTransform pure leaf leaf-exemption; HUD/TextCluster_k4.cpp; 4 refusals: 0x004c1c80(callee C1 tracker-drift) 0x00427680(repeat-ESI-implicit+U-2127 no arg_type) 0x00450b10(7-arg no arg_type+live-renderer) 0x00428450(spin-angle accumulator no arg_type+live-renderer callee); halt-threshold-exceeded(4 refusals)
 ```
 
 ## Merged
