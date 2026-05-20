@@ -17,6 +17,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ```
 2026-05-20  c3-batch-k-s1  rvas=0x0042b960  branch=c3/batch-k-s1  evidence=log/diff_car_slot_init_1p.csv  note=1/5 frontend menu-cluster C2->C3; CarSlotInit1P (Frontend/MenuButtonDetect.cpp); 4 refused/deferred: 0x0042aa00 RED-diff known (validity-address drift; Ghidra re-check needed per 2026-05-15 comment), 0x0042ed70 DEFERRED (6-arg mixed void no arg_type), 0x004307a0 DEFERRED callee-gate (0x004a2c48 drifted C2->C1), 0x00428320 DEFERRED (font ctx required no arg_type); HALT threshold 4>=3; refusal row per c3-batch-j-s4 precedent
+2026-05-20  c3-batch-k-s2  rvas=0x004c5c00,0x0040bb50,0x00430b90  branch=c3/batch-k-s2  evidence=log/diff_linked_list_string_search.csv;log/diff_sprite_lookup_c.csv;log/diff_progress_bar_set_a.csv  note=3/5 frontend sprite-gate/HUD leaf C2->C3; Frontend/SpriteCluster_k2.cpp; promoted 0x004c5c00 first (pure leaf) to satisfy 0x0040bb50 callee-gate; REFUSED 0x0040e480 (already in RaceResults.cpp, no diff arg_type for PTR_PTR double-deref); REFUSED 0x00439210 (5626B, many uncatalogued callees, U-3880 filed — re-pickup when 0x0042ebe0/0x004368e0 C2)
 ```
 
 ## Merged

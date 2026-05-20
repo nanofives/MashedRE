@@ -101,6 +101,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\UtilMid_h6.cpp" ^
     "Frontend\MenuStateMachine.cpp" ^
     "Frontend\FrontendDispatch.cpp" ^
+    "Frontend\SpriteCluster_k2.cpp" ^
     "Boot\FrameDispatch.cpp" ^
     "Input\DirectInput.cpp" ^
     "Input\DInput_j5.cpp" ^
