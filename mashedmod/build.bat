@@ -107,6 +107,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Input\DInput_j5.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
     "Harness\HarnessStubs.cpp" ^
+    "Frontend\Leaves_k3.cpp" ^
+    "Util\UtilLeaves_k3.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
