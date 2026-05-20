@@ -1526,3 +1526,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-20  sweep-20260520-0001  scribe-release  bucket=bucket_00591710  writes=0  renames=0  errors=0
 2026-05-20  sweep-20260520-0001  scribe-release  buckets=5 drained (320 plates, 320 bookmarks, 0 renames; 4 productive game-code buckets bucket_00565cd0/bucket_0041dc30/bucket_004f022d/bucket_0052df70 + 1 HALT bucket_00591710 qhull-2002.1-residue with 0 plates; bucket_0052df70 was orphan-queue-row reconstructed pre-sweep)  errors=0  sync=partial (slots 0/1/10 LOCKED skipped, slot 11 partial-refresh blocked on busy db.57.gbf/tmp12044365867512143779.ps; same pattern as sweep-20260519-1818)
 2026-05-20  sweep-20260520-0604  scribe-claim  buckets=3 queued, 0 skipped-HOLD
+2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_00489450  writes=19  renames=0  errors=0
