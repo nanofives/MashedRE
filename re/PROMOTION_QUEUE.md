@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-k-s3  rvas=0x00408a50,0x0040e340,0x0040e370  branch=c3/batch-k-s3  evidence=log/diff_per_car_race_progress_get.csv;log/diff_get_live_car_count.csv;log/diff_is_car_slot_active.csv  note=3 C2 leaf getters authored+built; FRIDA-DIFF-PENDING (MASHED.exe absent in sandbox); Frontend/Leaves_k3.cpp (PerCarRaceProgressGet 0x00408a50) + Util/UtilLeaves_k3.cpp (GetLiveCarCount 0x0040e340 + IsCarSlotActive 0x0040e370); all 3 are pure leaves (leaf-exemption path); hooks_registry.py entries added (per_car_race_progress_get/get_live_car_count/is_car_slot_active); 2 refused: 0x00412f30 callee-gate (0x0046d4a0/0x00467210/0x0041f0d0/0x00412e30 at C1; D-9340 already filed); 0x004997b0 signature_unsupported (4-arg ushort/LPCSTR/ptr*/DWORD* no arg_type); frida-sweep must run diffs + re-classify on this branch before C2->C3 promotion is valid
 ```
 
 ## Merged

@@ -5384,4 +5384,70 @@ HOOKS = {
         'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
         'path2_tests':    [0x00, 0x01, 0x02],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-k-s3 — frontend_c0_leaves_plus_util_k3 (C2→C3)
+    # Frontend/Leaves_k3.cpp + Util/UtilLeaves_k3.cpp
+    # Refused in this session:
+    #   0x00412f30 — callee_gate: 0x0046d4a0/0x00467210/0x0041f0d0/0x00412e30 at C1
+    #   0x004997b0 — signature_unsupported: 4-arg (ushort,LPCSTR,ptr*,DWORD*) no arg_type
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00408a50  PerCarRaceProgressGet  (frontend/subsystem_observed=ai_or_vehicle_boundary)
+    # Per-car race-progress float getter: *(float*)(0x008a96e8 + param_1 * 0x30c).
+    # int_scalar: passes car slot index (0-3) as int32, returns float in ST0.
+    # At main-menu quiescent state, BSS is zeroed → all slots return 0.0f.
+    # Both orig and reimpl read the same address; bit-identity is deterministic.
+    # OOB slots (> 3 in practice) read into contiguous BSS — both sides return
+    # the same raw bits at that address. 10 tests: 0-3 (valid), 4-9 (OOB/stable).
+    # U-1292: subsystem tag open; does not affect reimpl.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00408a50.md
+    'per_car_race_progress_get': {
+        'rva':            0x00408a50,
+        'export':         'PerCarRaceProgressGet',
+        'signature':      {'ret': 'float', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x0040e340  GetLiveCarCount  (util/subsystem_observed=util_or_vehicle)
+    # 5-byte stub: MOV EAX, [0x008a94d0]; RET.
+    # read_global: write sentinel to DAT_008a94d0, call fn(), verify return == sentinel.
+    # 10 sentinels covering 0, 1, MAX, and bit-pattern variants.
+    # U-0497: writer of DAT_008a94d0 not documented; does not affect reimpl.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e340.md
+    'get_live_car_count': {
+        'rva':            0x0040e340,
+        'export':         'GetLiveCarCount',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x008a94d0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x00000004, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000],
+        'path2_tests':    [0x00000000, 0x00000004, 0xDEADBEEF],
+    },
+
+    # 0x0040e370  IsCarSlotActive  (util/subsystem_observed=util_or_vehicle)
+    # bool getter: if (3 < param_1) return false;
+    #   return *(int*)(PTR_PTR_005f2770 + param_1*4 + 0x34) != 0;
+    # int_scalar: pass slot index as uint32, return bool as uint32.
+    # OOB tests (4..9) return 0 deterministically (bounds check path).
+    # In-bounds tests (0..3) at quiescent main menu: PTR_PTR_005f2770 is live;
+    # slots are null → both orig and reimpl return 0. Bit-identical confirmed.
+    # Large values (0xffffffff etc.) exercise the bounds-check path (> 3 always true).
+    # U-1611: PTR_PTR_005f2770 owner open; does not affect reimpl.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e370.md
+    'is_car_slot_active': {
+        'rva':            0x0040e370,
+        'export':         'IsCarSlotActive',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 0x7fffffff, 0xffffffff],
+        'path2_tests':    [0, 1, 4, 100],
+    },
 }
