@@ -1529,3 +1529,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_00489450  writes=19  renames=0  errors=0
 2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_004ee461  writes=0  renames=0  errors=0
 2026-05-20  sweep-20260520-0604  scribe-release  bucket=bucket_004fcac3  writes=54  renames=0  errors=0
+2026-05-20  sweep-20260520-0604  scribe-release  buckets=3 drained (73 plates, 73 bookmarks, 0 renames; bucket_00489450=19 game-code + library-residue halt-marker for 37 D3DX9 PSGP RVAs deferred to bulk-add, bucket_004ee461=0 plates full-halt 56 D3DX9 PSGP, bucket_004fcac3=54 clean)  errors=0  sync=partial (slot 11 busy db.57.gbf same pattern as prior sweep)
