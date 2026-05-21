@@ -6141,4 +6141,150 @@ HOOKS = {
              0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 2, 0],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-n-s2 — frontend_small_leaves (C2→C3, 5 candidates)
+    # Frontend/SmallLeaves_n2.cpp — 3 new-author leaves + 1 dispatcher;
+    # Frontend/MenuMenusMixed.cpp — 1 drift-staged (MenuTableSearch 0x0042a940).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0045ba00  RaceResultIndexedStore
+    # void(int param_1, uint32 param_2): writes param_2 to (&DAT_0068d1f0)[param_1].
+    # 15-byte leaf. 5 callers: FUN_0040be50/0040e590/004111c0/00422fd0/00424eb0.
+    # entity_field_set: call fn(p1, p2), read back target_global + p1*4 as uint32.
+    # For OOB indices, memory is still read back (both paths write to that address).
+    # All in-range indices 0..9 write deterministically — both paths must agree.
+    # U-2869 (DAT_0068d1f0 array element semantics) does not affect correctness.
+    # ref: re/analysis/promote_c1_low_ab1/0x0045ba00.md
+    'race_result_indexed_store': {
+        'rva':            0x0045ba00,
+        'export':         'RaceResultIndexedStore',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':       'entity_field_set',
+        'target_global':  0x0068d1f0,
+        'entity_byte_stride': 4,
+        'lut_root_delta': 0,
+        # [param_1, param_2]: write param_2 at index param_1; read back.
+        'path1_tests': [
+            [0,  0x00000000],
+            [0,  0xDEADBEEF],
+            [1,  0x12345678],
+            [1,  0xCAFEBABE],
+            [2,  0xFFFFFFFF],
+            [2,  0x80000000],
+            [3,  0x00000001],
+            [3,  0x55555555],
+            [4,  0xAAAAAAAA],
+            [4,  0x3F800000],
+        ],
+        'path2_tests': [
+            [0, 0xDEADBEEF],
+            [1, 0x12345678],
+            [2, 0xFFFFFFFF],
+        ],
+    },
+
+    # 0x0046c5c0  VehicleSlotInit
+    # uint32(uint32 param_1): initialise slot at index param_1 (0..15).
+    # Returns 1 on success, 0 if param_1 > 15 (OOB).
+    # 47-byte body. Callers: FUN_004111c0, FUN_00422fd0 (C3).
+    # int_scalar: pass index, compare return value.
+    # OOB path (param_1 > 15) returns 0 deterministically (no side-effects).
+    # In-range path returns 1 and writes to BSS (zero-init) arrays — deterministic.
+    # U-2870 (struct layout) and U-2871 (DAT_007f1030 identity) do not affect
+    # correctness of the OOB guard and return values.
+    # ORDER NOTE: Must be GREEN before VehicleSlotFieldSet (0x0046c790) is promoted.
+    # ref: re/analysis/promote_c1_low_ab1/0x0046c5c0.md
+    'vehicle_slot_init': {
+        'rva':            0x0046c5c0,
+        'export':         'VehicleSlotInit',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # OOB path (> 15) returns 0; in-range returns 1.
+        'path1_tests':    [16, 17, 100, 255, 0xffffffff, 0, 1, 5, 10, 15],
+        'path2_tests':    [16, 0, 15],
+    },
+
+    # 0x0046c790  VehicleSlotFieldSet
+    # uint32(uint32 param_1, uint32 param_2):
+    #   writes param_2 to field +0x0c of per-slot struct at DAT_008815b0.
+    #   Returns 0xffffffff (-1) if param_1 > 15, else 0.
+    # 31-byte body. Caller: FUN_00422fd0 (C3, FrontendRaceResultsDispatch).
+    # int_pair: call fn(p1, p2), compare return value.
+    # OOB (param_1 > 15): both paths return 0xffffffff — deterministic.
+    # In-range: both paths write to BSS (zero-init) and return 0 — deterministic.
+    # ORDER NOTE: VehicleSlotInit (0x0046c5c0) must be GREEN before this is promoted.
+    # U-2872 (field semantics at +0x0c) does not affect bit-identity.
+    # ref: re/analysis/promote_c1_low_ab1/0x0046c790.md
+    'vehicle_slot_field_set': {
+        'rva':            0x0046c790,
+        'export':         'VehicleSlotFieldSet',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # [param_1, param_2]. OOB (p1 > 15) → 0xffffffff; in-range → 0.
+        'path1_tests': [
+            [0,  0x00000000],
+            [0,  0xDEADBEEF],
+            [1,  0x12345678],
+            [5,  0xCAFEBABE],
+            [15, 0xFFFFFFFF],
+            [16, 0x00000000],   # OOB → 0xffffffff
+            [17, 0x00000000],   # OOB → 0xffffffff
+            [100, 0x00000000],  # OOB → 0xffffffff
+            [255, 0x00000000],  # OOB → 0xffffffff
+            [0xffffffff, 0x1],  # OOB → 0xffffffff
+        ],
+        'path2_tests': [
+            [0, 0xDEADBEEF],
+            [15, 0xFFFFFFFF],
+            [16, 0x00000000],
+        ],
+    },
+
+    # 0x0042a940  MenuTableSearch
+    # uint32(uint32 param_1): linear scan of stride-3 table at 0x005f6748
+    #   via FUN_0040ce80(param_1) as key. Returns 0 if not found; value field (+8) on match.
+    # 61-byte body. DRIFT-STAGED: impl in Frontend/MenuMenusMixed.cpp.
+    # Callee: FUN_0040ce80 (C2). Table at 0x005f6748 is zero-init at quiescent state.
+    # int_scalar: pass param_1 as uint32. At main-menu quiescent state the table
+    # contains 0s; first entry key == FUN_0040ce80(param_1); -1 sentinel not set.
+    # Both paths call the same original FUN_0040ce80 (not yet replaced) → identical key.
+    # The scan returns consistently from the live table — both paths agree.
+    # arg_type='int_scalar': pass param_1 index; compare return value.
+    # U-3434 (FUN_0040ce80 semantics) and U-3435 (+4 field role) do not affect correctness.
+    # ref: re/analysis/frontend_promote_menus_a/0x0042a940.md
+    'menu_table_search': {
+        'rva':            0x0042a940,
+        'export':         'MenuTableSearch',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # At quiescent main menu, table is zero-initialised; function behavior
+        # is determined by the table contents (stable for each slot index).
+        # Both orig and reimpl call the same FUN_0040ce80 and scan the same table.
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x004307a0  ElapsedVsThresholdCheck
+    # uint32(void): reads 3-float threshold table DAT_00614718[DAT_0067f17c*0xc],
+    #   accumulates elapsed time via LapFracGetBySlot+LapLapsGetBySlot+LapSecsGetBySlot,
+    #   returns 1 if elapsed < threshold_sum, else 0.
+    # 116-byte body. Callees: 0x00429a70/80/90 all C3.
+    # arg_type='none': call 10x at quiescent main-menu state; elapsed and threshold
+    #   globals are stable at main-menu → deterministic return each time.
+    # U-3596 (table field semantics) and U-3597 (DAT_0067f17c as row index) do not
+    #   affect bit-identity for known quiescent state.
+    # ref: re/analysis/frontend_c0_promote/0x004307a0.md
+    'elapsed_vs_threshold_check': {
+        'rva':            0x004307a0,
+        'export':         'ElapsedVsThresholdCheck',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }

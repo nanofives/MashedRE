@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-21  c3-batch-n-s2  rvas=0x0045ba00,0x0046c5c0,0x0046c790,0x0042a940,0x004307a0  branch=c3/batch-n-s2  evidence=log/diff_race_result_indexed_store.csv;log/diff_vehicle_slot_init.csv;log/diff_vehicle_slot_field_set.csv;log/diff_menu_table_search.csv;log/diff_elapsed_vs_threshold_check.csv  note=5/5 frontend small-leaves C2->C3 (RaceResultIndexedStore+VehicleSlotInit+VehicleSlotFieldSet+MenuTableSearch+ElapsedVsThresholdCheck); SmallLeaves_n2.cpp (4 new) + MenuMenusMixed.cpp (1 drift-staged); all 10/10 GREEN; open non-blocking: U-2869/U-2870/U-2871/U-2872/U-3434/U-3435/U-3596/U-3597
 ```
 
 ## Merged
