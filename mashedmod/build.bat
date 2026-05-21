@@ -36,10 +36,10 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Math\RwSqrt.cpp" ^
     "GameState\StateAccessors.cpp" ^
     "Vehicle\VehicleState.cpp" ^
-    "Vehicle\MiscDamping_j3.cpp" ^
-    "Vehicle\Replay_j3.cpp" ^
-    "Vehicle\Damage_j4.cpp" ^
-    "Vehicle\Physics_j4.cpp" ^
+    "Vehicle\MiscDamping.cpp" ^
+    "Vehicle\Replay.cpp" ^
+    "Vehicle\Damage.cpp" ^
+    "Vehicle\Physics.cpp" ^
     "Util\TimerState.cpp" ^
     "Util\TimerSubarrayInit.cpp" ^
     "Util\GameStateGetters.cpp" ^
@@ -47,8 +47,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\TimerInit.cpp" ^
     "Audio\AudioMemory.cpp" ^
     "Audio\AudioRws.cpp" ^
-    "Audio\RwsStream_i1.cpp" ^
-    "Audio\RwsFmt_j1.cpp" ^
+    "Audio\RwsStream.cpp" ^
+    "Audio\RwsFmt.cpp" ^
     "Audio\AudioDSound.cpp" ^
     "Audio\AudioMusic.cpp" ^
     "Math\RwV3dTransform.cpp" ^
@@ -67,7 +67,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\FrontendMode.cpp" ^
     "HUD\HudDispatch.cpp" ^
     "HUD\FontCtx.cpp" ^
-    "HUD\HudBatch_h4.cpp" ^
+    "HUD\HudBatch.cpp" ^
     "Frontend\MenuScoreGetters.cpp" ^
     "Frontend\MenuInit.cpp" ^
     "Frontend\MenuScoreSort.cpp" ^
@@ -90,26 +90,28 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Save\VfsStream.cpp" ^
     "Save\FsOpen.cpp" ^
     "Save\SettingsConfig.cpp" ^
-    "Save\SettingsAndIO_i3.cpp" ^
-    "Save\SettingsCfg_i4.cpp" ^
-    "Save\SettingsDialog_j5.cpp" ^
+    "Save\SettingsAndIO.cpp" ^
+    "Save\SettingsCfg.cpp" ^
+    "Save\SettingsDialog.cpp" ^
     "Boot\CrtStartup.cpp" ^
-    "Boot\Boot_j5.cpp" ^
+    "Boot\Boot.cpp" ^
     "Util\TimerSetters.cpp" ^
     "Util\TimerSlot.cpp" ^
-    "Util\UtilBatch_h5.cpp" ^
-    "Util\UtilMid_h6.cpp" ^
+    "Util\UtilBatch.cpp" ^
+    "Util\UtilMid.cpp" ^
     "Frontend\MenuStateMachine.cpp" ^
     "Frontend\FrontendDispatch.cpp" ^
-    "Frontend\SpriteCluster_k2.cpp" ^
+    "Frontend\SpriteCluster.cpp" ^
     "Boot\FrameDispatch.cpp" ^
     "Input\DirectInput.cpp" ^
-    "Input\DInput_j5.cpp" ^
+    "Input\DInput.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
     "Harness\HarnessStubs.cpp" ^
-    "Frontend\Leaves_k3.cpp" ^
-    "Util\UtilLeaves_k3.cpp" ^
-    "HUD\TextCluster_k4.cpp" ^
+    "Frontend\Leaves.cpp" ^
+    "Frontend\MenuMenusMixed.cpp" ^
+    "Util\UtilLeaves.cpp" ^
+    "HUD\TextCluster.cpp" ^
+    "Frontend\MenuSpriteDispatch.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

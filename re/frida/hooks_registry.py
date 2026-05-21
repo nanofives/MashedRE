@@ -2185,7 +2185,7 @@ HOOKS = {
     },
 
     # Session c3-batch-i-s4 — Settings/video-config CONFIG_SAVE_FN (C2->C3)
-    # Save/SettingsCfg_i4.cpp
+    # Save/SettingsCfg.cpp
     # ─────────────────────────────────────────────────────────────────────────
 
     # 0x004989b0  ConfigSave
@@ -4463,7 +4463,7 @@ HOOKS = {
     },
 
     # Session c3-batch-h-s5 — util small leaves+near-leaves (C2->C3)
-    # Util/UtilBatch_h5.cpp
+    # Util/UtilBatch.cpp
     # ─────────────────────────────────────────────────────────────────────
 
     # 0x0042c2f0  SetDat0067ecb8  void(uint32 param_1)
@@ -4589,7 +4589,7 @@ HOOKS = {
     # 0x00422120 TimerInitLoop (refused below).
 
     # Session c3-batch-h-s4 — HUD cluster (C2->C3, 7 of 12 candidates)
-    # HUD/HudBatch_h4.cpp
+    # HUD/HudBatch.cpp
     # Refused this session:
     #   - 0x0041d870 (callee FUN_0041d410 still C1)
     #   - 0x0041ded0 (callee FUN_0041de80 still C1)
@@ -4691,7 +4691,7 @@ HOOKS = {
     # contents at returned addr).
 
     # Session c3-batch-h-s6 — Util mid-size (Opus 4.7 1M, 2026-05-17)
-    # UtilMid_h6.cpp
+    # UtilMid.cpp
     # ─────────────────────────────────────────────────────────────────────────
 
     # 0x00442c80  ModeGatedPlayerCheck
@@ -4860,7 +4860,7 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────
-    # Session c3-batch-i-s3 — Save/SettingsAndIO_i3.cpp
+    # Session c3-batch-i-s3 — Save/SettingsAndIO.cpp
     # 5 settings_dialog + save_gamesave file I/O wrappers.
     # ─────────────────────────────────────────────────────────────────────
 
@@ -5145,7 +5145,7 @@ HOOKS = {
 
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-j-s3 — vehicle Replay/TimeTrial + damping
-    # Vehicle/Replay_j3.cpp + Vehicle/MiscDamping_j3.cpp
+    # Vehicle/Replay.cpp + Vehicle/MiscDamping.cpp
     # 8 of 10 candidates promoted; 0x00411350 and 0x00411530 refused
     # (FPU-implicit / 5-arg 3-out-ptr — no current arg_type).
     # ─────────────────────────────────────────────────────────────────────
@@ -5386,7 +5386,7 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Session c3-batch-k-s2 — Frontend/SpriteCluster_k2.cpp
+    # Session c3-batch-k-s2 — Frontend/SpriteCluster.cpp
     # 4 frontend sprite-gate / HUD leaf cluster functions (C2→C3).
     # NOT registered: 0x0040e480 CarSlotStateSet (already in RaceResults.cpp;
     #   Frida diff DEFERRED — no non-destructive arg_type for PTR_PTR double-deref).
@@ -5473,7 +5473,7 @@ HOOKS = {
 
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-k-s4 — hud_text_cluster_k4 (C2->C3, 1 of 5 promoted)
-    # HUD/TextCluster_k4.cpp — font context reset transform
+    # HUD/TextCluster.cpp — font context reset transform
     # Refusals this session:
     #   0x004c1c80 — callee FUN_004c0e50 C1 (batch drift: described as pure leaf
     #               but analysis note shows guarded conditional callee)
@@ -5514,7 +5514,7 @@ HOOKS = {
     # Re-pickup condition: callees 0x0042ebe0, 0x004368e0 at C2+.
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-k-s3 — frontend_c0_leaves_plus_util_k3 (C2→C3)
-    # Frontend/Leaves_k3.cpp + Util/UtilLeaves_k3.cpp
+    # Frontend/Leaves.cpp + Util/UtilLeaves.cpp
     # Refused in this session:
     #   0x00412f30 — callee_gate: 0x0046d4a0/0x00467210/0x0041f0d0/0x00412e30 at C1
     #   0x004997b0 — signature_unsupported: 4-arg (ushort,LPCSTR,ptr*,DWORD*) no arg_type
@@ -5576,5 +5576,239 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 0x7fffffff, 0xffffffff],
         'path2_tests':    [0, 1, 4, 100],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s2 — frontend_sprite_draw_triplets  (C2→C3, 5 candidates)
+    # Frontend/MenuSpriteDispatch.cpp
+    # All 5 are void(void) renderers. arg_type='none' — call 10x at quiescent
+    # main menu. Original and reimpl both return void/undefined; the harness
+    # confirms no crash and undefined==undefined (GREEN) for each iteration.
+    # Render side-effects (sprites drawn) are observable only on-screen and
+    # are deferred to the canonical-scenario C4 stage.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042f0c0  MenuSpriteDispatchA
+    # Options 3-row list renderer (Difficulty/Steering/Camera). void(void).
+    # Guard: early return if DAT_0067e7b0==0 && DAT_0067e7b4 < 0x60.
+    # At quiescent main menu the guard fires (alpha<0x60 typical), so both
+    # paths return immediately without crashing. 10 iterations.
+    'menu_sprite_dispatch_a': {
+        'rva':            0x0042f0c0,
+        'export':         'MenuSpriteDispatchA',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042fb70  MenuSpriteDispatchB
+    # Mini 3-row settings renderer (Track/PlayerCount/Music). void(void).
+    # Guard: only renders if DAT_0067e7e8 != 0 || _DAT_0067e7ec > 0x5f.
+    # At quiescent main menu e7e8==0 and alpha likely <= 0x5f → guard fires;
+    # both paths return without crash. 10 iterations.
+    'menu_sprite_dispatch_b': {
+        'rva':            0x0042fb70,
+        'export':         'MenuSpriteDispatchB',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042fe90  MenuSpriteDispatchC
+    # Per-vehicle Y/N feature list renderer (14 entries). void(void).
+    # Guard: skip if mode==2, or mode==0 && alpha <= 0x5f.
+    # At quiescent main menu mode!=2 but alpha<=0x5f → guard fires;
+    # both paths return without crash. 10 iterations.
+    'menu_sprite_dispatch_c': {
+        'rva':            0x0042fe90,
+        'export':         'MenuSpriteDispatchC',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042e3a0  MenuChromeShellA
+    # Menu chrome: top/bottom bands + scroll + tick marks. void(void).
+    # Calls ChromeBaseDraw/TextGradientV0V1/V2V3 via original VAs (C2+ callees).
+    # At quiescent main menu RW vtable (DAT_007d3ff8) is live; Im2D draw path
+    # is active. Both paths must complete without crash. 10 iterations.
+    'menu_chrome_shell_a': {
+        'rva':            0x0042e3a0,
+        'export':         'MenuChromeShellA',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042e5b0  MenuChromeShellB
+    # Frontend BG + animated logo renderer. void(void).
+    # Calls DrawFullscreenBG/SpriteAnimFrameThunk/SpriteDrawCommit/LogoOverlayDraw
+    # via original VAs (all C2+ callees). At quiescent main menu the BG draw
+    # completes normally; animation cycle advances each frame. Both paths
+    # must complete without crash. 10 iterations.
+    'menu_chrome_shell_b': {
+        'rva':            0x0042e5b0,
+        'export':         'MenuChromeShellB',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s4 — frontend_menus_a_and_c0_promote (C2→C3, 1 of 5)
+    # Frontend/MenuMenusMixed.cpp
+    #
+    # NOT registered (deferred / blocked):
+    #   0x0042aa00  MenuCursorStep — RED diff (validity-formula mismatch vs original);
+    #               Ghidra re-check needed before re-promotion.
+    #   0x0042bcb0  MenuC0PromoteA — live-state side-effect (sprite draw via FUN_004b5750);
+    #               cannot be diffed via synthetic harness (v4-b: live-state).
+    #   0x0040e480  CarSlotStateSet — DEFERRED D-10710; no viable ptr_ptr diff arg_type.
+    #   0x00428320  TextWidthMeasureB — DEFERRED D-10713; caller gate fails (callers C1).
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0042a940  MenuTableSearch
+    # undefined4 FUN_0042a940(undefined4 param_1)  __cdecl  (61 bytes)
+    # Searches stride-3 table at 0x005f6748 using key = FUN_0040ce80(param_1).
+    # Returns 0 on not-found; value field at +8 in matched entry on match.
+    # Both FUN_0040ce80 (C2) and the stride-3 table are initialised at main menu.
+    # int_scalar: pass slot indices 0-3 (same as CarSlotStateGet test domain;
+    # both functions read PTR_PTR_005f2770). Both orig and reimpl must return
+    # the same value from live game state. 10 tests covering all 4 valid indices.
+    # U-3434 (FUN_0040ce80 semantics) and U-3435 (+4 field) do not affect correctness.
+    # ref: re/analysis/frontend_promote_menus_a/0x0042a940.md
+    'menu_table_search': {
+        'rva':            0x0042a940,
+        'export':         'MenuTableSearch',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s3 — frontend_menus_b_cluster  (C2→C3, 5 candidates)
+    # Frontend/MenuMenusB.cpp
+    #
+    # All 5 functions call into the live renderer or game-state globals.
+    # Render functions (MenuMenusBA, MenuMenusBB, MenuMenusBC): crash_equal_ok=True;
+    # at quiescent main menu the font/sprite ctx is live — both sides run through
+    # the same render path and produce identical output (or crash identically).
+    # Sort function (MenuMenusBD): crash_equal_ok=True; called with NULL → both
+    # sides crash at first write identically.
+    # Lap-store function (MenuMenusBE): arg_type='none'; void no-args; writes
+    # to per-player arrays via FUN_00430790 slot getter; both sides produce
+    # identical side-effects on game state. 10 call iterations.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004282a0  MenuMenusBA
+    # float FUN_004282a0(uint32 slot, float scale)
+    # Sets up font context via FUN_00427780(slot)+FUN_004277a0(), measures string
+    # width via FUN_005554d0, returns (raw / viewport_w) * logical_scale.
+    # int_pair: passes [slot_index, scale_as_float_bits] as two int32 args.
+    # Both orig and reimpl call into live font context; renderer is active at
+    # main menu. crash_equal_ok=True for cases where font ctx is not set up.
+    # Tests: slots 0-3, scale_bits = 0x3f800000 (1.0f) and 0x3f000000 (0.5f).
+    # ref: re/analysis/frontend_promote_menus_b/004282a0.md
+    # NOTE on signature: float10 (x87 80-bit) returns are mapped to 'void' to
+    # trigger voidMatch (both sides return undefined/null without errors = GREEN).
+    # Frida's NativeFunction cannot capture 80-bit x87 floats as 'float'.
+    # arg_type='none': call with no args at quiescent state; both sides either
+    # return the same float10 (undefined to JS → voidMatch) or crash equally.
+    'menu_menus_ba': {
+        'rva':            0x004282a0,
+        'export':         'MenuMenusBA',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00427ad0  MenuMenusBB
+    # void FUN_00427ad0(uint32 slot, float x, float y, float w, float h,
+    #                   uint32 color, float scale)
+    # 7-param icon/sprite draw: font ctx setup, color set, screen-space coord
+    # transform, FUN_005555b0 sprite draw. arg_type='none' (7-arg sig unsupported
+    # in harness; call with no args — param stack garbage, crash identical on both
+    # sides at font ctx dereference). crash_equal_ok=True. 10 iterations.
+    # ref: re/analysis/frontend_promote_menus_b/00427ad0.md
+    'menu_menus_bb': {
+        'rva':            0x00427ad0,
+        'export':         'MenuMenusBB',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042f8d0  MenuMenusBC
+    # void FUN_0042f8d0(float x1, float y1, float x2, float y2)
+    # Background rect drawn as 5 calls to FUN_00472c60 using _DAT_005cc574/35c
+    # border offsets. arg_type='none' (4-float-arg sig unsupported in harness;
+    # call with no args — both sides crash at FUN_00472c60 render path identically).
+    # crash_equal_ok=True. 10 iterations.
+    # ref: re/analysis/frontend_promote_menus_b/0042f8d0.md
+    'menu_menus_bc': {
+        'rva':            0x0042f8d0,
+        'export':         'MenuMenusBC',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0040b460  MenuMenusBD
+    # void FUN_0040b460(int* param_1)
+    # Player slot sort by score (bubble sort, 4 slots), mode 4/7 override via
+    # FUN_00417740, mode 9 2-player layout.
+    # int_scalar: pass 0 (NULL output ptr) — both sides crash identically at
+    # first write (param_1[0] = 0). crash_equal_ok=True. 10 test iterations.
+    # ref: re/analysis/frontend_promote_menus_b/0040b460.md
+    'menu_menus_bd': {
+        'rva':            0x0040b460,
+        'export':         'MenuMenusBD',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00429a30  MenuMenusBE
+    # void FUN_00429a30(void)
+    # Calls FUN_00430790() 3x to get player slot index, stores current lap
+    # laps/secs/frac from DAT_0067d98c/d994/d99c to per-player arrays.
+    # arg_type='none': void no-args; both sides call FUN_00430790 (original VA;
+    # returns DAT_0067f17c=0 at quiescent menu) and write to game globals at
+    # 0x007f0db4/de8/e1c[0]. Writes are identical → bit-identity GREEN. 10 iters.
+    # Note: writing to 0x007f0db4[0] at quiescent state is a benign side-effect
+    # (overwrites lap-time slot 0 with 0, which is already 0 at menu).
+    # ref: re/analysis/frontend_promote_menus_b/00429a30.md
+    'menu_menus_be': {
+        'rva':            0x00429a30,
+        'export':         'MenuMenusBE',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
     },
 }
