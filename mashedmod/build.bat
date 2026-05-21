@@ -79,6 +79,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\VehicleMeta.cpp" ^
     "Frontend\MenuChrome.cpp" ^
     "Frontend\RaceResults.cpp" ^
+    "Frontend\MenuMenusB.cpp" ^
     "Save\GameSaveVFS.cpp" ^
     "Boot\CrtCompilerSupport.cpp" ^
     "Boot\CrtInit.cpp" ^

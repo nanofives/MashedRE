@@ -5698,6 +5698,7 @@ HOOKS = {
     },
 
     # ─────────────────────────────────────────────────────────────────────────
+
     # Session c3-batch-m-s3 — frontend_menus_b_cluster  (C2→C3, 5 candidates)
     # Frontend/MenuMenusB.cpp
     #

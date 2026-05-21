@@ -2,6 +2,7 @@
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 2026-05-20  frida-sweep-20260520-1800  frida-sweep-claim  branches=4 queued (worktree-agent-aa9eb1c8100aaaedc [zero-yield], c3/batch-m-s3 [5 hooks], worktree-agent-a2d6778b8c4c0624c [4 hooks], c3/batch-m-s6 [3 hooks])
+2026-05-20  c3-batch-m-s3  menus_b_cluster  C2->C3  5 hooks: 0x004282a0 MenuMenusBA + 0x00427ad0 MenuMenusBB + 0x0042f8d0 MenuMenusBC + 0x0040b460 MenuMenusBD + 0x00429a30 MenuMenusBE  file=mashedmod/src/mashed_re/Frontend/MenuMenusB.cpp  evidence=log/diff_menu_menus_ba.csv:GREEN-10/10;log/diff_menu_menus_bb.csv:GREEN-10/10;log/diff_menu_menus_bc.csv:GREEN-10/10;log/diff_menu_menus_bd.csv:GREEN-10/10;log/diff_menu_menus_be.csv:GREEN-10/10  callee-gates: 004277a0(C2) + 004277a0(C2) + 00472c60(C2) + 00417740(C2) + 00430790(C2)  arg_types: none/crash_equal_ok ×4 + none ×1
 2026-05-20  sweep-20260521-0113  scribe-release  buckets=3 drained  errors=0  note=pool-sync partial (slot 10 refreshed; slot 11 busy on active py process — non-blocking per skill; master saved+closed cleanly)
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_high_ab3  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_mid_ab2  writes=13  errors=0
