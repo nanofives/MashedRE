@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-m-s3  rvas=0x004282a0,0x00427ad0,0x0042f8d0,0x0040b460,0x00429a30  branch=c3/batch-m-s3  evidence=log/diff_menu_menus_ba.csv:GREEN-10/10;log/diff_menu_menus_bb.csv:GREEN-10/10;log/diff_menu_menus_bc.csv:GREEN-10/10;log/diff_menu_menus_bd.csv:GREEN-10/10;log/diff_menu_menus_be.csv:GREEN-10/10  note=5/5 frontend menus_b cluster C2->C3; MenuMenusBA+BB+BC+BD+BE; Frontend/MenuMenusB.cpp; callee gates cleared (004277a0/00472c60/00417740/00430790 all C2); arg_type=none/crash_equal_ok for render functions + void/none for lap store; all GREEN 10/10
 ```
 
 ## Merged

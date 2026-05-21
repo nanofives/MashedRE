@@ -5384,4 +5384,119 @@ HOOKS = {
         'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
         'path2_tests':    [0x00, 0x01, 0x02],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s3 — frontend_menus_b_cluster  (C2→C3, 5 candidates)
+    # Frontend/MenuMenusB.cpp
+    #
+    # All 5 functions call into the live renderer or game-state globals.
+    # Render functions (MenuMenusBA, MenuMenusBB, MenuMenusBC): crash_equal_ok=True;
+    # at quiescent main menu the font/sprite ctx is live — both sides run through
+    # the same render path and produce identical output (or crash identically).
+    # Sort function (MenuMenusBD): crash_equal_ok=True; called with NULL → both
+    # sides crash at first write identically.
+    # Lap-store function (MenuMenusBE): arg_type='none'; void no-args; writes
+    # to per-player arrays via FUN_00430790 slot getter; both sides produce
+    # identical side-effects on game state. 10 call iterations.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004282a0  MenuMenusBA
+    # float FUN_004282a0(uint32 slot, float scale)
+    # Sets up font context via FUN_00427780(slot)+FUN_004277a0(), measures string
+    # width via FUN_005554d0, returns (raw / viewport_w) * logical_scale.
+    # int_pair: passes [slot_index, scale_as_float_bits] as two int32 args.
+    # Both orig and reimpl call into live font context; renderer is active at
+    # main menu. crash_equal_ok=True for cases where font ctx is not set up.
+    # Tests: slots 0-3, scale_bits = 0x3f800000 (1.0f) and 0x3f000000 (0.5f).
+    # ref: re/analysis/frontend_promote_menus_b/004282a0.md
+    # NOTE on signature: float10 (x87 80-bit) returns are mapped to 'void' to
+    # trigger voidMatch (both sides return undefined/null without errors = GREEN).
+    # Frida's NativeFunction cannot capture 80-bit x87 floats as 'float'.
+    # arg_type='none': call with no args at quiescent state; both sides either
+    # return the same float10 (undefined to JS → voidMatch) or crash equally.
+    'menu_menus_ba': {
+        'rva':            0x004282a0,
+        'export':         'MenuMenusBA',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00427ad0  MenuMenusBB
+    # void FUN_00427ad0(uint32 slot, float x, float y, float w, float h,
+    #                   uint32 color, float scale)
+    # 7-param icon/sprite draw: font ctx setup, color set, screen-space coord
+    # transform, FUN_005555b0 sprite draw. arg_type='none' (7-arg sig unsupported
+    # in harness; call with no args — param stack garbage, crash identical on both
+    # sides at font ctx dereference). crash_equal_ok=True. 10 iterations.
+    # ref: re/analysis/frontend_promote_menus_b/00427ad0.md
+    'menu_menus_bb': {
+        'rva':            0x00427ad0,
+        'export':         'MenuMenusBB',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042f8d0  MenuMenusBC
+    # void FUN_0042f8d0(float x1, float y1, float x2, float y2)
+    # Background rect drawn as 5 calls to FUN_00472c60 using _DAT_005cc574/35c
+    # border offsets. arg_type='none' (4-float-arg sig unsupported in harness;
+    # call with no args — both sides crash at FUN_00472c60 render path identically).
+    # crash_equal_ok=True. 10 iterations.
+    # ref: re/analysis/frontend_promote_menus_b/0042f8d0.md
+    'menu_menus_bc': {
+        'rva':            0x0042f8d0,
+        'export':         'MenuMenusBC',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0040b460  MenuMenusBD
+    # void FUN_0040b460(int* param_1)
+    # Player slot sort by score (bubble sort, 4 slots), mode 4/7 override via
+    # FUN_00417740, mode 9 2-player layout.
+    # int_scalar: pass 0 (NULL output ptr) — both sides crash identically at
+    # first write (param_1[0] = 0). crash_equal_ok=True. 10 test iterations.
+    # ref: re/analysis/frontend_promote_menus_b/0040b460.md
+    'menu_menus_bd': {
+        'rva':            0x0040b460,
+        'export':         'MenuMenusBD',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00429a30  MenuMenusBE
+    # void FUN_00429a30(void)
+    # Calls FUN_00430790() 3x to get player slot index, stores current lap
+    # laps/secs/frac from DAT_0067d98c/d994/d99c to per-player arrays.
+    # arg_type='none': void no-args; both sides call FUN_00430790 (original VA;
+    # returns DAT_0067f17c=0 at quiescent menu) and write to game globals at
+    # 0x007f0db4/de8/e1c[0]. Writes are identical → bit-identity GREEN. 10 iters.
+    # Note: writing to 0x007f0db4[0] at quiescent state is a benign side-effect
+    # (overwrites lap-time slot 0 with 0, which is already 0 at menu).
+    # ref: re/analysis/frontend_promote_menus_b/00429a30.md
+    'menu_menus_be': {
+        'rva':            0x00429a30,
+        'export':         'MenuMenusBE',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
