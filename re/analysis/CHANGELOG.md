@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-20  frida-sweep-20260520-1800  frida-sweep-claim  branches=4 queued (worktree-agent-aa9eb1c8100aaaedc [zero-yield], c3/batch-m-s3 [5 hooks], worktree-agent-a2d6778b8c4c0624c [4 hooks], c3/batch-m-s6 [3 hooks])
 2026-05-20  sweep-20260521-0113  scribe-release  buckets=3 drained  errors=0  note=pool-sync partial (slot 10 refreshed; slot 11 busy on active py process — non-blocking per skill; master saved+closed cleanly)
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_high_ab3  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_mid_ab2  writes=13  errors=0
