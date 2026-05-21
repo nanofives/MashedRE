@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-m-s1  rvas=  branch=c3/batch-m-s1  evidence=  note=zero-yield-halt-row; 0/5 frontend chrome+text-draw C2->C3; STOP-AND-ASK triggered: all 5 candidates (0x00472f40 TextGradientV0V1Override, 0x004730b0 TextGradientV2V3Override, 0x00472c60 ChromeBaseDraw, 0x004739f0 TextSpriteScaled, 0x00473870 TextSpriteUVExplicit) call through DAT_007d3ff8+0x20 (render-state setter) and DAT_007d3ff8+0x30 (draw-primitive) vtable slots with mixed float/uint/pointer multi-arg signatures (5..12 params); none of the 53 existing diff_template.js arg_types supports this pattern; harness extension needed: new draw_quad_observe arg_type required — fn(float x, float y, float w, float h, uint argb [, ptr tex, int mode...]) writes to DAT_00898a20 vertex buffer, then calls live renderer vtable; observable = fingerprint of DAT_00898a20..DAT_00898a97 (112 bytes) after call; crash_equal_ok strategy considered but multi-arg signature dispatch is blocked (no existing float×4+uint or ptr+float×4+uint+int arg_type); re-pickup condition: after draw_quad_observe arg_type added to diff_template.js (see also c3-batch-k-s4 refusal of 0x00450b10 for same reason); precedent: c3-batch-k-s1 DEFERRED 0x0042ed70 (6-arg mixed void no arg_type); no source files created; baseline build not run (no new files)
 ```
 
 ## Merged
