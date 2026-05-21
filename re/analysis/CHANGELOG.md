@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-20  sweep-20260521-0113  scribe-release  buckets=3 drained  errors=0  note=pool-sync partial (slot 10 refreshed; slot 11 busy on active py process — non-blocking per skill; master saved+closed cleanly)
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_high_ab3  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_mid_ab2  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_low_ab1  writes=13  errors=0
