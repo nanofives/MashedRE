@@ -115,6 +115,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "HUD\TextCluster.cpp" ^
     "Frontend\MenuSpriteDispatch.cpp" ^
     "Frontend\MenuMixed.cpp" ^
+    "Frontend\DrawQuadPrimitives.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

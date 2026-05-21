@@ -400,16 +400,22 @@ extern "C" __declspec(dllexport) void __cdecl MenusLapTimeFmt(
     int param_1, std::uint32_t param_2,
     char* param_3, char* param_4)
 {
-    // Format param_1 into param_3 buffer.
-    // DAT_005cd794 / DAT_005cd798 / DAT_005cd7a0 cited at 0x0042d290 body.
-    const char* fmt_ge10 = *reinterpret_cast<const char* const*>(0x005cd794u);
-    const char* fmt_lt10 = *reinterpret_cast<const char* const*>(0x005cd798u);
-    std::uint32_t pad_lt10 = *reinterpret_cast<const std::uint32_t*>(0x005cd7a0u);
+    // Format-string addresses ARE the strings (.rdata-resident); do NOT
+    // dereference. Confirmed by harness Orig output 2026-05-21 (see
+    // log/diff_menus_lap_time_fmt.csv): DAT_005cd794 → "%d", DAT_005cd798 →
+    // "%s%d", DAT_005cd7a0 → "0". Ghidra's analysis note 0x0042d290.md
+    // claimed "%02d" + a pad value; runtime observable is "%s%d" + pad
+    // string "0" + param_1, taking FOUR variadic args (Ghidra's high-level
+    // call site shows only the fixed-arg prototype and elides the 4th).
+    const char* fmt_ge10 = reinterpret_cast<const char*>(0x005cd794u);
+    const char* fmt_lt10 = reinterpret_cast<const char*>(0x005cd798u);
+    const char* pad_str  = reinterpret_cast<const char*>(0x005cd7a0u);
 
+    // Both branches format the value; the < 10 branch prepends pad_str ("0").
     if (param_1 < 10) {
-        s_FUN_004a2b60(param_3, fmt_lt10, pad_lt10);
+        s_FUN_004a2b60(param_3, fmt_lt10, pad_str, static_cast<std::uint32_t>(param_1));
     } else {
-        s_FUN_004a2b60(param_3, fmt_ge10, param_1);
+        s_FUN_004a2b60(param_3, fmt_ge10, static_cast<std::uint32_t>(param_1));
     }
 
     // Read second value from FPU ST0 via FUN_004a2c48.
@@ -418,7 +424,7 @@ extern "C" __declspec(dllexport) void __cdecl MenusLapTimeFmt(
     std::uint32_t iVar1 = s_FUN_004a2c48();
 
     if (static_cast<int>(iVar1) < 10) {
-        s_FUN_004a2b60(param_4, fmt_lt10, pad_lt10);
+        s_FUN_004a2b60(param_4, fmt_lt10, pad_str, iVar1);
     } else {
         s_FUN_004a2b60(param_4, fmt_ge10, iVar1);
     }

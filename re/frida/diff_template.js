@@ -43,6 +43,18 @@
 //   target_global_base    string (hex addr) — used by vec3_global_mul_observe
 //   target_global_stride  number (per-index byte stride) — same
 //
+// Frontend draw-cluster arg_types (added 2026-05-21):
+//   draw_quad_observe  — Im2D quad/sprite draw: fingerprint DAT_00898a20
+//                        vertex buffer (112B) after orig+reimpl each call.
+//                        Optional CONFIG fields: vbuf_addr_str, vbuf_len.
+//   out_buf_fmt_2      — 4-arg void with two char* output buffers.
+//                        Compares C-string contents joined by '|'.
+//                        Optional CONFIG field: out_buf_size (default 32).
+//   trig_text_draw     — 6-arg void; Interceptor.replace on draw-callee captures
+//                        (sprite_id, adj_x, adj_y) for parity check.
+//                        Optional CONFIG field: draw_callee_rva_str
+//                        (default '0x00427ff0' / FontText_DrawTextRotated).
+//
 'use strict';
 
 const CONFIG = $CONFIG$;
@@ -1331,6 +1343,195 @@ function runDiff() {
                            original: origV, reimpl: reimV,
                            match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── draw_quad_observe ───────────────────────────────────────────────────
+    // For Im2D quad/sprite-draw functions that write a 4-vertex (28 B/vert)
+    // buffer at DAT_00898a20 then dispatch through the RW driver vtable at
+    // DAT_007d3ff8+0x30. Observable = fingerprint of the 112-byte vertex
+    // buffer post-call. Both orig + reimpl invoke the same live vtable, so
+    // if the buffer state matches, the geometry built is bit-identical.
+    //
+    // Works for any arg count — dispatches via CONFIG.signature.args.length.
+    // Pointer-typed positional args ('pointer' in signature.args) are passed
+    // through ptr() with the test value as the raw address (use 0 for NULL).
+    // Float-typed args go through as JS numbers (NativeFunction promotes).
+    //
+    // Tests: flat array per call whose length matches signature.args.length.
+    //   5-arg form: [x, y, w, h, argb]            (ChromeBaseDraw / gradient)
+    //   7-arg form: [tex, x, y, w, h, argb, mode] (TextSpriteUVExplicit)
+    //  12-arg form: [tex, x, y, w, h, argb, u0, u1, v0, v1, scale_mode, blend]
+    //
+    // CONFIG fields:
+    //   vbuf_addr_str   string (hex) — override DAT_00898a20 if needed
+    //   vbuf_len        int          — override 112 if buffer size differs
+    if (CONFIG.arg_type === 'draw_quad_observe') {
+        const VBUF = ptr(CONFIG.vbuf_addr_str || '0x00898a20');
+        const VLEN = (CONFIG.vbuf_len | 0) || 112;
+        const sigArgs = CONFIG.signature.args;
+        const argc    = sigArgs.length;
+
+        // Save buffer contents so live game state is restored after the test.
+        const savedBuf = new Array(VLEN);
+        for (let k = 0; k < VLEN; k++) {
+            try { savedBuf[k] = VBUF.add(k).readU8(); }
+            catch (e) { savedBuf[k] = 0; }
+        }
+        function fingerprintVbuf() {
+            let fp = 0;
+            for (let k = 0; k < VLEN; k++) {
+                fp = ((fp * 31) ^ VBUF.add(k).readU8()) >>> 0;
+            }
+            return fp;
+        }
+        function packArgs(t) {
+            const a = [];
+            for (let k = 0; k < argc; k++) {
+                if (sigArgs[k] === 'pointer') a.push(ptr((t[k] | 0) >>> 0));
+                else a.push(t[k]);
+            }
+            return a;
+        }
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const args = packArgs(t);
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Zero vbuf, run Orig, fingerprint.
+            for (let k = 0; k < VLEN; k++) VBUF.add(k).writeU8(0);
+            try { Orig.apply(null, args); origV = fingerprintVbuf(); }
+            catch (e) {
+                errO = e.message;
+                try { origV = fingerprintVbuf(); } catch (_) {}
+            }
+            // Zero vbuf, run Reimpl, fingerprint.
+            for (let k = 0; k < VLEN; k++) VBUF.add(k).writeU8(0);
+            try { Reimpl.apply(null, args); reimV = fingerprintVbuf(); }
+            catch (e) {
+                errR = e.message;
+                try { reimV = fingerprintVbuf(); } catch (_) {}
+            }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        // Restore live buffer.
+        for (let k = 0; k < VLEN; k++) {
+            try { VBUF.add(k).writeU8(savedBuf[k]); } catch (_) {}
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── out_buf_fmt_2 ───────────────────────────────────────────────────────
+    // For MenusLapTimeFmt-style: void(int p1, uint32 p2, char* outA, char* outB).
+    // Both output buffers receive sprintf-style formatted bytes; observable is
+    // the C-string contents of each, joined by '|'.
+    //
+    // Tests: [p1, p2] pair (or a single int for the common p2=0 case).
+    // CONFIG.out_buf_size: per-buffer size (default 32). Both buffers zeroed
+    // before each call.
+    if (CONFIG.arg_type === 'out_buf_fmt_2') {
+        const BUF_SIZE = (CONFIG.out_buf_size | 0) || 32;
+        const bufAo = Memory.alloc(BUF_SIZE);
+        const bufBo = Memory.alloc(BUF_SIZE);
+        const bufAr = Memory.alloc(BUF_SIZE);
+        const bufBr = Memory.alloc(BUF_SIZE);
+        function readCStr(b, max) {
+            let s = '';
+            for (let k = 0; k < max; k++) {
+                const c = b.add(k).readU8();
+                if (c === 0) break;
+                s += String.fromCharCode(c);
+            }
+            return s;
+        }
+        function zero(b) { for (let k = 0; k < BUF_SIZE; k++) b.add(k).writeU8(0); }
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const p1 = (typeof t === 'number') ? (t | 0) : (t[0] | 0);
+            const p2 = (typeof t === 'number') ? 0     : (t[1] >>> 0);
+            let origV = null, reimV = null, errO = null, errR = null;
+
+            zero(bufAo); zero(bufBo);
+            try { Orig(p1, p2, bufAo, bufBo);
+                  origV = readCStr(bufAo, BUF_SIZE) + '|' + readCStr(bufBo, BUF_SIZE); }
+            catch (e) { errO = e.message; }
+
+            zero(bufAr); zero(bufBr);
+            try { Reimpl(p1, p2, bufAr, bufBr);
+                  reimV = readCStr(bufAr, BUF_SIZE) + '|' + readCStr(bufBr, BUF_SIZE); }
+            catch (e) { errR = e.message; }
+
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── trig_text_draw ──────────────────────────────────────────────────────
+    // For MenusLapTimeCmp-style 6-arg void functions that call:
+    //   FUN_004282a0(sprite_id, p5)   — text-measure, leaves width on ST0
+    //   FUN_0042b8c0(...)             — compute angle
+    //   FUN_0042b8b0()                — screen-width getter
+    //   FUN_00427ff0(sid, adj_x, adj_y) — final text-draw (the observable)
+    //
+    // We Interceptor.replace the final draw callee with a NativeCallback that
+    // captures (sid, adj_x, adj_y). Both orig and reimpl call through the same
+    // patched address, so bit-identical (adj_x, adj_y) implies bit-identical
+    // upstream math (including the ST0-implicit text-width handoff).
+    //
+    // CONFIG.draw_callee_rva_str: hex addr of the draw callee (default
+    // '0x00427ff0'). Signature of the callee is void(uint32, float, float).
+    // Tests: [sprite_id, x, y, p4, p5, p6].
+    if (CONFIG.arg_type === 'trig_text_draw') {
+        const drawAddr = ptr(CONFIG.draw_callee_rva_str || '0x00427ff0');
+        let capturedArgs = null;
+        const captureStub = new NativeCallback(function (sid, ax, ay) {
+            capturedArgs = { sid: sid >>> 0, ax: ax, ay: ay };
+        }, 'void', ['uint32', 'float', 'float'], 'mscdecl');
+        Interceptor.replace(drawAddr, captureStub);
+
+        const fbScratch = Memory.alloc(4);
+        function floatBits(f) { fbScratch.writeFloat(f); return fbScratch.readU32(); }
+
+        try {
+            for (let i = 0; i < CONFIG.tests.length; i++) {
+                const t = CONFIG.tests[i];
+                let origV = null, reimV = null, errO = null, errR = null;
+
+                capturedArgs = null;
+                try { Orig(t[0] >>> 0, t[1], t[2], t[3] >>> 0, t[4] >>> 0, t[5] >>> 0); }
+                catch (e) { errO = e.message; }
+                const oa = capturedArgs;
+                origV = oa ? [oa.sid, floatBits(oa.ax), floatBits(oa.ay)].join(',')
+                           : 'no-call';
+
+                capturedArgs = null;
+                try { Reimpl(t[0] >>> 0, t[1], t[2], t[3] >>> 0, t[4] >>> 0, t[5] >>> 0); }
+                catch (e) { errR = e.message; }
+                const ra = capturedArgs;
+                reimV = ra ? [ra.sid, floatBits(ra.ax), floatBits(ra.ay)].join(',')
+                           : 'no-call';
+
+                const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+                results.push({ idx: i, input: JSON.stringify(t),
+                               original: origV, reimpl: reimV,
+                               match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                               err_original: errO, err_reimpl: errR });
+            }
+        } finally {
+            Interceptor.revert(drawAddr);
         }
         send({ type: 'results', data: results });
         return;

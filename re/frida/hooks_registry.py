@@ -5879,4 +5879,266 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # 0x0042d290  MenusLapTimeFmt  (out_buf_fmt_2 — added 2026-05-21)
+    # void(int p1, uint32 p2, char* out_a, char* out_b)
+    # Writes sprintf-style formatted strings to out_a / out_b. p1 < 10 → "%02d"
+    # padded form, else "%d". Second value is read via FUN_004a2c48 (FPU ST0).
+    # arg_type='out_buf_fmt_2': two output buffers, fingerprinted as C-strings.
+    # ST0 is undefined at NativeFunction entry boundary (cdecl ABI says empty
+    # FPU stack), so FUN_004a2c48 sees the same FPU state on both orig and reimpl
+    # calls → identical output. crash_equal_ok protects the path where ST0
+    # underflow or FPU exception terminates the second sprintf.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042d290.md
+    # ref: mashedmod/src/mashed_re/Frontend/MenuMixed.cpp:399
+    'menus_lap_time_fmt': {
+        'rva':            0x0042d290,
+        'export':         'MenusLapTimeFmt',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32', 'pointer', 'pointer']},
+        'arg_type':       'out_buf_fmt_2',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'out_buf_size':   32,
+        'path1_tests': [
+            # < 10 (zero-padded path)
+            [0, 0],
+            [1, 0],
+            [5, 0],
+            [9, 0],
+            # >= 10 ("%d" path)
+            [10, 0],
+            [42, 0],
+            [99, 0],
+            [100, 0],
+            [1234, 0],
+            # boundary
+            [-1, 0],
+        ],
+        'path2_tests': [
+            [0, 0],
+            [10, 0],
+            [99, 0],
+        ],
+    },
+
+    # 0x0042ed70  MenusLapTimeCmp  (trig_text_draw — added 2026-05-21)
+    # void(uint32 sprite_id, float x, float y, uint32 p4, uint32 p5, uint32 p6)
+    # Calls FUN_004282a0 (text-measure → ST0), FUN_0042b8c0 (angle), fsin/fcos,
+    # FUN_0042b8b0 (screen-width), FUN_00427ff0 (draw text rotated).
+    # arg_type='trig_text_draw': Interceptor.replace on draw callee 0x00427ff0
+    # captures (sprite_id, adj_x, adj_y). Both paths share the same trig + ST0
+    # handoff via the original callees, so identical adj_x/adj_y implies
+    # bit-identical upstream math.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042ed70.md
+    # ref: mashedmod/src/mashed_re/Frontend/MenuMixed.cpp:461
+    'menus_lap_time_cmp': {
+        'rva':            0x0042ed70,
+        'export':         'MenusLapTimeCmp',
+        'signature':      {'ret': 'void',
+                            'args': ['uint32', 'float', 'float', 'uint32', 'uint32', 'uint32']},
+        'arg_type':       'trig_text_draw',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'draw_callee_rva_str': '0x00427ff0',
+        'path1_tests': [
+            # [sprite_id, x, y, p4, p5, p6]
+            [0x00,  100.0, 100.0, 0,    0,    0   ],
+            [0x01,  200.0, 150.0, 0,    0,    0   ],
+            [0x10,    0.0,   0.0, 0,    0,    0   ],
+            [0x40,  320.0, 240.0, 1,    1,    1   ],
+            [0x80,  640.0, 480.0, 0,    0,    0   ],
+            [0xFF,  -50.0, -50.0, 0,    0,    0   ],
+            [0x20,   10.0,  20.0, 0,    5,    0   ],
+            [0x30,  150.0, 300.0, 2,    0,    0   ],
+            [0x50,  500.0, 100.0, 0,    0,    0xFF],
+            [0x60,  100.0, 400.0, 0,    0xFF, 0   ],
+        ],
+        'path2_tests': [
+            [0x00, 100.0, 100.0, 0, 0, 0],
+            [0x40, 320.0, 240.0, 1, 1, 1],
+        ],
+    },
+
+    # ────────────────────────────────────────────────────────────────────────
+    # Draw-quad primitive cluster (c3-batch-m-s1 replay, 2026-05-21)
+    # All five write to the global 4-vertex buffer at DAT_00898a20 (112 bytes)
+    # and dispatch through the RW driver vtable at DAT_007d3ff8 — verified via
+    # the draw_quad_observe arg_type (post-call buffer fingerprint).
+    # ref: mashedmod/src/mashed_re/Frontend/DrawQuadPrimitives.cpp
+    # ────────────────────────────────────────────────────────────────────────
+
+    # 0x00472c60  ChromeBaseDraw
+    # void(float x, float y, float w, float h, uint32 argb)
+    # 5-arg filled quad with full screen-scale. Tests include non-trivial ARGB
+    # to exercise the R↔B byte-swap.
+    'chrome_base_draw': {
+        'rva':            0x00472c60,
+        'export':         'ChromeBaseDraw',
+        'signature':      {'ret': 'void',
+                            'args': ['float', 'float', 'float', 'float', 'uint32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [x, y, w, h, argb]
+            [0.0,    0.0,   640.0, 1.0,   0xffffffff],
+            [0.0,   64.0,   640.0, 1.0,   0xffffffff],
+            [0.0,  416.0,   640.0, 1.0,   0xffffffff],
+            [0.0,   64.0,   640.0, 3.0,   0x80f7941d],
+            [0.0,   65.5,   640.0, 3.0,   0x40f7941d],
+            [0.0,  413.0,   640.0, 3.0,   0x80f7941d],
+            [0.0,  410.0,   640.0, 3.0,   0x40f7941d],
+            # non-trivial RGB to verify R↔B byte-swap
+            [10.0,  20.0,   100.0, 50.0,  0xff112233],
+            [50.0,  60.0,    80.0, 80.0,  0xa0ff0000],
+            [100.0,100.0,    50.0, 50.0,  0x800000ff],
+        ],
+        'path2_tests': [
+            [0.0, 64.0, 640.0, 1.0, 0xffffffff],
+            [0.0, 416.0, 640.0, 1.0, 0xffffffff],
+        ],
+    },
+
+    # 0x00472f40  TextGradientV0V1Override
+    # Same shape as ChromeBaseDraw; V0+V1 color override to 0xff000000 after fill.
+    'text_gradient_v0v1_override': {
+        'rva':            0x00472f40,
+        'export':         'TextGradientV0V1Override',
+        'signature':      {'ret': 'void',
+                            'args': ['float', 'float', 'float', 'float', 'uint32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # Canonical caller: MenuChromeShellA top band.
+            [0.0,    0.0,   640.0,  64.0,  0xa0000000],
+            # vary alpha
+            [0.0,    0.0,   640.0,  64.0,  0xff000000],
+            [0.0,    0.0,   640.0,  64.0,  0x00000000],
+            [0.0,    0.0,   640.0,  64.0,  0x80808080],
+            # vary geometry
+            [100.0,  50.0,   200.0, 100.0, 0xc0ffffff],
+            [0.0,    0.0,     1.0,   1.0,  0xff112233],
+            # non-trivial RGB
+            [10.0,  10.0,    50.0,  50.0,  0xff112233],
+            [10.0,  10.0,    50.0,  50.0,  0xa0ff0000],
+            [10.0,  10.0,    50.0,  50.0,  0x800000ff],
+            [10.0,  10.0,    50.0,  50.0,  0xc000ff00],
+        ],
+        'path2_tests': [
+            [0.0, 0.0, 640.0, 64.0, 0xa0000000],
+            [0.0, 0.0, 640.0, 64.0, 0xff000000],
+        ],
+    },
+
+    # 0x004730b0  TextGradientV2V3Override
+    # Same shape; V2+V3 color override after fill.
+    'text_gradient_v2v3_override': {
+        'rva':            0x004730b0,
+        'export':         'TextGradientV2V3Override',
+        'signature':      {'ret': 'void',
+                            'args': ['float', 'float', 'float', 'float', 'uint32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # Canonical caller: MenuChromeShellA bottom band.
+            [0.0,  416.0,   640.0,  64.0,  0xa0000000],
+            [0.0,  410.0,   640.0,  64.0,  0xff000000],
+            [0.0,    0.0,   640.0,  64.0,  0x00000000],
+            [0.0,    0.0,   640.0,  64.0,  0x80808080],
+            [100.0, 50.0,   200.0, 100.0,  0xc0ffffff],
+            [0.0,    0.0,     1.0,   1.0,  0xff112233],
+            [10.0,  10.0,    50.0,  50.0,  0xff112233],
+            [10.0,  10.0,    50.0,  50.0,  0xa0ff0000],
+            [10.0,  10.0,    50.0,  50.0,  0x800000ff],
+            [10.0,  10.0,    50.0,  50.0,  0xc000ff00],
+        ],
+        'path2_tests': [
+            [0.0, 416.0, 640.0, 64.0, 0xa0000000],
+            [0.0, 410.0, 640.0, 64.0, 0xff000000],
+        ],
+    },
+
+    # 0x00473870  TextSpriteUVExplicit
+    # 7-arg textured quad (no coord scaling); NULL tex_ptr path is safe.
+    # First arg is a pointer (use 0 for NULL); blend_flag is the last int.
+    'text_sprite_uv_explicit': {
+        'rva':            0x00473870,
+        'export':         'TextSpriteUVExplicit',
+        'signature':      {'ret':  'void',
+                            'args': ['pointer', 'float', 'float', 'float', 'float',
+                                     'uint32', 'int32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [tex_ptr=0 (NULL), x, y, w, h, argb, blend_flag]
+            [0,   0.0,    0.0,   64.0,  64.0,  0xffffffff,  0],
+            [0, 100.0,  100.0,  100.0,  50.0,  0x80ffffff,  0],
+            [0, 200.0,  150.0,   50.0,  50.0,  0xffff0000,  1],
+            [0,   0.0,    0.0,    1.0,   1.0,  0x00000000,  0],
+            [0, 320.0,  240.0,  160.0, 120.0,  0xc0808080,  0],
+            [0, -50.0,  -50.0,   25.0,  25.0,  0xff112233,  1],
+            # Non-trivial RGB
+            [0,  10.0,   10.0,   50.0,  50.0,  0xff112233,  0],
+            [0,  10.0,   10.0,   50.0,  50.0,  0xa0ff0000,  0],
+            [0,  10.0,   10.0,   50.0,  50.0,  0x800000ff,  0],
+            [0,  10.0,   10.0,   50.0,  50.0,  0xc000ff00,  0],
+        ],
+        'path2_tests': [
+            [0, 0.0, 0.0, 64.0, 64.0, 0xffffffff, 0],
+            [0, 100.0, 100.0, 100.0, 50.0, 0xff112233, 1],
+        ],
+    },
+
+    # 0x004739f0  TextSpriteScaled
+    # 12-arg textured quad with 3 coord-scaling modes + explicit UVs.
+    # STAGED AT C2-IMPL — U-0458 + U-0459 [Blocks C3] open; hook installed so
+    # the harness can run draw_quad_observe but promotion is gated.
+    'text_sprite_scaled': {
+        'rva':            0x004739f0,
+        'export':         'TextSpriteScaled',
+        'signature':      {'ret':  'void',
+                            'args': ['pointer', 'float', 'float', 'float', 'float',
+                                     'uint32', 'uint32', 'uint32', 'uint32', 'uint32',
+                                     'int32', 'int32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [tex_ptr=0, x, y, w, h, argb, u0, u1, v0, v1, scale_mode, blend_flag]
+            # mode 0 — no scaling
+            [0,   0.0,   0.0,  64.0,  64.0,  0xffffffff,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            [0, 100.0, 100.0, 100.0,  50.0,  0x80ffffff,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            # mode 2 — Y-only scale
+            [0,  50.0,  50.0,  50.0,  50.0,  0xff112233,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 2, 0],
+            # default — full scale (any value != 0 and != 2)
+            [0,   1.0,   1.0,   1.0,   1.0,  0xff000000,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 1, 0],
+            [0,  10.0,  20.0,  50.0,  30.0,  0xc0808080,
+             0x3f000000, 0x3f800000, 0x3f000000, 0x3f800000, 1, 1],
+            # Non-trivial RGB stress
+            [0,  10.0,  10.0,  50.0,  50.0,  0xff112233,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            [0,  10.0,  10.0,  50.0,  50.0,  0xa0ff0000,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            [0,  10.0,  10.0,  50.0,  50.0,  0x800000ff,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            [0,  10.0,  10.0,  50.0,  50.0,  0xc000ff00,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            # Edge: mode 2 with different UVs
+            [0,  50.0,  50.0,  50.0,  50.0,  0xff112233,
+             0x3f000000, 0x3f800000, 0x3f000000, 0x3f800000, 2, 0],
+        ],
+        'path2_tests': [
+            [0, 0.0, 0.0, 64.0, 64.0, 0xffffffff,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 0, 0],
+            [0, 50.0, 50.0, 50.0, 50.0, 0xff112233,
+             0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 2, 0],
+        ],
+    },
 }

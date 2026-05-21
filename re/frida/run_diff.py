@@ -144,6 +144,17 @@ def main():
         config['target_global_base'] = f"0x{hook['target_global_base']:08x}"
     if 'target_global_stride' in hook:
         config['target_global_stride'] = hook['target_global_stride']
+    # draw_quad_observe — buffer addr+len for the Im2D vertex array.
+    if 'vbuf_addr_str' in hook:
+        config['vbuf_addr_str'] = hook['vbuf_addr_str']
+    if 'vbuf_len' in hook:
+        config['vbuf_len'] = hook['vbuf_len']
+    # out_buf_fmt_2 — per-output-buffer size override.
+    if 'out_buf_size' in hook:
+        config['out_buf_size'] = hook['out_buf_size']
+    # trig_text_draw — hex addr of the draw callee to Interceptor.replace.
+    if 'draw_callee_rva_str' in hook:
+        config['draw_callee_rva_str'] = hook['draw_callee_rva_str']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)

@@ -64,14 +64,13 @@
 
 ---
 
-## Open uncertainties (new struct-level; no U-ID assigned yet)
+## Open uncertainties (struct-level)
 
-The following uncertainties arose at the struct-aggregation level and do not yet have U-IDs.  
-They should be assigned IDs and added to UNCERTAINTIES.md via `/re-classify` before S-DoD is claimed.
+Filed into `UNCERTAINTIES.md` on 2026-05-20 (closes D-11002).
 
-| Tentative | Struct | Statement |
-|-----------|--------|-----------|
-| TBD | HudIngameElement_114 | Field +0x50 semantics: used as inner index for doubly-indirect dispatch in FUN_0041c9a0; meaning unknown |
-| TBD | HudIngameElement_A | Guard region +0x00..+0x0F: not dispatched by any observed function; may hold struct type tag or active-element count |
-| TBD | FrontendStateMachine | Gaps at +0x20..+0x23 (between subState7 and timerAccum): not observed in any plate; content unknown |
-| TBD | PlayerSlotArray | Fields +0x04 and +0x0C within each 0x10-byte slot entry: never observed in any plate |
+| U-ID | Struct | Statement |
+|------|--------|-----------|
+| U-3881 | HudIngameElement_114 | Field +0x50 semantics: used as inner index for doubly-indirect dispatch in FUN_0041c9a0; meaning unknown |
+| U-3882 | HudIngameElement_A | Guard region +0x00..+0x0F: not dispatched by any observed function; may hold struct type tag or active-element count |
+| U-3883 | FrontendStateMachine | Gap at +0x20..+0x23 (between subState7 and timerAccum): not observed in any plate; content unknown |
+| U-3884 | PlayerSlotArray | Fields +0x04 and +0x0C within each 0x10-byte slot entry: never observed in any plate |

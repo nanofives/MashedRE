@@ -13,7 +13,7 @@
 //   0x004c1c80  callee FUN_004c0e50 is C1 — fails C2->C3 "callee at C2+" rule;
 //               batch header described as "pure leaf" but analysis note shows
 //               guarded conditional callee — tracker drift, skip rather than promote.
-//   0x00427680  repeat refusal from HudBatch_h4.cpp session — non-standard ESI
+//   0x00427680  repeat refusal from HudBatch.cpp session — non-standard ESI
 //               implicit output ptr + U-2127 EDI artifact; no matching arg_type
 //               in diff_template.js; deferred pending harness arg_type extension.
 //   0x00450b10  pure leaf but 7-arg mixed signature (int, float*5, uint32, float*)
