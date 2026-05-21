@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_mid_ab2  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_low_ab1  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-claim  buckets=3 queued, 0 skipped-HOLD
 2026-05-20  struct-uids-frontend  uncertainty-filing  4 struct-level U-IDs filed from frontend S-DoD audit 2026-05-17: U-3881 HudIngameElement_114 +0x50 semantics, U-3882 HudIngameElement_A guard region +0x00..+0x0F, U-3883 FrontendStateMachine gap +0x20..+0x23, U-3884 PlayerSlotArray +0x04/+0x0C per-slot fields. Source: re/analysis/structs/README.md open list (TBD entries). Closes D-11002 (Frontend S-DoD Row 3 housekeeping).
