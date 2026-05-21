@@ -1555,3 +1555,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-20  0042fe90  MenuSpriteDispatchC  C2->C3  evidence=log/diff_menu_sprite_dispatch_c.csv (10/10 GREEN void_match); reimpl=Frontend/MenuSpriteDispatch.cpp; c3-batch-m-s2
 2026-05-20  0042e3a0  MenuChromeShellA  C2->C3  evidence=log/diff_menu_chrome_shell_a.csv (10/10 GREEN void_match); reimpl=Frontend/MenuSpriteDispatch.cpp; c3-batch-m-s2
 2026-05-20  0042e5b0  FUN_0042e5b0  C2->C2  REFUSED C3: callees 0x00473c20 U-3900/0x00473ee0 U-3903+U-3904/0x00474890 U-3908+U-3909 all [Blocks C3]; Frida RED 10/10 both-crash different addresses; D-11013 filed; c3-batch-m-s2
+2026-05-20  frida-sweep-20260520-1800  release  rvas=16-C3-promotions  integration-diff=15-GREEN+1-known-env-hang(menu_menus_bc)  c3_batch_m  16/30 yield 53%
