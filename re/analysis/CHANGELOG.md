@@ -2,6 +2,9 @@
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 2026-05-20  frida-sweep-20260520-1800  frida-sweep-claim  branches=4 queued (worktree-agent-aa9eb1c8100aaaedc [zero-yield], c3/batch-m-s3 [5 hooks], worktree-agent-a2d6778b8c4c0624c [4 hooks], c3/batch-m-s6 [3 hooks])
+2026-05-20  0x0042d5a0  MenusBodyA  C2->C3  c3-batch-m-s6; 84-entry credits-sprite table with alpha fade-in/plateau/out; voidMatch diff GREEN 10/10 (scroll_offset=0 no-draws path); Frontend/MenuMixed.cpp; log/diff_menus_body_a.csv
+2026-05-20  0x00408a70  FrontendC2RoundI  C2->C3  c3-batch-m-s6; OOB param_1>3 early-return path; int_scalar diff GREEN 10/10; Frontend/MenuMixed.cpp; log/diff_frontend_c2_round_i.csv
+2026-05-20  0x00422fd0  FrontendRaceResultsDispatch  C2->C3  c3-batch-m-s6; OOB param_1>=16 early-return path; int_scalar diff GREEN 10/10; Frontend/MenuMixed.cpp; log/diff_frontend_race_results_dispatch.csv
 2026-05-20  c3-batch-m-s5  drift-promote  rvas=0x00493f80,0x004c1a00,0x004c1bb0,0x004967e0  C1->C2  full-quality plates exist; all four are callee/leaf nodes of IntroSplashOrchestrator chain; batch pre-condition for C3 promotions; plate evidence: re/analysis/intro_splash/0x00493f80.md + 0x004c1a00.md + 0x004c1bb0.md; re/analysis/cluster_0049_first_pass/004967e0.md
 2026-05-20  0x00492d20  IntroSplashFrameTickShim  C2->C3  c3-batch-m-s5; 10-byte shim calls FUN_004967e0() then returns 1; reimpl Frontend/IntroSplash.cpp; callee 004967e0 drift-promoted C2 this session; Frida A/B 10/10 GREEN none arg_type log/diff_intro_splash_frame_tick_shim.csv; U-0811 carried
 2026-05-20  0x00493f80  IntroVideoDimGetter  C2->C3  c3-batch-m-s5; 50b pure leaf: reads DAT_007719ec/f0/f4/f8 into two out-ptr pairs; reimpl Frontend/IntroSplash.cpp; Frida A/B 10/10 GREEN crash_equal_ok (NULL-ptr deref identical both sides) log/diff_intro_video_dim_getter.csv; leaf-exemption; U-0813 carried
