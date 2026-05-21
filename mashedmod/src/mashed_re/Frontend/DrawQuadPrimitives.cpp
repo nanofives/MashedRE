@@ -19,6 +19,9 @@
 //   0x004739f0  TextSpriteScaled          — 12-arg textured quad (3 scaling modes,
 //                                            explicit UV; staged at C2-impl —
 //                                            U-0458/U-0459 block C3 promotion)
+//   0x00450b10  HudIm2DQuad               — 7-arg textured quad; explicit UV array;
+//                                            raw int texture handle; different render
+//                                            state sequence from siblings; HUD sprite draw
 //
 // Analysis notes:
 //   re/analysis/hud_frontend/0x00472c60.md
@@ -26,6 +29,7 @@
 //   re/analysis/credits_screen/0x004730b0.md
 //   re/analysis/hud_frontend_d5/0x00473870.md
 //   re/analysis/promote_c1_mid_ab2/0x004739f0.md
+//   re/analysis/hud_ingame_promote_c2/0x00450b10.md
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
@@ -400,3 +404,107 @@ extern "C" __declspec(dllexport) void __cdecl TextSpriteScaled(
 }
 
 RH_ScopedInstall(TextSpriteScaled, 0x004739f0);
+
+
+// ---------------------------------------------------------------------------
+// HudIm2DQuad  --  0x00450b10
+//
+// 7-arg Im2D textured quad. Explicit UV array; NO coordinate scaling (params
+// used as-is). Cited at 0x00450b10 body.
+//
+// Signature:
+//   param_1 (int32_t)      — texture handle (0 = untextured; raw int, not ptr)
+//   param_2 (float)        — x
+//   param_3 (float)        — y
+//   param_4 (float)        — width
+//   param_5 (float)        — height
+//   param_6 (uint32_t)     — ARGB color (byte-reordered before write)
+//   param_7 (uint32_t[4])  — UV array [u0, v0, u1, v1] as raw float32 bits
+//
+// UV layout (cited at 0x00450b10 pre-fill block):
+//   V0 (TL): U=param_7[0]=u0, V=param_7[1]=v0
+//   V1 (TR): U=param_7[2]=u1, V=param_7[1]=v0  (V1.v copied from V0.v)
+//   V2 (BL): U=param_7[0]=u0, V=param_7[3]=v1  (V2.u copied from V0.u)
+//   V3 (BR): U=param_7[2]=u1, V=param_7[3]=v1
+//
+// Texture dispatch (0x00450b10 body):
+//   param_1 == 0: state(1, 0)     — clear texture
+//   param_1 != 0: state(1, param_1); state(9, 2)   — bind + state 9=2
+//
+// Render state sequence (0x00450b10 body):
+//   state(8, 0); state(6, 0); state(0xc, 1)  [before draw]
+//   draw 4 verts
+//   state(8, 1); state(6, 1)  [restore; 0xc not restored]
+//
+// Loop: Z/rhw/color written via pointer loop from V0.z(+0x08) advancing 0x1c
+// per iteration until addr >= 0x898a98 (past V3). Same color_swap as siblings.
+//
+// Callees: none (pure leaf; vtable calls only). Caller: 0x00428450 (C2).
+// Analysis note: re/analysis/hud_ingame_promote_c2/0x00450b10.md
+// ---------------------------------------------------------------------------
+
+// 0x00450b10
+extern "C" __declspec(dllexport) void __cdecl HudIm2DQuad(
+    std::int32_t  tex_handle,
+    float         x,
+    float         y,
+    float         w,
+    float         h,
+    std::uint32_t argb,
+    std::uint32_t* uv)          // uv[0]=u0_bits, uv[1]=v0_bits, uv[2]=u1_bits, uv[3]=v1_bits
+{
+    const std::uint32_t z    = rw_z_field();
+    const std::uint32_t col  = color_swap_argb_to_abgr(argb);
+
+    // ── Pre-fill UV fields (cited at 0x00450b10 pre-fill block) ────────────────
+    // V0: x,y already set below; U=uv[0], V=uv[1]
+    *reinterpret_cast<std::uint32_t*>(kV0 + 0x14) = uv[0];  // V0.U = u0  (0x00898a34)
+    *reinterpret_cast<std::uint32_t*>(kV0 + 0x18) = uv[1];  // V0.V = v0  (0x00898a38)
+    // V1: U=uv[2], V=uv[1] (copy of v0)
+    *reinterpret_cast<std::uint32_t*>(kV1 + 0x14) = uv[2];  // V1.U = u1  (0x00898a50)
+    *reinterpret_cast<std::uint32_t*>(kV1 + 0x18) = uv[1];  // V1.V = v0  (0x00898a54)
+    // V2: U=uv[0] (copy of u0), V=uv[3]
+    *reinterpret_cast<std::uint32_t*>(kV2 + 0x14) = uv[0];  // V2.U = u0  (0x00898a6c)
+    *reinterpret_cast<std::uint32_t*>(kV2 + 0x18) = uv[3];  // V2.V = v1  (0x00898a70)
+    // V3: U=uv[2] (copy of u1), V=uv[3] (copy of v1)
+    *reinterpret_cast<std::uint32_t*>(kV3 + 0x14) = uv[2];  // V3.U = u1  (0x00898a88)
+    *reinterpret_cast<std::uint32_t*>(kV3 + 0x18) = uv[3];  // V3.V = v1  (0x00898a8c)
+
+    // ── X/Y geometry (cited at 0x00450b10 body) ─────────────────────────────
+    *reinterpret_cast<float*>(kV0 + 0x00) = x;              // V0.X (0x00898a20)
+    *reinterpret_cast<float*>(kV0 + 0x04) = y;              // V0.Y (0x00898a24)
+    *reinterpret_cast<float*>(kV1 + 0x00) = x + w;          // V1.X (0x00898a3c)
+    *reinterpret_cast<float*>(kV1 + 0x04) = y;              // V1.Y (0x00898a40)
+    *reinterpret_cast<float*>(kV2 + 0x00) = x;              // V2.X (0x00898a58)
+    *reinterpret_cast<float*>(kV2 + 0x04) = y + h;          // V2.Y (0x00898a5c)
+    // V3.X and V3.Y are set via the loop copy of V1.X and V2.Y:
+    *reinterpret_cast<float*>(kV3 + 0x00) = x + w;          // V3.X (0x00898a74)
+    *reinterpret_cast<float*>(kV3 + 0x04) = y + h;          // V3.Y (0x00898a78)
+
+    // ── Loop: Z/RHW/color for all 4 vertices (cited at loop body 0x00450b10) ──
+    // puVar2 starts at V0.z (+0x08), advances 7 uint32s (0x1c) per iteration,
+    // exits when addr >= 0x898a98.
+    fill_zwc_all(z, col);
+
+    // ── Texture dispatch (cited at 0x00450b10 branch 0x00450b5b) ────────────
+    if (tex_handle == 0) {
+        rw_set_state(1, 0);                   // no texture
+    } else {
+        rw_set_state(1, tex_handle);          // bind texture handle
+        rw_set_state(9, 2);                   // state 9=2 (unconditional when tex != 0)
+    }
+
+    // ── Render states before draw (cited at 0x00450b10 body) ────────────────
+    rw_set_state(8,    0);   // state 8=0
+    rw_set_state(6,    0);   // state 6=0
+    rw_set_state(0xc,  1);   // state 12=1
+
+    // ── Draw (cited at 0x00450b10 draw call) ─────────────────────────────────
+    rw_draw_4verts();        // (**(+0x30))(4, &DAT_00898a20, 4)
+
+    // ── Restore render states (cited at 0x00450b10 epilog) ──────────────────
+    rw_set_state(8, 1);
+    rw_set_state(6, 1);
+}
+
+RH_ScopedInstall(HudIm2DQuad, 0x00450b10);
