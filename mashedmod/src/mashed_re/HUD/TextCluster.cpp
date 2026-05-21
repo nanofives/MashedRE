@@ -9,20 +9,19 @@
 // Hooks in this file:
 //   0x00552750  FontCtx_ResetTransform  pure leaf; identity RwMatrix on cur ctx
 //
-// Refusals this session (documented in re/PROMOTION_QUEUE.md):
+// Refusals from prior sessions (documented in re/PROMOTION_QUEUE.md):
 //   0x004c1c80  callee FUN_004c0e50 is C1 — fails C2->C3 "callee at C2+" rule;
 //               batch header described as "pure leaf" but analysis note shows
 //               guarded conditional callee — tracker drift, skip rather than promote.
 //   0x00427680  repeat refusal from HudBatch.cpp session — non-standard ESI
 //               implicit output ptr + U-2127 EDI artifact; no matching arg_type
 //               in diff_template.js; deferred pending harness arg_type extension.
-//   0x00450b10  pure leaf but 7-arg mixed signature (int, float*5, uint32, float*)
-//               has no matching arg_type in diff_template.js; also a live-renderer
-//               function that writes static Im2D vertex buffers and calls vtable
-//               draw — unsafe to call from Frida quiescent. Deferred.
-//   0x00428450  callee FUN_00450b10 (C2) calls vtable draw path; spin-angle
-//               accumulator side-effect requires new arg_type; live-renderer
-//               callee makes quiescent Frida diff unsafe. Deferred.
+//   0x00450b10  PROMOTED C2->C3 in c3-batch-n-s1 (DrawQuadPrimitives.cpp);
+//               draw_quad_observe arg_type landed 2026-05-21; Frida GREEN 12/12.
+//   0x00428450  spin-angle accumulator side-effect — _DAT_0067d974 is incremented
+//               by each call; draw_quad_observe cannot reset it between Orig+Reimpl
+//               calls; needs new harness arg_type (spin_angle_observe or global-reset
+//               wrapper); deferred to harness-extension session.
 
 #include "../Core/HookSystem.h"
 #include <cstdint>

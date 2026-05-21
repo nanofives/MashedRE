@@ -6141,4 +6141,63 @@ HOOKS = {
              0x00000000, 0x3f800000, 0x00000000, 0x3f800000, 2, 0],
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-n-s1 — hud_drift_replay  (C2→C3, HUD Im2D cluster)
+    # Frontend/DrawQuadPrimitives.cpp — HudIm2DQuad (7-arg explicit-UV quad)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00450b10  HudIm2DQuad
+    # 7-arg Im2D textured quad: raw int tex_handle, x, y, w, h, ARGB, UV[4] ptr.
+    # Explicit UV array [u0, v0, u1, v1] as raw float32 bits.
+    # No coordinate scaling — params used as-is.
+    # Render states: bind tex, then 8=0, 6=0, 0xc=1; draw; restore 8=1, 6=1.
+    #
+    # arg_type: draw_quad_observe — fingerprints the 112-byte Im2D vertex buffer
+    #           (DAT_00898a20) after each call.
+    #
+    # UV pointer strategy: pass 0x00898a20 (vertex buffer base). The harness
+    # zeros the 112-byte buffer before each call, so UV reads at [+0x00..+0x0c]
+    # = {u0=0.0, v0=0.0, u1=0.0, v1=0.0} — deterministic degenerate UV.
+    #
+    # tex_handle is int32 (NOT a pointer). Using 0 (no texture) for all tests
+    # since a live texture handle would require game state initialization.
+    # Vertex buffer fingerprint still covers X/Y/Z/RHW/color/UV fields for
+    # bit-identical comparison between orig and reimpl.
+    #
+    # Signature:
+    #   (int32 tex_handle, float x, float y, float w, float h,
+    #    uint32 argb, pointer uv_ptr) -> void
+    'hud_im2d_quad': {
+        'rva':            0x00450b10,
+        'export':         'HudIm2DQuad',
+        'signature':      {'ret':  'void',
+                            'args': ['int32', 'float', 'float', 'float', 'float',
+                                     'uint32', 'pointer']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [tex_handle, x, y, w, h, argb, uv_ptr_addr]
+            # uv_ptr_addr = 0x00898a20 (vertex buffer base, zeroed before call)
+            # All UV = 0.0 (degenerate but deterministic).
+            [0,   0.0,    0.0,   64.0,  64.0,  0xffffffff,  0x00898a20],
+            [0, 100.0,  100.0,  100.0,  50.0,  0x80ffffff,  0x00898a20],
+            [0, 200.0,  150.0,   50.0,  50.0,  0xffff0000,  0x00898a20],
+            [0,   0.0,    0.0,    1.0,   1.0,  0x00000000,  0x00898a20],
+            [0, 320.0,  240.0,  160.0, 120.0,  0xc0808080,  0x00898a20],
+            [0, -50.0,  -50.0,   25.0,  25.0,  0xff112233,  0x00898a20],
+            [0,  10.0,   10.0,   50.0,  50.0,  0xff112233,  0x00898a20],
+            [0,  10.0,   10.0,   50.0,  50.0,  0xa0ff0000,  0x00898a20],
+            [0,  10.0,   10.0,   50.0,  50.0,  0x800000ff,  0x00898a20],
+            [0,  10.0,   10.0,   50.0,  50.0,  0xc000ff00,  0x00898a20],
+            [0,   0.0,    0.0,  640.0, 480.0,  0xff000000,  0x00898a20],
+            [0,  16.0,   16.0,   32.0,  32.0,  0x40ffffff,  0x00898a20],
+        ],
+        'path2_tests': [
+            [0, 0.0, 0.0, 64.0, 64.0, 0xffffffff, 0x00898a20],
+            [0, 100.0, 100.0, 100.0, 50.0, 0xff112233, 0x00898a20],
+            [0, 320.0, 240.0, 160.0, 120.0, 0xc0808080, 0x00898a20],
+        ],
+    },
 }
