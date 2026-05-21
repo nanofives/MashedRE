@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-m-s6  rvas=0x0042d5a0,0x00408a70,0x00422fd0  branch=c3/batch-m-s6  evidence=log/diff_menus_body_a.csv;log/diff_frontend_c2_round_i.csv;log/diff_frontend_race_results_dispatch.csv  note=3/5 mixed-cluster frontend C2->C3 (MenusBodyA+FrontendC2RoundI+FrontendRaceResultsDispatch); 2 deferred: D-11014 (0x0042d290 MenusLapTimeFmt out-buf-ptr no arg_type) + D-11015 (0x0042ed70 MenusLapTimeCmp 6-arg live-renderer no arg_type); all 3 GREEN 10/10; Frontend/MenuMixed.cpp
 ```
 
 ## Merged

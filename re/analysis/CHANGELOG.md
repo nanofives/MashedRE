@@ -1,6 +1,9 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-20  0x0042d5a0  MenusBodyA  C2->C3  c3-batch-m-s6; 84-entry credits-sprite table with alpha fade-in/plateau/out; voidMatch diff GREEN 10/10 (scroll_offset=0 no-draws path); Frontend/MenuMixed.cpp; log/diff_menus_body_a.csv
+2026-05-20  0x00408a70  FrontendC2RoundI  C2->C3  c3-batch-m-s6; OOB param_1>3 early-return path; int_scalar diff GREEN 10/10; Frontend/MenuMixed.cpp; log/diff_frontend_c2_round_i.csv
+2026-05-20  0x00422fd0  FrontendRaceResultsDispatch  C2->C3  c3-batch-m-s6; OOB param_1>=16 early-return path; int_scalar diff GREEN 10/10; Frontend/MenuMixed.cpp; log/diff_frontend_race_results_dispatch.csv
 2026-05-20  sweep-20260521-0113  scribe-release  buckets=3 drained  errors=0  note=pool-sync partial (slot 10 refreshed; slot 11 busy on active py process — non-blocking per skill; master saved+closed cleanly)
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_high_ab3  writes=13  errors=0
 2026-05-20  sweep-20260521-0113  scribe-release  bucket=promote_c1_mid_ab2  writes=13  errors=0

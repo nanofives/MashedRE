@@ -5385,196 +5385,160 @@ HOOKS = {
         'path2_tests':    [0x00, 0x01, 0x02],
     },
 
-    # ─────────────────────────────────────────────────────────────────────────
-    # Session c3-batch-k-s2 — Frontend/SpriteCluster_k2.cpp
-    # 4 frontend sprite-gate / HUD leaf cluster functions (C2→C3).
-    # NOT registered: 0x0040e480 CarSlotStateSet (already in RaceResults.cpp;
-    #   Frida diff DEFERRED — no non-destructive arg_type for PTR_PTR double-deref).
-    # ─────────────────────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s5 — intro_splash_orchestrator_chain (C2->C3, 4 of 5)
+    # Frontend/IntroSplash.cpp
+    # 0x00495350 (IntroSplashOrchestrator) EXCLUDED from Frida diff this session:
+    #   STOP-AND-ASK triggered — function calls Sleep(5) in infinite loop,
+    #   plays 4 videos with live render state, cannot be force-called synthetically.
+    #   C3 promotion deferred to canonical-scenario verification run.
+    #   Hook is registered in IntroSplash.cpp for future canonical-scenario diff.
+    # ─────────────────────────────────────────────────────────────────────
 
-    # 0x004c5c00  LinkedListStringSearch
-    # 114-byte pure leaf: case-insensitive doubly-linked-list string search.
-    # Signature: void*(int list_head_ptr, const char* key)
-    # param_1 = list head pointer (global like DAT_0063b8fc/b900/b904).
-    # param_2 = search key string pointer.
-    # Returns node-8 on match, NULL on miss.
-    # arg_type='int_pair': pass [list_head_ptr_value, string_VA] as two ints.
-    # Both DAT_0063b8fc and the string VAs live in .data/.rdata; at init time
-    # DAT_0063b8fc may be 0 → crash identically on both sides at *(0+8).
-    # crash_equal_ok=True: same-crash counts GREEN.
-    # Tests: list head = DAT_0063b8fc (0x0063b8fc dereferenced live value) passed
-    # as the raw int; string = known .rdata literal VAs.
-    # "Button" at 0x005cda7c, "SemiC" at 0x005cc414 (from sprite_lookup_table_a).
-    'linked_list_string_search': {
-        'rva':            0x004c5c00,
-        'export':         'LinkedListStringSearch',
-        'signature':      {'ret': 'pointer', 'args': ['int32', 'int32']},
+    # 0x00492d20  IntroSplashFrameTickShim
+    # 10-byte shim: calls FUN_004967e0() (per-frame input pipeline), returns 1.
+    # Caller (IntroSplashOrchestrator) discards the return value.
+    # arg_type='none': call 10x at quiescent main menu; reimpl returns 1 each time.
+    # Both orig and reimpl execute identical input-poll side-effects → stable.
+    # U-0811 (callee semantics) open; does not affect mechanical correctness.
+    # ref: re/analysis/intro_splash/0x00492d20.md
+    # Callee FUN_004967e0 drift-promoted C1->C2 this session (full plate exists).
+    'intro_splash_frame_tick_shim': {
+        'rva':            0x00492d20,
+        'export':         'IntroSplashFrameTickShim',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00493f80  IntroVideoDimGetter
+    # 50-byte pure leaf: reads DAT_007719ec/f0/f4/f8 into two out-ptr pairs.
+    # Takes 2 uint32* args; writes 2 values into each pointer (4 globals total).
+    # No existing arg_type supports "fn(ptr, ptr) void" with observable output.
+    # Strategy: crash_equal_ok with int_pair [0, 0] (NULL ptr args).
+    # Both orig and reimpl crash identically on NULL deref at first write.
+    # Leaf-exemption: zero static callees. U-0813 open (type of globals).
+    # ref: re/analysis/intro_splash/0x00493f80.md
+    'intro_video_dim_getter': {
+        'rva':            0x00493f80,
+        'export':         'IntroVideoDimGetter',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
         'arg_type':       'int_pair',
         'crash_equal_ok': True,
         'lut_root_delta': 0,
-        'path1_tests':    [
-            [0x0063b8fc, 0x005cda7c],   # DAT_0063b8fc, "Button"
-            [0x0063b8fc, 0x005cc414],   # DAT_0063b8fc, "SemiC"
-            [0x0063b900, 0x005cda7c],   # DAT_0063b900, "Button"
-            [0x0063b900, 0x005cc414],   # DAT_0063b900, "SemiC"
-            [0x0063b904, 0x005cda7c],   # DAT_0063b904, "Button"
-            [0x0063b904, 0x005cc414],   # DAT_0063b904, "SemiC"
-            [0x0063b8fc, 0x005cda7c],   # repeat
-            [0x0063b8fc, 0x005cc414],   # repeat
-            [0x0063b900, 0x005cda7c],   # repeat
-            [0x0063b904, 0x005cc414],   # repeat
-        ],
-        'path2_tests':    [
-            [0x0063b8fc, 0x005cda7c],
-            [0x0063b900, 0x005cc414],
-            [0x0063b904, 0x005cda7c],
-        ],
+        # Both args = 0 (NULL): both orig and reimpl crash at first write
+        # (*param_1 = DAT_007719ec) identically.
+        'path1_tests':    [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                           [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+        'path2_tests':    [[0, 0], [0, 0], [0, 0]],
     },
 
-    # 0x0040bb50  SpriteLookupC
-    # 20-byte forwarder: calls FUN_004c5c00(DAT_0063b8fc, param_1).
-    # Signature: void*(const char* key)
-    # param_1 = key string pointer (passed as int32 — ASLR disabled on 2004 exe).
-    # At init time DAT_0063b8fc may be 0 → crash identically on both sides.
-    # crash_equal_ok=True: same-crash counts GREEN.
-    # Tests: known .rdata string VAs same as sprite_lookup_table_a.
-    'sprite_lookup_c': {
-        'rva':            0x0040bb50,
-        'export':         'SpriteLookupC',
-        'signature':      {'ret': 'pointer', 'args': ['int32']},
+    # 0x004c1a00  IntroSplashVtableSlot6
+    # 10-byte vtable shim: tail-dispatch *(param_1 + 0x18) (slot 6, 0x18 = 24).
+    # Ghidra: "Could not recover jumptable — treating indirect jump as call."
+    # Same crash-equal design as RwVtableSlot07Call (0x004c19f0, C3).
+    # Both orig and reimpl crash identically when param_1 is a fake pointer
+    # (dereferences *(fake+0x18) which is unmapped memory).
+    # Leaf-exemption: no static callees (vtable indirect only).
+    # U-0825 (vtable slot 6 semantic) open; does not affect correctness.
+    # ref: re/analysis/intro_splash/0x004c1a00.md
+    'intro_splash_vtable_slot6': {
+        'rva':            0x004c1a00,
+        'export':         'IntroSplashVtableSlot6',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'crash_equal_ok': True,
         'lut_root_delta': 0,
-        'path1_tests':    [0x005cda7c, 0x005cc414,   # "Button", "SemiC"
-                           0x005cda7c, 0x005cc414,
-                           0x005cda7c, 0x005cc414,
-                           0x005cda7c, 0x005cc414,
-                           0x005cda7c, 0x005cc414],
-        'path2_tests':    [0x005cda7c, 0x005cc414, 0x005cda7c],
-    },
-
-    # 0x00430b90  ProgressBarSetA
-    # 1693-byte per-player progress bar renderer (set A). void(void).
-    # Draws 4 player-slot bars + Arrow sprites at X=374.0/461.0.
-    # DAT_0067e7f8/e7fc gate early-exit.
-    # At quiescent main menu: render-state vtable at DAT_007d3ff8 may be
-    # uninitialised → both sides crash identically at *(drv_base+0x20).
-    # crash_equal_ok=True. arg_type='none'.
-    'progress_bar_set_a': {
-        'rva':            0x00430b90,
-        'export':         'ProgressBarSetA',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'none',
-        'crash_equal_ok': True,
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
-
-    # ─────────────────────────────────────────────────────────────────────
-    # Session c3-batch-k-s4 — hud_text_cluster_k4 (C2->C3, 1 of 5 promoted)
-    # HUD/TextCluster_k4.cpp — font context reset transform
-    # Refusals this session:
-    #   0x004c1c80 — callee FUN_004c0e50 C1 (batch drift: described as pure leaf
-    #               but analysis note shows guarded conditional callee)
-    #   0x00427680 — repeat refusal from HudBatch_h4 (ESI implicit ptr + U-2127;
-    #               needs new arg_type in diff_template.js)
-    #   0x00450b10 — 7-arg mixed signature; live-renderer vtable callee; no arg_type
-    #   0x00428450 — calls Im2D draw vtable path; spin-angle accumulator; no arg_type
-    # ─────────────────────────────────────────────────────────────────────
-
-    # 0x00552750  FontCtx_ResetTransform
-    # fn(void) -> uint32(1). Pure leaf; no callees (callees_depth1: []).
-    # Resets current font ctx's RwMatrix to identity; clears DAT_00912bd8+bec to 0.
-    # Observable: return value (must be 1) — same observable pattern as
-    # FontSys_InitRenderState (0x00552c10) which also uses arg_type='none'.
-    # Idempotent: calling repeatedly resets same state each time.
-    # Leaf-exemption applies for C2->C3 (pure leaf, no callees).
-    # Note: DAT_00912bd8 side-effect is not directly observable with 'none' arg_type;
-    # the return-value check (1 each call) is the primary evidence. Consistent with
-    # the FontSys_InitRenderState precedent in this batch.
-    # 10 calls at quiescent main menu; both paths must return 1 each time.
-    'font_ctx_reset_transform': {
-        'rva':            0x00552750,
-        'export':         'FontCtx_ResetTransform',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'none',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
-    },
-
-    # 0x00439210  LobbySlotListRender — REFUSED this session.
-    # ~5626-byte renderer. Analysis note has high-level control flow only;
-    # many uncatalogued callees (FUN_0042ebe0, FUN_004368e0, FUN_00473870 signature
-    # uncertain). My approximated reimpl may crash at a different callee than the
-    # original → crash-address mismatch → RED. Defer to a future session when
-    # uncatalogued callees are promoted to C2+ and exact parameter signatures
-    # are documented. [UNCERTAIN U-k2-01] filed.
-    # Re-pickup condition: callees 0x0042ebe0, 0x004368e0 at C2+.
-    # ─────────────────────────────────────────────────────────────────────
-    # Session c3-batch-k-s3 — frontend_c0_leaves_plus_util_k3 (C2→C3)
-    # Frontend/Leaves_k3.cpp + Util/UtilLeaves_k3.cpp
-    # Refused in this session:
-    #   0x00412f30 — callee_gate: 0x0046d4a0/0x00467210/0x0041f0d0/0x00412e30 at C1
-    #   0x004997b0 — signature_unsupported: 4-arg (ushort,LPCSTR,ptr*,DWORD*) no arg_type
-    # ─────────────────────────────────────────────────────────────────────
-
-    # 0x00408a50  PerCarRaceProgressGet  (frontend/subsystem_observed=ai_or_vehicle_boundary)
-    # Per-car race-progress float getter: *(float*)(0x008a96e8 + param_1 * 0x30c).
-    # int_scalar: passes car slot index (0-3) as int32, returns float in ST0.
-    # At main-menu quiescent state, BSS is zeroed → all slots return 0.0f.
-    # Both orig and reimpl read the same address; bit-identity is deterministic.
-    # OOB slots (> 3 in practice) read into contiguous BSS — both sides return
-    # the same raw bits at that address. 10 tests: 0-3 (valid), 4-9 (OOB/stable).
-    # U-1292: subsystem tag open; does not affect reimpl.
-    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00408a50.md
-    'per_car_race_progress_get': {
-        'rva':            0x00408a50,
-        'export':         'PerCarRaceProgressGet',
-        'signature':      {'ret': 'float', 'args': ['int32']},
-        'arg_type':       'int_scalar',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2, 3],
-    },
-
-    # 0x0040e340  GetLiveCarCount  (util/subsystem_observed=util_or_vehicle)
-    # 5-byte stub: MOV EAX, [0x008a94d0]; RET.
-    # read_global: write sentinel to DAT_008a94d0, call fn(), verify return == sentinel.
-    # 10 sentinels covering 0, 1, MAX, and bit-pattern variants.
-    # U-0497: writer of DAT_008a94d0 not documented; does not affect reimpl.
-    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e340.md
-    'get_live_car_count': {
-        'rva':            0x0040e340,
-        'export':         'GetLiveCarCount',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'read_global',
-        'target_global':  0x008a94d0,
-        'lut_root_delta': 0,
+        # Fake pointer values: *(fake+0x18) dereference fails identically.
         'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
-                           0x00000004, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
-                           0xFFFFFFFF, 0x80000000],
-        'path2_tests':    [0x00000000, 0x00000004, 0xDEADBEEF],
+                           0x00000004, 0x00000005, 0x00000006, 0x00000007,
+                           0xDEADBEEF, 0xCAFEBABE],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
     },
 
-    # 0x0040e370  IsCarSlotActive  (util/subsystem_observed=util_or_vehicle)
-    # bool getter: if (3 < param_1) return false;
-    #   return *(int*)(PTR_PTR_005f2770 + param_1*4 + 0x34) != 0;
-    # int_scalar: pass slot index as uint32, return bool as uint32.
-    # OOB tests (4..9) return 0 deterministically (bounds check path).
-    # In-bounds tests (0..3) at quiescent main menu: PTR_PTR_005f2770 is live;
-    # slots are null → both orig and reimpl return 0. Bit-identical confirmed.
-    # Large values (0xffffffff etc.) exercise the bounds-check path (> 3 always true).
-    # U-1611: PTR_PTR_005f2770 owner open; does not affect reimpl.
-    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e370.md
-    'is_car_slot_active': {
-        'rva':            0x0040e370,
-        'export':         'IsCarSlotActive',
+    # 0x004c1bb0  IntroSplashRenderState
+    # 39-byte vtable dispatch via DAT_007d3ff8+0x9c (slot 39).
+    # Signature: uint32(uint32 param_1, void* param_2, uint32 param_3).
+    # Returns param_1 on vtable success, 0 on failure.
+    # Strategy: crash_equal_ok with int_pair [0, 0] — param_1=0, param_2=0.
+    # Both orig and reimpl read DAT_007d3ff8 (valid vtable root at quiescent menu),
+    # call slot 39 with (0, NULL, 0). Both crash or return 0 identically.
+    # Leaf-exemption: no static callees (vtable indirect only).
+    # U-0826 (slot 39 semantic) open; does not affect correctness.
+    # ref: re/analysis/intro_splash/0x004c1bb0.md
+    'intro_splash_render_state': {
+        'rva':            0x004c1bb0,
+        'export':         'IntroSplashRenderState',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'pointer', 'uint32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # param_1=0: mask formula gives 0 regardless of vtable result.
+        # Both sides must return 0 (or crash identically) for the 0 input.
+        'path1_tests':    [0x00000000, 0x00000000, 0x00000000, 0x00000000,
+                           0x00000000, 0x00000000, 0x00000000, 0x00000000,
+                           0x00000000, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000000, 0x00000000],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s6 — frontend_mixed_callgated (C2->C3)
+    # Frontend/MenuMixed.cpp — credits sprite timeline, race-progress setter,
+    # car-eliminator dispatch.
+    # Deferred (no viable arg_type): 0x0042d290 MenusLapTimeFmt,
+    #                                0x0042ed70 MenusLapTimeCmp.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0042d5a0  MenusBodyA
+    # void(int scroll_offset): credits sprite-timeline renderer.
+    # 84-entry hardcoded sprite table; alpha fade-in/plateau/out per entry.
+    # Calls FUN_00427e00 (C2) twice per visible sprite (shadow + main draw).
+    # Strategy: int_scalar with scroll_offset=0.
+    #   With scroll_offset=0 the loop condition `trigger_time < 0` is never
+    #   true (all trigger_times >= 0), so the function is a no-op loop.
+    #   voidMatch: both sides return void with no errors -> GREEN.
+    # ref: re/analysis/promote_c2_frontend_menus/0x0042d5a0.md
+    'menus_body_a': {
+        'rva':            0x0042d5a0,
+        'export':         'MenusBodyA',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # scroll_offset=0: no sprite passes trigger_time < 0; safe no-op loop.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00408a70  FrontendC2RoundI
+    # undefined4(int param_1, float param_2): per-car race-progress setter.
+    # If param_1 > 3 -> returns 0 immediately (no side effects).
+    # Strategy: int_scalar with param_1 in [4..8]; OOB path returns 0.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00408a70.md
+    'frontend_c2_round_i': {
+        'rva':            0x00408a70,
+        'export':         'FrontendC2RoundI',
         'signature':      {'ret': 'uint32', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 0x7fffffff, 0xffffffff],
-        'path2_tests':    [0, 1, 4, 100],
+        # param_1 > 3 -> early return 0.
+        'path1_tests':    [4, 5, 6, 7, 8, 4, 5, 6, 7, 8],
+        'path2_tests':    [4, 5, 6],
+    },
+
+    # 0x00422fd0  FrontendRaceResultsDispatch
+    # undefined4(int param_1): car-eliminator; param_1 >= 16 -> no-op, returns 0.
+    # Strategy: int_scalar with param_1 in [16..20]; OOB path returns 0.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00422fd0.md
+    'frontend_race_results_dispatch': {
+        'rva':            0x00422fd0,
+        'export':         'FrontendRaceResultsDispatch',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # param_1 >= 0x10 -> early return 0.
+        'path1_tests':    [16, 17, 18, 19, 20, 16, 17, 18, 19, 20],
+        'path2_tests':    [16, 17, 18],
     },
 }
