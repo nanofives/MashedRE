@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-21  frida-sweep-20260521-1932  frida-sweep-claim  branches=2 (c3/batch-n-s1, c3/batch-n-s2)
 2026-05-21  c3-batch-m-s1-replay-20260521  re-classify-transaction  rvas=0x00472c60,0x00472f40,0x004730b0,0x00473870,0x004739f0  note=c3-batch-m-s1 zero-yield-halt replay: authored 5 draw-quad reimpls in Frontend/DrawQuadPrimitives.cpp against draw_quad_observe arg_type; promoted 4 C2->C3 (ChromeBaseDraw/TextGradientV0V1Override/TextGradientV2V3Override/TextSpriteUVExplicit); staged 5th at C2-impl (TextSpriteScaled — U-0459 [Blocks C3] open); resolved U-0458 U-3415 U-3416 via runtime evidence + Ghidra MCP decomp
 2026-05-21  0x00472c60  ChromeBaseDraw  C2->C3  c3-batch-m-s1-replay; RwIm2D 5-arg filled quad; coord-scaled; R<->B byte-swap (confirmed via non-trivial RGB tests); arg_type=draw_quad_observe; GREEN 10/10 log/diff_chrome_base_draw.csv; 5 C2+ callers including 0042e3a0 (MenuChromeShellA C3); reimpl Frontend/DrawQuadPrimitives.cpp
 2026-05-21  0x00472f40  TextGradientV0V1Override  C2->C3  c3-batch-m-s1-replay; same shape as ChromeBaseDraw with V0+V1 color override to 0xff000000 (top-edge opaque-black gradient); arg_type=draw_quad_observe; GREEN 10/10 log/diff_text_gradient_v0v1_override.csv; caller 0042e3a0 C3; reimpl Frontend/DrawQuadPrimitives.cpp
