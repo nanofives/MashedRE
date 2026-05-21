@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-21  c3-batch-n-s3  rvas=  branch=c3/batch-n-s3  evidence=  note=zero-yield-halt-row; 0/5 frontend mid-size C2->C3; abort-threshold-exceeded (4 STOP-AND-ASK): 0x00403050 LoadingScreen live-render (DAT_00771964 guard; loading state not reachable synthetically; needs canonical-scenario past-menu); 0x0042aa00 MenuCursorStep RED-diff/validity-address-drift (Ghidra re-check needed before fix; defer D-10713 precedent); 0x0040e480 CarSlotStateSet double-deref setter (PTR_PTR_005f2770 readback not supported by entity_field_set — needs ptr_ptr_entity_set arg_type); 0x0042bcb0 MenuFrameInit live-render side-effect via FUN_004b5750 (sprite draw; U-3452/3453/3454 open [UNCERTAIN]); 1 clean-DEFER: 0x00428320 TextWidthMeasureB caller-gate (FUN_00428a30+FUN_00428bf0 still C1; D-10713/10699); baseline build OK; no source files created; worktree c3/batch-n-s3 created
 ```
 
 ## Merged
