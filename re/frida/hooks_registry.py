@@ -5384,4 +5384,102 @@ HOOKS = {
         'path1_tests':    [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
         'path2_tests':    [0x00, 0x01, 0x02],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-m-s5 — intro_splash_orchestrator_chain (C2->C3, 4 of 5)
+    # Frontend/IntroSplash.cpp
+    # 0x00495350 (IntroSplashOrchestrator) EXCLUDED from Frida diff this session:
+    #   STOP-AND-ASK triggered — function calls Sleep(5) in infinite loop,
+    #   plays 4 videos with live render state, cannot be force-called synthetically.
+    #   C3 promotion deferred to canonical-scenario verification run.
+    #   Hook is registered in IntroSplash.cpp for future canonical-scenario diff.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00492d20  IntroSplashFrameTickShim
+    # 10-byte shim: calls FUN_004967e0() (per-frame input pipeline), returns 1.
+    # Caller (IntroSplashOrchestrator) discards the return value.
+    # arg_type='none': call 10x at quiescent main menu; reimpl returns 1 each time.
+    # Both orig and reimpl execute identical input-poll side-effects → stable.
+    # U-0811 (callee semantics) open; does not affect mechanical correctness.
+    # ref: re/analysis/intro_splash/0x00492d20.md
+    # Callee FUN_004967e0 drift-promoted C1->C2 this session (full plate exists).
+    'intro_splash_frame_tick_shim': {
+        'rva':            0x00492d20,
+        'export':         'IntroSplashFrameTickShim',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00493f80  IntroVideoDimGetter
+    # 50-byte pure leaf: reads DAT_007719ec/f0/f4/f8 into two out-ptr pairs.
+    # Takes 2 uint32* args; writes 2 values into each pointer (4 globals total).
+    # No existing arg_type supports "fn(ptr, ptr) void" with observable output.
+    # Strategy: crash_equal_ok with int_pair [0, 0] (NULL ptr args).
+    # Both orig and reimpl crash identically on NULL deref at first write.
+    # Leaf-exemption: zero static callees. U-0813 open (type of globals).
+    # ref: re/analysis/intro_splash/0x00493f80.md
+    'intro_video_dim_getter': {
+        'rva':            0x00493f80,
+        'export':         'IntroVideoDimGetter',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':       'int_pair',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Both args = 0 (NULL): both orig and reimpl crash at first write
+        # (*param_1 = DAT_007719ec) identically.
+        'path1_tests':    [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                           [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+        'path2_tests':    [[0, 0], [0, 0], [0, 0]],
+    },
+
+    # 0x004c1a00  IntroSplashVtableSlot6
+    # 10-byte vtable shim: tail-dispatch *(param_1 + 0x18) (slot 6, 0x18 = 24).
+    # Ghidra: "Could not recover jumptable — treating indirect jump as call."
+    # Same crash-equal design as RwVtableSlot07Call (0x004c19f0, C3).
+    # Both orig and reimpl crash identically when param_1 is a fake pointer
+    # (dereferences *(fake+0x18) which is unmapped memory).
+    # Leaf-exemption: no static callees (vtable indirect only).
+    # U-0825 (vtable slot 6 semantic) open; does not affect correctness.
+    # ref: re/analysis/intro_splash/0x004c1a00.md
+    'intro_splash_vtable_slot6': {
+        'rva':            0x004c1a00,
+        'export':         'IntroSplashVtableSlot6',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Fake pointer values: *(fake+0x18) dereference fails identically.
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x00000004, 0x00000005, 0x00000006, 0x00000007,
+                           0xDEADBEEF, 0xCAFEBABE],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x004c1bb0  IntroSplashRenderState
+    # 39-byte vtable dispatch via DAT_007d3ff8+0x9c (slot 39).
+    # Signature: uint32(uint32 param_1, void* param_2, uint32 param_3).
+    # Returns param_1 on vtable success, 0 on failure.
+    # Strategy: crash_equal_ok with int_pair [0, 0] — param_1=0, param_2=0.
+    # Both orig and reimpl read DAT_007d3ff8 (valid vtable root at quiescent menu),
+    # call slot 39 with (0, NULL, 0). Both crash or return 0 identically.
+    # Leaf-exemption: no static callees (vtable indirect only).
+    # U-0826 (slot 39 semantic) open; does not affect correctness.
+    # ref: re/analysis/intro_splash/0x004c1bb0.md
+    'intro_splash_render_state': {
+        'rva':            0x004c1bb0,
+        'export':         'IntroSplashRenderState',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'pointer', 'uint32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # param_1=0: mask formula gives 0 regardless of vtable result.
+        # Both sides must return 0 (or crash identically) for the 0 input.
+        'path1_tests':    [0x00000000, 0x00000000, 0x00000000, 0x00000000,
+                           0x00000000, 0x00000000, 0x00000000, 0x00000000,
+                           0x00000000, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000000, 0x00000000],
+    },
 }

@@ -16,6 +16,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 ## Queued
 
 ```
+2026-05-20  c3-batch-m-s5  rvas=0x00492d20,0x00493f80,0x004c1a00,0x004c1bb0  branch=c3/batch-m-s5  evidence=log/diff_intro_splash_frame_tick_shim.csv;log/diff_intro_video_dim_getter.csv;log/diff_intro_splash_vtable_slot6.csv;log/diff_intro_splash_render_state.csv  note=4/5 intro-splash chain C2->C3 (IntroSplashFrameTickShim+IntroVideoDimGetter+IntroSplashVtableSlot6+IntroSplashRenderState); Frontend/IntroSplash.cpp; all 4 Frida path1 GREEN 10/10; 4 drift-promotes C1->C2 inline (00493f80+004c1a00+004c1bb0+004967e0); 0x00495350 IntroSplashOrchestrator EXCLUDED from C3 this session (STOP-AND-ASK: Sleep+infinite-loop unsafe for synthetic Frida; impl staged at C2, canonical-scenario C3 promotion needed); 2026-05-20
 ```
 
 ## Merged
