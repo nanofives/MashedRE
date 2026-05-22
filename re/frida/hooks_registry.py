@@ -7857,20 +7857,128 @@ HOOKS = {
     },
 
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Harness-extension session B (2026-05-22) — smoke-test entries for 4 new
+    # arg_types: allocator_nonnull, resource_loader_4arg, struct_three_write,
+    # slot_quad_set.  These entries are NOT C3 promotions — c3_batch_r handles
+    # promotion.  They are here so run_diff.py can exercise the new arg_types.
+    # ─────────────────────────────────────────────────────────────────────────
+
     # 0x004c5890  RwTexDictionaryCreate
     # uint32*(void): alloc RwTexDictionary (type=6), link into global TXD list,
     # init circular texture sentinel, notify event DAT_00618150.
-    # crash_equal_ok: RW engine not initialised at quiescent menu call-in →
-    # vtable+0x118 derefs from rw_base=0 → identical null-deref crash.
+    # arg_type='allocator_nonnull': both sides must agree on null/non-null.
+    # At quiescent main menu the RW engine IS initialised (game is at menu);
+    # the allocator via vtable+0x118 should succeed on both sides → both 1.
+    # (Demoted from C3 in frida-sweep-q because the old 'none' entry crashed
+    # identically — the new arg_type checks success/failure, not crash equality.)
     'rw_tex_dictionary_create': {
         'rva':            0x004c5890,
         'export':         'RwTexDictionaryCreate',
         'signature':      {'ret': 'pointer', 'args': []},
-        'arg_type':       'none',
-        'crash_equal_ok': True,
+        'arg_type':       'allocator_nonnull',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004997b0  Win32ResourceLoader
+    # undefined4(ushort nameId, LPCSTR type, void** outBuf, DWORD* outLen).
+    # Wraps FindResourceA+LoadResource+SizeofResource+LockResource.
+    # arg_type='resource_loader_4arg': compare (ret & 1) | (outBuf_nonnull << 1).
+    # Tests: known resource IDs that exist in MASHED.exe resources.
+    # ID 0x194 (404) + "RWTEXDICTIONARY" is cited in analysis (FUN_004921d0).
+    # ID 1 / "RWTEXDICTIONARY" may or may not exist — harness is permissive.
+    # Both sides call into the same module → same FindResource results.
+    'win32_resource_loader': {
+        'rva':            0x004997b0,
+        'export':         'Win32ResourceLoader',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'pointer', 'pointer', 'pointer']},
+        'arg_type':       'resource_loader_4arg',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            {'name_id': 0x194, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x001, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x194, 'type_str': 'NONEXISTENT_TYPE'},
+            {'name_id': 0x000, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x194, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x002, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x194, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x003, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x194, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x004, 'type_str': 'RWTEXDICTIONARY'},
+        ],
+        'path2_tests':    [
+            {'name_id': 0x194, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x001, 'type_str': 'RWTEXDICTIONARY'},
+            {'name_id': 0x194, 'type_str': 'NONEXISTENT_TYPE'},
+        ],
+    },
+
+    # 0x005be140  AudioSubStructThreeWrite
+    # void(ptr param_1, uint32 param_2, uint32 param_3): leaf 3-field write.
+    # Writes: param_1+0x14=param_2, param_1+0x10=param_3, param_1+0x0c=0.
+    # arg_type='struct_three_write': sentinel-fill 32B scratch, call, read offsets.
+    'audio_sub_struct_three_write': {
+        'rva':            0x005be140,
+        'export':         'AudioSubStructThreeWrite',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type':       'struct_three_write',
+        'lut_root_delta': 0,
+        'struct_size':    32,
+        'observe_offsets': [0x0c, 0x10, 0x14],
+        'path1_tests':    [
+            [0x00000001, 0x00000002],
+            [0xDEADBEEF, 0xCAFEBABE],
+            [0x00000000, 0x00000000],
+            [0xFFFFFFFF, 0xFFFFFFFF],
+            [0x12345678, 0x9ABCDEF0],
+            [0x00000001, 0x00000000],
+            [0x00000000, 0x00000001],
+            [0x80000000, 0x00000001],
+            [0x3F800000, 0x3F800000],
+            [0xAAAAAAAA, 0x55555555],
+        ],
+        'path2_tests':    [
+            [0x00000001, 0x00000002],
+            [0xDEADBEEF, 0xCAFEBABE],
+            [0x00000000, 0x00000000],
+        ],
+    },
+
+    # 0x00422ac0  SlotQuadSet
+    # void(int param_1, uint32* param_2): writes param_2[0..3] to
+    #   DAT_006412e8 + param_1 * 0xf40 + {0, 4, 8, 12}.
+    # arg_type='slot_quad_set': pre-fill 4-word array, call, read back globals.
+    # Only safe indices: 0 and 1 (stride 0xf40 = 3904; DAT_006412e8 = 0x006412e8).
+    # idx=0 → 0x006412e8..0x006412f4 (safe BSS range).
+    # idx=1 → 0x00642228..0x00642234 (safe BSS range).
+    'slot_quad_set': {
+        'rva':            0x00422ac0,
+        'export':         'SlotQuadSet',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
+        'arg_type':       'slot_quad_set',
+        'lut_root_delta': 0,
+        'slot_base_addr': '0x006412e8',
+        'slot_stride':    0xf40,
+        'slot_field_count': 4,
+        'path1_tests':    [
+            {'idx': 0, 'vals': [0x00000001, 0x00000002, 0x00000003, 0x00000004]},
+            {'idx': 1, 'vals': [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x9ABCDEF0]},
+            {'idx': 0, 'vals': [0x00000000, 0x00000000, 0x00000000, 0x00000000]},
+            {'idx': 1, 'vals': [0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA]},
+            {'idx': 0, 'vals': [0x3F800000, 0x40000000, 0x40400000, 0x40800000]},
+            {'idx': 1, 'vals': [0x00000001, 0x00000002, 0x00000003, 0x00000004]},
+            {'idx': 0, 'vals': [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x9ABCDEF0]},
+            {'idx': 1, 'vals': [0x00000000, 0x00000000, 0x00000000, 0x00000000]},
+            {'idx': 0, 'vals': [0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA]},
+            {'idx': 1, 'vals': [0x3F800000, 0x40000000, 0x40400000, 0x40800000]},
+        ],
+        'path2_tests':    [
+            {'idx': 0, 'vals': [0x00000001, 0x00000002, 0x00000003, 0x00000004]},
+            {'idx': 1, 'vals': [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x9ABCDEF0]},
+            {'idx': 0, 'vals': [0x00000000, 0x00000000, 0x00000000, 0x00000000]},
+        ],
     },
 
 }

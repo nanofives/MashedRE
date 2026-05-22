@@ -75,6 +75,46 @@ extern "C" __declspec(dllexport) void __cdecl SlotWordSet(
 RH_ScopedInstall(SlotWordSet, 0x00422af0);
 
 // ---------------------------------------------------------------------------
+// SlotQuadSet  --  0x00422ac0
+//
+// Original: FUN_00422ac0 (41 bytes, 0x00422ac0..0x00422ae9)
+// Signature: void FUN_00422ac0(int param_1, undefined4 *param_2)
+// Returns: void
+//
+// Body (cited from re/analysis/c0_promotion_render_a/0x00422ac0.md):
+//   stride = param_1 * 0xf40                                  // 0x00422ac4
+//   DAT_006412e8 + stride          = param_2[0]               // 0x00422ac9
+//   DAT_006412ec + stride (+4)     = param_2[1]               // +0x4
+//   DAT_006412f0 + stride (+8)     = param_2[2]               // +0x8
+//   DAT_006412f4 + stride (+0xc)   = param_2[3]               // +0xc
+//
+// Constants (all cited from 0x00422ac0 body):
+//   0x006412e8 — per-slot quad-write base
+//   0xf40 (3904) — per-slot stride (same as SlotWordSet at 0x00422af0)
+//
+// Callees: none (leaf).
+// Callers: (tracked via hooks.csv; C2 sibling of 0x00422af0).
+//
+// ref: re/analysis/c0_promotion_render_a/0x00422ac0.md
+// ---------------------------------------------------------------------------
+
+// 0x00422ac0
+extern "C" __declspec(dllexport) void __cdecl SlotQuadSet(
+    int param_1, const std::uint32_t* param_2)
+{
+    // stride = param_1 * 0xf40, cited at 0x00422ac4
+    const unsigned stride = static_cast<unsigned>(param_1) * 0xf40u;
+    // Base 0x006412e8, cited at 0x00422ac9
+    auto* base = reinterpret_cast<std::uint32_t*>(0x006412e8u + stride);
+    base[0] = param_2[0];   // DAT_006412e8 + stride + 0
+    base[1] = param_2[1];   // DAT_006412ec + stride + 4
+    base[2] = param_2[2];   // DAT_006412f0 + stride + 8
+    base[3] = param_2[3];   // DAT_006412f4 + stride + 12
+}
+
+RH_ScopedInstall(SlotQuadSet, 0x00422ac0);
+
+// ---------------------------------------------------------------------------
 // FUN_00403d30  --  0x00403d30
 //
 // Original: FUN_00403d30 (123 bytes, 0x00403d30..0x00403dab)

@@ -105,3 +105,77 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwStreamWriteChunked(
 }
 
 RH_ScopedInstall(RwStreamWriteChunked, 0x004cc6e0);
+
+// ---------------------------------------------------------------------------
+// Win32ResourceLoader  --  0x004997b0
+//
+// Original: FUN_004997b0 (101 bytes, 0x004997b0..0x00499816)
+// Signature:
+//   undefined4 FUN_004997b0(ushort param_1, LPCSTR param_2,
+//                           undefined4 *param_3, DWORD *param_4)
+//   param_1: numeric resource ID (cast to LPCSTR for FindResourceA)
+//   param_2: resource type string (e.g. "RWTEXDICTIONARY")
+//   param_3: output — receives LockResource pointer if non-null
+//   param_4: output — receives SizeofResource byte count if non-null
+//   Returns 1 on success, 0 on failure (FindResourceA or LoadResource failed).
+//
+// Steps (cited from re/analysis/promote_c2_video_cfg/004997b0.md):
+//   1. hModule = FUN_00499720() — HINSTANCE getter (C3).
+//   2. hResInfo = FindResourceA(hModule, (LPCSTR)(uint)param_1, param_2).
+//   3. If NULL → return 0.
+//   4. hResData = LoadResource(hModule, hResInfo).
+//   5. If NULL → return 0.
+//   6. If param_4 != NULL: *param_4 = SizeofResource(hModule, hResInfo).
+//   7. If param_3 != NULL: *param_3 = LockResource(hResData).
+//   8. Return 1.
+//
+// External callees (Win32 API via IAT):
+//   FindResourceA, LoadResource, SizeofResource, LockResource — all confirmed C3.
+//   FUN_00499720 — HINSTANCE getter, C3.
+//
+// Callee FUN_00499720 is already C3; all Win32 APIs are external (no callee gate).
+//
+// ref: re/analysis/promote_c2_video_cfg/004997b0.md
+// ---------------------------------------------------------------------------
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+
+// External callee: FUN_00499720 — HINSTANCE getter.
+using HinstFn_t = HINSTANCE (__cdecl*)();
+static HinstFn_t const s_FUN_00499720 = reinterpret_cast<HinstFn_t>(0x00499720u);
+
+// 0x004997b0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Win32ResourceLoader(
+    std::uint16_t param_1,   // numeric resource ID
+    LPCSTR        param_2,   // resource type string
+    void**        param_3,   // output: locked resource pointer (may be NULL)
+    DWORD*        param_4)   // output: resource size in bytes (may be NULL)
+{
+    // Step 1: get module handle, cited at 0x004997b0 body entry.
+    HMODULE hModule = s_FUN_00499720();
+
+    // Step 2: locate the resource; nameId cast to LPCSTR per analysis note.
+    HRSRC hResInfo = FindResourceA(hModule,
+                                   reinterpret_cast<LPCSTR>(static_cast<UINT_PTR>(param_1)),
+                                   param_2);
+    if (hResInfo == nullptr) return 0u;   // Step 3
+
+    // Step 4: load.
+    HGLOBAL hResData = LoadResource(hModule, hResInfo);
+    if (hResData == nullptr) return 0u;   // Step 5
+
+    // Step 6: size output.
+    if (param_4 != nullptr)
+        *param_4 = SizeofResource(hModule, hResInfo);
+
+    // Step 7: lock output.
+    if (param_3 != nullptr)
+        *param_3 = LockResource(hResData);
+
+    return 1u;   // Step 8
+}
+
+RH_ScopedInstall(Win32ResourceLoader, 0x004997b0);

@@ -79,6 +79,30 @@
 //                        Tests: flat list (length = call count; values ignored).
 //                        Required CONFIG: struct_size, observe_offset, observe_length.
 //
+// Harness-extension arg_types (added 2026-05-22 session B):
+//   allocator_nonnull  — fn() -> pointer: allocator that returns fresh heap ptr each
+//                        call; pointer-identity comparison is meaningless. Observable:
+//                        both sides agree on null (0) vs non-null (1).
+//                        Unblocks 0x004c5890 RwTexDictionaryCreate (demoted frida-sweep-q).
+//                        Tests: flat list (length = call count; values ignored).
+//   resource_loader_4arg — fn(uint16 nameId, LPCSTR type, uint8** outBuf, uint32* outLen).
+//                        Calls Win32 FindResourceA+LoadResource+SizeofResource+LockResource.
+//                        Observable: (ret & 1) | ((outBuf_nonnull) << 1).
+//                        Unblocks 0x004997b0 Win32ResourceLoader.
+//                        Tests: list of { name_id, type_str } objects.
+//   struct_three_write — void(ptr, uint32, uint32): sentinel-fill scratch buf, call,
+//                        read back observe_offsets (default [0x0c, 0x10, 0x14]) as CSV.
+//                        Unblocks 0x005be140 FUN_005be140 (3-field leaf writer).
+//                        Tests: list of [val_a, val_b] pairs.
+//                        Optional CONFIG: struct_size (default 32), observe_offsets.
+//   slot_quad_set      — void(int idx, uint32* arr4): writes arr[0..3] to
+//                        slot_base_addr + idx * slot_stride + {0,4,8,12}.
+//                        Saves/restores live globals; compare as CSV fingerprint.
+//                        Unblocks 0x00422ac0 FUN_00422ac0 (4-word per-slot store).
+//                        Tests: list of { idx, vals: [v0,v1,v2,v3] } objects.
+//                        Optional CONFIG: slot_base_addr (default '0x006412e8'),
+//                          slot_stride (default 0xf40), slot_field_count (default 4).
+//
 'use strict';
 
 const CONFIG = $CONFIG$;
@@ -1776,6 +1800,212 @@ function runDiff() {
             try { Reimpl(sBufB); reimV = fpRange(sBufB, obsOff, obsLen); } catch (e) { errR = e.message; }
             const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
             results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── allocator_nonnull ────────────────────────────────────────────────────
+    // For functions that allocate heap memory and return a pointer.
+    // Pointer-identity comparison is meaningless (addresses differ each call).
+    // Observable: both sides agree on null vs non-null — that is the correctness
+    // signal (allocation succeeded or failed identically).
+    //
+    // Strategy: call fn() [no args], check (ret !== null && !ret.isNull()).
+    //   orig nonnull + reimpl nonnull → GREEN (both 1).
+    //   orig null    + reimpl null    → GREEN (both 0).
+    //   mismatch                      → RED.
+    //
+    // CONFIG fields: none beyond standard.
+    // Tests: flat list (length = call count; values ignored).
+    // Unblocks: 0x004c5890 RwTexDictionaryCreate (demoted in frida-sweep-q).
+    if (CONFIG.arg_type === 'allocator_nonnull') {
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let origV = null, reimV = null, errO = null, errR = null;
+            try {
+                const p = Orig();
+                origV = (p && !p.isNull()) ? 1 : 0;
+            } catch (e) { errO = e.message; }
+            try {
+                const p = Reimpl();
+                reimV = (p && !p.isNull()) ? 1 : 0;
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── resource_loader_4arg ─────────────────────────────────────────────────
+    // For Win32ResourceLoader-style: fn(uint16 nameId, LPCSTR type, uint8** outBuf, uint32* outLen).
+    // Calls the Win32 FindResourceA/LoadResource/SizeofResource/LockResource chain.
+    // Both outBuf and outLen are written on success (returns 1) or untouched on failure (returns 0).
+    //
+    // Strategy: allocate 4-byte outBuf slot and 4-byte outLen slot.
+    //   Call orig(nameId, typeName, pOutBuf, pOutLen).
+    //   Call reimpl(nameId, typeName, pOutBuf, pOutLen).
+    //   Observable: return value (0 or 1) packed with nullness of *outBuf.
+    //   Encoding: (ret & 1) | (((*pOutBuf == 0) ? 0 : 1) << 1).
+    //   Both sides must agree on success/failure and whether a buffer was returned.
+    //   The actual resource bytes are from the same MASHED.exe module, so the
+    //   pointer returned by LockResource will be identical (same module = same addr).
+    //
+    // Tests: list of { name_id: uint16, type_str: string } objects.
+    // type_str is embedded as a NUL-terminated UTF-8 string in scratch memory.
+    // CONFIG fields: none beyond standard.
+    // Unblocks: 0x004997b0 Win32ResourceLoader.
+    if (CONFIG.arg_type === 'resource_loader_4arg') {
+        const outBufSlot = Memory.alloc(4);   // uint8** outBuf (4-byte slot holding the pointer)
+        const outLenSlot = Memory.alloc(4);   // uint32* outLen
+        // Pre-allocate type-string buffers (one per test, up to 64 chars).
+        const typeStrBufs = CONFIG.tests.map(function(t) {
+            const s = t.type_str || '';
+            const b = Memory.alloc(s.length + 1);
+            for (let k = 0; k < s.length; k++) b.add(k).writeU8(s.charCodeAt(k) & 0xff);
+            b.add(s.length).writeU8(0);
+            return b;
+        });
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const nameId = (t.name_id >>> 0);
+            const typeBuf = typeStrBufs[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Reset output slots before each call.
+            outBufSlot.writeU32(0);
+            outLenSlot.writeU32(0);
+            try {
+                const ret = Orig(nameId, typeBuf, outBufSlot, outLenSlot);
+                const retU = (ret === null || ret === undefined) ? 0 : (ret >>> 0);
+                const bufNonNull = (outBufSlot.readU32() !== 0) ? 1 : 0;
+                origV = (retU & 1) | (bufNonNull << 1);
+            } catch (e) { errO = e.message; }
+            // Reset for reimpl.
+            outBufSlot.writeU32(0);
+            outLenSlot.writeU32(0);
+            try {
+                const ret = Reimpl(nameId, typeBuf, outBufSlot, outLenSlot);
+                const retU = (ret === null || ret === undefined) ? 0 : (ret >>> 0);
+                const bufNonNull = (outBufSlot.readU32() !== 0) ? 1 : 0;
+                reimV = (retU & 1) | (bufNonNull << 1);
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── struct_three_write ───────────────────────────────────────────────────
+    // For leaf 3-field-write functions: void(ptr param_1, uint32 param_2, uint32 param_3).
+    // Writes param_2 → param_1+0x14, param_3 → param_1+0x10, 0 → param_1+0x0c.
+    //
+    // Strategy: allocate a scratch buffer of struct_size bytes (default 32).
+    //   Pre-fill with sentinel 0xDEADBEEF. Call fn(buf, val_a, val_b).
+    //   Read back bytes at observe_offsets (default [0x0c, 0x10, 0x14]) as uint32s.
+    //   Compare as comma-separated fingerprint. Both paths must agree.
+    //   Restores nothing (fresh scratch each call pair).
+    //
+    // CONFIG fields:
+    //   struct_size      int (default 32)
+    //   observe_offsets  array of byte offsets to read back (default [12, 16, 20])
+    // Tests: list of [val_a, val_b] pairs.
+    // Unblocks: 0x005be140 FUN_005be140.
+    if (CONFIG.arg_type === 'struct_three_write') {
+        const stSize   = (CONFIG.struct_size | 0) || 32;
+        const stOffs   = CONFIG.observe_offsets || [0x0c, 0x10, 0x14];
+        const stBufA   = Memory.alloc(stSize);
+        const stBufB   = Memory.alloc(stSize);
+        function fillSentinelSt(b) {
+            for (let k = 0; k + 3 < stSize; k += 4) b.add(k).writeU32(0xDEADBEEF);
+        }
+        function fpSt(b) {
+            return stOffs.map(function(off) {
+                return b.add(off).readU32() >>> 0;
+            }).join(',');
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t    = CONFIG.tests[i];
+            const valA = t[0] >>> 0;
+            const valB = t[1] >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            fillSentinelSt(stBufA);
+            try { Orig(stBufA, valA, valB); origV = fpSt(stBufA); } catch (e) { errO = e.message; }
+            fillSentinelSt(stBufB);
+            try { Reimpl(stBufB, valA, valB); reimV = fpSt(stBufB); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── slot_quad_set ────────────────────────────────────────────────────────
+    // For slot-indexed 4-dword writers: void(int param_1, uint32* param_2).
+    // Function writes param_2[0..3] to four consecutive globals at
+    //   DAT_006412e8 + param_1 * 0xf40 + {0, 4, 8, 12}.
+    //
+    // Strategy: allocate a 16-byte array, fill with test values, call fn(idx, arr).
+    //   Read back the 4 dwords from the live globals (DAT_006412e8 + idx*0xf40).
+    //   Save originals before; restore after each test pair so both sides start clean.
+    //   Compare as comma-separated fingerprint.
+    //
+    // CONFIG fields:
+    //   slot_base_addr   string (hex, default '0x006412e8') — base of the global array.
+    //   slot_stride      int (default 0xf40 = 3904) — per-index stride in bytes.
+    //   slot_field_count int (default 4) — number of dwords to read back.
+    // Tests: list of { idx: int, vals: [v0, v1, v2, v3] } objects.
+    // Unblocks: 0x00422ac0 FUN_00422ac0.
+    if (CONFIG.arg_type === 'slot_quad_set') {
+        const sqBase   = ptr(CONFIG.slot_base_addr || '0x006412e8');
+        const sqStride = (CONFIG.slot_stride | 0) || 0xf40;
+        const sqCount  = (CONFIG.slot_field_count | 0) || 4;
+        const sqArrBuf = Memory.alloc(sqCount * 4);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t   = CONFIG.tests[i];
+            const idx = (t.idx | 0);
+            const vals = t.vals;  // array of sqCount uint32 values
+            // Compute effective write base.
+            const effective = sqBase.add(idx * sqStride);
+            // Save live globals.
+            const saved = [];
+            for (let k = 0; k < sqCount; k++) saved.push(effective.add(k * 4).readU32());
+            let origV = null, reimV = null, errO = null, errR = null;
+            // ── orig call ──
+            // Write test values into scratch array.
+            for (let k = 0; k < sqCount; k++) sqArrBuf.add(k * 4).writeU32((vals[k] >>> 0));
+            try {
+                Orig(idx, sqArrBuf);
+                origV = [];
+                for (let k = 0; k < sqCount; k++) origV.push(effective.add(k * 4).readU32() >>> 0);
+                origV = origV.join(',');
+            } catch (e) { errO = e.message; }
+            // Restore so reimpl sees same starting state.
+            for (let k = 0; k < sqCount; k++) effective.add(k * 4).writeU32(saved[k]);
+            // ── reimpl call ──
+            for (let k = 0; k < sqCount; k++) sqArrBuf.add(k * 4).writeU32((vals[k] >>> 0));
+            try {
+                Reimpl(idx, sqArrBuf);
+                reimV = [];
+                for (let k = 0; k < sqCount; k++) reimV.push(effective.add(k * 4).readU32() >>> 0);
+                reimV = reimV.join(',');
+            } catch (e) { errR = e.message; }
+            // Restore live globals.
+            for (let k = 0; k < sqCount; k++) effective.add(k * 4).writeU32(saved[k]);
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
                            original: origV, reimpl: reimV,
                            match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });

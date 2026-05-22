@@ -1218,6 +1218,41 @@ extern "C" __declspec(dllexport) void __cdecl AudioRwsSubZeroInit(std::uint32_t*
 
 RH_ScopedInstall(AudioRwsSubZeroInit, 0x005be190);
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x005be140  FUN_005be140  AudioSubStructThreeWrite  (0x19 bytes, leaf)
+// Signature: void FUN_005be140(int param_1, undefined4 param_2, undefined4 param_3)
+//
+// Writes three fields of the struct pointed to by param_1:
+//   *(param_1 + 0x14) = param_2    -- cited 0x005be143
+//   *(param_1 + 0x10) = param_3    -- cited 0x005be149
+//   *(param_1 + 0x0c) = 0          -- cited 0x005be14f
+//
+// Pure leaf, no callees. Called from FUN_005be160 (conditional teardown).
+// S-3687 cleared (see promote_c2_rws_audio_loader session notes).
+//
+// Smoke-test target for struct_three_write harness arg_type (2026-05-22 session B).
+// Full C3 promotion is c3_batch_r's job.
+//
+// Constants (cited from 0x005be140 body):
+//   0x14 (20)   -- param_2 field offset, cited 0x005be143
+//   0x10 (16)   -- param_3 field offset, cited 0x005be149
+//   0x0c (12)   -- zero field offset, cited 0x005be14f
+//   0x0  (0)    -- value written at 0x0c, cited 0x005be154
+//
+// Analysis note: re/analysis/promote_c2_rws_audio_loader/5be140.md
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) void __cdecl AudioSubStructThreeWrite(
+    std::uint32_t* param_1,   // pointer to sub-struct
+    std::uint32_t  param_2,   // value to write at +0x14
+    std::uint32_t  param_3)   // value to write at +0x10
+{
+    *reinterpret_cast<std::uint32_t*>(reinterpret_cast<std::uint8_t*>(param_1) + 0x14u) = param_2;  // cited 0x005be143
+    *reinterpret_cast<std::uint32_t*>(reinterpret_cast<std::uint8_t*>(param_1) + 0x10u) = param_3;  // cited 0x005be149
+    *reinterpret_cast<std::uint32_t*>(reinterpret_cast<std::uint8_t*>(param_1) + 0x0cu) = 0u;       // cited 0x005be14f
+}
+
+RH_ScopedInstall(AudioSubStructThreeWrite, 0x005be140);
+
 // NOTE: 0x005ab410 (AudioRwsChunkTypeSeek) was already implemented in
 // Audio/RwsStream.cpp (c3-batch-i-s1). No duplicate here.
 // hooks.csv row for 005ab410 is drift-staged at C2; re-classify in this session

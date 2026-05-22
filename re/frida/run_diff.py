@@ -173,6 +173,16 @@ def main():
         config['observe_offset'] = hook['observe_offset']
     if 'observe_length' in hook:
         config['observe_length'] = hook['observe_length']
+    # struct_three_write — optional observe_offsets list and struct_size.
+    if 'observe_offsets' in hook:
+        config['observe_offsets'] = hook['observe_offsets']
+    # slot_quad_set — per-slot quad-write globals.
+    if 'slot_base_addr' in hook:
+        config['slot_base_addr'] = hook['slot_base_addr']
+    if 'slot_stride' in hook:
+        config['slot_stride'] = hook['slot_stride']
+    if 'slot_field_count' in hook:
+        config['slot_field_count'] = hook['slot_field_count']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
