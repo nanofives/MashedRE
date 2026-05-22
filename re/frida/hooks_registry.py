@@ -6908,6 +6908,151 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
+    # c3-batch-p session 5 — render_track_node_remainder
+    # Render/TrackNodeLeaves_o1.cpp
+    #
+    # Five siblings of the 0x0041e870 TrackNodeRecordScan seed (c3-batch-o s1)
+    # and the +0x14/+0x44 thunks promoted in s1+s2.
+    #
+    # 0x0041e9e0  TrackNodeFnPtrGet18 — getter; returns *(DAT_0063d7e4+0x18)
+    # uint32(void). Dual-role field: data guard for TrackNodeDispatch18.
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e9e0.md
+    'track_node_fn_ptr_get18': {
+        'rva':            0x0041e9e0,
+        'export':         'TrackNodeFnPtrGet18',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x18,
+        'is_getter':      True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0x00400000,
+            0xFFFFFFFF,
+            0x80000000,
+            0x00000042,
+            0x0041e870,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
+    },
+
+    # 0x0041e8c0  TrackNodeDispatch18 — indirect dispatcher via *(DAT_0063d7e4+0x18)
+    # void(void). Calls through fn-ptr at record+0x18 (same field as Get18 getter).
+    # crash_equal_ok=True: sentinel fn-ptr values crash both sides identically.
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e8c0.md
+    'track_node_dispatch18': {
+        'rva':            0x0041e8c0,
+        'export':         'TrackNodeDispatch18',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x18,
+        'is_getter':      False,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+        ],
+        'path2_tests': [0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x0041e8f0  TrackNodeDispatch24 — indirect dispatcher via *(DAT_0063d7e4+0x24)
+    # void(void). Calls through fn-ptr at record+0x24.
+    # crash_equal_ok=True: sentinel fn-ptr values crash both sides identically.
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e8f0.md
+    'track_node_dispatch24': {
+        'rva':            0x0041e8f0,
+        'export':         'TrackNodeDispatch24',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x24,
+        'is_getter':      False,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+        ],
+        'path2_tests': [0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x0041e9b0  TrackNodeFieldCmp10 — compare *(DAT_0063d7e4+0x10) == param_1
+    # int(int param_1). Returns 1 if equal, 0 otherwise. Pure comparison, no writes.
+    # Strategy: track_record_deref with is_getter=True, field_offset=0x10.
+    # Harness injects fake record; writes sentinel at +0x10; calls Orig()/Reimpl()
+    # with no args (NativeFunction called with zero args → param_1 defaults to 0).
+    # Test semantics: sentinel written at +0x10, then fn() called with param_1=0.
+    #   sentinel == 0  → function returns 1 (equal)
+    #   sentinel != 0  → function returns 0 (not-equal)
+    # Both original and reimpl see identical sentinel and param_1 → bit-identical.
+    # Coverage: tests the equal-branch (sentinel=0) and not-equal-branch (sentinel!=0).
+    # The param_1=0 constraint is documented; not a blocker for C3 evidence.
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e9b0.md
+    'track_node_field_cmp10': {
+        'rva':            0x0041e9b0,
+        'export':         'TrackNodeFieldCmp10',
+        'signature':      {'ret': 'int', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x10,
+        'is_getter':      True,
+        'lut_root_delta': 0,
+        # Tests: flat list of sentinel uint32 values written at +0x10.
+        # sentinel=0x00000000 → compare(0,0) → 1; sentinel!=0 → compare(field,0) → 0.
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0x00000002,
+            0x0000FFFF,
+            0xDEADBEEF,
+            0x12345678,
+            0x00400000,
+            0x00000042,
+            0x00000000,
+            0xCAFEBABE,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x00000000],
+    },
+
+    # 0x0041e980  TrackNodeRecordFind — first-match-return scan of record array
+    # char*(int param_1). Scans DAT_005f37a0-many records at s_training_005f33f8
+    # (stride 0x48); returns pointer to first record where *(record+0x10)==param_1.
+    # Returns NULL if no match. NO global write (contrast: TrackNodeRecordScan
+    # writes DAT_0063d7e4 as last-match side effect).
+    # Strategy: int_scalar — pass param_1 directly; compare return value.
+    # At quiescent main-menu state DAT_005f37a0 == 0 → both original and reimpl
+    # return NULL immediately → bit-identical NULL comparison == GREEN.
+    # ret type 'pointer': Frida returns NativePointer; .toString() comparison
+    # gives '0x0' == '0x0' for both sides.
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e980.md
+    'track_node_record_find': {
+        'rva':            0x0041e980,
+        'export':         'TrackNodeRecordFind',
+        'signature':      {'ret': 'pointer', 'args': ['int']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Tests: int param_1 values. At quiescent main-menu, DAT_005f37a0==0 so
+        # both sides return NULL for all inputs. Bit-identical NULL == GREEN.
+        'path1_tests': [
+            0,
+            1,
+            2,
+            -1,
+            0x0000FFFF,
+            0xDEADBEEF,
+            0x12345678,
+            0,
+            3,
+            7,
+        ],
+        'path2_tests': [0, 1, 2],
+    },
+
     # 0x005be190  AudioRwsSubZeroInit — zeros 4 fields of sub-struct
     # void(undefined4 *param_1).
     # Strategy: audio_sub_struct_zero — allocate 24-byte sentinel-filled buffer
