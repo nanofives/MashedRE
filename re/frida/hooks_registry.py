@@ -7448,4 +7448,103 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-q-s2 — render_promote_c2_render_frame  (C2→C3)
+    # Render/FrameHelpers_q2.cpp — ParticleEmitter state setters
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004769a0  ParticleEmitter_SetPosition
+    # void(float *param_1): if param_1==NULL use &DAT_006925a8 (default pos).
+    # Writes param_1[0/1/2] → DAT_00692528/0x0069252c/0x00692530 (XYZ staging).
+    # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
+    # Strategy: void_setter_observe with NULL input (int32=0) — triggers NULL guard,
+    # both sides write default float from DAT_006925a8 to DAT_00692528; read back X.
+    # Target global restored by harness after each test.
+    # ref: re/analysis/promote_c2_render_frame/0x004769a0.md
+    'particle_emitter_set_position': {
+        'rva':            0x004769a0,
+        'export':         'ParticleEmitter_SetPosition',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00692528,  # DAT_00692528 — active emitter position X
+        'lut_root_delta': 0,
+        # NULL (0) → both sides use default DAT_006925a8; observe X written back.
+        # 10 repeats confirm stable bit-identical output.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x004769d0  ParticleEmitter_SetVelocity
+    # void(float *param_1): if param_1==NULL use &DAT_00613288 (default vel).
+    # Writes param_1[0/1] → DAT_006924dc/0x006924e0 (XY velocity staging).
+    # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
+    # Strategy: void_setter_observe with NULL input — triggers NULL guard, both
+    # sides write default float from DAT_00613288 to DAT_006924dc; read back Vx.
+    # ref: re/analysis/promote_c2_render_frame/0x004769d0.md
+    'particle_emitter_set_velocity': {
+        'rva':            0x004769d0,
+        'export':         'ParticleEmitter_SetVelocity',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x006924dc,  # DAT_006924dc — active emitter velocity Vx
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x004769f0  ParticleEmitter_SetColour
+    # void(uint32_t *param_1): if param_1==NULL: DAT_00692554 = DAT_00613290 (copy default);
+    # else: DAT_00692554 = param_1[0].
+    # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
+    # Strategy: void_setter_observe with NULL input — triggers NULL branch, both
+    # sides copy DAT_00613290 into DAT_00692554; read back colour dword.
+    # ref: re/analysis/promote_c2_render_frame/0x004769f0.md
+    'particle_emitter_set_colour': {
+        'rva':            0x004769f0,
+        'export':         'ParticleEmitter_SetColour',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00692554,  # DAT_00692554 — active emitter colour staging
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00476a30  ParticleEmitter_SetScalar
+    # void(uint32_t param_1): direct write DAT_006924d8 = param_1 (no NULL guard).
+    # param_1 is a VALUE not a pointer.
+    # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
+    # Strategy: void_setter_observe — call fn(value), read back DAT_006924d8.
+    # Full value range tested (0, positives, sentinels, max uint32).
+    # ref: re/analysis/promote_c2_render_frame/0x00476a30.md
+    'particle_emitter_set_scalar': {
+        'rva':            0x00476a30,
+        'export':         'ParticleEmitter_SetScalar',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x006924d8,  # _DAT_006924d8 — active emitter scalar staging
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 5, 0x100, 0xDEADBEEF, 0x7FFFFFFF,
+                           0x80000000, 0xFFFFFFFF, 0x3F800000],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x00476a40  ParticleEmitter_SetRGBA
+    # void(uint32_t *param_1): if param_1==NULL use &DAT_00613294 (default RGBA).
+    # Writes param_1[0/1/2/3] → DAT_00692598/9c/a0/a4 (RGBA staging).
+    # Pure leaf (callees_depth1: []). Leaf-function exemption applies.
+    # Strategy: void_setter_observe with NULL input — triggers NULL guard, both
+    # sides write default R from DAT_00613294 into DAT_00692598; read back R.
+    # ref: re/analysis/promote_c2_render_frame/0x00476a40.md
+    'particle_emitter_set_rgba': {
+        'rva':            0x00476a40,
+        'export':         'ParticleEmitter_SetRGBA',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00692598,  # DAT_00692598 — active emitter R staging
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
 }
