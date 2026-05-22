@@ -6496,6 +6496,32 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-o-s4 — render_rw_submit_video (C2→C3, 5 candidates)
+    # Render/RenderSubmit_o4.cpp
+    # Deferred: 0x004cc7f0 RwFreeListCreateWrapper — live-state side effect
+    #   (unconditionally allocates a RwFreeList pool via FUN_004cc820; no guard;
+    #    calling 10x would attempt 10 pool allocations at the same addresses).
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004cd060  AllocatorSlotGet
+    # void* fn(void): returns DAT_007d3ff8 + 0x108 (RW allocator malloc slot addr).
+    # 10-byte leaf. No branches, no callees, no side effects.
+    # Strategy: none — call 10x at quiescent main menu; return value depends on
+    #   DAT_007d3ff8 (live RW globals base). Both orig and reimpl read the same
+    #   global and add 0x108, so return must be bit-identical.
+    # U-3740: name-proximity note (addressed in analysis notes; non-blocking).
+    # ref: re/analysis/promote_c2_rw_render_submit/004cd060.md
+    'allocator_slot_get': {
+        'rva':            0x004cd060,
+        'export':         'AllocatorSlotGet',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # ─────────────────────────────────────────────────────────────────────────
     # Session c3-batch-o-s3 — render_rw_plugin_helpers  (C2→C3, 4 of 5 promoted)
     # Render/RwPluginHelpers_o3.cpp
@@ -6594,5 +6620,70 @@ HOOKS = {
                            [0x008a9550, 0], [0x008a9550, 0], [0x008a9550, 0],
                            [0x008a9550, 0]],
         'path2_tests':    [[0x008a9550, 0], [0x008a9550, 0], [0x008a9550, 0]],
+    },
+
+    # 0x004cd140  RwRenderCommandBufferReset
+    # int fn(void): guards on *(DAT_00911d00 + 0x3c + DAT_007d3ff8) != 0;
+    #   if non-zero: zeroes 15 DWORDs at +0x38, returns 1; else returns 0.
+    # 46-byte leaf. No callees.
+    # At quiescent main-menu state: Im3D handle at +0x3c is 0 (no active
+    #   Im3D primitives) → guard fails → returns 0 without any side effect.
+    # Strategy: none — call 10x; both orig and reimpl return 0 (guard fails
+    #   safely); bit-identical. If diff RED (staging-block mutated), defer.
+    # STOP-AND-ASK: if diff RED → live-state-side-effect refusal.
+    # ref: re/analysis/promote_c2_rw_render_submit/004cd140.md
+    'rw_render_command_buffer_reset': {
+        'rva':            0x004cd140,
+        'export':         'RwRenderCommandBufferReset',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042b890  RenderWidthSet
+    # void fn(uint16_t param_1): writes low 16 bits of param_1 to DAT_0067ea54.
+    # 11-byte leaf. No branches, no callees.
+    # Strategy: void_setter_observe — call fn(test_value), read back U32 at
+    #   DAT_0067ea54 (which includes adjacent byte at +2 unchanged).
+    #   Both orig and reimpl write the same low 16 bits → U32 readback matches.
+    # Paired with RenderHeightSet (0x0042b8a0) at DAT_0067ea56.
+    # ref: re/analysis/promote_c2_video_display/0042b890.md
+    'render_width_set': {
+        'rva':            0x0042b890,
+        'export':         'RenderWidthSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0067ea54,
+        'lut_root_delta': 0,
+        # Test values: chosen to exercise low 16 bits fully (high 16 bits zeroed
+        # by the 16-bit write; U32 readback captures only written 16 bits).
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000320, 0x00000280,
+                           0x00000400, 0x00000500, 0x0000FFFF, 0x00000640,
+                           0x00001234, 0x0000DEAD],
+        'path2_tests':    [0x00000320, 0x00000280, 0x0000FFFF],
+    },
+
+    # 0x0042b8a0  RenderHeightSet
+    # void fn(uint16_t param_1): writes low 16 bits of param_1 to DAT_0067ea56.
+    # 11-byte leaf. No branches, no callees.
+    # Strategy: void_setter_observe — call fn(test_value), read back U32 at
+    #   DAT_0067ea56. Same design as RenderWidthSet but for the height global.
+    # Paired sibling of RenderWidthSet; forms {width, height} uint16_t[2] at
+    #   0x0067ea54..0x0067ea57.
+    # ref: re/analysis/promote_c2_video_display/0042b8a0.md
+    'render_height_set': {
+        'rva':            0x0042b8a0,
+        'export':         'RenderHeightSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0067ea56,
+        'lut_root_delta': 0,
+        # Same test values as RenderWidthSet (height range similar to width).
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000258, 0x000001E0,
+                           0x00000300, 0x00000400, 0x0000FFFF, 0x000004B0,
+                           0x00001234, 0x0000DEAD],
+        'path2_tests':    [0x00000258, 0x000001E0, 0x0000FFFF],
     },
 }
