@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  frida-sweep-20260522-1455  frida-sweep-claim  branches=3 (save/sdone-a-s1..s3)
 2026-05-22  frida-sweep-20260522-1319  frida-sweep-release  branches=6 merged  integration-diff=17/18 GREEN (rw_tex_dictionary_create RED on pointer-identity; demoted C3->C2)  hooks=17  c3_batch_q yield 57% (17/30)
 2026-05-22  c3-batch-q-s6  re-classify-transaction  rvas=0x004cbd30,0x004cc050,0x004c5890  note=3 render stream-io+TXD-create C2->C3; crash_equal_ok GREEN 10/10 (stream pair); allocator_nonnull GREEN (TXD-create); JMP patches verified all 3; Render/TextureLoader_q6.cpp
 2026-05-22  0x004cbd30  RwStreamRead  C2->C3  c3-batch-q-s6; 317B 4-type stream dispatch; crash_equal_ok GREEN 10/10 log/diff_rw_stream_read.csv; JMP patch OK; callers=004cf7d0(C2)+005ab380(C3); callee=00550950(C1)
