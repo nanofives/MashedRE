@@ -7448,4 +7448,91 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ── c3-batch-q-s3: render low-RVA mixed ───────────────────────────────────
+
+    # 0x00422af0  SlotWordSet — 20B pure leaf; writes param_2 to
+    # DAT_00641320 + param_1 * 0xf40 (single dword per-slot setter).
+    # Strategy: entity_field_set — call fn(param_1, param_2), read back
+    # target_global + param_1 * entity_byte_stride (= DAT_00641320 + idx*0xf40).
+    # Use small indices 0/1/2 and known sentinel values. No callees (leaf-exemption).
+    # ref: re/analysis/c0_promotion_render_a/0x00422af0.md
+    'slot_word_set': {
+        'rva':               0x00422af0,
+        'export':            'SlotWordSet',
+        'signature':         {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':          'entity_field_set',
+        'target_global':     0x00641320,
+        'entity_byte_stride': 0xf40,
+        'lut_root_delta':    0,
+        # Inputs: [param_1 (slot index), param_2 (value to write)]
+        # Use indices 0/1/2 with distinct sentinel values.
+        'path1_tests': [
+            [0, 0xDEADBEEF], [1, 0xCAFEBABE], [2, 0x12345678],
+            [0, 0xFFFFFFFF], [1, 0x00000000], [2, 0x55555555],
+            [0, 0xAAAAAAAA], [1, 0x3F800000], [2, 0xBEEFCAFE],
+            [0, 0x00000001],
+        ],
+        'path2_tests': [
+            [0, 0xDEADBEEF], [1, 0xCAFEBABE], [2, 0x12345678],
+        ],
+    },
+
+    # 0x00403d30  Render_00403d30 — 123B; two FUN_00427ad0 calls (shadow+fill, id 0x22f).
+    # No args, void return. Both calls are unconditional (no branching).
+    # Strategy: arg_type='void' with crash_equal_ok=True.
+    # Both orig and reimpl call FUN_00427ad0 at 0x00427ad0 (C3: MenuMenusBB), so
+    # bit-identical behavior is expected; crash_equal_ok covers any state-dependent
+    # crash at main-menu quiescent state.
+    # Caller: FUN_00404320 (C2: PerModeRenderMachine, mode-9 dispatch path).
+    # Callee: FUN_00427ad0 (C3: MenuMenusBB).
+    # ref: re/analysis/promote_c2_render_lowrva/00403d30.md
+    'render_00403d30': {
+        'rva':            0x00403d30,
+        'export':         'Render_00403d30',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # 10 dummy calls; arg_type='void' ignores input.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x00403ed0  Render_00403ed0 — 205B; four FUN_00427ad0 calls (ids 0xf3+0x230 pairs).
+    # No args, void return. Same drop-shadow pattern as 0x00403d30.
+    # Strategy: arg_type='void' with crash_equal_ok=True (same rationale as above).
+    # Caller: FUN_00404320 (C2: PerModeRenderMachine, mode-5 dispatch path).
+    # Callee: FUN_00427ad0 (C3: MenuMenusBB).
+    # ref: re/analysis/promote_c2_render_lowrva/00403ed0.md
+    'render_00403ed0': {
+        'rva':            0x00403ed0,
+        'export':         'Render_00403ed0',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # 10 dummy calls; arg_type='void' ignores input.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x0040df60  ConditionalRenderSubPass — 55B; 3-gate conditional dispatcher.
+    # No args, void return. Gated: DAT_0063ba8c∈(4,7) && GetRaceSubMode()∈(2,6)
+    # && DAT_007f0fd0∈{4,7,8,9,10} → FUN_00401f10; all 3 gates fail at main-menu
+    # quiescent state → both sides return without any write.
+    # Strategy: arg_type='void' — both sides agree on void/no-op at menu state.
+    # Callees: GetRaceSubMode (C3), FUN_00401f10 (C2).
+    # ref: re/analysis/promote_c2_render_lowrva/0040df60.md
+    'conditional_render_sub_pass': {
+        'rva':            0x0040df60,
+        'export':         'ConditionalRenderSubPass',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        # 10 dummy calls; arg_type='void' ignores input.
+        # At menu: DAT_0063ba8c not in (4,7) → gate 1 fails → no-op guaranteed.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1, 2],
+    },
+
 }
