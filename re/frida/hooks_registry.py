@@ -6686,4 +6686,85 @@ HOOKS = {
                            0x00001234, 0x0000DEAD],
         'path2_tests':    [0x00000258, 0x000001E0, 0x0000FFFF],
     },
+
+    # ── c3-batch-o-s5 vehicle small leaves (C2→C3) ───────────────────────────
+    # First vehicle C3 session — exploratory.  3 of 5 candidates promoted:
+    #   0x0046cbe0  VehicleCarStateSet         (new impl in Vehicle/SmallLeaves_o5.cpp)
+    #   0x00467300  VehicleCollisionWinTrigger (already in Vehicle/Damage.cpp; just adding registry)
+    #   0x0042d3a0  RaceTransitionBufZero      (new impl in Vehicle/SmallLeaves_o5.cpp)
+    #
+    # Deferred (live-state side effects with garbage args under synthetic diff):
+    #   0x0042bf30  FUN_0042bf30  — writes 6 race-transition globals with garbage args
+    #   0x0042c280  FUN_0042c280  — constant-arg wrapper calling 0x0042bf30; same concern
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0046cbe0  VehicleCarStateSet
+    # int(int vehicleIdx, uint32 spinoutState, uint32 secondaryVal) — 43-byte setter.
+    # Pure leaf; OOB guard: if vehicleIdx > 0xf return 0.
+    # Writes byte to kSpinoutStateBase[vehicleIdx * 0x341] and uint32 to
+    # kSecondaryStateBase + vehicleIdx * 0xd04.
+    # Strategy: arg_type='void' (call with no stack args). In cdecl, vehicleIdx
+    # reads garbage from the stack at call entry. The guard `param_1 > 0xf`
+    # fires reliably on unset stack residue (arbitrary values almost always > 15);
+    # both orig and reimpl return 0 without writing any global — bit-identical.
+    # Caller FUN_00424eb0 (C2). Pure leaf; callee-gate exemption applies.
+    # ref: re/analysis/util_c0_promote/0x0046cbe0.md
+    'vehicle_car_state_set': {
+        'rva':            0x0046cbe0,
+        'export':         'VehicleCarStateSet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        # 10 dummy calls; arg_type='void' ignores input.
+        # Both sides read garbage vehicleIdx from stack -> guard fires -> return 0.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00467300  VehicleCollisionWinTrigger
+    # void(int vehicleIdx) — 73-byte guard + 4-loop + 2 global writes.
+    # Already implemented in Vehicle/Damage.cpp (RH_ScopedInstall in place).
+    # Guard 1: (&DAT_00881F90)[vehicleIdx * 0x341] != 0 -> return early.
+    # Guard 2: (&DAT_008815A4)[vehicleIdx * 0x341] == 0 -> return early.
+    # At quiescent main menu, DAT_008815A4 (contact data) is 0 for all slots
+    # -> guard 2 fires -> early return, no writes. Bit-identical (both return void).
+    # Callee FUN_00413c70 (C2). Anti-island rule satisfied.
+    # U-2632 (effect code 3 semantic) is semantic-only; not a C3 blocker.
+    # ref: re/analysis/vehicle_promote_c2_b/00467300.md
+    'vehicle_collision_win_trigger': {
+        'rva':            0x00467300,
+        'export':         'VehicleCollisionWinTrigger',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Pass vehicle indices 0..7 (8 slots). At main menu DAT_008815A4 is 0
+        # for all, so guard 2 fires and both paths return early without writes.
+        # 10 tests for coverage stability.
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x0042d3a0  RaceTransitionBufZero
+    # void(void) — 52-byte bulk-zero loop; memset(0x0067ed78, 0, 0x340).
+    # Pure leaf (callees=[]). Callee-gate exemption applies.
+    # Callers: FUN_00432080 (C2), FUN_004331a0 (C2).
+    # Strategy: void_write_observe on 0x0067ed78 (first dword of cleared range).
+    # Write sentinel, call fn, read back — should be 0 if fn writes correctly.
+    # Both orig and reimpl must zero the region -> readback == 0 -> bit-identical.
+    # At main menu, this buffer holds race-transition params (idle state); zeroing
+    # is idempotent and safe (not position/velocity physics state).
+    # S-1067/S-1068 (callers) are not C3 blockers for this leaf.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0042d3a0.md
+    'race_transition_buf_zero': {
+        'rva':            0x0042d3a0,
+        'export':         'RaceTransitionBufZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0067ed78,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
 }
