@@ -6908,6 +6908,37 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
+    # 0x0041ea90  TrackNodeFnPtrGet44 — getter; returns *(DAT_0063d7e4+0x44)
+    # void/uint32 (no args).
+    # Strategy: track_record_deref — allocate fake 0x48B record buffer; write
+    # sentinel at +0x44; set DAT_0063d7e4 = fake_record_ptr; call fn(); compare
+    # return value. Restore DAT_0063d7e4 = NULL after. Sibling of track_node_fn_ptr_get14
+    # (field_offset=0x14); same shape, same safety (getter, no side effects).
+    # ref: re/analysis/render_promote_c2_track_node/0x0041ea90.md
+    'track_node_fn_ptr_get44': {
+        'rva':            0x0041ea90,
+        'export':         'TrackNodeFnPtrGet44',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x44,
+        'is_getter':      True,
+        'lut_root_delta': 0,
+        # Tests: list of sentinel uint32 values written at +0x44 before each call.
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0x00400000,
+            0xFFFFFFFF,
+            0x80000000,
+            0x00000042,
+            0x0041ea90,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
+    },
+
     # 0x005be190  AudioRwsSubZeroInit — zeros 4 fields of sub-struct
     # void(undefined4 *param_1).
     # Strategy: audio_sub_struct_zero — allocate 24-byte sentinel-filled buffer
