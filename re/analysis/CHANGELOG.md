@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  frida-sweep-20260522-1319  frida-sweep-claim  branches=6 (c3/batch-q-s1..s6)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-release  branches=6 merged  integration-diff=GREEN  hooks=24  c3_batch_p yield 80% (best batch yet)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-claim  branches=6 (c3/batch-p-s1..s6)
 2026-05-22  c3-batch-p-s2  re-classify-transaction  rvas=0x0041e8b0,0x0041e970  note=2 render track-node dispatcher stubs C2->C3; track_record_deref+crash_equal_ok=True; both Frida diffs 10/10 GREEN; JMP patches verified; U-0429 U-3214 carried non-blocking; TrackNodeLeaves_o1.cpp
