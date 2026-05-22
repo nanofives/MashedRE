@@ -7981,4 +7981,81 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session save-sdone-a-s2 — settings dialog + RW stream write (C2→C3)
+    # Save/SettingsDialog.cpp (PopulateModeCombo, VideoSettingsDlgProc)
+    # Save/RwStream.cpp (RwStreamWrite)
+    # Deferred: VideoSettingsDispatcher (0x00499400) — DialogBoxParamA live
+    #   modal loop + 3 C1 callees; deferred until those reach C2+.
+    # Deferred: FUN_00550910 (0x00550910) — VFS stream close; no confirmed
+    #   internal C2+ callee (IAT indirect only); live file-handle risk.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00498d60  PopulateModeCombo_s2
+    # 219-byte mode combo filler. HWND via EAX (Ghidra in_EAX).
+    # Not exercised at main menu (video settings dialog silenced by patch).
+    # Synthetic call: arg_type='none' + crash_equal_ok: both sides AV
+    # identically at first SendMessageA(NULL, CB_ADDSTRING, ...) (null HWND
+    # from EAX=0 passed to PopulateModeCombo_Body).
+    # Anti-island: callers VideoDialogInit_i3 (C3), SubsystemSelChanged_i3 (C3).
+    # Callees: FormatDisplayModeString (C1, EBX-implicit — via naked thunk),
+    #          SendMessageA (Win32 — satisfy callee rule).
+    # ref: re/analysis/promote_c2_settings_dialog/00498d60.md
+    'populate_mode_combo_s2': {
+        'rva':            0x00498d60,
+        'export':         'PopulateModeCombo_s2',
+        # Real ret is void but use uint32 so Frida serializes the return value
+        # (void causes `got` to be omitted from JSON → KeyError in write_report).
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004991f0  VideoSettingsDlgProc_s2
+    # 453-byte DLGPROC for dialog 0x65. Standard Win32 DLGPROC signature.
+    # Not exercised at main menu (dialog silenced by patch).
+    # Synthetic call: arg_type='none' → all args=0 (hDlg=NULL, uMsg=0,
+    # wParam=0, lParam=0). uMsg=0 is not WM_INITDIALOG(0x110) or WM_COMMAND
+    # (0x111) — falls through default → returns FALSE (0). Deterministic.
+    # Both orig+reimpl return 0 for all 10 invocations. Bit-identity proven.
+    # Anti-island: caller VideoSettingsDispatcher (C2); callees VideoDialogInit
+    #   (C3), SubsystemSelChanged (C3), ReadModeFromCombo (C3), EndDialog (Win32).
+    # ref: re/analysis/promote_c2_settings_dialog/004991f0.md
+    'video_settings_dlg_proc_s2': {
+        'rva':            0x004991f0,
+        'export':         'VideoSettingsDlgProc_s2',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004cbe80  RwStreamWrite_s2
+    # 444-byte RW stream write: 4-type switch (file-fwrite/mem-grow+copy/cb-write).
+    # Synthetic call: arg_type='none' → param_1=NULL → deref at context[0]
+    # type dispatch → identical crash on both sides. crash_equal_ok=True.
+    # Anti-island: callers FileWriteWrapper_i3 (C3), RwStreamWriteChunked (C3).
+    #              callees RwIdentityPassthrough (C3), RwErrSlotWrite (C3),
+    #              VfsStreamRead/fwrite-style (C3).
+    # [U-2328] 0x30404 alloc flags, [U-2329] 0x1030404 realloc flags — non-blocking.
+    # ref: re/analysis/promote_c2_rw_engine_init/004cbe80.md
+    'rw_stream_write_s2': {
+        'rva':            0x004cbe80,
+        'export':         'RwStreamWrite_s2',
+        # arg_type='none' calls fn() with zero args; signature.args must be []
+        # so Frida NativeFunction does not reject the zero-arg call.
+        # Real signature: (RwStream* stream, void* buffer, RwUInt32 length) -> void*.
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
