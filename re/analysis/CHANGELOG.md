@@ -1703,3 +1703,38 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  00550b00  VfsFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550bc0  VfsStreamGetType  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550980  VfsStreamRead  C2->C3  Frida A/B GREEN 10/10 bit-identical; fixed arg-order (buf,element_size,count,ctx) + dispatch-deref bug; ABI confirmed disasm Ghidra pool10; caller RwStreamWrite C4
+2026-05-22  00431b10  FUN_00431b10  C1->C2  skeleton_prep_s5; CHEAP tier; pure leaf; DAT_007f0f10=2; re/analysis/skeleton_prep_high_leverage/00431b10.md
+2026-05-22  004e4320  FUN_004e4320  C1->C2  skeleton_prep_s5; CHEAP tier; DAT_007d716c slot setter; callee FUN_004c0e50 C1; re/analysis/skeleton_prep_high_leverage/004e4320.md
+2026-05-22  004e4350  FUN_004e4350  C1->C2  skeleton_prep_s5; CHEAP tier; pure leaf; DAT_007d716c slot clearer; re/analysis/skeleton_prep_high_leverage/004e4350.md
+2026-05-22  004c1480  FUN_004c1480  C1->C2  skeleton_prep_s5; CHEAP tier; RwFrameTransform dirty-list insert; callee FUN_004c52f0 C1; re/analysis/skeleton_prep_high_leverage/004c1480.md
+2026-05-22  00403c60  FUN_00403c60  C1->C2  skeleton_prep_s5; CHEAP tier; CupVFXSplash 4x sprite render; callee FUN_00427ad0 C1; re/analysis/skeleton_prep_high_leverage/00403c60.md
+2026-05-22  00426c00  FUN_00426c00  C1->C2  skeleton_prep_s3; getter DAT_00644158; U-0421 pre-existing; re/analysis/skeleton_prep_game_state/00426c00.md
+2026-05-22  004274d0  FUN_004274d0  C1->C2  skeleton_prep_s3; LOC_INIT_FN; copies DAT_007719e8->DAT_007f0f60; U-0867 pre-existing; re/analysis/skeleton_prep_game_state/004274d0.md
+2026-05-22  004274e0  FUN_004274e0  C1->C2  skeleton_prep_s3; LOC_FN; switch lang->dat filename; U-0869 pre-existing; re/analysis/skeleton_prep_game_state/004274e0.md
+2026-05-22  00428390  FUN_00428390  C1->C2  skeleton_prep_s3; frontend state setter DAT_0067d960=param_1; re/analysis/skeleton_prep_game_state/00428390.md
+2026-05-22  00429290  FUN_00429290  C1->C2  skeleton_prep_s3; per-frame title tick; 5 callees; re/analysis/skeleton_prep_game_state/00429290.md
+2026-05-22  0042a9f0  GetFadeAlpha  C1->C2  skeleton_prep_s3; returns (byte)DAT_0067eca8; re/analysis/skeleton_prep_game_state/0042a9f0.md
+2026-05-22  0042b8e0  FUN_0042b8e0  C1->C2  skeleton_prep_s3; returns bool DAT_0067eca4==2; U-0500 pre-existing; re/analysis/skeleton_prep_game_state/0042b8e0.md
+2026-05-22  0042b910  FUN_0042b910  C1->C2  skeleton_prep_s3; returns constant 5; re/analysis/skeleton_prep_game_state/0042b910.md
+2026-05-22  0042b940  FUN_0042b940  C1->C2  skeleton_prep_s3; setter DAT_0067ecb0=param_1; U-0501 pre-existing; re/analysis/skeleton_prep_game_state/0042b940.md
+2026-05-22  0042c1c0  FUN_0042c1c0  C1->C2  skeleton_prep_s3; getter DAT_0067eab0; U-0502 pre-existing; re/analysis/skeleton_prep_game_state/0042c1c0.md
+2026-05-22  0042c1d0  FUN_0042c1d0  C1->C2  skeleton_prep_s3; zeros 12 DWORDs at DAT_0067ea10; U-0503 pre-existing; re/analysis/skeleton_prep_game_state/0042c1d0.md
+2026-05-22  0042c220  FUN_0042c220  C1->C2  skeleton_prep_s3; per-slot controller check loop; S-0493 S-0494 pre-existing; U-0504 pre-existing; re/analysis/skeleton_prep_game_state/0042c220.md
+2026-05-22  0042d390  GetRaceStateField  C1->C2  skeleton_prep_s3; getter DAT_0067ea6c; U-1715 pre-existing; re/analysis/skeleton_prep_game_state/0042d390.md
+2026-05-22  0042f530  sub_0042f530  C1->C2  skeleton_prep_s3; ViewportSetup; viewport rect + raster copy; U-1714 U-1716 pre-existing; re/analysis/skeleton_prep_game_state/0042f530.md
+2026-05-22  00431b40  FUN_00431b40  C1->C2  skeleton_prep_s3; setter DAT_0067eaa8=param_1; re/analysis/skeleton_prep_game_state/00431b40.md
+2026-05-22  00492440  FUN_00492440  C1->C2  skeleton-prep-s1 mechanical decomp; leaf RenderStatsAccumulate; re/analysis/skeleton_prep_boot_winmain_a/00492440.md
+2026-05-22  004927c0  FUN_004927c0  C1->C2  skeleton-prep-s1 mechanical decomp; race-progression FSM; U-3921; re/analysis/skeleton_prep_boot_winmain_a/004927c0.md
+2026-05-22  00492e60  FUN_00492e60  C1->C2  skeleton-prep-s1 mechanical decomp; SetDefaultViewWindow; U-3922; re/analysis/skeleton_prep_boot_winmain_a/00492e60.md
+2026-05-22  00493640  FUN_00493640  C1->C2  skeleton-prep-s1 mechanical decomp; RwPluginAttachChain 18-callee; S-3937..S-3954; re/analysis/skeleton_prep_boot_winmain_a/00493640.md
+2026-05-22  00493f70  FUN_00493f70  C1->C2  skeleton-prep-s1 mechanical decomp; VideoStateFlagGet leaf; re/analysis/skeleton_prep_boot_winmain_a/00493f70.md
+2026-05-22  00494460  FUN_00494460  C1->C2  skeleton-prep-s1 mechanical decomp; VideoClose; S-3955 S-3956; re/analysis/skeleton_prep_boot_winmain_a/00494460.md
+2026-05-22  00495120  FUN_00495120  C1->C2  skeleton-prep-s1 mechanical decomp; TimerInit QPFStore; re/analysis/skeleton_prep_boot_winmain_a/00495120.md
+2026-05-22  004951f0  FUN_004951f0  C1->C2  skeleton-prep-s1 mechanical decomp; D3DDeviceCreate; U-3923 U-3924 U-3925 S-3957..S-3961; re/analysis/skeleton_prep_boot_winmain_a/004951f0.md
+2026-05-22  00495270  FUN_00495270  C1->C2  skeleton-prep-s1 mechanical decomp; HWNDGet wrapper; S-3962; re/analysis/skeleton_prep_boot_winmain_a/00495270.md
+2026-05-22  004954f0  FUN_004954f0  C1->C2  skeleton-prep-s1 mechanical decomp; HardwareShutdown seq; U-3926 S-3963 S-3964; re/analysis/skeleton_prep_boot_winmain_a/004954f0.md
+2026-05-22  00495580  FUN_00495580  C1->C2  skeleton-prep-s1 mechanical decomp; DInputRelease COM vtable; S-3965; re/analysis/skeleton_prep_boot_winmain_a/00495580.md
+2026-05-22  004955c0  thunk_FUN_00495580  C1->C2  skeleton-prep-s1 mechanical decomp; 4B thunk->FUN_00495580; re/analysis/skeleton_prep_boot_winmain_a/004955c0.md
+2026-05-22  00495780  FUN_00495780  C1->C2  skeleton-prep-s1 mechanical decomp; DInputIsAcquired bool wrapper; S-3966; re/analysis/skeleton_prep_boot_winmain_a/00495780.md
+2026-05-22  00496010  FUN_00496010  C1->C2  skeleton-prep-s1 mechanical decomp; DInputShutdown; U-3927 S-3967 S-3968; re/analysis/skeleton_prep_boot_winmain_a/00496010.md
+2026-05-22  004960a0  FUN_004960a0  C1->C2  skeleton-prep-s1 mechanical decomp; DInputInit; S-3969 S-3970; re/analysis/skeleton_prep_boot_winmain_a/004960a0.md
