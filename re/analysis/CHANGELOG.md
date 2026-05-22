@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  c3-batch-q-s6  re-classify-transaction  rvas=0x004cbd30,0x004cc050,0x004c5890  note=3 render stream-io+TXD-create C2->C3; crash_equal_ok GREEN 10/10 (stream pair); allocator_nonnull GREEN (TXD-create); JMP patches verified all 3; Render/TextureLoader_q6.cpp
+2026-05-22  0x004cbd30  RwStreamRead  C2->C3  c3-batch-q-s6; 317B 4-type stream dispatch; crash_equal_ok GREEN 10/10 log/diff_rw_stream_read.csv; JMP patch OK; callers=004cf7d0(C2)+005ab380(C3); callee=00550950(C1)
+2026-05-22  0x004cc050  RwStreamSkip  C2->C3  c3-batch-q-s6; 249B 4-type stream dispatch; crash_equal_ok GREEN 10/10 log/diff_rw_stream_skip.csv; JMP patch OK; callers=004cf7d0(C2)+005ab410(C3); callee=005509b0(C1)
+2026-05-22  0x004c5890  RwTexDictionaryCreate  C2->C3  c3-batch-q-s6; alloc+init RwTexDictionary; allocator_nonnull (both return valid ptr; pointer identity mismatch inherent to heap alloc) log/diff_rw_tex_dictionary_create.csv; JMP patch OK; caller=004cf7d0(C2)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-release  branches=6 merged  integration-diff=GREEN  hooks=24  c3_batch_p yield 80% (best batch yet)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-claim  branches=6 (c3/batch-p-s1..s6)
 2026-05-22  c3-batch-p-s2  re-classify-transaction  rvas=0x0041e8b0,0x0041e970  note=2 render track-node dispatcher stubs C2->C3; track_record_deref+crash_equal_ok=True; both Frida diffs 10/10 GREEN; JMP patches verified; U-0429 U-3214 carried non-blocking; TrackNodeLeaves_o1.cpp
