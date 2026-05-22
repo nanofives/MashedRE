@@ -2184,6 +2184,33 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # Session save-sdone-a-s3 — career event helpers (C1->C3)
+    # Save/CareerEvents.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0042a920  PostTrophyEvent  void(uint32 event_id)
+    # Pure 20-byte leaf: writes DAT_00898ab0=0x40 (priority), then param_1 into
+    # DAT_00899140 (event-ID slot consumed by frontend state machine).
+    # Disasm: MOV [0x898ab0],0x40; MOV [0x899140],param_1; RET.
+    # Caller: 0x00430290 Championship::Complete (posts IDs 0x264..0x26a).
+    # arg_type='void_setter_observe': call fn(event_id), read back DAT_00899140.
+    # The fixed priority write (0x40 to DAT_00898ab0) is implicitly verified by
+    # the bit-identical readback of DAT_00899140 (same code path must have run).
+    # Pure leaf — leaf-function exemption applies (CONFIDENCE.md, 2026-05-09).
+    # [UNCERTAIN U-1552] DAT_00898ab0 = 0x40 semantic unknown (non-blocking).
+    'post_trophy_event': {
+        'rva':            0x0042a920,
+        'export':         'PostTrophyEvent',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00899140,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000264, 0x00000265, 0x00000266, 0x00000267,
+                           0x00000268, 0x00000269, 0x0000026a, 0x00000000,
+                           0xDEADBEEF, 0x00000001],
+        'path2_tests':    [0x00000264, 0x00000265, 0x0000026a],
+    },
+
     # Session c3-batch-i-s4 — Settings/video-config CONFIG_SAVE_FN (C2->C3)
     # Save/SettingsCfg.cpp
     # ─────────────────────────────────────────────────────────────────────────
@@ -7979,6 +8006,146 @@ HOOKS = {
             {'idx': 1, 'vals': [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x9ABCDEF0]},
             {'idx': 0, 'vals': [0x00000000, 0x00000000, 0x00000000, 0x00000000]},
         ],
+    },
+
+    # ---------------------------------------------------------------------------
+    # Session save-sdone-a-s1 (2026-05-22) — Save subsystem core functions.
+    # ---------------------------------------------------------------------------
+
+    # 0x0040dd60  Race::GuardConcludedAndP1Won
+    # 23-byte predicate. uint(void). Returns non-zero iff race concluded AND P0 won.
+    # Expression: ((DAT_0063b90c != 1) - 1) & DAT_007f0fcc
+    # At quiescent main-menu: DAT_0063b90c == 0 (race not concluded) → returns 0.
+    # Strategy: none — call 10x at quiescent state; both return 0 identically.
+    # Globals: DAT_0063b90c (race-concluded), DAT_007f0fcc (P0-won flag).
+    # Cited from: re/analysis/profile_career_d2/FUN_0040dd60.md
+    'guard_concluded_and_p1_won': {
+        'rva':            0x0040dd60,
+        'export':         'GuardConcludedAndP1Won',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00404ee0  Save::SerializeToBuffer
+    # void(void). Stride-gather 12 bytes; championship table snapshot; profile
+    # serialize; DEADBEEF magic write to 0x803358.
+    # Strategy: void_write_observe on 0x803358 (DEADBEEF magic target).
+    # Sentinel written → fn called → both orig+reimpl write 0xDEADBEEF → read back.
+    # Result is identical (0xDEADBEEF) regardless of sentinel. 10 calls with
+    # varied sentinels to confirm the write always fires.
+    # crash_equal_ok=True: DAT_008A94A8 profile ptr may be NULL at menu (profile
+    # serialize path skipped); the championship table write still fires.
+    # Cited from: re/analysis/save_gamesave_d3/00404ee0.md
+    'serialize_to_buffer': {
+        'rva':            0x00404ee0,
+        'export':         'SerializeToBuffer',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00803358,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x12345678, 0xDEADBEEF, 0xCAFEBABE,
+                           0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0x00000001],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00404e80  Save::DeserializeFromBuffer
+    # void(void). Championship table restore; stride-scatter; state counter restore;
+    # profile deserialize (if ptr non-null).
+    # Strategy: void_write_observe on DAT_008A95AC (state counter).
+    # Sentinel written to kSaveStateCounter (0x008A95AC), fn called — Deserialize
+    # overwrites it from DAT_00828254. Both orig+reimpl must write same value.
+    # crash_equal_ok=True: DAT_008A94A8 profile ptr may be NULL at menu → profile
+    # path skipped, but counter restore always fires.
+    # Cited from: re/analysis/save_gamesave_d3/00404e80.md
+    'deserialize_from_buffer': {
+        'rva':            0x00404e80,
+        'export':         'DeserializeFromBuffer',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008A95AC,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x12345678, 0xDEADBEEF, 0xCAFEBABE,
+                           0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0x00000001],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session save-sdone-a-s2 — settings dialog + RW stream write (C2→C3)
+    # Save/SettingsDialog.cpp (PopulateModeCombo, VideoSettingsDlgProc)
+    # Save/RwStream.cpp (RwStreamWrite)
+    # Deferred: VideoSettingsDispatcher (0x00499400) — DialogBoxParamA live
+    #   modal loop + 3 C1 callees; deferred until those reach C2+.
+    # Deferred: FUN_00550910 (0x00550910) — VFS stream close; no confirmed
+    #   internal C2+ callee (IAT indirect only); live file-handle risk.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00498d60  PopulateModeCombo_s2
+    # 219-byte mode combo filler. HWND via EAX (Ghidra in_EAX).
+    # Not exercised at main menu (video settings dialog silenced by patch).
+    # Synthetic call: arg_type='none' + crash_equal_ok: both sides AV
+    # identically at first SendMessageA(NULL, CB_ADDSTRING, ...) (null HWND
+    # from EAX=0 passed to PopulateModeCombo_Body).
+    # Anti-island: callers VideoDialogInit_i3 (C3), SubsystemSelChanged_i3 (C3).
+    # Callees: FormatDisplayModeString (C1, EBX-implicit — via naked thunk),
+    #          SendMessageA (Win32 — satisfy callee rule).
+    # ref: re/analysis/promote_c2_settings_dialog/00498d60.md
+    'populate_mode_combo_s2': {
+        'rva':            0x00498d60,
+        'export':         'PopulateModeCombo_s2',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004991f0  VideoSettingsDlgProc_s2
+    # 453-byte DLGPROC for dialog 0x65. Standard Win32 DLGPROC signature.
+    # Not exercised at main menu (dialog silenced by patch).
+    # Synthetic call: arg_type='none' → all args=0 (hDlg=NULL, uMsg=0,
+    # wParam=0, lParam=0). uMsg=0 is not WM_INITDIALOG(0x110) or WM_COMMAND
+    # (0x111) — falls through default → returns FALSE (0). Deterministic.
+    # Both orig+reimpl return 0 for all 10 invocations. Bit-identity proven.
+    # Anti-island: caller VideoSettingsDispatcher (C2); callees VideoDialogInit
+    #   (C3), SubsystemSelChanged (C3), ReadModeFromCombo (C3), EndDialog (Win32).
+    # ref: re/analysis/promote_c2_settings_dialog/004991f0.md
+    'video_settings_dlg_proc_s2': {
+        'rva':            0x004991f0,
+        'export':         'VideoSettingsDlgProc_s2',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004cbe80  RwStreamWrite_s2
+    # 444-byte RW stream write: 4-type switch (file-fwrite/mem-grow+copy/cb-write).
+    # Synthetic call: arg_type='none' → param_1=NULL → deref at context[0]
+    # type dispatch → identical crash on both sides. crash_equal_ok=True.
+    # Anti-island: callers FileWriteWrapper_i3 (C3), RwStreamWriteChunked (C3).
+    #              callees RwIdentityPassthrough (C3), RwErrSlotWrite (C3),
+    #              VfsStreamRead/fwrite-style (C3).
+    # [U-2328] 0x30404 alloc flags, [U-2329] 0x1030404 realloc flags — non-blocking.
+    # ref: re/analysis/promote_c2_rw_engine_init/004cbe80.md
+    'rw_stream_write_s2': {
+        'rva':            0x004cbe80,
+        'export':         'RwStreamWrite_s2',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'uint32']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
     },
 
 }
