@@ -1218,3 +1218,8 @@ extern "C" __declspec(dllexport) void __cdecl AudioRwsSubZeroInit(std::uint32_t*
 
 RH_ScopedInstall(AudioRwsSubZeroInit, 0x005be190);
 
+// NOTE: 0x005ab410 (AudioRwsChunkTypeSeek) was already implemented in
+// Audio/RwsStream.cpp (c3-batch-i-s1). No duplicate here.
+// hooks.csv row for 005ab410 is drift-staged at C2; re-classify in this session
+// promotes it to C3 using the existing AudioRwsChunkTypeSeek implementation.
+
