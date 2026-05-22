@@ -7785,4 +7785,35 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
+
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-q-s5 — render_d3d9_helpers_b (C2→C3)
+    # Render/D3D9Helpers_q5.cpp
+    # 1 of 5 candidates promoted; 4 deferred:
+    #   0x004cfe40 — destructive VB pool teardown (calls RwFreeListDestroy on live heap)
+    #   0x004c8690 — anti-island: callee 0x004ccc50 still C1
+    #   0x00498b60 — destructive teardown (frees live input/render heap; tagged L4098)
+    #   0x004997b0 — 4-arg (ushort/LPCSTR/ptr*/DWORD*); no arg_type fit in diff_template.js
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004cc6e0  RwStreamWriteChunked
+    # undefined4(stream, src_ptr, byte_count): chunked write to RW stream via 256-byte stack buf.
+    # Strategy: arg_type='none' — Frida calls fn() with 0 args → all 3 params = 0.
+    # param_3=0 triggers immediate early-out: return param_1 (= 0). Deterministic.
+    # Both orig and reimpl return 0 for all 10 invocations. Bit-identity proven.
+    # crash_equal_ok: non-zero param_3 with null stream would crash via FUN_004cbe80; not tested.
+    # Anti-island: callee 0x004cbe80 at C2 (save/mapped). No D3D9 live-state mutation.
+    # ref: re/analysis/promote_c2_render_d3d9/0x004cc6e0.md
+    'rw_stream_write_chunked': {
+        'rva':            0x004cc6e0,
+        'export':         'RwStreamWriteChunked',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'pointer', 'uint32']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
