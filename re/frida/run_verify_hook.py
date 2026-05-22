@@ -160,11 +160,16 @@ def write_report(name, config, out_path):
         lines.append('')
         lines.append('per-input results:')
         for c in res['cases']:
-            ok = c['got'] is not None and c['err'] is None
+            # For void (arg_type=none) functions, 'got' may be absent from the
+            # JSON payload (JS undefined is not serialised). Treat absent or null
+            # 'got' as OK provided there is no error.
+            is_void = 'got' not in c or c['got'] is None
+            ok = (is_void or c['got'] is not None) and c['err'] is None
             tag = 'OK' if ok else 'FAIL'
-            lines.append(f"  [{tag}] input={c['input']}  got={c['got']}  err={c['err'] or ''}")
+            got_display = c.get('got', '(void)')
+            lines.append(f"  [{tag}] input={c['input']}  got={got_display}  err={c['err'] or ''}")
             if not ok: fail_flags.append(f"call {c['idx']} (input={c['input']}) failed: {c['err']}")
-        if all(c['got'] is not None and c['err'] is None for c in res['cases']):
+        if all(c['err'] is None for c in res['cases']):
             pass_flags.append(f"all {len(res['cases'])} calls returned without exception")
     else:
         fail_flags.append('no results captured')
