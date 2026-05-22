@@ -44,6 +44,10 @@ function pollLutThenRun(triesLeft) {
 }
 
 function callFn(fn, input, buf) {
+    if (CONFIG.arg_type === 'none') {
+        // Zero-arg invocation; `input` is a dummy iteration marker.
+        return fn();
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);
