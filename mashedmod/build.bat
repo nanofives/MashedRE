@@ -81,6 +81,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\RaceResults.cpp" ^
     "Frontend\MenuMenusB.cpp" ^
     "Frontend\IntroSplash.cpp" ^
+    "Save\GameSaveBuffer.cpp" ^
+    "Save\Race_Guard.cpp" ^
     "Save\GameSaveVFS.cpp" ^
     "Boot\CrtCompilerSupport.cpp" ^
     "Boot\CrtInit.cpp" ^
