@@ -1,0 +1,347 @@
+================================================================================
+c3_batch_o.txt — render-heavy C2->C3 promotion  —  2026-05-21  (PHASE-5)
+================================================================================
+
+Mode:           Sonnet 4.6 C2->C3 promotion (hook authoring/replay + Frida bit-identity diff)
+Sessions:       6   (production-default 6x5 shape)
+Per session:    5 candidates  (default cap; hard cap 8)
+Total candidates: 30
+Pool:           137 C2 candidates passed c3_filter_v4 across 8 subsystems
+                (render 85, vehicle 23, frontend 10, audio 7, hud 4, util 4,
+                 save 3, input 1). c3_batch_n unblockers excluded — see § Deferred.
+Worktrees:      .worktrees/c3-batch-o-s1..s6 (one per session)
+Anchor binary:  original/MASHED.exe.unpatched SHA-256
+                BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+Context (read before starting any session):
+- c3_batch_n landed 6 C3 promotions (1 HUD + 5 frontend) via frida-sweep-20260521-1932:
+  HudIm2DQuad, RaceResultIndexedStore, VehicleSlotInit, VehicleSlotFieldSet,
+  MenuTableSearch, ElapsedVsThresholdCheck. Frontend C3+ moved 30.9% -> 32.8%.
+- c3_batch_n s3 zero-yield surfaced 8 concrete unblockers (see § Deferred); none
+  of those resolved between batch n and batch o — they remain blocked and are
+  excluded from this batch.
+- This batch leans into render (untapped subsystem, 85 v4-passed C2 candidates;
+  yield uncalibrated, treat first 3 render sessions as exploratory). Vehicle
+  (23 candidates, untapped) and mixed audio/util/save round it out for risk
+  distribution.
+
+Read this BEFORE starting any session:
+- .claude/skills/promote-c3-batch/SKILL.md            (session template + caps + yield table)
+- .claude/skills/hook-author/SKILL.md                 (gta-reversed-style scaffolding)
+- .claude/skills/diff-original/SKILL.md               (Frida bit-identity)
+- .claude/skills/re-classify/SKILL.md                 (C2->C3 promotion rubric)
+- re/CONFIDENCE.md                                    (C3 evidence requirements)
+- re/frida/diff_template.js                           (supported arg_types — 56+ after harness-ext-20260521)
+- re/frida/hooks_registry.py                          (existing hook registry; 284 entries after c3_batch_n)
+- mashedmod/build.bat                                 (build target file list)
+
+C3 evidence rubric reminder (re/CONFIDENCE.md):
+- Reimplementation written in mashedmod/src/mashed_re/<Subsystem>/
+- Build clean
+- Hooked through RH_ScopedInstall and runtime-toggleable
+- Frida diff GREEN bit-identical on at least one test vector batch
+- At least one caller AND one callee at C2+ (anti-island rule)
+- No unresolved semantic/structural [UNCERTAIN] markers
+- C4 promotion BLOCKED on canonical-scenario runtime (project_runtime_blocked.md)
+
+Pool-slot semantics: C2->C3 work does NOT need Ghidra pool slots. Sessions
+only need Frida pool slots (PID-based, acquired per-hook by run_diff_parallel.py
+via scripts/frida_pool.sh).
+
+================================================================================
+Session 1 — render_track_node_leaves  (C2->C3, 5-fn batch, ORDER-DEPENDENT)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/c3-batch-o-s1/  (branch c3/batch-o-s1)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+Promote 5 render-subsystem track-node iteration leaves. Pure-leaf seed +
+4 thunks that call the seed. ORDER MATTERS: promote 0x0041e870 FIRST and
+confirm GREEN before authoring the 4 thunks (their callee_gate flips green
+only after the seed lands).
+
+# Candidates
+| RVA        | Size | Analysis note                                         | Reimpl name suggested            | Status / Notes |
+|------------|------|-------------------------------------------------------|----------------------------------|----------------|
+| 0x0041e870 | 48B  | re/analysis/render_promote_c2_track_node/0x0041e870.md | (new: Render/TrackNodeLeaves_o1.cpp) | PURE LEAF (callees=[]); promote FIRST. void(int) array scan, last-match-wins write to DAT_0063d7e4 |
+| 0x0041e8b0 | 8B   | re/analysis/render_promote_c2_track_node/0x0041e8b0.md | (same file)                      | 8B thunk; calls 0x0041e870 family; promote AFTER seed GREEN |
+| 0x0041e970 | 8B   | re/analysis/render_promote_c2_track_node/0x0041e970.md | (same file)                      | 8B thunk |
+| 0x0041e9d0 | 8B   | re/analysis/render_promote_c2_track_node/0x0041e9d0.md | (same file)                      | 8B thunk |
+| 0x0041ea90 | 8B   | re/analysis/render_promote_c2_track_node/0x0041ea90.md | (same file)                      | 8B thunk |
+
+# Pre-flight
+1. Create worktree:
+   ```bash
+   git worktree add .worktrees/c3-batch-o-s1 -b c3/batch-o-s1
+   cd .worktrees/c3-batch-o-s1
+   ```
+2. Anchor check: `sha256sum original/MASHED.exe.unpatched` = BDCAE0...EFD3C0E
+3. Baseline build: `mashedmod\build.bat` must succeed on a fresh worktree
+4. **ORDER MATTERS:** author + register + diff 0x0041e870 FIRST, confirm GREEN,
+   THEN do the 4 thunks together.
+
+# Per-function workflow (new-author variant)
+Per the promote-c3-batch SKILL.md template. For arg_type, expect `int_scalar`
+or `int_observe` for the seed (void(int) reading globals); the 8B thunks may
+share the same arg_type (look at the existing register entries for similar
+8B render thunks in hooks_registry.py).
+
+# Batch verification (after all 5 wired)
+```bash
+scripts/frida_pool.sh cleanup
+py -3.12 re/frida/run_diff_parallel.py <hook names>
+```
+
+# Promotion (single re-classify transaction)
+Invoke re-classify with all GREEN RVAs.
+
+# Commit: `c3: batch-o s1 render track-node leaves — N hooks GREEN`
+
+# STOP-AND-ASK if
+- 0x0041e870 RED on diff — root-cause it; do NOT proceed with the thunks until
+  the seed is GREEN.
+- Any 8B thunk turns out to NOT call 0x0041e870 family (note may have drifted).
+- More than 2 candidates need new arg_types — split the session.
+
+================================================================================
+Session 2 — render_lowrva_globals  (C2->C3, 5-fn batch, mixed small setters)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/c3-batch-o-s2/  (branch c3/batch-o-s2)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+Promote 5 render low-RVA global-setter functions. All pure-leaf (callees=[]),
+small bodies, branch-guarded global writes. Should be the cleanest yield of
+this batch.
+
+# Candidates
+| RVA        | Size | Analysis note                                          | Reimpl name suggested        | Status / Notes |
+|------------|------|--------------------------------------------------------|------------------------------|----------------|
+| 0x00409680 | 19B  | re/analysis/promote_c2_render_lowrva/00409680.md       | (new: Render/LowRvaSetters_o2.cpp) | Pure leaf; void or int(...) — verify sig in note |
+| 0x004053d0 | 44B  | re/analysis/promote_c2_render_lowrva/004053d0.md       | (same file)                  | void(int, undefined4); 3-global setter w/ if-guard |
+| 0x00423630 | 52B  | re/analysis/promote_c2_render_lowrva/00423630.md       | (same file)                  | Pure leaf |
+| 0x00425ab0 | 87B  | re/analysis/promote_c2_render_lowrva/00425ab0.md       | (same file)                  | Pure leaf |
+| 0x004235b0 | 116B | re/analysis/promote_c2_render_lowrva/004235b0.md       | (same file)                  | Pure leaf (mid-size; lots of callees in note — VERIFY all C2+ before authoring) |
+
+# Pre-flight + workflow + verification: same shape as Session 1.
+
+# STOP-AND-ASK if
+- 0x004235b0 callees include any C1 (filter said C2+ but cross-check before
+  authoring). If 1-2 C1 callees, drift-promote in-session; if more, defer.
+- Any candidate's `undefined4` arg implies a struct pointer rather than a
+  scalar — pick the right arg_type (pointer_observe vs int_pair).
+
+# Commit: `c3: batch-o s2 render low-rva setters — N hooks GREEN`
+
+================================================================================
+Session 3 — render_rw_plugin_helpers  (C2->C3, 5-fn batch, tiny plugin fns)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/c3-batch-o-s3/  (branch c3/batch-o-s3)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+Promote 5 render RW-plugin helpers — tightly-clustered cousins, all 5B-42B,
+callees=1 (chain stays inside the cluster). Likely a vtable-thunk pattern;
+expect uniform arg_type across all 5.
+
+# Candidates
+| RVA        | Size | Analysis note                                         | Reimpl name suggested      | Status / Notes |
+|------------|------|-------------------------------------------------------|----------------------------|----------------|
+| 0x004c2d70 | 5B   | re/analysis/render_promote_c2_rw_plugin/0x004c2d70.md | (new: Render/RwPluginHelpers_o3.cpp) | 5B; likely a tail-call thunk — verify it's not an MFC trampoline |
+| 0x004c2d90 | 35B  | re/analysis/render_promote_c2_rw_plugin/0x004c2d90.md | (same file)                | 35B; expect uniform shape with 004c2e70/004c2f30 |
+| 0x004c2e70 | 35B  | re/analysis/render_promote_c2_rw_plugin/0x004c2e70.md | (same file)                | 35B |
+| 0x004c2f30 | 35B  | re/analysis/render_promote_c2_rw_plugin/0x004c2f30.md | (same file)                | 35B |
+| 0x004c2ed0 | 42B  | re/analysis/render_promote_c2_rw_plugin/0x004c2ed0.md | (same file)                | 42B |
+
+# Pre-flight + workflow + verification: same shape as Session 1.
+
+# STOP-AND-ASK if
+- 0x004c2d70 is a Microsoft compiler-generated stub (jmp [import]) rather than
+  Mashed code — defer it as out-of-scope.
+- The 35B cluster reveals 5 different signatures (heterogeneous) — split the
+  session, do only the homogeneous ones.
+
+# Commit: `c3: batch-o s3 render rw-plugin helpers — N hooks GREEN`
+
+================================================================================
+Session 4 — render_rw_submit_video  (C2->C3, 5-fn batch, render-cmd + video)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/c3-batch-o-s4/  (branch c3/batch-o-s4)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+Promote 5 render command-buffer + video-display small functions. Crosses two
+clusters (rw_render_submit + video_display); should still cluster cleanly
+into one .cpp file.
+
+# Candidates
+| RVA        | Size | Analysis note                                          | Reimpl name suggested      | Status / Notes |
+|------------|------|--------------------------------------------------------|----------------------------|----------------|
+| 0x004cd060 | 10B  | re/analysis/promote_c2_rw_render_submit/004cd060.md    | (new: Render/RenderSubmit_o4.cpp) | 10B; tiny |
+| 0x004cc7f0 | 32B  | re/analysis/promote_c2_rw_render_submit/004cc7f0.md    | (same file)                | 32B |
+| 0x004cd140 | 46B  | re/analysis/promote_c2_rw_render_submit/004cd140.md    | (same file)                | RwRenderCommandBufferReset (named) |
+| 0x0042b890 | 11B  | re/analysis/promote_c2_video_display/0x0042b890.md     | (extend file)              | 11B; video display |
+| 0x0042b8a0 | 11B  | re/analysis/promote_c2_video_display/0x0042b8a0.md     | (extend file)              | 11B; video display |
+
+# Pre-flight + workflow + verification: same shape as Session 1.
+
+# STOP-AND-ASK if
+- RwRenderCommandBufferReset mutates a live cmdbuf in the harness's address
+  space — that's a live-state side effect. If diff is RED, the harness can't
+  simulate it cleanly — defer with a live-state-side-effect refusal.
+
+# Commit: `c3: batch-o s4 render submit/video — N hooks GREEN`
+
+================================================================================
+Session 5 — vehicle_small_leaves  (C2->C3, 5-fn batch, untapped subsystem)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/c3-batch-o-s5/  (branch c3/batch-o-s5)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+Promote 5 small vehicle-subsystem functions. Vehicle is UNTAPPED for C3
+(only 4 vehicle C3+ rows currently) — this is exploratory. All 5 picks
+have v4 filter pass; verify per-candidate before authoring.
+
+# Candidates
+| RVA        | Size | Analysis note                                          | Reimpl name suggested      | Status / Notes |
+|------------|------|--------------------------------------------------------|----------------------------|----------------|
+| 0x0046cbe0 | 43B  | re/analysis/util_c0_promote/0x0046cbe0.md              | (new: Vehicle/SmallLeaves_o5.cpp) | NOTE: in util_c0_promote/ but subsystem=vehicle per hooks.csv |
+| 0x00467300 | 73B  | re/analysis/vehicle_promote_c2_b/0x00467300.md          | (same file)                | VehicleCollisionWinTrigger (named) |
+| 0x0042c280 | ?    | re/analysis/promote_c2_vehicle_lowrva/0x0042c280.md    | (same file)                | Size unparsed — read note before authoring |
+| 0x0042bf30 | ?    | re/analysis/promote_c2_vehicle_lowrva/0x0042bf30.md    | (same file)                | Size unparsed |
+| 0x0042d3a0 | ?    | re/analysis/promote_c2_vehicle_lowrva/0x0042d3a0.md    | (same file)                | Size unparsed |
+
+# Pre-flight + workflow + verification: same shape as Session 1.
+
+# STOP-AND-ASK if
+- Any of the 3 size-unparsed candidates turns out >200B — defer to a larger-
+  function session.
+- Vehicle-state side-effects detected (writes to live physics globals) —
+  defer with live-state-side-effect refusal.
+
+# Commit: `c3: batch-o s5 vehicle small leaves — N hooks GREEN`
+
+================================================================================
+Session 6 — mixed_audio_util_save  (C2->C3, 5-fn batch, cross-subsystem)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/c3-batch-o-s6/  (branch c3/batch-o-s6)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+Promote 5 small cross-subsystem functions: 2 audio (RWS parser leaves),
+1 util (5B), 2 save (settings dialog populator + video-mode init). Risk-
+distribution session — single subsystem refusal won't tank the whole batch.
+
+# Candidates
+| RVA        | Size | Subsystem | Analysis note                                            | Reimpl name suggested        | Status / Notes |
+|------------|------|-----------|----------------------------------------------------------|------------------------------|----------------|
+| 0x005be190 | 17B  | audio     | re/analysis/promote_c2_rws_audio_loader/005be190.md      | (new: Audio/RwsLeaves_o6.cpp) | 17B RWS leaf |
+| 0x005be140 | 25B  | audio     | re/analysis/promote_c2_rws_audio_loader/005be140.md      | (same file)                  | 25B RWS leaf |
+| 0x00430790 | 5B   | util      | re/analysis/promote_c1_low_ab1/0x00430790.md             | (new: Util/SmallLeaves_o6.cpp) | 5B util tiny |
+| 0x00498d60 | ?    | save      | re/analysis/promote_c2_settings_dialog/00498d60.md       | (new: Save/SettingsDialog_o6.cpp) | PopulateModeCombo (named) |
+| 0x00498c00 | ?    | save      | re/analysis/promote_c2_settings_dialog/00498c00.md       | (same file)                  | VideoModeTableInit (named) |
+
+# Pre-flight + workflow + verification: same shape as Session 1.
+
+# STOP-AND-ASK if
+- PopulateModeCombo or VideoModeTableInit reach into the Windows
+  registry / settings dialog Win32 calls — those are live-state side effects
+  that synthetic Frida diff can't reproduce cleanly. Defer.
+
+# Commit: `c3: batch-o s6 mixed audio/util/save — N hooks GREEN`
+
+================================================================================
+Deferred (NOT in this batch — unblocker work required before re-pickup)
+================================================================================
+
+All 8 c3_batch_n-leftover candidates remain blocked. Each needs ONE concrete
+unblocker landed before it becomes promotable:
+
+| RVA        | Subsystem | Blocker | Unblock action |
+|------------|-----------|---------|----------------|
+| 0x00428450 | hud       | spin_angle accumulator (_DAT_0067d974) increments per call — observe sees diff sin(angle) between Orig and Reimpl sub-calls | NEW harness arg_type `spin_angle_observe` (resets sin-input global between sub-calls) |
+| 0x0040e480 | frontend  | double-deref setter (`*(*0x005f2770 + p1*4 + 0x34) = p2`) — entity_field_set arg_type does single-deref only | NEW harness arg_type `ptr_ptr_entity_set` |
+| 0x00427680 | hud       | U-2127 structural [Blocks C3] — EDI artifact at 0x00427f8c unconfirmed | Resolve U-2127 (Ghidra MCP trace of EDI usage at call site) |
+| 0x00402fb0 | hud       | U-3885 + U-3886 [Blocks C3] (angle-accumulator init + second caller condition) | Resolve U-3885 + U-3886 (Ghidra-side) |
+| 0x004c1c80 | hud       | Callee FUN_004c0e50 still C1 (anti-island gate fail) | Promote 0x004c0e50 to C2+ via discover-c1-batch |
+| 0x0042aa00 | frontend  | Known-RED diff (validity-address formula drift since 2026-05-15) | Ghidra MCP re-decomp to confirm `0x0067ed84+cursor+slot*0x10-0x10` formula vs original |
+| 0x00428320 | frontend  | Callers FUN_00428a30 + FUN_00428bf0 both still C1 (caller-gate fail) | Promote either caller to C2+ |
+| 0x00403050 | frontend  | LoadingScreen — texture handle 0 at menu-idle; gated by DAT_00771964 | Canonical past-menu scenario OR new harness arg_type with global-precondition |
+| 0x0042bcb0 | frontend  | Live sprite-draw side-effect via FUN_004b5750 corrupts harness | Live-state diff approach OR split body into testable sub-helpers (resolve U-3452/3453/3454 first) |
+
+c3_batch_p strategy hint: queue a HARNESS-EXTENSION session FIRST (adds
+spin_angle_observe + ptr_ptr_entity_set in one transaction), then c3_batch_p
+can replay 0x00428450 + 0x0040e480 + 1-2 of the U-ID-resolved candidates.
+
+Other v4-passed candidates NOT picked for c3_batch_o (capacity exhausted):
+- 80+ remaining render candidates (track_loader, texture_loader, render_d3d9
+  mid-size cluster — pick from these for c3_batch_p if render yield holds up).
+- 16 vehicle candidates in promote_c2_vehicle_lowrva (Replay::* + state queries).
+- 3 audio (005ab410, 005abfa0, 005ac210, 005acaa0 — RWS parsers, mid-size).
+- 1 input (0x00497310, 293B — bigger than typical session pick).
+- input + frontend continuation rows from c3_batch_n (00434720 / 00439210 —
+  body sizes unparseable; need note re-read before placement).
+
+================================================================================
+Yield calibration & next steps
+================================================================================
+
+Expected yield per the SKILL.md yield table:
+- s1 render track-node:    UNCALIBRATED — exploratory. Pure-leaf seed + 4 thunks.
+  Best-case 5/5 if 0x0041e870 GREEN unlocks the cluster. Worst-case 1/5 if
+  thunk arg_types diverge from the seed.
+- s2 render low-rva:        UNCALIBRATED. Mostly callee-free; 4 small + 1 mid.
+  Best-case 5/5; worst-case 3/5 if 004235b0's callees include a C1.
+- s3 render rw-plugin:      UNCALIBRATED. Tight cluster; either all GREEN
+  (5/5) or thunk pattern doesn't fit harness (1/5).
+- s4 render submit/video:   UNCALIBRATED. Cmd-buffer reset is live-state
+  risk — likely 3-4/5.
+- s5 vehicle small leaves:  UNCALIBRATED. First vehicle C3 session — expect
+  2-3/5 with 1-2 STOP-AND-ASK on physics state.
+- s6 mixed audio/util/save: UNCALIBRATED. settings_dialog rows are Win32-
+  side-effect risk — expect 2-3/5.
+
+Realistic landing range: 14-22 promotions of 30 attempted (47-73%). On the
+low end, this is still a 2x improvement vs c3_batch_n's 6/15 (40%); the
+upper end would be the biggest single-batch win to date.
+
+If this batch lands at the midpoint (~18 promotions), Frontend+HUD C3+ stays
+flat (no candidates in this batch), but Render C3+ jumps from a low baseline
+(currently <10 C3 render rows) to a meaningful percentage, AND Vehicle gets
+its first C3 leaves.
+
+After c3_batch_o lands, c3_batch_p priorities:
+1. Harness-extension session (spin_angle_observe + ptr_ptr_entity_set).
+2. Replay 0x00428450 + 0x0040e480 with the new arg_types.
+3. Continue render mid-size cluster from the 80+ remaining v4-passed pool.
+
+================================================================================
+INVOCATION
+================================================================================
+Open 6 Claude Code sessions in parallel. Paste session block <N> into
+session <N>. Each session creates its own worktree, does its 5 candidates,
+commits to its branch, appends a PROMOTION_QUEUE row, then halts.
+
+After all 6 sessions complete, invoke the frida-sweep skill (Sonnet 4.6)
+from the main worktree to merge all branches, resolve build.bat /
+hooks_registry.py / CHANGELOG.md conflicts, rebuild the canonical .asi,
+and run the integration diff across every promoted hook.
