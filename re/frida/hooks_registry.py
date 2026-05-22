@@ -6346,4 +6346,31 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-o-s1 — render_track_node_leaves  (C2→C3, seed only)
+    # Render/TrackNodeLeaves_o1.cpp
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0041e870  TrackNodeRecordScan
+    # void(int param_1): clears DAT_0063d7e4 to NULL; if DAT_005f37a0 > 0,
+    #   iterates 0x48B record array at s_training_005f33f8, storing last record
+    #   where *(record+0x10)==param_1 into DAT_0063d7e4 (last-match-wins).
+    # 48-byte pure leaf (callees=[]).
+    # arg_type='void_setter_observe': call fn(param_1), read back DAT_0063d7e4.
+    #   At quiescent main menu DAT_005f37a0==0, so fn unconditionally writes NULL
+    #   to 0x0063d7e4 and returns. Observable=0 for every input → deterministic
+    #   bit-identical between orig and reimpl.
+    # target_global restored after each test (harness behaviour for void_setter_observe).
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e870.md
+    'track_node_record_scan': {
+        'rva':            0x0041e870,
+        'export':         'TrackNodeRecordScan',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0063d7e4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 5, 10, 100, -1, 0x7fffffff, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
 }
