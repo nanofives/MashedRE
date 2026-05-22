@@ -7,7 +7,9 @@
 //   0x00498bf0  DisplayGetCursorGate    — leaf getter for DAT_00773204 (cursor/display gate)
 //   0x00498b60  VideoModeArraysFree     — void teardown: frees 3 globals (driver-system clean-up)
 //   0x004c2f00  RwEngineGetCurrentMode  — wrapper for driver-system cmd 0x0a
-//   0x004c2ed0  RwEngineGetModeInfo     — wrapper for driver-system cmd 0x06
+//
+// Note: 0x004c2ed0 RwEngineGetModeInfo was deferred from an earlier session
+// and is now implemented in Render/RwPluginHelpers_o3.cpp (c3-batch-o-s3).
 //
 // Binary anchor: MASHED.exe SHA-256 (unpatched):
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -135,13 +137,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetCurrentMode() 
 
 RH_ScopedInstall(RwEngineGetCurrentMode, 0x004c2f00);
 
-// ---------------------------------------------------------------------------
-// RwEngineGetModeInfo  --  0x004c2ed0
-//
-// Deferred from this C3 session: requires an out-buffer arg_type sized to
-// the full RwVideoMode struct (~100 bytes per RW 3.x). The existing
-// out3_idx harness only allocates 12 bytes; the dispatcher (cmd 0x06) would
-// scribble past the end of that buffer and corrupt Frida-managed memory.
-// Promotion deferred until a wide-buffer arg_type lands.
-// Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2ed0.md (C2)
-// ---------------------------------------------------------------------------
+// 0x004c2ed0 RwEngineGetModeInfo — implemented in Render/RwPluginHelpers_o3.cpp (c3-batch-o-s3).
