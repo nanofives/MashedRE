@@ -1,6 +1,11 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  00422af0  SlotWordSet  C2->C3  c3-batch-q-s3; 20B pure leaf; writes param_2 to DAT_00641320+param_1*0xf40; leaf-fn-exemption; entity_field_set 10/10 GREEN log/diff_slot_word_set.csv; Render/LowRvaMixed_q3.cpp
+2026-05-22  00403d30  Render_00403d30  C2->C3  c3-batch-q-s3; 123B two FUN_00427ad0 calls shadow+fill id 0x22f; void crash_equal_ok 10/10 GREEN log/diff_render_00403d30.csv; callee FUN_00427ad0 C3; caller FUN_00404320 C2; Render/LowRvaMixed_q3.cpp
+2026-05-22  00403ed0  Render_00403ed0  C2->C3  c3-batch-q-s3; 205B four FUN_00427ad0 calls ids 0xf3+0x230; void crash_equal_ok 10/10 GREEN log/diff_render_00403ed0.csv; callee FUN_00427ad0 C3; caller FUN_00404320 C2; Render/LowRvaMixed_q3.cpp
+2026-05-22  0040df60  ConditionalRenderSubPass  C2->C3  c3-batch-q-s3; 55B 3-gate conditional; void 10/10 GREEN log/diff_conditional_render_sub_pass.csv; callees GetRaceSubMode C3+FUN_00401f10 C2; U-1713 semantic non-blocking; Render/LowRvaMixed_q3.cpp
+2026-05-22  00422ac0  FUN_00422ac0  C2->C2  REFUSED C3: no harness arg_type for void(int ptr-to-4array); D-11017 filed; c3-batch-q-s3
 2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_00412130  writes=80  renames=0 (HUD weapons-VFX + ParticleEmitters game-code; no FidDB attestation)  errors=0
 2026-05-22  c3-batch-q-s2  re-classify-transaction  rvas=0x004769a0,0x004769d0,0x004769f0,0x00476a30,0x00476a40  note=5/5 ParticleEmitter state setters C2->C3; Render/FrameHelpers_q2.cpp; all 5 Frida diffs 10/10 GREEN; leaf-fn-exemption (callees_depth1=[] for all); void_setter_observe NULL-path (ptr variants) + full-range (SetScalar)
 2026-05-22  004769a0  ParticleEmitter_SetPosition  C2->C3  c3-batch-q-s2; NULL→&DAT_006925a8; writes XYZ to DAT_00692528/2c/30; leaf-exemption; void_setter_observe NULL-path 10/10 GREEN log/diff_particle_emitter_set_position.csv; Render/FrameHelpers_q2.cpp
