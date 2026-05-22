@@ -8,11 +8,11 @@
 //   0x0041e870  TrackNodeRecordScan    — 48B pure leaf; scans 0x48B record array,
 //                                         last-match-wins write to DAT_0063d7e4
 //
-// Smoke-test stubs for `track_record_deref` harness arg_type (2026-05-22):
+// c3_batch_p s1 promotions (drift-replay, 2026-05-22):
 //   0x0041e9d0  TrackNodeFnPtrGet14    — 8B getter; returns *(DAT_0063d7e4+0x14)
+//   0x0041ea90  TrackNodeFnPtrGet44    — 8B getter; returns *(DAT_0063d7e4+0x44)
 //
 // Still deferred (dispatchers call through unknown fn-ptr; unsafe without track loaded):
-//   0x0041ea90  TrackNodeFnPtrGet44    — 8B getter; returns *(DAT_0063d7e4+0x44)
 //   0x0041e8b0  TrackNodeDispatch14    — 8B indirect dispatch via *(DAT_0063d7e4+0x14)
 //   0x0041e970  TrackNodeDispatch44    — 8B indirect dispatch via *(DAT_0063d7e4+0x44)
 //
@@ -124,3 +124,36 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet14() {
 }
 
 RH_ScopedInstall(TrackNodeFnPtrGet14, 0x0041e9d0);
+
+// ---------------------------------------------------------------------------
+// TrackNodeFnPtrGet44  --  0x0041ea90
+//
+// Original: FUN_0041ea90 (8 bytes, 0x0041ea90..0x0041ea97)
+// Signature: undefined4 FUN_0041ea90(void)
+//   Returns: dword at *(DAT_0063d7e4 + 0x44)
+//
+// Reads DAT_0063d7e4 (current track descriptor record pointer) and returns
+// the dword at offset +0x44 within that record. Used by FUN_00426e10 as a
+// non-zero guard: `if FUN_0041ea90() != 0 { call FUN_0041e970() }`.
+// Getter pair with FUN_0041e970: this reads field+0x44, FUN_0041e970 calls it
+// as a function pointer. Same pattern as TrackNodeFnPtrGet14 / FUN_0041e8b0
+// pair at field+0x14.
+// At quiescent main menu, DAT_0063d7e4 == NULL -> this function will crash
+// unless DAT_0063d7e4 is pre-seeded by the diff harness (track_record_deref).
+//
+// Constants (cited from 0x0041ea90 body):
+//   0x0063d7e4 — global track-descriptor pointer
+//   0x44 (68)  — field offset within 0x48-byte record
+//
+// Analysis note: re/analysis/render_promote_c2_track_node/0x0041ea90.md
+// ---------------------------------------------------------------------------
+
+// 0x0041ea90
+extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet44() {
+    // Read the current track-descriptor record pointer from DAT_0063d7e4.
+    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
+    // Return the dword at record+0x44.
+    return *reinterpret_cast<std::uint32_t*>(record + 0x44u);
+}
+
+RH_ScopedInstall(TrackNodeFnPtrGet44, 0x0041ea90);
