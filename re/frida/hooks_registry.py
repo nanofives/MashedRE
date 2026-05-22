@@ -5560,6 +5560,31 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000004, 0xDEADBEEF],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Util/SmallLeaves_o6.cpp  (c3-batch-o-s6)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00430790  GetDat0067f17c  (util)
+    # 5-byte stub: MOV EAX, [0x0067f17c]; RET.
+    # read_global: write sentinel to DAT_0067f17c, call fn(), verify return == sentinel.
+    # 10 sentinels covering 0, 1, MAX, and bit-pattern variants.
+    # U-3894: DAT_0067f17c content type not mechanically confirmed; does not affect reimpl.
+    # U-3895: Subsystem assignment (util vs leaderboard); does not block C3.
+    # Anti-island: caller 0x00429a30 MenuMenusBE (C3); callee=leaf (trivially satisfied).
+    # ref: re/analysis/promote_c1_low_ab1/0x00430790.md
+    'get_dat_0067f17c': {
+        'rva':            0x00430790,
+        'export':         'GetDat0067f17c',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067f17c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0x00000004, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000],
+        'path2_tests':    [0x00000000, 0x00000004, 0xDEADBEEF],
+    },
+
     # 0x004c1bb0  IntroSplashRenderState
     # 39-byte vtable dispatch via DAT_007d3ff8+0x9c (slot 39).
     # Signature: uint32(uint32 param_1, void* param_2, uint32 param_3).
