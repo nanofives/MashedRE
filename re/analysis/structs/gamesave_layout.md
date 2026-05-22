@@ -15,58 +15,106 @@ First-write RVA = instruction that first writes each field into the buffer.
 |-------------|-------------|--------------------|-----------------|-------|
 | 0x0000 | 4 | `0xDEADBEEF` | 0x00404F37 | Magic sentinel — `MOV DWORD PTR [0x803358], 0xDEADBEEF` |
 | 0x0004 | 0x2443C (150,076) | all-zero (no saves) | 0x00404F34 | Profile data block — REP MOVSD from `*DAT_008A94A8` (0x928F dwords) |
-| 0x24440 | 0xB60 (2,912) | see tail notes | [UNCERTAIN U-3559] | Tail — NOT written by Save::SerializeToBuffer; shipped with non-zero defaults |
+| 0x24440 | 0x600 (1,536) | all zero | (BSS) | Pre-championship gap — no code writes this; all zero in shipped file; in-memory BSS at 0x827798–0x827D97 |
+| 0x24A40 | 0x520 (1,312) | see championship block | 0x00404F19 | Championship snapshot — REP MOVSD from `DAT_007F0A40` (0x148 dwords); see sub-layout below |
+| 0x24EFC | 4 | 0x00000000 | 0x00404F23 | Save state counter — `MOV [0x00828254], EAX` where EAX = `DAT_008A95AC`; overwrites byte within championship block |
+| 0x24F60 | 0xA0 (160) | all zero | (BSS) | Post-championship gap — no code writes this; all zero in shipped file; in-memory BSS at 0x8282B8–0x8282F7 |
 
-**Total:** 0x24440 + 0xB60 = 0x24FA0 ✓
+**Total:** 0x24440 + 0x600 + 0x520 + 0xA0 = 0x24FA0 ✓  
+(Note: 0x24EFC is inside the championship block; the save state counter DWORD at that offset is overwritten by a separate MOV after the championship REP MOVSD.)
 
 ---
 
-## Tail data (0x24440–0x24F9F) — observed values in shipped file
+## Tail (RESOLVED 2026-05-22 workstream E)
 
-First non-zero byte at file offset 0x24A44 (0x604 bytes past tail start).
+**Writer identification:** The tail is written by `Save::SerializeToBuffer` (0x00404EE0) and the
+flat-blob I/O pair (`SAVE_WRITE_FN` 0x00404F50 / `SAVE_LOAD_FN` 0x00404E50). There is NO second
+independent save function for the tail.
 
-### Sparse non-zero offsets (0x24A44–0x24C9F): likely championship progression flags
+**Proof:** `mcp__ghidra__ghidra_eval` enumerated all Ghidra cross-references whose destination falls
+in `0x827798..0x8282F7`; the complete set is:
 
-| File offset | DWORD value | Observation |
-|-------------|-------------|-------------|
-| 0x24A44 | 0x00000001 | — |
-| 0x24A4C | 0x00000002 | — |
-| 0x24A50 | 0x00000002 | — |
-| 0x24A6C | 0x00000001 | — |
-| 0x24A7C | 0x00000002 | — |
-| 0x24A80 | 0x00000002 | sparse pattern continues; spaced 0x08–0x30 bytes |
+| From RVA | Dest address | Ref type | Context |
+|----------|-------------|----------|---------|
+| 0x00404F14 | 0x00827D98 | DATA | `MOV EDI, 0x827D98` — destination for REP MOVSD |
+| 0x00404F19 | 0x00827D98 | WRITE | `MOVSD.REP ES:EDI, ESI` — start of championship copy |
+| 0x00404F19 | 0x00827D9C | WRITE | Continuation of same REP MOVSD |
+| 0x00404E87 | 0x00827D98 | DATA | `MOV ESI, 0x827D98` — source for DeserializeFromBuffer REP MOVSD |
+| 0x00404E91 | 0x00827D98 | READ | `MOVSD.REP ES:EDI, ESI` — DeserializeFromBuffer read |
+| 0x00404E91 | 0x00827D9C | READ | Continuation of same REP MOVSD |
+| 0x00404F23 | 0x00828254 | WRITE | `MOV [0x00828254], EAX` — save state counter |
+| 0x00404EBC | 0x00828254 | READ | `MOV EAX, [0x00828254]` — DeserializeFromBuffer read |
 
-### Dense region (0x24CB0–0x24DE7): track ID sequences
+All eight references belong to `SerializeToBuffer` (0x00404EE0) and `DeserializeFromBuffer`
+(0x00404E80). No other function in the binary references any address in the tail range.
 
-Values are 4-byte little-endian integers, stride 4 bytes:
-```
-0x24CB0: 09 13 0C 07 FF FF FF FF 09 13 0C 07 0B 09 12 0C
-0x24CC0: 07 0B 09 11 10 13 07 09 11 13 0C 0B 09 11 0C 07
-0x24CD0: 0B 09 12 0C 07 0B 09 11 12 0C 0B 09 09 09 09 09
-...continuing through 0x24DE7 (all value 0x09 = 9 for last dozen entries)
-```
-Max track ID seen: 0x13 = 19. Range 0x07–0x13 consistent with 20 tracks (0-indexed or 1-indexed).  
-0xFFFFFFFF = -1 appears at 0x24CC0 and 0x24D38 — likely sentinel/unset entry.
+### Pre-championship gap (0x24440–0x24A3F, 0x600 bytes)
 
-### Float array (0x24E1C–0x24E4F, 13 floats)
+- In-memory range: 0x00827798–0x00827D97.
+- All zero in the shipped `gamesave.bin`. Ghidra static image: all zero (BSS).
+- No code writes this range. `SerializeToBuffer` does not touch it.
+- Conclusion: this region is zero-initialized BSS that is serialized to file as-is by the flat
+  blob I/O. It may be reserved for a future subsystem or is leftover alignment padding.
+  [UNCERTAIN — zero in shipped file does not prove it is always zero at runtime]
 
-All entries = `0x3F7D70A4` = ~0.9898 (IEEE 754 little-endian).  
-13 entries × 4 bytes = 52 bytes. Count 13 matches 13-track championship table.
+### Championship snapshot block (0x24A40–0x24F5F, 0x520 bytes)
 
-### Byte flag run (0x24E50–0x24EEF, 160 bytes)
+Written at RVA 0x00404F19 by `Save::SerializeToBuffer`: `MOVSD.REP` of `0x148` dwords
+(328 dwords = 1,312 bytes) FROM `DAT_007F0A40` TO `DAT_00827D98` (= save_buf + 0x24A40).
 
-All 0x01. Likely a 160-element byte array of unlock/completion flags.
+Read at RVA 0x00404E91 by `Save::DeserializeFromBuffer`: reverse direction, same length.
 
-### Float array (0x24F00–0x24F0B, 3 floats)
+Source global `DAT_007F0A40` is the live championship table. Code at 0x004368E0, 0x0043A174
+and others accesses it as `(&DAT_007F0A40)[col + row * 0xC]` — stride 12 dwords per row.
+The table has at least 13 rows (track count) × 12 columns per row = 156 dwords (624 bytes) for
+the flag matrix. The full serialized block is 328 dwords which includes additional per-row fields
+after the flag matrix; exact sub-field layout is [UNCERTAIN U-3560-ext].
 
-All entries = `0x3F333333` = ~0.7 (IEEE 754).
+Observed sub-regions in the shipped file (all offsets relative to start of championship block,
+i.e. file offset = 0x24A40 + block_offset):
 
-### Trailing non-zero (0x24F10, 0x24F57–0x24F5B)
+| Block offset | File offset | Size (bytes) | Values in shipped file | Mechanical description |
+|-------------|-------------|-------------|----------------------|----------------------|
+| 0x0000 | 0x24A40 | 0x270 (624) | sparse 0/1/2 | Championship mode flags: `[col + row*0xC]` matrix, 156 dwords (13 rows × 12 cols). Values: 0=not started, 1=won, 2=completed [UNCERTAIN — semantic labels inferred from context] |
+| 0x0270 | 0x24CB0 | 0x138 (312) | track IDs 0x07–0x13, 0xFFFFFFFF=-1 | Track ID sequences — 78 dwords. -1 (0xFFFFFFFF) at block offsets 0x0280 and 0x02F8 are sentinels/unset entries [UNCERTAIN] |
+| 0x03A8 | 0x24DE8 | 0x034 (52) | all 0x0000003B (59) | 13 dwords of value 59 [UNCERTAIN — field identity unknown] |
+| 0x03DC | 0x24E1C | 0x034 (52) | all `0x3F7D70A4` | 13 floats = ~0.9898f (IEEE 754 single). Count 13 matches track count [UNCERTAIN — semantic: best-time or rating] |
+| 0x0410 | 0x24E50 | 0x09C (156) | all 0x01 (byte-packed) | 156 bytes all 0x01; likely a 156-element byte flag array (unlock/completion per championship slot) [UNCERTAIN] |
+| 0x04AC | 0x24EEC | 0x010 (16) | all zero | Zero gap within championship block |
+| 0x04BC | 0x24EFC | 0x004 (4) | 0x00000000 | **Save state counter** — overwritten at RVA 0x00404F23: `MOV [0x00828254], EAX` where EAX = `DAT_008A95AC` (live save counter). Loaded from `DAT_008A95AC` at RVA 0x00404F03 before the championship REP MOVSD, then stored here after it. |
+| 0x04C0 | 0x24F00 | 0x00C (12) | all `0x3F333333` | 3 floats = ~0.7f (IEEE 754 single) [UNCERTAIN — field identity unknown] |
+| 0x04CC | 0x24F0C | 0x004 (4) | all zero | Zero gap |
+| 0x04D0 | 0x24F10 | 0x004 (4) | 0x00000002 | 1 dword = 2 [UNCERTAIN — field identity unknown] |
+| 0x04D4 | 0x24F14 | 0x040 (64) | mostly zero; 0x01010100 at 0x24F54, 0x01010101 at 0x24F58 | Trailing championship block bytes [UNCERTAIN] |
 
-```
-0x24F10: 0x02
-0x24F57-0x24F5B: 0x01 0x01 0x01 0x01 0x01
-```
+### Save state counter (0x24EFC, 4 bytes)
+
+- In-memory address: 0x00828254 = save_buf + 0x24EFC.
+- Offset within championship block: 0x4BC (dword index 303 of 328).
+- Write RVA: 0x00404F23 — `MOV [0x00828254], EAX`.
+- Source: `DAT_008A95AC` (live save state counter loaded at 0x00404F03).
+- Note: the REP MOVSD at 0x00404F19 first copies championship data covering this position from
+  `DAT_007F0A40[0x12F]`, then RVA 0x00404F23 immediately OVERWRITES that dword with the live
+  counter. So `0x828254` holds the save state counter, NOT the championship table element at
+  dword 303.
+
+### Post-championship gap (0x24F60–0x24F9F, 0xA0 bytes)
+
+- In-memory range: 0x008282B8–0x008282F7.
+- All zero in the shipped `gamesave.bin`. Ghidra static image: all zero (BSS).
+- No code writes this range. Reserved/alignment padding.
+
+### Hypothesis outcome
+
+- **Hypothesis 1 (separate save function):** REFUTED. No second writer exists; `SerializeToBuffer`
+  itself writes the championship snapshot into the tail via REP MOVSD at 0x00404F19 and the
+  save-counter MOV at 0x00404F23.
+- **Hypothesis 2 (second independent record):** REFUTED. The tail is part of the same flat
+  0x24FA0-byte blob; the I/O functions at 0x00404E50 / 0x00404F50 treat the whole buffer as one
+  record.
+- **Hypothesis 3 (load-only / game never touches):** PARTIALLY CONFIRMED for the pre- and
+  post-championship gaps (0x600 + 0xA0 bytes). The championship block itself is actively
+  written by SerializeToBuffer.
 
 ---
 
@@ -100,5 +148,8 @@ All entries = `0x3F333333` = ~0.7 (IEEE 754).
 ## Uncertainties
 
 - **U-3558**: 12 bytes at stride 0x4C from 0x7F105C — which struct fields?
-- **U-3559**: Who writes save_buf tail [0x24440..0x24F9F]? Not Save::SerializeToBuffer.
+- **~~U-3559~~**: RESOLVED 2026-05-22 workstream E — see "Tail (RESOLVED)" section above.
 - **U-3560**: DAT_008A94A8 points to what struct? 150,076-byte profile block layout TBD.
+- **U-3560-ext** [NEW]: Championship block sub-field layout at offsets 0x0270–0x051F: exact field
+  identities for track IDs, 0x3B dwords, 0.9898f floats, byte flags, 0.7f floats, trailing 0x02
+  dword unknown. Requires decomp of championship init/reset functions (callers of 0x7F0A40).
