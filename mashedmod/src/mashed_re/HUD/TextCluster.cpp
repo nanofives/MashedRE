@@ -8,6 +8,7 @@
 //
 // Hooks in this file:
 //   0x00552750  FontCtx_ResetTransform  pure leaf; identity RwMatrix on cur ctx
+//   0x00428450  HudSpinCoinAnim         (C2 stub; smoke-test for spin_angle_observe arg_type)
 //
 // Refusals from prior sessions (documented in re/PROMOTION_QUEUE.md):
 //   0x004c1c80  callee FUN_004c0e50 is C1 — fails C2->C3 "callee at C2+" rule;
@@ -20,8 +21,8 @@
 //               draw_quad_observe arg_type landed 2026-05-21; Frida GREEN 12/12.
 //   0x00428450  spin-angle accumulator side-effect — _DAT_0067d974 is incremented
 //               by each call; draw_quad_observe cannot reset it between Orig+Reimpl
-//               calls; needs new harness arg_type (spin_angle_observe or global-reset
-//               wrapper); deferred to harness-extension session.
+//               calls; new harness arg_type spin_angle_observe resets the accumulator
+//               before each sub-call; smoke-tested 2026-05-22.
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
@@ -128,3 +129,112 @@ std::uint32_t __cdecl FontCtx_ResetTransform()
 }
 
 RH_ScopedInstall(FontCtx_ResetTransform, 0x00552750);
+
+// ---------------------------------------------------------------------------
+// HudSpinCoinAnim  --  0x00428450
+//
+// Original: FUN_00428450 (305 bytes, 0x00428450..0x00428580)
+// Signature: void FUN_00428450(int param_1, int param_2)
+//   param_1: horizontal position offset (screen units)
+//   param_2: vertical position offset (screen units)
+//
+// Computes sin of current spin angle (_DAT_0067d974), scales by screen dims
+// and constants, then calls FUN_00450b10 (HudIm2DQuad) with computed x/y/w/h.
+// Advances spin angle: _DAT_0067d974 += _DAT_005cc56c.
+//
+// Constants (cited from 0x00428450 body):
+//   0x0067d974 — spin angle accumulator (float32)
+//   0x005cc56c — angular velocity constant (float32)
+//   0x005d757c — sin threshold for UV horizontal flip (float32)
+//   0x00771960 — pointer to texture handle (ptr-to-undefined4)
+//   0x005cd5a8 — screen-width scale factor (float32)
+//   0x005cd65c — x-position base constant (float32)
+//   0x005cd274 — x-position sin scale constant (float32)
+//   0x005cc560 — y/height scale constant (float32)
+//   0x005cd658 — y-position offset constant (float32)
+//   0x005cc730 — size ratio constant (float32)
+//
+// Smoke-test target for spin_angle_observe harness arg_type (2026-05-22).
+// Full C3 promotion is c3_batch_p's job.
+// Analysis note: re/analysis/hud_ingame_promote_c2/0x00428450.md
+// ---------------------------------------------------------------------------
+
+// 0x00428450
+extern "C" __declspec(dllexport) void __cdecl HudSpinCoinAnim(int param_1, int param_2) {
+    // Spin angle accumulator (float32) at DAT_0067d974.
+    float& spinAngle = *reinterpret_cast<float*>(0x0067d974u);
+
+    // Compute sin of current spin angle using x87 fsin (matches original MSVC codegen).
+    // Original uses: fsin((float10)_DAT_0067d974) -> narrowed to float32.
+    // std::sin uses SSE2 double; fsin uses x87 80-bit extended — bit-level diverges.
+    // We load the raw float from the angle pointer directly to avoid reference aliasing.
+    float sinVal;
+    {
+        float* pAngle = &spinAngle;
+        __asm {
+            mov eax, pAngle
+            fld dword ptr [eax]
+            fsin
+            fstp sinVal
+        }
+    }
+
+    // Default UV layout (coin face, forward-facing).
+    std::uint32_t local_10 = 0u;            // u0 = 0.0f
+    std::uint32_t local_c  = 0u;            // v0 = 0.0f
+    std::uint32_t local_8  = 0x3f000000u;   // u1 = 0.5f
+    std::uint32_t local_4  = 0x3f800000u;   // v1 = 1.0f
+
+    std::uint32_t texHandle = 0u;
+
+    // Screen width (int16_t from FUN_0042b8b0, sign-extended).
+    typedef short (__cdecl *GetWidth_t)();
+    typedef short (__cdecl *GetHeight_t)();
+    auto GetWidth  = reinterpret_cast<GetWidth_t>(0x0042b8b0u);
+    auto GetHeight = reinterpret_cast<GetHeight_t>(0x0042b8c0u);
+    short sw = GetWidth();
+    float screenW = static_cast<float>(static_cast<std::int32_t>(sw));
+    float scaleW  = *reinterpret_cast<float*>(0x005cd5a8u);
+    float fVar2   = screenW * scaleW;
+
+    short sh = GetHeight();
+    float screenH = static_cast<float>(static_cast<std::int32_t>(sh));
+
+    // UV horizontal flip when sin < threshold.
+    float threshold = *reinterpret_cast<float*>(0x005d757cu);
+    if (sinVal < threshold) {
+        local_10 = 0x3f800000u;  // u0 = 1.0f (flip left edge)
+        local_8  = 0x3f000000u;  // u1 = 0.5f (unchanged)
+    }
+
+    // Texture handle from global pointer (if non-null).
+    std::uint32_t** texPtrPtr = reinterpret_cast<std::uint32_t**>(0x00771960u);
+    if (*texPtrPtr != nullptr) {
+        texHandle = **texPtrPtr;
+    }
+
+    // Draw call through HudIm2DQuad (0x00450b10).
+    float baseCx  = *reinterpret_cast<float*>(0x005cd65cu);
+    float sinScX  = *reinterpret_cast<float*>(0x005cd274u);
+    float scaleYH = *reinterpret_cast<float*>(0x005cc560u);
+    float yOff    = *reinterpret_cast<float*>(0x005cd658u);
+    float ratio   = *reinterpret_cast<float*>(0x005cc730u);
+
+    float drawX = fVar2 * ((baseCx - sinVal * sinScX) + static_cast<float>(param_1));
+    float drawY = screenH * scaleYH * (static_cast<float>(param_2) + yOff);
+    float drawW = sinVal * ratio * fVar2;
+    float drawH = screenH * scaleYH * ratio;
+
+    struct UVArray { std::uint32_t u0, v0, u1, v1; };
+    UVArray uvs = { local_10, local_c, local_8, local_4 };
+
+    typedef void (__cdecl *DrawQuad_t)(std::uint32_t, float, float, float, float, std::uint32_t, UVArray*);
+    auto DrawQuad = reinterpret_cast<DrawQuad_t>(0x00450b10u);
+    DrawQuad(texHandle, drawX, drawY, drawW, drawH, 0xffffffffu, &uvs);
+
+    // Advance spin angle accumulator.
+    float angVel = *reinterpret_cast<float*>(0x005cc56cu);
+    spinAngle += angVel;
+}
+
+RH_ScopedInstall(HudSpinCoinAnim, 0x00428450);

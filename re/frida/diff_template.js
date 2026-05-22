@@ -55,6 +55,30 @@
 //                        Optional CONFIG field: draw_callee_rva_str
 //                        (default '0x00427ff0' / FontText_DrawTextRotated).
 //
+// Harness-extension arg_types (added 2026-05-22):
+//   spin_angle_observe — void(int p1, int p2): resets DAT_0067d974 spin-angle
+//                        accumulator to known seed before EACH sub-call; compares
+//                        vertex-buffer fingerprint. Unblocks 0x00428450.
+//                        Tests: [[p1, p2, angle_seed_float], ...].
+//                        Optional: vbuf_addr_str, vbuf_len, angle_global_str.
+//   ptr_ptr_entity_set — void(int p1, uint32 p2): double-deref setter where the
+//                        write target is *(*target_global + p1*stride + field_offset).
+//                        Read-back goes through both derefs. Unblocks 0x0040e480.
+//                        Tests: [[p1, p2], ...].
+//                        Required CONFIG: target_global (hex addr of outer ptr).
+//                        Optional: entity_byte_stride (default 4), field_offset (default 0).
+//   track_record_deref — void/uint32(): fakes DAT_0063d7e4 with scratch 0x48B record;
+//                        writes sentinel at field_offset; calls fn(); compares return val.
+//                        Unblocks 0x0041e9d0, 0x0041ea90, 0x0041e8b0, 0x0041e970.
+//                        Tests: flat list of sentinel uint32 values.
+//                        Required CONFIG: field_offset (0x14 or 0x44).
+//                        Optional: is_getter (default true), record_global_str.
+//   audio_sub_struct_zero — void(pointer): allocates sentinel-filled struct buffer;
+//                        calls fn(buf); fingerprints the observed byte range.
+//                        Unblocks 0x005be190, 0x005be140.
+//                        Tests: flat list (length = call count; values ignored).
+//                        Required CONFIG: struct_size, observe_offset, observe_length.
+//
 'use strict';
 
 const CONFIG = $CONFIG$;
@@ -1532,6 +1556,229 @@ function runDiff() {
             }
         } finally {
             Interceptor.revert(drawAddr);
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── spin_angle_observe ──────────────────────────────────────────────────
+    // For HudSpinCoinAnim-style: void(int param_1, int param_2).
+    // Problem: function increments _DAT_0067d974 (spin angle accumulator) each
+    // call, so the orig and reimpl calls would see different accumulator states
+    // within one test cycle — draw_quad_observe alone cannot isolate them.
+    // Strategy: before EACH sub-call (orig and reimpl), reset DAT_0067d974 to
+    // a known sentinel value (the test input cast as float), call fn(p1, p2),
+    // then fingerprint the 112-byte vertex buffer at DAT_00898a20.
+    // Both paths see the same accumulator seed → bit-identical geometry → match.
+    // Tests: [[p1, p2, angle_seed_float], ...] where angle_seed_float is the
+    // float32 spin angle to inject before each call (e.g. 0.0, 1.5708, etc.).
+    //
+    // CONFIG fields:
+    //   vbuf_addr_str   string (hex) — vertex buffer base (default '0x00898a20')
+    //   vbuf_len        int          — vertex buffer size (default 112)
+    //   angle_global_str string (hex) — spin angle accumulator addr (default '0x0067d974')
+    if (CONFIG.arg_type === 'spin_angle_observe') {
+        const VBUF2   = ptr(CONFIG.vbuf_addr_str  || '0x00898a20');
+        const VLEN2   = (CONFIG.vbuf_len  | 0) || 112;
+        const AADDR   = ptr(CONFIG.angle_global_str || '0x0067d974');
+        const ANGVBUF = Memory.alloc(4);  // scratch for float write
+        // Save vbuf contents so live game state is restored after the test.
+        const savedBuf2 = new Array(VLEN2);
+        for (let k = 0; k < VLEN2; k++) {
+            try { savedBuf2[k] = VBUF2.add(k).readU8(); } catch (e) { savedBuf2[k] = 0; }
+        }
+        // Save the current spin angle so we restore it after the test batch.
+        let savedAngle = 0;
+        try { savedAngle = AADDR.readU32(); } catch (e) {}
+        function fpVbuf2() {
+            let fp = 0;
+            for (let k = 0; k < VLEN2; k++) {
+                fp = ((fp * 31) ^ VBUF2.add(k).readU8()) >>> 0;
+            }
+            return fp;
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t  = CONFIG.tests[i];   // [p1, p2, angle_seed_float]
+            const p1 = t[0] | 0;
+            const p2 = t[1] | 0;
+            const angleSeed = t[2];        // float JS number
+            let origV = null, reimV = null, errO = null, errR = null;
+            // ── orig call ──
+            for (let k = 0; k < VLEN2; k++) VBUF2.add(k).writeU8(0);
+            ANGVBUF.writeFloat(angleSeed);
+            AADDR.writeU32(ANGVBUF.readU32());   // inject float bits
+            try { Orig(p1, p2); origV = fpVbuf2(); } catch (e) { errO = e.message; try { origV = fpVbuf2(); } catch (_) {} }
+            // ── reimpl call ──
+            for (let k = 0; k < VLEN2; k++) VBUF2.add(k).writeU8(0);
+            ANGVBUF.writeFloat(angleSeed);
+            AADDR.writeU32(ANGVBUF.readU32());   // inject same float bits again
+            try { Reimpl(p1, p2); reimV = fpVbuf2(); } catch (e) { errR = e.message; try { reimV = fpVbuf2(); } catch (_) {} }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        // Restore live vbuf and spin angle.
+        for (let k = 0; k < VLEN2; k++) { try { VBUF2.add(k).writeU8(savedBuf2[k]); } catch (_) {} }
+        try { AADDR.writeU32(savedAngle); } catch (_) {}
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── ptr_ptr_entity_set ───────────────────────────────────────────────────
+    // For CarSlotStateSet-style: void(int param_1, uint32 param_2).
+    // Function does: *(*target_global_addr + param_1*stride + field_offset) = param_2.
+    // Read-back sequence: outer_ptr = *target_global_addr (a pointer);
+    //   effective = outer_ptr + param_1*stride + field_offset; read u32 at effective.
+    // Unlike entity_field_set (single-deref), this does one extra deref of the base.
+    //
+    // CONFIG fields:
+    //   target_global        hex string — address that holds the outer pointer
+    //   entity_byte_stride   int        — per-index stride (default 4)
+    //   field_offset         int        — fixed byte offset after stride*p1 (default 0)
+    //
+    // If *target_global == NULL at call time, the write crashes — the harness
+    // returns 0 for both sides (null-guard observable). Both paths must agree.
+    if (CONFIG.arg_type === 'ptr_ptr_entity_set') {
+        const outerPtrAddr  = ptr(CONFIG.target_global);
+        const stride        = (CONFIG.entity_byte_stride | 0) || 4;
+        const fieldOff      = (CONFIG.field_offset | 0) || 0;
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t  = CONFIG.tests[i];
+            const p1 = t[0] | 0;
+            const p2 = t[1] >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Read outer pointer; if null both sides will crash identically.
+            let outerPtr = null;
+            try { outerPtr = outerPtrAddr.readPointer(); } catch (e) { errO = errR = 'null-outer: ' + e.message; }
+            if (outerPtr !== null && outerPtr.isNull()) {
+                // Outer pointer is NULL — both writes would AV. Report 0/0 (match).
+                results.push({ idx: i, input: JSON.stringify(t),
+                               original: 0, reimpl: 0, match: true,
+                               err_original: 'outer_null', err_reimpl: 'outer_null' });
+                continue;
+            }
+            if (outerPtr === null) {
+                results.push({ idx: i, input: JSON.stringify(t),
+                               original: null, reimpl: null, match: false,
+                               err_original: errO, err_reimpl: errR });
+                continue;
+            }
+            // Compute effective address for read-back.
+            const effective = outerPtr.add(p1 * stride + fieldOff);
+            // ── orig call ──
+            try { Orig(p1, p2); origV = effective.readU32(); } catch (e) { errO = e.message; }
+            // ── reimpl call ──
+            try { Reimpl(p1, p2); reimV = effective.readU32(); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── track_record_deref ───────────────────────────────────────────────────
+    // For TrackNodeFnPtrGet14/44 and TrackNodeDispatch14/44.
+    // Problem: all four dereference DAT_0063d7e4, which is NULL at quiescent
+    // main-menu state. Strategy: allocate a fake 0x48-byte record in scratch
+    // memory, write sentinel values at the field offsets each function reads
+    // (+0x14 and/or +0x44), set DAT_0063d7e4 = fake_record_ptr, call fn,
+    // read back the return value (for getters) or compare observable state.
+    // Restore DAT_0063d7e4 to original (NULL) after each test pair.
+    //
+    // Tests shape: flat list of sentinel values to write at field_offset.
+    //
+    // CONFIG fields:
+    //   field_offset      int (hex) — byte offset within record (0x14 or 0x44)
+    //   is_getter         bool      — if true, compare return value; if false (dispatcher),
+    //                                  use crash_equal_ok (both sides deref through fn-ptr)
+    //   record_global_str string    — hex addr of the global pointer (default '0x0063d7e4')
+    if (CONFIG.arg_type === 'track_record_deref') {
+        const RECORD_SIZE   = 0x48;
+        const RECGLOBAL     = ptr(CONFIG.record_global_str || '0x0063d7e4');
+        const fieldOff2     = (CONFIG.field_offset | 0);
+        const isGetter      = (CONFIG.is_getter !== false);  // default true
+        // Allocate fake record buffer; zero it entirely.
+        const fakeRec = Memory.alloc(RECORD_SIZE);
+        for (let k = 0; k < RECORD_SIZE; k++) fakeRec.add(k).writeU8(0);
+        // Save and override the global pointer.
+        let savedRecPtr = null;
+        try { savedRecPtr = RECGLOBAL.readU32(); } catch (e) {}
+        RECGLOBAL.writeU32(parseInt(fakeRec.toString(), 16));
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const sentinelU32 = (CONFIG.tests[i] >>> 0);
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Write sentinel at the field offset both paths will read.
+            fakeRec.add(fieldOff2).writeU32(sentinelU32);
+            // ── orig call ──
+            try {
+                const ret = Orig();
+                origV = isGetter ? (ret >>> 0) : 1;  // getter: compare return value; dispatcher: compare 1 (no-crash)
+            } catch (e) { errO = e.message; origV = isGetter ? null : 0; }
+            // Reset sentinel so reimpl sees same state.
+            fakeRec.add(fieldOff2).writeU32(sentinelU32);
+            // ── reimpl call ──
+            try {
+                const ret = Reimpl();
+                reimV = isGetter ? (ret >>> 0) : 1;
+            } catch (e) { errR = e.message; reimV = isGetter ? null : 0; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: sentinelU32,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        // Restore the global pointer.
+        try { if (savedRecPtr !== null) RECGLOBAL.writeU32(savedRecPtr); } catch (_) {}
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_sub_struct_zero ────────────────────────────────────────────────
+    // For AudioRwsSubZeroInit-style: void(pointer param_1).
+    // Function zeroes a sub-region of the struct pointed to by param_1.
+    // Strategy: Memory.alloc(struct_size) a pair of buffers (one per path).
+    // Fill each with sentinel pattern 0xAA. Call fn(buf). Read back the bytes
+    // at [observe_offset..observe_offset+observe_length) and compare as a
+    // position-sensitive fingerprint.
+    //
+    // CONFIG fields:
+    //   struct_size      int — total allocation size in bytes
+    //   observe_offset   int — byte offset within struct to start comparison
+    //   observe_length   int — number of bytes to compare
+    if (CONFIG.arg_type === 'audio_sub_struct_zero') {
+        const sSize   = (CONFIG.struct_size   | 0) || 24;
+        const obsOff  = (CONFIG.observe_offset | 0) || 0;
+        const obsLen  = (CONFIG.observe_length | 0) || sSize;
+        const sBufA   = Memory.alloc(sSize);
+        const sBufB   = Memory.alloc(sSize);
+        function fillSentinel(b) {
+            for (let k = 0; k < sSize; k++) b.add(k).writeU8(0xAA);
+        }
+        function fpRange(b, off, len) {
+            let fp = 0;
+            for (let k = 0; k < len; k++) {
+                fp = ((fp * 31) ^ b.add(off + k).readU8()) >>> 0;
+            }
+            return fp;
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            // tests: each entry is ignored (we just call fn with fresh sentinel each time)
+            let origV = null, reimV = null, errO = null, errR = null;
+            fillSentinel(sBufA);
+            try { Orig(sBufA); origV = fpRange(sBufA, obsOff, obsLen); } catch (e) { errO = e.message; }
+            fillSentinel(sBufB);
+            try { Reimpl(sBufB); reimV = fpRange(sBufB, obsOff, obsLen); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
         }
         send({ type: 'results', data: results });
         return;

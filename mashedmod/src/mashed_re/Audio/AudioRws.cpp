@@ -1185,3 +1185,36 @@ extern "C" __declspec(dllexport) std::uint32_t * __cdecl AudioPoolConstruct(
 
 RH_ScopedInstall(AudioPoolConstruct, 0x005ae650);
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 0x005be190  FUN_005be190  AudioRwsSubZeroInit  (0x11 bytes, leaf)
+// Signature: void FUN_005be190(undefined4 *param_1)
+//
+// Zeroes four fields of a sub-struct pointed to by param_1:
+//   param_1[5] = 0    -- offset 0x14
+//   param_1[3] = 0    -- offset 0x0c
+//   param_1[4] = 0    -- offset 0x10
+//   *param_1   = 0    -- offset 0x00
+//
+// Pure leaf, no callees. Called from FUN_005be160 (conditional teardown).
+//
+// Smoke-test target for audio_sub_struct_zero harness arg_type (2026-05-22).
+// Full C3 promotion is c3_batch_p's job.
+//
+// Constants (cited from 0x005be190 body):
+//   index 5 -> offset 0x14 (20)
+//   index 3 -> offset 0x0c (12)
+//   index 4 -> offset 0x10 (16)
+//   index 0 -> offset 0x00 (0)
+//
+// Analysis note: re/analysis/promote_c2_rws_audio_loader/5be190.md
+// ─────────────────────────────────────────────────────────────────────────────
+extern "C" __declspec(dllexport) void __cdecl AudioRwsSubZeroInit(std::uint32_t* param_1)
+{
+    param_1[5] = 0u;   // offset 0x14
+    param_1[3] = 0u;   // offset 0x0c
+    param_1[4] = 0u;   // offset 0x10
+    param_1[0] = 0u;   // offset 0x00
+}
+
+RH_ScopedInstall(AudioRwsSubZeroInit, 0x005be190);
+

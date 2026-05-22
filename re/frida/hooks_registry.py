@@ -6792,4 +6792,141 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
+
+    # ── harness-extension-20260522: 4 new arg_type smoke-tests ──────────────
+    # These entries exercise the new arg_type handlers added to diff_template.js
+    # (spin_angle_observe, ptr_ptr_entity_set, track_record_deref,
+    #  audio_sub_struct_zero). They are NOT promoted to C3 here — that is
+    # c3_batch_p's job. The entries are kept for convenience.
+
+    # 0x00428450  HudSpinCoinAnim — spin-angle accumulator + Im2D draw
+    # void(int param_1, int param_2).
+    # Strategy: spin_angle_observe — reset DAT_0067d974 to known float seed before
+    # each sub-call; compare 112-byte vertex buffer fingerprint at DAT_00898a20.
+    # The seed is injected as raw float bits (0.0, π/2, π, 3π/2) to cover the
+    # sin values that determine UV flip and width sign.
+    # crash_equal_ok=True: at main menu DAT_00771960 (texture ptr) may be NULL;
+    # the draw vtable may or may not be hot — both paths see same state.
+    # Callee FUN_00450b10 (HudIm2DQuad) is already C3 → callee gate satisfied.
+    # ref: re/analysis/hud_ingame_promote_c2/0x00428450.md
+    'hud_spin_coin_anim': {
+        'rva':            0x00428450,
+        'export':         'HudSpinCoinAnim',
+        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type':       'spin_angle_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Tests: [p1, p2, angle_seed_float]
+        # angle seeds: 0.0, π/4, π/2, π, 3π/2, 2π, -π/4 (cover sin range)
+        'path1_tests': [
+            [0,   0,   0.0],
+            [0,   0,   0.7853982],   # π/4
+            [0,   0,   1.5707963],   # π/2
+            [0,   0,   3.1415927],   # π
+            [0,   0,   4.7123890],   # 3π/2
+            [10,  20,  0.0],
+            [10,  20,  1.5707963],
+            [-5,  15,  0.0],
+            [-5,  15,  3.1415927],
+            [100, 200, 0.7853982],
+        ],
+        'path2_tests': [
+            [0, 0, 0.0],
+            [0, 0, 1.5707963],
+            [10, 20, 0.0],
+        ],
+    },
+
+    # 0x0040e480  CarSlotStateSet — double-deref setter
+    # void(int param_1, uint32 param_2).
+    # Strategy: ptr_ptr_entity_set — read outer ptr from 0x005f2770; compute
+    # effective = outer_ptr + param_1*4 + 0x34; read back u32 after each call.
+    # At quiescent main menu PTR_PTR_005f2770 is populated (game has initialized
+    # the slot table before entering menu loop); CarSlotStateGet (0x0040e470)
+    # already passes via entity_field_set using the same data, confirming the
+    # table is live. Safe to write (slot state is a lightweight byte field).
+    # ref: re/analysis/c0_promotion_frontend_a/0x0040e480.md
+    'car_slot_state_set': {
+        'rva':            0x0040e480,
+        'export':         'CarSlotStateSet',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':       'ptr_ptr_entity_set',
+        'target_global':  0x005f2770,
+        'entity_byte_stride': 4,
+        'field_offset':   0x34,
+        'lut_root_delta': 0,
+        # Tests: [param_1 (slot idx 0-3), param_2 (value to write)]
+        # Pairs chosen so the read-back is deterministic and self-healing
+        # (each slot is set then reset to 0 in a later test).
+        'path1_tests': [
+            [0, 1],
+            [1, 1],
+            [2, 1],
+            [3, 1],
+            [0, 0],
+            [1, 0],
+            [2, 0],
+            [3, 0],
+            [0, 0xDEADBEEF],
+            [0, 0],
+        ],
+        'path2_tests': [
+            [0, 1],
+            [0, 0],
+        ],
+    },
+
+    # 0x0041e9d0  TrackNodeFnPtrGet14 — getter; returns *(DAT_0063d7e4+0x14)
+    # void/uint32 (no args).
+    # Strategy: track_record_deref — allocate fake 0x48B record buffer; write
+    # sentinel at +0x14; set DAT_0063d7e4 = fake_record_ptr; call fn(); compare
+    # return value. Restore DAT_0063d7e4 = NULL after. The getter is always safe
+    # (no side effects, no vtable call-through).
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e9d0.md
+    'track_node_fn_ptr_get14': {
+        'rva':            0x0041e9d0,
+        'export':         'TrackNodeFnPtrGet14',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x14,
+        'is_getter':      True,
+        'lut_root_delta': 0,
+        # Tests: list of sentinel uint32 values written at +0x14 before each call.
+        # We test with 0 (null fn-ptr, guard fires), non-zero (fn-ptr-like values).
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0x00400000,
+            0xFFFFFFFF,
+            0x80000000,
+            0x00000042,
+            0x0041e870,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
+    },
+
+    # 0x005be190  AudioRwsSubZeroInit — zeros 4 fields of sub-struct
+    # void(undefined4 *param_1).
+    # Strategy: audio_sub_struct_zero — allocate 24-byte sentinel-filled buffer
+    # (0xAA pattern); call fn(buf); observe all 24 bytes for the zero-write effect.
+    # Function zeroes offsets 0x00, 0x0c, 0x10, 0x14 (indices 0, 3, 4, 5).
+    # The observed range covers the full 24 bytes to confirm only those 4 fields
+    # are zeroed and nothing outside is disturbed.
+    # ref: re/analysis/promote_c2_rws_audio_loader/5be190.md
+    'audio_rws_sub_zero_init': {
+        'rva':            0x005be190,
+        'export':         'AudioRwsSubZeroInit',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'audio_sub_struct_zero',
+        'struct_size':    24,    # 6 * uint32 = 24 bytes (covers indices 0..5)
+        'observe_offset': 0,
+        'observe_length': 24,
+        'lut_root_delta': 0,
+        # Tests: 10 identical calls (function is deterministic; input is ignored).
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
 }

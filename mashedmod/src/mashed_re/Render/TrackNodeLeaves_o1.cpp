@@ -8,8 +8,10 @@
 //   0x0041e870  TrackNodeRecordScan    — 48B pure leaf; scans 0x48B record array,
 //                                         last-match-wins write to DAT_0063d7e4
 //
-// Deferred (require new `track_record_deref` harness arg_type):
+// Smoke-test stubs for `track_record_deref` harness arg_type (2026-05-22):
 //   0x0041e9d0  TrackNodeFnPtrGet14    — 8B getter; returns *(DAT_0063d7e4+0x14)
+//
+// Still deferred (dispatchers call through unknown fn-ptr; unsafe without track loaded):
 //   0x0041ea90  TrackNodeFnPtrGet44    — 8B getter; returns *(DAT_0063d7e4+0x44)
 //   0x0041e8b0  TrackNodeDispatch14    — 8B indirect dispatch via *(DAT_0063d7e4+0x14)
 //   0x0041e970  TrackNodeDispatch44    — 8B indirect dispatch via *(DAT_0063d7e4+0x44)
@@ -89,3 +91,36 @@ extern "C" __declspec(dllexport) void __cdecl TrackNodeRecordScan(int param_1)
 }
 
 RH_ScopedInstall(TrackNodeRecordScan, 0x0041e870);
+
+// ---------------------------------------------------------------------------
+// TrackNodeFnPtrGet14  --  0x0041e9d0
+//
+// Original: FUN_0041e9d0 (8 bytes, 0x0041e9d0..0x0041e9d7)
+// Signature: undefined4 FUN_0041e9d0(void)
+//   Returns: dword at *(DAT_0063d7e4 + 0x14)
+//
+// Reads DAT_0063d7e4 (current track descriptor record pointer) and returns
+// the dword at offset +0x14 within that record. Used as a non-zero guard
+// by FUN_00426e10: `if FUN_0041e9d0() != 0 { call FUN_0041e8b0() }`.
+// At quiescent main menu, DAT_0063d7e4 == NULL -> this function will crash
+// unless DAT_0063d7e4 is pre-seeded by the diff harness (track_record_deref).
+//
+// Smoke-test target for track_record_deref harness arg_type (2026-05-22).
+// Full C3 promotion is c3_batch_p's job.
+//
+// Constants (cited from 0x0041e9d0 body):
+//   0x0063d7e4 — global track-descriptor pointer
+//   0x14 (20)  — field offset within 0x48-byte record
+//
+// Analysis note: re/analysis/render_promote_c2_track_node/0x0041e9d0.md
+// ---------------------------------------------------------------------------
+
+// 0x0041e9d0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet14() {
+    // Read the current track-descriptor record pointer from DAT_0063d7e4.
+    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
+    // Return the dword at record+0x14.
+    return *reinterpret_cast<std::uint32_t*>(record + 0x14u);
+}
+
+RH_ScopedInstall(TrackNodeFnPtrGet14, 0x0041e9d0);

@@ -155,6 +155,24 @@ def main():
     # trig_text_draw — hex addr of the draw callee to Interceptor.replace.
     if 'draw_callee_rva_str' in hook:
         config['draw_callee_rva_str'] = hook['draw_callee_rva_str']
+    # spin_angle_observe — optional spin-angle global addr override.
+    if 'angle_global_str' in hook:
+        config['angle_global_str'] = hook['angle_global_str']
+    # ptr_ptr_entity_set — field_offset within the dereferenced struct.
+    if 'field_offset' in hook:
+        config['field_offset'] = hook['field_offset']
+    # track_record_deref — field offset, getter flag, record global override.
+    if 'is_getter' in hook:
+        config['is_getter'] = hook['is_getter']
+    if 'record_global_str' in hook:
+        config['record_global_str'] = hook['record_global_str']
+    # audio_sub_struct_zero — struct layout for sentinel + observe range.
+    if 'struct_size' in hook:
+        config['struct_size'] = hook['struct_size']
+    if 'observe_offset' in hook:
+        config['observe_offset'] = hook['observe_offset']
+    if 'observe_length' in hook:
+        config['observe_length'] = hook['observe_length']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
