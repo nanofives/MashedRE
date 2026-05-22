@@ -1,0 +1,32 @@
+rva	name	subsystem	reason
+0043c5b0	FUN_0043c5b0	frontend	inline [UNCERTAIN U-0448] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+00427e00	FUN_00427e00	frontend	signature-unsupported: fastcall ECX/EDX args
+004a2c48	FUN_004a2c48	frontend	signature-unsupported: in_ST0 (FPU) arg
+0041d870	sub_0041d870	hud	callee-gate: 0041d410=C1
+0041ded0	sub_0041ded0	hud	callee-gate: 0041de80=C1
+0041e850	sub_0041e850	hud	callee-gate: 0041e630=C1
+004cc230	FUN_004cc230	frontend	inline [UNCERTAIN U-3722] not in UNCERTAINTIES.md (heading=## mechanical description)
+004c1be0	sub_004c1be0	frontend	callee-gate: 00493fd0=C1,004c7730=C1
+00428760	FUN_00428760	hud	callee-gate: 00428610=C1
+0041c2d0	FUN_0041c2d0	hud	signature-unsupported: in_EAX arg
+0041b340	FUN_0041b340	hud	signature-unsupported: in_EAX arg
+0041bc50	FUN_0041bc50	hud	signature-unsupported: in_EAX arg
+0041c9a0	FUN_0041c9a0	hud	signature-unsupported: in_EAX arg
+00427ca0	FontText_HudInit	hud	callee-gate: 00427880=C1,00556cc0=C1,00556d70=C1
+00427620	FontText_HudShutdown	hud	callee-gate: 004c5930=C1,00552b90=C1,00555830=C1,00556cd0=C1,00556e40=C1
+00427ff0	FontText_DrawTextRotated	hud	inline bare [UNCERTAIN] (heading=## body summary (0x00427ff0–0x0042813d))
+005554d0	FUN_005554d0	hud	callee-gate: 00554940=C1
+004368e0	FUN_004368e0	frontend	callee-gate: 00427f00=C1,0042e8b0=C1,0042fab0=C1,00458630=C0
+0042ac50	FUN_0042ac50	frontend	signature-unsupported: fastcall ECX/EDX args
+00430b30	FUN_00430b30	frontend	signature-unsupported: in_EAX arg
+00552840	FontCtx_SetRotation	hud	callee-gate: 004c4d20=C1
+004c57a0	FontCtxMatrix_AllocInit	hud	inline bare [UNCERTAIN] (heading=## fun_00427680 — hud-normalized → screen xy (s-1060 callee))
+00431b80	FUN_00431b80	frontend	inline bare [UNCERTAIN] (heading=## why c2 (drift-promote from c1, 2026-05-14))
+0042f020	FUN_0042f020	frontend	signature-unsupported: fastcall ECX/EDX args
+00431d00	FUN_00431d00	frontend	signature-unsupported: in_EAX arg
+00495080	FUN_00495080	frontend	callee-gate: 00494fd0=C1
+00494f30	FUN_00494f30	frontend	callee-gate: 00493fc0=C1
+004215c0	FUN_004215c0	frontend	callee-gate: 004039f0=C1,0040be50=C1
+004a2b60	FUN_004a2b60	frontend	callee-gate: 004a4ea8=C0,004a504f=C1
+00412cf0	FUN_00412cf0	hud	callee-gate: 004726f0=C1
+004277a0	FUN_004277a0	frontend	signature-unsupported: in_EAX arg

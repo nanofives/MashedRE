@@ -1,0 +1,1682 @@
+{
+  "0x005b0360": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0360.md",
+    "text": "[C1 2026-05-18] Iterates `*(param_1+0xc)+0x14` count of items from `*(param_1+0xc)+0x18`, indexed +0x14 + iVar3 with\u2026",
+    "raw_first": "Iterates `*(param_1+0xc)+0x14` count of items from `*(param_1+0xc)+0x18`, indexed +0x14 + iVar3 with stride 0x28. For each item: load uVar1 = `*(*(iVar2+0x18)+0x14+iVar3)`, call `FUN_005b03e0(param_5, uVar1)` to lookup match; if non-null, call `FUN_005b0a90(param_4, iVar2, param_2, uVar1, 0, uVar4, param_3)` to allocate list-node. On allocation failure: `FUN_005b0b40(param_4)` (clear list) then return 0. Increment uVar4, iVar3 += 0x28. Returns 1 on full loop."
+  },
+  "0x005b03e0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b03e0.md",
+    "text": "[C1 2026-05-18] Doubly-linked-list traversal starting from `*(param_1+4)`, breaks when iVar2 == param_1 (sentinel).\u2026",
+    "raw_first": "Doubly-linked-list traversal starting from `*(param_1+4)`, breaks when iVar2 == param_1 (sentinel). For each list node: load entry `iVar3 = *(iVar2+8)`, walk inner array `iVar4 = *(iVar3+0x54)`, count `*(iVar4+8)`. For each inner element: load `puVar5 = *(iVar4+4)+uVar8*4`, byte `bVar1 = *(puVar5+4)`, key `uVar6 = param_2[6]`. Test sequence:"
+  },
+  "0x005b04b0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b04b0.md",
+    "text": "[C1 2026-05-18] Recursive list-merge / set-cover routine. Outer loop `while local_44 < *(*(param_1+0xc)+0x14)`. Inner\u2026",
+    "raw_first": "Recursive list-merge / set-cover routine. Outer loop `while local_44 < *(*(param_1+0xc)+0x14)`. Inner loops walk `*param_5` doubly-linked list. On each node match `ppppppiVar1[-1] == local_44` \u2192 continue. Otherwise if param_3 != 0:"
+  },
+  "0x005b0700": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0700.md",
+    "text": "[C1 2026-05-18] Linked-list scan: iVar3=0, uVar4=0xffffffff. Walk `iVar1 = *(int*)(param_1+4)` chain until iVar1 ==\u2026",
+    "raw_first": "Linked-list scan: iVar3=0, uVar4=0xffffffff. Walk `iVar1 = *(int*)(param_1+4)` chain until iVar1 == param_1. For each node: load `uVar2 = *(*(iVar1+8)+0x54)+0x10`. If `param_2 <= uVar2 && param_2 <= uVar4`: store `iVar3 = *(iVar1+8)`, update uVar4 = uVar2. Returns iVar3 (best-match data ptr or 0)."
+  },
+  "0x005b0740": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0740.md",
+    "text": "[C1 2026-05-18] Recursive list-walk over `param_5` (head sentinel). Outer `do` loop on local_24 (next ptr). For each\u2026",
+    "raw_first": "Recursive list-walk over `param_5` (head sentinel). Outer `do` loop on local_24 (next ptr). For each node:"
+  },
+  "0x005b0970": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0970.md",
+    "text": "[C1 2026-05-18] Initialize a worker/voice descriptor record:",
+    "raw_first": "Initialize a worker/voice descriptor record:"
+  },
+  "0x005b09c0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b09c0.md",
+    "text": "[C1 2026-05-18] Iterates doubly-linked list at `*(param_1+0x20)`. For each node piVar5: if\u2026",
+    "raw_first": "Iterates doubly-linked list at `*(param_1+0x20)`. For each node piVar5: if `*(*(piVar5[-0xb]+0x54)+0xc) != 0`, load `uVar2 = **(uint**)(*(*(param_1+0xc)+0x18)+0x14+param_1_offset)`."
+  },
+  "0x005b0a90": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0a90.md",
+    "text": "[C1 2026-05-18] Allocate-and-link list node:",
+    "raw_first": "Allocate-and-link list node:"
+  },
+  "0x005b0b10": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0b10.md",
+    "text": "[C1 2026-05-18] Unlink-and-free node:",
+    "raw_first": "Unlink-and-free node:"
+  },
+  "0x005b0b40": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0b40.md",
+    "text": "[C1 2026-05-18] Drain doubly-linked list at param_1 (head sentinel). While `*param_1 != param_1` (non-empty): call\u2026",
+    "raw_first": "Drain doubly-linked list at param_1 (head sentinel). While `*param_1 != param_1` (non-empty): call `FUN_005b0b10(*param_1 + -0x13)` (unlink+free node at -0x4c bytes from the list-link pointer). Re-reads `*param_1` each iteration."
+  },
+  "0x005b0b60": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0b60.md",
+    "text": "[C1 2026-05-18] Search list at param_1 (head sentinel) for a node where `puVar1[-0x11] == param_2`. Walk via `*puVar1`\u2026",
+    "raw_first": "Search list at param_1 (head sentinel) for a node where `puVar1[-0x11] == param_2`. Walk via `*puVar1` until sentinel reached. On match return `puVar1 + -0x13` (= node base, -0x4c bytes). On not-found return 0."
+  },
+  "0x005b0b90": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0b90.md",
+    "text": "[C1 2026-05-18] Initialize a 6-word descriptor:",
+    "raw_first": "Initialize a 6-word descriptor:"
+  },
+  "0x005b0bb0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0bb0.md",
+    "text": "[C1 2026-05-18] Build per-channel descriptor array.",
+    "raw_first": "Build per-channel descriptor array."
+  },
+  "0x005b0c70": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0c70.md",
+    "text": "[C1 2026-05-18] Initialize 6-word descriptor with a payload value:",
+    "raw_first": "Initialize 6-word descriptor with a payload value:"
+  },
+  "0x005b0ca0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0ca0.md",
+    "text": "[C1 2026-05-18] Two-line setter:",
+    "raw_first": "Two-line setter:"
+  },
+  "0x005b0cf0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0cf0.md",
+    "text": "[C1 2026-05-18] Range-mark routine over an array.",
+    "raw_first": "Range-mark routine over an array."
+  },
+  "0x005b0dc0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0dc0.md",
+    "text": "[C1 2026-05-18] Two-line setter:",
+    "raw_first": "Two-line setter:"
+  },
+  "0x005b0df0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0df0.md",
+    "text": "[C1 2026-05-18] Build secondary descriptor referenced by param_1[8] (puVar1). Copies from param_3:",
+    "raw_first": "Build secondary descriptor referenced by param_1[8] (puVar1). Copies from param_3:"
+  },
+  "0x005b0e70": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0e70.md",
+    "text": "[C1 2026-05-18] State-machine transition with optional callback:",
+    "raw_first": "State-machine transition with optional callback:"
+  },
+  "0x005b0ec0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0ec0.md",
+    "text": "[C1 2026-05-18] State-machine transition with conditional list-detach:",
+    "raw_first": "State-machine transition with conditional list-detach:"
+  },
+  "0x005b0f10": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0f10.md",
+    "text": "[C1 2026-05-18] Initialize 7-word descriptor:",
+    "raw_first": "Initialize 7-word descriptor:"
+  },
+  "0x005b0f40": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0f40.md",
+    "text": "[C1 2026-05-18] Thunk: `FUN_005ad2e0(*(param_1+0x28))`. Releases/destroys a handle stored at +0x28.",
+    "raw_first": "Thunk: `FUN_005ad2e0(*(param_1+0x28))`. Releases/destroys a handle stored at +0x28."
+  },
+  "0x005b0f90": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b0f90.md",
+    "text": "[C1 2026-05-18] State-change with list-reseat:",
+    "raw_first": "State-change with list-reseat:"
+  },
+  "0x005b1030": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1030.md",
+    "text": "[C1 2026-05-18] Paired vtable dispatch helper:",
+    "raw_first": "Paired vtable dispatch helper:"
+  },
+  "0x005b1080": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1080.md",
+    "text": "[C1 2026-05-18] Single-line callback invocation: `(*(code*)param_1[1])(*param_1, param_1[2])`. Calls the function\u2026",
+    "raw_first": "Single-line callback invocation: `(*(code*)param_1[1])(*param_1, param_1[2])`. Calls the function pointer at param_1[1] with args (param_1[0], param_1[2])."
+  },
+  "0x005b10a0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b10a0.md",
+    "text": "[C1 2026-05-18] Indirect dispatch via 8-byte vtable slot:",
+    "raw_first": "Indirect dispatch via 8-byte vtable slot:"
+  },
+  "0x005b10d0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b10d0.md",
+    "text": "[C1 2026-05-18] Linker-emitted thunk for FUN_005b10a0 (identical signature, Ghidra reports `thunk:true`). Indirect\u2026",
+    "raw_first": "Linker-emitted thunk for FUN_005b10a0 (identical signature, Ghidra reports `thunk:true`). Indirect dispatch via 8-byte vtable slot at `*(param_2+4)`."
+  },
+  "0x005b10e0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b10e0.md",
+    "text": "[C1 2026-05-18] Indirect dispatch via 8-byte vtable slot at `*(param_2+8)` (cf. FUN_005b10a0 which uses +4):",
+    "raw_first": "Indirect dispatch via 8-byte vtable slot at `*(param_2+8)` (cf. FUN_005b10a0 which uses +4):"
+  },
+  "0x005b1110": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1110.md",
+    "text": "[C1 2026-05-18] Wrapper that passes `&param_3` (stack address of last arg) as the 4th arg to FUN_005b10e0, then\u2026",
+    "raw_first": "Wrapper that passes `&param_3` (stack address of last arg) as the 4th arg to FUN_005b10e0, then returns param_3. Effectively a getter-via-dispatch:"
+  },
+  "0x005b1140": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1140.md",
+    "text": "[C1 2026-05-18] Wrapper calling FUN_005b10a0 with `&stack0x10` (i.e. the caller's 4th arg slot) as the 4th arg.\u2026",
+    "raw_first": "Wrapper calling FUN_005b10a0 with `&stack0x10` (i.e. the caller's 4th arg slot) as the 4th arg. Forwards the stack-resident 4th parameter into the dispatched callee."
+  },
+  "0x005b1160": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1160.md",
+    "text": "[C1 2026-05-18] Initialize a small ring-buffer header (or similar fixed-size circular structure):",
+    "raw_first": "Initialize a small ring-buffer header (or similar fixed-size circular structure):"
+  },
+  "0x005b1180": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1180.md",
+    "text": "[C1 2026-05-18] Pop-equivalent / consume-front of ring buffer described by FUN_005b1160 header:",
+    "raw_first": "Pop-equivalent / consume-front of ring buffer described by FUN_005b1160 header:"
+  },
+  "0x005b11d0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b11d0.md",
+    "text": "[C1 2026-05-18] Advance ring-buffer head one slot forward (rotate-by-one):",
+    "raw_first": "Advance ring-buffer head one slot forward (rotate-by-one):"
+  },
+  "0x005b11f0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b11f0.md",
+    "text": "[C1 2026-05-18] Zero-initialize a 17-word (68-byte) object and install two function pointers at slots 0/1:",
+    "raw_first": "Zero-initialize a 17-word (68-byte) object and install two function pointers at slots 0/1:"
+  },
+  "0x005b1260": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1260.md",
+    "text": "[C1 2026-05-18] RWS audio stream/source constructor. Initialize large object at param_1 from descriptor param_2:",
+    "raw_first": "RWS audio stream/source constructor. Initialize large object at param_1 from descriptor param_2:"
+  },
+  "0x005b1500": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b1500.md",
+    "text": "[C1 2026-05-18] Destructor for the FUN_005b1260 object. Idempotent via bit 0x1000 on `*(param_1+0x188)`:",
+    "raw_first": "Destructor for the FUN_005b1260 object. Idempotent via bit 0x1000 on `*(param_1+0x188)`:"
+  },
+  "0x005b15d0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b15d0.md",
+    "text": "[C1 2026-05-18] Linker thunk to FUN_005b1500 (Ghidra `thunk:true`). Same body as the destructor at 0x005b1500.",
+    "raw_first": "Linker thunk to FUN_005b1500 (Ghidra `thunk:true`). Same body as the destructor at 0x005b1500."
+  },
+  "0x005b2080": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2080.md",
+    "text": "[C1 2026-05-18] Audio-stream tick / pump:",
+    "raw_first": "Audio-stream tick / pump:"
+  },
+  "0x005b2190": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2190.md",
+    "text": "[C1 2026-05-18] Audio-source command submitter. If `(*(param_1+0x188) & 0x2ff8) == 0`:",
+    "raw_first": "Audio-source command submitter. If `(*(param_1+0x188) & 0x2ff8) == 0`:"
+  },
+  "0x005b2220": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2220.md",
+    "text": "[C1 2026-05-18] Stream copy/convert engine \u2014 pumps decoded samples from in-buffer to out-buffer with sample-size\u2026",
+    "raw_first": "Stream copy/convert engine \u2014 pumps decoded samples from in-buffer to out-buffer with sample-size handshake and ring-buffer indexing. Large function (1.5KB body)."
+  },
+  "0x005b2820": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2820.md",
+    "text": "[C1 2026-05-18] Lock-protected next-slot accessor. Acquires semaphore `*(HANDLE*)(param_1+0x18c)` for INFINITE.",
+    "raw_first": "Lock-protected next-slot accessor. Acquires semaphore `*(HANDLE*)(param_1+0x18c)` for INFINITE."
+  },
+  "0x005b29e0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b29e0.md",
+    "text": "[C1 2026-05-18] Lock-protected slot-recycle. Acquires `*(HANDLE*)(param_1+0x18c)`.",
+    "raw_first": "Lock-protected slot-recycle. Acquires `*(HANDLE*)(param_1+0x18c)`."
+  },
+  "0x005b2b00": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2b00.md",
+    "text": "[C1 2026-05-18] Audio decode/fill loop. Acquires `*(param_1+0x18c)`. Outer while: reads state at slot\u2026",
+    "raw_first": "Audio decode/fill loop. Acquires `*(param_1+0x18c)`. Outer while: reads state at slot `*(param_1+0x14c)`. State 1 path:"
+  },
+  "0x005b2de0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2de0.md",
+    "text": "[C1 2026-05-18] Async-load completion callback shape (param_1 = packed args, *param_1 = audio object):",
+    "raw_first": "Async-load completion callback shape (param_1 = packed args, *param_1 = audio object):"
+  },
+  "0x005b2fd0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b2fd0.md",
+    "text": "[C1 2026-05-18] Sample-position projector:",
+    "raw_first": "Sample-position projector:"
+  },
+  "0x005b3020": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3020.md",
+    "text": "[C1 2026-05-18] Compute next sample-position across all records:",
+    "raw_first": "Compute next sample-position across all records:"
+  },
+  "0x005b30e0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b30e0.md",
+    "text": "[C1 2026-05-18] Seek/wrap operation for the stream:",
+    "raw_first": "Seek/wrap operation for the stream:"
+  },
+  "0x005b3300": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3300.md",
+    "text": "[C1 2026-05-18] Stream-stop / flush routine. Gate on top byte of `*(param_1+0x188)` (`< '\\0'` meaning bit 31 set or\u2026",
+    "raw_first": "Stream-stop / flush routine. Gate on top byte of `*(param_1+0x188)` (`< '\\0'` meaning bit 31 set or top-byte signed < 0):"
+  },
+  "0x005b34f0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b34f0.md",
+    "text": "[C1 2026-05-18] Audio-codec/factory registrar:",
+    "raw_first": "Audio-codec/factory registrar:"
+  },
+  "0x005b3540": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3540.md",
+    "text": "[C1 2026-05-18] Thin wrapper: `FUN_005ad5f0(&DAT_007ddb04)`. Pairs with FUN_005b34f0 \u2014 likely the deregister/teardown\u2026",
+    "raw_first": "Thin wrapper: `FUN_005ad5f0(&DAT_007ddb04)`. Pairs with FUN_005b34f0 \u2014 likely the deregister/teardown for the same global slot."
+  },
+  "0x005b3550": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3550.md",
+    "text": "[C1 2026-05-18] Doubly-linked-list unlink + destroy:",
+    "raw_first": "Doubly-linked-list unlink + destroy:"
+  },
+  "0x005b3580": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3580.md",
+    "text": "[C1 2026-05-18] Initialize empty list-with-tail header:",
+    "raw_first": "Initialize empty list-with-tail header:"
+  },
+  "0x005b35a0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b35a0.md",
+    "text": "[C1 2026-05-18] Doubly-linked-list push-back (intrusive):",
+    "raw_first": "Doubly-linked-list push-back (intrusive):"
+  },
+  "0x005b35e0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b35e0.md",
+    "text": "[C1 2026-05-18] Doubly-linked-list remove (intrusive):",
+    "raw_first": "Doubly-linked-list remove (intrusive):"
+  },
+  "0x005b3620": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3620.md",
+    "text": "[C1 2026-05-18] List find-by-key:",
+    "raw_first": "List find-by-key:"
+  },
+  "0x005b3670": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3670.md",
+    "text": "[C1 2026-05-18] List find-by-pointer:",
+    "raw_first": "List find-by-pointer:"
+  },
+  "0x005b36b0": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b36b0.md",
+    "text": "[C1 2026-05-18] List index-by-position:",
+    "raw_first": "List index-by-position:"
+  },
+  "0x005b3e60": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b3e60.md",
+    "text": "[C1 2026-05-18] Sample-format-converter / mixdown:",
+    "raw_first": "Sample-format-converter / mixdown:"
+  },
+  "0x005b4060": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b4060.md",
+    "text": "[C1 2026-05-18] Compute output-buffer byte length for a sample-rate / channel / bits-per-sample conversion:",
+    "raw_first": "Compute output-buffer byte length for a sample-rate / channel / bits-per-sample conversion:"
+  },
+  "0x005b4150": {
+    "bucket": "cluster_005b_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_005b_first_pass\\005b4150.md",
+    "text": "[C1 2026-05-18] Compute output byte offset corresponding to input byte offset param_2:",
+    "raw_first": "Compute output byte offset corresponding to input byte offset param_2:"
+  },
+  "0x004f022d": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f022d.md",
+    "text": "[C1 2026-05-18] Takes (float *param_1, float *param_2, undefined4 param_3).",
+    "raw_first": "Takes (float *param_1, float *param_2, undefined4 param_3)."
+  },
+  "0x004f0307": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0307.md",
+    "text": "[C1 2026-05-18] Takes (float *param_1, undefined4 param_2).",
+    "raw_first": "Takes (float *param_1, undefined4 param_2)."
+  },
+  "0x004f07a0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f07a0.md",
+    "text": "[C1 2026-05-18] Takes (int param_1).",
+    "raw_first": "Takes (int param_1)."
+  },
+  "0x004f07d0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f07d0.md",
+    "text": "[C1 2026-05-18] Takes (int param_1).",
+    "raw_first": "Takes (int param_1)."
+  },
+  "0x004f0800": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0800.md",
+    "text": "[C1 2026-05-18] Tail-calls three teardown functions in sequence: FUN_004f43b0, FUN_004f4470, FUN_0045b350.",
+    "raw_first": "Tail-calls three teardown functions in sequence: FUN_004f43b0, FUN_004f4470, FUN_0045b350."
+  },
+  "0x004f0810": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0810.md",
+    "text": "[C1 2026-05-18] Zero-clears 9 slots in the engine struct at offsets 0x3c..0x5c (in +4 increments) \u2014 same struct as\u2026",
+    "raw_first": "Zero-clears 9 slots in the engine struct at offsets 0x3c..0x5c (in +4 increments) \u2014 same struct as 0x004f07a0/0x004f07d0."
+  },
+  "0x004f0900": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0900.md",
+    "text": "[C1 2026-05-18] Calls (*(*(DAT_007d3ff8 + 4) + 0x68))() \u2014 indirect vtable dispatch via the RwEngine global.",
+    "raw_first": "Calls (*(*(DAT_007d3ff8 + 4) + 0x68))() \u2014 indirect vtable dispatch via the RwEngine global."
+  },
+  "0x004f0910": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0910.md",
+    "text": "[C1 2026-05-18] Takes 5 undefined4 params (param_1..param_5).",
+    "raw_first": "Takes 5 undefined4 params (param_1..param_5)."
+  },
+  "0x004f0940": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0940.md",
+    "text": "[C1 2026-05-18] Takes 4 undefined4 params (param_1..param_4).",
+    "raw_first": "Takes 4 undefined4 params (param_1..param_4)."
+  },
+  "0x004f0970": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0970.md",
+    "text": "[C1 2026-05-18] Takes (undefined4 param_1).",
+    "raw_first": "Takes (undefined4 param_1)."
+  },
+  "0x004f0ae0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0ae0.md",
+    "text": "[C1 2026-05-18] Takes (int param_1).",
+    "raw_first": "Takes (int param_1)."
+  },
+  "0x004f0bd0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0bd0.md",
+    "text": "[C1 2026-05-18] Takes (int param_1).",
+    "raw_first": "Takes (int param_1)."
+  },
+  "0x004f0c10": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0c10.md",
+    "text": "[C1 2026-05-18] Takes (int *param_1).",
+    "raw_first": "Takes (int *param_1)."
+  },
+  "0x004f0c50": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0c50.md",
+    "text": "[C1 2026-05-18] Takes (uint *param_1, undefined4 param_2, 7x undefined2 param_3..param_9).",
+    "raw_first": "Takes (uint *param_1, undefined4 param_2, 7x undefined2 param_3..param_9)."
+  },
+  "0x004f0d80": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0d80.md",
+    "text": "[C1 2026-05-18] Takes (int param_1, code *param_2, undefined4 param_3).",
+    "raw_first": "Takes (int param_1, code *param_2, undefined4 param_3)."
+  },
+  "0x004f0dc0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0dc0.md",
+    "text": "[C1 2026-05-18] Takes (undefined4 *param_1, char *param_2, undefined4 param_3, undefined4 param_4).",
+    "raw_first": "Takes (undefined4 *param_1, char *param_2, undefined4 param_3, undefined4 param_4)."
+  },
+  "0x004f0f10": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f0f10.md",
+    "text": "[C1 2026-05-18] Takes (undefined4 param_1 [stream], char *param_2, undefined4 param_3).",
+    "raw_first": "Takes (undefined4 param_1 [stream], char *param_2, undefined4 param_3)."
+  },
+  "0x004f10e0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f10e0.md",
+    "text": "[C1 2026-05-18] Takes (int param_1 [mesh-header], char *param_2 [type-descriptor]).",
+    "raw_first": "Takes (int param_1 [mesh-header], char *param_2 [type-descriptor])."
+  },
+  "0x004f1130": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1130.md",
+    "text": "[C1 2026-05-18] Increments *(short *)(DAT_00912118 + DAT_007d3ff8) by 1.",
+    "raw_first": "Increments *(short *)(DAT_00912118 + DAT_007d3ff8) by 1."
+  },
+  "0x004f1150": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1150.md",
+    "text": "[C1 2026-05-18] Takes (undefined4 param_1, int param_2). Returns stream handle.",
+    "raw_first": "Takes (undefined4 param_1, int param_2). Returns stream handle."
+  },
+  "0x004f13d0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f13d0.md",
+    "text": "[C1 2026-05-18] Stream-reader counterpart of 0x004f1150 (writer). RpGeometry/RpAtomic NATIVE-flag stream-reader.",
+    "raw_first": "Stream-reader counterpart of 0x004f1150 (writer). RpGeometry/RpAtomic NATIVE-flag stream-reader."
+  },
+  "0x004f1800": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1800.md",
+    "text": "[C1 2026-05-18] Takes (int param_1).",
+    "raw_first": "Takes (int param_1)."
+  },
+  "0x004f1870": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1870.md",
+    "text": "[C1 2026-05-18] Same shape as 0x004f1150 (writer) but operates on offset +0x34 instead of +0x58, with an indirection\u2026",
+    "raw_first": "Same shape as 0x004f1150 (writer) but operates on offset +0x34 instead of +0x58, with an indirection via FUN_004e55d0(param_2) (gets parent geometry from atomic)."
+  },
+  "0x004f1b00": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1b00.md",
+    "text": "[C1 2026-05-18] Sibling to 0x004f13d0 \u2014 RpAtomic NATIVE stream-reader.",
+    "raw_first": "Sibling to 0x004f13d0 \u2014 RpAtomic NATIVE stream-reader."
+  },
+  "0x004f1f00": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1f00.md",
+    "text": "[C1 2026-05-18] Same shape as 0x004f1800 (chunk-size) but for the RpAtomic variant.",
+    "raw_first": "Same shape as 0x004f1800 (chunk-size) but for the RpAtomic variant."
+  },
+  "0x004f1f90": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1f90.md",
+    "text": "[C1 2026-05-18] Takes (undefined4 param_1).",
+    "raw_first": "Takes (undefined4 param_1)."
+  },
+  "0x004f1fb0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f1fb0.md",
+    "text": "[C1 2026-05-18] Tri-list -> tri-strip / triangle-fan converter (RpMeshHeader builder).",
+    "raw_first": "Tri-list -> tri-strip / triangle-fan converter (RpMeshHeader builder)."
+  },
+  "0x004f2570": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f2570.md",
+    "text": "[C1 2026-05-18] Core triangle-strip generation algorithm (NvTriStrip-like). Largest function in cluster (~2.3KB).",
+    "raw_first": "Core triangle-strip generation algorithm (NvTriStrip-like). Largest function in cluster (~2.3KB)."
+  },
+  "0x004f2e70": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f2e70.md",
+    "text": "[C1 2026-05-18] Triangle-adjacency graph builder. Allocates a per-triangle node array (param_1 * 4 bytes) and two\u2026",
+    "raw_first": "Triangle-adjacency graph builder. Allocates a per-triangle node array (param_1 * 4 bytes) and two free-lists:"
+  },
+  "0x004f2f90": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f2f90.md",
+    "text": "[C1 2026-05-18] Takes (handle param_1, int *param_2 [edge-list head], short param_3 [v_a], short param_4 [v_b], int\u2026",
+    "raw_first": "Takes (handle param_1, int *param_2 [edge-list head], short param_3 [v_a], short param_4 [v_b], int param_5 [tri_idx], int param_6 [tri_array])."
+  },
+  "0x004f3030": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3030.md",
+    "text": "[C1 2026-05-18] Priority-queue update on triangle adjacency graph.",
+    "raw_first": "Priority-queue update on triangle adjacency graph."
+  },
+  "0x004f3150": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3150.md",
+    "text": "[C1 2026-05-18] Strip-extension routine. Walks adjacency graph from a starting edge, appending vertices to the index\u2026",
+    "raw_first": "Strip-extension routine. Walks adjacency graph from a starting edge, appending vertices to the index buffer until topology dead-end."
+  },
+  "0x004f3440": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3440.md",
+    "text": "[C1 2026-05-18] Strip-merger / post-processor.",
+    "raw_first": "Strip-merger / post-processor."
+  },
+  "0x004f36c0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f36c0.md",
+    "text": "[C1 2026-05-18] Tri-list -> tri-LIST mesh builder (no strip generation). Counterpart to 0x004f1fb0 (strip-generator).",
+    "raw_first": "Tri-list -> tri-LIST mesh builder (no strip generation). Counterpart to 0x004f1fb0 (strip-generator)."
+  },
+  "0x004f3b00": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3b00.md",
+    "text": "[C1 2026-05-18] Tri-list \"finalize\" dispatcher.",
+    "raw_first": "Tri-list \"finalize\" dispatcher."
+  },
+  "0x004f3b60": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3b60.md",
+    "text": "[C1 2026-05-18] Container-clear for a dynamic array.",
+    "raw_first": "Container-clear for a dynamic array."
+  },
+  "0x004f3bc0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3bc0.md",
+    "text": "[C1 2026-05-18] Takes (undefined4 *param_1). Zeroes param_1[0..2].",
+    "raw_first": "Takes (undefined4 *param_1). Zeroes param_1[0..2]."
+  },
+  "0x004f3bd0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3bd0.md",
+    "text": "[C1 2026-05-18] Takes (int *param_1, int param_2). Returns *(undefined4 *)(*param_1 + param_2 * 4).",
+    "raw_first": "Takes (int *param_1, int param_2). Returns *(undefined4 *)(*param_1 + param_2 * 4)."
+  },
+  "0x004f3be0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3be0.md",
+    "text": "[C1 2026-05-18] Takes (int *param_1 [container {ptr,count,cap}], int param_2 [item pointer]).",
+    "raw_first": "Takes (int *param_1 [container {ptr,count,cap}], int param_2 [item pointer])."
+  },
+  "0x004f3cb0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3cb0.md",
+    "text": "[C1 2026-05-18] Takes (int *param_1 [container], int param_2 [item ptr]).",
+    "raw_first": "Takes (int *param_1 [container], int param_2 [item ptr])."
+  },
+  "0x004f3ce0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3ce0.md",
+    "text": "[C1 2026-05-18] Stream-size accumulator for material container.",
+    "raw_first": "Stream-size accumulator for material container."
+  },
+  "0x004f3d40": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3d40.md",
+    "text": "[C1 2026-05-18] Material-list stream-writer.",
+    "raw_first": "Material-list stream-writer."
+  },
+  "0x004f3e90": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f3e90.md",
+    "text": "[C1 2026-05-18] Material-list stream-reader. Counterpart to 0x004f3d40.",
+    "raw_first": "Material-list stream-reader. Counterpart to 0x004f3d40."
+  },
+  "0x004f4200": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f4200.md",
+    "text": "[C1 2026-05-18] Takes (int param_1 [item]).",
+    "raw_first": "Takes (int param_1 [item])."
+  },
+  "0x004f4270": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f4270.md",
+    "text": "[C1 2026-05-18] Takes (int param_1 [item]).",
+    "raw_first": "Takes (int param_1 [item])."
+  },
+  "0x004f42d0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f42d0.md",
+    "text": "[C1 2026-05-18] Subsystem init sequence:",
+    "raw_first": "Subsystem init sequence:"
+  },
+  "0x004f4340": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f4340.md",
+    "text": "[C1 2026-05-18] Creates a \"default\" RW interface object (counterpart to 0x004f43f0).",
+    "raw_first": "Creates a \"default\" RW interface object (counterpart to 0x004f43f0)."
+  },
+  "0x004f43b0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f43b0.md",
+    "text": "[C1 2026-05-18] Teardown counterpart to FUN_004f4340.",
+    "raw_first": "Teardown counterpart to FUN_004f4340."
+  },
+  "0x004f43f0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f43f0.md",
+    "text": "[C1 2026-05-18] Sibling of 0x004f4340; uses FUN_004eb3c0(0) (driver callbacks) instead of FUN_004eb9d0(0).",
+    "raw_first": "Sibling of 0x004f4340; uses FUN_004eb3c0(0) (driver callbacks) instead of FUN_004eb9d0(0)."
+  },
+  "0x004f4470": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f4470.md",
+    "text": "[C1 2026-05-18] Teardown counterpart to FUN_004f43f0.",
+    "raw_first": "Teardown counterpart to FUN_004f43f0."
+  },
+  "0x004f4510": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f4510.md",
+    "text": "[C1 2026-05-18] Calls FUN_004e4bd0(0x10, 0x505, &LAB_004f4540, &LAB_004f4570, &LAB_004f4660) \u2014 plugin registration\u2026",
+    "raw_first": "Calls FUN_004e4bd0(0x10, 0x505, &LAB_004f4540, &LAB_004f4570, &LAB_004f4660) \u2014 plugin registration with id 0x505, size 0x10, and 3 callbacks (constructor/destructor/copy)."
+  },
+  "0x004f46a0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f46a0.md",
+    "text": "[C1 2026-05-18] Master render-state reset.",
+    "raw_first": "Master render-state reset."
+  },
+  "0x004f4900": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f4900.md",
+    "text": "[C1 2026-05-18] Subset of FUN_004f46a0 \u2014 only the buffer-release portion.",
+    "raw_first": "Subset of FUN_004f46a0 \u2014 only the buffer-release portion."
+  },
+  "0x004f5020": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f5020.md",
+    "text": "[C1 2026-05-18] Takes (int param_1).",
+    "raw_first": "Takes (int param_1)."
+  },
+  "0x004f5030": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f5030.md",
+    "text": "[C1 2026-05-18] Vertex format converter (4-component source).",
+    "raw_first": "Vertex format converter (4-component source)."
+  },
+  "0x004f57e0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f57e0.md",
+    "text": "[C1 2026-05-18] Vertex format converter (3-component source).",
+    "raw_first": "Vertex format converter (3-component source)."
+  },
+  "0x004f6870": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f6870.md",
+    "text": "[C1 2026-05-18] Vertex format converter with INTERPOLATION (morph target / lerp between two sources).",
+    "raw_first": "Vertex format converter with INTERPOLATION (morph target / lerp between two sources)."
+  },
+  "0x004f71f0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f71f0.md",
+    "text": "[C1 2026-05-18] Vertex format converter (2-component source \u2014 e.g., UV).",
+    "raw_first": "Vertex format converter (2-component source \u2014 e.g., UV)."
+  },
+  "0x004f77f0": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f77f0.md",
+    "text": "[C1 2026-05-18] ARGB-to-BGRA reorder + alpha check.",
+    "raw_first": "ARGB-to-BGRA reorder + alpha check."
+  },
+  "0x004f7850": {
+    "bucket": "cluster_004f_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_004f_first_pass\\004f7850.md",
+    "text": "[C1 2026-05-18] Indirect / palette-based vertex format converter.",
+    "raw_first": "Indirect / palette-based vertex format converter."
+  },
+  "0x00550400": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550400.md",
+    "text": "[C1 2026-05-18] Tests two ranges: `0 < DAT_007dc758` AND `DAT_007dc758 < DAT_007dc75c + 1`.",
+    "raw_first": "Tests two ranges: `0 < DAT_007dc758` AND `DAT_007dc758 < DAT_007dc75c + 1`."
+  },
+  "0x005504d0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005504d0.md",
+    "text": "[C1 2026-05-18] Walks the singly-linked list rooted at `DAT_007dc754`. Each node has a `next`",
+    "raw_first": "Walks the singly-linked list rooted at `DAT_007dc754`. Each node has a `next`"
+  },
+  "0x00550520": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550520.md",
+    "text": "[C1 2026-05-18] Variant of FUN_005504d0: walks `DAT_007dc754` list, calling",
+    "raw_first": "Variant of FUN_005504d0: walks `DAT_007dc754` list, calling"
+  },
+  "0x00550580": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550580.md",
+    "text": "[C1 2026-05-18] Open-file routine on FS record `param_1`. Enters critical section",
+    "raw_first": "Open-file routine on FS record `param_1`. Enters critical section"
+  },
+  "0x00550670": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550670.md",
+    "text": "[C1 2026-05-18] Top-level \"open file by path\" routine. param_1 is a path string.",
+    "raw_first": "Top-level \"open file by path\" routine. param_1 is a path string."
+  },
+  "0x00550740": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550740.md",
+    "text": "[C1 2026-05-18] Trivial getter: returns `&DAT_007dc754` (address-of FS-list-head pointer).",
+    "raw_first": "Trivial getter: returns `&DAT_007dc754` (address-of FS-list-head pointer)."
+  },
+  "0x00550750": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550750.md",
+    "text": "[C1 2026-05-18] Walk `DAT_007dc754` list. For each node, call",
+    "raw_first": "Walk `DAT_007dc754` list. For each node, call"
+  },
+  "0x005507a0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005507a0.md",
+    "text": "[C1 2026-05-18] Trivial getter: returns `DAT_007dc76c` (the default-FS pointer).",
+    "raw_first": "Trivial getter: returns `DAT_007dc76c` (the default-FS pointer)."
+  },
+  "0x00550a20": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550a20.md",
+    "text": "[C1 2026-05-18] `gets`-equivalent on an open RtFS file handle (`param_3` = file handle;",
+    "raw_first": "`gets`-equivalent on an open RtFS file handle (`param_3` = file handle;"
+  },
+  "0x00550bd0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00550bd0.md",
+    "text": "[C1 2026-05-18] Single-line thunk: `(*(*(param_1+0x38)+0x40))()` \u2014 load file handle's",
+    "raw_first": "Single-line thunk: `(*(*(param_1+0x38)+0x40))()` \u2014 load file handle's"
+  },
+  "0x00551090": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551090.md",
+    "text": "[C1 2026-05-18] Async-IO completion poll for a disk-backed RtFS file handle.",
+    "raw_first": "Async-IO completion poll for a disk-backed RtFS file handle."
+  },
+  "0x00551190": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551190.md",
+    "text": "[C1 2026-05-18] Construct a new disk-backed FS instance with `param_1` file slots.",
+    "raw_first": "Construct a new disk-backed FS instance with `param_1` file slots."
+  },
+  "0x005512b0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005512b0.md",
+    "text": "[C1 2026-05-18] Synchronous-wait wrapper: if file-handle +0x20 != 1, call FUN_00551090",
+    "raw_first": "Synchronous-wait wrapper: if file-handle +0x20 != 1, call FUN_00551090"
+  },
+  "0x00551330": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551330.md",
+    "text": "[C1 2026-05-18] `RtFSManagerRegister`-equivalent. Wires up an FS record + initializes its",
+    "raw_first": "`RtFSManagerRegister`-equivalent. Wires up an FS record + initializes its"
+  },
+  "0x00551410": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551410.md",
+    "text": "[C1 2026-05-18] Scan `param_1` (string) for first ':' char. Returns pointer to the char",
+    "raw_first": "Scan `param_1` (string) for first ':' char. Returns pointer to the char"
+  },
+  "0x00551460": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551460.md",
+    "text": "[C1 2026-05-18] Concatenate `param_3` and `param_4` into `param_1` (buffer of size",
+    "raw_first": "Concatenate `param_3` and `param_4` into `param_1` (buffer of size"
+  },
+  "0x00551550": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551550.md",
+    "text": "[C1 2026-05-18] User-callback dispatcher on file handle. Only fires if `param_1 != 0` and",
+    "raw_first": "User-callback dispatcher on file handle. Only fires if `param_1 != 0` and"
+  },
+  "0x00551840": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551840.md",
+    "text": "[C1 2026-05-18] Serialize an 8-slot record array out via a stream/writer.",
+    "raw_first": "Serialize an 8-slot record array out via a stream/writer."
+  },
+  "0x00551a50": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551a50.md",
+    "text": "[C1 2026-05-18] Outer loop runs uVar5 = 0..1 (2 iterations). Inner walks `param_1+2..+9`",
+    "raw_first": "Outer loop runs uVar5 = 0..1 (2 iterations). Inner walks `param_1+2..+9`"
+  },
+  "0x00551ad0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551ad0.md",
+    "text": "[C1 2026-05-18] Construct an animation/clip-like object from a string name.",
+    "raw_first": "Construct an animation/clip-like object from a string name."
+  },
+  "0x00551c40": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551c40.md",
+    "text": "[C1 2026-05-18] Allocate and stream-read a 0x40-byte keyframe record + tag block.",
+    "raw_first": "Allocate and stream-read a 0x40-byte keyframe record + tag block."
+  },
+  "0x00551ca0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551ca0.md",
+    "text": "[C1 2026-05-18] Stream-write a 0x40-byte keyframe to a stream.",
+    "raw_first": "Stream-write a 0x40-byte keyframe to a stream."
+  },
+  "0x00551ce0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551ce0.md",
+    "text": "[C1 2026-05-18] Returns the constant `0x40` (64 bytes) \u2014 keyframe record size.",
+    "raw_first": "Returns the constant `0x40` (64 bytes) \u2014 keyframe record size."
+  },
+  "0x00551cf0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551cf0.md",
+    "text": "[C1 2026-05-18] Refcount-decrement on a keyframe attached at `(param_1+0x14)`. Reads",
+    "raw_first": "Refcount-decrement on a keyframe attached at `(param_1+0x14)`. Reads"
+  },
+  "0x00551d40": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551d40.md",
+    "text": "[C1 2026-05-18] Big \"evaluate all 8 animation tracks for the 2 outputs of channel `param_1`\"",
+    "raw_first": "Big \"evaluate all 8 animation tracks for the 2 outputs of channel `param_1`\""
+  },
+  "0x00551fd0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551fd0.md",
+    "text": "[C1 2026-05-18] Trivial getter: returns `*(param_1 + 0x14)` \u2014 the keyframe-ptr slot on",
+    "raw_first": "Trivial getter: returns `*(param_1 + 0x14)` \u2014 the keyframe-ptr slot on"
+  },
+  "0x00551fe0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00551fe0.md",
+    "text": "[C1 2026-05-18] Walk all 8 track slots at `DAT_009124f8 + 8 + param_1`. For each non-null",
+    "raw_first": "Walk all 8 track slots at `DAT_009124f8 + 8 + param_1`. For each non-null"
+  },
+  "0x00552020": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552020.md",
+    "text": "[C1 2026-05-18] Channel `param_1` has-any-active-track query. Walks the 8 track slots",
+    "raw_first": "Channel `param_1` has-any-active-track query. Walks the 8 track slots"
+  },
+  "0x00552230": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552230.md",
+    "text": "[C1 2026-05-18] Pack a rotation transform into `param_1` from 16-float source `param_2`.",
+    "raw_first": "Pack a rotation transform into `param_1` from 16-float source `param_2`."
+  },
+  "0x005522e0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005522e0.md",
+    "text": "[C1 2026-05-18] Dispatch keyframe-write by class id.",
+    "raw_first": "Dispatch keyframe-write by class id."
+  },
+  "0x005524a0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005524a0.md",
+    "text": "[C1 2026-05-18] Compute total record size: `FUN_00551ce0(*(param_1+0x14)) + param_1[1]*0x20 + 4`.",
+    "raw_first": "Compute total record size: `FUN_00551ce0(*(param_1+0x14)) + param_1[1]*0x20 + 4`."
+  },
+  "0x00552720": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552720.md",
+    "text": "[C1 2026-05-18] Copy 6 dwords from `param_2` (at offsets 0, 1, 4, 5, 0xc, 0xd) into",
+    "raw_first": "Copy 6 dwords from `param_2` (at offsets 0, 1, 4, 5, 0xc, 0xd) into"
+  },
+  "0x00552890": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552890.md",
+    "text": "[C1 2026-05-18] Cached squared-distance computation. Lazy-init pattern:",
+    "raw_first": "Cached squared-distance computation. Lazy-init pattern:"
+  },
+  "0x00552920": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552920.md",
+    "text": "[C1 2026-05-18] Build a 4-point sub-path on object `param_1`.",
+    "raw_first": "Build a 4-point sub-path on object `param_1`."
+  },
+  "0x00552d70": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552d70.md",
+    "text": "[C1 2026-05-18] If `DAT_00912b04 > 0`: decrement DAT_00912b04, zero DAT_00912bd8,",
+    "raw_first": "If `DAT_00912b04 > 0`: decrement DAT_00912b04, zero DAT_00912bd8,"
+  },
+  "0x00552fa0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00552fa0.md",
+    "text": "[C1 2026-05-18] Reset / re-initialize a path object `param_1`.",
+    "raw_first": "Reset / re-initialize a path object `param_1`."
+  },
+  "0x00553030": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553030.md",
+    "text": "[C1 2026-05-18] Append a \"move-to\" point (type=0) onto path `param_1`'s sub-list at",
+    "raw_first": "Append a \"move-to\" point (type=0) onto path `param_1`'s sub-list at"
+  },
+  "0x005530f0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005530f0.md",
+    "text": "[C1 2026-05-18] Append a \"line-to\" point (type=1) and compute the segment's tangent and",
+    "raw_first": "Append a \"line-to\" point (type=1) and compute the segment's tangent and"
+  },
+  "0x005531f0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005531f0.md",
+    "text": "[C1 2026-05-18] Append THREE consecutive curve-segments (type=2 each), in one allocation.",
+    "raw_first": "Append THREE consecutive curve-segments (type=2 each), in one allocation."
+  },
+  "0x005533d0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005533d0.md",
+    "text": "[C1 2026-05-18] Close-path (loop-closure): match first/last tangents to make the path",
+    "raw_first": "Close-path (loop-closure): match first/last tangents to make the path"
+  },
+  "0x00553590": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553590.md",
+    "text": "[C1 2026-05-18] Static-target variant of FUN_00552fa0 \u2014 resets the global path object",
+    "raw_first": "Static-target variant of FUN_00552fa0 \u2014 resets the global path object"
+  },
+  "0x00553620": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553620.md",
+    "text": "[C1 2026-05-18] Copy / tessellate path `param_2` into path `param_1`, applying curve",
+    "raw_first": "Copy / tessellate path `param_2` into path `param_1`, applying curve"
+  },
+  "0x005538a0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005538a0.md",
+    "text": "[C1 2026-05-18] Recursive cubic-Bezier subdivision (De Casteljau).",
+    "raw_first": "Recursive cubic-Bezier subdivision (De Casteljau)."
+  },
+  "0x00553c50": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553c50.md",
+    "text": "[C1 2026-05-18] Compute axis-aligned bounding box of a path.",
+    "raw_first": "Compute axis-aligned bounding box of a path."
+  },
+  "0x00553cf0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553cf0.md",
+    "text": "[C1 2026-05-18] Compute total bounds of a path tree (sub-list walk).",
+    "raw_first": "Compute total bounds of a path tree (sub-list walk)."
+  },
+  "0x00553e00": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553e00.md",
+    "text": "[C1 2026-05-18] Recursive prune: walk sub-list (param_1[5]). For each node, recurse into",
+    "raw_first": "Recursive prune: walk sub-list (param_1[5]). For each node, recurse into"
+  },
+  "0x00553e80": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553e80.md",
+    "text": "[C1 2026-05-18] Recursive free of a sub-list.",
+    "raw_first": "Recursive free of a sub-list."
+  },
+  "0x00553ef0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00553ef0.md",
+    "text": "[C1 2026-05-18] Allocate a fresh empty sub-list head.",
+    "raw_first": "Allocate a fresh empty sub-list head."
+  },
+  "0x00554010": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00554010.md",
+    "text": "[C1 2026-05-18] Recursive sub-list resolver: walk sub-list (param_1[5]). For each node",
+    "raw_first": "Recursive sub-list resolver: walk sub-list (param_1[5]). For each node"
+  },
+  "0x00554150": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00554150.md",
+    "text": "[C1 2026-05-18] Deep destruct of a path node.",
+    "raw_first": "Deep destruct of a path node."
+  },
+  "0x00554200": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00554200.md",
+    "text": "[C1 2026-05-18] Load a path-sub-list from a binary stream `param_1` (file handle).",
+    "raw_first": "Load a path-sub-list from a binary stream `param_1` (file handle)."
+  },
+  "0x00554390": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00554390.md",
+    "text": "[C1 2026-05-18] Load a vector font from binary stream `param_1`. Returns the font",
+    "raw_first": "Load a vector font from binary stream `param_1`. Returns the font"
+  },
+  "0x005555b0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005555b0.md",
+    "text": "[C1 2026-05-18] Word-wrap text layout pass on a font `param_1`.",
+    "raw_first": "Word-wrap text layout pass on a font `param_1`."
+  },
+  "0x00555830": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00555830.md",
+    "text": "[C1 2026-05-18] Font destructor.",
+    "raw_first": "Font destructor."
+  },
+  "0x00556780": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00556780.md",
+    "text": "[C1 2026-05-18] **Vector-font text-format loader**. Reads a text file via the RtFS",
+    "raw_first": "**Vector-font text-format loader**. Reads a text file via the RtFS"
+  },
+  "0x00556e40": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00556e40.md",
+    "text": "[C1 2026-05-18] Refcount-down on a text-block object at offset +0x74 (refcount), +0x68",
+    "raw_first": "Refcount-down on a text-block object at offset +0x74 (refcount), +0x68"
+  },
+  "0x00556e90": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00556e90.md",
+    "text": "[C1 2026-05-18] Initialize a 4-color \u00d7 2-line render-style record from 4 RGBA byte arrays.",
+    "raw_first": "Initialize a 4-color \u00d7 2-line render-style record from 4 RGBA byte arrays."
+  },
+  "0x00557110": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\00557110.md",
+    "text": "[C1 2026-05-18] Initialize geometric-tween style record (positions + size deltas).",
+    "raw_first": "Initialize geometric-tween style record (positions + size deltas)."
+  },
+  "0x005572b0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005572b0.md",
+    "text": "[C1 2026-05-18] Single-instruction thunk (jmp) to FUN_005572c0. Ghidra marked it as",
+    "raw_first": "Single-instruction thunk (jmp) to FUN_005572c0. Ghidra marked it as"
+  },
+  "0x005572c0": {
+    "bucket": "cluster_0055_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0055_first_pass\\005572c0.md",
+    "text": "[C1 2026-05-18] **Vector-text stroke renderer**. Walks a glyph's path sub-list and",
+    "raw_first": "**Vector-text stroke renderer**. Walks a glyph's path sub-list and"
+  },
+  "0x004840b0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004840b0.md",
+    "text": "[C1 2026-05-18] Bounds check: `if (3 < param_1) return 0;` at 0x004840b0.",
+    "raw_first": "Bounds check: `if (3 < param_1) return 0;` at 0x004840b0."
+  },
+  "0x00484280": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484280.md",
+    "text": "[C1 2026-05-18] fastcall.",
+    "raw_first": "fastcall."
+  },
+  "0x004842b0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004842b0.md",
+    "text": "[C1 2026-05-18] void(void).",
+    "raw_first": "void(void)."
+  },
+  "0x00484310": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484310.md",
+    "text": "[C1 2026-05-18] void(void).",
+    "raw_first": "void(void)."
+  },
+  "0x004844a0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004844a0.md",
+    "text": "[C1 2026-05-18] void(void).",
+    "raw_first": "void(void)."
+  },
+  "0x00484580": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484580.md",
+    "text": "[C1 2026-05-18] (int param_1, undefined4 param_2).",
+    "raw_first": "(int param_1, undefined4 param_2)."
+  },
+  "0x004847d0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004847d0.md",
+    "text": "[C1 2026-05-18] void(void). Initializes a 12\u00d712 spatial-grid (outer iVar5=5..-6, inner iVar4=5..-6 \u2192 12 iterations\u2026",
+    "raw_first": "void(void). Initializes a 12\u00d712 spatial-grid (outer iVar5=5..-6, inner iVar4=5..-6 \u2192 12 iterations each)."
+  },
+  "0x00484a50": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484a50.md",
+    "text": "[C1 2026-05-18] __fastcall (param_1, in_EAX=cell).",
+    "raw_first": "__fastcall (param_1, in_EAX=cell)."
+  },
+  "0x00484ac0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484ac0.md",
+    "text": "[C1 2026-05-18] (float *param_1) \u2014 registers object param_1 into spatial-grid cells.",
+    "raw_first": "(float *param_1) \u2014 registers object param_1 into spatial-grid cells."
+  },
+  "0x00484cf0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484cf0.md",
+    "text": "[C1 2026-05-18] (undefined4 *param_1) \u2014 Append object to world-objects array (DAT_006dccb8 base, 0x8C stride, max 300\u2026",
+    "raw_first": "(undefined4 *param_1) \u2014 Append object to world-objects array (DAT_006dccb8 base, 0x8C stride, max 300 entries)."
+  },
+  "0x00484de0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484de0.md",
+    "text": "[C1 2026-05-18] void(void). Iterates DAT_006e70cc world-objects pairs spatially (uses grid cells via +0x19 cell-count\u2026",
+    "raw_first": "void(void). Iterates DAT_006e70cc world-objects pairs spatially (uses grid cells via +0x19 cell-count and +0xa offsets into a 16-bit ID)."
+  },
+  "0x00484f70": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00484f70.md",
+    "text": "[C1 2026-05-18] void(void). Fallback brute-force O(N\u00b2) pair-test over DAT_006e70cc objects (no grid).",
+    "raw_first": "void(void). Fallback brute-force O(N\u00b2) pair-test over DAT_006e70cc objects (no grid)."
+  },
+  "0x004850b0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004850b0.md",
+    "text": "[C1 2026-05-18] (int param_1) \u2014 searches a linked list at `*(DAT_006e71cc + 4)` for an entry whose `*(entry+8) ==\u2026",
+    "raw_first": "(int param_1) \u2014 searches a linked list at `*(DAT_006e71cc + 4)` for an entry whose `*(entry+8) == param_1`; returns `*(entry+0xc)` on match."
+  },
+  "0x004850e0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004850e0.md",
+    "text": "[C1 2026-05-18] (param_1=vehicle, param_2=pos_or_NULL, param_3=transform_or_NULL, param_4=type_idx) \u2014 SmplFzx object\u2026",
+    "raw_first": "(param_1=vehicle, param_2=pos_or_NULL, param_3=transform_or_NULL, param_4=type_idx) \u2014 SmplFzx object creation."
+  },
+  "0x004852e0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004852e0.md",
+    "text": "[C1 2026-05-18] void(void). `in_EAX` is the object pointer (implicit thiscall-like).",
+    "raw_first": "void(void). `in_EAX` is the object pointer (implicit thiscall-like)."
+  },
+  "0x004853b0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004853b0.md",
+    "text": "[C1 2026-05-18] (int param_1) \u2014 SmplFzx state-block getter by ID.",
+    "raw_first": "(int param_1) \u2014 SmplFzx state-block getter by ID."
+  },
+  "0x004853f0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004853f0.md",
+    "text": "[C1 2026-05-18] (undefined2 param_1) \u2014 SmplFzx retire-by-id wrapper.",
+    "raw_first": "(undefined2 param_1) \u2014 SmplFzx retire-by-id wrapper."
+  },
+  "0x00485460": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485460.md",
+    "text": "[C1 2026-05-18] (int param_1, undefined4 *param_2) \u2014 SmplFzx transform helper.",
+    "raw_first": "(int param_1, undefined4 *param_2) \u2014 SmplFzx transform helper."
+  },
+  "0x004854e0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004854e0.md",
+    "text": "[C1 2026-05-18] (int param_1=state-block, float param_2=size_scale) \u2014 initializes a SmplFzx 8-vertex (cube) bounding\u2026",
+    "raw_first": "(int param_1=state-block, float param_2=size_scale) \u2014 initializes a SmplFzx 8-vertex (cube) bounding shape."
+  },
+  "0x004858c0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004858c0.md",
+    "text": "[C1 2026-05-18] (undefined4 *param_1=AABB_or_extents, float param_2=spring_constant, undefined4 param_3, int\u2026",
+    "raw_first": "(undefined4 *param_1=AABB_or_extents, float param_2=spring_constant, undefined4 param_3, int param_4=state_block) \u2014 SmplFzx state init."
+  },
+  "0x00485a00": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485a00.md",
+    "text": "[C1 2026-05-18] (int param_1=vehicle, undefined4 param_2, undefined4 *param_3=output_slot) \u2014 initial state-block setter.",
+    "raw_first": "(int param_1=vehicle, undefined4 param_2, undefined4 *param_3=output_slot) \u2014 initial state-block setter."
+  },
+  "0x00485a70": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485a70.md",
+    "text": "[C1 2026-05-18] (ushort *param_1=manager, undefined4 param_2=value) \u2014 Allocate slot in linked-list manager.",
+    "raw_first": "(ushort *param_1=manager, undefined4 param_2=value) \u2014 Allocate slot in linked-list manager."
+  },
+  "0x00485b30": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485b30.md",
+    "text": "[C1 2026-05-18] (short *param_1=manager, int param_2=key) \u2014 Remove slot from doubly-linked list manager.",
+    "raw_first": "(short *param_1=manager, int param_2=key) \u2014 Remove slot from doubly-linked list manager."
+  },
+  "0x00485bd0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485bd0.md",
+    "text": "[C1 2026-05-18] (int *param_1=stack) \u2014 Pop dword from a stack.",
+    "raw_first": "(int *param_1=stack) \u2014 Pop dword from a stack."
+  },
+  "0x00485bf0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485bf0.md",
+    "text": "[C1 2026-05-18] (int *param_1=stack, undefined4 param_2=value) \u2014 Push dword onto a stack.",
+    "raw_first": "(int *param_1=stack, undefined4 param_2=value) \u2014 Push dword onto a stack."
+  },
+  "0x00485c20": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485c20.md",
+    "text": "[C1 2026-05-18] __fastcall(undefined4 param_1=vehicle, in_EAX=index, unaff_ESI=output_vec3) \u2014 Vehicle attachment-point\u2026",
+    "raw_first": "__fastcall(undefined4 param_1=vehicle, in_EAX=index, unaff_ESI=output_vec3) \u2014 Vehicle attachment-point lookup (7-way switch on index 0..6)."
+  },
+  "0x00485d90": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485d90.md",
+    "text": "[C1 2026-05-18] void(void). 4-iteration outer (iVar5=4..1) over particle-emitter slots.",
+    "raw_first": "void(void). 4-iteration outer (iVar5=4..1) over particle-emitter slots."
+  },
+  "0x00485e10": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485e10.md",
+    "text": "[C1 2026-05-18] void(void). Particle-emitter slot teardown.",
+    "raw_first": "void(void). Particle-emitter slot teardown."
+  },
+  "0x00485e50": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485e50.md",
+    "text": "[C1 2026-05-18] (int param_1=slot_idx, int param_2=sub_slot, undefined4 param_3, undefined4 param_4).",
+    "raw_first": "(int param_1=slot_idx, int param_2=sub_slot, undefined4 param_3, undefined4 param_4)."
+  },
+  "0x00485ef0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00485ef0.md",
+    "text": "[C1 2026-05-18] void(void). Particle emitter per-frame update + draw.",
+    "raw_first": "void(void). Particle emitter per-frame update + draw."
+  },
+  "0x00486220": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486220.md",
+    "text": "[C1 2026-05-18] void(void). Particle slot draw-flush.",
+    "raw_first": "void(void). Particle slot draw-flush."
+  },
+  "0x00486270": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486270.md",
+    "text": "[C1 2026-05-18] void(void). Particle slot full-reset.",
+    "raw_first": "void(void). Particle slot full-reset."
+  },
+  "0x004862d0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004862d0.md",
+    "text": "[C1 2026-05-18] void(void). Initialize \"spark\"-particle emitters (DAT_006fe700) and \"scorch\" decal emitter\u2026",
+    "raw_first": "void(void). Initialize \"spark\"-particle emitters (DAT_006fe700) and \"scorch\" decal emitter (DAT_006fe740)."
+  },
+  "0x00486350": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486350.md",
+    "text": "[C1 2026-05-18] void(void). Particle emitter pair teardown \u2014 FUN_004768c0(&DAT_006fe700); FUN_004768c0(&DAT_006fe740).",
+    "raw_first": "void(void). Particle emitter pair teardown \u2014 FUN_004768c0(&DAT_006fe700); FUN_004768c0(&DAT_006fe740)."
+  },
+  "0x00486370": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486370.md",
+    "text": "[C1 2026-05-18] (int param_1=transform_or_NULL, float param_2=lifetime) \u2014 spawn particle into circular buffer at\u2026",
+    "raw_first": "(int param_1=transform_or_NULL, float param_2=lifetime) \u2014 spawn particle into circular buffer at DAT_00703038."
+  },
+  "0x00486460": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486460.md",
+    "text": "[C1 2026-05-18] (undefined4 *param_1=pos, undefined4 param_2=lifetime) \u2014 spawn scorch/decal particle into circular\u2026",
+    "raw_first": "(undefined4 *param_1=pos, undefined4 param_2=lifetime) \u2014 spawn scorch/decal particle into circular buffer at DAT_0070303c (capacity 100)."
+  },
+  "0x004864f0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004864f0.md",
+    "text": "[C1 2026-05-18] (undefined4 *param_1=transform, undefined4 param_2=lifetime, int param_3=count) \u2014 burst-spawn N\u2026",
+    "raw_first": "(undefined4 *param_1=transform, undefined4 param_2=lifetime, int param_3=count) \u2014 burst-spawn N particles, but only when emitter moved past min-distance threshold."
+  },
+  "0x00486610": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486610.md",
+    "text": "[C1 2026-05-18] (undefined4 param_1, undefined4 param_2) \u2014 Thin wrapper: FUN_004864f0(param_1, param_2, 4).",
+    "raw_first": "(undefined4 param_1, undefined4 param_2) \u2014 Thin wrapper: FUN_004864f0(param_1, param_2, 4)."
+  },
+  "0x00486830": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486830.md",
+    "text": "[C1 2026-05-18] void(void). Per-frame particle simulate+draw for the cloud/scorch particle systems.",
+    "raw_first": "void(void). Per-frame particle simulate+draw for the cloud/scorch particle systems."
+  },
+  "0x00486f50": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486f50.md",
+    "text": "[C1 2026-05-18] void(void). Particle-pair draw-flush.",
+    "raw_first": "void(void). Particle-pair draw-flush."
+  },
+  "0x00486f90": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00486f90.md",
+    "text": "[C1 2026-05-18] void(void). Full reset of particle circular buffers.",
+    "raw_first": "void(void). Full reset of particle circular buffers."
+  },
+  "0x00487140": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487140.md",
+    "text": "[C1 2026-05-18] void(void). Single-call: FUN_004768c0(&DAT_00703068) \u2014 release third emitter (additional particle\u2026",
+    "raw_first": "void(void). Single-call: FUN_004768c0(&DAT_00703068) \u2014 release third emitter (additional particle system)."
+  },
+  "0x00487150": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487150.md",
+    "text": "[C1 2026-05-18] __fastcall (undefined2 param_1=texture_handle).",
+    "raw_first": "__fastcall (undefined2 param_1=texture_handle)."
+  },
+  "0x00487d00": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487d00.md",
+    "text": "[C1 2026-05-18] (undefined4 param_1=transform, byte param_2=alpha) \u2014 Submit particle to third emitter (DAT_00703068).",
+    "raw_first": "(undefined4 param_1=transform, byte param_2=alpha) \u2014 Submit particle to third emitter (DAT_00703068)."
+  },
+  "0x00487d60": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487d60.md",
+    "text": "[C1 2026-05-18] void(void). Single-call: FUN_00476df0(&DAT_00703068) \u2014 flush third-emitter batch.",
+    "raw_first": "void(void). Single-call: FUN_00476df0(&DAT_00703068) \u2014 flush third-emitter batch."
+  },
+  "0x00487d70": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487d70.md",
+    "text": "[C1 2026-05-18] void(void). Draw third emitter with alpha-blend mode override.",
+    "raw_first": "void(void). Draw third emitter with alpha-blend mode override."
+  },
+  "0x00487de0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487de0.md",
+    "text": "[C1 2026-05-18] void(void). Thin wrapper: FUN_00487d70(&DAT_00703050) \u2014 calls flush-with-alpha-blend on a 4th emitter\u2026",
+    "raw_first": "void(void). Thin wrapper: FUN_00487d70(&DAT_00703050) \u2014 calls flush-with-alpha-blend on a 4th emitter at &DAT_00703050 (sibling of DAT_00703068)."
+  },
+  "0x00487df0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487df0.md",
+    "text": "[C1 2026-05-18] void(void). DAT_00703058 = 0 \u2014 clear 3rd-emitter count.",
+    "raw_first": "void(void). DAT_00703058 = 0 \u2014 clear 3rd-emitter count."
+  },
+  "0x00487e00": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487e00.md",
+    "text": "[C1 2026-05-18] void(void). Wrapper: FUN_00487150(&DAT_00703050) \u2014 init 4th emitter via two-arg path.",
+    "raw_first": "void(void). Wrapper: FUN_00487150(&DAT_00703050) \u2014 init 4th emitter via two-arg path."
+  },
+  "0x00487e20": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487e20.md",
+    "text": "[C1 2026-05-18] THUNK (4 bytes) to FUN_00535700 \u2014 RenderWare vertex buffer lock helper.",
+    "raw_first": "THUNK (4 bytes) to FUN_00535700 \u2014 RenderWare vertex buffer lock helper."
+  },
+  "0x00487e30": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487e30.md",
+    "text": "[C1 2026-05-18] THUNK (4 bytes) to FUN_00535910 \u2014 vertex-buffer unlock.",
+    "raw_first": "THUNK (4 bytes) to FUN_00535910 \u2014 vertex-buffer unlock."
+  },
+  "0x00487e40": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487e40.md",
+    "text": "[C1 2026-05-18] (int param_1) \u2014 Remove cloud/sky-element by index.",
+    "raw_first": "(int param_1) \u2014 Remove cloud/sky-element by index."
+  },
+  "0x00487e70": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00487e70.md",
+    "text": "[C1 2026-05-18] (undefined4 param_1=type, undefined4 *param_2=position, undefined4 param_3=transform_ptr, int\u2026",
+    "raw_first": "(undefined4 param_1=type, undefined4 *param_2=position, undefined4 param_3=transform_ptr, int param_4=count) \u2014 Register cloud/sky element."
+  },
+  "0x004880a0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004880a0.md",
+    "text": "[C1 2026-05-18] (int param_1) \u2014 Sky/cloud mesh initialization.",
+    "raw_first": "(int param_1) \u2014 Sky/cloud mesh initialization."
+  },
+  "0x00488320": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00488320.md",
+    "text": "[C1 2026-05-18] __fastcall (param_1=unused, param_2=output_float, in_EAX=cloud_slot_ptr).",
+    "raw_first": "__fastcall (param_1=unused, param_2=output_float, in_EAX=cloud_slot_ptr)."
+  },
+  "0x00488390": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00488390.md",
+    "text": "[C1 2026-05-18] (int param_1, undefined4 param_2) \u2014 Set cloud-slot phase-increment by index.",
+    "raw_first": "(int param_1, undefined4 param_2) \u2014 Set cloud-slot phase-increment by index."
+  },
+  "0x004883b0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004883b0.md",
+    "text": "[C1 2026-05-18] (int param_1=camera_or_player) \u2014 Build per-frame cloud-vertex-buffer for the sky mesh.",
+    "raw_first": "(int param_1=camera_or_player) \u2014 Build per-frame cloud-vertex-buffer for the sky mesh."
+  },
+  "0x00489240": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00489240.md",
+    "text": "[C1 2026-05-18] void(void). Sky-secondary-dispatch (already-commented in Ghidra: \"SkySecondaryDispatch \u2014 10-byte\u2026",
+    "raw_first": "void(void). Sky-secondary-dispatch (already-commented in Ghidra: \"SkySecondaryDispatch \u2014 10-byte vtable stub; calls vtable slot +0x48 on DAT_007030ac.\")."
+  },
+  "0x00489290": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x00489290.md",
+    "text": "[C1 2026-05-18] void(void). Init particle-pool free-list at &DAT_00703170..&DAT_00705a10, stride 0x1a (26 dwords = 104\u2026",
+    "raw_first": "void(void). Init particle-pool free-list at &DAT_00703170..&DAT_00705a10, stride 0x1a (26 dwords = 104 bytes)."
+  },
+  "0x004892c0": {
+    "bucket": "cluster_0048_first_pass",
+    "exists": true,
+    "file": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\re\\analysis\\cluster_0048_first_pass\\0x004892c0.md",
+    "text": "[C1 2026-05-18] (undefined4 param_1=texture, int param_2=max_particles, int param_3=lifetime_divisor, int\u2026",
+    "raw_first": "(undefined4 param_1=texture, int param_2=max_particles, int param_3=lifetime_divisor, int param_4=blend_flags) \u2014 Allocate particle emitter from pool at &DAT_00703170."
+  }
+}

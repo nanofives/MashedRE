@@ -1,0 +1,1963 @@
+{
+  "date": "2026-05-19",
+  "buckets": [
+    {
+      "bucket": "bucket_0041e140",
+      "rvas": [
+        {
+          "rva": "0x0041e140",
+          "plate": "[C1 2026-05-19] Returns the dword `DAT_0063d7e0` (0x0041e140-0041e145)."
+        },
+        {
+          "rva": "0x0041e150",
+          "plate": "[C1 2026-05-19] Reads a 3-int input from `in_EAX` (treated as `int*`)."
+        },
+        {
+          "rva": "0x0041e170",
+          "plate": "[C1 2026-05-19] Input: `in_EAX` (int, total hundredths-of-a-second), `unaff_EDI` (int* output triple)."
+        },
+        {
+          "rva": "0x0041e1c0",
+          "plate": "[C1 2026-05-19] Calling convention: __fastcall (param_1 in EDX, in_EAX, unaff_ESI in-flight; via call from 0x0041e1e0)."
+        },
+        {
+          "rva": "0x0041e1e0",
+          "plate": "[C1 2026-05-19] Operates on a manager struct at `unaff_EBX` (thiscall-like, `unaff_EBX = this`)."
+        },
+        {
+          "rva": "0x0041e4b0",
+          "plate": "[C1 2026-05-19] Reads `iVar1 = this->m_0x1b4` (state code) and compares to cached `this->m_0x1b8`."
+        },
+        {
+          "rva": "0x0041e8d0",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x1c]` (Ghidra notes \"Could not recover jumptable... treating indirect jump\u2026"
+        },
+        {
+          "rva": "0x0041e8e0",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x20]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e900",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x28]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e910",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x2c]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e920",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x30]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e930",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x34]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e940",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x38]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e950",
+          "plate": "[C1 2026-05-19] Tail-jump trampoline: `jmp [DAT_0063d7e4 + 0x3c]` (Ghidra: \"Could not recover jumptable... treating indirect jump as\u2026"
+        },
+        {
+          "rva": "0x0041e9f0",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x1c);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea00",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x20);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea20",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x28);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea30",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x2c);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea40",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x30);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea50",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x34);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea60",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x38);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ea70",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063d7e4 + 0x3c);` (one mov instruction)."
+        },
+        {
+          "rva": "0x0041ec00",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041ec00(int param_1)` where `param_1` is the slot index (`* 0x2ac` = stride into the global state\u2026"
+        },
+        {
+          "rva": "0x0041ecc0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041ecc0(int param_1, undefined4 param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x0041eeb0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041eeb0(int param_1, int param_2, int param_3, int param_4)`."
+        },
+        {
+          "rva": "0x0041efe0",
+          "plate": "[C1 2026-05-19] Pure-getter: `return (byte)(DAT_0063dc74[param_1 * 0x2ac] >> 3) & 1;`"
+        },
+        {
+          "rva": "0x0041f060",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041f060(int param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x0041f0d0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041f0d0(int param_1, uint *param_2)`."
+        },
+        {
+          "rva": "0x0041f100",
+          "plate": "[C1 2026-05-19] Pure float-getter: `return (float10)*(float*)(DAT_0063dc64 + param_1 * 0x2ac);`"
+        },
+        {
+          "rva": "0x0041f220",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041f220(int param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x0041f290",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041f290(int param_1, int param_2)`."
+        },
+        {
+          "rva": "0x0041f2c0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041f2c0(int param_1, int param_2, undefined4 param_3, undefined4 param_4)`."
+        },
+        {
+          "rva": "0x0041f300",
+          "plate": "[C1 2026-05-19] Pure getter: `return *(undefined4*)(DAT_0063dc6c + param_1 * 0x2ac);`"
+        },
+        {
+          "rva": "0x0041f330",
+          "plate": "[C1 2026-05-19] Signature `char* FUN_0041f330(void)` \u2014 input ID comes through `unaff_ESI` (likely thiscall or fastcall variant)."
+        },
+        {
+          "rva": "0x0041f360",
+          "plate": "[C1 2026-05-19] Signature `int FUN_0041f360(undefined4 param_1)` \u2014 returns 1 or 0."
+        },
+        {
+          "rva": "0x0041f3d0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_0041f3d0(int param_1, int param_2)`."
+        },
+        {
+          "rva": "0x0041f4f0",
+          "plate": "[C1 2026-05-19] thiscall-shape (no params; `unaff_EDI = this`)."
+        },
+        {
+          "rva": "0x0041f590",
+          "plate": "[C1 2026-05-19] thiscall-shape (no params; `unaff_ESI = this` = per-slot record)."
+        },
+        {
+          "rva": "0x0041f710",
+          "plate": "[C1 2026-05-19] thiscall-shape (no params; `in_EAX = this`)."
+        },
+        {
+          "rva": "0x0041f770",
+          "plate": "[C1 2026-05-19] thiscall-shape with `param_1 = (float)` `unaff_EBX -> this`. Actually `in_EAX = this`."
+        },
+        {
+          "rva": "0x0041f880",
+          "plate": "[C1 2026-05-19] thiscall-shape (`unaff_EDI = this`)."
+        },
+        {
+          "rva": "0x0041fe10",
+          "plate": "[C1 2026-05-19] thiscall-shape (`in_EAX = this`)."
+        },
+        {
+          "rva": "0x00420290",
+          "plate": "[C1 2026-05-19] Signature `void FUN_00420290(float param_1, float param_2)`."
+        },
+        {
+          "rva": "0x00420340",
+          "plate": "[C1 2026-05-19] thiscall-shape (`unaff_ESI = this` = per-slot record)."
+        },
+        {
+          "rva": "0x00420870",
+          "plate": "[C1 2026-05-19] Largest function in the bucket (970 bytes). Signature `void FUN_00420870(float param_1, undefined4 param_2, undefined4\u2026"
+        },
+        {
+          "rva": "0x00420d80",
+          "plate": "[C1 2026-05-19] Pure-getter that returns the sum of two floats: `(&DAT_0063e4b8)[param_1 * 9] + (&DAT_0063e4bc)[param_1 * 9]`."
+        },
+        {
+          "rva": "0x00420da0",
+          "plate": "[C1 2026-05-19] Signature `undefined4 FUN_00420da0(int param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x00420dc0",
+          "plate": "[C1 2026-05-19] Signature `undefined4 FUN_00420dc0(int param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x00420e00",
+          "plate": "[C1 2026-05-19] thiscall-shape, `unaff_ESI = this` (this is a `float*` aliasing a 7+ dword record at offsets 0..6)."
+        },
+        {
+          "rva": "0x00421060",
+          "plate": "[C1 2026-05-19] thiscall-shape (`unaff_ESI = this`)."
+        },
+        {
+          "rva": "0x00421080",
+          "plate": "[C1 2026-05-19] Initializes an array of 128 particle records (stride 0xb dwords = 44 bytes)."
+        },
+        {
+          "rva": "0x004210b0",
+          "plate": "[C1 2026-05-19] Subsystem-init function for the smoke-particle pool."
+        },
+        {
+          "rva": "0x004210f0",
+          "plate": "[C1 2026-05-19] Two-instruction thunk: `FUN_004768c0(&DAT_0063e548); return;`"
+        },
+        {
+          "rva": "0x00421100",
+          "plate": "[C1 2026-05-19] Computes an RGBA byte color from a particle's age (sum-of-TTL-pair) and writes it to a 4-byte output\u2026"
+        },
+        {
+          "rva": "0x00421160",
+          "plate": "[C1 2026-05-19] Particle-spawn handler. Signature `void FUN_00421160(undefined4 *param_1, undefined4 param_2)`."
+        },
+        {
+          "rva": "0x004212b0",
+          "plate": "[C1 2026-05-19] Per-frame smoke/debris emitter and updater. Two-phase loop."
+        },
+        {
+          "rva": "0x00421560",
+          "plate": "[C1 2026-05-19] Per-frame smoke-emitter render wrapper."
+        },
+        {
+          "rva": "0x004215e0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_004215e0(undefined4 param_1, undefined4 param_2, int param_3)`."
+        },
+        {
+          "rva": "0x00421630",
+          "plate": "[C1 2026-05-19] Signature `void FUN_00421630(undefined4 param_1, undefined4 param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x00421690",
+          "plate": "[C1 2026-05-19] One-line wrapper that tail-calls `FUN_00421060()` \u2014 likely an exported alias / vtable thunk into the small-record-clear\u2026"
+        },
+        {
+          "rva": "0x004216b0",
+          "plate": "[C1 2026-05-19] thiscall-shape (`unaff_EBX = this`); operates on a sub-region of a debris record (the `0x208`-byte block from\u2026"
+        },
+        {
+          "rva": "0x00421720",
+          "plate": "[C1 2026-05-19] Calls `FUN_004216b0()` twice in a `do { ... } while(iVar1 != 0)` loop with `iVar1 = 2..0`."
+        },
+        {
+          "rva": "0x00421750",
+          "plate": "[C1 2026-05-19] Signature `void FUN_00421750(undefined4 param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x00421800",
+          "plate": "[C1 2026-05-19] Same as FUN_00421750, but writes a **full 4x4 matrix** (via `FUN_0055b650`) instead of a vec3."
+        },
+        {
+          "rva": "0x004218b0",
+          "plate": "[C1 2026-05-19] Signature `int FUN_004218b0(undefined4 param_1)`."
+        },
+        {
+          "rva": "0x004218d0",
+          "plate": "[C1 2026-05-19] Signature 5-param wrapper `FUN_004218d0(p1, p2, p3, p4, p5)`."
+        },
+        {
+          "rva": "0x00421930",
+          "plate": "[C1 2026-05-19] Signature `undefined4 FUN_00421930(undefined4 param_1)`."
+        },
+        {
+          "rva": "0x00421980",
+          "plate": "[C1 2026-05-19] Two-line helper. Reads global `DAT_006ce274`."
+        },
+        {
+          "rva": "0x00421a90",
+          "plate": "[C1 2026-05-19] Calling convention: __thiscall (`unaff_EBX = this`); `in_EAX` is an int input (lane id) saved to `this->+0xf8`\u2026"
+        },
+        {
+          "rva": "0x00421ba0",
+          "plate": "[C1 2026-05-19] Per-debris-slot init."
+        },
+        {
+          "rva": "0x00421c10",
+          "plate": "[C1 2026-05-19] Signature `void FUN_00421c10(int param_1)`."
+        },
+        {
+          "rva": "0x00421c50",
+          "plate": "[C1 2026-05-19] Calls `FUN_00421c10(in_EAX)` twice, advancing `in_EAX += 0x100` between calls (do-while `iVar1 = 2..1`)."
+        },
+        {
+          "rva": "0x00421c80",
+          "plate": "[C1 2026-05-19] Hard tear-down for a debris slot. Signature `void FUN_00421c80(int param_1)`."
+        },
+        {
+          "rva": "0x004220d0",
+          "plate": "[C1 2026-05-19] Loads & inits the **debris pool**."
+        },
+        {
+          "rva": "0x00422140",
+          "plate": "[C1 2026-05-19] Walks the 4-slot debris pool (`&DAT_0063fb90`, stride 0x208, until 0x6403b0)."
+        },
+        {
+          "rva": "0x00422160",
+          "plate": "[C1 2026-05-19] thiscall-shape (`unaff_EBX = this`). Per-frame debris-lane update."
+        },
+        {
+          "rva": "0x00422290",
+          "plate": "[C1 2026-05-19] Two-lane wrapper: calls `FUN_00422160()` twice (`iVar1 = 2..1`)."
+        },
+        {
+          "rva": "0x004223b0",
+          "plate": "[C1 2026-05-19] Signature `void FUN_004223b0(undefined4 *param_1, undefined4 param_2)`."
+        },
+        {
+          "rva": "0x004223f0",
+          "plate": "[C1 2026-05-19] Pseudo-random float generator. `__fastcall` (param_1 in ECX, in_EAX read first)."
+        },
+        {
+          "rva": "0x00422440",
+          "plate": "[C1 2026-05-19] Pure leaf \u2014 cosine-eased interpolation (smoothstep)."
+        }
+      ],
+      "missing_md": []
+    },
+    {
+      "bucket": "bucket_00474d80",
+      "rvas": [
+        {
+          "rva": "0x00474d80",
+          "plate": "[C1 2026-05-19] Takes `param_1` (int / pointer) and `param_2` (int)."
+        },
+        {
+          "rva": "0x00474db0",
+          "plate": "[C1 2026-05-19] Allocates `param_1 * param_2` bytes via RW alloc vtable: `(*(code**)(DAT_007d3ff8 + 0x108))(param_1*param_2, 0)`."
+        },
+        {
+          "rva": "0x00474de0",
+          "plate": "[C1 2026-05-19] Vec3 linear interpolation toward a camera/object position read via `FUN_004671d0(0)` (returns float pointer to a Vec3)."
+        },
+        {
+          "rva": "0x00474e70",
+          "plate": "[C1 2026-05-19] Geometric helper on three Vec3s (`param_1`, `param_2`, `param_3`)."
+        },
+        {
+          "rva": "0x00475010",
+          "plate": "[C1 2026-05-19] Pushes a stack frame containing `{handler = LAB_00474f50, esp = &stack0x00000008}` and calls `FUN_00474fb0(param_1\u2026"
+        },
+        {
+          "rva": "0x00475180",
+          "plate": "[C1 2026-05-19] Frees a singly-linked list of nodes:"
+        },
+        {
+          "rva": "0x00475210",
+          "plate": "[C1 2026-05-19] Visibility/sphere test then offset-vertex emit."
+        },
+        {
+          "rva": "0x004752d0",
+          "plate": "[C1 2026-05-19] Infinite-loop diagnostic print: `do { FID_conflict__wprintf(\"%s\\n\", param_1); } while (true);`."
+        },
+        {
+          "rva": "0x004752f0",
+          "plate": "[C1 2026-05-19] **Animation keyframe sampler / 4x4 matrix builder at time param_3** (per inline comment from prior pass at top of\u2026"
+        },
+        {
+          "rva": "0x004756e0",
+          "plate": "[C1 2026-05-19] **Animation tick / advance**: takes `param_1` (anim handle, cast through `int(float)` \u2014 likely a typo'd RW handle\u2026"
+        },
+        {
+          "rva": "0x00475770",
+          "plate": "[C1 2026-05-19] Converts a 4x4 matrix at `param_2` to Euler angles into `param_1[0..2]` (pitch, roll/heading, yaw layout TBD)."
+        },
+        {
+          "rva": "0x00475830",
+          "plate": "[C1 2026-05-19] 10-slot registration into a control table at `param_1`:"
+        },
+        {
+          "rva": "0x004758d0",
+          "plate": "[C1 2026-05-19] Thin wrapper: `FUN_004e66d0(param_1, FUN_00475830, param_2)`."
+        },
+        {
+          "rva": "0x004759b0",
+          "plate": "[C1 2026-05-19] **Particle pool initializer**."
+        },
+        {
+          "rva": "0x00475a00",
+          "plate": "[C1 2026-05-19] **Particle pool slot allocator** \u2014 registers one new slot in the pool created by FUN_004759b0."
+        },
+        {
+          "rva": "0x00475ab0",
+          "plate": "[C1 2026-05-19] **Particle emit / slot replacement**."
+        },
+        {
+          "rva": "0x00475d90",
+          "plate": "[C1 2026-05-19] **Particle pool teardown** (counterpart to FUN_004759b0)."
+        },
+        {
+          "rva": "0x00475ea0",
+          "plate": "[C1 2026-05-19] **Effect-batch teardown** (counterpart to FUN_00476390)."
+        },
+        {
+          "rva": "0x00475ef0",
+          "plate": "[C1 2026-05-19] **Emitter array initializer** \u2014 zeroes a contiguous region of emitter slots at `0x00691698..0x00692418` in `0xD8`\u2026"
+        },
+        {
+          "rva": "0x00475f30",
+          "plate": "[C1 2026-05-19] Tiny float setter writing the same computed value to `in_EAX[0]` and `in_EAX[1]`:"
+        },
+        {
+          "rva": "0x00475f50",
+          "plate": "[C1 2026-05-19] Tiny byte-writer using ESI as hidden pointer (unaff_ESI):"
+        },
+        {
+          "rva": "0x00475f90",
+          "plate": "[C1 2026-05-19] **Per-emitter render** \u2014 emits flame, smoke, and \"extra\" particles from an emitter struct at `param_1` (size 0xD8+ per\u2026"
+        },
+        {
+          "rva": "0x00476320",
+          "plate": "[C1 2026-05-19] Geometric helper: takes `param_1` (output Vec3), `param_2` (origin Vec3), `param_3` (angle scalar)."
+        },
+        {
+          "rva": "0x00476390",
+          "plate": "[C1 2026-05-19] **Particle effect system init**."
+        },
+        {
+          "rva": "0x00476650",
+          "plate": "[C1 2026-05-19] **Ring-buffer scanner + emit** \u2014 scans an 8-slot ring buffer at `DAT_0069183c` for the first free entry, then forwards\u2026"
+        },
+        {
+          "rva": "0x00476710",
+          "plate": "[C1 2026-05-19] Same ring-buffer scan body as FUN_00476650 over `DAT_0069183c..0x006925bc` step 0x1b0, then `FUN_004764f0()` (zero-args\u2026"
+        },
+        {
+          "rva": "0x004767c0",
+          "plate": "[C1 2026-05-19] Identical ring-buffer scan body to FUN_00476650 and FUN_00476710 (same address range, stride, exit conditions), trailed\u2026"
+        },
+        {
+          "rva": "0x00476860",
+          "plate": "[C1 2026-05-19] Thunk: `FUN_00476650(param_1, param_2, param_3, 0)`."
+        },
+        {
+          "rva": "0x004768a0",
+          "plate": "[C1 2026-05-19] Thunk: `FUN_004767c0(param_1, param_2, param_3, 0, param_4)`."
+        },
+        {
+          "rva": "0x004768c0",
+          "plate": "[C1 2026-05-19] **Sprite-batch / particle-batch destroy** \u2014 releases all RW resources owned by a 0x40-byte batch descriptor at\u2026"
+        },
+        {
+          "rva": "0x00476a10",
+          "plate": "[C1 2026-05-19] Copies 16 dwords (64 bytes) from `param_1` (default `&DAT_00692558` if null) into `&DAT_006924e8`."
+        },
+        {
+          "rva": "0x00476a80",
+          "plate": "[C1 2026-05-19] Copies 8 dwords (32 bytes) from `param_1` (default `&DAT_006132a4` if null) into globals at `DAT_00692534..0x00692550`\u2026"
+        },
+        {
+          "rva": "0x00476ae0",
+          "plate": "[C1 2026-05-19] **Per-batch state setter** at offset 0xB8/0xBC, with dirty bit 0x4000."
+        },
+        {
+          "rva": "0x00476b30",
+          "plate": "[C1 2026-05-19] **Per-batch state setter** at offset 0xC4, dirty bit 0x2000, with secondary write."
+        },
+        {
+          "rva": "0x00476b90",
+          "plate": "[C1 2026-05-19] **Per-batch 64-byte (16 dwords) state setter** at offset 0xF8 of plugin-data, dirty bit 0x8000."
+        },
+        {
+          "rva": "0x00476be0",
+          "plate": "[C1 2026-05-19] **Per-batch single-dword state setter** at offset 0xC0, dirty bit 0x20000."
+        },
+        {
+          "rva": "0x00476c60",
+          "plate": "[C1 2026-05-19] **Per-batch 32-byte (8 dwords) state setter** at offset 0xD8, dirty bit 0x100000."
+        },
+        {
+          "rva": "0x004770a0",
+          "plate": "[C1 2026-05-19] **Batch render dispatcher** \u2014 if `*(*(int*)(*(param_1+4)+DAT_007dc57c) + 4) != 0` (i.e., plugin-data has non-empty\u2026"
+        },
+        {
+          "rva": "0x00477450",
+          "plate": "[C1 2026-05-19] Initializes a 0x5c-byte (92-byte) decal record at `in_EAX` (implicit `this` ptr, hidden first param):"
+        },
+        {
+          "rva": "0x00477490",
+          "plate": "[C1 2026-05-19] **Per-decal animate-and-render tick** \u2014 operates on a decal/shockwave struct at `unaff_ESI` (implicit this from EAX/ESI\u2026"
+        },
+        {
+          "rva": "0x00477500",
+          "plate": "[C1 2026-05-19] **Per-decal render with material color update** \u2014 gated on `*(this+0x48) != 0.0` (radius non-zero)."
+        },
+        {
+          "rva": "0x00477580",
+          "plate": "[C1 2026-05-19] **Per-decal release** \u2014 tears down RW resources at `unaff_ESI+0x44` (atomic ptr)."
+        },
+        {
+          "rva": "0x004775b0",
+          "plate": "[C1 2026-05-19] **Shockwave / hemisphere effect system initializer** \u2014 loads two DFFs and pre-builds 20 (= 10+10) decal pool slots."
+        },
+        {
+          "rva": "0x00477760",
+          "plate": "[C1 2026-05-19] **Decal pool emit** \u2014 picks a free slot from one of two pools and commits a 64-byte block + extras via FUN_00477450."
+        },
+        {
+          "rva": "0x00477870",
+          "plate": "[C1 2026-05-19] **Shockwave / hemisphere system teardown** (counterpart to FUN_004775b0)."
+        },
+        {
+          "rva": "0x004778e0",
+          "plate": "[C1 2026-05-19] **Decal/trail slot zeroizer** \u2014 operates on slot index `unaff_ESI`:"
+        },
+        {
+          "rva": "0x00477b60",
+          "plate": "[C1 2026-05-19] **256-slot pool allocator** for the 0x2c0-byte slot pool at `0x00693198` (paired with the FUN_004778e0 zeroizer)."
+        },
+        {
+          "rva": "0x00477be0",
+          "plate": "[C1 2026-05-19] **Trail-strip vertex pusher** \u2014 append one quad to a moving-line trail at slot `param_1` (1-based, from FUN_00477b60)."
+        },
+        {
+          "rva": "0x00477e00",
+          "plate": "[C1 2026-05-19] One-liner setter: `(&DAT_0069318c)[param_1 * 0xb0] = param_2`."
+        },
+        {
+          "rva": "0x00477e40",
+          "plate": "[C1 2026-05-19] **Trail subsystem initializer**."
+        },
+        {
+          "rva": "0x00477e60",
+          "plate": "[C1 2026-05-19] **TrianglePlaneCompute** \u2014 computes a normalized plane equation from three triangle vertices `param_2..param_4` into\u2026"
+        },
+        {
+          "rva": "0x00477f00",
+          "plate": "[C1 2026-05-19] **PlaneFromPointAndNormal** \u2014 builds a normalized plane equation in `param_1[0..3]` from point `param_2` and normal\u2026"
+        },
+        {
+          "rva": "0x00477f50",
+          "plate": "[C1 2026-05-19] **PointPlaneClassify** \u2014 tests which side of plane `param_1` (4 floats) point `param_2` (Vec3) lies on, and optionally\u2026"
+        },
+        {
+          "rva": "0x00478030",
+          "plate": "[C1 2026-05-19] **AABB-vs-plane intersection test (8-corner scan)** \u2014 tests all 8 corners of an AABB (`param_2[0..5]` = min/max XYZ)\u2026"
+        },
+        {
+          "rva": "0x004780c0",
+          "plate": "[C1 2026-05-19] **Sphere-vs-plane classify** \u2014 tests sphere `param_2` (Vec3 center + radius at `+0xc`) against plane `param_1`."
+        },
+        {
+          "rva": "0x00478110",
+          "plate": "[C1 2026-05-19] **RW stream reader for an array of N items** \u2014 opens a stream, reads N from header, reads N records into\u2026"
+        },
+        {
+          "rva": "0x00478220",
+          "plate": "[C1 2026-05-19] **Per-frame debug-line render loop** \u2014 draws 5 lines \u00d7 2 verts per \"thing\" in `param_1`, count `*(param_1+0x16240)`."
+        },
+        {
+          "rva": "0x00478cc0",
+          "plate": "[C1 2026-05-19] Zero-loop: `for (i = 0x418f; i != 0; i--) { *param_1 = 0; param_1++; }`."
+        },
+        {
+          "rva": "0x00478cd0",
+          "plate": "[C1 2026-05-19] Trivial thunk: `FUN_00484580()`."
+        },
+        {
+          "rva": "0x00479100",
+          "plate": "[C1 2026-05-19] **Raycast-and-vertex-color-sample on a collision mesh** \u2014 operates on collision object at `*(param_1 + 0x10090)`, with\u2026"
+        },
+        {
+          "rva": "0x00479fb0",
+          "plate": "[C1 2026-05-19] **Array-of-atomics destructor** \u2014 destroys all atomics in an array at `param_1` of count `*(int*)(param_1 + 0x188)`."
+        },
+        {
+          "rva": "0x0047a130",
+          "plate": "[C1 2026-05-19] **Script-command handler** \u2014 zeros a small global vector and installs a callback."
+        },
+        {
+          "rva": "0x0047a180",
+          "plate": "[C1 2026-05-19] **Script handler** \u2014 registered into the script-VM dispatch table (no direct callers)."
+        },
+        {
+          "rva": "0x0047aaa0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set string** at offset 0x2640 of the current-context (`DAT_006bf1c8 + 0x2640`)."
+        },
+        {
+          "rva": "0x0047aad0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set Vec3 + alpha at +0x1d8 of current-context** (DAT_006bf1cc)."
+        },
+        {
+          "rva": "0x0047acd0",
+          "plate": "[C1 2026-05-19] Script handler: writes float arg-top at `DAT_006bf1cc + 0x20c`."
+        },
+        {
+          "rva": "0x0047ad00",
+          "plate": "[C1 2026-05-19] Script handler: writes float arg-top at `DAT_006bf1cc + 0x210`."
+        },
+        {
+          "rva": "0x0047ade0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 write 3 strings into a sub-record at `0x86cac4 + iVar2*0x110`**."
+        },
+        {
+          "rva": "0x0047ae80",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set type=1 with 3 floats** at `0x86cb84..0x86cb8c` of slot `iVar2`."
+        },
+        {
+          "rva": "0x0047aef0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set type=2 with 2 floats** at `0x86cb90..0x86cb94` of slot."
+        },
+        {
+          "rva": "0x0047af50",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set type=3 with 1 float** at `0x86cba0` of slot."
+        },
+        {
+          "rva": "0x0047afa0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set type=4 with 2 floats** at `0x86cb98, 0x86cb9c` of slot."
+        },
+        {
+          "rva": "0x0047b000",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 multi-field write** (6 args): slot-id, then 5 sub-values."
+        },
+        {
+          "rva": "0x0047b0a0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set Vec3** at `0x86cba8, 0x86cbac, 0x86cbb0` of slot."
+        },
+        {
+          "rva": "0x0047b110",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set single int** at `0x86cbc4` of slot (selected by slot-id arg)."
+        },
+        {
+          "rva": "0x0047b160",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set single float** at `0x86cbc8` of slot."
+        },
+        {
+          "rva": "0x0047b1b0",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set the Vec3 at globals `_DAT_006bf1bc..c4`** (the same 3-dword block zeroed in FUN_0047a130)."
+        },
+        {
+          "rva": "0x0047b200",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set single int** at global `DAT_006132fc` (the \"selected index\" sentinel; default 0xffffffff per\u2026"
+        },
+        {
+          "rva": "0x0047b230",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 set single float** at global `DAT_00613300`."
+        },
+        {
+          "rva": "0x0047b420",
+          "plate": "[C1 2026-05-19] **Script handler \u2014 append-to-list** in slot at `0x86ed20`."
+        }
+      ],
+      "missing_md": []
+    },
+    {
+      "bucket": "bucket_004bdcc0",
+      "rvas": [
+        {
+          "rva": "0x004bdcc0",
+          "plate": "[C1 2026-05-19] Reads FuncState* from `*(param_1+0x28)` (LexState->fs)."
+        },
+        {
+          "rva": "0x004bdd50",
+          "plate": "[C1 2026-05-19] fs = *(L+0x28). At 0x004bdd56."
+        },
+        {
+          "rva": "0x004bdda0",
+          "plate": "[C1 2026-05-19] f = **(int**)(fs->f at offset *(fs+0)) \u2014 Proto* at fs[0]."
+        },
+        {
+          "rva": "0x004bddf0",
+          "plate": "[C1 2026-05-19] FUN_004b9ad0(LS, name_ptr, sizeof) \u2014 `luaS_newlstr` (creates TString from literal)."
+        },
+        {
+          "rva": "0x004bde20",
+          "plate": "[C1 2026-05-19] fs = *(L+0x28)."
+        },
+        {
+          "rva": "0x004bdea0",
+          "plate": "[C1 2026-05-19] fs = *(L+0x28). For each of `nvars` iterations:"
+        },
+        {
+          "rva": "0x004bdee0",
+          "plate": "[C1 2026-05-19] FUN_004bcc10(L, 0x2c) \u2014 `check_next(',')` (expects a name list, comma after first name)."
+        },
+        {
+          "rva": "0x004bdf80",
+          "plate": "[C1 2026-05-19] Iteration of token 0x105 (TK_ELSEIF) loop emitting jumps; final TK_ELSE=0x104 path."
+        },
+        {
+          "rva": "0x004be070",
+          "plate": "[C1 2026-05-19] FUN_004bc590(L) \u2014 `next(ls)` consume current."
+        },
+        {
+          "rva": "0x004be0a0",
+          "plate": "[C1 2026-05-19] Loop: FUN_004bc590 (next), FUN_004bd0b0 (singlevar / str_checkname), FUN_004bdd50 (new_localvar(name, nvars++))\u2026"
+        },
+        {
+          "rva": "0x004be110",
+          "plate": "[C1 2026-05-19] fs = *(L+0x28); extra = nexps - nvars."
+        },
+        {
+          "rva": "0x004be170",
+          "plate": "[C1 2026-05-19] FUN_004bc590(L) \u2014 `next(ls)`."
+        },
+        {
+          "rva": "0x004be1b0",
+          "plate": "[C1 2026-05-19] FUN_004bd0b0(L, &v) \u2014 `singlevar(ls,v)` for the first NAME."
+        },
+        {
+          "rva": "0x004be220",
+          "plate": "[C1 2026-05-19] FUN_004bd040(L, &v) \u2014 `primaryexp(ls,v)` returns expdesc; first item type at v[0]."
+        },
+        {
+          "rva": "0x004be290",
+          "plate": "[C1 2026-05-19] FUN_004ba9e0(L, nvars, MAXMUSED=0xfe=254, '(variables in a multiple assignment)' s_00617bb8) \u2014 checklimit."
+        },
+        {
+          "rva": "0x004be360",
+          "plate": "[C1 2026-05-19] fs = *(L+0x28); FUN_004bc590 (consume 'return')."
+        },
+        {
+          "rva": "0x004be3b0",
+          "plate": "[C1 2026-05-19] fs = L+0x28; bl = fs+0x28 (Block linked list head)."
+        },
+        {
+          "rva": "0x004be410",
+          "plate": "[C1 2026-05-19] local FuncState new_fs[307] \u2014 `open_func`-equivalent stack frame (0x4cc = 1228 bytes)."
+        },
+        {
+          "rva": "0x004be4b0",
+          "plate": "[C1 2026-05-19] fs = L+0x28; f = *fs (Proto*)."
+        },
+        {
+          "rva": "0x004be540",
+          "plate": "[C1 2026-05-19] If next token == ')' (0x29): no params \u2192 call parlist_end via FUN_004be5d0(L,0,0)."
+        },
+        {
+          "rva": "0x004be5d0",
+          "plate": "[C1 2026-05-19] fs = L+0x28; f = *fs."
+        },
+        {
+          "rva": "0x004be640",
+          "plate": "[C1 2026-05-19] Reads byte from S buffer (decrement S->n at S[0], advance S[1], or call refill func S[2] when n==0)."
+        },
+        {
+          "rva": "0x004be6c0",
+          "plate": "[C1 2026-05-19] pcVar1 = *(char**)(S+0x10) \u2014 S->name field."
+        },
+        {
+          "rva": "0x004be6d0",
+          "plate": "[C1 2026-05-19] FUN_004bebe0(L, S) \u2014 `LoadHeader` returns swap-flag (endian mismatch)."
+        },
+        {
+          "rva": "0x004be6f0",
+          "plate": "[C1 2026-05-19] FUN_004bee60(L) \u2014 alloc Proto (0x44 bytes zero-init, link into L->openupval list)."
+        },
+        {
+          "rva": "0x004be780",
+          "plate": "[C1 2026-05-19] S->n at S[0] -= 1; if was 0, call S->reader func at S[2] for refill."
+        },
+        {
+          "rva": "0x004be7d0",
+          "plate": "[C1 2026-05-19] FUN_004be6c0(S) \u2014 getZ source name."
+        },
+        {
+          "rva": "0x004be7f0",
+          "plate": "[C1 2026-05-19] FUN_004be820(L, &out, 4, S, swap) \u2014 read 4 bytes (byte-reverse if swap)."
+        },
+        {
+          "rva": "0x004be820",
+          "plate": "[C1 2026-05-19] If swap==0: FUN_004be880(L, S, b, size) \u2014 `LoadBlock` straight copy."
+        },
+        {
+          "rva": "0x004be880",
+          "plate": "[C1 2026-05-19] FUN_004bc480(S, b, size) \u2014 `luaZ_read(z,b,n)`."
+        },
+        {
+          "rva": "0x004be8b0",
+          "plate": "[C1 2026-05-19] size = LoadInt(L,S,swap)."
+        },
+        {
+          "rva": "0x004be8d4",
+          "plate": "[C1 2026-05-19] Calls FUN_004b7d20, FUN_004be820, FUN_004b9950 in sequence (same triple as 0x004be8b0)."
+        },
+        {
+          "rva": "0x004be900",
+          "plate": "[C1 2026-05-19] n = LoadInt(L,S,swap)."
+        },
+        {
+          "rva": "0x004be980",
+          "plate": "[C1 2026-05-19] If swap==0: LoadBlock(L,S,b, n*esize) \u2014 bulk copy."
+        },
+        {
+          "rva": "0x004bea00",
+          "plate": "[C1 2026-05-19] n = LoadInt(L,S,swap); f->sizelineinfo (offset 0x34) = n."
+        },
+        {
+          "rva": "0x004beaa0",
+          "plate": "[C1 2026-05-19] n = LoadInt(L,S,swap); f->sizelocvars (offset 0x30) = n."
+        },
+        {
+          "rva": "0x004beaf0",
+          "plate": "[C1 2026-05-19] n = LoadInt; f[3] (sizestrings?) = n. Alloc n*4 \u2192 f[2]."
+        },
+        {
+          "rva": "0x004bebe0",
+          "plate": "[C1 2026-05-19] FUN_004bed80(L,S) \u2014 `LoadSignature` ('Lua' chars via PTR_s_l_006178d0)."
+        },
+        {
+          "rva": "0x004bed50",
+          "plate": "[C1 2026-05-19] FUN_004be820(L, &local_8, 8, S, swap) \u2014 LoadVar 8 bytes."
+        },
+        {
+          "rva": "0x004bed80",
+          "plate": "[C1 2026-05-19] ppuVar4 = &PTR_s_l_006178d0; loop while *ppuVar4 != '\\0'."
+        },
+        {
+          "rva": "0x004bede0",
+          "plate": "[C1 2026-05-19] byte = LoadByte."
+        },
+        {
+          "rva": "0x004bee20",
+          "plate": "[C1 2026-05-19] size = (nelems + 1) * 16."
+        },
+        {
+          "rva": "0x004bee60",
+          "plate": "[C1 2026-05-19] puVar1 = luaM_realloc(L, NULL, 0x44)."
+        },
+        {
+          "rva": "0x004beec0",
+          "plate": "[C1 2026-05-19] *(f+0x1c) = sizecode (param_3)."
+        },
+        {
+          "rva": "0x004beef0",
+          "plate": "[C1 2026-05-19] Returns 0x44 + 4*(sizecode+sizek+sizep+2*sizep+sizelocvars+sizelineinfo*3)."
+        },
+        {
+          "rva": "0x004bef20",
+          "plate": "[C1 2026-05-19] If 0 < f[7] (sizecode > 0): subtract sizeproto(f) from L->totalbytes."
+        },
+        {
+          "rva": "0x004befa0",
+          "plate": "[C1 2026-05-19] L->totalbytes (offset 0x60) -= (cl->nupvalues+1)*16. Offset 0xe = nupvalues short."
+        },
+        {
+          "rva": "0x004befd0",
+          "plate": "[C1 2026-05-19] Loop over f->locvars[]: if pc < locvars[i].startpc \u2192 return 0 (not yet in scope)."
+        },
+        {
+          "rva": "0x004bf020",
+          "plate": "[C1 2026-05-19] FUN_004baa70(L, msg, *(int*)(L+8)) \u2014 `luaX_error(ls, msg, ls->t.token)`."
+        },
+        {
+          "rva": "0x004bf040",
+          "plate": "[C1 2026-05-19] pc = FUN_004bfa60(fs, 0x2a /OP_JMP, -1 /NO_JUMP)."
+        },
+        {
+          "rva": "0x004bf080",
+          "plate": "[C1 2026-05-19] If fs->pc != fs->lasttarget: fs->lasttarget = fs->pc; concat jpc \u2192 pc; reset jpc."
+        },
+        {
+          "rva": "0x004bf0b0",
+          "plate": "[C1 2026-05-19] fs+0xe (short freereg) += n."
+        },
+        {
+          "rva": "0x004bf0f0",
+          "plate": "[C1 2026-05-19] FUN_004bfa60(*(L+0x28), 7 /OP_LOADK?, idx)."
+        },
+        {
+          "rva": "0x004bf110",
+          "plate": "[C1 2026-05-19] If num fits in int (via __ftol round-trip equality): FUN_004bfa60(fs, 6 /OP_LOADINT?, int_val)."
+        },
+        {
+          "rva": "0x004bf180",
+          "plate": "[C1 2026-05-19] f = fs[0]; nk = f[1] (sizek). Search last min(20, nk) entries for `*(double*)(f->k + i*8) == num` \u2192 reuse."
+        },
+        {
+          "rva": "0x004bf200",
+          "plate": "[C1 2026-05-19] If 0 < n: FUN_004bfa60(fs, 5, n) \u2014 `OP_LOADNIL? actually for positive`."
+        },
+        {
+          "rva": "0x004bf230",
+          "plate": "[C1 2026-05-19] uVar1 = previous_instr(fs) via FUN_004bf260."
+        },
+        {
+          "rva": "0x004bf260",
+          "plate": "[C1 2026-05-19] If fs+0x14 (lasttarget) < fs+0x10 (pc): return code[pc-1]."
+        },
+        {
+          "rva": "0x004bf280",
+          "plate": "[C1 2026-05-19] If FUN_004bf230 (hasjumps==test): patch code[pc-1] C field = `nresults`. Specifically `(uVar | ((nresults<<6)) &\u2026"
+        },
+        {
+          "rva": "0x004bf2d0",
+          "plate": "[C1 2026-05-19] Switch on `*e`:"
+        },
+        {
+          "rva": "0x004bf320",
+          "plate": "[C1 2026-05-19] If target == fs+0x14 (lasttarget? actually pc?) \u2014 call FUN_004bf490 (luaK_patchtohere)."
+        },
+        {
+          "rva": "0x004bf360",
+          "plate": "[C1 2026-05-19] Loop: fix = list; list = getjump(fix); op = code[fix] & 0x3f."
+        },
+        {
+          "rva": "0x004bf3f0",
+          "plate": "[C1 2026-05-19] If dest == -1: write sentinel 0x7fffff80 (NO_JUMP relative encoding)."
+        },
+        {
+          "rva": "0x004bf460",
+          "plate": "[C1 2026-05-19] raw = code[pc] >> 6."
+        },
+        {
+          "rva": "0x004bf490",
+          "plate": "[C1 2026-05-19] Walks jump-chain via getjump until -1 sentinel, calling patchtarget(last_pc, dest) on each."
+        },
+        {
+          "rva": "0x004bf4e0",
+          "plate": "[C1 2026-05-19] FUN_004bf510(fs, e, 1, 0x27 + (cond?2:0) = ...) \u2014 `codecond(jt list, cond=true)`. Opcode `'+'`=0x27 vs `')'`=0x29."
+        },
+        {
+          "rva": "0x004bf510",
+          "plate": "[C1 2026-05-19] Select list (e+4 or e+8 = jt/jf) based on flag param_3."
+        },
+        {
+          "rva": "0x004bf5c0",
+          "plate": "[C1 2026-05-19] FUN_004bf600(fs, e) \u2014 dischargevars."
+        },
+        {
+          "rva": "0x004bf600",
+          "plate": "[C1 2026-05-19] Switch e->k:"
+        },
+        {
+          "rva": "0x004bf670",
+          "plate": "[C1 2026-05-19] switch(op): 0x20\u21940x21, 0x22\u21940x25, 0x23\u21940x24, 0x26/0x28\u21920x27, 0x27/0x29\u21920x26, else 0."
+        },
+        {
+          "rva": "0x004bf6e0",
+          "plate": "[C1 2026-05-19] fs = L+0x28; FUN_004bf600 (dischargevars)."
+        },
+        {
+          "rva": "0x004bf820",
+          "plate": "[C1 2026-05-19] Loop: if (code[pc] & 0x3f) != expected_op \u2192 return 1."
+        },
+        {
+          "rva": "0x004bf870",
+          "plate": "[C1 2026-05-19] FUN_004bf080 (luaK_getlabel) \u2014 flush jpc."
+        },
+        {
+          "rva": "0x004bf890",
+          "plate": "[C1 2026-05-19] If op == 0 (NOT): codecond(fs, e, true, 0x1e); FUN_004bfa40(fs, 0x1e) \u2014 emit OP_NOT."
+        },
+        {
+          "rva": "0x004bf920",
+          "plate": "[C1 2026-05-19] If op == 0xc (AND): FUN_004bf4e0(fs, e, true) \u2014 goiftrue."
+        },
+        {
+          "rva": "0x004bf970",
+          "plate": "[C1 2026-05-19] FUN_004bf510(fs, e, 0, 0x26 + (cond?2:0))."
+        },
+        {
+          "rva": "0x004bf9a0",
+          "plate": "[C1 2026-05-19] Switch op:"
+        },
+        {
+          "rva": "0x004bfa40",
+          "plate": "[C1 2026-05-19] FUN_004bfa80(fs, op, 0, 0)."
+        },
+        {
+          "rva": "0x004bfa60",
+          "plate": "[C1 2026-05-19] FUN_004bfa80(fs, op, A_or_Bx, 0)."
+        },
+        {
+          "rva": "0x004bfa80",
+          "plate": "[C1 2026-05-19] size = 812 bytes \u2014 the largest function in this bucket; corresponds to lcode.c `code_emit` with all opcode peepholes."
+        }
+      ],
+      "missing_md": []
+    },
+    {
+      "bucket": "bucket_00557fb0",
+      "rvas": [
+        {
+          "rva": "0x00557fb0",
+          "plate": "[C1 2026-05-19] Reads `piVar1 = *(int **)(DAT_00913274 + param_1)` (cited 0x00557fb6) \u2014 pointer table indexed by `param_1`."
+        },
+        {
+          "rva": "0x00558030",
+          "plate": "[C1 2026-05-19] Reads `piVar3 = *(int **)(param_1 + DAT_00913274)` (cited 0x00558039)."
+        },
+        {
+          "rva": "0x00558100",
+          "plate": "[C1 2026-05-19] Reads `piVar1 = *(int **)(DAT_00913274 + param_1)` (cited 0x00558106) \u2014 actor record pointer."
+        },
+        {
+          "rva": "0x00558140",
+          "plate": "[C1 2026-05-19] Reads `piVar1 = *(int **)(DAT_00913274 + param_1)` (cited 0x00558146) \u2014 actor record."
+        },
+        {
+          "rva": "0x00558180",
+          "plate": "[C1 2026-05-19] Writes 4 fixed values into `param_1[0..3]`:"
+        },
+        {
+          "rva": "0x00558400",
+          "plate": "[C1 2026-05-19] Reads `piVar1 = (int *)(param_2 + 0xc)` (cited 0x00558404) \u2014 glyph-row count."
+        },
+        {
+          "rva": "0x00558550",
+          "plate": "[C1 2026-05-19] If `DAT_007dc8b4 != 0` (cited 0x0055855a) \u2014 batch has queued glyphs:"
+        },
+        {
+          "rva": "0x005586f0",
+          "plate": "[C1 2026-05-19] Calls `(**(code **)(DAT_007d3ff8 + 0xf4))(param_2)` (cited 0x00558707) \u2014 texture/raster query on font texture\u2026"
+        },
+        {
+          "rva": "0x00558860",
+          "plate": "[C1 2026-05-19] Calls `FUN_00558180(&local_1c, local_5c)` (cited 0x0055886f) \u2014 fetches font metrics into stack vars."
+        },
+        {
+          "rva": "0x00558b40",
+          "plate": "[C1 2026-05-19] Computes a direction vector `local_c..local_4 = param_1[3..5] - param_1[0..2]` (cited 0x00558b46..0x00558b59) \u2014\u2026"
+        },
+        {
+          "rva": "0x00558c50",
+          "plate": "[C1 2026-05-19] Calls `FUN_005c4ad0(4, *(uint *)(param_1 + 4) | 0x40000)` (cited 0x00558c58) \u2014 allocates a 4-byte-stride container with\u2026"
+        },
+        {
+          "rva": "0x00558c80",
+          "plate": "[C1 2026-05-19] Calls `FUN_005c4d50(*(undefined4 *)(param_1 + 0x10))` (cited 0x00558c86) \u2014 destroys container at `param_1+0x10`."
+        },
+        {
+          "rva": "0x00558ca0",
+          "plate": "[C1 2026-05-19] Writes `*(undefined4 *)(param_1 + 0x14) = param_2` (cited 0x00558ca5)."
+        },
+        {
+          "rva": "0x00558cb0",
+          "plate": "[C1 2026-05-19] Reads `pcVar2 = *(code **)(*param_1 + 0x20)` (cited 0x00558cb6) \u2014 virtual function at vtable+0x20."
+        },
+        {
+          "rva": "0x00558d30",
+          "plate": "[C1 2026-05-19] If `param_1 == *(int **)(*param_1 + 0x14)` (cited 0x00558d33) \u2014 singleton self-ref: clears `*(*param_1 + 0x14) = 0`."
+        },
+        {
+          "rva": "0x00559040",
+          "plate": "[C1 2026-05-19] Computes three triangle edge vectors:"
+        },
+        {
+          "rva": "0x005592f0",
+          "plate": "[C1 2026-05-19] Reads view dimensions via `*(int *)(*(int *)(param_1 + 0x60) + 0xc)` (width) and `+0x10` (height) from RW camera frame\u2026"
+        },
+        {
+          "rva": "0x00559560",
+          "plate": "[C1 2026-05-19] Reads `iVar2 = *(int *)(param_1 + 0x14)` (cited 0x00559563)."
+        },
+        {
+          "rva": "0x005595d0",
+          "plate": "[C1 2026-05-19] Sub-allocator carving function: receives `param_1` (arena cursor wrapper) with mutable cursor at `*(param_1+8)`, and a\u2026"
+        },
+        {
+          "rva": "0x00559b50",
+          "plate": "[C1 2026-05-19] `local_8 = FUN_00559560(param_1)` (cited 0x00559b62) \u2014 computes total arena bytes needed."
+        },
+        {
+          "rva": "0x00559ba0",
+          "plate": "[C1 2026-05-19] Calls `FUN_00564190(param_1)` (cited 0x00559ba3)."
+        },
+        {
+          "rva": "0x00559bc0",
+          "plate": "[C1 2026-05-19] If `*(int *)(param_1 + 0x2c) == 0` (cited 0x00559bc3): returns 0 \u2014 stack empty."
+        },
+        {
+          "rva": "0x00559be0",
+          "plate": "[C1 2026-05-19] Writes `*(*(int *)(param_1 + 0x28) + *(int *)(param_1 + 0x2c) * 4) = param_2` (cited 0x00559be3) \u2014 stores pointer at\u2026"
+        },
+        {
+          "rva": "0x00559c00",
+          "plate": "[C1 2026-05-19] If `*(int *)(param_1 + 0x3c) == 0` (cited 0x00559c03): returns void."
+        },
+        {
+          "rva": "0x00559c20",
+          "plate": "[C1 2026-05-19] Writes `*(*(int *)(param_1 + 0x38) + *(int *)(param_1 + 0x3c) * 4) = param_2` (cited 0x00559c23) \u2014 push."
+        },
+        {
+          "rva": "0x00559ee0",
+          "plate": "[C1 2026-05-19] Reads `uVar2 = *(ushort *)(param_2 + 8)` (cited 0x00559ee5) \u2014 shape index."
+        },
+        {
+          "rva": "0x0055a140",
+          "plate": "[C1 2026-05-19] If `*(short *)(param_2 + 0x54) != -1` (cited 0x0055a141) \u2014 body A has slot:"
+        },
+        {
+          "rva": "0x0055a1f0",
+          "plate": "[C1 2026-05-19] Broad-phase tick / collision-pair generator. Takes 10 args: world-state ptr, output pair array, max pairs, &count\u2026"
+        },
+        {
+          "rva": "0x0055a9a0",
+          "plate": "[C1 2026-05-19] Variant of 0x0055a1f0 inner phase 3 \u2014 generates pair candidates for a list of shapes (`param_2` array of `param_3` body\u2026"
+        },
+        {
+          "rva": "0x0055ab30",
+          "plate": "[C1 2026-05-19] Re-asserted by this bucket. Body of function unchanged vs prior plate:"
+        },
+        {
+          "rva": "0x0055abb0",
+          "plate": "[C1 2026-05-19] Reads `uVar1 = *(ushort *)(param_2 + 0x20)` (cited 0x0055abb5) \u2014 shape index."
+        },
+        {
+          "rva": "0x0055ad20",
+          "plate": "[C1 2026-05-19] Writes `*(undefined4 *)(param_1 + 0xc) = param_2` (cited 0x0055ad25)."
+        },
+        {
+          "rva": "0x0055ade0",
+          "plate": "[C1 2026-05-19] If `param_2[9] != 0` AND `((*(param_2[9]+0x60))[(uVar1>>5)*4] & (1<<(uVar1&0x1f))) != 0` (cited 0x0055ade3..0x0055ae04)\u2026"
+        },
+        {
+          "rva": "0x0055ae50",
+          "plate": "[C1 2026-05-19] Calls `FUN_00565550()` (cited 0x0055ae50)."
+        },
+        {
+          "rva": "0x0055af40",
+          "plate": "[C1 2026-05-19] Calls `FUN_00565590(*param_1, param_2)` (cited 0x0055af45)."
+        },
+        {
+          "rva": "0x0055af60",
+          "plate": "[C1 2026-05-19] Returns `*(undefined4 *)(param_1 + 0x2c)` (cited 0x0055af60)."
+        },
+        {
+          "rva": "0x0055af70",
+          "plate": "[C1 2026-05-19] Returns `*(undefined4 *)(param_1 + 0x3c)` (cited 0x0055af70)."
+        },
+        {
+          "rva": "0x0055af80",
+          "plate": "[C1 2026-05-19] Iterates `*(int *)(param_1 + 0x44)` slots (cited 0x0055af86):"
+        },
+        {
+          "rva": "0x0055afc0",
+          "plate": "[C1 2026-05-19] Iterates `*(int *)(param_1 + 0x40)` slots (cited 0x0055afca):"
+        },
+        {
+          "rva": "0x0055b030",
+          "plate": "[C1 2026-05-19] `iVar1 = FUN_00559bc0(param_1)` (cited 0x0055b035) \u2014 pop a free body record from stack."
+        },
+        {
+          "rva": "0x0055b060",
+          "plate": "[C1 2026-05-19] Calls `FUN_00559be0(*param_1, param_1)` (cited 0x0055b063) \u2014 push body record onto free stack."
+        },
+        {
+          "rva": "0x0055b080",
+          "plate": "[C1 2026-05-19] Stores world ptr `*param_1 = param_2` (cited 0x0055b083)."
+        },
+        {
+          "rva": "0x0055b4a0",
+          "plate": "[C1 2026-05-19] Validates `param_2[0..2] != DAT_005d757c` (cited 0x0055b4a6..0x0055b4ba) \u2014 guards against degenerate inertia."
+        },
+        {
+          "rva": "0x0055b750",
+          "plate": "[C1 2026-05-19] Reads body matrix at `iVar9 = p1[1]*0x40 + **(int**)(*p1+0x10)` (cited 0x0055b752)."
+        },
+        {
+          "rva": "0x0055b800",
+          "plate": "[C1 2026-05-19] Calls `FUN_004c52f0(p1[1]*0x40 + **(int**)(*p1+0x10), param_2, 0)` (cited 0x0055b811) \u2014 matrix mul/orthonormalize."
+        },
+        {
+          "rva": "0x0055b860",
+          "plate": "[C1 2026-05-19] Initializes a shape/collider record at `param_1` (37+ ints):"
+        },
+        {
+          "rva": "0x0055b930",
+          "plate": "[C1 2026-05-19] Calls `FUN_0055bad0()` (cited 0x0055b930)."
+        },
+        {
+          "rva": "0x0055ba90",
+          "plate": "[C1 2026-05-19] Calls `(**(code **)(*(int *)(param_1 + 0x5c) + 4))(param_1)` (cited 0x0055ba93) \u2014 virtual at vtable[+4] on owner at\u2026"
+        },
+        {
+          "rva": "0x0055bac0",
+          "plate": "[C1 2026-05-19] Writes `*(undefined2 *)(param_1 + 0x5a) = param_2` (cited 0x0055bac5)."
+        },
+        {
+          "rva": "0x0055bad0",
+          "plate": "[C1 2026-05-19] Tail-calls vtable[+4] on owner at `param_1+0x5c`: `(**(code **)(*(int *)(param_1 + 0x5c) + 4))()` (cited 0x0055bad7)."
+        },
+        {
+          "rva": "0x0055bae0",
+          "plate": "[C1 2026-05-19] Calls `pfVar10 = (float *)(**(code **)(*(int *)(param_1 + 0x5c) + 8))(param_1, param_3)` (cited 0x0055bae9) \u2014\u2026"
+        },
+        {
+          "rva": "0x0055bb70",
+          "plate": "[C1 2026-05-19] If `(*(byte *)(*(int *)(param_1 + 0x5c) + 0x40) & 2) == 0` AND `(*(uint *)(param_1 + 0xc) & 0x20000) == 0` (cited\u2026"
+        },
+        {
+          "rva": "0x0055bbf0",
+          "plate": "[C1 2026-05-19] Calls `fVar8 = (**(code **)((int)param_1[0x17] + 0xc))(param_1, param_2, &local_2c)` (cited 0x0055bbfd) \u2014 virtual at\u2026"
+        },
+        {
+          "rva": "0x0055bd70",
+          "plate": "[C1 2026-05-19] Tail-calls vtable[+0x10] on owner at `param_1+0x5c`: `(**(code **)(*(int *)(param_1 + 0x5c) + 0x10))()` (cited\u2026"
+        },
+        {
+          "rva": "0x0055bd80",
+          "plate": "[C1 2026-05-19] If `(*(byte *)(*(int *)(param_1 + 0x5c) + 0x40) & 2) == 0` AND `(*(uint *)(param_1 + 0xc) & 0x20000) == 0` AND `param_2\u2026"
+        },
+        {
+          "rva": "0x0055bde0",
+          "plate": "[C1 2026-05-19] If `(*(byte *)((int)param_1[0x17] + 0x40) & 2) == 0` AND `((uint)param_1[3] & 0x20000) == 0` AND `param_2 != 0`:"
+        },
+        {
+          "rva": "0x0055c000",
+          "plate": "[C1 2026-05-19] If `param_2 != 0`: rotates `param_3` by 3x3 from `param_2[0..10]` into `local_18/14/10` (cited 0x0055c01b..0x0055c046)\u2026"
+        },
+        {
+          "rva": "0x0055c0f0",
+          "plate": "[C1 2026-05-19] If `*(short *)(param_1 + 0x15) != 0`: iterates `param_1[0x14]` array of vec3 (16 bytes per element) (cited\u2026"
+        },
+        {
+          "rva": "0x0055c230",
+          "plate": "[C1 2026-05-19] If `param_2 != 0`: rotates `param_4` by 3x3 of `param_2` (cited 0x0055c241..0x0055c270); points `param_4 = &local_c`."
+        },
+        {
+          "rva": "0x0055c2d0",
+          "plate": "[C1 2026-05-19] If `param_2 != 0`:"
+        },
+        {
+          "rva": "0x0055c380",
+          "plate": "[C1 2026-05-19] Initializes a shape record `param_1[0..0x25]`:"
+        },
+        {
+          "rva": "0x0055c3e0",
+          "plate": "[C1 2026-05-19] Calls `iVar1 = (**(code **)(*(int *)(param_1 + 0x5c) + 0x14))(param_1, param_2, &local_18)` (cited 0x0055c3eb) \u2014 first\u2026"
+        },
+        {
+          "rva": "0x0055c490",
+          "plate": "[C1 2026-05-19] Writes `*(undefined4 *)(param_1 + 0x48) = param_2` (cited 0x0055c495)."
+        },
+        {
+          "rva": "0x0055c540",
+          "plate": "[C1 2026-05-19] Calls `FUN_0055c380(param_1, &DAT_005e4f50)` (cited 0x0055c545) \u2014 initializes shape with vtable pointer `DAT_005e4f50`."
+        },
+        {
+          "rva": "0x0055cd40",
+          "plate": "[C1 2026-05-19] Per-component sign-flip-and-scale on `param_2` direction vector:"
+        },
+        {
+          "rva": "0x0055dca0",
+          "plate": "[C1 2026-05-19] Initializes a contact/manifold cache at `param_1` (8 ints):"
+        },
+        {
+          "rva": "0x0055dd60",
+          "plate": "[C1 2026-05-19] Calls `FUN_0055fdd0(param_1[1])` (cited 0x0055dd66) \u2014 destroy secondary sub-allocator."
+        },
+        {
+          "rva": "0x0055ddd0",
+          "plate": "[C1 2026-05-19] Linear-scan for free slot in array at `*(p1+8)` of length `*(p1+0xc)`, capped at `*(p1+0x10)` (cited\u2026"
+        },
+        {
+          "rva": "0x0055de20",
+          "plate": "[C1 2026-05-19] Iterates `*(int *)(param_1 + 0xc)` slots at `*(int *)(param_1 + 8)` (cited 0x0055de2a..0x0055de31)."
+        },
+        {
+          "rva": "0x0055de60",
+          "plate": "[C1 2026-05-19] Searches `*(p1+8)` array of length `*(p1+0xc)` for entry equal to `param_2` (cited 0x0055de6a..0x0055de7d)."
+        },
+        {
+          "rva": "0x0055deb0",
+          "plate": "[C1 2026-05-19] Returns `*(undefined4 *)(param_1 + 4)` (cited 0x0055deb0)."
+        },
+        {
+          "rva": "0x0055ded0",
+          "plate": "[C1 2026-05-19] Initializes a contact/pair record header at `param_1`:"
+        },
+        {
+          "rva": "0x0055df90",
+          "plate": "[C1 2026-05-19] Walks free-list at `*(p1+0x2c)` (linked via `puVar1[4]`) (cited 0x0055df94..0x0055dfaa):"
+        },
+        {
+          "rva": "0x0055dff0",
+          "plate": "[C1 2026-05-19] If `*(int *)(param_1 + 0x24) != 0` (cited 0x0055dff3):"
+        },
+        {
+          "rva": "0x0055e050",
+          "plate": "[C1 2026-05-19] Allocates 32-byte stack buffer `local_20`."
+        },
+        {
+          "rva": "0x0055e190",
+          "plate": "[C1 2026-05-19] Refcount decrement: `iVar1 = *param_1; *param_1 = iVar1 - 1` (cited 0x0055e193..0x0055e198)."
+        },
+        {
+          "rva": "0x0055e200",
+          "plate": "[C1 2026-05-19] Writes `*param_1 = param_2` (cited 0x0055e205)."
+        },
+        {
+          "rva": "0x0055e2d0",
+          "plate": "[C1 2026-05-19] Calls `uVar1 = FUN_00559c00(param_1)` (cited 0x0055e2d5) \u2014 pop pair-record from secondary stack."
+        },
+        {
+          "rva": "0x0055e300",
+          "plate": "[C1 2026-05-19] Calls `FUN_0055e190(param_1[0x13])` (cited 0x0055e304) \u2014 release refcounted thing at `+0x4c` (index 0x13)."
+        },
+        {
+          "rva": "0x0055e330",
+          "plate": "[C1 2026-05-19] Initializes a pair-record at `param_1` (0x26 ints):"
+        }
+      ],
+      "missing_md": []
+    },
+    {
+      "bucket": "bucket_005ae170",
+      "rvas": [
+        {
+          "rva": "0x005ae170",
+          "plate": "[C1 2026-05-19] Three-arg loop: `int FUN_005ae170(byte *param_1, byte *param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005ae250",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 * FUN_005ae250(int param_1, int param_2, int param_3, int param_4, undefined4 *param_5)`."
+        },
+        {
+          "rva": "0x005ae300",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005ae300(int param_1)`."
+        },
+        {
+          "rva": "0x005ae330",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005ae330(int param_1)`."
+        },
+        {
+          "rva": "0x005ae380",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005ae380(byte *param_1)`."
+        },
+        {
+          "rva": "0x005ae3a0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005ae3a0(int param_1, undefined4 param_2)`."
+        },
+        {
+          "rva": "0x005ae470",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005ae470(int param_1)`."
+        },
+        {
+          "rva": "0x005ae4b0",
+          "plate": "[C1 2026-05-19] 5-byte thunk (single `JMP rel32`) into `FUN_004522d0` (in the MSVC CRT range 0x004a0000..0x004b3fff per CLAUDE.md\u2026"
+        },
+        {
+          "rva": "0x005ae4c0",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_005ae4c0(int param_1, int param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005ae550",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005ae550(int param_1, int *param_2)`."
+        },
+        {
+          "rva": "0x005ae590",
+          "plate": "[C1 2026-05-19] Signature: `bool FUN_005ae590(int param_1)`."
+        },
+        {
+          "rva": "0x005ae7e0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005ae7e0(int param_1)`."
+        },
+        {
+          "rva": "0x005aea60",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005aea60(undefined4 *param_1)`."
+        },
+        {
+          "rva": "0x005aeaf0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 * FUN_005aeaf0(int param_1, int param_2)`."
+        },
+        {
+          "rva": "0x005aeb30",
+          "plate": "[C1 2026-05-19] Signature: `undefined * FUN_005aeb30(void)`."
+        },
+        {
+          "rva": "0x005aeb80",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005aeb80(void)`."
+        },
+        {
+          "rva": "0x005aeb90",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_005aeb90(float param_1)`."
+        },
+        {
+          "rva": "0x005aed20",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005aed20(float *param_1, float *param_2)`."
+        },
+        {
+          "rva": "0x005aeda0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005aeda0(uint param_1, uint param_2, uint *param_3, uint *param_4)`."
+        },
+        {
+          "rva": "0x005aeed0",
+          "plate": "[C1 2026-05-19] Signature: `bool FUN_005aeed0(undefined4 *param_1)`."
+        },
+        {
+          "rva": "0x005aefa0",
+          "plate": "[C1 2026-05-19] Signature: `LONG * FUN_005aefa0(LONG *param_1, LONG param_2)`."
+        },
+        {
+          "rva": "0x005aefc0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005aefc0(int param_1, undefined4 param_2..6)`."
+        },
+        {
+          "rva": "0x005af010",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005af010(int param_1)`."
+        },
+        {
+          "rva": "0x005af040",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005af040(int param_1, undefined4 param_2)`."
+        },
+        {
+          "rva": "0x005af070",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005af070(int param_1, undefined4 *param_2, undefined4 param_3..7, undefined4 param_8)`."
+        },
+        {
+          "rva": "0x005af170",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af170(undefined4 param_1)`."
+        },
+        {
+          "rva": "0x005af180",
+          "plate": "[C1 2026-05-19] Signature: `int * FUN_005af180(int param_1, code *param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x005af200",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af200(int param_1, code *param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x005af230",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af230(int param_1, code *param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x005af260",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af260(undefined4 param_1)`."
+        },
+        {
+          "rva": "0x005af2d0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af2d0(undefined4 param_1, undefined4 param_2, undefined4 *param_3)`."
+        },
+        {
+          "rva": "0x005af300",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005af300(int param_1)`."
+        },
+        {
+          "rva": "0x005af430",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005af430(int param_1)`."
+        },
+        {
+          "rva": "0x005af470",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005af470(int param_1)`."
+        },
+        {
+          "rva": "0x005af510",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005af510(int param_1, undefined4 param_2, uint *param_3)`."
+        },
+        {
+          "rva": "0x005af600",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af600(int param_1, undefined4 param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005af690",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af690(undefined4 param_1, int param_2, uint *param_3)`."
+        },
+        {
+          "rva": "0x005af700",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 * FUN_005af700(int param_1, int param_2, uint param_3)`."
+        },
+        {
+          "rva": "0x005af740",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af740(int param_1, int param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005af7a0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af7a0(int param_1, int param_2)`."
+        },
+        {
+          "rva": "0x005af7d0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af7d0(int param_1, undefined4 param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005af860",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af860(undefined4 param_1, undefined4 *param_2, undefined4 *param_3, int param_4, int param_5)`."
+        },
+        {
+          "rva": "0x005af8f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005af8f0(LONG *param_1, int param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005afa00",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005afa00(int param_1, undefined4 *******param_2)`."
+        },
+        {
+          "rva": "0x005afcf0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005afcf0(int param_1, uint *param_2)`."
+        },
+        {
+          "rva": "0x005b0360",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005b0360(int param_1, undefined4 param_2..5)`."
+        },
+        {
+          "rva": "0x005b03e0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005b03e0(int param_1, uint *param_2)`."
+        },
+        {
+          "rva": "0x005b04b0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005b04b0(int param_1, undefined4 param_2, int param_3, int ******param_4, int ******param_5\u2026"
+        },
+        {
+          "rva": "0x005b0700",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005b0700(int param_1, uint param_2)`."
+        },
+        {
+          "rva": "0x005b0740",
+          "plate": "[C1 2026-05-19] Signature: `bool FUN_005b0740(undefined4 *param_1, undefined4 param_2, int param_3, undefined4 param_4, int param_5\u2026"
+        },
+        {
+          "rva": "0x005b0970",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0970(int param_1, int param_2, undefined4 param_3, int param_4)`."
+        },
+        {
+          "rva": "0x005b09c0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b09c0(int param_1, byte *param_2)`."
+        },
+        {
+          "rva": "0x005b0a90",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0a90(int *param_1, undefined4 param_2, undefined4 param_3, undefined4 *param_4, undefined4\u2026"
+        },
+        {
+          "rva": "0x005b0b10",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0b10(int param_1)`."
+        },
+        {
+          "rva": "0x005b0b40",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0b40(undefined4 *param_1)`."
+        },
+        {
+          "rva": "0x005b0b60",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 * FUN_005b0b60(undefined4 *param_1, int param_2)`."
+        },
+        {
+          "rva": "0x005b0b90",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0b90(undefined4 *param_1)`."
+        },
+        {
+          "rva": "0x005b0bb0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005b0bb0(int param_1, uint param_2, int param_3)`."
+        },
+        {
+          "rva": "0x005b0c70",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0c70(uint *param_1, uint param_2)`."
+        },
+        {
+          "rva": "0x005b0ca0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0ca0(uint *param_1, uint param_2)`."
+        },
+        {
+          "rva": "0x005b0cf0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0cf0(uint *param_1, int param_2, int param_3, uint param_4, int param_5, uint param_6)`."
+        },
+        {
+          "rva": "0x005b0dc0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0dc0(uint *param_1, uint param_2)`."
+        },
+        {
+          "rva": "0x005b0df0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 * FUN_005b0df0(undefined4 *param_1, undefined4 param_2, int *param_3)`."
+        },
+        {
+          "rva": "0x005b0e70",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0e70(int param_1)`."
+        },
+        {
+          "rva": "0x005b0ec0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0ec0(int param_1)`."
+        },
+        {
+          "rva": "0x005b0f10",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005b0f10(undefined4 param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x005b0f40",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0f40(int param_1)`."
+        },
+        {
+          "rva": "0x005b0f90",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b0f90(int param_1, undefined4 param_2, int *param_3)`."
+        },
+        {
+          "rva": "0x005b1030",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b1030(int param_1, undefined4 param_2, int param_3, undefined4 param_4)`."
+        },
+        {
+          "rva": "0x005b1080",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b1080(undefined4 *param_1)`."
+        },
+        {
+          "rva": "0x005b10a0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b10a0(undefined4 param_1, int param_2, int param_3, undefined4 param_4)`."
+        },
+        {
+          "rva": "0x005b10d0",
+          "plate": "[C1 2026-05-19] 5-byte thunk (single `JMP rel32`) into `FUN_005b10a0`."
+        },
+        {
+          "rva": "0x005b10e0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b10e0(undefined4 param_1, int param_2, int param_3, undefined4 param_4)`."
+        },
+        {
+          "rva": "0x005b1110",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005b1110(undefined4 param_1, undefined4 param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x005b1140",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b1140(undefined4 param_1, undefined4 param_2, undefined4 param_3)`."
+        },
+        {
+          "rva": "0x005b1160",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b1160(undefined1 *param_1, undefined4 param_2, undefined1 param_3)`."
+        },
+        {
+          "rva": "0x005b1180",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b1180(byte *param_1)`."
+        },
+        {
+          "rva": "0x005b11d0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b11d0(byte *param_1)`."
+        },
+        {
+          "rva": "0x005b11f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005b11f0(undefined4 *param_1)`."
+        },
+        {
+          "rva": "0x005b1260",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005b1260(undefined4 *param_1, int *param_2)`."
+        }
+      ],
+      "missing_md": []
+    },
+    {
+      "bucket": "bucket_004fcb51",
+      "rvas": [
+        {
+          "rva": "0x004fcb51",
+          "plate": "[C1 2026-05-19] Initializes a 9-slot function/label table inside `*param_1`. Writes 9 pointers:"
+        },
+        {
+          "rva": "0x004fcb96",
+          "plate": "[C1 2026-05-19] Object destructor body \u2014 `__fastcall` taking `this=param_1`. Tears down up to three contained pointer-fields at offsets\u2026"
+        },
+        {
+          "rva": "0x004fcbca",
+          "plate": "[C1 2026-05-19] Standard MSVC \"vector-deleting destructor\" / \"scalar-deleting destructor\" thunk, `__thiscall(this, byte flags)`:"
+        },
+        {
+          "rva": "0x004fcbe6",
+          "plate": "[C1 2026-05-19] Tiny 4-field constructor (`__thiscall`):"
+        },
+        {
+          "rva": "0x004fcc00",
+          "plate": "[C1 2026-05-19] Object body-destructor `__fastcall(this=param_1)` \u2014 smaller sibling of FUN_004fcb96."
+        },
+        {
+          "rva": "0x004fcc18",
+          "plate": "[C1 2026-05-19] Vector/scalar-deleting destructor thunk paired with FUN_004fcc00:"
+        },
+        {
+          "rva": "0x004fcc34",
+          "plate": "[C1 2026-05-19] Constructor for a larger shader-compiler-context object (`__fastcall(this=param_1)`):"
+        },
+        {
+          "rva": "0x004fcc67",
+          "plate": "[C1 2026-05-19] Body-destructor for the same large shader-context object that FUN_004fcc34 constructs (`__fastcall(this)`). Tears down\u2026"
+        },
+        {
+          "rva": "0x004fccbc",
+          "plate": "[C1 2026-05-19] Vector/scalar-deleting destructor thunk for the FUN_004fcc34/FUN_004fcc67 large-class:"
+        },
+        {
+          "rva": "0x004fccd8",
+          "plate": "[C1 2026-05-19] Shader-source file-open routine. Loads a source file by name (with optional path-canonicalization and wide-to-narrow\u2026"
+        },
+        {
+          "rva": "0x004fce7f",
+          "plate": "[C1 2026-05-19] In-memory shader-source load entry (`__thiscall`):"
+        },
+        {
+          "rva": "0x004fceb8",
+          "plate": "[C1 2026-05-19] Body-destructor (`__fastcall(this)`). Tears down a single owned heap-buffer at `+4` of `this`:"
+        },
+        {
+          "rva": "0x004fced0",
+          "plate": "[C1 2026-05-19] Vector/scalar-deleting destructor thunk paired with FUN_004fceb8:"
+        },
+        {
+          "rva": "0x004fceec",
+          "plate": "[C1 2026-05-19] Top-level shader-compiler-context constructor (`__fastcall(this=param_1)`). Establishes compile-environment defaults\u2026"
+        },
+        {
+          "rva": "0x004fcf91",
+          "plate": "[C1 2026-05-19] Top-level shader-compiler-context destructor \u2014 symmetric counterpart of FUN_004fceec."
+        },
+        {
+          "rva": "0x004fd031",
+          "plate": "[C1 2026-05-19] Adds a node to a singly-linked list rooted at `*(this+0x48)` (`__thiscall(this, param_2)`)."
+        },
+        {
+          "rva": "0x004fd075",
+          "plate": "[C1 2026-05-19] Two-out-param getter (`__thiscall(this, out_p2, out_p3)`):"
+        },
+        {
+          "rva": "0x004fd09a",
+          "plate": "[C1 2026-05-19] List-tail walker + two-field reader (`__thiscall(this, out_p2, out_p3)`):"
+        },
+        {
+          "rva": "0x004fd0d3",
+          "plate": "[C1 2026-05-19] **Preprocessor token classifier / next-token dispatch** (`__fastcall(this)`). The single largest functional anchor in\u2026"
+        },
+        {
+          "rva": "0x004fd405",
+          "plate": "[C1 2026-05-19] Parse-error reporter (`__cdecl`-ish, also takes a stack-spilled varargs tail). Two params + varargs:"
+        },
+        {
+          "rva": "0x004fd4b1",
+          "plate": "[C1 2026-05-19] `#line` directive setter (`__thiscall(this, line_no, file_name_ptr_or_0)`)."
+        },
+        {
+          "rva": "0x004fd4da",
+          "plate": "[C1 2026-05-19] `#include` directive handler (`__fastcall(this)`). Reads the filename token, resolves path relative to current file or\u2026"
+        },
+        {
+          "rva": "0x004fd6a2",
+          "plate": "[C1 2026-05-19] `#error` directive handler (`__fastcall(this)`). Reads the rest of the current line, copies it (skipping `\\r` and\u2026"
+        },
+        {
+          "rva": "0x004fd778",
+          "plate": "[C1 2026-05-19] `#if` / `#ifdef` / `#ifndef` opener \u2014 pushes a new `#if`-frame on the stack (`__thiscall(this, condition_bool)`)."
+        },
+        {
+          "rva": "0x004fd7d0",
+          "plate": "[C1 2026-05-19] `#elif` directive handler (`__thiscall(this, condition_bool)`)."
+        },
+        {
+          "rva": "0x004fd843",
+          "plate": "[C1 2026-05-19] `#else` directive handler (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x004fd8a5",
+          "plate": "[C1 2026-05-19] `#endif` directive handler (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x004fd8f5",
+          "plate": "[C1 2026-05-19] `#pragma pack_matrix(row_major|column_major)` directive handler (HLSL-style) (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x004fda12",
+          "plate": "[C1 2026-05-19] `#pragma warning( <mode> : <id-list> ; <mode> : <id-list> ... )` directive parser (`__fastcall(this)`). Recognizes\u2026"
+        },
+        {
+          "rva": "0x004fdda7",
+          "plate": "[C1 2026-05-19] Tiny string-length-only walker (`__cdecl(char* s)`)."
+        },
+        {
+          "rva": "0x004fddbc",
+          "plate": "[C1 2026-05-19] Macro-table **insert** (replace existing if name matches; otherwise head-insert)."
+        },
+        {
+          "rva": "0x004fde39",
+          "plate": "[C1 2026-05-19] Macro-table **lookup** (`FUN_004fde39(name, out_p2, out_p3)`)."
+        },
+        {
+          "rva": "0x004fdeaa",
+          "plate": "[C1 2026-05-19] String-escaping helper for `#`-stringizing macros (`__cdecl(src, src_len, dst_or_0)`). Two-pass-capable (dst==0 \u2192 just\u2026"
+        },
+        {
+          "rva": "0x004fdf0f",
+          "plate": "[C1 2026-05-19] Error-tap wrapper (`__thiscall(this, value)`):"
+        },
+        {
+          "rva": "0x004fdf42",
+          "plate": "[C1 2026-05-19] `#define` directive handler (`__thiscall(this, name_token, args_present_flag)`). Builds a macro-table node (16 bytes)\u2026"
+        },
+        {
+          "rva": "0x004fe1b0",
+          "plate": "[C1 2026-05-19] Macro-table **remove** by name (`__cdecl(name)`; `extraout_ECX = this`)."
+        },
+        {
+          "rva": "0x004fe21e",
+          "plate": "[C1 2026-05-19] `#pragma` dispatcher (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x004fe298",
+          "plate": "[C1 2026-05-19] `defined(NAME)` evaluator inside `#if`-expressions (`__thiscall(this, name)`)."
+        },
+        {
+          "rva": "0x004fe2fe",
+          "plate": "[C1 2026-05-19] **Macro expansion engine** \u2014 the largest function in the bucket (1745 bytes). Drives both:"
+        },
+        {
+          "rva": "0x004fe9cf",
+          "plate": "[C1 2026-05-19] **Predefined-macro setup** at compiler-context construction (`__thiscall(this, user_defines_table)`). Installs four\u2026"
+        },
+        {
+          "rva": "0x004febf6",
+          "plate": "[C1 2026-05-19] **Yacc/Bison action dispatcher** \u2014 called by FUN_004ff041's parser-table walker with `(production_id, arg_count)` once\u2026"
+        },
+        {
+          "rva": "0x004ff041",
+          "plate": "[C1 2026-05-19] **Yacc/Bison-generated parser driver** (canonical \"yyparse\" shape). Drives a LALR(1) state machine using tables at\u2026"
+        },
+        {
+          "rva": "0x004ff554",
+          "plate": "[C1 2026-05-19] Public **Init** entry for the preprocessor (`__thiscall(this, source_ptr, source_len, user_defines_table\u2026"
+        },
+        {
+          "rva": "0x004ff5b6",
+          "plate": "[C1 2026-05-19] **Top-level preprocessor token-stream entry** \u2014 caller's view of \"give me the next post-preprocessed token\"\u2026"
+        },
+        {
+          "rva": "0x004ff8b9",
+          "plate": "[C1 2026-05-19] \"Consume tokens through end-of-block\" (`__fastcall(this)`):"
+        },
+        {
+          "rva": "0x004ff913",
+          "plate": "[C1 2026-05-19] Trivial 1-line: `*param_1 = 0` (initialize a single dword pointer slot to NULL). Sister-init to FUN_004ff958."
+        },
+        {
+          "rva": "0x004ff919",
+          "plate": "[C1 2026-05-19] Free a singly-linked list of heap-allocated nodes (next pointer at offset +0):"
+        },
+        {
+          "rva": "0x004ff936",
+          "plate": "[C1 2026-05-19] **Block-pool allocator** (`__thiscall(this, size)`):"
+        },
+        {
+          "rva": "0x004ff958",
+          "plate": "[C1 2026-05-19] Initializer for an 8-dword \"diagnostic/log state\" struct:"
+        },
+        {
+          "rva": "0x004ff978",
+          "plate": "[C1 2026-05-19] Diagnostic-state destructor. Walks list at `*param_1` freeing nodes (same shape as FUN_004ff919), then also frees\u2026"
+        },
+        {
+          "rva": "0x004ff9a7",
+          "plate": "[C1 2026-05-19] **Sorted-key insertion** into a parallel-array map (`__thiscall(this, key, out_index)`). Maintains two arrays kept in\u2026"
+        },
+        {
+          "rva": "0x004ffae8",
+          "plate": "[C1 2026-05-19] Push a log-message record onto a singly-linked list (`__thiscall(this, message_string)`)."
+        },
+        {
+          "rva": "0x004ffb3e",
+          "plate": "[C1 2026-05-19] Flush log-message list to a caller-supplied IUnknown-like writer (`__thiscall(this, out_writer_pp)`)."
+        },
+        {
+          "rva": "0x004ffba7",
+          "plate": "[C1 2026-05-19] One-liner: `return *(undefined4 *)(param_1 + 8);`"
+        },
+        {
+          "rva": "0x004ffbab",
+          "plate": "[C1 2026-05-19] Initializer for a 13-dword lexer-input-state struct (`__fastcall(this=param_1)`):"
+        },
+        {
+          "rva": "0x004ffbc5",
+          "plate": "[C1 2026-05-19] **Lexer-input-state setter** (`__thiscall(this, source_ptr, source_len, file_id, line, owner_ptr, parent_ptr)`)."
+        },
+        {
+          "rva": "0x004ffc2d",
+          "plate": "[C1 2026-05-19] **Advance source cursor to end-of-line, return 1 if `\\n` was found, 0 if hit end-of-source** (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x004ffc86",
+          "plate": "[C1 2026-05-19] **Floating-point literal lexer** (`__thiscall(this, source_ptr, out_double_or_0)`)."
+        },
+        {
+          "rva": "0x004ffe02",
+          "plate": "[C1 2026-05-19] **Identifier lexer** (`__thiscall(this, source_ptr, out_strdup_ptr)`)."
+        },
+        {
+          "rva": "0x004ffe81",
+          "plate": "[C1 2026-05-19] **Single/multi-char punctuator lexer** (`__thiscall(this, source_ptr, out_byte3)`)."
+        },
+        {
+          "rva": "0x004fff8d",
+          "plate": "[C1 2026-05-19] **Float-literal suffix consumer** (`__thiscall(this, source_ptr, out_typecode_or_null)`)."
+        },
+        {
+          "rva": "0x004fffd3",
+          "plate": "[C1 2026-05-19] **Integer-literal suffix consumer** (`__thiscall(this, source_ptr, out_typecode_or_null)`)."
+        },
+        {
+          "rva": "0x0050005a",
+          "plate": "[C1 2026-05-19] **Per-error-code severity setter** (`__thiscall(this, error_code_string_arg, severity_command)`)."
+        },
+        {
+          "rva": "0x005000c2",
+          "plate": "[C1 2026-05-19] **Compiler-error message emitter (severity-unconditional)** (`__cdecl(error_state, source_loc, error_code, fmt\u2026"
+        },
+        {
+          "rva": "0x0050018b",
+          "plate": "[C1 2026-05-19] **Compiler-warning message emitter (severity-table-gated)** (`__cdecl(error_state, source_loc, error_code, fmt\u2026"
+        },
+        {
+          "rva": "0x005002ec",
+          "plate": "[C1 2026-05-19] **\"Unexpected token\" diagnostic formatter** (`__cdecl(error_state, source_loc, token)`)."
+        },
+        {
+          "rva": "0x0050042f",
+          "plate": "[C1 2026-05-19] **Whitespace + comment + line-continuation skipper** (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x0050055f",
+          "plate": "[C1 2026-05-19] **Hex literal lexer** (`__thiscall(this, source_ptr, out_uint_or_null)`)."
+        },
+        {
+          "rva": "0x00500604",
+          "plate": "[C1 2026-05-19] **Octal literal lexer** (`__thiscall(this, source_ptr, out_uint_or_null)`)."
+        },
+        {
+          "rva": "0x00500680",
+          "plate": "[C1 2026-05-19] **Decimal literal lexer** (`__thiscall(this, source_ptr, out_uint_or_null)`)."
+        },
+        {
+          "rva": "0x00500721",
+          "plate": "[C1 2026-05-19] **C escape-sequence decoder** (`__thiscall(this, source_ptr, out_int)`)."
+        },
+        {
+          "rva": "0x005008b7",
+          "plate": "[C1 2026-05-19] **Shader version/profile-prefix lexer** (`__thiscall(this, source_ptr, out_int)`)."
+        },
+        {
+          "rva": "0x005009ba",
+          "plate": "[C1 2026-05-19] **Single-quoted character literal lexer** (`__thiscall(this, source_ptr, out_int)`)."
+        },
+        {
+          "rva": "0x005009f9",
+          "plate": "[C1 2026-05-19] **String literal lexer** (`__thiscall(this, source_ptr, out_strdup_ptr)`)."
+        },
+        {
+          "rva": "0x00500adc",
+          "plate": "[C1 2026-05-19] **Main lexer dispatch / raw-token producer** (`__thiscall(this, mode_mask, out_token)`)."
+        },
+        {
+          "rva": "0x00500ee3",
+          "plate": "[C1 2026-05-19] **Case-insensitive string hash, mod 7** (`__cdecl(string)`)."
+        },
+        {
+          "rva": "0x00500f1f",
+          "plate": "[C1 2026-05-19] **Hash-table case-insensitive string lookup** (`__thiscall(table, key_string)`)."
+        },
+        {
+          "rva": "0x00500f51",
+          "plate": "[C1 2026-05-19] **Hash-table flatten / enumerate-all-entries** (`__cdecl(table, out_array)`)."
+        },
+        {
+          "rva": "0x00500f76",
+          "plate": "[C1 2026-05-19] **Structure initialiser / zero-clear at specific offsets** (`__fastcall(this)`)."
+        },
+        {
+          "rva": "0x00500f92",
+          "plate": "[C1 2026-05-19] **yyerror \u2014 Berkeley YACC error callback** (`__cdecl(parser_state, fmt, varargs...)`)."
+        }
+      ],
+      "missing_md": []
+    }
+  ],
+  "total_rvas": 480,
+  "total_missing_md": 0
+}

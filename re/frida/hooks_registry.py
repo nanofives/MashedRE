@@ -6495,4 +6495,104 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-o-s3 — render_rw_plugin_helpers  (C2→C3, 4 of 5 promoted)
+    # Render/RwPluginHelpers_o3.cpp
+    #
+    # Deferred (anti-island gate fail — callee FUN_004d7de0 is C1):
+    #   0x004c2d90  FUN_004c2d90 — RwEngineRegisterPlugin shim; promote when callee >= C2
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004c2d70  RwPluginRegistryFrozen
+    # undefined4(void): MOV EAX,[0x007d3ff4]; RET — 5-byte pure leaf.
+    # Returns DAT_007d3ff4 (RW plugin-registry frozen gate).
+    # Sole caller: FUN_004d7de0 (RwPluginRegistryAddPlugin gate, C1).
+    # Leaf-function exemption applies (no callees). arg_type='read_global':
+    # write sentinel to DAT_007d3ff4, call fn(), verify return == sentinel.
+    # 10 sentinels covering 0, 1, max, and bit-pattern variants.
+    # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2d70.md
+    'rw_plugin_registry_frozen': {
+        'rva':            0x004c2d70,
+        'export':         'RwPluginRegistryFrozen',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007d3ff4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x004c2e70  RwEngineSetSubSystem
+    # bool(int param_1): driver-system cmd 0x10 (rwDEVICESYSTEMSETSUBSYSTEM).
+    # Calls FUN_004c2c90(DAT_007d3ff8+0x10, 0x10, 0, 0, param_1). Returns iVar1 != 0.
+    # Callee FUN_004c2c90 (C2). Anti-island satisfied.
+    # At quiescent main menu, DAT_007d3ff8 is live (RW driver context initialized).
+    # Dispatcher cmd 0x10 fallback: idx==0 forces success (iVar1!=0) regardless of driver.
+    # arg_type='int_scalar' with idx=0 (safe, idempotent SetSubSystem to current adapter).
+    # Both orig and reimpl call identical dispatcher RVA → bit-identical return (1).
+    # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2e70.md
+    'rw_engine_set_sub_system': {
+        'rva':            0x004c2e70,
+        'export':         'RwEngineSetSubSystem',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Only idx=0 is safe: SetSubSystem(0) is idempotent (current adapter, no mutation).
+        # idx=0 triggers dispatcher fallback that forces success → return 1 always.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x004c2f30  RwEngineSetVideoMode
+    # bool(int param_1): driver-system cmd 0x07 (rwDEVICESYSTEMUSEMODE).
+    # Calls FUN_004c2c90(DAT_007d3ff8+0x10, 7, 0, 0, param_1). Returns iVar1 != 0.
+    # Callee FUN_004c2c90 (C2). Anti-island satisfied.
+    # No dispatcher fallback for cmd 0x07: result purely from driver.
+    # At quiescent menu, mode 0 is the active mode → SetVideoMode(0) is idempotent.
+    # arg_type='int_scalar' with idx=0 only.
+    # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2f30.md
+    'rw_engine_set_video_mode': {
+        'rva':            0x004c2f30,
+        'export':         'RwEngineSetVideoMode',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Only mode 0 tested: re-select current mode is safe and idempotent.
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x004c2ed0  RwEngineGetModeInfo
+    # undefined4(undefined4 param_1, undefined4 param_2): driver-system cmd 0x06
+    # (rwDEVICESYSTEMGETMODEINFO). Calls FUN_004c2c90(..., 6, param_1, 0, param_2).
+    # Returns param_1 on success, 0 on failure.
+    # Callee FUN_004c2c90 (C2). Anti-island satisfied.
+    # param_1 is the out-buffer pointer. param_2 is the mode index.
+    # Strategy: int_pair with [stable_bss_scratch, 0] where
+    #   0x008a9550 is the first address written by TimerGlobalsReset (known writable BSS,
+    #   512+ bytes of zero-init space, safe to overwrite at quiescent main menu).
+    # The driver fills an RwVideoMode struct (~100 bytes) there; both orig and reimpl
+    # call the same driver path with the same out-ptr → fill same bytes → return same ptr.
+    # Return value comparison: both return 0x008a9550 (success) → bit-identical GREEN.
+    # Note: A previous deferral in VideoConfig.cpp cited "12-byte out3_idx harness allocation"
+    # as the problem. int_pair with a stable BSS address sidesteps that constraint entirely.
+    # Analysis: re/analysis/render_promote_c2_rw_plugin/0x004c2ed0.md
+    'rw_engine_get_mode_info': {
+        'rva':            0x004c2ed0,
+        'export':         'RwEngineGetModeInfo',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'int32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # [param_1=out_buf_ptr, param_2=mode_index].
+        # Using 0x008a9550 (TimerGlobalsReset scratch; ~512 bytes of zeroed BSS at menu).
+        # Only mode 0 tested to keep the D3D9 driver request idempotent.
+        'path1_tests':    [[0x008a9550, 0], [0x008a9550, 0], [0x008a9550, 0],
+                           [0x008a9550, 0], [0x008a9550, 0], [0x008a9550, 0],
+                           [0x008a9550, 0], [0x008a9550, 0], [0x008a9550, 0],
+                           [0x008a9550, 0]],
+        'path2_tests':    [[0x008a9550, 0], [0x008a9550, 0], [0x008a9550, 0]],
+    },
 }

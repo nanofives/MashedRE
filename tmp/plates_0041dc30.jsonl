@@ -1,0 +1,80 @@
+{"rva": "0x0041dc30", "plate": "[C1 2026-05-20] 4-iteration loop (i = 0..3): calls FUN_00417730(i), stores float10->float into (&DAT_0063d590)[i]."}
+{"rva": "0x0041e080", "plate": "[C1 2026-05-20] Pure leaf \u2014 zero-initialises 12 fields of a global struct rooted at DAT_0063d798..0063d7dc."}
+{"rva": "0x00422470", "plate": "[C1 2026-05-20] Wraps a float param through a math pipeline."}
+{"rva": "0x004224d0", "plate": "[C1 2026-05-20] Initialises one slot of a 0xf40-byte array rooted at &DAT_006403e8. Index = `param_1`; stride 0xf40."}
+{"rva": "0x00422a80", "plate": "[C1 2026-05-20] One-liner. Zero/memset slot N of the 0xf40-byte array at &DAT_006403e8."}
+{"rva": "0x00422aa0", "plate": "[C1 2026-05-20] Pure leaf setter. Writes `param_2` into slot field at &DAT_0064131c + param_1*0xf40."}
+{"rva": "0x00423040", "plate": "[C1 2026-05-20] Frontend menu directional-input handler. Reads four input flags DAT_007f1044/045/046/047\u2026"}
+{"rva": "0x00423270", "plate": "[C1 2026-05-20] Menu page-tab cycler. Selects iVar1 (low) and iVar2 (high) menu-page bounds based on DAT_007f1a54\u2026"}
+{"rva": "0x00423320", "plate": "[C1 2026-05-20] 8-way menu cursor on 4x32 grid (DAT_007f1a90 = cursor index, mod 4 columns x N rows)."}
+{"rva": "0x00423b40", "plate": "[C1 2026-05-20] Per-player score accessor #1 \u2014 returns `(&DAT_00899a94)[param_1 * 0x4e]` (player N field at +0x000 of\u2026"}
+{"rva": "0x00423b60", "plate": "[C1 2026-05-20] Twin of 0x00423b40 (only base differs): returns `(&DAT_00899a98)[param_1 * 0x4e]` (player N field at\u2026"}
+{"rva": "0x00423b80", "plate": "[C1 2026-05-20] Sibling accessor: returns `(&DAT_00899f74)[param_1 * 0x4e]` (player N field at +0x4e0 \u2014 DAT_00899f74 -\u2026"}
+{"rva": "0x00423ba0", "plate": "[C1 2026-05-20] Sibling accessor #4: returns `(&DAT_00899f78)[param_1 * 0x4e]` (cumulative counterpart of DAT_00899a98)."}
+{"rva": "0x00423bc0", "plate": "[C1 2026-05-20] Team-aware accessor for player N field at base DAT_00899a9c (+0x008)."}
+{"rva": "0x00423c40", "plate": "[C1 2026-05-20] Same shape as 0x00423bc0 but for field at base DAT_00899a40 (offset -0x54 from DAT_00899a94, == start\u2026"}
+{"rva": "0x00423cc0", "plate": "[C1 2026-05-20] Team-aware accessor for field DAT_00899a44 (+0x04 of player struct). Hybrid of 0x00423b40 + 0x00423bc0:"}
+{"rva": "0x00423d50", "plate": "[C1 2026-05-20] Same shape as 0x00423bc0 but for field at base DAT_00899a90 (+0x50 of player struct)."}
+{"rva": "0x00423dd0", "plate": "[C1 2026-05-20] Field at DAT_00899a48 (+0x08). GetRaceSubMode==4 gate + team-aggregation. Aggregates\u2026"}
+{"rva": "0x00423e60", "plate": "[C1 2026-05-20] Cumulative-block twin of 0x00423bc0 \u2014 field at DAT_00899f7c (+0x4e8 of player struct or alternate\u2026"}
+{"rva": "0x00423ee0", "plate": "[C1 2026-05-20] Field at DAT_00899f20 (block-2, similar offset to DAT_00899a40 of block-1). Aggregates\u2026"}
+{"rva": "0x00423f60", "plate": "[C1 2026-05-20] Field at DAT_00899f24 (block-2 +0x04). RaceSubMode==4 gate + team-aggregation. Aggregates\u2026"}
+{"rva": "0x00423ff0", "plate": "[C1 2026-05-20] Field at DAT_00899f70 (block-2 +0x50). Team-aggregation: 00899f70/0089a0a8/0089a1e0/0089a318."}
+{"rva": "0x00424070", "plate": "[C1 2026-05-20] Field at DAT_00899f28 (block-2 +0x08). RaceSubMode==4 gate + team-aggregation:\u2026"}
+{"rva": "0x00424100", "plate": "[C1 2026-05-20] Field at DAT_008999a0 (offset -0xa0 from DAT_00899a40, == start of an EARLIER player-struct block #0).\u2026"}
+{"rva": "0x004241b0", "plate": "[C1 2026-05-20] One-instruction leaf getter: `return DAT_008994c0;`."}
+{"rva": "0x004241c0", "plate": "[C1 2026-05-20] Same shape as 0x00424100 \u2014 field at DAT_00899e80 (offset +0x60 from DAT_00899e20-ish). Active-player\u2026"}
+{"rva": "0x00424270", "plate": "[C1 2026-05-20] Race-position rank dispatcher. param_1 = output int[4] (player rank slots), param_2 = score-type\u2026"}
+{"rva": "0x00424920", "plate": "[C1 2026-05-20] End-of-round score accumulator. Adds 32 pairs of fields: `block2[i] += block1[i]` where block1 = match\u2026"}
+{"rva": "0x00424b80", "plate": "[C1 2026-05-20] End-of-match debug-print + stats accumulator. Iterates over player-array slots (puVar10 starts at\u2026"}
+{"rva": "0x00425b70", "plate": "[C1 2026-05-20] Setter for slot N in array rooted at DAT_008992a0 (stride 0x13 ints = 76 bytes)."}
+{"rva": "0x00425b90", "plate": "[C1 2026-05-20] Wraps FUN_004e66d0(*param_1, FUN_004516d0, &local_8) with local_8=0."}
+{"rva": "0x00425bf0", "plate": "[C1 2026-05-20] One-liner: `FUN_00495280(\"d:\\\\ToastArt\\\\common\\\\perm.piz\");`"}
+{"rva": "0x00425c00", "plate": "[C1 2026-05-20] Copter (helicopter) asset registration. Scans array starting at &DAT_00899260 with stride 0x13 ints\u2026"}
+{"rva": "0x00425ca0", "plate": "[C1 2026-05-20] Spatial-transform setter on the +4 field of param_1 (probably an RwFrame*)."}
+{"rva": "0x00425ea0", "plate": "[C1 2026-05-20] Bulk destructor for the copter/object slot array (DAT_00899260 .. 0x8994c0, stride 0x4c bytes = 0x13\u2026"}
+{"rva": "0x00425ee0", "plate": "[C1 2026-05-20] Slot-pointer leaf: returns `&DAT_00899294 + param_1 * 0x13` (pointer to int slot[0xd] of slot N)."}
+{"rva": "0x00425ef0", "plate": "[C1 2026-05-20] \"Count active copter slots\" \u2014 pure leaf. Checks 8 pairs of (slot_handle, slot_visible_flag) and\u2026"}
+{"rva": "0x00425fa0", "plate": "[C1 2026-05-20] Slot-info exporter. Reads slot N's `handle` (DAT_00899260[N*0x13]) and `visible_flag`\u2026"}
+{"rva": "0x00426020", "plate": "[C1 2026-05-20] Getter thunk #1: `return &DAT_00646e58;` (pointer to global)."}
+{"rva": "0x00426080", "plate": "[C1 2026-05-20] Getter thunk #2: `return DAT_00656ed8;` (4-byte value)."}
+{"rva": "0x00426090", "plate": "[C1 2026-05-20] Getter thunk #3: `return &DAT_0066ce58;` (pointer to global)."}
+{"rva": "0x004260a0", "plate": "[C1 2026-05-20] Getter thunk #4: `return DAT_00657438;` (4-byte value)."}
+{"rva": "0x004260b0", "plate": "[C1 2026-05-20] Getter thunk #5: `return DAT_0065743c;` (4-byte value)."}
+{"rva": "0x00426460", "plate": "[C1 2026-05-20] Iterator-style transform applier on a world object handle (param_1)."}
+{"rva": "0x00426b40", "plate": "[C1 2026-05-20] Subsystem teardown \u2014 sequentially calls 10 cleanup functions:"}
+{"rva": "0x00426bc0", "plate": "[C1 2026-05-20] Getter leaf: `return DAT_0066d6e0;` (single int)."}
+{"rva": "0x00426bd0", "plate": "[C1 2026-05-20] 2-value packed-record reader. Reads two ushorts from a packed table at &DAT_0066d658, stride 4 bytes\u2026"}
+{"rva": "0x00426c50", "plate": "[C1 2026-05-20] Conditional dispatcher: `if (FUN_0041ea60() != 0) FUN_0041e940();`"}
+{"rva": "0x00426cb0", "plate": "[C1 2026-05-20] Slot-pointer leaf: `return &DAT_00663664 + param_1 * 0x4c;` \u2014 returns pointer to slot N of a 0x4c-byte\u2026"}
+{"rva": "0x00426d00", "plate": "[C1 2026-05-20] 2D-slot-pointer leaf: `return &DAT_00663670 + param_2 * 0xc + param_1 * 0x4c;` \u2014 returns pointer to\u2026"}
+{"rva": "0x00426d20", "plate": "[C1 2026-05-20] Per-frame transform refresh over a 4-handle array at DAT_00656f48..0x656f58 (16 bytes / 4 int handles)."}
+{"rva": "0x00426d90", "plate": "[C1 2026-05-20] Bulk cleanup over the 4-handle array DAT_00656f48..0x656f58 (the same array as 0x00426d20)."}
+{"rva": "0x00426dc0", "plate": "[C1 2026-05-20] 3-arg forwarder: `FUN_00479100(&DAT_00646e58, param_1, param_2, param_3);`"}
+{"rva": "0x00426de0", "plate": "[C1 2026-05-20] Float-getter leaf: `return (float10)_DAT_0064435c;` \u2014 returns the float at DAT_0064435c (loaded as\u2026"}
+{"rva": "0x00426df0", "plate": "[C1 2026-05-20] Float-getter leaf: `return (float10)_DAT_00644360;` (companion of 0x00426de0, +4 bytes)."}
+{"rva": "0x004273e0", "plate": "[C1 2026-05-20] 2D quad emitter (Im2D-style HUD primitive). Args: 4 floats (x1, y1, x2, y2 of a UV/screen rect) +\u2026"}
+{"rva": "0x00427580", "plate": "[C1 2026-05-20] HUD-rect param initializer. Pure leaf \u2014 writes 4 globals starting at DAT_008991c0..0x008991cc:"}
+{"rva": "0x004277a0", "plate": "[C1 2026-05-20] Glyph remapper. Reads first u16 from in_EAX as length N (signed). For each of N source u16 entries\u2026"}
+{"rva": "0x00427880", "plate": "[C1 2026-05-20] Resource loader skeleton."}
+{"rva": "0x00429b30", "plate": "[C1 2026-05-20] Race-overlay setup A. Gated on `GetRaceSubMode != 2 && DAT_008991b0 == 0`."}
+{"rva": "0x00429b70", "plate": "[C1 2026-05-20] Race-overlay setup B (sibling of 0x00429b30). Gated on `GetRaceSubMode in {3, 4, 5}` (calls 3 times, 3\u2026"}
+{"rva": "0x0042a640", "plate": "[C1 2026-05-20] BSP world file loader. Already has a [C1 2026-05-07] comment in Ghidra noting pattern shared with\u2026"}
+{"rva": "0x0042a980", "plate": "[C1 2026-05-20] Linked-list lookup. Calls FUN_0040ce80(param_1) -> iVar2 (key). Walks a sentinel-terminated list at\u2026"}
+{"rva": "0x0042a9c0", "plate": "[C1 2026-05-20] Mode-based code lookup. Reads DAT_007f0fd0 (mode/state):"}
+{"rva": "0x0042ad10", "plate": "[C1 2026-05-20] HUD-glyph slot initializer. Takes (param_1 unused, param_2 glyph-id, param_3 x, param_4 y, param_5\u2026"}
+{"rva": "0x0042ad90", "plate": "[C1 2026-05-20] Sparse key/value table lookup. Takes (param_1 unused, param_2 = int* table)."}
+{"rva": "0x0042add0", "plate": "[C1 2026-05-20] Variant of 0x0042ad90 \u2014 uses preselected table `(&DAT_0067ed38)[DAT_0067e9f8 * 0x10]` (current-mode\u2026"}
+{"rva": "0x0042b920", "plate": "[C1 2026-05-20] Constant getter: `return 0x16;` (22 decimal)."}
+{"rva": "0x0042bde0", "plate": "[C1 2026-05-20] 5-call HUD-rect emitter. Takes (param_1 int, param_2 byte). Builds a packed color arg by ORing param_2\u2026"}
+{"rva": "0x0042bfb0", "plate": "[C1 2026-05-20] 6-arg state-store with fallback. Reads DAT_0067eab0; if 0 -> call FUN_0042bf30() (alt init) and return."}
+{"rva": "0x0042fab0", "plate": "[C1 2026-05-20] 10-case dispatcher; each case calls FUN_0040bb90() with no arguments. Carries a [C1 2026-05-11]\u2026"}
+{"rva": "0x00430250", "plate": "[C1 2026-05-20] 13-slot table lookup. If param_2 nonzero:"}
+{"rva": "0x00431b70", "plate": "[C1 2026-05-20] Getter leaf: `return DAT_007f0f10;` (single int)."}
+{"rva": "0x00432450", "plate": "[C1 2026-05-20] State-transition trigger. Reads 3 fields at DAT_0067eabc/c0 and DAT_0067eab4; compares against\u2026"}
+{"rva": "0x00432ad0", "plate": "[C1 2026-05-20] MenuIm2DQuad dim-overlay fade-out. Reads DAT_00898a90 (alpha counter, expected range 0..0x1ff):"}
+{"rva": "0x00432b30", "plate": "[C1 2026-05-20] Massive HUD-glyph-pair emitter for race control prompts. param_1 (in_EAX) = mode (0/2/other = current\u2026"}
+{"rva": "0x00433240", "plate": "[C1 2026-05-20] Race-state arm/reset routine. Gated on `DAT_0067eca4 == 0` (one-shot)."}
+{"rva": "0x004332a0", "plate": "[C1 2026-05-20] Per-frame menu/race input dispatch. Gated on DAT_0067eab0 == 0 (game-state pre-start guard)."}
+{"rva": "0x0043aee0", "plate": "[C1 2026-05-20] Tiny gated mutator. Reads FUN_004307a0() result and DAT_0067ed6c; if both non-zero:"}
+{"rva": "0x004893d0", "plate": "[C1 2026-05-20] Push-vertex into a dynamic vertex buffer. Param_1 = struct{int* buf; int capacity; int count; ...\u2026"}

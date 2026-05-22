@@ -1,0 +1,59 @@
+rva	name	subsystem	reason
+00494c80	FUN_00494c80	util	callee-gate: 00493bc0=C1,00493f00=C1,004944b0=C1,00494ac0=C1,004a1790=C1
+0043c5b0	FUN_0043c5b0	frontend	inline [UNCERTAIN U-0448] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+0042e3a0	FUN_0042e3a0	frontend	callee-gate: 00472c60=C1,00472f40=C1,004730b0=C1
+0042d5a0	FUN_0042d5a0	frontend	callee-gate: 00427e00=C1
+0042e5b0	FUN_0042e5b0	frontend	callee-gate: 00473c20=C1,00473ee0=C1,00474890=C1,004a2c48=C1
+0041d870	sub_0041d870	hud	callee-gate: 0041d410=C1
+0041ded0	sub_0041ded0	hud	callee-gate: 0041de80=C1
+0041e850	sub_0041e850	hud	callee-gate: 0041e630=C1
+004929d0	FUN_004929d0	util	callee-gate: 0040b430=C1,0040b540=C1,0040b6d0=C1,0040b6e0=C1,0040b700=C1,0040d440=C1,0040e450=C1,0040e460=C1,0042b8e0=C1,0042b910=C1,0042b940=C1,0042c1c0=C1,0042c1d0=C1,0042c220=C1,00448700=C1,004927c0=C1
+004af31a	LAB_004af31a	util	callee-gate: 004af2d4=C1,004af32d=C1
+004950b0	FUN_004950b0	util	callee-gate: 00495120=C1
+00495350	sub_00495350	frontend	callee-gate: 00493f70=C1,00493f80=C1,00493fc0=C1,00493fd0=C1,00494460=C1,00494480=C1,00494a80=C1,004c1a00=C1,004c1bb0=C1,004c1be0=C1
+00492d20	sub_00492d20	frontend	callee-gate: 004967e0=C1
+004cc230	FUN_004cc230	frontend	inline [UNCERTAIN U-3722] not in UNCERTAINTIES.md (heading=## mechanical description)
+004cc160	FUN_004cc160	frontend	callee-gate: 004d7ff0=C1,004d8480=C1
+0041c2d0	FUN_0041c2d0	hud	signature-unsupported: in_EAX arg
+0041b340	FUN_0041b340	hud	signature-unsupported: in_EAX arg
+0041bc50	FUN_0041bc50	hud	signature-unsupported: in_EAX arg
+0041c9a0	FUN_0041c9a0	hud	signature-unsupported: in_EAX arg
+00427ca0	FontText_HudInit	hud	callee-gate: 00427880=C1,00556cc0=C1,00556d70=C1,00556e90=C1
+00427620	FontText_HudShutdown	hud	callee-gate: 004c5930=C1,00552b90=C1,00555830=C1,00556cd0=C1,00556e40=C1
+00427ff0	FontText_DrawTextRotated	hud	inline bare [UNCERTAIN] (heading=## body summary (0x00427ff0–0x0042813d))
+005554d0	FUN_005554d0	hud	callee-gate: 00554940=C1
+0042f0c0	FUN_0042f0c0	frontend	callee-gate: 00427e00=C1,00473870=C1,004739f0=C1,004a2c48=C1
+0042fb70	FUN_0042fb70	frontend	callee-gate: 00427e00=C1,00473870=C1,004739f0=C1,004a2c48=C1
+0042fe90	FUN_0042fe90	frontend	callee-gate: 00427e00=C1,00473870=C1,004739f0=C1,004a2c48=C1
+0042bcb0	FUN_0042bcb0	frontend	callee-gate: 004b5750=C1
+004282a0	FUN_004282a0	frontend	callee-gate: 004277a0=C1
+00427ad0	FUN_00427ad0	frontend	callee-gate: 004277a0=C1,00552d70=C1,005555b0=C1,00556e90=C1
+0042f8d0	FUN_0042f8d0	frontend	callee-gate: 00472c60=C1
+0042ac50	FUN_0042ac50	frontend	signature-unsupported: fastcall ECX/EDX args
+0042a940	FUN_0042a940	frontend	callee-gate: 0040ce80=C1
+0040b460	FUN_0040b460	frontend	callee-gate: 00417740=C1
+00430b30	FUN_00430b30	frontend	signature-unsupported: in_EAX arg
+0042d290	FUN_0042d290	frontend	callee-gate: 004a2b60=C1,004a2c48=C1
+00429a30	FUN_00429a30	frontend	callee-gate: 00430790=C1
+00403050	FUN_00403050	frontend	callee-gate: 00402fb0=C1,00428760=C1
+00408a70	FUN_00408a70	frontend	callee-gate: 004a2c48=C1
+00422fd0	FUN_00422fd0	frontend	callee-gate: 004215c0=C1,0045ba00=C1,0046c5c0=C1,0046c790=C1
+00552840	FontCtx_SetRotation	hud	callee-gate: 004c4d20=C1
+004c57a0	FontCtxMatrix_AllocInit	hud	inline bare [UNCERTAIN] (heading=## fun_00427680 — hud-normalized → screen xy (s-1060 callee))
+00431b80	FUN_00431b80	frontend	inline bare [UNCERTAIN] (heading=## why c2 (drift-promote from c1, 2026-05-14))
+0042f020	FUN_0042f020	frontend	signature-unsupported: fastcall ECX/EDX args
+00431d00	FUN_00431d00	frontend	signature-unsupported: in_EAX arg
+00495080	FUN_00495080	frontend	callee-gate: 00494fd0=C1
+00494f30	FUN_00494f30	frontend	callee-gate: 00493fc0=C1
+00492d30	FUN_00492d30	util	callee-gate: 004030d0=C1,004111c0=C1,0043d7c0=C1,0043dfd0=C1,00496920=C1,00498860=C1
+00429bd0	FUN_00429bd0	util	callee-gate: 00401340=C1,004013f0=C1,0040dc80=C1,00427e00=C1,00429620=C1,00429b70=C1,00472c60=C1
+00424eb0	FUN_00424eb0	util	callee-gate: 00408b00=C1,00409290=C1,0040b290=C1,0040dc90=C1,0040eee0=C1,00421690=C1,00443080=C1,0045ba00=C1,0046baa0=C1,00486f90=C1,004a2c48=C1
+00442440	FUN_00442440	util	callee-gate: 0040dc90=C1,0046d4a0=C1,004c4d20=C1
+004c1c10	Camera::SetProjection	util	signature-unsupported: in_ST0 (FPU) arg
+0041f1e0	FUN_0041f1e0	util	callee-gate: 004c0ed0=C1
+00412cf0	FUN_00412cf0	hud	callee-gate: 004726f0=C1,004a2c48=C1
+0041cb80	sub_0041cb80	util	callee-gate: 0040b890=C1,0041c380=C1
+0041d730	sub_0041d730	util	callee-gate: 0041cdb0=C1
+00410860	FUN_00410860	util	callee-gate: 0040b6d0=C1,0040e460=C1,00424b80=C1,00429860=C1,00429b30=C1,0042aab0=C1,0043aee0=C1,00448700=C1,004a2c48=C1
+00493480	FUN_00493480	util	inline bare [UNCERTAIN] (heading=## constants)
+004b302f	__stricmp	util	callee-gate: 004a8828=C0,004ac869=C0,004ae5fa=C0,004b2eb0=C0

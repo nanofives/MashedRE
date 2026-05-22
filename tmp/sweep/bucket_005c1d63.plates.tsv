@@ -1,0 +1,80 @@
+0x005c1d63	[C1 2026-05-18] FidDB-attested MSVC CRT entry point.
+0x005c1da2	[C1 2026-05-18] Naked SEH-finally tail.
+0x005c1dac	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__ftol` (float-to-long with FPU mode swap).
+0x005c1dd3	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_fwprintf` (`int __cdecl FID_conflict:_fwprintf(FILE*, wchar_t*…
+0x005c1e27	[C1 2026-05-18] Naked SEH-finally tail; same pattern as 0x005c1da2.
+0x005c1e31	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_ungetc`.
+0x005c1f1c	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__setjmp3` (records EBP, SEH chain, frame info).
+0x005c1f97	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_strtod` (`double __cdecl _strtod(char* _Str, char** _EndPtr)`).
+0x005c2025	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_strcoll`.
+0x005c2090	[C1 2026-05-18] Math kernel matching the structure of `floor`/`ceil`-default implementations.
+0x005c21ba	[C1 2026-05-18] 3-instruction tail to `__cintrindisp2()` (CRT internal intrinsic dispatcher).
+0x005c21e2	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_frexp` (`double __cdecl _frexp(double _X, int * _Y)`).
+0x005c228e	[C1 2026-05-18] Body: `p = __getptd(); p->_holdrand = param_1; return;`.
+0x005c229b	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_rand`.
+0x005c22bd	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_sscanf` (`int __cdecl _sscanf(char* _Src, char* _Format, ...)`).
+0x005c2300	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_strncat`.
+0x005c2435	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__time32`.
+0x005c2470	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `shortsort` (the insertion-sort partition called by `_qsort` for…
+0x005c24e0	[C1 2026-05-18] Iterative quicksort: stack-of-(lo, hi) ranges held in `auStack_f0` / `auStack_78` (30 dwords each = 30…
+0x005c2770	[C1 2026-05-18] Body: declares 12 bytes of stack (`auStack_c`), then `ExceptionList = auStack_c;` (writes fs:[0]).
+0x005c278f	[C1 2026-05-18] In-memory `_vsnprintf` shape.
+0x005c27e6	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_atof`.
+0x005c281e	[C1 2026-05-18] Locale-aware uppercase conversion.
+0x005c28e7	[C1 2026-05-18] Body: `p = __getptd(); locale = p->_tfpecode; if (locale != PTR_DAT_00616be4) locale =…
+0x005c29cb	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_clock`.
+0x005c2a0e	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `___inittime`.
+0x005c2a45	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_localtime` (`tm * __cdecl _localtime(time_t * _Time)`).
+0x005c2bc5	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `strtoxl` (the shared signed/unsigned `long` parser).
+0x005c2d84	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_strtol`. Calls strtoxl (0x005c2bc5) with signed flag.
+0x005c2d9b	[C1 2026-05-18] Canonical `_endthreadex` body.
+0x005c2dd9	[C1 2026-05-18] Thread entry trampoline that bridges the C runtime's per-thread ptd over to the user proc.
+0x005c2e79	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__beginthread`.
+0x005c2f0a	[C1 2026-05-18] Body: do { *dst = *src; ++dst; ++src; } while (last_value != 0); return dst.
+0x005c2f26	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_wcscmp`.
+0x005c2f58	[C1 2026-05-18] Body: walk wide-string until null, return char-count - 1.
+0x005c2f70	[C1 2026-05-18] Tiny: `FUN_004a7118((double)in_ST0); FUN_005c2f8d();`. Promotes the FP top-of-stack value to a…
+0x005c2f84	[C1 2026-05-18] Body shares its tail with FUN_005c2f8d (post-`__fload_withFB`). Math-domain-error classifier.
+0x005c2f8d	[C1 2026-05-18] Walks ST(0) using FPU flag ZF + FPU control word to classify NaN / Inf / signed-Inf / signed-zero…
+0x005c302a	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__ftell_lk` (file-locked ftell).
+0x005c318c	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__rt_probe_read4@4` (read-probe primitive, /RTCu support).
+0x005c31d0	[C1 2026-05-18] Wrapper that uses GS-cookie protection (`local_8 = DAT_00616038 ^ unaff_retaddr`).
+0x005c326b	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `__floor_default`.
+0x005c3340	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `__cintrindisp2`.
+0x005c337e	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `__cintrindisp1`.
+0x005c33bb	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `__ctrandisp2`.
+0x005c3403	[C1 2026-05-18] 7-byte function — extreme jump-target / partial-routine pattern (likely entry from a `cmp/jcc` ladder…
+0x005c340a	[C1 2026-05-18] Same body as 0x005c3403 minus the leading `byte&0xfe` clear at EBP-0x2c8.
+0x005c3551	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `__ctrandisp1`.
+0x005c3584	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `__fload`.
+0x005c35c0	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `__inc`. Calls from FUN_005c35d6 (the shared scanf core) confirm role.
+0x005c35d6	[C1 2026-05-18] Full _input/_vfscanf body. 2,672 bytes.
+0x005c4180	[C1 2026-05-18] Body: `FUN_005c419e((double)in_ST0);` and return.
+0x005c419e	[C1 2026-05-18] Canonical Pentium-era MSVC `_exp`.
+0x005c4440	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_gmtime`.
+0x005c4547	[C1 2026-05-18] FidDB-attested MSVC CRT helper: `___mbtowc_mt`.
+0x005c4607	[C1 2026-05-18] FidDB-attested MSVC CRT entry point: `_mbtowc`.
+0x005c4640	[C1 2026-05-18] 3-line trampoline: `FUN_004e1ac0(&DAT_00617f98, param_1, param_2, param_3, param_4);`.
+0x005c4670	[C1 2026-05-18] Reads a chunk header via `FUN_004cc5e0(stream, 1, &len, &type)` at 005c4684.
+0x005c4780	[C1 2026-05-18] Body: `FUN_004e1ac0(&DAT_00617f78, p1, p2, p3, p4);`. Companion of FUN_005c4640.
+0x005c47b0	[C1 2026-05-18] Body: `if (param_1[1] != 0) (*(DAT_007d3ff8 + 0x10c))(*param_1); return param_1;`.
+0x005c47e0	[C1 2026-05-18] Two-phase loader.
+0x005c4ab0	[C1 2026-05-18] Body: `return (*(byte*)(DAT_00911ae4 + 10 + param_1) & 0xf0) != 0;`.
+0x005c4ad0	[C1 2026-05-18] Allocates header (0x10 bytes) via `DAT_007d3ff8+0x108(0x10, 0x30000)`.
+0x005c4ba0	[C1 2026-05-18] 1-line: `*(int*)(param_1 + 4) = 0;`.
+0x005c4bb0	[C1 2026-05-18] Growth formula: `new_cap = cap + (cap + (cap >> 31 & 3)) >> 2` — that is, `cap * 1.25` rounded toward…
+0x005c4c60	[C1 2026-05-18] Same growth strategy as FUN_005c4bb0 but factors `param_2` (count to append) into the new-capacity…
+0x005c4d20	[C1 2026-05-18] 1-line: `*(int*)(param_1 + 4) -= param_2;`.
+0x005c4d30	[C1 2026-05-18] Body: `if (param_1[1] != 0) return *param_1; return 0;`.
+0x005c4d50	[C1 2026-05-18] Body: `if (*p != 0 && p[2] != 0) { free(*p); *p = 0; p[2] = 0; } free(p); return 1;`.
+0x005c4da0	[C1 2026-05-18] Body: ownership-detaching destructor — returns the underlying data array to the caller iff length > 0…
+0x005c4df0	[C1 2026-05-18] Body: `return p[3] * idx + *p;`. p[3] = elemSize, *p = data ptr.
+0x005c4e10	[C1 2026-05-18] Body: `return p[3] * p[1] + *p;`. p[1] = length.
+0x005c4e20	[C1 2026-05-18] AABB-vs-AABB overlap test: bbox min `*(p2+0x10..18)` strictly < `param_3[0..2]` AND bbox max…
+0x005c4fa0	[C1 2026-05-18] Stack pointer pattern: `param_1[0x51]` is the top-of-stack; pre-decrement by 8 (= one 8-byte stack…
+0x005c5780	[C1 2026-05-18] Stage 1 (005c57e2..005c5828): walk all faces (count at +0x1e), find face whose plane-distance is…
+0x005c6b40	[C1 2026-05-18] Body: `p[0]=0; p[3]=0; p[4]=0; p[1]=0; p[2]=0;`. Out-of-order to match assembler/optimizer.
+0x005c6b60	[C1 2026-05-18] Coordinate normalization: input *0x100 (16-bit fixed-point) minus current X/Y in p1[1]/p1[2], then…
+0x005c6bb0	[C1 2026-05-18] Body: `FUN_005aa560(&DAT_007de148, p1, p2, 0, p3, p4);`.
+0x005c6cc0	[C1 2026-05-18] Init-string DAT_005e7a4c is the class-name anchor (referenced at 005c6cc7).
+0x005cb160	[C1 2026-05-18] __fastcall: param_1=ECX, param_2=EDX (unused in body), param_3=out vec3, param_4=in vec3…

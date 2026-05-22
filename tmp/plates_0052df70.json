@@ -1,0 +1,402 @@
+[
+  {
+    "rva": "0x0052df70",
+    "plate": "[C1 2026-05-20] Time-driven update on a struct at param_1 (animation/effect controller). `param_2` = negative tick\u2026",
+    "raw": "Time-driven update on a struct at param_1 (animation/effect controller). `param_2` = negative tick delta."
+  },
+  {
+    "rva": "0x0052e0e0",
+    "plate": "[C1 2026-05-20] Forward-time variant of FUN_0052df70. param_2 = positive tick delta.",
+    "raw": "Forward-time variant of FUN_0052df70. param_2 = positive tick delta."
+  },
+  {
+    "rva": "0x0052e2c0",
+    "plate": "[C1 2026-05-20] Dispatcher: computes `param_2 = param_2 - *(float*)(param_1+4)`.",
+    "raw": "Dispatcher: computes `param_2 = param_2 - *(float*)(param_1+4)`."
+  },
+  {
+    "rva": "0x0052e650",
+    "plate": "[C1 2026-05-20] Guard: if `*(int*)(param_1+0x18) == 0` return 1.",
+    "raw": "Guard: if `*(int*)(param_1+0x18) == 0` return 1."
+  },
+  {
+    "rva": "0x0052ea70",
+    "plate": "[C1 2026-05-20] Palette/byte-mapping: param_1 = descriptor, param_2 = input dword array, param_3 = byte-presence mask,\u2026",
+    "raw": "Palette/byte-mapping: param_1 = descriptor, param_2 = input dword array, param_3 = byte-presence mask, param_4 = ignored, param_5 = output palette table (current count + base), param_6 = number of dwords."
+  },
+  {
+    "rva": "0x0052eb40",
+    "plate": "[C1 2026-05-20] Allocates a composite buffer: `total = param_2*0x40 + param_4*0x14 + 0xf + param_3`. Allocator via\u2026",
+    "raw": "Allocates a composite buffer: `total = param_2*0x40 + param_4*0x14 + 0xf + param_3`. Allocator via `(**(code**)(DAT_007d3ff8+0x108))(total, 0x30116)`."
+  },
+  {
+    "rva": "0x0052eeb0",
+    "plate": "[C1 2026-05-20] Slot setter for global table at DAT_007dc508.",
+    "raw": "Slot setter for global table at DAT_007dc508."
+  },
+  {
+    "rva": "0x0052fd60",
+    "plate": "[C1 2026-05-20] Iterates `piVar1` from `&DAT_007dc524` while `(int)piVar1 < 0x7dc534`: if `*piVar1 != 0` calls\u2026",
+    "raw": "Iterates `piVar1` from `&DAT_007dc524` while `(int)piVar1 < 0x7dc534`: if `*piVar1 != 0` calls FUN_004d41e0(*piVar1) then zeros the slot."
+  },
+  {
+    "rva": "0x0052fdb0",
+    "plate": "[C1 2026-05-20] Sorts an array of 4-int tuples (16 bytes each) using a 4-element fixed network compare+swap.",
+    "raw": "Sorts an array of 4-int tuples (16 bytes each) using a 4-element fixed network compare+swap."
+  },
+  {
+    "rva": "0x0052fe90",
+    "plate": "[C1 2026-05-20] Stream-write of a 9-tagged chunk:",
+    "raw": "Stream-write of a 9-tagged chunk:"
+  },
+  {
+    "rva": "0x0052ff00",
+    "plate": "[C1 2026-05-20] Stream-read counterpart of FUN_0052fe90:",
+    "raw": "Stream-read counterpart of FUN_0052fe90:"
+  },
+  {
+    "rva": "0x0052ffd0",
+    "plate": "[C1 2026-05-20] If `(param_1 & 1) != 0`:",
+    "raw": "If `(param_1 & 1) != 0`:"
+  },
+  {
+    "rva": "0x00530000",
+    "plate": "[C1 2026-05-20] Single store: `*(undefined4*)(param_1 + 0x6c) = DAT_007dc524` (current default pipeline handle into\u2026",
+    "raw": "Single store: `*(undefined4*)(param_1 + 0x6c) = DAT_007dc524` (current default pipeline handle into instance)."
+  },
+  {
+    "rva": "0x00530010",
+    "plate": "[C1 2026-05-20] Feature-gate query: returns 1 iff `DAT_007dc540 != 0` AND (`DAT_007dc544 == 0` OR resource at\u2026",
+    "raw": "Feature-gate query: returns 1 iff `DAT_007dc540 != 0` AND (`DAT_007dc544 == 0` OR resource at `DAT_007dc508+*(int*)(param_1+0x18)` is null OR `DAT_007dc548 < *(uint*)(handle+0x1c)`)."
+  },
+  {
+    "rva": "0x00530050",
+    "plate": "[C1 2026-05-20] Inverse predicate of FUN_00530010: returns 1 iff `DAT_007dc540 != 0` AND `DAT_007dc544 != 0` AND\u2026",
+    "raw": "Inverse predicate of FUN_00530010: returns 1 iff `DAT_007dc540 != 0` AND `DAT_007dc544 != 0` AND handle != 0 AND `*(uint*)(handle+0x1c) <= DAT_007dc548`."
+  },
+  {
+    "rva": "0x00530090",
+    "plate": "[C1 2026-05-20] Frees field at `param_1+0x30` via vtable free, zeros offsets 0x24, 0x28, 0x2c, 0x30, 0x34, 0x38 on the\u2026",
+    "raw": "Frees field at `param_1+0x30` via vtable free, zeros offsets 0x24, 0x28, 0x2c, 0x30, 0x34, 0x38 on the instance."
+  },
+  {
+    "rva": "0x005300d0",
+    "plate": "[C1 2026-05-20] Stream-write: writes `param_2[9]`, `param_2[10]`, `param_2[11]` (4 bytes each).",
+    "raw": "Stream-write: writes `param_2[9]`, `param_2[10]`, `param_2[11]` (4 bytes each)."
+  },
+  {
+    "rva": "0x00530160",
+    "plate": "[C1 2026-05-20] Stream-read of a 0xc-byte header + variable payload.",
+    "raw": "Stream-read of a 0xc-byte header + variable payload."
+  },
+  {
+    "rva": "0x005302c0",
+    "plate": "[C1 2026-05-20] Size accessor: returns 0xc if `param_1[10] == 0`, else `*param_1 + 0xc + (param_1[11] + param_1[10])*2`.",
+    "raw": "Size accessor: returns 0xc if `param_1[10] == 0`, else `*param_1 + 0xc + (param_1[11] + param_1[10])*2`."
+  },
+  {
+    "rva": "0x00530650",
+    "plate": "[C1 2026-05-20] Vertex stream rebuild for the CSL skin atomic pipeline.",
+    "raw": "Vertex stream rebuild for the CSL skin atomic pipeline."
+  },
+  {
+    "rva": "0x00530c00",
+    "plate": "[C1 2026-05-20] D3D9 vertex declaration builder for the CSL skin atomic pipeline. Sets up `local_94..local_8c` element\u2026",
+    "raw": "D3D9 vertex declaration builder for the CSL skin atomic pipeline. Sets up `local_94..local_8c` element array."
+  },
+  {
+    "rva": "0x00532000",
+    "plate": "[C1 2026-05-20] Batch matrix*vec3 transform: `output[i] = matrix * input[i] + translation`.",
+    "raw": "Batch matrix*vec3 transform: `output[i] = matrix * input[i] + translation`."
+  },
+  {
+    "rva": "0x005320b0",
+    "plate": "[C1 2026-05-20] Indexed-matrix variant of FUN_00532000.",
+    "raw": "Indexed-matrix variant of FUN_00532000."
+  },
+  {
+    "rva": "0x005327d0",
+    "plate": "[C1 2026-05-20] Constructs and registers the `nodeD3D9SkinAtomicAllInOne_csl` pipeline.",
+    "raw": "Constructs and registers the `nodeD3D9SkinAtomicAllInOne_csl` pipeline."
+  },
+  {
+    "rva": "0x00532a60",
+    "plate": "[C1 2026-05-20] Quaternion-to-4x4-matrix conversion.",
+    "raw": "Quaternion-to-4x4-matrix conversion."
+  },
+  {
+    "rva": "0x00532b80",
+    "plate": "[C1 2026-05-20] Quaternion SLERP plus linear translation.",
+    "raw": "Quaternion SLERP plus linear translation."
+  },
+  {
+    "rva": "0x005333a0",
+    "plate": "[C1 2026-05-20] Reads `*(int*)(param_2 + 4)` entries; each entry = 36 bytes from stream (`FUN_004cc790(stream,\u2026",
+    "raw": "Reads `*(int*)(param_2 + 4)` entries; each entry = 36 bytes from stream (`FUN_004cc790(stream, piVar4+1, 0x20)` plus a 4-byte tag)."
+  },
+  {
+    "rva": "0x00533d00",
+    "plate": "[C1 2026-05-20] Allocates a 9-dword instance header via `(**(code**)(DAT_007d3ff8+0x118))(DAT_0091246c, 0x3011e)`.",
+    "raw": "Allocates a 9-dword instance header via `(**(code**)(DAT_007d3ff8+0x118))(DAT_0091246c, 0x3011e)`."
+  },
+  {
+    "rva": "0x00533ec0",
+    "plate": "[C1 2026-05-20] Per-frame matrix-palette assembly for the skin atomic.",
+    "raw": "Per-frame matrix-palette assembly for the skin atomic."
+  },
+  {
+    "rva": "0x00535330",
+    "plate": "[C1 2026-05-20] Vertex format allocator. param_2 = feature bitmask:",
+    "raw": "Vertex format allocator. param_2 = feature bitmask:"
+  },
+  {
+    "rva": "0x005356f0",
+    "plate": "[C1 2026-05-20] Thunk forwarder to FUN_004e6920 (5 bytes = a JMP instruction).",
+    "raw": "Thunk forwarder to FUN_004e6920 (5 bytes = a JMP instruction)."
+  },
+  {
+    "rva": "0x00538310",
+    "plate": "[C1 2026-05-20] BVH node split (recursive 2-way tree build).",
+    "raw": "BVH node split (recursive 2-way tree build)."
+  },
+  {
+    "rva": "0x00538a80",
+    "plate": "[C1 2026-05-20] Sets `DAT_00912480 = param_1` and returns `*(undefined4*)(DAT_00912484 + param_1)`.",
+    "raw": "Sets `DAT_00912480 = param_1` and returns `*(undefined4*)(DAT_00912484 + param_1)`."
+  },
+  {
+    "rva": "0x00538b70",
+    "plate": "[C1 2026-05-20] Freelist walker: while `*param_1 != 0`, advance head via `*param_1 = *(int*)(iVar1 + 0x58)` then free\u2026",
+    "raw": "Freelist walker: while `*param_1 != 0`, advance head via `*param_1 = *(int*)(iVar1 + 0x58)` then free node."
+  },
+  {
+    "rva": "0x00538ba0",
+    "plate": "[C1 2026-05-20] Same shape as FUN_00538b70 but the next-pointer is at offset 0xc.",
+    "raw": "Same shape as FUN_00538b70 but the next-pointer is at offset 0xc."
+  },
+  {
+    "rva": "0x00538bd0",
+    "plate": "[C1 2026-05-20] World-sector enumeration entry. If `param_1 != 0`: calls `RpWorldForAllWorldSectors(param_1,\u2026",
+    "raw": "World-sector enumeration entry. If `param_1 != 0`: calls `RpWorldForAllWorldSectors(param_1, &LAB_00538c30, &param_1)` (RW iterator) and returns param_1 (mutated by callback)."
+  },
+  {
+    "rva": "0x00538d60",
+    "plate": "[C1 2026-05-20] Ray-vs-BVH-vs-triangle intersection over a RpWorld using the game's collision BVH.",
+    "raw": "Ray-vs-BVH-vs-triangle intersection over a RpWorld using the game's collision BVH."
+  },
+  {
+    "rva": "0x00539900",
+    "plate": "[C1 2026-05-20] AABB-vs-BVH variant of FUN_00538d60.",
+    "raw": "AABB-vs-BVH variant of FUN_00538d60."
+  },
+  {
+    "rva": "0x00539ec0",
+    "plate": "[C1 2026-05-20] Sphere-vs-BVH variant.",
+    "raw": "Sphere-vs-BVH variant."
+  },
+  {
+    "rva": "0x0053a6c0",
+    "plate": "[C1 2026-05-20] Atomic-level collision dispatch by `param_2[6]` (bound type enum):",
+    "raw": "Atomic-level collision dispatch by `param_2[6]` (bound type enum):"
+  },
+  {
+    "rva": "0x0053a7a0",
+    "plate": "[C1 2026-05-20] Ray-vs-atomic (per-RpAtomic mesh BVH).",
+    "raw": "Ray-vs-atomic (per-RpAtomic mesh BVH)."
+  },
+  {
+    "rva": "0x0053b7b0",
+    "plate": "[C1 2026-05-20] AABB-vs-atomic counterpart (mirrors FUN_00539900 but at atomic granularity).",
+    "raw": "AABB-vs-atomic counterpart (mirrors FUN_00539900 but at atomic granularity)."
+  },
+  {
+    "rva": "0x0053bdf0",
+    "plate": "[C1 2026-05-20] Sphere-vs-atomic counterpart (mirrors FUN_00539ec0).",
+    "raw": "Sphere-vs-atomic counterpart (mirrors FUN_00539ec0)."
+  },
+  {
+    "rva": "0x0053c5d0",
+    "plate": "[C1 2026-05-20] Animated/morphed atomic collision dispatch.",
+    "raw": "Animated/morphed atomic collision dispatch."
+  },
+  {
+    "rva": "0x0053c6e0",
+    "plate": "[C1 2026-05-20] Ray-vs-morphed-atomic (vertex-interpolated triangles).",
+    "raw": "Ray-vs-morphed-atomic (vertex-interpolated triangles)."
+  },
+  {
+    "rva": "0x0053ccc0",
+    "plate": "[C1 2026-05-20] Sphere-vs-atomic-with-morph (mirror of FUN_0053c5d0 for sphere case).",
+    "raw": "Sphere-vs-atomic-with-morph (mirror of FUN_0053c5d0 for sphere case)."
+  },
+  {
+    "rva": "0x0053cd80",
+    "plate": "[C1 2026-05-20] Sphere-vs-morphed-atomic. param_3 = sphere, params 4/5/6 = callback context.",
+    "raw": "Sphere-vs-morphed-atomic. param_3 = sphere, params 4/5/6 = callback context."
+  },
+  {
+    "rva": "0x0053d040",
+    "plate": "[C1 2026-05-20] Setter: `*(undefined4*)(DAT_007dc5b0 + param_1) = param_2` (stores BVH root pointer for an atomic).",
+    "raw": "Setter: `*(undefined4*)(DAT_007dc5b0 + param_1) = param_2` (stores BVH root pointer for an atomic)."
+  },
+  {
+    "rva": "0x0053d060",
+    "plate": "[C1 2026-05-20] Releases BVH at `*(int*)(DAT_007dc5b0 + param_1)` via FUN_004522d0 and zeros the slot. Returns param_1.",
+    "raw": "Releases BVH at `*(int*)(DAT_007dc5b0 + param_1)` via FUN_004522d0 and zeros the slot. Returns param_1."
+  },
+  {
+    "rva": "0x0053d090",
+    "plate": "[C1 2026-05-20] Predicate: returns `*(int*)(DAT_007dc5b0 + param_1) != 0` \u2014 \"has BVH\".",
+    "raw": "Predicate: returns `*(int*)(DAT_007dc5b0 + param_1) != 0` \u2014 \"has BVH\"."
+  },
+  {
+    "rva": "0x0053d200",
+    "plate": "[C1 2026-05-20] Variant of FUN_0053d060 that takes both `param_1` (base) and `param_2` (offset) explicitly.",
+    "raw": "Variant of FUN_0053d060 that takes both `param_1` (base) and `param_2` (offset) explicitly."
+  },
+  {
+    "rva": "0x0053d400",
+    "plate": "[C1 2026-05-20] BVH-build dispatcher: calls FUN_0053d460 with the atomic's vertex/face/index buffers (offsets\u2026",
+    "raw": "BVH-build dispatcher: calls FUN_0053d460 with the atomic's vertex/face/index buffers (offsets 0x14/0x10/0x2c)."
+  },
+  {
+    "rva": "0x0053d460",
+    "plate": "[C1 2026-05-20] Inner BVH-build orchestrator.",
+    "raw": "Inner BVH-build orchestrator."
+  },
+  {
+    "rva": "0x0053d5a0",
+    "plate": "[C1 2026-05-20] Allocates a packed BVH-node buffer. param_1 = vertex count, param_2 = leaf count, param_3 = 6-dword\u2026",
+    "raw": "Allocates a packed BVH-node buffer. param_1 = vertex count, param_2 = leaf count, param_3 = 6-dword header, param_4 = flags."
+  },
+  {
+    "rva": "0x0053d690",
+    "plate": "[C1 2026-05-20] Size predicate: `(node[0x1e] + 3) * 0x10` (size of leaves+header); + `node[0x1c]*2` if `(node[0]&1)`.",
+    "raw": "Size predicate: `(node[0x1e] + 3) * 0x10` (size of leaves+header); + `node[0x1c]*2` if `(node[0]&1)`."
+  },
+  {
+    "rva": "0x0053d6c0",
+    "plate": "[C1 2026-05-20] Stream-write of a BVH chunk.",
+    "raw": "Stream-write of a BVH chunk."
+  },
+  {
+    "rva": "0x0053d820",
+    "plate": "[C1 2026-05-20] Stream-read of a BVH chunk (counterpart of FUN_0053d6c0).",
+    "raw": "Stream-read of a BVH chunk (counterpart of FUN_0053d6c0)."
+  },
+  {
+    "rva": "0x0053d920",
+    "plate": "[C1 2026-05-20] BVH stream-read for an alternate (legacy?) format with explicit child pointers.",
+    "raw": "BVH stream-read for an alternate (legacy?) format with explicit child pointers."
+  },
+  {
+    "rva": "0x0053dba0",
+    "plate": "[C1 2026-05-20] BVH builder entry. param_1 = vertex count, param_2 = vertex buffer base, param_3 = triangle count,\u2026",
+    "raw": "BVH builder entry. param_1 = vertex count, param_2 = vertex buffer base, param_3 = triangle count, param_4 = index buffer base, param_5 = pre-allocated index-permutation buffer or 0."
+  },
+  {
+    "rva": "0x0053de50",
+    "plate": "[C1 2026-05-20] Recursive depth-first free of the temp BVH tree. Leaves identified by `*node < 0`.",
+    "raw": "Recursive depth-first free of the temp BVH tree. Leaves identified by `*node < 0`."
+  },
+  {
+    "rva": "0x0053dea0",
+    "plate": "[C1 2026-05-20] SAH (Surface Area Heuristic) BVH split for the in-build tree.",
+    "raw": "SAH (Surface Area Heuristic) BVH split for the in-build tree."
+  },
+  {
+    "rva": "0x0053e430",
+    "plate": "[C1 2026-05-20] SAH evaluation helper. Given split-axis param_2 and split-plane param_3:",
+    "raw": "SAH evaluation helper. Given split-axis param_2 and split-plane param_3:"
+  },
+  {
+    "rva": "0x0053e5d0",
+    "plate": "[C1 2026-05-20] SAH cost evaluator: returns ratio comparing two log-sized halves with their box extents.",
+    "raw": "SAH cost evaluator: returns ratio comparing two log-sized halves with their box extents."
+  },
+  {
+    "rva": "0x0053e690",
+    "plate": "[C1 2026-05-20] Helper: `if (param_1/param_2) > _DAT_005cc32c return 1.0f/1.0f` (i.e., 1.0). Else `return 1.0f /\u2026",
+    "raw": "Helper: `if (param_1/param_2) > _DAT_005cc32c return 1.0f/1.0f` (i.e., 1.0). Else `return 1.0f / (param_1/param_2 + _DAT_005cc32c)`."
+  },
+  {
+    "rva": "0x0053e6f0",
+    "plate": "[C1 2026-05-20] Partition: in-place rearranges a 2-dword-per-entry array so all entries with `[+4]==1` come before\u2026",
+    "raw": "Partition: in-place rearranges a 2-dword-per-entry array so all entries with `[+4]==1` come before others. param_1 base + offset at `+0x30 * 8 + +8` gives the table."
+  },
+  {
+    "rva": "0x0053e730",
+    "plate": "[C1 2026-05-20] Allocates an 8-byte leaf marker: `*alloc = -1`, `(ushort*)(alloc+4) = param_1` (count),\u2026",
+    "raw": "Allocates an 8-byte leaf marker: `*alloc = -1`, `(ushort*)(alloc+4) = param_1` (count), `(ushort*)(alloc+6) = param_2` (offset)."
+  },
+  {
+    "rva": "0x0053e760",
+    "plate": "[C1 2026-05-20] Allocates a 0x14-byte internal node: `puVar1[0] = axis`, `[3] = left`, `[4] = right`. (Other 2 dwords\u2026",
+    "raw": "Allocates a 0x14-byte internal node: `puVar1[0] = axis`, `[3] = left`, `[4] = right`. (Other 2 dwords left zero \u2014 likely overwritten by caller.)"
+  },
+  {
+    "rva": "0x0053e790",
+    "plate": "[C1 2026-05-20] Frees in-build BVH work struct: frees fields at +4, +8, +0x38 if non-null, then frees the struct itself.",
+    "raw": "Frees in-build BVH work struct: frees fields at +4, +8, +0x38 if non-null, then frees the struct itself."
+  },
+  {
+    "rva": "0x0053e7f0",
+    "plate": "[C1 2026-05-20] Tree-depth measure: iterative DFS counting leaves (`*node < 0`) into iVar2.",
+    "raw": "Tree-depth measure: iterative DFS counting leaves (`*node < 0`) into iVar2."
+  },
+  {
+    "rva": "0x0053e830",
+    "plate": "[C1 2026-05-20] Renderable construction from a source RpRaster pair (or single).",
+    "raw": "Renderable construction from a source RpRaster pair (or single)."
+  },
+  {
+    "rva": "0x0053eca0",
+    "plate": "[C1 2026-05-20] Resets a 0x34-byte slot. Iterates 2 slots (iVar2=2..0); per slot, switches on `piVar3[4]` (tag):",
+    "raw": "Resets a 0x34-byte slot. Iterates 2 slots (iVar2=2..0); per slot, switches on `piVar3[4]` (tag):"
+  },
+  {
+    "rva": "0x0053f150",
+    "plate": "[C1 2026-05-20] Lookup helper: scans up to 2 entries at `DAT_007dc5dc + param_1` for one with `[+0x14] == param_2`.\u2026",
+    "raw": "Lookup helper: scans up to 2 entries at `DAT_007dc5dc + param_1` for one with `[+0x14] == param_2`. Returns pointer or 0."
+  },
+  {
+    "rva": "0x0053fa20",
+    "plate": "[C1 2026-05-20] Stream-read of a 4-byte chunk into local. If value is non-zero and `*(int*)(DAT_007dc5ec + param_3) ==\u2026",
+    "raw": "Stream-read of a 4-byte chunk into local. If value is non-zero and `*(int*)(DAT_007dc5ec + param_3) == 0`, calls FUN_00543b10(param_3); on success sets the slot to 1."
+  },
+  {
+    "rva": "0x0053fb00",
+    "plate": "[C1 2026-05-20] Identical shape to FUN_0053fa20 but uses DAT_007dc5f0 slot and FUN_00543b20 initializer.",
+    "raw": "Identical shape to FUN_0053fa20 but uses DAT_007dc5f0 slot and FUN_00543b20 initializer."
+  },
+  {
+    "rva": "0x0053fb70",
+    "plate": "[C1 2026-05-20] Direct lazy-init: if `*(int*)(DAT_007dc5ec + param_1) == 0`, call FUN_00543b10; on success set slot to\u2026",
+    "raw": "Direct lazy-init: if `*(int*)(DAT_007dc5ec + param_1) == 0`, call FUN_00543b10; on success set slot to 1."
+  },
+  {
+    "rva": "0x0053fba0",
+    "plate": "[C1 2026-05-20] Getter: returns `*(undefined4*)(DAT_007dc5ec + param_1)` (init flag for slot 0).",
+    "raw": "Getter: returns `*(undefined4*)(DAT_007dc5ec + param_1)` (init flag for slot 0)."
+  },
+  {
+    "rva": "0x0053fbb0",
+    "plate": "[C1 2026-05-20] Pipeline-mode configurator. param_2 selects a render mode (1..6).",
+    "raw": "Pipeline-mode configurator. param_2 selects a render mode (1..6)."
+  },
+  {
+    "rva": "0x0053fd30",
+    "plate": "[C1 2026-05-20] Stage configurator: finds stage with `+0x14 == 2` (texture-stage 2) and writes a new texture+ARG+OP\u2026",
+    "raw": "Stage configurator: finds stage with `+0x14 == 2` (texture-stage 2) and writes a new texture+ARG+OP triple."
+  },
+  {
+    "rva": "0x0053fea0",
+    "plate": "[C1 2026-05-20] Getter: returns `*(int*)(DAT_007dc5dc+param_1) ? *(int*)(*(int*)(DAT_007dc5dc+param_1) + 0x30) : 0`.",
+    "raw": "Getter: returns `*(int*)(DAT_007dc5dc+param_1) ? *(int*)(*(int*)(DAT_007dc5dc+param_1) + 0x30) : 0`."
+  },
+  {
+    "rva": "0x0053fec0",
+    "plate": "[C1 2026-05-20] Material/texture pair installer. Finds stage with `+0x14 == 1` and rebuilds its texture binding from\u2026",
+    "raw": "Material/texture pair installer. Finds stage with `+0x14 == 1` and rebuilds its texture binding from param_1/param_2 texture handles."
+  }
+]

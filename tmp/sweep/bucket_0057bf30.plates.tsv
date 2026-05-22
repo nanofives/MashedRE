@@ -1,0 +1,8 @@
+0x0057bf30	[C1 2026-05-18] Signature recovered as `float10 (float *param_1, float *param_2, float *param_3, float *param_4, float…
+0x0057c0d0	[C1 2026-05-18] Signature recovered as `undefined4 (float *param_1, float *param_2, float *param_3, float *param_4)`.
+0x0057c1b0	[C1 2026-05-18] Signature recovered as `undefined4 (undefined4 param_1)`.
+0x0057c2b0	[C1 2026-05-18] Signature recovered as `int FUN_0057c2b0(int param_1)`.
+0x0057c370	[C1 2026-05-18] Signature recovered as `undefined4 FUN_0057c370(int param_1)`.
+0x0057c420	[C1 2026-05-18] Pre-existing inline comment `[C1 2026-05-13]` already in Ghidra: "Takes `param_1` (int)…
+0x0057c440	[C1 2026-05-18] Signature recovered as `int FUN_0057c440(int param_1)`.
+0x0057c550	[C1 2026-05-18] Signature recovered as `undefined4 FUN_0057c550(int param_1)`.

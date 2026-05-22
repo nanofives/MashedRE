@@ -1,0 +1,129 @@
+================================================================================
+c3_batch_l — Frontend C2→C3 (filter-v4 yield: 7 of 36 candidates passed)
+Batch generated 2026-05-20 by promote-c3-batch skill
+================================================================================
+
+Yield note: frontend C2 pool is dominated by callee-gate failures (22 of 36
+rejected with depth-1 callees still C1). The 7 candidates below are the
+clean-gates of the 2026-05-20 frontend pool. This batch is intentionally
+a single session (no parallel sessions) because the candidate pool is
+shallow — fanout adds merge overhead without yield. If more frontend C3
+work is wanted next batch, the prerequisite is a discover-c1-batch session
+that lifts the C1 callees behind the rejected rows (most-cited C1 callees
+in the reject list: 00427e00, 00473870, 004739f0, 004a2c48, 004277a0,
+004967e0, 00472c60, 005554d0/00552d70 — these are the C2-readiness work).
+
+Filter v4 outputs:
+  re/analysis/plans/c3_batch_l_passed.tsv     (7 rows — all in this batch)
+  re/analysis/plans/c3_batch_l_rejected.tsv  (29 rows — defer/queue-c2-first)
+
+================================================================================
+Session 1 — frontend_c3_l1  (C2→C3, 7-function batch)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 7)
+Worktree:    .worktrees/c3-batch-l-s1/  (branch c3/batch-l-s1)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id:    c3-batch-l
+
+# Mission
+Promote 7 C2 frontend functions to C3 by authoring their reimpls in
+mashed_re_dev.asi, running run_diff_parallel.py for bit-identical
+verification, and applying re-classify transactionally. Stay inside
+this worktree. Do not touch main.
+
+# Candidates (read each analysis note BEFORE authoring)
+| RVA        | Ghidra name      | Analysis note                                    | Notes |
+|------------|------------------|--------------------------------------------------|-------|
+| 0x00439210 | FUN_00439210     | re/analysis/hud_frontend_d2/0x00439210.md        | "LobbySlotListRender" per U-3880 (filed 2026-05-20). 5 callees including FUN_0042ebe0 (C4) and FUN_0042ee00 (SpriteSlotGate C4). U-3880 is structural-noted but Blocks=C3 of this RVA — read it before authoring. |
+| 0x00428320 | FUN_00428320     | re/analysis/frontend_promote_menus_b/00428320.md | 2 callees: 0x00427840 (FontText_UTF16WidenCopy C4), 0x005554d0 (verify is C2+). |
+| 0x0042aa00 | FUN_0042aa00     | re/analysis/frontend_promote_menus_a/0x0042aa00.md | Pure leaf — callees are DAT_* data refs only (0067e9f8/ed40/ed74/ed84). |
+| 0x004307a0 | FUN_004307a0     | re/analysis/frontend_c0_promote/0x004307a0.md     | Mixed function + data refs. Confirm note's callee list before authoring. |
+| 0x0040e480 | FUN_0040e480     | re/analysis/c0_promotion_frontend_a/0x0040e480.md | Single data ref 005f2770 — likely a leaf. |
+| 0x004c5c00 | FUN_004c5c00     | re/analysis/sprite_gate_c3/0x004c5c00.md         | Case-insensitive linked-list string search, 114 bytes. Pure leaf. Note frontmatter has `drift_promote: true` and `subsystem: frontend` but the function is likely RW/util-shape — verify subsystem classification before promotion (frontmatter note + hooks.csv must agree). |
+| 0x0042ed70 | FUN_0042ed70     | re/analysis/promote_c2_frontend_menus/0x0042ed70.md | 4 callees: 0x00427ff0, 0x004282a0 (CHECK — was c3_batch_l_rejected for callee-gate; if still C1/C2 this could fail), 0x0042b8b0, 0x0042b8c0. Re-verify the callees before authoring. |
+
+# Pre-flight checklist
+1. Confirm worktree binding:  `git worktree list | grep c3-batch-l-s1`
+2. Anchor check:              `sha256sum original/MASHED.exe.unpatched` matches
+                              BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+                              (MASHED.exe itself will differ — 5 patches applied)
+3. Baseline build:            `mashedmod\build.bat` must succeed on a clean
+                              worktree before you add any new hook.
+4. NEVER touch original/:     2026-05-20 memory rule — do not rm, clean, or
+                              reset anything in original/ or parents. The
+                              .unpatched anchor is precious.
+
+# Per-function workflow (repeat for each RVA, then commit ONCE at the end)
+1. Read the analysis note end-to-end. Confirm:
+   - callees_depth1 all at C2+ in hooks.csv (re-verify; filter v4 was a
+     snapshot — hooks.csv may have drifted in the meantime).
+   - signature is expressible by re/frida/diff_template.js (53 arg_types
+     supported; check via the filter v4 script's recipe).
+   - No unresolved inline [UNCERTAIN] markers in the note body OUTSIDE
+     the ## Uncertainties section.
+2. Author the reimpl:
+   - File: mashedmod/src/mashed_re/Frontend/<Cluster_l1>.cpp (or split if
+     the candidate's nature doesn't fit one cluster — e.g., FUN_004c5c00
+     is a util-shaped string-search and may belong under Util/ instead).
+   - Copy the comment header style from existing C3+ hooks; cite RVA,
+     cite disasm bytes, cite the no-guessing source-of-truth lines.
+   - extern "C" __declspec(dllexport) <ret> __cdecl <Name>(<args>) { … }
+   - RH_ScopedInstall(<Name>, 0x00xxxxxx);
+3. Wire build:
+   - Append `"%SRC%\Frontend\<Cluster_l1>.cpp" ^` to mashedmod\build.bat
+     (or wherever the file lives).
+   - Append a hooks_registry.py entry with the right arg_type and a
+     non-trivial input domain (≥10 vectors).
+4. Build: `cmd /c mashedmod\build.bat > log\build_<rva>.txt 2>&1`. Halt on failure.
+
+# Batch verification (run ONCE after all 7 hooks authored)
+1. scripts/frida_pool.sh cleanup
+2. py -3.12 re/frida/run_diff_parallel.py <hook1> <hook2> ... <hook7>
+3. Expect all GREEN with 100% bit-identical match counts. If any RED:
+   debug the failing hook (NOT the others), re-build, re-run.
+4. cat log/diff_<hook>.csv for each — confirm match column is all True.
+
+NOTE on observation harness: the canonical-scenario observation step (Row 2
+of Frontend S-DoD) is currently BLOCKED at the harness level — Frida attach
+mid-intro-splash crashes MASHED before the menu is up. This DOES NOT block
+C2→C3 promotion (which uses synthetic A/B diff via run_diff_parallel.py).
+It only blocks the C3→C4 promotion step. Do not attempt to run
+observe_frontend_full_30s.py as part of this session.
+
+# Promotion transaction (run re-classify ONCE per batch, not per RVA)
+Invoke re-classify with all 7 RVAs in one call. The skill validates the
+gates and applies tracker mutations transactionally.
+
+# Commit policy (this worktree only)
+- One commit at the end of the per-function loop (NOT per function).
+- Commit message: `c3: frontend batch l session 1 — N hooks, evidence cited`
+  (where N is the actual count promoted; refusals get separate D-rows).
+- Do NOT merge to main from this session. Branch merge is the frida-sweep step.
+
+# Output (what the frida-sweep / user-merge consumes)
+- Worktree branch c3/batch-l-s1 with one commit on top of main containing:
+  - New mashed_re/Frontend/<Cluster_l1>.cpp file(s) (or Util/ if FUN_004c5c00
+    is reclassified)
+  - build.bat additions
+  - hooks_registry.py additions
+  - hooks.csv / STUBS.md / CHANGELOG.md updates
+  - Analysis note frontmatter bumps to C3
+- One row appended to re/PROMOTION_QUEUE.md of the form:
+    2026-05-20  c3-batch-l-s1  rvas=0x<a>,0x<b>,...  branch=c3/batch-l-s1  evidence=log/diff_<hook>.csv;...  note=<one-line>
+
+# STOP-AND-ASK if
+- Anchor mismatch on MASHED.exe.unpatched.
+- Baseline build fails on clean worktree (main is broken — escalate).
+- A candidate's analysis note describes a function very different from
+  what hooks.csv says (drift on the note; flag and skip rather than
+  promoting).
+- Any C2 candidate's callee turned C1 since filter v4 ran (re-check
+  hooks.csv at session start; defer that candidate).
+- More than 1 candidate needs caller drift-promote in this session
+  (split the work; do drift-promotes in a dedicated pass).
+
+================================================================================
+End of c3_batch_l.txt
+================================================================================

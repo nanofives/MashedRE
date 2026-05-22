@@ -1,0 +1,80 @@
+0x004f022d|[C1 2026-05-20] Signature: `void FUN_004f022d(float *param_1, float *param_2, undefined4 param_3)`.
+0x004f0307|[C1 2026-05-20] Signature: `void FUN_004f0307(float *param_1, undefined4 param_2)`.
+0x004f07a0|[C1 2026-05-20] Signature: `void FUN_004f07a0(int param_1)`.
+0x004f07d0|[C1 2026-05-20] Signature: `void FUN_004f07d0(int param_1)`.
+0x004f0800|[C1 2026-05-20] Signature: `void FUN_004f0800(void)`.
+0x004f0810|[C1 2026-05-20] Signature: `undefined4 FUN_004f0810(void)`.
+0x004f0900|[C1 2026-05-20] Signature: `void FUN_004f0900(void)`.
+0x004f0910|[C1 2026-05-20] Signature: `void FUN_004f0910(u32 p1, u32 p2, u32 p3, u32 p4, u32 p5)`.
+0x004f0940|[C1 2026-05-20] Signature: `void FUN_004f0940(u32 p1, u32 p2, u32 p3, u32 p4)`.
+0x004f0970|[C1 2026-05-20] Signature: `void FUN_004f0970(u32 param_1)`.
+0x004f0ae0|[C1 2026-05-20] Signature: `int * FUN_004f0ae0(int param_1)`.
+0x004f0bd0|[C1 2026-05-20] Signature: `u32 FUN_004f0bd0(int param_1)`.
+0x004f0c10|[C1 2026-05-20] Signature: `u32 FUN_004f0c10(int *param_1)`.
+0x004f0c50|[C1 2026-05-20] Signature: `u32 * FUN_004f0c50(u32 *p1, u32 p2, u16 p3, u16 p4, u16 p5, u16 p6, u16 p7, u16 p8, u16…
+0x004f0d80|[C1 2026-05-20] Signature: `int FUN_004f0d80(int param_1, code *param_2, u32 param_3)`.
+0x004f0dc0|[C1 2026-05-20] Signature: `u32 FUN_004f0dc0(u32 *p1, char *p2, u32 p3 [stream], u32 p4)`.
+0x004f0f10|[C1 2026-05-20] Signature: `u32 * FUN_004f0f10(u32 p1 [stream], char *p2, u32 p3)`.
+0x004f10e0|[C1 2026-05-20] Signature: `int FUN_004f10e0(int param_1, char *param_2)`.
+0x004f1130|[C1 2026-05-20] Signature: `void FUN_004f1130(void)`.
+0x004f1150|[C1 2026-05-20] Signature: `u32 FUN_004f1150(u32 param_1, int param_2)`.
+0x004f13d0|[C1 2026-05-20] Signature: `int FUN_004f13d0(u32 param_1, int param_2)`.
+0x004f1800|[C1 2026-05-20] Signature: `int FUN_004f1800(int param_1)`.
+0x004f1870|[C1 2026-05-20] Signature: `u32 FUN_004f1870(u32 param_1, int param_2)`.
+0x004f1b00|[C1 2026-05-20] Signature: `int FUN_004f1b00(u32 param_1, int param_2)`.
+0x004f1f00|[C1 2026-05-20] Signature: `int FUN_004f1f00(int param_1)`.
+0x004f1f90|[C1 2026-05-20] Signature: `void FUN_004f1f90(u32 param_1)`.
+0x004f1fb0|[C1 2026-05-20] Signature: `u32 * FUN_004f1fb0(int *param_1, u32 *param_2, uint param_3)`.
+0x004f2570|[C1 2026-05-20] Signature: `u32 FUN_004f2570(int param_1, uint param_2, int *param_3, int param_4)`.
+0x004f2e70|[C1 2026-05-20] Signature: `int FUN_004f2e70(uint count, u32 *node_pool_out, u32 edge_pool, int tri_array)`.
+0x004f2f90|[C1 2026-05-20] Signature: `void FUN_004f2f90(u32 pool, int *edge_head, short v_a, short v_b, int tri_idx, int…
+0x004f3030|[C1 2026-05-20] Signature: `void FUN_004f3030(int *node, int bucket_array, int strip_len)`.
+0x004f3150|[C1 2026-05-20] Signature: `int FUN_004f3150(int *strip, short *edge, u32 bucket_array, u32 tri_array, int strip_len)`.
+0x004f3440|[C1 2026-05-20] Signature: `u32 FUN_004f3440(int *strip_head, int param_2)`.
+0x004f36c0|[C1 2026-05-20] Signature: `u32 * FUN_004f36c0(int param_1)`.
+0x004f3b00|[C1 2026-05-20] Signature: `void * FUN_004f3b00(int param_1, byte param_2)`.
+0x004f3b60|[C1 2026-05-20] Signature: `int * FUN_004f3b60(int *param_1)`.
+0x004f3bc0|[C1 2026-05-20] Signature: `void FUN_004f3bc0(u32 *param_1)`.
+0x004f3bd0|[C1 2026-05-20] Signature: `u32 FUN_004f3bd0(int *param_1, int param_2)`.
+0x004f3be0|[C1 2026-05-20] Signature: `int FUN_004f3be0(int *param_1, int param_2)`.
+0x004f3cb0|[C1 2026-05-20] Signature: `int FUN_004f3cb0(int *param_1, int param_2)`.
+0x004f3ce0|[C1 2026-05-20] Signature: `int FUN_004f3ce0(int *param_1)`.
+0x004f3d40|[C1 2026-05-20] Signature: `int * FUN_004f3d40(int *param_1, u32 stream)`.
+0x004f3e90|[C1 2026-05-20] Signature: `int * FUN_004f3e90(u32 stream, int *out_container)`.
+0x004f4200|[C1 2026-05-20] Signature: `void FUN_004f4200(int param_1)`.
+0x004f4270|[C1 2026-05-20] Signature: `void FUN_004f4270(int param_1)`.
+0x004f42d0|[C1 2026-05-20] Signature: `u32 FUN_004f42d0(void)`.
+0x004f4340|[C1 2026-05-20] Signature: `u32 FUN_004f4340(void)`.
+0x004f43b0|[C1 2026-05-20] Signature: `void FUN_004f43b0(void)`.
+0x004f43f0|[C1 2026-05-20] Signature: `u32 FUN_004f43f0(void)`.
+0x004f4470|[C1 2026-05-20] Signature: `void FUN_004f4470(void)`.
+0x004f4510|[C1 2026-05-20] Signature: `bool FUN_004f4510(void)`.
+0x004f46a0|[C1 2026-05-20] Signature: `u32 FUN_004f46a0(void)`.
+0x004f4900|[C1 2026-05-20] Signature: `void FUN_004f4900(void)`.
+0x004f5020|[C1 2026-05-20] Signature: `u32 FUN_004f5020(int param_1)`.
+0x004f5030|[C1 2026-05-20] Signature: `u32 FUN_004f5030(int format_id, float *dst, float *src, int count, int dst_stride)`.
+0x004f57e0|[C1 2026-05-20] Signature: `u32 FUN_004f57e0(int format_id, float *dst, float *src, int count, int dst_stride)`.
+0x004f6870|[C1 2026-05-20] Signature: `u32 FUN_004f6870(int format_id, float *dst, float *src_a, float *src_b, float t, int count,…
+0x004f71f0|[C1 2026-05-20] Signature: `u32 FUN_004f71f0(int format_id, float *dst, float *src, int count, int dst_stride)`.
+0x004f77f0|[C1 2026-05-20] Signature: `bool FUN_004f77f0(u32 *param_1, int param_2, int param_3, int param_4)`.
+0x004f7850|[C1 2026-05-20] Signature: `u32 FUN_004f7850(int format_id, u16 *dst, byte *src, int palette, int count, int…
+0x004f79f0|[C1 2026-05-20] Signature: complex (uses unaff_retaddr, stack args at +0x14, etc.) — likely `void FUN_004f79f0(int p1,…
+0x004f7dc0|[C1 2026-05-20] Signature: `void FUN_004f7dc0(uint format_id, float *dst, float *src)`.
+0x004f81b0|[C1 2026-05-20] Signature: `void FUN_004f81b0(uint format_id, float *dst, float *src)`.
+0x004f8400|[C1 2026-05-20] Signature: `void FUN_004f8400(float *param_1, int count, float *min_out, float *max_out)`.
+0x004f8490|[C1 2026-05-20] Signature: `char FUN_004f8490(u32 uv_array, u32 count)`.
+0x004f8580|[C1 2026-05-20] Signature: `bool FUN_004f8580(void)`.
+0x004f8640|[C1 2026-05-20] Signature: `void FUN_004f8640(int offset, u32 value)`.
+0x004f8660|[C1 2026-05-20] Signature: `u32 FUN_004f8660(int offset)`.
+0x004f8670|[C1 2026-05-20] Signature: `void FUN_004f8670(int offset, u32 value)`.
+0x004f8690|[C1 2026-05-20] Signature: `u32 FUN_004f8690(int offset)`.
+0x004f8730|[C1 2026-05-20] Signature: `void FUN_004f8730(void)`.
+0x004fa5f0|[C1 2026-05-20] Signature: `void FUN_004fa5f0(void)`.
+0x004fb050|[C1 2026-05-20] Signature: `void FUN_004fb050(u32 *param_1)`.
+0x004fb0e0|[C1 2026-05-20] Signature: `void FUN_004fb0e0(u32 param_1)`.
+0x004fb130|[C1 2026-05-20] Signature: `void FUN_004fb130(u32 *param_1)`.
+0x004fb210|[C1 2026-05-20] Signature: `void FUN_004fb210(float *param_1, float *param_2)`.
+0x004fb2a0|[C1 2026-05-20] Signature: `void FUN_004fb2a0(u32 *src, u32 *dst)`.
+0x004fb3e0|[C1 2026-05-20] Signature: `void FUN_004fb3e0(u32 *src, u32 *dst)`.
+0x004fb4d0|[C1 2026-05-20] Signature: `void FUN_004fb4d0(float scalar, float *out_scalar)`.
+0x004fb5a0|[C1 2026-05-20] Signature: `void FUN_004fb5a0(int p1, int p2, int p3, float *p4, uint p5, int p6, int *p7, int *p8,…

@@ -1,0 +1,80 @@
+0x00489940	[C1 2026-05-18] 7-arg constructor allocating a "ring-buffer trail" object via `FUN_00474db0` (heap allocator).
+0x004899c0	[C1 2026-05-18] Two-arg method `(struct *param_1, vec3 *param_2)`.
+0x00489a40	[C1 2026-05-18] 4-arg method `(trail_struct *param_1, vec3 *param_2, vec3 *param_3 nullable, u32 *param_4 nullable)`.
+0x00489c30	[C1 2026-05-18] Single-arg method `(trail_struct *param_1)`.
+0x00489c60	[C1 2026-05-18] Destructor for the trail struct allocated by FUN_00489940.
+0x00489ce0	[C1 2026-05-18] 5-arg "add spark to slot" method `(int slot_index, vec3 *p_pos, u32 packed, vec3 *p_dir, vec3…
+0x00489da0	[C1 2026-05-18] Single-arg `(int slot_index)`.
+0x00489dc0	[C1 2026-05-18] Two-arg "init/reset slot" `(int slot_index, int param_2)`.
+0x0048a060	[C1 2026-05-18] Compiler-recovered as `(void)` but uses `in_EAX` (slot pointer) and `unaff_ESI` (source spark struct)…
+0x0048a130	[C1 2026-05-18] 5-arg per-slot update `(int slot, int param_2, u8 *p_color_rgba, float life_min, float life_step)`.
+0x0048a3c0	[C1 2026-05-18] Single-arg destructor `(int slot_index)`.
+0x0048a430	[C1 2026-05-18] Single-arg `(int slot_index)`.
+0x0048a460	[C1 2026-05-18] Zero-arg bulk-zero initializer.
+0x0048a490	[C1 2026-05-18] `__fastcall` with `unaff_ESI` as the actual `this`/struct pointer (compiler reg-passing).
+0x0048a4e0	[C1 2026-05-18] Two-arg method `(struct *param_1, float param_2)`.
+0x0048a5d0	[C1 2026-05-18] Walks the 124-entry trail array (`&DAT_00709238`, stride 0xcc, end `0x713198`).
+0x0048a6f0	[C1 2026-05-18] One-arg method `(int *param_1)`.
+0x0048a780	[C1 2026-05-18] Walks all 124 trail-array entries (`&DAT_00709238`, stride 0xcc, end `0x713198`).
+0x0048a830	[C1 2026-05-18] Zero-arg initializer.
+0x0048a850	[C1 2026-05-18] 6-arg "add N sparks to global second-pool" `(vec3 *pos, int count, vec3 *vel_or_null, u32…
+0x0048aa50	[C1 2026-05-18] 8-arg "burst spawn N sparks" `(param_1, count, scale, vec3 *origin, angle, color, accel, life)`.
+0x0048ab70	[C1 2026-05-18] Zero-arg "update + emit spark vertices" loop for second spark pool.
+0x0049dcb0	[C1 2026-05-18] 3-arg method `(undefined4 *param_1, int param_2, undefined4 param_3)`.
+0x0049de60	[C1 2026-05-18] Thunk: `(**(code **)**(undefined4 **)(param_1 + -8))()` — tail-jumps to vtable [0] of object whose…
+0x0049de70	[C1 2026-05-18] Thunk: `(**(code **)(**(int **)(param_1 + -8) + 4))()` — tail-jumps to vtable [1] of object whose…
+0x0049de80	[C1 2026-05-18] Thunk: `(**(code **)(**(int **)(param_1 + -8) + 8))()` — tail-jumps to vtable [2] of object at…
+0x0049de90	[C1 2026-05-18] `__fastcall` destructor on `(undefined4 *param_1)`.
+0x0049df70	[C1 2026-05-18] `__thiscall` lazy-create + delegate method `(int *param_1, undefined4 param_2, undefined4 param_3)`.
+0x0049e140	[C1 2026-05-18] 3-arg method `(int param_1, undefined4 param_2, undefined4 *param_3)`.
+0x0049e190	[C1 2026-05-18] `__thiscall` method `(int *param_1, int param_2)`.
+0x0049e4b0	[C1 2026-05-18] `__thiscall` lazy-create method `(int param_1, int param_2)`.
+0x0049e580	[C1 2026-05-18] `__fastcall` method `(int *param_1)`.
+0x0049e5c0	[C1 2026-05-18] `__fastcall` method `(int *param_1)`.
+0x0049e600	[C1 2026-05-18] `__fastcall` method `(int *param_1)`.
+0x0049e640	[C1 2026-05-18] `__fastcall` method `(int *param_1)`.
+0x0049e6c0	[C1 2026-05-18] `__thiscall` method `(int *param_1, int *param_2)`.
+0x0049ea70	[C1 2026-05-18] `__fastcall` method `(int param_1)`.
+0x0049eab0	[C1 2026-05-18] `__thiscall` scalar-deleting destructor `(void *param_1, byte param_2)`.
+0x0049ead0	[C1 2026-05-18] 5-byte thunk: jumps to `FUN_0049fac0` (the body destructor at 0x0049fac0).
+0x0049ebc0	[C1 2026-05-18] `__fastcall` destructor for a derived class `(undefined4 *param_1)`.
+0x0049ebf0	[C1 2026-05-18] `__thiscall` scalar-deleting destructor `(void *param_1, byte param_2)`.
+0x0049ec80	[C1 2026-05-18] `__thiscall` scalar-deleting destructor `(void *param_1, byte param_2)`.
+0x0049eca0	[C1 2026-05-18] 1-arg helper `(LPVOID *param_1)`.
+0x0049ecc0	[C1 2026-05-18] 3-arg method `(int param_1, int *param_2, undefined4 param_3)` — likely a…
+0x0049eeb0	[C1 2026-05-18] `__fastcall` 1-arg method.
+0x0049ef10	[C1 2026-05-18] 2-arg method `(int param_1, undefined2 *param_2)`.
+0x0049ef60	[C1 2026-05-18] 3-arg method `(int param_1, undefined4 *param_2, undefined4 *param_3)`.
+0x0049f030	[C1 2026-05-18] `__thiscall` 4-arg method `(int param_1, int param_2, undefined4 param_3, undefined4 param_4)`.
+0x0049f090	[C1 2026-05-18] 5-byte thunk: jumps to `FUN_004a28b0` (out-of-bucket).
+0x0049f0a0	[C1 2026-05-18] `__fastcall` destructor on `(undefined4 *param_1)`.
+0x0049f180	[C1 2026-05-18] 1-arg `(int *param_1)`.
+0x0049f1b0	[C1 2026-05-18] 1-arg constructor-tail `(int param_1)`.
+0x0049f1e0	[C1 2026-05-18] 1-arg `(int param_1)`.
+0x0049f210	[C1 2026-05-18] `__fastcall` destructor on `(undefined4 *param_1)`.
+0x0049f2b0	[C1 2026-05-18] 1-arg `(int *param_1)`.
+0x0049f2e0	[C1 2026-05-18] 1-arg `(int param_1)`.
+0x0049f300	[C1 2026-05-18] `__fastcall` destructor `(int param_1)`.
+0x0049f420	[C1 2026-05-18] `__thiscall` 2-arg method `(int *param_1, int *param_2)`.
+0x0049f4d0	[C1 2026-05-18] 3-arg method `(undefined4 param_1, undefined4 param_2, int *param_3)`.
+0x0049f5b0	[C1 2026-05-18] `__thiscall` 3-arg method `(int param_1, int *param_2, uint param_3)` — pin connect with optional…
+0x0049f690	[C1 2026-05-18] 1-arg `(undefined4 param_1)`.
+0x0049f830	[C1 2026-05-18] 1-arg `(int *param_1)`.
+0x0049f950	[C1 2026-05-18] 2-arg `(int param_1, int *param_2)`.
+0x0049fa40	[C1 2026-05-18] Trivial: returns 0.
+0x0049fac0	[C1 2026-05-18] `__fastcall` destructor body `(int param_1)`.
+0x0049fc80	[C1 2026-05-18] `__fastcall` method `(int param_1)`.
+0x0049fcc0	[C1 2026-05-18] 2-arg helper `(int param_1, int *param_2)`.
+0x0049fe10	[C1 2026-05-18] 4-arg `(int *param_1, int param_2_arr, int param_3_count, int *param_4_idx_out)`.
+0x0049ff30	[C1 2026-05-18] 1-arg `(int param_1)`.
+0x0049ff60	[C1 2026-05-18] 1-arg `(int param_1)`.
+0x0049ffe0	[C1 2026-05-18] 2-arg method `(int *param_1, int *param_2)` — pattern-table walker.
+0x004b4000	[C1 2026-05-18] Drift-skip: this RVA was already plated by `batch-t-s1` (`cluster_004b4_first_pass/004b4000.md`)…
+0x004b4010	[C1 2026-05-18] Drift-skip: already plated.
+0x004b4050	[C1 2026-05-18] Drift-skip: already plated.
+0x004b4080	[C1 2026-05-18] Drift-skip: already plated.
+0x004b40c0	[C1 2026-05-18] Drift-skip: already plated.
+0x004b40f0	[C1 2026-05-18] Drift-skip: already plated.
+0x004b4120	[C1 2026-05-18] Drift-skip: already plated.
+0x004b4130	[C1 2026-05-18] Drift-skip: already plated.
+0x004b4140	[C1 2026-05-18] Drift-skip: already plated.

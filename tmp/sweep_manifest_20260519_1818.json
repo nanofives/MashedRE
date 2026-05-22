@@ -1,0 +1,2391 @@
+{
+  "date": "2026-05-19",
+  "buckets": [
+    {
+      "bucket": "bucket_00449ba0",
+      "rvas": [
+        {
+          "rva": "0x00449ba0",
+          "plate": "[C1 2026-05-19] Ghidra marks this as a thunk (5 bytes) jumping to `FUN_00449b30` (the decomp reports the body of the underlying\u2026"
+        },
+        {
+          "rva": "0x0044aaa0",
+          "plate": "[C1 2026-05-19] Iterates an array of 10-DWORD entries starting somewhere before `&DAT_0068432c` (puVar1 starts at &DAT_0068432c, stride\u2026"
+        },
+        {
+          "rva": "0x0044ab20",
+          "plate": "[C1 2026-05-19] Loads engine-handle via `FUN_0055dec0(DAT_006ce274)` \u2192 iVar3."
+        },
+        {
+          "rva": "0x0044b000",
+          "plate": "[C1 2026-05-19] Indexes the same 10-DWORD record array `(&DAT_0068432c)[param_1 * 10]` \u2192 fetches `record[0]` of slot `param_1`."
+        },
+        {
+          "rva": "0x0044bbc0",
+          "plate": "[C1 2026-05-19] Reads `iVar1 = FUN_004c0ed0(*(undefined4*)(*(int*)(param_1+8) + 4))`. FUN_004c0ed0 likely returns a transform/matrix\u2026"
+        },
+        {
+          "rva": "0x0044bc30",
+          "plate": "[C1 2026-05-19] Signature: `void(int param_1, float param_2)`. param_1 = entity struct base, param_2 = dt (scalar)."
+        },
+        {
+          "rva": "0x0044bd50",
+          "plate": "[C1 2026-05-19] Signature: `void(int param_1)`. param_1 = entity struct base."
+        },
+        {
+          "rva": "0x0044be70",
+          "plate": "[C1 2026-05-19] Identical shape to 0x0044bd50 with two differences:"
+        },
+        {
+          "rva": "0x0044bfa0",
+          "plate": "[C1 2026-05-19] Signature: `void(int *param_1, int param_2)`. param_2 is converted to float, +0.0f if negative, multiplied by\u2026"
+        },
+        {
+          "rva": "0x0044c370",
+          "plate": "[C1 2026-05-19] Reads pointer at `DAT_00896000 + 4`, dereferences it as int*, adds 0x30 to that."
+        },
+        {
+          "rva": "0x0044c490",
+          "plate": "[C1 2026-05-19] Sibling of 0x0044bbc0. Same 9-DWORD descriptor shape pushed to FUN_00484cf0 queue."
+        },
+        {
+          "rva": "0x0044c4f0",
+          "plate": "[C1 2026-05-19] Initializer for a 0x58-byte slot at `param_1` (member of the array starting at &DAT_00896120)."
+        },
+        {
+          "rva": "0x0044c5f0",
+          "plate": "[C1 2026-05-19] Per-frame tick for a 0x58-byte slot (siblings: 0x0044c490 initializer is 0x0044c4f0)."
+        },
+        {
+          "rva": "0x0044c740",
+          "plate": "[C1 2026-05-19] Pair-collision test between two 0x58-byte slots `param_1` and `param_2`. Reads only floats at +0x8 (position), +0xc\u2026"
+        },
+        {
+          "rva": "0x0044c8b0",
+          "plate": "[C1 2026-05-19] Initializer driving the 3-slot array at &DAT_00896120 (3 \u00d7 0x58 = 0x108 bytes)."
+        },
+        {
+          "rva": "0x0044c920",
+          "plate": "[C1 2026-05-19] Per-frame tick driver for the 3-slot array at &DAT_00896120."
+        },
+        {
+          "rva": "0x0044caa0",
+          "plate": "[C1 2026-05-19] Reads `*(int *)(param_1 + 0x10148)` into global `DAT_00896230` (anchor entity/instance handle)."
+        },
+        {
+          "rva": "0x0044cb00",
+          "plate": "[C1 2026-05-19] Per-frame transform for the 4-slot array at &DAT_00896230 (driven by 0x0044caa0)."
+        },
+        {
+          "rva": "0x0044d6e0",
+          "plate": "[C1 2026-05-19] Single-arg setter: `DAT_00684b34 = param_1`. Stores 1 dword into a global flag/handle slot."
+        },
+        {
+          "rva": "0x0044df80",
+          "plate": "[C1 2026-05-19] Toggle: if `DAT_00684b7c != param_1` then walk the array from `&DAT_00890080` to `0x894e00` with stride 0x3e dwords (=\u2026"
+        },
+        {
+          "rva": "0x0044dfe0",
+          "plate": "[C1 2026-05-19] Returns the constant `0x50` (80 decimal)."
+        },
+        {
+          "rva": "0x0044dff0",
+          "plate": "[C1 2026-05-19] Position accessor for the 0x00890080 array."
+        },
+        {
+          "rva": "0x0044e020",
+          "plate": "[C1 2026-05-19] Boolean accessor for record param_1 in the 0x00890080 array."
+        },
+        {
+          "rva": "0x0044e050",
+          "plate": "[C1 2026-05-19] Returns the float at `&DAT_008900a8 + param_1 * 0xf8` (the +0x28 field per record in the 0x00890080 array)."
+        },
+        {
+          "rva": "0x0044e070",
+          "plate": "[C1 2026-05-19] Indirection chain into the 0x00890080 array and a second table at &DAT_00894de0."
+        },
+        {
+          "rva": "0x0044e190",
+          "plate": "[C1 2026-05-19] Builds child sub-objects for a parent at unaff_EBX. Note: function uses unaff_EBX (the decomp can't see param0) \u2014 this\u2026"
+        },
+        {
+          "rva": "0x0044e240",
+          "plate": "[C1 2026-05-19] Calls `FUN_00557ec0()` exactly 10 times in sequence, then `FUN_00558030()`."
+        },
+        {
+          "rva": "0x0044e2d0",
+          "plate": "[C1 2026-05-19] in_EAX (a pointer pair), unaff_EBX (parent base)."
+        },
+        {
+          "rva": "0x0044e310",
+          "plate": "[C1 2026-05-19] Sibling of 0x0044e2d0 \u2014 writes to `parent+0xa4` (next slot after +0xa0)."
+        },
+        {
+          "rva": "0x0044e680",
+          "plate": "[C1 2026-05-19] Initializes the 0x00890080 array (50 records of 0xf8 bytes). The big stack-resident `local_180[0x50]` table holds 80\u2026"
+        },
+        {
+          "rva": "0x0044ecc0",
+          "plate": "[C1 2026-05-19] Walks a 0x1c-byte-stride array (piVar3 += 7 dwords per inner iter) from `&DAT_00895614` to `0x89595c` \u2014 `(0x89595c\u2026"
+        },
+        {
+          "rva": "0x0044f830",
+          "plate": "[C1 2026-05-19] Initializer for the 3-rank \u00d7 10-slot effect array starting near &DAT_0089560c."
+        },
+        {
+          "rva": "0x00450300",
+          "plate": "[C1 2026-05-19] Globals initializer. Sets a long sequence of dwords at 0x00684c40, 0x00684b80..b8c, 0x00684be0..be8, 0x00684bbc..bdc (3\u2026"
+        },
+        {
+          "rva": "0x00451060",
+          "plate": "[C1 2026-05-19] Ghidra already has a `[C1 2026-05-07]` plate comment: \"SkyClearColorSet \u2014 called from SkyDomeRender\u2026"
+        },
+        {
+          "rva": "0x004516d0",
+          "plate": "[C1 2026-05-19] Switch on `*param_2` (an int dispatcher / atomic-index 0..2):"
+        },
+        {
+          "rva": "0x00451730",
+          "plate": "[C1 2026-05-19] Calls `FUN_004c1740(param_1, *(int*)(*(int*)(*(int*)(param_2+0x18)+0x5c) + 0x14), *(int*)(*(int*)(param_2+0x18)+0x14))`."
+        },
+        {
+          "rva": "0x00451820",
+          "plate": "[C1 2026-05-19] `iVar1 = FUN_0040e340()` \u2014 get count of players/AIs/entities."
+        },
+        {
+          "rva": "0x00451990",
+          "plate": "[C1 2026-05-19] Signature `(int param_1, undefined4 *param_2, undefined4 *param_3) -> int`."
+        },
+        {
+          "rva": "0x00451ad0",
+          "plate": "[C1 2026-05-19] Outer driver \u2014 loops over `local_58 = FUN_0040e340()` entities."
+        },
+        {
+          "rva": "0x00451cc0",
+          "plate": "[C1 2026-05-19] Reset/disable for param_1:"
+        },
+        {
+          "rva": "0x00451ce0",
+          "plate": "[C1 2026-05-19] `iVar2 = FUN_00550bc0(*(int*)(param_1+0x50))` \u2014 resolve a handle to a frame/object."
+        },
+        {
+          "rva": "0x00452140",
+          "plate": "[C1 2026-05-19] Tail-call wrapper: `FUN_00451990(&DAT_00684d18, param_1, param_2)`."
+        },
+        {
+          "rva": "0x004523f0",
+          "plate": "[C1 2026-05-19] Destructor for a 2-DWORD-header container `{count: *param_1, items: param_1[1]}`."
+        },
+        {
+          "rva": "0x0045a3a0",
+          "plate": "[C1 2026-05-19] Bulk-zero initializer over a 3D-ish array at `&DAT_0068c31c..&DAT_0068d76c`."
+        },
+        {
+          "rva": "0x0045a530",
+          "plate": "[C1 2026-05-19] Sibling of 0x0044bbc0 and 0x0044c490 \u2014 pushes a descriptor to FUN_00484cf0 queue."
+        },
+        {
+          "rva": "0x0045a590",
+          "plate": "[C1 2026-05-19] in_EAX = pickup item ptr (object). Reads frame at `*(int*)(in_EAX+0x24)+4`."
+        },
+        {
+          "rva": "0x0045a950",
+          "plate": "[C1 2026-05-19] Per-frame collision-emit logic for a slot at param_1."
+        },
+        {
+          "rva": "0x0045ac40",
+          "plate": "[C1 2026-05-19] Sorts the 5\u00d75 \"hit-spark\" sub-array of the 0x68bd00 record table by distance from param_2 (an RwV3d)."
+        },
+        {
+          "rva": "0x0045ae80",
+          "plate": "[C1 2026-05-19] Per-frame driver for the \"hit-spark\"/\"pickup\" system. Two big loops."
+        },
+        {
+          "rva": "0x0045b360",
+          "plate": "[C1 2026-05-19] Reset for a slot at unaff_ESI: clears 4 dwords at +0xc, +0x10, +0x14, +0x18 (an RwV3d + flag)."
+        },
+        {
+          "rva": "0x0045b390",
+          "plate": "[C1 2026-05-19] Probably \"explode and damage 4 entities\" \u2014 heavy combined effect."
+        },
+        {
+          "rva": "0x0045bfd0",
+          "plate": "[C1 2026-05-19] Ghidra-marked thunk: 5-byte JMP to `FUN_00426060`."
+        },
+        {
+          "rva": "0x0045bff0",
+          "plate": "[C1 2026-05-19] Returns true if `(&DAT_0088fc88)[param_1 * 0x2d] == 0`. The 0x2d-DWORD stride (= 0xb4 bytes per record) is a per-record\u2026"
+        },
+        {
+          "rva": "0x0045c030",
+          "plate": "[C1 2026-05-19] Builds a coordinate-frame RwMatrix at param_1 from:"
+        },
+        {
+          "rva": "0x0045c110",
+          "plate": "[C1 2026-05-19] Big switch on `*(uint*)(param_1+4)`. Tests against ~20 magic IDs of form 0xff0NNNNN where NN = 01..0a (1..10) and the\u2026"
+        },
+        {
+          "rva": "0x0045c330",
+          "plate": "[C1 2026-05-19] Returns `FUN_0045bff0(param_1) == 0` \u2014 boolean inverter."
+        },
+        {
+          "rva": "0x0045c4e0",
+          "plate": "[C1 2026-05-19] Linear search: scans array `param_2`, stride 10 dwords (40 bytes) per record, up to `param_3` records, returning the\u2026"
+        },
+        {
+          "rva": "0x0045c510",
+          "plate": "[C1 2026-05-19] Walks the `&DAT_0088f680` array (iVar2 = 0..3, max 4 slots) testing each non-null entry:"
+        },
+        {
+          "rva": "0x0045c550",
+          "plate": "[C1 2026-05-19] Walks a linked list of \"state-transitions\" starting at `&DAT_005fcb74 + param_1*0x28` (record stride 0x28 = 40 bytes)."
+        },
+        {
+          "rva": "0x0045c640",
+          "plate": "[C1 2026-05-19] 4-way switch on param_1, sets two global pointers (DAT_0088fbc4 and DAT_0088fbc8):"
+        },
+        {
+          "rva": "0x0045c850",
+          "plate": "[C1 2026-05-19] Single-store setter: `*(int*)(&DAT_0088f09c + param_1*4) = 0`. Clears dword at index param_1 in array starting at\u2026"
+        },
+        {
+          "rva": "0x0045c860",
+          "plate": "[C1 2026-05-19] Zeros 4 dwords at 0x0088f0a0..0x0088f0ac (DAT_0088f0a0, DAT_0088f0a4, DAT_0088f0a8, DAT_0088f0ac)."
+        },
+        {
+          "rva": "0x0045c880",
+          "plate": "[C1 2026-05-19] Updates a 6\u00d76 float \"score\" matrix at `&DAT_0088f5e0` (= 36 floats = 0x90 bytes; bound `0x88f670 = 0x0088f5e0 + 0x90`)."
+        },
+        {
+          "rva": "0x0045ca30",
+          "plate": "[C1 2026-05-19] Tri-band quantizer over the 6\u00d76 float matrix at `&DAT_0088f5e0`:"
+        },
+        {
+          "rva": "0x0045cab0",
+          "plate": "[C1 2026-05-19] `FUN_0046cbb0(param_1, &local_8, local_4)` \u2014 query something into local_8 and local_4."
+        },
+        {
+          "rva": "0x0045caf0",
+          "plate": "[C1 2026-05-19] `DAT_008aa254 < 2` (likely \"single-player gate\") AND `param_2 >= 0`:"
+        },
+        {
+          "rva": "0x0045cb20",
+          "plate": "[C1 2026-05-19] Add-binding helper. Inputs: param_1 (state-id), param_2 (player-id-like), param_3 (extra-key)."
+        },
+        {
+          "rva": "0x0045cbe0",
+          "plate": "[C1 2026-05-19] Remove-binding helper."
+        },
+        {
+          "rva": "0x0045d080",
+          "plate": "[C1 2026-05-19] Clears all bindings for all 4 players."
+        },
+        {
+          "rva": "0x0045d0e0",
+          "plate": "[C1 2026-05-19] Decision predicate for \"should player param_1 take an action this frame?\""
+        },
+        {
+          "rva": "0x0045da90",
+          "plate": "[C1 2026-05-19] Two-step audio/sound parameter setter for slot `param_1` (indexed into `&DAT_0069045c` per-slot table)."
+        },
+        {
+          "rva": "0x0045daf0",
+          "plate": "[C1 2026-05-19] Copies a 3-float position from a transform held by `param_2` into slot record `(&DAT_0068f640)[param_1*2]` at offsets\u2026"
+        },
+        {
+          "rva": "0x0045dce0",
+          "plate": "[C1 2026-05-19] Conditional copy of a 3-float position (from `param_2[0..2]`) into a slot record at\u2026"
+        },
+        {
+          "rva": "0x0045dd50",
+          "plate": "[C1 2026-05-19] One-line accessor: returns `*(undefined4*)(&DAT_008aa300 + param_1*4)` \u2014 i.e. `g_table[param_1]` for a dword table."
+        },
+        {
+          "rva": "0x0045dff0",
+          "plate": "[C1 2026-05-19] Range-test predicate. Returns 1 iff `f1 - f2` lies in the open interval `(_DAT_005ce6b4, _DAT_005cc55c)`, else 0."
+        },
+        {
+          "rva": "0x00461e90",
+          "plate": "[C1 2026-05-19] Pure dispatch table: `switch(param_1)` over ~14 cases (0, 2, 3, 0xb, 0x19, 0x1a, 0x1e, 0x21, 0x22, 0x24, 0x25, 0x26\u2026"
+        },
+        {
+          "rva": "0x00462760",
+          "plate": "[C1 2026-05-19] Walks the per-slot pointer table starting at `&DAT_0069045c`, advancing 4 bytes per slot, while pointer < 0x69046c (16\u2026"
+        },
+        {
+          "rva": "0x004656e0",
+          "plate": "[C1 2026-05-19] Slot activation/start for player `param_1`. Three early-out branches:"
+        },
+        {
+          "rva": "0x00465f40",
+          "plate": "[C1 2026-05-19] Position-plus-volume setter for entity `param_1`, sub-slot `param_3`, with position `*param_2` (3 floats) and a scalar\u2026"
+        },
+        {
+          "rva": "0x00466000",
+          "plate": "[C1 2026-05-19] Extended version of 0x00465f40: position + volume + pitch(?) setter for entity `param_1`, sub-slot `param_3`."
+        },
+        {
+          "rva": "0x004660fa",
+          "plate": "[C1 2026-05-19] Not a function. `listing_code_unit_at(0x004660fa)` returns a single-byte data unit `?? 90h` (an alignment / padding\u2026"
+        }
+      ],
+      "missing_md": [],
+      "extras_from_dir": []
+    },
+    {
+      "bucket": "bucket_00466100",
+      "rvas": [
+        {
+          "rva": "0x00466100",
+          "plate": "[C1 2026-05-19] Three params: `param_1` int, `param_2` int (slot/index), `param_3` float."
+        },
+        {
+          "rva": "0x004670a0",
+          "plate": "[C1 2026-05-19] No params; constructor-like."
+        },
+        {
+          "rva": "0x004671d0",
+          "plate": "[C1 2026-05-19] Param: `param_1` int."
+        },
+        {
+          "rva": "0x004672d0",
+          "plate": "[C1 2026-05-19] Same pattern as 0x004671d0 but returns `*(undefined4*)(rec+4)` (no +0x40 offset)."
+        },
+        {
+          "rva": "0x0046bce0",
+          "plate": "[C1 2026-05-19] Params: `param_1` (undefined4*), `param_2` (uint)."
+        },
+        {
+          "rva": "0x0046bd20",
+          "plate": "[C1 2026-05-19] Params: `param_1` (undefined4*), `param_2` (uint)."
+        },
+        {
+          "rva": "0x0046bd60",
+          "plate": "[C1 2026-05-19] Params: `param_1` (undefined4*), `param_2` (uint), `param_3` (uint)."
+        },
+        {
+          "rva": "0x0046bda0",
+          "plate": "[C1 2026-05-19] Params: `param_1` (float*), `param_2` (uint vehicle), `param_3` (uint wheel)."
+        },
+        {
+          "rva": "0x0046be10",
+          "plate": "[C1 2026-05-19] Params: `param_1` (undefined4*), `param_2` (uint vehicle), `param_3` (int offset), `param_4` (undefined4 value)."
+        },
+        {
+          "rva": "0x0046be50",
+          "plate": "[C1 2026-05-19] Params: `param_1` (uint vehicle), `param_2` (undefined4 case index 1..6), `param_3` (uint value), `param_4` (undefined4\u2026"
+        },
+        {
+          "rva": "0x0046bf50",
+          "plate": "[C1 2026-05-19] Params: `param_1` (float* vec3), `param_2` (uint vehicle)."
+        },
+        {
+          "rva": "0x0046bfc0",
+          "plate": "[C1 2026-05-19] Params: `param_1` (int vehicle index), `param_2` (float* AABB 6-floats), `param_3` (undefined4 matrix ptr), `param_4`\u2026"
+        },
+        {
+          "rva": "0x0046d2e0",
+          "plate": "[C1 2026-05-19] Params: int vehicle, int wheel, undefined4* out."
+        },
+        {
+          "rva": "0x0046d320",
+          "plate": "[C1 2026-05-19] Identical body to 0x0046d2e0 (reads `&DAT_00881790 + ((v*0x11)+wheel)*0xc4`). Likely duplicate accessor (different\u2026"
+        },
+        {
+          "rva": "0x0046d360",
+          "plate": "[C1 2026-05-19] Params: undefined4* out, uint vehicle, uint wheel."
+        },
+        {
+          "rva": "0x0046d660",
+          "plate": "[C1 2026-05-19] Params: undefined4* out (vec3), uint vehicle."
+        },
+        {
+          "rva": "0x0046d740",
+          "plate": "[C1 2026-05-19] Params: undefined4* (vec3 in), uint vehicle."
+        },
+        {
+          "rva": "0x0046d880",
+          "plate": "[C1 2026-05-19] Params: `param_1` (int object-base, has +0x19c writable flag + +0x9c8 vec3), `param_2` (int OBB/wedge ptr)."
+        },
+        {
+          "rva": "0x0046dd80",
+          "plate": "[C1 2026-05-19] No params; returns `(float10)DAT_0061313c` \u2014 single global float getter (returned as x87 extended-precision)."
+        },
+        {
+          "rva": "0x0046dd90",
+          "plate": "[C1 2026-05-19] Params: int vehicle, undefined4 value."
+        },
+        {
+          "rva": "0x00471430",
+          "plate": "[C1 2026-05-19] No params."
+        },
+        {
+          "rva": "0x00471450",
+          "plate": "[C1 2026-05-19] No params. Snapshots count into running-total and advances player counter:"
+        },
+        {
+          "rva": "0x00471490",
+          "plate": "[C1 2026-05-19] Param `param_1` int (named-object handle/id)."
+        },
+        {
+          "rva": "0x00471530",
+          "plate": "[C1 2026-05-19] No params. Loop initializes a string table at base 0x00690a30 .. 0x00691480:"
+        },
+        {
+          "rva": "0x00471560",
+          "plate": "[C1 2026-05-19] Param: `char* name`."
+        },
+        {
+          "rva": "0x00471780",
+          "plate": "[C1 2026-05-19] Existing comment claims param_1 is \"camera-anim entry base pointer\" (2026-05-13) but the body is **active-event\u2026"
+        },
+        {
+          "rva": "0x004721b0",
+          "plate": "[C1 2026-05-19] Params: `param_1` (int object), `param_2` (undefined4 cookie)."
+        },
+        {
+          "rva": "0x004722e0",
+          "plate": "[C1 2026-05-19] Param: int object base."
+        },
+        {
+          "rva": "0x00472500",
+          "plate": "[C1 2026-05-19] Existing 2026-05-13 note: \"PlayerColorGet \u2014 returns one of two color variants\"."
+        },
+        {
+          "rva": "0x00472520",
+          "plate": "[C1 2026-05-19] Params: int idx, undefined4 value."
+        },
+        {
+          "rva": "0x00472550",
+          "plate": "[C1 2026-05-19] Getter pair to 0x472500's gate at +0x8: returns `(&DAT_00691508)[idx*4]` (the gate flag)."
+        },
+        {
+          "rva": "0x00472560",
+          "plate": "[C1 2026-05-19] Params: int player, int variant."
+        },
+        {
+          "rva": "0x004725f0",
+          "plate": "[C1 2026-05-19] No params. Init loop iVar2 = 0..n until puVar1 >= 0x6915ac:"
+        },
+        {
+          "rva": "0x004726b0",
+          "plate": "[C1 2026-05-19] Params: float* a, float* b. Computes `a[0]*b[0] + a[1]*b[1]` (Dot2)."
+        },
+        {
+          "rva": "0x004726f0",
+          "plate": "[C1 2026-05-19] Existing 2026-05-15 note states 3-element float arrays."
+        },
+        {
+          "rva": "0x00472740",
+          "plate": "[C1 2026-05-19] Param: undefined1* (4-byte buffer)."
+        },
+        {
+          "rva": "0x004728f0",
+          "plate": "[C1 2026-05-19] Param: undefined4 curve_handle."
+        },
+        {
+          "rva": "0x004729b0",
+          "plate": "[C1 2026-05-19] Params: undefined4 curve_handle, undefined1* color_a (4 bytes), undefined1* color_b (4 bytes)."
+        },
+        {
+          "rva": "0x00472ad0",
+          "plate": "[C1 2026-05-19] Param: undefined4 curve_handle."
+        },
+        {
+          "rva": "0x00472b10",
+          "plate": "[C1 2026-05-19] Params: undefined4* texture, float x, float y, float w, float h, uint color."
+        },
+        {
+          "rva": "0x00473220",
+          "plate": "[C1 2026-05-19] Same shape as 0x472b10 (4-vertex quad), but x/y/w/h are pre-scaled by screen factors:"
+        },
+        {
+          "rva": "0x004733b0",
+          "plate": "[C1 2026-05-19] Near-identical to 0x473220 but uses DAT_00898a30 (vs DAT_00898a4c) for the side-color, and `_DAT_00898a68 =\u2026"
+        },
+        {
+          "rva": "0x00473c20",
+          "plate": "[C1 2026-05-19] Existing 2026-05-15 note documents thunk_FUN_00493f70 with arg (0x14, 1) first."
+        },
+        {
+          "rva": "0x00473ee0",
+          "plate": "[C1 2026-05-19] Existing 2026-05-15 signature note."
+        },
+        {
+          "rva": "0x004744a0",
+          "plate": "[C1 2026-05-19] No params. Triple-nested loops same shape as inner triple-loop of 0x473ee0:"
+        },
+        {
+          "rva": "0x00474890",
+          "plate": "[C1 2026-05-19] Existing 2026-05-15 note: 9 params, body 0x00474890-0x00474d16 (1158 B)."
+        },
+        {
+          "rva": "0x0047b480",
+          "plate": "[C1 2026-05-19] Param: undefined4 script_ctx."
+        },
+        {
+          "rva": "0x0047b5b0",
+          "plate": "[C1 2026-05-19] Same bytecode 3-byte read pattern as 0x47b480."
+        },
+        {
+          "rva": "0x0047b6b0",
+          "plate": "[C1 2026-05-19] Same 3-byte bytecode read as 0x47b480/5b0."
+        },
+        {
+          "rva": "0x0047ba20",
+          "plate": "[C1 2026-05-19] Params: int hull (has byte-index table at +0xf0, vert array at +0x24..), int faceIdx, float* point, uint* outSideBit."
+        },
+        {
+          "rva": "0x0047bb10",
+          "plate": "[C1 2026-05-19] Params: int hull (+0x148 face count, +0xf0 face indices, +0x138 hull-center sub), float* point, int outContactArray (16\u2026"
+        },
+        {
+          "rva": "0x0047bc90",
+          "plate": "[C1 2026-05-19] __fastcall, but uses `unaff_ESI` (= caller's local \"this\") and `param_2`."
+        },
+        {
+          "rva": "0x0047c1f0",
+          "plate": "[C1 2026-05-19] Uses register-passed `in_EAX` (object), `unaff_EBX` (count). Param `param_1`."
+        },
+        {
+          "rva": "0x0047c230",
+          "plate": "[C1 2026-05-19] Same shape as 0x0047c1f0 but tests `FUN_004780c0(EAX, param_1) == 2` (specific value match, not bool)."
+        },
+        {
+          "rva": "0x0047c270",
+          "plate": "[C1 2026-05-19] Param: undefined4 contact_array."
+        },
+        {
+          "rva": "0x0047c2d0",
+          "plate": "[C1 2026-05-19] Same shape as 0x47c270 but calls 0x47c1f0 (the boolean variant) instead of 0x47c230."
+        },
+        {
+          "rva": "0x0047ccb0",
+          "plate": "[C1 2026-05-19] No params; **destructor** for a sub-system."
+        },
+        {
+          "rva": "0x0047cd50",
+          "plate": "[C1 2026-05-19] Params: int objA (has inner handle at +0x14), int objB (has type at +0x10, id at +0x18)."
+        },
+        {
+          "rva": "0x0047cdc0",
+          "plate": "[C1 2026-05-19] Params: int idx, float dist."
+        },
+        {
+          "rva": "0x0047cde0",
+          "plate": "[C1 2026-05-19] Params: int idx, undefined4 value."
+        },
+        {
+          "rva": "0x0047ce00",
+          "plate": "[C1 2026-05-19] Existing 2026-05-13 note documents 200-element array."
+        },
+        {
+          "rva": "0x0047ce20",
+          "plate": "[C1 2026-05-19] Param: int idx."
+        },
+        {
+          "rva": "0x0047ce70",
+          "plate": "[C1 2026-05-19] No params; returns global `DAT_006c6eb0` (used elsewhere as \"current scenery actor count\")."
+        },
+        {
+          "rva": "0x0047ce80",
+          "plate": "[C1 2026-05-19] Existing 2026-05-13 note documents 200-element array."
+        },
+        {
+          "rva": "0x0047cf20",
+          "plate": "[C1 2026-05-19] Params: int idx, int newState."
+        },
+        {
+          "rva": "0x0047d130",
+          "plate": "[C1 2026-05-19] Existing 2026-05-13 note documents 200-element array."
+        },
+        {
+          "rva": "0x0047d150",
+          "plate": "[C1 2026-05-19] Existing 2026-05-13 note documents slot index range."
+        },
+        {
+          "rva": "0x0047d180",
+          "plate": "[C1 2026-05-19] Existing 2026-05-13 note."
+        },
+        {
+          "rva": "0x0047d330",
+          "plate": "[C1 2026-05-19] No params. Iterates `&DAT_006c9a78` to 0x6c9a88 (= 4 slots)."
+        },
+        {
+          "rva": "0x0047d640",
+          "plate": "[C1 2026-05-19] Param: int param_1 (world/event-DB with +0xc8 count, +0xd4 list-of-lists base)."
+        },
+        {
+          "rva": "0x0047def0",
+          "plate": "[C1 2026-05-19] Param: int param_1 (event-DB, same shape as 0x47d640)."
+        },
+        {
+          "rva": "0x0047f1e0",
+          "plate": "[C1 2026-05-19] Params: undefined4* out, uint vehicleIdx."
+        },
+        {
+          "rva": "0x0047f230",
+          "plate": "[C1 2026-05-19] Same as 0x0047f1e0 but reads vec3 at offset `+0x10` of vertex (vs +0)."
+        },
+        {
+          "rva": "0x0047f290",
+          "plate": "[C1 2026-05-19] Param: int idx (0..200)."
+        },
+        {
+          "rva": "0x0047f380",
+          "plate": "[C1 2026-05-19] No params. Bulk destructor across full 200-slot scenery-actor pool."
+        },
+        {
+          "rva": "0x0047f450",
+          "plate": "[C1 2026-05-19] No params. World-teardown wrapper."
+        },
+        {
+          "rva": "0x0047f480",
+          "plate": "[C1 2026-05-19] No params. Final world-destroy entry point."
+        },
+        {
+          "rva": "0x0047f6d0",
+          "plate": "[C1 2026-05-19] Params: (undefined4 p1, int p2_entity, undefined4* p3_contact_src, undefined4 p4, int* p5_ringbuf_state)."
+        },
+        {
+          "rva": "0x0047fad0",
+          "plate": "[C1 2026-05-19] Constructor. Params (param_1 entity_template, param_2 clump_handle, param_3 float scale, param_4..7 attribs)."
+        },
+        {
+          "rva": "0x004893a0",
+          "plate": "[C1 2026-05-19] 16-byte thunk. Pure tail-call to `FUN_00476cb0(param_1, param_2, param_3)`."
+        },
+        {
+          "rva": "0x004893b0",
+          "plate": "[C1 2026-05-19] Single-param int* (a small \"cursor+base\" descriptor)."
+        }
+      ],
+      "missing_md": [],
+      "extras_from_dir": []
+    },
+    {
+      "bucket": "bucket_004d7ac0",
+      "rvas": [
+        {
+          "rva": "0x004d7ac0",
+          "plate": "[C1 2026-05-19] Takes a single `int` parameter `param_1` and routes through two branches based on `param_1 == 0` or `param_1 != 0`\u2026"
+        },
+        {
+          "rva": "0x004d7bc0",
+          "plate": "[C1 2026-05-19] Reads `DAT_007d6b2c` and compares against `param_1` (0x004d7bc4)."
+        },
+        {
+          "rva": "0x004d7c10",
+          "plate": "[C1 2026-05-19] Sibling of FUN_004d7bc0 with the same shape but targeting a different lookup table and target."
+        },
+        {
+          "rva": "0x004d7db0",
+          "plate": "[C1 2026-05-19] Object extension/plugin lookup: takes `param_1` (object pointer) and `param_2` (id/key)."
+        },
+        {
+          "rva": "0x004d8090",
+          "plate": "[C1 2026-05-19] Walks the extension list at `*(undefined4 **)(param_1 + 0x10)` (same head as 0x004d7db0)."
+        },
+        {
+          "rva": "0x004d80d0",
+          "plate": "[C1 2026-05-19] Walks the dirty-frame queue at `DAT_007d3ff8+0xbc` (intrusive doubly-linked list) until head meets sentinel\u2026"
+        },
+        {
+          "rva": "0x004d8280",
+          "plate": "[C1 2026-05-19] Walks linked list at `param_1` via next pointer at `+0x9c`."
+        },
+        {
+          "rva": "0x004d8300",
+          "plate": "[C1 2026-05-19] Same chain-walk shape as FUN_004d8280 but does **not** combine matrices (used when parent had no dirty data)."
+        },
+        {
+          "rva": "0x004d8350",
+          "plate": "[C1 2026-05-19] Single-frame sync entry point (compare to FUN_004d80d0 which is queue-wide)."
+        },
+        {
+          "rva": "0x004d83d0",
+          "plate": "[C1 2026-05-19] Recursive child sub-walker for FUN_004d8350."
+        },
+        {
+          "rva": "0x004d84e0",
+          "plate": "[C1 2026-05-19] Reads two dwords from `DAT_007d6c5c + DAT_007d3ff8` and `+0x4` into the caller-supplied output buffer `param_1`\u2026"
+        },
+        {
+          "rva": "0x004d8680",
+          "plate": "[C1 2026-05-19] Case-insensitive string compare (stricmp)."
+        },
+        {
+          "rva": "0x004d8770",
+          "plate": "[C1 2026-05-19] Substitutes `param_1` with default string at `&DAT_005d8d70` if null."
+        },
+        {
+          "rva": "0x004d87a0",
+          "plate": "[C1 2026-05-19] Substitutes `param_1` with default string at `&DAT_005d8d70` if null (double-null-check pattern at\u2026"
+        },
+        {
+          "rva": "0x004d8eb0",
+          "plate": "[C1 2026-05-19] Walks a doubly-linked list at `DAT_00911ad8 + 0x10 + DAT_007d3ff8` (resource list head; sentinel at `+0x18`)."
+        },
+        {
+          "rva": "0x004d9050",
+          "plate": "[C1 2026-05-19] Iterates pixel grid described by descriptor at `param_2`:"
+        },
+        {
+          "rva": "0x004d9360",
+          "plate": "[C1 2026-05-19] Leaf accumulator for the octree quantizer."
+        },
+        {
+          "rva": "0x004d94a0",
+          "plate": "[C1 2026-05-19] Octree descend-with-lazy-alloc helper."
+        },
+        {
+          "rva": "0x004d9530",
+          "plate": "[C1 2026-05-19] Main palette-build entry point. Given an octree root in `param_3[0x1000]` and a requested palette size `param_2`\u2026"
+        },
+        {
+          "rva": "0x004d9a60",
+          "plate": "[C1 2026-05-19] Mean-to-RGBA palette-entry writer."
+        },
+        {
+          "rva": "0x004d9ba0",
+          "plate": "[C1 2026-05-19] Recursive pixel-assignment pass: walks the octree under `param_1` and stamps `param_5` (palette index, byte) into each\u2026"
+        },
+        {
+          "rva": "0x004d9d00",
+          "plate": "[C1 2026-05-19] Recursive stats-merge pass over octree nodes that fall *inside* a query box."
+        },
+        {
+          "rva": "0x004d9ee0",
+          "plate": "[C1 2026-05-19] Combine two stats blobs (`param_2`, `param_3`) into `param_1`."
+        },
+        {
+          "rva": "0x004da000",
+          "plate": "[C1 2026-05-19] 1-D binary-search split-evaluator along channel `param_3` for the partition stored in `param_2`."
+        },
+        {
+          "rva": "0x004da270",
+          "plate": "[C1 2026-05-19] Recursive *seed* pass: walks the octree at `param_1`, summing leaf stats into the running aggregate at `param_1`\u2026"
+        },
+        {
+          "rva": "0x004da430",
+          "plate": "[C1 2026-05-19] Recursive leaf-count: returns 1 if `param_2 <= 0` (terminator depth) at a non-null node, else 0 for null nodes."
+        },
+        {
+          "rva": "0x004da480",
+          "plate": "[C1 2026-05-19] Recursive single-cluster palette emit: walks the octree in-order, writing one palette entry per leaf at `param_2 +\u2026"
+        },
+        {
+          "rva": "0x004da4f0",
+          "plate": "[C1 2026-05-19] Per-pixel paletted-image emission: given an input bpp configuration in descriptor `param_6` plus quantizer state in\u2026"
+        },
+        {
+          "rva": "0x004daa00",
+          "plate": "[C1 2026-05-19] Descend the octree to a leaf and return the palette-index byte."
+        },
+        {
+          "rva": "0x004daa40",
+          "plate": "[C1 2026-05-19] Quantizer initializer / state builder."
+        },
+        {
+          "rva": "0x004daaf0",
+          "plate": "[C1 2026-05-19] Quantizer teardown: counterpart of FUN_004daa40."
+        },
+        {
+          "rva": "0x004dab70",
+          "plate": "[C1 2026-05-19] Recursive tree-free helper."
+        },
+        {
+          "rva": "0x004dabd0",
+          "plate": "[C1 2026-05-19] 32-bit-RGBA image resampler from descriptor `param_2` to descriptor `param_1` using bilinear-area weighted resampling."
+        },
+        {
+          "rva": "0x004daff0",
+          "plate": "[C1 2026-05-19] Inner loop for the 32-bit RGBA bilinear-area resampler: integrates source pixels spanning the column range `[param_2 >>\u2026"
+        },
+        {
+          "rva": "0x004db2e0",
+          "plate": "[C1 2026-05-19] Outer-shell of the image resize call."
+        },
+        {
+          "rva": "0x004db770",
+          "plate": "[C1 2026-05-19] D3D9 immediate-mode draw call setup before submitting a vertex buffer:"
+        },
+        {
+          "rva": "0x004dba60",
+          "plate": "[C1 2026-05-19] Submits `param_3` vertices (28 bytes each \u2014 confirmed by stride math `param_3 * 0x1c`) at primitive-type `param_1`\u2026"
+        },
+        {
+          "rva": "0x004dc160",
+          "plate": "[C1 2026-05-19] Vec3 array \u00d7 4x4 matrix transform with translation row."
+        },
+        {
+          "rva": "0x004dc1f0",
+          "plate": "[C1 2026-05-19] Vec3 array \u00d7 3x3 matrix transform (no translation row)."
+        },
+        {
+          "rva": "0x004dc280",
+          "plate": "[C1 2026-05-19] Single Vec3 \u00d7 4x4 matrix transform with translation row (returns the packed-3-float result at `param_1`)."
+        },
+        {
+          "rva": "0x004dc300",
+          "plate": "[C1 2026-05-19] Single Vec3 \u00d7 3x3 matrix transform without translation."
+        },
+        {
+          "rva": "0x004dc370",
+          "plate": "[C1 2026-05-19] Vec3 array \u00d7 4x4 matrix transform with translation, **output as 3 separate floats per vertex** (no CONCAT44 packing)."
+        },
+        {
+          "rva": "0x004dc410",
+          "plate": "[C1 2026-05-19] Vec3 array \u00d7 3x3 matrix transform without translation, **output as 3 separate floats per vertex**."
+        },
+        {
+          "rva": "0x004dc4a0",
+          "plate": "[C1 2026-05-19] Single Vec3 \u00d7 4x4 matrix transform with translation, 3-float output (mirrors FUN_004dc370 with count=1)."
+        },
+        {
+          "rva": "0x004dc530",
+          "plate": "[C1 2026-05-19] Single Vec3 \u00d7 3x3 matrix transform without translation, 3-float output (mirrors FUN_004dc410 with count=1)."
+        },
+        {
+          "rva": "0x004dc5b0",
+          "plate": "[C1 2026-05-19] Dynamic vertex-buffer suballocator: hands out a region of `param_2` bytes (`param_2` strict, where `param_1` is the\u2026"
+        },
+        {
+          "rva": "0x004dc750",
+          "plate": "[C1 2026-05-19] Inverse of FUN_004dc5b0 \u2014 frees a vertex-buffer suballoc range and tries to coalesce with adjacent free-list entries."
+        },
+        {
+          "rva": "0x004dc8a0",
+          "plate": "[C1 2026-05-19] Cycles the active dynamic-VB ring index forward by one (mod 4)."
+        },
+        {
+          "rva": "0x004dcb80",
+          "plate": "[C1 2026-05-19] Singly-linked-list search-and-deactivate."
+        },
+        {
+          "rva": "0x004dcbb0",
+          "plate": "[C1 2026-05-19] Ring-buffer initial Lock helper: given alignment `param_1` and write size `param_1 * param_2` bytes (note `param_2`\u2026"
+        },
+        {
+          "rva": "0x004dcd30",
+          "plate": "[C1 2026-05-19] Calls vtable slot `+0x30` of the COM object at `param_1` (matches `IDirect3DVertexBuffer9::Unlock`)."
+        },
+        {
+          "rva": "0x004dd140",
+          "plate": "[C1 2026-05-19] IAT thunk for d3d9.dll!Direct3DCreate9. Single indirect JMP through the import table."
+        },
+        {
+          "rva": "0x004dd150",
+          "plate": "[C1 2026-05-19] Computes the total in-memory byte cost of a D3D9 texture or cubemap, including all mip levels and metadata, into\u2026"
+        },
+        {
+          "rva": "0x004ddcb0",
+          "plate": "[C1 2026-05-19] Clamps and adjusts (width, height) to satisfy D3D9 device caps."
+        },
+        {
+          "rva": "0x004ddd60",
+          "plate": "[C1 2026-05-19] Pack-4-bytes-to-D3D-format helper: writes a single 32-bit packed pixel into `*param_1` from the 4-byte BGRA-ish source\u2026"
+        },
+        {
+          "rva": "0x004ec130",
+          "plate": "[C1 2026-05-19] Camera/frustum-cull-around-atomic routine."
+        },
+        {
+          "rva": "0x004ec720",
+          "plate": "[C1 2026-05-19] Writes `param_2` to `**(undefined4 **)(param_1 + 0x14)` \u2014 double indirection."
+        },
+        {
+          "rva": "0x004ec730",
+          "plate": "[C1 2026-05-19] Getter sibling of FUN_004ec720: returns `**(undefined4 **)(param_1 + 0x14)`."
+        },
+        {
+          "rva": "0x004ec740",
+          "plate": "[C1 2026-05-19] Writes `param_2` to `*(undefined4 *)(*(int *)(param_1 + 0x14) + 0xc)` \u2014 sets field at offset `+0xc` of indirect target."
+        },
+        {
+          "rva": "0x004ec750",
+          "plate": "[C1 2026-05-19] Getter sibling of FUN_004ec740: returns `*(undefined4 *)(*(int *)(param_1 + 0x14) + 0xc)`."
+        },
+        {
+          "rva": "0x004ec760",
+          "plate": "[C1 2026-05-19] Tolerant float-equality test: returns 1 if `|param_1 - param_2|` is *outside* the epsilon band `[_DAT_005dae30\u2026"
+        },
+        {
+          "rva": "0x004ec79d",
+          "plate": "[C1 2026-05-19] IEEE-754 float32 -> half-float (float16) converter for `param_3` elements, source at `param_2`, dest at `param_1`\u2026"
+        },
+        {
+          "rva": "0x004ec839",
+          "plate": "[C1 2026-05-19] IEEE-754 half-float (float16) -> float32 inverse of FUN_004ec79d."
+        },
+        {
+          "rva": "0x004ec8eb",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. Calls `FUN_004fbe7a(1)` (one-shot LoadLibrary-style initializer) then forwards 6 args via\u2026"
+        },
+        {
+          "rva": "0x004ec915",
+          "plate": "[C1 2026-05-19] Vec2 Catmull-Rom interpolation (D3DXVec2CatmullRom equivalent)."
+        },
+        {
+          "rva": "0x004ec9a3",
+          "plate": "[C1 2026-05-19] Delay-load forwarder pattern (see FUN_004ec8eb)."
+        },
+        {
+          "rva": "0x004ec9cd",
+          "plate": "[C1 2026-05-19] Vec2 Hermite interpolation (D3DXVec2Hermite equivalent)."
+        },
+        {
+          "rva": "0x004eca7c",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. Target `PTR_FUN_00618868`. Args: 6."
+        },
+        {
+          "rva": "0x004ecaab",
+          "plate": "[C1 2026-05-19] Vec2 barycentric interpolation: `P = V0 + (V1 - V0) * f + (V2 - V0) * g` where `param_5 = f` and `param_6 = g`."
+        },
+        {
+          "rva": "0x004ecaee",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. Variadic: no arg-shuffle (zero stack adjustment), JMPs through `PTR_FUN_006187a8` after init."
+        },
+        {
+          "rva": "0x004ecafb",
+          "plate": "[C1 2026-05-19] Pure thunk: `JMP dword ptr [0x006187a8]` (6 bytes)."
+        },
+        {
+          "rva": "0x004ecb12",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. Calls FUN_004fbe7a(1) then JMPs `_DAT_006187cc`. 0-arg shuffle."
+        },
+        {
+          "rva": "0x004ecb1f",
+          "plate": "[C1 2026-05-19] Pure thunk: `JMP [_DAT_006187cc]` (6 bytes). Init-bypassed sibling of FUN_004ecb12."
+        },
+        {
+          "rva": "0x004ecb36",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. FUN_004fbe7a(1) + JMP `_DAT_006187bc`. 0-arg."
+        },
+        {
+          "rva": "0x004ecb43",
+          "plate": "[C1 2026-05-19] Pure thunk: `JMP [_DAT_006187bc]`."
+        },
+        {
+          "rva": "0x004ecb5a",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. FUN_004fbe7a(1) + JMP `_DAT_006187c4`. 0-arg."
+        },
+        {
+          "rva": "0x004ecb67",
+          "plate": "[C1 2026-05-19] Pure thunk: `JMP [_DAT_006187c4]`."
+        },
+        {
+          "rva": "0x004ecb97",
+          "plate": "[C1 2026-05-19] Vec3 Catmull-Rom interpolation (3-channel equivalent of FUN_004ec915)."
+        },
+        {
+          "rva": "0x004ecc45",
+          "plate": "[C1 2026-05-19] Delay-load forwarder. FUN_004fbe7a(1) + JMP `PTR_FUN_00618870` with 6 args."
+        },
+        {
+          "rva": "0x004ecc6f",
+          "plate": "[C1 2026-05-19] Vec3 Hermite interpolation (3-channel equivalent of FUN_004ec9cd)."
+        }
+      ],
+      "missing_md": [],
+      "extras_from_dir": []
+    },
+    {
+      "bucket": "bucket_00554010",
+      "rvas": [
+        {
+          "rva": "0x00554010",
+          "plate": "[C1 2026-05-19] Recursive walker over a path-node singly-linked list rooted at `param_1[5]` (next-sibling pointer at offset +0x14)."
+        },
+        {
+          "rva": "0x00554150",
+          "plate": "[C1 2026-05-19] Destructor for a path-node, paired with FUN_00554010."
+        },
+        {
+          "rva": "0x00554200",
+          "plate": "[C1 2026-05-19] Loads a path-sub-list from a binary file stream `param_1`."
+        },
+        {
+          "rva": "0x00554390",
+          "plate": "[C1 2026-05-19] **Top-level vector-font binary loader.** Caller is FUN_00427880 (single caller \u2014 likely the font-asset registration\u2026"
+        },
+        {
+          "rva": "0x005555b0",
+          "plate": "[C1 2026-05-19] **Word-wrap text layout** over a font `param_1` (font*), an input byte buffer `param_2`, em-scale `param_3`, a 4-float\u2026"
+        },
+        {
+          "rva": "0x00555830",
+          "plate": "[C1 2026-05-19] **Font destructor.** Returns 1 on success, 0 if param_1 was null."
+        },
+        {
+          "rva": "0x00556780",
+          "plate": "[C1 2026-05-19] **Text-format vector-font loader.** Parses a PostScript-style font description:"
+        },
+        {
+          "rva": "0x00556e40",
+          "plate": "[C1 2026-05-19] Decrements refcount at offset +0x74 in `param_1` (text-block object)."
+        },
+        {
+          "rva": "0x00556e90",
+          "plate": "[C1 2026-05-19] Initializes a render-style record (param_1 = float[] of length >= 0x1a) from 4 byte-RGBA arrays (param_5 = top-left\u2026"
+        },
+        {
+          "rva": "0x00557110",
+          "plate": "[C1 2026-05-19] Initializes a geometric-tween record (param_1) from 4 2-float position pairs: param_5 (TL), param_4 (TR), param_2 (BL)\u2026"
+        },
+        {
+          "rva": "0x005572b0",
+          "plate": "[C1 2026-05-19] Single-instruction thunk (5 bytes, `jmp FUN_005572c0`). Ghidra represents this as a separate function body but it\u2026"
+        },
+        {
+          "rva": "0x005572c0",
+          "plate": "[C1 2026-05-19] **Vertex-buffer builder for a vector-text path.** Walks a path-node `param_1` (param_1[5] = next-sibling chain) and\u2026"
+        },
+        {
+          "rva": "0x00557ec0",
+          "plate": "[C1 2026-05-19] Lazy-init + slot-assign of a style-record at `*(int*)(DAT_00913274 + param_1)` \u2014 DAT_00913274 is a global table base\u2026"
+        },
+        {
+          "rva": "0x0055e440",
+          "plate": "[C1 2026-05-19] 3-arg constructor for a struct at `param_1`. Calls `FUN_0055c380(param_1, &DAT_005e51c8)` (likely vtable / base-class\u2026"
+        },
+        {
+          "rva": "0x0055f450",
+          "plate": "[C1 2026-05-19] Allocates 0x424 bytes via `**(DAT_007d3ff8 + 0x108)(0x424, 0x30900)` and forwards to FUN_0055f800 (full init) with\u2026"
+        },
+        {
+          "rva": "0x0055f480",
+          "plate": "[C1 2026-05-19] 16-byte-aligned (`+0xf & ~0xf`) cursor-advance bumper that lays out 7 sub-arrays in a slab buffer."
+        },
+        {
+          "rva": "0x0055f520",
+          "plate": "[C1 2026-05-19] Computes the maximum required scratch-buffer size for a solver context."
+        },
+        {
+          "rva": "0x0055f670",
+          "plate": "[C1 2026-05-19] Computes the TOTAL required buffer size (vs FUN_0055f520 which computed the MAX). Same descriptor `param_1`."
+        },
+        {
+          "rva": "0x0055f800",
+          "plate": "[C1 2026-05-19] **Top-level solver-context initializer.** Sets up a 0x424-byte (1060-byte) physics-solver context for a body-system\u2026"
+        },
+        {
+          "rva": "0x0055fdd0",
+          "plate": "[C1 2026-05-19] Destructor for the 0x424 solver context allocated by FUN_0055f450."
+        },
+        {
+          "rva": "0x0055fe10",
+          "plate": "[C1 2026-05-19] Setter: copies 3 dwords from `*param_2` into `*(param_1+0x4c..0x54)`. Matches the \"gravity / origin\" slot in\u2026"
+        },
+        {
+          "rva": "0x0055fe30",
+          "plate": "[C1 2026-05-19] Setter: stores `param_2` into `*(param_1+0x08)` (= iter_max_b slot from FUN_0055f800, default 300)."
+        },
+        {
+          "rva": "0x0055fe40",
+          "plate": "[C1 2026-05-19] Setter: stores `param_2` into `*(param_1+0x04)` (= iter_max_a slot from FUN_0055f800, default 100)."
+        },
+        {
+          "rva": "0x0055fe50",
+          "plate": "[C1 2026-05-19] Calls FUN_0055a1f0 with 10 arguments resolved from the solver context:"
+        },
+        {
+          "rva": "0x0055fea0",
+          "plate": "[C1 2026-05-19] Two-loop pass over solver context's body arrays."
+        },
+        {
+          "rva": "0x0055ff70",
+          "plate": "[C1 2026-05-19] Guard: tests `*(*(this+0x70) + 0xc)` (world+0xc), and if nonzero, calls FUN_0056bb30(this)."
+        },
+        {
+          "rva": "0x0055ff90",
+          "plate": "[C1 2026-05-19] Marks the first stack-of-arena byte: `**(this+0xd8) = *(this+0x7c)` and `*(*(this+0xd8) + 4) = 0`."
+        },
+        {
+          "rva": "0x005601f0",
+          "plate": "[C1 2026-05-19] Builds compressed output rows from a stride-16 source `param_2` indexed by `param_5[0]` (index array, count\u2026"
+        },
+        {
+          "rva": "0x00560260",
+          "plate": "[C1 2026-05-19] **Massive 3537-byte islanded-solver step.** Receives 13 parameters including arrays for: position+force buffer\u2026"
+        },
+        {
+          "rva": "0x00561040",
+          "plate": "[C1 2026-05-19] Outer driver that walks pair-record list (stride 0x28 starting at `*(this+0xd4)`, count `*(this+0xc8)`) and slices into\u2026"
+        },
+        {
+          "rva": "0x00561280",
+          "plate": "[C1 2026-05-19] Projects a contact-point into world space and updates a path-length accumulator."
+        },
+        {
+          "rva": "0x00561390",
+          "plate": "[C1 2026-05-19] **CCD (continuous collision detection) + impact resolution pass** for a solver context (param_1 = solver struct)."
+        },
+        {
+          "rva": "0x00561c50",
+          "plate": "[C1 2026-05-19] Iterates pair records (count `*(this+0xc8)`, stride 0x28, base `*(this+0xd4)`) and for active ones (`!(rec[6] & 3)`):"
+        },
+        {
+          "rva": "0x00561e60",
+          "plate": "[C1 2026-05-19] Calls FUN_00568fd0(*(this+0xc0), this+0xc4) and returns this."
+        },
+        {
+          "rva": "0x00561e80",
+          "plate": "[C1 2026-05-19] Calls FUN_00568dd0(*(this+0xc0), this+0xc4) and returns this. Pair with FUN_00561e60 \u2014 likely \"begin\" vs \"end\"."
+        },
+        {
+          "rva": "0x00561ea0",
+          "plate": "[C1 2026-05-19] Returns `*(DAT_00623fac + param_1)` IF `DAT_00623fac != -1`, else 0."
+        },
+        {
+          "rva": "0x00561ec0",
+          "plate": "[C1 2026-05-19] Returns `*(DAT_00623fb0 + param_1)` IF `DAT_00623fb0 != -1`, else 0."
+        },
+        {
+          "rva": "0x00562010",
+          "plate": "[C1 2026-05-19] Per-sector callback (RpSector* param_1) \u2014 invoked through RpWorldForAllWorldSectors."
+        },
+        {
+          "rva": "0x00562380",
+          "plate": "[C1 2026-05-19] Computes triangle normal at `param_1 + 0x1c..0x24` via the cross-product formula on 3 vertex pointers\u2026"
+        },
+        {
+          "rva": "0x00562460",
+          "plate": "[C1 2026-05-19] Calls **RpWorldForAllWorldSectors(world, LAB_00562490, NULL)** \u2014 a real RenderWare imported function (cited as named\u2026"
+        },
+        {
+          "rva": "0x00562500",
+          "plate": "[C1 2026-05-19] Forwards to FUN_00562010(param_1). Used as an RpSector-callback function pointer in FUN_00562460."
+        },
+        {
+          "rva": "0x00562560",
+          "plate": "[C1 2026-05-19] Calls `**(DAT_007d3ff8 + 0x10c)(param_1)` (raw allocator free) and returns 1."
+        },
+        {
+          "rva": "0x00562580",
+          "plate": "[C1 2026-05-19] Sets defaults for a BSP/world descriptor at `param_1`:"
+        },
+        {
+          "rva": "0x005625e0",
+          "plate": "[C1 2026-05-19] Subtracts old value at `*(param_1+0xc)` from accumulator `*(param_1+0x18)` if old != 0; replaces `*(param_1+0xc)` with\u2026"
+        },
+        {
+          "rva": "0x00562600",
+          "plate": "[C1 2026-05-19] Allocates 0x60 (96) bytes via FUN_00564130(0x60, 0x10, 0x30900) (scratch-allocator with 16-byte align, category\u2026"
+        },
+        {
+          "rva": "0x00562660",
+          "plate": "[C1 2026-05-19] Switch on `iVar1 = *(param_1+0x44)` (= \"bound-source\" mode set by FUN_00562600's param_2):"
+        },
+        {
+          "rva": "0x00562ed0",
+          "plate": "[C1 2026-05-19] Appender: appends a triangle record to a fixed-capacity array."
+        },
+        {
+          "rva": "0x00562fd0",
+          "plate": "[C1 2026-05-19] 3-arg constructor variant: `FUN_0055c380(this, &DAT_005e5338)` (base/vtable init)."
+        },
+        {
+          "rva": "0x00563810",
+          "plate": "[C1 2026-05-19] Decrements refcount at offset +0x84. On zero: invokes raw-free via vtable+0x10c. Returns 1 (always 1 unless param_1 is\u2026"
+        },
+        {
+          "rva": "0x00563840",
+          "plate": "[C1 2026-05-19] Allocates a packed slab record holding 3 sub-arrays (param_1, param_2, param_3 counts)."
+        },
+        {
+          "rva": "0x00563940",
+          "plate": "[C1 2026-05-19] Phase 1: normalizes edge directions. For each edge (count `*(short*)(param_1 + 0x20)`):"
+        },
+        {
+          "rva": "0x00563b00",
+          "plate": "[C1 2026-05-19] Computes 2 support-extrema along an axis defined by a quaternion-transformed direction."
+        },
+        {
+          "rva": "0x00563c80",
+          "plate": "[C1 2026-05-19] **Hill-climbing support-vertex search** over a convex mesh (param_1 = mesh, param_2 = direction)."
+        },
+        {
+          "rva": "0x00563de0",
+          "plate": "[C1 2026-05-19] Pure function: returns `(param_1 + 2 + param_2 * 2) * 8`. Computes byte count for a \"p1 nodes + p2\u2026"
+        },
+        {
+          "rva": "0x00563df0",
+          "plate": "[C1 2026-05-19] Initializes an 8-byte-per-entry doubly-linked list with `param_2 + 2 + param_3*2` entries:"
+        },
+        {
+          "rva": "0x00563e70",
+          "plate": "[C1 2026-05-19] Inserts pair `(param_2, param_3)` into a hash-bucketed doubly-linked-list."
+        },
+        {
+          "rva": "0x00563f60",
+          "plate": "[C1 2026-05-19] Bucket-clear: removes all nodes in the linked-list chain headed by `param_2`'s bucket and returns them to the free-list\u2026"
+        },
+        {
+          "rva": "0x00564040",
+          "plate": "[C1 2026-05-19] Collects all unique pair-IDs that key `param_2` is hashed with, filtered by bitmap `param_4`. Stores into output buffer\u2026"
+        },
+        {
+          "rva": "0x00564100",
+          "plate": "[C1 2026-05-19] **memset clone**: writes `param_2` (byte) into `param_3` bytes of `param_1`. Uses 4-at-a-time then tail byte loop\u2026"
+        },
+        {
+          "rva": "0x00564130",
+          "plate": "[C1 2026-05-19] Aligned allocator. Calls `**(DAT_007d3ff8 + 0x108)(param_1 + param_2, param_3)` (raw alloc of `size + align` bytes)."
+        },
+        {
+          "rva": "0x00564190",
+          "plate": "[C1 2026-05-19] Calls `**(DAT_007d3ff8 + 0x10c)(...)` with parameters forwarded."
+        },
+        {
+          "rva": "0x005641b0",
+          "plate": "[C1 2026-05-19] AABB-containment test with hysteresis. `param_1` and `param_2` are 8-float AABBs (min at +0..+8, max at +0x10..+0x18)."
+        },
+        {
+          "rva": "0x00564310",
+          "plate": "[C1 2026-05-19] Selects an octree octant (3-bit code in [0..7]) where `param_2` (loose AABB) overlaps `param_3` (parent AABB). The\u2026"
+        },
+        {
+          "rva": "0x005645b0",
+          "plate": "[C1 2026-05-19] Initializes a packed broadphase/octree state table:"
+        },
+        {
+          "rva": "0x005646c0",
+          "plate": "[C1 2026-05-19] **Octree overlap query** with an iterative stack-based walk. Stack holds AABBs in local_2800..afStack_27ec (5-level\u2026"
+        },
+        {
+          "rva": "0x00564c80",
+          "plate": "[C1 2026-05-19] **Insert primitive `param_2` with bound `param_3` into the octree.**"
+        },
+        {
+          "rva": "0x00565120",
+          "plate": "[C1 2026-05-19] Writes the low 6 bits (`& 0x03ff` mask applied via complement) of an octant-table entry at `this + 0x9820 + ((octant +\u2026"
+        },
+        {
+          "rva": "0x00565160",
+          "plate": "[C1 2026-05-19] Used by FUN_00564c80 octree-split (per `0x00564c80.md` callees list \u2014 one of the three octant-relocate helpers)."
+        },
+        {
+          "rva": "0x005651b0",
+          "plate": "[C1 2026-05-19] Octant-table primitive-count incrementer (matches FUN_00564c80 split-trigger logic)."
+        },
+        {
+          "rva": "0x00565200",
+          "plate": "[C1 2026-05-19] Reads per-primitive tight AABB at `this + (param_2 & 0xffff) * 0x20` (per-prim stride 0x20 = 8 floats = AABB, matches\u2026"
+        },
+        {
+          "rva": "0x00565260",
+          "plate": "[C1 2026-05-19] **Remove primitive `param_2` from the broadphase octree** (counterpart to the INSERT at FUN_00564c80)."
+        },
+        {
+          "rva": "0x00565550",
+          "plate": "[C1 2026-05-19] Trivial accessor: `return *(ushort*)(this + 0xb810 + (param_2 & 0xffff)*2)`."
+        },
+        {
+          "rva": "0x00565570",
+          "plate": "[C1 2026-05-19] Trivial accessor (setter): `*(ushort*)(this + 0xb810 + (param_2 & 0xffff)*2) = param_3`."
+        },
+        {
+          "rva": "0x00565590",
+          "plate": "[C1 2026-05-19] Trivial accessor (setter): `*(void**)(this + 0xc018) = param_2`."
+        },
+        {
+          "rva": "0x005655a0",
+          "plate": "[C1 2026-05-19] **NOTE: this is the boundary into physics-engine territory** \u2014 bucket label was \"collision-BVH\" but\u2026"
+        },
+        {
+          "rva": "0x00565780",
+          "plate": "[C1 2026-05-19] **Jacobi eigenvalue iteration for symmetric 3x3 matrix.** param_1 is the in/out symmetric matrix (gets diagonalized in\u2026"
+        },
+        {
+          "rva": "0x005659f0",
+          "plate": "[C1 2026-05-19] Applies a 3-row Givens rotation to columns `param_2` and `param_3` of a 3x3 row-major float matrix at `param_1` (matrix\u2026"
+        },
+        {
+          "rva": "0x00565ab0",
+          "plate": "[C1 2026-05-19] **Takes a 3x3 symmetric matrix at `param_2` (9 floats) and produces a unit quaternion + eigenvalues at `param_1`.**"
+        },
+        {
+          "rva": "0x00565bc0",
+          "plate": "[C1 2026-05-19] Returns the index `0..2` of the component of `param_1` (3-float vector) with the largest absolute value."
+        },
+        {
+          "rva": "0x00565c20",
+          "plate": "[C1 2026-05-19] Bounding-sphere merge / Welzl-style sphere-union step."
+        },
+        {
+          "rva": "0x00565cce",
+          "plate": "[C1 2026-05-19] **NOT A FUNCTION.** `mcp__ghidra__function_at(0x00565cce)` returns \"no function found\"."
+        },
+        {
+          "rva": "0x005551d0",
+          "plate": "[C1 2026-05-19] **Font allocator.** Note: NOT in the original candidate list (size column at row 5 was 0x005555b0, not 0x005551d0) but\u2026"
+        }
+      ],
+      "missing_md": [],
+      "extras_from_dir": [
+        "0x005551d0"
+      ]
+    },
+    {
+      "bucket": "bucket_00565d50",
+      "rvas": [
+        {
+          "rva": "0x00565d50",
+          "plate": "[C1 2026-05-19] Signature: `float10 FUN_00565d50(float *param_1, float *param_2, float *param_3, float *param_4)`."
+        },
+        {
+          "rva": "0x00565ef0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00565ef0(float *param_1, float *param_2, float *param_3)`."
+        },
+        {
+          "rva": "0x00565fa0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00565fa0(float *param_1, float *param_2, float *param_3, float param_4)`."
+        },
+        {
+          "rva": "0x00566010",
+          "plate": ""
+        },
+        {
+          "rva": "0x005660c0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566120",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566370",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566480",
+          "plate": ""
+        },
+        {
+          "rva": "0x005664d0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566500",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566590",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566720",
+          "plate": ""
+        },
+        {
+          "rva": "0x005667e0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566840",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566900",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566ca0",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_00566ca0(float *param_1, float *param_2, float *param_3, float *param_4, float p5)`."
+        },
+        {
+          "rva": "0x00566d70",
+          "plate": ""
+        },
+        {
+          "rva": "0x00566df0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567040",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567180",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567200",
+          "plate": ""
+        },
+        {
+          "rva": "0x005673a0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567490",
+          "plate": ""
+        },
+        {
+          "rva": "0x005675a0",
+          "plate": ""
+        },
+        {
+          "rva": "0x005675f0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567780",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567a00",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567b30",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567c70",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567d40",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567dd0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567ed0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00567f00",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00567f00(undefined4 param_1, int param_2)` (other args passed on stack \u2014 Ghidra rendering quirk)."
+        },
+        {
+          "rva": "0x00568010",
+          "plate": ""
+        },
+        {
+          "rva": "0x005685f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005685f0(int param_1, uint *param_2, uint *param_3, undefined4 *param_4, undefined4 *param_5)`."
+        },
+        {
+          "rva": "0x005686d0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00568720",
+          "plate": ""
+        },
+        {
+          "rva": "0x00568750",
+          "plate": ""
+        },
+        {
+          "rva": "0x00568b30",
+          "plate": ""
+        },
+        {
+          "rva": "0x00568b80",
+          "plate": ""
+        },
+        {
+          "rva": "0x00568dd0",
+          "plate": "[C1 2026-05-19] Signature: `int *FUN_00568dd0(int *param_1, int param_2)`."
+        },
+        {
+          "rva": "0x00568f80",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569130",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569250",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569420",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569720",
+          "plate": ""
+        },
+        {
+          "rva": "0x005697b0",
+          "plate": ""
+        },
+        {
+          "rva": "0x005698a0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569ad0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569e10",
+          "plate": ""
+        },
+        {
+          "rva": "0x00569f60",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056a190",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056a4d0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056a6b0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056a710",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056ac80",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056b0c0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056b270",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056b520",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056b780",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056b7a0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_0056b7a0(undefined4 *param_1, int param_2, uint param_3, int param_4)`."
+        },
+        {
+          "rva": "0x0056b9d0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_0056b9d0(int param_1, undefined4 param_2..param_7)`."
+        },
+        {
+          "rva": "0x0056ba50",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056bb20",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056cba0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056cd20",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056ce50",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056d630",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056de00",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056e3a0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056e5a0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056e770",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056e7b0",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056ea30",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056efc0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056efc0(int param_1, undefined4 param_2)`."
+        },
+        {
+          "rva": "0x0056f450",
+          "plate": ""
+        },
+        {
+          "rva": "0x0056f4a0",
+          "plate": ""
+        },
+        {
+          "rva": "0x00570090",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00570090(int param_1, int param_2, float param_3, float param_4)`."
+        },
+        {
+          "rva": "0x005729a0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005729a0(float *param_1, int *param_2, float *param_3, float *param_4)`."
+        },
+        {
+          "rva": "0x005735f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005735f0(float *param_1, float *param_2, float *param_3, float *param_4)`."
+        },
+        {
+          "rva": "0x00566050",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00566050(float *param_1, float *param_2, float *param_3)`."
+        },
+        {
+          "rva": "0x00566200",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00566200(float *param_1, float *param_2, float *param_3)`."
+        },
+        {
+          "rva": "0x005663a0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005663a0(float *param_1, float *param_2)`."
+        },
+        {
+          "rva": "0x00566420",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00566420(float p1, float p2, float p3, float p4, int param_5, float param_6, int param_7)`."
+        },
+        {
+          "rva": "0x005665a0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005665a0(float *param_1, float param_2, float param_3, int param_4, float *param_5)`."
+        },
+        {
+          "rva": "0x005667c0",
+          "plate": "[C1 2026-05-19] Signature: `float10 FUN_005667c0(float *param_1, float *param_2)`."
+        },
+        {
+          "rva": "0x00566830",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00566830(float *param_1, float *param_2)`."
+        },
+        {
+          "rva": "0x005668e0",
+          "plate": "[C1 2026-05-19] Signature: `undefined4 FUN_005668e0(int param_1)`."
+        },
+        {
+          "rva": "0x00566aa0",
+          "plate": "[C1 2026-05-19] Signature: `float10 FUN_00566aa0(int param_1)`."
+        },
+        {
+          "rva": "0x00566b40",
+          "plate": "[C1 2026-05-19] Signature: `float10 FUN_00566b40(float *param_1, float *param_2, float *param_3, float param_4)`."
+        },
+        {
+          "rva": "0x00566c10",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_00566c10(float *param_1, int param_2, int param_3, int param_4, float p5, float p6)`."
+        },
+        {
+          "rva": "0x00566d50",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_00566d50(float *param_1, float *param_2, float *param_3, float *param_4, float p5)`."
+        },
+        {
+          "rva": "0x00566ea0",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_00566ea0(float *param_1, float *param_2, float *param_3, float *param_4, float *param_5, float p6\u2026"
+        },
+        {
+          "rva": "0x005670a0",
+          "plate": "[C1 2026-05-19] Signature: `bool FUN_005670a0(float *param_1, float *param_2, float *param_3, float *param_4, float *param_5, float p6\u2026"
+        },
+        {
+          "rva": "0x005672c0",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_005672c0(int param_1)`."
+        },
+        {
+          "rva": "0x00567350",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00567350(uint param_1, int *param_2, uint *param_3, uint *param_4, int param_5, int param_6, int\u2026"
+        },
+        {
+          "rva": "0x005675d0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005675d0(int param_1, int param_2, int param_3, undefined4 param_4)`."
+        },
+        {
+          "rva": "0x00567630",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_00567630(int param_1)`."
+        },
+        {
+          "rva": "0x005676f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005676f0(int param_1, int *param_2, int *param_3, uint *param_4, int param_5, int param_6, int\u2026"
+        },
+        {
+          "rva": "0x00567c00",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00567c00(int param_1, int param_2)`."
+        },
+        {
+          "rva": "0x00567c40",
+          "plate": "[C1 2026-05-19] Signature: `char FUN_00567c40(void)`."
+        },
+        {
+          "rva": "0x00567c60",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00567c60(int param_1, int param_2, undefined4 *param_3, int param_4, int param_5, uint param_6\u2026"
+        },
+        {
+          "rva": "0x005684c0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_005684c0(int param_1, int *param_2, int *param_3, undefined4 *param_4, undefined4 *param_5)`."
+        },
+        {
+          "rva": "0x00568560",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00568560(int *param_1, int param_2, int *param_3, undefined4 *param_4, undefined4 *param_5)`."
+        },
+        {
+          "rva": "0x005687a0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005687a0(int param_1)`."
+        },
+        {
+          "rva": "0x005687d0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_005687d0(int param_1)`."
+        },
+        {
+          "rva": "0x00568860",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00568860(int param_1, uint *param_2, undefined4 param_3, int param_4)`."
+        },
+        {
+          "rva": "0x00568990",
+          "plate": "[C1 2026-05-19] Signature: `uint FUN_00568990(int param_1, int param_2, uint param_3, int param_4, uint param_5)`."
+        },
+        {
+          "rva": "0x00568c40",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_00568c40(int param_1)`."
+        },
+        {
+          "rva": "0x00568c80",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00568c80(int param_1, uint *param_2, int param_3, int param_4, int param_5)`."
+        },
+        {
+          "rva": "0x00568cf0",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_00568cf0(uint param_1)`."
+        },
+        {
+          "rva": "0x00568d20",
+          "plate": "[C1 2026-05-19] Signature: `uint * FUN_00568d20(int param_1, uint param_2)`."
+        },
+        {
+          "rva": "0x00568fd0",
+          "plate": "[C1 2026-05-19] Signature: `int *FUN_00568fd0(int *param_1, int param_2)`."
+        },
+        {
+          "rva": "0x00569690",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00569690(int *param_1, int *param_2, int param_3, ..., int param_12)`."
+        },
+        {
+          "rva": "0x00569e90",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_00569e90(int param_1, ..., int param_4)` (most args on stack)."
+        },
+        {
+          "rva": "0x0056a250",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056a250(uint *param_1, undefined4 *param_2, int param_3, uint param_4)`."
+        },
+        {
+          "rva": "0x0056a450",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056a450(undefined4 *param_1, int param_2, undefined4 param_3, int param_4)`."
+        },
+        {
+          "rva": "0x0056a7a0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056a7a0(int param_1, ..., int param_4)`."
+        },
+        {
+          "rva": "0x0056aae0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056aae0(int *param_1, int *param_2, int param_3, ..., int param_12)`."
+        },
+        {
+          "rva": "0x0056ac40",
+          "plate": "[C1 2026-05-19] Signature: `float10 FUN_0056ac40(int *param_1, uint *param_2, float *param_3, int param_4)`."
+        },
+        {
+          "rva": "0x0056adb0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056adb0(int *param_1, int *param_2)`."
+        },
+        {
+          "rva": "0x0056ba30",
+          "plate": "[C1 2026-05-19] Signature: `bool FUN_0056ba30(int param_1, int param_2)`."
+        },
+        {
+          "rva": "0x0056bb30",
+          "plate": "[C1 2026-05-19] Signature: `int FUN_0056bb30(int param_1)`."
+        },
+        {
+          "rva": "0x0056bb80",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056bb80(float *param_1, float *param_2, float param_3)`."
+        },
+        {
+          "rva": "0x0056bce0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056bce0(float *param_1, float *param_2, float param_3)`."
+        },
+        {
+          "rva": "0x0056bdf0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056bdf0(int param_1, undefined4 param_2, int param_3, int *param_4, float param_5)`."
+        },
+        {
+          "rva": "0x0056be80",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056be80(int *param_1, int param_2, float param_3)`."
+        },
+        {
+          "rva": "0x0056c0a0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056c0a0(int param_1, ..., int *param_6, int param_7, ..., int param_9, ..., float param_11)`."
+        },
+        {
+          "rva": "0x0056c310",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056c310(int param_1, ..., int param_5, ..., int *param_9, int param_10, ..., float param_12)`."
+        },
+        {
+          "rva": "0x0056c580",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056c580(int param_1, ..., int param_6, int *param_7, int param_8)`."
+        },
+        {
+          "rva": "0x0056c8e0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056c8e0(int param_1, int param_2, float *param_3, int param_4)`."
+        },
+        {
+          "rva": "0x0056caa0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056caa0(int param_1, ..., int *param_3, int *param_4, int *param_5, int param_6, int *param_7\u2026"
+        },
+        {
+          "rva": "0x0056cf90",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056cf90(undefined4 *param_1, int param_2, int param_3)`."
+        },
+        {
+          "rva": "0x0056d070",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056d070(int *param_1, int param_2, uint param_3, int param_4, ..., int param_6, int param_7\u2026"
+        },
+        {
+          "rva": "0x0056d350",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056d350(int *param_1, float *param_2, float *param_3, int param_4, int param_5, int param_6)`."
+        },
+        {
+          "rva": "0x0056d3f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056d3f0(int param_1)` (most args on stack)."
+        },
+        {
+          "rva": "0x0056dd40",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056dd40(int param_1)`."
+        },
+        {
+          "rva": "0x0056e680",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056e680(int param_1, ..., int *param_3, int *param_4, int param_5, ..., int param_7, int\u2026"
+        },
+        {
+          "rva": "0x0056ed60",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056ed60(float *param_1, float *param_2, float *param_3)`."
+        },
+        {
+          "rva": "0x0056ef30",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056ef30(int param_1)`."
+        },
+        {
+          "rva": "0x0056f020",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056f020(int param_1)`."
+        },
+        {
+          "rva": "0x0056f0a0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056f0a0(int param_1)`."
+        },
+        {
+          "rva": "0x0056f1f0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056f1f0(int *param_1, undefined4 *param_2)`."
+        },
+        {
+          "rva": "0x0056f350",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056f350(int param_1, float *param_2, float param_3)`."
+        },
+        {
+          "rva": "0x0056fad0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056fad0(float *param_1, float *param_2, float *param_3, float *param_4, int param_5, int\u2026"
+        },
+        {
+          "rva": "0x0056fb90",
+          "plate": "[C1 2026-05-19] Signature: `int *FUN_0056fb90(uint *param_1, float *param_2, float *param_3, int *param_4, float *param_5)`."
+        },
+        {
+          "rva": "0x0056fea0",
+          "plate": "[C1 2026-05-19] Signature: `void FUN_0056fea0(float *param_1, float *param_2, float *param_3, float *param_4)`."
+        }
+      ],
+      "missing_md": [
+        "0x00566010",
+        "0x005660c0",
+        "0x00566120",
+        "0x00566370",
+        "0x00566480",
+        "0x005664d0",
+        "0x00566500",
+        "0x00566590",
+        "0x00566720",
+        "0x005667e0",
+        "0x00566840",
+        "0x00566900",
+        "0x00566d70",
+        "0x00566df0",
+        "0x00567040",
+        "0x00567180",
+        "0x00567200",
+        "0x005673a0",
+        "0x00567490",
+        "0x005675a0",
+        "0x005675f0",
+        "0x00567780",
+        "0x00567a00",
+        "0x00567b30",
+        "0x00567c70",
+        "0x00567d40",
+        "0x00567dd0",
+        "0x00567ed0",
+        "0x00568010",
+        "0x005686d0",
+        "0x00568720",
+        "0x00568750",
+        "0x00568b30",
+        "0x00568b80",
+        "0x00568f80",
+        "0x00569130",
+        "0x00569250",
+        "0x00569420",
+        "0x00569720",
+        "0x005697b0",
+        "0x005698a0",
+        "0x00569ad0",
+        "0x00569e10",
+        "0x00569f60",
+        "0x0056a190",
+        "0x0056a4d0",
+        "0x0056a6b0",
+        "0x0056a710",
+        "0x0056ac80",
+        "0x0056b0c0",
+        "0x0056b270",
+        "0x0056b520",
+        "0x0056b780",
+        "0x0056ba50",
+        "0x0056bb20",
+        "0x0056cba0",
+        "0x0056cd20",
+        "0x0056ce50",
+        "0x0056d630",
+        "0x0056de00",
+        "0x0056e3a0",
+        "0x0056e5a0",
+        "0x0056e770",
+        "0x0056e7b0",
+        "0x0056ea30",
+        "0x0056f450",
+        "0x0056f4a0"
+      ],
+      "extras_from_dir": [
+        "0x00566050",
+        "0x00566200",
+        "0x005663a0",
+        "0x00566420",
+        "0x005665a0",
+        "0x005667c0",
+        "0x00566830",
+        "0x005668e0",
+        "0x00566aa0",
+        "0x00566b40",
+        "0x00566c10",
+        "0x00566d50",
+        "0x00566ea0",
+        "0x005670a0",
+        "0x005672c0",
+        "0x00567350",
+        "0x005675d0",
+        "0x00567630",
+        "0x005676f0",
+        "0x00567c00",
+        "0x00567c40",
+        "0x00567c60",
+        "0x005684c0",
+        "0x00568560",
+        "0x005687a0",
+        "0x005687d0",
+        "0x00568860",
+        "0x00568990",
+        "0x00568c40",
+        "0x00568c80",
+        "0x00568cf0",
+        "0x00568d20",
+        "0x00568fd0",
+        "0x00569690",
+        "0x00569e90",
+        "0x0056a250",
+        "0x0056a450",
+        "0x0056a7a0",
+        "0x0056aae0",
+        "0x0056ac40",
+        "0x0056adb0",
+        "0x0056ba30",
+        "0x0056bb30",
+        "0x0056bb80",
+        "0x0056bce0",
+        "0x0056bdf0",
+        "0x0056be80",
+        "0x0056c0a0",
+        "0x0056c310",
+        "0x0056c580",
+        "0x0056c8e0",
+        "0x0056caa0",
+        "0x0056cf90",
+        "0x0056d070",
+        "0x0056d350",
+        "0x0056d3f0",
+        "0x0056dd40",
+        "0x0056e680",
+        "0x0056ed60",
+        "0x0056ef30",
+        "0x0056f020",
+        "0x0056f0a0",
+        "0x0056f1f0",
+        "0x0056f350",
+        "0x0056fad0",
+        "0x0056fb90",
+        "0x0056fea0"
+      ]
+    },
+    {
+      "bucket": "bucket_005a5020",
+      "rvas": [
+        {
+          "rva": "0x005a5020",
+          "plate": "[C1 2026-05-19] Vertex-neighbor printer (Ghidra prior-pass comment: \"[C1 2026-05-17] Vertex-neighbor printer.\")."
+        },
+        {
+          "rva": "0x005a52c0",
+          "plate": "[C1 2026-05-19] Multi-mode emitter for OFF / \"centrums + facets\" formats (Ghidra prior-pass comment: \"[C1 2026-05-17] Multi-mode\u2026"
+        },
+        {
+          "rva": "0x005a56e0",
+          "plate": "[C1 2026-05-19] Callback printer invoked from `FUN_005a4e00` with two vertex pointers + info word."
+        },
+        {
+          "rva": "0x005a5820",
+          "plate": "[C1 2026-05-19] Halfspace input parser. Reads global string `DAT_0091400c` (`qh.halfspace` text source)."
+        },
+        {
+          "rva": "0x005a5910",
+          "plate": "[C1 2026-05-19] Object destructor pattern (Ghidra prior-pass comment: \"[C1 2026-05-17] Object destructor pattern:\")."
+        },
+        {
+          "rva": "0x005a5b30",
+          "plate": "[C1 2026-05-19] Destroys a compound object pointed to by `param_1` (Ghidra prior-pass comment: \"[C1 2026-05-17] Destroys a compound\u2026"
+        },
+        {
+          "rva": "0x005a5d60",
+          "plate": "[C1 2026-05-19] Refcount-release wrapper. Calls `FUN_005a5d90(param_1)` (the actual decrement)."
+        },
+        {
+          "rva": "0x005a5d90",
+          "plate": "[C1 2026-05-19] Decrements refcount at `*param_1`. If new value is `0`:"
+        },
+        {
+          "rva": "0x005a5f60",
+          "plate": "[C1 2026-05-19] Generic constructor-chain walker (Ghidra prior-pass comment: \"[C1 2026-05-17] Generic constructor-chain walker:\")."
+        },
+        {
+          "rva": "0x005a6030",
+          "plate": "[C1 2026-05-19] Sets shutdown-in-progress flag `_DAT_007dc950 = 1`."
+        },
+        {
+          "rva": "0x005a6070",
+          "plate": "[C1 2026-05-19] Reverse fn-ptr-table walker. Iterates backward from `param_1 + (param_2-1)*8` to start."
+        },
+        {
+          "rva": "0x005a6150",
+          "plate": "[C1 2026-05-19] Sequential registrar: three `FUN_005ad080` calls, each demanding return `==1`:"
+        },
+        {
+          "rva": "0x005a6190",
+          "plate": "[C1 2026-05-19] Clamps `param_1` to `>= 0x10`. Stores into `DAT_00914700` and returns it."
+        },
+        {
+          "rva": "0x005a61b0",
+          "plate": "[C1 2026-05-19] Pure switch: maps single-bit-set inputs to integer codes:"
+        },
+        {
+          "rva": "0x005a62b0",
+          "plate": "[C1 2026-05-19] Audio device factory."
+        },
+        {
+          "rva": "0x005a6340",
+          "plate": "[C1 2026-05-19] Detects host preferred sample format and writes device-object vtable slots (Ghidra prior-pass comment: \"[C1 2026-05-17]\u2026"
+        },
+        {
+          "rva": "0x005a65a0",
+          "plate": "[C1 2026-05-19] Reverse of FUN_005a62b0."
+        },
+        {
+          "rva": "0x005a65d0",
+          "plate": "[C1 2026-05-19] Voice/source initializer."
+        },
+        {
+          "rva": "0x005a6670",
+          "plate": "[C1 2026-05-19] Voice update handler paired with init at `FUN_005a65d0`."
+        },
+        {
+          "rva": "0x005a6b70",
+          "plate": "[C1 2026-05-19] Creates a voice/stream object."
+        },
+        {
+          "rva": "0x005a6c60",
+          "plate": "[C1 2026-05-19] If `*(int*)(param_1+0x14)!=0` reuses that slot: `*(slot+0x10)=1` and return."
+        },
+        {
+          "rva": "0x005a6c90",
+          "plate": "[C1 2026-05-19] Returns voice slot to pool."
+        },
+        {
+          "rva": "0x005a6cb0",
+          "plate": "[C1 2026-05-19] Voice close."
+        },
+        {
+          "rva": "0x005b1500",
+          "plate": "[C1 2026-05-19] Destructor for the FUN_005b1260 object. Idempotent via bit `0x1000` at `*(param_1+0x188)`."
+        },
+        {
+          "rva": "0x005b15d0",
+          "plate": "[C1 2026-05-19] Thunk (5-byte JMP) to `FUN_005b1500`. Used as virtual-dtor slot \u2014 see `param_1+0x28` callbacks in FUN_005b7880."
+        },
+        {
+          "rva": "0x005b2080",
+          "plate": "[C1 2026-05-19] Audio-stream tick / pump."
+        },
+        {
+          "rva": "0x005b2190",
+          "plate": "[C1 2026-05-19] Audio-source command submitter."
+        },
+        {
+          "rva": "0x005b2220",
+          "plate": "[C1 2026-05-19] Sample-copy / convert engine. Pumps decoded samples from in-buffer to out-buffer with sample-size dispatch."
+        },
+        {
+          "rva": "0x005b2820",
+          "plate": "[C1 2026-05-19] Lock-protected next-slot accessor. Acquires `*(HANDLE*)(param_1+0x18c)` for INFINITE."
+        },
+        {
+          "rva": "0x005b29e0",
+          "plate": "[C1 2026-05-19] Lock-protected slot-recycle. Acquires `*(HANDLE*)(param_1+0x18c)`."
+        },
+        {
+          "rva": "0x005b2b00",
+          "plate": "[C1 2026-05-19] Audio decode/fill loop. Acquires `*(HANDLE*)(param_1+0x18c)`."
+        },
+        {
+          "rva": "0x005b2de0",
+          "plate": "[C1 2026-05-19] Async-load completion callback shape (`param_1[0]` = audio stream object)."
+        },
+        {
+          "rva": "0x005b2fd0",
+          "plate": "[C1 2026-05-19] Sample-position projector. Reads stride `*(uint*)(*(param_1+0x18) + param_4*0x28 + 0x20)`."
+        },
+        {
+          "rva": "0x005b3020",
+          "plate": "[C1 2026-05-19] Compute next sample-position across all records."
+        },
+        {
+          "rva": "0x005b30e0",
+          "plate": "[C1 2026-05-19] Seek/wrap operation for the stream."
+        },
+        {
+          "rva": "0x005b3300",
+          "plate": "[C1 2026-05-19] Stream stop/flush. Gate on top byte of `*(param_1+0x188)` being negative (bit `15` of high byte = bit `31`/`23` shape\u2026"
+        },
+        {
+          "rva": "0x005b34f0",
+          "plate": "[C1 2026-05-19] Audio-codec/factory registrar (Ghidra prior-pass comment: \"[C1 2026-05-17] Audio-codec/factory registrar:\")."
+        },
+        {
+          "rva": "0x005b3540",
+          "plate": "[C1 2026-05-19] Thin wrapper: `FUN_005ad5f0(&DAT_007ddb04)`. Pairs with `FUN_005b34f0` \u2014 likely the deregister/teardown."
+        },
+        {
+          "rva": "0x005b3550",
+          "plate": "[C1 2026-05-19] Doubly-linked-list unlink + destroy."
+        },
+        {
+          "rva": "0x005b3580",
+          "plate": "[C1 2026-05-19] Initialize empty list-with-tail header."
+        },
+        {
+          "rva": "0x005b35a0",
+          "plate": "[C1 2026-05-19] Doubly-linked-list push-back (intrusive). Element `+0x20`/`+0x24` are next/prev ptrs."
+        },
+        {
+          "rva": "0x005b35e0",
+          "plate": "[C1 2026-05-19] Doubly-linked-list remove (intrusive). Scans list head for the node, then unlinks via `param_2[8]/param_2[9]`."
+        },
+        {
+          "rva": "0x005b3620",
+          "plate": "[C1 2026-05-19] List find-by-key. Iterates list calling `FUN_005adf30(node[-8], param_2)` (compare). Returns matching node or NULL."
+        },
+        {
+          "rva": "0x005b3670",
+          "plate": "[C1 2026-05-19] List find-by-pointer. Walks list comparing `node[-2] == param_2`."
+        },
+        {
+          "rva": "0x005b36b0",
+          "plate": "[C1 2026-05-19] List index-by-position. Returns nth element or NULL if out-of-range."
+        },
+        {
+          "rva": "0x005b3e60",
+          "plate": "[C1 2026-05-19] Sample-format converter / mixdown. Branches on `(*(byte*)(param_1+0xd), *(byte*)(param_4+0xd))` (in_channels\u2026"
+        },
+        {
+          "rva": "0x005b4060",
+          "plate": "[C1 2026-05-19] Compute output-buffer byte length for a sample-rate/channel/bits-per-sample conversion."
+        },
+        {
+          "rva": "0x005b4150",
+          "plate": "[C1 2026-05-19] Compute output byte offset corresponding to input byte offset `param_2` under conversion (param_1 -> param_3)."
+        },
+        {
+          "rva": "0x005b41f0",
+          "plate": "[C1 2026-05-19] Linear-interpolation sample-rate converter."
+        },
+        {
+          "rva": "0x005b4850",
+          "plate": "[C1 2026-05-19] Bit-depth + signed/unsigned converter (8<->16 bit, signed<->unsigned)."
+        },
+        {
+          "rva": "0x005b51d0",
+          "plate": "[C1 2026-05-19] ADPCM stereo decoder header initializer (96 bytes / `0x60`)."
+        },
+        {
+          "rva": "0x005b53b0",
+          "plate": "[C1 2026-05-19] ADPCM stereo block encoder. Output block = 8 bytes (1 predictor byte + 7 sample-pair bytes for 14 samples)."
+        },
+        {
+          "rva": "0x005b5860",
+          "plate": "[C1 2026-05-19] ADPCM stereo block decoder (mate of 0x005b53b0)."
+        },
+        {
+          "rva": "0x005b5e00",
+          "plate": "[C1 2026-05-19] Microsoft IMA-style ADPCM mono encoder dispatcher."
+        },
+        {
+          "rva": "0x005b5f70",
+          "plate": "[C1 2026-05-19] IMA-style ADPCM mono encoder inner block."
+        },
+        {
+          "rva": "0x005b6260",
+          "plate": "[C1 2026-05-19] IMA-style ADPCM mono block decoder."
+        },
+        {
+          "rva": "0x005b66c0",
+          "plate": "[C1 2026-05-19] Channel dispatch. Computes `count = (param_2 >> 1) / param_4` (samples per channel given total bytes & channel count)."
+        },
+        {
+          "rva": "0x005b6710",
+          "plate": "[C1 2026-05-19] Decoder dispatch. Reads `*(byte*)(param_1+0xd)` (channels) and `*(uint*)(param_1+0x8) / (channels * 0x24)` (block\u2026"
+        },
+        {
+          "rva": "0x005b6760",
+          "plate": "[C1 2026-05-19] IMA ADPCM mono decoder."
+        },
+        {
+          "rva": "0x005b6820",
+          "plate": "[C1 2026-05-19] IMA ADPCM mono encoder."
+        },
+        {
+          "rva": "0x005b6910",
+          "plate": "[C1 2026-05-19] IMA ADPCM stereo decoder. Two parallel predictor states (L/R)."
+        },
+        {
+          "rva": "0x005b6a40",
+          "plate": "[C1 2026-05-19] IMA ADPCM mono encoder per-sample residual quantizer."
+        },
+        {
+          "rva": "0x005b6b00",
+          "plate": "[C1 2026-05-19] IMA ADPCM mono decoder per-sample step."
+        },
+        {
+          "rva": "0x005b6be0",
+          "plate": "[C1 2026-05-19] Second codec/sink-object vtable installer (shape parallel to FUN_005a6340 but with different `param_1+0x40 = 0x88` and\u2026"
+        },
+        {
+          "rva": "0x005b7010",
+          "plate": "[C1 2026-05-19] Calls `(*(int**)(param_1+0x5c)+4)(*(param_1+0x94), *(int*)(param_1+0x5c)+8)` \u2014 virtual call on a sub-object."
+        },
+        {
+          "rva": "0x005b70e0",
+          "plate": "[C1 2026-05-19] Initialize output-format descriptor."
+        },
+        {
+          "rva": "0x005b7110",
+          "plate": "[C1 2026-05-19] Reserve next codec-output slot for channel `param_2`."
+        },
+        {
+          "rva": "0x005b73b0",
+          "plate": "[C1 2026-05-19] Find file extension. Walks string to terminator, then back-walks until `'.'` (returns pointer to char after the dot) or\u2026"
+        },
+        {
+          "rva": "0x005b73e0",
+          "plate": "[C1 2026-05-19] Second codec/factory registrar (mate to FUN_005b34f0 but at slot `&DAT_007ddd2c`)."
+        },
+        {
+          "rva": "0x005b7430",
+          "plate": "[C1 2026-05-19] Thin wrapper: `FUN_005ad5f0(&DAT_007ddd2c)` (deregister mate of FUN_005b73e0)."
+        },
+        {
+          "rva": "0x005b74c0",
+          "plate": "[C1 2026-05-19] Stream-object vtable installer (parallel to FUN_005a6340 and FUN_005b6be0; this one wires the full audio-stream\u2026"
+        },
+        {
+          "rva": "0x005b7880",
+          "plate": "[C1 2026-05-19] Stream destructor."
+        },
+        {
+          "rva": "0x005b7980",
+          "plate": "[C1 2026-05-19] Stream tick (paired with vtable at FUN_005b74c0)."
+        },
+        {
+          "rva": "0x005b7b30",
+          "plate": "[C1 2026-05-19] Completion callback used by the stream subsystem."
+        },
+        {
+          "rva": "0x005b7e20",
+          "plate": "[C1 2026-05-19] If `param_2 != 0` calls `FUN_005b3300(param_1+0x5c)` (stop the inner stream)."
+        },
+        {
+          "rva": "0x005b8040",
+          "plate": "[C1 2026-05-19] Async-IO ring initializer (5-slot ring at param_1)."
+        },
+        {
+          "rva": "0x005b8080",
+          "plate": "[C1 2026-05-19] Closes the ring semaphore via `CloseHandle(*(HANDLE*)(param_1+0xc))`."
+        },
+        {
+          "rva": "0x005b8090",
+          "plate": "[C1 2026-05-19] Async-IO ring enqueue."
+        },
+        {
+          "rva": "0x005b8130",
+          "plate": "[C1 2026-05-19] Async-IO ring dequeue."
+        },
+        {
+          "rva": "0x005b81d0",
+          "plate": "[C1 2026-05-19] Async-IO ring reset."
+        }
+      ],
+      "missing_md": [],
+      "extras_from_dir": []
+    }
+  ],
+  "total_rvas": 551,
+  "total_missing_md": 67
+}

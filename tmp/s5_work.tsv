@@ -1,0 +1,80 @@
+0x00583f10	[C1 2026-05-18] Two-argument function: `param_1` is a pointer to a pointer-to-int-array (set/list handle), `param_2` is...
+0x00583f80	[C1 2026-05-18] `void FUN_00583f80(int *param_1, int param_2, int param_3)`.
+0x00584070	[C1 2026-05-18] `void FUN_00584070(int param_1, float param_2, float param_3)` — takes a facet pointer and two doubles...
+0x00584230	[C1 2026-05-18] `void FUN_00584230(undefined4 param_1, float param_2, float param_3, undefined4 param_4)`.
+0x00584430	[C1 2026-05-18] `void FUN_00584430(int param_1, int param_2)`.
+0x005846e0	[C1 2026-05-18] `void FUN_005846e0(int param_1, int param_2, int param_3, undefined4 *param_4)` — facet1, facet2,...
+0x00584880	[C1 2026-05-18] `undefined4 FUN_00584880(int param_1)` — takes a facet pointer, returns a new temp vertex-set.
+0x00584950	[C1 2026-05-18] `undefined4 FUN_00584950(int param_1)` — checktype: 0 = check all, !=0 = test specific facets.
+0x00584c50	[C1 2026-05-18] `void FUN_00584c50(int param_1)` — facet pointer.
+0x00584d80	[C1 2026-05-18] `void FUN_00584d80(int param_1, int param_2)` — facet1, optional facet2 (0 = self).
+0x00584f40	[C1 2026-05-18] `int FUN_00584f40(int param_1, int param_2, int param_3)` — facet (param_1), vertices set (param_2),...
+0x00585380	[C1 2026-05-18] `float FUN_00585380(float param_1, float *param_2, float *param_3, float *param_4)` — actually...
+0x00585660	[C1 2026-05-18] `void FUN_00585660(int param_1, undefined4 *param_2)` — facetlist, output flag pointer.
+0x00585890	[C1 2026-05-18] `void FUN_00585890(undefined4 *param_1)` — output wasmerge flag pointer.
+0x00585b60	[C1 2026-05-18] `void FUN_00585b60(int param_1)` — newfacet list head.
+0x00585d70	[C1 2026-05-18] `void FUN_00585d70(int param_1)` — facetlist.
+0x00585ee0	[C1 2026-05-18] `void FUN_00585ee0(int param_1)` — facet.
+0x00586040	[C1 2026-05-18] `void FUN_00586040(int param_1)` — facetlist.
+0x00586190	[C1 2026-05-18] `void FUN_00586190(int param_1)` — facet.
+0x00586340	[C1 2026-05-18] `int FUN_00586340(void)` — returns merge count.
+0x00586640	[C1 2026-05-18] `void FUN_00586640(float param_1, float param_2, int param_3)` — first two params are misclassified by...
+0x005868a0	[C1 2026-05-18] `void FUN_005868a0(int param_1, int param_2)` — facet (samecycle head), newfacet.
+0x00586b90	[C1 2026-05-18] `void FUN_00586b90(uint param_1, undefined4 *param_2)` — facetlist, wasmerge*.
+0x00586d90	[C1 2026-05-18] `void FUN_00586d90(uint param_1, int param_2)` — samecycle (param_1), newfacet (param_2).
+0x00586e80	[C1 2026-05-18] `void FUN_00586e80(int param_1, int param_2)` — samecycle (param_1), newfacet (param_2).
+0x005870c0	[C1 2026-05-18] `void FUN_005870c0(int param_1, int param_2)` — samecycle, newfacet.
+0x00587370	[C1 2026-05-18] `void FUN_00587370(int param_1, int param_2)` — samecycle, newfacet.
+0x005874f0	[C1 2026-05-18] `void FUN_005874f0(float param_1, float param_2, float *param_3, float *param_4, int param_5)` —...
+0x00587ad0	[C1 2026-05-18] `void FUN_00587ad0(int param_1, int param_2)` — facet1, facet2 (2D mergefacet).
+0x00587c20	[C1 2026-05-18] `void FUN_00587c20(int param_1, int param_2)` — facet1, facet2.
+0x00587d30	[C1 2026-05-18] `void FUN_00587d30(int param_1, int param_2)` — facet1, facet2.
+0x00587e00	[C1 2026-05-18] `void FUN_00587e00(int param_1, int param_2, int param_3)` — facet1, facet2, mergeapex.
+0x005882e0	[C1 2026-05-18] `void FUN_005882e0(int param_1, int param_2)` — facet1, facet2.
+0x00588440	[C1 2026-05-18] `void FUN_00588440(int param_1, int *param_2)` — facet1.vertices, &facet2.vertices.
+0x005885a0	[C1 2026-05-18] `int FUN_005885a0(int param_1)` — vertex pointer.
+0x005886e0	[C1 2026-05-18] `bool FUN_005886e0(void)` — qh_reducevertices.
+0x005888f0	[C1 2026-05-18] `undefined4 FUN_005888f0(int param_1)` — facet.
+0x00588a90	[C1 2026-05-18] `int FUN_00588a90(int param_1, int param_2)` — vertex (param_1), newfacet (param_2).
+0x00588ce0	[C1 2026-05-18] `void FUN_00588ce0(int *param_1, int param_2, int param_3)` — ridge, oldvertex, newvertex.
+0x00588e70	[C1 2026-05-18] `void FUN_00588e70(int param_1, int param_2, int param_3, int param_4, int param_5)` — oldv, newv,...
+0x00589080	[C1 2026-05-18] `undefined4 FUN_00589080(int param_1, int param_2)` — facet1, facet2 (returns 1 if a merge was queued).
+0x005893a0	[C1 2026-05-18] `bool FUN_005893a0(void)` — qh_test_vneighbors.
+0x00589500	[C1 2026-05-18] `void FUN_00589500(int param_1, int param_2)` — facet1, newfacet (qh_tracemerge).
+0x00589650	[C1 2026-05-18] `void FUN_00589650(int param_1, int param_2)` — facet1 (deleted), facet2 (kept).
+0x00589740	[C1 2026-05-18] `undefined4 FUN_00589740(int param_1)` — vertex pointer.
+0x00589890	[C1 2026-05-18] `void FUN_00589890(int param_1, undefined4 param_2)` — facet, replacement.
+0x005898d0	[C1 2026-05-18] `void FUN_005898d0(void)` — qh_freebuffers.
+0x00589b00	[C1 2026-05-18] `void FUN_00589b00(int param_1)` — qh_freebuild(allmem). param_1 == 0 means "fast freebuild" (skip...
+0x00589dc0	[C1 2026-05-18] `void FUN_00589dc0(undefined4 param_1)` — qh_freeqhull(allmem).
+0x00589e20	[C1 2026-05-18] `void FUN_00589e20(undefined4 a, b, c, d)` — qhull init entry.
+0x00589fa0	[C1 2026-05-18] `FUN_00589fa0(...)` — 13,347-byte function (decomp output exceeded a single tool-call budget; reviewed...
+0x0058d6d0	[C1 2026-05-18] `void FUN_0058d6d0(void)` — qh_init_qhull_command / qh_initbuffers.
+0x0058d810	[C1 2026-05-18] `FUN_0058d810(...)` — 3,990-byte function. (Reviewed via callees/callers; full decomp body not...
+0x0058e7b0	[C1 2026-05-18] `void FUN_0058e7b0(a, b, c)` — qh_init_A / qh_initstatistics.
+0x0058e940	[C1 2026-05-18] `void FUN_0058e940(char *param_1)` — qh_initthresholds(command).
+0x0058ed00	[C1 2026-05-18] `void FUN_0058ed00(undefined4 param_1, int param_2, float *param_3)` — qh_option(option, intarg,...
+0x0058edf0	[C1 2026-05-18] `float10 FUN_0058edf0(char *param_1, char **param_2)` — qh_strtod wrapper.
+0x0058ee20	[C1 2026-05-18] `void FUN_0058ee20(char *param_1, char **param_2)` — qh_strtol wrapper (base 10).
+0x0058ee50	[C1 2026-05-18] `int FUN_0058ee50(uint param_1)` — qh_memalloc(insize).
+0x0058f010	[C1 2026-05-18] `void FUN_0058f010(undefined4 *param_1, int param_2)` — qh_memfree(ptr, insize).
+0x0058f0a0	[C1 2026-05-18] `void FUN_0058f0a0(int *param_1, undefined4 *param_2)` — qh_memfreeshort(curlong*, totlong*).
+0x0058f140	[C1 2026-05-18] `void FUN_0058f140(undefined4 param_1)` — qh_meminit / first init.
+0x0058f160	[C1 2026-05-18] `void FUN_0058f160(int IStrace, int alignlog2, undefined4 numsizes, undefined4 bufsize, undefined4...
+0x0058f240	[C1 2026-05-18] `void FUN_0058f240(void)` — qh_memsetup.
+0x0058f360	[C1 2026-05-18] `void FUN_0058f360(int param_1)` — qh_memsize(size).
+0x0058f3f0	[C1 2026-05-18] `void FUN_0058f3f0(undefined4 param_1)` — qh_memstatistics(fp).
+0x0058f520	[C1 2026-05-18] `int FUN_0058f520(int dim, undefined4 numpoints, undefined4 points, int ismalloc, char *qhull_cmd, int...
+0x0058f6a0	[C1 2026-05-18] `void FUN_0058f6a0(int exitcode, int facet, int vertex)` — qh_errexit(exitcode, facet, vertex).
+0x0058f8e0	[C1 2026-05-18] `void FUN_0058f8e0(undefined4 atype, int facet1, int facet2, int ridge, int vertex)` —...
+0x0058fa50	[C1 2026-05-18] `void FUN_0058fa50(int facetlist, int facets_set, undefined4 printformat)` —...
+0x0058fae0	[C1 2026-05-18] `void FUN_0058fae0(void)` — qh_qhull(). Main hull construction loop.
+0x0058fd40	[C1 2026-05-18] `undefined4 FUN_0058fd40(undefined4 furthest_point, int facet, int checkdist)` —...
+0x005901f0	[C1 2026-05-18] `void FUN_005901f0(void)` — qh_buildhull_with_restart / qh_build_withrestart (joggle precision-error...
+0x005903e0	[C1 2026-05-18] `void FUN_005903e0(void)` — qh_buildhull().
+0x005905d0	[C1 2026-05-18] `void FUN_005905d0(int point, int facet)` — qh_tracepoint(point, facet) / qh_at_periodic.
+0x00590900	[C1 2026-05-18] `void FUN_00590900(undefined4 errcode, undefined4 facet1, undefined4 facet2)` — two-facet errexit...
+0x00590930	[C1 2026-05-18] `void FUN_00590930(undefined4 point, int facet, int *out_visible_outside, int *out_horizon_outside)` —...
+0x00590dc0	[C1 2026-05-18] `int FUN_00590dc0(float *param_1)` — qh_nextfurthest(&visible) — returns next outside point + facet.
+0x00591020	[C1 2026-05-18] `void FUN_00591020(int param_1, int param_2, float *param_3)` — qh_partitionall(points_set, num_points,...
+0x005913c0	[C1 2026-05-18] `void FUN_005913c0(undefined4 point, int facet, float *prev_dist)` — qh_partitioncoplanar(point, facet,...

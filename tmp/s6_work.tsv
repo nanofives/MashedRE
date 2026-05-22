@@ -1,0 +1,80 @@
+0x005c7070	[C1 2026-05-18] Waits on the semaphore handle at `*(int*)(this+0x9c) + 4` with timeout `0xffffffff` (`INFINITE`).
+0x005c7330	[C1 2026-05-18] Computes `fVar1 = (*(float*)(*(int*)(this+0x9c) + 8)) * (*(float*)(this+0x44)) *...
+0x005c7500	[C1 2026-05-18] Computes `ROUND(*(float*)(this+0x38) * *(float*)(this+0x34))` (one product).
+0x005c7570	[C1 2026-05-18] Zeros `*(this+0x90)` (0x005c757a) and `*(this+0x94)` (0x005c7581).
+0x005c75b0	[C1 2026-05-18] One-line getter: `return *(undefined4*)(param_1 + 0x8c);`.
+0x005c75c0	[C1 2026-05-18] Waits on semaphore at `*(int*)(this+0x9c) + 4` with `0xffffffff` timeout.
+0x005c7a90	[C1 2026-05-18] Calls `FUN_005a9e10(this, &DAT_005e7a5c, 0)` (0x005c7a9c) — passes string at 0x005e7a5c.
+0x005c7ee0	[C1 2026-05-18] Two byte-clearing loops at top: each clears `*(u32*)(this+0x34)` bytes starting at pointer...
+0x005c7f80	[C1 2026-05-18] Conditional cleanup: if `(*(byte*)(this+0x4c) & 1) != 0`: - Call `FUN_005aaa00(*(u32*)(this+0x3c), 0,...
+0x005c7fb0	[C1 2026-05-18] Calls `FUN_005bb000(*(u32*)(this+0x3c), 0)` (0x005c7fb5) — likely "stop/free" on the resource at +0x3c.
+0x005c7fe0	[C1 2026-05-18] `WaitForSingleObject(*(HANDLE*)(this+0x2c), 0xffffffff)` — INFINITE wait on event at +0x2c.
+0x005c8120	[C1 2026-05-18] Structure-twin of FUN_005c7a90 — same `FUN_005aee20(0x28)` probe chain producing iVar2 from the...
+0x005c88b0	[C1 2026-05-18] If `*(code**)param_2 != NULL`, indirect-jump via `(*(code*)*param_2)()`. (warning: Ghidra could not...
+0x005c8910	[C1 2026-05-18] Loads `iVar1 = *(int*)(param_1 + 0x20)` (substruct pointer).
+0x005c8980	[C1 2026-05-18] Tail-wrapper: `FUN_005aab00(param_1, 1); return param_1;`.
+0x005c8eb0	[C1 2026-05-18] Calls `FUN_005b0f10(param_1, param_2)` — likely base-class ctor.
+0x005c90a0	[C1 2026-05-18] Loads `iVar1 = *(int*)(this+0x20)`.
+0x005c9120	[C1 2026-05-18] Resets four fields of `param_1`: - `*(u32*)(param_1+0x1e8) = 0` - `*(u32*)(param_1+0x20c) = 0` -...
+0x005c91f0	[C1 2026-05-18] Pure tail-wrapper: `FUN_005aba20(&DAT_007de2b8, param_1, param_2, param_3, param_4, param_5);` — passes...
+0x005c9220	[C1 2026-05-18] Marked `thunk:true` in Ghidra. Forwards to FUN_005abcf0.
+0x005c9380	[C1 2026-05-18] Pure leaf size-computation: `param_1 = param_1 >> 3; if (param_1 == 0) param_1 = 1; return param_1 +...
+0x005c93a0	[C1 2026-05-18] Treats `param_1` as a bit-count, computes `uVar2 = param_1 + 7`.
+0x005c9490	[C1 2026-05-18] Reads `*(u8*)((char*)param_1 + 9)` — the ownership-flag byte from FUN_005c93a0's allocation.
+0x005c94c0	[C1 2026-05-18] Treats `*param_1` as a byte-array base and `param_1[1]` as its length in bytes (header layout matches...
+0x005c95b0	[C1 2026-05-18] Bit-range setter on a byte-array bitmap (counterpart to the FUN_005c94c0 search).
+0x005c9680	[C1 2026-05-18] Calls `FUN_005ad570(&DAT_007de34c)`; if zero return NULL.
+0x005c96d0	[C1 2026-05-18] Tail wrapper: `FUN_005ad5f0(&DAT_007de34c); return;` — counterpart to FUN_005c9680 (registration →...
+0x005c96e0	[C1 2026-05-18] Twin of FUN_005c9680 but with different handle/strings/tables: - Handle `&DAT_007de374` (vs...
+0x005c9730	[C1 2026-05-18] Tail-wrapper: `FUN_005ad5f0(&DAT_007de374); return;` — counterpart to FUN_005c96e0.
+0x005c9740	[C1 2026-05-18] Two-channel commit: - `FUN_005c9770(*(u32*)(this+0x2c), *(u32*)(this+0x38), *(u32*)(this+0x28))` — pack...
+0x005c9770	[C1 2026-05-18] Saturating-pack int32 buffer → int16 buffer.
+0x005c98d0	[C1 2026-05-18] Voice-mixer core. Reads voice struct `piVar3 = *(int**)(this+0x20)`, gates on `*piVar3 == 4` (state 4 =...
+0x005c9d10	[C1 2026-05-18] Voice resampler/interpolator (the "input prep" stage before FUN_005c98d0 mixer applies levels).
+0x005ca2d0	[C1 2026-05-18] Ghidra reports "Library Function - Single Match: __aullshr / Library: Visual Studio". FidDB attestation.
+0x005ca2f0	[C1 2026-05-18] MSVC SEH unwind funclet (Ghidra-named `Unwind@`). One-line `call FUN_004a1790()`.
+0x005ca2f8	[C1 2026-05-18] MSVC SEH unwind funclet at 0x005ca2f8 — Ghidra synthesised an entry but `function_at`+`decomp` did not...
+0x005ca300	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `_free(*(void**)(unaff_EBP + 8))` — calls `free` on the value at...
+0x005ca320	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a1790()` — same destructor as Unwind@005ca2f0.
+0x005ca340	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. This destructor is reused by many unwind labels in...
+0x005ca360	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Same destructor as Unwind@005ca340.
+0x005ca368	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Same destructor as Unwind@005ca340.
+0x005ca380	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Same destructor as Unwind@005ca340.
+0x005ca3a0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a01b0()`. Distinct dtor (vs 0x0049c6d0 group).
+0x005ca3a8	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a1180()`. Reused by 0x005ca3b3, 0x005ca3d8, 0x005ca3e3,...
+0x005ca3b3	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a1180()`. Deduped — see 0x005ca3a8.
+0x005ca3d0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a01b0()`. Deduped — see 0x005ca3a0.
+0x005ca3d8	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a1180()`. Deduped — see 0x005ca3a8.
+0x005ca3e3	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a1180()`. Deduped — see 0x005ca3a8.
+0x005ca3ee	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a1180()`. Deduped — see 0x005ca3a8.
+0x005ca3f9	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6a0()`. Reused by 0x005ca404, 0x005ca412.
+0x005ca404	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6a0()`. Deduped — see 0x005ca3f9.
+0x005ca412	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6a0()`. Deduped — see 0x005ca3f9.
+0x005ca430	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca438	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `_free(*(void**)(unaff_EBP + -0x10))` — frees the value at `[EBP-0x10]`...
+0x005ca450	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca470	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca478	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca490	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca498	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca4a0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca4a8	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca4c0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca4c8	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca4e0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca500	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca520	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049f300()`. Distinct dtor — not part of the 0x0049c6d0 high-fan-in...
+0x005ca540	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049eeb0()`. Reused by 0x005ca5c0, 0x005ca640.
+0x005ca560	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca580	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a2ae0()`. Reused by 0x005ca5c8.
+0x005ca5a0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `thunk_FUN_004a28b0()` — calls a thunk dtor.
+0x005ca5c0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049eeb0()`. Deduped — see 0x005ca540.
+0x005ca5c8	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a2ae0()`. Deduped — see 0x005ca580.
+0x005ca5e0	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `_free(*(void**)(unaff_EBP + 8))` — frees frame slot `[EBP+8]`. Same...
+0x005ca600	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca620	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_0049c6d0()`. Deduped — see 0x005ca340.
+0x005ca640	[C1 2026-05-18] MSVC SEH unwind funclet (atypically large; carries a small fixup before the tail-call).
+0x005ca680	[C1 2026-05-18] MSVC SEH unwind funclet. Body: `FUN_004a26f0()`. Distinct dtor.
+0x005cb000	[C1 2026-05-18] `__fastcall` six-arg routine. Of the six declared params, ECX (`param_1`) and EDX (`param_2`) are...
+0x005cb07f	[C1 2026-05-18] `__fastcall` six-arg routine — twin of FUN_005cb000 but without the translation column.
+0x005cb0ef	[C1 2026-05-18] `__fastcall` five-arg routine — single-vec3 form (no loop) of FUN_005cb000.
