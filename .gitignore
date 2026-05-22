@@ -68,3 +68,4 @@ __pycache__/
 
 # auto-created agent worktrees (managed by Claude Agent tool, not project work)
 .claude/worktrees/agent-*/
+tmp/
