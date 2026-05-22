@@ -117,6 +117,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\MenuMixed.cpp" ^
     "Frontend\DrawQuadPrimitives.cpp" ^
     "Frontend\SmallLeaves_n2.cpp" ^
+    "Render\HighAB3Helpers_p6.cpp" ^
     "Render\TrackNodeLeaves_o1.cpp" ^
     "Render\LowRvaSetters_o2.cpp" ^
     "Render\RwPluginHelpers_o3.cpp" ^

@@ -7353,4 +7353,99 @@ HOOKS = {
         ],
         'path2_tests': [0, 1, 2],
     },
+
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3-batch-p s6 — render_high_ab3_mixed + audio (2026-05-22)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004d7ff0  RwIdentityPassthrough — 4B pure leaf; return param_1.
+    # Strategy: int_scalar — pass any uint32 value, compare return.
+    # Original and reimpl must agree: return == input.
+    # Leaf-function exemption applies (no callees). U-0131 non-blocking.
+    # ref: re/analysis/promote_c1_high_ab3/0x004d7ff0.md
+    'rw_identity_passthrough': {
+        'rva':            0x004d7ff0,
+        'export':         'RwIdentityPassthrough',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000042,
+                           0x004d7ff0, 0x7FFFFFFF],
+        'path2_tests':    [0, 0xDEADBEEF, 0x12345678],
+    },
+
+
+    # 0x00552d70  ViewportStackPop — 39B pure leaf; decrement DAT_00912b04 if >0,
+    # then zero DAT_00912bd8 and DAT_00912bec.
+    # Strategy: void_write_observe on DAT_00912bec (last write, distance-threshold
+    # cache slot). Write sentinel, call fn() (guard passes if DAT_00912b04 > 0 at
+    # main-menu quiescent state — viewport stack is active during menu rendering),
+    # read back DAT_00912bec. Both orig and reimpl must have written 0 (sentinel zeroed).
+    # Leaf-function exemption applies (no callees). No uncertainties.
+    # ref: re/analysis/promote_c1_high_ab3/0x00552d70.md
+    'viewport_stack_pop': {
+        'rva':            0x00552d70,
+        'export':         'ViewportStackPop',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00912bec,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+
+    # 0x004d8480  RwErrSlotWrite — 85B pure leaf; conditional 64-bit error-slot store.
+    # Strategy: int_scalar with uint32 return + int32 arg (avoid Frida ptr-wrap crash).
+    # Test values are addresses of known stable 8-byte-aligned .bss regions in
+    # MASHED.exe: the function reads param_1[0] and param_1[1] and conditionally
+    # writes them to the error slot, then returns param_1 (as uint32/pointer in EAX).
+    # Using real readable/writable game addresses avoids AV on the param_1 deref.
+    # Both sides must agree: return (EAX) == input (the passed address).
+    # The conditional write to the error slot is identical on both sides, so no
+    # net divergence in the return value observable.
+    # Leaf-function exemption applies. U-0132/U-0133 non-blocking.
+    # ref: re/analysis/promote_c1_high_ab3/0x004d8480.md
+    'rw_err_slot_write': {
+        'rva':            0x004d8480,
+        'export':         'RwErrSlotWrite',
+        # Use int32 arg so Frida passes value directly without ptr() wrapping.
+        # Function returns param_1 in EAX; uint32 captures raw address correctly.
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Test values: addresses of known 8-byte-aligned readable .bss regions.
+        # 0x00912b04 = viewport stack depth counter (viewport cluster globals)
+        # 0x00912bd8 = stage-state cache slot (same cluster)
+        # 0x007d3ff8 = RW global interface pointer region
+        # 0x007d6c5c = error slot array base pointer
+        # 0x00633674 = audio format table base (9-entry ptr array)
+        'path1_tests':    [0x00912b04, 0x00912bd8, 0x007d3ff8,
+                           0x007d6c5c, 0x00633674, 0x00912bec,
+                           0x00912b04, 0x00912bd8, 0x007d3ff8,
+                           0x007d6c5c],
+        'path2_tests':    [0x00912b04, 0x00912bd8, 0x007d3ff8],
+    },
+
+
+    # 0x005ab410  AudioRwsChunkTypeSeek
+    # uint32(stream, type, *out_size, *out_ver): loops calling AudioRwsChunkHeaderRead.
+    # crash_equal_ok: same null-stream deref propagates from inner FUN_004cbd30.
+    # NOTE: not C3-promoted (caller 005a7b60 still C1); registered for harness completeness.
+    'audio_rws_chunk_type_seek': {
+        'rva':            0x005ab410,
+        'export':         'AudioRwsChunkTypeSeek',
+        'signature':      {'ret': 'uint32',
+                           'args': ['uint32', 'int32', 'pointer', 'pointer']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
