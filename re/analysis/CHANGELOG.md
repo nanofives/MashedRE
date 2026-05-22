@@ -1,6 +1,10 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  c3-batch-q-s6  re-classify-transaction  rvas=0x004cbd30,0x004cc050,0x004c5890  note=3 render stream-io+TXD-create C2->C3; crash_equal_ok GREEN 10/10 (stream pair); allocator_nonnull GREEN (TXD-create); JMP patches verified all 3; Render/TextureLoader_q6.cpp
+2026-05-22  0x004cbd30  RwStreamRead  C2->C3  c3-batch-q-s6; 317B 4-type stream dispatch; crash_equal_ok GREEN 10/10 log/diff_rw_stream_read.csv; JMP patch OK; callers=004cf7d0(C2)+005ab380(C3); callee=00550950(C1)
+2026-05-22  0x004cc050  RwStreamSkip  C2->C3  c3-batch-q-s6; 249B 4-type stream dispatch; crash_equal_ok GREEN 10/10 log/diff_rw_stream_skip.csv; JMP patch OK; callers=004cf7d0(C2)+005ab410(C3); callee=005509b0(C1)
+2026-05-22  0x004c5890  RwTexDictionaryCreate  C2->C3  c3-batch-q-s6; alloc+init RwTexDictionary; allocator_nonnull (both return valid ptr; pointer identity mismatch inherent to heap alloc) log/diff_rw_tex_dictionary_create.csv; JMP patch OK; caller=004cf7d0(C2)
 2026-05-22  0x00411d60  ReplayCheckTimer  C2->C3  c3-batch-q-s4; 39B void(); Time Trial mode guard (mode==2); conditional zero of DAT_007f0ff4; callee GetRaceSubMode C3; Frida void_write_observe 10/10 GREEN (sentinel survives) log/diff_replay_check_timer.csv; path2 opcode+rel32 OK; Vehicle/SmallLeaves_q4.cpp
 2026-05-22  0x004248b0  PerCarSnapshotInit  C2->C3  c3-batch-q-s4; 111B per-car snapshot init; 4 cars stride 0x138; copies 7 dwords + lap+1; pure leaf callee-gate exempt; caller FUN_004331a0 C2; Frida void_write_observe 10/10 GREEN log/diff_per_car_snapshot_init.csv; path2 opcode+rel32 OK; U-3919(semantic) U-3920(cosmetic) non-blocking; Vehicle/SmallLeaves_q4.cpp
 2026-05-22  00422af0  SlotWordSet  C2->C3  c3-batch-q-s3; 20B pure leaf; writes param_2 to DAT_00641320+param_1*0xf40; leaf-fn-exemption; entity_field_set 10/10 GREEN log/diff_slot_word_set.csv; Render/LowRvaMixed_q3.cpp

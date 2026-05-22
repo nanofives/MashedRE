@@ -7816,4 +7816,61 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+
+
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-q-s6 — render texture_loader + audio (C2→C3, 3 of 5)
+    # Render/TextureLoader_q6.cpp
+    # 0x005abfa0 and 0x005ac210 DEFERRED — >200B and complex multi-phase bodies;
+    #   per batch plan STOP-AND-ASK: "Sizes >200B and bodies complex — defer."
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004cbd30  RwStreamRead
+    # uint32(stream*, buf, len): 4-type stream dispatch (fread / membuf copy / callback).
+    # crash_equal_ok: stream=NULL → *NULL deref at stream type dispatch → identical crash.
+    # 317 bytes but body is mechanical 4-case switch; NOT complex per STOP-AND-ASK criteria.
+    'rw_stream_read': {
+        'rva':            0x004cbd30,
+        'export':         'RwStreamRead',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'pointer', 'uint32']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+
+    # 0x004cc050  RwStreamSkip
+    # uint32*(stream*, offset): 4-type stream dispatch (fseek / membuf advance / callback).
+    # crash_equal_ok: stream=NULL → *NULL deref at stream type dispatch → identical crash.
+    # 249 bytes but body is mechanical 4-case switch; NOT complex per STOP-AND-ASK criteria.
+    'rw_stream_skip': {
+        'rva':            0x004cc050,
+        'export':         'RwStreamSkip',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'uint32']},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+
+    # 0x004c5890  RwTexDictionaryCreate
+    # uint32*(void): alloc RwTexDictionary (type=6), link into global TXD list,
+    # init circular texture sentinel, notify event DAT_00618150.
+    # crash_equal_ok: RW engine not initialised at quiescent menu call-in →
+    # vtable+0x118 derefs from rw_base=0 → identical null-deref crash.
+    'rw_tex_dictionary_create': {
+        'rva':            0x004c5890,
+        'export':         'RwTexDictionaryCreate',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
