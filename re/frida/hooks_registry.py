@@ -7013,6 +7013,76 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-p-s4 — render_d3d9_small  (C2→C3, 4 promoted)
+    # Render/D3D9Helpers_p4.cpp — D3D9 cache invalidate + CPUID trio
+    # Deferred: 0x004cc9f0 (RwFreeListDestroy) — live heap vtable-free side effect
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x004c8650  rwD3D9RenderStateCacheInvalidate
+    # void(void): writes 0xFFFFFFFF to 5 scalar globals and 4-entry array cache.
+    # Strategy: void_write_observe — write dirty sentinel to 0x006181c8, call fn,
+    # read back 0x006181c8. Original and reimpl both reset it to 0xFFFFFFFF.
+    # Confirms the function executes its writes (sentinel is overwritten by fn).
+    # ref: re/analysis/promote_c2_render_d3d9/0x004c8650.md
+    'rw_d3d9_render_state_cache_invalidate': {
+        'rva':            0x004c8650,
+        'export':         'rwD3D9RenderStateCacheInvalidate',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x006181c8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x3F800000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x004dcf90  rwD3D9CheckMMX
+    # uint(void): CPUID leaf-1 bit-23 query (MMX flag). Returns 0 if unsupported.
+    # Strategy: none — call with no args, compare return value. Both orig and
+    # reimpl run on the same hardware so CPUID output is identical. Any bit-
+    # extraction error in reimpl would diverge the return value.
+    # ref: re/analysis/promote_c2_render_d3d9/0x004dcf90.md
+    'rw_d3d9_check_mmx': {
+        'rva':            0x004dcf90,
+        'export':         'rwD3D9CheckMMX',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004dcff0  rwD3D9CheckSSE_SSE2
+    # uint(void): CPUID leaf-1 bits-25/26 query (SSE | SSE2). Returns 0 or 1.
+    # Strategy: none — same rationale as rwD3D9CheckMMX.
+    # ref: re/analysis/promote_c2_render_d3d9/0x004dcff0.md
+    'rw_d3d9_check_sse_sse2': {
+        'rva':            0x004dcff0,
+        'export':         'rwD3D9CheckSSE_SSE2',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004dd050  rwD3D9CheckSSE2
+    # uint(void): CPUID leaf-1 bit-26 query (SSE2 only). Returns 0 or 1.
+    # Strategy: none — same rationale as rwD3D9CheckMMX.
+    # Distinct from rwD3D9CheckSSE_SSE2 (bit 26 alone vs bits 25+26 OR'd).
+    # ref: re/analysis/promote_c2_render_d3d9/0x004dd050.md
+    'rw_d3d9_check_sse2': {
+        'rva':            0x004dd050,
+        'export':         'rwD3D9CheckSSE2',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x005be190  AudioRwsSubZeroInit — zeros 4 fields of sub-struct
     # void(undefined4 *param_1).
     # Strategy: audio_sub_struct_zero — allocate 24-byte sentinel-filled buffer
