@@ -1,6 +1,13 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-18  sweep-20260518-1729  scribe-release  bucket=bucket_00412130  writes=80  renames=0 (HUD weapons-VFX + ParticleEmitters game-code; no FidDB attestation)  errors=0
+2026-05-22  c3-batch-q-s2  re-classify-transaction  rvas=0x004769a0,0x004769d0,0x004769f0,0x00476a30,0x00476a40  note=5/5 ParticleEmitter state setters C2->C3; Render/FrameHelpers_q2.cpp; all 5 Frida diffs 10/10 GREEN; leaf-fn-exemption (callees_depth1=[] for all); void_setter_observe NULL-path (ptr variants) + full-range (SetScalar)
+2026-05-22  004769a0  ParticleEmitter_SetPosition  C2->C3  c3-batch-q-s2; NULL→&DAT_006925a8; writes XYZ to DAT_00692528/2c/30; leaf-exemption; void_setter_observe NULL-path 10/10 GREEN log/diff_particle_emitter_set_position.csv; Render/FrameHelpers_q2.cpp
+2026-05-22  004769d0  ParticleEmitter_SetVelocity  C2->C3  c3-batch-q-s2; NULL→&DAT_00613288; writes XY to DAT_006924dc/e0; leaf-exemption; void_setter_observe NULL-path 10/10 GREEN log/diff_particle_emitter_set_velocity.csv; Render/FrameHelpers_q2.cpp
+2026-05-22  004769f0  ParticleEmitter_SetColour  C2->C3  c3-batch-q-s2; NULL→copy DAT_00613290 into DAT_00692554 else param_1[0]; leaf-exemption; void_setter_observe NULL-path 10/10 GREEN log/diff_particle_emitter_set_colour.csv; Render/FrameHelpers_q2.cpp
+2026-05-22  00476a30  ParticleEmitter_SetScalar  C2->C3  c3-batch-q-s2; direct write _DAT_006924d8=param_1 (value not ptr); leaf-exemption; void_setter_observe full-range 10/10 GREEN log/diff_particle_emitter_set_scalar.csv; Render/FrameHelpers_q2.cpp
+2026-05-22  00476a40  ParticleEmitter_SetRGBA  C2->C3  c3-batch-q-s2; NULL→&DAT_00613294; writes RGBA to DAT_00692598/9c/a0/a4; leaf-exemption; void_setter_observe NULL-path 10/10 GREEN log/diff_particle_emitter_set_rgba.csv; Render/FrameHelpers_q2.cpp
 2026-05-22  frida-sweep-20260522-1319  frida-sweep-claim  branches=6 (c3/batch-q-s1..s6)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-release  branches=6 merged  integration-diff=GREEN  hooks=24  c3_batch_p yield 80% (best batch yet)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-claim  branches=6 (c3/batch-p-s1..s6)

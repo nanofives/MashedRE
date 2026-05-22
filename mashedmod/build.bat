@@ -127,6 +127,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Util\SmallLeaves_o6.cpp" ^
     "Render\TrackLoaderMicros_p3.cpp" ^
+    "Render\FrameHelpers_q2.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
