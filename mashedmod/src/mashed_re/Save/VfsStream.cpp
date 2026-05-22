@@ -35,38 +35,58 @@
 // Note: the analysis note lists ctx as param5; signature chosen to match the
 // observed register ordering exactly as mechanical description shows.
 // ---------------------------------------------------------------------------
-// The VFS sub-context is at *(*(ctx+0x38)+0x28).
-// vtable slot index 3 is at byte offset 0x0C (4 bytes per pointer).
+// ABI confirmed via disassembly (Ghidra pool10 2026-05-22):
+//   00550980: PUSH ESI
+//   00550981: MOV ESI, [ESP+0xC]        ; ESI = element_size (param_2)
+//   00550985: MOV EDX, ESI
+//   00550987: MOV ECX, [ESP+0x14]       ; ECX = ctx (param_4, NOT thiscall)
+//   0055098B: IMUL EDX, [ESP+0x10]      ; EDX = element_size * count (total_bytes)
+//   00550990: MOV EAX, [ECX+0x38]       ; EAX = *(ctx+0x38)
+//   00550993: PUSH EDX                  ; push total_bytes
+//   00550994: MOV EDX, [ESP+0xC]        ; EDX = buf (param_1, re-read from stack)
+//   00550998: ADD EAX, 0x28             ; EAX = *(ctx+0x38) + 0x28
+//   0055099B: PUSH EDX                  ; push buf
+//   0055099C: PUSH ECX                  ; push ctx
+//   0055099D: CALL [EAX+0xC]            ; call *(*(ctx+0x38)+0x28+0x0C)(ctx, buf, total_bytes)
+//   005509A0: ADD ESP, 0xC              ; cdecl caller cleanup (3 args)
+//   005509A3: XOR EDX, EDX
+//   005509A5: DIV ESI                   ; EAX = EAX / element_size
+//   005509A7: POP ESI
+//   005509A8: RET
+//
+// Stack args at call site (cdecl, caller pushes right-to-left):
+//   param_1 = buf         [ESP+4] before PUSH ESI / [ESP+8] inside
+//   param_2 = element_size [ESP+8] / [ESP+C] inside
+//   param_3 = count        [ESP+C] / [ESP+10] inside
+//   param_4 = ctx          [ESP+10] / [ESP+14] inside
+//
+// Dispatch: fn = *(void**)(*(char**)(ctx+0x38) + 0x28 + 0x0C)
+//           fn(ctx, buf, total_bytes)  — 3 cdecl stack args
 extern "C" __declspec(dllexport) int __cdecl VfsStreamRead(
-    void* ctx,
     void* buf,
     int   element_size,
-    int   count)
+    int   count,
+    void* ctx)
 {
-    // 0x00550989: total_bytes = element_size * count
+    // 0x0055098B: total_bytes = element_size * count
     const int total_bytes = element_size * count;
 
-    // 0x0055098E: sub_ctx_base = *(ctx+0x38)
+    // 0x00550990: base = *(ctx+0x38)
+    // 0x00550998: fn_slot = base + 0x28 + 0x0C  (single pointer read, not vtable double-deref)
     auto* ctx_bytes = reinterpret_cast<std::uint8_t*>(ctx);
-    void* sub_ctx_base;
-    std::memcpy(&sub_ctx_base, ctx_bytes + 0x38, sizeof(sub_ctx_base));
+    void* base;
+    std::memcpy(&base, ctx_bytes + 0x38, sizeof(base));
+    auto* fn_slot = reinterpret_cast<std::uint8_t*>(base) + 0x28 + 0x0C;
 
-    // sub_ctx = sub_ctx_base + 0x28
-    auto* sub_ctx = reinterpret_cast<std::uint8_t*>(sub_ctx_base) + 0x28;
-
-    // 0x00550997: vtable[3] = *(*(sub_ctx)+0x0C)
-    // sub_ctx is a pointer to an object; read vtable ptr from *sub_ctx, then slot 3
-    void* vtable_ptr;
-    std::memcpy(&vtable_ptr, sub_ctx, sizeof(vtable_ptr));
-    auto* vtable = reinterpret_cast<std::uint8_t*>(vtable_ptr);
+    // 0x0055099D: CALL [EAX+0xC] — read function pointer directly from fn_slot
     using ReadFn = int(__cdecl*)(void*, void*, int);
     ReadFn read_fn;
-    std::memcpy(&read_fn, vtable + 0x0C, sizeof(read_fn));
+    std::memcpy(&read_fn, fn_slot, sizeof(read_fn));
 
-    // 0x00550997: call vtable[3](ctx, buf, total_bytes)
+    // 0x0055099C/9B/93: call fn(ctx, buf, total_bytes)
     const int bytes_read = read_fn(ctx, buf, total_bytes);
 
-    // 0x0055099E: return bytes_read / element_size
+    // 0x005509A5: return bytes_read / element_size
     if (element_size == 0) return 0;
     return bytes_read / element_size;
 }

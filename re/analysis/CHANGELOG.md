@@ -1699,3 +1699,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  004cbe80  RwStreamWrite  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550b00  VfsFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550bc0  VfsStreamGetType  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00550980  VfsStreamRead  C2->C3  Frida A/B GREEN 10/10 bit-identical; fixed arg-order (buf,element_size,count,ctx) + dispatch-deref bug; ABI confirmed disasm Ghidra pool10; caller RwStreamWrite C4
