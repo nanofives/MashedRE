@@ -65,3 +65,6 @@ __pycache__/
 # gta-reversed-modern: https://github.com/gta-reversed/gta-reversed-modern.git
 # Consumer:            re/tools/rw_catalog_extract.py
 /re/prior_art/renderware/
+
+# auto-created agent worktrees (managed by Claude Agent tool, not project work)
+.claude/worktrees/agent-*/
