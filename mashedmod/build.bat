@@ -121,6 +121,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\TrackNodeLeaves_o1.cpp" ^
     "Render\LowRvaSetters_o2.cpp" ^
     "Render\RwPluginHelpers_o3.cpp" ^
+    "Render\RwPluginHelpers_q1.cpp" ^
     "Render\RenderSubmit_o4.cpp" ^
     "Render\D3D9Helpers_p4.cpp" ^
     "Vehicle\SmallLeaves_o5.cpp" ^

@@ -7448,4 +7448,88 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # -----------------------------------------------------------------------
+    # c3-batch-q-s1: render RW-plugin B — 4 driver-system wrappers
+    # All share callee FUN_004c2c90 (C2). Caller FUN_00498c00 (C2).
+    # Anti-island satisfied for all 4.
+    # -----------------------------------------------------------------------
+
+    # 0x004c2de0  RwEngineGetNumSubSystems
+    # uint32 fn(void): cmd 0x0d; pre-init local_4=1; dispatcher case-0xd writes
+    #   *param_3=1 fallback on indirect-callee-fail; return local_4.
+    # At quiescent main menu, driver initialized → cmd 0xd indirect callee runs.
+    # Result is 1 (single subsystem). Both orig and reimpl call same dispatcher
+    # RVA → bit-identical return.
+    # arg_type='none': call 10x; both return same uint32 count.
+    # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2de0.md
+    'rw_engine_get_num_sub_systems': {
+        'rva':            0x004c2de0,
+        'export':         'RwEngineGetNumSubSystems',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004c2e10  RwEngineGetSubSystemInfo
+    # uint32(ptr param_1, int param_2): cmd 0x0e; fills RwSubSystemInfo (0x50B) at param_1.
+    # Returns param_1 on success, 0 on failure.
+    # Dispatcher case 0xe: idx==0 triggers error callback "Only rendering sub system".
+    # Strategy: int_pair with [0x008a9550 (scratch BSS, 512B zeroed), 1].
+    #   idx=1 — with only 1 sub-system (idx 0 = the only one), driver returns 0
+    #   → function returns 0 on both orig and reimpl; bit-identical GREEN.
+    # Using scratch BSS 0x008a9550 (same region used by rw_engine_get_mode_info).
+    # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2e10.md
+    'rw_engine_get_sub_system_info': {
+        'rva':            0x004c2e10,
+        'export':         'RwEngineGetSubSystemInfo',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'int32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # [param_1=out_buf_ptr, param_2=subsystem_index].
+        # idx=1: out-of-range for single-subsystem driver → both return 0.
+        'path1_tests':    [[0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1],
+                           [0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1],
+                           [0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1],
+                           [0x008a9550, 1]],
+        'path2_tests':    [[0x008a9550, 1], [0x008a9550, 1], [0x008a9550, 1]],
+    },
+
+    # 0x004c2e40  RwEngineGetCurrentSubSystem
+    # uint32 fn(void): cmd 0x0f; dispatcher case-0xf writes *param_3=0 fallback;
+    #   returns local_4 on success / 0xffffffff on fail.
+    # At quiescent main menu, driver initialized → cmd 0xf indirect callee runs.
+    # Returns current subsystem index (0 in single-adapter systems).
+    # Idempotent read-only call. Both orig and reimpl call same dispatcher → same result.
+    # arg_type='none': call 10x; both return same uint32.
+    # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2e40.md
+    'rw_engine_get_current_sub_system': {
+        'rva':            0x004c2e40,
+        'export':         'RwEngineGetCurrentSubSystem',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004c2ea0  RwEngineGetNumVideoModes
+    # uint32 fn(void): cmd 0x05; no dispatcher fallback; returns local_4 on success
+    #   / 0xffffffff on fail. Same shape as GetCurrentSubSystem but cmd=5.
+    # At quiescent main menu, driver initialized → cmd 5 indirect callee runs.
+    # Returns count of D3D9 fullscreen video modes (typically 10-30+).
+    # Idempotent read. Both orig and reimpl call same dispatcher → same result.
+    # arg_type='none': call 10x; both return same uint32.
+    # ref: re/analysis/render_promote_c2_rw_plugin/0x004c2ea0.md
+    'rw_engine_get_num_video_modes': {
+        'rva':            0x004c2ea0,
+        'export':         'RwEngineGetNumVideoModes',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
