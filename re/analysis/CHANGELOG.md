@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  save-sdone-final  RELEASE  branches=1 merged  integration-diff=GREEN  hooks=2  **Save C3+ crosses 90.6% S-DoD threshold (29/32)**
 2026-05-22  frida-sweep-20260522-1455  frida-sweep-release  branches=3 merged  integration-diff=GREEN  hooks=8  save_sdone_workstream_a yield 67% (8/12); Save C3+ jumps to 84.4% (27/32)
 2026-05-22  0x004cbe80  RwStreamWrite  C2->C3  save-sdone-a-s2; 444B 4-type stream write (file/mem-grow/cb); crash_equal_ok GREEN 10/10 path1 log/diff_rw_stream_write_s2.csv; path2 opcode+rel32+interceptor OK; callees=004d7ff0(C3)+004d8480(C3)+00550980(C3); U-2328 U-2329 non-blocking; Save/RwStream.cpp
 2026-05-22  0x004991f0  VideoSettingsDlgProc  C2->C3  save-sdone-a-s2; 453B Win32 DLGPROC; naked __cdecl bridge + __stdcall body; WM_INITDIALOG+WM_COMMAND 14 control IDs; crash_equal_ok GREEN 10/10 path1 log/diff_video_settings_dlg_proc_s2.csv; path2 opcode+rel32+interceptor OK; callees=00498f60(C3)+00499170(C3)+00498d20(C3)+EndDialog(Win32); U-3007 U-3008 non-blocking
