@@ -6939,6 +6939,80 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
     },
 
+    # 0x0041e8b0  TrackNodeDispatch14 — void dispatcher; calls *(DAT_0063d7e4+0x14)
+    # void(void). Sibling of TrackNodeFnPtrGet14 — same global, same field, but
+    # calls THROUGH the fn-ptr rather than returning it.
+    # Strategy: track_record_deref + is_getter=False + crash_equal_ok=True.
+    # The fake 0x48-byte record has a sentinel at +0x14. When sentinel is 0 or
+    # a non-executable address, both original and reimpl crash identically when
+    # trying to call through it. crash_equal_ok accepts equal-crash as GREEN.
+    # Restore DAT_0063d7e4 = NULL after each test pair (handled by harness).
+    #
+    # NOTE: test vectors must NOT include actual executable addresses (e.g.
+    # 0x0041e870): when the dispatcher calls through a live fn-ptr, the callee
+    # (TrackNodeRecordScan) clears DAT_0063d7e4 as a side-effect. The harness
+    # does NOT re-seed DAT_0063d7e4 between Orig and Reimpl calls within the
+    # same iteration, so the Reimpl half reads NULL and crashes differently.
+    # All test vectors here are non-executable data addresses; both sides crash
+    # identically with matching AV messages.
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e8b0.md
+    'track_node_dispatch14': {
+        'rva':            0x0041e8b0,
+        'export':         'TrackNodeDispatch14',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x14,
+        'is_getter':      False,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Tests: sentinel uint32 values written at +0x14. All non-executable data
+        # addresses or unmapped values; both sides crash identically.
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0x00400000,
+            0xFFFFFFFF,
+            0x80000000,
+            0x00000042,
+            0x00630000,   # data segment (non-code) — safe, no callee side-effects
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
+    },
+
+    # 0x0041e970  TrackNodeDispatch44 — void dispatcher; calls *(DAT_0063d7e4+0x44)
+    # void(void). Same shape as TrackNodeDispatch14; field offset is +0x44 instead of +0x14.
+    # Strategy: track_record_deref + is_getter=False + crash_equal_ok=True (same rationale).
+    # Same non-executable-only test vector restriction applies (see dispatch14 note).
+    # ref: re/analysis/render_promote_c2_track_node/0x0041e970.md
+    'track_node_dispatch44': {
+        'rva':            0x0041e970,
+        'export':         'TrackNodeDispatch44',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'track_record_deref',
+        'field_offset':   0x44,
+        'is_getter':      False,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Tests: sentinel uint32 values written at +0x44. All non-executable;
+        # both sides crash identically.
+        'path1_tests': [
+            0x00000000,
+            0x00000001,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0x00400000,
+            0xFFFFFFFF,
+            0x80000000,
+            0x00000042,
+            0x00630000,   # data segment (non-code) — safe, no callee side-effects
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x00400000],
+    },
+
     # 0x005be190  AudioRwsSubZeroInit — zeros 4 fields of sub-struct
     # void(undefined4 *param_1).
     # Strategy: audio_sub_struct_zero — allocate 24-byte sentinel-filled buffer

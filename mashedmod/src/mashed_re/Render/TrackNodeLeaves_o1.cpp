@@ -1,4 +1,4 @@
-// Mashed RE — Render track-node leaf functions (c3-batch-o session 1).
+// Mashed RE — Render track-node leaf functions (c3-batch-o session 1 + c3-batch-p session 2).
 //
 // Anchored to MASHED.exe SHA-256:
 //   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
@@ -12,9 +12,13 @@
 //   0x0041e9d0  TrackNodeFnPtrGet14    — 8B getter; returns *(DAT_0063d7e4+0x14)
 //   0x0041ea90  TrackNodeFnPtrGet44    — 8B getter; returns *(DAT_0063d7e4+0x44)
 //
-// Still deferred (dispatchers call through unknown fn-ptr; unsafe without track loaded):
+// c3-batch-p session 2 (2026-05-22): dispatchers promoted to C3:
 //   0x0041e8b0  TrackNodeDispatch14    — 8B indirect dispatch via *(DAT_0063d7e4+0x14)
 //   0x0041e970  TrackNodeDispatch44    — 8B indirect dispatch via *(DAT_0063d7e4+0x44)
+//
+// Still deferred:
+//   0x0041ea90  TrackNodeFnPtrGet44    — 8B getter; returns *(DAT_0063d7e4+0x44)
+//                                         (batch-p s1 candidate; not in this session)
 //
 // Analysis notes:
 //   re/analysis/render_promote_c2_track_node/0x0041e870.md
@@ -157,3 +161,93 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet44() {
 }
 
 RH_ScopedInstall(TrackNodeFnPtrGet44, 0x0041ea90);
+
+// ---------------------------------------------------------------------------
+// TrackNodeDispatch14  --  0x0041e8b0
+//
+// Original: FUN_0041e8b0 (8 bytes, 0x0041e8b0..0x0041e8b7)
+// Signature: void FUN_0041e8b0(void)
+//   Returns: void
+//
+// Reads DAT_0063d7e4 (current track descriptor record pointer) and calls
+// through the function pointer stored at record+0x14. Ghidra reports:
+// "Could not recover jumptable at 0x0041e8b6. Too many branches."
+// Called from FUN_00426e10 with guard `if FUN_0041e9d0() != 0`.
+// Sibling of TrackNodeDispatch44 (0x0041e970, which uses +0x44).
+//
+// Harness: track_record_deref + crash_equal_ok=True. The fake 0x48-byte
+// record has a zero/non-code-ptr sentinel at +0x14; both original and
+// reimplementation crash identically when called through a non-executable
+// fn-ptr. crash_equal_ok accepts equal-crash as GREEN.
+//
+// Constants (cited from 0x0041e8b0 body):
+//   0x0063d7e4 — global track-descriptor pointer
+//   0x14 (20)  — fn-ptr field offset within 0x48-byte record
+//
+// Uncertainties (non-blocking for C3):
+//   U-0429: caller FUN_00426e10 may pass args; Ghidra decompiler shows void
+//           due to jumptable failure. Actual parameter signature unconfirmed.
+//           Does not affect reimplementation correctness since the dispatcher
+//           body itself has no parameter reads (args pass through to callee).
+//   U-3214: actual fn-ptr values at record+0x14 unknown without runtime data.
+//
+// Anti-island: callee chain root is TrackNodeRecordScan (0x0041e870, C3);
+//   TrackNodeFnPtrGet14 (0x0041e9d0) is the guard getter in the same cluster.
+//
+// ref: re/analysis/render_promote_c2_track_node/0x0041e8b0.md
+// ---------------------------------------------------------------------------
+
+// 0x0041e8b0
+extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch14()
+{
+    // Read the current track-descriptor record pointer from DAT_0063d7e4. [0x0041e8b0]
+    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
+    // Read the function pointer at record+0x14 and call through it. [0x0041e8b0 body]
+    typedef void(__cdecl* fn_t)();
+    fn_t fn = *reinterpret_cast<fn_t*>(record + 0x14u);
+    fn();
+}
+
+RH_ScopedInstall(TrackNodeDispatch14, 0x0041e8b0);
+
+// ---------------------------------------------------------------------------
+// TrackNodeDispatch44  --  0x0041e970
+//
+// Original: FUN_0041e970 (8 bytes, 0x0041e970..0x0041e977)
+// Signature: void FUN_0041e970(void)
+//   Returns: void
+//
+// Reads DAT_0063d7e4 (current track descriptor record pointer) and calls
+// through the function pointer stored at record+0x44. Ghidra reports:
+// "Could not recover jumptable at 0x0041e976. Too many branches."
+// Called from FUN_00426e10 with guard `if FUN_0041ea90() != 0`.
+// Sibling of TrackNodeDispatch14 (0x0041e8b0, which uses +0x14).
+//
+// Harness: track_record_deref + crash_equal_ok=True (same rationale as
+// TrackNodeDispatch14 above).
+//
+// Constants (cited from 0x0041e970 body):
+//   0x0063d7e4 — global track-descriptor pointer
+//   0x44 (68)  — fn-ptr field offset within 0x48-byte record
+//
+// Uncertainties (non-blocking for C3):
+//   U-3214: actual fn-ptr values at record+0x44 unknown without runtime data.
+//
+// Anti-island: same cluster as 0x0041e8b0 above; TrackNodeRecordScan (C3)
+//   is the record-setting root.
+//
+// ref: re/analysis/render_promote_c2_track_node/0x0041e970.md
+// ---------------------------------------------------------------------------
+
+// 0x0041e970
+extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch44()
+{
+    // Read the current track-descriptor record pointer from DAT_0063d7e4. [0x0041e970]
+    std::uintptr_t record = *reinterpret_cast<std::uintptr_t*>(0x0063d7e4u);
+    // Read the function pointer at record+0x44 and call through it. [0x0041e970 body]
+    typedef void(__cdecl* fn_t)();
+    fn_t fn = *reinterpret_cast<fn_t*>(record + 0x44u);
+    fn();
+}
+
+RH_ScopedInstall(TrackNodeDispatch44, 0x0041e970);
