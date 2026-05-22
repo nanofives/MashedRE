@@ -21,4 +21,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GetRaceEndTrigger() {
 }
 
 RH_ScopedInstall(GetRaceSubMode,    0x0042f6a0);
-RH_ScopedInstall(GetRaceEndTrigger, 0x005c9d00);
+// RH_ScopedInstall(GetRaceEndTrigger, 0x005c9d00);  // DISABLED 2026-05-22: 2-byte function; 5-byte JMP patch overwrites past boundary — see hooks.csv C3->C2 demotion

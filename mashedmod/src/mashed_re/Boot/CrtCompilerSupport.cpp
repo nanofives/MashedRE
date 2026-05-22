@@ -137,7 +137,7 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl CrtSehProlog(voi
     }
 }
 
-RH_ScopedInstall(CrtSehProlog, 0x004a5984);
+// RH_ScopedInstall(CrtSehProlog, 0x004a5984);  // DISABLED 2026-05-22: corrupts SEH chain — see hooks.csv C3->C2 demotion
 
 // ---------------------------------------------------------------------------
 // 0x004a59bf  __SEH_epilog
@@ -169,4 +169,4 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl CrtSehEpilog(voi
     }
 }
 
-RH_ScopedInstall(CrtSehEpilog, 0x004a59bf);
+// RH_ScopedInstall(CrtSehEpilog, 0x004a59bf);  // DISABLED 2026-05-22: corrupts SEH chain — see hooks.csv C3->C2 demotion
