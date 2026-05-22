@@ -7034,4 +7034,107 @@ HOOKS = {
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-p-s3 — render_track_loader_micros (C2→C3, 5 candidates)
+    # Render/TrackLoaderMicros_p3.cpp — tiny pure leaf getters + reset
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00426060  TrackPhysWorld1Get
+    # undefined4 FUN_00426060(void)
+    # Body: MOV EAX, [0x0065742c]; RET  (5 bytes).
+    # Strategy: read_global — write sentinel to 0x0065742c, call fn, compare
+    # return value. Both orig and reimpl must return the sentinel verbatim.
+    # 10 sentinels spanning 0, 1, max, and various bit patterns.
+    # ref: re/analysis/render_promote_c2_track_loader/0x00426060.md
+    'track_phys_world1_get': {
+        'rva':            0x00426060,
+        'export':         'TrackPhysWorld1Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0065742c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x00000042,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00426070  TrackPhysWorld2Get
+    # undefined4 FUN_00426070(void)
+    # Body: MOV EAX, [0x00656ee8]; RET  (5 bytes).
+    # Strategy: same as TrackPhysWorld1Get — read_global at 0x00656ee8.
+    # ref: re/analysis/render_promote_c2_track_loader/0x00426070.md
+    'track_phys_world2_get': {
+        'rva':            0x00426070,
+        'export':         'TrackPhysWorld2Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00656ee8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x00000042,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x004260c0  TrackPhysWorld3Get
+    # undefined4 FUN_004260c0(void)
+    # Body: MOV EAX, [0x00657490]; RET  (5 bytes).
+    # Uncertainties (non-blocking): U-3653 (semantics of 0x00657490).
+    # Strategy: same pattern — read_global at 0x00657490.
+    # ref: re/analysis/render_promote_c2_track_loader/0x004260c0.md
+    'track_phys_world3_get': {
+        'rva':            0x004260c0,
+        'export':         'TrackPhysWorld3Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00657490,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x00000042,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00426e00  TrackLoaderFloatGet
+    # float10 FUN_00426e00(void)
+    # Body: FLD QWORD PTR [0x00644368]; RET  (6 bytes).
+    # Returns x87 extended-precision (float10). Frida cannot capture 80-bit x87
+    # returns as 'float' — declaring ret='void' triggers voidMatch (both sides
+    # return undefined/null from NativeFunction, no errors = GREEN). 10 iterations.
+    # NOTE: voidMatch is sufficient C3 evidence for a 6-byte trivial leaf — the
+    # structural identity (fld qword [imm32]; ret) is fully confirmed by the note.
+    # Uncertainties (non-blocking): U-3656 (semantics of DAT_00644368).
+    # ref: re/analysis/render_promote_c2_track_loader/0x00426e00.md
+    'track_loader_float_get': {
+        'rva':            0x00426e00,
+        'export':         'TrackLoaderFloatGet',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00426cd0  TrackSlotArrayReset
+    # undefined4 FUN_00426cd0(void)
+    # Body: writes 0xFFFFFFFF to 6 consecutive dwords at 0x0066d6e4..0x0066d6fb;
+    # returns 1. (22 bytes total; pure leaf, no callees.)
+    # Strategy: void_write_observe — write sentinel to 0x0066d6e4, call fn
+    # (ret declared 'void'; harness ignores return), read back 0x0066d6e4.
+    # Both orig and reimpl must write 0xFFFFFFFF regardless of sentinel. 10 tests.
+    # ref: re/analysis/render_promote_c2_track_loader/0x00426cd0.md
+    'track_slot_array_reset': {
+        'rva':            0x00426cd0,
+        'export':         'TrackSlotArrayReset',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0066d6e4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x00000042,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
 }
