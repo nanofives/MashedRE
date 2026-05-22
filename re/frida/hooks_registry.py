@@ -7448,4 +7448,56 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-q-s4 — vehicle_lowrva_continuation (C2->C3, 2 promoted)
+    # Vehicle/SmallLeaves_q4.cpp
+    # Deferred: 0x00432080 (>200B), 0x00411350 (FPU ST0), 0x00411530 (5-arg+FPU)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004248b0  PerCarSnapshotInit — 4-car x 0x138 snapshot copy + lap+1
+    # void(void): copies 7 dwords from live car block (0x008994c0 area) into
+    # snapshot block (0x008999a0 area) for 4 cars (stride 0x138); also increments
+    # the lap counter at field+0x00 by 1 in the snapshot.
+    # Strategy: void_write_observe on 0x00899a40 (first dword written by the loop).
+    #   Write sentinel, call fn(), read back. Orig and reimpl both copy the live
+    #   value from 0x00899560 there -- readback equals *0x00899560 on both sides.
+    #   The side effect (lap+1 at 0x008999a0) is identical on both sides.
+    # Caller: FUN_004331a0 (race-end init, C2). Pure leaf -- callee-gate exempt.
+    # U-1510/U-1511: non-blocking semantic gaps.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x004248b0.md
+    'per_car_snapshot_init': {
+        'rva':            0x004248b0,
+        'export':         'PerCarSnapshotInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00899a40,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00411d60  ReplayCheckTimer — conditional tick-zero in Time Trial mode
+    # void(void): if GetRaceSubMode()==2 && DAT_0063bb14!=0 &&
+    #             *(DAT_0063bb14+0x194)==0: DAT_007f0ff4=0.
+    # Strategy: void_write_observe on 0x007f0ff4 (the global that may be zeroed).
+    #   At quiescent main menu GetRaceSubMode()!=2, so the first gate fails and
+    #   fn returns without modifying DAT_007f0ff4. The sentinel survives intact
+    #   on both sides -- bit-identical null-mutation result.
+    # Callee: GetRaceSubMode (0x0042f6a0, C3). Not a live-state mutator at menu.
+    # Anti-island: Replay.cpp cluster (C3) shares DAT_007f0ff4 global.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00411d60.md
+    'replay_check_timer': {
+        'rva':            0x00411d60,
+        'export':         'ReplayCheckTimer',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x007f0ff4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
 }

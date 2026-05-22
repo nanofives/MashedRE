@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-22  0x00411d60  ReplayCheckTimer  C2->C3  c3-batch-q-s4; 39B void(); Time Trial mode guard (mode==2); conditional zero of DAT_007f0ff4; callee GetRaceSubMode C3; Frida void_write_observe 10/10 GREEN (sentinel survives) log/diff_replay_check_timer.csv; path2 opcode+rel32 OK; Vehicle/SmallLeaves_q4.cpp
+2026-05-22  0x004248b0  PerCarSnapshotInit  C2->C3  c3-batch-q-s4; 111B per-car snapshot init; 4 cars stride 0x138; copies 7 dwords + lap+1; pure leaf callee-gate exempt; caller FUN_004331a0 C2; Frida void_write_observe 10/10 GREEN log/diff_per_car_snapshot_init.csv; path2 opcode+rel32 OK; U-3919(semantic) U-3920(cosmetic) non-blocking; Vehicle/SmallLeaves_q4.cpp
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-release  branches=6 merged  integration-diff=GREEN  hooks=24  c3_batch_p yield 80% (best batch yet)
 2026-05-22  frida-sweep-20260522-0510  frida-sweep-claim  branches=6 (c3/batch-p-s1..s6)
 2026-05-22  c3-batch-p-s2  re-classify-transaction  rvas=0x0041e8b0,0x0041e970  note=2 render track-node dispatcher stubs C2->C3; track_record_deref+crash_equal_ok=True; both Frida diffs 10/10 GREEN; JMP patches verified; U-0429 U-3214 carried non-blocking; TrackNodeLeaves_o1.cpp
