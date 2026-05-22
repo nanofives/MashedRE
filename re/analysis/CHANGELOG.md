@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-21  0x00430790  GetDat0067f17c  C2->C3  c3-batch-o-s6; 5B pure global getter returns DAT_0067f17c; leaf-exemption; caller MenuMenusBE 0x00429a30 C3; Frida read_global 10/10 GREEN log/diff_get_dat_0067f17c.csv; U-3894(semantic/open) U-3895(cosmetic/open) carried; S-1605 cleared; Util/SmallLeaves_o6.cpp
 2026-05-21  frida-sweep-20260521-1932  frida-sweep-release  branches=2 merged  integration-diff=GREEN  hooks=6
 2026-05-21  frida-sweep-20260521-1932  frida-sweep-claim  branches=2 (c3/batch-n-s1, c3/batch-n-s2)
 2026-05-21  c3-batch-n-s2  re-classify-transaction  rvas=0x0045ba00,0x0046c5c0,0x0046c790,0x0042a940,0x004307a0  note=5/5 frontend small-leaves C2->C3; 3 new-author leaves + 1 dispatcher in Frontend/SmallLeaves_n2.cpp; 1 drift-staged MenuTableSearch in Frontend/MenuMenusMixed.cpp; all 5 Frida diffs 10/10 GREEN; U-2869/2870/2871/2872/3434/3435/3596/3597 carried (non-blocking semantics only)

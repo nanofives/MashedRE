@@ -484,7 +484,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1602 | 0x0042c1a0 FUN_0042c1a0 | 0x0040ab40 0x0040ac80 | util | passthrough | 2026-05-03 | called on case 6 and case 4 range-guarded paths; shared by two state dispatchers |
 | S-1603 | 0x00405420 FUN_00405420 | 0x0040de10 FUN_0040de10 | util | passthrough | 2026-05-03 | called after Replay::StartLap and DAT_0063ba8c=1 in FUN_0040de10 |
 | S-1604 | 0x00430820 FUN_00430820 | 0x00429aa0 FUN_00429aa0 | util | passthrough | 2026-05-03 | predicate; non-zero selects table at 0x00614720 over flat arrays |
-| S-1605 | 0x00430790 FUN_00430790 | 0x00429aa0 FUN_00429aa0 | util | passthrough | 2026-05-03 | index provider; called 3× per FUN_00429aa0 invocation |
+| S-1605 | 0x00430790 GetDat0067f17c | 0x00429aa0 FUN_00429aa0 | util | CLEARED | 2026-05-21 | GetDat0067f17c promoted C3 (c3-batch-o-s6); 5B leaf, no longer a stub |
 | S-1606 | 0x0045c810 FUN_0045c810 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | first call in FUN_0045d3a0 before mode-2 guard |
 | S-1607 | 0x0045d330 FUN_0045d330 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | called once before the per-count loop in FUN_0045d3a0 |
 | S-1608 | 0x0045d1e0 FUN_0045d1e0 | 0x0045d3a0 FUN_0045d3a0 | util | passthrough | 2026-05-03 | loop body called for each index 0..(DAT_008aa254-1) |
