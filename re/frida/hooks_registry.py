@@ -6373,4 +6373,126 @@ HOOKS = {
         'path1_tests':    [0, 1, 2, 5, 10, 100, -1, 0x7fffffff, 0, 1],
         'path2_tests':    [0, 1, 2],
     },
+    # ── Session c3-batch-o-s2 — render low-RVA global setters (C2→C3) ───────
+
+    # 0x00409680  LedArrayInit
+    # void(void): fills 0x480 (1152) dwords with 0xbf800000 (-1.0f) starting at
+    # DAT_0063a5f0. Sentinel initialiser for the led.piz record buffer. Pure leaf.
+    # void_write_observe: write sentinel to DAT_0063a5f0, call fn, read back —
+    # expected read-back is always 0xbf800000 regardless of sentinel value.
+    # The sentinel value in the test input is just a pre-call marker confirming
+    # that fn actually overwrote it. 10 calls with varying sentinels = 10 GREEN.
+    # U-3210 registered (array grid purpose); non-blocking for bit-identity.
+    # ref: re/analysis/promote_c2_render_lowrva/00409680.md
+    'led_array_init': {
+        'rva':            0x00409680,
+        'export':         'LedArrayInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063a5f0,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+            0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA, 0x3F800000,
+        ],
+        'path2_tests': [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004053d0  TrackDataSlotSet
+    # void(int param_1, undefined4 param_2): 3-global setter with if-guard.
+    # if (param_1 != 0): DAT_00639d74=0, DAT_00639d70=param_1, DAT_00639d78=param_2
+    # else:              DAT_00639d70=0,  DAT_00639d78=0  (DAT_00639d74 unchanged)
+    # entity_field_set: call fn(p1, p2), read back DAT_00639d70+p1*0 = DAT_00639d70.
+    # stride=0 always reads DAT_00639d70 post-call; result is p1 (if p1!=0) or 0.
+    # U-3209 registered (triple semantics; asymmetric else-clear); non-blocking.
+    # ref: re/analysis/promote_c2_render_lowrva/004053d0.md
+    'track_data_slot_set': {
+        'rva':            0x004053d0,
+        'export':         'TrackDataSlotSet',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':       'entity_field_set',
+        'target_global':  0x00639d70,
+        'entity_byte_stride': 0,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [param_1, param_2]: read-back is DAT_00639d70 after call
+            [0,  0x00000000],   # else-branch: DAT_00639d70 = 0
+            [0,  0xDEADBEEF],   # else-branch: DAT_00639d70 = 0 (param_2 ignored)
+            [1,  0x00000000],   # if-branch:   DAT_00639d70 = 1
+            [1,  0x12345678],   # if-branch:   DAT_00639d70 = 1
+            [2,  0xCAFEBABE],   # if-branch:   DAT_00639d70 = 2
+            [5,  0xFFFFFFFF],   # if-branch:   DAT_00639d70 = 5
+            [0,  0xFFFFFFFF],   # else-branch: DAT_00639d70 = 0
+            [10, 0xAAAAAAAA],   # if-branch:   DAT_00639d70 = 10
+            [0,  0x55555555],   # else-branch: DAT_00639d70 = 0
+            [7,  0x3F800000],   # if-branch:   DAT_00639d70 = 7
+        ],
+        'path2_tests': [
+            [0, 0xDEADBEEF],
+            [1, 0x12345678],
+            [5, 0xFFFFFFFF],
+        ],
+    },
+
+    # 0x00423630  AiDataBufInit
+    # void(void): clears DAT_00801a9c; fills DAT_007f1a9c and DAT_007f9a9c with
+    # 0x2000 (8192) dwords of 0xffffffff each; clears DAT_007f1a54 and DAT_007f1a64.
+    # void_write_observe: write sentinel to DAT_007f1a9c, call fn, read back —
+    # expected read-back is always 0xffffffff (fill value) regardless of sentinel.
+    # 10 calls with varying sentinels confirm the fill unconditionally overwrites.
+    # U-3216 registered (second buffer purpose); non-blocking for bit-identity.
+    # ref: re/analysis/promote_c2_render_lowrva/00423630.md
+    'ai_data_buf_init': {
+        'rva':            0x00423630,
+        'export':         'AiDataBufInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x007f1a9c,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+            0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA, 0x3F800000,
+        ],
+        'path2_tests': [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00425ab0  EntryHeaderClear
+    # void(void): hand-unrolled clear of 2 dwords per entry × 8 entries, stride
+    # 0x4c from DAT_008992a0. Zeroes the "enabled" guard (entry+0x3C/+0x40) for
+    # all 8 slots in the 0x4c-stride array.
+    # void_write_observe: write sentinel to DAT_008992a0, call fn, read back —
+    # expected read-back is always 0x00000000 (cleared by fn) regardless of sentinel.
+    # ref: re/analysis/promote_c2_render_lowrva/00425ab0.md
+    'entry_header_clear': {
+        'rva':            0x00425ab0,
+        'export':         'EntryHeaderClear',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008992a0,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+            0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA, 0x3F800000,
+        ],
+        'path2_tests': [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004235b0  AiPizLoad
+    # undefined4(void): opens d:\ToastArt\Common\ai.piz, seeks record 0x13269902,
+    # reads into DAT_007f1a9c; returns 1 on success, 0 on failure.
+    # 116B body, callees all C2+: FUN_00423480 FUN_00495280 FUN_004cc230
+    # FUN_004cc5e0 FUN_004cbd30 FUN_004cc160 FUN_004952f0.
+    # arg_type='none': call 10x at quiescent main-menu; file open result is
+    # deterministic (ai.piz present or not); return value is stable across calls.
+    # U-3215 registered (record tag semantics); non-blocking for bit-identity.
+    # ref: re/analysis/promote_c2_render_lowrva/004235b0.md
+    'ai_piz_load': {
+        'rva':            0x004235b0,
+        'export':         'AiPizLoad',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
 }
