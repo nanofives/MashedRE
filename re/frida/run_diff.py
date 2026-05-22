@@ -192,6 +192,11 @@ def main():
         sys.exit(f"MASHED.exe not found at {MASHED_EXE}")
     if not ASI_PATH.exists():
         sys.exit(f"build artifact not found at {ASI_PATH} — run mashedmod\\build.bat first")
+    _shim = MASHED_EXE.parent / 'd3d9.dll'
+    if not _shim.exists():
+        sys.exit(f"FATAL: {_shim} missing (d3d9 windowed shim). "
+                 f"Run `mashedmod\\build_d3d9_shim.bat`, then retry. "
+                 f"Refusing to spawn MASHED without the shim — it would go fullscreen.")
 
     print(f"hook: {name}  rva={config['target_rva']}  export={config['export']}")
     print(f"spawning {MASHED_EXE} via subprocess (hook BYPASSED)")

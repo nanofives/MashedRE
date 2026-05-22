@@ -33,6 +33,7 @@ Same posture as `ghidra-sweep`: this skill owns the working tree for its duratio
 3. **Anchor check.** `sha256sum original/MASHED.exe` must equal `BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E`. Mismatch → halt.
 4. **Baseline build clean on main.** Run `cmd /c mashedmod\build.bat > log/frida_sweep_baseline.txt 2>&1`. Main must build cleanly before any merge — otherwise we can't distinguish merge breakage from pre-existing breakage.
 5. **Frida pool empty.** `scripts/frida_pool.sh cleanup` to clear stale locks and zombie MASHED.exe processes from the per-session diffs.
+6. **d3d9 shim deployed.** `original/d3d9.dll` must exist (the windowed-mode `CreateDevice` proxy). Without it, any spawned MASHED.exe runs fullscreen and may take over the user's display — disruptive even when the integration diff itself works. Fix with `mashedmod\build_d3d9_shim.bat`. Drift incident 2026-05-22 (Save C4 workstream): the shim went missing between sweeps without anyone noticing and the next agent's Frida launch went fullscreen. Adding this guard.
 
 ## Session ID
 

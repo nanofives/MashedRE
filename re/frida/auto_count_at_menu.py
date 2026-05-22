@@ -116,6 +116,18 @@ def main():
         try: log.unlink()
         except PermissionError: pass  # locked by a previous MASHED instance; harmless
 
+    # Pre-flight: d3d9 shim must be deployed, else MASHED will run fullscreen
+    # and take over the display. Fix via `mashedmod\build_d3d9_shim.bat`.
+    # (Drift incident 2026-05-22 Save C4 workstream: shim went missing between
+    # sweeps; the next Frida launch went fullscreen.)
+    shim = MASHED_EXE.parent / 'd3d9.dll'
+    if not shim.exists():
+        print(f"FATAL: {shim} missing. d3d9 shim not deployed.")
+        print(f"       Run `mashedmod\\build_d3d9_shim.bat` to rebuild + deploy,")
+        print(f"       then re-run this script. Refusing to spawn MASHED without")
+        print(f"       the windowed-mode shim — it would go fullscreen.")
+        sys.exit(2)
+
     print(f"spawning {MASHED_EXE}")
     proc = subprocess.Popen(
         [str(MASHED_EXE)], cwd=str(MASHED_EXE.parent),

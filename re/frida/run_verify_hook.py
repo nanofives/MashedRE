@@ -89,6 +89,11 @@ def main():
         sys.exit(f"build artifact not found at {ASI_PATH}")
 
     print(f"hook: {name}  rva={config['target_rva']}  export={config['export']}")
+    _shim = MASHED_EXE.parent / 'd3d9.dll'
+    if not _shim.exists():
+        sys.exit(f"FATAL: {_shim} missing (d3d9 windowed shim). "
+                 f"Run `mashedmod\\build_d3d9_shim.bat`, then retry. "
+                 f"Refusing to spawn MASHED without the shim — it would go fullscreen.")
     print(f"spawning {MASHED_EXE} via subprocess (auto-hook ENABLED)")
     # Registry AppCompat shim includes RUNASINVOKER → no elevation needed.
     env = {k: v for k, v in os.environ.items() if k != 'MASHED_RE_NO_AUTO_HOOK'}

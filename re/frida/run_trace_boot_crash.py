@@ -42,6 +42,10 @@ def main():
     # enum, never reaches the interesting boot path). Use subprocess.Popen +
     # short delay before attach — we miss the very first events but the
     # late-boot crash site stays intact.
+    _shim = MASHED_EXE.parent / 'd3d9.dll'
+    if not _shim.exists():
+        sys.exit(f"FATAL: {_shim} missing (d3d9 windowed shim). "
+                 f"Run `mashedmod\\build_d3d9_shim.bat`, then retry.")
     print(f"spawning {MASHED_EXE} via subprocess")
     proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent))
     print(f"  pid = {proc.pid}")
