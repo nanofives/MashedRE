@@ -1655,3 +1655,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  004c2e40  RwEngineGetCurrentSubSystem  C2->C3  c3-batch-q-s1; 44B driver-system wrapper cmd 0x0f; none arg_type GREEN 10/10 log/diff_rw_engine_get_current_sub_system.csv; callee FUN_004c2c90 C2; caller FUN_00498c00 C2; Render/RwPluginHelpers_q1.cpp
 2026-05-22  004c2ea0  RwEngineGetNumVideoModes  C2->C3  c3-batch-q-s1; 44B driver-system wrapper cmd 0x05; none arg_type GREEN 10/10 log/diff_rw_engine_get_num_video_modes.csv; callee FUN_004c2c90 C2; caller FUN_00498c00 C2; Render/RwPluginHelpers_q1.cpp
 2026-05-22  004c2d90  FUN_004c2d90  C2->C2  DEFERRED C3: anti-island gate fail — callee FUN_004d7de0 is C1; re-pickup when FUN_004d7de0 >= C2; c3-batch-q-s1
+
+2026-05-22  0042a920  Frontend::PostTrophyEvent  C1->C3  save-sdone-a-s3; 20B pure leaf; Frida void_setter_observe 10/10 GREEN (log/diff_post_trophy_event.csv); JMP E9+rel32+interceptor 3/3 (log/verify_hook_install_post_trophy_event.txt); impl mashedmod/src/mashed_re/Save/CareerEvents.cpp; leaf-function exemption per CONFIDENCE.md (Vec3Magnitude precedent); U-1552 non-blocking semantic

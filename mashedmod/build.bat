@@ -95,6 +95,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Save\SettingsAndIO.cpp" ^
     "Save\SettingsCfg.cpp" ^
     "Save\SettingsDialog.cpp" ^
+    "Save\CareerEvents.cpp" ^
     "Boot\CrtStartup.cpp" ^
     "Boot\Boot.cpp" ^
     "Util\TimerSetters.cpp" ^

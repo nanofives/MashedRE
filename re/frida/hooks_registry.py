@@ -2184,6 +2184,33 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # Session save-sdone-a-s3 — career event helpers (C1->C3)
+    # Save/CareerEvents.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0042a920  PostTrophyEvent  void(uint32 event_id)
+    # Pure 20-byte leaf: writes DAT_00898ab0=0x40 (priority), then param_1 into
+    # DAT_00899140 (event-ID slot consumed by frontend state machine).
+    # Disasm: MOV [0x898ab0],0x40; MOV [0x899140],param_1; RET.
+    # Caller: 0x00430290 Championship::Complete (posts IDs 0x264..0x26a).
+    # arg_type='void_setter_observe': call fn(event_id), read back DAT_00899140.
+    # The fixed priority write (0x40 to DAT_00898ab0) is implicitly verified by
+    # the bit-identical readback of DAT_00899140 (same code path must have run).
+    # Pure leaf — leaf-function exemption applies (CONFIDENCE.md, 2026-05-09).
+    # [UNCERTAIN U-1552] DAT_00898ab0 = 0x40 semantic unknown (non-blocking).
+    'post_trophy_event': {
+        'rva':            0x0042a920,
+        'export':         'PostTrophyEvent',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00899140,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000264, 0x00000265, 0x00000266, 0x00000267,
+                           0x00000268, 0x00000269, 0x0000026a, 0x00000000,
+                           0xDEADBEEF, 0x00000001],
+        'path2_tests':    [0x00000264, 0x00000265, 0x0000026a],
+    },
+
     # Session c3-batch-i-s4 — Settings/video-config CONFIG_SAVE_FN (C2->C3)
     # Save/SettingsCfg.cpp
     # ─────────────────────────────────────────────────────────────────────────
