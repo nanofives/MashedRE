@@ -5294,6 +5294,36 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # 0x0040de00  thunk_FUN_004117b0  (ThunkReplaySave)
+    # 4-byte compiler-generated JMP thunk; tail-calls ReplaySave (0x004117b0, C3).
+    # Reimpl: ThunkReplaySave() calls ReplaySave() via C++ linkage (no loop).
+    # At quiescent menu: latch DAT_005f29c8 != 0 on 2nd+ call → void return.
+    # First call: DAT_0063bb10 == 0 → latch-only path → void.  Bit-identical.
+    'thunk_replay_save': {
+        'rva':            0x0040de00,
+        'export':         'ThunkReplaySave',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00430290  Championship::Complete (ChampionshipComplete)
+    # void(void); per-track completion handler for modes 3/4/5 (Bronze/Silver/Gold Cup).
+    # Guard: DAT_0067e9fc must be 3/4/5 AND GuardConcludedAndP1Won() != 0.
+    # At quiescent main menu: DAT_0067e9fc is not 3/4/5 → immediate return.
+    # Bit-identical via void match (arg_type=none).
+    'championship_complete': {
+        'rva':            0x00430290,
+        'export':         'ChampionshipComplete',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x00411170  TimeTrialRecordPlayback
     # void(int); per-frame state-6 dispatcher.  Calls RecordFrame +
     # PlaybackTick (both mode-gated, early-out at menu) then DAMAGE_FN.
