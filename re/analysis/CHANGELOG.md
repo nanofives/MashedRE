@@ -1670,3 +1670,32 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  0042a920  Frontend::PostTrophyEvent  C1->C3  save-sdone-a-s3; 20B pure leaf; Frida void_setter_observe 10/10 GREEN (log/diff_post_trophy_event.csv); JMP E9+rel32+interceptor 3/3 (log/verify_hook_install_post_trophy_event.txt); impl mashedmod/src/mashed_re/Save/CareerEvents.cpp; leaf-function exemption per CONFIDENCE.md (Vec3Magnitude precedent); U-1552 non-blocking semantic
 2026-05-22  0040de00  thunk_FUN_004117b0  C1->C3  save-sdone-final; 4B JMP thunk to ReplaySave (C3); ThunkReplaySave direct-call reimpl; Frida none GREEN 10/10 path1 (log/diff_thunk_replay_save.csv); JMP E9+rel32+interceptor 3/3 (log/verify_hook_install_thunk_replay_save.txt); impl mashedmod/src/mashed_re/Save/ReplayThunk.cpp; anti-island gate satisfied (target C3); U-3641 non-blocking in target body
 2026-05-22  00430290  Championship::Complete  C1->C3  save-sdone-final; 986B three-path handler modes 3/4/5 (Bronze/Silver/Gold cup); mode guard DAT_0067e9fc!=3/4/5 at menu -> void; Frida none GREEN 10/10 path1 (log/diff_championship_complete.csv); JMP E9+rel32+interceptor 3/3 (log/verify_hook_install_championship_complete.txt); impl mashedmod/src/mashed_re/Save/CareerEvents.cpp; callees all C3; S-1540 resolved; U-1547 U-1549 non-blocking
+2026-05-22  BATCH  save-workstream-C  C3->C4  28 save hooks promoted via observe_c4_save_hooks.py; scenario=boot_main_menu_idle_15s; E9+rel32 verified + alive_throughout=True + alive_at_end=True; bypass_set=14 (CrtSehProlog+CrtSehEpilog broken ABI, VfsStreamRead CC mismatch, RwTexDictionaryCreate demoted-still-installed, 10 TrackNode NULL-deref); evidence log/observe_c4_save_hooks.csv
+2026-05-22  00404e50  SaveLoad  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00404e80  Save::DeserializeFromBuffer  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00404ee0  Save::SerializeToBuffer  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00404f50  SaveWrite  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00404f80  SaveFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004099a0  Save::AutosaveTrigger  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004099e0  SaveStatusClear  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  0040dd60  Race::GuardConcludedAndP1Won  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  0040de00  thunk_FUN_004117b0  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  0042a920  Frontend::PostTrophyEvent  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00430290  Championship::Complete  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004963e0  ConfigLogError  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00496400  ConfigLogDebug  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00498910  ConfigFilenameGet  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00498950  ConfigLoad  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004989b0  ConfigSave  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00498d20  ReadModeFromCombo_j5  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00498d60  PopulateModeCombo  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00498f60  VideoDialogInit_i3  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00499170  SubsystemSelectionChanged_i3  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004991f0  VideoSettingsDlgProc  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00499740  SetControlTextFromResource_i3  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004a4541  FsopenSafe  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004b3b70  FileReadWrapper_i3  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004b3bb0  FileWriteWrapper_i3  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  004cbe80  RwStreamWrite  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00550b00  VfsFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
+2026-05-22  00550bc0  VfsStreamGetType  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
