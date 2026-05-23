@@ -1797,3 +1797,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  00484170  FUN_00484170  C1->C2  re/analysis/skeleton_prep_high_leverage/00484170.md; vtable[0x108] alloc 24B record; skeleton-prep-s5
 2026-05-23  sweep-20260523-0118  scribe-claim  buckets=7 queued, 0 skipped-HOLD
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_boot_winmain_a  writes=15  errors=0
+2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_game_state  writes=15  errors=0
