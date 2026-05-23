@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-23  lever3-d3dx9-20260523T120000  lever3-d3dx9-bulk-attest  promoted=105 C1->C2 (D3DX9 PSGP band)  scope=0x004ec000..0x004fc9e0  enumerated=197 band functions; 105 in CSV at C1 promoted; 92 not yet in CSV skipped; 0 already C2+; attestation=calibrated PSGP band (statically-linked Microsoft PSGP; dispatcher 0x004fbe7a + 71-entry SSE/SSE2/3DNow! table confirmed)
 2026-05-23  lever3-expansion-20260523-1330  lever3-expansion-RELEASE  WIP-released; 79 C1->C2 CRT-band bulk-attest complete
 2026-05-23  lever3-expansion-20260523-1330  lever3-bulk-attest  promoted=79 C1->C2 (CRT-band FidDB)  details=mass-attestation via Ghidra Library Function names + CRT-band calibrated rule (004a0000..004b3fff); 7 game-logic exclusions (DFF/TXD/RW-stream loaders in upper band); 40 already C2+; 493 CRT-band functions enumerated from Ghidra master
 2026-05-23  canonical-mass-observe-r3  BATCH-PROMOTE  11 hooks C2->C3 via boot-to-menu canonical observation round-3 (spawn+suspend); scenario=boot-to-menu-canonical-r3; log=log/mass_canonical_observe_r3b.txt; reached_main_menu=True; 7 INCONCLUSIVE stay C2; 2 excluded as hot-path (sub_00493f70 ~170/s, sub_004671a0 ~170/s)
