@@ -1811,7 +1811,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  00426670  WorldRenderDispatch_Begin  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4320 C2
 2026-05-23  004266b0  WorldRenderDispatch_End  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4350 C22026-05-23  frida-sweep-20260523-0207  frida-sweep-release  branches=5 merged  integration-diff=GREEN  hooks=5
 2026-05-23  lever3-crt-drain-20260523-0245  lever3-claim  scope=9 CRT-band callees blocking 4 skeleton parents
-
 2026-05-23  lever3-crt-drain  0x004a2be9 __security_check_cookie  C1->C2 via FidDB library attestation; __fastcall — MSVC /GS stack-cookie checker; FidDB GREEN
 2026-05-23  lever3-crt-drain  0x004a3ac9 FUN_004a3ac9  C1->C2 via FidDB library attestation; CRT-band residue, FUN_* in FidDB; analysis note attests body
 2026-05-23  lever3-crt-drain  0x004a45fb _malloc  C1->C2 via FidDB library attestation; __cdecl — MSVC CRT _malloc; FidDB GREEN
@@ -1822,3 +1821,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  lever3-crt-drain  0x004aa44f ___sbh_heap_init  C1->C2 via FidDB library attestation; MSVC CRT ___sbh_heap_init; FidDB GREEN
 2026-05-23  lever3-crt-drain  0x004ae29f ___crtInitCritSecAndSpinCount  C1->C2 via FidDB library attestation; MSVC CRT init helper; FidDB GREEN
 2026-05-23  lever3-crt-drain-20260523-0245  lever3-release  promoted=9 C1->C2 (CRT-band FidDB attestation)  skeleton-parents-unblocked=4 (00493900, 004aa3fe, 004a8a04, 004ac04a)
+2026-05-23  0x00493550  thunk_EngineStopDispatch  C2->C3  harness-extensions-session-C; 4B JMP thunk to FUN_004938c0; teardown_call_pair arg_type GREEN 10/10 log/diff_engine_stop_dispatch.csv; leaf-exemption; Boot/LaunchHandshake.cpp; caller sub_00492370 C2; callees_depth1=[] (JMP thunk)

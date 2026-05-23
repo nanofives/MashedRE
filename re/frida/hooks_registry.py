@@ -8285,60 +8285,83 @@ HOOKS = {
     # 0x00493550  thunk_EngineStopDispatch  (thunk_FUN_004938c0)
     # 4-byte JMP thunk to FUN_004938c0 at 0x004938c0 (EngineStopHelper).
     # Inlined target: 5 sequential void calls (teardown sequence).
-    # Synthetic call: arg_type='none', zero args. Calling teardown from main
-    # menu will crash or corrupt engine state — both sides crash identically.
-    # crash_equal_ok=True; arg_type='none'; signature.ret='void'.
+    # arg_type='teardown_call_pair': zero DAT_007d3ff8 (RW engine vtable base)
+    # before EACH call (both orig AND reimpl) so both crash symmetrically from
+    # idx=0. Without this, orig runs first on fresh state (succeeds), reimpl runs
+    # after orig has torn down the engine (crashes — asymmetric divergence at idx=0).
+    # crash_equal_ok=True covers all crash pairs. state_global_str=0x007d3ff8.
     # Anti-island: callee FUN_004938c0 (C2); callers via WinMain chain.
     # ref: re/analysis/promote_c2_launch_handshake/00493550.md
     'engine_stop_dispatch': {
-        'rva':            0x00493550,
-        'export':         'thunk_EngineStopDispatch',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'none',
-        'crash_equal_ok': True,
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
+        'rva':              0x00493550,
+        'export':           'thunk_EngineStopDispatch',
+        'signature':        {'ret': 'void', 'args': []},
+        'arg_type':         'teardown_call_pair',
+        'crash_equal_ok':   True,
+        'state_global_str': '0x007d3ff8',
+        'lut_root_delta':   0,
+        'path1_tests':      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':      [0, 1, 2],
     },
 
 
     # 0x00493560  thunk_HwExitDispatch  (thunk_FUN_004954f0)
     # 4-byte JMP thunk to FUN_004954f0 at 0x004954f0 (HardwareShutdown).
-    # Inlined target: ShowCursor(1) gate, D3D teardown, input teardown; returns 0.
-    # Synthetic call: arg_type='none', zero args. Calling hardware-exit from main
-    # menu will crash identically on both sides. crash_equal_ok=True.
+    # Inlined target: ShowCursor(1) gate, D3D teardown (FUN_00498b60),
+    # DInput teardown, and 4 more teardown callees; returns 0.
+    #
+    # DEFERRED (harness-extensions session C): teardown_call_pair unblocks
+    # engine_stop_dispatch/engine_stop_helper but NOT hw_exit_dispatch.
+    # FUN_004954f0 does D3D/DInput teardown, not just RW teardown. Zeroing
+    # DAT_007d3ff8 (RW vtable base) makes the RW engine calls safe but the
+    # D3D device teardown proceeds: orig (first call, fresh D3D state) gets
+    # "system error" (D3D Release succeeds but Win32 SEH caught); reimpl
+    # (second call, post-orig D3D state) crashes at a different heap address
+    # (D3D device pointer is already released/invalid). crash_equal_ok cannot
+    # cover different error types ("system error" vs "access violation").
+    #
+    # Re-pickup: Ghidra analysis of FUN_004954f0's D3D teardown callee
+    # (FUN_00498b60) to identify the D3D device global pointer address;
+    # then add that global to the teardown_call_pair pre-null set, OR extend
+    # teardown_call_pair with a multi-global NULL list; OR add a
+    # 'hw_teardown_pair' arg_type that nulls BOTH 0x007d3ff8 AND the D3D
+    # device global before each call. Hook is authored and build-clean; C3
+    # evidence path blocked on D3D global identification.
     # Anti-island: callee FUN_004954f0 (C2); callers via WinMain chain.
     # ref: re/analysis/promote_c2_launch_handshake/00493560.md
     'hw_exit_dispatch': {
-        'rva':            0x00493560,
-        'export':         'thunk_HwExitDispatch',
-        'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'none',
-        'crash_equal_ok': True,
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
+        'rva':              0x00493560,
+        'export':           'thunk_HwExitDispatch',
+        'signature':        {'ret': 'uint32', 'args': []},
+        'arg_type':         'teardown_call_pair',
+        'crash_equal_ok':   True,
+        'state_global_str': '0x007d3ff8',
+        'lut_root_delta':   0,
+        'path1_tests':      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':      [0, 1, 2],
     },
 
 
     # 0x004938c0  EngineStopHelper  (sub_004938c0)
     # 24-byte function body: 5 sequential void calls, no branches, no globals.
     # Calls: FUN_00558470 / FUN_00550390 / FUN_004c2f60 / FUN_004c3040 / FUN_004c3270.
-    # Synthetic call: arg_type='none', zero args. Teardown chain — calling from
-    # main menu will crash identically on both sides. crash_equal_ok=True.
+    # arg_type='teardown_call_pair': same strategy. Zero DAT_007d3ff8 before each
+    # call pair. FUN_00558470 is the first callee that dereferences the RW engine
+    # vtable at 0x007d3ff8+0x20 — pre-zeroing forces identical crash from idx=0.
     # Anti-island: all 5 callees at C2; callers FUN_00492370 (WinMain chain),
-    #              thunk_FUN_004938c0 (0x00493550, C3 this session).
+    #              thunk_FUN_004938c0 (0x00493550).
     # [U-3860] callee semantics unknown at C2 — non-blocking for C3 promotion.
     # ref: re/analysis/promote_c2_launch_handshake/004938c0.md
     'engine_stop_helper': {
-        'rva':            0x004938c0,
-        'export':         'EngineStopHelper',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'none',
-        'crash_equal_ok': True,
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
+        'rva':              0x004938c0,
+        'export':           'EngineStopHelper',
+        'signature':        {'ret': 'void', 'args': []},
+        'arg_type':         'teardown_call_pair',
+        'crash_equal_ok':   True,
+        'state_global_str': '0x007d3ff8',
+        'lut_root_delta':   0,
+        'path1_tests':      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':      [0, 1, 2],
     },
 
 
@@ -8433,6 +8456,45 @@ HOOKS = {
         # path → void_match → GREEN.  param_1 is never dereferenced.
         'path1_tests':    [0, 1, 2, 100, 0xFFFF, 0x1234, 0xDEAD, 0x4321, 0xBEEF, 0xABCD],
         'path2_tests':    [0, 1, 2],
+    },
+
+    # =========================================================================
+    # c3-batch-r session C — harness-extensions  (2026-05-22)
+    # New arg_types: teardown_call_pair, large_buffer_save_restore
+    # =========================================================================
+
+    # 0x004924f0  DataZeroFill  (sub_004924f0)
+    # 220KB zero-fill + complex nested init loops (switch 0-11) + 6 depth-1 callees.
+    # arg_type='large_buffer_save_restore': snapshot DAT_007f0f60 (0x35da4 bytes =
+    # 0xdce9 dwords) before EACH call pair; restore between orig and reimpl so both
+    # sides see the same pre-call buffer state. Without this, orig zeroes the region,
+    # then reimpl finds it already zeroed — subsequent nested init loops produce
+    # different results (init state consumed by first call).
+    #
+    # PROMOTION BLOCKER: anti-island rule prevents C3 until all callees are C2+.
+    # Current callee status:
+    #   FUN_00431ae0 C1, FUN_00431af0 C1, FUN_00431b00 C1,
+    #   0x0045b350 C1, FUN_00431b10 C1, FUN_00431d00 C2.
+    # 5 of 6 callees at C1 — cannot promote to C3 until promoted.
+    # This registry entry is INFRASTRUCTURE ONLY (enables harness-side testing);
+    # C3 promotion requires callee promotions first.
+    # Also blocked by [UNCERTAIN U-0009] inner-switch effective-address math.
+    # Re-pickup: all 5 C1 callees promoted to C2+.
+    #
+    # crash_equal_ok=True: complex init loops may crash if live state is wrong.
+    # signature.ret='void': DataZeroFill has void return.
+    # ref: re/analysis/boot_app_init/004924f0.md
+    'data_zero_fill': {
+        'rva':                  0x004924f0,
+        'export':               'DataZeroFill',
+        'signature':            {'ret': 'void', 'args': []},
+        'arg_type':             'large_buffer_save_restore',
+        'crash_equal_ok':       True,
+        'buffer_addr':          '0x007f0f60',
+        'buffer_size_dwords':   0xdce9,
+        'lut_root_delta':       0,
+        'path1_tests':          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':          [0, 1, 2],
     },
 
     # 0x004266b0  WorldRenderDispatch_End

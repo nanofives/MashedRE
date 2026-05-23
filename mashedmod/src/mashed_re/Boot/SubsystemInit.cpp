@@ -416,30 +416,36 @@ RH_ScopedInstall(SetDefaultViewWindow, 0x00492e60);
 
 
 // ---------------------------------------------------------------------------
-// DataZeroFill  --  0x004924f0  --  DEFERRED
+// DataZeroFill  --  0x004924f0  --  DEFERRED (stub passthrough)
 //
-// DEFERRED: DataZeroFill requires harness extension for large-buffer pre/post
-// state save. The function zero-fills 0xdce9 DWORDs (= 0x35da4 bytes = ~220 KB)
-// starting at DAT_007f0f60, then runs complex nested init loops and calls 5
-// depth-1 callees at C1 confidence.
+// DEFERRED: DataZeroFill C3 promotion blocked by anti-island rule (5 of 6
+// depth-1 callees at C1: 0x00431ae0, 0x00431af0, 0x00431b00, 0x0045b350,
+// 0x00431b10). Only FUN_00431d00 is C2. Callee promotions required first.
+// Also blocked by [UNCERTAIN U-0009] inner-switch effective-address math.
 //
-// Reasons for deferral:
-//  1. Buffer save/restore: 0x35da4 bytes of game state altered per call. A
-//     synthetic A/B would corrupt MASHED.exe memory and crash on call #2 (after
-//     orig already zeroed the region, reimpl zeros it again — identical, but the
-//     subsequent nested loops write different data on each invocation because the
-//     init state is already consumed).
-//  2. 5 of 6 depth-1 callees are C1 (0x00431ae0, 0x00431af0, 0x00431b00,
-//     0x0045b350, 0x00431b10). Anti-island rule: at least one callee must be C2+
-//     to permit C3. Only FUN_00431d00 is C2; the other 5 are C1. This alone
-//     blocks C3 until those callees are promoted.
-//  3. [UNCERTAIN U-0009] structural: inner switch (cases 0–11) effective-address
-//     math per-iteration not pinpointed. Blocks=none per UNCERTAINTIES.md, but
-//     combined with (1) and (2) this is firmly deferred.
+// Harness-side unblocked by large_buffer_save_restore arg_type (added
+// 2026-05-22 session C): harness now snapshots DAT_007f0f60 (0xdce9 dwords =
+// ~220 KB) before each call pair and restores between orig and reimpl.
 //
-// Re-pickup condition: all 5 C1 callees promoted to C2+, AND a large-buffer
-// save/restore arg_type or a fresh-state (boot-time) Frida scenario added.
-// See DEFERRED.md for tracking row.
+// This stub is a PASSTHROUGH to the original function so the .asi exports the
+// symbol for run_diff_parallel. The actual reimplementation will replace this
+// passthrough once callee promotions land.
 //
-// Analysis: re/analysis/boot_app_init/004924f0.md (C2)
+// Full function body (from analysis 004924f0.md):
+//   Zeroes 0xdce9 DWORDs at DAT_007f0f60 via REP STOSD.
+//   Then runs a nested init loop (switch cases 0-11) calling 6 depth-1 callees.
+// See re/analysis/boot_app_init/004924f0.md for full body.
+//
+// Re-pickup condition: all 5 C1 callees promoted to C2+.
 // ---------------------------------------------------------------------------
+
+using DataZeroFill_t = void (__cdecl*)();
+static DataZeroFill_t const s_orig_DataZeroFill =
+    reinterpret_cast<DataZeroFill_t>(0x004924f0u);
+
+// 0x004924f0
+extern "C" __declspec(dllexport) void __cdecl DataZeroFill() {
+    s_orig_DataZeroFill();
+}
+
+RH_ScopedInstall(DataZeroFill, 0x004924f0);

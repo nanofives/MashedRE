@@ -183,6 +183,14 @@ def main():
         config['slot_stride'] = hook['slot_stride']
     if 'slot_field_count' in hook:
         config['slot_field_count'] = hook['slot_field_count']
+    # teardown_call_pair — engine-state global to NULL before each call pair.
+    if 'state_global_str' in hook:
+        config['state_global_str'] = hook['state_global_str']
+    # large_buffer_save_restore — buffer snapshot params.
+    if 'buffer_addr' in hook:
+        config['buffer_addr'] = hook['buffer_addr']
+    if 'buffer_size_dwords' in hook:
+        config['buffer_size_dwords'] = hook['buffer_size_dwords']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
