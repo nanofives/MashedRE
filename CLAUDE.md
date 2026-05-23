@@ -39,6 +39,7 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean ch
    - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
    - `scripts/patch_mashed_skip_selector.py` — silent video selector.
    - `scripts/patch_mashed_skip_controller_dialog.py` — silent controller selector.
+   - `scripts/patch_mashed_skip_intro.py` — **NOT a binary patch.** Replaces 5 intro .mpg files in `original/toastart/pc/movies/` with empty 1-frame MPEGs (originals backed up to `movies/backup/`). Lets MASHED run its intro player normally — videos just finish in microseconds. Cuts boot-to-menu from ~10s to <3s. Reversible via `--restore` flag. Approach borrowed from SciLor's MashedRunner (re/prior_art/MashedRunner/Intro.cs).
 2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600).
 3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
    Must NOT include `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed
@@ -113,6 +114,7 @@ py -3.12 scripts\patch_mashed_show_windowed.py
 py -3.12 scripts\patch_mashed_skip_audio_com.py
 py -3.12 scripts\patch_mashed_skip_selector.py
 py -3.12 scripts\patch_mashed_skip_controller_dialog.py
+py -3.12 scripts\patch_mashed_skip_intro.py            # replaces intro .mpg files; --restore to undo
 
 # Acquire / release a Ghidra pool slot (use the skill rather than calling this directly
 # unless you know what you're doing — the skill handles lock hygiene).
