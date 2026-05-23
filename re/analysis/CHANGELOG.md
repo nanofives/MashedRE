@@ -1862,3 +1862,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  0x00492290  sub_00492290  C2 STAY  canonical-observe count=0; message-pump loop body — executes continuously from entry; Interceptor missed due to already-running context; evidence gap remains
 2026-05-23  0x00492770  FUN_00492770  C2 STAY  canonical-observe count=0; MainLoopInit — callee of sub_00492290 which itself showed count=0; both stay at C2
 2026-05-23  mass-canonical-observe  release  promoted=10 C2->C3  stayed=2 (00492290 00492770)
+2026-05-23  u0448-scope-narrow  U-0448 Blocks=C3 -> Blocks=none scoped to reader FRONTEND_FN (4 known offsets sufficient; struct unknowns only matter to writers)
