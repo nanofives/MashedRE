@@ -1822,3 +1822,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  lever3-crt-drain  0x004ae29f ___crtInitCritSecAndSpinCount  C1->C2 via FidDB library attestation; MSVC CRT init helper; FidDB GREEN
 2026-05-23  lever3-crt-drain-20260523-0245  lever3-release  promoted=9 C1->C2 (CRT-band FidDB attestation)  skeleton-parents-unblocked=4 (00493900, 004aa3fe, 004a8a04, 004ac04a)
 2026-05-23  0x00493550  thunk_EngineStopDispatch  C2->C3  harness-extensions-session-C; 4B JMP thunk to FUN_004938c0; teardown_call_pair arg_type GREEN 10/10 log/diff_engine_stop_dispatch.csv; leaf-exemption; Boot/LaunchHandshake.cpp; caller sub_00492370 C2; callees_depth1=[] (JMP thunk)
+2026-05-23  0x00428590  ViewportInit  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu-idle; Boot/SubsystemInit.cpp RH_ScopedInstall; caller SubsystemInit 0x00492270 C2; callees FUN_004671a0 C2 FUN_00428450 C2; re/analysis/canonical_observe_viewport_init.md
