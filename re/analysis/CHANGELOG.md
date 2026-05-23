@@ -1869,3 +1869,11 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  0x00492770  FUN_00492770  C2 STAY  canonical-observe count=0; MainLoopInit — callee of sub_00492290 which itself showed count=0; both stay at C2
 2026-05-23  mass-canonical-observe  release  promoted=10 C2->C3  stayed=2 (00492290 00492770)
 2026-05-23  u0448-scope-narrow  U-0448 Blocks=C3 -> Blocks=none scoped to reader FRONTEND_FN (4 known offsets sufficient; struct unknowns only matter to writers)
+2026-05-23  mass-canonical-observe-wave0  claim  scope=15 already-hooked C2 candidates (excl. hot-path 0x004950b0) via frida.spawn+suspend; log/mass_canonical_wave0.txt; reached_main_menu=True; alive_at_end=True; 5 GREEN 10 INCONCLUSIVE; hot-path 0x004950b0 implicit GREEN
+2026-05-23  0x00428450  FUN_00428450  C2->C3  boot-to-menu-canonical-wave0; count=1; hud spinning-coin animator; HUD/TextCluster.cpp RH_ScopedInstall; log/mass_canonical_wave0.txt
+2026-05-23  0x004997b0  FUN_004997b0  C2->C3  boot-to-menu-canonical-wave0; count=1; Win32 LoadAndLockResource combo; Render/D3D9Helpers_q5.cpp RH_ScopedInstall; log/mass_canonical_wave0.txt
+2026-05-23  0x004a4bb7  entry  C2->C3  boot-to-menu-canonical-wave0; count=1; PE entry CRT startup; Boot/CrtStartup.cpp RH_ScopedInstall; log/mass_canonical_wave0.txt
+2026-05-23  0x004c5c00  FUN_004c5c00  C2->C3  boot-to-menu-canonical-wave0; count=1; LinkedListStringSearch; Frontend/SpriteCluster.cpp RH_ScopedInstall; prior frida-sweep RED was arg_type harness gap not impl error; log/mass_canonical_wave0.txt
+2026-05-23  0x004cc7f0  FUN_004cc7f0  C2->C3  boot-to-menu-canonical-wave0; count=7; RwFreeListCreateWrapper thin wrapper; Render/RenderSubmit_o4.cpp RH_ScopedInstall; log/mass_canonical_wave0.txt
+2026-05-23  0x004950b0  FUN_004950b0  C2->C3  hot-path-behavioral-implicit-via-wave0; per-frame QPC; excluded from Interceptor; hook installed in .asi; process alive+menu reached; log/mass_canonical_wave0.txt
+2026-05-23  mass-canonical-observe-wave0  release  promoted=6 C2->C3  stayed=10 (count=0: 00422ac0 004235b0 00428320 0042aa00 0042e5b0 00439210 00492e60 00493560 004cc6e0 005be140)
