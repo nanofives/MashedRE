@@ -130,6 +130,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\RwPluginHelpers_q1.cpp" ^
     "Render\RenderSubmit_o4.cpp" ^
     "Render\D3D9Helpers_p4.cpp" ^
+    "Vehicle\ReplayCluster.cpp" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
     "Util\SmallLeaves_o6.cpp" ^
