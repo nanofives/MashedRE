@@ -1031,3 +1031,59 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3935 | 0x00494f40 FUN_00494f40 | 0x00494fd0 FUN_00494fd0 | render | passthrough | 2026-05-20 | gamma LUT generator; takes two stack out-param values from GetGammaRamp call; depth-2; batch-ab-s2 |
 | S-3936 | 0x004c75e0 FUN_004c75e0 | 0x004b5750 FUN_004b5750 | render | passthrough | 2026-05-20 | viewport origin getter; (viewport*, short*x, short*y) -> void; 26 bytes; depth-1 callee of 0x004b5750 textured-quad emitter; not recursed; batch-ab-s3 promote_c1_high_ab3 |
 | S-3927 | 0x005c4d30 FUN_005c4d30 | 0x005555b0 FUN_005555b0 | render | passthrough | 2026-05-20 | glyph metric base resolver; takes *(font+0x134) arg; returns base ptr for glyph records; depth-1 callee of 0x005555b0 word-wrap layout; not recursed; batch-ab-s3 promote_c1_high_ab3 |
+| S-3971 | 0x0045e040 FUN_0045e040 | 0x00467010 FUN_00467010 | boot | passthrough | 2026-05-22 | step-1 of two-step shutdown; callee of 0x00467010; depth-1; skeleton-prep-s4 |
+| S-3972 | 0x00466a50 FUN_00466a50 | 0x00467010 FUN_00467010 | boot | passthrough | 2026-05-22 | step-2 of two-step shutdown; callee of 0x00467010; depth-1; skeleton-prep-s4 |
+| S-3973 | 0x004c0c20 FUN_004c0c20 | 0x00467020 FUN_00467020 | render | passthrough | 2026-05-22 | called on param_1+4 sub-ptr; depth-1; skeleton-prep-s4 |
+| S-3974 | 0x004c1cf0 FUN_004c1cf0 | 0x00467020 FUN_00467020 | render | passthrough | 2026-05-22 | called on param_1 base ptr (destructor?); depth-1; skeleton-prep-s4 |
+| S-3975 | 0x004c7650 FUN_004c7650 | 0x00467020 FUN_00467020 | render | passthrough | 2026-05-22 | called on param_1+0x60 and +0x64 sub-ptrs; depth-1; skeleton-prep-s4 |
+| S-3976 | 0x004c0740 FUN_004c0740 | 0x00467070 FUN_00467070 | render | passthrough | 2026-05-22 | detach-child; takes (ptr, int); depth-1; skeleton-prep-s4 |
+| S-3977 | 0x004c0c20 FUN_004c0c20 | 0x00467070 FUN_00467070 | render | passthrough | 2026-05-22 | destroy child ref; depth-1 (also in 00467020); skeleton-prep-s4 |
+| S-3978 | 0x004c1cf0 FUN_004c1cf0 | 0x00467070 FUN_00467070 | render | passthrough | 2026-05-22 | destroy parent; depth-1 (also in 00467020); skeleton-prep-s4 |
+| S-3979 | 0x004464c0 FUN_004464c0 | 0x00448700 FUN_00448700 | vehicle | passthrough | 2026-05-22 | called 100x with &DAT_00897fe0; depth-1; skeleton-prep-s4 |
+| S-3980 | 0x004840f0 FUN_004840f0 | 0x004841d0 FUN_004841d0 | boot | passthrough | 2026-05-22 | called 84x in 4 loops; depth-1; skeleton-prep-s4 |
+| S-3981 | 0x00412010 FUN_00412010 | 0x0045b930 FUN_0045b930 | boot | passthrough | 2026-05-22 | shutdown step 1; depth-1; skeleton-prep-s4 |
+| S-3982 | 0x0045b350 FUN_0045b350 | 0x0045b930 FUN_0045b930 | vehicle | passthrough | 2026-05-22 | shutdown step 2; depth-1; skeleton-prep-s4 |
+| S-3983 | 0x00458880 FUN_00458880 | 0x0045b930 FUN_0045b930 | vehicle | passthrough | 2026-05-22 | shutdown step 3; depth-1; skeleton-prep-s4 |
+| S-3984 | 0x004593b0 FUN_004593b0 | 0x0045b930 FUN_0045b930 | vehicle | passthrough | 2026-05-22 | shutdown step 4; depth-1; skeleton-prep-s4 |
+| S-3985 | 0x00404820 FUN_00404820 | 0x0045b930 FUN_0045b930 | boot | passthrough | 2026-05-22 | shutdown step 5; depth-1; skeleton-prep-s4 |
+| S-3986 | 0x004c5930 FUN_004c5930 | 0x0045b930 FUN_0045b930 | render | passthrough | 2026-05-22 | teardown with handle arg 0x0068d4e0; depth-1; skeleton-prep-s4 |
+| S-3987 | 0x0045ba10 FUN_0045ba10 | 0x0045bae0 FUN_0045bae0 | vehicle | passthrough | 2026-05-22 | per-slot init (called 2x per iteration); depth-1; skeleton-prep-s4 |
+| S-3988 | 0x0042a6b0 FUN_0042a6b0 | 0x0045bae0 FUN_0045bae0 | render | passthrough | 2026-05-22 | TXD loader ("PowerUpModels.txd", 0, 0); depth-1; skeleton-prep-s4 |
+| S-3989 | 0x00459290 FUN_00459290 | 0x0045bae0 FUN_0045bae0 | vehicle | passthrough | 2026-05-22 | post-init step; depth-1; skeleton-prep-s4 |
+| S-3990 | 0x004587a0 FUN_004587a0 | 0x0045bae0 FUN_0045bae0 | vehicle | passthrough | 2026-05-22 | post-init step; depth-1; skeleton-prep-s4 |
+| S-3991 | 0x00453f30 FUN_00453f30 | 0x0045bae0 FUN_0045bae0 | vehicle | passthrough | 2026-05-22 | post-init step; depth-1; skeleton-prep-s4 |
+| S-3992 | 0x0047b9b0 FUN_0047b9b0 | 0x0045bae0 FUN_0045bae0 | util | passthrough | 2026-05-22 | Lua script runner ("powerups_all.lua", stack_buf, &LAB_00440bc0); depth-1; skeleton-prep-s4 |
+| S-3993 | 0x00411f30 FUN_00411f30 | 0x0045bae0 FUN_0045bae0 | boot | passthrough | 2026-05-22 | final init step A; depth-1; skeleton-prep-s4 |
+| S-3994 | 0x004039c0 FUN_004039c0 | 0x0045bae0 FUN_0045bae0 | boot | passthrough | 2026-05-22 | final init step B; depth-1; skeleton-prep-s4 |
+| S-3995 | 0x004278d0 FUN_004278d0 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | draw lap counter text; depth-1; skeleton-prep-s4 |
+| S-3996 | 0x00427990 FUN_00427990 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | draw 8-arg text; depth-1; skeleton-prep-s4 |
+| S-3997 | 0x00427be0 FUN_00427be0 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | draw text with stack buf; depth-1; skeleton-prep-s4 |
+| S-3998 | 0x00427e00 FUN_00427e00 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | draw positioned text; depth-1; skeleton-prep-s4 |
+| S-3999 | 0x004282a0 FUN_004282a0 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | called with (iVar2, 0x3f19999a); depth-1; skeleton-prep-s4 |
+| S-4000 | 0x0042aae0 FUN_0042aae0 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | called with arg 0; depth-1; skeleton-prep-s4 |
+| S-4001 | 0x0042c010 FUN_0042c010 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | 5-arg rect draw; depth-1; skeleton-prep-s4 |
+| S-4002 | 0x0042c090 FUN_0042c090 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | 1-arg rect draw; depth-1; skeleton-prep-s4 |
+| S-4003 | 0x004671a0 FUN_004671a0 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | acquire render resource (0xffffffff arg); depth-1; skeleton-prep-s4 |
+| S-4004 | 0x004c19f0 FUN_004c19f0 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | set render target A; depth-1; skeleton-prep-s4 |
+| S-4005 | 0x004c1a00 FUN_004c1a00 | 0x00433f40 FUN_00433f40 | render | passthrough | 2026-05-22 | set render target B; depth-1; skeleton-prep-s4 |
+| S-4006 | 0x004a2c48 FUN_004a2c48 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-22 | delta-time getter; depth-1; skeleton-prep-s4 |
+| S-4007 | 0x0042c220 FUN_0042c220 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | called in -0xdf0000 branch; depth-1; skeleton-prep-s4 |
+| S-4008 | 0x0042c150 FUN_0042c150 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | called after inner loop; depth-1; skeleton-prep-s4 |
+| S-4009 | 0x0042ae10 FUN_0042ae10 | 0x0043d7c0 FUN_0043d7c0 | input | passthrough | 2026-05-22 | button-press query (arg 0); depth-1; skeleton-prep-s4 |
+| S-4010 | 0x0042aeb0 FUN_0042aeb0 | 0x0043d7c0 FUN_0043d7c0 | input | passthrough | 2026-05-22 | button-press query B; depth-1; skeleton-prep-s4 |
+| S-4011 | 0x0042af50 FUN_0042af50 | 0x0043d7c0 FUN_0043d7c0 | input | passthrough | 2026-05-22 | button-press query C; depth-1; skeleton-prep-s4 |
+| S-4012 | 0x0043d2a0 FUN_0043d2a0 | 0x0043d7c0 FUN_0043d7c0 | util | passthrough | 2026-05-22 | state-set dispatcher; depth-1; skeleton-prep-s4 |
+| S-4013 | 0x0042b950 FUN_0042b950 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | called on transition; depth-1; skeleton-prep-s4 |
+| S-4014 | 0x0042bf30 FUN_0042bf30 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | 6-arg dispatch; depth-1; skeleton-prep-s4 |
+| S-4015 | 0x0040de10 FUN_0040de10 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on transition; depth-1; skeleton-prep-s4 |
+| S-4016 | 0x0040e360 FUN_0040e360 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called with arg 1; depth-1; skeleton-prep-s4 |
+| S-4017 | 0x004298c0 FUN_004298c0 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | post-selection cleanup; depth-1; skeleton-prep-s4 |
+| S-4018 | 0x00429aa0 FUN_00429aa0 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | post-selection init; depth-1; skeleton-prep-s4 |
+| S-4019 | 0x0040b810 FUN_0040b810 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on map-start transition; depth-1; skeleton-prep-s4 |
+| S-4020 | 0x00413f90 FUN_00413f90 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | player-slot getter; depth-1; skeleton-prep-s4 |
+| S-4021 | 0x00422b30 FUN_00422b30 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | called on map-start; depth-1; skeleton-prep-s4 |
+| S-4022 | 0x0046dc00 FUN_0046dc00 | 0x0043d7c0 FUN_0043d7c0 | render | passthrough | 2026-05-22 | 2-arg display caller; depth-1; skeleton-prep-s4 |
+| S-4023 | 0x00493570 FUN_00493570 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xe10000 transition; depth-1; skeleton-prep-s4 |
+| S-4024 | 0x00493580 FUN_00493580 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xe00000 transition; depth-1; skeleton-prep-s4 |
+| S-4025 | 0x0040ab40 FUN_0040ab40 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac4!=0; depth-1; skeleton-prep-s4 |
+| S-4026 | 0x0040ac80 FUN_0040ac80 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac5!=0; depth-1; skeleton-prep-s4 |
