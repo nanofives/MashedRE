@@ -1810,3 +1810,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-05-23  00426670  WorldRenderDispatch_Begin  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4320 C2
 2026-05-23  004266b0  WorldRenderDispatch_End  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4350 C22026-05-23  frida-sweep-20260523-0207  frida-sweep-release  branches=5 merged  integration-diff=GREEN  hooks=5
+2026-05-23  lever3-crt-drain-20260523-0245  lever3-claim  scope=9 CRT-band callees blocking 4 skeleton parents
