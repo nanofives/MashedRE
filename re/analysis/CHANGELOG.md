@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-23  lever3-expansion-20260523-1330  lever3-expansion-RELEASE  WIP-released; 79 C1->C2 CRT-band bulk-attest complete
+2026-05-23  lever3-expansion-20260523-1330  lever3-bulk-attest  promoted=79 C1->C2 (CRT-band FidDB)  details=mass-attestation via Ghidra Library Function names + CRT-band calibrated rule (004a0000..004b3fff); 7 game-logic exclusions (DFF/TXD/RW-stream loaders in upper band); 40 already C2+; 493 CRT-band functions enumerated from Ghidra master
 2026-05-23  canonical-mass-observe-r2  BATCH-PROMOTE  9 hooks C2->C3 via boot-to-menu canonical observation round-2 (spawn+suspend); scenario=boot-to-menu-canonical-r2; log=log/mass_canonical_observe_r2.txt; reached_main_menu=True; 11 INCONCLUSIVE stay C2
 2026-05-23  0x00499ba0  sub_00499ba0  C2->C3  canonical-observation-r2; WindowCreate: CoInitialize+RegisterClassA+CreateWindowExA; count=1 30s menu GREEN
 2026-05-23  0x004cc160  FUN_004cc160  C2->C3  canonical-observation-r2; RwStreamClose equivalent (stream-context close dispatcher); count=1 30s menu GREEN
