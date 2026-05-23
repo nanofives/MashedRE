@@ -1,22 +1,27 @@
 # mass_canonical_observe_r3.py
 #
-# Mass canonical-scenario observation — ROUND 3 — 20 boot-once C2 candidates.
+# Mass canonical-scenario observation — ROUND 3 (v2) — 18 boot-once C2 candidates.
 # C2 -> C3 evidence via boot-to-menu canonical observation.
+#
+# NOTE: Round 3 initial run (20 candidates) crashed at t+~20s because
+# sub_00493f70 (~170/s) and sub_004671a0 (~170/s) are hot-path menu functions,
+# not boot-once. Removed both per CLAUDE.md guardrails to allow stable run.
 #
 # Scenario (identical to rounds 1+2):
 #   1. frida.spawn MASHED.exe (suspended) — process is frozen before any user
 #      code runs, including CRT startup. This is critical for early-init candidates
 #      which fire before a plain attach() could land.
-#   2. Interceptor.attach ALL 20 candidates BEFORE resume.
+#   2. Interceptor.attach ALL 18 candidates BEFORE resume.
 #   3. device.resume(pid) — process boots to main menu.
 #   4. Idle 30 seconds on main menu, polling counts.
 #   5. Kill MASHED, report per-candidate result table.
 #
-# All 20 candidates are boot-once or rare-fire (not per-frame hot paths) —
+# All 18 candidates are boot-once or rare-fire (not per-frame hot paths) —
 # Interceptor.attach is safe per CLAUDE.md "Frida overhead on hot paths" rules.
+# sub_00493f70 and sub_004671a0 are EXCLUDED — confirmed hot-path at menu.
 #
 # Candidate groups:
-#   Boot-time D3D/RW init helpers (0x00493f70, 0x00495270, 0x004c2f60,
+#   Boot-time D3D/RW init helpers (0x00495270, 0x004c2f60,
 #   0x004c5c80, 0x004c9eb0, 0x004c9f50, 0x004c9f60, 0x004cbc60, 0x004cbc70,
 #   0x004cbc80, 0x004c2d90, 0x00498c00, 0x00498b60):
 #     — fire once at boot; HIGH yield expected (70-80%).
@@ -24,12 +29,10 @@
 #     — expected to fire at boot (QueryPerformanceFrequency call).
 #   Frontend menu state init (0x00428320, 0x00428390, 0x004274d0, 0x004274e0):
 #     — 50-60% yield; some may be track-state-only setters.
-#   PIZ loader (0x004671a0):
-#     — may or may not fire at boot depending on which assets load.
 #   D3D matrix init (0x00499ce0):
 #     — expected to fire (identity matrix init at boot).
 #
-# Realistic prediction: 11-16 promotions of 20 attempted.
+# Realistic prediction: 9-14 promotions of 18 attempted.
 #
 # Output: log/mass_canonical_observe_r3.txt
 #
@@ -98,17 +101,17 @@ def _find_log_dir(script_root: Path) -> Path:
     parent_log = script_root.parent.parent / 'log'
     return parent_log
 
-OUT_FILE = _find_log_dir(ROOT) / 'mass_canonical_observe_r3.txt'
+OUT_FILE = _find_log_dir(ROOT) / 'mass_canonical_observe_r3b.txt'
 
 # ---------------------------------------------------------------------------
-# 20 C2 candidates — boot-time D3D/RW init + frontend + util.
+# 18 C2 candidates — boot-time D3D/RW init + frontend + util.
 # (RVA = VA for MASHED.exe ImageBase 0x00400000)
+# EXCLUDED from initial 20: sub_00493f70 (hot ~170/s), sub_004671a0 (hot ~170/s)
 # ---------------------------------------------------------------------------
 
 CANDIDATES = [
     # (va_hex, short_name, expected_context)
     # --- Boot-time D3D/RW init helpers (HIGH yield) ---
-    ('0x00493f70', 'sub_00493f70',        'VideoStateFlagGet: returns DAT_00771a04; leaf; video state flag getter'),
     ('0x00495270', 'FUN_00495270',        'HWNDGet: *param_1=FUN_00499710(); D3D init area'),
     ('0x004c2f60', 'FUN_004c2f60',        'RW engine plugin helper: dispatcher cmds 0x12+0x03 engine-stop path'),
     ('0x004c5c80', 'FUN_004c5c80',        'RW init: writes param_1 to *(DAT_007d4054+0x10+DAT_007d3ff8)'),
@@ -128,8 +131,6 @@ CANDIDATES = [
     ('0x00428390', 'FUN_00428390',        'game state setter: DAT_0067d960=param_1'),
     ('0x004274d0', 'FUN_004274d0',        'LOC_INIT_FN: copies DAT_007719e8->DAT_007f0f60'),
     ('0x004274e0', 'FUN_004274e0',        'LOC_FN: switch lang->filename'),
-    # --- PIZ loader (fires per-PIZ during boot asset load) ---
-    ('0x004671a0', 'sub_004671a0',        'vehicle-0 getter via FUN_0042b930==3 + param_1 dispatch'),
     # --- D3D matrix init (expected fire) ---
     ('0x00499ce0', 'FUN_00499ce0',        'InitViewportMatrix: zeros 12 floats+sets 4 to 1.0f at DAT_00773928'),
 ]
@@ -195,7 +196,7 @@ def mute_pid_audio(pid: int) -> bool:
 
 
 def main() -> int:
-    print('=== mass_canonical_observe_r3.py  (ROUND 3) ===')
+    print('=== mass_canonical_observe_r3.py  (ROUND 3 v2 — 18 candidates, hot-paths excluded) ===')
     print(f'MASHED.exe : {MASHED_EXE}')
     print(f'ASI        : {ASI_PATH}')
     print(f'Candidates : {len(CANDIDATES)}')
@@ -443,8 +444,8 @@ def main() -> int:
 def _write_output(out_file: Path, candidates, counters, attach_errors,
                   reached_menu, alive_at_end, overall_verdict):
     lines = [
-        'mass_canonical_observe_r3.py result  (ROUND 3)',
-        '===============================================',
+        'mass_canonical_observe_r3.py result  (ROUND 3 v2 — 18 candidates)',
+        '===================================================================',
         f'spawn_method      : frida.spawn (suspended before resume)',
         f'idle_seconds      : 30',
         f'reached_main_menu : {reached_menu}',
