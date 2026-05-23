@@ -1824,3 +1824,17 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  lever3-crt-drain-20260523-0245  lever3-release  promoted=9 C1->C2 (CRT-band FidDB attestation)  skeleton-parents-unblocked=4 (00493900, 004aa3fe, 004a8a04, 004ac04a)
 2026-05-23  0x00493550  thunk_EngineStopDispatch  C2->C3  harness-extensions-session-C; 4B JMP thunk to FUN_004938c0; teardown_call_pair arg_type GREEN 10/10 log/diff_engine_stop_dispatch.csv; leaf-exemption; Boot/LaunchHandshake.cpp; caller sub_00492370 C2; callees_depth1=[] (JMP thunk)
 2026-05-23  0x00428590  ViewportInit  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu-idle; Boot/SubsystemInit.cpp RH_ScopedInstall; caller SubsystemInit 0x00492270 C2; callees FUN_004671a0 C2 FUN_00428450 C2; re/analysis/canonical_observe_viewport_init.md
+2026-05-23  mass-canonical-observe  claim  scope=12 boot-once C2 candidates via frida.spawn+suspend; log/mass_canonical_observe.txt; reached_main_menu=True; 10 GREEN 2 INCONCLUSIVE
+2026-05-23  0x00492370  sub_00492370  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; WinMain wrapper outer; boot subsystem
+2026-05-23  0x004924f0  sub_004924f0  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; DataZeroFill 0xdce9 DWORDs; boot subsystem
+2026-05-23  0x00493900  sub_00493900  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; CmdlineParse tokenizer; boot subsystem
+2026-05-23  0x00493710  FUN_00493710  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; RW_INIT_FN RwEngineInit chain; render subsystem
+2026-05-23  0x00402750  sub_00402750  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; AppInitialiseOnBootup asset loader; boot subsystem
+2026-05-23  0x004aa3fe  __heap_init  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; CRT HeapCreate; boot subsystem
+2026-05-23  0x004a8a04  FUN_004a8a04  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; __mtinitlocks TlsAlloc; boot subsystem
+2026-05-23  0x004ac04a  FUN_004ac04a  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; CRT file-handle table; boot subsystem
+2026-05-23  0x004c2c90  FUN_004c2c90  C2->C3  canonical-observation; frida.spawn+resume count=244 GREEN 30s menu; RW driver-system dispatcher multi-call during RW init; render subsystem
+2026-05-23  0x004c2fb0  FUN_004c2fb0  C2->C3  canonical-observation; frida.spawn+resume count=1 GREEN 30s menu; RW engine-start plugin helper; render subsystem
+2026-05-23  0x00492290  sub_00492290  C2 STAY  canonical-observe count=0; message-pump loop body — executes continuously from entry; Interceptor missed due to already-running context; evidence gap remains
+2026-05-23  0x00492770  FUN_00492770  C2 STAY  canonical-observe count=0; MainLoopInit — callee of sub_00492290 which itself showed count=0; both stay at C2
+2026-05-23  mass-canonical-observe  release  promoted=10 C2->C3  stayed=2 (00492290 00492770)
