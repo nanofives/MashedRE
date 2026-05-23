@@ -111,6 +111,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\FrontendDispatch.cpp" ^
     "Frontend\SpriteCluster.cpp" ^
     "Boot\FrameDispatch.cpp" ^
+    "Boot\GameStateCluster.cpp" ^
     "Input\DirectInput.cpp" ^
     "Input\DInput.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
