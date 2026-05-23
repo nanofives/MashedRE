@@ -79,6 +79,18 @@
 //                        Tests: flat list (length = call count; values ignored).
 //                        Required CONFIG: struct_size, observe_offset, observe_length.
 //
+// Harness-extension arg_types (added 2026-05-22 session C):
+//   teardown_call_pair — teardown/shutdown thunks: zero state_global_str before
+//                        EACH call (both orig+reimpl) so both crash symmetrically.
+//                        Unblocks 0x00493550, 0x00493560, 0x004938c0.
+//                        Tests: flat list (length = call count; values ignored).
+//                        Required CONFIG: state_global_str (default '0x007d3ff8').
+//   large_buffer_save_restore — snapshot+restore a large live-state buffer before
+//                        each call pair. Both sides see identical pre-call state.
+//                        Unblocks 0x004924f0 harness-side (C3 still needs callees).
+//                        Tests: flat list (length = call count; values ignored).
+//                        Required CONFIG: buffer_addr, buffer_size_dwords.
+//
 // Harness-extension arg_types (added 2026-05-22 session B):
 //   allocator_nonnull  — fn() -> pointer: allocator that returns fresh heap ptr each
 //                        call; pointer-identity comparison is meaningless. Observable:
@@ -2010,6 +2022,130 @@ function runDiff() {
                            match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
         }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── teardown_call_pair ───────────────────────────────────────────────────
+    // For teardown/shutdown thunks: zero a known engine-state global before
+    // EACH invocation (both orig AND reimpl) so both sides see the same
+    // already-torn-down state. This makes idx=0 crash symmetrically instead
+    // of orig succeeding (fresh state) while reimpl crashes (state torn down by
+    // orig's prior call).
+    //
+    // Strategy: before every call (orig and reimpl), write 0 to the global at
+    // CONFIG.state_global_str. After each call, the function may crash — that
+    // is expected and handled by crash_equal_ok=True on the registry entry.
+    // The original value of the global is saved once before the loop and
+    // restored after all tests (best-effort; process may crash anyway).
+    //
+    // CONFIG fields:
+    //   state_global_str  string (hex addr) — address of the engine-state pointer
+    //                     to NULL before each call pair. Default '0x007d3ff8'
+    //                     (RW engine vtable base, confirmed as the crash target).
+    // Tests: flat list (length = call count; values ignored).
+    // Unblocks: engine_stop_dispatch (0x00493550), hw_exit_dispatch (0x00493560),
+    //           engine_stop_helper (0x004938c0).
+    if (CONFIG.arg_type === 'teardown_call_pair') {
+        const tdGlobalAddr = ptr(CONFIG.state_global_str || '0x007d3ff8');
+        // Save the global's current value for best-effort restore.
+        let tdSavedVal = 0;
+        try { tdSavedVal = tdGlobalAddr.readU32(); } catch (_) {}
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Pre-corrupt engine state before orig call.
+            try { tdGlobalAddr.writeU32(0); } catch (_) {}
+            try {
+                const ret = Orig();
+                origV = (ret === undefined || ret === null) ? 0
+                      : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                      : (ret >>> 0);
+            } catch (e) { errO = e.message; }
+            // Pre-corrupt engine state before reimpl call (state may already be 0).
+            try { tdGlobalAddr.writeU32(0); } catch (_) {}
+            try {
+                const ret = Reimpl();
+                reimV = (ret === undefined || ret === null) ? 0
+                      : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                      : (ret >>> 0);
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        // Best-effort restore.
+        try { tdGlobalAddr.writeU32(tdSavedVal); } catch (_) {}
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── large_buffer_save_restore ────────────────────────────────────────────
+    // For functions that zero-fill a large live-state buffer (hundreds of KB).
+    // Without save/restore, the buffer is permanently zeroed after the first
+    // call (orig), so reimpl runs against a different pre-call state.
+    //
+    // Strategy: snapshot the buffer into JS-side Uint8Array before EACH call
+    // pair; restore from snapshot between orig and reimpl, and restore again
+    // after reimpl. Both sides see the same pre-call buffer state.
+    // The function is called with zero args (arg_type='none' semantics).
+    // Observable: both sides should produce the same crash or same void return.
+    //
+    // CONFIG fields:
+    //   buffer_addr          string (hex addr) — base address of the buffer.
+    //   buffer_size_dwords   int  — number of 4-byte dwords in the buffer.
+    //                               Total bytes = buffer_size_dwords * 4.
+    // Tests: flat list (length = call count; values ignored).
+    // Unblocks (harness side): data_zero_fill (0x004924f0) — NOTE: C3 promotion
+    //   still blocked by anti-island rule (5 of 6 callees at C1). This arg_type
+    //   is infrastructure for when callees are promoted.
+    if (CONFIG.arg_type === 'large_buffer_save_restore') {
+        const lbAddr  = ptr(CONFIG.buffer_addr);
+        const lbDwords = (CONFIG.buffer_size_dwords | 0);
+        const lbBytes  = lbDwords * 4;
+
+        // Snapshot the buffer contents (read lbBytes bytes into JS ArrayBuffer).
+        // Use NativePointer.readByteArray(n) — consistent with codebase convention.
+        let lbSnapshot = null;
+        try {
+            lbSnapshot = lbAddr.readByteArray(lbBytes);
+        } catch (e) {
+            send({ type: 'error', msg: 'large_buffer_save_restore: failed to snapshot buffer: ' + e.message });
+            return;
+        }
+        function lbRestore() {
+            try { lbAddr.writeByteArray(lbSnapshot); } catch (_) {}
+        }
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Restore before orig call so orig sees the original buffer state.
+            lbRestore();
+            try {
+                const ret = Orig();
+                origV = (ret === undefined || ret === null) ? 0
+                      : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                      : (ret >>> 0);
+            } catch (e) { errO = e.message; }
+            // Restore before reimpl call so reimpl sees the same pre-call state.
+            lbRestore();
+            try {
+                const ret = Reimpl();
+                reimV = (ret === undefined || ret === null) ? 0
+                      : (typeof ret === 'object') ? (parseInt(ret.toString(), 16) >>> 0)
+                      : (ret >>> 0);
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            const voidMatch  = (CONFIG.signature.ret === 'void') && errO === null && errR === null;
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || voidMatch || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        // Final restore.
+        lbRestore();
         send({ type: 'results', data: results });
         return;
     }

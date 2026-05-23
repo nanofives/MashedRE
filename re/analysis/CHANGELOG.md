@@ -1810,3 +1810,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-05-23  00426670  WorldRenderDispatch_Begin  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4320 C2
 2026-05-23  004266b0  WorldRenderDispatch_End  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4350 C22026-05-23  frida-sweep-20260523-0207  frida-sweep-release  branches=5 merged  integration-diff=GREEN  hooks=5
+
+2026-05-23  0x00493550  thunk_EngineStopDispatch  C2->C3  harness-extensions-session-C; 4B JMP thunk to FUN_004938c0; teardown_call_pair arg_type GREEN 10/10 log/diff_engine_stop_dispatch.csv; leaf-exemption; Boot/LaunchHandshake.cpp; caller sub_00492370 C2; callees_depth1=[] (JMP thunk)
