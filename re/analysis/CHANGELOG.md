@@ -1703,3 +1703,17 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  00550b00  VfsFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550bc0  VfsStreamGetType  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550980  VfsStreamRead  C2->C3  Frida A/B GREEN 10/10 bit-identical; fixed arg-order (buf,element_size,count,ctx) + dispatch-deref bug; ABI confirmed disasm Ghidra pool10; caller RwStreamWrite C4
+2026-05-22  00496370  FUN_00496370  C1->C2  skeleton-prep-s2; DInput keyboard release; decomp end-to-end; plate re/analysis/skeleton_prep_boot_winmain_b/00496370.md
+2026-05-22  004963d0  thunk_FUN_00496370  C1->C2  skeleton-prep-s2; 4B thunk to FUN_00496370; plate re/analysis/skeleton_prep_boot_winmain_b/004963d0.md
+2026-05-22  00496920  FUN_00496920  C1->C2  skeleton-prep-s2; pure leaf table lookup DAT_00772ffc[param_1]; plate re/analysis/skeleton_prep_boot_winmain_b/00496920.md
+2026-05-22  00496970  FUN_00496970  C1->C2  skeleton-prep-s2; guard+free+zero DAT_0077307c; plate re/analysis/skeleton_prep_boot_winmain_b/00496970.md
+2026-05-22  00498510  FUN_00498510  C1->C2  skeleton-prep-s2; controller select setup 664b; plate re/analysis/skeleton_prep_boot_winmain_b/00498510.md
+2026-05-22  00498860  FUN_00498860  C1->C2  skeleton-prep-s2; time-string sanitizer 170b; plate re/analysis/skeleton_prep_boot_winmain_b/00498860.md
+2026-05-22  00499730  FUN_00499730  C1->C2  skeleton-prep-s2; 5b ptr-getter &DAT_00773818; plate re/analysis/skeleton_prep_boot_winmain_b/00499730.md
+2026-05-22  00499ce0  FUN_00499ce0  C1->C2  skeleton-prep-s2; 4x4 identity matrix init 165b; plate re/analysis/skeleton_prep_boot_winmain_b/00499ce0.md
+2026-05-22  004b4880  FUN_004b4880  C1->C2  skeleton-prep-s2; 3-field destructor 87b; plate re/analysis/skeleton_prep_boot_winmain_b/004b4880.md
+2026-05-22  004b6700  FUN_004b6700  C1->C2  skeleton-prep-s2; 11b zero DAT_007d3e54; U-3921 filed; plate re/analysis/skeleton_prep_boot_winmain_b/004b6700.md
+2026-05-22  004c5c80  FUN_004c5c80  C1->C2  skeleton-prep-s2; 20b param_1→*(DAT_007d4054+0x10+DAT_007d3ff8); plate re/analysis/skeleton_prep_boot_winmain_b/004c5c80.md
+2026-05-22  004c9eb0  FUN_004c9eb0  C1->C2  skeleton-prep-s2; 146b vtable dispatch loop; plate re/analysis/skeleton_prep_boot_winmain_b/004c9eb0.md
+2026-05-22  004c9f50  FUN_004c9f50  C1->C2  skeleton-prep-s2; 9b DAT_007d4134=param_1; plate re/analysis/skeleton_prep_boot_winmain_b/004c9f50.md
+2026-05-22  004c9f60  FUN_004c9f60  C1->C2  skeleton-prep-s2; 66b conditional setter + 4 dirty flags; plate re/analysis/skeleton_prep_boot_winmain_b/004c9f60.md
