@@ -1703,3 +1703,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  00550b00  VfsFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550bc0  VfsStreamGetType  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550980  VfsStreamRead  C2->C3  Frida A/B GREEN 10/10 bit-identical; fixed arg-order (buf,element_size,count,ctx) + dispatch-deref bug; ABI confirmed disasm Ghidra pool10; caller RwStreamWrite C4
+2026-05-22  00492440  RenderStatsAccumulate  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00492440.md; pure leaf 124B; 60-frame rolling avg; no U/S
+2026-05-22  004927c0  RacePairIndexFSM  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/004927c0.md; 12-state FSM; pair-index table; 8 gate-pair globals; U-3921
+2026-05-22  00492e60  SetDefaultViewWindow  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00492e60.md; 43B; RwCameraSetViewWindow(0.8f,0.8f) pattern; U-3922
+2026-05-22  00493640  RwPluginAttachChain  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00493640.md; 171B; 18-call bail-on-zero chain; S-3937..S-3954
+2026-05-22  00493f70  VideoStateFlagGet  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00493f70.md; 5B leaf; getter DAT_00771a04; no U/S
+2026-05-22  00494460  VideoClose  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00494460.md; 31B; FUN_00494320+FUN_004c7650+zero globals; S-3955 S-3956
+2026-05-22  00495120  TimerInit  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00495120.md; 42B; QueryPerformanceFrequency→DAT_00771e70/e74; no U/S
+2026-05-22  004951f0  D3DDeviceCreate  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/004951f0.md; 121B; ShowCursor(0); D3DCAPS9 VertexShaderVersion+PixelShaderVersion; U-3923 U-3924 U-3925; S-3957..S-3961
+2026-05-22  00495270  HWNDGet  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00495270.md; 11B; wrapper FUN_00499710→*param_1; S-3962
+2026-05-22  004954f0  HardwareShutdown  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/004954f0.md; 44B; ShowCursor(1)+D3D+input+DInput8 release sequence; U-3926; S-3963 S-3964
+2026-05-22  00495580  DInputRelease  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00495580.md; 41B; COM vtable+8 Release(); clears DAT_00771e78; S-3965
+2026-05-22  004955c0  thunk_DInputRelease  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/004955c0.md; 4B thunk→FUN_00495580; no new U/S
+2026-05-22  00495780  DInputIsAcquired  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00495780.md; 11B bool wrapper→FUN_004955d0; S-3966
+2026-05-22  00496010  DInputShutdown  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/00496010.md; 45B; FUN_00495e80+FUN_004b6520(0x1120 zero); U-3927; S-3967 S-3968
+2026-05-22  004960a0  DInputInit  C1->C2  skeleton-prep-s1 recovery; plate re/analysis/skeleton_prep_boot_winmain_a/004960a0.md; 49B; FUN_00495520+FUN_00496040; deadzone 0x10/0.35f; S-3969 S-3970

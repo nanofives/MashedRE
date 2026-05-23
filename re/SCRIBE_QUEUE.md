@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-22  skeleton-prep-s1-20260522  work_type=promote-c2  session=skeleton-prep-s1  branch=c1-c2/skeleton-prep-s1  bucket=re/analysis/skeleton_prep_boot_winmain_a  rvas=0x00492440,0x004927c0,0x00492e60,0x00493640,0x00493f70,0x00494460,0x00495120,0x004951f0,0x00495270,0x004954f0,0x00495580,0x004955c0,0x00495780,0x00496010,0x004960a0  count=15  new-U=U-3921..U-3927  new-S=S-3937..S-3970
 
 ## Drained
 
