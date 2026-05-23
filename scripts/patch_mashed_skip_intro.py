@@ -1,111 +1,117 @@
-# One-time on-disk patch of MASHED.exe to skip the HardwareShowIntroVideo playback.
+# Replace MASHED's intro/splash .mpg videos with a 1-frame empty MPEG to skip
+# intro playback without binary-patching the game.
 #
-# Background: MASHED plays multi-second intro/splash videos (supersonic.mpg,
-# empire.mpg, intro.mpg) before reaching main menu. This makes
-# canonical-observation Frida runs slower (BOOT_WAIT must clear intro), and
-# slows manual testing.
+# Approach (credit: SciLor's MashedRunner — see re/prior_art/MashedRunner/Intro.cs):
+# the game's HardwareShowIntroVideo (FUN_00495350 at 0x00495350) cycles through
+# 4 intro stages, each playing a .mpg via DirectShow. Each stage's loop exits
+# when the DirectShow source pin signals end-of-stream. So if we replace each
+# .mpg with a tiny (1-frame) empty MPEG, the loop exits in microseconds and
+# the function returns normally with all state properly initialized.
 #
-# Approach: replace the entry byte of HardwareShowIntroVideo (FUN_00495350)
-# with `C3` (RET). The function becomes a no-op — caller's stack stays clean
-# (CALL pushed return addr, RET pops it; no prolog/epilog mismatch).
+# This avoids the 3 binary-patch approaches that all crashed MASHED at t+3-6s
+# (NOPing the call site, RET at function entry, or .asi hook with setup+
+# cleanup but no playback). See re/analysis/intro_skip_investigation.md for
+# the failed attempts.
 #
-# Why not NOP the call site at 0x00402838: the next call (FUN_00494c80) is
-# DirectShow filter-graph setup for the menu's small.mpg background video,
-# which relies on COM apartment state initialized inside FUN_00495350's
-# per-stage video loader (FUN_00494a80). NOPing just the intro call leaves
-# the menu setup attempting CoCreateInstance against an uninitialized
-# apartment and crashes. Replacing FUN_00495350 with a clean RET preserves
-# the caller's flow while skipping all video playback.
+# Why it works: the playback LOOP runs once-per-stage (no skip), but each
+# iteration finishes immediately because the empty MPEG has no frames after
+# the first. DirectShow filter graph + RW renderer state are all properly
+# set up + torn down between stages.
 #
-# FUN_00495350 original prolog (16 bytes at file 0x95350):
-#   55 8b ec 83 e4 f8 83 ec 40 53 55 56 57 33 db 53
-#   = PUSH EBP; MOV EBP, ESP; AND ESP, ~7; SUB ESP, 0x40; PUSH EBX/EBP/ESI/EDI; XOR EBX, EBX; PUSH EBX
-#
-# Patch: write `C3` (RET) at file 0x95350. The function returns immediately.
-# Per C2 attestation (analysis note re/analysis/promote_c2_launch_handshake/),
-# FUN_00495350 is "void(void)" so the immediate RET is calling-convention safe.
-#
-# Result: MASHED still calls HardwareShowIntroVideo (no caller change), but
-# the function returns immediately. Boot continues directly to font loading,
-# menu setup, main menu — typically <1s vs ~8-15s with intro playback.
+# Files replaced (5 of 6 .mpg files in toastart/pc/movies/):
+#   empire.mpg, intro.mpg, renderware.mpg, small.mpg, supersonic.mpg
+# Kept as-is:
+#   frontend.mpg — looping menu background video (would be visible empty)
 #
 # Safety:
-#   1. Original preserved at MASHED.exe.unpatched (created only on first run).
-#   2. Pre-patch byte signature verified before writing; re-running is no-op.
-#   3. Restore by removing the patched file and renaming .unpatched back.
-import hashlib
+#   1. Originals backed up to toastart/pc/movies/backup/ (first run only).
+#   2. Re-running is a no-op if backup already exists.
+#   3. Restore by running with --restore flag, OR manually move backup/*.mpg
+#      back over toastart/pc/movies/.
 import shutil
 import sys
 from pathlib import Path
 
-ROOT       = Path(__file__).resolve().parent.parent
-MASHED_EXE = ROOT / 'original' / 'MASHED.exe'
-BACKUP     = ROOT / 'original' / 'MASHED.exe.unpatched'
+ROOT          = Path(__file__).resolve().parent.parent
+MOVIES_DIR    = ROOT / 'original' / 'toastart' / 'pc' / 'movies'
+BACKUP_DIR    = MOVIES_DIR / 'backup'
+EMPTY_MPG_SRC = ROOT / 're' / 'prior_art' / 'MashedRunner' / 'tmp' / 'SciLorsEmptyVideo.mpg'
 
-# File offset of FUN_00495350 entry. RVA 0x00495350 - imagebase 0x00400000
-# = 0x00095350. .text is mapped 1:1 in this binary so file_off = RVA - 0x400000.
-PATCH_OFFSET = 0x00095350  # in MASHED.exe file
-PATCH_LEN    = 1
-
-# Original prolog first byte: 0x55 (PUSH EBP).
-# Replacement: 0xC3 (RET — function exits before doing anything).
-PRE_PATCH  = bytes.fromhex('55')
-POST_PATCH = bytes.fromhex('c3')
-
-ANCHOR_SHA = 'bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e'
+# Per SciLor's MashedRunner Mashed.cs VIDEO_NAMES — 5 intro stage videos.
+# frontend.mpg is intentionally excluded (menu background loop).
+VIDEO_NAMES = ['empire.mpg', 'intro.mpg', 'renderware.mpg', 'small.mpg', 'supersonic.mpg']
 
 
-def sha256_of(path: Path) -> str:
-    h = hashlib.sha256()
-    h.update(path.read_bytes())
-    return h.hexdigest()
+def apply() -> int:
+    if not MOVIES_DIR.exists():
+        print(f'FATAL: {MOVIES_DIR} not found.', file=sys.stderr)
+        return 1
+    if not EMPTY_MPG_SRC.exists():
+        print(f'FATAL: empty-video resource not found at {EMPTY_MPG_SRC}', file=sys.stderr)
+        return 2
+
+    BACKUP_DIR.mkdir(exist_ok=True)
+    empty_bytes = EMPTY_MPG_SRC.read_bytes()
+    replaced = 0
+    already_patched = 0
+
+    for name in VIDEO_NAMES:
+        target = MOVIES_DIR / name
+        backup = BACKUP_DIR / name
+        if not target.exists():
+            print(f'  skip: {name} not present in {MOVIES_DIR.name}/')
+            continue
+        target_size = target.stat().st_size
+        if target_size == len(empty_bytes) and target.read_bytes() == empty_bytes:
+            already_patched += 1
+            print(f'  noop: {name} is already the empty video')
+            continue
+        # First-run backup (don't overwrite an existing backup).
+        if not backup.exists():
+            shutil.copy2(target, backup)
+            print(f'  backed up: {name} -> backup/{name} ({target_size} bytes)')
+        target.write_bytes(empty_bytes)
+        replaced += 1
+        print(f'  replaced: {name} ({target_size} -> {len(empty_bytes)} bytes)')
+
+    print()
+    print(f'Result: {replaced} replaced, {already_patched} already patched.')
+    if replaced > 0:
+        print(f'Intro skip active. MASHED.exe will boot to main menu in <2s.')
+    return 0
+
+
+def restore() -> int:
+    if not BACKUP_DIR.exists():
+        print(f'No backup to restore from at {BACKUP_DIR}', file=sys.stderr)
+        return 1
+    restored = 0
+    for name in VIDEO_NAMES:
+        backup = BACKUP_DIR / name
+        target = MOVIES_DIR / name
+        if not backup.exists():
+            print(f'  skip: backup/{name} not found')
+            continue
+        if target.exists():
+            target.unlink()
+        shutil.move(str(backup), str(target))
+        restored += 1
+        print(f'  restored: backup/{name} -> {name}')
+    # Remove backup dir if empty
+    try:
+        BACKUP_DIR.rmdir()
+        print(f'  removed empty backup/ directory')
+    except OSError:
+        pass
+    print()
+    print(f'Result: {restored} restored.')
+    return 0
 
 
 def main() -> int:
-    if not MASHED_EXE.exists():
-        print(f'FATAL: {MASHED_EXE} not found.', file=sys.stderr)
-        return 1
-
-    # First-run backup. Don't overwrite an existing backup.
-    if not BACKUP.exists():
-        # Verify the source file matches the anchor SHA before backing it up.
-        live = sha256_of(MASHED_EXE)
-        if live != ANCHOR_SHA:
-            print(
-                f'WARNING: {MASHED_EXE.name} SHA-256 = {live}; expected anchor '
-                f'{ANCHOR_SHA}. Refusing to back up — this might be a different '
-                f'version OR a previously-patched binary missing its .unpatched.',
-                file=sys.stderr,
-            )
-            return 2
-        shutil.copy2(MASHED_EXE, BACKUP)
-        print(f'Backed up {MASHED_EXE.name} -> {BACKUP.name} (first run).')
-
-    data = bytearray(MASHED_EXE.read_bytes())
-    region = bytes(data[PATCH_OFFSET:PATCH_OFFSET + PATCH_LEN])
-
-    if region == POST_PATCH:
-        print(f'NOP: {MASHED_EXE.name} already patched at file 0x{PATCH_OFFSET:06x}; nothing to do.')
-        return 0
-
-    if region != PRE_PATCH:
-        print(
-            f'FATAL: {MASHED_EXE.name} at file 0x{PATCH_OFFSET:06x} has unexpected bytes:\n'
-            f'  found:    {region.hex()}\n'
-            f'  expected: {PRE_PATCH.hex()}\n'
-            f'Refusing to patch — manually restore MASHED.exe.unpatched first.',
-            file=sys.stderr,
-        )
-        return 3
-
-    data[PATCH_OFFSET:PATCH_OFFSET + PATCH_LEN] = POST_PATCH
-    MASHED_EXE.write_bytes(bytes(data))
-    print(
-        f'PATCHED: {MASHED_EXE.name} at file 0x{PATCH_OFFSET:06x} (RVA 0x{0x00400000 + PATCH_OFFSET:08x}):\n'
-        f'  {PRE_PATCH.hex()}  ->  {POST_PATCH.hex()}\n'
-        f'Intro/splash video calls are now NOPed; MASHED boots straight to menu.'
-    )
-    return 0
+    if len(sys.argv) > 1 and sys.argv[1] == '--restore':
+        return restore()
+    return apply()
 
 
 if __name__ == '__main__':
