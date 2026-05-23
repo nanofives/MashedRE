@@ -138,6 +138,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\LowRvaMixed_q3.cpp" ^
     "Render\D3D9Helpers_q5.cpp" ^
     "Render\TextureLoader_q6.cpp" ^
+    "Render\TextureLoaderCluster.cpp" ^
     "Boot\LaunchHandshake.cpp" ^
     "Render\FrameWorldPasses.cpp" ^
     "Render\PerModeRender.cpp" ^
