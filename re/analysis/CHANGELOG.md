@@ -1781,3 +1781,17 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  0045bae0  FUN_0045bae0  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/0045bae0.md; powerup init+TXD+Lua; S-3987..S-3994; U-3936
 2026-05-22  00433f40  FUN_00433f40  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00433f40.md; RaceEndFadeOverlay; S-3995..S-4005; U-3937 U-3938
 2026-05-22  0043d7c0  FUN_0043d7c0  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/0043d7c0.md; transition FSM; S-4006..S-4026; U-3939 U-3940 U-3941
+2026-05-22  00431b10  FUN_00431b10  C1->C2  re/analysis/skeleton_prep_high_leverage/00431b10.md; DAT_007f0f10=2 setter; pure leaf; skeleton-prep-s5
+2026-05-22  004e4320  FUN_004e4320  C1->C2  re/analysis/skeleton_prep_high_leverage/004e4320.md; DAT_007d716c slot+0xc setter; skeleton-prep-s5
+2026-05-22  004e4350  FUN_004e4350  C1->C2  re/analysis/skeleton_prep_high_leverage/004e4350.md; DAT_007d716c slot clearer; pure leaf; skeleton-prep-s5
+2026-05-22  004c1480  FUN_004c1480  C1->C2  re/analysis/skeleton_prep_high_leverage/004c1480.md; RwFrameTransform+dirty-list insert; skeleton-prep-s5
+2026-05-22  00403c60  FUN_00403c60  C1->C2  re/analysis/skeleton_prep_high_leverage/00403c60.md; 4x sprite draw calls spriteIDs 554/555; skeleton-prep-s5
+2026-05-22  004c3040  sub_004c3040  C1->C2  re/analysis/skeleton_prep_high_leverage/004c3040.md; RwEngineClose wrapper; skeleton-prep-s5
+2026-05-22  004c3270  sub_004c3270  C1->C2  re/analysis/skeleton_prep_high_leverage/004c3270.md; RwEngineStop wrapper; skeleton-prep-s5
+2026-05-22  00550390  sub_00550390  C1->C2  re/analysis/skeleton_prep_high_leverage/00550390.md; RW linked-list teardown+DeleteCriticalSection; skeleton-prep-s5
+2026-05-22  00558470  sub_00558470  C1->C2  re/analysis/skeleton_prep_high_leverage/00558470.md; 2x vtable[0x10c] free+zero; pure leaf; skeleton-prep-s5
+2026-05-22  004c5930  sub_004c5930  C1->C2  re/analysis/skeleton_prep_high_leverage/004c5930.md; active-handle guard+circular-list traversal+doubly-linked unlink+vtable[0x11c]; skeleton-prep-s5
+2026-05-22  004c30b0  FUN_004c30b0  C1->C2  re/analysis/skeleton_prep_high_leverage/004c30b0.md; RwEngineOpen wrapper; skeleton-prep-s5
+2026-05-22  004c32b0  FUN_004c32b0  C1->C2  re/analysis/skeleton_prep_high_leverage/004c32b0.md; RwEngineInit wrapper; skeleton-prep-s5
+2026-05-22  005581f0  FUN_005581f0  C1->C2  re/analysis/skeleton_prep_high_leverage/005581f0.md; null-guard free or error; skeleton-prep-s5
+2026-05-22  00484170  FUN_00484170  C1->C2  re/analysis/skeleton_prep_high_leverage/00484170.md; vtable[0x108] alloc 24B record; skeleton-prep-s5
