@@ -1703,3 +1703,17 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-22  00550b00  VfsFileExists  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550bc0  VfsStreamGetType  C3->C4  observe_c4_save_hooks_2026-05-22 boot_main_menu_idle_15s; install_ok=True alive_throughout=True
 2026-05-22  00550980  VfsStreamRead  C2->C3  Frida A/B GREEN 10/10 bit-identical; fixed arg-order (buf,element_size,count,ctx) + dispatch-deref bug; ABI confirmed disasm Ghidra pool10; caller RwStreamWrite C4
+2026-05-22  004cbc60  FUN_004cbc60  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/004cbc60.md; trivial setter DAT_007d4598=param_1
+2026-05-22  004cbc70  FUN_004cbc70  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/004cbc70.md; trivial getter returns DAT_007d4598
+2026-05-22  004cbc80  FUN_004cbc80  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/004cbc80.md; trivial setter DAT_007d459c=param_1
+2026-05-22  004723d0  FUN_004723d0  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/004723d0.md; pure data init 10 blocks at 0x00691500; U-3940
+2026-05-22  00484130  FUN_00484130  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00484130.md; vtable[slot67] null-guard destructor; returns 1; U-3941
+2026-05-22  00467010  FUN_00467010  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00467010.md; 9B two-step shutdown; S-3937 S-3938; U-3936
+2026-05-22  00467020  FUN_00467020  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00467020.md; 3-field destructor; S-3939 S-3940 S-3941; U-3937
+2026-05-22  00467070  FUN_00467070  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00467070.md; pair-destructor; S-3942 S-3943 S-3944; U-3938 U-3939
+2026-05-22  004841d0  FUN_004841d0  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/004841d0.md; zero 0x100 dwords+84x FUN_004840f0; S-3946; U-3942 U-3943
+2026-05-22  00448700  FUN_00448700  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00448700.md; 100-iter loop+param writes; S-3945; U-3944 U-3945
+2026-05-22  0045b930  FUN_0045b930  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/0045b930.md; 5 shutdowns+fn-ptr dispatch; S-3947..S-3952; U-3946
+2026-05-22  0045bae0  FUN_0045bae0  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/0045bae0.md; powerup init+TXD+Lua; S-3953..S-3960; U-3932
+2026-05-22  00433f40  FUN_00433f40  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/00433f40.md; RaceEndFadeOverlay; S-3961..S-3971; U-3933 U-3934
+2026-05-22  0043d7c0  FUN_0043d7c0  C1->C2  skeleton-prep-s4 recovery; plate re/analysis/skeleton_prep_render/0043d7c0.md; transition FSM; S-3972..S-3992; U-3935 U-3936 U-3937
