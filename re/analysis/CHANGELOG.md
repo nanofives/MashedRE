@@ -1803,3 +1803,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_high_leverage  writes=14  errors=0
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=scribe-audit-s6  writes=0  errors=0  note=work_type=scribe-audit, no plate writes (notes only)
 2026-05-23  sweep-20260523-0118  scribe-release  buckets=6 drained (s1, s1-dup, s2, s3, s4, s5, s6)  total_writes=72 plates+72 bookmarks  errors=0
+2026-05-23  00426670  WorldRenderDispatch_Begin  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4320 C2
+2026-05-23  004266b0  WorldRenderDispatch_End  C2->C3  c3-batch-r-s3; reimpl Render/FrameWorldPasses.cpp; int_scalar 10/10 GREEN void_match; path2 JMP PASS; callers C2; callee FUN_004e4350 C2

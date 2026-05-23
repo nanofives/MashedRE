@@ -8259,4 +8259,42 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ── c3-batch-r session 3: frame world render passes ─────────────────────────
+
+    # 0x00426670  WorldRenderDispatch_Begin
+    # void(int camera_ptr): guard DAT_0066d704; selects world-A/B handle;
+    # calls FUN_004e4320(world_handle, camera_ptr).
+    # At quiescent main menu, DAT_0066d704 == 0 → early return on all tests.
+    # Strategy: int_scalar; void_match at menu → GREEN.
+    # Anti-island: callers FUN_0040df20/FUN_00492e90 (both C2); callee FUN_004e4320 (C2).
+    # ref: re/analysis/render_promote_c2_track_loader/0x00426670.md
+    'world_render_dispatch_begin': {
+        'rva':            0x00426670,
+        'export':         'WorldRenderDispatch_Begin',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # 10 vectors; DAT_0066d704 == 0 at menu → all take the early-return
+        # path → void_match → GREEN.  param_1 is never dereferenced.
+        'path1_tests':    [0, 1, 2, 100, 0xFFFF, 0x1234, 0xDEAD, 0x4321, 0xBEEF, 0xABCD],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004266b0  WorldRenderDispatch_End
+    # void(int camera_ptr): exact mirror of WorldRenderDispatch_Begin using
+    # FUN_004e4350 instead of FUN_004e4320.  Same guard, same world-A/B selector.
+    # Strategy: identical to world_render_dispatch_begin (int_scalar, void_match).
+    # Anti-island: callers FUN_0040df20/FUN_00492e90 (both C2); callee FUN_004e4350 (C2).
+    # ref: re/analysis/render_promote_c2_track_loader/0x004266b0.md
+    'world_render_dispatch_end': {
+        'rva':            0x004266b0,
+        'export':         'WorldRenderDispatch_End',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # 10 vectors; same early-return reasoning as world_render_dispatch_begin.
+        'path1_tests':    [0, 1, 2, 100, 0xFFFF, 0x1234, 0xDEAD, 0x4321, 0xBEEF, 0xABCD],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
