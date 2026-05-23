@@ -1802,3 +1802,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_render  writes=14  errors=0
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_high_leverage  writes=14  errors=0
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=scribe-audit-s6  writes=0  errors=0  note=work_type=scribe-audit, no plate writes (notes only)
+2026-05-23  sweep-20260523-0118  scribe-release  buckets=6 drained (s1, s1-dup, s2, s3, s4, s5, s6)  total_writes=72 plates+72 bookmarks  errors=0
