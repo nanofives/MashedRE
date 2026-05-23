@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-23  lever3-libpng-20260523T150000  lever3-libpng-bulk-attest  promoted=152 C1->C2 (libpng/zlib band)  scope=0x00513f90..0x0052caf0  enumerated=152 in CSV at C1 promoted; 0 not found; 0 already C2+; attestation=calibrated libpng/zlib band (statically-linked libpng 1.x + zlib 1.x; anchors: png_write_data@00516bb0 "Call to NULL write function"; png_write_tRNS@0051e230; zlib_crc32@00522970; zlib_inflate@00522ce0 "unknown compression method"; inflate_fast@0052c7a0 "invalid literal/length code"; lower=00513f90 __setjmp3+png_helper; upper=0052caf0 inflate_fast body_end)
 2026-05-23  0x00492770  MainLoopInit  C2->C3  hot-path-behavioral-observation; frida.spawn+NO-Interceptor survival; all 4 hooks GREEN 30s idle main menu; boot subsystem; U-3928..U-3931 retained
 2026-05-23  0x00493480  FpsDiscretise  C2->C3  hot-path-behavioral-observation; frida.spawn+NO-Interceptor survival; GREEN 30s; U-3933 RESOLVED DAT_005cc948=1/3000.0f; util subsystem
 2026-05-23  0x004926c0  AudioTickAndAvg  C2->C3  hot-path-behavioral-observation; frida.spawn+NO-Interceptor survival; GREEN 30s; U-3932 retained; boot subsystem
