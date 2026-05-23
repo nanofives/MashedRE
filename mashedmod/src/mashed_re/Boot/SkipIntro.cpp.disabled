@@ -1,0 +1,53 @@
+// SkipIntro.cpp — make HardwareShowIntroVideo skip the 4 intro stages
+// without their per-stage playback loops, while still running each stage's
+// setup + cleanup so downstream state (DAT_00771a18, DAT_00771a04) is
+// properly initialized and torn down.
+//
+// Original FUN_00495350 (0x00495350) plays 4 stages in sequence:
+//   for stage in [1,2,3,4]:
+//     FUN_00494a80(0, stage, 0)         // setup: load video, set DAT_00771a18/a04/a08
+//     FUN_00493f80(&dur1, &dur2)         // compute durations (local vars only)
+//     loop:
+//       FUN_004671a0(0) + FUN_00492d20() + FUN_00494480(0)  // render frame
+//       Sleep(5)
+//       if FUN_00493f70(0) == 0 or input pressed: break
+//     FUN_00494460(0)                    // cleanup: destroy DAT_00771a18, zero flags
+//
+// This reimpl removes the per-stage playback loop but preserves setup +
+// cleanup, so DAT_00771a18 / DAT_00771a04 / DAT_00771a08 end up at the same
+// post-intro state as if the videos had played.
+//
+// Original RVA: 0x00495350. Signature: void(void). __cdecl.
+//
+// Note: this is an INTRO-SKIP hook, not a faithful reimplementation. It is
+// installed via RH_ScopedInstall but the C2 attestation of "video playback
+// loop" is NOT preserved. The hook is opt-in: future C3 promotion of this
+// function should be done from a faithful reimpl, not this skip-hook.
+
+#include "../Core/HookSystem.h"
+#include <cstdint>
+
+// Forward-declare the original-side helpers we call via passthrough.
+// Use the original RVAs directly (the original implementations are still in
+// the patched MASHED.exe; we just bypass FUN_00495350's body).
+typedef void (__cdecl *Pfn_FUN_00494a80)(std::uint32_t, std::uint32_t, std::uint32_t);
+typedef void (__cdecl *Pfn_FUN_00493f80)(float*, float*);
+typedef void (__cdecl *Pfn_FUN_00494460)(void);
+
+static Pfn_FUN_00494a80 s_FUN_00494a80 = reinterpret_cast<Pfn_FUN_00494a80>(0x00494a80);
+static Pfn_FUN_00493f80 s_FUN_00493f80 = reinterpret_cast<Pfn_FUN_00493f80>(0x00493f80);
+static Pfn_FUN_00494460 s_FUN_00494460 = reinterpret_cast<Pfn_FUN_00494460>(0x00494460);
+
+extern "C" __declspec(dllexport) void __cdecl HardwareShowIntroVideo_Skip()
+{
+    // Stages 1..4: setup then cleanup, no playback loop.
+    float dummy1 = 0.0f, dummy2 = 0.0f;
+    for (int stage = 1; stage <= 4; ++stage) {
+        s_FUN_00494a80(0, static_cast<std::uint32_t>(stage), 0);
+        s_FUN_00493f80(&dummy1, &dummy2);
+        s_FUN_00494460();
+    }
+}
+
+// 0x00495350 — HardwareShowIntroVideo, intro-skip variant
+RH_ScopedInstall(HardwareShowIntroVideo_Skip, 0x00495350);
