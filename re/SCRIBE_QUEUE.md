@@ -13,7 +13,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 ## Queued
 
 2026-05-22  skeleton-prep-s1  bucket=skeleton_prep_boot_winmain_a  rvas=0x00492440,0x004927c0,0x00492e60,0x00493640,0x00493f70,0x00494460,0x00495120,0x004951f0,0x00495270,0x004954f0,0x00495580,0x004955c0,0x00495780,0x00496010,0x004960a0  work_type=promote-c2  promotions=15xC1->C2  pool=Mashed_pool6  branch=c1-c2/skeleton-prep-s1  new-U=U-3921..U-3927  new-S=S-3937..S-3970  note=skeleton-prep batch s1 boot_winmain_callees_a; 15 C1->C2 promotions; boot/render/input/frontend/util subsystems; 00493640=RwPluginAttachChain 18-callee; 004927c0=race-FSM 12-state; 004951f0=D3DDeviceCreate; 00496010=DInputShutdown; 004960a0=DInputInit; all plates in re/analysis/skeleton_prep_boot_winmain_a/
-
+2026-05-22  skeleton-prep-s1-20260522  work_type=promote-c2  session=skeleton-prep-s1  branch=c1-c2/skeleton-prep-s1  bucket=re/analysis/skeleton_prep_boot_winmain_a  rvas=0x00492440,0x004927c0,0x00492e60,0x00493640,0x00493f70,0x00494460,0x00495120,0x004951f0,0x00495270,0x004954f0,0x00495580,0x004955c0,0x00495780,0x00496010,0x004960a0  count=15  new-U=U-3921..U-3927  new-S=S-3937..S-3970
 
 ## Drained
 

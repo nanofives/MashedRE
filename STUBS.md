@@ -1031,3 +1031,37 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-3935 | 0x00494f40 FUN_00494f40 | 0x00494fd0 FUN_00494fd0 | render | passthrough | 2026-05-20 | gamma LUT generator; takes two stack out-param values from GetGammaRamp call; depth-2; batch-ab-s2 |
 | S-3936 | 0x004c75e0 FUN_004c75e0 | 0x004b5750 FUN_004b5750 | render | passthrough | 2026-05-20 | viewport origin getter; (viewport*, short*x, short*y) -> void; 26 bytes; depth-1 callee of 0x004b5750 textured-quad emitter; not recursed; batch-ab-s3 promote_c1_high_ab3 |
 | S-3927 | 0x005c4d30 FUN_005c4d30 | 0x005555b0 FUN_005555b0 | render | passthrough | 2026-05-20 | glyph metric base resolver; takes *(font+0x134) arg; returns base ptr for glyph records; depth-1 callee of 0x005555b0 word-wrap layout; not recursed; batch-ab-s3 promote_c1_high_ab3 |
+| S-3937 | 0x004e5d30 FUN_004e5d30 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #1 in 18-chain; RW addr range; depth-1; skeleton-prep-s1 |
+| S-3938 | 0x00543e50 FUN_00543e50 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #2 in 18-chain; skeleton-prep-s1 |
+| S-3939 | 0x0053eaa0 FUN_0053eaa0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #3 in 18-chain; skeleton-prep-s1 |
+| S-3940 | 0x0053d0b0 FUN_0053d0b0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #4 in 18-chain; skeleton-prep-s1 |
+| S-3941 | 0x00538600 FUN_00538600 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #5 in 18-chain; skeleton-prep-s1 |
+| S-3942 | 0x00534a80 FUN_00534a80 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #6 in 18-chain; skeleton-prep-s1 |
+| S-3943 | 0x00534920 FUN_00534920 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #7 in 18-chain; skeleton-prep-s1 |
+| S-3944 | 0x00546530 FUN_00546530 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #8 in 18-chain; skeleton-prep-s1 |
+| S-3945 | 0x005336d0 FUN_005336d0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #9 in 18-chain; skeleton-prep-s1 |
+| S-3946 | 0x0052e310 FUN_0052e310 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #10 in 18-chain; skeleton-prep-s1 |
+| S-3947 | 0x00544d20 FUN_00544d20 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #11 in 18-chain; skeleton-prep-s1 |
+| S-3948 | 0x00549640 FUN_00549640 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #12 in 18-chain; skeleton-prep-s1 |
+| S-3949 | 0x005578a0 FUN_005578a0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #13 in 18-chain; skeleton-prep-s1 |
+| S-3950 | 0x005515a0 FUN_005515a0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #14 in 18-chain; skeleton-prep-s1 |
+| S-3951 | 0x0052d8e0 FUN_0052d8e0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #15 (void/unconditional); depth-1; skeleton-prep-s1 |
+| S-3952 | 0x0057c270 FUN_0057c270 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #16 in 18-chain; skeleton-prep-s1 |
+| S-3953 | 0x00561ee0 FUN_00561ee0 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #17 in 18-chain; skeleton-prep-s1 |
+| S-3954 | 0x00472380 FUN_00472380 | 0x00493640 FUN_00493640 | boot | passthrough | 2026-05-22 | RW plugin-attach #18 (terminal; return propagated); skeleton-prep-s1 |
+| S-3955 | 0x00494320 FUN_00494320 | 0x00494460 sub_00494460 | frontend | passthrough | 2026-05-22 | video teardown step called first in VideoClose; no args; skeleton-prep-s1 |
+| S-3956 | 0x004c7650 FUN_004c7650 | 0x00494460 sub_00494460 | frontend | passthrough | 2026-05-22 | video context release; takes handle from DAT_00771a18; skeleton-prep-s1 |
+| S-3957 | 0x00499400 FUN_00499400 | 0x004951f0 FUN_004951f0 | render | passthrough | 2026-05-22 | D3D device creation attempt; takes DAT_006147bc as arg; returns success flag; skeleton-prep-s1 |
+| S-3958 | 0x004cbb60 FUN_004cbb60 | 0x004951f0 FUN_004951f0 | render | passthrough | 2026-05-22 | returns D3D caps pointer stored at DAT_00771e58; skeleton-prep-s1 |
+| S-3959 | 0x00498b60 FUN_00498b60 | 0x004951f0 FUN_004951f0 | render | passthrough | 2026-05-22 | failure cleanup / D3D teardown; no args; skeleton-prep-s1 |
+| S-3960 | 0x00498bf0 FUN_00498bf0 | 0x004951f0 FUN_004951f0 | render | passthrough | 2026-05-22 | display-active flag getter; returns bool; skeleton-prep-s1 |
+| S-3961 | 0x00496400 FUN_00496400 | 0x004951f0 FUN_004951f0 | util | passthrough | 2026-05-22 | printf-style debug logger; format+args; skeleton-prep-s1 |
+| S-3962 | 0x00499710 FUN_00499710 | 0x00495270 FUN_00495270 | boot | passthrough | 2026-05-22 | returns HWND of game window; no args; skeleton-prep-s1 |
+| S-3963 | 0x0045b350 FUN_0045b350 | 0x004954f0 FUN_004954f0 | boot | passthrough | 2026-05-22 | shutdown step between D3D release and input release; no args; skeleton-prep-s1 |
+| S-3964 | 0x00496370 thunk_FUN_00496370 | 0x004954f0 FUN_004954f0 | boot | passthrough | 2026-05-22 | teardown thunk step 3; no args; skeleton-prep-s1 |
+| S-3965 | 0x004987b0 FUN_004987b0 | 0x00495580 FUN_00495580 | util | passthrough | 2026-05-22 | debug string logger; takes format/literal string arg; skeleton-prep-s1 |
+| S-3966 | 0x004955d0 FUN_004955d0 | 0x00495780 FUN_00495780 | input | passthrough | 2026-05-22 | DInput active/acquired state check; returns int; skeleton-prep-s1 |
+| S-3967 | 0x00495e80 FUN_00495e80 | 0x00496010 FUN_00496010 | input | passthrough | 2026-05-22 | unacquire+release all active joypad devices; no args; skeleton-prep-s1 |
+| S-3968 | 0x004b6520 FUN_004b6520 | 0x00496010 FUN_00496010 | util | passthrough | 2026-05-22 | buffer zeroing helper; takes (ptr, byte_count); skeleton-prep-s1 |
+| S-3969 | 0x00495520 FUN_00495520 | 0x004960a0 FUN_004960a0 | input | passthrough | 2026-05-22 | DI availability check; no args; return ignored; skeleton-prep-s1 |
+| S-3970 | 0x00496040 FUN_00496040 | 0x004960a0 FUN_004960a0 | input | passthrough | 2026-05-22 | DInput device enumeration/creation; no args; returns success flag; skeleton-prep-s1 |
