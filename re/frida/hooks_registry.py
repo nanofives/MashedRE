@@ -8259,4 +8259,86 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+
+    # 0x00493540  thunk_LaunchLangGate  (thunk_FUN_00495150)
+    # 4-byte JMP thunk to FUN_00495150 at 0x00495150.
+    # Inlined target: DInput init seq (QPC+DI8+joypad+kbd+remap); reads DAT_007719e8
+    # (lang-code switch 1->2..5->1) and DAT_006147c0 (cs-selector); returns
+    # (DAT_007719e4 == 0).
+    # Synthetic call: arg_type='none', zero args. Both sides may crash identically
+    # when DInput is not initialized; crash_equal_ok=True covers that case.
+    # arg_type='none' — both sides call with zero args; signature.args must be [].
+    # Anti-island: callee FUN_00495150 (C2); callers via WinMain chain.
+    # ref: re/analysis/promote_c2_launch_handshake/00493540.md
+    'launch_lang_gate': {
+        'rva':            0x00493540,
+        'export':         'thunk_LaunchLangGate',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+
+    # 0x00493550  thunk_EngineStopDispatch  (thunk_FUN_004938c0)
+    # 4-byte JMP thunk to FUN_004938c0 at 0x004938c0 (EngineStopHelper).
+    # Inlined target: 5 sequential void calls (teardown sequence).
+    # Synthetic call: arg_type='none', zero args. Calling teardown from main
+    # menu will crash or corrupt engine state — both sides crash identically.
+    # crash_equal_ok=True; arg_type='none'; signature.ret='void'.
+    # Anti-island: callee FUN_004938c0 (C2); callers via WinMain chain.
+    # ref: re/analysis/promote_c2_launch_handshake/00493550.md
+    'engine_stop_dispatch': {
+        'rva':            0x00493550,
+        'export':         'thunk_EngineStopDispatch',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+
+    # 0x00493560  thunk_HwExitDispatch  (thunk_FUN_004954f0)
+    # 4-byte JMP thunk to FUN_004954f0 at 0x004954f0 (HardwareShutdown).
+    # Inlined target: ShowCursor(1) gate, D3D teardown, input teardown; returns 0.
+    # Synthetic call: arg_type='none', zero args. Calling hardware-exit from main
+    # menu will crash identically on both sides. crash_equal_ok=True.
+    # Anti-island: callee FUN_004954f0 (C2); callers via WinMain chain.
+    # ref: re/analysis/promote_c2_launch_handshake/00493560.md
+    'hw_exit_dispatch': {
+        'rva':            0x00493560,
+        'export':         'thunk_HwExitDispatch',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+
+    # 0x004938c0  EngineStopHelper  (sub_004938c0)
+    # 24-byte function body: 5 sequential void calls, no branches, no globals.
+    # Calls: FUN_00558470 / FUN_00550390 / FUN_004c2f60 / FUN_004c3040 / FUN_004c3270.
+    # Synthetic call: arg_type='none', zero args. Teardown chain — calling from
+    # main menu will crash identically on both sides. crash_equal_ok=True.
+    # Anti-island: all 5 callees at C2; callers FUN_00492370 (WinMain chain),
+    #              thunk_FUN_004938c0 (0x00493550, C3 this session).
+    # [U-3860] callee semantics unknown at C2 — non-blocking for C3 promotion.
+    # ref: re/analysis/promote_c2_launch_handshake/004938c0.md
+    'engine_stop_helper': {
+        'rva':            0x004938c0,
+        'export':         'EngineStopHelper',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
