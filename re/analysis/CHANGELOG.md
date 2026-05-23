@@ -1799,3 +1799,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_boot_winmain_a  writes=15  errors=0
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_game_state  writes=15  errors=0
 2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_boot_winmain_b  writes=15  errors=0
+2026-05-23  sweep-20260523-0118  scribe-release  bucket=skeleton_prep_render  writes=14  errors=0
