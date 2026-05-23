@@ -146,6 +146,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\PerModeRender.cpp" ^
     "Render\MixedC3Sweep.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
+    "Boot\Wave3Cluster.cpp" ^
     "Audio\MixedC3Sweep.cpp" ^
     /link /DLL
 popd
