@@ -1877,3 +1877,13 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  0x004cc7f0  FUN_004cc7f0  C2->C3  boot-to-menu-canonical-wave0; count=7; RwFreeListCreateWrapper thin wrapper; Render/RenderSubmit_o4.cpp RH_ScopedInstall; log/mass_canonical_wave0.txt
 2026-05-23  0x004950b0  FUN_004950b0  C2->C3  hot-path-behavioral-implicit-via-wave0; per-frame QPC; excluded from Interceptor; hook installed in .asi; process alive+menu reached; log/mass_canonical_wave0.txt
 2026-05-23  mass-canonical-observe-wave0  release  promoted=6 C2->C3  stayed=10 (count=0: 00422ac0 004235b0 00428320 0042aa00 0042e5b0 00439210 00492e60 00493560 004cc6e0 005be140)
+
+2026-05-23  mass-canonical-wave2  0x00431ae0 DefaultParam_SetField04  C2->C3 via mass-canonical-wave2 (count=1 at boot-to-menu)
+2026-05-23  mass-canonical-wave2  0x00431af0 DefaultParam_SetField08  C2->C3 via mass-canonical-wave2 (count=1 at boot-to-menu)
+2026-05-23  mass-canonical-wave2  0x00431b00 DefaultParam_SetField00  C2->C3 via mass-canonical-wave2 (count=1 at boot-to-menu)
+2026-05-23  mass-canonical-wave2  0x004cc820 RwFreeListCreate  C2->C3 via mass-canonical-wave2 (count=35 at boot-to-menu — multi-call)
+2026-05-23  mass-canonical-wave2  0x004c5800 RwTexDictionarySetCurrent  C2->C3 via mass-canonical-wave2 (count=2)
+2026-05-23  mass-canonical-wave2  0x004c5820 RwTexDictionaryGetCurrent  C2->C3 via mass-canonical-wave2 (count=1)
+2026-05-23  mass-canonical-wave2  0x004c5a00 RwTextureCreate  C2->C3 via mass-canonical-wave2 (count=1)
+2026-05-23  mass-canonical-wave2  0x004c5ae0 RwTextureSetName  C2->C3 via mass-canonical-wave2 (count=1)
+2026-05-23  mass-canonical-wave2  0x004c5b50 RwTextureSetMaskName  C2->C3 via mass-canonical-wave2 (count=1)
