@@ -8259,4 +8259,77 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+
+    # =========================================================================
+    # c3-batch-r-s2 — boot_subsystem_init  (2026-05-23)
+    # Cluster: Boot/SubsystemInit.cpp
+    # 4 promotions; 1 deferred (DataZeroFill 0x004924f0 — side-effect-heavy).
+    # =========================================================================
+
+    # 0x00492270  SubsystemInit
+    # 30-byte gate: FUN_00493710(0) → if 0 return 0; else DisplayInit()+ViewportInit(); return 1.
+    # arg_type='none': zero-arg call; returns uint32 (0 or 1).
+    # Strategy: at main menu, RW is already initialised so FUN_00493710(0) returns non-zero;
+    # both orig and reimpl should return 1. crash_equal_ok=True (re-init side effects; but both
+    # sides are identical). Anti-island: caller sub_00492370 C2; callees FUN_00493710 C2,
+    # DisplayInit C2->C3 (this batch), ViewportInit C2->C3 (this batch).
+    # ref: re/analysis/boot_app_init/00492270.md
+    'subsystem_init': {
+        'rva':            0x00492270,
+        'export':         'SubsystemInit',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004921d0  DisplayInit
+    # 155-byte display init: reads RW video mode, sets viewport dims, loads LoadIcon TXD.
+    # arg_type='void': no args, void return. crash_equal_ok=True — side effects on globals
+    # DAT_0077195c and DAT_00771960 are identical between orig and reimpl; both sides call
+    # same stubs (passthrough to originals for S-3902..S-3905). Observable: no crash.
+    # Anti-island: caller SubsystemInit C2->C3 (this batch); callee FUN_004c2f00 C3.
+    # ref: re/analysis/boot_subsystem_d3/0x004921d0.md
+    'display_init': {
+        'rva':            0x004921d0,
+        'export':         'DisplayInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [None, None, None, None, None, None, None, None, None, None],
+        'path2_tests':    [None, None, None],
+    },
+
+    # 0x00428590  ViewportInit — DEFERRED (not in this registry)
+    # Deferred from c3-batch-r-s2: synthetic A/B is unreliable for this function.
+    # The reimpl (ViewportInit in Boot/SubsystemInit.cpp) calls 0x004c1bb0 and 0x004c1a00
+    # with single-arg cdecl, but those RVAs are patched by installed hooks
+    # (IntroSplashRenderState / IntroSplashVtableSlot6) that have 3-arg and 1-arg
+    # signatures respectively. On the first synthetic call orig path returns 1
+    # (fresh state succeeds), but reimpl crashes: the hook for 0x004c1a00
+    # (IntroSplashVtableSlot6) dispatches through vtable slot 6 of the camera handle.
+    # After the orig path's first call modifies camera state, the reimpl path gets
+    # corrupted live state and crashes (access violation at 0x0).
+    # Re-pickup: canonical-scenario (boot-time) Frida observation or a dedicated
+    # save/restore harness that resets the RW camera globals between orig and reimpl
+    # calls. Hook is authored and build-clean; C3 evidence path is canonical-scenario.
+    # See DEFERRED.md for tracking row.
+    # ref: re/analysis/boot_subsystem_d3/0x00428590.md
+
+    # 0x00492e60  SetDefaultViewWindow — DEFERRED (not in this registry)
+    # Deferred from c3-batch-r-s2: calling convention ambiguity on FUN_004c1c80.
+    # The analysis note describes FUN_004c1c80 as 1-arg cdecl (Ghidra shows it taking
+    # uVar1 only), but the actual function is likely __thiscall(RwCamera*, RwV2d*) per
+    # its description "viewport dims setter; stores param_2[0/1] at this+0x68/0x6c".
+    # Frida diff RED: reimpl crashes with "access violation accessing 0xffffffff" while
+    # orig runs cleanly. The 0xffffffff crash address matches the sentinel first-arg to
+    # FUN_004671a0, suggesting ECX/thiscall mismatch in FUN_004c1c80 invocation.
+    # Re-pickup: Ghidra disassembly of 0x00492e60 body to confirm arg count + calling
+    # convention of FUN_004c1c80 call site; fix reimpl accordingly. Hook is authored and
+    # build-clean. [UNCERTAIN U-3922] covers the 0xffffffff ambiguity.
+    # ref: re/analysis/skeleton_prep_boot_winmain_a/00492e60.md
+
 }

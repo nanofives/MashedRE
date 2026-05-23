@@ -102,6 +102,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Save\ReplayThunk.cpp" ^
     "Boot\CrtStartup.cpp" ^
     "Boot\Boot.cpp" ^
+    "Boot\SubsystemInit.cpp" ^
     "Util\TimerSetters.cpp" ^
     "Util\TimerSlot.cpp" ^
     "Util\UtilBatch.cpp" ^
