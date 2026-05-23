@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-23  0x00492270  SubsystemInit  C2->C3  c3-batch-r-s2; 30B gate: FUN_00493710(0)+DisplayInit+ViewportInit; Frida none arg_type GREEN 10/10 log/diff_subsystem_init.csv; Boot/SubsystemInit.cpp; caller sub_00492370 C2; callees FUN_00493710 C2 + DisplayInit C3 (this batch) + ViewportInit C2
+2026-05-23  0x004921d0  DisplayInit  C2->C3  c3-batch-r-s2; 155B display init: RW video-mode+dims+LoadIcon TXD; Frida void arg_type crash_equal_ok GREEN 10/10 log/diff_display_init.csv; Boot/SubsystemInit.cpp; stubs S-3902 S-3903 S-3904 S-3905 (all passthrough); caller SubsystemInit C3; callee FUN_004c2f00 C3
 2026-05-22  0x004a5984  CrtSehProlog  C3<-C2  DEMOTION: canonical-scenario bisect 2026-05-22; reimpl opens spurious frame (push ebp/mov ebp,esp) violating compiler-injected non-standard ABI; JMP patch corrupts SEH chain; confirmed sole crasher; Boot/CrtCompilerSupport.cpp
 2026-05-22  0x004a59bf  CrtSehEpilog  C3<-C2  DEMOTION: canonical-scenario bisect 2026-05-22; JMP hook corrupts SEH chain; confirmed independent crasher; Boot/CrtCompilerSupport.cpp
 2026-05-22  0x005c9d00  GetRaceEndTrigger  C3<-C2  DEMOTION: canonical-scenario bisect 2026-05-22; 2-byte function but JMP patch is 5 bytes overwriting 3 bytes past boundary into next function; confirmed independent crasher; Util/GameStateGetters.cpp
