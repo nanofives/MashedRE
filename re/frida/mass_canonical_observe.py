@@ -64,8 +64,33 @@ def _find_original(script_root: Path) -> Path:
 
 
 MASHED_EXE = _find_original(ROOT)
-ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
-OUT_FILE   = ROOT / 'log' / 'mass_canonical_observe.txt'
+
+# ASI path: prefer worktree-local build; fall back to main repo build.
+# (git worktrees share sources but build outputs live in the worktree root's
+# mashedmod/build/ which may not exist if the worktree was never built there.)
+def _find_asi(script_root: Path) -> Path:
+    local = script_root / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
+    if local.exists():
+        return local
+    # Fall back: look for the main repo's build output two levels up the tree.
+    # Worktree path pattern: <repo>/.worktrees/<name>/  →  <repo>/
+    parent = script_root.parent.parent
+    fallback = parent / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
+    if fallback.exists():
+        return fallback
+    return local  # return local (will fail pre-flight check with a clear message)
+
+ASI_PATH   = _find_asi(ROOT)
+
+# OUT_FILE: prefer main-repo log/ directory (shared; same pattern as MASHED_EXE fallback).
+def _find_log_dir(script_root: Path) -> Path:
+    local_log = script_root / 'log'
+    if local_log.exists():
+        return local_log
+    parent_log = script_root.parent.parent / 'log'
+    return parent_log
+
+OUT_FILE   = _find_log_dir(ROOT) / 'mass_canonical_observe.txt'
 
 # ---------------------------------------------------------------------------
 # 12 boot-once C2 candidates (RVA = VA for MASHED.exe ImageBase 0x00400000).
