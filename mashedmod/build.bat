@@ -134,6 +134,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Vehicle\ReplayCluster.cpp" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
+    "Vehicle\Wave3Cluster.cpp" ^
     "Util\SmallLeaves_o6.cpp" ^
     "Render\TrackLoaderMicros_p3.cpp" ^
     "Render\FrameHelpers_q2.cpp" ^
