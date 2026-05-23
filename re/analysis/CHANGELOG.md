@@ -1,6 +1,16 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-23  canonical-mass-observe-r2  BATCH-PROMOTE  9 hooks C2->C3 via boot-to-menu canonical observation round-2 (spawn+suspend); scenario=boot-to-menu-canonical-r2; log=log/mass_canonical_observe_r2.txt; reached_main_menu=True; 11 INCONCLUSIVE stay C2
+2026-05-23  0x00499ba0  sub_00499ba0  C2->C3  canonical-observation-r2; WindowCreate: CoInitialize+RegisterClassA+CreateWindowExA; count=1 30s menu GREEN
+2026-05-23  0x004cc160  FUN_004cc160  C2->C3  canonical-observation-r2; RwStreamClose equivalent (stream-context close dispatcher); count=1 30s menu GREEN
+2026-05-23  0x004b6540  thunk_FUN_004b6640  C2->C3  canonical-observation-r2; 4B TXD loader thunk; count=1 30s menu GREEN
+2026-05-23  0x004b6560  thunk_FUN_004b6610  C2->C3  canonical-observation-r2; 4B TXD loader thunk; count=1 30s menu GREEN
+2026-05-23  0x004b6610  FUN_004b6610  C2->C3  canonical-observation-r2; 19B TXD loader setter (param_1->DAT_007d3e5c; param_2->DAT_007d3e60); count=1 30s menu GREEN
+2026-05-23  0x00494f20  thunk_FUN_00494460  C2->C3  canonical-observation-r2; 5B boot thunk -> intro_splash path; count=3 (fires in intro_splash polling loop); 30s menu GREEN
+2026-05-23  0x00499730  FUN_00499730  C2->C3  canonical-observation-r2; 5B ptr-getter returns &DAT_00773818; count=1 30s menu GREEN
+2026-05-23  0x004a774d  __mtinitlocks  C2->C3  canonical-observation-r2; MSVC CRT __mtinitlocks 36-entry lock table; count=1 30s menu GREEN
+2026-05-23  0x004aa3e4  ___heap_select  C2->C3  canonical-observation-r2; MSVC CRT ___heap_select mode+size check; count=1 30s menu GREEN
 2026-05-23  0x004938c0  EngineStopHelper  C2->C3  recovery-item1; 24B teardown dispatcher: 5 sequential void calls; Frida teardown_call_pair GREEN 10/10 crash_equal_ok log/diff_engine_stop_helper.csv; Boot/LaunchHandshake.cpp; callers FUN_00492370 C2 + thunk_EngineStopDispatch C3; callees FUN_00558470/00550390/004c2f60/004c3040/004c3270 all C2; U-3860 callee-semantics non-blocking
 2026-05-23  0x00492270  SubsystemInit  C2->C3  c3-batch-r-s2; 30B gate: FUN_00493710(0)+DisplayInit+ViewportInit; Frida none arg_type GREEN 10/10 log/diff_subsystem_init.csv; Boot/SubsystemInit.cpp; caller sub_00492370 C2; callees FUN_00493710 C2 + DisplayInit C3 (this batch) + ViewportInit C2
 2026-05-23  0x004921d0  DisplayInit  C2->C3  c3-batch-r-s2; 155B display init: RW video-mode+dims+LoadIcon TXD; Frida void arg_type crash_equal_ok GREEN 10/10 log/diff_display_init.csv; Boot/SubsystemInit.cpp; stubs S-3902 S-3903 S-3904 S-3905 (all passthrough); caller SubsystemInit C3; callee FUN_004c2f00 C3
