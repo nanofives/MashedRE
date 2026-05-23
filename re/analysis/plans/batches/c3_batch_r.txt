@@ -1,0 +1,357 @@
+================================================================================
+c3_batch_r.txt — skeleton-to-menu C2->C3 promotion  —  2026-05-23  (PHASE-6)
+================================================================================
+
+Mode:           Sonnet 4.6 C2->C3 promotion (hook authoring + Frida bit-identity)
+Sessions:       5   (5x5/4/6/2 shape — smaller than 6x5 default to match the
+                   skeleton-filtered pool size of 22)
+Per session:    4-6 candidates  (hard cap 8 — see promote-c3-batch skill)
+Total candidates: 22
+Pool:           22 skeleton candidates that pass c3_filter_v4 after
+                skeleton_prep_ghidra_batch landed (sweep-20260523-0118).
+                Reference: re/analysis/plans/skeleton_to_menu_post_prep_passed.tsv
+Worktrees:      .worktrees/c3-batch-r-s1..s5 (pre-CREATED before agent launch
+                — see "Worktree pre-creation" below). Each session is bound
+                to its worktree via cd at start.
+Anchor binary:  original/MASHED.exe.unpatched SHA-256
+                BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+Why this batch (read before any session):
+- skeleton_prep_ghidra_batch landed 72 C1->C2 promotions; re-running
+  c3_filter_v4 shows 22 of 40 skeleton candidates are now gate-passable
+  (vs 3 pre-prep). This batch promotes them C2->C3.
+- These are WinMain-chain + frame-state-tree + RW-plugin functions, LARGER
+  per-RVA than recent render-leaf C3 batches (avg ~80-200B vs 20-50B leaves).
+- Some candidates are side-effect-heavy (main-loop, frame-dispatch, init
+  bookends). They may not synthetic-A/B well. Workers MUST defer rather
+  than guess on candidates that:
+    - mutate live globals in ways the harness can't reset
+    - call into non-leaf paths that aren't fully C2+
+    - require a running game loop to produce observable output
+- Yield expectation: 40-60% (vs 70-80% calibrated render-tier). 9-13
+  promotions of 22 attempted.
+
+Worktree pre-creation (BEFORE launching any agent — done by the main session):
+- Per feedback_parallel_fanout_gotchas gotcha #0 (2026-05-22 incident),
+  Agent subagents launched from one Claude session share the parent
+  working tree. Without pre-created worktrees, they all race on the
+  same hooks.csv / build.bat / hooks_registry.py.
+- Pre-create:
+    git worktree add -b c3/batch-r-s1 .worktrees/c3-batch-r-s1 main
+    git worktree add -b c3/batch-r-s2 .worktrees/c3-batch-r-s2 main
+    git worktree add -b c3/batch-r-s3 .worktrees/c3-batch-r-s3 main
+    git worktree add -b c3/batch-r-s4 .worktrees/c3-batch-r-s4 main
+    git worktree add -b c3/batch-r-s5 .worktrees/c3-batch-r-s5 main
+- Each session's FIRST command MUST be `cd <worktree-path>` followed by
+  git rev-parse --abbrev-ref HEAD verification.
+
+Read this BEFORE starting any session:
+- .claude/skills/promote-c3-batch/SKILL.md            (per-session template + caps)
+- .claude/skills/hook-author/SKILL.md                 (gta-reversed-style scaffolding)
+- .claude/skills/diff-original/SKILL.md               (Frida bit-identity workflow)
+- .claude/skills/re-classify/SKILL.md                 (C2->C3 promotion rubric)
+- re/CONFIDENCE.md                                    (C3 evidence requirements)
+- re/frida/diff_template.js                           (current arg_types — DO NOT invent new ones)
+- re/frida/hooks_registry.py                          (entries; appended in worktree, not main)
+- mashedmod/build.bat                                 (build target file list)
+- re/analysis/skeleton_call_tree.md                   (context: why each candidate matters)
+- re/analysis/phase6_prep.md                          (why this batch exists)
+
+WORKER REMINDERS (from today's post-mortems):
+- FIRST COMMAND in your session: `cd .worktrees/c3-batch-r-s<N>` + verify
+  `git rev-parse --abbrev-ref HEAD` prints c3/batch-r-s<N>. Do NOT operate
+  in the main worktree.
+- AFTER all RVAs complete, COMMIT on your branch (git log --oneline
+  c3/batch-r-s<N> ^main must show your commit BEFORE halting).
+- Use targeted `git add <files>`; NEVER `git add -A` (sweeps worktree
+  gitlinks; .gitignore excludes most but stay disciplined).
+- NEVER touch original/ directory. No rm, no git clean, no git reset on
+  parents.
+- Write PROMOTION_QUEUE.md row in YOUR branch's checkout, NOT main's.
+- DO NOT name an arg_type that isn't already in re/frida/diff_template.js
+  (per feedback_worker_invented_arg_types). If your candidate needs a new
+  signature shape, DEFER it and queue a harness-extension session prompt
+  in PROMOTION_QUEUE.md.
+- DEFER over guess: these are heavy WinMain-chain functions. If synthetic
+  A/B doesn't terminate or produces non-deterministic output, DEFER and
+  note why. Don't fake a C3 promotion.
+
+C3 evidence rubric reminder (re/CONFIDENCE.md):
+- Reimplementation written in mashedmod/src/mashed_re/<Subsystem>/
+- Build clean (mashedmod\build.bat exits 0)
+- Hooked via RH_ScopedInstall and runtime-toggleable
+- Frida diff GREEN on at least one test vector batch (10+ vectors)
+- At least one caller AND one callee at C2+ (anti-island rule)
+- No unresolved semantic/structural [UNCERTAIN] markers in body (filter
+  caught these but verify before authoring)
+- C4 promotion BLOCKED — that's canonical-scenario work, separate.
+
+================================================================================
+Session 1 — launch_handshake_thunks  (C2->C3, 4-fn batch — smallest, easiest)
+================================================================================
+
+Worktree:    .worktrees/c3-batch-r-s1/  (branch c3/batch-r-s1) — PRE-CREATED
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 4)
+Skill used:  promote-c3-batch
+Frida pool:  shared via scripts/frida_pool.sh
+
+# Mission
+4 launch-handshake thunks / engine-stop dispatchers. Smallest functions in
+the batch — mostly 5-50B wrapper bodies. Expected yield 4/4.
+
+# Pre-flight (in this exact order)
+1. cd C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/c3-batch-r-s1
+2. pwd && git rev-parse --abbrev-ref HEAD  (must be c3/batch-r-s1)
+3. sha256sum original/MASHED.exe   (verify anchor)
+4. mashedmod\build.bat              (baseline build must succeed)
+5. Read each candidate's analysis note FULLY before authoring.
+
+# Candidates
+| RVA        | Current name           | Analysis note                                          | Notes |
+|------------|------------------------|--------------------------------------------------------|-------|
+| 0x00493540 | thunk_FUN_00495150     | re/analysis/promote_c2_launch_handshake/00493540.md    | lang/codeset gate; returns bool |
+| 0x00493550 | thunk_FUN_004938c0     | re/analysis/promote_c2_launch_handshake/00493550.md    | engine-stop dispatch; 4 void calls (FUN_004c3040/004c3270/00550390/00558470) |
+| 0x00493560 | thunk_FUN_004954f0     | re/analysis/promote_c2_launch_handshake/00493560.md    | HardwareExit gate + ShowCursor + 3 thunks |
+| 0x004938c0 | sub_004938c0           | re/analysis/promote_c2_launch_handshake/004938c0.md    | engine-stop helper called by 00493550 |
+
+# Workflow per RVA
+1. Read note. Confirm callees_depth1 all at C2+, no inline [UNCERTAIN] in body.
+2. Author mashedmod/src/mashed_re/Boot/LaunchHandshake.cpp (one cluster file).
+   - Comment header cites RVA, decomp source, "no-guessing" attestation.
+   - extern "C" __declspec(dllexport) <ret> __cdecl <Name>(<args>) { ... }
+   - RH_ScopedInstall(<Name>, 0xRVA);
+3. Append entry to mashedmod\build.bat (one new file).
+4. Append hooks_registry.py entries (4 total). Use signature_void or
+   signature_uint8 from diff_template.js — DO NOT invent new arg_types.
+
+# Batch verification (after all 4 authored)
+1. scripts/frida_pool.sh cleanup
+2. py -3.12 re/frida/run_diff_parallel.py launch_lang_gate engine_stop_dispatch hw_exit_dispatch engine_stop_helper
+3. Expect 4 GREEN bit-identical diffs.
+
+# Promotion transaction
+- Invoke re-classify with all 4 RVAs.
+- Append ONE row to re/PROMOTION_QUEUE.md in YOUR worktree.
+- git add specific files (NEVER -A). Single commit on c3/batch-r-s1.
+- Verify git log --oneline c3/batch-r-s1 ^main shows commit BEFORE halting.
+
+# STOP-AND-ASK if
+- Anchor mismatch on MASHED.exe.
+- Any callee still C1 in hooks.csv (filter should have caught this; if it
+  slipped through, defer the candidate).
+- Any signature needs a new arg_type — DEFER.
+
+# Commit subject: `c3: batch-r s1 launch handshake thunks — N hooks GREEN`
+
+================================================================================
+Session 2 — boot_subsystem_init  (C2->C3, 5-fn batch)
+================================================================================
+
+Worktree:    .worktrees/c3-batch-r-s2/  (branch c3/batch-r-s2) — PRE-CREATED
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+
+# Mission
+5 boot/subsystem-init functions. Mid-size (avg ~100-300B). Some write large
+data globals (DataZeroFill writes 0xdce9 dwords) — side-effect-aware Frida
+diff required.
+
+# Pre-flight (same shape as Session 1, substitute s2 branch)
+- cd C:/Users/maria/Desktop/Proyectos/Mashed/.worktrees/c3-batch-r-s2
+- git rev-parse --abbrev-ref HEAD  (must be c3/batch-r-s2)
+- anchor + build
+
+# Candidates
+| RVA        | Current name           | Analysis note                                       | Notes |
+|------------|------------------------|-----------------------------------------------------|-------|
+| 0x00492270 | sub_00492270           | re/analysis/boot_app_init/00492270.md               | SubsystemInit — calls FUN_00493710(0) RW init gate |
+| 0x004921d0 | FUN_004921d0           | re/analysis/boot_subsystem_d3/0x004921d0.md         | DisplayInit — video-mode pick + LoadIcon |
+| 0x00428590 | FUN_00428590           | re/analysis/boot_subsystem_d3/0x00428590.md         | ViewportInit — bg-colour 0xff000000; sets DAT_0067d974 to π/2 |
+| 0x004924f0 | sub_004924f0           | re/analysis/boot_app_init/004924f0.md               | DataZeroFill — zeros 0xdce9 dwords at DAT_007f0f60. SIDE-EFFECT HEAVY |
+| 0x00492e60 | sub_00492e60            | re/analysis/skeleton_prep_boot_winmain_a/00492e60.md | SetDefaultViewWindow — RwCameraSetViewWindow(0.8,0.8) |
+
+# Cluster file: mashedmod/src/mashed_re/Boot/SubsystemInit.cpp
+
+# Workflow per RVA: same as Session 1.
+
+# STOP-AND-ASK if
+- 0x004924f0 (DataZeroFill) — synthetic A/B may corrupt 0x35da4 bytes of
+  game state. Either (a) use save/restore pattern around the call, or
+  (b) defer with explicit note "DataZeroFill requires harness extension
+  for large-buffer pre/post-state save".
+- 0x004921d0 calls FUN_004c2f00 (RW video-mode pick) — verify it's at C2+.
+- Any RVA's body deviates structurally from its note (drift; flag rather
+  than promote).
+
+# Commit subject: `c3: batch-r s2 boot subsystem init — N hooks GREEN`
+
+================================================================================
+Session 3 — frame_world_render_passes  (C2->C3, 5-fn batch)
+================================================================================
+
+Worktree:    .worktrees/c3-batch-r-s3/  (branch c3/batch-r-s3) — PRE-CREATED
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+
+# Mission
+5 render-frame sub-passes. State-3/7 in-race pipeline + minimap camera
+ortho setup/restore. These read/write RW camera state — synthetic A/B
+needs the camera global initialized to a known value.
+
+# Pre-flight (substitute s3)
+
+# Candidates
+| RVA        | Current name           | Analysis note                                       | Notes |
+|------------|------------------------|-----------------------------------------------------|-------|
+| 0x00426030 | FUN_00426030           | re/analysis/render_promote_c2_track_loader/0x00426030.md | WorldRenderPrePass — pre-frame setup |
+| 0x00426670 | FUN_00426670           | re/analysis/render_promote_c2_track_loader/0x00426670.md | WorldRenderDispatch_Begin |
+| 0x004266b0 | FUN_004266b0           | re/analysis/render_promote_c2_track_loader/0x004266b0.md | WorldRenderDispatch_End |
+| 0x0040de30 | sub_0040de30           | re/analysis/promote_c2_render_lowrva/0040de30.md    | MinimapCameraOrthoSetup — saves frame matrix + sets ortho 0.6×0.45 |
+| 0x0040df20 | sub_0040df20           | re/analysis/promote_c2_render_lowrva/0040df20.md    | MinimapCameraRestore — restores saved camera state |
+
+# Cluster file: mashedmod/src/mashed_re/Render/FrameWorldPasses.cpp
+
+# Workflow per RVA: same as Session 1.
+
+# STOP-AND-ASK if
+- MinimapCameraOrthoSetup/Restore are an inseparable pair — if you can
+  diff one without the other, fine; if not, treat as ONE compound hook.
+- Any pass mutates RwCamera state via vtable — check if Frida can
+  observe/restore the vtable target.
+
+# Commit subject: `c3: batch-r s3 frame world render passes — N hooks GREEN`
+
+================================================================================
+Session 4 — frame_state_heavy  (C2->C3, 6-fn batch — heaviest session)
+================================================================================
+
+Worktree:    .worktrees/c3-batch-r-s4/  (branch c3/batch-r-s4) — PRE-CREATED
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 6)
+
+# Mission
+6 per-frame state-machine / orchestration functions. THESE ARE THE HARDEST
+in the batch. Many depend on a running game loop or mutate per-frame globals
+in ways synthetic A/B can't easily replay. Expected yield: 3-4 of 6.
+
+# Pre-flight (substitute s4)
+
+# Candidates
+| RVA        | Current name           | Analysis note                                       | Notes |
+|------------|------------------------|-----------------------------------------------------|-------|
+| 0x00492e90 | FUN_00492e90           | re/analysis/physics_collision/00492e90.md           | FrameDispatch — per-frame state machine on DAT_00771968. HEAVY. |
+| 0x00492290 | sub_00492290           | re/analysis/boot_app_init/00492290.md               | MainLoop — `while (DAT_00828300==0 && FUN_00499690()==0)`. Probably loops in synthetic. |
+| 0x00492770 | FUN_00492770           | re/analysis/boot_subsystem_d3/0x00492770.md         | MainLoopInit — clears exit flag, registers callbacks. Side-effects. |
+| 0x004926c0 | FUN_004926c0           | re/analysis/boot_subsystem_d3/0x004926c0.md         | AudioTickAndAvg — QPC + audio skip toggle. 60-frame avg. |
+| 0x00493480 | FUN_00493480           | re/analysis/boot_subsystem_d3/0x00493480.md         | FpsDiscretise — FPS bucket snap (50/100/150/200 Hz). |
+| 0x00404320 | sub_00404320           | re/analysis/promote_c2_render_lowrva/00404320.md    | PerModeRenderMachine — modes 5/8/9/10 dispatch. |
+
+# Cluster file: mashedmod/src/mashed_re/Boot/FrameDispatch.cpp + mashedmod/src/mashed_re/Render/PerModeRender.cpp
+
+# Workflow per RVA: same as Session 1.
+
+# STOP-AND-ASK if (PROBABLY HITS THIS SESSION)
+- 0x00492290 (MainLoop) — synthetic call would loop indefinitely OR exit
+  immediately if exit flag is pre-set. Probably defer; note "requires
+  bounded-tick harness extension".
+- 0x00492e90 (FrameDispatch) — per-frame switch with 7 cases; synthetic
+  needs to seed DAT_00771968 to a benign state. Probably promotable IF
+  case-by-case sentinel coverage works.
+- 0x00492770 (MainLoopInit) — sets DAT_00828300=0 + DAT_00771968=1.
+  Side-effect-heavy. Can A/B with pre/post snapshot of these 2 globals.
+- 0x004926c0 (AudioTickAndAvg) — QPC reads make output non-deterministic
+  unless you stub QueryPerformanceCounter. Probably defer.
+- 0x00493480 (FpsDiscretise) — pure-leaf computation on globals; probably
+  PROMOTABLE if globals are pre-seeded.
+- 0x00404320 (PerModeRenderMachine) — calls EndUpdate/BeginUpdate/
+  SetViewWindow vtable methods; mode dispatch. Live-state risk.
+
+# Commit subject: `c3: batch-r s4 frame state heavy — N hooks GREEN (M deferred)`
+
+================================================================================
+Session 5 — rw_plugin_helpers  (C2->C3, 2-fn batch — smallest)
+================================================================================
+
+Worktree:    .worktrees/c3-batch-r-s5/  (branch c3/batch-r-s5) — PRE-CREATED
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 2)
+
+# Mission
+2 RW plugin helpers. Sibling cluster of already-C3 leaves (004c2ed0
+RwEngineGetModeInfo + 004c2f00 RwEngineGetCurrentMode landed in earlier
+batches). High expected yield 2/2.
+
+# Pre-flight (substitute s5)
+
+# Candidates
+| RVA        | Current name           | Analysis note                                          | Notes |
+|------------|------------------------|--------------------------------------------------------|-------|
+| 0x004c2c90 | FUN_004c2c90           | re/analysis/render_promote_c2_rw_plugin/0x004c2c90.md  | RW plugin dispatcher cmd helper |
+| 0x004c2fb0 | FUN_004c2fb0           | re/analysis/render_promote_c2_rw_plugin/0x004c2fb0.md  | RW plugin helper |
+
+# Cluster file: mashedmod/src/mashed_re/Render/RwPluginHelpers_r5.cpp
+# (Sibling of existing RwPluginHelpers_o3.cpp which holds 004c2ed0/004c2f00.)
+
+# Workflow per RVA: same as Session 1.
+
+# STOP-AND-ASK if
+- The 35-44B candidate uses a DIFFERENT pattern than the already-C3
+  siblings (004c2ed0/004c2f00) — defer.
+- Callee FUN_004c2c90 used to be the dispatcher; if so, it's self-referential
+  and the synthetic call needs a stable cmd table — defer if unclear.
+
+# Commit subject: `c3: batch-r s5 rw plugin helpers r5 — N hooks GREEN`
+
+================================================================================
+Deferred (NOT in this batch — separate work)
+================================================================================
+
+Skeleton candidates STILL blocked after skeleton-prep batch (14 of 40 total
+skeleton, after subtracting the 22 in this batch + 4 already C3+):
+
+| RVA        | Blocker | Unblock action |
+|------------|---------|----------------|
+| 0x00492370 | live-state-side-effect: _unlink on live path | scribe-audit pass on the note (the _unlink mention is likely prose, not actual call) |
+| 0x00493600 | callee-gate: FUN_004935a0/004935d0/004ce790/00513f90 still C0/C1 | next C1->C2 batch |
+| 0x004929d0 (StateDispatch) | callee-gate: 16 C1 callees | next C1->C2 batch (uneconomic — split per case) |
+| 0x00492d30 (TimerTick) | callee-gate: 3 C1 callees | next C1->C2 batch |
+| 0x00402750 (AppInitialiseOnBootup) | callee-gate: 0041a060/00496e40/004d8560/00558240 (00496e40+00558240 deferred this batch) | requires those deferred candidates first |
+| 0x00402a40 (AppDestroy) | callee-gate: similar to AppInit | same |
+| 0x00493900 (CmdlineParse) | callee-gate: CRT-band 004a2be9/004a3ac9 | Lever-3 FidDB drain |
+| 0x00493710 (RW_INIT_FN) | callee-gate: 004cbc90/00550350/005584c0 (renumbered C2 in s4 — verify post-sweep) | re-run filter after s4 lands |
+| 0x004aa3fe (__heap_init) | callee-gate: CRT-band | Lever-3 |
+| 0x004a8a04 | callee-gate: CRT-band | Lever-3 |
+| 0x004ac04a | callee-gate: CRT-band | Lever-3 |
+| 0x00410b30 (InGameRenderDispatcher) | callee-gate: 9 C1 callees | next C1->C2 batch (large; depth-1 sweep) |
+| 0x00433f40 (RaceEndFadeOverlay) | signature-unsupported: 5-arg shape | harness-extension session for 5-arg float panel sig |
+| 0x0043c5b0 (FRONTEND_FN) | U-0448 Blocks=C3 | U-ID resolution in Ghidra |
+
+================================================================================
+Yield calibration & next steps
+================================================================================
+
+Expected yield per session (calibrated against c3_batch_p/q render-tier 70-80%
+and frontend-tier ~0%):
+- s1 launch handshake thunks:    4/4   (thunks/wrappers — easiest)
+- s2 boot subsystem init:        3-4/5 (mid-size; 004924f0 likely deferred)
+- s3 frame world render passes:  3-4/5 (sub-passes; minimap pair risk)
+- s4 frame state heavy:          2-4/6 (HARDEST; many side-effect issues)
+- s5 rw plugin helpers:          2/2   (proven sibling cluster)
+
+Realistic landing range: 14-18 promotions of 22 attempted (64-82%).
+
+After frida-sweep merges these:
+- Skeleton C3+ count: 23 → 37-41 (of 84) ≈ 44-49% (vs 27% pre-batch)
+- Boot subsystem C3+: large jump (10+ promotions in s1+s2+s4)
+- Phase 6 step 1 substantially complete; standalone mashed_re.exe build
+  can start linking these reimpls (Phase 6 step 2).
+
+================================================================================
+INVOCATION
+================================================================================
+
+Main session (Opus) creates the 5 worktrees, then launches 5 background
+Agent subagents (Sonnet), one per session block. Each agent's prompt:
+- Pre-bakes the cd into the worktree
+- Pre-bakes the branch name
+- Pre-bakes the candidate list
+- Pre-bakes guardrails (NEVER -A, NEVER touch original/, COMMIT before halt)
+
+After all 5 complete, invoke frida-sweep skill from main to merge branches,
+rebuild canonical .asi, run integration diff.
