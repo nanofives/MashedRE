@@ -3,6 +3,18 @@
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
 2026-05-23  lever3-expansion-20260523-1330  lever3-expansion-RELEASE  WIP-released; 79 C1->C2 CRT-band bulk-attest complete
 2026-05-23  lever3-expansion-20260523-1330  lever3-bulk-attest  promoted=79 C1->C2 (CRT-band FidDB)  details=mass-attestation via Ghidra Library Function names + CRT-band calibrated rule (004a0000..004b3fff); 7 game-logic exclusions (DFF/TXD/RW-stream loaders in upper band); 40 already C2+; 493 CRT-band functions enumerated from Ghidra master
+2026-05-23  canonical-mass-observe-r3  BATCH-PROMOTE  11 hooks C2->C3 via boot-to-menu canonical observation round-3 (spawn+suspend); scenario=boot-to-menu-canonical-r3; log=log/mass_canonical_observe_r3b.txt; reached_main_menu=True; 7 INCONCLUSIVE stay C2; 2 excluded as hot-path (sub_00493f70 ~170/s, sub_004671a0 ~170/s)
+2026-05-23  0x00495270  FUN_00495270  C2->C3  canonical-observation-r3; HWNDGet: *param_1=FUN_00499710(); count=1 30s menu GREEN
+2026-05-23  0x004c5c80  FUN_004c5c80  C2->C3  canonical-observation-r3; RW init write: *(DAT_007d4054+0x10+DAT_007d3ff8)=param_1; count=3 30s menu GREEN
+2026-05-23  0x004c9eb0  FUN_004c9eb0  C2->C3  canonical-observation-r3; RW init vtable-dispatch loop writes DAT_006181c4; count=1 30s menu GREEN
+2026-05-23  0x004c9f50  FUN_004c9f50  C2->C3  canonical-observation-r3; trivial setter DAT_007d4134=param_1; count=1 30s menu GREEN
+2026-05-23  0x004c9f60  FUN_004c9f60  C2->C3  canonical-observation-r3; conditional setter DAT_007d413c+vtable dispatch; count=1 30s menu GREEN
+2026-05-23  0x004cbc60  FUN_004cbc60  C2->C3  canonical-observation-r3; trivial setter DAT_007d4598=param_1; count=1 30s menu GREEN
+2026-05-23  0x004cbc70  FUN_004cbc70  C2->C3  canonical-observation-r3; trivial getter returns DAT_007d4598; count=1 30s menu GREEN
+2026-05-23  0x004cbc80  FUN_004cbc80  C2->C3  canonical-observation-r3; trivial setter DAT_007d459c=param_1; count=2 30s menu GREEN
+2026-05-23  0x004c2d90  FUN_004c2d90  C2->C3  canonical-observation-r3; RwEngineRegisterPlugin shim FUN_004d7de0 forward; count=24 30s menu GREEN
+2026-05-23  0x00498c00  VideoModeTableInit  C2->C3  canonical-observation-r3; D3D subsystem+mode enumeration init; count=1 30s menu GREEN
+2026-05-23  0x00495120  FUN_00495120  C2->C3  canonical-observation-r3; TimerInit QueryPerformanceFrequency->DAT_00771e70/e74; count=1 30s menu GREEN
 2026-05-23  canonical-mass-observe-r2  BATCH-PROMOTE  9 hooks C2->C3 via boot-to-menu canonical observation round-2 (spawn+suspend); scenario=boot-to-menu-canonical-r2; log=log/mass_canonical_observe_r2.txt; reached_main_menu=True; 11 INCONCLUSIVE stay C2
 2026-05-23  0x00499ba0  sub_00499ba0  C2->C3  canonical-observation-r2; WindowCreate: CoInitialize+RegisterClassA+CreateWindowExA; count=1 30s menu GREEN
 2026-05-23  0x004cc160  FUN_004cc160  C2->C3  canonical-observation-r2; RwStreamClose equivalent (stream-context close dispatcher); count=1 30s menu GREEN
