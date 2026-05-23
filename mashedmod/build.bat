@@ -114,16 +114,20 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Boot\GameStateCluster.cpp" ^
     "Input\DirectInput.cpp" ^
     "Input\DInput.cpp" ^
+    "Input\InputWave3.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
     "Harness\HarnessStubs.cpp" ^
     "Frontend\Leaves.cpp" ^
     "Frontend\MenuMenusMixed.cpp" ^
     "Util\UtilLeaves.cpp" ^
+    "Util\UtilWave3.cpp" ^
     "HUD\TextCluster.cpp" ^
+    "HUD\HudWave3.cpp" ^
     "Frontend\MenuSpriteDispatch.cpp" ^
     "Frontend\MenuMixed.cpp" ^
     "Frontend\DrawQuadPrimitives.cpp" ^
     "Frontend\SmallLeaves_n2.cpp" ^
+    "Frontend\FrontendWave3.cpp" ^
     "Render\HighAB3Helpers_p6.cpp" ^
     "Render\TrackNodeLeaves_o1.cpp" ^
     "Render\LowRvaSetters_o2.cpp" ^
@@ -147,6 +151,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\MixedC3Sweep.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
     "Audio\MixedC3Sweep.cpp" ^
+    "Audio\AudioWave3.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
