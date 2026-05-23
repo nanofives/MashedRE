@@ -1887,3 +1887,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  mass-canonical-wave2  0x004c5a00 RwTextureCreate  C2->C3 via mass-canonical-wave2 (count=1)
 2026-05-23  mass-canonical-wave2  0x004c5ae0 RwTextureSetName  C2->C3 via mass-canonical-wave2 (count=1)
 2026-05-23  mass-canonical-wave2  0x004c5b50 RwTextureSetMaskName  C2->C3 via mass-canonical-wave2 (count=1)
+
+2026-05-23  implicit-survival-sweep  21 hooks C2->C3 (RaceEndCheckFinish, AudioWaveLoad, BootQueueFlush + 18 more) — installed + MASHED survived 30s menu idle; never-fire = weaker C3 evidence than fire+survive
