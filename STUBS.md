@@ -1207,3 +1207,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4110 | 0x004769f0 FUN_004769f0 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&local_14 color bytes); batch-ac-s5 |
 | S-4111 | 0x00476a30 FUN_00476a30 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (float local_c); batch-ac-s5 |
 | S-4112 | 0x00476d00 FUN_00476d00 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&DAT_00722630 render context); batch-ac-s5 |
+| S-4113 | 0x00467210 FUN_00467210 | 0x0048e5f0 FUN_0048e5f0 | particle | passthrough | 2026-05-24 | global state accessor called with -1; field +0x24 compared to two thresholds (DAT_005cd30c, DAT_005ccac0); batch-ac-s6 |

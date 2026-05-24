@@ -2268,6 +2268,21 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0048fce0,FUN_0048fce0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fce0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
 0048fd10,FUN_0048fd10,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fd10.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
 0048fd40,FUN_0048fd40,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fd40.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
+0048df60,FUN_0048df60,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048df60.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4015
+0048e180,FUN_0048e180,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e180.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4016 U-4017
+0048e360,FUN_0048e360,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e360.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4018
+0048e5f0,FUN_0048e5f0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e5f0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4019 S-4113
+0048e7b0,FUN_0048e7b0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e7b0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
+0048e820,FUN_0048e820,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e820.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4020
+0048eac0,FUN_0048eac0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048eac0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
+0048f590,FUN_0048f590,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f590.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4021 U-4022
+0048f780,FUN_0048f780,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f780.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4023 U-4024
+0048f8a0,FUN_0048f8a0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f8a0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4025 U-4026 U-4027
+0048f9f0,FUN_0048f9f0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f9f0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4028 U-4029
+0048fb10,FUN_0048fb10,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048fb10.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4030 U-4031
+0048fce0,FUN_0048fce0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048fce0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
+0048fd10,FUN_0048fd10,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048fd10.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
+0048fd40,FUN_0048fd40,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048fd40.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
 0048fdd0,FUN_0048fdd0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fdd0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
 0048fef0,FUN_0048fef0,particle,C1,mapped,re/analysis/bucket_0048ad50/0048fef0.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"
 0048ff20,FUN_0048ff20,particle,C1,mapped,re/analysis/bucket_0048ad50/0048ff20.md,batch-t-s2,,"batch_t s2 MULTI[particles-effects,directshow-ibasefilter]"

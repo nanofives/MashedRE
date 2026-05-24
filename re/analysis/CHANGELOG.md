@@ -1954,3 +1954,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x0048d900  FUN_0048d900  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d900.md; U-4011..U-4012
 2026-05-24  0x0048db20  FUN_0048db20  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048db20.md; no new U/S IDs
 2026-05-24  0x0048dd40  FUN_0048dd40  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048dd40.md; U-4013..U-4014
+2026-05-24  batch-ac-s6  particle-promote-ac6  15x C1->C2 mechanical promotion  rvas=0x0048df60,0x0048e180,0x0048e360,0x0048e5f0,0x0048e7b0,0x0048e820,0x0048eac0,0x0048f590,0x0048f780,0x0048f8a0,0x0048f9f0,0x0048fb10,0x0048fce0,0x0048fd10,0x0048fd40  bucket=re/analysis/particle_promote_ac6  slot=Mashed_pool6  U-4015..U-4031(17) S-4113(1)
