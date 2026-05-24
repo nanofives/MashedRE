@@ -1121,4 +1121,4 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4024 | 0x00493580 FUN_00493580 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xe00000 transition; depth-1; skeleton-prep-s4 |
 | S-4025 | 0x0040ab40 FUN_0040ab40 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac4!=0; depth-1; skeleton-prep-s4 |
 | S-4026 | 0x0040ac80 FUN_0040ac80 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac5!=0; depth-1; skeleton-prep-s4 |
-| S-4027 | 0x00467210 FUN_00467210 | 0x0048e5f0 FUN_0048e5f0 | particle | passthrough | 2026-05-24 | global state accessor called with -1; field +0x24 compared to two thresholds (DAT_005cd30c, DAT_005ccac0); batch-ac-s6 |
+| S-4113 | 0x00467210 FUN_00467210 | 0x0048e5f0 FUN_0048e5f0 | particle | passthrough | 2026-05-24 | global state accessor called with -1; field +0x24 compared to two thresholds (DAT_005cd30c, DAT_005ccac0); batch-ac-s6 |
