@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  batch-ac-s3  bucket=re/analysis/particle_promote_ac3  rvas=0x00489a40,0x00489c30,0x00489c60,0x00489ce0,0x00489da0,0x00489dc0,0x0048a060,0x0048a130,0x0048a3c0,0x0048a430,0x0048a460,0x0048a490,0x0048a4e0,0x0048a5d0,0x0048a6f0  pool=Mashed_pool14(fallback-pool13-stale-lock)  pool-assigned=Mashed_pool13  branch=c1-c2/batch-ac-s3  promotions=15xC1->C2  new-U=U-3951..U-3967  new-S=S-4027..S-4054  reclassifications=0  note=particle subsystem mechanical C1->C2; all 15 confirmed particle; all bodies read end-to-end; every const/offset/callee enumerated; pool13 open failed (LockException), used pool14 session 27ff6b9e already held by MCP server; no library-residue detected; no STOP-AND-ASK trips
 
 ## Drained
 
