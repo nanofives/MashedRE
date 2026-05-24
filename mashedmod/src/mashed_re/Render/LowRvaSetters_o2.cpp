@@ -342,4 +342,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AiPizLoad(void)
     return uVar3;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(AiPizLoad, 0x004235b0);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AiPizLoad, 0x004235b0);

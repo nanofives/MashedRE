@@ -98,7 +98,7 @@ extern "C" __declspec(dllexport) int __cdecl AudioFmtTableSearch(int param_1, in
     return 0;  // exhausted with no match
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioFmtTableSearch, 0x005acd10);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioFmtTableSearch, 0x005acd10);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ac980  FUN_005ac980  AudioFmtDescCopy  (~70 bytes)
@@ -172,7 +172,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioFmtDescCopy(
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioFmtDescCopy, 0x005ac980);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioFmtDescCopy, 0x005ac980);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005acd60  FUN_005acd60  AudioFmtGlobalScan  (~50 bytes)
@@ -378,7 +378,7 @@ AudioSubStructLinkDevice(std::uint32_t* param_1, std::uint32_t param_2)
     return param_1;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioSubStructLinkDevice, 0x005ae010);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSubStructLinkDevice, 0x005ae010);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005adfe0  FUN_005adfe0  AudioSubStructLinkBuffer  (32 bytes)
@@ -411,7 +411,7 @@ AudioSubStructLinkBuffer(std::uint32_t* param_1, std::uint32_t param_2)
     return param_1;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioSubStructLinkBuffer, 0x005adfe0);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSubStructLinkBuffer, 0x005adfe0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ae0b0  FUN_005ae0b0  AudioSubStructZeroInit  (14 bytes)
@@ -471,7 +471,7 @@ AudioSubStructDualInit(std::uint32_t param_1,
     return (r2 != nullptr) ? param_1 : 0u;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioSubStructDualInit, 0x005ac7b0);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSubStructDualInit, 0x005ac7b0);
 // 0x005aea00 — vtable-based raw alloc trampoline (C2).
 typedef void* (__cdecl *RawAllocFn)(int, int);
 static RawAllocFn const RawAlloc = reinterpret_cast<RawAllocFn>(0x005aea00u);

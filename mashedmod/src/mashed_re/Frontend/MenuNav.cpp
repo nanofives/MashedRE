@@ -116,7 +116,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuEntryGet() {
     return *reinterpret_cast<std::uint32_t*>(iVar1 + 4 + iVar3 * 4);
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
 
 // ---------------------------------------------------------------------------
 // 0x0042bb60  MenuTeamBalance

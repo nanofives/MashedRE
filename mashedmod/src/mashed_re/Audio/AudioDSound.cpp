@@ -42,7 +42,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioBufFieldSet(int param_1, int 
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);
 
 // 0x005baf90  FUN_005baf90  (~0x18 bytes, 0x005baf90–0x005bafa8)
 // int __cdecl AudioDSoundRelease(int param_1)
@@ -177,7 +177,7 @@ extern "C" __declspec(dllexport) unsigned int __cdecl AudioSemaphoreCreate(
     return mask & static_cast<unsigned int>(reinterpret_cast<uintptr_t>(param_1));
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);
 // 0x005bbfc0  FUN_005bbfc0  (~70 bytes)
 // AudioDSoundSecondaryInit — QueryInterface + vtable+0x14 secondary init.
 //
@@ -251,7 +251,7 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundSecondaryInit(void** par
     return 0;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused: RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
 
 // ---------------------------------------------------------------------------
 // 0x005aef00  FUN_005aef00  (0x26 bytes)

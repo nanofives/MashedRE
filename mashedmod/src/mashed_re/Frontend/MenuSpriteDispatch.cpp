@@ -634,4 +634,4 @@ extern "C" __declspec(dllexport) void __cdecl MenuChromeShellB(void)
     s_LogoOverlayDraw(logo_bg, slide);
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);
+// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);

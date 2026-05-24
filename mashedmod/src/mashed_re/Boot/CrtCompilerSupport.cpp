@@ -95,7 +95,7 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl CrtStackProbe(vo
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(CrtStackProbe, 0x004a3440);
+RH_ScopedInstall(CrtStackProbe, 0x004a3440);  // re-enabled 2026-05-24 canonical-observation count=4 fires-at-boot
 
 // ---------------------------------------------------------------------------
 // 0x004a5984  __SEH_prolog
