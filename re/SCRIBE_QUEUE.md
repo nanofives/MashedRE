@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  batch-ad-s4  bucket=re/analysis/particle_promote_ad4  rvas=0x0049df70,0x0049e140,0x0049e190,0x0049e4b0,0x0049e580,0x0049e5c0,0x0049e600,0x0049e640,0x0049e6c0,0x0049ea70,0x0049eab0,0x0049ead0,0x0049ebc0,0x0049ebf0,0x0049ec80  pool=Mashed_pool14(session-reuse-27ff6b9e)  branch=c1-c2/batch-ad-s4  promotions=15xC1->C2  new-U-IDs=U-4122..U-4136  new-S-IDs=S-4234..S-4248  subsystem_observed=particle(all 15)  note=particle subsystem mechanical C1->C2; COM-style lazy-init cluster (CritSec/vtable/HRESULT) + event-handle cluster (SetEvent/ResetEvent) + destructor chain (scalar-deleting/derived); pool14 access-denied on open, used existing session already held by MCP server; thunk at 0x0049ead0 is 5-byte JMP to FUN_0049fac0 (body decomped via expansion); no library residue detected; no STOP trips
 
 ## Drained
 

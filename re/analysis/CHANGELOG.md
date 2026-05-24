@@ -1958,5 +1958,20 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  sweep-20260524-1938  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
 2026-05-24  batch-ad-s1  particle-promote-ad1  15x C1->C2 mechanical promotion  rvas=0x0048fdd0,0x0048fef0,0x0048ff20,0x0048ffd0,0x0049c5d0,0x0049c620,0x0049c690,0x0049c6a0,0x0049c6b0,0x0049c6d0,0x0049c6e0,0x0049c750,0x0049c770,0x0049c800,0x0049c810  bucket=re/analysis/particle_promote_ad1  slot=Mashed_pool2  U-4032..U-4045(14) S-4114..S-4126(13)
 2026-05-24  batch-ad-s2  particle-promote-ad2  15x C1->C2 mechanical promotion  rvas=0x0049c840,0x0049c900,0x0049c930,0x0049c990,0x0049ca00,0x0049ca60,0x0049cb00,0x0049cb20,0x0049cbd0,0x0049cc40,0x0049cc80,0x0049ccd0,0x0049cd70,0x0049ce10,0x0049ceb0  bucket=re/analysis/particle_promote_ad2  slot=Mashed_pool12  U-4062..U-4085(24) S-4155..S-4161(7)
+2026-05-24  0x0049df70  FUN_0049df70  C1->C2  batch-ad-s4: mechanical; lazy-create __thiscall; CritSec +0xC4; COM HRESULTs; plate re/analysis/particle_promote_ad4/0x0049df70.md; U-4122 S-4234
+2026-05-24  0x0049e140  FUN_0049e140  C1->C2  batch-ad-s4: mechanical; 3-arg method; +0x50/+0x8; FUN_004a1570; plate re/analysis/particle_promote_ad4/0x0049e140.md; U-4123 S-4235
+2026-05-24  0x0049e190  FUN_0049e190  C1->C2  batch-ad-s4: mechanical; __thiscall SetEvent/ResetEvent; nested +0x18 gate; vtable +0xA0; plate re/analysis/particle_promote_ad4/0x0049e190.md; U-4124 S-4236
+2026-05-24  0x0049e4b0  FUN_0049e4b0  C1->C2  batch-ad-s4: mechanical; lazy-create __thiscall; CritSec +0xC4; alloc 0xE0; sub-obj +0x78; FUN_0049cc80; plate re/analysis/particle_promote_ad4/0x0049e4b0.md; U-4125 S-4237
+2026-05-24  0x0049e580  FUN_0049e580  C1->C2  batch-ad-s4: mechanical; __fastcall; guard [5]; set [0x1c]=1; gate [0x1b]; SetEvent [0x17]; vtable +0x60; plate re/analysis/particle_promote_ad4/0x0049e580.md; U-4126 S-4238
+2026-05-24  0x0049e5c0  FUN_0049e5c0  C1->C2  batch-ad-s4: mechanical; __fastcall; cond ResetEvent; 3 vtable calls; FUN_0049c620; plate re/analysis/particle_promote_ad4/0x0049e5c0.md; U-4127 S-4239
+2026-05-24  0x0049e600  FUN_0049e600  C1->C2  batch-ad-s4: mechanical; __fastcall; zero [0x18]; FUN_0049c690 gate==2; vtable +0x7c; FUN_0049cc40; plate re/analysis/particle_promote_ad4/0x0049e600.md; U-4128 S-4240
+2026-05-24  0x0049e640  FUN_0049e640  C1->C2  batch-ad-s4: mechanical; __fastcall; sub-obj [0x2b] release; nested +0x18/+0x25 gates; vtable +0x64/+0x70/+0x80; 0x80040224; plate re/analysis/particle_promote_ad4/0x0049e640.md; U-4129 S-4241
+2026-05-24  0x0049e6c0  FUN_0049e6c0  C1->C2  batch-ad-s4: mechanical; __thiscall 2-arg; 2 CritSecs +0x7C/+0x94; FUN_0049fcc0; nested +0x98/+0xC0/+0xC4; plate re/analysis/particle_promote_ad4/0x0049e6c0.md; U-4130 S-4242
+2026-05-24  0x0049ea70  FUN_0049ea70  C1->C2  batch-ad-s4: mechanical; __fastcall; FUN_0049cb00; CritSec +0x94; zeroes +0x70/+0x74/+0xB8/+0xBC; plate re/analysis/particle_promote_ad4/0x0049ea70.md; U-4131 S-4243
+2026-05-24  0x0049eab0  FUN_0049eab0  C1->C2  batch-ad-s4: mechanical; scalar-deleting dtor; thunk_FUN_0049fac0; conditional _free; plate re/analysis/particle_promote_ad4/0x0049eab0.md; U-4132 S-4244
+2026-05-24  0x0049ead0  thunk_FUN_0049fac0  C1->C2  batch-ad-s4: mechanical; 5-byte thunk JMP->FUN_0049fac0; sub-obj +0x9C vtable[2] release; FUN_0049f300; plate re/analysis/particle_promote_ad4/0x0049ead0.md; U-4133 S-4245
+2026-05-24  0x0049ebc0  FUN_0049ebc0  C1->C2  batch-ad-s4: mechanical; derived dtor; vtable slots 0/3/4/0x38/0x39 reset; FUN_0049de90; plate re/analysis/particle_promote_ad4/0x0049ebc0.md; U-4134 S-4246
+2026-05-24  0x0049ebf0  FUN_0049ebf0  C1->C2  batch-ad-s4: mechanical; scalar-deleting dtor; FUN_0049de90; conditional _free; plate re/analysis/particle_promote_ad4/0x0049ebf0.md; U-4135 S-4247
+2026-05-24  0x0049ec80  FUN_0049ec80  C1->C2  batch-ad-s4: mechanical; scalar-deleting dtor; FUN_0049ebc0->FUN_0049de90 chain; plate re/analysis/particle_promote_ad4/0x0049ec80.md; U-4136 S-4248
 
 2026-05-24  sweep-20260524-2041  scribe-claim  buckets=6 queued, 0 skipped-HOLD
