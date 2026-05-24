@@ -1891,3 +1891,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  implicit-survival-sweep  21 hooks C2->C3 (RaceEndCheckFinish, AudioWaveLoad, BootQueueFlush + 18 more) — installed + MASHED survived 30s menu idle; never-fire = weaker C3 evidence than fire+survive
 
 2026-05-23  c4-lift-sweep  52 hooks C3->C4 — canonical-scenario observation evidence with hook installed; under-claimed as C3 in earlier runs today
+2026-05-24  0x00449880  FUN_00449880  C1->C2  batch-ac-s1; particle; fills 256-float array DAT_00683ec8 with _DAT_005f96d0+_DAT_005cc320; plate=re/analysis/particle_promote_ac1/0x00449880.md
+2026-05-24  0x00449b30  FUN_00449b30  C1->C2  batch-ac-s1; particle; smoke particle system init; FUN_004b6520+FUN_004770c0(2197/256)+FUN_00476ae0+FUN_00476c10; plate=re/analysis/particle_promote_ac1/0x00449b30.md
+2026-05-24  0x00449bb0  FUN_00449bb0  C1->C2  batch-ac-s1; particle; car shadow billboard init; DAT_00684308=&DAT_006842c8; FUN_004770c0(2060/80); plate=re/analysis/particle_promote_ac1/0x00449bb0.md
+2026-05-24  0x00485d90  FUN_00485d90  C1->C2  batch-ac-s1; particle; 4-slot emitter init outer-4 x inner-7; FUN_004892c0+FUN_004893a0; stride 0x8f; plate=re/analysis/particle_promote_ac1/0x00485d90.md
+2026-05-24  0x00485e10  FUN_00485e10  C1->C2  batch-ac-s1; particle; slot teardown FUN_004768c0+vtable[0x10c]; step 0x8f; plate=re/analysis/particle_promote_ac1/0x00485e10.md
+2026-05-24  0x00485e50  FUN_00485e50  C1->C2  batch-ac-s1; particle; sub-slot register guard DAT_006fdfbc; 5-iter 3-float write; U-3951; plate=re/analysis/particle_promote_ac1/0x00485e50.md
+2026-05-24  0x00485ef0  FUN_00485ef0  C1->C2  batch-ac-s1; particle; per-frame update+draw; outer stride 0x23c; inner-1 age-decay; inner-2 7-slot draw; U-3952; plate=re/analysis/particle_promote_ac1/0x00485ef0.md
+2026-05-24  0x00486220  FUN_00486220  C1->C2  batch-ac-s1; particle; draw-flush vtable[0x20](8 0/1)+FUN_00489910; stride 0x8f; plate=re/analysis/particle_promote_ac1/0x00486220.md
+2026-05-24  0x00486270  FUN_00486270  C1->C2  batch-ac-s1; particle; full-reset outer-4 stride 0x8f; FUN_004894f0; inner-7 5-field zero; plate=re/analysis/particle_promote_ac1/0x00486270.md
+2026-05-24  0x004862d0  FUN_004862d0  C1->C2  batch-ac-s1; particle; spark+scorch emitter pair init; zero-fill loop stride 0x1f; FUN_004770c0 x2; plate=re/analysis/particle_promote_ac1/0x004862d0.md
+2026-05-24  0x00486350  FUN_00486350  C1->C2  batch-ac-s1; particle; emitter pair teardown FUN_004768c0 x2; plate=re/analysis/particle_promote_ac1/0x00486350.md
+2026-05-24  0x00486370  FUN_00486370  C1->C2  batch-ac-s1; particle; spark ring-buffer spawn cap 149 stride 0x1f; 16-float matrix copy; reads +0x30/34/38; U-3953; plate=re/analysis/particle_promote_ac1/0x00486370.md
+2026-05-24  0x00486460  FUN_00486460  C1->C2  batch-ac-s1; particle; scorch ring-buffer spawn cap 100 stride 0x24; pos *param_1[0/1/2]; plate=re/analysis/particle_promote_ac1/0x00486460.md
+2026-05-24  0x004864f0  FUN_004864f0  C1->C2  batch-ac-s1; particle; burst-spawn N; sq-dist guard vs _DAT_005cc9a0; updates _DAT_006fe780/84/88; FUN_004c51a0 jitter; plate=re/analysis/particle_promote_ac1/0x004864f0.md
+2026-05-24  0x00486610  FUN_00486610  C1->C2  batch-ac-s1; particle; thin wrapper FUN_004864f0(p1 p2 4); plate=re/analysis/particle_promote_ac1/0x00486610.md
