@@ -1,6 +1,21 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-24  0x0048a780  FUN_0048a780  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048a780.md; U-3951..U-3952; S-4027..S-4028
+2026-05-24  0x0048a830  FUN_0048a830  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048a830.md; S-4029
+2026-05-24  0x0048a850  FUN_0048a850  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048a850.md; U-3953..U-3955; S-4030..S-4032
+2026-05-24  0x0048aa50  FUN_0048aa50  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048aa50.md; U-3956
+2026-05-24  0x0048ab70  FUN_0048ab70  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048ab70.md; U-3957
+2026-05-24  0x0048ad50  FUN_0048ad50  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048ad50.md; U-3958; S-4033
+2026-05-24  0x0048ade0  FUN_0048ade0  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048ade0.md
+2026-05-24  0x0048ae00  FUN_0048ae00  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048ae00.md; U-3959..U-3960; S-4034..S-4046
+2026-05-24  0x0048af70  FUN_0048af70  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048af70.md; U-3961; S-4047..S-4050
+2026-05-24  0x0048aff0  FUN_0048aff0  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048aff0.md; U-3962; S-4051
+2026-05-24  0x0048b230  FUN_0048b230  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048b230.md; U-3963; S-4052..S-4055
+2026-05-24  0x0048b440  FUN_0048b440  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048b440.md; U-3964..U-3965; S-4056..S-4062
+2026-05-24  0x0048b650  FUN_0048b650  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048b650.md; U-3966; leaf-function
+2026-05-24  0x0048b7c0  FUN_0048b7c0  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048b7c0.md; U-3967; S-4063..S-4066
+2026-05-24  0x0048b960  FUN_0048b960  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048b960.md; U-3968; S-4067
 2026-05-23  lever3-libpng-20260523T150000  lever3-libpng-bulk-attest  promoted=152 C1->C2 (libpng/zlib band)  scope=0x00513f90..0x0052caf0  enumerated=152 in CSV at C1 promoted; 0 not found; 0 already C2+; attestation=calibrated libpng/zlib band (statically-linked libpng 1.x + zlib 1.x; anchors: png_write_data@00516bb0 "Call to NULL write function"; png_write_tRNS@0051e230; zlib_crc32@00522970; zlib_inflate@00522ce0 "unknown compression method"; inflate_fast@0052c7a0 "invalid literal/length code"; lower=00513f90 __setjmp3+png_helper; upper=0052caf0 inflate_fast body_end)
 2026-05-23  0x00492770  MainLoopInit  C2->C3  hot-path-behavioral-observation; frida.spawn+NO-Interceptor survival; all 4 hooks GREEN 30s idle main menu; boot subsystem; U-3928..U-3931 retained
 2026-05-23  0x00493480  FpsDiscretise  C2->C3  hot-path-behavioral-observation; frida.spawn+NO-Interceptor survival; GREEN 30s; U-3933 RESOLVED DAT_005cc948=1/3000.0f; util subsystem
