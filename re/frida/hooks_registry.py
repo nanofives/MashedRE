@@ -3255,15 +3255,19 @@ HOOKS = {
 
     # 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
     # Copies 6 dwords from 0x0063dc10 + slot*0x2ac into *dst.
-    # Strategy: int_copy24_out — call fn(slot, buf), read 6 dwords from buf.
+    # Strategy: int_copy_outbuf — allocate 4 KB sentinel-filled (0xCD) scratch
+    # buffer per side; call fn(slot, buf); fingerprint first 24 bytes.
     # Source is a live game-global array; at main-menu quiescent state the values
-    # are stable. Both orig and reimpl read the same source → identical output.
+    # are stable. Both orig and reimpl read the same source → identical fingerprint.
     # Slot 0 maps to 0x0063dc10; slot 1 to 0x0063debc, etc.
+    # Prior arg_type 'int_copy24_out' did not exist in diff_template.js and silently
+    # fell through to default fn(input) — calling 2-arg fn with 1 arg → AV both sides.
     'timer_slot_data_copy': {
         'rva':            0x0041f000,
         'export':         'TimerSlotDataCopy',
         'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
-        'arg_type':       'int_copy24_out',
+        'arg_type':       'int_copy_outbuf',
+        'out_buf_size':   24,
         'lut_root_delta': 0,
         # Test vectors: slot indices 0..9 (same slot read multiple times is valid;
         # the source globals are stable at quiescent main-menu state).
@@ -3311,12 +3315,20 @@ HOOKS = {
 
     # 0x004222c0  TimerInitThunk  void(void)
     # Confirmed thunk of 0x00422120 (TimerInitLoop). Identical test strategy.
+    # Observation point: 0x0063fc80 (element 0 +0xf0) — a real write site.
+    # Per Ghidra decomp 2026-05-24: TimerInitLoop iterates 4 elements at
+    # 0x0063fb90 stride 0x208 calling FUN_00421c50; FUN_00421c50 calls
+    # FUN_00421c10 twice with EAX advancing by 0x100; FUN_00421c10's tail
+    # writes 0 to (param+0xf0) and (param+0xf4). For element 0 with param =
+    # 0x0063fb90, that means writes hit 0x0063fc80 and 0x0063fc84. Prior
+    # observation point 0x0063fb90 (element base) was NEVER written by the
+    # function — both sides preserved sentinel → fake-GREEN match.
     'timer_init_thunk': {
         'rva':            0x004222c0,
         'export':         'TimerInitThunk',
         'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'void_write_observe',
-        'target_global':  0x0063fb90,
+        'target_global':  0x0063fc80,
         'lut_root_delta': 0,
         'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
                            0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
@@ -3724,45 +3736,12 @@ HOOKS = {
                            0x7FFFFFFF, 0x0000002A],
         'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
     },
-    'timer_array_zero': {
-        'rva':            0x00422b10,
-        'export':         'TimerArrayZero',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'void_write_observe',
-        'target_global':  0x008994c0,
-        'lut_root_delta': 0,
-        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
-                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
-                           0x3F800000, 0xBEEFCAFE],
-        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
-    },
+    # Note: alias entries 'timer_array_zero' / 'player_slot_zero' removed
+    # 2026-05-24 — their exports (TimerArrayZero / PlayerSlotZero) were
+    # superseded by the first-wins TimerDwordClear / TimerGlobalZero in
+    # Util/TimerInit.cpp and no longer exist in the .asi. Use
+    # 'timer_dword_clear' (0x00422b10) and 'timer_global_zero' (0x00425b10).
 
-    # 0x00425b10  PlayerSlotZero
-    # Pure leaf; writes 0 to 8 globals at stride 0x4c from 0x008992a0.
-    # Strategy: write sentinel to first address (0x008992a0), call fn, read back.
-    # Both original and reimpl must write 0 (sentinel overwritten).
-    # 10 sentinel values confirm write for each call.
-    # ref: re/analysis/timer_d3_cont1_b/0x00425b10.md
-    'player_slot_zero': {
-        'rva':            0x00425b10,
-        'export':         'PlayerSlotZero',
-        'signature':      {'ret': 'void', 'args': []},
-        'arg_type':       'void_write_observe',
-        'target_global':  0x008992a0,
-        'lut_root_delta': 0,
-        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
-                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
-                           0x3F800000, 0xBEEFCAFE],
-        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
-    },
-
-    # 0x004222c0  TimerInitThunk
-    # 4-byte thunk of FUN_00422120 (0x00422120, C2).
-    # Strategy: 'none' — call 10x at quiescent main menu; both original and
-    # reimpl delegate to 0x00422120 and produce same side-effects.
-    # FUN_00422120 iterates 0x0063fb90 stride 0x208 x4 calling FUN_00421c50;
-    # at main menu the loop body is deterministic (same state both paths).
-    # ref: re/analysis/timer_d3_cont1_b/0x004222c0.md
     'float_table_init': {
         'rva':            0x0041cbc0,
         'export':         'FloatTableInit',
@@ -3775,15 +3754,9 @@ HOOKS = {
                            0x3F800000, 0xBEEFCAFE],
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
-    'slot_data_copy': {
-        'rva':            0x0041f000,
-        'export':         'SlotDataCopy',
-        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
-        'arg_type':       'int_out24',
-        'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
-        'path2_tests':    [0, 1, 2],
-    },
+    # Note: alias entry 'slot_data_copy' removed 2026-05-24 — its export
+    # SlotDataCopy was superseded by TimerSlotDataCopy (Util/TimerInit.cpp:78)
+    # and no longer exists in the .asi. Use 'timer_slot_data_copy' instead.
 
     # 0x0041eda0  SlotBitSet  void(int param_1, int param_2)
     # target = 0x0063dc74 + param_1 * 0x2ac.

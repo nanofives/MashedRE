@@ -115,6 +115,15 @@
 //                        Optional CONFIG: slot_base_addr (default '0x006412e8'),
 //                          slot_stride (default 0xf40), slot_field_count (default 4).
 //
+// Phase A1 arg_types (added 2026-05-24):
+//   int_copy_outbuf    — void(int slot, T* dst): caller-supplied dst buffer
+//                        copy. Allocates a 4 KB sentinel-filled (0xCD) scratch
+//                        per side; calls fn(slot, buf); reads back the first
+//                        CONFIG.out_buf_size bytes (default 24) as a position-
+//                        sensitive XOR fingerprint. Unblocks 0x0041f000
+//                        TimerSlotDataCopy. Tests: flat list of slot indices.
+//                        Optional CONFIG: out_buf_size (default 24).
+//
 'use strict';
 
 const CONFIG = $CONFIG$;
@@ -884,6 +893,45 @@ function runDiff() {
                 reimV = ioBufB.readU32();
             } catch(e) { errR = e.message; }
             results.push({ idx: i, input: idx,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── int_copy_outbuf ──────────────────────────────────────────────────────
+    // For TimerSlotDataCopy-style: fn(int slot, T* dst) — void return, copies
+    // N bytes from a per-slot source global into dst. Each test is a single
+    // integer index. Allocates a sentinel-filled 4 KB scratch buffer per side
+    // (oversized to back any TimerSlot-like copy); reads back the first
+    // CONFIG.out_buf_size (default 24) bytes as a position-sensitive XOR
+    // fingerprint. Real GREEN requires both fingerprints to be non-zero AND
+    // equal — proof the function wrote AND wrote the same bytes.
+    if (CONFIG.arg_type === 'int_copy_outbuf') {
+        const BUF_BYTES = 4096;
+        const READ_LEN  = (CONFIG.out_buf_size | 0) || 24;
+        const SENTINEL  = 0xCD;  // VC malloc-style uninit byte
+        const cBufA = Memory.alloc(BUF_BYTES);
+        const cBufB = Memory.alloc(BUF_BYTES);
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const slot = CONFIG.tests[i] | 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Fill both buffers with sentinel before each call.
+            for (let k = 0; k < BUF_BYTES; k++) {
+                cBufA.add(k).writeU8(SENTINEL);
+                cBufB.add(k).writeU8(SENTINEL);
+            }
+            try {
+                Orig(slot, cBufA);
+                origV = bufFingerprint(cBufA, READ_LEN);
+            } catch(e) { errO = e.message; }
+            try {
+                Reimpl(slot, cBufB);
+                reimV = bufFingerprint(cBufB, READ_LEN);
+            } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: slot,
                            original: origV, reimpl: reimV,
                            match: (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });

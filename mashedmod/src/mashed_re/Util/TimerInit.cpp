@@ -84,7 +84,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerSlotDataCopy(int slot, int* d
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(TimerSlotDataCopy, 0x0041f000);
+RH_ScopedInstall(TimerSlotDataCopy, 0x0041f000);  // re-enabled 2026-05-24 phase-a1 int_copy_outbuf GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00420d40  TimerStructArrayClear  void(void)
@@ -188,7 +188,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerInitThunk() {
     TimerInitLoop();
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(TimerInitThunk, 0x004222c0);
+RH_ScopedInstall(TimerInitThunk, 0x004222c0);  // re-enabled 2026-05-24 phase-a1 write@+0xf0 GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00422b10  TimerDwordClear  void(void)
@@ -205,7 +205,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerDwordClear() {
     std::memset(reinterpret_cast<void*>(kTimerDwordClearBase), 0, kTimerDwordClearBytes);
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(TimerDwordClear, 0x00422b10);
+RH_ScopedInstall(TimerDwordClear, 0x00422b10);  // re-enabled 2026-05-24 phase-a1 real-GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00425b10  TimerGlobalZero  void(void)
@@ -227,7 +227,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerGlobalZero() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(TimerGlobalZero, 0x00425b10);
+RH_ScopedInstall(TimerGlobalZero, 0x00425b10);  // re-enabled 2026-05-24 phase-a1 real-GREEN
 
 // frida-sweep-20260516-0008: c3-batch-e-s12 added duplicate impls for
 // 0x00422b10 (TimerArrayZero), 0x00425b10 (PlayerSlotZero), 0x004222c0
