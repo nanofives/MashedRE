@@ -12,7 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
-2026-05-24  batch-ac-s2  work_type=promote-c2  session=batch-ac-s2  branch=c1-c2/batch-ac-s2  bucket=re/analysis/particle_promote_ac2  pool=Mashed_pool12  rvas=0x00486830,0x00486f50,0x00486f90,0x00487140,0x00487150,0x00487d00,0x00487d60,0x00487d70,0x00487de0,0x00487df0,0x00487e00,0x00489290,0x004892c0,0x00489940,0x004899c0  promotions=15xC1->C2  new-U-IDs=U-3951..U-3957  new-S-IDs=none  subsystem_observed=particle(all 15)  note=batch_ac session 2; 15 particle C1->C2 mechanical promotions; emitter-dispatch cluster (sparks/scorch/cup_cloud/4th-emitter) + pool-allocator + ring-buffer-trail-ctor + vec3-fill; 7 uncertainties filed covering local_5d8 stride mismatch, FLT_MIN guard, label-ptr role in FUN_00484cf0, dual-stride loop ranges, pool-slot struct layout, uninitialized +0x20, and param-swap at FUN_004892c0 call
+2026-05-24  batch-ac-s2  work_type=promote-c2  session=batch-ac-s2  branch=c1-c2/batch-ac-s2  bucket=re/analysis/particle_promote_ac2  pool=Mashed_pool12  rvas=0x00486830,0x00486f50,0x00486f90,0x00487140,0x00487150,0x00487d00,0x00487d60,0x00487d70,0x00487de0,0x00487df0,0x00487e00,0x00489290,0x004892c0,0x00489940,0x004899c0  promotions=15xC1->C2  new-U-IDs=U-3954..U-3960  new-S-IDs=none  subsystem_observed=particle(all 15)  note=batch_ac session 2; 15 particle C1->C2 mechanical promotions; emitter-dispatch cluster (sparks/scorch/cup_cloud/4th-emitter) + pool-allocator + ring-buffer-trail-ctor + vec3-fill; 7 uncertainties filed covering local_5d8 stride mismatch, FLT_MIN guard, label-ptr role in FUN_00484cf0, dual-stride loop ranges, pool-slot struct layout, uninitialized +0x20, and param-swap at FUN_004892c0 call
 
 ## Drained
 
