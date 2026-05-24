@@ -1939,3 +1939,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x004899c0  FUN_004899c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004899c0.md
 
 2026-05-24  batch-ac-s3  15 particle hooks C1->C2 (0x00489a40 0x00489c30 0x00489c60 0x00489ce0 0x00489da0 0x00489dc0 0x0048a060 0x0048a130 0x0048a3c0 0x0048a430 0x0048a460 0x0048a490 0x0048a4e0 0x0048a5d0 0x0048a6f0) — mechanical decomp transcription; U-3961..U-3977; S-4027..S-4054; pool=Mashed_pool14 (fallback from pool13 stale-lock); branch=c1-c2/batch-ac-s3
+2026-05-24  0x0048baf0  FUN_0048baf0  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048baf0.md; U-3996..U-3997; S-4096
+2026-05-24  0x0048bb70  FUN_0048bb70  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048bb70.md; U-3998; S-4097
+2026-05-24  0x0048bbe0  FUN_0048bbe0  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048bbe0.md; U-3999; S-4098 S-4099
+2026-05-24  0x0048bc10  FUN_0048bc10  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048bc10.md; S-4100
+2026-05-24  0x0048cee0  FUN_0048cee0  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048cee0.md; U-4000..U-4001; S-4101..S-4103
+2026-05-24  0x0048cf70  FUN_0048cf70  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048cf70.md; S-4104
+2026-05-24  0x0048cf90  FUN_0048cf90  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048cf90.md; U-4002..U-4003; S-4105..S-4106
+2026-05-24  0x0048d0f0  FUN_0048d0f0  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d0f0.md; U-4004..U-4006; leaf function
+2026-05-24  0x0048d140  FUN_0048d140  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d140.md; U-4007..U-4008; S-4107..S-4112
+2026-05-24  0x0048d360  FUN_0048d360  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d360.md; U-4009
+2026-05-24  0x0048d540  FUN_0048d540  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d540.md; U-4010
+2026-05-24  0x0048d720  FUN_0048d720  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d720.md; no new U/S IDs
+2026-05-24  0x0048d900  FUN_0048d900  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048d900.md; U-4011..U-4012
+2026-05-24  0x0048db20  FUN_0048db20  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048db20.md; no new U/S IDs
+2026-05-24  0x0048dd40  FUN_0048dd40  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048dd40.md; U-4013..U-4014
