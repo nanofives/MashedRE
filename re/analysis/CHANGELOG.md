@@ -1922,3 +1922,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x004892c0  FUN_004892c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004892c0.md; U-3958
 2026-05-24  0x00489940  FUN_00489940  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00489940.md; U-3959..U-3960
 2026-05-24  0x004899c0  FUN_004899c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004899c0.md
+
+2026-05-24  batch-ac-s3  15 particle hooks C1->C2 (0x00489a40 0x00489c30 0x00489c60 0x00489ce0 0x00489da0 0x00489dc0 0x0048a060 0x0048a130 0x0048a3c0 0x0048a430 0x0048a460 0x0048a490 0x0048a4e0 0x0048a5d0 0x0048a6f0) — mechanical decomp transcription; U-3961..U-3977; S-4027..S-4054; pool=Mashed_pool14 (fallback from pool13 stale-lock); branch=c1-c2/batch-ac-s3

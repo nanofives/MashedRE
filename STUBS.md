@@ -1121,3 +1121,31 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4024 | 0x00493580 FUN_00493580 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xe00000 transition; depth-1; skeleton-prep-s4 |
 | S-4025 | 0x0040ab40 FUN_0040ab40 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac4!=0; depth-1; skeleton-prep-s4 |
 | S-4026 | 0x0040ac80 FUN_0040ac80 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac5!=0; depth-1; skeleton-prep-s4 |
+| S-4027 | 0x004a2c48 FUN_004a2c48 | 0x00489a40 FUN_00489a40 | particle | passthrough | 2026-05-24 | batch-ac-s3: small helper returning byte via ST registers; called in history-walk loop |
+| S-4028 | 0x004893d0 FUN_004893d0 | 0x00489a40 FUN_00489a40 | particle | passthrough | 2026-05-24 | batch-ac-s3: pushes vertex/position data into auxiliary object (param_1[10]) |
+| S-4029 | 0x00489450 FUN_00489450 | 0x00489a40 FUN_00489a40 | particle | passthrough | 2026-05-24 | batch-ac-s3: pushes scale value into auxiliary object |
+| S-4030 | 0x00489480 FUN_00489480 | 0x00489a40 FUN_00489a40 | particle | passthrough | 2026-05-24 | batch-ac-s3: pushes third parameter (texcoord/alpha) into auxiliary object |
+| S-4031 | 0x00489890 FUN_00489890 | 0x00489a40 FUN_00489a40 | particle | passthrough | 2026-05-24 | batch-ac-s3: finalizes/submits auxiliary object after history loop |
+| S-4032 | 0x00489910 FUN_00489910 | 0x00489c30 FUN_00489c30 | particle | passthrough | 2026-05-24 | batch-ac-s3: single-arg call; role unknown |
+| S-4033 | 0x004898d0 FUN_004898d0 | 0x00489c60 FUN_00489c60 | particle | passthrough | 2026-05-24 | batch-ac-s3: called with auxiliary object ptr before it is zeroed; role unknown |
+| S-4034 | 0x004c0b30 FUN_004c0b30 | 0x00489dc0 FUN_00489dc0 | particle | passthrough | 2026-05-24 | batch-ac-s3: zero-arg call returning undefined4; result passed to FUN_004e7e30 |
+| S-4035 | 0x00534b60 FUN_00534b60 | 0x00489dc0 FUN_00489dc0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 3-arg call (0x200, 0x80007, 0); returns render object handle |
+| S-4036 | 0x004e7e30 FUN_004e7e30 | 0x00489dc0 FUN_00489dc0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg call with render object + FUN_004c0b30 result |
+| S-4037 | 0x004e8090 FUN_004e8090 | 0x00489dc0 FUN_00489dc0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg call conditional on DAT_007067ec != 0 |
+| S-4038 | 0x00535700 FUN_00535700 | 0x00489dc0 FUN_00489dc0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 4-arg vertex buffer lock; returns stride+ptr pair |
+| S-4039 | 0x00472650 FUN_00472650 | 0x0048a060 FUN_0048a060 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg float range RNG; returns value in [arg0, arg1] |
+| S-4040 | 0x004c1b40 FUN_004c1b40 | 0x0048a130 FUN_0048a130 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg check returning int; result checked == 2 before spawn |
+| S-4041 | 0x00535910 FUN_00535910 | 0x0048a130 FUN_0048a130 | particle | passthrough | 2026-05-24 | batch-ac-s3: vertex stream unlock; single render-object arg |
+| S-4042 | 0x004e6920 FUN_004e6920 | 0x0048a3c0 FUN_0048a3c0 | particle | passthrough | 2026-05-24 | batch-ac-s3: thunk; destroy/release of render object |
+| S-4043 | 0x004c0c20 FUN_004c0c20 | 0x0048a3c0 FUN_0048a3c0 | particle | passthrough | 2026-05-24 | batch-ac-s3: single-arg; receives render_obj[1] value; role unknown |
+| S-4044 | 0x004c1480 FUN_004c1480 | 0x0048a490 FUN_0048a490 | particle | passthrough | 2026-05-24 | batch-ac-s3: 4-arg call; role unknown |
+| S-4045 | 0x004b40f0 FUN_004b40f0 | 0x0048a490 FUN_0048a490 | particle | passthrough | 2026-05-24 | batch-ac-s3: 1-arg; returns pointer or handle; also called by 0x0048a4e0 and 0x0048a6f0 |
+| S-4046 | 0x004b5240 FUN_004b5240 | 0x0048a490 FUN_0048a490 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg call with object + 0; role unknown |
+| S-4047 | 0x004b4120 FUN_004b4120 | 0x0048a4e0 FUN_0048a4e0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 1-arg; returns undefined4 (possibly object handle) |
+| S-4048 | 0x004c0ed0 FUN_004c0ed0 | 0x0048a4e0 FUN_0048a4e0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 1-arg; called twice in same function; role unknown |
+| S-4049 | 0x004c3d60 FUN_004c3d60 | 0x0048a4e0 FUN_0048a4e0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 3-arg; fills 12-byte buffer from iVar6 and uVar4 |
+| S-4050 | 0x00490020 FUN_00490020 | 0x0048a4e0 FUN_0048a4e0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 6-arg spawn call; receives vec3 buffer, color, zeros, handle, scale |
+| S-4051 | 0x00474d80 FUN_00474d80 | 0x0048a5d0 FUN_0048a5d0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg call; receives first dword of inner entry + constant 1 |
+| S-4052 | 0x004c39b0 FUN_004c39b0 | 0x0048a6f0 FUN_0048a6f0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 2-arg call filling 12-byte local buffer from param_1[1] |
+| S-4053 | 0x004c1340 FUN_004c1340 | 0x0048a6f0 FUN_0048a6f0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 3-arg call; role unknown |
+| S-4054 | 0x004c1520 FUN_004c1520 | 0x0048a6f0 FUN_0048a6f0 | particle | passthrough | 2026-05-24 | batch-ac-s3: 4-arg call with 10.0f (0x41200000); role unknown |
