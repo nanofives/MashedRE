@@ -1974,4 +1974,20 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x0049ebf0  FUN_0049ebf0  C1->C2  batch-ad-s4: mechanical; scalar-deleting dtor; FUN_0049de90; conditional _free; plate re/analysis/particle_promote_ad4/0x0049ebf0.md; U-4135 S-4247
 2026-05-24  0x0049ec80  FUN_0049ec80  C1->C2  batch-ad-s4: mechanical; scalar-deleting dtor; FUN_0049ebc0->FUN_0049de90 chain; plate re/analysis/particle_promote_ad4/0x0049ec80.md; U-4136 S-4248
 
+2026-05-24  0x0049eca0  FUN_0049eca0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049eca0.md; U-4152 S-4274
+2026-05-24  0x0049ecc0  FUN_0049ecc0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049ecc0.md; U-4153 S-4275
+2026-05-24  0x0049eeb0  FUN_0049eeb0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049eeb0.md; U-4154 S-4276
+2026-05-24  0x0049ef10  FUN_0049ef10  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049ef10.md; U-4155 S-4277
+2026-05-24  0x0049ef60  FUN_0049ef60  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049ef60.md; U-4156 S-4278
+2026-05-24  0x0049f030  FUN_0049f030  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f030.md; U-4157 S-4279
+2026-05-24  0x0049f090  thunk_FUN_004a28b0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f090.md; U-4158 S-4280
+2026-05-24  0x0049f0a0  FUN_0049f0a0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f0a0.md; U-4159 S-4281
+2026-05-24  0x0049f180  FUN_0049f180  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f180.md; U-4160 S-4282
+2026-05-24  0x0049f1b0  FUN_0049f1b0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f1b0.md; U-4161 S-4283
+2026-05-24  0x0049f1e0  FUN_0049f1e0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f1e0.md; U-4162 S-4284
+2026-05-24  0x0049f210  FUN_0049f210  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f210.md; U-4163 S-4285
+2026-05-24  0x0049f2b0  FUN_0049f2b0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f2b0.md; U-4164 S-4286
+2026-05-24  0x0049f2e0  FUN_0049f2e0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f2e0.md; U-4165 S-4287
+2026-05-24  0x0049f300  FUN_0049f300  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f300.md; U-4166 S-4288
+
 2026-05-24  sweep-20260524-2041  scribe-claim  buckets=6 queued, 0 skipped-HOLD
