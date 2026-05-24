@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  batch-ad-s5  bucket=re/analysis/particle_promote_ad5  rvas=0x0049eca0,0x0049ecc0,0x0049eeb0,0x0049ef10,0x0049ef60,0x0049f030,0x0049f090,0x0049f0a0,0x0049f180,0x0049f1b0,0x0049f1e0,0x0049f210,0x0049f2b0,0x0049f2e0,0x0049f300  pool=Mashed_pool15  branch=c1-c2/batch-ad-s5  promotions=15xC1->C2  new-U-IDs=U-4152..U-4166  new-S-IDs=S-4274..S-4288  subsystem=particle  note=particle subsystem mechanical C1->C2; 15 DirectShow/COM strmbase-region functions; CoCreateInstance wrapper, 4-GUID IID dispatch, SEH+CritSec property setter, COM Release×2 (refcnt at +0x14 vs +0x10), vtable-call initialisers, thunk→FUN_004a28b0 (linked-list free), compact destructor×2, dead-branch unconditional callee; no STOP-AND-ASK trips; no library residue requiring reclassification
 
 ## Drained
 

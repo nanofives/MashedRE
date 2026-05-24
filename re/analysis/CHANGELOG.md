@@ -1956,3 +1956,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x0048dd40  FUN_0048dd40  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048dd40.md; U-4013..U-4014
 2026-05-24  batch-ac-s6  particle-promote-ac6  15x C1->C2 mechanical promotion  rvas=0x0048df60,0x0048e180,0x0048e360,0x0048e5f0,0x0048e7b0,0x0048e820,0x0048eac0,0x0048f590,0x0048f780,0x0048f8a0,0x0048f9f0,0x0048fb10,0x0048fce0,0x0048fd10,0x0048fd40  bucket=re/analysis/particle_promote_ac6  slot=Mashed_pool6  U-4015..U-4031(17) S-4113(1)
 2026-05-24  sweep-20260524-1938  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
+2026-05-24  0x0049eca0  FUN_0049eca0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049eca0.md; U-4152 S-4274
+2026-05-24  0x0049ecc0  FUN_0049ecc0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049ecc0.md; U-4153 S-4275
+2026-05-24  0x0049eeb0  FUN_0049eeb0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049eeb0.md; U-4154 S-4276
+2026-05-24  0x0049ef10  FUN_0049ef10  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049ef10.md; U-4155 S-4277
+2026-05-24  0x0049ef60  FUN_0049ef60  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049ef60.md; U-4156 S-4278
+2026-05-24  0x0049f030  FUN_0049f030  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f030.md; U-4157 S-4279
+2026-05-24  0x0049f090  thunk_FUN_004a28b0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f090.md; U-4158 S-4280
+2026-05-24  0x0049f0a0  FUN_0049f0a0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f0a0.md; U-4159 S-4281
+2026-05-24  0x0049f180  FUN_0049f180  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f180.md; U-4160 S-4282
+2026-05-24  0x0049f1b0  FUN_0049f1b0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f1b0.md; U-4161 S-4283
+2026-05-24  0x0049f1e0  FUN_0049f1e0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f1e0.md; U-4162 S-4284
+2026-05-24  0x0049f210  FUN_0049f210  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f210.md; U-4163 S-4285
+2026-05-24  0x0049f2b0  FUN_0049f2b0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f2b0.md; U-4164 S-4286
+2026-05-24  0x0049f2e0  FUN_0049f2e0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f2e0.md; U-4165 S-4287
+2026-05-24  0x0049f300  FUN_0049f300  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f300.md; U-4166 S-4288
