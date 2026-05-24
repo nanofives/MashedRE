@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  batch-ac-s1  bucket=re/analysis/particle_promote_ac1  rvas=0x00449880,0x00449b30,0x00449bb0,0x00485d90,0x00485e10,0x00485e50,0x00485ef0,0x00486220,0x00486270,0x004862d0,0x00486350,0x00486370,0x00486460,0x004864f0,0x00486610  pool=Mashed_pool12  branch=c1-c2/batch-ac-s1  promotions=15xC1->C2  new-U-IDs=U-3951,U-3952,U-3953  new-S-IDs=none  subsystem_observed=particle(all 15)  note=particle subsystem mechanical C1->C2 promotion; pool11 stale-locked, acquired pool12 as fallback; 3 structural uncertainties filed (U-3951: uninitialized locals in 0x00485e50; U-3952: uninitialized locals in 0x00485ef0; U-3953: hidden in_EAX register arg in 0x00486370); 0x00449880/449b30/449bb0 were unmapped status (promoted to new+C2); all 15 gates satisfied (plate exists, decomp read end-to-end, every access/branch/callee/constant cited); no library residue observed; no subsystem reclassifications
 
 ## Drained
 
