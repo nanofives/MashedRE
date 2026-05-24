@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  batch-ac-s5-particle_promote_ac5-20260524-0000  bucket=re/analysis/particle_promote_ac5  rvas=0x0048baf0,0x0048bb70,0x0048bbe0,0x0048bc10,0x0048cee0,0x0048cf70,0x0048cf90,0x0048d0f0,0x0048d140,0x0048d360,0x0048d540,0x0048d720,0x0048d900,0x0048db20,0x0048dd40  pool=Mashed_pool15  branch=c1-c2/batch-ac-s5  promotions=15xC1->C2  new-U=U-3951..U-3969(19)  new-S=S-4027..S-4043(17)  reclassifications=0  notes=particle subsystem; render-dispatch/clear/init/teardown/spawn/age-update/render templates; 5 update+render templates share bit-scan loop pattern; FUN_0048d0f0 is pure leaf
 
 ## Drained
 

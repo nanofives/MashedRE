@@ -1121,3 +1121,20 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4024 | 0x00493580 FUN_00493580 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xe00000 transition; depth-1; skeleton-prep-s4 |
 | S-4025 | 0x0040ab40 FUN_0040ab40 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac4!=0; depth-1; skeleton-prep-s4 |
 | S-4026 | 0x0040ac80 FUN_0040ac80 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac5!=0; depth-1; skeleton-prep-s4 |
+| S-4027 | 0x004770a0 FUN_004770a0 | 0x0048baf0 FUN_0048baf0 | particle | passthrough | 2026-05-24 | called twice with &DAT_00720040 and &DAT_00720080; batch-ac-s5 |
+| S-4028 | 0x004b6480 FUN_004b6480 | 0x0048bb70 FUN_0048bb70 | particle | passthrough | 2026-05-24 | called with (&DAT_007200c0, 0x80); batch-ac-s5 |
+| S-4029 | 0x004ce2d0 FUN_004ce2d0 | 0x0048bbe0 FUN_0048bbe0 | particle | passthrough | 2026-05-24 | single-arg call with opaque constant 0x5cc4de; batch-ac-s5 |
+| S-4030 | 0x004c5cb0 FUN_004c5cb0 | 0x0048bbe0 FUN_0048bbe0 | particle | passthrough | 2026-05-24 | called with (ptr-global, 0); return stored to DAT_00722134; batch-ac-s5 |
+| S-4031 | 0x004c5a60 FUN_004c5a60 | 0x0048bc10 FUN_0048bc10 | particle | passthrough | 2026-05-24 | single-arg teardown; mirror of S-4030 init side; batch-ac-s5 |
+| S-4032 | 0x0040bb30 FUN_0040bb30 | 0x0048cee0 FUN_0048cee0 | particle | passthrough | 2026-05-24 | takes string arg, returns undefined4; called twice; batch-ac-s5 |
+| S-4033 | 0x004770c0 FUN_004770c0 | 0x0048cee0 FUN_0048cee0 | particle | passthrough | 2026-05-24 | 4-arg call (ptr, 0x817, 0x100, handle); batch-ac-s5 |
+| S-4034 | 0x00476cb0 FUN_00476cb0 | 0x0048cee0 FUN_0048cee0 | particle | passthrough | 2026-05-24 | 3-arg call (ptr, 5, 6); batch-ac-s5 |
+| S-4035 | 0x004768c0 FUN_004768c0 | 0x0048cf70 FUN_0048cf70 | particle | passthrough | 2026-05-24 | single-arg teardown per 0x40-byte record; batch-ac-s5 |
+| S-4036 | 0x00472650 FUN_00472650 | 0x0048cf90 FUN_0048cf90 | particle | passthrough | 2026-05-24 | called with raw float args (-1.0f, +1.0f); returns float10; batch-ac-s5 |
+| S-4037 | 0x004a2c48 FUN_004a2c48 | 0x0048cf90 FUN_0048cf90 | particle | passthrough | 2026-05-24 | no-arg call returning undefined1; called 3 times per spawn; batch-ac-s5 |
+| S-4038 | 0x00472740 FUN_00472740 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 4-arg render call (color_ptr, color_ptr2, pfVar2+8, pfVar2[0xc]); batch-ac-s5 |
+| S-4039 | 0x004769a0 FUN_004769a0 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (pfVar2 position ptr); batch-ac-s5 |
+| S-4040 | 0x004769d0 FUN_004769d0 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&local_8 size); batch-ac-s5 |
+| S-4041 | 0x004769f0 FUN_004769f0 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&local_14 color bytes); batch-ac-s5 |
+| S-4042 | 0x00476a30 FUN_00476a30 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (float local_c); batch-ac-s5 |
+| S-4043 | 0x00476d00 FUN_00476d00 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&DAT_00722630 render context); batch-ac-s5 |
