@@ -161,7 +161,7 @@ extern "C" __declspec(dllexport) void __cdecl ChromeBaseDraw(
     rw_draw_4verts();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ChromeBaseDraw, 0x00472c60);
+RH_ScopedInstall(ChromeBaseDraw, 0x00472c60);  // re-enabled 2026-05-24 c3-frontend-b
 
 
 // ---------------------------------------------------------------------------
@@ -199,7 +199,7 @@ extern "C" __declspec(dllexport) void __cdecl TextGradientV0V1Override(
     rw_draw_4verts();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TextGradientV0V1Override, 0x00472f40);
+RH_ScopedInstall(TextGradientV0V1Override, 0x00472f40);  // re-enabled 2026-05-24 c3-frontend-b
 
 
 // ---------------------------------------------------------------------------
@@ -236,7 +236,7 @@ extern "C" __declspec(dllexport) void __cdecl TextGradientV2V3Override(
     rw_draw_4verts();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TextGradientV2V3Override, 0x004730b0);
+RH_ScopedInstall(TextGradientV2V3Override, 0x004730b0);  // re-enabled 2026-05-24 c3-frontend-b
 
 
 // ---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ extern "C" __declspec(dllexport) void __cdecl TextSpriteUVExplicit(
     rw_draw_4verts();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TextSpriteUVExplicit, 0x00473870);
+RH_ScopedInstall(TextSpriteUVExplicit, 0x00473870);  // re-enabled 2026-05-24 c3-frontend-b
 
 
 // ---------------------------------------------------------------------------

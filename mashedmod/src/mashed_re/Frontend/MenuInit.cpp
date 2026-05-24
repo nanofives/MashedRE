@@ -45,7 +45,7 @@ extern "C" __declspec(dllexport) int __cdecl GetFrameCounterPlus73() {
     return *reinterpret_cast<std::int32_t*>(0x0067f17cu) + 0x49;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetFrameCounterPlus73, 0x0042f0b0);
+RH_ScopedInstall(GetFrameCounterPlus73, 0x0042f0b0);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // MenuEntryArrayInit  --  0x0042d3e0
@@ -104,4 +104,4 @@ extern "C" __declspec(dllexport) void __cdecl MenuEntryArrayInit() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuEntryArrayInit, 0x0042d3e0);
+RH_ScopedInstall(MenuEntryArrayInit, 0x0042d3e0);  // re-enabled 2026-05-24 c3-frontend-a

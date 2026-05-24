@@ -26,7 +26,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerArrayClear() {
     std::memset(reinterpret_cast<void*>(kTimerArray), 0, 312u * sizeof(std::uint32_t));
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerArrayClear, 0x00422b30);
+RH_ScopedInstall(TimerArrayClear, 0x00422b30);  // re-enabled 2026-05-24 c3-frontend-a
 
 
 // ─── 0x0040b810  TimerGlobalsReset ────────────────────────────────────────────
@@ -69,7 +69,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerGlobalsReset() {
     zero32(0x0063b8ecu);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerGlobalsReset, 0x0040b810);
+RH_ScopedInstall(TimerGlobalsReset, 0x0040b810);  // re-enabled 2026-05-24 c3-frontend-a
 
 
 // ─── 0x0042af50  MenuReadinessCheck ───────────────────────────────────────────
@@ -163,4 +163,4 @@ extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheck() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuReadinessCheck, 0x0042af50);
+RH_ScopedInstall(MenuReadinessCheck, 0x0042af50);  // re-enabled 2026-05-24 c3-frontend-a

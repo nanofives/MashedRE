@@ -175,7 +175,7 @@ extern "C" __declspec(dllexport) void __cdecl RwInitNullStub() {
     // Intentionally empty — mirror of the 0xC3 RET in the original.
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwInitNullStub, 0x0045b350);
+RH_ScopedInstall(RwInitNullStub, 0x0045b350);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // 0x004b6480  BitArrayClear — void(byte* buf, uint count_bits)

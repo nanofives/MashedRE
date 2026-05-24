@@ -359,7 +359,7 @@ extern "C" __declspec(dllexport) void __cdecl MenusBodyA(int scroll_offset) {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenusBodyA, 0x0042d5a0);
+RH_ScopedInstall(MenusBodyA, 0x0042d5a0);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
 // MenusLapTimeFmt  --  0x0042d290
@@ -431,7 +431,7 @@ extern "C" __declspec(dllexport) void __cdecl MenusLapTimeFmt(
     (void)param_2;  // param_2 unused in body (cited as undefined4 in plate)
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenusLapTimeFmt, 0x0042d290);
+RH_ScopedInstall(MenusLapTimeFmt, 0x0042d290);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
 // MenusLapTimeCmp  --  0x0042ed70
@@ -513,7 +513,7 @@ extern "C" __declspec(dllexport) void __cdecl MenusLapTimeCmp(
     s_FontText_DrawTextRotated(sprite_id, adj_x, adj_y);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenusLapTimeCmp, 0x0042ed70);
+RH_ScopedInstall(MenusLapTimeCmp, 0x0042ed70);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // FrontendC2RoundI  --  0x00408a70
@@ -613,7 +613,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendC2RoundI(
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendC2RoundI, 0x00408a70);
+RH_ScopedInstall(FrontendC2RoundI, 0x00408a70);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
 // FrontendRaceResultsDispatch  --  0x00422fd0
@@ -698,4 +698,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendRaceResultsDispat
     return 0u;  // always 0 (cited at 0x00422fd0 body: return 0)
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendRaceResultsDispatch, 0x00422fd0);
+RH_ScopedInstall(FrontendRaceResultsDispatch, 0x00422fd0);  // re-enabled 2026-05-24 c3-frontend-a

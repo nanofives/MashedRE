@@ -60,7 +60,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotStateGet(int param
     return *SlotStateAddr(param_1);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotStateGet, 0x0040e470);
+RH_ScopedInstall(CarSlotStateGet, 0x0040e470);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // CarSlotStateSet  --  0x0040e480
@@ -90,4 +90,4 @@ extern "C" __declspec(dllexport) void __cdecl CarSlotStateSet(int param_1, std::
     *SlotStateAddr(param_1) = param_2;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotStateSet, 0x0040e480);
+RH_ScopedInstall(CarSlotStateSet, 0x0040e480);  // re-enabled 2026-05-24 c3-render-a

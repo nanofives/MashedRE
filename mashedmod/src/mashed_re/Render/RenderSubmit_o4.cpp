@@ -62,7 +62,7 @@ extern "C" __declspec(dllexport) void* __cdecl AllocatorSlotGet()
     return reinterpret_cast<void*>(base + 0x108u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AllocatorSlotGet, 0x004cd060);
+RH_ScopedInstall(AllocatorSlotGet, 0x004cd060);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // RwFreeListCreateWrapper  --  0x004cc7f0
@@ -149,7 +149,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl RwRenderCommandBufferReset
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwRenderCommandBufferReset, 0x004cd140);
+RH_ScopedInstall(RwRenderCommandBufferReset, 0x004cd140);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // RenderWidthSet  --  0x0042b890
@@ -180,7 +180,7 @@ extern "C" __declspec(dllexport) void __cdecl RenderWidthSet(std::uint16_t param
     *reinterpret_cast<std::uint16_t*>(0x0067ea54u) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RenderWidthSet, 0x0042b890);
+RH_ScopedInstall(RenderWidthSet, 0x0042b890);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // RenderHeightSet  --  0x0042b8a0
@@ -211,4 +211,4 @@ extern "C" __declspec(dllexport) void __cdecl RenderHeightSet(std::uint16_t para
     *reinterpret_cast<std::uint16_t*>(0x0067ea56u) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RenderHeightSet, 0x0042b8a0);
+RH_ScopedInstall(RenderHeightSet, 0x0042b8a0);  // re-enabled 2026-05-24 c3-render-a

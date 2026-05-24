@@ -127,4 +127,4 @@ extern "C" __declspec(dllexport) void* __cdecl FrontendModeDispatch(int param_1)
     return nullptr;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendModeDispatch, 0x0042ee40);
+RH_ScopedInstall(FrontendModeDispatch, 0x0042ee40);  // re-enabled 2026-05-24 c3-frontend-b

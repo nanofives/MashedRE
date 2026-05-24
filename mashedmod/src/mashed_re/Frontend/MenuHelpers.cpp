@@ -206,7 +206,7 @@ extern "C" __declspec(dllexport) void __cdecl FrontendCursorUpdate() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendCursorUpdate, 0x0042f7b0);
+RH_ScopedInstall(FrontendCursorUpdate, 0x0042f7b0);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // LocalPlayerSlotCheck  --  0x00436810
@@ -298,4 +298,4 @@ extern "C" __declspec(dllexport) int __cdecl LocalPlayerSlotCheck(int param_1) {
     return false;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LocalPlayerSlotCheck, 0x00436810);
+RH_ScopedInstall(LocalPlayerSlotCheck, 0x00436810);  // re-enabled 2026-05-24 c3-frontend-b

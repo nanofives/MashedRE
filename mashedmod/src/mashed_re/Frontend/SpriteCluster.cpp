@@ -489,7 +489,7 @@ extern "C" __declspec(dllexport) void __cdecl ProgressBarSetA() {
     ProgressBarSetA_RwState(8, 1);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ProgressBarSetA, 0x00430b90);
+RH_ScopedInstall(ProgressBarSetA, 0x00430b90);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ============================================================================
 // 0x00439210 — LobbySlotListRender

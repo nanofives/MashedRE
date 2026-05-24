@@ -85,4 +85,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuTableSearch(
     return *reinterpret_cast<std::uint32_t*>(0x005f6750u + static_cast<unsigned>(pos) * 4u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuTableSearch, 0x0042a940);
+RH_ScopedInstall(MenuTableSearch, 0x0042a940);  // re-enabled 2026-05-24 c3-frontend-a

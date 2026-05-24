@@ -73,7 +73,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetNumSubSystems(
     return static_cast<std::uint32_t>(local_4);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineGetNumSubSystems, 0x004c2de0);
+RH_ScopedInstall(RwEngineGetNumSubSystems, 0x004c2de0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // RwEngineGetSubSystemInfo  --  0x004c2e10
@@ -118,7 +118,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetSubSystemInfo(
     return param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineGetSubSystemInfo, 0x004c2e10);
+RH_ScopedInstall(RwEngineGetSubSystemInfo, 0x004c2e10);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // RwEngineGetCurrentSubSystem  --  0x004c2e40
@@ -161,7 +161,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetCurrentSubSyst
     return 0xffffffffu;  // -1 sentinel: dispatcher refused / driver not available
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineGetCurrentSubSystem, 0x004c2e40);
+RH_ScopedInstall(RwEngineGetCurrentSubSystem, 0x004c2e40);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // RwEngineGetNumVideoModes  --  0x004c2ea0
@@ -206,4 +206,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetNumVideoModes(
     return 0xffffffffu;  // -1 sentinel: driver refused
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineGetNumVideoModes, 0x004c2ea0);
+RH_ScopedInstall(RwEngineGetNumVideoModes, 0x004c2ea0);  // re-enabled 2026-05-24 c3-render-b

@@ -54,7 +54,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GetLiveCarCount() {
     return *reinterpret_cast<const std::uint32_t*>(0x008a94d0u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetLiveCarCount, 0x0040e340);
+RH_ScopedInstall(GetLiveCarCount, 0x0040e340);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // IsCarSlotActive  --  0x0040e370

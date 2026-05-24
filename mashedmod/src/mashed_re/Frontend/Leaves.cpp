@@ -49,4 +49,4 @@ extern "C" __declspec(dllexport) float __cdecl PerCarRaceProgressGet(int param_1
     return *reinterpret_cast<const float*>(base + static_cast<unsigned>(param_1) * stride);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PerCarRaceProgressGet, 0x00408a50);
+RH_ScopedInstall(PerCarRaceProgressGet, 0x00408a50);  // re-enabled 2026-05-24 c3-frontend-a

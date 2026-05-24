@@ -85,4 +85,4 @@ extern "C" __declspec(dllexport) int __cdecl VehicleUnlockFlagGet(int param_1, i
     return (flag_byte == 0x01u) ? 1 : 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleUnlockFlagGet, 0x0042ef40);
+RH_ScopedInstall(VehicleUnlockFlagGet, 0x0042ef40);  // re-enabled 2026-05-24 c3-frontend-b

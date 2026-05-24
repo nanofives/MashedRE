@@ -72,4 +72,4 @@ extern "C" __declspec(dllexport) void __cdecl TimeDiffDecompose(
     *csec_out = static_cast<float>(diff - (minutes * kSecPerMinute + seconds) * kCsecPerSecond);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimeDiffDecompose, 0x0042d300);
+RH_ScopedInstall(TimeDiffDecompose, 0x0042d300);  // re-enabled 2026-05-24 c3-frontend-a

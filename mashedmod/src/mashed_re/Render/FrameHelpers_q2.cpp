@@ -65,7 +65,7 @@ extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetPosition(float*
     *reinterpret_cast<float*>(0x00692530u) = param_1[2];  // DAT_00692530 = Z
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ParticleEmitter_SetPosition, 0x004769a0);
+RH_ScopedInstall(ParticleEmitter_SetPosition, 0x004769a0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // ParticleEmitter_SetVelocity  --  0x004769d0
@@ -104,7 +104,7 @@ extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetVelocity(float*
     *reinterpret_cast<float*>(0x006924e0u) = param_1[1];  // DAT_006924e0 = Vy
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ParticleEmitter_SetVelocity, 0x004769d0);
+RH_ScopedInstall(ParticleEmitter_SetVelocity, 0x004769d0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // ParticleEmitter_SetColour  --  0x004769f0
@@ -144,7 +144,7 @@ extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetColour(std::uin
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ParticleEmitter_SetColour, 0x004769f0);
+RH_ScopedInstall(ParticleEmitter_SetColour, 0x004769f0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // ParticleEmitter_SetScalar  --  0x00476a30
@@ -177,7 +177,7 @@ extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetScalar(std::uin
     *reinterpret_cast<std::uint32_t*>(0x006924d8u) = param_1;  // _DAT_006924d8 = param_1
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ParticleEmitter_SetScalar, 0x00476a30);
+RH_ScopedInstall(ParticleEmitter_SetScalar, 0x00476a30);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // ParticleEmitter_SetRGBA  --  0x00476a40
@@ -222,4 +222,4 @@ extern "C" __declspec(dllexport) void __cdecl ParticleEmitter_SetRGBA(std::uint3
     *reinterpret_cast<std::uint32_t*>(0x006925a4u) = param_1[3];  // DAT_006925a4 = A
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ParticleEmitter_SetRGBA, 0x00476a40);
+RH_ScopedInstall(ParticleEmitter_SetRGBA, 0x00476a40);  // re-enabled 2026-05-24 c3-render-b

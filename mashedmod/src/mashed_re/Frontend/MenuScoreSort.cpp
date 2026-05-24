@@ -63,7 +63,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl SplitScreenTrackAssignmen
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);
+RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // PlayerColorTableGet  --  0x0040e3a0

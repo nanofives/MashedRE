@@ -44,7 +44,7 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl MenuDimSet()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuDimSet, 0x0042aad0);
+RH_ScopedInstall(MenuDimSet, 0x0042aad0);  // re-enabled 2026-05-24 c3-frontend-a
 
 
 // ---------------------------------------------------------------------------
@@ -175,4 +175,4 @@ extern "C" __declspec(dllexport) void __fastcall MenuIm2DQuad(int param_1)
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuIm2DQuad, 0x0042aae0);
+RH_ScopedInstall(MenuIm2DQuad, 0x0042aae0);  // re-enabled 2026-05-24 c3-frontend-a

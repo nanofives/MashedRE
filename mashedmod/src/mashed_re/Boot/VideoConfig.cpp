@@ -53,7 +53,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VideoGetRenderWidth() {
     return *reinterpret_cast<const std::uint32_t*>(0x00616028u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VideoGetRenderWidth, 0x00498bc0);
+RH_ScopedInstall(VideoGetRenderWidth, 0x00498bc0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // VideoGetRenderHeight  --  0x00498bd0
@@ -69,7 +69,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VideoGetRenderHeight() {
     return *reinterpret_cast<const std::uint32_t*>(0x0061602cu);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VideoGetRenderHeight, 0x00498bd0);
+RH_ScopedInstall(VideoGetRenderHeight, 0x00498bd0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // DisplayGetCursorGate  --  0x00498bf0
@@ -86,7 +86,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl DisplayGetCursorGate() {
     return *reinterpret_cast<const std::uint32_t*>(0x00773204u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DisplayGetCursorGate, 0x00498bf0);
+RH_ScopedInstall(DisplayGetCursorGate, 0x00498bf0);  // re-enabled 2026-05-24 c3-render-b
 
 // ---------------------------------------------------------------------------
 // VideoModeArraysFree  --  0x00498b60
@@ -135,6 +135,6 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetCurrentMode() 
     return 0xffffffffu;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineGetCurrentMode, 0x004c2f00);
+RH_ScopedInstall(RwEngineGetCurrentMode, 0x004c2f00);  // re-enabled 2026-05-24 c3-render-b
 
 // 0x004c2ed0 RwEngineGetModeInfo — implemented in Render/RwPluginHelpers_o3.cpp (c3-batch-o-s3).

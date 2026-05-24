@@ -73,7 +73,7 @@ extern "C" __declspec(dllexport) void __cdecl RaceResultIndexedStore(
     *reinterpret_cast<std::uint32_t*>(0x0068d1f0u + static_cast<unsigned>(param_1) * 4u) = param_2;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceResultIndexedStore, 0x0045ba00);
+RH_ScopedInstall(RaceResultIndexedStore, 0x0045ba00);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // VehicleSlotInit  --  0x0046c5c0
@@ -128,7 +128,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotInit(
     return 1u; // success [0x0046c5ec]
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleSlotInit, 0x0046c5c0);
+RH_ScopedInstall(VehicleSlotInit, 0x0046c5c0);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // VehicleSlotFieldSet  --  0x0046c790
@@ -179,7 +179,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotFieldSet(
     return 0u; // success [0x0046c7ac]
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleSlotFieldSet, 0x0046c790);
+RH_ScopedInstall(VehicleSlotFieldSet, 0x0046c790);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ---------------------------------------------------------------------------
 // ElapsedVsThresholdCheck  --  0x004307a0
@@ -251,4 +251,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ElapsedVsThresholdCheck()
     return (fVar7 < fVar3) ? 1u : 0u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ElapsedVsThresholdCheck, 0x004307a0);
+RH_ScopedInstall(ElapsedVsThresholdCheck, 0x004307a0);  // re-enabled 2026-05-24 c3-frontend-b

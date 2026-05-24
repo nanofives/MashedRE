@@ -68,7 +68,7 @@ extern "C" __declspec(dllexport) int __cdecl MenuGroupCount(int /*param_unused*/
 
 // Note: RH_ScopedInstall patches the original __fastcall at 0x0042ac00.
 // Our reimpl is __cdecl but functionally identical (param_1/ECX unused).
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuGroupCount, 0x0042ac00);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(MenuGroupCount, 0x0042ac00);
 
 // ---------------------------------------------------------------------------
 // MenuCursorStep  --  0x0042aa00

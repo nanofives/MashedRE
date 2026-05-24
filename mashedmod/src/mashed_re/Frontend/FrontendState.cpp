@@ -45,7 +45,7 @@ extern "C" __declspec(dllexport) char __cdecl MenuSlotCount() {
     if (*reinterpret_cast<const std::int32_t*>(0x007f1a44) != -1) cVar1 += 1;
     return cVar1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuSlotCount, 0x00430b60);
+RH_ScopedInstall(MenuSlotCount, 0x00430b60);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0042f6b0  MenuModeSync
@@ -84,7 +84,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuModeSync() {
         default: break;             // no write — falls through
     }
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuModeSync, 0x0042f6b0);
+RH_ScopedInstall(MenuModeSync, 0x0042f6b0);  // re-enabled 2026-05-24 c3-frontend-b
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00430910  MenuOptionSlotGet
@@ -152,4 +152,4 @@ extern "C" __declspec(dllexport) int __cdecl MenuOptionSlotGet() {
     iVar1 = reinterpret_cast<const std::int32_t*>(0x007f0a40)[optionIdx + rowIdx * 0xc];
     return iVar1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuOptionSlotGet, 0x00430910);
+RH_ScopedInstall(MenuOptionSlotGet, 0x00430910);  // re-enabled 2026-05-24 c3-frontend-b

@@ -275,7 +275,7 @@ extern "C" __declspec(dllexport) void __cdecl CarSlotInit1P() {
     CallSlotWrite(3, 0);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotInit1P, 0x0042b960);
+RH_ScopedInstall(CarSlotInit1P, 0x0042b960);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
 // 0x0042b9e0  CarSlotAssign
@@ -432,7 +432,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotAssign() {
     } while (true);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);
+RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
 // 0x0042b540  MenuButtonDetectD
@@ -533,7 +533,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectD() {
     return uVar3;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);
+RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);  // re-enabled 2026-05-24 c3-frontend-a
 
 // ---------------------------------------------------------------------------
 // 0x0042b8b0  ScreenWidthGet

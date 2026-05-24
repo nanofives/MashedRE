@@ -54,7 +54,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Vehicle0HandleGet() {
     return *reinterpret_cast<const std::uint32_t*>(kVehicle0Handle_0067f190);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Vehicle0HandleGet, 0x0042f510);
+RH_ScopedInstall(Vehicle0HandleGet, 0x0042f510);  // re-enabled 2026-05-24 c3-render-b
 
 
 // ─── 0x00498bf0  DisplayActiveFlagGet ─────────────────────────────────────────
@@ -70,7 +70,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl DisplayActiveFlagGet() {
     return *reinterpret_cast<const std::uint32_t*>(kDisplayActive_00773204);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DisplayActiveFlagGet, 0x00498bf0);
+RH_ScopedInstall(DisplayActiveFlagGet, 0x00498bf0);  // re-enabled 2026-05-24 c3-render-b
 
 
 // ─── 0x004c19f0  RwVtableSlot07Call ───────────────────────────────────────────
@@ -92,7 +92,7 @@ extern "C" __declspec(dllexport) void __cdecl RwVtableSlot07Call(int param_1) {
     fn();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwVtableSlot07Call, 0x004c19f0);
+RH_ScopedInstall(RwVtableSlot07Call, 0x004c19f0);  // re-enabled 2026-05-24 c3-frontend-b
 
 
 // =============================================================================

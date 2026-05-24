@@ -53,7 +53,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackPhysWorld1Get()
     return *reinterpret_cast<std::uint32_t*>(0x0065742cu);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackPhysWorld1Get, 0x00426060);
+RH_ScopedInstall(TrackPhysWorld1Get, 0x00426060);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // TrackPhysWorld2Get  --  0x00426070
@@ -85,7 +85,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackPhysWorld2Get()
     return *reinterpret_cast<std::uint32_t*>(0x00656ee8u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackPhysWorld2Get, 0x00426070);
+RH_ScopedInstall(TrackPhysWorld2Get, 0x00426070);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // TrackPhysWorld3Get  --  0x004260c0
@@ -120,7 +120,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackPhysWorld3Get()
     return *reinterpret_cast<std::uint32_t*>(0x00657490u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackPhysWorld3Get, 0x004260c0);
+RH_ScopedInstall(TrackPhysWorld3Get, 0x004260c0);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // TrackLoaderFloatGet  --  0x00426e00
@@ -164,7 +164,7 @@ extern "C" __declspec(dllexport) double __cdecl TrackLoaderFloatGet()
     return *reinterpret_cast<double*>(0x00644368u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackLoaderFloatGet, 0x00426e00);
+RH_ScopedInstall(TrackLoaderFloatGet, 0x00426e00);  // re-enabled 2026-05-24 c3-render-a
 
 // ---------------------------------------------------------------------------
 // TrackSlotArrayReset  --  0x00426cd0
@@ -214,4 +214,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackSlotArrayReset()
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackSlotArrayReset, 0x00426cd0);
+RH_ScopedInstall(TrackSlotArrayReset, 0x00426cd0);  // re-enabled 2026-05-24 c3-render-a
