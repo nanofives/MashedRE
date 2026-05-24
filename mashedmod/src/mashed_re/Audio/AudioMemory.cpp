@@ -96,7 +96,7 @@ extern "C" __declspec(dllexport) unsigned char __cdecl AudioBitScanForward(unsig
     return bit;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioBitScanForward, 0x005aee20);
+RH_ScopedInstall(AudioBitScanForward, 0x005aee20);  // re-enabled 2026-05-24 batch-mixed
 
 // 0x005aec30  FUN_005aec30  (103 bytes)
 // In-place endian swap of a buffer by element width.

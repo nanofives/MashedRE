@@ -85,7 +85,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ModeGatedPlayerCheck(int 
     return (val > thr) ? 1u : 0u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ModeGatedPlayerCheck, 0x00442c80);
+RH_ScopedInstall(ModeGatedPlayerCheck, 0x00442c80);  // re-enabled 2026-05-24 batch-util
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004950b0  QpcTimeScaledTo3Mhz
@@ -215,7 +215,7 @@ extern "C" __declspec(dllexport) void __cdecl GameStateSlotsFill() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);
+RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);  // re-enabled 2026-05-24 batch-util
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041d730  PlayerSlotConfigInit
@@ -484,7 +484,7 @@ extern "C" __declspec(dllexport) void __cdecl HudDualLabelRender() {
     fn_render(0xffu, y2);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudDualLabelRender, 0x004295a0);
+RH_ScopedInstall(HudDualLabelRender, 0x004295a0);  // re-enabled 2026-05-24 batch-util
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00442440  TransformMatrixUpdate
@@ -726,7 +726,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerSlotTickDispatcher() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerSlotTickDispatcher, 0x0043c000);
+RH_ScopedInstall(TimerSlotTickDispatcher, 0x0043c000);  // re-enabled 2026-05-24 batch-util
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00475a60  PendingOpQueueFlush
@@ -760,7 +760,7 @@ extern "C" __declspec(dllexport) void __cdecl PendingOpQueueFlush() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PendingOpQueueFlush, 0x00475a60);
+RH_ScopedInstall(PendingOpQueueFlush, 0x00475a60);  // re-enabled 2026-05-24 batch-util
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00410860  ScoreThresholdStateCheck

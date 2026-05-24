@@ -28,7 +28,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GetRaceEndFlag() {
     return *reinterpret_cast<std::uint32_t*>(0x0067ea90u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetRaceEndFlag, 0x0042fe80);
+RH_ScopedInstall(GetRaceEndFlag, 0x0042fe80);  // re-enabled 2026-05-24 batch-frontend
 
 // ---------------------------------------------------------------------------
 // GetFrameCounterPlus73  --  0x0042f0b0

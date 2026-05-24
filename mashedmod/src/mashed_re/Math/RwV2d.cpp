@@ -63,7 +63,7 @@ float __cdecl Vec2Length(const float* v)
     return result;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Vec2Length, 0x004c3bf0);
+RH_ScopedInstall(Vec2Length, 0x004c3bf0);  // re-enabled 2026-05-24 batch-mixed
 
 // 0x004c3c60
 // Normalises in[2] into out[2] using RW inv-sqrt LUT.
@@ -110,4 +110,4 @@ float __cdecl Vec2Normalize(float* out, const float* in)
     return mag;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Vec2Normalize, 0x004c3c60);
+RH_ScopedInstall(Vec2Normalize, 0x004c3c60);  // re-enabled 2026-05-24 batch-mixed

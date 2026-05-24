@@ -238,3 +238,7 @@ extern "C" __declspec(dllexport) void __cdecl HudSpinCoinAnim(int param_1, int p
 }
 
 // MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSpinCoinAnim, 0x00428450);
+// Re-enable refused 2026-05-24: diff-original 5/10 mismatches — reimpl diverges from
+// original on real test vectors. The hooks.csv C4 promotion claim was based on
+// canonical-observation evidence from the loader-broken window, not actual diff.
+// Needs decomp re-read and reimpl rewrite.

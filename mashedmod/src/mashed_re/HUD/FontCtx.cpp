@@ -175,6 +175,9 @@ std::uint32_t __cdecl FontCtx_SetTranslation(float x, float y)
 }
 
 // MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtx_SetTranslation, 0x00552df0);
+// Re-enable refused 2026-05-24: synthetic diff returns None/None on all 10 vec2 inputs
+// (function dereferences a global FontCtx pointer; bare floats can't reach valid state).
+// Needs an arg_type that supplies a live FontCtx before re-enable.
 
 // ---------------------------------------------------------------------------
 // FontSys_InitRenderState  --  0x00552c10

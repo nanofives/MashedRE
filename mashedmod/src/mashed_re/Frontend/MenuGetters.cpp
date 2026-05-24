@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuAlphaGet() {
     return *reinterpret_cast<std::uint32_t*>(0x0067ecb0u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuAlphaGet, 0x0042b930);
+RH_ScopedInstall(MenuAlphaGet, 0x0042b930);  // re-enabled 2026-05-24 batch-frontend
 
 // ---------------------------------------------------------------------------
 // MenuGroupCount  --  0x0042ac00

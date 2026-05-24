@@ -125,7 +125,7 @@ void __cdecl Sub0041db80_HudThresholdDispatch()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Sub0041db80_HudThresholdDispatch, 0x0041db80);
+RH_ScopedInstall(Sub0041db80_HudThresholdDispatch, 0x0041db80);  // re-enabled 2026-05-24 batch-mixed
 
 
 // ===========================================================================
@@ -267,7 +267,7 @@ extern "C" __declspec(dllexport) void __cdecl Sub00403160_SubMode0BViewport() {
     reinterpret_cast<CamBeginFn>(0x004c1a00)(cam);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);
+RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);  // re-enabled 2026-05-24 batch-mixed
 
 
 // ===========================================================================
@@ -580,7 +580,7 @@ const std::uint8_t* __cdecl FontText_StringTableLookup(int index) {
     return base + off;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontText_StringTableLookup, 0x00427780);
+RH_ScopedInstall(FontText_StringTableLookup, 0x00427780);  // re-enabled 2026-05-24 batch-mixed
 
 
 // ===========================================================================
@@ -639,7 +639,7 @@ null_term:
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontText_UTF16WidenCopy, 0x00427840);
+RH_ScopedInstall(FontText_UTF16WidenCopy, 0x00427840);  // re-enabled 2026-05-24 batch-mixed
 
 
 // ===========================================================================

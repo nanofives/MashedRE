@@ -178,4 +178,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Win32ResourceLoader(
     return 1u;   // Step 8
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Win32ResourceLoader, 0x004997b0);
+RH_ScopedInstall(Win32ResourceLoader, 0x004997b0);  // re-enabled 2026-05-24 batch-util

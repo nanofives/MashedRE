@@ -117,7 +117,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectE() {
     return uVar2;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);
+RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);  // re-enabled 2026-05-24 batch-frontend
 
 // ---------------------------------------------------------------------------
 // 0x0042b310  MenuButtonDetectC
@@ -211,7 +211,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectC() {
     return uVar3;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);
+RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);  // re-enabled 2026-05-24 batch-frontend
 
 // ---------------------------------------------------------------------------
 // 0x0042b960  CarSlotInit1P

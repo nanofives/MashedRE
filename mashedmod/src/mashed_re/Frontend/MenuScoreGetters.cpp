@@ -54,7 +54,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ModeScoreGetBySlot(std::u
 extern "C" __declspec(dllexport) std::uint32_t __cdecl HotkeyStringBaseGet() {
     return *reinterpret_cast<std::uint32_t*>(0x0063b8ec);
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HotkeyStringBaseGet, 0x0040b7a0);
+RH_ScopedInstall(HotkeyStringBaseGet, 0x0040b7a0);  // re-enabled 2026-05-24 batch-frontend
 
 // 0x0040b7b0
 // 4-table dispatch: returns one of four per-player arrays indexed by param_1,
