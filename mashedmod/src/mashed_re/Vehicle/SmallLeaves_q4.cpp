@@ -161,7 +161,7 @@ extern "C" __declspec(dllexport) void __cdecl PerCarSnapshotInit(void) {
         rw32(kDstLap + off) = rd32(kSrcLap + off) + 1u; // lap+1
     }
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PerCarSnapshotInit, 0x004248b0);
+RH_ScopedInstall(PerCarSnapshotInit, 0x004248b0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00411d60  ReplayCheckTimer
@@ -189,4 +189,4 @@ extern "C" __declspec(dllexport) void __cdecl ReplayCheckTimer(void) {
     if (*reinterpret_cast<const std::int32_t*>(cur_ptr + kOffset_0x194) != 0) return;
     rw32(kDat_007f0ff4) = 0u;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplayCheckTimer, 0x00411d60);
+RH_ScopedInstall(ReplayCheckTimer, 0x00411d60);  // re-enabled 2026-05-24 c3-vehicle

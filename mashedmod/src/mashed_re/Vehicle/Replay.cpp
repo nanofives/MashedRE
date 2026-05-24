@@ -135,7 +135,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ReplayGetBestTime(
        reinterpret_cast<void*>(static_cast<std::uintptr_t>(mins)));
     return 1u;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplayGetBestTime, 0x00411580);
+RH_ScopedInstall(ReplayGetBestTime, 0x00411580);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004115c0  Replay::GetCurrentTime
@@ -157,7 +157,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ReplayGetCurrentTime(
        reinterpret_cast<void*>(static_cast<std::uintptr_t>(mins)));
     return 1u;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplayGetCurrentTime, 0x004115c0);
+RH_ScopedInstall(ReplayGetCurrentTime, 0x004115c0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004114e0  Replay::Cleanup
@@ -188,7 +188,7 @@ extern "C" __declspec(dllexport) void __cdecl ReplayCleanup() {
     *g_u32(kDat_0063bb10) = 0u;
     *g_u32(kDat_0063bb2c) = 0u;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplayCleanup, 0x004114e0);
+RH_ScopedInstall(ReplayCleanup, 0x004114e0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00411600  Replay::RecordFrame  (REPLAY_FN: per-frame writer)
@@ -249,7 +249,7 @@ extern "C" __declspec(dllexport) void __cdecl ReplayRecordFrame(int param_1) {
         // wprintf trio omitted (unreachable in diff regime).
     }
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplayRecordFrame, 0x00411600);
+RH_ScopedInstall(ReplayRecordFrame, 0x00411600);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00411750  Replay::StartLap
@@ -279,7 +279,7 @@ extern "C" __declspec(dllexport) void __cdecl ReplayStartLap() {
     }
     *g_u32(kDat_0063bb1c) = 0u;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplayStartLap, 0x00411750);
+RH_ScopedInstall(ReplayStartLap, 0x00411750);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004117b0  Replay::Save
@@ -322,7 +322,7 @@ extern "C" __declspec(dllexport) void __cdecl ReplaySave() {
     }
     *g_u32(kDat_005f29c8) = 1u;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReplaySave, 0x004117b0);
+RH_ScopedInstall(ReplaySave, 0x004117b0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00411170  TimeTrial::RecordPlayback  (per-frame state-6 dispatcher)
@@ -355,4 +355,4 @@ extern "C" __declspec(dllexport) void __cdecl TimeTrialRecordPlayback(int param_
     *g_u32(kDat_0063ba8c) = 7u;
     as_fn<Fn_void_void_t>(kFn_FUN_004194f0)();
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimeTrialRecordPlayback, 0x00411170);
+RH_ScopedInstall(TimeTrialRecordPlayback, 0x00411170);  // re-enabled 2026-05-24 c3-vehicle

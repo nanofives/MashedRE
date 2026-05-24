@@ -38,7 +38,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleSlotGetter(std::ui
     if (vehicleIdx > 0xfu) return 0xffffffffu;
     return reinterpret_cast<const std::uint32_t*>(kVehicleBase_8815a4)[vehicleIdx * kDWordStride];
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleSlotGetter, 0x0046c7b0);
+RH_ScopedInstall(VehicleSlotGetter, 0x0046c7b0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046c770  VehicleDestructionStateGetter
@@ -51,7 +51,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleDestructionStateGe
     if (vehicleIdx > 0xfu) return 0xffffffffu;
     return reinterpret_cast<const std::uint32_t*>(kVehicleBase_8815b0)[vehicleIdx * kDWordStride];
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleDestructionStateGetter, 0x0046c770);
+RH_ScopedInstall(VehicleDestructionStateGetter, 0x0046c770);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046c6d0  VehicleEntitySlotRead
@@ -66,7 +66,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleEntitySlotRead(int slotIdx, 
     *outVal = *reinterpret_cast<const std::uint32_t*>(kEntityBase_8820b0 + slotIdx * kByteStride);
     return 1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleEntitySlotRead, 0x0046c6d0);
+RH_ScopedInstall(VehicleEntitySlotRead, 0x0046c6d0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046dbe0  VehicleRacePositionGet
@@ -77,7 +77,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleEntitySlotRead(int slotIdx, 
 extern "C" __declspec(dllexport) std::uint32_t __cdecl VehicleRacePositionGet(int param_1) {
     return reinterpret_cast<const std::uint32_t*>(kVehicleBase_8815a8)[param_1 * kDWordStride];
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleRacePositionGet, 0x0046dbe0);
+RH_ScopedInstall(VehicleRacePositionGet, 0x0046dbe0);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00468b40  VehicleContactHistoryLookup
@@ -102,7 +102,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleContactHistoryLookup(int par
     }
     return 1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleContactHistoryLookup, 0x00468b40);
+RH_ScopedInstall(VehicleContactHistoryLookup, 0x00468b40);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046d700  VehicleVec3At9C8Get
@@ -122,7 +122,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleVec3At9C8Get(std::uint32_t* 
     outVec[2] = reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f70)[vehicleIdx * kDWordStride];
     return 1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleVec3At9C8Get, 0x0046d700);
+RH_ScopedInstall(VehicleVec3At9C8Get, 0x0046d700);  // re-enabled 2026-05-24 c3-vehicle
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0046cbb0  VehicleCarStateRead
@@ -155,4 +155,4 @@ static constexpr std::uintptr_t kCarRaceArrayBase = 0x0089a880u;
 extern "C" __declspec(dllexport) float __cdecl VehicleRaceAngleGet(int carIdx) {
     return *reinterpret_cast<const float*>(kCarRaceArrayBase + carIdx * 4u);
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleRaceAngleGet, 0x00417730);
+RH_ScopedInstall(VehicleRaceAngleGet, 0x00417730);  // re-enabled 2026-05-24 c3-vehicle

@@ -86,4 +86,4 @@ extern "C" __declspec(dllexport) int __cdecl VehicleCarStateSet(int vehicleIdx, 
 extern "C" __declspec(dllexport) void __cdecl RaceTransitionBufZero(void) {
     std::memset(reinterpret_cast<void*>(kRaceTransBufBase), 0, kRaceTransBufSize);
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceTransitionBufZero, 0x0042d3a0);
+RH_ScopedInstall(RaceTransitionBufZero, 0x0042d3a0);  // re-enabled 2026-05-24 c3-vehicle

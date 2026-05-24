@@ -317,4 +317,4 @@ extern "C" __declspec(dllexport) void __cdecl VehicleCollisionWinTrigger(int par
     *reinterpret_cast<std::uint32_t*>(kDAT_007f0fdc) = 6000u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleCollisionWinTrigger, 0x00467300);
+RH_ScopedInstall(VehicleCollisionWinTrigger, 0x00467300);  // re-enabled 2026-05-24 c3-vehicle

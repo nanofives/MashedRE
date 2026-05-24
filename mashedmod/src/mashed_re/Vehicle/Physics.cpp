@@ -59,4 +59,4 @@ std::uint32_t __cdecl VehicleSpinoutStateSet(std::uint32_t vehicleIdx,
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleSpinoutStateSet, 0x0046cbe0);
+RH_ScopedInstall(VehicleSpinoutStateSet, 0x0046cbe0);  // re-enabled 2026-05-24 c3-vehicle
