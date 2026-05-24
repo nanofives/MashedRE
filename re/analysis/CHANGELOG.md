@@ -1956,3 +1956,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x0048dd40  FUN_0048dd40  C1->C2  batch-ac-s5 mechanical decomp; re/analysis/particle_promote_ac5/0048dd40.md; U-4013..U-4014
 2026-05-24  batch-ac-s6  particle-promote-ac6  15x C1->C2 mechanical promotion  rvas=0x0048df60,0x0048e180,0x0048e360,0x0048e5f0,0x0048e7b0,0x0048e820,0x0048eac0,0x0048f590,0x0048f780,0x0048f8a0,0x0048f9f0,0x0048fb10,0x0048fce0,0x0048fd10,0x0048fd40  bucket=re/analysis/particle_promote_ac6  slot=Mashed_pool6  U-4015..U-4031(17) S-4113(1)
 2026-05-24  sweep-20260524-1938  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
+2026-05-24  batch-ad-s6  particle-promote-ad6  15x C1->C2 mechanical promotion  rvas=0x0049f420,0x0049f4d0,0x0049f5b0,0x0049f690,0x0049f830,0x0049f950,0x0049fa40,0x0049fac0,0x0049fc80,0x0049fcc0,0x0049fe10,0x0049ff30,0x0049ff60,0x0049ffe0,0x004b4000  bucket=re/analysis/particle_promote_ad6  slot=Mashed_pool0  U-4182..U-4196(20) S=none

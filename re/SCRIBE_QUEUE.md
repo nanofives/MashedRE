@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  batch-ad-s6  bucket=re/analysis/particle_promote_ad6  rvas=0x0049f420,0x0049f4d0,0x0049f5b0,0x0049f690,0x0049f830,0x0049f950,0x0049fa40,0x0049fac0,0x0049fc80,0x0049fcc0,0x0049fe10,0x0049ff30,0x0049ff60,0x0049ffe0,0x004b4000  pool=Mashed_pool0(acquired-after-cleanup)  branch=c1-c2/batch-ad-s6  promotions=15xC1->C2  new-U=U-4182..U-4196(20)  new-S=none  reclassifications=0  note=particle subsystem mechanical C1->C2; directshow-baseclasses vtable dispatch cluster (0x0049f420..0x0049ffe0) + FUN_004b4000 (first post-CRT game code, one-line wrapper); all 15 confirmed particle; all bodies read end-to-end; every const/offset/callee enumerated; 0x004b4000 confirmed not library residue; no STOP-AND-ASK trips
 
 ## Drained
 
