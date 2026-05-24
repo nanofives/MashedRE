@@ -236,7 +236,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuSpriteDispatchA(void)
     vtable_render_state(8, 1);
 }
 
-RH_ScopedInstall(MenuSpriteDispatchA, 0x0042f0c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuSpriteDispatchA, 0x0042f0c0);
 
 
 // ---------------------------------------------------------------------------
@@ -333,7 +333,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuSpriteDispatchB(void)
     vtable_render_state(8, 1);
 }
 
-RH_ScopedInstall(MenuSpriteDispatchB, 0x0042fb70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuSpriteDispatchB, 0x0042fb70);
 
 
 // ---------------------------------------------------------------------------
@@ -433,7 +433,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuSpriteDispatchC(void)
     vtable_render_state(8, 1);
 }
 
-RH_ScopedInstall(MenuSpriteDispatchC, 0x0042fe90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuSpriteDispatchC, 0x0042fe90);
 
 
 // ---------------------------------------------------------------------------
@@ -509,7 +509,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuChromeShellA(void)
     }
 }
 
-RH_ScopedInstall(MenuChromeShellA, 0x0042e3a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuChromeShellA, 0x0042e3a0);
 
 
 // ---------------------------------------------------------------------------
@@ -634,4 +634,4 @@ extern "C" __declspec(dllexport) void __cdecl MenuChromeShellB(void)
     s_LogoOverlayDraw(logo_bg, slide);
 }
 
-RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);

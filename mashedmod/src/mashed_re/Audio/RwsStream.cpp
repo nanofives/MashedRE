@@ -81,7 +81,7 @@ AudioRwsChunkHeaderRead(std::uint32_t param_1, std::uint32_t* param_2)
     return param_1;
 }
 
-RH_ScopedInstall(AudioRwsChunkHeaderRead, 0x005ab380);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioRwsChunkHeaderRead, 0x005ab380);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ab410  FUN_005ab410  AudioRwsChunkTypeSeek    (~140 bytes)
@@ -154,7 +154,7 @@ AudioRwsChunkTypeSeek(std::uint32_t param_1, int param_2,
     (void)local_8; (void)local_4;
 }
 
-RH_ScopedInstall(AudioRwsChunkTypeSeek, 0x005ab410);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioRwsChunkTypeSeek, 0x005ab410);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005abf80  FUN_005abf80  AudioWaveVtableSlot1cDispatch  (~16 bytes)
@@ -191,7 +191,7 @@ AudioWaveVtableSlot1cDispatch(int param_1)
     }
 }
 
-RH_ScopedInstall(AudioWaveVtableSlot1cDispatch, 0x005abf80);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioWaveVtableSlot1cDispatch, 0x005abf80);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005aa0c0  FUN_005aa0c0  AudioTreeWalkPredicateSearch  (~100 bytes)
@@ -279,4 +279,4 @@ AudioTreeWalkPredicateSearch(std::uint32_t* param_1, int* param_2,
     return nullptr;
 }
 
-RH_ScopedInstall(AudioTreeWalkPredicateSearch, 0x005aa0c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioTreeWalkPredicateSearch, 0x005aa0c0);

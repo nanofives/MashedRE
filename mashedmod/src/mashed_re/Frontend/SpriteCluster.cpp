@@ -227,7 +227,7 @@ extern "C" __declspec(dllexport) void* __cdecl LinkedListStringSearch(
     return nullptr;
 }
 
-RH_ScopedInstall(LinkedListStringSearch, 0x004c5c00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LinkedListStringSearch, 0x004c5c00);
 
 // ============================================================================
 // 0x0040bb50 — SpriteLookupC
@@ -256,7 +256,7 @@ extern "C" __declspec(dllexport) void* __cdecl SpriteLookupC(const char* key) {
     return LinkedListStringSearch(tableC, key);
 }
 
-RH_ScopedInstall(SpriteLookupC, 0x0040bb50);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteLookupC, 0x0040bb50);
 
 // ============================================================================
 // 0x00430b90 — ProgressBarSetA
@@ -489,7 +489,7 @@ extern "C" __declspec(dllexport) void __cdecl ProgressBarSetA() {
     ProgressBarSetA_RwState(8, 1);
 }
 
-RH_ScopedInstall(ProgressBarSetA, 0x00430b90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ProgressBarSetA, 0x00430b90);
 
 // ============================================================================
 // 0x00439210 — LobbySlotListRender
@@ -667,4 +667,4 @@ extern "C" __declspec(dllexport) void __cdecl LobbySlotListRender() {
     }
 }
 
-RH_ScopedInstall(LobbySlotListRender, 0x00439210);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LobbySlotListRender, 0x00439210);

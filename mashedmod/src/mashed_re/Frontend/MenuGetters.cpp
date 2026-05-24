@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuAlphaGet() {
     return *reinterpret_cast<std::uint32_t*>(0x0067ecb0u);
 }
 
-RH_ScopedInstall(MenuAlphaGet, 0x0042b930);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuAlphaGet, 0x0042b930);
 
 // ---------------------------------------------------------------------------
 // MenuGroupCount  --  0x0042ac00
@@ -68,7 +68,7 @@ extern "C" __declspec(dllexport) int __cdecl MenuGroupCount(int /*param_unused*/
 
 // Note: RH_ScopedInstall patches the original __fastcall at 0x0042ac00.
 // Our reimpl is __cdecl but functionally identical (param_1/ECX unused).
-RH_ScopedInstall(MenuGroupCount, 0x0042ac00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuGroupCount, 0x0042ac00);
 
 // ---------------------------------------------------------------------------
 // MenuCursorStep  --  0x0042aa00

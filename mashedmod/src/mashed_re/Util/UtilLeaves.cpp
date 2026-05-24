@@ -54,7 +54,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GetLiveCarCount() {
     return *reinterpret_cast<const std::uint32_t*>(0x008a94d0u);
 }
 
-RH_ScopedInstall(GetLiveCarCount, 0x0040e340);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetLiveCarCount, 0x0040e340);
 
 // ---------------------------------------------------------------------------
 // IsCarSlotActive  --  0x0040e370
@@ -99,4 +99,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl IsCarSlotActive(int param
     return val != 0u ? 1u : 0u;
 }
 
-RH_ScopedInstall(IsCarSlotActive, 0x0040e370);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(IsCarSlotActive, 0x0040e370);

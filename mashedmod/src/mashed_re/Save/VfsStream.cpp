@@ -91,7 +91,7 @@ extern "C" __declspec(dllexport) int __cdecl VfsStreamRead(
     return bytes_read / element_size;
 }
 
-RH_ScopedInstall(VfsStreamRead, 0x00550980);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VfsStreamRead, 0x00550980);
 
 // ---------------------------------------------------------------------------
 // 0x00550bc0  VfsStreamGetType
@@ -110,4 +110,4 @@ extern "C" __declspec(dllexport) int __cdecl VfsStreamGetType(void* ctx)
     return result;
 }
 
-RH_ScopedInstall(VfsStreamGetType, 0x00550bc0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VfsStreamGetType, 0x00550bc0);

@@ -78,7 +78,7 @@ extern "C" __declspec(dllexport) void __cdecl SpriteSlotDispatch(int slot) {
     s_FUN_0040bb90(kSlotPtrs[slot]);
 }
 
-RH_ScopedInstall(SpriteSlotDispatch, 0x0042fab0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteSlotDispatch, 0x0042fab0);
 
 
 // ---------------------------------------------------------------------------
@@ -122,4 +122,4 @@ extern "C" __declspec(dllexport) void __cdecl SpriteAnimFrameThunk(
     s_FUN_0040bb70(sprite_ptr, x1, y1, x2, y2, color, uv_param, frame_idx, flag);
 }
 
-RH_ScopedInstall(SpriteAnimFrameThunk, 0x0042e590);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteAnimFrameThunk, 0x0042e590);

@@ -72,7 +72,7 @@ extern "C" __declspec(dllexport) void __cdecl SlotWordSet(
     *reinterpret_cast<std::uint32_t*>(0x00641320u + static_cast<unsigned>(param_1) * 0xf40u) = param_2;
 }
 
-RH_ScopedInstall(SlotWordSet, 0x00422af0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SlotWordSet, 0x00422af0);
 
 // ---------------------------------------------------------------------------
 // SlotQuadSet  --  0x00422ac0
@@ -112,7 +112,7 @@ extern "C" __declspec(dllexport) void __cdecl SlotQuadSet(
     base[3] = param_2[3];   // DAT_006412f4 + stride + 12
 }
 
-RH_ScopedInstall(SlotQuadSet, 0x00422ac0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SlotQuadSet, 0x00422ac0);
 
 // ---------------------------------------------------------------------------
 // FUN_00403d30  --  0x00403d30
@@ -175,7 +175,7 @@ extern "C" __declspec(dllexport) void __cdecl Render_00403d30(void)
     );
 }
 
-RH_ScopedInstall(Render_00403d30, 0x00403d30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Render_00403d30, 0x00403d30);
 
 // ---------------------------------------------------------------------------
 // FUN_00403ed0  --  0x00403ed0
@@ -266,7 +266,7 @@ extern "C" __declspec(dllexport) void __cdecl Render_00403ed0(void)
     );
 }
 
-RH_ScopedInstall(Render_00403ed0, 0x00403ed0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Render_00403ed0, 0x00403ed0);
 
 // ---------------------------------------------------------------------------
 // ConditionalRenderSubPass  --  0x0040df60
@@ -344,4 +344,4 @@ extern "C" __declspec(dllexport) void __cdecl ConditionalRenderSubPass(void)
     }
 }
 
-RH_ScopedInstall(ConditionalRenderSubPass, 0x0040df60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ConditionalRenderSubPass, 0x0040df60);

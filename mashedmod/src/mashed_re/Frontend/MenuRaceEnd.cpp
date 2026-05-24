@@ -43,7 +43,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RaceEndFlagIfEndMode() {
     return uVar2;
 }
 
-RH_ScopedInstall(RaceEndFlagIfEndMode, 0x0042fe30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceEndFlagIfEndMode, 0x0042fe30);
 
 // ---------------------------------------------------------------------------
 // RaceEndAltFlagIfEndMode  --  0x0042fe50
@@ -73,4 +73,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RaceEndAltFlagIfEndMode()
     return mask & *reinterpret_cast<const std::uint32_t*>(0x0067ea78u);
 }
 
-RH_ScopedInstall(RaceEndAltFlagIfEndMode, 0x0042fe50);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceEndAltFlagIfEndMode, 0x0042fe50);

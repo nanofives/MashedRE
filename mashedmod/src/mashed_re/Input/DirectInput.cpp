@@ -114,7 +114,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GetInputHinst() {
     return *reinterpret_cast<const std::uint32_t*>(kInputHinstAddr);
 }
 
-RH_ScopedInstall(GetInputHinst, 0x00499720);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetInputHinst, 0x00499720);
 
 // ---------------------------------------------------------------------------
 // 0x00495530  CreateDInputObject — undefined4(void)
@@ -149,7 +149,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CreateDInputObject() {
     return 1;
 }
 
-RH_ScopedInstall(CreateDInputObject, 0x00495530);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CreateDInputObject, 0x00495530);
 
 // ---------------------------------------------------------------------------
 // 0x004955b0  CreateDInputObjectBool — bool(void)
@@ -162,7 +162,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CreateDInputObjectBool() 
     return CreateDInputObject() != 0 ? 1u : 0u;
 }
 
-RH_ScopedInstall(CreateDInputObjectBool, 0x004955b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CreateDInputObjectBool, 0x004955b0);
 
 // ---------------------------------------------------------------------------
 // 0x0045b350  RwInitNullStub — void(void)
@@ -175,7 +175,7 @@ extern "C" __declspec(dllexport) void __cdecl RwInitNullStub() {
     // Intentionally empty — mirror of the 0xC3 RET in the original.
 }
 
-RH_ScopedInstall(RwInitNullStub, 0x0045b350);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwInitNullStub, 0x0045b350);
 
 // ---------------------------------------------------------------------------
 // 0x004b6480  BitArrayClear — void(byte* buf, uint count_bits)
@@ -242,7 +242,7 @@ extern "C" __declspec(dllexport) void __cdecl BitArrayClear(
     }
 }
 
-RH_ScopedInstall(BitArrayClear, 0x004b6480);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(BitArrayClear, 0x004b6480);
 
 // ---------------------------------------------------------------------------
 // 0x00495830  JoypadStrcpy — int(int slot_idx, int dst_ptr)
@@ -292,4 +292,4 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl JoypadStrcpy(
     return 1;
 }
 
-RH_ScopedInstall(JoypadStrcpy, 0x00495830);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(JoypadStrcpy, 0x00495830);

@@ -125,7 +125,7 @@ void __cdecl Sub0041db80_HudThresholdDispatch()
     }
 }
 
-RH_ScopedInstall(Sub0041db80_HudThresholdDispatch, 0x0041db80);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Sub0041db80_HudThresholdDispatch, 0x0041db80);
 
 
 // ===========================================================================
@@ -190,7 +190,7 @@ float __cdecl FontText_StringWidthAccumulator(const void* font_ctx,
     return total * scale;
 }
 
-RH_ScopedInstall(FontText_StringWidthAccumulator, 0x005554d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontText_StringWidthAccumulator, 0x005554d0);
 #endif
 
 
@@ -267,7 +267,7 @@ extern "C" __declspec(dllexport) void __cdecl Sub00403160_SubMode0BViewport() {
     reinterpret_cast<CamBeginFn>(0x004c1a00)(cam);
 }
 
-RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Sub00403160_SubMode0BViewport, 0x00403160);
 
 
 // ===========================================================================
@@ -557,7 +557,7 @@ skip28:
     }
 }
 
-RH_ScopedInstall(Sub0041bc50_HudRender29Dispatcher, 0x0041bc50);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Sub0041bc50_HudRender29Dispatcher, 0x0041bc50);
 #endif
 
 
@@ -580,7 +580,7 @@ const std::uint8_t* __cdecl FontText_StringTableLookup(int index) {
     return base + off;
 }
 
-RH_ScopedInstall(FontText_StringTableLookup, 0x00427780);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontText_StringTableLookup, 0x00427780);
 
 
 // ===========================================================================
@@ -639,7 +639,7 @@ null_term:
     }
 }
 
-RH_ScopedInstall(FontText_UTF16WidenCopy, 0x00427840);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontText_UTF16WidenCopy, 0x00427840);
 
 
 // ===========================================================================
@@ -742,5 +742,5 @@ alloc_failed:
     }
 }
 
-RH_ScopedInstall(FontCtxMatrix_AllocInit, 0x004c57a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtxMatrix_AllocInit, 0x004c57a0);
 #endif

@@ -23,7 +23,7 @@ static constexpr std::uint32_t  kEntityDWordStride  = 0x341u; // = 0xD04 / 4
 extern "C" __declspec(dllexport) void __cdecl EntityFieldSet(int param_1, std::uint32_t param_2) {
     reinterpret_cast<std::uint32_t*>(kEntityBase_8815a8)[param_1 * kEntityDWordStride] = param_2;
 }
-RH_ScopedInstall(EntityFieldSet, 0x0046dc00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(EntityFieldSet, 0x0046dc00);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00492340  CarSlotInit
@@ -64,4 +64,4 @@ extern "C" __declspec(dllexport) void __cdecl CarSlotInit(int param_1) {
         *reinterpret_cast<std::uint32_t*>(kPlayerBase_7f1058 + iVar1 + 0x14) = 0xffu;
     }
 }
-RH_ScopedInstall(CarSlotInit, 0x00492340);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotInit, 0x00492340);

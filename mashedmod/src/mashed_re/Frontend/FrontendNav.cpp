@@ -135,4 +135,4 @@ extern "C" __declspec(dllexport) void __cdecl MenuCursorBack() {
         // In both branches: continue outer loop.
     }
 }
-RH_ScopedInstall(MenuCursorBack, 0x004323c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuCursorBack, 0x004323c0);

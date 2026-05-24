@@ -98,7 +98,7 @@ extern "C" __declspec(dllexport) void __cdecl WorldRenderDispatch_Begin(std::int
     s_FUN_004e4320(world_handle, static_cast<std::uint32_t>(param_1));
 }
 
-RH_ScopedInstall(WorldRenderDispatch_Begin, 0x00426670);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(WorldRenderDispatch_Begin, 0x00426670);
 
 // ---------------------------------------------------------------------------
 // WorldRenderDispatch_End  --  0x004266b0
@@ -148,4 +148,4 @@ extern "C" __declspec(dllexport) void __cdecl WorldRenderDispatch_End(std::int32
     s_FUN_004e4350(world_handle, static_cast<std::uint32_t>(param_1));
 }
 
-RH_ScopedInstall(WorldRenderDispatch_End, 0x004266b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(WorldRenderDispatch_End, 0x004266b0);

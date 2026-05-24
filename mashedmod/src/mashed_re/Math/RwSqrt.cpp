@@ -62,7 +62,7 @@ extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
     return result;
 }
 
-RH_ScopedInstall(FastInvSqrt, 0x004c3b90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FastInvSqrt, 0x004c3b90);
 
 // Mashed RE - Fast sqrt (single float) primitive.
 // Original: 0x004c3b30  FUN_004c3b30  ai_update_d4  C1 -> C3
@@ -95,4 +95,4 @@ extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
     return result;
 }
 
-RH_ScopedInstall(FastSqrt, 0x004c3b30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FastSqrt, 0x004c3b30);

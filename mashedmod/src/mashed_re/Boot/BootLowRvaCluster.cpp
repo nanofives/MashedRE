@@ -147,7 +147,7 @@ void __cdecl BootQueueFlush(std::int32_t param_1)
     }
 }
 
-RH_ScopedInstall(BootQueueFlush, 0x004026d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(BootQueueFlush, 0x004026d0);
 
 
 // ============================================================================
@@ -201,7 +201,7 @@ void __cdecl BootDefaultParamsInit()
     *g_DAT_00636aec = 0x42700000u;          // cluster+4   = 60.0f [UNCERTAIN U-0171]
 }
 
-RH_ScopedInstall(BootDefaultParamsInit, 0x00402f50);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(BootDefaultParamsInit, 0x00402f50);
 
 
 // ============================================================================
@@ -255,7 +255,7 @@ std::int32_t __cdecl VtableTeardown_114c0()
     return 1;
 }
 
-RH_ScopedInstall(VtableTeardown_114c0, 0x004114c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VtableTeardown_114c0, 0x004114c0);
 
 
 // ============================================================================
@@ -307,7 +307,7 @@ void __cdecl DefaultParam_SetField04()
     *g_DAT_007f0f04 = 0x3f333333u;
 }
 
-RH_ScopedInstall(DefaultParam_SetField04, 0x00431ae0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DefaultParam_SetField04, 0x00431ae0);
 
 
 // ============================================================================
@@ -332,7 +332,7 @@ void __cdecl DefaultParam_SetField08()
     *g_DAT_007f0f08 = 0x3f333333u;
 }
 
-RH_ScopedInstall(DefaultParam_SetField08, 0x00431af0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DefaultParam_SetField08, 0x00431af0);
 
 
 // ============================================================================
@@ -357,4 +357,4 @@ void __cdecl DefaultParam_SetField00()
     *g_DAT_007f0f00 = 0x3f333333u;
 }
 
-RH_ScopedInstall(DefaultParam_SetField00, 0x00431b00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DefaultParam_SetField00, 0x00431b00);

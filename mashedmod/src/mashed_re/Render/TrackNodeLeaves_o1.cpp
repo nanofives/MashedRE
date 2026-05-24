@@ -94,7 +94,7 @@ extern "C" __declspec(dllexport) void __cdecl TrackNodeRecordScan(int param_1)
     // Returns void; side effect is DAT_0063d7e4 = last matching record, or NULL.
 }
 
-RH_ScopedInstall(TrackNodeRecordScan, 0x0041e870);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeRecordScan, 0x0041e870);
 
 // ---------------------------------------------------------------------------
 // TrackNodeFnPtrGet14  --  0x0041e9d0
@@ -127,7 +127,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet14() {
     return *reinterpret_cast<std::uint32_t*>(record + 0x14u);
 }
 
-RH_ScopedInstall(TrackNodeFnPtrGet14, 0x0041e9d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeFnPtrGet14, 0x0041e9d0);
 
 // ---------------------------------------------------------------------------
 // TrackNodeFnPtrGet44  --  0x0041ea90
@@ -160,7 +160,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet44() {
     return *reinterpret_cast<std::uint32_t*>(record + 0x44u);
 }
 
-RH_ScopedInstall(TrackNodeFnPtrGet44, 0x0041ea90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeFnPtrGet44, 0x0041ea90);
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch14  --  0x0041e8b0
@@ -208,7 +208,7 @@ extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch14()
     fn();
 }
 
-RH_ScopedInstall(TrackNodeDispatch14, 0x0041e8b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeDispatch14, 0x0041e8b0);
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch44  --  0x0041e970
@@ -250,7 +250,7 @@ extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch44()
     fn();
 }
 
-RH_ScopedInstall(TrackNodeDispatch44, 0x0041e970);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeDispatch44, 0x0041e970);
 // ---------------------------------------------------------------------------
 // TrackNodeFnPtrGet18  --  0x0041e9e0
 //
@@ -286,7 +286,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl TrackNodeFnPtrGet18() {
     return *reinterpret_cast<std::uint32_t*>(record + 0x18u);
 }
 
-RH_ScopedInstall(TrackNodeFnPtrGet18, 0x0041e9e0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeFnPtrGet18, 0x0041e9e0);
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch18  --  0x0041e8c0
@@ -333,7 +333,7 @@ extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch18() {
     fn();
 }
 
-RH_ScopedInstall(TrackNodeDispatch18, 0x0041e8c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeDispatch18, 0x0041e8c0);
 
 // ---------------------------------------------------------------------------
 // TrackNodeDispatch24  --  0x0041e8f0
@@ -377,7 +377,7 @@ extern "C" __declspec(dllexport) void __cdecl TrackNodeDispatch24() {
     fn();
 }
 
-RH_ScopedInstall(TrackNodeDispatch24, 0x0041e8f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeDispatch24, 0x0041e8f0);
 
 // ---------------------------------------------------------------------------
 // TrackNodeFieldCmp10  --  0x0041e9b0
@@ -417,7 +417,7 @@ extern "C" __declspec(dllexport) int __cdecl TrackNodeFieldCmp10(int param_1) {
     return (field_val == param_1) ? 1 : 0;
 }
 
-RH_ScopedInstall(TrackNodeFieldCmp10, 0x0041e9b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeFieldCmp10, 0x0041e9b0);
 
 // ---------------------------------------------------------------------------
 // TrackNodeRecordFind  --  0x0041e980
@@ -482,5 +482,5 @@ extern "C" __declspec(dllexport) char* __cdecl TrackNodeRecordFind(int param_1) 
     return nullptr;
 }
 
-RH_ScopedInstall(TrackNodeRecordFind, 0x0041e980);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackNodeRecordFind, 0x0041e980);
 

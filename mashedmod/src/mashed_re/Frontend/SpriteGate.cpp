@@ -48,7 +48,7 @@ extern "C" __declspec(dllexport) void* __cdecl SpriteLookupTableA(const char* ke
     return s_FUN_004c5c00(tableA, key);
 }
 
-RH_ScopedInstall(SpriteLookupTableA, 0x0040bb70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteLookupTableA, 0x0040bb70);
 
 // ---------------------------------------------------------------------------
 // SpriteLookupTableB  --  0x0040bb90
@@ -72,7 +72,7 @@ extern "C" __declspec(dllexport) void* __cdecl SpriteLookupTableB(const char* ke
     return s_FUN_004c5c00(tableB, key);
 }
 
-RH_ScopedInstall(SpriteLookupTableB, 0x0040bb90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteLookupTableB, 0x0040bb90);
 
 // ---------------------------------------------------------------------------
 // SpriteSlotGate  --  0x0042ee00
@@ -116,7 +116,7 @@ extern "C" __declspec(dllexport) void* __cdecl SpriteSlotGate(int slot) {
     return nullptr;
 }
 
-RH_ScopedInstall(SpriteSlotGate, 0x0042ee00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteSlotGate, 0x0042ee00);
 
 // ---------------------------------------------------------------------------
 // HudSlotTypePlayer0  --  0x00430a10
@@ -153,7 +153,7 @@ extern "C" __declspec(dllexport) int __cdecl HudSlotTypePlayer0() {
     }
 }
 
-RH_ScopedInstall(HudSlotTypePlayer0, 0x00430a10);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSlotTypePlayer0, 0x00430a10);
 
 // ---------------------------------------------------------------------------
 // HudSlotTypePlayer1  --  0x00430a60
@@ -188,7 +188,7 @@ extern "C" __declspec(dllexport) int __cdecl HudSlotTypePlayer1() {
     }
 }
 
-RH_ScopedInstall(HudSlotTypePlayer1, 0x00430a60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSlotTypePlayer1, 0x00430a60);
 
 // ---------------------------------------------------------------------------
 // HudSlotTypePlayer2  --  0x00430ab0
@@ -223,4 +223,4 @@ extern "C" __declspec(dllexport) int __cdecl HudSlotTypePlayer2() {
     }
 }
 
-RH_ScopedInstall(HudSlotTypePlayer2, 0x00430ab0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSlotTypePlayer2, 0x00430ab0);

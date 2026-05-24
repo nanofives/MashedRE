@@ -70,7 +70,7 @@ RwTexDictionarySetCurrent(std::uint32_t param_1)
     return 1u;  // cited 0x004c5815
 }
 
-RH_ScopedInstall(RwTexDictionarySetCurrent, 0x004c5800);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwTexDictionarySetCurrent, 0x004c5800);
 
 // ---------------------------------------------------------------------------
 // 0x004c5820  FUN_004c5820  RwTexDictionaryGetCurrent   (15 bytes)
@@ -98,7 +98,7 @@ RwTexDictionaryGetCurrent()
     return *reinterpret_cast<std::uint32_t*>(rw_base + 0x1cu + rw_slot);
 }
 
-RH_ScopedInstall(RwTexDictionaryGetCurrent, 0x004c5820);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwTexDictionaryGetCurrent, 0x004c5820);
 
 // ---------------------------------------------------------------------------
 // 0x004c5a00  FUN_004c5a00  RwTextureCreate   (89 bytes)
@@ -172,7 +172,7 @@ RwTextureCreate(std::uint32_t param_1)
     return puVar1;
 }
 
-RH_ScopedInstall(RwTextureCreate, 0x004c5a00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwTextureCreate, 0x004c5a00);
 
 // ---------------------------------------------------------------------------
 // 0x004c5ae0  FUN_004c5ae0  RwTextureSetName   (109 bytes)
@@ -248,7 +248,7 @@ RwTextureSetName(std::uint32_t* param_1, const char* param_2)
     return param_1;  // cited 0x004c5b40
 }
 
-RH_ScopedInstall(RwTextureSetName, 0x004c5ae0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwTextureSetName, 0x004c5ae0);
 
 // ---------------------------------------------------------------------------
 // 0x004c5b50  FUN_004c5b50  RwTextureSetMaskName   (109 bytes)
@@ -307,4 +307,4 @@ RwTextureSetMaskName(std::uint32_t* param_1, const char* param_2)
     return param_1;  // cited 0x004c5bb0
 }
 
-RH_ScopedInstall(RwTextureSetMaskName, 0x004c5b50);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwTextureSetMaskName, 0x004c5b50);

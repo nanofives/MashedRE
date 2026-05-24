@@ -63,7 +63,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl SplitScreenTrackAssignmen
     }
 }
 
-RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SplitScreenTrackAssignment, 0x00430830);
 
 // ---------------------------------------------------------------------------
 // PlayerColorTableGet  --  0x0040e3a0
@@ -124,4 +124,4 @@ extern "C" __declspec(dllexport) void __cdecl PlayerColorTableGet(int param_1, s
     }
 }
 
-RH_ScopedInstall(PlayerColorTableGet, 0x0040e3a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PlayerColorTableGet, 0x0040e3a0);

@@ -45,4 +45,4 @@ extern "C" __declspec(dllexport) void __cdecl ReplaySave();
 extern "C" __declspec(dllexport) void __cdecl ThunkReplaySave() {
     ReplaySave();
 }
-RH_ScopedInstall(ThunkReplaySave, 0x0040de00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ThunkReplaySave, 0x0040de00);

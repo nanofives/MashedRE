@@ -80,7 +80,7 @@ extern "C" __declspec(dllexport) void __cdecl rwD3D9RenderStateCacheInvalidate()
     }
 }
 
-RH_ScopedInstall(rwD3D9RenderStateCacheInvalidate, 0x004c8650);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(rwD3D9RenderStateCacheInvalidate, 0x004c8650);
 
 // ---------------------------------------------------------------------------
 // rwD3D9CheckMMX  --  0x004dcf90
@@ -156,7 +156,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl rwD3D9CheckMMX()
     return (static_cast<std::uint32_t>(info[3]) >> 0x17u) & 1u;
 }
 
-RH_ScopedInstall(rwD3D9CheckMMX, 0x004dcf90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(rwD3D9CheckMMX, 0x004dcf90);
 
 // ---------------------------------------------------------------------------
 // rwD3D9CheckSSE_SSE2  --  0x004dcff0
@@ -200,7 +200,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl rwD3D9CheckSSE_SSE2()
     return ((static_cast<std::uint32_t>(info[3]) & 0x06000000u) != 0u) ? 1u : 0u;
 }
 
-RH_ScopedInstall(rwD3D9CheckSSE_SSE2, 0x004dcff0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(rwD3D9CheckSSE_SSE2, 0x004dcff0);
 
 // ---------------------------------------------------------------------------
 // rwD3D9CheckSSE2  --  0x004dd050
@@ -244,4 +244,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl rwD3D9CheckSSE2()
     return (static_cast<std::uint32_t>(info[3]) >> 0x1au) & 1u;
 }
 
-RH_ScopedInstall(rwD3D9CheckSSE2, 0x004dd050);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(rwD3D9CheckSSE2, 0x004dd050);

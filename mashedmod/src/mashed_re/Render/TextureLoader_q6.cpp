@@ -128,7 +128,7 @@ RwStreamRead(std::uint32_t* param_1, void* param_2, std::uint32_t param_3)
     }
 }
 
-RH_ScopedInstall(RwStreamRead, 0x004cbd30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwStreamRead, 0x004cbd30);
 
 // ---------------------------------------------------------------------------
 // 0x004cc050  FUN_004cc050  RwStreamSkip   (249 bytes)
@@ -208,7 +208,7 @@ RwStreamSkip(std::uint32_t* param_1, std::uint32_t param_2)
     }
 }
 
-RH_ScopedInstall(RwStreamSkip, 0x004cc050);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwStreamSkip, 0x004cc050);
 
 // ---------------------------------------------------------------------------
 // 0x004c5890  FUN_004c5890  RwTexDictionaryCreate   (small body, ~60 bytes est.)
@@ -305,4 +305,4 @@ RwTexDictionaryCreate()
     return puVar3;
 }
 
-RH_ScopedInstall(RwTexDictionaryCreate, 0x004c5890);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwTexDictionaryCreate, 0x004c5890);

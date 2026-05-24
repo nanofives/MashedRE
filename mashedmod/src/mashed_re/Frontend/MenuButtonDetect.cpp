@@ -117,7 +117,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectE() {
     return uVar2;
 }
 
-RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectE, 0x0042b770);
 
 // ---------------------------------------------------------------------------
 // 0x0042b310  MenuButtonDetectC
@@ -211,7 +211,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectC() {
     return uVar3;
 }
 
-RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectC, 0x0042b310);
 
 // ---------------------------------------------------------------------------
 // 0x0042b960  CarSlotInit1P
@@ -275,7 +275,7 @@ extern "C" __declspec(dllexport) void __cdecl CarSlotInit1P() {
     CallSlotWrite(3, 0);
 }
 
-RH_ScopedInstall(CarSlotInit1P, 0x0042b960);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotInit1P, 0x0042b960);
 
 // ---------------------------------------------------------------------------
 // 0x0042b9e0  CarSlotAssign
@@ -432,7 +432,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl CarSlotAssign() {
     } while (true);
 }
 
-RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CarSlotAssign, 0x0042b9e0);
 
 // ---------------------------------------------------------------------------
 // 0x0042b540  MenuButtonDetectD
@@ -533,7 +533,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuButtonDetectD() {
     return uVar3;
 }
 
-RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectD, 0x0042b540);
 
 // ---------------------------------------------------------------------------
 // 0x0042b8b0  ScreenWidthGet
@@ -553,7 +553,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenWidthGet() {
         *reinterpret_cast<std::uint16_t*>(kScreenWidth));
 }
 
-RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);
 
 // ---------------------------------------------------------------------------
 // 0x0042b8c0  ScreenHeightGet
@@ -569,4 +569,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenHeightGet() {
         *reinterpret_cast<std::uint16_t*>(kScreenHeight));
 }
 
-RH_ScopedInstall(ScreenHeightGet, 0x0042b8c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ScreenHeightGet, 0x0042b8c0);

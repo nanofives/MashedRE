@@ -253,7 +253,7 @@ extern "C" __declspec(dllexport) int __cdecl CrtPreInit()
     return result;
 }
 
-RH_ScopedInstall(CrtPreInit, 0x004a31f3);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtPreInit, 0x004a31f3);
 
 
 // ---------------------------------------------------------------------------
@@ -330,7 +330,7 @@ extern "C" __declspec(dllexport) void __cdecl CrtExitCore(unsigned int exit_code
     }
 }
 
-RH_ScopedInstall(CrtExitCore, 0x004a3258);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtExitCore, 0x004a3258);
 
 
 // ---------------------------------------------------------------------------
@@ -523,4 +523,4 @@ extern "C" __declspec(dllexport) int __cdecl WinMainEntry()
     }
 }
 
-RH_ScopedInstall(WinMainEntry, 0x004a4bb7);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(WinMainEntry, 0x004a4bb7);

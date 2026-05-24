@@ -104,7 +104,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwStreamWriteChunked(
     return param_1;
 }
 
-RH_ScopedInstall(RwStreamWriteChunked, 0x004cc6e0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwStreamWriteChunked, 0x004cc6e0);
 
 // ---------------------------------------------------------------------------
 // Win32ResourceLoader  --  0x004997b0
@@ -178,4 +178,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Win32ResourceLoader(
     return 1u;   // Step 8
 }
 
-RH_ScopedInstall(Win32ResourceLoader, 0x004997b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Win32ResourceLoader, 0x004997b0);

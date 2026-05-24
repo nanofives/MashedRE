@@ -180,4 +180,4 @@ finalise:
     }
     return 0;
 }
-RH_ScopedInstall(RaceEndCheckFinish, 0x00432080);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceEndCheckFinish, 0x00432080);

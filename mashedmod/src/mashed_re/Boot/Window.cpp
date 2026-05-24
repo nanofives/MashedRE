@@ -97,7 +97,7 @@ extern "C" __declspec(dllexport) void __cdecl WindowShow(int nCmdShow) {
     UpdateWindow(hwnd);
 }
 
-RH_ScopedInstall(WindowShow, 0x004996f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(WindowShow, 0x004996f0);
 
 // ---------------------------------------------------------------------------
 // 0x00499690  WindowMsgPump  — bool(void)
@@ -144,4 +144,4 @@ extern "C" __declspec(dllexport) int __cdecl WindowMsgPump() {
     return quit != 0;
 }
 
-RH_ScopedInstall(WindowMsgPump, 0x00499690);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(WindowMsgPump, 0x00499690);

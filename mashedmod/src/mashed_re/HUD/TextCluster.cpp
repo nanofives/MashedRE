@@ -128,7 +128,7 @@ std::uint32_t __cdecl FontCtx_ResetTransform()
     return 1u;
 }
 
-RH_ScopedInstall(FontCtx_ResetTransform, 0x00552750);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtx_ResetTransform, 0x00552750);
 
 // ---------------------------------------------------------------------------
 // HudSpinCoinAnim  --  0x00428450
@@ -237,4 +237,4 @@ extern "C" __declspec(dllexport) void __cdecl HudSpinCoinAnim(int param_1, int p
     spinAngle += angVel;
 }
 
-RH_ScopedInstall(HudSpinCoinAnim, 0x00428450);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSpinCoinAnim, 0x00428450);

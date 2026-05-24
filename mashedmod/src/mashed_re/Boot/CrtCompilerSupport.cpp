@@ -49,7 +49,7 @@ extern "C" __declspec(dllexport) void __cdecl CrtFastErrorExit(std::uint32_t par
     reinterpret_cast<CrtExitProcess_t>(kCrtExitProcessRva)(0xFF);
 }
 
-RH_ScopedInstall(CrtFastErrorExit, 0x004a4b93);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtFastErrorExit, 0x004a4b93);
 
 // ---------------------------------------------------------------------------
 // 0x004a3440  __chkstk
@@ -95,7 +95,7 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl CrtStackProbe(vo
     }
 }
 
-RH_ScopedInstall(CrtStackProbe, 0x004a3440);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtStackProbe, 0x004a3440);
 
 // ---------------------------------------------------------------------------
 // 0x004a5984  __SEH_prolog

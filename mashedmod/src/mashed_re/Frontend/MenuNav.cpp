@@ -116,7 +116,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuEntryGet() {
     return *reinterpret_cast<std::uint32_t*>(iVar1 + 4 + iVar3 * 4);
 }
 
-RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
 
 // ---------------------------------------------------------------------------
 // 0x0042bb60  MenuTeamBalance
@@ -172,7 +172,7 @@ extern "C" __declspec(dllexport) int __cdecl MenuTeamBalance() {
     return -1;
 }
 
-RH_ScopedInstall(MenuTeamBalance, 0x0042bb60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuTeamBalance, 0x0042bb60);
 
 // ---------------------------------------------------------------------------
 // 0x0042aff0  MenuButtonDetectA
@@ -276,7 +276,7 @@ hold_repeat:
     return 1u;
 }
 
-RH_ScopedInstall(MenuButtonDetectA, 0x0042aff0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectA, 0x0042aff0);
 
 // ---------------------------------------------------------------------------
 // 0x0042b180  MenuButtonDetectB
@@ -376,4 +376,4 @@ hold_repeat_b:
     return 1u;
 }
 
-RH_ScopedInstall(MenuButtonDetectB, 0x0042b180);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectB, 0x0042b180);

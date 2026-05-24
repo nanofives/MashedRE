@@ -249,4 +249,4 @@ void* __cdecl RwStreamWrite_s2(
     }
 }
 
-RH_ScopedInstall(RwStreamWrite_s2, 0x004cbe80);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwStreamWrite_s2, 0x004cbe80);

@@ -35,4 +35,4 @@ extern "C" __declspec(dllexport) FILE* __cdecl FsopenSafe(
     return _fsopen(filename, mode, kShareFlagDenyNo);
 }
 
-RH_ScopedInstall(FsopenSafe, 0x004a4541);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FsopenSafe, 0x004a4541);

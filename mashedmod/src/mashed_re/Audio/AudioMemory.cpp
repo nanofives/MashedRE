@@ -30,7 +30,7 @@ extern "C" __declspec(dllexport) void* __cdecl AudioAlignedAlloc(int size, int t
     return reinterpret_cast<void*>(aligned);
 }
 
-RH_ScopedInstall(AudioAlignedAlloc, 0x005aea10);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioAlignedAlloc, 0x005aea10);
 
 // 0x005aea40  FUN_005aea40  (15 bytes)
 // Recovers the raw allocation base from *(ptr - 4), replaces the stack
@@ -48,7 +48,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioAlignedFree(void* ptr) {
     rawFree(raw);
 }
 
-RH_ScopedInstall(AudioAlignedFree, 0x005aea40);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioAlignedFree, 0x005aea40);
 
 // 0x005aec00  FUN_005aec00  (42 bytes)
 // Reverses all bytes in buf in-place using two pointers from opposite ends.
@@ -73,7 +73,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioByteReverse(char* buf, uint32
     }
 }
 
-RH_ScopedInstall(AudioByteReverse, 0x005aec00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioByteReverse, 0x005aec00);
 
 // 0x005aee20  FUN_005aee20  (27 bytes)
 // Scans bits 0..31 of param; returns the index of the lowest set bit (0..31),
@@ -96,7 +96,7 @@ extern "C" __declspec(dllexport) unsigned char __cdecl AudioBitScanForward(unsig
     return bit;
 }
 
-RH_ScopedInstall(AudioBitScanForward, 0x005aee20);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioBitScanForward, 0x005aee20);
 
 // 0x005aec30  FUN_005aec30  (103 bytes)
 // In-place endian swap of a buffer by element width.
@@ -136,4 +136,4 @@ extern "C" __declspec(dllexport) void __cdecl AudioByteSwapBuffer(
     }
 }
 
-RH_ScopedInstall(AudioByteSwapBuffer, 0x005aec30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioByteSwapBuffer, 0x005aec30);

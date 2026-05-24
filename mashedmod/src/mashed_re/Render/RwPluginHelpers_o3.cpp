@@ -57,7 +57,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwPluginRegistryFrozen() 
     return *reinterpret_cast<const std::uint32_t*>(0x007d3ff4u);
 }
 
-RH_ScopedInstall(RwPluginRegistryFrozen, 0x004c2d70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwPluginRegistryFrozen, 0x004c2d70);
 
 // ---------------------------------------------------------------------------
 // RwEngineSetSubSystem  --  0x004c2e70
@@ -89,7 +89,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl RwEngineSetSubSystem(std::
     return iVar1 != 0;  // bool cast: non-zero → 1, zero → 0
 }
 
-RH_ScopedInstall(RwEngineSetSubSystem, 0x004c2e70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineSetSubSystem, 0x004c2e70);
 
 // ---------------------------------------------------------------------------
 // RwEngineSetVideoMode  --  0x004c2f30
@@ -121,7 +121,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl RwEngineSetVideoMode(std::
     return iVar1 != 0;  // bool cast
 }
 
-RH_ScopedInstall(RwEngineSetVideoMode, 0x004c2f30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineSetVideoMode, 0x004c2f30);
 
 // ---------------------------------------------------------------------------
 // RwEngineGetModeInfo  --  0x004c2ed0
@@ -166,4 +166,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwEngineGetModeInfo(
     return param_1;
 }
 
-RH_ScopedInstall(RwEngineGetModeInfo, 0x004c2ed0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwEngineGetModeInfo, 0x004c2ed0);

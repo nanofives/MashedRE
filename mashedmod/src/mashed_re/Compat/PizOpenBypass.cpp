@@ -73,4 +73,4 @@ extern "C" __declspec(dllexport) void __cdecl PizOpen_SelectiveBypass(const char
     LogP(ok ? "\tOK\n" : "\tFAILED\n");
 }
 
-RH_ScopedInstall(PizOpen_SelectiveBypass, 0x00495280);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizOpen_SelectiveBypass, 0x00495280);

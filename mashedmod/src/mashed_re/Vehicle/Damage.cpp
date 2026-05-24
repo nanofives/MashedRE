@@ -111,7 +111,7 @@ void __fastcall VehicleDamageAccumulatorAdd(int param_1, int param_2, float para
     }
 }
 
-RH_ScopedInstall(VehicleDamageAccumulatorAdd, 0x00420de0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleDamageAccumulatorAdd, 0x00420de0);
 
 
 // ============================================================================
@@ -180,7 +180,7 @@ void __cdecl VehicleEliminationSlotPostInit()
     }
 }
 
-RH_ScopedInstall(VehicleEliminationSlotPostInit, 0x00418de0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleEliminationSlotPostInit, 0x00418de0);
 
 
 // ============================================================================
@@ -271,7 +271,7 @@ extern "C" __declspec(dllexport) void __cdecl VehicleEliminationSlotInit(int par
     }
 }
 
-RH_ScopedInstall(VehicleEliminationSlotInit, 0x00419760);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleEliminationSlotInit, 0x00419760);
 
 
 // ============================================================================
@@ -317,4 +317,4 @@ extern "C" __declspec(dllexport) void __cdecl VehicleCollisionWinTrigger(int par
     *reinterpret_cast<std::uint32_t*>(kDAT_007f0fdc) = 6000u;
 }
 
-RH_ScopedInstall(VehicleCollisionWinTrigger, 0x00467300);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleCollisionWinTrigger, 0x00467300);

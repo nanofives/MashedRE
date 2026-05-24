@@ -79,7 +79,7 @@ void __cdecl CrtExitProcess_j5(int exit_code)
     ExitProcess(static_cast<UINT>(exit_code));                            // 0x004a31b1 body
 }
 
-RH_ScopedInstall(CrtExitProcess_j5, 0x004a31b1);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtExitProcess_j5, 0x004a31b1);
 
 
 // ============================================================================
@@ -106,7 +106,7 @@ void __cdecl CrtExitNoReturn_j5(int exit_code)
     g_CrtExitCore(exit_code, 0, 0);                                       // 0x004a332b body
 }
 
-RH_ScopedInstall(CrtExitNoReturn_j5, 0x004a332b);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtExitNoReturn_j5, 0x004a332b);
 
 
 // ============================================================================
@@ -129,4 +129,4 @@ void __cdecl CrtExitNormal_j5()
     g_CrtExitCore(0, 0, 1);                                               // 0x004a334d body
 }
 
-RH_ScopedInstall(CrtExitNormal_j5, 0x004a334d);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtExitNormal_j5, 0x004a334d);

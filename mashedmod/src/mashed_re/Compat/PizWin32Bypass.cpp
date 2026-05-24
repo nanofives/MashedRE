@@ -360,6 +360,6 @@ PizWin32Close_Compat(void)
 // Hook registration. Patched in by Core/HookSystem.cpp via 5-byte inline JMP
 // at the original RVAs when MASHED_RE_NO_AUTO_HOOK is unset.
 // ─────────────────────────────────────────────────────────────────────────────
-RH_ScopedInstall(PizWin32Open_Compat,  0x004b6710);
-RH_ScopedInstall(PizWin32Read_Compat,  0x004b67e0);
-RH_ScopedInstall(PizWin32Close_Compat, 0x004b6770);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizWin32Open_Compat,  0x004b6710);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizWin32Read_Compat,  0x004b67e0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizWin32Close_Compat, 0x004b6770);

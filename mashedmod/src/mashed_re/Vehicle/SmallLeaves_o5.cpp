@@ -57,7 +57,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleCarStateSet(int vehicleIdx, 
     *reinterpret_cast<std::uint32_t*>(kSecondaryStateBase + static_cast<std::uintptr_t>(vehicleIdx) * kByteStride) = secondaryVal;
     return 1;
 }
-RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0042d3a0  RaceTransitionBufZero
@@ -86,4 +86,4 @@ RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);
 extern "C" __declspec(dllexport) void __cdecl RaceTransitionBufZero(void) {
     std::memset(reinterpret_cast<void*>(kRaceTransBufBase), 0, kRaceTransBufSize);
 }
-RH_ScopedInstall(RaceTransitionBufZero, 0x0042d3a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceTransitionBufZero, 0x0042d3a0);

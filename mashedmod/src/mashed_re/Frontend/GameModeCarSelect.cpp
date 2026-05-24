@@ -95,4 +95,9 @@ extern "C" __declspec(dllexport) void __cdecl CarSelectReset() {
     CallCursorMover(0, 0);
 }
 
-RH_ScopedInstall(CarSelectReset, 0x00431d00);
+// DISABLED 2026-05-24: hook hangs MASHED at boot. Reimpl calls FUN_00431b80
+// three times with EAX=0/ESI=0 via inline asm — non-standard calling
+// convention with caller-supplied context. At boot context EAX/ESI are not
+// what the original expected; suspect infinite loop in cursor mover. Re-enable
+// only after diff-original validation in a real car-select scenario.
+// RH_ScopedInstall(CarSelectReset, 0x00431d00);

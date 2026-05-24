@@ -13,4 +13,4 @@ extern "C" __declspec(dllexport) void* __cdecl TimerGetBasePtr() {
     return reinterpret_cast<void*>(0x005f2b10);
 }
 
-RH_ScopedInstall(TimerGetBasePtr, 0x00413f90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerGetBasePtr, 0x00413f90);

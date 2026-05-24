@@ -46,7 +46,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RwIdentityPassthrough(std
     return param_1;
 }
 
-RH_ScopedInstall(RwIdentityPassthrough, 0x004d7ff0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwIdentityPassthrough, 0x004d7ff0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00552d70  FUN_00552d70  ViewportStackPop  (39 bytes)
@@ -87,7 +87,7 @@ extern "C" __declspec(dllexport) void __cdecl ViewportStackPop(void)
     *s_DistCache    = 0u;                   // 0x00912bec: invalidate distance-threshold cache
 }
 
-RH_ScopedInstall(ViewportStackPop, 0x00552d70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ViewportStackPop, 0x00552d70);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004d8480  FUN_004d8480  RwErrSlotWrite  (85 bytes)
@@ -152,4 +152,4 @@ extern "C" __declspec(dllexport) std::uint32_t* __cdecl RwErrSlotWrite(std::uint
     return param_1;  // always return param_1 (identity for callers)
 }
 
-RH_ScopedInstall(RwErrSlotWrite, 0x004d8480);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwErrSlotWrite, 0x004d8480);

@@ -126,7 +126,7 @@ dispatch:
     return exists_fn(puVar4, param_1);
 }
 
-RH_ScopedInstall(VfsFileExists, 0x00550b00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VfsFileExists, 0x00550b00);
 
 
 // ─── 0x004099a0  AutosaveTrigger ──────────────────────────────────────────────
@@ -174,4 +174,4 @@ extern "C" __declspec(dllexport) void __cdecl AutosaveTrigger() {
     *reinterpret_cast<std::uint32_t*>(kAutosaveOffset) = 0u;   // 0x004099c9
 }
 
-RH_ScopedInstall(AutosaveTrigger, 0x004099a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AutosaveTrigger, 0x004099a0);

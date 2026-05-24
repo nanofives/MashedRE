@@ -125,7 +125,7 @@ extern "C" __declspec(dllexport) float __cdecl MenuMenusBA(
     return static_cast<float>(result);
 }
 
-RH_ScopedInstall(MenuMenusBA, 0x004282a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuMenusBA, 0x004282a0);
 
 // ---------------------------------------------------------------------------
 // MenuMenusBB  --  0x00427ad0
@@ -227,7 +227,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBB(
     s_FUN_00552d70();
 }
 
-RH_ScopedInstall(MenuMenusBB, 0x00427ad0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuMenusBB, 0x00427ad0);
 
 // ---------------------------------------------------------------------------
 // MenuMenusBC  --  0x0042f8d0
@@ -318,7 +318,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBC(
                    param_4, kMenuBc_ColorB);
 }
 
-RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
 
 // ---------------------------------------------------------------------------
 // MenuMenusBD  --  0x0040b460
@@ -410,7 +410,7 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBD(std::int32_t* param_1)
     }
 }
 
-RH_ScopedInstall(MenuMenusBD, 0x0040b460);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuMenusBD, 0x0040b460);
 
 // ---------------------------------------------------------------------------
 // MenuMenusBE  --  0x00429a30
@@ -468,4 +468,4 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBE(void)
     reinterpret_cast<float*>(kMenuBe_FracArr)[iVar1] = frac_val;
 }
 
-RH_ScopedInstall(MenuMenusBE, 0x00429a30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuMenusBE, 0x00429a30);

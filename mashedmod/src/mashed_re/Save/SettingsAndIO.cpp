@@ -121,7 +121,7 @@ int __cdecl FileReadWrapper_i3(const char* filename, void* buf, std::uint32_t si
     return bytes_read;                                 // 0x004b3ba8
 }
 
-RH_ScopedInstall(FileReadWrapper_i3, 0x004b3b70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FileReadWrapper_i3, 0x004b3b70);
 
 
 // ============================================================================
@@ -173,7 +173,7 @@ int __cdecl FileWriteWrapper_i3(const char* filename, void* buf, std::uint32_t s
     return write_result;             // 0x004b3be3
 }
 
-RH_ScopedInstall(FileWriteWrapper_i3, 0x004b3bb0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FileWriteWrapper_i3, 0x004b3bb0);
 
 
 // ============================================================================
@@ -288,7 +288,7 @@ void __cdecl SetControlTextFromResource_i3()
     }
 }
 
-RH_ScopedInstall(SetControlTextFromResource_i3, 0x00499740);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SetControlTextFromResource_i3, 0x00499740);
 
 
 // ============================================================================
@@ -344,7 +344,7 @@ void __cdecl SubsystemSelectionChanged_i3()
     }
 }
 
-RH_ScopedInstall(SubsystemSelectionChanged_i3, 0x00499170);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SubsystemSelectionChanged_i3, 0x00499170);
 
 
 // ============================================================================
@@ -449,4 +449,4 @@ void __cdecl VideoDialogInit_i3()
     }
 }
 
-RH_ScopedInstall(VideoDialogInit_i3, 0x00498f60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VideoDialogInit_i3, 0x00498f60);

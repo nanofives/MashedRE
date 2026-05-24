@@ -52,4 +52,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067f17c() {
     return *reinterpret_cast<const std::uint32_t*>(0x0067f17cu);
 }
 
-RH_ScopedInstall(GetDat0067f17c, 0x00430790);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetDat0067f17c, 0x00430790);

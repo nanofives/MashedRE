@@ -101,7 +101,7 @@ extern "C" __declspec(dllexport) void __cdecl LedArrayInit(void)
     }
 }
 
-RH_ScopedInstall(LedArrayInit, 0x00409680);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LedArrayInit, 0x00409680);
 
 // ---------------------------------------------------------------------------
 // TrackDataSlotSet  --  0x004053d0
@@ -152,7 +152,7 @@ extern "C" __declspec(dllexport) void __cdecl TrackDataSlotSet(
     *reinterpret_cast<std::uint32_t*>(0x00639d78u) = 0u;  // DAT_00639d78 = 0
 }
 
-RH_ScopedInstall(TrackDataSlotSet, 0x004053d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TrackDataSlotSet, 0x004053d0);
 
 // ---------------------------------------------------------------------------
 // AiDataBufInit  --  0x00423630
@@ -212,7 +212,7 @@ extern "C" __declspec(dllexport) void __cdecl AiDataBufInit(void)
     *reinterpret_cast<std::uint32_t*>(0x007f1a64u) = 0u;  // DAT_007f1a64
 }
 
-RH_ScopedInstall(AiDataBufInit, 0x00423630);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AiDataBufInit, 0x00423630);
 
 // ---------------------------------------------------------------------------
 // EntryHeaderClear  --  0x00425ab0
@@ -265,7 +265,7 @@ extern "C" __declspec(dllexport) void __cdecl EntryHeaderClear(void)
     }
 }
 
-RH_ScopedInstall(EntryHeaderClear, 0x00425ab0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(EntryHeaderClear, 0x00425ab0);
 
 // ---------------------------------------------------------------------------
 // AiPizLoad  --  0x004235b0
@@ -342,4 +342,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AiPizLoad(void)
     return uVar3;
 }
 
-RH_ScopedInstall(AiPizLoad, 0x004235b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AiPizLoad, 0x004235b0);

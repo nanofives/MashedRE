@@ -23,7 +23,7 @@ extern "C" __declspec(dllexport) int __cdecl StatePhaseIsIdle() {
     return (*reinterpret_cast<const std::uint32_t*>(kStatePhase_0067eca4) == 0u) ? 1 : 0;
 }
 
-RH_ScopedInstall(StatePhaseIsIdle, 0x0042b8d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StatePhaseIsIdle, 0x0042b8d0);
 
 
 // ─── 0x0042b8f0  StatePhaseIsFinal ────────────────────────────────────────────
@@ -38,7 +38,7 @@ extern "C" __declspec(dllexport) int __cdecl StatePhaseIsFinal() {
     return (*reinterpret_cast<const std::uint32_t*>(kStatePhase_0067eca4) == 5u) ? 1 : 0;
 }
 
-RH_ScopedInstall(StatePhaseIsFinal, 0x0042b8f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StatePhaseIsFinal, 0x0042b8f0);
 
 
 // ─── 0x0042f510  Vehicle0HandleGet ────────────────────────────────────────────
@@ -54,7 +54,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Vehicle0HandleGet() {
     return *reinterpret_cast<const std::uint32_t*>(kVehicle0Handle_0067f190);
 }
 
-RH_ScopedInstall(Vehicle0HandleGet, 0x0042f510);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Vehicle0HandleGet, 0x0042f510);
 
 
 // ─── 0x00498bf0  DisplayActiveFlagGet ─────────────────────────────────────────
@@ -70,7 +70,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl DisplayActiveFlagGet() {
     return *reinterpret_cast<const std::uint32_t*>(kDisplayActive_00773204);
 }
 
-RH_ScopedInstall(DisplayActiveFlagGet, 0x00498bf0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DisplayActiveFlagGet, 0x00498bf0);
 
 
 // ─── 0x004c19f0  RwVtableSlot07Call ───────────────────────────────────────────
@@ -92,7 +92,7 @@ extern "C" __declspec(dllexport) void __cdecl RwVtableSlot07Call(int param_1) {
     fn();
 }
 
-RH_ScopedInstall(RwVtableSlot07Call, 0x004c19f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwVtableSlot07Call, 0x004c19f0);
 
 
 // =============================================================================
@@ -195,7 +195,7 @@ extern "C" __declspec(dllexport) int __cdecl MainLoopInit() {
     return 1;
 }
 
-RH_ScopedInstall(MainLoopInit, 0x00492770);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MainLoopInit, 0x00492770);
 
 
 // ---------------------------------------------------------------------------
@@ -279,7 +279,7 @@ extern "C" __declspec(dllexport) int __cdecl FpsDiscretise() {
     return 1;
 }
 
-RH_ScopedInstall(FpsDiscretise, 0x00493480);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FpsDiscretise, 0x00493480);
 
 
 // ---------------------------------------------------------------------------
@@ -385,4 +385,4 @@ extern "C" __declspec(dllexport) void __cdecl AudioTickAndAvg() {
     }
 }
 
-RH_ScopedInstall(AudioTickAndAvg, 0x004926c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioTickAndAvg, 0x004926c0);

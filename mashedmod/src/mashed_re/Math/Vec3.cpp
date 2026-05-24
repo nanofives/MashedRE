@@ -52,4 +52,4 @@ extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
     return result;
 }
 
-RH_ScopedInstall(Vec3Magnitude, 0x004c3ac0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Vec3Magnitude, 0x004c3ac0);

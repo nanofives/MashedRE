@@ -25,7 +25,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendGlobalGet() {
     return *reinterpret_cast<const std::uint32_t*>(0x008a95acu);
 }
 
-RH_ScopedInstall(FrontendGlobalGet, 0x0040ad20);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendGlobalGet, 0x0040ad20);
 
 // ---------------------------------------------------------------------------
 // FrontendArrayGet  --  0x0040b6c0
@@ -46,4 +46,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl FrontendArrayGet(int para
     return arr[static_cast<std::uint32_t>(param_1)];
 }
 
-RH_ScopedInstall(FrontendArrayGet, 0x0040b6c0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendArrayGet, 0x0040b6c0);

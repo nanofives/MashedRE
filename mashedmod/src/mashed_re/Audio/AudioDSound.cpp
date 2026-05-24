@@ -42,7 +42,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioBufFieldSet(int param_1, int 
     }
 }
 
-RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);
 
 // 0x005baf90  FUN_005baf90  (~0x18 bytes, 0x005baf90–0x005bafa8)
 // int __cdecl AudioDSoundRelease(int param_1)
@@ -69,7 +69,7 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundRelease(int param_1) {
     return 1;
 }
 
-RH_ScopedInstall(AudioDSoundRelease, 0x005baf90);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioDSoundRelease, 0x005baf90);
 
 // 0x005bc400  FUN_005bc400  (~0x4e bytes, 0x005bc400–0x005bc44d)
 // int __cdecl AudioDSoundQIChain(int *param_1, int *param_2)
@@ -140,7 +140,7 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundQIChain(int* param_1, in
     return 0;
 }
 
-RH_ScopedInstall(AudioDSoundQIChain, 0x005bc400);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioDSoundQIChain, 0x005bc400);
 
 // 0x005aeea0  FUN_005aeea0  (0x20 bytes, 0x005aeea0–0x005aeec0)
 // uint FUN_005aeea0(void *param_1, LONG param_2, LONG param_3)
@@ -177,7 +177,7 @@ extern "C" __declspec(dllexport) unsigned int __cdecl AudioSemaphoreCreate(
     return mask & static_cast<unsigned int>(reinterpret_cast<uintptr_t>(param_1));
 }
 
-RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);
 // 0x005bbfc0  FUN_005bbfc0  (~70 bytes)
 // AudioDSoundSecondaryInit — QueryInterface + vtable+0x14 secondary init.
 //
@@ -251,7 +251,7 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundSecondaryInit(void** par
     return 0;
 }
 
-RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
 
 // ---------------------------------------------------------------------------
 // 0x005aef00  FUN_005aef00  (0x26 bytes)
@@ -282,7 +282,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioThreadDescInit(
     param_1[4] = param_4;   // 0x005aef17 — stack size
 }
 
-RH_ScopedInstall(AudioThreadDescInit, 0x005aef00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioThreadDescInit, 0x005aef00);
 
 // ---------------------------------------------------------------------------
 // 0x005a9e10  FUN_005a9e10  (0x21 bytes)
@@ -316,7 +316,7 @@ extern "C" __declspec(dllexport) void* __cdecl AudioSubStructTwoCallInit(
     return param_1;
 }
 
-RH_ScopedInstall(AudioSubStructTwoCallInit, 0x005a9e10);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioSubStructTwoCallInit, 0x005a9e10);
 
 // ---------------------------------------------------------------------------
 // 0x005ade90  FUN_005ade90  (0x32 bytes)

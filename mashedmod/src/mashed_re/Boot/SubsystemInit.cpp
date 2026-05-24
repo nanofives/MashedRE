@@ -212,7 +212,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl SubsystemInit() {
     return 1;
 }
 
-RH_ScopedInstall(SubsystemInit, 0x00492270);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SubsystemInit, 0x00492270);
 
 
 // ---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ extern "C" __declspec(dllexport) void __cdecl DisplayInit() {
     }
 }
 
-RH_ScopedInstall(DisplayInit, 0x004921d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DisplayInit, 0x004921d0);
 
 
 // ---------------------------------------------------------------------------
@@ -368,7 +368,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl ViewportInit() {
     return 1;
 }
 
-RH_ScopedInstall(ViewportInit, 0x00428590);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ViewportInit, 0x00428590);
 
 
 // ---------------------------------------------------------------------------
@@ -412,7 +412,7 @@ extern "C" __declspec(dllexport) void __cdecl SetDefaultViewWindow() {
     s_FUN_004c1c80(uVar1);
 }
 
-RH_ScopedInstall(SetDefaultViewWindow, 0x00492e60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SetDefaultViewWindow, 0x00492e60);
 
 
 // ---------------------------------------------------------------------------
@@ -448,4 +448,4 @@ extern "C" __declspec(dllexport) void __cdecl DataZeroFill() {
     s_orig_DataZeroFill();
 }
 
-RH_ScopedInstall(DataZeroFill, 0x004924f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DataZeroFill, 0x004924f0);

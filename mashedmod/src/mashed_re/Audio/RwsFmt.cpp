@@ -89,7 +89,7 @@ AudioFmtDescEqual(int* param_1, int* param_2)
     return 1u;
 }
 
-RH_ScopedInstall(AudioFmtDescEqual, 0x005ac5f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioFmtDescEqual, 0x005ac5f0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ac9e0  FUN_005ac9e0  AudioFmtEntryMatch   (~100 bytes)
@@ -168,4 +168,4 @@ AudioFmtEntryMatch(std::uint32_t* param_1, std::uint32_t* param_2)
     return 1u;
 }
 
-RH_ScopedInstall(AudioFmtEntryMatch, 0x005ac9e0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioFmtEntryMatch, 0x005ac9e0);

@@ -31,7 +31,7 @@ void __cdecl RwV3dTransformPoint(float* out, const float* in, const float* mat)
     out[2] = mat[14] + mat[10]*z + mat[6]*y + mat[2]*x;
 }
 
-RH_ScopedInstall(RwV3dTransformPoint, 0x004c3730);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwV3dTransformPoint, 0x004c3730);
 
 // 0x004c3880
 // out = mat * in  (linear direction transform; translation omitted)
@@ -47,4 +47,4 @@ void __cdecl RwV3dTransformVector(float* out, const float* in, const float* mat)
     out[2] = mat[10]*z + mat[6]*y + mat[2]*x;
 }
 
-RH_ScopedInstall(RwV3dTransformVector, 0x004c3880);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwV3dTransformVector, 0x004c3880);

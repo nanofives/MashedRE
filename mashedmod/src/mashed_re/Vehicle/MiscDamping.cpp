@@ -45,4 +45,4 @@ extern "C" __declspec(dllexport) int __cdecl VehicleDampVec3(int vehicleIdx) {
     *fz = *fz * k;
     return 1;
 }
-RH_ScopedInstall(VehicleDampVec3, 0x0046c570);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleDampVec3, 0x0046c570);

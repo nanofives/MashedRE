@@ -48,7 +48,7 @@ extern "C" __declspec(dllexport) void __cdecl SetDat0067ecb8(std::uint32_t param
     *reinterpret_cast<std::uint32_t*>(0x0067ecb8) = param_1;
 }
 
-RH_ScopedInstall(SetDat0067ecb8, 0x0042c2f0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SetDat0067ecb8, 0x0042c2f0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004098b0  LoadingState1Enter  void __cdecl(void)
@@ -71,7 +71,7 @@ extern "C" __declspec(dllexport) void __cdecl LoadingState1Enter() {
     *reinterpret_cast<std::uint32_t*>(0x008a95ac) = 0u;
 }
 
-RH_ScopedInstall(LoadingState1Enter, 0x004098b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LoadingState1Enter, 0x004098b0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00409930  LoadingState3Enter  void __cdecl(void)
@@ -92,7 +92,7 @@ extern "C" __declspec(dllexport) void __cdecl LoadingState3Enter() {
     *reinterpret_cast<std::uint32_t*>(0x008a95b0) = 0u;
 }
 
-RH_ScopedInstall(LoadingState3Enter, 0x00409930);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LoadingState3Enter, 0x00409930);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00409900  LoadingState2Enter  void __cdecl(void)
@@ -132,7 +132,7 @@ extern "C" __declspec(dllexport) void __cdecl LoadingState2Enter() {
     *reinterpret_cast<std::uint32_t*>(0x008a95b0) = 0u;
 }
 
-RH_ScopedInstall(LoadingState2Enter, 0x00409900);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LoadingState2Enter, 0x00409900);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00426c10  TimerDispatch10  void __cdecl(void)
@@ -169,7 +169,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerDispatch10() {
     }
 }
 
-RH_ScopedInstall(TimerDispatch10, 0x00426c10);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerDispatch10, 0x00426c10);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00426c30  TimerDispatch30  void __cdecl(void)
@@ -203,7 +203,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerDispatch30() {
     }
 }
 
-RH_ScopedInstall(TimerDispatch30, 0x00426c30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerDispatch30, 0x00426c30);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00426c70  TimerDispatch70  void __cdecl(void)
@@ -236,7 +236,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerDispatch70() {
     }
 }
 
-RH_ScopedInstall(TimerDispatch70, 0x00426c70);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerDispatch70, 0x00426c70);
 
 // 0x0041cb80  TimerArrayInit46 — REFUSED (not bit-identical reachable).
 //

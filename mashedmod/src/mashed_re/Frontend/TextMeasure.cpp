@@ -91,4 +91,4 @@ extern "C" __declspec(dllexport) float __cdecl TextWidthMeasureB(
     return static_cast<float>(result);
 }
 
-RH_ScopedInstall(TextWidthMeasureB, 0x00428320);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TextWidthMeasureB, 0x00428320);

@@ -149,7 +149,7 @@ extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckA() {
     }
 }
 
-RH_ScopedInstall(MenuReadinessCheckA, 0x0042ae10);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuReadinessCheckA, 0x0042ae10);
 
 // ---------------------------------------------------------------------------
 // MenuReadinessCheckB  --  0x0042aeb0
@@ -259,7 +259,7 @@ extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckB() {
     }
 }
 
-RH_ScopedInstall(MenuReadinessCheckB, 0x0042aeb0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuReadinessCheckB, 0x0042aeb0);
 
 // ---------------------------------------------------------------------------
 // MenuReadinessCheckC  --  0x0042af50
@@ -371,4 +371,4 @@ extern "C" __declspec(dllexport) int __cdecl MenuReadinessCheckC() {
     }
 }
 
-RH_ScopedInstall(MenuReadinessCheckC, 0x0042af50);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuReadinessCheckC, 0x0042af50);

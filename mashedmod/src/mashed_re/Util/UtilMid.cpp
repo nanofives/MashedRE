@@ -85,7 +85,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ModeGatedPlayerCheck(int 
     return (val > thr) ? 1u : 0u;
 }
 
-RH_ScopedInstall(ModeGatedPlayerCheck, 0x00442c80);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ModeGatedPlayerCheck, 0x00442c80);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004950b0  QpcTimeScaledTo3Mhz
@@ -128,7 +128,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl QpcTimeScaledTo3Mhz() {
     return static_cast<std::uint32_t>(result & 0xFFFFFFFFu);
 }
 
-RH_ScopedInstall(QpcTimeScaledTo3Mhz, 0x004950b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(QpcTimeScaledTo3Mhz, 0x004950b0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004b302f  StricmpThunk
@@ -144,7 +144,7 @@ extern "C" __declspec(dllexport) int __cdecl StricmpThunk(const char* s1, const 
     return _stricmp(s1, s2);
 }
 
-RH_ScopedInstall(StricmpThunk, 0x004b302f);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StricmpThunk, 0x004b302f);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00429aa0  GameStateSlotsFill
@@ -215,7 +215,7 @@ extern "C" __declspec(dllexport) void __cdecl GameStateSlotsFill() {
     }
 }
 
-RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GameStateSlotsFill, 0x00429aa0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041d730  PlayerSlotConfigInit
@@ -286,7 +286,7 @@ extern "C" __declspec(dllexport) void __cdecl PlayerSlotConfigInit() {
     } while (rv + static_cast<int>(kSlotInitStride) < static_cast<int>(kSlotInitBound));
 }
 
-RH_ScopedInstall(PlayerSlotConfigInit, 0x0041d730);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PlayerSlotConfigInit, 0x0041d730);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00492d30  GameTickStateMachine7
@@ -428,7 +428,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GameTickStateMachine7() {
     return 1u;
 }
 
-RH_ScopedInstall(GameTickStateMachine7, 0x00492d30);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GameTickStateMachine7, 0x00492d30);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004295a0  HudDualLabelRender
@@ -484,7 +484,7 @@ extern "C" __declspec(dllexport) void __cdecl HudDualLabelRender() {
     fn_render(0xffu, y2);
 }
 
-RH_ScopedInstall(HudDualLabelRender, 0x004295a0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudDualLabelRender, 0x004295a0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00442440  TransformMatrixUpdate
@@ -592,7 +592,7 @@ extern "C" __declspec(dllexport) void __cdecl TransformMatrixUpdate(int param_1)
     (void)local_18; (void)local_14; (void)local_10;  // silence unused-warning
 }
 
-RH_ScopedInstall(TransformMatrixUpdate, 0x00442440);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TransformMatrixUpdate, 0x00442440);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0043c000  TimerSlotTickDispatcher
@@ -726,7 +726,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerSlotTickDispatcher() {
     }
 }
 
-RH_ScopedInstall(TimerSlotTickDispatcher, 0x0043c000);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerSlotTickDispatcher, 0x0043c000);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00475a60  PendingOpQueueFlush
@@ -760,7 +760,7 @@ extern "C" __declspec(dllexport) void __cdecl PendingOpQueueFlush() {
     }
 }
 
-RH_ScopedInstall(PendingOpQueueFlush, 0x00475a60);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PendingOpQueueFlush, 0x00475a60);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00410860  ScoreThresholdStateCheck
@@ -970,7 +970,7 @@ extern "C" __declspec(dllexport) void __cdecl ScoreThresholdStateCheck() {
     }
 }
 
-RH_ScopedInstall(ScoreThresholdStateCheck, 0x00410860);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ScoreThresholdStateCheck, 0x00410860);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00412cf0  LabelTrailRecordAppend
@@ -1072,4 +1072,4 @@ extern "C" __declspec(dllexport) void __cdecl LabelTrailRecordAppend(
     *param_8 += 1;
 }
 
-RH_ScopedInstall(LabelTrailRecordAppend, 0x00412cf0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LabelTrailRecordAppend, 0x00412cf0);

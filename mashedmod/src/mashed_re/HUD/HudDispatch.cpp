@@ -216,7 +216,7 @@ LAB_0040e0db:
     Call0041db80();
 }
 
-RH_ScopedInstall(HudIngameDispatch, 0x0040dfc0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudIngameDispatch, 0x0040dfc0);
 
 // ---------------------------------------------------------------------------
 // 0x0041b630  HudSlotLoopB630
@@ -261,7 +261,7 @@ extern "C" __declspec(dllexport) void __cdecl HudSlotLoopB630() {
     } while (reinterpret_cast<std::int32_t>(puVar1) < static_cast<std::int32_t>(0x0063caa0u));
 }
 
-RH_ScopedInstall(HudSlotLoopB630, 0x0041b630);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSlotLoopB630, 0x0041b630);
 
 // ---------------------------------------------------------------------------
 // 0x0041ccc0  HudSlotLoopCcc0
@@ -305,7 +305,7 @@ extern "C" __declspec(dllexport) void __cdecl HudSlotLoopCcc0() {
     } while (reinterpret_cast<std::int32_t>(puVar1) < static_cast<std::int32_t>(0x0063d270u));
 }
 
-RH_ScopedInstall(HudSlotLoopCcc0, 0x0041ccc0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSlotLoopCcc0, 0x0041ccc0);
 
 // ---------------------------------------------------------------------------
 // FUN_0041c2d0  --  0x0041c2d0
@@ -358,4 +358,4 @@ void __cdecl FUN_0041c2d0()
     }
 }
 
-RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);

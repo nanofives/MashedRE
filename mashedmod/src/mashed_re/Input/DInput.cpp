@@ -160,4 +160,4 @@ int __cdecl ControllerConfigLoad_j5()
     }
 }
 
-RH_ScopedInstall(ControllerConfigLoad_j5, 0x004971b0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ControllerConfigLoad_j5, 0x004971b0);

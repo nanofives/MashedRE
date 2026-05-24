@@ -329,4 +329,4 @@ int __cdecl AudioWaveLoad(int    param_1,
     return iVar5;
 }
 
-RH_ScopedInstall(AudioWaveLoad, 0x005abfa0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioWaveLoad, 0x005abfa0);

@@ -145,7 +145,7 @@ void __cdecl IntroVideoDimGetter(std::uint32_t* param_1, std::uint32_t* param_2)
     }
 }
 
-RH_ScopedInstall(IntroVideoDimGetter, 0x00493f80);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(IntroVideoDimGetter, 0x00493f80);
 
 
 // ─── 0x004c1a00  IntroSplashVtableSlot6 ──────────────────────────────────────
@@ -171,7 +171,7 @@ int __cdecl IntroSplashVtableSlot6(int param_1) {
     return fn();
 }
 
-RH_ScopedInstall(IntroSplashVtableSlot6, 0x004c1a00);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(IntroSplashVtableSlot6, 0x004c1a00);
 
 
 // ─── 0x004c1bb0  IntroSplashRenderState ──────────────────────────────────────
@@ -207,7 +207,7 @@ std::uint32_t __cdecl IntroSplashRenderState(std::uint32_t param_1,
     return mask & param_1;
 }
 
-RH_ScopedInstall(IntroSplashRenderState, 0x004c1bb0);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(IntroSplashRenderState, 0x004c1bb0);
 
 
 // ─── 0x00492d20  IntroSplashFrameTickShim ────────────────────────────────────
@@ -226,7 +226,7 @@ int __cdecl IntroSplashFrameTickShim() {
     return 1;
 }
 
-RH_ScopedInstall(IntroSplashFrameTickShim, 0x00492d20);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(IntroSplashFrameTickShim, 0x00492d20);
 
 
 // ─── 0x00495350  IntroSplashOrchestrator ─────────────────────────────────────
@@ -396,4 +396,4 @@ void __cdecl IntroSplashOrchestrator() {
     }
 }
 
-RH_ScopedInstall(IntroSplashOrchestrator, 0x00495350);
+// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(IntroSplashOrchestrator, 0x00495350);
