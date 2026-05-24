@@ -1891,3 +1891,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  implicit-survival-sweep  21 hooks C2->C3 (RaceEndCheckFinish, AudioWaveLoad, BootQueueFlush + 18 more) — installed + MASHED survived 30s menu idle; never-fire = weaker C3 evidence than fire+survive
 
 2026-05-23  c4-lift-sweep  52 hooks C3->C4 — canonical-scenario observation evidence with hook installed; under-claimed as C3 in earlier runs today
+2026-05-24  0x00486830  FUN_00486830  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00486830.md; U-3951..U-3953
+2026-05-24  0x00486f50  FUN_00486f50  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00486f50.md
+2026-05-24  0x00486f90  FUN_00486f90  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00486f90.md; U-3954
+2026-05-24  0x00487140  FUN_00487140  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487140.md
+2026-05-24  0x00487150  FUN_00487150  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487150.md
+2026-05-24  0x00487d00  FUN_00487d00  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487d00.md
+2026-05-24  0x00487d60  FUN_00487d60  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487d60.md
+2026-05-24  0x00487d70  FUN_00487d70  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487d70.md
+2026-05-24  0x00487de0  FUN_00487de0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487de0.md
+2026-05-24  0x00487df0  FUN_00487df0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487df0.md
+2026-05-24  0x00487e00  FUN_00487e00  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487e00.md
+2026-05-24  0x00489290  FUN_00489290  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00489290.md
+2026-05-24  0x004892c0  FUN_004892c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004892c0.md; U-3955
+2026-05-24  0x00489940  FUN_00489940  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00489940.md; U-3956..U-3957
+2026-05-24  0x004899c0  FUN_004899c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004899c0.md
