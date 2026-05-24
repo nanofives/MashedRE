@@ -1208,3 +1208,16 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4111 | 0x00476a30 FUN_00476a30 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (float local_c); batch-ac-s5 |
 | S-4112 | 0x00476d00 FUN_00476d00 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&DAT_00722630 render context); batch-ac-s5 |
 | S-4113 | 0x00467210 FUN_00467210 | 0x0048e5f0 FUN_0048e5f0 | particle | passthrough | 2026-05-24 | global state accessor called with -1; field +0x24 compared to two thresholds (DAT_005cd30c, DAT_005ccac0); batch-ac-s6 |
+| S-4114 | 0x004768c0 FUN_004768c0 | 0x0048fdd0 FUN_0048fdd0 | particle | passthrough | 2026-05-24 | called 9x with global DAT ptrs; batch-ad-s1 |
+| S-4115 | 0x004e89a0 FUN_004e89a0 | 0x0048fef0 FUN_0048fef0 | particle | passthrough | 2026-05-24 | called with (iVar2, label_ptr, param_2); batch-ad-s1 |
+| S-4116 | 0x004b3b70 FUN_004b3b70 | 0x0048ff20 FUN_0048ff20 | particle | passthrough | 2026-05-24 | called with ("Tri.dff", local_404, uVar1); batch-ad-s1 |
+| S-4117 | 0x004b3e40 FUN_004b3e40 | 0x0048ff20 FUN_0048ff20 | particle | passthrough | 2026-05-24 | called with (local_404, 0x400, 0, 0); batch-ad-s1 |
+| S-4118 | 0x004b6520 FUN_004b6520 | 0x0048ff20 FUN_0048ff20 | particle | passthrough | 2026-05-24 | called with (local_404, 0x400); batch-ad-s1 |
+| S-4119 | 0x004b65a0 thunk_FUN_004b68e0 | 0x0048ff20 FUN_0048ff20 | particle | passthrough | 2026-05-24 | thunk, no args; batch-ad-s1 |
+| S-4120 | 0x004b65b0 thunk_FUN_004b68f0 | 0x0048ff20 FUN_0048ff20 | particle | passthrough | 2026-05-24 | thunk, called with ("Tri.dff"); batch-ad-s1 |
+| S-4121 | 0x004e66d0 FUN_004e66d0 | 0x0048ff20 FUN_0048ff20 | particle | passthrough | 2026-05-24 | called with (uVar1, &LAB_0048fed0, puVar2); batch-ad-s1 |
+| S-4122 | 0x004e8090 FUN_004e8090 | 0x0048ffd0 FUN_0048ffd0 | particle | passthrough | 2026-05-24 | called with (puVar1[2], 0); batch-ad-s1 |
+| S-4123 | 0x004e6e00 FUN_004e6e00 | 0x0048ffd0 FUN_0048ffd0 | particle | passthrough | 2026-05-24 | called with (*puVar1); batch-ad-s1 |
+| S-4124 | 0x0049ecc0 FUN_0049ecc0 | 0x0049c5d0 FUN_0049c5d0 | particle | passthrough | 2026-05-24 | called with no args on both-comparisons-fail; batch-ad-s1 |
+| S-4125 | 0x004a1200 FUN_004a1200 | 0x0049c6e0 FUN_0049c6e0 | particle | passthrough | 2026-05-24 | called with (param_2, &PTR_DAT_005d0cbc); returns int; batch-ad-s1 |
+| S-4126 | 0x004a2310 FUN_004a2310 | 0x0049c750 FUN_0049c750 | particle | passthrough | 2026-05-24 | called with no args when param_1[0x14]!=0; batch-ad-s1 |
