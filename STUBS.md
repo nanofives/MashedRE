@@ -1121,44 +1121,44 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4024 | 0x00493580 FUN_00493580 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xe00000 transition; depth-1; skeleton-prep-s4 |
 | S-4025 | 0x0040ab40 FUN_0040ab40 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac4!=0; depth-1; skeleton-prep-s4 |
 | S-4026 | 0x0040ac80 FUN_0040ac80 | 0x0043d7c0 FUN_0043d7c0 | boot | passthrough | 2026-05-22 | called on -0xba0000 eac5!=0; depth-1; skeleton-prep-s4 |
-| S-4027 | 0x0048a6f0 | 0x0048a780 FUN_0048a780 | particle | passthrough | 2026-05-24 | called with (piVar2, piVar4[2]); depth-1; batch-ac-s4 |
-| S-4028 | 0x0048a490 | 0x0048a780 FUN_0048a780 | particle | passthrough | 2026-05-24 | called with no args iVar3 times in cleanup loop; depth-1; batch-ac-s4 |
-| S-4029 | 0x004b6480 | 0x0048a830 FUN_0048a830 | particle | passthrough | 2026-05-24 | called with (&DAT_007151f0, 0x200); zero/fill-type; depth-1; batch-ac-s4 |
-| S-4030 | 0x00472650 | 0x0048a850 FUN_0048a850 | particle | passthrough | 2026-05-24 | called with two float args (range bounds); depth-1; batch-ac-s4 |
-| S-4031 | 0x004c39b0 | 0x0048a850 FUN_0048a850 | particle | passthrough | 2026-05-24 | called with two ptr args (same ptr); depth-1; batch-ac-s4 |
-| S-4032 | 0x004a2c48 | 0x0048a850 FUN_0048a850 | particle | passthrough | 2026-05-24 | no-arg call returning byte; depth-1; batch-ac-s4 |
-| S-4033 | 0x00499d90 | 0x0048ad50 FUN_0048ad50 | particle | passthrough | 2026-05-24 | called with (&DAT_0071ba30, active_count); depth-1; batch-ac-s4 |
-| S-4034 | 0x0040bb30 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with string ("wfall", "shockwave"); texture lookup; depth-1; batch-ac-s4 |
-| S-4035 | 0x004770c0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (ptr, int, int, handle); depth-1; batch-ac-s4 |
-| S-4036 | 0x0042a5d0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with ("Splash.dff", 0, 0); clump loader; depth-1; batch-ac-s4 |
-| S-4037 | 0x004b3f90 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with clump handle; depth-1; batch-ac-s4 |
-| S-4038 | 0x005449f0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 1); depth-1; batch-ac-s4 |
-| S-4039 | 0x00544a70 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 0, 0, 1, 1.0); depth-1; batch-ac-s4 |
-| S-4040 | 0x00544ad0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 0); depth-1; batch-ac-s4 |
-| S-4041 | 0x00544bf0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 0); depth-1; batch-ac-s4 |
-| S-4042 | 0x004c0b30 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | no-arg allocator returning handle; depth-1; batch-ac-s4 |
-| S-4043 | 0x004e69a0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (iVar3); depth-1; batch-ac-s4 |
-| S-4044 | 0x004e7e30 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (uVar5, uVar4); depth-1; batch-ac-s4 |
-| S-4045 | 0x004c1040 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (*puVar7, uVar4); depth-1; batch-ac-s4 |
-| S-4046 | 0x004b52f0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (*puVar8, 0x40, 1); depth-1; batch-ac-s4 |
-| S-4047 | 0x004768c0 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (ptr) and (ptr, param_1); teardown; depth-1; batch-ac-s4 |
-| S-4048 | 0x004c1210 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (uVar2); depth-1; batch-ac-s4 |
-| S-4049 | 0x004c0c20 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (uVar2) and (puVar5[10]); depth-1; batch-ac-s4 |
-| S-4050 | 0x004e6920 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (iVar1); depth-1; batch-ac-s4 |
-| S-4051 | 0x00476320 | 0x0048aff0 FUN_0048aff0 | particle | passthrough | 2026-05-24 | called with (puVar9+3, &DAT_006146fc, 0x42700000); depth-1; batch-ac-s4 |
-| S-4052 | 0x00472740 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (local_10, global_ptr, global_ptr, float); depth-1; batch-ac-s4 |
-| S-4053 | 0x004c1520 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (uVar1, &DAT_006146fc, float, 0); depth-1; batch-ac-s4 |
-| S-4054 | 0x004c1340 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (uVar1, &local_c, 1); depth-1; batch-ac-s4 |
-| S-4055 | 0x00465ca0 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (0x1d, param_1); depth-1; batch-ac-s4 |
-| S-4056 | 0x00474de0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_c, &local_c, 0x3d4ccccd); depth-1; batch-ac-s4 |
-| S-4057 | 0x004769a0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_c); position setter; depth-1; batch-ac-s4 |
-| S-4058 | 0x004769f0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_18); color/texture setter; depth-1; batch-ac-s4 |
-| S-4059 | 0x004769d0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_14); size setter; depth-1; batch-ac-s4 |
-| S-4060 | 0x00476a30 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (float); rotation setter; depth-1; batch-ac-s4 |
-| S-4061 | 0x00476d00 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&DAT_00720080); emit/flush; depth-1; batch-ac-s4 |
-| S-4062 | 0x00476df0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&DAT_00720080); finalize; depth-1; batch-ac-s4 |
-| S-4063 | 0x004c51a0 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40, puVar3, 0); matrix/transform init; depth-1; batch-ac-s4 |
-| S-4064 | 0x004c4d20 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40, &DAT_006146f0, 90.0, 1); depth-1; batch-ac-s4 |
-| S-4065 | 0x004c5010 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40, &local_4c, 1); scale/size setter; depth-1; batch-ac-s4 |
-| S-4066 | 0x00476a10 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40); matrix emit; depth-1; batch-ac-s4 |
-| S-4067 | 0x004b40f0 | 0x0048b960 FUN_0048b960 | particle | passthrough | 2026-05-24 | called with (pfVar5[-0x14]); returns int/ptr; depth-1; batch-ac-s4 |
+| S-4055 | 0x0048a6f0 | 0x0048a780 FUN_0048a780 | particle | passthrough | 2026-05-24 | called with (piVar2, piVar4[2]); depth-1; batch-ac-s4 |
+| S-4056 | 0x0048a490 | 0x0048a780 FUN_0048a780 | particle | passthrough | 2026-05-24 | called with no args iVar3 times in cleanup loop; depth-1; batch-ac-s4 |
+| S-4057 | 0x004b6480 | 0x0048a830 FUN_0048a830 | particle | passthrough | 2026-05-24 | called with (&DAT_007151f0, 0x200); zero/fill-type; depth-1; batch-ac-s4 |
+| S-4058 | 0x00472650 | 0x0048a850 FUN_0048a850 | particle | passthrough | 2026-05-24 | called with two float args (range bounds); depth-1; batch-ac-s4 |
+| S-4059 | 0x004c39b0 | 0x0048a850 FUN_0048a850 | particle | passthrough | 2026-05-24 | called with two ptr args (same ptr); depth-1; batch-ac-s4 |
+| S-4060 | 0x004a2c48 | 0x0048a850 FUN_0048a850 | particle | passthrough | 2026-05-24 | no-arg call returning byte; depth-1; batch-ac-s4 |
+| S-4061 | 0x00499d90 | 0x0048ad50 FUN_0048ad50 | particle | passthrough | 2026-05-24 | called with (&DAT_0071ba30, active_count); depth-1; batch-ac-s4 |
+| S-4062 | 0x0040bb30 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with string ("wfall", "shockwave"); texture lookup; depth-1; batch-ac-s4 |
+| S-4063 | 0x004770c0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (ptr, int, int, handle); depth-1; batch-ac-s4 |
+| S-4064 | 0x0042a5d0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with ("Splash.dff", 0, 0); clump loader; depth-1; batch-ac-s4 |
+| S-4065 | 0x004b3f90 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with clump handle; depth-1; batch-ac-s4 |
+| S-4066 | 0x005449f0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 1); depth-1; batch-ac-s4 |
+| S-4067 | 0x00544a70 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 0, 0, 1, 1.0); depth-1; batch-ac-s4 |
+| S-4068 | 0x00544ad0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 0); depth-1; batch-ac-s4 |
+| S-4069 | 0x00544bf0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (handle, 0); depth-1; batch-ac-s4 |
+| S-4070 | 0x004c0b30 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | no-arg allocator returning handle; depth-1; batch-ac-s4 |
+| S-4071 | 0x004e69a0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (iVar3); depth-1; batch-ac-s4 |
+| S-4072 | 0x004e7e30 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (uVar5, uVar4); depth-1; batch-ac-s4 |
+| S-4073 | 0x004c1040 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (*puVar7, uVar4); depth-1; batch-ac-s4 |
+| S-4074 | 0x004b52f0 | 0x0048ae00 FUN_0048ae00 | particle | passthrough | 2026-05-24 | called with (*puVar8, 0x40, 1); depth-1; batch-ac-s4 |
+| S-4075 | 0x004768c0 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (ptr) and (ptr, param_1); teardown; depth-1; batch-ac-s4 |
+| S-4076 | 0x004c1210 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (uVar2); depth-1; batch-ac-s4 |
+| S-4077 | 0x004c0c20 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (uVar2) and (puVar5[10]); depth-1; batch-ac-s4 |
+| S-4078 | 0x004e6920 | 0x0048af70 FUN_0048af70 | particle | passthrough | 2026-05-24 | called with (iVar1); depth-1; batch-ac-s4 |
+| S-4079 | 0x00476320 | 0x0048aff0 FUN_0048aff0 | particle | passthrough | 2026-05-24 | called with (puVar9+3, &DAT_006146fc, 0x42700000); depth-1; batch-ac-s4 |
+| S-4080 | 0x00472740 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (local_10, global_ptr, global_ptr, float); depth-1; batch-ac-s4 |
+| S-4081 | 0x004c1520 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (uVar1, &DAT_006146fc, float, 0); depth-1; batch-ac-s4 |
+| S-4082 | 0x004c1340 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (uVar1, &local_c, 1); depth-1; batch-ac-s4 |
+| S-4083 | 0x00465ca0 | 0x0048b230 FUN_0048b230 | particle | passthrough | 2026-05-24 | called with (0x1d, param_1); depth-1; batch-ac-s4 |
+| S-4084 | 0x00474de0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_c, &local_c, 0x3d4ccccd); depth-1; batch-ac-s4 |
+| S-4085 | 0x004769a0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_c); position setter; depth-1; batch-ac-s4 |
+| S-4086 | 0x004769f0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_18); color/texture setter; depth-1; batch-ac-s4 |
+| S-4087 | 0x004769d0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&local_14); size setter; depth-1; batch-ac-s4 |
+| S-4088 | 0x00476a30 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (float); rotation setter; depth-1; batch-ac-s4 |
+| S-4089 | 0x00476d00 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&DAT_00720080); emit/flush; depth-1; batch-ac-s4 |
+| S-4090 | 0x00476df0 | 0x0048b440 FUN_0048b440 | particle | passthrough | 2026-05-24 | called with (&DAT_00720080); finalize; depth-1; batch-ac-s4 |
+| S-4091 | 0x004c51a0 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40, puVar3, 0); matrix/transform init; depth-1; batch-ac-s4 |
+| S-4092 | 0x004c4d20 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40, &DAT_006146f0, 90.0, 1); depth-1; batch-ac-s4 |
+| S-4093 | 0x004c5010 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40, &local_4c, 1); scale/size setter; depth-1; batch-ac-s4 |
+| S-4094 | 0x00476a10 | 0x0048b7c0 FUN_0048b7c0 | particle | passthrough | 2026-05-24 | called with (&local_40); matrix emit; depth-1; batch-ac-s4 |
+| S-4095 | 0x004b40f0 | 0x0048b960 FUN_0048b960 | particle | passthrough | 2026-05-24 | called with (pfVar5[-0x14]); returns int/ptr; depth-1; batch-ac-s4 |

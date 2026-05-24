@@ -11,7 +11,7 @@ YYYY-MM-DD  <SESSION_SHORT_ID>  bucket=<bucket>  rvas=<comma-separated list>
 The sweep session moves rows from "Queued" to "Drained" as it processes them. Drained rows are kept for audit. Queued rows are never deleted — only moved.
 
 ## Queued
-2026-05-24  particle_promote_ac4-20260524  bucket=re/analysis/particle_promote_ac4  rvas=0x0048a780,0x0048a830,0x0048a850,0x0048aa50,0x0048ab70,0x0048ad50,0x0048ade0,0x0048ae00,0x0048af70,0x0048aff0,0x0048b230,0x0048b440,0x0048b650,0x0048b7c0,0x0048b960  pool=Mashed_pool14  branch=c1-c2/batch-ac-s4  promotions=15xC1->C2  new-U=U-3951..U-3968  new-S=S-4027..S-4067  subsystem_observed=particle(all 15 confirmed particle; waterfall+shockwave+spark+explosion clusters)  notes=batch-ac-s4; three particle sub-pools: spark ring-buf (0x200 entries stride 0x34 at 0x00715230), wfall (0x80 entries stride 0x34 at 0x007206f0), shockwave (0x40 entries stride 0x18 at 0x0071fa40); explosion 8-ring at 0x007201d0; all confirmed via decomp pool14 2026-05-24
+2026-05-24  particle_promote_ac4-20260524  bucket=re/analysis/particle_promote_ac4  rvas=0x0048a780,0x0048a830,0x0048a850,0x0048aa50,0x0048ab70,0x0048ad50,0x0048ade0,0x0048ae00,0x0048af70,0x0048aff0,0x0048b230,0x0048b440,0x0048b650,0x0048b7c0,0x0048b960  pool=Mashed_pool14  branch=c1-c2/batch-ac-s4  promotions=15xC1->C2  new-U=U-3978..U-3995  new-S=S-4055..S-4095  subsystem_observed=particle(all 15 confirmed particle; waterfall+shockwave+spark+explosion clusters)  notes=batch-ac-s4; three particle sub-pools: spark ring-buf (0x200 entries stride 0x34 at 0x00715230), wfall (0x80 entries stride 0x34 at 0x007206f0), shockwave (0x40 entries stride 0x18 at 0x0071fa40); explosion 8-ring at 0x007201d0; all confirmed via decomp pool14 2026-05-24
 
 
 ## Drained
