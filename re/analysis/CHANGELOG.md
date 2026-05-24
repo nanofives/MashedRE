@@ -1907,3 +1907,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x00486460  FUN_00486460  C1->C2  batch-ac-s1; particle; scorch ring-buffer spawn cap 100 stride 0x24; pos *param_1[0/1/2]; plate=re/analysis/particle_promote_ac1/0x00486460.md
 2026-05-24  0x004864f0  FUN_004864f0  C1->C2  batch-ac-s1; particle; burst-spawn N; sq-dist guard vs _DAT_005cc9a0; updates _DAT_006fe780/84/88; FUN_004c51a0 jitter; plate=re/analysis/particle_promote_ac1/0x004864f0.md
 2026-05-24  0x00486610  FUN_00486610  C1->C2  batch-ac-s1; particle; thin wrapper FUN_004864f0(p1 p2 4); plate=re/analysis/particle_promote_ac1/0x00486610.md
+2026-05-24  0x00486830  FUN_00486830  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00486830.md; U-3954..U-3956
+2026-05-24  0x00486f50  FUN_00486f50  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00486f50.md
+2026-05-24  0x00486f90  FUN_00486f90  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00486f90.md; U-3957
+2026-05-24  0x00487140  FUN_00487140  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487140.md
+2026-05-24  0x00487150  FUN_00487150  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487150.md
+2026-05-24  0x00487d00  FUN_00487d00  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487d00.md
+2026-05-24  0x00487d60  FUN_00487d60  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487d60.md
+2026-05-24  0x00487d70  FUN_00487d70  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487d70.md
+2026-05-24  0x00487de0  FUN_00487de0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487de0.md
+2026-05-24  0x00487df0  FUN_00487df0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487df0.md
+2026-05-24  0x00487e00  FUN_00487e00  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00487e00.md
+2026-05-24  0x00489290  FUN_00489290  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00489290.md
+2026-05-24  0x004892c0  FUN_004892c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004892c0.md; U-3958
+2026-05-24  0x00489940  FUN_00489940  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x00489940.md; U-3959..U-3960
+2026-05-24  0x004899c0  FUN_004899c0  C1->C2  batch-ac-s2 mechanical decomp; re/analysis/particle_promote_ac2/0x004899c0.md
