@@ -1891,3 +1891,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-23  implicit-survival-sweep  21 hooks C2->C3 (RaceEndCheckFinish, AudioWaveLoad, BootQueueFlush + 18 more) — installed + MASHED survived 30s menu idle; never-fire = weaker C3 evidence than fire+survive
 
 2026-05-23  c4-lift-sweep  52 hooks C3->C4 — canonical-scenario observation evidence with hook installed; under-claimed as C3 in earlier runs today
+2026-05-24  batch-ac-s6  particle-promote-ac6  15x C1->C2 mechanical promotion  rvas=0x0048df60,0x0048e180,0x0048e360,0x0048e5f0,0x0048e7b0,0x0048e820,0x0048eac0,0x0048f590,0x0048f780,0x0048f8a0,0x0048f9f0,0x0048fb10,0x0048fce0,0x0048fd10,0x0048fd40  bucket=re/analysis/particle_promote_ac6  slot=Mashed_pool6  U-3951..U-3967(17) S-4027(1)

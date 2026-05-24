@@ -12,6 +12,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-24  particle-promote-ac6-20260524-0000  bucket=re/analysis/particle_promote_ac6  rvas=0x0048df60,0x0048e180,0x0048e360,0x0048e5f0,0x0048e7b0,0x0048e820,0x0048eac0,0x0048f590,0x0048f780,0x0048f8a0,0x0048f9f0,0x0048fb10,0x0048fce0,0x0048fd10,0x0048fd40  pool=Mashed_pool6  branch=c1-c2/batch-ac-s6  promotions=15xC1->C2  U-IDs=U-3951..U-3967  S-IDs=S-4027
 
 ## Drained
 
