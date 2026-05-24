@@ -1208,3 +1208,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4111 | 0x00476a30 FUN_00476a30 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (float local_c); batch-ac-s5 |
 | S-4112 | 0x00476d00 FUN_00476d00 | 0x0048d140 FUN_0048d140 | particle | passthrough | 2026-05-24 | 1-arg (&DAT_00722630 render context); batch-ac-s5 |
 | S-4113 | 0x00467210 FUN_00467210 | 0x0048e5f0 FUN_0048e5f0 | particle | passthrough | 2026-05-24 | global state accessor called with -1; field +0x24 compared to two thresholds (DAT_005cd30c, DAT_005ccac0); batch-ac-s6 |
+| S-4194 | 0x0049cbd0 FUN_0049cbd0 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | base-class destructor; called at 0x0049debf; out of bucket; batch-ad-s3 |
+| S-4195 | 0x0049c990 FUN_0049c990 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | second base-class destructor; called at 0x0049dec4; out of bucket; batch-ad-s3 |
+| S-4196 | 0x004a1180 FUN_004a1180 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | string-buffer destructor; called 3× (0x0049df0f, 0x0049df1b, 0x0049df27); no visible args each call; batch-ad-s3 |
+| S-4197 | 0x004a01b0 FUN_004a01b0 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | top-level base dtor; called at 0x0049df33; no visible args; batch-ad-s3 |
