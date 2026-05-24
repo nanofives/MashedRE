@@ -803,8 +803,19 @@ function runDiff() {
     // Also read back the uint32 return value (must be 1).
     // Observable = (ret << 16) | dirtyFlagReadback. Both paths must match.
     // Dirty flag is restored to its pre-test value after each pair.
+    //
+    // Prelude (added 2026-05-24 phase-a1): call MASHED's original
+    // FontSys_InitRenderState (0x00552c10) once before the test loop to
+    // guarantee g_FontCtxPtrs[0] is allocated. Without this, the function
+    // derefs a NULL slot ptr and both sides AV identically at offset 0.
     if (CONFIG.arg_type === 'font_ctx_float2') {
         const pDirty = ptr('0x00912bd8');
+        // Idempotent one-time setup: allocate slot 0.
+        const InitRenderState = new NativeFunction(ptr('0x00552c10'), 'uint32', [], 'mscdecl');
+        try { InitRenderState(); } catch (e) {
+            send({ type: 'error', msg: 'FontSys_InitRenderState prelude failed: ' + e.message });
+            return;
+        }
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             const sx = t[0], sy = t[1];
@@ -839,8 +850,24 @@ function runDiff() {
     // read back bool return value and new depth. Pack into uint32 for comparison.
     // Observable = (retBool & 1) | ((new_depth & 0xff) << 8).
     // depth is restored after each pair.
+    //
+    // Prelude (added 2026-05-24 phase-a1): call MASHED's original
+    // FontSys_InitRenderState (0x00552c10) once before the test loop to
+    // guarantee g_FontCtxPtrs[0] is allocated. FontMatrix_Push at initial
+    // depth=N copies 64 bytes FROM g_FontCtxPtrs[N] — needs that slot valid.
+    // Only initial depth 0 (copies from slot 0, valid post-prelude) and
+    // initial depth 31 (overflow early-out, doesn't touch ctx) are
+    // safely exercisable. Tests with depth in (1..30) deref unallocated
+    // slots and AV both sides identically — they're not on the registry's
+    // test list, but the prelude is still required for depth=0.
     if (CONFIG.arg_type === 'font_matrix_push') {
         const pDepth = ptr('0x00912b04');
+        // Idempotent one-time setup: allocate slot 0 (and reset depth to 0).
+        const InitRenderState = new NativeFunction(ptr('0x00552c10'), 'uint32', [], 'mscdecl');
+        try { InitRenderState(); } catch (e) {
+            send({ type: 'error', msg: 'FontSys_InitRenderState prelude failed: ' + e.message });
+            return;
+        }
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];  // { depth } — initial depth to inject
             const testDepth = (t.depth | 0) >>> 0;

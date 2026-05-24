@@ -1558,7 +1558,11 @@ HOOKS = {
     # Stack overflow guard (depth < 31); increment depth; lazy-alloc; 64-byte copy.
     # Observable: return bool and new stack depth.
     # Strategy: font_matrix_push -- inject depth, call, read back (ret|(new_depth<<8)).
-    # Test depths: 0 (normal), 1, 5, 29, 30 (at max-1), 31 (overflow -> false).
+    # Test depths (2026-05-24 phase-a1): only 0 (push slot 1, copies from
+    # slot 0 — valid post-prelude) and 31 (overflow early-out, returns false
+    # without touching ctx). Depths 1..30 deref unallocated slots and AV
+    # both sides identically — non-informative. Tests alternate to exercise
+    # both code paths (success + overflow).
     'font_matrix_push': {
         'rva':            0x00552d10,
         'export':         'FontMatrix_Push',
@@ -1566,21 +1570,21 @@ HOOKS = {
         'arg_type':       'font_matrix_push',
         'lut_root_delta': 0,
         'path1_tests': [
-            {'depth': 0},
-            {'depth': 1},
-            {'depth': 5},
-            {'depth': 10},
-            {'depth': 28},
-            {'depth': 29},
-            {'depth': 30},
+            {'depth':  0},
             {'depth': 31},
-            {'depth': 0},
-            {'depth': 15},
+            {'depth':  0},
+            {'depth': 31},
+            {'depth':  0},
+            {'depth': 31},
+            {'depth':  0},
+            {'depth': 31},
+            {'depth':  0},
+            {'depth': 31},
         ],
         'path2_tests': [
-            {'depth': 0},
-            {'depth': 30},
+            {'depth':  0},
             {'depth': 31},
+            {'depth':  0},
         ],
     },
 
@@ -3897,10 +3901,13 @@ HOOKS = {
     # 0x00552b60  FontSys_InitSeq
     # fn(void) -> void.
     # 8-step font subsystem init: zero flag + 7 alloc/init calls. No branches.
-    # All 5 alloc callees are C1 stubs — crash identically on both sides when
-    # called without initialised game state. crash_equal_ok=True counts same-
-    # error as GREEN. Called once during game init (FontText_HudInit at 0x00427ca0).
-    # arg_type='none': call 10x; both crash with same error each time.
+    # Called exactly once during game init (FontText_HudInit at 0x00427ca0).
+    # By the time the diff attaches (~2s after spawn), MASHED has already
+    # called FontSys_InitSeq once via its natural boot — state is now valid.
+    # Re-calling 10x in the diff allocates/leaks state and hangs MASHED
+    # (timeout observed 2026-05-24). Reduced to 1 call. arg_type='none':
+    # both Orig and Reimpl execute the same allocation sequence once; if
+    # either side hangs or diverges, the test reports it.
     'font_sys_init_seq': {
         'rva':            0x00552b60,
         'export':         'FontSys_InitSeq',
@@ -3908,8 +3915,8 @@ HOOKS = {
         'arg_type':       'none',
         'crash_equal_ok': True,
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
+        'path1_tests':    [0],
+        'path2_tests':    [0],
     },
 
     # Session c3-batch-g-s15 — carry-overs from batch-d/c

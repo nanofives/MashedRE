@@ -140,7 +140,7 @@ std::uint32_t __cdecl FontCtx_SetScale(float sx, float sy)
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(FontCtx_SetScale, 0x00552da0);
+RH_ScopedInstall(FontCtx_SetScale, 0x00552da0);  // re-enabled 2026-05-24 phase-a1 font_ctx_float2+prelude GREEN
 
 // ---------------------------------------------------------------------------
 // FontCtx_SetTranslation  --  0x00552df0
@@ -174,10 +174,7 @@ std::uint32_t __cdecl FontCtx_SetTranslation(float x, float y)
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtx_SetTranslation, 0x00552df0);
-// Re-enable refused 2026-05-24: synthetic diff returns None/None on all 10 vec2 inputs
-// (function dereferences a global FontCtx pointer; bare floats can't reach valid state).
-// Needs an arg_type that supplies a live FontCtx before re-enable.
+RH_ScopedInstall(FontCtx_SetTranslation, 0x00552df0);  // re-enabled 2026-05-24 phase-a1 font_ctx_float2+prelude GREEN
 
 // ---------------------------------------------------------------------------
 // FontSys_InitRenderState  --  0x00552c10
@@ -323,7 +320,7 @@ bool __cdecl FontMatrix_Push()
     return bVar1;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(FontMatrix_Push, 0x00552d10);
+RH_ScopedInstall(FontMatrix_Push, 0x00552d10);  // re-enabled 2026-05-24 phase-a1 font_matrix_push+prelude GREEN
 
 // ---------------------------------------------------------------------------
 // FontCtx_FlushMatrix  --  0x00552e40
@@ -425,7 +422,12 @@ float* __cdecl FontCtx_FlushMatrix()
     return g_OutputMat;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtx_FlushMatrix, 0x00552e40);
+// MASS-DISABLED 2026-05-24 needs-canonical-camera-state: RH_ScopedInstall(FontCtx_FlushMatrix, 0x00552e40);
+// Phase A1 re-verify 2026-05-24: synthetic diff only exercises NULL-camera AV
+// path (both sides AV at 0x14 reading *(*g_ActiveCamera+0x14)). AV/AV match
+// is banned as GREEN per the no-overclaiming rule — success path (dirty=0
+// recompute) is never reached synthetically. Needs canonical-scenario where
+// MASHED has a valid camera (in-race, not menu).
 
 // ---------------------------------------------------------------------------
 // FontSys_InitSeq  --  0x00552b60
@@ -494,4 +496,9 @@ void __cdecl FontSys_InitSeq()
     g_SetActiveCamera(0);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontSys_InitSeq, 0x00552b60);
+// MASS-DISABLED 2026-05-24 one-shot-init-cannot-resynth: RH_ScopedInstall(FontSys_InitSeq, 0x00552b60);
+// Phase A1 re-verify 2026-05-24: by diff-attach time MASHED has already
+// called this once via FontText_HudInit boot path. Re-calling at attach
+// time (even once) hangs MASHED — allocations leak / state corrupts.
+// Hook install only fires from MASHED's natural one-shot call, which the
+// diff harness cannot synthesise. Needs canonical-scenario verification.
