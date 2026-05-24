@@ -111,7 +111,7 @@ extern "C" __declspec(dllexport) bool __cdecl FrontendPlayerSlotCheck(int param_
     return (enableFlag != 0) && !bVar1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);
+RH_ScopedInstall(FrontendPlayerSlotCheck, 0x0042ebe0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
 
 // ---------------------------------------------------------------------------
 // FrontendCursorUpdate  --  0x0042f7b0

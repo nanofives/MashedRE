@@ -26,14 +26,14 @@
 extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067ecb4() {
     return *reinterpret_cast<std::uint32_t*>(0x0067ecb4);
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetDat0067ecb4, 0x0042c2d0);
+RH_ScopedInstall(GetDat0067ecb4, 0x0042c2d0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
 
 extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067ecb8() {
     return *reinterpret_cast<std::uint32_t*>(0x0067ecb8);
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetDat0067ecb8, 0x0042c2e0);
+RH_ScopedInstall(GetDat0067ecb8, 0x0042c2e0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
 
 extern "C" __declspec(dllexport) std::uint32_t __cdecl GetDat0067ea64() {
     return *reinterpret_cast<std::uint32_t*>(0x0067ea64);
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetDat0067ea64, 0x0042f500);
+RH_ScopedInstall(GetDat0067ea64, 0x0042f500);  // re-enabled 2026-05-24 (pre-regression C4 leaf)

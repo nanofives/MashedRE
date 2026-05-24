@@ -52,4 +52,4 @@ extern "C" __declspec(dllexport) float __cdecl Vec3Magnitude(const float* v) {
     return result;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Vec3Magnitude, 0x004c3ac0);
+RH_ScopedInstall(Vec3Magnitude, 0x004c3ac0);  // re-enabled 2026-05-24 — pre-regression C4, sanity-check the workflow

@@ -276,7 +276,7 @@ hold_repeat:
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectA, 0x0042aff0);
+RH_ScopedInstall(MenuButtonDetectA, 0x0042aff0);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
 
 // ---------------------------------------------------------------------------
 // 0x0042b180  MenuButtonDetectB
@@ -376,4 +376,4 @@ hold_repeat_b:
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MenuButtonDetectB, 0x0042b180);
+RH_ScopedInstall(MenuButtonDetectB, 0x0042b180);  // re-enabled 2026-05-24 (pre-regression C4 leaf)

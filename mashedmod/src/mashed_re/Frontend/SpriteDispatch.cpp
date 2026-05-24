@@ -123,3 +123,7 @@ extern "C" __declspec(dllexport) void __cdecl SpriteAnimFrameThunk(
 }
 
 // MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteAnimFrameThunk, 0x0042e590);
+// Re-enable refused 2026-05-24: function dereferences sprite_ptr_table[arg]; current
+// synthetic A/B test passes only because both orig and reimpl AV identically on bare-int
+// inputs (orig=None, reimpl=None x10 cases). Needs an arg_type that supplies a valid
+// sprite-object pointer before re-enable can be C-evidence.

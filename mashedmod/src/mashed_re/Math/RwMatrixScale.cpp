@@ -92,4 +92,4 @@ void __cdecl RwMatrixScale(float* mat, const float* scale, int mode)
     flags_and(&mat[3], 0xfffdfffcu);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwMatrixScale, 0x004c5010);
+RH_ScopedInstall(RwMatrixScale, 0x004c5010);  // re-enabled 2026-05-24 (pre-regression C4 leaf)
