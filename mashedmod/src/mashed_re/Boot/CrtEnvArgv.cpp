@@ -149,7 +149,7 @@ extern "C" __declspec(dllexport) int __cdecl CrtSetEnvp(void) {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtSetEnvp, 0x004abc53);
+// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(CrtSetEnvp, 0x004abc53);
 
 // ─── 0x004abf28  ___crtGetEnvironmentStringsA  ─────────────────────────────────
 // Returns a malloc'd ANSI copy of the process environment block.
@@ -255,4 +255,4 @@ LAB_004abf76:
     return local_8;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtGetEnvStrings, 0x004abf28);
+// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(CrtGetEnvStrings, 0x004abf28);

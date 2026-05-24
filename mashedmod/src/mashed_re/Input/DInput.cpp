@@ -160,4 +160,4 @@ int __cdecl ControllerConfigLoad_j5()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ControllerConfigLoad_j5, 0x004971b0);
+RH_ScopedInstall(ControllerConfigLoad_j5, 0x004971b0);  // re-enabled 2026-05-24 c3-input

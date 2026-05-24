@@ -448,4 +448,4 @@ extern "C" __declspec(dllexport) void __cdecl DataZeroFill() {
     s_orig_DataZeroFill();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DataZeroFill, 0x004924f0);
+// MASS-DISABLED 2026-05-24 c3-boot-hangs: RH_ScopedInstall(DataZeroFill, 0x004924f0);

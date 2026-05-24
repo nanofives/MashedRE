@@ -79,7 +79,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl thunk_LaunchLangGate() {
     return s_FUN_00495150();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(thunk_LaunchLangGate, 0x00493540);
+RH_ScopedInstall(thunk_LaunchLangGate, 0x00493540);  // re-enabled 2026-05-24 c3-boot-a
 
 
 // ─── 0x00493550  thunk_FUN_004938c0 ────────────────────────────────────────
@@ -100,7 +100,7 @@ extern "C" __declspec(dllexport) void __cdecl thunk_EngineStopDispatch() {
     s_FUN_004938c0();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(thunk_EngineStopDispatch, 0x00493550);
+// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(thunk_EngineStopDispatch, 0x00493550);
 
 
 // ─── 0x00493560  thunk_FUN_004954f0 ────────────────────────────────────────
@@ -125,7 +125,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl thunk_HwExitDispatch() {
     return s_FUN_004954f0();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);
+// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);
 
 
 // ─── 0x004938c0  sub_004938c0  (EngineStopHelper) ──────────────────────────

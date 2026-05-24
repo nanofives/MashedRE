@@ -46,4 +46,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ThunkVideoStateGet(void) 
     return *reinterpret_cast<const std::uint32_t*>(kVideoStateFlagAddr);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ThunkVideoStateGet, 0x00494ef0);
+RH_ScopedInstall(ThunkVideoStateGet, 0x00494ef0);  // re-enabled 2026-05-24 c3-boot-a

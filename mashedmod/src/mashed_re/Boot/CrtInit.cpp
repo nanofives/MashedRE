@@ -36,4 +36,4 @@ extern "C" __declspec(dllexport) void __cdecl CrtPreInitLoop() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtPreInitLoop, 0x004a78b0);
+// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(CrtPreInitLoop, 0x004a78b0);

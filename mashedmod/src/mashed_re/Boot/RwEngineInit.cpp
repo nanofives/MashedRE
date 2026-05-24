@@ -48,4 +48,4 @@ extern "C" __declspec(dllexport) unsigned char __cdecl DInputInitPredicate() {
     return (result != 0) ? 1u : 0u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DInputInitPredicate, 0x004955b0);
+RH_ScopedInstall(DInputInitPredicate, 0x004955b0);  // re-enabled 2026-05-24 c3-input
