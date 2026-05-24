@@ -40,7 +40,7 @@ extern "C" __declspec(dllexport) void __cdecl SaveStatusClear(std::uint32_t para
     *reinterpret_cast<std::uint32_t*>(kSaveStatusGlobal) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SaveStatusClear, 0x004099e0);
+RH_ScopedInstall(SaveStatusClear, 0x004099e0);  // re-enabled 2026-05-24 batch-save-b
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00404e50  SaveLoad
@@ -63,7 +63,7 @@ extern "C" __declspec(dllexport) int __cdecl SaveLoad() {
     return 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SaveLoad, 0x00404e50);
+RH_ScopedInstall(SaveLoad, 0x00404e50);  // re-enabled 2026-05-24 batch-save-a
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00404f50  SaveWrite
@@ -85,7 +85,7 @@ extern "C" __declspec(dllexport) int __cdecl SaveWrite() {
     return 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SaveWrite, 0x00404f50);
+RH_ScopedInstall(SaveWrite, 0x00404f50);  // re-enabled 2026-05-24 batch-save-a
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00404f80  SaveFileExists
@@ -106,4 +106,4 @@ extern "C" __declspec(dllexport) int __cdecl SaveFileExists() {
     return (raw != 0) ? 1 : 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SaveFileExists, 0x00404f80);
+RH_ScopedInstall(SaveFileExists, 0x00404f80);  // re-enabled 2026-05-24 batch-save-a

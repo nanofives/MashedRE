@@ -132,7 +132,7 @@ extern "C" __declspec(dllexport) void __cdecl ConfigLogError(const char* msg) {
     game_fputs(msg, log_handle);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ConfigLogError, 0x004963e0);
+RH_ScopedInstall(ConfigLogError, 0x004963e0);  // re-enabled 2026-05-24 batch-save-c
 
 // ---------------------------------------------------------------------------
 // 0x00496400  ConfigLogDebug  — void(char*, ...)
@@ -159,7 +159,7 @@ extern "C" __declspec(dllexport) void __cdecl ConfigLogDebug(const char* fmt, ..
     game_fputs(buf, log_handle);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ConfigLogDebug, 0x00496400);
+RH_ScopedInstall(ConfigLogDebug, 0x00496400);  // re-enabled 2026-05-24 batch-save-c
 
 // ---------------------------------------------------------------------------
 // 0x00498910  ConfigFilenameGet  — char*(void)
@@ -195,7 +195,7 @@ extern "C" __declspec(dllexport) char* __cdecl ConfigFilenameGet() {
     return dst;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ConfigFilenameGet, 0x00498910);
+RH_ScopedInstall(ConfigFilenameGet, 0x00498910);  // re-enabled 2026-05-24 batch-save-c
 
 // ---------------------------------------------------------------------------
 // 0x00498950  ConfigLoad  — int(void)
@@ -235,4 +235,4 @@ extern "C" __declspec(dllexport) int __cdecl ConfigLoad() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ConfigLoad, 0x00498950);
+RH_ScopedInstall(ConfigLoad, 0x00498950);  // re-enabled 2026-05-24 batch-save-c

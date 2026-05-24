@@ -110,4 +110,4 @@ extern "C" __declspec(dllexport) int __cdecl VfsStreamGetType(void* ctx)
     return result;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VfsStreamGetType, 0x00550bc0);
+RH_ScopedInstall(VfsStreamGetType, 0x00550bc0);  // re-enabled 2026-05-24 batch-save-f

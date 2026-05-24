@@ -114,7 +114,7 @@ int __cdecl ReadModeFromCombo_j5()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ReadModeFromCombo_j5, 0x00498d20);
+RH_ScopedInstall(ReadModeFromCombo_j5, 0x00498d20);  // re-enabled 2026-05-24 batch-save-d
 
 
 // ============================================================================
@@ -298,7 +298,7 @@ void __cdecl PopulateModeCombo_s2()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PopulateModeCombo_s2, 0x00498d60);
+RH_ScopedInstall(PopulateModeCombo_s2, 0x00498d60);  // re-enabled 2026-05-24 batch-save-d
 
 
 // ============================================================================
@@ -447,7 +447,7 @@ void __cdecl VideoSettingsDlgProc_s2()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VideoSettingsDlgProc_s2, 0x004991f0);
+RH_ScopedInstall(VideoSettingsDlgProc_s2, 0x004991f0);  // re-enabled 2026-05-24 batch-save-e
 
 // The actual DLGPROC body (__stdcall, static so no @16 export decoration issue).
 static INT_PTR __stdcall VideoSettingsDlgProc_s2_Body(

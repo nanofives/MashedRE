@@ -109,7 +109,7 @@ extern "C" __declspec(dllexport) void __cdecl DeserializeFromBuffer() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DeserializeFromBuffer, 0x00404e80);
+RH_ScopedInstall(DeserializeFromBuffer, 0x00404e80);  // re-enabled 2026-05-24 batch-save-a
 
 // ─── 0x00404EE0  Save::SerializeToBuffer ──────────────────────────────────────
 // void(void): packs live state into save_buf; writes DEADBEEF magic.
@@ -154,4 +154,4 @@ extern "C" __declspec(dllexport) void __cdecl SerializeToBuffer() {
     writeU32at(kSaveBufBase, kDeadBeef);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SerializeToBuffer, 0x00404ee0);
+RH_ScopedInstall(SerializeToBuffer, 0x00404ee0);  // re-enabled 2026-05-24 batch-save-a

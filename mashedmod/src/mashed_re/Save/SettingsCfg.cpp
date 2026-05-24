@@ -139,4 +139,4 @@ extern "C" __declspec(dllexport) int __cdecl ConfigSave() {
     return 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ConfigSave, 0x004989b0);
+RH_ScopedInstall(ConfigSave, 0x004989b0);  // re-enabled 2026-05-24 batch-save-d

@@ -121,7 +121,7 @@ int __cdecl FileReadWrapper_i3(const char* filename, void* buf, std::uint32_t si
     return bytes_read;                                 // 0x004b3ba8
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FileReadWrapper_i3, 0x004b3b70);
+RH_ScopedInstall(FileReadWrapper_i3, 0x004b3b70);  // re-enabled 2026-05-24 batch-save-e
 
 
 // ============================================================================
@@ -173,7 +173,7 @@ int __cdecl FileWriteWrapper_i3(const char* filename, void* buf, std::uint32_t s
     return write_result;             // 0x004b3be3
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FileWriteWrapper_i3, 0x004b3bb0);
+RH_ScopedInstall(FileWriteWrapper_i3, 0x004b3bb0);  // re-enabled 2026-05-24 batch-save-e
 
 
 // ============================================================================
@@ -288,7 +288,7 @@ void __cdecl SetControlTextFromResource_i3()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SetControlTextFromResource_i3, 0x00499740);
+RH_ScopedInstall(SetControlTextFromResource_i3, 0x00499740);  // re-enabled 2026-05-24 batch-save-e
 
 
 // ============================================================================
@@ -344,7 +344,7 @@ void __cdecl SubsystemSelectionChanged_i3()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SubsystemSelectionChanged_i3, 0x00499170);
+RH_ScopedInstall(SubsystemSelectionChanged_i3, 0x00499170);  // re-enabled 2026-05-24 batch-save-d
 
 
 // ============================================================================
@@ -449,4 +449,4 @@ void __cdecl VideoDialogInit_i3()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VideoDialogInit_i3, 0x00498f60);
+RH_ScopedInstall(VideoDialogInit_i3, 0x00498f60);  // re-enabled 2026-05-24 batch-save-d

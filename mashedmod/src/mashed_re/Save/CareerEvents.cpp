@@ -43,7 +43,7 @@ extern "C" __declspec(dllexport) void __cdecl PostTrophyEvent(std::uint32_t even
     *kFrontendEventId       = event_id;               // 0x0042a92a
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PostTrophyEvent, 0x0042a920);
+RH_ScopedInstall(PostTrophyEvent, 0x0042a920);  // re-enabled 2026-05-24 batch-save-b
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00430290  Championship::Complete   (986 bytes, C1->C3)
@@ -323,4 +323,4 @@ extern "C" __declspec(dllexport) void __cdecl ChampionshipComplete() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ChampionshipComplete, 0x00430290);
+RH_ScopedInstall(ChampionshipComplete, 0x00430290);  // re-enabled 2026-05-24 batch-save-c

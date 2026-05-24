@@ -40,4 +40,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GuardConcludedAndP1Won() 
     return static_cast<std::uint32_t>((concluded != 1u) - 1) & p0won;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GuardConcludedAndP1Won, 0x0040dd60);
+RH_ScopedInstall(GuardConcludedAndP1Won, 0x0040dd60);  // re-enabled 2026-05-24 batch-save-b
