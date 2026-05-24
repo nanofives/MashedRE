@@ -140,7 +140,7 @@ std::uint32_t __cdecl FontCtx_SetScale(float sx, float sy)
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtx_SetScale, 0x00552da0);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(FontCtx_SetScale, 0x00552da0);
 
 // ---------------------------------------------------------------------------
 // FontCtx_SetTranslation  --  0x00552df0
@@ -278,7 +278,7 @@ std::uint32_t __cdecl FontSys_InitRenderState()
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontSys_InitRenderState, 0x00552c10);
+RH_ScopedInstall(FontSys_InitRenderState, 0x00552c10);  // re-enabled 2026-05-24 c3-safe
 
 // ---------------------------------------------------------------------------
 // FontMatrix_Push  --  0x00552d10
@@ -323,7 +323,7 @@ bool __cdecl FontMatrix_Push()
     return bVar1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontMatrix_Push, 0x00552d10);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(FontMatrix_Push, 0x00552d10);
 
 // ---------------------------------------------------------------------------
 // FontCtx_FlushMatrix  --  0x00552e40

@@ -507,4 +507,4 @@ extern "C" __declspec(dllexport) void __cdecl HudIm2DQuad(
     rw_set_state(6, 1);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudIm2DQuad, 0x00450b10);
+RH_ScopedInstall(HudIm2DQuad, 0x00450b10);  // re-enabled 2026-05-24 c3-safe

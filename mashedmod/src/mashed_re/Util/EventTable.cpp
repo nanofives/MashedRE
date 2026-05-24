@@ -35,4 +35,4 @@ extern "C" __declspec(dllexport) void __cdecl GetPlayerStateBits(
 }
 
 // MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetEventFlag,       0x0041f1c0);
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GetPlayerStateBits, 0x0041f090);
+RH_ScopedInstall(GetPlayerStateBits, 0x0041f090);  // re-enabled 2026-05-24 c3-safe

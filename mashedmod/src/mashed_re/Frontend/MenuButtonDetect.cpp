@@ -553,7 +553,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenWidthGet() {
         *reinterpret_cast<std::uint16_t*>(kScreenWidth));
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);
+RH_ScopedInstall(ScreenWidthGet, 0x0042b8b0);  // re-enabled 2026-05-24 c3-safe
 
 // ---------------------------------------------------------------------------
 // 0x0042b8c0  ScreenHeightGet
@@ -569,4 +569,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ScreenHeightGet() {
         *reinterpret_cast<std::uint16_t*>(kScreenHeight));
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ScreenHeightGet, 0x0042b8c0);
+RH_ScopedInstall(ScreenHeightGet, 0x0042b8c0);  // re-enabled 2026-05-24 c3-safe

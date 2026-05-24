@@ -41,7 +41,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerTrackSetter(std::uint32_t par
 }
 
 // MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerSlotClear,   0x0041d820);
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerTrackSetter, 0x0041e130);
+RH_ScopedInstall(TimerTrackSetter, 0x0041e130);  // re-enabled 2026-05-24 c3-safe
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041eda0  TimerBitFieldSet  void(int slot, int flag)
 //
@@ -62,7 +62,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerBitFieldSet(int slot, int fla
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerBitFieldSet, 0x0041eda0);
+RH_ScopedInstall(TimerBitFieldSet, 0x0041eda0);  // re-enabled 2026-05-24 c3-safe
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041f000  TimerSlotDataCopy  void(int slot, int* dst)
@@ -84,7 +84,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerSlotDataCopy(int slot, int* d
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerSlotDataCopy, 0x0041f000);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(TimerSlotDataCopy, 0x0041f000);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00420d40  TimerStructArrayClear  void(void)
@@ -122,7 +122,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerStructArrayClear() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerStructArrayClear, 0x00420d40);
+RH_ScopedInstall(TimerStructArrayClear, 0x00420d40);  // re-enabled 2026-05-24 c3-safe
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00422120  TimerInitLoop  void(void)
@@ -176,7 +176,7 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl TimerInitLoop() 
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerInitLoop, 0x00422120);
+RH_ScopedInstall(TimerInitLoop, 0x00422120);  // re-enabled 2026-05-24 c3-safe
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004222c0  TimerInitThunk  void(void)
@@ -188,7 +188,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerInitThunk() {
     TimerInitLoop();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerInitThunk, 0x004222c0);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(TimerInitThunk, 0x004222c0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00422b10  TimerDwordClear  void(void)
@@ -205,7 +205,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerDwordClear() {
     std::memset(reinterpret_cast<void*>(kTimerDwordClearBase), 0, kTimerDwordClearBytes);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerDwordClear, 0x00422b10);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(TimerDwordClear, 0x00422b10);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00425b10  TimerGlobalZero  void(void)
@@ -227,7 +227,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerGlobalZero() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerGlobalZero, 0x00425b10);
+// MASS-DISABLED 2026-05-24 c3-refused-needs-arg-type: RH_ScopedInstall(TimerGlobalZero, 0x00425b10);
 
 // frida-sweep-20260516-0008: c3-batch-e-s12 added duplicate impls for
 // 0x00422b10 (TimerArrayZero), 0x00425b10 (PlayerSlotZero), 0x004222c0
@@ -266,5 +266,5 @@ extern "C" __declspec(dllexport) void __cdecl FloatTableInit() {
     *reinterpret_cast<std::uint32_t*>(kDat0063d270) = 0u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FloatTableInit, 0x0041cbc0);
+RH_ScopedInstall(FloatTableInit, 0x0041cbc0);  // re-enabled 2026-05-24 c3-safe
 

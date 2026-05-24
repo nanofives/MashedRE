@@ -23,7 +23,7 @@ extern "C" __declspec(dllexport) int __cdecl StatePhaseIsIdle() {
     return (*reinterpret_cast<const std::uint32_t*>(kStatePhase_0067eca4) == 0u) ? 1 : 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StatePhaseIsIdle, 0x0042b8d0);
+RH_ScopedInstall(StatePhaseIsIdle, 0x0042b8d0);  // re-enabled 2026-05-24 c3-safe
 
 
 // ─── 0x0042b8f0  StatePhaseIsFinal ────────────────────────────────────────────
@@ -38,7 +38,7 @@ extern "C" __declspec(dllexport) int __cdecl StatePhaseIsFinal() {
     return (*reinterpret_cast<const std::uint32_t*>(kStatePhase_0067eca4) == 5u) ? 1 : 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StatePhaseIsFinal, 0x0042b8f0);
+RH_ScopedInstall(StatePhaseIsFinal, 0x0042b8f0);  // re-enabled 2026-05-24 c3-safe
 
 
 // ─── 0x0042f510  Vehicle0HandleGet ────────────────────────────────────────────

@@ -60,7 +60,7 @@ extern "C" __declspec(dllexport) void __cdecl PitchParamSet(std::uint32_t param_
     *reinterpret_cast<std::uint32_t*>(kPitchParam0066d6fc) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PitchParamSet, 0x00426630);
+RH_ScopedInstall(PitchParamSet, 0x00426630);  // re-enabled 2026-05-24 c3-safe
 
 // ── 0x004266f0 ───────────────────────────────────────────────────────────────
 // PitchParam2Set — writes param_1 to DAT_0066d700 (sibling of PitchParamSet; target +4).
@@ -73,4 +73,4 @@ extern "C" __declspec(dllexport) void __cdecl PitchParam2Set(std::uint32_t param
     *reinterpret_cast<std::uint32_t*>(kPitchParam20066d700) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PitchParam2Set, 0x004266f0);
+RH_ScopedInstall(PitchParam2Set, 0x004266f0);  // re-enabled 2026-05-24 c3-safe

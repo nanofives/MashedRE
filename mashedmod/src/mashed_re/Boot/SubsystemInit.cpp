@@ -212,7 +212,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl SubsystemInit() {
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SubsystemInit, 0x00492270);
+RH_ScopedInstall(SubsystemInit, 0x00492270);  // re-enabled 2026-05-24 batch-boot
 
 
 // ---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ extern "C" __declspec(dllexport) void __cdecl DisplayInit() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DisplayInit, 0x004921d0);
+RH_ScopedInstall(DisplayInit, 0x004921d0);  // re-enabled 2026-05-24 batch-boot
 
 
 // ---------------------------------------------------------------------------
