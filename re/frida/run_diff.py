@@ -155,6 +155,9 @@ def main():
     # trig_text_draw — hex addr of the draw callee to Interceptor.replace.
     if 'draw_callee_rva_str' in hook:
         config['draw_callee_rva_str'] = hook['draw_callee_rva_str']
+    # sprite_table_dispatch — hex addr of the callee to Interceptor.replace.
+    if 'callee_rva_str' in hook:
+        config['callee_rva_str'] = hook['callee_rva_str']
     # spin_angle_observe — optional spin-angle global addr override.
     if 'angle_global_str' in hook:
         config['angle_global_str'] = hook['angle_global_str']

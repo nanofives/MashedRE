@@ -78,7 +78,7 @@ extern "C" __declspec(dllexport) void __cdecl SpriteSlotDispatch(int slot) {
     s_FUN_0040bb90(kSlotPtrs[slot]);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteSlotDispatch, 0x0042fab0);
+RH_ScopedInstall(SpriteSlotDispatch, 0x0042fab0);  // re-enabled 2026-05-24 phase-a1 sprite_table_dispatch GREEN
 
 
 // ---------------------------------------------------------------------------
@@ -122,8 +122,4 @@ extern "C" __declspec(dllexport) void __cdecl SpriteAnimFrameThunk(
     s_FUN_0040bb70(sprite_ptr, x1, y1, x2, y2, color, uv_param, frame_idx, flag);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SpriteAnimFrameThunk, 0x0042e590);
-// Re-enable refused 2026-05-24: function dereferences sprite_ptr_table[arg]; current
-// synthetic A/B test passes only because both orig and reimpl AV identically on bare-int
-// inputs (orig=None, reimpl=None x10 cases). Needs an arg_type that supplies a valid
-// sprite-object pointer before re-enable can be C-evidence.
+RH_ScopedInstall(SpriteAnimFrameThunk, 0x0042e590);  // re-enabled 2026-05-24 phase-a1 sprite_table_dispatch GREEN

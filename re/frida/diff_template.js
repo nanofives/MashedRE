@@ -123,6 +123,16 @@
 //                        sensitive XOR fingerprint. Unblocks 0x0041f000
 //                        TimerSlotDataCopy. Tests: flat list of slot indices.
 //                        Optional CONFIG: out_buf_size (default 24).
+//   sprite_table_dispatch — void(int slot): sprite-table dispatcher that
+//                        looks up a sprite ptr from slot and tail-calls a
+//                        downstream callee with that ptr. Interceptor.replace
+//                        the callee with a NativeCallback that captures the
+//                        first arg; compare captures between Orig+Reimpl.
+//                        Unblocks 0x0042fab0 SpriteSlotDispatch and
+//                        0x0042e590 SpriteAnimFrameThunk.
+//                        Required CONFIG: callee_rva_str (hex addr of callee
+//                        to patch; e.g. '0x0040bb90' / '0x0040bb70').
+//                        Tests: flat list of slot indices.
 //
 'use strict';
 
@@ -1667,6 +1677,67 @@ function runDiff() {
             }
         } finally {
             Interceptor.revert(drawAddr);
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── sprite_table_dispatch ───────────────────────────────────────────────
+    // For SpriteSlotDispatch (0x0042fab0) and SpriteAnimFrameThunk (0x0042e590):
+    // 10-way / lookup-based dispatchers that compute a sprite ptr from
+    // sprite_slot, then JMP/CALL a downstream callee with that ptr as arg 0.
+    // The downstream callee (FUN_0040bb90 / FUN_0040bb70) dereferences a
+    // global linked-list head (DAT_0063b904) that is NULL at diff-attach time
+    // — both Orig and Reimpl AV identically at offset 0x8, and AV/AV match
+    // is banned as GREEN.
+    //
+    // Strategy (modeled on trig_text_draw): Interceptor.replace the callee
+    // with a NativeCallback that captures the first arg (the sprite ptr) and
+    // returns immediately. Both Orig and Reimpl call through the patched
+    // address, so the captures reflect the dispatcher's bit-identical
+    // sprite-ptr-computation. The callee's downstream code never runs.
+    //
+    // Out-of-range slots: SpriteSlotDispatch's default case returns without
+    // calling the callee; the capture stays null. Both sides null === null
+    // is still a real match (both took the no-call path).
+    //
+    // CONFIG.callee_rva_str: hex addr of the callee to patch
+    //   (default '0x0040bb90' for SpriteSlotDispatch;
+    //    set to '0x0040bb70' for SpriteAnimFrameThunk).
+    // CONFIG.signature: caller-side signature (already routed through CONFIG).
+    //   For SpriteAnimFrameThunk, declare 'void(int32)' even though the real
+    //   function takes 9 args — only the first arg matters; remaining stack
+    //   bytes are garbage but the patched callee only reads its first arg.
+    // Tests: flat list of slot indices.
+    if (CONFIG.arg_type === 'sprite_table_dispatch') {
+        const calleeAddr = ptr(CONFIG.callee_rva_str || '0x0040bb90');
+        let capturedPtr = null;
+        const captureStub = new NativeCallback(function (ptrArg) {
+            capturedPtr = ptrArg ? (parseInt(ptrArg.toString(), 16) >>> 0) : 0;
+        }, 'void', ['pointer'], 'mscdecl');
+        Interceptor.replace(calleeAddr, captureStub);
+        try {
+            for (let i = 0; i < CONFIG.tests.length; i++) {
+                const slot = CONFIG.tests[i] | 0;
+                let origV = null, reimV = null, errO = null, errR = null;
+                capturedPtr = null;
+                try { Orig(slot >>> 0); } catch (e) { errO = e.message; }
+                origV = capturedPtr;
+                capturedPtr = null;
+                try { Reimpl(slot >>> 0); } catch (e) { errR = e.message; }
+                reimV = capturedPtr;
+                // Real match: both produced the same captured ptr value
+                // (real callee invocation) OR both bypassed the callee
+                // (out-of-range path → both null). Errors must also match.
+                const sameCapture = (origV === reimV);
+                const sameErr     = (errO === errR);
+                results.push({ idx: i, input: slot,
+                               original: origV, reimpl: reimV,
+                               match: sameCapture && sameErr,
+                               err_original: errO, err_reimpl: errR });
+            }
+        } finally {
+            Interceptor.revert(calleeAddr);
         }
         send({ type: 'results', data: results });
         return;

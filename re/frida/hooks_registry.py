@@ -1845,30 +1845,39 @@ HOOKS = {
     # 0x0042fab0  SpriteSlotDispatch
     # Assembly-confirmed 10-way dispatch: MOV [ESP+4], slot_ptr; JMP FUN_0040bb90.
     # Slot 0 -> ptr 0x5cd898; slot 9 -> ptr 0x5cd838 (stride mostly 0xc).
-    # arg_type='int_scalar': passes slot index (0–9 + out-of-range) as int32.
-    # Default case (out of range 0–9): no-op return; both paths must agree (void).
-    # Call with void wrapper: treat 'void' ret as uint32 for harness compatibility.
+    # Strategy: sprite_table_dispatch (added phase-a1 2026-05-24) — patches
+    # FUN_0040bb90 with a NativeCallback that captures the first arg (the
+    # slot ptr). Both Orig and Reimpl route through the patched stub; their
+    # captured ptrs must match. Prior arg_type 'int_scalar' produced
+    # both-AV-at-0x8 (FUN_0040bb90 derefs NULL list head) — banned as GREEN.
     'sprite_slot_dispatch': {
         'rva':            0x0042fab0,
         'export':         'SpriteSlotDispatch',
         'signature':      {'ret': 'void', 'args': ['int32']},
-        'arg_type':       'int_scalar',
+        'arg_type':       'sprite_table_dispatch',
+        'callee_rva_str': '0x0040bb90',
         'lut_root_delta': 0,
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1],
-        'path2_tests':    [0, 1, 9],
+        # Cover all 10 slots (0..9) + one out-of-range (default fall-through path).
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 100, -1],
+        'path2_tests':    [0, 5, 100],
     },
 
     # 0x0042e590  SpriteAnimFrameThunk
     # Assembly-confirmed tail-call thunk: computes idx = sprite_slot + 2*DAT_0067f17c,
     # looks up sprite_ptr_table[idx] at 0x5f79d8, overwrites first arg, JMP FUN_0040bb70.
-    # arg_type='int_scalar': passes sprite_slot as int32; FUN_0040bb70 receives
-    # live game state for remaining args (x1/y1/x2/y2/color/uv/frame/flag).
-    # Both orig and reimpl call FUN_0040bb70 with the same transformed first arg.
+    # Strategy: sprite_table_dispatch (added phase-a1 2026-05-24) — patches
+    # FUN_0040bb70 with a NativeCallback that captures the first arg (the
+    # transformed sprite ptr). Both Orig and Reimpl produce the same lookup
+    # using the same anim_frame global and sprite_ptr_table base, so captures
+    # must match. Prior arg_type 'int_scalar' produced both-AV-at-0x8 — banned
+    # as GREEN; this is the SpriteAnimFrameThunk fake-AV/AV the operator
+    # specifically warned about.
     'sprite_anim_frame_thunk': {
         'rva':            0x0042e590,
         'export':         'SpriteAnimFrameThunk',
         'signature':      {'ret': 'void', 'args': ['int32']},
-        'arg_type':       'int_scalar',
+        'arg_type':       'sprite_table_dispatch',
+        'callee_rva_str': '0x0040bb70',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
         'path2_tests':    [0, 1, 2],
