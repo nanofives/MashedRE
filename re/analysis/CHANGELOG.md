@@ -1990,4 +1990,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  0x0049f2e0  FUN_0049f2e0  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f2e0.md; U-4165 S-4287
 2026-05-24  0x0049f300  FUN_0049f300  C1->C2  batch-ad-s5 mechanical decomp; re/analysis/particle_promote_ad5/0049f300.md; U-4166 S-4288
 
+2026-05-24  batch-ad-s6  particle-promote-ad6  15x C1->C2 mechanical promotion  rvas=0x0049f420,0x0049f4d0,0x0049f5b0,0x0049f690,0x0049f830,0x0049f950,0x0049fa40,0x0049fac0,0x0049fc80,0x0049fcc0,0x0049fe10,0x0049ff30,0x0049ff60,0x0049ffe0,0x004b4000  bucket=re/analysis/particle_promote_ad6  slot=Mashed_pool0  U-4182..U-4196(20) S=none
+
 2026-05-24  sweep-20260524-2041  scribe-claim  buckets=6 queued, 0 skipped-HOLD
