@@ -62,6 +62,13 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-0705 | 0x004d54f0 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d54f0; sampler state setter wrapper; called with (stage, state, value); DEFERRED D-2020 |
 | S-0706 | 0x004d5570 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d5570; texture stage state setter wrapper; called with (stage, state, value); DEFERRED D-2020 |
 | S-0707 | 0x004d53b0 | 0x004d6200 FUN_004d6200 | render | passthrough | 2026-05-02 | FUN_004d53b0; state restore epilogue; no visible args; DEFERRED D-2020 |
+| S-4155 | 0x0049f030 | 0x0049ca60 FUN_0049ca60 | particle | passthrough | 2026-05-24 | called with (1, 0, param_1+0x0c); return value propagated; batch-ad-s2 |
+| S-4156 | 0x004a2340 | 0x0049ca60 FUN_0049ca60 | particle | passthrough | 2026-05-24 | called conditionally when param_1+0x50 != 0; no visible args; batch-ad-s2 |
+| S-4157 | 0x004a0e90 | 0x0049cc80 FUN_0049cc80 | particle | passthrough | 2026-05-24 | called with (0, param_2, param_2+0x7c, param_3, param_4); 5-arg constructor helper; batch-ad-s2 |
+| S-4158 | 0x0049fa40 | 0x0049ccd0 FUN_0049ccd0 | particle | passthrough | 2026-05-24 | called with param_1; return value propagated; batch-ad-s2 |
+| S-4159 | 0x0049ff30 | 0x0049cd70 FUN_0049cd70 | particle | passthrough | 2026-05-24 | called with param_1; no return value used; batch-ad-s2 |
+| S-4160 | 0x0049ff60 | 0x0049ce10 FUN_0049ce10 | particle | passthrough | 2026-05-24 | called with param_1 when vtable[0x88] >= 0; return value propagated; batch-ad-s2 |
+| S-4161 | 0x0049fc80 | 0x0049ceb0 FUN_0049ceb0 | particle | passthrough | 2026-05-24 | called with no visible args when vtable[0x8c] >= 0; batch-ad-s2 |
 
 ## Resolved stubs (audit trail — do not delete)
 

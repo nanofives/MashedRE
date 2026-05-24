@@ -1957,5 +1957,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  batch-ac-s6  particle-promote-ac6  15x C1->C2 mechanical promotion  rvas=0x0048df60,0x0048e180,0x0048e360,0x0048e5f0,0x0048e7b0,0x0048e820,0x0048eac0,0x0048f590,0x0048f780,0x0048f8a0,0x0048f9f0,0x0048fb10,0x0048fce0,0x0048fd10,0x0048fd40  bucket=re/analysis/particle_promote_ac6  slot=Mashed_pool6  U-4015..U-4031(17) S-4113(1)
 2026-05-24  sweep-20260524-1938  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
 2026-05-24  batch-ad-s1  particle-promote-ad1  15x C1->C2 mechanical promotion  rvas=0x0048fdd0,0x0048fef0,0x0048ff20,0x0048ffd0,0x0049c5d0,0x0049c620,0x0049c690,0x0049c6a0,0x0049c6b0,0x0049c6d0,0x0049c6e0,0x0049c750,0x0049c770,0x0049c800,0x0049c810  bucket=re/analysis/particle_promote_ad1  slot=Mashed_pool2  U-4032..U-4045(14) S-4114..S-4126(13)
+2026-05-24  batch-ad-s2  particle-promote-ad2  15x C1->C2 mechanical promotion  rvas=0x0049c840,0x0049c900,0x0049c930,0x0049c990,0x0049ca00,0x0049ca60,0x0049cb00,0x0049cb20,0x0049cbd0,0x0049cc40,0x0049cc80,0x0049ccd0,0x0049cd70,0x0049ce10,0x0049ceb0  bucket=re/analysis/particle_promote_ad2  slot=Mashed_pool12  U-4062..U-4085(24) S-4155..S-4161(7)
 
 2026-05-24  sweep-20260524-2041  scribe-claim  buckets=6 queued, 0 skipped-HOLD
