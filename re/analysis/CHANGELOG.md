@@ -1892,4 +1892,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-05-23  c4-lift-sweep  52 hooks C3->C4 — canonical-scenario observation evidence with hook installed; under-claimed as C3 in earlier runs today
 
-2026-05-24  batch-ac-s3  15 particle hooks C1->C2 (0x00489a40 0x00489c30 0x00489c60 0x00489ce0 0x00489da0 0x00489dc0 0x0048a060 0x0048a130 0x0048a3c0 0x0048a430 0x0048a460 0x0048a490 0x0048a4e0 0x0048a5d0 0x0048a6f0) — mechanical decomp transcription; U-3951..U-3967; S-4027..S-4054; pool=Mashed_pool14 (fallback from pool13 stale-lock); branch=c1-c2/batch-ac-s3
+2026-05-24  batch-ac-s3  15 particle hooks C1->C2 (0x00489a40 0x00489c30 0x00489c60 0x00489ce0 0x00489da0 0x00489dc0 0x0048a060 0x0048a130 0x0048a3c0 0x0048a430 0x0048a460 0x0048a490 0x0048a4e0 0x0048a5d0 0x0048a6f0) — mechanical decomp transcription; U-3961..U-3977; S-4027..S-4054; pool=Mashed_pool14 (fallback from pool13 stale-lock); branch=c1-c2/batch-ac-s3
