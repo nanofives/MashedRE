@@ -4382,6 +4382,78 @@ HOOKS = {
         'path2_tests':    [0x00000005, 0x00000000, 0xDEADBEEF],
     },
 
+    # 0x004026d0  BootQueueFlush
+    # void(int count) — RW cam alloc/commit/finalize loop. With count=0 the
+    # loop is no-op; both sides skip the body and return. arg_type='int_scalar'
+    # with all-zero test inputs.
+    'boot_queue_flush': {
+        'rva':            0x004026d0,
+        'export':         'BootQueueFlush',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x00402f50  BootDefaultParamsInit
+    # void(void) — writes 5 constants to 0x636ae8 cluster.
+    # void_write_observe on 0x636ae8 (first written field).
+    'boot_default_params_init': {
+        'rva':            0x00402f50,
+        'export':         'BootDefaultParamsInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00636ae8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00431ae0  DefaultParam_SetField04 — writes 0x3f333333 to 0x007f0f04.
+    'default_param_set_field04': {
+        'rva':            0x00431ae0,
+        'export':         'DefaultParam_SetField04',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x007f0f04,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00431af0  DefaultParam_SetField08 — writes 0x3f333333 to 0x007f0f08.
+    'default_param_set_field08': {
+        'rva':            0x00431af0,
+        'export':         'DefaultParam_SetField08',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x007f0f08,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00431b00  DefaultParam_SetField00 — writes 0x3f333333 to 0x007f0f00.
+    'default_param_set_field00': {
+        'rva':            0x00431b00,
+        'export':         'DefaultParam_SetField00',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x007f0f00,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
     # 0x0042f510  Vehicle0HandleGet
     # uint32(void) — `return DAT_0067f190;` (5-byte pure-leaf getter).
     # arg_type='read_global': write sentinel to 0x0067f190; both sides

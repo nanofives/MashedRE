@@ -147,7 +147,7 @@ void __cdecl BootQueueFlush(std::int32_t param_1)
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(BootQueueFlush, 0x004026d0);
+RH_ScopedInstall(BootQueueFlush, 0x004026d0);  // re-enabled 2026-05-24 phase-a2 GREEN int_scalar(count=0)
 
 
 // ============================================================================
@@ -201,7 +201,7 @@ void __cdecl BootDefaultParamsInit()
     *g_DAT_00636aec = 0x42700000u;          // cluster+4   = 60.0f [UNCERTAIN U-0171]
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(BootDefaultParamsInit, 0x00402f50);
+RH_ScopedInstall(BootDefaultParamsInit, 0x00402f50);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe
 
 
 // ============================================================================
@@ -255,7 +255,11 @@ std::int32_t __cdecl VtableTeardown_114c0()
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VtableTeardown_114c0, 0x004114c0);
+// MASS-DISABLED 2026-05-24 needs-canonical-vtable-state: RH_ScopedInstall(VtableTeardown_114c0, 0x004114c0);
+// Phase A2 audit 2026-05-24: function derefs *DAT_007d3ff8 (renderer vtable
+// global). At diff-attach time the global may be NULL or stale; calling
+// dereferences uninitialised state. Canonical-scenario at teardown is the
+// proper validation. NO-ENTRY in registry — synthetic test infeasible.
 
 
 // ============================================================================
@@ -307,7 +311,7 @@ void __cdecl DefaultParam_SetField04()
     *g_DAT_007f0f04 = 0x3f333333u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DefaultParam_SetField04, 0x00431ae0);
+RH_ScopedInstall(DefaultParam_SetField04, 0x00431ae0);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe (0.7f)
 
 
 // ============================================================================
@@ -332,7 +336,7 @@ void __cdecl DefaultParam_SetField08()
     *g_DAT_007f0f08 = 0x3f333333u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DefaultParam_SetField08, 0x00431af0);
+RH_ScopedInstall(DefaultParam_SetField08, 0x00431af0);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe (0.7f)
 
 
 // ============================================================================
@@ -357,4 +361,4 @@ void __cdecl DefaultParam_SetField00()
     *g_DAT_007f0f00 = 0x3f333333u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(DefaultParam_SetField00, 0x00431b00);
+RH_ScopedInstall(DefaultParam_SetField00, 0x00431b00);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe (0.7f)
