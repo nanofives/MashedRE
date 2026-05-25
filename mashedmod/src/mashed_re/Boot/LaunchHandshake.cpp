@@ -100,7 +100,7 @@ extern "C" __declspec(dllexport) void __cdecl thunk_EngineStopDispatch() {
     s_FUN_004938c0();
 }
 
-// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(thunk_EngineStopDispatch, 0x00493550);
+RH_ScopedInstall(thunk_EngineStopDispatch, 0x00493550);  // re-enabled 2026-05-25 a4-thunk-passthrough (C3 evidence: log/diff_engine_stop_dispatch.csv GREEN 10/10)
 
 
 // ─── 0x00493560  thunk_FUN_004954f0 ────────────────────────────────────────
@@ -125,7 +125,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl thunk_HwExitDispatch() {
     return s_FUN_004954f0();
 }
 
-// MASS-DISABLED 2026-05-24 c3-boot-refused: RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);
+RH_ScopedInstall(thunk_HwExitDispatch, 0x00493560);  // re-enabled 2026-05-25 a4-thunk-passthrough (C3 evidence: implicit-survival sweep 2026-05-23; 1:1 proxy to s_FUN_004954f0)
 
 
 // ─── 0x004938c0  sub_004938c0  (EngineStopHelper) ──────────────────────────
