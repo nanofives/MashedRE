@@ -4272,6 +4272,98 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000005, 0xDEADBEEF],
     },
 
+    # 0x00426c00  GameStateFlagGet
+    # uint32(void) — returns DAT_00644158 (5-byte pure-leaf getter).
+    # arg_type='read_global': write sentinel; both sides read same global.
+    'game_state_flag_get': {
+        'rva':            0x00426c00,
+        'export':         'GameStateFlagGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00644158,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000021, 0xDEADBEEF,
+                           0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA,
+                           0x12345678, 0xCAFEBABE],
+        'path2_tests':    [0x00000000, 0x00000021, 0xDEADBEEF],
+    },
+
+    # 0x0042b8e0  StatePhaseIsTwo
+    # int(void) — `return DAT_0067eca4 == 2;` (14-byte pure-leaf predicate).
+    # arg_type='read_global': same target global as the IsIdle/IsFinal pair.
+    'state_phase_is_two': {
+        'rva':            0x0042b8e0,
+        'export':         'StatePhaseIsTwo',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067eca4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000002, 0x00000000, 0x00000001, 0x00000003,
+                           0x00000004, 0x00000005, 0x0000000F, 0x80000002,
+                           0xDEADBEEF, 0xFFFFFFFF],
+        'path2_tests':    [0x00000002, 0x00000000, 0xDEADBEEF],
+    },
+
+    # 0x0042b910  RaceEndConstGet
+    # int(void) — returns hardcoded 5 (5-byte body).
+    # arg_type='none': no input needed; both sides return 5 every call.
+    'race_end_const_get': {
+        'rva':            0x0042b910,
+        'export':         'RaceEndConstGet',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042b940  StatePhaseSubSet
+    # void(uint32) — `DAT_0067ecb0 = param_1;` (9-byte pure-leaf setter).
+    # arg_type='void_setter_observe': call fn(value), read back target_global.
+    'state_phase_sub_set': {
+        'rva':            0x0042b940,
+        'export':         'StatePhaseSubSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0067ecb0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF, 0x80000000,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
+
+    # 0x0042c1c0  RaceInterruptFlagGet
+    # uint32(void) — returns DAT_0067eab0 (5-byte pure-leaf getter).
+    'race_interrupt_flag_get': {
+        'rva':            0x0042c1c0,
+        'export':         'RaceInterruptFlagGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067eab0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x55555555, 0xAAAAAAAA, 0x12345678,
+                           0xCAFEBABE, 0xBEEFCAFE],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x0042c1d0  RaceStateArrayZero
+    # void(void) — zeroes 12 DWORDs at DAT_0067ea10 (16-byte body).
+    # arg_type='void_write_observe' on base; sentinel->0 proves write.
+    'race_state_array_zero': {
+        'rva':            0x0042c1d0,
+        'export':         'RaceStateArrayZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0067ea10,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
     # 0x0042b8f0  StatePhaseIsFinal
     # int(void) — `return DAT_0067eca4 == 5;` (14-byte pure-leaf predicate).
     # arg_type='read_global': write sentinel to 0x0067eca4 before each call;

@@ -57,7 +57,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GameStateFlagGet() {
     return *reinterpret_cast<const std::uint32_t*>(0x00644158u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GameStateFlagGet, 0x00426c00);
+RH_ScopedInstall(GameStateFlagGet, 0x00426c00);  // re-enabled 2026-05-24 phase-a2 GREEN read_global
 
 
 // ---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ extern "C" __declspec(dllexport) int __cdecl StatePhaseIsTwo() {
     return (*reinterpret_cast<const std::uint32_t*>(0x0067eca4u) == 2u) ? 1 : 0;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StatePhaseIsTwo, 0x0042b8e0);
+RH_ScopedInstall(StatePhaseIsTwo, 0x0042b8e0);  // re-enabled 2026-05-24 phase-a2 GREEN read_global
 
 
 // ---------------------------------------------------------------------------
@@ -122,7 +122,7 @@ extern "C" __declspec(dllexport) int __cdecl RaceEndConstGet() {
     return 5;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceEndConstGet, 0x0042b910);
+RH_ScopedInstall(RaceEndConstGet, 0x0042b910);  // re-enabled 2026-05-24 phase-a2 GREEN constant=5
 
 
 // ---------------------------------------------------------------------------
@@ -155,7 +155,7 @@ extern "C" __declspec(dllexport) void __cdecl StatePhaseSubSet(std::uint32_t par
     *reinterpret_cast<std::uint32_t*>(0x0067ecb0u) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StatePhaseSubSet, 0x0042b940);
+RH_ScopedInstall(StatePhaseSubSet, 0x0042b940);  // re-enabled 2026-05-24 phase-a2 GREEN void_setter_observe
 
 
 // ---------------------------------------------------------------------------
@@ -187,7 +187,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl RaceInterruptFlagGet() {
     return *reinterpret_cast<const std::uint32_t*>(0x0067eab0u);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceInterruptFlagGet, 0x0042c1c0);
+RH_ScopedInstall(RaceInterruptFlagGet, 0x0042c1c0);  // re-enabled 2026-05-24 phase-a2 GREEN read_global
 
 
 // ---------------------------------------------------------------------------
@@ -230,4 +230,4 @@ extern "C" __declspec(dllexport) void __cdecl RaceStateArrayZero() {
     } while (iVar1 != 0);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceStateArrayZero, 0x0042c1d0);
+RH_ScopedInstall(RaceStateArrayZero, 0x0042c1d0);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe
