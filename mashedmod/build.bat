@@ -15,7 +15,42 @@ if not exist "%OUT%" mkdir "%OUT%"
 call %VCVARS% >nul
 if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 
-echo === Building mashed_re.exe ===
+REM ===========================================================================
+REM Phase C status (2026-05-25):
+REM   - LINK GATE MET: an experimental full-source-set build (every reimpl in
+REM     mashedmod/src/mashed_re/**/*.cpp minus dll_main.cpp + Core/HookSystem.cpp)
+REM     links cleanly with only ONE unresolved external (HookSystem::Register,
+REM     stubbed via Stubs/HookSystemNoOp.cpp). DLL imports per Phase B
+REM     (re/STANDALONE_DEPS.md) all resolve via /link <libs>.
+REM
+REM   - RUNTIME GATE NOT MET: the full-set exe crashed at startup with
+REM     STATUS_DLL_INIT_FAILED (0xC0000142). Root cause: many reimpls have
+REM     static initializers that dereference MASHED.exe RVAs, e.g.
+REM       static const GUID g_iid = *reinterpret_cast<const GUID*>(0x005d09dc);
+REM     valid only when injected into MASHED's address space. Phase F (RW3
+REM     replacement) + Phase G (boot chain) need to neutralize or redirect
+REM     these RVA tunnels per .cpp before the full set can run standalone.
+REM
+REM For now the exe target uses the MINIMAL self-contained set proven to run
+REM (Milestones A..B5: window, D3D9 device, Frontend.piz load + TXD decode +
+REM 4x2 textured atlas). The full-set link is verified via the .asi target
+REM (which exercises every .cpp). When Phase F/G work begins, .cpp files will
+REM be added back here individually as their RVA references are neutralized.
+REM
+REM See `re/STANDALONE_DEPS.md` for the per-region disposition list.
+REM ===========================================================================
+
+REM RUNTIME NOTE: when launching mashedmod\build\mashed_re.exe, Windows'
+REM safe-DLL-search resolves d3d9.dll and dinput8.dll to the *.bak-able
+REM shim copies that build_d3d9_shim.bat / build_dinput8_shim.bat may have
+REM left in mashedmod\build\. Those shims expect d3d9_real.dll /
+REM dinput8_real.dll alongside (used only by MASHED.exe in original\); when
+REM present alongside the standalone they fail to chain and the standalone
+REM crashes at process load with STATUS_DLL_INIT_FAILED (0xC0000142).
+REM Mitigation: either run mashed_re.exe from a directory without those
+REM shim DLLs, or rename them (mv d3d9.dll d3d9.dll.bak) before the run.
+REM This file's exe target intentionally does NOT depend on the shim DLLs.
+echo === Building mashed_re.exe (minimal self-contained set) ===
 pushd "%SRC%"
 cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "exe_main.cpp" ^
