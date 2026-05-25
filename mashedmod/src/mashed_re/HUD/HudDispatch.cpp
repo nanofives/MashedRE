@@ -358,4 +358,7 @@ void __cdecl FUN_0041c2d0()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);
+// MASS-DISABLED 2026-05-24 needs-canonical-hud-state: RH_ScopedInstall(FUN_0041c2d0, 0x0041c2d0);
+// Phase A2 audit 2026-05-24: synthetic diff produces AV/AV crash both sides
+// (banned per phase-A1 rule). Function (hud_dispatch_draw4 in registry)
+// derefs HUD state globals not present at diff-attach time.

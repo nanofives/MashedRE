@@ -286,7 +286,11 @@ extern "C" __declspec(dllexport) void __cdecl PlayerSlotConfigInit() {
     } while (rv + static_cast<int>(kSlotInitStride) < static_cast<int>(kSlotInitBound));
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PlayerSlotConfigInit, 0x0041d730);
+// MASS-DISABLED 2026-05-24 needs-canonical-slot-state: RH_ScopedInstall(PlayerSlotConfigInit, 0x0041d730);
+// Phase A2 audit 2026-05-24: synthetic diff AV/AV — both crash inside the
+// function with the same address. Banned as crash_equal GREEN per phase-A1
+// rule. Function depends on player-slot state setup not present at diff
+// attach time.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00492d30  GameTickStateMachine7
@@ -970,7 +974,10 @@ extern "C" __declspec(dllexport) void __cdecl ScoreThresholdStateCheck() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ScoreThresholdStateCheck, 0x00410860);
+// MASS-DISABLED 2026-05-24 needs-canonical-score-state: RH_ScopedInstall(ScoreThresholdStateCheck, 0x00410860);
+// Phase A2 audit 2026-05-24: synthetic diff AV/AV — banned per phase-A1
+// rule. Function depends on score-state subsystem state not present at
+// diff attach time.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00412cf0  LabelTrailRecordAppend

@@ -360,6 +360,10 @@ PizWin32Close_Compat(void)
 // Hook registration. Patched in by Core/HookSystem.cpp via 5-byte inline JMP
 // at the original RVAs when MASHED_RE_NO_AUTO_HOOK is unset.
 // ─────────────────────────────────────────────────────────────────────────────
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizWin32Open_Compat,  0x004b6710);
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizWin32Read_Compat,  0x004b67e0);
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PizWin32Close_Compat, 0x004b6770);
+// MASS-DISABLED 2026-05-24 needs-canonical-piz-state: RH_ScopedInstall(PizWin32Open_Compat,  0x004b6710);
+// MASS-DISABLED 2026-05-24 needs-canonical-piz-state: RH_ScopedInstall(PizWin32Read_Compat,  0x004b67e0);
+// MASS-DISABLED 2026-05-24 needs-canonical-piz-state: RH_ScopedInstall(PizWin32Close_Compat, 0x004b6770);
+// Phase A2 audit 2026-05-24: synthetic diff produces AV/AV crash both sides
+// (depends on PIZ mount state that diff-attach time doesn't have). Banned
+// as crash_equal GREEN per phase-A1 rule. Canonical-scenario at MASHED's
+// natural piz-open call path is the appropriate validation.

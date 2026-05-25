@@ -253,7 +253,12 @@ extern "C" __declspec(dllexport) int __cdecl CrtPreInit()
     return result;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtPreInit, 0x004a31f3);
+// MASS-DISABLED 2026-05-24 a4-boot-crasher-canonical-only: RH_ScopedInstall(CrtPreInit, 0x004a31f3);
+// Phase A2 audit 2026-05-24: synthetic diff is GREEN-UNIFORM (all=0) but
+// arg_type='void' only observes EAX — doesn't verify the CRT pre-init
+// writes to fn-ptr tables / heap state. Side-effects are unsafe to
+// re-trigger (would call _atexit twice, etc.). A4 boot-crasher: re-enable
+// requires scaffolded-call test per A4 procedure.
 
 
 // ---------------------------------------------------------------------------
@@ -330,7 +335,11 @@ extern "C" __declspec(dllexport) void __cdecl CrtExitCore(unsigned int exit_code
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(CrtExitCore, 0x004a3258);
+// MASS-DISABLED 2026-05-24 a4-boot-crasher-canonical-only: RH_ScopedInstall(CrtExitCore, 0x004a3258);
+// Phase A2 audit 2026-05-24: synthetic diff AV/AV — banned per phase-A1
+// rule. A4 boot-crasher: function only safely invoked at the natural
+// CRT exit call site. Re-enable requires scaffolded-call test per A4
+// procedure (FRONTEND_ROADMAP A4).
 
 
 // ---------------------------------------------------------------------------
@@ -523,4 +532,8 @@ extern "C" __declspec(dllexport) int __cdecl WinMainEntry()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(WinMainEntry, 0x004a4bb7);
+// MASS-DISABLED 2026-05-24 a4-boot-crasher-canonical-only: RH_ScopedInstall(WinMainEntry, 0x004a4bb7);
+// Phase A2 audit 2026-05-24: synthetic diff TIMES OUT — function only
+// runs once at process entry. Re-calling it on a running MASHED triggers
+// a re-init loop or hang. A4 boot-crasher: re-enable requires natural
+// boot-time install (which dinput8 shim already provides if uncommented).
