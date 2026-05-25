@@ -2123,3 +2123,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  C1->C2  0040acd0  FUN_0040acd0  frontend-oversize (save-game state-machine dispatcher)
 2026-05-25  C1->C2  0040eee0  FUN_0040eee0  frontend-oversize (round-end car-elimination + score distribution)
 2026-05-25  C1->C2  0043af10  FUN_0043af10  frontend-oversize (game-setup lobby renderer; D-11025 cleared)
+2026-05-25  bulk  C0->C1  981 RVAs  library-band POLICY OVERRIDE  c0-c1-libs-20260525-1900
+2026-05-25  C0->C1  00458630  FUN_00458630  c0-c1-game (powerup sprite lookup)
+2026-05-25  C0->C1  004736c0  FUN_004736c0  c0-c1-game (line/border quad renderer)
+2026-05-25  C0->C1  00474e60  FUN_00474e60  c0-c1-game (float->x87 angle)
+2026-05-25  C0->C1  005aa1e0  LAB_005aa1e0  c0-c1-game (is-equal comparator wrapper)
