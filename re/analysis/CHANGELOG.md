@@ -2057,3 +2057,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  00425bf0  FUN_00425bf0  C1->C2  batch-frontend-s3; perm.piz pre-load one-liner; re/analysis/frontend_c1_to_c2_s3/FUN_00425bf0.md
 2026-05-25  00425c00  FUN_00425c00  C1->C2  batch-frontend-s3; copter asset registration scan+load; re/analysis/frontend_c1_to_c2_s3/FUN_00425c00.md
 2026-05-25  00425ca0  FUN_00425ca0  C1->C2  batch-frontend-s3; RwFrame spatial-transform setter; re/analysis/frontend_c1_to_c2_s3/FUN_00425ca0.md
+2026-05-25  00426cf0  FUN_00426cf0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426cf0.md  addr-of-global leaf; U-4197; frontend_c1_to_c2_s5
+2026-05-25  00426d00  FUN_00426d00  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426d00.md  2D array slot accessor; U-4198; frontend_c1_to_c2_s5
+2026-05-25  00426d20  FUN_00426d20  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426d20.md  per-frame transform refresh 4-handle array; U-4199 U-4200 U-4201; frontend_c1_to_c2_s5
+2026-05-25  00426d90  FUN_00426d90  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426d90.md  bulk cleanup 4-handle array; frontend_c1_to_c2_s5
+2026-05-25  00426dc0  FUN_00426dc0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426dc0.md  3-arg forwarder to FUN_00479100; U-4202; frontend_c1_to_c2_s5
+2026-05-25  00426de0  FUN_00426de0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426de0.md  float-getter leaf DAT_0064435c; U-4203; frontend_c1_to_c2_s5
+2026-05-25  00426df0  FUN_00426df0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00426df0.md  float-getter leaf DAT_00644360; U-4204; frontend_c1_to_c2_s5
+2026-05-25  004273e0  FUN_004273e0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_004273e0.md  Im2D quad emitter; U-4205 U-4206; frontend_c1_to_c2_s5
+2026-05-25  00427580  FUN_00427580  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00427580.md  HUD-rect param init leaf; U-4207 U-4208 U-4209; frontend_c1_to_c2_s5
+2026-05-25  00427880  FUN_00427880  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00427880.md  resource loader open-load-close pattern; U-4210 U-4211; frontend_c1_to_c2_s5
+2026-05-25  00427c90  FUN_00427c90  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00427c90.md  pure global getter DAT_0067d84c; U-4212; frontend_c1_to_c2_s5
+2026-05-25  00428140  FUN_00428140  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428140.md  sprite draw alpha-fade 7-param; U-4213 U-4214 U-4215; frontend_c1_to_c2_s5
+2026-05-25  004288a0  FUN_004288a0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_004288a0.md  menu layout renderer 8-call chain; U-4216 U-4217 U-4218 U-4219; frontend_c1_to_c2_s5
+2026-05-25  00428a30  FUN_00428a30  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428a30.md  title screen draw w/ attract timer; U-4220 U-4221 U-4222 U-4223; frontend_c1_to_c2_s5
+2026-05-25  00428bf0  FUN_00428bf0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428bf0.md  alternate title-screen draw (attract mode); U-4224 U-4225; frontend_c1_to_c2_s5
