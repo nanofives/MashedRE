@@ -133,6 +133,17 @@
 //                        Required CONFIG: callee_rva_str (hex addr of callee
 //                        to patch; e.g. '0x0040bb90' / '0x0040bb70').
 //                        Tests: flat list of slot indices.
+//   audio_sub_struct_link — uint32* fn(uint32* p1, uint32 p2): 12-byte sub-
+//                        struct field writer (Link Device or Link Buffer).
+//                        Allocates a zeroed 12-byte scratch per side; calls
+//                        fn(buf, p2); observes (ret-non-null << 24) | low-
+//                        24-bit XOR fingerprint of the buf. Unblocks
+//                        0x005ae010 / 0x005adfe0. Tests: flat list of p2.
+//   audio_sub_struct_dual — uint32 fn(uint32 p1, uint32 p2, uint32 p3):
+//                        delegates to LinkDevice + LinkBuffer. Same 12-byte
+//                        scratch + fingerprint strategy as the link arg_type.
+//                        Unblocks 0x005ac7b0 AudioSubStructDualInit.
+//                        Tests: list of {p2, p3} pairs.
 //
 'use strict';
 
@@ -1933,6 +1944,91 @@ function runDiff() {
     //   struct_size      int — total allocation size in bytes
     //   observe_offset   int — byte offset within struct to start comparison
     //   observe_length   int — number of bytes to compare
+    // ── audio_sub_struct_link ───────────────────────────────────────────────
+    // For AudioSubStructLinkDevice (0x005ae010) and AudioSubStructLinkBuffer
+    // (0x005adfe0): uint32* fn(uint32* param_1, uint32 param_2). With a zeroed
+    // 12-byte scratch buf, the cleanup callee (FUN_005ae080 / FUN_005ae050) is
+    // a no-op, and the function writes param_1[0]=p2 (Device) or param_1[1]=p2
+    // (Buffer) and clears a bit in param_1[2]. Per-side allocated scratch buf;
+    // fingerprint the 12 bytes plus return-pointer-non-null flag.
+    // Prior arg_type 'audio_sub_struct_link' did not exist in this file and
+    // fell through to default fn(input), passing a bare uint32 as the pointer
+    // arg — both sides AV. Tests: flat list of param_2 values.
+    if (CONFIG.arg_type === 'audio_sub_struct_link') {
+        const BUF_BYTES = 12;
+        const sBufA = Memory.alloc(BUF_BYTES);
+        const sBufB = Memory.alloc(BUF_BYTES);
+        function zero(b) {
+            for (let k = 0; k < BUF_BYTES; k++) b.add(k).writeU8(0);
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const p2 = (CONFIG.tests[i] | 0) >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            zero(sBufA);
+            try {
+                const ret = Orig(sBufA, p2);
+                const retNn = (ret && !ret.isNull()) ? 1 : 0;
+                const fp = bufFingerprint(sBufA, BUF_BYTES);
+                origV = (retNn << 24) | (fp & 0x00ffffff);
+            } catch (e) { errO = e.message; }
+            zero(sBufB);
+            try {
+                const ret = Reimpl(sBufB, p2);
+                const retNn = (ret && !ret.isNull()) ? 1 : 0;
+                const fp = bufFingerprint(sBufB, BUF_BYTES);
+                reimV = (retNn << 24) | (fp & 0x00ffffff);
+            } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: p2,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_sub_struct_dual ───────────────────────────────────────────────
+    // For AudioSubStructDualInit (0x005ac7b0): uint32 fn(uint32 param_1,
+    // uint32 param_2, uint32 param_3). param_1 is the buffer address passed
+    // as uint32; the function casts internally. Calls LinkDevice(p1,p2) then
+    // LinkBuffer(p1,p3); returns p1 on success, 0 on failure. With a zeroed
+    // 12-byte scratch buf both cleanups are no-ops and both link calls write
+    // to the buffer. Tests: list of [p2, p3] pairs.
+    if (CONFIG.arg_type === 'audio_sub_struct_dual') {
+        const BUF_BYTES = 12;
+        const sBufA = Memory.alloc(BUF_BYTES);
+        const sBufB = Memory.alloc(BUF_BYTES);
+        function zero(b) {
+            for (let k = 0; k < BUF_BYTES; k++) b.add(k).writeU8(0);
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t  = CONFIG.tests[i];
+            const p2 = (t.p2 | 0) >>> 0;
+            const p3 = (t.p3 | 0) >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            zero(sBufA);
+            try {
+                const ret    = Orig(sBufA.toInt32() >>> 0, p2, p3);
+                const retNn  = ((ret >>> 0) !== 0) ? 1 : 0;
+                const fp     = bufFingerprint(sBufA, BUF_BYTES);
+                origV = (retNn << 24) | (fp & 0x00ffffff);
+            } catch (e) { errO = e.message; }
+            zero(sBufB);
+            try {
+                const ret    = Reimpl(sBufB.toInt32() >>> 0, p2, p3);
+                const retNn  = ((ret >>> 0) !== 0) ? 1 : 0;
+                const fp     = bufFingerprint(sBufB, BUF_BYTES);
+                reimV = (retNn << 24) | (fp & 0x00ffffff);
+            } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     if (CONFIG.arg_type === 'audio_sub_struct_zero') {
         const sSize   = (CONFIG.struct_size   | 0) || 24;
         const obsOff  = (CONFIG.observe_offset | 0) || 0;

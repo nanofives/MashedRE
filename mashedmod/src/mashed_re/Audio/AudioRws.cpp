@@ -378,7 +378,7 @@ AudioSubStructLinkDevice(std::uint32_t* param_1, std::uint32_t param_2)
     return param_1;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSubStructLinkDevice, 0x005ae010);
+RH_ScopedInstall(AudioSubStructLinkDevice, 0x005ae010);  // re-enabled 2026-05-24 phase-a1 audio_sub_struct_link GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005adfe0  FUN_005adfe0  AudioSubStructLinkBuffer  (32 bytes)
@@ -411,7 +411,7 @@ AudioSubStructLinkBuffer(std::uint32_t* param_1, std::uint32_t param_2)
     return param_1;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSubStructLinkBuffer, 0x005adfe0);
+RH_ScopedInstall(AudioSubStructLinkBuffer, 0x005adfe0);  // re-enabled 2026-05-24 phase-a1 audio_sub_struct_link GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ae0b0  FUN_005ae0b0  AudioSubStructZeroInit  (14 bytes)
@@ -471,7 +471,7 @@ AudioSubStructDualInit(std::uint32_t param_1,
     return (r2 != nullptr) ? param_1 : 0u;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSubStructDualInit, 0x005ac7b0);
+RH_ScopedInstall(AudioSubStructDualInit, 0x005ac7b0);  // re-enabled 2026-05-24 phase-a1 audio_sub_struct_dual GREEN
 // 0x005aea00 — vtable-based raw alloc trampoline (C2).
 typedef void* (__cdecl *RawAllocFn)(int, int);
 static RawAllocFn const RawAlloc = reinterpret_cast<RawAllocFn>(0x005aea00u);
