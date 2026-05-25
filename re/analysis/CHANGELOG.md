@@ -2072,3 +2072,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  004288a0  FUN_004288a0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_004288a0.md  menu layout renderer 8-call chain; U-4216 U-4217 U-4218 U-4219; frontend_c1_to_c2_s5
 2026-05-25  00428a30  FUN_00428a30  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428a30.md  title screen draw w/ attract timer; U-4220 U-4221 U-4222 U-4223; frontend_c1_to_c2_s5
 2026-05-25  00428bf0  FUN_00428bf0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428bf0.md  alternate title-screen draw (attract mode); U-4224 U-4225; frontend_c1_to_c2_s5
+2026-05-25  batch-frontend-s6  frontend-c1-to-c2-s6  15x C1->C2 mechanical promotion  rvas=0x00428d30,0x00429240,0x004298c0,0x00429b30,0x00429b70,0x0042a640,0x0042a980,0x0042a9c0,0x0042ad10,0x0042ad90,0x0042add0,0x0042b920,0x0042bde0,0x0042bfb0,0x0042e8b0  bucket=re/analysis/frontend_c1_to_c2_s6  slot=Mashed_pool0  U-4197..U-4205(9)
