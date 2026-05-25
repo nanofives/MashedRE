@@ -12,6 +12,8 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 
 ## Queued
 
+2026-05-25  batch-frontend-s4  bucket=re/analysis/frontend_c1_to_c2_s4  rvas=00425ea0,00425ee0,00425ef0,00425fa0,00426020,00426080,00426090,004260a0,004260b0,00426460,00426b40,00426bc0,00426bd0,00426c50,00426cb0
+
 
 ## Drained
 
