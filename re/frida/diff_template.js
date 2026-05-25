@@ -1091,35 +1091,65 @@ function runDiff() {
         let dsDsCallCount = 0;
         const _dsDsStubs = [];  // GC anchors for NativeCallback objects
 
-        const VTBL_DS   = Memory.alloc(24);  // 6 vtable slots x 4 bytes
-        const OBJ_DS    = Memory.alloc(4);   // object[0] = vtable ptr
-        const PPUNK_DS  = Memory.alloc(4);   // ppUnk = &OBJ_DS
+        // Two separate IUnknown-shaped fake objects:
+        //   OBJ_DS / VTBL_DS   — the "outer" object the caller passes via *param_1.
+        //                        Its vtable[0] (QI) writes OBJ_DS_QI's address into
+        //                        *ppOut so the reimpl can deref a valid QI output.
+        //                        Its vtable[2] (Release) increments the call counter.
+        //   OBJ_DS_QI / VTBL_DS_QI — the "inner" QI-output object. Its vtable[5]
+        //                        (secondary init) writes 3 (the expected success
+        //                        sentinel — see U-0362 in AudioDSound.cpp) into the
+        //                        4th-arg output slot, then returns 0 (S_OK).
+        // 2026-05-24 phase-a1: stubs are stdcall to match MSVC virtual-method ABI
+        // (orig uses stdcall vtable calls; previously mscdecl stubs caused ESP
+        // imbalance only on the orig side, producing a false RED).
+        const VTBL_DS    = Memory.alloc(24);
+        const OBJ_DS     = Memory.alloc(4);
+        const VTBL_DS_QI = Memory.alloc(24);
+        const OBJ_DS_QI  = Memory.alloc(4);
+        const PPUNK_DS   = Memory.alloc(4);
 
-        // Generic 1-arg stub: return 0, increment counter.
-        // 2026-05-24 phase-a1: stubs are stdcall to match MSVC virtual-method
-        // ABI (orig uses stdcall vtable calls; previously mscdecl stubs caused
-        // ESP imbalance only on the orig side, producing a false RED).
-        const dsStub1 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'stdcall');
-        // Generic 2-arg stub.
-        const dsStub2 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer'], 'stdcall');
-        // Generic 4-arg stub (slot 5: this, arg2, arg3, arg4).
-        const dsStub4 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer', 'pointer', 'pointer'], 'stdcall');
-        // QI stub (slot 0, 3 args): writes null to ppOut output slot; returns 0.
+        // Outer object's Release (slot 2).
+        const dsStubRel = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'stdcall');
+        // Outer object's QI (slot 0, 3 args): writes the inner OBJ_DS_QI address
+        // into the output slot so the reimpl gets a valid interface ptr to
+        // route slot 5 through. Returns 0 (S_OK).
         const dsDsQiStub = new NativeCallback(function(self, iid, ppOut) {
             dsDsCallCount++;
-            if (ppOut && !ppOut.isNull()) ppOut.writeU32(0);
+            if (ppOut && !ppOut.isNull()) ppOut.writeU32(OBJ_DS_QI.toInt32());
             return 0;
         }, 'int32', ['pointer', 'pointer', 'pointer'], 'stdcall');
-        _dsDsStubs.push(dsStub1, dsStub2, dsStub4, dsDsQiStub);
+        // Inner object's slot 5 (4 args: this, fmtPtr, mode, &outStatus). Writes
+        // the success sentinel (3) into the 4th-arg output slot so the orig's
+        // CMP [ESP+0x8], 3 evaluates true → return 1. Returns 0 (S_OK).
+        const dsSlot5Stub = new NativeCallback(function(self, fmt, mode, pOut) {
+            dsDsCallCount++;
+            if (pOut && !pOut.isNull()) pOut.writeU32(3);
+            return 0;
+        }, 'int32', ['pointer', 'pointer', 'int32', 'pointer'], 'stdcall');
+        // Generic filler stubs (slots not exercised in the success path).
+        const dsStub1 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'stdcall');
+        const dsStub2 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer'], 'stdcall');
+        _dsDsStubs.push(dsStubRel, dsDsQiStub, dsSlot5Stub, dsStub1, dsStub2);
 
-        VTBL_DS.add(0 * 4).writeU32(dsDsQiStub.toInt32()); // slot 0: QI (3 args)
-        VTBL_DS.add(1 * 4).writeU32(dsStub1.toInt32());    // slot 1: AddRef (1 arg: this)
-        VTBL_DS.add(2 * 4).writeU32(dsStub1.toInt32());    // slot 2: Release (1 arg: this)
-        VTBL_DS.add(3 * 4).writeU32(dsStub2.toInt32());    // slot 3: unused
-        VTBL_DS.add(4 * 4).writeU32(dsStub2.toInt32());    // slot 4: unused
-        VTBL_DS.add(5 * 4).writeU32(dsStub4.toInt32());    // slot 5: secondary init (4 args)
+        // Outer vtable.
+        VTBL_DS.add(0 * 4).writeU32(dsDsQiStub.toInt32());  // slot 0: QI
+        VTBL_DS.add(1 * 4).writeU32(dsStub1.toInt32());     // slot 1: AddRef
+        VTBL_DS.add(2 * 4).writeU32(dsStubRel.toInt32());   // slot 2: Release
+        VTBL_DS.add(3 * 4).writeU32(dsStub2.toInt32());     // slot 3: unused
+        VTBL_DS.add(4 * 4).writeU32(dsStub2.toInt32());     // slot 4: unused
+        VTBL_DS.add(5 * 4).writeU32(dsStub2.toInt32());     // slot 5: unused on outer
+
+        // Inner vtable (the QI output). Only slot 5 matters; the rest no-op.
+        VTBL_DS_QI.add(0 * 4).writeU32(dsStub1.toInt32());  // slot 0 unused
+        VTBL_DS_QI.add(1 * 4).writeU32(dsStub1.toInt32());
+        VTBL_DS_QI.add(2 * 4).writeU32(dsStub1.toInt32());
+        VTBL_DS_QI.add(3 * 4).writeU32(dsStub2.toInt32());
+        VTBL_DS_QI.add(4 * 4).writeU32(dsStub2.toInt32());
+        VTBL_DS_QI.add(5 * 4).writeU32(dsSlot5Stub.toInt32());  // slot 5: secondary init
 
         OBJ_DS.writeU32(VTBL_DS.toInt32());
+        OBJ_DS_QI.writeU32(VTBL_DS_QI.toInt32());
         PPUNK_DS.writeU32(OBJ_DS.toInt32());
 
         for (let i = 0; i < CONFIG.tests.length; i++) {

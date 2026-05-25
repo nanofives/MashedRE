@@ -329,4 +329,13 @@ int __cdecl AudioWaveLoad(int    param_1,
     return iVar5;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioWaveLoad, 0x005abfa0);
+// MASS-DISABLED 2026-05-24 needs-canonical-rws-stream: RH_ScopedInstall(AudioWaveLoad, 0x005abfa0);
+// Phase A1 re-verify 2026-05-24: AudioWaveLoad is a 5-arg stream loader that
+// reads 0x803 (fmt) + 0x804 (PCM) RWS chunks via FUN_005ab380, allocates +
+// initialises a wave_node via FUN_005ac210 (itself C1 DEFERRED), and pumps
+// PCM through FUN_005abd30 + FUN_005abf80 in a loop. No registry entry was
+// ever added — synthetic testing requires a valid RWS stream handle and an
+// audio context, plus working stubs for the eight stream/alloc/feed callees.
+// Worth doing later but the test-harness cost outweighs the unblocked-hook
+// yield for this one function. Canonical-scenario verification (asset load
+// during MASHED boot) is the appropriate validation.

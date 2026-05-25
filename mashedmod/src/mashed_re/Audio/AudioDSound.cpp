@@ -211,61 +211,67 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundSecondaryInit(void** par
     // param_1 = IUnknown** (pointer to COM object pointer slot)
     // *param_1 = IUnknown* (pointer to the COM object)
     // piVar2[0] = vtable pointer (first field of COM object)
-    // 2026-05-24 phase-a1: vtable typedefs changed from __cdecl to __stdcall to
-    // match MSVC's default virtual-method ABI on x86. The original at 0x005bbfc0
-    // uses stdcall vtable calls — when our reimpl declared __cdecl the caller did
-    // not balance the stack after each vtable call, leaving ESP 12 bytes too high
-    // and corrupting MASHED's stack at the call site. Frida diff exposed the bug:
-    // orig crashed at vtable[0] entry while reimpl returned cleanly, because the
-    // diff harness's stubs were cdecl too (mismatch only manifested on the orig
-    // side). Diff stubs now match: stdcall on both sides.
-    typedef int  (__stdcall *VtblFn3)(void*, void*, void*);
-    typedef int  (__stdcall *VtblFn4)(void*, void*, int,  void*);
-    typedef void (__stdcall *VtblFn1)(void*);
+    //
+    // 2026-05-24 phase-a1 rewrite: previous reimpl had two bugs vs. the asm
+    // at 0x005bbfc0..0x005bc017, both confirmed by Ghidra disassembly:
+    //
+    //   1. Slot 5 routing.  Per asm 0x005bbfe2..0x005bbff5, the orig calls
+    //      vtable[5] on the QI-OUTPUT interface (puStack_8), not on the
+    //      original pUnk's vtable. Ghidra's decomp showed `*piVar2 + 0x14`
+    //      because it collapsed the indirection through local_4.
+    //
+    //   2. Slot 5 output destination.  The asm does `LEA EDX, [ESP+0x8]`
+    //      then `PUSH EDX` — the 4th arg to slot 5 is the address of the
+    //      CALLER'S param_1 SLOT (stack frame reuse). Slot 5 writes its
+    //      "secondary init status" into that slot. The orig then checks
+    //      [ESP+0x8] == 3 — i.e., reads back the value slot 5 wrote.
+    //
+    // Calling-convention also changed from __cdecl to __stdcall to match
+    // MSVC's default virtual-method ABI; vtable callees pop their own args.
+    typedef int  (__stdcall *VtblFn3)(void*, void*, void**);  // QI
+    typedef int  (__stdcall *VtblFn4)(void*, void*, int, void**);  // slot 5
+    typedef void (__stdcall *VtblFn1)(void*);  // Release
 
-    void*  pUnk     = *param_1;                          // IUnknown*
-    void** vtbl     = *reinterpret_cast<void***>(pUnk);  // vtable ptr
+    void*  pUnk = *param_1;                              // IUnknown*  (captured BEFORE param_1 slot is overwritten)
+    void** vtbl = *reinterpret_cast<void***>(pUnk);      // vtable ptr
 
-    // 0x005bbfc8: QI call — vtable slot 0 (offset 0x00)
-    // iVar1 = (**(code **)*piVar2)(piVar2, &DAT_005d09bc, &puStack_8)
+    // 0x005bbfc8: QI call — vtable slot 0
+    //   (**(code **)*piVar2)(piVar2, &DAT_005d09bc, &puStack_8)
     void* puStack_8 = nullptr;
     auto qi  = reinterpret_cast<VtblFn3>(vtbl[0]);
     int iVar1 = qi(pUnk, reinterpret_cast<void*>(0x005d09bcu), &puStack_8);
 
     if (iVar1 >= 0) {
-        // 0x005bbfd8: iVar3 = 0; never updated before the branch below [U-0362]
-        int iVar3 = 0;
+        // 0x005bbfdc: vtable+0x14 (slot 5) call ON THE QI-OUTPUT INTERFACE
+        // The 4th arg is &param_1 — writes into the caller's input slot.
+        // After this call, param_1 is overwritten with slot 5's output.
+        void** qi_vtbl = *reinterpret_cast<void***>(puStack_8);
+        auto slot5     = reinterpret_cast<VtblFn4>(qi_vtbl[5]);
+        iVar1 = slot5(puStack_8,
+                      reinterpret_cast<void*>(0x005e7100u),
+                      0,
+                      reinterpret_cast<void**>(&param_1));
 
-        // 0x005bbfdc: vtable+0x14 call (slot 5)
-        // iVar1 = (**(code **)(* piVar2 + 0x14))(piVar2, &DAT_005e7100, 0, &puStack_8)
-        auto slot5 = reinterpret_cast<VtblFn4>(vtbl[5]);
-        iVar1 = slot5(pUnk, reinterpret_cast<void*>(0x005e7100u), 0, &puStack_8);
-
-        // 0x005bbff0: dead branch — iVar3 is always 0 [U-0362]
-        if ((iVar1 >= 0) && (iVar3 == 3)) {
-            auto rel1 = reinterpret_cast<VtblFn1>(vtbl[2]);
-            rel1(pUnk);
+        // 0x005bbffc: CMP [ESP+0x8], 0x3  — read back what slot 5 wrote.
+        // The decomp comment U-0362 was wrong: iVar3 IS updated, by slot 5
+        // writing through the &param_1 output ptr. The check is a real
+        // post-init status comparison (status == 3 means "secondary ready"
+        // or similar — exact semantic still uncertain but the code path
+        // is reachable).
+        if ((iVar1 >= 0) && (reinterpret_cast<std::uintptr_t>(param_1) == 3u)) {
             return 1;
         }
     }
 
-    // 0x005bc000: Release — vtable slot 2 (offset 0x08)
-    // (**(code **)(*piVar2 + 8))(piVar2)
+    // 0x005bc00a: Release on the ORIGINAL pUnk (vtable slot 2).
+    // pUnk was captured before the param_1 overwrite, so it still points to
+    // the input IUnknown* even after slot 5 mutated the param_1 slot.
     auto rel = reinterpret_cast<VtblFn1>(vtbl[2]);
     rel(pUnk);
     return 0;
 }
 
-// MASS-DISABLED 2026-05-24 needs-vtable-routing-fix: RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
-// Phase A1 re-verify 2026-05-24: synthetic diff exposed a reimpl-vs-asm divergence.
-// Per asm at 0x005bbfe2..0x005bbff5, the orig calls vtable[5] on the QI-OUTPUT
-// interface (the third-arg output of the prior QI call), not on the original
-// pUnk. Our reimpl above calls slot5 on the original pUnk's vtable — that's
-// Ghidra's decomp lying (it collapsed the indirection). Real fix is to
-// re-route through the QI-output vtable; deferred until the reimpl is
-// rewritten against the asm. Calling-convention change to __stdcall was
-// applied 2026-05-24 phase-a1 to fix the separate stack-imbalance bug; the
-// vtable-routing bug is independent.
+RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);  // re-enabled 2026-05-24 phase-a1 dsound_secondary_init GREEN (post-vtable-routing-fix)
 
 // ---------------------------------------------------------------------------
 // 0x005aef00  FUN_005aef00  (0x26 bytes)
