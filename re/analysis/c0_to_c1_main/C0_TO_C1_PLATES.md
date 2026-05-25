@@ -18,20 +18,20 @@ undefined4 FUN_00458630(undefined4 param_1);  // (powerup_type) -> sprite_handle
 **Body summary:** 13-case switch on `param_1` (powerup type code 2/6/7/9/A/B/C/D/10/11/12/13/15/16); each case calls `FUN_004c5c00(DAT_0068b9ac, "name")` with a string-id selector. Default returns 0.
 
 **String table cited:**
-| case | string                          |
-|------|----------------------------------|
-| 2    | "flamethrower"                   |
-| 6/c/d| `&DAT_005ce594`                  |
-| 7    | "mortar"                         |
-| 9    | "machinegun"                     |
-| 10   | "depthcharge"                    |
-| 0xb  | "missile"                        |
-| 0x10 | "flamethrower" (dup of case 2)   |
-| 0x11 | "shotgun"                        |
-| 0x12 | "flare"                          |
-| 0x13 | `&PTR_DAT_005ce4fc`              |
-| 0x15 | "chaos"                          |
-| 0x16 | "airstrike"                      |
+| case | string                                |
+|------|----------------------------------------|
+| 2    | "flamethrower"                         |
+| 6/c/d| `&DAT_005ce594` = **"mine"** (U-4311)  |
+| 7    | "mortar"                               |
+| 9    | "machinegun"                           |
+| 10   | "depthcharge"                          |
+| 0xb  | "missile"                              |
+| 0x10 | "flamethrower" (dup of case 2)         |
+| 0x11 | "shotgun"                              |
+| 0x12 | "flare"                                |
+| 0x13 | `&PTR_DAT_005ce4fc` = **"oil"** (U-4311) |
+| 0x15 | "chaos"                                |
+| 0x16 | "airstrike"                            |
 
 **Callers:** `FUN_0043af10` (lobby renderer, just promoted to C2).
 **Callees:** `FUN_004c5c00` (string-keyed sprite-lookup utility).
@@ -80,9 +80,8 @@ float10 FUN_00474e60(float param_1);  // angle conversion (likely deg->rad or ra
 **Body summary:** Single multiplication —
 `return (float10)param_1 * (float10)_DAT_005cd7a8;`.
 
-`_DAT_005cd7a8` is the conversion constant (radians ↔ degrees ↔
-1/(2π) — exact value not promoted to a named symbol but is a runtime
-constant in `.rdata`).
+`_DAT_005cd7a8` = `0x3C8EFA35` = **0.0174533 = π/180** (U-4309 RESOLVED
+via memory_read). FUN_00474e60 is a **degrees-to-radians converter**.
 
 **Callers:** `FUN_00434720` (championship progress; same caller cluster as
 0x004736c0).
@@ -120,17 +119,24 @@ c3             RET
 Used as a callback that wraps an inner audio-related comparator into
 a 0/1 boolean result.
 
-**Inner CALL target:** rel32 = 0x3D3F means absolute = 0x005aa1ee + 5 + 0x3d3f
-= **0x005ade32** (need follow-up disassembly to identify the inner
-comparator at C2 time).
+**Inner CALL target (U-4310 RESOLVED):** Recomputed from CALL position
+0x005aa1ec, next-PC 0x005aa1f1, rel32 0x00003D3F → target **0x005ADE30**,
+inside `FUN_005ade10` (list-search-and-unlink helper; already C1 since
+2026-05-02). The helper walks a doubly-linked list looking for a node
+whose `[2]` field matches the search key, unlinks and frees on match
+(returns the list head), or returns NULL on miss.
 
-**Callers:** indirect — likely passed as a function pointer to a
-qsort/bsearch-style API in the audio subsystem. Not yet traced.
+**Callers (U-4310 RESOLVED):** sole data reference at 0x005aa091 inside
+`FUN_005aa060(undefined4 a, undefined4 *src, undefined4 *out)`, which:
+- copies `src[0..3]` to locals,
+- calls `FUN_005aa0c0(a, &src, &LAB_005aa1e0, &local_10, 1)` — passing
+  `&LAB_005aa1e0` as the **callback function pointer** (3rd arg).
+This is a `for_each`-with-predicate or `apply`-style API where
+LAB_005aa1e0 is the per-element predicate.
 
-**Recommendation at next confidence promotion:** trace callers via
-`reference_to 0x005aa1e0` to identify which audio table this is being
-searched/sorted into; identify inner comparator at 0x005ade32; consider
-promoting to a real Ghidra function definition before C2 work.
+**Return-value semantics (corrected):** Returns **1 if entry was NOT
+found in the list** (inner FUN_005ade10 returned NULL); returns **0 if
+found and removed** (inner returned the list head, nonzero).
 
 ---
 

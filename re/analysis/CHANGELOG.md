@@ -2128,3 +2128,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  C0->C1  004736c0  FUN_004736c0  c0-c1-game (line/border quad renderer)
 2026-05-25  C0->C1  00474e60  FUN_00474e60  c0-c1-game (float->x87 angle)
 2026-05-25  C0->C1  005aa1e0  LAB_005aa1e0  c0-c1-game (is-equal comparator wrapper)
+2026-05-25  RESOLVED  U-4309  _DAT_005cd7a8 = PI/180 = 0.0174533 (FUN_00474e60 = deg-to-rad)
+2026-05-25  RESOLVED  U-4310  LAB_005aa1e0 = callback fn-ptr; target 0x005ade30 inside FUN_005ade10 list-search-and-unlink; sole caller FUN_005aa060
+2026-05-25  RESOLVED  U-4311  &DAT_005ce594="mine" (case 6/c/d); &PTR_DAT_005ce4fc="oil" (case 0x13) in FUN_00458630
