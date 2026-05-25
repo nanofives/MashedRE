@@ -283,4 +283,4 @@ extern "C" __declspec(dllexport) void __cdecl PerModeRenderMachine() {
     // No matching mode — void return (e.g. main menu, mode 0)
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(PerModeRenderMachine, 0x00404320);
+RH_ScopedInstall(PerModeRenderMachine, 0x00404320);  // re-enabled 2026-05-24 phase-a2-strict GREEN int_scalar (no-op modes)

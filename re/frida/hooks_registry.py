@@ -4360,6 +4360,22 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # 0x00404320  PerModeRenderMachine — void(uint32 mode). Mode 5/8/9/10
+    # take specific dispatch paths; modes outside this set (incl. 0/1 at
+    # quiescent menu) fall through with no-op. arg_type='int_scalar' with
+    # non-matching modes exercises the fall-through; both sides match.
+    'per_mode_render_machine': {
+        'rva':            0x00404320,
+        'export':         'PerModeRenderMachine',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Modes not in {5,8,9,10} → no-op fall-through. Avoid mode 10 which
+        # calls ModePrologue + RwCameraEndUpdate (state-dependent).
+        'path1_tests':    [0, 1, 2, 3, 4, 6, 7, 11, 100, 0xFFFFFFFF],
+        'path2_tests':    [0, 1, 100],
+    },
+
     # 0x00492770  MainLoopInit
     # int(void) — writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
     # void_write_observe on 0x00828300 (exit flag, first write). Callees include
