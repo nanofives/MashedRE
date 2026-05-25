@@ -2073,3 +2073,20 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  00428a30  FUN_00428a30  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428a30.md  title screen draw w/ attract timer; U-4220 U-4221 U-4222 U-4223; frontend_c1_to_c2_s5
 2026-05-25  00428bf0  FUN_00428bf0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428bf0.md  alternate title-screen draw (attract mode); U-4224 U-4225; frontend_c1_to_c2_s5
 2026-05-25  batch-frontend-s6  frontend-c1-to-c2-s6  15x C1->C2 mechanical promotion  rvas=0x00428d30,0x00429240,0x004298c0,0x00429b30,0x00429b70,0x0042a640,0x0042a980,0x0042a9c0,0x0042ad10,0x0042ad90,0x0042add0,0x0042b920,0x0042bde0,0x0042bfb0,0x0042e8b0  bucket=re/analysis/frontend_c1_to_c2_s6  slot=Mashed_pool0  U-4197..U-4205(9)
+
+2026-05-25  C1->C2  0042f400  FUN_0042f400  batch-frontend-followup-s1
+2026-05-25  C1->C2  0042fa00  FUN_0042fa00  batch-frontend-followup-s1
+2026-05-25  C1->C2  0042fab0  FUN_0042fab0  batch-frontend-followup-s1
+2026-05-25  C1->C2  00430120  FUN_00430120  batch-frontend-followup-s1
+2026-05-25  C1->C2  00430250  FUN_00430250  batch-frontend-followup-s1
+2026-05-25  C1->C2  00430670  FUN_00430670  batch-frontend-followup-s1
+2026-05-25  C1->C2  00431240  FUN_00431240  batch-frontend-followup-s1
+2026-05-25  C1->C2  004314b0  FUN_004314b0  batch-frontend-followup-s1
+2026-05-25  C1->C2  00431710  FUN_00431710  batch-frontend-followup-s1
+2026-05-25  C1->C2  00431b70  FUN_00431b70  batch-frontend-followup-s1
+2026-05-25  C1->C2  00431d80  FUN_00431d80  batch-frontend-followup-s1
+2026-05-25  C1->C2  00431d90  FUN_00431d90  batch-frontend-followup-s1
+2026-05-25  C1->C2  00431f30  FUN_00431f30  batch-frontend-followup-s1
+2026-05-25  C1->C2  004322c0  FUN_004322c0  batch-frontend-followup-s1
+2026-05-25  C1->C2  00432450  FUN_00432450  batch-frontend-followup-s1
+2026-05-25  C1->C2  004324a0  FUN_004324a0  batch-frontend-followup-s1
