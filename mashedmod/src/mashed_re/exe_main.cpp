@@ -26,7 +26,7 @@
 //                               (160x160 content per cell, cell pitch 200x270,
 //                               row 0 starts at y=50, row 1 at y=320).
 //                               Window title reflects atlas mode.
-// Milestone B6 (this revision; Phase F gate per FRONTEND_ROADMAP):
+// Milestone B6 (Phase F gate per FRONTEND_ROADMAP):
 //                               renders ONE textured 2D quad — the 'main'
 //                               texture (256x256 PAL8 from Frontend.piz/
 //                               TEXTURES.TXD) — centered at title-screen
@@ -37,6 +37,20 @@
 //                               as a build-time fallback via kTitleMode
 //                               toggle — set to false for the diagnostic
 //                               4x2 view.
+// Milestone B7 (this revision; Phase G wedge): VirtualAlloc-maps the
+//                               MASHED.exe data-section address range
+//                               (0x00500000..0x009fffff) into the
+//                               standalone's process at startup so that
+//                               reimpls referencing MASHED RVAs (e.g.
+//                               MenuEntryArrayInit zeroing the array at
+//                               0x00898ac4) can run without AV. This is
+//                               the prerequisite for compiling the
+//                               Boot/Frontend/HUD/etc. reimpl set into
+//                               the exe target — Phase C's runtime gate.
+//                               After the mapping is established, calls
+//                               one pure-leaf reimpl (MenuEntryArrayInit)
+//                               to verify the wedge. Failure to allocate
+//                               is non-fatal; rendering still proceeds.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -172,6 +186,18 @@ constexpr float         kTitleQuadSize    = 512.f;
 // the only 256x256 PAL8 in Frontend.piz's TEXTURES.TXD — MASHED's menu code
 // references this exact name at multiple call sites. Per the B3 log row 5.
 constexpr const char    kTitleTexName[]   = "main";
+
+// B7 — MASHED data-section emulation. MASHED.exe's .data starts shortly after
+// our exe's image ends (we're loaded at 0x00400000 and end around 0x00470000
+// for a 400KB exe). MASHED's data extends to ~0x008fffff. VirtualAlloc-map
+// the gap so reimpls' deref of fixed RVAs (0x00500000+) succeed with zeroed
+// memory rather than AV. Address range chosen to:
+//   - skip our own image (0x00400000..~0x00470000 reserved by PE loader),
+//   - cover MASHED's .data + .bss footprint,
+//   - leave room for DLL imports the loader places between 0x70000000+.
+constexpr std::uintptr_t kMashedDataBase  = 0x00500000u;
+constexpr std::size_t    kMashedDataSize  = 0x00500000u; // 5 MB -> 0x00500000..0x009fffff
+bool                     g_mashed_data_mapped = false;
 
 // Distinctive teal clear color so we can confirm visually that D3D9 init
 // worked. RGB(40, 80, 120) reads as a muted dark teal — clearly not the
@@ -631,9 +657,127 @@ bool UploadAllTexturesForAtlas() {
     return uploaded > 0;
 }
 
+// B7: VirtualAlloc-map the MASHED data-section address range so reimpls
+// dereferencing fixed RVAs (e.g. 0x00898ac4 in MenuEntryArrayInit) succeed
+// with zeroed memory instead of AV. Writes a log line on success/failure.
+// Failure is non-fatal — the title-screen render still runs without the
+// wedge; we just can't call most Boot/Frontend/HUD reimpls from the
+// standalone yet.
+bool MapMashedDataSection() {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    // Probe each 64KB allocation-granule and find which ones are free vs
+    // already mapped. The MASHED .data spans 0x00500000..0x009fffff but the
+    // standalone may have DLL imports / loader-placed pages somewhere in
+    // that range. Walk granule-by-granule and allocate each free one
+    // separately. Any granule that's already mapped is logged but skipped
+    // (a subsequent reimpl that derefs into it may still AV — but at least
+    // we'll have covered everything we could).
+    constexpr std::uintptr_t kGran = 0x10000u; // 64KB allocation granularity
+    std::uintptr_t covered = 0, blocked = 0, blocked_first = 0;
+    for (std::uintptr_t a = kMashedDataBase;
+         a < kMashedDataBase + kMashedDataSize;
+         a += kGran) {
+        MEMORY_BASIC_INFORMATION mbi{};
+        if (VirtualQuery(reinterpret_cast<LPVOID>(a), &mbi, sizeof(mbi)) == 0) {
+            // Query failed — assume the granule is unavailable.
+            ++blocked;
+            if (!blocked_first) blocked_first = a;
+            continue;
+        }
+        if (mbi.State == MEM_FREE) {
+            void* p = VirtualAlloc(
+                reinterpret_cast<LPVOID>(a),
+                kGran,
+                MEM_RESERVE | MEM_COMMIT,
+                PAGE_READWRITE);
+            if (p) ++covered;
+            else { ++blocked; if (!blocked_first) blocked_first = a; }
+        } else {
+            // Already in use (private / mapped / image / reserved).
+            ++blocked;
+            if (!blocked_first) blocked_first = a;
+        }
+    }
+    if (log) {
+        std::fprintf(log,
+                     "\nMilestone B7: granule walk over 0x%08X..0x%08X — "
+                     "%zu granules covered, %zu blocked%s%s\n",
+                     static_cast<unsigned>(kMashedDataBase),
+                     static_cast<unsigned>(kMashedDataBase + kMashedDataSize - 1),
+                     covered, blocked,
+                     blocked ? " (first blocked at 0x" : "",
+                     blocked ? "" : "");
+        if (blocked) {
+            std::fprintf(log, "Milestone B7: first blocked granule = 0x%08X\n",
+                         static_cast<unsigned>(blocked_first));
+        }
+    }
+    g_mashed_data_mapped = (covered > 0);
+    if (log) {
+        std::fprintf(log,
+                     "Milestone B7: g_mashed_data_mapped = %s\n",
+                     g_mashed_data_mapped ? "true (partial)" : "false");
+        std::fclose(log);
+    }
+    return g_mashed_data_mapped;
+}
+
+// Forward declaration: MenuEntryArrayInit lives in Frontend/MenuInit.cpp.
+// It's a pure-leaf reimpl that zeroes 30 entries of a 52-byte struct array
+// at MASHED address 0x00898ac0. With the B7 wedge above, it runs on the
+// standalone's VirtualAlloc'd memory instead of MASHED's .data.
+extern "C" void __cdecl MenuEntryArrayInit();
+
+// B7: call a single pure-leaf reimpl to verify the data-section wedge works.
+// Writes the first and last entry's offset-0 dword via the reimpl, then reads
+// them back and confirms they're zero (the reimpl is a zero-fill). If the
+// wedge is inactive or the reimpl crashes, the log line is missing.
+void VerifyDataSectionWedgeViaReimpl() {
+    std::FILE* prelog = std::fopen(kLogPath, "a");
+    if (prelog) {
+        std::fprintf(prelog,
+                     "\nMilestone B7: wedge status = %s\n",
+                     g_mashed_data_mapped ? "ACTIVE" : "INACTIVE (VirtualAlloc failed)");
+        std::fclose(prelog);
+    }
+    if (!g_mashed_data_mapped) return;
+    // Pre-poison the range the reimpl is supposed to zero so we can confirm
+    // the writes actually happened.
+    constexpr std::uintptr_t kArrayBase = 0x00898ac0u;
+    constexpr std::uintptr_t kArrayEnd  = 0x008990dcu;
+    for (std::uintptr_t a = kArrayBase; a < kArrayEnd; a += 4) {
+        *reinterpret_cast<std::uint32_t*>(a) = 0xDEADBEEFu;
+    }
+    // Call the reimpl. If it AVs, the process dies — proves the wedge didn't
+    // cover the right range. If it returns, the writes succeeded.
+    MenuEntryArrayInit();
+    // Verify a sample of offsets: entry-0 offset 0 (= 0x00898ac0),
+    // entry-0 offset +40 (= 0x00898ae8), entry-29 offset 0 (= 0x008990ac).
+    const std::uint32_t v0   = *reinterpret_cast<std::uint32_t*>(0x00898ac0u);
+    const std::uint32_t v40  = *reinterpret_cast<std::uint32_t*>(0x00898ae8u);
+    const std::uint32_t v29  = *reinterpret_cast<std::uint32_t*>(0x008990acu);
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (log) {
+        std::fprintf(log,
+                     "Milestone B7: MenuEntryArrayInit() returned without AV.\n"
+                     "  entry 0 [0x00898ac0] = 0x%08X (expect 0)\n"
+                     "  entry 0 [0x00898ae8] = 0x%08X (expect 0)\n"
+                     "  entry 29[0x008990ac] = 0x%08X (expect 0)\n",
+                     v0, v40, v29);
+        std::fclose(log);
+    }
+}
+
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+    // B7 must run BEFORE any reimpl is called. The MapMashedDataSection
+    // call itself doesn't depend on the log (it writes append-mode after
+    // LoadFrontendPiz creates the log), but the data window IS required for
+    // any subsequent reimpl that derefs a MASHED RVA. We do the actual
+    // VirtualAlloc here so it's effective before the asset chain starts.
+    (void)MapMashedDataSection();
+
     // Try to load the frontend asset archive before opening the window so the
     // initial title reflects load state. Failure is non-fatal.
     if (LoadFrontendPiz()) {
@@ -647,6 +791,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             (void)DecodeAndDumpTexturesTxd();
         }
     }
+
+    // B7: verify the VirtualAlloc'd data window by actually calling a
+    // pure-leaf reimpl through it. After this point the log either contains
+    // a "Phase G wedge active" diagnostic or the process has crashed in
+    // MenuEntryArrayInit (meaning the wedge isn't covering the right range).
+    VerifyDataSectionWedgeViaReimpl();
 
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
