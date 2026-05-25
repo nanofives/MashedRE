@@ -42,7 +42,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioBufFieldSet(int param_1, int 
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);
+RH_ScopedInstall(AudioBufFieldSet, 0x005baf60);  // re-enabled 2026-05-24 phase-a1 buf_field_set GREEN
 
 // 0x005baf90  FUN_005baf90  (~0x18 bytes, 0x005baf90–0x005bafa8)
 // int __cdecl AudioDSoundRelease(int param_1)
@@ -177,7 +177,7 @@ extern "C" __declspec(dllexport) unsigned int __cdecl AudioSemaphoreCreate(
     return mask & static_cast<unsigned int>(reinterpret_cast<uintptr_t>(param_1));
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);
+RH_ScopedInstall(AudioSemaphoreCreate, 0x005aeea0);  // re-enabled 2026-05-24 phase-a1 semaphore_create GREEN
 // 0x005bbfc0  FUN_005bbfc0  (~70 bytes)
 // AudioDSoundSecondaryInit — QueryInterface + vtable+0x14 secondary init.
 //
@@ -211,12 +211,17 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundSecondaryInit(void** par
     // param_1 = IUnknown** (pointer to COM object pointer slot)
     // *param_1 = IUnknown* (pointer to the COM object)
     // piVar2[0] = vtable pointer (first field of COM object)
-    // Vtable uses __cdecl (caller-cleans) in our reimpl: the Frida test harness
-    // provides mscdecl (cdecl) stubs for the reimpl side. The original at 0x005bbfc0
-    // uses __stdcall vtable calls — detected by calling convention mismatch in Frida.
-    typedef int  (__cdecl *VtblFn3)(void*, void*, void*);
-    typedef int  (__cdecl *VtblFn4)(void*, void*, int,  void*);
-    typedef void (__cdecl *VtblFn1)(void*);
+    // 2026-05-24 phase-a1: vtable typedefs changed from __cdecl to __stdcall to
+    // match MSVC's default virtual-method ABI on x86. The original at 0x005bbfc0
+    // uses stdcall vtable calls — when our reimpl declared __cdecl the caller did
+    // not balance the stack after each vtable call, leaving ESP 12 bytes too high
+    // and corrupting MASHED's stack at the call site. Frida diff exposed the bug:
+    // orig crashed at vtable[0] entry while reimpl returned cleanly, because the
+    // diff harness's stubs were cdecl too (mismatch only manifested on the orig
+    // side). Diff stubs now match: stdcall on both sides.
+    typedef int  (__stdcall *VtblFn3)(void*, void*, void*);
+    typedef int  (__stdcall *VtblFn4)(void*, void*, int,  void*);
+    typedef void (__stdcall *VtblFn1)(void*);
 
     void*  pUnk     = *param_1;                          // IUnknown*
     void** vtbl     = *reinterpret_cast<void***>(pUnk);  // vtable ptr
@@ -251,7 +256,16 @@ extern "C" __declspec(dllexport) int __cdecl AudioDSoundSecondaryInit(void** par
     return 0;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
+// MASS-DISABLED 2026-05-24 needs-vtable-routing-fix: RH_ScopedInstall(AudioDSoundSecondaryInit, 0x005bbfc0);
+// Phase A1 re-verify 2026-05-24: synthetic diff exposed a reimpl-vs-asm divergence.
+// Per asm at 0x005bbfe2..0x005bbff5, the orig calls vtable[5] on the QI-OUTPUT
+// interface (the third-arg output of the prior QI call), not on the original
+// pUnk. Our reimpl above calls slot5 on the original pUnk's vtable — that's
+// Ghidra's decomp lying (it collapsed the indirection). Real fix is to
+// re-route through the QI-output vtable; deferred until the reimpl is
+// rewritten against the asm. Calling-convention change to __stdcall was
+// applied 2026-05-24 phase-a1 to fix the separate stack-imbalance bug; the
+// vtable-routing bug is independent.
 
 // ---------------------------------------------------------------------------
 // 0x005aef00  FUN_005aef00  (0x26 bytes)

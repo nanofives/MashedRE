@@ -80,4 +80,4 @@ extern "C" __declspec(dllexport) void __cdecl MusicGroupVolumeSet(
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MusicGroupVolumeSet, 0x005baf00);
+RH_ScopedInstall(MusicGroupVolumeSet, 0x005baf00);  // re-enabled 2026-05-24 phase-a1 music_vol_set GREEN

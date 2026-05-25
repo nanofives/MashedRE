@@ -98,7 +98,7 @@ extern "C" __declspec(dllexport) int __cdecl AudioFmtTableSearch(int param_1, in
     return 0;  // exhausted with no match
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioFmtTableSearch, 0x005acd10);
+RH_ScopedInstall(AudioFmtTableSearch, 0x005acd10);  // re-enabled 2026-05-24 phase-a1 fmt_table_search (buffer-alloc fix) GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005ac980  FUN_005ac980  AudioFmtDescCopy  (~70 bytes)
@@ -172,7 +172,7 @@ extern "C" __declspec(dllexport) void __cdecl AudioFmtDescCopy(
     }
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AudioFmtDescCopy, 0x005ac980);
+RH_ScopedInstall(AudioFmtDescCopy, 0x005ac980);  // re-enabled 2026-05-24 phase-a1 fmt_desc_copy (buffer-alloc fix) GREEN
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x005acd60  FUN_005acd60  AudioFmtGlobalScan  (~50 bytes)

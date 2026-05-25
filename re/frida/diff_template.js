@@ -632,6 +632,22 @@ function runDiff() {
     if (CONFIG.arg_type === 'matrix_scale') {
         matsBufs = { mat: Memory.alloc(64), scale: Memory.alloc(12) };
     }
+    // fmt_* buffers (declared null at module scope) — allocate on demand.
+    // Without these, every fmt_desc_copy / fmt_table_search / fmt_global_scan
+    // call throws "cannot read property 'add' of null" (regression: the
+    // original authors of these arg_types declared the slots but never
+    // wrote the Memory.alloc lines).
+    if (CONFIG.arg_type === 'fmt_desc_copy') {
+        fmtSrcBuf = Memory.alloc(0x20);
+        fmtDstBuf = Memory.alloc(0x20);
+    }
+    if (CONFIG.arg_type === 'fmt_table_search') {
+        fmtCtxBuf      = Memory.alloc(0x30);
+        fmtEntryPtrBuf = Memory.alloc(4);
+    }
+    if (CONFIG.arg_type === 'fmt_global_scan') {
+        fmtKeyBuf = Memory.alloc(16);
+    }
     const results = [];
 
 
@@ -1080,17 +1096,20 @@ function runDiff() {
         const PPUNK_DS  = Memory.alloc(4);   // ppUnk = &OBJ_DS
 
         // Generic 1-arg stub: return 0, increment counter.
-        const dsStub1 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'mscdecl');
+        // 2026-05-24 phase-a1: stubs are stdcall to match MSVC virtual-method
+        // ABI (orig uses stdcall vtable calls; previously mscdecl stubs caused
+        // ESP imbalance only on the orig side, producing a false RED).
+        const dsStub1 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer'], 'stdcall');
         // Generic 2-arg stub.
-        const dsStub2 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer'], 'mscdecl');
+        const dsStub2 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer'], 'stdcall');
         // Generic 4-arg stub (slot 5: this, arg2, arg3, arg4).
-        const dsStub4 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer', 'pointer', 'pointer'], 'mscdecl');
+        const dsStub4 = new NativeCallback(function() { dsDsCallCount++; return 0; }, 'int32', ['pointer', 'pointer', 'pointer', 'pointer'], 'stdcall');
         // QI stub (slot 0, 3 args): writes null to ppOut output slot; returns 0.
         const dsDsQiStub = new NativeCallback(function(self, iid, ppOut) {
             dsDsCallCount++;
             if (ppOut && !ppOut.isNull()) ppOut.writeU32(0);
             return 0;
-        }, 'int32', ['pointer', 'pointer', 'pointer'], 'mscdecl');
+        }, 'int32', ['pointer', 'pointer', 'pointer'], 'stdcall');
         _dsDsStubs.push(dsStub1, dsStub2, dsStub4, dsDsQiStub);
 
         VTBL_DS.add(0 * 4).writeU32(dsDsQiStub.toInt32()); // slot 0: QI (3 args)
@@ -2021,6 +2040,146 @@ function runDiff() {
                 reimV = (retNn << 24) | (fp & 0x00ffffff);
             } catch (e) { errR = e.message; }
             results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── buf_field_set ───────────────────────────────────────────────────────
+    // For AudioBufFieldSet (0x005baf60): void(int param_1, int param_2).
+    // Writes param_2 to *(p1+0x74), ORs 0x100 into *(p1+0x78). If bit 3 of
+    // *(p1+0x78) is set, also writes param_2 to *(*(p1+0x11c)+0x38). With a
+    // zeroed CONFIG.buf_size buffer (default 0x120), bit 3 is clear and the
+    // COM branch is never taken; the function exercises only the two field
+    // writes. Tests: flat list of param_2 values.
+    // Required CONFIG: buf_size, field_offsets (default [0x74, 0x78]).
+    if (CONFIG.arg_type === 'buf_field_set') {
+        const BUF_BYTES = (CONFIG.buf_size | 0) || 0x120;
+        const offsets   = CONFIG.field_offsets || [0x74, 0x78];
+        const bufA = Memory.alloc(BUF_BYTES);
+        const bufB = Memory.alloc(BUF_BYTES);
+        function zero(b) {
+            for (let k = 0; k < BUF_BYTES; k++) b.add(k).writeU8(0);
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const p2 = (CONFIG.tests[i] | 0) >>> 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            zero(bufA);
+            try {
+                Orig(bufA, p2);
+                // Pack two field reads into a single uint32: low 16 of +0x74 XOR low 16 of +0x78<<16
+                const v74 = bufA.add(offsets[0]).readU32();
+                const v78 = bufA.add(offsets[1]).readU32();
+                origV = ((v74 & 0xffff) ^ ((v74 >>> 16) & 0xffff)) | (((v78 & 0xffff) ^ ((v78 >>> 16) & 0xffff)) << 16);
+                origV = origV >>> 0;
+            } catch (e) { errO = e.message; }
+            zero(bufB);
+            try {
+                Reimpl(bufB, p2);
+                const v74 = bufB.add(offsets[0]).readU32();
+                const v78 = bufB.add(offsets[1]).readU32();
+                reimV = ((v74 & 0xffff) ^ ((v74 >>> 16) & 0xffff)) | (((v78 & 0xffff) ^ ((v78 >>> 16) & 0xffff)) << 16);
+                reimV = reimV >>> 0;
+            } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: p2,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── semaphore_create ────────────────────────────────────────────────────
+    // For AudioSemaphoreCreate (0x005aeea0): uint(void*, LONG, LONG).
+    // Calls CreateSemaphoreA(NULL, initial, max, NULL); stores HANDLE at *p1;
+    // returns -(handle!=0) & p1 (i.e. p1 if handle non-null else 0).
+    // Tests: [initial, max] pairs. Both sides allocate per-side scratch, call
+    // fn(buf, init, max), close the resulting handle, and observe:
+    //   bit0 = (ret-non-null) ; bit1 = (handle stored at *buf was non-null).
+    // Per-side buf addrs differ — ret-pointer-identity is meaningless across
+    // sides; but ret-non-null and handle-validity must match.
+    if (CONFIG.arg_type === 'semaphore_create') {
+        const sBufA = Memory.alloc(4);
+        const sBufB = Memory.alloc(4);
+        // CloseHandle from kernel32 — release the semaphores we leak otherwise.
+        // Use instance method (modern Frida API) — Module.findExportByName is
+        // not available as a static across versions.
+        let CloseHandle = null;
+        try {
+            const k32Mod = Module.load('kernel32.dll');
+            const ch = k32Mod.findExportByName('CloseHandle');
+            if (ch && !ch.isNull()) {
+                CloseHandle = new NativeFunction(ch, 'int32', ['pointer'], 'stdcall');
+            }
+        } catch (_) { /* leak semaphores if kernel32 unreachable */ }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const init = (t[0] | 0);
+            const max  = (t[1] | 0);
+            let origV = null, reimV = null, errO = null, errR = null;
+            sBufA.writeU32(0);
+            try {
+                const ret  = Orig(sBufA, init, max);
+                const h    = sBufA.readU32();
+                if (CloseHandle && h !== 0) CloseHandle(ptr(h));
+                origV = ((((ret >>> 0) !== 0) ? 1 : 0)) | (((h !== 0) ? 1 : 0) << 1);
+            } catch (e) { errO = e.message; }
+            sBufB.writeU32(0);
+            try {
+                const ret  = Reimpl(sBufB, init, max);
+                const h    = sBufB.readU32();
+                if (CloseHandle && h !== 0) CloseHandle(ptr(h));
+                reimV = ((((ret >>> 0) !== 0) ? 1 : 0)) | (((h !== 0) ? 1 : 0) << 1);
+            } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── music_vol_set ───────────────────────────────────────────────────────
+    // For MusicGroupVolumeSet (0x005baf00): void(int* p1, float vol).
+    // Writes vol to *(p1+0x38); walks circular linked list at p1+0xc setting
+    // bit 6 on each node's +0x14; if *(p1+0x11c) != 0 writes vol's raw bits
+    // to *(*(p1+0x11c)+0x30). With a zeroed CONFIG.buf_size buf (default
+    // 0x120) and a sentinel self-loop (write p1+0xc to itself), the loop
+    // runs zero iterations and the secondary branch is skipped. Tests: flat
+    // list of float volume values. Observable: low-24 fingerprint of buf
+    // packed with (sentinel-still-self-loop ? 1 : 0).
+    if (CONFIG.arg_type === 'music_vol_set') {
+        const BUF_BYTES = (CONFIG.buf_size | 0) || 0x120;
+        const bufA = Memory.alloc(BUF_BYTES);
+        const bufB = Memory.alloc(BUF_BYTES);
+        function setupEmpty(b) {
+            for (let k = 0; k < BUF_BYTES; k++) b.add(k).writeU8(0);
+            // Sentinel self-loop: *(b+0xc) = b+0xc  (head of empty circular list).
+            b.add(0x0c).writePointer(b.add(0x0c));
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const vol = +CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            setupEmpty(bufA);
+            try {
+                Orig(bufA, vol);
+                const v38 = bufA.add(0x38).readU32();      // vol raw bits at +0x38
+                const sentinel = bufA.add(0x0c).readPointer().equals(bufA.add(0x0c)) ? 1 : 0;
+                origV = ((v38 & 0xffffff) | (sentinel << 24)) >>> 0;
+            } catch (e) { errO = e.message; }
+            setupEmpty(bufB);
+            try {
+                Reimpl(bufB, vol);
+                const v38 = bufB.add(0x38).readU32();
+                const sentinel = bufB.add(0x0c).readPointer().equals(bufB.add(0x0c)) ? 1 : 0;
+                reimV = ((v38 & 0xffffff) | (sentinel << 24)) >>> 0;
+            } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: vol,
                            original: origV, reimpl: reimV,
                            match: (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
