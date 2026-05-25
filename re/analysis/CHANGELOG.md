@@ -15,6 +15,21 @@ Append-only log of confidence promotions and demotions, written by the `re-class
 2026-05-25  0x00427be0  FUN_00427be0  C1->C2  batch-render-s1
 2026-05-25  0x00429e10  FUN_00429e10  C1->C2  batch-render-s1
 2026-05-25  0x0042a470  FUN_0042a470  C1->C2  batch-render-s1
+2026-05-25  0x00467210  sub_00467210  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00467210.md; U-4387
+2026-05-25  0x00472380  FUN_00472380  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00472380.md; U-4388
+2026-05-25  0x004725c0  FUN_004725c0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_004725c0.md; U-4389
+2026-05-25  0x00474d80  FUN_00474d80  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474d80.md; U-4390
+2026-05-25  0x00474db0  FUN_00474db0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474db0.md; U-4391
+2026-05-25  0x00474de0  FUN_00474de0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474de0.md; U-4392
+2026-05-25  0x00474e70  FUN_00474e70  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474e70.md; U-4393
+2026-05-25  0x00474f30  FUN_00474f30  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474f30.md; U-4394
+2026-05-25  0x00474fb0  FUN_00474fb0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474fb0.md; U-4395
+2026-05-25  0x00474fd0  FUN_00474fd0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00474fd0.md; U-4396
+2026-05-25  0x00475010  FUN_00475010  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00475010.md; U-4397
+2026-05-25  0x00475180  FUN_00475180  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00475180.md; U-4398
+2026-05-25  0x00475210  FUN_00475210  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_00475210.md; U-4399
+2026-05-25  0x004752d0  FUN_004752d0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_004752d0.md; U-4400
+2026-05-25  0x004752f0  FUN_004752f0  C1->C2  batch-render-s4; decomp via MCP pool6; plate re/analysis/render_c1_to_c2_s4/FUN_004752f0.md; U-4401
 2026-05-25  0x00425ea0  FUN_00425ea0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425ea0.md
 2026-05-25  0x00425ee0  FUN_00425ee0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425ee0.md
 2026-05-25  0x00425ef0  FUN_00425ef0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425ef0.md
