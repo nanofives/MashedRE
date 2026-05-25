@@ -1,0 +1,258 @@
+Microsoft (R) COFF/PE Dumper Version 14.44.35223.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file original\MASHED.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Section contains the following imports:
+
+    DINPUT8.dll
+                5CC014 Import Address Table
+                5E80D0 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                    0 DirectInput8Create
+
+    KERNEL32.dll
+                5CC030 Import Address Table
+                5E80EC Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                  27F QueryPerformanceFrequency
+                  329 Sleep
+                  167 GetModuleHandleA
+                  13D GetDriveTypeA
+                  161 GetLogicalDrives
+                  12D GetCurrentDirectoryA
+                  241 LockResource
+                  328 SizeofResource
+                  233 LoadResource
+                   D4 FindResourceA
+                  395 lstrcmpiA
+                  132 GetCurrentThreadId
+                  202 InitializeCriticalSection
+                   76 DeleteCriticalSection
+                   8B EnterCriticalSection
+                  22D LeaveCriticalSection
+                  2EC SetEvent
+                  2A9 ResetEvent
+                  250 MulDiv
+                  363 WaitForMultipleObjects
+                  20A InterlockedIncrement
+                  206 InterlockedDecrement
+                   2C CloseHandle
+                   46 CreateEventA
+                  365 WaitForSingleObject
+                  29E ReleaseSemaphore
+                  1A8 GetSystemInfo
+                  358 VirtualFree
+                  12F GetCurrentProcess
+                   61 CreateSemaphoreA
+                  355 VirtualAlloc
+                   E5 FreeLibrary
+                  22E LoadLibraryA
+                  189 GetProcAddress
+                  369 WideCharToMultiByte
+                  318 SetThreadPriority
+                  1BA GetThreadPriority
+                  27E QueryPerformanceCounter
+                  1BE GetTickCount
+                  15A GetLastError
+                   65 CreateThread
+                   AC ExitThread
+                  251 MultiByteToWideChar
+                  398 lstrcpyA
+                  1C8 GetVersionExA
+                  345 UnmapViewOfFile
+                   4D CreateFileW
+                   4B CreateFileMappingA
+                  14D GetFileSize
+                  244 MapViewOfFile
+                  153 GetFullPathNameA
+                  219 IsProcessorFeaturePresent
+                  17D GetOverlappedResult
+                  15E GetLocaleInfoW
+                  2E9 SetEnvironmentVariableA
+                   33 CompareStringW
+                   32 CompareStringA
+                  35D VirtualQuery
+                  35B VirtualProtect
+                  2E8 SetEndOfFile
+                  1A2 GetStringTypeW
+                  19F GetStringTypeA
+                  21B IsValidCodePage
+                  21D IsValidLocale
+                   A1 EnumSystemLocalesA
+                  1C2 GetUserDefaultLCID
+                  221 LCMapStringW
+                  220 LCMapStringA
+                   4A CreateFileA
+                   DB FlushFileBuffers
+                  30C SetStdHandle
+                  20E IsBadCodePtr
+                  131 GetCurrentThread
+                  39E lstrlenA
+                  1B9 GetThreadLocale
+                  15D GetLocaleInfoA
+                   EB GetACP
+                  207 InterlockedExchange
+                  211 IsBadReadPtr
+                  31D SetUnhandledExceptionFilter
+                   F1 GetCPInfo
+                  2AC ResumeThread
+                  17C GetOEMCP
+                  2F1 SetFilePointer
+                  150 GetFileType
+                  2FA SetHandleCount
+                  141 GetEnvironmentStringsW
+                   E4 FreeEnvironmentStringsW
+                  13F GetEnvironmentStrings
+                   E3 FreeEnvironmentStringsA
+                  342 UnhandledExceptionFilter
+                  19E GetStdHandle
+                  376 WriteFile
+                  290 ReadFile
+                  214 IsBadWritePtr
+                  1F1 HeapCreate
+                  268 OutputDebugStringA
+                  148 GetFileAttributesA
+                   AB ExitProcess
+                  331 TerminateProcess
+                  2B1 RtlUnwind
+                  1C1 GetTimeZoneInformation
+                  1AC GetSystemTimeAsFileTime
+                  1EF HeapAlloc
+                  1F5 HeapFree
+                  1F9 HeapReAlloc
+                  19C GetStartupInfoA
+                   FD GetCommandLineA
+                  130 GetCurrentProcessId
+                  165 GetModuleFileNameA
+                  283 RaiseException
+                  337 TlsFree
+                  2FE SetLastError
+                  339 TlsSetValue
+                  338 TlsGetValue
+                  336 TlsAlloc
+                  1FB HeapSize
+                  1F3 HeapDestroy
+
+    USER32.dll
+                5CC20C Import Address Table
+                5E82C8 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                  111 GetDlgItem
+                   34 CharUpperA
+                  201 PostQuitMessage
+                  1DC MessageBoxA
+                   FF GetClientRect
+                  1B2 KillTimer
+                  23B SendMessageA
+                  2BB UpdateWindow
+                  28E ShowCursor
+                  117 GetForegroundWindow
+                  1A6 IsIconic
+                  16E GetWindowLongA
+                  12C GetMenu
+                    2 AdjustWindowRectEx
+                  227 RegisterWindowMessageA
+                  1EA MsgWaitForMultipleObjects
+                  14C GetQueueStatus
+                  202 PostThreadMessageA
+                   99 DestroyWindow
+                  1B7 LoadCursorA
+                  216 RegisterClassA
+                    1 AdjustWindowRect
+                   60 CreateWindowExA
+                   8E DefWindowProcA
+                  1B5 LoadBitmapA
+                  1FD PeekMessageA
+                  2AA TranslateMessage
+                   A1 DispatchMessageA
+                  2D0 WaitMessage
+                  280 SetWindowLongA
+                  283 SetWindowPos
+                   9E DialogBoxParamA
+                   C6 EndDialog
+                  1C8 LoadStringA
+                  286 SetWindowTextA
+                  27A SetTimer
+                  256 SetFocus
+                  292 ShowWindow
+                  174 GetWindowRect
+
+    GDI32.dll
+                5CC024 Import Address Table
+                5E80E0 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                   8F DeleteObject
+                  1A5 GetStockObject
+
+    ADVAPI32.dll
+                5CC000 Import Address Table
+                5E80BC Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                  1E1 RegOpenKeyExA
+                  1C8 RegCloseKey
+                  1EB RegQueryValueExA
+                  1E0 RegOpenKeyA
+
+    ole32.dll
+                5CC2CC Import Address Table
+                5E8388 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                   1C CoFreeUnusedLibraries
+                   61 CoTaskMemFree
+                   60 CoTaskMemAlloc
+                   39 CoInitialize
+                   10 CoCreateInstance
+                   65 CoUninitialize
+
+    d3d9.dll
+                5CC2C4 Import Address Table
+                5E8380 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                    0 Direct3DCreate9
+
+    WINMM.dll
+                5CC2AC Import Address Table
+                5E8368 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                   9F timeBeginPeriod
+                   A0 timeEndPeriod
+                   A3 timeGetTime
+                   A5 timeSetEvent
+                   A4 timeKillEvent
+
+    DSOUND.dll
+                5CC01C Import Address Table
+                5E80D8 Import Name Table
+                     0 time date stamp
+                     0 Index of first forwarder reference
+
+                      Ordinal    11
+
+  Summary
+
+      32B000 .data
+       1E000 .rdata
+       7F000 .rsrc
+      1CA000 .text
+        1000 _rwcseg
+        1000 _rwdseg
