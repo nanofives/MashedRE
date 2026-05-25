@@ -1,6 +1,21 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-25  0x004780c0  FUN_004780c0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_004780c0.md; U-4525
+2026-05-25  0x00478110  FUN_00478110  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00478110.md; U-4526
+2026-05-25  0x00478220  FUN_00478220  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00478220.md; U-4527
+2026-05-25  0x00478cc0  FUN_00478cc0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00478cc0.md; U-4528
+2026-05-25  0x00478cd0  FUN_00478cd0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00478cd0.md; U-4529
+2026-05-25  0x00479100  FUN_00479100  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00479100.md; U-4530
+2026-05-25  0x00479fb0  FUN_00479fb0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00479fb0.md; U-4531
+2026-05-25  0x0047a130  FUN_0047a130  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047a130.md; U-4532
+2026-05-25  0x0047a180  FUN_0047a180  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047a180.md; U-4533
+2026-05-25  0x0047aaa0  FUN_0047aaa0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047aaa0.md; U-4534
+2026-05-25  0x0047aad0  FUN_0047aad0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047aad0.md; U-4535
+2026-05-25  0x0047acd0  FUN_0047acd0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047acd0.md; U-4536
+2026-05-25  0x0047ad00  FUN_0047ad00  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047ad00.md; U-4537
+2026-05-25  0x0047ade0  FUN_0047ade0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047ade0.md; U-4538
+2026-05-25  0x0047ae80  FUN_0047ae80  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047ae80.md; U-4539
 2026-05-25  0x004019d0  FUN_004019d0  C1->C2  batch-render-s1
 2026-05-25  0x00401fe0  FUN_00401fe0  C1->C2  batch-render-s1
 2026-05-25  0x00402240  FUN_00402240  C1->C2  batch-render-s1

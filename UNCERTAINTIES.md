@@ -8,6 +8,9 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 
 | ID | Type | Where | Statement | Evidence missing | Path to resolution | Blocks |
 |----|------|-------|-----------|------------------|--------------------|--------|
+| U-4525 | cosmetic | 0x004780c0 FUN_004780c0 | C1 comment says "sphere-vs-plane classify" — no issue with mechanics | n/a | n/a | none |
+| U-4536 | semantic | 0x0047acd0 FUN_0047acd0 | Sky context +0x20c float field purpose unknown | Cross-reference all script handlers writing to adjacent fields (0x1d8..0x214 range) | Enumerate all script handlers in the sky-VM bank and map the full sky context struct | none |
+| U-4537 | semantic | 0x0047ad00 FUN_0047ad00 | Sky context +0x210 float field purpose unknown | Cross-reference all script handlers writing to adjacent fields (0x1d8..0x214 range) | Enumerate all script handlers in the sky-VM bank and map the full sky context struct | none |
 | U-0001 | structural | 0x004a4bb7 (entry) | Four bytes written to `local_114.szCSDVersion[0x7c..0x7f]` (0xcf,0x4b,0x4a,0x00) before GetVersionExA — purpose unclear | Instruction-level listing at these offsets | Read listing at those instructions; check if compiler generates them as stack-init or SEH-related | none |
 | U-0002 | semantic | 0x004a4bb7 (entry) | `local_20` boolean set from multi-step module-header parse (0x5a4d/0x4550/0x10b or 0x20b check, then dword at offset 0x3a or 0x3e) | Instruction-level listing to confirm exact field offsets and which data-directory entry is read | Read listing at PE-parse block; cross-check against known PE32 optional header layout at C2+ | none |
 | U-0003 | provenance | 0x004a31f3 (FUN_004a31f3) | `PTR_FUN_00616044` global pointer to function — called if non-null, but what writes it before this call is not visible | Cross-references to 0x00616044 showing writer(s) | mcp__ghidra__reference_to 0x00616044 to find initialization site | none |
