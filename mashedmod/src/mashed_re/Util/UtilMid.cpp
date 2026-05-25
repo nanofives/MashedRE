@@ -128,7 +128,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl QpcTimeScaledTo3Mhz() {
     return static_cast<std::uint32_t>(result & 0xFFFFFFFFu);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(QpcTimeScaledTo3Mhz, 0x004950b0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(QpcTimeScaledTo3Mhz, 0x004950b0);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004b302f  StricmpThunk
@@ -144,7 +144,7 @@ extern "C" __declspec(dllexport) int __cdecl StricmpThunk(const char* s1, const 
     return _stricmp(s1, s2);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(StricmpThunk, 0x004b302f);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(StricmpThunk, 0x004b302f);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00429aa0  GameStateSlotsFill
@@ -432,7 +432,7 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl GameTickStateMachine7() {
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(GameTickStateMachine7, 0x00492d30);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(GameTickStateMachine7, 0x00492d30);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x004295a0  HudDualLabelRender
@@ -596,7 +596,7 @@ extern "C" __declspec(dllexport) void __cdecl TransformMatrixUpdate(int param_1)
     (void)local_18; (void)local_14; (void)local_10;  // silence unused-warning
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TransformMatrixUpdate, 0x00442440);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(TransformMatrixUpdate, 0x00442440);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0043c000  TimerSlotTickDispatcher
@@ -1079,4 +1079,4 @@ extern "C" __declspec(dllexport) void __cdecl LabelTrailRecordAppend(
     *param_8 += 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(LabelTrailRecordAppend, 0x00412cf0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(LabelTrailRecordAppend, 0x00412cf0);

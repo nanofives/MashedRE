@@ -95,7 +95,7 @@ extern "C" __declspec(dllexport) void __cdecl RwFreeListCreateWrapper(
     s_FUN_004cc820(param_1, param_2, param_3, 1u, 0u, param_4);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwFreeListCreateWrapper, 0x004cc7f0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RwFreeListCreateWrapper, 0x004cc7f0);
 
 // ---------------------------------------------------------------------------
 // RwRenderCommandBufferReset  --  0x004cd140

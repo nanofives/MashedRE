@@ -189,4 +189,4 @@ extern "C" __declspec(dllexport) void __cdecl SlotSortByModeScore(int* param_1) 
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SlotSortByModeScore, 0x0040b620);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(SlotSortByModeScore, 0x0040b620);

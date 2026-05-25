@@ -195,7 +195,7 @@ extern "C" __declspec(dllexport) int __cdecl MainLoopInit() {
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(MainLoopInit, 0x00492770);
+RH_ScopedInstall(MainLoopInit, 0x00492770);  // re-enabled 2026-05-24 phase-a2 GREEN void_write_observe
 
 
 // ---------------------------------------------------------------------------
@@ -279,7 +279,7 @@ extern "C" __declspec(dllexport) int __cdecl FpsDiscretise() {
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FpsDiscretise, 0x00493480);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(FpsDiscretise, 0x00493480);
 
 
 // ---------------------------------------------------------------------------
@@ -385,4 +385,4 @@ extern "C" __declspec(dllexport) void __cdecl AudioTickAndAvg() {
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(AudioTickAndAvg, 0x004926c0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(AudioTickAndAvg, 0x004926c0);

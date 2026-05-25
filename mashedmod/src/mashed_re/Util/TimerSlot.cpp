@@ -34,7 +34,7 @@ extern "C" __declspec(dllexport) void __cdecl ZeroFillWrapper(void* param_1, uns
     std::memset(param_1, 0, param_2);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ZeroFillWrapper, 0x004b6520);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(ZeroFillWrapper, 0x004b6520);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041f000  SlotDataCopy  void(int param_1, int* param_2)

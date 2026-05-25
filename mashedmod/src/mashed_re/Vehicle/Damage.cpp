@@ -111,7 +111,7 @@ void __fastcall VehicleDamageAccumulatorAdd(int param_1, int param_2, float para
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleDamageAccumulatorAdd, 0x00420de0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(VehicleDamageAccumulatorAdd, 0x00420de0);
 
 
 // ============================================================================
@@ -180,7 +180,7 @@ void __cdecl VehicleEliminationSlotPostInit()
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleEliminationSlotPostInit, 0x00418de0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(VehicleEliminationSlotPostInit, 0x00418de0);
 
 
 // ============================================================================
@@ -271,7 +271,7 @@ extern "C" __declspec(dllexport) void __cdecl VehicleEliminationSlotInit(int par
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleEliminationSlotInit, 0x00419760);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(VehicleEliminationSlotInit, 0x00419760);
 
 
 // ============================================================================

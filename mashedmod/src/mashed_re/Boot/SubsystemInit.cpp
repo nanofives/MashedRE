@@ -368,7 +368,7 @@ extern "C" __declspec(dllexport) std::int32_t __cdecl ViewportInit() {
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(ViewportInit, 0x00428590);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(ViewportInit, 0x00428590);
 
 
 // ---------------------------------------------------------------------------
@@ -412,7 +412,7 @@ extern "C" __declspec(dllexport) void __cdecl SetDefaultViewWindow() {
     s_FUN_004c1c80(uVar1);
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(SetDefaultViewWindow, 0x00492e60);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(SetDefaultViewWindow, 0x00492e60);
 
 
 // ---------------------------------------------------------------------------

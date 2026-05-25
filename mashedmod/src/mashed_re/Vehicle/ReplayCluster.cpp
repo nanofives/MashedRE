@@ -180,4 +180,4 @@ finalise:
     }
     return 0;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RaceEndCheckFinish, 0x00432080);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RaceEndCheckFinish, 0x00432080);

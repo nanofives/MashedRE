@@ -189,4 +189,4 @@ extern "C" __declspec(dllexport) std::uint32_t* __cdecl RwFreeListCreate(
     return param_5;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(RwFreeListCreate, 0x004cc820);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RwFreeListCreate, 0x004cc820);

@@ -190,7 +190,7 @@ float __cdecl FontText_StringWidthAccumulator(const void* font_ctx,
     return total * scale;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontText_StringWidthAccumulator, 0x005554d0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(FontText_StringWidthAccumulator, 0x005554d0);
 #endif
 
 
@@ -557,7 +557,7 @@ skip28:
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(Sub0041bc50_HudRender29Dispatcher, 0x0041bc50);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(Sub0041bc50_HudRender29Dispatcher, 0x0041bc50);
 #endif
 
 
@@ -742,5 +742,5 @@ alloc_failed:
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(FontCtxMatrix_AllocInit, 0x004c57a0);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(FontCtxMatrix_AllocInit, 0x004c57a0);
 #endif

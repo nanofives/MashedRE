@@ -4272,6 +4272,24 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000005, 0xDEADBEEF],
     },
 
+    # 0x00492770  MainLoopInit
+    # int(void) — writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
+    # void_write_observe on 0x00828300 (exit flag, first write). Callees include
+    # FUN_004c57a0 (allocator) which may have side-effects; both sides call same
+    # allocator with same state and observable is the deterministic exit-flag write.
+    'main_loop_init': {
+        'rva':            0x00492770,
+        'export':         'MainLoopInit',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00828300,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
     # 0x00426c00  GameStateFlagGet
     # uint32(void) — returns DAT_00644158 (5-byte pure-leaf getter).
     # arg_type='read_global': write sentinel; both sides read same global.

@@ -283,4 +283,4 @@ extern "C" __declspec(dllexport) void __cdecl PerModeRenderMachine() {
     // No matching mode — void return (e.g. main menu, mode 0)
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PerModeRenderMachine, 0x00404320);
+// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(PerModeRenderMachine, 0x00404320);
