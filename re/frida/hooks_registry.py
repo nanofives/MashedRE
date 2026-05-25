@@ -6563,6 +6563,11 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': []},
         'arg_type':       'none',
         'lut_root_delta': 0,
+        # 2026-05-24 phase-a1 audit: function depends on canonical PIZ-VFS
+        # state (s_FUN_00423480 builds path, s_FUN_00495280 mounts piz, etc.)
+        # which is only set up by MASHED's natural boot init. At the diff
+        # harness's attach time both sides AV at NULL deref. crash_equal_ok
+        # is banned as GREEN per Phase A1 rule. Defer to canonical scenario.
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
     },

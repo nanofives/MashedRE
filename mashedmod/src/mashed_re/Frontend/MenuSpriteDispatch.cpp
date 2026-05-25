@@ -634,4 +634,9 @@ extern "C" __declspec(dllexport) void __cdecl MenuChromeShellB(void)
     s_LogoOverlayDraw(logo_bg, slide);
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);
+// MASS-DISABLED 2026-05-24 reimpl-divergent-error: RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);
+// Phase A1 audit 2026-05-24: synthetic diff shows orig AVs at 0x8 but reimpl
+// throws "system error" (different failure mode). The two implementations
+// take different code paths when given bare-int input — suggests a real
+// reimpl-vs-original divergence beyond just missing state. Needs reimpl
+// audit against the asm before re-enable.

@@ -342,4 +342,8 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl AiPizLoad(void)
     return uVar3;
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(AiPizLoad, 0x004235b0);
+// MASS-DISABLED 2026-05-24 needs-canonical-piz-state: RH_ScopedInstall(AiPizLoad, 0x004235b0);
+// Phase A1 audit 2026-05-24: function depends on canonical PIZ-VFS state
+// (s_FUN_00423480 builds path, s_FUN_00495280 mounts piz). At diff-attach
+// time both sides AV at NULL deref of mount state. crash_equal_ok is banned
+// as GREEN. Validation happens at the canonical AI-init call site.

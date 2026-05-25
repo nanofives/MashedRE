@@ -318,7 +318,11 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBC(
                    param_4, kMenuBc_ColorB);
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
+// MASS-DISABLED 2026-05-24 hangs-harness: RH_ScopedInstall(MenuMenusBC, 0x0042f8d0);
+// Phase A1 audit 2026-05-24: synthetic diff TIMES OUT — function hangs both
+// sides under repeated bare-int invocation (likely a render-loop or wait-on-
+// global pattern). 60s harness deadline insufficient. Canonical-scenario
+// at MENUS-B-C screen render is the appropriate validation path.
 
 // ---------------------------------------------------------------------------
 // MenuMenusBD  --  0x0040b460

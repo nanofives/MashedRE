@@ -116,7 +116,14 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl MenuEntryGet() {
     return *reinterpret_cast<std::uint32_t*>(iVar1 + 4 + iVar3 * 4);
 }
 
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+// MASS-DISABLED 2026-05-24 needs-canonical-menu-ptr-table: RH_ScopedInstall(MenuEntryGet, 0x0042ac90);
+// Phase A1 audit 2026-05-24: function derefs *(0x0067ed38 + slot*0x40) (the
+// per-slot menu pointer table). At quiescent main menu without an active
+// menu screen, slot 0's pointer is NULL and both sides AV at 0x0
+// identically (banned as crash_equal GREEN). Real test would require
+// staging a synthetic entry array with sentinel terminators (0xFF040000 /
+// 0xFF050000 / 0xFF060000 / 0xFF140000) and pointing the slot table at it.
+// Scaffold cost > yield for one hook; canonical-scenario at menu navigation.
 
 // ---------------------------------------------------------------------------
 // 0x0042bb60  MenuTeamBalance

@@ -68,7 +68,7 @@ extern "C" __declspec(dllexport) int __cdecl MenuGroupCount(int /*param_unused*/
 
 // Note: RH_ScopedInstall patches the original __fastcall at 0x0042ac00.
 // Our reimpl is __cdecl but functionally identical (param_1/ECX unused).
-// MASS-DISABLED 2026-05-24 c3-refused-no-canon-fire: RH_ScopedInstall(MenuGroupCount, 0x0042ac00);
+RH_ScopedInstall(MenuGroupCount, 0x0042ac00);  // re-enabled 2026-05-24 phase-a1 audit sentinel_array_ptr GREEN (11/11)
 
 // ---------------------------------------------------------------------------
 // MenuCursorStep  --  0x0042aa00
