@@ -140,7 +140,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleCarStateRead(std::uint32_t c
     *outSecondary = *reinterpret_cast<const std::uint32_t*>(kVehicleBase_881f94 + carIdx * kByteStride);
     return 1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleCarStateRead, 0x0046cbb0);
+RH_ScopedInstall(VehicleCarStateRead, 0x0046cbb0);  // re-enabled 2026-05-24 phase-a2 GREEN (9/9 2 distinct)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00417730  VehicleRaceAngleGet

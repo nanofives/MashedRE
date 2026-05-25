@@ -57,7 +57,7 @@ extern "C" __declspec(dllexport) int __cdecl VehicleCarStateSet(int vehicleIdx, 
     *reinterpret_cast<std::uint32_t*>(kSecondaryStateBase + static_cast<std::uintptr_t>(vehicleIdx) * kByteStride) = secondaryVal;
     return 1;
 }
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);
+RH_ScopedInstall(VehicleCarStateSet, 0x0046cbe0);  // re-enabled 2026-05-24 phase-a2 GREEN (guard early-out matches; documented in registry)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0042d3a0  RaceTransitionBufZero

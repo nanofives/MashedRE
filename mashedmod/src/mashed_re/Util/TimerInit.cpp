@@ -40,7 +40,7 @@ extern "C" __declspec(dllexport) void __cdecl TimerTrackSetter(std::uint32_t par
     *reinterpret_cast<std::uint32_t*>(0x0063d7e0) = param_1;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TimerSlotClear,   0x0041d820);
+RH_ScopedInstall(TimerSlotClear,   0x0041d820);  // re-enabled 2026-05-24 phase-a2 GREEN (sentinel->0 observed)
 RH_ScopedInstall(TimerTrackSetter, 0x0041e130);  // re-enabled 2026-05-24 c3-safe
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x0041eda0  TimerBitFieldSet  void(int slot, int flag)

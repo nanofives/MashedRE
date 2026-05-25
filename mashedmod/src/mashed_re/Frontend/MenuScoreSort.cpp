@@ -124,4 +124,4 @@ extern "C" __declspec(dllexport) void __cdecl PlayerColorTableGet(int param_1, s
     }
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(PlayerColorTableGet, 0x0040e3a0);
+RH_ScopedInstall(PlayerColorTableGet, 0x0040e3a0);  // re-enabled 2026-05-24 phase-a2 GREEN (12/12 6 distinct)

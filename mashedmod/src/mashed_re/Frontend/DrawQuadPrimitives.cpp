@@ -403,7 +403,7 @@ extern "C" __declspec(dllexport) void __cdecl TextSpriteScaled(
     rw_draw_4verts();
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(TextSpriteScaled, 0x004739f0);
+RH_ScopedInstall(TextSpriteScaled, 0x004739f0);  // re-enabled 2026-05-24 phase-a2 GREEN (10/10 10 distinct)
 
 
 // ---------------------------------------------------------------------------
