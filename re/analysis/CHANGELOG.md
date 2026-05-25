@@ -2120,3 +2120,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  C1->C2  004c75e0  FUN_004c75e0  batch-frontend-followup-s3
 2026-05-25  C1->C2  004d8000  FUN_004d8000  batch-frontend-followup-s3
 2026-05-25  C1->C2  004d8c40  FUN_004d8c40  batch-frontend-followup-s3
+2026-05-25  C1->C2  0040acd0  FUN_0040acd0  frontend-oversize (save-game state-machine dispatcher)
+2026-05-25  C1->C2  0040eee0  FUN_0040eee0  frontend-oversize (round-end car-elimination + score distribution)
