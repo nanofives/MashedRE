@@ -2012,3 +2012,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  0x004224d0  FUN_004224d0  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/004224d0.md; U-4211 U-4212; slot=Mashed_pool11
 2026-05-25  batch-frontend-s1  DEFERRED  0x0040acd0  decomp >300 lines (large nested-switch state machine); defer to dedicated session
 2026-05-25  batch-frontend-s1  DEFERRED  0x0040eee0  decomp >300 lines (3356b body, complex race-scoring multi-mode); defer to dedicated session
+2026-05-25  0x00422a80  FUN_00422a80  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00422a80.md
+2026-05-25  0x00422aa0  FUN_00422aa0  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00422aa0.md
+2026-05-25  0x00423040  FUN_00423040  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423040.md
+2026-05-25  0x00423270  FUN_00423270  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423270.md
+2026-05-25  0x00423320  FUN_00423320  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423320.md
+2026-05-25  0x00423b40  FUN_00423b40  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423b40.md
+2026-05-25  0x00423b60  FUN_00423b60  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423b60.md
+2026-05-25  0x00423b80  FUN_00423b80  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423b80.md
+2026-05-25  0x00423ba0  FUN_00423ba0  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423ba0.md
+2026-05-25  0x00423bc0  FUN_00423bc0  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423bc0.md
+2026-05-25  0x00423c40  FUN_00423c40  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423c40.md
+2026-05-25  0x00423cc0  FUN_00423cc0  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423cc0.md
+2026-05-25  0x00423d50  FUN_00423d50  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423d50.md
+2026-05-25  0x00423dd0  FUN_00423dd0  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423dd0.md
+2026-05-25  0x00423e60  FUN_00423e60  C1->C2  batch-frontend-s2; decomp read end-to-end via MCP pool11; plate re/analysis/frontend_c1_to_c2_s2/0x00423e60.md
