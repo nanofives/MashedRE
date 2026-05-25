@@ -1997,3 +1997,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  sweep-20260524-2041  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
 
 2026-05-24  lever3-libs-bulk-attest  117 C1->C2 (D3DX9-shader-compiler 80 + Qhull 35 + D3DX9-fx 2) via subsystem-tag attestation — library residue, terminal C2
+2026-05-25  0x00401570  FUN_00401570  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/00401570.md; leaf; slot=Mashed_pool11
+2026-05-25  0x00401da0  FUN_00401da0  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/00401da0.md; U-4197 U-4198; slot=Mashed_pool11
+2026-05-25  0x00401ee0  FUN_00401ee0  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/00401ee0.md; U-4199; slot=Mashed_pool11
+2026-05-25  0x00408ad0  FUN_00408ad0  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/00408ad0.md; leaf; U-4200; slot=Mashed_pool11
+2026-05-25  0x0040b290  FUN_0040b290  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/0040b290.md; U-4201 U-4202; slot=Mashed_pool11
+2026-05-25  0x0040d250  FUN_0040d250  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/0040d250.md; leaf; U-4203; slot=Mashed_pool11
+2026-05-25  0x0040d590  FUN_0040d590  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/0040d590.md; U-4204 U-4205; slot=Mashed_pool11
+2026-05-25  0x00414120  FUN_00414120  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/00414120.md; leaf; U-4206; slot=Mashed_pool11
+2026-05-25  0x004189f0  thunk_FUN_00419760  C1->C2  batch-frontend-s1; 4-byte thunk confirmed; plate re/analysis/frontend_c1_to_c2_s1/004189f0.md; slot=Mashed_pool11
+2026-05-25  0x0041dc30  FUN_0041dc30  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/0041dc30.md; U-4207 U-4208; slot=Mashed_pool11
+2026-05-25  0x0041e080  FUN_0041e080  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/0041e080.md; leaf; U-4209; slot=Mashed_pool11
+2026-05-25  0x00422470  FUN_00422470  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/00422470.md; U-4210; slot=Mashed_pool11
+2026-05-25  0x004224d0  FUN_004224d0  C1->C2  batch-frontend-s1; decomp read end-to-end; plate re/analysis/frontend_c1_to_c2_s1/004224d0.md; U-4211 U-4212; slot=Mashed_pool11
+2026-05-25  batch-frontend-s1  DEFERRED  0x0040acd0  decomp >300 lines (large nested-switch state machine); defer to dedicated session
+2026-05-25  batch-frontend-s1  DEFERRED  0x0040eee0  decomp >300 lines (3356b body, complex race-scoring multi-mode); defer to dedicated session
