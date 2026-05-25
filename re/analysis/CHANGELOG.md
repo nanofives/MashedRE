@@ -1,6 +1,21 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-25  0x00425ea0  FUN_00425ea0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425ea0.md
+2026-05-25  0x00425ee0  FUN_00425ee0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425ee0.md
+2026-05-25  0x00425ef0  FUN_00425ef0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425ef0.md
+2026-05-25  0x00425fa0  FUN_00425fa0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00425fa0.md
+2026-05-25  0x00426020  FUN_00426020  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426020.md
+2026-05-25  0x00426080  FUN_00426080  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426080.md
+2026-05-25  0x00426090  FUN_00426090  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426090.md
+2026-05-25  0x004260a0  FUN_004260a0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_004260a0.md
+2026-05-25  0x004260b0  FUN_004260b0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_004260b0.md
+2026-05-25  0x00426460  FUN_00426460  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426460.md
+2026-05-25  0x00426b40  FUN_00426b40  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426b40.md
+2026-05-25  0x00426bc0  FUN_00426bc0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426bc0.md
+2026-05-25  0x00426bd0  FUN_00426bd0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426bd0.md
+2026-05-25  0x00426c50  FUN_00426c50  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426c50.md
+2026-05-25  0x00426cb0  FUN_00426cb0  C1->C2  batch-frontend-s4; decomp via MCP pool14; plate re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
 2026-05-24  0x0048a780  FUN_0048a780  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048a780.md; U-3978..U-3979; S-4055..S-4056
 2026-05-24  0x0048a830  FUN_0048a830  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048a830.md; S-4057
 2026-05-24  0x0048a850  FUN_0048a850  C1->C2  batch-ac-s4; decomp read end-to-end via MCP pool14; plate re/analysis/particle_promote_ac4/0x0048a850.md; U-3980..U-3982; S-4058..S-4060
