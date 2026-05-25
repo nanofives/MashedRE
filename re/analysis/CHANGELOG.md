@@ -2220,3 +2220,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  C1->C2  00476c60  FUN_00476c60  batch-render-s6 (per-batch 8-dword +0xD8 dirty 0x100000; U-4449)
 2026-05-25  C1->C2  004770a0  FUN_004770a0  batch-render-s6 (batch render dispatcher vtable+0x48; 19 callers; U-4450)
 2026-05-25  C1->C2  00477450  FUN_00477450  batch-render-s6 (decal record init 0x5C bytes EAX=this; U-4451)
+2026-05-25  C1->C2  00477490  FUN_00477490  batch-render-2-s1
+2026-05-25  C1->C2  00477500  FUN_00477500  batch-render-2-s1
+2026-05-25  C1->C2  00477580  FUN_00477580  batch-render-2-s1
+2026-05-25  C1->C2  004775b0  FUN_004775b0  batch-render-2-s1
+2026-05-25  C1->C2  00477760  FUN_00477760  batch-render-2-s1
+2026-05-25  C1->C2  00477870  FUN_00477870  batch-render-2-s1
+2026-05-25  C1->C2  004778e0  FUN_004778e0  batch-render-2-s1
+2026-05-25  C1->C2  00477b60  FUN_00477b60  batch-render-2-s1
+2026-05-25  C1->C2  00477be0  FUN_00477be0  batch-render-2-s1
+2026-05-25  C1->C2  00477e00  FUN_00477e00  batch-render-2-s1
+2026-05-25  C1->C2  00477e40  FUN_00477e40  batch-render-2-s1
+2026-05-25  C1->C2  00477e60  FUN_00477e60  batch-render-2-s1
+2026-05-25  C1->C2  00477f00  FUN_00477f00  batch-render-2-s1
+2026-05-25  C1->C2  00477f50  FUN_00477f50  batch-render-2-s1
+2026-05-25  C1->C2  00478030  FUN_00478030  batch-render-2-s1
