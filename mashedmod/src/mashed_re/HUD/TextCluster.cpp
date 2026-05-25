@@ -160,85 +160,121 @@ std::uint32_t __cdecl FontCtx_ResetTransform()
 // ---------------------------------------------------------------------------
 
 // 0x00428450
-extern "C" __declspec(dllexport) void __cdecl HudSpinCoinAnim(int param_1, int param_2) {
-    // Spin angle accumulator (float32) at DAT_0067d974.
-    float& spinAngle = *reinterpret_cast<float*>(0x0067d974u);
-
-    // Compute sin of current spin angle using x87 fsin (matches original MSVC codegen).
-    // Original uses: fsin((float10)_DAT_0067d974) -> narrowed to float32.
-    // std::sin uses SSE2 double; fsin uses x87 80-bit extended — bit-level diverges.
-    // We load the raw float from the angle pointer directly to avoid reference aliasing.
-    float sinVal;
-    {
-        float* pAngle = &spinAngle;
-        __asm {
-            mov eax, pAngle
-            fld dword ptr [eax]
-            fsin
-            fstp sinVal
-        }
+// 2026-05-24 phase-a3: rewritten as inline-asm x87 sequence to match the
+// orig's bit-pattern output. Prior C++ reimpl used MSVC's default x86
+// SSE2 codegen (/arch:SSE2 since VS2019), producing 32-bit-rounded
+// intermediates while the orig uses x87 80-bit extended precision on
+// the FPU stack. The diff harness caught this as SILENT-DIVERGE on
+// 5/10 inputs (any non-zero param_1 or param_2). The new sequence
+// mirrors the orig x87 ops at 0x00428453..0x0042857d exactly: FSIN at
+// entry, FILD+FMUL for screenW*scaleW, the (baseCx-sinVal*sinScX)+
+// param_1 chain via FIADD on the caller's stack slot for param_1, and
+// the (param_2+yOff)*screenH*scaleYH chain matching the orig's stack-
+// shuffle pattern. Output args are pushed to DrawQuad in the same
+// order as 0x00428550..0x00428562.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl HudSpinCoinAnim(int /*param_1*/, int /*param_2*/) {
+    __asm {
+        // 0x00428450..0x00428492: prologue + fsin + UV defaults + FSTP sinVal.
+        sub  esp, 0x2c
+        fld  dword ptr ds:[0x0067d974]     // spinAngle
+        mov  al, 0xff
+        fsin
+        push esi
+        mov  byte ptr [esp+0x4], al
+        mov  byte ptr [esp+0x5], al
+        mov  byte ptr [esp+0x6], al
+        mov  byte ptr [esp+0x7], al
+        mov  dword ptr [esp+0x20], 0x0       // u0 default
+        mov  dword ptr [esp+0x24], 0x0       // v0 default
+        mov  dword ptr [esp+0x28], 0x3f000000 // u1 default 0.5
+        mov  dword ptr [esp+0x2c], 0x3f800000 // v1 default 1.0
+        xor  esi, esi                          // texHandle = 0
+        fstp dword ptr [esp+0x8]              // sinVal (32-bit)
+        // GetWidth -> AX (int16), MOVSX, store, FILD, FMUL scaleW, FSTP fVar2.
+        mov  ecx, 0x0042b8b0
+        call ecx
+        movsx eax, ax
+        mov  dword ptr [esp+0xc], eax
+        fild dword ptr [esp+0xc]
+        fmul dword ptr ds:[0x005cd5a8]           // * scaleW
+        fstp dword ptr [esp+0xc]              // fVar2 (32-bit)
+        // GetHeight -> AX, MOVSX, store, FILD, FMUL scaleYH (keep on FPU).
+        mov  ecx, 0x0042b8c0
+        call ecx
+        movsx ecx, ax
+        mov  dword ptr [esp+0x10], ecx
+        fild dword ptr [esp+0x10]
+        fmul dword ptr ds:[0x005cc560]           // ST(0) = screenH * scaleYH
+        // (baseCx - sinVal*sinScX) + param_1 via FIADD.
+        fld  dword ptr [esp+0x8]              // ST(0)=sinVal, ST(1)=screenH*scaleYH
+        fmul dword ptr ds:[0x005cd274]           // ST(0) = sinVal * sinScX
+        fsubr dword ptr ds:[0x005cd65c]          // ST(0) = baseCx - sinVal*sinScX
+        fiadd dword ptr [esp+0x34]            // ST(0) += float10(param_1)
+        // (param_2 + yOff) via FILD+FADD; FSTP to scratch.
+        fild dword ptr [esp+0x38]             // ST(0)=float10(param_2), push
+        fadd dword ptr ds:[0x005cd658]           // ST(0) = param_2 + yOff
+        fstp dword ptr [esp+0x14]             // store drawY' (32-bit), pop
+        // drawW = sinVal * ratio * fVar2 (FPU stack order matches orig).
+        fld  dword ptr [esp+0x8]              // ST(0)=sinVal
+        fmul dword ptr ds:[0x005cc730]           // * ratio
+        fmul dword ptr [esp+0xc]              // * fVar2
+        fstp dword ptr [esp+0x18]             // drawW
+        // drawH = screenH*scaleYH * ratio (dup ST(1) first).
+        fld  st(1)                             // ST(0)=ST(1)=screenH*scaleYH
+        fmul dword ptr ds:[0x005cc730]
+        fstp dword ptr [esp+0x1c]             // drawH
+        // drawX = fVar2 * (baseCx-sinVal*sinScX+param_1).
+        fld  dword ptr [esp+0xc]              // ST(0)=fVar2
+        fmul st(0), st(1)                     // * (baseCx-...+param_1)
+        fstp dword ptr [esp+0x10]             // drawX
+        fstp st(0)                             // pop (baseCx-...+param_1) — discard
+        fmul dword ptr [esp+0x14]             // ST(0) = screenH*scaleYH * drawY'
+        fstp dword ptr [esp+0x14]             // drawY (final) — store as 32-bit
+        // UV horizontal flip when sinVal < threshold.
+        fld  dword ptr [esp+0x8]              // ST(0)=sinVal
+        fcomp dword ptr ds:[0x005d757c]          // compare with threshold, pop
+        fnstsw ax
+        test ah, 0x5
+        jp   skip_flip
+        mov  dword ptr [esp+0x20], 0x3f800000 // u0 = 1.0
+        mov  dword ptr [esp+0x28], 0x3f000000 // u1 = 0.5
+skip_flip:
+        // texHandle from global pointer (if non-null).
+        mov  eax, dword ptr ds:[0x00771960]
+        test eax, eax
+        jz   skip_tex
+        mov  esi, dword ptr [eax]
+skip_tex:
+        // DrawQuad(texHandle, drawX, drawY, drawW, drawH, 0xffffffff, &uvs).
+        // Note: per orig, the FPU stack still has drawY-final at ST(0);
+        // but the args are PUSHED as int dwords from the local stack slots.
+        mov  eax, dword ptr [esp+0x4]          // 0xffffffff (color)
+        mov  ecx, dword ptr [esp+0x1c]         // drawH
+        lea  edx, [esp+0x20]                   // &uvs
+        push edx
+        mov  edx, dword ptr [esp+0x1c]         // drawW (post-push)
+        push eax                               // color
+        mov  eax, dword ptr [esp+0x1c]         // drawY (post-push)
+        push ecx                               // drawH
+        mov  ecx, dword ptr [esp+0x1c]         // drawX
+        push edx                               // drawW
+        push eax                               // drawY
+        push ecx                               // drawX
+        push esi                               // texHandle
+        // Pop the still-pending FPU value before calling out (it was stack
+        // garbage — orig doesn't pre-pop because cdecl callee preserves FPU).
+        // (Actually orig leaves ST(0) live across the CALL; we mirror that.)
+        mov  ecx, 0x00450b10
+        call ecx
+        // Advance spin angle accumulator.
+        fld  dword ptr ds:[0x0067d974]
+        fadd dword ptr ds:[0x005cc56c]
+        add  esp, 0x1c
+        pop  esi
+        fstp dword ptr ds:[0x0067d974]
+        add  esp, 0x2c
+        ret
     }
-
-    // Default UV layout (coin face, forward-facing).
-    std::uint32_t local_10 = 0u;            // u0 = 0.0f
-    std::uint32_t local_c  = 0u;            // v0 = 0.0f
-    std::uint32_t local_8  = 0x3f000000u;   // u1 = 0.5f
-    std::uint32_t local_4  = 0x3f800000u;   // v1 = 1.0f
-
-    std::uint32_t texHandle = 0u;
-
-    // Screen width (int16_t from FUN_0042b8b0, sign-extended).
-    typedef short (__cdecl *GetWidth_t)();
-    typedef short (__cdecl *GetHeight_t)();
-    auto GetWidth  = reinterpret_cast<GetWidth_t>(0x0042b8b0u);
-    auto GetHeight = reinterpret_cast<GetHeight_t>(0x0042b8c0u);
-    short sw = GetWidth();
-    float screenW = static_cast<float>(static_cast<std::int32_t>(sw));
-    float scaleW  = *reinterpret_cast<float*>(0x005cd5a8u);
-    float fVar2   = screenW * scaleW;
-
-    short sh = GetHeight();
-    float screenH = static_cast<float>(static_cast<std::int32_t>(sh));
-
-    // UV horizontal flip when sin < threshold.
-    float threshold = *reinterpret_cast<float*>(0x005d757cu);
-    if (sinVal < threshold) {
-        local_10 = 0x3f800000u;  // u0 = 1.0f (flip left edge)
-        local_8  = 0x3f000000u;  // u1 = 0.5f (unchanged)
-    }
-
-    // Texture handle from global pointer (if non-null).
-    std::uint32_t** texPtrPtr = reinterpret_cast<std::uint32_t**>(0x00771960u);
-    if (*texPtrPtr != nullptr) {
-        texHandle = **texPtrPtr;
-    }
-
-    // Draw call through HudIm2DQuad (0x00450b10).
-    float baseCx  = *reinterpret_cast<float*>(0x005cd65cu);
-    float sinScX  = *reinterpret_cast<float*>(0x005cd274u);
-    float scaleYH = *reinterpret_cast<float*>(0x005cc560u);
-    float yOff    = *reinterpret_cast<float*>(0x005cd658u);
-    float ratio   = *reinterpret_cast<float*>(0x005cc730u);
-
-    float drawX = fVar2 * ((baseCx - sinVal * sinScX) + static_cast<float>(param_1));
-    float drawY = screenH * scaleYH * (static_cast<float>(param_2) + yOff);
-    float drawW = sinVal * ratio * fVar2;
-    float drawH = screenH * scaleYH * ratio;
-
-    struct UVArray { std::uint32_t u0, v0, u1, v1; };
-    UVArray uvs = { local_10, local_c, local_8, local_4 };
-
-    typedef void (__cdecl *DrawQuad_t)(std::uint32_t, float, float, float, float, std::uint32_t, UVArray*);
-    auto DrawQuad = reinterpret_cast<DrawQuad_t>(0x00450b10u);
-    DrawQuad(texHandle, drawX, drawY, drawW, drawH, 0xffffffffu, &uvs);
-
-    // Advance spin angle accumulator.
-    float angVel = *reinterpret_cast<float*>(0x005cc56cu);
-    spinAngle += angVel;
 }
 
-// MASS-DISABLED 2026-05-24 loader-broken-9d: RH_ScopedInstall(HudSpinCoinAnim, 0x00428450);
-// Re-enable refused 2026-05-24: diff-original 5/10 mismatches — reimpl diverges from
-// original on real test vectors. The hooks.csv C4 promotion claim was based on
-// canonical-observation evidence from the loader-broken window, not actual diff.
-// Needs decomp re-read and reimpl rewrite.
+RH_ScopedInstall(HudSpinCoinAnim, 0x00428450);  // re-enabled 2026-05-24 phase-a3 x87-inline-asm rewrite GREEN (10/10)
