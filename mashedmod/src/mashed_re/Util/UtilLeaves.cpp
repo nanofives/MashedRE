@@ -99,4 +99,4 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl IsCarSlotActive(int param
     return val != 0u ? 1u : 0u;
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(IsCarSlotActive, 0x0040e370);
+RH_ScopedInstall(IsCarSlotActive, 0x0040e370);  // re-enabled 2026-05-24 phase-a2-strict GREEN bounds-only test

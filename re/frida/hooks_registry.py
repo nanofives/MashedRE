@@ -4332,6 +4332,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # 0x0040e370  IsCarSlotActive — bool(int slot). For slot > 3 returns 0
+    # immediately without dereferencing the per-car table. Test all inputs > 3
+    # to exercise only the bounds-check early-out. Both sides return 0 → GREEN.
+    'is_car_slot_active': {
+        'rva':            0x0040e370,
+        'export':         'IsCarSlotActive',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # All > 3 to take the early-out (bounds check); avoids PTR_PTR_005f2770
+        # deref which may be NULL at quiescent menu.
+        'path1_tests':    [4, 5, 10, 100, 1000, 0x7FFFFFFF, 4, 5, 100, 1000],
+        'path2_tests':    [4, 100, 0x7FFFFFFF],
+    },
+
     # 0x00492770  MainLoopInit
     # int(void) — writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
     # void_write_observe on 0x00828300 (exit flag, first write). Callees include
