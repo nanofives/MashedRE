@@ -20,12 +20,23 @@
 //                      "main", 256x256) to a D3D9 IDirect3DTexture9 via
 //                      D3d9Render/QuadRenderer and drew it as a centered
 //                      screen-space quad each frame on top of the teal clear.
-// Milestone B5 (this revision): uploads ALL 8 decoded Frontend.piz textures
+// Milestone B5 (prior revision): uploads ALL 8 decoded Frontend.piz textures
 //                               into QuadRenderer slots 0..7 and draws them
 //                               as a fixed 4x2 atlas in the 800x600 window
 //                               (160x160 content per cell, cell pitch 200x270,
 //                               row 0 starts at y=50, row 1 at y=320).
 //                               Window title reflects atlas mode.
+// Milestone B6 (this revision; Phase F gate per FRONTEND_ROADMAP):
+//                               renders ONE textured 2D quad — the 'main'
+//                               texture (256x256 PAL8 from Frontend.piz/
+//                               TEXTURES.TXD) — centered at title-screen
+//                               position scaled to 512x512. This closes
+//                               the "RW replacement layer renders 1
+//                               textured sprite" milestone (M6, smallest-
+//                               viable-demo path). Atlas mode is retained
+//                               as a build-time fallback via kTitleMode
+//                               toggle — set to false for the diagnostic
+//                               4x2 view.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -144,6 +155,24 @@ constexpr float         kAtlasContentSize = 160.f;
 // B5 — uploaded slot count, set once at startup by UploadAllTexturesForAtlas().
 std::uint32_t g_atlas_slot_count = 0;
 
+// B6 — title-screen mode (Phase F gate). When true (default), render a single
+// centered 'main' texture instead of the 4x2 atlas. Set to false to restore
+// the B5 diagnostic atlas view.
+constexpr bool kTitleMode = true;
+
+// B6 — title-screen layout constants. 'main' is 256x256 PAL8; we render it
+// at 512x512 centered, which is half the backbuffer height (600 - 512 = 88
+// vertical headroom). On 800x600 this leaves a 144-pixel left/right border.
+// Slot 0 is reserved for the title texture; atlas slots start at 1.
+constexpr std::uint32_t kTitleSlotIndex   = 0;
+constexpr float         kTitleQuadCenterX = 400.f;
+constexpr float         kTitleQuadCenterY = 300.f;
+constexpr float         kTitleQuadSize    = 512.f;
+// Name of the texture to use as the title-screen logo. Picked because it's
+// the only 256x256 PAL8 in Frontend.piz's TEXTURES.TXD — MASHED's menu code
+// references this exact name at multiple call sites. Per the B3 log row 5.
+constexpr const char    kTitleTexName[]   = "main";
+
 // Distinctive teal clear color so we can confirm visually that D3D9 init
 // worked. RGB(40, 80, 120) reads as a muted dark teal — clearly not the
 // default desktop or window background.
@@ -245,16 +274,24 @@ bool RenderFrame() {
 
     g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
     g_device->BeginScene();
-    // B5: draw an atlas of all uploaded TXD textures in a 4x2 grid. Each
-    // cell is kAtlasContentSize x kAtlasContentSize centered on its grid
-    // position. No-op if zero slots were uploaded.
-    for (std::uint32_t slot = 0; slot < g_atlas_slot_count; ++slot) {
-        const std::uint32_t col = slot % kAtlasCols;
-        const std::uint32_t row = slot / kAtlasCols;
-        const float cx = kAtlasOriginX + static_cast<float>(col) * kAtlasCellPitchX;
-        const float cy = kAtlasOriginY + static_cast<float>(row) * kAtlasCellPitchY;
-        g_quad_renderer.RenderAt(slot, cx, cy,
-                                 kAtlasContentSize, kAtlasContentSize);
+    if constexpr (kTitleMode) {
+        // B6: title-screen MVP — single centered 'main' texture quad.
+        // Phase F (M6) gate: "RW replacement renders 1 textured sprite".
+        if (g_atlas_slot_count > 0) {
+            g_quad_renderer.RenderAt(kTitleSlotIndex,
+                                     kTitleQuadCenterX, kTitleQuadCenterY,
+                                     kTitleQuadSize, kTitleQuadSize);
+        }
+    } else {
+        // B5 diagnostic atlas mode (4x2 grid of all uploaded textures).
+        for (std::uint32_t slot = 0; slot < g_atlas_slot_count; ++slot) {
+            const std::uint32_t col = slot % kAtlasCols;
+            const std::uint32_t row = slot / kAtlasCols;
+            const float cx = kAtlasOriginX + static_cast<float>(col) * kAtlasCellPitchX;
+            const float cy = kAtlasOriginY + static_cast<float>(row) * kAtlasCellPitchY;
+            g_quad_renderer.RenderAt(slot, cx, cy,
+                                     kAtlasContentSize, kAtlasContentSize);
+        }
     }
     g_device->EndScene();
 
@@ -461,10 +498,83 @@ bool DecodeAndDumpTexturesTxd() {
     return true;
 }
 
+// B6: upload the 'main' texture to slot 0 for the title-screen MVP. Looks up
+// the texture by name in the decoded TXD; if not found, falls back to texture 0.
+// Updates g_atlas_slot_count (set to 1 on success) + window title.
+bool UploadTitleTextureForLogo() {
+    if (!g_device || !g_txd.valid()) return false;
+
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (log) {
+        std::fprintf(log, "\nMilestone B6: title-screen mode — uploading '%s'\n",
+                     kTitleTexName);
+    }
+
+    if (!g_quad_renderer.Init(g_device, kWidth, kHeight)) {
+        if (log) {
+            std::fprintf(log, "\nMilestone B6: QuadRenderer.Init failed: %s\n",
+                         g_quad_renderer.last_error());
+            std::fclose(log);
+        }
+        return false;
+    }
+
+    // Locate the title texture by name. Linear scan over the 8 TXD entries —
+    // negligible cost on a one-shot init path.
+    std::uint32_t title_idx = UINT32_MAX;
+    for (std::uint32_t i = 0; i < g_txd.count(); ++i) {
+        const auto& t = g_txd.texture(i);
+        // Case-sensitive match. Names in Mashed's TXDs are stored as written.
+        bool eq = true;
+        for (std::size_t k = 0; k < sizeof(kTitleTexName); ++k) {
+            if (t.name[k] != kTitleTexName[k]) { eq = false; break; }
+        }
+        if (eq) { title_idx = i; break; }
+    }
+    if (title_idx == UINT32_MAX) {
+        if (log) {
+            std::fprintf(log, "  '%s' not found in TXD; falling back to texture 0\n",
+                         kTitleTexName);
+        }
+        title_idx = 0;
+    }
+
+    const auto& tex = g_txd.texture(title_idx);
+    if (!g_quad_renderer.UploadFromTextureToSlot(kTitleSlotIndex, tex)) {
+        if (log) {
+            std::fprintf(log,
+                         "  slot %u upload FAILED: '%s' %ux%u %s — %s\n",
+                         kTitleSlotIndex, tex.name, tex.width(), tex.height(),
+                         mashed_re::Txd::PixelFormatName(tex.format()),
+                         g_quad_renderer.last_error());
+            std::fclose(log);
+        }
+        return false;
+    }
+
+    g_atlas_slot_count = 1;
+
+    if (log) {
+        std::fprintf(log,
+                     "  slot %u: '%s' %ux%u %s mips=%u OK (title-screen quad)\n",
+                     kTitleSlotIndex, tex.name, tex.width(), tex.height(),
+                     mashed_re::Txd::PixelFormatName(tex.format()),
+                     tex.mip_count);
+        std::fclose(log);
+    }
+
+    std::snprintf(g_windowTitle, sizeof(g_windowTitle),
+                  "Mashed RE (Milestone B6 - title screen: '%s' %ux%u)",
+                  tex.name, tex.width(), tex.height());
+    if (g_hwnd) SetWindowTextA(g_hwnd, g_windowTitle);
+    return true;
+}
+
 // B5: upload every decoded TXD texture into a separate QuadRenderer slot so
-// the frame loop can draw them all as an atlas. Stops at kMaxSlots (8 cells
-// for the 4x2 layout). Per-texture upload failures are logged but don't
-// abort the rest. Updates g_atlas_slot_count + window title.
+// the frame loop can draw them all as an atlas. Retained as fallback when
+// kTitleMode is false. Stops at kMaxSlots (8 cells for the 4x2 layout).
+// Per-texture upload failures are logged but don't abort the rest.
+// Updates g_atlas_slot_count + window title.
 bool UploadAllTexturesForAtlas() {
     if (!g_device || !g_txd.valid()) return false;
 
@@ -580,10 +690,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         return 3;
     }
 
-    // B5: now that D3D9 is up and the TXD is decoded, upload every texture
-    // into a QuadRenderer slot for the 4x2 atlas. Failure is non-fatal — the
-    // frame loop still runs and shows a teal clear, just without quads on top.
-    (void)UploadAllTexturesForAtlas();
+    // B5/B6: now that D3D9 is up and the TXD is decoded, upload textures into
+    // QuadRenderer slot(s). B6 default uploads just 'main' to slot 0 for the
+    // title-screen MVP; B5 fallback uploads all 8 textures into a 4x2 atlas
+    // when kTitleMode is false. Failure is non-fatal — the frame loop still
+    // runs and shows a teal clear, just without quads on top.
+    if constexpr (kTitleMode) {
+        (void)UploadTitleTextureForLogo();
+    } else {
+        (void)UploadAllTexturesForAtlas();
+    }
 
     // Main loop: pump messages + render until the user closes the window or
     // hits ESC, or the device gets into an unrecoverable state.
