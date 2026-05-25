@@ -16,6 +16,21 @@ Append-only log of confidence promotions and demotions, written by the `re-class
 2026-05-25  0x0047ad00  FUN_0047ad00  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047ad00.md; U-4537
 2026-05-25  0x0047ade0  FUN_0047ade0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047ade0.md; U-4538
 2026-05-25  0x0047ae80  FUN_0047ae80  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_0047ae80.md; U-4539
+2026-05-25  0x0047aef0  FUN_0047aef0  C1->C2  batch-render-2-s3
+2026-05-25  0x0047af50  FUN_0047af50  C1->C2  batch-render-2-s3
+2026-05-25  0x0047afa0  FUN_0047afa0  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b000  FUN_0047b000  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b0a0  FUN_0047b0a0  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b110  FUN_0047b110  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b160  FUN_0047b160  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b1b0  FUN_0047b1b0  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b200  FUN_0047b200  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b230  FUN_0047b230  C1->C2  batch-render-2-s3
+2026-05-25  0x0047b420  FUN_0047b420  C1->C2  batch-render-2-s3
+2026-05-25  0x00480340  FUN_00480340  C1->C2  batch-render-2-s3
+2026-05-25  0x00483a70  FUN_00483a70  C1->C2  batch-render-2-s3
+2026-05-25  0x00487020  FUN_00487020  C1->C2  batch-render-2-s3
+2026-05-25  0x00487280  FUN_00487280  C1->C2  batch-render-2-s3
 2026-05-25  0x004019d0  FUN_004019d0  C1->C2  batch-render-s1
 2026-05-25  0x00401fe0  FUN_00401fe0  C1->C2  batch-render-s1
 2026-05-25  0x00402240  FUN_00402240  C1->C2  batch-render-s1
