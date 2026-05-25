@@ -1997,3 +1997,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  sweep-20260524-2041  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
 
 2026-05-24  lever3-libs-bulk-attest  117 C1->C2 (D3DX9-shader-compiler 80 + Qhull 35 + D3DX9-fx 2) via subsystem-tag attestation — library residue, terminal C2
+2026-05-25  00423ee0  FUN_00423ee0  C1->C2  batch-frontend-s3; block-2+0x00 team-aggregating getter; re/analysis/frontend_c1_to_c2_s3/FUN_00423ee0.md
+2026-05-25  00423f60  FUN_00423f60  C1->C2  batch-frontend-s3; block-2+0x04 getter+RaceSubMode gate; re/analysis/frontend_c1_to_c2_s3/FUN_00423f60.md
+2026-05-25  00423ff0  FUN_00423ff0  C1->C2  batch-frontend-s3; block-2+0x50 team-aggregating getter; re/analysis/frontend_c1_to_c2_s3/FUN_00423ff0.md
+2026-05-25  00424070  FUN_00424070  C1->C2  batch-frontend-s3; block-2+0x08 getter+RaceSubMode gate; re/analysis/frontend_c1_to_c2_s3/FUN_00424070.md
+2026-05-25  00424100  FUN_00424100  C1->C2  batch-frontend-s3; block-0 getter with active-player guard; re/analysis/frontend_c1_to_c2_s3/FUN_00424100.md
+2026-05-25  004241b0  FUN_004241b0  C1->C2  batch-frontend-s3; one-instruction leaf getter DAT_008994c0; re/analysis/frontend_c1_to_c2_s3/FUN_004241b0.md
+2026-05-25  004241c0  FUN_004241c0  C1->C2  batch-frontend-s3; block-1 getter with active-player guard; re/analysis/frontend_c1_to_c2_s3/FUN_004241c0.md
+2026-05-25  00424270  FUN_00424270  C1->C2  batch-frontend-s3; 14-case rank-sort dispatcher; re/analysis/frontend_c1_to_c2_s3/FUN_00424270.md
+2026-05-25  00424920  FUN_00424920  C1->C2  batch-frontend-s3; end-of-round score accumulator 32 pairs; re/analysis/frontend_c1_to_c2_s3/FUN_00424920.md
+2026-05-25  00424b80  FUN_00424b80  C1->C2  batch-frontend-s3; end-of-match stats flush+debug print; re/analysis/frontend_c1_to_c2_s3/FUN_00424b80.md
+2026-05-25  00425b70  FUN_00425b70  C1->C2  batch-frontend-s3; copter-slot setter DAT_008992a0 stride 0x13; re/analysis/frontend_c1_to_c2_s3/FUN_00425b70.md
+2026-05-25  00425b90  FUN_00425b90  C1->C2  batch-frontend-s3; RpClumpForAllAtomics wrapper; re/analysis/frontend_c1_to_c2_s3/FUN_00425b90.md
+2026-05-25  00425bf0  FUN_00425bf0  C1->C2  batch-frontend-s3; perm.piz pre-load one-liner; re/analysis/frontend_c1_to_c2_s3/FUN_00425bf0.md
+2026-05-25  00425c00  FUN_00425c00  C1->C2  batch-frontend-s3; copter asset registration scan+load; re/analysis/frontend_c1_to_c2_s3/FUN_00425c00.md
+2026-05-25  00425ca0  FUN_00425ca0  C1->C2  batch-frontend-s3; RwFrame spatial-transform setter; re/analysis/frontend_c1_to_c2_s3/FUN_00425ca0.md
