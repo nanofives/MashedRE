@@ -2126,6 +2126,21 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  bulk  C0->C1  981 RVAs  library-band POLICY OVERRIDE  c0-c1-libs-20260525-1900
 2026-05-25  C0->C1  00458630  FUN_00458630  c0-c1-game (powerup sprite lookup)
 2026-05-25  C0->C1  004736c0  FUN_004736c0  c0-c1-game (line/border quad renderer)
+2026-05-25  C1->C2  004756e0  FUN_004756e0  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_004756e0.md
+2026-05-25  C1->C2  00475770  FUN_00475770  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475770.md
+2026-05-25  C1->C2  00475830  FUN_00475830  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475830.md
+2026-05-25  C1->C2  004758d0  FUN_004758d0  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_004758d0.md
+2026-05-25  C1->C2  004759b0  FUN_004759b0  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_004759b0.md
+2026-05-25  C1->C2  00475a00  FUN_00475a00  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475a00.md
+2026-05-25  C1->C2  00475ab0  FUN_00475ab0  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475ab0.md
+2026-05-25  C1->C2  00475d90  FUN_00475d90  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475d90.md
+2026-05-25  C1->C2  00475ea0  FUN_00475ea0  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475ea0.md
+2026-05-25  C1->C2  00475ef0  FUN_00475ef0  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475ef0.md
+2026-05-25  C1->C2  00475f30  FUN_00475f30  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475f30.md
+2026-05-25  C1->C2  00475f50  FUN_00475f50  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475f50.md
+2026-05-25  C1->C2  00475f90  FUN_00475f90  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00475f90.md
+2026-05-25  C1->C2  00476320  FUN_00476320  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00476320.md
+2026-05-25  C1->C2  00476390  FUN_00476390  batch-render-s5; decomp via MCP pool7; plate re/analysis/render_c1_to_c2_s5/FUN_00476390.md
 2026-05-25  C0->C1  00474e60  FUN_00474e60  c0-c1-game (float->x87 angle)
 2026-05-25  C0->C1  005aa1e0  LAB_005aa1e0  c0-c1-game (is-equal comparator wrapper)
 2026-05-25  RESOLVED  U-4309  _DAT_005cd7a8 = PI/180 = 0.0174533 (FUN_00474e60 = deg-to-rad)
