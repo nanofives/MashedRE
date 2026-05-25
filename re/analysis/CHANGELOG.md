@@ -2131,3 +2131,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  RESOLVED  U-4309  _DAT_005cd7a8 = PI/180 = 0.0174533 (FUN_00474e60 = deg-to-rad)
 2026-05-25  RESOLVED  U-4310  LAB_005aa1e0 = callback fn-ptr; target 0x005ade30 inside FUN_005ade10 list-search-and-unlink; sole caller FUN_005aa060
 2026-05-25  RESOLVED  U-4311  &DAT_005ce594="mine" (case 6/c/d); &PTR_DAT_005ce4fc="oil" (case 0x13) in FUN_00458630
+2026-05-25  C1->C2  0042a530  FUN_0042a530  batch-render-s2
+2026-05-25  C1->C2  0042a5d0  FUN_0042a5d0  batch-render-s2
+2026-05-25  C1->C2  0042a740  FUN_0042a740  batch-render-s2
+2026-05-25  C1->C2  0042a7f0  FUN_0042a7f0  batch-render-s2
+2026-05-25  C1->C2  0042a860  FUN_0042a860  batch-render-s2
+2026-05-25  C1->C2  0042a8d0  FUN_0042a8d0  batch-render-s2
+2026-05-25  C1->C2  0042c010  FUN_0042c010  batch-render-s2
+2026-05-25  C1->C2  0042c090  FUN_0042c090  batch-render-s2
+2026-05-25  C1->C2  0042c960  CameraTransitionStateMachine  batch-render-s2
+2026-05-25  C1->C2  0042d420  FUN_0042d420  batch-render-s2
+2026-05-25  C1->C2  0042d4a0  FUN_0042d4a0  batch-render-s2
+2026-05-25  C1->C2  0042f520  FUN_0042f520  batch-render-s2
+2026-05-25  C1->C2  004430e0  FUN_004430e0  batch-render-s2
+2026-05-25  C1->C2  00443210  FUN_00443210  batch-render-s2
+2026-05-25  C1->C2  00448730  FUN_00448730  batch-render-s2
