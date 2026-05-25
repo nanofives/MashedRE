@@ -2073,3 +2073,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  00428a30  FUN_00428a30  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428a30.md  title screen draw w/ attract timer; U-4220 U-4221 U-4222 U-4223; frontend_c1_to_c2_s5
 2026-05-25  00428bf0  FUN_00428bf0  C1->C2  re/analysis/frontend_c1_to_c2_s5/FUN_00428bf0.md  alternate title-screen draw (attract mode); U-4224 U-4225; frontend_c1_to_c2_s5
 2026-05-25  batch-frontend-s6  frontend-c1-to-c2-s6  15x C1->C2 mechanical promotion  rvas=0x00428d30,0x00429240,0x004298c0,0x00429b30,0x00429b70,0x0042a640,0x0042a980,0x0042a9c0,0x0042ad10,0x0042ad90,0x0042add0,0x0042b920,0x0042bde0,0x0042bfb0,0x0042e8b0  bucket=re/analysis/frontend_c1_to_c2_s6  slot=Mashed_pool0  U-4197..U-4205(9)
+2026-05-25  C1->C2  00448220  Frontend::PostRaceResultCamera  batch-frontend-followup-s3
+2026-05-25  C1->C2  0046c700  FUN_0046c700  batch-frontend-followup-s3
+2026-05-25  C1->C2  00472dc0  FUN_00472dc0  batch-frontend-followup-s3
+2026-05-25  C1->C2  00473540  FUN_00473540  batch-frontend-followup-s3
+2026-05-25  C1->C2  004893d0  FUN_004893d0  batch-frontend-followup-s3
+2026-05-25  C1->C2  00493fc0  sub_00493fc0  batch-frontend-followup-s3
+2026-05-25  C1->C2  00493fd0  sub_00493fd0  batch-frontend-followup-s3
+2026-05-25  C1->C2  00494a80  sub_00494a80  batch-frontend-followup-s3
+2026-05-25  C1->C2  00497470  FUN_00497470  batch-frontend-followup-s3
+2026-05-25  C1->C2  004974b0  FUN_004974b0  batch-frontend-followup-s3
+2026-05-25  C1->C2  00497b10  FUN_00497b10  batch-frontend-followup-s3
+2026-05-25  C1->C2  00497b60  FUN_00497b60  batch-frontend-followup-s3
+2026-05-25  C1->C2  004c75e0  FUN_004c75e0  batch-frontend-followup-s3
+2026-05-25  C1->C2  004d8000  FUN_004d8000  batch-frontend-followup-s3
+2026-05-25  C1->C2  004d8c40  FUN_004d8c40  batch-frontend-followup-s3
