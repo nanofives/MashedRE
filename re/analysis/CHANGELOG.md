@@ -1995,3 +1995,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-24  sweep-20260524-2041  scribe-claim  buckets=6 queued, 0 skipped-HOLD
 2026-05-24  batch-ad-s3  particle-promote-ad3  15x C1->C2 mechanical promotion  rvas=0x0049cf00,0x0049d0a0,0x0049d1d0,0x0049d200,0x0049d920,0x0049d960,0x0049d9a0,0x0049da20,0x0049da90,0x0049db00,0x0049dcb0,0x0049de60,0x0049de70,0x0049de80,0x0049de90  bucket=re/analysis/particle_promote_ad3  slot=Mashed_pool12  U-4092,U-4093(2)  S-4194..S-4197(4)  drained-by=sweep-20260524-2041 (added during sweep — original session omitted CHANGELOG row)
 2026-05-24  sweep-20260524-2041  scribe-release  buckets=6 drained  errors=0  plates=90  bookmarks=90  renames=0
+
+2026-05-24  lever3-libs-bulk-attest  117 C1->C2 (D3DX9-shader-compiler 80 + Qhull 35 + D3DX9-fx 2) via subsystem-tag attestation — library residue, terminal C2
