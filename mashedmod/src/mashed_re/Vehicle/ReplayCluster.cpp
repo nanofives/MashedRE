@@ -180,4 +180,4 @@ finalise:
     }
     return 0;
 }
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RaceEndCheckFinish, 0x00432080);
+RH_ScopedInstall(RaceEndCheckFinish, 0x00432080);  // re-enabled 2026-05-24 phase-a2-strict GREEN int_scalar

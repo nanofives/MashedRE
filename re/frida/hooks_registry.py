@@ -4347,6 +4347,19 @@ HOOKS = {
         'path2_tests':    [4, 100, 0x7FFFFFFF],
     },
 
+    # 0x00432080  RaceEndCheckFinish — int(int param_1). Race-end finalization
+    # checker; writes 0 to DAT_0067f19c then mode-dispatches. At quiescent menu
+    # the early-out path (DAT_0067eca4 != 0) may fire; both sides match.
+    'race_end_check_finish': {
+        'rva':            0x00432080,
+        'export':         'RaceEndCheckFinish',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, -1, 100, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x00492770  MainLoopInit
     # int(void) — writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
     # void_write_observe on 0x00828300 (exit flag, first write). Callees include
