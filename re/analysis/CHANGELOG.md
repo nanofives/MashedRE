@@ -2160,3 +2160,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-25  C1->C2  004430e0  FUN_004430e0  batch-render-s2
 2026-05-25  C1->C2  00443210  FUN_00443210  batch-render-s2
 2026-05-25  C1->C2  00448730  FUN_00448730  batch-render-s2
+2026-05-25  C1->C2  00448770  FUN_00448770  batch-render-s3 (RW frame init 3-slot array A; object+0x1011c)
+2026-05-25  C1->C2  00448820  FUN_00448820  batch-render-s3 (RW frame init 5-slot array; object+0x1012c)
+2026-05-25  C1->C2  00448880  FUN_00448880  batch-render-s3 (RW frame init 3-slot array B; object+0x10128)
+2026-05-25  C1->C2  00448cb0  FUN_00448cb0  batch-render-s3 (orbital anim tick; DAT_00896490; sin/cos; 3 angle globals)
+2026-05-25  C1->C2  00448dc0  FUN_00448dc0  batch-render-s3 (5-slot per-frame update via FUN_00442410/20)
+2026-05-25  C1->C2  00448e20  FUN_00448e20  batch-render-s3 (orbital anim tick; DAT_00896480; mirror of FUN_00448cb0)
+2026-05-25  C1->C2  00448ef0  FUN_00448ef0  batch-render-s3 (tick dispatcher: cb0+e20+dc0 + sinusoidal bob)
+2026-05-25  C1->C2  004491e0  SkyDomeUpdatePos  batch-render-s3 (4-slot sky clumps camera-relative; scale 180.0f)
+2026-05-25  C1->C2  0045b990  FUN_0045b990  batch-render-s3 (render frame dispatcher; 2 ticks + fn-ptr table)
+2026-05-25  C1->C2  0045de80  FUN_0045de80  batch-render-s3 (track audio zone-to-channel mapper; 40 channels)
+2026-05-25  C1->C2  0045e160  FUN_0045e160  batch-render-s3 (track-36 audio waypoint init; 11 pts type 1)
+2026-05-25  C1->C2  0045e2a0  FUN_0045e2a0  batch-render-s3 (track-0 audio waypoint init; 15 pts type 2)
+2026-05-25  C1->C2  00462950  FUN_00462950  batch-render-s3 (course audio loader; pcdics path; RWS stream; DS buffers)
+2026-05-25  C1->C2  004671c0  GetOverlayCamera  batch-render-s3 (leaf; returns DAT_006905b4)
+2026-05-25  DEFERRED  004492b0  SkyDomeRender  batch-render-s3 (no Ghidra function at address; needs function_create; U-4376)
