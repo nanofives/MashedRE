@@ -70,7 +70,7 @@ RwTexDictionarySetCurrent(std::uint32_t param_1)
     return 1u;  // cited 0x004c5815
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RwTexDictionarySetCurrent, 0x004c5800);
+RH_ScopedInstall(RwTexDictionarySetCurrent, 0x004c5800);  // re-enabled 2026-05-24 phase-a2-strict GREEN int_scalar (always returns 1)
 
 // ---------------------------------------------------------------------------
 // 0x004c5820  FUN_004c5820  RwTexDictionaryGetCurrent   (15 bytes)
@@ -98,7 +98,7 @@ RwTexDictionaryGetCurrent()
     return *reinterpret_cast<std::uint32_t*>(rw_base + 0x1cu + rw_slot);
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(RwTexDictionaryGetCurrent, 0x004c5820);
+RH_ScopedInstall(RwTexDictionaryGetCurrent, 0x004c5820);  // re-enabled 2026-05-24 phase-a2-strict GREEN getter
 
 // ---------------------------------------------------------------------------
 // 0x004c5a00  FUN_004c5a00  RwTextureCreate   (89 bytes)

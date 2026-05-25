@@ -4272,6 +4272,66 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000005, 0xDEADBEEF],
     },
 
+    # 0x004b6520  ZeroFillWrapper — memset(p1, 0, p2).
+    # Pure CRT wrapper. arg_type='bytes_inplace' allocates a buffer per side,
+    # writes input bytes via test.init, calls fn(buf, len), fingerprints
+    # readback. Both sides should produce all-zero buffer.
+    'zero_fill_wrapper': {
+        'rva':            0x004b6520,
+        'export':         'ZeroFillWrapper',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type':       'bytes_inplace',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            {'init': [0xAA] * 8,  'len': 8},
+            {'init': [0xFF] * 16, 'len': 16},
+            {'init': [0x55] * 32, 'len': 32},
+            {'init': [0xCD] * 64, 'len': 64},
+            {'init': [0xDE,0xAD,0xBE,0xEF,0xCA,0xFE,0xBA,0xBE], 'len': 8},
+            {'init': [],          'len': 0},
+            {'init': [0x42] * 4,  'len': 4},
+            {'init': [0x99] * 128,'len': 128},
+            {'init': [0x77] * 1,  'len': 1},
+            {'init': [0x33] * 256,'len': 256},
+        ],
+        'path2_tests':    [
+            {'init': [0xAA] * 8,  'len': 8},
+            {'init': [],          'len': 0},
+            {'init': [0xFF] * 32, 'len': 32},
+        ],
+    },
+
+    # 0x004c5800  RwTexDictionarySetCurrent — writes param_1 to dynamic
+    # vtable-slot address (rw_base + 0x1c + rw_slot). Returns 1.
+    # arg_type='int_scalar': just verifies both sides return 1 consistently.
+    # The write side-effect can't be observed by void_setter_observe (dynamic
+    # slot address), but both sides write to same address — restored by
+    # the immediate-next call from MASHED's natural execution.
+    'rw_tex_dictionary_set_current': {
+        'rva':            0x004c5800,
+        'export':         'RwTexDictionarySetCurrent',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF,
+                           0x80000000, 0x55555555, 0xAAAAAAAA, 0x12345678, 0],
+        'path2_tests':    [0, 0xDEADBEEF, 0],
+    },
+
+    # 0x004c5820  RwTexDictionaryGetCurrent — symmetric getter for setter above.
+    # Returns *(rw_base + 0x1c + rw_slot). Both sides read same global so
+    # return same value. arg_type='none' — value is whatever's currently
+    # stored (deterministic across both calls).
+    'rw_tex_dictionary_get_current': {
+        'rva':            0x004c5820,
+        'export':         'RwTexDictionaryGetCurrent',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x00492770  MainLoopInit
     # int(void) — writes 4 fixed globals to 0 plus state-machine=1 plus 2 callees.
     # void_write_observe on 0x00828300 (exit flag, first write). Callees include

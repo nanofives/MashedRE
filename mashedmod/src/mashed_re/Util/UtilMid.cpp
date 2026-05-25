@@ -144,7 +144,16 @@ extern "C" __declspec(dllexport) int __cdecl StricmpThunk(const char* s1, const 
     return _stricmp(s1, s2);
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(StricmpThunk, 0x004b302f);
+// MASS-DISABLED 2026-05-24 reimpl-stricmp-locale-divergence: RH_ScopedInstall(StricmpThunk, 0x004b302f);
+// Phase A2-strict 2026-05-24: synthetic diff revealed real reimpl divergence.
+// Orig's __stricmp at 0x004b302f uses MASVC CRT path with locale-aware
+// FUN_004ac869 character mapping; returns normalized character-diff per
+// the locale tables. Our reimpl calls C runtime _stricmp which returns
+// raw ASCII char-diff. For 'z' vs 'a' the orig returned 1 but reimpl
+// returned 25 (122-97). Functionally equivalent (sign matches) but bit-
+// identity fails; most callers only check ==0. Fix path: tunnel through
+// to MASHED's ___ascii_stricmp at known RVA, OR re-implement the locale
+// table walk. Deferred — not blocking.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 0x00429aa0  GameStateSlotsFill
