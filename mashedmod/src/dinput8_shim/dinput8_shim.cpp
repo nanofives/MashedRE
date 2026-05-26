@@ -33,6 +33,16 @@ namespace {
 HMODULE g_HookAsi = nullptr;
 
 void LoadDevAsi(HINSTANCE hThis) {
+    // Honour MASHED_RE_NO_AUTO_HOOK: Frida A/B harness sets this env var to
+    // prevent the dinput8 auto-load.  Without this guard, dinput8 pre-loads the
+    // dev-path ASI before Frida attaches, blocking Module.load() in the Frida
+    // agent (Windows dedup by module base-name).
+    {
+        char buf[4] = {0};
+        DWORD r = GetEnvironmentVariableA("MASHED_RE_NO_AUTO_HOOK", buf, sizeof(buf));
+        if (r > 0 && buf[0] != '\0' && buf[0] != '0') return;
+    }
+
     wchar_t our_dir[MAX_PATH];
     DWORD got = GetModuleFileNameW(hThis, our_dir, MAX_PATH);
     if (got == 0 || got >= MAX_PATH) return;

@@ -149,6 +149,7 @@
 
 const CONFIG = $CONFIG$;
 const ASI_PATH        = CONFIG.asi_path;
+const ASI_MODULE_NAME = CONFIG.asi_module_name || 'mashed_re_dev.asi';
 const TARGET_ADDR     = ptr(CONFIG.target_rva);
 const LUT_BASE_ADDR   = ptr('0x007d3ff8');
 const LUT_OFFSET_ADDR = ptr('0x007d3ffc');
@@ -575,9 +576,9 @@ function runDiff() {
     var module;
     try {
         Module.load(ASI_PATH);
-        module = Process.findModuleByName('mashed_re_dev.asi');
+        module = Process.findModuleByName(ASI_MODULE_NAME);
         if (module === null) {
-            send({ type: 'error', msg: 'findModuleByName returned null after Module.load' });
+            send({ type: 'error', msg: 'findModuleByName(' + ASI_MODULE_NAME + ') returned null after Module.load' });
             return;
         }
     } catch (e) {

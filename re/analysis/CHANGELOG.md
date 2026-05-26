@@ -2683,3 +2683,11 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  00423ba0  PlayerScoreAccD  c3-batch-s-s2 (per-player accessor base 0x00899f78 stride 0x4e dwords; cumulative counterpart of B; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
 2026-05-26  C2->C3  00423bc0  PlayerScoreTeamAccC  c3-batch-s-s2 (team-aware accessor base 0x00899a9c stride 0x4e dwords; menu team-mode==0 direct-read; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
 2026-05-26  C2->C3  00423c40  PlayerScoreTeamAccBase  c3-batch-s-s2 (team-aware accessor base 0x00899a40 stride 0x4e dwords; no race-sub-mode guard; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  004260a0  GetDat00657438  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_00657438.csv
+2026-05-26  C2->C3  004260b0  GetDat0065743c  c3-batch-s-s5  Frida A/B 10/10 GREEN; C2+ caller FUN_00487280; log/diff_get_dat_0065743c.csv
+2026-05-26  C2->C3  00426bc0  GetDat0066d6e0  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_0066d6e0.csv
+2026-05-26  C2->C3  00426bd0  GetTableEntry0066d658  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_table_entry_0066d658.csv
+2026-05-26  C2->C3  004260a0  GetDat00657438  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_00657438.csv
+2026-05-26  C2->C3  004260b0  GetDat0065743c  c3-batch-s-s5  Frida A/B 10/10 GREEN; C2+ caller FUN_00487280; log/diff_get_dat_0065743c.csv
+2026-05-26  C2->C3  00426bc0  GetDat0066d6e0  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_0066d6e0.csv
+2026-05-26  C2->C3  00426bd0  GetTableEntry0066d658  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_table_entry_0066d658.csv
