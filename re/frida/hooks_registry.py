@@ -9366,4 +9366,178 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3-batch-t-s2 (2026-05-26): Frontend menu-miscellaneous leaves.
+    # 5 of 10 candidates GREEN; refused: 0x00422aa0 (caller C1), 0x00426cb0
+    # (callers C1), 0x00425b90 (callees C1), 0x00424270 (no harness arg_type
+    # fit for void(int*, int, int)), 0x0042bfb0 (no harness arg_type fit for
+    # 6-arg conditional writer).
+    # See mashedmod/src/mashed_re/Frontend/MenuMiscLeaves_t2.cpp.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00423cc0  PlayerScoreTeamAccGatedB
+    # Team-aware getter, block-1 +0x04 (base 0x00899a44), RaceSubMode gate.
+    # At quiescent main menu: GetRaceSubMode()!=4 (typically 0), GetTeamMode()==0
+    # → direct-read path. Both orig and reimpl read same field → bit-identical.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423cc0.md
+    'player_score_team_acc_gated_b': {
+        'rva':            0x00423cc0,
+        'export':         'PlayerScoreTeamAccGatedB',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423d50  PlayerScoreTeamAccBaseB
+    # Team-aware getter, block-1 +0x50 (base 0x00899a90), no race-sub-mode gate.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423d50.md
+    'player_score_team_acc_base_b': {
+        'rva':            0x00423d50,
+        'export':         'PlayerScoreTeamAccBaseB',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423dd0  PlayerScoreTeamAccGatedC
+    # Team-aware getter, block-1 +0x08 (base 0x00899a48), RaceSubMode gate.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423dd0.md
+    'player_score_team_acc_gated_c': {
+        'rva':            0x00423dd0,
+        'export':         'PlayerScoreTeamAccGatedC',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423e60  PlayerScoreTeamAccCumB
+    # Team-aware getter, block-2 +0x5c (base 0x00899f7c), no race-sub-mode gate.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423e60.md
+    'player_score_team_acc_cum_b': {
+        'rva':            0x00423e60,
+        'export':         'PlayerScoreTeamAccCumB',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00424920  EndOfRoundAccumulator  void()
+    # Pure leaf: 32 sequential `block2_field += block1_field` adds across 4
+    # players × 8 fields. No branches, no calls.
+    # arg_type='state_machine_observe': inject 32 input globals (block-1
+    # source fields), call fn(), read back 32 output globals (block-2 dest
+    # fields). Save/restore wraps everything so the test is non-destructive.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00424920.md
+    'end_of_round_accumulator': {
+        'rva':            0x00424920,
+        'export':         'EndOfRoundAccumulator',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            # Player 0 block-1 sources.
+            {'addr': 0x00899a40, 'type': 'u32'},
+            {'addr': 0x00899a94, 'type': 'u32'},
+            {'addr': 0x00899a44, 'type': 'u32'},
+            {'addr': 0x00899a98, 'type': 'u32'},
+            {'addr': 0x00899a48, 'type': 'u32'},
+            {'addr': 0x00899a90, 'type': 'u32'},
+            {'addr': 0x00899a9c, 'type': 'u32'},
+            {'addr': 0x008999a0, 'type': 'u32'},
+            # Player 1 block-1 sources.
+            {'addr': 0x00899b78, 'type': 'u32'},
+            {'addr': 0x00899bcc, 'type': 'u32'},
+            {'addr': 0x00899b7c, 'type': 'u32'},
+            {'addr': 0x00899bd0, 'type': 'u32'},
+            {'addr': 0x00899b80, 'type': 'u32'},
+            {'addr': 0x00899bc8, 'type': 'u32'},
+            {'addr': 0x00899bd4, 'type': 'u32'},
+            {'addr': 0x00899ad8, 'type': 'u32'},
+            # Player 2 block-1 sources.
+            {'addr': 0x00899cb0, 'type': 'u32'},
+            {'addr': 0x00899d04, 'type': 'u32'},
+            {'addr': 0x00899cb4, 'type': 'u32'},
+            {'addr': 0x00899d08, 'type': 'u32'},
+            {'addr': 0x00899cb8, 'type': 'u32'},
+            {'addr': 0x00899d00, 'type': 'u32'},
+            {'addr': 0x00899d0c, 'type': 'u32'},
+            {'addr': 0x00899c10, 'type': 'u32'},
+            # Player 3 block-1 sources.
+            {'addr': 0x00899de8, 'type': 'u32'},
+            {'addr': 0x00899e3c, 'type': 'u32'},
+            {'addr': 0x00899dec, 'type': 'u32'},
+            {'addr': 0x00899e40, 'type': 'u32'},
+            {'addr': 0x00899df0, 'type': 'u32'},
+            {'addr': 0x00899e38, 'type': 'u32'},
+            {'addr': 0x00899e44, 'type': 'u32'},
+            {'addr': 0x00899d48, 'type': 'u32'},
+        ],
+        'output_globals': [
+            # Player 0 block-2 dests (in adds order).
+            {'addr': 0x00899f20, 'type': 'u32'},
+            {'addr': 0x00899f74, 'type': 'u32'},
+            {'addr': 0x00899f24, 'type': 'u32'},
+            {'addr': 0x00899f78, 'type': 'u32'},
+            {'addr': 0x00899f28, 'type': 'u32'},
+            {'addr': 0x00899f70, 'type': 'u32'},
+            {'addr': 0x00899f7c, 'type': 'u32'},
+            {'addr': 0x00899e80, 'type': 'u32'},
+            # Player 1 block-2 dests.
+            {'addr': 0x0089a058, 'type': 'u32'},
+            {'addr': 0x0089a0ac, 'type': 'u32'},
+            {'addr': 0x0089a05c, 'type': 'u32'},
+            {'addr': 0x0089a0b0, 'type': 'u32'},
+            {'addr': 0x0089a060, 'type': 'u32'},
+            {'addr': 0x0089a0a8, 'type': 'u32'},
+            {'addr': 0x0089a0b4, 'type': 'u32'},
+            {'addr': 0x00899fb8, 'type': 'u32'},
+            # Player 2 block-2 dests.
+            {'addr': 0x0089a190, 'type': 'u32'},
+            {'addr': 0x0089a1e4, 'type': 'u32'},
+            {'addr': 0x0089a194, 'type': 'u32'},
+            {'addr': 0x0089a1e8, 'type': 'u32'},
+            {'addr': 0x0089a198, 'type': 'u32'},
+            {'addr': 0x0089a1e0, 'type': 'u32'},
+            {'addr': 0x0089a1ec, 'type': 'u32'},
+            {'addr': 0x0089a0f0, 'type': 'u32'},
+            # Player 3 block-2 dests.
+            {'addr': 0x0089a2c8, 'type': 'u32'},
+            {'addr': 0x0089a31c, 'type': 'u32'},
+            {'addr': 0x0089a2cc, 'type': 'u32'},
+            {'addr': 0x0089a320, 'type': 'u32'},
+            {'addr': 0x0089a2d0, 'type': 'u32'},
+            {'addr': 0x0089a318, 'type': 'u32'},
+            {'addr': 0x0089a324, 'type': 'u32'},
+            {'addr': 0x0089a228, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # 32 inputs each — array of 32 values. Use varied non-zero inputs to
+        # exercise add-paths; expected output is input + saved-pre-call-output.
+        'path1_tests': [
+            [1] * 32,
+            [2] * 32,
+            [0] * 32,
+            [0x10] * 32,
+            [0x100] * 32,
+            [0xff] * 32,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+             17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+            [0x1000] * 32,
+            [0x7fff] * 32,
+            [0] * 32,
+        ],
+        'path2_tests': [
+            [1] * 32,
+            [0] * 32,
+            [0x10] * 32,
+        ],
+    },
+
 }
