@@ -8794,4 +8794,46 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-s-s1 — Frontend/SlotZeroers_s1.cpp (C2->C3)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00422aa0  SlotFieldSet  void(int slot, uint32 value)
+    # Pure leaf setter. Writes param_2 into dword at
+    #   &DAT_0064131c + param_1 * 0xf40
+    # (DAT_0064131c = DAT_006403e8 + 0xf34; field +0xf34 within the 0xf40-byte
+    # per-slot block.)
+    # arg_type='entity_field_set': call fn(p1, p2), read back
+    #   CONFIG.target_global + p1 * CONFIG.entity_byte_stride as observable uint32.
+    # target_global=0x0064131c, entity_byte_stride=0xf40.
+    # Tests: vary slot (0..3) and value (0, sentinel, max).
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00422aa0.md
+    'slot_field_set': {
+        'rva':                  0x00422aa0,
+        'export':               'SlotFieldSet',
+        'signature':            {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':             'entity_field_set',
+        'target_global':        0x0064131c,
+        'entity_byte_stride':   0xf40,
+        'lut_root_delta':       0,
+        # [slot_index, value_to_write]
+        'path1_tests': [
+            [0, 0x00000000],
+            [0, 0x00000001],
+            [0, 0xDEADBEEF],
+            [0, 0xFFFFFFFF],
+            [1, 0x00000000],
+            [1, 0x12345678],
+            [2, 0x00000000],
+            [2, 0xCAFEBABE],
+            [3, 0x00000000],
+            [3, 0xABCDABCD],
+        ],
+        'path2_tests': [
+            [0, 0x00000000],
+            [0, 0xDEADBEEF],
+            [1, 0x12345678],
+        ],
+    },
+
 }
