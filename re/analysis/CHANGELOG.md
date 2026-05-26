@@ -2673,3 +2673,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  00426020  GlobalDat00646e58Get     c3-batch-s-s4  evidence=log/diff_global_dat_00646e58_get.csv  GREEN 10/10  leaf-exemption
 2026-05-26  C2->C3  00426080  GlobalDat00656ed8Get     c3-batch-s-s4  evidence=log/diff_global_dat_00656ed8_get.csv  GREEN 10/10  leaf-exemption
 2026-05-26  C2->C3  00426090  GlobalDat0066ce58Get     c3-batch-s-s4  evidence=log/diff_global_dat_0066ce58_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00423b40  PlayerScoreAccA  c3-batch-s-s2 (per-player accessor base 0x00899a94 stride 0x4e dwords; GetRaceSubMode==4 guard; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423b60  PlayerScoreAccB  c3-batch-s-s2 (per-player accessor base 0x00899a98 stride 0x4e dwords; twin of PlayerScoreAccA; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423ba0  PlayerScoreAccD  c3-batch-s-s2 (per-player accessor base 0x00899f78 stride 0x4e dwords; cumulative counterpart of B; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423bc0  PlayerScoreTeamAccC  c3-batch-s-s2 (team-aware accessor base 0x00899a9c stride 0x4e dwords; menu team-mode==0 direct-read; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423c40  PlayerScoreTeamAccBase  c3-batch-s-s2 (team-aware accessor base 0x00899a40 stride 0x4e dwords; no race-sub-mode guard; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)

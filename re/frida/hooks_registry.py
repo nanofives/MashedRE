@@ -8836,4 +8836,91 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-s-s2 — frontend per-player score accessors (C2->C3)
+    # Frontend/SlotZeroers_s2.cpp
+    # Five per-player score getters that read from 0x00899a40 block,
+    # stride 0x4e dwords (= 0x138 bytes) per player.
+    # Two callee patterns:
+    #   GetRaceSubMode (0x0042f6a0, C3) — race sub-mode guard (== 4 → return 0)
+    #   GetDat0067ea64 (0x0042f500, C4) — team mode flag (== 0 → direct read)
+    # At quiescent main menu: race sub-mode != 4, team mode == 0.
+    # Strategy: int_scalar; player indices 0..3 repeated.
+    # Both paths read from the same global arrays; A/B must be bit-identical.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423b40.md
+    #      re/analysis/frontend_c1_to_c2_s2/0x00423b60.md
+    #      re/analysis/frontend_c1_to_c2_s2/0x00423ba0.md
+    #      re/analysis/frontend_c1_to_c2_s2/0x00423bc0.md
+    #      re/analysis/frontend_c1_to_c2_s2/0x00423c40.md
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00423b40  PlayerScoreAccA
+    # Per-player score accessor #1. Guard: GetRaceSubMode()==4 → return 0.
+    # Returns (&DAT_00899a94)[param_1 * 0x4e] (dword array, stride 0x4e dwords).
+    # At main menu: race sub-mode != 4 → takes array-read path.
+    # Both orig and reimpl read same global → bit-identical.
+    'player_score_acc_a': {
+        'rva':            0x00423b40,
+        'export':         'PlayerScoreAccA',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Player indices 0..3 (only 4 players). Repeat to reach 10 vectors.
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423b60  PlayerScoreAccB
+    # Per-player score accessor #2. Twin of PlayerScoreAccA with base 0x00899a98.
+    # Same guard and strategy.
+    'player_score_acc_b': {
+        'rva':            0x00423b60,
+        'export':         'PlayerScoreAccB',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423ba0  PlayerScoreAccD
+    # Per-player score accessor #4. Base 0x00899f78. Same guard and strategy.
+    'player_score_acc_d': {
+        'rva':            0x00423ba0,
+        'export':         'PlayerScoreAccD',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423bc0  PlayerScoreTeamAccC
+    # Team-aware accessor. Field at base 0x00899a9c, stride 0x4e dwords.
+    # At main menu: GetDat0067ea64()==0 (no teams) → direct-read path.
+    # Returns (&DAT_00899a9c)[param_1 * 0x4e] — player data stable at menu.
+    'player_score_team_acc_c': {
+        'rva':            0x00423bc0,
+        'export':         'PlayerScoreTeamAccC',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423c40  PlayerScoreTeamAccBase
+    # Team-aware accessor. Field at base 0x00899a40 (player struct base field +0x000).
+    # No race-sub-mode guard. Same team-mode strategy as PlayerScoreTeamAccC.
+    # At main menu: GetDat0067ea64()==0 (no teams) → direct-read path.
+    'player_score_team_acc_base': {
+        'rva':            0x00423c40,
+        'export':         'PlayerScoreTeamAccBase',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
 }
