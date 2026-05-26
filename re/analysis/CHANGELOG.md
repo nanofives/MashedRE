@@ -2652,3 +2652,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  00425ee0  SlotWordPtrGet           c3-batch-s-s4  evidence=log/diff_slot_word_ptr_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00425ef0  ActiveSlotCount          c3-batch-s-s4  evidence=log/diff_active_slot_count.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00426020  GlobalDat00646e58Get     c3-batch-s-s4  evidence=log/diff_global_dat_00646e58_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00426080  GlobalDat00656ed8Get     c3-batch-s-s4  evidence=log/diff_global_dat_00656ed8_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00426090  GlobalDat0066ce58Get     c3-batch-s-s4  evidence=log/diff_global_dat_0066ce58_get.csv  GREEN 10/10  leaf-exemption
