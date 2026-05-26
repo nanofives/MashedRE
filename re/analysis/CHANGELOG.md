@@ -2702,3 +2702,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C3-REFUSED  0042a640  PathBuilderLoad  c3-batch-s-s6; no Frida arg_type for char* filename; D-11028 filed
 2026-05-26  C3-REFUSED  0042bde0  HudRectEmitter  c3-batch-s-s6; Frida RED 10/10 crashes (live D3D9 state required); D-11029 filed
 2026-05-26  frida-sweep-20260526-1415  frida-sweep-release  branches=6 (c3/batch-s-s1..s6)  integration-diff=GREEN  hooks=20
+2026-05-26  C4->C3  0x004cc160  FUN_004cc160                     frida-sweep-20260526-1415-PhaseA  reason=loader-broken-9d-audit-window-no-registry-entry
+2026-05-26  C4->C3  0x004c5c00  LinkedListStringSearch          frida-sweep-20260526-1415-PhaseA  reason=loader-broken-9d-audit-window-arg_type-REFUSED
+2026-05-26  Phase-A-evidence-update  19 frontend C4 rows verified post-loader-fix (9 full PASS + 10 install-only-verified); 2 demoted to C3 (LinkedListStringSearch, FUN_004cc160)
