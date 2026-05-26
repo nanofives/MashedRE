@@ -1,0 +1,26 @@
+# Merge drivers for frida-sweep / ghidra-sweep append-only files.
+#
+# These four files are touched by EVERY parallel-fanout worker branch and
+# conflict predictably at sweep time. The conflict pattern is always
+# "union of additions" (each branch adds dict entries / log lines / build
+# entries near the end of the file). `merge=union` is git's built-in
+# driver that keeps both sides without conflict markers — equivalent to
+# the manual mechanical resolution the frida-sweep skill describes.
+#
+# Caveat: union merges naively concatenate conflicting hunks. For these
+# four files that's exactly right because each branch ADDS in different
+# regions. If two branches ever modify the SAME line (e.g. rename an
+# existing entry), union will duplicate it — surface the resulting
+# syntactic issue in build / re-classify and resolve by hand.
+#
+# These do NOT apply to merges from main into a worktree (which never
+# conflict in the first place). They apply at the frida-sweep `git merge`
+# step where worker branches converge.
+
+mashedmod/build.bat              merge=union
+re/frida/hooks_registry.py       merge=union
+re/analysis/CHANGELOG.md         merge=union
+re/PROMOTION_QUEUE.md            merge=union
+
+# hooks.csv is per-row data with strict format. Auto-union is too risky
+# (could produce duplicate-RVA rows or torn rows). Keep manual resolution.
