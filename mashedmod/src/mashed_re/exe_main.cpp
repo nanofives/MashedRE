@@ -37,6 +37,15 @@
 //                               as a build-time fallback via kTitleMode
 //                               toggle — set to false for the diagnostic
 //                               4x2 view.
+// Milestone B11 (this revision; Phase H input slice): adds DirectInput8
+//                               keyboard polling. Per-frame reads 256-byte
+//                               key state, updates the window title with
+//                               arrow-key / Enter / Esc state. Proves the
+//                               DInput dependency from STANDALONE_DEPS.md
+//                               is wired correctly. Future H milestones
+//                               feed these reads into MASHED's input
+//                               globals so frontend_mode_dispatch can
+//                               navigate menus.
 // Milestone B7 (this revision; Phase G wedge): VirtualAlloc-maps the
 //                               MASHED.exe data-section address range
 //                               (0x00500000..0x009fffff) into the
@@ -92,6 +101,8 @@
 
 #include <windows.h>
 #include <d3d9.h>
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -103,6 +114,8 @@
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
 
 namespace {
 
@@ -118,6 +131,13 @@ bool               g_active        = true;
 IDirect3D9*        g_d3d           = nullptr;
 IDirect3DDevice9*  g_device        = nullptr;
 D3DPRESENT_PARAMETERS g_pp         = {};
+
+// B11 — DirectInput8 keyboard state. MASHED stashes its DInput device inside
+// FUN_004997b0 / FUN_004998a0 callchain; we own ours directly.
+IDirectInput8A*       g_dinput        = nullptr;
+IDirectInputDevice8A* g_kbd           = nullptr;
+unsigned char         g_keys[256]     = {};   // raw DInput key state, set 0x80 if held
+unsigned char         g_keys_prev[256]= {};   // last frame, for edge detection
 
 constexpr int   kWidth         = 800;
 constexpr int   kHeight        = 600;
@@ -245,6 +265,104 @@ bool PumpOnce() {
         WaitMessage();
     }
     return g_quit;
+}
+
+// B11 — DirectInput8 keyboard init. Called after the window is created so we
+// can set the cooperative level against g_hwnd. Background+NonExclusive lets
+// us read keys without stealing focus, matching the title-screen UX. Failures
+// are non-fatal — the frame loop still renders the title-screen quad, just
+// without keyboard navigation.
+bool InitDirectInput(HINSTANCE hInstance) {
+    HRESULT hr = DirectInput8Create(
+        hInstance,
+        DIRECTINPUT_VERSION,
+        IID_IDirectInput8A,
+        reinterpret_cast<void**>(&g_dinput),
+        nullptr);
+    if (FAILED(hr) || !g_dinput) {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                         "\nMilestone B11: DirectInput8Create FAILED hr=0x%08lX\n",
+                         static_cast<unsigned long>(hr));
+            std::fclose(log);
+        }
+        return false;
+    }
+    hr = g_dinput->CreateDevice(GUID_SysKeyboard, &g_kbd, nullptr);
+    if (FAILED(hr) || !g_kbd) {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                         "\nMilestone B11: CreateDevice(SysKeyboard) FAILED hr=0x%08lX\n",
+                         static_cast<unsigned long>(hr));
+            std::fclose(log);
+        }
+        g_dinput->Release(); g_dinput = nullptr;
+        return false;
+    }
+    g_kbd->SetDataFormat(&c_dfDIKeyboard);
+    g_kbd->SetCooperativeLevel(g_hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+    g_kbd->Acquire();
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (log) {
+        std::fprintf(log,
+                     "\nMilestone B11: DirectInput8 + keyboard device acquired "
+                     "(cooperative = background+nonexclusive)\n");
+        std::fclose(log);
+    }
+    return true;
+}
+
+void ShutdownDirectInput() {
+    if (g_kbd)    { g_kbd->Unacquire(); g_kbd->Release(); g_kbd = nullptr; }
+    if (g_dinput) { g_dinput->Release(); g_dinput = nullptr; }
+}
+
+// B11 — single-shot keyboard poll. Saves prior state, fetches new state.
+// Re-acquires on focus loss (DIERR_INPUTLOST / DIERR_NOTACQUIRED) so the
+// next poll succeeds.
+void PollKeyboard() {
+    if (!g_kbd) return;
+    std::memcpy(g_keys_prev, g_keys, sizeof(g_keys));
+    HRESULT hr = g_kbd->GetDeviceState(sizeof(g_keys), g_keys);
+    if (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED) {
+        g_kbd->Acquire();
+        std::memset(g_keys, 0, sizeof(g_keys));
+    } else if (FAILED(hr)) {
+        std::memset(g_keys, 0, sizeof(g_keys));
+    }
+}
+
+// B11 — per-frame title refresh showing current arrow/Enter/Esc state. This
+// is the proof-of-concept: keystrokes change the window title in real time.
+// Updates only when the key set changes (avoids SetWindowText spam).
+void UpdateTitleFromKeyboard() {
+    if (!g_kbd || !g_hwnd) return;
+    const bool up    = (g_keys[DIK_UP]    & 0x80) != 0;
+    const bool down  = (g_keys[DIK_DOWN]  & 0x80) != 0;
+    const bool left  = (g_keys[DIK_LEFT]  & 0x80) != 0;
+    const bool right = (g_keys[DIK_RIGHT] & 0x80) != 0;
+    const bool enter = (g_keys[DIK_RETURN]& 0x80) != 0;
+    const bool esc   = (g_keys[DIK_ESCAPE]& 0x80) != 0;
+    // Pack into a single int so we only refresh title on transitions.
+    static int s_last_packed = -1;
+    const int packed = (up<<0)|(down<<1)|(left<<2)|(right<<3)|(enter<<4)|(esc<<5);
+    if (packed == s_last_packed) return;
+    s_last_packed = packed;
+    char buf[256];
+    std::snprintf(buf, sizeof(buf),
+                  "Mashed RE (B11 keys: %s%s%s%s%s%s)",
+                  up    ? "UP "    : "",
+                  down  ? "DOWN "  : "",
+                  left  ? "LEFT "  : "",
+                  right ? "RIGHT " : "",
+                  enter ? "ENTER " : "",
+                  esc   ? "ESC "   : "");
+    if (!up && !down && !left && !right && !enter && !esc) {
+        std::snprintf(buf, sizeof(buf), "Mashed RE (B11 keys: -)");
+    }
+    SetWindowTextA(g_hwnd, buf);
 }
 
 bool InitD3D9() {
@@ -983,6 +1101,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         return 3;
     }
 
+    // B11: DirectInput8 keyboard. Failure is non-fatal — render loop still
+    // works; the window title just won't reflect key state.
+    (void)InitDirectInput(hInstance);
+
     // B5/B6: now that D3D9 is up and the TXD is decoded, upload textures into
     // QuadRenderer slot(s). B6 default uploads just 'main' to slot 0 for the
     // title-screen MVP; B5 fallback uploads all 8 textures into a 4x2 atlas
@@ -995,8 +1117,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     }
 
     // Main loop: pump messages + render until the user closes the window or
-    // hits ESC, or the device gets into an unrecoverable state.
+    // hits ESC, or the device gets into an unrecoverable state. Per frame we
+    // also poll the keyboard (B11) and refresh the window title to reflect
+    // current key state.
     while (!PumpOnce()) {
+        PollKeyboard();
+        UpdateTitleFromKeyboard();
+        // B11: ESC via DirectInput also exits the app (in addition to the
+        // WM_KEYDOWN handler).
+        if ((g_keys[DIK_ESCAPE] & 0x80) && !(g_keys_prev[DIK_ESCAPE] & 0x80)) {
+            PostQuitMessage(0);
+        }
         if (!RenderFrame()) {
             // Unrecoverable device loss; bail out.
             break;
@@ -1004,6 +1135,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     }
 
     // Teardown.
+    ShutdownDirectInput();
     ShutdownD3D9();
     if (g_hwnd) {
         DestroyWindow(g_hwnd);
