@@ -8,6 +8,9 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 
 | ID | Type | Where | Statement | Evidence missing | Path to resolution | Blocks |
 |----|------|-------|-----------|------------------|--------------------|--------|
+| U-5300 | semantic | 0x004d6910 (FUN_004d6910) | case 1: DAT_007d6b30 — field semantics unknown (render target related?) | cross-reference writes to DAT_007d6b30 | reference_to DAT_007d6b30 to find all write sites | C2->C3 |
+| U-5301 | semantic | 0x004d6910 (FUN_004d6910) | case 2: checks DAT_007d6b34 == DAT_007d6b38 before returning success — purpose of equality check unclear | cross-reference DAT_007d6b34 and DAT_007d6b38 | reference_to both globals; decomp writers | C2->C3 |
+| U-5302 | semantic | 0x004d55b0 (FUN_004d55b0) | no callers found — function may be called via function pointer or be in an unloaded subsystem path | find call sites via code search | search_pcode for call to 0x004d55b0 or reference_from in caller candidates | C2->C3 |
 | U-4525 | cosmetic | 0x004780c0 FUN_004780c0 | C1 comment says "sphere-vs-plane classify" — no issue with mechanics | n/a | n/a | none |
 | U-4536 | semantic | 0x0047acd0 FUN_0047acd0 | Sky context +0x20c float field purpose unknown | Cross-reference all script handlers writing to adjacent fields (0x1d8..0x214 range) | Enumerate all script handlers in the sky-VM bank and map the full sky context struct | none |
 | U-4537 | semantic | 0x0047ad00 FUN_0047ad00 | Sky context +0x210 float field purpose unknown | Cross-reference all script handlers writing to adjacent fields (0x1d8..0x214 range) | Enumerate all script handlers in the sky-VM bank and map the full sky context struct | none |
