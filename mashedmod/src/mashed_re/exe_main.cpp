@@ -473,6 +473,69 @@ void UpdateTitleSlotFromKeyboard() {
     }
 }
 
+// B14 — write DirectInput key state into MASHED's per-player input-byte
+// globals at 0x007f1044 (active) / 0x007f1504 (processed). Layout per
+// re/analysis (also documented in Frontend/MenuButtonDetect.cpp):
+//
+//   active byte:    0x007f1044 + col + player * 0x4c   (6 cols, 4 players)
+//   processed byte: 0x007f1504 + col + player * 0x4c
+//
+// Per MenuButtonDetectA/B the menu code reads:
+//   `active != 0 && processed == 0`  => "newly pressed, ready to consume"
+//   After consuming, MASHED sets processed = active so the same press
+//   isn't acted on twice.
+//
+// Provisional column-to-key mapping (player 0 only, on keyboard):
+//   col 0 = UP arrow
+//   col 1 = DOWN arrow
+//   col 2 = LEFT arrow
+//   col 3 = RIGHT arrow
+//   col 4 = ENTER (select)
+//   col 5 = ESCAPE (back)
+//
+// These are best-guesses — once we run actual frontend nav code we can
+// observe which col the menu reads and remap. Wedge granule for
+// 0x007f0000 must be live for these writes; if not, SEH catches the
+// AV and the standalone keeps running (just with no input visible to
+// future frontend code).
+void WriteMashedInputGlobalsFromKeyboard() {
+    if (!g_kbd) return;
+    constexpr std::uintptr_t kActiveBase    = 0x007f1044u;
+    constexpr std::uintptr_t kProcessedBase = 0x007f1504u;
+    // Player 0 stride * 0 = 0. We only write for player 0 — multi-player
+    // menus aren't supported in standalone yet.
+    struct ColKey { std::uint32_t col; std::uint8_t dik; };
+    constexpr ColKey kMap[] = {
+        { 0u, DIK_UP     },
+        { 1u, DIK_DOWN   },
+        { 2u, DIK_LEFT   },
+        { 3u, DIK_RIGHT  },
+        { 4u, DIK_RETURN },
+        { 5u, DIK_ESCAPE },
+    };
+    __try {
+        for (const auto& m : kMap) {
+            const bool down      = (g_keys[m.dik]      & 0x80) != 0;
+            const bool down_prev = (g_keys_prev[m.dik] & 0x80) != 0;
+            volatile std::uint8_t* active =
+                reinterpret_cast<std::uint8_t*>(kActiveBase    + m.col);
+            volatile std::uint8_t* processed =
+                reinterpret_cast<std::uint8_t*>(kProcessedBase + m.col);
+            if (down) {
+                *active = 1u;
+                // Rising edge: re-arm processed so menu sees a fresh press.
+                if (!down_prev) *processed = 0u;
+            } else {
+                *active = 0u;
+                *processed = 0u;
+            }
+        }
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        // 0x007f0000 granule not in wedge. Silent — caller doesn't need
+        // to know; the standalone keeps running without input wiring.
+    }
+}
+
 bool InitD3D9() {
     g_d3d = Direct3DCreate9(D3D_SDK_VERSION);
     if (!g_d3d) return false;
@@ -1280,6 +1343,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // works; the window title just won't reflect key state.
     (void)InitDirectInput(hInstance);
 
+    // B14: one-time wedge probe — write a test byte to MASHED's input
+    // active byte (0x007f1044) and read it back. If the wedge has the
+    // 0x007f0000 granule committed, the readback will match; otherwise
+    // the write AVs and SEH catches it. Either way, log the outcome.
+    {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        bool ok = false;
+        std::uint8_t readback = 0;
+        __try {
+            *reinterpret_cast<volatile std::uint8_t*>(0x007f1044u) = 0xA5u;
+            readback = *reinterpret_cast<volatile std::uint8_t*>(0x007f1044u);
+            *reinterpret_cast<volatile std::uint8_t*>(0x007f1044u) = 0u;
+            ok = (readback == 0xA5u);
+        } __except(EXCEPTION_EXECUTE_HANDLER) {
+            ok = false;
+        }
+        if (log) {
+            std::fprintf(log,
+                         "\nMilestone B14: MASHED input-globals wedge probe = %s "
+                         "(wrote 0xA5 to 0x007f1044, readback=0x%02X)\n",
+                         ok ? "OK" : "FAIL",
+                         readback);
+            std::fclose(log);
+        }
+    }
+
     // B5/B6: now that D3D9 is up and the TXD is decoded, upload textures into
     // QuadRenderer slot(s). B6 default uploads just 'main' to slot 0 for the
     // title-screen MVP; B5 fallback uploads all 8 textures into a 4x2 atlas
@@ -1303,6 +1392,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         UpdateQuadFromKeyboard();
         // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
         UpdateTitleSlotFromKeyboard();
+        // B14: mirror DInput keyboard state into MASHED's input globals
+        // (0x007f1044 active / 0x007f1504 processed, player 0). No frontend
+        // code currently reads these in standalone, but the wiring exists
+        // for B16's frontend_mode_dispatch loop.
+        WriteMashedInputGlobalsFromKeyboard();
         // B11: ESC via DirectInput also exits the app (in addition to the
         // WM_KEYDOWN handler).
         if ((g_keys[DIK_ESCAPE] & 0x80) && !(g_keys_prev[DIK_ESCAPE] & 0x80)) {
