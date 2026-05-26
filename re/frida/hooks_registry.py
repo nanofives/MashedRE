@@ -9732,6 +9732,176 @@ HOOKS = {
         'path2_tests': [
             [0.0, 0.0, 1.0, 0.0, 0.5, 1.0, 0xffffffff],
             [0.1, 0.1, 0.9, 0.1, 0.5, 0.9, 0xff112233],
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-t-s5 — SplashGameMode_t5 cluster (C2->C3, 6 candidates)
+    # Frontend/SplashGameMode_t5.cpp — intro_splash + game_mode + race_results
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00493f70  VideoStateFlagGet  uint32(void)
+    # 5B leaf: returns DAT_00771a04.
+    # arg_type='read_global': inject input into 0x00771a04, call fn(), expect input back.
+    # ref: re/analysis/skeleton_prep_boot_winmain_a/00493f70.md
+    'video_state_flag_get': {
+        'rva':            0x00493f70,
+        'export':         'VideoStateFlagGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00771a04,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00493fc0  AspectRatioGlobalGet  uint32(void)
+    # 5B leaf: returns DAT_00771a18 (caller pushes 2 floats but body ignores them).
+    # arg_type='read_global'.
+    # ref: re/analysis/intro_splash/0x00493fc0.md
+    'aspect_ratio_global_get': {
+        'rva':            0x00493fc0,
+        'export':         'AspectRatioGlobalGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00771a18,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00431d80  TiebreakFlagGet  uint32(void)
+    # 5B leaf: returns DAT_0067ea7c (mode-4/code-6 tiebreak flag).
+    # arg_type='read_global'.
+    # ref: re/analysis/race_results/00431d80.md
+    'tiebreak_flag_get': {
+        'rva':            0x00431d80,
+        'export':         'TiebreakFlagGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ea7c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x0046c700  EntityScoreFieldAdd  uint32(int32 idx, int32 delta)
+    # 43B incrementer: if (idx>15) return 0; (int*)(0x008820b0+idx*0xd04) += delta; return 1.
+    # arg_type='entity_field_add': non-idempotent — snapshots field, calls
+    # fn(idx,delta), reads post-add field + return value, RESTORES baseline so
+    # Orig and Reimpl each start from identical state. Fingerprint = ret:field.
+    # Includes an out-of-range idx (16) to exercise the >15 guard (returns 0).
+    # ref: re/analysis/race_results/0046c700.md
+    'entity_score_field_add': {
+        'rva':                0x0046c700,
+        'export':             'EntityScoreFieldAdd',
+        'signature':          {'ret': 'uint32', 'args': ['int32', 'int32']},
+        'arg_type':           'entity_field_add',
+        'target_global':      0x008820b0,
+        'entity_byte_stride': 0xd04,
+        'max_index':          0xf,
+        'lut_root_delta':     0,
+        # [param_1 (idx 0..15 valid; 16 out-of-range), param_2 (delta)]
+        'path1_tests': [
+            [0, 0],
+            [0, 1],
+            [1, 5],
+            [2, 0x10],
+            [3, 0x100],
+            [4, -1],
+            [5, 0x7fffffff],
+            [10, 3],
+            [15, 1],
+            [16, 1],
+        ],
+        'path2_tests': [
+            [0, 1],
+            [1, 1],
+            [16, 1],
+        ],
+    },
+
+    # 0x004c75e0  ViewportOriginGetter  void(int obj, u16* out0, u16* out1)
+    # 27B leaf: *out0 = *(u16*)(obj+0x1c); *out1 = *(u16*)(obj+0x1e).
+    # arg_type='int_ptr2_out': uses a 12-byte buf — pre-zeroes 4-byte slots,
+    # calls fn(input, buf, buf+4), returns (buf[0]&0x3f) | ((buf[4]&0x3f)<<8).
+    # input is the integer first arg (treated as pointer-typed obj address).
+    # We pass valid in-process addresses so the U16 reads at +0x1c/+0x1e don't fault.
+    # Strategy: pass &target_global values that point at known stable memory.
+    # We exploit RX module read-only globals; pass MASHED.exe's image-base region
+    # offsets where the dword at base+0x1c & 0x1e is mappable (text section).
+    # Safe choice: pass a known C2-allocated video object header? Cleaner: pass
+    # a static known-mapped data pointer — DAT_00771a18 = 0x00771a18 base.
+    # The function only reads 2 bytes at +0x1c and +0x1e. We pass test addrs
+    # that point well inside MASHED.exe's writeable .data such that the reads
+    # are safe and reproducible.
+    # ref: re/analysis/intro_splash_d2/0x004c75e0.md
+    'viewport_origin_getter': {
+        'rva':            0x004c75e0,
+        'export':         'ViewportOriginGetter',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer', 'pointer']},
+        'arg_type':       'int_ptr2_out',
+        'lut_root_delta': 0,
+        # int param_1 = mappable object base. Each value: passing the global pool
+        # base 0x00771a00 means body reads u16@0x00771a1c + u16@0x00771a1e.
+        # Vary the base to vary the addr-pair sampled; both orig and reimpl
+        # must read the same bytes -> identical observable.
+        'path1_tests': [
+            0x00771a00,
+            0x00771a20,
+            0x00771a40,
+            0x00771a60,
+            0x00771a80,
+            0x00771aa0,
+            0x00771ac0,
+            0x00771ae0,
+            0x00771b00,
+            0x00771b20,
+        ],
+        'path2_tests': [
+            0x00771a00,
+            0x00771a20,
+            0x00771a40,
+        ],
+    },
+
+    # 0x00494f30  AspectRatioSnapshot  void(void)
+    # 15B: DAT_00771a50 = DAT_00771a54 = FUN_00493fc0()  (returns DAT_00771a18).
+    # arg_type='state_machine_observe': inject DAT_00771a18 (single input),
+    # call fn(), read back DAT_00771a50 and DAT_00771a54 (both should == injected).
+    # ref: re/analysis/game_mode_cont2/0x00494f30.md
+    'aspect_ratio_snapshot': {
+        'rva':            0x00494f30,
+        'export':         'AspectRatioSnapshot',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals': [
+            {'addr': 0x00771a18, 'type': 'u32'},   # source via FUN_00493fc0
+        ],
+        'output_globals': [
+            {'addr': 0x00771a50, 'type': 'u32'},   # dest 1
+            {'addr': 0x00771a54, 'type': 'u32'},   # dest 2 (same value)
+        ],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,
+            0xDEADBEEF,
+            0xCAFEBABE,
+            0x12345678,
+            0xFFFFFFFF,
+            0x80000000,
+            0x00000001,
+            0x55555555,
+            0xAAAAAAAA,
+            0x00000000,
+        ],
+        'path2_tests': [
+            0x00000000,
+            0xDEADBEEF,
+            0xCAFEBABE,
         ],
     },
 

@@ -2716,3 +2716,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  00414120  CopyTable005f2a70To0089a384  c3-batch-t-s1  state_machine_observe Frida A/B GREEN 10/10; log/diff_copy_table_005f2a70_to_0089a384.csv
 2026-05-26  C2->C3  0x00431d90  FrontendPanelFlagAdvance  c3-batch-t-s3 (panel-flag mass-advance; void_write_observe 10/10 GREEN; leaf+callers C2; log/diff_frontend_panel_flag_advance.csv)
 2026-05-26  C2->C3  0x00432ad0  MenuDimOverlayFadeStep  c3-batch-t-s3 (dim-overlay fade tick; callee 0042aae0 C3; void_write_observe 10/10 GREEN crash_equal_ok; U-4253 resolved; log/diff_menu_dim_overlay_fade_step.csv)
+2026-05-26  C2->C3  0x00493f70  VideoStateFlagGet  path1 10/10 GREEN log/diff_video_state_flag_get.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x00493fc0  AspectRatioGlobalGet  path1 10/10 GREEN log/diff_aspect_ratio_global_get.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x00431d80  TiebreakFlagGet  path1 10/10 GREEN log/diff_tiebreak_flag_get.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x0046c700  EntityScoreFieldAdd  path1 10/10 GREEN log/diff_entity_score_field_add.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x004c75e0  ViewportOriginGetter  path1 10/10 GREEN log/diff_viewport_origin_getter.csv (c3-batch-t-s5)

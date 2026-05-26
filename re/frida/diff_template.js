@@ -351,6 +351,28 @@ function callFn(fn, input, buf) {
         const addr = ptr(CONFIG.target_global).add(p1 * CONFIG.entity_byte_stride);
         return addr.readU32();
     }
+    // entity_field_add — fn(int idx, int delta): non-idempotent incrementer.
+    // input: [idx, delta].  Address: CONFIG.target_global + idx*CONFIG.entity_byte_stride.
+    // Unlike entity_field_set (idempotent absolute write), the body does
+    // *(int*)addr += delta, so the back-to-back Orig/Reimpl A/B loop would see
+    // the residue of the first call. Snapshot the field, call fn(idx,delta),
+    // pack (return_value, post-add field) into a fingerprint, then RESTORE the
+    // field so Orig and Reimpl each start from the identical baseline.
+    if (CONFIG.arg_type === 'entity_field_add') {
+        const idx   = input[0] | 0;
+        const delta = input[1] | 0;
+        const addr  = ptr(CONFIG.target_global).add(idx * CONFIG.entity_byte_stride);
+        // For out-of-range idx (guard returns 0 with no write), readback is
+        // still safe because the function never touches addr.
+        const guarded = idx > (CONFIG.max_index !== undefined ? CONFIG.max_index : 0xf);
+        const saved = guarded ? 0 : addr.readU32();
+        const ret = fn(idx, delta) >>> 0;
+        const field = guarded ? 0 : (addr.readU32() >>> 0);
+        if (!guarded) addr.writeU32(saved);  // restore baseline
+        // Fingerprint: ret in high 8 bits region + low field bits.
+        return ('00000000' + ret.toString(16)).slice(-8) + ':' +
+               ('00000000' + field.toString(16)).slice(-8);
+    }
     // cursor_back — fn(void): complex void cursor-nav function.
     // input: { row, col, flag, mp_flag } — initial global state to inject before calling.
     // Sets DAT_0067f17c/DAT_0067f184/DAT_0067f1a4/DAT_0067ea68, calls fn, reads back
@@ -662,10 +684,15 @@ function bufFingerprint(buf, len) {
 function runDiff() {
     var module;
     try {
-        Module.load(ASI_PATH);
-        module = Process.findModuleByName(ASI_MODULE_NAME);
-        if (module === null) {
-            send({ type: 'error', msg: 'findModuleByName(' + ASI_MODULE_NAME + ') returned null after Module.load' });
+        // Use the handle returned by Module.load directly. findModuleByName
+        // matches by basename and can return a *different* mashed_re_dev.asi
+        // already auto-loaded by the dinput8 proxy (main checkout's build),
+        // which lacks worktree-only exports. Prefer the exact module we loaded.
+        const loaded = Module.load(ASI_PATH);
+        module = (loaded && loaded.findExportByName) ? loaded
+               : Process.findModuleByName('mashed_re_dev.asi');
+        if (module === null || module === undefined) {
+            send({ type: 'error', msg: 'findModuleByName returned null after Module.load' });
             return;
         }
     } catch (e) {

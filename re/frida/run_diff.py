@@ -26,16 +26,12 @@ def _find_original(script_root: Path) -> Path:
     candidate = script_root / 'original' / 'MASHED.exe'
     if candidate.exists():
         return candidate
-    # Walk up: worktree is at <main>/.worktrees/<name>/  (2 levels)
-    parent = script_root.parent.parent
-    candidate2 = parent / 'original' / 'MASHED.exe'
-    if candidate2.exists():
-        return candidate2
-    # Walk up: worktree is at <main>/.claude/worktrees/<name>/  (3 levels)
-    parent3 = script_root.parent.parent.parent
-    candidate3 = parent3 / 'original' / 'MASHED.exe'
-    if candidate3.exists():
-        return candidate3
+    # Walk up: worktree may be at <main>/.worktrees/<name>/ OR
+    # <main>/.claude/worktrees/<name>/ (varying depth). Search ancestors.
+    for parent in script_root.parents:
+        candidate2 = parent / 'original' / 'MASHED.exe'
+        if candidate2.exists():
+            return candidate2
     return candidate  # let the later check produce a clear error
 
 ROOT = _SCRIPT_ROOT
