@@ -2652,3 +2652,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  0x00431d90  FrontendPanelFlagAdvance  c3-batch-t-s3 (panel-flag mass-advance; void_write_observe 10/10 GREEN; leaf+callers C2; log/diff_frontend_panel_flag_advance.csv)
+2026-05-26  C2->C3  0x00432ad0  MenuDimOverlayFadeStep  c3-batch-t-s3 (dim-overlay fade tick; callee 0042aae0 C3; void_write_observe 10/10 GREEN crash_equal_ok; U-4253 resolved; log/diff_menu_dim_overlay_fade_step.csv)

@@ -8794,4 +8794,125 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-t-s3 — frontend bucket_0041dc30 mixed C2→C3
+    # mashedmod/src/mashed_re/Frontend/BucketMixed_t3.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00431b70  GetDat007f0f10  — STAGED at C2 (NOT promoted; C3 caller-gate fails).
+    # Pure-leaf uint32(void) getter: returns DAT_007f0f10. read_global Frida diff
+    # is 10/10 GREEN and the reimpl is bit-identical, but the sole caller
+    # FUN_0045d0e0 is C1 (no callee — leaf), so the C3 caller-AND-callee gate is
+    # unmet. RH_ScopedInstall is commented out. Re-pickup: promote FUN_0045d0e0.
+    'get_dat_007f0f10': {
+        'rva':            0x00431b70,
+        'export':         'GetDat007f0f10',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007f0f10,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00431d90  FrontendPanelFlagAdvance
+    # void(void); writes 19 panel-flag globals. Per-flag rule:
+    #   X == 1 -> 2; else -> 0  (special: 0x0067e7b0 preserves 1, else 0).
+    # Strategy: void_write_observe with sentinel written to DAT_0067e7d8 (the
+    # first global touched by the body). Several sentinels: 0, 1 (expect 2),
+    # 2 (expect 0), random (expect 0). Both orig+reimpl must transform
+    # identically.
+    'frontend_panel_flag_advance': {
+        'rva':            0x00431d90,
+        'export':         'FrontendPanelFlagAdvance',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0067e7d8,
+        'lut_root_delta': 0,
+        # Carefully chosen so the read-back is deterministic and divergent:
+        #   0 -> 0; 1 -> 2; 2 -> 0; everything else -> 0.
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xFFFFFFFF, 0x00000001, 0x00000002,
+                           0x80000000, 0x00000001],
+        'path2_tests':    [0x00000000, 0x00000001, 0x00000002],
+    },
+
+    # 0x00432ad0  MenuDimOverlayFadeStep
+    # void(void); reads DAT_00898a90 (alpha counter); clamps to 0..0x1ff;
+    # temporarily writes DAT_0067eca8 = min(counter, 0xff); calls
+    # MenuIm2DQuad(0) [C3]; restores DAT_0067eca8; decrements counter by 0x10.
+    # Strategy: void_write_observe on DAT_00898a90 (the persistent observable).
+    # For each sentinel:
+    #   sentinel < 1  -> read-back = 0
+    #   1..0xff       -> read-back = sentinel - 0x10
+    #   0x100..0x1ff  -> read-back = sentinel - 0x10
+    #   > 0x1ff       -> read-back = 0x1ff - 0x10 = 0x1ef
+    # crash_equal_ok: MenuIm2DQuad uses live D3D9 vtable; at quiescent menu
+    # the call is suppressed (alpha=0) but with non-zero alpha the draw fires.
+    'menu_dim_overlay_fade_step': {
+        'rva':            0x00432ad0,
+        'export':         'MenuDimOverlayFadeStep',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00898a90,
+        'lut_root_delta': 0,
+        'crash_equal_ok': True,
+        # Cover all four clamp branches plus mid-range steps.
+        'path1_tests':    [0x00000000,  # < 1  -> 0
+                           0x00000001,  # ==1  -> -15
+                           0x00000010,  # 16   -> 0
+                           0x000000ff,  # 255  -> 239
+                           0x00000100,  # 256  -> 240
+                           0x000001ff,  # 511  -> 495
+                           0x00000200,  # >0x1ff -> 0x1ef
+                           0xFFFFFFFF,  # signed-negative -> 0 (treated as <1)
+                           0x80000000,  # signed-negative -> 0
+                           0x00000020], # 32 -> 16
+        'path2_tests':    [0x00000000, 0x00000010, 0x00000200],
+    },
+
+    # 0x00472dc0  Im2DTriangleDraw  — STAGED at C2 (NOT a C3 hook).
+    # void(float x1, y1, x2, y2, x3, y3, uint32 argb): 3-vertex Im2D fill.
+    # Sibling of ChromeBaseDraw (0x00472c60, C3) — same write pattern but
+    # 3 vertices instead of 4, and prim-count = 3.
+    # draw_quad_observe (vbuf_len=92) is NON-DETERMINISTIC here: each vertex's
+    # Z field is the live *(DAT_007d3ff8+0x18), read by both orig and reimpl at
+    # call time. A frame boundary between the two calls changes Z and diverges
+    # the buffer fingerprint (idx1/idx3 deterministically RED in run_diff.py).
+    # idx3's ARGB is byte-swap-invariant yet still diverges — isolating the
+    # divergence to the shared live Z read, not the reimpl. Kept here so the
+    # harness can run it once a Z-freezing arg_type lands; the .asi RH_ScopedInstall
+    # is commented out. See BucketMixed_t3.cpp.
+    'im2d_triangle_draw': {
+        'rva':            0x00472dc0,
+        'export':         'Im2DTriangleDraw',
+        'signature':      {'ret':  'void',
+                            'args': ['float', 'float', 'float', 'float',
+                                     'float', 'float', 'uint32']},
+        'arg_type':       'draw_quad_observe',
+        'vbuf_addr_str':  '0x00898a20',
+        'vbuf_len':       92,
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [x1, y1, x2, y2, x3, y3, argb]
+            [0.0,  0.0,  1.0,  0.0,  0.5,  1.0,  0xffffffff],
+            [0.1,  0.1,  0.9,  0.1,  0.5,  0.9,  0xff112233],
+            [0.0,  0.0,  0.5,  0.5,  0.25, 0.75, 0xa0ff0000],
+            [0.2,  0.3,  0.4,  0.3,  0.3,  0.5,  0xff00ff00],
+            [0.0,  0.0,  1.0,  1.0,  0.0,  1.0,  0x800000ff],
+            [0.5,  0.0,  0.7,  0.2,  0.3,  0.2,  0xc000ff00],
+            [0.0,  0.5,  0.3,  0.7,  0.0,  1.0,  0x40808080],
+            [-0.1, -0.1, 0.5,  -0.1, 0.2,  0.5,  0xff223344],
+            [0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0x00000000],
+            [0.25, 0.25, 0.75, 0.25, 0.5,  0.75, 0xff994433],
+        ],
+        'path2_tests': [
+            [0.0, 0.0, 1.0, 0.0, 0.5, 1.0, 0xffffffff],
+            [0.1, 0.1, 0.9, 0.1, 0.5, 0.9, 0xff112233],
+        ],
+    },
+
 }
