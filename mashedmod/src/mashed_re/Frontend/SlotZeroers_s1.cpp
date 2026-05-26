@@ -356,8 +356,8 @@ extern "C" __declspec(dllexport) void __cdecl TabCycler()
     }
 }
 
-// RH_ScopedInstall(TabCycler, 0x00423270);
-// DEFERRED: harness-extension needed ('tab_cycler_observe' arg_type missing from diff_template.js).
+RH_ScopedInstall(TabCycler, 0x00423270);
+// Harness extension landed 2026-05-26: 'state_machine_observe' arg_type covers this.
 
 // ---------------------------------------------------------------------------
 // CursorMover  --  0x00423320
@@ -447,5 +447,5 @@ extern "C" __declspec(dllexport) void __cdecl CursorMover()
     }
 }
 
-// RH_ScopedInstall(CursorMover, 0x00423320);
-// DEFERRED: harness-extension needed ('cursor_grid_observe' arg_type missing from diff_template.js).
+RH_ScopedInstall(CursorMover, 0x00423320);
+// Harness extension landed 2026-05-26: 'state_machine_observe' arg_type covers this.

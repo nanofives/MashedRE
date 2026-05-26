@@ -9250,4 +9250,120 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Harness-ext landed 2026-05-26: slot_block_zero + state_machine_observe.
+    # Unblocks 3 c3_batch_s-s1 deferred candidates.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00422a80  SlotBlockZero  void(int slot)
+    # 8-byte leaf. Computes base = &DAT_006403e8 + slot * 0xf40 and calls
+    # FUN_004b6520(base, 0xf40) to zero the per-slot block.
+    # arg_type='slot_block_zero': pre-write sentinel to first dword, call,
+    # read back first dword (should be 0 after the memset).
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00422a80.md
+    'slot_block_zero': {
+        'rva':                0x00422a80,
+        'export':             'SlotBlockZero',
+        'signature':          {'ret': 'void', 'args': ['int32']},
+        'arg_type':           'slot_block_zero',
+        'target_global':      0x006403e8,
+        'entity_byte_stride': 0xf40,
+        'lut_root_delta':     0,
+        'path1_tests':        [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':        [0, 1, 2],
+    },
+
+    # 0x00423270  TabCycler  void()
+    # ~120 bytes. Reads context at DAT_007f1a54, button flags at DAT_007f1070/71,
+    # debounce at DAT_007f1530/31; mutates tab index at DAT_007f1a64.
+    # arg_type='state_machine_observe': inject the 6 input globals as u8 values
+    # plus initial tab index, call fn(), read back tab index.
+    # Test domain mixes context (1..6 inclusive + 0 default), tab-right/-left
+    # button flags, debounce, and initial tab values.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423270.md
+    'tab_cycler': {
+        'rva':            0x00423270,
+        'export':         'TabCycler',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x007f1a54, 'type': 'u32'},  # context
+            {'addr': 0x007f1071, 'type': 'u8'},   # tab-right flag
+            {'addr': 0x007f1070, 'type': 'u8'},   # tab-left flag
+            {'addr': 0x007f1531, 'type': 'u8'},   # debounce-right
+            {'addr': 0x007f1530, 'type': 'u8'},   # debounce-left
+            {'addr': 0x007f1a64, 'type': 'u32'},  # initial tab index
+        ],
+        'output_globals': [
+            {'addr': 0x007f1a64, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # [context, tabR, tabL, debR, debL, initial_tab]
+        'path1_tests': [
+            [0, 0, 0, 0, 0, 0],    # idle, default bounds
+            [1, 1, 0, 0, 0, 2],    # tab-right press in ctx 1 (bounds 2..3) from 2 -> 3
+            [1, 1, 0, 0, 0, 3],    # tab-right press in ctx 1 from 3 -> wrap to 2
+            [1, 1, 0, 1, 0, 2],    # tab-right with debounce-right set: no-op
+            [2, 0, 1, 0, 0, 2],    # tab-left press in ctx 2 (bounds 2..4) from 2 -> wrap to 4
+            [3, 1, 0, 0, 0, 2],    # ctx 3 (bounds 2..3): 2 -> 3
+            [4, 1, 0, 0, 0, 5],    # ctx 4 (bounds 2..5): 5 -> wrap to 2
+            [5, 0, 1, 0, 0, 3],    # ctx 5 (bounds 2..3): 3 -> 2
+            [6, 1, 0, 0, 0, 4],    # ctx 6 (bounds 2..5): 4 -> 5
+            [0, 1, 0, 0, 0, 0],    # default ctx (bounds 0..8): 0 -> 1
+        ],
+        'path2_tests': [
+            [1, 1, 0, 0, 0, 2],
+            [4, 0, 1, 0, 0, 5],
+            [0, 0, 0, 0, 0, 0],
+        ],
+    },
+
+    # 0x00423320  CursorMover  void()
+    # ~130 bytes. 8-way grid cursor mover with debounce. Reads tab DAT_007f1a64,
+    # cursor DAT_007f1a90, dir flags DAT_007f1072..1075, debounce DAT_007f1532..1535.
+    # Up/down stride 4, clamp [0, 0x7f]. Up/down gated by tab != 2.
+    # Left/right cycle within 4-column row.
+    # arg_type='state_machine_observe': inject all 10 globals, call, read cursor.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423320.md
+    'cursor_mover': {
+        'rva':            0x00423320,
+        'export':         'CursorMover',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x007f1a64, 'type': 'u32'},  # tab index (guard: != 2 enables up/down)
+            {'addr': 0x007f1a90, 'type': 'u32'},  # initial cursor
+            {'addr': 0x007f1072, 'type': 'u8'},   # UP flag
+            {'addr': 0x007f1073, 'type': 'u8'},   # DOWN flag
+            {'addr': 0x007f1074, 'type': 'u8'},   # LEFT flag
+            {'addr': 0x007f1075, 'type': 'u8'},   # RIGHT flag
+            {'addr': 0x007f1532, 'type': 'u8'},   # debounce UP
+            {'addr': 0x007f1533, 'type': 'u8'},   # debounce DOWN
+            {'addr': 0x007f1534, 'type': 'u8'},   # debounce LEFT
+            {'addr': 0x007f1535, 'type': 'u8'},   # debounce RIGHT
+        ],
+        'output_globals': [
+            {'addr': 0x007f1a90, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # [tab, cursor, up, down, left, right, debUp, debDown, debLeft, debRight]
+        'path1_tests': [
+            [0, 0,  0, 0, 0, 0,  0, 0, 0, 0],   # idle, no movement
+            [0, 8,  1, 0, 0, 0,  0, 0, 0, 0],   # UP from 8 -> 4
+            [0, 0,  1, 0, 0, 0,  0, 0, 0, 0],   # UP from 0 (clamp) -> 0
+            [0, 0,  0, 1, 0, 0,  0, 0, 0, 0],   # DOWN from 0 -> 4
+            [0, 0x7c, 0, 1, 0, 0, 0, 0, 0, 0],  # DOWN from 0x7c (just below clamp) -> 0x7c + 4 = 0x80 > 0x7f, clamp keep
+            [2, 8,  1, 0, 0, 0,  0, 0, 0, 0],   # UP gated by tab=2; cursor unchanged
+            [0, 5,  0, 0, 0, 1,  0, 0, 0, 0],   # RIGHT from 5 (col 1) -> 6 (col 2)
+            [0, 4,  0, 0, 1, 0,  0, 0, 0, 0],   # LEFT from 4 (col 0) -> wrap to col 3 = 7
+            [0, 4,  1, 0, 0, 0,  1, 0, 0, 0],   # UP with debounce-up: no-op
+            [0, 0,  0, 0, 0, 0,  0, 0, 0, 0],   # baseline idle
+        ],
+        'path2_tests': [
+            [0, 8, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ],
+    },
+
 }

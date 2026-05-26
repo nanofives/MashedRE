@@ -199,6 +199,22 @@ def main():
         config['buffer_addr'] = hook['buffer_addr']
     if 'buffer_size_dwords' in hook:
         config['buffer_size_dwords'] = hook['buffer_size_dwords']
+    # slot_block_zero — optional sentinel value (default 0xDEADBEEF in template).
+    if 'sentinel_value' in hook:
+        config['sentinel_value'] = hook['sentinel_value']
+    # state_machine_observe — input/output global descriptor arrays.
+    if 'input_globals' in hook:
+        config['input_globals'] = [
+            {'addr': f"0x{g['addr']:08x}" if isinstance(g.get('addr'), int) else g['addr'],
+             'type': g.get('type', 'u32')}
+            for g in hook['input_globals']
+        ]
+    if 'output_globals' in hook:
+        config['output_globals'] = [
+            {'addr': f"0x{g['addr']:08x}" if isinstance(g.get('addr'), int) else g['addr'],
+             'type': g.get('type', 'u32')}
+            for g in hook['output_globals']
+        ]
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)

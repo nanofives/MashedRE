@@ -403,6 +403,93 @@ function callFn(fn, input, buf) {
         return (p && !p.isNull()) ? 1 : 0;
     }
 
+    // slot_block_zero — fn(int slot): void(int) that zeroes/initializes a
+    // per-slot block in a global array. The first dword of the block is the
+    // observable: pre-write a sentinel value, call fn(slot), read back the
+    // first dword. Bit-identical reimpl must produce the same post-call value
+    // (typically 0 for memset-class functions).
+    //
+    // CONFIG fields:
+    //   target_global       — hex address of array base (e.g. 0x006403e8)
+    //   entity_byte_stride  — bytes per slot (e.g. 0xf40)
+    //   sentinel_value      — optional uint32 pre-write (default 0xDEADBEEF)
+    if (CONFIG.arg_type === 'slot_block_zero') {
+        const slot = input | 0;
+        const sentinel = (CONFIG.sentinel_value !== undefined ? CONFIG.sentinel_value : 0xDEADBEEF) >>> 0;
+        const base = ptr(CONFIG.target_global).add(slot * CONFIG.entity_byte_stride);
+        // Save the original first dword so the test is non-destructive.
+        const saved = base.readU32();
+        base.writeU32(sentinel);
+        fn(slot);
+        const result = base.readU32();
+        base.writeU32(saved);
+        return result;
+    }
+
+    // state_machine_observe — fn(void): void() that mutates one or more
+    // globals based on the current state of other globals. Inject test
+    // values into CONFIG.input_globals, call fn(), read back
+    // CONFIG.output_globals as the observable.
+    //
+    // Save/restore semantics: every global (input + output) is snapshotted
+    // before injection and restored after readback, so the test is
+    // non-destructive across runs.
+    //
+    // CONFIG fields:
+    //   input_globals  — array of {addr: '0x...', type: 'u8'|'u16'|'u32'|'s8'|'s16'|'s32'}
+    //   output_globals — array of {addr: '0x...', type: ...}
+    //   input — array of values matching input_globals (or scalar if 1 global)
+    //
+    // Returns a hex string packing all output globals (32 bits each) so
+    // BigInt-sized observables don't lose precision through JSON.
+    if (CONFIG.arg_type === 'state_machine_observe') {
+        const inputs  = CONFIG.input_globals  || [];
+        const outputs = CONFIG.output_globals || [];
+        const reader = function (p, type) {
+            switch (type || 'u32') {
+                case 'u8':  return p.readU8();
+                case 'u16': return p.readU16();
+                case 'u32': return p.readU32();
+                case 's8':  return p.readS8();
+                case 's16': return p.readS16();
+                case 's32': return p.readS32();
+                default: return p.readU32();
+            }
+        };
+        const writer = function (p, v, type) {
+            switch (type || 'u32') {
+                case 'u8':  p.writeU8(v & 0xff); break;
+                case 'u16': p.writeU16(v & 0xffff); break;
+                case 'u32': p.writeU32(v >>> 0); break;
+                case 's8':  p.writeS8((v << 24) >> 24); break;
+                case 's16': p.writeS16((v << 16) >> 16); break;
+                case 's32': p.writeS32(v | 0); break;
+                default:    p.writeU32(v >>> 0);
+            }
+        };
+        // Save all originals (inputs + outputs).
+        const all = inputs.concat(outputs);
+        const saved = all.map(g => reader(ptr(g.addr), g.type));
+        // Inject inputs. `input` is either a scalar (when 1 input global) or
+        // an array of values in input_globals order.
+        const values = Array.isArray(input) ? input : [input];
+        inputs.forEach((g, i) => {
+            const v = values[i] !== undefined ? values[i] : 0;
+            writer(ptr(g.addr), v, g.type);
+        });
+        // Call (void).
+        fn();
+        // Read outputs.
+        let result = '';
+        outputs.forEach(g => {
+            const v = reader(ptr(g.addr), g.type) >>> 0;
+            result += ('00000000' + v.toString(16)).slice(-8);
+        });
+        // Restore everything.
+        all.forEach((g, i) => writer(ptr(g.addr), saved[i], g.type));
+        return '0x' + (result || '0');
+    }
+
     // car_slot_init — fn(int param_1): conditional void struct initialiser.
     // input: { idx, guard_val } — param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val.
     // Calls fn(idx), then reads back the 4 fields (offsets +0, +0xC, +0x10, +0x14) packed as

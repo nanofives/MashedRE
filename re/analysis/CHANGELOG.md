@@ -2705,3 +2705,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C4->C3  0x004cc160  FUN_004cc160                     frida-sweep-20260526-1415-PhaseA  reason=loader-broken-9d-audit-window-no-registry-entry
 2026-05-26  C4->C3  0x004c5c00  LinkedListStringSearch          frida-sweep-20260526-1415-PhaseA  reason=loader-broken-9d-audit-window-arg_type-REFUSED
 2026-05-26  Phase-A-evidence-update  19 frontend C4 rows verified post-loader-fix (9 full PASS + 10 install-only-verified); 2 demoted to C3 (LinkedListStringSearch, FUN_004cc160)
+2026-05-26  C2->C3  00422a80  SlotBlockZero    harness-ext-20260526-slot_block_zero  slot_block_zero arg_type GREEN 10/10
+2026-05-26  C2->C3  00423270  TabCycler        harness-ext-20260526-state_machine_observe  state_machine_observe arg_type GREEN 10/10
+2026-05-26  C2->C3  00423320  CursorMover      harness-ext-20260526-state_machine_observe  state_machine_observe arg_type GREEN 10/10
+2026-05-26  harness-ext-20260526  unblocks=0x00422a80,0x00423270,0x00423320  arg_types=slot_block_zero,state_machine_observe  note=2 new arg_types in diff_template.js; 3 c3-batch-s-s1 deferred candidates promoted to C3
