@@ -111,7 +111,7 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Math\RwV2d.cpp" ^
     "Math\RwV3dTransform.cpp" ^
     "Math\RwMatrixScale.cpp" ^
-    /link /SUBSYSTEM:WINDOWS /BASE:0x10000000 /FIXED:NO ^
+    /link /SUBSYSTEM:WINDOWS /BASE:0x10000000 /FIXED:NO /DYNAMICBASE:NO ^
     user32.lib d3d9.lib
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)

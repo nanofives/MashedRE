@@ -37,15 +37,20 @@
 //                               as a build-time fallback via kTitleMode
 //                               toggle — set to false for the diagnostic
 //                               4x2 view.
-// Milestone B11 (this revision; Phase H input slice): adds DirectInput8
-//                               keyboard polling. Per-frame reads 256-byte
-//                               key state, updates the window title with
-//                               arrow-key / Enter / Esc state. Proves the
-//                               DInput dependency from STANDALONE_DEPS.md
-//                               is wired correctly. Future H milestones
-//                               feed these reads into MASHED's input
-//                               globals so frontend_mode_dispatch can
-//                               navigate menus.
+// Milestone B11 (Phase H input slice): adds DirectInput8 keyboard polling.
+//                               Per-frame reads 256-byte key state, updates
+//                               the window title with arrow / Enter / Esc.
+// Milestone B12 (this revision; Phase H render-feedback slice): connects the
+//                               DirectInput state to the title-screen
+//                               render. Arrow keys translate the 'main'
+//                               texture quad around the window in 4-pixel
+//                               steps; Enter resets to center; Esc exits.
+//                               First end-to-end input -> visual loop in
+//                               the standalone. Pre-requisite for full
+//                               menu-nav: once Phase F supplies an
+//                               RwIm2DRenderPrimitive replacement, the same
+//                               poll loop can drive MASHED's menu state
+//                               machine.
 // Milestone B7 (this revision; Phase G wedge): VirtualAlloc-maps the
 //                               MASHED.exe data-section address range
 //                               (0x00500000..0x009fffff) into the
@@ -106,6 +111,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <climits>
 
 #include "Piz/PizReader.h"
 #include "Rws/RwsChunkWalker.h"
@@ -202,6 +208,14 @@ constexpr std::uint32_t kTitleSlotIndex   = 0;
 constexpr float         kTitleQuadCenterX = 400.f;
 constexpr float         kTitleQuadCenterY = 300.f;
 constexpr float         kTitleQuadSize    = 512.f;
+
+// B12 — keyboard-driven offset applied to the title quad. Arrow keys
+// translate the quad in 4-px steps; Enter resets to (0, 0). The center+offset
+// is clamped to keep the half-quad on-screen (so its center can range from
+// kTitleQuadSize/2 to kWidth-kTitleQuadSize/2 horizontally, ditto vertically).
+float g_titleQuadOffsetX = 0.f;
+float g_titleQuadOffsetY = 0.f;
+constexpr float kTitleQuadStep = 4.f;
 // Name of the texture to use as the title-screen logo. Picked because it's
 // the only 256x256 PAL8 in Frontend.piz's TEXTURES.TXD — MASHED's menu code
 // references this exact name at multiple call sites. Per the B3 log row 5.
@@ -345,11 +359,19 @@ void UpdateTitleFromKeyboard() {
     const bool right = (g_keys[DIK_RIGHT] & 0x80) != 0;
     const bool enter = (g_keys[DIK_RETURN]& 0x80) != 0;
     const bool esc   = (g_keys[DIK_ESCAPE]& 0x80) != 0;
-    // Pack into a single int so we only refresh title on transitions.
-    static int s_last_packed = -1;
+    // Pack into an int so we only refresh title on transitions OR quad
+    // position changes (which happen while arrows are held — without this,
+    // the title's quad@x,y would freeze at the moment of key-press).
+    static int    s_last_packed = -1;
+    static int    s_last_qx     = INT_MIN;
+    static int    s_last_qy     = INT_MIN;
     const int packed = (up<<0)|(down<<1)|(left<<2)|(right<<3)|(enter<<4)|(esc<<5);
-    if (packed == s_last_packed) return;
+    const int qx = static_cast<int>(g_titleQuadOffsetX);
+    const int qy = static_cast<int>(g_titleQuadOffsetY);
+    if (packed == s_last_packed && qx == s_last_qx && qy == s_last_qy) return;
     s_last_packed = packed;
+    s_last_qx = qx;
+    s_last_qy = qy;
     char buf[256];
     std::snprintf(buf, sizeof(buf),
                   "Mashed RE (B11 keys: %s%s%s%s%s%s)",
@@ -360,9 +382,57 @@ void UpdateTitleFromKeyboard() {
                   enter ? "ENTER " : "",
                   esc   ? "ESC "   : "");
     if (!up && !down && !left && !right && !enter && !esc) {
-        std::snprintf(buf, sizeof(buf), "Mashed RE (B11 keys: -)");
+        std::snprintf(buf, sizeof(buf),
+                      "Mashed RE (B12 idle; quad@%+d,%+d)",
+                      static_cast<int>(g_titleQuadOffsetX),
+                      static_cast<int>(g_titleQuadOffsetY));
+    } else {
+        // Overwrite the B11 suffix with B12 offset info.
+        std::snprintf(buf, sizeof(buf),
+                      "Mashed RE (B12 keys: %s%s%s%s%s%s; quad@%+d,%+d)",
+                      up    ? "UP "    : "",
+                      down  ? "DOWN "  : "",
+                      left  ? "LEFT "  : "",
+                      right ? "RIGHT " : "",
+                      enter ? "ENTER " : "",
+                      esc   ? "ESC "   : "",
+                      static_cast<int>(g_titleQuadOffsetX),
+                      static_cast<int>(g_titleQuadOffsetY));
     }
     SetWindowTextA(g_hwnd, buf);
+}
+
+// B12 — translate the title quad based on held arrow keys. Enter resets. The
+// clamp keeps the quad fully on the 800x600 backbuffer; without it, holding an
+// arrow eventually walks the quad off-screen, leaving an empty teal frame
+// (technically correct, visually misleading). 4-px step at 60 Hz = ~240 px/s.
+void UpdateQuadFromKeyboard() {
+    if (!g_kbd) return;
+    const bool up    = (g_keys[DIK_UP]    & 0x80) != 0;
+    const bool down  = (g_keys[DIK_DOWN]  & 0x80) != 0;
+    const bool left  = (g_keys[DIK_LEFT]  & 0x80) != 0;
+    const bool right = (g_keys[DIK_RIGHT] & 0x80) != 0;
+    if (left)  g_titleQuadOffsetX -= kTitleQuadStep;
+    if (right) g_titleQuadOffsetX += kTitleQuadStep;
+    if (up)    g_titleQuadOffsetY -= kTitleQuadStep;
+    if (down)  g_titleQuadOffsetY += kTitleQuadStep;
+    // Reset on Enter rising edge so a held Enter doesn't pin offset at zero.
+    const bool enter      = (g_keys[DIK_RETURN]      & 0x80) != 0;
+    const bool enter_prev = (g_keys_prev[DIK_RETURN] & 0x80) != 0;
+    if (enter && !enter_prev) {
+        g_titleQuadOffsetX = 0.f;
+        g_titleQuadOffsetY = 0.f;
+    }
+    // Clamp so the quad center stays within [half, dim-half] (half-quad-on-screen).
+    const float halfQuad = kTitleQuadSize * 0.5f;
+    const float minX = halfQuad - kTitleQuadCenterX;
+    const float maxX = (static_cast<float>(kWidth)  - halfQuad) - kTitleQuadCenterX;
+    const float minY = halfQuad - kTitleQuadCenterY;
+    const float maxY = (static_cast<float>(kHeight) - halfQuad) - kTitleQuadCenterY;
+    if (g_titleQuadOffsetX < minX) g_titleQuadOffsetX = minX;
+    if (g_titleQuadOffsetX > maxX) g_titleQuadOffsetX = maxX;
+    if (g_titleQuadOffsetY < minY) g_titleQuadOffsetY = minY;
+    if (g_titleQuadOffsetY > maxY) g_titleQuadOffsetY = maxY;
 }
 
 bool InitD3D9() {
@@ -423,7 +493,8 @@ bool RenderFrame() {
         // Phase F (M6) gate: "RW replacement renders 1 textured sprite".
         if (g_atlas_slot_count > 0) {
             g_quad_renderer.RenderAt(kTitleSlotIndex,
-                                     kTitleQuadCenterX, kTitleQuadCenterY,
+                                     kTitleQuadCenterX + g_titleQuadOffsetX,
+                                     kTitleQuadCenterY + g_titleQuadOffsetY,
                                      kTitleQuadSize, kTitleQuadSize);
         }
     } else {
@@ -810,8 +881,23 @@ bool MapMashedDataSection() {
                 PAGE_READWRITE);
             if (p) ++covered;
             else { ++blocked; if (!blocked_first) blocked_first = a; }
+        } else if (mbi.State == MEM_RESERVE) {
+            // Granule is reserved (e.g. by the process heap's lazy-commit
+            // strategy) but no physical pages backed yet. Commit it
+            // ourselves so reimpl deref succeeds. This is harmless even if
+            // the reservation owner later writes there — they own the
+            // pages, we just paid the commit charge.
+            void* p = VirtualAlloc(
+                reinterpret_cast<LPVOID>(a),
+                kGran,
+                MEM_COMMIT,
+                PAGE_READWRITE);
+            if (p) ++covered;
+            else { ++blocked; if (!blocked_first) blocked_first = a; }
         } else {
-            // Already in use (private / mapped / image / reserved).
+            // MEM_COMMIT already (image / mapped / explicit commit) — leave
+            // alone. Reimpls that deref into here will be reading whatever
+            // the owner wrote.
             ++blocked;
             if (!blocked_first) blocked_first = a;
         }
@@ -956,6 +1042,7 @@ void ExecuteFrontendBootChain() {
     std::FILE* log = std::fopen(kLogPath, "a");
     if (!log) return;
     std::fprintf(log, "\nMilestone B10: frontend boot chain start\n");
+    std::fflush(log);
 
     // Step 1: DataZeroFill replacement. Original at 0x004924f0 zero-fills
     // 0xdce9 dwords (= ~220 KB) at 0x007f0f60. Reimpl in SubsystemInit.cpp
@@ -974,40 +1061,78 @@ void ExecuteFrontendBootChain() {
         std::fprintf(log, "  [1] DataZeroFill SKIPPED: granule 0x%08X not covered\n",
                      static_cast<unsigned>(kBigBufBase & ~0xFFFFu));
     }
+    std::fflush(log);
 
     // Step 2: BootDefaultParamsInit. Writes 5 floats at 0x636ae8 cluster.
-    BootDefaultParamsInit();
-    std::fprintf(log, "  [2] BootDefaultParamsInit OK\n");
+    // Probe the target granule before the call so a failure here shows the
+    // wedge coverage rather than just AV'ing silently.
+    {
+        MEMORY_BASIC_INFORMATION mbi2{};
+        if (VirtualQuery(reinterpret_cast<LPVOID>(0x00630000u), &mbi2, sizeof(mbi2))) {
+            std::fprintf(log, "  [2-pre] 0x00630000 state=0x%08lX protect=0x%08lX\n",
+                         static_cast<unsigned long>(mbi2.State),
+                         static_cast<unsigned long>(mbi2.Protect));
+            std::fflush(log);
+        }
+    }
+    __try {
+        BootDefaultParamsInit();
+        std::fprintf(log, "  [2] BootDefaultParamsInit OK\n");
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::fprintf(log, "  [2] BootDefaultParamsInit AV'd (target 0x00636ae8 not in wedge)\n");
+    }
+    std::fflush(log);
 
     // Step 3: DefaultParam_SetField00/04/08. Each writes 0.7f at 0x007f0f0X.
-    DefaultParam_SetField00();
-    DefaultParam_SetField04();
-    DefaultParam_SetField08();
+    __try {
+        DefaultParam_SetField00();
+        DefaultParam_SetField04();
+        DefaultParam_SetField08();
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::fprintf(log, "  [3] DefaultParam_SetField00/04/08 AV'd\n");
+        std::fflush(log);
+    }
     std::fprintf(log, "  [3] DefaultParam_SetField00/04/08 OK; readback "
                  "0x007f0f00=0x%08X 04=0x%08X 08=0x%08X (expect 0x3f333333)\n",
                  *reinterpret_cast<std::uint32_t*>(0x007f0f00u),
                  *reinterpret_cast<std::uint32_t*>(0x007f0f04u),
                  *reinterpret_cast<std::uint32_t*>(0x007f0f08u));
+    std::fflush(log);
 
     // Step 4: RaceStateArrayZero. Zeroes 12 dwords at 0x0067ea10.
-    RaceStateArrayZero();
-    std::fprintf(log, "  [4] RaceStateArrayZero OK; readback "
-                 "0x0067ea10=0x%08X 0x0067ea14=0x%08X (expect 0)\n",
-                 *reinterpret_cast<std::uint32_t*>(0x0067ea10u),
-                 *reinterpret_cast<std::uint32_t*>(0x0067ea14u));
+    __try {
+        RaceStateArrayZero();
+        std::fprintf(log, "  [4] RaceStateArrayZero OK; readback "
+                     "0x0067ea10=0x%08X 0x0067ea14=0x%08X (expect 0)\n",
+                     *reinterpret_cast<std::uint32_t*>(0x0067ea10u),
+                     *reinterpret_cast<std::uint32_t*>(0x0067ea14u));
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::fprintf(log, "  [4] RaceStateArrayZero AV'd (target 0x0067ea10 not in wedge)\n");
+    }
+    std::fflush(log);
 
     // Step 5: MenuEntryArrayInit — already verified by B7; call it again
     // here as part of the canonical boot order.
-    MenuEntryArrayInit();
-    std::fprintf(log, "  [5] MenuEntryArrayInit OK; readback "
-                 "0x00898ac0=0x%08X (expect 0)\n",
-                 *reinterpret_cast<std::uint32_t*>(0x00898ac0u));
+    __try {
+        MenuEntryArrayInit();
+        std::fprintf(log, "  [5] MenuEntryArrayInit OK; readback "
+                     "0x00898ac0=0x%08X (expect 0)\n",
+                     *reinterpret_cast<std::uint32_t*>(0x00898ac0u));
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::fprintf(log, "  [5] MenuEntryArrayInit AV'd\n");
+    }
+    std::fflush(log);
 
     // Step 6: TimerSlotClear. Zeroes 0x0063d558.
-    TimerSlotClear();
-    std::fprintf(log, "  [6] TimerSlotClear OK; readback "
-                 "0x0063d558=0x%08X (expect 0)\n",
-                 *reinterpret_cast<std::uint32_t*>(0x0063d558u));
+    __try {
+        TimerSlotClear();
+        std::fprintf(log, "  [6] TimerSlotClear OK; readback "
+                     "0x0063d558=0x%08X (expect 0)\n",
+                     *reinterpret_cast<std::uint32_t*>(0x0063d558u));
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::fprintf(log, "  [6] TimerSlotClear AV'd (target 0x0063d558 not in wedge)\n");
+    }
+    std::fflush(log);
 
     // Step 7: MainLoopInit. Sets game-loop exit flag, state=1, frame ctrs.
     // Internally calls FUN_00495110, FUN_0042b920, FUN_00433240, etc. via
@@ -1123,6 +1248,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     while (!PumpOnce()) {
         PollKeyboard();
         UpdateTitleFromKeyboard();
+        // B12: arrow keys translate title quad; Enter resets.
+        UpdateQuadFromKeyboard();
         // B11: ESC via DirectInput also exits the app (in addition to the
         // WM_KEYDOWN handler).
         if ((g_keys[DIK_ESCAPE] & 0x80) && !(g_keys_prev[DIK_ESCAPE] & 0x80)) {
