@@ -2610,3 +2610,15 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004d8b70  rwID_RESOURCESMODULE_dtor  batch-render-6-s4
 2026-05-26  C1->C2  004d8eb0  RwResourcesDrainArena  batch-render-6-s4
 2026-05-26  C1->C2  004d8fa0  rwID_CHUNKGROUPMODULE_ctor  batch-render-6-s4
+2026-05-26  C1->C2  004d9050  FUN_004d9050  batch-render-6-s5 (octree pixel-insert main loop; 16-way trie; alloc+recurse; 783B; U-5400)
+2026-05-26  C1->C2  004d9360  FUN_004d9360  batch-render-6-s5 (leaf accumulator; residual+count+channel sums; 308B; U-5401)
+2026-05-26  C1->C2  004d94a0  FUN_004d94a0  batch-render-6-s5 (descend-with-lazy-alloc; 16-way trie walk; vtable alloc; 131B; U-5402)
+2026-05-26  C1->C2  004d9530  FUN_004d9530  batch-render-6-s5 (palette-build entry; seed+split+emit phases; 1319B; U-5403)
+2026-05-26  C1->C2  004d9a60  FUN_004d9a60  batch-render-6-s5 (mean-to-RGBA writer; div+scale+clamp per channel; 319B; U-5404)
+2026-05-26  C1->C2  004d9ba0  FUN_004d9ba0  batch-render-6-s5 (pixel-assignment recursive pass; 16-way child descent; box test; 348B; U-5405)
+2026-05-26  C1->C2  004d9d00  FUN_004d9d00  batch-render-6-s5 (recursive stats-merge over octree box; 16-way fan; 475B; U-5406)
+2026-05-26  C1->C2  004d9ee0  FUN_004d9ee0  batch-render-6-s5 (two-blob stats combiner; between-cluster variance; 276B; U-5407)
+2026-05-26  C1->C2  004da000  FUN_004da000  batch-render-6-s5 (1-D split evaluator; binary-search midpoint; best-energy track; 608B; U-5408)
+2026-05-26  C1->C2  004da270  FUN_004da270  batch-render-6-s5 (recursive seed pass; leaf finalize residual; 441B; U-5409)
+2026-05-26  C1->C2  004da430  FUN_004da430  batch-render-6-s5 (recursive leaf-count; 16-way sum; 66B; U-5410)
+2026-05-26  C1->C2  004da480  FUN_004da480  batch-render-6-s5 (single-cluster palette emit; in-order walk; leaf slot write; 100B; U-5411)
