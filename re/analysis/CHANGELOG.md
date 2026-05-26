@@ -2724,3 +2724,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  004274d0  LangIndexSeedFromCli  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (read_global); log/diff_lang_index_seed_from_cli.csv
 2026-05-26  C2->C3  00428390  FrontendStateSet  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (void_setter_observe); log/diff_frontend_state_set.csv
 2026-05-26  C2->C3  0042fa00  PlayerSlotEdgeAdjust  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (none); log/diff_player_slot_edge_adjust.csv
+2026-05-26  C2->C3  00423cc0  PlayerScoreTeamAccGatedB  c3-batch-t-s2  validated frida-sweep-20260526-1942 integration diff 10/10 GREEN
+2026-05-26  C2->C3  00423d50  PlayerScoreTeamAccBaseB   c3-batch-t-s2  validated frida-sweep-20260526-1942 integration diff 10/10 GREEN
+2026-05-26  C2->C3  00423dd0  PlayerScoreTeamAccGatedC  c3-batch-t-s2  validated frida-sweep-20260526-1942 integration diff 10/10 GREEN
+2026-05-26  C2->C3  00423e60  PlayerScoreTeamAccCumB    c3-batch-t-s2  validated frida-sweep-20260526-1942 integration diff 10/10 GREEN
+2026-05-26  C2->C3  00424920  EndOfRoundAccumulator     c3-batch-t-s2  validated frida-sweep-20260526-1942 integration diff 10/10 GREEN
+2026-05-26  frida-sweep-20260526-1942  frida-sweep-release  branches=6 (c3/batch-t-s1..s6)  integration-diff=GREEN 20/20 (4 contention-timeouts re-ran clean)  hooks=20 (s1=5 s3=2 s5=5 s6=3 s2=5); s4=0 shape-only-notes
