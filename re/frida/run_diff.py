@@ -26,11 +26,16 @@ def _find_original(script_root: Path) -> Path:
     candidate = script_root / 'original' / 'MASHED.exe'
     if candidate.exists():
         return candidate
-    # Walk up: worktree is at <main>/.worktrees/<name>/
+    # Walk up: worktree is at <main>/.worktrees/<name>/ (2 levels)
     parent = script_root.parent.parent
     candidate2 = parent / 'original' / 'MASHED.exe'
     if candidate2.exists():
         return candidate2
+    # Also try 3 levels up: worktree is at <main>/.claude/worktrees/<name>/
+    parent3 = script_root.parent.parent.parent
+    candidate3 = parent3 / 'original' / 'MASHED.exe'
+    if candidate3.exists():
+        return candidate3
     return candidate  # let the later check produce a clear error
 
 ROOT = _SCRIPT_ROOT
@@ -39,9 +44,30 @@ sys.path.insert(0, str(ROOT / 're' / 'frida'))
 from hooks_registry import HOOKS
 
 MASHED_EXE = _find_original(ROOT)
-ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
+_ASI_SRC   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'diff_template.js'
 LOG_DIR    = ROOT / 'log'
+
+# When running from a worktree, the dinput8 shim pre-loads the MAIN REPO's
+# mashed_re_dev.asi (via its "..\mashedmod\build\" fallback path).  Windows
+# module dedup by base-name blocks a second load of our worktree's ASI under
+# the same "mashed_re_dev.asi" name.  Work-around: copy the worktree ASI to
+# a unique name so it loads as a distinct module.
+import shutil as _shutil, tempfile as _tempfile
+_asi_tmp = None
+if _ASI_SRC.exists():
+    _tmp = _tempfile.NamedTemporaryFile(suffix='_mashed_re_dev.asi',
+                                        dir=str(_ASI_SRC.parent),
+                                        delete=False)
+    _tmp.close()
+    _shutil.copy2(str(_ASI_SRC), _tmp.name)
+    ASI_PATH = Path(_tmp.name)
+    _asi_tmp = _tmp.name
+    # Patch diff_template.js findModuleByName to use the temp basename.
+    _TEMP_ASI_BASENAME = Path(_tmp.name).name
+else:
+    ASI_PATH = _ASI_SRC
+    _TEMP_ASI_BASENAME = 'mashed_re_dev.asi'
 
 results_received = []
 errors_received  = []
@@ -110,13 +136,14 @@ def main():
 
     hook = HOOKS[name]
     config = {
-        'asi_path':       str(ASI_PATH).replace('\\', '\\\\'),
-        'target_rva':     f"0x{hook['rva']:08x}",
-        'export':         hook['export'],
-        'signature':      hook['signature'],
-        'arg_type':       hook['arg_type'],
-        'lut_root_delta': hook['lut_root_delta'],
-        'tests':          hook['path1_tests'],
+        'asi_path':        str(ASI_PATH).replace('\\', '\\\\'),
+        'asi_module_name': _TEMP_ASI_BASENAME,
+        'target_rva':      f"0x{hook['rva']:08x}",
+        'export':          hook['export'],
+        'signature':       hook['signature'],
+        'arg_type':        hook['arg_type'],
+        'lut_root_delta':  hook['lut_root_delta'],
+        'tests':           hook['path1_tests'],
     }
     # Optional fields — only forwarded if present in the registry entry.
     if 'target_global' in hook:
@@ -295,4 +322,14 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        rc = main()
+    finally:
+        # Clean up the temp ASI copy (worktree dedup workaround).
+        if _asi_tmp is not None:
+            try:
+                import os as _os
+                _os.unlink(_asi_tmp)
+            except Exception:
+                pass
+    sys.exit(rc)

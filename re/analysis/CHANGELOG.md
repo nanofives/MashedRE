@@ -2652,3 +2652,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  004260a0  GetDat00657438  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_00657438.csv
+2026-05-26  C2->C3  004260b0  GetDat0065743c  c3-batch-s-s5  Frida A/B 10/10 GREEN; C2+ caller FUN_00487280; log/diff_get_dat_0065743c.csv
+2026-05-26  C2->C3  00426bc0  GetDat0066d6e0  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_0066d6e0.csv
+2026-05-26  C2->C3  00426bd0  GetTableEntry0066d658  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_table_entry_0066d658.csv

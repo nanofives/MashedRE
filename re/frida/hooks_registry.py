@@ -8794,4 +8794,83 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # =========================================================================
+    # c3-batch-s session 5 — Frontend GlobalGetters_s5  (2026-05-26)
+    # 4 pure-leaf getters promoted C2->C3.
+    # Refused: 0x00426b40 (7 of 10 callees at C1 — anti-island rule).
+    # =========================================================================
+
+    # 0x004260a0  GetDat00657438
+    # Pure leaf: reads DAT_00657438 (4-byte global at 0x00657438), returns it.
+    # Strategy: write sentinel values to 0x00657438, call orig/reimpl, compare.
+    # 10 sentinels covering 0, 1, max, and bit-pattern variants.
+    # ref: re/analysis/frontend_c1_to_c2_s4/FUN_004260a0.md
+    'get_dat_00657438': {
+        'rva':            0x004260a0,
+        'export':         'GetDat00657438',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00657438,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x004260b0  GetDat0065743c
+    # Pure leaf: reads DAT_0065743c (4-byte global at 0x0065743c), returns it.
+    # Paired with GetDat00657438 (adjacent globals, 0x00657438 + 4 = 0x0065743c).
+    # Strategy: write sentinel values to 0x0065743c, call orig/reimpl, compare.
+    # ref: re/analysis/frontend_c1_to_c2_s4/FUN_004260b0.md
+    'get_dat_0065743c': {
+        'rva':            0x004260b0,
+        'export':         'GetDat0065743c',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0065743c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00426bc0  GetDat0066d6e0
+    # Pure leaf: reads DAT_0066d6e0 (4-byte global at 0x0066d6e0), returns it.
+    # Single caller: FUN_00409290.
+    # Strategy: write sentinel values to 0x0066d6e0, call orig/reimpl, compare.
+    # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426bc0.md
+    'get_dat_0066d6e0': {
+        'rva':            0x00426bc0,
+        'export':         'GetDat0066d6e0',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0066d6e0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00426bd0  GetTableEntry0066d658
+    # Reads a packed 4-byte record from table at 0x0066d658: stride 4 per index.
+    # Writes low uint16 to *param_2, high uint16 to *param_3. Void return.
+    # Strategy: int_ptr2_out — fn(idx, out1, out2); compare packed fingerprint.
+    # The buf is pre-zeroed; uint16 writes land in low 2 bytes of each 4-byte slot.
+    # The `& 0x3f` pack covers 6 bits of each uint16, sufficient for table entries.
+    # Indices 0..9 ensure varied table positions; at quiescent menu state
+    # 0x0066d658 holds live game data — both orig and reimpl read the same region.
+    # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426bd0.md
+    'get_table_entry_0066d658': {
+        'rva':            0x00426bd0,
+        'export':         'GetTableEntry0066d658',
+        'signature':      {'ret': 'void', 'args': ['int', 'pointer', 'pointer']},
+        'arg_type':       'int_ptr2_out',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
 }
