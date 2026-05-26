@@ -2565,3 +2565,18 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004d4bf0  FUN_004d4bf0  batch-render-5-s6 (recursive Kahn sort step; swaps 0x80B-table/in-deg/entry blocks; repairs dep-index refs; self-recursive)
 2026-05-26  C1->C2  004d4dd0  FUN_004d4dd0  batch-render-5-s6 (pipeline pool open/activate; alloc/grow/sync; entry callbacks; marks active; 9 callers)
 2026-05-26  C1->C2  004d4f00  FUN_004d4f00  batch-render-5-s6 (pipeline entry linear search; vtable[+0xe8] comparison; start-after param; returns slot+index; 2 callers)
+2026-05-26  C1->C2  004d83d0  RwFrameSyncDirtyChildren  batch-render-6-s4
+2026-05-26  C1->C2  004d8430  rwID_ERRORMODULE_ctor  batch-render-6-s4
+2026-05-26  C1->C2  004d8470  rwID_ERRORMODULE_dtor  batch-render-6-s4
+2026-05-26  C1->C2  004d84e0  RwResourcesEmptyArena_PopSlot  batch-render-6-s4
+2026-05-26  C1->C2  004d8530  rwID_PIPEMODULE_ctor  batch-render-6-s4
+2026-05-26  C1->C2  004d8550  rwID_PIPEMODULE_dtor  batch-render-6-s4
+2026-05-26  C1->C2  004d8570  RwEngineRegisterStringFunctions  batch-render-6-s4
+2026-05-26  C1->C2  004d8680  RwStricmp  batch-render-6-s4
+2026-05-26  C1->C2  004d8770  RwStringGetSizeAligned  batch-render-6-s4
+2026-05-26  C1->C2  004d87a0  RwStringStreamWrite  batch-render-6-s4
+2026-05-26  C1->C2  004d8810  RwNativeRasterRead  batch-render-6-s4
+2026-05-26  C1->C2  004d8a80  rwID_RESOURCESMODULE_ctor  batch-render-6-s4
+2026-05-26  C1->C2  004d8b70  rwID_RESOURCESMODULE_dtor  batch-render-6-s4
+2026-05-26  C1->C2  004d8eb0  RwResourcesDrainArena  batch-render-6-s4
+2026-05-26  C1->C2  004d8fa0  rwID_CHUNKGROUPMODULE_ctor  batch-render-6-s4
