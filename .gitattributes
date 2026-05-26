@@ -18,9 +18,18 @@
 # step where worker branches converge.
 
 mashedmod/build.bat              merge=union
-re/frida/hooks_registry.py       merge=union
 re/analysis/CHANGELOG.md         merge=union
 re/PROMOTION_QUEUE.md            merge=union
 
 # hooks.csv is per-row data with strict format. Auto-union is too risky
 # (could produce duplicate-RVA rows or torn rows). Keep manual resolution.
+#
+# re/frida/hooks_registry.py was REMOVED from the union set 2026-05-26 after
+# the c3_batch_t sweep: it is a multi-line nested-dict structure, and when
+# worker branches inherit a shared baseline (all branched from the same main),
+# union splices new dict entries INTO the middle of inherited entries — every
+# splice truncated an entry body and broke Python syntax (4 manual repairs
+# needed that sweep). build.bat / CHANGELOG.md / PROMOTION_QUEUE.md stay on
+# union because their entries are single self-contained lines. hooks_registry.py
+# now uses default 3-way merge — conflicts there get hand-resolved (keep both
+# dict entries, one closing brace), same as hooks.csv.
