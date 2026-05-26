@@ -631,7 +631,10 @@ bool RenderFrame() {
 // failure — Milestone B1's contract is "try to load and report", not "must
 // have assets to start").
 bool LoadFrontendPiz() {
-    std::FILE* log = std::fopen(kLogPath, "w");
+    // Appends; the per-run truncate happens once at WinMain entry so the
+    // log accumulates entries from all earlier phases (e.g. the wedge
+    // walk) without being clobbered here.
+    std::FILE* log = std::fopen(kLogPath, "a");
 
     bool ok = g_frontend_piz.Load(kFrontendPiz);
     if (!ok) {
@@ -1267,12 +1270,12 @@ void ExecuteFrontendBootChain() {
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
-    // B7 must run BEFORE any reimpl is called. The MapMashedDataSection
-    // call itself doesn't depend on the log (it writes append-mode after
-    // LoadFrontendPiz creates the log), but the data window IS required for
-    // any subsequent reimpl that derefs a MASHED RVA. We do the actual
-    // VirtualAlloc here so it's effective before the asset chain starts.
-    (void)MapMashedDataSection();
+    // Truncate the log at session start so subsequent fopen "a" calls
+    // build a clean per-run trace.
+    {
+        std::FILE* clr = std::fopen(kLogPath, "w");
+        if (clr) std::fclose(clr);
+    }
 
     // Try to load the frontend asset archive before opening the window so the
     // initial title reflects load state. Failure is non-fatal.
@@ -1288,14 +1291,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
     }
 
-    // B7: verify the VirtualAlloc'd data window by actually calling a
-    // pure-leaf reimpl through it. After this point the log either contains
-    // a "Phase G wedge active" diagnostic or the process has crashed in
-    // MenuEntryArrayInit (meaning the wedge isn't covering the right range).
-    VerifyDataSectionWedgeViaReimpl();
-
-    // B10 (Phase G): execute the frontend boot chain via the wedge.
-    ExecuteFrontendBootChain();
+    // Wedge (B7) and boot chain (B10) are deferred until AFTER InitD3D9 —
+    // see the post-InitD3D9 calls. d3d9 needs unobstructed low-address
+    // space to settle CreateDevice, and running our 4-MB wedge before it
+    // caused 60%+ cold-start failures.
 
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
@@ -1338,6 +1337,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         UnregisterClassA(kClassName, hInstance);
         return 3;
     }
+
+    // B7 (deferred to post-InitD3D9): wedge over whatever low-address
+    // granules d3d9 didn't claim. Then verify + run boot chain.
+    (void)MapMashedDataSection();
+    VerifyDataSectionWedgeViaReimpl();
+    ExecuteFrontendBootChain();
 
     // B11: DirectInput8 keyboard. Failure is non-fatal — render loop still
     // works; the window title just won't reflect key state.
