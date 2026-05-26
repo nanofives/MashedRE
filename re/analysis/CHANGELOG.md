@@ -2691,3 +2691,13 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  004260b0  GetDat0065743c  c3-batch-s-s5  Frida A/B 10/10 GREEN; C2+ caller FUN_00487280; log/diff_get_dat_0065743c.csv
 2026-05-26  C2->C3  00426bc0  GetDat0066d6e0  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_dat_0066d6e0.csv
 2026-05-26  C2->C3  00426bd0  GetTableEntry0066d658  c3-batch-s-s5  Frida A/B 10/10 GREEN; leaf-exemption; log/diff_get_table_entry_0066d658.csv
+2026-05-26  C2->C3  0042b920  ConstantGetter22  c3-batch-s-s6; constant getter returns 0x16 (22); 5B pure leaf; Frida GREEN 10/10; RH_ScopedInstall; caller 0x00492770 MainLoopInit C4; pure-leaf exemption
+2026-05-26  C3-REFUSED  00426cb0  SlotIndexToPtr  c3-batch-s-s6; Frida A/B GREEN 12/12; caller-gate fails (both callers C1); D-11026 filed
+2026-05-26  C3-REFUSED  00426d90  HandleArrayRelease  c3-batch-s-s6; callee gate: 0x004e6680 C1; D-11027 filed
+2026-05-26  C3-REFUSED  0042a640  PathBuilderLoad  c3-batch-s-s6; no Frida arg_type for char* filename; D-11028 filed
+2026-05-26  C3-REFUSED  0042bde0  HudRectEmitter  c3-batch-s-s6; Frida RED 10/10 crashes (live D3D9 state required); D-11029 filed
+2026-05-26  C2->C3  0042b920  ConstantGetter22  c3-batch-s-s6; constant getter returns 0x16 (22); 5B pure leaf; Frida GREEN 10/10; RH_ScopedInstall; caller 0x00492770 MainLoopInit C4; pure-leaf exemption
+2026-05-26  C3-REFUSED  00426cb0  SlotIndexToPtr  c3-batch-s-s6; Frida A/B GREEN 12/12; caller-gate fails (both callers C1); D-11026 filed
+2026-05-26  C3-REFUSED  00426d90  HandleArrayRelease  c3-batch-s-s6; callee gate: 0x004e6680 C1; D-11027 filed
+2026-05-26  C3-REFUSED  0042a640  PathBuilderLoad  c3-batch-s-s6; no Frida arg_type for char* filename; D-11028 filed
+2026-05-26  C3-REFUSED  0042bde0  HudRectEmitter  c3-batch-s-s6; Frida RED 10/10 crashes (live D3D9 state required); D-11029 filed

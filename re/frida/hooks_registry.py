@@ -9171,4 +9171,83 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-s-s6 — Frontend near-leaf cluster (C2→C3)
+    # Frontend/MenuNearLeaves_s6.cpp
+    #
+    # Deferred this session:
+    #   0x00426d90 HandleArrayRelease — callee 0x004e6680 (RpClumpRender) is C1;
+    #              callee gate fails. Re-enable once 0x004e6680 reaches C2+.
+    #   0x0042a640 PathBuilderLoad   — no suitable Frida arg_type for char* path
+    #              + vtable dispatch. Queue harness-ext work first.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00426cb0  SlotIndexToPtr
+    # Pure leaf: returns &DAT_00663664 + param_1 * 0x4c. 12 bytes. No callees.
+    # Both orig and reimpl compute the same deterministic pointer for the same
+    # input index → bit-identical on every call.
+    # arg_type='int_scalar': passes int param_1, returns pointer (as uint32).
+    # Tests cover index 0..10 and a few negative/large values.
+    # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
+    'slot_index_to_ptr': {
+        'rva':            0x00426cb0,
+        'export':         'SlotIndexToPtr',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, -1],
+        'path2_tests':    [0, 1, 5],
+    },
+
+    # 0x0042b920  ConstantGetter22
+    # Pure constant getter: MOV EAX, 0x16; RET. 5 bytes. No args, no callees.
+    # Returns 0x16 (22) unconditionally. arg_type='void': call 10x, compare
+    # uint32 return. Both sides must return 0x16 every time.
+    # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042b920.md
+    'constant_getter_22': {
+        'rva':            0x0042b920,
+        'export':         'ConstantGetter22',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'void',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    # 0x0042bde0  HudRectEmitter
+    # void(int param_1, byte param_2): 5 calls to ChromeBaseDraw (C3).
+    # Both orig and reimpl draw to the same vertex buffer (DAT_00898a20);
+    # function returns void; void===void is always GREEN.
+    # Mission note: use int_pair arg_type; do NOT set crash_equal_ok.
+    # Test vectors: [param_1, param_2] covering a range of row-indices and
+    # alpha values. param_1 shifts HUD row (fVar1 = param_1 - 13); param_2
+    # controls colour blend (0..255).
+    # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042bde0.md
+    'hud_rect_emitter': {
+        'rva':            0x0042bde0,
+        'export':         'HudRectEmitter',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # [param_1, param_2]: row-index, colour-byte
+        'path1_tests': [
+            [0,   0],
+            [1,   0],
+            [5,   0],
+            [10,  0],
+            [13,  0],
+            [0,   128],
+            [5,   255],
+            [10,  64],
+            [20,  200],
+            [0,   1],
+        ],
+        'path2_tests': [
+            [0,   0],
+            [5,   128],
+            [13,  255],
+        ],
+    },
+
 }
