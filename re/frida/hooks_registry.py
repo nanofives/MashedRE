@@ -9008,4 +9008,88 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-s-s4 — Frontend/GlobalGetters_s4.cpp (C2→C3)
+    # 5 pure-leaf global-getter functions.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00425ee0  SlotWordPtrGet
+    # Signature: uint32_t* fn(int param_1)
+    # Returns &DAT_00899294 + param_1 * 0x13 (int32 word stride).
+    # Strategy: int_scalar — pass param_1 as uint32; compare raw returned
+    # pointer as integer. Both orig and reimpl must compute the same address.
+    # 10 indices covering 0, low, mid, and boundary values.
+    'slot_word_ptr_get': {
+        'rva':            0x00425ee0,
+        'export':         'SlotWordPtrGet',
+        'signature':      {'ret': 'pointer', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 0xFF, 0x1000],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00425ef0  ActiveSlotCount
+    # Signature: int fn(void)
+    # Counts active slots in the hardcoded 8-slot table at 0x00899260.
+    # Strategy: none — call 10x at quiescent main-menu state; both orig and
+    # reimpl read the same live BSS addresses and must return identical counts.
+    'active_slot_count': {
+        'rva':            0x00425ef0,
+        'export':         'ActiveSlotCount',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00426020  GlobalDat00646e58Get
+    # Signature: void* fn(void)
+    # Returns &DAT_00646e58 — fixed compile-time constant address.
+    # Strategy: none — call 10x; both orig and reimpl must return the same
+    # fixed address 0x00646e58 each time.
+    'global_dat_00646e58_get': {
+        'rva':            0x00426020,
+        'export':         'GlobalDat00646e58Get',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00426080  GlobalDat00656ed8Get
+    # Signature: uint32_t fn(void)
+    # Returns DAT_00656ed8 — reads and returns the 4-byte global value.
+    # Strategy: read_global — write sentinel values to 0x00656ed8, call fn(),
+    # confirm both orig and reimpl read the same address and return the sentinel.
+    'global_dat_00656ed8_get': {
+        'rva':            0x00426080,
+        'export':         'GlobalDat00656ed8Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00656ed8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00426090  GlobalDat0066ce58Get
+    # Signature: void* fn(void)
+    # Returns &DAT_0066ce58 — fixed compile-time constant address.
+    # High fan-in: 8 callers. Strategy: none — call 10x; both orig and reimpl
+    # must return the fixed address 0x0066ce58 each time.
+    'global_dat_0066ce58_get': {
+        'rva':            0x00426090,
+        'export':         'GlobalDat0066ce58Get',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
