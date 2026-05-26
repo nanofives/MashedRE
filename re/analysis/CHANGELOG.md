@@ -1,6 +1,21 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-26  C1->C2  004b41f0  FUN_004b41f0  batch-render-3-s3
+2026-05-26  C1->C2  004b4230  FUN_004b4230  batch-render-3-s3
+2026-05-26  C1->C2  004b4270  FUN_004b4270  batch-render-3-s3
+2026-05-26  C1->C2  004b4280  FUN_004b4280  batch-render-3-s3
+2026-05-26  C1->C2  004b42c0  FUN_004b42c0  batch-render-3-s3
+2026-05-26  C1->C2  004b4650  FUN_004b4650  batch-render-3-s3
+2026-05-26  C1->C2  004b46b0  FUN_004b46b0  batch-render-3-s3
+2026-05-26  C1->C2  004b47c0  FUN_004b47c0  batch-render-3-s3
+2026-05-26  C1->C2  004b47e0  FUN_004b47e0  batch-render-3-s3
+2026-05-26  C1->C2  004b48e0  FUN_004b48e0  batch-render-3-s3
+2026-05-26  C1->C2  004b4a80  FUN_004b4a80  batch-render-3-s3
+2026-05-26  C1->C2  004b4ad0  FUN_004b4ad0  batch-render-3-s3
+2026-05-26  C1->C2  004b4b20  FUN_004b4b20  batch-render-3-s3
+2026-05-26  C1->C2  004b4b60  FUN_004b4b60  batch-render-3-s3
+2026-05-26  C1->C2  004b4c80  FUN_004b4c80  batch-render-3-s3
 2026-05-25  0x004780c0  FUN_004780c0  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_004780c0.md; U-4525
 2026-05-25  0x00478110  FUN_00478110  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00478110.md; U-4526
 2026-05-25  0x00478220  FUN_00478220  C1->C2  batch-render-2-s2; decomp via MCP pool10; plate re/analysis/render_2_c1_to_c2_s2/FUN_00478220.md; U-4527
