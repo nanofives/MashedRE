@@ -52,6 +52,10 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | ~~U-3564~~ | ~~structural~~ | ~~vehicle_update_d2: 0x00470670 VehicleControlUpdate~~ | ~~FUN_00467650 VehicleWheelDrivetrainUpdate C2 plate verified args and CVT pipeline~~ | ~~resolved vehicle_promote_c2_b-20260512~~ | ~~resolved~~ | none |
 | ~~U-3565~~ | ~~structural~~ | ~~vehicle_update_d2: 0x00470670 VehicleControlUpdate~~ | ~~FUN_00468980 VehicleAeroStabilizer C2 plate verified args and pitch-stabilization role~~ | ~~resolved vehicle_promote_c2_b-20260512~~ | ~~resolved~~ | none |
 
+| U-5000 | structural | render: 0x004c9fb0 FUN_004c9fb0 | IDirect3DDevice9 vtable+0x34 call: exact D3D9 method identity unclear (ResetEx or CreateAdditionalSwapChain) | Call-site register args; cross-reference D3D9 SDK vtable layout at offset 0x34 | Inspect callee vtable dispatch in listing; check D3D9 header at runtime | C3 of 004c9fb0 |
+| U-5001 | structural | render: 0x004cb0f0 FUN_004cb0f0 | IDirect3DDevice9 vtable+0x1AC: D3D9 standard maps this to SetIndices but context (called alongside SetPixelShader/SetClipPlane) suggests different operation | Call-site args in FUN_0049a750; cross-ref D3D9 vtable layout | mcp__ghidra__decomp_function 0x0049a750 | C3 of 004cb0f0 |
+| U-5002 | structural | render: 0x004cb130/004cb190 FUN_004cb130/FUN_004cb190 | IDirect3DDevice9 vtable+0x190 (400 decimal): standard D3D9 maps this to SetStreamSource but may be different; 5-arg call pattern matches SetStreamSource | Call-site args in FUN_00499d90; cross-ref D3D9 vtable layout | mcp__ghidra__decomp_function 0x00499d90 | C3 of 004cb130/004cb190 |
+
 ## Resolved (audit trail)
 
 | ID | Type | Resolved date | Resolution |
