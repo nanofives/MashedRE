@@ -26,28 +26,38 @@ The skill needs to know:
 
 If a parameter is missing, prefer the conservative default — never balloon a session to a complexity the cap can't absorb.
 
-**Standard batch shape: 6 sessions × 5 candidates = 30 promotions per batch.** This is the production cadence; the skill produces a batch of this shape unless the user overrides. A 30-promotion batch matches one productive parallel-fanout afternoon and aligns with the Ghidra-discovery batch sizing (`batch_h.txt` has 6 sessions too).
+**Two production batch shapes:**
 
-## Why 5 / 8 (the per-session cap)
+| Shape | Sessions × K | Model | Total promotions | When to pick |
+|---|---|---|---|---|
+| **standard** (default) | 6 × 5 | Sonnet 4.6 | 30 | Routine batches when the candidate pool has lots of small leaves. Sonnet handles K=5 cleanly inside a 150k context budget. |
+| **high-throughput** | 6 × 10 | Opus 4.7 1M | 60 | Roughly 2-3× the token cost for ~2× the promotions per round. Pick when the candidate pool justifies it (e.g. ≥60 v4-filter-passed candidates) or when the user has explicitly asked for "bigger" / "Opus" / "high-throughput". c3_batch_j ran this shape successfully. |
+
+Both shapes use the same 6-session fanout — only the per-session K and worker model differ. Default to **standard**; produce **high-throughput** when the user asks for it OR when v4-filter-passed candidates ≥ 60 AND the user is operating under "make it fast" mode rather than a budget-constrained mode. If you up-shape on your own initiative, declare the cost trade-off in the batch file header.
+
+## Why 5 / 8 / 10 (the per-session cap)
 
 Each C2→C3 promotion costs the worker session roughly **10–15k tokens**: read analysis note, scan existing similar hook, write a small `.cpp`, edit `build.bat`, edit `hooks_registry.py`, build, run `run_diff_parallel.py`, then a ~5–10k transaction in re-classify (hooks.csv slice reads + multiple Edits across hooks.csv / STUBS.md / CHANGELOG / analysis note frontmatter).
 
-Sonnet 4.6 effective working budget before auto-compact is ≈150k tokens. With ~13k of fixed startup context (CLAUDE.md + CONFIDENCE.md + this skill's prompt + hooks_registry inspection), a session has ≈137k usable. That fits:
+**Sonnet 4.6 (standard shape):** effective working budget before auto-compact is ≈150k tokens. With ~13k of fixed startup context (CLAUDE.md + CONFIDENCE.md + this skill's prompt + hooks_registry inspection), a session has ≈137k usable. That fits:
 
 - **5 functions** = 75k → 88k total → ~50k headroom (preferred default; survives one drift-promote or struct-doc detour)
-- **8 functions** = 120k → 133k → ~17k headroom (hard cap; no room for surprises)
+- **8 functions** = 120k → 133k → ~17k headroom (hard Sonnet cap; no room for surprises)
 
-Beyond 8, compaction is likely mid-session. A compaction in the middle of a re-classify transaction is a recipe for tracker drift, so the cap is firm.
+Beyond 8 on Sonnet, compaction is likely mid-session. A compaction in the middle of a re-classify transaction is a recipe for tracker drift, so the Sonnet cap is firm at 8.
+
+**Opus 4.7 1M (high-throughput shape):** effective working budget is ≈1M tokens. At 10–15k per promotion, K=10 lands at ~150k total — well within budget. K=15 (~225k) is also fine; K=20 starts to pile up tool-result history. The Opus session cap used in production is **10** (matches c3_batch_j) with a hard absolute ceiling at **15**.
 
 ## Model declaration (per session)
 
 | Role | Model | Reason |
 |---|---|---|
-| Per-session worker | **Sonnet 4.6** (`claude-sonnet-4-6`) | C2→C3 authoring is mechanical: read note, copy template, paste address, run harness. Sonnet handles it cleanly and is ~4× cheaper than Opus. |
-| End-of-batch merge / promotion-queue sweep | Opus 4.7 (`claude-opus-4-7`) | Only invoked if a sweep is needed (rare for C3 — see § "When sweep is needed"). |
-| Caller drift-promote (if needed mid-session) | Sonnet 4.6 | Inline within the same session. Use Opus only if the caller turns out to be > 200 lines of decomp with semantic puzzles. |
+| Per-session worker (standard shape) | **Sonnet 4.6** (`claude-sonnet-4-6`) | C2→C3 authoring is mechanical: read note, copy template, paste address, run harness. Sonnet handles it cleanly at K=5–8 and is ~3-4× cheaper than Opus per token. |
+| Per-session worker (high-throughput shape) | **Opus 4.7 1M** (`claude-opus-4-7[1m]`) | 1M context fits K=10–15 comfortably. Use when total promotion target ≥60 or when filter-passed pool justifies the token cost. |
+| End-of-batch merge / promotion-queue sweep | Sonnet 4.6 (`claude-sonnet-4-6`) per `frida-sweep` SKILL.md | Mechanical conflict resolution + observed integration diff. Opus is wasted. |
+| Caller drift-promote (if needed mid-session) | Same as the session model | Inline within the same session — Opus only if the caller turns out to be > 200 lines of decomp with semantic puzzles. |
 
-Always write the model id verbatim into the batch row (`Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap N RVAs`). Future-you will thank current-you when comparing token spend across batches.
+Always write the model id verbatim into the batch row (`Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap N RVAs` or `Model: Opus 4.7 1M (claude-opus-4-7[1m]) — hard cap N RVAs`). Future-you will thank current-you when comparing token spend across batches.
 
 ## Candidate selection algorithm
 
@@ -357,14 +367,22 @@ When invoked:
 - Putting more than 8 RVAs in one session — that's the compaction-risk line.
 - Mixing complexity tiers within one session (3 trivial leaves + 1 200-line dispatcher) — uneven session lengths cause the rest of the fanout to wait.
 - Including candidates whose analysis note doesn't exist or hasn't been read end-to-end — speculation, not promotion.
-- Recommending Opus for a routine batch — that's a 4× cost increase for no measurable quality gain on mechanical C2→C3 work. Save Opus for the sweep, the hard-call sessions, and the gate-edge cases.
+- Recommending Opus for a routine *standard*-shape batch when the candidate pool is small (<30 v4-passed) — that's a 3-4× cost increase for no measurable quality gain on mechanical C2→C3 work. Opus is the correct choice only for *high-throughput* (K≥10) batches.
 - Emitting a batch that requires sweep coordination as the default — the C3 path should self-classify per-worktree; sweep is the exception.
 - Failing to declare the worktree branch name in every session block. Sessions that share branches will collide on commit.
 
 ## Default batch + scale guidance
 
-**Production default: N=6, K=5** (`c3_batch_<id>.txt` with 6 sessions of 5 candidates each = 30 promotions). Wall time ~45-60 min of human-attended parallel Claude work = roughly 5 hrs serial equivalent. This is the cadence to run weekly until each subsystem's C2 backlog is drained.
+**Default shape: standard, N=6, K=5, Sonnet 4.6** (`c3_batch_<id>.txt` with 6 sessions of 5 candidates each = 30 promotions). Wall time ~45-60 min of human-attended parallel Claude work = roughly 5 hrs serial equivalent. This is the cadence to run weekly until each subsystem's C2 backlog is drained.
 
-**If a first-ever pilot is requested explicitly**, the user can ask for N=2 K=4 (8 promotions, faster validation), but the default produced when the user just says "make a c3 batch" is **always 6×5**. Do not silently shrink the batch — if candidates run low (fewer than 30 viable C2 leaves remain in the requested subsystems), produce a partial batch and report exactly which sessions are short.
+**High-throughput shape: N=6, K=10, Opus 4.7 1M** (60 promotions per round). Up-shape when:
+- v4-filter-passed candidates ≥ 60 AND
+- the user says "high-throughput" / "Opus" / "bigger" / "make it fast"
+OR
+- token budget is not a constraint AND the candidate pool is large
 
-C2 backlog (snapshot 2026-05-12): util 27 (24 after today's session), frontend 66, render 54, hud 36, vehicle 30, audio 20 → ~213 promotions = ~7 batches at the 6×5 cadence.
+The high-throughput shape roughly doubles per-round output for ~2-3× the token cost. c3_batch_j was run this way successfully — 60 promotions landed in one parallel-fanout afternoon.
+
+**If a first-ever pilot is requested explicitly**, the user can ask for N=2 K=4 (8 promotions, faster validation). Do not silently shrink the default batch — if candidates run low (fewer than the shape's total target remain in the requested subsystems), produce a partial batch and report exactly which sessions are short.
+
+C2 backlog (snapshot 2026-05-26): frontend 143, render 600+, hud 70, vehicle ~30, audio ~20 → ~800+ promotions remaining. At standard cadence (30/round) that's 27+ rounds; at high-throughput cadence (60/round) it's 13+. The high-throughput shape is strongly recommended for any subsystem with a 100+ C2 backlog.
