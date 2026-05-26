@@ -1,6 +1,11 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-26  00423ee0  PlayerBlock2Field00Get  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
+2026-05-26  00423f60  PlayerBlock2Field04Get  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
+2026-05-26  00423ff0  PlayerBlock2Field50Get  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
+2026-05-26  00424070  PlayerBlock2Field08Get  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
+2026-05-26  004241b0  GetDat008994c0  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_s3.cpp
 2026-05-26  C1->C2  0x004d6b90  FUN_004d6b90  batch-render-6-s2
 2026-05-26  C1->C2  0x004d6c40  FUN_004d6c40  batch-render-6-s2
 2026-05-26  C1->C2  0x004d6c90  FUN_004d6c90  batch-render-6-s2

@@ -8794,4 +8794,98 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-s-s3 — frontend menu-leaf cluster (C2→C3, 5 candidates)
+    # Frontend/MenuLeaves_s3.cpp
+    # Four team-aggregating per-player stat getters + one trivial global reader.
+    # Callees: GetDat0067ea64 (0x0042f500, C4), GetRaceSubMode (0x0042f6a0, C3).
+    # Strategy for the 4 team-aggregation getters: int_scalar (player index 0..3).
+    #   Both orig and reimpl read the same live globals at quiescent main menu.
+    #   Team-mode is 0 at menu → simple direct-field path; both sides agree.
+    # Strategy for GetDat008994c0: read_global — write sentinel to 0x008994c0,
+    #   call fn, compare return. Both sides must return the sentinel verbatim.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00423ee0  PlayerBlock2Field00Get
+    # int(int param_1): reads (&DAT_00899f20)[param_1*0x4e]; team-aggregates if teams on.
+    # No RaceSubMode gate. Pure field +0x00 from block-2 root.
+    # At quiescent main menu: GetDat0067ea64()==0 → direct field access, no team loop.
+    # int_scalar: pass player indices 0..3 (valid range); all 4 slots are initialized
+    # at main menu. Return value is the block-2 field for that slot (likely 0 at menu).
+    # 10 tests covering all 4 valid indices repeatedly; OOB indices probe the no-gate path.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ee0.md
+    'player_block2_field00_get': {
+        'rva':            0x00423ee0,
+        'export':         'PlayerBlock2Field00Get',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423f60  PlayerBlock2Field04Get
+    # int(int param_1): same as Field00Get but field +0x04; RaceSubMode==4 → return 0.
+    # At quiescent main menu: GetRaceSubMode()!=4, GetDat0067ea64()==0 → direct field.
+    # int_scalar: same 4-slot coverage. Both sides agree on 0 for typical zeroed stats.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423f60.md
+    'player_block2_field04_get': {
+        'rva':            0x00423f60,
+        'export':         'PlayerBlock2Field04Get',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00423ff0  PlayerBlock2Field50Get
+    # int(int param_1): field +0x50 from block-2 root (dword offset 0x14). No gate.
+    # At quiescent main menu: GetDat0067ea64()==0 → direct field access.
+    # int_scalar: same 4-slot coverage.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00423ff0.md
+    'player_block2_field50_get': {
+        'rva':            0x00423ff0,
+        'export':         'PlayerBlock2Field50Get',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00424070  PlayerBlock2Field08Get
+    # int(int param_1): field +0x08 from block-2 root; RaceSubMode==4 → return 0.
+    # At quiescent main menu: GetRaceSubMode()!=4, GetDat0067ea64()==0 → direct field.
+    # int_scalar: same 4-slot coverage.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00424070.md
+    'player_block2_field08_get': {
+        'rva':            0x00424070,
+        'export':         'PlayerBlock2Field08Get',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x004241b0  GetDat008994c0
+    # undefined4 FUN_004241b0(void): 6-byte leaf, returns *(uint32*)0x008994c0.
+    # Strategy: read_global — write sentinel to 0x008994c0, call fn, compare return.
+    # Both orig and reimpl must return the sentinel verbatim.
+    # 10 sentinel values spanning 0, 1, max, patterns.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_004241b0.md
+    'get_dat_008994c0': {
+        'rva':            0x004241b0,
+        'export':         'GetDat008994c0',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x008994c0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
 }
