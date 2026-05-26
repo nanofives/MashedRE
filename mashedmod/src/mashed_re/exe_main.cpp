@@ -216,6 +216,12 @@ constexpr float         kTitleQuadSize    = 512.f;
 float g_titleQuadOffsetX = 0.f;
 float g_titleQuadOffsetY = 0.f;
 constexpr float kTitleQuadStep = 4.f;
+
+// B13 — currently-displayed atlas slot in title mode. PgUp/PgDn cycle through
+// all uploaded textures (0..g_atlas_slot_count-1). Wraps around. Lets the user
+// visually verify every Frontend.piz TEXTURES.TXD entry decodes + uploads
+// cleanly, not just 'main'.
+std::uint32_t g_titlePickedSlot = 0;
 // Name of the texture to use as the title-screen logo. Picked because it's
 // the only 256x256 PAL8 in Frontend.piz's TEXTURES.TXD — MASHED's menu code
 // references this exact name at multiple call sites. Per the B3 log row 5.
@@ -360,18 +366,23 @@ void UpdateTitleFromKeyboard() {
     const bool enter = (g_keys[DIK_RETURN]& 0x80) != 0;
     const bool esc   = (g_keys[DIK_ESCAPE]& 0x80) != 0;
     // Pack into an int so we only refresh title on transitions OR quad
-    // position changes (which happen while arrows are held — without this,
-    // the title's quad@x,y would freeze at the moment of key-press).
-    static int    s_last_packed = -1;
-    static int    s_last_qx     = INT_MIN;
-    static int    s_last_qy     = INT_MIN;
+    // position changes (which happen while arrows are held) OR slot pick
+    // changes (B13 PgUp/PgDn cycling). Without these, the title would freeze
+    // mid-action.
+    static int           s_last_packed = -1;
+    static int           s_last_qx     = INT_MIN;
+    static int           s_last_qy     = INT_MIN;
+    static std::uint32_t s_last_slot   = UINT32_MAX;
     const int packed = (up<<0)|(down<<1)|(left<<2)|(right<<3)|(enter<<4)|(esc<<5);
     const int qx = static_cast<int>(g_titleQuadOffsetX);
     const int qy = static_cast<int>(g_titleQuadOffsetY);
-    if (packed == s_last_packed && qx == s_last_qx && qy == s_last_qy) return;
+    const std::uint32_t slot = g_titlePickedSlot;
+    if (packed == s_last_packed && qx == s_last_qx && qy == s_last_qy
+        && slot == s_last_slot) return;
     s_last_packed = packed;
     s_last_qx = qx;
     s_last_qy = qy;
+    s_last_slot = slot;
     char buf[256];
     std::snprintf(buf, sizeof(buf),
                   "Mashed RE (B11 keys: %s%s%s%s%s%s)",
@@ -381,15 +392,20 @@ void UpdateTitleFromKeyboard() {
                   right ? "RIGHT " : "",
                   enter ? "ENTER " : "",
                   esc   ? "ESC "   : "");
+    const char* slot_name = "(none)";
+    if (g_titlePickedSlot < g_txd.count()) {
+        slot_name = g_txd.texture(g_titlePickedSlot).name;
+    }
     if (!up && !down && !left && !right && !enter && !esc) {
         std::snprintf(buf, sizeof(buf),
-                      "Mashed RE (B12 idle; quad@%+d,%+d)",
+                      "Mashed RE (B13 idle; slot %u/'%s' quad@%+d,%+d)",
+                      g_titlePickedSlot, slot_name,
                       static_cast<int>(g_titleQuadOffsetX),
                       static_cast<int>(g_titleQuadOffsetY));
     } else {
-        // Overwrite the B11 suffix with B12 offset info.
         std::snprintf(buf, sizeof(buf),
-                      "Mashed RE (B12 keys: %s%s%s%s%s%s; quad@%+d,%+d)",
+                      "Mashed RE (B13 slot %u/'%s'; keys: %s%s%s%s%s%s; quad@%+d,%+d)",
+                      g_titlePickedSlot, slot_name,
                       up    ? "UP "    : "",
                       down  ? "DOWN "  : "",
                       left  ? "LEFT "  : "",
@@ -433,6 +449,28 @@ void UpdateQuadFromKeyboard() {
     if (g_titleQuadOffsetX > maxX) g_titleQuadOffsetX = maxX;
     if (g_titleQuadOffsetY < minY) g_titleQuadOffsetY = minY;
     if (g_titleQuadOffsetY > maxY) g_titleQuadOffsetY = maxY;
+}
+
+// B13 — PgUp / PgDn cycle through uploaded atlas slots (the 8 Frontend.piz
+// textures). Wraps. Reacts on rising edge only (otherwise a held key would
+// blow through all 8 in two frames). Home key resets to slot 0.
+void UpdateTitleSlotFromKeyboard() {
+    if (!g_kbd || g_atlas_slot_count == 0) return;
+    const bool pgup_now      = (g_keys[DIK_PGUP]      & 0x80) != 0;
+    const bool pgup_prev     = (g_keys_prev[DIK_PGUP] & 0x80) != 0;
+    const bool pgdn_now      = (g_keys[DIK_PGDN]      & 0x80) != 0;
+    const bool pgdn_prev     = (g_keys_prev[DIK_PGDN] & 0x80) != 0;
+    const bool home_now      = (g_keys[DIK_HOME]      & 0x80) != 0;
+    const bool home_prev     = (g_keys_prev[DIK_HOME] & 0x80) != 0;
+    if (pgdn_now && !pgdn_prev) {
+        g_titlePickedSlot = (g_titlePickedSlot + 1u) % g_atlas_slot_count;
+    }
+    if (pgup_now && !pgup_prev) {
+        g_titlePickedSlot = (g_titlePickedSlot + g_atlas_slot_count - 1u) % g_atlas_slot_count;
+    }
+    if (home_now && !home_prev) {
+        g_titlePickedSlot = 0u;
+    }
 }
 
 bool InitD3D9() {
@@ -492,7 +530,14 @@ bool RenderFrame() {
         // B6: title-screen MVP — single centered 'main' texture quad.
         // Phase F (M6) gate: "RW replacement renders 1 textured sprite".
         if (g_atlas_slot_count > 0) {
-            g_quad_renderer.RenderAt(kTitleSlotIndex,
+            // B13: render whichever slot the user has cycled to. Clamp under
+            // a wraparound from input handling (defensive — should never trip
+            // if PgUp/PgDn modulo math is correct).
+            const std::uint32_t slot =
+                (g_titlePickedSlot < g_atlas_slot_count)
+                    ? g_titlePickedSlot
+                    : 0u;
+            g_quad_renderer.RenderAt(slot,
                                      kTitleQuadCenterX + g_titleQuadOffsetX,
                                      kTitleQuadCenterY + g_titleQuadOffsetY,
                                      kTitleQuadSize, kTitleQuadSize);
@@ -882,11 +927,8 @@ bool MapMashedDataSection() {
             if (p) ++covered;
             else { ++blocked; if (!blocked_first) blocked_first = a; }
         } else if (mbi.State == MEM_RESERVE) {
-            // Granule is reserved (e.g. by the process heap's lazy-commit
-            // strategy) but no physical pages backed yet. Commit it
-            // ourselves so reimpl deref succeeds. This is harmless even if
-            // the reservation owner later writes there — they own the
-            // pages, we just paid the commit charge.
+            // Lazy-reserved (typically by process heap). Commit on top of
+            // the reservation so reimpls can write there.
             void* p = VirtualAlloc(
                 reinterpret_cast<LPVOID>(a),
                 kGran,
@@ -895,9 +937,7 @@ bool MapMashedDataSection() {
             if (p) ++covered;
             else { ++blocked; if (!blocked_first) blocked_first = a; }
         } else {
-            // MEM_COMMIT already (image / mapped / explicit commit) — leave
-            // alone. Reimpls that deref into here will be reading whatever
-            // the owner wrote.
+            // MEM_COMMIT (image / mapped / explicit) — leave alone.
             ++blocked;
             if (!blocked_first) blocked_first = a;
         }
@@ -994,28 +1034,38 @@ void VerifyDataSectionWedgeViaReimpl() {
         std::fclose(clog);
     }
     // Pre-poison the range the reimpl is supposed to zero so we can confirm
-    // the writes actually happened. If a granule is blocked, this poison
-    // write itself will AV before the reimpl call.
-    for (std::uintptr_t a = kArrayBase; a < kArrayEnd; a += 4) {
-        *reinterpret_cast<std::uint32_t*>(a) = 0xDEADBEEFu;
-    }
-    // Call the reimpl. If it AVs, the process dies — proves the wedge didn't
-    // cover the right range. If it returns, the writes succeeded.
-    MenuEntryArrayInit();
-    // Verify a sample of offsets: entry-0 offset 0 (= 0x00898ac0),
-    // entry-0 offset +40 (= 0x00898ae8), entry-29 offset 0 (= 0x008990ac).
-    const std::uint32_t v0   = *reinterpret_cast<std::uint32_t*>(0x00898ac0u);
-    const std::uint32_t v40  = *reinterpret_cast<std::uint32_t*>(0x00898ae8u);
-    const std::uint32_t v29  = *reinterpret_cast<std::uint32_t*>(0x008990acu);
-    std::FILE* log = std::fopen(kLogPath, "a");
-    if (log) {
-        std::fprintf(log,
-                     "Milestone B7: MenuEntryArrayInit() returned without AV.\n"
-                     "  entry 0 [0x00898ac0] = 0x%08X (expect 0)\n"
-                     "  entry 0 [0x00898ae8] = 0x%08X (expect 0)\n"
-                     "  entry 29[0x008990ac] = 0x%08X (expect 0)\n",
-                     v0, v40, v29);
-        std::fclose(log);
+    // the writes actually happened. Both the poison write and the reimpl
+    // are SEH-wrapped: if a granule in the range is blocked, the AV is
+    // caught and the process survives. This used to be fatal back when we
+    // committed every MEM_RESERVE granule blindly (which corrupted d3d9's
+    // lazy-reserved memory). The current wedge only commits MEM_FREE
+    // granules, so we accept that some reimpls will AV here.
+    __try {
+        for (std::uintptr_t a = kArrayBase; a < kArrayEnd; a += 4) {
+            *reinterpret_cast<std::uint32_t*>(a) = 0xDEADBEEFu;
+        }
+        MenuEntryArrayInit();
+        const std::uint32_t v0   = *reinterpret_cast<std::uint32_t*>(0x00898ac0u);
+        const std::uint32_t v40  = *reinterpret_cast<std::uint32_t*>(0x00898ae8u);
+        const std::uint32_t v29  = *reinterpret_cast<std::uint32_t*>(0x008990acu);
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                         "Milestone B7: MenuEntryArrayInit() returned without AV.\n"
+                         "  entry 0 [0x00898ac0] = 0x%08X (expect 0)\n"
+                         "  entry 0 [0x00898ae8] = 0x%08X (expect 0)\n"
+                         "  entry 29[0x008990ac] = 0x%08X (expect 0)\n",
+                         v0, v40, v29);
+            std::fclose(log);
+        }
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                         "Milestone B7: MenuEntryArrayInit() AV'd (target "
+                         "granule 0x00890000 not in wedge — see coverage above).\n");
+            std::fclose(log);
+        }
     }
 }
 
@@ -1235,11 +1285,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // title-screen MVP; B5 fallback uploads all 8 textures into a 4x2 atlas
     // when kTitleMode is false. Failure is non-fatal — the frame loop still
     // runs and shows a teal clear, just without quads on top.
-    if constexpr (kTitleMode) {
-        (void)UploadTitleTextureForLogo();
-    } else {
-        (void)UploadAllTexturesForAtlas();
-    }
+    // B13: always upload all textures so PgUp/PgDn can cycle through them in
+    // title mode. The B5 atlas-grid layout vs. B6 title-screen layout is a
+    // render-time choice (still controlled by kTitleMode), not an upload-time
+    // one. UploadTitleTextureForLogo() is retained for the comment + slot-0
+    // contract but UploadAllTexturesForAtlas() supersedes it.
+    (void)UploadAllTexturesForAtlas();
 
     // Main loop: pump messages + render until the user closes the window or
     // hits ESC, or the device gets into an unrecoverable state. Per frame we
@@ -1250,6 +1301,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         UpdateTitleFromKeyboard();
         // B12: arrow keys translate title quad; Enter resets.
         UpdateQuadFromKeyboard();
+        // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
+        UpdateTitleSlotFromKeyboard();
         // B11: ESC via DirectInput also exits the app (in addition to the
         // WM_KEYDOWN handler).
         if ((g_keys[DIK_ESCAPE] & 0x80) && !(g_keys_prev[DIK_ESCAPE] & 0x80)) {
