@@ -2652,3 +2652,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  00423b40  PlayerScoreAccA  c3-batch-s-s2 (per-player accessor base 0x00899a94 stride 0x4e dwords; GetRaceSubMode==4 guard; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423b60  PlayerScoreAccB  c3-batch-s-s2 (per-player accessor base 0x00899a98 stride 0x4e dwords; twin of PlayerScoreAccA; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423ba0  PlayerScoreAccD  c3-batch-s-s2 (per-player accessor base 0x00899f78 stride 0x4e dwords; cumulative counterpart of B; callee C3; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423bc0  PlayerScoreTeamAccC  c3-batch-s-s2 (team-aware accessor base 0x00899a9c stride 0x4e dwords; menu team-mode==0 direct-read; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
+2026-05-26  C2->C3  00423c40  PlayerScoreTeamAccBase  c3-batch-s-s2 (team-aware accessor base 0x00899a40 stride 0x4e dwords; no race-sub-mode guard; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32+interceptor PASS)
