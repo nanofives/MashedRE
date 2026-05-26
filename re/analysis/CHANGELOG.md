@@ -2652,3 +2652,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  0x00493f70  VideoStateFlagGet  path1 10/10 GREEN log/diff_video_state_flag_get.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x00493fc0  AspectRatioGlobalGet  path1 10/10 GREEN log/diff_aspect_ratio_global_get.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x00431d80  TiebreakFlagGet  path1 10/10 GREEN log/diff_tiebreak_flag_get.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x0046c700  EntityScoreFieldAdd  path1 10/10 GREEN log/diff_entity_score_field_add.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  0x004c75e0  ViewportOriginGetter  path1 10/10 GREEN log/diff_viewport_origin_getter.csv (c3-batch-t-s5)

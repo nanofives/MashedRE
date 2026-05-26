@@ -350,6 +350,28 @@ function callFn(fn, input, buf) {
         const addr = ptr(CONFIG.target_global).add(p1 * CONFIG.entity_byte_stride);
         return addr.readU32();
     }
+    // entity_field_add — fn(int idx, int delta): non-idempotent incrementer.
+    // input: [idx, delta].  Address: CONFIG.target_global + idx*CONFIG.entity_byte_stride.
+    // Unlike entity_field_set (idempotent absolute write), the body does
+    // *(int*)addr += delta, so the back-to-back Orig/Reimpl A/B loop would see
+    // the residue of the first call. Snapshot the field, call fn(idx,delta),
+    // pack (return_value, post-add field) into a fingerprint, then RESTORE the
+    // field so Orig and Reimpl each start from the identical baseline.
+    if (CONFIG.arg_type === 'entity_field_add') {
+        const idx   = input[0] | 0;
+        const delta = input[1] | 0;
+        const addr  = ptr(CONFIG.target_global).add(idx * CONFIG.entity_byte_stride);
+        // For out-of-range idx (guard returns 0 with no write), readback is
+        // still safe because the function never touches addr.
+        const guarded = idx > (CONFIG.max_index !== undefined ? CONFIG.max_index : 0xf);
+        const saved = guarded ? 0 : addr.readU32();
+        const ret = fn(idx, delta) >>> 0;
+        const field = guarded ? 0 : (addr.readU32() >>> 0);
+        if (!guarded) addr.writeU32(saved);  // restore baseline
+        // Fingerprint: ret in high 8 bits region + low field bits.
+        return ('00000000' + ret.toString(16)).slice(-8) + ':' +
+               ('00000000' + field.toString(16)).slice(-8);
+    }
     // cursor_back — fn(void): complex void cursor-nav function.
     // input: { row, col, flag, mp_flag } — initial global state to inject before calling.
     // Sets DAT_0067f17c/DAT_0067f184/DAT_0067f1a4/DAT_0067ea68, calls fn, reads back
@@ -400,6 +422,70 @@ function callFn(fn, input, buf) {
         }
         const p = fn();
         return (p && !p.isNull()) ? 1 : 0;
+    }
+
+    // state_machine_observe — fn(void): void() that mutates one or more
+    // globals based on the current state of other globals. Inject test
+    // values into CONFIG.input_globals, call fn(), read back
+    // CONFIG.output_globals as the observable.
+    //
+    // Save/restore semantics: every global (input + output) is snapshotted
+    // before injection and restored after readback, so the test is
+    // non-destructive across runs.
+    //
+    // CONFIG fields:
+    //   input_globals  — array of {addr: '0x...', type: 'u8'|'u16'|'u32'|'s8'|'s16'|'s32'}
+    //   output_globals — array of {addr: '0x...', type: ...}
+    //   input — array of values matching input_globals (or scalar if 1 global)
+    //
+    // Returns a hex string packing all output globals (32 bits each) so
+    // BigInt-sized observables don't lose precision through JSON.
+    if (CONFIG.arg_type === 'state_machine_observe') {
+        const inputs  = CONFIG.input_globals  || [];
+        const outputs = CONFIG.output_globals || [];
+        const reader = function (p, type) {
+            switch (type || 'u32') {
+                case 'u8':  return p.readU8();
+                case 'u16': return p.readU16();
+                case 'u32': return p.readU32();
+                case 's8':  return p.readS8();
+                case 's16': return p.readS16();
+                case 's32': return p.readS32();
+                default: return p.readU32();
+            }
+        };
+        const writer = function (p, v, type) {
+            switch (type || 'u32') {
+                case 'u8':  p.writeU8(v & 0xff); break;
+                case 'u16': p.writeU16(v & 0xffff); break;
+                case 'u32': p.writeU32(v >>> 0); break;
+                case 's8':  p.writeS8((v << 24) >> 24); break;
+                case 's16': p.writeS16((v << 16) >> 16); break;
+                case 's32': p.writeS32(v | 0); break;
+                default:    p.writeU32(v >>> 0);
+            }
+        };
+        // Save all originals (inputs + outputs).
+        const all = inputs.concat(outputs);
+        const saved = all.map(g => reader(ptr(g.addr), g.type));
+        // Inject inputs. `input` is either a scalar (when 1 input global) or
+        // an array of values in input_globals order.
+        const values = Array.isArray(input) ? input : [input];
+        inputs.forEach((g, i) => {
+            const v = values[i] !== undefined ? values[i] : 0;
+            writer(ptr(g.addr), v, g.type);
+        });
+        // Call (void).
+        fn();
+        // Read outputs.
+        let result = '';
+        outputs.forEach(g => {
+            const v = reader(ptr(g.addr), g.type) >>> 0;
+            result += ('00000000' + v.toString(16)).slice(-8);
+        });
+        // Restore everything.
+        all.forEach((g, i) => writer(ptr(g.addr), saved[i], g.type));
+        return '0x' + (result || '0');
     }
 
     // car_slot_init — fn(int param_1): conditional void struct initialiser.
@@ -574,9 +660,14 @@ function bufFingerprint(buf, len) {
 function runDiff() {
     var module;
     try {
-        Module.load(ASI_PATH);
-        module = Process.findModuleByName('mashed_re_dev.asi');
-        if (module === null) {
+        // Use the handle returned by Module.load directly. findModuleByName
+        // matches by basename and can return a *different* mashed_re_dev.asi
+        // already auto-loaded by the dinput8 proxy (main checkout's build),
+        // which lacks worktree-only exports. Prefer the exact module we loaded.
+        const loaded = Module.load(ASI_PATH);
+        module = (loaded && loaded.findExportByName) ? loaded
+               : Process.findModuleByName('mashed_re_dev.asi');
+        if (module === null || module === undefined) {
             send({ type: 'error', msg: 'findModuleByName returned null after Module.load' });
             return;
         }
