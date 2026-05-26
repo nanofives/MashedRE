@@ -90,6 +90,7 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\GlobalGetters_s5.cpp" ^
     "Frontend\MenuNearLeaves_s6.cpp" ^
     "Frontend\MenuMiscLeaves_t2.cpp" ^
+    "Frontend\BucketMixed_t3.cpp" ^
     "HUD\HudDispatch.cpp" ^
     "Boot\GameStateCluster.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
@@ -226,6 +227,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\GlobalGetters_s4.cpp" ^
     "Frontend\GlobalGetters_s5.cpp" ^
     "Frontend\MenuNearLeaves_s6.cpp" ^
+    "Frontend\BucketMixed_t3.cpp" ^
     "Render\HighAB3Helpers_p6.cpp" ^
     "Render\TrackNodeLeaves_o1.cpp" ^
     "Render\LowRvaSetters_o2.cpp" ^
