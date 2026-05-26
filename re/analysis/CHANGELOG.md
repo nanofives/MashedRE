@@ -2652,3 +2652,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+
+2026-05-26  C2->C3  0042b920  ConstantGetter22  c3-batch-s-s6; constant getter returns 0x16 (22); 5B pure leaf; Frida GREEN 10/10 (log/diff_constant_getter_22.csv); RH_ScopedInstall; caller 0x00492770 MainLoopInit C4; pure-leaf exemption; impl mashedmod/src/mashed_re/Frontend/MenuNearLeaves_s6.cpp
+2026-05-26  C3-REFUSED  00426cb0  SlotIndexToPtr  c3-batch-s-s6; Frida A/B GREEN 12/12; caller-gate fails: both callers (0x00407e20 C1, 0x00408b00 C1); leaf-exemption covers callee-side only (per D-8917 precedent); D-11026 filed; reimpl+RH_ScopedInstall ready in MenuNearLeaves_s6.cpp
+2026-05-26  C3-REFUSED  00426d90  HandleArrayRelease  c3-batch-s-s6; callee gate: 0x004e6680 C1; reimpl authored no RH_ScopedInstall; D-11027 filed
+2026-05-26  C3-REFUSED  0042a640  PathBuilderLoad  c3-batch-s-s6; no Frida arg_type for char* filename + vtable dispatch; reimpl authored no RH_ScopedInstall; D-11028 filed
+2026-05-26  C3-REFUSED  0042bde0  HudRectEmitter  c3-batch-s-s6; Frida RED 10/10 crashes (live D3D9 state required; globals 005cc35c/574/cd784 + ChromeBaseDraw crash outside render loop); reimpl authored; D-11029 filed
