@@ -1,6 +1,21 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-26  C1->C2  0x004df8d0  FUN_004df8d0  batch-render-7-s3
+2026-05-26  C1->C2  0x004df910  FUN_004df910  batch-render-7-s3
+2026-05-26  C1->C2  0x004df950  FUN_004df950  batch-render-7-s3
+2026-05-26  C1->C2  0x004df980  FUN_004df980  batch-render-7-s3
+2026-05-26  C1->C2  0x004df9b0  FUN_004df9b0  batch-render-7-s3
+2026-05-26  C1->C2  0x004df9e0  FUN_004df9e0  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfa10  FUN_004dfa10  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfa40  FUN_004dfa40  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfa70  FUN_004dfa70  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfaa0  FUN_004dfaa0  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfab0  FUN_004dfab0  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfb10  FUN_004dfb10  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfb60  FUN_004dfb60  batch-render-7-s3
+2026-05-26  C1->C2  0x004dfbc0  FUN_004dfbc0  batch-render-7-s3
+2026-05-26  C1->C2  0x004e02d0  FUN_004e02d0  batch-render-7-s3
 2026-05-26  C1->C2  0x004d6b90  FUN_004d6b90  batch-render-6-s2
 2026-05-26  C1->C2  0x004d6c40  FUN_004d6c40  batch-render-6-s2
 2026-05-26  C1->C2  0x004d6c90  FUN_004d6c90  batch-render-6-s2
@@ -2652,3 +2667,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  00425ee0  SlotWordPtrGet           c3-batch-s-s4  evidence=log/diff_slot_word_ptr_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00425ef0  ActiveSlotCount          c3-batch-s-s4  evidence=log/diff_active_slot_count.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00426020  GlobalDat00646e58Get     c3-batch-s-s4  evidence=log/diff_global_dat_00646e58_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00426080  GlobalDat00656ed8Get     c3-batch-s-s4  evidence=log/diff_global_dat_00656ed8_get.csv  GREEN 10/10  leaf-exemption
+2026-05-26  C2->C3  00426090  GlobalDat0066ce58Get     c3-batch-s-s4  evidence=log/diff_global_dat_0066ce58_get.csv  GREEN 10/10  leaf-exemption
