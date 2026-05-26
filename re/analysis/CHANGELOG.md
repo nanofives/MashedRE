@@ -2652,3 +2652,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C1->C2  004dc160  FUN_004dc160  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 4x4 with translation; output stride 0xc; U-5428)
 2026-05-26  C1->C2  004dc1f0  FUN_004dc1f0  batch-render-6-s6 (rw-d3d9-matrix-batch; N×Vec3 × 3x3 no translation; output stride 0xc)
 2026-05-26  C1->C2  004dc280  FUN_004dc280  batch-render-6-s6 (rw-d3d9-matrix-single; single Vec3 × 4x4 with translation; returns 3-float at param_1)
+2026-05-26  C2->C3  004274d0  LangIndexSeedFromCli  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (read_global); log/diff_lang_index_seed_from_cli.csv
+2026-05-26  C2->C3  00428390  FrontendStateSet  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (void_setter_observe); log/diff_frontend_state_set.csv
+2026-05-26  C2->C3  0042fa00  PlayerSlotEdgeAdjust  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (none); log/diff_player_slot_edge_adjust.csv
