@@ -2701,3 +2701,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C3-REFUSED  00426d90  HandleArrayRelease  c3-batch-s-s6; callee gate: 0x004e6680 C1; D-11027 filed
 2026-05-26  C3-REFUSED  0042a640  PathBuilderLoad  c3-batch-s-s6; no Frida arg_type for char* filename; D-11028 filed
 2026-05-26  C3-REFUSED  0042bde0  HudRectEmitter  c3-batch-s-s6; Frida RED 10/10 crashes (live D3D9 state required); D-11029 filed
+2026-05-26  frida-sweep-20260526-1415  frida-sweep-release  branches=6 (c3/batch-s-s1..s6)  integration-diff=GREEN  hooks=20
