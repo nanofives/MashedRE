@@ -9366,4 +9366,84 @@ HOOKS = {
         ],
     },
 
+    # c3-batch-t-s1 (2026-05-26): Frontend small leaves promotion.
+    # 5 of 10 candidates authored; 5 deferred (state mutators + thunk + ptr-arg).
+
+    'race_score_float_get_by_slot': {
+        'rva':            0x00408ad0,
+        'export':         'RaceScoreFloatGetBySlot',
+        'signature':      {'ret': 'float', 'args': ['int32']},
+        'arg_type':       'float_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    'entry_table_scan_by_key': {
+        'rva':                0x00401570,
+        'export':             'EntryTableScanByKey',
+        'signature':          {'ret': 'void', 'args': ['int32']},
+        'arg_type':           'void_setter_observe',
+        'target_global':      0x00636ac0,
+        'lut_root_delta':     0,
+        # void_setter_observe: call fn(key), read back ptr at DAT_00636ac0.
+        # Table is static; matched/default entry ptr is deterministic.
+        'path1_tests':        [0, 1, 2, 0xffffffff, 10, 100, 0, 1, 3, 4],
+        'path2_tests':        [0, 1, 0xffffffff],
+    },
+
+    'double_deref_indexed_getter': {
+        'rva':            0x0040d250,
+        'export':         'DoubleDerefIndexedGetter',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    'scoreboard_state_zero_init': {
+        'rva':            0x0041e080,
+        'export':         'ScoreboardStateZeroInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [],
+        'output_globals': [
+            {'addr': 0x0063d798, 'type': 'u32'},
+            {'addr': 0x0063d79c, 'type': 'u32'},
+            {'addr': 0x0063d7a0, 'type': 'u32'},
+            {'addr': 0x0063d7b0, 'type': 'u32'},
+            {'addr': 0x0063d7b4, 'type': 'u32'},
+            {'addr': 0x0063d7b8, 'type': 'u32'},
+            {'addr': 0x0063d7c4, 'type': 'u32'},
+            {'addr': 0x0063d7cc, 'type': 'u32'},
+            {'addr': 0x0063d7d0, 'type': 'u32'},
+            {'addr': 0x0063d7d4, 'type': 'u32'},
+            {'addr': 0x0063d7d8, 'type': 'u32'},
+            {'addr': 0x0063d7dc, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
+    'copy_table_005f2a70_to_0089a384': {
+        'rva':            0x00414120,
+        'export':         'CopyTable005f2a70To0089a384',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [],
+        'output_globals': [
+            {'addr': 0x0089a378, 'type': 'u32'},
+            {'addr': 0x0089a37c, 'type': 'u32'},
+            {'addr': 0x0089a380, 'type': 'u32'},
+            {'addr': 0x0089a384, 'type': 'u32'},
+            {'addr': 0x0089a420, 'type': 'u32'},
+            {'addr': 0x0089a41c, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests':    [0, 0, 0],
+    },
+
 }

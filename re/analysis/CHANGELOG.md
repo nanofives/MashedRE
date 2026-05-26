@@ -2709,3 +2709,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  00423270  TabCycler        harness-ext-20260526-state_machine_observe  state_machine_observe arg_type GREEN 10/10
 2026-05-26  C2->C3  00423320  CursorMover      harness-ext-20260526-state_machine_observe  state_machine_observe arg_type GREEN 10/10
 2026-05-26  harness-ext-20260526  unblocks=0x00422a80,0x00423270,0x00423320  arg_types=slot_block_zero,state_machine_observe  note=2 new arg_types in diff_template.js; 3 c3-batch-s-s1 deferred candidates promoted to C3
+2026-05-26  C2->C3  00408ad0  RaceScoreFloatGetBySlot      c3-batch-t-s1  float_scalar Frida A/B GREEN 10/10; log/diff_race_score_float_get_by_slot.csv
+2026-05-26  C2->C3  00401570  EntryTableScanByKey          c3-batch-t-s1  void_setter_observe Frida A/B GREEN 10/10; log/diff_entry_table_scan_by_key.csv
+2026-05-26  C2->C3  0040d250  DoubleDerefIndexedGetter     c3-batch-t-s1  none Frida A/B GREEN 10/10; log/diff_double_deref_indexed_getter.csv
+2026-05-26  C2->C3  0041e080  ScoreboardStateZeroInit      c3-batch-t-s1  state_machine_observe Frida A/B GREEN 10/10; log/diff_scoreboard_state_zero_init.csv
+2026-05-26  C2->C3  00414120  CopyTable005f2a70To0089a384  c3-batch-t-s1  state_machine_observe Frida A/B GREEN 10/10; log/diff_copy_table_005f2a70_to_0089a384.csv

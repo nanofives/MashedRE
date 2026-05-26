@@ -83,6 +83,7 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\VehicleMeta.cpp" ^
     "Frontend\MenuTime.cpp" ^
     "Frontend\SmallLeaves_n2.cpp" ^
+    "Frontend\SmallLeaves_t1.cpp" ^
     "Frontend\SlotZeroers_s1.cpp" ^
     "Frontend\MenuLeaves_s3.cpp" ^
     "Frontend\GlobalGetters_s4.cpp" ^
@@ -218,6 +219,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\MenuMixed.cpp" ^
     "Frontend\DrawQuadPrimitives.cpp" ^
     "Frontend\SmallLeaves_n2.cpp" ^
+    "Frontend\SmallLeaves_t1.cpp" ^
     "Frontend\SlotZeroers_s1.cpp" ^
     "Frontend\MenuLeaves_s3.cpp" ^
     "Frontend\GlobalGetters_s4.cpp" ^
