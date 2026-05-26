@@ -1,6 +1,21 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-26  C1->C2  0x004d6b90  FUN_004d6b90  batch-render-6-s2
+2026-05-26  C1->C2  0x004d6c40  FUN_004d6c40  batch-render-6-s2
+2026-05-26  C1->C2  0x004d6c90  FUN_004d6c90  batch-render-6-s2
+2026-05-26  C1->C2  0x004d6ce0  FUN_004d6ce0  batch-render-6-s2
+2026-05-26  C1->C2  0x004d6e60  FUN_004d6e60  batch-render-6-s2
+2026-05-26  C1->C2  0x004d6e70  FUN_004d6e70  batch-render-6-s2
+2026-05-26  C1->C2  0x004d7100  FUN_004d7100  batch-render-6-s2
+2026-05-26  C1->C2  0x004d71f0  FUN_004d71f0  batch-render-6-s2
+2026-05-26  C1->C2  0x004d7200  FUN_004d7200  batch-render-6-s2
+2026-05-26  C1->C2  0x004d7250  FUN_004d7250  batch-render-6-s2
+2026-05-26  C1->C2  0x004d72a0  FUN_004d72a0  batch-render-6-s2
+2026-05-26  C1->C2  0x004d72f0  FUN_004d72f0  batch-render-6-s2
+2026-05-26  C1->C2  0x004d7340  FUN_004d7340  batch-render-6-s2
+2026-05-26  C1->C2  0x004d7390  FUN_004d7390  batch-render-6-s2
+2026-05-26  C1->C2  0x004d73e0  FUN_004d73e0  batch-render-6-s2
 2026-05-26  C1->C2  0x004c5770  FUN_004c5770  batch-render-4-s3
 2026-05-26  C1->C2  0x004c5830  FUN_004c5830  batch-render-4-s3
 2026-05-26  C1->C2  0x004c5850  FUN_004c5850  batch-render-4-s3
