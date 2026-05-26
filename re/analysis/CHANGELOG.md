@@ -2721,3 +2721,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  0x00431d80  TiebreakFlagGet  path1 10/10 GREEN log/diff_tiebreak_flag_get.csv (c3-batch-t-s5)
 2026-05-26  C2->C3  0x0046c700  EntityScoreFieldAdd  path1 10/10 GREEN log/diff_entity_score_field_add.csv (c3-batch-t-s5)
 2026-05-26  C2->C3  0x004c75e0  ViewportOriginGetter  path1 10/10 GREEN log/diff_viewport_origin_getter.csv (c3-batch-t-s5)
+2026-05-26  C2->C3  004274d0  LangIndexSeedFromCli  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (read_global); log/diff_lang_index_seed_from_cli.csv
+2026-05-26  C2->C3  00428390  FrontendStateSet  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (void_setter_observe); log/diff_frontend_state_set.csv
+2026-05-26  C2->C3  0042fa00  PlayerSlotEdgeAdjust  c3_batch_t-s6 path1 Frida A/B 0/10 mismatch (none); log/diff_player_slot_edge_adjust.csv

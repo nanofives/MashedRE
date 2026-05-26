@@ -254,6 +254,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\SlotZeroers_s2.cpp" ^
     "Frontend\MenuMiscLeaves_t2.cpp" ^
     "Frontend\SplashGameMode_t5.cpp" ^
+    "Frontend\SkeletonAndScatter_t6.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

@@ -9038,6 +9038,56 @@ HOOKS = {
         'rva':            0x00425ef0,
         'export':         'ActiveSlotCount',
         'signature':      {'ret': 'int32', 'args': []},
+    # c3_batch_t-s6  skeleton_prep + scatter cluster (2026-05-26)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x004274d0  LangIndexSeedFromCli  uint32_t(void)
+    # 15B leaf. Reads DAT_007719e8 (cli-language-index) writes DAT_007f0f60.
+    # Returns 1 unconditionally. arg_type='read_global' writes a sentinel to
+    # 0x007719e8 before each call; return value (always 1) is the observable.
+    # Sentinel preserved via diff_template save/restore for read_global.
+    # ref: re/analysis/skeleton_prep_game_state/004274d0.md
+    'lang_index_seed_from_cli': {
+        'rva':            0x004274d0,
+        'export':         'LangIndexSeedFromCli',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007719e8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00428390  FrontendStateSet  void(uint32_t param_1)
+    # 9B pure leaf. Writes param_1 to DAT_0067d960 (frontend state global).
+    # arg_type='void_setter_observe' calls fn(input), reads back target_global.
+    # Both sides write param_1; result must equal input on both sides.
+    # ref: re/analysis/skeleton_prep_game_state/00428390.md
+    'frontend_state_set': {
+        'rva':            0x00428390,
+        'export':         'FrontendStateSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0067d960,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x55555555],
+        'path2_tests':    [0, 3, 0xDEADBEEF],
+    },
+
+    # 0x0042fa00  PlayerSlotEdgeAdjust  void(void)
+    # 162B pure leaf. Loops 12 slots; iff iVar4 matches one of 4 active-player
+    # slot ids, conditionally inc/dec/clamp slot property at DAT_0067e938.
+    # At quiescent main menu, active-slot ids are sentinels (-1 / unset) so loop
+    # body short-circuits — both sides do identical no-op.
+    # arg_type='none': void return, called 10× at quiescent menu; both sides
+    # return undefined; identity check passes.
+    # ref: re/analysis/frontend_unmapped_a/0x0042fa00.md
+    'player_slot_edge_adjust': {
+        'rva':            0x0042fa00,
+        'export':         'PlayerSlotEdgeAdjust',
+        'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'none',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -9053,6 +9103,16 @@ HOOKS = {
         'rva':            0x00426020,
         'export':         'GlobalDat00646e58Get',
         'signature':      {'ret': 'pointer', 'args': []},
+    # 0x00403050  PreRaceLoadingScreenDraw  void(void)
+    # 124B. Early-returns if DAT_00771964 == 0 (pre-race texture handle).
+    # At quiescent main menu the handle is 0 (texture only loaded during track
+    # load), so the function returns immediately — both sides identical no-op.
+    # arg_type='none': void return, called 10× at quiescent menu.
+    # ref: re/analysis/loading_screen/0x00403050.md
+    'pre_race_loading_screen_draw': {
+        'rva':            0x00403050,
+        'export':         'PreRaceLoadingScreenDraw',
+        'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'none',
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

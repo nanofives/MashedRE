@@ -28,11 +28,12 @@ def _find_original(script_root: Path) -> Path:
     candidate = script_root / 'original' / 'MASHED.exe'
     if candidate.exists():
         return candidate
-    # Walk up: worktree is at <main>/.worktrees/<name>/
-    parent = script_root.parent.parent
-    candidate2 = parent / 'original' / 'MASHED.exe'
-    if candidate2.exists():
-        return candidate2
+    # Walk up ancestors: worktrees may be nested at <main>/.worktrees/<name>/
+    # or <main>/.claude/worktrees/<name>/ (deeper). Search every ancestor.
+    for parent in script_root.parents:
+        cand = parent / 'original' / 'MASHED.exe'
+        if cand.exists():
+            return cand
     return candidate  # let the later check produce a clear error
 
 
