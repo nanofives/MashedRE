@@ -741,10 +741,45 @@ void VerifyDataSectionWedgeViaReimpl() {
         std::fclose(prelog);
     }
     if (!g_mashed_data_mapped) return;
-    // Pre-poison the range the reimpl is supposed to zero so we can confirm
-    // the writes actually happened.
+    // Probe the MenuEntryArrayInit working range BEFORE poisoning to detect
+    // blocked granules. If any 64KB granule in 0x00898000..0x008990df is
+    // missing, the reimpl will AV. Log the per-granule state so a coverage
+    // failure is visible.
     constexpr std::uintptr_t kArrayBase = 0x00898ac0u;
     constexpr std::uintptr_t kArrayEnd  = 0x008990dcu;
+    std::FILE* clog = std::fopen(kLogPath, "a");
+    if (clog) {
+        std::fprintf(clog, "Milestone B7: checking MenuEntryArrayInit range "
+                           "0x%08X..0x%08X granule coverage:\n",
+                     static_cast<unsigned>(kArrayBase),
+                     static_cast<unsigned>(kArrayEnd));
+        // 64KB granule boundaries: 0x00890000, 0x008a0000.
+        for (std::uintptr_t g = (kArrayBase & ~0xFFFFu);
+             g <= ((kArrayEnd - 1) & ~0xFFFFu);
+             g += 0x10000) {
+            MEMORY_BASIC_INFORMATION mbi{};
+            if (VirtualQuery(reinterpret_cast<LPVOID>(g), &mbi, sizeof(mbi))) {
+                const char* state =
+                    mbi.State == MEM_COMMIT  ? "COMMIT"  :
+                    mbi.State == MEM_RESERVE ? "RESERVE" :
+                    mbi.State == MEM_FREE    ? "FREE"    : "?";
+                const char* type =
+                    mbi.Type  == MEM_IMAGE   ? "IMAGE"   :
+                    mbi.Type  == MEM_MAPPED  ? "MAPPED"  :
+                    mbi.Type  == MEM_PRIVATE ? "PRIVATE": "-";
+                std::fprintf(clog, "  granule 0x%08X: %s/%s (protect=0x%lX)\n",
+                             static_cast<unsigned>(g), state, type,
+                             static_cast<unsigned long>(mbi.Protect));
+            } else {
+                std::fprintf(clog, "  granule 0x%08X: VirtualQuery failed\n",
+                             static_cast<unsigned>(g));
+            }
+        }
+        std::fclose(clog);
+    }
+    // Pre-poison the range the reimpl is supposed to zero so we can confirm
+    // the writes actually happened. If a granule is blocked, this poison
+    // write itself will AV before the reimpl call.
     for (std::uintptr_t a = kArrayBase; a < kArrayEnd; a += 4) {
         *reinterpret_cast<std::uint32_t*>(a) = 0xDEADBEEFu;
     }

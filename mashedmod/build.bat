@@ -50,7 +50,7 @@ REM crashes at process load with STATUS_DLL_INIT_FAILED (0xC0000142).
 REM Mitigation: either run mashed_re.exe from a directory without those
 REM shim DLLs, or rename them (mv d3d9.dll d3d9.dll.bak) before the run.
 REM This file's exe target intentionally does NOT depend on the shim DLLs.
-echo === Building mashed_re.exe (minimal + B7 Phase G wedge) ===
+echo === Building mashed_re.exe (B9: frontend + HUD + math + vehicle clusters) ===
 pushd "%SRC%"
 cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "exe_main.cpp" ^
@@ -60,7 +60,59 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "D3d9Render\QuadRenderer.cpp" ^
     "Stubs\HookSystemNoOp.cpp" ^
     "Frontend\MenuInit.cpp" ^
-    /link /SUBSYSTEM:WINDOWS user32.lib d3d9.lib
+    "Frontend\MenuButtonDetect.cpp" ^
+    "Frontend\FrontendState.cpp" ^
+    "Frontend\FrontendNav.cpp" ^
+    "Frontend\FrontendMode.cpp" ^
+    "Frontend\FrontendAccessors.cpp" ^
+    "Frontend\FrontendDispatch.cpp" ^
+    "Frontend\MenuGetters.cpp" ^
+    "Frontend\MenuChrome.cpp" ^
+    "Frontend\MenuHelpers.cpp" ^
+    "Frontend\MenuNav.cpp" ^
+    "Frontend\MenuRaceEnd.cpp" ^
+    "Frontend\MenuScoreGetters.cpp" ^
+    "Frontend\MenuScoreSort.cpp" ^
+    "Frontend\MenuStateMachine.cpp" ^
+    "Frontend\GameModeInit.cpp" ^
+    "Frontend\GameModeCarSelect.cpp" ^
+    "Frontend\TimerReset.cpp" ^
+    "Frontend\SpriteGate.cpp" ^
+    "Frontend\Leaves.cpp" ^
+    "Frontend\TextMeasure.cpp" ^
+    "Frontend\VehicleMeta.cpp" ^
+    "Frontend\MenuTime.cpp" ^
+    "Frontend\SmallLeaves_n2.cpp" ^
+    "HUD\HudDispatch.cpp" ^
+    "Boot\GameStateCluster.cpp" ^
+    "Boot\BootLowRvaCluster.cpp" ^
+    "Boot\Window.cpp" ^
+    "Boot\VideoConfig.cpp" ^
+    "Boot\Teardown.cpp" ^
+    "Boot\LaunchHandshake.cpp" ^
+    "Boot\FrameDispatch.cpp" ^
+    "Boot\SubsystemInit.cpp" ^
+    "Util\GameStateGetters.cpp" ^
+    "Util\EventTable.cpp" ^
+    "Util\TimerInit.cpp" ^
+    "Util\TimerState.cpp" ^
+    "Util\TimerSubarrayInit.cpp" ^
+    "Util\TimerSetters.cpp" ^
+    "Util\TimerSlot.cpp" ^
+    "Util\UtilLeaves.cpp" ^
+    "Util\SmallLeaves_o6.cpp" ^
+    "Vehicle\VehicleState.cpp" ^
+    "Vehicle\SmallLeaves_o5.cpp" ^
+    "Vehicle\SmallLeaves_q4.cpp" ^
+    "Vehicle\MiscDamping.cpp" ^
+    "GameState\StateAccessors.cpp" ^
+    "Math\Vec3.cpp" ^
+    "Math\RwSqrt.cpp" ^
+    "Math\RwV2d.cpp" ^
+    "Math\RwV3dTransform.cpp" ^
+    "Math\RwMatrixScale.cpp" ^
+    /link /SUBSYSTEM:WINDOWS /BASE:0x10000000 /FIXED:NO ^
+    user32.lib d3d9.lib
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
