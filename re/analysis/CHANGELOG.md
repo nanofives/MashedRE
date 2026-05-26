@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-05-26  frida-sweep-20260526-1415  frida-sweep-claim  branches=6 (c3/batch-s-s1..s6)
 2026-05-26  C1->C2  0x004df8d0  FUN_004df8d0  batch-render-7-s3
 2026-05-26  C1->C2  0x004df910  FUN_004df910  batch-render-7-s3
 2026-05-26  C1->C2  0x004df950  FUN_004df950  batch-render-7-s3
