@@ -9038,6 +9038,13 @@ HOOKS = {
         'rva':            0x00425ef0,
         'export':         'ActiveSlotCount',
         'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
     # c3_batch_t-s6  skeleton_prep + scatter cluster (2026-05-26)
     # ─────────────────────────────────────────────────────────────────────────
 
@@ -9103,6 +9110,12 @@ HOOKS = {
         'rva':            0x00426020,
         'export':         'GlobalDat00646e58Get',
         'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # 0x00403050  PreRaceLoadingScreenDraw  void(void)
     # 124B. Early-returns if DAT_00771964 == 0 (pre-race texture handle).
     # At quiescent main menu the handle is 0 (texture only loaded during track
@@ -9504,6 +9517,8 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         'path2_tests':    [0, 0, 0],
+    },
+
     # ─────────────────────────────────────────────────────────────────────────
     # c3-batch-t-s2 (2026-05-26): Frontend menu-miscellaneous leaves.
     # 5 of 10 candidates GREEN; refused: 0x00422aa0 (caller C1), 0x00426cb0
@@ -9675,6 +9690,10 @@ HOOKS = {
             [1] * 32,
             [0] * 32,
             [0x10] * 32,
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
     # Session c3-batch-t-s3 — frontend bucket_0041dc30 mixed C2→C3
     # mashedmod/src/mashed_re/Frontend/BucketMixed_t3.cpp
     # ─────────────────────────────────────────────────────────────────────────
@@ -9792,6 +9811,9 @@ HOOKS = {
         'path2_tests': [
             [0.0, 0.0, 1.0, 0.0, 0.5, 1.0, 0xffffffff],
             [0.1, 0.1, 0.9, 0.1, 0.5, 0.9, 0xff112233],
+        ],
+    },
+
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-t-s5 — SplashGameMode_t5 cluster (C2->C3, 6 candidates)
     # Frontend/SplashGameMode_t5.cpp — intro_splash + game_mode + race_results
