@@ -722,11 +722,23 @@ bool MapMashedDataSection() {
     return g_mashed_data_mapped;
 }
 
-// Forward declaration: MenuEntryArrayInit lives in Frontend/MenuInit.cpp.
-// It's a pure-leaf reimpl that zeroes 30 entries of a 52-byte struct array
-// at MASHED address 0x00898ac0. With the B7 wedge above, it runs on the
-// standalone's VirtualAlloc'd memory instead of MASHED's .data.
-extern "C" void __cdecl MenuEntryArrayInit();
+// Forward declarations for reimpls in linked .cpp files. All of these are
+// safe to call standalone provided the Phase G wedge covers the MASHED-data
+// addresses they touch. Verified bit-identical via Frida diff under the .asi
+// path; here they run against our VirtualAlloc'd window instead of MASHED's.
+extern "C" void          __cdecl MenuEntryArrayInit();       // Frontend/MenuInit.cpp
+extern "C" std::uint32_t __cdecl GameStateFlagGet();         // Boot/GameStateCluster.cpp
+extern "C" int           __cdecl StatePhaseIsTwo();          // Boot/GameStateCluster.cpp
+extern "C" int           __cdecl RaceEndConstGet();          // Boot/GameStateCluster.cpp
+extern "C" void          __cdecl StatePhaseSubSet(std::uint32_t);  // Boot/GameStateCluster.cpp
+extern "C" std::uint32_t __cdecl RaceInterruptFlagGet();     // Boot/GameStateCluster.cpp
+extern "C" void          __cdecl RaceStateArrayZero();       // Boot/GameStateCluster.cpp
+extern "C" void          __cdecl TimerSlotClear();           // Util/TimerInit.cpp
+extern "C" void          __cdecl BootDefaultParamsInit();    // Boot/BootLowRvaCluster.cpp
+extern "C" void          __cdecl DefaultParam_SetField04();  // Boot/BootLowRvaCluster.cpp
+extern "C" void          __cdecl DefaultParam_SetField08();  // Boot/BootLowRvaCluster.cpp
+extern "C" void          __cdecl DefaultParam_SetField00();  // Boot/BootLowRvaCluster.cpp
+extern "C" int           __cdecl MainLoopInit();             // Boot/FrameDispatch.cpp
 
 // B7: call a single pure-leaf reimpl to verify the data-section wedge works.
 // Writes the first and last entry's offset-0 dword via the reimpl, then reads
@@ -803,6 +815,99 @@ void VerifyDataSectionWedgeViaReimpl() {
     }
 }
 
+// B10 (Phase G): execute MASHED's frontend-boot data-init sequence using the
+// VirtualAlloc'd wedge. Pure-leaf reimpls that only touch MASHED globals are
+// safe; tunnel reimpls (functions whose body just JMPs to MASHED's RVA) are
+// either skipped or inlined here with a standalone-safe replacement.
+//
+// Sequence per re/analysis/skeleton_call_tree.md WinMainEntry path:
+//   1. DataZeroFill_StandaloneInline — zero 0xdce9 DWORDs at 0x007f0f60.
+//      The packaged reimpl is a tunnel that calls MASHED 0x004924f0; we
+//      inline the memset here so the standalone doesn't need to jump
+//      into MASHED's code section.
+//   2. BootDefaultParamsInit — writes 5 floats to the 0x00636ae8 cluster.
+//   3. DefaultParam_SetField00/04/08 — writes 0.7f to 0x007f0f00/04/08.
+//   4. RaceStateArrayZero — zeroes 12 DWORDs at 0x0067ea10.
+//   5. MenuEntryArrayInit — zeroes 30 entries × 52 bytes at 0x00898ac0.
+//   6. TimerSlotClear — zeroes 0x0063d558.
+//   7. MainLoopInit — sets game-loop exit flag, game state, frame counters.
+//
+// Each step writes diagnostics to mashed_re.log. The chain halts on any
+// AV (process dies) — log shows last good step.
+void ExecuteFrontendBootChain() {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (!log) return;
+    std::fprintf(log, "\nMilestone B10: frontend boot chain start\n");
+
+    // Step 1: DataZeroFill replacement. Original at 0x004924f0 zero-fills
+    // 0xdce9 dwords (= ~220 KB) at 0x007f0f60. Reimpl in SubsystemInit.cpp
+    // is a tunnel; for standalone we do the memset directly.
+    constexpr std::uintptr_t kBigBufBase = 0x007f0f60u;
+    constexpr std::size_t    kBigBufDw   = 0xdce9u;        // 56553 dwords
+    constexpr std::size_t    kBigBufSz   = kBigBufDw * 4u; // 226212 bytes
+    // Check coverage before writing.
+    MEMORY_BASIC_INFORMATION mbi{};
+    if (VirtualQuery(reinterpret_cast<LPVOID>(kBigBufBase & ~0xFFFFu),
+                     &mbi, sizeof(mbi)) && mbi.State == MEM_COMMIT) {
+        std::memset(reinterpret_cast<void*>(kBigBufBase), 0, kBigBufSz);
+        std::fprintf(log, "  [1] DataZeroFill (inline): %zu bytes at 0x%08X = 0\n",
+                     kBigBufSz, static_cast<unsigned>(kBigBufBase));
+    } else {
+        std::fprintf(log, "  [1] DataZeroFill SKIPPED: granule 0x%08X not covered\n",
+                     static_cast<unsigned>(kBigBufBase & ~0xFFFFu));
+    }
+
+    // Step 2: BootDefaultParamsInit. Writes 5 floats at 0x636ae8 cluster.
+    BootDefaultParamsInit();
+    std::fprintf(log, "  [2] BootDefaultParamsInit OK\n");
+
+    // Step 3: DefaultParam_SetField00/04/08. Each writes 0.7f at 0x007f0f0X.
+    DefaultParam_SetField00();
+    DefaultParam_SetField04();
+    DefaultParam_SetField08();
+    std::fprintf(log, "  [3] DefaultParam_SetField00/04/08 OK; readback "
+                 "0x007f0f00=0x%08X 04=0x%08X 08=0x%08X (expect 0x3f333333)\n",
+                 *reinterpret_cast<std::uint32_t*>(0x007f0f00u),
+                 *reinterpret_cast<std::uint32_t*>(0x007f0f04u),
+                 *reinterpret_cast<std::uint32_t*>(0x007f0f08u));
+
+    // Step 4: RaceStateArrayZero. Zeroes 12 dwords at 0x0067ea10.
+    RaceStateArrayZero();
+    std::fprintf(log, "  [4] RaceStateArrayZero OK; readback "
+                 "0x0067ea10=0x%08X 0x0067ea14=0x%08X (expect 0)\n",
+                 *reinterpret_cast<std::uint32_t*>(0x0067ea10u),
+                 *reinterpret_cast<std::uint32_t*>(0x0067ea14u));
+
+    // Step 5: MenuEntryArrayInit — already verified by B7; call it again
+    // here as part of the canonical boot order.
+    MenuEntryArrayInit();
+    std::fprintf(log, "  [5] MenuEntryArrayInit OK; readback "
+                 "0x00898ac0=0x%08X (expect 0)\n",
+                 *reinterpret_cast<std::uint32_t*>(0x00898ac0u));
+
+    // Step 6: TimerSlotClear. Zeroes 0x0063d558.
+    TimerSlotClear();
+    std::fprintf(log, "  [6] TimerSlotClear OK; readback "
+                 "0x0063d558=0x%08X (expect 0)\n",
+                 *reinterpret_cast<std::uint32_t*>(0x0063d558u));
+
+    // Step 7: MainLoopInit. Sets game-loop exit flag, state=1, frame ctrs.
+    // Internally calls FUN_00495110, FUN_0042b920, FUN_00433240, etc. via
+    // raw RVA. Those land in our wedge but contain zero bytes — interpreted
+    // as ADD [EAX],AL (also 00) which usually crashes. Wrap in SEH to keep
+    // the chain alive even if MainLoopInit hits a callee tunnel.
+    __try {
+        const int r = MainLoopInit();
+        std::fprintf(log, "  [7] MainLoopInit returned %d\n", r);
+    } __except(EXCEPTION_EXECUTE_HANDLER) {
+        std::fprintf(log, "  [7] MainLoopInit AV'd (expected: tunnels into "
+                     "MASHED code section via FUN_00495110 etc.)\n");
+    }
+
+    std::fprintf(log, "Milestone B10: frontend boot chain complete\n");
+    std::fclose(log);
+}
+
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
@@ -832,6 +937,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // a "Phase G wedge active" diagnostic or the process has crashed in
     // MenuEntryArrayInit (meaning the wedge isn't covering the right range).
     VerifyDataSectionWedgeViaReimpl();
+
+    // B10 (Phase G): execute the frontend boot chain via the wedge.
+    ExecuteFrontendBootChain();
 
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
