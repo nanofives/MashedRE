@@ -25,6 +25,16 @@ OUT_FILE = LOG_DIR / 'crash_eip.txt'
 
 AGENT_JS = r'''
 'use strict';
+// Module ranges so we can classify EIP + each stack return-address candidate
+// as MASHED.exe code vs our .asi vs a system DLL.
+function moduleTable() {
+    const out = [];
+    Process.enumerateModules().forEach(function (m) {
+        out.push({ name: m.name, base: m.base.toString(),
+                   end: m.base.add(m.size).toString(), size: m.size });
+    });
+    return out;
+}
 Process.setExceptionHandler(function (details) {
     const ctx = details.context;
     let bytesBefore = '', bytesAt = '';
@@ -37,6 +47,18 @@ Process.setExceptionHandler(function (details) {
         for (let i = 0; i < 16; i++) {
             try { bytesAt += eip.add(i).readU8().toString(16).padStart(2,'0') + ' '; }
             catch (e) { bytesAt += '?? '; }
+        }
+    } catch (e) {}
+
+    // Stack dump: read 48 dwords from ESP. Any value inside MASHED.exe's
+    // code range is a candidate return address — the topmost is the caller
+    // of the faulting (leaf) function.
+    let stack = [];
+    try {
+        const esp = ptr(ctx.esp.toString());
+        for (let i = 0; i < 48; i++) {
+            try { stack.push({ off: i*4, val: esp.add(i*4).readU32().toString(16) }); }
+            catch (e) { break; }
         }
     } catch (e) {}
 
@@ -57,6 +79,8 @@ Process.setExceptionHandler(function (details) {
         bytes_at_eip:     bytesAt.trim(),
         mem_address:      (details.memory && details.memory.address) ? details.memory.address.toString() : '?',
         mem_op:           (details.memory && details.memory.operation) ? details.memory.operation : '?',
+        stack:            stack,
+        modules:          moduleTable(),
     });
     return false;
 });
