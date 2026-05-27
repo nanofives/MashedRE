@@ -1,5 +1,27 @@
 # Runtime self-exit scoping — it is a CRASH, not a timeout/clean-exit
 
+> **CORRECTED ROOT CAUSE (2026-05-27, supersedes the "data corruption" hypothesis below).**
+> A HW write-watchpoint on 0x005f6560 **never fired** and the Toast string was **intact at
+> the crash** — so it is NOT corrupted. The real bug is **our `FontText_UTF16WidenCopy`
+> (0x00427840) reimpl** in `mashedmod/src/mashed_re/HUD/HudBatch.cpp`, which **diverges from
+> the original**:
+>
+> | | original `FUN_00427840` | our reimpl |
+> |---|---|---|
+> | load obj | `MOV EAX,[0x7d3ff8]` (1 load → obj) | `mov eax,[0x7d3ff8]; mov eax,[eax]` (**extra deref**) |
+> | call | `PUSH EDI(src); CALL [EAX+0xf4]` → `(*(obj+0xf4))(src)` | `call [eax+0xf4]` → `(*(*obj+0xf4))()` (**wrong ptr + no src arg**) |
+>
+> So the reimpl calls the wrong function pointer with no argument, yielding `strlen(NULL)`.
+> This is a **hook-caused bug** (my earlier "faithful reimpl / not hook-caused" claim was
+> wrong — I trusted the structure without diffing the asm). The ~94 s timing = when the
+> title screen (`FUN_00428a30`) first renders text after the intro sequence; intro-skip →
+> title at ~6 s → crash ~15 s, matching the observed "intro-skip dies before t=15 s".
+> Fix = make the reimpl mirror the original exactly (single deref of 0x7d3ff8; push src;
+> `add esp,4`). Must re-verify via diff-original + a runtime title-screen survival pass.
+> Open: the hooks-OFF run crashed at a different (null-exec) site ~96 s — that is a
+> SEPARATE issue, not addressed by this fix; needs its own pass.
+
+
 Session date: 2026-05-26/27. Purpose: diagnose the ~60-75s "self-exit" that gates
 the full-race C4 fire-counting observation. Mandate was scope-and-stop (no fix).
 

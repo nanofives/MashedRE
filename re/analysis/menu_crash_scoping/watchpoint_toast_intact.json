@@ -1,0 +1,324 @@
+[
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "watch",
+    "type": "system",
+    "pc": "0x74a64984",
+    "pc_cl": "0x74a64984",
+    "eax": "0x1af8c0",
+    "ebx": "0x0",
+    "ecx": "0x2",
+    "edx": "0x0",
+    "esi": "0x1afb8c",
+    "edi": "0x75e1d5f0",
+    "esp": "0x1af8c0",
+    "ebp": "0x1af918",
+    "mem": "?",
+    "memop": "?",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 36,
+        "val": "MASHED+0xa57c2"
+      }
+    ]
+  },
+  {
+    "kind": "av",
+    "type": "access-violation",
+    "pc": "0x4a9440",
+    "pc_cl": "MASHED+0xa9440",
+    "eax": "0x2ad79f8",
+    "ebx": "0x0",
+    "ecx": "0x0",
+    "edx": "0x30000",
+    "esi": "0x5f65a8",
+    "edi": "0x1af948",
+    "esp": "0x1af934",
+    "ebp": "0x1aff74",
+    "mem": "0x0",
+    "memop": "read",
+    "toast_now": "54 6f 61 73 74 20 54 6f 61 73 74 20 54 6f 61 73",
+    "code_chain": [
+      {
+        "off": 16,
+        "val": "MASHED+0x28349"
+      }
+    ]
+  }
+]
