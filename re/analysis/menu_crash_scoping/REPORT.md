@@ -214,17 +214,34 @@ font/draw context `DAT_0067d838` is **NULL**. Full static trace (all stock; NONE
    `FUN_005507b0(filename, &DAT_0061737c)` and returns NULL if that open fails.
 5. `FUN_005507b0` (the VFS/piz file open) — **stock, not hooked** — failed.
 
-Verdict: the remaining ~94 s crash is **entirely stock code**; the font/draw context fails
-to build because a **VFS file open fails** during the post-intro font init (the font-data
-file isn't openable through the piz VFS in the modded boot). This is the **PIZ/VFS
-resource-loading subsystem** — the documented font36.piz / Win11-NVMe problem area
-(`PizWin32Bypass` exists for exactly this and is currently MASS-DISABLED). NO hook reimpl
-is implicated in this layer (the only hook bug in the whole path, FontText, is now fixed).
+### Runtime probe of FUN_00427880 (2026-05-27) — the file OPENS; the BUILDER fails
 
-Next: a one-call runtime probe — hook `FUN_00427880` (called once, ~90 s) to log the EAX
-filename + the `RwStreamOpen`/`FUN_005507b0` return — to capture the exact file and the
-exact failing step; then investigate the piz VFS mount (and whether re-enabling
-`PizWin32Bypass` or fixing the font-resource path resolves it).
+`re/frida/probe_fontctx_open.py` (light Interceptors on the cold, once-at-~90 s
+`FUN_00427880`) overturns the "VFS open fails" guess above:
+
+```
+FUN_00427880 ENTER : filename = 'fgdc20.rwf'          (a RenderWare vector-font file)
+RwStreamOpen (FUN_004cc230)      -> 0x2daaf5c  (OK — opened fine)
+RwStreamFindChunk (FUN_004cc5e0) -> 0x1        (OK — chunk found)
+FUN_00427880 RETURN ctx (EDI)    -> 0x0        (NULL — FAILED)
+```
+
+So the open + find-chunk SUCCEED; the font/draw-context **builder `FUN_00554390(stream)`
+returns NULL** while parsing the valid `fgdc20.rwf`. `FUN_00554390` is **stock** (not hooked).
+Its ~15 NULL-return paths; with stream reads succeeding for valid data, the prime suspects
+are the **RW raster/texture creates** it performs — `FUN_004c5cb0(record,0)` (per-glyph;
+`if (iVar11==0) goto fail`), `FUN_00554200` / `FindChunk 0x1a1` (other branch), or the ctx
+allocator `FUN_005551d0()` at the top. These are D3D9/RW-raster-backed → consistent with a
+modded-boot / d3d9-shim dependency not being ready when the font loads (~90 s, right after
+the blocking intro player returns).
+
+Correction note: the static failure-path reading above suggested the *open* fails; runtime
+proved the open succeeds and the *builder* fails. (Third static-inference correction this
+session — keep verifying at runtime.)
+
+Next: probe `FUN_00554390`'s internal calls (`FUN_005551d0`, `FUN_004c5cb0`, `FUN_00554200`)
+to find the exact failing step; that pinpoints the RW-raster/D3D dependency. Also worth a
+no-`.asi` control to see whether stock-MASHED (no hooks) builds the font ctx here at all.
 
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 

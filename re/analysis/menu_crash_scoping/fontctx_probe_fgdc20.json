@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "enter",
+    "eax": "0x1afdec",
+    "filename": "fgdc20.rwf"
+  },
+  {
+    "kind": "streamopen",
+    "eax": "0x2daaf5c"
+  },
+  {
+    "kind": "findchunk",
+    "eax": "0x1"
+  },
+  {
+    "kind": "ctxresult",
+    "edi": "0x0"
+  },
+  {
+    "kind": "av",
+    "type": "access-violation",
+    "pc": "0x0",
+    "esi": "0x0",
+    "mem": "0x0"
+  }
+]
