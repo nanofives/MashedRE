@@ -6,8 +6,13 @@ the full-race C4 fire-counting observation. Mandate was scope-and-stop (no fix).
 ## Verdict
 
 The self-exit is a **genuine access violation (0xC0000005)**, NOT a clean quit, idle
-timeout, or watchdog. It reproduces with our hooks **disabled**, so it is **not caused
-by hook installation**.
+timeout, or watchdog. It reproduces with our hooks **disabled** (different faulting
+site), so it is **not caused by hook installation** — the ~94 s instability is upstream
+of our patcher. With hooks ON the fault is **`strlen(NULL)`** reached through the
+RenderWare "strlen-wrapper" vtable slot invoked by our (faithful) `FontText_UTF16WidenCopy`
+hook; with hooks OFF the same ~94 s state surfaces as a null/wild-pointer call instead.
+Root cause = a **NULL/corrupt pointer state that appears at ~94 s**; the hooks only
+relocate where it is first dereferenced. See "Frida caller-recovery" below.
 
 ## Evidence (3 plain launches, no Frida; exit code + Windows WER event log)
 
@@ -70,6 +75,47 @@ the intro→menu stage transition (H2). [UNCERTAIN] — could NOT independently 
 this session: the empty-video resource `re/prior_art/MashedRunner/tmp/SciLorsEmptyVideo.mpg`
 is missing, so `scripts/patch_mashed_skip_intro.py` cannot run without first regenerating it.
 
+## Frida caller-recovery (the real AV + caller chain)
+
+`re/frida/poll_attach_catch_crash.py` (exception handler + ESP stack-dump + module
+table), attached by PID to a normal launch. Raw capture:
+`re/analysis/menu_crash_scoping/crash_eip_real_av.json`.
+
+NOTE: MASHED raises `OutputDebugStringA` ("Replay size is N", N growing) **every frame**
+— a shipped debug-build leftover in MASHED.exe itself (our source contains no
+`OutputDebugString`; verified). Under a debugger this is `DBG_PRINTEXCEPTION_C`
+(0x40010006, Frida type `system`) and floods the handler. The catcher was fixed this
+session to ignore non-fatal types and only report real faults. It then caught the AV:
+
+```
+type        access-violation         eip 0x004a9440  (= _strlen; bytes 8b 01 = MOV EAX,[ECX])
+ecx         0x0                       mem_address 0x0   mem_op read     → strlen(NULL)
+stack[0]    0x717580d4                → return addr INSIDE mashed_re_dev.asi (base 0x71750000 → asi+0x80d4)
+stack[+16]  0x00428349                → MASHED.exe return address (one frame up the chain)
+```
+
+Caller chain (resolved from the on-disk PE, no guessing):
+- `0x00428344` in MASHED.exe is `E8 f7 f4 ff ff` = `CALL rel32` → **target 0x00427840**
+  (return addr 0x00428349 = the stack[+16] value).
+- `0x00427840` = **`FontText_UTF16WidenCopy`**, an ACTIVE hook
+  (`mashedmod/src/mashed_re/HUD/HudBatch.cpp:642`). Its reimpl does
+  `call [*(0x007d3ff8) + 0xf4]` to get the string length.
+- `*(rw_base + 0xf4)` is documented in our own source as the RenderWare **"strlen
+  wrapper"** (`Render/TextureLoaderCluster.cpp:205`, cited 0x004c5af6). That wrapper
+  calls the original `_strlen` (0x004a9410) — whose return address is the `.asi`
+  value at stack[0].
+
+So a **NULL string/charset text pointer** reaches `strlen` via the RW strlen-wrapper,
+invoked from our `FontText_UTF16WidenCopy` hook. Our reimpl mirrors the original's
+vtable call faithfully (the original 0x00427840 would issue the same call) — the bug is
+the **NULL string in the RW object at ~94 s**, not the reimpl's structure. This is
+consistent with the hooks-OFF run dying at a different null-pointer site at the same time.
+
+[UNCERTAIN] mechanism that produces the NULL at ~94 s. One lead: the every-frame
+"Replay size is N" grows monotonically (frame loop is recording replay even at this
+stage); a fixed-cap replay buffer overflowing could corrupt adjacent state. NOT proven —
+needs a watchpoint / buffer-cap check before any claim.
+
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 
 - `empire_splash_t007.png` (this dir; copied from `verify/scene_t007.png`, run 3) shows
@@ -99,13 +145,15 @@ is missing, so `scripts/patch_mashed_skip_intro.py` cannot run without first reg
    DLL at all. This is the one remaining question the env-var A/B can't answer (the
    `.asi` is still mapped, just unhooked, in run 2). NOTE: touches `original/`, so it is
    a stop-and-ask item per project rules — not done here.
-2. **Recover the strlen caller**: `re/frida/poll_attach_catch_crash.py` was extended this
-   session with a 48-dword ESP stack-dump + module table. One Frida-attached crash would
-   give `[ESP]` = the return address into the caller that passed the bad `char*`. Caveat:
-   Frida destabilises MASHED (dies faster, possibly a different site), so treat a single
-   sample cautiously.
+2. **DONE this session — strlen caller recovered** (see "Frida caller-recovery"): the
+   NULL string reaches `strlen` via the RW strlen-wrapper invoked by `FontText_UTF16WidenCopy`
+   (0x00427840). Next, find *what nulls the RW charset/string object at ~94 s*: set a
+   write-watchpoint on the `[rw_base+0xf4]`-target's string field, and check the
+   "Replay size is N" path (`ReplayRecordFrame` 0x00411600 etc.) for a fixed-cap buffer
+   that overflows ~94 s. Trace the value of `*(0x007d3ff8)` and its `+0xf4` string field
+   over time.
 3. **Regenerate the empty-MPG resource** and re-run intro-skip to lock down H1-vs-H2.
-4. If the no-`.asi` control still crashes → this is a stock-MASHED-on-Win11 intro/menu
-   defect; investigate the intro→menu handoff (`HardwareShowIntroVideo` FUN_00495350 and
-   what consumes its output) and the audio-COM path we NOP'd, as candidates for the bad
-   string/pointer.
+4. If the no-`.asi` control still crashes → this is a stock-MASHED-on-Win11 defect;
+   investigate what populates/clears the RW charset object, and the audio-COM path we
+   NOP'd, as candidates. Whether the original 0x00427840 also `strlen(NULL)`-crashes given
+   the same state (i.e. is this purely a state bug?) is answerable by the no-`.asi` control.

@@ -35,7 +35,14 @@ function moduleTable() {
     });
     return out;
 }
+// Only real faults — NOT OutputDebugString (DBG_PRINTEXCEPTION_C, type
+// 'system'), which MASHED raises every frame ("Replay size is N") and which
+// floods a debugger-side handler. Without this filter the first debug-print is
+// mistaken for the crash.
+const FATAL = { 'access-violation': 1, 'illegal-instruction': 1, 'abort': 1,
+                'bus-error': 1, 'division-by-zero': 1, 'stack-overflow': 1 };
 Process.setExceptionHandler(function (details) {
+    if (!FATAL[details.type]) { return false; }
     const ctx = details.context;
     let bytesBefore = '', bytesAt = '';
     try {
@@ -142,8 +149,8 @@ def main():
     script.on('message', on_message)
     script.load()
 
-    print("  watching up to 90s for the crash")
-    deadline = time.time() + 90
+    print("  watching up to 130s for the crash")
+    deadline = time.time() + 130
     while time.time() < deadline:
         if captured['value'] is not None:
             break

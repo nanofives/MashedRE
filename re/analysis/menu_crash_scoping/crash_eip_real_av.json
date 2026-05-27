@@ -1,0 +1,700 @@
+{
+  "kind": "crash",
+  "type": "access-violation",
+  "address": "0x4a9440",
+  "eax": "0x2bc79f8",
+  "ebx": "0x0",
+  "ecx": "0x0",
+  "edx": "0x30000",
+  "esi": "0x5f65a8",
+  "edi": "0x1af948",
+  "ebp": "0x1aff74",
+  "esp": "0x1af934",
+  "eip": "0x4a9440",
+  "bytes_before_eip": "00 00 8d a4 24 00 00 00 00 8d a4 24 00 00 00 00",
+  "bytes_at_eip": "8b 01 ba ff fe fe 7e 03 d0 83 f0 ff 33 c2 83 c1",
+  "mem_address": "0x0",
+  "mem_op": "read",
+  "stack": [
+    {
+      "off": 0,
+      "val": "717580d4"
+    },
+    {
+      "off": 4,
+      "val": "0"
+    },
+    {
+      "off": 8,
+      "val": "75e1d5f0"
+    },
+    {
+      "off": 12,
+      "val": "0"
+    },
+    {
+      "off": 16,
+      "val": "428349"
+    },
+    {
+      "off": 20,
+      "val": "0"
+    },
+    {
+      "off": 24,
+      "val": "0"
+    },
+    {
+      "off": 28,
+      "val": "0"
+    },
+    {
+      "off": 32,
+      "val": "0"
+    },
+    {
+      "off": 36,
+      "val": "0"
+    },
+    {
+      "off": 40,
+      "val": "0"
+    },
+    {
+      "off": 44,
+      "val": "0"
+    },
+    {
+      "off": 48,
+      "val": "0"
+    },
+    {
+      "off": 52,
+      "val": "0"
+    },
+    {
+      "off": 56,
+      "val": "0"
+    },
+    {
+      "off": 60,
+      "val": "0"
+    },
+    {
+      "off": 64,
+      "val": "0"
+    },
+    {
+      "off": 68,
+      "val": "0"
+    },
+    {
+      "off": 72,
+      "val": "0"
+    },
+    {
+      "off": 76,
+      "val": "0"
+    },
+    {
+      "off": 80,
+      "val": "0"
+    },
+    {
+      "off": 84,
+      "val": "0"
+    },
+    {
+      "off": 88,
+      "val": "0"
+    },
+    {
+      "off": 92,
+      "val": "0"
+    },
+    {
+      "off": 96,
+      "val": "0"
+    },
+    {
+      "off": 100,
+      "val": "0"
+    },
+    {
+      "off": 104,
+      "val": "0"
+    },
+    {
+      "off": 108,
+      "val": "0"
+    },
+    {
+      "off": 112,
+      "val": "0"
+    },
+    {
+      "off": 116,
+      "val": "0"
+    },
+    {
+      "off": 120,
+      "val": "0"
+    },
+    {
+      "off": 124,
+      "val": "0"
+    },
+    {
+      "off": 128,
+      "val": "0"
+    },
+    {
+      "off": 132,
+      "val": "0"
+    },
+    {
+      "off": 136,
+      "val": "0"
+    },
+    {
+      "off": 140,
+      "val": "0"
+    },
+    {
+      "off": 144,
+      "val": "0"
+    },
+    {
+      "off": 148,
+      "val": "0"
+    },
+    {
+      "off": 152,
+      "val": "0"
+    },
+    {
+      "off": 156,
+      "val": "0"
+    },
+    {
+      "off": 160,
+      "val": "0"
+    },
+    {
+      "off": 164,
+      "val": "0"
+    },
+    {
+      "off": 168,
+      "val": "0"
+    },
+    {
+      "off": 172,
+      "val": "0"
+    },
+    {
+      "off": 176,
+      "val": "0"
+    },
+    {
+      "off": 180,
+      "val": "0"
+    },
+    {
+      "off": 184,
+      "val": "0"
+    },
+    {
+      "off": 188,
+      "val": "0"
+    }
+  ],
+  "modules": [
+    {
+      "name": "MASHED.exe",
+      "base": "0x400000",
+      "end": "0x995000",
+      "size": 5853184
+    },
+    {
+      "name": "ntdll.dll",
+      "base": "0x77460000",
+      "end": "0x7761f000",
+      "size": 1830912
+    },
+    {
+      "name": "KERNEL32.DLL",
+      "base": "0x75e00000",
+      "end": "0x75ef0000",
+      "size": 983040
+    },
+    {
+      "name": "KERNELBASE.dll",
+      "base": "0x74900000",
+      "end": "0x74bcd000",
+      "size": 2936832
+    },
+    {
+      "name": "apphelp.dll",
+      "base": "0x722b0000",
+      "end": "0x7235e000",
+      "size": 712704
+    },
+    {
+      "name": "USER32.dll",
+      "base": "0x76310000",
+      "end": "0x764e6000",
+      "size": 1925120
+    },
+    {
+      "name": "win32u.dll",
+      "base": "0x748b0000",
+      "end": "0x748cb000",
+      "size": 110592
+    },
+    {
+      "name": "GDI32.dll",
+      "base": "0x748d0000",
+      "end": "0x748f2000",
+      "size": 139264
+    },
+    {
+      "name": "gdi32full.dll",
+      "base": "0x760e0000",
+      "end": "0x761cc000",
+      "size": 966656
+    },
+    {
+      "name": "msvcp_win.dll",
+      "base": "0x76280000",
+      "end": "0x76305000",
+      "size": 544768
+    },
+    {
+      "name": "ucrtbase.dll",
+      "base": "0x76f80000",
+      "end": "0x77090000",
+      "size": 1114112
+    },
+    {
+      "name": "ADVAPI32.dll",
+      "base": "0x75b60000",
+      "end": "0x75be2000",
+      "size": 532480
+    },
+    {
+      "name": "msvcrt.dll",
+      "base": "0x75a60000",
+      "end": "0x75b27000",
+      "size": 815104
+    },
+    {
+      "name": "sechost.dll",
+      "base": "0x75d00000",
+      "end": "0x75d83000",
+      "size": 536576
+    },
+    {
+      "name": "RPCRT4.dll",
+      "base": "0x77390000",
+      "end": "0x7744c000",
+      "size": 770048
+    },
+    {
+      "name": "ole32.dll",
+      "base": "0x77140000",
+      "end": "0x77293000",
+      "size": 1388544
+    },
+    {
+      "name": "combase.dll",
+      "base": "0x765e0000",
+      "end": "0x76873000",
+      "size": 2699264
+    },
+    {
+      "name": "WINMM.dll",
+      "base": "0x74850000",
+      "end": "0x74883000",
+      "size": 208896
+    },
+    {
+      "name": "DSOUND.dll",
+      "base": "0x71e20000",
+      "end": "0x71e96000",
+      "size": 483328
+    },
+    {
+      "name": "powrprof.dll",
+      "base": "0x72d00000",
+      "end": "0x72d55000",
+      "size": 348160
+    },
+    {
+      "name": "ResampleDmo.DLL",
+      "base": "0x714d0000",
+      "end": "0x7156a000",
+      "size": 630784
+    },
+    {
+      "name": "OLEAUT32.dll",
+      "base": "0x761d0000",
+      "end": "0x7626f000",
+      "size": 651264
+    },
+    {
+      "name": "winmmbase.dll",
+      "base": "0x718c0000",
+      "end": "0x718e5000",
+      "size": 151552
+    },
+    {
+      "name": "shcore.dll",
+      "base": "0x764f0000",
+      "end": "0x765c1000",
+      "size": 856064
+    },
+    {
+      "name": "msdmo.dll",
+      "base": "0x72fb0000",
+      "end": "0x72fb9000",
+      "size": 36864
+    },
+    {
+      "name": "d3d9.dll",
+      "base": "0x71c40000",
+      "end": "0x71c5a000",
+      "size": 106496
+    },
+    {
+      "name": "DINPUT8.dll",
+      "base": "0x73040000",
+      "end": "0x73059000",
+      "size": 102400
+    },
+    {
+      "name": "dinput8_real.DLL",
+      "base": "0x71c00000",
+      "end": "0x71c38000",
+      "size": 229376
+    },
+    {
+      "name": "mashed_re_dev.asi",
+      "base": "0x71750000",
+      "end": "0x7178c000",
+      "size": 245760
+    },
+    {
+      "name": "IMM32.DLL",
+      "base": "0x75b30000",
+      "end": "0x75b55000",
+      "size": 151552
+    },
+    {
+      "name": "d3d9_real.dll",
+      "base": "0x6fd50000",
+      "end": "0x6feca000",
+      "size": 1548288
+    },
+    {
+      "name": "VERSION.dll",
+      "base": "0x74540000",
+      "end": "0x74548000",
+      "size": 32768
+    },
+    {
+      "name": "dwmapi.dll",
+      "base": "0x72f70000",
+      "end": "0x72f96000",
+      "size": 155648
+    },
+    {
+      "name": "dxcore.dll",
+      "base": "0x72d60000",
+      "end": "0x72d98000",
+      "size": 229376
+    },
+    {
+      "name": "UMPDC.dll",
+      "base": "0x72730000",
+      "end": "0x7273e000",
+      "size": 57344
+    },
+    {
+      "name": "inputhost.dll",
+      "base": "0x70460000",
+      "end": "0x705d2000",
+      "size": 1515520
+    },
+    {
+      "name": "CoreMessaging.dll",
+      "base": "0x709e0000",
+      "end": "0x70abd000",
+      "size": 905216
+    },
+    {
+      "name": "kernel.appcore.dll",
+      "base": "0x74830000",
+      "end": "0x74845000",
+      "size": 86016
+    },
+    {
+      "name": "bcryptPrimitives.dll",
+      "base": "0x77310000",
+      "end": "0x77387000",
+      "size": 487424
+    },
+    {
+      "name": "uxtheme.dll",
+      "base": "0x72c10000",
+      "end": "0x72c90000",
+      "size": 524288
+    },
+    {
+      "name": "CRYPTBASE.DLL",
+      "base": "0x73b30000",
+      "end": "0x73b3a000",
+      "size": 40960
+    },
+    {
+      "name": "MSCTF.dll",
+      "base": "0x75fc0000",
+      "end": "0x760d7000",
+      "size": 1142784
+    },
+    {
+      "name": "HID.DLL",
+      "base": "0x72cf0000",
+      "end": "0x72cfb000",
+      "size": 45056
+    },
+    {
+      "name": "SETUPAPI.DLL",
+      "base": "0x74cc0000",
+      "end": "0x75111000",
+      "size": 4526080
+    },
+    {
+      "name": "cfgmgr32.DLL",
+      "base": "0x74390000",
+      "end": "0x743ce000",
+      "size": 253952
+    },
+    {
+      "name": "DEVOBJ.dll",
+      "base": "0x71c60000",
+      "end": "0x71c84000",
+      "size": 147456
+    },
+    {
+      "name": "WINTRUST.dll",
+      "base": "0x74c40000",
+      "end": "0x74ca7000",
+      "size": 421888
+    },
+    {
+      "name": "CRYPT32.dll",
+      "base": "0x75bf0000",
+      "end": "0x75cf9000",
+      "size": 1085440
+    },
+    {
+      "name": "MSASN1.dll",
+      "base": "0x73ba0000",
+      "end": "0x73bae000",
+      "size": 57344
+    },
+    {
+      "name": "nvldumd.dll",
+      "base": "0x70e60000",
+      "end": "0x70efc000",
+      "size": 638976
+    },
+    {
+      "name": "cryptnet.dll",
+      "base": "0x71dd0000",
+      "end": "0x71dfb000",
+      "size": 176128
+    },
+    {
+      "name": "wldp.dll",
+      "base": "0x71c90000",
+      "end": "0x71ceb000",
+      "size": 372736
+    },
+    {
+      "name": "drvstore.dll",
+      "base": "0x71610000",
+      "end": "0x71739000",
+      "size": 1216512
+    },
+    {
+      "name": "imagehlp.dll",
+      "base": "0x76f60000",
+      "end": "0x76f7b000",
+      "size": 110592
+    },
+    {
+      "name": "CRYPTSP.dll",
+      "base": "0x73b80000",
+      "end": "0x73b94000",
+      "size": 81920
+    },
+    {
+      "name": "rsaenh.dll",
+      "base": "0x73b40000",
+      "end": "0x73b72000",
+      "size": 204800
+    },
+    {
+      "name": "bcrypt.dll",
+      "base": "0x73b10000",
+      "end": "0x73b2c000",
+      "size": 114688
+    },
+    {
+      "name": "nvgpucomp32.dll",
+      "base": "0x65c70000",
+      "end": "0x69b03000",
+      "size": 65613824
+    },
+    {
+      "name": "SHELL32.dll",
+      "base": "0x76880000",
+      "end": "0x76ec3000",
+      "size": 6565888
+    },
+    {
+      "name": "NvMemMapStorage.dll",
+      "base": "0x70370000",
+      "end": "0x7045d000",
+      "size": 970752
+    },
+    {
+      "name": "nvd3dum.dll",
+      "base": "0x60500000",
+      "end": "0x64176000",
+      "size": 63397888
+    },
+    {
+      "name": "directxdatabasehelper.dll",
+      "base": "0x70310000",
+      "end": "0x7035f000",
+      "size": 323584
+    },
+    {
+      "name": "SHLWAPI.dll",
+      "base": "0x75120000",
+      "end": "0x75172000",
+      "size": 335872
+    },
+    {
+      "name": "Windows.Storage.dll",
+      "base": "0x75370000",
+      "end": "0x75a56000",
+      "size": 7233536
+    },
+    {
+      "name": "WS2_32.dll",
+      "base": "0x75300000",
+      "end": "0x75369000",
+      "size": 430080
+    },
+    {
+      "name": "PSAPI.DLL",
+      "base": "0x74c30000",
+      "end": "0x74c36000",
+      "size": 24576
+    },
+    {
+      "name": "DNSAPI.dll",
+      "base": "0x736e0000",
+      "end": "0x737cc000",
+      "size": 966656
+    },
+    {
+      "name": "IPHLPAPI.DLL",
+      "base": "0x73f50000",
+      "end": "0x73f75000",
+      "size": 151552
+    },
+    {
+      "name": "NSI.dll",
+      "base": "0x74cb0000",
+      "end": "0x74cb7000",
+      "size": 28672
+    },
+    {
+      "name": "nvspcap.dll",
+      "base": "0x71360000",
+      "end": "0x71476000",
+      "size": 1138688
+    },
+    {
+      "name": "nvppe.dll",
+      "base": "0x71220000",
+      "end": "0x71360000",
+      "size": 1310720
+    },
+    {
+      "name": "quartz.dll",
+      "base": "0x6f780000",
+      "end": "0x6f92b000",
+      "size": 1748992
+    },
+    {
+      "name": "devenum.dll",
+      "base": "0x71860000",
+      "end": "0x7187c000",
+      "size": 114688
+    },
+    {
+      "name": "wdmaud.drv",
+      "base": "0x715d0000",
+      "end": "0x7160d000",
+      "size": 249856
+    },
+    {
+      "name": "wdmaud2.drv",
+      "base": "0x715b0000",
+      "end": "0x715cc000",
+      "size": 114688
+    },
+    {
+      "name": "MMDevAPI.DLL",
+      "base": "0x71190000",
+      "end": "0x7120e000",
+      "size": 516096
+    },
+    {
+      "name": "AUDIOSES.DLL",
+      "base": "0x71010000",
+      "end": "0x7117e000",
+      "size": 1499136
+    },
+    {
+      "name": "msacm32.drv",
+      "base": "0x730e0000",
+      "end": "0x730eb000",
+      "size": 45056
+    },
+    {
+      "name": "midimap.dll",
+      "base": "0x73030000",
+      "end": "0x73038000",
+      "size": 32768
+    },
+    {
+      "name": "Windows.UI.dll",
+      "base": "0x700b0000",
+      "end": "0x701c1000",
+      "size": 1118208
+    },
+    {
+      "name": "AVRT.dll",
+      "base": "0x71dc0000",
+      "end": "0x71dc9000",
+      "size": 36864
+    }
+  ]
+}
