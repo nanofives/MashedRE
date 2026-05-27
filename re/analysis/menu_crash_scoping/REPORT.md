@@ -1,25 +1,35 @@
 # Runtime self-exit scoping — it is a CRASH, not a timeout/clean-exit
 
-> **CORRECTED ROOT CAUSE (2026-05-27, supersedes the "data corruption" hypothesis below).**
+> **ROOT CAUSE + FIX (2026-05-27; supersedes the "data corruption" hypothesis below).**
 > A HW write-watchpoint on 0x005f6560 **never fired** and the Toast string was **intact at
-> the crash** — so it is NOT corrupted. The real bug is **our `FontText_UTF16WidenCopy`
-> (0x00427840) reimpl** in `mashedmod/src/mashed_re/HUD/HudBatch.cpp`, which **diverges from
-> the original**:
+> the crash** — so it is NOT corrupted. The real bug was in **our `FontText_UTF16WidenCopy`
+> (0x00427840) reimpl** (`HudBatch.cpp`): it **omitted the `push src` argument** before
+> `call [obj+0xf4]`, so the length-getter measured a stale stack slot (0/NULL) → `strlen(NULL)`.
 >
-> | | original `FUN_00427840` | our reimpl |
+> Diagnosis caveat (recorded so it isn't repeated): I FIRST mis-called it an "extra deref"
+> and removed the reimpl's `mov eax,[eax]`. That was WRONG — `s_VtableRootAddr_00427840` is a
+> C variable *holding* the address 0x007d3ff8, so `mov eax,[var]` loads the constant and the
+> `mov eax,[eax]` is the **correct, required** deref to obtain `obj = *(0x007d3ff8)`. Removing
+> it made the build crash at `unknown+0` (null-exec) instead. The **only** real divergence was
+> the missing `push src`.
+>
+> | | original `FUN_00427840` | reimpl (corrected) |
 > |---|---|---|
-> | load obj | `MOV EAX,[0x7d3ff8]` (1 load → obj) | `mov eax,[0x7d3ff8]; mov eax,[eax]` (**extra deref**) |
-> | call | `PUSH EDI(src); CALL [EAX+0xf4]` → `(*(obj+0xf4))(src)` | `call [eax+0xf4]` → `(*(*obj+0xf4))()` (**wrong ptr + no src arg**) |
+> | obj | `MOV EAX,[0x7d3ff8]` | `mov eax,[s_VtableRootAddr]; mov eax,[eax]` (var holds the addr) |
+> | call | `PUSH EDI(src); CALL [EAX+0xf4]; ADD ESP,4` | `push edi(src); call [eax+0xf4]; add esp,4` ✓ |
 >
-> So the reimpl calls the wrong function pointer with no argument, yielding `strlen(NULL)`.
-> This is a **hook-caused bug** (my earlier "faithful reimpl / not hook-caused" claim was
-> wrong — I trusted the structure without diffing the asm). The ~94 s timing = when the
-> title screen (`FUN_00428a30`) first renders text after the intro sequence; intro-skip →
-> title at ~6 s → crash ~15 s, matching the observed "intro-skip dies before t=15 s".
-> Fix = make the reimpl mirror the original exactly (single deref of 0x7d3ff8; push src;
-> `add esp,4`). Must re-verify via diff-original + a runtime title-screen survival pass.
-> Open: the hooks-OFF run crashed at a different (null-exec) site ~96 s — that is a
-> SEPARATE issue, not addressed by this fix; needs its own pass.
+> **Fix applied + VERIFIED:** rebuilt, redeployed, plain-launch survival run — the `_strlen`
+> crash (0x004a9440) is **gone**; the crash moved one call downstream (see next section). The
+> ~94 s timing = when the title screen (`FUN_00428a30`) first renders text post-intro
+> (intro-skip → title ~6 s → crash ~15 s, matching the observed "intro-skip dies before t=15 s").
+>
+> **NEW BLOCKER (downstream, separate):** after FontText, `FUN_00428320` calls the STOCK
+> `FUN_005554d0(DAT_0067d838 /*font ctx*/, widened_str, scale)`, which crashes at **0x005554e3**
+> = `MOV EAX,[ESI+0x134]` with `ESI` = the font/draw context `DAT_0067d838`. So the draw
+> context is **NULL/invalid at title-render time** (a stock function dereferencing a bad
+> context — an upstream font/draw-context init issue, NOT another hook reimpl: our 0x005554d0
+> reimpl is REFUSED/MASS-DISABLED, so stock runs). `DAT_0067d838` is set at 0x004282c4.
+> Also still open: the hooks-OFF ~96 s null-exec crash is a separate matter.
 
 
 Session date: 2026-05-26/27. Purpose: diagnose the ~60-75s "self-exit" that gates

@@ -587,13 +587,19 @@ RH_ScopedInstall(FontText_StringTableLookup, 0x00427780);  // re-enabled 2026-05
 // 0x00427840  FontText_UTF16WidenCopy
 //
 // Original: FUN_00427840 (0x35 bytes).
-// __fastcall: EAX = byte* src, ECX = ushort* dst.
-// Reads byte-length via vtable at *(DAT_007d3ff8 + 0xf4); widens each src byte
-// to ushort (zero-extend); null-terminates dst.
+// Non-standard fastcall: EAX = byte* src, ECX = ushort* dst.
+// Gets the byte length by calling the function pointer at obj+0xf4 (where
+// obj = *(0x007d3ff8)) WITH src as its argument: len = (*(obj+0xf4))(src).
+// Then widens each src byte to ushort (zero-extend) and null-terminates dst.
 //
-// We implement as __declspec(naked) to preserve the non-standard fastcall
-// (EAX=src, ECX=dst). U-1069 is in the analysis note but is about the source
-// object identity, not the function body itself.
+// We implement as __declspec(naked) to preserve EAX=src, ECX=dst.
+//
+// 2026-05-27 FIX: the prior reimpl OMITTED the `push src` argument before the
+// `call [obj+0xf4]`, so the length-getter measured a stale stack slot (NULL) ->
+// strlen(NULL) crash on the title screen (~94s). The two `mov eax`/`mov eax,[eax]`
+// loads are CORRECT and required: s_VtableRootAddr holds the constant 0x007d3ff8,
+// so the first mov loads that address and the second derefs it to obj. Fix =
+// push src + add esp,4. See re/analysis/menu_crash_scoping/REPORT.md.
 // ===========================================================================
 
 // File-static pointer-global for forced memref (see 0x004c57a0 notes).
@@ -605,35 +611,32 @@ extern "C" __declspec(dllexport) __declspec(naked)
 void __cdecl FontText_UTF16WidenCopy()
 {
     __asm {
-        // EAX = src (byte*), ECX = dst (ushort*)
+        // EAX = src (byte*), ECX = dst (ushort*). Mirrors FUN_00427840:
+        // EDI=src, ESI=dst, EAX=len.
         push esi
         push edi
-        push ebx
-        mov  esi, eax                       // src
-        mov  edi, ecx                       // dst
+        mov  edi, eax                       // EDI = src        (orig 0x427842)
+        mov  eax, dword ptr [s_VtableRootAddr_00427840]  // EAX = 0x007d3ff8 (const addr held in the C var)
+        mov  eax, dword ptr [eax]           // EAX = *(0x007d3ff8) = obj
+        push edi                            // arg = src        (orig 0x427849: PUSH EDI)
+        mov  esi, ecx                       // ESI = dst        (orig 0x42784a)
+        call dword ptr [eax+0xf4]           // len = (*(obj+0xf4))(src)  (orig 0x42784c)
+        add  esp, 4                         // clean pushed arg (orig 0x427852)
 
-        // iVar1 = (**(*0x7d3ff8 + 0xf4))()
-        mov  eax, dword ptr [s_VtableRootAddr_00427840]
-        mov  eax, dword ptr [eax]           // EAX = *(0x7d3ff8)
-        call dword ptr [eax+0xf4]
-        mov  ebx, eax                       // len = vtable call return
-
-        // If iVar1 <= 0 -> skip copy and null-terminate
-        test ebx, ebx
+        test eax, eax                       // if len <= 0 -> just null-terminate
         jle  null_term
 
 copy_loop:
-        movzx eax, byte ptr [esi]           // load src byte zero-extended
-        mov  word ptr [edi], ax             // store as ushort
-        inc  esi
-        add  edi, 2
-        dec  ebx
+        movzx ecx, byte ptr [edi]           // load src byte zero-extended (orig MOVZX CX,[EDI])
+        mov  word ptr [esi], cx             // store as ushort              (orig MOV [ESI],CX)
+        add  esi, 2
+        inc  edi
+        dec  eax
         jnz  copy_loop
 
 null_term:
-        mov  word ptr [edi], 0              // null terminate
-        pop  ebx
         pop  edi
+        mov  word ptr [esi], 0              // null terminate dst
         pop  esi
         ret
     }
