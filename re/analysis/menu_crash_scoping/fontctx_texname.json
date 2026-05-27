@@ -1,0 +1,19 @@
+[
+  {
+    "kind": "lookup",
+    "idx": 1,
+    "name": "fgdc20",
+    "p1": "0x1afd8c",
+    "dict": "0x0",
+    "ecx": "0x2b0",
+    "edx": "0x1afd8c",
+    "ret": "0x0",
+    "fail": true
+  },
+  {
+    "kind": "av",
+    "pc": "0x5554e3",
+    "esi": "0x0",
+    "mem": "0x134"
+  }
+]

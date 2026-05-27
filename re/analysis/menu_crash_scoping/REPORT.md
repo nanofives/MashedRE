@@ -272,10 +272,33 @@ stock `FUN_005554d0` derefs `NULL+0x134` → AV. Entirely stock code; the only h
 whole path (FontText) is fixed. This is the **RW texture-dictionary / resource-state**
 subsystem: the font's glyph TXD isn't current/loaded when the font initializes in the modded boot.
 
-Next: capture the missing texture **name** (param_1 at the failing `FUN_004c5cb0`) and which
-method returns 0 (find vs load); trace what loads/sets the font TXD (e.g. `pc.txd` via
-`FUN_004b3d80`, or a font-specific dictionary) relative to font init order. A no-`.asi`
-control would show whether stock-MASHED (no hooks) reaches a valid font ctx here at all.
+### Missing texture named (2026-05-27) — `fgdc20`; its TXD is present but not current
+
+`re/frida/probe_fontctx_texname.py` (gated to lookups inside `FUN_00554390`):
+```
+[1] FUN_004c5cb0 name='fgdc20' dict=0x0 ecx=0x2b0 -> 0x0   <-- FAIL (NULL)
+AV pc=0x5554e3 esi=0 mem=0x134
+```
+The missing texture is **`fgdc20`** — the font's own glyph texture (same base as `fgdc20.rwf`).
+
+`Font36.piz` (`piz_extract.py list`) contains **both**:
+- `FGDC20.RWF` (the font, read OK) and **`FGDC20.TXD`** (its glyph texture dictionary).
+
+So the texture **exists in the mounted piz** — this is purely a **TXD load/ordering** failure:
+nothing loads `FGDC20.TXD` and sets it as the current RW texture dictionary before the font
+builds. Contrast: the logo textures `FUN_004283a0` loads (`MashedNEWLogo`, `proLogicII`,
+`DolbyDig`) are **loose PNG/BMP** in Font36.piz, so `RwTextureRead`-as-image finds them; but
+`fgdc20` lives only inside `FGDC20.TXD`, so its lookup needs that TXD current — and it isn't.
+`FUN_004283a0` (the stock call right before font init) loads the logos but **does not** load
+`FGDC20.TXD`. Every function in this path is stock (FontText was the lone hook bug, fixed).
+
+**This is the decisive open question:** does stock MASHED (no `.asi`) load/set `FGDC20.TXD`
+current here, or does it fail the same way on this Win11 box? → run the **no-`.asi` control**
+(temporarily move `original/mashed_re_dev.asi` aside — touches `original/`, needs approval).
+If stock also fails, the modded boot is missing/mis-ordering a TXD load the real game does;
+if stock works, one of our boot patches / the d3d9 shim disrupts the TXD load. Secondary: find
+what is *supposed* to load+set `FGDC20.TXD` current (search refs to the font TXD / a
+`RwTexDictionaryStreamRead`+`SetCurrent` near the font path).
 
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 
