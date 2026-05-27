@@ -280,7 +280,15 @@ extern "C" __declspec(dllexport) void __cdecl FrontendDirInput()
 }
 
 // RH_ScopedInstall(FrontendDirInput, 0x00423040);
-// BLOCKED: callees FUN_00417450 (C1) and FUN_00417530 (C1) must reach C2+ first.
+// CALLEE-GATE CLEARED (00417450/00417530 C2 frontend-gate-unblock-u 2026-05-26)
+// but DIFF RED 8/10 (frontend-gate-unblock-u): this reimpl's per-axis repeat-timer
+// slot addresses (DAT_006440ec.. mapping) DIVERGE from the original — orig writes
+// the timer/state values to different slots than this impl assumes. The
+// state_machine_observe harness (flags 0x007f1042/0x007f1076 held 0) is correct;
+// the BUG is in the timer-address mapping above. Install kept OFF until the exact
+// store offsets are re-read from Ghidra (listing of 0x004230b0..0x00423240 stores)
+// and the LEFT/RIGHT/UP/DOWN pTimer/pTimer2 addresses corrected. Evidence:
+// log/diff_frontend_dir_input.csv. Re-pickup: Ghidra re-analysis of store offsets.
 
 // ---------------------------------------------------------------------------
 // TabCycler  --  0x00423270

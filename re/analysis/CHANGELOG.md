@@ -2739,3 +2739,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  004e6680  FUN_004e6680  C1->C2  frontend-gate-unblock-u; list-walk destructor; unblocks HandleArrayRelease callee-gate
 2026-05-26  004e66d0  RpClumpForAllAtomics  C1->C2  frontend-gate-unblock-u; RW atomic iterator; unblocks 00425b90 callee-gate
 2026-05-26  004516d0  FUN_004516d0  C1->C2  frontend-gate-unblock-u; atomic-slot dispatcher; unblocks 00425b90 callee-gate
+2026-05-26  00423040  FrontendDirInput  C2-RED  frontend-gate-unblock-u; callee-gate cleared (00417450/00417530 C2) but reimpl DIVERGENT (timer-slot addresses wrong); diff RED 8/10; install kept OFF; needs Ghidra re-read of store offsets
