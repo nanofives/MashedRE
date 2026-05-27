@@ -211,6 +211,13 @@ def main():
              'type': g.get('type', 'u32')}
             for g in hook['output_globals']
         ]
+    # multi_arg_global_write — guard + contiguous output block.
+    if 'guard_global' in hook:
+        config['guard_global'] = f"0x{hook['guard_global']:08x}"
+    if 'out_base' in hook:
+        config['out_base'] = f"0x{hook['out_base']:08x}"
+    if 'out_count' in hook:
+        config['out_count'] = hook['out_count']
 
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)

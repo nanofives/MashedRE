@@ -512,6 +512,62 @@ function callFn(fn, input, buf) {
         return '0x' + (result || '0');
     }
 
+    // multi_arg_global_write — fn(p1..pN): void that writes N params into a
+    // contiguous u32 globals block (+ optional flag), gated by a guard global.
+    // Set guard != 0 so the write path is taken (not the alt-init callee path),
+    // call fn(...params), read back out_count u32s at out_base, restore.
+    //
+    // CONFIG fields:
+    //   guard_global  — hex addr of the guard (set to 1 before the call)
+    //   out_base      — hex addr of the first written global
+    //   out_count     — number of consecutive u32 slots to read back
+    //   input         — array of N param values to pass
+    if (CONFIG.arg_type === 'multi_arg_global_write') {
+        const guard    = ptr(CONFIG.guard_global);
+        const outBase  = ptr(CONFIG.out_base);
+        const outCount = CONFIG.out_count | 0;
+        const params   = Array.isArray(input) ? input : [input];
+        // Save guard + the output block.
+        const savedGuard = guard.readU32();
+        const savedOut = [];
+        for (let i = 0; i < outCount; i++) savedOut.push(outBase.add(i * 4).readU32());
+        // Force the write path.
+        guard.writeU32(1);
+        fn.apply(null, params.map(v => v >>> 0));
+        // Read back the written block.
+        let result = '';
+        for (let i = 0; i < outCount; i++) {
+            const v = outBase.add(i * 4).readU32() >>> 0;
+            result += ('00000000' + v.toString(16)).slice(-8);
+        }
+        // Restore.
+        guard.writeU32(savedGuard);
+        for (let i = 0; i < outCount; i++) outBase.add(i * 4).writeU32(savedOut[i]);
+        return '0x' + result;
+    }
+
+    // sort_dispatch_out4 — fn(int* out, int sel, int dir): void sort dispatcher
+    // that writes 4 sorted player indices into the out buffer based on live
+    // player state. Alloc a 4-int out buffer, call fn(out, sel, dir), read back
+    // the 4 ints packed as a hex string. Both orig and reimpl read the same
+    // live globals at quiescent menu → bit-identical sorted output.
+    //
+    // input: {sel, dir}
+    if (CONFIG.arg_type === 'sort_dispatch_out4') {
+        const out = Memory.alloc(16);
+        // Pre-fill with a sentinel so an under-write is detectable.
+        for (let i = 0; i < 4; i++) out.add(i * 4).writeS32(-1);
+        const sel = input.sel | 0;
+        const dir = input.dir | 0;
+        fn(out, sel, dir);
+        let result = '';
+        for (let i = 0; i < 4; i++) {
+            const v = out.add(i * 4).readU32() >>> 0;
+            result += ('00000000' + v.toString(16)).slice(-8);
+        }
+        return '0x' + result;
+    }
+
     // car_slot_init — fn(int param_1): conditional void struct initialiser.
     // input: { idx, guard_val } — param_1 = idx; guard field at 0x7f105c+idx*0x4c is set to guard_val.
     // Calls fn(idx), then reads back the 4 fields (offsets +0, +0xC, +0x10, +0x14) packed as

@@ -9987,4 +9987,43 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3-batch-u (2026-05-26): targeted arg_type-unblocked promotion.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0042bfb0  MenuStateParamStore  void(p1..p6)
+    # Guarded 6-param global-block writer. If DAT_0067eab0==0 → FUN_0042bf30()
+    # alt path; else writes p1..p6 to DAT_0067e918..0067e92c + flag DAT_0067e930=1.
+    # arg_type='multi_arg_global_write': set guard=1, call fn(p1..p6), read back
+    # 7 u32s at 0x0067e918, restore. Gate: caller 0x00432450 C2, callee 0x0042bf30 C2.
+    # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042bfb0.md
+    'menu_state_param_store': {
+        'rva':            0x0042bfb0,
+        'export':         'MenuStateParamStore',
+        'signature':      {'ret': 'void', 'args': ['uint32','uint32','uint32','uint32','uint32','uint32']},
+        'arg_type':       'multi_arg_global_write',
+        'guard_global':   0x0067eab0,
+        'out_base':       0x0067e918,
+        'out_count':      7,
+        'lut_root_delta': 0,
+        # 6-param tuples; varied sentinels exercise each output slot.
+        'path1_tests': [
+            [0x00000000, 0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005],
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x9ABCDEF0, 0x0F0F0F0F, 0xF0F0F0F0],
+            [0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000],
+            [0x80000000, 0x7FFFFFFF, 0x00000001, 0xFFFFFFFE, 0x55555555, 0xAAAAAAAA],
+            [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555, 0x66666666],
+            [0x00000010, 0x00000020, 0x00000040, 0x00000080, 0x00000100, 0x00000200],
+            [0xABCDABCD, 0xDCBADCBA, 0x13579BDF, 0x2468ACE0, 0xFEDCBA98, 0x76543210],
+            [0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000],
+            [0x7F7F7F7F, 0x80808080, 0x01010101, 0xFEFEFEFE, 0xC3C3C3C3, 0x3C3C3C3C],
+            [0xDEADC0DE, 0xFEEDFACE, 0xBAADF00D, 0x8BADF00D, 0xCAFED00D, 0x1BADB002],
+        ],
+        'path2_tests': [
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005, 0x00000006],
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x9ABCDEF0, 0x0F0F0F0F, 0xF0F0F0F0],
+            [0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000],
+        ],
+    },
+
 }
