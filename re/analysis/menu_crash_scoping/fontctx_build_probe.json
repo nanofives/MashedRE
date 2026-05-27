@@ -1,0 +1,42 @@
+[
+  {
+    "kind": "enter",
+    "stream": "0x1"
+  },
+  {
+    "kind": "sub",
+    "name": "FUN_005551d0_alloc",
+    "ret": "0xd797ccc"
+  },
+  {
+    "kind": "sub",
+    "name": "FUN_005c4d30_arraybase",
+    "ret": "0xd7b9e60"
+  },
+  {
+    "kind": "sub",
+    "name": "FUN_005c4d30_arraybase",
+    "ret": "0xd7b9e60"
+  },
+  {
+    "kind": "sub",
+    "name": "FUN_004c5cb0_rastercreate",
+    "ret": "0x0"
+  },
+  {
+    "kind": "sub",
+    "name": "FUN_005c4d30_arraybase",
+    "ret": "0xd7b9e60"
+  },
+  {
+    "kind": "leave",
+    "ret": "0x0"
+  },
+  {
+    "kind": "av",
+    "type": "access-violation",
+    "pc": "0x5554e3",
+    "esi": "0x0",
+    "mem": "0x134"
+  }
+]

@@ -239,9 +239,43 @@ Correction note: the static failure-path reading above suggested the *open* fail
 proved the open succeeds and the *builder* fails. (Third static-inference correction this
 session — keep verifying at runtime.)
 
-Next: probe `FUN_00554390`'s internal calls (`FUN_005551d0`, `FUN_004c5cb0`, `FUN_00554200`)
-to find the exact failing step; that pinpoints the RW-raster/D3D dependency. Also worth a
-no-`.asi` control to see whether stock-MASHED (no hooks) builds the font ctx here at all.
+### Probe of FUN_00554390 internals (2026-05-27) — the per-glyph texture lookup fails
+
+`re/frida/probe_fontctx_build.py` (hooks the builder + suspect sub-calls, attributing inner
+returns via an in-function flag):
+
+```
+FUN_00554390 ENTER (stream=0x1)
+  FUN_005551d0_alloc        -> 0xd797ccc   (OK — ctx allocated)
+  FUN_005c4d30_arraybase    -> 0xd7b9e60   (OK — glyph array allocated)
+  FUN_004c5cb0_rastercreate -> 0x0         <-- NULL/FAIL
+FUN_00554390 LEAVE -> 0x0                   (builder fails)
+AV pc=0x5554e3 esi=0 mem=0x134              (title render with NULL ctx)
+```
+
+The failing call is **`FUN_004c5cb0(glyph_name, dict=0)`** (stock) — a RenderWare
+**texture lookup-or-load by name**:
+```
+tex = (*(rwdev+0x18))(name);        // find in current texture dictionary
+if (tex) { ++refcount; return tex; }
+tex = (*(rwdev+0x14))(name, dict);  // else load it
+if (tex == 0) { log_error(0x16, name, …); return 0; }   // <-- returns NULL
+```
+(`rwdev = DAT_007d3ff8`; the +0x14/+0x18 method ptrs are the RW device's texture
+read/find, set during RW/D3D init.)
+
+**Deepest root (9-layer trace):** a per-glyph **texture named in `fgdc20.rwf` is neither in
+the current RW texture dictionary nor loadable** at font-load time (~90 s, right after the
+blocking intro player returns) → `FUN_004c5cb0` logs error **0x16** and returns NULL →
+`FUN_00554390` (font builder) returns NULL → `FUN_00427880` NULL → `DAT_0067d838` NULL →
+stock `FUN_005554d0` derefs `NULL+0x134` → AV. Entirely stock code; the only hook bug in the
+whole path (FontText) is fixed. This is the **RW texture-dictionary / resource-state**
+subsystem: the font's glyph TXD isn't current/loaded when the font initializes in the modded boot.
+
+Next: capture the missing texture **name** (param_1 at the failing `FUN_004c5cb0`) and which
+method returns 0 (find vs load); trace what loads/sets the font TXD (e.g. `pc.txd` via
+`FUN_004b3d80`, or a font-specific dictionary) relative to font init order. A no-`.asi`
+control would show whether stock-MASHED (no hooks) reaches a valid font ctx here at all.
 
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 
