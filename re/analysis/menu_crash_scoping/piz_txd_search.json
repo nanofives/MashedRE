@@ -1,0 +1,19 @@
+[
+  {
+    "kind": "search",
+    "name": "fgdc20.txd",
+    "ret": "0x0",
+    "found": false
+  },
+  {
+    "kind": "a6b0",
+    "name": "fgdc20.txd",
+    "ret": "0x0",
+    "fail": true
+  },
+  {
+    "kind": "av",
+    "pc": "0x5554e3",
+    "esi": "0x0"
+  }
+]

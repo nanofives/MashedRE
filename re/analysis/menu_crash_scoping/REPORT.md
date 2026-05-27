@@ -313,7 +313,44 @@ builds. Contrast: the logo textures `FUN_004283a0` loads (`MashedNEWLogo`, `proL
 `FUN_004283a0` (the stock call right before font init) loads the logos but **does not** load
 `FGDC20.TXD`. Every function in this path is stock (FontText was the lone hook bug, fixed).
 
-**This is the decisive open question:** does stock MASHED (no `.asi`) load/set `FGDC20.TXD`
+### TXD-load trace (2026-05-27) — `VfsFileExists("fgdc20.txd")` returns 0
+
+`FUN_00427ca0` (font init) is *meant* to: `FUN_0042a6b0("fgdc20.txd")` → load+return the TXD,
+`FUN_00556cc0(txd)` → set current, then `FUN_00427880("fgdc20.rwf")` → build the font (finding
+`fgdc20` in the now-current TXD). The TXD/RWF names are at `DAT_005cd600` = `"fgdc20.txd\0\0fgdc20.rwf"`.
+
+`FUN_0042a6b0` only loads the TXD if `FUN_0042a530(reg, name)` ("Searching piz for %s") finds it.
+`FUN_0042a530` tries `FUN_0042a470(reg, name, t)` for t∈{4,1,3,2,5} = prefixes
+{`pc/`,bare,`xbox/`,`ps2/`,`gamecube/`}, each calling **`VfsFileExists` (`thunk_FUN_00550b00`)**;
+on all-miss it logs "Unable to find %s in piz" and returns 0.
+
+Runtime probe (`re/frida/probe_piz_txd_search.py`):
+```
+FUN_0042a530 'Searching piz for' name='fgdc20.txd' -> 0x0   <-- NOT FOUND IN PIZ
+FUN_0042a6b0(name='fgdc20.txd')                    -> 0x0   <-- no current TXD
+AV pc=0x5554e3 esi=0
+```
+So **`VfsFileExists("fgdc20.txd")` (and the prefixed variants) all return 0** — the file is
+reported absent from the **VFS default mount** (`DAT_007dc76c`; original `FUN_00550b00`: no `:`
+prefix → dispatch `default_mount->vtable[0x13](name)`). Yet `FGDC20.TXD` IS in Font36.piz, and
+`fgdc20.rwf` *opened* fine earlier via `FUN_005507b0` (a different stock VFS path). So font36.piz
+files resolve through `FUN_005507b0` but are **absent from the default mount `VfsFileExists`
+queries** — a VFS mount-routing gap.
+
+`VfsFileExists` (0x00550b00) IS one of our hooks, but its reimpl was **diffed against the original
+and is faithful** (entry guard `DAT_007dc75c`, strlen-wrapper, `:`-scan + mount-list walk at
+`DAT_007dc754`, default-mount fallback `DAT_007dc76c`, `vtable[0x13]` dispatch — all match), and
+the no-`.asi` control reproduces — so this is **stock VFS behaviour**, not a reimpl bug.
+
+**14-layer root, fully pinned:** the modded boot leaves font36.piz's entries out of the VFS
+*default mount*, so `VfsFileExists("fgdc20.txd")=0` → piz search fails → font TXD never loads/sets
+current → `RwTextureRead('fgdc20')` misses → font build NULL → NULL font ctx → title render AV ~94 s.
+Next: the VFS mount setup — what `FUN_00495280("...font36.piz")` registers vs what `DAT_007dc76c`
+(default mount) points to, and why `FUN_005507b0` resolves font36.piz but the default mount doesn't.
+Strong regression candidate (menus worked 2026-05-17).
+
+### (superseded guess) Was the decisive open question pre-no-`.asi`:
+does stock MASHED (no `.asi`) load/set `FGDC20.TXD`
 current here, or does it fail the same way on this Win11 box? → run the **no-`.asi` control**
 (temporarily move `original/mashed_re_dev.asi` aside — touches `original/`, needs approval).
 If stock also fails, the modded boot is missing/mis-ordering a TXD load the real game does;
