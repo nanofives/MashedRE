@@ -2740,3 +2740,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  004e66d0  RpClumpForAllAtomics  C1->C2  frontend-gate-unblock-u; RW atomic iterator; unblocks 00425b90 callee-gate
 2026-05-26  004516d0  FUN_004516d0  C1->C2  frontend-gate-unblock-u; atomic-slot dispatcher; unblocks 00425b90 callee-gate
 2026-05-26  00423040  FrontendDirInput  C2-RED  frontend-gate-unblock-u; callee-gate cleared (00417450/00417530 C2) but reimpl DIVERGENT (timer-slot addresses wrong); diff RED 8/10; install kept OFF; needs Ghidra re-read of store offsets
+2026-05-26  00423b00  FUN_00423b00  C1->C2  frontend-gate-unblock-u; frontend input dispatcher (reclassified ai->frontend); unblocks FrontendDirInput caller-gate
+2026-05-26  00423040  FrontendDirInput  C2->C3  frontend-gate-unblock-u; reimpl CORRECTED vs Ghidra (was RED swapped phase/count); state_machine_observe GREEN 10/10; both gates pass

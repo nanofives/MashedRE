@@ -10046,6 +10046,9 @@ HOOKS = {
         'export':         'FrontendDirInput',
         'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'state_machine_observe',
+        # Per-axis (verified vs decomp): LEFT phase 006440fc/count 00644108;
+        # RIGHT phase 0064410c/count 006440f4; UP phase 006440ec/count 00644104;
+        # DOWN phase 006440f0/count 006440f8. scroll L/R=007f1a5c, U/D=007f1a58.
         'input_globals':  [
             {'addr': 0x007f1042, 'type': 'u8'},   # callback-A trigger — HOLD 0
             {'addr': 0x007f1076, 'type': 'u8'},   # callback-B trigger — HOLD 0
@@ -10055,13 +10058,14 @@ HOOKS = {
             {'addr': 0x007f1045, 'type': 'u8'},   # RIGHT flag
             {'addr': 0x007f1046, 'type': 'u8'},   # UP flag
             {'addr': 0x007f1047, 'type': 'u8'},   # DOWN flag
-            {'addr': 0x006440ec, 'type': 'u32'},  # RIGHT timer
-            {'addr': 0x006440f0, 'type': 'u32'},  # RIGHT timer2
-            {'addr': 0x006440f4, 'type': 'u32'},  # UP timer
-            {'addr': 0x006440f8, 'type': 'u32'},  # UP timer2
-            {'addr': 0x006440fc, 'type': 'u32'},  # LEFT/DOWN shared timer
-            {'addr': 0x00644104, 'type': 'u32'},  # DOWN timer2
-            {'addr': 0x00644108, 'type': 'u32'},  # LEFT timer2
+            {'addr': 0x006440ec, 'type': 'u32'},  # UP phase
+            {'addr': 0x006440f0, 'type': 'u32'},  # DOWN phase
+            {'addr': 0x006440f4, 'type': 'u32'},  # RIGHT count
+            {'addr': 0x006440f8, 'type': 'u32'},  # DOWN count
+            {'addr': 0x006440fc, 'type': 'u32'},  # LEFT phase
+            {'addr': 0x00644104, 'type': 'u32'},  # UP count
+            {'addr': 0x00644108, 'type': 'u32'},  # LEFT count
+            {'addr': 0x0064410c, 'type': 'u32'},  # RIGHT phase
             {'addr': 0x007f1a58, 'type': 'u32'},  # UP/DOWN scroll
             {'addr': 0x007f1a5c, 'type': 'u32'},  # LEFT/RIGHT scroll
         ],
@@ -10073,27 +10077,28 @@ HOOKS = {
             {'addr': 0x006440fc, 'type': 'u32'},
             {'addr': 0x00644104, 'type': 'u32'},
             {'addr': 0x00644108, 'type': 'u32'},
+            {'addr': 0x0064410c, 'type': 'u32'},
             {'addr': 0x007f1a58, 'type': 'u32'},
             {'addr': 0x007f1a5c, 'type': 'u32'},
         ],
         'lut_root_delta': 0,
-        # [cbA, cbB, menu, tab, L, R, U, D, t_ec, t_f0, t_f4, t_f8, t_fc, t_104, t_108, s_a58, s_a5c]
+        # [cbA, cbB, menu, tab, L, R, U, D, ec(UPp), f0(DNp), f4(Rc), f8(DNc), fc(Lp), 104(UPc), 108(Lc), 10c(Rp), s_a58, s_a5c]
         'path1_tests': [
-            [0,0, 1,0, 0,0,0,0, 0,0,0,0,0,0,0, 0,0],            # all idle, menu!=0 → resets
-            [0,0, 0,4, 1,0,0,0, 0,0,0,0,0,0,0, 0,0],            # LEFT, timers 0 → init
-            [0,0, 0,4, 0,1,0,0, 5,1,0,0,0,0,0, 0,0],            # RIGHT, timer=5 → decrement
-            [0,0, 0,4, 0,0,1,0, 0,0,1,1,0,0,0, 0,0],            # UP, timer=1 → ->0, timer2=2
-            [0,0, 0,4, 0,0,0,1, 0,0,0,0,1,1,0, 0,0],            # DOWN, shared timer=1
-            [0,0, 0,4, 1,1,1,1, 0,0,0,0,0,0,0, 0,0],            # all dirs, timers 0 → all init
-            [0,0, 0,4, 0,0,0,0, 9,2,9,2,9,2,2, 0,0],            # no flags → all reset to 0
-            [0,0, 0,4, 1,0,0,0, 0xa,0,0,0,0,0,0, 0,0],          # LEFT timer=10 → decrement to 9
-            [0,0, 0,4, 0,1,0,1, 3,1,0,0,4,1,0, 0,0],            # RIGHT+DOWN mixed
-            [0,0, 5,4, 1,1,1,1, 1,1,1,1,1,1,1, 0,0],            # menu!=0 still runs timers (no cb)
+            [0,0, 1,0, 0,0,0,0, 0,0,0,0,0,0,0,0, 0,0],          # all idle, menu!=0
+            [0,0, 0,4, 1,0,0,0, 0,0,0,0,0,0,0,0, 0,0],          # LEFT, phase0/count0 → P=1,C=10
+            [0,0, 0,4, 0,1,0,0, 0,0,5,0,0,0,0,1, 0,0],          # RIGHT phase=1,count=5 → P=2,C=4
+            [0,0, 0,4, 0,0,1,0, 0,0,0,0,0,1,0,0, 0,0],          # UP phase0,count1 → P=1,C=10
+            [0,0, 0,4, 0,0,0,1, 0,1,0,1,0,0,0,0, 0,0],          # DOWN phase=1,count=1 → P=2,C=0→?
+            [0,0, 0,4, 1,1,1,1, 0,0,0,0,0,0,0,0, 0,0],          # all dirs, all phase0/count0
+            [0,0, 0,4, 0,0,0,0, 9,2,9,2,9,2,2,9, 0,0],          # no flags → all phases reset to 0
+            [0,0, 0,4, 1,0,0,0, 0,0,0,0,1,0,0xa,0, 0,0],        # LEFT phase=1,count=10 → P=2,C=9
+            [0,0, 0,4, 0,1,0,1, 0,1,3,1,0,0,0,1, 0,0],          # RIGHT+DOWN mixed
+            [0,0, 5,4, 1,1,1,1, 1,1,1,1,1,1,1,1, 0,0],          # menu!=0 still runs timers (no cb)
         ],
         'path2_tests': [
-            [0,0, 0,4, 1,0,0,0, 0,0,0,0,0,0,0, 0,0],
-            [0,0, 0,4, 0,1,0,0, 5,1,0,0,0,0,0, 0,0],
-            [0,0, 1,0, 0,0,0,0, 0,0,0,0,0,0,0, 0,0],
+            [0,0, 0,4, 1,0,0,0, 0,0,0,0,0,0,0,0, 0,0],
+            [0,0, 0,4, 0,1,0,0, 0,0,5,0,0,0,0,1, 0,0],
+            [0,0, 1,0, 0,0,0,0, 0,0,0,0,0,0,0,0, 0,0],
         ],
     },
 

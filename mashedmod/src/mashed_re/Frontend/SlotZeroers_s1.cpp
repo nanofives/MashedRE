@@ -180,115 +180,51 @@ extern "C" __declspec(dllexport) void __cdecl FrontendDirInput()
 
     float step = *reinterpret_cast<float*>(0x005cc564u);
 
-    // Per-axis repeat-key logic. Each axis: timer at 0x006440ec[axis_offset].
-    // LEFT (DAT_007f1044) [0x004230b0]
-    {
-        std::int32_t* pTimer  = reinterpret_cast<std::int32_t*>(0x006440fcu);
-        std::int32_t* pTimer2 = reinterpret_cast<std::int32_t*>(0x00644108u);
-        float*        pScroll = reinterpret_cast<float*>(0x007f1a5cu);
-        std::uint8_t  flag    = *reinterpret_cast<std::uint8_t*>(0x007f1044u);
-        if (!flag) {
-            *pTimer  = 0;
-            *pTimer2 = 0;
-        } else {
-            if (*pTimer2 == 0) {
-                *pScroll -= step;
-            }
-            if (*pTimer == 0) {
-                *pTimer  = 10;  // initial repeat delay [0x00423113]
-                *pTimer2 = 1;
-            } else {
-                (*pTimer)--;
-                if (*pTimer == 0) {
-                    *pTimer2 = 2;
-                }
-            }
+    // Per-axis repeat-key logic (corrected against Ghidra decomp 0x004230b0..0x0042326b,
+    // frontend-gate-unblock-u 2026-05-26). Each axis has a PHASE word (0/1/2 state) and a
+    // COUNT word (countdown 10→0). Logic per axis (P=phase, C=count):
+    //   flag==0          → P=0; C=0
+    //   flag!=0:  if C==0 → scroll ±= step
+    //             if P==0 → P=1; C=10
+    //             else    → P=2; if C==0 → C=1; else C--; if C<0 → C=0  (P stays 2)
+    auto repeat_axis = [step](std::uint8_t flag, std::int32_t* P, std::int32_t* C,
+                              float* scroll, bool plus) {
+        if (!flag) { *P = 0; *C = 0; return; }
+        if (*C == 0) { *scroll += plus ? step : -step; }
+        if (*P == 0) { *P = 1; *C = 10; }
+        else {
+            *P = 2;
+            if (*C == 0) { *C = 1; }
+            else { (*C)--; if (*C < 0) *C = 0; }
         }
-    }
-    // RIGHT (DAT_007f1045) [0x00423152]
-    {
-        std::int32_t* pTimer  = reinterpret_cast<std::int32_t*>(0x006440ecu);
-        std::int32_t* pTimer2 = reinterpret_cast<std::int32_t*>(0x006440f0u);
-        float*        pScroll = reinterpret_cast<float*>(0x007f1a5cu);
-        std::uint8_t  flag    = *reinterpret_cast<std::uint8_t*>(0x007f1045u);
-        if (!flag) {
-            *pTimer  = 0;
-            *pTimer2 = 0;
-        } else {
-            if (*pTimer2 == 0) {
-                *pScroll += step;
-            }
-            if (*pTimer == 0) {
-                *pTimer  = 10;
-                *pTimer2 = 1;
-            } else {
-                (*pTimer)--;
-                if (*pTimer == 0) {
-                    *pTimer2 = 2;
-                }
-            }
-        }
-    }
-    // UP (DAT_007f1046) [0x004231b0]
-    {
-        std::int32_t* pTimer  = reinterpret_cast<std::int32_t*>(0x006440f4u);
-        std::int32_t* pTimer2 = reinterpret_cast<std::int32_t*>(0x006440f8u);
-        float*        pScroll = reinterpret_cast<float*>(0x007f1a58u);
-        std::uint8_t  flag    = *reinterpret_cast<std::uint8_t*>(0x007f1046u);
-        if (!flag) {
-            *pTimer  = 0;
-            *pTimer2 = 0;
-        } else {
-            if (*pTimer2 == 0) {
-                *pScroll += step;
-            }
-            if (*pTimer == 0) {
-                *pTimer  = 10;
-                *pTimer2 = 1;
-            } else {
-                (*pTimer)--;
-                if (*pTimer == 0) {
-                    *pTimer2 = 2;
-                }
-            }
-        }
-    }
-    // DOWN (DAT_007f1047) [0x004231fb]
-    {
-        std::int32_t* pTimer  = reinterpret_cast<std::int32_t*>(0x006440fcu);
-        std::int32_t* pTimer2 = reinterpret_cast<std::int32_t*>(0x00644104u);
-        float*        pScroll = reinterpret_cast<float*>(0x007f1a58u);
-        std::uint8_t  flag    = *reinterpret_cast<std::uint8_t*>(0x007f1047u);
-        if (!flag) {
-            *pTimer  = 0;
-            *pTimer2 = 0;
-        } else {
-            if (*pTimer2 == 0) {
-                *pScroll -= step;
-            }
-            if (*pTimer == 0) {
-                *pTimer  = 10;
-                *pTimer2 = 1;
-            } else {
-                (*pTimer)--;
-                if (*pTimer == 0) {
-                    *pTimer2 = 2;
-                }
-            }
-        }
-    }
+    };
+    // LEFT  (007f1044): phase 006440fc, count 00644108, scroll 007f1a5c, minus [0x004230b0]
+    repeat_axis(*reinterpret_cast<std::uint8_t*>(0x007f1044u),
+                reinterpret_cast<std::int32_t*>(0x006440fcu),
+                reinterpret_cast<std::int32_t*>(0x00644108u),
+                reinterpret_cast<float*>(0x007f1a5cu), false);
+    // RIGHT (007f1045): phase 0064410c, count 006440f4, scroll 007f1a5c, plus  [0x00423152]
+    repeat_axis(*reinterpret_cast<std::uint8_t*>(0x007f1045u),
+                reinterpret_cast<std::int32_t*>(0x0064410cu),
+                reinterpret_cast<std::int32_t*>(0x006440f4u),
+                reinterpret_cast<float*>(0x007f1a5cu), true);
+    // UP    (007f1046): phase 006440ec, count 00644104, scroll 007f1a58, plus  [0x004231b0]
+    repeat_axis(*reinterpret_cast<std::uint8_t*>(0x007f1046u),
+                reinterpret_cast<std::int32_t*>(0x006440ecu),
+                reinterpret_cast<std::int32_t*>(0x00644104u),
+                reinterpret_cast<float*>(0x007f1a58u), true);
+    // DOWN  (007f1047): phase 006440f0, count 006440f8, scroll 007f1a58, minus [0x004231fb]
+    repeat_axis(*reinterpret_cast<std::uint8_t*>(0x007f1047u),
+                reinterpret_cast<std::int32_t*>(0x006440f0u),
+                reinterpret_cast<std::int32_t*>(0x006440f8u),
+                reinterpret_cast<float*>(0x007f1a58u), false);
 }
 
-// RH_ScopedInstall(FrontendDirInput, 0x00423040);
-// CALLEE-GATE CLEARED (00417450/00417530 C2 frontend-gate-unblock-u 2026-05-26)
-// but DIFF RED 8/10 (frontend-gate-unblock-u): this reimpl's per-axis repeat-timer
-// slot addresses (DAT_006440ec.. mapping) DIVERGE from the original — orig writes
-// the timer/state values to different slots than this impl assumes. The
-// state_machine_observe harness (flags 0x007f1042/0x007f1076 held 0) is correct;
-// the BUG is in the timer-address mapping above. Install kept OFF until the exact
-// store offsets are re-read from Ghidra (listing of 0x004230b0..0x00423240 stores)
-// and the LEFT/RIGHT/UP/DOWN pTimer/pTimer2 addresses corrected. Evidence:
-// log/diff_frontend_dir_input.csv. Re-pickup: Ghidra re-analysis of store offsets.
+RH_ScopedInstall(FrontendDirInput, 0x00423040);
+// Per-axis timer logic CORRECTED against Ghidra decomp (frontend-gate-unblock-u
+// 2026-05-26): the earlier impl had swapped phase/count roles and wrong addresses
+// (RED 8/10). Now uses the verified per-axis phase/count mapping. Callees
+// 00417450/00417530 C2; diffed via state_machine_observe (callback flags held 0).
 
 // ---------------------------------------------------------------------------
 // TabCycler  --  0x00423270
