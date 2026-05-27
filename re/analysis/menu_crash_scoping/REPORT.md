@@ -195,6 +195,37 @@ Candidate corruptor to check: the per-frame "Replay size is N" growing buffer (a
 is recording replay even at the title screen) — a fixed-cap replay/array overflowing into
 adjacent `.data`. [UNCERTAIN] until the watchpoint names the writer.
 
+## Font-context blocker trace (2026-05-27) — stock VFS file-open failure
+
+After the FontText fix, the title overlay crashes in stock `FUN_005554d0` @0x005554e3
+(`MOV EAX,[ESI+0x134]`). Crash-catcher capture: **`ESI = 0x0`**, `mem 0x134 read` → the
+font/draw context `DAT_0067d838` is **NULL**. Full static trace (all stock; NONE hooked):
+
+1. `FUN_005554d0(DAT_0067d838, str, scale)` derefs `font_ctx+0x134` → NULL deref.
+2. `DAT_0067d838` is set by `FUN_00427ca0()` (font init) via `DAT_0067d838 = FUN_00427880()`.
+   `FUN_00427ca0` ← `FUN_00402750` (boot), called *after* intros (`FUN_00495350`) and the
+   `font36.piz` load, and *before* `FUN_004669b0` (which renders the overlay). The crash
+   stack confirms boot `FUN_00402750` is live (ret 0x4028e0 = its `call FUN_004669b0`). So
+   init RAN but **`FUN_00427880()` returned NULL**.
+3. `FUN_00427880()` (stock) takes a filename in EAX and does:
+   `stream = RwStreamOpen(2 /*rwSTREAMFILENAME*/, 1 /*read*/, filename)`; if `stream==0`
+   it returns NULL (`TEST ESI,ESI; JZ`). Then `FindChunk(stream,0x199)`, `FUN_00554390`.
+4. `RwStreamOpen` = `FUN_004cc230`; for (type 2, mode 1) it opens the file via
+   `FUN_005507b0(filename, &DAT_0061737c)` and returns NULL if that open fails.
+5. `FUN_005507b0` (the VFS/piz file open) — **stock, not hooked** — failed.
+
+Verdict: the remaining ~94 s crash is **entirely stock code**; the font/draw context fails
+to build because a **VFS file open fails** during the post-intro font init (the font-data
+file isn't openable through the piz VFS in the modded boot). This is the **PIZ/VFS
+resource-loading subsystem** — the documented font36.piz / Win11-NVMe problem area
+(`PizWin32Bypass` exists for exactly this and is currently MASS-DISABLED). NO hook reimpl
+is implicated in this layer (the only hook bug in the whole path, FontText, is now fixed).
+
+Next: a one-call runtime probe — hook `FUN_00427880` (called once, ~90 s) to log the EAX
+filename + the `RwStreamOpen`/`FUN_005507b0` return — to capture the exact file and the
+exact failing step; then investigate the piz VFS mount (and whether re-enabling
+`PizWin32Bypass` or fixing the font-resource path resolves it).
+
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 
 - `empire_splash_t007.png` (this dir; copied from `verify/scene_t007.png`, run 3) shows
