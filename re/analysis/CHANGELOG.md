@@ -2734,3 +2734,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  C2->C3  0042bfb0  MenuStateParamStore  c3-batch-u  multi_arg_global_write arg_type (new); GREEN 10/10; gates pass (caller 00432450 C2, callee 0042bf30 C2); callees unblocked by s/t batches
 2026-05-26  0041f880  FUN_0041f880  C1->C2  frontend-gate-unblock-u; mechanical decomp plate; unblocks SlotFieldSet caller-gate
 2026-05-26  00422aa0  SlotFieldSet  C2->C3  frontend-gate-unblock-u; entity_field_set GREEN 10/10 (c3-batch-s-s1 evidence); caller-gate cleared by 0041f880 C2
+2026-05-26  00417450  FUN_00417450  C1->C2  frontend-gate-unblock-u; pure-leaf grid writer; unblocks FrontendDirInput callee-gate
+2026-05-26  00417530  FUN_00417530  C1->C2  frontend-gate-unblock-u; pure-leaf grid eraser; unblocks FrontendDirInput callee-gate
+2026-05-26  004e6680  FUN_004e6680  C1->C2  frontend-gate-unblock-u; list-walk destructor; unblocks HandleArrayRelease callee-gate
+2026-05-26  004e66d0  RpClumpForAllAtomics  C1->C2  frontend-gate-unblock-u; RW atomic iterator; unblocks 00425b90 callee-gate
+2026-05-26  004516d0  FUN_004516d0  C1->C2  frontend-gate-unblock-u; atomic-slot dispatcher; unblocks 00425b90 callee-gate
