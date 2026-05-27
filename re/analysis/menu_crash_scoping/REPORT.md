@@ -116,6 +116,53 @@ consistent with the hooks-OFF run dying at a different null-pointer site at the 
 stage); a fixed-cap replay buffer overflowing could corrupt adjacent state. NOT proven —
 needs a watchpoint / buffer-cap check before any claim.
 
+## NULL traced to a corrupted .data string (2026-05-27)
+
+Deep-stack re-run (`poll_attach_catch_crash.py` now dumps 320 stack dwords + extracts
+MASHED-range return-address chain). Real AV again: `strlen(NULL)` at 0x004a9440. The
+MASHED return chain (live frames):
+- `+0x010 = 0x00428349` → return into `FUN_00428320` (after its `CALL 0x00427840`).
+- `+0x418 = 0x00428b67` → return into **`FUN_00428a30`** (after its `CALL 0x00428320` at
+  0x00428b62). Offset 0x418 matches `FUN_00428320`'s `SUB ESP,0x404` frame, so this is the
+  live caller (the `0x4a5xxx` values in between are stale data inside that 1KB buffer).
+
+`FUN_00428a30` is the **title-screen / build-date renderer**. The exact asm at the crash site:
+```
+0x428b4d PUSH 0x3f800000      ; scale 1.0f  (param_2)
+0x428b52 PUSH 0x54            ; 'T'
+0x428b54 PUSH 0x005f6560      ; the "Toast Toast Toast…" string
+0x428b59 CALL 0x004a3480      ; strrchr  →  EAX = ptr to last 'T', or NULL
+0x428b61 PUSH EAX             ; param_1 = strrchr result
+0x428b62 CALL 0x00428320      ; FUN_00428320(result, 1.0f)
+```
+So `strrchr(0x005f6560, 'T')` returned **NULL** → `FUN_00428320(NULL)` → `FontText_UTF16WidenCopy`
+→ RW strlen-wrapper → `strlen(NULL)`.
+
+`strrchr` returns NULL only if the string has no 'T'. Established facts:
+- `0x005f6560` is in **`.data` (0x5ea000–0x914703, WRITABLE)** — `memory_blocks_list`.
+  (The non-crashing call sites pass `.rdata` constants at 0x5cc4d8, or stack buffers — never NULL.)
+- The string is statically `"Toast Toast … "` (13×, contains 'T') — `memory_read`.
+- `strrchr` = `FUN_004a3480`, **NOT one of our hooks** (grep: no `4a3480`/`strrchr` in
+  `mashedmod/src`) — so the NULL is not a reimpl bug; strrchr genuinely found no 'T'.
+- `reference_to 0x005f6560` = exactly **2 refs, both reads** (the two title renderers'
+  `strrchr`); **zero intentional writers.**
+
+Conclusion: the Toast string at 0x005f6560 is **corrupted (its 'T'/content zeroed or
+overwritten) by an unintended stray write / buffer overflow at ~94 s** — there is no code
+that writes there on purpose. The only hooked function in the whole chain is
+`FontText_UTF16WidenCopy`, and it faithfully mirrors the original; everything else
+(`FUN_00428a30`, `FUN_00428320`, `strrchr`) is unmodified MASHED. This explains the
+hooks-ON vs hooks-OFF difference: the same stray overflow lands on different victims
+depending on memory layout (our 250 hooks perturb it) — Toast string (→ `strlen(NULL)`)
+with hooks ON, a code pointer (→ null-exec) with hooks OFF.
+
+**Next decisive step (runtime): a write-watchpoint on 0x005f6560** to catch the exact
+instruction that corrupts it. HW watchpoint (debug reg) is preferable to `MemoryAccessMonitor`
+page-guard here because the page is read every frame (page-guard would trap the hot reads).
+Candidate corruptor to check: the per-frame "Replay size is N" growing buffer (a frame loop
+is recording replay even at the title screen) — a fixed-cap replay/array overflowing into
+adjacent `.data`. [UNCERTAIN] until the watchpoint names the writer.
+
 ## Screenshot status (goal: verified main-menu shot) — NOT achieved
 
 - `empire_splash_t007.png` (this dir; copied from `verify/scene_t007.png`, run 3) shows

@@ -57,15 +57,20 @@ Process.setExceptionHandler(function (details) {
         }
     } catch (e) {}
 
-    // Stack dump: read 48 dwords from ESP. Any value inside MASHED.exe's
-    // code range is a candidate return address — the topmost is the caller
-    // of the faulting (leaf) function.
-    let stack = [];
+    // Stack dump: read 320 dwords from ESP (covers callers with large frames,
+    // e.g. FUN_00428320's ~0x418-byte frame). Any value inside MASHED.exe's
+    // code range is a return-address candidate; in stack order they spell out
+    // the call chain into the faulting leaf.
+    let stack = [], codeAddrs = [];
+    const MX_LO = 0x400000, MX_HI = 0x995000;  // MASHED.exe .text range
     try {
         const esp = ptr(ctx.esp.toString());
-        for (let i = 0; i < 48; i++) {
-            try { stack.push({ off: i*4, val: esp.add(i*4).readU32().toString(16) }); }
-            catch (e) { break; }
+        for (let i = 0; i < 320; i++) {
+            try {
+                const v = esp.add(i*4).readU32();
+                stack.push({ off: i*4, val: v.toString(16) });
+                if (v >= MX_LO && v < MX_HI) codeAddrs.push({ off: i*4, val: v.toString(16) });
+            } catch (e) { break; }
         }
     } catch (e) {}
 
@@ -87,6 +92,7 @@ Process.setExceptionHandler(function (details) {
         mem_address:      (details.memory && details.memory.address) ? details.memory.address.toString() : '?',
         mem_op:           (details.memory && details.memory.operation) ? details.memory.operation : '?',
         stack:            stack,
+        code_addrs:       codeAddrs,
         modules:          moduleTable(),
     });
     return false;
