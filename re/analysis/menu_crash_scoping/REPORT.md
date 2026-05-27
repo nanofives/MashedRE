@@ -1,5 +1,26 @@
 # Runtime self-exit scoping — it is a CRASH, not a timeout/clean-exit
 
+> **NO-`.asi` CONTROL (2026-05-27) — the ~94 s crash is NOT caused by our hooks.**
+> Renamed BOTH `original/mashed_re_dev.asi` and `mashedmod/build/mashed_re_dev.asi` aside
+> (the dinput8 proxy tries both paths), launched plain stock MASHED: **still crashed at
+> t=94.8 s, 0xC0000005** (WER module `unknown`+0 = null-exec). So with NO hook DLL loaded at
+> all, the title screen still dies at ~94 s. The crash is **stock MASHED + the modded-boot
+> environment** (5 binary patches + d3d9 shim + dinput8 loader) on this Win11 box — our
+> reimplementation hooks are **fully exonerated** for this blocker. (The exact site differs —
+> null-exec here vs the `0x5554e3` `[font_ctx+0x134]` read with hooks-on — only because layout
+> shifts; same NULL-font-context root, same ~94 s timing. Both `.asi` were restored after,
+> hash `2ed4a3ba…` verified.)
+>
+> Consequence: the FontText `push src` fix (commit `2c4c05d`) was a real, correct bug fix, but
+> it is NOT the ~94 s blocker. The blocker is the **stock font/draw-context build failing
+> because `FGDC20.TXD` (present in Font36.piz) is never loaded + set current** before the font
+> initializes in the modded boot → `RwTextureRead('fgdc20')` fails (err 0x16) → NULL ctx → crash.
+> Unblocking C4 now means fixing/working-around that **stock TXD-load/ordering** issue (a
+> boot/resource problem), not hook work. Next: find what should `RwTexDictionaryStreamRead`+
+> `SetCurrent` `FGDC20.TXD` and why it doesn't in the modded boot (candidates: a boot patch, the
+> d3d9 shim's device config, or post-intro RW/D3D state).
+
+
 > **ROOT CAUSE + FIX (2026-05-27; supersedes the "data corruption" hypothesis below).**
 > A HW write-watchpoint on 0x005f6560 **never fired** and the Toast string was **intact at
 > the crash** — so it is NOT corrupted. The real bug was in **our `FontText_UTF16WidenCopy`
