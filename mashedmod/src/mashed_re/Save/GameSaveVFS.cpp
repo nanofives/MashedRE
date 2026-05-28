@@ -119,10 +119,17 @@ extern "C" __declspec(dllexport) int __cdecl VfsFileExists(char* param_1) {
     }
 
 dispatch:
-    // Dispatch: vtable[0x13](obj, filename).
-    // puVar4[0] is vtable pointer; vtable[0x13] is method at word-index 0x13 = byte offset 0x4c.
-    const auto* vtable = reinterpret_cast<void**>(puVar4[0]);
-    const auto exists_fn = reinterpret_cast<int(__cdecl*)(std::uint32_t*, char*)>(vtable[kVtableExistsIdx]);
+    // Original: (*(code*)puVar4[0x13])(puVar4, filename) — the exists fn-ptr is a
+    // DIRECT function-pointer FIELD at object word-index 0x13 (byte 0x4c), a C-style
+    // object, NOT a C++ vtable.
+    // 2026-05-27 FIX: the prior reimpl derefed puVar4[0] as a "vtable" first (a
+    // spurious extra indirection) and called *(*(puVar4)+0x4c) — a garbage ptr —
+    // so VfsFileExists wrongly returned 0 ("not found"). That broke the font-TXD
+    // piz search (VfsFileExists("fgdc20.txd")=0 vs original=1) -> no TXD load ->
+    // NULL font ctx -> ~94s title crash. Now reads puVar4[0x13] directly, matching
+    // the original. See re/analysis/menu_crash_scoping/REPORT.md.
+    const auto exists_fn = reinterpret_cast<int(__cdecl*)(std::uint32_t*, char*)>(
+        static_cast<std::uintptr_t>(puVar4[kVtableExistsIdx]));
     return exists_fn(puVar4, param_1);
 }
 
