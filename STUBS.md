@@ -1232,3 +1232,8 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4195 | 0x0049c990 FUN_0049c990 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | second base-class destructor; called at 0x0049dec4; out of bucket; batch-ad-s3 |
 | S-4196 | 0x004a1180 FUN_004a1180 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | string-buffer destructor; called 3× (0x0049df0f, 0x0049df1b, 0x0049df27); no visible args each call; batch-ad-s3 |
 | S-4197 | 0x004a01b0 FUN_004a01b0 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | top-level base dtor; called at 0x0049df33; no visible args; batch-ad-s3 |
+| S-4358 | 0x004cc9f0 FUN_004cc9f0 | 0x00556ce0 FontSys_ShutdownBuffers | hud | passthrough | 2026-05-28 | RwFreeList destroy; called with DAT_00912a00; shape consistent with RwFreeList_Destroy but name unconfirmed; batch-ae-s5 |
+| S-4359 | 0x004cc9e0 thunk_FUN_004cc820 | 0x00556d20 FontSys_InitBuffers | hud | passthrough | 2026-05-28 | RwFreeList allocator thunk (4B); redirects to FUN_004cc820; batch-ae-s5 |
+| S-4360 | 0x004c5a60 FUN_004c5a60 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-28 | Free/release call for obj[0x1a]; called only when field non-NULL; batch-ae-s5 |
+| S-4361 | 0x00556e90 FUN_00556e90 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-28 | Style colour setter (4 channel args by pointer); called with all-0xFF RGBA; batch-ae-s5 |
+| S-4362 | 0x00557110 FUN_00557110 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-28 | Style property setter (4 zero args by pointer); role unconfirmed; batch-ae-s5 |
