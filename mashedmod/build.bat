@@ -92,6 +92,7 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\MenuStateWriters_u1.cpp" ^
     "Frontend\MenuMiscLeaves_t2.cpp" ^
     "Frontend\BucketMixed_t3.cpp" ^
+    "Frontend\Cluster_v3.cpp" ^
     "HUD\HudDispatch.cpp" ^
     "Boot\GameStateCluster.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
@@ -258,6 +259,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\MenuMiscLeaves_t2.cpp" ^
     "Frontend\SplashGameMode_t5.cpp" ^
     "Frontend\SkeletonAndScatter_t6.cpp" ^
+    "Frontend\Cluster_v3.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

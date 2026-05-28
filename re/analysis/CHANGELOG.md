@@ -2744,3 +2744,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-26  00423040  FrontendDirInput  C2->C3  frontend-gate-unblock-u; reimpl CORRECTED vs Ghidra (was RED swapped phase/count); state_machine_observe GREEN 10/10; both gates pass
 2026-05-28  sweep-20260528-1345  scribe-claim  buckets=6 queued (batch-ae-s1..s6, 34 RVAs); pre-existing render/frontend Queued rows left untouched (out of scope)
 2026-05-28  sweep-20260528-1345  scribe-release  buckets=6 drained (batch-ae-s1..s6); plates=32, bookmarks=32, renames=0; skipped=2 (0x00554940 U-5624, 0x00555910 U-5649 — no Ghidra function object, function_create needed); errors=0
+2026-05-28  00428610  ViewportScaledRectDraw  C2->C3  c3-batch-v-s3; Frida draw_quad_observe GREEN 12/12 path1; all callees C3 (ScreenWidthGet ScreenHeightGet HudIm2DQuad); caller FUN_00428760 C2; U-5593+U-5594 closed; S-4244+S-4245+S-4246 cleared; verify_hook deferred to frida-sweep
