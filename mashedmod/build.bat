@@ -94,6 +94,7 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\BucketMixed_t3.cpp" ^
     "Frontend\Cluster_v3.cpp" ^
     "HUD\HudDispatch.cpp" ^
+    "HUD\Cluster_v2.cpp" ^
     "Boot\GameStateCluster.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
     "Boot\Window.cpp" ^
