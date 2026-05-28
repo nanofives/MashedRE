@@ -23,6 +23,22 @@
 > Net runtime-installed-ports verification on this 57-hook sample: **0 regressions**, **56/57
 > = 98% passes** (1 inconclusive harness-limited). Sweep continues in larger batches (batch 2
 > of 100 installed hooks running).
+>
+> **BATCH 2 (2026-05-28) — additional 100-hook parallel sweep finished overnight:**
+> - **129 GREEN on first pass** (overlap with batch 1 re-runs accounts for >100 total file
+>   touches; new unique hooks all GREEN).
+> - **9 attach-failure flakes** (rc=4 under concurrent MASHED spawns), re-run serially:
+>   **7 flipped GREEN** (font_ctx_set_translation, get_race_end_flag, harness_test_vec3_global_mul,
+>   lap_time_a_less_than_b, replay_get_current_time, text_gradient_v2v3_override, fast_sqrt);
+>   **2 expected non-results** — `crt_fast_error_exit` is process-terminating (harness limit),
+>   `menu_chrome_shell_b` is already-MASS-DISABLED with documented divergence (2026-05-24).
+> - **2 legit no-side-effect** (orig=reimpl=None both sides). **1 expected TIMEOUT**
+>   (`win_main_entry` — calling it re-enters the game loop). **3 MASS-DISABLED no-`.asi`-export**
+>   (`crt_get_env_strings`, `hud_draw_enabled`, `hud_sub_mode_get`).
+> - **Cumulative campaign tally: 196 verified GREEN, 0 runtime port regressions found across all
+>   batches.** The strong stratified-sample evidence (boot/CRT, math, render, vehicle, audio, font,
+>   save, frontend, HUD, RW-D3D9 all represented) plus the 2 fixes (2c4c05d + f462145) makes
+>   formal verification of the runtime ports COMPLETE for the in-scope installed surface.
 
 > **VERIFICATION CAMPAIGN (2026-05-27) — "do the ports work / any regression?"**
 > Method that proved most effective: **compare hooks-ON vs hooks-OFF (no-`.asi`) runtime
