@@ -1815,7 +1815,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004022a0,FUN_004022a0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004022a0.md,,, create quad geometry (4v/2t) in XZ plane via FUN_004e8c70 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004022a0.md
 00402590,FUN_00402590,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_00402590.md,,, create quad atomic: wraps FUN_004022a0 into clump via FUN_004e6d80 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_00402590.md
 00402b70,FUN_00402b70,util,C1,mapped,,,, path normaliser: 8.3 uppercase; strips PS2/XBOX/PLATFORM dirs; max 6 levels
-00402f80,FUN_00402f80,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x00402f80.md,,, cup float init: DAT_00636aec=60.0 DAT_00636af4=40.0 | batch-ae-s1
+00402f80,CupFloatInit,hud,C3,impl,mashedmod/src/mashed_re/Hud/Cluster_v2.cpp,,log/diff_cup_float_init.csv, cup float init: DAT_00636aec=60.0 DAT_00636af4=40.0 | batch-ae-s1 | C2->C3 c3-batch-v-s2 void_write_observe GREEN 10/10
 004034a0,FUN_004034a0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004034a0.md,,, D3D9 cap check (NONPOW2CONDITIONAL + STRETCHRECT); creates RT at DAT_00636b70 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004034a0.md
 004036a0,FUN_004036a0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004036a0.md,,, screen-quad blit __thiscall: 4 verts from UV→screen + vtable SetRS/DrawPrim | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004036a0.md
 004039e0,FUN_004039e0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004039e0.md,,, getter: returns float10 DAT_005ea0a8; 1 caller FUN_0041a250 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004039e0.md
