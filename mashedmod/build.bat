@@ -213,6 +213,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Input\DirectInput.cpp" ^
     "Input\DInput.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
+    "Compat\IntroTextNullGuard.cpp" ^
     "Harness\HarnessStubs.cpp" ^
     "Frontend\Leaves.cpp" ^
     "Frontend\MenuMenusMixed.cpp" ^
