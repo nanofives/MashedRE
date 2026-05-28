@@ -1262,3 +1262,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4360 | 0x004c5a60 FUN_004c5a60 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-28 | Free/release call for obj[0x1a]; called only when field non-NULL; batch-ae-s5 |
 | S-4361 | 0x00556e90 FUN_00556e90 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-28 | Style colour setter (4 channel args by pointer); called with all-0xFF RGBA; batch-ae-s5 |
 | S-4362 | 0x00557110 FUN_00557110 | 0x00556d70 FUN_00556d70 | hud | passthrough | 2026-05-28 | Style property setter (4 zero args by pointer); role unconfirmed; batch-ae-s5 |
+| S-4398 | 0x0042b8b0 FUN_0042b8b0 | 0x004736c0 FUN_004736c0 | frontend | passthrough | 2026-05-28 | returns int16_t screen width; called 2x (0x004736c2, 0x004736d0); not decomped in this session; batch-ae-s6 |
+| S-4399 | 0x0042b8c0 FUN_0042b8c0 | 0x004736c0 FUN_004736c0 | frontend | passthrough | 2026-05-28 | returns int16_t screen height; called 2x (0x004736c9, 0x004736d7); not decomped in this session; batch-ae-s6 |
