@@ -1232,3 +1232,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4195 | 0x0049c990 FUN_0049c990 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | second base-class destructor; called at 0x0049dec4; out of bucket; batch-ad-s3 |
 | S-4196 | 0x004a1180 FUN_004a1180 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | string-buffer destructor; called 3× (0x0049df0f, 0x0049df1b, 0x0049df27); no visible args each call; batch-ad-s3 |
 | S-4197 | 0x004a01b0 FUN_004a01b0 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | top-level base dtor; called at 0x0049df33; no visible args; batch-ad-s3 |
+| S-4398 | 0x0042b8b0 FUN_0042b8b0 | 0x004736c0 FUN_004736c0 | frontend | passthrough | 2026-05-28 | returns int16_t screen width; called 2x (0x004736c2, 0x004736d0); not decomped in this session; batch-ae-s6 |
+| S-4399 | 0x0042b8c0 FUN_0042b8c0 | 0x004736c0 FUN_004736c0 | frontend | passthrough | 2026-05-28 | returns int16_t screen height; called 2x (0x004736c9, 0x004736d7); not decomped in this session; batch-ae-s6 |
