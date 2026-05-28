@@ -1,5 +1,30 @@
 # Runtime self-exit scoping — it is a CRASH, not a timeout/clean-exit
 
+> **VERIFICATION CAMPAIGN (2026-05-27) — "do the ports work / any regression?"**
+> Method that proved most effective: **compare hooks-ON vs hooks-OFF (no-`.asi`) runtime
+> behavior** — divergences pinpoint port regressions that synthetic diff-original missed.
+> Results:
+> - **2 real port regressions found + fixed + runtime-verified:**
+>   1. `FontText_UTF16WidenCopy` (0x00427840) — omitted `push src` → `strlen(NULL)` (commit `2c4c05d`).
+>   2. `VfsFileExists` (0x00550b00) — spurious extra deref `((void**)obj[0])[0x13]` vs original
+>      direct field `obj[0x13]` → returned 0 ("not found") so the font-TXD piz search failed
+>      (`VfsFileExists("fgdc20.txd")`: ours=0, original=1). Fix `f462145`; verified: piz search
+>      now finds it and `FUN_004b3d80` loads the TXD (handle 0x1389d94).
+>   Both fixes make our reimpls MORE faithful to the original (they reduce regression, add none).
+> - **Build health:** compiles clean; all ~250 hooks install (live inline-JMP); `.asi` loads.
+> - **No regression vs stock:** with both fixes, hooks-ON advances **at least as far as** stock
+>   no-`.asi` (in fact further — a hook makes the stock TXD-load Bug B succeed). No port-caused
+>   crash earlier than stock in the reachable (boot→~90 s) window.
+> - **Remaining blocker is STOCK, not our ports:** after the fixes the title/intro text render
+>   still crashes ~90 s in stock `FUN_004277a0` (NULL out-buffer, EBX=0, rendering "Empire
+>   Interactive" text) — stock functions, a system-DLL/callback stack, and the no-`.asi` control
+>   crashes at a stock blocker too. So the menu/race is unreachable for a **stock** reason.
+> - **Verification status:** boot-window ports (boot/RW-engine/render-init/font/audio that fire
+>   0–90 s) run with no port-caused crash. **Menu/race ports cannot be runtime-verified** until
+>   the stock title-render blocker is resolved (a separate, non-port effort — workaround or
+>   stock-bug fix).
+
+
 > **NO-`.asi` CONTROL (2026-05-27) — the ~94 s crash is NOT caused by our hooks.**
 > Renamed BOTH `original/mashed_re_dev.asi` and `mashedmod/build/mashed_re_dev.asi` aside
 > (the dinput8 proxy tries both paths), launched plain stock MASHED: **still crashed at
