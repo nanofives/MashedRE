@@ -1803,10 +1803,10 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0057c220,RWP37WorldSlotAssign,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/0057c220.md,vehicle_update_d3_cont-20260513,,assigns body to world slot; registry at DAT_007dc8d8+param_1; maintains back-links via body+0x30 and *(body+0x10)+8; S-3733
 00559c40,PhysicsSceneBodyRegister,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/00559c40.md,vehicle_update_d3_cont-20260513,,large (0x293b); registers body in scene slot bitfield; scene[0x16] slot bitmap; body+8=slot ushort; body+9=scene; activity flag DAT_007dc8c0; S-3745
 0055ae70,PhysicsSceneBodySetShapeFlags,vehicle,C1,new,re/analysis/vehicle_update_d3_cont/0055ae70.md,vehicle_update_d3_cont-20260513,,sets shape flags for body slot in scene; active bitfield at scene[0x1a]; get/clear/apply shape data; mode-dependent shapeIdx (1 or vehicleIdx+2); S-3746 S-3747
-00401000,FUN_00401000,hud,C1,mapped,,,, cup trophy init — creates cup.dff clump + particles at DAT_00636560..636574
-004011f0,FUN_004011f0,hud,C1,mapped,,,, cup trophy per-frame transform update; called from FUN_004013f0
-00401340,FUN_00401340,hud,C1,mapped,,,, cup color-by-game-mode setter; spin speed = -DAT_007f0ff0*scale
-004013f0,FUN_004013f0,hud,C1,mapped,,,, cup trophy render: push-update-draw-pop on DAT_007d3ff8 world context
+00401000,FUN_00401000,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x00401000.md,,, cup trophy init — creates cup.dff clump + particles at DAT_00636560..636574 | batch-ae-s1
+004011f0,FUN_004011f0,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x004011f0.md,,, cup trophy per-frame transform update; called from FUN_004013f0 | batch-ae-s1
+00401340,FUN_00401340,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x00401340.md,,, cup color-by-game-mode setter; spin speed = -DAT_007f0ff0*scale | batch-ae-s1
+004013f0,FUN_004013f0,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x004013f0.md,,, cup trophy render: push-update-draw-pop on DAT_007d3ff8 world context | batch-ae-s1
 00401630,FUN_00401630,track,C1,mapped,,,," LoadMapModel(idx): formats ""map_%d.dff"" and calls FUN_004b3bf0"
 00401690,FUN_00401690,render,C1,mapped,,,, AABB + inv-radius from mesh; ESI=this struct[1..13]; calls Vec3Magnitude 004c3ac0
 004019d0,FUN_004019d0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004019d0.md,,, race track VFX marker position update; iterates DAT_00636ac0 particle array | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004019d0.md
@@ -1815,12 +1815,12 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 004022a0,FUN_004022a0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004022a0.md,,, create quad geometry (4v/2t) in XZ plane via FUN_004e8c70 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004022a0.md
 00402590,FUN_00402590,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_00402590.md,,, create quad atomic: wraps FUN_004022a0 into clump via FUN_004e6d80 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_00402590.md
 00402b70,FUN_00402b70,util,C1,mapped,,,, path normaliser: 8.3 uppercase; strips PS2/XBOX/PLATFORM dirs; max 6 levels
-00402f80,FUN_00402f80,hud,C1,mapped,,,, cup float init: DAT_00636aec=60.0 DAT_00636af4=40.0
+00402f80,FUN_00402f80,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x00402f80.md,,, cup float init: DAT_00636aec=60.0 DAT_00636af4=40.0 | batch-ae-s1
 004034a0,FUN_004034a0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004034a0.md,,, D3D9 cap check (NONPOW2CONDITIONAL + STRETCHRECT); creates RT at DAT_00636b70 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004034a0.md
 004036a0,FUN_004036a0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004036a0.md,,, screen-quad blit __thiscall: 4 verts from UV→screen + vtable SetRS/DrawPrim | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004036a0.md
 004039e0,FUN_004039e0,render,C2,mapped,re/analysis/render_c1_to_c2_s1/FUN_004039e0.md,,, getter: returns float10 DAT_005ea0a8; 1 caller FUN_0041a250 | batch-render-s1 plate at re/analysis/render_c1_to_c2_s1/FUN_004039e0.md
 00403c60,FUN_00403c60,hud,C2,mapped,re/analysis/skeleton_prep_high_leverage/00403c60.md,,,CupVFXSplash: 4x FUN_00427ad0 sprite IDs 554/555; x=120/123 y=80/83/140/143 w=400 h=80; scale=0.8f; skeleton_prep_s5-20260522
-00404820,FUN_00404820,hud,C1,mapped,,,, free scene at DAT_00636c00 via FUN_004e6e00; 1 caller FUN_0045b930
+00404820,FUN_00404820,hud,C2,mapped,re/analysis/boot_hud_promote_ae1/0x00404820.md,,, free scene at DAT_00636c00 via FUN_004e6e00; 1 caller FUN_0045b930 | batch-ae-s1
 00404e00,FUN_00404e00,vehicle,C2,mapped,re/analysis/promote_c2_vehicle_lowrva/0x00404e00.md,,, GetDirtBodyName(idx): lookup DAT_00639cc8→PTR_s_DirtBody_005ea0b8
 00404e20,FUN_00404e20,vehicle,C2,mapped,re/analysis/promote_c2_vehicle_lowrva/0x00404e20.md,,, GetDirtAdWheelName(body,wheel): 2D table DAT_00636c08 stride 0x4e
 00500c48,FUN_00500c48,render,C1,mapped,re/analysis/breadth_unmapped_005xx/0x00500c48.md,,,D3DX9 vertex decl semantic name parser (POSITION/BLENDWEIGHT/etc)
