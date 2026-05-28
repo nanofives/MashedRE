@@ -10102,4 +10102,64 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-v-s1 — font_pools_frontend_ae6 / font_atlas_promote_ae5
+    # Frontend/Cluster_v1.cpp — 3 leaf candidates
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00474e60  DegToRad
+    # float(float) — param_1 * _DAT_005cd7a8 (PI/180 = 0x3C8EFA35 = 0.0174533f).
+    # Pure x87 leaf: FLDS [ESP+4]; FMULS [0x005cd7a8]; RET (10 bytes).
+    # Constant at 0x005cd7a8, read at 0x00474e62. Caller: FUN_00434720 (C2).
+    # arg_type='float_scalar': pass degree value, compare float return.
+    'deg_to_rad': {
+        'rva':            0x00474e60,
+        'export':         'DegToRad',
+        'signature':      {'ret': 'float', 'args': ['float']},
+        'arg_type':       'float_scalar',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0.0, 45.0, 90.0, 180.0, 270.0, 360.0,
+            -45.0, -180.0, 1.0, 0.5, 30.0, 60.0,
+            720.0, -360.0, 0.001, 1234.5,
+        ],
+        'path2_tests': [0.0, 45.0, 90.0, 180.0, 360.0],
+    },
+
+    # 0x00556cd0  FontAtlasSlotGet
+    # uint32(void) — returns DAT_00912a20 directly (5-byte pure-leaf getter).
+    # MOV EAX, [0x00912a20]; RET. Data ref at 0x00556cd1.
+    # Caller: FontText_HudShutdown (0x00427620, C2).
+    # arg_type='read_global': write sentinel to 0x00912a20, call fn, compare return.
+    'font_atlas_slot_get': {
+        'rva':            0x00556cd0,
+        'export':         'FontAtlasSlotGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00912a20,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x00556cc0  FontAtlasSlotSet
+    # void(uint32) — DAT_00912a20 = param_1 (9-byte pure-leaf setter).
+    # MOV EAX,[ESP+4]; MOV [0x00912a20],EAX; RET. Data ref at 0x00556cc3.
+    # Caller: FUN_00427ca0 (0x00427ca0, C2).
+    # arg_type='void_setter_observe': call fn(value), read back 0x00912a20.
+    'font_atlas_slot_set': {
+        'rva':            0x00556cc0,
+        'export':         'FontAtlasSlotSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00912a20,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF, 0x80000000,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
+    },
+
 }
