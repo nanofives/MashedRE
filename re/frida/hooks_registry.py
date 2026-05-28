@@ -6558,6 +6558,71 @@ HOOKS = {
         ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-v-s3 — viewport_scaled_rect (C2→C3, 1 promoted; 2 skipped)
+    # Frontend/Cluster_v3.cpp — ViewportScaledRectDraw (7-arg wrapper of HudIm2DQuad).
+    # Skips: 0x00458630 (callee 004c5c00 return is non-deterministic pointer; no arg_type);
+    #        0x00423b00 (caller FUN_00425a40 is C1; gate (c) fails).
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00428610  ViewportScaledRectDraw
+    # 7-arg viewport-scaled textured rect. Wraps HudIm2DQuad (0x00450b10) after:
+    #   1. Computing normalised scale factors via ScreenWidthGet/ScreenHeightGet.
+    #   2. Computing position based on coordMode (param_6: 0/1=absolute, 2=centred).
+    #   3. Building a 4-float blend struct from blendMode (param_7: 0=default,
+    #      1=blend_r, 2=blend_g, 3=both).
+    #   4. Resolving texture handle: *param_1 if non-NULL, else 0.
+    #   5. Calling HudIm2DQuad(tex, x, y, w*fVar4, h*fVar1, 0xffffffff, &blend).
+    #
+    # Observable: vertex buffer at DAT_00898a20 (112 bytes) — draw_quad_observe.
+    # Screen dims are live globals but deterministic (both paths read same value).
+    # blend struct depends only on param_7 and float constants — deterministic.
+    # param_1=0 (NULL) for all tests: tex_handle=0, no pointer deref needed.
+    #
+    # Test vectors cover:
+    #   coordMode 0/1/2, blendMode 0/1/2/3, varied x/y/w/h, NULL texture.
+    # ref: re/analysis/frontend_hud_dispatcher_ae2/0x00428610.md
+    'viewport_scaled_rect_draw': {
+        'rva':            0x00428610,
+        'export':         'ViewportScaledRectDraw',
+        'signature':      {'ret': 'void',
+                            'args': ['pointer', 'float', 'float', 'float', 'float',
+                                     'int32', 'int32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Tests: [tex_ptr, x, y, w, h, coordMode, blendMode]
+        # All tex_ptr=0 (NULL) to avoid dereferencing unknown memory.
+        'path1_tests': [
+            # coordMode 0 (absolute), blendMode 0 (default)
+            [0, 0.0,   0.0,  100.0, 100.0, 0, 0],
+            [0, 50.0,  50.0,  50.0,  50.0, 0, 0],
+            [0, 200.0, 100.0, 80.0,  40.0, 0, 0],
+            # coordMode 1 (same as 0), blendMode 0
+            [0, 10.0,  20.0,  30.0,  40.0, 1, 0],
+            # coordMode 2 (centred), blendMode 0
+            [0, 100.0, 100.0, 50.0,  50.0, 2, 0],
+            [0, 300.0, 200.0, 100.0, 80.0, 2, 0],
+            # coordMode 0, blendMode 1
+            [0, 0.0,   0.0,  100.0, 100.0, 0, 1],
+            # coordMode 0, blendMode 2
+            [0, 0.0,   0.0,  100.0, 100.0, 0, 2],
+            # coordMode 0, blendMode 3
+            [0, 0.0,   0.0,  100.0, 100.0, 0, 3],
+            # coordMode 2, blendMode 1
+            [0, 200.0, 150.0, 60.0,  60.0, 2, 1],
+            # coordMode 2, blendMode 2
+            [0, 200.0, 150.0, 60.0,  60.0, 2, 2],
+            # coordMode 2, blendMode 3
+            [0, 200.0, 150.0, 60.0,  60.0, 2, 3],
+        ],
+        'path2_tests': [
+            [0, 0.0, 0.0, 100.0, 100.0, 0, 0],
+            [0, 100.0, 100.0, 50.0, 50.0, 2, 0],
+            [0, 0.0, 0.0, 100.0, 100.0, 0, 3],
+        ],
+    },
+
     # ─────────────────────────────────────────────────────────────────────
     # Session c3-batch-n-s2 — frontend_small_leaves (C2→C3, 5 candidates)
     # Frontend/SmallLeaves_n2.cpp — 3 new-author leaves + 1 dispatcher;

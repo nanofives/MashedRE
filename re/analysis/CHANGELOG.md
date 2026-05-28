@@ -2747,3 +2747,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-28  0x00474e60  DegToRad  C2->C3  c3-batch-v-s1; leaf-exemption; Frida path1 GREEN 16/16; impl Cluster_v1.cpp; caller 00434720 C2
 
 2026-05-28  00402f80  CupFloatInit  C2->C3  c3-batch-v-s2; pure leaf void(void) initialiser; void_write_observe GREEN 10/10 on 0x00636af4; leaf-exemption; caller FUN_00433240 C2; HUD/Cluster_v2.cpp
+2026-05-28  00428610  ViewportScaledRectDraw  C2->C3  c3-batch-v-s3; Frida draw_quad_observe GREEN 12/12 path1; all callees C3 (ScreenWidthGet ScreenHeightGet HudIm2DQuad); caller FUN_00428760 C2; U-5593+U-5594 closed; S-4244+S-4245+S-4246 cleared; verify_hook deferred to frida-sweep

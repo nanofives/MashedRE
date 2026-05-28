@@ -1238,9 +1238,9 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4241 | 0x00427680 FUN_00427680 | 0x00427f00 FUN_00427f00 | hud | passthrough | 2026-05-28 | 4 args (p2 p3 p6 p5); purpose unknown; batch-ae-s2 |
 | S-4242 | 0x00556ca0 FUN_00556ca0 | 0x00427f00 FUN_00427f00 | hud | passthrough | 2026-05-28 | 5 args (global ptr, stack buf, float, stack buf, global ptr); purpose unknown; batch-ae-s2 |
 | S-4243 | 0x00552d70 FUN_00552d70 | 0x00427f00 FUN_00427f00 | hud | passthrough | 2026-05-28 | no visible args; purpose unknown; batch-ae-s2 |
-| S-4244 | 0x0042b8b0 FUN_0042b8b0 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-28 | no visible args; returns int16 screen dimension (width query); batch-ae-s2 |
-| S-4245 | 0x0042b8c0 FUN_0042b8c0 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-28 | 1 float arg; returns int16 screen dimension (height query); batch-ae-s2 |
-| S-4246 | 0x00450b10 FUN_00450b10 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-28 | 7 args (texId x y w h colour blendStruct*); primitive draw call; batch-ae-s2 |
+| ~~S-4244~~ | ~~0x0042b8b0~~ | ~~0x00428610~~ | ~~hud~~ | CLEARED 2026-05-28 | — | ScreenWidthGet now C3 impl (MenuButtonDetect.cpp); stub retired |
+| ~~S-4245~~ | ~~0x0042b8c0~~ | ~~0x00428610~~ | ~~hud~~ | CLEARED 2026-05-28 | — | ScreenHeightGet now C3 impl (MenuButtonDetect.cpp); stub retired |
+| ~~S-4246~~ | ~~0x00450b10~~ | ~~0x00428610~~ | ~~hud~~ | CLEARED 2026-05-28 | — | HudIm2DQuad now C3 impl (DrawQuadPrimitives.cpp); stub retired |
 | S-4247 | 0x004c5c00 FUN_004c5c00 | 0x00458630 FUN_00458630 | frontend | passthrough | 2026-05-28 | 2 args (global handle, ASCII name); returns lookup result handle/ptr/0; batch-ae-s2 |
 | S-4278 | 0x0055deb0 FUN_0055deb0 | 0x00553f40 FontGlyph_UploadData | hud | passthrough | 2026-05-28 | returns element count when node[1]==-1; single-arg; batch-ae-s3 |
 | S-4279 | 0x00555830 FUN_00555830 | 0x00555280 FontSys_ShutdownContextPool | hud | passthrough | 2026-05-28 | per-node field[1] teardown; called once per list node in walk loop; single arg; batch-ae-s3 || S-4318 | 0x005c4ad0 FUN_005c4ad0    | 0x005551d0 FUN_005551d0         | hud/font | passthrough | 2026-05-28 | Called with (0x20, 0x30190); allocates/initialises glyph data buffer; batch-ae-s4 |
