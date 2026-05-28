@@ -10162,4 +10162,39 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000001, 0xDEADBEEF],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-v-s2 — HUD/Cluster_v2.cpp (1/3 promoted)
+    # Refusals:
+    #   0x004c1c80 — no arg_type for (int, in_ptr_2uint32) returning int;
+    #               callee FUN_004c0e50 IS C2 now (stale batch-k note) but
+    #               harness gap blocks promotion; deferred.
+    #   0x00555f20 — int param_1 is a live font ctx pointer; vtable+0x108 call
+    #               requires valid live object; no arg_type creates font ctx
+    #               from test scalars; deferred.
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00402f80  CupFloatInit
+    # Pure void(void) initialiser: no calls, no branches. Writes 4 constants
+    # to 4 consecutive globals:
+    #   DAT_00636ae8 = 0             (0x00402f80)
+    #   DAT_00636af0 = 0             (0x00402f8a)
+    #   DAT_00636af4 = 0x42200000    (0x00402f94) = +40.0f IEEE-754
+    #   DAT_00636aec = 0x42700000    (0x0040299e) = +60.0f IEEE-754
+    # Strategy: void_write_observe on 0x00636af4.
+    #   Write sentinel -> call fn -> read back -> must be 0x42200000.
+    # Leaf-exemption applies (callees_depth1: []).
+    # Caller FUN_00433240 is C2.
+    'cup_float_init': {
+        'rva':            0x00402f80,
+        'export':         'CupFloatInit',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00636af4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
 }
