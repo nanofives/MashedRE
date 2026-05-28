@@ -1232,3 +1232,17 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4195 | 0x0049c990 FUN_0049c990 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | second base-class destructor; called at 0x0049dec4; out of bucket; batch-ad-s3 |
 | S-4196 | 0x004a1180 FUN_004a1180 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | string-buffer destructor; called 3× (0x0049df0f, 0x0049df1b, 0x0049df27); no visible args each call; batch-ad-s3 |
 | S-4197 | 0x004a01b0 FUN_004a01b0 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | top-level base dtor; called at 0x0049df33; no visible args; batch-ad-s3 |
+| S-4318 | 0x005c4ad0 FUN_005c4ad0    | 0x005551d0 FUN_005551d0         | hud/font | passthrough | 2026-05-28 | Called with (0x20, 0x30190); allocates/initialises glyph data buffer; batch-ae-s4 |
+| S-4319 | 0x004c5890 FUN_004c5890    | 0x00555360 FUN_00555360         | hud/font | passthrough | 2026-05-28 | No-arg call; result stored in DAT_00912a1c/DAT_00912a20; font system state init; batch-ae-s4 |
+| S-4320 | 0x004cc9e0 thunk_FUN_004cc820 | 0x00555360 FUN_00555360      | hud/font | passthrough | 2026-05-28 | Pool/heap allocator thunk; called twice with differing size+tag args; batch-ae-s4 |
+| S-4321 | 0x004c5c80 FUN_004c5c80    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | RW heap state save/restore (push); arg is heap-state cookie; batch-ae-s4 |
+| S-4322 | 0x004c5ca0 FUN_004c5ca0    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | RW heap state save (save current handle); no args; batch-ae-s4 |
+| S-4323 | 0x004c5cb0 FUN_004c5cb0    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | File open from name+path; returns file handle or NULL; batch-ae-s4 |
+| S-4324 | 0x004ce2d0 FUN_004ce2d0    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | Activates VFS path for DAT_00912a0c; likely RW VFS push; batch-ae-s4 |
+| S-4325 | 0x00550a20 FUN_00550a20    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | Line-read from file buffer; (buf, maxlen, file_handle); batch-ae-s4 |
+| S-4326 | 0x005c4c60 FUN_005c4c60    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | Resize glyph data buffer; (handle, new_count, tag); batch-ae-s4 |
+| S-4327 | 0x005c4d30 FUN_005c4d30    | 0x00555af0 FontCtx_LoadMetrics_Met | hud/font | passthrough | 2026-05-28 | Get raw pointer from glyph data handle; batch-ae-s4 |
+| S-4328 | 0x004cdca0 FUN_004cdca0    | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud/font | passthrough | 2026-05-28 | Creates pixel image (w, h, 0x20 bpp); atlas image alloc; batch-ae-s4 |
+| S-4329 | 0x004cdd00 FUN_004cdd00    | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud/font | passthrough | 2026-05-28 | Unlocks/destroys atlas image handle; batch-ae-s4 |
+| S-4330 | 0x004cdd60 FUN_004cdd60    | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud/font | passthrough | 2026-05-28 | Locks atlas image for pixel access; batch-ae-s4 |
+| S-4331 | 0x004d52d0 FUN_004d52d0    | 0x00555ff0 FontCtx_LoadMetrics_Atlas | hud/font | passthrough | 2026-05-28 | Blits/copies texture pixels into image buffer; (image_handle, texture_ptr); batch-ae-s4 |
