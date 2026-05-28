@@ -1232,3 +1232,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4195 | 0x0049c990 FUN_0049c990 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | second base-class destructor; called at 0x0049dec4; out of bucket; batch-ad-s3 |
 | S-4196 | 0x004a1180 FUN_004a1180 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | string-buffer destructor; called 3× (0x0049df0f, 0x0049df1b, 0x0049df27); no visible args each call; batch-ad-s3 |
 | S-4197 | 0x004a01b0 FUN_004a01b0 | 0x0049de90 FUN_0049de90 | particle | passthrough | 2026-05-24 | top-level base dtor; called at 0x0049df33; no visible args; batch-ad-s3 |
+| S-4278 | 0x0055deb0 FUN_0055deb0 | 0x00553f40 FontGlyph_UploadData | hud | passthrough | 2026-05-28 | returns element count when node[1]==-1; single-arg; batch-ae-s3 |
+| S-4279 | 0x00555830 FUN_00555830 | 0x00555280 FontSys_ShutdownContextPool | hud | passthrough | 2026-05-28 | per-node field[1] teardown; called once per list node in walk loop; single arg; batch-ae-s3 |
