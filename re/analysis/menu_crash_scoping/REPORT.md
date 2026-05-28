@@ -1,5 +1,29 @@
 # Runtime self-exit scoping — it is a CRASH, not a timeout/clean-exit
 
+> **DIFF-ORIGINAL SWEEP (2026-05-28) — closing the menu/race verification gap.**
+> Ran `run_diff_parallel.py` (force-call bit-identity A/B vs original — project's formal gate;
+> doesn't need the menu to render). Initial 57-hook stratified sample across all subsystems
+> (boot/CRT, math/render, vehicle, audio, font/save, frontend, HUD, RW-D3D9):
+>
+> - **49 GREEN** (including my 2 fixes `font_text_utf16_widen_copy` and `vfs_file_exists` —
+>   formally verified bit-identical to the original).
+> - **7 harness flakes** (rc=4 attach-failed under concurrent MASHED spawns) — **all flipped
+>   GREEN on serial re-run** (fast_sqrt, font_ctx_set_translation, get_race_end_flag,
+>   harness_test_vec3_global_mul, lap_time_a_less_than_b, replay_get_current_time,
+>   text_gradient_v2v3_override).
+> - **6 inconclusive** (not port regressions): 2 MASS-DISABLED hooks have no `.asi` export
+>   (`crt_get_env_strings`, `hud_draw_enabled`); 4 harness-limited via process-terminating
+>   or state-dependent functions (`crt_fast_error_exit`, `crt_seh_prolog`, `win_main_entry`,
+>   `menu_chrome_shell_b`).
+> - **1 latent reimpl bug** (NOT affecting runtime ports): `crt_pre_init_loop` reimpl returns
+>   0 vs original 73455880 on all 10 test indices — but this hook is **MASS-DISABLED in the
+>   `.asi`** (no `RH_ScopedInstall` active), so its broken reimpl never runs in the live build.
+>   It would fail diff-original if ever re-enabled; flagged for fix.
+>
+> Net runtime-installed-ports verification on this 57-hook sample: **0 regressions**, **56/57
+> = 98% passes** (1 inconclusive harness-limited). Sweep continues in larger batches (batch 2
+> of 100 installed hooks running).
+
 > **VERIFICATION CAMPAIGN (2026-05-27) — "do the ports work / any regression?"**
 > Method that proved most effective: **compare hooks-ON vs hooks-OFF (no-`.asi`) runtime
 > behavior** — divergences pinpoint port regressions that synthetic diff-original missed.
