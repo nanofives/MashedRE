@@ -1243,3 +1243,5 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-4245 | 0x0042b8c0 FUN_0042b8c0 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-28 | 1 float arg; returns int16 screen dimension (height query); batch-ae-s2 |
 | S-4246 | 0x00450b10 FUN_00450b10 | 0x00428610 FUN_00428610 | hud | passthrough | 2026-05-28 | 7 args (texId x y w h colour blendStruct*); primitive draw call; batch-ae-s2 |
 | S-4247 | 0x004c5c00 FUN_004c5c00 | 0x00458630 FUN_00458630 | frontend | passthrough | 2026-05-28 | 2 args (global handle, ASCII name); returns lookup result handle/ptr/0; batch-ae-s2 |
+| S-4278 | 0x0055deb0 FUN_0055deb0 | 0x00553f40 FontGlyph_UploadData | hud | passthrough | 2026-05-28 | returns element count when node[1]==-1; single-arg; batch-ae-s3 |
+| S-4279 | 0x00555830 FUN_00555830 | 0x00555280 FontSys_ShutdownContextPool | hud | passthrough | 2026-05-28 | per-node field[1] teardown; called once per list node in walk loop; single arg; batch-ae-s3 |
