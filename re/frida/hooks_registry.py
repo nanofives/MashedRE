@@ -10550,6 +10550,50 @@ HOOKS = {
             [1, 0x12345678],
             [2, 0xcafebabe],
         ],
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-aa-s6 — BatchAA_s6.cpp
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00556cd0  GetDat00912a20
+    # undefined4 FUN_00556cd0(void) — 5-byte getter.
+    # Returns DAT_00912a20 verbatim.  No callees, no branches.
+    # Strategy: read_global — write sentinel to 0x00912a20, call fn(), compare
+    #   returned value vs written sentinel.  bit-identical by construction.
+    # Caller: FontText_HudShutdown (0x00427620, C2).
+    # ref: re/analysis/font_atlas_promote_ae5/0x00556cd0.md
+    'get_dat_00912a20': {
+        'rva':            0x00556cd0,
+        'export':         'GetDat00912a20',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00912a20,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00426d00  FrontendArraySlotGet
+    # undefined* FUN_00426d00(int param_1, int param_2) — pure leaf.
+    # Returns &DAT_00663670 + param_2*0xc + param_1*0x4c (address arithmetic only).
+    # No callees, no branches, no globals modified.
+    # Strategy: int_pair — pass [param_1, param_2]; return is the computed pointer
+    #   (uint32 on x86).  Both paths compute identical address arithmetic.
+    # Test range: param_1 in [0..3], param_2 in [0..2] (safe address region near base).
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426d00.md
+    'frontend_array_slot_get': {
+        'rva':            0x00426d00,
+        'export':         'FrontendArraySlotGet',
+        'signature':      {'ret': 'pointer', 'args': ['int', 'int']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            [0, 0], [1, 0], [2, 0], [3, 0],
+            [0, 1], [1, 1], [2, 1], [3, 1],
+            [0, 2], [1, 2],
+        ],
+        'path2_tests':    [[0, 0], [1, 1], [2, 0]],
     },
 
 }
