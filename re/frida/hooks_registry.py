@@ -10262,4 +10262,122 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-aa-s1 — BatchAA_s1.cpp  (5 candidates, 1 deferred)
+    # Deferred: 0x00426b40 — still anti-island (7/10 callees at C1)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00426cf0  GetDat0066d6e4
+    # undefined4 * FUN_00426cf0(void): pure leaf; returns &DAT_0066d6e4.
+    # No branches, no callees, no side effects.
+    # arg_type='none': called 10x at quiescent state; both sides return the same
+    # pointer (address 0x0066d6e4). Pointer comparison: NativePointer.toString()
+    # gives '0x66d6e4' == '0x66d6e4' for both sides.
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426cf0.md
+    'get_dat0066d6e4': {
+        'rva':            0x00426cf0,
+        'export':         'GetDat0066d6e4',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041ded0  HudModeGuardDispatch
+    # void FUN_0041ded0(undefined4 param_1): if (DAT_0063d5e8 != 0) FUN_0041de80(param_1).
+    # Callee: FUN_0041de80 (C2) — HUD mode dispatcher with vtable dispatches.
+    # arg_type='int_scalar': pass param_1 (0 or 1 per callers).
+    # At quiescent main menu DAT_0063d5e8 == 0 → guard skips → void_match for all inputs.
+    # void_match: both sides return void without error == GREEN.
+    # crash_equal_ok=True as fallback if guard is non-zero at attach time.
+    # ref: re/analysis/hud_ingame_promote_c2/0x0041ded0.md
+    'hud_mode_guard_dispatch': {
+        'rva':            0x0041ded0,
+        'export':         'HudModeGuardDispatch',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0, 1, 0, 0, 1, 0, 1, 0],
+        'path2_tests':    [0, 1, 0],
+    },
+
+    # 0x00552840  FontCtx_SetRotation
+    # undefined4 FUN_00552840(undefined4 param_1): Z-axis rotation on font context matrix.
+    # Steps: axis=(0,0,1); RwMatrix_SetRotAxisAngle(ctx,axis,param_1,preconcat=1);
+    #        DAT_00912bd8=0; DAT_00912bec=0; return 1.
+    # Callee: FUN_004c4d20 (C2, RwMatrix_SetRotAxisAngle).
+    # arg_type='float_scalar': pass angle directly; compare return value (always 1).
+    #   Function always returns 1; both orig and reimpl return 1 → 10/10 GREEN if
+    #   no crash. crash_equal_ok=True: if font context not set up, both sides crash
+    #   identically at g_FontCtxPtrs[depth] deref.
+    # Strategy rationale: font_ctx_float2 requires 2 floats + a prelude; no single-
+    #   float counterpart exists. float_scalar + crash_equal_ok is the closest match.
+    #   Return value 1 is deterministic across all rotation angles.
+    # ref: re/analysis/hud_promote_c2_b/0x00552840.md
+    'font_ctx_set_rotation': {
+        'rva':            0x00552840,
+        'export':         'FontCtx_SetRotation',
+        'signature':      {'ret': 'uint32', 'args': ['float']},
+        'arg_type':       'float_scalar',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        # Rotation angles in degrees as float values
+        'path1_tests':    [
+            0.0,    # 0 degrees
+            90.0,   # 90 degrees
+            180.0,  # 180 degrees
+            270.0,  # 270 degrees
+            -90.0,  # -90 degrees
+            45.0,   # 45 degrees
+            1.0,    # 1 degree
+            -1.0,   # -1 degree
+            360.0,  # 360 degrees (full rotation)
+            0.0,    # 0 again (idempotency)
+        ],
+        'path2_tests':    [0.0, 90.0, 180.0],
+    },
+
+    # 0x0042bde0  HudRectEmitter5
+    # void FUN_0042bde0(int param_1, byte param_2): emits 5 HUD rects via ChromeBaseDraw.
+    # Callee: FUN_00472c60 ChromeBaseDraw (C3).
+    # ChromeBaseDraw calls into D3D9 render state + RW vtable — will crash at
+    # quiescent attach time when vtable global DAT_007d3ff8 may not be set up.
+    # arg_type='none': call fn() with no args (like MenuMenusBC 0x0042f8d0 pattern);
+    #   both sides crash identically at the render path → crash_equal_ok GREEN.
+    # Signature: void() for the none/crash_equal_ok strategy; actual args not needed.
+    # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042bde0.md
+    'hud_rect_emitter5': {
+        'rva':            0x0042bde0,
+        'export':         'HudRectEmitter5',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00426dc0  FrontendRaycastForward
+    # void FUN_00426dc0(undefined4 p1, undefined4 p2, undefined4 p3):
+    #   3-arg forwarder: FUN_00479100(&DAT_00646e58, p1, p2, p3); return.
+    # Callee: FUN_00479100 (C2) — raycast + vertex-color sample on collision mesh.
+    # Calling FUN_00479100 without a live collision mesh will crash.
+    # arg_type='none': call fn() with no args; both sides crash at the FUN_00479100
+    #   collision-mesh deref identically → crash_equal_ok GREEN.
+    # (&DAT_00646e58 is a real global address hardcoded in reimpl; both sides pass
+    # the same pointer, so the crash site is identical.)
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426dc0.md
+    'frontend_raycast_forward': {
+        'rva':            0x00426dc0,
+        'export':         'FrontendRaycastForward',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }

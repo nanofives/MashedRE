@@ -1,0 +1,266 @@
+"vswhere.exe" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+=== Building mashed_re.exe (B9: frontend + HUD + math + vehicle clusters) ===
+exe_main.cpp
+exe_main.cpp(303): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(314): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(327): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(592): warning C4984: "if constexpr" es una extensión del lenguaje C++17
+exe_main.cpp(637): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(687): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(733): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(745): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(786): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(833): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(907): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(967): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1058): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1072): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1117): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1128): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1158): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1276): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+exe_main.cpp(1356): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+PizReader.cpp
+Piz\PizReader.cpp(40): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+RwsChunkWalker.cpp
+TxdDecoder.cpp
+QuadRenderer.cpp
+HookSystemNoOp.cpp
+MenuInit.cpp
+MenuButtonDetect.cpp
+FrontendState.cpp
+FrontendNav.cpp
+FrontendMode.cpp
+FrontendAccessors.cpp
+FrontendDispatch.cpp
+MenuGetters.cpp
+MenuChrome.cpp
+MenuHelpers.cpp
+MenuNav.cpp
+MenuRaceEnd.cpp
+Frontend\MenuRaceEnd.cpp(72): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+MenuScoreGetters.cpp
+MenuScoreSort.cpp
+Generando código...
+Compilando...
+MenuStateMachine.cpp
+GameModeInit.cpp
+GameModeCarSelect.cpp
+TimerReset.cpp
+SpriteGate.cpp
+Leaves.cpp
+TextMeasure.cpp
+VehicleMeta.cpp
+MenuTime.cpp
+SmallLeaves_n2.cpp
+SmallLeaves_t1.cpp
+SlotZeroers_s1.cpp
+MenuLeaves_s3.cpp
+GlobalGetters_s4.cpp
+GlobalGetters_s5.cpp
+MenuNearLeaves_s6.cpp
+MenuStateWriters_u1.cpp
+MenuMiscLeaves_t2.cpp
+BucketMixed_t3.cpp
+Cluster_v3.cpp
+Generando código...
+Compilando...
+HudDispatch.cpp
+Cluster_v2.cpp
+GameStateCluster.cpp
+BootLowRvaCluster.cpp
+Window.cpp
+VideoConfig.cpp
+Teardown.cpp
+LaunchHandshake.cpp
+FrameDispatch.cpp
+SubsystemInit.cpp
+GameStateGetters.cpp
+EventTable.cpp
+TimerInit.cpp
+TimerState.cpp
+TimerSubarrayInit.cpp
+TimerSetters.cpp
+TimerSlot.cpp
+UtilLeaves.cpp
+SmallLeaves_o6.cpp
+VehicleState.cpp
+Generando código...
+Compilando...
+SmallLeaves_o5.cpp
+SmallLeaves_q4.cpp
+MiscDamping.cpp
+StateAccessors.cpp
+Vec3.cpp
+RwSqrt.cpp
+RwV2d.cpp
+RwV3dTransform.cpp
+RwMatrixScale.cpp
+Cluster_v1.cpp
+BatchAA_s1.cpp
+Generando código...
+   Creando biblioteca C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\build\mashed_re.lib y objeto C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\build\mashed_re.exp
+=== Building mashed_re_dev.asi ===
+dll_main.cpp
+dll_main.cpp(22): warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+HookSystem.cpp
+Vec3.cpp
+RwSqrt.cpp
+StateAccessors.cpp
+VehicleState.cpp
+MiscDamping.cpp
+Replay.cpp
+Damage.cpp
+Physics.cpp
+TimerState.cpp
+TimerSubarrayInit.cpp
+GameStateGetters.cpp
+EventTable.cpp
+TimerInit.cpp
+AudioMemory.cpp
+AudioRws.cpp
+RwsStream.cpp
+RwsFmt.cpp
+AudioDSound.cpp
+Generando código...
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\src\mashed_re\Audio\RwsStream.cpp(139) : warning C4700: se utilizó la variable local 'local_10' sin inicializar
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\src\mashed_re\Audio\RwsStream.cpp(66) : warning C4700: se utilizó la variable local 'local_8' sin inicializar
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\src\mashed_re\Audio\RwsStream.cpp(146) : warning C4700: se utilizó la variable local 'local_c' sin inicializar
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\src\mashed_re\Audio\RwsStream.cpp(69) : warning C4700: se utilizó la variable local 'local_4' sin inicializar
+Compilando...
+AudioMusic.cpp
+RwV3dTransform.cpp
+RwV2d.cpp
+RwMatrixScale.cpp
+TimerReset.cpp
+MenuNav.cpp
+FrontendState.cpp
+FrontendNav.cpp
+GameModeInit.cpp
+MenuButtonDetect.cpp
+GameModeCarSelect.cpp
+MenuGetters.cpp
+SpriteGate.cpp
+FrontendAccessors.cpp
+FrontendMode.cpp
+HudDispatch.cpp
+FontCtx.cpp
+HudBatch.cpp
+MenuScoreGetters.cpp
+MenuInit.cpp
+Generando código...
+Compilando...
+MenuScoreSort.cpp
+MenuRaceEnd.cpp
+Frontend\MenuRaceEnd.cpp(72): warning C4146: operador unario menos aplicado a un tipo unsigned; el resultado aún no tiene signo
+TextMeasure.cpp
+SpriteDispatch.cpp
+MenuTime.cpp
+MenuHelpers.cpp
+VehicleMeta.cpp
+MenuChrome.cpp
+RaceResults.cpp
+MenuMenusB.cpp
+IntroSplash.cpp
+GameSaveBuffer.cpp
+Race_Guard.cpp
+GameSaveVFS.cpp
+Save\GameSaveVFS.cpp(89): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+CrtCompilerSupport.cpp
+CrtInit.cpp
+Window.cpp
+RwEngineInit.cpp
+Teardown.cpp
+VideoConfig.cpp
+Generando código...
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\src\mashed_re\Boot\CrtCompilerSupport.cpp(162) : warning C4733: Inline asm que asigna a 'FS:0': el controlador no está registrado como controlador seguro
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\src\mashed_re\Boot\CrtCompilerSupport.cpp(135) : warning C4733: Inline asm que asigna a 'FS:0': el controlador no está registrado como controlador seguro
+Compilando...
+GameSave.cpp
+VfsStream.cpp
+FsOpen.cpp
+SettingsConfig.cpp
+SettingsAndIO.cpp
+SettingsCfg.cpp
+SettingsDialog.cpp
+RwStream.cpp
+CareerEvents.cpp
+ReplayThunk.cpp
+CrtStartup.cpp
+Boot\CrtStartup.cpp(378): warning C4996: 'GetVersionExA': se declaró desusado
+Boot.cpp
+SubsystemInit.cpp
+TimerSetters.cpp
+TimerSlot.cpp
+UtilBatch.cpp
+UtilMid.cpp
+MenuStateMachine.cpp
+FrontendDispatch.cpp
+SpriteCluster.cpp
+Generando código...
+Compilando...
+FrameDispatch.cpp
+GameStateCluster.cpp
+DirectInput.cpp
+DInput.cpp
+PizWin32Bypass.cpp
+IntroTextNullGuard.cpp
+HarnessStubs.cpp
+Leaves.cpp
+MenuMenusMixed.cpp
+UtilLeaves.cpp
+TextCluster.cpp
+MenuSpriteDispatch.cpp
+MenuMixed.cpp
+DrawQuadPrimitives.cpp
+SmallLeaves_n2.cpp
+SmallLeaves_t1.cpp
+SlotZeroers_s1.cpp
+MenuLeaves_s3.cpp
+GlobalGetters_s4.cpp
+GlobalGetters_s5.cpp
+Generando código...
+Compilando...
+MenuNearLeaves_s6.cpp
+MenuStateWriters_u1.cpp
+BucketMixed_t3.cpp
+HighAB3Helpers_p6.cpp
+TrackNodeLeaves_o1.cpp
+LowRvaSetters_o2.cpp
+RwPluginHelpers_o3.cpp
+RwPluginHelpers_q1.cpp
+RenderSubmit_o4.cpp
+D3D9Helpers_p4.cpp
+ReplayCluster.cpp
+SmallLeaves_o5.cpp
+SmallLeaves_q4.cpp
+SmallLeaves_o6.cpp
+TrackLoaderMicros_p3.cpp
+FrameHelpers_q2.cpp
+LowRvaMixed_q3.cpp
+D3D9Helpers_q5.cpp
+TextureLoader_q6.cpp
+TextureLoaderCluster.cpp
+Generando código...
+Compilando...
+LaunchHandshake.cpp
+FrameWorldPasses.cpp
+PerModeRender.cpp
+MixedC3Sweep.cpp
+BootLowRvaCluster.cpp
+MixedC3Sweep.cpp
+SlotZeroers_s2.cpp
+MenuMiscLeaves_t2.cpp
+SplashGameMode_t5.cpp
+SkeletonAndScatter_t6.cpp
+Cluster_v1.cpp
+Cluster_v2.cpp
+Cluster_v3.cpp
+BatchAA_s1.cpp
+Generando código...
+C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\build\MixedC3Sweep.obj : warning LNK4042: objeto especificado más de una vez; omitidos los sobrantes
+   Creando biblioteca C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\build\mashed_re_dev.lib y objeto C:\Users\maria\Desktop\Proyectos\Mashed\.worktrees\c3-batch-aa-s1\mashedmod\build\mashed_re_dev.exp
+=== Build OK ===
+mashed_re.exe
+mashed_re_dev.asi
