@@ -6123,6 +6123,33 @@ HOOKS = {
 
     # ─────────────────────────────────────────────────────────────────────────
 
+    # Session c3-batch-aa-s5 — Frontend/BatchAA_s5.cpp  (C2→C3, 1 candidate)
+    # 0x0042a980  MenuTableSearchAlt
+    # Same stride-3 table as MenuTableSearch (0x0042a940); returns field at +4
+    # instead of +8. Key derived via FUN_0040ce80(param_1) (C2).
+    # Sentinel-terminated walk; no live-state writes.
+    # int_scalar: same domain as MenuTableSearch — pass slot indices 0-3;
+    # both orig and reimpl read the same quiescent table state. 10 tests.
+    # ref: re/analysis/frontend_c1_to_c2_s6/FUN_0042a980.md
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0042a980  MenuTableSearchAlt
+    # undefined4 FUN_0042a980(undefined4 param_1)  __cdecl  (61 bytes)
+    # Searches stride-3 table at 0x005f6748 using key = FUN_0040ce80(param_1).
+    # Returns 0 on not-found; value field at +4 (0x5f674c + pos*4) on match.
+    # U-4199 (field semantics) does not affect correctness.
+    'menu_table_search_alt': {
+        'rva':            0x0042a980,
+        'export':         'MenuTableSearchAlt',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+
     # Session c3-batch-m-s3 — frontend_menus_b_cluster  (C2→C3, 5 candidates)
     # Frontend/MenuMenusB.cpp
     #
