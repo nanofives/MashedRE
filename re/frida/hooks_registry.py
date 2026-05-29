@@ -10463,6 +10463,66 @@ HOOKS = {
                            0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA,
                            0x12345678, 0xBEEFCAFE],
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    # Session c3-batch-aa-s4 — frontend small leaves (C2→C3, 2 candidates)
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x0042a9c0  ModeCodeLookup
+    # Pure leaf. Reads DAT_007f0fd0 (mode/state int32 at 0x007f0fd0).
+    # Returns 0x2d (45) for modes {5,7,8,9,10}; undefined (UB) for all others.
+    # Decomp (Mashed_pool13, verbatim):
+    #   if ((mode==10||mode==9||mode==8)||(mode==7||(uVar1=0x16,mode==5)))
+    #       uVar1 = 0x2d;
+    #   return uVar1;
+    # Strategy: read_global — write mode value to 0x007f0fd0, call fn(), compare ret.
+    # Only defined modes {5,7,8,9,10} are tested (all return 0x2d).
+    # [UNCERTAIN U-4200] on mode==5 return resolved by decomp literal (0x2d).
+    # Leaf-exemption applies (callees_depth1: []).
+    'mode_code_lookup': {
+        'rva':            0x0042a9c0,
+        'export':         'ModeCodeLookup',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007f0fd0,
+        'lut_root_delta': 0,
+        'path1_tests':    [5, 7, 8, 9, 10, 5, 7, 8, 9, 10],
+        'path2_tests':    [5, 7, 10],
+    },
+
+    # 0x00425b70  SlotFieldSetter
+    # Pure leaf. void(int param_1, undefined4 param_2).
+    # Writes param_2 to (&DAT_008992a4)[param_1 * 0x13] (+0x04 field).
+    # Zeroes        (&DAT_008992a0)[param_1 * 0x13]     (+0x00 field).
+    # Array base: 0x008992a0; stride: 0x13 dwords = 0x4c bytes.
+    # Strategy: entity_field_set — call fn(p1, p2), read back 0x008992a4 + p1*0x4c.
+    # [UNCERTAIN U-4200] on whether 0x008992a0 and 0x00899260 are the same array
+    # is non-blocking (doesn't affect this function's addresses).
+    # Leaf-exemption applies (callees_depth1: []).
+    'slot_field_setter': {
+        'rva':            0x00425b70,
+        'export':         'SlotFieldSetter',
+        'signature':      {'ret': 'void', 'args': ['int32', 'uint32']},
+        'arg_type':       'entity_field_set',
+        'target_global':  0x008992a4,
+        'entity_byte_stride': 0x4c,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [param_1, param_2]
+            [0, 0],
+            [0, 1],
+            [0, 0xdeadbeef],
+            [0, 0xffffffff],
+            [1, 0],
+            [1, 0x12345678],
+            [2, 0],
+            [2, 0xabcdef01],
+            [2, 0xcafebabe],
+            [3, 0x99999999],
+        ],
+        'path2_tests': [
+            [0, 0xdeadbeef],
+            [1, 0x12345678],
+            [2, 0xcafebabe],
+        ],
     },
 
 }
