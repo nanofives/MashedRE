@@ -19,6 +19,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-29  unc-hyg-s1  bucket=inline-uncertain  rvas=0041d410 0041de80 0041e630 00427f00 00427ff0 004c57a0 00555ff0  note=A reformatted(U-5584,U-5585 in 0041d410; U-5586,U-5587 in 0041de80; U-5589 in 0041e630; U-5591,U-5592 in 00427f00; U-5654,U-5655 in 00555ff0) C minted(U-5709 in 00427ff0; U-5710,U-5711 in 004c57a0) E intentional-C3-block(U-5584,U-5585,U-5586,U-5587,U-5589,U-5591,U-5592,U-5654,U-5655 all Blocks=C2->C3)
 2026-05-29  unc-hyg-s2  bucket=inline-uncertain  rvas=00423b80 00424100 004241c0 00424b80 00425b70 00425bf0 00425c00 00425ca0  note=A reformatted(00424100,004241c0,00424b80,00425b70,00425bf0,00425c00x4,00425ca0x2) B reused-id-all-catalogued C minted(U-5739+U-5740 for 00423b80) D none E none
 2026-05-29  unc-hyg-s3  bucket=inline-uncertain  rvas=00425fa0 00426460 00426cf0 00426d00 00426d20 00426dc0 00426de0  note=A reformatted/minted 00425fa0(U-5769) 00426460(U-5770), B none, C minted 00426cf0(U-5771) 00426d00(U-5772) 00426d20(U-5773,U-5774,U-5775) 00426dc0(U-5776) 00426de0(U-5777), D none, E none
+2026-05-29  unc-hyg-s4  bucket=inline-uncertain  rvas=00426df0 004273e0 00427580 00427880 00427c90 00428140 004288a0  note=A reformatted: 0 reused-id-catalogued: 0 minted: 20 (U-5799..U-5818) reworded: 0 intentional-C3-block: 0
 
 
 ## Drained
