@@ -2748,3 +2748,17 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-05-28  00402f80  CupFloatInit  C2->C3  c3-batch-v-s2; pure leaf void(void) initialiser; void_write_observe GREEN 10/10 on 0x00636af4; leaf-exemption; caller FUN_00433240 C2; HUD/Cluster_v2.cpp
 2026-05-28  00428610  ViewportScaledRectDraw  C2->C3  c3-batch-v-s3; Frida draw_quad_observe GREEN 12/12 path1; all callees C3 (ScreenWidthGet ScreenHeightGet HudIm2DQuad); caller FUN_00428760 C2; U-5593+U-5594 closed; S-4244+S-4245+S-4246 cleared; verify_hook deferred to frida-sweep
+2026-05-29  00426cf0  GetDat0066d6e4  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp  c3-batch-aa-s1-merged-integration-GREEN
+2026-05-29  0041ded0  HudModeGuardDispatch  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp  c3-batch-aa-s1-merged-integration-GREEN
+2026-05-29  00552840  FontCtx_SetRotation  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp  c3-batch-aa-s1-merged-integration-GREEN
+2026-05-29  0042bde0  HudRectEmitter5  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp  c3-batch-aa-s1-merged-integration-GREEN
+2026-05-29  00426dc0  FrontendRaycastForward  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s1.cpp  c3-batch-aa-s1-merged-integration-GREEN
+2026-05-29  00423b80  PlayerScoreAccC  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s2.cpp  c3-batch-aa-s2-merged-integration-GREEN
+2026-05-29  00427c90  GetDat0067d84c  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s3.cpp  c3-batch-aa-s3-merged-integration-GREEN
+2026-05-29  00424100  TeamBlockZeroGet  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s3.cpp  c3-batch-aa-s3-merged-integration-GREEN
+2026-05-29  00556cc0  SetDat00912a20  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s3.cpp  c3-batch-aa-s3-merged-integration-GREEN
+2026-05-29  0042a9c0  ModeCodeLookup  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s4.cpp  c3-batch-aa-s4-merged-integration-GREEN
+2026-05-29  00425b70  SlotFieldSetter  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s4.cpp  c3-batch-aa-s4-merged-integration-GREEN
+2026-05-29  0042a980  MenuTableSearchAlt  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s5.cpp  c3-batch-aa-s5-merged-integration-GREEN
+2026-05-29  00556cd0  GetDat00912a20  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s6.cpp  c3-batch-aa-s6-merged-integration-GREEN
+2026-05-29  00426d00  FrontendArraySlotGet  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s6.cpp  c3-batch-aa-s6-merged-integration-GREEN
