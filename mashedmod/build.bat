@@ -124,6 +124,7 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Math\RwMatrixScale.cpp" ^
     "Frontend\Cluster_v1.cpp" ^
     "Frontend\BatchAA_s1.cpp" ^
+    "Frontend\BatchAA_s3.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000000 /FIXED:NO /DYNAMICBASE:NO ^
     user32.lib d3d9.lib
 popd
@@ -267,6 +268,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\Cluster_v3.cpp" ^
     "Frontend\BatchAA_s1.cpp" ^
     "Frontend\BatchAA_s2.cpp" ^
+    "Frontend\BatchAA_s3.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

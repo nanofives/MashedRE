@@ -10404,6 +10404,65 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],
+    # ── c3-batch-aa-s3 ────────────────────────────────────────────────────────
+    # Frontend/BatchAA_s3.cpp — GetDat0067d84c, TeamBlockZeroGet, SetDat00912a20
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x00427c90  GetDat0067d84c
+    # undefined4 FUN_00427c90(void) — pure 5-byte getter; returns DAT_0067d84c.
+    # No callees, no branches.
+    # arg_type='read_global': write sentinel to target_global, call fn(), read back.
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00427c90.md
+    'get_dat_0067d84c': {
+        'rva':            0x00427c90,
+        'export':         'GetDat0067d84c',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067d84c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA,
+                           0x12345678, 0xBEEFCAFE],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00424100  TeamBlockZeroGet
+    # int FUN_00424100(int param_1) — team-aggregating block-0 getter.
+    # param_1: player slot index 0..3.
+    # Returns block-0 field at (&DAT_008999a0)[param_1 * 0x4e] plus team-partner
+    # contributions (active-player guard: partner active-slot != -1).
+    # Callee FUN_0042f500 (0x0042f500, C4): team-mode flag.
+    # At main-menu quiescent state: team-mode flag is 0, so function returns
+    # (&DAT_008999a0)[param_1 * 0x4e] directly for all slots 0..3.
+    # arg_type='int_scalar': pass param_1 as int, compare return values.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_00424100.md
+    'team_block_zero_get': {
+        'rva':            0x00424100,
+        'export':         'TeamBlockZeroGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
+    # 0x00556cc0  SetDat00912a20
+    # void FUN_00556cc0(undefined4 param_1) — pure 9-byte setter.
+    # Writes param_1 to DAT_00912a20 (global font/style pointer at 0x00912a20).
+    # No callees, no branches. One caller: FUN_00427ca0 (0x00427ca0).
+    # arg_type='void_setter_observe': call fn(value), read back target_global.
+    # ref: re/analysis/font_atlas_promote_ae5/0x00556cc0.md
+    'set_dat_00912a20': {
+        'rva':            0x00556cc0,
+        'export':         'SetDat00912a20',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00912a20,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0xFFFFFFFF, 0x80000000, 0x55555555, 0xAAAAAAAA,
+                           0x12345678, 0xBEEFCAFE],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
     },
 
 }
