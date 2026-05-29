@@ -54,3 +54,72 @@
 
 - Variant of FUN_0042ad90 (0x0042ad90): same sentinel-terminated table walk but with the table pointer sourced from `(&DAT_0067ed38)[DAT_0067e9f8 * 0x10]` (current-mode selection) rather than an explicit parameter.
 - Implicit register keys (EBX, EDI) still apply; exact calling site must be inspected to resolve the calling convention [UNCERTAIN U-5861].
+
+<!-- shape-decomp-injected 2026-05-29 -->
+## Mechanical description
+
+Verbatim Ghidra DecompInterface output (Mashed_pool13 clone of MASHED.exe, RVA 0x0042add0):
+
+```c
+/* [C1 2026-05-20] Variant of 0x0042ad90 � uses preselected table `(&DAT_0067ed38)[DAT_0067e9f8 *
+
+   0x10]` (current-mode� */
+
+
+
+int FUN_0042add0(void)
+
+
+
+{
+
+  int *piVar1;
+
+  int iVar2;
+
+  int iVar3;
+
+  int unaff_EBX;
+
+  int iVar4;
+
+  int unaff_EDI;
+
+  
+
+  piVar1 = (int *)(&DAT_0067ed38)[DAT_0067e9f8 * 0x10];
+
+  iVar2 = *piVar1;
+
+  iVar4 = 0;
+
+  iVar3 = 0;
+
+  do {
+
+    if (iVar2 == -0xf90000) {
+
+      return -1;
+
+    }
+
+    if (iVar2 == unaff_EBX) {
+
+      if (unaff_EDI == iVar4) {
+
+        return piVar1[iVar3 + 1];
+
+      }
+
+      iVar4 = iVar4 + 1;
+
+    }
+
+    iVar2 = piVar1[iVar3 + 1];
+
+    iVar3 = iVar3 + 1;
+
+  } while( true );
+
+}
+```
