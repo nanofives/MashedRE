@@ -22,7 +22,7 @@
 ## Branches
 
 1. `iVar2 == -0xf90000` (sentinel 0xff070000; signed -16318464 decimal): return -1.
-2. `iVar2 == unaff_EBX` (primary key match from register EBX [UNCERTAIN]): if `unaff_EDI == iVar4` (secondary key from EDI [UNCERTAIN]), return `piVar1[iVar3 + 1]`.
+2. `iVar2 == unaff_EBX` (primary key match from register EBX [UNCERTAIN U-5861]): if `unaff_EDI == iVar4` (secondary key from EDI [UNCERTAIN U-5862]), return `piVar1[iVar3 + 1]`.
 3. Otherwise advance: `iVar2 = piVar1[iVar3 + 1]; iVar3++`.
 
 ## Local variables
@@ -31,7 +31,7 @@
 - `iVar2` — current key read.
 - `iVar3` — running word index (step +1).
 - `iVar4` — running secondary-key match counter (step +1 on primary match).
-- `unaff_EBX`, `unaff_EDI` — implicit search keys [UNCERTAIN].
+- `unaff_EBX`, `unaff_EDI` — implicit search keys [UNCERTAIN U-5861] [UNCERTAIN U-5862].
 
 ## Callees
 
@@ -53,4 +53,4 @@
 ## Notes
 
 - Variant of FUN_0042ad90 (0x0042ad90): same sentinel-terminated table walk but with the table pointer sourced from `(&DAT_0067ed38)[DAT_0067e9f8 * 0x10]` (current-mode selection) rather than an explicit parameter.
-- Implicit register keys (EBX, EDI) still apply; exact calling site must be inspected to resolve [UNCERTAIN].
+- Implicit register keys (EBX, EDI) still apply; exact calling site must be inspected to resolve the calling convention [UNCERTAIN U-5861].

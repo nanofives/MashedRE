@@ -16,6 +16,7 @@ The sweep session moves rows from "Queued" to "Drained" as it processes them. Dr
 2026-05-25  batch-render-s1  bucket=re/analysis/render_c1_to_c2_s1  rvas=004019d0,00401fe0,00402240,004022a0,00402590,004034a0,004036a0,004039e0,004270f0,004278d0,00427990,00427be0,00429e10,0042a470
 2026-05-25  batch-render-2-s2  bucket=re/analysis/render_2_c1_to_c2_s2  rvas=004780c0,00478110,00478220,00478cc0,00478cd0,00479100,00479fb0,0047a130,0047a180,0047aaa0,0047aad0,0047acd0,0047ad00,0047ade0,0047ae80
 2026-05-26  batch-render-6-s1  bucket=re/analysis/render_6_c1_to_c2_s1  rvas=004d4f90,004d5190,004d52d0,004d5310,004d5340,004d53b0,004d5480,004d54d0,004d54f0,004d5550,004d5570,004d55b0,004d5bc0,004d6200,004d6910
+2026-05-29  unc-hyg-s6  bucket=inline-uncertain  rvas=0042ad90 0042add0 00431b80 0041dc30 00458630 004cc230 004d8c40  note=A reformatted(00458630-U5595-colon-trap); B reused-id-catalogued(004cc230-U3722,004d8c40-U2360); C minted(0042ad90-U5859+U5860,0042add0-U5861+U5862); D reworded(00431b80-false-positive-Why-C2,0041dc30-false-positive-shape1-bare-fixed-to-U4207); E intentional-C3-block(0041dc30-U4207+U4208-in-Uncertainties-section)
 
 
 ## Drained
