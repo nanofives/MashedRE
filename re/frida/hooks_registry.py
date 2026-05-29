@@ -10238,6 +10238,32 @@ HOOKS = {
     #               from test scalars; deferred.
     # ─────────────────────────────────────────────────────────────────────
 
+    # ─────────────────────────────────────────────────────────────────────
+    # Session c3-batch-aa-s2 — frontend per-player score accessor (C2->C3)
+    # Frontend/BatchAA_s2.cpp
+    # 0x00423b80  PlayerScoreAccC — twin of AccA/AccB with base 0x00899f74.
+    # Callee: GetRaceSubMode (0x0042f6a0, C3). At quiescent main menu:
+    # race sub-mode != 4 → takes the array-read path → bit-identical with orig.
+    # arg_type='int_scalar': pass int param_1 (player index), compare uint32 return.
+    # ref: re/analysis/frontend_c1_to_c2_s2/0x00423b80.md
+    # ─────────────────────────────────────────────────────────────────────
+
+    # 0x00423b80  PlayerScoreAccC
+    # Per-player score accessor #3. Guard: GetRaceSubMode()==4 → return 0.
+    # Returns (&DAT_00899f74)[param_1 * 0x4e] (dword array, stride 0x4e dwords).
+    # Array base: 0x00899f74 (field +0x534 from 0x00899a40, cited at 0x00423b95).
+    # At main menu: race sub-mode != 4 → takes array-read path → bit-identical.
+    'player_score_acc_c': {
+        'rva':            0x00423b80,
+        'export':         'PlayerScoreAccC',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        # Player indices 0..3 (only 4 players). Repeat to reach 10+ vectors.
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
     # 0x00402f80  CupFloatInit
     # Pure void(void) initialiser: no calls, no branches. Writes 4 constants
     # to 4 consecutive globals:
