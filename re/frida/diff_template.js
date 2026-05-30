@@ -857,6 +857,41 @@ function runDiff() {
         return;
     }
 
+    // ── bgra_encode ──────────────────────────────────────────────────────────
+    // For pixel-format encoder leaves: fn(byte *bgra) -> uint32.
+    //   param_1 = pointer to a 4-byte (or 3-byte) input buffer.
+    //   Return value = the packed pixel word (uint16 or uint32 depending on format).
+    // Strategy: allocate a 4-byte scratch buf; write each test's bytes; call fn(buf);
+    //   compare the integer return value (orig vs reimpl).
+    // Tests: array of [b0, b1, b2, b3] (4-element; for 3-byte BGR variants b3 is ignored).
+    // Harness-extension arg_type added 2026-05-30 (c3-batch-ab-s3).
+    // Unblocks: 0x004df8d0 PixEncode1555, 0x004df910 PixEncode4444,
+    //           0x004df950 PixEncodeA8R3G3B2, 0x004df980 PixEncodeX4R4G4B4,
+    //           0x004df9e0 PixEncodeX8R8G8B8.
+    if (CONFIG.arg_type === 'bgra_encode') {
+        const encBuf = Memory.alloc(4);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            encBuf.add(0).writeU8((t[0] || 0) & 0xff);
+            encBuf.add(1).writeU8((t[1] || 0) & 0xff);
+            encBuf.add(2).writeU8((t[2] || 0) & 0xff);
+            encBuf.add(3).writeU8((t[3] || 0) & 0xff);
+            var origV = null, reimV = null, errO = null, errR = null;
+            try { origV = (Orig(encBuf) >>> 0); } catch(e) { errO = e.message; }
+            encBuf.add(0).writeU8((t[0] || 0) & 0xff);
+            encBuf.add(1).writeU8((t[1] || 0) & 0xff);
+            encBuf.add(2).writeU8((t[2] || 0) & 0xff);
+            encBuf.add(3).writeU8((t[3] || 0) & 0xff);
+            try { reimV = (Reimpl(encBuf) >>> 0); } catch(e) { errR = e.message; }
+            var match = (!errO && !errR && origV === reimV);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: origV, reimpl: reimV, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── endian_pack ──────────────────────────────────────────────────────────
     // Tests AudioFieldEndianPack-style fn(int **out_ptr_ptr, uint *src, int size).
     // For each test {src_val, size}: allocate an 8-byte output buffer, write src_val

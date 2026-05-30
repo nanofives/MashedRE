@@ -10603,4 +10603,272 @@ HOOKS = {
         'path2_tests':    [[0, 0], [1, 1], [2, 0]],
     },
 
+    # ──────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-ab-s1 — Render/BatchAB_s1.cpp
+    # ──────────────────────────────────────────────────────────────────────────
+
+    # 0x004d40c0  GetPipelinePtr
+    # undefined4 FUN_004d40c0(void) — 5-byte getter.
+    # Returns DAT_007d4710 (current RW pipeline pointer).
+    # Strategy: read_global — write sentinel to 0x007d4710, call fn(),
+    #   verify returned value equals sentinel.  bit-identical by construction.
+    # Caller: FUN_004cd2d0 (RwRenderIndexedSubmit, C2).
+    # Leaf-function exemption (no callees). ref: re/analysis/render_5_c1_to_c2_s6/004d40c0.md
+    'get_pipeline_ptr': {
+        'rva':            0x004d40c0,
+        'export':         'GetPipelinePtr',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007d4710,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x00000000, 0x3F800000],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004671c0  GetOverlayCamera
+    # undefined4 FUN_004671c0(void) — 5-byte getter.
+    # Returns DAT_006905b4 (overlay/minimap RwCamera* global).
+    # Strategy: read_global — write sentinel to 0x006905b4, call fn(),
+    #   verify returned value equals sentinel.  bit-identical by construction.
+    # Caller: FUN_00492e90 (per-frame render loop, C2+).
+    # Leaf-function exemption (no callees). ref: re/analysis/render_c1_to_c2_s3/FUN_004671c0.md
+    'get_overlay_camera': {
+        'rva':            0x004671c0,
+        'export':         'GetOverlayCamera',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x006905b4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x00000000, 0x3F800000],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004cbb60  GetRenderStateBlockPtr
+    # undefined4* FUN_004cbb60(void) — 6-byte getter.
+    # Returns &DAT_00911fa0 (fixed address of render-state block).
+    # Strategy: none — call 10x at quiescent state; both orig and reimpl
+    #   return identical fixed address (0x00911fa0); comparison via .toString().
+    # Callers: FUN_004951f0, FUN_004f46a0, FUN_00530c00, FUN_005327d0,
+    #          FUN_00543710, FUN_00549970 (all C2+).
+    # Leaf-function exemption (no callees). ref: re/analysis/render_4_c1_to_c2_s6/FUN_004cbb60.md
+    'get_render_state_block_ptr': {
+        'rva':            0x004cbb60,
+        'export':         'GetRenderStateBlockPtr',
+        'signature':      {'ret': 'pointer', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-ab-s3 — Render/BatchAB_s3.cpp  (C2→C3, 5 candidates)
+    # bucket 0x004ddfb0 pixel-format BGRA encoder leaves
+    # ──────────────────────────────────────────────────────────────────────────
+
+    # 0x004df8d0  PixEncode1555
+    # uint FUN_004df8d0(byte *bgra)  — 52 bytes, pure leaf
+    # Returns 16-bit A1R5G5B5 pack:
+    #   (((b[3] & 0x80) * 2 | b[0] & 0xf8) << 5 | b[1] & 0xf8) << 2 | (b[2] >> 3)
+    # Alpha bit from high bit of b[3]. Decoder match: D3DFMT_A1R5G5B5 (0x19).
+    # arg_type: bgra_encode — allocate 4-byte buf, write [b0,b1,b2,b3], call fn(buf),
+    #   compare uint32 return value. Added to diff_template.js 2026-05-30 c3-batch-ab-s3.
+    # ref: re/analysis/bucket_004ddfb0/0x004df8d0.md
+    'pix_encode_1555': {
+        'rva':            0x004df8d0,
+        'export':         'PixEncode1555',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'bgra_encode',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [b0, b1, b2, b3]  (BGRA bytes)
+            [0x00, 0x00, 0x00, 0x00],   # all zeros
+            [0xff, 0xff, 0xff, 0xff],   # all ones
+            [0xf8, 0x00, 0x00, 0x00],   # blue only (5-bit)
+            [0x00, 0xf8, 0x00, 0x00],   # green only (5-bit)
+            [0x00, 0x00, 0xf8, 0x00],   # red only (5-bit)
+            [0x00, 0x00, 0x00, 0x80],   # alpha bit only
+            [0xf8, 0xf8, 0xf8, 0x80],   # all channels max + alpha
+            [0x10, 0x20, 0x40, 0x00],   # low values, alpha off
+            [0x10, 0x20, 0x40, 0x80],   # low values, alpha on
+            [0xaa, 0x55, 0xcc, 0x80],   # alternating pattern, alpha on
+        ],
+        'path2_tests': [
+            [0xf8, 0xf8, 0xf8, 0x80],
+            [0x00, 0x00, 0x00, 0x80],
+            [0xaa, 0x55, 0xcc, 0x00],
+        ],
+    },
+
+    # 0x004df910  PixEncode4444
+    # uint FUN_004df910(byte *bgra)  — 50 bytes, pure leaf
+    # Returns 16-bit A4R4G4B4 pack:
+    #   ((b[3] & 0xf0) << 4 | b[0] & 0xf0) << 4 | b[1] & 0xf0 | (b[2] >> 4)
+    # Decoder match: D3DFMT_A4R4G4B4 (0x1a).
+    # ref: re/analysis/bucket_004ddfb0/0x004df910.md
+    'pix_encode_4444': {
+        'rva':            0x004df910,
+        'export':         'PixEncode4444',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'bgra_encode',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00, 0x00, 0x00, 0x00],
+            [0xff, 0xff, 0xff, 0xff],
+            [0xf0, 0x00, 0x00, 0x00],   # blue nibble only
+            [0x00, 0xf0, 0x00, 0x00],   # green nibble only
+            [0x00, 0x00, 0xf0, 0x00],   # red nibble only
+            [0x00, 0x00, 0x00, 0xf0],   # alpha nibble only
+            [0xf0, 0xf0, 0xf0, 0xf0],   # all channels max nibble
+            [0x12, 0x34, 0x56, 0x78],   # mixed nibbles
+            [0xaa, 0x55, 0xcc, 0x88],   # alternating
+            [0x10, 0x20, 0x30, 0x40],   # low nibbles
+        ],
+        'path2_tests': [
+            [0xf0, 0xf0, 0xf0, 0xf0],
+            [0x12, 0x34, 0x56, 0x78],
+            [0x00, 0x00, 0x00, 0xf0],
+        ],
+    },
+
+    # 0x004df950  PixEncodeA8R3G3B2
+    # uint FUN_004df950(byte *src4)  — 43 bytes, pure leaf
+    # Returns 16-bit packed word (A8R3G3B2 shape):
+    #   (b[1] & 0xe0 | (b[2] >> 3)) >> 3 | (b[3] << 8) | (b[0] & 0xe0)
+    # Uncertainty U-5550: name is uncertain; formula is literal from decomp.
+    # ref: re/analysis/bucket_004ddfb0/0x004df950.md
+    'pix_encode_a8r3g3b2': {
+        'rva':            0x004df950,
+        'export':         'PixEncodeA8R3G3B2',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'bgra_encode',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00, 0x00, 0x00, 0x00],
+            [0xff, 0xff, 0xff, 0xff],
+            [0xe0, 0x00, 0x00, 0x00],   # b0 top 3 bits
+            [0x00, 0xe0, 0x00, 0x00],   # b1 top 3 bits
+            [0x00, 0x00, 0xf8, 0x00],   # b2 (>> 3 then masked)
+            [0x00, 0x00, 0x00, 0xff],   # b3 (alpha byte shifted up)
+            [0xe0, 0xe0, 0xf8, 0xff],   # all channels max
+            [0x40, 0x60, 0x80, 0x55],   # mixed mid values
+            [0xaa, 0xcc, 0x88, 0x77],   # alternating bytes
+            [0x20, 0x40, 0x18, 0x33],   # low bits
+        ],
+        'path2_tests': [
+            [0xe0, 0xe0, 0xf8, 0xff],
+            [0x40, 0x60, 0x80, 0x55],
+            [0x00, 0x00, 0x00, 0xff],
+        ],
+    },
+
+    # 0x004df980  PixEncodeX4R4G4B4
+    # uint FUN_004df980(byte *bgr)  — 39 bytes, pure leaf
+    # Returns 16-bit X4R4G4B4 pack (alpha forced 0xf):
+    #   (CONCAT11(0xf, b[0] & 0xf0) << 4) | (b[1] & 0xf0) | (b[2] >> 4)
+    #   = 0xf000 | ((b[0] & 0xf0) << 4) | (b[1] & 0xf0) | (b[2] >> 4)
+    # b[3] is not consumed. Decoder match: D3DFMT_X4R4G4B4 (0x1e).
+    # ref: re/analysis/bucket_004ddfb0/0x004df980.md
+    'pix_encode_x4r4g4b4': {
+        'rva':            0x004df980,
+        'export':         'PixEncodeX4R4G4B4',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'bgra_encode',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00, 0x00, 0x00, 0x00],   # all zeros (alpha still 0xf)
+            [0xf0, 0xf0, 0xf0, 0x00],   # all channel nibbles max
+            [0xf0, 0x00, 0x00, 0x00],   # blue nibble only
+            [0x00, 0xf0, 0x00, 0x00],   # green nibble only
+            [0x00, 0x00, 0xf0, 0x00],   # red nibble only
+            [0x10, 0x20, 0x30, 0x00],   # low nibbles
+            [0xaa, 0xbb, 0xcc, 0x00],   # alternating nibbles
+            [0x50, 0x60, 0x70, 0xff],   # b3 non-zero (not consumed)
+            [0xff, 0xff, 0xff, 0x00],   # all bytes max (nibble truncation)
+            [0x80, 0x40, 0x20, 0x00],   # descending power-of-2 nibbles
+        ],
+        'path2_tests': [
+            [0xf0, 0xf0, 0xf0, 0x00],
+            [0xaa, 0xbb, 0xcc, 0x00],
+            [0x00, 0x00, 0x00, 0x00],
+        ],
+    },
+
+    # 0x004df9e0  PixEncodeX8R8G8B8
+    # uint FUN_004df9e0(byte *bgr)  — 34 bytes, pure leaf
+    # Returns 32-bit X8R8G8B8 pack (alpha forced 0xff):
+    #   ((b[0] | 0xffffff00) << 8 | b[1]) << 8 | b[2]
+    #   = 0xff000000 | (b[0] << 16) | (b[1] << 8) | b[2]
+    # b[3] is not consumed. Decoder match: D3DFMT_X8R8G8B8 (0x16).
+    # ref: re/analysis/bucket_004ddfb0/0x004df9e0.md
+    'pix_encode_x8r8g8b8': {
+        'rva':            0x004df9e0,
+        'export':         'PixEncodeX8R8G8B8',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'bgra_encode',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x00, 0x00, 0x00, 0x00],   # all zeros (alpha still 0xff)
+            [0xff, 0xff, 0xff, 0x00],   # all channels max
+            [0xff, 0x00, 0x00, 0x00],   # b0 only
+            [0x00, 0xff, 0x00, 0x00],   # b1 only
+            [0x00, 0x00, 0xff, 0x00],   # b2 only
+            [0x12, 0x34, 0x56, 0x00],   # mixed mid values
+            [0xaa, 0x55, 0xcc, 0x00],   # alternating
+            [0x80, 0x40, 0x20, 0x00],   # descending
+            [0x10, 0x20, 0x30, 0xff],   # b3 non-zero (not consumed)
+            [0xfe, 0xfd, 0xfc, 0x00],   # near-max
+        ],
+        'path2_tests': [
+            [0xff, 0xff, 0xff, 0x00],
+            [0x12, 0x34, 0x56, 0x00],
+            [0xaa, 0x55, 0xcc, 0x00],
+        ],
+    },
+
+    # 0x004d7db0  RwPluginExtensionSlotGet
+    # uint32(int param_1, int param_2): walk *(param_1+0x10) linked list;
+    # match node[2]==param_2; return node[0] or 0xffffffff on miss.
+    # Leaf function, no callees. Pure reader of passed-in pointer — no global writes.
+    # Strategy: int_pair — pass [type_desc_ptr, plugin_id]. Both orig and reimpl
+    # walk the same live RpAtomic extension list (DAT_00618664, initialized at menu).
+    # For any given (ptr, id) pair both sides must return the same value (found
+    # offset or 0xffffffff sentinel). Varying id covers both found and miss branches.
+    # DAT_00618664 = RpAtomic class anchor; populated by RwEngineInit before menu.
+    # Callers: FUN_004c2dc0 (Lua C2), FUN_004e7e10 (C1 thunk forwarder passing same anchor).
+    # ref: re/analysis/render_6_c1_to_c2_s3/004d7db0.md
+    # ref: re/analysis/bucket_004d7ac0/0x004d7db0.md
+    # impl: mashedmod/src/mashed_re/Render/BatchAB_s6.cpp
+    'rw_plugin_extension_slot_get': {
+        'rva':            0x004d7db0,
+        'export':         'RwPluginExtensionSlotGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32', 'int32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # param_1 = 0x00618664 (RpAtomic class anchor, valid at menu-boot).
+        # param_2 = varied plugin ids; expect 0xffffffff for unknown ids,
+        # or registered base offset for any id that happens to be registered.
+        'path1_tests': [
+            [0x00618664, 0x00000000],
+            [0x00618664, 0x00000001],
+            [0x00618664, 0x00000002],
+            [0x00618664, 0x00000003],
+            [0x00618664, 0x00000100],
+            [0x00618664, 0x00000101],
+            [0x00618664, 0x00000102],
+            [0x00618664, 0x00000200],
+            [0x00618664, 0x7fffffff],
+            [0x00618664, 0xffffffff],
+        ],
+        'path2_tests': [
+            [0x00618664, 0x00000000],
+            [0x00618664, 0x00000001],
+            [0x00618664, 0x00000100],
+        ],
+    },
+
 }
