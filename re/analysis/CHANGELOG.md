@@ -2762,3 +2762,12 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-29  0042a980  MenuTableSearchAlt  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s5.cpp  c3-batch-aa-s5-merged-integration-GREEN
 2026-05-29  00556cd0  GetDat00912a20  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s6.cpp  c3-batch-aa-s6-merged-integration-GREEN
 2026-05-29  00426d00  FrontendArraySlotGet  C2->C3  mashedmod/src/mashed_re/Frontend/BatchAA_s6.cpp  c3-batch-aa-s6-merged-integration-GREEN
+2026-05-30  004d40c0  GetPipelinePtr  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s1.cpp  c3-batch-ab-s1-merged-integration-GREEN
+2026-05-30  004671c0  GetOverlayCamera  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s1.cpp  c3-batch-ab-s1-merged-integration-GREEN
+2026-05-30  004cbb60  GetRenderStateBlockPtr  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s1.cpp  c3-batch-ab-s1-merged-integration-GREEN
+2026-05-30  004df8d0  PixEncode1555  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
+2026-05-30  004df910  PixEncode4444  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
+2026-05-30  004df950  PixEncodeA8R3G3B2  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
+2026-05-30  004df980  PixEncodeX4R4G4B4  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
+2026-05-30  004df9e0  PixEncodeX8R8G8B8  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
+2026-05-30  004d7db0  RwPluginExtensionSlotGet  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s6.cpp  c3-batch-ab-s6-merged-integration-GREEN
