@@ -1,5 +1,112 @@
 # Runtime self-exit scoping — it is a CRASH, not a timeout/clean-exit
 
+> **RUNTIME PROBE RESULT (2026-05-30) — the font-TXD/VFS root cause is NOT
+> reproducing in the current build; the directory is intact and `fgdc20.txd`
+> RESOLVES. The crash has MOVED to a near-null code-pointer AV (`pc=0x44`).**
+> This supersedes BOTH the original "VFS mount-routing gap" framing AND the
+> static-scoping "truncated directory" prediction immediately below.
+>
+> Probe `re/frida/probe_piz_dir_dump.py` (read-only; light Interceptors on
+> `FUN_00550b00` VfsFileExists + the piz exists method `LAB_004b6ba0`), captured
+> at the font-init `fgdc20` lookups (~90 s). Raw: `log/piz_dir_dump.txt`.
+> - Default mount `DAT_007dc76c` = piz handler `DAT_007d3e54` = `0x14383f8`
+>   (**swap happened**), `DAT_007d3e4c`=1 (piz open), current piz =
+>   `"TOASTART\COMMON\FONT36.PIZ"`.
+> - In-memory piz header read correctly: magic `0x5a4950` ("PIZ\0"), ver `3`,
+>   **count `26`**.
+> - Directory `DAT_0090dac0` **fully + correctly populated** — all 26 entries match
+>   Font36.piz, incl. **idx 16 `FGDC20.RWF`** and **idx 17 `FGDC20.TXD`**.
+> - `VfsFileExists("pc/fgdc20.txd")` → **0** (correct — piz stores bare names);
+>   `VfsFileExists("fgdc20.txd")` → **1 (FOUND)**. Same via the piz exists method.
+> - ⟹ The 14-layer "fgdc20.txd not found → NULL font ctx" chain is **resolved /
+>   non-reproducing** in the 2026-05-28 `.asi` build. The stock NO_BUFFERING read
+>   works on this drive (directory intact, bypass still MASS-DISABLED), so the
+>   PizWin32Bypass re-enable is **NOT** the fix for this. My truncation prediction
+>   (below) was wrong; confirmed by direct dump before any code change.
+> - **Remaining crash:** `AV pc=0x44 esi=0` immediately AFTER the successful
+>   `fgdc20.txd` resolution (~90–94 s) — a near-null **code-pointer transfer**,
+>   distinct from the prior `0x4a9440` (strlen), `0x5554e3` (font-ctx), `0x0`
+>   (hooks-off) sites. Consistent with this report's "single ~94 s memory-corruption
+>   defect; toggling hooks/layout moves WHERE the wild pointer first dereferences."
+> - **Decisive next step (not done):** recover the `pc=0x44` caller chain via
+>   `re/frida/poll_attach_catch_crash.py` (deep stack dump + MASHED return-addr
+>   chain), and/or set the ~94 s write-watchpoint on the corrupted state
+>   (Toast string `0x005f6560` / the RW charset object) named in the sections below.
+>   The font/VFS layer is no longer the place to look.
+
+> **VFS-MOUNT STATIC SCOPING (2026-05-30) — the "VFS mount-routing gap" framing
+> below is MECHANICALLY WRONG; the real fault is a truncated in-memory piz
+> directory, prime suspect = the stock NO_BUFFERING read (bypass currently
+> MASS-DISABLED).** Slot Mashed_pool13, read-only; every claim RVA-cited.
+>
+> **What `FUN_00495280("…font36.piz")` registers vs what `DAT_007dc76c` points to:**
+> - `FUN_00495280` → `FUN_004b6570` → `FUN_004b6940` (PizOpenAndParse). On the
+>   success path `FUN_004b6940` does (decomp, tail):
+>   `DAT_007d3e58 = FUN_005507a0(); FUN_00550790(DAT_007d3e54);` (read of
+>   `DAT_007d3e54` cited at 0x004b6ad0).
+> - `FUN_005507a0` (0x005507a0) = `GetDefaultFileSystem()` → returns `DAT_007dc76c`.
+> - `FUN_00550790` (0x00550790) = `SetDefaultFileSystem(x)` → `DAT_007dc76c = x`.
+> - So **opening a piz swaps the VFS default mount to the piz FS handler
+>   `DAT_007d3e54`** (saving the prior mount in `DAT_007d3e58`). Close
+>   (`FUN_004952f0` → `thunk_FUN_004b67a0` → `FUN_004b67a0`) restores it:
+>   `FUN_00550790(DAT_007d3e58); DAT_007d3e58 = 0; DAT_007d3e48 = 0;`. Clean+symmetric.
+> - The piz FS handler `DAT_007d3e54` is built by `FUN_004b6640` (0x004b6640,
+>   reached from boot via `thunk_FUN_004b6640` 0x004b6540): allocates a 0x58-byte
+>   RW struct and sets, among others, vtable slot **+0x28 (open) = `LAB_004b6c00`**
+>   and vtable slot **+0x4c = word-index 0x13 (exists) = `LAB_004b6ba0`**, then
+>   `DAT_007d3e54 = struct`.
+>
+> **Why the open-vs-exists asymmetry framing is wrong** (the load-bearing finding):
+> - `VfsFileExists` (`FUN_00550b00`) dispatches `mount->vtable[0x13]` = `LAB_004b6ba0`.
+>   `RwStreamOpen`(type 2/mode 1)→`FUN_005507b0`→`FUN_00550580` dispatches
+>   `mount->vtable[+0x28]` = `LAB_004b6c00`.
+> - **Both `LAB_004b6ba0` (exists) and `LAB_004b6c00` (open) read the SAME entry
+>   count `DAT_008ad9a8`, walk the SAME directory table `DAT_0090dac0` at stride
+>   0x80, and call the SAME comparator `FUN_004b6b10` — which is `__stricmp`
+>   (case-insensitive).** (Disassembly cited: both have `MOV …,[0x008ad9a8]`,
+>   `…,0x90dac0`, `CALL 0x004b6b10`.) They are resolution-symmetric. There is **no
+>   routing gap** between open and exists — the prior report's
+>   "font36.piz files resolve through FUN_005507b0 but are absent from the default
+>   mount VfsFileExists queries" is impossible if font36.piz is the current piz.
+> - `RwStreamOpen` (`FUN_004cc230`) returns **NULL** if the underlying
+>   `FUN_005507b0` open returns 0 (frees the stream at `LAB_004cc31f`). So the
+>   probed `fgdc20.rwf → 0x2daaf5c` (non-null) is a **genuine** piz hit, not a
+>   false positive.
+>
+> **What this leaves:** open finds `fgdc20.rwf` while exists fails on `fgdc20.txd`,
+> same directory + same compare ⟹ the **in-memory directory `DAT_0090dac0` is
+> truncated/corrupt at/after `fgdc20.txd`**. Confirmed cheaply:
+> - `Font36.piz` (piz_extract) has **26 entries**; `FGDC20.RWF` is dir **index 16**,
+>   `FGDC20.TXD` is dir **index 17** (both stored as bare uppercase names). The
+>   search's type-1 try (`FUN_0042a470` case 1) queries the **bare** name, which
+>   `__stricmp` would match. The header count dword (`PIZ\0`, ver 3, `[+8]=0x1a`) is
+>   genuinely **26** — a correct read yields all 26.
+> - So index 16 present + index 17 absent ⟹ the live count `DAT_008ad9a8` is short
+>   (≈17) or the directory chunk-read in `FUN_004b6940` dropped entries 17+.
+>
+> **Prime suspect (build state):** `mashedmod/src/mashed_re/Compat/PizWin32Bypass.cpp`
+> is compiled (`build.bat:225`) but its three `RH_ScopedInstall` lines (363–365) are
+> **MASS-DISABLED ("2026-05-24 needs-canonical-piz-state")** — i.e. disabled during
+> the loader-broken window. So the **stock** `FUN_004b6710` (`CreateFileA … 0x60000000`
+> = `FILE_FLAG_NO_BUFFERING|FILE_FLAG_OVERLAPPED`) + `FUN_004b67e0` build the
+> directory — the exact modern-4K-sector hazard documented in
+> `re/analysis/fun_004b6940_scoping/REPORT.md`. The no-`.asi` control (2026-05-27)
+> also runs stock NO_BUFFERING and crashes identically → consistent with a
+> stock-on-modern-hardware directory-read defect, not a hook regression.
+>
+> **DECISIVE runtime check (NOT done — needs Frida/approval):** at the failed
+> `VfsFileExists("fgdc20.txd")`, dump `DAT_008ad9a8` (count) and the first ~20
+> entries of `DAT_0090dac0` (stride 0x80, name at +0). Expect count<26 and/or a
+> garbled entry-17.
+>
+> **Minimal-fix candidate (source-only, no `original/` touch, reversible):**
+> re-enable the three PizWin32Bypass `RH_ScopedInstall` lines (drops NO_BUFFERING),
+> rebuild, boot-to-title. If the directory then reads all 26 entries,
+> `VfsFileExists("fgdc20.txd")`→1, TXD loads+SetCurrent, font builds, title render
+> no longer dereferences a NULL font ctx. (Re-validate per
+> `memory/project_loader_broken_9d_audit` — these hooks were disabled in that window
+> and never re-validated.)
+
 > **DIFF-ORIGINAL SWEEP (2026-05-28) — closing the menu/race verification gap.**
 > Ran `run_diff_parallel.py` (force-call bit-identity A/B vs original — project's formal gate;
 > doesn't need the menu to render). Initial 57-hook stratified sample across all subsystems
