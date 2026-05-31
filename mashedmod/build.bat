@@ -52,12 +52,18 @@ REM shim DLLs, or rename them (mv d3d9.dll d3d9.dll.bak) before the run.
 REM This file's exe target intentionally does NOT depend on the shim DLLs.
 echo === Building mashed_re.exe (B9: frontend + HUD + math + vehicle clusters) ===
 pushd "%SRC%"
-cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
+REM /EHa (not /EHsc) for the exe target: the standalone boot chain relies on
+REM __try/__except to survive partial-wedge AVs (steps 2..7, B7/B14 probes);
+REM /EHa makes those SEH guards catch hardware exceptions. The .asi target keeps
+REM /EHsc (it runs inside MASHED, not the wedge).
+cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "exe_main.cpp" ^
     "Piz\PizReader.cpp" ^
     "Rws\RwsChunkWalker.cpp" ^
     "Txd\TxdDecoder.cpp" ^
     "D3d9Render\QuadRenderer.cpp" ^
+    "D3d9Render\RwIm2DBridge.cpp" ^
+    "Compat\StandaloneRvaThunks.cpp" ^
     "Stubs\HookSystemNoOp.cpp" ^
     "Frontend\MenuInit.cpp" ^
     "Frontend\MenuButtonDetect.cpp" ^
@@ -66,6 +72,8 @@ cl /nologo /EHsc /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\FrontendMode.cpp" ^
     "Frontend\FrontendAccessors.cpp" ^
     "Frontend\FrontendDispatch.cpp" ^
+    "Frontend\DrawQuadPrimitives.cpp" ^
+    "Frontend\MenuSpriteDispatch.cpp" ^
     "Frontend\MenuGetters.cpp" ^
     "Frontend\MenuChrome.cpp" ^
     "Frontend\MenuHelpers.cpp" ^

@@ -72,6 +72,11 @@ public:
     bool             has_slot(std::uint32_t slot) const {
         return slot < kMaxSlots && m_textures[slot] != nullptr;
     }
+    // B15: expose the uploaded D3D9 texture for a slot so the RW Im2D->D3D9
+    // bridge can bind it by handle. Returns nullptr if the slot is empty.
+    IDirect3DTexture9* slot_texture(std::uint32_t slot) const {
+        return slot < kMaxSlots ? m_textures[slot] : nullptr;
+    }
     std::uint32_t    tex_width()  const  { return m_tex_w[0]; }
     std::uint32_t    tex_height() const  { return m_tex_h[0]; }
     const char*      last_error() const  { return m_last_error; }

@@ -65,6 +65,37 @@
 //                               one pure-leaf reimpl (MenuEntryArrayInit)
 //                               to verify the wedge. Failure to allocate
 //                               is non-fatal; rendering still proceeds.
+// Milestone B15 (Phase F/H; 2026-05-30): RW Im2D -> D3D9 bridge. Installs a
+//                               fake RW device at *(0x007d3ff8) so MASHED's
+//                               bit-identical C3 Im2D draw reimpls
+//                               (Frontend/DrawQuadPrimitives.cpp: HudIm2DQuad,
+//                               ChromeBaseDraw, ...) render through our D3D9
+//                               device instead of AV'ing on a null RW device.
+//                               Each reimpl writes the DAT_00898a20 4-vertex
+//                               buffer + dispatches via device +0x20/+0x30; the
+//                               bridge (D3d9Render/RwIm2DBridge.cpp) translates
+//                               that into DrawPrimitiveUP. Verified: HudIm2DQuad
+//                               renders a correctly-colored alpha-blended quad
+//                               (verify/b15_bridge.png). Also hardened boot:
+//                               exe target now builds /EHa (so the boot chain's
+//                               __try/__except guards catch partial-wedge AVs)
+//                               and ExecuteFrontendBootChain step 1 zeroes
+//                               granule-by-granule.
+// Milestone B16 (Phase C/F/H; 2026-05-31): menu CHROME. Renders MASHED's menu
+//                               chrome (top/bottom bands + white divider lines,
+//                               MenuChromeShellA's 640x480 layout scaled to
+//                               800x600) through the B15 bridge. Two paths:
+//                               (a) FAITHFUL — call MASHED's real MenuChromeShellA
+//                               (0x0042e3a0); its by-RVA calls to the Im2D draws
+//                               + screen getters are redirected by standalone RVA
+//                               thunks (Compat/StandaloneRvaThunks: VirtualAlloc
+//                               the MASHED .text granules RWX + write E9 JMP
+//                               thunks -> our reimpls/stubs). Gated on cold-start
+//                               granule availability (getter granule 0x00420000
+//                               is often unclaimable). (b) RELIABLE — issue the
+//                               same chrome via self-contained HudIm2DQuad (no
+//                               .text-granule dep); renders on every boot.
+//                               Verified: verify/b16_chrome.png.
 //
 // This file is intentionally self-contained. The Boot/*.cpp reimplementations
 // (Window.cpp, VideoConfig.cpp, FrameDispatch.cpp, RwEngineInit.cpp, ...) read
@@ -117,6 +148,32 @@
 #include "Rws/RwsChunkWalker.h"
 #include "Txd/TxdDecoder.h"
 #include "D3d9Render/QuadRenderer.h"
+#include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
+#include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
+
+// B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
+// Frontend/DrawQuadPrimitives.cpp). Writes the DAT_00898a20 vertex buffer and
+// dispatches through *(0x007d3ff8) — which RwIm2DBridge_Install() points at our
+// fake RW device. Calling this from the standalone routes the draw into D3D9.
+//   tex_handle: 0 = untextured (uses diffuse color); else a handle registered
+//               via RwIm2DBridge_RegisterTexture.
+//   uv: [u0_bits, v0_bits, u1_bits, v1_bits] as float32 bit patterns.
+extern "C" void __cdecl HudIm2DQuad(
+    std::int32_t tex_handle, float x, float y, float w, float h,
+    std::uint32_t argb, std::uint32_t* uv);
+
+// B16 — MASHED's real per-frame menu-chrome drawer (0x0042e3a0,
+// Frontend/MenuSpriteDispatch.cpp). It draws two gradient bands + two white
+// divider lines by calling the C3 Im2D draws *by MASHED RVA*
+// (TextGradientV0V1Override @0x00472f40, TextGradientV2V3Override @0x004730b0,
+// ChromeBaseDraw @0x00472c60) and the screen-dim getters @0x0042b8b0/c0. Those
+// RVAs are redirected to our standalone reimpls/stubs by the B16 thunk install
+// below, so calling MenuChromeShellA() renders the actual menu chrome via the
+// B15 bridge. The three Im2D draws are also declared so we can thunk to them.
+extern "C" void __cdecl MenuChromeShellA(void);
+extern "C" void __cdecl ChromeBaseDraw(float x, float y, float w, float h, std::uint32_t argb);
+extern "C" void __cdecl TextGradientV0V1Override(float x, float y, float w, float h, std::uint32_t argb);
+extern "C" void __cdecl TextGradientV2V3Override(float x, float y, float w, float h, std::uint32_t argb);
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "d3d9.lib")
@@ -243,6 +300,20 @@ bool                     g_mashed_data_mapped = false;
 // worked. RGB(40, 80, 120) reads as a muted dark teal — clearly not the
 // default desktop or window background.
 constexpr D3DCOLOR kClearColor  = D3DCOLOR_XRGB(40, 80, 120);
+
+// B15 — RW Im2D -> D3D9 bridge state. When the fake RW device is installed at
+// *(0x007d3ff8), the frontend's C3 Im2D draw reimpls (HudIm2DQuad etc.) render
+// through D3D9. The per-frame demo below calls HudIm2DQuad directly to prove the
+// bridge end-to-end: one textured quad (the title texture, by handle) plus one
+// untextured semi-transparent colored quad. Both are drawn BY MASHED's actual
+// draw function, routed through our renderer.
+bool             g_bridge_installed = false;
+constexpr int    kBridgeTitleHandle = 1;    // handle we register slot 0's texture under
+constexpr bool   kBridgeDemo        = false; // B15 proof quads (off; B16 chrome supersedes)
+
+// B16 — set once MASHED's MenuChromeShellA can be driven in the standalone (its
+// called RVAs are thunked to our reimpls and the scale constants are written).
+bool             g_b16_chrome_ready = false;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     switch (msg) {
@@ -614,6 +685,50 @@ bool RenderFrame() {
             const float cy = kAtlasOriginY + static_cast<float>(row) * kAtlasCellPitchY;
             g_quad_renderer.RenderAt(slot, cx, cy,
                                      kAtlasContentSize, kAtlasContentSize);
+        }
+    }
+    // B16: render MASHED's menu chrome (two dark bands + two white divider
+    // lines) through the B15 bridge.
+    if (g_bridge_installed) {
+        if (g_b16_chrome_ready) {
+            // Faithful path: call MASHED's ACTUAL frontend function
+            // MenuChromeShellA (0x0042e3a0). Its by-RVA calls to the Im2D draws
+            // + screen getters are redirected by the B16 thunks to our reimpls.
+            // Available only when the 0x00420000/0x00470000 .text granules + the
+            // scale-constant granule were all claimable this cold-start.
+            MenuChromeShellA();
+        } else {
+            // Reliable path: the SAME chrome layout read from MenuChromeShellA's
+            // decomp (640x480 virtual, scaled 1.25x -> 800x600) issued via the
+            // self-contained HudIm2DQuad bridge draw. No dependence on the flaky
+            // MASHED .text getter-granule, so this renders on every successful
+            // boot. Bands are flat (HudIm2DQuad) vs MASHED's gradient, but the
+            // chrome frame + divider lines match.
+            std::uint32_t uv[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            HudIm2DQuad(0, 0.f,   0.f, 800.f, 80.f, 0xa0000000u, uv); // top band
+            HudIm2DQuad(0, 0.f, 520.f, 800.f, 80.f, 0xa0000000u, uv); // bottom band
+            HudIm2DQuad(0, 0.f,  80.f, 800.f,  2.f, 0xffffffffu, uv); // top divider line
+            HudIm2DQuad(0, 0.f, 520.f, 800.f,  2.f, 0xffffffffu, uv); // bottom divider line
+        }
+    }
+
+    // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual
+    // C3 HudIm2DQuad reimpl. One untextured semi-transparent quad (top-left) and
+    // one textured quad (the title texture, bottom-right) — both submitted via
+    // the fake RW device at *(0x007d3ff8).
+    if constexpr (kBridgeDemo) {
+        if (g_bridge_installed) {
+            // Full-texture UV [0,0]..[1,1] as float32 bit patterns.
+            std::uint32_t uv_full[4] = { 0x00000000u, 0x00000000u,
+                                         0x3f800000u, 0x3f800000u };
+            // Untextured: bright semi-transparent magenta rectangle, top-left.
+            HudIm2DQuad(0, 40.f, 40.f, 220.f, 140.f, 0x80ff20ffu, uv_full);
+            // Textured: the title texture (registered under kBridgeTitleHandle),
+            // bottom-right, opaque white modulate.
+            if (g_atlas_slot_count > 0) {
+                HudIm2DQuad(kBridgeTitleHandle, 520.f, 380.f, 200.f, 180.f,
+                            0xffffffffu, uv_full);
+            }
         }
     }
     g_device->EndScene();
@@ -1166,16 +1281,32 @@ void ExecuteFrontendBootChain() {
     constexpr std::uintptr_t kBigBufBase = 0x007f0f60u;
     constexpr std::size_t    kBigBufDw   = 0xdce9u;        // 56553 dwords
     constexpr std::size_t    kBigBufSz   = kBigBufDw * 4u; // 226212 bytes
-    // Check coverage before writing.
-    MEMORY_BASIC_INFORMATION mbi{};
-    if (VirtualQuery(reinterpret_cast<LPVOID>(kBigBufBase & ~0xFFFFu),
-                     &mbi, sizeof(mbi)) && mbi.State == MEM_COMMIT) {
-        std::memset(reinterpret_cast<void*>(kBigBufBase), 0, kBigBufSz);
-        std::fprintf(log, "  [1] DataZeroFill (inline): %zu bytes at 0x%08X = 0\n",
-                     kBigBufSz, static_cast<unsigned>(kBigBufBase));
-    } else {
-        std::fprintf(log, "  [1] DataZeroFill SKIPPED: granule 0x%08X not covered\n",
-                     static_cast<unsigned>(kBigBufBase & ~0xFFFFu));
+    // The 226 KB span (0x007f0f60..+0x373a4) crosses 4 granules; the wedge maps
+    // them only partially on most cold-starts (d3d9 placement variance — e.g.
+    // 35/80 granules this run). The earlier single-granule VirtualQuery
+    // pre-check passed when 0x007f0000 was committed but a LATER granule was
+    // blocked, so the memset walked into unmapped memory and AV'd. SEH does not
+    // reliably catch hardware faults under /EHsc, so don't rely on it: walk the
+    // span granule-by-granule and zero ONLY committed, accessible granules. This
+    // cannot AV regardless of EH model.
+    {
+        std::size_t zeroed = 0, skipped = 0;
+        const std::uintptr_t spanEnd = kBigBufBase + kBigBufSz;
+        for (std::uintptr_t g = kBigBufBase & ~0xFFFFu; g < spanEnd; g += 0x10000u) {
+            const std::uintptr_t gs = (g < kBigBufBase) ? kBigBufBase : g;
+            const std::uintptr_t ge = (g + 0x10000u < spanEnd) ? (g + 0x10000u) : spanEnd;
+            MEMORY_BASIC_INFORMATION gm{};
+            const bool ok =
+                VirtualQuery(reinterpret_cast<LPVOID>(g), &gm, sizeof(gm)) != 0 &&
+                gm.State == MEM_COMMIT &&
+                (gm.Protect & (PAGE_READWRITE | PAGE_WRITECOPY |
+                               PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)) != 0 &&
+                (gm.Protect & (PAGE_GUARD | PAGE_NOACCESS)) == 0;
+            if (ok) { std::memset(reinterpret_cast<void*>(gs), 0, ge - gs); zeroed += ge - gs; }
+            else    { skipped += ge - gs; }
+        }
+        std::fprintf(log, "  [1] DataZeroFill (granule-aware): zeroed %zu, skipped %zu bytes\n",
+                     zeroed, skipped);
     }
     std::fflush(log);
 
@@ -1385,6 +1516,67 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // one. UploadTitleTextureForLogo() is retained for the comment + slot-0
     // contract but UploadAllTexturesForAtlas() supersedes it.
     (void)UploadAllTexturesForAtlas();
+
+    // B15: install the RW Im2D -> D3D9 bridge. Points *(0x007d3ff8) at a fake RW
+    // device so the frontend's C3 Im2D draw reimpls (HudIm2DQuad, ChromeBaseDraw,
+    // ...) render through our D3D9 device instead of AV'ing on a null RW device.
+    // Requires the Phase-G wedge to cover the 0x007d0000 granule; logs the result.
+    {
+        g_bridge_installed = mashed_re::D3d9Render::RwIm2DBridge_Install(g_device);
+        if (g_bridge_installed && g_atlas_slot_count > 0) {
+            // Register slot 0's uploaded texture under the demo handle so the
+            // textured bridge draw can bind it.
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kBridgeTitleHandle, g_quad_renderer.slot_texture(0));
+        }
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                         "\nMilestone B15: RW Im2D->D3D9 bridge install = %s "
+                         "(fake RW device at *(0x007d3ff8); HudIm2DQuad routes to D3D9)\n",
+                         g_bridge_installed ? "OK" : "FAILED (wedge gap at 0x007d0000)");
+            std::fclose(log);
+        }
+    }
+
+    // B16: install standalone RVA thunks so MASHED's real MenuChromeShellA
+    // (0x0042e3a0) can run here. It calls the C3 Im2D draws + screen getters by
+    // absolute MASHED RVA — unmapped in the standalone — so we map the .text
+    // granules and write JMP thunks to our reimpls/stubs, plus restore the
+    // .rdata scale constants (1/640, 1/480) the scaled draws read directly.
+    {
+        using namespace mashed_re::Compat;
+        const bool map_text  = StandaloneThunks_MapRange(0x00420000u, 0x60000u); // 0x00420000..0x0047ffff
+        const bool map_scale = StandaloneThunks_MapRange(0x005c0000u, 0x10000u);
+        bool scale_ok = false;
+        if (map_scale) {
+            __try {
+                *reinterpret_cast<volatile std::uint32_t*>(0x005cd5a8u) = 0x3ACCCCCDu; // 1/640
+                *reinterpret_cast<volatile std::uint32_t*>(0x005cc560u) = 0x3B088889u; // 1/480
+                scale_ok = true;
+            } __except(EXCEPTION_EXECUTE_HANDLER) { scale_ok = false; }
+        }
+        const bool t1 = StandaloneThunks_Install(0x0042b8b0u, reinterpret_cast<const void*>(&Standalone_ScreenWidth));
+        const bool t2 = StandaloneThunks_Install(0x0042b8c0u, reinterpret_cast<const void*>(&Standalone_ScreenHeight));
+        const bool t3 = StandaloneThunks_Install(0x0042d5a0u, reinterpret_cast<const void*>(&Standalone_CreditsNoOp));
+        const bool t4 = StandaloneThunks_Install(0x00472f40u, reinterpret_cast<const void*>(&TextGradientV0V1Override));
+        const bool t5 = StandaloneThunks_Install(0x004730b0u, reinterpret_cast<const void*>(&TextGradientV2V3Override));
+        const bool t6 = StandaloneThunks_Install(0x00472c60u, reinterpret_cast<const void*>(&ChromeBaseDraw));
+        const bool thunks_ok = t1 && t2 && t3 && t4 && t5 && t6;
+        g_b16_chrome_ready = g_bridge_installed && map_text && scale_ok && thunks_ok;
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                "\nMilestone B16: standalone RVA thunks — map_text=%d map_scale=%d scale_ok=%d "
+                "thunks=%d/6 (b8b0=%d b8c0=%d d5a0=%d f40=%d 30b0=%d 2c60=%d)\n"
+                "Milestone B16: MenuChromeShellA ready = %s\n",
+                map_text, map_scale, scale_ok, static_cast<int>(StandaloneThunks_Count()),
+                t1, t2, t3, t4, t5, t6,
+                g_b16_chrome_ready ? "YES (real MASHED menu chrome via the B15 bridge)"
+                                   : "NO (missing dependency — see flags above)");
+            std::fclose(log);
+        }
+    }
 
     // Main loop: pump messages + render until the user closes the window or
     // hits ESC, or the device gets into an unrecoverable state. Per frame we
