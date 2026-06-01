@@ -24,6 +24,8 @@ public class W32 {
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint flags);
   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr h);
   [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
 }
 "@
@@ -91,8 +93,12 @@ for ($i = 1; $i -le $Runs; $i++) {
 
   $shotRes = "(skipped)"
   if (-not $crashedEarly -and $hwnd -ne [IntPtr]::Zero -and $i -le $Shots) {
-    [void][W32]::SetWindowPos($hwnd, $HWND_TOPMOST, 0, 0, 0, 0, (0x0001 -bor 0x0002 -bor 0x0040)) # NOSIZE|NOMOVE|SHOWWINDOW
-    Start-Sleep -Milliseconds 400
+    # Move the window to (0,0), TOPMOST, and bring it to the front so the capture
+    # isn't overlapped by the terminal. 0x0040=SHOWWINDOW (NOSIZE kept, NOMOVE dropped).
+    [void][W32]::SetWindowPos($hwnd, $HWND_TOPMOST, 0, 0, 0, 0, (0x0001 -bor 0x0040)) # NOSIZE|SHOWWINDOW
+    [void][W32]::BringWindowToTop($hwnd)
+    [void][W32]::SetForegroundWindow($hwnd)
+    Start-Sleep -Milliseconds 500
     $shotRes = Take-Shot $hwnd ("b17_{0}_run{1:D2}.png" -f $Tag, $i)
   }
 

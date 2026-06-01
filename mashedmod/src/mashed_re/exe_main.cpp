@@ -183,6 +183,31 @@ extern "C" void __cdecl TextGradientV2V3Override(float x, float y, float w, floa
 #pragma comment(lib, "psapi.lib")
 
 // ===========================================================================
+// B17 — image-pad: own the low MASHED arena via the exe IMAGE itself.
+//
+// Proven root cause of the cold-start lottery: at /BASE:0x10000000 the legacy
+// 0x00400000..0x009fffff range is vacant, so Windows fills it bottom-up (before
+// any user code) with NLS section mappings + the process heap + d3d9's heap, at
+// per-run-varying addresses. The reimpls' hardcoded MASHED RVAs then land in
+// foreign/READONLY memory ~half the time, gating boot and the faithful menu path.
+//
+// Deterministic fix: rebase the exe to /BASE:0x10000 and emit this ~10MB zero-
+// init array. It makes the exe image's VA span cover the entire MASHED address
+// arena (~0x00401000..0x009fffff). Every hardcoded MASHED RVA then resolves to
+// OUR image's committed, writable, zero-filled memory — present from load,
+// immune to NLS/heap/d3d9 squatting (which are forced above the image). This
+// recreates MASHED's own low-memory layout (a low-based image owning the arena),
+// which is exactly the environment d3d9's CreateDevice is built for.
+//
+// The Phase-G wedge + B16 RVA thunks still run, but now they re-protect already-
+// committed image pages and write JMP thunks into our .bss — guaranteed to
+// succeed. External linkage + the WinMain reference keep /OPT:REF from dropping
+// the array. On-disk size is unaffected (.bss has no raw data).
+// ===========================================================================
+extern "C" char g_b17_low_arena_pad[0x00A00000];
+char            g_b17_low_arena_pad[0x00A00000];
+
+// ===========================================================================
 // B17 — earliest-possible low-arena reservation (TLS callback).
 //
 // Root cause of the cold-start lottery (proven by the B17 region maps): the exe
@@ -1592,6 +1617,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 "B17-TLS: reserved %ld/%ld needed granules at TLS time "
                 "(seen-free; the rest were already occupied by kernel-early NLS)\n",
                 g_b17_tls_reserved, g_b17_tls_seen_free);
+            std::fprintf(log,
+                "B17-PAD: image-pad arena [0x%p .. 0x%p] (exe owns the MASHED RVA range)\n",
+                static_cast<void*>(&g_b17_low_arena_pad[0]),
+                static_cast<void*>(&g_b17_low_arena_pad[sizeof(g_b17_low_arena_pad) - 1]));
             std::fclose(log);
         }
     }
