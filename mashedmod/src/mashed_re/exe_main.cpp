@@ -152,7 +152,8 @@
 #include "D3d9Render/QuadRenderer.h"
 #include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
 #include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
-#include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings)
+#include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
+#include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
@@ -438,6 +439,15 @@ struct MenuItemTex { int handle; std::uint32_t w, h; bool ready; };
 MenuItemTex      g_menu_items[8] = {};
 std::uint32_t    g_menu_item_count = 0;
 std::uint32_t    g_menu_selected   = 0;   // B19c: keyboard-driven selection index
+
+// B19 faithful font — MASHED's actual FGDC20 glyphs (Font36.piz). When loaded,
+// the menu items are drawn glyph-by-glyph in this font instead of the GDI/Arial
+// fallback textures. The decoded menu-item strings are kept for per-frame draw.
+mashed_re::D3d9Render::MashedFont g_font;
+constexpr std::uint32_t kSlotMenuFont   = 15;
+constexpr int           kHandleMenuFont = 9;
+constexpr float         kMenuTextHeight = 30.f;   // on-screen glyph height (px)
+wchar_t          g_menu_msgs[8][64] = {};
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     switch (msg) {
@@ -785,6 +795,40 @@ void ShutdownD3D9() {
     if (g_d3d)    { g_d3d->Release();    g_d3d    = nullptr; }
 }
 
+// B19 faithful font: draw `s` centered horizontally on `cx`, top at `top_y`,
+// glyph cell height `height_px`, tint `argb`, glyph-by-glyph through the bridge
+// using MASHED's FGDC20 atlas UVs. No-op if the font isn't loaded.
+void DrawMashedString(const wchar_t* s, float cx, float top_y,
+                      float height_px, std::uint32_t argb) {
+    if (!g_font.ready() || !s) return;
+    const float scale = height_px / g_font.natural_height();
+    const float space_adv = height_px * 0.32f;
+    auto glyph_of = [](wchar_t c) -> unsigned char {
+        return static_cast<unsigned char>((c >= 0 && c < 128) ? c : '?');
+    };
+    // Pass 1: measure for centering.
+    float total = 0.f;
+    for (const wchar_t* p = s; *p; ++p) {
+        float uv[4], wpx;
+        if (g_font.Glyph(glyph_of(*p), uv, &wpx)) total += wpx * scale + 1.f;
+        else                                      total += space_adv;
+    }
+    // Pass 2: draw.
+    float penX = cx - total * 0.5f;
+    for (const wchar_t* p = s; *p; ++p) {
+        float uv[4], wpx;
+        if (g_font.Glyph(glyph_of(*p), uv, &wpx)) {
+            std::uint32_t uvb[4];
+            std::memcpy(uvb, uv, sizeof(uvb));
+            const float gw = wpx * scale;
+            HudIm2DQuad(g_font.handle(), penX, top_y, gw, height_px, argb, uvb);
+            penX += gw + 1.f;
+        } else {
+            penX += space_adv;
+        }
+    }
+}
+
 // Render one frame: clear to teal, present. Returns false on unrecoverable
 // device loss (caller should exit).
 bool RenderFrame() {
@@ -882,17 +926,21 @@ bool RenderFrame() {
     // the rest slightly dimmed — a stand-in for the menu state machine's highlight.
     if (g_bridge_installed && g_menu_item_count > 0) {
         const float startY = 300.f;
-        const float stepY  = 46.f;
+        const float stepY  = 44.f;
         for (std::uint32_t i = 0; i < g_menu_item_count; ++i) {
-            const MenuItemTex& it = g_menu_items[i];
-            if (!it.ready) continue;
-            const float w = static_cast<float>(it.w);
-            const float h = static_cast<float>(it.h);
-            const float x = (800.f - w) * 0.5f;
-            const float y = startY + static_cast<float>(i) * stepY;
             // Selected item bright white; the rest dimmed.
-            const std::uint32_t argb = (i == g_menu_selected) ? 0xffffffffu : 0x80a0a0a0u;
-            HudIm2DQuad(it.handle, x, y, w, h, argb, uv_full);
+            const std::uint32_t argb = (i == g_menu_selected) ? 0xffffffffu : 0x90b0b0b0u;
+            const float y = startY + static_cast<float>(i) * stepY;
+            if (g_font.ready()) {
+                // Faithful path: draw the item string in MASHED's FGDC20 font.
+                DrawMashedString(g_menu_msgs[i], 400.f, y, kMenuTextHeight, argb);
+            } else {
+                // Fallback: the GDI-rasterized Arial texture.
+                const MenuItemTex& it = g_menu_items[i];
+                if (!it.ready) continue;
+                const float w = static_cast<float>(it.w), h = static_cast<float>(it.h);
+                HudIm2DQuad(it.handle, (800.f - w) * 0.5f, y, w, h, argb, uv_full);
+            }
         }
     }
 
@@ -1378,6 +1426,10 @@ void LoadMenuItems() {
         std::free(bgra);
         if (!ok) continue;
         mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(handle, g_quad_renderer.slot_texture(slot));
+        // Keep the decoded string for faithful-font per-frame drawing.
+        int c = 0;
+        for (; c < n && c < 63; ++c) g_menu_msgs[g_menu_item_count][c] = txt[c];
+        g_menu_msgs[g_menu_item_count][c] = 0;
         g_menu_items[g_menu_item_count] = { handle, w, h, true };
         if (log) {
             char a[128]; int k = 0;
@@ -2044,6 +2096,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // B19b: load the language message table + rasterize the main-menu items.
         if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {
             LoadMenuItems();
+        }
+        // B19 faithful font: decode FGDC20.TXD atlas + FGDC20.RWF glyph metrics
+        // and upload the glyph sheet. When this succeeds the menu draws in MASHED's
+        // actual font (glyph-by-glyph); otherwise the GDI/Arial textures are used.
+        {
+            bool fok = g_font.Load(g_quad_renderer, kSlotMenuFont, kHandleMenuFont,
+                                   "original/TOASTART/Common/Font36.piz");
+            std::FILE* log = std::fopen(kLogPath, "a");
+            if (log) {
+                std::fprintf(log, "\nB19 faithful font (FGDC20): load %s (height=%.1f)\n",
+                             fok ? "OK" : "FAILED", g_font.natural_height());
+                std::fclose(log);
+            }
         }
     }
 
