@@ -152,6 +152,7 @@
 #include "D3d9Render/QuadRenderer.h"
 #include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
 #include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
+#include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
@@ -422,6 +423,20 @@ bool             g_menu_bg_ready   = false;
 bool             g_menu_logo_ready = false;
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
+
+// B19b — real menu item text. The language .DAT (Font36.piz/USA.DAT) is loaded
+// into g_msg_dat and kept for the program lifetime; a message id resolves to a
+// [u16 len][UTF-16LE text] record via the offset table (faithful to MASHED's
+// FUN_00427780: str = base + *(u32*)(base + id*4)). Each main-menu item string
+// is GDI-rasterized to a texture (slots 10+) and drawn through the bridge.
+std::uint8_t*    g_msg_dat       = nullptr;
+std::uint32_t    g_msg_dat_len   = 0;
+constexpr std::uint32_t kSlotMenuItem0 = 10;   // menu item textures: slots 10..14
+constexpr int           kHandleMenuItem0 = 4;  // handles 4..8
+constexpr std::uint32_t kMenuItemFontPx  = 30;
+struct MenuItemTex { int handle; std::uint32_t w, h; bool ready; };
+MenuItemTex      g_menu_items[8] = {};
+std::uint32_t    g_menu_item_count = 0;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     switch (msg) {
@@ -842,6 +857,24 @@ bool RenderFrame() {
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
     }
 
+    // B19b: the real main-menu item list (GDI-rasterized message strings) drawn
+    // as a centered vertical list over the chrome. Item 0 shown bright ("selected"),
+    // the rest slightly dimmed — a stand-in for the menu state machine's highlight.
+    if (g_bridge_installed && g_menu_item_count > 0) {
+        const float startY = 300.f;
+        const float stepY  = 46.f;
+        for (std::uint32_t i = 0; i < g_menu_item_count; ++i) {
+            const MenuItemTex& it = g_menu_items[i];
+            if (!it.ready) continue;
+            const float w = static_cast<float>(it.w);
+            const float h = static_cast<float>(it.h);
+            const float x = (800.f - w) * 0.5f;
+            const float y = startY + static_cast<float>(i) * stepY;
+            const std::uint32_t argb = (i == 0) ? 0xffffffffu : 0xc0c0c0c0u;
+            HudIm2DQuad(it.handle, x, y, w, h, argb, uv_full);
+        }
+    }
+
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual
     // C3 HudIm2DQuad reimpl. One untextured semi-transparent quad (top-left) and
     // one textured quad (the title texture, bottom-right) — both submitted via
@@ -1250,6 +1283,91 @@ bool LoadPngAssetToSlot(const char* piz_path, const char* entry_name,
         std::fclose(log);
     }
     return ok;
+}
+
+// B19b: load the language message table (.DAT) from a .piz into a persistent
+// buffer (kept for the program lifetime so message pointers stay valid).
+bool LoadMessageTable(const char* piz_path, const char* entry_name) {
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load(piz_path)) return false;
+    std::uint32_t idx = UINT32_MAX;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        if (n && std::strcmp(n, entry_name) == 0) { idx = i; break; }
+    }
+    if (idx == UINT32_MAX) return false;
+    std::uint32_t blen = 0;
+    const std::uint8_t* blob = piz.blob(idx, &blen);
+    if (!blob || blen < 8) return false;
+    g_msg_dat = static_cast<std::uint8_t*>(std::malloc(blen));
+    if (!g_msg_dat) return false;
+    std::memcpy(g_msg_dat, blob, blen);
+    g_msg_dat_len = blen;
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (log) {
+        std::fprintf(log, "\nB19b: message table %s/%s loaded (%u bytes)\n",
+                     piz_path, entry_name, blen);
+        std::fclose(log);
+    }
+    return true;
+}
+
+// B19b: resolve a message id to its UTF-16 text. Faithful to FUN_00427780:
+//   record = base + *(u32*)(base + id*4); record = [u16 len][len * u16 chars].
+// Copies up to cap-1 chars into out (null-terminated). Returns the char count.
+int GetMenuMessage(int id, wchar_t* out, int cap) {
+    if (out && cap > 0) out[0] = 0;
+    if (!g_msg_dat || id < 0 || cap <= 0) return 0;
+    const std::uint32_t off_pos = static_cast<std::uint32_t>(id) * 4u;
+    if (off_pos + 4 > g_msg_dat_len) return 0;
+    std::uint32_t off;
+    std::memcpy(&off, g_msg_dat + off_pos, 4);
+    if (off + 2 > g_msg_dat_len) return 0;
+    std::uint16_t len;
+    std::memcpy(&len, g_msg_dat + off, 2);
+    if (off + 2 + static_cast<std::uint32_t>(len) * 2u > g_msg_dat_len) return 0;
+    int n = 0;
+    for (int i = 0; i < len && n < cap - 1; ++i) {
+        std::uint16_t ch;
+        std::memcpy(&ch, g_msg_dat + off + 2 + i * 2, 2);
+        out[n++] = static_cast<wchar_t>(ch);
+    }
+    out[n] = 0;
+    return n;
+}
+
+// B19b: rasterize the main-menu item strings (real message ids) into textures and
+// register them with the bridge. Called once after the assets + bridge are up.
+void LoadMenuItems() {
+    // Main-menu options (DEFINES.TXT ids): Single Player / Multiplayer /
+    // Championship / Time Attack / Options. Real strings from the language table.
+    static const int kMenuIds[] = { 33, 34, 35, 36, 39 };
+    std::FILE* log = std::fopen(kLogPath, "a");
+    g_menu_item_count = 0;
+    for (int i = 0; i < static_cast<int>(sizeof(kMenuIds) / sizeof(kMenuIds[0])); ++i) {
+        wchar_t txt[128];
+        int n = GetMenuMessage(kMenuIds[i], txt, 128);
+        if (n <= 0) continue;
+        std::uint32_t w = 0, h = 0;
+        std::uint8_t* bgra = mashed_re::D3d9Render::RenderTextToBGRA(txt, kMenuItemFontPx, &w, &h);
+        if (!bgra) continue;
+        const std::uint32_t slot = kSlotMenuItem0 + g_menu_item_count;
+        const int handle = kHandleMenuItem0 + static_cast<int>(g_menu_item_count);
+        bool ok = g_quad_renderer.UploadBGRAToSlot(slot, w, h, bgra);
+        std::free(bgra);
+        if (!ok) continue;
+        mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(handle, g_quad_renderer.slot_texture(slot));
+        g_menu_items[g_menu_item_count] = { handle, w, h, true };
+        if (log) {
+            char a[128]; int k = 0;
+            for (; k < n && k < 127; ++k) a[k] = (txt[k] < 128) ? static_cast<char>(txt[k]) : '?';
+            a[k] = 0;
+            std::fprintf(log, "B19b: menu item id=%d \"%s\" %ux%u -> slot %u handle %d\n",
+                         kMenuIds[i], a, w, h, slot, handle);
+        }
+        ++g_menu_item_count;
+    }
+    if (log) { std::fprintf(log, "B19b: %u menu items ready\n", g_menu_item_count); std::fclose(log); }
 }
 
 // B17 — the set of 64KB granules the faithful frontend path needs MEM_COMMIT
@@ -1902,6 +2020,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         g_menu_logo_ready = LoadPngAssetToSlot(
             "original/TOASTART/Common/Font36.piz", "MASHEDLOGO.PNG",
             kSlotMenuLogo, kHandleMenuLogo, &g_menu_logo_w, &g_menu_logo_h);
+        // B19b: load the language message table + rasterize the main-menu items.
+        if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {
+            LoadMenuItems();
+        }
     }
 
     // B17: single greppable summary line. The harness keys boot-success on the
