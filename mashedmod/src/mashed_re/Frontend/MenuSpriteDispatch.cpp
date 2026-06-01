@@ -455,9 +455,9 @@ RH_ScopedInstall(MenuSpriteDispatchC, 0x0042fe90);  // re-enabled 2026-05-24 c3-
 // ---------------------------------------------------------------------------
 
 // Globals (cited at 0x0042e3a0 body):
-static constexpr std::uintptr_t kChrA_ScreenTable   = 0x0067ed38u; // screen-type table (stride 0x10)
+static constexpr std::uintptr_t kChrA_ScreenTable   = 0x0067ed38u; // screen-type table (stride 0x40; 0x0042e3a9 SHL EAX,0x6)
 static constexpr std::uintptr_t kChrA_ScreenIdx     = 0x0067e9f8u; // current screen index
-static constexpr std::uintptr_t kChrA_CreditsSent   = 0x005f6980u; // credits screen type sentinel
+static constexpr std::uintptr_t kChrA_CreditsSent   = 0x005f6980u; // credits screen descriptor ADDRESS (compared, not deref'd)
 static constexpr std::uintptr_t kChrA_ScrollCtr     = 0x0067ebc0u; // credits scroll counter
 static constexpr std::uintptr_t kChrA_DeltaTime     = 0x007f1000u; // delta-time (scroll speed)
 static constexpr std::uintptr_t kChrA_AnimFrame     = 0x0067f17cu; // animation frame counter
@@ -467,11 +467,21 @@ extern "C" __declspec(dllexport) void __cdecl MenuChromeShellA(void)
 {
     int screen_idx = *reinterpret_cast<int*>(kChrA_ScreenIdx);
 
-    // Credits scroll: if current screen type == DAT_005f6980.
-    // Cited at 0x0042e3a0 body entry.
+    // Credits-screen check. Disassembly at 0x0042e3a0 (verified in Ghidra slot,
+    // MASHED.exe @0x00400000):
+    //   0042e3a0  MOV EAX,[0x0067e9f8]            ; screen_idx
+    //   0042e3a9  SHL EAX,0x6                     ; screen_idx * 0x40   (NOT 0x10)
+    //   0042e3ac  MOV ECX,[EAX + 0x0067ed38]      ; screen_type = table[screen_idx]
+    //   0042e3b6  CMP ECX,0x5f6980                ; compare to the ADDRESS &DAT_005f6980
+    //   0042e3bd  JNZ ...                          ; (immediate-address compare)
+    // The earlier reimpl used stride 0x10 and *dereferenced* the sentinel
+    // (*(void**)0x005f6980) — two divergences. Both are invisible at the quiescent
+    // main menu (screen_idx==0, non-credits screen → else branch either way), so the
+    // synthetic diff and the standalone's B16 no-op thunk masked them; but they are
+    // real for the credits screen / screen_idx!=0 and affect the .asi too.
     void* screen_type = *reinterpret_cast<void**>(
-        kChrA_ScreenTable + static_cast<std::uintptr_t>(screen_idx) * 0x10u);
-    void* credits_sentinel = *reinterpret_cast<void**>(kChrA_CreditsSent);
+        kChrA_ScreenTable + static_cast<std::uintptr_t>(screen_idx) * 0x40u);
+    void* credits_sentinel = reinterpret_cast<void*>(kChrA_CreditsSent);
 
     if (screen_type == credits_sentinel) {
         // Advance scroll counter by delta-time. Cited at body.
