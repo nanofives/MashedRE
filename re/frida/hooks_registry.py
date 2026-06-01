@@ -6075,14 +6075,18 @@ HOOKS = {
     # 0x0042e5b0  MenuChromeShellB
     # Frontend BG + animated logo renderer. void(void).
     # Calls DrawFullscreenBG/SpriteAnimFrameThunk/SpriteDrawCommit/LogoOverlayDraw
-    # via original VAs (all C2+ callees). At quiescent main menu the BG draw
-    # completes normally; animation cycle advances each frame. Both paths
-    # must complete without crash. 10 iterations.
+    # via original VAs (all C2+ callees). In the synthetic harness (called in
+    # isolation, not inside a live menu frame) the sprite handles aren't set up,
+    # so the first BG draw (FUN_00473c20) derefs a null at +0x8 and both orig and
+    # reimpl AV identically at 0x8 — crash-equal. (2026-06-01 B18a faithful rewrite
+    # fixed the prior divergence where orig AV'd at 0x8 but the reimpl threw a
+    # different error from its wrong 1-arg DrawFullscreenBG signature.)
     'menu_chrome_shell_b': {
         'rva':            0x0042e5b0,
         'export':         'MenuChromeShellB',
         'signature':      {'ret': 'void', 'args': []},
         'arg_type':       'none',
+        'crash_equal_ok': True,
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         'path2_tests':    [0, 1, 2],

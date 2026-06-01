@@ -92,23 +92,32 @@ static auto* const s_ChromeBaseDraw =
     reinterpret_cast<void(__cdecl*)(float, float, float, float,
                                     std::uint32_t)>(0x00472c60);
 
-// 0x00473c20  DrawFullscreenBG  (C2) — draw fullscreen BG texture
+// 0x00473c20  DrawFullscreenBG  (C2) — fullscreen BG quad via the Im2D path.
+// 10 args (verified vs 0x0042e5b0 call site + 0x00473c20 body, Ghidra slot):
+// (x0,y0,x1,y1 floats; a5; bg_handle; a7; logo_handle; tex_sel; alpha).
 static auto* const s_DrawFullscreenBG =
-    reinterpret_cast<void(__cdecl*)(void*)>(0x00473c20);
+    reinterpret_cast<void(__cdecl*)(float, float, float, float,
+                                    int, int, int, int, int, int)>(0x00473c20);
 
-// 0x0042e590  SpriteAnimFrameThunk  (C4) — sprite-slot resolver
+// 0x0042e590  SpriteAnimFrameThunk — pass-through thunk to FUN_0040bb70.
+// 9 args, RETURNS a handle (the result is fed to SpriteDrawCommit). The earlier
+// reimpl typed it void — that dropped the return. Verified vs 0x0042e5b0 call
+// site (uVar4 = FUN_0042e590(...); FUN_00474890(uVar4)).
 static auto* const s_SpriteAnimFrameThunk =
-    reinterpret_cast<void(__cdecl*)(int, float, float, float, float,
-                                    std::uint32_t, int, int, int)>(0x0042e590);
+    reinterpret_cast<std::uint32_t(__cdecl*)(int, float, float, float, float,
+                                             std::uint32_t, int, int, int)>(0x0042e590);
 
-// 0x00474890  SpriteDrawCommit  (C2) — sprite draw commit
+// 0x00474890  SpriteDrawCommit — takes the SpriteAnimFrameThunk return (1 arg),
+// not 9. Verified vs 0x0042e5b0 call site.
 static auto* const s_SpriteDrawCommit =
-    reinterpret_cast<void(__cdecl*)(void*, float, float, float, float,
-                                    std::uint32_t, int, int, int)>(0x00474890);
+    reinterpret_cast<void(__cdecl*)(std::uint32_t)>(0x00474890);
 
-// 0x00473ee0  LogoOverlayDraw  (C2) — draw logo overlay with slide offset
+// 0x00473ee0  LogoOverlayDraw — animated logo overlay. 10 args (verified vs
+// 0x0042e5b0 call site): (a1,a2 ints; slide float; 512.0f; a5; bg_handle; a7;
+// logo_handle; tex_sel; alpha). The earlier reimpl typed it (void*,int).
 static auto* const s_LogoOverlayDraw =
-    reinterpret_cast<void(__cdecl*)(void*, int)>(0x00473ee0);
+    reinterpret_cast<void(__cdecl*)(int, int, float, float,
+                                    int, int, int, int, int, int)>(0x00473ee0);
 
 // RW vtable accessor: DAT_007d3ff8
 static constexpr std::uintptr_t kVtableGlobal = 0x007d3ff8u;
@@ -562,91 +571,87 @@ static constexpr std::uintptr_t kChrB_SlideBase     = 0x005cd65cu; // slide base
 static const int kChrB_SlotCycle[16] = { 0,1,2,3,4,5, 0,1,2,3,4,5, 0,1,2,3 };
 
 // 0x0042e5b0
+// Faithful rewrite 2026-06-01 (B18a). The earlier version was mass-disabled for
+// a "reimpl-vs-original divergence": it had WRONG callee signatures — it called
+// DrawFullscreenBG/LogoOverlayDraw with 1-2 args (the real forms take 10), dropped
+// SpriteAnimFrameThunk's return that feeds SpriteDrawCommit, and computed the
+// slide wrong (subtracted DAT_005cd65c instead of decrementing 0x10). Rewritten
+// instruction-faithfully from the 0x0042e5b0 disassembly (Ghidra slot, MASHED.exe
+// @0x00400000); coords are the 640x480 virtual space (288/64/352/352, 512x512 BG).
 extern "C" __declspec(dllexport) void __cdecl MenuChromeShellB(void)
 {
-    // Draw fullscreen BG texture. Cited at 0x0042e5b0 body entry.
-    void* bg_handle = *reinterpret_cast<void**>(kChrB_BGHandle);
-    s_DrawFullscreenBG(bg_handle);
+    // Fullscreen background quad. 0x0042e5b0:
+    //   FUN_00473c20(0,0,0x44000000,0x44000000,0,DAT_00898ab8,0,DAT_008991a0,0,0xff)
+    const int bg_handle   = *reinterpret_cast<int*>(kChrB_BGHandle);   // DAT_00898ab8
+    const int logo_handle = *reinterpret_cast<int*>(kChrB_BGHandleB);  // DAT_008991a0
+    s_DrawFullscreenBG(0.0f, 0.0f, 512.0f, 512.0f, 0, bg_handle, 0, logo_handle, 0, 0xff);
 
-    // 512-frame phase. Cited at body.
-    std::uint32_t phase = s_FrameCounter() & 0x1ffu;
+    std::uint32_t local_5c = 0x00ffffffu;
 
-    // Advance sprite A counter at phase 0x1e0. Cited at body.
+    // 512-frame animation phase.
+    const std::uint32_t phase = s_FrameCounter() & 0x1ffu;
     if (phase == 0x1e0u) {
-        *reinterpret_cast<int*>(kChrB_SpriteACount) += 2;
+        *reinterpret_cast<int*>(kChrB_SpriteACount) += 2;          // DAT_0067e848
+    } else if (phase == 0x0e0u) {
+        *reinterpret_cast<int*>(kChrB_SpriteBCount) += 2;          // DAT_0067f0b8
     }
-    // Advance sprite B counter at phase 0x0e0. Cited at body.
-    if (phase == 0x0e0u) {
-        *reinterpret_cast<int*>(kChrB_SpriteBCount) += 2;
+    if ((*reinterpret_cast<int*>(kChrB_SpriteBCount) & 1) == 0) {
+        *reinterpret_cast<int*>(kChrB_SpriteBCount) += 1;          // force odd
     }
-    // Force sprite B counter odd. Cited at body.
-    *reinterpret_cast<int*>(kChrB_SpriteBCount) |= 1;
 
-    // Compute alpha values for sprite A (iVar6) and sprite B (iVar7).
-    // Phase ranges cited at body.
-    int iVar6 = 0, iVar7 = 0;
+    // Crossfade alphas iVar6 (sprite A) / iVar7 (sprite B). Faithful to the
+    // decomp's branch structure: the fall-through paths default iVar6 = 0xff.
+    int iVar6, iVar7;
     if (phase < 0x0e0u) {
-        // Phase 0x000..0x0df: both faded out.
-        iVar6 = 0; iVar7 = 0;
-    } else if (phase < 0x0f0u) {
-        // Phase 0x0e0..0x0ef: fade in B.
-        iVar7 = static_cast<int>((phase - 0x0e0u) * 0x10u);
-        iVar6 = 0;
+        iVar7 = 0; iVar6 = 0xff;
     } else if (phase < 0x100u) {
-        // Phase 0x0f0..0x0ff: B=0xff; partial A fade.
-        iVar7 = 0xff;
-        int delta = static_cast<int>(phase - 0x0f0u);
-        iVar6 = (0x1f - delta) * 0x10;
+        const int t = static_cast<int>(phase) - 0xe0;
+        if (0xf < t) { iVar6 = (0x1f - t) * 0x10; iVar7 = 0xff; }
+        else         { iVar7 = t * 0x10;          iVar6 = 0xff; }
     } else if (phase < 0x1e0u) {
-        // Phase 0x100..0x1df: B fully visible, A=0.
-        iVar7 = 0xff; iVar6 = 0;
-    } else if (phase < 0x1f0u) {
-        // Phase 0x1e0..0x1ef: fade in A.
-        iVar6 = static_cast<int>((phase - 0x1e0u) * 0x10u);
-        iVar7 = 0xff;
+        iVar6 = 0; iVar7 = 0xff;
     } else {
-        // Phase 0x1f0..0x1ff: fade out B.
-        int delta = static_cast<int>(phase - 0x1f0u);
-        iVar7 = (0x1f - delta) * 0x10;
-        iVar6 = 0xff;
+        const int t = static_cast<int>(phase) - 0x1e0;
+        if (t < 0x10) { iVar6 = t * 0x10;          iVar7 = 0xff; }
+        else          { iVar7 = (0x1f - t) * 0x10; iVar6 = 0xff; }
     }
 
-    // Sprite A: cycle lookup from DAT_0067e848. Cited at body.
-    int a_count = *reinterpret_cast<int*>(kChrB_SpriteACount);
-    int a_slot = kChrB_SlotCycle[a_count & 0xf];
-    if (iVar6 > 0) {
-        // Draw sprite A via SpriteAnimFrameThunk. Cited at body.
-        s_SpriteAnimFrameThunk(a_slot,
-            0.0f, 0.0f, 640.0f, 480.0f,
-            static_cast<std::uint32_t>(iVar6) << 24u, 0, 0, 0);
+    const int b_count = *reinterpret_cast<int*>(kChrB_SpriteBCount);
+    std::uint32_t uVar5 = static_cast<std::uint32_t>(kChrB_SlotCycle[b_count & 0xf]);
+
+    if (iVar6 != 0) {
+        std::uint32_t uVar3 = phase + 0x20u;
+        local_5c = (static_cast<std::uint32_t>(static_cast<unsigned char>(iVar6)) << 24) | 0x00ffffffu;
+        if (0x1ffu < uVar3) uVar3 = phase - 0x1e0u;
+        const int a_count = *reinterpret_cast<int*>(kChrB_SpriteACount);
+        const std::uint32_t h = s_SpriteAnimFrameThunk(
+            0, 288.0f, 64.0f, 352.0f, 352.0f, local_5c,
+            static_cast<int>(uVar3 << 8) / 0x120,
+            kChrB_SlotCycle[a_count & 0xf], 1);
+        s_SpriteDrawCommit(h);
+    }
+    if (iVar7 != 0) {
+        local_5c = (static_cast<std::uint32_t>(static_cast<unsigned char>(iVar7)) << 24)
+                 | (local_5c & 0x00ffffffu);
+        uVar5 = s_SpriteAnimFrameThunk(
+            1, 288.0f, 64.0f, 352.0f, 352.0f, local_5c,
+            static_cast<int>((phase - 0x0e0u) * 0x100u) / 0x120,
+            static_cast<int>(uVar5), 1);
+        s_SpriteDrawCommit(uVar5);
     }
 
-    // Sprite B: cycle lookup from DAT_0067f0b8. Cited at body.
-    int b_count = *reinterpret_cast<int*>(kChrB_SpriteBCount);
-    int b_slot = kChrB_SlotCycle[b_count & 0xf];
-    if (iVar7 > 0) {
-        s_SpriteAnimFrameThunk(b_slot,
-            0.0f, 0.0f, 640.0f, 480.0f,
-            static_cast<std::uint32_t>(iVar7) << 24u, 0, 0, 0);
-    }
-
-    // Update slide offset: decrement by 1 each frame, clamp to [0, 0x200].
-    // Cited at body.
-    int slide = *reinterpret_cast<int*>(kChrB_SlideOffset);
-    int slide_base = *reinterpret_cast<int*>(kChrB_SlideBase);
-    slide -= slide_base;
-    if (slide < 0)        slide = 0;
-    if (slide > 0x200)    slide = 0x200;
+    // Slide offset: snapshot (as float), decrement by 0x10, clamp [0, 0x200].
+    const int slide_old = *reinterpret_cast<int*>(kChrB_SlideOffset);   // DAT_008990e0
+    const float fVar1   = static_cast<float>(slide_old);
+    int slide = slide_old - 0x10;
+    if (slide < 0)          slide = 0;
+    else if (0x200 < slide) slide = 0x200;
     *reinterpret_cast<int*>(kChrB_SlideOffset) = slide;
 
-    // Draw logo overlay with slide offset. Cited at body.
-    void* logo_bg = *reinterpret_cast<void**>(kChrB_BGHandleB);
-    s_LogoOverlayDraw(logo_bg, slide);
+    // Logo overlay. The slide is passed as a float (old offset + _DAT_005cd65c):
+    //   FUN_00473ee0(0,0, fVar1 + _DAT_005cd65c, 0x44000000, 0, DAT_00898ab8, 0, DAT_008991a0, 0, 0xff)
+    const float slide_base = *reinterpret_cast<float*>(kChrB_SlideBase); // _DAT_005cd65c
+    s_LogoOverlayDraw(0, 0, fVar1 + slide_base, 512.0f, 0, bg_handle, 0, logo_handle, 0, 0xff);
 }
 
-// MASS-DISABLED 2026-05-24 reimpl-divergent-error: RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);
-// Phase A1 audit 2026-05-24: synthetic diff shows orig AVs at 0x8 but reimpl
-// throws "system error" (different failure mode). The two implementations
-// take different code paths when given bare-int input — suggests a real
-// reimpl-vs-original divergence beyond just missing state. Needs reimpl
-// audit against the asm before re-enable.
+RH_ScopedInstall(MenuChromeShellB, 0x0042e5b0);  // re-enabled 2026-06-01 B18a (faithful rewrite vs asm)
