@@ -437,6 +437,7 @@ constexpr std::uint32_t kMenuItemFontPx  = 30;
 struct MenuItemTex { int handle; std::uint32_t w, h; bool ready; };
 MenuItemTex      g_menu_items[8] = {};
 std::uint32_t    g_menu_item_count = 0;
+std::uint32_t    g_menu_selected   = 0;   // B19c: keyboard-driven selection index
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     switch (msg) {
@@ -667,6 +668,25 @@ void UpdateTitleSlotFromKeyboard() {
     }
 }
 
+// B19c: keyboard-driven main-menu selection. Up/Down move the highlight among the
+// loaded menu items (rising-edge), clamped to [0, count-1]. A functional menu
+// selection state (the standalone analogue of MASHED's menu state machine, which
+// is driven by the 0x898aec entry table + FUN_0043c5b0; reimplementing that
+// faithfully is the parked RtCharset/menu-engine work).
+void UpdateMenuSelection() {
+    if (!g_kbd || g_menu_item_count == 0) return;
+    const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
+    const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
+    const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
+    const bool down_prev = (g_keys_prev[DIK_DOWN] & 0x80) != 0;
+    if (down_now && !down_prev && g_menu_selected + 1 < g_menu_item_count) {
+        ++g_menu_selected;
+    }
+    if (up_now && !up_prev && g_menu_selected > 0) {
+        --g_menu_selected;
+    }
+}
+
 // B14 — write DirectInput key state into MASHED's per-player input-byte
 // globals at 0x007f1044 (active) / 0x007f1504 (processed). Layout per
 // re/analysis (also documented in Frontend/MenuButtonDetect.cpp):
@@ -870,7 +890,8 @@ bool RenderFrame() {
             const float h = static_cast<float>(it.h);
             const float x = (800.f - w) * 0.5f;
             const float y = startY + static_cast<float>(i) * stepY;
-            const std::uint32_t argb = (i == 0) ? 0xffffffffu : 0xc0c0c0c0u;
+            // Selected item bright white; the rest dimmed.
+            const std::uint32_t argb = (i == g_menu_selected) ? 0xffffffffu : 0x80a0a0a0u;
             HudIm2DQuad(it.handle, x, y, w, h, argb, uv_full);
         }
     }
@@ -2051,6 +2072,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         UpdateQuadFromKeyboard();
         // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
         UpdateTitleSlotFromKeyboard();
+        // B19c: Up/Down move the main-menu selection highlight.
+        UpdateMenuSelection();
         // B14: mirror DInput keyboard state into MASHED's input globals
         // (0x007f1044 active / 0x007f1504 processed, player 0). No frontend
         // code currently reads these in standalone, but the wiring exists
