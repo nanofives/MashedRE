@@ -141,6 +141,7 @@
 #include <dinput.h>
 #include <psapi.h>      // B17: GetMappedFileName — identify MEM_MAPPED squatters
 #include <cstdint>
+#include <cstdlib>      // B19a: std::free for WIC-decoded BGRA buffers
 #include <cstdio>
 #include <cstring>
 #include <climits>
@@ -150,6 +151,7 @@
 #include "Txd/TxdDecoder.h"
 #include "D3d9Render/QuadRenderer.h"
 #include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
+#include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
@@ -407,6 +409,19 @@ constexpr bool   kBridgeDemo        = false; // B15 proof quads (off; B16 chrome
 // B16 — set once MASHED's MenuChromeShellA can be driven in the standalone (its
 // called RVAs are thunked to our reimpls and the scale constants are written).
 bool             g_b16_chrome_ready = false;
+
+// B19a — real menu background + logo (PNG assets decoded via WIC). The frontend's
+// bg is Perm.piz/BACKGROUND.PNG; the logo is Font36.piz/MASHEDLOGO.PNG. They're
+// uploaded into QuadRenderer slots above the 8 atlas slots and registered with
+// the bridge under their own handles so HudIm2DQuad draws them through D3D9.
+constexpr std::uint32_t kSlotMenuBg     = 8;
+constexpr std::uint32_t kSlotMenuLogo   = 9;
+constexpr int           kHandleMenuBg   = 2;   // 1 = title texture (B15 demo)
+constexpr int           kHandleMenuLogo = 3;
+bool             g_menu_bg_ready   = false;
+bool             g_menu_logo_ready = false;
+std::uint32_t    g_menu_logo_w     = 0;
+std::uint32_t    g_menu_logo_h     = 0;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     switch (msg) {
@@ -753,10 +768,18 @@ bool RenderFrame() {
 
     g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
     g_device->BeginScene();
+
+    // B19a: real menu background (Perm.piz/BACKGROUND.PNG) drawn fullscreen behind
+    // everything via the bridge. When present it supersedes the B13 title quad.
+    std::uint32_t uv_full[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
+    if (g_bridge_installed && g_menu_bg_ready) {
+        HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
+    }
+
     if constexpr (kTitleMode) {
-        // B6: title-screen MVP — single centered 'main' texture quad.
-        // Phase F (M6) gate: "RW replacement renders 1 textured sprite".
-        if (g_atlas_slot_count > 0) {
+        // B6: title-screen MVP — single centered 'main' texture quad. Suppressed
+        // once the real menu background is loaded (B19a).
+        if (g_atlas_slot_count > 0 && !g_menu_bg_ready) {
             // B13: render whichever slot the user has cycled to. Clamp under
             // a wraparound from input handling (defensive — should never trip
             // if PgUp/PgDn modulo math is correct).
@@ -803,6 +826,20 @@ bool RenderFrame() {
             HudIm2DQuad(0, 0.f,  80.f, 800.f,  2.f, 0xffffffffu, uv); // top divider line
             HudIm2DQuad(0, 0.f, 520.f, 800.f,  2.f, 0xffffffffu, uv); // bottom divider line
         }
+    }
+
+    // B19a: real MASHED logo (Font36.piz/MASHEDLOGO.PNG) over the chrome — fit
+    // into a 560x360 box preserving aspect, top-centered below the top band.
+    if (g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
+        float lw = 560.f;
+        float lh = lw * static_cast<float>(g_menu_logo_h) / static_cast<float>(g_menu_logo_w);
+        if (lh > 360.f) {
+            lh = 360.f;
+            lw = lh * static_cast<float>(g_menu_logo_w) / static_cast<float>(g_menu_logo_h);
+        }
+        const float lx = (800.f - lw) * 0.5f;
+        const float ly = 100.f;
+        HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
     }
 
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual
@@ -1163,6 +1200,56 @@ bool UploadAllTexturesForAtlas() {
                   uploaded);
     if (g_hwnd) SetWindowTextA(g_hwnd, g_windowTitle);
     return uploaded > 0;
+}
+
+// B19a: load a PNG asset from a .piz by entry name, decode it via WIC, upload to
+// a QuadRenderer slot, and register it with the RW Im2D bridge under `handle` so
+// HudIm2DQuad(handle, ...) draws it. Writes the decoded dims on success. The piz
+// is loaded into a local Archive (freed on return) — the pixels are copied into
+// the D3D9 texture before that, so the blob lifetime is fine.
+bool LoadPngAssetToSlot(const char* piz_path, const char* entry_name,
+                        std::uint32_t slot, int handle,
+                        std::uint32_t* out_w, std::uint32_t* out_h) {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load(piz_path)) {
+        if (log) { std::fprintf(log, "\nB19a: %s load FAILED: %s\n", piz_path, piz.last_error()); std::fclose(log); }
+        return false;
+    }
+    std::uint32_t idx = UINT32_MAX;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        if (n && std::strcmp(n, entry_name) == 0) { idx = i; break; }
+    }
+    if (idx == UINT32_MAX) {
+        if (log) { std::fprintf(log, "\nB19a: %s not found in %s\n", entry_name, piz_path); std::fclose(log); }
+        return false;
+    }
+    std::uint32_t blen = 0;
+    const std::uint8_t* blob = piz.blob(idx, &blen);
+    if (!blob || blen == 0) {
+        if (log) { std::fprintf(log, "\nB19a: %s blob empty\n", entry_name); std::fclose(log); }
+        return false;
+    }
+    std::uint32_t w = 0, h = 0;
+    std::uint8_t* bgra = mashed_re::D3d9Render::DecodeImageToBGRA(blob, blen, &w, &h);
+    if (!bgra) {
+        if (log) { std::fprintf(log, "\nB19a: WIC decode FAILED for %s (%u bytes)\n", entry_name, blen); std::fclose(log); }
+        return false;
+    }
+    bool ok = g_quad_renderer.UploadBGRAToSlot(slot, w, h, bgra);
+    std::free(bgra);
+    if (ok) {
+        mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(handle, g_quad_renderer.slot_texture(slot));
+        if (out_w) *out_w = w;
+        if (out_h) *out_h = h;
+    }
+    if (log) {
+        std::fprintf(log, "\nB19a: %s :: %s decode+upload %s (%ux%u) -> slot %u handle %d\n",
+                     piz_path, entry_name, ok ? "OK" : "FAILED", w, h, slot, handle);
+        std::fclose(log);
+    }
+    return ok;
 }
 
 // B17 — the set of 64KB granules the faithful frontend path needs MEM_COMMIT
@@ -1802,6 +1889,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                                    : "NO (missing dependency — see flags above)");
             std::fclose(log);
         }
+    }
+
+    // B19a: load the real menu background + logo PNGs (Perm.piz/BACKGROUND.PNG,
+    // Font36.piz/MASHEDLOGO.PNG) via WIC, upload them, and register them with the
+    // bridge. Failure is non-fatal (the chrome + title quad still render). Needs
+    // the QuadRenderer initialised (UploadAllTexturesForAtlas already did Init).
+    if (g_bridge_installed && g_atlas_slot_count > 0) {
+        g_menu_bg_ready = LoadPngAssetToSlot(
+            "original/TOASTART/Common/Perm.piz", "BACKGROUND.PNG",
+            kSlotMenuBg, kHandleMenuBg, nullptr, nullptr);
+        g_menu_logo_ready = LoadPngAssetToSlot(
+            "original/TOASTART/Common/Font36.piz", "MASHEDLOGO.PNG",
+            kSlotMenuLogo, kHandleMenuLogo, &g_menu_logo_w, &g_menu_logo_h);
     }
 
     // B17: single greppable summary line. The harness keys boot-success on the

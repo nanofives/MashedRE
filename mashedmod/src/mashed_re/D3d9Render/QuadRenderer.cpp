@@ -249,6 +249,39 @@ bool QuadRenderer::UploadFromTextureToSlot(std::uint32_t slot,
     return UploadIntoTextureSlot(slot, tex);
 }
 
+bool QuadRenderer::UploadBGRAToSlot(std::uint32_t slot, std::uint32_t w,
+                                    std::uint32_t h, const std::uint8_t* bgra) {
+    if (!m_device)          { m_last_error = "not initialised";  return false; }
+    if (slot >= kMaxSlots)  { m_last_error = "slot out of range"; return false; }
+    if (!bgra || w == 0 || h == 0) { m_last_error = "bad BGRA input"; return false; }
+
+    SafeRelease(m_textures[slot]);
+    HRESULT hr = m_device->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8,
+                                         D3DPOOL_MANAGED, &m_textures[slot], nullptr);
+    if (FAILED(hr)) { m_last_error = "CreateTexture(BGRA) failed"; return false; }
+
+    D3DLOCKED_RECT lr;
+    hr = m_textures[slot]->LockRect(0, &lr, nullptr, 0);
+    if (FAILED(hr)) {
+        m_last_error = "LockRect(BGRA) failed";
+        SafeRelease(m_textures[slot]);
+        return false;
+    }
+    // BGRA matches D3DFMT_A8R8G8B8 byte order; copy row-by-row honoring pitch.
+    std::uint8_t*       dst = static_cast<std::uint8_t*>(lr.pBits);
+    const std::uint32_t row_bytes = w * 4u;
+    for (std::uint32_t row = 0; row < h; ++row) {
+        std::memcpy(dst + static_cast<std::size_t>(row) * lr.Pitch,
+                    bgra + static_cast<std::size_t>(row) * row_bytes, row_bytes);
+    }
+    m_textures[slot]->UnlockRect(0);
+
+    m_tex_w[slot] = w;
+    m_tex_h[slot] = h;
+    m_last_error  = "ok";
+    return true;
+}
+
 void QuadRenderer::SetCommonRenderStates() {
     m_device->SetRenderState(D3DRS_LIGHTING,         FALSE);
     m_device->SetRenderState(D3DRS_ZENABLE,          FALSE);

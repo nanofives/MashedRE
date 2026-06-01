@@ -56,6 +56,12 @@ public:
     bool UploadFromTextureToSlot(std::uint32_t slot,
                                  const mashed_re::Txd::Texture& tex);
 
+    // B19a: upload a raw top-down 32bpp BGRA buffer (e.g. a WIC-decoded PNG,
+    // stride = w*4) into slot `slot` as a single-mip D3DFMT_A8R8G8B8 texture.
+    // No swizzle — BGRA already matches A8R8G8B8. For the frontend bg/logo PNGs.
+    bool UploadBGRAToSlot(std::uint32_t slot, std::uint32_t w, std::uint32_t h,
+                          const std::uint8_t* bgra);
+
     // B4 path: draw slot 0 at the centered layout produced by the last
     // UploadFromTexture() call. No-op if no slot-0 texture present.
     void Render();
