@@ -2779,3 +2779,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=bucket_util_0052daf0_00582680(nonqhull-10)  writes=10  errors=0
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=frontend_c1_to_c2_s4  writes=15  errors=0
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=render_c1_to_c2_s1  writes=14  errors=0
+2026-06-01  sweep-20260601-2052  scribe-release  bucket=render_2_c1_to_c2_s2  writes=15  errors=0
