@@ -101,7 +101,7 @@ The skill pulls candidates from several sources depending on requested work type
    awk -F',' 'NR>1 && $4=="C0" && $6=="" {print $1","$2","$3}' hooks.csv
    ```
 2. Or `function_list` from Ghidra MCP minus already-mapped RVAs (only if `hooks.csv` C0 set is exhausted).
-3. **Filter out candidates in known CRT bands.** The MSVC CRT static-linkage residue lives at `0x004a0000..0x004b3fff` (calibrated against batch_s session 1: the bucket `0x004b0068..0x004b3a60` turned out to be 100% CRT, with 29 of 60 RVAs already attesting FidDB names in Ghidra). See § "CRT-band exclusion" below for the full recipe. Drop candidates in these ranges from first-pass buckets entirely.
+3. **Filter out candidates in known library bands.** The MSVC CRT static-linkage residue lives at `0x004a0000..0x004b3fff` (calibrated against batch_s session 1: the bucket `0x004b0068..0x004b3a60` turned out to be 100% CRT, with 29 of 60 RVAs already attesting FidDB names in Ghidra); the qhull/RW-Physics island lives at `0x0057c5b0..0x005a5820`. See § "Library-band exclusion" below for the full table + recipe. Drop candidates in these ranges from first-pass buckets entirely.
 4. Filter for "has at least one xref" (drop dead code / unreferenced stubs).
 5. Cluster by xref proximity — RVAs in the same call tree go to the same session so the bucket name reflects a coherent cluster.
 
@@ -115,37 +115,42 @@ The skill pulls candidates from several sources depending on requested work type
 
 ### promote-c2
 1. `hooks.csv` rows with `confidence=C1` in the requested subsystem.
-2. Drop ones whose analysis note has only structural placeholders (need actual decomp reading).
-3. Drop ones whose hooks.csv row was added < 7 days ago (the C1 plate is still fresh — wait for it to "settle" before pushing to C2).
-4. Cluster by Ghidra address range (sessions get contiguous 0x1000-range buckets when possible).
+2. **Library-band exclusion (do this BEFORE clustering — see § "Library-band exclusion").** promote-c2 pulls by subsystem label, but vendored-library functions are routinely MISLABELED (`util`, `render`, `audio`) in hooks.csv until reclassified — so a subsystem filter alone does NOT catch them. Drop a candidate if EITHER:
+   - its subsystem already starts with `third-party-library[` (already attested — never hand-promote), OR
+   - its address falls in a known vendored-library band (qhull/RW-Physics `0x0057c5b0..0x005a5820`, D3DX9 PSGP `0x004ec000..0x004fc9e0`, CRT `0x004a0000..0x004b3fff`) REGARDLESS of its hooks.csv subsystem label.
+   These belong in a library-tag + FidDB drain, not a hand-plate C1→C2 session. (batch_ag-s5/s6 burned 110 of 360 RVAs on the qhull island before this rule existed — s6 full-halted, s5 wasted 50 plates.)
+3. Drop ones whose analysis note has only structural placeholders (need actual decomp reading).
+4. Drop ones whose hooks.csv row was added < 7 days ago (the C1 plate is still fresh — wait for it to "settle" before pushing to C2).
+5. Cluster by Ghidra address range (sessions get contiguous 0x1000-range buckets when possible).
 
 ### struct
 1. Read `re/analysis/structs/REPORT_*.md` files for known-missing structs.
 2. Or accept the user's explicit list of struct names.
 3. Cross-reference S-DoD requirement #3 from `ROADMAP.md` — prioritize structs that gate subsystem S-DoD.
 
-## CRT-band exclusion
+## Library-band exclusion (CRT + vendored libraries)
 
-The MSVC CRT static-linkage residue inside MASHED.exe occupies an address range that is almost entirely Ghidra-FidDB-attested library code (`_strncpy`, `_ftol2`, `__crt*`, `___security_init_cookie`, etc.). Spending a worker session "discovering" this is wasted budget — Ghidra already knows.
+Several address ranges in MASHED.exe are almost entirely Ghidra-FidDB-attested / vendored library code (MSVC CRT, qhull-2002.1 via RenderWare Physics, D3DX9 PSGP, etc.). Spending a worker session "discovering" or hand-plating these is wasted budget — Ghidra already knows, and the functions are often still MISLABELED (`util`/`render`/`audio`) in hooks.csv, so a subsystem filter alone won't catch them. **Exclude by ADDRESS BAND. Applies to both `first-pass` and `promote-c2`.**
 
-**Calibrated CRT bands (as of 2026-05-17):**
+**Calibrated library bands:**
 
-| Range | Status | Source |
+| Range | Library | Source / note |
 |---|---|---|
-| `0x004a0000..0x004b3fff` | CRT-dense; assume residue unless proven otherwise | batch_s session 1 hit 100% CRT in `0x004b0068..0x004b3a60` (29/60 RVAs had FidDB names) |
-| Real game code in `0x004b*` | Starts ~`0x004b4000` | Same post-mortem; verified by xrefs from RW frames |
+| `0x004a0000..0x004b3fff` | MSVC CRT static-linkage residue | batch_s s1 hit 100% CRT in `0x004b0068..0x004b3a60` (29/60 had FidDB names); real game code resumes ~`0x004b4000` |
+| `0x0057c5b0..0x005a5820` | qhull-2002.1 (vendored via RenderWare Physics 3.7) | ~165KB island; provenance string @0x005e5f58; batch-t-s5/v-s5/y-s6/z-s1/ag-s6 all HALTED here; routinely mislabeled `util` in hooks.csv. See `memory/project_qhull_rwphysics_island.md` |
+| `0x004ec000..0x004fc9e0` | D3DX9 PSGP (Microsoft, statically linked) | ~67KB / 93 RVAs; SSE/SSE2/3DNow! dispatch table @FUN_004fbe7a. See `memory/project_d3dx9_psgp_band.md` |
 
-**Pre-filter recipe.** Before assigning RVAs to first-pass sessions:
+**Pre-filter recipe.** Before assigning RVAs to first-pass OR promote-c2 sessions:
 
-1. **Range short-circuit.** Any candidate in `0x004a0000..0x004b3fff` is suspect. Drop unless the user has explicitly asked to "drain the CRT residue" (which is a different work shape: bulk-rename + library-tag, not C0→C1 discovery).
+1. **Range short-circuit.** Any candidate in a calibrated library band above is suspect. Drop unless the user has explicitly asked to "drain a library band" (a different work shape: bulk-rename + library-tag, not C0→C1 / C1→C2 hand-plating).
 2. **Ghidra FidDB attestation check.** For each remaining candidate, hit Ghidra MCP:
    ```
    mcp__ghidra__function_at(<rva>)   # returns the function record incl. signature + tags
    ```
-   If the response includes a name matching any CRT prefix (regex `^(___|__|_crt|_strncpy|_strcpy|_strcmp|_strlen|_memcpy|_memset|_memmove|_ftol|_fdiv|_alloca|_sprintf|_vsprintf|_setjmp|_longjmp)`) OR a `Library Function: <foo>` tag — exclude. The candidate is already classified by FidDB; running a worker session on it is duplicate work.
-3. **Bucket veto.** If after applying steps 1+2, more than **30%** of a proposed bucket falls in the CRT band, refuse the bucket and re-pick from a different address range. A CRT-dense bucket cannot be salvaged by trimming individual RVAs — the xref cluster itself is library code.
+   If the response includes a name matching any library prefix (CRT: `^(___|__|_crt|_strncpy|_strcpy|_strcmp|_strlen|_memcpy|_memset|_memmove|_ftol|_fdiv|_alloca|_sprintf|_vsprintf|_setjmp|_longjmp)`; qhull: `^qh_?` or contains `qhull`) OR a `Library Function: <foo>` tag — exclude. The candidate is already classified by FidDB; running a worker session on it is duplicate work.
+3. **Bucket veto.** If after applying steps 1+2, more than **30%** of a proposed bucket falls in any library band, refuse the bucket and re-pick from a different address range. A library-dense bucket cannot be salvaged by trimming individual RVAs — the xref cluster itself is library code.
 
-The CRT band is allowed to be the subject of a dedicated "library-tag drain" session (different work shape), but those prompts come from a separate generator, not this skill.
+These library bands are allowed to be the subject of a dedicated "library-tag drain" session (different work shape), but those prompts come from a separate generator, not this skill.
 
 ## Subsystem prediction is best-effort
 
