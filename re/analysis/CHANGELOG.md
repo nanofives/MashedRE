@@ -2771,3 +2771,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-05-30  004df980  PixEncodeX4R4G4B4  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
 2026-05-30  004df9e0  PixEncodeX8R8G8B8  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s3.cpp  c3-batch-ab-s3-merged-integration-GREEN
 2026-05-30  004d7db0  RwPluginExtensionSlotGet  C2->C3  mashedmod/src/mashed_re/Render/BatchAB_s6.cpp  c3-batch-ab-s6-merged-integration-GREEN
+2026-06-01  sweep-20260601-2052  scribe-claim  buckets=9 queued, 2 skipped-HOLD
