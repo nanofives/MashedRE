@@ -139,6 +139,7 @@
 #include <d3d9.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
+#include <psapi.h>      // B17: GetMappedFileName — identify MEM_MAPPED squatters
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -179,6 +180,73 @@ extern "C" void __cdecl TextGradientV2V3Override(float x, float y, float w, floa
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "psapi.lib")
+
+// ===========================================================================
+// B17 — earliest-possible low-arena reservation (TLS callback).
+//
+// Root cause of the cold-start lottery (proven by the B17 region maps): the exe
+// is based at 0x10000000, vacating the legacy 0x00400000..0x009fffff range. The
+// Windows bottom-up VA allocator then fills that range with NLS code-page section
+// mappings (C_1252/C_850/l_intl/locale.nls — READONLY), the process heaps, and
+// d3d9's heap (which grows during CreateDevice). Their placement varies per run,
+// so our reimpls' hardcoded MASHED RVAs (.text getters/draws at 0x42xxxx/0x47xxxx,
+// .data/.bss at 0x63xxxx/0x67xxxx/0x7dxxxx/0x7fxxxx/0x89xxxx, .rdata scale at
+// 0x5cxxxx) land sometimes in free space (claimable), sometimes inside a foreign
+// mapping (lost) — gating boot AND the faithful MenuChromeShellA path.
+//
+// Fix: a TLS callback runs in LdrpRunInitializeRoutines — before CRT init and
+// before WinMain, the earliest user code in the process. It RESERVEs (no commit)
+// the exact 64KB granules our reimpls need, claiming them while they are still
+// free so the bottom-up allocator routes d3d9/heaps/CRT-init NLS around them.
+// WinMain's existing commit paths (MapMashedDataSection for >=0x500000,
+// StandaloneThunks_MapRange for 0x420000/0x470000/0x5c0000) then commit our
+// MEM_RESERVE granules on demand. Granules already occupied by kernel/ntdll-early
+// NLS at TLS time cannot be reclaimed; the WinMain region dump reports them.
+//
+// Reserving only the exact granules (512KB of VA, 0 committed) — not the whole
+// arena — keeps d3d9's CreateDevice low-address space largely unobstructed, per
+// the prior finding that a committed 4MB wedge before d3d9 caused ~60% failures.
+// MUST use only kernel32/ntdll calls here: the CRT is not yet initialized.
+// ===========================================================================
+namespace {
+const std::uintptr_t kB17ReserveBases[] = {
+    0x00420000u,  // .text getters (0x0042b8b0/c0, credits 0x0042d5a0)
+    0x00470000u,  // .text Im2D draws (0x00472c60/2f40, 0x004730b0)
+    0x005c0000u,  // .rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)
+    0x00630000u,  // .data boot params (0x00636ae8) + timer (0x0063d558)
+    0x00670000u,  // .data race-state array (0x0067ea10)
+    0x007d0000u,  // .data RW device slot (*(0x007d3ff8)) — B15 bridge
+    0x007f0000u,  // .bss big buffer (0x007f0f60) + input (0x007f1044)
+    0x00890000u,  // .bss menu-entry array + vtx buffer (0x00898a20/ac0)
+};
+volatile long g_b17_tls_reserved  = 0;  // granules we reserved at TLS time
+volatile long g_b17_tls_seen_free = 0;  // granules that were FREE at TLS time
+}  // namespace
+
+extern "C" void NTAPI B17_TlsReserve(PVOID, DWORD reason, PVOID) {
+    if (reason != DLL_PROCESS_ATTACH) return;
+    for (std::size_t i = 0; i < sizeof(kB17ReserveBases) / sizeof(kB17ReserveBases[0]); ++i) {
+        const std::uintptr_t base = kB17ReserveBases[i];
+        MEMORY_BASIC_INFORMATION mbi;
+        if (VirtualQuery(reinterpret_cast<LPVOID>(base), &mbi, sizeof(mbi)) == 0) continue;
+        if (mbi.State == MEM_FREE) {
+            ++g_b17_tls_seen_free;
+            if (VirtualAlloc(reinterpret_cast<LPVOID>(base), 0x10000u,
+                             MEM_RESERVE, PAGE_READWRITE) != nullptr) {
+                ++g_b17_tls_reserved;
+            }
+        }
+    }
+}
+
+// Register B17_TlsReserve as an EXE TLS callback. /INCLUDE:__tls_used forces the
+// PE TLS directory to be emitted (x86 decoration); the CRT$XLB slot is one of the
+// loader-invoked callback entries.
+#pragma comment(linker, "/INCLUDE:__tls_used")
+#pragma section(".CRT$XLB", long, read)
+extern "C" __declspec(allocate(".CRT$XLB"))
+    PIMAGE_TLS_CALLBACK g_b17_tls_cb = B17_TlsReserve;
 
 namespace {
 
@@ -1072,6 +1140,101 @@ bool UploadAllTexturesForAtlas() {
     return uploaded > 0;
 }
 
+// B17 — the set of 64KB granules the faithful frontend path needs MEM_COMMIT
+// at once. Two live BELOW the wedge (the MASHED .text getter/draw granules,
+// claimed by Compat/StandaloneRvaThunks); the rest are MASHED .data/.rdata/.bss
+// granules inside the wedge range. Kept in one table so the diagnostic dumper,
+// the deterministic reservation, and the wedge all agree on the target set.
+struct NamedGranule { std::uintptr_t base; const char* what; };
+constexpr NamedGranule kNeededGranules[] = {
+    { 0x00420000u, ".text getters (0x0042b8b0/c0, credits 0x0042d5a0)" },
+    { 0x00470000u, ".text Im2D draws (0x00472c60/2f40, 0x004730b0)"    },
+    { 0x005c0000u, ".rdata scale consts (1/640 @5cd5a8, 1/480 @5cc560)" },
+    { 0x00630000u, ".data boot params (0x00636ae8) + timer (0x0063d558)" },
+    { 0x00670000u, ".data race-state array (0x0067ea10)"                },
+    { 0x007d0000u, ".data RW device slot (*(0x007d3ff8)) — B15 bridge"  },
+    { 0x007f0000u, ".bss big buffer (0x007f0f60) + input (0x007f1044)"  },
+    { 0x00890000u, ".bss menu-entry array + vtx buffer (0x00898a20/ac0)"},
+};
+
+// B17 — walk the VirtualQuery region map across the whole low-address arena
+// (0x00400000..0x00a00000) and log every region's state/type/protect. Called
+// at WinMain entry, immediately before InitD3D9, and immediately after, so the
+// cold-start lottery (which granules d3d9 / the heap / DLLs claim, and when)
+// becomes a deterministic, diffable record instead of guesswork. Also prints a
+// compact one-line state of each kNeededGranules entry, prefixed so a harness
+// can grep it per phase.
+void DumpRegionMap(const char* tag) {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    if (!log) return;
+    constexpr std::uintptr_t kLo = 0x00400000u;
+    constexpr std::uintptr_t kHi = 0x00a00000u;
+    std::fprintf(log, "\n=== B17 region map [%s] 0x%08X..0x%08X ===\n",
+                 tag, static_cast<unsigned>(kLo), static_cast<unsigned>(kHi - 1));
+    std::uintptr_t a = kLo;
+    std::size_t free_bytes = 0, commit_bytes = 0, reserve_bytes = 0;
+    while (a < kHi) {
+        MEMORY_BASIC_INFORMATION mbi{};
+        if (VirtualQuery(reinterpret_cast<LPVOID>(a), &mbi, sizeof(mbi)) == 0) break;
+        const std::uintptr_t rbase = reinterpret_cast<std::uintptr_t>(mbi.BaseAddress);
+        const std::size_t    rsize = mbi.RegionSize;
+        const char* state =
+            mbi.State == MEM_COMMIT  ? "COMMIT " :
+            mbi.State == MEM_RESERVE ? "RESERVE" :
+            mbi.State == MEM_FREE    ? "FREE   " : "?      ";
+        const char* type =
+            mbi.Type  == MEM_IMAGE   ? "IMAGE"   :
+            mbi.Type  == MEM_MAPPED  ? "MAPPED"  :
+            mbi.Type  == MEM_PRIVATE ? "PRIVATE" : "-";
+        // Only log regions that intersect our arena (clip the trailing one).
+        if (rbase < kHi) {
+            // For MEM_MAPPED regions, resolve the backing file so we know what
+            // is squatting in the arena (NO-GUESSING). GetMappedFileName needs
+            // a committed address inside the region.
+            char fn[256] = "";
+            if (mbi.Type == MEM_MAPPED && mbi.State == MEM_COMMIT) {
+                char raw[MAX_PATH] = "";
+                if (GetMappedFileNameA(GetCurrentProcess(),
+                                       reinterpret_cast<LPVOID>(rbase),
+                                       raw, MAX_PATH) > 0) {
+                    // Keep just the trailing filename to stay readable.
+                    const char* slash = std::strrchr(raw, '\\');
+                    std::snprintf(fn, sizeof(fn), "  <%s>", slash ? slash + 1 : raw);
+                } else {
+                    std::snprintf(fn, sizeof(fn), "  <pagefile/anon-section>");
+                }
+            }
+            std::fprintf(log, "  0x%08X +0x%08X  %s %-7s protect=0x%03lX%s\n",
+                         static_cast<unsigned>(rbase),
+                         static_cast<unsigned>(rsize),
+                         state, type,
+                         static_cast<unsigned long>(mbi.Protect), fn);
+        }
+        if (mbi.State == MEM_FREE)         free_bytes    += rsize;
+        else if (mbi.State == MEM_COMMIT)  commit_bytes  += rsize;
+        else if (mbi.State == MEM_RESERVE) reserve_bytes += rsize;
+        // Advance to the next region; guard against zero-size loops.
+        std::uintptr_t next = rbase + rsize;
+        if (next <= a) next = a + 0x1000u;
+        a = next;
+    }
+    std::fprintf(log, "  --- totals: free=%zuKB commit=%zuKB reserve=%zuKB ---\n",
+                 free_bytes / 1024, commit_bytes / 1024, reserve_bytes / 1024);
+    // Per-needed-granule one-liners (greppable: "B17-GRAN [tag]").
+    for (const auto& g : kNeededGranules) {
+        MEMORY_BASIC_INFORMATION mbi{};
+        const char* st = "QUERYFAIL";
+        if (VirtualQuery(reinterpret_cast<LPVOID>(g.base), &mbi, sizeof(mbi))) {
+            st = mbi.State == MEM_COMMIT  ? "COMMIT"  :
+                 mbi.State == MEM_RESERVE ? "RESERVE" :
+                 mbi.State == MEM_FREE    ? "FREE"    : "?";
+        }
+        std::fprintf(log, "  B17-GRAN [%s] 0x%08X %-7s  %s\n",
+                     tag, static_cast<unsigned>(g.base), st, g.what);
+    }
+    std::fclose(log);
+}
+
 // B7: VirtualAlloc-map the MASHED data-section address range so reimpls
 // dereferencing fixed RVAs (e.g. 0x00898ac4 in MenuEntryArrayInit) succeed
 // with zeroed memory instead of AV. Writes a log line on success/failure.
@@ -1290,22 +1453,33 @@ void ExecuteFrontendBootChain() {
     // span granule-by-granule and zero ONLY committed, accessible granules. This
     // cannot AV regardless of EH model.
     {
+        // B17: PAGE-granular (4KB), not 64KB-granule. The earlier granule-aware
+        // version VirtualQuery'd the granule BASE but memset the whole sub-span —
+        // which AV'd when a foreign sub-granule mapping (a READONLY NLS section
+        // view spilling into the granule) poisoned a page mid-span (the B17 region
+        // maps proved this; it was a remaining ~20% cold-start crash site). Query
+        // and zero each 4KB page independently so a poisoned page is skipped, not
+        // walked into. SEH-wrapped as belt-and-suspenders.
         std::size_t zeroed = 0, skipped = 0;
         const std::uintptr_t spanEnd = kBigBufBase + kBigBufSz;
-        for (std::uintptr_t g = kBigBufBase & ~0xFFFFu; g < spanEnd; g += 0x10000u) {
-            const std::uintptr_t gs = (g < kBigBufBase) ? kBigBufBase : g;
-            const std::uintptr_t ge = (g + 0x10000u < spanEnd) ? (g + 0x10000u) : spanEnd;
-            MEMORY_BASIC_INFORMATION gm{};
-            const bool ok =
-                VirtualQuery(reinterpret_cast<LPVOID>(g), &gm, sizeof(gm)) != 0 &&
-                gm.State == MEM_COMMIT &&
-                (gm.Protect & (PAGE_READWRITE | PAGE_WRITECOPY |
-                               PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)) != 0 &&
-                (gm.Protect & (PAGE_GUARD | PAGE_NOACCESS)) == 0;
-            if (ok) { std::memset(reinterpret_cast<void*>(gs), 0, ge - gs); zeroed += ge - gs; }
-            else    { skipped += ge - gs; }
+        __try {
+            for (std::uintptr_t p = kBigBufBase; p < spanEnd; p += 0x1000u) {
+                const std::uintptr_t pe = (p + 0x1000u < spanEnd) ? (p + 0x1000u) : spanEnd;
+                MEMORY_BASIC_INFORMATION gm{};
+                const bool ok =
+                    VirtualQuery(reinterpret_cast<LPVOID>(p), &gm, sizeof(gm)) != 0 &&
+                    gm.State == MEM_COMMIT &&
+                    (gm.Protect & (PAGE_READWRITE | PAGE_WRITECOPY |
+                                   PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)) != 0 &&
+                    (gm.Protect & (PAGE_GUARD | PAGE_NOACCESS)) == 0;
+                if (ok) { std::memset(reinterpret_cast<void*>(p), 0, pe - p); zeroed += pe - p; }
+                else    { skipped += pe - p; }
+            }
+        } __except (EXCEPTION_EXECUTE_HANDLER) {
+            // A page flipped state between query and memset — extremely unlikely,
+            // but keep the chain alive.
         }
-        std::fprintf(log, "  [1] DataZeroFill (granule-aware): zeroed %zu, skipped %zu bytes\n",
+        std::fprintf(log, "  [1] DataZeroFill (page-granular): zeroed %zu, skipped %zu bytes\n",
                      zeroed, skipped);
     }
     std::fflush(log);
@@ -1408,6 +1582,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         if (clr) std::fclose(clr);
     }
 
+    // B17: snapshot the low-address arena before ANYTHING runs (no piz heap,
+    // no window, no d3d9). This is the pristine layout we get to reserve from.
+    DumpRegionMap("winmain-entry");
+    {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                "B17-TLS: reserved %ld/%ld needed granules at TLS time "
+                "(seen-free; the rest were already occupied by kernel-early NLS)\n",
+                g_b17_tls_reserved, g_b17_tls_seen_free);
+            std::fclose(log);
+        }
+    }
+
     // Try to load the frontend asset archive before opening the window so the
     // initial title reflects load state. Failure is non-fatal.
     if (LoadFrontendPiz()) {
@@ -1463,11 +1651,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     ShowWindow(g_hwnd, nCmdShow);
     UpdateWindow(g_hwnd);
 
+    // B17: snapshot the arena right before CreateDevice so we can diff what
+    // d3d9 claims against what was free here.
+    DumpRegionMap("pre-initd3d9");
+
     if (!InitD3D9()) {
         DestroyWindow(g_hwnd);
         UnregisterClassA(kClassName, hInstance);
         return 3;
     }
+
+    // B17: snapshot again immediately after CreateDevice. The diff vs
+    // pre-initd3d9 is d3d9's real low-address footprint — the granules we must
+    // NOT pre-reserve, and the ones we may.
+    DumpRegionMap("post-initd3d9");
 
     // B7 (deferred to post-InitD3D9): wedge over whatever low-address
     // granules d3d9 didn't claim. Then verify + run boot chain.
@@ -1574,6 +1771,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 t1, t2, t3, t4, t5, t6,
                 g_b16_chrome_ready ? "YES (real MASHED menu chrome via the B15 bridge)"
                                    : "NO (missing dependency — see flags above)");
+            std::fclose(log);
+        }
+    }
+
+    // B17: single greppable summary line. The harness keys boot-success on the
+    // presence of this line (the process reached the render loop without an
+    // uncaught AV) and chrome-readiness on the YES/NO field.
+    {
+        std::FILE* log = std::fopen(kLogPath, "a");
+        if (log) {
+            std::fprintf(log,
+                "\nB17-SUMMARY reached-main-loop chrome=%s thunks=%u/6\n",
+                g_b16_chrome_ready ? "YES" : "NO",
+                mashed_re::Compat::StandaloneThunks_Count());
             std::fclose(log);
         }
     }

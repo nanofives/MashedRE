@@ -165,6 +165,26 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
 
 }  // namespace
 
+// B17: probe that the EXACT byte range [addr, addr+len) is committed and
+// writable. A granule-base VirtualQuery is fooled by sub-granule NLS section
+// mappings (e.g. a READONLY locale.nls view occupying the head of a 64KB granule
+// while our target address sits in a free/foreign tail): the granule base reads
+// COMMIT, but the real write address still AVs. This does a SEH-guarded
+// read-modify-write of the first and last byte — the only reliable test that the
+// address is genuinely ours to write. Restores the bytes it touched.
+static bool ProbeWritable(std::uintptr_t addr, std::size_t len) {
+    if (len == 0) return false;
+    volatile std::uint8_t* lo = reinterpret_cast<volatile std::uint8_t*>(addr);
+    volatile std::uint8_t* hi = reinterpret_cast<volatile std::uint8_t*>(addr + len - 1);
+    __try {
+        std::uint8_t a = *lo; *lo = a; *lo = a;
+        std::uint8_t b = *hi; *hi = b; *hi = b;
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
+}
+
 bool RwIm2DBridge_Install(IDirect3DDevice9* device) {
     g_device = device;
 
@@ -173,20 +193,29 @@ bool RwIm2DBridge_Install(IDirect3DDevice9* device) {
     g_fakeDevice.set_state_fn = reinterpret_cast<void*>(&Bridge_SetRenderState);
     g_fakeDevice.draw_fn      = reinterpret_cast<void*>(&Bridge_DrawPrimitive);
 
-    // Write &g_fakeDevice into *(0x007d3ff8). That slot lives in the Phase-G
-    // wedge range (0x00500000..0x009fffff); verify the granule is committed
-    // before writing so a gap doesn't AV.
-    MEMORY_BASIC_INFORMATION mbi{};
-    if (VirtualQuery(reinterpret_cast<LPVOID>(kRwDeviceSlot & ~0xFFFFu),
-                     &mbi, sizeof(mbi)) == 0 || mbi.State != MEM_COMMIT) {
-        return false;  // wedge doesn't cover the device-slot granule
+    // B17 robustness: the install writes the fake-device pointer to *(0x007d3ff8),
+    // and every draw reimpl writes a 4-vertex buffer (4 * 0x1c bytes) at
+    // kVBufBase=0x00898a20 and reads back through *(0x007d3ff8). If EITHER address
+    // is not genuinely committed-writable (sub-granule NLS poisoning — see
+    // ProbeWritable), installing would set up a bridge whose first per-frame draw
+    // AVs in the render loop, OR the install write itself AVs here and kills the
+    // process before it reaches the main loop. Probe the EXACT addresses and bail
+    // gracefully (no bridge, no chrome — but the window still boots) if either is
+    // unusable. This is the fix for the ~60% cold-start crashes, which the B17
+    // region maps pinned to this exact write.
+    if (!ProbeWritable(kRwDeviceSlot, sizeof(std::uintptr_t))) {
+        return false;  // device-slot granule poisoned/uncommitted
     }
-    *reinterpret_cast<std::uintptr_t*>(kRwDeviceSlot) =
-        reinterpret_cast<std::uintptr_t>(&g_fakeDevice);
+    if (!ProbeWritable(kVBufBase, 4u * sizeof(SrcVert))) {
+        return false;  // vertex-buffer granule poisoned/uncommitted
+    }
 
-    // Sanity: the draw reimpls also read the vertex buffer at kVBufBase, which
-    // must be in the wedge too. Touch-probe (read) so callers can log coverage.
-    (void)kVBufBase;
+    __try {
+        *reinterpret_cast<std::uintptr_t*>(kRwDeviceSlot) =
+            reinterpret_cast<std::uintptr_t>(&g_fakeDevice);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
     return true;
 }
 
