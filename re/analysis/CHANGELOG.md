@@ -2775,3 +2775,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=bucket_util_00095280_0040e460  writes=60  errors=0  (10 listing-level C0 plates: 00550c30,00550c50,00550d80,00550da0,00550f20,00551050,00551180,00551290,005512d0,005514e0)
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=bucket_util_0040e4b0_0042f790  writes=60  errors=0
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=bucket_util_0042f7a0_004764e0  writes=60  errors=0  (0x0043dfd0 HOLD-at-C1; thunk @0x00476430)
+2026-06-01  sweep-20260601-2052  scribe-release  bucket=bucket_util_004764f0_0052da20  writes=60  errors=0  (2 listing-level C0 plates: 00493ac0,00493b40; 3 thunks)
