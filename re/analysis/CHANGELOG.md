@@ -2781,3 +2781,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=render_c1_to_c2_s1  writes=14  errors=0
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=render_2_c1_to_c2_s2  writes=15  errors=0
 2026-06-01  sweep-20260601-2052  scribe-release  bucket=render_6_c1_to_c2_s1  writes=15  errors=0
+2026-06-01  sweep-20260601-2052  scribe-release  buckets=9 drained  errors=0  (2 HOLD rows skipped: batch-ag-s5-qhull, batch-ag-s6)
