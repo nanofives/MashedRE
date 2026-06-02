@@ -3054,3 +3054,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-02  005aa1e0  FUN_005aa1e0  C1->C2  audio; master function_create (26B cdecl predicate wrapping FUN_005adf30, decomp-confirmed) + plate/bookmark; resolves S-1720; AUDIO C1 -> 0 (fully drained). sweep-20260602-0347 finalize.
 
 2026-06-02  sweep-20260602-1945  scribe-claim  buckets=6 queued (batch_aj s1-s6 author-only fragments), 0 skipped-HOLD
+2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_input_dinput_0047b860_0049b300  writes=17  errors=0
+2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_input_luajoy_004b64e0_004c06c0  writes=24  errors=0
+2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_track_00401630_0047c0f0  writes=26  errors=0
+2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_physics_smplfzx_00478cb0_0057c4b0  writes=27  errors=0
+2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_powerups_camera_particle_0044d5e0_004b4140  writes=27  errors=0
+2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_sky_worldobj_dbg_video_hud_00484280_00555910  writes=24  errors=0  (2 master function_create: 00554940,00555910)
