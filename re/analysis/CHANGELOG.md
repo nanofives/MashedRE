@@ -3060,3 +3060,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_physics_smplfzx_00478cb0_0057c4b0  writes=27  errors=0
 2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_powerups_camera_particle_0044d5e0_004b4140  writes=27  errors=0
 2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_sky_worldobj_dbg_video_hud_00484280_00555910  writes=24  errors=0  (2 master function_create: 00554940,00555910)
+2026-06-02  sweep-20260602-1945  scribe-release  buckets=6 drained  errors=0
