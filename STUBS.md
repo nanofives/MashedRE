@@ -13,6 +13,10 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 
 | ID | RVA called | Caller (RVA / name) | Subsystem | Type | Inserted | Notes |
 |----|-----------|---------------------|-----------|------|----------|-------|
+| S-5703 | 0x005bcef0 | 0x005bcbb0..005bf470 batch_ai-s2 (RwaDSSource/RwaDSRenderer DirectShow) | audio | passthrough | 2026-06-02 | LAB_005bcef0 and LAB_005bd640: handler code installed as `+0x28`/`+0x34` but not yet promoted to functions (no boundary). Out of this session's RVA scope; flagged for promotion. |
+| S-5705 | 0x005bdd00 | 0x005bcbb0..005bf470 batch_ai-s2 (RwaDSSource/RwaDSRenderer DirectShow) | audio | passthrough | 2026-06-02 | LAB_005bdd00: callback passed to FUN_005bd500, an unpromoted code label (no boundary). Out of this session's RVA scope; flagged for promotion. (FUN_005bdef0 is in this bucket.) |
+| S-5708 | 0x00634274 | 0x005bcbb0..005bf470 batch_ai-s2 (RwaDSSource/RwaDSRenderer DirectShow) | audio | passthrough | 2026-06-02 | PTR_LAB_00634274 target (handler/vtable table at 0x00634274), not promoted/inspected. |
+| S-5712 | 0x005be870 | 0x005bcbb0..005bf470 batch_ai-s2 (RwaDSSource/RwaDSRenderer DirectShow) | audio | passthrough | 2026-06-02 | LAB_005be870, LAB_005be790, LAB_005be4d0: pin/thread handler code labels (no boundary), unpromoted; LAB_005be4d0 is the worker thread proc. Flagged for promotion. |
 | S-5500 | 0x005aeda0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aeda0: mod/div byte-budget (out-of-bucket unreversed callee, batch_ah s6) |
 | S-5501 | 0x005ab370 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ab370: acquire sub-obj (out-of-bucket unreversed callee, batch_ah s6) |
 | S-5502 | 0x005ab1c0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ab1c0: submit sub-obj (out-of-bucket unreversed callee, batch_ah s6) |
