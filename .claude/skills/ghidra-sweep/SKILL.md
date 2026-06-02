@@ -44,6 +44,20 @@ Any Queued row that has a `HOLD=<reason>` tag is **skipped silently** — do not
 
 ## Sweep execution
 
+The master write is **scripted**, not a per-RVA MCP loop. Two helpers carry it:
+- `scripts/sweep_build_manifest.py` (Phase A, local/filesystem only) — turns the
+  queued rows + plate `.md` files into a nested-by-bucket `sweep_manifest.json`.
+- `scripts/ghidra/sweep_apply_eval.py` (Phase B) — a `ghidra_eval` module that
+  applies the entire manifest to master in ONE transaction (plate + bookmark +
+  conservative rename + C0 fallback), returning a structured result.
+
+This collapses the old ~5-round-trips-per-RVA chatter (which made a 300-RVA sweep
+take minutes against the shared, single-writer master) into one in-JVM pass. The
+sweep stays SOLO — master is single-writer and the MCP server serializes, so the
+fix is fewer round-trips, not parallel writers. (Superseded prototype:
+`scripts/ghidra/BulkPlateBookmark.py`, which used the pre-12 `CodeUnit.*_COMMENT`
+API and `0x*.md`-only globbing.)
+
 ```
 1. git pull --rebase
 2. bash scripts/ghidra_assert.sh scribe-check           # must be clear
@@ -54,37 +68,54 @@ Any Queued row that has a `HOLD=<reason>` tag is **skipped silently** — do not
    "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-claim  buckets=<N queued, M skipped-HOLD>"
 5. mcp__ghidra__project_program_open_existing
      project_location="C:/Users/maria/Desktop/Proyectos/Mashed"
-     project_name="Mashed"
-     program_name="MASHED.exe"
-     read_only=false
-6. mcp__ghidra__health_ping → must succeed; mcp__ghidra__ghidra_info path must NOT contain "pool"
-7. For each Queued row (in order, skipping HOLD rows):
-     a. Log: "Draining bucket=<bucket> rvas=<count>"
-     b. For each RVA in the row's rvas list — in address order, one at a time:
-          i.   mcp__ghidra__function_at <rva>
-               → if null: write a C0 listing-level plate instead (see § "C0 fallback" below); do NOT skip the RVA
-          ii.  Build plate text: first bullet of re/analysis/<bucket>/<rva>.md § "## Mechanical description",
-               prefixed "[C1 YYYY-MM-DD] ". Truncate at last word boundary ≤ 120 chars, append "…" if cut.
-               Never paraphrase — truncation is the only compression.
-          iii. mcp__ghidra__comment_set  (plate comment, type="plate")
-          iv.  mcp__ghidra__bookmark_add  category="first-pass"  description="C1 YYYY-MM-DD session:<bucket>"
-          v.   mcp__ghidra__comment_get <rva>  (check for "Library Function:" prefix)
-               → if matches single concrete symbol AND Ghidra still shows FUN_XXXXXXXX:
-                   mcp__ghidra__function_rename to exactly that symbol name (no prefix/suffix/namespace)
-               → otherwise: skip rename
-          vi.  If any MCP call in (i)–(v) fails: halt the entire sweep, surface the error verbatim.
-               Do NOT skip and continue. The user decides whether to retry from the failed RVA or abort.
-     c. After all RVAs in the bucket complete:
-          Append to re/analysis/CHANGELOG.md:
-          "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-release  bucket=<bucket>  writes=<N>  errors=0"
-          Move the row in re/SCRIBE_QUEUE.md from "## Queued" to "## Drained",
-          appending:  drained-by=<SESSION_SHORT_ID>; <N> plates, <N> bookmarks, <renames> renames
-          git add re/SCRIBE_QUEUE.md re/analysis/CHANGELOG.md
-          git commit -m "scribe: drained <bucket> via sweep $SESSION_SHORT_ID"
-8. mcp__ghidra__program_save              # NOT program_save_as
-9. mcp__ghidra__program_close
-10. bash scripts/ghidra_pool.sh sync
-11. git rm "master.WIP-$SESSION_SHORT_ID"
+     project_name="Mashed"  program_name="MASHED.exe"  read_only=false
+   → capture the returned session_id for steps 6/8/9/11.
+6. mcp__ghidra__health_ping → must succeed; the open result's program_path must be
+   "/MASHED.exe" (NOT a "pool" path — a pool path means a clone, not master).
+7. BUILD THE MANIFEST (local, no Ghidra):
+     py -3.12 scripts/sweep_build_manifest.py --queue re/SCRIBE_QUEUE.md \
+       --out sweep_manifest.json --date <YYYY-MM-DD> --level <C1|C2>
+   (or --rows <fragment files...> when draining author-only fanout fragments
+   that are not yet lifted into SCRIBE_QUEUE.md). Confirm the printed per-bucket
+   plated counts == the queued rva counts and missing_md == 0 BEFORE applying.
+   The builder resolves each RVA to its plate via the plate's frontmatter `rva:`
+   (filename-stem fallback — survives the 0x/bare-hex inconsistency), extracts
+   the first chunk of "## Mechanical description", truncates ≤120 chars at a word
+   boundary, and prefixes "[<level> <date>] ". Never paraphrases.
+8. APPLY THE WHOLE BATCH IN ONE TRANSACTION via mcp__ghidra__ghidra_eval — this
+   collapses the legacy ~5-MCP-round-trips-per-RVA loop into a single in-JVM
+   pass (hundreds of RVAs go from minutes to seconds):
+     _ns = {}
+     exec(open(r"<repo>/scripts/ghidra/sweep_apply_eval.py", encoding="utf-8").read(), _ns)
+     _ = _ns["run"](sessions, "<session_id>", r"<repo>/sweep_manifest.json")
+   Bind the result to `_` — ghidra_eval returns context["_"] in (multi-statement)
+   exec mode. The apply IS the protocol, server-side: PLATE comment
+   (CommentType.PLATE), "NOTE" bookmark (category = manifest bm_category, comment
+   "<level> <date> session:<bucket>"), C0 listing-level fallback when
+   function_at is null (no bookmark), and a conservative rename only when the
+   manifest entry carries an explicit `rename` OR a pre-existing single-line
+   "Library Function: <sym>" attestation, AND the name still starts with FUN_.
+   The batch commits the transaction only if totals.errors == []; any per-RVA
+   error rolls the WHOLE transaction back (no partial master state).
+   → If totals.errors is non-empty: HALT, surface them verbatim, do NOT save.
+     Fix the manifest/plates and re-run step 8 (setComment/setBookmark are
+     idempotent, so a clean re-run is safe).
+   → Spot-check 2–3 plates with mcp__ghidra__comment_get (type=plate) before saving.
+9. mcp__ghidra__program_save              # NOT program_save_as
+10. Record the drain. Because the apply is ONE atomic transaction, a single
+    commit covering all buckets is correct (the legacy per-bucket commit was a
+    crash-recovery checkpoint for the serial loop, which no longer exists). For
+    each drained bucket append to re/analysis/CHANGELOG.md:
+       "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-release  bucket=<bucket>  writes=<N>  errors=0"
+    and move its row in re/SCRIBE_QUEUE.md from "## Queued" to "## Drained",
+    appending  drained-by=<SESSION_SHORT_ID>; <N> plates, <N> bookmarks,
+    <renames> renames  (note any C0-listing RVAs). Then commit with TARGETED
+    adds — never `git add -A` (a concurrent session may hold unrelated edits):
+       git add re/SCRIBE_QUEUE.md re/analysis/CHANGELOG.md re/analysis/<bucket dirs>
+       git commit -m "scribe: drained <batch> (<K> buckets / <N> plates) via sweep $SESSION_SHORT_ID"
+11. mcp__ghidra__program_close
+12. bash scripts/ghidra_pool.sh sync     # tolerate "device busy" on a held clone — non-fatal
+13. rm "master.WIP-$SESSION_SHORT_ID"  (it is .gitignored here; if tracked, git rm)
     Append to re/analysis/CHANGELOG.md:
     "<YYYY-MM-DD>  $SESSION_SHORT_ID  scribe-release  buckets=<N drained>  errors=0"
     git add re/analysis/CHANGELOG.md

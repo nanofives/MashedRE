@@ -1,4 +1,11 @@
 # BulkPlateBookmark.py — Ghidra script (PyGhidra)
+#
+# SUPERSEDED (2026-06-02) by scripts/ghidra/sweep_apply_eval.py, which runs via
+# the MCP `ghidra_eval` tool against the live master session. This script targets
+# the pre-12 `CodeUnit.*_COMMENT` constants (relocated to
+# ghidra.program.model.listing.CommentType in Ghidra 12.0.3) and the Ghidra
+# *script* globals (currentProgram/getFunctionAt/createBookmark) — neither is
+# valid under the current toolchain. Kept for reference only; do not run.
 # Bulk-write PLATE comments and "first-pass" bookmarks for a sweep manifest,
 # and (when the function comment carries a single "Library Function:" attribution
 # and the Ghidra function name is still FUN_XXXXXXXX) rename to that symbol.
