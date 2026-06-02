@@ -1,0 +1,1020 @@
+{
+ "date": "2026-06-02",
+ "level": "C2",
+ "buckets": [
+  {
+   "bucket": "bucket_audio_005b8be0_005bcb80",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x005b8be0",
+     "plate": "[C2 2026-06-02] If `*(byte*)(param_1+0x28) & 2` (flag bit 0x2 set), perform a doubly-linked-list unlink using the pair of pointers at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b8c40",
+     "plate": "[C2 2026-06-02] `iVar7 = *(param_1+0x94)` (caps/device owner); `uVar10 = caps[+0x50] & 8` (hardware-mix select). - **Early out**: if\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b92e0",
+     "plate": "[C2 2026-06-02] If `param_2 == 0`: `uVar1 = *(uint*)(param_1+0x28) & 0xfffffdff` (clear bit `0x200`). Else: `uVar1 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b9320",
+     "plate": "[C2 2026-06-02] If `*(uint*)(param_1+0x28) & 0x100` (pending-restart bit set): return the requested-play bit, `*(uint*)(param_1+0x28)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b93a0",
+     "plate": "[C2 2026-06-02] **Hardware path** (`caps[+0x50] & 8`): `iVar1 = source[+0x11c]` (hwvoice); set `hwvoice[+0x88] = 0` and `hwvoice[+0x8c]\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b9410",
+     "plate": "[C2 2026-06-02] **Software path** (`caps[+0x50] & 8 == 0`): if `param_2 != 0` set source flag `0x800` in `+0x28`, else clear it (`&\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b9460",
+     "plate": "[C2 2026-06-02] If `FUN_005b9320(param_1)` (is-playing) is nonzero, call `FUN_005b92e0(param_1, 0)` (stop). 2. `uVar3 = caps[+0x50] >>\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b9e30",
+     "plate": "[C2 2026-06-02] Tail-calls `FUN_005aa560(&DAT_007dded0, p1, p3, p2, p4, p5)` and returns. - Note the argument reorder: caller's `p2`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005b9f30",
+     "plate": "[C2 2026-06-02] `FUN_005a9e10(param_1, &DAT_005e6e50, 0)` \u2014 base/sub-object constructor, passing the class-name/ descriptor global\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ba720",
+     "plate": "[C2 2026-06-02] `iVar1 = FUN_005aabe0(*param_1)` \u2014 refcount/instance-count query on the object at `*param_1`. 2. If `iVar1 == 0` (this\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ba760",
+     "plate": "[C2 2026-06-02] `uVar1 = FUN_005aabe0(*param_1)` \u2014 instance/refcount query on `*param_1`. 2. If `uVar1 < 2` (last instance going away)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ba780",
+     "plate": "[C2 2026-06-02] `iVar1 = *(param_1+0x20)` \u2014 device/caps owner object. 2. `FUN_005bb000(param_1, 0)` (DirectSound buffer init/teardown)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ba7f0",
+     "plate": "[C2 2026-06-02] `FUN_005aab70(param_1, 1)` \u2014 enter/lock. 2. **IDirectSound3DListener commit** \u2014 if `obj[+0x3c] != 0`: `pfVar1 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005baa60",
+     "plate": "[C2 2026-06-02] **`param_2 & 1`**: build a 0x30-byte block straight from `param_3[0..0xb]` (no transform; `[0xb]`, `[0x10]` taken as\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bac00",
+     "plate": "[C2 2026-06-02] Calls `(**(code**)(**(int**)(param_1+8) + 0x14))(...)` three times in sequence on the COM interface pointer stored at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005baf40",
+     "plate": "[C2 2026-06-02] `*(param_1+0x3c) = param_2` (unconditional). 2. If `*(byte*)(param_1+0x78) & 8` (hardware path), also mirror to the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bb000",
+     "plate": "[C2 2026-06-02] **Teardown (`param_2 == 0`):** - If `param_1[0x27] != 0` (buffer exists): set flag `0x200` in `[0x1e]`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bb5b0",
+     "plate": "[C2 2026-06-02] `param_4 >>= 1` \u2192 sample count (each sample is `int16`). 2. Main loop, 4 samples per iteration over `param_4 &\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bb820",
+     "plate": "[C2 2026-06-02] Tail-calls `FUN_005aba20(&DAT_007ddf50, p1, p2, p3, p4, p5)` and returns. No argument reorder (contrast 0x005b9e30\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bba60",
+     "plate": "[C2 2026-06-02] Read the caps byte through the chain `*(byte*)(*(int*)(*(int*)(param_1+0x58)+0x20)+0x50)` (object at `+0x58` \u2192 owner at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbac0",
+     "plate": "[C2 2026-06-02] Read caps via `*(byte*)(*(int*)(*(int*)(param_1+0x58)+0x20)+0x50) & 8`. 2. If `== 0` (**software**): `iVar1 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbb20",
+     "plate": "[C2 2026-06-02] `FUN_005ad080(&PTR_LAB_006351ec, 4)` \u2014 register the table at `0x006351ec` with count 4. 2. If nonzero\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbb70",
+     "plate": "[C2 2026-06-02] `FUN_005ad080(&PTR_LAB_006351fc, 4)` \u2014 table `0x006351fc`, count 4. 2. If result `== 1`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbbb0",
+     "plate": "[C2 2026-06-02] `iVar1 = FUN_005ad570(&DAT_007ddf9c)` \u2014 guarded init/once-check; return NULL if it returns 0. 2\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbc00",
+     "plate": "[C2 2026-06-02] Calls `FUN_005ad5f0(&DAT_007ddf9c)` (release/destruct the static filter object) and returns.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbc10",
+     "plate": "[C2 2026-06-02] `piVar2 = FUN_005bbd50(param_1, param_5)` \u2014 create the sound buffer; return 0 if NULL. 2. Assemble a WAVEFORMATEX-style\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbd50",
+     "plate": "[C2 2026-06-02] Zero a 9-dword (0x24-byte) DSBUFFERDESC `local_24`; clear the out-pointer `local_28 = 0`. 2. `local_24[0] = 0x24`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbdb0",
+     "plate": "[C2 2026-06-02] Clear out triple: `param_6[0]=param_6[1]=param_6[2]=0`. 2. Build WAVEFORMATEX from `param_2`: channels =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbed0",
+     "plate": "[C2 2026-06-02] If `param_2 != 0`: `QueryInterface(*param_1, &DAT_005d09cc, param_1+1)` via vtable slot 0\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbf30",
+     "plate": "[C2 2026-06-02] If `param_1[2] != 0`: `Release(param_1[2])` via `vtable+0x8`. 2. If `param_1[1] != 0`: `Release(param_1[1])` via\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bbf60",
+     "plate": "[C2 2026-06-02] Clear out trio: `param_3[0] = param_3[1] = param_3[2] = 0`. 2. `iVar1 = vtable+0x14(param_1, *param_2, param_3)` \u2014\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc020",
+     "plate": "[C2 2026-06-02] `local_4 = 0`; `piVar2 = *param_1` (buffer interface). 2. `iVar1 = vtable+0x24(piVar2, &local_4)` \u2014 GetStatus into\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc050",
+     "plate": "[C2 2026-06-02] `iVar2 = vtable+0x2c(*param_1, param_2, param_4)` \u2014 Lock, returning region pointer(s)/length(s). 2. If `iVar2 >= 0`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc0f0",
+     "plate": "[C2 2026-06-02] `iVar2 = vtable+0x2c(*param_1, param_2, param_4)` \u2014 Lock. 2. If `iVar2 >= 0`: same pair of inline pointer/length relay\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc190",
+     "plate": "[C2 2026-06-02] **Silence short-circuit**: if `*param_1 < -9999` (dB\u00d7100 floor): write `param_2 = {0, 0, 0x3dcccccd (0.1f), 0}` and\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc450",
+     "plate": "[C2 2026-06-02] `*param_1 = 0; param_1[1] = 0;` \u2014 clears the first two dwords (the interface-pointer pair at the head of the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc470",
+     "plate": "[C2 2026-06-02] `FUN_005bc450()` (zero the head pair); `FUN_005be0f0(0, param_3+2)` and `FUN_005be0f0(0, param_3+8, 0)` (construct two\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc640",
+     "plate": "[C2 2026-06-02] If `param_1[1] != 0`: `Release(param_1[1])` via `vtable+0x8`. 2. If `*param_1 != 0`: - if `param_1[1] == 0` (the QI'd\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc690",
+     "plate": "[C2 2026-06-02] `piVar1 = param_1 + 2` (embedded sub-object at `+0x8`); `FUN_005be140()` prep, then `vtable+0xc(piVar1)`. 2. `iVar3 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc750",
+     "plate": "[C2 2026-06-02] `piVar1 = *param_1` (COM interface). `QueryInterface(piVar1, &DAT_005d09ac, &local_34)` via vtable slot 0\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc800",
+     "plate": "[C2 2026-06-02] `iVar1 = FUN_005ad570(&DAT_007ddfc4)` \u2014 guarded once-check; return NULL if 0. 2. `FUN_005ad540(&DAT_007ddfc4\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc850",
+     "plate": "[C2 2026-06-02] Calls `FUN_005ad5f0(&DAT_007ddfc4)` (release/destruct the second static handler object) and returns.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc860",
+     "plate": "[C2 2026-06-02] `iVar1 = FUN_005ae250(0x12, 8, 1, 0, &DAT_007ddfec)` \u2014 allocate/register a pool tracker (the `&DAT_007ddfec` handle\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc880",
+     "plate": "[C2 2026-06-02] Calls `FUN_005ae330(&DAT_007ddfec)` \u2014 release the pool tracker on the same `&DAT_007ddfec` handle that 0x005bc860\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc890",
+     "plate": "[C2 2026-06-02] `pv = CoTaskMemAlloc(0x48)` (72 = sizeof(AM_MEDIA_TYPE)); return NULL on failure. 2. Copy `0x12` dwords (72 bytes) from\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc900",
+     "plate": "[C2 2026-06-02] If `*(LPVOID*)((int)param_1 + 0x44) != 0` (pbFormat): `CoTaskMemFree(pbFormat)`. 2. `CoTaskMemFree(param_1)` (free the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bc920",
+     "plate": "[C2 2026-06-02] **PCM** (`FUN_005adf30(param_2[1], &DAT_005e6424) == 0`): allocate an 18-byte WAVEFORMATEX\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcab0",
+     "plate": "[C2 2026-06-02] **Subtype**: if `*param_1 == -2` (0xFFFE, WAVE_FORMAT_EXTENSIBLE), copy the SubFormat GUID directly from\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcb80",
+     "plate": "[C2 2026-06-02] Writes the well-known \"audio subtype from format tag\" GUID `{0000pppp-0000-0010-8000-00AA00389B71}` (where `pppp` =\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_audio_005bcbb0_005bf470",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x005bcbb0",
+     "plate": "[C2 2026-06-02] Frees the format-block field of a media-type-shaped struct at `param_1`.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcbe0",
+     "plate": "[C2 2026-06-02] Constructor for the semaphore-protected SPSC ring-buffer object used to queue COM interface pointers. `param_1` =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcc70",
+     "plate": "[C2 2026-06-02] Destructor for the ring-buffer object built by FUN_005bcbe0. `param_1` = object.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcca0",
+     "plate": "[C2 2026-06-02] Thread-safe PUSH of a COM interface pointer into the ring buffer. `param_1` = ring object, `param_2` = COM interface\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcd10",
+     "plate": "[C2 2026-06-02] Thread-safe POP from the ring buffer. `param_1` = ring object. Returns the dequeued COM pointer, or 0 if the ring is\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcd80",
+     "plate": "[C2 2026-06-02] Drains the ring buffer, releasing every queued COM pointer. `param_1` = ring object.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bcda0",
+     "plate": "[C2 2026-06-02] Returns the ring buffer's current occupancy (number of queued items). `param_1` = ring object. Locked read; releases\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bce80",
+     "plate": "[C2 2026-06-02] Constructor for the RwaDSRenderer filter object (DirectShow CBaseFilter-shaped). `param_1` = object.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bd500",
+     "plate": "[C2 2026-06-02] Recursive DirectShow pin-graph traversal that invokes a caller-supplied callback at each reached node. Effective\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bd610",
+     "plate": "[C2 2026-06-02] Conditionally releases three global COM interface pointers. No parameters.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bd6f0",
+     "plate": "[C2 2026-06-02] Streaming per-tick handler for the RwaDSRenderer (installed at filter `+0x30` by FUN_005bce80; called via pointer, no\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bd9e0",
+     "plate": "[C2 2026-06-02] Secondary per-instance initializer for the RwaDSRenderer core object (installed at filter `+0x3c` by FUN_005bce80\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bdad0",
+     "plate": "[C2 2026-06-02] Second streaming per-tick variant (sibling of FUN_005bd6f0), pumping the second pin's sample/allocator descriptors at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bdc70",
+     "plate": "[C2 2026-06-02] Flushes/resets the renderer's sample pipes. `param_1` = filter wrapper; `param_2` = enable flag. `core = *(param_1 +\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bde50",
+     "plate": "[C2 2026-06-02] Zeroes a media-buffer descriptor. `param_1` = descriptor (5-dword struct).",
+     "rename": null
+    },
+    {
+     "rva": "0x005bde70",
+     "plate": "[C2 2026-06-02] Binds (loads) a media-buffer descriptor from a source object. `param_1` = descriptor, `param_2` = source object\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bdef0",
+     "plate": "[C2 2026-06-02] Releases a media-buffer descriptor's bound object according to its mode tag `param_1[4]`, then zeroes the descriptor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bdf40",
+     "plate": "[C2 2026-06-02] Copies bytes from a source media-buffer descriptor into a sink descriptor (the renderer's pull/push data mover)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bdff0",
+     "plate": "[C2 2026-06-02] Sets/clears a \"discontinuity\" flag on a media-buffer descriptor's bound object, by mode tag `*(param_1 + 0x10)`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be080",
+     "plate": "[C2 2026-06-02] Tests the \"discontinuity\" flag on a media-buffer descriptor's bound object (companion getter to the setter\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be0f0",
+     "plate": "[C2 2026-06-02] Constructor for a small COM/list node with an optional inline trailing buffer. `param_1` = inline buffer byte-count (0\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be160",
+     "plate": "[C2 2026-06-02] Conditional teardown for a COM-style audio node. `param_1` = object.",
+     "rename": null
+    },
+    {
+     "rva": "0x005be1b0",
+     "plate": "[C2 2026-06-02] QueryInterface implementation for a RwaDS COM object. `param_1` = this, `param_2` = riid pointer, `param_3` = ppvObject\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be260",
+     "plate": "[C2 2026-06-02] Constructor/factory for the **RwaDSSource** DirectShow source filter (named via string `u_RwaDSSource_00635838`, with\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be450",
+     "plate": "[C2 2026-06-02] Destructor for the RwaDSSource filter built by FUN_005be260. `param_1` = object. Tears down the worker thread and\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be540",
+     "plate": "[C2 2026-06-02] Acquires a delivery IMediaSample from the IMemAllocator associated with a pin at `param_1 + 0x15c`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be5f0",
+     "plate": "[C2 2026-06-02] Enqueues a media sample into the RwaDSSource ring buffer and wakes the worker thread. `param_1` = filter object\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be630",
+     "plate": "[C2 2026-06-02] Connection/peer-pin probe. `param_1` = object (an `int*`). Returns 1 on success, 0 otherwise.",
+     "rename": null
+    },
+    {
+     "rva": "0x005be720",
+     "plate": "[C2 2026-06-02] Stack-resident COM helper that constructs an interface on a 252-byte stack frame and registers it with a global service\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be8c0",
+     "plate": "[C2 2026-06-02] Constructor for an enumerator object (IEnumMediaTypes / IEnumPins-shaped, 0x14 bytes). `param_1` = parent pin/filter\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005be930",
+     "plate": "[C2 2026-06-02] Resets an enumerator's cursor. `param_1` = enumerator object.",
+     "rename": null
+    },
+    {
+     "rva": "0x005be940",
+     "plate": "[C2 2026-06-02] QueryInterface implementation for an enumerator object. `param_1` = this, `param_2` = riid, `param_3` = ppvObject out.",
+     "rename": null
+    },
+    {
+     "rva": "0x005be990",
+     "plate": "[C2 2026-06-02] Destructor for the enumerator object built by FUN_005be8c0. `param_1` = object. Returns the base Release result.",
+     "rename": null
+    },
+    {
+     "rva": "0x005be9f0",
+     "plate": "[C2 2026-06-02] IEnumMediaTypes::Next implementation. `param_1` = enumerator, `param_2` = count requested, `param_3` = output array of\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005beaa0",
+     "plate": "[C2 2026-06-02] IEnumMediaTypes::Clone implementation. `param_1` = source enumerator, `param_2` = `*ppEnum` out.",
+     "rename": null
+    },
+    {
+     "rva": "0x005beae0",
+     "plate": "[C2 2026-06-02] Base allocator/constructor for the CBasePin/CBaseFilter-shaped object. `param_1` = preallocated object or 0, `param_2`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005beb50",
+     "plate": "[C2 2026-06-02] Initializes (zeroes) the CBasePin/CBaseFilter media-type-array bookkeeping block. `param_1` = object.",
+     "rename": null
+    },
+    {
+     "rva": "0x005beba0",
+     "plate": "[C2 2026-06-02] Multi-IID QueryInterface for a CBasePin-shaped object. `param_1` = this, `param_2` = riid, `param_3` = ppvObject out\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bec10",
+     "plate": "[C2 2026-06-02] Base destructor for the CBaseFilter/pin object. `param_1` = object. Releases the media-type table, tears down the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bedc0",
+     "plate": "[C2 2026-06-02] Thread-safe setter for the \"connected peer pin\" pointer at `+0x124`, with COM refcount handover. `param_1` = object\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bef20",
+     "plate": "[C2 2026-06-02] Copies a media-type-ish record from a source object to a destination. `param_1` = source, `param_2` = destination.",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf000",
+     "plate": "[C2 2026-06-02] Returns a CoTaskMem-allocated copy of a string field (IPin::QueryId-shaped). `param_1` = object, `param_2` = `*out`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf050",
+     "plate": "[C2 2026-06-02] Broadcasts a vtable call to every output pin of a CBaseFilter. `param_1` = filter. Returns the last negative HRESULT\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf0c0",
+     "plate": "[C2 2026-06-02] Broadcasts a 6-argument vtable call to every output pin of a CBaseFilter (6-arg sibling of FUN_005bf050). `param_1` =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf160",
+     "plate": "[C2 2026-06-02] Enumerator search/walk over a COM enumerator (IEnumPins / IEnumMediaTypes-shaped). `param_1` = the object exposing the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf230",
+     "plate": "[C2 2026-06-02] Constructor/factory for the **RwaDSRenderer** DirectShow filter (named via string `u_RwaDSRenderer_0063581c`, with an\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf350",
+     "plate": "[C2 2026-06-02] Pops one item from the RwaDSRenderer's ring buffer, gated on the ring being present. `param_1` = renderer object. The\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf370",
+     "plate": "[C2 2026-06-02] Destructor for the RwaDSRenderer filter built by FUN_005bf230 (renderer counterpart of the RwaDSSource destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf470",
+     "plate": "[C2 2026-06-02] Stack-resident COM helper that constructs an interface on a 252-byte stack frame and registers it with the global\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_audio_005bf4d0_005c9770",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x005bf4d0",
+     "plate": "[C2 2026-06-02] 1-arg method on a COM-style object (`param_1` = `int*` to an object whose first field is a vtable pointer). Local\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf660",
+     "plate": "[C2 2026-06-02] 1-arg leaf. Zero-initialises three consecutive 4-byte slots of `param_1`: - `param_1[0] = 0` (byte +0x0) - `param_1[1]\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf670",
+     "plate": "[C2 2026-06-02] 1-arg leaf implementing **COM `AddRef`**: calls `InterlockedIncrement((LONG *)(param_1 + 4))` \u2014 atomically increments\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf6d0",
+     "plate": "[C2 2026-06-02] 3-arg method implementing **COM `QueryInterface`**: - `param_1` = object (`int*`), `param_2` = requested IID, `param_3`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf710",
+     "plate": "[C2 2026-06-02] 6-arg **constructor / placement-initialiser** for the audio COM object (the ~0x164-byte struct used throughout this\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf7d0",
+     "plate": "[C2 2026-06-02] 3-arg leaf setter. Writes two callback/function-pointer fields of the audio COM object: - `*(param_1 + 0x144) =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf8a0",
+     "plate": "[C2 2026-06-02] 1-arg method. Tears down a held COM interface under a critical section. - Calls `FUN_005c0730(param_1)`; result\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bf8f0",
+     "plate": "[C2 2026-06-02] 2-arg method that negotiates/connects a COM interface (DirectShow-pin / allocator style). - `puVar1 = param_1 + 0x140`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfa20",
+     "plate": "[C2 2026-06-02] 2-arg method that forwards to the allocator/interface held at `+0x140`. - `piVar1 = *(param_1 + 0x140)`. - If NULL\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfa40",
+     "plate": "[C2 2026-06-02] 4-arg method: get-or-create an allocator object and validate it via the `+0x144` callback. - `bVar1 = false; piVar2 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfb20",
+     "plate": "[C2 2026-06-02] 1-arg method: reads two 64-bit values via a COM vtable call and converts them from 100-ns `REFERENCE_TIME` units to a\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfb90",
+     "plate": "[C2 2026-06-02] 1-arg method: - `ReleaseSemaphore((HANDLE)param_1[0x54], 1, NULL)` \u2014 releases (count +1) the semaphore handle at word\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfcc0",
+     "plate": "[C2 2026-06-02] 3-arg leaf getter returning two 64-bit values (high dwords forced to 0): - `*param_2 = *(param_1 + 0x15c)`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfd10",
+     "plate": "[C2 2026-06-02] 3-arg **constructor** for a *second* COM object class in this cluster (distinct vtables from [[0x005bf710]])\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfe60",
+     "plate": "[C2 2026-06-02] 1-arg method: lazily create and hand out an allocator object under a critical section\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bfed0",
+     "plate": "[C2 2026-06-02] 2-arg method: replace the held allocator interface (`NotifyAllocator`-style) under a critical section\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005bff40",
+     "plate": "[C2 2026-06-02] 2-arg method: initialise an audio source from a COM interface and probe its capability set into a bitmask. (Matches\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7070",
+     "plate": "[C2 2026-06-02] 1-arg method: unlink a mixer-voice node from a doubly-linked list under a semaphore lock, then reset\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7330",
+     "plate": "[C2 2026-06-02] 1-arg method: compute left/right mixer gains (with a table-driven square-root transform) and program two ramp targets\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7500",
+     "plate": "[C2 2026-06-02] 1-arg method: compute a 64-bit fixed-point rate/pitch value and store it. - `uVar1 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7570",
+     "plate": "[C2 2026-06-02] 2-arg voice reset/init: - `*(param_1 + 0x90) = 0` ; `*(param_1 + 0x94) = 0` \u2014 clear two state fields. - `*(param_1 +\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c75b0",
+     "plate": "[C2 2026-06-02] 1-arg leaf getter: `return *(undefined4 *)(param_1 + 0x8c)` \u2014 reads the 32-bit field at byte offset `+0x8c` of the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c75c0",
+     "plate": "[C2 2026-06-02] 2-arg state setter under the mixer-context semaphore: - `WaitForSingleObject(*(HANDLE *)(*(param_1 + 0x9c) + 4)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7990",
+     "plate": "[C2 2026-06-02] 4-arg thin wrapper that forwards to the global-singleton dispatcher with the first two user args swapped and a constant\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7a90",
+     "plate": "[C2 2026-06-02] 1-arg setup that configures a mixer-voice processing descriptor, selecting a mix-routine variant by a queried\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7ee0",
+     "plate": "[C2 2026-06-02] 2-arg method: zero two mix accumulator buffers, then reset every voice in a linked list under the semaphore. - Buffer\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7f80",
+     "plate": "[C2 2026-06-02] 1-arg conditional release: - If `(*(byte *)(param_1 + 0x4c) & 1) != 0`: - `FUN_005aaa00(*(param_1 + 0x3c), 0, 0)` \u2014\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7fb0",
+     "plate": "[C2 2026-06-02] 1-arg voice teardown (installed at object `+0x34` by [[0x005c7a90]]): - `FUN_005bb000(*(param_1 + 0x3c), 0)` \u2014\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c7fe0",
+     "plate": "[C2 2026-06-02] 1-arg method (installed at object `+0x2c` by [[0x005c7a90]]): run a guarded operation under the `+0x2c` synchronisation\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c8120",
+     "plate": "[C2 2026-06-02] 1-arg setup, **structural twin of [[0x005c7a90]]** for a second voice class (different name string, larger descriptor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c88b0",
+     "plate": "[C2 2026-06-02] 2-arg dispatcher over a descriptor `param_2`: - If `*param_2 != NULL` (a function pointer is present): tail-call\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c8910",
+     "plate": "[C2 2026-06-02] 3-arg parameter-set over the sub-object at `*(param_1 + 0x20)` (call it `S`): - `iVar1 = S = *(param_1 + 0x20)`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c8980",
+     "plate": "[C2 2026-06-02] 1-arg tail wrapper (installed at object `+0x2c` by [[0x005c8120]]): - `FUN_005aab00(param_1, 1)` \u2014 same guarded\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c8eb0",
+     "plate": "[C2 2026-06-02] 2-arg constructor (installed at object `+0x3c` by [[0x005c8120]]): - `FUN_005b0f10(param_1, param_2)` \u2014 base-class /\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c90a0",
+     "plate": "[C2 2026-06-02] 2-arg voice stop over the sub-object `S = *(param_1 + 0x20)`: - `*(S + 0x224) = *(S + 0x1ec) * 2` \u2014 recompute a derived\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9120",
+     "plate": "[C2 2026-06-02] 1-arg leaf state reset: - `*(param_1 + 0x1e8) = 0` - `*(param_1 + 0x20c) = 0` - `*(param_1 + 0x210) = 0` - `*(param_1 +\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c91f0",
+     "plate": "[C2 2026-06-02] 5-arg pure tail wrapper that prepends the global singleton pointer: - `FUN_005aba20(&DAT_007de2b8, param_1, param_2\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9220",
+     "plate": "[C2 2026-06-02] 4-byte **thunk** (`jmp FUN_005abcf0`) \u2014 Ghidra marks `thunk:true`. The thunk forwards directly to `FUN_005abcf0` at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9380",
+     "plate": "[C2 2026-06-02] 1-arg pure leaf size computation: - `param_1 = param_1 >> 3` (bits \u2192 bytes). - If `param_1 == 0`, clamp to `1`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c93a0",
+     "plate": "[C2 2026-06-02] 3-arg constructor for a **bit-array allocator object** (header + payload). - `uVar2 = param_1 + 7` (param_1 = capacity\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9490",
+     "plate": "[C2 2026-06-02] 1-arg destructor for the bit-array allocator object built by [[0x005c93a0]]; honours the ownership flags byte at `+9`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c94c0",
+     "plate": "[C2 2026-06-02] 3-arg method: find a run of `param_2` consecutive **zero (free)** bits in the bit-array, mark them used, and return the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c95b0",
+     "plate": "[C2 2026-06-02] 4-arg bit-range setter on the bit-array (counterpart to the [[0x005c94c0]] search): set bits `[param_2\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9680",
+     "plate": "[C2 2026-06-02] 0-arg lazy singleton getter/initialiser over the global `&DAT_007de34c`: - `iVar1 = FUN_005ad570(&DAT_007de34c)` \u2014\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c96d0",
+     "plate": "[C2 2026-06-02] 0-arg tail wrapper: `FUN_005ad5f0(&DAT_007de34c)` \u2014 the shutdown/release counterpart to the [[0x005c9680]] singleton\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c96e0",
+     "plate": "[C2 2026-06-02] 0-arg lazy singleton getter/initialiser \u2014 **twin of [[0x005c9680]]** over a different global handle: - `iVar1 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9730",
+     "plate": "[C2 2026-06-02] 0-arg tail wrapper: `FUN_005ad5f0(&DAT_007de374)` \u2014 the shutdown/release counterpart to the [[0x005c96e0]] singleton\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9740",
+     "plate": "[C2 2026-06-02] 1-arg two-channel output commit: convert the two 32-bit mix accumulators into the two 16-bit output buffers via\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9770",
+     "plate": "[C2 2026-06-02] 3-arg **saturating int32 \u2192 int16 PCM pack** (the mixer output-conversion leaf). - `param_1` = `int16*` destination\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_audio_005c98d0_005cb0ef",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x005c98d0",
+     "plate": "[C2 2026-06-02] Voice-mixer accumulate stage. `param_1` (ECX-style `this`) holds a voice-channel object; the voice struct is `piVar3 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005c9d10",
+     "plate": "[C2 2026-06-02] Voice resampler / sample-fetch stage that fills the source buffer the FUN_005c98d0 mixer then reads. `piVar5 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca2d0",
+     "plate": "[C2 2026-06-02] MSVC C runtime helper `__aullshr` \u2014 64-bit unsigned right shift of the value in `EDX:EAX` by `CL`. Ghidra reports\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca2f0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1790`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca2f8",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1790`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca300",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet (helper-call form): pushes the frame pointer and `CALL 0x004a3bda`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca320",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1790`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca340",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca360",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca368",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca380",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3a0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a01b0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3a8",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1180`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3b3",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1180`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3d0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a01b0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3d8",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1180`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3e3",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1180`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3ee",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a1180`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca3f9",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6a0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca404",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6a0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca412",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6a0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca430",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca438",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet (helper-call form): pushes the frame pointer and `CALL 0x004a3bda`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca450",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca470",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca478",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca490",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca498",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca4a0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca4a8",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca4c0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca4c8",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca4e0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca500",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca520",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049f300`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca540",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049eeb0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca560",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca580",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a2ae0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca5a0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049f090`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca5c0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049eeb0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca5c8",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a2ae0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca5e0",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet (helper-call form): pushes the frame pointer and `CALL 0x004a3bda`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca600",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca620",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049c6d0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca640",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x0049eeb0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005ca680",
+     "plate": "[C2 2026-06-02] MSVC SEH unwind funclet: loads an object pointer into ECX, then tail-jumps (`JMP 0x004a26f0`) to the cleanup/destructor\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005cb000",
+     "plate": "[C2 2026-06-02] RenderWare `RwV3dTransformPoints` \u2014 transform an array of `param_5` points (`param_4`, stride 3 floats) by a 4x3\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005cb07f",
+     "plate": "[C2 2026-06-02] RenderWare `RwV3dTransformVectors` \u2014 twin of RwV3dTransformPoints (0x005cb000) without the translation column: `out.x =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x005cb0ef",
+     "plate": "[C2 2026-06-02] RenderWare `RwV3dTransformPoint` \u2014 single-point (no loop) form of RwV3dTransformPoints (0x005cb000). Transforms one\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  }
+ ],
+ "totals": {
+  "rvas": 196,
+  "plated": 196,
+  "missing_md": 0,
+  "cross_bucket_dups": []
+ }
+}
