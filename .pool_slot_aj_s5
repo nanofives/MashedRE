@@ -1,0 +1,8 @@
+Mashed_pool10
+# Pre-assigned Mashed_pool4 was POISONED by a leaked in-JVM project lock
+# (program_list_open=0 yet LockException on open; matches the documented
+# "MCP leaks project lock on failed open" failure mode — my first program_open
+# used path="MASHED.exe" which locked the project then errored, leaking the lock).
+# Cannot restart the shared server. Fell back to Mashed_pool10 (.rep 2026-06-02
+# 00:51, freshest; verified working by ai_s3). session_id=66dfa454fa3643469c958d2a46c13159.
+# Will program_close at end.
