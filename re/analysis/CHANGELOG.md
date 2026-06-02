@@ -3052,3 +3052,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-02  sweep-20260602-0347  scribe-release  buckets=4 drained  errors=0
 2026-06-02  re-classify batch_ai  audio C1->C2 x149 + reclass-OUT x47 (third-party-library: 1 msvc-crt@005ca2d0, 43 msvc-seh-funclets, 3 renderware V3dTransform@005cb000/07f/0ef; all kept C1 per vendored-library convention) + rename 2 LAB->FUN (005ba780/005ba7f0, master function_create). audio C1 -> 1 (held 005aa1e0 listing-LAB). C2 3473->3622. Filed UNCERTAINTIES U-7000..U-7399 (87, all non-blocking semantic/structural/data) + STUBS S-5703/5705/5708/5712 (4 new unpromoted code-labels; 46 worker-minted IDs dropped as already-tracked or now-reversed). Evidence: 4 bucket_audio plates + sweep-20260602-0347.
 2026-06-02  005aa1e0  FUN_005aa1e0  C1->C2  audio; master function_create (26B cdecl predicate wrapping FUN_005adf30, decomp-confirmed) + plate/bookmark; resolves S-1720; AUDIO C1 -> 0 (fully drained). sweep-20260602-0347 finalize.
+
+2026-06-02  sweep-20260602-1945  scribe-claim  buckets=6 queued (batch_aj s1-s6 author-only fragments), 0 skipped-HOLD
