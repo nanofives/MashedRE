@@ -110,6 +110,7 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 
 | ID | RVA | Caller | Resolved date | Resolution |
 |----|-----|--------|---------------|------------|
+| S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | 2026-06-02 | C2 batch_ai-finalize: master function_create + decomp confirms cdecl predicate `int(node,ctx){return FUN_005adf30(*node,ctx)==0;}`; plate re/analysis/bucket_audio_005a7b60_005ab620/005aa1e0.md; corrects old note (callee FUN_005adf30 not FUN_005ade10, U-6625) |
 | S-0373 | 0x00493ac0 LAB_00493ac0 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; pre-NT5 code-page path; GetThreadLocale→GetLocaleInfoA(0x1004)→atoi; fallback GetACP |
 | S-0374 | 0x00493b40 LAB_00493b40 | 0x00493b50 FUN_00493b50 | 2026-05-03 | C1 analyzed video_mci_d2; NT5+ code-page path; MOV EAX,3 (CP_THREAD_ACP); RET |
 | S-0375 | 0x0049ec10 FUN_0049ec10 | 0x00493c00 FUN_00493c00 | 2026-05-03 | C1 analyzed video_mci_d2; __thiscall ctor; vtable[0]+7 offsets; calls FUN_0049dd60+FUN_0049cfb0 |
@@ -521,7 +522,6 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 | S-1654 | 0x00432450 FUN_00432450 | 0x004324a0 FUN_004324a0 | frontend | passthrough | 2026-05-03 | MP race transition; same 6-param signature as FUN_0042bf30; used for non-zero eab0 path |
 | ~~S-1655~~ | ~~0x0042aa00 FUN_0042aa00~~ | ~~0x004322c0 FUN_004322c0~~ | frontend | **cleared** 2026-05-17 | callee 0x0042aa00 now C2 in frontend (track-display state update); frontend_s_dod_audit_20260517 |
 | ~~S-1656~~ | ~~0x00430910 FUN_00430910~~ | ~~0x004322c0 FUN_004322c0~~ | frontend | **cleared** 2026-05-17 | callee 0x00430910 now C3 in frontend (MenuOptionSlotGet); frontend_s_dod_audit_20260517 |
-| S-1720 | 0x005aa1e0 FUN_005aa1e0 | 0x005aa060 FUN_005aa060 | audio | passthrough | 2026-05-03 | inline callback at LAB_005aa1e0; no Ghidra function body; passed as code ptr to FUN_005aa0c0; D-5080 |
 | S-1600 | 0x00409930 FUN_00409930 | 0x0040ab40 FUN_0040ab40 | util | passthrough | 2026-05-03 | called in case 6 of FUN_0040ab40 alongside FUN_0042c1a0 |
 | S-1601 | 0x00409970 FUN_00409970 | 0x0040ab40 FUN_0040ab40 | util | passthrough | 2026-05-03 | called on sub-state 7/8 in multiple cases of FUN_0040ab40 |
 | S-1602 | 0x0042c1a0 FUN_0042c1a0 | 0x0040ab40 0x0040ac80 | util | passthrough | 2026-05-03 | called on case 6 and case 4 range-guarded paths; shared by two state dispatchers |
