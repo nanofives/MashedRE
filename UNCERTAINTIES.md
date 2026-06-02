@@ -157,6 +157,7 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-6323 | semantic | 0x0052d7e0 FUN_0052d7e0 | Depth-class enum for param_4; packing logic fully transcribed | param_4 depth-class enum mapping | Cross-reference callers passing param_4 | none |
 | U-6324 | semantic | 0x0052d980 FUN_0052d980 | Descriptor field meanings; registration logic fully transcribed | Descriptor field-name mapping | reference_to the registered descriptor readers | none |
 | U-6325 | semantic | 0x0052da20 FUN_0052da20 | Allocator-tag 0x3001b meaning and object field semantics; allocation/init arithmetic fully transcribed | Allocator-tag and object-field semantics | Cross-reference the allocator tag enum | none |
+| U-6326 | semantic | 0x00492d10 / 0x00493570 / 0x00493580 / 0x00493590 (timer_d3 cluster) | Field/value semantics of the timer cluster at DAT 0x00771968 ("timer_d3") — call sequence transcribed mechanically; field meanings not asserted. Consolidates batch_ag-s4 plate refs to non-existent IDs U-3472/U-3473/U-3475. | named field roles of the 0x00771968 timer struct | reference_to 0x00771968 write sites; cross-check the timer/TimerSlot cluster | none |
 
 ## Resolved (audit trail)
 
