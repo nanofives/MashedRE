@@ -3042,3 +3042,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005ab710_005af040  writes=60  errors=0
 2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005af070_005b2190  writes=60  errors=0
 2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005b2220_005b8570  writes=60  errors=0
+2026-06-02  sweep-20260602-0245  scribe-release  buckets=6 drained (360 plates, 359 bookmarks, 1 C0-listing, 0 renames)  errors=0
