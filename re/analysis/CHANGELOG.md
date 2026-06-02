@@ -3049,3 +3049,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-02  sweep-20260602-0347  scribe-release  bucket=bucket_audio_005bcbb0_005bf470  writes=49  errors=0
 2026-06-02  sweep-20260602-0347  scribe-release  bucket=bucket_audio_005bf4d0_005c9770  writes=49  errors=0
 2026-06-02  sweep-20260602-0347  scribe-release  bucket=bucket_audio_005c98d0_005cb0ef  writes=49  errors=0  (2 master function_create: 005ba780,005ba7f0 in s1 bucket)
+2026-06-02  sweep-20260602-0347  scribe-release  buckets=4 drained  errors=0
