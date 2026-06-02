@@ -3036,3 +3036,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 
 2026-06-01  qhull-disposition  subsystem-retag  count=183  util->third-party-library[qhull-2002.1]  band=0x0057c5b0..0x005a5820  (kept C1; FidDB/promotion DEFERRED)
 2026-06-02  sweep-20260602-0245  scribe-claim  buckets=6 queued, 0 skipped-HOLD (batch_ah audio promote-c2; scripted ghidra_eval apply)
+2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_0042f760_00465b20  writes=60  errors=0
+2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_00465c10_005a7b50  writes=60  errors=0
+2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005a7b60_005ab620  writes=60  errors=0
+2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005ab710_005af040  writes=60  errors=0
+2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005af070_005b2190  writes=60  errors=0
+2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005b2220_005b8570  writes=60  errors=0
