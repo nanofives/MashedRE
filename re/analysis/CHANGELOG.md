@@ -3035,3 +3035,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-01  0052df40  C1->C2  subsystem=util  re/analysis/bucket_util_0052daf0_00582680/0x0052df40.md  batch_ag
 
 2026-06-01  qhull-disposition  subsystem-retag  count=183  util->third-party-library[qhull-2002.1]  band=0x0057c5b0..0x005a5820  (kept C1; FidDB/promotion DEFERRED)
+2026-06-02  sweep-20260602-0245  scribe-claim  buckets=6 queued, 0 skipped-HOLD (batch_ah audio promote-c2; scripted ghidra_eval apply)
