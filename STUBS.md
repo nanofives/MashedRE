@@ -13,6 +13,38 @@ Each stub gets one row. Resolve by reversing the target function (preferred) or 
 
 | ID | RVA called | Caller (RVA / name) | Subsystem | Type | Inserted | Notes |
 |----|-----------|---------------------|-----------|------|----------|-------|
+| S-5500 | 0x005aeda0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aeda0: mod/div byte-budget (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5501 | 0x005ab370 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ab370: acquire sub-obj (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5502 | 0x005ab1c0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ab1c0: submit sub-obj (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5503 | 0x005ab620 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | thunk_FUN_005ab620: sub-obj release (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5504 | 0x005ad570 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ad570: registry init (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5505 | 0x005ad540 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ad540: register key (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5506 | 0x005ad420 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ad420: install tables (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5507 | 0x005ad5f0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ad5f0: deregister (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5508 | 0x005ae030 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ae030: object dtor (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5509 | 0x004522d0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_004522d0: free, CRT band (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5510 | 0x005adf30 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005adf30: key comparator (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5511 | 0x005ac9e0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ac9e0: fmt comparator (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5512 | 0x005ac980 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ac980: build fmt key (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5513 | 0x005ac5f0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ac5f0: fmt-key match (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5514 | 0x005aea50 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aea50: scratch alloc (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5515 | 0x005ac740 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ac740: release fmt/header buf (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5516 | 0x005aea00 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aea00: fixed-size alloc (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5517 | 0x005c9d00 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005c9d00: stereo decode path (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5518 | 0x005a9e10 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005a9e10: base obj init (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5519 | 0x005aee20 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aee20: feature-bit query (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5520 | 0x004d7ff0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_004d7ff0: installed handler +0x30 (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5521 | 0x005b0f40 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b0f40: base handler/dtor chain (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5522 | 0x005b0f10 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b0f10: descriptor base init (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5523 | 0x005b1080 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b1080: output-buf alloc (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5524 | 0x005ad2e0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005ad2e0: release sub-obj +0x58 (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5525 | 0x005b1500 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | thunk_FUN_005b1500: destruct ctx +0x5c (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5526 | 0x005b0ec0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b0ec0: state-change notify (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5527 | 0x005b2080 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b2080: ring pump/advance (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5528 | 0x005b0f90 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b0f90: downstream notify (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5529 | 0x005b11d0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005b11d0: return node to pool (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5530 | 0x005aeea0 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aeea0: semaphore create (out-of-bucket unreversed callee, batch_ah s6) |
+| S-5531 | 0x005aa560 | 0x005b2220..0x005b8570 batch_ah-s6 (audio stream/codec) | audio | passthrough | 2026-06-01 | FUN_005aa560: delegated ctor/registrar (out-of-bucket unreversed callee, batch_ah s6) |
 | S-0001 | 0x00499730 | 0x00493900 sub_00493900 | boot | passthrough | 2026-05-02 | Returns command-line string pointer; called as FUN_00499730(); depth-3 |
 | S-0002 | 0x004a3ac9 | 0x00493900 sub_00493900 | boot | passthrough | 2026-05-02 | strtok-like tokenizer; takes (str, delimiter); depth-3 |
 | S-0003 | 0x00499890 | 0x00499ba0 sub_00499ba0 | boot | passthrough | 2026-05-02 | Called after CreateWindowExA; no visible args; depth-3 |

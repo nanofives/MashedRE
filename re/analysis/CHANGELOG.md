@@ -3043,3 +3043,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005af070_005b2190  writes=60  errors=0
 2026-06-01  sweep-20260602-0245  scribe-release  bucket=bucket_audio_005b2220_005b8570  writes=60  errors=0
 2026-06-02  sweep-20260602-0245  scribe-release  buckets=6 drained (360 plates, 359 bookmarks, 1 C0-listing, 0 renames)  errors=0
+2026-06-01  batch_ah  C1->C2  audio x359 (held 0x005aa1e0 listing-level fn-create-candidate; reclass 0x00545340 audio->track per U-6501); +135 uncertainties U-6400..U-6925; +32 stubs S-5500..S-5531; drained via sweep-20260602-0245
