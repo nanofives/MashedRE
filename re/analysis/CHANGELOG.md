@@ -3062,3 +3062,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-02  sweep-20260602-1945  scribe-release  bucket=bucket_sky_worldobj_dbg_video_hud_00484280_00555910  writes=24  errors=0  (2 master function_create: 00554940,00555910)
 2026-06-02  sweep-20260602-1945  scribe-release  buckets=6 drained  errors=0
 2026-06-02  re-classify batch_aj  C1->C2 x145 (input 41, track 26, smplfzx 14, physics 13, powerups 10, camera 9, particle->render 8, sky 7, world-objects 6, debug-overlay 5, video 4, hud 2) + 3 RW-Physics/qhull reclass-OUT kept-C1 (0055dc70,00562520,0057c4b0) + rename LAB->FUN 00479030 + 2 master function_create (00554940,00555910 resolves U-1067/U-5649 boundary) + 17 U-rows U-7400..U-7416 (data/struct/semantic, non-blocking). Boundary-flags surfaced: 00462500/00462510 (track-vs-audio), 0047b9b0 (physics-vs-script). Evidence: 6 bucket plates + sweep-20260602-1945. input/track/physics/smplfzx/powerups/camera/particle/sky/world-objects/debug-overlay/video/hud C1 -> 0.
+
+2026-06-02  sweep-20260603-0116  scribe-claim  buckets=6 queued (batch_ak s1-s6 author-only fragments; vehicle+ai), 0 skipped-HOLD
