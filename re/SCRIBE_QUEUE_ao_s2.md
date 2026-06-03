@@ -68,3 +68,7 @@ finalize (ghidra-sweep + central re-classify) writes hooks.csv / trackers.
 - No hooks.csv / STUBS.md / UNCERTAINTIES.md / DEFERRED.md / re/SCRIBE_QUEUE.md writes.
   No master-project mutation. No U-/S- IDs minted (reserved U-8600..U-8899 / S-6800..
   S-6999 are for central re-classify).
+
+## Drained
+
+drained-by=sweep-20260603-2210; 10 plates, 10 bookmarks, 0 renames

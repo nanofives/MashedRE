@@ -108,3 +108,7 @@ third-party-library[RenderWare-Physics-3.7], kept C1.
   read-only session). No U-IDs / S-IDs minted (author-only; nothing plated, so
   no inline [UNCERTAIN] markers were created either). gameplay C1 still drains
   by 26 via the reclass-OUT.
+
+## Drained
+
+drained-by=sweep-20260603-2210; 0 plates (all-skip fragment; library_skip list consumed by central re-classify)

@@ -75,3 +75,7 @@ finalize (ghidra-sweep) writes hooks.csv / trackers and commits.
   function) and FUN_004c3910 (resolved mechanically, no row mutation).
 - Files in the atomic commit: 3 plates + this fragment. No hooks.csv writes, no
   re-classify, no master-Ghidra mutation (read-only MCP throughout).
+
+## Drained
+
+drained-by=sweep-20260603-2210; 3 plates, 3 bookmarks, 0 renames

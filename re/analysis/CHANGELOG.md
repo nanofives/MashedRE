@@ -3100,3 +3100,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-03  sweep-20260603-1259  scribe-release  buckets=6 drained  errors=0
 2026-06-03  re-classify batch_an  C1->C2 x156 (gameplay campaign 3/~5, next-156 0x456040..0x47f380): 132 stay gameplay + 24 subsystem-reclass (10 gameplay->render = 3 s4 alt-camera/render-object triple + 6 s5 RwIm2D-quad/RW-3D-line draw + 1 s6 LOD setter; 8 gameplay->audio = 3 s3 + 5 s4 RWS-audio emitter/channel position+param sync; 4 gameplay->camera s6 camera-path node containment FUN_0047c160; 2 gameplay->hud s6 event-marker overlay builders DAT_007e9de0). 0045c030/0045a530/00461e90/0046bfc0/00471780/0047cdc0 boundary-flagged. NO library_skip, NO function_create (all 156 genuine game fns w/ function objects). +204 U-rows U-8300..U-8503 (non-blocking). Evidence: 6 bucket plates + sweep-20260603-1259. gameplay C1 480 -> 324.
 2026-06-03  sweep-20260603-2210  scribe-claim  buckets=3 queued (ao_s1 14, ao_s2 10, ao_s3 3), 3 all-skip fragments (ao_s4/s5/s6), 0 skipped-HOLD
+2026-06-03  sweep-20260603-2210  scribe-release  bucket=bucket_gameplay_0047f450_004e4440  writes=14  errors=0
+2026-06-03  sweep-20260603-2210  scribe-release  bucket=bucket_gameplay_004e4800_00558030  writes=10  errors=0
+2026-06-03  sweep-20260603-2210  scribe-release  bucket=bucket_gameplay_00558100_0055a1f0  writes=3  errors=0

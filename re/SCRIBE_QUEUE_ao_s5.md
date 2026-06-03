@@ -71,3 +71,7 @@ finalize (ghidra-sweep) writes hooks.csv / trackers.
 - **No U-IDs / S-IDs minted**; no new uncertainties — every verdict is from
   literal decomp of the function body. No hooks.csv / tracker writes, no master
   Ghidra writes (read-only session, program_close at end).
+
+## Drained
+
+drained-by=sweep-20260603-2210; 0 plates (all-skip fragment; library_skip list consumed by central re-classify)

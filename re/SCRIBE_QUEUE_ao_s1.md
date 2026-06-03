@@ -80,3 +80,7 @@ finalize (ghidra-sweep) writes hooks.csv / trackers and commits.
   function objects cited in each plate.
 - Files committed atomically (bucket dir + this fragment); no re-classify, no
   build, no Frida — author-only.
+
+## Drained
+
+drained-by=sweep-20260603-2210; 14 plates, 14 bookmarks, 0 renames

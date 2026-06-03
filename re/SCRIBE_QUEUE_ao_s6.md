@@ -102,3 +102,7 @@ reserved ranges (U-8600..U-8899 / S-6800..S-6999), and commits.
 - **Campaign effect**: gameplay C1 drains by 26 via reclass-OUT (kept C1 under
   third-party-library[RenderWare-Physics-3.7]); C2-promotion count from this
   session is 0, as the batch_ao header predicted for the RW-Physics page.
+
+## Drained
+
+drained-by=sweep-20260603-2210; 0 plates (all-skip fragment; library_skip list consumed by central re-classify)

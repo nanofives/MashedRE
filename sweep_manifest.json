@@ -3,831 +3,171 @@
  "level": "C2",
  "buckets": [
   {
-   "bucket": "bucket_gameplay_00456040_004588c0",
+   "bucket": "bucket_gameplay_0047f450_004e4440",
    "bm_category": "promote-c2",
    "rvas": [
     {
-     "rva": "0x00456040",
-     "plate": "[C2 2026-06-03] Pool-G slot allocator / activator. `param_1` is the owning entity record; the slot index is read from `*(param_1 +\u2026",
+     "rva": "0x0047f450",
+     "plate": "[C2 2026-06-03] No parameters, no return value. Body 0x0047f450..0x0047f47e (47 bytes). - Guard: `if (DAT_006ce274 != 0)` \u2014 the global\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456140",
-     "plate": "[C2 2026-06-03] Emit one rotated screen-space sprite at world/screen position `param_1` with colour `param_2` (32-bit RGBA). Stack\u2026",
+     "rva": "0x0047f480",
+     "plate": "[C2 2026-06-03] No parameters, no return value. Body 0x0047f480..0x0047f4b7 (56 bytes). - Guard: `if (DAT_006ce274 != 0)`. - Sequence\u2026",
      "rename": null
     },
     {
-     "rva": "0x004568a0",
-     "plate": "[C2 2026-06-03] Pool-G **teardown / clump-destroy pass** (NOT init \u2014 the C1 plate's \"initialisation\" label was a guess; the\u2026",
+     "rva": "0x0047f6d0",
+     "plate": "[C2 2026-06-03] Signature (pool1 decomp): `undefined4* FUN_0047f6d0(undefined4 param_1, int param_2, undefined4* param_3, undefined4\u2026",
      "rename": null
     },
     {
-     "rva": "0x004568d0",
-     "plate": "[C2 2026-06-03] Per-frame pool-G updater that drives a 3-axis spinning **lock/track indicator** (one per active slot). Iterates the 4\u2026",
+     "rva": "0x0047fad0",
+     "plate": "[C2 2026-06-03] Signature (pool1 decomp): `int FUN_0047fad0(int param_1, undefined4 param_2, float param_3, undefined4 param_4\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456c30",
-     "plate": "[C2 2026-06-03] Pool-G cleanup walk (per-slot virtual release + clear active flag).",
+     "rva": "0x004893a0",
+     "plate": "[C2 2026-06-03] 16-byte tail-call thunk: body 0x004893a0..0x004893af; pool1 decomp shows a single call/jump to `FUN_00476cb0` with this\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456c70",
-     "plate": "[C2 2026-06-03] Pool-G per-slot teardown loop. Walks `&DAT_006886b0` (pool-G base) forward, stride `0x48` B, while `(int)puVar1 <\u2026",
+     "rva": "0x004893b0",
+     "plate": "[C2 2026-06-03] Leaf, one parameter `int* param_1`. Body 0x004893b0..0x004893ce (31 bytes; the 2026-05-19 plate's size_bytes=16 was\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456c90",
-     "plate": "[C2 2026-06-03] True thunk (Ghidra `thunk:true`, body 0x00456c90..0x00456c94, 4 bytes) that jumps to `FUN_00456c70` (pool-G per-slot\u2026",
+     "rva": "0x00489450",
+     "plate": "[C2 2026-06-03] Leaf, 2 args `(int* param_1, undefined4* param_2)`. Body 0x00489450..0x00489472 (35 bytes). - Reads `iVar1 =\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456ce0",
-     "plate": "[C2 2026-06-03] Leaf field-reset on the struct pointed to by EAX (`in_EAX`, dword-indexed). Writes exactly five fields, no branches\u2026",
+     "rva": "0x00489480",
+     "plate": "[C2 2026-06-03] Leaf, 2 args `(int* param_1, undefined4 param_2)`. Body 0x00489480..0x00489497 (24 bytes). - Single write\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456d00",
-     "plate": "[C2 2026-06-03] Leaf field-reset on the struct pointed to by EAX (`in_EAX`, dword-indexed): - `in_EAX[0] = 0x3f800000` (+0x00, = 1.0f \u2014\u2026",
+     "rva": "0x004894a0",
+     "plate": "[C2 2026-06-03] Leaf, 3 args `(int* param_1, undefined4* param_2, undefined4* param_3)`. Body 0x004894a0..0x004894e0 (65 bytes). - Two\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456eb0",
-     "plate": "[C2 2026-06-03] Spawn one particle into **pool H** (base `&DAT_00688810`, stride `0x1a` dwords = 0x68 = 104 B). The active-flag bitmap\u2026",
+     "rva": "0x004894f0",
+     "plate": "[C2 2026-06-03] Leaf, 1 arg `(int param_1)`. Body 0x004894f0..0x004894ff (16 bytes). - Writes 0 to three fields of the track container\u2026",
      "rename": null
     },
     {
-     "rva": "0x00456f70",
-     "plate": "[C2 2026-06-03] Probabilistic vertical-impulse (\"shake\") injector.",
+     "rva": "0x00489500",
+     "plate": "[C2 2026-06-03] 1 arg `(int* param_1)`, no return. Body 0x00489500..0x0048988a (907 bytes). - Time advance: reads `fVar2 =\u2026",
      "rename": null
     },
     {
-     "rva": "0x004570a0",
-     "plate": "[C2 2026-06-03] Effect-record builder that fills a 7-dword stack record and dispatches it via `FUN_00484cf0` (the effect dispatcher\u2026",
+     "rva": "0x00489890",
+     "plate": "[C2 2026-06-03] 1 arg `(int param_1)`, no return. Body 0x00489890..0x004898c6 (55 bytes). - Gate: `if (*(int*)(param_1 + 0x54) != 0)` \u2014\u2026",
      "rename": null
     },
     {
-     "rva": "0x00457100",
-     "plate": "[C2 2026-06-03] Per-frame **pool-H update + draw** (64 entries). Cursor `puVar5 = &DAT_00688828` (= pool base 0x00688810 + 0x18); slot\u2026",
+     "rva": "0x004898d0",
+     "plate": "[C2 2026-06-03] 1 arg `(int param_1)`. Body 0x004898d0..0x00489901 (50 bytes). - `*(undefined4*)(param_1 + 0x54) = 0` \u2014 clears the gate\u2026",
      "rename": null
     },
     {
-     "rva": "0x00457610",
-     "plate": "[C2 2026-06-03] Releases the two pool-H sprite lists, bracketed by a render-state push/pop on the renderer singleton `DAT_007d3ff8`:",
-     "rename": null
-    },
-    {
-     "rva": "0x00457650",
-     "plate": "[C2 2026-06-03] Pool-H cull scan. Walks `puVar5 = &DAT_00688858` (= pool base 0x688810 + 0x48), stride `0x1a` dwords (0x68 B), slot\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004576b0",
-     "plate": "[C2 2026-06-03] \"Any active?\" predicate over two bitmaps; returns 1 if anything is active, else 0.",
-     "rename": null
-    },
-    {
-     "rva": "0x004577f0",
-     "plate": "[C2 2026-06-03] Thin wrapper that calls `FUN_00456eb0` (spawn one particle into pool H) and returns. Although Ghidra renders it as a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00457ba0",
-     "plate": "[C2 2026-06-03] Per-entry reset for a pool-J entry (`unaff_ESI` = entry base, dword-indexed; stride 0x6c). Sets an identity-scale +\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00457c10",
-     "plate": "[C2 2026-06-03] Raycast-and-spawn-decal for an active entry (`in_EAX` = parent entry). Builds a ground-probe segment from the parent's\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00458020",
-     "plate": "[C2 2026-06-03] Reset of a \"pair\" header (`unaff_EDI` = header base). The header holds two pool-J entry pointers at +0x00/+0x04 plus\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00458080",
-     "plate": "[C2 2026-06-03] Per-frame state machine for a pulsing \u2192 detonating pickup/mine entry (`in_EAX` = entry; state at +0x60). `local_a4 =\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00458360",
-     "plate": "[C2 2026-06-03] Two-loop teardown of the pool-I/J effect arrays:",
-     "rename": null
-    },
-    {
-     "rva": "0x004584e0",
-     "plate": "[C2 2026-06-03] Direction-and-magnitude helper: writes the (optionally normalized) vector from an entity to an anchor into ESI, and\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00458570",
-     "plate": "[C2 2026-06-03] Companion to 0x004584e0: direction-and-magnitude from a looked-up target frame to an anchor. `param_1` is the entity\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00458880",
-     "plate": "[C2 2026-06-03] Pool-I teardown (25 entries). Destroys every entry's RW clump, then releases the pool's sprite-list header and shared\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004588c0",
-     "plate": "[C2 2026-06-03] Burst-spawns 10 sub-particles around a pool entry (`param_1` is a real arg here \u2014 Ghidra recovered `void\u2026",
+     "rva": "0x00489910",
+     "plate": "[C2 2026-06-03] 1 arg `(int param_1)`, no return. Body 0x00489910..0x00489930 (33 bytes). - Gate: `if (*(int*)(param_1 + 0x54) != 0)`\u2026",
      "rename": null
     }
    ],
    "missing_md": []
   },
   {
-   "bucket": "bucket_gameplay_00458a40_0045ac40",
+   "bucket": "bucket_gameplay_004e4800_00558030",
    "bm_category": "promote-c2",
    "rvas": [
     {
-     "rva": "0x00458a40",
-     "plate": "[C2 2026-06-03] `void FUN_00458a40(void)` \u2014 entry pointer arrives in **EDI** (`unaff_EDI`, an `int*`); body 0x00458a40..0x00458b0e\u2026",
+     "rva": "0x00554010",
+     "plate": "[C2 2026-06-03] `undefined4 * FUN_00554010(undefined4 *param_1)` \u2014 recursive resolver over a path-node singly-linked list (next-sibling\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458b10",
-     "plate": "[C2 2026-06-03] `void FUN_00458b10(void)` \u2014 body 0x00458b10..0x00458bea. Pickup-pool **post-frame proximity submit + render-state\u2026",
+     "rva": "0x00554150",
+     "plate": "[C2 2026-06-03] `void FUN_00554150(int *param_1)` \u2014 deep destructor for a path-node, inverse of the loader FUN_00554200 and the\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458c70",
-     "plate": "[C2 2026-06-03] `void FUN_00458c70(void)` \u2014 body 0x00458c70..0x00458cf7. **Pickup-pool reset-all** (drains every slot to zero). - Loops\u2026",
+     "rva": "0x00554200",
+     "plate": "[C2 2026-06-03] `int * FUN_00554200(undefined4 param_1)` \u2014 loads one path-sub-list from binary stream `param_1`, recursing for nested\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458d00",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_00458d00(void)` \u2014 body 0x00458d00..0x00458dc0. **Random pickup-type selector** \u2014 returns one type id\u2026",
+     "rva": "0x00554390",
+     "plate": "[C2 2026-06-03] `int * FUN_00554390(int param_1)` \u2014 top-level binary vector-font loader from stream `param_1`. Single caller\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458dd0",
-     "plate": "[C2 2026-06-03] `void FUN_00458dd0(undefined4 *param_1)` \u2014 body 0x00458dd0..0x00458df5. **Re-skin a pickup-pool entry's visual by its\u2026",
+     "rva": "0x00555830",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00555830(int param_1)` \u2014 font-object destructor. Returns 1 on success, 0 if `param_1 == NULL`.",
      "rename": null
     },
     {
-     "rva": "0x00458e00",
-     "plate": "[C2 2026-06-03] `int FUN_00458e00(float *param_1, int param_2)` \u2014 body 0x00458e00..0x00458f11. **Spawn a pickup-pool entry.** `param_1`\u2026",
+     "rva": "0x00556780",
+     "plate": "[C2 2026-06-03] `undefined4 * FUN_00556780(undefined4 *param_1, undefined4 param_2, undefined4 param_3, int param_4)` \u2014 text-format\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458f20",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_00458f20(int param_1, int param_2)` \u2014 body 0x00458f20..0x00458f70. **Per-slot state transition** for\u2026",
+     "rva": "0x00556e40",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00556e40(int param_1)` \u2014 refcount-decrement / conditional destroy of a style/text-block object.",
      "rename": null
     },
     {
-     "rva": "0x00458f80",
-     "plate": "[C2 2026-06-03] `void FUN_00458f80(undefined4 param_1)` \u2014 body 0x00458f80..0x00458f98. **Broadcast a state transition to all 25 pickup\u2026",
+     "rva": "0x00557110",
+     "plate": "[C2 2026-06-03] `int FUN_00557110(int param_1, float *param_2, float *param_3, float *param_4, float *param_5)` \u2014 leaf; initializes the\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458fa0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_00458fa0(int param_1, undefined4 param_2)` \u2014 body 0x00458fa0..0x00458fc5. **Per-slot lifetime/TTL\u2026",
+     "rva": "0x005572b0",
+     "plate": "[C2 2026-06-03] 5-byte unconditional `jmp FUN_005572c0` thunk. Ghidra marks the function object `thunk:true` (re-verified in\u2026",
      "rename": null
     },
     {
-     "rva": "0x00458fd0",
-     "plate": "[C2 2026-06-03] `void FUN_00458fd0(undefined4 param_1, undefined4 param_2, undefined4 param_3)` \u2014 body 0x00458fd0..0x00458ff0\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00459000",
-     "plate": "[C2 2026-06-03] `void FUN_00459000(void)` \u2014 body 0x00459000..0x0045928e. **Pickup-pool per-frame update + draw** (main tick for the\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004593b0",
-     "plate": "[C2 2026-06-03] `void FUN_004593b0(void)` \u2014 body 0x004593b0..0x004593f3. **Homing-projectile pool (\"pool J\") teardown.** Distinct from\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00459400",
-     "plate": "[C2 2026-06-03] `int FUN_00459400(int param_1)` \u2014 body 0x00459400..0x0045947f. **Pool J per-frame trail-mesh vertex animator** (cosine\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00459480",
-     "plate": "[C2 2026-06-03] `void FUN_00459480(void)` \u2014 body 0x00459480..0x00459532. Entry pointer arrives in **EDI** (`unaff_EDI`). **Pool J\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00459540",
-     "plate": "[C2 2026-06-03] `void FUN_00459540(int param_1)` \u2014 body 0x00459540..0x0045955b. **Pool J per-slot deactivate/reset notify** (called\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004595c0",
-     "plate": "[C2 2026-06-03] `void FUN_004595c0(int param_1)` \u2014 body 0x004595c0..0x0045961a. **Pool J per-slot activate** (called from weapon-fire\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00459620",
-     "plate": "[C2 2026-06-03] `void FUN_00459620(float param_1, float *param_2, float param_3, float param_4, undefined4 *param_5)` \u2014 body\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a0d0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0045a0d0(int param_1)` \u2014 body 0x0045a0d0..0x0045a0ea. **Pool J per-slot target-id accessor.** - If `0\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a110",
-     "plate": "[C2 2026-06-03] `undefined * FUN_0045a110(int param_1)` \u2014 body 0x0045a110..0x0045a128. **Pool J per-slot aim-vector pointer accessor.**\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a130",
-     "plate": "[C2 2026-06-03] `void FUN_0045a130(void)` \u2014 body 0x0045a130..0x0045a180. **Pool J post-frame proximity submit + render-state flush**\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a190",
-     "plate": "[C2 2026-06-03] `void FUN_0045a190(void)` \u2014 body 0x0045a190..0x0045a392. **Pool J per-frame update + draw** (main tick; parallels the\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a3a0",
-     "plate": "[C2 2026-06-03] `void FUN_0045a3a0(undefined4 *param_1)` \u2014 body 0x0045a3a0..0x0045a412. **Hit-spark record-table zero-init** (the\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a530",
-     "plate": "[C2 2026-06-03] `void FUN_0045a530(undefined4 param_1)` \u2014 body 0x0045a530..0x0045a585. Source vec3 arrives in **EAX** (`in_EAX`, a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a590",
-     "plate": "[C2 2026-06-03] `void FUN_0045a590(void)` \u2014 body 0x0045a590..0x0045a6a5. Item object arrives in **EAX** (`in_EAX`, a pickup/powerup\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045a950",
-     "plate": "[C2 2026-06-03] `void FUN_0045a950(int param_1)` \u2014 body 0x0045a950..0x0045aba1. **Per-frame collision/impact hit-spark emit +\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045ac40",
-     "plate": "[C2 2026-06-03] `void __thiscall FUN_0045ac40(int param_1, float *param_2)` \u2014 body 0x0045ac40..0x0045ad69. **Distance-sort the 5\u00d75\u2026",
+     "rva": "0x005572c0",
+     "plate": "[C2 2026-06-03] `int * FUN_005572c0(int *param_1, float *param_2)` \u2014 walks a path-node chain `param_1` (next-sibling at +0x14 /\u2026",
      "rename": null
     }
    ],
    "missing_md": []
   },
   {
-   "bucket": "bucket_gameplay_0045ae80_0045dd50",
+   "bucket": "bucket_gameplay_00558100_0055a1f0",
    "bm_category": "promote-c2",
    "rvas": [
     {
-     "rva": "0x0045ae80",
-     "plate": "[C2 2026-06-03] `void FUN_0045ae80(void)` \u2014 body 0x0045ae80..0x0045b1f5. Per-frame driver for the \"hit-spark\"/impact-spark particle\u2026",
+     "rva": "0x00558100",
+     "plate": "[C2 2026-06-03] Takes one arg `param_1` (an object pointer; dereferenced at `param_1 + 0x48` below). - Reads `piVar1 = *(int\u2026",
      "rename": null
     },
     {
-     "rva": "0x0045b360",
-     "plate": "[C2 2026-06-03] `void FUN_0045b360(void)` \u2014 body 0x0045b360..0x0045b38d. `__thiscall`-style: operates on the entity/effect-slot pointer\u2026",
+     "rva": "0x00558140",
+     "plate": "[C2 2026-06-03] Inverse of 0x00558100 (same record lookup, same offsets). - Reads `piVar1 = *(int **)(DAT_00913274 + param_1)` (cited\u2026",
      "rename": null
     },
     {
-     "rva": "0x0045b390",
-     "plate": "[C2 2026-06-03] `void FUN_0045b390(int *param_1)` \u2014 body 0x0045b390..0x0045b6d6. Detonation handler: emits an event, spawns ground\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045bfd0",
-     "plate": "[C2 2026-06-03] `undefined4 thunk_FUN_00426060(void)` \u2014 body 0x0045bfd0..0x0045bfd4. Ghidra-marked thunk (`thunk:true`): a 5-byte `JMP\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045bff0",
-     "plate": "[C2 2026-06-03] `bool FUN_0045bff0(int param_1)` \u2014 body 0x0045bff0..0x0045c009. Single read: `return (&DAT_0088fc88)[param_1 * 0x2d] ==\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c030",
-     "plate": "[C2 2026-06-03] `void FUN_0045c030(int param_1, float *param_2, undefined4 *param_3)` \u2014 body 0x0045c030..0x0045c102. Builds a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c110",
-     "plate": "[C2 2026-06-03] `uint FUN_0045c110(int param_1)` \u2014 body 0x0045c110..0x0045c328. Evaluates a tagged condition opcode read from\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c330",
-     "plate": "[C2 2026-06-03] `bool FUN_0045c330(undefined4 param_1)` \u2014 body 0x0045c330..0x0045c342. Pure inverter: `iVar1 = FUN_0045bff0(param_1)\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c4e0",
-     "plate": "[C2 2026-06-03] `int FUN_0045c4e0(int param_1, int *param_2, int param_3)` \u2014 body 0x0045c4e0..0x0045c503. Linear search over a record\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c510",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0045c510(int param_1, int param_2)` \u2014 body 0x0045c510..0x0045c545. Walks the 4-slot pointer table\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c550",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0045c550(int param_1, int param_2)` \u2014 body 0x0045c550..0x0045c637. Two phases over three parallel stack\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c640",
-     "plate": "[C2 2026-06-03] `void FUN_0045c640(int param_1)` \u2014 body 0x0045c640..0x0045c6a0. 4-way selector that sets the two globals `DAT_0088fbc4`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c850",
-     "plate": "[C2 2026-06-03] `void FUN_0045c850(int param_1)` \u2014 body 0x0045c850..0x0045c85f. Single store: `*(undefined4*)(&DAT_0088f09c + param_1 *\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c860",
-     "plate": "[C2 2026-06-03] `void FUN_0045c860(void)` \u2014 body 0x0045c860..0x0045c876. Zeros four consecutive globals `DAT_0088f0a0 = DAT_0088f0a4 =\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045c880",
-     "plate": "[C2 2026-06-03] `void FUN_0045c880(undefined4 param_1, int param_2, int param_3)` \u2014 body 0x0045c880..0x0045c9f3. Updates the 6\u00d76 float\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045ca30",
-     "plate": "[C2 2026-06-03] `void FUN_0045ca30(void)` \u2014 body 0x0045ca30..0x0045caa5. In-place tri-band quantizer over the same 6\u00d76 float matrix at\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045cab0",
-     "plate": "[C2 2026-06-03] `bool FUN_0045cab0(undefined4 param_1)` \u2014 body 0x0045cab0..0x0045caed. 1. `FUN_0046cbb0(param_1, &local_8, local_4)` \u2014\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045caf0",
-     "plate": "[C2 2026-06-03] `bool FUN_0045caf0(int param_1, int param_2)` \u2014 body 0x0045caf0..0x0045cb1f. Returns: - `false` if `DAT_008aa254 >= 2`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045cb20",
-     "plate": "[C2 2026-06-03] `void FUN_0045cb20(int param_1, undefined4 param_2, undefined4 param_3)` \u2014 body 0x0045cb20..0x0045cbde. Registers a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045cbe0",
-     "plate": "[C2 2026-06-03] `void FUN_0045cbe0(undefined4 param_1, undefined4 param_2)` \u2014 body 0x0045cbe0..0x0045cc48. Counterpart of 0x0045cb20\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045d080",
-     "plate": "[C2 2026-06-03] `void FUN_0045d080(void)` \u2014 body 0x0045d080..0x0045d0d4. Clears every binding for all 4 players. - Outer loop `iVar1 =\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045d0e0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0045d0e0(int param_1)` \u2014 body 0x0045d0e0..0x0045d1d6. Per-frame predicate: should player `param_1`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045da90",
-     "plate": "[C2 2026-06-03] `void FUN_0045da90(int param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)` \u2014 body\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045daf0",
-     "plate": "[C2 2026-06-03] `void FUN_0045daf0(int param_1, undefined4 param_2)` \u2014 body 0x0045daf0..0x0045db4e. Updates the 3D position of an audio\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045dce0",
-     "plate": "[C2 2026-06-03] `void FUN_0045dce0(int param_1, undefined4 *param_2, int param_3)` \u2014 body 0x0045dce0..0x0045dd44. Mode-gated variant of\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0045dd50",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0045dd50(int param_1)` \u2014 body 0x0045dd50..0x0045dd5b. One-line accessor: `return\u2026",
+     "rva": "0x00558b40",
+     "plate": "[C2 2026-06-03] Segment-vs-sphere test. `param_1` = float[6] segment (two endpoints), `param_2` = float[4] sphere (center xyz + radius\u2026",
      "rename": null
     }
    ],
    "missing_md": []
   },
   {
-   "bucket": "bucket_gameplay_0045dff0_0046dd90",
+   "bucket": "bucket_gameplay_0055bd80_0055e330",
    "bm_category": "promote-c2",
-   "rvas": [
-    {
-     "rva": "0x0045dff0",
-     "plate": "[C2 2026-06-03] `__thiscall`-tagged by Ghidra; two params `param_1`, `param_2`. - Computes `fVar2 = (float)FUN_00408ad0(0,param_1)`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00461e90",
-     "plate": "[C2 2026-06-03] Four params: `param_1` (int case selector), `param_2` (int key), `param_3`/`param_4` (out `undefined4*`). Returns\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00462760",
-     "plate": "[C2 2026-06-03] No params. Walks the pointer table starting at `&DAT_0069045c`, advancing 4 bytes (`piVar2 = piVar2 + 1`) per iteration\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004656e0",
-     "plate": "[C2 2026-06-03] One param `param_1` (int player/slot index). - Guard 1: requires `(&DAT_0088f680)[param_1] != 0` (per-player struct\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00465f40",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int entity), `param_2` (`undefined4*` \u2192 3 floats, a position), `param_3` (int sub-slot), `param_4`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00466000",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int entity), `param_2` (`undefined4*` \u2192 3-float position), `param_3` (int sub-slot), `param_4`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00466100",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int entity), `param_2` (int sub-slot), `param_3` (float volume). - Volume-only variant of\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004670a0",
-     "plate": "[C2 2026-06-03] No params; constructor-like. Builds the global render object at `DAT_006905b0`. - `DAT_006905b0 = FUN_004c1d30()`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004671d0",
-     "plate": "[C2 2026-06-03] One param `param_1` (int, a player/camera index; -1 = \"current\"). - `iVar1 = FUN_0042b930()`: - if `iVar1 != 3` \u2192\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004672d0",
-     "plate": "[C2 2026-06-03] One param `param_1`. Identical control flow to 0x004671d0 but returns the frame pointer itself (no `+0x40`)\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046bce0",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` out, 3 dwords), `param_2` (uint vehicle index). - Bounds: `if (0xf < param_2) return\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046bd20",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` out, 3 dwords), `param_2` (uint vehicle index). - Bounds: `if (0xf < param_2) return\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046bd60",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` out), `param_2` (uint vehicle), `param_3` (uint wheel). - Bounds: `if ((param_2 <\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046bda0",
-     "plate": "[C2 2026-06-03] Params: `param_1` (float* out), `param_2` (uint vehicle), `param_3` (uint wheel). - Bounds: `(param_2 < 0x10) &&\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046be10",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` \u2192 1 value), `param_2` (uint vehicle), `param_3` (int offset into the per-vehicle\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046be50",
-     "plate": "[C2 2026-06-03] Params: `param_1` (uint vehicle), `param_2` (case index 1..6), `param_3` (uint value), `param_4` (undefined4 paired\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046bf50",
-     "plate": "[C2 2026-06-03] Params: `param_1` (float* \u2192 vec3), `param_2` (uint vehicle). - Bounds: `if (0xf < param_2) return 0;`. - Branch on\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046bfc0",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int vehicle index), `param_2` (float* AABB \u2014 6 floats min/max), `param_3` (matrix ptr), `param_4`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046d2e0",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int vehicle), `param_2` (int wheel), `param_3` (undefined4* out). - Bounds: `if ((param_1 < 0x10) &&\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046d320",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` out), `param_2` (uint vehicle), `param_3` (uint wheel). - Identical body to 0x0046d2e0\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046d360",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` out), `param_2` (uint vehicle), `param_3` (uint wheel). - Bounds `(param_2 < 0x10) &&\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046d660",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` out, 3 dwords), `param_2` (uint vehicle). - Bounds: `if (0xf < param_2) return 0;`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046d740",
-     "plate": "[C2 2026-06-03] Params: `param_1` (`undefined4*` \u2192 vec3 in), `param_2` (uint vehicle). - Bounds: `if (0xf < param_2) return 0;`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046d880",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int object base; has writable flag at +0x19c and a vec3 at +0x9c8), `param_2` (int array of\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046dd80",
-     "plate": "[C2 2026-06-03] No params. Returns `(float10)DAT_0061313c` \u2014 single global float getter, returned in x87 extended precision. Pure leaf\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0046dd90",
-     "plate": "[C2 2026-06-03] Params: `param_1` (int vehicle), `param_2` (undefined4 value). - `*(undefined4*)(&DAT_008816f4 + param_1 * 0xd04) =\u2026",
-     "rename": null
-    }
-   ],
-   "missing_md": []
-  },
-  {
-   "bucket": "bucket_gameplay_00471430_0047b6b0",
-   "bm_category": "promote-c2",
-   "rvas": [
-    {
-     "rva": "0x00471430",
-     "plate": "[C2 2026-06-03] `void FUN_00471430(void)`. Body 0x00471430..0x00471444. No params, no return. - Single store\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00471450",
-     "plate": "[C2 2026-06-03] `void FUN_00471450(void)`. Body 0x00471450..0x0047147f. No params, no return. - `iVar1 = DAT_006905c8;` (snapshot\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00471490",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_00471490(int param_1)`. Body 0x00471490..0x004714e3. Appends one id to the current record's list; two\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00471530",
-     "plate": "[C2 2026-06-03] `void FUN_00471530(void)`. Body 0x00471530..0x00471556. No params, no return. Clears a fixed-stride table. - `puVar1 =\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00471560",
-     "plate": "[C2 2026-06-03] `int FUN_00471560(char *param_1)`. Body 0x00471560..0x0047159c. Linear search of a fixed-stride string table; returns\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00471780",
-     "plate": "[C2 2026-06-03] `void FUN_00471780(int param_1, int param_2)`. Body 0x00471780..0x00471abd. Per-event tick loop that drives an animator\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004721b0",
-     "plate": "[C2 2026-06-03] `int FUN_004721b0(int param_1, undefined4 param_2)`. Body 0x004721b0..0x004721d9. Configures a sub-resource and\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004722e0",
-     "plate": "[C2 2026-06-03] `void FUN_004722e0(int param_1)`. Body 0x004722e0..0x00472303. (Decompiler note: a trailing unreachable block at\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472500",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_00472500(int param_1)`. Body 0x00472500..0x0047251d. Per-record getter with a gate. - `if\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472520",
-     "plate": "[C2 2026-06-03] `void FUN_00472520(int param_1, undefined4 param_2)`. Body 0x00472520..0x00472530. One-store setter\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472550",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_00472550(int param_1)`. Body 0x00472550..0x0047255c. One-load getter. - `return (&DAT_00691508)[param_1\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472560",
-     "plate": "[C2 2026-06-03] `void FUN_00472560(int param_1, int param_2)`. Body 0x00472560..0x004725af. Populates a 0x691500-table record's two\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004725f0",
-     "plate": "[C2 2026-06-03] `void FUN_004725f0(void)`. Body 0x004725f0..0x0047263a. Resets the whole 0x691500-table (the records read by 0x00472500\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004726b0",
-     "plate": "[C2 2026-06-03] `float10 FUN_004726b0(float *param_1, float *param_2)`. Body 0x004726b0..0x004726ee. Pure leaf: 2-element dot product\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004726f0",
-     "plate": "[C2 2026-06-03] `float10 FUN_004726f0(float *param_1, float *param_2)`. Body 0x004726f0..0x00472736. Pure leaf: 3-element dot product\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472740",
-     "plate": "[C2 2026-06-03] `void FUN_00472740(undefined1 *param_1)`. Body 0x00472740..0x00472810. Fills a 4-byte buffer with four RNG bytes\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004728f0",
-     "plate": "[C2 2026-06-03] `float10 FUN_004728f0(undefined4 param_1)`. Body 0x004728f0..0x004729a6. Numerically integrates the arc length of a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004729b0",
-     "plate": "[C2 2026-06-03] `void FUN_004729b0(undefined4 param_1, undefined1 *param_2, undefined1 *param_3)`. Body 0x004729b0..0x00472acc. Walks a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472ad0",
-     "plate": "[C2 2026-06-03] `void FUN_00472ad0(undefined4 param_1)`. Body 0x00472ad0..0x00472b0d. Thin wrapper that calls the gradient curve-line\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00472b10",
-     "plate": "[C2 2026-06-03] `void FUN_00472b10(undefined4 *param_1, float param_2, float param_3, float param_4, float param_5, uint param_6)`\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00473220",
-     "plate": "[C2 2026-06-03] `void FUN_00473220(float param_1, float param_2, float param_3, float param_4, uint param_5, uint param_6)`. Body\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004733b0",
-     "plate": "[C2 2026-06-03] `void FUN_004733b0(float param_1, float param_2, float param_3, float param_4, uint param_5, uint param_6)`. Body\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004744a0",
-     "plate": "[C2 2026-06-03] `void FUN_004744a0(void)`. Body 0x004744a0..0x00474884. Renders a sine-displaced ribbon as a grid of alpha-blended 2D\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047b480",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047b480(undefined4 param_1)`. Body 0x0047b480..0x0047b4fe. A script-bytecode op handler: reads 3\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047b5b0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047b5b0(undefined4 param_1)`. Body 0x0047b5b0..0x0047b626. Script-bytecode op handler: reads **two**\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047b6b0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047b6b0(undefined4 param_1)`. Body 0x0047b6b0..0x0047b71e. Script-bytecode op handler: reads **three**\u2026",
-     "rename": null
-    }
-   ],
-   "missing_md": []
-  },
-  {
-   "bucket": "bucket_gameplay_0047ba20_0047f380",
-   "bm_category": "promote-c2",
-   "rvas": [
-    {
-     "rva": "0x0047ba20",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047ba20(int param_1, int param_2, float *param_3, uint *param_4)` \u2014 body 0x0047ba20..0x0047bb05\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047bb10",
-     "plate": "[C2 2026-06-03] `void FUN_0047bb10(int param_1, float *param_2, int param_3, int *param_4)` \u2014 body 0x0047bb10..0x0047bc81. **Per-hull\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047bc90",
-     "plate": "[C2 2026-06-03] `undefined4 __fastcall FUN_0047bc90(undefined4 param_1, int param_2)` \u2014 body 0x0047bc90..0x0047bcb3. **Edge\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047c1f0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047c1f0(undefined4 param_1)` \u2014 body 0x0047c1f0..0x0047c224. **All-sub-items-pass predicate** over one\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047c230",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047c230(undefined4 param_1)` \u2014 body 0x0047c230..0x0047c265. **All-sub-items-equal-2 predicate** over\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047c270",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047c270(undefined4 param_1)` \u2014 body 0x0047c270..0x0047c2ca. **Any-active-node-all-equal-2 test** over\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047c2d0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047c2d0(undefined4 param_1)` \u2014 body 0x0047c2d0..0x0047c32a. **Any-active-node-all-nonzero test** over\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047ccb0",
-     "plate": "[C2 2026-06-03] `void FUN_0047ccb0(void)` \u2014 body 0x0047ccb0..0x0047cd23. **Teardown of a sub-system's RW resource + indexed handle\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047cd50",
-     "plate": "[C2 2026-06-03] `void FUN_0047cd50(int param_1, int param_2)` \u2014 body 0x0047cd50..0x0047cdb6. **Conditional reset-scale + flag-set on a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047cdc0",
-     "plate": "[C2 2026-06-03] `void FUN_0047cdc0(int param_1, float param_2)` \u2014 body 0x0047cdc0..0x0047cdd3. **Store-squared-distance setter.**\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047cde0",
-     "plate": "[C2 2026-06-03] `void FUN_0047cde0(int param_1, undefined4 param_2)` \u2014 body 0x0047cde0..0x0047cdfa. **Bounds-checked setter** for the\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047ce00",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047ce00(int param_1)` \u2014 body 0x0047ce00..0x0047ce19. **Bounds-checked getter** for the 200-entry array\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047ce20",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047ce20(int param_1)` \u2014 body 0x0047ce20..0x0047ce3a. **Bounds-checked getter** for the scenery-actor\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047ce70",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047ce70(void)` \u2014 body 0x0047ce70..0x0047ce75. **Getter for the global scenery-actor count**\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047ce80",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047ce80(int param_1)` \u2014 body 0x0047ce80..0x0047ce9a. **Bounds-checked getter** for the 200-entry array\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047cf20",
-     "plate": "[C2 2026-06-03] `void FUN_0047cf20(int param_1, int param_2)` \u2014 body 0x0047cf20..0x0047cfcf. **Scenery-actor visibility/render-enable\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047d130",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047d130(int param_1)` \u2014 body 0x0047d130..0x0047d149. **Bounds-checked getter for the scenery-actor\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047d150",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047d150(int param_1)` \u2014 body 0x0047d150..0x0047d178. **Get a scenery- actor's RW render object\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047d180",
-     "plate": "[C2 2026-06-03] `void FUN_0047d180(int param_1, undefined4 param_2)` \u2014 body 0x0047d180..0x0047d230. **Reposition / re-transform a\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047d330",
-     "plate": "[C2 2026-06-03] `void FUN_0047d330(void)` \u2014 body 0x0047d330..0x0047d3b9. **Teardown of the 4-slot \"special\" actor array**\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047d640",
-     "plate": "[C2 2026-06-03] `void FUN_0047d640(int param_1)` \u2014 body 0x0047d640..0x0047deef. **Per-frame on-screen event-marker emitter (type-6\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047def0",
-     "plate": "[C2 2026-06-03] `void FUN_0047def0(int param_1)` \u2014 body 0x0047def0..0x0047e9be. **Per-frame on-screen event-marker emitter (type-8/9/10\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047f1e0",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047f1e0(undefined4 *param_1, uint param_2)` \u2014 body 0x0047f1e0.. 0x0047f22f. **Read the \"current\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047f230",
-     "plate": "[C2 2026-06-03] `undefined4 FUN_0047f230(undefined4 *param_1, uint param_2)` \u2014 body 0x0047f230.. 0x0047f281. **Read the \"current\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047f290",
-     "plate": "[C2 2026-06-03] `void FUN_0047f290(int param_1)` \u2014 body 0x0047f290..0x0047f378. **Destroy one scenery- actor slot** `param_1` (0..200)\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x0047f380",
-     "plate": "[C2 2026-06-03] `void FUN_0047f380(void)` \u2014 body 0x0047f380..0x0047f44d. **Bulk-destroy the entire 200-slot scenery-actor pool.**\u2026",
-     "rename": null
-    }
-   ],
+   "rvas": [],
    "missing_md": []
   }
  ],
  "totals": {
-  "rvas": 156,
-  "plated": 156,
+  "rvas": 27,
+  "plated": 27,
   "missing_md": 0,
   "cross_bucket_dups": []
  }
