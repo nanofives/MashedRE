@@ -3072,3 +3072,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-02  sweep-20260603-0116  scribe-release  bucket=bucket_ai_00452eb0_004c3df0  writes=19  errors=0
 2026-06-02  sweep-20260603-0116  scribe-release  buckets=6 drained  errors=0
 2026-06-02  re-classify batch_ak  C1->C2 x123 (vehicle 66, ai 57) + 14 RW/RW-Physics reclass-OUT kept-C1 (6 renderware 004c0b30/004c1040/004c39b0/004e69a0/004e6ab0/004e7e30 + 8 RenderWare-Physics-3.7 00559c40/0055ae70/0055b940/0055bab0/0055c4a0/0057c220/0057c300/0057c500) + 115 U-rows U-7500..U-7614 (non-blocking) + 004826d0 note correction. Evidence: 6 bucket plates + sweep-20260603-0116. vehicle + ai C1 -> 0 (gameplay 792 + render 458 remain).
+2026-06-03  sweep-20260603-0334  scribe-claim  buckets=6 queued, 0 skipped-HOLD (batch_al gameplay campaign 1/~5, 156 RVAs)
