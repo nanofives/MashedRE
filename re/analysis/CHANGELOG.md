@@ -3082,3 +3082,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-03  sweep-20260603-0334  scribe-release  buckets=6 drained  errors=0
 2026-06-03  re-classify batch_al  C1->C2 x156 (gameplay campaign 1/~5, lowest-156 0x405400..0x41d910): 111 stay gameplay + 45 subsystem-reclass (6 gameplay->hud s4 VehicleIcons sprite-batch; 39 gameplay->render = 13 s4 trail-decal/drift-mark/particle + 26 s6 ParticleEmitter classes + ghost tint). 004173e0 render boundary-flagged. NO library_skip, NO function_create (all 156 genuine game fns w/ function objects). +236 U-rows U-7700..U-7935 (non-blocking). Evidence: 6 bucket plates + sweep-20260603-0334. gameplay C1 792 -> 636 (render 458 + remaining gameplay 636).
 2026-06-03  sweep-20260603-0427  scribe-claim  buckets=6 queued, 0 skipped-HOLD
+2026-06-03  sweep-20260603-0427  scribe-release  bucket=bucket_gameplay_0041e140_0041efe0  writes=26  errors=0
+2026-06-03  sweep-20260603-0427  scribe-release  bucket=bucket_gameplay_0041f060_004210f0  writes=26  errors=0
+2026-06-03  sweep-20260603-0427  scribe-release  bucket=bucket_gameplay_00421100_004223f0  writes=26  errors=0
+2026-06-03  sweep-20260603-0427  scribe-release  bucket=bucket_gameplay_00422440_0044e070  writes=26  errors=0
+2026-06-03  sweep-20260603-0427  scribe-release  bucket=bucket_gameplay_0044e190_00453eb0  writes=26  errors=0
+2026-06-03  sweep-20260603-0427  scribe-release  bucket=bucket_gameplay_00454130_00455fe0  writes=26  errors=0

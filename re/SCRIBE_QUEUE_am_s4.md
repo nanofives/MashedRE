@@ -123,3 +123,5 @@ Author-only promote-c2 pass (gameplay campaign batch 2/~5, slice 0x00422440 + th
 - **No new U-IDs / S-IDs / arg_types minted. No Frida, no build, no re-classify, no
   hooks.csv write, no master-Ghidra mutation.** Per author-only mission: only the bucket
   dir, this fragment, and `.pool_slot_am_s4` were created/modified.
+
+> DRAINED by sweep-20260603-0427 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

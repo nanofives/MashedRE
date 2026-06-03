@@ -100,3 +100,5 @@ finalize (ghidra-sweep) writes hooks.csv / trackers and commits.
   `[STUB]` in the plates).
 - Files: bucket dir + this fragment committed atomically (path-scoped).
   `.pool_slot_am_s5` left untracked (session marker).
+
+> DRAINED by sweep-20260603-0427 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.
