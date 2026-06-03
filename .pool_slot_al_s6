@@ -1,0 +1,7 @@
+Mashed_pool10
+# NOTE: pre-assigned Mashed_pool6 was POISONED (leaked in-JVM lock: project_open
+# failed with ghidra.framework.store.LockException; shared MCP reported 0 open
+# sessions and pinged fresh). Per feedback_mcp_leaked_project_lock fell back to a
+# verified-free clone Mashed_pool10 (no top-level .lock~; pool8 was just claimed
+# 22:46 by a sibling so avoided it; pool4 SKIPPED per batch). Opened read-only OK.
+# session_id f2ce64e1c1ab4cff8346ed2858ecd6d8  date 2026-06-02
