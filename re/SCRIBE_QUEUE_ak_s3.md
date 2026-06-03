@@ -12,7 +12,7 @@ live-decoded in Mashed_pool2 on 2026-06-02 (NO-GUESSING: classifications below c
 
 ## Queued (C1 -> C2)  — genuine vehicle game code (12 plates)
 
-2026-06-02  ak_s3  bucket=re/analysis/bucket_vehicle_004922e0_0057c500  confidence=C1->C2  rvas_c2=004922e0,00496900,004b3bf0,004b3e40,004b5190,004b5240,004b5320,004b5580,004b65a0,004b65b0,00546b10,00546e70
+2026-06-02  ak_s3  bucket=re/analysis/bucket_vehicle_004922e0_0057c500  confidence=C1->C2  rvas=004922e0,00496900,004b3bf0,004b3e40,004b5190,004b5240,004b5320,004b5580,004b65a0,004b65b0,00546b10,00546e70
 
 - **004922e0** — per-car hit/event trigger; two state guards then writes a 4-field "pending event"
   record into the per-player block (base DAT_007f1058, stride 0x4c). Pure game, no RW. (U-1858/59/60)
