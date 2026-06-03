@@ -78,3 +78,5 @@ finalize (ghidra-sweep) writes hooks.csv / trackers and commits.
   (landed hook) — used by 0x00456f70, 0x004584e0, 0x00458570.
 - Files left UNTRACKED until the atomic commit below: bucket dir + this fragment +
   .pool_slot_an_s1. No re-classify, no build, no Frida — author-only.
+
+> DRAINED by sweep-20260603-1259 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

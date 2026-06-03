@@ -112,3 +112,5 @@ trackers, mints U-/S- IDs from the reserved ranges, and commits.
   arg_types minted. No Frida, no build, no re-classify, no hooks.csv write. Per the
   author-only mission only the bucket dir, this fragment, and `.pool_slot_an_s6` were
   created/modified.
+
+> DRAINED by sweep-20260603-1259 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

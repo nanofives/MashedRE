@@ -71,3 +71,5 @@ finalize (ghidra-sweep + re-classify) writes hooks.csv / trackers and commits.
   (U-8300..U-8599, S-6600..S-6799). Grounded float constants this session (read
   from pool11 memory): _DAT_005cc320=1.0f, _DAT_005cc33c=-1.0f, _DAT_005cc558=0.001f,
   _DAT_005cd5a8=1/640, _DAT_005cc560=1/480, _DAT_005cd0ec=0.005f.
+
+> DRAINED by sweep-20260603-1259 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

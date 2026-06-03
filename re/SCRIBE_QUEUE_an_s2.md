@@ -129,3 +129,5 @@ Recurring open items for central minting:
 
 - Files: bucket dir (26 plates) + this fragment, committed this session (atomic,
   path-scoped). `.pool_slot_an_s2` left untracked (session marker).
+
+> DRAINED by sweep-20260603-1259 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

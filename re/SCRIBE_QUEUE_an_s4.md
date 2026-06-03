@@ -81,3 +81,5 @@ walk across 0x00461-0x0046d). Bucket plates are the C2 deliverable; central fina
 - **U-mint**: every plate carries `## Uncertainties`; recommend minting U-rows for the
   data-semantic [UNCERTAIN] markers (per-vehicle field identities, the 0046bfc0 indirect-caller
   gap, the 00461e90 color-constant classifier hypothesis, 0046dd90 missing bound check).
+
+> DRAINED by sweep-20260603-1259 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

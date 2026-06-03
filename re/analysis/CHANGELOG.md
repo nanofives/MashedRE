@@ -3091,3 +3091,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-03  sweep-20260603-0427  scribe-release  buckets=6 drained  errors=0
 2026-06-03  re-classify batch_am  C1->C2 x156 (gameplay campaign 2/~5, next-156 0x41e140..0x455fe0): 90 stay gameplay + 66 subsystem-reclass (60 gameplay->render = 2 s1 material-color + 25 s3 debris/smoke effects + 20 s4 effect-entity + 13 s6 scene-graph; 5 gameplay->audio s4 in-world-item accessors FUN_00461650; 1 gameplay->hud s6 lock-on reticle). 00422160/0044df80/004223f0/00422440 boundary-flagged. NO library_skip, NO function_create (all 156 genuine game fns w/ function objects). +217 U-rows U-8000..U-8216 (non-blocking). Evidence: 6 bucket plates + sweep-20260603-0427. gameplay C1 636 -> 480.
 2026-06-03  sweep-20260603-1259  scribe-claim  buckets=6 queued, 0 skipped-HOLD
+2026-06-03  sweep-20260603-1259  scribe-release  bucket=bucket_gameplay_00456040_004588c0  writes=26  errors=0
+2026-06-03  sweep-20260603-1259  scribe-release  bucket=bucket_gameplay_00458a40_0045ac40  writes=26  errors=0
+2026-06-03  sweep-20260603-1259  scribe-release  bucket=bucket_gameplay_0045ae80_0045dd50  writes=26  errors=0
+2026-06-03  sweep-20260603-1259  scribe-release  bucket=bucket_gameplay_0045dff0_0046dd90  writes=26  errors=0
+2026-06-03  sweep-20260603-1259  scribe-release  bucket=bucket_gameplay_00471430_0047b6b0  writes=26  errors=0
+2026-06-03  sweep-20260603-1259  scribe-release  bucket=bucket_gameplay_0047ba20_0047f380  writes=26  errors=0
