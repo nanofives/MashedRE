@@ -75,3 +75,5 @@ finalize (ghidra-sweep) writes hooks.csv / trackers and commits.
 - **Stubs**: none encountered/minted this session.
 - Files: bucket dir + this fragment committed this session (atomic path-scoped).
   `.pool_slot_al_s1` left untracked (session marker).
+
+> DRAINED by sweep-20260603-0334 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

@@ -1,0 +1,834 @@
+{
+ "date": "2026-06-03",
+ "level": "C2",
+ "buckets": [
+  {
+   "bucket": "bucket_gameplay_00405400_00407620",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x00405400",
+     "plate": "[C2 2026-06-03] `void FUN_00405400(void)`. Body 0x00405400..0x00405416. Pure store, no reads, no callees. - Sets three adjacent globals\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405430",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00405430(void)`. Body 0x00405430..0x00405456. Returns int treated as bool. - Predicate: `if\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405540",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00405540(int param_1)`. Body 0x00405540..0x0040572e. `param_1` = pointer to a write-back struct\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405730",
+     "plate": "[C2 2026-06-03] `void FUN_00405730(int param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4)`. Body\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405780",
+     "plate": "[C2 2026-06-03] `int FUN_00405780(undefined4 param_1, int param_2, int param_3)`. Body 0x00405780..0x00405880. Allocates+initializes\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004058b0",
+     "plate": "[C2 2026-06-03] `void FUN_004058b0(int param_1, float param_2)`. Body 0x004058b0..0x004058be. - Single statement: `*(float *)(param_1 +\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004058c0",
+     "plate": "[C2 2026-06-03] Decompiles as `void FUN_004058c0(void) { FUN_004058b0(); return; }`. Body 0x004058c0..0x004058d8. - The decomp\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004058e0",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_004058e0(int param_1, undefined4 param_2)`. Body 0x004058e0..0x0040591d. `param_1` = search-key\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405920",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00405920(float param_1, float param_2)`. Body 0x00405920..0x00405aad. Also reads `in_EAX`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405ab0",
+     "plate": "[C2 2026-06-03] `void FUN_00405ab0(float *param_1)` (param_1 = target vec3). Body 0x00405ab0..0x00405f57. Reads `unaff_ESI` (caller\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00405f60",
+     "plate": "[C2 2026-06-03] `void __fastcall FUN_00405f60(int param_1)` \u2014 `this` in ECX. Body 0x00405f60..0x00406064. Per-tick updater that may\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406070",
+     "plate": "[C2 2026-06-03] `void FUN_00406070(void)`. Body 0x00406070..0x0040612f. Reads `unaff_EDI` (direction/velocity vec3). Spawns one entry\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406130",
+     "plate": "[C2 2026-06-03] `void FUN_00406130(void)`. Body 0x00406130..0x0040615d. Destructor walk over subsystem B (10-slot array at 0x0063a490\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406160",
+     "plate": "[C2 2026-06-03] `void FUN_00406160(void)`. Body 0x00406160..0x00406369. Per-tick updater over subsystem B (10-slot array). `pfVar4 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406370",
+     "plate": "[C2 2026-06-03] `void FUN_00406370(void)`. Body 0x00406370..0x00406408. Pure zero-init of subsystem B (10-slot array at 0x0063a490\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406410",
+     "plate": "[C2 2026-06-03] `void FUN_00406410(void)`. Body 0x00406410..0x004064bd. Reads `unaff_ESI` (this-pointer). Cooldown-gated spawner that\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004064c0",
+     "plate": "[C2 2026-06-03] `float10 FUN_004064c0(void)`. Body 0x004064c0..0x0040694e. Reads `in_EAX` (this-pointer). Returns `local_1c`. Two-state\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406950",
+     "plate": "[C2 2026-06-03] `void FUN_00406950(int param_1)`. Body 0x00406950..0x004069c2. Per-bucket tick for the timed-event table populated by\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004069d0",
+     "plate": "[C2 2026-06-03] `void FUN_004069d0(float param_1)`. Body 0x004069d0..0x00406ad7. Ghidra mistypes the param: it is a pointer (this)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00406ae0",
+     "plate": "[C2 2026-06-03] `void FUN_00406ae0(void)`. Body 0x00406ae0..0x00406cdb. Reads `in_EAX` (this-pointer). Per-tick AI/weapon update for\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004074a0",
+     "plate": "[C2 2026-06-03] `void FUN_004074a0(void)`. Body 0x004074a0..0x00407546. Global \"wipe-all\" \u2014 destructs and resets both subsystem A\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407550",
+     "plate": "[C2 2026-06-03] `undefined * FUN_00407550(void)`. Body 0x00407550..0x00407572. Reads `unaff_ESI` (search key). \"Find subsystem A record\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407580",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00407580(int param_1)`. Body 0x00407580..0x00407590. Subsystem A record key accessor by index\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004075a0",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_004075a0(void)`. Body 0x004075a0..0x004075a5. Pure getter: `return DAT_0063a5d0;` (subsystem A record\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004075b0",
+     "plate": "[C2 2026-06-03] `bool FUN_004075b0(int param_1, undefined4 *param_2)`. Body 0x004075b0..0x004075f5. `param_1` = record index, `param_2`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407620",
+     "plate": "[C2 2026-06-03] `void FUN_00407620(int *param_1, int param_2)`. Body 0x00407620..0x0040763c. Subsystem A record basis-vector accessor\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_gameplay_00407640_0040ad40",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x00407640",
+     "plate": "[C2 2026-06-03] `int FUN_00407640(int param_1)` \u2014 linear-scan \"find Copter record index by key\". Returns the array index of the first\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004077e0",
+     "plate": "[C2 2026-06-03] `float10 FUN_004077e0(void)` \u2014 single-expression getter. Reads field +0x60 of the Copter record at the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407800",
+     "plate": "[C2 2026-06-03] `void FUN_00407800(int param_1)` \u2014 one-shot Copter-array + smoke-particle initializer. STRING ANCHORS confirm\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407a00",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00407a00(int param_1, int param_2)` \u2014 2-D accessor over the flat dword table at `0x008a9914`.",
+     "rename": null
+    },
+    {
+     "rva": "0x00407a20",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00407a20(int param_1)` \u2014 row-base getter over the per-AI table at `0x008a9648`.",
+     "rename": null
+    },
+    {
+     "rva": "0x00407b00",
+     "plate": "[C2 2026-06-03] `int FUN_00407b00(int param_1)` \u2014 \"find the group index whose range/value set contains `param_1`\" over the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407b70",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_00407b70(int param_1, int param_2)` \u2014 \"is `param_1` a member of the group that begins at slot\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407be0",
+     "plate": "[C2 2026-06-03] `int FUN_00407be0(int param_1, int param_2)` \u2014 **predecessor** of value `param_1` within the group beginning at slot\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407cd0",
+     "plate": "[C2 2026-06-03] `int FUN_00407cd0(int param_1, int param_2)` \u2014 **successor** of value `param_1` within the group beginning at slot\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407d70",
+     "plate": "[C2 2026-06-03] `int FUN_00407d70(int param_1)` \u2014 **count of distinct values** in the group starting at slot `param_1` of the shared\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407db0",
+     "plate": "[C2 2026-06-03] `int FUN_00407db0(int param_1, int param_2)` \u2014 maps value `param_2` to its **group-local cumulative offset** within the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00407e20",
+     "plate": "[C2 2026-06-03] `void FUN_00407e20(undefined4 param_1, float param_2, int param_3, float *param_4, float *param_5, float param_6)` \u2014 AI\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00408590",
+     "plate": "[C2 2026-06-03] `void FUN_00408590(int param_1, int param_2)` \u2014 wrong-way / direction-alignment detector. `param_1` = AI track-state\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00408610",
+     "plate": "[C2 2026-06-03] `void FUN_00408610(int param_1, undefined4 param_2, int param_3)` \u2014 per-AI per-tick track-progress / lap / racing-line\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00409300",
+     "plate": "[C2 2026-06-03] `int FUN_00409300(int param_1)` \u2014 returns the **first int of the `param_1`-th group** in the shared range-table (base\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00409330",
+     "plate": "[C2 2026-06-03] `int FUN_00409330(int param_1, int param_2)` \u2014 **successor** of value `param_1` within group number `param_2` of the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004093b0",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_004093b0(undefined4 param_1, float *param_2, float *param_3)` \u2014 3-track-piece-ahead heading/curvature\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004095a0",
+     "plate": "[C2 2026-06-03] `undefined1 * FUN_004095a0(int param_1)` \u2014 builds the `.LED` filename into the global buffer `&DAT_0063b7f0` and\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004096a0",
+     "plate": "[C2 2026-06-03] `undefined4 FUN_004096a0(void)` \u2014 loads the `.LED` file into the global buffer at `&DAT_0063a5f0`. Returns 1 on\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00409790",
+     "plate": "[C2 2026-06-03] `void FUN_00409790(void)` \u2014 command dispatcher for `.LED`-entry editor opcodes read from the command stream at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004098a0",
+     "plate": "[C2 2026-06-03] `undefined4 * FUN_004098a0(void)` \u2014 pure getter returning the `.LED` entry array base.",
+     "rename": null
+    },
+    {
+     "rva": "0x004098d0",
+     "plate": "[C2 2026-06-03] `void FUN_004098d0(void)` \u2014 state-flag setter. Writes four globals to fixed values and returns. No direct callers found\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00409950",
+     "plate": "[C2 2026-06-03] `void FUN_00409950(void)` \u2014 state-flag setter, same global family as FUN_004098d0. Writes three globals to fixed values\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00409970",
+     "plate": "[C2 2026-06-03] `void FUN_00409970(void)` \u2014 state-flag setter, same family as FUN_004098d0 / FUN_00409950. Backs up the current state\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00409a80",
+     "plate": "[C2 2026-06-03] `void FUN_00409a80(void)` \u2014 polls a status source twice and, on a 0\u2192nonzero transition, prints `\"status change\\n\"`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040ad40",
+     "plate": "[C2 2026-06-03] `void FUN_0040ad40(undefined4 param_1, float param_2)` \u2014 uniform vec3 scale on an object referenced by handle\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_gameplay_0040ad90_00412010",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x0040ad90",
+     "plate": "[C2 2026-06-03] Body `0x0040ad90..0x0040ae23` (147 bytes). Signature `void FUN_0040ad90(undefined4 param_1, float param_2, float\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040ae30",
+     "plate": "[C2 2026-06-03] Body `0x0040ae30..0x0040aeec` (188 bytes). Signature `void FUN_0040ae30(undefined4 param_1)` \u2014 single object handle.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040aef0",
+     "plate": "[C2 2026-06-03] Body `0x0040aef0..0x0040b088` (408 bytes). Signature `void FUN_0040aef0(float param_1)` \u2014 Ghidra types the parameter\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040b420",
+     "plate": "[C2 2026-06-03] Body `0x0040b420..0x0040b42b` (11 bytes). Signature `undefined4 FUN_0040b420(int param_1)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040b890",
+     "plate": "[C2 2026-06-03] Body `0x0040b890..0x0040b8d1` (65 bytes). Signature `int FUN_0040b890(void)`. Returns either 8 or 12 (0xc).",
+     "rename": null
+    },
+    {
+     "rva": "0x0040b8e0",
+     "plate": "[C2 2026-06-03] Body `0x0040b8e0..0x0040b921` (65 bytes). Signature `int FUN_0040b8e0(void)`. Same structure as `FUN_0040b890` but the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040b930",
+     "plate": "[C2 2026-06-03] Body `0x0040b930..0x0040b962` (50 bytes). Signature `void FUN_0040b930(undefined4 *param_1)` \u2014 writes a 4-DWORD output\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040b970",
+     "plate": "[C2 2026-06-03] Body `0x0040b970..0x0040b998` (40 bytes). Signature `void FUN_0040b970(undefined4 *param_1)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040b9a0",
+     "plate": "[C2 2026-06-03] Body `0x0040b9a0..0x0040b9fe` (91 bytes). Signature `void FUN_0040b9a0(undefined4 *param_1, int param_2)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040ba00",
+     "plate": "[C2 2026-06-03] Body `0x0040ba00..0x0040ba5a` (90 bytes). Signature `void FUN_0040ba00(undefined4 *param_1)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040ba60",
+     "plate": "[C2 2026-06-03] Body `0x0040ba60..0x0040ba93` (45 bytes). Signature `void FUN_0040ba60(int param_1)` \u2014 `param_1` is the base of a\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040baa0",
+     "plate": "[C2 2026-06-03] Body `0x0040baa0..0x0040bade` (62 bytes). Signature `int * FUN_0040baa0(int *param_1, undefined4 *param_2)`. Returns\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040bae0",
+     "plate": "[C2 2026-06-03] Body `0x0040bae0..0x0040bb0b` (43 bytes). Signature `int FUN_0040bae0(int param_1, undefined4 param_2)`. Returns\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040be50",
+     "plate": "[C2 2026-06-03] Body `0x0040be50..0x0040c589` (1849 bytes). Signature decompiles as `void FUN_0040be50(void)`; the per-slot index is\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040c5b0",
+     "plate": "[C2 2026-06-03] Body `0x0040c5b0..0x0040c680` (208 bytes). Signature `void FUN_0040c5b0(void)`. Driver loop that dispatches\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040c690",
+     "plate": "[C2 2026-06-03] Body `0x0040c690..0x0040c9f9` (873 bytes). Signature `void FUN_0040c690(int param_1, undefined4 param_2, float\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040ca00",
+     "plate": "[C2 2026-06-03] Body `0x0040ca00..0x0040cd8b` (904 bytes). Signature `void FUN_0040ca00(void)`. Per-player effect tick driver feeding\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040cd90",
+     "plate": "[C2 2026-06-03] `function_at(0x0040cd90)` reports `thunk:true`, `name = thunk_FUN_00425ef0`, body `0x0040cd90..0x0040cd94` \u2014 a 5-byte\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040cda0",
+     "plate": "[C2 2026-06-03] Body `0x0040cda0..0x0040cdf5` (85 bytes). Signature `void FUN_0040cda0(undefined4 param_1, undefined4 param_2, int\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040cf40",
+     "plate": "[C2 2026-06-03] Body `0x0040cf40..0x0040cf78` (56 bytes). Signature `void FUN_0040cf40(void)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040d430",
+     "plate": "[C2 2026-06-03] Body `0x0040d430..0x0040d435` (5 bytes). Signature `undefined * FUN_0040d430(void)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040d8f0",
+     "plate": "[C2 2026-06-03] Body `0x0040d8f0..0x0040da40` (336 bytes). Signature `void FUN_0040d8f0(int param_1)` \u2014 `param_1` is a player index.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040dc70",
+     "plate": "[C2 2026-06-03] Body `0x0040dc70..0x0040dc75` (5 bytes). Signature `undefined4 FUN_0040dc70(void)`.",
+     "rename": null
+    },
+    {
+     "rva": "0x0040dcb0",
+     "plate": "[C2 2026-06-03] Body `0x0040dcb0..0x0040dd5f` (175 bytes). Signature `void FUN_0040dcb0(void)`. A 4-state machine driven by the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0040e500",
+     "plate": "[C2 2026-06-03] Body `0x0040e500..0x0040e55e` (94 bytes). Signature `int FUN_0040e500(void)`. Scans players 0..3 and returns an index\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00412010",
+     "plate": "[C2 2026-06-03] Body `0x00412010..0x0041204c` (60 bytes). Signature `void FUN_00412010(void)`.",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_gameplay_00412100_00418e50",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x00412100",
+     "plate": "[C2 2026-06-03] Per-frame tick over the 6-slot wheel-trail-decal record array at `&DAT_0063bb38` (stride 0xb dwords = 0x2c bytes; loop\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00412130",
+     "plate": "[C2 2026-06-03] Pure state-lookup returning an `int` count/cap from two pieces of game state; no memory writes. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00412190",
+     "plate": "[C2 2026-06-03] Builds/initializes up to 6 entries of the 0x2c-byte (11-dword) wheel-trail-decal record array at `&DAT_0063bb38`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00412620",
+     "plate": "[C2 2026-06-03] Per-frame update of the wheel-trail-decal slot array built by `FUN_00412190`; same stride 0xb dwords, same count cap\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00412880",
+     "plate": "[C2 2026-06-03] Tail-jump thunk to `FUN_00412190` (single `JMP rel32`, 5 bytes). Ghidra flags the symbol `thunk:true` and renders the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004128f0",
+     "plate": "[C2 2026-06-03] Per-icon HUD-overlay quad builder. Signature recovered as `void FUN_004128f0(float param_1)`; `in_EAX` = a\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00412e30",
+     "plate": "[C2 2026-06-03] Spawns one particle record by linearly interpolating a vec3 between two source points, into a 128-deep pool. Signature\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00413b80",
+     "plate": "[C2 2026-06-03] Initializer for the \"VehicleIcons\" sprite-batch / texture-atlas object at global `&DAT_0063bd50`. (control-flow\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00413bb0",
+     "plate": "[C2 2026-06-03] Single-call wrapper: `FUN_004768c0(&DAT_0063bd50); return;`. Operates on the same VehicleIcons sprite-batch object as\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00413bc0",
+     "plate": "[C2 2026-06-03] `__fastcall` UV-rect lookup: index in `ESI`, output pointer in EAX/`param_1`; writes 4 floats (a uv quad\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00413cb0",
+     "plate": "[C2 2026-06-03] Per-frame draw of an animated 20-cell (4 rows \u00d7 5 cols) sparkle grid into the VehicleIcons sprite-batch. Each cell at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00413f50",
+     "plate": "[C2 2026-06-03] Render-state-bracketed flush of the VehicleIcons sprite batch. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00413fa0",
+     "plate": "[C2 2026-06-03] Computes a `mode*3 + bias` bucket index. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00416230",
+     "plate": "[C2 2026-06-03] Per-player field setter: `*(undefined4 *)(&DAT_0089a500 + param_1 * 0x74) = param_2;`. Writes one dword at the `+0x00`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00417370",
+     "plate": "[C2 2026-06-03] Per-player init writing a randomized signed integer into the player-state record. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x004173a0",
+     "plate": "[C2 2026-06-03] Single-instruction float getter: `float10 FUN_004173a0(void) { return (float10)_DAT_0089a360; }` \u2014 loads the global\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004173b0",
+     "plate": "[C2 2026-06-03] Per-player init twin of `FUN_00417370`, differing only in scale. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x004173e0",
+     "plate": "[C2 2026-06-03] 2D world-coordinate \u2192 byte lookup over a two-level decal/terrain grid. Inputs `(uint x, uint y)` centered at 0 (valid\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00417750",
+     "plate": "[C2 2026-06-03] Per-event statistics accumulator. `__fastcall(undefined4 param_1)`. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00418a00",
+     "plate": "[C2 2026-06-03] Constructor for a drift-mark / decal record using register-passed `this` (`unaff_ESI`). (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00418a70",
+     "plate": "[C2 2026-06-03] Conditional draw helper on a register-passed record (`in_EAX`). (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00418aa0",
+     "plate": "[C2 2026-06-03] Initializer for a per-emitter record at register-passed `this` (`unaff_EDI`), seeding an RW atomic's world transform\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00418bd0",
+     "plate": "[C2 2026-06-03] Raycast-and-refine that builds a world-space matrix; `__fastcall(undefined4 param_1, int param_2)` returning `int`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00418db0",
+     "plate": "[C2 2026-06-03] Destroy/free pass over the 4-record drift-mark array. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00418e30",
+     "plate": "[C2 2026-06-03] Per-frame tick over the 4-record drift-mark array. (control-flow complete)",
+     "rename": null
+    },
+    {
+     "rva": "0x00418e50",
+     "plate": "[C2 2026-06-03] Fills 0x40 (=64) consecutive dwords starting at `&DAT_0063c508` with the constant `0x3fe00000`. (control-flow complete)",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_gameplay_00418e70_0041a8d0",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x00418e70",
+     "plate": "[C2 2026-06-03] Per-frame draw for a 64-slot smoke-puff sprite array. Walks two parallel arrays in lockstep: `pfVar2 = &DAT_0063c508`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00418f30",
+     "plate": "[C2 2026-06-03] Tail-call wrapper: `FUN_004770a0(&DAT_0063c1c8); return;`. Single statement, no locals. Invokes the sprite-batch\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00418f40",
+     "plate": "[C2 2026-06-03] Tail-call wrapper: `FUN_004768c0(&DAT_0063c1c8); return;`. Single statement, no locals. Invokes the sprite-batch\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00418f50",
+     "plate": "[C2 2026-06-03] Spawns one smoke-puff into the 64-slot pool drawn by FUN_00418e70. Spawn position is read from the implicit register\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00419090",
+     "plate": "[C2 2026-06-03] \"Target\" record constructor. Implicit args: `in_EAX` (a clump/object pointer), `unaff_EBX` (the record `this`), and\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004190f0",
+     "plate": "[C2 2026-06-03] Two-field clearer. Implicit arg `in_EAX` (record `this`): - `*(in_EAX + 0x4c) = 0` - `*(in_EAX + 0x50) = 0`",
+     "rename": null
+    },
+    {
+     "rva": "0x00419100",
+     "plate": "[C2 2026-06-03] Per-frame update for one \"target\" record (this = EAX). Subsystem: airstrike/missile target overlay. Caller FUN_0041a180\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00419480",
+     "plate": "[C2 2026-06-03] Render/dispatch over 6 atomic handles in a \"target\" record (this = `in_EAX`, int-array view). Outer guard: `if\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004194f0",
+     "plate": "[C2 2026-06-03] Composite reset/init driver for the weapons-effects bucket. No callers in the project (top-level entry, likely invoked\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00419530",
+     "plate": "[C2 2026-06-03] Main per-frame render for the weapons-effects overlay. `local_88 = 0x3f19999a` (0.6f), `local_84 = 0x3ee66666` (0.45f)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004196f0",
+     "plate": "[C2 2026-06-03] Bucket-wide teardown/shutdown for the weapons-effects overlay. No callers in the project (top-level). - Loop 1: `puVar1\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x004197e0",
+     "plate": "[C2 2026-06-03] 3-state target-reticule state machine for one launcher record (this = `unaff_ESI`, float-array view). State at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00419a00",
+     "plate": "[C2 2026-06-03] 4-state missile-in-flight state machine for one record (this = `unaff_ESI`), `switch(*(ESI+0x44))`. Caller FUN_00419fd0\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00419fd0",
+     "plate": "[C2 2026-06-03] Tick driver for the 4-record missile array: `puVar1 = &DAT_0063bda0; do { FUN_00419a00(); puVar1 += 100; } while\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x00419ff0",
+     "plate": "[C2 2026-06-03] Initializer for the \"smoke\" sprite-batch at `&DAT_0063c1c8`. `local_8 = local_4 = 0x3eb33333` (0.35f)\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a060",
+     "plate": "[C2 2026-06-03] Bucket-master init (\"spawn weapons-effects subsystem\" entry-point). No callers in the project (top-level). - `uVar1 =\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a180",
+     "plate": "[C2 2026-06-03] Bucket-master per-frame update (\"tick weapons-effects\" entry-point). Gated by `if (FUN_0042fe50() != 0)`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a400",
+     "plate": "[C2 2026-06-03] Ghost-vehicle slot constructor. Args: `param_1` (slot index), `param_2` (clump pointer), `param_3` (RGBA pointer or\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a4a0",
+     "plate": "[C2 2026-06-03] \"Set transform\" for a ghost-vehicle slot. Args: `param_1` (slot), `param_2` (RwMatrix* or NULL). `param_1 *= 0xc4`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a500",
+     "plate": "[C2 2026-06-03] Setter for a vec3 (\"tint scale\") of a ghost-vehicle slot at offset `+0xa0` (`&DAT_0063c6d0 + slot*0xc4`). Args\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a550",
+     "plate": "[C2 2026-06-03] Setter for a 4-dword block (\"secondary tint\" / RGBA-or-vec4) of a ghost-vehicle slot at offset `+0x80` (`&DAT_0063c6b0\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a5b0",
+     "plate": "[C2 2026-06-03] One-dword setter for a ghost-vehicle slot: `*(&DAT_0063c6ec + param_1 * 0xc4) = param_2` \u2014 writes the caller-supplied\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a5d0",
+     "plate": "[C2 2026-06-03] Per-frame render for ONE ghost-vehicle slot. Arg `param_1` = slot index; `iVar5 = param_1 * 0xc4`. Caller FUN_0041ad00\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a840",
+     "plate": "[C2 2026-06-03] Destroy helper for a ghost-vehicle slot. Arg `param_1`; `param_1 *= 0xc4`. Pure indirect vtable calls (no named\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a8b0",
+     "plate": "[C2 2026-06-03] Setter for the ghost-slot \"enabled\" flag: `*(&DAT_0063c6f0 + param_1 * 0xc4) = param_2` \u2014 writes the caller-supplied\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a8d0",
+     "plate": "[C2 2026-06-03] Initializer for a 2-slot ghost-vehicle array. Args: `param_1` (unused passthrough), `param_2` (base of a per-slot\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  },
+  {
+   "bucket": "bucket_gameplay_0041a980_0041d910",
+   "bm_category": "promote-c2",
+   "rvas": [
+    {
+     "rva": "0x0041a980",
+     "plate": "[C2 2026-06-03] `void FUN_0041a980(void)` \u2014 body 0x0041a980..0x0041a9ac. Teardown of the 2-slot ghost-vehicle clump-handle array at\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041a9d0",
+     "plate": "[C2 2026-06-03] `void FUN_0041a9d0(int param_1)` \u2014 body 0x0041a9d0..0x0041aab7. Per-frame computes a Z-only \"tint scale\" vec3 for each\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041aac0",
+     "plate": "[C2 2026-06-03] `void FUN_0041aac0(int param_1)` \u2014 body 0x0041aac0..0x0041ac52. Per-frame phase accumulator producing a 4-channel\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041ac60",
+     "plate": "[C2 2026-06-03] `void FUN_0041ac60(void)` \u2014 body 0x0041ac60..0x0041acfc. Per-frame distance-based alpha scalar for each of the 2\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041ad60",
+     "plate": "[C2 2026-06-03] `void FUN_0041ad60(void)` \u2014 body 0x0041ad60..0x0041ada7. Constructor for the **17-atomic ParticleEmitter (Class A)**\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041adb0",
+     "plate": "[C2 2026-06-03] `void FUN_0041adb0(void)` \u2014 body 0x0041adb0..0x0041ae15. Configures the 17-atomic emitter (`this` in ESI, `unaff_ESI`).",
+     "rename": null
+    },
+    {
+     "rva": "0x0041ae20",
+     "plate": "[C2 2026-06-03] `void __fastcall FUN_0041ae20(int param_1)` \u2014 body 0x0041ae20..0x0041ae53. Per-frame reset of the 17-atomic emitter's\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041ae60",
+     "plate": "[C2 2026-06-03] `void FUN_0041ae60(void)` \u2014 body 0x0041ae60..0x0041aef0. Low-band per-atomic material-apply dispatch for the 17-atomic\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041af00",
+     "plate": "[C2 2026-06-03] `void FUN_0041af00(void)` \u2014 body 0x0041af00..0x0041af4d. High-band counterpart to FUN_0041ae60 for the 17-atomic\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041af50",
+     "plate": "[C2 2026-06-03] `void FUN_0041af50(void)` \u2014 body 0x0041af50..0x0041b335. Per-frame update for one 17-atomic emitter (Class A). `this`\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041b440",
+     "plate": "[C2 2026-06-03] `void FUN_0041b440(void)` \u2014 body 0x0041b440..0x0041b44a. Tail-call destructor for the 17-atomic emitter (`this` in\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041b520",
+     "plate": "[C2 2026-06-03] `void FUN_0041b520(void)` \u2014 body 0x0041b520..0x0041b535. Iterates the 17-atomic emitter record array, calling the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041b690",
+     "plate": "[C2 2026-06-03] `void FUN_0041b690(void)` \u2014 body 0x0041b690..0x0041b717. Constructor for the **29-atomic ParticleEmitter (Class B)**\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041b720",
+     "plate": "[C2 2026-06-03] `void FUN_0041b720(void)` \u2014 body 0x0041b720..0x0041b76e. Packs the per-atom visibility-bit word at +0x168 for the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041b770",
+     "plate": "[C2 2026-06-03] `void __fastcall FUN_0041b770(int param_1)` \u2014 body 0x0041b770..0x0041b796. Copies a vec3 from a mode-indexed table into\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041b7a0",
+     "plate": "[C2 2026-06-03] `void FUN_0041b7a0(void)` \u2014 body 0x0041b7a0..0x0041bbb8. Per-frame visibility resolver for the 29-atomic emitter (Class\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041beb0",
+     "plate": "[C2 2026-06-03] `void FUN_0041beb0(void)` \u2014 body 0x0041beb0..0x0041bebd. Tail-call destructor for the 29-atomic emitter (`this` in\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041c320",
+     "plate": "[C2 2026-06-03] `void FUN_0041c320(void)` \u2014 body 0x0041c320..0x0041c37a. Constructor for the **24-atomic ParticleEmitter (Class C)**\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041c380",
+     "plate": "[C2 2026-06-03] `void FUN_0041c380(void)` \u2014 body 0x0041c380..0x0041c401. Configures the 24-atomic emitter (`this` in ESI). Sets the\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041c410",
+     "plate": "[C2 2026-06-03] `void FUN_0041c410(void)` \u2014 body 0x0041c410..0x0041c91d. Per-frame update for the 24-atomic emitter (Class C; `this` in\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041cb00",
+     "plate": "[C2 2026-06-03] `void FUN_0041cb00(void)` \u2014 body 0x0041cb00..0x0041cb0d. Tail-call destructor for the 24-atomic emitter (`this` in\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041cd20",
+     "plate": "[C2 2026-06-03] `void FUN_0041cd20(void)` \u2014 body 0x0041cd20..0x0041cdaa. Constructor for the **34-atomic ParticleEmitter (Class D)**\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041cdb0",
+     "plate": "[C2 2026-06-03] `void FUN_0041cdb0(void)` \u2014 body 0x0041cdb0..0x0041cdfe. Packs the per-atom visibility word at +0x15c for the 34-atomic\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041ce00",
+     "plate": "[C2 2026-06-03] `void FUN_0041ce00(void)` \u2014 body 0x0041ce00..0x0041d36e. Per-frame visibility resolver for the 34-atomic emitter (Class\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041d6d0",
+     "plate": "[C2 2026-06-03] `void FUN_0041d6d0(void)` \u2014 body 0x0041d6d0..0x0041d6dd. Tail-call destructor for the 34-atomic emitter (`this` in\u2026",
+     "rename": null
+    },
+    {
+     "rva": "0x0041d910",
+     "plate": "[C2 2026-06-03] `void FUN_0041d910(void)` \u2014 body 0x0041d910..0x0041d924. Clears two adjacent globals: `DAT_0063d584 = 0; DAT_0063d588 =\u2026",
+     "rename": null
+    }
+   ],
+   "missing_md": []
+  }
+ ],
+ "totals": {
+  "rvas": 156,
+  "plated": 156,
+  "missing_md": 0,
+  "cross_bucket_dups": []
+ }
+}

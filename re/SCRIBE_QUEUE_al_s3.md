@@ -87,3 +87,5 @@ project.
 - **No new S-IDs**, no `function_create`, no master writes. Files left as the
   bucket dir + this fragment + `.pool_slot_al_s3` for the single end-of-session
   commit.
+
+> DRAINED by sweep-20260603-0334 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.

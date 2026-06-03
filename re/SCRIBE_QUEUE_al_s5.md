@@ -89,3 +89,5 @@ _DAT_005cc950`; 0x0041a4a0 slot +0x0c is the RwMatrix flags word (0x3c-byte iden
   re-classify, no build, no Frida — per author-only mission.
 - Binary anchor: opened original/MASHED.exe via Mashed_pool8 clone (image_base 00400000,
   PE32). Did not re-hash; clone is of the pinned original.
+
+> DRAINED by sweep-20260603-0334 — 26 plates + 26 bookmarks to master Ghidra, 0 renames, 0 errors. C1->C2 finalize via re-classify follows.
