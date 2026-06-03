@@ -3079,3 +3079,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-03  sweep-20260603-0334  scribe-release  bucket=bucket_gameplay_00412100_00418e50  writes=26  errors=0
 2026-06-03  sweep-20260603-0334  scribe-release  bucket=bucket_gameplay_00418e70_0041a8d0  writes=26  errors=0
 2026-06-03  sweep-20260603-0334  scribe-release  bucket=bucket_gameplay_0041a980_0041d910  writes=26  errors=0
+2026-06-03  sweep-20260603-0334  scribe-release  buckets=6 drained  errors=0
