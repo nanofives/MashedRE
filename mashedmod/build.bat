@@ -305,6 +305,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     "Gameplay\GameplayLeaves_ad3.cpp" ^
     "Particle\ParticleLeaves_ad4.cpp" ^
+    "Particle\ParticleLeaves_ad5.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

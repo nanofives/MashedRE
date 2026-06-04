@@ -12067,5 +12067,27 @@ HOOKS = {
             {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 5}]},
         ],
     },
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3-batch-ad-s5 — particle pool HARVEST (1/12 promotable)
+    # ─────────────────────────────────────────────────────────────────────────
+    # 0x0049fa40  ConstZeroRet_0049fa40 — bytes: 33 C0 C2 04 00
+    #   XOR EAX,EAX ; RET 4  ->  __stdcall u32(u32 ignored) returning 0.
+    # The RET 4 (callee-clean of one 4-byte arg) makes this __stdcall; the
+    # function is total (returns 0 for EVERY argument), so bit-identity holds
+    # for all inputs. arg_type 'int_scalar' pushes one dummy u32; stdcall on
+    # both orig and reimpl keeps ESP balanced across the RET 4. Export
+    # decorates to _ConstZeroRet_0049fa40@4 (extern "C" __stdcall).
+    'particle_const_zero_ret_0049fa40': {
+        'rva':            0x0049fa40,
+        'export':         '_ConstZeroRet_0049fa40@4',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'orig_calling_convention':   'stdcall',
+        'reimpl_calling_convention': 'stdcall',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 0x10, 0xff, 0x1234, 0xDEADBEEF,
+                           0xCAFEBABE, 0x7FFFFFFF, 0xFFFFFFFF],
+        'path2_tests':    [0, 1, 0xFFFFFFFF],
+    },
 
 }
