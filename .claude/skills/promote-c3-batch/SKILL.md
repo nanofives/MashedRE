@@ -178,20 +178,44 @@ Expected C3 yield (promotions / candidates ever-attempted) varies sharply by sub
 
 When the user requests a "frontend C3 batch", cite this yield expectation back and propose a 2-session pilot before committing to N=6.
 
-## Worktree binding
+## Worktree binding — use the robust helper, NEVER fall back to main
 
-Each session block must include worktree-acquire commands at the top so two sessions never edit the same `build.bat`/`hooks_registry.py`. The `worktree` skill handles the heavy lifting:
+**This is the #1 stop-and-ask source (c3_batch_ab post-mortem, 2026-06-04): 4 of 6
+worker stops were branch/worktree problems.** Two failure modes, both eliminated by
+the helper below:
+- **Batch-ID / branch collision.** A reused batch letter collides with a *stale*
+  branch of the same name from an earlier phase, so `git worktree add -b <branch>`
+  either fails or lands the session on the WRONG base (stale commit, missing recent
+  work). c3_batch_ab reused `ab` and collided with 2026-05-30 render branches.
+- **Fallback-to-main.** When the add failed, a session worked in the MAIN checkout
+  instead — racing siblings on `run_diff.py`/`build.bat`/`hooks_registry.py` and
+  stranding commits on the wrong branch.
+
+Every session block MUST set up its worktree via the helper, which picks a
+collision-free branch, bases it off a pinned integration SHA, and refuses to touch
+main:
 
 ```bash
-NAME=c3-batch-<id>-session-<n>
-BRANCH=c3/batch-<id>-session-<n>
-git worktree add ".worktrees/$NAME" -b "$BRANCH"
-cd ".worktrees/$NAME"
-# Frida pool is shared across worktrees — slots are PID-based.
-# Each session acquires its own slot at diff time, not at session start.
+WT=$(bash scripts/c3_session_worktree.sh c3-batch-<id>-s<n>)   # arg2 optional: base SHA
+# On nonzero exit the helper printed a clear error — STOP; do NOT work in main.
+cd "$WT"
+# Frida pool is shared across worktrees — slots are PID-based (or use the warm
+# pool: run_diff_warm.py manages its own instances). Acquire at diff time.
 ```
 
-Worktrees merge back to main via the user-driven sweep at end-of-batch (see § "When sweep is needed").
+The helper:
+- normalizes `c3-batch-<id>-s<n>` → branch `c3/batch-<id>-s<n>`, appending `-v2/-v3…`
+  if that branch already exists (stale collision) — so the session never lands on a
+  stale base;
+- resolves the base ref (default `feature/standalone-frontend-b15-b16`, or
+  `$C3_BASE_REF`, or an explicit SHA arg) to a concrete commit up front, so all
+  sibling sessions branch from the SAME point and the sweep merges cleanly;
+- reuses an existing same-label worktree (idempotent resume);
+- exits nonzero (never works in main) on any failure.
+
+Worktrees merge back via the user-driven `frida-sweep` at end-of-batch (see § "When
+sweep is needed"). The generator should ALSO pick a collision-free batch `<id>` up
+front (see § "Output file naming").
 
 ## Pool slot semantics
 
@@ -347,7 +371,14 @@ When invoked:
    - size_bytes (≤50 = +2, ≤200 = +1, >200 = exclude unless special)
    - subsystem cohesion (prefer grouping with same-cluster siblings)
 4. **Assign** top-scoring candidates to sessions, respecting the per-session cap. Aim for similar total complexity per session.
-5. **Emit `c3_batch_<id>.txt`** at the project root. `<id>` = next unused letter (`a`, `b`, …) — match the existing `batch_h.txt` pattern but in its own namespace.
+5. **Emit `c3_batch_<id>.txt`** at the project root. `<id>` = next **collision-free** id. Do NOT just take the next letter — letters get reused across phases and the stale `c3/batch-<id>-s*` branches cause the #1 worker stop. Pick `<id>` such that NO matching branch exists:
+   ```bash
+   for cand in <candidate ids>; do
+     git for-each-ref --format='%(refname:short)' "refs/heads/c3/batch-${cand}-*" | grep -q . \
+       && echo "SKIP ${cand} (branches exist)" || { echo "USE ${cand}"; break; }
+   done
+   ```
+   Equivalently, namespace the id by phase so collisions can't happen (e.g. `ab-audio`, `render2`), matching the C1->C2 batches' `c1-c2/batch-render-N-sN` scheme that had ZERO worktree stops. The session blocks still set up via `scripts/c3_session_worktree.sh` (which collision-proofs even if a stale branch slips through).
 6. **Report to the user**:
    - File path
    - N sessions × K candidates each (= total to promote)
@@ -370,6 +401,8 @@ When invoked:
 - Recommending Opus for a routine *standard*-shape batch when the candidate pool is small (<30 v4-passed) — that's a 3-4× cost increase for no measurable quality gain on mechanical C2→C3 work. Opus is the correct choice only for *high-throughput* (K≥10) batches.
 - Emitting a batch that requires sweep coordination as the default — the C3 path should self-classify per-worktree; sweep is the exception.
 - Failing to declare the worktree branch name in every session block. Sessions that share branches will collide on commit.
+- Shipping a candidate with only a *suggested/approximate* arg_type. Every batched RVA must carry a **confirmed** arg_type that EXISTS in `re/frida/diff_template.js` today (grep the supported list and match it to the note's recovered signature). "Probably maps to int_pair" is how c3_batch_ab s1 ended up with all 7 candidates needing harness extensions mid-session → a forced stop-and-ask. If a candidate needs a new arg_type, it does NOT go in the batch — route it to a harness-extension pre-pass.
+- Putting a whole session's worth of must-extend candidates in one block. If a session's confirmed-arg_type yield is < K, shrink that session or backfill from a different cluster; never ship a session that can only land 0–1 hooks (that guarantees a stop). When the viable pool is smaller than the requested shape, size DOWN and say so — do not pad with un-promotable RVAs.
 
 ## Default batch + scale guidance
 
