@@ -868,6 +868,14 @@ function runDiff() {
         const structO = Memory.alloc(SS), structR = Memory.alloc(SS);
         const outsO = [], outsR = [];
         for (let k = 0; k < nOut; k++) { outsO.push(Memory.alloc(8)); outsR.push(Memory.alloc(8)); }
+        // Retain every nested sub-buffer for the whole test loop. The nested
+        // Memory.alloc()s below are closure-locals whose only surviving reference
+        // after the forEach is the raw integer pointer written into the parent
+        // struct (NOT a live JS NativePointer) — so Frida can reclaim/reuse that
+        // memory before the force-call fires, leaving the ORIG side reading stale
+        // heap garbage (nondeterministic partial mismatches). Pushing the handles
+        // here keeps them alive for the script's lifetime. (c3-batch-ae-s2.)
+        const _keepAlive = [];
         for (let i = 0; i < CONFIG.tests.length; i++) {
             const t = CONFIG.tests[i];
             for (let b = 0; b < SS; b++) { structO.add(b).writeU8(0); structR.add(b).writeU8(0); }
@@ -878,6 +886,7 @@ function runDiff() {
             (t.seeds || []).forEach(function (s) { wr(structO, s.off, s.type, s.value); wr(structR, s.off, s.type, s.value); });
             (t.nested || []).forEach(function (n) {
                 const subO = Memory.alloc(n.size), subR = Memory.alloc(n.size);
+                _keepAlive.push(subO, subR);   // keep alive past this closure (see note above)
                 for (let b = 0; b < n.size; b++) { subO.add(b).writeU8(0); subR.add(b).writeU8(0); }
                 (n.fields || []).forEach(function (f) { wr(subO, f.off, f.type, f.value); wr(subR, f.off, f.type, f.value); });
                 structO.add(n.ptr_off).writePointer(subO);

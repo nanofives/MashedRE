@@ -282,6 +282,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\FrameWorldPasses.cpp" ^
     "Render\PerModeRender.cpp" ^
     "Render\MixedC3Sweep.cpp" ^
+    "Render\RenderLeaves_ae2.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
     "Audio\MixedC3Sweep.cpp" ^
     "Audio\AudioLeaves_ab1.cpp" ^

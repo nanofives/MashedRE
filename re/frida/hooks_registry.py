@@ -11326,6 +11326,84 @@ HOOKS = {
         ],
     },
 
+    # ── c3-batch-ae-s2 render leaves ─────────────────────────────────────────
+    # 0x004b40c0  RenderElemArrayCopy — __cdecl void(p1, p2): copy *(p1+0x24)
+    # dwords from (*(p1+0x20))[i] into p2[i]; guarded by p2!=0 && (signed)count>0.
+    # Pure leaf. struct_call_observe: param_1 = descriptor struct (+0x20 src-array
+    # ptr wired via nested, +0x24 count); param_2 = out0 (8-byte dst, so count<=2
+    # stays in-bounds). Observe the two dst dwords. The count=0 / count=0xffffffff
+    # (signed -1) vectors exercise the no-copy guard.
+    # ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b40c0.md
+    'render_elem_array_copy': {
+        'rva':         0x004b40c0,
+        'export':      'RenderElemArrayCopy',
+        'signature':   {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0x28,
+        'out_ptrs':    1,
+        'observe_ret': False,
+        'observe':     [{'src': 'out0', 'off': 0, 'type': 'u32'},
+                        {'src': 'out0', 'off': 4, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 2}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0x11223344}, {'off': 4, 'type': 'u32', 'value': 0x55667788}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 1}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0xDEADBEEF}, {'off': 4, 'type': 'u32', 'value': 0xA5A5A5A5}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 0}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0xAAAAAAAA}, {'off': 4, 'type': 'u32', 'value': 0xBBBBBBBB}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 2}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0}, {'off': 4, 'type': 'u32', 'value': 0}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 2}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0xFFFFFFFF}, {'off': 4, 'type': 'u32', 'value': 0x7FFFFFFF}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 1}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0x80000000}, {'off': 4, 'type': 'u32', 'value': 0x12345678}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 2}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0x12345678}, {'off': 4, 'type': 'u32', 'value': 0x9ABCDEF0}]}]},
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 0xFFFFFFFF}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0xCCCCCCCC}, {'off': 4, 'type': 'u32', 'value': 0xDDDDDDDD}]}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x24, 'type': 'u32', 'value': 2}],
+             'nested': [{'ptr_off': 0x20, 'size': 8, 'fields': [{'off': 0, 'type': 'u32', 'value': 0x11223344}, {'off': 4, 'type': 'u32', 'value': 0x55667788}]}]},
+        ],
+    },
+
+    # 0x00478cc0  RenderWorldStateZeroFill — __cdecl void(p): memset(p,0,0x418f*4)
+    # (inline REP STOSD, 67132 bytes). struct_call_observe: struct_size 0x10680
+    # (> 0x1063c so off 0x1063c is a one-past-the-end guard that must SURVIVE).
+    # Each test seeds the 7 observed offsets with a sentinel; the in-range six must
+    # read back 0 (catches a no-op reimpl), and the 0x1063c guard must retain its
+    # seed (catches a reimpl that writes past the 0x418f-th dword).
+    # ref: re/analysis/render_2_c1_to_c2_s2/FUN_00478cc0.md  (U-4528)
+    'render_worldstate_zerofill': {
+        'rva':         0x00478cc0,
+        'export':      'RenderWorldStateZeroFill',
+        'signature':   {'ret': 'void', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0x10680,
+        'out_ptrs':    0,
+        'observe_ret': False,
+        'observe':     [{'src': 'struct', 'off': 0x0,     'type': 'u32'},
+                        {'src': 'struct', 'off': 0x4,     'type': 'u32'},
+                        {'src': 'struct', 'off': 0x1000,  'type': 'u32'},
+                        {'src': 'struct', 'off': 0x8000,  'type': 'u32'},
+                        {'src': 'struct', 'off': 0x10000, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x10638, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x1063c, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': o, 'type': 'u32', 'value': v}
+                       for o in (0x0, 0x4, 0x1000, 0x8000, 0x10000, 0x10638, 0x1063c)]}
+            for v in (0xDEADBEEF, 0xCAFEBABE, 0xFEEDFACE, 0x11111111,
+                      0x22222222, 0x33333333, 0x44444444, 0x55555555)
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': o, 'type': 'u32', 'value': 0xDEADBEEF}
+                       for o in (0x0, 0x4, 0x1000, 0x8000, 0x10000, 0x10638, 0x1063c)]},
+        ],
+    },
+
     # 0x005c9380  AudioBitBufSizeCalc — __cdecl u32(bits): max(1, bits>>3) + 0xc.
     'audio_bitbuf_size_calc': {
         'rva':         0x005c9380,
