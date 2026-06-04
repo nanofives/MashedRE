@@ -3117,3 +3117,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-03  sweep-20260603-2220  scribe-claim  buckets=6 queued (batch_aq: s1 3 plates + 1 function_create, s2-s6 rvas=NONE), 0 skipped-HOLD
 2026-06-03  sweep-20260603-2220  scribe-release  bucket=bucket_render_00401690_004dc5b0  writes=3  errors=0  (+1 master function_create FUN_004492b0)
 2026-06-03  sweep-20260603-2220  scribe-release  buckets aq_s2..s6: writes=0 each (ALL-SKIP rvas=NONE, 130 library_skip renderware)
+2026-06-03  sweep-20260603-2220  scribe-release  buckets=6 drained  errors=0  sync=6 refreshed/10 skipped-locked
