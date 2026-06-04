@@ -9775,6 +9775,59 @@ HOOKS = {
         ],
     },
 
+    # 0x004b65e0  PizGlobalsZero6  void()
+    # 32 bytes. Zeroes six global dwords in two contiguous groups of three:
+    #   group 1: 0x008eda28 / 0x008eda2c / 0x008eda30
+    #   group 2: 0x0090daa0 / 0x0090daa4 / 0x0090daa8
+    # (decomp verified via Ghidra 2026-06-04; c3-batch-ae-s3.)
+    # arg_type='state_machine_observe': inject all 6 globals with distinct
+    # NON-ZERO sentinels (input_globals == output_globals), call fn(), read all
+    # 6 back. A correct reimpl zeroes every one -> output is all-zero. A no-op or
+    # partial-zero stub leaves a sentinel non-zero -> RED. This defeats the
+    # false-GREEN that a plain `return;` would otherwise produce.
+    # ref: re/analysis/render_3_c1_to_c2_s5/FUN_004b65e0.md
+    'piz_globals_zero6': {
+        'rva':            0x004b65e0,
+        'export':         'PizGlobalsZero6',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x008eda28, 'type': 'u32'},
+            {'addr': 0x008eda2c, 'type': 'u32'},
+            {'addr': 0x008eda30, 'type': 'u32'},
+            {'addr': 0x0090daa0, 'type': 'u32'},
+            {'addr': 0x0090daa4, 'type': 'u32'},
+            {'addr': 0x0090daa8, 'type': 'u32'},
+        ],
+        'output_globals': [
+            {'addr': 0x008eda28, 'type': 'u32'},
+            {'addr': 0x008eda2c, 'type': 'u32'},
+            {'addr': 0x008eda30, 'type': 'u32'},
+            {'addr': 0x0090daa0, 'type': 'u32'},
+            {'addr': 0x0090daa4, 'type': 'u32'},
+            {'addr': 0x0090daa8, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # Each vector = 6 distinct non-zero sentinels injected before the call.
+        'path1_tests': [
+            [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555, 0x66666666],
+            [0xDEADBEEF, 0xCAFEBABE, 0xFEEDFACE, 0x8BADF00D, 0xABAD1DEA, 0x0D15EA5E],
+            [0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010, 0x00000020],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x80000000, 0x40000000, 0x20000000, 0x10000000, 0x08000000, 0x04000000],
+            [0x7FFFFFFF, 0x12345678, 0x9ABCDEF0, 0x0FEDCBA9, 0x13579BDF, 0x2468ACE0],
+            [0xA5A5A5A5, 0x5A5A5A5A, 0xC3C3C3C3, 0x3C3C3C3C, 0xF0F0F0F0, 0x0F0F0F0F],
+            [0x00000100, 0x00010000, 0x01000000, 0x00000200, 0x00020000, 0x02000000],
+            [0xBADC0FFE, 0xDEFEC8ED, 0xD0D0CACA, 0xFACEFEED, 0xC0DED00D, 0xDEADC0DE],
+            [0x99999999, 0x88888888, 0x77777777, 0x66666666, 0x55555555, 0x44444444],
+        ],
+        'path2_tests': [
+            [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555, 0x66666666],
+            [0xDEADBEEF, 0xCAFEBABE, 0xFEEDFACE, 0x8BADF00D, 0xABAD1DEA, 0x0D15EA5E],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+        ],
+    },
+
     # 0x00423320  CursorMover  void()
     # ~130 bytes. 8-way grid cursor mover with debounce. Reads tab DAT_007f1a64,
     # cursor DAT_007f1a90, dir flags DAT_007f1072..1075, debounce DAT_007f1532..1535.
