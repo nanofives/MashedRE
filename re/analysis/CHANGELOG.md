@@ -3112,3 +3112,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-03  sweep-20260603-2132  scribe-release  bucket=bucket_gameplay_ap_s4  writes=0  errors=0  (ALL-SKIP: rvas=NONE, 28 library_skip; master NOT opened - zero plates across batch)
 2026-06-03  sweep-20260603-2132  scribe-release  bucket=bucket_gameplay_ap_s5  writes=0  errors=0  (ALL-SKIP: rvas=NONE, 28 library_skip; master NOT opened - zero plates across batch)
 2026-06-03  sweep-20260603-2132  scribe-release  bucket=bucket_gameplay_ap_s6  writes=0  errors=0  (ALL-SKIP: rvas=NONE, 28 library_skip; master NOT opened - zero plates across batch)
+2026-06-03  sweep-20260603-2132  scribe-release  buckets=6 drained  errors=0
