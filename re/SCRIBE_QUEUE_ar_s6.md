@@ -198,3 +198,7 @@ session's share.
   sessions this CLOSES the render campaign.
 - Files in the atomic commit: this fragment only. No hooks.csv writes, no
   re-classify, no master-Ghidra mutation (read-only MCP throughout).
+
+## Drained
+
+drained-by=sweep-20260604-0020; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: library_skip, rvas=NONE)

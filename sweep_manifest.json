@@ -1,33 +1,10 @@
 {
- "date": "2026-06-03",
+ "date": "2026-06-04",
  "level": "C2",
- "buckets": [
-  {
-   "bucket": "bucket_render_00401690_004dc5b0",
-   "bm_category": "promote-c2",
-   "rvas": [
-    {
-     "rva": "0x00401690",
-     "plate": "[C2 2026-06-03] Body 0x00401690-0x004019c3 (pool1 function object). Ghidra signature `undefined FUN_00401690(void)`; the object pointer\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x004492b0",
-     "plate": "[C2 2026-06-03] NO function object in pool1 (`function_at` null); instruction stream present from 0x004492b0 to RET at 0x0044942a (read\u2026",
-     "rename": null
-    },
-    {
-     "rva": "0x00490500",
-     "plate": "[C2 2026-06-03] Body 0x00490500-0x00490e43 (pool1 function object; 0x944 bytes \u2014 supersedes prior plate's 0x943). Deepens the\u2026",
-     "rename": null
-    }
-   ],
-   "missing_md": []
-  }
- ],
+ "buckets": [],
  "totals": {
-  "rvas": 3,
-  "plated": 3,
+  "rvas": 0,
+  "plated": 0,
   "missing_md": 0,
   "cross_bucket_dups": []
  }

@@ -104,3 +104,7 @@ finalize (ghidra-sweep + central re-classify) writes hooks.csv / trackers.
 - No hooks.csv / STUBS.md / UNCERTAINTIES.md / DEFERRED.md /
   re/SCRIBE_QUEUE.md writes. No re-classify run. Reserved ranges
   U-9200..U-9499 / S-7200..S-7399 untouched (central re-classify mints).
+
+## Drained
+
+drained-by=sweep-20260604-0020; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: library_skip, rvas=NONE)

@@ -130,3 +130,7 @@ finalize (ghidra-sweep + central re-classify) writes hooks.csv / trackers.
 - **Uncertainties**: none minted (author-only; no bare [UNCERTAIN] markers
   needed — every skip decision is library-confirmed by named RW exports,
   literal strings, RW error/stream/fn-table idioms, or D3DX PSGP shape).
+
+## Drained
+
+drained-by=sweep-20260604-0020; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: library_skip, rvas=NONE)
