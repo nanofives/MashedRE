@@ -11810,4 +11810,104 @@ HOOKS = {
                            [1, 1, 0x55555555, 0xAAAAAAAA, 0x7FFFFFFF]],
     },
 
+    # ---- c3_batch_ad session 2 (HARVEST, frontend pure leaves) ----------------
+
+    # 0x00426cb0  FrontendSlotTablePtr426cb0
+    # undefined* FUN_00426cb0(int param_1) { return &DAT_00663664 + param_1*0x4c; }
+    # Pure index-to-pointer slot helper (0x4c-byte stride table at 0x00663664).
+    # int_scalar: pass index, compare returned pointer (EAX) as uint32.
+    # ref: re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
+    'frontend_slot_table_ptr_426cb0': {
+        'rva':            0x00426cb0,
+        'export':         'FrontendSlotTablePtr426cb0',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 5, 10, 16, 100, 255, 0xffff, 0xffffffff],
+        'path2_tests':    [0, 1, 16],
+    },
+
+    # 0x00426de0  FrontendFloatGet426de0
+    # float10 FUN_00426de0(void) { return (float10)_DAT_0064435c; }
+    # Pure float-getter leaf; loads 32-bit float at 0x0064435c, returns in ST0.
+    # arg_type='read_global': seed 0x0064435c with each test's raw float bits,
+    # call fn(), compare the float return. This DISCRIMINATES the cited address
+    # (a plain 'none' getter reads 0.0 at menu-idle -> vacuous GREEN). Harness
+    # saves/restores the global so the test is non-destructive.
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426de0.md
+    'frontend_float_get_426de0': {
+        'rva':            0x00426de0,
+        'export':         'FrontendFloatGet426de0',
+        'signature':      {'ret': 'float', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0064435c,
+        'lut_root_delta': 0,
+        # raw IEEE-754 bits: 0, 1.0, -1.0, 0.5, 100.0, -100.0, pi, 0.1, 1e6, 2.0
+        'path1_tests':    [0x00000000, 0x3f800000, 0xbf800000, 0x3f000000,
+                           0x42c80000, 0xc2c80000, 0x40490fdb, 0x3dcccccd,
+                           0x49742400, 0x40000000],
+        'path2_tests':    [0x3f800000, 0xc2c80000, 0x00000000],
+    },
+
+    # 0x00426df0  FrontendFloatGet426df0
+    # float10 FUN_00426df0(void) { return (float10)_DAT_00644360; }  (= 0x0064435c + 4)
+    # Companion float-getter leaf. read_global on 0x00644360 (same rationale).
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00426df0.md
+    'frontend_float_get_426df0': {
+        'rva':            0x00426df0,
+        'export':         'FrontendFloatGet426df0',
+        'signature':      {'ret': 'float', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00644360,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x3f800000, 0xbf800000, 0x3f000000,
+                           0x42c80000, 0xc2c80000, 0x40490fdb, 0x3dcccccd,
+                           0x49742400, 0x40000000],
+        'path2_tests':    [0x3f800000, 0xc2c80000, 0x00000000],
+    },
+
+    # 0x00427580  FrontendQuadParamInit427580
+    # void FUN_00427580(void): writes 4 floats to 0x008991c0..cc from .data
+    # sources 0x0067d830/0x0067d834 and .rdata scale consts 0x005cd5f0/f4/f8.
+    # state_machine_observe: inject the two WRITABLE .data sources (the scale
+    # consts are read-only .rdata and read live by both sides), call fn(), read
+    # back the 4 written globals. Save/restore makes it non-destructive.
+    # Inputs are raw IEEE-754 float bits ([0x0067d830, 0x0067d834]).
+    # ref: re/analysis/frontend_c1_to_c2_s5/FUN_00427580.md
+    'frontend_quad_param_init_427580': {
+        'rva':            0x00427580,
+        'export':         'FrontendQuadParamInit427580',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x0067d830, 'type': 'u32'},  # source A (-> 0x008991c8)
+            {'addr': 0x0067d834, 'type': 'u32'},  # source B (-> 0x008991cc, 0x008991c4)
+        ],
+        'output_globals': [
+            {'addr': 0x008991c0, 'type': 'u32'},  # const 0x3e660000
+            {'addr': 0x008991c4, 'type': 'u32'},  # d5f0 - B*d5f4
+            {'addr': 0x008991c8, 'type': 'u32'},  # A*d5f8
+            {'addr': 0x008991cc, 'type': 'u32'},  # B*d5f4
+        ],
+        'lut_root_delta': 0,
+        # [src_A_bits, src_B_bits] as raw IEEE-754 float bit patterns
+        'path1_tests': [
+            [0x00000000, 0x00000000],  # 0.0,   0.0
+            [0x3f800000, 0x3f800000],  # 1.0,   1.0
+            [0x40000000, 0x40400000],  # 2.0,   3.0
+            [0x44200000, 0x43f00000],  # 640.0, 480.0
+            [0xbf800000, 0x40000000],  # -1.0,  2.0
+            [0x3f000000, 0x3f000000],  # 0.5,   0.5
+            [0x44480000, 0x44160000],  # 800.0, 600.0
+            [0x40400000, 0x40800000],  # 3.0,   4.0
+            [0xc0000000, 0xc0400000],  # -2.0,  -3.0
+            [0x3e800000, 0x3e000000],  # 0.25,  0.125
+        ],
+        'path2_tests': [
+            [0x3f800000, 0x3f800000],
+            [0x44200000, 0x43f00000],
+            [0x00000000, 0x00000000],
+        ],
+    },
+
 }
