@@ -102,16 +102,16 @@ def float_bits(f):
         return None  # output-buffer types return a comma-separated bit string
 
 
-def main():
-    if len(sys.argv) < 2:
-        sys.exit(f"usage: {sys.argv[0]} <hook_name>\n  registered: {', '.join(HOOKS.keys())}")
-    name = sys.argv[1]
-    if name not in HOOKS:
-        sys.exit(f"unknown hook {name!r}; registered: {', '.join(HOOKS.keys())}")
+def build_config(hook, asi_path=None):
+    """Map a hooks_registry entry to the Frida agent CONFIG dict.
 
-    hook = HOOKS[name]
+    Single source of truth shared by run_diff.py (one spawn per hook) and
+    run_diff_warm.py (one warm spawn per slot, many hooks). asi_path defaults
+    to the module-level ASI_PATH; the warm pool may pass a per-slot path.
+    """
+    _asi = str(asi_path if asi_path is not None else ASI_PATH).replace('\\', '\\\\')
     config = {
-        'asi_path':       str(ASI_PATH).replace('\\', '\\\\'),
+        'asi_path':       _asi,
         'target_rva':     f"0x{hook['rva']:08x}",
         'export':         hook['export'],
         'signature':      hook['signature'],
@@ -218,7 +218,18 @@ def main():
         config['out_base'] = f"0x{hook['out_base']:08x}"
     if 'out_count' in hook:
         config['out_count'] = hook['out_count']
+    return config
 
+
+def main():
+    if len(sys.argv) < 2:
+        sys.exit(f"usage: {sys.argv[0]} <hook_name>\n  registered: {', '.join(HOOKS.keys())}")
+    name = sys.argv[1]
+    if name not in HOOKS:
+        sys.exit(f"unknown hook {name!r}; registered: {', '.join(HOOKS.keys())}")
+
+    hook = HOOKS[name]
+    config = build_config(hook)
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     csv_out = LOG_DIR / f'diff_{name}.csv'
