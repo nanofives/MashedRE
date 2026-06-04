@@ -50,6 +50,14 @@ Beyond 8 on Sonnet, compaction is likely mid-session. A compaction in the middle
 
 ## Model declaration (per session)
 
+> **STANDING USER PREFERENCE (2026-06-04): workers run Opus, not Sonnet.** Declare
+> **Opus 4.8 1M (`claude-opus-4-8[1m]`)** in every session block and use the Opus
+> per-session caps (K=10–15, ceiling 15), regardless of "standard vs high-throughput"
+> shape. The Sonnet rows below are historical. See `memory/feedback_worker_model_opus.md`.
+> (author+verify-only + central classify + the collision-free worktree helper +
+> confirmed-arg_type-only still apply unchanged — the model only raises K and cuts
+> compaction risk.)
+
 | Role | Model | Reason |
 |---|---|---|
 | Per-session worker (standard shape) | **Sonnet 4.6** (`claude-sonnet-4-6`) | C2→C3 authoring is mechanical: read note, copy template, paste address, run harness. Sonnet handles it cleanly at K=5–8 and is ~3-4× cheaper than Opus per token. |
