@@ -822,6 +822,132 @@ function runDiff() {
     }
     const results = [];
 
+    // ── struct_call_observe ─────────────────────────────────────────────────
+    // Generic struct-pointer call harness for leaf getters/setters that read
+    // and/or write fields of a heap struct (with optional out-pointer args and
+    // nested sub-struct pointers). Added 2026-06-04 (c3-batch-ab-s4) for the
+    // audio leaves 0x005bfcc0 / 0x005c7500 / 0x005c75b0.
+    //
+    // Per test: allocate two fresh zeroed struct buffers (Orig + Reimpl side),
+    // seed identical field values, wire up nested sub-struct pointers, call
+    // fn(structPtr [, out0 [, out1]]), then read back the declared observables
+    // (struct fields, out-buffer fields, and/or the return value) and compare.
+    //
+    // CONFIG:
+    //   struct_size  int               bytes to allocate for param_1 (zeroed)
+    //   out_ptrs     0|1|2             extra 8-byte out-pointer args after param_1
+    //   observe_ret  bool              include the return value in the fingerprint
+    //   observe      [{src,off,type}]  src: 'struct'|'out0'|'out1'
+    // tests[i]:
+    //   { seeds:[{off,type,value}], nested:[{ptr_off,size,fields:[{off,type,value}]}] }
+    //   type for seeds: u8|u16|u32|s32|f32|u64 ; for observe: u8|u16|u32|s32|u64
+    if (CONFIG.arg_type === 'struct_call_observe') {
+        const SS   = CONFIG.struct_size || 0x200;
+        const nOut = CONFIG.out_ptrs || 0;
+        const wr = function (p, off, type, value) {
+            const a = p.add(off);
+            switch (type) {
+                case 'u8':  a.writeU8(value & 0xff); break;
+                case 'u16': a.writeU16(value & 0xffff); break;
+                case 's32': a.writeS32(value | 0); break;
+                case 'f32': a.writeFloat(value); break;
+                case 'u64': a.writeU32(value >>> 0); a.add(4).writeU32(0); break;
+                default:    a.writeU32(value >>> 0); break;  // u32
+            }
+        };
+        const rd = function (p, off, type) {
+            const a = p.add(off);
+            switch (type) {
+                case 'u8':  return (a.readU8()  >>> 0).toString(16);
+                case 'u16': return (a.readU16() >>> 0).toString(16);
+                case 's32': return (a.readS32()  | 0).toString(16);
+                case 'u64': return (a.readU32() >>> 0).toString(16) + ':' + (a.add(4).readU32() >>> 0).toString(16);
+                default:    return (a.readU32() >>> 0).toString(16);  // u32
+            }
+        };
+        const structO = Memory.alloc(SS), structR = Memory.alloc(SS);
+        const outsO = [], outsR = [];
+        for (let k = 0; k < nOut; k++) { outsO.push(Memory.alloc(8)); outsR.push(Memory.alloc(8)); }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            for (let b = 0; b < SS; b++) { structO.add(b).writeU8(0); structR.add(b).writeU8(0); }
+            for (let k = 0; k < nOut; k++) {
+                outsO[k].writeU32(0); outsO[k].add(4).writeU32(0);
+                outsR[k].writeU32(0); outsR[k].add(4).writeU32(0);
+            }
+            (t.seeds || []).forEach(function (s) { wr(structO, s.off, s.type, s.value); wr(structR, s.off, s.type, s.value); });
+            (t.nested || []).forEach(function (n) {
+                const subO = Memory.alloc(n.size), subR = Memory.alloc(n.size);
+                for (let b = 0; b < n.size; b++) { subO.add(b).writeU8(0); subR.add(b).writeU8(0); }
+                (n.fields || []).forEach(function (f) { wr(subO, f.off, f.type, f.value); wr(subR, f.off, f.type, f.value); });
+                structO.add(n.ptr_off).writePointer(subO);
+                structR.add(n.ptr_off).writePointer(subR);
+            });
+            let retO = null, retR = null, errO = null, errR = null;
+            try {
+                if (nOut === 0)      retO = Orig(structO);
+                else if (nOut === 1) retO = Orig(structO, outsO[0]);
+                else                 retO = Orig(structO, outsO[0], outsO[1]);
+            } catch (e) { errO = e.message; }
+            try {
+                if (nOut === 0)      retR = Reimpl(structR);
+                else if (nOut === 1) retR = Reimpl(structR, outsR[0]);
+                else                 retR = Reimpl(structR, outsR[0], outsR[1]);
+            } catch (e) { errR = e.message; }
+            const fpO = [], fpR = [];
+            if (CONFIG.observe_ret) {
+                fpO.push('r=' + (retO !== null && retO !== undefined ? retO.toString() : 'null'));
+                fpR.push('r=' + (retR !== null && retR !== undefined ? retR.toString() : 'null'));
+            }
+            (CONFIG.observe || []).forEach(function (o) {
+                const baseO = o.src === 'out0' ? outsO[0] : o.src === 'out1' ? outsO[1] : structO;
+                const baseR = o.src === 'out0' ? outsR[0] : o.src === 'out1' ? outsR[1] : structR;
+                fpO.push(o.src + '+' + o.off + '=' + rd(baseO, o.off, o.type));
+                fpR.push(o.src + '+' + o.off + '=' + rd(baseR, o.off, o.type));
+            });
+            const sO = fpO.join('|'), sR = fpR.join('|');
+            results.push({ idx: i, input: JSON.stringify(t), original: sO, reimpl: sR,
+                           match: (!errO && !errR && sO === sR), err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── pcm_pack ────────────────────────────────────────────────────────────
+    // Saturating int32->int16 PCM pack: void fn(i16* dst, i32* src, u32 count).
+    // The function writes 2*count int16 samples from 2*count int32 sources.
+    // Added 2026-06-04 (c3-batch-ab-s4) for 0x005c9770.
+    // Per test {src:[int32...], count:N}: write source ints into a shared src
+    // buffer, call Orig/Reimpl into two separate dst buffers, compare exact bytes.
+    if (CONFIG.arg_type === 'pcm_pack') {
+        const SRC_MAX = 8192, DST_MAX = 8192;
+        const srcBuf = Memory.alloc(SRC_MAX);
+        const dstO = Memory.alloc(DST_MAX), dstR = Memory.alloc(DST_MAX);
+        const hexDump = function (p, nbytes) {
+            let s = '';
+            for (let b = 0; b < nbytes; b++) { const v = p.add(b).readU8(); s += (v < 16 ? '0' : '') + v.toString(16); }
+            return s;
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const src = t.src || [];
+            const count = t.count >>> 0;
+            const nSamples = src.length;       // = 2*count
+            const dstBytes = nSamples * 2;     // 2 bytes per int16 output sample
+            for (let k = 0; k < SRC_MAX; k++) srcBuf.add(k).writeU8(0);
+            for (let k = 0; k < DST_MAX; k++) { dstO.add(k).writeU8(0); dstR.add(k).writeU8(0); }
+            for (let k = 0; k < nSamples; k++) srcBuf.add(k * 4).writeS32(src[k] | 0);
+            let errO = null, errR = null;
+            try { Orig(dstO, srcBuf, count); }   catch (e) { errO = e.message; }
+            try { Reimpl(dstR, srcBuf, count); } catch (e) { errR = e.message; }
+            const fO = hexDump(dstO, dstBytes), fR = hexDump(dstR, dstBytes);
+            results.push({ idx: i, input: JSON.stringify(t), original: fO, reimpl: fR,
+                           match: (!errO && !errR && fO === fR), err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
 
     // ── bytes_inplace / bytes_inplace_3 ─────────────────────────────────────
     // Allocate a pair of scratch buffers; fill both from test.init before each

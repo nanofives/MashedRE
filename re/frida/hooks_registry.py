@@ -524,7 +524,7 @@ HOOKS = {
         'signature':              {'ret': 'int32', 'args': ['int32', 'pointer']},
         'arg_type':               'sentinel_array_ptr',
         'orig_calling_convention':   'fastcall',
-        'reimpl_calling_convention': 'mscdecl',
+        'reimpl_calling_convention': 'fastcall',  # 2026-06-01: reimpl rebuilt as __fastcall (EDX=param_2) to match the installed inline-JMP ABI; was 'mscdecl', which let orig+reimpl each pass under its own convention while the LIVE hook crashed (boot AV). Test both as fastcall now.
         'lut_root_delta': 0,
         # Each test is a list of int32 values (as Python ints).
         # 0xFF060000 = group delimiter; 0xFF070000 = end-of-array terminator.
@@ -10872,6 +10872,151 @@ HOOKS = {
             [0x00618664, 0x00000000],
             [0x00618664, 0x00000001],
             [0x00618664, 0x00000100],
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3-batch-ab session 4 — audio leaves (bucket_audio_005bf4d0_005c9770).
+    # ABIs verified from the disassembly (see Audio/AudioLeaves_ab4.cpp headers).
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005bf660  Audio3DwordZero — __cdecl void(ptr): zero 3 consecutive dwords.
+    # bytes_inplace with a 2-arg signature (the spare uint32 is harmless under
+    # cdecl; the function reads only [ESP+4]). len=16 cases guard against
+    # over-zeroing past the 3 dwords.
+    'audio_3dword_zero': {
+        'rva':         0x005bf660,
+        'export':      'Audio3DwordZero',
+        'signature':   {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type':    'bytes_inplace',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'init': [0xAA,0xBB,0xCC,0xDD, 0x11,0x22,0x33,0x44, 0x55,0x66,0x77,0x88], 'len': 12},
+            {'init': [0xFF]*16, 'len': 16},
+            {'init': [0x01,0x02,0x03,0x04, 0x05,0x06,0x07,0x08,
+                      0x09,0x0A,0x0B,0x0C, 0x0D,0x0E,0x0F,0x10], 'len': 16},
+        ],
+        'path2_tests': [
+            {'init': [0xAA,0xBB,0xCC,0xDD, 0x11,0x22,0x33,0x44, 0x55,0x66,0x77,0x88], 'len': 12},
+        ],
+    },
+
+    # 0x005bfcc0  AudioCounterPairGet — __stdcall int(ptr, u64* o1, u64* o2).
+    # o1 = (u64)*(p+0x15c) ; o2 = (u64)((u32)*(p+0x15c) - (u32)*(p+0x160)) ; ret 0.
+    # Export decorates to _AudioCounterPairGet@12 (extern "C" __stdcall).
+    'audio_counter_pair_get': {
+        'rva':         0x005bfcc0,
+        'export':      '_AudioCounterPairGet@12',
+        'signature':   {'ret': 'int32', 'args': ['pointer', 'pointer', 'pointer']},
+        'arg_type':    'struct_call_observe',
+        'orig_calling_convention':   'stdcall',
+        'reimpl_calling_convention': 'stdcall',
+        'struct_size': 0x180,
+        'out_ptrs':    2,
+        'observe_ret': True,
+        'observe':     [{'src': 'out0', 'off': 0, 'type': 'u64'},
+                        {'src': 'out1', 'off': 0, 'type': 'u64'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': 0x15c, 'type': 'u32', 'value': 1000},      {'off': 0x160, 'type': 'u32', 'value': 300}]},
+            {'seeds': [{'off': 0x15c, 'type': 'u32', 'value': 0},         {'off': 0x160, 'type': 'u32', 'value': 0}]},
+            {'seeds': [{'off': 0x15c, 'type': 'u32', 'value': 5},         {'off': 0x160, 'type': 'u32', 'value': 10}]},
+            {'seeds': [{'off': 0x15c, 'type': 'u32', 'value': 0xFFFFFFFF},{'off': 0x160, 'type': 'u32', 'value': 1}]},
+            {'seeds': [{'off': 0x15c, 'type': 'u32', 'value': 0x12345678},{'off': 0x160, 'type': 'u32', 'value': 0x1000}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x15c, 'type': 'u32', 'value': 1000},      {'off': 0x160, 'type': 'u32', 'value': 300}]},
+        ],
+    },
+
+    # 0x005c7500  AudioMixerRateCompute — __cdecl void(ptr): fixed-point store.
+    # *(p+0x80) = ((u32)(int)(f38*f34) << 32) / *(*(p+0x9c)+0x18), low 16 cleared.
+    # Products chosen exactly float32-representable so the FISTP-truncate matches
+    # the C cast bit-for-bit; divisors are nonzero.
+    'audio_mixer_rate_compute': {
+        'rva':         0x005c7500,
+        'export':      'AudioMixerRateCompute',
+        'signature':   {'ret': 'void', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0x100,
+        'out_ptrs':    0,
+        'observe_ret': False,
+        'observe':     [{'src': 'struct', 'off': 0x80, 'type': 'u64'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': 2.0}, {'off': 0x38, 'type': 'f32', 'value': 3.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 0x10000}]}]},
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': 1.0}, {'off': 0x38, 'type': 'f32', 'value': 1.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 2}]}]},
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': 4.0}, {'off': 0x38, 'type': 'f32', 'value': 5.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 1000}]}]},
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': 1.5}, {'off': 0x38, 'type': 'f32', 'value': 3.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 256}]}]},
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': 0.0}, {'off': 0x38, 'type': 'f32', 'value': 123.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 7}]}]},
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': -2.0}, {'off': 0x38, 'type': 'f32', 'value': 3.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 0x10000}]}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x34, 'type': 'f32', 'value': 2.0}, {'off': 0x38, 'type': 'f32', 'value': 3.0}],
+             'nested': [{'ptr_off': 0x9c, 'size': 0x20, 'fields': [{'off': 0x18, 'type': 'u32', 'value': 0x10000}]}]},
+        ],
+    },
+
+    # 0x005c75b0  AudioVoiceField8cGet — __cdecl u32(ptr): return *(p+0x8c).
+    'audio_voice_field8c_get': {
+        'rva':         0x005c75b0,
+        'export':      'AudioVoiceField8cGet',
+        'signature':   {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0xa0,
+        'out_ptrs':    0,
+        'observe_ret': True,
+        'observe':     [],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': 0x8c, 'type': 'u32', 'value': 0}]},
+            {'seeds': [{'off': 0x8c, 'type': 'u32', 'value': 1}]},
+            {'seeds': [{'off': 0x8c, 'type': 'u32', 'value': 0xDEADBEEF}]},
+            {'seeds': [{'off': 0x8c, 'type': 'u32', 'value': 0x7FFFFFFF}]},
+            {'seeds': [{'off': 0x8c, 'type': 'u32', 'value': 0xFFFFFFFF}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x8c, 'type': 'u32', 'value': 0xDEADBEEF}]},
+        ],
+    },
+
+    # 0x005c9380  AudioBitBufSizeCalc — __cdecl u32(bits): max(1, bits>>3) + 0xc.
+    'audio_bitbuf_size_calc': {
+        'rva':         0x005c9380,
+        'export':      'AudioBitBufSizeCalc',
+        'signature':   {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':    'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests': [0, 1, 7, 8, 9, 16, 255, 256, 1024, 0xFFFFFFFF],
+        'path2_tests': [0, 8, 1024],
+    },
+
+    # 0x005c9770  AudioPcmPackSaturate — __cdecl void(i16* dst, i32* src, count).
+    # Saturating int32->int16 pack; writes 2*count samples. src holds 2*count
+    # int32s. Cases cover main-loop (count even), main+tail (count odd),
+    # tail-only (count=1), empty (count=0), and all three saturation branches.
+    'audio_pcm_pack_saturate': {
+        'rva':         0x005c9770,
+        'export':      'AudioPcmPackSaturate',
+        'signature':   {'ret': 'void', 'args': ['pointer', 'pointer', 'uint32']},
+        'arg_type':    'pcm_pack',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'src': [], 'count': 0},
+            {'src': [0, -1], 'count': 1},
+            {'src': [0x100, -0x100, 0x800000, -0x800001], 'count': 2},
+            {'src': [0x100, -0x100, 0, 0x123456, 0x900000, -0x900000], 'count': 3},
+            {'src': [-0x800000, 0x7fff00, 0x7fff01, 0x800000, 1, -1, 0x7fffffff, -0x7fffffff], 'count': 4},
+        ],
+        'path2_tests': [
+            {'src': [0x100, -0x100, 0x800000, -0x800001], 'count': 2},
+            {'src': [0x100, -0x100, 0, 0x123456, 0x900000, -0x900000], 'count': 3},
         ],
     },
 

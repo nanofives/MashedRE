@@ -170,6 +170,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Audio\RwsFmt.cpp" ^
     "Audio\AudioDSound.cpp" ^
     "Audio\AudioMusic.cpp" ^
+    "Audio\AudioLeaves_ab4.cpp" ^
     "Math\RwV3dTransform.cpp" ^
     "Math\RwV2d.cpp" ^
     "Math\RwMatrixScale.cpp" ^
@@ -235,6 +236,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Input\DInput.cpp" ^
     "Compat\PizWin32Bypass.cpp" ^
     "Compat\IntroTextNullGuard.cpp" ^
+    "Compat\StreamHandlerDispatchGuard.cpp" ^
     "Harness\HarnessStubs.cpp" ^
     "Frontend\Leaves.cpp" ^
     "Frontend\MenuMenusMixed.cpp" ^
