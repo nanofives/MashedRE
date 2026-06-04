@@ -3126,3 +3126,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  sweep-20260604-0020  scribe-release  bucket=bucket_render_ar_s4  writes=0  errors=0  (ALL-SKIP: rvas=NONE, library_skip; master NOT opened - zero plates across batch)
 2026-06-04  sweep-20260604-0020  scribe-release  bucket=bucket_render_ar_s5  writes=0  errors=0  (ALL-SKIP: rvas=NONE, library_skip; master NOT opened - zero plates across batch)
 2026-06-04  sweep-20260604-0020  scribe-release  bucket=bucket_render_ar_s6  writes=0  errors=0  (ALL-SKIP: rvas=NONE, library_skip; master NOT opened - zero plates across batch)
+2026-06-04  sweep-20260604-0020  scribe-release  buckets=6 drained  errors=0
