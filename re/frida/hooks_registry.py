@@ -11976,5 +11976,96 @@ HOOKS = {
             [0x00000000, 0x00000000],
         ],
     },
+    # ───────────────────────────────────────────────────────────────────────
+    # Session c3-batch-ad-s4 — HARVEST  (C2→C3, 3 viable 0x0049xxxx COM leaves)
+    # Particle/ParticleLeaves_ad4.cpp — author+verify-only; central classify at
+    # sweep. NO diff_template.js change (reuses fastcall_reg + struct_call_observe)
+    # → NOT sweep-critical. The other 10 candidates in the slate were SKIPPED as
+    # needs-live-state (CoCreateInstance / QueryInterface / EnterCriticalSection /
+    # unconditional vtable dispatch — not constructible at diff-attach).
+    # ───────────────────────────────────────────────────────────────────────
+
+    # 0x0049c690  ComField14Get — uint __fastcall(ptr): return *(ECX+0x14).
+    # Bytes: 8b4114 (MOV EAX,[ECX+0x14]) ; c3 (RET, reg-only -> __fastcall).
+    # The harness seeds ECX with a ZEROED 64-byte scratch buffer, so *(ECX+0x14)
+    # == 0 -> orig and reimpl both return 0 (proves ECX marshalling + the +0x14
+    # read + callee-clean stack balance). Same shape as the validated fastcall_reg
+    # canary com_release_thunk @ 0x004a1790.
+    # ref: re/analysis/particle_promote_ad1/0049c690.md
+    'com_field14_get': {
+        'rva':              0x0049c690,
+        'export':           'ComField14Get',
+        'signature':        {'ret': 'uint32', 'args': []},
+        'arg_type':         'fastcall_reg',
+        'fastcall_nargs':   1,
+        'fastcall_ecx_ptr': True,
+        'lut_root_delta':   0,
+        # Markers only — the harness replaces each with a fresh zeroed scratch ptr.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x0049f180  ComRefRelease14 — LONG __stdcall(int*): COM Release. Atomically
+    # decrements the refcount dword at byte +0x14; when the new count hits 0 (and
+    # ptr non-null) makes a __thiscall to vtable slot 7 (offset +0x1c) with arg 1.
+    # Returns the post-decrement count.  RET 0x4 -> __stdcall.
+    # struct_call_observe seeds the refcount at +0x14 with a value > 1 so the
+    # decrement stays > 0 and the vtable-finalise path is NOT taken (the zeroed
+    # scratch struct has a null vtable, so the 0-count path is unconstructible at
+    # diff-time). Observe the return value AND the post-call refcount field.
+    # ref: re/analysis/particle_promote_ad5/0049f180.md
+    'com_ref_release14': {
+        'rva':         0x0049f180,
+        'export':      '_ComRefRelease14@4',
+        'signature':   {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'orig_calling_convention':   'stdcall',
+        'reimpl_calling_convention': 'stdcall',
+        'struct_size': 0x40,
+        'out_ptrs':    0,
+        'observe_ret': True,
+        'observe':     [{'src': 'struct', 'off': 0x14, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        # refcount seeds — all > 1 (NEVER 1, which would decrement to 0 and call
+        # the null vtable). Each test allocates a fresh zeroed struct per side.
+        'path1_tests': [
+            {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 2}]},
+            {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 3}]},
+            {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 5}]},
+            {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 16}]},
+            {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 0x7fffffff}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x14, 'type': 'u32', 'value': 5}]},
+        ],
+    },
+
+    # 0x0049f2b0  ComRefRelease10 — LONG __stdcall(int*): byte-identical to
+    # ComRefRelease14 except the refcount dword is at byte +0x10. Same __stdcall
+    # ABI (RET 0x4), same __thiscall vtable-slot-7 / arg-1 finalise on count 0.
+    # ref: re/analysis/particle_promote_ad5/0049f2b0.md
+    'com_ref_release10': {
+        'rva':         0x0049f2b0,
+        'export':      '_ComRefRelease10@4',
+        'signature':   {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'orig_calling_convention':   'stdcall',
+        'reimpl_calling_convention': 'stdcall',
+        'struct_size': 0x40,
+        'out_ptrs':    0,
+        'observe_ret': True,
+        'observe':     [{'src': 'struct', 'off': 0x10, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 2}]},
+            {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 3}]},
+            {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 5}]},
+            {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 16}]},
+            {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 0x7fffffff}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x10, 'type': 'u32', 'value': 5}]},
+        ],
+    },
 
 }
