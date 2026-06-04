@@ -3068,6 +3068,122 @@ HOOKS = {
         'path2_tests':    [0, 0, 0],
     },
 
+    # ===== c3_batch_ab session 1 (2026-06-04) — audio pure leaves =====
+    # Each rides a NEW arg_type added to diff_template.js this session (the
+    # branch touches diff_template.js — flag for frida-sweep manual merge).
+
+    # 0x005ac540  AudioByte54Bit3Get — uint(ptr): (*(byte*)(p+0x54) & 8) >> 3.
+    # arg_type 'ptr_scratch_field': zeroed scratch, test byte seeded at +0x54.
+    'audio_byte54_bit3_get': {
+        'rva':            0x005ac540,
+        'export':         'AudioByte54Bit3Get',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_scratch_field',
+        'field_offset':   0x54,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00, 0x08, 0xFF, 0xF7, 0x80, 0x88, 0x0F, 0x07, 0xF8, 0x48],
+        'path2_tests':    [0x00, 0x08, 0xFF],
+    },
+
+    # 0x005aded0  AudioListNodeCount — int(anchor): circular-list (next@+4) count.
+    # arg_type 'audio_list_count': hand-built ring of N nodes (no audio pool).
+    'audio_list_node_count': {
+        'rva':            0x005aded0,
+        'export':         'AudioListNodeCount',
+        'signature':      {'ret': 'int32', 'args': ['pointer']},
+        'arg_type':       'audio_list_count',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 5, 8, 13, 16],
+        'path2_tests':    [0, 1, 4],
+    },
+
+    # 0x005ade60  AudioListIndexOfKey — int(anchor,key): index of node whose
+    # key@+8 == key, walking next@+4; -1 if none.
+    # arg_type 'audio_list_find_index': hand-built ring from payloads list.
+    'audio_list_index_of_key': {
+        'rva':            0x005ade60,
+        'export':         'AudioListIndexOfKey',
+        'signature':      {'ret': 'int32', 'args': ['pointer', 'int32']},
+        'arg_type':       'audio_list_find_index',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            {'payloads': [],              'key': 5},      # empty -> -1
+            {'payloads': [10],            'key': 10},     # 0
+            {'payloads': [10],            'key': 99},     # -1
+            {'payloads': [10, 20, 30],    'key': 10},     # 0
+            {'payloads': [10, 20, 30],    'key': 20},     # 1
+            {'payloads': [10, 20, 30],    'key': 30},     # 2
+            {'payloads': [10, 20, 30],    'key': 99},     # -1
+            {'payloads': [10, 20, 30, 40, 50], 'key': 50},# 4
+            {'payloads': [-1, -2, -3],    'key': -2},     # 1 (sign)
+            {'payloads': [0, 1, 2],       'key': 0},      # 0
+        ],
+        'path2_tests':    [
+            {'payloads': [10, 20, 30], 'key': 20},
+            {'payloads': [10],         'key': 99},
+            {'payloads': [],           'key': 1},
+        ],
+    },
+
+    # 0x005ae590  AudioArenaBlockIsFree — bool(block): **(block+8)==*(block+0xc).
+    # arg_type 'arena_block_free_predicate': hand-built block, both branches.
+    'audio_arena_block_is_free': {
+        'rva':            0x005ae590,
+        'export':         'AudioArenaBlockIsFree',
+        'signature':      {'ret': 'bool', 'args': ['pointer']},
+        'arg_type':       'arena_block_free_predicate',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            {'free': True}, {'free': False}, {'free': True}, {'free': False},
+            {'free': True}, {'free': False}, {'free': True}, {'free': False},
+        ],
+        'path2_tests':    [{'free': True}, {'free': False}, {'free': True}],
+    },
+
+    # 0x005aeda0  AudioShiftAddMul64 — void(a,b,*hi,*lo): shift-add 64-bit mul.
+    # arg_type 'int2_ptr2_out': two scalar args + two 4-byte out-slots.
+    'audio_shift_add_mul64': {
+        'rva':            0x005aeda0,
+        'export':         'AudioShiftAddMul64',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32', 'pointer', 'pointer']},
+        'arg_type':       'int2_ptr2_out',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            [0, 0], [1, 1], [2, 3],
+            [0xFFFFFFFF, 0xFFFFFFFF], [0x80000000, 0x80000000],
+            [0xAAAAAAAA, 0x55555555], [0x10000, 0x10000],
+            [0x7FFFFFFF, 0x7FFFFFFF], [0xFFFFFFFF, 1], [1, 0xFFFFFFFF],
+        ],
+        'path2_tests':    [[1, 1], [0xFFFFFFFF, 0xFFFFFFFF], [0xAAAAAAAA, 0x55555555]],
+    },
+
+    # 0x005b0700  AudioListMinKeySelect — int(anchor,thresh): select payload by
+    # key chain *(*(payload+0x54)+0x10) >= thresh while bestKey stays >= thresh.
+    # arg_type 'audio_list_min_select': hand-built ring with key sub-structs;
+    # return mapped to payload index.
+    'audio_list_min_key_select': {
+        'rva':            0x005b0700,
+        'export':         'AudioListMinKeySelect',
+        'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type':       'audio_list_min_select',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            {'keys': [],            'thresh': 0},     # -1 (none)
+            {'keys': [5],           'thresh': 0},     # 0
+            {'keys': [5],           'thresh': 10},    # -1
+            {'keys': [5, 10, 15],   'thresh': 0},     # last qualifying -> 2
+            {'keys': [15, 10, 5],   'thresh': 8},     # 1
+            {'keys': [100, 1, 100], 'thresh': 50},    # 2
+            {'keys': [0xFFFFFFFF, 0], 'thresh': 0},   # 1
+            {'keys': [7, 7, 7],     'thresh': 7},     # 2
+        ],
+        'path2_tests':    [
+            {'keys': [5, 10, 15], 'thresh': 0},
+            {'keys': [5],         'thresh': 10},
+            {'keys': [],          'thresh': 0},
+        ],
+    },
+
     # 0x005ac740  AudioSubStructBufCleanup
     # void(int param_1): audio sub-struct buffer cleanup.
     # bit1@+0x18 guards free; always zeroes +0x10 and +0x14.

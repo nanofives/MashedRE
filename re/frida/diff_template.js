@@ -1653,6 +1653,181 @@ function runDiff() {
         return;
     }
 
+    // ── ptr_scratch_field (added 2026-06-04, c3_batch_ab s1) ─────────────────
+    // fn(ptr) -> int.  The function reads a field at scratch+field_offset.
+    // Allocate one zeroed scratch buffer (read-only target), seed the test byte
+    // at CONFIG.field_offset (default 0x54), call Orig/Reimpl, compare returns.
+    // Used for AudioByte54Bit3Get (0x005ac540): (*(byte*)(p+0x54) & 8) >> 3.
+    if (CONFIG.arg_type === 'ptr_scratch_field') {
+        var PSF_OFF = (CONFIG.field_offset !== undefined) ? (CONFIG.field_offset | 0) : 0x54;
+        var PSF_SZ  = 0x80;
+        var psfBuf  = Memory.alloc(PSF_SZ);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var bval = (CONFIG.tests[i] | 0) & 0xff;
+            var origV = null, reimV = null, errO = null, errR = null;
+            for (var z = 0; z < PSF_SZ; z++) psfBuf.add(z).writeU8(0);
+            psfBuf.add(PSF_OFF).writeU8(bval);
+            try { origV = Orig(psfBuf) >>> 0; }   catch (e) { errO = e.message; }
+            try { reimV = Reimpl(psfBuf) >>> 0; } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: bval, original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_list_count (added 2026-06-04, c3_batch_ab s1) ──────────────────
+    // fn(anchor) -> int node count.  Hand-build a circular list (next@+4) with
+    // N nodes WITHOUT the audio pool (pool is not ready at diff-attach), so the
+    // traversal body is actually exercised.  Read-only => one structure, both
+    // sides.  Used for AudioListNodeCount (0x005aded0).
+    if (CONFIG.arg_type === 'audio_list_count') {
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var n = CONFIG.tests[i] | 0;
+            var anchor = Memory.alloc(12);
+            var nodes = [];
+            for (var k = 0; k < n; k++) nodes.push(Memory.alloc(12));
+            var prev = anchor;
+            for (var k = 0; k < n; k++) { prev.add(4).writePointer(nodes[k]); prev = nodes[k]; }
+            prev.add(4).writePointer(anchor);   // close the ring (also handles n==0)
+            var origV = null, reimV = null, errO = null, errR = null;
+            try { origV = Orig(anchor) | 0; }   catch (e) { errO = e.message; }
+            try { reimV = Reimpl(anchor) | 0; } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: n, original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_list_find_index (added 2026-06-04, c3_batch_ab s1) ─────────────
+    // fn(anchor, key) -> int index-of-key or -1.  Hand-build circular list
+    // (next@+4, key@+8) from test.payloads; query test.key.  Read-only.
+    // Used for AudioListIndexOfKey (0x005ade60).
+    if (CONFIG.arg_type === 'audio_list_find_index') {
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var pls = t.payloads || [];
+            var key = t.key | 0;
+            var anchor = Memory.alloc(12);
+            var nodes = [];
+            for (var k = 0; k < pls.length; k++) {
+                var nd = Memory.alloc(12);
+                nd.add(8).writeS32(pls[k] | 0);
+                nodes.push(nd);
+            }
+            var prev = anchor;
+            for (var k = 0; k < nodes.length; k++) { prev.add(4).writePointer(nodes[k]); prev = nodes[k]; }
+            prev.add(4).writePointer(anchor);
+            var origV = null, reimV = null, errO = null, errR = null;
+            try { origV = Orig(anchor, key) | 0; }   catch (e) { errO = e.message; }
+            try { reimV = Reimpl(anchor, key) | 0; } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t), original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── int2_ptr2_out (added 2026-06-04, c3_batch_ab s1) ─────────────────────
+    // void fn(uint a, uint b, uint* hi, uint* lo).  Two scalar args + two 4-byte
+    // out-slots; observable = "hi,lo" hex fingerprint.  Used for
+    // AudioShiftAddMul64 (0x005aeda0).  test = [a, b].
+    if (CONFIG.arg_type === 'int2_ptr2_out') {
+        var i2Buf = Memory.alloc(8);
+        function i2Pack() {
+            return ('00000000' + (i2Buf.readU32() >>> 0).toString(16)).slice(-8) + ',' +
+                   ('00000000' + (i2Buf.add(4).readU32() >>> 0).toString(16)).slice(-8);
+        }
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var a = (CONFIG.tests[i][0]) >>> 0;
+            var b = (CONFIG.tests[i][1]) >>> 0;
+            var origV = null, reimV = null, errO = null, errR = null;
+            i2Buf.writeU32(0); i2Buf.add(4).writeU32(0);
+            try { Orig(a, b, i2Buf, i2Buf.add(4)); origV = i2Pack(); }   catch (e) { errO = e.message; }
+            i2Buf.writeU32(0); i2Buf.add(4).writeU32(0);
+            try { Reimpl(a, b, i2Buf, i2Buf.add(4)); reimV = i2Pack(); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(CONFIG.tests[i]),
+                           original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── audio_list_min_select (added 2026-06-04, c3_batch_ab s1) ─────────────
+    // fn(anchor, thresh) -> int (selected payload pointer, or 0).  Hand-build a
+    // circular list (next@+4, payload@+8) where each payload+0x54 -> keystruct,
+    // keystruct+0x10 = key (from test.keys).  The raw return is a payload
+    // pointer; map it back to its index so the A/B compares logical selection
+    // (per-side pointer identity is meaningless).  Used for AudioListMinKeySelect
+    // (0x005b0700).  test = { keys: [...], thresh: uint }.
+    if (CONFIG.arg_type === 'audio_list_min_select') {
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var keys = t.keys || [];
+            var thresh = (t.thresh) >>> 0;
+            var anchor = Memory.alloc(12);
+            var nodes = [], payloads = [];
+            for (var k = 0; k < keys.length; k++) {
+                var ks = Memory.alloc(0x14);
+                ks.add(0x10).writeU32(keys[k] >>> 0);
+                var pl = Memory.alloc(0x58);
+                pl.add(0x54).writePointer(ks);
+                var nd = Memory.alloc(12);
+                nd.add(8).writePointer(pl);
+                nodes.push(nd); payloads.push(pl);
+            }
+            var prev = anchor;
+            for (var k = 0; k < nodes.length; k++) { prev.add(4).writePointer(nodes[k]); prev = nodes[k]; }
+            prev.add(4).writePointer(anchor);
+            var idxOf = function (ret) {
+                if (!ret) return -1;
+                var rp = ptr(ret >>> 0);
+                for (var m = 0; m < payloads.length; m++) { if (payloads[m].equals(rp)) return m; }
+                return -2;   // returned a pointer we did not build -> mismatch signal
+            };
+            var origV = null, reimV = null, errO = null, errR = null;
+            try { origV = idxOf(Orig(anchor, thresh) >>> 0); }   catch (e) { errO = e.message; }
+            try { reimV = idxOf(Reimpl(anchor, thresh) >>> 0); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t), original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── arena_block_free_predicate (added 2026-06-04, c3_batch_ab s1) ────────
+    // bool fn(block) = **(block+8) == *(block+0xc).  Hand-build a 16-byte block:
+    // block+8 -> headNode, block+0xc = end-sentinel value; headNode+0 (its next)
+    // == sentinel for the fully-free case, != sentinel otherwise.  No pool.
+    // Used for AudioArenaBlockIsFree (0x005ae590).  test = { free: bool }.
+    if (CONFIG.arg_type === 'arena_block_free_predicate') {
+        var ABF_SENT = 0x13572468;
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var isFree = t.free ? true : false;
+            var block = Memory.alloc(0x10);
+            var headNode = Memory.alloc(0x10);
+            block.add(8).writePointer(headNode);
+            block.add(0xc).writeU32(ABF_SENT >>> 0);
+            headNode.writeU32((isFree ? ABF_SENT : (ABF_SENT ^ 0xff)) >>> 0);
+            var origV = null, reimV = null, errO = null, errR = null;
+            try { origV = Orig(block) ? 1 : 0; }   catch (e) { errO = e.message; }
+            try { reimV = Reimpl(block) ? 1 : 0; } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(t), original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── eax_implicit_ptr / eax_implicit_int ─────────────────────────────────
     // Build a small RWX thunk that seeds EAX=imm32 then JMPs to the target.
     // Layout (10 bytes):

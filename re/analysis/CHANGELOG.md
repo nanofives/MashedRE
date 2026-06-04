@@ -3135,3 +3135,10 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  005c75b0  AudioVoiceField8cGet   C2->C3  log/diff_audio_voice_field8c_get.csv (Frida GREEN 5/5; pure-leaf exemption) [c3-batch-ab-s4]
 2026-06-04  005c9380  AudioBitBufSizeCalc    C2->C3  log/diff_audio_bitbuf_size_calc.csv (Frida GREEN 10/10; pure-leaf exemption) [c3-batch-ab-s4]
 2026-06-04  005c9770  AudioPcmPackSaturate   C2->C3  log/diff_audio_pcm_pack_saturate.csv (Frida GREEN 5/5; caller FUN_005c9740 C2; U-7219 resolved) [c3-batch-ab-s4]
+2026-06-04  re-classify c3_batch_ab s1  6 audio pure-leaves C2->C3 (leaf-exemption via Frida bit-identity A/B, hook-bypassed; reimpls in mashedmod/src/mashed_re/Audio/AudioLeaves_ab1.cpp; 6 NEW diff_template.js arg_types added this branch -> flag for frida-sweep manual merge). 0x005ae4c0 DEFERRED (mutating intra-block first-fit allocator returns block-relative ptr; needs pointer-relative-fingerprint harness; queued in PROMOTION_QUEUE).
+2026-06-04  005ac540  AudioByte54Bit3Get      C2->C3  log/diff_audio_byte54_bit3_get.csv (10/10 GREEN, arg_type ptr_scratch_field)
+2026-06-04  005ade60  AudioListIndexOfKey     C2->C3  log/diff_audio_list_index_of_key.csv (10/10 GREEN, arg_type audio_list_find_index)
+2026-06-04  005aded0  AudioListNodeCount      C2->C3  log/diff_audio_list_node_count.csv (8/8 GREEN, arg_type audio_list_count)
+2026-06-04  005ae590  AudioArenaBlockIsFree   C2->C3  log/diff_audio_arena_block_is_free.csv (8/8 GREEN, arg_type arena_block_free_predicate)
+2026-06-04  005aeda0  AudioShiftAddMul64      C2->C3  log/diff_audio_shift_add_mul64.csv (10/10 GREEN, arg_type int2_ptr2_out)
+2026-06-04  005b0700  AudioListMinKeySelect   C2->C3  log/diff_audio_list_min_key_select.csv (8/8 GREEN, arg_type audio_list_min_select); U-6819 key semantics data-level non-blocking
