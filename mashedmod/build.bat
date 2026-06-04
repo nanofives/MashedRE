@@ -143,6 +143,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\BatchAB_s1.cpp" ^
     "Render\BatchAB_s3.cpp" ^
     "Render\BatchAB_s6.cpp" ^
+    "Render\RenderLeaves_ae1.cpp" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     user32.lib d3d9.lib
@@ -302,6 +303,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\BatchAB_s1.cpp" ^
     "Render\BatchAB_s3.cpp" ^
     "Render\BatchAB_s6.cpp" ^
+    "Render\RenderLeaves_ae1.cpp" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     "Gameplay\GameplayLeaves_ad3.cpp" ^
     "Particle\ParticleLeaves_ad4.cpp" ^

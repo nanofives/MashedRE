@@ -12090,4 +12090,124 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xFFFFFFFF],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3-batch-ae-s1 — render-leaf HARVEST (2/11 promotable)
+    # ─────────────────────────────────────────────────────────────────────────
+    # 0x00492440  RenderStatsAccumulate — __cdecl void(ptr): per-frame stats
+    #   rollup over a 60-frame window. Fields (byte offsets from param_1):
+    #     +0x20 A sample (in)   +0x24 B sample (in)   +0x28 frame counter
+    #     +0x2c A accum         +0x30 B accum         +0x34 A avg (out)
+    #     +0x38 B avg (out)     +0x3c A max           +0x40 B max
+    #   accum += sample; if counter > 0x3b: avg = accum/0x3c, accum = 0,
+    #   counter = 0; counter += 1; max = max(max, sample). All s32 (signed
+    #   idiv / jl). struct_call_observe seeds the input fields and observes
+    #   every mutated field; observe_ret=False (void). Tests exercise the
+    #   rollup boundary (counter 0x3b vs 0x3c), signed division (negative
+    #   accumulators), and signed max tracking.
+    'render_stats_accumulate': {
+        'rva':         0x00492440,
+        'export':      'RenderStatsAccumulate',
+        'signature':   {'ret': 'void', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0x80,
+        'out_ptrs':    0,
+        'observe_ret': False,
+        'observe':     [{'src': 'struct', 'off': 0x28, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x2c, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x30, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x34, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x38, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x3c, 'type': 'u32'},
+                        {'src': 'struct', 'off': 0x40, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # counter low: simple accumulate, no rollup; max tracking from 0
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 10}, {'off': 0x24, 'type': 'u32', 'value': 20},
+                       {'off': 0x28, 'type': 'u32', 'value': 5},  {'off': 0x2c, 'type': 'u32', 'value': 100},
+                       {'off': 0x30, 'type': 'u32', 'value': 200}]},
+            # counter exactly 0x3b (59): NOT > 0x3b -> no rollup, counter -> 60
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 5}, {'off': 0x24, 'type': 'u32', 'value': 5},
+                       {'off': 0x28, 'type': 'u32', 'value': 0x3b}, {'off': 0x2c, 'type': 'u32', 'value': 1000},
+                       {'off': 0x30, 'type': 'u32', 'value': 2000}]},
+            # counter 0x3c (60): > 0x3b -> rollup; (1180+5)/60=19, (2360+5)/60=39
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 5}, {'off': 0x24, 'type': 'u32', 'value': 5},
+                       {'off': 0x28, 'type': 'u32', 'value': 0x3c}, {'off': 0x2c, 'type': 'u32', 'value': 1180},
+                       {'off': 0x30, 'type': 'u32', 'value': 2360}]},
+            # division truncation: (5999+1)/60=100, (119+1)/60=2
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 1}, {'off': 0x24, 'type': 'u32', 'value': 1},
+                       {'off': 0x28, 'type': 'u32', 'value': 0x64}, {'off': 0x2c, 'type': 'u32', 'value': 5999},
+                       {'off': 0x30, 'type': 'u32', 'value': 119}]},
+            # signed division: accum -7259 (0xFFFFE3A5) /60 trunc-toward-zero = -120
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 0}, {'off': 0x24, 'type': 'u32', 'value': 0},
+                       {'off': 0x28, 'type': 'u32', 'value': 0x3c}, {'off': 0x2c, 'type': 'u32', 'value': 0xFFFFE3A5},
+                       {'off': 0x30, 'type': 'u32', 'value': 0xFFFFE3A5}]},
+            # signed max: maxA seeded -100 (0xFFFFFF9C), sample -50 -> -100 < -50 -> update
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 0xFFFFFFCE}, {'off': 0x24, 'type': 'u32', 'value': 0xFFFFFFCE},
+                       {'off': 0x28, 'type': 'u32', 'value': 1}, {'off': 0x3c, 'type': 'u32', 'value': 0xFFFFFF9C},
+                       {'off': 0x40, 'type': 'u32', 'value': 0xFFFFFF9C}]},
+            # signed max: maxA seeded -100, sample -200 (0xFFFFFF38) -> no update
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 0xFFFFFF38}, {'off': 0x24, 'type': 'u32', 'value': 0xFFFFFF38},
+                       {'off': 0x28, 'type': 'u32', 'value': 1}, {'off': 0x3c, 'type': 'u32', 'value': 0xFFFFFF9C},
+                       {'off': 0x40, 'type': 'u32', 'value': 0xFFFFFF9C}]},
+            # all zero
+            {'seeds': []},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x20, 'type': 'u32', 'value': 10}, {'off': 0x24, 'type': 'u32', 'value': 20},
+                       {'off': 0x28, 'type': 'u32', 'value': 0x3c}, {'off': 0x2c, 'type': 'u32', 'value': 1180}]},
+        ],
+    },
+
+    # 0x004b46b0  Vec3Equal — __cdecl u32(float* a, float* b): returns 1 if all
+    #   three components compare equal under IEEE-754 `==`, else 0. No epsilon;
+    #   FP compare (not bit compare) -> +0.0 == -0.0 is 1, NaN == NaN is 0.
+    #   Reused arg_type 'fmt_desc_pair_compare' (2-arg form): seeds float bits
+    #   as u32 at f00/f04/f08 in each scratch buffer; the function is read-only
+    #   so the buffer fingerprints are unchanged and the 0/1 return drives the
+    #   match. Tests cover all-equal, per-component mismatch, signed-zero, and
+    #   NaN edges.
+    'render_vec3_equal': {
+        'rva':            0x004b46b0,
+        'export':         'Vec3Equal',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # all equal {1.0, 2.0, 3.0} -> 1
+            {'a': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000},
+             'b': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000}},
+            # x differs (1.0 vs 2.0) -> 0
+            {'a': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000},
+             'b': {'f00': 0x40000000, 'f04': 0x40000000, 'f08': 0x40400000}},
+            # y differs (2.0 vs 5.0) -> 0
+            {'a': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000},
+             'b': {'f00': 0x3F800000, 'f04': 0x40A00000, 'f08': 0x40400000}},
+            # z differs (3.0 vs 4.0) -> 0
+            {'a': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000},
+             'b': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40800000}},
+            # all zero equal -> 1
+            {'a': {'f00': 0, 'f04': 0, 'f08': 0}, 'b': {'f00': 0, 'f04': 0, 'f08': 0}},
+            # +0.0 vs -0.0 on x, rest equal -> FP == -> 1 (bit-different inputs)
+            {'a': {'f00': 0x00000000, 'f04': 0x40000000, 'f08': 0x40400000},
+             'b': {'f00': 0x80000000, 'f04': 0x40000000, 'f08': 0x40400000}},
+            # NaN vs NaN on x -> NaN != NaN -> 0 (both orig+reimpl agree)
+            {'a': {'f00': 0x7FC00000, 'f04': 0, 'f08': 0},
+             'b': {'f00': 0x7FC00000, 'f04': 0, 'f08': 0}},
+            # negatives equal {-1.0, -2.0, -3.0} -> 1
+            {'a': {'f00': 0xBF800000, 'f04': 0xC0000000, 'f08': 0xC0400000},
+             'b': {'f00': 0xBF800000, 'f04': 0xC0000000, 'f08': 0xC0400000}},
+            # large equal
+            {'a': {'f00': 0x60AD78EC, 'f04': 0x60AD78EC, 'f08': 0x60AD78EC},
+             'b': {'f00': 0x60AD78EC, 'f04': 0x60AD78EC, 'f08': 0x60AD78EC}},
+            # mixed-sign equal {-1.0, 2.0, -3.0} -> 1
+            {'a': {'f00': 0xBF800000, 'f04': 0x40000000, 'f08': 0xC0400000},
+             'b': {'f00': 0xBF800000, 'f04': 0x40000000, 'f08': 0xC0400000}},
+        ],
+        'path2_tests': [
+            {'a': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000},
+             'b': {'f00': 0x3F800000, 'f04': 0x40000000, 'f08': 0x40400000}},
+            {'a': {'f00': 0x3F800000}, 'b': {'f00': 0x40000000}},
+        ],
+    },
+
 }
