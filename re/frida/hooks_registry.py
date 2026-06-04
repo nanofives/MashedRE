@@ -10700,6 +10700,31 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
+    # ── c3-batch-ad-s1 ───────────────────────────────────────────────────────
+    # Frontend/FrontendLeaves_ad1.cpp — TeamBlockOneGet
+    # ──────────────────────────────────────────────────────────────────────────
+    # 0x004241c0  TeamBlockOneGet
+    # int FUN_004241c0(int param_1) — team-aggregating block-1 getter.
+    # Exact structural twin of FUN_00424100 (team_block_zero_get), differing ONLY
+    # in the block base: block-1 root DAT_00899e80 vs block-0 root DAT_008999a0.
+    # param_1: player slot index 0..3.
+    # Returns block-1 field at (&DAT_00899e80)[param_1 * 0x4e] plus team-partner
+    # contributions (active-player guard: partner active-slot != -1).
+    # Callee FUN_0042f500 (0x0042f500, C4): team-mode flag.
+    # At main-menu quiescent state: team-mode flag is 0, so function returns
+    # (&DAT_00899e80)[param_1 * 0x4e] directly for all slots 0..3.
+    # arg_type='int_scalar': pass param_1 as int, compare return values.
+    # ref: re/analysis/frontend_c1_to_c2_s3/FUN_004241c0.md
+    'team_block_one_get': {
+        'rva':            0x004241c0,
+        'export':         'TeamBlockOneGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 1],
+        'path2_tests':    [0, 1, 2, 3],
+    },
+
     # 0x00556cc0  SetDat00912a20
     # void FUN_00556cc0(undefined4 param_1) â€” pure 9-byte setter.
     # Writes param_1 to DAT_00912a20 (global font/style pointer at 0x00912a20).
