@@ -11620,4 +11620,169 @@ HOOKS = {
         'path2_tests': [0, 1, 2],
     },
 
+    # ───────────────────────────────────────────────────────────────────────
+    # Session c3-batch-ac-s1 — s5-redo  (C2→C3, 8 util pure leaves)
+    # Util/UtilLeaves_ac.cpp — author+verify-only; central classify at sweep.
+    #
+    # NOTE ON ARG_TYPES: the batch prompt's suggested arg_types were corrected
+    # this session to the harness semantics that actually exercise each function
+    # (the prompt's void_step_global/read_global suggestions observe unrelated
+    # globals / pass no index → vacuous false-GREEN). The arg_types below are the
+    # *validated* shapes used by the analogous landed hooks (void_write_observe
+    # ← TimerGlobalsReset; int_scalar ← VehicleSlotGetter). All are existing
+    # arg_types — NO diff_template.js change, so this batch is NOT sweep-critical.
+    # ───────────────────────────────────────────────────────────────────────
+
+    # 0x00407a60  UtilTableInit8a9620  — void(void) record-table init.
+    # Zeroes 0xc3 dwords per record then writes 0xffffffff at record+0x28, 4
+    # records over [0x008a9620, 0x008aa278). void_write_observe on 0x008a9648
+    # (record-0 sentinel): sentinel wiped, then function writes 0xffffffff back.
+    'util_table_init_8a9620': {
+        'rva':            0x00407a60,
+        'export':         'UtilTableInit8a9620',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008a9648,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x7FFFFFFF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x0040ad30  UtilSet8a95ac  — void(uint32): *0x008a95ac = arg.
+    # void_setter_observe: call fn(v), read back target_global → must equal v.
+    'util_set_8a95ac': {
+        'rva':            0x0040ad30,
+        'export':         'UtilSet8a95ac',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x008a95ac,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x7FFFFFFF],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x0040b250  UtilReset8a9500  — void(void): write 0xfffffc18 (-1000) to 8
+    # globals 0x008a9500..0x008a952c. void_write_observe on 0x008a9500 (first
+    # write): sentinel wiped, function writes 0xfffffc18.
+    'util_reset_8a9500': {
+        'rva':            0x0040b250,
+        'export':         'UtilReset8a9500',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008a9500,
+        'lut_root_delta': 0,
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0040b430  UtilFieldAdd8a94f0  — void(int idx, int delta): indexed += .
+    #   idx>3 → *0x008a94fc += delta ; else (&0x008a94f0)[idx] += delta.
+    # entity_field_add: addr = 0x008a94f0 + idx*4; snapshot/add/restore. Tests
+    # span idx 0..3 (the array path) with assorted signed deltas; idx>3 cases
+    # are guarded (max_index=3) and collapse onto 0x008a94fc==index3 by design.
+    'util_field_add_8a94f0': {
+        'rva':                0x0040b430,
+        'export':             'UtilFieldAdd8a94f0',
+        'signature':          {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type':           'entity_field_add',
+        'target_global':      0x008a94f0,
+        'entity_byte_stride': 4,
+        'max_index':          3,
+        'lut_root_delta':     0,
+        'path1_tests':    [[0, 1], [1, -1], [2, 1000], [3, -1000],
+                           [0, 0x7fffffff], [1, 0x80000000], [2, -1],
+                           [3, 0x55555555], [0, -2], [2, 0]],
+        'path2_tests':    [[0, 1], [2, -1], [3, 1000]],
+    },
+
+    # 0x0040b6d0  UtilArrayGet8a94e0  — int(int idx): return (&0x008a94e0)[idx].
+    # int_scalar: fn(idx) → returned dword. Both orig+reimpl read the identical
+    # static-data address → bit-identical. Indices kept to the in-bounds 0..3
+    # range (note: 4-entry array) so the read stays inside mapped .data.
+    'util_array_get_8a94e0': {
+        'rva':            0x0040b6d0,
+        'export':         'UtilArrayGet8a94e0',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 0, 3],
+        'path2_tests':    [0, 1, 3],
+    },
+
+    # 0x004292c0  UtilWritePtr  — void(uint32* p, uint32 v): *p = v.
+    # struct_three_write: harness fills a scratch buffer with 0xDEADBEEF, calls
+    # fn(buf, valA, valB), then reads observe_offsets=[0] back. The function is a
+    # 2-arg cdecl (*p=v); we declare a 3rd dummy uint32 only because the harness's
+    # call site passes (buf, valA, valB) — under cdecl the caller cleans the stack
+    # so the ignored 3rd arg is safe (the 2-arg variant already ran clean × N,
+    # proving cdecl/no stack imbalance). valA is the written word; valB unused.
+    # Discriminating: a mis-targeted write leaves buf[0]==0xDEADBEEF → RED.
+    # (struct_three_write's keys ARE forwarded by build_config — unlike
+    # buf_field_set's field_offsets/buf_size, which are not — so no harness edit
+    # and the integration re-run stays genuine.)  Test values avoid 0xDEADBEEF.
+    'util_write_ptr': {
+        'rva':             0x004292c0,
+        'export':          'UtilWritePtr',
+        'signature':       {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type':        'struct_three_write',
+        'struct_size':     0x40,
+        'observe_offsets': [0],
+        'lut_root_delta':  0,
+        'path1_tests':    [[0x00000000, 0], [0x00000001, 0], [0xCAFEBABE, 0],
+                           [0x12345678, 0], [0xFFFFFFFF, 0], [0x80000000, 0],
+                           [0x55555555, 0], [0xAAAAAAAA, 0], [0x7FFFFFFF, 0],
+                           [0x0000FFFF, 0]],
+        'path2_tests':    [[0x00000001, 0], [0xCAFEBABE, 0], [0xFFFFFFFF, 0]],
+    },
+
+    # 0x0042aab0  UtilInit898a90  — void(void): *0x00898a90=0x180; *0x00898ab0=0.
+    # void_write_observe on 0x00898a90 (first write): sentinel wiped → 0x180.
+    'util_init_898a90': {
+        'rva':            0x0042aab0,
+        'export':         'UtilInit898a90',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00898a90,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x7FFFFFFF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x00430b00  TimeDisplaySetEntry — void(p1,p2,v3,v4,v5): writes v3,v4,v5 at
+    #   0x008989e0 + (p2 + p1*2)*0xc {+0,+4,+8}.  No guard in the original.
+    # multi_arg_global_write over the WHOLE 48-byte buffer (out_count=12) so any
+    # (p1,p2) in {0,1}² lands inside the readback window → the 2D index formula
+    # is genuinely exercised. guard_global=0x008989e0 is inside the saved/restored
+    # window (the function overwrites it for slot (0,0)), so the forced guard=1 is
+    # self-contained and benign.
+    'time_display_set_entry': {
+        'rva':            0x00430b00,
+        'export':         'TimeDisplaySetEntry',
+        'signature':      {'ret': 'void',
+                           'args': ['int32', 'int32', 'uint32', 'uint32', 'uint32']},
+        'arg_type':       'multi_arg_global_write',
+        'guard_global':   0x008989e0,
+        'out_base':       0x008989e0,
+        'out_count':      12,
+        'lut_root_delta': 0,
+        'path1_tests':    [[0, 0, 0x3f7d70a4, 0x0000003b, 0x00000009],
+                           [0, 1, 0xDEADBEEF, 0xCAFEBABE, 0x12345678],
+                           [1, 0, 0xFFFFFFFF, 0x80000000, 0x00000001],
+                           [1, 1, 0x55555555, 0xAAAAAAAA, 0x7FFFFFFF],
+                           [0, 0, 0x11111111, 0x22222222, 0x33333333],
+                           [1, 1, 0x00000000, 0xFFFFFFFF, 0x0000ffff],
+                           [0, 1, 0x44444444, 0x55555555, 0x66666666],
+                           [1, 0, 0x77777777, 0x88888888, 0x99999999]],
+        'path2_tests':    [[0, 0, 0x3f7d70a4, 0x0000003b, 0x00000009],
+                           [1, 1, 0x55555555, 0xAAAAAAAA, 0x7FFFFFFF]],
+    },
+
 }
