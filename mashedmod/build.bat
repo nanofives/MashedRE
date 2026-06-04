@@ -166,6 +166,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\TimerInit.cpp" ^
     "Audio\AudioMemory.cpp" ^
     "Audio\AudioRws.cpp" ^
+    "Audio\AudioLeaves_ab2.cpp" ^
     "Audio\RwsStream.cpp" ^
     "Audio\RwsFmt.cpp" ^
     "Audio\AudioDSound.cpp" ^

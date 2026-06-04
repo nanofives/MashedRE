@@ -11135,5 +11135,91 @@ HOOKS = {
             {'src': [0x100, -0x100, 0, 0x123456, 0x900000, -0x900000], 'count': 3},
         ],
     },
+    # ── c3-batch-ab session 2 (audio pure leaves) ────────────────────────────
+    # 0x005b3580  AudioListHeaderInit  void(uint32* header)
+    # Intrusive circular doubly-linked-list header init: header[0]=0 (count),
+    # header[1]=&header[1], header[2]=&header[1] (empty self-looped sentinel).
+    # arg_type='fmt_desc_pair_compare' is reused here because it is the ONLY
+    # harness that drives orig and reimpl through the SAME scratch buffer
+    # (allocated once) — the function writes SELF-REFERENTIAL pointers
+    # (&header[1]) into header[1]/header[2], so a per-side buffer would record
+    # two different addresses and false-RED. With one shared bufA both sides
+    # write the identical &bufA[1], so the 12-byte fingerprint matches.
+    # ret='void' → the harness's return component is 0 for both sides (a uint32
+    # ret would compare undefined EAX and false-RED). The fn ignores bufB; the
+    # extra cdecl arg is caller-cleaned and harmless. The varied 'a' seeds are
+    # overwritten by the init, confirming a full overwrite regardless of prior
+    # contents. ref: re/analysis/bucket_audio_005b2220_005b8570/0x005b3580.md
+    'audio_list_header_init': {
+        'rva':            0x005b3580,
+        'export':         'AudioListHeaderInit',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            { 'a': {},                                                'b': {} },
+            { 'a': {'f00': 0xFFFFFFFF},                               'b': {} },
+            { 'a': {'f00': 0x80000000, 'f04': 0x80000000, 'f08': 0x80000000}, 'b': {} },
+            { 'a': {'f00': 0xAAAAAAAA, 'f04': 0x55555555, 'f08': 0xAAAAAAAA}, 'b': {} },
+            { 'a': {'f00': 0xDEADBEEF},                               'b': {} },
+            { 'a': {'f04': 0xCAFEBABE},                               'b': {} },
+            { 'a': {'f08': 0x12345678},                               'b': {} },
+            { 'a': {'f00': 1, 'f04': 2, 'f08': 3},                    'b': {} },
+        ],
+        'path2_tests': [
+            { 'a': {},                  'b': {} },
+            { 'a': {'f00': 0xFFFFFFFF}, 'b': {} },
+            { 'a': {'f00': 0xDEADBEEF}, 'b': {} },
+        ],
+    },
+
+    # 0x005b4060  AudioFmtConvertByteLength  int(int* fmtIn, uint* fmtOut)
+    # Output byte length to convert fmtIn -> fmtOut. Reads (both descriptors):
+    #   +0x00 u32 sample-rate, +0x08 i32 data-size (fmtIn only, = param_1[2]),
+    #   +0x0c u8  bits-per-sample (low byte of dword @+0x0c), +0x0d u8 channels.
+    #   ratio = (rateOut/rateIn)*(bitsOut/bitsIn)*(chanOut/chanIn)*sizeIn
+    #   uVar1 = bitsOut>>3 (out bytes/sample);  aligned = (ROUND(ratio)-1+uVar1) & ~(uVar1-1)
+    #   return ROUND((float)aligned)   (round-to-nearest-even throughout).
+    # arg_type='fmt_desc_pair_compare' (2-arg form) seeds two 0x40 buffers from
+    # field maps and passes both pointers. Pure reads → fingerprints stay equal;
+    # the real comparison is ret&0xffff (the byte length). NO crash_equal: the
+    # function never dereferences a pointer field, so neither side faults.
+    # 'a' (fmtIn) ALWAYS supplies nonzero divisors: f00 (rate), f0c low byte
+    # (bits), f0c byte1 (channels). f0c packs bits|(chan<<8).
+    # ref: re/analysis/bucket_audio_005b2220_005b8570/0x005b4060.md
+    'audio_fmt_convert_byte_length': {
+        'rva':            0x005b4060,
+        'export':         'AudioFmtConvertByteLength',
+        'signature':      {'ret': 'uint32', 'args': ['pointer', 'pointer']},
+        'arg_type':       'fmt_desc_pair_compare',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # identity 16-bit stereo @44100, size 1000
+            { 'a': {'f00': 44100, 'f08': 1000,  'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            # upsample 22050->44100, 8->16 bit, mono->stereo, size 500
+            { 'a': {'f00': 22050, 'f08': 500,   'f0c':  8 | (1 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            # downsample 44100->22050, 16->8 bit, stereo->mono, size 4000
+            { 'a': {'f00': 44100, 'f08': 4000,  'f0c': 16 | (2 << 8)}, 'b': {'f00': 22050, 'f0c':  8 | (1 << 8)} },
+            # 24-bit out (uVar1=3), 1.5x scale on odd size -> RNE tie 1498.5
+            { 'a': {'f00': 48000, 'f08': 999,   'f0c': 16 | (2 << 8)}, 'b': {'f00': 48000, 'f0c': 24 | (2 << 8)} },
+            # zero input size -> ratio 0
+            { 'a': {'f00': 44100, 'f08': 0,     'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            # large size at 2^24 (float32 exactness boundary)
+            { 'a': {'f00': 44100, 'f08': 16777216, 'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            # odd identity size 333 (round-up alignment to even)
+            { 'a': {'f00': 44100, 'f08': 333,   'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            # 8-bit mono identity, tiny size 7 (uVar1=1, mask ~0 -> no rounding)
+            { 'a': {'f00':  8000, 'f08': 7,     'f0c':  8 | (1 << 8)}, 'b': {'f00':  8000, 'f0c':  8 | (1 << 8)} },
+            # 32-bit out (uVar1=4, mask ~3)
+            { 'a': {'f00': 44100, 'f08': 100,   'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 32 | (2 << 8)} },
+            # high-rate 96000->48000, 24->16 bit, stereo, size 48000
+            { 'a': {'f00': 96000, 'f08': 48000, 'f0c': 24 | (2 << 8)}, 'b': {'f00': 48000, 'f0c': 16 | (2 << 8)} },
+        ],
+        'path2_tests': [
+            { 'a': {'f00': 44100, 'f08': 1000, 'f0c': 16 | (2 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            { 'a': {'f00': 22050, 'f08': 500,  'f0c':  8 | (1 << 8)}, 'b': {'f00': 44100, 'f0c': 16 | (2 << 8)} },
+            { 'a': {'f00': 48000, 'f08': 999,  'f0c': 16 | (2 << 8)}, 'b': {'f00': 48000, 'f0c': 24 | (2 << 8)} },
+        ],
+    },
 
 }

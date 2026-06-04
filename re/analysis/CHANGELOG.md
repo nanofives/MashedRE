@@ -3142,3 +3142,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  005ae590  AudioArenaBlockIsFree   C2->C3  log/diff_audio_arena_block_is_free.csv (8/8 GREEN, arg_type arena_block_free_predicate)
 2026-06-04  005aeda0  AudioShiftAddMul64      C2->C3  log/diff_audio_shift_add_mul64.csv (10/10 GREEN, arg_type int2_ptr2_out)
 2026-06-04  005b0700  AudioListMinKeySelect   C2->C3  log/diff_audio_list_min_key_select.csv (8/8 GREEN, arg_type audio_list_min_select); U-6819 key semantics data-level non-blocking
+2026-06-04  005b4060  AudioFmtConvertByteLength  C2->C3  c3-batch-ab-s2; fmt_desc_pair_compare Frida warm-pool A/B GREEN 10/10 (log/diff_audio_fmt_convert_byte_length.csv); pure leaf, 4 C2 callers (005b3e60/005b4150/005b41f0/+1) leaf-exemption on callee half; reimpl mashedmod/src/mashed_re/Audio/AudioLeaves_ab2.cpp; U-6910 struct-typing open (non-blocking — all field roles diff-confirmed)
