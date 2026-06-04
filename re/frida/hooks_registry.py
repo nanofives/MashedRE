@@ -843,6 +843,73 @@ HOOKS = {
         'path2_tests':    [0, 15, 16, 255],
     },
 
+    # ── c3_batch_ad session 3 — gameplay pure-leaf harvest (GameplayLeaves_ad3.cpp) ──
+    # 3 of 11 candidates viable with an existing arg_type; the rest SKIPPED
+    # (two-index getters / 4-arg setters / void indexed setter / stateful arena
+    #  grid / thiscall-with-callee — all need a NEW arg_type → harness-extension).
+
+    # 0x0046bce0  VehicleVec3At94Get
+    # if (0xf < veh) return 0; reads vec3 (&DAT_00882094[veh*0x341] dwords) into out.
+    # out3_idx: 12-byte buf first, vehicleIdx second; compares return value (0/1).
+    # Read-only getter (sibling of VehicleVec3At9C8Get 0x0046d700). U-8408 open
+    # (vec3 semantic) — does not affect offset/bounds correctness.
+    # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046bce0.md
+    'vehicle_vec3_at_94_get': {
+        'rva':            0x0046bce0,
+        'export':         'VehicleVec3At94Get',
+        'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type':       'out3_idx',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16, 255],
+    },
+
+    # 0x0046d740  VehicleVec3At6E4Set
+    # if (0xf < veh) return 0; writes input vec3 into &DAT_008816e4 + veh*0xd04.
+    # out3_idx: 12-byte buf is the INPUT vec3 (read by the setter), vehicleIdx
+    # second; compares return value (0/1 bounds). The write side-effect lands in
+    # the inactive per-vehicle .bss record at menu (benign). U-8421 open.
+    # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046d740.md
+    'vehicle_vec3_at_6e4_set': {
+        'rva':            0x0046d740,
+        'export':         'VehicleVec3At6E4Set',
+        'signature':      {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type':       'out3_idx',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
+        'path2_tests':    [0, 15, 16, 255],
+    },
+
+    # 0x00461e90  SurfaceCodeClassify
+    # Pure leaf: undefined4 fn(sel, key, out1*, out2*). switch(sel) over a fixed
+    # case set; each case maps `key` (large negative comparands) to a pair of
+    # codes {0..3} written to *out1/*out2, returning 0/1. No globals, no callees.
+    # int2_ptr2_out: fn(sel, key, out1, out2) → "out1,out2" hex fingerprint
+    # (compares the written code pair; return value not in the fingerprint, but
+    #  the code pair is the function's product and discriminates all branches).
+    # Tests span multiple cases + their discriminating constants + default.
+    # U-8393/U-8394 open (comparand/code semantics) — mapping is mechanically exact.
+    # ref: re/analysis/bucket_gameplay_0045dff0_0046dd90/0x00461e90.md
+    'surface_code_classify': {
+        'rva':            0x00461e90,
+        'export':         'SurfaceCodeClassify',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32', 'pointer', 'pointer']},
+        'arg_type':       'int2_ptr2_out',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0,    -0x9b9b9c], [0,    -0x697f80], [0,    0],
+            [2,    -0x4b7f80], [2,    -0x237f80], [2,    -0x377f80],
+            [3,    -0x7fc000], [0xb,  -0xff9b4c], [0x19, -0xe17f4c],
+            [0x1a, -0x7f3800], [0x21, -0xff8000], [0x21, -0x7fbfc0],
+            [0x24, -0x4b7f80], [0x25, -0xebaf74], [0x27, -0x4b4b4c],
+            [0x27, -1],        [0x99, 0],         [0x26, -0x697f80],
+            [0x22, -0xffa54c], [0x24, -0x237f80],
+        ],
+        'path2_tests': [
+            [0, -0x9b9b9c], [2, -0x4b7f80], [0x99, 0], [0x27, -1], [0x21, -0xff8000],
+        ],
+    },
+
     # â”€â”€ Session 89: 5 util pure-function C2â†’C3 promotions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     'timer_get_base_ptr': {
