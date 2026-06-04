@@ -170,6 +170,13 @@ def build_config(hook, asi_path=None):
         config['is_getter'] = hook['is_getter']
     if 'record_global_str' in hook:
         config['record_global_str'] = hook['record_global_str']
+    # struct_call_observe — out-pointer count + observable descriptor list.
+    if 'out_ptrs' in hook:
+        config['out_ptrs'] = hook['out_ptrs']
+    if 'observe' in hook:
+        config['observe'] = hook['observe']
+    if 'observe_ret' in hook:
+        config['observe_ret'] = hook['observe_ret']
     # audio_sub_struct_zero — struct layout for sentinel + observe range.
     if 'struct_size' in hook:
         config['struct_size'] = hook['struct_size']
@@ -257,7 +264,18 @@ def main():
         shutil.copy2(str(_canonical_cfg), str(MASHED_EXE.parent / 'videocfg.bin'))
 
     env = {**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'}
-    proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env)
+    # Detach from the parent's console + give each instance its own process
+    # group. Without this, a Ctrl-C / Ctrl-Break in the terminal (or the parent
+    # being signaled) broadcasts a console signal to EVERY MASHED spawned in
+    # this terminal's group — i.e. all pooled instances die at once. proc.kill()
+    # (TerminateProcess by PID) still tears down THIS instance surgically.
+    # Matches launch_with_hooks.py / diag_smoke.py.
+    _CREATE_NEW_PROCESS_GROUP = 0x00000200
+    _DETACHED_PROCESS         = 0x00000008
+    proc = subprocess.Popen(
+        [str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env,
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        creationflags=_CREATE_NEW_PROCESS_GROUP | _DETACHED_PROCESS)
     print(f"  pid = {proc.pid}")
 
     time.sleep(0.2)

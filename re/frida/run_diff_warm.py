@@ -76,7 +76,18 @@ def spawn_instance(idx):
     """Spawn one warm MASHED.exe from original/ and attach a Frida session.
     Returns (proc, session) or (proc, None) on attach failure."""
     env = {**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'}
-    proc = subprocess.Popen([str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env)
+    # CRITICAL for a multi-instance pool: detach each instance from the parent's
+    # console and give it its own process group. A plain Popen leaves every
+    # instance in the terminal's console group, so a Ctrl-C / Ctrl-Break (or the
+    # parent exiting) broadcasts a console signal to ALL of them — they'd close
+    # simultaneously. Detached, each is independent and is killed only by its own
+    # proc.kill() (TerminateProcess by this exact PID) in the teardown loop.
+    _CREATE_NEW_PROCESS_GROUP = 0x00000200
+    _DETACHED_PROCESS         = 0x00000008
+    proc = subprocess.Popen(
+        [str(MASHED_EXE)], cwd=str(MASHED_EXE.parent), env=env,
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        creationflags=_CREATE_NEW_PROCESS_GROUP | _DETACHED_PROCESS)
     print(f"  [slot {idx}] spawned pid={proc.pid}")
     time.sleep(0.4)
     try:
