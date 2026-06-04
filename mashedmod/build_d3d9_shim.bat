@@ -27,6 +27,7 @@ if errorlevel 1 (echo [ERROR] vcvars32.bat failed & exit /b 1)
 echo === Building d3d9 shim (windowed-force proxy) ===
 cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\d3d9.dll" ^
     "%SRC%\d3d9_shim.cpp" ^
+    user32.lib ^
     /link /DLL /DEF:"%SRC%\d3d9_shim.def"
 if errorlevel 1 (echo [ERROR] d3d9 shim build failed & exit /b 1)
 

@@ -59,6 +59,38 @@ LONG           g_VtablePatched        = 0;
 constexpr UINT kForceBackBufferWidth  = 640;
 constexpr UINT kForceBackBufferHeight = 480;
 
+// Reshape the device window with a normal title bar / borders, for comfort when
+// arranging several concurrent MASHED instances on screen (parallel C2->C3 diff
+// pool). The D3D9 backbuffer is fixed at kForceBackBufferWidth×Height; we resize
+// the OUTER window via AdjustWindowRect so the CLIENT area stays exactly that
+// size — the backbuffer presents 1:1, so the render path is unaffected. The
+// window class and title text are untouched (FindWindowA-based tooling still
+// works). On by default; opt out by setting env MASHED_RE_BORDERLESS=1 (restores
+// the original borderless window for any flow that screenshots the whole frame).
+void ApplyWindowBorders(HWND hWnd) {
+    if (!hWnd || !IsWindow(hWnd)) return;
+    char buf[8] = { 0 };
+    if (GetEnvironmentVariableA("MASHED_RE_BORDERLESS", buf, sizeof(buf)) > 0 &&
+        buf[0] == '1') {
+        return;  // explicit opt-out: leave the original (borderless) style
+    }
+    LONG_PTR cur = GetWindowLongPtr(hWnd, GWL_STYLE);
+    if (cur & WS_CHILD) return;  // never reshape a child window
+
+    // Fixed-size titled window: caption (drag), sysmenu/close, minimize. No
+    // WS_THICKFRAME / WS_MAXIMIZEBOX — a fixed backbuffer can't follow a resize.
+    const LONG_PTR kBorderStyle =
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+    SetWindowLongPtr(hWnd, GWL_STYLE, kBorderStyle | (cur & WS_VISIBLE));
+
+    // Grow the outer rect so the client area remains the backbuffer size.
+    RECT rc = { 0, 0, (LONG)kForceBackBufferWidth, (LONG)kForceBackBufferHeight };
+    AdjustWindowRect(&rc, (DWORD)kBorderStyle, FALSE);
+    SetWindowPos(hWnd, nullptr, 0, 0,
+                 rc.right - rc.left, rc.bottom - rc.top,
+                 SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+}
+
 HRESULT STDMETHODCALLTYPE CreateDevice_ForceWindowed(
     IDirect3D9* pThis,
     UINT Adapter, D3DDEVTYPE DeviceType, HWND hFocusWindow,
@@ -71,8 +103,15 @@ HRESULT STDMETHODCALLTYPE CreateDevice_ForceWindowed(
         pPP->BackBufferHeight           = kForceBackBufferHeight;
         pPP->FullScreen_RefreshRateInHz = 0;
     }
-    return g_OriginalCreateDevice(pThis, Adapter, DeviceType, hFocusWindow,
-                                  BehaviorFlags, pPP, ppDevice);
+    // The windowed present target: explicit device window if set, else the focus
+    // window. Capture before the call (we don't modify these fields).
+    HWND hWnd = (pPP && pPP->hDeviceWindow) ? pPP->hDeviceWindow : hFocusWindow;
+    HRESULT hr = g_OriginalCreateDevice(pThis, Adapter, DeviceType, hFocusWindow,
+                                        BehaviorFlags, pPP, ppDevice);
+    if (SUCCEEDED(hr)) {
+        ApplyWindowBorders(hWnd);
+    }
+    return hr;
 }
 
 void PatchCreateDeviceSlot(IDirect3D9* pD3D) {
