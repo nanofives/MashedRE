@@ -136,6 +136,16 @@ def build_config(hook, asi_path=None):
         config['alloc_rva_str'] = f"0x{hook['alloc_rva']:08x}"
     if 'crash_equal_ok' in hook:
         config['crash_equal_ok'] = hook['crash_equal_ok']
+    # fastcall_reg — register-convention force-call (ECX[+EDX]) for __fastcall/
+    # __thiscall leaves. The diff_template.js handler reads these; without
+    # forwarding them here, ecx_ptr defaults off and ECX gets the raw test marker
+    # (deref AVs). (Plumbing gap caught by the 0x004a1790 canary, c3_batch_ab s6.)
+    if 'fastcall_nargs' in hook:
+        config['fastcall_nargs'] = hook['fastcall_nargs']
+    if 'fastcall_ecx_ptr' in hook:
+        config['fastcall_ecx_ptr'] = hook['fastcall_ecx_ptr']
+    if 'fastcall_edx_ptr' in hook:
+        config['fastcall_edx_ptr'] = hook['fastcall_edx_ptr']
     if 'pool_addr' in hook:
         config['pool_addr_str'] = f"0x{hook['pool_addr']:08x}"
     if 'insert_rva' in hook:

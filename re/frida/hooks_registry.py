@@ -11221,5 +11221,271 @@ HOOKS = {
             { 'a': {'f00': 48000, 'f08': 999,  'f0c': 16 | (2 << 8)}, 'b': {'f00': 48000, 'f0c': 24 | (2 << 8)} },
         ],
     },
+    # ───────────────────────────────────────────────────────────────────────
+    # c3_batch_ab session 6 — Util leaves (audio/util batch). Branch
+    # c3/batch-ab-util-s6 (the generated c3/batch-ab-s6 name collided with an
+    # unrelated render-ab commit; user chose a distinct branch). Reimpl:
+    # mashedmod/src/mashed_re/Util/UtilLeaves_ab6.cpp. All seven are byte-
+    # faithful ports of disasm read from the anchored binary (capstone,
+    # 2026-06-04); the suggested arg_types from the batch were CONFIRMED against
+    # the actual bytes and corrected where the bytes disagreed (see per-entry
+    # notes). No invented arg_types — every one below already exists in
+    # diff_template.js.
+    # ───────────────────────────────────────────────────────────────────────
+
+    # 0x004425d0  UtilZeroTable8964c0  — void(void) global-table zeroer.
+    # Bytes: mov eax,0x8964c0 ; loop{ mov [eax],0 ; add eax,0xd8 ; cmp eax,0x897fc0 ; jl }
+    #        ; mov [0x89898c],0 ; ret.  Zeroes elem[0] of each 0xD8-stride entry
+    # over [0x008964c0, 0x00897fc0) + the scalar 0x0089898c.
+    # arg_type: state_machine_observe (NOT the batch's 'void_step_global' — that
+    #   handler is hard-coded to the MenuCursorStep cursor globals and would
+    #   false-GREEN a zeroer by reading back an address it never touches). Seed a
+    #   sentinel at sampled zeroed addresses (elem0/elem1/last-elem/scalar) and an
+    #   over-run guard at 0x00897fc0 (which the loop must NOT write); confirm
+    #   orig==reimpl. input_globals==output_globals (seed, then read back).
+    # ref: re/analysis/timer_d3_cont1_b/0x004425d0.md
+    'util_zero_table_8964c0': {
+        'rva':            0x004425d0,
+        'export':         'UtilZeroTable8964c0',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x008964c0, 'type': 'u32'},  # elem[0], first written
+            {'addr': 0x00896598, 'type': 'u32'},  # elem[1] = base + 0xD8 (stride check)
+            {'addr': 0x00897ee8, 'type': 'u32'},  # elem[31], last written (bound check)
+            {'addr': 0x0089898c, 'type': 'u32'},  # trailing scalar
+            {'addr': 0x00897fc0, 'type': 'u32'},  # OVER-RUN GUARD: loop stops before here
+        ],
+        'output_globals': [
+            {'addr': 0x008964c0, 'type': 'u32'},
+            {'addr': 0x00896598, 'type': 'u32'},
+            {'addr': 0x00897ee8, 'type': 'u32'},
+            {'addr': 0x0089898c, 'type': 'u32'},
+            {'addr': 0x00897fc0, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # [elem0, elem1, last, scalar, guard] — guard sentinel must survive.
+        'path1_tests': [
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0BADF00D, 0xA5A5A5A5],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005],
+            [0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000],
+            [0x55555555, 0xAAAAAAAA, 0x55555555, 0xAAAAAAAA, 0x0000FFFF],
+            [0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xFEEDFACE],
+            [0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x13371337],
+            [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0xDEADC0DE],
+        ],
+        'path2_tests': [
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0BADF00D, 0xA5A5A5A5],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005],
+        ],
+    },
+
+    # 0x0045c480  UtilZeroScatter45c480  — void(void) scatter zeroer.
+    # Bytes: 12 individual dword writes (eax/ecx==0) to named globals + rep stosd
+    # of 0x24 dwords from 0x0088f5e0 + write to 0x008aa2ec ; ret.
+    # arg_type: state_machine_observe (same rationale as 0x004425d0). Sample 4 of
+    #   the scalar writes, the rep-stosd block ends, and an over-run guard one
+    #   dword past the block (0x0088f670, which the 36-dword stosd must NOT reach).
+    # ref: re/analysis/timer_d2_cont1/0x0045c480.md
+    'util_zero_scatter_45c480': {
+        'rva':            0x0045c480,
+        'export':         'UtilZeroScatter45c480',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x0088f0a0, 'type': 'u32'},  # first scalar (ecx=0)
+            {'addr': 0x0088e67c, 'type': 'u32'},  # scalar
+            {'addr': 0x008aa2e0, 'type': 'u32'},  # scalar (eax=0)
+            {'addr': 0x008aa2ec, 'type': 'u32'},  # last scalar (post-stosd)
+            {'addr': 0x0088f5e0, 'type': 'u32'},  # rep-stosd block, dword[0]
+            {'addr': 0x0088f66c, 'type': 'u32'},  # block dword[35] = base+0x8C (last)
+            {'addr': 0x0088f670, 'type': 'u32'},  # OVER-RUN GUARD: dword[36], NOT written
+        ],
+        'output_globals': [
+            {'addr': 0x0088f0a0, 'type': 'u32'},
+            {'addr': 0x0088e67c, 'type': 'u32'},
+            {'addr': 0x008aa2e0, 'type': 'u32'},
+            {'addr': 0x008aa2ec, 'type': 'u32'},
+            {'addr': 0x0088f5e0, 'type': 'u32'},
+            {'addr': 0x0088f66c, 'type': 'u32'},
+            {'addr': 0x0088f670, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # [s0, s1, s2, s3, blk0, blk35, guard] — guard sentinel must survive.
+        'path1_tests': [
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0BADF00D, 0xFEEDFACE, 0x8BADF00D, 0xA5A5A5A5],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005, 0x00000006, 0x00000007],
+            [0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000, 0x80000000],
+            [0x55555555, 0xAAAAAAAA, 0x55555555, 0xAAAAAAAA, 0x55555555, 0xAAAAAAAA, 0x0000FFFF],
+            [0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x13371337],
+            [0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0xDEADC0DE],
+            [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555, 0x66666666, 0xC0FFEE00],
+        ],
+        'path2_tests': [
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0BADF00D, 0xFEEDFACE, 0x8BADF00D, 0xA5A5A5A5],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004, 0x00000005, 0x00000006, 0x00000007],
+        ],
+    },
+
+    # 0x0046b4f0  UtilTableRead46b4f0  — int(out_ptr, outerIdx, innerIdx).
+    # Bytes: bounds (outer<0x10 unsigned, inner<0x12 signed) else return 0; else
+    # copy 3 dwords from a static 2D table @0x008815a0 into out[0..2], return 1.
+    #   row    = 0x008815a0 + outer*0xD04
+    #   out[0] = *(uint32*)(row + (inner*3 + 0x18)*4)
+    #   out[1] = *(uint32*)(row + inner*3*4 + 0x64)
+    #   out[2] = *(uint32*)(row + inner*3*4 + 0x68)
+    # arg_type: sort_dispatch_out4 (NOT 'int_ptr2_out'/'out3_idx' — those marshal
+    #   (int,ptr,ptr) / (ptr,int) and do not match this fn's (ptr,int,int) ABI;
+    #   sort_dispatch_out4 is the only handler that calls fn(out,a,b) with a
+    #   pointer FIRST and reads back the out buffer). It prefills the 4-int buffer
+    #   with -1 and packs all 4 back: in-bounds -> [d0,d1,d2,-1]; OOB -> [-1,-1,-1,-1]
+    #   (no write). Reads a static data table -> orig and reimpl observe identical
+    #   contents -> bit-identical. (U-2193 table semantics: non-blocking.)
+    # input: {sel: outerIdx, dir: innerIdx}.
+    # ref: re/analysis/profile_career_d3/FUN_0046b4f0.md
+    'util_table_read_46b4f0': {
+        'rva':            0x0046b4f0,
+        'export':         'UtilTableRead46b4f0',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'int32', 'int32']},
+        'arg_type':       'sort_dispatch_out4',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'sel': 0,  'dir': 0},    # in-bounds
+            {'sel': 0,  'dir': 1},
+            {'sel': 1,  'dir': 0},
+            {'sel': 1,  'dir': 17},   # inner max (0x11)
+            {'sel': 15, 'dir': 0},    # outer max (0x0f)
+            {'sel': 15, 'dir': 17},   # both max in-bounds
+            {'sel': 7,  'dir': 9},
+            {'sel': 16, 'dir': 0},    # outer OOB (>=0x10) -> 0
+            {'sel': 0,  'dir': 18},   # inner OOB (>=0x12) -> 0
+            {'sel': 16, 'dir': 18},   # both OOB
+            {'sel': 0,  'dir': -1},   # inner signed-negative: jl (inner<0x12) is TAKEN -> in-bounds path
+        ],
+        'path2_tests': [
+            {'sel': 0,  'dir': 0},
+            {'sel': 15, 'dir': 17},
+            {'sel': 16, 'dir': 0},
+        ],
+    },
+
+    # 0x004904d0  UtilZeroTable86a4a0  — void(void) global-table zeroer.
+    # Bytes: mov eax,0x86a4a0 ; loop{ mov [eax],0 ; add eax,0x50 ; cmp eax,0x86ae00 ; jl } ; ret.
+    # Zeroes elem[0] of each 0x50-stride entry over [0x0086a4a0, 0x0086ae00) = 30 entries.
+    # arg_type: state_machine_observe (same rationale as 0x004425d0).
+    # ref: re/analysis/timer_d3_cont2/0x004904d0.md
+    'util_zero_table_86a4a0': {
+        'rva':            0x004904d0,
+        'export':         'UtilZeroTable86a4a0',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x0086a4a0, 'type': 'u32'},  # elem[0]
+            {'addr': 0x0086a4f0, 'type': 'u32'},  # elem[1] = base + 0x50 (stride check)
+            {'addr': 0x0086adb0, 'type': 'u32'},  # elem[29], last written (bound check)
+            {'addr': 0x0086ae00, 'type': 'u32'},  # OVER-RUN GUARD: loop stops before here
+        ],
+        'output_globals': [
+            {'addr': 0x0086a4a0, 'type': 'u32'},
+            {'addr': 0x0086a4f0, 'type': 'u32'},
+            {'addr': 0x0086adb0, 'type': 'u32'},
+            {'addr': 0x0086ae00, 'type': 'u32'},
+        ],
+        'lut_root_delta': 0,
+        # [elem0, elem1, last, guard] — guard sentinel must survive.
+        'path1_tests': [
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xA5A5A5A5],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004],
+            [0x80000000, 0x80000000, 0x80000000, 0x80000000],
+            [0x55555555, 0xAAAAAAAA, 0x55555555, 0x0000FFFF],
+            [0x00000000, 0x00000000, 0x00000000, 0xFEEDFACE],
+            [0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x13371337],
+            [0x11111111, 0x22222222, 0x33333333, 0xDEADC0DE],
+        ],
+        'path2_tests': [
+            [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xA5A5A5A5],
+            [0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF],
+            [0x00000001, 0x00000002, 0x00000003, 0x00000004],
+        ],
+    },
+
+    # 0x004d8560  UtilReturnOne4d8560  — int(void) constant.
+    # Bytes: mov eax,1 ; ret.  Always returns 1.
+    # arg_type: none (zero-arg, compare return value).
+    # ref: re/analysis/timer_d3_cont2/0x004d8560.md
+    'util_return_one_4d8560': {
+        'rva':            0x004d8560,
+        'export':         'UtilReturnOne4d8560',
+        'signature':      {'ret': 'int32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        # `none` ignores the input value; the markers just drive N iterations.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x0055dec0  UtilDeref55dec0  — uint32(uint32* p) = *p   (__cdecl stack arg).
+    # Bytes: mov eax,[esp+4] ; mov eax,[eax] ; ret.  The pointer arrives on the
+    # STACK (NOT EAX) — the batch's suggested 'eax_implicit_ptr' was DISCONFIRMED
+    # by these bytes.
+    # arg_type: vec3_ptr — the only single-pointer-arg handler that calls fn(buf)
+    #   (seeded buffer) and compares the returned dword. vec3_ptr seeds buf[0..2]
+    #   as floats; this fn returns buf[0] (the first dword) regardless of type, so
+    #   each float triple yields a distinct, deterministic return that orig and
+    #   reimpl must both reproduce. ret declared uint32 for exact-dword compare.
+    # ref: re/analysis/timer_d3_cont2/0x0055dec0.md
+    'util_deref_55dec0': {
+        'rva':            0x0055dec0,
+        'export':         'UtilDeref55dec0',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'vec3_ptr',
+        'lut_root_delta': 0,
+        # Only lane 0 (buf[0]) is read by the fn; the other two lanes are
+        # irrelevant. Varied first-lane bit patterns exercise distinct returns.
+        'path1_tests': [
+            (0.0,      0.0, 0.0),
+            (1.0,      0.0, 0.0),
+            (-1.0,     0.0, 0.0),
+            (3.5,      0.0, 0.0),
+            (-99.99,   0.0, 0.0),
+            (1e-6,     0.0, 0.0),
+            (1234.5,   0.0, 0.0),
+            (12.34,    0.0, 0.0),
+            (1e30,     0.0, 0.0),
+            (-1e-30,   0.0, 0.0),
+        ],
+        'path2_tests': [
+            (0.0,  0.0, 0.0),
+            (1.0,  0.0, 0.0),
+            (-1.0, 0.0, 0.0),
+        ],
+    },
+
+    # 0x004a1790  ComReleaseThunk  — uint __fastcall(void** pp): COM Release thunk.
+    # *** fastcall_reg CANARY *** (validates the new diff_template.js arg_type).
+    # Bytes: mov eax,[ecx] ; test eax,eax ; je end ; mov ecx,[eax] ; push eax ;
+    #        call [ecx+8] ; ret.  ECX = pointer-to-interface-pointer; on the null
+    # path EAX = *pp = 0 is returned. CONFIRMED __fastcall by the bytes.
+    # The harness seeds ECX with a ZEROED 64-byte scratch buffer, so *pp == 0 ->
+    # je taken -> orig and reimpl both no-op and return 0 (proves ECX marshalling
+    # + callee-clean stack balance). If GREEN, fastcall_reg is validated.
+    # ref: re/analysis/video_mci/0x004a1790.md
+    'com_release_thunk': {
+        'rva':              0x004a1790,
+        'export':           'ComReleaseThunk',
+        'signature':        {'ret': 'uint32', 'args': []},
+        'arg_type':         'fastcall_reg',
+        'fastcall_nargs':   1,
+        'fastcall_ecx_ptr': True,
+        'lut_root_delta':   0,
+        # Markers only — the harness replaces each with a fresh zeroed scratch ptr.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7],
+        'path2_tests': [0, 1, 2],
+    },
 
 }

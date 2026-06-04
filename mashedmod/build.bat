@@ -124,6 +124,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Util\TimerSlot.cpp" ^
     "Util\UtilLeaves.cpp" ^
     "Util\SmallLeaves_o6.cpp" ^
+    "Util\UtilLeaves_ab6.cpp" ^
     "Vehicle\VehicleState.cpp" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
@@ -266,6 +267,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
     "Util\SmallLeaves_o6.cpp" ^
+    "Util\UtilLeaves_ab6.cpp" ^
     "Render\TrackLoaderMicros_p3.cpp" ^
     "Render\FrameHelpers_q2.cpp" ^
     "Render\LowRvaMixed_q3.cpp" ^
