@@ -3149,3 +3149,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  0x005bb5b0  AudioPcmSaturatedAdd  C2->C3  log/diff_audio_pcm_saturated_add.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
 2026-06-04  0x005bc450  AudioSlotPairZero  C2->C3  log/diff_audio_slot_pair_zero.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
 2026-06-04  0x005bcb80  AudioMediaSubtypeFromTag  C2->C3  log/diff_audio_media_subtype_from_tag.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
+
+2026-06-04  frida-sweep c3_batch_ab  merged 5 GREEN sessions onto feature: 26 C2->C3 (s1 6 + s2 1 + s3 6 + s4 6 audio + util-s6 7 incl fastcall_reg canary 0x004a1790). s5 EXCLUDED (corrupt hooks.csv: wholesale-rewrote + dropped 23 rows, 8 targets never promoted) -> redo in next batch. Merged .asi links clean (no cross-worker symbol clash); representative integration diff GREEN 6/6 incl canary. Added missing build dep Compat/StreamHandlerDispatchGuard.cpp. fastcall_reg arg_type VALIDATED.
