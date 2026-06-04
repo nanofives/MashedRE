@@ -1,0 +1,186 @@
+################################################################################
+# c3_batch_ad.txt — C2->C3 HARVEST over remaining pure-leaf pools   [OPUS]
+#
+# Generated 2026-06-04, after c3_batch_ac swept (C3 373). MODEL: Opus 4.8 1M
+# (claude-opus-4-8[1m]) — standing preference; use Opus's judgment to classify
+# AND promote in one pass.
+#
+# *** WHY "HARVEST" (not a pre-classified batch): ***
+# I planned to make this the fastcall_reg expansion, but a 92-candidate
+# classification proved fastcall_reg is a DUD — only ~1 of 92 is cleanly viable
+# (0x0049c690). The "fastcall" pool is overwhelmingly in_EAX/ESI/EBX-implicit
+# (multi-register, can't drive with ECX/EDX), non-leaf (COM/CriticalSection/
+# vtable live-state), void-returning (nothing to diff), or stack-arg __thiscall.
+# (My earlier "~93 unblocked" was the survey's phrase-counter over-counting.)
+# So this batch instead HARVESTS the remaining PURE-LEAF C2 pools (frontend 22,
+# gameplay 11, particle 24 — pure leaves avoid the live-state-via-callees trap
+# that sank the fastcall non-leaves). Yield is UNCERTAIN per subsystem (see
+# per-session caveats), so each Opus session CLASSIFIES viability itself and
+# promotes only what's genuinely diffable — skipping the rest is EXPECTED and
+# correct, NOT a failure. This is the model the ac Opus worker proved (it
+# corrected 3 false-GREEN arg_types itself).
+#
+# Sessions:  5  (worktree-isolated via the helper)
+# Per session: ~10-12 candidates; promote the viable subset, skip the rest.
+#
+# ------------------------------------------------------------------------------
+# HARVEST PROTOCOL (every session) — AUTHOR+VERIFY ONLY, central classify
+# ------------------------------------------------------------------------------
+# Worktree (collision-free, never-main):
+#     WT=$(bash scripts/c3_session_worktree.sh c3-batch-ad-s<N>); cd "$WT"
+#     # nonzero exit => STOP, do NOT work in main.
+# Pre-flight: sha256sum original/MASHED.exe.unpatched == BDCAE093...EFD3C0E ;
+#     cmd /c mashedmod\build.bat clean BEFORE adding hooks.
+# For EACH candidate:
+#   1. Read the analysis note end-to-end. CLASSIFY viability for a synthetic
+#      Frida force-call A/B (re/frida/diff_template.js):
+#      VIABLE iff: genuine game code (not vendored RW/CRT/D3D/COM); force-callable
+#        with synthesized scalars or a pointer to a zeroed scratch buffer (derefs
+#        null-safe, NO live initialized engine/COM/threading state — beware the
+#        0x0049xxxx DirectSound/threading module: CriticalSection/Event/vtable
+#        methods are NOT viable); deterministic comparable result (int/ptr/float
+#        return, OR a void fn whose effect is an observable write to a passed
+#        buffer or a seedable global — use the observe-style arg_types); a
+#        signature expressible by an EXISTING arg_type in diff_template.js
+#        (grep the supported list; confirm against a same-arg_type C3 hook).
+#      SKIP (report the reason, do NOT force it) iff: needs-live-state, library,
+#        signature needs a NEW arg_type (route to harness-extension, do NOT
+#        invent one here), float/ST0+multireg, nondeterministic, inline-[UNCERTAIN]
+#        in body, or args in non-ECX/EDX implicit registers (in_EAX/ESI/EBX) that
+#        the harness can't drive.
+#   2. VIABLE -> author reimpl in mashedmod/src/mashed_re/<Subsystem>/<Cluster>_ad<N>.cpp
+#      + hooks_registry.py entry (CONFIRMED arg_type + >=8 edge-case test vectors)
+#      + build.bat line. Build (cmd /c mashedmod\build.bat) — halt on failure.
+#   3. Verify the VIABLE set ONCE: py -3.12 re/frida/run_diff_warm.py <names> --slots 4
+#      Expect GREEN; eyeball each diff_*.csv (watch for vacuous/false-GREEN —
+#      the ac worker caught void_step_global observing UNRELATED globals).
+# *** DO NOT edit hooks.csv. DO NOT run re-classify. *** (central classify at sweep)
+# Commit (this worktree only, ONE commit) — .cpp + build.bat + hooks_registry.py ONLY:
+#     "c3(batch-ad-s<N>): author+verify <K-viable> <subsystem> leaves (no hooks.csv)"
+#   Append ONE re/PROMOTION_QUEUE.md row: date, c3-batch-ad-s<N>, rvas=<VIABLE only>,
+#   branch=<helper's branch>, evidence=log/diff_*.csv, note=<K promoted / M skipped + skip reasons>.
+# FOLLOW-UP: frida-sweep merges the CODE, rebuilds .asi, integration-diffs, and
+#   does the ONE central hooks.csv C2->C3 write for the GREEN set.
+################################################################################
+
+
+================================================================================
+Session 1 — frontend_c3_ad1  (HARVEST, 11 candidates)   [Frontend/FrontendLeaves_ad1.cpp]
+================================================================================
+Model: Opus 4.8 1M (claude-opus-4-8[1m])
+WT=$(bash scripts/c3_session_worktree.sh c3-batch-ad-s1); cd "$WT"
+# Candidates (rva  note) — classify each; promote viable, skip rest:
+00428140  re/analysis/frontend_c1_to_c2_s5/FUN_00428140.md
+004288a0  re/analysis/frontend_c1_to_c2_s5/FUN_004288a0.md
+00428a30  re/analysis/frontend_c1_to_c2_s5/FUN_00428a30.md
+00428bf0  re/analysis/frontend_c1_to_c2_s5/FUN_00428bf0.md
+00423b00  re/analysis/frontend_gate_unblock_u/0x00423b00.md
+004241c0  re/analysis/frontend_c1_to_c2_s3/FUN_004241c0.md
+00424270  re/analysis/frontend_c1_to_c2_s3/FUN_00424270.md
+00424b80  re/analysis/frontend_c1_to_c2_s3/FUN_00424b80.md
+00425b90  re/analysis/frontend_c1_to_c2_s3/FUN_00425b90.md
+00425bf0  re/analysis/frontend_c1_to_c2_s3/FUN_00425bf0.md
+00425c00  re/analysis/frontend_c1_to_c2_s3/FUN_00425c00.md
+# Verify viable: py -3.12 re/frida/run_diff_warm.py <viable hook names> --slots 4
+
+
+================================================================================
+Session 2 — frontend_c3_ad2  (HARVEST, 11 candidates)   [Frontend/FrontendLeaves_ad2.cpp]
+================================================================================
+Model: Opus 4.8 1M (claude-opus-4-8[1m])
+WT=$(bash scripts/c3_session_worktree.sh c3-batch-ad-s2); cd "$WT"
+# Candidates:
+00425ca0  re/analysis/frontend_c1_to_c2_s3/FUN_00425ca0.md
+00426b40  re/analysis/frontend_c1_to_c2_s4/FUN_00426b40.md
+00426cb0  re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md
+00426d20  re/analysis/frontend_c1_to_c2_s5/FUN_00426d20.md
+00426d90  re/analysis/frontend_c1_to_c2_s5/FUN_00426d90.md
+00426de0  re/analysis/frontend_c1_to_c2_s5/FUN_00426de0.md
+00426df0  re/analysis/frontend_c1_to_c2_s5/FUN_00426df0.md
+004273e0  re/analysis/frontend_c1_to_c2_s5/FUN_004273e0.md
+00427580  re/analysis/frontend_c1_to_c2_s5/FUN_00427580.md
+00427880  re/analysis/frontend_c1_to_c2_s5/FUN_00427880.md
+004893d0  re/analysis/bucket_0041dc30/0x004893d0.md
+# Verify viable: py -3.12 re/frida/run_diff_warm.py <viable hook names> --slots 4
+
+
+================================================================================
+Session 3 — gameplay_c3_ad3  (HARVEST, 11 candidates)   [Gameplay/GameplayLeaves_ad3.cpp]
+================================================================================
+Model: Opus 4.8 1M (claude-opus-4-8[1m])
+WT=$(bash scripts/c3_session_worktree.sh c3-batch-ad-s3); cd "$WT"
+# Candidates:
+00417450  re/analysis/frontend_gate_unblock_u/0x00417450.md
+00417530  re/analysis/frontend_gate_unblock_u/0x00417530.md
+0041f880  re/analysis/frontend_gate_unblock_u/0x0041f880.md
+00461e90  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x00461e90.md
+0046bce0  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046bce0.md
+0046bd60  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046bd60.md
+0046be10  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046be10.md
+0046be50  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046be50.md
+0046d2e0  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046d2e0.md
+0046d740  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046d740.md
+0046dd90  re/analysis/bucket_gameplay_0045dff0_0046dd90/0x0046dd90.md
+# Verify viable: py -3.12 re/frida/run_diff_warm.py <viable hook names> --slots 4
+
+
+================================================================================
+Session 4 — particle_c3_ad4  (HARVEST, 13 candidates)   [Particle/ParticleLeaves_ad4.cpp]
+================================================================================
+Model: Opus 4.8 1M (claude-opus-4-8[1m])
+WT=$(bash scripts/c3_session_worktree.sh c3-batch-ad-s4); cd "$WT"
+# *** CAVEAT: 0x0049xxxx is the DirectSound/threading module — the fastcall pass
+#     found it ~97% live-state (CriticalSection/Event/vtable). EXPECT most to SKIP
+#     (needs-live-state). 0x0049c690 is the ONE confirmed-viable from that pass
+#     (int return *(ecx+0x14), fastcall_reg nargs=1 ecx_ptr=true). Harvest the rest. ***
+# Candidates:
+0049c690  re/analysis/particle_promote_ad1/... (CONFIRMED viable: fastcall_reg, ret int *(ecx+0x14))  [note: 0049c6b0 path below; 0049c690 note may be in same dir]
+0049c6b0  re/analysis/particle_promote_ad1/0049c6b0.md
+0049eca0  re/analysis/particle_promote_ad5/0049eca0.md
+0049ecc0  re/analysis/particle_promote_ad5/0049ecc0.md
+0049ef10  re/analysis/particle_promote_ad5/0049ef10.md
+0049ef60  re/analysis/particle_promote_ad5/0049ef60.md
+0049f030  re/analysis/particle_promote_ad5/0049f030.md
+0049f180  re/analysis/particle_promote_ad5/0049f180.md
+0049f1b0  re/analysis/particle_promote_ad5/0049f1b0.md
+0049f1e0  re/analysis/particle_promote_ad5/0049f1e0.md
+0049f2b0  re/analysis/particle_promote_ad5/0049f2b0.md
+0049f2e0  re/analysis/particle_promote_ad5/0049f2e0.md
+0049f420  re/analysis/particle_promote_ad6/0x0049f420.md
+# Verify viable: py -3.12 re/frida/run_diff_warm.py <viable hook names> --slots 4
+
+
+================================================================================
+Session 5 — particle_c3_ad5  (HARVEST, 12 candidates)   [Particle/ParticleLeaves_ad5.cpp]
+================================================================================
+Model: Opus 4.8 1M (claude-opus-4-8[1m])
+WT=$(bash scripts/c3_session_worktree.sh c3-batch-ad-s5); cd "$WT"
+# *** Same DirectSound/threading-module caveat as s4 — expect heavy SKIP. ***
+# Candidates:
+0049f4d0  re/analysis/particle_promote_ad6/0x0049f4d0.md
+0049f5b0  re/analysis/particle_promote_ad6/0x0049f5b0.md
+0049f690  re/analysis/particle_promote_ad6/0x0049f690.md
+0049f830  re/analysis/particle_promote_ad6/0x0049f830.md
+0049f950  re/analysis/particle_promote_ad6/0x0049f950.md
+0049fa40  re/analysis/particle_promote_ad6/0x0049fa40.md
+0049fcc0  re/analysis/particle_promote_ad6/0x0049fcc0.md
+0049fe10  re/analysis/particle_promote_ad6/0x0049fe10.md
+0049ff30  re/analysis/particle_promote_ad6/0x0049ff30.md
+0049ff60  re/analysis/particle_promote_ad6/0x0049ff60.md
+0049ffe0  re/analysis/particle_promote_ad6/0x0049ffe0.md
+004b4000  re/analysis/particle_promote_ad6/0x004b4000.md
+# Verify viable: py -3.12 re/frida/run_diff_warm.py <viable hook names> --slots 4
+
+
+################################################################################
+# After ad commits: run frida-sweep (central classify the GREEN set).
+#
+# REALISM (set expectations): frontend + gameplay pure-leaves are the better
+# bets; the particle 0x0049xxxx module is mostly DirectSound/threading live-state
+# and will likely yield few. Total promotions uncertain — that's fine, the
+# harvest extracts whatever's genuinely diffable. After ad, the easy bit-identical
+# pure-leaf pool is largely exhausted; the next gains need either harness
+# extensions (observe-style for void leaves; a multi-register/EAX+ECX arg_type)
+# or shift to the C3->C4 canonical-scenario phase. fastcall_reg stays in the
+# harness (validated) for the occasional ECX-only int-returning leaf.
+################################################################################
