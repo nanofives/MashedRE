@@ -1019,6 +1019,180 @@ function runDiff() {
         return;
     }
 
+    // ── cstr_ret_offset ──────────────────────────────────────────────────────
+    // find-extension-style fn(char* s) -> char* (a pointer into s). Writes
+    // test.str (ASCII, NUL-terminated) into a shared buffer, calls fn(buf), and
+    // compares the returned pointer as a byte offset from buf (orig vs reimpl).
+    // -1 means the returned pointer was null. test: { str: "filename.ext" }.
+    // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005b73b0.
+    if (CONFIG.arg_type === 'cstr_ret_offset') {
+        const sbuf = Memory.alloc(512);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var s = (t && t.str != null) ? t.str : '';
+            for (var j = 0; j < s.length; j++) sbuf.add(j).writeU8(s.charCodeAt(j) & 0xff);
+            sbuf.add(s.length).writeU8(0);
+            var offO = -1, offR = -1, errO = null, errR = null;
+            try { var pO = Orig(sbuf);   if (pO && !pO.isNull()) offO = pO.sub(sbuf).toInt32(); } catch(e) { errO = e.message; }
+            try { var pR = Reimpl(sbuf); if (pR && !pR.isNull()) offR = pR.sub(sbuf).toInt32(); } catch(e) { errR = e.message; }
+            var match = (!errO && !errR && offO === offR);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: offO, reimpl: offR, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── pcm_sat_add ──────────────────────────────────────────────────────────
+    // 16-bit PCM saturated additive mixer: fn(out, srcA, srcB, byteCount).
+    // test: { a: [int16...], b: [int16...] } (sample count = min length).
+    // Writes a[]/b[] as int16 into shared src buffers, zeroes two out buffers,
+    // calls fn(outX, srcA, srcB, n*2), compares out fingerprints (n*2 bytes).
+    // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005bb5b0.
+    if (CONFIG.arg_type === 'pcm_sat_add') {
+        const PCMCAP = 1024;
+        const srcA = Memory.alloc(PCMCAP), srcB = Memory.alloc(PCMCAP);
+        const outO = Memory.alloc(PCMCAP), outR = Memory.alloc(PCMCAP);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var a = t.a || [], b = t.b || [];
+            var n = Math.min(a.length, b.length);
+            for (var j = 0; j < n; j++) { srcA.add(j*2).writeS16(a[j] | 0); srcB.add(j*2).writeS16(b[j] | 0); }
+            for (var j = 0; j < (n*2 + 4); j++) { outO.add(j).writeU8(0); outR.add(j).writeU8(0); }
+            var errO = null, errR = null;
+            try { Orig(outO, srcA, srcB, (n*2) >>> 0); }   catch(e) { errO = e.message; }
+            try { Reimpl(outR, srcA, srcB, (n*2) >>> 0); } catch(e) { errR = e.message; }
+            var fO = bufFingerprint(outO, n*2), fR = bufFingerprint(outR, n*2);
+            var match = (!errO && !errR && fO === fR);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: fO, reimpl: fR, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── guid_from_tag ────────────────────────────────────────────────────────
+    // DirectShow MEDIASUBTYPE GUID builder: fn(uint32 tag, uint32* out16).
+    // test: tag (uint32). Calls fn(tag, outX) into two 16-byte buffers (preset
+    // to 0xCC), compares 16-byte fingerprints.
+    // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005bcb80.
+    if (CONFIG.arg_type === 'guid_from_tag') {
+        const gO = Memory.alloc(16), gR = Memory.alloc(16);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var tag = CONFIG.tests[i] >>> 0;
+            for (var j = 0; j < 16; j++) { gO.add(j).writeU8(0xCC); gR.add(j).writeU8(0xCC); }
+            var errO = null, errR = null;
+            try { Orig(tag, gO); }   catch(e) { errO = e.message; }
+            try { Reimpl(tag, gR); } catch(e) { errR = e.message; }
+            var fO = bufFingerprint(gO, 16), fR = bufFingerprint(gR, 16);
+            var match = (!errO && !errR && fO === fR);
+            results.push({ idx: i, input: JSON.stringify(tag),
+                           original: fO, reimpl: fR, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── ptr_zero_pair ────────────────────────────────────────────────────────
+    // fn(uint32* p): zeroes p[0] and p[1]. Preload both dwords with a sentinel
+    // plus a guard dword at +8 (must stay untouched), call, compare 12 bytes.
+    // test: sentinel (uint32). Harness-extension added 2026-06-04 (c3_batch_ab s3) for 0x005bc450.
+    if (CONFIG.arg_type === 'ptr_zero_pair') {
+        const zO = Memory.alloc(16), zR = Memory.alloc(16);
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var sv = CONFIG.tests[i] >>> 0;
+            zO.writeU32(sv); zO.add(4).writeU32(sv); zO.add(8).writeU32(0xA5A5A5A5);
+            zR.writeU32(sv); zR.add(4).writeU32(sv); zR.add(8).writeU32(0xA5A5A5A5);
+            var errO = null, errR = null;
+            try { Orig(zO); }   catch(e) { errO = e.message; }
+            try { Reimpl(zR); } catch(e) { errR = e.message; }
+            var fO = bufFingerprint(zO, 12), fR = bufFingerprint(zR, 12);
+            var match = (!errO && !errR && fO === fR);
+            results.push({ idx: i, input: JSON.stringify(sv),
+                           original: fO, reimpl: fR, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── renderer_field3c_set ─────────────────────────────────────────────────
+    // fn(int p1, uint32 v): writes v to *(p1+0x3c); if (*(byte*)(p1+0x78)&8)
+    // also mirrors v to *(*(int*)(p1+0x11c)+0x34). Builds a 0x200-byte struct
+    // with hwvoice embedded at +0x140 (so +0x11c -> base+0x140, mirror at +0x174).
+    // test: { val: uint32, hw: 0|1 }. Observable: [+0x3c]:[hwvoice+0x34] hex.
+    // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005baf40.
+    if (CONFIG.arg_type === 'renderer_field3c_set') {
+        var STRUCTSZ = 0x200, HWOFF = 0x140;
+        var sO = Memory.alloc(STRUCTSZ), sR = Memory.alloc(STRUCTSZ);
+        var packU32 = function (p) { return ('00000000' + (p.readU32()>>>0).toString(16)).slice(-8); };
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var val = t.val >>> 0, hw = t.hw ? 1 : 0;
+            var errO = null, errR = null;
+            [sO, sR].forEach(function (s) {
+                for (var j = 0; j < STRUCTSZ; j++) s.add(j).writeU8(0);
+                s.add(0x78).writeU8(hw ? 0x08 : 0x00);
+                s.add(0x11c).writePointer(s.add(HWOFF));
+                s.add(0x3c).writeU32(0xDEADBEEF);
+                s.add(HWOFF + 0x34).writeU32(0xDEADBEEF);
+            });
+            try { Orig(sO, val); }   catch(e) { errO = e.message; }
+            try { Reimpl(sR, val); } catch(e) { errR = e.message; }
+            var fO = packU32(sO.add(0x3c)) + ':' + packU32(sO.add(HWOFF + 0x34));
+            var fR = packU32(sR.add(0x3c)) + ':' + packU32(sR.add(HWOFF + 0x34));
+            var match = (!errO && !errR && fO === fR);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: fO, reimpl: fR, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── source_loop_set ──────────────────────────────────────────────────────
+    // fn(int src, int loop): software path (caps[+0x50]&8==0) sets/clears bit
+    // 0x800 in *(src+0x28); hardware path sets/clears bit 0x8 in
+    // *(*(int*)(src+0x11c)+0xcc). Builds a 0x200-byte struct with caps embedded
+    // at +0x180 (so +0x94 -> base+0x180, caps+0x50 at +0x1d0) and hwvoice at
+    // +0x100 (so +0x11c -> base+0x100, control word at +0x1cc).
+    // test: { loop: 0|1, hw: 0|1, pre28: uint32, prehw: uint32 }.
+    // Observable: [+0x28]:[hwvoice+0xcc] hex.
+    // Harness-extension arg_type added 2026-06-04 (c3_batch_ab s3) for 0x005b9410.
+    if (CONFIG.arg_type === 'source_loop_set') {
+        var SLS_SZ = 0x200, CAPSOFF = 0x180, SLS_HWOFF = 0x100;
+        var slO = Memory.alloc(SLS_SZ), slR = Memory.alloc(SLS_SZ);
+        var slPack = function (p) { return ('00000000' + (p.readU32()>>>0).toString(16)).slice(-8); };
+        for (var i = 0; i < CONFIG.tests.length; i++) {
+            var t = CONFIG.tests[i];
+            var loop = t.loop ? 1 : 0, hw = t.hw ? 1 : 0;
+            var pre28 = (t.pre28 != null ? t.pre28 : 0) >>> 0;
+            var prehw = (t.prehw != null ? t.prehw : 0) >>> 0;
+            var errO = null, errR = null;
+            [slO, slR].forEach(function (s) {
+                for (var j = 0; j < SLS_SZ; j++) s.add(j).writeU8(0);
+                s.add(0x94).writePointer(s.add(CAPSOFF));
+                s.add(CAPSOFF + 0x50).writeU8(hw ? 0x08 : 0x00);
+                s.add(0x11c).writePointer(s.add(SLS_HWOFF));
+                s.add(0x28).writeU32(pre28);
+                s.add(SLS_HWOFF + 0xcc).writeU32(prehw);
+            });
+            try { Orig(slO, loop); }   catch(e) { errO = e.message; }
+            try { Reimpl(slR, loop); } catch(e) { errR = e.message; }
+            var fO = slPack(slO.add(0x28)) + ':' + slPack(slO.add(SLS_HWOFF + 0xcc));
+            var fR = slPack(slR.add(0x28)) + ':' + slPack(slR.add(SLS_HWOFF + 0xcc));
+            var match = (!errO && !errR && fO === fR);
+            results.push({ idx: i, input: JSON.stringify(t),
+                           original: fO, reimpl: fR, match: match,
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── endian_pack ──────────────────────────────────────────────────────────
     // Tests AudioFieldEndianPack-style fn(int **out_ptr_ptr, uint *src, int size).
     // For each test {src_val, size}: allocate an 8-byte output buffer, write src_val

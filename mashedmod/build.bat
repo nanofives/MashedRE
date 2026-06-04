@@ -281,6 +281,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Boot\BootLowRvaCluster.cpp" ^
     "Audio\MixedC3Sweep.cpp" ^
     "Audio\AudioLeaves_ab1.cpp" ^
+    "Audio\AudioLeaves_ab3.cpp" ^
     "Frontend\SlotZeroers_s2.cpp" ^
     "Frontend\MenuMiscLeaves_t2.cpp" ^
     "Frontend\SplashGameMode_t5.cpp" ^

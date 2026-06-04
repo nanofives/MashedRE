@@ -2973,6 +2973,138 @@ HOOKS = {
                      0x12,0x34,0x56,0x78, 0x9A,0xBC,0xDE,0xF0], 'swap': 0},
         ],
     },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # c3_batch_ab session 3 — six audio pure leaves (Audio/AudioLeaves_ab3.cpp).
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x005b73b0  AudioFindExtension — char* fn(char* s); back-walks from NUL to
+    # find the char after the last '.', else returns s. Note: a leading '.' is
+    # NOT treated as a separator (loop breaks at s before testing it).
+    # arg_type='cstr_ret_offset': writes test.str into a buffer, compares the
+    # returned pointer as an offset from the buffer.
+    'audio_find_extension': {
+        'rva':            0x005b73b0,
+        'export':         'AudioFindExtension',
+        'signature':      {'ret': 'pointer', 'args': ['pointer']},
+        'arg_type':       'cstr_ret_offset',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'str': 'sound.wav'},     # dot@5 -> offset 6
+            {'str': 'music.rws'},     # dot@5 -> offset 6
+            {'str': 'noext'},         # no dot -> offset 0 (returns s)
+            {'str': 'a.b.c'},         # last dot@3 -> offset 4
+            {'str': '.hidden'},       # leading dot only -> offset 0 (edge)
+            {'str': 'track01.RWS'},   # dot@7 -> offset 8
+            {'str': 'x.y'},           # dot@1 -> offset 2
+            {'str': 'file.'},         # trailing dot@4 -> offset 5 (empty ext)
+        ],
+        'path2_tests': [
+            {'str': 'sound.wav'},
+            {'str': 'noext'},
+            {'str': 'a.b.c'},
+        ],
+    },
+
+    # 0x005b9410  AudioSourceLoopSet — void fn(int src, int loop). Software path
+    # (caps[+0x50]&8==0): bit 0x800 in *(src+0x28). Hardware path: bit 0x8 in
+    # *(*(int*)(src+0x11c)+0xcc). arg_type='source_loop_set' exercises both.
+    'audio_source_loop_set': {
+        'rva':            0x005b9410,
+        'export':         'AudioSourceLoopSet',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'int32']},
+        'arg_type':       'source_loop_set',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'loop': 1, 'hw': 0, 'pre28': 0x00000000},  # sw set:  -> 0x800
+            {'loop': 0, 'hw': 0, 'pre28': 0xFFFFFFFF},  # sw clear:-> 0xfffff7ff
+            {'loop': 1, 'hw': 0, 'pre28': 0x12345000},  # sw set:  -> 0x12345800
+            {'loop': 0, 'hw': 0, 'pre28': 0x00000800},  # sw clear:-> 0
+            {'loop': 1, 'hw': 1, 'prehw': 0x00000000},  # hw set:  -> 0x8
+            {'loop': 0, 'hw': 1, 'prehw': 0xFFFFFFFF},  # hw clear:-> 0xfffffff7
+            {'loop': 1, 'hw': 1, 'prehw': 0x00000100},  # hw set:  -> 0x108
+            {'loop': 0, 'hw': 1, 'prehw': 0x00000008},  # hw clear:-> 0
+        ],
+        'path2_tests': [
+            {'loop': 1, 'hw': 0, 'pre28': 0x00000000},
+            {'loop': 0, 'hw': 0, 'pre28': 0xFFFFFFFF},
+            {'loop': 1, 'hw': 1, 'prehw': 0x00000000},
+        ],
+    },
+
+    # 0x005baf40  AudioRendererField3cSet — void fn(int p1, uint32 v). Writes v
+    # to *(p1+0x3c); if (*(byte*)(p1+0x78)&8) mirrors v to hwvoice+0x34.
+    'audio_renderer_field3c_set': {
+        'rva':            0x005baf40,
+        'export':         'AudioRendererField3cSet',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'uint32']},
+        'arg_type':       'renderer_field3c_set',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'val': 0x12345678, 'hw': 0},   # sw: +0x3c only
+            {'val': 0x00000000, 'hw': 0},
+            {'val': 0xFFFFFFFF, 'hw': 1},   # hw: +0x3c and mirror
+            {'val': 0xCAFEBABE, 'hw': 1},
+            {'val': 0x00000001, 'hw': 0},
+            {'val': 0xABCD1234, 'hw': 1},
+        ],
+        'path2_tests': [
+            {'val': 0x12345678, 'hw': 0},
+            {'val': 0xCAFEBABE, 'hw': 1},
+        ],
+    },
+
+    # 0x005bb5b0  AudioPcmSaturatedAdd — void fn(out, srcA, srcB, byteCount).
+    # out[i] = saturate(srcA[i]+srcB[i]) over byteCount>>1 int16 samples; clamps
+    # to [-0x7fff, +0x7fff] (lower bound -32767, NOT -32768).
+    'audio_pcm_saturated_add': {
+        'rva':            0x005bb5b0,
+        'export':         'AudioPcmSaturatedAdd',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'pointer', 'pointer', 'uint32']},
+        'arg_type':       'pcm_sat_add',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'a': [100, 200, 300, 400], 'b': [50, 60, 70, 80]},          # plain, n=4
+            {'a': [32000, 32000],       'b': [32000, 32000]},            # +overflow -> 32767
+            {'a': [-32000, -32000],     'b': [-32000, -32000]},          # -overflow -> -32767
+            {'a': [1],                  'b': [-1]},                      # n=1 tail
+            {'a': [10, 20, 30],         'b': [1, 2, 3]},                 # n=3 tail
+            {'a': [0,0,0,0,0,0,0,0],    'b': [1,2,3,4,5,6,7,8]},         # n=8 pure main
+            {'a': [32767, -32768, 16000, -16000, 32767],
+             'b': [32767, -32768, 16000, -16000, 1]},                   # boundaries, n=5
+            {'a': [-16384, -16384],     'b': [-16383, -16384]},          # -32767 kept / -32768 clamp
+        ],
+        'path2_tests': [
+            {'a': [100, 200, 300, 400], 'b': [50, 60, 70, 80]},
+            {'a': [32000, 32000],       'b': [32000, 32000]},
+            {'a': [10, 20, 30],         'b': [1, 2, 3]},
+        ],
+    },
+
+    # 0x005bc450  AudioSlotPairZero — void fn(uint32* p): p[0]=0; p[1]=0.
+    # arg_type='ptr_zero_pair' preloads a sentinel + guard dword, compares 12B.
+    'audio_slot_pair_zero': {
+        'rva':            0x005bc450,
+        'export':         'AudioSlotPairZero',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'ptr_zero_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x00000000, 0xCAFEBABE],
+        'path2_tests': [0xDEADBEEF, 0x12345678],
+    },
+
+    # 0x005bcb80  AudioMediaSubtypeFromTag — void fn(uint32 tag, uint32* out16):
+    # writes {0000tttt-0000-0010-8000-00AA00389B71}. arg_type='guid_from_tag'.
+    'audio_media_subtype_from_tag': {
+        'rva':            0x005bcb80,
+        'export':         'AudioMediaSubtypeFromTag',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'pointer']},
+        'arg_type':       'guid_from_tag',
+        'lut_root_delta': 0,
+        'path1_tests': [0x0001, 0x0002, 0x0055, 0x0000FFFF, 0x00000000, 0x00001234],
+        'path2_tests': [0x0001, 0x0055, 0x00000000],
+    },
+
     'audio_pool_free': {
         'rva':          0x005ae920,
         'export':       'AudioPoolFree',

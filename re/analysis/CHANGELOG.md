@@ -3143,3 +3143,9 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  005aeda0  AudioShiftAddMul64      C2->C3  log/diff_audio_shift_add_mul64.csv (10/10 GREEN, arg_type int2_ptr2_out)
 2026-06-04  005b0700  AudioListMinKeySelect   C2->C3  log/diff_audio_list_min_key_select.csv (8/8 GREEN, arg_type audio_list_min_select); U-6819 key semantics data-level non-blocking
 2026-06-04  005b4060  AudioFmtConvertByteLength  C2->C3  c3-batch-ab-s2; fmt_desc_pair_compare Frida warm-pool A/B GREEN 10/10 (log/diff_audio_fmt_convert_byte_length.csv); pure leaf, 4 C2 callers (005b3e60/005b4150/005b41f0/+1) leaf-exemption on callee half; reimpl mashedmod/src/mashed_re/Audio/AudioLeaves_ab2.cpp; U-6910 struct-typing open (non-blocking — all field roles diff-confirmed)
+2026-06-04  0x005b73b0  AudioFindExtension  C2->C3  log/diff_audio_find_extension.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
+2026-06-04  0x005b9410  AudioSourceLoopSet  C2->C3  log/diff_audio_source_loop_set.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
+2026-06-04  0x005baf40  AudioRendererField3cSet  C2->C3  log/diff_audio_renderer_field3c_set.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
+2026-06-04  0x005bb5b0  AudioPcmSaturatedAdd  C2->C3  log/diff_audio_pcm_saturated_add.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
+2026-06-04  0x005bc450  AudioSlotPairZero  C2->C3  log/diff_audio_slot_pair_zero.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
+2026-06-04  0x005bcb80  AudioMediaSubtypeFromTag  C2->C3  log/diff_audio_media_subtype_from_tag.csv (warm-pool Frida A/B bit-identical; leaf-exempt)
