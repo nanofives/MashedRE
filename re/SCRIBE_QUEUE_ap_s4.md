@@ -92,3 +92,7 @@ finalize (ghidra-sweep + central re-classify) writes hooks.csv / trackers.
 - **Drift check**: all 28 confirmed `gameplay,C1,mapped` in hooks.csv via
   anchored `^<rva>,` grep at session start (no 0x prefix in CSV col 1). 0
   drift-skips, 0 already->=C2.
+
+## Drained
+
+drained-by=sweep-20260603-2132; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 28 library_skip, rvas=NONE)

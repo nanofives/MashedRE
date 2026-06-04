@@ -142,3 +142,7 @@ S-7000..S-7199), and commits.
   third-party-library[RenderWare-Physics-3.7]); C2-promotion count from this
   session is 0, as the batch_ap header predicted for this band. With all six
   ap fragments drained, gameplay C1 -> 0 and the gameplay campaign CLOSES.
+
+## Drained
+
+drained-by=sweep-20260603-2132; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 28 library_skip, rvas=NONE)

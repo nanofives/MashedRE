@@ -111,3 +111,7 @@ subsystem reclassifications.
 - [UNCERTAIN] 00574230 has zero static call references (reached via vtable
   slot per batch-z-s2 plate); the owning vtable address was not chased in
   this session.
+
+## Drained
+
+drained-by=sweep-20260603-2132; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 28 library_skip, rvas=NONE)

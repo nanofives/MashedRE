@@ -120,3 +120,7 @@ third-party-library[RenderWare-Physics-3.7], kept C1.
 - **gameplay C1 still drains by 28** via the reclass-OUT (324→296).
 - Files in the atomic commit: this fragment only. No hooks.csv writes, no
   re-classify, no master-Ghidra mutation (read-only MCP throughout).
+
+## Drained
+
+drained-by=sweep-20260603-2132; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 28 library_skip, rvas=NONE)
