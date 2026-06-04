@@ -95,3 +95,7 @@ third-party-library[renderware], kept C1.
 - No hooks.csv / STUBS / UNCERTAINTIES / DEFERRED / shared SCRIBE_QUEUE
   writes. Master Ghidra untouched (read-only clone session, program_close
   done).
+
+## Drained
+
+drained-by=sweep-20260603-2220; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 26 library_skip, rvas=NONE)

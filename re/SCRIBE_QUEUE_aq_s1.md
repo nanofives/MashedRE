@@ -80,3 +80,7 @@ finalize (ghidra-sweep + central re-classify) writes hooks.csv / trackers.
   re/SCRIBE_QUEUE.md writes. No master-project mutation. No U-/S- IDs
   minted (reserved U-8900..U-9199 carried over per batch plan are for
   central re-classify).
+
+## Drained
+
+drained-by=sweep-20260603-2220; 3 plates, 3 bookmarks, 0 renames, 1 master function_create (FUN_004492b0 body 0x004492b0..0x0044942a, resolves the S-1760 no-fn-object hold)

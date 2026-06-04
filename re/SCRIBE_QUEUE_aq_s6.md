@@ -145,3 +145,7 @@ commits.
 - **Campaign effect**: render C1 drains by 26 via reclass-OUT (kept C1 under
   third-party-library[renderware]); C2-promotion count from this session is 0,
   as the batch_aq header predicted for the RW-core band.
+
+## Drained
+
+drained-by=sweep-20260603-2220; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 26 library_skip, rvas=NONE)

@@ -152,3 +152,7 @@ OUT to third-party-library[renderware], kept C1.
 - **render C1 drains by 26** via the reclass-OUT.
 - Files in the atomic commit: this fragment only. No hooks.csv writes, no
   re-classify, no master-Ghidra mutation (read-only MCP throughout).
+
+## Drained
+
+drained-by=sweep-20260603-2220; 0 plates, 0 bookmarks, 0 renames (ALL-SKIP: 26 library_skip, rvas=NONE)
