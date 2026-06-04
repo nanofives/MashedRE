@@ -34,6 +34,7 @@
 //                   "vec2_normalize" | "matrix_scale"
 //                 | "eax_implicit_ptr"          -- EAX-implicit pointer arg
 //                 | "eax_implicit_int"          -- EAX-implicit integer arg
+//                 | "fastcall_reg"              -- __fastcall/__thiscall ECX(+EDX) reg-only leaf
 //                 | "vec3_global_mul_observe"   -- 3-float global read/mul/write
 //                 | "fmt_desc_pair_compare"     -- 2- or 4-arg fmt-desc comparator
 //   lut_root_delta  number  (0 or 4 — offset for LUT readiness poll)
@@ -1611,6 +1612,98 @@ function runDiff() {
             } catch (e) { errR = e.message; }
             const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
             results.push({ idx: i, input: CONFIG.tests[i],
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── fastcall_reg ─────────────────────────────────────────────────────────
+    // Register-convention force-call for __fastcall / __thiscall LEAF functions
+    // whose arguments live ENTIRELY in ECX (+ EDX) with NO stack args. This is
+    // the two-register generalization of the eax_implicit trampoline above and
+    // unblocks the largest signature-rejected bucket (the ~93 "fastcall ECX/EDX
+    // args" candidates flagged by c3_filter_v4).
+    //
+    // Trampoline (15 bytes, one per side; jmp rel32 fixed at build, the two
+    // imm32 windows patched per iteration):
+    //   B9 ?? ?? ?? ??   mov ecx, imm32       ; bytes [0..4],  imm patched at +1
+    //   BA ?? ?? ?? ??   mov edx, imm32       ; bytes [5..9],  imm patched at +6
+    //   E9 ?? ?? ?? ??   jmp rel32 -> target  ; bytes [10..14]
+    // The target consumes ECX (and EDX) and ends with a callee-clean RET (RET 0
+    // for a 2-register fastcall — no stack args), so wrapping the trampoline as
+    // NativeFunction(tramp, ret, [], 'mscdecl') leaves ESP balanced across
+    // iterations and captures EAX as the return value (int/ptr/void only — for
+    // float/ST0 returns use a dedicated arg_type).
+    //
+    // CONFIG.signature      : { ret: 'uint32'|'int32'|'pointer'|'void', args: [] }
+    //                         (EMPTY args — the registers ARE the arguments).
+    // CONFIG.fastcall_nargs : 1 (ECX only; EDX seeded 0) | 2 (ECX+EDX). Default 2.
+    // CONFIG.fastcall_ecx_ptr / fastcall_edx_ptr : bool. If set, that register is
+    //                         seeded with the address of a fresh 64-byte zeroed
+    //                         scratch buffer (one per test) so a deref inside the
+    //                         target hits zeroed memory instead of AVing; the raw
+    //                         CONFIG.tests entry is kept only as the input marker.
+    // CONFIG.tests          : per test, a scalar ECX value (nargs==1, int mode) or
+    //                         a 2-element [ecxVal, edxVal] (nargs==2, int mode).
+    //                         For a ptr register the value is replaced by a
+    //                         scratch-buffer address.
+    if (CONFIG.arg_type === 'fastcall_reg') {
+        const nargs   = (CONFIG.fastcall_nargs === 1) ? 1 : 2;
+        const ecxPtr  = !!CONFIG.fastcall_ecx_ptr;
+        const edxPtr  = !!CONFIG.fastcall_edx_ptr;
+        const SCRATCH = 64;
+
+        function buildFastcallTramp(targetAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 15, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putBytes([0xB9, 0x00, 0x00, 0x00, 0x00]);  // mov ecx, 0 (patched at +1)
+                w.putBytes([0xBA, 0x00, 0x00, 0x00, 0x00]);  // mov edx, 0 (patched at +6)
+                w.putJmpAddress(targetAddr);                  // jmp rel32 -> target
+                w.flush();
+            });
+            return code;
+        }
+        const trampO = buildFastcallTramp(TARGET_ADDR);
+        const trampR = buildFastcallTramp(reimplAddr);
+        const FnO = new NativeFunction(trampO, CONFIG.signature.ret, [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, CONFIG.signature.ret, [], 'mscdecl');
+
+        // Fresh zeroed scratch buffer per test for any pointer register.
+        const ecxScratch = [], edxScratch = [];
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            if (ecxPtr) { const b = Memory.alloc(SCRATCH); for (let k = 0; k < SCRATCH; k += 4) b.add(k).writeU32(0); ecxScratch.push(b); }
+            if (edxPtr) { const b = Memory.alloc(SCRATCH); for (let k = 0; k < SCRATCH; k += 4) b.add(k).writeU32(0); edxScratch.push(b); }
+        }
+        function asU32(v) {
+            return (typeof v === 'object') ? (parseInt(v.toString(), 16) >>> 0) : (v >>> 0);
+        }
+
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t      = CONFIG.tests[i];
+            const rawEcx = Array.isArray(t) ? t[0] : t;
+            const rawEdx = Array.isArray(t) ? (t[1] | 0) : 0;
+            const ecxVal = ecxPtr ? asU32(ecxScratch[i]) : (rawEcx >>> 0);
+            const edxVal = (nargs === 2) ? (edxPtr ? asU32(edxScratch[i]) : (rawEdx >>> 0)) : 0;
+            trampO.add(1).writeU32(ecxVal); trampO.add(6).writeU32(edxVal);
+            trampR.add(1).writeU32(ecxVal); trampR.add(6).writeU32(edxVal);
+
+            let origV = null, reimV = null, errO = null, errR = null;
+            try {
+                const r = FnO();
+                origV = (r === undefined || r === null) ? 0
+                      : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0) : (r >>> 0);
+            } catch (e) { errO = e.message; }
+            try {
+                const r = FnR();
+                reimV = (r === undefined || r === null) ? 0
+                      : (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0) : (r >>> 0);
+            } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: t,
                            original: origV, reimpl: reimV,
                            match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });
