@@ -1,0 +1,30 @@
+rva	name	subsystem	reason
+00427e00	FUN_00427e00	frontend	signature-unsupported: fastcall ECX/EDX args
+004a2c48	FUN_004a2c48	frontend	signature-unsupported: in_ST0 (FPU) arg
+004cc230	FUN_004cc230	frontend	callee-gate: 005507b0=C1
+0042ac50	FUN_0042ac50	frontend	signature-unsupported: fastcall ECX/EDX args
+00430b30	FUN_00430b30	frontend	signature-unsupported: in_EAX arg
+004391b0	FUN_004391b0	frontend	signature-unsupported: fastcall ECX/EDX args
+0043d2a0	FUN_0043d2a0	frontend	signature-unsupported: in_EAX arg
+00432800	FUN_00432800	frontend	signature-unsupported: in_EAX arg
+004325c0	FUN_004325c0	frontend	signature-unsupported: in_EAX arg
+00431b80	FUN_00431b80	frontend	signature-unsupported: in_EAX arg
+004324a0	FUN_004324a0	frontend	signature-unsupported: in_EAX arg
+004322c0	FUN_004322c0	frontend	signature-unsupported: in_EAX arg
+0042f400	FUN_0042f400	frontend	signature-unsupported: in_EAX arg
+0042f020	FUN_0042f020	frontend	signature-unsupported: fastcall ECX/EDX args
+00431d00	FUN_00431d00	frontend	signature-unsupported: in_EAX arg
+00429240	FUN_00429240	frontend	signature-unsupported: fastcall ECX/EDX args
+00428d30	FUN_00428d30	frontend	signature-unsupported: 5-arg shape
+00497470	FUN_00497470	frontend	signature-unsupported: fastcall ECX/EDX args
+004974b0	FUN_004974b0	frontend	signature-unsupported: in_EAX arg
+00497b10	FUN_00497b10	frontend	signature-unsupported: in_EAX arg
+00425ea0	FUN_00425ea0	frontend	callee-gate: 004e6e00=C1
+00425fa0	FUN_00425fa0	frontend	callee-gate: 004e5fc0=C1
+00426460	FUN_00426460	frontend	signature-unsupported: fastcall ECX/EDX args
+004277a0	FUN_004277a0	frontend	signature-unsupported: in_EAX arg
+00429b30	FUN_00429b30	frontend	signature-unsupported: fastcall ECX/EDX args
+00429b70	FUN_00429b70	frontend	signature-unsupported: fastcall ECX/EDX args
+0042ad10	FUN_0042ad10	frontend	signature-unsupported: fastcall ECX/EDX args
+0042ad90	FUN_0042ad90	frontend	signature-unsupported: fastcall ECX/EDX args
+00432b30	FUN_00432b30	frontend	signature-unsupported: in_EAX arg
