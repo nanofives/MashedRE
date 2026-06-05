@@ -3155,3 +3155,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  frida-sweep c3_batch_ac (s5-redo, Opus single session)  8 util leaves C2->C3 (00407a60/0040ad30/0040b250/0040b430/0040b6d0/004292c0/0042aab0/00430b00). Author+verify-only -> central classify (no hooks.csv corruption, unlike s5). ff feature to c3/batch-ac-s1; integration build clean + run_diff_warm GREEN 8/8 (4 spawns, 15s). Opus worker HARNESS-CORRECTED arg_types (void_write_observe/int_scalar/struct_three_write vs suggested void_step_global/read_global/void_write_observe which would false-GREEN). C3 365->373.
 
 2026-06-04  frida-sweep c3_batch_ad (Opus HARVEST, 5 sessions)  12 C2->C3 of 57 pure-leaf candidates (frontend 5, gameplay 3, particle/COM 4). Author+verify-only -> central classify (5 branches cherry-picked, 2 hooks_registry union-conflicts resolved). Integration build clean + run_diff_warm GREEN 12/12 (13.9s). Yield ~21% (particle 0x0049xxxx DirectSound module mostly live-state SKIP, as predicted). C3 373->385.
+2026-06-04  00492440  RenderStatsAccumulate  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae1.cpp  c3-batch-ae-s1
+2026-06-04  004b46b0  Vec3Equal  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae1.cpp  c3-batch-ae-s1
+2026-06-04  004b40c0  RenderElemArrayCopy  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae2.cpp  c3-batch-ae-s2
+2026-06-04  00478cc0  RenderWorldStateZeroFill  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae2.cpp  c3-batch-ae-s2
+2026-06-04  004b65e0  PizGlobalsZero6  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae3.cpp  c3-batch-ae-s3

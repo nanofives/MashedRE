@@ -144,6 +144,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\BatchAB_s3.cpp" ^
     "Render\BatchAB_s6.cpp" ^
     "Render\RenderLeaves_ae1.cpp" ^
+    "Render\RenderLeaves_ae2.cpp" ^
     "Render\RenderLeaves_ae3.cpp" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
