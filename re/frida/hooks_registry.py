@@ -12519,4 +12519,45 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ─── c3-batch-af-s6 (2026-06-04): frontend menu leaves ──────────────────
+
+    # 0x00431f30  FrontendPageIdDispatch  void(int page_id)
+    # Calls FUN_00431d90 (FrontendPanelFlagAdvance, C3 — mass panel-flag advance/
+    # clear over 0x0067e7a8..0x0067e838) then a switch setting exactly one panel
+    # flag to 1 for the given page id (page 8 sets two: 0x0067e808 + 0x0067e828).
+    # arg_type=multi_arg_global_write over the WHOLE 37-u32 flag block
+    # [0x0067e7a8 .. 0x0067e838] so every page's flag-set lands inside the readback
+    # window and the switch is genuinely exercised. No guard in the original;
+    # guard_global=0x0067e7a8 is inside the saved/restored window and is overwritten
+    # by FUN_00431d90 on every call, so the forced guard=1 is self-contained/benign
+    # (model: time_display_set_entry). Both orig+reimpl call the SAME FUN_00431d90
+    # so the flag-clear half is bit-identical by construction.
+    # Gate: caller 0x0043d2a0 C2, callee 0x00431d90 C3.
+    # ref: re/analysis/options_menu/0x00431f30.md
+    'frontend_page_id_dispatch': {
+        'rva':            0x00431f30,
+        'export':         'FrontendPageIdDispatch',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'multi_arg_global_write',
+        'guard_global':   0x0067e7a8,
+        'out_base':       0x0067e7a8,
+        'out_count':      37,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [4], [5], [6], [7], [8], [9], [10], [0xc], [0xf], [0x11],
+            [0x14], [0x1e], [0x20], [0x21], [0x63],
+        ],
+        'path2_tests': [
+            [8], [0x1e], [0x63],
+        ],
+    },
+
+    # 0x00424270  RankSortDispatcher — NOT PROMOTED (c3-batch-af-s6 2026-06-04).
+    # A faithful port + sort_dispatch_out4 diff came back GREEN but DEGENERATE:
+    # at a quiescent menu all 4 player slots are inactive so every sel/dir vector
+    # yields the identical [0,1,2,3] (log/diff_rank_sort_dispatcher.csv) — the
+    # 14-case dispatch/sort/team paths are never exercised -> false-GREEN. Defer
+    # to a populated-race canonical scenario (C3->C4 track). Entry intentionally
+    # omitted so the central frida-sweep does not promote it.
+
 }

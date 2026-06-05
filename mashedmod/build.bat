@@ -105,6 +105,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\MenuStateWriters_u1.cpp" ^
     "Frontend\MenuMiscLeaves_t2.cpp" ^
     "Frontend\BucketMixed_t3.cpp" ^
+    "Frontend\MenuLeaves_af6.cpp" ^
     "Frontend\Cluster_v3.cpp" ^
     "Frontend\BatchAA_s4.cpp" ^
     "HUD\HudDispatch.cpp" ^
@@ -307,6 +308,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\BatchAA_s4.cpp" ^
     "Frontend\BatchAA_s5.cpp" ^
     "Frontend\FrontendLeaves_ad1.cpp" ^
+    "Frontend\MenuLeaves_af6.cpp" ^
     "Frontend\BatchAA_s6.cpp" ^
     "Render\BatchAB_s1.cpp" ^
     "Render\BatchAB_s3.cpp" ^
