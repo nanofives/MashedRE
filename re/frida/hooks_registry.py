@@ -12409,4 +12409,61 @@ HOOKS = {
         ],
     },
 
+
+    # ===================================================================
+    # c3-batch-af session 4 (Frontend/MenuLeaves_af4.cpp)
+    # ===================================================================
+
+    # 0x0043aee0  MenuSlotFlagSetCurrent
+    # void(void) -- gated write of 1 to (&DAT_007f0a40)[DAT_0067f17c*0xc].
+    # Gate: FUN_004307a0()!=0 && DAT_0067ed6c!=0. FUN_004307a0() is uncontrolled
+    # at attach time, but orig and reimpl share it, so the observed slot agrees
+    # either way. Inject slot index 0 so the written slot is the observed base.
+    'menu_slot_flag_set_current': {
+        'rva':            0x0043aee0,
+        'export':         'MenuSlotFlagSetCurrent',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'state_machine_observe',
+        'input_globals':  [
+            {'addr': 0x0067ed6c, 'type': 'u32'},  # override flag (gate 2)
+            {'addr': 0x0067f17c, 'type': 'u32'},  # current-slot index
+        ],
+        'output_globals': [
+            {'addr': 0x007f0a40, 'type': 'u32'},  # slot[0] flag (idx injected = 0)
+        ],
+        'lut_root_delta': 0,
+        # [override_flag, slot_index]
+        'path1_tests': [
+            [0, 0],            # override off: no write
+            [1, 0],            # override on: writes 1 to slot0 iff gate!=0
+            [0xFFFFFFFF, 0],   # override on (alt sentinel)
+            [0, 0],            # override off again
+            [1, 0],            # override on again
+            [0x55555555, 0],
+            [0xAAAAAAAA, 0],
+        ],
+        'path2_tests': [
+            [0, 0], [1, 0], [0xFFFFFFFF, 0],
+        ],
+    },
+
+    # 0x00401ee0  EntityTableSelectUpdate
+    # void(uint32) -- FUN_00401570(param_1) selects an entry pointer into the
+    # global at 0x00636ac0; then FUN_00401da0() (RW matrix update); then if the
+    # deref'd entry value != 0, tail-calls FUN_004e6680(value). Observe the
+    # selected-entry pointer at 0x00636ac0 after the call (written by the select).
+    # NOTE: exercises live entity/table state; if the table is unpopulated at the
+    # diff-attach menu the deref may fault on both sides (no clean diff). Treated
+    # as best-effort; see PROMOTION_QUEUE fragment.
+    'entity_table_select_update': {
+        'rva':            0x00401ee0,
+        'export':         'EntityTableSelectUpdate',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00636ac0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0, 1],
+        'path2_tests':    [0, 1],
+    },
+
 }

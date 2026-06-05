@@ -98,6 +98,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\SmallLeaves_t1.cpp" ^
     "Frontend\SlotZeroers_s1.cpp" ^
     "Frontend\MenuLeaves_s3.cpp" ^
+    "Frontend\MenuLeaves_af4.cpp" ^
     "Frontend\GlobalGetters_s4.cpp" ^
     "Frontend\GlobalGetters_s5.cpp" ^
     "Frontend\MenuNearLeaves_s6.cpp" ^
@@ -258,6 +259,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\SmallLeaves_t1.cpp" ^
     "Frontend\SlotZeroers_s1.cpp" ^
     "Frontend\MenuLeaves_s3.cpp" ^
+    "Frontend\MenuLeaves_af4.cpp" ^
     "Frontend\GlobalGetters_s4.cpp" ^
     "Frontend\GlobalGetters_s5.cpp" ^
     "Frontend\MenuNearLeaves_s6.cpp" ^
