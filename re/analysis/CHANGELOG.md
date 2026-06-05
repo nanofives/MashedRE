@@ -3160,3 +3160,10 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  004b40c0  RenderElemArrayCopy  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae2.cpp  c3-batch-ae-s2
 2026-06-04  00478cc0  RenderWorldStateZeroFill  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae2.cpp  c3-batch-ae-s2
 2026-06-04  004b65e0  PizGlobalsZero6  C2->C3  mashedmod/src/mashed_re/Render/RenderLeaves_ae3.cpp  c3-batch-ae-s3
+2026-06-04  00494f30  AspectRatioSnapshot  C2->C3  mashedmod/src/mashed_re/Frontend/SplashGameMode_t5.cpp  c3-batch-af-s3
+2026-06-04  00431f30  FrontendPageIdDispatch  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_af6.cpp  c3-batch-af-s6
+2026-06-04  00431b70  MenuFlagDat007f0f10Get  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_af5.cpp  c3-batch-af-s5
+2026-06-04  0043aee0  MenuSlotFlagSetCurrent  C2->C3  mashedmod/src/mashed_re/Frontend/MenuLeaves_af4.cpp  c3-batch-af-s4
+2026-06-04  00473540  GradientQuadHorizAlpha  HELD-C2  draw_quad_observe live-state flip (RED in pool runs) -> canonical C3->C4 track  c3-batch-af-s1
+2026-06-04  004736c0  BorderQuadFourAlpha     HELD-C2  draw_quad_observe live-state flip -> canonical C3->C4 track  c3-batch-af-s1
+2026-06-04  00401ee0  EntityTableSelectUpdate HELD-C2  void_setter_observe live entity-table flip -> canonical C3->C4 track  c3-batch-af-s4
