@@ -149,6 +149,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Render\RenderLeaves_ae2.cpp" ^
     "Render\RenderLeaves_ae3.cpp" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
+    "Frontend\MenuLeaves_af5.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     user32.lib d3d9.lib
 popd
@@ -316,6 +317,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Gameplay\GameplayLeaves_ad3.cpp" ^
     "Particle\ParticleLeaves_ad4.cpp" ^
     "Particle\ParticleLeaves_ad5.cpp" ^
+    "Frontend\MenuLeaves_af5.cpp" ^
     /link /DLL
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

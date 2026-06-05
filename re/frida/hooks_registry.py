@@ -12409,7 +12409,6 @@ HOOKS = {
         ],
     },
 
-
     # ===================================================================
     # c3-batch-af session 4 (Frontend/MenuLeaves_af4.cpp)
     # ===================================================================
@@ -12464,6 +12463,60 @@ HOOKS = {
         'lut_root_delta': 0,
         'path1_tests':    [0, 1, 0, 1],
         'path2_tests':    [0, 1],
+    },
+
+    # ───────────────────────────────────────────────────────────────────────
+    # c3_batch_af-s5  frontend menu-leaf HARVEST (2026-06-04)
+    # ───────────────────────────────────────────────────────────────────────
+
+    # 0x00431b70  MenuFlagDat007f0f10Get  uint32(void)
+    # 5B pure getter leaf: `return DAT_007f0f10;`. arg_type='read_global' writes a
+    # sentinel to 0x007f0f10 before each call; the returned value must equal it.
+    # ref: re/analysis/bucket_0041dc30/0x00431b70.md
+    'menu_flag_dat_007f0f10_get': {
+        'rva':            0x00431b70,
+        'export':         'MenuFlagDat007f0f10Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007f0f10,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x004298c0  MenuQuadGlobalZero  void(void)
+    # 27B pure leaf — four 32-bit zero stores (0x0067d99c, 0x0067d994, 0x0067d98c,
+    # 0x008991bc), no callees, no branches. arg_type='none': void return, called
+    # 10x; both orig and reimpl emit the identical store sequence (asm-equivalence
+    # confirmed in the .cpp header against the disassembly).
+    # ref: re/analysis/frontend_c1_to_c2_s6/FUN_004298c0.md
+    'menu_quad_global_zero': {
+        'rva':            0x004298c0,
+        'export':         'MenuQuadGlobalZero',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00423b00  FrontendInputDispatch  void(void)
+    # 29B per-frame menu-input dispatcher: guard DAT_007f1a50==1 then 4 void(void)
+    # callees (FrontendDirInput / TabCycler / CursorMover / spline-editor tick; the
+    # last via tail-call JMP). arg_type='none': void return, called 10x; confirms
+    # non-crash with the live callee chain at the menu. WEAK `none` evidence —
+    # central classify should confirm asm-equivalence of the call sequence.
+    # ref: re/analysis/frontend_gate_unblock_u/0x00423b00.md
+    'frontend_input_dispatch': {
+        'rva':            0x00423b00,
+        'export':         'FrontendInputDispatch',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
     },
 
 }
