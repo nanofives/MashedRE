@@ -87,11 +87,23 @@ static void ManifestLine(const char* path, std::size_t idx,
     CloseHandle(h);
 }
 
-// Install hooks, honoring optional env-var gates for crash bisection:
+// Install hooks, honoring optional env-var gates. With NO env set this is
+// identical to "install every registered hook" (unchanged default behavior).
+//
+// Crash bisection:
 //   MASHED_HOOK_LO / MASHED_HOOK_HI  install only registry indices [LO, HI)
-//   MASHED_HOOK_SKIP                 comma/space list of names to skip (substring)
+//   MASHED_HOOK_SKIP                 names to skip (substring denylist)
 //   MASHED_HOOK_MANIFEST=<path>      append an index->rva->name manifest (opt-in)
-// With NO env set this is identical to "install every registered hook".
+//
+// C3->C4 canonical verification (the important one):
+//   MASHED_HOOK_ONLY=<list>          install ONLY hooks whose name OR 0xRVA appears
+//                                    in this comma/space list (allowlist). This is
+//                                    how a C4 batch installs just its candidate
+//                                    set live (inline-JMP) while every other
+//                                    function stays original -> a clean per-hook
+//                                    "modded vs original" canonical scenario that
+//                                    sidesteps the full-install multi-bug field.
+// Precedence: ONLY (if set) wins; otherwise LO/HI range; SKIP applies on top.
 void InstallAll() {
     const std::size_t n = Registry().size();
     std::size_t lo = 0, hi = n;
@@ -100,12 +112,21 @@ void InstallAll() {
         std::size_t v = std::strtoul(s, nullptr, 0);
         if (v < hi) hi = v;
     }
+    const char* only     = std::getenv("MASHED_HOOK_ONLY");
     const char* skip     = std::getenv("MASHED_HOOK_SKIP");
     const char* manifest = std::getenv("MASHED_HOOK_MANIFEST");
 
     for (std::size_t i = 0; i < n; ++i) {
         const HookEntry& e = Registry()[i];
-        bool want = (i >= lo && i < hi);
+        bool want;
+        if (only && only[0]) {
+            // allowlist: match by name substring or by "0x%08x" RVA token
+            char rvatok[16];
+            wsprintfA(rvatok, "0x%08x", static_cast<unsigned>(e.target_rva));
+            want = (e.name && std::strstr(only, e.name)) || std::strstr(only, rvatok);
+        } else {
+            want = (i >= lo && i < hi);
+        }
         if (want && skip && skip[0] && e.name && std::strstr(skip, e.name)) {
             want = false;
         }
