@@ -320,7 +320,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Particle\ParticleLeaves_ad4.cpp" ^
     "Particle\ParticleLeaves_ad5.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
-    /link /DLL
+    /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 

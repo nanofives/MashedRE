@@ -1,6 +1,7 @@
 #include "HookSystem.h"
 
 #include <cstring>
+#include <cstdlib>
 #include <vector>
 
 namespace HookSystem {
@@ -70,8 +71,49 @@ bool Uninstall(std::size_t index) {
     return true;
 }
 
+// Append "idx rva installed name\n" to the manifest path via raw WriteFile
+// (loader-lock-safe; avoids CRT file I/O inside DllMain).
+static void ManifestLine(const char* path, std::size_t idx,
+                         std::uintptr_t rva, bool installed, const char* name) {
+    HANDLE h = CreateFileA(path, FILE_APPEND_DATA, FILE_SHARE_READ, nullptr,
+                           OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    char buf[256];
+    int n = wsprintfA(buf, "%u\t0x%08X\t%d\t%s\r\n",
+                      static_cast<unsigned>(idx), static_cast<unsigned>(rva),
+                      installed ? 1 : 0, name ? name : "?");
+    DWORD wrote = 0;
+    if (n > 0) WriteFile(h, buf, static_cast<DWORD>(n), &wrote, nullptr);
+    CloseHandle(h);
+}
+
+// Install hooks, honoring optional env-var gates for crash bisection:
+//   MASHED_HOOK_LO / MASHED_HOOK_HI  install only registry indices [LO, HI)
+//   MASHED_HOOK_SKIP                 comma/space list of names to skip (substring)
+//   MASHED_HOOK_MANIFEST=<path>      append an index->rva->name manifest (opt-in)
+// With NO env set this is identical to "install every registered hook".
 void InstallAll() {
-    for (std::size_t i = 0; i < Registry().size(); ++i) Install(i);
+    const std::size_t n = Registry().size();
+    std::size_t lo = 0, hi = n;
+    if (const char* s = std::getenv("MASHED_HOOK_LO")) lo = std::strtoul(s, nullptr, 0);
+    if (const char* s = std::getenv("MASHED_HOOK_HI")) {
+        std::size_t v = std::strtoul(s, nullptr, 0);
+        if (v < hi) hi = v;
+    }
+    const char* skip     = std::getenv("MASHED_HOOK_SKIP");
+    const char* manifest = std::getenv("MASHED_HOOK_MANIFEST");
+
+    for (std::size_t i = 0; i < n; ++i) {
+        const HookEntry& e = Registry()[i];
+        bool want = (i >= lo && i < hi);
+        if (want && skip && skip[0] && e.name && std::strstr(skip, e.name)) {
+            want = false;
+        }
+        bool ok = want && Install(i);
+        if (manifest && manifest[0]) {
+            ManifestLine(manifest, i, e.target_rva, ok, e.name);
+        }
+    }
 }
 
 void UninstallAll() {
