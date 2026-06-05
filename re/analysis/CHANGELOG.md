@@ -3167,3 +3167,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-04  00473540  GradientQuadHorizAlpha  HELD-C2  draw_quad_observe live-state flip (RED in pool runs) -> canonical C3->C4 track  c3-batch-af-s1
 2026-06-04  004736c0  BorderQuadFourAlpha     HELD-C2  draw_quad_observe live-state flip -> canonical C3->C4 track  c3-batch-af-s1
 2026-06-04  00401ee0  EntityTableSelectUpdate HELD-C2  void_setter_observe live entity-table flip -> canonical C3->C4 track  c3-batch-af-s4
+2026-06-05  00493f70  VideoStateFlagGet  C3->C4  mashedmod/src/mashed_re/Frontend/SplashGameMode_t5.cpp  boot_to_menu_install_observe_2026-06-05
