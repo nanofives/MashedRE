@@ -3190,3 +3190,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-05  00499730  C4->C2  re-validation: no installable reimpl (not a registered hook)
 2026-06-05  004926c0  C4->C2  re-validation: no installable reimpl (not a registered hook)
 2026-06-05  00493480  C4->C2  re-validation: no installable reimpl (not a registered hook)
+2026-06-05  0042b930  MenuAlphaGet  C4-RECONFIRMED  canonical install-observe (37296x)  boot_to_menu_install_observe_2026-06-05
+2026-06-05  0042c2e0  GetDat0067ecb8  C4-RECONFIRMED  canonical install-observe (2443x)  boot_to_menu_install_observe_2026-06-05
+2026-06-05  0040bb70  SpriteLookupTableA  C4-RECONFIRMED  canonical install-observe (2674x)  boot_to_menu_install_observe_2026-06-05
