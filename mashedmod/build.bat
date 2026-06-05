@@ -76,6 +76,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\FrontendAccessors.cpp" ^
     "Frontend\FrontendDispatch.cpp" ^
     "Frontend\DrawQuadPrimitives.cpp" ^
+    "Frontend\MenuLeaves_af1.cpp" ^
     "Frontend\MenuSpriteDispatch.cpp" ^
     "Frontend\MenuGetters.cpp" ^
     "Frontend\MenuChrome.cpp" ^
@@ -252,6 +253,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\MenuSpriteDispatch.cpp" ^
     "Frontend\MenuMixed.cpp" ^
     "Frontend\DrawQuadPrimitives.cpp" ^
+    "Frontend\MenuLeaves_af1.cpp" ^
     "Frontend\SmallLeaves_n2.cpp" ^
     "Frontend\SmallLeaves_t1.cpp" ^
     "Frontend\SlotZeroers_s1.cpp" ^

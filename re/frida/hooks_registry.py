@@ -6768,6 +6768,74 @@ HOOKS = {
         ],
     },
 
+    # ── c3-batch-af-s1 harvest (2026-06-04) ─────────────────────────────────
+    # Two more draw_quad_observe siblings. Scalar signatures; per-vertex colors
+    # are alpha variations on the same R<->B swapped RGB of argb.
+    # ref: mashedmod/src/mashed_re/Frontend/MenuLeaves_af1.cpp
+
+    # 0x00473540  GradientQuadHorizAlpha
+    # void(float x, float y, float w, float h, uint argb)
+    # Horizontal alpha split: V0/V2 keep argb's alpha byte, V1/V3 force alpha=0.
+    'gradient_quad_horiz_alpha': {
+        'rva':            0x00473540,
+        'export':         'GradientQuadHorizAlpha',
+        'signature':      {'ret': 'void',
+                            'args': ['float', 'float', 'float', 'float', 'uint32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0.0,    0.0,   640.0,  64.0,  0xa0000000],
+            [0.0,    0.0,   640.0,  64.0,  0xff000000],
+            [0.0,    0.0,   640.0,  64.0,  0x00000000],
+            [0.0,    0.0,   640.0,  64.0,  0x80808080],
+            [100.0,  50.0,   200.0, 100.0, 0xc0ffffff],
+            [0.0,    0.0,     1.0,   1.0,  0xff112233],
+            # non-trivial RGB to verify R<->B swap
+            [10.0,  10.0,    50.0,  50.0,  0xff112233],
+            [10.0,  10.0,    50.0,  50.0,  0xa0ff0000],
+            [10.0,  10.0,    50.0,  50.0,  0x800000ff],
+            [10.0,  10.0,    50.0,  50.0,  0xc000ff00],
+        ],
+        'path2_tests': [
+            [0.0, 0.0, 640.0, 64.0, 0xa0000000],
+            [10.0, 10.0, 50.0, 50.0, 0xff112233],
+        ],
+    },
+
+    # 0x004736c0  BorderQuadFourAlpha
+    # void(float x, float y, float w, float h, uint argb,
+    #      byte aV0, byte aV1, byte aV2, byte aV3)
+    # Four independent per-vertex alpha bytes over the shared swapped RGB.
+    # The four byte args are passed as int32 (NativeFunction truncates).
+    'border_quad_four_alpha': {
+        'rva':            0x004736c0,
+        'export':         'BorderQuadFourAlpha',
+        'signature':      {'ret': 'void',
+                            'args': ['float', 'float', 'float', 'float', 'uint32',
+                                     'int32', 'int32', 'int32', 'int32']},
+        'arg_type':       'draw_quad_observe',
+        'crash_equal_ok': True,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            # [x, y, w, h, argb, aV0, aV1, aV2, aV3]
+            [0.0,    0.0,   640.0,  64.0,  0xff112233, 0xff, 0xff, 0xff, 0xff],
+            [0.0,    0.0,   640.0,  64.0,  0x00112233, 0x80, 0x40, 0x20, 0x10],
+            [100.0,  50.0,   200.0, 100.0, 0xffff0000, 0xff, 0x00, 0xff, 0x00],
+            [0.0,    0.0,     1.0,   1.0,  0xff0000ff, 0x00, 0x00, 0x00, 0x00],
+            [10.0,  10.0,    50.0,  50.0,  0xff00ff00, 0x01, 0x7f, 0xfe, 0xc3],
+            [320.0, 240.0,  160.0, 120.0, 0xffaabbcc, 0xaa, 0xbb, 0xcc, 0xdd],
+            [10.0,  10.0,    50.0,  50.0,  0x12345678, 0x11, 0x22, 0x33, 0x44],
+            [10.0,  10.0,    50.0,  50.0,  0xa0ff0000, 0xff, 0xff, 0x80, 0x80],
+            [10.0,  10.0,    50.0,  50.0,  0x800000ff, 0x10, 0x20, 0x30, 0x40],
+            [10.0,  10.0,    50.0,  50.0,  0xc000ff00, 0xc0, 0xc0, 0xc0, 0xc0],
+        ],
+        'path2_tests': [
+            [0.0, 0.0, 640.0, 64.0, 0xff112233, 0xff, 0x80, 0x40, 0x00],
+            [10.0, 10.0, 50.0, 50.0, 0x12345678, 0x11, 0x22, 0x33, 0x44],
+        ],
+    },
+
     # 0x004739f0  TextSpriteScaled
     # 12-arg textured quad with 3 coord-scaling modes + explicit UVs.
     # STAGED AT C2-IMPL â€” U-0458 + U-0459 [Blocks C3] open; hook installed so
