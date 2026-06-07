@@ -3194,3 +3194,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-05  0042c2e0  GetDat0067ecb8  C4-RECONFIRMED  canonical install-observe (2443x)  boot_to_menu_install_observe_2026-06-05
 2026-06-05  0040bb70  SpriteLookupTableA  C4-RECONFIRMED  canonical install-observe (2674x)  boot_to_menu_install_observe_2026-06-05
 2026-06-06  004c5010  RwMatrixScale  C4-RECONFIRMED  canonical install-observe hot-path (5376x)  boot_to_menu_install_observe_2026-06-06
+2026-06-06  004c2f00  RwEngineGetCurrentMode  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (4x)
+2026-06-06  00498bf0  DisplayActiveFlagGet  C3->C4  mashedmod/src/mashed_re/Boot/FrameDispatch.cpp  boot_to_menu_install_observe_2026-06-06 (1850x)
+2026-06-06  004c2d70  RwPluginRegistryFrozen  C3->C4  mashedmod/src/mashed_re/Render/RwPluginHelpers_o3.cpp  boot_to_menu_install_observe_2026-06-06 (84x)
+2026-06-06  00498bc0  VideoGetRenderWidth  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (3x)
+2026-06-06  00498bd0  VideoGetRenderHeight  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (3x)
