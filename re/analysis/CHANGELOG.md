@@ -3199,3 +3199,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-06  004c2d70  RwPluginRegistryFrozen  C3->C4  mashedmod/src/mashed_re/Render/RwPluginHelpers_o3.cpp  boot_to_menu_install_observe_2026-06-06 (84x)
 2026-06-06  00498bc0  VideoGetRenderWidth  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (3x)
 2026-06-06  00498bd0  VideoGetRenderHeight  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (3x)
+2026-06-06  0040e340  GetLiveCarCount  C3->C4  mashedmod/src/mashed_re/Util/UtilLeaves.cpp  boot_to_menu_install_observe_2026-06-06 (2755x)
+2026-06-06  0042b8d0  StatePhaseIsIdle  C3->C4  mashedmod/src/mashed_re/Util/StateAccessors.cpp  boot_to_menu_install_observe_2026-06-06 (2755x)
+2026-06-06  004cd060  AllocatorSlotGet  C3->C4  mashedmod/src/mashed_re/Render/RwPluginHelpers_o3.cpp  boot_to_menu_install_observe_2026-06-06 (1x)
+2026-06-06  00494ef0  ThunkVideoStateGet  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (8150x)
