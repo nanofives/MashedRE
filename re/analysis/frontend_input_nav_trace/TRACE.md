@@ -259,6 +259,26 @@ diff already covered the input domain. Non-leaf dispatchers (e.g. these menu dra
 additionally need behavioral-diff coverage; promote through the re-classify skill (it gates
 leaf vs non-leaf), NOT off this tool's "C4-READY" label.
 
+## Mass navigate C4 testing (2026-06-07)
+
+re/frida/c4_navigate_batch.py orchestrates canonical_c4_navigate.run() over many candidates:
+- candidate sources: --rvas | --manifest <f> | --from-hookscsv <subsystem> [--status impl].
+- ONE --nav path per invocation = one target screen; re-run with a different --nav for another.
+- PHASE 1 (exercise, OFF): Interceptor-count candidates in CHUNKS (default 6/boot) to bound
+  aggregate rate; counts gated to AFTER nav completes (COUNT_GATE) so "exercised" = "fires on
+  the target screen", not boot/intro. PHASE 2 (ON): install ALL together (one boot); on crash,
+  BISECT to isolate culprit RVA(s) so one bad hook doesn't fail the batch's survived flag.
+- Per-candidate verdict: exercised + installed(0xE9) + survived + NOT hot. Hot fns (rate >
+  ~800/s, e.g. ChromeBaseDraw 0x00472c60 ~3956/s) are flagged HOT and routed to the behavioral-
+  survival lane (Interceptor on hot paths destabilizes — CLAUDE.md), NOT trusted off the count.
+- Self-filtering: mass-run a whole subsystem at one screen; fns that don't fire there report
+  HOLD (calls=0) — only genuinely on-screen fns pass. Demo (10 frontend C3 impl, --nav 4,4 ->
+  Game Type Select): 6 trio-OK, 3 HOLD not-exercised (MenuGroupCount/IsMultiplayerMode/
+  LangIndexSeedFromCli), 1 HOT (ChromeBaseDraw). Reports: log/c4_nav_batch_result.{json,md},
+  ON screenshot verify/c4nav/c4nav_ON_all.png (Game Type Select, all installed, survived).
+- REPORT ONLY — never auto-promotes; the re-classify skill gates leaf vs non-leaf for the
+  actual C3->C4 promotion. Pair with scripts/patch_mashed_no_focus_pause.py for background runs.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8

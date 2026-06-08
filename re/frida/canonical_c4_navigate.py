@@ -95,6 +95,8 @@ let DELTA = 0;
 const RVA_RESOLVER = 0x00497310;          // FUN_00497310(player@esp+4, control@esp+8)
 const COUNT = {};
 let NAV = [], SETTLE = 7000, DWELL = 1500, t0 = Date.now(), navStarted = 0, lastSlot = -99;
+let COUNT_GATE = 0;   // candidate counters only tally calls AFTER this time (nav complete)
+                      // so "exercised" means "fires on the navigated target screen", not boot/intro
 
 function abs(rva){ return ptr(rva + DELTA); }
 function modtab(){ const o=[]; Process.enumerateModules().forEach(m=>o.push(
@@ -126,6 +128,7 @@ function navControl(){
 rpc.exports = {
   setbase:function(b){ DELTA = b - IMGBASE; return DELTA; },
   setnav:function(list, settle, dwell){ NAV = list||[]; SETTLE = settle; DWELL = dwell; t0 = Date.now();
+    COUNT_GATE = t0 + SETTLE + NAV.length*DWELL + 800;   // start tallying after nav completes
     // arm the nav driver: override FUN_00497310 return for the scripted control
     try { Interceptor.attach(abs(RVA_RESOLVER), {
       onEnter(a){ const sp=this.context.esp; this.p=sp.add(4).readS32(); this.c=sp.add(8).readS32(); },
@@ -145,7 +148,8 @@ rpc.exports = {
   counts:function(){ return COUNT; },
   countthese:function(rvas){
     rvas.forEach(function(r){ COUNT[r]=0;
-      try{ Interceptor.attach(ptr(r),{onEnter:function(){COUNT[r]++;}}); }catch(e){ COUNT[r]=-1; } });
+      try{ Interceptor.attach(ptr(r),{onEnter:function(){ if(Date.now()>=COUNT_GATE) COUNT[r]++; }}); }
+      catch(e){ COUNT[r]=-1; } });
     return Object.keys(COUNT).length; }
 };
 send({kind:'ready'});
