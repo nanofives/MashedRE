@@ -243,4 +243,4 @@ extern "C" __declspec(dllexport) int __cdecl RangeTableGroupOffset(int param_1, 
     }
     return iVar4;
 }
-RH_ScopedInstall(RangeTableGroupOffset, 0x00407db0);  // c3_batch_ah s1
+RH_ScopedInstall(RangeTableGroupOffset, 0x00407db0);  // c3_batch_ah s1; C2->C3 scenario-attach 2026-06-08 (12 distinct, sentinel 0x0066ce58)
