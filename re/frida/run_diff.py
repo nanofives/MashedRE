@@ -235,6 +235,16 @@ def build_config(hook, asi_path=None):
         config['out_base'] = f"0x{hook['out_base']:08x}"
     if 'out_count' in hook:
         config['out_count'] = hook['out_count']
+    # c3_batch_ag harness-ext (2026-06-08): forward custom keys for the 4 new
+    # arg_type handlers verbatim (seed_field_read_field / structptr_seeded_array /
+    # scalars_to_scattered_globals / count_header_list_ring). Addresses are already
+    # hex strings in-registry, so pass them through unchanged.
+    for _k in ('seed_off', 'read_off', 'read_size', 'read_offs', 'fold_ret',
+               'idx_call_str', 'idx_arrays', 'prep_call_str', 'prep_arg_types',
+               'pre_fill_byte', 'list_op', 'node_link_off', 'cmp_field_off',
+               'object_size', 'init_rva_str', 'pushback_rva_str'):
+        if _k in hook:
+            config[_k] = hook[_k]
     return config
 
 

@@ -3364,6 +3364,255 @@ function runDiff() {
         return;
     }
 
+    // ── seed_field_read_field (c3_batch_ag harness-ext 2026-06-08) ───────────
+    // void fn(structPtr). Seed one field with a per-vector value, call, read a
+    // (possibly different) field back. Proves a field-copy / derive path ran.
+    // CONFIG: { struct_size, seed_off, read_off, read_size }.  Tests: list of
+    //   seed values (uint32). Observable = the read_off bytes after the call.
+    // Unlocks: 0x00483a30 Replay_Rewind (seed_off=0x18, read_off=0x1c, 4 bytes:
+    //   copies *(p+0x18)->*(p+0x1c)).
+    if (CONFIG.arg_type === 'seed_field_read_field') {
+        const SFSZ   = (CONFIG.struct_size | 0) || 0x40;
+        const seedOff = CONFIG.seed_off | 0;
+        const readOff = CONFIG.read_off | 0;
+        const readSz  = (CONFIG.read_size | 0) || 4;
+        const sfBufA  = Memory.alloc(SFSZ);
+        const sfBufB  = Memory.alloc(SFSZ);
+        function sfRead(b) {
+            let v = '';
+            for (let j = 0; j < readSz; j++) v += ('0' + b.add(readOff + j).readU8().toString(16)).slice(-2);
+            return v;
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const sv = (CONFIG.tests[i] >>> 0);
+            let origV = null, reimV = null, errO = null, errR = null;
+            for (let z = 0; z < SFSZ; z++) sfBufA.add(z).writeU8(0);
+            sfBufA.add(seedOff).writeU32(sv);
+            try { Orig(sfBufA); origV = sfRead(sfBufA); } catch (e) { errO = e.message; }
+            for (let z = 0; z < SFSZ; z++) sfBufB.add(z).writeU8(0);
+            sfBufB.add(seedOff).writeU32(sv);
+            try { Reimpl(sfBufB); reimV = sfRead(sfBufB); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: sv, original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── structptr_seeded_array (c3_batch_ag harness-ext 2026-06-08) ──────────
+    // int fn(structPtr, arrayPtr). Zero the struct (so a gate field reads 0 and a
+    // C2 callee path is skipped), seed an input array, call, read back N struct
+    // fields. CONFIG: { struct_size, array_vals_len (#u32 in array), read_offs[] }.
+    // Tests: list of arrays of u32 (the seeded array values, raw bits — note the
+    //   callee may re-read them as float). Observable = concat of read_offs bytes.
+    // Unlocks: 0x004c1c80 ViewportDimsSet (struct_size>=0x78, gate@+0x04 stays 0,
+    //   array = 2 u32 dims, read_offs=[0x68,0x6c,0x70,0x74]).
+    if (CONFIG.arg_type === 'structptr_seeded_array') {
+        const SASZ   = (CONFIG.struct_size | 0) || 0x80;
+        const readOffs = CONFIG.read_offs || [];
+        const saStructA = Memory.alloc(SASZ);
+        const saStructB = Memory.alloc(SASZ);
+        function saRead(b) {
+            return readOffs.map(function(off) {
+                return ('00000000' + (b.add(off | 0).readU32() >>> 0).toString(16)).slice(-8);
+            }).join(',');
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const vals = CONFIG.tests[i] || [];
+            const arr = Memory.alloc(Math.max(4, vals.length * 4));
+            for (let k = 0; k < vals.length; k++) arr.add(k * 4).writeU32(vals[k] >>> 0);
+            let origV = null, reimV = null, errO = null, errR = null;
+            for (let z = 0; z < SASZ; z++) saStructA.add(z).writeU8(0);
+            try { Orig(saStructA, arr); origV = saRead(saStructA); } catch (e) { errO = e.message; }
+            for (let z = 0; z < SASZ; z++) saStructB.add(z).writeU8(0);
+            try { Reimpl(saStructB, arr); reimV = saRead(saStructB); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: JSON.stringify(vals), original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── scalars_to_scattered_globals (c3_batch_ag harness-ext 2026-06-08) ────
+    // void|int fn(s1[,s2[,s3]]). Writes a set of NON-contiguous globals/arrays
+    // (multi_arg_global_write only handles ONE contiguous block + a guard).
+    // Save the observed windows, call Orig, snapshot, restore; call Reimpl,
+    // snapshot, restore — so both sides see an identical baseline (works even for
+    // functions that mutate shared global state).
+    // CONFIG: { observe:[{addr,len}], idx_call_str?, idx_arrays:[{base,stride,elem_len}],
+    //   fold_ret? (XOR the return value into the fingerprint) }.
+    // Tests: list of { args:[...] } (or a raw array of args).
+    // Unlocks: 0x00417450/0x00417530 sparse-grid (fixed globals + 1/0 return),
+    //   0x004299d0 TimeRecord (3 scalar globals + 3 track arrays at idx_call=0x430790).
+    if (CONFIG.arg_type === 'scalars_to_scattered_globals') {
+        const observe   = CONFIG.observe || [];
+        const idxArrays = CONFIG.idx_arrays || [];
+        const foldRet   = CONFIG.fold_ret ? true : false;
+        const idxCall   = CONFIG.idx_call_str
+            ? new NativeFunction(ptr(CONFIG.idx_call_str), 'int32', [], 'mscdecl') : null;
+        // Optional prep: run the ORIGINAL of some helper (e.g. the grid writer) to
+        // populate state BEFORE calling the target, so a clear/erase target has
+        // something to act on. Same prep both sides => isolates the target's diff.
+        const prepFn = CONFIG.prep_call_str
+            ? new NativeFunction(ptr(CONFIG.prep_call_str), 'void',
+                  (CONFIG.prep_arg_types || ['uint32', 'uint32', 'uint32']), 'mscdecl') : null;
+        // Optional pre-fill: set every observed window to a byte BEFORE each call
+        // (inside the save/restore bracket, so it is reverted). Used when the
+        // function only acts on a sentinel-initialised region — e.g. the sparse
+        // grid treats 0xff as "free", but the region is 0x00 at diff-attach, so
+        // without this the writer finds no free slot and is a constant no-op.
+        const preFillByte = (CONFIG.pre_fill_byte !== undefined && CONFIG.pre_fill_byte !== null)
+            ? (CONFIG.pre_fill_byte & 0xff) : null;
+        function curIdx() { return idxCall ? (idxCall() | 0) : 0; }
+        function windows() {
+            const ws = observe.map(function(w) { return { a: ptr(w.addr), len: w.len | 0, fill: w.fill }; });
+            const idx = curIdx();
+            idxArrays.forEach(function(ar) {
+                ws.push({ a: ptr(ar.base).add(idx * (ar.stride | 0)), len: ar.elem_len | 0 });
+            });
+            return ws;
+        }
+        const hasFill = (preFillByte !== null) || observe.some(function(w) { return w.fill !== undefined && w.fill !== null; });
+        // FNV-1a (non-cancelling) — a position-XOR fold would cancel values that
+        // the function writes to two observed windows (e.g. TimeRecord writes the
+        // same min/sec/frac to both the scalar globals AND the track arrays).
+        function snapFp(ret) {
+            let fp = 0x811c9dc5 | 0;
+            windows().forEach(function(w) {
+                const ba = new Uint8Array(w.a.readByteArray(w.len));   // bulk read (fast)
+                for (let j = 0; j < ba.length; j++) { fp = Math.imul(fp ^ ba[j], 0x01000193); }
+            });
+            if (foldRet && ret !== null && ret !== undefined) {
+                const r = ret >>> 0;
+                for (let b = 0; b < 4; b++) fp = Math.imul(fp ^ ((r >>> (b * 8)) & 0xff), 0x01000193);
+            }
+            return fp >>> 0;
+        }
+        function saveW() { return windows().map(function(w) { return w.a.readByteArray(w.len); }); }
+        function restoreW(s) { windows().forEach(function(w, ix) { w.a.writeByteArray(s[ix]); }); }
+        function fillW(byte) {
+            windows().forEach(function(w) {
+                const fb = (w.fill !== undefined && w.fill !== null) ? (w.fill & 0xff) : byte;
+                if (fb === null) return;   // idx_arrays / un-filled windows are left as-is
+                const b = new Uint8Array(w.len); b.fill(fb); w.a.writeByteArray(b.buffer);
+            });
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            const args = (t && t.args) ? t.args : (Array.isArray(t) ? t : [t]);
+            const a = args.map(function(v) { return v >>> 0; });
+            const prepArgs = (t && t.prep_args) ? t.prep_args.map(function(v) { return v >>> 0; }) : null;
+            let origV = null, reimV = null, errO = null, errR = null;
+            const saved = saveW();
+            try { if (hasFill) fillW(preFillByte); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Orig.apply(null, a); origV = snapFp(r); } catch (e) { errO = e.message; }
+            restoreW(saved);
+            try { if (hasFill) fillW(preFillByte); if (prepFn && prepArgs) prepFn.apply(null, prepArgs); const r = Reimpl.apply(null, a); reimV = snapFp(r); } catch (e) { errR = e.message; }
+            restoreW(saved);
+            results.push({ idx: i, input: JSON.stringify(args), original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
+    // ── count_header_list_ring (c3_batch_ag harness-ext 2026-06-08) ──────────
+    // Intrusive list with a COUNT-HEADER (NOT the bare sentinel that
+    // audio_list_insert/find_index assume). Header: count@[0], embedded
+    // sentinel@header+4 (sentinel.next@+0). Object: link node@object+node_link_off
+    // (object = node - node_link_off), compared field@object+cmp_field_off.
+    // The structure is BUILT with the ORIGINAL Init+PushBack (init_rva_str /
+    // pushback_rva_str), then the target op (Orig vs Reimpl) is exercised.
+    // CONFIG: { list_op:'init'|'pushback'|'find'|'at', node_link_off, cmp_field_off,
+    //   object_size, init_rva_str, pushback_rva_str }.
+    // Observables are ADDRESS-NORMALIZED (count + cmp-field value / found field /
+    // -1), never raw pointers, so per-side allocations compare cleanly.
+    // Unlocks: 0x005b3580 Init, 0x005b35a0 PushBack, 0x005b3670 Find, 0x005b36b0 At.
+    if (CONFIG.arg_type === 'count_header_list_ring') {
+        const LINK  = (CONFIG.node_link_off | 0) || 0x20;
+        const CMP   = (CONFIG.cmp_field_off | 0) || 0x18;
+        const OBJSZ = (CONFIG.object_size | 0) || 0x40;
+        const HDRSZ = 0x10;
+        const op    = CONFIG.list_op;
+        const InitFn = CONFIG.init_rva_str
+            ? new NativeFunction(ptr(CONFIG.init_rva_str), 'void', ['pointer'], 'mscdecl') : null;
+        const PushFn = CONFIG.pushback_rva_str
+            ? new NativeFunction(ptr(CONFIG.pushback_rva_str), 'void', ['pointer', 'pointer'], 'mscdecl') : null;
+        // keepAlive: Memory.alloc buffers referenced only by raw pointers inside the
+        // list nodes (target memory) get GC'd by Frida between the Orig and Reimpl
+        // calls — the second call then walks freed memory (AV / garbage). Retain
+        // every allocation here for the whole handler run.
+        const _keep = [];
+        // Build a populated list using the ORIGINAL primitives.
+        function buildList(fieldVals) {
+            const hdr = Memory.alloc(HDRSZ); _keep.push(hdr);
+            for (let z = 0; z < HDRSZ; z++) hdr.add(z).writeU8(0);
+            InitFn(hdr);
+            for (let k = 0; k < fieldVals.length; k++) {
+                const o = Memory.alloc(OBJSZ); _keep.push(o);
+                for (let z = 0; z < OBJSZ; z++) o.add(z).writeU8(0);
+                o.add(CMP).writeS32(fieldVals[k] | 0);
+                PushFn(hdr, o);
+            }
+            return hdr;
+        }
+        // Read the cmp field of the object owning the first node (sentinel.next).
+        function firstField(hdr) {
+            const node = hdr.add(4).readPointer();           // header[1] = sentinel.next
+            if (node.isNull() || node.equals(hdr.add(4))) return null;  // empty (self-loop)
+            return node.sub(LINK).add(CMP).readS32();
+        }
+        function retField(ret) {
+            if (!ret || ret.isNull()) return -1;
+            return ret.add(CMP).readS32();                    // ret = object base
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            if (op === 'init') {
+                // Prefill 3 header words with a per-vector sentinel; call Init; read
+                // normalized empty-state (count, self-loop next, self-loop tail).
+                const sv = (t >>> 0) || 0xDEADBEEF;
+                const hA = Memory.alloc(HDRSZ), hB = Memory.alloc(HDRSZ);
+                const h0 = function (h, s) { h.writeU32(s); h.add(4).writeU32(s); h.add(8).writeU32(s); h.add(12).writeU32(0); };
+                const initObs = function (h) {
+                    const count = h.readU32() >>> 0;
+                    const selfN = h.add(4).readPointer().equals(h.add(4)) ? 1 : 0;
+                    const selfT = h.add(8).readPointer().equals(h.add(4)) ? 1 : 0;
+                    return count + ':' + selfN + selfT;
+                };
+                h0(hA, sv); try { Orig(hA);  origV = initObs(hA); } catch (e) { errO = e.message; }
+                h0(hB, sv); try { Reimpl(hB); reimV = initObs(hB); } catch (e) { errR = e.message; }
+            } else if (op === 'pushback') {
+                const pre = t.pre || [];
+                const pf  = t.push_field | 0;
+                const hA = buildList(pre), hB = buildList(pre);
+                const oA = Memory.alloc(OBJSZ), oB = Memory.alloc(OBJSZ);
+                for (let z = 0; z < OBJSZ; z++) { oA.add(z).writeU8(0); oB.add(z).writeU8(0); }
+                oA.add(CMP).writeS32(pf); oB.add(CMP).writeS32(pf);
+                try { Orig(hA, oA);   origV = (hA.readU32() >>> 0) + ':' + firstField(hA); } catch (e) { errO = e.message; }
+                try { Reimpl(hB, oB); reimV = (hB.readU32() >>> 0) + ':' + firstField(hB); } catch (e) { errR = e.message; }
+            } else if (op === 'find') {
+                const hdr = buildList(t.field_vals || []);
+                const key = t.key | 0;
+                try { origV = retField(Orig(hdr, key)); }   catch (e) { errO = e.message; }
+                try { reimV = retField(Reimpl(hdr, key)); } catch (e) { errR = e.message; }
+            } else if (op === 'at') {
+                const hdr = buildList(t.field_vals || []);
+                const pos = t.pos | 0;
+                try { origV = retField(Orig(hdr, pos)); }   catch (e) { errO = e.message; }
+                try { reimV = retField(Reimpl(hdr, pos)); } catch (e) { errR = e.message; }
+            }
+            results.push({ idx: i, input: JSON.stringify(t), original: origV, reimpl: reimV,
+                           match: (errO === null && errR === null && origV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── standard scalar / vec3 / read_global / none loop ────────────────────
     try {
         for (let i = 0; i < CONFIG.tests.length; i++) {
