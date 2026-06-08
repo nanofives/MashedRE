@@ -291,3 +291,388 @@ becomes the input feeder into the per-screen selection cursor (`DAT_0067ed40` an
   port's correctness hinges entirely on faithfully reproducing the *populators*
   (FUN_0043d2a0 / FUN_0042d3e0 / FUN_004325c0), not just this draw loop. Those are the
   follow-up RE targets.
+
+---
+---
+
+# PART 2 — The populators (2026-06-08 read-only pass, Mashed_pool13)
+
+Source: read-only Ghidra session on `Mashed_pool13` (pool12 / pool13 both had `.lock`;
+pool12 refused — `LockException`; **pool13 opened clean** read_only, confirmed
+`MASHED.exe` image_base `0x00400000`, PE32 x86, session
+`fd72c3abe66540ecb6cc82ac85db8586`, `program_close` issued at end). Anchor untouched.
+NO-GUESSING: every offset/const below read from the pool13 image (decomp + listing +
+`memory_read`). C-levels cross-checked against `hooks.csv`.
+
+> **Prior-spec correction.** The Part-1 "Uncertainties" said FUN_0042d3e0 "is small and
+> not C2+." **It is now `MenuEntryArrayInit`, C3, already implemented**
+> (`mashedmod/src/mashed_re/Frontend/MenuInit.cpp`). Likewise FUN_0042ac00
+> (`MenuGroupCount`, C3), FUN_0042a9c0 (`ModeCodeLookup`, C3), FUN_00431d90 /
+> FUN_00431f30 (both C3) are already reimplemented. The genuinely-unported populator
+> logic is **FUN_0043d2a0** (nav stack + record-array builder, C2) and the small
+> register-arg table iterators **FUN_0042ad90 / FUN_0042add0 / FUN_0042ac50 /
+> FUN_00432800 / FUN_00432b30** (all C2).
+
+> **KEY DISCOVERY — the menu content is STATIC, not runtime-only.** The Part-1 spec
+> said the screen sentinels' "pointed-to contents were not harvested (undefined data,
+> runtime-filled)." **Wrong — they are static `.data` descriptor tables.** Each screen
+> has a static per-screen item-descriptor table; the array of pointers to them is
+> `PTR_DAT_005f7638` (indexed by screen id). FUN_0043d2a0 *expands* the active screen's
+> static descriptor table into the runtime 0x898ac0 draw-record array via the
+> register-arg iterator FUN_0042ad90. So a faithful port harvests these tables verbatim
+> from the binary (they survive the image-pad? **NO** — they live at 0x005f6xxx which
+> is inside MASHED's zeroed range; the standalone must hard-code the harvested bytes).
+> See "## Harvested consts (Part 2)".
+
+---
+
+## FUN_0043d2a0 (push/pop — the navigation centerpiece)
+
+```c
+// 0x0043d2a0  body 0x0043d2a0..0x0043d7b6 (~1302 B)   hooks.csv: C2
+void FUN_0043d2a0(int param_1 /*=EDI, screen id*/, int param_2 /*dir*/);
+//   calling_convention "unknown" (cdecl, 2 stack params at [ESP+0x30]=param_1,
+//   [ESP+0x34]=param_2 after the 4 pushes); NOTE Ghidra prints (param_1,param_2)
+//   but the listing shows ESI=screen-id=[ESP+0x30], EDI=dir=[ESP+0x34] — i.e. the
+//   *first* stack arg is the screen id, second is the direction. (decomp's
+//   param_1/param_2 are swapped vs role; trust the listing.)
+```
+
+`dir` (the `[ESP+0x34]`/`EDI` arg): **0 = push** (enter child screen), **1 = pop**
+(go back), **2 = reload/replace** (rebuild current screen in place).
+
+### Phase 1 — teardown on `dir` (0x0043d2ab..0x0043d31e)
+- `dir==0` (push): `FUN_00431f30(screen_id)` (FrontendPageIdDispatch, C3 — page-enter side effects).
+- `dir==1` (pop): if `DAT_0067e9f8 - 2 >= 0` → `FUN_00431f30((&DAT_0067ed7c)[(DAT_0067e9f8-2)*0x10])` (re-fire the page we're returning to).
+- `dir==2` (reload): `FUN_00431d90()` (FrontendPanelFlagAdvance, C3).
+- Always: `FUN_00472640(0xff)` (util setter `DAT_0086ecc8=0xff`, C2).
+
+### Phase 2 — per-screen-id snapshot side effects (0x0043d2cf..0x0043d3e3)
+Switch on `screen_id` (signed; raw constants from listing):
+| id | action (verbatim from decomp) |
+|---|---|
+| `0x1a`(26) | `DAT_007f0ef4=DAT_007f0eec; DAT_007f0ef8=DAT_007f0ef0` |
+| `0x13`(19) | copy 5 dwords `007f0f00/0c/10/08/04 → 007f0f14/24/20/1c/18` |
+| `0x20`(32) | `DAT_008990d8 = FUN_0040ad20()` |
+| `0x1c`(28) | loop: copy 10 dwords from `(&DAT_007f105c)[i*0x13]` → `(&DAT_00899160)[i]`, while src `< 0x7f13ec` (stride 0x4c bytes = 0x13 ints) |
+| `0x1f`(31) or `0x21`(33) | copy 4 dwords `007f0f30/34/38/3c → 007f0f44/48/4c/50` |
+| `1` | `FUN_00414120(); FUN_00422b30(); FUN_0040b810(); DAT_0067ea70=1` |
+
+These are per-screen "snapshot the editable settings on entry" operations. For a
+minimal nav port they are **screen-specific and optional** (the standalone owns its own
+settings model); port lazily, per screen wired.
+
+### Phase 3 — `FUN_0042d3e0()` (MenuEntryArrayInit, C3) — **zero the whole 0x898ac0 record array** (every push/pop/reload starts from a clean array).
+
+### Phase 4 — stack mutation + slide-context selection (0x0043d3ea..0x0043d4a6)
+The **navigation stack depth** is `DAT_0067e9f8` (`.data`, signed int, =0 in image).
+Per-depth-slot arrays are indexed `[depth*0x10]` (0x40-byte stride per slot):
+| array base | per-slot field | meaning |
+|---|---|---|
+| `DAT_0067ed78` | `+0x00` | active screen **descriptor-table pointer** = `(&PTR_DAT_005f7638)[screen_id]` |
+| `DAT_0067ed7c` | `+0x04` | active screen **id** |
+| `DAT_0067ed80` | `+0x08` | **selection cursor** (highlighted item index; -1 = none) |
+| `DAT_0067ed84..` | `+0x0c..0x38` | **12 per-item availability flags** (1=enabled, 0=greyed) — written by FUN_00432800 |
+| `DAT_0067edb4` | `+0x3c` | **visible item count** for this screen |
+| `DAT_0067ed38` | (separate base, `+local_1c`) | a *second* per-slot screen-ptr (used for slide-out compare) |
+| `DAT_0067ed74` | (`+local_1c`) | saved cursor used on pop |
+
+- `dir==0` (push): `(&DAT_0067ed78)[depth*0x10] = PTR_DAT_005f7638[screen_id]`;
+  `(&DAT_0067ed7c)[depth*0x10] = screen_id`; `(&DAT_0067ed80)[depth*0x10] = 0`;
+  **`FUN_00432800(depth)`** (init availability flags + place cursor, see below);
+  `local_1c = depth*0x40`. (depth is incremented at the very end, Phase 7.)
+- `dir==2` (reload): `local_1c = depth*0x40` (operate on current top).
+- `dir==1` (pop): `DAT_0067e9f8 = depth-1`; **if `<1` return** (can't pop past root);
+  `local_1c = depth*0x40`.
+
+### Phase 5 — build the **back-button row** (record slot 0; 0x0043d4b5..0x0043d570)
+Calls FUN_0042ad90 **twice** with register args set in the listing:
+- 1st: `EBX=0xff000000` (tag key −0x1000000), `EDI=0` (occurrence), `EDX=DAT_0067ed38[slot]` ptr → `SI = sVar2`.
+- 2nd: `EBX=0xff000000`, `EDI=0`, `EDX=DAT_0067ed74[slot]/ed78 ptr` → `AX = sVar3`.
+If either != -1, writes record slot 0 (base **0x00898ac0**) verbatim:
+`+0x00=0xff000000`(tag), `+0x0c byte triple=0xff,0xff,0xff`(color rgb),
+`+0x14=0x42800000`(64.0f), `+0x18=0x42400000`(48.0f), `+0x10=0x3f19999a`(0.6f scale),
+`+0x24=0`, `+0x28=(int)sVar2`, `+0x2c=(int)sVar3`; and type `+0x04`/`slide +0x10`:
+`{1,0}` if sVar3==-1 else `{2 or 0,0x1ff}`. Sets `local_10=1` so the main loop's
+cursor starts at record slot 1 (`puVar4 = &DAT_00898ad8 + local_10*0xd`).
+
+### Phase 6 — main item-expansion loop (0x0043d630..0x0043d764)
+Per record slot (cursor `puVar4`, stride **0xd ints / 0x34 / 52 B**, base 0x00898ad8 = record1+0x18):
+- `FUN_0042ad90(EBX=0xff040000 /*tag −0xfc0000*/, EDI=row_index, EDX=DAT_0067ed38[slot])` → primary id `sVar2/EBP`.
+- `FUN_0042ad90(EBX=0xff040000, EDI=row_index, EDX=DAT_0067ed78[slot])` → secondary id `sVar3/EBX`.
+- **Loop terminates** when BOTH return -1 (`BP==-1 && BX==BP`) → finalize and `return`.
+- Otherwise writes that record slot (offsets relative to record base):
+  `+0x00 = 0xff040000`(tag), color `+0x0c..0x0f = 0xff,0xff,0xff,0xff`,
+  `+0x14 = 0x42800000`(64.0f X), `+0x10 = 0x3f4ccccd`(0.8f scale) — **or `0x3f147ae1`(0.578f)** when the screen ptr is `&DAT_005f72a0`/`&DAT_005f7370` (the two "list" screens) and `local_c!=0`;
+  `+0x0c(int) = row_index`(=`iVar6`/EDI), `+0x18(Y) = FILD(local_c) + ST(spacing)`
+  with `-_DAT_005cd900`(58.0f) bias if screen ptr == `&DAT_005f7370`, and another
+  `-58.0f` if == `&DAT_005f72a0`; `+0x08 = row_index`, `+0x10(=ECX) = (int)sVar2`,
+  `+0x14 = (int)sVar3`, `+0x04(type) = 0x1ff` default — **but if `DAT_0067e9f8==0`**
+  (root screen) `+0x04 = 1` and slide `+0x10 = depth` (root items start visible).
+- Loop step: `row_index++`, `local_c += 0x1e`(30), `local_8 += 0x1c`(28), cursor += 0x34.
+
+### Phase 7 — finalize (0x0043d769..0x0043d7b6)
+- `DAT_0067ece0 = local_4` (= count of non-(-1) primaries seen, the running item total) — on push it is written into `(&DAT_0067edb4)[slot]` (visible item count); on pop/reload it is *read back* from `DAT_0067ed74[slot]`.
+- `FUN_0042ad90(EBX=0xff080000 /*tag −0xf80000*/, EDI=0, EDX=DAT_0067ed38[slot])` → id for the prompt strip.
+- `FUN_00432b30(EAX=screen_kind, [ESP+0x24]=&local_4 /*record index by-ref via ESI*/, prompt_id)` — appends the L/R/back prompt-glyph row(s).
+- if `dir==0`: `DAT_0067e9f8 = depth+1` (**commit the push**).
+- `DAT_0067e844 = dir` (remember last direction — the Part-1 "mode flag" gating slide-out bias).
+
+### State globals FUN_0043d2a0 owns (the menu "state")
+| global | RVA | type | role |
+|---|---|---|---|
+| `DAT_0067e9f8` | 0x0067e9f8 | int | **nav-stack depth** (0=root). THE core state var. |
+| `DAT_0067ed78[d*0x10]` | 0x0067ed78 | ptr | per-depth active descriptor-table ptr |
+| `DAT_0067ed7c[d*0x10]` | 0x0067ed7c | int | per-depth screen id |
+| `DAT_0067ed80[d*0x10]` | 0x0067ed80 | int | per-depth **selection cursor** (the highlight) |
+| `DAT_0067ed84[d*0x10]+i` | 0x0067ed84 | int×12 | per-item availability flags |
+| `DAT_0067edb4[d*0x10]` | 0x0067edb4 | int | per-depth visible item count |
+| `DAT_0067ed38[d*0x10]` | 0x0067ed38 | ptr | secondary per-depth screen ptr (slide-out src) |
+| `DAT_0067ed74[d*0x10]` | 0x0067ed74 | int | saved cursor (pop) |
+| `DAT_0067e844` | 0x0067e844 | int | last nav direction |
+| `DAT_0067ece0` | 0x0067ece0 | int | scratch: current item total |
+| `DAT_0067e914` | 0x0067e914 | int | global "menu is animating" gate (read by anim tick) |
+| record array | 0x00898ac0 | 31×52B | the draw records this builds |
+
+### Callees of FUN_0043d2a0 (C-level from hooks.csv, port-needed?)
+| RVA | name | C | port-needed? |
+|---|---|---|---|
+| 0x00431f30 | FrontendPageIdDispatch | **C3** | reuse |
+| 0x00431d90 | FrontendPanelFlagAdvance | **C3** | reuse |
+| 0x00472640 | (util setter) | C2 | trivial / stub |
+| 0x0040ad20 / 0x0040b810 / 0x00414120 / 0x00422b30 | misc per-screen | C0/C1 | per-screen, optional |
+| 0x0042d3e0 | MenuEntryArrayInit | **C3** | reuse (zero the array) |
+| 0x00432800 | (avail-flag init) | C2 | **YES** — places cursor / greys items |
+| 0x0042ad90 | (kv table iterator) | C2 | **YES** — the descriptor-table reader |
+| 0x0042ac00 | MenuGroupCount | **C3** | reuse |
+| 0x0042ac50 | (Y-centering) | C2 | **YES** — small, pure |
+| 0x00432b30 | (prompt-strip builder) | C2 | optional (faithful chrome only) |
+
+---
+
+## FUN_0042d3e0 (init — MenuEntryArrayInit, C3, already ported)
+
+```c
+// 0x0042d3e0  body 0x0042d3e0..0x0042d41a   hooks.csv: C3 (MenuInit.cpp)
+void FUN_0042d3e0(void);
+```
+
+Pure leaf. `puVar1 = &DAT_00898ac4` (= record base 0x898ac0 **+ 0x04**); loop stride
+0xd ints (52 B); runs while `< 0x8990dc`. Per slot it writes **0** to 13 fields
+covering record+0x00..+0x30 (clears the entire record). Extent
+`0x898ac4..0x8990dc` ⇒ ((0x8990dc − 0x898ac4)/0x34) = **30 full slots** zeroed (the
+loop is entered at +0x04 so it covers slots 0..29; slot 30's tail is the implicit
+sentinel/scratch). This confirms the Part-1 "31 slots" bound: **30 usable record
+slots**, slot index 30 is the loop-terminator guard region. **No port work needed** —
+already C3. The port just calls its existing `MenuEntryArrayInit` reimpl at the top of
+its `FUN_0043d2a0`-equivalent.
+
+---
+
+## FUN_004325c0 (anim — Menu Slide Animation Tick, C2)
+
+```c
+// 0x004325c0  body 0x004325c0..0x004327f3   hooks.csv: C2
+undefined4 FUN_004325c0(void);   // returns 1 if ALL slots settled, 0 if any still animating
+```
+
+Per-frame tick. `piVar6 = &DAT_00898ad0` (= record base **+0x10**, the slide-counter
+field); stride 0xd; runs while `<= 0x8990e7`. Field map relative to `piVar6`:
+`piVar6[-4]`=record+0x00 (tag), `piVar6[-3]`=record+0x04 (type/phase), `piVar6[-2]`=
+record+0x08, `*piVar6`=record+0x10 (**slide counter**), `piVar6[3]`=record+0x1c (Y),
+`piVar6[4]`=record+0x20, `piVar6[8]`=record+0x30 (screen ptr).
+
+- Settle gate: if `piVar6[-3] != 0x1000` (not frozen) AND `DAT_0067e914 != 0` → `local_8=0` (still animating).
+- Tag dispatch (signed `iVar1 = piVar6[-4]`):
+  - `-0xfc0000` (countdown): `*piVar6 += FUN_004a2c48()`; on `<1` underflow → if type==2 set counter=0x1ff & freeze(type=0x1000); else counter=0, type=1, recompute Y via `FUN_0042ac50()` + `piVar6[4]*0x1e` (−58.0f bias for the two list-screen ptrs).
+  - `-0xef0000/-0x1000000/-0xee0000/-0xed0000/-0xdd0000/-0xf00000` (slide-in family): `*piVar6 += FUN_004a2c48()`; on `>399` overflow → counter=0x1ff, freeze(0x1000).
+  - else (float path): `piVar6[-2] += DAT_007f1004 * _DAT_005cd8fc`(300.0f); if `>= _DAT_005cd09c`(180.0f) → set `piVar6[-2]=0x43340000`(180.0f), freeze(0x1000).
+- Callees: `FUN_004a2c48` (float→int round / frame-delta, C2) + `FUN_0042ac50` (Y-centering, C2). **Both must be ported** (small). DAT_007f1004 is a runtime scroll-speed global (=0 in image). **Port-needed: YES** — small, drives the slide-in animation each frame; the standalone calls it every frame on its record array.
+
+---
+
+## FUN_00432800 (per-screen availability-flag init + cursor placement, C2)
+
+```c
+// 0x00432800  body 0x00432800..0x00432a88   hooks.csv: C2
+void FUN_00432800(int depth);
+```
+
+Called from FUN_0043d2a0 Phase 4 on push. Sets 12 per-item availability flags
+`(&DAT_0067ed84)[depth*0x10 + i] = 1` (i=0..11). Then a switch on the screen id
+(`(&DAT_0067ed7c)[depth*0x10]`) selectively **clears** specific flags based on live game
+state (e.g. case 1: calls `FUN_0040e480(0..3,0)`; case 0x12: queries unlock/
+player-count globals `DAT_007f0a50/a58`, `FUN_00430b60`, `FUN_0042f500` and disables
+rows; case 0x1c: per-vehicle `thunk_FUN_00497450(0..3)` availability + seeds 8 fixed
+ids `DAT_00898aa0..` = 0,1,2,3 / `DAT_00898b1c..` = 0x236..0x239). Finally **places the
+selection cursor**: starting from the stored cursor (`DAT_0067ed80[depth]`), it scans
+forward (wrapping at `DAT_0067edb4[depth]` = item count) to the first item whose
+availability flag ==1, and stores it; if none enabled, cursor = -1. **Port-needed:
+YES for cursor placement** (the "first selectable item" logic is the nav contract); the
+per-screen grey-out cases are state-dependent and ported lazily per wired screen. Heavy
+state deps (unlock globals, FUN_00430b60/0042f500/00497450 are sub-C2) make a *faithful*
+port of the grey-out cases a **partial blocker** — but a minimal port can flag-all-=1
+and just run the cursor-placement tail.
+
+---
+
+## FUN_00432b30 (prompt-strip glyph builder, C2)
+
+```c
+// 0x00432b30  body 0x00432b30..0x0043305e   hooks.csv: C2
+void FUN_00432b30(int screen_kind /*EAX*/, int* rec_index /*ESI, by-ref*/, int prompt_id);
+```
+
+Large branch table (screen_kind × relation-code `iVar3` from `FUN_0042add0`) that
+appends one prompt row to the record array at `(&DAT_00898ae8)[*rec_index*0xd]` /
+`(&DAT_00898aec)[...]`, picking glyph ids `0x42,0x43,0x48,0x13,0x58,0x133,0x225` (the
+back/forward/L-R navigation indicator sprites), then `*rec_index += 1`. Callees:
+`FUN_0042add0` (per-depth variant of the kv iterator, C2), `FUN_0042ad10` (HUD-glyph
+slot init `0x40,0x1ac,0`, C2), `FUN_0042a9c0` (ModeCodeLookup, C3), `FUN_0042b920`.
+**Port-needed: OPTIONAL** — this only draws the on-screen "◄ ► / Back" prompt glyphs;
+not required for a functional state-machine-driven menu. Defer until faithful chrome.
+
+---
+
+## Harvested consts (Part 2) — real bytes from original/MASHED.exe (pool13)
+
+`.rdata` floats (block 0x005cc000..0x005e9fff, read-only; verbatim LE):
+| RVA | bytes (LE) | value | role |
+|---|---|---|---|
+| 0x005cd8fc (`_DAT_005cd8fc`) | `00 00 96 43` | 300.0f | float-path slide speed multiplier (×DAT_007f1004) — anim tick |
+| 0x005cd900 (`_DAT_005cd900`) | `00 00 68 42` | 58.0f | Y bias subtracted for the two list-screen ptrs (build loop + anim tick) |
+| 0x005cd09c (`_DAT_005cd09c`) | `00 00 34 43` | 180.0f | float-path freeze threshold |
+
+Inline immediates baked into the record writes (from listing of FUN_0043d2a0):
+| immediate | float / meaning |
+|---|---|
+| `0x42800000` | 64.0f — record +0x14 (back-button & item X) |
+| `0x42400000` | 48.0f — back-button +0x18 (Y) |
+| `0x3f19999a` | 0.6f — back-button +0x10 (scale) |
+| `0x3f4ccccd` | 0.8f — item +0x10 (scale, normal screens) |
+| `0x3f147ae1` | 0.578f — item +0x10 (scale, list screens when local_c!=0) |
+| `0xff000000` | tag −0x1000000 — back-button row tag / kv search key |
+| `0xff040000` | tag −0xfc0000 — list-item row tag / kv search key |
+| `0xff080000` | tag −0xf80000 — prompt-strip kv search key |
+| `0x43340000` | 180.0f — anim-tick float-path frozen cap |
+| `0x1ff` / `0x1000` / `1` | slide-counter cap / frozen-state code / visible-state code (record +0x04 & +0x10) |
+| ids `0x42 0x43 0x48 0x13 0x58 0x133 0x225 0x236..0x239` | navigation-prompt & vehicle-tile sprite/string ids |
+
+**The per-screen descriptor tables (STATIC).** `PTR_DAT_005f7638` (0x005f7638) is a
+`void*[~34]` array of pointers to per-screen item-descriptor tables, indexed by screen
+id. Harvested values (first 34 entries, LE):
+```
+[0]=0x005f6860 [1]=0x005f6980 [2]=0x005f6a20 [3]=0x005f6a98 [4]=0x005f6c68
+[5]=0x005f6d58 [6]=0x005f6da0 [7]=0x005f6df8 [8]=0x005f6e50 [9]=0x005f6c00
+[10]=0x005f7058 [11]=0x005f70d8 [12]=0x005f7190 [13]=0x005f7140 [14]=0x005f71d8
+[15]=0x005f6cb8 [16]=0x005f6d08 [17]=0x005f7220 [18]=0x005f72a0 [19]=0x005f7458
+[20]=0x005f7598 [21]=0x005f67e8 [22]=0x005f6900 [23]=0x005f75e8 [24]=0x005f7370
+[25]=0x005f6944 [26]=0x005f7000 [27]=0x00000000 [28]=0x005f6b68 [29]=0x005f6b00
+[30]=0x005f7540 [31]=0x005f6ef8 [32]=0x005f74f0 [33]=0x005f6f90]
+```
+(trailer at +0x88: `0x005cd760, 0x0000000a` — count/sentinel.) Each table is an array of
+`(tag_key:u32, id:u32)` pairs. Example — table[0] @0x005f6860 (verbatim):
+```
+ff000000 00000047   ff080005 00000000   ff020050 00000000(?)...  [parsed as (tag,id):]
+(0xff000000,0x47) (0xff080000,0x05) (0xff020000,0x50) (0xff030000,0x78)
+(0xff040000,0x18) (0xff140000,0x00) (0xff150000,0x00) (0xff060000,0x04) ...
+```
+Example — table[18] @0x005f72a0 (the "list A" sentinel screen):
+```
+(0xff000000,0x024d) (0xff080000,0x02) (0xff020000,0x50) (0xff030000,0x78)
+(0xff040000,0x150) (0xff140000,0x00) (0xff420000,...) ...
+```
+Iterator (FUN_0042ad90/FUN_0042ac00) walks pairs until terminator **`0xff070000`**
+(= −0xf90000); group delimiter is **`0xff060000`** (= −0xfa0000). `0xff040000` entries
+are the selectable list items (one per visible row); `0xff000000` is the back-target;
+`0xff080000` is the prompt id. **The standalone must hard-code these harvested tables**
+(they live at 0x005f6xxx, inside MASHED's image-padded zeroed range). The two screens
+compared by identity in the draw/build loops are **table[18]=0x005f72a0** and
+**table[24]=0x005f7370** (the wide "list" screens — track-select / car-select style).
+
+---
+
+## Port order + first-wire recommendation
+
+Ranking the four functions by portability × value to make the standalone menu
+state-machine-driven:
+
+| rank | function | C | portability | value | verdict |
+|---|---|---|---|---|---|
+| **1** | **FUN_0043d2a0** (push/pop) | C2 | medium (deps mostly C3) | **highest** — IS the nav | **FIRST WIRE** |
+| 2 | FUN_004325c0 (anim tick) | C2 | high (2 small C2 callees) | medium (slide polish) | second |
+| 3 | FUN_0042d3e0 (init) | **C3** | done | n/a | already reusable |
+| 4 | FUN_0043c5b0 (draw loop, Part 1) | — | high (draws C2/C3 prims) | high but downstream | wire after the array is real |
+
+### Single best first-wire piece: **FUN_0043d2a0** (confirmed — matches the prompt's expectation).
+
+It is the navigation centerpiece: it owns the nav stack, expands the active screen's
+static descriptor table into the 31×52-B record array, places the cursor, and is the
+single entry point for every push/pop/reload. Its heavy side-effect callees are already
+C3 (`FUN_0042d3e0` init, `FUN_00431f30`/`FUN_00431d90` page dispatch, `FUN_0042ac00`
+group-count, `FUN_0042a9c0` mode-lookup). The only *new* small ports it needs are the
+kv-iterator `FUN_0042ad90` (and its variant `FUN_0042add0`), the Y-centering
+`FUN_0042ac50`, and the cursor-placement tail of `FUN_00432800`.
+
+### Exact state the standalone must OWN to wire FUN_0043d2a0
+A single nav-stack module owning these (all currently the flat
+`g_menu_items[8]`/`g_menu_selected` in `exe_main.cpp` — replace it):
+
+1. **`int g_nav_depth`** ← `DAT_0067e9f8` (0=root).
+2. Per-depth slot array (≥8 slots × this struct), the standalone analogue of the
+   `[depth*0x10]`-indexed `.data` arrays:
+   ```c
+   struct NavSlot {
+     int          screen_id;        // DAT_0067ed7c
+     const u32*   desc_table;       // DAT_0067ed78  ← &harvested table for screen_id
+     int          cursor;           // DAT_0067ed80  (highlighted item; -1 = none)
+     int          item_count;       // DAT_0067edb4
+     int          avail[12];        // DAT_0067ed84..  (1=enabled)
+     const u32*   slide_src;        // DAT_0067ed38  (slide-out source table)
+     int          saved_cursor;     // DAT_0067ed74
+   };
+   ```
+3. **`MenuRecord g_records[31]`** — the 31×52-B record array (the 0x898ac0 analogue),
+   layout exactly as Part-1's field map; zeroed by the existing `MenuEntryArrayInit`.
+4. The **harvested static descriptor tables** (the 0x005f6xxx blobs) hard-coded as
+   `const u32[]` and a `PTR_DAT_005f7638`-equivalent `const u32* g_screen_tables[34]`.
+5. `int g_last_dir` ← `DAT_0067e844`; `int g_menu_animating` ← `DAT_0067e914`.
+
+`UpdateMenuSelection()` (exe_main.cpp ~686) feeds DIK_UP/DOWN into `slot.cursor`
+(clamped/wrapped over the `avail[]` mask); Enter/Esc call the ported
+`Nav(screen_id, dir)` (= FUN_0043d2a0) to push/pop. `RenderFrame()` ticks the ported
+`FUN_004325c0` then runs the ported draw loop over `g_records`.
+
+### Blockers / partial blockers
+- **FUN_00432800 grey-out cases** depend on sub-C2 game-state queries
+  (`FUN_00430b60`, `FUN_0042f500`, `thunk_FUN_00497450`, unlock globals
+  `DAT_007f0a50/a58`). A *faithful* per-screen disable map is blocked on those; a
+  **minimal** port (all items enabled + cursor-placement tail only) is unblocked and
+  sufficient to make the menu navigable. Flag for follow-up RE.
+- **FUN_0042ad90 / FUN_0042add0** use implicit register args (EBX=tag, EDI=occurrence)
+  rather than stack params — port them as explicit `kv_lookup(table, tag, occurrence)`;
+  the listing (0x0043d4b0, 0x0043d634, 0x0043d77e) pins the exact EBX/EDI values, so
+  this is mechanical, **not** a blocker.
+- **FUN_00432b30** (prompt strip) is large/branchy and cosmetic — defer, not a blocker
+  for state-machine-driven navigation.
+- **No hard blocker** prevents wiring FUN_0043d2a0 first with a minimal FUN_00432800.
+
+---
+
+## Uncertainties (Part 2)
+
+- `[UNCERTAIN]` Exact length of each per-screen descriptor table (terminator-scanned at
+  runtime via `0xff070000`); the harvest above shows the format and first entries but
+  the port must scan each table to its `0xff070000` terminator when transcribing. Not a
+  semantic gap — mechanical transcription.
+- `[UNCERTAIN]` `DAT_007f1004` (anim-tick float-path multiplier) is a runtime scroll/
+  frame-time global (=0 in image); its update site was not traced this pass. The port
+  needs a frame-delta source for the float-path slide (the integer slide paths use
+  `FUN_004a2c48` which is already C2).
+- `[UNCERTAIN]` The `screen_kind` arg to FUN_00432b30 (EAX) — its derivation in the
+  caller (`MOV EAX,EBP` where EBP came from the loop) maps a screen to one of
+  {1,2,4,5,6,8,10}; the exact screen→kind map was not enumerated (cosmetic prompt strip
+  only).
+- Confirmed-resolved from Part 1: FUN_0042d3e0 is **C3** (not sub-C2); the screen
+  sentinels `&DAT_005f72a0`/`&DAT_005f7370` ARE **static descriptor tables**
+  (table[18]/table[24]), not runtime-filled undefined data.
