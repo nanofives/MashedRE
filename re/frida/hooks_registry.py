@@ -1449,6 +1449,35 @@ HOOKS = {
         'path2_tests': [[0, 0], [2, 5], [0, 0x7FFFFFFF]],
     },
 
+    # 0x00407a20 GetAiLapCounter(idx) -> (&DAT_008a9648)[idx*0xc3] per-AI lap counter.
+    # idx = AI slot index; the per-AI rows differ during/after a race so distinct
+    # idx span multiple rows (use 0..7 = the populated AI slots in Quick Battle).
+    'get_ai_lap_counter': {
+        'rva':         0x00407a20,
+        'export':      'GetAiLapCounter',
+        'signature':   {'ret': 'int', 'args': ['uint32']},
+        'arg_type':    'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x00407a00 ReadAiCheckpointField(row, col) -> *(&DAT_008a9914 + (row*0xc3+col)*4).
+    # row = AI slot index, col = dword within the +0x2f4 checkpoint block. Vary BOTH
+    # so distinct (row,col) read distinct populated cells of the per-AI table.
+    'read_ai_checkpoint_field': {
+        'rva':         0x00407a00,
+        'export':      'ReadAiCheckpointField',
+        'signature':   {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':    'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [2, 0],
+            [3, 0], [4, 0], [5, 0], [0, 5], [1, 3], [2, 4],
+        ],
+        'path2_tests': [[0, 0], [1, 1], [2, 0]],
+    },
+
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session 86 â€” c3_render_math  (C2â†’C3, 5 candidates)
     # RW column-major transform + 2D vector math + matrix scale
