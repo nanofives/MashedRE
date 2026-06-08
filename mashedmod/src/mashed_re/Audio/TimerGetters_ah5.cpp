@@ -10,9 +10,9 @@
 //   0x005aaff0 AudioTimerBaselineInit - writes counter@now into dcdf0 and 0
 //       into dcdf4; void_write_observe on dcdf4 is degenerate (always 0),
 //       on dcdf0 is racy (counter moves between orig/reimpl calls).
-//   0x005a89a0/b0/c0 VoiceFieldD6c/D70/D74Get - thiscall struct-ptr getters
-//       `fn(int this) -> *(this+0xD6C..D74)`; read_global (0-arg fixed global)
-//       does NOT fit the shape -> DEFER (no arg_type invention).
+//   (2026-06-08 harness/scenario-attach) the three voice field-getters below
+//   are now promotable via the new thiscall_field_get arg_type (synthetic
+//   struct-seed, plain menu-attach) — authored + registered here.
 #include "../Core/HookSystem.h"
 #include <cstdint>
 
@@ -90,3 +90,26 @@ extern "C" __declspec(dllexport) uint32_t __cdecl AudioLinearToLog(float param_1
 }
 
 RH_ScopedInstall(AudioLinearToLog, 0x005aeb90);  // c3_batch_ah s5
+
+// Voice field-getter triplet. __cdecl, single struct/this pointer on the stack
+// (disasm: MOV EAX,[ESP+4]; MOV EAX,[EAX+off]; RET), NOT an ECX thiscall.
+// Verbatim leaf: return *(uint32_t*)((char*)this + off).
+// (harness/scenario-attach 2026-06-08; verified pool14.)
+
+// 0x005a89a0  FUN_005a89a0  (11 bytes)  undefined4(this)  -> *(this+0xD6C)
+extern "C" __declspec(dllexport) uint32_t __cdecl VoiceFieldD6cGet(void* self) {
+    return *reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(self) + 0xD6C);
+}
+RH_ScopedInstall(VoiceFieldD6cGet, 0x005a89a0);
+
+// 0x005a89b0  FUN_005a89b0  (11 bytes)  undefined4(this)  -> *(this+0xD70)
+extern "C" __declspec(dllexport) uint32_t __cdecl VoiceFieldD70Get(void* self) {
+    return *reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(self) + 0xD70);
+}
+RH_ScopedInstall(VoiceFieldD70Get, 0x005a89b0);
+
+// 0x005a89c0  FUN_005a89c0  (11 bytes)  undefined4(this)  -> *(this+0xD74)
+extern "C" __declspec(dllexport) uint32_t __cdecl VoiceFieldD74Get(void* self) {
+    return *reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(self) + 0xD74);
+}
+RH_ScopedInstall(VoiceFieldD74Get, 0x005a89c0);

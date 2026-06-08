@@ -2104,6 +2104,67 @@ function runDiff() {
         return;
     }
 
+    // ── thiscall_field_get ───────────────────────────────────────────────────
+    // SYNTHETIC field-getter harness for the shape
+    //     <ret> fn(this)  ->  return *(this + field_off);
+    // The function takes a single struct/this pointer (delivered on the stack as
+    // __cdecl in MASHED — e.g. 0x005a89a0 `MOV EAX,[ESP+4]; MOV EAX,[EAX+0xD6C];
+    // RET`, NOT an ECX thiscall despite the conventional name) and returns one
+    // field read from it. We seed the struct OURSELVES so the test works at a
+    // PLAIN menu-attach with no live state required.
+    //
+    // Per test: alloc a fresh zeroed scratch struct (retained in _keep[] so Frida
+    // GC can't reclaim it while the raw pointer is the only live ref — same hazard
+    // as struct_call_observe), write the test-vector value at field_off, call
+    // fn(scratchPtr) on each side, read the return. Varying the seed across vectors
+    // makes the return echo the seed -> NON-DEGENERATE (a `return 0;` stub would
+    // mismatch). The pointer is passed positionally; CONFIG.signature.args must be
+    // ['pointer'] with calling_convention 'mscdecl' (the default).
+    //
+    // CONFIG.field_off    : int    byte offset of the read field within the struct.
+    // CONFIG.ret_kind     : 'u32'|'int'|'float'  how to interpret/seed the value.
+    // CONFIG.struct_size  : int    bytes to allocate (>= field_off + 8). Default
+    //                              field_off + 64.
+    // CONFIG.tests        : flat list of seed values (u32/int/float per ret_kind).
+    if (CONFIG.arg_type === 'thiscall_field_get') {
+        const fieldOff = CONFIG.field_off | 0;
+        const retKind  = CONFIG.ret_kind || 'u32';
+        const SS = CONFIG.struct_size || (fieldOff + 64);
+        const _keep = [];
+        const seedVal = function (p, v) {
+            const a = p.add(fieldOff);
+            if (retKind === 'float') a.writeFloat(v);
+            else                     a.writeU32(v >>> 0);
+        };
+        const callSide = function (Fn, structPtr) {
+            const r = Fn(structPtr);
+            if (retKind === 'float') {
+                // Frida returns a JS number for a 'float' NativeFunction ret.
+                return (typeof r === 'number') ? r : null;
+            }
+            // int/u32 — normalise pointer/number to u32.
+            if (r === undefined || r === null) return null;
+            return (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0) : (r >>> 0);
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const v = CONFIG.tests[i];
+            const structO = Memory.alloc(SS), structR = Memory.alloc(SS);
+            _keep.push(structO, structR);
+            for (let b = 0; b < SS; b += 4) { structO.add(b).writeU32(0); structR.add(b).writeU32(0); }
+            seedVal(structO, v); seedVal(structR, v);
+            let origV = null, reimV = null, errO = null, errR = null;
+            try { origV = callSide(Orig,   structO); } catch (e) { errO = e.message; }
+            try { reimV = callSide(Reimpl, structR); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: v,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── fastcall_reg ─────────────────────────────────────────────────────────
     // Register-convention force-call for __fastcall / __thiscall LEAF functions
     // whose arguments live ENTIRELY in ECX (+ EDX) with NO stack args. This is

@@ -13105,4 +13105,63 @@ HOOKS = {
         'path2_tests': [0.0, 0.001, 0.5, 1.0, 100.0],
     },
 
+    # ── Voice field-getter triplet (harness/scenario-attach 2026-06-08) ──────
+    # __cdecl undefined4 fn(void* this) -> *(uint32_t*)(this + off). Disasm
+    # (pool14): MOV EAX,[ESP+4]; MOV EAX,[EAX+off]; RET. NOT an ECX thiscall.
+    # Promoted via the new SYNTHETIC thiscall_field_get arg_type: the harness
+    # seeds its own scratch struct (no live state needed), writes the test value
+    # at field_off, calls fn(scratch), and compares the returned field read.
+    # Varying the seed -> the return echoes it -> NON-DEGENERATE.
+    # ref: re/analysis/bucket_audio_005a7b60_005ab620/{005a89a0,005a89b0,005a89c0}.md
+    'voice_field_d6c_get': {
+        'rva':            0x005a89a0,
+        'export':         'VoiceFieldD6cGet',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'thiscall_field_get',
+        'field_off':      0xD6C,
+        'ret_kind':       'u32',
+        'struct_size':    0xE00,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0x00000001, 0xFFFFFFFF, 0xDEADBEEF, 0x12345678,
+            0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x0000FFFF, 0xFFFF0000,
+            0x55555555, 0xAAAAAAAA,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
+    },
+
+    'voice_field_d70_get': {
+        'rva':            0x005a89b0,
+        'export':         'VoiceFieldD70Get',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'thiscall_field_get',
+        'field_off':      0xD70,
+        'ret_kind':       'u32',
+        'struct_size':    0xE00,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0x00000001, 0xFFFFFFFF, 0xDEADBEEF, 0x12345678,
+            0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x0000FFFF, 0xFFFF0000,
+            0x55555555, 0xAAAAAAAA,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
+    },
+
+    'voice_field_d74_get': {
+        'rva':            0x005a89c0,
+        'export':         'VoiceFieldD74Get',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'thiscall_field_get',
+        'field_off':      0xD74,
+        'ret_kind':       'u32',
+        'struct_size':    0xE00,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0x00000001, 0xFFFFFFFF, 0xDEADBEEF, 0x12345678,
+            0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x0000FFFF, 0xFFFF0000,
+            0x55555555, 0xAAAAAAAA,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
+    },
+
 }

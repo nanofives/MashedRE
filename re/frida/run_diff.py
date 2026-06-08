@@ -239,6 +239,12 @@ def build_config(hook, asi_path=None):
     # arg_type handlers verbatim (seed_field_read_field / structptr_seeded_array /
     # scalars_to_scattered_globals / count_header_list_ring). Addresses are already
     # hex strings in-registry, so pass them through unchanged.
+    # thiscall_field_get (2026-06-08 harness/scenario-attach): synthetic struct
+    # field-getter — seeds its own scratch struct, works at plain menu-attach.
+    if 'field_off' in hook:
+        config['field_off'] = hook['field_off']
+    if 'ret_kind' in hook:
+        config['ret_kind'] = hook['ret_kind']
     for _k in ('seed_off', 'read_off', 'read_size', 'read_offs', 'fold_ret',
                'idx_call_str', 'idx_arrays', 'prep_call_str', 'prep_arg_types',
                'pre_fill_byte', 'list_op', 'node_link_off', 'cmp_field_off',
