@@ -12826,4 +12826,61 @@ HOOKS = {
     # to a populated-race canonical scenario (C3->C4 track). Entry intentionally
     # omitted so the central frida-sweep does not promote it.
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Session c3-batch-ah-s3 — gameplay getters  (C2->C3)
+    # Gameplay/ScoreMasks_ah3.cpp — pure-leaf global-read getters.
+    # The 5 score-mask out-buffer fns (0x0040b970/ba00/b930/b9a0/ba60) are
+    # authored in the same .cpp but DEFERRED: int_outbuf4 is fn(idx,buf) (wrong
+    # shape for void fn(int* out)) and no harness arg_type seeds 0x008a94e0[4].
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # 0x0040dc70  GetAnimationState
+    # Pure leaf: returns DAT_0063b90c (state register 0..3). void(void)->uint32.
+    # read_global: write sentinel to 0x0063b90c, call fn(), return must equal it.
+    'get_animation_state': {
+        'rva':            0x0040dc70,
+        'export':         'GetAnimationState',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0063b90c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0x00000002, 0x00000003,
+                           0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF, 0x80000000,
+                           0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000000, 0x00000002, 0xFFFFFFFF],
+    },
+
+    # 0x0040d430  GetPointerGlobal
+    # Pure leaf: returns the pointer value stored at 0x005f2770. void(void)->ptr.
+    # read_global: write sentinel to 0x005f2770, call fn(), return must equal it.
+    'get_pointer_global': {
+        'rva':            0x0040d430,
+        'export':         'GetPointerGlobal',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x005f2770,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xDEADBEEF, 0xCAFEBABE,
+                           0x12345678, 0xFFFFFFFF, 0x80000000, 0x55555555,
+                           0xAAAAAAAA, 0x00000000],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xFFFFFFFF],
+    },
+
+    # 0x0040b420  IndexedTableLookup — NOT PROMOTED (c3-batch-ah-s3 2026-06-08).
+    # Pure indexed leaf: returns DWORD at 0x008a9500 + idx*4. uint32(int idx).
+    # int_scalar diff came back GREEN but DEGENERATE: the live table at 0x008a9500
+    # is all-zero at the quiescent menu, so every index returns 0
+    # (log/diff_indexed_table_lookup.csv) -> false-GREEN. No harness arg_type
+    # seeds the table. Defer to a populated canonical scenario. Entry kept (with
+    # the explanatory note) so a future sweep does not re-promote it blindly.
+    'indexed_table_lookup': {
+        'rva':            0x0040b420,
+        'export':         'IndexedTableLookup',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
