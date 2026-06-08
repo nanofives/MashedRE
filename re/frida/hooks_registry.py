@@ -2129,6 +2129,22 @@ HOOKS = {
         'path2_tests':    [0, 1, 2, 3],
     },
 
+    # 0x004f5020  FormatEntryLookup  (c3_batch_ah s4)
+    # return *(u32*)(&DAT_005dae40 + idx*4) -- indexed read of the static .rdata
+    # format-size table at 0x005dae40 (entries 0..16 = 4,8,12,16,4,4,4,8,...).
+    # arg_type='int_scalar': single int index, returns uint32. Diverse in-range
+    # indices give a varied (non-degenerate) observable.
+    # ref: re/analysis/bucket_004f022d/0x004f5020.md
+    'format_entry_lookup': {
+        'rva':            0x004f5020,
+        'export':         'FormatEntryLookup',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 7, 10, 12, 16, 5, 8, 0],
+        'path2_tests':    [0, 1, 2],
+    },
+
     # Session c3-batch-b-s2 â€” frontend batch b session 2 (C2â†’C3, 6 candidates)
     # MenuScoreGetters.cpp + MenuInit.cpp
     # SlotSortByModeScore (0x0040b620) OMITTED â€” arg_type 'void_out_ptr'

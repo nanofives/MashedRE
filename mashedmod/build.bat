@@ -328,6 +328,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Audio\AudioList_ag.cpp" ^
     "Gameplay\RangeTable_ah1.cpp" ^
     "Gameplay\ScoreMasks_ah3.cpp" ^
+    "Gameplay\Thresholds_ah4.cpp" ^
+    "Render\PluginFields_ah4.cpp" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
