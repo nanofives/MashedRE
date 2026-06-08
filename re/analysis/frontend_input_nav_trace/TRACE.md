@@ -309,6 +309,31 @@ Takeaway: Option A cleanly separated the menu-screen subset (14) + 2 genuine cra
 ~100 deeper-screen hooks. The crashers are the highest-value find — the navigate C4 gate caught
 installed-scenario regressions that force-call C3 could not.
 
+## Post-Option-A actions (2026-06-07)
+
+**Crashers fixed (root-caused via the navigate-C4 gate — both were crash_equal_ok C3s):**
+- MenuDimSet 0x0042aad0: `mov [kDimEnableFlag],1` (C++ constexpr) assembled as a write to the
+  symbol's read-only .rdata, not absolute 0x008990e4 -> faulting write in the .asi
+  (eip 0x727d9e44). Fixed -> `mov dword ptr ds:[0x008990e4],1`. Now installed+survived+
+  exercised(1300) on Game Type Select. (commit d48e99e1)
+- MenuMenusBA 0x004282a0 + latent MenuMenusBB 0x00427ad0: FUN_004277a0 is a REGISTER-ARG fn
+  (reads in_EAX = FUN_00427780's returned ptr, writes unaff_EBX = local buffer). Calling both
+  as void __cdecl clobbered EAX between them -> AV 0x00427813. Reimplemented both helpers'
+  logic inline (pure string-table lookup + control-code transcode). No more crash.
+- Build footgun found+fixed: build.bat now deploys build/mashed_re_dev.asi -> original/ (the
+  loader path); a stale .asi had been masking the fix. (see memory feedback-build-deploys-asi)
+
+**Install-failures = disabled-by-design:** MenuMenusBC 0x0042f8d0 + LinkedListStringSearch
+0x004c5c00 had RH_ScopedInstall commented out (MASS-DISABLED) -> no inline-JMP -> fail C3's
+"hooked via RH_ScopedInstall" gate. DEMOTED C3->C2. (commit 77024999)
+
+**Trio-OK -> re-classify (no overclaiming):** C4 gate (CONFIDENCE.md) = "clean Frida CSV diff
+between original and modded on a canonical scenario." The navigate harness proves install+
+survive+exercise (the C4 *prerequisite*) but NOT a behavioral diff -> NONE auto-promoted to C4.
+The leaf getters among the trio are C4-candidates pending a canonical-scenario behavioral diff
+(return-value/written-bytes original-vs-modded). That diff layer is the remaining work to earn
+the C4s; survival evidence alone does not.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
