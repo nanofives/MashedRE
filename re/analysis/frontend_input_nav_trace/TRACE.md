@@ -149,6 +149,50 @@ Candidates for the actual directional consumer (next RE layer, if pursued):
 - the id-0x16 page handler inside the FUN_0043dfd0 switch that owns the selected-row write
   (writer of `*(int*)(0x67ed40 + depth*0x40)` = 0x67ed80 at depth 1) — not yet pinned.
 
+## 2026-06-07 (cont) — resolver-override drives the menu; directional = analog axes
+
+Built re/frida/input_resolver_drive.py: hooks FUN_00497310(player@esp+4, control@esp+8)
+(cdecl, confirmed by --probe: players 0..2 active, control indices 0..12) and overrides its
+return to 0xff for chosen (player,control) through the LEGITIMATE pipeline (so the cook +
+edge-detect + gates are all satisfied).
+
+- **--sweep** (force each control, watch selection/depth): forcing **control 4** for player 0
+  caused depth 1->2 (submenu PUSH) => **control 4 = CONFIRM/select**. Control 6 also pushed.
+  => the per-player pipeline DOES drive the menu; earlier direct-flag injection failed only
+  because it wrote the wrong representation. No single control moved the selection *row*.
+
+- **--dumpmap** (read the live per-player binding table): ALL 4 players have **type=1
+  (joystick)**, control map holds joystick indices {0,1,2,3,4,5} for controls 1-3,5-8, and
+  **controls 9-12 are unset (scancode 0)**. Cross-ref FUN_00497310: switch **cases 9/10/11/12
+  threshold the analog axes fVar1/fVar2 (DAT_0077311c) vs DAT_005d757c** — i.e. controls 9-12
+  are the ANALOG directional controls (stick up/down/left/right), NOT digital buttons.
+
+**=> Directional menu nav is driven by the analog STICK axes (DAT_0077311c), which are 0 with
+no joystick attached.** That is the real reason no digital flag write / single FUN_00497310
+override moved the selection row: directional input on this config has no digital binding.
+The menu sits idle (no direction) until the attract timer — consistent with the lifecycle.
+
+Working in-process injection paths (all OS-input-free):
+- CONFIRM/select: override FUN_00497310(player, 4) -> 0xff (PROVEN: submenu push).
+- DIRECTIONAL: drive the analog axis snapshot DAT_0077311c (per-joystick, FUN_004972b0 fills
+  it from FUN_004957a0), OR override FUN_00497310 cases 9-12 to return their analog "pressed"
+  sentinel (case 11/12: CONCAT31(..,0xff); case 9/10: FUN_004a2c48()). NEXT STEP to test.
+- ALT faithful path: set a player to keyboard — write type=2 at (&DAT_007e96fc)[p*0x80]
+  (0x7e96fc+p*0x200) and arrow DIK scancodes into (&DAT_007e96c8)[p*0x80+ctrl], then drive
+  the keyboard bitfield DAT_0077313c. Untested.
+
+## Focus-pause patch (2026-06-07)
+
+MASHED pauses when its window loses focus: main-loop pump FUN_00499690 (0x00499690) calls
+`WaitMessage()` (0x004996d5) whenever the focus flag DAT_0077391c==0 (set by WndProc
+FUN_00499820 WM_ACTIVATE). DAT_0077391c has exactly one reader, so that is the only gate.
+scripts/patch_mashed_no_focus_pause.py flips the JNZ (75) at 0x004996d3 to JMP (eb) so
+WaitMessage is always skipped -> game runs full-speed when unfocused (reversible: --restore;
+trade-off: spins a CPU core while unfocused). Lets background input testing run while the
+user multitasks. NOTE: during Frida spawns the window had focus anyway (tick ~107/s), so the
+pause was NOT the cause of the directional-injection negative — that was the joystick-default
+config above.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
