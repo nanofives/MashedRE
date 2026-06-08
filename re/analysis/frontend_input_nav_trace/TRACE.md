@@ -460,6 +460,24 @@ Status: in-race canonical scenario WORKS and exercises gameplay hooks. Remaining
 in-race (the in-race subset is now reachable); (b) drive the race to completion for the
 results-screen subset. Both are now tractable (the hard "reach the race" gate is solved).
 
+Broader coverage measure (20 representative gameplay HOLDs counted in-race, 45s):
+**8/20 exercised in-race** = VehicleSlotInit 0x0046c5c0, RaceResultIndexedStore 0x0045ba00,
+FrontendC2RoundI 0x00408a70, RaceScoreFloatGetBySlot 0x00408ad0 (58k), LapLapsGetBySlot
+0x00429a80 (8.3k), LapSecsGetBySlot 0x00429a90 (8.3k), LocalPlayerSlotCheck 0x00436810,
+VehicleUnlockFlagGet 0x0042ef40. The 0-count 12 are the RESULTS/round-end subset
+(PlayerScoreAcc*, EndOfRoundAccumulator, FrontendRaceResultsDispatch, ModeScoreGetBySlot,
+TeamBlockZeroGet, TiebreakFlagGet, EntityScoreFieldAdd, CarSlotInit/VehicleSlotFieldSet).
+
+CEILING for the RESULTS subset: the Time Trial does not auto-end and holding control-4 does not
+complete a lap (the car needs real steering to cross checkpoints). Reaching the results screen
+requires driving the car through a full lap — an autonomous-driving automation problem out of
+scope here. (A memory-patch to force race-end could trigger results hooks but is a forced, not
+canonical, state.) So: ~40% of gameplay hooks are reachable via the in-race canonical scenario;
+the results subset needs race completion (driving) — the honest remaining boundary.
+
+Tools: re/frida/statenav.py (state-aware nav + in-race hook counting). Screens: verify/p2/
+sn_{gts,colour,track,descend2,race_enter}.png.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8

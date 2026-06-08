@@ -104,8 +104,10 @@ def main():
     scr=sess.create_script(AGENT); scr.on("message",lambda m,d:None); scr.load()
     scr.exports_sync.init()
     # representative gameplay/results-gated HOLD hooks (non-hot: init/event/results, not per-frame)
-    GAMEPLAY = ["0x0046c5c0","0x00492340","0x00423b40","0x00408ad0","0x00429a80",
-                "0x0045ba00","0x00424920","0x00436810","0x0040e470","0x00431d80"]
+    GAMEPLAY = ["0x0046c5c0","0x0046c790","0x00492340","0x00423b40","0x00423b60",
+                "0x00423c40","0x00424920","0x0045ba00","0x00422fd0","0x00408a70",
+                "0x00408ad0","0x00429a80","0x00429a90","0x0040b6b0","0x00436810",
+                "0x00431d80","0x0042ef40","0x0046c700","0x004241b0","0x00424100"]
     scr.exports_sync.countthese(GAMEPLAY)
     dev.resume(pid)
     nav=Nav(scr,pid)
@@ -130,19 +132,23 @@ def main():
     shoot(pid, ROOT/shotdir/"sn_track.png")
     # DESCEND toward the race: confirm, wait for depth-increase OR phase-change (race leaves the
     # frontend), screenshot+log each new state. Stop when stuck or phase leaves 3 (in race).
-    last_d=nav.depth(); last_ph=nav.phase()
-    for step in range(8):
-        if not nav.alive(): print("   exited during descent"); break
-        nav.press(4)
-        time.sleep(1.2)
-        d=nav.depth(); ph=nav.phase()
-        print(f"  descend step {step}: depth={d} phase={ph} sel={scr.exports_sync.sel()}")
-        shoot(pid, ROOT/shotdir/f"sn_descend{step}.png")
-        if ph!=3 and ph!=last_d:   # phase left menu-active -> likely in race/transition
-            print(f"  >>> phase changed to {ph} (likely race/transition) at step {step}")
-        if d==last_d and ph==last_ph and step>=2:
-            print(f"  >>> stuck at depth={d} phase={ph} (needs different input here)")
-        last_d=d; last_ph=ph
+    nav.press(4); time.sleep(1.5)   # confirm track -> enter race
+    print(f"  after track confirm: depth={nav.depth()} phase={nav.phase()}")
+    shoot(pid, ROOT/shotdir/"sn_race_enter.png")
+    # DRIVE phase: hold throttle (best-guess accel control) and wait, to progress the race
+    # toward lap completion / results. Try a couple control indices for accel.
+    drive_secs = 45
+    end=time.time()+drive_secs; t_shot=0
+    while time.time()<end:
+        if not nav.alive(): print("   exited in race"); break
+        scr.exports_sync.press(4, 800)   # hold accel-ish
+        time.sleep(0.7)
+        if time.time()-t_shot>8:
+            t_shot=time.time()
+            cc=scr.exports_sync.counts()
+            nz=[r for r,c in cc.items() if isinstance(c,int) and c>0]
+            print(f"   in-race t+{int(drive_secs-(end-time.time()))}s phase={nav.phase()} exercised={len(nz)}")
+            shoot(pid, ROOT/shotdir/f"sn_race_{int(time.time())%100000}.png")
     print(f"  FINAL: depth={nav.depth()} phase={nav.phase()}")
     shoot(pid, ROOT/shotdir/"sn_final.png")
     try:
