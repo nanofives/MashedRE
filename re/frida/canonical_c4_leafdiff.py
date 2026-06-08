@@ -38,6 +38,10 @@ LEAVES = {
     "0x00493fc0": {"name": "AspectRatioGlobalGet", "kind": "ret_eax_src", "src": 0x00771a18},
     "0x00493f80": {"name": "IntroVideoDimGetter",  "kind": "out2x2"},
     "0x0042aad0": {"name": "MenuDimSet",           "kind": "writeflag"},
+    # AspectRatioSnapshot: DAT_00771a50 = AspectRatioGlobalGet(); DAT_00771a54 = DAT_00771a50.
+    # Only callee (0x00493fc0) is now C4 -> no stub. Same-run check: d1==d2==[src] after call.
+    "0x00494f30": {"name": "AspectRatioSnapshot",  "kind": "snap2src",
+                   "src": 0x00771a18, "d1": 0x00771a50, "d2": 0x00771a54},
 }
 
 AGENT = r'''
@@ -61,7 +65,8 @@ function record(key, sig){
   SAMP[key][sig] = (SAMP[key][sig]||0) + 1;
 }
 
-function attachLeaf(key, where, kind, src){
+function attachLeaf(key, where, L){
+  const kind=L.kind, src=L.src, d1=L.d1, d2=L.d2;
   try {
     Interceptor.attach(where, {
       onEnter(a){
@@ -76,6 +81,9 @@ function attachLeaf(key, where, kind, src){
           } else if (kind==='ret_eax_src'){
             const v=ret.toUInt32(); const g=abs(src).readU32();
             record(key, v===g ? 'ret==[src]' : 'MISMATCH ret=0x'+v.toString(16)+' src=0x'+g.toString(16));
+          } else if (kind==='snap2src'){
+            const a1=abs(d1).readU32(), a2=abs(d2).readU32(), s=abs(src).readU32();
+            record(key, (a1===a2 && a2===s) ? 'd1==d2==[src]' : 'MISMATCH d1=0x'+a1.toString(16)+' d2=0x'+a2.toString(16)+' s=0x'+s.toString(16));
           } else if (kind==='out2x2'){
             let s='';
             if(!this.p1.isNull()) s+='p1['+this.p1.readU32().toString(16)+','+this.p1.add(4).readU32().toString(16)+']';
@@ -116,12 +124,12 @@ rpc.exports = {
     for (const key in leaves){
       const L=leaves[key]; LEAVES[key]=L;
       if (mode==='off'){
-        attachLeaf(key, abs(parseInt(key,16)), L.kind, L.src);
+        attachLeaf(key, abs(parseInt(key,16)), L);
       } else {
         // ON: attach the .asi export (installed inline-JMP tail-jumps here)
         let ex=null;
         if (asi){ try{ ex=asi.findExportByName(L.name); }catch(e){} }
-        if (ex){ attachLeaf(key, ex, L.kind, L.src); }
+        if (ex){ attachLeaf(key, ex, L); }
         else { send({kind:'err', msg:'no export '+L.name+' in .asi -> cannot capture ON'}); }
       }
     }

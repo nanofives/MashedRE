@@ -40,5 +40,19 @@
     "clean": true,
     "verdict": "C4-CLEAN",
     "why": []
+  },
+  "0x00494f30": {
+    "name": "AspectRatioSnapshot",
+    "kind": "snap2src",
+    "off": [
+      "d1==d2==[src]"
+    ],
+    "on": [
+      "d1==d2==[src]"
+    ],
+    "installed": true,
+    "clean": true,
+    "verdict": "C4-CLEAN",
+    "why": []
   }
 }

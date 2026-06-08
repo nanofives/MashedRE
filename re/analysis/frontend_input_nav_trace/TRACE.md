@@ -361,6 +361,28 @@ Net menu-reachable navigate-C4 prerequisite coverage: ~15 distinct frontend hook
 Select + Options (install+survive+exercise confirmed). C4 promotion of these still needs the
 canonical-scenario behavioral-diff layer (above).
 
+## Leaf C4s earned via canonical-scenario behavioral diff (2026-06-07)
+
+re/frida/canonical_c4_leafdiff.py closes the C4 gate for pure leaves: captures the leaf's
+OBSERVABLE BEHAVIOR in OFF (original, Interceptor on RVA) and ON (modded, Interceptor on the
+.asi export the inline-JMP tail-jumps to) on the SAME navigated screen (Game Type Select),
+and compares. For getters reading run-varying globals (pointer/handle, not a stable value) it
+compares SAME-RUN (return/writes == source global) so cross-boot variance is not a false diff.
+
+Promoted C3->C4 (clean diff + inline-JMP live + pure-leaf-no-stubs):
+- MenuDimSet 0x0042aad0          : writes byte=0x30 + flag@0x008990e4=1 (identical both runs)
+- IntroVideoDimGetter 0x00493f80 : writes dims 512.0f x4 (identical)
+- AspectRatioGlobalGet 0x00493fc0: ret==[0x00771a18] both runs
+- AspectRatioSnapshot 0x00494f30 : d1(0x771a50)==d2(0x771a54)==[0x771a18] both runs (callee
+  AspectRatioGlobalGet is C4 -> no stub)
+=> C4 115 -> 119. Evidence: c4_leafdiff_gts.json. Method generalizes to any pure-leaf getter/
+writer reachable on a navigable screen.
+
+HELD (not promoted, honest): MenuReadinessCheckA/B 0x0042ae10/0x0042aeb0 — return 0/1 but the
+idle canonical scenario only exercises the trivial 0-branch (+ they call FUN_0040e470); the
+draw dispatchers (MenuChromeShellA/MenusBodyA/MenuIm2DQuad) are non-leaves needing side-effect
+diffs; ChromeBaseDraw is HOT. These need a richer diff (branch coverage / side-effect capture).
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
