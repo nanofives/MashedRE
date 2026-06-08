@@ -1,0 +1,44 @@
+{
+  "0x00493fc0": {
+    "name": "AspectRatioGlobalGet",
+    "kind": "ret_eax_src",
+    "off": [
+      "ret==[src]"
+    ],
+    "on": [
+      "ret==[src]"
+    ],
+    "installed": true,
+    "clean": true,
+    "verdict": "C4-CLEAN",
+    "why": []
+  },
+  "0x00493f80": {
+    "name": "IntroVideoDimGetter",
+    "kind": "out2x2",
+    "off": [
+      "p1[44000000,44000000]p2[44000000,44000000]"
+    ],
+    "on": [
+      "p1[44000000,44000000]p2[44000000,44000000]"
+    ],
+    "installed": true,
+    "clean": true,
+    "verdict": "C4-CLEAN",
+    "why": []
+  },
+  "0x0042aad0": {
+    "name": "MenuDimSet",
+    "kind": "writeflag",
+    "off": [
+      "byte=0x30 flag=0x1"
+    ],
+    "on": [
+      "byte=0x30 flag=0x1"
+    ],
+    "installed": true,
+    "clean": true,
+    "verdict": "C4-CLEAN",
+    "why": []
+  }
+}

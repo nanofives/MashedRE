@@ -3208,3 +3208,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-07  0042aad0  MenuDimSet  C3(crash fixed; C4 blocked on canonical diff)  navigate-C4
 2026-06-07  004282a0  MenuMenusBA  C3(register-ABI crash fixed)  navigate-C4
 2026-06-07  00427ad0  MenuMenusBB  C3(register-ABI crash fixed, latent)  navigate-C4
+2026-06-07  0042aad0  MenuDimSet  C3->C4  canonical-scenario behavioral diff (leafdiff GTS, installed 0xE9, pure leaf no stubs)
+2026-06-07  00493f80  IntroVideoDimGetter  C3->C4  canonical-scenario behavioral diff (leafdiff GTS, installed 0xE9, pure leaf no stubs)
+2026-06-07  00493fc0  AspectRatioGlobalGet  C3->C4  canonical-scenario behavioral diff (leafdiff GTS, installed 0xE9, pure leaf no stubs)
