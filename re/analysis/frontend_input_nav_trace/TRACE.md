@@ -383,6 +383,57 @@ idle canonical scenario only exercises the trivial 0-branch (+ they call FUN_004
 draw dispatchers (MenuChromeShellA/MenusBodyA/MenuIm2DQuad) are non-leaves needing side-effect
 diffs; ChromeBaseDraw is HOT. These need a richer diff (branch coverage / side-effect capture).
 
+## Branch-coverage / side-effect diffs — readiness checks + draw dispatchers (2026-06-08)
+
+Extended the diff harnesses to reach non-leaf / branchy frontend functions:
+- canonical_c4_sidediff.py: SIDE-EFFECT diff. `buffer` kind (capture N output bytes) and
+  `calltrace` kind (capture in-target ordered (callee,args) sequence; animated scalar args
+  masked via same-run formula check, e.g. MenusBodyA arg == [0x0067ebc0]-15000 -> delta d=0).
+- canonical_c4_leafdiff.py --readiness: capture EAX return DURING input taps (gate-at-settle)
+  so BOTH branches (0 idle / 1 input-pending) are exercised.
+
+Earned C3->C4 (clean canonical diff + inline-JMP live + no stubs):
+- MenuIm2DQuad 0x0042aae0     : 112-byte vertex buffer @0x0067ec30 bit-identical.
+- MenuChromeShellA 0x0042e3a0 : identical draw-call sequence (MenusBodyA d=0 + 4 const draws).
+- MenuReadinessCheckA 0x0042ae10 : both branches {0,1} identical (input-driven, GTS).
+=> C4 119 -> 122.
+HELD honestly: MenuReadinessCheckB 0x0042aeb0 (only 0-branch reachable under our taps; its +1
+byte offset checks control 0x7f1043 which down-taps don't set) ; ChromeBaseDraw 0x00472c60
+(HOT, behavioral lane).
+
+## Part 2 (in-race/results scenario) — scoped, blockers identified, NOT completed this session
+
+Goal: exercise the ~100 gameplay/results-gated HOLD hooks (PlayerScoreAcc*, Lap*GetBySlot,
+RaceResult*, VehicleSlotInit/CarSlotInit, EndOfRoundAccumulator...). Path mapped:
+  menu -> [4,4] Game Type Select -> [4] Single Player -> [12,12,4] Time Trial ->
+  **Player Colour Select** (verify/p2_timetrial_sel.png; shows controller "1" + icon row)
+  -> [track select?] -> [car select?] -> race -> results.
+
+BLOCKERS (why this is a much larger effort than Part 1):
+1. **Fixed-dwell deep nav is unreliable** past ~3 screens: each screen's transition timing
+   varies, so blind timed taps desync (the colour-sweep oscillated d2<->d3 and fell back to
+   GTS, verify/p2_colour_sweep.png; blind-confirm chain landed on Options,
+   verify/p2_blindconfirm.png). FIX NEEDED: state-aware nav — poll DAT_0067e9f8 (depth)/
+   DAT_0067eca4 (phase) and issue each input only once the expected screen is reached. This is
+   the concrete next deliverable and the prerequisite for everything below.
+2. **Player Colour Select needs a player-JOIN input**, not the generic menu-confirm (control 4):
+   blind confirms do not advance past it (the screen waits for player 1 to "join" with the
+   highlighted colour; likely a fresh-press edge on a specific control/joystick button, and
+   players default to joystick type — see [[feedback-no-global-input-injection]] binding dump).
+   Screen text is data-driven (USA.DAT) so no string anchor in the exe; the join control must be
+   found empirically (state-aware sweep on the parked colour screen) or by RE'ing the page state
+   machine.
+3. **Beyond colour**: track select + car select (each likely VehicleSlotInit/CarSlotInit fire
+   here — a subset of the HOLDs reachable WITHOUT finishing a race), then race start.
+4. **Race itself**: score/lap/results hooks fire only after a race progresses/completes.
+   Automating an actual race (driving the car through a track, or an abort-to-results path) is
+   the hardest piece and likely the bulk of the remaining work.
+
+Honest status: Part 2 is a multi-component effort (state-aware nav -> join RE -> setup nav ->
+race/abort -> results capture). Genuinely attempted and de-risked (path + precise blockers
+mapped); not completable in one session. Recommended start: build the state-aware nav driver
+(reusable; unblocks reliable deep navigation and clean join discovery), then iterate inward.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
