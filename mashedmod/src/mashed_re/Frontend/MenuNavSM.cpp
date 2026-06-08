@@ -32,81 +32,66 @@ namespace {
 // --------------------------------------------------------------------------
 // Harvested per-screen descriptor tables (verbatim from MASHED.exe, pool13).
 //
-// Format: a flat u32 stream of (key, value) entries, walked by the kv-iterator
-// FUN_0042ad90. Group delimiter = 0xff060000 (-0xfa0000); terminator =
-// 0xff070000 (-0xf90000). The selectable list items are the 0xff040000 entries;
-// 0xff000000 is the back-target string id; 0xff080000 is the prompt/screen id.
+// Format: a flat u32 stream of (key, value) entries, walked by the kv-iterators
+// FUN_0042ad90 / FUN_0042ac90. Group delimiter = 0xff060000 (-0xfa0000);
+// terminator = 0xff070000 (-0xf90000). The selectable list items are the
+// 0xff040000 entries; 0xff000000 is the back-target string id; 0xff080000 is
+// the prompt/screen-kind id; 0xff140000 / 0xff050000 carry each item's ACTION
+// CODE (the value the select handler dispatches on, see ItemActionCode + Nav_Select).
 //
-// KvLookup(table, 0xff040000, n) returns the id of the n-th list item; the
-// number of items = count of 0xff040000 occurrences before 0xff070000.
+// Source: PTR_DAT_005f7638[0..33] pointer array @0x005f7638 (read_only
+// Mashed_pool13, anchor BDCAE093... untouched, program_close issued). Each kTN[]
+// below is the full byte stream from PTR_DAT_005f7638[N], read out to its
+// 0xff070000 terminator. Screen 27 = nullptr (PTR_DAT_005f7638[27] = 0).
+// Generated from re/analysis/standalone_menu_sm/harvest/.
 //
-// Source RVAs (read_only Mashed_pool13, anchor untouched):
-//   PTR_DAT_005f7638[0..33] pointer array
-//   table[0]=0x005f6860 (root / main menu; pushed by FUN_0043df00 as id 0)
-//   table[1]=0x005f6980  table[2]=0x005f6a20  table[3]=0x005f6a98 ...
+// NOTE these REPLACE the earlier hand-transcribed kTable0..3, which truncated
+// the action codes (e.g. root item 1 action was transcribed 0x50 but the real
+// little-endian bytes are 0xff500000). The action codes are load-bearing for the
+// reversed push map, so the full verbatim stream is required.
 // --------------------------------------------------------------------------
 
-// table[0] @0x005f6860 - root MAIN MENU (screen id 0). Items 0xff040000:
-//   0x18, 0x27, 0x1c, 0x1d, 0x1e  (5 items, before first 0xff070000).
-const std::uint32_t kTable0_Root[] = {
-    0xff000000u, 0x00000047u, 0xff080000u, 0x00000005u,
-    0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u,
-    0xff040000u, 0x00000018u, 0xff140000u, 0xff150000u, // 0xff140000 val = 0xff150000 (verbatim)
-    0xff060000u, 0xff040000u, 0x00000027u, 0xff140000u,
-    0x00000050u, 0xff060000u, 0xff040000u, 0x0000001cu,
-    0xff140000u, 0x0000001eu, 0xff060000u, 0xff040000u,
-    0x0000001du, 0xff140000u, 0x0000001fu, 0xff060000u,
-    0xff040000u, 0x0000001eu, 0xff140000u, 0x00000020u,
-    0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u,
-    0xff100000u, 0xff120000u, 0xff0a0000u, 0xff070000u, // terminator
-};
+const std::uint32_t kT0[] = { 0xff000000u, 0x00000047u, 0xff080000u, 0x00000005u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000018u, 0xff140000u, 0xff150000u, 0xff060000u, 0xff040000u, 0x00000027u, 0xff140000u, 0xff500000u, 0xff060000u, 0xff040000u, 0x0000001cu, 0xff140000u, 0xff1e0000u, 0xff060000u, 0xff040000u, 0x0000001du, 0xff140000u, 0xff1f0000u, 0xff060000u, 0xff040000u, 0x0000001eu, 0xff140000u, 0xff200000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff120000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT1[] = { 0xff000000u, 0x00000040u, 0xff080000u, 0x00000001u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000021u, 0xff050000u, 0x00000002u, 0xff060000u, 0xff040000u, 0x00000022u, 0xff050000u, 0x00000003u, 0xff060000u, 0xff040000u, 0x00000027u, 0xff140000u, 0xff500000u, 0xff060000u, 0xff040000u, 0x0000026bu, 0xff140000u, 0xff820000u, 0xff060000u, 0xff040000u, 0x00000261u, 0xff140000u, 0xff800000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT2[] = { 0xff000000u, 0x00000021u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x000000e5u, 0xff140000u, 0xff3d0000u, 0xff060000u, 0xff040000u, 0x000000e6u, 0xff140000u, 0xff4d0000u, 0xff060000u, 0xff040000u, 0x00000024u, 0xff050000u, 0xff400000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT3[] = { 0xff000000u, 0x00000022u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x0000013eu, 0xff140000u, 0xff2c0000u, 0xff060000u, 0xff040000u, 0x00000140u, 0xff140000u, 0xff2e0000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT4[] = { 0xff000000u, 0x00000130u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff1d0000u, 0xff060000u, 0xff090000u, 0xff0d0000u, 0xff0e0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT5[] = { 0xff000000u, 0x00000037u, 0xff080000u, 0x00000008u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff240000u, 0xff060000u, 0xff090000u, 0xff230000u, 0xff330000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT6[] = { 0xff000000u, 0x00000270u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff260000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff110000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT7[] = { 0xff000000u, 0x00000270u, 0xff080000u, 0x0000000au, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff260000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff110000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT8[] = { 0xff000000u, 0x00000027u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000156u, 0xff140000u, 0xff430000u, 0xff060000u, 0xff040000u, 0x00000234u, 0xff140000u, 0xff730000u, 0xff060000u, 0xff040000u, 0x00000157u, 0xff140000u, 0xff440000u, 0xff060000u, 0xff040000u, 0x00000250u, 0xff140000u, 0xff470000u, 0xff060000u, 0xff040000u, 0x0000025fu, 0xff140000u, 0xff830000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT9[] = { 0xff000000u, 0x00000025u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x0000005du, 0xff140000u, 0xff2e0000u, 0xff060000u, 0xff040000u, 0x0000005eu, 0xff050000u, 0xff2f0000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT10[] = { 0xff000000u, 0x0000013fu, 0xff080000u, 0x00000006u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000153u, 0xff140000u, 0xffffffffu, 0xff060000u, 0xff040000u, 0x0000005fu, 0xff140000u, 0xff300000u, 0xff060000u, 0xff040000u, 0x00000060u, 0xff140000u, 0xff310000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT11[] = { 0xff000000u, 0x000000c5u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x000000c6u, 0xff140000u, 0xff370000u, 0xff060000u, 0xff040000u, 0x000000c7u, 0xff140000u, 0xff380000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff0b0000u, 0xff0c0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT12[] = { 0xff000000u, 0x000000ccu, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff3a0000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT13[] = { 0xff000000u, 0x000000c7u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x000000cdu, 0xff140000u, 0xff390000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff0b0000u, 0xff0c0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT14[] = { 0xff000000u, 0x000000ccu, 0xff080000u, 0x00000006u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff260000u, 0xff060000u, 0xff090000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT15[] = { 0xff000000u, 0x000000cfu, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff3b0000u, 0xff060000u, 0xff090000u, 0xff0d0000u, 0xff0e0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT16[] = { 0xff000000u, 0x000000d5u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff3c0000u, 0xff060000u, 0xff090000u, 0xff0d0000u, 0xff0e0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT17[] = { 0xff000000u, 0x0000013fu, 0xff080000u, 0x00000006u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000132u, 0xff140000u, 0xffffffffu, 0xff060000u, 0xff040000u, 0x000000dbu, 0xff140000u, 0xffffffffu, 0xff060000u, 0xff040000u, 0x0000024cu, 0xff140000u, 0xffffffffu, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT18[] = { 0xff000000u, 0x0000024du, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000150u, 0xff140000u, 0xff420000u, 0xff060000u, 0xff040000u, 0x00000056u, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x0000024cu, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x00000103u, 0xff140000u, 0xff810000u, 0xff040000u, 0x000000feu, 0xff140000u, 0xff810000u, 0xff040000u, 0x000000dbu, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x0000024du, 0xff140000u, 0xff810000u, 0xff060000u, 0xff060000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT19[] = { 0xff000000u, 0x00000156u, 0xff080000u, 0x00000004u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000158u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x00000159u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x00000260u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x0000015bu, 0xff140000u, 0xff450000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT20[] = { 0xff000000u, 0x00000047u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff4c0000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT21[] = { 0xff000000u, 0x00000027u, 0xff080000u, 0x00000001u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000018u, 0xff140000u, 0xff490000u, 0xff060000u, 0xff040000u, 0x00000017u, 0xff140000u, 0xff4a0000u, 0xff060000u, 0xff040000u, 0x00000250u, 0xff140000u, 0xff470000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT22[] = { 0xff000000u, 0x000000c3u, 0xff080000u, 0x00000001u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff4b0000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT23[] = { 0xff000000u, 0x00000047u, 0xff080000u, 0x00000001u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff4c0000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT24[] = { 0xff000000u, 0x0000024du, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000150u, 0xff140000u, 0xff420000u, 0xff060000u, 0xff040000u, 0x00000056u, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x000000fdu, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x000000feu, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x00000100u, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x00000101u, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x00000102u, 0xff140000u, 0xff810000u, 0xff060000u, 0xff040000u, 0x0000024du, 0xff140000u, 0xff810000u, 0xff060000u, 0xff090000u, 0xff100000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT25[] = { 0xff000000u, 0x00000020u, 0xff080000u, 0x00000000u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0xffffffffu, 0xff140000u, 0xff4f0000u, 0xff060000u, 0xff070000u };
+const std::uint32_t kT26[] = { 0xff000000u, 0x0000001au, 0xff080000u, 0x00000004u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000224u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT28[] = { 0xff000000u, 0x0000020fu, 0xff080000u, 0x00000004u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x000000c3u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x000000c3u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x000000c3u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x000000c3u, 0xff140000u, 0xff450000u, 0xff060000u, 0xff090000u, 0xff0d0000u, 0xff0e0000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT29[] = { 0xff000000u, 0x00000235u, 0xff080000u, 0x00000002u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000242u, 0xff140000u, 0xff710000u, 0xff060000u, 0xff040000u, 0x00000243u, 0xff140000u, 0xff720000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT30[] = { 0xff000000u, 0x00000234u, 0xff080000u, 0x00000006u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x00000234u, 0xff140000u, 0xffffffffu, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT31[] = { 0xff000000u, 0x0000026bu, 0xff080000u, 0x00000004u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x0000026cu, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x0000026du, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x0000026eu, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x0000026fu, 0xff140000u, 0xff450000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT32[] = { 0xff000000u, 0x0000025fu, 0xff080000u, 0x00000004u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x0000025fu, 0xff140000u, 0xff450000u, 0xff060000u, 0xff090000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
+const std::uint32_t kT33[] = { 0xff000000u, 0x0000026bu, 0xff080000u, 0x00000004u, 0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u, 0xff040000u, 0x0000026du, 0xff140000u, 0xff450000u, 0xff060000u, 0xff040000u, 0x0000026eu, 0xff140000u, 0xff450000u, 0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u, 0xff0d0000u, 0xff0e0000u, 0xff110000u, 0xff100000u, 0xff0a0000u, 0xff070000u };
 
-// table[1] @0x005f6980. back-id 0x40. Items: 0x21, 0x22, 0x27, 0x26b, 0x261.
-const std::uint32_t kTable1[] = {
-    0xff000000u, 0x00000040u, 0xff080000u, 0x00000001u,
-    0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u,
-    0xff040000u, 0x00000021u, 0xff050000u, 0x00000002u,
-    0xff060000u, 0xff040000u, 0x00000022u, 0xff050000u,
-    0x00000003u, 0xff060000u, 0xff040000u, 0x00000027u,
-    0xff140000u, 0x00000050u, 0xff060000u, 0xff040000u,
-    0x0000026bu, 0xff140000u, 0x00000082u, 0xff060000u,
-    0xff040000u, 0x00000261u, 0xff140000u, 0x00000080u,
-    0xff060000u, 0xff090000u, 0xff0b0000u, 0xff0c0000u,
-    0xff100000u, 0xff0a0000u, 0xff070000u,
-};
-
-// table[2] @0x005f6a20. back-id 0x21. Items: 0xe5, 0xe6, 0x24.
-const std::uint32_t kTable2[] = {
-    0xff000000u, 0x00000021u, 0xff080000u, 0x00000002u,
-    0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u,
-    0xff040000u, 0x000000e5u, 0xff140000u, 0x0000003du,
-    0xff060000u, 0xff040000u, 0x000000e6u, 0xff140000u,
-    0x0000004du, 0xff060000u, 0xff040000u, 0x00000024u,
-    0xff050000u, 0x00000040u, 0xff060000u, 0xff090000u,
-    0xff0b0000u, 0xff0c0000u, 0xff100000u, 0xff110000u,
-    0xff0a0000u, 0xff070000u,
-};
-
-// table[3] @0x005f6a98. back-id 0x22. Items: 0x13e, 0x140.
-const std::uint32_t kTable3[] = {
-    0xff000000u, 0x00000022u, 0xff080000u, 0x00000002u,
-    0xff020000u, 0x00000050u, 0xff030000u, 0x00000078u,
-    0xff040000u, 0x0000013eu, 0xff140000u, 0x0000002cu,
-    0xff060000u, 0xff040000u, 0x00000140u, 0xff140000u,
-    0x0000002eu, 0xff060000u, 0xff090000u, 0xff0b0000u,
-    0xff0c0000u, 0xff100000u, 0xff110000u, 0xff0a0000u,
-    0xff070000u,
-};
-
-// PTR_DAT_005f7638 analogue: screen id -> descriptor table. Only the screens we
-// have harvested are populated; the rest are nullptr (KvLookup tolerates null ->
-// empty screen). Verbatim screen->table addresses from PTR_DAT_005f7638 confirm
-// indices 0/1/2/3 map to these tables.
+// PTR_DAT_005f7638 analogue: screen id -> descriptor table (all 34 entries
+// verbatim; index 27 = nullptr matching PTR_DAT_005f7638[27]=0).
 const std::uint32_t* const kScreenTables[] = {
-    kTable0_Root, // [0] 0x005f6860 root
-    kTable1,      // [1] 0x005f6980
-    kTable2,      // [2] 0x005f6a20
-    kTable3,      // [3] 0x005f6a98
+    kT0, kT1, kT2, kT3, kT4, kT5, kT6, kT7, kT8, kT9,
+    kT10, kT11, kT12, kT13, kT14, kT15, kT16, kT17, kT18, kT19,
+    kT20, kT21, kT22, kT23, kT24, kT25, kT26, nullptr /*27*/, kT28, kT29,
+    kT30, kT31, kT32, kT33,
 };
 constexpr int kScreenTableCount =
     static_cast<int>(sizeof(kScreenTables) / sizeof(kScreenTables[0]));
@@ -116,23 +101,103 @@ const std::uint32_t* TableForScreen(int screen_id) {
     return kScreenTables[screen_id];
 }
 
-// Root item index -> child screen pushed on Select(). The faithful item->screen
-// map lives in the distributed per-screen select handlers (not reversed here;
-// documented follow-up). For the demo, the first two root items push the two
-// harvested submenus so a push lands on REAL submenu content; the rest are
-// no-ops (documented). This is the only non-harvested heuristic in this module.
-int RootChildScreen(int root_item_index) {
-    switch (root_item_index) {
-        case 0: return 1;   // -> table[1]
-        case 1: return 2;   // -> table[2]
-        case 2: return 3;   // -> table[3]
-        default: return -1; // unmapped (follow-up RE)
+// --------------------------------------------------------------------------
+// Reversed item -> child-screen push map (FUN_0043dfd0, the frontend input/
+// update tick; 0x0043dfd0). On SELECT the original reads the highlighted item's
+// ACTION CODE via FUN_0042ac90 (0x0042ac90) — the value after the item's
+// 0xff140000 / 0xff050000 key — then dispatches on it. The cases below are the
+// FUN_0043d2a0(child, 0) PUSH targets transcribed verbatim from that dispatch
+// ladder, with the originating decomp line cited.
+//
+// Three classes:
+//   (A) unconditional push  -> faithful, returned directly.
+//   (B) state-gated push    -> the original chooses between two children on a
+//       sub-C2 game-state query; we take the *primary/default* child and mark it
+//       [UNCERTAIN] (the secondary branch needs the gated state ported).
+//   (C) non-push action      -> modal dialog (FUN_0042bf30), reload(0,2),
+//       pop(0,1), or a pure side-effect; ActionToScreen returns a sentinel and
+//       Nav_Select performs the right non-push behavior (or no-op).
+//
+// Default rule (LAB_0043fc37, 0x0043fc37): if the action code does not match any
+// 0xffXX0000 case, the original calls FUN_0043d2a0(action_code, 0) — i.e. a
+// SMALL action value IS the literal child screen id. This is how screen 1's
+// items 0x21/0x22 (action 0x2 / 0x3) push screens 2 / 3.
+// --------------------------------------------------------------------------
+
+// Sentinels returned by ActionToScreen for non-push actions.
+enum : int {
+    kActReload = -2,   // FUN_0043d2a0(0,2)  reload current (returns to root state)
+    kActPop    = -3,   // FUN_0043d2a0(0,1)  pop one level
+    kActNone   = -1,   // modal / pure side-effect / unmapped: no nav change
+};
+
+// action code -> child screen (or sentinel). action is the raw u32 from the
+// descriptor table. RVAs are lines within FUN_0043dfd0 (0x0043dfd0) unless noted.
+int ActionToScreen(std::uint32_t action) {
+    switch (action) {
+        // (A) unconditional pushes -----------------------------------------
+        case 0xff430000u: return 0x13; // L1116
+        case 0xff490000u: return 7;    // L1138
+        case 0xff4b0000u: return 1;    // L1133
+        case 0xff4d0000u: return 4;    // L941
+        case 0xff500000u: return 8;    // L1187
+        case 0xff710000u:              // L1198
+        case 0xff720000u: return 4;    // L1204
+        case 0xff730000u: return 0x1e; // L1183
+        case 0xff830000u: return 0x20; // L1229
+        case 0xff2c0000u:              // L402 -> LAB_0043f198 -> push 4
+        case 0xff2e0000u: return 4;    // L816 -> LAB_0043f1fd -> push 4
+        case 0xff2d0000u:              // L400 -> LAB_0043f21d
+        case 0xff2f0000u: return 10;   // L287
+        case 0xff300000u:              // L849 -> ecdc=1 -> LAB_0043f203 -> push 4
+        case 0xff310000u: return 4;    // L853 -> ecdc=2 -> LAB_0043f203 -> push 4
+        case 0xff360000u: return 0xb;  // L863
+        case 0xff380000u: return 0xd;  // L867
+        case 0xff3b0000u: return 6;    // L914
+        case 0xff400000u: return 4;    // L273 (LAB_0043f468 path; pushes 4)
+        case 0xff4a0000u: return kActReload; // L1145 FUN_0043d2a0(0,2)
+        case 0xff3a0000u: return kActReload; // L907 FUN_0043d2a0(0,2)
+        case 0xff150000u: return kActReload; // L338 FUN_0043d2a0(0,2)
+        case 0xff450000u: return kActPop;    // L1120 FUN_0043d2a0(0,1)
+
+        // (B) state-gated pushes (primary/default branch; secondary [UNCERTAIN])
+        case 0xff240000u: return 7;    // L303 default (ecdc==0 && ed6c==0). Other
+                                       // branches open confirm dialogs / set state.
+        case 0xff3c0000u: return 0xf;  // L889 when FUN_0042bb60()==0x1000; else modal.
+        case 0xff3d0000u: return 4;    // L257/LAB_0043f468 push 4 (also sets DAT_0067f184).
+        case 0xff820000u: return 0x1f; // L1212 when FUN_00402f40()==0; else 0x21 (L1215).
+        case 0xff4c0000u: return 1;    // L1158 when DAT_0067ed3c==0x17; else pop (L1165).
+
+        // (C) modal dialogs / pure side-effects (no nav) --------------------
+        case 0xff1e0000u:              // L335 FUN_0042bf30 confirm
+        case 0xff1f0000u:              // L392 FUN_0042bf30 confirm
+        case 0xff200000u:              // L396 FUN_0042bf30 confirm
+        case 0xff390000u:              // no Nav from this code
+        case 0xff440000u:              // L951 FUN_00409900 (no push)
+        case 0xff470000u:              // L1124 FUN_00409930 (no push)
+        case 0xff4f0000u:              // L1192 handled, no push
+        case 0xff800000u:              // L1219 FUN_0042bf30 confirm
+        case 0xff810000u:              // L1223 reset cursor (no nav)
+        case 0xff420000u:              // L953 gated reload/modal (player-count dep)
+        case 0xff260000u:              // mode-tile sub-handler (internal codes)
+        case 0xffffffffu:              // FUN_0042ac90 -> "no action key in group"
+            return kActNone;
+
+        // (default) LAB_0043fc37: small action value == literal child screen id.
+        default:
+            if (action < static_cast<std::uint32_t>(kScreenTableCount)) {
+                return static_cast<int>(action);
+            }
+            return kActNone;
     }
 }
 
 // Tag keys (negated forms confirmed in the iterator decomp).
 constexpr std::uint32_t kTagBack = 0xff000000u; // -0x1000000
 constexpr std::uint32_t kTagItem = 0xff040000u; // -0xfc0000
+constexpr std::uint32_t kTagAct1 = 0xff050000u; // -0xfb0000 (per-item action key)
+constexpr std::uint32_t kTagAct2 = 0xff140000u; // -0xec0000 (per-item action key)
+constexpr std::uint32_t kGrpEnd  = 0xff060000u; // -0xfa0000 (group delimiter)
 constexpr std::uint32_t kTermVal = 0xff070000u; // -0xf90000 (terminator)
 
 // --------------------------------------------------------------------------
@@ -188,6 +253,40 @@ int CountItems(const std::uint32_t* table) {
         if (n >= kMaxItems) break;
     }
     return n;
+}
+
+// FUN_0042ac90 (0x0042ac90) - read the ACTION CODE of the item at list index
+// `item_index`. The original walks the table past `item_index` occurrences of
+// the item tag (0xff040000), then scans within that item's group for the action
+// key (0xff050000 or 0xff140000), returning the following u32; or 0xffffffff
+// ("no action") if the group ends (0xff060000) first. This is the value the
+// select handler dispatches on (see ActionToScreen). Returns 0xffffffff if the
+// item or table is absent.
+std::uint32_t ItemActionCode(const std::uint32_t* table, int item_index) {
+    if (table == nullptr || item_index < 0) return 0xffffffffu;
+    int idx = 0;       // word cursor
+    int item = -1;     // current item ordinal (-1 before first 0xff040000)
+    bool in_target = false;
+    for (;;) {
+        const std::uint32_t k = table[idx];
+        if (k == kTermVal) return 0xffffffffu;        // ran off the end
+        if (k == kTagItem) {                          // 0xff040000 -> next item
+            ++item;
+            in_target = (item == item_index);
+            idx += 2;                                 // skip (tag, string-id)
+            continue;
+        }
+        if (in_target) {
+            if (k == kGrpEnd) return 0xffffffffu;     // group closed, no action key
+            if (k == kTagAct1 || k == kTagAct2) {     // 0xff050000 / 0xff140000
+                return table[idx + 1];                // the dispatch action code
+            }
+            idx += 2;                                 // other keyed pair
+            continue;
+        }
+        // Outside the target group: walk word-by-word (markers may be bare).
+        ++idx;
+    }
 }
 
 // FUN_00432800 tail (cursor placement) - MINIMAL all-enabled variant.
@@ -315,12 +414,24 @@ void Nav_MoveCursor(int delta) {
 bool Nav_Select() {
     const NavSlot& s = g_stack[g_nav_depth];
     if (s.cursor < 0 || s.cursor >= s.item_count) return false;
-    // Only the root screen has a (heuristic) child map wired; deeper screens are
-    // documented follow-up (faithful per-screen select handlers not yet reversed).
-    int child = -1;
-    if (g_nav_depth == 0) child = RootChildScreen(s.cursor);
-    if (child < 0) return false;
-    Nav(child, kNavPush);
+    // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
+    // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
+    const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
+    const int target = ActionToScreen(action);
+    if (target == kActPop) {
+        return Nav_Back();
+    }
+    if (target == kActReload) {
+        Nav(0 /*ignored*/, kNavReload);
+        return true;
+    }
+    if (target == kActNone) {
+        return false; // modal dialog / pure side-effect / unmapped: no nav change
+    }
+    if (target < 0 || target >= kScreenTableCount || TableForScreen(target) == nullptr) {
+        return false; // defensive: never push a screen we have no table for
+    }
+    Nav(target, kNavPush);
     return true;
 }
 
