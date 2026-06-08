@@ -12826,4 +12826,58 @@ HOOKS = {
     # to a populated-race canonical scenario (C3->C4 track). Entry intentionally
     # omitted so the central frida-sweep does not promote it.
 
+    # ── Session c3-batch-ah-s5 — audio root/timer getters + linear->log leaf ──
+    # DEFERRED (not registered): 0x005ab010 AudioElapsedTicks (moving-counter
+    #   diff, read_global can't capture deterministically), 0x005aaff0
+    #   AudioTimerBaselineInit (void_write_observe degenerate/racy), and the
+    #   0x005a89a0/b0/c0 VoiceField getters (thiscall struct-ptr, not 0-arg
+    #   read_global). See TimerGetters_ah5.cpp header.
+
+    # 0x005aad40  AudioRootGet — MOV EAX,[0x007dcd20]; RET. read_global: write
+    #   sentinel to 0x007dcd20, call fn(), verify return == sentinel.
+    # ref: re/analysis/bucket_audio_005a7b60_005ab620/005aad40.md
+    'audio_root_get': {
+        'rva':            0x005aad40,
+        'export':         'AudioRootGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007dcd20,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE, 0x12345678,
+                           0xFFFFFFFF, 0x80000000, 0x00000001, 0x55555555,
+                           0xAAAAAAAA, 0x00FF00FF],
+        'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
+    },
+
+    # 0x005ab070  AudioTimerRateGet — NOT REGISTERED (c3-batch-ah-s5 2026-06-08).
+    #   return [0x007dcdf8] if [0x007dce00]==1 else literal 1000. read_global
+    #   seeds 0x007dcdf8, but at the diff-attach point the runtime gate
+    #   0x007dce00 != 1, so every vector returns the constant 1000 (verified:
+    #   diff GREEN but all-1000 DEGENERATE -> false-GREEN). The seeded global
+    #   never reaches the return; read_global can't satisfy the gate (single
+    #   global only). DEFER to a scenario where the timer is initialized
+    #   (DAT_007dce00==1). Reimpl AudioTimerRateGet is authored + installed in
+    #   TimerGetters_ah5.cpp but intentionally omitted here so the central
+    #   frida-sweep does not promote on the degenerate observable.
+
+    # 0x005aeb90  AudioLinearToLog — uint(float). x87 leaf:
+    #   if (x < [0x005cc990]) return 0xffffd8f0; else
+    #   r = TRUNC(log10(x) * [0x005cd0b8]); return (r>0)?0:r.
+    #   [0x005cc990]=0x3727c5ac (~9.99e-6 threshold), [0x005cd0b8]=2000.0f.
+    #   Pure leaf; output varies with the float input across the LUT domain.
+    # ref: re/analysis/bucket_audio_005ab710_005af040/0x005aeb90.md
+    'audio_linear_to_log': {
+        'rva':            0x005aeb90,
+        'export':         'AudioLinearToLog',
+        'signature':      {'ret': 'uint32', 'args': ['float']},
+        'arg_type':       'float_scalar',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0.0, 1.0e-9, 1.0e-6, 1.0e-5, 0.0001, 0.001, 0.01, 0.1,
+            0.25, 0.5, 0.70710678, 1.0, 2.0, 10.0, 100.0, 1000.0,
+            1.0e6, 3.1622776,
+        ],
+        'path2_tests': [0.0, 0.001, 0.5, 1.0, 100.0],
+    },
+
 }
