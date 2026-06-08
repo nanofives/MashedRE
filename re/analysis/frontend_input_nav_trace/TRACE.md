@@ -468,12 +468,28 @@ VehicleUnlockFlagGet 0x0042ef40. The 0-count 12 are the RESULTS/round-end subset
 (PlayerScoreAcc*, EndOfRoundAccumulator, FrontendRaceResultsDispatch, ModeScoreGetBySlot,
 TeamBlockZeroGet, TiebreakFlagGet, EntityScoreFieldAdd, CarSlotInit/VehicleSlotFieldSet).
 
-CEILING for the RESULTS subset: the Time Trial does not auto-end and holding control-4 does not
-complete a lap (the car needs real steering to cross checkpoints). Reaching the results screen
-requires driving the car through a full lap — an autonomous-driving automation problem out of
-scope here. (A memory-patch to force race-end could trigger results hooks but is a forced, not
-canonical, state.) So: ~40% of gameplay hooks are reachable via the in-race canonical scenario;
-the results subset needs race completion (driving) — the honest remaining boundary.
+RESULTS SUBSET — ACHIEVED (the earlier "out of scope" ceiling was WRONG). The fix: the
+results/scoring hooks belong to the COMPETITIVE arena mode (Quick Battle), not Time Trial.
+statenav navigates Single Player -> Quick Battle(mode sel 1) -> colour -> track -> "Game Mode"
+setup -> confirm "Play Game" -> arena round (phase 0). Rounds END on elimination/timeout, and
+cycling a held control (drive_ctrls) induces car movement -> collisions/eliminations -> points
+scored -> round-end scoring. Confirmed: phase oscillates 0<->3 (round <-> round-end/results),
+the "Race Results" screen appears (verify/p2/sn_round_80.png, Team/Crowns panel), and the
+RESULTS hooks fire: EndOfRoundAccumulator 0x00424920(1), PlayerScoreAccA 0x00423b40(20),
+PlayerScoreTeamAccBase 0x00423c40(24), TeamBlockZeroGet 0x00424100(6), FrontendRaceResultsDispatch
+0x00422fd0(12), RaceResultIndexedStore 0x0045ba00(36), GetDat008994c0 0x004241b0(1),
+VehicleSlotFieldSet 0x0046c790(12), FrontendC2RoundI 0x00408a70(20). Remaining 0-count are
+conditional/mode-specific branches (TiebreakFlagGet=only on a tie, ModeScoreGetBySlot=other
+mode, PlayerScoreAccB=team variant, CarSlotInit=fires pre-counter-attach) reachable with mode
+variations.
+
+NET Part 2: the in-race/results canonical scenario WORKS for the gameplay-gated hooks. In-race
+(Time Trial) exercises the during-race subset (slot-init, lap, score-read, slot-check); Quick
+Battle to round-end exercises the results/scoring subset (end-of-round, player/team score,
+results-dispatch). ~14 distinct gameplay-gated hooks exercised across the two scenarios; the
+state-aware nav (statenav.py) reliably reaches both. Remaining to fully promote these to C4:
+the OFF/ON behavioral-diff layer applied in-race/results (same method as Part 1, integrated
+with statenav) — the exercise prerequisite is now met for both subsets.
 
 Tools: re/frida/statenav.py (state-aware nav + in-race hook counting). Screens: verify/p2/
 sn_{gts,colour,track,descend2,race_enter}.png.

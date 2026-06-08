@@ -104,10 +104,12 @@ def main():
     scr=sess.create_script(AGENT); scr.on("message",lambda m,d:None); scr.load()
     scr.exports_sync.init()
     # representative gameplay/results-gated HOLD hooks (non-hot: init/event/results, not per-frame)
-    GAMEPLAY = ["0x0046c5c0","0x0046c790","0x00492340","0x00423b40","0x00423b60",
-                "0x00423c40","0x00424920","0x0045ba00","0x00422fd0","0x00408a70",
-                "0x00408ad0","0x00429a80","0x00429a90","0x0040b6b0","0x00436810",
-                "0x00431d80","0x0042ef40","0x0046c700","0x004241b0","0x00424100"]
+    # RESULTS/round-end subset (the 12 that were 0 in Time Trial) + a few in-race positives.
+    # These fire on round END in the competitive arena (Quick Battle), which ends on
+    # elimination/timeout with the AI playing it out -> no driving needed.
+    GAMEPLAY = ["0x00423b40","0x00423b60","0x00423c40","0x00424920","0x00422fd0",
+                "0x0040b6b0","0x00431d80","0x0046c700","0x004241b0","0x00424100",
+                "0x00492340","0x0046c790","0x0045ba00","0x00408a70","0x00436810"]
     scr.exports_sync.countthese(GAMEPLAY)
     dev.resume(pid)
     nav=Nav(scr,pid)
@@ -121,9 +123,10 @@ def main():
     # GTS cursor on Single Player(0). confirm -> Single Player mode-select (depth 3)
     nav.confirm_to_depth(3)
     print(f"  single player: depth={nav.depth()} sel={scr.exports_sync.sel()}")
-    # mode-select: down,down to Time Trial(2), confirm -> colour-select (depth 4)
-    nav.press(12); nav.press(12)
-    print(f"  mode sel after down,down: sel={scr.exports_sync.sel()}")
+    # mode-select: down ONCE to Quick Battle(1) (the competitive arena: rounds END on
+    # elimination/timeout -> end-of-round scoring fires WITHOUT driving a lap). confirm -> colour.
+    nav.press(12)
+    print(f"  mode sel after down (Quick Battle): sel={scr.exports_sync.sel()}")
     nav.confirm_to_depth(4, tries=4)
     print(f"  colour-select: depth={nav.depth()} sel={scr.exports_sync.sel()}")
     shoot(pid, ROOT/shotdir/"sn_colour.png")
@@ -132,24 +135,43 @@ def main():
     shoot(pid, ROOT/shotdir/"sn_track.png")
     # DESCEND toward the race: confirm, wait for depth-increase OR phase-change (race leaves the
     # frontend), screenshot+log each new state. Stop when stuck or phase leaves 3 (in race).
-    nav.press(4); time.sleep(1.5)   # confirm track -> enter race
+    nav.press(4); time.sleep(1.5)   # confirm track -> Quick Battle "Game Mode" setup screen
     print(f"  after track confirm: depth={nav.depth()} phase={nav.phase()}")
+    shoot(pid, ROOT/shotdir/"sn_gamemode.png")
+    # On the Game Mode screen "Play Game" is the top option; confirm to START the arena round.
+    # Robust: press confirm until phase leaves the menu (==0 = in arena) or we stop progressing.
+    for k in range(5):
+        if nav.phase()!=3: break
+        nav.press(4); time.sleep(1.5)
+        print(f"  start-attempt {k}: depth={nav.depth()} phase={nav.phase()}")
+        if nav.phase()==0: break
     shoot(pid, ROOT/shotdir/"sn_race_enter.png")
-    # DRIVE phase: hold throttle (best-guess accel control) and wait, to progress the race
-    # toward lap completion / results. Try a couple control indices for accel.
-    drive_secs = 45
-    end=time.time()+drive_secs; t_shot=0
+    # WAIT for the arena round to play out (AI drives; round ends on elimination/timeout ->
+    # end-of-round scoring fires the results hooks). No forced input needed. Watch for results
+    # hooks to start firing and for a phase change (round-end/results screen).
+    round_secs = int(sys.argv[sys.argv.index("--round")+1]) if "--round" in sys.argv else 110
+    end=time.time()+round_secs; t_shot=0; first_results=None
+    RESULTS_SUBSET={"0x00423b40","0x00423b60","0x00423c40","0x00424920","0x00422fd0","0x0046c700","0x004241b0","0x00424100"}
+    # induce car movement/elimination to trigger a SCORING event (point) -> the score-accumulator
+    # hooks fire on round-point. Cycle a held control (rotate every ~6s) to find throttle/steer
+    # and drive the car into collisions / off the arena.
+    drive_ctrls=[4,0,1,11,12,5,6,7]; di=0; dt=0
     while time.time()<end:
         if not nav.alive(): print("   exited in race"); break
-        scr.exports_sync.press(4, 800)   # hold accel-ish
-        time.sleep(0.7)
-        if time.time()-t_shot>8:
+        if time.time()-dt>6: di=(di+1)%len(drive_ctrls); dt=time.time()
+        scr.exports_sync.press(drive_ctrls[di], 600)
+        time.sleep(0.5)
+        if time.time()-t_shot>10:
             t_shot=time.time()
             cc=scr.exports_sync.counts()
             nz=[r for r,c in cc.items() if isinstance(c,int) and c>0]
-            print(f"   in-race t+{int(drive_secs-(end-time.time()))}s phase={nav.phase()} exercised={len(nz)}")
-            shoot(pid, ROOT/shotdir/f"sn_race_{int(time.time())%100000}.png")
-    print(f"  FINAL: depth={nav.depth()} phase={nav.phase()}")
+            res_hit=[r for r in RESULTS_SUBSET if isinstance(cc.get(r),int) and cc[r]>0]
+            tnow=int(round_secs-(end-time.time()))
+            print(f"   round t+{tnow}s phase={nav.phase()} exercised={len(nz)} results_hit={len(res_hit)}")
+            shoot(pid, ROOT/shotdir/f"sn_round_{tnow}.png")
+            if res_hit and first_results is None:
+                first_results=tnow; print(f"   >>> RESULTS hooks firing at t+{tnow}s: {res_hit}")
+    print(f"  FINAL: depth={nav.depth()} phase={nav.phase()} first_results_at={first_results}")
     shoot(pid, ROOT/shotdir/"sn_final.png")
     try:
         counts = scr.exports_sync.counts()
