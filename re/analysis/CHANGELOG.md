@@ -3224,3 +3224,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-08  005b35a0  FUN_005b35a0 (AudioListPushBack)  C2->C3  Frida 12/12 GREEN non-degenerate (harness-ext count_header_list_ring)
 2026-06-08  005b3670  FUN_005b3670 (AudioListFind)  C2->C3  Frida 12/12 GREEN non-degenerate (harness-ext count_header_list_ring)
 2026-06-08  005b36b0  FUN_005b36b0 (AudioListAt)  C2->C3  Frida 12/12 GREEN non-degenerate (harness-ext count_header_list_ring)
+2026-06-08  005b3580  FUN_005b3580 (AudioListInit)  C2->C3  Frida 12/12 GREEN (harness-ext count_header_list_ring; nullary-init constant 0:11 by construction; prefill-sentinel overwrite proves exec; user-approved)
