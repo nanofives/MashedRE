@@ -155,6 +155,7 @@
 #include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
+#include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
 // Frontend/DrawQuadPrimitives.cpp). Writes the DAT_00898a20 vertex buffer and
@@ -464,10 +465,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         return 0;
 
     case WM_KEYDOWN:
-        if (wp == VK_ESCAPE) {
-            PostQuitMessage(0);
-            return 0;
-        }
+        // ESC is no longer a hard quit here: the nav state machine consumes ESC
+        // as a pop-back (and only quits via the DInput path when at the root).
+        // Leaving a WM_KEYDOWN quit would defeat the pop-back demo.
         break;
 
     default:
@@ -678,23 +678,39 @@ void UpdateTitleSlotFromKeyboard() {
     }
 }
 
-// B19c: keyboard-driven main-menu selection. Up/Down move the highlight among the
-// loaded menu items (rising-edge), clamped to [0, count-1]. A functional menu
-// selection state (the standalone analogue of MASHED's menu state machine, which
-// is driven by the 0x898aec entry table + FUN_0043c5b0; reimplementing that
-// faithfully is the parked RtCharset/menu-engine work).
-void UpdateMenuSelection() {
-    if (!g_kbd || g_menu_item_count == 0) return;
+// Menu navigation, now driven by the ported state machine (Frontend/MenuNavSM,
+// a port of MASHED's FUN_0043d2a0 + the kv-iterator FUN_0042ad90). Up/Down move
+// the per-screen cursor over the REAL descriptor-table items (rising-edge);
+// Enter pushes the highlighted item's child screen; Esc/Backspace pops one level.
+// Replaces the old hand-rolled g_menu_selected clamp. Input arrives ONLY through
+// this in-process DirectInput path (no global input injection).
+//
+// Returns true if Esc was pressed AT THE ROOT (caller should quit the app);
+// otherwise Esc was consumed as a pop-back.
+bool UpdateMenuSelection() {
+    using namespace mashed_re::Frontend;
+    if (!g_kbd) return false;
     const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
     const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
     const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
     const bool down_prev = (g_keys_prev[DIK_DOWN] & 0x80) != 0;
-    if (down_now && !down_prev && g_menu_selected + 1 < g_menu_item_count) {
-        ++g_menu_selected;
+    const bool ent_now   = (g_keys[DIK_RETURN]    & 0x80) != 0;
+    const bool ent_prev  = (g_keys_prev[DIK_RETURN]& 0x80) != 0;
+    const bool esc_now   = (g_keys[DIK_ESCAPE]    & 0x80) != 0;
+    const bool esc_prev  = (g_keys_prev[DIK_ESCAPE]& 0x80) != 0;
+    const bool bks_now   = (g_keys[DIK_BACK]      & 0x80) != 0;
+    const bool bks_prev  = (g_keys_prev[DIK_BACK] & 0x80) != 0;
+
+    if (down_now && !down_prev) Nav_MoveCursor(+1);
+    if (up_now   && !up_prev)   Nav_MoveCursor(-1);
+    if (ent_now  && !ent_prev)  Nav_Select();           // push child screen
+    if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
+    if (esc_now  && !esc_prev) {
+        if (!Nav_Back()) return true;                   // at root -> quit
     }
-    if (up_now && !up_prev && g_menu_selected > 0) {
-        --g_menu_selected;
-    }
+    // Mirror the nav cursor into the legacy global for any code still reading it.
+    if (Nav_Cursor() >= 0) g_menu_selected = static_cast<std::uint32_t>(Nav_Cursor());
+    return false;
 }
 
 // B14 — write DirectInput key state into MASHED's per-player input-byte
@@ -794,6 +810,10 @@ void ShutdownD3D9() {
     if (g_device) { g_device->Release(); g_device = nullptr; }
     if (g_d3d)    { g_d3d->Release();    g_d3d    = nullptr; }
 }
+
+// Forward decl: defined ~L1400. Resolves a menu message id to its UTF-16 text
+// (faithful to FUN_00427780). Used by the nav-driven menu draw loop in RenderFrame.
+int GetMenuMessage(int id, wchar_t* out, int cap);
 
 // B19 faithful font: draw `s` centered horizontally on `cx`, top at `top_y`,
 // glyph cell height `height_px`, tint `argb`, glyph-by-glyph through the bridge
@@ -921,23 +941,69 @@ bool RenderFrame() {
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
     }
 
-    // B19b: the real main-menu item list (GDI-rasterized message strings) drawn
-    // as a centered vertical list over the chrome. Item 0 shown bright ("selected"),
-    // the rest slightly dimmed — a stand-in for the menu state machine's highlight.
-    if (g_bridge_installed && g_menu_item_count > 0) {
+    // State-machine-driven menu draw. The nav stack (Frontend/MenuNavSM, port of
+    // FUN_0043d2a0 + the kv-iterator FUN_0042ad90) has populated g_records from the
+    // REAL per-screen descriptor table; we render those records through the
+    // existing faithful font path. The highlighted record (row_index == cursor)
+    // is bright; the rest dimmed. The back-button record (tag 0xff000000) is drawn
+    // at the top once depth > 0 so a push/pop is visually unambiguous.
+    if (g_bridge_installed) {
+        using namespace mashed_re::Frontend;
+        const MenuRecord* recs = Nav_Records();
+        const int         nrec = Nav_RecordCount();
+        const int         cur  = Nav_Cursor();
+        const int         depth = Nav_Depth();
+
+        // Breadcrumb: show nav depth + screen id so screenshots prove the state
+        // transitions (root vs pushed submenu vs popped back).
+        wchar_t crumb[64];
+        const int sid = Nav_ScreenId();
+        // depth/screen in plain ASCII (faithful font is ASCII-only).
+        wchar_t* c = crumb;
+        const wchar_t* lbl = L"DEPTH ";
+        for (const wchar_t* p = lbl; *p; ++p) *c++ = *p;
+        *c++ = static_cast<wchar_t>(L'0' + (depth % 10));
+        const wchar_t* lbl2 = L"  SCREEN ";
+        for (const wchar_t* p = lbl2; *p; ++p) *c++ = *p;
+        if (sid >= 10) *c++ = static_cast<wchar_t>(L'0' + (sid / 10) % 10);
+        *c++ = static_cast<wchar_t>(L'0' + (sid % 10));
+        *c = 0;
+        if (g_font.ready()) DrawMashedString(crumb, 400.f, 250.f, 22.f, 0xffffd060u);
+
         const float startY = 300.f;
         const float stepY  = 44.f;
-        for (std::uint32_t i = 0; i < g_menu_item_count; ++i) {
-            // Selected item bright white; the rest dimmed.
-            const std::uint32_t argb = (i == g_menu_selected) ? 0xffffffffu : 0x90b0b0b0u;
-            const float y = startY + static_cast<float>(i) * stepY;
+        int drawn = 0;
+        for (int r = 0; r < nrec; ++r) {
+            const MenuRecord& rec = recs[r];
+            if (rec.prim_id < 0) continue;                 // -1 = no text
+            const bool is_back = (static_cast<std::uint32_t>(rec.tag) == 0xff000000u);
+            // Resolve the descriptor-table id to its language string.
+            wchar_t txt[128];
+            const int n = GetMenuMessage(rec.prim_id, txt, 128);
+            if (n <= 0) {
+                // No string for this id; show the raw id so the record is still
+                // visibly state-driven (NO-GUESSING about its label).
+                wchar_t* q = txt; const wchar_t* pre = L"id ";
+                for (const wchar_t* p = pre; *p; ++p) *q++ = *p;
+                int v = rec.prim_id; wchar_t tmp[16]; int t = 0;
+                if (v == 0) tmp[t++] = L'0';
+                while (v > 0) { tmp[t++] = static_cast<wchar_t>(L'0' + v % 10); v /= 10; }
+                while (t > 0) *q++ = tmp[--t];
+                *q = 0;
+            }
+            // Back row at the top; list items below it.
+            const bool highlighted = (!is_back && rec.row_index == cur);
+            const float y = is_back ? 200.f : (startY + static_cast<float>(drawn) * stepY);
+            if (!is_back) ++drawn;
+            else if (depth == 0) continue;                 // hide back row at root
+            const std::uint32_t argb = highlighted ? 0xffffffffu
+                                     : is_back      ? 0x90d0d0ffu
+                                                    : 0x90b0b0b0u;
             if (g_font.ready()) {
-                // Faithful path: draw the item string in MASHED's FGDC20 font.
-                DrawMashedString(g_menu_msgs[i], 400.f, y, kMenuTextHeight, argb);
-            } else {
-                // Fallback: the GDI-rasterized Arial texture.
-                const MenuItemTex& it = g_menu_items[i];
-                if (!it.ready) continue;
+                DrawMashedString(txt, 400.f, y, kMenuTextHeight, argb);
+            } else if (rec.row_index >= 0 && rec.row_index < 8 &&
+                       g_menu_items[rec.row_index].ready) {
+                const MenuItemTex& it = g_menu_items[rec.row_index];
                 const float w = static_cast<float>(it.w), h = static_cast<float>(it.h);
                 HudIm2DQuad(it.handle, (800.f - w) * 0.5f, y, w, h, argb, uv_full);
             }
@@ -2097,6 +2163,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {
             LoadMenuItems();
         }
+        // Initialize the ported nav state machine at the root screen (id 0).
+        // Analogue of FUN_0043df00's FUN_0043d2a0(0,2) frontend-enter reload.
+        // From here the menu is state-machine-driven (push/pop/cursor), replacing
+        // the old hand-rolled g_menu_selected clamp.
+        mashed_re::Frontend::Nav_Init();
         // B19 faithful font: decode FGDC20.TXD atlas + FGDC20.RWF glyph metrics
         // and upload the glyph sheet. When this succeeds the menu draws in MASHED's
         // actual font (glyph-by-glyph); otherwise the GDI/Arial textures are used.
@@ -2137,18 +2208,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         UpdateQuadFromKeyboard();
         // B13: PgUp/PgDn cycle through uploaded atlas slots; Home -> 0.
         UpdateTitleSlotFromKeyboard();
-        // B19c: Up/Down move the main-menu selection highlight.
-        UpdateMenuSelection();
+        // State-machine-driven nav: Up/Down move the cursor, Enter pushes the
+        // highlighted item's child screen, Esc/Backspace pop. Returns true only
+        // when Esc is pressed at the ROOT (nothing left to pop) -> quit the app.
+        if (UpdateMenuSelection()) {
+            PostQuitMessage(0);
+        }
         // B14: mirror DInput keyboard state into MASHED's input globals
         // (0x007f1044 active / 0x007f1504 processed, player 0). No frontend
         // code currently reads these in standalone, but the wiring exists
         // for B16's frontend_mode_dispatch loop.
         WriteMashedInputGlobalsFromKeyboard();
-        // B11: ESC via DirectInput also exits the app (in addition to the
-        // WM_KEYDOWN handler).
-        if ((g_keys[DIK_ESCAPE] & 0x80) && !(g_keys_prev[DIK_ESCAPE] & 0x80)) {
-            PostQuitMessage(0);
-        }
         if (!RenderFrame()) {
             // Unrecoverable device loss; bail out.
             break;
