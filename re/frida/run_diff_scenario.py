@@ -22,8 +22,25 @@
 #   py -3.12 re/frida/run_diff_scenario.py <hook_name> [--scenario results]
 #       [--sentinel 0xADDR[,0xADDR...]] [--sentinel-words N]
 #       [--round 120] [--shot-dir verify/scenario]
+#       [--zero-arg] [--baseline 0xVAL]
 #
 #   <hook_name>            a key in hooks_registry.HOOKS (read-only getter ONLY).
+#
+# ── Zero-arg getter mode (--zero-arg, or auto when the signature takes 0 args) ──
+# For a ZERO-ARG getter the vary-the-input vector model is wrong: the function
+# returns ONE value for every vector (no input dimension), so the normal
+# degeneracy check ("> 1 distinct value") always reports DEGENERATE even when
+# the function is perfectly correct and the state is populated. Constant-across-
+# (absent)-input is the CORRECT behaviour for these.
+#
+# In zero-arg mode the C3 criterion becomes a SINGLE-SHOT observation:
+#   (1) bit-identical orig == reimpl (no mismatches), AND
+#   (2) the observed value is NON-TRIVIAL/populated — return != 0 and, when a
+#       --baseline / registry 'zero_arg_baseline' is supplied, != that menu/
+#       default value — taken AT a gate-satisfied scenario point (the sentinel
+#       gate is already asserted non-zero by the harness before the diff runs).
+# This proves the getter reads real populated state and the reimpl reproduces
+# it bit-for-bit. It is STILL C3 evidence (synthetic A/B, hook bypassed), NOT C4.
 #   --scenario results     scenario point to navigate to (default 'results';
 #                          'race' = stop as soon as the round has started/track
 #                          loaded; the diff runs once the sentinel is non-zero).
@@ -147,6 +164,22 @@ def main():
     shotdir    = _arg("--shot-dir", "verify/scenario")
     Path(ROOT / shotdir).mkdir(parents=True, exist_ok=True)
 
+    # Zero-arg mode: explicit --zero-arg, OR auto-detect a 0-argument signature,
+    # OR the registry entry sets 'zero_arg': True. The C3 criterion switches from
+    # "distinct values across vectors" to "single non-default populated value".
+    zero_arg = ("--zero-arg" in sys.argv
+                or hook.get("zero_arg", False)
+                or len(hook["signature"].get("args", [])) == 0)
+    # Baseline / menu-default value to reject (the value the getter returns when
+    # the gate is NOT satisfied). --baseline overrides the registry field.
+    _bl = _arg("--baseline", None)
+    if _bl is not None:
+        baseline = int(_bl, 16) if _bl.lower().startswith("0x") else int(_bl)
+    elif "zero_arg_baseline" in hook:
+        baseline = hook["zero_arg_baseline"]
+    else:
+        baseline = None
+
     # sentinel addresses: --sentinel arg overrides registry 'scenario_sentinel'.
     sent_arg = _arg("--sentinel", None)
     if sent_arg:
@@ -160,6 +193,9 @@ def main():
     print(f"hook: {name}  rva=0x{hook['rva']:08x}  export={hook['export']}")
     print(f"scenario={scenario}  sentinels={[hex(s) for s in sentinels]} "
           f"x{sent_words} words  round={round_secs}s")
+    if zero_arg:
+        print(f"mode: ZERO-ARG (single-shot non-default; "
+              f"baseline={'0x%x' % baseline if baseline is not None else 'none (reject 0 only)'})")
 
     if not MASHED_EXE.exists():
         sys.exit(f"MASHED.exe not found at {MASHED_EXE}")
@@ -284,6 +320,7 @@ def main():
     ret_kind = hook["signature"]["ret"]
     mismatches = 0
     distinct_orig = set()
+    obs_bits = []   # observed orig values as raw bits (for zero-arg non-default check)
     with csv_out.open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["idx", "input", "original", "original_bits",
@@ -301,10 +338,41 @@ def main():
                 mismatches += 1
             if r.get("original") is not None:
                 distinct_orig.add(str(r["original"]))
+                if ob is not None:
+                    obs_bits.append(ob)
 
     print(f"\nResults written to {csv_out}")
     print(f"  total cases:        {len(results_received)}")
     print(f"  mismatches:         {mismatches}")
+
+    # ── ZERO-ARG criterion: single-shot, non-default, bit-identical ──────────
+    if zero_arg:
+        observed = obs_bits[0] if obs_bits else None
+        print(f"  observed value:     " +
+              (f"0x{observed:08x} ({observed})" if observed is not None else "none"))
+        if mismatches > 0:
+            print("\nRED: orig != reimpl (zero-arg).")
+            for r in results_received:
+                if not r["match"]:
+                    print(f"  idx={r['idx']} orig={r['original']} reimpl={r['reimpl']}")
+            return 1
+        if observed is None:
+            print("\nNO OBSERVATION — agent returned no usable value.")
+            return 3
+        if observed == 0:
+            print("\nDEGENERATE (zero-arg): value is 0 — state not populated / gate "
+                  "not satisfied at this scenario point. Leave at C2.")
+            return 6
+        if baseline is not None and observed == (baseline & 0xffffffff):
+            print(f"\nDEGENERATE (zero-arg): value == menu/default baseline "
+                  f"0x{baseline & 0xffffffff:08x} — gate not satisfied. Leave at C2.")
+            return 6
+        print("\nGREEN + NON-DEFAULT (zero-arg): bit-identical orig==reimpl at a "
+              "gate-satisfied scenario point; value is populated/non-trivial "
+              "(C3 evidence; NOT C4).")
+        return 0
+
+    # ── standard varied-vector criterion ─────────────────────────────────────
     print(f"  distinct orig vals: {len(distinct_orig)}  -> "
           f"{'NON-DEGENERATE (state is live)' if len(distinct_orig) > 1 else 'DEGENERATE (still constant — sentinel populated but vectors do not vary the read)'}")
     if mismatches == 0 and len(distinct_orig) > 1:

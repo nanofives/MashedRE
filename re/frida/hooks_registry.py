@@ -13184,4 +13184,93 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
     },
 
+    # ── Zero-arg getters (run_diff_scenario.py --zero-arg) ───────────────────
+    # These take NO argument, so the varied-vector model can't show variance —
+    # the C3 criterion is a SINGLE-SHOT non-default value at a gate-satisfied
+    # scenario point (run_diff_scenario.py zero-arg mode). 'zero_arg': True and
+    # 'zero_arg_baseline' = the menu/default value to reject. The single test is
+    # a dummy iteration marker (arg_type 'none' calls fn() and returns its value).
+
+    # 0x0040cd90 CountNonZeroPairs — int(void). Counts 8 (base,base+0x44) record
+    # pairs in the 0x00899260 table where both dwords are nonzero. At a populated
+    # race the table is filled -> ret > 0; menu/default = 0. scenario=race,
+    # sentinel=0x00899260.
+    'count_nonzero_pairs': {
+        'rva':            0x0040cd90,
+        'export':         'CountNonZeroPairs',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'zero_arg':       True,
+        'zero_arg_baseline': 0,
+        'scenario_sentinel': 0x00899260,
+        'lut_root_delta': 0,
+        'path1_tests':    [0],
+        'path2_tests':    [0],
+    },
+
+    # 0x0040b890 GetGridCount8or12 — int(void). 8 or 12 gated on FUN_0040e340/
+    # FUN_0042f500/DAT_007f0fd0. Menu default observed = 12 (0xc); a selected game
+    # mode flips DAT_007f0fd0/the gate so it returns 8. baseline rejects the menu
+    # default. sentinel=0x007f0fd0 (the mode flag the gate reads).
+    'grid_count_8or12': {
+        'rva':            0x0040b890,
+        'export':         'GetGridCount8or12',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'zero_arg':       True,
+        'zero_arg_baseline': 12,
+        'scenario_sentinel': 0x007f0fd0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0],
+        'path2_tests':    [0],
+    },
+
+    # 0x0040b8e0 GetScoreThreshold7or10 — int(void). Same gate; 7 or 10.
+    'score_threshold_7or10': {
+        'rva':            0x0040b8e0,
+        'export':         'GetScoreThreshold7or10',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'zero_arg':       True,
+        'zero_arg_baseline': 10,
+        'scenario_sentinel': 0x007f0fd0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0],
+        'path2_tests':    [0],
+    },
+
+    # 0x005ab070 AudioTimerRateGet — undefined4(void). Returns DAT_007dcdf8 if the
+    # gate DAT_007dce00 == 1, else literal 1000. The gate flips to 1 by the title
+    # screen; 0x007dcdf8 ~ 10000000. baseline rejects the 1000 ungated default.
+    # sentinel=0x007dce00 (the gate). scenario=race reaches gate=1 well before.
+    'audio_timer_rate_get': {
+        'rva':            0x005ab070,
+        'export':         'AudioTimerRateGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'zero_arg':       True,
+        'zero_arg_baseline': 1000,
+        'scenario_sentinel': 0x007dce00,
+        'lut_root_delta': 0,
+        'path1_tests':    [0],
+        'path2_tests':    [0],
+    },
+
+    # 0x004077e0 GetSelectedCopterField60 — float10(void). field +0 of the SELECTED
+    # Copter record (&DAT_00639de0)[DAT_0063a5d8*0x3b]. Copter array @0x00639de0
+    # (selected idx @0x0063a5d8) is unpopulated in Quick-Battle arena -> likely
+    # DEFER. sentinel=0x00639de0.
+    'selected_copter_field60': {
+        'rva':            0x004077e0,
+        'export':         'GetSelectedCopterField60',
+        'signature':      {'ret': 'float', 'args': []},
+        'arg_type':       'none',
+        'zero_arg':       True,
+        'zero_arg_baseline': None,
+        'scenario_sentinel': 0x00639de0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0],
+        'path2_tests':    [0],
+    },
+
 }

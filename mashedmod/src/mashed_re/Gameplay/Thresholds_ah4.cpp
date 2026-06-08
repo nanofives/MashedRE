@@ -44,7 +44,7 @@ extern "C" __declspec(dllexport) int __cdecl GetGridCount8or12(void) {
     return iVar1;
 }
 
-RH_ScopedInstall(GetGridCount8or12, 0x0040b890);  // c3_batch_ah s4 (DEFER: degenerate)
+RH_ScopedInstall(GetGridCount8or12, 0x0040b890);  // C3 harness/scenario-attach 2026-06-08 (zero-arg, race: 8 != menu-12)
 
 // 0x0040b8e0  FUN_0040b8e0  (65 bytes)  int(void)
 // Same shape as 0x0040b890 but returns 7 or 10.  Returns 7 in every case except:
@@ -60,7 +60,7 @@ extern "C" __declspec(dllexport) int __cdecl GetScoreThreshold7or10(void) {
     return iVar1;
 }
 
-RH_ScopedInstall(GetScoreThreshold7or10, 0x0040b8e0);  // c3_batch_ah s4 (DEFER: degenerate)
+RH_ScopedInstall(GetScoreThreshold7or10, 0x0040b8e0);  // C3 harness/scenario-attach 2026-06-08 (zero-arg, race: 7 != menu-10)
 
 // 0x0040cf40  FUN_0040cf40  (56 bytes)  void(void)
 // For each of DAT_0063ba90 / DAT_0063ba94: if non-null, FUN_004c5a60(handle) and
@@ -71,3 +71,15 @@ extern "C" __declspec(dllexport) void __cdecl ReleaseResourcePair(void) {
 }
 
 RH_ScopedInstall(ReleaseResourcePair, 0x0040cf40);  // c3_batch_ah s4 (DEFER: no-op at menu)
+
+// 0x004077e0  FUN_004077e0  (17 bytes)  float10(void)
+// return (float10)(float)(&DAT_00639de0)[DAT_0063a5d8 * 0x3b];
+// Reads field +0x0 (a float) of the SELECTED Copter record in the array at
+// 0x00639de0; the selected index is DAT_0063a5d8 and records are 0x3b dwords
+// (0xEC bytes) apart. x87 ST0 (float10) return -> exposed to Frida as 'float'.
+extern "C" __declspec(dllexport) float __cdecl GetSelectedCopterField60(void) {
+    int idx = *reinterpret_cast<int*>(0x0063a5d8);
+    return reinterpret_cast<float*>(0x00639de0)[idx * 0x3b];
+}
+
+RH_ScopedInstall(GetSelectedCopterField60, 0x004077e0);  // harness/scenario-attach 2026-06-08

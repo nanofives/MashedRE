@@ -129,3 +129,25 @@ extern "C" __declspec(dllexport) void __cdecl PlayerScoreGateInvert(int param_1)
 }
 
 RH_ScopedInstall(PlayerScoreGateInvert, 0x0040ba60);  // c3_batch_ah s3
+
+// 0x0040cd90  thunk_FUN_00425ef0  ->  int FUN_00425ef0(void)
+// Counts how many of 8 record-pairs in the DAT_00899260 table have BOTH dwords
+// nonzero: pair i = (base_i, hdr_i) where the 8 (hdr,base) addresses come from
+// the decomp (pool14 2026-06-08). The records are 0x4C bytes apart
+// (0x00899260, 0x008992ac, ...; hdr at base+0x44). Bit-faithful port — left
+// unrolled to match the original's explicit 8 compares.
+extern "C" __declspec(dllexport) int __cdecl CountNonZeroPairs(void) {
+    int iVar1 = 0;
+    auto g = [](uintptr_t a) -> uint32_t { return *reinterpret_cast<uint32_t*>(a); };
+    if (g(0x008992a4) != 0 && g(0x00899260) != 0) iVar1 = 1;
+    if (g(0x008992f0) != 0 && g(0x008992ac) != 0) iVar1 += 1;
+    if (g(0x0089933c) != 0 && g(0x008992f8) != 0) iVar1 += 1;
+    if (g(0x00899388) != 0 && g(0x00899344) != 0) iVar1 += 1;
+    if (g(0x008993d4) != 0 && g(0x00899390) != 0) iVar1 += 1;
+    if (g(0x00899420) != 0 && g(0x008993dc) != 0) iVar1 += 1;
+    if (g(0x0089946c) != 0 && g(0x00899428) != 0) iVar1 += 1;
+    if (g(0x008994b8) != 0 && g(0x00899474) != 0) iVar1 += 1;
+    return iVar1;
+}
+
+RH_ScopedInstall(CountNonZeroPairs, 0x0040cd90);  // harness/scenario-attach 2026-06-08
