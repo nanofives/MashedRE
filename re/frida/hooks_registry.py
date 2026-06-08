@@ -1338,6 +1338,117 @@ HOOKS = {
         'path2_tests': [{'field_vals': [0x10, 0x20, 0x30], 'pos': 1}, {'field_vals': [0x10, 0x20, 0x30], 'pos': 3}],
     },
 
+    # ── c3_batch_ah s1 — Gameplay range-table walker family + getters ──────────
+    # All six walk-family functions read the shared range-table via FUN_00426090()
+    # == &DAT_0066ce58 (a static .bss buffer populated only during track load).
+    # The Copter getter reads DAT_0063a5d0 (count) / DAT_00639dc4 (array); the LED
+    # getter returns a constant &DAT_0063a5f0. int_scalar = 1-arg cdecl; int_pair =
+    # 2-arg cdecl; none = zero-arg getter.
+
+    # 0x00407640 FindCopterByKeyIndex(key) -> index | -1.
+    'find_copter_by_key_index': {
+        'rva':         0x00407640,
+        'export':      'FindCopterByKeyIndex',
+        'signature':   {'ret': 'int', 'args': ['uint32']},
+        'arg_type':    'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests': [0, 0xFFFFFFFF, 0x80000000, 0x7FFFFFFF, 0xAAAAAAAA, 0x55555555,
+                        1, 2, 0x12345678, 0xDEADBEEF, 0x100, 0x10],
+        'path2_tests': [0, 0x7FFFFFFF, 0xDEADBEEF],
+    },
+
+    # 0x004098a0 GetLedEntryArrayBase() -> &DAT_0063a5f0 (constant getter).
+    'get_led_entry_array_base': {
+        'rva':         0x004098a0,
+        'export':      'GetLedEntryArrayBase',
+        'signature':   {'ret': 'pointer', 'args': []},
+        'arg_type':    'none',
+        'lut_root_delta': 0,
+        'path1_tests': list(range(12)),
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x00409300 RangeTableFirstOfGroup(group) -> first int of group-th group.
+    'range_table_first_of_group': {
+        'rva':         0x00409300,
+        'export':      'RangeTableFirstOfGroup',
+        'signature':   {'ret': 'int', 'args': ['uint32']},
+        'arg_type':    'int_scalar',
+        'lut_root_delta': 0,
+        # group ordinal domain is small (0..~10); huge values walk off the table.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x00409330 RangeTableSuccessorByGroup(value, group) -> successor.
+    'range_table_successor_by_group': {
+        'rva':         0x00409330,
+        'export':      'RangeTableSuccessorByGroup',
+        'signature':   {'ret': 'int', 'args': ['uint32', 'uint32']},
+        'arg_type':    'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0], [1, 0], [2, 1], [5, 2], [0x10, 0], [0xFF, 1],
+            [0xFFFFFFFF, 0], [0x80000000, 0], [0x7FFFFFFF, 0],
+            [0xAAAAAAAA, 1], [0x55555555, 2], [0x100, 0],
+        ],
+        'path2_tests': [[0, 0], [2, 1], [0x7FFFFFFF, 0]],
+    },
+
+    # 0x00407b00 RangeTableFindGroup(value) -> group index containing value.
+    'range_table_find_group': {
+        'rva':         0x00407b00,
+        'export':      'RangeTableFindGroup',
+        'signature':   {'ret': 'int', 'args': ['uint32']},
+        'arg_type':    'int_scalar',
+        'lut_root_delta': 0,
+        # value domain is small track-piece ids (0..~20); huge values walk off table.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20],
+        'path2_tests': [0, 5, 10],
+    },
+
+    # 0x00407b70 RangeTableMemberTest(value, slot) -> 1/0.
+    'range_table_member_test': {
+        'rva':         0x00407b70,
+        'export':      'RangeTableMemberTest',
+        'signature':   {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':    'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0], [1, 0], [2, 0], [5, 1], [0x10, 2], [0xFF, 0],
+            [0xFFFFFFFF, 0], [0x80000000, 0], [0x7FFFFFFF, 0],
+            [0xAAAAAAAA, 1], [0x55555555, 2], [0x100, 0],
+        ],
+        'path2_tests': [[0, 0], [5, 1], [0x7FFFFFFF, 0]],
+    },
+
+    # 0x00407d70 RangeTableCountGroup(slot) -> span sum + 1.
+    'range_table_count_group': {
+        'rva':         0x00407d70,
+        'export':      'RangeTableCountGroup',
+        'signature':   {'ret': 'int', 'args': ['uint32']},
+        'arg_type':    'int_scalar',
+        'lut_root_delta': 0,
+        # slot index domain is small (0..~12); huge values walk off the table.
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12],
+        'path2_tests': [0, 1, 2],
+    },
+
+    # 0x00407db0 RangeTableGroupOffset(slot, value) -> group-local cumulative offset.
+    'range_table_group_offset': {
+        'rva':         0x00407db0,
+        'export':      'RangeTableGroupOffset',
+        'signature':   {'ret': 'int', 'args': ['uint32', 'uint32']},
+        'arg_type':    'int_pair',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0, 0], [0, 1], [1, 2], [2, 5], [0, 0x10], [1, 0xFF],
+            [0, 0xFFFFFFFF], [0, 0x80000000], [0, 0x7FFFFFFF],
+            [1, 0xAAAAAAAA], [2, 0x55555555], [0, 0x100],
+        ],
+        'path2_tests': [[0, 0], [2, 5], [0, 0x7FFFFFFF]],
+    },
+
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session 86 â€” c3_render_math  (C2â†’C3, 5 candidates)
     # RW column-major transform + 2D vector math + matrix scale
