@@ -434,6 +434,32 @@ race/abort -> results capture). Genuinely attempted and de-risked (path + precis
 mapped); not completable in one session. Recommended start: build the state-aware nav driver
 (reusable; unblocks reliable deep navigation and clean join discovery), then iterate inward.
 
+## Part 2 BREAKTHROUGH — in-race scenario reached via state-aware nav (2026-06-08)
+
+re/frida/statenav.py solves blocker #1 (state-aware nav): it polls DAT_0067e9f8 (menu depth)
++ DAT_0067eca4 (phase) and issues each in-process input (FUN_00497310 override) only when the
+expected screen is reached, waiting for the transition. This reliably drives the FULL chain:
+  boot -> [confirm] GTS(d2) -> [confirm] dismiss modal -> [confirm] Single Player(d3) ->
+  [down,down] Time Trial -> [confirm] Player Colour Select(d4) -> [confirm] Track/Challenge
+  Select(d5, "Angel Peak/Kharga Temple/...") -> [confirm track] -> **IN RACE** (phase->0,
+  verify/p2/sn_descend2.png shows the live track + car).
+
+Blocker #2 RESOLVED: the colour-select "join" is just confirm (control 4) — the earlier
+blind-nav failure was purely fixed-dwell desync, not a special control. State-aware timing
+cracked it.
+
+**In-race exercises gameplay-gated hooks** (the ~100 HOLDs): of 10 representative HOLDs counted
+in-race, 6 fire: VehicleSlotInit 0x0046c5c0(3), RaceScoreFloatGetBySlot 0x00408ad0(16130),
+LapLapsGetBySlot 0x00429a80(2240), RaceResultIndexedStore 0x0045ba00(6), LocalPlayerSlotCheck
+0x00436810(3360), CarSlotStateGet 0x0040e470(58625). The 0-count ones (PlayerScoreAccA,
+EndOfRoundAccumulator, TiebreakFlagGet, CarSlotInit) fire at RACE-END/results -> need the race
+to FINISH (cross line / time out), the remaining piece.
+
+Status: in-race canonical scenario WORKS and exercises gameplay hooks. Remaining for full Part 2:
+(a) integrate statenav's descent into the OFF/ON exercise+diff harness to sweep all ~100 HOLDs
+in-race (the in-race subset is now reachable); (b) drive the race to completion for the
+results-screen subset. Both are now tractable (the hard "reach the race" gate is solved).
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
