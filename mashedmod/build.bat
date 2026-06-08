@@ -327,6 +327,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\TimeRecordWrite_ag.cpp" ^
     "Audio\AudioList_ag.cpp" ^
     "Gameplay\RangeTable_ah1.cpp" ^
+    "Gameplay\ScoreMasks_ah3.cpp" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
