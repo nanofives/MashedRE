@@ -559,6 +559,113 @@ void PollKeyboard() {
     }
 }
 
+// --------------------------------------------------------------------------
+// Scripted in-process nav demo (verification harness for the menu state machine).
+//
+// Enabled only when env var MASHED_NAV_DEMO is set. Drives the menu purely
+// through the standalone's OWN in-process input path: it writes edge events
+// directly into the g_keys / g_keys_prev buffers that PollKeyboard fills and
+// UpdateMenuSelection reads — i.e. the exact same code path real keystrokes take,
+// with NO OS-level input injection (no keybd_event / SendInput / SetForegroundWindow).
+//
+// At scripted frames it dumps the D3D9 backbuffer to a 24-bit BMP in verify/ so
+// the push/pop/cursor-move transitions are captured without any screen-grab.
+// --------------------------------------------------------------------------
+bool g_nav_demo = false;
+
+// Dump the current backbuffer (post-Present is unavailable, so we grab the
+// render target before Present, see RenderFrame) to a 24-bit BMP. Self-contained
+// (no D3DX dependency). Returns true on success.
+bool DumpBackbufferBMP(const char* path) {
+    if (!g_device) return false;
+    IDirect3DSurface9* rt = nullptr;
+    if (FAILED(g_device->GetRenderTarget(0, &rt)) || !rt) return false;
+    D3DSURFACE_DESC d{};
+    rt->GetDesc(&d);
+    IDirect3DSurface9* sys = nullptr;
+    bool ok = false;
+    if (SUCCEEDED(g_device->CreateOffscreenPlainSurface(
+            d.Width, d.Height, d.Format, D3DPOOL_SYSTEMMEM, &sys, nullptr)) && sys) {
+        if (SUCCEEDED(g_device->GetRenderTargetData(rt, sys))) {
+            D3DLOCKED_RECT lr{};
+            if (SUCCEEDED(sys->LockRect(&lr, nullptr, D3DLOCK_READONLY))) {
+                const int W = static_cast<int>(d.Width), H = static_cast<int>(d.Height);
+                const int rowBytes = W * 3;
+                const int pad = (4 - (rowBytes & 3)) & 3;
+                const int imgSize = (rowBytes + pad) * H;
+                const int fileSize = 54 + imgSize;
+                std::FILE* f = std::fopen(path, "wb");
+                if (f) {
+                    unsigned char hdr[54] = {};
+                    hdr[0]='B'; hdr[1]='M';
+                    *reinterpret_cast<int*>(hdr+2)  = fileSize;
+                    *reinterpret_cast<int*>(hdr+10) = 54;
+                    *reinterpret_cast<int*>(hdr+14) = 40;
+                    *reinterpret_cast<int*>(hdr+18) = W;
+                    *reinterpret_cast<int*>(hdr+22) = H;   // bottom-up
+                    *reinterpret_cast<short*>(hdr+26) = 1;
+                    *reinterpret_cast<short*>(hdr+28) = 24;
+                    *reinterpret_cast<int*>(hdr+34) = imgSize;
+                    std::fwrite(hdr, 1, 54, f);
+                    // Source is X8R8G8B8 (BGRA little-endian). Write bottom-up BGR.
+                    const unsigned char* base = static_cast<const unsigned char*>(lr.pBits);
+                    unsigned char* rowbuf = static_cast<unsigned char*>(std::malloc(rowBytes + pad));
+                    if (rowbuf) {
+                        for (int i = 0; i < pad; ++i) rowbuf[rowBytes + i] = 0;
+                        for (int y = H - 1; y >= 0; --y) {
+                            const unsigned char* src = base + y * lr.Pitch;
+                            for (int x = 0; x < W; ++x) {
+                                rowbuf[x*3+0] = src[x*4+0]; // B
+                                rowbuf[x*3+1] = src[x*4+1]; // G
+                                rowbuf[x*3+2] = src[x*4+2]; // R
+                            }
+                            std::fwrite(rowbuf, 1, rowBytes + pad, f);
+                        }
+                        std::free(rowbuf);
+                        ok = true;
+                    }
+                    std::fclose(f);
+                }
+                sys->UnlockRect();
+            }
+        }
+        sys->Release();
+    }
+    rt->Release();
+    return ok;
+}
+
+// Inject a key edge (held this frame, released last frame) into the DInput state
+// buffers so UpdateMenuSelection sees a rising edge. In-process only.
+void NavDemoTap(unsigned char dik) {
+    g_keys_prev[dik] = 0x00;   // was up last frame
+    g_keys[dik]      = 0x80;   // held this frame -> rising edge
+}
+
+// Per-frame scripted driver. `phase` counts RenderFrame iterations after the
+// menu is up. Returns true when the script has finished (caller quits).
+// Screenshots are saved to verify/msm_*.bmp at the documented transitions.
+bool RunNavDemoStep(int phase) {
+    if (!g_nav_demo) return false;
+    using namespace mashed_re::Frontend;
+    // Let the window/device settle for the first ~60 frames, then run the script
+    // with ~10-frame spacing so each transition is a distinct, settled frame.
+    switch (phase) {
+        case 60:  DumpBackbufferBMP("verify/msm_1_root.bmp");        break; // root menu
+        case 70:  NavDemoTap(DIK_DOWN);                              break; // cursor down
+        case 80:  DumpBackbufferBMP("verify/msm_2_cursor_down.bmp"); break; // cursor moved
+        case 90:  NavDemoTap(DIK_RETURN);                            break; // push child screen
+        case 100: DumpBackbufferBMP("verify/msm_3_pushed.bmp");      break; // submenu
+        case 110: NavDemoTap(DIK_DOWN);                              break; // cursor in submenu
+        case 120: DumpBackbufferBMP("verify/msm_4_sub_cursor.bmp");  break; // submenu cursor moved
+        case 130: NavDemoTap(DIK_ESCAPE);                            break; // pop back to root
+        case 140: DumpBackbufferBMP("verify/msm_5_popped.bmp");      break; // back at root
+        case 150: return true;                                              // done -> quit
+        default: break;
+    }
+    return false;
+}
+
 // B11 — per-frame title refresh showing current arrow/Enter/Esc state. This
 // is the proof-of-concept: keystrokes change the window title in real time.
 // Updates only when the key set changes (avoids SetWindowText spam).
@@ -1951,6 +2058,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         if (clr) std::fclose(clr);
     }
 
+    // Scripted nav-demo verification harness (in-process input only). Enabled
+    // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
+    g_nav_demo = (GetEnvironmentVariableA("MASHED_NAV_DEMO", nullptr, 0) != 0);
+
     // B17: snapshot the low-address arena before ANYTHING runs (no piz heap,
     // no window, no d3d9). This is the pristine layout we get to reserve from.
     DumpRegionMap("winmain-entry");
@@ -2201,8 +2312,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // hits ESC, or the device gets into an unrecoverable state. Per frame we
     // also poll the keyboard (B11) and refresh the window title to reflect
     // current key state.
+    int nav_demo_phase = 0;
     while (!PumpOnce()) {
         PollKeyboard();
+        // Scripted nav-demo: inject the next in-process key edge / capture a
+        // backbuffer BMP (no-op unless MASHED_NAV_DEMO is set). Runs right after
+        // PollKeyboard so injected edges feed UpdateMenuSelection this frame.
+        if (g_nav_demo) {
+            if (RunNavDemoStep(nav_demo_phase)) { PostQuitMessage(0); }
+            ++nav_demo_phase;
+        }
         UpdateTitleFromKeyboard();
         // B12: arrow keys translate title quad; Enter resets.
         UpdateQuadFromKeyboard();
