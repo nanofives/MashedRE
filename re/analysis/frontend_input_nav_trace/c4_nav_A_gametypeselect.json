@@ -1,0 +1,1237 @@
+{
+  "0x0042e3a0": {
+    "name": "MenuChromeShellA",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "menu chrome: Im2D top/bottom bands + credits scroll + amber tick marks DAT_0067f17c>9; callees 0x0042d5a0/00472f40/004730b0/00472c60 all C2; callers 0x0043bf30 C1 (chain via 0x0043c5b0 C2); Frida A/B 10/10 GREEN void_match c3-batch-m-s2 2026-05-20"
+  },
+  "0x0042d5a0": {
+    "name": "MenusBodyA",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "credits sprite-timeline renderer; 84-entry hardcoded table; fade-in/plateau/out alpha; callee FUN_00427e00 C2; Frida int_scalar scroll=0 no-op 10/10 GREEN voidMatch; U-2177 U-2178 U-2179 carried; c3-batch-m-s6 2026-05-20"
+  },
+  "0x00472f40": {
+    "name": "TextGradientV0V1Override",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "RwIm2D top-transparent gradient-quad draw (x/y/w/h/argb); same shape as ChromeBaseDraw + V0+V1 color override to 0xff000000 (top edge opaque-black); 4-vertex buffer DAT_00898a20; coord-scaled by b8b0/b8c0 x _005cd5a8/_005cc560; R<->B byte-swap; clears S-0450; arg_type=draw_quad_observe; GREEN 10/10; caller 0042e3a0 C3 (MenuChromeShellA)"
+  },
+  "0x004730b0": {
+    "name": "TextGradientV2V3Override",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "RwIm2D bottom-transparent gradient-quad draw (x/y/w/h/argb); same shape as ChromeBaseDraw + V2+V3 color override to 0xff000000 (bottom edge opaque-black); 4-vertex buffer DAT_00898a20; coord-scaled by b8b0/b8c0 x _005cd5a8/_005cc560; R<->B byte-swap; clears S-0451; arg_type=draw_quad_observe; GREEN 10/10; caller 0042e3a0 C3 (MenuChromeShellA)"
+  },
+  "0x0042aad0": {
+    "name": "MenuDimSet",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": false,
+    "survived": false,
+    "C4_trio": false,
+    "notes": "dim-setter: writes 0x30 to in_EAX+3 (naked fn); sets DAT_008990e4=1; 14 bytes; leaf (no callees); caller FUN_0043c5b0 C2; Frida A/B GREEN 10/10 crash_equal_ok (both orig+reimpl AV at 0x3 in NativeFunction ctx; identical error string); harness gap U-0457 filed for EAX-implicit; U-0452 U-0453 (provenance/structural; none-blocking)"
+  },
+  "0x0042aae0": {
+    "name": "MenuIm2DQuad",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "RwIm2D fullscreen quad renderer: 4-vertex buffer 0x0067ec30; screen dims from DAT_0067ea54/56; alpha=DAT_0067eca8; 286 bytes; vtable-only callees (no fn callees); caller FUN_0043c5b0 C2; Frida A/B GREEN 10/10 void_match (alpha=0 at quiescent menu suppresses draw); U-0454 U-0455 U-0456 (structural/semantic; none-blocking"
+  },
+  "0x00472c60": {
+    "name": "ChromeBaseDraw",
+    "calls": 20676,
+    "rate_per_s": 3976.2,
+    "hot": true,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "RwIm2D filled-quad draw (x/y/w/h/ARGB); 4-vertex buffer DAT_00898a20; coord-scaled by b8b0/b8c0 x _005cd5a8/_005cc560; R<->B byte-swap on color (formula verified via Frida 10/10 with non-trivial RGB); render states 1=0/12=1/10=5/11=6; arg_type=draw_quad_observe; GREEN 10/10; 5 C2+ callers including 0042e3a0 (MenuChromeShellA C3)"
+  },
+  "0x00492d20": {
+    "name": "IntroSplashFrameTickShim",
+    "calls": 939,
+    "rate_per_s": 180.6,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "10-byte shim: calls FUN_004967e0 then returns 1; caller discards return; Frida A/B 10/10 GREEN none arg_type; callee 004967e0 drift-promoted C1->C2 this session; U-0811 open (callee semantics)"
+  },
+  "0x004274d0": {
+    "name": "LangIndexSeedFromCli",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "LOC_INIT_FN; copies DAT_007719e8->DAT_007f0f60 returns 1; pure leaf; U-0867(blocks=none); C2->C3 c3_batch_t-s6 2026-05-26 path1 Frida A/B 0/10 mismatch; caller 0x00402750 C4; skeleton_prep_s3"
+  },
+  "0x00493f80": {
+    "name": "IntroVideoDimGetter",
+    "calls": 940,
+    "rate_per_s": 180.8,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "50b pure leaf: reads DAT_007719ec/f0/f4/f8 into two out-ptr pairs (param_1[0..1] param_2[0..1]); caller divides for aspect ratio; Frida A/B 10/10 GREEN crash_equal_ok (NULL-ptr deref identical both sides); leaf-exemption (zero callees); U-0813 open (global types)"
+  },
+  "0x00493fc0": {
+    "name": "AspectRatioGlobalGet",
+    "calls": 1880,
+    "rate_per_s": 361.5,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "AspectRatioGlobalGet; returns DAT_00771a18; 5b leaf body ignores 2 caller floats; leaf-exemption; caller 00495350(C2); path1 10/10 GREEN c3-batch-t-s5; U-0814 U-0815"
+  },
+  "0x004c19f0": {
+    "name": "RwVtableSlot07Call",
+    "calls": 1878,
+    "rate_per_s": 361.2,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "vtable trampoline `(**(code**)(param_1+0x1c))()`; 10 bytes; indirect call (Ghidra: no static callees); 10/10 bit-identical Frida force-call A/B via fake-ptr (both orig+reimpl SIGSEGV identically on [scalar+0x1c] dereference per crash_equal_ok); pure-leaf exemption (zero static callees); caller FUN_00492e90 C2 and FUN_00495350; direct callee of 0x00492e90; U-0824 still open (target identity); analysis re/analysis/intro_splash/0x004c19f0.md; ma2-frida-s5 2026-05-16"
+  },
+  "0x004c1a00": {
+    "name": "IntroSplashVtableSlot6",
+    "calls": 1882,
+    "rate_per_s": 361.9,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "10b vtable trampoline: tail-jmp *(param_1+0x18) slot 6; return gates draw call; Frida A/B 10/10 GREEN crash_equal_ok (fake-ptr dereference identical both sides); leaf-exemption (no static callees); U-0825 open (slot 6 semantic)"
+  },
+  "0x004c1bb0": {
+    "name": "IntroSplashRenderState",
+    "calls": 941,
+    "rate_per_s": 181.0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "39b vtable dispatch DAT_007d3ff8+0x9c slot 39; returns param_1 on success 0 on fail; Frida A/B 10/10 GREEN crash_equal_ok (param_1=0 gives 0 or identical crash); leaf-exemption (no static callees); U-0826 open (slot 39 semantic)"
+  },
+  "0x0042f0c0": {
+    "name": "MenuSpriteDispatchA",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "options 3-row renderer (Difficulty/Steering/Camera); alpha guard DAT_0067e7b4<0x60; callees 0x00427e00/004739f0/00473870/004a2c48 all C2; callers 0x0043bf30 C1; Frida A/B 10/10 GREEN void_match c3-batch-m-s2 2026-05-20"
+  },
+  "0x0042fb70": {
+    "name": "MenuSpriteDispatchB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "mini 3-row settings renderer (Track/PlayerCount/Music); alpha guard e7ec<0x60; callees 0x00427e00/004739f0/00473870/004a2c48/0042ac00/0042ac50 all C2+; callers 0x0043bf30 C1; Frida A/B 10/10 GREEN void_match c3-batch-m-s2 2026-05-20"
+  },
+  "0x0042fe90": {
+    "name": "MenuSpriteDispatchC",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "per-vehicle Y/N feature list renderer; 14 entries stride 52b; Y/Z glyph; mode==2 guard; callees 0x00427e00/004739f0/00473870/004a2c48/0042ac00/0042ac50 all C2+; callers 0x0043bf30 C1; Frida A/B 10/10 GREEN void_match c3-batch-m-s2 2026-05-20"
+  },
+  "0x00430760": {
+    "name": "IsMultiplayerMode",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "returns 1 if DAT_0067e9fc in {2 3 4 5 10}; pure leaf; leaf-exemption; Frida A/B 10/10 GREEN; c3-batch-b-s2; D-2740 cleared; session frontend_promote_menus_b0042fab0"
+  },
+  "0x004282a0": {
+    "name": "MenuMenusBA",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": false,
+    "survived": false,
+    "C4_trio": false,
+    "notes": "text width measure variant A: FUN_00427780+FUN_004277a0 ctx \u2192 FUN_005554d0 scaled by DAT_0067d830/DAT_005cd618; crash_equal_ok 10/10 GREEN; c3-batch-m-s3 2026-05-20"
+  },
+  "0x00427ad0": {
+    "name": "MenuMenusBB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "7-param icon/sprite draw: font ctx FUN_00427780+FUN_004277a0; resolution-scaled coords; FUN_005555b0 draw; crash_equal_ok 10/10 GREEN; c3-batch-m-s3 2026-05-20"
+  },
+  "0x0042f8d0": {
+    "name": "MenuMenusBC",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": false,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "background quad: 5 calls to FUN_00472c60 with _DAT_005cc574/_005cc35c border offsets; crash_equal_ok 10/10 GREEN; c3-batch-m-s3 2026-05-20"
+  },
+  "0x0042ac00": {
+    "name": "MenuGroupCount",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "leaf-exemption; 11/11 A/B GREEN c3-batch-g-s5 2026-05-16; U-3439 U-3440 registered; sentinel scanner counts 0xFF060000 groups before 0xFF070000 terminator"
+  },
+  "0x00473870": {
+    "name": "TextSpriteUVExplicit",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "7-param textured-quad draw (tex_ptr/x/y/w/h/argb/blend_flag); 4-vertex buffer DAT_00898a20; NO coordinate scaling (params used as-is); UV fixed to [0..1]x[0..1] full-texture quad (analysis-note correction filed 2026-05-21: C1 note claimed UVs unset but Ghidra decomp shows fixed UV writes); R<->B byte-swap; texture dispatch param_1=NULL -> state(1"
+  },
+  "0x0042a940": {
+    "name": "MenuTableSearch",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "linear table search at 0x5f6748 via FUN_0040ce80; stride 3; D-2750 cleared; U-3434 U-3435; Frida int_scalar 10/10 GREEN c3-batch-n-s2 2026-05-21"
+  },
+  "0x00430830": {
+    "name": "SplitScreenTrackAssignment",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "switch(DAT_0067e9fc)\u2192per-slot arrays stride 0xc/0x30; leaf-exemption; caller MenuCursorBack C3; Frida A/B 10/10 GREEN + path2 4/4 OK; c3-batch-g-s9"
+  },
+  "0x0040b460": {
+    "name": "MenuMenusBD",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "player slot sort A: bubble-sort by DAT_008a94f0; mode 4/7 override FUN_00417740; mode 9 2-player layout; crash_equal_ok 10/10 GREEN; c3-batch-m-s3 2026-05-20"
+  },
+  "0x0042d290": {
+    "name": "MenusLapTimeFmt",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "lap-time two-buf formatter; fmt strings DAT_005cd794=\"%d\" / DAT_005cd798=\"%s%d\" / DAT_005cd7a0=\"0\" corrected via runtime evidence (analysis note 0x0042d290.md addendum); reimpl bug fix MenuMixed.cpp:404-419 (format-string indirection + variadic arg count); arg_type=out_buf_fmt_2 added to diff_template.js; GREEN 10/10; callees 004a2b60/004a2c48 both C2; caller 00434720 drift C1->C2 same transaction; cleared S-3431 S-3432"
+  },
+  "0x0042d300": {
+    "name": "TimeDiffDecompose",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "time diff decompose: sign/min/sec/csec outputs; 128b; pure leaf (leaf-exemption); Frida A/B 15/15 GREEN; new arg_type time_diff_decompose; ma3-frida-s8 2026-05-17"
+  },
+  "0x00429870": {
+    "name": "LapTimeALessThanB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "lap time compare: (laps*60+secs+frac) A<B\u21921; pure leaf; leaf-exemption; Frida A/B GREEN 10/10; c3-batch-b-s1"
+  },
+  "0x00429a30": {
+    "name": "MenuMenusBE",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "stores current lap (laps/secs/frac) to per-player arrays via FUN_00430790 slot index; void/none 10/10 GREEN; c3-batch-m-s3 2026-05-20"
+  },
+  "0x00429a80": {
+    "name": "LapLapsGetBySlot",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "returns DAT_0067d98c[param_1]; pure leaf; leaf-exemption; Frida A/B GREEN 10/10; c3-batch-b-s1"
+  },
+  "0x00429a90": {
+    "name": "LapSecsGetBySlot",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "returns DAT_0067d994[param_1] (lap secs getter by slot); pure leaf; leaf-exemption; Frida A/B 10/10 GREEN; c3-batch-b-s2; D-2764 cleared; session frontend_promote_menus_b"
+  },
+  "0x00429a70": {
+    "name": "LapFracGetBySlot",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "returns float DAT_0067d99c[param_1*4]; pure leaf; leaf-exemption; Frida A/B GREEN 10/10; c3-batch-b-s1"
+  },
+  "0x0040b7b0": {
+    "name": "PlayerHotkeyTableGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "switch(param_2 0-3)\u21924 arrays; pure leaf; leaf-exemption; Frida A/B GREEN 18/18; c3-batch-b-s1"
+  },
+  "0x0040b6b0": {
+    "name": "ModeScoreGetBySlot",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "returns DAT_008a9530[param_1]; pure leaf; leaf-exemption; Frida A/B GREEN 11/11; c3-batch-b-s1"
+  },
+  "0x00474e60": {
+    "name": "DegToRad",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "depth-3 callee: float-to-x87-angle converter; caller FUN_00434720; D-2772; bucket hud_frontend_d2 | C0->C1 via c0-c1-game-20260525-1930: float -> x87-angle converter (single mul by _DAT_005cd7a8); plate at re/analysis/c0_to_c1_main/C0_TO_C1_PLATES.md | U-4309 RESOLVED: _DAT_005cd7a8 = PI/180 (0x3C8EFA35 = 0.0174533); FUN_00474e60 is a deg-to-rad converter | C1->C2 batch-ae-s6: 10-byte pure leaf; param_1 * _DAT_005cd7a8 (PI/180); x87 float10 result; no uncertainties | C2->C3 c3-batch-v-s1: DegToRad; impl Cluster_v1.cpp RH_ScopedInstall; Frida path1 GREEN 16/16; leaf exemption (callees=[]; caller 00434720 C2)"
+  },
+  "0x00436810": {
+    "name": "LocalPlayerSlotCheck",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "local player slot occupancy: param_1==12->false; mode0 non-zero DAT_007f0a7c rows; modeN type-2 DAT_007f0a74; U-3410 U-3411 preserved (literal offsets/value); Frida A/B 18/18 GREEN; int return (low-byte ABI); callee IsMultiplayerMode C3; ma3-frida-s8 2026-05-17"
+  },
+  "0x0042ee40": {
+    "name": "FrontendModeDispatch",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "204-byte dispatcher: outer switch DAT_0067e9fc (2..10); forwards param_1 to FUN_0040bb90 (C4 SpriteLookupTableB) on match; cases 3-5 have -1000 adjustment for param_1>999 with {0,1,2} filter; cases 6-9 require param_1==0; cases 2/10 always forward; default returns 0; crash-equal; Frida A/B 14/14 GREEN ma3-frida-s7 2026-05-17; U-3463 U-3464 U-3465 filed"
+  },
+  "0x0042ef40": {
+    "name": "VehicleUnlockFlagGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "vehicle unlock flag: switch(param_2) reads byte DAT_007f0e50+param_1*0xc; returns 1 if byte==1; [UNCERTAIN U-3176] no bounds check reproduced; diff GREEN 20/20 c3-batch-b-s6"
+  },
+  "0x00408a70": {
+    "name": "FrontendC2RoundI",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "per-car race-progress setter; 5 writes to DAT_008a9640 stride 0x30c; FPU-round via FUN_004a2c48; callee FUN_004a2c48 C2; Frida int_scalar p1>3 early-return-0 10/10 GREEN; U-2169 U-2170 carried; c3-batch-m-s6 2026-05-20"
+  },
+  "0x00408ad0": {
+    "name": "RaceScoreFloatGetBySlot",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "16b float getter: returns *(float*)(DAT_008a96ec+param_1*0x30c); pure-leaf-exemption; caller FUN_0040d590 C2; Frida float_scalar 10/10 GREEN c3-batch-t-s1 2026-05-26; U-4200"
+  },
+  "0x00422fd0": {
+    "name": "FrontendRaceResultsDispatch",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "car-eliminator: kill+status+50f\u00d72+state2+spectator handler; callees 0x0046c5c0/0x0046c790/0x004215c0/0x0045ba00 all C2; FUN_0040e470 C3; thunk_FUN_00419760 C1 cond; Frida int_scalar p1>=16 early-return-0 10/10 GREEN; U-1301..U-1303 carried; c3-batch-m-s6 2026-05-20"
+  },
+  "0x00431d80": {
+    "name": "TiebreakFlagGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "TiebreakFlagGet; returns DAT_0067ea7c (tiebreak-enable flag mode-4/code-6); leaf-exemption; caller 0040eee0(C2); path1 10/10 GREEN c3-batch-t-s5; U-1305"
+  },
+  "0x0046c700": {
+    "name": "EntityScoreFieldAdd",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "EntityScoreFieldAdd; (int*)(DAT_008820b0+idx*0xd04)+=delta; guard idx>15 ret0 else ret1; leaf-exemption; caller 0040eee0(C2); new arg_type entity_field_add (save/call/read/restore); path1 10/10 GREEN c3-batch-t-s5; U-1306"
+  },
+  "0x0042b9e0": {
+    "name": "FUN_0042b9e0",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "car-select confirm/assigner; reset+valid-count+collision+assign; returns 0x1000 on success; U-1652 U-1653 U-3549; reimpl mashedmod/src/mashed_re/Frontend/MenuButtonDetect.cpp; C3 c3-batch-a-s6 (hooks_registry+source committed) evidence regenerated GREEN 10/10 by ma3-frida-s4 2026-05-17"
+  },
+  "0x004323c0": {
+    "name": "MenuCursorBack",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "135b void nav: decr DAT_0067f17c scan via FUN_00430830/00430910/0042f6b0; A/B 10/10 GREEN; callees C2+; U-3601 U-3602 open (semantic blocks:none); analysis re/analysis/frontend_c0_promote/0x004323c0.md"
+  },
+  "0x0042ae10": {
+    "name": "MenuReadinessCheckA",
+    "calls": 936,
+    "rate_per_s": 180.0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "readiness check: path A stride-0x4c char scan at 0x7f1502; path B car-index+FUN_0040e470 (C2) check; A/B 10/10 GREEN c3-batch-g-s5 2026-05-16; callee 0x0040e470 C2; callers FUN_0043d7c0/FUN_0043dfd0 C1 (caller-chain noted); U-3445 U-3446 U-3447 U-3448 registered"
+  },
+  "0x0042aeb0": {
+    "name": "MenuReadinessCheckB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "structural variant of MenuReadinessCheckA: table base+1 (0x7f1043/1503); no e7c8 guard; A/B 10/10 GREEN c3-batch-g-s5 2026-05-16; callee 0x0040e470 C2; callers FUN_0043d7c0 C1 (caller-chain noted); U-3445 U-3446 registered"
+  },
+  "0x0042af50": {
+    "name": "MenuReadinessCheckC",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "structural variant of MenuReadinessCheckA: table bases -1 byte (0x7f1041/1501); upper bound 0x7f1760; same e7c8 guard as A; A/B 10/10 GREEN ma3-frida-s3 2026-05-17; callee 0x0040e470 C2; callers FUN_0043d7c0/FUN_0043dfd0 C1 (caller-chain noted; same as A/B); U-1615 U-1616 registered; D-4843 cleared; carry-over from c3-batch-g-s6 [merged-from-dup: duplicate row resolved by ma3-frida-s3 (was util subsystem; reclassified frontend on promotion); structural variant of M...]"
+  },
+  "0x00430910": {
+    "name": "MenuOptionSlotGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "137b pure leaf; switch(DAT_0067e9fc) exclusion gate then (&DAT_007f0a40)[optIdx+rowIdx*0xc]; A/B 10/10 GREEN; leaf-exemption; U-3598 U-3599 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x00430910.md"
+  },
+  "0x0040b810": {
+    "name": "TimerGlobalsReset",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x008a9550; c3-batch-a-s1; C4 REFUSED 2026-05-15 c4-batch-a-s13: E9+rel32 OK but count=0 in cold_boot_to_menu (fires before Frida attach; harness timing limitation); see D-10601; ma3-frida-s2 drained dup C2 row + re-verified A/B 10/10 GREEN [merged-from-dup: zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; D-4848 cleared; session frontend_c0_promote | zeroes 21 globals 0x008a94f0/9530/9540 blocks + 0x0063b8ec; U-1609 U-1610; leaf-exemption; A/B 10/10 GREEN void_write_ob...] [subsystem-drift: util]"
+  },
+  "0x0042f6b0": {
+    "name": "MenuModeSync",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "115b pure leaf; switch(DAT_0067f184 0..11 absent 4/6/7)->DAT_0067e9fc; default no-op; A/B 10/10 GREEN; leaf-exemption; U-3595 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x0042f6b0.md; ma3-frida-s2 drained dup C2 row + re-verified A/B 10/10 GREEN"
+  },
+  "0x004307a0": {
+    "name": "ElapsedVsThresholdCheck",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "elapsed-time vs threshold check: reads 3-float table DAT_00614718[DAT_0067f17c*0xc]; calls 00429a70/80/90 all C3; U-3596 U-3597; D-4851 cleared; Frida none 10/10 GREEN c3-batch-n-s2 2026-05-21"
+  },
+  "0x004309b0": {
+    "name": "FrontendModeIndex",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "game-mode-to-index mapper: mode 2->0 3->1 4->2 5->5 6..9->3 10->11; leaf; leaf-exemption; A/B 10/10 GREEN; c3-batch-c-s3 2026-05-14"
+  },
+  "0x00430b60": {
+    "name": "MenuSlotCount",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "47b pure leaf; counts non-(-1) among DAT_007f1a14/24/34/44 (stride 0x10); returns char 0..4; A/B 10/10 GREEN; leaf-exemption; U-3600 open (semantic-only); analysis re/analysis/frontend_c0_promote/0x00430b60.md; ma3-frida-s2 drained dup C2 row + re-verified A/B 10/10 GREEN"
+  },
+  "0x00492340": {
+    "name": "CarSlotInit",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "46b pure leaf; guard 0x7f105c+idx*0x4c; writes [0]=1 [+c]=10 [+10]=3 [+14]=0xff; A/B 10/10 GREEN; leaf-exemption; U-3643 U-3644 open (structural/semantic blocks:none); analysis re/analysis/game_mode_cont2/0x00492340.md; C4 refused 2026-05-15 c4-batch-a-s14: path2 E9+rel32+bytes OK but interceptor 0/3 (harness-limited dict arg_type); canonical-scenario cold_boot_to_menu count=0; D-10603 [merged-from-dup: player-entry init: stride-0x4c array at 0x7f1058; guard [+4]; writes [0]=1 [+c]=10 [+10]=3 [+14]=0xff; caller FUN_0043df...]"
+  },
+  "0x00414120": {
+    "name": "CopyTable005f2a70To0089a384",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "80b leaf: zero 3 globals + zero 0x9c bytes at 0089a420 + copy 0x9c bytes 005f2a70->0089a384; pure-leaf-exemption; Frida state_machine_observe 10/10 GREEN c3-batch-t-s1 2026-05-26; U-4206"
+  },
+  "0x00422b30": {
+    "name": "TimerArrayClear",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x00899e80; c3-batch-a-s1; C4 REFUSED 2026-05-15 c4-batch-a-s13: E9+rel32 OK but count=0 + game crashes under Interceptor (312-iter loop; Frida overhead on loop body); see D-10602; ma3-frida-s2 drained dup C2 row + re-verified A/B 10/10 GREEN [merged-from-dup: memset: zeroes 0x138 dwords at DAT_00899e80 (1248 bytes); U-1612; leaf-exemption; A/B 10/10 GREEN void_write_observe 0x0...] [subsystem-drift: util]"
+  },
+  "0x0046dc00": {
+    "name": "EntityFieldSet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "20b pure leaf; *(0x8815a8+param_1*0xd04)=param_2; A/B 10/10 GREEN; leaf-exemption; U-3645 U-3646 open (structural/semantic blocks:none); analysis re/analysis/game_mode_cont2/0x0046dc00.md; C4 refused 2026-05-15 c4-batch-a-s14: path2 E9+rel32+bytes OK but interceptor 0/3 (harness-limited bad argument count for 2-arg void); canonical-scenario cold_boot_to_menu count=0; D-10604 [merged-from-dup: indexed store *(0x8815a8+param_1*0xd04)=param_2; stride 0xd04 matches entity struct (ai_update_d5); callers FUN_0043dfd0...]"
+  },
+  "0x00494f30": {
+    "name": "AspectRatioSnapshot",
+    "calls": 941,
+    "rate_per_s": 181.0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "snapshot: DAT_00771a50=DAT_00771a54=FUN_00493fc0()\u2192DAT_00771a18; caller FUN_0043dfd0; D-4866; U-3648 | C2->C3 c3_batch_af (Opus frontend menu-leaf harvest, author+verify, central classify): Frida bit-identical GREEN run_diff_warm (deterministic arg_type, reproducible across solo+slots4+slots7) + integration build clean"
+  },
+  "0x0040e480": {
+    "name": "CarSlotStateSet",
+    "calls": 3756,
+    "rate_per_s": 722.3,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": true,
+    "notes": "18B double-deref setter *(PTR_PTR_005f2770+param_1*4+0x34)=param_2; leaf-exemption; callers CarSlotInit1P/CarSlotAssign C3; ptr_ptr_entity_set GREEN 10/10; U-3431 carried non-blocking; c3-batch-p-s1"
+  },
+  "0x00431d90": {
+    "name": "FrontendPanelFlagAdvance",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "panel-flag mass-advance; 19 frontend panel flags 0x0067e7a8..0x0067e838 via (X!=1)-1&2 (1->2 else->0); options flag 0x0067e7b0 special (preserve-1 or clear-0); leaf (no callees); callers FUN_00431f30+FUN_0043d2a0 both C2; Frida void_write_observe 10/10 GREEN c3-batch-t-s3 2026-05-26; no uncertainties"
+  },
+  "0x00431f30": {
+    "name": "FrontendPageIdDispatch",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "page-ID dispatch; 17 cases; param_1=10\u2192DAT_0067e7b0=1 (options page FUN_0042f0c0); calls FUN_00431d90; no stubs | batch-frontend-followup-s1 plate at re/analysis/frontend_c1_to_c2_followup_s1/FUN_00431f30.md | C2->C3 c3_batch_af (Opus frontend menu-leaf harvest, author+verify, central classify): Frida bit-identical GREEN run_diff_warm (deterministic arg_type, reproducible across solo+slots4+slots7) + integration build clean"
+  },
+  "0x00427c90": {
+    "name": "GetDat0067d84c",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "pure global getter: returns DAT_0067d84c; callees=none; U-4212; frontend_c1_to_c2_s5"
+  },
+  "0x00428390": {
+    "name": "FrontendStateSet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "state setter DAT_0067d960=param_1; pure leaf; C2->C3 c3_batch_t-s6 2026-05-26 path1 Frida A/B 0/10 mismatch; caller 0x00402750 C4; skeleton_prep_s3"
+  },
+  "0x0040d250": {
+    "name": "DoubleDerefIndexedGetter",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "16b double-deref getter: returns *(*(*0x005f2770+DAT_0063ba7c*4)); pure-leaf-exemption; caller FUN_00428d30 C2; Frida none 10/10 GREEN c3-batch-t-s1 2026-05-26; U-4203"
+  },
+  "0x0042f0b0": {
+    "name": "GetFrameCounterPlus73",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "int getter: DAT_0067f17c+0x49; 8b; pure leaf; leaf-exemption; Frida A/B 10/10 GREEN; c3-batch-b-s2; promote_c2_frontend_menus-20260513"
+  },
+  "0x004c5c00": {
+    "name": "FUN_004c5c00",
+    "calls": 2010,
+    "rate_per_s": 386.5,
+    "hot": false,
+    "installed": false,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "LinkedListStringSearch; c3-batch-k-s2 RED (arg_type gap); promoted C3 via canonical-wave0 count=1 (hook survival evidence; behavioral); frida-sweep RED was arg_type harness gap not impl error | C3->C4 2026-05-23 c4-lift: canonical-scenario observation evidence with hook installed (fired during boot-to-menu or per-frame survival) \u2014 meets C4 rubric per CONFIDENCE.md + feedback_no_overclaiming_c_levels | C4 DEMOTED 2026-05-26 frida-sweep-20260526-1415 Phase A: C4 evidence dated 2026-05-23 fell inside loader-broken-9d-audit window (.asi not actually loaded during canonical-wave0); arg_type EXPLICITLY REFUSED in hooks_registry.py (pointer non-determinism in linked-list walk); no path to verify_hook_install re-validation. Re-promote blocked by harness gap."
+  },
+  "0x00401570": {
+    "name": "EntryTableScanByKey",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "36b table scan: iterates &DAT_00636578 stride 0x68 (13 entries) matching entry[0x38]==param_1; stores result ptr in DAT_00636ac0; pure-leaf-exemption; caller FUN_00401ee0 C2; Frida void_setter_observe 10/10 GREEN c3-batch-t-s1 2026-05-26"
+  },
+  "0x00426cf0": {
+    "name": "GetDat0066d6e4",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "addr-of-global leaf: returns &DAT_0066d6e4; callees=none; U-4197; frontend_c1_to_c2_s5"
+  },
+  "0x0045ba00": {
+    "name": "RaceResultIndexedStore",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "indexed write: *(DAT_0068d1f0+param_1*4)=param_2; 15B leaf-exemption; caller FrontendRaceResultsDispatch C3; Frida entity_field_set 10/10 GREEN c3-batch-n-s2 2026-05-21; U-2869"
+  },
+  "0x0046c5c0": {
+    "name": "VehicleSlotInit",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "bounds-check param_1<=0xf; zero DAT_008815a4[param_1*0x341]; write DAT_007f1030 to DAT_008820b0[param_1*0xd04]; ret 1/0; 47B leaf-exemption; caller FrontendRaceResultsDispatch C3; Frida int_scalar 10/10 GREEN c3-batch-n-s2 2026-05-21; U-2870 U-2871"
+  },
+  "0x0046c790": {
+    "name": "VehicleSlotFieldSet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "bounds-check param_1<=0xf; write param_2 to DAT_008815b0[param_1*0x341]; ret 0/-1; 31B leaf-exemption; caller FrontendRaceResultsDispatch C3; Frida int_pair 10/10 GREEN c3-batch-n-s2 2026-05-21; U-2872"
+  },
+  "0x004c75e0": {
+    "name": "ViewportOriginGetter",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "ViewportOriginGetter; reads u16@param_1+0x1c/+0x1e into out-ptrs; 27b leaf-exemption; caller 00493fd0(C2); int_ptr2_out path1 10/10 GREEN c3-batch-t-s5; U-2347"
+  },
+  "0x0042d3e0": {
+    "name": "MenuEntryArrayInit",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "bulk-zero 30-entry array 0x898ac0..0x8990bf stride 52b; 14 selected offsets only; no callees; pure leaf; leaf-exemption; Frida A/B 10/10 GREEN; c3-batch-b-s2; promote_c2_frontend_menus-20260513; C4 REFUSED 2026-05-15 c4-batch-a-s13: E9+rel32 OK but count=0 + game crashes under Interceptor (fires before attach or early-boot Interceptor instability); see D-10603"
+  },
+  "0x0042ed70": {
+    "name": "MenusLapTimeCmp",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "trig-adjusted text draw: FUN_004282a0 width (ST0) -> fsin/fcos -> FUN_00427ff0 draw; arg_type=trig_text_draw added to diff_template.js (Interceptor.replace on draw callee captures adj_x/adj_y); GREEN 10/10; callees 004282a0=C3/0042b8c0=C3/0042b8b0=C3/00427ff0=C2; caller 004368e0 drift C1->C2 same transaction"
+  },
+  "0x0042f7b0": {
+    "name": "FrontendCursorUpdate",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "controller cursor updater; 4-axis 4-slots; release-edge DAT_007f1504 stride 0x130; clamp [0,3]; pure leaf exemption; Frida A/B 10/10 GREEN c3-batch-d-s1 2026-05-14"
+  },
+  "0x0042fa00": {
+    "name": "PlayerSlotEdgeAdjust",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "player-slot property adjuster; left/right edges DAT_007f1504 stride 0x4c; active slots {iVar1 iVar2 DAT_007f1a24 007f1a34}; clamps [0,2]; pure leaf; U-3555(blocks=none); C2->C3 c3_batch_t-s6 2026-05-26 path1 Frida A/B 0/10 mismatch; frontend_unmapped_a-20260511 | batch-frontend-followup-s1 plate at re/analysis/frontend_c1_to_c2_followup_s1/FUN_0042fa00.md"
+  },
+  "0x0040e470": {
+    "name": "CarSlotStateGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "14b leaf getter returns *(PTR_PTR_005f2770+param_1*4+0x34); Frida path1 GREEN 10/10 int_scalar; path2 inline-JMP PASS 4/4; leaf-exemption (no callees); callers MenuButtonDetectA/B C3; U-1300 semantic-only blocks=none; c3-batch-g-s7 2026-05-16 [merged-from-dup: 14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promoted C1\u2192C2 c3-batch-a... | 14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promote 2026-05-14 c3-bat... | 14b getter; returns *(PTR_PTR_005f2770+param_1*4+0x34); used as car-state query; U-1300; drift-promoted C1->C2 by c3-bat... | raw getter: PTR_PTR_005f2770+param_1*4+0x34; 1=player 2+=AI; U-0394; drift-promote 2026-05-14 c3-batch-a-s3] [subsystem-drift: vehicle]"
+  },
+  "0x0041e080": {
+    "name": "ScoreboardStateZeroInit",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "67b leaf: zero 11 globals 0x0063d798..0x0063d7dc + write 0x47 to DAT_0063d7cc; pure-leaf-exemption; Frida state_machine_observe 10/10 GREEN c3-batch-t-s1 2026-05-26; U-4209"
+  },
+  "0x00422a80": {
+    "name": "SlotBlockZero",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "void(int slot) memset wrapper; calls FUN_004b6520(base+slot*0xf40"
+  },
+  "0x00422aa0": {
+    "name": "SlotFieldSet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "15B pure-leaf setter: writes param_2 to dword DAT_0064131c+param_1*0xf40; entity_field_set Frida A/B 10/10 GREEN (c3-batch-s-s1); RH_ScopedInstall active; leaf-exemption (no callees); caller 0x0041f880 promoted C2 same transaction (frontend-gate-unblock-u 2026-05-26) satisfies caller-gate; was refused c3-batch-s-s1 ONLY on caller-gate"
+  },
+  "0x00423040": {
+    "name": "FrontendDirInput",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "directional menu-input handler: 2 grid callbacks (00417450/00417530 C2) gated by DAT_007f1042/1076+menu==0+tab==4"
+  },
+  "0x00423270": {
+    "name": "TabCycler",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "void() tab cycler; per-context bounds; mutates DAT_007f1a64; state_machine_observe arg_type GREEN 10/10 path1; harness-ext landed 2026-05-26"
+  },
+  "0x00423320": {
+    "name": "CursorMover",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "void() 8-way cursor with debounce; mutates DAT_007f1a90 (cursor) gated by tab DAT_007f1a64; state_machine_observe arg_type GREEN 10/10 path1; harness-ext landed 2026-05-26"
+  },
+  "0x00423b40": {
+    "name": "PlayerScoreAccA",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "c3-batch-s-s2 C2->C3; per-player accessor base 0x00899a94 stride 0x4e dwords; guard GetRaceSubMode()==4; callee GetRaceSubMode C3; Frida A/B 10/10 GREEN; path2 E9+rel32 PASS interceptor 4/4"
+  },
+  "0x00423b60": {
+    "name": "PlayerScoreAccB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "c3-batch-s-s2 C2->C3; per-player accessor base 0x00899a98 stride 0x4e dwords; twin of PlayerScoreAccA; callee GetRaceSubMode C3; Frida A/B 10/10 GREEN; path2 E9+rel32 PASS interceptor 4/4"
+  },
+  "0x00423b80": {
+    "name": "PlayerScoreAccC",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "batch-frontend-s2 C1->C2; per-player accessor base 0x00899f74 stride 0x4e; guard race-sub-mode==4"
+  },
+  "0x00423ba0": {
+    "name": "PlayerScoreAccD",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "c3-batch-s-s2 C2->C3; per-player accessor base 0x00899f78 stride 0x4e dwords; cumulative counterpart of PlayerScoreAccB; callee GetRaceSubMode C3; Frida A/B 10/10 GREEN; path2 E9+rel32 PASS interceptor 4/4"
+  },
+  "0x00423bc0": {
+    "name": "PlayerScoreTeamAccC",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "c3-batch-s-s2 C2->C3; team-aware accessor base 0x00899a9c stride 0x4e dwords; at menu team-mode==0 so direct-read path; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32 PASS interceptor 4/4"
+  },
+  "0x00423c40": {
+    "name": "PlayerScoreTeamAccBase",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "c3-batch-s-s2 C2->C3; team-aware accessor base 0x00899a40 stride 0x4e dwords; player struct base field +0x000; no race-sub-mode guard; callee GetDat0067ea64 C4; Frida A/B 10/10 GREEN; path2 E9+rel32 PASS interceptor 4/4"
+  },
+  "0x00423cc0": {
+    "name": "PlayerScoreTeamAccGatedB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "team-aware getter block-1 +0x04 base 0x00899a44; RaceSubMode gate; int_scalar 10/10 GREEN; C2->C3 c3-batch-t-s2 validated at frida-sweep-20260526-1942 integration diff (worktree diff was deferred due to stale-loader dedup)"
+  },
+  "0x00423d50": {
+    "name": "PlayerScoreTeamAccBaseB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "team-aware base getter; int_scalar 10/10 GREEN; C2->C3 c3-batch-t-s2 validated at frida-sweep-20260526-1942 integration diff (worktree diff was deferred due to stale-loader dedup)"
+  },
+  "0x00423dd0": {
+    "name": "PlayerScoreTeamAccGatedC",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "team-aware getter gated variant C; int_scalar 10/10 GREEN; C2->C3 c3-batch-t-s2 validated at frida-sweep-20260526-1942 integration diff (worktree diff was deferred due to stale-loader dedup)"
+  },
+  "0x00423e60": {
+    "name": "PlayerScoreTeamAccCumB",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "team-aware cumulative getter B; int_scalar 10/10 GREEN; C2->C3 c3-batch-t-s2 validated at frida-sweep-20260526-1942 integration diff (worktree diff was deferred due to stale-loader dedup)"
+  },
+  "0x00423ee0": {
+    "name": "PlayerBlock2Field00Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C2->C3 c3-batch-s-s3 2026-05-26; block-2+0x00 team-aggregating getter; callees GetDat0067ea64(C4); build GREEN; RH_ScopedInstall; Frida diff pending frida-sweep (dinput8 DLL-dedup); U-4197"
+  },
+  "0x00423f60": {
+    "name": "PlayerBlock2Field04Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C2->C3 c3-batch-s-s3 2026-05-26; block-2+0x04 team-aggregating getter RaceSubMode==4 gate; callees GetRaceSubMode(C3) GetDat0067ea64(C4); build GREEN; RH_ScopedInstall; Frida diff pending frida-sweep (dinput8 DLL-dedup)"
+  },
+  "0x00423ff0": {
+    "name": "PlayerBlock2Field50Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C2->C3 c3-batch-s-s3 2026-05-26; block-2+0x50 team-aggregating getter no-gate; callees GetDat0067ea64(C4); build GREEN; RH_ScopedInstall; Frida diff pending frida-sweep (dinput8 DLL-dedup)"
+  },
+  "0x00424070": {
+    "name": "PlayerBlock2Field08Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C2->C3 c3-batch-s-s3 2026-05-26; block-2+0x08 team-aggregating getter RaceSubMode==4 gate; callees GetRaceSubMode(C3) GetDat0067ea64(C4); build GREEN; RH_ScopedInstall; Frida diff pending frida-sweep (dinput8 DLL-dedup)"
+  },
+  "0x00424100": {
+    "name": "TeamBlockZeroGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C1->C2 batch-frontend-s3 2026-05-25; block-0 team-aggregating getter with active-player -1 guard; int(player_idx)->int; reads DAT_008999a0 stride 0x4e; calls FUN_0042f500; caller: FUN_0042c960; U-4198"
+  },
+  "0x004241b0": {
+    "name": "GetDat008994c0",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C2->C3 c3-batch-s-s3 2026-05-26; pure leaf returns DAT_008994c0; leaf-exemption; build GREEN; RH_ScopedInstall; Frida diff pending frida-sweep (dinput8 DLL-dedup)"
+  },
+  "0x00424920": {
+    "name": "EndOfRoundAccumulator",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "end-of-round accumulator; pure leaf; int_scalar 10/10 GREEN; C2->C3 c3-batch-t-s2 validated at frida-sweep-20260526-1942 integration diff (worktree diff was deferred due to stale-loader dedup)"
+  },
+  "0x00425b70": {
+    "name": "SlotFieldSetter",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "C1->C2 batch-frontend-s3 2026-05-25; slot setter in array at DAT_008992a0 stride 0x13 dwords; void(int,undefined4); writes param_2 to [idx].+0x04 zeroes [idx].+0x00; pure leaf; caller: FUN_004262f0; U-4200"
+  },
+  "0x00425ee0": {
+    "name": "SlotWordPtrGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "leaf: returns &DAT_00899294 + param_1*0x13; pointer to word[0xd] of slot N in 0x4c-stride table; GREEN 10/10"
+  },
+  "0x00425ef0": {
+    "name": "ActiveSlotCount",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "leaf: counts active slots in 8-slot table 0x00899260 stride 0x4c; slot active = word[0]+0x44 != 0 AND word[0] != 0; returns int 0..8; GREEN 10/10"
+  },
+  "0x00426020": {
+    "name": "GlobalDat00646e58Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "leaf getter: returns &DAT_00646e58; 3 callers; GREEN 10/10"
+  },
+  "0x00426080": {
+    "name": "GlobalDat00656ed8Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "leaf getter: returns DAT_00656ed8 (4-byte value); 1 caller; GREEN 10/10"
+  },
+  "0x00426090": {
+    "name": "GlobalDat0066ce58Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "leaf getter: returns &DAT_0066ce58; 8 callers; GREEN 10/10"
+  },
+  "0x004260a0": {
+    "name": "GetDat00657438",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "pure-leaf getter returns DAT_00657438; leaf-exemption applied; Frida A/B 10/10 GREEN; paired with 004260b0"
+  },
+  "0x004260b0": {
+    "name": "GetDat0065743c",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "pure-leaf getter returns DAT_0065743c; C2+ caller FUN_00487280; Frida A/B 10/10 GREEN; paired with 004260a0"
+  },
+  "0x00426bc0": {
+    "name": "GetDat0066d6e0",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "pure-leaf getter returns DAT_0066d6e0; leaf-exemption applied; Frida A/B 10/10 GREEN; 1 caller FUN_00409290"
+  },
+  "0x00426bd0": {
+    "name": "GetTableEntry0066d658",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "pure-leaf table-indexed reader: table 0x0066d658 stride 4; writes uint16 low+high to *param_2/*param_3; leaf-exemption applied; Frida A/B 10/10 GREEN"
+  },
+  "0x00426d00": {
+    "name": "FrontendArraySlotGet",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "2D array slot accessor: &DAT_00663670 + param_2*0xc + param_1*0x4c; callees=none; U-4198; frontend_c1_to_c2_s5"
+  },
+  "0x00426dc0": {
+    "name": "FrontendRaycastForward",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "3-arg forwarder: FUN_00479100(&DAT_00646e58"
+  },
+  "0x0042a980": {
+    "name": "MenuTableSearchAlt",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "sentinel-terminated 3-word-stride list walk at 0x5f6748; key=FUN_0040ce80(param_1); returns value or 0; U-4199"
+  },
+  "0x0042a9c0": {
+    "name": "ModeCodeLookup",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "mode-code mapper: DAT_007f0fd0; modes 5/7-10->0x2d(45) [corrected batch-aa: comma-expr branch taken"
+  },
+  "0x0042b920": {
+    "name": "ConstantGetter22",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "constant getter: returns 0x16 (22); 5B pure leaf; Frida GREEN 10/10 void+10x int_scalar; pure-leaf exemption; caller 0x00492770 (MainLoopInit) C4; RH_ScopedInstall(ConstantGetter22"
+  },
+  "0x0042bde0": {
+    "name": "HudRectEmitter5",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "5-call HUD rect emitter via FUN_00472c60; (param_1-13) base Y; param_2 colour byte; reads DAT_005cc35c/574/cd784"
+  },
+  "0x0042bfb0": {
+    "name": "MenuStateParamStore",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "6-arg guarded state-store to DAT_0067e918..e92c + flag e930=1; alt-path FUN_0042bf30 (C2) when guard DAT_0067eab0==0; multi_arg_global_write arg_type (new) GREEN 10/10; caller 0x00432450 C2 + callee 0x0042bf30 C2 both gates pass; harness-ext-20260526-u"
+  },
+  "0x00431b70": {
+    "name": "MenuFlagDat007f0f10Get",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "batch_z s6 HUD/frontend/race-state core (HUD-glyph emitter + per-player score aggregation + menu input + copter asset loader + race state machine + screen-dim fade); per-player score struct stride 0x4e at DAT_00899a40, HUD-glyph slot stride 0xd ints at DAT_00898ac0 | batch-frontend-followup-s1 plate at re/analysis/frontend_c1_to_c2_followup_s1/FUN_00431b70.md | C2->C3 c3_batch_af (Opus frontend menu-leaf harvest, author+verify, central classify): Frida bit-identical GREEN run_diff_warm (deterministic arg_type, reproducible across solo+slots4+slots7) + integration build clean"
+  },
+  "0x00432ad0": {
+    "name": "MenuDimOverlayFadeStep",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "menu dim-overlay fade-out tick; reads DAT_00898a90 alpha counter, clamps 0..0x1ff, writes DAT_0067eca8=min(counter,0xff), calls MenuIm2DQuad(0) [0x0042aae0 C3], restores DAT_0067eca8, decrements counter by 0x10; caller FUN_00448730 C2; callee 0x0042aae0 C3; Frida void_write_observe 10/10 GREEN (crash_equal_ok on draw path; clamp-to-0 path clean) c3-batch-t-s3 2026-05-26; U-4253 resolved (callee 0042aae0 is C3 MenuIm2DQuad dim-overlay renderer)"
+  },
+  "0x0043aee0": {
+    "name": "MenuSlotFlagSetCurrent",
+    "calls": 0,
+    "rate_per_s": 0,
+    "hot": false,
+    "installed": true,
+    "survived": true,
+    "C4_trio": false,
+    "notes": "batch_z s6 HUD/frontend/race-state core (HUD-glyph emitter + per-player score aggregation + menu input + copter asset loader + race state machine + screen-dim fade); per-player score struct stride 0x4e at DAT_00899a40, HUD-glyph slot stride 0xd ints at DAT_00898ac0 | batch-frontend-followup-s2 plate at re/analysis/frontend_c1_to_c2_followup_s2/FUN_0043aee0.md | C2->C3 c3_batch_af (Opus frontend menu-leaf harvest, author+verify, central classify): Frida bit-identical GREEN run_diff_warm (deterministic arg_type, reproducible across solo+slots4+slots7) + integration build clean"
+  },
+  "_meta": {
+    "nav": [
+      4,
+      4
+    ],
+    "chunk": 6,
+    "n": 122,
+    "n_trio_ok": 14,
+    "bad": [
+      "0x004282a0",
+      "0x0042aad0"
+    ],
+    "shot": "verify/c4nav_A/c4nav_ON_g7.png",
+    "window_s": 5.2
+  }
+}

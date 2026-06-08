@@ -279,6 +279,36 @@ re/frida/c4_navigate_batch.py orchestrates canonical_c4_navigate.run() over many
 - REPORT ONLY — never auto-promotes; the re-classify skill gates leaf vs non-leaf for the
   actual C3->C4 promotion. Pair with scripts/patch_mashed_no_focus_pause.py for background runs.
 
+## Option A full sweep result (2026-06-07) — 122 frontend C3 impl @ Game Type Select (nav 4,4)
+
+Full results: c4_nav_A_gametypeselect.{json,md} (this dir). Per-group ON screenshots:
+verify/c4nav_A/c4nav_ON_g{2..7}.png (survivor groups; g0/g1 crashed -> bisected).
+
+- **14 trio-OK** (exercised-on-screen + installed 0xE9 + survived + not-hot): MenuChromeShellA
+  0x0042e3a0, MenusBodyA 0x0042d5a0, TextGradientV0V1Override 0x00472f40,
+  TextGradientV2V3Override 0x004730b0, MenuIm2DQuad 0x0042aae0, IntroSplashFrameTickShim
+  0x00492d20, IntroVideoDimGetter 0x00493f80, AspectRatioGlobalGet 0x00493fc0, RwVtableSlot07Call
+  0x004c19f0, IntroSplashVtableSlot6 0x004c1a00, IntroSplashRenderState 0x004c1bb0,
+  MenuReadinessCheckA 0x0042ae10, AspectRatioSnapshot 0x00494f30, CarSlotStateSet 0x0040e480.
+  (Many are per-frame fns that also fire pre-nav; the nav-specific ones are the Menu* drawers
+  + MenuReadinessCheckA.) NOT auto-promoted — hand to re-classify, which leaf-gates: pure-leaf
+  getters (AspectRatio*, IntroVideoDimGetter) auto-C4 off the trio; non-leaf draw dispatchers
+  (MenuChromeShellA, MenusBodyA, ...) still need behavioral-diff coverage.
+- **1 HOT**: ChromeBaseDraw 0x00472c60 (~3976/s) -> behavioral-survival lane, not Interceptor.
+- **2 CRASHERS (real regressions the C3 force-call diff missed!)**: MenuDimSet 0x0042aad0
+  (exercised 940 calls, but crashes when installed; eip=0x727d9e44) and MenuMenusBA 0x004282a0
+  (crashes installed; eip=0x00427813). These crash on the canonical navigated scenario with the
+  inline-JMP live -> they FAIL C4 and warrant a reimpl fix (and arguably a C3 review).
+- **Install-failures (status=impl but no 0xE9 under MASHED_HOOK_ONLY)**: FUN_004c5c00 0x004c5c00
+  (exercised 2010 calls), MenuMenusBC 0x0042f8d0 -> allowlist/registration discrepancy to chase.
+- **~100 HOLD not-exercised**: do not fire on Game Type Select -> the Option B worklist (deeper
+  screens: Single-Player setup, Options, Multiplayer, records/results, player/score getters).
+  HOLD is "not on this screen", NOT a C4-negative; these rows are untouched (report-only).
+
+Takeaway: Option A cleanly separated the menu-screen subset (14) + 2 genuine crashers from the
+~100 deeper-screen hooks. The crashers are the highest-value find — the navigate C4 gate caught
+installed-scenario regressions that force-call C3 could not.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
