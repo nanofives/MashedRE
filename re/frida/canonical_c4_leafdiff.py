@@ -101,9 +101,11 @@ function attachLeaf(key, where, L){
 }
 
 rpc.exports = {
-  setup:function(mode, leaves, nav, settle, dwell){
+  setup:function(mode, leaves, nav, settle, dwell, gateAtSettle){
     MODE=mode; NAV=nav; SETTLE=settle; DWELL=dwell; t0=Date.now();
-    GATE = t0 + SETTLE + NAV.length*DWELL + 800;
+    // gateAtSettle: start capturing right after settle (DURING nav taps) so input-driven
+    // branches (e.g. readiness=1 while a control is pending) are observed, not just idle.
+    GATE = gateAtSettle ? (t0 + SETTLE) : (t0 + SETTLE + NAV.length*DWELL + 800);
     const m = Process.findModuleByName('MASHED.exe') || Process.enumerateModules()[0];
     DELTA = m.base.toUInt32() - IMGBASE;
     // nav driver
@@ -141,6 +143,8 @@ rpc.exports = {
 send({kind:'ready'});
 '''
 
+GATE_AT_SETTLE = False
+
 def run(mode, nav, settle, dwell, seconds):
     env = dict(os.environ)
     if mode == "on":
@@ -154,7 +158,7 @@ def run(mode, nav, settle, dwell, seconds):
         p = m.get("payload", {})
         if p.get("kind") in ("info", "err"): print("   ", p.get("msg"))
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
-    scr.exports_sync.setup(mode, LEAVES, nav, settle, dwell)
+    scr.exports_sync.setup(mode, LEAVES, nav, settle, dwell, GATE_AT_SETTLE)
     dev.resume(pid)
     t = time.time() + seconds
     while time.time() < t:
@@ -175,6 +179,15 @@ def run(mode, nav, settle, dwell, seconds):
     return {"samples": samples, "jmp": jmp}
 
 def main():
+    global LEAVES, GATE_AT_SETTLE
+    if "--readiness" in sys.argv:
+        # exercise BOTH branches of the readiness checks by capturing the EAX return DURING
+        # continuous down-taps (input pending -> 1-branch) AND idle gaps (0-branch).
+        LEAVES = {
+            "0x0042ae10": {"name": "MenuReadinessCheckA", "kind": "ret_eax"},
+            "0x0042aeb0": {"name": "MenuReadinessCheckB", "kind": "ret_eax"},
+        }
+        GATE_AT_SETTLE = True
     nav = [int(x) for x in sys.argv[sys.argv.index("--nav")+1].split(",")] if "--nav" in sys.argv else [4,4]
     settle = int(sys.argv[sys.argv.index("--settle")+1]) if "--settle" in sys.argv else 7000
     dwell  = int(sys.argv[sys.argv.index("--dwell")+1])  if "--dwell"  in sys.argv else 1500
