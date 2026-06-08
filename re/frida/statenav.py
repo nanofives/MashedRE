@@ -68,6 +68,7 @@ rpc.exports={
   countthese:function(rvas){ rvas.forEach(function(r){ const a=parseInt(r,16); CNT[r]=0;
     try{ Interceptor.attach(abs(a),{onEnter:function(){CNT[r]++;}}); }catch(e){ CNT[r]=-1; } }); return 1; },
   counts:function(){ return CNT; },
+  peek:function(rva){ try{ return abs(parseInt(rva,16)).readU32(); }catch(e){ return 0; } },
   depth:function(){ try{return abs(RVA_DEPTH).readS32();}catch(e){return -999;} },
   phase:function(){ try{return abs(RVA_PHASE).readS32();}catch(e){return -999;} },
   sel:function(){ try{const d=abs(RVA_DEPTH).readS32(); return abs(RVA_SEL+d*0x40).readS32();}catch(e){return -999;} }
