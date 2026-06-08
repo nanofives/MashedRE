@@ -113,3 +113,11 @@ extern "C" __declspec(dllexport) uint32_t __cdecl VoiceFieldD74Get(void* self) {
     return *reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(self) + 0xD74);
 }
 RH_ScopedInstall(VoiceFieldD74Get, 0x005a89c0);
+
+// 0x005ab370  FUN_005ab370  (7 bytes)  undefined4(this)  -> *(this+0x10)
+// Same __cdecl single-stack-ptr field-getter shape (MOV EAX,[ESP+4];
+// MOV EAX,[EAX+0x10]; RET, pool14). Audio channel-meta accessor.
+extern "C" __declspec(dllexport) uint32_t __cdecl ChannelField10Get(void* self) {
+    return *reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(self) + 0x10);
+}
+RH_ScopedInstall(ChannelField10Get, 0x005ab370);

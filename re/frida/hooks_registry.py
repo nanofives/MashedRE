@@ -13164,4 +13164,24 @@ HOOKS = {
         'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
     },
 
+    # 0x005ab370 — identical __cdecl field-getter shape, audio channel-meta
+    # accessor (*(this+0x10)). Adjacent in the voice bucket; same thiscall_field_get.
+    # ref: re/analysis/bucket_audio_005a7b60_005ab620/005ab370.md
+    'channel_field_10_get': {
+        'rva':            0x005ab370,
+        'export':         'ChannelField10Get',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'thiscall_field_get',
+        'field_off':      0x10,
+        'ret_kind':       'u32',
+        'struct_size':    0x80,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000, 0x00000001, 0xFFFFFFFF, 0xDEADBEEF, 0x12345678,
+            0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x0000FFFF, 0xFFFF0000,
+            0x55555555, 0xAAAAAAAA,
+        ],
+        'path2_tests': [0x00000000, 0xDEADBEEF, 0x12345678],
+    },
+
 }
