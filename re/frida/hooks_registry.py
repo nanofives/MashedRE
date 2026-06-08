@@ -13062,8 +13062,20 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0xDEADBEEF, 0xCAFEBABE],
     },
 
-    # 0x005ab070  AudioTimerRateGet — NOT REGISTERED (c3-batch-ah-s5 2026-06-08).
-    #   return [0x007dcdf8] if [0x007dce00]==1 else literal 1000. read_global
+    # 0x005ab070  AudioTimerRateGet — DEFERRED, NOT REGISTERED (re-checked
+    #   2026-06-08 scenario-attach pickup). uint32(void):
+    #     return [0x007dcdf8] if [0x007dce00]==1 else literal 1000.
+    #   read_global on 0x007dcdf8 is GREEN-but-DEGENERATE under run_diff.py: at the
+    #   early menu-attach diff point the gate 0x007dce00 is NOT yet 1 (audio init
+    #   completes later, ~title), so every seeded vector falls to the literal 1000
+    #   (log/diff_audio_timer_rate_get.csv = all 1000). The gate IS 1 from title
+    #   onward (verified live: 0x007dce00==1, 0x007dcdf8=10000000), but at that
+    #   point the function is zero-arg so the scenario-attach VECTOR model returns
+    #   the same live value for every vector -> also degenerate. Neither harness
+    #   can show non-degeneracy. Re-pickup: a read_global diff taken AFTER title
+    #   (gate==1) seeding 0x007dcdf8 to varied values. Entry intentionally omitted
+    #   so the central frida-sweep does not promote on the false-GREEN.
+    #   (historical) c3-batch-ah-s5 2026-06-08.
     #   seeds 0x007dcdf8, but at the diff-attach point the runtime gate
     #   0x007dce00 != 1, so every vector returns the constant 1000 (verified:
     #   diff GREEN but all-1000 DEGENERATE -> false-GREEN). The seeded global
