@@ -3226,3 +3226,12 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-08  005b36b0  FUN_005b36b0 (AudioListAt)  C2->C3  Frida 12/12 GREEN non-degenerate (harness-ext count_header_list_ring)
 2026-06-08  005b3580  FUN_005b3580 (AudioListInit)  C2->C3  Frida 12/12 GREEN (harness-ext count_header_list_ring; nullary-init constant 0:11 by construction; prefill-sentinel overwrite proves exec; user-approved)
 2026-06-08  frida-sweep-20260608-ah  frida-sweep-claim  branches=6 queued (c3_batch_ah s1..s6)
+2026-06-08  00409300  FUN_00409300 (RangeTableFirstOfGroup)  C2->C3  Frida 12/12 GREEN non-degenerate (c3_batch_ah s1 int_scalar; callee FUN_00426090=C3) + integration-diff GREEN frida-sweep-20260608-ah
+2026-06-08  00409330  FUN_00409330 (RangeTableSuccessorByGroup)  C2->C3  Frida 12/12 GREEN non-degenerate (c3_batch_ah s1 int_pair) + integration-diff GREEN
+2026-06-08  00407b70  FUN_00407b70 (RangeTableMemberTest)  C2->C3  Frida 12/12 GREEN non-degenerate (c3_batch_ah s1 int_pair) + integration-diff GREEN
+2026-06-08  0040dc70  FUN_0040dc70 (GetAnimationState)  C2->C3  Frida 10/10 GREEN non-degenerate (c3_batch_ah s3 read_global 0x0063b90c; pure leaf) + integration-diff GREEN
+2026-06-08  0040d430  FUN_0040d430 (GetPointerGlobal)  C2->C3  Frida 10/10 GREEN non-degenerate (c3_batch_ah s3 read_global 0x005f2770; pure leaf) + integration-diff GREEN
+2026-06-08  004f5020  FUN_004f5020 (FormatEntryLookup)  C2->C3  Frida 12/12 GREEN non-degenerate (c3_batch_ah s4 int_scalar; static .rdata table outputs 4/8/12/16) + integration-diff GREEN
+2026-06-08  005aad40  FUN_005aad40 (AudioRootGet)  C2->C3  Frida 10/10 GREEN non-degenerate (c3_batch_ah s5 read_global 0x007dcd20; pure leaf) + integration-diff GREEN
+2026-06-08  005aeb90  FUN_005aeb90 (AudioLinearToLog)  C2->C3  Frida 18/18 GREEN non-degenerate (c3_batch_ah s5 float_scalar x87 log10 leaf; disasm-corrected decompiler 0.30103 artifact) + integration-diff GREEN
+2026-06-08  frida-sweep-20260608-ah  frida-sweep-release  branches=6 merged  integration-diff=GREEN  hooks=8 (C2->C3)
