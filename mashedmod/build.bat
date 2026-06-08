@@ -321,6 +321,11 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Particle\ParticleLeaves_ad5.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
     "Input\MemsetInline_ag1.cpp" ^
+    "Vehicle\ReplayRewind_ag.cpp" ^
+    "HUD\ViewportDimsSet_ag.cpp" ^
+    "Gameplay\SparseGrid_ag.cpp" ^
+    "Util\TimeRecordWrite_ag.cpp" ^
+    "Audio\AudioList_ag.cpp" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)

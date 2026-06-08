@@ -1112,6 +1112,232 @@ HOOKS = {
         ],
     },
 
+    # ── c3_batch_ag harness-ext 2026-06-08 — 9 deferrals unlocked by 4 new ────
+    # arg_type handlers (seed_field_read_field / structptr_seeded_array /
+    # scalars_to_scattered_globals / count_header_list_ring).
+
+    # 0x00483a30 Replay::Rewind — copies *(p+0x18)->*(p+0x1c). Seed +0x18, read +0x1c.
+    'replay_rewind': {
+        'rva':       0x00483a30,
+        'export':    'ReplayRewind',
+        'signature': {'ret': 'void', 'args': ['pointer']},
+        'arg_type':  'seed_field_read_field',
+        'struct_size': 0x40, 'seed_off': 0x18, 'read_off': 0x1c, 'read_size': 4,
+        'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xFFFFFFFF, 0x80000000, 0x7FFFFFFF, 0xAAAAAAAA,
+                        0x55555555, 0x12345678, 0xDEADBEEF, 0xCAFEBABE, 0x00FF00FF, 0xF0F0F0F0],
+        'path2_tests': [0xDEADBEEF, 0x55555555, 0x80000000],
+    },
+
+    # 0x004c1c80 ViewportDimsSet(structPtr, dims[2]) — stores dims@+0x68/+0x6c and
+    # ratios DAT_005cc320/dim@+0x70/+0x74; gate@+4 stays 0 so FUN_004c0e50 is skipped.
+    # dims are re-read as float for the ratio -> test vectors are float bit patterns.
+    'viewport_dims_set': {
+        'rva':       0x004c1c80,
+        'export':    'ViewportDimsSet',
+        'signature': {'ret': 'int', 'args': ['pointer', 'pointer']},
+        'arg_type':  'structptr_seeded_array',
+        'struct_size': 0x80, 'read_offs': [0x68, 0x6c, 0x70, 0x74],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [0x44480000, 0x44160000],  # 800.0, 600.0
+            [0x44200000, 0x43F00000],  # 640.0, 480.0
+            [0x44800000, 0x44400000],  # 1024.0, 768.0
+            [0x44F00000, 0x44870000],  # 1920.0, 1080.0
+            [0x3F800000, 0x40000000],  # 1.0, 2.0
+            [0x40000000, 0x3F800000],  # 2.0, 1.0
+            [0x43800000, 0x43800000],  # 256.0, 256.0
+            [0x44160000, 0x44480000],  # 600.0, 800.0
+            [0x3F000000, 0x40400000],  # 0.5, 3.0
+            [0x42C80000, 0x42C80000],  # 100.0, 100.0
+            [0x45000000, 0x44A00000],  # 2048.0, 1280.0
+            [0x44480000, 0x44480000],  # 800.0, 800.0
+        ],
+        'path2_tests': [[0x44480000, 0x44160000], [0x44200000, 0x43F00000], [0x3F800000, 0x40000000]],
+    },
+
+    # 0x00417450 SparseGridCellWrite(x,y,v) -> 1/0. Snapshot the whole cell table +
+    # slot data + high-water (save/restore both sides) and fold the return.
+    'sparse_grid_cell_write': {
+        'rva':       0x00417450,
+        'export':    'SparseGridCellWrite',
+        'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']},
+        'arg_type':  'scalars_to_scattered_globals',
+        'observe':   [{'addr': '0x007f1a9c', 'len': 0xC000}, {'addr': '0x00801a9c', 'len': 4}],
+        'fold_ret':  True,
+        'pre_fill_byte': 0xFF,   # grid free-slot sentinel; region is 0x00 at attach
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'args': [0, 0, 0xAB]}, {'args': [0, 0, 0xCD]}, {'args': [8, 0, 0x11]},
+            {'args': [0, 8, 0x22]}, {'args': [16, 16, 0x33]}, {'args': [0, 0, 0xFF]},
+            {'args': [64, 64, 0x44]}, {'args': [100, 100, 0x55]}, {'args': [0, 0, 0x00]},
+            {'args': [8, 16, 0x7F]}, {'args': [0x10000, 0, 0x99]}, {'args': [0, 0x10000, 0xEE]},
+        ],
+        'path2_tests': [{'args': [0, 0, 0xAB]}, {'args': [16, 16, 0x33]}, {'args': [0x10000, 0, 0x99]}],
+    },
+
+    # 0x00417530 SparseGridCellErase(x,y) -> 1/0. Prep = ORIGINAL writer 0x00417450
+    # populates the cell first (so erase has something to clear), inside save/restore.
+    'sparse_grid_cell_erase': {
+        'rva':       0x00417530,
+        'export':    'SparseGridCellErase',
+        'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':  'scalars_to_scattered_globals',
+        # Split fill: cell table -> 0x00 baseline, slot data -> 0xff (free sentinel).
+        # erase frees the cell (cellTable[cell]=0xffff != 0x00 baseline) so its (x,y)-
+        # dependent effect is visible — a uniform 0xff fill would revert to baseline.
+        'observe':   [{'addr': '0x007f1a9c', 'len': 0x8000, 'fill': 0x00},
+                      {'addr': '0x007f9a9c', 'len': 0x4000, 'fill': 0xFF},
+                      {'addr': '0x00801a9c', 'len': 4, 'fill': 0x00}],
+        'fold_ret':  True,
+        'prep_call_str': '0x00417450',
+        'prep_arg_types': ['uint32', 'uint32', 'uint32'],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'args': [0, 0],   'prep_args': [0, 0, 0xAB]},
+            {'args': [8, 0],   'prep_args': [8, 0, 0xCD]},
+            {'args': [0, 8],   'prep_args': [0, 8, 0x11]},
+            {'args': [16, 16], 'prep_args': [16, 16, 0x22]},
+            {'args': [64, 64], 'prep_args': [64, 64, 0x33]},
+            {'args': [100, 100], 'prep_args': [100, 100, 0x44]},
+            {'args': [0, 0],   'prep_args': [0, 0, 0xFF]},
+            {'args': [8, 16],  'prep_args': [8, 16, 0x55]},
+            {'args': [24, 8],  'prep_args': [24, 8, 0x66]},
+            {'args': [0x10000, 0], 'prep_args': [0x10000, 0, 0x77]},  # OOR: prep no-op, erase->0
+            {'args': [32, 32], 'prep_args': [32, 32, 0x88]},
+            {'args': [0, 24],  'prep_args': [0, 24, 0x99]},
+        ],
+        'path2_tests': [
+            {'args': [0, 0], 'prep_args': [0, 0, 0xAB]},
+            {'args': [16, 16], 'prep_args': [16, 16, 0x22]},
+        ],
+    },
+
+    # 0x004299d0 TimeRecordWriteTrackBest(frac,sec,min). Echoes the 3 scattered
+    # scalar globals + the 3 track arrays at idx=FUN_00430790() (C3 impl).
+    'time_record_write_track_best': {
+        'rva':       0x004299d0,
+        'export':    'TimeRecordWriteTrackBest',
+        'signature': {'ret': 'void', 'args': ['uint32', 'uint32', 'uint32']},
+        'arg_type':  'scalars_to_scattered_globals',
+        'observe':   [{'addr': '0x0067d990', 'len': 0x14}],  # DAT_0067d990 / d998 / 9a0
+        'idx_call_str': '0x00430790',
+        'idx_arrays': [
+            {'base': '0x007f0db4', 'stride': 4, 'elem_len': 4},   # minutes
+            {'base': '0x007f0de8', 'stride': 4, 'elem_len': 4},   # seconds
+            {'base': '0x007f0e1c', 'stride': 4, 'elem_len': 4},   # fractional
+        ],
+        'fold_ret': False,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'args': [0x3DCCCCCD, 30, 2]}, {'args': [0x3F000000, 45, 5]}, {'args': [0, 0, 0]},
+            {'args': [0xFFFFFFFF, 59, 99]}, {'args': [0x3F800000, 1, 1]}, {'args': [0x40490FDB, 15, 10]},
+            {'args': [0x12345678, 42, 7]}, {'args': [0xAAAAAAAA, 33, 3]}, {'args': [0x55555555, 12, 8]},
+            {'args': [0x80000000, 59, 0]}, {'args': [0x7FFFFFFF, 1, 59]}, {'args': [0xCAFEBABE, 21, 4]},
+        ],
+        'path2_tests': [{'args': [0x3F000000, 45, 5]}, {'args': [0xFFFFFFFF, 59, 99]}, {'args': [0x12345678, 42, 7]}],
+    },
+
+    # 0x005b3580 AudioListInit(hdr) — count-header circular-list init. Prefill the 3
+    # header words with a per-vector sentinel, call, read normalized empty-state.
+    'audio_list_init': {
+        'rva':       0x005b3580,
+        'export':    'AudioListInit',
+        'signature': {'ret': 'void', 'args': ['pointer']},
+        'arg_type':  'count_header_list_ring',
+        'list_op':   'init',
+        'node_link_off': 0x20, 'cmp_field_off': 0x18, 'object_size': 0x40,
+        'init_rva_str': '0x005b3580', 'pushback_rva_str': '0x005b35a0',
+        'lut_root_delta': 0,
+        'path1_tests': [0xDEADBEEF, 0xCAFEBABE, 0x11111111, 0x22222222, 0, 0xFFFFFFFF,
+                        0x80000000, 0x55555555, 0xAAAAAAAA, 0x12345678, 1, 0x7FFFFFFF],
+        'path2_tests': [0xDEADBEEF, 0, 0xFFFFFFFF],
+    },
+
+    # 0x005b35a0 AudioListPushBack(hdr,obj). Build list from `pre` via ORIGINAL
+    # Init+PushBack, push a new object with `push_field`, observe count + first field.
+    'audio_list_push_back': {
+        'rva':       0x005b35a0,
+        'export':    'AudioListPushBack',
+        'signature': {'ret': 'void', 'args': ['pointer', 'pointer']},
+        'arg_type':  'count_header_list_ring',
+        'list_op':   'pushback',
+        'node_link_off': 0x20, 'cmp_field_off': 0x18, 'object_size': 0x40,
+        'init_rva_str': '0x005b3580', 'pushback_rva_str': '0x005b35a0',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'pre': [], 'push_field': 0x111},
+            {'pre': [0xAAA], 'push_field': 0x222},
+            {'pre': [0xAAA, 0xBBB], 'push_field': 0x333},
+            {'pre': [1, 2, 3], 'push_field': 0x444},
+            {'pre': [0x10, 0x20, 0x30, 0x40], 'push_field': 0x555},
+            {'pre': [], 'push_field': 0},
+            {'pre': [0xFFFF], 'push_field': 0x7FFF},
+            {'pre': [5, 6, 7, 8, 9], 'push_field': 0x666},
+            {'pre': [0x100], 'push_field': 0x777},
+            {'pre': [0xDEAD], 'push_field': 0xBEEF},
+            {'pre': [1], 'push_field': 2},
+            {'pre': [0x12, 0x34, 0x56], 'push_field': 0x78},
+        ],
+        'path2_tests': [{'pre': [], 'push_field': 0x111}, {'pre': [1, 2, 3], 'push_field': 0x444}],
+    },
+
+    # 0x005b3670 AudioListFind(hdr,key) -> object base. Observe cmp-field of the
+    # returned object (==key when found) or -1.
+    'audio_list_find': {
+        'rva':       0x005b3670,
+        'export':    'AudioListFind',
+        'signature': {'ret': 'pointer', 'args': ['pointer', 'int32']},
+        'arg_type':  'count_header_list_ring',
+        'list_op':   'find',
+        'node_link_off': 0x20, 'cmp_field_off': 0x18, 'object_size': 0x40,
+        'init_rva_str': '0x005b3580', 'pushback_rva_str': '0x005b35a0',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'field_vals': [0x10, 0x20, 0x30], 'key': 0x20},
+            {'field_vals': [0x10, 0x20, 0x30], 'key': 0x10},
+            {'field_vals': [0x10, 0x20, 0x30], 'key': 0x30},
+            {'field_vals': [0x10, 0x20, 0x30], 'key': 0x99},   # absent -> NULL
+            {'field_vals': [0xAA], 'key': 0xAA},
+            {'field_vals': [0xAA], 'key': 0xBB},
+            {'field_vals': [], 'key': 0x1},                    # empty -> NULL
+            {'field_vals': [1, 2, 3, 4, 5], 'key': 4},
+            {'field_vals': [1, 2, 3, 4, 5], 'key': 6},
+            {'field_vals': [0x7FFFFFFF, 0, 0x40], 'key': 0},
+            {'field_vals': [0x7FFFFFFF, 0, 0x40], 'key': 0x40},
+            {'field_vals': [100, 200, 300], 'key': 200},
+        ],
+        'path2_tests': [{'field_vals': [0x10, 0x20, 0x30], 'key': 0x20}, {'field_vals': [0x10, 0x20, 0x30], 'key': 0x99}],
+    },
+
+    # 0x005b36b0 AudioListAt(hdr,pos) -> object base. Observe cmp-field of the pos-th
+    # object (traversal order = reverse insertion) or -1 when out of range.
+    'audio_list_at': {
+        'rva':       0x005b36b0,
+        'export':    'AudioListAt',
+        'signature': {'ret': 'pointer', 'args': ['pointer', 'int32']},
+        'arg_type':  'count_header_list_ring',
+        'list_op':   'at',
+        'node_link_off': 0x20, 'cmp_field_off': 0x18, 'object_size': 0x40,
+        'init_rva_str': '0x005b3580', 'pushback_rva_str': '0x005b35a0',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'field_vals': [0x10, 0x20, 0x30], 'pos': 0},
+            {'field_vals': [0x10, 0x20, 0x30], 'pos': 1},
+            {'field_vals': [0x10, 0x20, 0x30], 'pos': 2},
+            {'field_vals': [0x10, 0x20, 0x30], 'pos': 3},      # OOR -> NULL
+            {'field_vals': [0xAA], 'pos': 0},
+            {'field_vals': [0xAA], 'pos': 1},                  # OOR -> NULL
+            {'field_vals': [], 'pos': 0},                      # empty -> NULL
+            {'field_vals': [1, 2, 3, 4, 5], 'pos': 4},
+            {'field_vals': [1, 2, 3, 4, 5], 'pos': 2},
+            {'field_vals': [100, 200, 300], 'pos': 1},
+            {'field_vals': [0x7F, 0x80, 0x90], 'pos': 0},
+            {'field_vals': [5, 6], 'pos': 1},
+        ],
+        'path2_tests': [{'field_vals': [0x10, 0x20, 0x30], 'pos': 1}, {'field_vals': [0x10, 0x20, 0x30], 'pos': 3}],
+    },
+
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session 86 â€” c3_render_math  (C2â†’C3, 5 candidates)
     # RW column-major transform + 2D vector math + matrix scale
