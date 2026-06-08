@@ -676,3 +676,121 @@ A single nav-stack module owning these (all currently the flat
 - Confirmed-resolved from Part 1: FUN_0042d3e0 is **C3** (not sub-C2); the screen
   sentinels `&DAT_005f72a0`/`&DAT_005f7370` ARE **static descriptor tables**
   (table[18]/table[24]), not runtime-filled undefined data.
+
+---
+---
+
+# PART 3 — Reversed item->child-screen PUSH MAP + full table harvest (2026-06-08, Mashed_pool13)
+
+Source: read-only Ghidra session on `Mashed_pool13` (pool13 opened clean read_only,
+confirmed `MASHED.exe` image_base `0x00400000`, PE32 x86, session
+`fb56d4689f9a404caee3a4479670e3ec`, `program_close` issued; anchor BDCAE093...
+verified before+after). This closes the two faithfulness gaps that Parts 1-2 left
+open (the demo `RootChildScreen()` heuristic + only tables[0..3] harvested).
+
+## How SELECT chooses the child screen (the real map)
+
+Confirmed: `FUN_0043bf30` (0x0043bf30) is **NOT** the push map — it is a per-frame
+flag dispatcher (14 independent `if (DAT_0067e7xx) FUN_xxx()` calls). The real SELECT
+routing lives in **`FUN_0043dfd0`** (0x0043dfd0, the frontend input/update tick, the
+3rd caller of FUN_0043d2a0), via this chain:
+
+1. On select, the original reads the highlighted item's **ACTION CODE** with
+   **`FUN_0042ac90`** (0x0042ac90): walk the active screen's descriptor table to the
+   cursor-th item (cursor = `*(&DAT_0067ed40 + slot*0x40)`), then scan that item's
+   group for the action key `0xff050000` (-0xfb0000) **or** `0xff140000` (-0xec0000);
+   return the following u32; or `0xffffffff` if the group ends (`0xff060000`) first.
+2. `FUN_0043dfd0` dispatches on that action code (`uVar10`) through a big `if/else`
+   ladder, each branch ending in `FUN_0043d2a0(child, 0)` (push), `(0,1)` (pop),
+   `(0,2)` (reload), a modal `FUN_0042bf30(...)`, or a pure side-effect.
+3. **Default rule (LAB_0043fc37, 0x0043fc37):** an action code that matches no
+   `0xffXX0000` case is passed *as the screen id*: `FUN_0043d2a0(uVar10, 0)`. This is
+   how screen 1's items 0x21/0x22 (action 0x2/0x3) push screens 2/3.
+
+So the action code (a per-item field in the **static** descriptor table), not the
+item index, is the key. This is exactly portable: read the code, run the same ladder.
+
+### Reversed action-code -> push-target map (cited to FUN_0043dfd0 decomp lines)
+
+| action code | -> child / behavior | class | line |
+|---|---|---|---|
+| 0xff430000 | push 0x13 | unconditional | L1116 |
+| 0xff490000 | push 7 | uncond | L1138 |
+| 0xff4b0000 | push 1 | uncond | L1133 |
+| 0xff4d0000 | push 4 | uncond | L941 |
+| 0xff500000 | push 8 | uncond | L1187 |
+| 0xff710000/0xff720000 | push 4 | uncond | L1198/1204 |
+| 0xff730000 | push 0x1e | uncond | L1183 |
+| 0xff830000 | push 0x20 | uncond | L1229 |
+| 0xff2c0000/0xff2e0000 | push 4 (LAB_0043f1fd) | uncond | L402/816 |
+| 0xff2d0000/0xff2f0000 | push 10 | uncond | L287/400 |
+| 0xff300000/0xff310000 | push 4 (LAB_0043f203) | uncond | L849/853 |
+| 0xff360000 | push 0xb | uncond | L863 |
+| 0xff380000 | push 0xd | uncond | L867 |
+| 0xff3b0000 | push 6 | uncond | L914 |
+| 0xff400000 | push 4 | uncond | L273 |
+| 0xff150000/0xff3a0000/0xff4a0000 | reload(0,2) | uncond | L338/907/1145 |
+| 0xff450000 | pop(0,1) | uncond | L1120 |
+| 0xff240000 | push 7 (primary) | **state-gated** [UNCERTAIN] | L303 |
+| 0xff3c0000 | push 0xf when FUN_0042bb60()==0x1000 else modal | **gated** [UNCERTAIN] | L889 |
+| 0xff3d0000 | push 4 (also sets DAT_0067f184) | **gated** | L257 |
+| 0xff820000 | push 0x1f when FUN_00402f40()==0 else 0x21 | **gated** [UNCERTAIN] | L1212/1215 |
+| 0xff4c0000 | push 1 when DAT_0067ed3c==0x17 else pop | **gated** [UNCERTAIN] | L1158/1165 |
+| 0xff1e/1f/20 0000, 0xff800000 | modal confirm (FUN_0042bf30) | no nav | L335/392/396/1219 |
+| 0xff440000/0xff470000 | side-effect (FUN_00409900/30) | no nav | L951/1124 |
+| 0xff810000 | reset cursor | no nav | L1223 |
+| 0xff420000 | gated reload/modal (player-count dep) | no nav (deferred) | L953 |
+| 0xff260000 | mode-tile sub-handler (internal codes) | no nav | L420+ |
+| else (small value) | push `action` (literal screen id) | default rule | L841/fc37 |
+
+For the 5 **state-gated** rows the port takes the primary/default branch and marks
+`[UNCERTAIN]`; the secondary branch needs the sub-C2 game-state query ported
+(FUN_0042bb60 vehicle-ready, FUN_00402f40, DAT_0067ed3c, DAT_0067ed6c). Non-nav
+modal/side-effect rows are correctly no-ops in the standalone (no dialog system yet).
+
+Frontend-enter is `FUN_0043df00` -> `FUN_0043d2a0(0, 2)`, i.e. **screen 0 = root
+main menu = table[0]** (confirmed). Root items push: item1 (0xff500000)->screen 8;
+items 2/3/4 open modal confirms; item0 (0xff150000) reloads.
+
+## Tables harvested
+
+**All 34** PTR_DAT_005f7638 entries read verbatim (33 non-null; index 27 = 0/null),
+each out to its `0xff070000` terminator, now in `MenuNavSM.cpp` as `kT0..kT33` with a
+34-entry `kScreenTables[]`. The earlier hand-transcribed `kTable0..3` were **wrong**
+(they truncated the action codes: root item 1 action was written `0x50`, the real
+little-endian bytes are `0xff500000`) — load-bearing for the push map, so replaced.
+Harvest + parser + the C++ table fragments are under
+`re/analysis/standalone_menu_sm/harvest/` (blk.b64 = raw bytes; tables.cpp.frag).
+
+Reachable tree from root verified end-to-end: 0 -> 8 -> 0x13(19); plus 1 -> 2 / 3 via
+the default rule. (Screens 4-7,9-26,28-33 are reachable through deeper game-state
+flows; their tables are all harvested so any reachable push lands on real content.)
+
+## VERIFICATION
+
+- **Logic (deterministic, authoritative):** `harvest/navsm_test.cpp` links
+  `MenuNavSM.cpp` and drives Nav_Init/Select/Back. Output confirms every transition:
+  root(0)[0x18,0x27,0x1c,0x1d,0x1e] --ENTER item1--> screen 8[0x156,0x234,0x157,0x250,
+  0x25f] --ENTER item0--> screen 19[0x158,0x159,0x260,0x15b] --ENTER(0xff450000)-->
+  pop to 8 --ESC--> root; and screen 1 item0(action 0x2)--> screen 2 (default rule).
+  All record arrays carry the correct real string ids at every level.
+- **Visual screenshot: BLOCKED (documented, not faked).** The in-process nav-demo
+  (`MASHED_NAV_DEMO=1`, RunNavDemoStep extended to the 3-level path, dumps
+  verify/msm_tree_*.bmp) could not capture: in this environment `mashed_re.exe` boots
+  to `B17-SUMMARY reached-main-loop chrome=YES` (menu items + faithful font load OK)
+  but never creates/shows its render-loop window (`MainWindowHandle==0`), so the
+  per-frame loop body (and thus the demo + RenderFrame) never runs. This is a
+  pre-existing standalone runtime/boot issue in the post-init render loop, NOT in the
+  menu state machine (which lives entirely inside that loop and is proven correct by
+  the logic harness). The prior commit 93f0ed4c captured msm_*.png when the window
+  did appear; re-run the nav-demo with the window foregrounded once the boot/window
+  issue is resolved to capture msm_tree_*.png.
+
+## RESUME HERE
+1. Resolve the standalone render-loop/window-creation hang (window never shows in
+   this env) → re-run `MASHED_NAV_DEMO=1 mashedmod/build/mashed_re.exe` to capture
+   verify/msm_tree_*.png for the 3-level path.
+2. Port the 5 state-gated action codes' secondary branches (need FUN_0042bb60,
+   FUN_00402f40, DAT_0067ed3c/ed6c) to remove the [UNCERTAIN] markers.
+3. Port the faithful pixel draw loop (FUN_0043c5b0) + anim tick (FUN_004325c0) so the
+   records render with MASHED's slide/highlight chrome rather than the text path.

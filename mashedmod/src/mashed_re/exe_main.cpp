@@ -476,6 +476,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     return DefWindowProcA(hwnd, msg, wp, lp);
 }
 
+extern bool g_nav_demo; // defined below; gates the background-park behavior.
+
 // Single-iteration message pump. Pattern lifted from WindowMsgPump
 // (re/analysis/window_msgpump/00499690.md, reimpl Boot/Window.cpp at 0x00499690)
 // but operating on local state. Returns true when the application should exit.
@@ -486,7 +488,11 @@ bool PumpOnce() {
         }
         TranslateMessage(&g_msg);
         DispatchMessageA(&g_msg);
-    } else if (!g_active) {
+    } else if (!g_active && !g_nav_demo) {
+        // When idle AND unfocused we park on WaitMessage to spare the CPU. The
+        // scripted nav-demo (verification harness) must keep ticking even when
+        // the window is in the background, so it never parks. (g_nav_demo is
+        // false in normal/shipping runs, so behavior there is unchanged.)
         WaitMessage();
     }
     return g_quit;
@@ -645,22 +651,46 @@ void NavDemoTap(unsigned char dik) {
 // Per-frame scripted driver. `phase` counts RenderFrame iterations after the
 // menu is up. Returns true when the script has finished (caller quits).
 // Screenshots are saved to verify/msm_*.bmp at the documented transitions.
+void NavDemoLog(int phase, const char* what, bool ok) {
+    std::FILE* lf = std::fopen(kLogPath, "a");
+    if (lf) {
+        std::fprintf(lf, "NAV_DEMO phase=%d %s ok=%d depth=%d screen=%d cur=%d nrec=%d\n",
+                     phase, what, (int)ok, mashed_re::Frontend::Nav_Depth(),
+                     mashed_re::Frontend::Nav_ScreenId(),
+                     mashed_re::Frontend::Nav_Cursor(),
+                     mashed_re::Frontend::Nav_RecordCount());
+        std::fclose(lf);
+    }
+}
+
 bool RunNavDemoStep(int phase) {
     if (!g_nav_demo) return false;
     using namespace mashed_re::Frontend;
     // Let the window/device settle for the first ~60 frames, then run the script
     // with ~10-frame spacing so each transition is a distinct, settled frame.
+    // Deep faithful path via the REVERSED push map (no heuristic):
+    //   root (screen 0)                                        -- 5 items
+    //     DOWN -> highlight item 1 ("0x27", action 0xff500000)
+    //     ENTER -> push screen 8                               -- 5 items
+    //       ENTER on item 0 ("0x156", action 0xff430000)
+    //       -> push screen 0x13 (=19)                          -- 4 items (all 0xff450000)
+    //         ESC -> pop back to screen 8
+    //           ESC -> pop back to root
+    // Each ENTER target is resolved by ItemActionCode + ActionToScreen, proving
+    // the descriptor-table action codes drive real screen transitions.
     switch (phase) {
-        case 60:  DumpBackbufferBMP("verify/msm_1_root.bmp");        break; // root menu
-        case 70:  NavDemoTap(DIK_DOWN);                              break; // cursor down
-        case 80:  DumpBackbufferBMP("verify/msm_2_cursor_down.bmp"); break; // cursor moved
-        case 90:  NavDemoTap(DIK_RETURN);                            break; // push child screen
-        case 100: DumpBackbufferBMP("verify/msm_3_pushed.bmp");      break; // submenu
-        case 110: NavDemoTap(DIK_DOWN);                              break; // cursor in submenu
-        case 120: DumpBackbufferBMP("verify/msm_4_sub_cursor.bmp");  break; // submenu cursor moved
-        case 130: NavDemoTap(DIK_ESCAPE);                            break; // pop back to root
-        case 140: DumpBackbufferBMP("verify/msm_5_popped.bmp");      break; // back at root
-        case 150: return true;                                              // done -> quit
+        case 60:  NavDemoLog(phase,"cap root",       DumpBackbufferBMP("verify/msm_tree_1_root.bmp"));       break;
+        case 70:  NavDemoTap(DIK_DOWN);              NavDemoLog(phase,"tap DOWN",       true);               break;
+        case 80:  NavDemoLog(phase,"cap root_item1", DumpBackbufferBMP("verify/msm_tree_2_root_item1.bmp")); break;
+        case 90:  NavDemoTap(DIK_RETURN);            NavDemoLog(phase,"tap ENTER",      true);               break;
+        case 100: NavDemoLog(phase,"cap screen8",    DumpBackbufferBMP("verify/msm_tree_3_screen8.bmp"));    break;
+        case 110: NavDemoTap(DIK_RETURN);            NavDemoLog(phase,"tap ENTER",      true);               break;
+        case 120: NavDemoLog(phase,"cap screen19",   DumpBackbufferBMP("verify/msm_tree_4_screen19.bmp"));   break;
+        case 130: NavDemoTap(DIK_ESCAPE);            NavDemoLog(phase,"tap ESC",        true);               break;
+        case 140: NavDemoLog(phase,"cap back8",      DumpBackbufferBMP("verify/msm_tree_5_back_screen8.bmp"));break;
+        case 150: NavDemoTap(DIK_ESCAPE);            NavDemoLog(phase,"tap ESC",        true);               break;
+        case 160: NavDemoLog(phase,"cap back_root",  DumpBackbufferBMP("verify/msm_tree_6_back_root.bmp"));  break;
+        case 170: NavDemoLog(phase,"done",true);     return true;
         default: break;
     }
     return false;
