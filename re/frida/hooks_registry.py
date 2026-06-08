@@ -1072,6 +1072,46 @@ HOOKS = {
         ],
     },
 
+    # ── c3_batch_ag s1 ───────────────────────────────────────────────────────
+    # 0x004b64e0  FUN_004b64e0  MemsetInline (57B inline memset; Lua-VM alloc).
+    # Real sig: (void* dst, byte fill, uint count) -> dst.  Diffed via the
+    # bytes_inplace_3 harness, which calls fn(buf, len, width) and fingerprints
+    # `len` bytes after prefilling them to 0 (init=[]). We therefore map:
+    #     dst   = buf      (the scratch buffer)
+    #     fill  = len      (the harness's 2nd arg == memset's fill byte)
+    #     count = width    (the harness's 3rd arg == memset's byte count)
+    # So each vector zero-fills `len` bytes, memset writes `width` bytes of value
+    # `len`, and the `len`-byte fingerprint shows the exact word/tail boundary.
+    # Non-degenerate: the fill value AND the write count both vary across vectors,
+    # and the buffer demonstrably changes from its zero prefill (except the
+    # count==0 branch vector, which is the intentional early-return coverage).
+    'memset_inline': {
+        'rva':         0x004b64e0,
+        'export':      'MemsetInline',
+        'signature':   {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type':    'bytes_inplace_3',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'init': [], 'len': 0xFF, 'width': 16},   # fill 0xFF (MAX), 4 words + 0 tail
+            {'init': [], 'len': 0xFF, 'width': 17},   # tail 1
+            {'init': [], 'len': 0xFF, 'width': 19},   # tail 3
+            {'init': [], 'len': 0x80, 'width': 64},   # fill 0x80 (sign bit), 16 words
+            {'init': [], 'len': 0xAA, 'width': 85},   # fill 0xAA (alt bits), 21 words + 1 tail
+            {'init': [], 'len': 0x55, 'width': 200},  # fill 0x55 (alt bits), count>window
+            {'init': [], 'len': 0x7F, 'width': 3},    # tail-only (count<4)
+            {'init': [], 'len': 0x01, 'width': 1},    # minimal
+            {'init': [], 'len': 0xFE, 'width': 0},    # count==0 early-return branch
+            {'init': [], 'len': 0xF0, 'width': 240},  # full fill, count==window
+            {'init': [], 'len': 0x0F, 'width': 15},   # 3 words + 3 tail
+            {'init': [], 'len': 0x3C, 'width': 60},   # 15 words exactly (no tail)
+        ],
+        'path2_tests': [
+            {'init': [], 'len': 0xFF, 'width': 19},
+            {'init': [], 'len': 0xAA, 'width': 85},
+            {'init': [], 'len': 0x7F, 'width': 3},
+        ],
+    },
+
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session 86 â€” c3_render_math  (C2â†’C3, 5 candidates)
     # RW column-major transform + 2D vector math + matrix scale

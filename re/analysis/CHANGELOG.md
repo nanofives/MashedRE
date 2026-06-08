@@ -3215,3 +3215,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-08  0042aae0  MenuIm2DQuad  C3->C4  canonical side-effect diff (vertex buffer bit-identical, GTS)
 2026-06-08  0042e3a0  MenuChromeShellA  C3->C4  canonical side-effect call-trace diff (identical draw-call seq, GTS)
 2026-06-08  0042ae10  MenuReadinessCheckA  C3->C4  canonical both-branch diff {0,1} (input-driven, GTS)
+2026-06-08  004b64e0  FUN_004b64e0 (MemsetInline)  C2->C3  Frida bit-identity 12/12 GREEN non-degenerate (bytes_inplace_3; pure leaf, no callees, no stubs/uncertainties)
