@@ -99,26 +99,56 @@ static constexpr std::uintptr_t kMenuBa_SizeScale     = 0x005cd5fcu;  // 0x00428
 static constexpr std::uintptr_t kMenuBa_ViewportW     = 0x0067d830u;  // 0x004282cc
 static constexpr std::uintptr_t kMenuBa_LogicalScale  = 0x005cd618u;  // 0x004282d6
 
+// String-table base used by FUN_00427780 (Ghidra 0x00427784/0x0042778b: [param_1*4 + 0x66d828]
+// then + 0x66d828). FUN_00427780 is a PURE function (no side effects) -> safe to inline.
+static constexpr std::uintptr_t kStrTableBase = 0x0066d828u;
+
+// FIX (2026-06-07 navigate-C4): the previous reimpl called s_FUN_00427780(param_1) then
+// s_FUN_004277a0() as plain __cdecl(void) calls. But FUN_004277a0 is a REGISTER-ARG function:
+// it reads its source from in_EAX (the pointer FUN_00427780 returns) and writes to unaff_EBX
+// (the caller's output buffer = local_404; Ghidra 0x004282c7 LEA EBX,[ESP+8]). Calling them as
+// void __cdecl left EAX clobbered between the two -> FUN_004277a0 derefs garbage -> AV at
+// 0x00427813 when installed. (The old crash_equal_ok C3 missed this: the synthetic force-call
+// never set EAX/EBX either, so orig+reimpl crashed identically = false GREEN.) FUN_00427780 and
+// FUN_004277a0 are both side-effect-free except for filling local_404, so we reimplement their
+// logic inline and keep the (correct, __cdecl-stack) FUN_005554d0 call.
+
 // 0x004282a0
 extern "C" __declspec(dllexport) float __cdecl MenuMenusBA(
     std::uint32_t param_1, float param_2)
 {
-    // local_404: stack buffer (0x400 bytes) for string data used by FUN_005554d0.
+    // local_404: 0x400-byte stack buffer that holds the transcoded string for FUN_005554d0.
     std::uint8_t local_404[kMenuBa_StrBufSize];
 
-    // Step 1: set font context for slot param_1 (0x004282a8)
-    s_FUN_00427780(param_1);
+    // inline FUN_00427780(param_1): src = *(u32*)(0x66d828 + param_1*4) + 0x66d828
+    const std::uint16_t* src = reinterpret_cast<const std::uint16_t*>(
+        *reinterpret_cast<std::uint32_t*>(kStrTableBase + param_1 * 4u) + kStrTableBase);
 
-    // Step 2: finalize font context (0x004282ad)
-    s_FUN_004277a0();
+    // inline FUN_004277a0(): src is a u16 length-prefixed string; transcode into local_404,
+    // remapping the control codes 8/9/10/0xb/0xc/0xd/0xe (Ghidra 0x004277a0 body).
+    short slen = static_cast<short>(src[0]);
+    short* dst = reinterpret_cast<short*>(local_404);
+    for (short i = 0; i < slen; ++i) {
+        short c = static_cast<short>(src[1 + i]);
+        switch (c) {
+            case 8:    c = 0x81; break;
+            case 9:    c = 0x7f; break;
+            case 10:   c = 0x81; break;
+            case 0x0b: c = 0x8d; break;
+            case 0x0c: c = 0x80; break;
+            case 0x0d: c = 0x87; break;
+            case 0x0e: c = 0x8f; break;
+        }
+        dst[i] = c;
+    }
+    dst[slen] = 0;   // matches original's unaff_EBX[(short)len] = 0
 
-    // Step 3: measure string width scaled by size_scale (0x004282b0..0x004282c8)
+    // FUN_005554d0(font_ctx, local_404, param_2 * size_scale) — __cdecl stack args (0x004282ec)
     void* font_ctx   = *reinterpret_cast<void**>(kMenuBa_FontCtx);
     float size_scale = *reinterpret_cast<float*>(kMenuBa_SizeScale);
     float raw_width  = s_FUN_005554d0(font_ctx, local_404, param_2 * size_scale);
 
-    // Step 4: convert to logical units via double intermediate (x87 float10 match)
-    // (raw_width / viewport_w) * logical_scale  (0x004282ca..0x004282de)
+    // (raw_width / viewport_w) * logical_scale  (0x004282f1..0x00428309)
     double viewport_w    = static_cast<double>(*reinterpret_cast<float*>(kMenuBa_ViewportW));
     double logical_scale = static_cast<double>(*reinterpret_cast<float*>(kMenuBa_LogicalScale));
     double result = (static_cast<double>(raw_width) / viewport_w) * logical_scale;
@@ -191,11 +221,30 @@ extern "C" __declspec(dllexport) void __cdecl MenuMenusBB(
     // to FUN_005555b0. We declare it here on the stack matching the original layout.
     std::uint8_t local_204[kMenuBb_StrBufSize];
 
-    // Step 1: set font/sprite context for slot param_1 (0x00427ae0)
-    s_FUN_00427780(param_1);
-
-    // Step 2: finalize context (0x00427ae5) — populates local context state
-    s_FUN_004277a0();
+    // Step 1+2: inline FUN_00427780(param_1) + FUN_004277a0() — same register-ABI fix as
+    // MenuMenusBA (FUN_004277a0 reads in_EAX = FUN_00427780's returned ptr, writes to
+    // unaff_EBX = local_204). Calling them as void __cdecl clobbers EAX between -> AV. Both are
+    // side-effect-free except filling local_204, so reimplement their logic inline.
+    {
+        const std::uint16_t* src = reinterpret_cast<const std::uint16_t*>(
+            *reinterpret_cast<std::uint32_t*>(kStrTableBase + param_1 * 4u) + kStrTableBase);
+        short slen = static_cast<short>(src[0]);
+        short* dst = reinterpret_cast<short*>(local_204);
+        for (short i = 0; i < slen; ++i) {
+            short c = static_cast<short>(src[1 + i]);
+            switch (c) {
+                case 8:    c = 0x81; break;
+                case 9:    c = 0x7f; break;
+                case 10:   c = 0x81; break;
+                case 0x0b: c = 0x8d; break;
+                case 0x0c: c = 0x80; break;
+                case 0x0d: c = 0x87; break;
+                case 0x0e: c = 0x8f; break;
+            }
+            dst[i] = c;
+        }
+        dst[slen] = 0;
+    }
 
     // Step 3: begin render state (0x00427aea)
     s_FUN_00552d10();

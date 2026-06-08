@@ -324,6 +324,13 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
 
+REM Deploy the dev .asi to original\ where the dinput8 loader actually reads it. Without
+REM this the loader keeps loading a STALE .asi and rebuilt fixes silently do not apply
+REM (footgun hit 2026-06-07: a crasher fix looked broken until the .asi was deployed).
+copy /Y "%OUT%\mashed_re_dev.asi" "%ROOT%..\original\mashed_re_dev.asi" >nul
+if errorlevel 1 (echo [ERROR] .asi deploy to original\ failed & exit /b 1)
+echo deployed mashed_re_dev.asi -^> original\
+
 echo === Build OK ===
 dir /b "%OUT%\mashed_re.exe" "%OUT%\mashed_re_dev.asi"
 endlocal

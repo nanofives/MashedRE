@@ -26,20 +26,25 @@
 // [UNCERTAIN U-0453] extraout_ECX/EDX captured by caller FUN_0043c5b0 may be artifact.
 // ---------------------------------------------------------------------------
 
-// DAT_008990e4: dim-enable flag global.  (cited at 0x0042aad3-ish within body)
-static constexpr std::uintptr_t kDimEnableFlag = 0x008990e4u;
+// DAT_008990e4: dim-enable flag global. The original writes it as an ABSOLUTE
+// memory operand (Ghidra 0x0042aad4: c7 05 e4 90 89 00 ... = MOV dword [0x008990e4],1).
+// NOTE: do NOT write `mov [kSymbol],1` for a C++ constant here — MSVC inline asm
+// assembles `[kSymbol]` as a write to the SYMBOL'S STORAGE (read-only .rdata),
+// not to the absolute address its value names, which faults inside the .asi
+// (observed crash eip in the .asi, navigate-C4 sweep 2026-06-07). Use the literal.
 
 // 0x0042aad0
-// NAKED: EAX at entry is the implicit pointer arg; we must capture it before
-// any standard prologue clobbers it. After capturing, implement the two writes.
+// NAKED: EAX at entry is the implicit pointer arg. The original (14 bytes) touches
+// only EAX-relative memory and the 0x008990e4 global; it clobbers NO registers
+// (caller FUN_0043c5b0 reads ECX/EDX after the call, U-0453), so we must not use a
+// scratch register for the global write — emit the absolute-address store.
 extern "C" __declspec(dllexport) __declspec(naked) void __cdecl MenuDimSet()
 {
     __asm {
-        // EAX at entry holds the implicit pointer (in_EAX).
-        // Write byte 0x30 to *(in_EAX + 3).   (0x0042aad0 body)
+        // Write byte 0x30 to *(in_EAX + 3).            (0x0042aad0)
         mov  byte ptr [eax+3], 0x30
-        // Write int32 1 to DAT_008990e4.        (0x0042aad0 body)
-        mov  dword ptr [kDimEnableFlag], 1
+        // Write int32 1 to absolute DAT_008990e4.      (0x0042aad4)
+        mov  dword ptr ds:[0x008990e4], 1
         ret
     }
 }
