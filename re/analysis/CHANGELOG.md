@@ -3203,3 +3203,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-06  0042b8d0  StatePhaseIsIdle  C3->C4  mashedmod/src/mashed_re/Util/StateAccessors.cpp  boot_to_menu_install_observe_2026-06-06 (2755x)
 2026-06-06  004cd060  AllocatorSlotGet  C3->C4  mashedmod/src/mashed_re/Render/RwPluginHelpers_o3.cpp  boot_to_menu_install_observe_2026-06-06 (1x)
 2026-06-06  00494ef0  ThunkVideoStateGet  C3->C4  mashedmod/src/mashed_re/Boot/VideoConfig.cpp  boot_to_menu_install_observe_2026-06-06 (8150x)
+2026-06-07  0042f8d0  MenuMenusBC  C3->C2  navigate-C4 (disabled-install fails C3 hook gate)
+2026-06-07  004c5c00  FUN_004c5c00  C3->C2  navigate-C4 (disabled-install fails C3 hook gate)
+2026-06-07  0042aad0  MenuDimSet  C3(crash fixed; C4 blocked on canonical diff)  navigate-C4
+2026-06-07  004282a0  MenuMenusBA  C3(register-ABI crash fixed)  navigate-C4
+2026-06-07  00427ad0  MenuMenusBB  C3(register-ABI crash fixed, latent)  navigate-C4
