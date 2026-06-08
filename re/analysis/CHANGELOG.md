@@ -3212,3 +3212,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-07  00493f80  IntroVideoDimGetter  C3->C4  canonical-scenario behavioral diff (leafdiff GTS, installed 0xE9, pure leaf no stubs)
 2026-06-07  00493fc0  AspectRatioGlobalGet  C3->C4  canonical-scenario behavioral diff (leafdiff GTS, installed 0xE9, pure leaf no stubs)
 2026-06-07  00494f30  AspectRatioSnapshot  C3->C4  canonical behavioral diff (leafdiff GTS; callee 0x493fc0 is C4, no stub)
+2026-06-08  0042aae0  MenuIm2DQuad  C3->C4  canonical side-effect diff (vertex buffer bit-identical, GTS)
+2026-06-08  0042e3a0  MenuChromeShellA  C3->C4  canonical side-effect call-trace diff (identical draw-call seq, GTS)
