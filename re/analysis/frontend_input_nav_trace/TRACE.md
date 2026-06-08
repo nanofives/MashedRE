@@ -334,6 +334,33 @@ The leaf getters among the trio are C4-candidates pending a canonical-scenario b
 (return-value/written-bytes original-vs-modded). That diff layer is the remaining work to earn
 the C4s; survival evidence alone does not.
 
+## Option B (deeper screens) result + ceiling (2026-06-07)
+
+Validated deeper nav paths (input_resolver_drive / canonical_c4_navigate + PrintWindow shots):
+- Options menu: `4,4,12,12,4` -> Sound/Gamma/Load Game/Save Game/Autosave (verify/optB_options.png)
+- Single Player: `4,4,4` -> Challenge Cup/Quick Battle/Time Trial mode-select (verify/optB_singleplayer.png)
+
+Option B sweep at Options (120 frontend C3 impl, nav 4,4,12,12,4): 13 trio-OK + 1 HOT, 0 crashes
+(re/analysis/frontend_input_nav_trace/c4_nav_B_options.{json,md}). But only **1 net-new**
+exercised hook vs Game Type Select: MenuReadinessCheckB 0x0042aeb0 (HOLD on GTS -> exercised on
+Options). The other 13 are the same per-frame menu/chrome drawers + getters that fire on ANY
+menu screen. CarSlotStateSet 0x0040e480 was GTS-only (not exercised on Options).
+
+**Ceiling found:** the ~100 remaining HOLDs are NOT on the general menu screens. By name they are
+gameplay/results-gated: PlayerScoreAcc*/PlayerScoreTeamAcc*/PlayerBlock2* (0x00423xxx in-race/
+results score accumulators), LapLapsGetBySlot/LapSecsGetBySlot/TimeDiffDecompose/MenusLapTimeFmt
+(records/results), RaceResultIndexedStore/EndOfRoundAccumulator/FrontendRaceResultsDispatch (race
+results), VehicleSlotInit/CarSlotInit/VehicleSlotFieldSet (car-select/race setup). These only fire
+during an actual race or on a results screen -> NOT reachable by menu navigation. Exercising them
+needs an in-race/results canonical scenario (drive a full race), which is a separate, much larger
+automation effort beyond the frontend menu navigate driver (the FUN_00497310 menu-input path does
+not apply in-race). Further menu-setup sweeps have diminishing returns (each re-surfaces the shared
+drawers + at most a couple new readiness/mode hooks).
+
+Net menu-reachable navigate-C4 prerequisite coverage: ~15 distinct frontend hooks across Game Type
+Select + Options (install+survive+exercise confirmed). C4 promotion of these still needs the
+canonical-scenario behavioral-diff layer (above).
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
