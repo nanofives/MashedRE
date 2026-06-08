@@ -82,6 +82,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\MenuChrome.cpp" ^
     "Frontend\MenuHelpers.cpp" ^
     "Frontend\MenuNav.cpp" ^
+    "Frontend\MenuNavSM.cpp" ^
     "Frontend\MenuRaceEnd.cpp" ^
     "Frontend\MenuScoreGetters.cpp" ^
     "Frontend\MenuScoreSort.cpp" ^
