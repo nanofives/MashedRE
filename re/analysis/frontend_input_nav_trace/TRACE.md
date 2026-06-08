@@ -234,6 +234,31 @@ past title+modal -> navigate to a target item -> confirm, all in-process, and ob
 hook under test on the resulting screen. This is the OS-input-free driver the C4 navigate/
 save rows were waiting on.
 
+## C4 navigate harness (2026-06-07)
+
+re/frida/canonical_c4_navigate.py wires the nav driver into the canonical_c4_verify.py
+evidence model: it runs a "boot -> navigate to screen X" scenario TWICE (OFF: installs
+nothing, Interceptor-counts the candidate while navigating, proves exercised-on-scenario; ON:
+MASHED_HOOK_ONLY=<candidates>, confirms each inline-JMP live (0xE9), navigates, survives), and
+emits the exercised+installed+survived trio per candidate. Navigation is the FUN_00497310
+return override (control 4=confirm, 11=up, 12=down) — fully in-process, zero OS input. Optional
+PrintWindow screenshot of the ON run (works occluded; pair with patch_mashed_no_focus_pause.py).
+
+```
+py -3.12 re/frida/canonical_c4_navigate.py 0xRVA[,..] --nav 4,4,12,12 \
+    [--settle 7000] [--dwell 1500] [--seconds 26] [--shot verify/x.png --shotat 18]
+```
+
+Demonstrated on MenuChromeShellA (0x0042e3a0) + MenusBodyA (0x0042d5a0) with --nav 4,4
+(confirm past title + "Load Successful" modal -> Game Type Select): OFF exercised both
+(2183 / 1983 calls on the navigated screen), ON installed (0xE9) + survived, screen reached =
+Game Type Select with hooks live (verify/c4nav_gametypeselect.png).
+
+CAVEAT (no overclaiming): the trio is sufficient C4 ONLY for a pure leaf whose C3 force-call
+diff already covered the input domain. Non-leaf dispatchers (e.g. these menu drawers)
+additionally need behavioral-diff coverage; promote through the re-classify skill (it gates
+leaf vs non-leaf), NOT off this tool's "C4-READY" label.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
