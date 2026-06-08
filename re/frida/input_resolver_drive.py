@@ -12,7 +12,9 @@
 #
 # Usage: py -3.12 re/frida/input_resolver_drive.py --probe [--settle MS] [--seconds N]
 #        py -3.12 re/frida/input_resolver_drive.py --force 0:12 --settle 8000 --seconds 18
+import ctypes
 import os, sys, time
+from ctypes import wintypes
 from pathlib import Path
 import frida
 try: import psutil
@@ -20,6 +22,50 @@ except ImportError: psutil = None
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+
+def _find_hwnd(target_pid):
+    user32 = ctypes.windll.user32; found = []
+    proto = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    def cb(hwnd, _):
+        pid = wintypes.DWORD(); user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        if pid.value == target_pid and user32.IsWindowVisible(hwnd):
+            n = user32.GetWindowTextLengthW(hwnd)
+            if n:
+                buf = ctypes.create_unicode_buffer(n+1); user32.GetWindowTextW(hwnd, buf, n+1)
+                if "MASHED" in buf.value.upper(): found.append(hwnd)
+        return True
+    user32.EnumWindows(proto(cb), 0)
+    return found[0] if found else None
+
+def shoot(pid, path):
+    """PrintWindow capture (works when occluded; no focus change)."""
+    try:
+        from PIL import Image
+        hwnd = _find_hwnd(pid)
+        if not hwnd: print("  [shot] no hwnd"); return False
+        user32 = ctypes.windll.user32; gdi32 = ctypes.windll.gdi32
+        r = wintypes.RECT(); user32.GetClientRect(hwnd, ctypes.byref(r))
+        w, h = r.right - r.left, r.bottom - r.top
+        if w <= 0 or h <= 0: print("  [shot] bad rect"); return False
+        hdc = user32.GetDC(hwnd); memdc = gdi32.CreateCompatibleDC(hdc)
+        bmp = gdi32.CreateCompatibleBitmap(hdc, w, h); gdi32.SelectObject(memdc, bmp)
+        user32.PrintWindow(hwnd, memdc, 0x00000002)
+        class BH(ctypes.Structure):
+            _fields_ = [("biSize", wintypes.DWORD), ("biWidth", wintypes.LONG),
+                        ("biHeight", wintypes.LONG), ("biPlanes", wintypes.WORD),
+                        ("biBitCount", wintypes.WORD), ("biCompression", wintypes.DWORD),
+                        ("biSizeImage", wintypes.DWORD), ("biXPelsPerMeter", wintypes.LONG),
+                        ("biYPelsPerMeter", wintypes.LONG), ("biClrUsed", wintypes.DWORD),
+                        ("biClrImportant", wintypes.DWORD)]
+        bi = BH(); bi.biSize = ctypes.sizeof(BH); bi.biWidth = w; bi.biHeight = -h
+        bi.biPlanes = 1; bi.biBitCount = 32; bi.biCompression = 0
+        buf = (ctypes.c_char * (w * h * 4))()
+        gdi32.GetDIBits(memdc, bmp, 0, h, buf, ctypes.byref(bi), 0)
+        Image.frombuffer("RGBA", (w, h), bytes(buf), "raw", "BGRA", 0, 1).convert("RGB").save(str(path))
+        gdi32.DeleteObject(bmp); gdi32.DeleteDC(memdc); user32.ReleaseDC(hwnd, hdc)
+        print(f"  [shot] saved {path} ({w}x{h})"); return True
+    except Exception as e:
+        print(f"  [shot] err {e}"); return False
 
 AGENT = r'''
 'use strict';
@@ -34,12 +80,13 @@ let SETTLE = 8000, t0 = Date.now();
 let PRESS_MS = 120, GAP_MS = 380;   // tap timing
 const probe = {};      // dedup entry-arg signatures
 let probeN = 0;
-let forced = 0, lastSwept = -1;
+let forced = 0, lastSwept = -1, lastConfirmSlot = -99;
 const selTL = []; let lastSig = null;
 
 function abs(rva){ return ptr(rva + DELTA); }
 rpc.exports = {
   setmode: function(mode, force, settle){ MODE = mode; FORCE = force||{}; SETTLE = settle; t0 = Date.now(); return 1; },
+  setsweep: function(list, dwell){ if (list && list.length) SWEEP_LIST = list; if (dwell) SWEEP_DWELL = dwell; return SWEEP_LIST.length; },
   probe: function(){ return probe; },
   forced: function(){ return forced; },
   timeline: function(){ return selTL; },
@@ -79,7 +126,9 @@ function pressedNow(){
 // sweep: which player-0 control index is under test right now (1.2s dwell each, 0..12),
 // tapped within its dwell so edge-detect sees press->release.
 let SWEEP_DWELL = 1500;
-let SWEEP_LIST = [0,1,2,3,5,6,7,8,9,10,11,12];   // control 4 = confirm; skip to stay on page
+// control 4 = confirm. Fire it TWICE (advance title->menu, then dismiss the "Load Successful"
+// modal), THEN sweep the directional candidates on the real Game Type Select menu.
+let SWEEP_LIST = [4,4,0,1,2,3,9,10,11,12];
 function sweepControl(){
   const tt = Date.now() - t0 - SETTLE;
   if (tt < 0) return -1;
@@ -114,7 +163,13 @@ function sweepControl(){
         if (FORCE[this.e4+':'+this.e8] && pressedNow()){ ret.replace(ptr(0xff)); forced++; }
       } else if (MODE === 'sweep'){
         const k = sweepControl();
-        if (k >= 0 && this.e4 === 0 && this.e8 === k){ ret.replace(ptr(0xff)); forced++;
+        if (k >= 0 && this.e4 === 0 && this.e8 === k){
+          // fire each control exactly ONCE per dwell-slot (one clean step per slot), so a
+          // scripted SWEEP_LIST like [4,4,12,12] = confirm,confirm,down,down is deterministic.
+          const slot = Math.floor((Date.now()-t0-SETTLE)/SWEEP_DWELL);
+          if (slot === lastConfirmSlot) return;
+          lastConfirmSlot = slot;
+          ret.replace(ptr(0xff)); forced++;
           if (lastSwept !== k){ sample('sweep ctrl '+k); lastSwept = k; } }
       }
     }
@@ -148,12 +203,22 @@ def main():
         elif p.get("kind") == "err": print("  [err]", p["msg"])
     scr = sess.create_script(AGENT); scr.on("message", on_msg); scr.load()
     scr.exports_sync.setmode(mode, force, settle)
+    if "--list" in sys.argv:
+        lst = [int(x) for x in sys.argv[sys.argv.index("--list")+1].split(",")]
+        dwell = int(sys.argv[sys.argv.index("--dwell")+1]) if "--dwell" in sys.argv else 0
+        scr.exports_sync.setsweep(lst, dwell)
     dev.resume(pid)
     print(f"  resumed; mode={mode} force={force} settle={settle}ms seconds={seconds}")
-    t = time.time() + seconds
+    shot = sys.argv[sys.argv.index("--shot")+1] if "--shot" in sys.argv else None
+    shotat = float(sys.argv[sys.argv.index("--shotat")+1]) if "--shotat" in sys.argv else None
+    start = time.time(); t = start + seconds; shot_done = False
     while time.time() < t:
         if psutil and not psutil.pid_exists(pid): print("  exited"); break
+        if shot and not shot_done and shotat is not None and (time.time()-start) >= shotat:
+            shoot(pid, ROOT / shot); shot_done = True
         time.sleep(0.5)
+    if shot and not shot_done:
+        shoot(pid, ROOT / shot)
     DIK = {0x01:"ESC",0x1c:"ENTER",0x1d:"LCTRL",0x2a:"LSHIFT",0x38:"LALT",0x39:"SPACE",
            0x48:"NUM8",0x4b:"NUM4",0x4d:"NUM6",0x50:"NUM2",
            0xc8:"UP",0xd0:"DOWN",0xcb:"LEFT",0xcd:"RIGHT",0x9c:"NUMENTER",0x0e:"BACKSPACE",

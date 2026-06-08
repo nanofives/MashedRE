@@ -21,7 +21,9 @@
 #
 # Usage: py -3.12 re/frida/input_feed_cooked.py [--seq down,down,down] [--settle MS]
 #        [--seconds N] [--player P] [--count 0x..,..]
+import ctypes
 import os, sys, time
+from ctypes import wintypes
 from pathlib import Path
 import frida
 try: import psutil
@@ -29,6 +31,59 @@ except ImportError: psutil = None
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+
+def find_hwnd_for_pid(target_pid):
+    user32 = ctypes.windll.user32
+    found = []
+    proto = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    def cb(hwnd, _):
+        pid = wintypes.DWORD()
+        user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        if pid.value == target_pid and user32.IsWindowVisible(hwnd):
+            n = user32.GetWindowTextLengthW(hwnd)
+            if n:
+                buf = ctypes.create_unicode_buffer(n+1); user32.GetWindowTextW(hwnd, buf, n+1)
+                if "MASHED" in buf.value.upper(): found.append(hwnd)
+        return True
+    user32.EnumWindows(proto(cb), 0)
+    return found[0] if found else None
+
+def shoot(pid, path):
+    """Capture the MASHED window via PrintWindow(PW_RENDERFULLCONTENT) — works even when the
+    window is occluded/not foreground (unlike a screen grab). No focus change."""
+    try:
+        from PIL import Image
+        hwnd = find_hwnd_for_pid(pid)
+        if not hwnd: print("  [shot] no hwnd"); return False
+        user32 = ctypes.windll.user32; gdi32 = ctypes.windll.gdi32
+        r = wintypes.RECT(); user32.GetClientRect(hwnd, ctypes.byref(r))
+        w, h = r.right - r.left, r.bottom - r.top
+        if w <= 0 or h <= 0: print("  [shot] bad rect"); return False
+        hdc = user32.GetDC(hwnd)
+        memdc = gdi32.CreateCompatibleDC(hdc)
+        bmp = gdi32.CreateCompatibleBitmap(hdc, w, h)
+        gdi32.SelectObject(memdc, bmp)
+        PW_RENDERFULLCONTENT = 0x00000002
+        ok = user32.PrintWindow(hwnd, memdc, PW_RENDERFULLCONTENT)
+        # pull bits via GetDIBits (32bpp top-down)
+        class BMPINFOHDR(ctypes.Structure):
+            _fields_ = [("biSize", wintypes.DWORD), ("biWidth", wintypes.LONG),
+                        ("biHeight", wintypes.LONG), ("biPlanes", wintypes.WORD),
+                        ("biBitCount", wintypes.WORD), ("biCompression", wintypes.DWORD),
+                        ("biSizeImage", wintypes.DWORD), ("biXPelsPerMeter", wintypes.LONG),
+                        ("biYPelsPerMeter", wintypes.LONG), ("biClrUsed", wintypes.DWORD),
+                        ("biClrImportant", wintypes.DWORD)]
+        bi = BMPINFOHDR(); bi.biSize = ctypes.sizeof(BMPINFOHDR); bi.biWidth = w
+        bi.biHeight = -h; bi.biPlanes = 1; bi.biBitCount = 32; bi.biCompression = 0
+        buf = (ctypes.c_char * (w * h * 4))()
+        gdi32.GetDIBits(memdc, bmp, 0, h, buf, ctypes.byref(bi), 0)
+        img = Image.frombuffer("RGBA", (w, h), bytes(buf), "raw", "BGRA", 0, 1).convert("RGB")
+        img.save(str(path))
+        gdi32.DeleteObject(bmp); gdi32.DeleteDC(memdc); user32.ReleaseDC(hwnd, hdc)
+        print(f"  [shot] saved {path} ({w}x{h}, PrintWindow ret={ok})")
+        return True
+    except Exception as e:
+        print(f"  [shot] err {e}"); return False
 
 # control index within a player's 0x4c flag block (byte offset from block base)
 CTRL = {"left":0, "right":1, "up":2, "down":3}
@@ -43,6 +98,7 @@ const RVA_DEPTH    = 0x0067e9f8;   // DAT_0067e9f8 menu-stack depth
 const RVA_SEL      = 0x0067ed40;   // selection table base (col*0x40)
 
 let SEQ = [], SETTLE = 13000, PRESS_FRAMES = 2, GAP_FRAMES = 14, PLAYER = 0;
+let ANALOG = false, ANALOG_MAG = 1.0;
 let startT = 0, frame = 0, taps = 0;
 const CNT = {};
 let selTimeline = [];   // [{f, t, depth, ctrl, v}]
@@ -51,8 +107,9 @@ let lastSig = null;
 function abs(rva){ return ptr(rva + DELTA); }
 
 rpc.exports = {
-  setplan: function(seq, settle, press, gap, player){
+  setplan: function(seq, settle, press, gap, player, analog, mag){
     SEQ = seq; SETTLE = settle; PRESS_FRAMES = press; GAP_FRAMES = gap; PLAYER = player;
+    ANALOG = !!analog; if (mag) ANALOG_MAG = mag;
     startT = Date.now(); return 1; },
   taps: function(){ return taps; },
   timeline: function(){ return selTimeline; },
@@ -100,9 +157,20 @@ function onMgrLeave(){
   // ctrl 0=L 1=R 2=U 3=D. Covers whichever byte the directional consumer reads.
   const ctrl = curCtrl();
   if (ctrl >= 0){
-    for (let p = 0; p < 4; p++){
-      try { abs(0x007f1044 + p*0x4c + ctrl).writeU8(0xff); } catch(e){}
-      try { abs(0x007f1038 + p*0x4c + ctrl).writeU8(0x7f); } catch(e){}
+    if (ANALOG){
+      // directional via the analog stick fields (FUN_00496530 writes these from joy axes):
+      //   x = 0x7f104c + p*0x4c, y = 0x7f1050 + p*0x4c (floats). ctrl 0=L 1=R 2=U 3=D.
+      const ax = (ctrl===0?-1:ctrl===1?1:0) * ANALOG_MAG;
+      const ay = (ctrl===2?-1:ctrl===3?1:0) * ANALOG_MAG;
+      for (let p = 0; p < 4; p++){
+        try { abs(0x007f104c + p*0x4c).writeFloat(ax); } catch(e){}
+        try { abs(0x007f1050 + p*0x4c).writeFloat(ay); } catch(e){}
+      }
+    } else {
+      for (let p = 0; p < 4; p++){
+        try { abs(0x007f1044 + p*0x4c + ctrl).writeU8(0xff); } catch(e){}
+        try { abs(0x007f1038 + p*0x4c + ctrl).writeU8(0x7f); } catch(e){}
+      }
     }
     taps++;
   }
@@ -152,14 +220,25 @@ def main():
 
     if count_rvas:
         scr.exports_sync.countthese(count_rvas)
-    scr.exports_sync.setplan(seq, settle, 2, 14, player)
+    analog = "--analog" in sys.argv
+    mag = float(sys.argv[sys.argv.index("--mag")+1]) if "--mag" in sys.argv else 1.0
+    scr.exports_sync.setplan(seq, settle, 2, 14, player, analog, mag)
     dev.resume(pid)
-    print(f"  resumed; feeding seq={seq_names} player={player} after {settle}ms (COOKED flags, in-process)")
+    print(f"  resumed; feeding seq={seq_names} player={player} after {settle}ms "
+          f"({'ANALOG axes' if analog else 'digital flags'} mag={mag}, in-process)")
 
+    shot = sys.argv[sys.argv.index("--shot")+1] if "--shot" in sys.argv else None
+    shot_at = float(sys.argv[sys.argv.index("--shotat")+1]) if "--shotat" in sys.argv else None
     t = time.time() + seconds
+    shot_done = False
     while time.time() < t:
         if psutil and not psutil.pid_exists(pid): print("  exited"); break
+        if shot and not shot_done and (shot_at is None or (time.time() - (t - seconds)) >= shot_at):
+            if shot_at is not None:
+                shoot(pid, ROOT / shot); shot_done = True
         time.sleep(0.5)
+    if shot and not shot_done:
+        shoot(pid, ROOT / shot)
 
     taps = 0; counts = {}; tl = []
     try: taps = scr.exports_sync.taps()

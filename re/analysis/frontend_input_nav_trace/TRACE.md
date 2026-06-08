@@ -193,13 +193,63 @@ user multitasks. NOTE: during Frida spawns the window had focus anyway (tick ~10
 pause was NOT the cause of the directional-injection negative — that was the joystick-default
 config above.
 
+## 2026-06-07 (cont 2) — SOLVED: in-process menu navigation, visually proven
+
+The earlier directional negatives were because depth 1 (menu id 0x16) is the **TITLE / press-
+start screen** (MASHED logo splash, verify/menu_baseline_pw.png) — NOT an item list. So
+directionals at depth 1 do nothing; the title only takes confirm.
+
+Driving via input_resolver_drive.py --sweep (override FUN_00497310(player,control)->0xff, one
+clean step per dwell-slot via --list), the full flow:
+1. confirm (control 4): title (depth 1) -> Game Type Select (depth 2), but a modal
+   "MASHED / Load Successful. / Continue" is up (verify/menu_depth2.png).
+2. confirm again: dismiss the modal -> clean Game Type Select (verify/menu_nav_test.png):
+   Single Player(0) / Multi Player(1) / Options(2) / Bonus Features(3, LOCKED/greyed) /
+   Exit To Windows(4).
+3. control 12 (DOWN) / control 11 (UP): move the selection. Observed cycle 0,1,2,4 — SKIPS
+   index 3 (locked Bonus), exactly matching the on-screen greyed row.
+
+**Confirmed control map (player input control index -> menu action):**
+- **4 = CONFIRM/select**  (digital; FUN_00497310 default/analog case)
+- **11 = UP**, **12 = DOWN**  (FUN_00497310 analog-axis cases 11/12; vertical list nav)
+- 9 / 10 = analog LEFT/RIGHT (horizontal; for Options sliders — not yet exercised)
+
+**Visual proof:** scripted `--list 4,4,12,12` (confirm,confirm,down,down) -> selection
+0->1->2, screenshot shows **Options highlighted** (verify/menu_nav_options.png). Fully
+in-process (Frida return override on FUN_00497310), ZERO OS input.
+
+### How to drive the menu in-process (reusable)
+```
+py -3.12 re/frida/input_resolver_drive.py --sweep --list <controls> --settle 7000 \
+    --seconds N [--shot verify/x.png --shotat <sec>]
+# controls: 4=confirm 11=up 12=down 9=left 10=right ; e.g. 4,4,12,12,4 = enter Options
+```
+Each list entry fires once per 1.5s dwell-slot. Selection index read at
+*(int*)(0x67ed40 + DAT_0067e9f8*0x40). PrintWindow screenshot works even when occluded
+(no focus change), so it composes with the focus-pause patch for background testing.
+
+### Implication for C4
+The navigate canonical scenario is NO LONGER a dead end. A scenario can now: boot -> confirm
+past title+modal -> navigate to a target item -> confirm, all in-process, and observe the
+hook under test on the resulting screen. This is the OS-input-free driver the C4 navigate/
+save rows were waiting on.
+
 ## Bottom line
 
 The ASK ("which input source the menu reads") is fully answered: DirectInput8
-`GetDeviceState(256)` → bitfield 0x77313c → remappable per-player resolver → cooked flag
-block 0x7f1038+p*0x4c → frontend tick. The navigate *canonical scenario* remains deferred:
-driving it in-process needs the directional consumer pinned (analog float fields / edge-pair
-/ id-0x16 page handler), which is a further focused layer. Tools (all in-process, OS-input-
-free): re/frida/input_feed_cooked.py (cooked-flag injector + selection probe),
-re/frida/menu_nav_observe.py (lifecycle observer).
+`GetDeviceState(256)` → bitfield 0x77313c → remappable per-player resolver FUN_00497310 →
+cooked flag block 0x7f1038+p*0x4c → frontend tick FUN_0043dfd0. AND the navigate scenario is
+now SOLVED in-process: override FUN_00497310(player, control) returns — control 4=confirm,
+11=up, 12=down — boots to title, confirms past the title + "Load Successful" modal, and
+navigates the Game Type Select item list, all OS-input-free and visually verified
+(verify/menu_nav_options.png shows Options highlighted via confirm,confirm,down,down).
+
+Tools (all in-process, OS-input-free):
+- re/frida/input_resolver_drive.py — the menu driver (--probe / --dumpmap / --sweep --list /
+  --force) + PrintWindow screenshot. THE tool for navigate scenarios.
+- re/frida/menu_nav_observe.py — lifecycle observer (phases, transitions, handler counts).
+- re/frida/input_feed_cooked.py — cooked-flag/analog injector + selection probe + screenshot
+  (superseded for nav by input_resolver_drive, kept for flag-level experiments).
+- re/frida/input_consumer_watch.py — MemoryAccessMonitor (one-shot per page; limited use).
+- scripts/patch_mashed_no_focus_pause.py — disable focus-loss pause for background testing.
 
