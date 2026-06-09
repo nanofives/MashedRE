@@ -52,10 +52,38 @@ struct NavSlot {
     std::int32_t      avail[kMaxItems];   // DAT_0067ed84.. (1 = enabled)
     const std::uint32_t* slide_src;       // DAT_0067ed38 (slide-out source table)
     std::int32_t      saved_cursor;       // DAT_0067ed74
+    std::int32_t      slot_kind;          // DAT_0067ed3c (per-slot screen-kind; 0 fresh)
 };
 
 // Direction codes for Nav() (EDI arg of FUN_0043d2a0).
 enum NavDir : int { kNavPush = 0, kNavPop = 1, kNavReload = 2 };
+
+// --------------------------------------------------------------------------
+// Standalone game-state model (fresh-boot main-menu defaults).
+//
+// MASHED's frontend dispatcher (FUN_0043dfd0) and grey-out builder
+// (FUN_00432800) branch on runtime/save globals (team slots DAT_007f1a14.. ,
+// game-mode DAT_0067e9fc, unlock arrays DAT_007f0a40.. , player-active
+// DAT_007e96fc.. , mode flags DAT_0067ea64/ecdc/ed6c, per-slot screen-kind
+// DAT_0067ed3c). The standalone is a fresh main menu with NO race/team/mode in
+// progress and no save loaded, so MASHED initializes those to their reset
+// values (player slots = -1, every flag/array = 0). This struct mirrors exactly
+// those defaults so the ported queries (FUN_0042bb60 / FUN_00402f40 /
+// FUN_00430b60 / FUN_0042f500 / FUN_00497450) reproduce the routing & grey-out
+// the real game shows at a fresh main menu. Settable so a future standalone that
+// loads a save or enters a mode can drive faithful deeper routing.
+struct MenuGameState {
+    int  team_slot[4];      // DAT_007f1a14 / 24 / 34 / 44 (active player team; -1 = empty)
+    int  game_mode;         // DAT_0067e9fc (0 = none at fresh menu)
+    int  flag_ea64;         // DAT_0067ea64 (FUN_0042f500 return)
+    int  flag_ecdc;         // DAT_0067ecdc
+    int  flag_ed6c;         // DAT_0067ed6c
+    int  player_active[4];  // DAT_007e96fc[i*0x80] (0 = inactive)
+};
+
+// Access / reset the standalone game state (defaults = fresh main menu).
+MenuGameState& Nav_GameState();
+void           Nav_GameStateReset();
 
 // --- public API ------------------------------------------------------------
 

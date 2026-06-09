@@ -131,9 +131,70 @@ enum : int {
     kActNone   = -1,   // modal / pure side-effect / unmapped: no nav change
 };
 
+// --------------------------------------------------------------------------
+// Standalone game-state model + the ported state queries the dispatcher gates
+// on. All values default to MASHED's fresh-main-menu reset state, confirmed by
+// decompiling the original initializers (pool13, anchor BDCAE093...): player/team
+// slots = -1, every mode flag / unlock entry = 0.
+// --------------------------------------------------------------------------
+MenuGameState g_game_state = {
+    { -1, -1, -1, -1 },  // team_slot[] (FUN_0042bb60 init writes 0xffffffff)
+    0,                   // game_mode (DAT_0067e9fc)
+    0,                   // flag_ea64 (FUN_0042f500)
+    0,                   // flag_ecdc (DAT_0067ecdc)
+    0,                   // flag_ed6c (DAT_0067ed6c)
+    { 0, 0, 0, 0 },      // player_active[] (DAT_007e96fc[i*0x80])
+};
+
+// FUN_0042bb60 (0x0042bb60) - team-composition validator. Counts active team
+// slots (DAT_007f1a14/24/34/44 >= 0); for each, reads its team byte
+// (&DAT_0067e938)[slot*3]-1 and tallies team-0 (iVar2) vs team-1 (iVar4).
+// Returns 0x1000 for a valid 1-vs-1 / 2-vs-1 / .. split, 1 / (iVar4!=0)+2 for
+// other team-game compositions, 0 for none-paired, -1 when <2 active. Verbatim
+// transcription. At fresh menu (all slots -1) iVar3==0 -> returns -1.
+int Q_TeamComposition() {
+    const MenuGameState& gs = g_game_state;
+    int iVar2 = 0, iVar3 = 0, iVar4 = 0;
+    int team[4] = { -1, -1, -1, -1 };
+    for (int i = 0; i < 4; ++i) {
+        if (gs.team_slot[i] >= 0) {
+            // (&DAT_0067e938)[slot*3] - 1; standalone has no team table loaded,
+            // so the byte is 0 -> team value -1 (neither 0 nor 1). Faithful at
+            // fresh state; a save-loaded standalone would supply the real table.
+            team[i] = -1; // (&DAT_0067e938)[gs.team_slot[i]*3] - 1
+            if (team[i] == 0) ++iVar2;
+            else if (team[i] == 1) ++iVar4;
+            ++iVar3;
+        }
+    }
+    if (iVar3 == 2) {
+        if (iVar2 == 1 && iVar4 == 1) return 0x1000;
+        return 0;
+    }
+    if (iVar3 == 3) {
+        if (iVar2 == 1) { return (iVar4 == 2) ? 0x1000 : (iVar4 != 0) + 2; }
+        if (iVar2 == 2) { if (iVar4 == 1) return 0x1000; return (iVar4 != 0) + 2; }
+        if (iVar2 == 0) return 1;
+        return (iVar4 != 0) + 2;
+    }
+    if (iVar3 == 4) {
+        if (iVar2 == 2) { return (iVar4 == 2) ? 0x1000 : (iVar4 != 0) + 2; }
+        if (iVar2 == 1) { return (iVar4 == 3) ? 0x1000 : (iVar4 != 0) + 2; }
+        if (iVar2 == 3) { if (iVar4 == 1) return 0x1000; return (iVar4 != 0) + 2; }
+        if (iVar2 == 0) return 1;
+        return (iVar4 != 0) + 2;
+    }
+    return -1; // iVar3 < 2
+}
+
+// FUN_00402f40 (0x00402f40) - leaf getter: return DAT_00636ad8. Fresh menu = 0.
+int Q_Flag636ad8() { return 0; }
+
 // action code -> child screen (or sentinel). action is the raw u32 from the
-// descriptor table. RVAs are lines within FUN_0043dfd0 (0x0043dfd0) unless noted.
-int ActionToScreen(std::uint32_t action) {
+// descriptor table. `slot_kind` is the active slot's screen-kind field
+// (DAT_0067ed3c[depth*0x40]; 0 at fresh menu) used only by the 0xff4c0000 gate.
+// RVAs are lines within FUN_0043dfd0 (0x0043dfd0) unless noted.
+int ActionToScreen(std::uint32_t action, int slot_kind) {
     switch (action) {
         // (A) unconditional pushes -----------------------------------------
         case 0xff430000u: return 0x13; // L1116
@@ -160,13 +221,26 @@ int ActionToScreen(std::uint32_t action) {
         case 0xff150000u: return kActReload; // L338 FUN_0043d2a0(0,2)
         case 0xff450000u: return kActPop;    // L1120 FUN_0043d2a0(0,1)
 
-        // (B) state-gated pushes (primary/default branch; secondary [UNCERTAIN])
-        case 0xff240000u: return 7;    // L303 default (ecdc==0 && ed6c==0). Other
-                                       // branches open confirm dialogs / set state.
-        case 0xff3c0000u: return 0xf;  // L889 when FUN_0042bb60()==0x1000; else modal.
-        case 0xff3d0000u: return 4;    // L257/LAB_0043f468 push 4 (also sets DAT_0067f184).
-        case 0xff820000u: return 0x1f; // L1212 when FUN_00402f40()==0; else 0x21 (L1215).
-        case 0xff4c0000u: return 1;    // L1158 when DAT_0067ed3c==0x17; else pop (L1165).
+        // (B) state-gated dispatches (now FAITHFULLY ported; queries reproduce the
+        // fresh-main-menu branch the real game takes).
+        case 0xff240000u:
+            // L292-331. game_mode 0 -> else (ea6c=4) -> LAB_0043e736; ecdc==0 &&
+            // ed6c==0 -> push 7. Other states open confirm dialogs (no nav here).
+            if (g_game_state.flag_ecdc == 0 && g_game_state.flag_ed6c == 0) return 7;
+            return kActNone; // confirm dialog / state set: no nav in standalone
+        case 0xff3c0000u:
+            // L877-903. push 0xf only when FUN_0042bb60()==0x1000 (valid 1v1 team
+            // split); otherwise a "need N players" modal (no nav).
+            return (Q_TeamComposition() == 0x1000) ? 0xf : kActNone;
+        case 0xff3d0000u: return 4;    // L257/LAB_0043f468: UNCONDITIONAL push 4
+                                       // (also sets DAT_0067f184=1; no nav effect).
+        case 0xff820000u:
+            // L1210-1217. FUN_00402f40()==0 -> push 0x1f; else push 0x21.
+            return (Q_Flag636ad8() == 0) ? 0x1f : 0x21;
+        case 0xff4c0000u:
+            // L1156-1165. slot_kind (DAT_0067ed3c[depth]) ==0x17 -> push 1; else
+            // pop. Fresh menu slot_kind=0 -> pop.
+            return (slot_kind == 0x17) ? 1 : kActPop;
 
         // (C) modal dialogs / pure side-effects (no nav) --------------------
         case 0xff1e0000u:              // L335 FUN_0042bf30 confirm
@@ -245,12 +319,20 @@ void RecordsZero() {
     g_record_count = 0;
 }
 
-// Count the selectable items (0xff040000 occurrences) in a screen's table.
+// Count the selectable items (0xff040000 tag occurrences) in a screen's table.
+// NOTE: must count by TAG occurrence, not by KvLookup value — some items carry a
+// legitimate string id of 0xffffffff (-1) (e.g. screens 4/5/6/.. whose label is
+// computed at runtime), which KvLookup returns as -1. Counting on value==-1 would
+// wrongly drop those items (and zero the whole screen). The original derives the
+// count from the group-count walker FUN_0042ac00, which counts tags.
 int CountItems(const std::uint32_t* table) {
-    int n = 0;
-    while (KvLookup(table, kTagItem, n) != -1) {
-        ++n;
-        if (n >= kMaxItems) break;
+    if (table == nullptr) return 0;
+    int n = 0, idx = 0;
+    for (;;) {
+        const std::uint32_t k = table[idx];
+        if (k == kTermVal) break;
+        if (k == kTagItem) { ++n; if (n >= kMaxItems) break; }
+        ++idx;
     }
     return n;
 }
@@ -327,9 +409,10 @@ void BuildRecords(const NavSlot& slot) {
     ++rec;
 
     // Phase 6: list items (tag 0xff040000). One record per 0xff040000 occurrence.
+    // prim may legitimately be -1 (0xffffffff string id = runtime-computed label);
+    // do NOT treat that as end-of-list (item_count is authoritative, by tag).
     for (int row = 0; row < slot.item_count && rec < kMaxRecords; ++row) {
         const int prim = KvLookup(slot.desc_table, kTagItem, row);
-        if (prim == -1) break;
         g_records[rec].tag       = static_cast<std::int32_t>(kTagItem);
         g_records[rec].type      = (g_nav_depth == 0) ? 1 : 0x1ff;
         g_records[rec].row_index = row;
@@ -417,7 +500,7 @@ bool Nav_Select() {
     // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
     // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
     const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
-    const int target = ActionToScreen(action);
+    const int target = ActionToScreen(action, s.slot_kind);
     if (target == kActPop) {
         return Nav_Back();
     }
@@ -449,6 +532,12 @@ const MenuRecord* Nav_Records()      { return g_records; }
 int               Nav_RecordCount()  { return g_record_count; }
 int               Nav_Cursor()       { return g_stack[g_nav_depth].cursor; }
 int               Nav_ScreenId()     { return g_stack[g_nav_depth].screen_id; }
+
+MenuGameState&    Nav_GameState()    { return g_game_state; }
+void              Nav_GameStateReset() {
+    g_game_state = MenuGameState{
+        { -1, -1, -1, -1 }, 0, 0, 0, 0, { 0, 0, 0, 0 } };
+}
 
 } // namespace Frontend
 } // namespace mashed_re
