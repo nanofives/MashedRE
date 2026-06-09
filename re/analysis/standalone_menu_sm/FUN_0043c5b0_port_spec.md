@@ -819,11 +819,52 @@ flows; their tables are all harvested so any reachable push lands on real conten
   highlight-quad branch and FUN_00432b30's prompt row. Until then the slide-anim
   + faithful-font text path is the standalone's draw.
 
+## PROGRESS 2026-06-09 (branch standalone/menu-state-machine) — Phase 2 DONE + VERIFIED
+
+- **FUN_0043c5b0 draw-loop port: DONE + screenshot-verified** (commits 013440e3,
+  71fad07f). The Part-3 "Visual screenshot BLOCKED" note is now RESOLVED: the
+  window/render loop DID run this session (`mashed_re.exe` from repo root, exit 0,
+  6 backbuffer BMPs dumped). BuildRecords now writes each record's EXACT
+  x/y/scale/color verbatim from the FUN_0043d2a0 record writes (X=64.0, scale 0.8 /
+  back-row 0.6, Y = ported FUN_0042ac50 vertical-centering base 0xf0=240 + 0x1e(30)
+  per row). The RenderFrame loop reads those exact fields (piVar9[-5]=X / [-4]=Y /
+  [-6]=scale / [-8]=color), DrawMashedStrings them left-justified scaled 1.25x to
+  800x600 with the +3.0f opaque-black drop shadow (LAB_0043d185), draws the selected
+  item's highlight background quad (FUN_00472c60 solid 0xa0146ef0 + FUN_00473540
+  gradient overlay) at the original's x=60/y=item.y-12/w=210/h=26, and the 0x224
+  triangle-border frame. ChromeBaseDraw itself is NOT callable in the standalone
+  (its RVA screen-getters + scale globals are image-pad-zeroed) → HudIm2DQuad
+  (absolute px) is the standalone-safe analogue. Verified:
+  `verify/msm_tree_1_root.png` / `_2_root_item1.png` (root in FGDC20 with real
+  USA/English.DAT labels Continue/Options/Restart Race/Quit Race/Quit Game, the
+  blue highlight bar tracking the cursor item0->item1), `_4_screen19.png` (depth-2
+  Sound submenu: Music Volume/SFX Volume/Insults Volume/Insults + highlight + the
+  "Sound" back title), `_6_back_root.png` (ESC popped to root, saved cursor
+  restored). Greyed items render greyed (screen8: Gamma Collection/Autosave).
+- **FUN_00432b30 prompt strip: DONE (content) / PARTIAL (special glyphs)** (commit
+  bceb9ddf). `Nav_PromptId()` resolves the screen's 0xff080000 prompt id (the value
+  FUN_0043d2a0 Phase 7 feeds to FUN_00432b30); RenderFrame draws it through
+  MenuStringTable::Decode (control-code remap) at the strip position (virtual
+  X=0x40=64, Y=0x1ac=428, scale 0x3f19999a=0.6 per FUN_0042ad10). The full
+  screen_kind x relation-code branch table is cosmetic + [UNCERTAIN] (screen->kind
+  map un-enumerated) so was NOT transcribed; the prompt id is the deterministic
+  faithful content. The strip is visible at the bottom in every screenshot.
+
 ## RESUME HERE
-1. Reimplement the RW sprite-atlas-by-id pipeline (see Piece 3 blocker above),
-   then port the full FUN_0043c5b0 pixel loop + FUN_00432b30 prompt strip.
-2. Feed real per-frame time into Nav_AnimTick (currently a fixed -0x28 step) so
-   the slide speed matches MASHED's frame-rate-scaled FUN_004a2c48.
-3. Drive MenuGameState from a loaded save (team table &DAT_0067e938, unlock
-   arrays) so deeper state-gated routing/grey-out exercises the secondary
-   branches (e.g. 0xff3c0000→push 0xf with a valid 1v1 team).
+1. **FGDC20 font 256-entry LUT (NEW, unblocks the prompt-strip nav glyphs).** The
+   standalone font loads only a 128-entry char->glyph LUT (MashedFont m_lut[128]),
+   so the FUN_004277a0-remapped special codes (0x7f..0x8f = the arrow/L-R/back
+   prompt glyphs) fall through to '?'/space. Crack the FGDC20.RWF LUT past index 127
+   (the deserializer FUN_00554390 reads 128 u16 @0x130 in the current port; confirm
+   whether the real charset has a wider LUT or the codes index the glyph table
+   directly) and extend MashedFont to support codes >=128. Then the prompt strip +
+   back-glyph render as real arrows instead of '?'.
+2. Reimplement the badges.txd NAMED-sprite atlas (SpriteLookupC / FUN_0040bb50:
+   "Button"/"Arrow"/"SemiC") — the still-deferred CHROME atlas behind the highlight
+   bar. Blocked only on cracking the multi-texture TXD-dictionary layout (sprite
+   atlas spec "(3)"); the item-label path does NOT need it.
+3. Feed real per-frame time into Nav_AnimTick (currently a fixed -0x28 step) so the
+   slide speed matches MASHED's frame-rate-scaled FUN_004a2c48 (DAT_007f1004).
+4. Drive MenuGameState from a loaded save (team table &DAT_0067e938, unlock arrays)
+   so deeper state-gated routing/grey-out exercises the secondary branches (e.g.
+   0xff3c0000->push 0xf with a valid 1v1 team).
