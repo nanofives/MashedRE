@@ -960,18 +960,21 @@ void ShutdownD3D9() {
 // (faithful to FUN_00427780). Used by the nav-driven menu draw loop in RenderFrame.
 int GetMenuMessage(int id, wchar_t* out, int cap);
 
-// B19 faithful font: draw `s` centered horizontally on `cx`, top at `top_y`,
-// glyph cell height `height_px`, tint `argb`, glyph-by-glyph through the bridge
-// using MASHED's FGDC20 atlas UVs. No-op if the font isn't loaded.
+// B19 faithful font: draw `s` at horizontal anchor `cx`, top at `top_y`, glyph
+// cell height `height_px`, tint `argb`, glyph-by-glyph through the bridge using
+// MASHED's FGDC20 atlas UVs. No-op if the font isn't loaded. When `anchor_left`
+// is true, `cx` is the LEFT edge (the original's FUN_00427680 left-justified
+// layout); otherwise `cx` is the centre (legacy callers).
 void DrawMashedString(const wchar_t* s, float cx, float top_y,
-                      float height_px, std::uint32_t argb) {
+                      float height_px, std::uint32_t argb,
+                      bool anchor_left = false) {
     if (!g_font.ready() || !s) return;
     const float scale = height_px / g_font.natural_height();
     const float space_adv = height_px * 0.32f;
     auto glyph_of = [](wchar_t c) -> unsigned char {
         return static_cast<unsigned char>((c >= 0 && c < 128) ? c : '?');
     };
-    // Pass 1: measure for centering.
+    // Pass 1: measure (for centering / unused when left-anchored).
     float total = 0.f;
     for (const wchar_t* p = s; *p; ++p) {
         float uv[4], wpx;
@@ -979,7 +982,7 @@ void DrawMashedString(const wchar_t* s, float cx, float top_y,
         else                                      total += space_adv;
     }
     // Pass 2: draw.
-    float penX = cx - total * 0.5f;
+    float penX = anchor_left ? cx : (cx - total * 0.5f);
     for (const wchar_t* p = s; *p; ++p) {
         float uv[4], wpx;
         if (g_font.Glyph(glyph_of(*p), uv, &wpx)) {
@@ -1156,7 +1159,7 @@ bool RenderFrame() {
             // ChromeBaseDraw analogue; ChromeBaseDraw's own RVA scale-globals are
             // image-pad-zeroed) and a brighter top-half gradient band.
             if (highlighted && !is224) {
-                const float hx = (60.0f + slideX) * kVScale;
+                const float hx = 60.0f * kVScale + slideX;
                 const float hy = (rec.y - 13.0f + 1.0f) * kVScale;
                 const float hw = 210.0f * kVScale;
                 const float hh = 26.0f * kVScale;
@@ -1209,19 +1212,18 @@ bool RenderFrame() {
               : is_back     ? 0x90d0d0ffu                       // back row tint
                             : (static_cast<std::uint32_t>(rec.color) & 0xffffffffu);
 
-            // DrawMashedString centers on cx; the original anchors text at X with a
-            // left edge, so map record X (left edge, 640-space) to a center by
-            // adding half the on-screen run width is impractical here — instead we
-            // anchor at the scaled X + a fixed indent, matching the highlight bar.
-            const float cx = rx + 96.0f + slideX;  // center inside the 64.0 indent + bar
+            // The original left-justifies text at the record's stored X (virtual
+            // 64.0; FUN_00427680). Left-anchor at scaled X + slide offset so the
+            // label sits inside the highlight bar (which starts at virtual x=60).
+            const float lx = rx + slideX;
             if (g_font.ready()) {
                 // Drop shadow (LAB_0043d185: FUN_00428140 at +_DAT_005cc31c=3.0f,
                 // color 0xff000000) then the base color.
                 const float sh = 3.0f * kVScale;
                 if (!highlighted) {
-                    DrawMashedString(txt, cx + sh, ry + sh, text_h, 0xff000000u);
+                    DrawMashedString(txt, lx + sh, ry + sh, text_h, 0xff000000u, true);
                 }
-                DrawMashedString(txt, cx, ry, text_h, base_argb);
+                DrawMashedString(txt, lx, ry, text_h, base_argb, true);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
                        g_menu_items[rec.row_index].ready) {
                 const MenuItemTex& it = g_menu_items[rec.row_index];
@@ -1249,9 +1251,8 @@ bool RenderFrame() {
                 const float px = 64.0f * kVScale;
                 const float py = 428.0f * kVScale;
                 const float ph = kMenuTextHeight * (0.6f / 0.8f) * kVScale;
-                // Anchor at left edge (the strip is left-justified). DrawMashedString
-                // centers on cx, so offset by an approximate half-run width.
-                DrawMashedString(pstr, px + 120.0f, py, ph, 0xffd0d0e0u);
+                // Strip is left-justified (FUN_0042ad10 X=0x40=64). Left-anchor.
+                DrawMashedString(pstr, px, py, ph, 0xffd0d0e0u, true);
             }
         }
     }
