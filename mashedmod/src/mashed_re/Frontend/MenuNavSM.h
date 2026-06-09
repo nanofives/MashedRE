@@ -127,6 +127,11 @@ int                 Nav_RecordCount();           // # of populated item records
 int                 Nav_Cursor();                // highlighted item index (-1 = none)
 int                 Nav_ScreenId();              // current screen id
 
+// The active screen's prompt-strip string id (the 0xff080000 descriptor entry,
+// per FUN_0043d2a0 Phase 7 / FUN_00432b30). Drawn at the bottom prompt strip
+// (virtual X=0x40, Y=0x1ac, scale 0x3f19999a). Returns -1 if none.
+int                 Nav_PromptId();
+
 // Whether list item `row_index` on the current screen is enabled (selectable).
 // Disabled (greyed) items have avail[row]==0 (FUN_00432800 per-screen disables).
 bool                Nav_ItemEnabled(int row_index);

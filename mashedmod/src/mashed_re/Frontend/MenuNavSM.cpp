@@ -279,6 +279,7 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
 // Tag keys (negated forms confirmed in the iterator decomp).
 constexpr std::uint32_t kTagBack = 0xff000000u; // -0x1000000
 constexpr std::uint32_t kTagItem = 0xff040000u; // -0xfc0000
+constexpr std::uint32_t kTagPrompt = 0xff080000u; // -0xf80000 (prompt-strip string id key)
 constexpr std::uint32_t kTagAct1 = 0xff050000u; // -0xfb0000 (per-item action key)
 constexpr std::uint32_t kTagAct2 = 0xff140000u; // -0xec0000 (per-item action key)
 constexpr std::uint32_t kGrpEnd  = 0xff060000u; // -0xfa0000 (group delimiter)
@@ -697,6 +698,15 @@ bool              Nav_AnimTick(int delta) { return Anim_Tick(delta); }
 int               Nav_RecordSlide(int rec_index) {
     if (rec_index < 0 || rec_index >= g_record_count) return 0;
     return g_records[rec_index].slide;
+}
+
+int               Nav_PromptId() {
+    // FUN_0043d2a0 Phase 7 reads the screen's prompt-strip string id via
+    // FUN_0042ad90(EBX=0xff080000, EDI=0) and passes it to FUN_00432b30 (the
+    // prompt-strip glyph builder). The standalone resolves the SAME id and draws
+    // it as a glyph run at the strip position (virtual X=0x40, Y=0x1ac, scale
+    // 0x3f19999a per FUN_0042ad10). Returns -1 if the table has no prompt entry.
+    return KvLookup(g_stack[g_nav_depth].desc_table, kTagPrompt, 0);
 }
 
 bool              Nav_ItemEnabled(int row_index) {

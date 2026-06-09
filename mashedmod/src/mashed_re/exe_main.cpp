@@ -1229,6 +1229,31 @@ bool RenderFrame() {
                 HudIm2DQuad(it.handle, (800.f - w) * 0.5f, ry, w, h, base_argb, uv_full);
             }
         }
+
+        // --- bottom prompt strip (port of FUN_00432b30 + FUN_0042ad10). The
+        // original appends nav-prompt glyph records (ids 0x42/0x43/0x48/0x13/0x58/
+        // 0x133/0x225) at virtual (X=0x40=64, Y=0x1ac=428, scale 0x3f19999a=0.6).
+        // The full screen_kind x relation-code branch table is cosmetic and
+        // [UNCERTAIN] (the screen->kind map is un-enumerated; see port spec); the
+        // deterministic, faithful content is the screen's 0xff080000 prompt id
+        // that FUN_0043d2a0 Phase 7 looks up and feeds to FUN_00432b30. We resolve
+        // that id THROUGH MenuStringTable::Decode so the FUN_004277a0 control-code
+        // remap (8/9/a/b/c/d/e -> 0x81/7f/81/8d/80/87/8f) turns it into the actual
+        // FGDC20 nav/prompt glyph run — the same glyph path the original uses.
+        const int prompt_id = Nav_PromptId();
+        if (prompt_id >= 0 && g_font.ready() && g_menu_str.ready()) {
+            wchar_t pstr[128];
+            const int pn = g_menu_str.Decode(prompt_id, pstr, 128);
+            if (pn > 0) {
+                // Virtual (64, 428, 0.6) -> 800x600. Strip sits in the bottom band.
+                const float px = 64.0f * kVScale;
+                const float py = 428.0f * kVScale;
+                const float ph = kMenuTextHeight * (0.6f / 0.8f) * kVScale;
+                // Anchor at left edge (the strip is left-justified). DrawMashedString
+                // centers on cx, so offset by an approximate half-run width.
+                DrawMashedString(pstr, px + 120.0f, py, ph, 0xffd0d0e0u);
+            }
+        }
     }
 
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual
