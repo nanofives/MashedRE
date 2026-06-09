@@ -67,14 +67,17 @@ int main() {
                     what, Nav_ScreenId(), want, (Nav_ScreenId() == want) ? "OK" : "FAIL");
     };
 
-    // 0xff820000 (screen 1 item 3): FUN_00402f40()==0 -> push 0x1f(31).
+    // 0xff820000 (screen 1 item 3): FUN_00402f40()==0 -> push 0x1f(31). Item 3 is
+    // greyed at fresh menu (case-1 disable when has_savedata==0), so enable it
+    // first (has_savedata=1) to reach the cursor and exercise the routing.
     Nav_GameStateReset();
+    Nav_GameState().has_savedata = 1;
     Nav_Init();
     Nav(1, kNavPush);              // depth1 screen1
     for (int i = 0; i < 3; ++i) Nav_MoveCursor(+1);  // cursor -> item 3
     std::printf("[screen1 cursor=%d action expect 0xff820000]\n", Nav_Cursor());
     Nav_Select();
-    check("0xff820000 fresh -> push 31", Nav_ScreenId(), 0x1f);
+    check("0xff820000 (savedata) -> push 31", Nav_ScreenId(), 0x1f);
 
     // 0xff240000 (screen 5 item 0): ecdc==0 && ed6c==0 -> push 7.
     Nav_GameStateReset(); Nav_Init();
@@ -121,6 +124,44 @@ int main() {
                     back, depth_before, Nav_Depth(),
                     (back && Nav_Depth() == depth_before - 1) ? "OK" : "FAIL");
     }
+
+    // ----------------------------------------------------------------------
+    // Piece 2 — faithful grey-out (FUN_00432800 per-screen disables).
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 2: faithful grey-out (fresh-menu defaults) ===\n");
+    auto avail_dump = [](const char* label, int screen) {
+        std::printf("  %s (screen %d): items=%d avail=[", label, screen,
+                    Nav_TopSlot().item_count);
+        for (int i = 0; i < Nav_TopSlot().item_count; ++i)
+            std::printf("%d", Nav_ItemEnabled(i) ? 1 : 0);
+        std::printf("] cursor=%d\n", Nav_Cursor());
+    };
+
+    // Screen 1: item 3 (saved-game/restart) disabled when has_savedata==0.
+    Nav_GameStateReset(); Nav_Init(); Nav(1, kNavPush);
+    avail_dump("screen1 fresh (item3 should be greyed)", 1);
+    std::printf("    -> item3 enabled? %d : %s\n", Nav_ItemEnabled(3),
+                (!Nav_ItemEnabled(3)) ? "OK (greyed)" : "FAIL");
+    // With save data present -> item 3 enabled.
+    Nav_GameStateReset(); Nav_GameState().has_savedata = 1;
+    Nav_Init(); Nav(1, kNavPush);
+    std::printf("    [has_savedata=1] item3 enabled? %d : %s\n", Nav_ItemEnabled(3),
+                Nav_ItemEnabled(3) ? "OK (enabled)" : "FAIL");
+
+    // Screen 8: items 2,3 greyed at fresh (FUN_00492d10()!=1).
+    Nav_GameStateReset(); Nav_Init();
+    Nav_Select();   // root item 1 -> push 8 (cursor at item1 default? ensure)
+    Nav_GameStateReset(); Nav_Init(); Nav(8, kNavPush);
+    avail_dump("screen8 fresh (items 2,3 greyed)", 8);
+    std::printf("    -> item2=%d item3=%d : %s\n", Nav_ItemEnabled(2), Nav_ItemEnabled(3),
+                (!Nav_ItemEnabled(2) && !Nav_ItemEnabled(3)) ? "OK" : "FAIL");
+    // cursor must NOT land on a disabled item.
+    std::printf("    -> cursor=%d enabled? %s\n", Nav_Cursor(),
+                (Nav_Cursor() >= 0 && Nav_ItemEnabled(Nav_Cursor())) ? "OK" : "FAIL");
+
+    // Screen 28 (0x1c): all vehicle items greyed when no players active.
+    Nav_GameStateReset(); Nav_Init(); Nav(0x1c, kNavPush);
+    avail_dump("screen28 fresh (no players -> all greyed)", 0x1c);
 
     return 0;
 }

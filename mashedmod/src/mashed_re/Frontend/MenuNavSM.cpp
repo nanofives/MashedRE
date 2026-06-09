@@ -137,14 +137,24 @@ enum : int {
 // decompiling the original initializers (pool13, anchor BDCAE093...): player/team
 // slots = -1, every mode flag / unlock entry = 0.
 // --------------------------------------------------------------------------
-MenuGameState g_game_state = {
-    { -1, -1, -1, -1 },  // team_slot[] (FUN_0042bb60 init writes 0xffffffff)
-    0,                   // game_mode (DAT_0067e9fc)
-    0,                   // flag_ea64 (FUN_0042f500)
-    0,                   // flag_ecdc (DAT_0067ecdc)
-    0,                   // flag_ed6c (DAT_0067ed6c)
-    { 0, 0, 0, 0 },      // player_active[] (DAT_007e96fc[i*0x80])
+// Fresh-main-menu defaults (image-padded zeroes; player slots -1).
+const MenuGameState kFreshState = {
+    { -1, -1, -1, -1 },  // team_slot[]
+    0,                   // game_mode
+    0,                   // flag_ea64
+    0,                   // flag_ecdc
+    0,                   // flag_ed6c
+    { 0, 0, 0, 0 },      // player_active[]
+    0,                   // has_savedata (DAT_007f0f2c)
+    0,                   // has_profiles (DAT_007f0ad4)
+    0,                   // ea88
+    0,                   // ea7c
+    0,                   // ea84 (DAT_0067ea8c)
+    0,                   // cur_track_set
+    { 0 },               // unlock_track[]
+    { 0 },               // unlock_car[]
 };
+MenuGameState g_game_state = kFreshState;
 
 // FUN_0042bb60 (0x0042bb60) - team-composition validator. Counts active team
 // slots (DAT_007f1a14/24/34/44 >= 0); for each, reads its team byte
@@ -371,17 +381,89 @@ std::uint32_t ItemActionCode(const std::uint32_t* table, int item_index) {
     }
 }
 
-// FUN_00432800 tail (cursor placement) - MINIMAL all-enabled variant.
-// Faithful grey-out cases are deferred (sub-C2 deps). Sets all avail[]=1, then
-// scans forward from the stored cursor (wrapping at item_count) to the first
-// enabled item; -1 if none. 0x00432800
+// FUN_00497450 (0x00497450) - player-active predicate. param<4 && DAT_007e96fc[
+// param*0x80] != 0. Fresh menu: all inactive. Used by the screen-0x1c grey-out.
+bool Q_PlayerActive(int player) {
+    if (player < 0 || player >= 4) return false;
+    return g_game_state.player_active[player] != 0;
+}
+
+// FUN_00430b60 (0x00430b60) - count of active team slots (DAT_007f1a14/24/34/44
+// != -1). Fresh menu = 0. Used by the screen-0x12 grey-out.
+int Q_ActivePlayerCount() {
+    int n = 0;
+    for (int i = 0; i < 4; ++i) if (g_game_state.team_slot[i] != -1) ++n;
+    return n;
+}
+
+// FUN_00432800 (0x00432800) - per-screen availability-flag init + cursor
+// placement. FAITHFUL port: first set all 12 avail flags = 1, then apply the
+// screen-id-keyed disable switch using the ported state queries, then place the
+// cursor on the first enabled item (forward scan, wrapping at item_count).
+// Avail-flag offsets (verbatim from the decomp; base &DAT_0067ed84[depth*0x10]):
+//   ed84=avail[0] ed88=avail[1] ed8c=avail[2] ed90=avail[3] ed98=avail[5]
+//   ed9c=avail[6]. RVAs are lines within FUN_00432800.
 void PlaceCursor(NavSlot& slot) {
-    for (int i = 0; i < kMaxItems; ++i) slot.avail[i] = 1;
+    int* av = slot.avail;
+    for (int i = 0; i < kMaxItems; ++i) av[i] = 1;
+
+    const MenuGameState& gs = g_game_state;
+    switch (slot.screen_id) {
+    case 1:   // L21: if DAT_007f0f2c==0 -> avail[3]=0 (Restart/saved-game item)
+        if (gs.has_savedata == 0) av[3] = 0;
+        // (also FUN_0040e480(0..3,0): clears external player-ready flags; no avail)
+        break;
+    case 2:   // L31: if DAT_007f0ad4==0 -> avail[1]=0 (no profiles)
+        if (gs.has_profiles == 0) av[1] = 0;
+        break;
+    case 8:   // L41: FUN_00492d10()==1 -> none; else avail[2]=0 then avail[3]=0
+        // DAT_00771968 fresh=0 (!=1) -> disable item 2 and item 3.
+        av[2] = 0;
+        av[3] = 0;
+        break;
+    case 10:  // L48: ea8c!=2 -> avail[1]=0 ; ea8c!=3 -> avail[2]=0
+        if (gs.ea84 != 2) av[1] = 0;
+        if (gs.ea84 != 3) av[2] = 0;
+        break;
+    case 0x12: { // 18 - L52: unlock/profile gating
+        // ea88==1 -> avail[3]=0, then track-2 unlock check; else avail[6] per ea7c.
+        if (gs.ea88 == 1) {
+            av[3] = 0;
+            if (Q_ActivePlayerCount() == 2) { av[5] = 0; }
+        } else {
+            if (gs.ea7c != 0) av[5] = 1;
+            else if (Q_ActivePlayerCount() == 2) av[5] = 0;
+        }
+        // car-unlock (DAT_007f0a58) -> avail[6]; track-unlock (DAT_007f0a50) -> avail[1]
+        av[6] = (gs.unlock_car[0] != 0) ? 1 : 0;
+        av[1] = (gs.unlock_track[0] != 0) ? 1 : 0;
+        // L: FUN_00430b60()!=4 && FUN_0042f500()==0 -> ok; else avail[3]=0
+        if (!(Q_ActivePlayerCount() != 4 && gs.flag_ea64 == 0)) av[3] = 0;
+        break;
+    }
+    case 0x18: // 24 - L: FUN_00430830(1)==0 -> avail[3]=0 (mode-slot empty)
+        // FUN_00430830 reads per-mode unlock slots; fresh menu = 0 -> disable.
+        av[3] = 0;
+        break;
+    case 0x1c: // 28 - per-vehicle: avail[i]=Q_PlayerActive(i) for i in 0..3
+        av[0] = 1; av[1] = 1; av[2] = 1; av[3] = 1;
+        for (int i = 0; i < 4; ++i) {
+            if (!Q_PlayerActive(i)) av[i] = 0;
+        }
+        break;
+    default:
+        break; // no per-screen disables
+    }
+
+    // Cursor placement tail (verbatim): start at stored cursor (or 0), scan
+    // forward over item_count to the first avail==1; else -1.
     if (slot.item_count <= 0) { slot.cursor = -1; return; }
     int c = (slot.cursor < 0) ? 0 : slot.cursor;
+    if (c >= slot.item_count) c = 0;
+    if (c < kMaxItems && av[c] == 1) { slot.cursor = c; return; }
     for (int n = 0; n < slot.item_count; ++n) {
         const int probe = (c + n) % slot.item_count;
-        if (slot.avail[probe] == 1) { slot.cursor = probe; return; }
+        if (probe < kMaxItems && av[probe] == 1) { slot.cursor = probe; return; }
     }
     slot.cursor = -1;
 }
@@ -497,6 +579,8 @@ void Nav_MoveCursor(int delta) {
 bool Nav_Select() {
     const NavSlot& s = g_stack[g_nav_depth];
     if (s.cursor < 0 || s.cursor >= s.item_count) return false;
+    if (s.cursor < kMaxItems && s.avail[s.cursor] != 1) return false; // disabled
+
     // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
     // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
     const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
@@ -533,11 +617,13 @@ int               Nav_RecordCount()  { return g_record_count; }
 int               Nav_Cursor()       { return g_stack[g_nav_depth].cursor; }
 int               Nav_ScreenId()     { return g_stack[g_nav_depth].screen_id; }
 
-MenuGameState&    Nav_GameState()    { return g_game_state; }
-void              Nav_GameStateReset() {
-    g_game_state = MenuGameState{
-        { -1, -1, -1, -1 }, 0, 0, 0, 0, { 0, 0, 0, 0 } };
+bool              Nav_ItemEnabled(int row_index) {
+    if (row_index < 0 || row_index >= kMaxItems) return false;
+    return g_stack[g_nav_depth].avail[row_index] == 1;
 }
+
+MenuGameState&    Nav_GameState()    { return g_game_state; }
+void              Nav_GameStateReset() { g_game_state = kFreshState; }
 
 } // namespace Frontend
 } // namespace mashed_re

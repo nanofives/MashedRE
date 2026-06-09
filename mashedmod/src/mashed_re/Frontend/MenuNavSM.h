@@ -79,6 +79,16 @@ struct MenuGameState {
     int  flag_ecdc;         // DAT_0067ecdc
     int  flag_ed6c;         // DAT_0067ed6c
     int  player_active[4];  // DAT_007e96fc[i*0x80] (0 = inactive)
+
+    // grey-out (FUN_00432800) state. Fresh-menu defaults below.
+    int  has_savedata;      // DAT_007f0f2c (screen 1 item 3 enable; 0 = none)
+    int  has_profiles;      // DAT_007f0ad4 (screen 2 item 1 enable; 0 = none)
+    int  ea88;              // DAT_0067ea88 (screen 0x12 gating)
+    int  ea7c;              // DAT_0067ea7c
+    int  ea84;              // DAT_0067ea8c-adjacent player-count code (DAT_0067ea8c)
+    int  cur_track_set;     // DAT_007f17c-indexed track count (unlock array head)
+    int  unlock_track[1];   // DAT_007f0a50[DAT_0067f17c*0x30] (0 = locked)
+    int  unlock_car[1];     // DAT_007f0a58[DAT_0067f17c*0x30] (0 = locked)
 };
 
 // Access / reset the standalone game state (defaults = fresh main menu).
@@ -116,6 +126,10 @@ const MenuRecord*   Nav_Records();               // kMaxRecords entries
 int                 Nav_RecordCount();           // # of populated item records
 int                 Nav_Cursor();                // highlighted item index (-1 = none)
 int                 Nav_ScreenId();              // current screen id
+
+// Whether list item `row_index` on the current screen is enabled (selectable).
+// Disabled (greyed) items have avail[row]==0 (FUN_00432800 per-screen disables).
+bool                Nav_ItemEnabled(int row_index);
 
 } // namespace Frontend
 } // namespace mashed_re

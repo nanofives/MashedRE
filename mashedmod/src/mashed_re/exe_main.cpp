@@ -1130,12 +1130,17 @@ bool RenderFrame() {
             }
             // Back row at the top; list items below it.
             const bool highlighted = (!is_back && rec.row_index == cur);
+            // Faithful grey-out: items the SM disabled (FUN_00432800) render in a
+            // darker, desaturated tone — matching the game's unavailable rows.
+            const bool disabled = (!is_back && rec.row_index >= 0 &&
+                                   !Nav_ItemEnabled(rec.row_index));
             const float y = is_back ? 200.f : (startY + static_cast<float>(drawn) * stepY);
             if (!is_back) ++drawn;
             else if (depth == 0) continue;                 // hide back row at root
-            const std::uint32_t argb = highlighted ? 0xffffffffu
-                                     : is_back      ? 0x90d0d0ffu
-                                                    : 0x90b0b0b0u;
+            const std::uint32_t argb = disabled      ? 0x60606060u   // greyed/unavailable
+                                     : highlighted    ? 0xffffffffu
+                                     : is_back         ? 0x90d0d0ffu
+                                                       : 0x90b0b0b0u;
             if (g_font.ready()) {
                 DrawMashedString(txt, 400.f, y, kMenuTextHeight, argb);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
