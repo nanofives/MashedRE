@@ -154,6 +154,7 @@
 #include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
 #include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
+#include "D3d9Render/MenuStringTable.h"     // menu id->glyph-string (sprite-by-id)
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 
@@ -445,6 +446,13 @@ std::uint32_t    g_menu_selected   = 0;   // B19c: keyboard-driven selection ind
 // the menu items are drawn glyph-by-glyph in this font instead of the GDI/Arial
 // fallback textures. The decoded menu-item strings are kept for per-frame draw.
 mashed_re::D3d9Render::MashedFont g_font;
+// Menu id->glyph-string table (the menu records' "sprite-atlas-by-id"). Faithful
+// to FUN_00427780 (id->entry) + FUN_004277a0 (control-char->special-glyph remap);
+// loaded from the language .DAT (FUN_004274e0 streams <lang>.dat). The draw-loop
+// port resolves each record's primary/secondary id through this, then draws the
+// resulting string via DrawMashedString (FGDC20).
+// RE: re/analysis/standalone_menu_sm/sprite_atlas_by_id_spec.md
+mashed_re::D3d9Render::MenuStringTable g_menu_str;
 constexpr std::uint32_t kSlotMenuFont   = 15;
 constexpr int           kHandleMenuFont = 9;
 constexpr float         kMenuTextHeight = 30.f;   // on-screen glyph height (px)
@@ -2334,6 +2342,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             if (log) {
                 std::fprintf(log, "\nB19 faithful font (FGDC20): load %s (height=%.1f)\n",
                              fok ? "OK" : "FAILED", g_font.natural_height());
+                std::fclose(log);
+            }
+        }
+        // Menu id->glyph-string table (sprite-atlas-by-id for menu records). Load
+        // the localized labels (English.dat carries the real text; USA.dat is a
+        // sparse placeholder) + run a small self-check that known menu ids resolve.
+        {
+            bool sok = g_menu_str.LoadFile(
+                           "original/TOASTART/Common/FONT/English.dat") ||
+                       g_menu_str.LoadFile(
+                           "original/TOASTART/Common/FONT/USA.dat");
+            std::FILE* log = std::fopen(kLogPath, "a");
+            if (log) {
+                std::fprintf(log,
+                    "\nMenuStringTable (id->glyph-string): load %s size=%u ids=%u\n",
+                    sok ? "OK" : "FAILED", g_menu_str.size(), g_menu_str.id_count());
+                // Self-check: the standalone main-menu record ids (FUN_0043d2a0
+                // root table[0] expands to these) must resolve to real labels.
+                static const int kCheck[] = { 0x21, 0x22, 0x23, 0x24, 0x27 };
+                for (int id : kCheck) {
+                    wchar_t w[64];
+                    int n = g_menu_str.Decode(id, w, 64);
+                    char a[64]; int k = 0;
+                    for (; k < n && k < 63; ++k)
+                        a[k] = (w[k] >= 32 && w[k] < 127) ? (char)w[k] : '.';
+                    a[k] = 0;
+                    std::fprintf(log, "  self-check id 0x%x len=%d \"%s\"\n", id, n, a);
+                }
                 std::fclose(log);
             }
         }
