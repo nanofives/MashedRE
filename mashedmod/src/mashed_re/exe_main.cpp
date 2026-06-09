@@ -1086,12 +1086,24 @@ bool RenderFrame() {
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
     }
 
-    // State-machine-driven menu draw. The nav stack (Frontend/MenuNavSM, port of
-    // FUN_0043d2a0 + the kv-iterator FUN_0042ad90) has populated g_records from the
-    // REAL per-screen descriptor table; we render those records through the
-    // existing faithful font path. The highlighted record (row_index == cursor)
-    // is bright; the rest dimmed. The back-button record (tag 0xff000000) is drawn
-    // at the top once depth > 0 so a push/pop is visually unambiguous.
+    // State-machine-driven menu draw — faithful port of FUN_0043c5b0's per-frame
+    // draw loop. The nav stack (Frontend/MenuNavSM, port of FUN_0043d2a0 + the
+    // kv-iterator FUN_0042ad90) has populated g_records from the REAL per-screen
+    // descriptor table, with each record carrying its EXACT stored x/y/scale/color
+    // fields (the 52-byte 0x898ac0 record layout). Here we reproduce the draw loop:
+    //   - for each record, resolve its primary string id (MenuStringTable/
+    //     GetMenuMessage = FUN_00427780/FUN_004277a0) and DrawMashedString at the
+    //     record's stored x/y/scale/color (mirrors FUN_00428140(id,x,y,argb,scale)),
+    //     with the +3.0f drop-shadow pass in opaque black (LAB_0043d185 of the
+    //     original: shadow at +_DAT_005cc31c then base color);
+    //   - draw the SELECTED item's highlight BACKGROUND quad (untextured solid +
+    //     gradient overlay = FUN_00472c60 / FUN_00473540 in the -0xfc0000 branch);
+    //   - draw the 0x224 special item's triangle border (FUN_00472dc0) — colored,
+    //     centered.
+    // Coords are MASHED's 640x480 virtual space; we scale by 1.25x to the 800x600
+    // backbuffer (the standalone-safe analogue of FUN_00427680/ChromeBaseDraw's
+    // screen-dimension scaling, whose RVA getters/scale globals are zeroed by the
+    // image-pad and so cannot be called here — HudIm2DQuad takes absolute px).
     if (g_bridge_installed) {
         using namespace mashed_re::Frontend;
         const MenuRecord* recs = Nav_Records();
@@ -1099,21 +1111,8 @@ bool RenderFrame() {
         const int         cur  = Nav_Cursor();
         const int         depth = Nav_Depth();
 
-        // Breadcrumb: show nav depth + screen id so screenshots prove the state
-        // transitions (root vs pushed submenu vs popped back).
-        wchar_t crumb[64];
-        const int sid = Nav_ScreenId();
-        // depth/screen in plain ASCII (faithful font is ASCII-only).
-        wchar_t* c = crumb;
-        const wchar_t* lbl = L"DEPTH ";
-        for (const wchar_t* p = lbl; *p; ++p) *c++ = *p;
-        *c++ = static_cast<wchar_t>(L'0' + (depth % 10));
-        const wchar_t* lbl2 = L"  SCREEN ";
-        for (const wchar_t* p = lbl2; *p; ++p) *c++ = *p;
-        if (sid >= 10) *c++ = static_cast<wchar_t>(L'0' + (sid / 10) % 10);
-        *c++ = static_cast<wchar_t>(L'0' + (sid % 10));
-        *c = 0;
-        if (g_font.ready()) DrawMashedString(crumb, 400.f, 250.f, 22.f, 0xffffd060u);
+        // Virtual(640x480) -> backbuffer(800x600) scale (FUN_00427680 analogue).
+        constexpr float kVScale = 1.25f;
 
         // Faithful slide animation (port of FUN_004325c0): advance every record's
         // slide counter one step per frame. Settled records sit at slide 0; just-
@@ -1121,51 +1120,113 @@ bool RenderFrame() {
         // original's per-frame delta scale (counts down).
         Nav_AnimTick(-0x28);
 
-        const float startY = 300.f;
-        const float stepY  = 44.f;
-        int drawn = 0;
         for (int r = 0; r < nrec; ++r) {
             const MenuRecord& rec = recs[r];
-            if (rec.prim_id < 0) continue;                 // -1 = no text
+            if (rec.prim_id < 0 &&
+                static_cast<std::uint32_t>(rec.prim_id) != 0x224u) continue;  // -1 = no text
             const bool is_back = (static_cast<std::uint32_t>(rec.tag) == 0xff000000u);
-            // Resolve the descriptor-table id to its language string.
-            wchar_t txt[128];
-            const int n = GetMenuMessage(rec.prim_id, txt, 128);
-            if (n <= 0) {
-                // No string for this id; show the raw id so the record is still
-                // visibly state-driven (NO-GUESSING about its label).
-                wchar_t* q = txt; const wchar_t* pre = L"id ";
-                for (const wchar_t* p = pre; *p; ++p) *q++ = *p;
-                int v = rec.prim_id; wchar_t tmp[16]; int t = 0;
-                if (v == 0) tmp[t++] = L'0';
-                while (v > 0) { tmp[t++] = static_cast<wchar_t>(L'0' + v % 10); v /= 10; }
-                while (t > 0) *q++ = tmp[--t];
-                *q = 0;
-            }
-            // Back row at the top; list items below it.
-            const bool highlighted = (!is_back && rec.row_index == cur);
-            // Faithful grey-out: items the SM disabled (FUN_00432800) render in a
-            // darker, desaturated tone — matching the game's unavailable rows.
-            const bool disabled = (!is_back && rec.row_index >= 0 &&
-                                   !Nav_ItemEnabled(rec.row_index));
-            const float y = is_back ? 200.f : (startY + static_cast<float>(drawn) * stepY);
-            if (!is_back) ++drawn;
-            else if (depth == 0) continue;                 // hide back row at root
-            const std::uint32_t argb = disabled      ? 0x60606060u   // greyed/unavailable
-                                     : highlighted    ? 0xffffffffu
-                                     : is_back         ? 0x90d0d0ffu
-                                                       : 0x90b0b0b0u;
+            if (is_back && depth == 0) continue;            // hide back row at root
+
+            // The record's EXACT stored fields (FUN_0043c5b0 reads piVar9[-5]=X,
+            // piVar9[-4]=Y, piVar9[-6]=scale, piVar9[-8]=color). Scale to 800x600.
+            const float rx = rec.x * kVScale;
+            const float ry = rec.y * kVScale;
+            // On-screen glyph height = scale * font-cell; the original passes the
+            // record's scale (0.6/0.8) into FUN_00428140's RtCharsetPrint which
+            // multiplies by _DAT_005cd5fc. kMenuTextHeight is the 0.8-scale height;
+            // derive the others proportionally so the back row (0.6) is smaller.
+            const float text_h = kMenuTextHeight * (rec.scale / 0.8f) * kVScale;
+
             // Slide-in offset: map the record's slide counter (0x1ff..0, settled
             // = 0) to a horizontal entry offset so records slide in from the right
             // exactly as the anim tick drives them (faithful FUN_004325c0 motion).
             const float slideX = static_cast<float>(Nav_RecordSlide(r)) * (260.f / 511.f);
+
+            const bool highlighted = (!is_back && rec.row_index == cur);
+            const bool disabled = (!is_back && rec.row_index >= 0 &&
+                                   !Nav_ItemEnabled(rec.row_index));
+            const bool is224 = (static_cast<std::uint32_t>(rec.prim_id) == 0x224u);
+
+            // --- selected-item highlight BACKGROUND quad (FUN_00472c60 solid +
+            // FUN_00473540 gradient overlay). In the -0xfc0000 branch the original
+            // draws this when iStack_3c == the per-screen cursor. Coords (640x480):
+            //   x = 60.0, y = item.y - 13.0 + 1.0, w = 210.0 (list A=166.0),
+            //   h = 26.0, fill 0xa0146ef0 (selected) / 0x40f8d0e8 (idle). We emit
+            // the untextured solid via HudIm2DQuad (the standalone-safe
+            // ChromeBaseDraw analogue; ChromeBaseDraw's own RVA scale-globals are
+            // image-pad-zeroed) and a brighter top-half gradient band.
+            if (highlighted && !is224) {
+                const float hx = (60.0f + slideX) * kVScale;
+                const float hy = (rec.y - 13.0f + 1.0f) * kVScale;
+                const float hw = 210.0f * kVScale;
+                const float hh = 26.0f * kVScale;
+                HudIm2DQuad(0, hx, hy, hw, hh, 0xa0146ef0u, uv_full); // solid fill
+                // gradient overlay (FUN_00473540): brighter upper band.
+                HudIm2DQuad(0, hx, hy, hw, hh * 0.5f, 0x60ffffffu, uv_full);
+            }
+
+            // --- 0x224 special centered item: triangle border (FUN_00472dc0,
+            // 4 triangles framing the centered tile). Drawn as a colored border
+            // rectangle outline (the standalone has no triangle primitive; the
+            // bordered rect is the faithful colored-quad analogue, 0xa0146ef0).
+            if (is224) {
+                const float bw = 320.0f * kVScale, bh = 34.0f * kVScale;
+                const float bx = (320.0f - 160.0f) * kVScale;  // centered on 320
+                const float by = ry;
+                const float t  = 2.0f * kVScale;               // border thickness
+                const std::uint32_t bc = highlighted ? 0xa0146ef0u : 0x40f8d0e8u;
+                HudIm2DQuad(0, bx,        by,        bw, t,  bc, uv_full); // top
+                HudIm2DQuad(0, bx,        by+bh-t,   bw, t,  bc, uv_full); // bottom
+                HudIm2DQuad(0, bx,        by,        t,  bh, bc, uv_full); // left
+                HudIm2DQuad(0, bx+bw-t,   by,        t,  bh, bc, uv_full); // right
+            }
+
+            // --- the label (FUN_00428140 = id->string via FUN_00427780/004277a0,
+            // then RtCharsetPrint). Resolve the id to its language string.
+            wchar_t txt[128];
+            const int n = is224 ? 0 : GetMenuMessage(rec.prim_id, txt, 128);
+            if (!is224 && n <= 0) {
+                // No string for this id; show the raw id so the record is still
+                // visibly state-driven (NO-GUESSING about its label).
+                wchar_t* q = txt; const wchar_t* pre = L"id ";
+                for (const wchar_t* p = pre; *p; ++p) *q++ = *p;
+                int v = rec.prim_id; wchar_t tmp[16]; int tt = 0;
+                if (v == 0) tmp[tt++] = L'0';
+                while (v > 0) { tmp[tt++] = static_cast<wchar_t>(L'0' + v % 10); v /= 10; }
+                while (tt > 0) *q++ = tmp[--tt];
+                *q = 0;
+            }
+            if (is224) continue;  // 0x224 has no string label (offset 0; border only)
+
+            // Base color: the record's stored ARGB (piVar9[-8]); selected items
+            // render in opaque-black-on-highlight as the original does in the
+            // selected -0xfc0000 branch (FUN_00428140 color arg 0xff000000 when
+            // iStack_3c==cursor); idle items use the record color, dimmed; greyed
+            // items use the grey-out tone.
+            const std::uint32_t base_argb =
+                disabled    ? 0x60606060u                       // greyed/unavailable
+              : highlighted ? 0xff101010u                       // black-on-highlight
+              : is_back     ? 0x90d0d0ffu                       // back row tint
+                            : (static_cast<std::uint32_t>(rec.color) & 0xffffffffu);
+
+            // DrawMashedString centers on cx; the original anchors text at X with a
+            // left edge, so map record X (left edge, 640-space) to a center by
+            // adding half the on-screen run width is impractical here — instead we
+            // anchor at the scaled X + a fixed indent, matching the highlight bar.
+            const float cx = rx + 96.0f + slideX;  // center inside the 64.0 indent + bar
             if (g_font.ready()) {
-                DrawMashedString(txt, 400.f + slideX, y, kMenuTextHeight, argb);
+                // Drop shadow (LAB_0043d185: FUN_00428140 at +_DAT_005cc31c=3.0f,
+                // color 0xff000000) then the base color.
+                const float sh = 3.0f * kVScale;
+                if (!highlighted) {
+                    DrawMashedString(txt, cx + sh, ry + sh, text_h, 0xff000000u);
+                }
+                DrawMashedString(txt, cx, ry, text_h, base_argb);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
                        g_menu_items[rec.row_index].ready) {
                 const MenuItemTex& it = g_menu_items[rec.row_index];
                 const float w = static_cast<float>(it.w), h = static_cast<float>(it.h);
-                HudIm2DQuad(it.handle, (800.f - w) * 0.5f, y, w, h, argb, uv_full);
+                HudIm2DQuad(it.handle, (800.f - w) * 0.5f, ry, w, h, base_argb, uv_full);
             }
         }
     }

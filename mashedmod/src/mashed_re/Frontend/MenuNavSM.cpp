@@ -347,6 +347,22 @@ int CountItems(const std::uint32_t* table) {
     return n;
 }
 
+// FUN_0042ac50 (0x0042ac50) - vertical-centering base for the item list. The
+// build loop writes each item's Y as base + spacing*row, where `base` is this
+// function's return. Verbatim transcription of the decomp (pool13, anchor
+// BDCAE093...):  in_EAX = visible item count, param_1 = per-item spacing (0x1e):
+//   if (count & 1) == 0: base = (0xf0 - spacing/2) - ((count-1)>>1)*spacing
+//   else               : base =  0xf0           - ((count-1)>>1)*spacing
+// 0xf0 = 240 is the vertical center in MASHED's 640x480 virtual coord space.
+// Returns the Y of the FIRST item (row 0); each subsequent row adds `spacing`.
+int Q_ListBaseY(int item_count, int spacing) {
+    const unsigned cnt = static_cast<unsigned>(item_count);
+    if ((cnt & 1u) == 0u) {
+        return (0xf0 - spacing / 2) - static_cast<int>((cnt - 1) >> 1) * spacing;
+    }
+    return 0xf0 - static_cast<int>((cnt - 1) >> 1) * spacing;
+}
+
 // FUN_0042ac90 (0x0042ac90) - read the ACTION CODE of the item at list index
 // `item_index`. The original walks the table past `item_index` occurrences of
 // the item tag (0xff040000), then scans within that item's group for the action
@@ -469,15 +485,28 @@ void PlaceCursor(NavSlot& slot) {
 }
 
 // FUN_0043d2a0 Phase 5+6 - expand the active screen's descriptor table into the
-// record array. Back-button = record slot 0; list items follow. Minimal port:
-// populates tag/type/ids/coords sufficient for the standalone text renderer.
+// record array. Back-button = record slot 0; list items follow. The coordinate /
+// scale / color fields are now populated FAITHFULLY (verbatim from the pool13
+// decomp of FUN_0043d2a0's record writes) so the ported draw loop can read each
+// record's EXACT stored x/y/scale/color (640x480 virtual coords; the renderer
+// applies the 800x600 1.25x screen scale, mirroring FUN_00427680/FUN_00472c60).
+//
+// Field writes transcribed from the decomp (puVar4 = &DAT_00898ad8 = record+0x18):
+//   back row 0:  +0x00 tag 0xff000000, +0x0c color 0xffffffff (rgb bytes),
+//                +0x18 X 0x42800000 (64.0), +0x1c Y 0x42400000 (48.0),
+//                +0x14 scale 0x3f19999a (0.6), +0x28 sec, +0x2c prim.
+//   item rows :  +0x00 tag 0xff040000, +0x0c color 0xffffffff,
+//                +0x18 X 0x42800000 (64.0), +0x14 scale 0x3f4ccccd (0.8),
+//                +0x1c Y = Q_ListBaseY(count,0x1e) + 0x1e*row  (FUN_0042ac50 +
+//                spacing), +0x10 slide 0x1ff (0 + type 1 at root), +0x2c prim.
 void BuildRecords(const NavSlot& slot) {
     RecordsZero();
 
     int rec = 0;
 
     // Phase 5: back-button row (record slot 0). Tag 0xff000000; its id is the
-    // first 0xff000000 entry in the table.
+    // first 0xff000000 entry in the table. X 64.0 / Y 48.0 / scale 0.6 (verbatim
+    // DAT_00898ad8/adc/ad4 writes).
     const int back_id = KvLookup(slot.desc_table, kTagBack, 0);
     g_records[rec].tag    = static_cast<std::int32_t>(kTagBack);
     g_records[rec].type   = 1;
@@ -494,15 +523,18 @@ void BuildRecords(const NavSlot& slot) {
     // Phase 6: list items (tag 0xff040000). One record per 0xff040000 occurrence.
     // prim may legitimately be -1 (0xffffffff string id = runtime-computed label);
     // do NOT treat that as end-of-list (item_count is authoritative, by tag).
+    // Y is the FUN_0042ac50 vertical-centering base + 0x1e(30) per row, so the
+    // list is centered on virtual-Y 0xf0 (240) exactly as the original lays it out.
+    constexpr int kSpacing = 0x1e;      // 30, the per-row Y step (local_c += 0x1e)
+    const int base_y = Q_ListBaseY(slot.item_count, kSpacing);
     for (int row = 0; row < slot.item_count && rec < kMaxRecords; ++row) {
         const int prim = KvLookup(slot.desc_table, kTagItem, row);
         g_records[rec].tag       = static_cast<std::int32_t>(kTagItem);
-        g_records[rec].type      = (g_nav_depth == 0) ? 1 : 0x1ff;
         g_records[rec].row_index = row;
         g_records[rec].color     = static_cast<std::int32_t>(0xffffffffu);
         g_records[rec].scale     = 0.8f;    // 0x3f4ccccd
-        g_records[rec].x         = 64.0f;
-        g_records[rec].y         = 0.0f;    // laid out by the renderer
+        g_records[rec].x         = 64.0f;   // 0x42800000
+        g_records[rec].y         = static_cast<float>(base_y + kSpacing * row);
         g_records[rec].prim_id   = prim;
         g_records[rec].sec_id    = -1;
         // Anim init (FUN_0043d2a0): slide counter +0x10 = 0x1ff (item slides in),
