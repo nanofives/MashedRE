@@ -786,11 +786,44 @@ flows; their tables are all harvested so any reachable push lands on real conten
   did appear; re-run the nav-demo with the window foregrounded once the boot/window
   issue is resolved to capture msm_tree_*.png.
 
+## PROGRESS 2026-06-08 (branch standalone/menu-state-machine)
+
+- **Piece 1 — faithful SELECT routing: DONE** (commit 04b236ad). Ported the gated
+  queries FUN_0042bb60 (team comp), FUN_00402f40 (DAT_00636ad8), per-slot
+  DAT_0067ed3c, mode flags ecdc/ed6c into a MenuGameState model (fresh-menu
+  reset defaults). All 5 gated cases now route faithfully:
+  0xff240000→push7, 0xff3c0000→modal/no-nav (teams invalid), 0xff3d0000→push4
+  (reclassified: unconditional, never gated), 0xff820000→push0x1f, 0xff4c0000→pop.
+  Also fixed a port bug: CountItems/BuildRecords used KvLookup value==-1 as
+  end-of-list, zeroing single-item screens whose label id is 0xffffffff
+  (4/5/6/20..); now count by 0xff040000 tag. Harness navsm_test.cpp green.
+- **Piece 2 — faithful grey-out: DONE** (commit 75c8b8a6). Ported FUN_00432800's
+  per-screen disable switch (ids 1,2,8,10,0x12,0x18,0x1c) + queries FUN_00497450/
+  00430b60/0042f500/00492d10/00430830. Disabled items render greyed
+  (0x60606060) and are unselectable; cursor skips them. Verified
+  verify/msm_tree_3_screen8.png (Gamma Collection/Autosave greyed) + harness.
+- **Piece 3 — anim tick: DONE (slide motion)** (this commit). Ported FUN_004325c0
+  (Nav_AnimTick): per-frame the record slide counter (+0x10) counts 0x1ff→0 and
+  freezes; renderer maps it to a horizontal slide-in offset. Verified harness
+  (settles in 13 frames, restarts on re-push) + visual (screen8 items mid-slide).
+  **BLOCKED (documented):** the full pixel draw loop FUN_0043c5b0 and the prompt-
+  strip FUN_00432b30 are NOT ported. Both render via MASHED's RW sprite-atlas
+  primitives keyed on **sprite/glyph ids** (FUN_00428140 alpha-fade sprite,
+  FUN_00472c60/73540 highlight quads, FUN_0040bb50 SpriteLookup; prompt glyphs
+  0x42/43/48/13/58/133/225). The standalone has NO sprite-atlas-by-id pipeline —
+  its records carry **text string ids** rendered through the FGDC20 font
+  (DrawMashedString). Swapping the readable text path for the unloaded sprite
+  path would regress the menu to raw numeric ids. Minimal next step to unblock:
+  reimplement an RW sprite-atlas loader (TXD glyph atlas + id→quad lookup) so the
+  draw loop has real sprites to emit; then port FUN_0043c5b0's tag-dispatch +
+  highlight-quad branch and FUN_00432b30's prompt row. Until then the slide-anim
+  + faithful-font text path is the standalone's draw.
+
 ## RESUME HERE
-1. Resolve the standalone render-loop/window-creation hang (window never shows in
-   this env) → re-run `MASHED_NAV_DEMO=1 mashedmod/build/mashed_re.exe` to capture
-   verify/msm_tree_*.png for the 3-level path.
-2. Port the 5 state-gated action codes' secondary branches (need FUN_0042bb60,
-   FUN_00402f40, DAT_0067ed3c/ed6c) to remove the [UNCERTAIN] markers.
-3. Port the faithful pixel draw loop (FUN_0043c5b0) + anim tick (FUN_004325c0) so the
-   records render with MASHED's slide/highlight chrome rather than the text path.
+1. Reimplement the RW sprite-atlas-by-id pipeline (see Piece 3 blocker above),
+   then port the full FUN_0043c5b0 pixel loop + FUN_00432b30 prompt strip.
+2. Feed real per-frame time into Nav_AnimTick (currently a fixed -0x28 step) so
+   the slide speed matches MASHED's frame-rate-scaled FUN_004a2c48.
+3. Drive MenuGameState from a loaded save (team table &DAT_0067e938, unlock
+   arrays) so deeper state-gated routing/grey-out exercises the secondary
+   branches (e.g. 0xff3c0000→push 0xf with a valid 1v1 team).

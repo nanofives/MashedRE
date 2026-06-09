@@ -1107,6 +1107,12 @@ bool RenderFrame() {
         *c = 0;
         if (g_font.ready()) DrawMashedString(crumb, 400.f, 250.f, 22.f, 0xffffd060u);
 
+        // Faithful slide animation (port of FUN_004325c0): advance every record's
+        // slide counter one step per frame. Settled records sit at slide 0; just-
+        // entered records start at 0x1ff and slide in. Step magnitude mirrors the
+        // original's per-frame delta scale (counts down).
+        Nav_AnimTick(-0x28);
+
         const float startY = 300.f;
         const float stepY  = 44.f;
         int drawn = 0;
@@ -1141,8 +1147,12 @@ bool RenderFrame() {
                                      : highlighted    ? 0xffffffffu
                                      : is_back         ? 0x90d0d0ffu
                                                        : 0x90b0b0b0u;
+            // Slide-in offset: map the record's slide counter (0x1ff..0, settled
+            // = 0) to a horizontal entry offset so records slide in from the right
+            // exactly as the anim tick drives them (faithful FUN_004325c0 motion).
+            const float slideX = static_cast<float>(Nav_RecordSlide(r)) * (260.f / 511.f);
             if (g_font.ready()) {
-                DrawMashedString(txt, 400.f, y, kMenuTextHeight, argb);
+                DrawMashedString(txt, 400.f + slideX, y, kMenuTextHeight, argb);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
                        g_menu_items[rec.row_index].ready) {
                 const MenuItemTex& it = g_menu_items[rec.row_index];

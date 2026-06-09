@@ -131,6 +131,16 @@ int                 Nav_ScreenId();              // current screen id
 // Disabled (greyed) items have avail[row]==0 (FUN_00432800 per-screen disables).
 bool                Nav_ItemEnabled(int row_index);
 
+// Advance the menu slide animation one frame (port of FUN_004325c0). `delta` is
+// the per-frame step (negative; slide counts down toward 0). Returns true when
+// every record has settled (animation complete). Call once per RenderFrame.
+bool                Nav_AnimTick(int delta);
+
+// Slide counter (0x1ff..0) for record `rec_index` (NOT row index; includes the
+// back row at index 0). 0x1ff = fully off-screen / just-entered, 0 = settled.
+// The renderer maps this to a horizontal slide-in offset.
+int                 Nav_RecordSlide(int rec_index);
+
 } // namespace Frontend
 } // namespace mashed_re
 

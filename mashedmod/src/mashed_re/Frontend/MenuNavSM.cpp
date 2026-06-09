@@ -488,6 +488,7 @@ void BuildRecords(const NavSlot& slot) {
     g_records[rec].prim_id = back_id;   // back string id
     g_records[rec].sec_id  = -1;
     g_records[rec].row_index = -1;      // back row is not a list index
+    g_records[rec].slide   = 0x1ff;     // +0x10: slide counter init (FUN_0043d2a0)
     ++rec;
 
     // Phase 6: list items (tag 0xff040000). One record per 0xff040000 occurrence.
@@ -504,10 +505,53 @@ void BuildRecords(const NavSlot& slot) {
         g_records[rec].y         = 0.0f;    // laid out by the renderer
         g_records[rec].prim_id   = prim;
         g_records[rec].sec_id    = -1;
+        // Anim init (FUN_0043d2a0): slide counter +0x10 = 0x1ff (item slides in),
+        // type +0x04 = 0 (not frozen). The anim tick (FUN_004325c0) drives slide
+        // -> 0 then freezes (type=1). Root screen items start settled (type=1).
+        g_records[rec].slide     = 0x1ff;
+        g_records[rec].type      = (g_nav_depth == 0) ? 1 : 0;
         ++rec;
     }
 
     g_record_count = rec;
+}
+
+// FUN_004325c0 (0x004325c0) - Menu Slide Animation Tick. Walks every record
+// (stride 0xd ints; piVar6 = record+0x10) and advances its slide counter
+// (record+0x10) toward the settled state, keyed on the record tag (record+0x00)
+// and type/state (record+0x04; 0x1000 = frozen). FAITHFUL semantics port:
+//   - list-item tag (0xff040000) with type 0 or 2: slide += delta (delta<0);
+//     when slide < 1 -> freeze (type 2 -> slide=0x1ff,type=0x1000; type 0 ->
+//     slide=0,type=1, settled at final Y).
+//   - other tags with type 0/2 and the 0xff0e/0d-class: slide += delta; when
+//     slide > 399 -> clamp 0x1ff, freeze.
+// `delta` stands in for FUN_004a2c48 (per-frame time-scaled step). The standalone
+// drives a fixed step per RenderFrame; sign matches the original (counts down).
+// Returns true once every record is frozen (all slides settled) = animation done.
+bool Anim_Tick(int delta) {
+    bool all_settled = true;
+    for (int i = 0; i < g_record_count; ++i) {
+        MenuRecord& r = g_records[i];
+        const std::uint32_t tag = static_cast<std::uint32_t>(r.tag);
+        if (r.type != 0x1000) {
+            // record is still animating
+            if (tag == kTagItem || tag == kTagBack ||
+                tag == 0xff080000u /* prompt */) {
+                if (r.type == 0 || r.type == 2) {
+                    r.slide += delta;             // *piVar6 += FUN_004a2c48()
+                    if (r.slide < 1) {
+                        if (r.type == 2) { r.slide = 0x1ff; r.type = 0x1000; }
+                        else             { r.slide = 0;     r.type = 1; }
+                    } else {
+                        all_settled = false;
+                    }
+                } else {
+                    // type==1 already settled list item: nothing to do
+                }
+            }
+        }
+    }
+    return all_settled;
 }
 
 } // namespace
@@ -616,6 +660,12 @@ const MenuRecord* Nav_Records()      { return g_records; }
 int               Nav_RecordCount()  { return g_record_count; }
 int               Nav_Cursor()       { return g_stack[g_nav_depth].cursor; }
 int               Nav_ScreenId()     { return g_stack[g_nav_depth].screen_id; }
+
+bool              Nav_AnimTick(int delta) { return Anim_Tick(delta); }
+int               Nav_RecordSlide(int rec_index) {
+    if (rec_index < 0 || rec_index >= g_record_count) return 0;
+    return g_records[rec_index].slide;
+}
 
 bool              Nav_ItemEnabled(int row_index) {
     if (row_index < 0 || row_index >= kMaxItems) return false;

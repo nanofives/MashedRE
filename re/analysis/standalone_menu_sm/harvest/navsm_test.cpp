@@ -163,5 +163,22 @@ int main() {
     Nav_GameStateReset(); Nav_Init(); Nav(0x1c, kNavPush);
     avail_dump("screen28 fresh (no players -> all greyed)", 0x1c);
 
+    // ----------------------------------------------------------------------
+    // Piece 3 — faithful slide-animation tick (port of FUN_004325c0).
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 3: slide-animation tick (FUN_004325c0) ===\n");
+    Nav_GameStateReset(); Nav_Init();
+    Nav(8, kNavPush);   // depth>0 -> items enter with slide=0x1ff, type=0
+    std::printf("  on push: rec1 slide=%d (expect 0x1ff=511)\n", Nav_RecordSlide(1));
+    int frames = 0; bool settled = false;
+    while (frames < 100 && !settled) { settled = Nav_AnimTick(-0x28); ++frames; }
+    std::printf("  settled after %d frames=%d ; rec1 slide=%d (expect 0) : %s\n",
+                frames, settled, Nav_RecordSlide(1),
+                (settled && Nav_RecordSlide(1) == 0) ? "OK" : "FAIL");
+    // Re-push rebuilds the slide (animation restarts on every screen change).
+    Nav(19, kNavPush);
+    std::printf("  re-push screen19: rec1 slide=%d (expect 0x1ff) : %s\n",
+                Nav_RecordSlide(1), (Nav_RecordSlide(1) == 0x1ff) ? "OK" : "FAIL");
+
     return 0;
 }
