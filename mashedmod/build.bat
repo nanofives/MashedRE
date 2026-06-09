@@ -343,6 +343,18 @@ copy /Y "%OUT%\mashed_re_dev.asi" "%ROOT%..\original\mashed_re_dev.asi" >nul
 if errorlevel 1 (echo [ERROR] .asi deploy to original\ failed & exit /b 1)
 echo deployed mashed_re_dev.asi -^> original\
 
+REM Keep the standalone's output dir free of the dev d3d9/dinput8 PROXY shims. When a
+REM proxy d3d9.dll/dinput8.dll sits next to mashed_re.exe, Windows binds it instead of
+REM System32's; the proxy forwards to *_real.dll (which live ONLY in original\) and the
+REM standalone dies at process load with STATUS_DLL_INIT_FAILED (0xC0000142) /
+REM "missing dinput8_real.DLL". The standalone must bind the REAL System32 d3d9/dinput8.
+REM Rename any stray shim copies aside so launching %OUT%\mashed_re.exe works clean.
+for %%D in (d3d9.dll dinput8.dll) do if exist "%OUT%\%%D" (
+    if exist "%OUT%\%%D.bak" del /q "%OUT%\%%D.bak"
+    ren "%OUT%\%%D" "%%D.bak"
+    echo moved aside dev shim %%D -^> %%D.bak  ^(standalone binds System32^)
+)
+
 echo === Build OK ===
 dir /b "%OUT%\mashed_re.exe" "%OUT%\mashed_re_dev.asi"
 endlocal
