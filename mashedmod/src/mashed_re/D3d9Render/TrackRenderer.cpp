@@ -364,6 +364,30 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                        " Clump_Exclude_From_World(%d)",
                                        &idx) == 1) {
                     if (idx >= 0 && idx < 64) excluded[idx] = true;
+                } else {
+                    // Setup_Fog(start_frac, end, r, g, b) — track fog wiring
+                    float fa = 0.f, fb = 0.f; int fr = 0, fg2 = 0, fb2 = 0;
+                    char sk[64] = {};
+                    if (std::sscanf(line.c_str(),
+                                    " Setup_Fog( %f , %f , %d , %d , %d )",
+                                    &fa, &fb, &fr, &fg2, &fb2) == 5 ||
+                        std::sscanf(line.c_str(),
+                                    " Setup_Fog(%f,%f,%d,%d,%d)",
+                                    &fa, &fb, &fr, &fg2, &fb2) == 5) {
+                        fog_on_ = true;
+                        fog_start_ = fa * fb;   // start = fraction of range
+                        fog_end_   = fb;
+                        fog_color_ = D3DCOLOR_XRGB(fr & 0xFF, fg2 & 0xFF,
+                                                   fb2 & 0xFF);
+                    } else if (std::sscanf(line.c_str(),
+                                    " Sky_Filename( %*d , \"%63[^\"]\" )",
+                                    sk) == 1 ||
+                               std::sscanf(line.c_str(),
+                                    " Sky_Filename(%*d,\"%63[^\"]\")",
+                                    sk) == 1) {
+                        // sky clump: drawn first, z-write off, unfogged
+                        load_prop(sk, &sky_);
+                    }
                 }
             }
             for (const auto& c : clumps) {
@@ -1148,6 +1172,35 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     dev->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
     dev->SetFVF(kFVF);
 
+    // sky clump first: unfogged, no depth write (renderer-gap closure)
+    if (!sky_.batches.empty()) {
+        dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
+        dev->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+        for (std::size_t mi = 0; mi < sky_.batches.size(); ++mi) {
+            const auto& b = sky_.batches[mi];
+            if (b.empty()) continue;
+            dev->SetTexture(0, sky_.textures[mi]);
+            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                 static_cast<UINT>(b.size() / 3),
+                                 b.data(), sizeof(V));
+        }
+        dev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+    }
+    // fog (COURSE.LUA Setup_Fog) + alpha cutouts (fence/grate textures)
+    if (fog_on_) {
+        dev->SetRenderState(D3DRS_FOGENABLE, TRUE);
+        dev->SetRenderState(D3DRS_FOGCOLOR, fog_color_);
+        dev->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);
+        DWORD fs, fe;
+        std::memcpy(&fs, &fog_start_, 4);
+        std::memcpy(&fe, &fog_end_, 4);
+        dev->SetRenderState(D3DRS_FOGSTART, fs);
+        dev->SetRenderState(D3DRS_FOGEND, fe);
+    }
+    dev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+    dev->SetRenderState(D3DRS_ALPHAREF, 0x30);
+    dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
     for (std::size_t mi = 0; mi < batches_.size(); ++mi) {
         const auto& b = batches_[mi];
         if (b.empty()) continue;
@@ -1302,6 +1355,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     dev->SetTexture(0, nullptr);
+    dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
+    dev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
     dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);  // back to the 2D menu path
 }
 

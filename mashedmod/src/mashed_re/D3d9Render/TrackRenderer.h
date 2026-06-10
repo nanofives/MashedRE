@@ -5,6 +5,14 @@
 // from the track's TXD (TEXTURES.TXD or <TRACK>.TXD; same chunk-0x23
 // container as the menu TXDs), vertex diffuse = the world's baked prelight.
 //
+// ============================ SCAFFOLD NOTICE ===========================
+// (reconciliation 2026-06-10, see re/analysis/DIVERGENCE_LEDGER_3D.md)
+// The DATA parsing consumed here (TrackWorld/DffModel/MTS/gates/fog params)
+// is FAITHFUL — format-cracked and validated. Everything BEHAVIORAL in this
+// class is [SCAFFOLD] — invented stand-ins to be REPLACED by RE'd verbatim
+// ports, NOT refined: the orbit/chase/centroid cameras, the kinematic+
+// harvested-rates handling, AI lane/braking driving, the ">7 gates"
+// elimination rule, first-to-N scoring, spawn scorer, drive/round demos.
 // ARCHITECTURE NOTE: this is the R4 *opening spike* — a minimal D3D9 path
 // consuming the cracked RW data so the renderer-architecture decision
 // (librw vs RW-subset port vs custom D3D9) is made against something
@@ -114,6 +122,17 @@ private:
         std::vector<D3DMATRIX>          instances;
     };
     std::vector<Prop> props_;
+
+    // renderer-gap closures (reconciliation 2026-06-10): fog from COURSE.LUA
+    // Setup_Fog(start_frac, end, r, g, b); sky.dff drawn first, z-write off,
+    // unfogged.
+    bool     fog_on_   = false;
+    float    fog_start_ = 0.f, fog_end_ = 100.f;
+    D3DCOLOR fog_color_ = D3DCOLOR_XRGB(24, 28, 40);
+    Prop     sky_;
+public:
+    D3DCOLOR fog_color() const { return fog_color_; }
+private:
 
     // car model + state
     std::vector<std::vector<V>>     car_batches_;

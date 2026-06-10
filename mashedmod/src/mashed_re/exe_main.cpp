@@ -1121,7 +1121,7 @@ bool RenderFrame() {
     // for verification, then keeps flying.
     if (g_track_view && g_track.ready()) {
         g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-                        D3DCOLOR_XRGB(24, 28, 40), 1.0f, 0);
+                        g_track.fog_color(), 1.0f, 0);  // horizon = fog color
         g_device->BeginScene();
         static DWORD s_t0 = GetTickCount();
         static DWORD s_prev = 0;
@@ -1196,6 +1196,10 @@ bool RenderFrame() {
             }
         }
         g_track.Render(g_device, t, &ci);
+        // [SCAFFOLD] R6 HUD overlay — invented pips/banner; the REAL game
+        // uses team badges + score bars + "+1/-1" points on a Current
+        // Standings screen (verify/parity3d/orig_race_t03.png). Replace via
+        // RE of the standings/score functions.
         // R6 HUD overlay (2D, on top of the 3D scene): countdown number,
         // per-car round-win scoreboard, round/result banner. The track
         // renderer leaves ZENABLE off on exit, so HudIm2DQuad/DrawMashedString
