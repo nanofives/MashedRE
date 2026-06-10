@@ -1,0 +1,464 @@
+{
+  "s1": [
+    {
+      "rva": "0x00401570",
+      "name": "FUN_00401570",
+      "note": "re/analysis/title_screen_d2/0x00401ee0.md"
+    },
+    {
+      "rva": "0x00401da0",
+      "name": "FUN_00401da0",
+      "note": "re/analysis/title_screen_d2/0x00401ee0.md"
+    },
+    {
+      "rva": "0x00401ee0",
+      "name": "FUN_00401ee0",
+      "note": "re/analysis/title_screen_d2/0x00401ee0.md"
+    },
+    {
+      "rva": "0x00408ad0",
+      "name": "FUN_00408ad0",
+      "note": "re/analysis/race_results/00408ad0.md"
+    },
+    {
+      "rva": "0x0040acd0",
+      "name": "FUN_0040acd0",
+      "note": "re/analysis/c0_promotion_frontend_a/0x0040acd0.md"
+    },
+    {
+      "rva": "0x0040b290",
+      "name": "FUN_0040b290",
+      "note": "re/analysis/race_results/0040b290.md"
+    },
+    {
+      "rva": "0x0040d250",
+      "name": "FUN_0040d250",
+      "note": "re/analysis/title_screen_d2/0x0040d250.md"
+    },
+    {
+      "rva": "0x0040d590",
+      "name": "FUN_0040d590",
+      "note": "re/analysis/race_results/0040d590.md"
+    },
+    {
+      "rva": "0x0040eee0",
+      "name": "FUN_0040eee0",
+      "note": "re/analysis/race_results/0040eee0.md"
+    },
+    {
+      "rva": "0x00414120",
+      "name": "FUN_00414120",
+      "note": "re/analysis/c0_promotion_frontend_a/0x00414120.md"
+    },
+    {
+      "rva": "0x004189f0",
+      "name": "thunk_FUN_00419760",
+      "note": "re/analysis/race_results_d2/004189f0.md"
+    },
+    {
+      "rva": "0x0041dc30",
+      "name": "FUN_0041dc30",
+      "note": "re/analysis/bucket_0041dc30/0x0041dc30.md"
+    },
+    {
+      "rva": "0x0041e080",
+      "name": "FUN_0041e080",
+      "note": "re/analysis/bucket_0041dc30/0x0041e080.md"
+    },
+    {
+      "rva": "0x00422470",
+      "name": "FUN_00422470",
+      "note": "re/analysis/bucket_0041dc30/0x00422470.md"
+    },
+    {
+      "rva": "0x004224d0",
+      "name": "FUN_004224d0",
+      "note": "re/analysis/bucket_0041dc30/0x004224d0.md"
+    }
+  ],
+  "s2": [
+    {
+      "rva": "0x00422a80",
+      "name": "FUN_00422a80",
+      "note": "re/analysis/bucket_0041dc30/0x00422a80.md"
+    },
+    {
+      "rva": "0x00422aa0",
+      "name": "FUN_00422aa0",
+      "note": "re/analysis/bucket_0041dc30/0x00422aa0.md"
+    },
+    {
+      "rva": "0x00423040",
+      "name": "FUN_00423040",
+      "note": "re/analysis/bucket_0041dc30/0x00423040.md"
+    },
+    {
+      "rva": "0x00423270",
+      "name": "FUN_00423270",
+      "note": "re/analysis/bucket_0041dc30/0x00423270.md"
+    },
+    {
+      "rva": "0x00423320",
+      "name": "FUN_00423320",
+      "note": "re/analysis/bucket_0041dc30/0x00423320.md"
+    },
+    {
+      "rva": "0x00423b40",
+      "name": "FUN_00423b40",
+      "note": "re/analysis/bucket_0041dc30/0x00423b40.md"
+    },
+    {
+      "rva": "0x00423b60",
+      "name": "FUN_00423b60",
+      "note": "re/analysis/bucket_0041dc30/0x00423b60.md"
+    },
+    {
+      "rva": "0x00423b80",
+      "name": "FUN_00423b80",
+      "note": "re/analysis/bucket_0041dc30/0x00423b80.md"
+    },
+    {
+      "rva": "0x00423ba0",
+      "name": "FUN_00423ba0",
+      "note": "re/analysis/bucket_0041dc30/0x00423ba0.md"
+    },
+    {
+      "rva": "0x00423bc0",
+      "name": "FUN_00423bc0",
+      "note": "re/analysis/bucket_0041dc30/0x00423bc0.md"
+    },
+    {
+      "rva": "0x00423c40",
+      "name": "FUN_00423c40",
+      "note": "re/analysis/bucket_0041dc30/0x00423c40.md"
+    },
+    {
+      "rva": "0x00423cc0",
+      "name": "FUN_00423cc0",
+      "note": "re/analysis/bucket_0041dc30/0x00423cc0.md"
+    },
+    {
+      "rva": "0x00423d50",
+      "name": "FUN_00423d50",
+      "note": "re/analysis/bucket_0041dc30/0x00423d50.md"
+    },
+    {
+      "rva": "0x00423dd0",
+      "name": "FUN_00423dd0",
+      "note": "re/analysis/bucket_0041dc30/0x00423dd0.md"
+    },
+    {
+      "rva": "0x00423e60",
+      "name": "FUN_00423e60",
+      "note": "re/analysis/bucket_0041dc30/0x00423e60.md"
+    }
+  ],
+  "s3": [
+    {
+      "rva": "0x00423ee0",
+      "name": "FUN_00423ee0",
+      "note": "re/analysis/bucket_0041dc30/0x00423ee0.md"
+    },
+    {
+      "rva": "0x00423f60",
+      "name": "FUN_00423f60",
+      "note": "re/analysis/bucket_0041dc30/0x00423f60.md"
+    },
+    {
+      "rva": "0x00423ff0",
+      "name": "FUN_00423ff0",
+      "note": "re/analysis/bucket_0041dc30/0x00423ff0.md"
+    },
+    {
+      "rva": "0x00424070",
+      "name": "FUN_00424070",
+      "note": "re/analysis/bucket_0041dc30/0x00424070.md"
+    },
+    {
+      "rva": "0x00424100",
+      "name": "FUN_00424100",
+      "note": "re/analysis/bucket_0041dc30/0x00424100.md"
+    },
+    {
+      "rva": "0x004241b0",
+      "name": "FUN_004241b0",
+      "note": "re/analysis/bucket_0041dc30/0x004241b0.md"
+    },
+    {
+      "rva": "0x004241c0",
+      "name": "FUN_004241c0",
+      "note": "re/analysis/bucket_0041dc30/0x004241c0.md"
+    },
+    {
+      "rva": "0x00424270",
+      "name": "FUN_00424270",
+      "note": "re/analysis/bucket_0041dc30/0x00424270.md"
+    },
+    {
+      "rva": "0x00424920",
+      "name": "FUN_00424920",
+      "note": "re/analysis/bucket_0041dc30/0x00424920.md"
+    },
+    {
+      "rva": "0x00424b80",
+      "name": "FUN_00424b80",
+      "note": "re/analysis/bucket_0041dc30/0x00424b80.md"
+    },
+    {
+      "rva": "0x00425b70",
+      "name": "FUN_00425b70",
+      "note": "re/analysis/bucket_0041dc30/0x00425b70.md"
+    },
+    {
+      "rva": "0x00425b90",
+      "name": "FUN_00425b90",
+      "note": "re/analysis/bucket_0041dc30/0x00425b90.md"
+    },
+    {
+      "rva": "0x00425bf0",
+      "name": "FUN_00425bf0",
+      "note": "re/analysis/bucket_0041dc30/0x00425bf0.md"
+    },
+    {
+      "rva": "0x00425c00",
+      "name": "FUN_00425c00",
+      "note": "re/analysis/bucket_0041dc30/0x00425c00.md"
+    },
+    {
+      "rva": "0x00425ca0",
+      "name": "FUN_00425ca0",
+      "note": "re/analysis/bucket_0041dc30/0x00425ca0.md"
+    }
+  ],
+  "s4": [
+    {
+      "rva": "0x00425ea0",
+      "name": "FUN_00425ea0",
+      "note": "re/analysis/bucket_0041dc30/0x00425ea0.md"
+    },
+    {
+      "rva": "0x00425ee0",
+      "name": "FUN_00425ee0",
+      "note": "re/analysis/bucket_0041dc30/0x00425ee0.md"
+    },
+    {
+      "rva": "0x00425ef0",
+      "name": "FUN_00425ef0",
+      "note": "re/analysis/bucket_0041dc30/0x00425ef0.md"
+    },
+    {
+      "rva": "0x00425fa0",
+      "name": "FUN_00425fa0",
+      "note": "re/analysis/bucket_0041dc30/0x00425fa0.md"
+    },
+    {
+      "rva": "0x00426020",
+      "name": "FUN_00426020",
+      "note": "re/analysis/bucket_0041dc30/0x00426020.md"
+    },
+    {
+      "rva": "0x00426080",
+      "name": "FUN_00426080",
+      "note": "re/analysis/bucket_0041dc30/0x00426080.md"
+    },
+    {
+      "rva": "0x00426090",
+      "name": "FUN_00426090",
+      "note": "re/analysis/bucket_0041dc30/0x00426090.md"
+    },
+    {
+      "rva": "0x004260a0",
+      "name": "FUN_004260a0",
+      "note": "re/analysis/bucket_0041dc30/0x004260a0.md"
+    },
+    {
+      "rva": "0x004260b0",
+      "name": "FUN_004260b0",
+      "note": "re/analysis/bucket_0041dc30/0x004260b0.md"
+    },
+    {
+      "rva": "0x00426460",
+      "name": "FUN_00426460",
+      "note": "re/analysis/bucket_0041dc30/0x00426460.md"
+    },
+    {
+      "rva": "0x00426b40",
+      "name": "FUN_00426b40",
+      "note": "re/analysis/bucket_0041dc30/0x00426b40.md"
+    },
+    {
+      "rva": "0x00426bc0",
+      "name": "FUN_00426bc0",
+      "note": "re/analysis/bucket_0041dc30/0x00426bc0.md"
+    },
+    {
+      "rva": "0x00426bd0",
+      "name": "FUN_00426bd0",
+      "note": "re/analysis/bucket_0041dc30/0x00426bd0.md"
+    },
+    {
+      "rva": "0x00426c50",
+      "name": "FUN_00426c50",
+      "note": "re/analysis/bucket_0041dc30/0x00426c50.md"
+    },
+    {
+      "rva": "0x00426cb0",
+      "name": "FUN_00426cb0",
+      "note": "re/analysis/bucket_0041dc30/0x00426cb0.md"
+    }
+  ],
+  "s5": [
+    {
+      "rva": "0x00426cf0",
+      "name": "FUN_00426cf0",
+      "note": "re/analysis/title_screen_d2/0x00401ee0.md"
+    },
+    {
+      "rva": "0x00426d00",
+      "name": "FUN_00426d00",
+      "note": "re/analysis/bucket_0041dc30/0x00426d00.md"
+    },
+    {
+      "rva": "0x00426d20",
+      "name": "FUN_00426d20",
+      "note": "re/analysis/bucket_0041dc30/0x00426d20.md"
+    },
+    {
+      "rva": "0x00426d90",
+      "name": "FUN_00426d90",
+      "note": "re/analysis/bucket_0041dc30/0x00426d90.md"
+    },
+    {
+      "rva": "0x00426dc0",
+      "name": "FUN_00426dc0",
+      "note": "re/analysis/bucket_0041dc30/0x00426dc0.md"
+    },
+    {
+      "rva": "0x00426de0",
+      "name": "FUN_00426de0",
+      "note": "re/analysis/bucket_0041dc30/0x00426de0.md"
+    },
+    {
+      "rva": "0x00426df0",
+      "name": "FUN_00426df0",
+      "note": "re/analysis/bucket_0041dc30/0x00426df0.md"
+    },
+    {
+      "rva": "0x004273e0",
+      "name": "FUN_004273e0",
+      "note": "re/analysis/bucket_0041dc30/0x004273e0.md"
+    },
+    {
+      "rva": "0x00427580",
+      "name": "FUN_00427580",
+      "note": "re/analysis/bucket_0041dc30/0x00427580.md"
+    },
+    {
+      "rva": "0x00427880",
+      "name": "FUN_00427880",
+      "note": "re/analysis/bucket_0041dc30/0x00427880.md"
+    },
+    {
+      "rva": "0x00427c90",
+      "name": "FUN_00427c90",
+      "note": "re/analysis/title_screen/0x00427c90.md"
+    },
+    {
+      "rva": "0x00428140",
+      "name": "FUN_00428140",
+      "note": "re/analysis/hud_frontend/0x00428140.md"
+    },
+    {
+      "rva": "0x004288a0",
+      "name": "FUN_004288a0",
+      "note": "re/analysis/title_screen_d2/0x004288a0.md"
+    },
+    {
+      "rva": "0x00428a30",
+      "name": "FUN_00428a30",
+      "note": "re/analysis/title_screen/0x00428a30.md"
+    },
+    {
+      "rva": "0x00428bf0",
+      "name": "FUN_00428bf0",
+      "note": "re/analysis/title_screen/0x00428bf0.md"
+    }
+  ],
+  "s6": [
+    {
+      "rva": "0x00428d30",
+      "name": "FUN_00428d30",
+      "note": "re/analysis/title_screen/0x00428d30.md"
+    },
+    {
+      "rva": "0x00429240",
+      "name": "FUN_00429240",
+      "note": "re/analysis/title_screen/0x00429240.md"
+    },
+    {
+      "rva": "0x004298c0",
+      "name": "FUN_004298c0",
+      "note": "re/analysis/c0_promotion_frontend_a/0x004298c0.md"
+    },
+    {
+      "rva": "0x00429b30",
+      "name": "FUN_00429b30",
+      "note": "re/analysis/bucket_0041dc30/0x00429b30.md"
+    },
+    {
+      "rva": "0x00429b70",
+      "name": "FUN_00429b70",
+      "note": "re/analysis/bucket_0041dc30/0x00429b70.md"
+    },
+    {
+      "rva": "0x0042a640",
+      "name": "FUN_0042a640",
+      "note": "re/analysis/bucket_0041dc30/0x0042a640.md"
+    },
+    {
+      "rva": "0x0042a980",
+      "name": "FUN_0042a980",
+      "note": "re/analysis/bucket_0041dc30/0x0042a980.md"
+    },
+    {
+      "rva": "0x0042a9c0",
+      "name": "FUN_0042a9c0",
+      "note": "re/analysis/bucket_0041dc30/0x0042a9c0.md"
+    },
+    {
+      "rva": "0x0042ad10",
+      "name": "FUN_0042ad10",
+      "note": "re/analysis/bucket_0041dc30/0x0042ad10.md"
+    },
+    {
+      "rva": "0x0042ad90",
+      "name": "FUN_0042ad90",
+      "note": "re/analysis/bucket_0041dc30/0x0042ad90.md"
+    },
+    {
+      "rva": "0x0042add0",
+      "name": "FUN_0042add0",
+      "note": "re/analysis/bucket_0041dc30/0x0042add0.md"
+    },
+    {
+      "rva": "0x0042b920",
+      "name": "FUN_0042b920",
+      "note": "re/analysis/bucket_0041dc30/0x0042b920.md"
+    },
+    {
+      "rva": "0x0042bde0",
+      "name": "FUN_0042bde0",
+      "note": "re/analysis/bucket_0041dc30/0x0042bde0.md"
+    },
+    {
+      "rva": "0x0042bfb0",
+      "name": "FUN_0042bfb0",
+      "note": "re/analysis/bucket_0041dc30/0x0042bfb0.md"
+    },
+    {
+      "rva": "0x0042e8b0",
+      "name": "FUN_0042e8b0",
+      "note": "re/analysis/hud_frontend_d5/0x0042e8b0.md"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+rva	name	subsystem	arg_type	note	callees
+004d8000	FUN_004d8000	frontend	unknown	re/analysis/intro_splash_d3/0x004d8000.md	004d8060,004d8090
+0043c5b0	FUN_0043c5b0	frontend	unknown	re/analysis/hud_frontend/0x0043c5b0.md	0040bb50,00427e00,00428140,0042aad0,0042aae0,0042b930,0042e3a0,0042e5b0,0043bf30,0043c5c2,00472c60,00473540,004739f0,005cc31c,005f6da0,005f6df8,005f72a0,005f7370,0067e9f8,0067eca4,0067ed38,0067ed40,0067ed80,007d3ff8
+0043bf30	FUN_0043bf30	frontend	unknown	re/analysis/hud_frontend/0x0043bf30.md	0042f0c0,0042fb70,0042fe90,00430120,00430b90,00431240,004314b0,00431710,004335f0,00434720,00439210,0043a610,0043aa30,0043af10,0067e7a8,0067e7b0,0067e7b8,0067e7c8,0067e7d8,0067e7e0,0067e7e8,0067e7f0,0067e7f8,0067e810,0067e818,0067e820,0067e830,0067e838
+00472dc0	FUN_00472dc0	frontend	unknown	re/analysis/hud_frontend/0x00472dc0.md	0042b8b0,0042b8c0,005cc560,005cd5a8,007d3ff8
+00473540	FUN_00473540	frontend	unknown	re/analysis/hud_frontend/0x00473540.md	0042b8b0,0042b8c0,00472c60,007d3ff8
+0041d870	sub_0041d870	hud	unknown	re/analysis/hud_ingame_promote_c2/0x0041d870.md	0040dfc0,0041c0c0,0041d410,0042f500,0063ba8c,0063cab8,0063d298,0063d558,007f0fd0
+0041ded0	sub_0041ded0	hud	unknown	re/analysis/hud_ingame_promote_c2/0x0041ded0.md	0041de80,0063d5e8
+0041e850	sub_0041e850	hud	unknown	re/analysis/hud_ingame_promote_c2/0x0041e850.md	0040dfc0,0041e630,0042f6a0,0063ba8c,0063d7e0
+004274e0	FUN_004274e0	frontend	unknown	re/analysis/skeleton_prep_game_state/004274e0.md	004cbd30,004cc160,004cc230,0066d828,0067d84c,007f0f60
+00493fd0	sub_00493fd0	frontend	unknown	re/analysis/intro_splash/0x00493fd0.md	004c75e0,005cc320,007d3ff8
+004c1be0	sub_004c1be0	frontend	unknown	re/analysis/promote_c1_high_ab3/0x004c1be0.md	00493fd0,00495350,00499710,004c7730,007e9584
+004c1c80	FUN_004c1c80	hud	unknown	re/analysis/hud_ingame_d2/0x004c1c80.md	
+00402fb0	FUN_00402fb0	hud	unknown	re/analysis/promote_c1_low_ab1/0x00402fb0.md	00402fb7,00402fbc,00402fc9,00402fd0,00402fe2,00402ff8,0040300e,00427e00,004a2c48,005cc56c,00636afc
+00428760	FUN_00428760	hud	unknown	re/analysis/promote_c1_low_ab1/0x00428760.md	00403160,00428610,00428762,00428787
+00428610	FUN_00428610	hud	unknown	re/analysis/frontend_hud_dispatcher_ae2/0x00428610.md	00428722,0042b8b0,0042b8c0,00450b10,005cc320,005cc32c,005cc560,005cd5a8,005d757c
+00427ca0	FontText_HudInit	hud	unknown	re/analysis/hud_promote_c2_b/0x00427ca0.md	00427880,0042a6b0,00552b60,00556cc0,00556d70,00556e90
+00427680	FontText_ComputeScreenXY	hud	unknown	re/analysis/hud_promote_c2_b/0x00427680.md	0042b8b0,0042b8c0,005554d0,0067d838
+00556ca0	FUN_00556ca0	hud	unknown	re/analysis/font_atlas_promote_ae5/0x00556ca0.md	00427e00,00428293,00556cb0
+00556cc0	FUN_00556cc0	hud	unknown	re/analysis/font_atlas_promote_ae5/0x00556cc0.md	00427ca0
+00556cd0	FUN_00556cd0	hud	unknown	re/analysis/font_atlas_promote_ae5/0x00556cd0.md	00427620
+004335f0	FUN_004335f0	frontend	unknown	re/analysis/hud_frontend_d2/0x004335f0.md	
+0043a610	FUN_0043a610	frontend	unknown	re/analysis/hud_frontend_d2/0x0043a610.md	
+0043af10	FUN_0043af10	frontend	unknown	re/analysis/hud_frontend_d2/0x0043af10.md	
+00434720	FUN_00434720	frontend	unknown	re/analysis/hud_frontend_d2/0x00434720.md	
+00431240	FUN_00431240	frontend	unknown	re/analysis/hud_frontend_d2/0x00431240.md	
+004314b0	FUN_004314b0	frontend	unknown	re/analysis/hud_frontend_d2/0x004314b0.md	
+00431710	FUN_00431710	frontend	unknown	re/analysis/hud_frontend_d2/0x00431710.md	
+0043aa30	FUN_0043aa30	frontend	unknown	re/analysis/hud_frontend_d2/0x0043aa30.md	
+00430120	FUN_00430120	frontend	unknown	re/analysis/hud_frontend_d2/0x00430120.md	
+0042bcb0	FUN_0042bcb0	frontend	unknown	re/analysis/c0_promotion_frontend_a/0x0042bcb0.md	004b5750,004c5c00,005cc560,005cc724,005cd18c,005cd5a8,005cd76c,005cd770,005cd774,005cd776,005cd778,00616038,00636ac8,007d3ff8,007e96fc
+004368e0	FUN_004368e0	frontend	unknown	re/analysis/hud_frontend_d5/0x004368e0.md	0040bb50,00427e00,00427f00,0042b8b0,0042b8c0,0042e8b0,0042ed70,0042ef40,0042fab0,00430760,004309b0,004368e5,004368f7,00436906,00436918,00436930,00436939,00436944,00436957,00436963,00436a9b,00438b20,00438c30,00438ddc,00458630,00472c60,00473870,004739f0,004a2b60,004a2c48,005f65c8,005f7370,0067e9f8,0067e9fc,0067ea60,0067ea64,0067ed38,0067f17c,007f0a40,007f0cb0,007f0db4,007f0de8,007f1004,007f1a14,007f1a1c,007f1a24,007f1a34,007f1a44
+004736c0	FUN_004736c0	frontend	unknown	re/analysis/font_pools_frontend_ae6/0x004736c0.md	0042b8b0,0042b8c0,004736c2,004736c9,004736d0,004736d7,004736de,004736f0,004736f8,00473835,00473840,00473848,00473850,00473858,00473860,00473867,005cc560,005cd5a8,007d3ff8
+00474e60	FUN_00474e60	frontend	unknown	re/analysis/font_pools_frontend_ae6/0x00474e60.md	00474e6a,005cd7a8
+00403050	FUN_00403050	frontend	unknown	re/analysis/loading_screen/0x00403050.md	00402fb0,00428760,0042b930,00492e90,00616038,00771964,007d3ff8
+0040b290	FUN_0040b290	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/0040b290.md	0040b296,0040b2d5,0040b2f9,0040b305,0040b315,0040b31f,0040b325,0040b32b,0040b331,0040b34b,0040e340,0040e350,0040e370,0042f500,007e9de0,007e9de4,007ea1e4,007ea5e4,007ea9e4,007f0fd0,007f0fd4,007f1014,007f1030,007f1a18
+0040d590	FUN_0040d590	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/0040d590.md	00408ad0,0040b290,00422fd0,005cc568,005cc730,005ccd6c
+00552840	FontCtx_SetRotation	hud	unknown	re/analysis/hud_promote_c2_b/0x00552840.md	004c4d20
+005540d0	FontCanvas_Init	hud	unknown	re/analysis/font_sys_promote_ae3/0x005540d0.md	004cc820,00553f40,00623e8c,00623e90,007d3ff8,007dc77c
+00495080	FUN_00495080	frontend	unknown	re/analysis/game_mode_cont2/0x00495080.md	00494fd0,005cc32c
+00494f30	FUN_00494f30	frontend	unknown	re/analysis/game_mode_cont2/0x00494f30.md	00493fc0,00771a18,00771a50,00771a54
+00431f30	FUN_00431f30	frontend	unknown	re/analysis/options_menu/0x00431f30.md	0042f0c0,0042fb70,0042fe90,00430120,00430b90,00431240,004314b0,00431710,00431d90,004335f0,00434720,00439210,0043a610,0043aa30,0043af10,0043bf30,0067e7a8,0067e7b0,0067e7b8,0067e7c8,0067e7d0,0067e7d8,0067e7e0,0067e7e8,0067e7f0,0067e7f8,0067e800,0067e808,0067e810,0067e818,0067e820,0067e828,0067e830,0067e838
+00401ee0	FUN_00401ee0	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/00401ee0.md	00401570,00401da0,00401ee3,00401ee8,00401ef1,004e6680,00636ac0
+00401da0	FUN_00401da0	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/00401da0.md	00401db4,00401e22,00401e2e,00401e3e,00401e4e,00401e5a,00401e66,00426cf0,00467210,004c1480,004c4d20,004c5010,004c51a0,005cc320,005cc340,00636ac0,00636ac4
+004189f0	thunk_FUN_00419760	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/004189f0.md	004189f4,00418a30,00418de0,00419760,005f3298,0063bf30,0063c018,0063c028,0063c04c,0063c06c,007f1a14,007f1a1c
+0042e8b0	FUN_0042e8b0	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042e8b0.md	
+00430670	FUN_00430670	frontend	unknown	re/analysis/hud_frontend_d5/0x00430670.md	00413f90,0043067f,004306a9,004306b5,004306d3,005f2b10,0067e9fc,0067ea94,0067ea98,0067f17c,007f1a1c
+004a2b60	FUN_004a2b60	frontend	unknown	re/analysis/promote_c1_high_ab3/0x004a2b60.md	004a2b6f,004a2b73,004a2b97,004a4ea8,004a504f
+00423b00	FUN_00423b00	frontend	unknown	re/analysis/frontend_gate_unblock_u/0x00423b00.md	
+005571e0	FontSys_InitFontPool	hud	unknown	re/analysis/font_pools_frontend_ae6/0x005571e0.md	004cc820,005571c0,005571eb,005571ff,00557210,00623f68,00623f6c,007dc81c
+00557250	FontSys_InitDataPools	hud	unknown	re/analysis/font_pools_frontend_ae6/0x00557250.md	004cc820,00552b60,005571e0,00557220,00557257,0055727e,005572a2,00623f70,00623f74,00623f78,00623f7c,007dc840,007dc864
+00556d20	FontSys_InitBuffers	hud	unknown	re/analysis/font_atlas_promote_ae5/0x00556d20.md	004cc820,00556ce0,00556d2d,00556d4a,00556d67,00623f60,00623f64,007d3ff8,007dc7e8
+00552b90	FontSys_Shutdown	hud	unknown	re/analysis/font_sys_promote_ae3/0x00552b90.md	004c5770,00552a60,00554050,00555280,00556ce0,005571c0,00557220,007d3ff8
+005571c0	FontSys_ShutdownFontPool	hud	unknown	re/analysis/font_pools_frontend_ae6/0x005571c0.md	004cc9f0,005571c9,005571d3,005571d8,005571e0
+00557220	FontSys_ShutdownDataPools	hud	unknown	re/analysis/font_pools_frontend_ae6/0x00557220.md	004cc9f0,00552b90,005571c0,00557229,00557233,0055723b,00557241,00557246,00557250
+00556ce0	FontSys_ShutdownBuffers	hud	unknown	re/analysis/font_atlas_promote_ae5/0x00556ce0.md	004cc9f0,00556cf3,00556cf8,00556d00,00556d0e,00556d20,007d3ff8
+00555f20	FontCtx_BuildExtTable	hud	unknown	re/analysis/font_ctx_promote_ae4/0x00555f20.md	00555f2e,00555f36,00555f70,00555f7c,00555f93,00555fb1,00555fb8,00555fc3,00555fc9,00555fcf,00555fd5,00555feb
+004013f0	FUN_004013f0	hud	unknown	re/analysis/boot_hud_promote_ae1/0x004013f0.md	004011f0,00426060,004c19f0,004c1a00,004e4320,004e4350,004e6680,00636560,00636564,007d3ff8
+00402f80	FUN_00402f80	hud	unknown	re/analysis/boot_hud_promote_ae1/0x00402f80.md	00636ae8,00636aec,00636af0,00636af4
+00403c60	FUN_00403c60	hud	unknown	re/analysis/skeleton_prep_high_leverage/00403c60.md	00403c8c,00403c8d,00403cb7,00403cb8,00403cf6,00403cf7,00403d2c,00403d2e,00427ad0
+00497b60	FUN_00497b60	frontend	unknown	re/analysis/cluster_0049_first_pass/00497b60.md	00497d31,00499720,00499740,004a2b60,00615fe8,007719e8,00773118,007e95c4,007e96c8
+004224d0	FUN_004224d0	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/004224d0.md	004224e0,004224ec,004b6520,005f6154,006403e8,006412e8,006412ec,006412f0,006412f4,006412f8,006412fc,00641300,00641304,00641308,0064130c,00641310,00641314,0064131c,00641320
+00424270	FUN_00424270	frontend	unknown	re/analysis/frontend_c1_to_c2_s3/FUN_00424270.md	
+00425b90	FUN_00425b90	frontend	unknown	re/analysis/frontend_c1_to_c2_s3/FUN_00425b90.md	
+00426b40	FUN_00426b40	frontend	unknown	re/analysis/frontend_c1_to_c2_s4/FUN_00426b40.md	
+00426cb0	FUN_00426cb0	frontend	unknown	re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md	
+00426d90	FUN_00426d90	frontend	unknown	re/analysis/frontend_c1_to_c2_s5/FUN_00426d90.md	
+0042a640	FUN_0042a640	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042a640.md	
+0042bde0	FUN_0042bde0	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042bde0.md	
+0042fab0	FUN_0042fab0	frontend	unknown	re/analysis/bucket_0041dc30/0x0042fab0.md	0040bb90
+00431b70	FUN_00431b70	frontend	unknown	re/analysis/bucket_0041dc30/0x00431b70.md	007f0f10
+00433240	FUN_00433240	frontend	unknown	re/analysis/bucket_0041dc30/0x00433240.md	00402f80,0042d3a0,0067e844,0067e914,0067e9f8,0067ea84,0067eca4,0067ecac,0067ecb0
+0043aee0	FUN_0043aee0	frontend	unknown	re/analysis/bucket_0041dc30/0x0043aee0.md	004307a0,0067ed6c,0067f17c,007f0a40
+004893d0	FUN_004893d0	frontend	unknown	re/analysis/bucket_0041dc30/0x004893d0.md	

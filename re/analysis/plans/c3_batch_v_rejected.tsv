@@ -1,0 +1,97 @@
+rva	name	subsystem	reason
+00427e00	FUN_00427e00	frontend	signature-unsupported: fastcall ECX/EDX args
+00428140	FUN_00428140	frontend	inline bare [UNCERTAIN] (heading=## shape)
+004a2c48	FUN_004a2c48	frontend	signature-unsupported: in_ST0 (FPU) arg
+004cc230	FUN_004cc230	frontend	inline [UNCERTAIN U-3722] not in UNCERTAINTIES.md (heading=## mechanical description)
+00494460	sub_00494460	frontend	callee-gate: 00494320=C1
+00494a80	sub_00494a80	frontend	callee-gate: 004944c0=C1
+004d8c40	FUN_004d8c40	frontend	inline [UNCERTAIN U-2360] not in UNCERTAINTIES.md (heading=## resolves)
+0041c2d0	FUN_0041c2d0	hud	signature-unsupported: in_EAX arg
+0041b340	FUN_0041b340	hud	signature-unsupported: in_EAX arg
+0041bc50	FUN_0041bc50	hud	signature-unsupported: in_EAX arg
+0041c9a0	FUN_0041c9a0	hud	signature-unsupported: in_EAX arg
+0041d410	FUN_0041d410	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+0041de80	FUN_0041de80	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+0041e630	FUN_0041e630	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+00427f00	FUN_00427f00	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+00427620	FontText_HudShutdown	hud	callee-gate: 00555830=C1,00556e40=C1
+00427ff0	FontText_DrawTextRotated	hud	inline bare [UNCERTAIN] (heading=## body summary (0x00427ff0–0x0042813d))
+00555360	FUN_00555360	hud	callee-gate: 00555910=C1
+005554d0	FUN_005554d0	hud	callee-gate: 00554940=C1
+00556d70	FUN_00556d70	hud	callee-gate: 00557110=C1
+005551d0	FUN_005551d0	hud	callee-gate: 00554940=C1
+0042ac50	FUN_0042ac50	frontend	signature-unsupported: fastcall ECX/EDX args
+00458630	FUN_00458630	frontend	inline bare [UNCERTAIN] (heading=## mechanical description)
+00430b30	FUN_00430b30	frontend	signature-unsupported: in_EAX arg
+004391b0	FUN_004391b0	frontend	signature-unsupported: fastcall ECX/EDX args
+0040eee0	FUN_0040eee0	frontend	callee-gate: 0040b6d0=C1
+00553f40	FontGlyph_UploadData	hud	callee-gate: 0055deb0=C1
+004c57a0	FontCtxMatrix_AllocInit	hud	inline bare [UNCERTAIN] (heading=## fun_00427680 — hud-normalized → screen xy (s-1060 callee))
+0043d2a0	FUN_0043d2a0	frontend	signature-unsupported: in_EAX arg
+00432800	FUN_00432800	frontend	signature-unsupported: in_EAX arg
+004325c0	FUN_004325c0	frontend	signature-unsupported: in_EAX arg
+00431b80	FUN_00431b80	frontend	inline bare [UNCERTAIN] (heading=## why c2 (drift-promote from c1, 2026-05-14))
+004324a0	FUN_004324a0	frontend	signature-unsupported: in_EAX arg
+004322c0	FUN_004322c0	frontend	signature-unsupported: in_EAX arg
+0042f400	FUN_0042f400	frontend	signature-unsupported: in_EAX arg
+0042f020	FUN_0042f020	frontend	signature-unsupported: fastcall ECX/EDX args
+00431d00	FUN_00431d00	frontend	signature-unsupported: in_EAX arg
+004298c0	FUN_004298c0	frontend	inline bare [UNCERTAIN] (heading=## notes)
+0040acd0	FUN_0040acd0	frontend	callee-gate: 004098d0=C1,00409950=C1,00409a80=C1,0042c1a0=C1,004d8560=C1
+00448220	Frontend::PostRaceResultCamera	frontend	callee-gate: 00408b00=C1,00409330=C1,0040e4a0=C1,0040e4b0=C1,0041ef60=C1,00441990=C1,00442e00=C1,00446520=C1,0046b4f0=C1,0046d4a0=C1,0046d510=C1,00472650=C1
+004288a0	FUN_004288a0	frontend	inline bare [UNCERTAIN] (heading=## callees (depth-1))
+0043df00	FUN_0043df00	frontend	callee-gate: 0040dc90=C1,0040e170=C1
+00428a30	FUN_00428a30	frontend	inline bare [UNCERTAIN] (heading=## shape)
+00429240	FUN_00429240	frontend	inline bare [UNCERTAIN] (heading=## branches)
+00429290	FUN_00429290	frontend	callee-gate: 0045d3f0=C1,0045d430=C1,00466b50=C1
+00428bf0	FUN_00428bf0	frontend	inline bare [UNCERTAIN] (heading=## shape)
+00428d30	FUN_00428d30	frontend	signature-unsupported: 5-arg shape
+00427c90	FUN_00427c90	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+00426cf0	FUN_00426cf0	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+004215c0	FUN_004215c0	frontend	callee-gate: 004039f0=C1,0040be50=C1
+00412cf0	FUN_00412cf0	hud	callee-gate: 004726f0=C1
+00555af0	FontCtx_LoadMetrics_Met	hud	callee-gate: 00550a20=C1
+00555ff0	FontCtx_LoadMetrics_Atlas	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+00554050	FontCanvas_Shutdown	hud	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00555280	FontSys_ShutdownContextPool	hud	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00401000	FUN_00401000	hud	callee-gate: 004b3bf0=C1,004b4080=C1,004b5320=C1,004c0b30=C1,004e4450=C1,004e4810=C1,004e48e0=C1,004e4900=C1,004e4b90=C1,004e4dd0=C1,004e5850=C1,0053fbb0=C1
+004011f0	FUN_004011f0	hud	callee-gate: 00429300=C1,004c15c0=C1
+00401340	FUN_00401340	hud	callee-gate: 004b4080=C1
+00404820	FUN_00404820	hud	callee-gate: 004e6e00=C1
+00497470	FUN_00497470	frontend	signature-unsupported: fastcall ECX/EDX args
+004974b0	FUN_004974b0	frontend	signature-unsupported: in_EAX arg
+00497b10	FUN_00497b10	frontend	signature-unsupported: in_EAX arg
+0041dc30	FUN_0041dc30	frontend	inline bare [UNCERTAIN] (heading=## mechanical description)
+00422470	FUN_00422470	frontend	callee-gate: 004223f0=C1,00422440=C1
+00423b80	FUN_00423b80	frontend	inline bare [UNCERTAIN] (heading=## body (mechanical transcript))
+00424100	FUN_00424100	frontend	inline bare [UNCERTAIN] (heading=## shape)
+004241c0	FUN_004241c0	frontend	inline bare [UNCERTAIN] (heading=## shape)
+00424b80	FUN_00424b80	frontend	inline bare [UNCERTAIN] (heading=## shape)
+00425b70	FUN_00425b70	frontend	inline bare [UNCERTAIN] (heading=## notes)
+00425bf0	FUN_00425bf0	frontend	inline bare [UNCERTAIN] (heading=## callees (depth 1))
+00425c00	FUN_00425c00	frontend	inline bare [UNCERTAIN] (heading=## callees (depth 1))
+00425ca0	FUN_00425ca0	frontend	inline bare [UNCERTAIN] (heading=## callees (depth 1))
+00425ea0	FUN_00425ea0	frontend	callee-gate: 004e6e00=C1
+00425fa0	FUN_00425fa0	frontend	inline bare [UNCERTAIN] (heading=## memory accesses)
+00426460	FUN_00426460	frontend	inline bare [UNCERTAIN] (heading=## callees)
+00426c50	FUN_00426c50	frontend	callee-gate: 0041e940=C1,0041ea60=C1
+00426d00	FUN_00426d00	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+00426d20	FUN_00426d20	frontend	inline bare [UNCERTAIN] (heading=## shape)
+00426dc0	FUN_00426dc0	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+00426de0	FUN_00426de0	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+00426df0	FUN_00426df0	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+004273e0	FUN_004273e0	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+00427580	FUN_00427580	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+004277a0	FUN_004277a0	frontend	signature-unsupported: in_EAX arg
+00427880	FUN_00427880	frontend	inline bare [UNCERTAIN] (heading=## constants / offsets)
+00429b30	FUN_00429b30	frontend	signature-unsupported: fastcall ECX/EDX args
+00429b70	FUN_00429b70	frontend	signature-unsupported: fastcall ECX/EDX args
+0042a980	FUN_0042a980	frontend	inline bare [UNCERTAIN] (heading=## notes)
+0042a9c0	FUN_0042a9c0	frontend	inline bare [UNCERTAIN] (heading=## branches)
+0042ad10	FUN_0042ad10	frontend	inline bare [UNCERTAIN] (heading=## memory reads)
+0042ad90	FUN_0042ad90	frontend	inline bare [UNCERTAIN] (heading=## branches)
+0042add0	FUN_0042add0	frontend	inline bare [UNCERTAIN] (heading=## branches)
+00430250	FUN_00430250	frontend	callee-gate: 0040d430=C1
+00432450	FUN_00432450	frontend	callee-gate: 0042c1a0=C1
+00432b30	FUN_00432b30	frontend	signature-unsupported: in_EAX arg
+004332a0	FUN_004332a0	frontend	callee-gate: 00496910=C1,00497450=C1

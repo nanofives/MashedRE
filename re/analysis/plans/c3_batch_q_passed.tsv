@@ -1,0 +1,97 @@
+rva	name	subsystem	arg_type	note	callees
+004c2f60	FUN_004c2f60	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2f60.md	
+004c2fb0	FUN_004c2fb0	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2fb0.md	
+004cbd30	FUN_004cbd30	render	unknown	re/analysis/texture_loader_d3/0x004cbd30.md	
+004cc050	FUN_004cc050	render	unknown	re/analysis/texture_loader_d3/0x004cc050.md	
+005abfa0	FUN_005abfa0	audio	unknown	re/analysis/promote_c2_audio_rws/005abfa0.md	
+004c2c90	FUN_004c2c90	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2c90.md	
+00498b60	FUN_00498b60	render	unknown	re/analysis/promote_c2_video_cfg/00498b60.md	007731f8,007731fc,00773408,00773410
+004c8690	FUN_004c8690	render	unknown	re/analysis/promote_c2_render_d3d9/0x004c8690.md	
+004c8e50	FUN_004c8e50	render	unknown	re/analysis/promote_c2_render_d3d9/0x004c8e50.md	
+004cc820	FUN_004cc820	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc820.md	
+004cc9f0	RwFreeListDestroy	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc9f0.md	
+004235b0	FUN_004235b0	render	unknown	re/analysis/promote_c2_render_lowrva/004235b0.md	00409710,00423480,00423630,00495280,004952f0,004cbd30,004cc160,004cc230,004cc5e0,00644110,007f1a9c
+0042e5b0	FUN_0042e5b0	frontend	unknown	re/analysis/promote_c2_frontend_menus/0x0042e5b0.md	0040bb70,0042e590,00473c20,00473ee0,00474890,004a2c48
+004cc5e0	FUN_004cc5e0	render	unknown	re/analysis/texture_loader_d2/0x004cc5e0.md	004cc050,004cc400,004cc601,004cc624,004cc637,004cc664,004cc66e,004d7ff0
+004769a0	FUN_004769a0	render	unknown	re/analysis/promote_c2_render_frame/0x004769a0.md	00692528,0069252c,00692530,006925a8
+004769d0	FUN_004769d0	render	unknown	re/analysis/promote_c2_render_frame/0x004769d0.md	00613288,006924dc,006924e0
+004769f0	FUN_004769f0	render	unknown	re/analysis/promote_c2_render_frame/0x004769f0.md	00613290,00692554
+00476a30	FUN_00476a30	render	unknown	re/analysis/promote_c2_render_frame/0x00476a30.md	006924d8
+00476a40	FUN_00476a40	render	unknown	re/analysis/promote_c2_render_frame/0x00476a40.md	00613294,00692598,0069259c,006925a0,006925a4
+00476d00	FUN_00476d00	render	unknown	re/analysis/promote_c2_render_frame/0x00476d00.md	006924d8,006924dc,006924e8,00692528,00692534,00692554,00692598
+004671a0	sub_004671a0	render	unknown	re/analysis/promote_c2_piz_loader/004671a0.md	0042b930,0042f510,006905b0
+004cc160	FUN_004cc160	frontend	unknown	re/analysis/promote_c2_rw_engine_init/004cc160.md	004cc230,004d7ff0,004d8480,00550910,007d3ff8,007d45c4
+00498d60	PopulateModeCombo	save	unknown	re/analysis/promote_c2_settings_dialog/00498d60.md	
+005ac210	FUN_005ac210	audio	unknown	re/analysis/promote_c2_audio_rws/005ac210.md	
+0042c280	FUN_0042c280	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x0042c280.md	0042bf30,0042c29a
+00432080	FUN_00432080	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00432080.md	0040e470,0042d3a0,004321c3,00432220,0067e844,0067e914,0067e9f8,0067eca4,0067ecac,0067f19c,007f1041,007f108d,007f10d9,007f1125,007f1171,007f11bd,007f1209,007f1255,007f1501,007f154d,007f1599,007f15e5,007f1631,007f167d,007f16c9,007f1715,007f1a0c,007f1a14
+004c1c80	FUN_004c1c80	hud	unknown	re/analysis/hud_ingame_d2/0x004c1c80.md	
+00402fb0	FUN_00402fb0	hud	unknown	re/analysis/promote_c1_low_ab1/0x00402fb0.md	00402fb7,00402fbc,00402fc9,00402fd0,00402fe2,00402ff8,0040300e,00427e00,004a2c48,005cc56c,00636afc
+00427680	FontText_ComputeScreenXY	hud	unknown	re/analysis/hud_promote_c2_b/0x00427680.md	0042b8b0,0042b8c0,005554d0,0067d838
+00434720	FUN_00434720	frontend	unknown	re/analysis/hud_frontend_d2/0x00434720.md	
+00439210	FUN_00439210	frontend	unknown	re/analysis/hud_frontend_d2/0x00439210.md	
+0042bcb0	FUN_0042bcb0	frontend	unknown	re/analysis/c0_promotion_frontend_a/0x0042bcb0.md	004b5750,004c5c00,005cc560,005cc724,005cd18c,005cd5a8,005cd76c,005cd770,005cd774,005cd776,005cd778,00616038,00636ac8,007d3ff8,007e96fc
+00428320	FUN_00428320	frontend	unknown	re/analysis/frontend_promote_menus_b/00428320.md	00427840,005554d0
+0040df60	sub_0040df60	render	unknown	re/analysis/promote_c2_render_lowrva/0040df60.md	00401f10,0042f6a0,00636ac0,0063ba8c,007f0fd0
+00403050	FUN_00403050	frontend	unknown	re/analysis/loading_screen/0x00403050.md	00402fb0,00428760,0042b930,00492e90,00616038,00771964,007d3ff8
+004cc7f0	FUN_004cc7f0	render	unknown	re/analysis/promote_c2_rw_render_submit/004cc7f0.md	004cc820
+0042bf30	FUN_0042bf30	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x0042bf30.md	0042bfa0,0067ea5c,0067eab0,0067eab4,0067eab8,0067eabc,0067eac0,0067eac8,0067eacc,0067ead0,0067ead4
+004248b0	FUN_004248b0	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x004248b0.md	0042491f
+00411350	Replay::TimeFormat	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00411350.md	004113a6,004a2c48
+00411530	Replay::GetTimeAtIdx	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00411530.md	00411350,00411570
+00411d60	Replay::CheckTimer	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00411d60.md	00411d87,0042f6a0,0063bb14,007f0ff4
+004099a0	Save::AutosaveTrigger	save	unknown	re/analysis/profile_career/004099a0.md	004099aa,004099b7,004099c0,004099c9,005cc7dc
+0042aa00	FUN_0042aa00	frontend	unknown	re/analysis/frontend_promote_menus_a/0x0042aa00.md	0067e9f8,0067ed40,0067ed74,0067ed84
+005acaa0	FUN_005acaa0	audio	unknown	re/analysis/promote_c2_audio_rws/005acaa0.md	005acd60,005ae0c0,005aeca0
+005aea50	FUN_005aea50	audio	unknown	re/analysis/audio_rws_loader_d3/005aea50.md	004522d0,005aea00,005aea55,007d3ff8
+004c2d90	FUN_004c2d90	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2d90.md	
+00498c00	VideoModeTableInit	render	unknown	re/analysis/promote_c2_settings_dialog/00498c00.md	
+004c2de0	FUN_004c2de0	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2de0.md	
+004c2e10	FUN_004c2e10	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2e10.md	
+004c2e40	FUN_004c2e40	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2e40.md	
+004c2ea0	FUN_004c2ea0	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2ea0.md	
+004228f0	FUN_004228f0	render	unknown	re/analysis/promote_c2_render_lowrva/004228f0.md	00422570,004cd070,004cd140,004cd2d0,005cc320,005cc328,006403fc,006412e8,00641310,00641313,00641318,0064131c,00641324,007d3ff8
+00442df0	FUN_00442df0	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00442df0.md	00442df6
+00428450	FUN_00428450	hud	unknown	re/analysis/hud_ingame_promote_c2/0x00428450.md	0042b8b0,0042b8c0,00450b10,005cc560,005cc56c,005cc730,005cd274,005cd5a8,005cd658,005cd65c,005d757c,0067d974,00771960
+004299d0	TimeRecord::WriteTrackBest	util	unknown	re/analysis/leaderboard/0x004299d0.md	
+00405890	FUN_00405890	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00405890.md	004058a9,00410d10,0063a5d0,0063a5d4,007f0fd0
+00423b20	FUN_00423b20	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00423b20.md	00423b30,004248b0
+00412f30	FUN_00412f30	util	unknown	re/analysis/util_c0_promote/0x00412f30.md	
+004c5c00	FUN_004c5c00	frontend	unknown	re/analysis/sprite_gate_c3/0x004c5c00.md	
+004809e0	VehicleRespawnTeleport	vehicle	unknown	re/analysis/vehicle_promote_c2_b/004809e0.md	
+0046dc20	VehicleOOBDebugDraw	vehicle	unknown	re/analysis/vehicle_update_d3/0046dc20.md	0040e350
+0047eb30	VehiclePhysicsWorldStep	vehicle	unknown	re/analysis/vehicle_promote_c2_b/0047eb30.md	
+004c5890	FUN_004c5890	render	unknown	re/analysis/texture_loader_d3/0x004c5890.md	
+004c77c0	FUN_004c77c0	render	unknown	re/analysis/texture_loader_d3/0x004c77c0.md	
+004cc400	FUN_004cc400	render	unknown	re/analysis/texture_loader_d3/0x004cc400.md	
+00413c70	FUN_00413c70	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00413c70.md	00413caa,005d757c,0063bc60,0063bc68
+0042fe70	FUN_0042fe70	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x0042fe70.md	0042fe75,0067ea80
+00480720	VehicleRespawnPlace	vehicle	unknown	re/analysis/vehicle_promote_c2_b/00480720.md	
+00404e80	Save::DeserializeFromBuffer	save	unknown	re/analysis/save_gamesave_d3/00404e80.md	00404e82,00404e91,00404ea0,00404eb2,00404ec1,00404ec8,00404ed3,00404ee0,007f0a40,007f0f54,007f105c
+00403d30	FUN_00403d30	render	unknown	re/analysis/promote_c2_render_lowrva/00403d30.md	00427ad0
+00403db0	FUN_00403db0	render	unknown	re/analysis/promote_c2_render_lowrva/00403db0.md	00403d30,00403ed0,00427ad0
+00403ed0	FUN_00403ed0	render	unknown	re/analysis/promote_c2_render_lowrva/00403ed0.md	00403d30,00403db0,00427ad0
+004041c0	FUN_004041c0	render	unknown	re/analysis/promote_c2_render_lowrva/004041c0.md	00403fa0,00417730,00427e00,005cc31c,005cc320,005cc32c,005cc558,005cc574,005cc728,005cc730,005cc734,005cc738,005cc73c,005d757c,00636b80,007f100c
+0041ea10	FUN_0041ea10	render	unknown	re/analysis/render_frame_d4/0x0041ea10.md	0063d7e4
+00422ac0	FUN_00422ac0	render	unknown	re/analysis/c0_promotion_render_a/0x00422ac0.md	006412e8,006412ec,006412f0,006412f4
+00422af0	FUN_00422af0	render	unknown	re/analysis/c0_promotion_render_a/0x00422af0.md	00641320
+00426030	FUN_00426030	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426030.md	0041e8f0,0041e9b0,0041ea10,0042604c,005f616c,00644158,00646e58
+004260e0	FUN_004260e0	render	unknown	re/analysis/render_promote_c2_track_loader/0x004260e0.md	005cc4dc,005cd4ac
+005be140	FUN_005be140	audio	unknown	re/analysis/promote_c2_rws_audio_loader/5be140.md	
+004c5800	FUN_004c5800	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5800.md	
+004c5820	FUN_004c5820	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5820.md	
+004c5a00	FUN_004c5a00	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5a00.md	
+004c5ae0	FUN_004c5ae0	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5ae0.md	
+004c5b50	FUN_004c5b50	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5b50.md	
+004e1df0	FUN_004e1df0	render	unknown	re/analysis/texture_loader_d3_cont1/0x004e1df0.md	
+00477730	FUN_00477730	render	unknown	re/analysis/promote_c2_render_frame/0x00477730.md	004773f0,00477810,006925b8,00692bb8
+004cfe40	FUN_004cfe40	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cfe40.md	
+004dcdc0	FUN_004dcdc0	render	unknown	re/analysis/promote_c2_render_d3d9/0x004dcdc0.md	
+004cc6e0	FUN_004cc6e0	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc6e0.md	
+00426cc0	FUN_00426cc0	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00426cc0.md	00426ccc,00663658
+004997b0	FUN_004997b0	util	unknown	re/analysis/promote_c2_video_cfg/004997b0.md	00499720
+00497310	FUN_00497310	input	unknown	re/analysis/promote_c2_video_cfg/00497310.md	004a2c48,005d757c,007730d4,0077311c,00773120,0077313c,007e95c0,007e96c8,007e96fc,007e9700
+0055c4f0	PhysicsBodySetFriction	vehicle	unknown	re/analysis/vehicle_update_d3_cont/0055c4f0.md	
+00404e00	FUN_00404e00	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00404e00.md	00404e1a,00639cc8
+00404e20	FUN_00404e20	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00404e20.md	00404e00,00404e43,00636c08
+00556e90	FUN_00556e90	render	unknown	re/analysis/promote_c1_high_ab3/0x00556e90.md	005d757c

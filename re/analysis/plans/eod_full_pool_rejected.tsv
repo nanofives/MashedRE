@@ -1,0 +1,311 @@
+rva	name	subsystem	reason
+004abe86	FUN_004abe86	boot	signature-unsupported: fastcall ECX/EDX args
+00402a40	sub_00402a40	boot	callee-gate: 004196f0=C1,004210f0=C1,004ce2d0=C1,004d8560=C1,00558240=C1
+004c5930	sub_004c5930	boot	inline [UNCERTAIN U-0010] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+00550390	sub_00550390	render	callee-gate: 00551510=C1
+004c3040	sub_004c3040	render	inline [UNCERTAIN U-0091] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+004c3270	sub_004c3270	render	callee-gate: 004ccf20=C1,004d7ca0=C1
+00493600	FUN_00493600	render	callee-gate: 004935a0=C1,004935d0=C1,004ce790=C1,00513f90=C0
+00493640	FUN_00493640	render	callee-gate: 00472380=C1,004e5d30=C1,0052d8e0=C1,0052e310=C1,005336d0=C1,00534920=C1,00534a80=C1,00538600=C1,0053d0b0=C1,0053eaa0=C1,00543e50=C1,00544d20=C1,00546530=C1,00549640=C1,005515a0=C1,005578a0=C1,00561ee0=C1,0057c270=C1
+004951f0	FUN_004951f0	render	callee-gate: 004cbb60=C1
+004c32b0	FUN_004c32b0	render	callee-gate: 004cc7e0=C1,004cce20=C1,004ccf20=C1,004cfa00=C1,004d7c60=C1,004d7ca0=C1,004d7de0=C1,004d8560=C1,004d8570=C1
+004522d0	FUN_004522d0	audio	callee-gate: 005a7b60=C1
+005abcf0	FUN_005abcf0	audio	callee-gate: 005a7e70=C1
+005aea00	FUN_005aea00	audio	inline [UNCERTAIN U-0125] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+004a2be9	__security_check_cookie	boot	signature-unsupported: fastcall ECX/EDX args
+004aac76	___sbh_alloc_block	boot	inline [UNCERTAIN U-0191] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+004ac45c	___crtMessageBoxA	boot	live-state-side-effect: blocking message box (in ## mechanical description)
+00499710	FUN_00499710	render	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in ## mechanical description)
+004014b0	FUN_004014b0	boot	callee-gate: 004c0740=C0,004c0c20=C0,004e45b0=C1,004e4860=C1,004e4d90=C1,004e5700=C1,004e6e00=C1
+004015a0	FUN_004015a0	boot	callee-gate: 004e6e00=C1
+004025f0	FUN_004025f0	boot	callee-gate: 00401630=C1,00401690=C1,00402240=C1,00402590=C1
+00403640	FUN_00403640	boot	callee-gate: 004034a0=C1
+00403660	FUN_00403660	boot	inline bare [UNCERTAIN] (heading=## struct offsets)
+0040bb30	FUN_0040bb30	boot	callee-gate: 0041a060=C1,00475a00=C1,00487e00=C1
+0040bbb0	FUN_0040bbb0	boot	callee-gate: 00401000=C1,00413b80=C1,004210b0=C1,004759b0=C1,00475a00=C1,00476390=C1,004775b0=C1,00477e40=C1,00485d90=C1,004862d0=C1,00487e00=C1,00489290=C1,0048a460=C1,0048a830=C1,0048ae00=C1,0048bbe0=C1,0048e820=C1,0048eac0=C1,0048ff20=C1,004c5cb0=C1
+0040bd00	FUN_0040bd00	boot	callee-gate: 00413b80=C1,00413bb0=C1,00475d90=C1,00475ea0=C1,004775b0=C1,00477870=C1,00485d90=C1,00485e10=C1,004862d0=C1,00486350=C1,00487140=C1,0048ae00=C1,0048af70=C1,0048bbe0=C1,0048bc10=C1,0048cf70=C1,0048fdd0=C1,0048ff20=C1,0048ffd0=C1
+0040cf80	FUN_0040cf80	boot	callee-gate: 0040cf40=C1,0041a980=C1,0041ec00=C1,0041f320=C1,00422140=C1
+0040cfd0	FUN_0040cfd0	boot	callee-gate: 00405400=C1,00426b40=C1,0045bed0=C1,0045bf30=C1,004725f0=C1,00484c90=C1,00490000=C1
+004113b0	FUN_004113b0	boot	callee-gate: 00482900=C1
+00418980	thunk_FUN_0041a060	boot	callee-gate: 00418a00=C1,00419090=C1,00419ff0=C1,0041a060=C1,0042a5d0=C1,004770c0=C1,004b3f90=C0,004c0b30=C1,004e69a0=C1,004e7e30=C1
+004189e0	thunk_FUN_004196f0	boot	callee-gate: 00418f40=C1,00419090=C1,004196f0=C1,0041a060=C1,004768c0=C1,004c0c20=C0,004e6920=C1,004e6e00=C1
+004c8740	FUN_004c8740	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c8800	FUN_004c8800	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c8c70	FUN_004c8c70	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+00494c80	FUN_00494c80	util	callee-gate: 00493bc0=C1,00493f00=C1,004944b0=C1,00494ac0=C1,004a1790=C1
+0045bae0	FUN_0045bae0	vehicle	callee-gate: 00453f30=C1,004587a0=C1,00459290=C1,0045ba10=C1,0047b9b0=C1
+0042a6b0	FUN_0042a6b0	vehicle	callee-gate: 0042a530=C1,004b3d20=C1
+00411f30	FUN_00411f30	vehicle	callee-gate: 004781b0=C1,004b3e40=C1,004b3f90=C0,004b5320=C1,004b5580=C1,004b68e0=C1,004b68f0=C1
+004039c0	FUN_004039c0	vehicle	callee-gate: 0042a5d0=C1
+00409710	FUN_00409710	render	callee-gate: 004095a0=C1
+00412050	FUN_00412050	render	callee-gate: 0047cdc0=C1,0047fad0=C1,004b3f90=C0
+0043c5b0	FUN_0043c5b0	frontend	callee-gate: 00428140=C1,0043bf30=C1,00473540=C1
+00427e00	FUN_00427e00	frontend	signature-unsupported: fastcall ECX/EDX args
+004a2c48	FUN_004a2c48	frontend	signature-unsupported: in_ST0 (FPU) arg
+005ba1d0	FUN_005ba1d0	audio	no-note
+005bad30	LAB_005bad30	audio	no-note
+005aa560	FUN_005aa560	audio	no-note
+004cf7d0	FUN_004cf7d0	render	callee-gate: 004c59c0=C1,004cf9e0=C1,004e1b60=C1
+004b3d80	FUN_004b3d80	render	callee-gate: 0042a530=C1,0054f8d0=C1
+0040b090	sub_0040b090	render	callee-gate: 0040ad40=C1,0040ad90=C1,0040ae30=C1,0040aef0=C1,004292c0=C1,004292d0=C1,0046d320=C1,0046d360=C1,0055dec0=C1
+00476df0	FUN_00476df0	render	inline bare [UNCERTAIN] (heading=## open items)
+0041d870	sub_0041d870	hud	callee-gate: 0041d410=C1
+0041ded0	sub_0041ded0	hud	callee-gate: 0041de80=C1
+0041e850	sub_0041e850	hud	callee-gate: 0041e630=C1
+004929d0	FUN_004929d0	util	callee-gate: 0040b430=C1,0040b540=C1,0040b6d0=C1,0040b6e0=C1,0040b700=C1,0040d440=C1,0040e450=C1,0040e460=C1
+0042c220	FUN_0042c220	util	callee-gate: 00497450=C1
+004af2d4	FUN_004af2d4	util	callee-gate: 004a92de=C0,004af400=C0
+004cc230	FUN_004cc230	frontend	inline [UNCERTAIN U-3722] not in UNCERTAINTIES.md (heading=## mechanical description)
+00499400	VideoSettingsDispatcher	save	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in ## constants (cited at exact rva))
+00494460	sub_00494460	frontend	callee-gate: 00494320=C1,004c7650=C1
+00499820	sub_00499820	boot	live-state-side-effect: fclose on live FILE* (in ## stubs encountered (callees not yet reversed))
+00496470	sub_00496470	boot	live-state-side-effect: fclose on live FILE* (in (preamble))
+00496490	sub_00496490	boot	inline bare [UNCERTAIN] (heading=## why c2)
+004c1be0	sub_004c1be0	frontend	callee-gate: 00493fd0=C1,004c7730=C1
+004a43d2	FUN_004a43d2	boot	callee-gate: 004aa00c=C0
+004a43b9	FUN_004a43b9	boot	callee-gate: 004a974d=C0,004a9858=C0
+005abd30	FUN_005abd30	audio	callee-gate: 005b3b30=C1,005b3b60=C1,005b3b80=C1
+004331a0	FUN_004331a0	vehicle	callee-gate: 00424920=C1
+00448700	FUN_00448700	vehicle	callee-gate: 004464c0=C1
+00495280	FUN_00495280	render	callee-gate: 00402b70=C1,004b6570=C1
+004952f0	FUN_004952f0	render	callee-gate: 004b65c0=C1,004b67a0=C1
+00428760	FUN_00428760	hud	callee-gate: 00428610=C1
+0041c2d0	FUN_0041c2d0	hud	signature-unsupported: in_EAX arg
+0041b340	FUN_0041b340	hud	signature-unsupported: in_EAX arg
+0041bc50	FUN_0041bc50	hud	signature-unsupported: in_EAX arg
+0041c9a0	FUN_0041c9a0	hud	signature-unsupported: in_EAX arg
+00427ca0	FontText_HudInit	hud	callee-gate: 00427880=C1,00556cc0=C1,00556d70=C1
+00427620	FontText_HudShutdown	hud	callee-gate: 00552b90=C1,00555830=C1,00556cd0=C1,00556e40=C1
+00427ff0	FontText_DrawTextRotated	hud	inline bare [UNCERTAIN] (heading=## body summary (0x00427ff0–0x0042813d))
+005554d0	FUN_005554d0	hud	callee-gate: 00554940=C1
+004368e0	FUN_004368e0	frontend	callee-gate: 00427f00=C1,0042e8b0=C1,0042fab0=C1,00458630=C0
+0042ac50	FUN_0042ac50	frontend	signature-unsupported: fastcall ECX/EDX args
+00430b30	FUN_00430b30	frontend	signature-unsupported: in_EAX arg
+00410b30	sub_00410b30	render	callee-gate: 004270f0=C1,00429e10=C1,00448730=C1,0045b990=C1,004725c0=C1,0047b9e0=C1,004891f0=C1,0048fd70=C1,00490490=C1
+00433f40	FUN_00433f40	render	signature-unsupported: 5-arg shape
+0042f530	sub_0042f530	render	callee-gate: 004c7760=C1
+0043d7c0	FUN_0043d7c0	util	callee-gate: 0040ab40=C1,0040ac80=C1,0040de10=C1,0040e360=C1,004298c0=C1,0042b950=C1,0042c150=C1,0043d2a0=C1,00493570=C1,00493580=C1
+00498860	FUN_00498860	util	callee-gate: 00498810=C1
+004a3b84	FUN_004a3b84	util	callee-gate: 00493f00=C1
+00411870	Replay::LapFinish	vehicle	callee-gate: 0046d4a0=C1,00482860=C1,004829d0=C1,00483a30=C1
+00411ae0	Ghost::PlaybackTick	vehicle	callee-gate: 00482c10=C1
+00411ce0	Ghost::SetupRender	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00411d90	Replay::CreateOrLoad	vehicle	callee-gate: 00430820=C1,00482900=C1,00482930=C1,00483d10=C1
+004c30b0	FUN_004c30b0	render	callee-gate: 004cae90=C1
+00552840	FontCtx_SetRotation	hud	callee-gate: 004c4d20=C1
+004c57a0	FontCtxMatrix_AllocInit	hud	inline bare [UNCERTAIN] (heading=## fun_00427680 — hud-normalized → screen xy (s-1060 callee))
+0046e9e0	FUN_0046e9e0	vehicle	callee-gate: 004c4670=C1,004c4680=C1
+00431b80	FUN_00431b80	frontend	inline bare [UNCERTAIN] (heading=## why c2 (drift-promote from c1, 2026-05-14))
+0042f020	FUN_0042f020	frontend	signature-unsupported: fastcall ECX/EDX args
+00431d00	FUN_00431d00	frontend	signature-unsupported: in_EAX arg
+00495080	FUN_00495080	frontend	callee-gate: 00494fd0=C1
+00494f30	FUN_00494f30	frontend	callee-gate: 00493fc0=C1
+00492d30	FUN_00492d30	util	callee-gate: 004030d0=C1,004111c0=C1,0043dfd0=C1
+005aba20	FUN_005aba20	audio	callee-gate: 005a7b00=C1,005a7b50=C1,005b3b60=C1
+004e4320	FUN_004e4320	render	callee-gate: 004c0e50=C1
+00420050	PerPlayerViewportRender	render	callee-gate: 004c1b40=C0,004e4900=C1,004e6680=C1
+00425e40	FUN_00425e40	render	callee-gate: 004c1b40=C0,004e6100=C1
+00475e50	FUN_00475e50	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00475d30	FUN_00475d30	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00477810	FUN_00477810	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00477a10	FUN_00477a10	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+0042f660	DefaultViewportCameraInit	render	callee-gate: 0042d420=C1,004c1a40=C0,004c1b10=C1,004c1d30=C0
+0041faf0	VehicleShadowRender	render	callee-gate: 00476a10=C1,004c0ed0=C1,004c45f0=C1,004c4d20=C1,004c52f0=C1
+0041fcc0	TireMarkRender	render	callee-gate: 00476a10=C1,004c45f0=C1,004c4d20=C1,004c52f0=C1
+0041f8f0	FUN_0041f8f0	render	callee-gate: 004b42c0=C1,004c1340=C1,004c1680=C1
+0040e180	FUN_0040e180	vehicle	callee-gate: 0046d4a0=C1
+00410d10	FUN_00410d10	vehicle	inline bare [UNCERTAIN] (heading=## constants)
+0046cbb0	FUN_0046cbb0	vehicle	callee-gate: 004645c0=C1
+004c51a0	RwMatrixTranslate	render	inline bare [UNCERTAIN] (heading=## d-4360 partial — lab_00554940 im2d per-glyph vertex emission)
+00429bd0	FUN_00429bd0	util	callee-gate: 00401340=C1,004013f0=C1,0040dc80=C1,00429620=C1,00429b70=C1
+00424eb0	FUN_00424eb0	util	callee-gate: 00408b00=C1,00409290=C1,0040b290=C1,0040dc90=C1,0040eee0=C1,00421690=C1,00443080=C1,0046baa0=C1,00486f90=C1
+00442440	FUN_00442440	util	callee-gate: 0040dc90=C1,0046d4a0=C1,004c4d20=C1
+004669b0	FUN_004669b0	audio	callee-gate: 0045d460=C1,004625b0=C1,004627f0=C1
+00429290	FUN_00429290	frontend	callee-gate: 00429240=C1,0045d3f0=C1,0045d430=C1,00466b50=C1
+004972b0	FUN_004972b0	input	callee-gate: 00495790=C1,004957a0=C1,00496100=C1
+00497190	FUN_00497190	input	signature-unsupported: EAX-implicit arg
+004c1480	FUN_004c1480	render	callee-gate: 004c52f0=C1
+004709a0	VehicleCollisionBroadPhase	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046ef70	FUN_0046ef70	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046ddb0	VehicleWheelForceIntegrator	vehicle	signature-unsupported: implicit-this arg
+00467650	VehicleWheelDrivetrainUpdate	vehicle	callee-gate: 004c39b0=C1,004c3df0=C1,004c4d20=C1
+00468980	VehicleAeroStabilizer	vehicle	callee-gate: 004c39b0=C1,004c4d20=C1
+0046f6c0	VehicleWheelContactSolver	vehicle	signature-unsupported: implicit-this arg
+00467350	VehicleSlipTimerTick	vehicle	callee-gate: 004c39b0=C1
+004c5bc0	FUN_004c5bc0	render	live-state-side-effect: _unlink on live path (in ## why c2)
+004215c0	FUN_004215c0	frontend	callee-gate: 004039f0=C1,0040be50=C1
+004cd070	RwRenderPrimitiveSubmit	render	callee-gate: 004d40d0=C1
+004cd2d0	RwRenderIndexedSubmit	render	callee-gate: 004d40c0=C1,004d40d0=C1
+00470c70	FUN_00470c70	vehicle	callee-gate: 00443080=C1,00480b70=C1
+0046da80	VehicleTrackInteraction	vehicle	inline bare [UNCERTAIN] (heading=## mechanistic description)
+00470670	VehicleControlUpdate	vehicle	inline [UNCERTAIN U-1408] catalogued but Blocks=C3 (matched-RVA) (heading=## mechanistic description)
+004c1c10	Camera::SetProjection	util	signature-unsupported: in_ST0 (FPU) arg
+004a3384	CRT::acos	util	signature-unsupported: in_ST0 (FPU) arg
+004a3620	CRT::atan	util	signature-unsupported: in_ST0 (FPU) arg
+004a3700	CRT::math_float_371d	util	signature-unsupported: in_ST0 (FPU) arg
+004a37b0	CRT::math_float_37cd	util	signature-unsupported: in_ST0 (FPU) arg
+004b6640	FUN_004b6640	boot	callee-gate: 00550430=C1,005504d0=C1,00551330=C1
+004283a0	FUN_004283a0	boot	callee-gate: 004c5cb0=C1,004ce2d0=C1
+004275d0	FUN_004275d0	boot	callee-gate: 00427580=C1,00552920=C1,00553cf0=C1,00553e80=C1,00553ef0=C1
+004881d0	FUN_004881d0	boot	callee-gate: 004880a0=C1,004c0b30=C1,004e7e30=C1,004e8090=C1,00534b60=C1
+0047ba00	FUN_0047ba00	boot	callee-gate: 00496940=C1
+0041b450	FUN_0041b450	boot	callee-gate: 0041ad60=C1,0042a5d0=C1
+0041bec0	FUN_0041bec0	boot	callee-gate: 0041b690=C1,0042a5d0=C1
+0041cb10	FUN_0041cb10	boot	callee-gate: 0041c320=C1,0042a5d0=C1,004e6ab0=C1
+0041d6e0	FUN_0041d6e0	boot	callee-gate: 0041cd20=C1,0042a5d0=C1
+0041def0	FUN_0041def0	boot	callee-gate: 0042a5d0=C1,004b51d0=C1,004b52f0=C1,004c0b30=C1,004c1040=C1,004c1340=C1,004e69a0=C1,004e7e30=C1
+0041d8b0	FUN_0041d8b0	boot	callee-gate: 0042a5d0=C1,004b51d0=C1,004b52f0=C1
+0041c100	FUN_0041c100	boot	callee-gate: 0042a5d0=C1,004b51d0=C1
+0041db90	FUN_0041db90	boot	callee-gate: 0042a5d0=C1,004b51d0=C1,004b52f0=C1
+0041a1e0	FUN_0041a1e0	boot	callee-gate: 0042a5d0=C1,004b51d0=C1,004b52f0=C1
+0041eaa0	FUN_0041eaa0	boot	callee-gate: 00476cb0=C1,004770c0=C1,004b48e0=C1,004c0b30=C1
+00421590	thunk_FUN_004210f0	boot	callee-gate: 004210f0=C1,004768c0=C1
+004955c0	thunk_FUN_00495580	boot	live-state-side-effect: DirectInput vtable on live device (in ## mechanical description)
+0041a3d0	FUN_0041a3d0	boot	callee-gate: 004e6e00=C1
+0041de70	FUN_0041de70	boot	callee-gate: 004e6e00=C1
+0041c2c0	FUN_0041c2c0	boot	callee-gate: 004e6e00=C1
+0041da80	FUN_0041da80	boot	callee-gate: 004e6e00=C1
+00425ed0	FUN_00425ed0	boot	callee-gate: 004e6e00=C1
+00496ce0	FUN_00496ce0	boot	callee-gate: 004d41e0=C1
+0041d890	FUN_0041d890	boot	callee-gate: 0041d6d0=C1
+0041c0e0	FUN_0041c0e0	boot	callee-gate: 0041beb0=C1
+0041b660	FUN_0041b660	boot	callee-gate: 0041ad60=C1,0041b440=C1
+00467010	FUN_00467010	boot	callee-gate: 0045e040=C1,00466a50=C1
+0041ccf0	FUN_0041ccf0	boot	callee-gate: 0041cb00=C1
+00467070	FUN_00467070	boot	callee-gate: 004c0740=C0,004c0c20=C0,004c1cf0=C0
+0041e0d0	FUN_0041e0d0	boot	callee-gate: 004c0c20=C0,004e6920=C1,004e6e00=C1,004e7e30=C1
+0045b930	FUN_0045b930	boot	callee-gate: 00404820=C1,00412010=C1,00458880=C1,004593b0=C1
+005581f0	FUN_005581f0	boot	callee-gate: 004c7650=C1
+00467020	FUN_00467020	boot	callee-gate: 004c0c20=C0,004c1cf0=C0,004c7650=C1
+0042c2a0	FUN_0042c2a0	boot	callee-gate: 004e5700=C1
+00428400	FUN_00428400	boot	callee-gate: 004ce2d0=C1
+00489250	FUN_00489250	boot	inline bare [UNCERTAIN] (heading=## why c2)
+0041ffb0	FUN_0041ffb0	boot	callee-gate: 0041ec00=C1,004768c0=C1,004c0c20=C0
+004b4880	FUN_004b4880	boot	callee-gate: 004c0740=C0,004c0c20=C0,004c1cf0=C0,004c7650=C1
+00494bc0	FUN_00494bc0	boot	inline bare [UNCERTAIN] (heading=## why c2)
+004841d0	FUN_004841d0	boot	callee-gate: 004840f0=C1
+00469aa0	VehicleContactScanUpdate	vehicle	callee-gate: 004c3d90=C1
+00469df0	VehicleVehicleCollisionImpulse	vehicle	signature-unsupported: in_EAX arg
+00468d80	VehicleTerrainContactSolver	vehicle	callee-gate: 004c39b0=C1,004c3df0=C1,004c4d20=C1
+004694e0	VehicleObjectContactSolver	vehicle	callee-gate: 00485360=C1,00485370=C1,00485420=C1,004c39b0=C1,004c3df0=C1
+0042c510	FUN_0042c510	vehicle	callee-gate: 00423b40=C1,00423b60=C1,00423b80=C1,00423ba0=C1,00423bc0=C1,00423c40=C1,00423cc0=C1,00423d50=C1,00423dd0=C1,00423e60=C1,00423ee0=C1,00423f60=C1,00423ff0=C1,00424070=C1
+0042d560	FUN_0042d560	render	callee-gate: 0042d420=C1,0042d4a0=C1,004c1a40=C0,004c1b10=C1,004c1d30=C0
+004a2b60	FUN_004a2b60	frontend	callee-gate: 004a4ea8=C0
+00550910	FUN_00550910	save	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+00419760	FUN_00419760	vehicle	callee-gate: 004661a0=C1,004922e0=C1
+00420de0	FUN_00420de0	vehicle	signature-unsupported: fastcall ECX/EDX args
+00418a30	FUN_00418a30	vehicle	signature-unsupported: in_EAX arg
+00418de0	FUN_00418de0	vehicle	signature-unsupported: in_EAX arg
+004cf160	FUN_004cf160	render	inline bare [UNCERTAIN] (heading=## why c2)
+0046c5f0	FUN_0046c5f0	vehicle	signature-unsupported: fastcall ECX/EDX args
+0046cc40	FUN_0046cc40	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00401f10	FUN_00401f10	render	callee-gate: 00412130=C1,004e6680=C1
+00403910	FUN_00403910	render	callee-gate: 004036a0=C1,004938e0=C1
+00403fa0	FUN_00403fa0	render	signature-unsupported: in_EAX arg
+00404650	FUN_00404650	render	callee-gate: 0041f290=C1,004e6680=C1
+004072e0	FUN_004072e0	render	callee-gate: 00406130=C1,004b59c0=C1
+0040bde0	FUN_0040bde0	render	callee-gate: 00412100=C1,00413f50=C1,00421560=C1,00457610=C1,00486220=C1,00486f50=C1,00487de0=C1,0048ad50=C1,0048baf0=C1,0048e7b0=C1,0048fce0=C1,0048fd10=C1,0048fd40=C1,0048fd70=C1,00490490=C1
+00413a00	FUN_00413a00	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00413a40	FUN_00413a40	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004189c0	FUN_004189c0	render	callee-gate: 00419530=C1
+0041ebb0	FUN_0041ebb0	render	callee-gate: 004770a0=C1
+004219c0	FUN_004219c0	render	callee-gate: 00421720=C1
+00422570	FUN_00422570	render	callee-gate: 00472500=C1,00477e60=C1,00477f50=C1,004b4ad0=C1,004c3d90=C1
+0041f1e0	FUN_0041f1e0	util	callee-gate: 004c0ed0=C1
+0046d400	FUN_0046d400	render	callee-gate: 00538c80=C1
+0046c7d0	FUN_0046c7d0	vehicle	callee-gate: 004093b0=C1,004c39b0=C1,004c4d20=C1
+00412cf0	FUN_00412cf0	hud	callee-gate: 004726f0=C1
+0041cb80	sub_0041cb80	util	callee-gate: 0040b890=C1,0041c380=C1
+0041d730	sub_0041d730	util	callee-gate: 0041cdb0=C1
+00410860	FUN_00410860	util	callee-gate: 0040b6d0=C1,0040e460=C1,00424b80=C1,00429860=C1,00429b30=C1,0042aab0=C1,0043aee0=C1
+004262f0	FUN_004262f0	render	callee-gate: 00425b70=C1,00425bf0=C1,00425c00=C1
+00426640	FUN_00426640	render	callee-gate: 0041e950=C1,0041ea70=C1
+00426700	FUN_00426700	render	callee-gate: 004756e0=C1
+00426780	FUN_00426780	render	callee-gate: 00475010=C1
+00426810	sub_00426810	render	callee-gate: 004924c0=C1,004c1b10=C1,004c39b0=C1,004c3dc0=C1,004c4d20=C1
+00426ab0	sub_00426ab0	render	callee-gate: 00467210=C1,00471ec0=C1,0047c160=C1,00491490=C1
+00426e10	FUN_00426e10	render	callee-gate: 0042a530=C1,0042a8d0=C1,00462950=C1,004715a0=C1,00478660=C1,00479330=C1,0047a020=C1,0047a0f0=C1,0047c0b0=C1,0047c0f0=C1,00480340=C1,00491780=C1,004924c0=C1,004c1b10=C1
+005aac20	FUN_005aac20	audio	live-state-side-effect: _unlink on live path (in ## why c2)
+005aa7e0	FUN_005aa7e0	audio	callee-gate: 005aabe0=C1
+005ae400	FUN_005ae400	audio	callee-gate: 005ae550=C1,005ae590=C1
+005bf610	FUN_005bf610	audio	callee-gate: 005bf660=C1,005bf670=C1
+005bf690	FUN_005bf690	audio	callee-gate: 005bf660=C1
+004aed77	FUN_004aed77	boot	signature-unsupported: in_EAX arg
+00404fa0	FUN_00404fa0	render	callee-gate: 004752d0=C1,00482ae0=C1,00532a60=C1,00546e70=C1
+004704c0	FUN_004704c0	vehicle	callee-gate: 0046baa0=C1,0047ea60=C1,004c4d20=C1
+004ac570	FUN_004ac570	boot	callee-gate: 004ae4b6=C0
+004a2bb8	report_failure	boot	live-state-side-effect: ExitProcess terminates host (in ## mechanical description)
+004ad351	__fcloseall	boot	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004a583a	FUN_004a583a	boot	live-state-side-effect: blocking message box (in ## mechanical description)
+004af601	FUN_004af601	boot	callee-gate: 004aa2c2=C0
+004773f0	FUN_004773f0	render	signature-unsupported: in_EAX arg
+004a4ff4	write_multi_char	render	signature-unsupported: in_EAX arg
+004a5018	write_string	render	signature-unsupported: in_EAX arg
+0041a9b0	FUN_0041a9b0	vehicle	callee-gate: 0041a8b0=C1
+0041ad00	FUN_0041ad00	vehicle	callee-gate: 0041a4a0=C1,0041a5d0=C1,0041a9d0=C1,0041aac0=C1,0041ac60=C1
+0041a960	FUN_0041a960	vehicle	callee-gate: 0041a840=C1
+004dcaa0	FUN_004dcaa0	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004ccba0	FUN_004ccba0	render	live-state-side-effect: _unlink on live path (in ## decompilation (verbatim, verified 2026-05-13))
+004982a0	FUN_004982a0	input	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in (preamble))
+00497230	FUN_00497230	input	signature-unsupported: in_EAX arg
+00495150	FUN_00495150	input	inline [UNCERTAIN U-2293] not in UNCERTAINTIES.md (heading=## mechanical description)
+00498510	FUN_00498510	input	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in (preamble))
+00496010	FUN_00496010	input	callee-gate: 00495e80=C1
+004b302f	__stricmp	util	callee-gate: 004a8828=C0,004ac869=C0,004ae5fa=C0,004b2eb0=C0
+004c5a60	FUN_004c5a60	render	inline bare [UNCERTAIN] (heading=## why c2)
+004caea0	FUN_004caea0	render	inline [UNCERTAIN U-3720] not in UNCERTAINTIES.md (heading=## why c2)
+0047d3c0	VehiclePhysicsWorldCreate	vehicle	callee-gate: 004826d0=C1,00482730=C1,004c0b30=C1,004e7e30=C1,00559c40=C1,0055ae70=C1,0055b940=C1,0055bab0=C1,0055c4a0=C1,0055dec0=C1,0057c220=C1,0057c300=C1,0057c500=C1,0057c550=C1
+0047ea40	PhysicsSceneStepWrapper	vehicle	callee-gate: 0047e9c0=C1
+00442ce0	VehicleRubberBandSpeedModifier	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046d4d0	VehiclePhysicsMatrixSet	vehicle	inline bare [UNCERTAIN] (heading=## vehicle struct layout derived)
+0047d240	VehiclePhysicsBodyPlace	vehicle	callee-gate: 004c0e50=C1,004c45f0=C1,004c4d20=C1,0055ab30=C1,0055ac00=C1,0055ade0=C1,0055dff0=C1,0057c210=C1
+0055c810	PhysicsBodySetLinearVelocity	vehicle	callee-gate: 0055c380=C1
+00471df0	FUN_00471df0	boot	callee-gate: 00471530=C1
+00467110	FUN_00467110	render	callee-gate: 004670a0=C1,004c0740=C0,004c0b30=C1,004c1a40=C0,004c1b10=C1,004c1d30=C0,004c2bf0=C0
+004954f0	FUN_004954f0	boot	live-state-side-effect: DirectInput vtable on live device (in ## mechanical description)
+00495580	FUN_00495580	input	live-state-side-effect: DirectInput vtable on live device (in ## mechanical description)
+00495780	FUN_00495780	boot	callee-gate: 004955d0=C1
+004967e0	FUN_004967e0	input	callee-gate: 00495fe0=C1,00496100=C1,00496530=C1,00497450=C1
+00496970	FUN_00496970	render	callee-gate: 004c7650=C1
+004b5750	FUN_004b5750	render	callee-gate: 004c75e0=C1
+004ec130	FUN_004ec130	render	callee-gate: 004cbb70=C1,004cbbd0=C1,004d5480=C1,004db770=C1
+004ec8eb	FUN_004ec8eb	render	callee-gate: 004fbe7a=C0
+004ecafb	thunk_FUN_004ecaee	render	callee-gate: 004fbe7a=C0
+004ecb12	FUN_004ecb12	render	callee-gate: 004fbe7a=C0
+004ecb36	FUN_004ecb36	render	callee-gate: 004fbe7a=C0
+004ecb5a	FUN_004ecb5a	render	callee-gate: 004fbe7a=C0
+004ecc45	FUN_004ecc45	render	callee-gate: 004fbe7a=C0
+005555b0	FUN_005555b0	render	callee-gate: 005c4d30=C1
+004277a0	FUN_004277a0	frontend	signature-unsupported: in_EAX arg
+004f022d	FUN_004f022d	render	callee-gate: 004eeddc=C0
+004f0307	FUN_004f0307	render	callee-gate: 004eeddc=C0
+004f0810	FUN_004f0810	render	callee-gate: 004d8560=C1
+004f0910	FUN_004f0910	render	callee-gate: 004d7de0=C1
+004f0940	FUN_004f0940	render	callee-gate: 004e1ac0=C1
+004f0dc0	FUN_004f0dc0	render	callee-gate: 004cc770=C1
+004f0f10	FUN_004f0f10	render	callee-gate: 004cc790=C1
+004f1150	FUN_004f1150	render	callee-gate: 004cc580=C1
+004f13d0	FUN_004f13d0	render	callee-gate: 004cb840=C1,004cb8a0=C1,004dc5b0=C1,004ebc30=C1
+004f1870	FUN_004f1870	render	callee-gate: 004e55d0=C1
+004f1b00	FUN_004f1b00	render	callee-gate: 004dc5b0=C1,004e55d0=C1
+004f1fb0	FUN_004f1fb0	render	callee-gate: 005c24e0=C1
+004f36c0	FUN_004f36c0	render	callee-gate: 005c24e0=C1
+004f3b60	FUN_004f3b60	render	callee-gate: 004e8030=C1
+004f3ce0	FUN_004f3ce0	render	callee-gate: 004e8400=C1
+004f3d40	FUN_004f3d40	render	callee-gate: 004cc580=C1,004cc770=C1,004e8440=C1
+004f3e90	FUN_004f3e90	render	callee-gate: 004e8030=C1,004e8120=C1
+004f42d0	FUN_004f42d0	render	callee-gate: 004cbc90=C1
+004f4340	FUN_004f4340	render	callee-gate: 004d4170=C1,004d41e0=C1,004d4380=C1,004d4dd0=C1,004d4f90=C1,004eb9d0=C1
+004f43b0	FUN_004f43b0	render	callee-gate: 004d41e0=C1
+004f43f0	FUN_004f43f0	render	callee-gate: 004eb3c0=C1,004eb9d0=C1
+004f4470	FUN_004f4470	render	callee-gate: 004d41e0=C1
+004f4510	FUN_004f4510	render	callee-gate: 004e4bd0=C1
+004f46a0	FUN_004f46a0	render	callee-gate: 004cbb60=C1
+004f8580	FUN_004f8580	render	callee-gate: 004e8f50=C1
+004f8730	FUN_004f8730	render	callee-gate: 004cbb50=C1
+004fb0e0	FUN_004fb0e0	render	callee-gate: 004ed6ad=C0,004ed8f6=C0,004ed976=C0
+004fb130	FUN_004fb130	render	callee-gate: 004c4dc0=C1
+004fb2a0	FUN_004fb2a0	render	callee-gate: 004c4680=C1,004ecf46=C0
+004fb3e0	FUN_004fb3e0	render	callee-gate: 004c4dc0=C1,004ecf1c=C0
+004fb4d0	FUN_004fb4d0	render	callee-gate: 004c4dc0=C1,004ecf46=C0
+004fb5a0	FUN_004fb5a0	render	callee-gate: 004ecf1c=C0,004ecf46=C0

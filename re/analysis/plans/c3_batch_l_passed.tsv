@@ -1,0 +1,8 @@
+rva	name	subsystem	arg_type	note	callees
+00439210	FUN_00439210	frontend	unknown	re/analysis/hud_frontend_d2/0x00439210.md	
+00428320	FUN_00428320	frontend	unknown	re/analysis/frontend_promote_menus_b/00428320.md	00427840,005554d0
+0042aa00	FUN_0042aa00	frontend	unknown	re/analysis/frontend_promote_menus_a/0x0042aa00.md	0067e9f8,0067ed40,0067ed74,0067ed84
+004307a0	FUN_004307a0	frontend	unknown	re/analysis/frontend_c0_promote/0x004307a0.md	00429a70,00429a80,00429a90,005cc728,00614718,0061471c,00614720,0067f17c
+0040e480	FUN_0040e480	frontend	unknown	re/analysis/c0_promotion_frontend_a/0x0040e480.md	005f2770
+004c5c00	FUN_004c5c00	frontend	unknown	re/analysis/sprite_gate_c3/0x004c5c00.md	
+0042ed70	FUN_0042ed70	frontend	unknown	re/analysis/promote_c2_frontend_menus/0x0042ed70.md	00427ff0,004282a0,0042b8b0,0042b8c0

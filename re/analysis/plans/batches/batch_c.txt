@@ -1,0 +1,282 @@
+================================================================================
+BATCH C — Track / Physics / Vehicle (Phase 5 #5-7 minimum mapping)
+================================================================================
+
+Six parallel sessions. Pool slots pre-assigned. Run after Batch B's scribe
+sweep has drained.
+
+The two TOP-PRIORITY sessions are 13 (track_world_initial_sweep) and 15
+(physics_collision_d3) — they fix the most alarming gaps in the tracker
+(track has 1 row, physics has 3).
+
+All sessions follow re/SESSION_RULES.md.
+
+
+
+================================================================================
+Session 13 — track_world_initial_sweep  (FIRST-PASS, no seed RVAs)
+================================================================================
+
+Pool slot:   Mashed_pool12 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/track_world_initial_sweep/
+
+# Mission
+The track subsystem currently has ONE row in hooks.csv. This is the most
+alarming coverage gap in the tracker. Identify the track-loading entry
+points by string xrefs (TRACK_*, .piz paths under TOASTART/TRACKS/,
+checkpoint / lap detection strings), document them, and walk depth-1 into a
+C1 map of at least 20 functions.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool12.
+2. Entry-point discovery:
+   a. mcp__ghidra__search_defined_strings for "TRACKS\\", ".piz", "ARCTIC",
+      "CITY", "EGYPT", "checkpoint", "lap", "course", "track" (case-insensitive
+      where possible).
+   b. For each hit, get xrefs_to. The functions referencing these strings
+      are candidate track entry points.
+   c. Cross-reference with prior_art/MashedFileExtractor to see what track
+      file format expectations exist.
+3. Pick the top 3 entry points (the ones with the most string xrefs and
+   that look like a track-loading orchestrator, not just a string-print).
+4. function_callees depth-1 from each entry point. Aggregate.
+5. Cap subset at 20. Overflow → DEFERRED as track_world_initial_sweep-cont1.
+6. For each RVA: function_at + decomp + per-RVA C1 plate.
+7. Update re/analysis/subsystem_map.md with the discovered track entry
+   points (the "Entry points: TBD" line under `### track`).
+8. File stubs/uncertainties/deferrals.
+9. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files in re/analysis/track_world_initial_sweep/
+- ≤20 C1 hooks.csv rows (with `subsystem=track`)
+- Update to re/analysis/subsystem_map.md: track entry points filled in
+- A REPORT.md summarizing the entry-point search and what was found
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- No track strings are present in MASHED.exe (would mean track names live
+  in .piz / .rws assets, not in the binary — entry-point strategy fails).
+- The track callee tree explodes past 60 (signal: track is wired through
+  many small leaf functions — confirm the slicing strategy).
+
+
+
+================================================================================
+Session 14 — track_collision_geometry  (INVESTIGATION → first-pass)
+================================================================================
+
+Pool slot:   Mashed_pool13 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Bucket dir:  re/analysis/track_collision_geometry/
+
+# Mission
+Track-side collision geometry — the BSP / quadtree / mesh that the world
+uses for raycasts. Distinct from vehicle-side collision response (that's
+physics_collision, session 15). Identify the data structure and the query
+functions, then map them.
+
+# Decision protocol
+1. Read prior_art/MashedTrainer notes — does it identify a collision data
+   structure? (Mashed Fully Loaded has different RVAs but the same engine.)
+2. In Ghidra, search_text for "BSP", "quadtree", "octree", "collision",
+   "raycast" string constants.
+3. If you find candidate entry points → proceed to sweep (step 4).
+4. If nothing surfaces from strings, the collision data may not be
+   string-tagged. Try: get the xrefs FROM vehicle-physics functions
+   (sessions 15 & 16) that look like they query the world. The shared
+   callees are the collision-query layer.
+
+# Sweep path
+5. Startup with $SLOT=Mashed_pool13.
+6. Build subset from the candidates. Cap 20. Overflow → cont1.
+7. Per-RVA C1 plates. Identify the BSP / mesh struct if possible.
+8. Draft re/analysis/structs/track_collision.md (the struct format).
+9. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 C1 hooks.csv rows (subsystem=track or physics depending on what you find)
+- Possibly re/analysis/structs/track_collision.md
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- Investigation can't find a candidate entry point in 30 minutes. The whole
+  collision pipeline may be in a separate module — file as DEFERRED with
+  re-pickup condition "after vehicle_dynamics_d3 (session 16) maps the
+  callers."
+
+
+
+================================================================================
+Session 15 — physics_collision_d3  (FIRST-PASS C0/C1 sweep, cont1 drain)
+================================================================================
+
+Pool slot:   Mashed_pool14 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/physics_collision_d3/
+
+# Mission
+Drain D-7840..D-7843 (4 deferred RVAs from physics_collision_d2). Physics
+subsystem currently has 3 rows in hooks.csv — woefully undermapped for a
+racing game. After draining the d2-cont1 deferrals, walk depth-1 callees
+of all physics_collision rows to fill out the subsystem.
+
+# Inputs
+- DEFERRED.md rows D-7840..D-7843 (4 RVAs).
+- hooks.csv rows where `subsystem=physics`.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool14.
+2. Resolve D-7840..D-7843 first — 4 RVAs into per-RVA C1 plates.
+3. Walk function_callees depth-1 from physics_collision + physics_collision_d2
+   entry points. Subtract hooks.csv RVAs.
+4. Take up to 16 more RVAs (total cap 20). Overflow → physics_collision_d3-cont1.
+5. For each: per-RVA C1 plate.
+6. Identify the per-vehicle collision response struct (impulse, normal,
+   penetration depth).
+7. Mark D-7840..D-7843 resolved.
+8. Shutdown + scribe-queue append. Note `clears=D-7840..D-7843`.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 C1 hooks.csv rows
+- D-7840..D-7843 resolved
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- physics_collision_d2's seed RVAs are ALSO inside what we'd call "vehicle"
+  (signal: subsystem boundary is wrong — confirm whether to relabel rows).
+
+
+
+================================================================================
+Session 16 — vehicle_dynamics_d3  (FIRST-PASS C0/C1 sweep)
+================================================================================
+
+Pool slot:   Mashed_pool15 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/vehicle_dynamics_d3/
+
+# Mission
+Drain D-3460 (0x004c4600 matrix_math) and continue vehicle_dynamics depth.
+The matrix math is shared with render — document the dependency so the
+render subsystem can lean on the vehicle-side analysis.
+
+# Inputs
+- DEFERRED.md row D-3460 (0x004c4600).
+- Existing vehicle_dynamics + vehicle_dynamics_d2 plates.
+- callees_depth1 from those parents, minus hooks.csv.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool15.
+2. Analyze 0x004c4600 first — it's the math primitive shared with render.
+   Write its plate carefully (a high-impact leaf).
+3. Build subset of unmapped vehicle_dynamics callees. Cap at 20 total
+   (1 for 0x004c4600 + 19 callees).
+4. Per-RVA C1 plates.
+5. Identify the per-vehicle physics state struct (mass, inertia, velocity,
+   angular velocity, suspension state). Draft
+   re/analysis/structs/vehicle_dynamics.md.
+6. Note in the 0x004c4600 plate that it's shared with render — future
+   render-side classification can reference this analysis.
+7. Mark D-3460 resolved.
+8. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files (one for 0x004c4600 specifically)
+- ≤20 C1 hooks.csv rows
+- D-3460 resolved
+- re/analysis/structs/vehicle_dynamics.md (initial draft)
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- 0x004c4600 turns out NOT to be matrix math (D-3460 description may be
+  stale). Verify with decomp before promoting the analysis to "math primitive."
+
+
+
+================================================================================
+Session 17 — vehicle_promote_c2  (RE-CLASSIFY)
+================================================================================
+
+Pool slot:   Mashed_pool0 (rotated from Batch A — confirm Batch A's scribe
+             sweep has released it before starting)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  re-classify
+Bucket dir:  re/analysis/vehicle_promote_c2/
+
+# Mission
+Vehicle has 110 C1 rows. Promote the cluster in 0x0046c000–0x00470fff to C2
+per re/CONFIDENCE.md.
+
+# Inputs
+- Filter hooks.csv: `subsystem=vehicle, confidence=C1, RVA in [0x0046c000,
+  0x00470fff]`. Take first 20 by RVA.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool0.
+2. For each RVA:
+   a. function_at + decomp_function.
+   b. Read body end-to-end. Document the C2 plate per re/CONFIDENCE.md § C2.
+   c. Cross-reference into the vehicle state struct (use session 16's draft
+      at re/analysis/structs/vehicle_dynamics.md if available).
+   d. [UNCERTAIN] for any field with disagreement.
+3. Re-classify per row. Reject promotions where the rule "at least one
+   caller and one callee at C2+" fails (no islands).
+4. Shutdown + scribe-queue append (the sweep will write plate-set
+   `[C2 YYYY-MM-DD] <purpose>` comments to master).
+
+# Output
+- 10–20 per-RVA .md files
+- 10–20 hooks.csv promotions C1 → C2
+- Possibly amendments to vehicle_dynamics.md struct doc
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- More than 5 rows in the subset have callees still at C0 — promotions
+  would fail the no-islands rule. Decide whether to map callees first
+  (different session) or pick a different sub-cluster.
+
+
+
+================================================================================
+Session 18 — vehicle_damage_d4  (FIRST-PASS C0/C1 sweep, cont1 drain)
+================================================================================
+
+Pool slot:   Mashed_pool1 (rotated from Batch A)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/vehicle_damage_d4/
+
+# Mission
+Drain D-5440..D-5446 (7 deferred RVAs from vehicle_damage_d2-cont1) and
+identify the per-vehicle damage state struct.
+
+# Inputs
+- DEFERRED.md D-5440..D-5446 (7 RVAs).
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool1.
+2. Per-RVA C1 plates for the 7 RVAs.
+3. Walk depth-1 callees of vehicle_damage + vehicle_damage_d2 + d3 rows.
+   Add up to 13 more RVAs (total cap 20). Overflow → vehicle_damage_d4-cont1.
+4. Identify the damage state struct (per-vehicle health, panel-damage
+   bitfield, smoke/fire flags). Draft re/analysis/structs/vehicle_damage.md.
+5. Mark D-5440..D-5446 resolved.
+6. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 C1 hooks.csv rows
+- D-5440..D-5446 resolved
+- re/analysis/structs/vehicle_damage.md (initial draft)
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- D-5440..D-5446 reference RVAs that no longer exist (binary drift since
+  2026-05-05) — confirm SHA-256 anchor before continuing.

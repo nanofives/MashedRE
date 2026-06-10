@@ -1,0 +1,572 @@
+================================================================================
+BATCH Q — promote-c2 wave 3 (standalone-exe critical path: boot + frame-dispatch
+            + frontend-draw callees)
+================================================================================
+
+SIXTEEN parallel sessions. Pool slots pre-assigned Mashed_pool0..Mashed_pool15
+(one per session, no race on `acquire`).
+
+PREREQUISITE: any in-flight ghidra-sweep must complete before this batch
+starts. Sessions cross-reference earlier batch_m/n/p plates that must be
+in master.
+
+GOAL — RAISE C2 FLOOR ON THE STANDALONE-EXE CRITICAL PATH
+
+The standalone target (mashed_re.exe → drawn main menu without MASHED.exe)
+needs the boot chain, frame loop, and frontend-draw chain all at C3. Each
+C3 promotion requires its callees at C2+ (caller-gate per re/CONFIDENCE.md).
+Today most of those callees are still C1, which is why recent C3 attempts
+(c3-batch-d, parts of e) burned cycles on caller-gate refusals.
+
+This batch promotes 16 × 7 = 112 RVAs from C1 to C2 across three clusters:
+  A.  WinMain depth-2 chain (boot subsystem)            sessions 97..102
+  B.  Frontend-draw FUN_0043c5b0 direct callees         sessions 103..108
+  C.  Frame-dispatch FUN_00492e90 callees +
+        camera-matrix cluster                           sessions 109..112
+
+A C1→C2 promotion is mechanical: read the existing C1 plate + decomp,
+assemble a `## Why C2` block citing constants/offsets at RVA, list
+explicit [UNCERTAIN] tags with U-IDs, file new stubs for any unmapped
+callees, and flip hooks.csv `confidence` C1→C2. Same per-session shape
+as batch_n.
+
+All sessions follow re/SESSION_RULES.md § "Parallel-fanout scribe-queue
+pattern". After all 16 finish committing, run `ghidra-sweep`.
+
+
+
+================================================================================
+Session 97 — promote_c2_winmain_init  (C1→C2, 7 RVAs)  cluster A
+================================================================================
+
+Pool slot:   Mashed_pool0 (pre-assigned — do not call ghidra_pool.sh acquire)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_winmain_init/
+
+# Mission
+Promote 7 C1 functions on the WinMain → init chain. The init chain is the
+gate that runs before the main loop; reaching C2 here is the precondition
+for promoting FUN_00492370 (WinMain) and FUN_00492270 (init wrapper) to C3.
+
+# Candidates
+| RVA        | Existing analysis path                                  | Why now                                 |
+|------------|---------------------------------------------------------|-----------------------------------------|
+| 0x00493710 | re/analysis/boot_app_init/0x00493710.md (if absent: create) | init-gate before display/viewport |
+| 0x00492770 | re/analysis/boot_subsystem_d3/00492770.md               | main-loop-init: DAT_00828300=0 + state=1 |
+| 0x00499690 | re/analysis/ (search) — currently un-noted              | loop-exit condition in FUN_00492290     |
+| 0x004926c0 | re/analysis/boot_subsystem_d3/004926c0.md               | boot-loop-frame-tick (QPC+60-frame-avg) |
+| 0x00493480 | re/analysis/boot_subsystem_d3/00493480.md               | FPS-tick-discretizer (snap 50/100/150/200Hz) |
+| 0x00492d20 | re/analysis/ (search) — depth-1 of FUN_00492290 loop   | per-frame helper                        |
+| 0x00492d30 | re/analysis/ (search) — depth-1 of FUN_00492290 loop   | per-frame helper                        |
+
+# Inputs
+At session start:
+```bash
+awk -F, 'NR>1 && $4=="C1" && $3=="boot" && $1 ~ /^0049[23]/' hooks.csv | head -20
+```
+Cross-reference re/analysis/boot_app_init/, boot_app_init_d2/, boot_subsystem_d3/.
+
+# Workflow
+1. Acquire $SLOT=Mashed_pool0 (fall back if stale-locked).
+2. For each RVA:
+   a. mcp__ghidra__function_at <rva>; mcp__ghidra__decomp_function
+   b. If existing C1 plate absent, write one (full frontmatter + mechanical
+      description); if present, extend with `## Why C2` block.
+   c. Cite every constant + DAT_ offset at its instruction address.
+   d. File [UNCERTAIN U-XXXX] markers in UNCERTAINTIES.md for any
+      semantically-ambiguous reads (vtable offsets, indirect dispatch).
+   e. Flip hooks.csv confidence C1→C2.
+3. Append Queued row to SCRIBE_QUEUE.md per the parallel-fanout pattern.
+4. One commit at session end.
+
+# STOP-AND-ASK if
+- FUN_00499690 turns out to be a Win32 message-pump call (PeekMessageA loop)
+  — note Win32 API, promote to C2 on FidDB identification.
+- More than 3 already C2 — abort; the candidate list is stale.
+
+
+
+================================================================================
+Session 98 — promote_c2_winmain_display  (C1→C2, 7 RVAs)  cluster A
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_winmain_display/
+
+# Mission
+Promote 7 C1 functions in the display-init + viewport setup chain. These
+are the depth-2 callees of WinMain that touch RenderWare + viewport state.
+
+# Candidates
+| RVA        | Existing analysis path                                  | Why now                                 |
+|------------|---------------------------------------------------------|-----------------------------------------|
+| 0x004921d0 | re/analysis/settings_config_d2_cont1/0x004921d0.md     | DisplayModeInit (TXD + viewport dims)   |
+| 0x00428590 | re/analysis/boot_subsystem_d3/00428590.md              | viewport-bg-color-init (0xff000000+π/2 FOV) |
+| 0x00498bc0 | re/analysis/settings_config_d2_cont1/00498bc0.md       | GetRenderWidth                          |
+| 0x00498bd0 | re/analysis/settings_config_d2_cont1/00498bd0.md       | GetRenderHeight                         |
+| 0x00498be0 | re/analysis/settings_config_d2_cont1/00498be0.md       | GetRenderDepth                          |
+| 0x00499ce0 | re/analysis/settings_config_d2_cont1/00499ce0.md       | InitViewportMatrix                      |
+| 0x00496e40 | re/analysis/boot_subsystem_d3/00496e40.md              | dual-async-worker init (PCVS_Init?)     |
+
+# Inputs / Workflow
+Same shape as Session 97. Bucket dir `promote_c2_winmain_display/`.
+
+# STOP-AND-ASK if
+- 0x004921d0 reads a global written by FUN_00497060 (BuildCameraMatrices)
+  whose semantics aren't documented — file U-ID, do not block promotion.
+
+
+
+================================================================================
+Session 99 — promote_c2_winmain_asset_load_a  (C1→C2, 7 RVAs)  cluster A
+================================================================================
+
+Pool slot:   Mashed_pool2 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_winmain_asset_load_a/
+
+# Mission
+Promote 7 of the 57 depth-2 callees of sub_00402750 (the asset-load phase
+that loads font36.piz / powerups.piz / Panel.piz / perm.piz / pc.txd).
+First half of the asset-load chain.
+
+# Candidates
+| RVA        | Caller context                            | Why now                              |
+|------------|-------------------------------------------|--------------------------------------|
+| 0x00495280 | sub_00402750 — called per .piz file       | piz_load(path)                       |
+| 0x004671a0 | sub_00402750 — first param 0xffffffff/0   | vehicle-0 / vehicle-* getter         |
+| 0x004669b0 | sub_00402750 — depth-2                    | post-PIZ asset registration          |
+| 0x0040bbb0 | sub_00402750 — depth-2                    | post-PIZ asset registration          |
+| 0x004723d0 | sub_00402750 — depth-2                    | post-PIZ asset registration          |
+| 0x0045b350 | sub_00402750 — depth-2                    | post-PIZ asset registration          |
+| 0x00558240 | sub_00402750 — stack-pointer 2-arg call   | file-system init (?)                 |
+
+# Inputs / Workflow
+Same shape as Session 97. Cross-reference re/analysis/boot_app_init/00402750.md.
+
+# STOP-AND-ASK if
+- 0x00495280 turns out to call into a Ghidra-decompiled .piz parser
+  function — surface; the parser is currently only documented Python-side
+  in re/tools/piz_extract.py.
+
+
+
+================================================================================
+Session 100 — promote_c2_winmain_asset_load_b  (C1→C2, 7 RVAs)  cluster A
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_winmain_asset_load_b/
+
+# Mission
+Second half of the sub_00402750 depth-2 chain — the panel.piz-driven UI
+initialisation cluster.
+
+# Candidates
+| RVA        | Caller context                       | Why now                                  |
+|------------|--------------------------------------|------------------------------------------|
+| 0x0041b450 | sub_00402750 post-Panel.piz          | UI init A                                |
+| 0x0041bec0 | sub_00402750 post-Panel.piz          | UI init B                                |
+| 0x0041cb10 | sub_00402750 post-Panel.piz          | UI init C                                |
+| 0x0041d6e0 | sub_00402750 post-Panel.piz          | UI init D                                |
+| 0x0041def0 | sub_00402750 post-Panel.piz          | UI init E                                |
+| 0x0041a1e0 | sub_00402750 post-Panel.piz          | UI init F                                |
+| 0x004b3d80 | sub_00402750 pc.txd loader (path arg)| txd_load — populates DAT_00636ac8        |
+
+# Inputs / Workflow
+Same shape as Session 97.
+
+# STOP-AND-ASK if
+- 0x004b3d80 turns out to be a generic RenderWare RwTextureRead — note
+  library match (cross-ref re/analysis/texture_loader_d3_cont1/).
+
+
+
+================================================================================
+Session 101 — promote_c2_winmain_teardown  (C1→C2, 7 RVAs)  cluster A
+================================================================================
+
+Pool slot:   Mashed_pool4 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_winmain_teardown/
+
+# Mission
+Promote 7 of the 43 depth-2 callees of sub_00402a40 (the teardown wrapper
+that fires after the main loop exits). Critical for clean-shutdown
+correctness in the standalone exe — the boot chain only round-trips if
+teardown works.
+
+# Inputs
+```bash
+# Pull depth-2 callees from the existing C1 plate's frontmatter
+grep -A 60 "callees_depth1:" re/analysis/boot_app_init/00402a40.md | head -40
+```
+
+# Candidates
+Top 7 unmapped/C1 callees by xref count. Each session pulls the list from
+the plate frontmatter; the orchestrator does not pre-pick the RVAs (lets
+the session adapt to whatever is already C2 from earlier batches).
+
+# Workflow
+Same shape as Session 97. Bucket dir `promote_c2_winmain_teardown/`.
+
+# STOP-AND-ASK if
+- The teardown chain calls a destructor whose vtable+0x11c slot is hit
+  three times for different object types — file [UNCERTAIN] for vtable
+  identification, promote to C2 on the mechanical observation.
+
+
+
+================================================================================
+Session 102 — promote_c2_data_array_init  (C1→C2, 7 RVAs)  cluster A
+================================================================================
+
+Pool slot:   Mashed_pool5 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_data_array_init/
+
+# Mission
+Promote 7 callees of sub_004924f0 (the 0xdce9-DWORD data-array init at
+DAT_007f0f60 with nested switch on cases 0..11). U-0009 is the parent
+uncertainty for this whole chain.
+
+# Inputs
+```bash
+grep -A 30 "callees_depth1:" re/analysis/boot_app_init/004924f0.md | head -30
+```
+
+# Workflow
+Same shape as Session 97. Resolve U-0009 if possible by citing the inner
+switch dispatch table addresses + per-case effective addresses.
+
+# STOP-AND-ASK if
+- The data-array layout makes the inner-switch dispatch ambiguous — file
+  a STRUCT GAP note in the QUEUE-ROW and promote to C2 on the mechanical
+  per-case observation.
+
+
+
+================================================================================
+Session 103 — promote_c2_frontend_draw_text  (C1→C2, 7 RVAs)  cluster B
+================================================================================
+
+Pool slot:   Mashed_pool6 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frontend_draw_text/
+
+# Mission
+Promote the text-drawing helpers used directly by FUN_0043c5b0 (the
+3,301-byte menu-draw function). These are the leaves under the menu-item
+loop's `0xff{11,00,0f,12,13,23}0000` text-only item paths.
+
+# Candidates
+| RVA        | Caller (FUN_0043c5b0 direct)                | Why now                                  |
+|------------|---------------------------------------------|------------------------------------------|
+| 0x00427e00 | text drawer for menu items (band fills + text) | C1 today; HOT path                   |
+| 0x004a2c48 | FontText helper used in 0x0043c5b0 chain   | C1 today                                |
+| 0x004274d0 | localization lookup, depth-1 of menu       | C1 today                                |
+| 0x004274e0 | localization helper sibling                | C1 today                                |
+| 0x00427ca0 | FontText_HudInit                            | C2 already? drift-check; deepen if so   |
+| 0x00427620 | FontText_HudShutdown                        | C2 already? drift-check; deepen if so   |
+| 0x00427680 | FontText_ComputeScreenXY                    | C2 already? drift-check; deepen if so   |
+
+# Inputs / Workflow
+Same shape as Session 97. Cross-reference re/analysis/hud_frontend/0x0043c5b0.md
+end-to-end before authoring each plate.
+
+# STOP-AND-ASK if
+- An RVA is already C2: skip (drift-promote not required); note in QUEUE-ROW
+  as "skipped — already C2".
+- 0x00427e00 references a font-glyph table whose schema isn't documented
+  — file U-ID; promote on the mechanical observation.
+
+
+
+================================================================================
+Session 104 — promote_c2_frontend_draw_sprite  (C1→C2, 7 RVAs)  cluster B
+================================================================================
+
+Pool slot:   Mashed_pool7 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frontend_draw_sprite/
+
+# Mission
+Promote the sprite/icon helpers used by FUN_0043c5b0 (menu-item icons +
+selected-item Button overlay).
+
+# Candidates
+| RVA        | Caller (FUN_0043c5b0 direct)              | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x00428140 | sprite drawer per menu-item icon         | C1 today                         |
+| 0x004739f0 | Button-texture renderer (selected items) | C1 today                         |
+| 0x0040bbb0 | sprite lookup adjacent to 0x0040bb50 (C2)| C1 today                         |
+| 0x00427ad0 | sprite-table adjacent helper             | C2 today (drift-deepen if so)    |
+| 0x004282a0 | sprite/font adjacent helper              | C2 today (drift-deepen if so)    |
+| 0x00472f40 | credits/sprite helper                    | C1 today (post batch-q-s5 drain) |
+| 0x004730b0 | credits/sprite helper                    | C1 today (post batch-q-s6 drain) |
+
+# Inputs / Workflow
+Same shape as Session 97. Bucket dir `promote_c2_frontend_draw_sprite/`.
+
+
+
+================================================================================
+Session 105 — promote_c2_frontend_draw_quad  (C1→C2, 7 RVAs)  cluster B
+================================================================================
+
+Pool slot:   Mashed_pool8 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frontend_draw_quad/
+
+# Mission
+Promote the quad/band renderers used by FUN_0043c5b0 for menu-item
+background fills (ARGB 0xa0146ef0 selected / 0x40f8d0e8 unselected /
+0xff1050b4 + 0xff501513 selection highlights).
+
+# Candidates
+| RVA        | Use in 0x0043c5b0                         | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x00472c60 | quad renderer for selected-item background | C1 today                        |
+| 0x00472dc0 | quad renderer sibling                     | C1 today                         |
+| 0x00473540 | quad/icon renderer                        | C1 today                         |
+| 0x00472500 | PlayerColorGet — used in 4-pl menu paths  | C1 today (per batch_m plates)    |
+| 0x00472c60 | (dup row sanity check)                    | drift-only                       |
+| 0x00428760 | adjacent quad/text helper                 | C1 today                         |
+| 0x00428610 | adjacent helper                           | C1 today                         |
+
+# Inputs / Workflow
+Same shape as Session 97. The four ARGB constants are the cite-anchors.
+
+
+
+================================================================================
+Session 106 — promote_c2_frontend_state  (C1→C2, 7 RVAs)  cluster B
+================================================================================
+
+Pool slot:   Mashed_pool9 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frontend_state/
+
+# Mission
+Promote the frontend phase-state + menu-item-table iteration helpers used
+by FUN_0043c5b0. DAT_0067eca4 (phase), DAT_00898aec..0x00899104 (menu
+item table 52-byte stride) are the anchors.
+
+# Candidates
+| RVA        | Caller context                            | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x0043bf30 | called after menu-item iteration tail     | C1 today                         |
+| 0x004335f0 | frontend state helper                     | C1 today                         |
+| 0x0043a610 | frontend state helper                     | C1 today                         |
+| 0x0043af10 | frontend state helper                     | C1 today                         |
+| 0x00434720 | frontend state helper                     | C1 today                         |
+| 0x00430120 | frontend phase setter                     | C1 today                         |
+| 0x004368e0 | frontend phase setter                     | C1 today                         |
+
+# Inputs / Workflow
+Same shape as Session 97.
+
+
+
+================================================================================
+Session 107 — promote_c2_frontend_menu_b  (C1→C2, 7 RVAs)  cluster B
+================================================================================
+
+Pool slot:   Mashed_pool10 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frontend_menu_b/
+
+# Mission
+Promote the remaining frontend menu sub-state helpers in the 0x0043xxxx
+range (championship / mode-pick / pause-menu chains).
+
+# Candidates
+| RVA        | Caller context                            | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x0043aa30 | frontend mode setter                      | C1 today                         |
+| 0x00430b90 | called from FUN_00492e90 else-branch      | C1 today                         |
+| 0x00431240 | championship helper                       | C1 today                         |
+| 0x004314b0 | championship helper                       | C1 today                         |
+| 0x00431710 | championship helper                       | C1 today                         |
+| 0x004d8c40 | frontend / RW render-state helper         | C1 today                         |
+| 0x004d8000 | RW shutdown helper                        | C1 today                         |
+
+# Inputs / Workflow
+Same shape as Session 97.
+
+
+
+================================================================================
+Session 108 — promote_c2_hud_ingame  (C1→C2, 7 RVAs)  cluster B
+================================================================================
+
+Pool slot:   Mashed_pool11 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_hud_ingame/
+
+# Mission
+Promote HUD-ingame helpers that are reachable from the menu when the menu
+overlays a race (paused-menu draw path). These also tighten the caller
+gate for FUN_0040dfc0 (HUD_INGAME_FN, currently C2).
+
+# Candidates
+| RVA        | Caller context                            | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x0041b340 | HUD-ingame draw helper                    | C1 today                         |
+| 0x0041c9a0 | HUD-ingame draw helper                    | C1 today                         |
+| 0x0041d410 | HUD-ingame draw helper                    | C1 today                         |
+| 0x0041de80 | HUD-ingame draw helper                    | C1 today                         |
+| 0x0041e630 | HUD-ingame draw helper                    | C1 today                         |
+| 0x00402fb0 | HUD-ingame entry-point sibling            | C1 today                         |
+| 0x004c1c80 | HUD-ingame matrix helper                  | C1 today                         |
+
+# Inputs / Workflow
+Same shape as Session 97. Bucket dir `promote_c2_hud_ingame/`.
+
+
+
+================================================================================
+Session 109 — promote_c2_frame_dispatch  (C1→C2, 7 RVAs)  cluster C
+================================================================================
+
+Pool slot:   Mashed_pool12 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frame_dispatch/
+
+# Mission
+Promote frame-dispatch FUN_00492e90 (1,236-byte per-frame router) direct
+callees that drive mode/HUD/menu rendering.
+
+# Candidates
+| RVA        | Caller (FUN_00492e90 direct)              | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x00403050 | mode dispatcher (loading_screen analysis) | C1 today                         |
+| 0x00404320 | PerModeRenderMachine (modes 5/8/9/10)     | C1 today (D-0884 resolved)       |
+| 0x004671a0 | camera-follow vehicle-0 getter            | C1 today                         |
+| 0x004671c0 | render frame entry                        | C1 today                         |
+| 0x00492440 | frame-dispatch sibling                    | C1 today                         |
+| 0x00492e60 | frame-dispatch sibling                    | C1 today                         |
+| 0x004950b0 | frame timer (read 2x per frame)           | C1 today                         |
+
+# Inputs / Workflow
+Same shape as Session 97. Bucket dir `promote_c2_frame_dispatch/`.
+
+
+
+================================================================================
+Session 110 — promote_c2_camera_matrix  (C1→C2, 7 RVAs)  cluster C
+================================================================================
+
+Pool slot:   Mashed_pool13 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_camera_matrix/
+
+# Mission
+Promote the FUN_004c1xxx camera-matrix cluster used by FUN_00492e90
+(matrix push/pop, view-window set, camera get/set).
+
+# Candidates
+| RVA        | Caller (FUN_00492e90 direct)              | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x004c19f0 | camera-matrix update                      | C1 today                         |
+| 0x004c1a00 | camera-matrix getter (gating render path) | C1 today                         |
+| 0x004c1bb0 | camera-matrix helper                      | C1 today                         |
+| 0x004c1be0 | camera-matrix helper                      | C1 today                         |
+| 0x004c1c80 | camera-matrix helper (0.8f scale arg)     | C1 today                         |
+| 0x00497000 | BuildProjMatrix                           | C1 today (per batch_l plates)    |
+| 0x00497060 | BuildCameraMatrices                       | C1 today (per batch_l plates)    |
+
+# Inputs / Workflow
+Same shape as Session 97. Bucket dir `promote_c2_camera_matrix/`.
+
+
+
+================================================================================
+Session 111 — promote_c2_frame_helpers  (C1→C2, 7 RVAs)  cluster C
+================================================================================
+
+Pool slot:   Mashed_pool14 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frame_helpers/
+
+# Mission
+Promote frame-dispatch sibling helpers: ShowCursor wrapper, minimap camera,
+conditional sub-pass dispatch.
+
+# Candidates
+| RVA        | Caller (FUN_00492e90 chain)               | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x00498bf0 | ShowCursor wrapper                        | C1 today                         |
+| 0x0040de30 | MinimapCameraOrthoSetup                   | C1 today                         |
+| 0x0040df20 | MinimapCameraRestore                      | C1 today                         |
+| 0x0040df60 | ConditionalRenderSubPass (3-gate)         | C1 today                         |
+| 0x00410b30 | per-frame integrator                      | C1 today                         |
+| 0x00426030 | per-frame integrator                      | C1 today                         |
+| 0x00426670 | per-frame integrator                      | C1 today                         |
+
+# Inputs / Workflow
+Same shape as Session 97.
+
+
+
+================================================================================
+Session 112 — promote_c2_frame_tail  (C1→C2, 7 RVAs)  cluster C
+================================================================================
+
+Pool slot:   Mashed_pool15 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 7)
+Skill used:  parallel-fanout C1→C2 promotion
+Bucket dir:  re/analysis/promote_c2_frame_tail/
+
+# Mission
+Promote remaining frame-dispatch tail helpers: per-frame integrators,
+0x00433f40 (called when FUN_004c1a00 returns non-zero), 0x004266b0.
+
+# Candidates
+| RVA        | Caller (FUN_00492e90 chain)               | Why now                          |
+|------------|-------------------------------------------|----------------------------------|
+| 0x004266b0 | frame-dispatch helper                     | C1 today                         |
+| 0x00433f40 | called when 0x004c1a00 ≠ 0                | C1 today                         |
+| 0x0042a9f0 | frame-dispatch helper                     | C1 today                         |
+| 0x0042b8d0 | frame-dispatch helper                     | C1 today                         |
+| 0x0042b8f0 | frame-dispatch helper                     | C1 today                         |
+| 0x0042d390 | frame-dispatch dispatch (race-mode gate)  | C1 today                         |
+| 0x00492440 | (drift-check from s109)                   | drift-only if already C2         |
+
+# Inputs / Workflow
+Same shape as Session 97.
+
+
+
+================================================================================
+POST-RUN (after all 16 sessions commit)
+================================================================================
+
+1. Inspect re/SCRIBE_QUEUE.md — confirm 16 new rows under "## Queued",
+   one per session (s97..s112), each with `level=c2`.
+2. Run `ghidra-sweep` (an Opus session). It drains every Queued row into
+   master Ghidra (per-RVA Ghidra plate + bookmark + comment, last-writer-
+   wins on conflict), de-duplicates hooks.csv rows, and resolves any
+   cross-bucket overlaps.
+3. After the sweep, the boot/frontend/frame-dispatch C2 floor is raised
+   enough that c3_batch_g (frontend menu C2→C3 promotions) can run
+   without the caller-gate refusals that blocked c3-batch-d.
+4. Expected promotions: 16 × 7 = 112 candidates → ~95 C2 (with ~15%
+   drift-skipped / [UNREACHABLE] / library-only).

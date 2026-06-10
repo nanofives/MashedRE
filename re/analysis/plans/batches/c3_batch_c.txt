@@ -1,0 +1,663 @@
+================================================================================
+C3 BATCH C — HUD Cluster (30 RVAs across 6 parallel agents)
+================================================================================
+Generated: 2026-05-14
+Batch id:  c3-batch-c
+Branches:  c3/batch-c-s1 .. c3/batch-c-s6
+Total:     30 C2 -> C3 candidates (18 HUD ingame/font + 12 frontend/font-sys)
+Shape:     K=[5,5,5,5,5,5]
+
+PASTE THIS ENTIRE FILE INTO A SINGLE CLAUDE CODE SESSION AT THE REPO ROOT
+(C:\Users\maria\Desktop\Proyectos\Mashed). That session runs pre-flight, then
+launches 6 sub-agents IN ONE MESSAGE via the Agent tool. Each agent works in
+its own git worktree, promotes its assigned RVAs from C2 to C3 (Frida bit-
+identity diff), commits to its branch, and returns one-line QUEUE-ROW summary.
+
+NOTE: This batch is the first to land HUD hooks. The HUD subdirectory
+(mashedmod/src/mashed_re/HUD/) does not yet exist in the repo. Any agent
+whose session creates the first .cpp under HUD/ must also add the new HUD/
+path entry to mashedmod\build.bat (look for the existing Math\ and Vehicle\
+entries as the template). Frontend/ likewise likely needs creation for the
+frontend candidates.
+
+IMPORTANT — CALLEE GATE WARNING:
+Several candidates in s1 and s2 have callees at C1 (not yet C2). Per the
+SKILL spec, more than 2 drift-promotes per session triggers STOP-AND-ASK.
+Agents for s1 and s2 must evaluate at session start whether drift-promote
+count is within budget; if not, substitute the C1-callee candidates for
+deferred status and promote only the pure-leaf candidates in their set.
+Individual deferred candidates are flagged DEFER or DRIFT-RISK in each table.
+
+================================================================================
+ORCHESTRATOR INSTRUCTIONS
+================================================================================
+
+You are the orchestrator for c3-batch-c. You do NOT author hooks yourself.
+You:
+  1. Run the pre-flight checks (below) yourself.
+  2. Launch 6 sub-agents in ONE message via 6 Agent tool calls.
+  3. Collect their QUEUE-ROW lines, append to re/PROMOTION_QUEUE.md.
+
+Agent tool settings:
+    subagent_type:     "general-purpose"
+    model:             "sonnet"
+    run_in_background: false
+    description:       "c3-batch-c-s<N>"
+    prompt:            <the corresponding AGENT N block below, verbatim>
+
+# PRE-FLIGHT (orchestrator runs these YOURSELF before launching agents)
+
+  1. Confirm working directory:
+       cd C:\Users\maria\Desktop\Proyectos\Mashed
+  2. git status — must be clean (no uncommitted changes on main).
+  3. SHA-256 anchor check on MASHED.exe:
+       py -3.12 -c "import hashlib,sys; h=hashlib.sha256(open('original/MASHED.exe','rb').read()).hexdigest(); print('OK' if h=='bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e' else 'MISMATCH:'+h)"
+     If MISMATCH: check that original/MASHED.exe.unpatched exists (patches
+     applied = expected). Abort if neither condition holds.
+  4. git fetch && git log --oneline -5
+  5. Confirm re/PROMOTION_QUEUE.md exists:
+       if not exist re\PROMOTION_QUEUE.md (echo MISSING & pause)
+  6. STOP-AND-ASK if any check fails.
+
+# LAUNCH
+ONE message, 6 Agent tool calls in parallel (all 6 in a single response).
+
+# POST-RUN
+  1. Parse QUEUE-ROW from each agent response.
+  2. Append rows (only GREEN sessions) in s1..s6 order to re/PROMOTION_QUEUE.md
+     under the ## Queued section.
+  3. Print summary:
+       "c3-batch-c complete: X/6 sessions GREEN, Y/30 RVAs at C3, Z refused"
+  4. For any RED session: print its failure verbatim. Do NOT append a row.
+  5. Do NOT run frida-sweep — that is the user's call after reviewing results.
+
+================================================================================
+AGENT PROMPTS (one Agent tool call per block, verbatim)
+================================================================================
+
+--------------------------------------------------------------------------------
+AGENT 1 — c3-batch-c-s1
+HUD ingame dispatch wrappers, cluster A (5 candidates)
+hud_ingame_promote_c2: RVAs 0x0041a3e0..0x0041ccc0
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-c-s1
+for the Mashed RE project.
+Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree: .worktrees/c3-batch-c-s1/  (branch c3/batch-c-s1)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id: c3-batch-c
+
+# MISSION
+Promote up to 5 C2 functions to C3 by authoring their reimpl in
+mashed_re_dev.asi, running run_diff_parallel.py for bit-identical
+verification, and applying re-classify transactionally. Stay inside your
+worktree. Do not touch main.
+
+# CANDIDATES
+| # | RVA        | Ghidra name   | Analysis note                                       | Size  | Sig         | Notes                                      |
+|---|------------|---------------|-----------------------------------------------------|-------|-------------|--------------------------------------------|
+| 1 | 0x0041a3e0 | FUN_0041a3e0  | re/analysis/hud_ingame_promote_c2/0x0041a3e0.md     | 19B   | void(void)  | guard+call; callee 0x0041c2d0 is C1        |
+| 2 | 0x0041b630 | FUN_0041b630  | re/analysis/hud_ingame_promote_c2/0x0041b630.md     | 32B   | void(void)  | 4-entry loop; callee 0x0041b340 is C1      |
+| 3 | 0x0041c0c0 | FUN_0041c0c0  | re/analysis/hud_ingame_promote_c2/0x0041c0c0.md     | 28B   | void(void)  | 2-entry unconditional loop; callee 0x0041bc50 C1 |
+| 4 | 0x0041c300 | FUN_0041c300  | re/analysis/hud_ingame_promote_c2/0x0041c300.md     | 19B   | void(void)  | guard+call; callee 0x0041c2d0 C1 (shared with #1) |
+| 5 | 0x0041ccc0 | FUN_0041ccc0  | re/analysis/hud_ingame_promote_c2/0x0041ccc0.md     | 38B   | void(void)  | 4-entry loop+guard; callee 0x0041c9a0 C1   |
+
+CALLEE GATE WARNING: All 5 candidates have C1 callees (0x0041c2d0, 0x0041b340,
+0x0041bc50, 0x0041c9a0). Unique C1 callees = 4. This exceeds the 2-drift-promote
+budget per session. DO NOT attempt 4 drift-promotes. Instead:
+  a. Check each callee's analysis note in hooks.csv for C2-quality evidence
+     (constants cited at RVA, no [UNCERTAIN] in body, mechanical decomp).
+  b. If 1-2 callees clearly have C2-quality notes (just not yet promoted),
+     drift-promote those and proceed with the candidates they serve.
+  c. For candidates whose callee cannot be drift-promoted within budget:
+     refuse and note in QUEUE-ROW.
+  d. STOP-AND-ASK if all 5 need callee drift-promotes with no shortcuts.
+Candidates #1 and #4 share callee 0x0041c2d0 — one drift-promote covers both.
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-c-s1" -b "c3/batch-c-s1"
+  cd ".worktrees\c3-batch-c-s1"
+
+# PRE-FLIGHT (inside the worktree)
+  1. SHA-256 check: py -3.12 -c "import hashlib; h=hashlib.sha256(open('original/MASHED.exe','rb').read()).hexdigest(); print('OK' if h=='bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e' else 'MISMATCH')"
+  2. Baseline build: cmd /c mashedmod\build.bat > log\build_baseline_s1.txt 2>&1
+     Halt if it fails.
+
+# PER-FUNCTION WORKFLOW
+  For each candidate (after resolving the callee gate):
+  1. Read its analysis note end-to-end. Confirm:
+     - Sig is implementable (void(void) — no unsupported arg types).
+     - No inline [UNCERTAIN] markers in the body section.
+     - Callee is C2+ (or drift-promoted in this session).
+  2. Author the reimpl:
+     - File: mashedmod/src/mashed_re/HUD/HudDispatch.cpp
+     - This is the FIRST session writing to HUD/. Create the directory and
+       add the entry to build.bat (see build.bat lines 28-31 for template):
+         "%SRC%\HUD\HudDispatch.cpp" ^
+       Insert it before the /link /DLL line.
+     - Cite RVA + body description above the function.
+     - Register via RH_ScopedInstall(<Name>, 0x<RVA>).
+  3. Wire hooks_registry.py:
+     - arg_type: 'void_void' (no args, no return scalar to diff)
+     - These are void(void) functions with side effects on globals — use
+       behavioral observation mode: call once in-process, verify no crash
+       and the expected global mutations. See existing void hooks for pattern.
+     - Provide at least 10 "call context" observations (e.g. flag states).
+  4. Build: cmd /c mashedmod\build.bat > log\build_0x0041XXXX.txt 2>&1
+     Halt on failure.
+
+# BATCH VERIFICATION
+  1. py -3.12 re/frida/run_diff_parallel.py <hook1> [hook2] ...
+     (list only the hooks successfully authored, not deferred ones)
+  2. All GREEN. Debug only the failing hook on RED.
+
+# PROMOTION
+  Invoke re-classify ONCE with all successfully verified RVAs.
+
+# COMMIT
+  git add mashedmod/src/mashed_re/HUD/HudDispatch.cpp
+  git add mashedmod/build.bat re/frida/hooks_registry.py hooks.csv
+  git add re/analysis/hud_ingame_promote_c2/*.md re/analysis/CHANGELOG.md
+  git commit -m "c3: hud ingame dispatch batch-c s1 — N hooks, evidence cited"
+
+# RETURN (copy this line into your response, filled in)
+QUEUE-ROW: 2026-05-14  c3-batch-c-s1  rvas=0x<a>,0x<b>,...  branch=c3/batch-c-s1  evidence=log/diff_<h>.csv;...  note=N hud dispatch C2->C3; <callee drift-promotes if any>
+
+If any refused: "K-M promoted, M refused (0x<rva>: <reason>)".
+
+# STOP-AND-ASK if:
+  - Anchor mismatch
+  - Baseline build fails
+  - All 5 candidates blocked by callee gate (no promotions possible)
+  - Any unfiled [UNCERTAIN] in a function body
+
+--------------------------------------------------------------------------------
+AGENT 2 — c3-batch-c-s2
+HUD ingame dispatch wrappers, cluster B (5 candidates)
+hud_ingame_promote_c2: RVAs 0x0041d870..0x00426ba0
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-c-s2
+for the Mashed RE project.
+Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree: .worktrees/c3-batch-c-s2/  (branch c3/batch-c-s2)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id: c3-batch-c
+
+# MISSION
+Promote up to 5 C2 functions to C3 by authoring their reimpl in
+mashed_re_dev.asi, running run_diff_parallel.py for bit-identical
+verification, and applying re-classify transactionally. Stay inside your
+worktree. Do not touch main.
+
+# CANDIDATES
+| # | RVA        | Ghidra name   | Analysis note                                       | Size  | Sig          | Notes                                              |
+|---|------------|---------------|-----------------------------------------------------|-------|--------------|----------------------------------------------------|
+| 1 | 0x0041d870 | FUN_0041d870  | re/analysis/hud_ingame_promote_c2/0x0041d870.md     | 28B   | void(void)   | 2-entry unconditional loop; callee 0x0041d410 C1   |
+| 2 | 0x0041db80 | FUN_0041db80  | re/analysis/hud_ingame_promote_c2/0x0041db80.md     | 9B*   | void(void)   | DEFER — [UNCERTAIN U-0579] body bounds wrong in Ghidra; vtable calls complex |
+| 3 | 0x0041ded0 | FUN_0041ded0  | re/analysis/hud_ingame_promote_c2/0x0041ded0.md     | 29B   | void(int)    | guard+passthrough; callee 0x0041de80 C1            |
+| 4 | 0x0041e850 | FUN_0041e850  | re/analysis/hud_ingame_promote_c2/0x0041e850.md     | 21B   | void(void)   | guard+call; callee 0x0041e630 C1                   |
+| 5 | 0x00426ba0 | FUN_00426ba0  | re/analysis/hud_ingame_promote_c2/0x00426ba0.md     | 5B    | uint32_t()   | PURE LEAF — global read DAT_0066d704; ideal start  |
+
+*Candidate #2 (0x0041db80): DEFER immediately. The analysis note records
+[UNCERTAIN U-0579] noting Ghidra body bounds are wrong (9B reported vs.
+actual larger body), plus vtable dispatch through 6 object pointers. Do not
+attempt promotion this session. Note it as refused in QUEUE-ROW.
+
+CALLEE GATE for #1, #3, #4: unique C1 callees = 3 (0x0041d410, 0x0041de80,
+0x0041e630). This is at the >2 threshold. Apply the same budget rule:
+  a. Evaluate each callee note for C2-quality evidence.
+  b. Drift-promote at most 2 that qualify.
+  c. Refuse candidates whose callee cannot be drift-promoted within budget.
+  d. Candidate #5 (0x00426ba0) is pure leaf — promote it regardless.
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-c-s2" -b "c3/batch-c-s2"
+  cd ".worktrees\c3-batch-c-s2"
+
+# PRE-FLIGHT (inside the worktree)
+  1. SHA-256 check: py -3.12 -c "import hashlib; h=hashlib.sha256(open('original/MASHED.exe','rb').read()).hexdigest(); print('OK' if h=='bdcae093a30fbf226bdd852b9c36798a987aee33b3ae82bf7404b0336efd3c0e' else 'MISMATCH')"
+  2. Baseline build: cmd /c mashedmod\build.bat > log\build_baseline_s2.txt 2>&1
+     Halt if it fails.
+  NOTE: s1 may have created mashedmod/src/mashed_re/HUD/. If s2 needs to add
+  more functions to HUD/HudDispatch.cpp, open the file it left and append
+  new hook bodies and RH_ScopedInstall calls to the same file.
+
+# PER-FUNCTION WORKFLOW
+  1. Candidate #5 (0x00426ba0) first — pure leaf, no callee gate:
+     - File: mashedmod/src/mashed_re/HUD/HudDispatch.cpp
+       If s1 created HUD/ and HudDispatch.cpp already, append to that file.
+       If HUD/ does not exist yet, create it and add build.bat entry.
+     - Reimpl name: HudDrawEnabled (returns DAT_0066d704 as uint32_t).
+     - Registry arg_type: 'read_global' (no args; returns global as scalar).
+       Use at least 10 test vectors (sentinel values covering 0, 1, max).
+  2. Candidate #2 (0x0041db80): skip immediately, document as refused.
+  3. For #1, #3, #4: resolve callee gate then author in HudDispatch.cpp.
+     - Void-returning functions: use behavioral observation in registry.
+  4. Build after each addition: cmd /c mashedmod\build.bat > log\build_<rva>.txt 2>&1
+
+# BATCH VERIFICATION
+  py -3.12 re/frida/run_diff_parallel.py <promoted hooks only>
+
+# PROMOTION + COMMIT + RETURN
+  Same pattern as AGENT 1. Commit message:
+    "c3: hud ingame dispatch batch-c s2 — N hooks, evidence cited"
+  QUEUE-ROW: 2026-05-14  c3-batch-c-s2  rvas=0x<a>,...  branch=c3/batch-c-s2  evidence=...  note=N hud dispatch C2->C3; 1 deferred (U-0579)
+
+# STOP-AND-ASK if:
+  - Anchor mismatch, baseline build fails
+  - All non-deferred candidates also blocked by callee gate
+  - Any unfiled [UNCERTAIN] in a body you attempt to promote
+
+--------------------------------------------------------------------------------
+AGENT 3 — c3-batch-c-s3
+HUD submode getter + frontend leaves (5 candidates)
+hud_ingame_promote_c2 (2) + hud_frontend_d3 (2) + hud_frontend_d5 (1 + 1 deferred)
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-c-s3
+for the Mashed RE project.
+Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree: .worktrees/c3-batch-c-s3/  (branch c3/batch-c-s3)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id: c3-batch-c
+
+# MISSION
+Promote up to 5 C2 functions to C3. This session mixes two subsystems:
+HUD (pure-leaf getters) and Frontend (table-driven getters). Most are ideal
+pure leaves. One candidate is flagged DEFER. Stay in your worktree.
+
+# CANDIDATES
+| # | RVA        | Ghidra name   | Analysis note                                    | Size  | Sig       | Notes                                                   |
+|---|------------|---------------|--------------------------------------------------|-------|-----------|---------------------------------------------------------|
+| 1 | 0x0042f6a0 | FUN_0042f6a0  | re/analysis/hud_ingame_promote_c2/0x0042f6a0.md  | 5B    | uint32_t()| PURE LEAF — returns DAT_0067e9fc (HUD sub-mode global)  |
+| 2 | 0x0040ad20 | FUN_0040ad20  | re/analysis/hud_frontend_d3/0x0040ad20.md        | 6B    | uint32_t()| PURE LEAF — returns DAT_008a95ac                        |
+| 3 | 0x0040b6c0 | FUN_0040b6c0  | re/analysis/hud_frontend_d3/0x0040b6c0.md        | 11B   | uint32_t(int)| PURE LEAF — indexed read DAT_008a94f0[param_1]       |
+| 4 | 0x004309b0 | FUN_004309b0  | re/analysis/hud_frontend_d5/0x004309b0.md        | 52B   | int()     | PURE LEAF — switch on DAT_0067e9fc→index mapping table  |
+| 5 | 0x00436810 | FUN_00436810  | re/analysis/hud_frontend_d5/0x00436810.md        | 193B  | bool(int) | DEFER — [UNCERTAIN U-3410, U-3411]; callee 0x00430760 C2 but unresolved semantics |
+
+Candidate #5 (0x00436810): DEFER. The analysis note has two [UNCERTAIN] markers
+(U-3410: probe offset semantics unverified; U-3411: value 2 meaning unconfirmed).
+These are inline in the body description, not just in the Uncertainties section.
+Do not promote. Document as refused in QUEUE-ROW.
+
+The remaining 4 (#1-#4) are all pure leaves — no callee gate, no drift-promote
+needed, no [UNCERTAIN] markers in body. Ideal first-pass HUD+Frontend promotion.
+
+# FILE PLACEMENT
+  - Candidate #1 (HUD submode getter): HUD/HudDispatch.cpp
+    If s1 or s2 created HUD/ already, append to their file.
+    If not yet created, create HUD/ and add build.bat entry.
+  - Candidates #2, #3 (Frontend d3): Frontend/FrontendAccessors.cpp
+    This is likely a new file under a new Frontend/ directory.
+    If Frontend/ does not exist: create it and add build.bat entry:
+      "%SRC%\Frontend\FrontendAccessors.cpp" ^
+  - Candidate #4 (Frontend d5 switch): Frontend/FrontendMode.cpp
+    New file under Frontend/ (or append to FrontendAccessors.cpp if closely
+    related enough — your call based on the reimpl name).
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-c-s3" -b "c3/batch-c-s3"
+  cd ".worktrees\c3-batch-c-s3"
+
+# PRE-FLIGHT
+  SHA-256 check + baseline build (same as s1/s2 above).
+
+# PER-FUNCTION WORKFLOW (for each of #1..#4)
+  1. Read analysis note. Confirm: no callees, no [UNCERTAIN] in body.
+  2. Author reimpl:
+     - Cite RVA above function: // 0x00XXXXXX
+     - Return the named global (pure load+ret pattern).
+     - Candidate #3 (0x0040b6c0): indexed read — emit bounds-safe cast.
+     - Candidate #4 (0x004309b0): switch table — emit the 8-case switch
+       exactly as documented (cases 0..8 on mode-2, default=mode-2).
+  3. Registry entries:
+     - #1, #2: arg_type 'read_global' (void, returns global as uint32_t).
+       Test vectors: 0 + at least 9 other sentinel values.
+     - #3: arg_type 'int_scalar' (one int param, returns scalar).
+       Test vectors: indices 0..9 (at minimum), plus one negative.
+     - #4: arg_type 'int_return' (void, returns int).
+       Test vectors: observe return for modes 2..10, plus default.
+  4. Build after each addition.
+
+# BATCH VERIFICATION
+  py -3.12 re/frida/run_diff_parallel.py <hook1> <hook2> <hook3> <hook4>
+  All 4 must be GREEN.
+
+# PROMOTION
+  re-classify with all 4 verified RVAs. Candidate #5 not included.
+
+# COMMIT + RETURN
+  Commit: "c3: hud+frontend getters batch-c s3 — 4 hooks, 1 deferred"
+  QUEUE-ROW: 2026-05-14  c3-batch-c-s3  rvas=0x0042f6a0,0x0040ad20,0x0040b6c0,0x004309b0  branch=c3/batch-c-s3  evidence=log/diff_<h1>.csv;...  note=4 pure-leaf HUD+frontend C2->C3; 1 deferred (U-3410/U-3411)
+
+# STOP-AND-ASK if:
+  - Anchor mismatch, baseline build fails
+  - A "pure leaf" note turns out to have callees or [UNCERTAIN] body markers
+  - build.bat conflict with s1/s2 (worktrees are isolated — no actual conflict
+    on disk, but note the lines you add for the frida-sweep merge step)
+
+--------------------------------------------------------------------------------
+AGENT 4 — c3-batch-c-s4
+HUD font-text subsystem (5 candidates)
+hud_promote_c2_b: RVAs 0x00427620..0x00427ca0
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-c-s4
+for the Mashed RE project.
+Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree: .worktrees/c3-batch-c-s4/  (branch c3/batch-c-s4)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id: c3-batch-c
+
+# MISSION
+Promote up to 5 C2 functions from the hud_promote_c2_b cluster (font-text
+subsystem, 0x00427xxx range) to C3. Two candidates carry UNCERTAIN markers
+and must be deferred. The remaining three span shutdown, string-table lookup,
+and font init. Stay in your worktree.
+
+# CANDIDATES
+| # | RVA        | Ghidra name   | Analysis note                                   | Size   | Sig                       | Notes                                                                   |
+|---|------------|---------------|-------------------------------------------------|--------|---------------------------|-------------------------------------------------------------------------|
+| 1 | 0x00427620 | FUN_00427620  | re/analysis/hud_promote_c2_b/0x00427620.md     | 93B    | void(void)                | FontText_HudShutdown; callees 0x00555830/00556e40/00556cd0/004c5930/00552b90 — all C1 |
+| 2 | 0x00427680 | FUN_00427680  | re/analysis/hud_promote_c2_b/0x00427680.md     | 247B   | complex/ESI implicit      | DEFER — [UNCERTAIN U-2127] implicit ESI output buffer; fastcall-adjacent signature not in harness |
+| 3 | 0x00427780 | FUN_00427780  | re/analysis/hud_promote_c2_b/0x00427780.md     | 16B    | undefined*(int)           | PURE LEAF — FontText_StringTableLookup; packed string table index read  |
+| 4 | 0x00427840 | FUN_00427840  | re/analysis/hud_promote_c2_b/0x00427840.md     | 53B    | void __fastcall(ushort*)  | DEFER — [UNCERTAIN U-1069] fastcall with implicit EAX source; not hookable via standard __cdecl harness |
+| 5 | 0x00427ca0 | FUN_00427ca0  | re/analysis/hud_promote_c2_b/0x00427ca0.md     | 343B   | void(void)                | FontText_HudInit; complex init; callees mostly C1 — evaluate callee gate |
+
+Candidate #2 (0x00427680): DEFER. [UNCERTAIN U-2127] — implicit ESI output
+register not representable in the standard hooks_registry arg_type set.
+Candidate #4 (0x00427840): DEFER. [UNCERTAIN U-1069] — fastcall with implicit
+EAX source ptr; the harness does not support __fastcall hooks without extension.
+Both must be refused in QUEUE-ROW.
+
+Candidate #1 (0x00427620) callee gate: all callees (0x00555830, 0x00556e40,
+0x00556cd0, 0x004c5930, 0x00552b90) are C1. This exceeds the 2-drift-promote
+budget if all are needed. However, the function is a pure teardown sequence
+(no branches except one conditional free). Evaluate: do any of these callees
+have C2-quality analysis notes? If 1-2 do, drift-promote and proceed.
+If all are C1 without C2-quality evidence, refuse #1 as well.
+
+Candidate #5 (0x00427ca0) callee gate: callees include 0x00552b60 (C2 in
+hooks.csv), 0x00556cc0 (C1), 0x00427880 (C1), 0x00556d70 (C1), 0x0042a6b0 (C1).
+At most 2 drift-promotes for the C1 ones. Evaluate before attempting.
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-c-s4" -b "c3/batch-c-s4"
+  cd ".worktrees\c3-batch-c-s4"
+
+# PRE-FLIGHT
+  SHA-256 check + baseline build.
+
+# FILE PLACEMENT
+  All promotable candidates here go under:
+    mashedmod/src/mashed_re/HUD/FontText.cpp
+  This is a new file in the HUD/ cluster (different from HudDispatch.cpp
+  used by s1/s2). If HUD/ was not yet created by s1/s2 (worktrees are
+  isolated), create it and add build.bat entry.
+  If HUD/ exists but FontText.cpp does not, create FontText.cpp only
+  (no duplicate build.bat entry for the directory, but do add the new
+  file entry):
+    "%SRC%\HUD\FontText.cpp" ^
+
+# PER-FUNCTION WORKFLOW
+  1. Candidate #3 first (0x00427780, pure leaf):
+     - Reimpl name: FontText_StringTableLookup
+     - Returns: pointer arithmetic — return (undefined*)(base + *(int*)(base + param_1*4))
+       where base = DAT_0066d828 (address 0x0066d828).
+     - Sig: void*(int) — use arg_type 'int_scalar' returning pointer; adapt
+       test vectors to valid index range (use index 0..9 as safe range).
+  2. Candidates #2, #4: skip immediately, document as refused.
+  3. Candidate #1 (0x00427620): evaluate callee gate then author if passes.
+     - Reimpl name: FontText_HudShutdown
+     - Teardown: call 5 subroutines in order, then null DAT_0067d838.
+  4. Candidate #5 (0x00427ca0): evaluate callee gate then author if passes.
+     - Reimpl name: FontText_HudInit
+     - Warning: 343B, complex 6-phase init. Read the note in full before
+       authoring. Stack-allocated colour struct must be exact.
+  5. Build after each addition.
+
+# BATCH VERIFICATION + PROMOTION + COMMIT + RETURN
+  py -3.12 re/frida/run_diff_parallel.py <verified hooks>
+  re-classify with verified RVAs only.
+  Commit: "c3: font-text batch-c s4 — N hooks, 2 deferred"
+  QUEUE-ROW: 2026-05-14  c3-batch-c-s4  rvas=0x<verified>,...  branch=c3/batch-c-s4  evidence=...  note=N FontText C2->C3; 2 deferred (U-2127, U-1069)
+
+# STOP-AND-ASK if:
+  - Anchor mismatch, baseline build fails
+  - All non-deferred candidates also blocked by callee gate
+  - FontText_HudInit body materially differs from the analysis note
+
+--------------------------------------------------------------------------------
+AGENT 5 — c3-batch-c-s5
+HUD font context matrix ops (5 candidates)
+hud_promote_c2_b: RVAs 0x00427ff0..0x00552b60
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-c-s5
+for the Mashed RE project.
+Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree: .worktrees/c3-batch-c-s5/  (branch c3/batch-c-s5)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id: c3-batch-c
+
+# MISSION
+Promote up to 5 C2 functions from the hud_promote_c2_b cluster (font context
+matrix system, 0x00552xxx range) to C3. One candidate is deferred. The
+remaining four span the identity-reset, Z-rotation, active-camera set, and
+init-sequence. Stay in your worktree.
+
+# CANDIDATES
+| # | RVA        | Ghidra name      | Analysis note                                   | Size   | Sig                  | Notes                                                               |
+|---|------------|------------------|-------------------------------------------------|--------|----------------------|---------------------------------------------------------------------|
+| 1 | 0x00427ff0 | FUN_00427ff0     | re/analysis/hud_promote_c2_b/0x00427ff0.md     | 333B   | void(7 params)       | DEFER — callee 0x004277a0 is [UNCERTAIN] (no args, return unused); complex sig not in harness |
+| 2 | 0x00552750 | FontCtx_ResetTransform | re/analysis/hud_promote_c2_b/0x00552750.md | 237B | uint32_t(void)     | PURE (no callees) — identity matrix write sequence; returns 1       |
+| 3 | 0x00552840 | FontCtx_SetRotation | re/analysis/hud_promote_c2_b/0x00552840.md  | 78B    | uint32_t(uint32_t)   | callee 0x004c4d20 (RwMatrix_SetRotAxisAngle) is C1 — DRIFT-RISK     |
+| 4 | 0x00552a60 | FontSys_SetActiveCamera | re/analysis/hud_promote_c2_b/0x00552a60.md | 235B | uint32_t(int)     | PURE (no callees) — camera setup; reads cam struct, writes 11 globals |
+| 5 | 0x00552b60 | FontSys_InitSeq  | re/analysis/hud_promote_c2_b/0x00552b60.md     | 44B    | void(void)           | callees: 0x00552a60 (C2), 0x00552c10 (C2); 5 others C1 — DRIFT-RISK |
+
+Candidate #1 (0x00427ff0): DEFER. Callee 0x004277a0 is [UNCERTAIN] (no RVA
+confirmed), 7-parameter signature not in the harness arg_type set.
+Document as refused.
+
+Candidate #3 callee gate: 0x004c4d20 (RwMatrix_SetRotAxisAngle) is C1 — 1
+drift-promote needed. Within budget. Check the note for C2-quality evidence
+before drift-promoting.
+
+Candidate #5 callee gate: 0x00552a60 (C2) and 0x00552c10 (C2 in hooks.csv)
+are fine. Five remaining callees (0x00557250, 0x005540d0, 0x00556d20,
+0x00555360, 0x005571e0) are C1. If drift-promote of 0x004c4d20 is already
+used for #3, you have budget for 1 more. Evaluate which C1 callees of #5
+have C2-quality notes. STOP if more than 2 total drift-promotes are needed
+across this session.
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-c-s5" -b "c3/batch-c-s5"
+  cd ".worktrees\c3-batch-c-s5"
+
+# PRE-FLIGHT
+  SHA-256 check + baseline build.
+
+# FILE PLACEMENT
+  All candidates here: mashedmod/src/mashed_re/HUD/FontCtx.cpp
+  New file in the HUD/ cluster. If HUD/ does not exist yet, create it and
+  add build.bat entry. If HUD/ exists but FontCtx.cpp does not, add only:
+    "%SRC%\HUD\FontCtx.cpp" ^
+
+# PER-FUNCTION WORKFLOW
+  1. Candidates #2 and #4 first (no callee gate):
+     a. 0x00552750 (FontCtx_ResetTransform):
+        - Reimpl name: FontCtx_ResetTransform
+        - Write 12 float literals to ctx matrix (identity); OR flags|=0x20003;
+          zero two globals. ctx = (&DAT_00912a84)[DAT_00912b04].
+        - Returns 1.
+        - Registry: arg_type 'read_global' (void → returns 1 always).
+     b. 0x00552a60 (FontSys_SetActiveCamera):
+        - Reimpl name: FontSys_SetActiveCamera
+        - Two paths: param_1==0 → clear + return 0; else read cam struct
+          and write 11 globals. Complex body — read note in full.
+        - Registry: arg_type 'int_scalar' (int param → returns 0 or 1).
+          Test vectors: 0 (reset path), plus valid cam-ptr values observed
+          in live game (use sentinel pattern if cam-ptr not testable).
+  2. Skip #1, document as refused.
+  3. Candidates #3 and #5: resolve callee gate first, then author.
+     b. 0x00552840 (FontCtx_SetRotation):
+        - Reimpl name: FontCtx_SetRotation
+        - Stack-alloc {0,0,1.0f} axis vector; call RwMatrix_SetRotAxisAngle
+          (0x004c4d20) with (ctx, axis, param_1, 1); zero two dirty flags.
+        - Returns 1.
+     c. 0x00552b60 (FontSys_InitSeq): only if within drift-promote budget.
+        - Reimpl name: FontSys_InitSeq
+        - 7-step sequence: zero global, call 7 callees in order.
+  4. Build after each addition.
+
+# BATCH VERIFICATION + PROMOTION + COMMIT + RETURN
+  py -3.12 re/frida/run_diff_parallel.py <verified hooks>
+  re-classify with verified RVAs only.
+  Commit: "c3: font ctx matrix batch-c s5 — N hooks, 1 deferred"
+  QUEUE-ROW: 2026-05-14  c3-batch-c-s5  rvas=0x<verified>,...  branch=c3/batch-c-s5  evidence=...  note=N FontCtx/FontSys C2->C3; 1 deferred (U-2127 callee)
+
+# STOP-AND-ASK if:
+  - Anchor mismatch, baseline build fails
+  - Total drift-promote count exceeds 2 across all 5 candidates
+  - 0x004c4d20 callee note has [UNCERTAIN] in body blocking drift-promote
+
+--------------------------------------------------------------------------------
+AGENT 6 — c3-batch-c-s6
+HUD font system state management (5 candidates)
+hud_promote_c2_b: RVAs 0x00552c10..0x00552e40
+--------------------------------------------------------------------------------
+
+You are a Sonnet 4.6 sub-agent running C3 promotion session c3-batch-c-s6
+for the Mashed RE project.
+Repo root: C:\Users\maria\Desktop\Proyectos\Mashed
+Model: Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree: .worktrees/c3-batch-c-s6/  (branch c3/batch-c-s6)
+Skills: hook-author, diff-original, re-classify
+Frida pool: shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id: c3-batch-c
+
+# MISSION
+Promote up to 5 C2 functions from the hud_promote_c2_b cluster (font system
+state: render-state init, matrix stack, scale/translate ops, flush) to C3.
+One candidate (FlushMatrix) is large and has a C0 callee — evaluate before
+attempting. Stay in your worktree.
+
+# CANDIDATES
+| # | RVA        | Ghidra name            | Analysis note                                   | Size  | Sig                    | Notes                                                          |
+|---|------------|------------------------|-------------------------------------------------|-------|------------------------|----------------------------------------------------------------|
+| 1 | 0x00552c10 | FontSys_InitRenderState| re/analysis/hud_promote_c2_b/0x00552c10.md     | 253B  | uint32_t(void)         | callees 0x004c57a0 (C1), 0x00552750 (C2 — s5); 1 drift-promote |
+| 2 | 0x00552d10 | FontMatrix_Push        | re/analysis/hud_promote_c2_b/0x00552d10.md     | 86B   | bool(void)             | callee 0x004c57a0 (C1) — same callee as #1; 1 shared drift-promote |
+| 3 | 0x00552da0 | FontCtx_SetScale       | re/analysis/hud_promote_c2_b/0x00552da0.md     | 72B   | uint32_t(float,float)  | callee 0x004c5010 (C2 in hooks.csv); gate passes — ideal       |
+| 4 | 0x00552df0 | FontCtx_SetTranslation | re/analysis/hud_promote_c2_b/0x00552df0.md     | 72B   | uint32_t(float,float)  | callee 0x004c51a0 (C2 in hooks.csv); gate passes — ideal       |
+| 5 | 0x00552e40 | FontCtx_FlushMatrix    | re/analysis/hud_promote_c2_b/0x00552e40.md     | 349B  | undefined*(void)       | callees 0x004c4600 C1, 0x004c5010 C2, 0x004c51a0 C2, 0x004c4dc0 C0/C1, 0x004c0ed0 C1; DRIFT-RISK |
+
+CALLEE GATE NOTES:
+  - Candidates #3 and #4: callees (0x004c5010, 0x004c51a0) already C2 in
+    hooks.csv — gate passes immediately. Promote first.
+  - Candidates #1 and #2 share callee 0x004c57a0 (C1). One drift-promote
+    covers both. Within budget.
+  - Candidate #5 (0x00552e40): callee 0x004c4dc0 has C0 rows in hooks.csv
+    (conflicting entries). Multiple C1 callees also present. Drift-promote
+    budget would be exhausted if #1/#2 are done. Evaluate:
+    a. After drift-promoting 0x004c57a0 for #1/#2, check if 0x004c4dc0
+       has a C2-quality note (even if filed as C0/C1).
+    b. If 0x004c4dc0 is genuinely C0 (no analysis note, no decomp): DEFER #5.
+    c. If 0x004c4dc0 is C1 with full analysis: that's your 2nd drift-promote
+       (budget exactly met); all other callees (0x004c4600, 0x004c0ed0) must
+       also be at least C1 with acceptable evidence.
+    d. STOP-AND-ASK if any callee of #5 is C0 without analysis evidence.
+
+# WORKTREE SETUP
+  cd C:\Users\maria\Desktop\Proyectos\Mashed
+  git worktree add ".worktrees/c3-batch-c-s6" -b "c3/batch-c-s6"
+  cd ".worktrees\c3-batch-c-s6"
+
+# PRE-FLIGHT
+  SHA-256 check + baseline build.
+
+# FILE PLACEMENT
+  All candidates: mashedmod/src/mashed_re/HUD/FontCtx.cpp
+  Append to the same file s5 uses (worktrees are isolated; frida-sweep
+  merges the additions). If s5 did not create FontCtx.cpp (parallel run —
+  it may not have run yet), create it yourself with the full header.
+  Add build.bat entry if not present:
+    "%SRC%\HUD\FontCtx.cpp" ^
+
+# PER-FUNCTION WORKFLOW
+  1. Candidates #3 and #4 first (no drift-promote needed):
+     a. 0x00552da0 (FontCtx_SetScale):
+        - Reimpl name: FontCtx_SetScale
+        - Stack {sx, sy, 1.0f}; call RwMatrixScale(ctx, vec, 1); zero flags.
+        - Registry: arg_type 'float2_scalar' or equivalent. Test ≥10 (sx,sy)
+          pairs covering (0,0), (1,1), (2,0.5), (-1,-1), small, large.
+     b. 0x00552df0 (FontCtx_SetTranslation):
+        - Reimpl name: FontCtx_SetTranslation
+        - Stack {x, y, 0.0f}; call RwMatrixTranslate(ctx, vec, 1); zero flags.
+        - Registry: same shape, ≥10 (x,y) pairs.
+  2. Drift-promote 0x004c57a0 (C1), then candidates #1 and #2:
+     a. 0x00552c10 (FontSys_InitRenderState):
+        - Reimpl name: FontSys_InitRenderState
+        - Long init: stack depth=0, alloc slot-0, reset transform, set 18
+          float globals, 256-short identity table loop, 31-ptr zero loop,
+          aspect ratio defaults. Read note end-to-end before authoring.
+        - Returns 1.
+     b. 0x00552d10 (FontMatrix_Push):
+        - Reimpl name: FontMatrix_Push
+        - Overflow check vs 31; increment depth; lazy-alloc new slot;
+          copy 64 bytes (16 dwords) from previous ctx to new ctx.
+        - Returns bool.
+  3. Candidate #5: evaluate callee gate as described above, then author or defer.
+     0x00552e40 (FontCtx_FlushMatrix):
+     - Reimpl name: FontCtx_FlushMatrix
+     - Two paths: dirty (recompute + cache) and clean (skip). Final compose
+       always runs. 349B — largest function in this batch.
+     - If promoted: registry arg_type 'read_global' (void → returns pointer).
+  4. Build after each addition.
+
+# BATCH VERIFICATION + PROMOTION + COMMIT + RETURN
+  py -3.12 re/frida/run_diff_parallel.py <verified hooks>
+  re-classify with verified RVAs only.
+  Commit: "c3: font sys state batch-c s6 — N hooks, evidence cited"
+  QUEUE-ROW: 2026-05-14  c3-batch-c-s6  rvas=0x<verified>,...  branch=c3/batch-c-s6  evidence=...  note=N FontCtx/FontSys state ops C2->C3[; M deferred]
+
+# STOP-AND-ASK if:
+  - Anchor mismatch, baseline build fails
+  - 0x004c4dc0 is confirmed C0 with no analysis note (defer #5, escalate)
+  - Total drift-promote count would exceed 2
+  - FontSys_InitRenderState body materially differs from the analysis note
+
+================================================================================
+FRIDA-SWEEP NOTE
+================================================================================
+
+After all 6 agents have committed and PROMOTION_QUEUE.md has been updated,
+run the frida-sweep skill from the main repo root to merge the 6 worktree
+branches. The predictable merge conflicts will be in:
+  - mashedmod/build.bat       (6 sessions each added source file lines)
+  - re/frida/hooks_registry.py (6 sessions each appended entries)
+  - hooks.csv                  (6 sessions each wrote C3 rows)
+
+frida-sweep resolves these mechanically, rebuilds the canonical .asi, and
+runs the integration diff against ALL promoted hooks in the merged build.
+Do NOT attempt to merge manually before frida-sweep.
+
+================================================================================
+END OF c3_batch_c.txt
+================================================================================

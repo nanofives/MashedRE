@@ -1,0 +1,294 @@
+================================================================================
+BATCH A — Frontend / HUD (Phase 5 #1, ship-first subsystem)
+================================================================================
+
+Six parallel sessions. Pool slots pre-assigned; do NOT call `ghidra_pool.sh
+acquire`. Each session is a self-contained prompt — paste into a fresh Claude.
+
+All sessions follow re/SESSION_RULES.md (startup ritual, per-RVA .md format,
+shutdown ritual). The scribe step is deferred to a follow-up `sweep` session
+— DO NOT scribe to master Ghidra from these parallel sessions.
+
+Sequencing: 1–5 fan out immediately. 6 (struct extraction) runs AFTER 1+3+4
+have committed because it consumes their purpose comments.
+
+Definition of "highest value" for this batch: Phase 5 #1 subsystems
+(frontend 188 rows, hud 67 rows) are the next to drive toward S-DoD.
+Sessions 1, 2, 4 are re-classify (C1→C2) promotions; sessions 3, 5 are
+first-pass sweeps; session 6 is pure documentation.
+
+
+
+================================================================================
+Session 1 — frontend_promote_menus_a  (RE-CLASSIFY session, NOT first-pass)
+================================================================================
+
+Pool slot:   Mashed_pool0 (pre-assigned; do NOT acquire)
+Model:       Sonnet 4.6 — process at most 20 RVAs in this session
+Skill used:  re-classify  (NOT the parallel-fanout first-pass workflow)
+Bucket dir:  re/analysis/frontend_promote_menus_a/
+
+# Mission
+The frontend subsystem has 188 hooks.csv rows. Most are C1 (mechanically
+mapped, purpose hinted by name/xrefs, body not read). Take the C1 rows whose
+RVA falls in 0x0042a000–0x0042bfff and promote them to C2 per
+re/CONFIDENCE.md § "C1 → C2": read the decomp end-to-end, document the shape
+of the function (args, return, what it reads/writes) with NO-GUESSING.
+
+# Inputs
+- Filter hooks.csv for `subsystem=frontend, confidence=C1` AND RVA in
+  [0x0042a000, 0x0042bfff]. Take the first 20 by RVA order.
+- For each, read the existing C1 plate in re/analysis/<earlier-bucket>/<rva>.md
+  if one exists, so you don't duplicate work.
+
+# Workflow
+1. Anchor + slot startup per re/SESSION_RULES.md § "Startup ritual" with
+   $SLOT=Mashed_pool0 (skip the `acquire` step).
+2. For each RVA in the subset:
+   a. `mcp__ghidra__function_at` + `mcp__ghidra__decomp_function` — read body.
+   b. Walk every memory access, every branch, every callee. Document field
+      offsets as raw `+0xNN`. Sign and width of every operand correct.
+   c. Write re/analysis/frontend_promote_menus_a/<rva>.md with full C2
+      format: signature, args, return, struct accesses table, callees.
+   d. Each callee must itself be at C2+ OR get an [UNCERTAIN U-NNNN] marker
+      ("semantic inferences from islands" anti-pattern).
+3. Run the re-classify skill on each row (it updates hooks.csv +
+   CHANGELOG.md + refuses promotions lacking evidence).
+4. Shutdown ritual per SESSION_RULES.md.
+5. Append a Queued row to re/SCRIBE_QUEUE.md (the sweep will run plate-set
+   to add `[C2 YYYY-MM-DD] <one-line purpose>` plate comments to master).
+
+# Output
+- 10–20 per-RVA .md files in re/analysis/frontend_promote_menus_a/
+- 10–20 hooks.csv rows promoted C1 → C2 (via re-classify)
+- One Queued row in re/SCRIBE_QUEUE.md
+- Final report: promoted count, refused count + reasons, uncertainties filed
+
+# STOP-AND-ASK if
+- A row in the subset has unresolved callees still at C0 (cannot promote;
+  ask whether to demote-and-defer or to expand subset to map callees first).
+- A row's decomp reveals it belongs to a different subsystem than `frontend`
+  (re-tag, but ask whether to also promote since the cluster definition shifts).
+- More than 3 rows in the subset hit the [UNCERTAIN] threshold (signal the
+  cluster is wider than the promotion can absorb in one session).
+
+
+
+================================================================================
+Session 2 — frontend_promote_menus_b  (mixed C0→C1 + C1→C2)
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  re-classify
+Bucket dir:  re/analysis/frontend_promote_menus_b/
+
+# Mission
+Frontend has 50 rows still at C0 (function object exists in Ghidra, no body
+analysis on file). Pull each C0 frontend row up to C1 minimum. Where the
+decomp is small and clear, take it the rest of the way to C2 in the same
+session.
+
+# Inputs
+- Filter hooks.csv for `subsystem=frontend, confidence=C0`. Take 20 by RVA
+  order (the first batch — there will be a `_c` session later for the rest).
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool1 (skip `acquire`).
+2. For each RVA:
+   a. function_at + decomp_function.
+   b. If decomp is < 200 LOC AND no [UNCERTAIN] markers: write the full C2
+      plate and promote C0 → C2 in one step (permitted; "skipping levels"
+      anti-pattern is about C0 → C3, not C0 → C2 with full evidence).
+   c. Otherwise: write a C1 plate (one-line purpose, callees enumerated, no
+      semantic claims) and promote C0 → C1.
+3. Run re-classify for each row.
+4. Shutdown + scribe-queue append.
+
+# Output
+- 20 per-RVA .md files in re/analysis/frontend_promote_menus_b/
+- 20 hooks.csv rows promoted (mix of C0→C1 and C0→C2)
+- Queued row in SCRIBE_QUEUE.md
+- Final report: promotion histogram
+
+# STOP-AND-ASK if
+- More than 5 rows fail to promote past C0 (signal: the rows are mislabeled,
+  may not be frontend at all).
+
+
+
+================================================================================
+Session 3 — frontend_unmapped_a  (FIRST-PASS C0/C1 sweep)
+================================================================================
+
+Pool slot:   Mashed_pool2 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass per re/SESSION_RULES.md
+Bucket dir:  re/analysis/frontend_unmapped_a/
+
+# Mission
+Functions exist in Ghidra (function_list returns them) in the RVA range
+0x0042c000–0x0042f000 that are NOT in hooks.csv. Map them as C1.
+
+# Inputs
+- function_list across 0x0042c000–0x0042f000.
+- hooks.csv (filter to RVAs already present in that range).
+- Subset = (function_list ∩ range) \ (hooks.csv ∩ range), capped at 20.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool2.
+2. function_list → subtract hooks.csv RVAs → take 20.
+3. For each: function_at + decomp_function + walk depth-1 callees.
+4. Per-RVA plate: re/analysis/frontend_unmapped_a/<rva>.md (front-matter
+   confidence=C1; mechanical bullets only; no semantic claims).
+5. Append C1 rows to hooks.csv.
+6. File [UNCERTAIN] markers (UNCERTAINTIES.md), stubs (STUBS.md), deferrals
+   (DEFERRED.md).
+7. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files
+- ≤20 hooks.csv adds (C1)
+- Queued row in SCRIBE_QUEUE.md (sweep will write plates + bookmarks)
+
+# STOP-AND-ASK if
+- The unmapped set in this range exceeds 40 (>2× cap) — confirm whether to
+  split into _a/_b or to narrow the range.
+
+
+
+================================================================================
+Session 4 — hud_ingame_promote_c2  (RE-CLASSIFY)
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  re-classify
+Bucket dir:  re/analysis/hud_ingame_promote_c2/
+
+# Mission
+hud_ingame currently has ~14 rows from hud_ingame + hud_ingame_d2 + d3
+sweeps, all at C1. Promote to C2 + identify the HUD state struct so the
+struct-extract session (#6) can document fields.
+
+# Inputs
+- hooks.csv rows where `subsystem=hud` AND name matches hud_ingame or its
+  d2/d3 callees. Cross-check with re/analysis/hud_ingame*/ existing notes.
+- Already-scribed RVAs:
+  0x0040dfc0,0x00403160,0x0041a3e0,0x0041b630,0x0041c0c0,0x0041c300,
+  0x0041ccc0,0x0041d870,0x0041db80,0x0041ded0,0x0041e850,0x00426ba0,
+  0x0042f500,0x0042f6a0,0x00428450,0x00450b10  (16 RVAs)
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool3.
+2. For each RVA: read decomp, document fully per C2 standard, identify the
+   HUD state struct (the global pointer all of these read from — start by
+   finding the common DAT_007xxxxx address referenced in ≥3 functions).
+3. Note the struct's offsets first-read/first-write per field (for session 6).
+4. Run re-classify per row.
+5. Shutdown + scribe-queue append.
+
+# Output
+- 16 per-RVA .md files
+- 16 hooks.csv promotions C1 → C2
+- A draft struct skeleton at re/analysis/hud_ingame_promote_c2/hud_state_draft.md
+  (will be folded into re/analysis/structs/hud_state.md by session 6).
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- The "shared HUD struct" theory fails (rows read from unrelated globals) —
+  ask whether to break hud_ingame into sub-clusters first.
+
+
+
+================================================================================
+Session 5 — hud_frontend_d5  (FIRST-PASS C0/C1 sweep, cont1 drain)
+================================================================================
+
+Pool slot:   Mashed_pool4 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/hud_frontend_d5/
+
+# Mission
+Drain D-9400..D-9406 — the 7 deferred RVAs from hud_frontend_d4 that didn't
+fit the cap of that earlier session.
+
+# Inputs
+- DEFERRED.md rows D-9400..D-9406. Extract the RVAs from the row text.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool4.
+2. Read the 7 deferred RVAs from DEFERRED.md D-9400..D-9406.
+3. Standard first-pass per re/SESSION_RULES.md § "Per-function output format":
+   one .md per RVA, C1 plate, mechanical bullets only.
+4. After analyzing the 7: walk depth-1 callees. If any are unmapped, add
+   them up to the cap of 20. Beyond that → DEFERRED as hud_frontend_d5-cont1.
+5. Mark D-9400..D-9406 as resolved in DEFERRED.md.
+6. Shutdown + scribe-queue append. Note in scribe-queue row:
+   `clears=D-9400..D-9406`.
+
+# Output
+- 7–20 per-RVA .md files
+- C1 hooks.csv rows
+- D-9400..D-9406 marked resolved
+- New D rows if cap-split occurred
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- Any of D-9400..D-9406 turns out to already be in hooks.csv (drift — handle
+  per re/SESSION_RULES.md § "drift-clear" pattern; don't silently overwrite).
+
+
+
+================================================================================
+Session 6 — frontend_struct_extract  (DOCUMENTATION ONLY)
+================================================================================
+
+Pool slot:   Mashed_pool5 (pre-assigned)
+Model:       Sonnet 4.6 — no RVA cap (documentation, not analysis)
+Skill used:  none (pure markdown authoring + Ghidra read)
+Bucket dir:  re/analysis/structs/
+
+# Mission
+The frontend subsystem reads from one or more global state structs (probably
+DAT_007xxxxx-rooted). S-DoD requirement #3 ("all shared structs touched by
+the subsystem documented field-by-field with first read/write RVA citations")
+is a blocker for frontend going S-DONE. Produce the struct doc.
+
+# Prerequisites
+This session MUST run after sessions 1, 3, 4 have committed their per-RVA
+.md files. Session 6 reads those plates to find the shared struct globals.
+
+# Inputs
+- All re/analysis/frontend_*/  and re/analysis/hud_ingame*/  per-RVA .md
+  files (those produced by sessions 1, 2, 3, 4).
+- Ghidra read access for first-write detection (search_text on DAT_xxxxxxxx
+  addresses).
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool5.
+2. Grep all the per-RVA .md files for DAT_007xxxxx references. Cluster by
+   address.
+3. For each top-N most-referenced DAT_ address (likely the struct base):
+   a. Determine the struct base.
+   b. For each `+0xNN` access seen across the .md files, document:
+      - offset, width, sign
+      - first read RVA + cite
+      - first write RVA + cite
+      - tentative semantic name (if multiple callers agree)
+      - [UNCERTAIN U-NNNN] if disagreement.
+4. Write re/analysis/structs/frontend_state.md.
+5. If multiple structs surface, write one file per struct.
+6. NO hooks.csv mutations. NO scribe-queue row needed (no master writes).
+7. Shutdown.
+
+# Output
+- re/analysis/structs/frontend_state.md (and additional struct files if any).
+- Possibly UNCERTAINTIES.md entries for fields with ambiguous semantics.
+
+# STOP-AND-ASK if
+- No DAT_ address is referenced by ≥3 frontend functions (signal: frontend
+  is more isolated than expected, or the plates aren't deep enough yet).
+- The same offset is read with different widths from different sites
+  (union-shaped struct — needs design decision).

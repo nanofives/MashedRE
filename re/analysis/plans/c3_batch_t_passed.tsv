@@ -1,0 +1,66 @@
+rva	name	subsystem	arg_type	note	callees
+004d8000	FUN_004d8000	frontend	unknown	re/analysis/intro_splash_d3/0x004d8000.md	004d8060,004d8090
+0043c5b0	FUN_0043c5b0	frontend	unknown	re/analysis/hud_frontend/0x0043c5b0.md	0040bb50,00427e00,00428140,0042aad0,0042aae0,0042b930,0042e3a0,0042e5b0,0043bf30,0043c5c2,00472c60,00473540,004739f0,005cc31c,005f6da0,005f6df8,005f72a0,005f7370,0067e9f8,0067eca4,0067ed38,0067ed40,0067ed80,007d3ff8
+0043bf30	FUN_0043bf30	frontend	unknown	re/analysis/hud_frontend/0x0043bf30.md	0042f0c0,0042fb70,0042fe90,00430120,00430b90,00431240,004314b0,00431710,004335f0,00434720,00439210,0043a610,0043aa30,0043af10,0067e7a8,0067e7b0,0067e7b8,0067e7c8,0067e7d8,0067e7e0,0067e7e8,0067e7f0,0067e7f8,0067e810,0067e818,0067e820,0067e830,0067e838
+00472dc0	FUN_00472dc0	frontend	unknown	re/analysis/hud_frontend/0x00472dc0.md	0042b8b0,0042b8c0,005cc560,005cd5a8,007d3ff8
+00473540	FUN_00473540	frontend	unknown	re/analysis/hud_frontend/0x00473540.md	0042b8b0,0042b8c0,00472c60,007d3ff8
+00493f70	sub_00493f70	frontend	unknown	re/analysis/skeleton_prep_boot_winmain_a/00493f70.md	00771a04
+004274d0	FUN_004274d0	frontend	unknown	re/analysis/skeleton_prep_game_state/004274d0.md	004274de,007719e8,007f0f60
+004274e0	FUN_004274e0	frontend	unknown	re/analysis/skeleton_prep_game_state/004274e0.md	004cbd30,004cc160,004cc230,0066d828,0067d84c,007f0f60
+00493fc0	sub_00493fc0	frontend	unknown	re/analysis/intro_splash/0x00493fc0.md	00493fd0,00495350,00771a18
+00493fd0	sub_00493fd0	frontend	unknown	re/analysis/intro_splash/0x00493fd0.md	004c75e0,005cc320,007d3ff8
+004c1be0	sub_004c1be0	frontend	unknown	re/analysis/promote_c1_high_ab3/0x004c1be0.md	00493fd0,00495350,00499710,004c7730,007e9584
+004335f0	FUN_004335f0	frontend	unknown	re/analysis/hud_frontend_d2/0x004335f0.md	
+0043a610	FUN_0043a610	frontend	unknown	re/analysis/hud_frontend_d2/0x0043a610.md	
+0043af10	FUN_0043af10	frontend	unknown	re/analysis/hud_frontend_d2/0x0043af10.md	
+00434720	FUN_00434720	frontend	unknown	re/analysis/hud_frontend_d2/0x00434720.md	
+00431240	FUN_00431240	frontend	unknown	re/analysis/hud_frontend_d2/0x00431240.md	
+004314b0	FUN_004314b0	frontend	unknown	re/analysis/hud_frontend_d2/0x004314b0.md	
+00431710	FUN_00431710	frontend	unknown	re/analysis/hud_frontend_d2/0x00431710.md	
+0043aa30	FUN_0043aa30	frontend	unknown	re/analysis/hud_frontend_d2/0x0043aa30.md	
+00430120	FUN_00430120	frontend	unknown	re/analysis/hud_frontend_d2/0x00430120.md	
+0042bcb0	FUN_0042bcb0	frontend	unknown	re/analysis/c0_promotion_frontend_a/0x0042bcb0.md	004b5750,004c5c00,005cc560,005cc724,005cd18c,005cd5a8,005cd76c,005cd770,005cd774,005cd776,005cd778,00616038,00636ac8,007d3ff8,007e96fc
+00403050	FUN_00403050	frontend	unknown	re/analysis/loading_screen/0x00403050.md	00402fb0,00428760,0042b930,00492e90,00616038,00771964,007d3ff8
+00408ad0	FUN_00408ad0	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/00408ad0.md	
+0040b290	FUN_0040b290	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/0040b290.md	0040b296,0040b2d5,0040b2f9,0040b305,0040b315,0040b31f,0040b325,0040b32b,0040b331,0040b34b,0040e340,0040e350,0040e370,0042f500,007e9de0,007e9de4,007ea1e4,007ea5e4,007ea9e4,007f0fd0,007f0fd4,007f1014,007f1030,007f1a18
+0040d590	FUN_0040d590	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/0040d590.md	00408ad0,0040b290,00422fd0,005cc568,005cc730,005ccd6c
+00431d80	FUN_00431d80	frontend	unknown	re/analysis/race_results/00431d80.md	00408ad0,0040eee0,0042f6a0,0067ea7c
+0046c700	FUN_0046c700	frontend	unknown	re/analysis/race_results/0046c700.md	0040eee0,0046c704,0046c717,0046c726
+00414120	FUN_00414120	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/00414120.md	005f2a70
+00495080	FUN_00495080	frontend	unknown	re/analysis/game_mode_cont2/0x00495080.md	00494fd0,005cc32c
+00494f30	FUN_00494f30	frontend	unknown	re/analysis/game_mode_cont2/0x00494f30.md	00493fc0,00771a18,00771a50,00771a54
+00431d90	FUN_00431d90	frontend	unknown	re/analysis/options_menu/0x00431d90.md	0067e7b0
+00431f30	FUN_00431f30	frontend	unknown	re/analysis/options_menu/0x00431f30.md	0042f0c0,0042fb70,0042fe90,00430120,00430b90,00431240,004314b0,00431710,00431d90,004335f0,00434720,00439210,0043a610,0043aa30,0043af10,0043bf30,0067e7a8,0067e7b0,0067e7b8,0067e7c8,0067e7d0,0067e7d8,0067e7e0,0067e7e8,0067e7f0,0067e7f8,0067e800,0067e808,0067e810,0067e818,0067e820,0067e828,0067e830,0067e838
+00428390	FUN_00428390	frontend	unknown	re/analysis/skeleton_prep_game_state/00428390.md	00402750,00428398,0067d960
+0040d250	FUN_0040d250	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/0040d250.md	005f2770,0063ba7c
+00401570	FUN_00401570	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/00401570.md	00636578,00636ac0
+00401da0	FUN_00401da0	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/00401da0.md	00401db4,00401e22,00401e2e,00401e3e,00401e4e,00401e5a,00401e66,00426cf0,00467210,004c1480,004c4d20,004c5010,004c51a0,005cc320,005cc340,00636ac0,00636ac4
+004189f0	thunk_FUN_00419760	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/004189f0.md	004189f4,00418a30,00418de0,00419760,005f3298,0063bf30,0063c018,0063c028,0063c04c,0063c06c,007f1a14,007f1a1c
+004c75e0	FUN_004c75e0	frontend	unknown	re/analysis/intro_splash_d2/0x004c75e0.md	00493fd0,004c77c0
+0042fa00	FUN_0042fa00	frontend	unknown	re/analysis/frontend_unmapped_a/0x0042fa00.md	0067e938,0067ea88,007f1504,007f1a14,007f1a24,007f1a34,007f1a44
+0042e8b0	FUN_0042e8b0	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042e8b0.md	
+00430670	FUN_00430670	frontend	unknown	re/analysis/hud_frontend_d5/0x00430670.md	00413f90,0043067f,004306a9,004306b5,004306d3,005f2b10,0067e9fc,0067ea94,0067ea98,0067f17c,007f1a1c
+004a2b60	FUN_004a2b60	frontend	unknown	re/analysis/promote_c1_high_ab3/0x004a2b60.md	004a2b6f,004a2b73,004a2b97,004a4ea8,004a504f
+00497b60	FUN_00497b60	frontend	unknown	re/analysis/cluster_0049_first_pass/00497b60.md	00497d31,00499720,00499740,004a2b60,00615fe8,007719e8,00773118,007e95c4,007e96c8
+0041e080	FUN_0041e080	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/0041e080.md	0063d798,0063d79c,0063d7a0,0063d7b0,0063d7b4,0063d7b8,0063d7c4,0063d7cc,0063d7d0,0063d7d4,0063d7d8,0063d7dc
+004224d0	FUN_004224d0	frontend	unknown	re/analysis/frontend_c1_to_c2_s1/004224d0.md	004224e0,004224ec,004b6520,005f6154,006403e8,006412e8,006412ec,006412f0,006412f4,006412f8,006412fc,00641300,00641304,00641308,0064130c,00641310,00641314,0064131c,00641320
+00422aa0	FUN_00422aa0	frontend	unknown	re/analysis/frontend_c1_to_c2_s2/0x00422aa0.md	
+00423040	FUN_00423040	frontend	unknown	re/analysis/frontend_c1_to_c2_s2/0x00423040.md	
+00423cc0	FUN_00423cc0	frontend	unknown	re/analysis/frontend_c1_to_c2_s2/0x00423cc0.md	
+00423d50	FUN_00423d50	frontend	unknown	re/analysis/frontend_c1_to_c2_s2/0x00423d50.md	
+00423dd0	FUN_00423dd0	frontend	unknown	re/analysis/frontend_c1_to_c2_s2/0x00423dd0.md	
+00423e60	FUN_00423e60	frontend	unknown	re/analysis/frontend_c1_to_c2_s2/0x00423e60.md	
+00424270	FUN_00424270	frontend	unknown	re/analysis/frontend_c1_to_c2_s3/FUN_00424270.md	
+00424920	FUN_00424920	frontend	unknown	re/analysis/frontend_c1_to_c2_s3/FUN_00424920.md	
+00425b90	FUN_00425b90	frontend	unknown	re/analysis/frontend_c1_to_c2_s3/FUN_00425b90.md	
+00426b40	FUN_00426b40	frontend	unknown	re/analysis/frontend_c1_to_c2_s4/FUN_00426b40.md	
+00426cb0	FUN_00426cb0	frontend	unknown	re/analysis/frontend_c1_to_c2_s4/FUN_00426cb0.md	
+00426d90	FUN_00426d90	frontend	unknown	re/analysis/frontend_c1_to_c2_s5/FUN_00426d90.md	
+0042a640	FUN_0042a640	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042a640.md	
+0042bde0	FUN_0042bde0	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042bde0.md	
+0042bfb0	FUN_0042bfb0	frontend	unknown	re/analysis/frontend_c1_to_c2_s6/FUN_0042bfb0.md	
+0042fab0	FUN_0042fab0	frontend	unknown	re/analysis/bucket_0041dc30/0x0042fab0.md	0040bb90
+00431b70	FUN_00431b70	frontend	unknown	re/analysis/bucket_0041dc30/0x00431b70.md	007f0f10
+00432ad0	FUN_00432ad0	frontend	unknown	re/analysis/bucket_0041dc30/0x00432ad0.md	0042aae0,0067eca8
+0043aee0	FUN_0043aee0	frontend	unknown	re/analysis/bucket_0041dc30/0x0043aee0.md	004307a0,0067ed6c,0067f17c,007f0a40
+004893d0	FUN_004893d0	frontend	unknown	re/analysis/bucket_0041dc30/0x004893d0.md	

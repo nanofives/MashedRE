@@ -1,0 +1,269 @@
+rva	name	subsystem	reason
+00550390	sub_00550390	render	callee-gate: 00551510=C1
+004c3040	sub_004c3040	render	inline [UNCERTAIN U-0091] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+00493640	FUN_00493640	render	callee-gate: 004e5d30=C1,0052d8e0=C1,0052e310=C1,005336d0=C1,00534920=C1,00534a80=C1,00538600=C1,0053d0b0=C1,0053eaa0=C1,00543e50=C1,00544d20=C1,00546530=C1,00549640=C1,005515a0=C1,005578a0=C1,00561ee0=C1,0057c270=C1
+004c32b0	FUN_004c32b0	render	callee-gate: 004d8560=C1
+00472380	FUN_00472380	render	callee-gate: 004e7d40=C1
+00499710	FUN_00499710	render	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in ## mechanical description)
+004c7a70	_rwDeviceSystemFn	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c8740	FUN_004c8740	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c8800	FUN_004c8800	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c8c70	FUN_004c8c70	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+00409710	FUN_00409710	render	callee-gate: 004095a0=C1
+00412050	FUN_00412050	render	callee-gate: 0047cdc0=C1,0047fad0=C1
+004cf7d0	FUN_004cf7d0	render	callee-gate: 004e1b60=C1
+004b3d80	FUN_004b3d80	render	callee-gate: 0054f8d0=C1
+0040b090	sub_0040b090	render	callee-gate: 0040ad40=C1,0040ad90=C1,0040ae30=C1,0040aef0=C1,004292c0=C1,004292d0=C1,0046d320=C1,0046d360=C1,0055dec0=C1
+00476df0	FUN_00476df0	render	inline bare [UNCERTAIN] (heading=## open items)
+0048ebc0	FUN_0048ebc0	render	callee-gate: 00490500=C1
+0048ebf0	FUN_0048ebf0	render	callee-gate: 00472650=C1
+0048f290	FUN_0048f290	render	callee-gate: 00472650=C1
+0048f420	FUN_0048f420	render	callee-gate: 00472650=C1
+0048fe70	FUN_0048fe70	render	callee-gate: 00538c80=C1
+004c9cd0	RESET_FN	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c9ad0	FUN_004c9ad0	render	callee-gate: 004ccde0=C1,004dc8e0=C1,004e08b0=C1
+00480340	FUN_00480340	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+00495280	FUN_00495280	render	callee-gate: 00402b70=C1
+004c1b10	FUN_004c1b10	render	callee-gate: 0047c0f0=C1
+00410b30	sub_00410b30	render	callee-gate: 0047b9e0=C1
+00433f40	FUN_00433f40	render	signature-unsupported: 5-arg shape
+004cb8a0	FUN_004cb8a0	render	live-state-side-effect: Direct3D vtable on live device (in ## decompilation summary)
+004d5570	FUN_004d5570	render	live-state-side-effect: Direct3D vtable on live device (in ## role)
+004d53b0	FUN_004d53b0	render	live-state-side-effect: Direct3D vtable on live device (in ## role)
+004c4d20	RwMatrix_SetRotAxisAngle	render	signature-unsupported: fastcall ECX/EDX args
+004d5bc0	FUN_004d5bc0	render	live-state-side-effect: Direct3D vtable on live device (in ## global data references)
+004cff00	FUN_004cff00	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cb330	FUN_004cb330	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004491e0	SkyDomeUpdatePos	render	callee-gate: 004840d0=C1,004c15c0=C1
+004914b0	RainRender	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+00491070	RainColorInit	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004270f0	CourseRenderFrame	render	callee-gate: 0041e8d0=C1,0041e8e0=C1,0041e9f0=C1,0041ea00=C1,004292c0=C1,004292d0=C1,00472ad0=C1,004e5660=C1,0055dec0=C1
+004924e0	FogColorGetter	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+0042c010	FUN_0042c010	render	callee-gate: 00472b10=C1
+00420050	PerPlayerViewportRender	render	callee-gate: 004e4900=C1
+00425e40	FUN_00425e40	render	callee-gate: 004e6100=C1
+00475e50	FUN_00475e50	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00475d30	FUN_00475d30	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00477810	FUN_00477810	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00477a10	FUN_00477a10	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+0048fd70	FUN_0048fd70	render	signature-unsupported: 5-arg shape
+00429e10	FUN_00429e10	render	callee-gate: 0040dc80=C1,0040e4a0=C1,0041e140=C1,00429660=C1,00443080=C1
+0042c960	CameraTransitionStateMachine	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+0042a5d0	FUN_0042a5d0	render	callee-gate: 004b3bf0=C1
+0042a740	FUN_0042a740	render	callee-gate: 00558df0=C1
+004b5030	FUN_004b5030	render	callee-gate: 00478660=C1,004e5c70=C1
+0045e2a0	FUN_0045e2a0	render	callee-gate: 00546380=C1
+0045e160	FUN_0045e160	render	callee-gate: 00546380=C1
+004c51a0	RwMatrixTranslate	render	inline bare [UNCERTAIN] (heading=## d-4360 partial — lab_00554940 im2d per-glyph vertex emission)
+004b3c60	FUN_004b3c60	render	callee-gate: 004e99b0=C1
+004b3cc0	FUN_004b3cc0	render	callee-gate: 00545260=C1
+004b3de0	FUN_004b3de0	render	callee-gate: 0052daf0=C1
+00474f30	FUN_00474f30	render	callee-gate: 00552020=C1
+00487280	FUN_00487280	render	callee-gate: 0045c030=C1,0045c110=C1,004726f0=C1,004c3df0=C1,004c4dc0=C1,00538c80=C1,00547230=C1
+004b53b0	FUN_004b53b0	render	callee-gate: 004b4550=C1
+004c5bc0	FUN_004c5bc0	render	live-state-side-effect: _unlink on live path (in ## why c2)
+004cee90	FUN_004cee90	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cefd0	FUN_004cefd0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004b42c0	FUN_004b42c0	render	callee-gate: 004c39b0=C1,004c4dc0=C1
+004c4470	sub_004c4470 (rwID_MATRIXMODULE ctor)	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004c4430	sub_004c4430 (rwID_MATRIXMODULE dtor)	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004c07b0	sub_004c07b0 (rwID_FRAMEMODULE ctor)	render	inline bare [UNCERTAIN] (heading=## evidence for c2)
+004c0830	sub_004c0830 (rwID_FRAMEMODULE dtor)	render	inline bare [UNCERTAIN] (heading=## evidence for c2)
+0045b990	FUN_0045b990	render	callee-gate: 00458b10=C1,0045a130=C1
+0042d420	FUN_0042d420	render	callee-gate: 004c0b30=C1
+004c4eb0	RwMatrixInvert_CofactorPath	render	inline bare [UNCERTAIN] (heading=## algorithm)
+004ce790	FUN_004ce790	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf160	FUN_004cf160	render	inline bare [UNCERTAIN] (heading=## why c2)
+004c3d60	FUN_004c3d60	render	callee-gate: 00534870=C1
+00401f10	FUN_00401f10	render	callee-gate: 00412130=C1
+00403910	FUN_00403910	render	callee-gate: 004938e0=C1
+00403fa0	FUN_00403fa0	render	signature-unsupported: in_EAX arg
+00404650	FUN_00404650	render	callee-gate: 0041f290=C1
+004072e0	FUN_004072e0	render	callee-gate: 00406130=C1
+0040bde0	FUN_0040bde0	render	callee-gate: 00412100=C1,00413f50=C1,00421560=C1,00457610=C1
+00413a00	FUN_00413a00	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00413a40	FUN_00413a40	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004189c0	FUN_004189c0	render	callee-gate: 00419530=C1
+004219c0	FUN_004219c0	render	callee-gate: 00421720=C1
+00422570	FUN_00422570	render	callee-gate: 00472500=C1
+0046d400	FUN_0046d400	render	callee-gate: 00538c80=C1
+004c90a0	FUN_004c90a0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004d40d0	FUN_004d40d0	render	callee-gate: 004e1710=C1,004e2030=C1
+00426640	FUN_00426640	render	callee-gate: 0041e950=C1,0041ea70=C1
+00426810	sub_00426810	render	callee-gate: 004c39b0=C1
+00426ab0	sub_00426ab0	render	callee-gate: 00471ec0=C1,0047c160=C1
+00426e10	FUN_00426e10	render	callee-gate: 004715a0=C1,00478660=C1,00479330=C1,0047a020=C1,0047a0f0=C1,0047c0b0=C1,0047c0f0=C1
+00404fa0	FUN_00404fa0	render	callee-gate: 00482ae0=C1,00532a60=C1,00546e70=C1
+004773f0	FUN_004773f0	render	signature-unsupported: in_EAX arg
+004a4ff4	write_multi_char	render	signature-unsupported: in_EAX arg
+004a5018	write_string	render	signature-unsupported: in_EAX arg
+004dcaa0	FUN_004dcaa0	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c3910	FUN_004c3910	render	inline bare [UNCERTAIN] (heading=(preamble))
+004c3dc0	FUN_004c3dc0	render	inline bare [UNCERTAIN] (heading=(preamble))
+004ccba0	FUN_004ccba0	render	live-state-side-effect: _unlink on live path (in ## decompilation (verbatim, verified 2026-05-13))
+0048aa20	FUN_0048aa20	render	callee-gate: 0044e0a0=C1
+00487020	FUN_00487020	render	callee-gate: 004219f0=C1,0045bfe0=C1,0045c350=C1
+004c1a70	FUN_004c1a70	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004c5a60	FUN_004c5a60	render	inline bare [UNCERTAIN] (heading=## why c2)
+004caea0	FUN_004caea0	render	inline [UNCERTAIN U-3720] not in UNCERTAINTIES.md (heading=## why c2)
+004019d0	FUN_004019d0	render	callee-gate: 00412130=C1,0046d4a0=C1,004b4080=C1
+00401fe0	FUN_00401fe0	render	callee-gate: 004e7fa0=C1,004e8030=C1,004e8640=C1,004e8910=C1,004e8940=C1,004e8a10=C1,004e8c70=C1
+00402240	FUN_00402240	render	callee-gate: 004c0b30=C1,004c1040=C1,004e67b0=C1,004e68a0=C1,004e6d80=C1,004e6f80=C1,004e7e30=C1,004e8ea0=C1
+004022a0	FUN_004022a0	render	callee-gate: 004e7fa0=C1,004e8030=C1,004e8640=C1,004e8910=C1,004e8940=C1,004e8a10=C1,004e8c70=C1
+00402590	FUN_00402590	render	callee-gate: 004c0b30=C1,004c1040=C1,004e67b0=C1,004e68a0=C1,004e6d80=C1,004e6f80=C1,004e7e30=C1,004e8ea0=C1
+004034a0	FUN_004034a0	render	inline bare [UNCERTAIN] (heading=## body summary)
+004036a0	FUN_004036a0	render	signature-unsupported: in_EAX arg
+00483a70	FUN_00483a70	render	callee-gate: 00482ae0=C1
+00443210	FUN_00443210	render	inline bare [UNCERTAIN] (heading=## body summary)
+00448770	FUN_00448770	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+00448820	FUN_00448820	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+00448880	FUN_00448880	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+00448cb0	FUN_00448cb0	render	callee-gate: 004c15c0=C1
+00448dc0	FUN_00448dc0	render	callee-gate: 00442410=C1,00442420=C1,004c15c0=C1
+00448e20	FUN_00448e20	render	callee-gate: 004c15c0=C1
+00448ef0	FUN_00448ef0	render	callee-gate: 00488390=C1
+00490000	FUN_00490000	render	callee-gate: 00490500=C1,004e8090=C1
+00490020	FUN_00490020	render	callee-gate: 0041f290=C1,00420e00=C1,004588c0=C1,00472650=C1,00472690=C1,004e8090=C1
+00490e70	FUN_00490e70	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00490fb0	FUN_00490fb0	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004910c0	FUN_004910c0	render	callee-gate: 00472650=C1,004c39b0=C1
+00491340	FUN_00491340	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00491b20	FUN_00491b20	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00491c00	FUN_00491c00	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00491e50	FUN_00491e50	render	signature-unsupported: in_EAX arg
+00491f00	FUN_00491f00	render	callee-gate: 00535700=C1,00535910=C1
+00492170	FUN_00492170	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004921b0	FUN_004921b0	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00467110	FUN_00467110	render	callee-gate: 004670a0=C1,004c0b30=C1
+004d0290	FUN_004d0290	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d0660	FUN_004d0660	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d07b0	FUN_004d07b0	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d0d00	FUN_004d0d00	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d1020	FUN_004d1020	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d1640	FUN_004d1640	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d1d20	FUN_004d1d20	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d3db0	FUN_004d3db0	render	callee-gate: 004e1780=C1,004e17e0=C1,004e1e70=C1
+004d41e0	FUN_004d41e0	render	live-state-side-effect: remove() on live path (in ## callees)
+004d4380	FUN_004d4380	render	callee-gate: 004e2090=C1
+004d55b0	FUN_004d55b0	render	live-state-side-effect: Direct3D vtable on live device (in ## role)
+004d6910	FUN_004d6910	render	inline bare [UNCERTAIN] (heading=## case table (0x004d6910))
+004935a0	FUN_004935a0	render	callee-gate: 0052cb00=C1
+00493c60	FUN_00493c60	render	signature-unsupported: fastcall ECX/EDX args
+00494820	FUN_00494820	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+00494b65	FUN_00494b65	render	signature-unsupported: fastcall ECX/EDX args
+00494f40	FUN_00494f40	render	signature-unsupported: fastcall ECX/EDX args
+00494fd0	FUN_00494fd0	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+00496940	FUN_00496940	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004969a0	FUN_004969a0	render	signature-unsupported: in_EAX arg
+00496c10	FUN_00496c10	render	callee-gate: 004938e0=C1
+00496ec0	FUN_00496ec0	render	callee-gate: 004c4dc0=C1
+00499d90	FUN_00499d90	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+00487e20	thunk_FUN_00535700	render	callee-gate: 00535700=C1
+00487e30	thunk_FUN_00535910	render	callee-gate: 00535910=C1
+004e66d0	RpClumpForAllAtomics	render	live-state-side-effect: _unlink on live path (in ## mechanical description (decomp transcript))
+004df9b0	FUN_004df9b0	render	callee-gate: 004df8a0=C1
+004dfa10	FUN_004dfa10	render	callee-gate: 004df750=C1
+004dfa70	FUN_004dfa70	render	callee-gate: 004df750=C1
+004dfaa0	FUN_004dfaa0	render	callee-gate: 004df750=C1
+004dfb60	FUN_004dfb60	render	callee-gate: 004dee20=C1
+004dfbc0	FUN_004dfbc0	render	callee-gate: 004dee40=C1
+004e02d0	FUN_004e02d0	render	callee-gate: 004df120=C1,004df750=C1
+00474d80	FUN_00474d80	render	callee-gate: 004568d0=C1,0045ae80=C1
+00474de0	FUN_00474de0	render	callee-gate: 004671d0=C1
+00475210	FUN_00475210	render	callee-gate: 0045bfe0=C1
+004752f0	FUN_004752f0	render	callee-gate: 00482ae0=C1,00532a60=C1,00546e70=C1
+00475830	FUN_00475830	render	callee-gate: 00557ec0=C1,00558030=C1,00558100=C1
+00475a00	FUN_00475a00	render	callee-gate: 004770c0=C1
+00475f30	FUN_00475f30	render	signature-unsupported: in_EAX arg
+00475f90	FUN_00475f90	render	callee-gate: 004c39b0=C1
+00476320	FUN_00476320	render	callee-gate: 004762c0=C1,004c39b0=C1
+00476390	FUN_00476390	render	callee-gate: 00476cb0=C1,004770c0=C1
+00476650	FUN_00476650	render	signature-unsupported: 5-arg shape
+00476710	FUN_00476710	render	callee-gate: 004764f0=C1
+004767c0	FUN_004767c0	render	callee-gate: 004764f0=C1
+004768c0	FUN_004768c0	render	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00477450	FUN_00477450	render	signature-unsupported: fastcall ECX/EDX args
+00477490	FUN_00477490	render	signature-unsupported: fastcall ECX/EDX args
+00477500	FUN_00477500	render	signature-unsupported: in_EAX arg
+00477580	FUN_00477580	render	callee-gate: 004e6920=C1,004e7e30=C1
+004775b0	FUN_004775b0	render	callee-gate: 004c0b30=C1,004e69a0=C1,004e7e30=C1,005493d0=C1
+00477870	FUN_00477870	render	callee-gate: 004e6e00=C1,005495b0=C1
+00477e40	FUN_00477e40	render	callee-gate: 00477b40=C1
+00477e60	FUN_00477e60	render	callee-gate: 004c39b0=C1
+00477f00	FUN_00477f00	render	callee-gate: 004c39b0=C1
+00478cd0	FUN_00478cd0	render	callee-gate: 00484580=C1
+00479100	FUN_00479100	render	callee-gate: 004b4cd0=C1,00559040=C1
+00479fb0	FUN_00479fb0	render	callee-gate: 004e6920=C1,004e7e30=C1
+0047a130	FUN_0047a130	render	callee-gate: 0047b9b0=C1
+0047acd0	FUN_0047acd0	render	inline bare [UNCERTAIN] (heading=## key globals / offsets)
+0047ad00	FUN_0047ad00	render	inline bare [UNCERTAIN] (heading=## key globals / offsets)
+004b4a80	FUN_004b4a80	render	callee-gate: 00538c80=C1
+004b4c80	FUN_004b4c80	render	callee-gate: 00538c80=C1
+004b4e20	FUN_004b4e20	render	callee-gate: 0053c5d0=C1
+004b5080	FUN_004b5080	render	callee-gate: 004c39b0=C1
+004b51d0	FUN_004b51d0	render	callee-gate: 004b5190=C1
+004b5260	FUN_004b5260	render	callee-gate: 004b4130=C1,004b4140=C1
+004b52f0	FUN_004b52f0	render	signature-unsupported: fastcall ECX/EDX args
+004b5360	thunk_FUN_005507b0	render	live-state-side-effect: fopen — live file I/O (in ## mechanical description)
+004b5380	thunk_FUN_00550950	render	callee-gate: 00550950=C1
+004b5390	thunk_FUN_005509b0	render	callee-gate: 005509b0=C1
+004b6590	thunk_FUN_004b67a0	render	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004b6710	FUN_004b6710	render	signature-unsupported: in_EAX arg
+004b6770	FUN_004b6770	render	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004b67a0	FUN_004b67a0	render	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004b6940	FUN_004b6940	render	callee-gate: 00550790=C1,005507a0=C1
+004b6b00	FUN_004b6b00	render	signature-unsupported: fastcall ECX/EDX args
+004b6b20	FUN_004b6b20	render	signature-unsupported: fastcall ECX/EDX args
+004b6b90	FUN_004b6b90	render	signature-unsupported: fastcall ECX/EDX args
+004b7fd0	FUN_004b7fd0	render	callee-gate: 004b7ff0=C1
+004b8080	FUN_004b8080	render	callee-gate: 004b7ff0=C1
+004c5da0	FUN_004c5da0	render	signature-unsupported: 5-arg shape
+004c79f0	FUN_004c79f0	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c7a20	FUN_004c7a20	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c9fb0	FUN_004c9fb0	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004cafd0	FUN_004cafd0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb070	FUN_004cb070	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb0b0	FUN_004cb0b0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb130	FUN_004cb130	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb190	FUN_004cb190	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb2c0	FUN_004cb2c0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb2f0	FUN_004cb2f0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb4c0	FUN_004cb4c0	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cb840	FUN_004cb840	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cbb00	FUN_004cbb00	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cbb20	FUN_004cbb20	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cbbd0	FUN_004cbbd0	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cd430	FUN_004cd430	render	callee-gate: 004e12b0=C1,004e14a0=C1
+004cdd00	FUN_004cdd00	render	live-state-side-effect: remove() on live path (in ## mechanical description)
+004cde20	FUN_004cde20	render	live-state-side-effect: _unlink on live path (in ## mechanical description)
+004ce480	FUN_004ce480	render	callee-gate: 004e1a90=C1
+004ce970	FUN_004ce970	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004ceba0	FUN_004ceba0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cecb0	FUN_004cecb0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf2b0	FUN_004cf2b0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf4a0	FUN_004cf4a0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf5a0	FUN_004cf5a0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004d8eb0	RwResourcesDrainArena	render	live-state-side-effect: _unlink on live path (in ## mechanical description (confirmed from decomp))
+004dba60	FUN_004dba60	render	callee-gate: 004dcbb0=C1
+004f0810	FUN_004f0810	render	callee-gate: 004d8560=C1
+004f0940	FUN_004f0940	render	callee-gate: 004e1ac0=C1
+004f13d0	FUN_004f13d0	render	callee-gate: 004dc5b0=C1,004ebc30=C1
+004f1870	FUN_004f1870	render	callee-gate: 004e55d0=C1
+004f1b00	FUN_004f1b00	render	callee-gate: 004dc5b0=C1,004e55d0=C1
+004f3b60	FUN_004f3b60	render	callee-gate: 004e8030=C1
+004f3ce0	FUN_004f3ce0	render	callee-gate: 004e8400=C1
+004f3d40	FUN_004f3d40	render	callee-gate: 004e8440=C1
+004f3e90	FUN_004f3e90	render	callee-gate: 004e8030=C1,004e8120=C1
+004f4340	FUN_004f4340	render	callee-gate: 004eb9d0=C1
+004f43f0	FUN_004f43f0	render	callee-gate: 004eb3c0=C1,004eb9d0=C1
+004f4510	FUN_004f4510	render	callee-gate: 004e4bd0=C1
+004f8580	FUN_004f8580	render	callee-gate: 004e8f50=C1
+004fb130	FUN_004fb130	render	callee-gate: 004c4dc0=C1
+004fb3e0	FUN_004fb3e0	render	callee-gate: 004c4dc0=C1
+004fb4d0	FUN_004fb4d0	render	callee-gate: 004c4dc0=C1
+004b4150	FUN_004b4150	render	callee-gate: 005493d0=C1,00549610=C1,00549620=C1
+004b41f0	FUN_004b41f0	render	callee-gate: 004e5c30=C1
+004b4230	FUN_004b4230	render	callee-gate: 004e5bf0=C1
+004b47c0	FUN_004b47c0	render	callee-gate: 0052e0e0=C1,00533ec0=C1
+004b47e0	FUN_004b47e0	render	callee-gate: 00532a60=C1,00532b80=C1
+004b48e0	FUN_004b48e0	render	callee-gate: 004c0b30=C1,004c15c0=C1

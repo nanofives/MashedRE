@@ -1,0 +1,310 @@
+================================================================================
+c3_batch_h — C2→C3 fanout (UPSIZED for 1M-context Opus 4.7 workers)
+Generated: 2026-05-17 by promote-c3-batch skill (re-planned for Opus)
+================================================================================
+
+CONTEXT
+-------
+- Subsystems: frontend + hud + util (expanded to support upsized session count)
+- N sessions: 6
+- K per session: 12 (vs standard 5; vs hard-cap 8 — UPSIZE OVERRIDE for Opus 1M)
+- Complexity profile: mixed (leaves + near-leaves + small MULTI)
+- Total target promotions: 72
+- Worker model: Opus 4.7 (claude-opus-4-7[1m])
+- End-of-batch sweep: invoke `frida-sweep` from main (Opus 4.7)
+
+UPSIZING RATIONALE + CAVEAT
+---------------------------
+Standard skill caps (5 RVAs/session, Sonnet 4.6) were tuned around the
+build/diff/re-classify pipeline cost — not context. The skill explicitly
+recommends Sonnet over Opus for C2→C3 work as "mechanical, ~4× cheaper,
+no measurable quality gain on routine cases".
+
+**User override active.** Opus 4.7 1M is being used for two reasons:
+1. Per-session cap goes from 5 → 12 (2.4× throughput per session). Reasonable
+   given 1M context easily holds 12×15K = 180K of per-RVA work + 100K
+   build/diff results + 50K re-classify transactions = 330K used, 670K
+   headroom. Cap is set by the surrounding tooling (build failure cascades,
+   Frida pool contention at diff time), NOT by context window.
+2. Current frontend C2 backlog is post-drainage — the easy pure-leaves were
+   already promoted in c3_batch_a..g. Remaining candidates are marginal/MULTI
+   with shallower call-graph clarity; Opus' judgment helps avoid bad
+   diff-vector authoring on the edge cases.
+
+If a session hits build failures cascading (one bad hook breaks the build
+for the rest of the session's hooks), report back so the cap can be dialed
+to 8-10 next batch.
+
+CANDIDATE-POOL SNAPSHOT (2026-05-17, post-frida-sweep-20260517-0424)
+--------------------------------------------------------------------
+- frontend drift-clean C2:  38 (subset: 5 pure-leaves ≤200 bytes; 27 small MULTI; 6 mid-size)
+- hud      drift-clean C2:  20 (mixed; ~10 small, ~10 mid)
+- util     drift-clean C2:  27 (mixed; ~14 small, ~13 mid)
+
+Total available drift-clean: 85. Batch consumes 72 (84% of pool).
+
+KNOWN DRIFT — verify before authoring
+-------------------------------------
+hooks.csv still has unresolved dup rows from c3_batch_a..g cleanup:
+- 0042b930: 2 rows (C2/mapped + C1/mapped). May actually be C3 elsewhere.
+- 0042b960: was in c3/ma3-frida-s4 drift-repair; still C2/mapped only.
+- Several rows in promote_c2_frontend_menus_b without `size_bytes:` frontmatter.
+
+Per-session worker MUST run `grep "^<rva>," hooks.csv` first for each
+candidate. If ANY C3+ row exists, skip + report in PROMOTION_QUEUE.md note.
+
+================================================================================
+Session 1 — frontend_c3_h1  (C2→C3, 12-function batch, leaves + tiny)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 12 RVAs (this session: 12)
+Worktree:    .worktrees/c3-batch-h-s1/  (branch c3/batch-h-s1)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh
+Batch id:    c3-batch-h
+
+# Mission
+Promote 12 small frontend C2 functions: all pure leaves OR size ≤ 50 bytes
+with MULTI callees. This is the lowest-risk tier. Cluster file:
+`mashedmod/src/mashed_re/Frontend/MenuLeafs_h1.cpp`.
+
+# Candidates (12)
+| RVA        | Size | Leaf?  | Analysis note                                                   | Signature hint                       |
+|------------|------|--------|-----------------------------------------------------------------|--------------------------------------|
+| 0x0042b930 |    5 | LEAF   | re/analysis/frontend_promote_menus_a/0x0042b930.md              | undefined4 (void) — DAT_0067ecb0 read |
+| 0x00430b30 |   45 | LEAF   | re/analysis/hud_frontend_d4/0x00430b30.md                       | inspect                              |
+| 0x0042ac50 |   48 | LEAF   | re/analysis/frontend_promote_menus_a/0x0042ac50.md              | int __fastcall (int) + implicit EAX  |
+| 0x0042f020 |   98 | LEAF   | re/analysis/frontend_c0_promote/0x0042f020.md                   | undefined4 __fastcall + EAX vehicle  |
+| 0x0042aa00 |  168 | LEAF   | re/analysis/frontend_promote_menus_a/0x0042aa00.md              | void (int param_1)                   |
+| 0x00494f30 |   15 | MULTI  | re/analysis/game_mode_cont2/0x00494f30.md                       | inspect callees for C2+ gate         |
+| 0x0040bb50 |   20 | MULTI  | re/analysis/hud_frontend/0x0040bb50.md                          | inspect callees                      |
+| 0x0042fe30 |   20 | MULTI  | re/analysis/promote_c2_frontend_menus/0x0042fe30.md             | undefined4 (void)                    |
+| 0x0042fe50 |   20 | MULTI  | re/analysis/promote_c2_frontend_menus/0x0042fe50.md             | uint (void)                          |
+| 0x00495080 |   37 | MULTI  | re/analysis/game_mode_cont2/0x00495080.md                       | inspect callees                      |
+| 0x0042a940 |   61 | MULTI  | re/analysis/frontend_promote_menus_a/0x0042a940.md              | undefined4 (undefined4)              |
+| 0x00431d00 |   97 | MULTI  | re/analysis/game_mode_cont2/0x00431d00.md                       | inspect                              |
+
+# Pre-flight checklist
+1. Worktree binding:  `git worktree list | grep c3-batch-h-s1`
+2. Anchor check:      `sha256sum original/MASHED.exe` matches version anchor
+3. Build baseline:    `mashedmod\build.bat` succeeds on clean worktree
+4. Drift check:       `grep "^<rva>," hooks.csv` for each candidate; skip if C3+
+5. Caller-at-C2+ gate: each note's `callers_noted` checked
+
+# Per-function workflow
+Standard hook-author + diff-original cycle. Author all 12 reimpls FIRST,
+then run a single batched build, then a single `run_diff_parallel.py`
+invocation covering all 12. Don't iterate one-at-a-time — Opus 1M can
+hold the full context.
+
+# Batch verification
+scripts/frida_pool.sh cleanup
+py -3.12 re/frida/run_diff_parallel.py <12 names>
+All GREEN required. If 1-2 RED, debug those only; if 3+ RED, partial-
+complete and report.
+
+# Promotion transaction
+re-classify with all 12 RVAs in one call. Drift cleanup inline.
+
+# Commit & queue
+git commit -m "c3: Frontend leaves+tiny h1 — 12 hooks"
+Append PROMOTION_QUEUE.md row with branch=c3/batch-h-s1 + evidence csvs.
+
+================================================================================
+Session 2 — frontend_c3_h2  (C2→C3, 12-function batch, mid-size frontend)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 12 RVAs (this session: 12)
+Worktree:    .worktrees/c3-batch-h-s2/  (branch c3/batch-h-s2)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-h
+
+# Mission
+Promote 12 mid-size frontend C2 functions (size 100-230 bytes). All MULTI
+but with shallow call graphs into the menu/score/getter cluster which is
+already heavily C2+. Cluster file: `mashedmod/src/mashed_re/Frontend/MenuMid_h2.cpp`.
+
+# Candidates (12)
+| RVA        | Size | Leaf? | Analysis note                                                | Notes                                  |
+|------------|------|-------|--------------------------------------------------------------|----------------------------------------|
+| 0x0042d290 |  110 | MULTI | re/analysis/promote_c2_frontend_menus/0x0042d290.md          | void (int, undefined4, ...)            |
+| 0x004c5c00 |  114 | ?     | re/analysis/sprite_gate_c3/0x004c5c00.md                     | sprite-gate cluster — verify signature |
+| 0x0042b960 |  115 | MULTI | re/analysis/frontend_promote_menus_a/0x0042b960.md           | was in s4 drift-repair; re-verify ALL  |
+| 0x004307a0 |  116 | MULTI | re/analysis/frontend_c0_promote/0x004307a0.md                | undefined4 (void)                      |
+| 0x00403050 |  124 | MULTI | re/analysis/loading_screen/0x00403050.md                     | loading_screen — inspect signature     |
+| 0x00429aa0 |  134 | MULTI | re/analysis/timer_d2_cont1/0x00429aa0.md                     | timer cluster                          |
+| 0x0042ed70 |  136 | MULTI | re/analysis/promote_c2_frontend_menus/0x0042ed70.md          | void (uint sprite_id, float x, float y, ...) — may need new harness arg_type |
+| 0x0042aa00 |  168 | LEAF  | re/analysis/frontend_promote_menus_a/0x0042aa00.md           | (moved here from s1 to balance load — REPLACE one of s1's if conflict) |
+| 0x004cc160 |  178 | MULTI | re/analysis/promote_c2_rw_engine_init/004cc160.md            | RW engine init — boot-adjacent         |
+| 0x0042bcb0 |  222 | MULTI | re/analysis/c0_promotion_frontend_a/0x0042bcb0.md            | inspect callee tree                    |
+| 0x0042e3a0 |  230 | MULTI | re/analysis/promote_c2_frontend_menus/0x0042e3a0.md          | dispatcher — 4 callees, verify all C2+ |
+| 0x00430b90 |    ? | ?     | re/analysis/hud_frontend_d2/0x00430b90.md                    | inspect frontmatter (no size_bytes)    |
+
+# STOP-AND-ASK if 0x0042ed70's signature requires a new harness arg_type.
+The last batch added 3 new arg_types; flag and skip rather than add a 4th.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 3 — frontend_c3_h3  (C2→C3, 12-function batch, frontend_promote_menus_b cluster)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 12 RVAs (this session: 12)
+Worktree:    .worktrees/c3-batch-h-s3/  (branch c3/batch-h-s3)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-h
+
+# Mission
+Promote 12 frontend C2 functions, primarily from the frontend_promote_menus_b
+cluster + remaining d2/dispatcher rows. **Notes for this cluster lack the
+`size_bytes:` frontmatter field** — Opus reader must check each note's body
+to score viability. Cluster file: `mashedmod/src/mashed_re/Frontend/MenuB_h3.cpp`.
+
+# Candidates (12)
+| RVA        | Analysis note                                                | Notes                                |
+|------------|--------------------------------------------------------------|--------------------------------------|
+| 0x0040b460 | re/analysis/frontend_promote_menus_b/0040b460.md             | inspect frontmatter + body           |
+| 0x00427ad0 | re/analysis/frontend_promote_menus_b/00427ad0.md             | inspect frontmatter + body           |
+| 0x004282a0 | re/analysis/frontend_promote_menus_b/004282a0.md             | inspect frontmatter + body           |
+| 0x00428320 | re/analysis/frontend_promote_menus_b/00428320.md             | inspect frontmatter + body           |
+| 0x00429a30 | re/analysis/frontend_promote_menus_b/00429a30.md             | inspect frontmatter + body           |
+| 0x0042f8d0 | re/analysis/frontend_promote_menus_b/0042f8d0.md             | inspect frontmatter + body           |
+| 0x00439210 | re/analysis/hud_frontend_d2/0x00439210.md                    | inspect frontmatter + body           |
+| 0x00431b80 | re/analysis/game_mode_cont1/0x00431b80.md                    | 369 bytes — only if pure-leaf tractable |
+| 0x004cc230 | re/analysis/promote_c2_rw_engine_init/004cc230.md            | 439 bytes — RW engine, boot-adjacent |
+| 0x0042fe90 | re/analysis/promote_c2_frontend_menus/0x0042fe90.md          | 650 bytes MULTI — Opus tier          |
+| 0x0042fb70 | re/analysis/promote_c2_frontend_menus/0x0042fb70.md          | 700 bytes MULTI — Opus tier          |
+| 0x0042e5b0 | re/analysis/promote_c2_frontend_menus/0x0042e5b0.md          | 755 bytes MULTI — Opus tier          |
+
+# This session intentionally bundles the LARGE MULTI candidates that Opus
+can handle but Sonnet would struggle with. STOP-AND-ASK if > 5 of these
+need callee drift-promotes — split the session.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 4 — hud_c3_h4  (C2→C3, 12-function batch, HUD)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 12 RVAs (this session: 12)
+Worktree:    .worktrees/c3-batch-h-s4/  (branch c3/batch-h-s4)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-h
+
+# Mission
+Promote 12 HUD-subsystem C2 functions. Mixed: ~3 with size_bytes
+frontmatter, ~9 without (inspect bodies). Cluster file:
+`mashedmod/src/mashed_re/HUD/HudBatch_h4.cpp`.
+
+# Candidates (12)
+| RVA        | Size | Leaf? | Analysis note                                                | Notes                                |
+|------------|------|-------|--------------------------------------------------------------|--------------------------------------|
+| 0x0041db80 |    9 | LEAF  | re/analysis/hud_ingame_promote_c2/0x0041db80.md              | tiny leaf, easy promote              |
+| 0x0041d870 |   28 | MULTI | re/analysis/hud_ingame_promote_c2/0x0041d870.md              | inspect callees                      |
+| 0x0041ded0 |   29 | MULTI | re/analysis/hud_ingame_promote_c2/0x0041ded0.md              | inspect callees                      |
+| 0x005554d0 |  120 | LEAF  | re/analysis/promote_c2_hud_ingame/0x005554d0.md              | mid-size leaf                        |
+| 0x00403160 |  229 | MULTI | re/analysis/hud_ingame_promote_c2/0x00403160.md              | inspect call tree                    |
+| 0x0041bc50 |    ? | ?     | re/analysis/hud_ingame_d2/0x0041bc50.md                      | inspect frontmatter                  |
+| 0x0041c2d0 |    ? | ?     | re/analysis/hud_ingame_d2/0x0041c2d0.md                      | inspect frontmatter                  |
+| 0x00427620 |    ? | ?     | re/analysis/hud_promote_c2_b/0x00427620.md                   | inspect frontmatter                  |
+| 0x00427680 |    ? | ?     | re/analysis/hud_promote_c2_b/0x00427680.md                   | inspect frontmatter                  |
+| 0x00427780 |    ? | ?     | re/analysis/hud_promote_c2_b/0x00427780.md                   | inspect frontmatter                  |
+| 0x00427840 |    ? | ?     | re/analysis/hud_promote_c2_b/0x00427840.md                   | inspect frontmatter                  |
+| 0x004c57a0 |    ? | ?     | re/analysis/font_text_d2/font_text_d2-20260503.md            | font/text — verify scope             |
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 5 — util_c3_h5  (C2→C3, 12-function batch, util small)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 12 RVAs (this session: 12)
+Worktree:    .worktrees/c3-batch-h-s5/  (branch c3/batch-h-s5)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-h
+
+# Mission
+Promote 12 util-subsystem C2 functions, size ≤ 80 bytes (small leaves and
+near-leaves). Cluster file: `mashedmod/src/mashed_re/Util/UtilBatch_h5.cpp`.
+
+# Candidates (12)
+| RVA        | Size | Leaf?  | Analysis note                                                | Notes                          |
+|------------|------|--------|--------------------------------------------------------------|--------------------------------|
+| 0x00413f90 |    5 | LEAF   | re/analysis/timer_d3/0x00413f90.md                           | tiny leaf                      |
+| 0x0042c2f0 |    9 | LEAF   | re/analysis/game_state_d2/0x0042c2f0.md                      | tiny leaf                      |
+| 0x004af31a |   19 | MULTI  | re/analysis/exception_filter/0x004af31a.md                   | inspect callees                |
+| 0x00426c30 |   22 | INLINE | re/analysis/timer_d3_cont1_b/0x00426c30.md                   | inline callees in note         |
+| 0x00426c70 |   22 | INLINE | re/analysis/timer_d3_cont1_b/0x00426c70.md                   | inline callees                 |
+| 0x004098b0 |   27 | LEAF   | re/analysis/util_c0_promote/0x004098b0.md                    | pure leaf                      |
+| 0x00426c10 |   27 | INLINE | re/analysis/timer_d3_cont1_b/0x00426c10.md                   | inline callees                 |
+| 0x00422120 |   28 | INLINE | re/analysis/timer_d3_cont1_b/0x00422120.md                   | inline callees                 |
+| 0x00409930 |   30 | LEAF   | re/analysis/util_c0_promote/0x00409930.md                    | pure leaf                      |
+| 0x00409900 |   43 | MULTI  | re/analysis/util_c0_promote/0x00409900.md                    | inspect callees                |
+| 0x0041f1e0 |   50 | MULTI  | re/analysis/util_c0_promote/0x0041f1e0.md                    | inspect callees                |
+| 0x0041cb80 |   53 | INLINE | re/analysis/timer_d3_cont1_b/0x0041cb80.md                   | inline callees                 |
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 6 — util_c3_h6  (C2→C3, 12-function batch, util mid)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — UPSIZED cap 12 RVAs (this session: 12)
+Worktree:    .worktrees/c3-batch-h-s6/  (branch c3/batch-h-s6)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-h
+
+# Mission
+Promote 12 util-subsystem C2 functions, size 60-300 bytes (mid-size). Some
+are MULTI with deeper call graphs — Opus 1M is the right tool. Cluster file:
+`mashedmod/src/mashed_re/Util/UtilMid_h6.cpp`.
+
+# Candidates (12)
+| RVA        | Size  | Leaf?  | Analysis note                                                | Notes                                |
+|------------|-------|--------|--------------------------------------------------------------|--------------------------------------|
+| 0x00442c80 |    62 | MULTI  | re/analysis/util_c0_promote/0x00442c80.md                    | inspect callees                      |
+| 0x004950b0 |    80 | MULTI  | re/analysis/timer/0x004950b0.md                              | timer utility                        |
+| 0x004b302f |   104 | MULTI  | re/analysis/promote_c2_txd_loader/004b302f.md                | TXD loader util                      |
+| 0x00429aa0 |   134 | MULTI  | re/analysis/timer_d2_cont1/0x00429aa0.md                     | (REMOVE if also in s2 — drift check) |
+| 0x0041d730 |   225 | INLINE | re/analysis/timer_d3_cont1_b/0x0041d730.md                   | inline callees                       |
+| 0x00492d30 |   265 | MULTI  | re/analysis/util_c0_promote/0x00492d30.md                    | inspect call tree                    |
+| 0x004295a0 |  ~124 | MULTI  | re/analysis/util_c0_promote/0x004295a0.md                    | tilde-size — verify in note          |
+| 0x00442440 |  ~390 | MULTI  | re/analysis/util_c0_promote/0x00442440.md                    | tilde-size — Opus tier               |
+| 0x0043c000 |     ? | ?      | re/analysis/game_mode_cont1/notes.md                         | inspect (shared notes file)          |
+| 0x00475a60 |     ? | ?      | re/analysis/timer_d3_cont1_b/0x00475a60.md                   | inspect frontmatter                  |
+| 0x00410860 |   591 | MULTI  | re/analysis/timer_d3_cont1_a/0x00410860.md                   | large MULTI — Opus tier              |
+| 0x00412cf0 |   312 | MULTI  | re/analysis/util_c0_promote/0x00412cf0.md                    | mid-large MULTI                      |
+
+# STOP-AND-ASK if ≥ 3 candidates need callee drift-promote — split session.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+END OF BATCH c3_batch_h (Opus version)
+================================================================================
+
+Total: 72 candidates across 6 sessions. Expected yield ~70-80% given
+drift in hooks.csv, harness arg_type gaps, and marginal MULTI candidates.
+Sessions that refuse > 4 of 12 candidates should partial-complete and
+report shortfall in PROMOTION_QUEUE row note.
+
+Post-batch: invoke `frida-sweep` (Opus 4.7) from main worktree to merge
+all 6 branches and run the integration diff. Expect heavier sweep work
+than usual — 72 hooks integration-diffing simultaneously.
+
+Subsystem balance after batch lands:
+- frontend C2 backlog: 38 → ~2 (essentially drained)
+- hud C2 backlog:      20 → ~8 (still room for ~1 more batch)
+- util C2 backlog:     27 → ~3 (essentially drained)
+
+Subsequent C3 batches likely need to:
+1. Expand subsystem coverage (audio, save, input, vehicle, render)
+2. OR wait for batch_s (Ghidra-side fanout) to surface fresh C2 from C1 pool.
+
+Wall time estimate: ~2-3 hours human-attended parallel work for 6 Opus
+sessions. Build + diff time dominates over Opus inference time.

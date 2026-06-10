@@ -1,0 +1,311 @@
+================================================================================
+BATCH E — Drain the oldest large dependency clusters
+================================================================================
+
+Six parallel sessions. Pool slots pre-assigned; do NOT call `ghidra_pool.sh
+acquire`. Each session is a self-contained prompt — paste into a fresh Claude.
+
+Run AFTER Batch D's scribe sweep has drained SCRIBE_QUEUE.md.
+
+All sessions follow re/SESSION_RULES.md (startup ritual, per-RVA .md format,
+shutdown ritual). The scribe step is deferred to a follow-up `sweep` session
+— DO NOT scribe to master Ghidra from these parallel sessions.
+
+Definition of "highest value" for this batch: the four oldest/largest open
+dependency clusters in DEFERRED.md are blocking subsystem progress.
+Draining them frees rw_engine_init (render init chain, 76 deferred total),
+timer_d3 (util layer, 76 deferred total), game_mode_cont2 (29 frontend
+deferred), and audio_rws_loader-cont1 (21 audio deferred). Each session
+resolves ~20 D-rows AND adds 20 fresh C1 plates.
+
+Sequencing: 25 & 26 partition the same parent cluster (rw_engine) — they
+MUST coordinate D-row claims (see "D-row partition" in each). 27 & 28 do
+the same for timer_d3-cont1. 29, 30 independent.
+
+
+
+================================================================================
+Session 25 — rw_engine_init_d2_cont1_a  (FIRST-PASS, large drain)
+================================================================================
+
+Pool slot:   Mashed_pool0 (pre-assigned; do NOT acquire)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass per re/SESSION_RULES.md
+Bucket dir:  re/analysis/rw_engine_init_d2_cont1_a/
+
+# Mission
+DEFERRED.md has 52 open rows tagged `rw_engine_init_d2-cont1` (D-0520+,
+filed 2026-05-02 from rw_engine_init_d2-20260502-1905's cap=18 split).
+These are depth-2 callees of RW_INIT_FN that have been deferred for ~10
+days. This session drains the FIRST 20 by D-row ID.
+
+# Inputs
+- DEFERRED.md rows tagged `rw_engine_init_d2-cont1`. Grep the file, sort
+  by D-ID ascending, take the first 20.
+- The parent context: re/analysis/rw_engine_init/ and
+  re/analysis/rw_engine_init_d2/ existing plates.
+
+# D-row partition  ⚠ COORDINATE WITH SESSION 26
+You take the FIRST 20 by ascending D-ID. Session 26 takes the NEXT 20.
+The remaining 12 → DEFERRED as `rw_engine_init_d2-cont2`.
+
+# Workflow
+1. Anchor + slot startup per re/SESSION_RULES.md § "Startup ritual" with
+   $SLOT=Mashed_pool0 (skip the `acquire` step).
+2. Grep DEFERRED.md for `rw_engine_init_d2-cont1`. Sort by D-ID. Take 1..20.
+   Drift-skip any RVA already in hooks.csv (the cluster has been deferred
+   ~10 days; some may have been mapped via later sweeps).
+3. For each RVA:
+   a. `mcp__ghidra__function_at` + `mcp__ghidra__decomp_function` — read body.
+   b. Per-RVA plate per re/SESSION_RULES.md § "Per-function output format":
+      one .md per RVA, C1 plate, mechanical bullets only.
+   c. Note in each plate which parent function called it (from the D-row
+      description); this preserves the RW_INIT_FN call-chain context.
+4. File [UNCERTAIN] markers, stubs, deferrals per standard protocol.
+5. Mark the 20 drained D-rows as resolved in DEFERRED.md.
+6. Shutdown ritual per SESSION_RULES.md.
+7. Append a Queued row to re/SCRIBE_QUEUE.md noting `clears=<the 20 D-IDs>`.
+
+# Output
+- 20 per-RVA .md files in re/analysis/rw_engine_init_d2_cont1_a/
+- 20 C1 hooks.csv rows (subsystem=render)
+- 20 D-rows resolved in DEFERRED.md
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- More than 5 of the first 20 RVAs are already in hooks.csv (drift this
+  large signals a possible bulk-already-mapped state — confirm before
+  silently drift-skipping).
+- An RVA decompiles into something that is NOT RW init code (signal that
+  the parent's call-graph has been retyped since 2026-05-02; verify before
+  promoting).
+
+
+
+================================================================================
+Session 26 — rw_engine_init_d2_cont1_b  (FIRST-PASS, large drain, partner of 25)
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/rw_engine_init_d2_cont1_b/
+
+# Mission
+Partner of Session 25. Drain D-rows 21..40 of `rw_engine_init_d2-cont1`
+(ascending D-ID order). Remaining 12 → re-deferred as
+`rw_engine_init_d2-cont2`.
+
+# Inputs
+- DEFERRED.md rows tagged `rw_engine_init_d2-cont1`. Sort by D-ID. Skip the
+  first 20 (Session 25's range). Take the next 20.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool1.
+2. Build the candidate set per the D-row partition above. Drift-skip any
+   RVA already in hooks.csv.
+3. Per-RVA C1 plates per re/SESSION_RULES.md format.
+4. After analyzing the 20: any remaining D-rows in the cluster get re-filed
+   as `rw_engine_init_d2-cont2` (new D-IDs from the next available range).
+5. Mark the 20 drained D-rows as resolved in DEFERRED.md.
+6. Shutdown + scribe-queue append. Note `clears=<the 20 D-IDs>` and
+   `re-deferred=<count> as rw_engine_init_d2-cont2`.
+
+# Output
+- 20 per-RVA .md files in re/analysis/rw_engine_init_d2_cont1_b/
+- 20 C1 hooks.csv rows (subsystem=render)
+- 20 D-rows resolved, ~12 re-filed as cont2
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- Session 25's D-row claim overlaps with this session's (D-ID partition
+  ambiguity — confirm exact ranges before adding plates).
+
+
+
+================================================================================
+Session 27 — timer_d3_cont1_a  (FIRST-PASS, large drain)
+================================================================================
+
+Pool slot:   Mashed_pool2 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/timer_d3_cont1_a/
+
+# Mission
+DEFERRED.md has 60 open rows tagged `timer_d3-cont1` (D-10300..D-10359),
+filed 2026-05-08 when timer_d3-20260508-1838 cap-split 76 callees. These
+are util-layer leaves (small functions called from the timer/IO surface).
+Drain the FIRST 20.
+
+# Inputs
+- DEFERRED.md rows D-10300..D-10319 specifically (first 20 of cont1).
+- Existing timer_d3 plates in re/analysis/timer_d3_20260508-1838/ for
+  parent-context.
+
+# D-row partition  ⚠ COORDINATE WITH SESSION 28
+You take D-10300..D-10319. Session 28 takes D-10320..D-10339. The
+remaining D-10340..D-10359 → re-defer as `timer_d3-cont1-tail` or roll
+into the existing `timer_d3-cont2` cluster (D-10360..D-10375 already).
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool2.
+2. Pull RVAs from D-10300..D-10319.
+3. Per-RVA C1 plates per re/SESSION_RULES.md format. Many of these are
+   small leaves — keep plates mechanical (signature, callers, callees, no
+   inferred semantics).
+4. File [UNCERTAIN] / stubs / deferrals per standard protocol.
+5. Mark D-10300..D-10319 as resolved.
+6. Shutdown + scribe-queue append. Note `clears=D-10300..D-10319`.
+
+# Output
+- 20 per-RVA .md files
+- 20 C1 hooks.csv rows (subsystem=util — re-tag if the decomp reveals a
+  different subsystem)
+- D-10300..D-10319 resolved
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- More than 5 of the 20 RVAs are already in hooks.csv (large drift signal).
+- The callee tree from these leaves explodes (small leaves shouldn't have
+  many callees — if they do, it's not a leaf).
+
+
+
+================================================================================
+Session 28 — timer_d3_cont1_b  (FIRST-PASS, partner of 27)
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/timer_d3_cont1_b/
+
+# Mission
+Partner of Session 27. Drain D-10320..D-10339 from `timer_d3-cont1`.
+
+# Inputs
+- DEFERRED.md rows D-10320..D-10339.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool3.
+2. Pull RVAs from D-10320..D-10339. Drift-skip any in hooks.csv.
+3. Per-RVA C1 plates per standard format.
+4. Mark D-10320..D-10339 as resolved.
+5. Shutdown + scribe-queue append. Note `clears=D-10320..D-10339`.
+
+# Output
+- 20 per-RVA .md files
+- 20 C1 hooks.csv rows
+- D-10320..D-10339 resolved
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- The remaining D-10340..D-10359 (20 rows) should roll into existing
+  `timer_d3-cont2` (16 rows already at D-10360..D-10375) or get a new
+  cont3 bucket. Default: roll into cont2 unless the count exceeds 36.
+
+
+
+================================================================================
+Session 29 — game_mode_cont2  (FIRST-PASS C0/C1 sweep)
+================================================================================
+
+Pool slot:   Mashed_pool4 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/game_mode_cont2/
+
+# Mission
+DEFERRED.md has 29 open rows tagged `game_mode_cont2` (D-4840..D-4868),
+all depth-2 callees of FUN_0043dfd0 (game_mode dispatcher). All marked
+`subsystem=frontend` except D-4868 (`util`). Drain up to 20.
+
+# Inputs
+- DEFERRED.md rows D-4840..D-4868. Sort by D-ID. Take the first 20.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool4.
+2. Pull RVAs. Drift-skip any already in hooks.csv.
+3. Per-RVA C1 plates per standard format. Note in each plate that the
+   parent is FUN_0043dfd0 (game_mode dispatch).
+4. The cluster's existence implies FUN_0043dfd0 is a switch-table on game
+   mode — if the dispatch table is visible from the parent, note its
+   layout in REPORT.md (modes → handler RVAs).
+5. Mark D-4840..D-4859 (first 20) resolved. Remaining 9 → re-defer as
+   `game_mode_cont3` or roll into the next batch.
+6. Shutdown + scribe-queue append.
+
+# Output
+- 20 per-RVA .md files in re/analysis/game_mode_cont2/
+- 20 C1 hooks.csv rows
+- D-4840..D-4859 resolved; 9 re-deferred
+- A REPORT.md noting the game_mode dispatch table layout if observable
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- D-4868 (the parent caller) blocks 9+ child rows because it gates the
+  semantic context — promote D-4868 first (do it in this session) rather
+  than 20 of the leaves without knowing the parent.
+
+
+
+================================================================================
+Session 30 — audio_rws_loader_cont1  (FIRST-PASS, drain audio depth-2)
+================================================================================
+
+Pool slot:   Mashed_pool5 (pre-assigned)
+Model:       Sonnet 4.6 — hard cap 20 RVAs
+Skill used:  parallel-fanout first-pass
+Bucket dir:  re/analysis/audio_rws_loader_cont1/
+
+# Mission
+DEFERRED.md has 21 open rows tagged `audio_rws_loader-cont1` (D-0340+).
+Audio is a Phase 5 #3 subsystem and audio_rws_loader sits below the SFX
+dispatch (already drained). Drain the cluster.
+
+# Inputs
+- DEFERRED.md rows tagged `audio_rws_loader-cont1`. Sort by D-ID.
+- Existing audio_rws_loader plates in re/analysis/audio_rws_loader/.
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool5.
+2. Pull RVAs (up to 20). Drift-skip any already in hooks.csv.
+3. Per-RVA C1 plates per standard format.
+4. The cluster is depth-2 of FUN_004cbd30 — note that linkage in each
+   plate. If the RWS file format magic / header layout becomes visible,
+   draft re/analysis/structs/rws_header.md (initial sketch from the
+   write/read sites in these callees).
+5. Mark drained D-rows as resolved. Any overflow → re-defer as cont2.
+6. Shutdown + scribe-queue append.
+
+# Output
+- ≤20 per-RVA .md files in re/analysis/audio_rws_loader_cont1/
+- ≤20 C1 hooks.csv rows (subsystem=audio)
+- Drained D-rows resolved
+- Possibly re/analysis/structs/rws_header.md (initial draft)
+- Queued row in SCRIBE_QUEUE.md
+
+# STOP-AND-ASK if
+- The RWS header offsets seen across callees disagree (signal: there's
+  more than one RWS variant — note both, do not pick one).
+- More than 3 callees turn out to be already at C2 elsewhere (drift signal
+  — verify D-row freshness before continuing).
+
+
+
+================================================================================
+END OF BATCH E
+================================================================================
+
+Expected end state (incremental to Batch D):
+
+  Subsystem    Delta                 Notes
+  ----------   -------------------   ---------------------------------
+  render       +40 maps              rw_engine_init_d2-cont1 nearly cleared
+  util         +40 maps              timer_d3-cont1 mostly cleared
+  frontend     +20 maps              game_mode_cont2 mostly cleared
+  audio        +20 maps              audio_rws_loader-cont1 cleared
+
+Plus: ~100 open D-rows resolved (oldest cluster cleanup).
+Plus: 1 initial rws_header.md struct draft (if RWS layout surfaces).

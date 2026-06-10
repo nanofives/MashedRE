@@ -1,0 +1,325 @@
+==============================================================================
+c3_batch_k.txt  -  Mashed C2->C3 promotion batch  -  2026-05-20
+==============================================================================
+PHASE 5 OPENER — Frontend + HUD + Util C2->C3 promotion
+
+Mode:           C2->C3 promotion via Frida bit-identical diff
+Sessions:       4   (skill default is 6; reduced because filter v4 yielded 21
+                    viable candidates from a frontend+hud+util C2 pool of 79;
+                    1 candidate deferred to c3_batch_l — 0x004299d0
+                    TimeRecord::WriteTrackBest, util)
+Per-session:    5 candidates (skill default K=5; hard cap 8)
+Total:          20 C2->C3 promotions
+Subsystems:     frontend (11), hud (5), util (4)
+Anchor binary:  original/MASHED.exe.unpatched SHA-256
+                BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+Filter:         c3_filter_v4 on hooks.csv 2026-05-20
+                (40 frontend C2 + 19 hud C2 + 20 util C2 = 79 initial;
+                21 passed all filters; 58 deferred — 6 inline_uncertain,
+                43 callee_gate, 9 signature_unsupported)
+Pool:           Frida pool slots (NOT Ghidra). Acquired per-diff via
+                scripts/frida_pool.sh; sessions don't pre-allocate.
+Sweep:          After all 4 sessions land their queue rows, invoke /frida-sweep
+                from main worktree to merge branches + run integration diff
+                + commit.
+
+Phase 5 opener context:
+- Phase 1 closed 2026-05-20 (all 4 exit criteria met).
+- Frontend is ROADMAP Phase 5 #1 (most isolated subsystem); 64 hooks already
+  landed in mashed_re/Frontend/, 57 of 303 game-code rows at C3+ (18.8%);
+  S-DoD floor is 90% C3+, so ~216 more promotions needed across multiple
+  batches.
+- This batch is the OPENER. Expect realistic yield ~12-15 GREEN of 20
+  attempted (per c3_batch_i/j historical refusal rates on first-touch
+  candidates).
+
+Prerequisite struct docs (authored 2026-05-20 in parallel with this batch):
+  re/analysis/structs/per_player_score.md           (READ if promoting score
+                                                      accessor bank — not in
+                                                      this batch but useful
+                                                      context)
+  re/analysis/structs/per_player_team_binding.md   (READ for s1 0x0042b960
+                                                      which reads team_id at
+                                                      DAT_007f1a14+slot*0x10)
+  re/analysis/structs/hud_glyph_slot.md             (READ for s4 0x00428450
+                                                      which writes glyph slot
+                                                      fields at DAT_00898ac0)
+
+Read this BEFORE starting any session:
+- .claude/skills/promote-c3-batch/SKILL.md  (the skill that generated this)
+- .claude/skills/hook-author/SKILL.md       (per-RVA reimpl shape)
+- .claude/skills/diff-original/SKILL.md     (Frida diff workflow)
+- .claude/skills/re-classify/SKILL.md       (transactional promotion to C3)
+- re/CONFIDENCE.md                          (C2->C3 evidence rubric)
+- re/frida/hooks_registry.py                (extend with new entries)
+- re/frida/diff_template.js                 (supported arg_types; do NOT
+                                              invent new ones in this batch)
+
+Library bands already calibrated (should NOT overlap any candidate here);
+see scripts/bulk_add_library_residue.py for the 13-band list.
+
+==============================================================================
+Session 1 — frontend_menu_cluster_k1  (C2->C3, 5 hooks)
+==============================================================================
+
+Model:        Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:     .worktrees/c3-batch-k-s1/  (branch c3/batch-k-s1)
+Skills:       hook-author, diff-original, re-classify
+Frida pool:   shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id:     c3-batch-k
+
+# Mission
+Promote 5 C2 frontend-menu functions to C3. All sit in the menu/alpha/page-tab
+cluster (post-batch-z-s6 mapping). Authored reimpls land in
+`mashedmod/src/mashed_re/Frontend/MenuCluster_k1.cpp` (one file for the
+cluster).
+
+# Candidates (read each analysis note BEFORE authoring)
+| RVA        | Ghidra name  | Analysis note                                       | Notes |
+|------------|--------------|-----------------------------------------------------|-------|
+| 0x0042aa00 | FUN_0042aa00 | re/analysis/frontend_promote_menus_a/0x0042aa00.md  | menu state read (4 globals at DAT_0067e9f8/ed40/ed74/ed84) |
+| 0x0042b960 | FUN_0042b960 | re/analysis/frontend_promote_menus_a/0x0042b960.md  | depends on per_player_team_binding struct (DAT_007f1a14 stride 0x10) |
+| 0x0042ed70 | FUN_0042ed70 | re/analysis/promote_c2_frontend_menus/0x0042ed70.md | 4 callees (0x00427ff0, 0x004282a0, 0x0042b8b0, 0x0042b8c0) all C2+ |
+| 0x004307a0 | FUN_004307a0 | re/analysis/frontend_c0_promote/0x004307a0.md       | 8 callees (read-only state queries + 3 const lookups) |
+| 0x00428320 | FUN_00428320 | re/analysis/frontend_promote_menus_b/00428320.md    | calls UTF16 widen-copy (0x00427840 C4) + 0x005554d0 |
+
+# Pre-flight
+```bash
+cd C:/Users/maria/Desktop/Proyectos/Mashed
+git worktree add ".worktrees/c3-batch-k-s1" -b "c3/batch-k-s1"
+cd ".worktrees/c3-batch-k-s1"
+sha256sum original/MASHED.exe.unpatched   # MUST equal BDCAE0...EFD3C0E
+mashedmod\build.bat                       # baseline build must succeed
+```
+
+# Per-function workflow (repeat for each RVA, then commit ONCE at end)
+1. Read the analysis note end-to-end (path from the candidates table).
+2. Confirm all `callees_depth1` are at C2+ in hooks.csv (filter v4 already
+   validated this; double-check at session start — drift can creep in).
+3. Confirm the signature has a matching arg_type in
+   `re/frida/diff_template.js`. If not: STOP and queue a note in
+   `re/PROMOTION_QUEUE.md` asking for a harness extension; DO NOT invent.
+4. Author the reimpl in
+   `mashedmod/src/mashed_re/Frontend/MenuCluster_k1.cpp`:
+     - One C++ function per RVA, all in the same file.
+     - Cite the RVA + a few disasm bytes in the comment header.
+     - `extern "C" __declspec(dllexport) <ret> __cdecl <Name>(<args>) { ... }`
+     - `RH_ScopedInstall(<Name>, 0x00<rva>);`
+5. Wire build:
+     - Append `"%SRC%\Frontend\MenuCluster_k1.cpp" ^` to mashedmod\build.bat
+       (one append for the whole file, not per RVA).
+     - Append a hooks_registry.py entry per RVA: arg_type matches diff_template.js;
+       >=10 test vectors covering 0/MAX/sign-bit/alternating bits.
+6. Build:
+     `cmd /c mashedmod\build.bat > log\build_batch-k-s1.txt 2>&1`
+     Halt on failure.
+
+# Batch verification (run ONCE after all 5 hooks authored)
+1. `scripts/frida_pool.sh cleanup`
+2. `py -3.12 re/frida/run_diff_parallel.py <name1> <name2> <name3> <name4> <name5>`
+3. Expect all GREEN with 100% bit-identical match counts. If any RED:
+   debug the failing hook (NOT the others), re-build, re-run.
+4. `cat log/diff_<name>.csv` for each — confirm match column all True.
+
+# Promotion transaction (run /re-classify ONCE per batch, not per RVA)
+Invoke `/re-classify` with all 5 RVAs in one call. The skill applies tracker
+mutations transactionally:
+- hooks.csv: dedupe stale rows; write fresh C3 row per RVA.
+- STUBS.md: resolve any stubs the new hooks close.
+- CHANGELOG.md: one line per RVA.
+- Analysis note frontmatter: bump confidence to C3.
+
+# Commit policy
+- ONE commit at end of session (NOT per function).
+- Message: `c3: frontend batch-k session 1 — 5 menu-cluster hooks, evidence cited`
+
+# Queue row (append to re/PROMOTION_QUEUE.md § Queued)
+```
+2026-05-20  c3-batch-k-s1  rvas=0x0042aa00,0x0042b960,0x0042ed70,0x004307a0,0x00428320  branch=c3/batch-k-s1  evidence=log/diff_<name1>.csv;log/diff_<name2>.csv;log/diff_<name3>.csv;log/diff_<name4>.csv;log/diff_<name5>.csv  note=5 frontend menu/alpha/page-tab cluster C2->C3; Frontend/MenuCluster_k1.cpp
+```
+
+# STOP-AND-ASK if
+- Anchor mismatch on MASHED.exe.
+- Baseline build fails on clean worktree (escalate — main is broken).
+- Any candidate's analysis note describes a function very different from
+  what hooks.csv says (drift; flag + skip rather than promoting).
+- Any candidate's signature requires a new arg_type not yet in
+  diff_template.js (defer; queue harness extension).
+- Refusals >= 3 in the session (halt + report; better to land 2 GREEN
+  than to push and fail mid-batch).
+
+==============================================================================
+Session 2 — frontend_sprite_cluster_k2  (C2->C3, 5 hooks)
+==============================================================================
+
+Model:        Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:     .worktrees/c3-batch-k-s2/  (branch c3/batch-k-s2)
+
+# Mission
+Promote 5 C2 frontend-sprite/leaf functions to C3. Authored reimpls land in
+`mashedmod/src/mashed_re/Frontend/SpriteCluster_k2.cpp`.
+
+# Candidates
+| RVA        | Ghidra name  | Analysis note                                  | Notes |
+|------------|--------------|------------------------------------------------|-------|
+| 0x004c5c00 | FUN_004c5c00 | re/analysis/sprite_gate_c3/0x004c5c00.md       | sprite-gate pure leaf — PROMOTE FIRST so 0x0040bb50 sees it C3 |
+| 0x0040bb50 | FUN_0040bb50 | re/analysis/hud_frontend/0x0040bb50.md         | callee FUN_004c5c00 (same session — order matters) |
+| 0x00430b90 | FUN_00430b90 | re/analysis/hud_frontend_d2/0x00430b90.md      | pure leaf |
+| 0x00439210 | FUN_00439210 | re/analysis/hud_frontend_d2/0x00439210.md      | calls 0x004391b0 (recently promoted C0->C1 by promote_c1_strays.py 2026-05-20) |
+| 0x0040e480 | FUN_0040e480 | re/analysis/c0_promotion_frontend_a/0x0040e480.md | calls 0x005f2770 |
+
+ORDER NOTE: promote 0x004c5c00 FIRST (it's a pure leaf), then 0x0040bb50
+which depends on it. The other three are independent — author in any
+order.
+
+# Pre-flight
+```bash
+cd C:/Users/maria/Desktop/Proyectos/Mashed
+git worktree add ".worktrees/c3-batch-k-s2" -b "c3/batch-k-s2"
+cd ".worktrees/c3-batch-k-s2"
+sha256sum original/MASHED.exe.unpatched
+mashedmod\build.bat
+```
+
+(Per-function workflow, Batch verification, Promotion transaction, Commit
+policy, and STOP-AND-ASK rules same as Session 1; reimpl file is
+`Frontend/SpriteCluster_k2.cpp` instead.)
+
+# Queue row
+```
+2026-05-20  c3-batch-k-s2  rvas=0x004c5c00,0x0040bb50,0x00430b90,0x00439210,0x0040e480  branch=c3/batch-k-s2  evidence=...  note=5 frontend sprite-leaf cluster C2->C3; Frontend/SpriteCluster_k2.cpp; promoted 0x004c5c00 first to satisfy 0x0040bb50 callee-gate
+```
+
+==============================================================================
+Session 3 — frontend_c0_leaves_plus_util_k3  (C2->C3, 5 hooks)
+==============================================================================
+
+Model:        Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:     .worktrees/c3-batch-k-s3/  (branch c3/batch-k-s3)
+
+# Mission
+Promote 5 small leaves split across two subsystems. Two reimpl files in this
+session (different subsystems — keep them isolated):
+  - `mashedmod/src/mashed_re/Frontend/Leaves_k3.cpp` for the 1 frontend leaf
+  - `mashedmod/src/mashed_re/Util/Leaves_k3.cpp` for the 4 util leaves
+
+# Candidates
+| RVA        | Ghidra name  | Analysis note                                          | Subsystem |
+|------------|--------------|--------------------------------------------------------|-----------|
+| 0x00408a50 | FUN_00408a50 | re/analysis/promote_c2_vehicle_lowrva/0x00408a50.md   | frontend  |
+| 0x0040e340 | FUN_0040e340 | re/analysis/promote_c2_vehicle_lowrva/0x0040e340.md   | util      |
+| 0x0040e370 | FUN_0040e370 | re/analysis/promote_c2_vehicle_lowrva/0x0040e370.md   | util      |
+| 0x00412f30 | FUN_00412f30 | re/analysis/util_c0_promote/0x00412f30.md             | util      |
+| 0x004997b0 | FUN_004997b0 | re/analysis/promote_c2_video_cfg/004997b0.md          | util      |
+
+NOTE: the `promote_c2_vehicle_lowrva` directory holds the source plates
+even though hooks.csv labels 0x00408a50 as frontend and 0x0040e340/370 as
+util — the plate location is historical, the hooks.csv subsystem is
+authoritative.
+
+# Pre-flight
+```bash
+cd C:/Users/maria/Desktop/Proyectos/Mashed
+git worktree add ".worktrees/c3-batch-k-s3" -b "c3/batch-k-s3"
+cd ".worktrees/c3-batch-k-s3"
+sha256sum original/MASHED.exe.unpatched
+mashedmod\build.bat
+```
+
+# Build wiring
+Append BOTH file paths to mashedmod\build.bat:
+  `"%SRC%\Frontend\Leaves_k3.cpp" ^`
+  `"%SRC%\Util\Leaves_k3.cpp" ^`
+
+(Per-function workflow, Batch verification, Promotion transaction, Commit
+policy, and STOP-AND-ASK rules same as Session 1.)
+
+# Queue row
+```
+2026-05-20  c3-batch-k-s3  rvas=0x00408a50,0x0040e340,0x0040e370,0x00412f30,0x004997b0  branch=c3/batch-k-s3  evidence=...  note=1 frontend + 4 util C0-promote leaves C2->C3; Frontend/Leaves_k3.cpp + Util/Leaves_k3.cpp
+```
+
+==============================================================================
+Session 4 — hud_text_cluster_k4  (C2->C3, 5 hooks)
+==============================================================================
+
+Model:        Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:     .worktrees/c3-batch-k-s4/  (branch c3/batch-k-s4)
+
+# Mission
+Promote 5 C2 HUD text/font functions to C3. Authored reimpls land in
+`mashedmod/src/mashed_re/HUD/TextCluster_k4.cpp`.
+
+# Candidates
+| RVA        | Ghidra name              | Analysis note                                    | Notes |
+|------------|--------------------------|--------------------------------------------------|-------|
+| 0x004c1c80 | FUN_004c1c80             | re/analysis/hud_ingame_d2/0x004c1c80.md         | pure leaf (no callees) |
+| 0x00427680 | FontText_ComputeScreenXY | re/analysis/hud_promote_c2_b/0x00427680.md      | 4 callees all C3+ (0x0042b8b0 C3 ScreenWidthGet, 0x0042b8c0 C3 ScreenHeightGet, 0x005554d0, 0x0067d838 const) |
+| 0x00552750 | FontCtx_ResetTransform   | re/analysis/hud_promote_c2_b/0x00552750.md      | pure leaf (no callees) |
+| 0x00450b10 | FUN_00450b10             | re/analysis/hud_ingame_promote_c2/0x00450b10.md | single callee DAT_007d3ff8 (RW driver) |
+| 0x00428450 | FUN_00428450             | re/analysis/hud_ingame_promote_c2/0x00428450.md | 13 callees — VERIFY ALL at C2+ pre-session (filter passed but double-check) |
+
+NOTE for 0x00428450: this writes to the `hud_glyph_slot` struct at DAT_00898ac0
+(stride 0xd ints = 52 bytes). Read `re/analysis/structs/hud_glyph_slot.md`
+authored 2026-05-20 for the field layout before authoring the reimpl. The
+struct doc identifies 8 of 13 fields at offsets +0x00 glyph_id, +0x0c rgba,
++0x14 alpha_scale (0x3f19999a = 0.6f), +0x18 x, +0x1c y, +0x24 effect_id,
++0x10 flag_a, +0x30 flag_b.
+
+# Pre-flight
+```bash
+cd C:/Users/maria/Desktop/Proyectos/Mashed
+git worktree add ".worktrees/c3-batch-k-s4" -b "c3/batch-k-s4"
+cd ".worktrees/c3-batch-k-s4"
+sha256sum original/MASHED.exe.unpatched
+mashedmod\build.bat
+```
+
+(Per-function workflow, Batch verification, Promotion transaction, Commit
+policy, and STOP-AND-ASK rules same as Session 1.)
+
+# Queue row
+```
+2026-05-20  c3-batch-k-s4  rvas=0x004c1c80,0x00427680,0x00552750,0x00450b10,0x00428450  branch=c3/batch-k-s4  evidence=...  note=5 HUD text/font cluster C2->C3; HUD/TextCluster_k4.cpp
+```
+
+==============================================================================
+End-of-batch sweep (NOT a worker session)
+==============================================================================
+
+After all 4 sessions:
+  1. Have committed their worktree branch (c3/batch-k-s1..s4)
+  2. Have appended their queue row to re/PROMOTION_QUEUE.md § Queued
+
+…invoke from main worktree (Sonnet 4.6):
+  /frida-sweep
+
+The sweep:
+- Merges every queued branch onto main (3 known text-file conflicts:
+  build.bat, hooks_registry.py, CHANGELOG.md — resolved mechanically).
+- Rebuilds canonical mashed_re_dev.asi from merged state.
+- Runs run_diff_parallel.py against ALL promoted hooks for integration diff.
+- Commits the merge only if every hook is GREEN.
+
+Expected post-sweep state:
+  hooks.csv C3+ in frontend: 57 -> ~69-71 (+12-14 GREEN of 20 attempted = ~60-70% yield)
+  Frontend S-DoD floor still 273 C3+ needed; ~14-15 batches remaining at this cadence.
+
+Deferred (NOT in this batch):
+  0x004299d0 TimeRecord::WriteTrackBest  util  — leftover candidate; first
+                                                  inclusion for c3_batch_l.
+
+Refused candidates analysis (full list at
+`re/analysis/plans/c3_batch_a_rejected.tsv` — note filter v4 named the
+file `c3_batch_a_*` per the skill's default; the corresponding batch is
+THIS file `c3_batch_k.txt`):
+  6 inline_uncertain   (need uncertainty-resolution pass before promotion)
+  43 callee_gate       (need leaf-first promotion before these candidates)
+  9 signature_unsupported (need harness extension before these)
+  Total deferred: 58 of 79 initial pool.
+
+After c3_batch_k completes, the natural next batch is `c3_batch_l`:
+- Pick up 0x004299d0 (leftover from k)
+- Re-run filter v4 on a broader subsystem set (frontend+hud+util+save+audio)
+- Target ~25-30 candidates (the deferred 43 callee-gate may have opened up
+  as their callees got promoted)

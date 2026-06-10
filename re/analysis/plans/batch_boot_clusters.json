@@ -1,0 +1,464 @@
+{
+  "s1": [
+    {
+      "rva": "00431b40",
+      "name": "FUN_00431b40",
+      "note": "re/analysis/boot_subsystem_d3/0x00431b40.md"
+    },
+    {
+      "rva": "00471eb0",
+      "name": "thunk_FUN_00471df0",
+      "note": "re/analysis/boot_app_init_d5/0x00471eb0.md"
+    },
+    {
+      "rva": "0047ba10",
+      "name": "thunk_FUN_00496970",
+      "note": "re/analysis/boot_app_init_d5/0x0047ba10.md"
+    },
+    {
+      "rva": "004955c0",
+      "name": "thunk_FUN_00495580",
+      "note": "re/analysis/boot_app_init_d5/0x004955c0.md"
+    },
+    {
+      "rva": "004955d0",
+      "name": "FUN_004955d0",
+      "note": "re/analysis/cluster_0049_first_pass/004955d0.md"
+    },
+    {
+      "rva": "00496e40",
+      "name": "FUN_00496e40",
+      "note": "re/analysis/boot_subsystem_d3/0x00496e40.md"
+    },
+    {
+      "rva": "00496e40",
+      "name": "FUN_00496e40",
+      "note": "re/analysis/skeleton_prep_boot_winmain_b/00496e40."
+    },
+    {
+      "rva": "004b6550",
+      "name": "thunk_FUN_004b6700",
+      "note": "re/analysis/boot_app_init_d5/0x004b6550.md"
+    },
+    {
+      "rva": "00558240",
+      "name": "FUN_00558240",
+      "note": "re/analysis/boot_app_init_d5/0x00558240.md"
+    },
+    {
+      "rva": "005c1d63",
+      "name": "_fseek",
+      "note": "re/analysis/bucket_005c1d63/0x005c1d63.md"
+    },
+    {
+      "rva": "005c1da2",
+      "name": "FUN_005c1da2",
+      "note": "re/analysis/bucket_005c1d63/0x005c1da2.md"
+    },
+    {
+      "rva": "005c1dac",
+      "name": "__ftol",
+      "note": "re/analysis/bucket_005c1d63/0x005c1dac.md"
+    },
+    {
+      "rva": "005c1dd3",
+      "name": "FID_conflict:_fwprintf",
+      "note": "re/analysis/bucket_005c1d63/0x005c1dd3.md"
+    },
+    {
+      "rva": "005c1e27",
+      "name": "FUN_005c1e27",
+      "note": "re/analysis/bucket_005c1d63/0x005c1e27.md"
+    },
+    {
+      "rva": "005c1e31",
+      "name": "FID_conflict:_ungetc",
+      "note": "re/analysis/bucket_005c1d63/0x005c1e31.md"
+    }
+  ],
+  "s2": [
+    {
+      "rva": "005c1ea0",
+      "name": "_longjmp",
+      "note": "re/analysis/memory_pool_d2/005c1ea0.md"
+    },
+    {
+      "rva": "005c1f1c",
+      "name": "__setjmp3",
+      "note": "re/analysis/bucket_005c1d63/0x005c1f1c.md"
+    },
+    {
+      "rva": "005c1f97",
+      "name": "_strtod",
+      "note": "re/analysis/bucket_005c1d63/0x005c1f97.md"
+    },
+    {
+      "rva": "005c2025",
+      "name": "_strcoll",
+      "note": "re/analysis/bucket_005c1d63/0x005c2025.md"
+    },
+    {
+      "rva": "005c2090",
+      "name": "FUN_005c2090",
+      "note": "re/analysis/bucket_005c1d63/0x005c2090.md"
+    },
+    {
+      "rva": "005c21ba",
+      "name": "FUN_005c21ba",
+      "note": "re/analysis/bucket_005c1d63/0x005c21ba.md"
+    },
+    {
+      "rva": "005c21e2",
+      "name": "_frexp",
+      "note": "re/analysis/bucket_005c1d63/0x005c21e2.md"
+    },
+    {
+      "rva": "005c228e",
+      "name": "FUN_005c228e",
+      "note": "re/analysis/bucket_005c1d63/0x005c228e.md"
+    },
+    {
+      "rva": "005c229b",
+      "name": "_rand",
+      "note": "re/analysis/bucket_005c1d63/0x005c229b.md"
+    },
+    {
+      "rva": "005c22bd",
+      "name": "_sscanf",
+      "note": "re/analysis/bucket_005c1d63/0x005c22bd.md"
+    },
+    {
+      "rva": "005c2300",
+      "name": "_strncat",
+      "note": "re/analysis/bucket_005c1d63/0x005c2300.md"
+    },
+    {
+      "rva": "005c2435",
+      "name": "FID_conflict:__time32",
+      "note": "re/analysis/bucket_005c1d63/0x005c2435.md"
+    },
+    {
+      "rva": "005c2470",
+      "name": "shortsort",
+      "note": "re/analysis/bucket_005c1d63/0x005c2470.md"
+    },
+    {
+      "rva": "005c24e0",
+      "name": "FUN_005c24e0",
+      "note": "re/analysis/bucket_005c1d63/0x005c24e0.md"
+    },
+    {
+      "rva": "005c2770",
+      "name": "FUN_005c2770",
+      "note": "re/analysis/bucket_005c1d63/0x005c2770.md"
+    }
+  ],
+  "s3": [
+    {
+      "rva": "005c278f",
+      "name": "FUN_005c278f",
+      "note": "re/analysis/bucket_005c1d63/0x005c278f.md"
+    },
+    {
+      "rva": "005c27e6",
+      "name": "_atof",
+      "note": "re/analysis/bucket_005c1d63/0x005c27e6.md"
+    },
+    {
+      "rva": "005c281e",
+      "name": "FUN_005c281e",
+      "note": "re/analysis/bucket_005c1d63/0x005c281e.md"
+    },
+    {
+      "rva": "005c28e7",
+      "name": "FUN_005c28e7",
+      "note": "re/analysis/bucket_005c1d63/0x005c28e7.md"
+    },
+    {
+      "rva": "005c29cb",
+      "name": "_clock",
+      "note": "re/analysis/bucket_005c1d63/0x005c29cb.md"
+    },
+    {
+      "rva": "005c2a0e",
+      "name": "___inittime",
+      "note": "re/analysis/bucket_005c1d63/0x005c2a0e.md"
+    },
+    {
+      "rva": "005c2a45",
+      "name": "_localtime",
+      "note": "re/analysis/bucket_005c1d63/0x005c2a45.md"
+    },
+    {
+      "rva": "005c2bc5",
+      "name": "strtoxl",
+      "note": "re/analysis/bucket_005c1d63/0x005c2bc5.md"
+    },
+    {
+      "rva": "005c2d84",
+      "name": "_strtol",
+      "note": "re/analysis/bucket_005c1d63/0x005c2d84.md"
+    },
+    {
+      "rva": "005c2d9b",
+      "name": "FUN_005c2d9b",
+      "note": "re/analysis/bucket_005c1d63/0x005c2d9b.md"
+    },
+    {
+      "rva": "005c2dd9",
+      "name": "FUN_005c2dd9",
+      "note": "re/analysis/bucket_005c1d63/0x005c2dd9.md"
+    },
+    {
+      "rva": "005c2e79",
+      "name": "__beginthread",
+      "note": "re/analysis/bucket_005c1d63/0x005c2e79.md"
+    },
+    {
+      "rva": "005c2f0a",
+      "name": "FUN_005c2f0a",
+      "note": "re/analysis/bucket_005c1d63/0x005c2f0a.md"
+    },
+    {
+      "rva": "005c2f26",
+      "name": "_wcscmp",
+      "note": "re/analysis/bucket_005c1d63/0x005c2f26.md"
+    },
+    {
+      "rva": "005c2f58",
+      "name": "FUN_005c2f58",
+      "note": "re/analysis/bucket_005c1d63/0x005c2f58.md"
+    }
+  ],
+  "s4": [
+    {
+      "rva": "005c2f70",
+      "name": "FUN_005c2f70",
+      "note": "re/analysis/bucket_005c1d63/0x005c2f70.md"
+    },
+    {
+      "rva": "005c2f84",
+      "name": "FUN_005c2f84",
+      "note": "re/analysis/bucket_005c1d63/0x005c2f84.md"
+    },
+    {
+      "rva": "005c2f8d",
+      "name": "FUN_005c2f8d",
+      "note": "re/analysis/bucket_005c1d63/0x005c2f8d.md"
+    },
+    {
+      "rva": "005c302a",
+      "name": "__ftell_lk",
+      "note": "re/analysis/bucket_005c1d63/0x005c302a.md"
+    },
+    {
+      "rva": "005c318c",
+      "name": "__rt_probe_read4@4",
+      "note": "re/analysis/bucket_005c1d63/0x005c318c.md"
+    },
+    {
+      "rva": "005c31d0",
+      "name": "FUN_005c31d0",
+      "note": "re/analysis/bucket_005c1d63/0x005c31d0.md"
+    },
+    {
+      "rva": "005c326b",
+      "name": "FID_conflict:__floor_default",
+      "note": "re/analysis/bucket_005c1d63/0x005c326b.md"
+    },
+    {
+      "rva": "005c3340",
+      "name": "__cintrindisp2",
+      "note": "re/analysis/bucket_005c1d63/0x005c3340.md"
+    },
+    {
+      "rva": "005c337e",
+      "name": "__cintrindisp1",
+      "note": "re/analysis/bucket_005c1d63/0x005c337e.md"
+    },
+    {
+      "rva": "005c33bb",
+      "name": "__ctrandisp2",
+      "note": "re/analysis/bucket_005c1d63/0x005c33bb.md"
+    },
+    {
+      "rva": "005c3403",
+      "name": "FUN_005c3403",
+      "note": "re/analysis/bucket_005c1d63/0x005c3403.md"
+    },
+    {
+      "rva": "005c340a",
+      "name": "FUN_005c340a",
+      "note": "re/analysis/bucket_005c1d63/0x005c340a.md"
+    },
+    {
+      "rva": "005c3551",
+      "name": "__ctrandisp1",
+      "note": "re/analysis/bucket_005c1d63/0x005c3551.md"
+    },
+    {
+      "rva": "005c3584",
+      "name": "__fload",
+      "note": "re/analysis/bucket_005c1d63/0x005c3584.md"
+    },
+    {
+      "rva": "005c35c0",
+      "name": "__inc",
+      "note": "re/analysis/bucket_005c1d63/0x005c35c0.md"
+    }
+  ],
+  "s5": [
+    {
+      "rva": "005c35d6",
+      "name": "FUN_005c35d6",
+      "note": "re/analysis/bucket_005c1d63/0x005c35d6.md"
+    },
+    {
+      "rva": "005c4180",
+      "name": "FUN_005c4180",
+      "note": "re/analysis/bucket_005c1d63/0x005c4180.md"
+    },
+    {
+      "rva": "005c419e",
+      "name": "FUN_005c419e",
+      "note": "re/analysis/bucket_005c1d63/0x005c419e.md"
+    },
+    {
+      "rva": "005c4440",
+      "name": "_gmtime",
+      "note": "re/analysis/bucket_005c1d63/0x005c4440.md"
+    },
+    {
+      "rva": "005c4547",
+      "name": "___mbtowc_mt",
+      "note": "re/analysis/bucket_005c1d63/0x005c4547.md"
+    },
+    {
+      "rva": "005c4607",
+      "name": "_mbtowc",
+      "note": "re/analysis/bucket_005c1d63/0x005c4607.md"
+    },
+    {
+      "rva": "005c4640",
+      "name": "FUN_005c4640",
+      "note": "re/analysis/bucket_005c1d63/0x005c4640.md"
+    },
+    {
+      "rva": "005c4670",
+      "name": "FUN_005c4670",
+      "note": "re/analysis/bucket_005c1d63/0x005c4670.md"
+    },
+    {
+      "rva": "005c4780",
+      "name": "FUN_005c4780",
+      "note": "re/analysis/bucket_005c1d63/0x005c4780.md"
+    },
+    {
+      "rva": "005c47b0",
+      "name": "FUN_005c47b0",
+      "note": "re/analysis/bucket_005c1d63/0x005c47b0.md"
+    },
+    {
+      "rva": "005c47e0",
+      "name": "FUN_005c47e0",
+      "note": "re/analysis/bucket_005c1d63/0x005c47e0.md"
+    },
+    {
+      "rva": "005c4ab0",
+      "name": "FUN_005c4ab0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4ab0.md"
+    },
+    {
+      "rva": "005c4ad0",
+      "name": "FUN_005c4ad0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4ad0.md"
+    },
+    {
+      "rva": "005c4ba0",
+      "name": "FUN_005c4ba0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4ba0.md"
+    },
+    {
+      "rva": "005c4bb0",
+      "name": "FUN_005c4bb0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4bb0.md"
+    }
+  ],
+  "s6": [
+    {
+      "rva": "005c4c60",
+      "name": "FUN_005c4c60",
+      "note": "re/analysis/bucket_005c1d63/0x005c4c60.md"
+    },
+    {
+      "rva": "005c4d20",
+      "name": "FUN_005c4d20",
+      "note": "re/analysis/bucket_005c1d63/0x005c4d20.md"
+    },
+    {
+      "rva": "005c4d30",
+      "name": "FUN_005c4d30",
+      "note": "re/analysis/bucket_005c1d63/0x005c4d30.md"
+    },
+    {
+      "rva": "005c4d50",
+      "name": "FUN_005c4d50",
+      "note": "re/analysis/bucket_005c1d63/0x005c4d50.md"
+    },
+    {
+      "rva": "005c4da0",
+      "name": "FUN_005c4da0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4da0.md"
+    },
+    {
+      "rva": "005c4df0",
+      "name": "FUN_005c4df0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4df0.md"
+    },
+    {
+      "rva": "005c4e10",
+      "name": "FUN_005c4e10",
+      "note": "re/analysis/bucket_005c1d63/0x005c4e10.md"
+    },
+    {
+      "rva": "005c4e20",
+      "name": "FUN_005c4e20",
+      "note": "re/analysis/bucket_005c1d63/0x005c4e20.md"
+    },
+    {
+      "rva": "005c4fa0",
+      "name": "FUN_005c4fa0",
+      "note": "re/analysis/bucket_005c1d63/0x005c4fa0.md"
+    },
+    {
+      "rva": "005c5780",
+      "name": "FUN_005c5780",
+      "note": "re/analysis/bucket_005c1d63/0x005c5780.md"
+    },
+    {
+      "rva": "005c6b40",
+      "name": "FUN_005c6b40",
+      "note": "re/analysis/bucket_005c1d63/0x005c6b40.md"
+    },
+    {
+      "rva": "005c6b60",
+      "name": "FUN_005c6b60",
+      "note": "re/analysis/bucket_005c1d63/0x005c6b60.md"
+    },
+    {
+      "rva": "005c6bb0",
+      "name": "FUN_005c6bb0",
+      "note": "re/analysis/bucket_005c1d63/0x005c6bb0.md"
+    },
+    {
+      "rva": "005c6cc0",
+      "name": "FUN_005c6cc0",
+      "note": "re/analysis/bucket_005c1d63/0x005c6cc0.md"
+    },
+    {
+      "rva": "005cb160",
+      "name": "FUN_005cb160",
+      "note": "re/analysis/bucket_005c1d63/0x005cb160.md"
+    }
+  ]
+}

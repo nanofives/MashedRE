@@ -1,0 +1,188 @@
+================================================================================
+save_sdone_workstream_a.txt — Save subsystem to S-DONE (workstream A: C3+)
+  2026-05-22 (PHASE-5; subsystem-focused, NOT a generic 6x5 batch)
+================================================================================
+
+Mode:           Sonnet 4.6 C2->C3 promotion (some C1->C2->C3 in one session)
+Sessions:       3 (partial batch — save subsystem only has 13 C1/C2 candidates;
+                12 selected here, 1 deferred as bigger-function)
+Per session:    4-5 candidates  (hard cap 8)
+Total:          12 candidates
+Worktrees:      .worktrees/save-sdone-a-s1..s3 (one per session)
+Anchor binary:  original/MASHED.exe.unpatched SHA-256
+                BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+PHASE-5 SUBSYSTEM PUSH:
+This is workstream A of the "Save → S-DONE" push. Save is the closest subsystem
+to S-DONE (59.4% C3+ currently; closest of all 30+ subsystems). Completing it
+gives us the project's FIRST S-DONE subsystem and proves the workflow.
+
+S-DONE for Save requires (per ROADMAP.md):
+  1a. ≥90% C3+         — workstream A (this batch) gets to ~100%
+  1b. ≥50% C4          — workstream C (canonical-scenario Frida, separate)
+  2.  Hooks-only-no-fallback boot test — workstream D (separate)
+  3.  Structs documented (resolve U-3559) — workstream E (Ghidra session, separate)
+  4.  gamesave.bin round-trip parser — workstream B (separate Python session)
+  5.  STUBS.md save section empty — currently empty (✓)
+
+This file only covers workstream A.
+
+Read this BEFORE starting any session:
+- .claude/skills/promote-c3-batch/SKILL.md
+- .claude/skills/hook-author/SKILL.md
+- .claude/skills/diff-original/SKILL.md
+- .claude/skills/re-classify/SKILL.md
+- re/CONFIDENCE.md
+- re/frida/diff_template.js (72+ arg_types after today's two harness-exts)
+- re/frida/hooks_registry.py (343+ entries)
+- ROADMAP.md (especially § "S-DoD — subsystem level")
+
+WORKER REMINDERS (from batch-o/p/q post-mortems):
+- AFTER re-classify, you MUST `git commit` on your branch. Verify with
+  `git log --oneline save/sdone-a-s<N> ^main` before halting.
+- Write PROMOTION_QUEUE.md row in YOUR worktree's copy, NOT main's.
+- Use targeted `git add <files>`; NEVER `git add -A`.
+- NEVER name an arg_type not present in diff_template.js (c3-batch-q-s6 incident).
+  Grep `re/frida/diff_template.js` first to verify.
+
+C3 evidence rubric reminder:
+- Reimplementation in mashedmod/src/mashed_re/Save/
+- Build clean
+- RH_ScopedInstall, runtime-toggleable
+- Frida diff GREEN bit-identical on at least one test vector batch
+- At least one caller AND one callee at C2+ (anti-island rule)
+- No unresolved semantic/structural [UNCERTAIN] markers
+- C4 BLOCKED on canonical scenario — that's workstream C
+
+================================================================================
+Session 1 — save_core  (4 C2 + 1 trivial C1)
+================================================================================
+
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/save-sdone-a-s1/  (branch save/sdone-a-s1)
+Skills:      hook-author, diff-original, re-classify
+
+# Mission
+Promote the core save data-path functions to C3. This is the highest-value
+session of workstream A — SerializeToBuffer and DeserializeFromBuffer are
+the heart of gamesave.bin I/O.
+
+# Candidates
+| RVA        | Conf | Size | Name + analysis note |
+|------------|------|------|----------------------|
+| 0x00404e80 | C2   | ?    | Save::DeserializeFromBuffer — re/analysis/profile_career/* or similar; restore 0x148dw from 0x827D98 → 0x7F0A40 |
+| 0x00404ee0 | C2   | ?    | Save::SerializeToBuffer — stride-gather 12 bytes, copy 0x148dw |
+| 0x004099a0 | C2   | ?    | Save::AutosaveTrigger — checks DAT_008a95ac; sets DAT_008a9584/94 |
+| 0x0040dd60 | C2   | 23B  | Race::GuardConcludedAndP1Won — `(DAT_0063b90c==1?0xFFFFFFFF:0)&DAT_007f0fcc` |
+| 0x0040de00 | C1   | 4B   | thunk_FUN_004117b0 (trivial; C1->C2->C3 in-session; jmp thunk pattern) |
+
+# Pre-flight + workflow + verification: standard.
+# arg_type pick: SerializeToBuffer/DeserializeFromBuffer likely need `bytes_inplace`
+# or `entity_field_set` style; check the existing serialize patterns in the project.
+
+# STOP-AND-ASK if
+- Either Serialize/Deserialize has an arg_type gap (no fit in diff_template.js).
+- The 4B thunk is a compiler-stub `jmp [import]` rather than Mashed code (then defer).
+
+# Commit subject: `c3: save-sdone-a s1 save core — N hooks GREEN`
+
+================================================================================
+Session 2 — save_settings_dialog  (5 C2)
+================================================================================
+
+Model:       Sonnet 4.6 — hard cap 8 RVAs (this session: 5)
+Worktree:    .worktrees/save-sdone-a-s2/  (branch save/sdone-a-s2)
+
+# Mission
+Promote the settings dialog cluster + 2 stream helpers used by save/load.
+The settings dialog is the user-facing save/settings UI; stream helpers are
+shared with the videocfg I/O.
+
+# Candidates
+| RVA        | Conf | Notes |
+|------------|------|-------|
+| 0x00498d60 | C2   | PopulateModeCombo — fills mode combo for current subsystem; filter flags!=0 AND width>0x270 |
+| 0x004991f0 | C2   | VideoSettingsDlgProc — DLGPROC for dialog 0x65: WM_INITDIALOG/COMMAND dispatch |
+| 0x00499400 | C2   | VideoSettingsDispatcher — subsystem enum loop; load; optional DialogBoxParam |
+| 0x004cbe80 | C2   | FUN_004cbe80 — RW stream write; cases (1/2=file-fwrite, 3=mem-grow+copy, 4=cb-write) |
+| 0x00550910 | C2   | FUN_00550910 — VFS stream close: marks obj+0x20=1; calls vtable[DAT_005CC068] |
+
+# STOP-AND-ASK if
+- VideoSettingsDlgProc / Dispatcher invoke live Win32 dialog APIs (DialogBoxParam,
+  SendMessage) that can't be replayed in synthetic Frida — defer with refusal.
+- 0x004cbe80 / 0x00550910 mutate live file handles that may be already-open in
+  the harness — defer.
+
+# Commit subject: `c3: save-sdone-a s2 settings dialog — N hooks GREEN`
+
+================================================================================
+Session 3 — save_career_small  (2 mixed-size C1)
+================================================================================
+
+Model:       Sonnet 4.6 — hard cap 8 RVAs (this session: 2)
+Worktree:    .worktrees/save-sdone-a-s3/  (branch save/sdone-a-s3)
+
+# Mission
+Smaller career-event C1 candidates. Stretch goal includes Race::EvaluateResult
+which is 820B — try it with STOP-AND-ASK if too complex.
+
+# Candidates
+| RVA        | Conf | Size  | Notes |
+|------------|------|-------|-------|
+| 0x0042a920 | C1   | 20B   | Frontend::PostTrophyEvent — writes DAT_00898ab0=0x40, DAT_00899140=event_id; IDs 0x264... |
+| 0x00410510 | C1   | 820B  | Race::EvaluateResult — race-end evaluator; sets DAT_0063b90c=1, DAT_0063ba8c=0xb; **STOP-AND-ASK if body has > 4 branches you can't disentangle in one pass** |
+
+# Pre-flight
+- Both candidates are C1 — read the analysis notes carefully BEFORE authoring.
+  If a note doesn't meet C2-quality bar (no clear mechanical description, missing
+  callees, etc.), defer rather than promote-with-guesswork.
+
+# STOP-AND-ASK if
+- Race::EvaluateResult is too complex for one-pass C1->C3 — defer it; just
+  promote the 20B trophy event and report.
+- Either candidate calls subsystem-foreign functions (e.g. rendering, audio)
+  that need their own promotion first.
+
+# Commit subject: `c3: save-sdone-a s3 career events — N hooks GREEN`
+
+================================================================================
+Deferred (not in this batch)
+================================================================================
+
+- 0x00430290 Championship::Complete (986B C1) — bigger-function session.
+  Cup completion logic; needs careful path enumeration (modes 3/4/5 = Bronze/
+  Silver/Gold; marks track done in DAT_007f0a40). Dedicated session, ~1h.
+
+================================================================================
+Yield calibration
+================================================================================
+
+Expected per-session yield:
+- s1 save core:           4-5/5 (core data path; serialize/deserialize have
+                                 clear shape; AutosaveTrigger + guard are
+                                 small leaves)
+- s2 settings dialog:     2-4/5 (Win32 live-state risk on Dlg/Dispatcher;
+                                 RW stream helpers may be live-file)
+- s3 career events:       1-2/2 (PostTrophyEvent should be easy; EvaluateResult
+                                 is wild card)
+
+Realistic landing: 7-11 of 12 (58-92%).
+
+After this batch lands and frida-sweep integrates: save C3+ goes from
+59.4% (19/32) to ~84-94% (26-30/32). **Workstream A approaches done.**
+
+Then workstreams B/C/D/E in parallel close the remaining S-DoD criteria.
+
+================================================================================
+INVOCATION
+================================================================================
+Open 3 Claude Code sessions in parallel (or spawn 3 background agents from
+the main session). Each session creates its own worktree, does its candidates,
+commits to its branch, appends a PROMOTION_QUEUE row TO ITS BRANCH (not main),
+then halts.
+
+After all 3 sessions complete, invoke the frida-sweep skill from the main
+worktree to merge all branches, resolve conflicts mechanically, rebuild the
+canonical .asi, and run the integration diff.
+
+Then proceed to workstreams B/C/D/E to close the remaining S-DoD criteria.

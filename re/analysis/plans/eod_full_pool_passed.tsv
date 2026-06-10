@@ -1,0 +1,410 @@
+rva	name	subsystem	arg_type	note	callees
+004a4bb7	entry	boot	unknown	re/analysis/promote_c2_boot_crt/004a4bb7.md	
+004a4b6e	__amsg_exit	boot	unknown	re/analysis/promote_c2_boot_crt/004a4b6e.md	004a333c,004ab8d6,004aba4d,006160c4,007739f0
+004abbea	FUN_004abbea	boot	unknown	re/analysis/promote_c2_boot_crt/004abbea.md	004abc49,004af2b6,004affe0,005cc4dc
+004a2c2f	FUN_004a2c2f	boot	unknown	re/analysis/promote_c2_boot_crt/004a2c2f.md	004a2bf7,004a5de3,004a5e35,00773994
+004a333c	__exit	boot	unknown	re/analysis/boot_crt_exit/0x004a333c.md	004a3258,004a334b
+004a40fe	___onexitinit	boot	unknown	re/analysis/boot_crt_exit/0x004a40fe.md	004a4124,004a45fb
+004a415e	_atexit	boot	unknown	re/analysis/boot_crt_exit/0x004a415e.md	004a4126
+00492290	sub_00492290	boot	unknown	re/analysis/boot_app_init/00492290.md	004926c0,00492770,004929d0,00492d20,00492d30,00492e90,00493480,00499690
+00493560	thunk_FUN_004954f0	boot	unknown	re/analysis/promote_c2_launch_handshake/00493560.md	0045b350,00493564,004954f0,00495580,004955c0,00496010,00496370,004963d0,00498b60,00498bf0
+00499cc0	sub_00499cc0	boot	unknown	re/analysis/boot_app_init/00499cc0.md	007e9584,007e95a8
+004a467e	_calloc	boot	unknown	re/analysis/boot_crt_exit/0x004a467e.md	004a4728,004a4737,004a5984,004a59bf,004a787f,004aac76,004aaf72,004aaf90,00773c34
+004a57e4	FUN_004a57e4	boot	unknown	re/analysis/boot_crt_exit/0x004a57e4.md	004a5838,00616038
+004a87f7	FUN_004a87f7	boot	unknown	re/analysis/boot_crt_exit/0x004a87f7.md	004a7796,004a8813,00616658
+004aa44f	___sbh_heap_init	boot	unknown	re/analysis/boot_crt_exit/0x004aa44f.md	004aa495
+004ab8d6	FUN_004ab8d6	boot	unknown	re/analysis/boot_crt_exit/0x004ab8d6.md	004a2be9,004a3440,004a34b0,004a9410,004ac45c,004ac560,004ac570,00616038,006160c8,00616890,007739f0
+004aba4d	__FF_MSGBANNER	boot	unknown	re/analysis/boot_crt_exit/0x004aba4d.md	004ab8d6,004aba84,006160c8,007739f0,00773c38
+00558470	sub_00558470	render	unknown	re/analysis/skeleton_prep_high_leverage/00558470.md	00558484,00558498,005584b5,007d3ff8,007dc8ac,007dc8b8,007dc8bc
+004c2f60	FUN_004c2f60	render	unknown	re/analysis/render_promote_c2_rw_plugin/0x004c2f60.md	
+004a2cbd	FID_conflict:_wprintf	render	unknown	re/analysis/rw_engine_init/004a2cbd.md	004a2d18,004a504f,00616110
+004a45fb	_malloc	boot	unknown	re/analysis/boot_crt_env/004a45fb.md	004a45cf,004a4601,004a4605,004a460a,004a460b,004a460c,00773c34
+004a460d	_free	boot	unknown	re/analysis/boot_crt_env/004a460d.md	004a4619,004a461c,004a461e,004a4620,004a4629,004a4636,004a4641,004a4649,004a4650,004a4655,004a4659,004a465b,004a4660,004a466a,004a466c,004a4672,004a4678,004a5984,004a59bf,004a787f,004aa497,004aa4c2,005cc1d0
+004a9410	_strlen	boot	unknown	re/analysis/boot_crt_env/004a9410.md	004a943f,004a9440,004a9442,004a9447,004a9449,004a944c,004a944e,004a9451,004a9458
+004aaff0	_memcpy	boot	unknown	re/analysis/boot_crt_env/004aaff0.md	004aaff5,004aaffb,004ab004,004ab00a,004ab010,004ab018,004ab01b,004ab01e,004ab023,004ab025,004ab02c,004ab18c
+004abd1a	FUN_004abd1a	boot	unknown	re/analysis/boot_crt_env/004abd1a.md	004abd22,004abd2c,004abd32,004abd3b,004abd3d,004abd61,004abd93
+004ac560	FUN_004ac560	boot	unknown	re/analysis/boot_crt_env/004ac560.md	004ac561,004ac565,004ac566,004ac567,004ac56f,004ac570,004ac5d5,004ac657
+004ae29f	___crtInitCritSecAndSpinCount	boot	unknown	re/analysis/boot_crt_env/004ae29f.md	004a5984,004ae2ab,004ae2b0,004ae2b2,004ae2b4,004ae2bd,004ae2c8,004ae2ca,004ae2cc,004ae2d1,004ae2d8,004ae2dd,004ae2df,004ae2e1,004ae2e6,004ae2eb,004ae2ef,004ae2f5,004ae2fa,004ae320,005cc038,005cc0b4,0077399c,00773d60
+004af2b6	___initmbctable	boot	unknown	re/analysis/boot_crt_env/004af2b6.md	004af166,004af2bf,004af2c1,004af2c6,004af2c7,004af2d1,004af2d3
+004affe0	FUN_004affe0	boot	unknown	re/analysis/boot_crt_env/004affe0.md	004affaf,004affe2,004affe4,004affe8,004affed,004afff0
+005abfa0	FUN_005abfa0	audio	unknown	re/analysis/promote_c2_audio_rws/005abfa0.md	
+004987b0	FUN_004987b0	input	unknown	re/analysis/promote_c2_dinput_init/004987b0.md	00498809,004a42c5,004a504f,00616038
+004a2bf7	FUN_004a2bf7	boot	unknown	re/analysis/boot_crt_exit_d3/004a2bf7.md	004a5a0c,004a5a57,006160d8,006160dc,006160e0,006160e4,006160e8,006160ec
+004a34b0	_strncpy	boot	unknown	re/analysis/boot_crt_exit_d3/004a34b0.md	
+004a4126	__onexit	boot	unknown	re/analysis/boot_crt_exit_d3/004a4126.md	004a31e1,004a407e,004a4158,004a5984,004a59bf
+004a4728	FUN_004a4728	boot	unknown	re/analysis/boot_crt_exit_d3/004a4728.md	004a77eb
+004a5de3	FUN_004a5de3	boot	unknown	re/analysis/boot_crt_exit_d3/004a5de3.md	004ad33b
+004a5e35	__ms_p5_mp_test_fdiv	boot	unknown	re/analysis/boot_crt_exit_d3/004a5e35.md	004a5df5
+004a5f07	___endstdio	boot	unknown	re/analysis/boot_crt_exit_d3/004a5f07.md	004a9744,004ad351,007739d4
+004a7796	__mtdeletelocks	boot	unknown	re/analysis/boot_crt_exit_d3/004a7796.md	00616408
+004a77eb	FUN_004a77eb	boot	unknown	re/analysis/boot_crt_exit_d3/004a77eb.md	00616408
+004a787f	__lock	boot	unknown	re/analysis/boot_crt_exit_d3/004a787f.md	004a4b6e,004a7800,00616408
+004aaf72	__callnewh	boot	unknown	re/analysis/boot_crt_exit_d3/004aaf72.md	00773c30
+004aaf90	_memset	boot	unknown	re/analysis/boot_crt_exit_d3/004aaf90.md	
+00498b60	FUN_00498b60	render	unknown	re/analysis/promote_c2_video_cfg/00498b60.md	007731f8,007731fc,00773408,00773410
+004a2d18	FUN_004a2d18	render	unknown	re/analysis/rw_engine_init_d2/004a2d18.md	
+004a504f	FUN_004a504f	render	unknown	re/analysis/rw_engine_init_d2/004a504f.md	005d1280,005d12a0,00616038,006160d8
+004026d0	FUN_004026d0	boot	unknown	re/analysis/promote_c2_boot_lowrva/0x004026d0.md	004671a0,004c19f0,004c1a00,004c1bb0,004c1be0
+00402f50	FUN_00402f50	boot	unknown	re/analysis/promote_c2_boot_lowrva/0x00402f50.md	004015a0,00402750,00636ae8,00636aec,00636af0,00636af4,00636af8,00636afc
+00404830	FUN_00404830	boot	unknown	re/analysis/promote_c2_perm_piz_callees/00404830.md	00636c08,006390b0,00639cc8,00639cd0,00639cd4,00639cf4,00639d2c,00639d30,00639d40,00639d4c,00639d50,00639d58,00639d5c,00639d60,00639d64
+004114c0	FUN_004114c0	boot	unknown	re/analysis/promote_c2_boot_lowrva/0x004114c0.md	00402750,004113b0,007d3ff8
+004c8690	FUN_004c8690	render	unknown	re/analysis/promote_c2_render_d3d9/0x004c8690.md	
+004c8e50	FUN_004c8e50	render	unknown	re/analysis/promote_c2_render_d3d9/0x004c8e50.md	
+004cc820	FUN_004cc820	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc820.md	
+004cc9f0	RwFreeListDestroy	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc9f0.md	
+004235b0	FUN_004235b0	render	unknown	re/analysis/promote_c2_render_lowrva/004235b0.md	00409710,00423480,00423630,00495280,004952f0,004cbd30,004cc160,004cc230,004cc5e0,00644110,007f1a9c
+0042e5b0	FUN_0042e5b0	frontend	unknown	re/analysis/promote_c2_frontend_menus/0x0042e5b0.md	0040bb70,0042e590,00473c20,00473ee0,00474890,004a2c48
+004cc5e0	FUN_004cc5e0	render	unknown	re/analysis/texture_loader_d2/0x004cc5e0.md	004cc050,004cc400,004cc601,004cc624,004cc637,004cc664,004cc66e,004d7ff0
+00476d00	FUN_00476d00	render	unknown	re/analysis/promote_c2_render_frame/0x00476d00.md	006924d8,006924dc,006924e8,00692528,00692534,00692554,00692598
+004671a0	sub_004671a0	render	unknown	re/analysis/promote_c2_piz_loader/004671a0.md	0042b930,0042f510,006905b0
+0042b8e0	FUN_0042b8e0	util	unknown	re/analysis/skeleton_prep_game_state/0042b8e0.md	0042b8d0,0042b8ed,0067eca4
+0042b910	FUN_0042b910	util	unknown	re/analysis/skeleton_prep_game_state/0042b910.md	0042b914,004331a0
+0042b940	FUN_0042b940	util	unknown	re/analysis/skeleton_prep_game_state/0042b940.md	0042b930,0042b948,0067ecb0
+0042c1c0	FUN_0042c1c0	util	unknown	re/analysis/skeleton_prep_game_state/0042c1c0.md	0042c1c4,0067eab0,00771968
+0042c1d0	FUN_0042c1d0	util	unknown	re/analysis/skeleton_prep_game_state/0042c1d0.md	0042c1df,0067ea10,0067ea3f
+00492e90	FUN_00492e90	boot	unknown	re/analysis/physics_collision/00492e90.md	00403050,00404320,0040df20,0040df60,0040dfc0,00410b30,00426030,00426670,004266b0,0042a9f0,0042b8d0,0042b8f0,0042b930,0042d390,0042f530,00430b90,00433f40,0043c5b0,004671a0,00492290,00492440,00492e60,004950b0,00498bf0,004c19f0,004c1a00,004c1bb0,004c1be0,004c1c80,005cc558,00771968,00771988,0077198c,00771990,00771998,0077199c,007719a0,007719a4,007719ac,007719b0,007719c8,007d3ff8
+004af31a	LAB_004af31a	util	unknown	re/analysis/exception_filter/0x004af31a.md	004af2d4,004af31f,004af325,004af32a,004af32c,004af32d,005cc16c,005ea054,00773d74
+004af32d	FUN_004af32d	util	unknown	re/analysis/exception_filter/0x004af32d.md	004a3258,004af31a,00773d74
+004950b0	FUN_004950b0	util	unknown	re/analysis/timer/0x004950b0.md	00495120,00771e70,00771e74
+005208c0	FUN_005208c0	util	unknown	re/analysis/memory_pool/005208c0.md	00517250,005208d0,005208d8,005208f0,00621c34,00621c44
+00517250	FUN_00517250	util	unknown	re/analysis/memory_pool/00517250.md	00517254,0051725a,00517264
+00493f70	sub_00493f70	frontend	unknown	re/analysis/skeleton_prep_boot_winmain_a/00493f70.md	00771a04
+004274d0	FUN_004274d0	frontend	unknown	re/analysis/skeleton_prep_game_state/004274d0.md	004274de,007719e8,007f0f60
+004274e0	FUN_004274e0	frontend	unknown	re/analysis/skeleton_prep_game_state/004274e0.md	004cbd30,004cc160,004cc230,0066d828,0067d84c,007f0f60
+004960e0	sub_004960e0	boot	unknown	re/analysis/window_msgpump/004960e0.md	00499820,00772fb8
+005ac210	FUN_005ac210	audio	unknown	re/analysis/promote_c2_audio_rws/005ac210.md	
+0042c280	FUN_0042c280	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x0042c280.md	0042bf30,0042c29a
+00432080	FUN_00432080	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00432080.md	0040e470,0042d3a0,004321c3,00432220,0067e844,0067e914,0067e9f8,0067eca4,0067ecac,0067f19c,007f1041,007f108d,007f10d9,007f1125,007f1171,007f11bd,007f1209,007f1255,007f1501,007f154d,007f1599,007f15e5,007f1631,007f167d,007f16c9,007f1715,007f1a0c,007f1a14
+004927c0	FUN_004927c0	vehicle	unknown	re/analysis/skeleton_prep_boot_winmain_a/004927c0.md	00492977,00771980,007f0a40,007f0f2c,007f1044,007f1045,007f1046,007f1047,007f10dc,007f10dd,007f10de,007f10df,007f1504,007f1505,007f1506,007f1507,007f159c,007f159d,007f159e,007f159f
+004c1c80	FUN_004c1c80	hud	unknown	re/analysis/hud_ingame_d2/0x004c1c80.md	
+00402fb0	FUN_00402fb0	hud	unknown	re/analysis/promote_c1_low_ab1/0x00402fb0.md	00402fb7,00402fbc,00402fc9,00402fd0,00402fe2,00402ff8,0040300e,00427e00,004a2c48,005cc56c,00636afc
+00427680	FontText_ComputeScreenXY	hud	unknown	re/analysis/hud_promote_c2_b/0x00427680.md	0042b8b0,0042b8c0,005554d0,0067d838
+00434720	FUN_00434720	frontend	unknown	re/analysis/hud_frontend_d2/0x00434720.md	
+00439210	FUN_00439210	frontend	unknown	re/analysis/hud_frontend_d2/0x00439210.md	
+0042bcb0	FUN_0042bcb0	frontend	unknown	re/analysis/c0_promotion_frontend_a/0x0042bcb0.md	004b5750,004c5c00,005cc560,005cc724,005cd18c,005cd5a8,005cd76c,005cd770,005cd774,005cd776,005cd778,00616038,00636ac8,007d3ff8,007e96fc
+00428320	FUN_00428320	frontend	unknown	re/analysis/frontend_promote_menus_b/00428320.md	00427840,005554d0
+0040de30	sub_0040de30	render	unknown	re/analysis/promote_c2_render_lowrva/0040de30.md	0040df20,00426670,004c1480,004c1c10,004c1c80,0063b928,0063b9a8,0063b9ac,0063b9b0
+0040df20	sub_0040df20	render	unknown	re/analysis/promote_c2_render_lowrva/0040df20.md	0040de30,004266b0,004c1480,004c1c10,004c1c80,0063b928,0063b9a8,0063b9ac
+00492440	sub_00492440	render	unknown	re/analysis/skeleton_prep_boot_winmain_a/00492440.md	
+00492e60	sub_00492e60	render	unknown	re/analysis/skeleton_prep_boot_winmain_a/00492e60.md	004671a0,004c1c80
+00403050	FUN_00403050	frontend	unknown	re/analysis/loading_screen/0x00403050.md	00402fb0,00428760,0042b930,00492e90,00616038,00771964,007d3ff8
+0042d390	GetRaceStateField	render	unknown	re/analysis/skeleton_prep_game_state/0042d390.md	0042d394,0067ea6c
+0042a9f0	GetFadeAlpha	render	unknown	re/analysis/skeleton_prep_game_state/0042a9f0.md	0042a9f4,00492e90,0067eca8
+004cc7f0	FUN_004cc7f0	render	unknown	re/analysis/promote_c2_rw_render_submit/004cc7f0.md	004cc820
+00496920	FUN_00496920	util	unknown	re/analysis/skeleton_prep_boot_winmain_b/00496920.md	00492d30,00772ffc,00773010
+004a4170	__alldiv	util	unknown	re/analysis/timer_d2/0x004a4170.md	
+004a4220	__allmul	util	unknown	re/analysis/timer_d2/0x004a4220.md	
+0042bf30	FUN_0042bf30	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x0042bf30.md	0042bfa0,0067ea5c,0067eab0,0067eab4,0067eab8,0067eabc,0067eac0,0067eac8,0067eacc,0067ead0,0067ead4
+00411350	Replay::TimeFormat	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00411350.md	004113a6,004a2c48
+00411530	Replay::GetTimeAtIdx	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00411530.md	00411350,00411570
+0042aa00	FUN_0042aa00	frontend	unknown	re/analysis/frontend_promote_menus_a/0x0042aa00.md	0067e9f8,0067ed40,0067ed74,0067ed84
+005acaa0	FUN_005acaa0	audio	unknown	re/analysis/promote_c2_audio_rws/005acaa0.md	005acd60,005ae0c0,005aeca0
+005aea50	FUN_005aea50	audio	unknown	re/analysis/audio_rws_loader_d3/005aea50.md	004522d0,005aea00,005aea55,007d3ff8
+004a42c5	FUN_004a42c5	render	unknown	re/analysis/rw_engine_init_d3/004a42c5.md	004a504f
+004ad1e0	FUN_004ad1e0	render	unknown	re/analysis/rw_engine_init_d3/004ad1e0.md	
+004e4350	FUN_004e4350	render	unknown	re/analysis/skeleton_prep_high_leverage/004e4350.md	004e4320,004e4354,004e435a,004e4360,004e4366,004e4370,007d716c
+004228f0	FUN_004228f0	render	unknown	re/analysis/promote_c2_render_lowrva/004228f0.md	00422570,004cd070,004cd140,004cd2d0,005cc320,005cc328,006403fc,006412e8,00641310,00641313,00641318,0064131c,00641324,007d3ff8
+00442df0	FUN_00442df0	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00442df0.md	00442df6
+00428450	FUN_00428450	hud	unknown	re/analysis/hud_ingame_promote_c2/0x00428450.md	0042b8b0,0042b8c0,00450b10,005cc560,005cc56c,005cc730,005cd274,005cd5a8,005cd658,005cd65c,005d757c,0067d974,00771960
+004299d0	TimeRecord::WriteTrackBest	util	unknown	re/analysis/leaderboard/0x004299d0.md	
+00405890	FUN_00405890	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00405890.md	004058a9,00410d10,0063a5d0,0063a5d4,007f0fd0
+00423b20	FUN_00423b20	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00423b20.md	00423b30,004248b0
+00428390	FUN_00428390	frontend	unknown	re/analysis/skeleton_prep_game_state/00428390.md	00402750,00428398,0067d960
+00412f30	FUN_00412f30	util	unknown	re/analysis/util_c0_promote/0x00412f30.md	
+004c5c00	FUN_004c5c00	frontend	unknown	re/analysis/sprite_gate_c3/0x004c5c00.md	
+004809e0	VehicleRespawnTeleport	vehicle	unknown	re/analysis/vehicle_promote_c2_b/004809e0.md	
+0046dc20	VehicleOOBDebugDraw	vehicle	unknown	re/analysis/vehicle_update_d3/0046dc20.md	0040e350
+0047eb30	VehiclePhysicsWorldStep	vehicle	unknown	re/analysis/vehicle_promote_c2_b/0047eb30.md	
+004c77c0	FUN_004c77c0	render	unknown	re/analysis/texture_loader_d3/0x004c77c0.md	
+004cc400	FUN_004cc400	render	unknown	re/analysis/texture_loader_d3/0x004cc400.md	
+00413c70	FUN_00413c70	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00413c70.md	00413caa,005d757c,0063bc60,0063bc68
+0042fe70	FUN_0042fe70	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x0042fe70.md	0042fe75,0067ea80
+00480720	VehicleRespawnPlace	vehicle	unknown	re/analysis/vehicle_promote_c2_b/00480720.md	
+00420d00	FUN_00420d00	boot	unknown	re/analysis/promote_c2_panel_piz_callees/00420d00.md	004b6520,0063e4b8,0063e4d0,0063e4f4,0063e518,0063e53c
+00412890	FUN_00412890	boot	unknown	re/analysis/promote_c2_panel_piz_callees/00412890.md	0040bb30,0063bc54
+004963d0	thunk_FUN_00496370	boot	unknown	re/analysis/skeleton_prep_boot_winmain_b/004963d0.md	00496370
+00484130	FUN_00484130	boot	unknown	re/analysis/skeleton_prep_render/00484130.md	00484134,0048413f,007d3ff8
+00425bc0	FUN_00425bc0	boot	unknown	re/analysis/promote_c2_perm_piz_callees/00425bc0.md	00425bc2,00425bd4,00425bda,004b3d80,004c5c80,00644150
+004723d0	FUN_004723d0	boot	unknown	re/analysis/skeleton_prep_render/004723d0.md	00691500,00691504,00691510,00691520,00691530,00691540,00691550,00691560,00691570,00691580,00691590,0069159c
+00484170	FUN_00484170	boot	unknown	re/analysis/skeleton_prep_high_leverage/00484170.md	0048417b,00484186,0048418a,0048418e,00484192,0048419e,004841a3,004841a9,004841ad,004841b5,004841c1,005cc320,007d3ff8
+00403db0	FUN_00403db0	render	unknown	re/analysis/promote_c2_render_lowrva/00403db0.md	00403d30,00403ed0,00427ad0
+004041c0	FUN_004041c0	render	unknown	re/analysis/promote_c2_render_lowrva/004041c0.md	00403fa0,00417730,00427e00,005cc31c,005cc320,005cc32c,005cc558,005cc574,005cc728,005cc730,005cc734,005cc738,005cc73c,005d757c,00636b80,007f100c
+0041ea10	FUN_0041ea10	render	unknown	re/analysis/render_frame_d4/0x0041ea10.md	0063d7e4
+00422ac0	FUN_00422ac0	render	unknown	re/analysis/c0_promotion_render_a/0x00422ac0.md	006412e8,006412ec,006412f0,006412f4
+00426030	FUN_00426030	render	unknown	re/analysis/render_promote_c2_track_loader/0x00426030.md	0041e8f0,0041e9b0,0041ea10,0042604c,005f616c,00644158,00646e58
+004260e0	FUN_004260e0	render	unknown	re/analysis/render_promote_c2_track_loader/0x004260e0.md	005cc4dc,005cd4ac
+005be140	FUN_005be140	audio	unknown	re/analysis/promote_c2_rws_audio_loader/5be140.md	
+004c5800	FUN_004c5800	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5800.md	
+004c5820	FUN_004c5820	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5820.md	
+004c5a00	FUN_004c5a00	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5a00.md	
+004c5ae0	FUN_004c5ae0	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5ae0.md	
+004c5b50	FUN_004c5b50	render	unknown	re/analysis/texture_loader_d3_cont1/0x004c5b50.md	
+004e1df0	FUN_004e1df0	render	unknown	re/analysis/texture_loader_d3_cont1/0x004e1df0.md	
+004a45cf	__nh_malloc	boot	unknown	re/analysis/boot_crt_env_cont1/0x004a45cf.md	004a45d0,004a45da,004a45e4,004a45ec,004a45fa
+004a4660	FUN_004a4660	boot	unknown	re/analysis/boot_crt_env_cont1/0x004a4660.md	004a45c6,004a4663,004a4668,004a77eb,00616408
+004aa497	___sbh_find_block	boot	unknown	re/analysis/boot_crt_env_cont1/0x004aa497.md	004aa49d,004aa4a0,004aa4af,004aa4b4,004aa4c1
+004aa4c2	___sbh_free_block	boot	unknown	re/analysis/boot_crt_env_cont1/0x004aa4c2.md	004aa4d9,004aa4ee,004aa504,004aa726,004aa742,004aa772,004aa7a0,004aa7d9
+004ae28f	___crtInitCritSecNoSpinCount@8	boot	unknown	re/analysis/boot_crt_env_cont1/0x004ae28f.md	004ae291,004ae298,004ae29e,004ae29f
+004af166	__setmbcp	boot	unknown	re/analysis/boot_crt_env_cont1/0x004af166.md	004aefd0,004af17b,004af181,004af185,004af1a8,004af1b0,004af1c1,004af1d7,004af1f0,004af207,004af221,004af24e,004af255,004af2ac,004af2ad,00773d70,00773db4
+004affaf	FUN_004affaf	boot	unknown	re/analysis/boot_crt_env_cont1/0x004affaf.md	004affb8,004affc0,004affd2,004affdf,004affe0,005d566a
+004a4554	__heap_alloc	boot	unknown	re/analysis/boot_crt_env_cont1/0x004a4554.md	004a4578,004a457e,004a4583,004a45a5,004a45a7,004a45af,004a45b2,004a45b6,004a45bc,004a45c2,004a45c6,004a45cf
+004a45c6	FUN_004a45c6	boot	unknown	re/analysis/boot_crt_env_cont1/0x004a45c6.md	004a45c8,004a45ce,004a4660,004a77eb,00616408
+004a7800	FUN_004a7800	boot	unknown	re/analysis/boot_crt_env_cont1/0x004a7800.md	004a77eb,004a7807,004a780d,004a781a,004a7820,004a7825,004a7843,004a787e,004aa23d,00616408
+004acd00	_memmove	boot	unknown	re/analysis/boot_crt_env_cont1/0x004acd00.md	004acd0e,004ad03c
+004aefd0	FUN_004aefd0	boot	unknown	re/analysis/boot_crt_env_cont1/0x004aefd0.md	004aed77,004aedcf,004af04c,004af051,004af0e4,004af14a,004af165,004afff4,00616d68,00616d70,00616d74,00616d80,00773d70
+004af2ad	FUN_004af2ad	boot	unknown	re/analysis/boot_crt_env_cont1/0x004af2ad.md	004a77eb,004af166,004af2af,004af2b5,00616408
+004aeda6	setSBCS	boot	unknown	re/analysis/boot_crt_env_cont1/0x004aeda6.md	004aedac,004aedb4,004aedce,004aefd0
+004aedcf	FUN_004aedcf	boot	unknown	re/analysis/boot_crt_env_cont1/0x004aedcf.md	004aede1,004aee16,004aee5c,004aeeae,004aef20,004aef60
+004a31e1	FUN_004a31e1	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004a31e1.md	004a31e3,004a31e8,004a407e,004a4126,004a4158
+004a407e	__onexit_lk	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004a407e.md	004a31e1,004a408e,004a4126
+004a4158	FUN_004a4158	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004a4158.md	004a31e1,004a31ea,004a407e,004a4126,004a415a,004a415c,004a77eb,00616408
+004ad33b	__controlfp	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004ad33b.md	004a5de3,004ad344
+004a5df5	__ms_p5_test_fdiv	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004a5df5.md	004a5e35,005cd0c8,005d1518,005d1520
+004a9744	__flushall	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004a9744.md	004a5f07,004a974a
+004aa7da	___sbh_alloc_new_region	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004aa7da.md	004aac76
+004aa891	___sbh_alloc_new_group	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004aa891.md	004aac76
+004a31ea	FUN_004a31ea	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004a31ea.md	004a31ec,004a31f1,004a4158,004a77eb,00616408
+004ad3e3	FUN_004ad3e3	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004ad3e3.md	004a77eb,004ad351,004ad3e5,004ad3ea,00616408
+004aa23d	FUN_004aa23d	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004aa23d.md	004a7800,004aa23f,004aa244
+004ae635	FUN_004ae635	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004ae635.md	004ac570,004ae67c,004ae6c6,005d7524,005d7528,00616d24,00616d30,00616d3c
+004af56c	FUN_004af56c	boot	unknown	re/analysis/boot_crt_exit_d3_cont1/0x004af56c.md	004a77eb,004af597,004af5d4,004af601
+00477730	FUN_00477730	render	unknown	re/analysis/promote_c2_render_frame/0x00477730.md	004773f0,00477810,006925b8,00692bb8
+004a4fc1	write_char	render	unknown	re/analysis/rw_engine_init_d2_cont2/0x004a4fc1.md	
+004a4da0	__aulldvrm	render	unknown	re/analysis/rw_engine_init_d2_cont2/0x004a4da0.md	
+004cfe40	FUN_004cfe40	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cfe40.md	
+004dcdc0	FUN_004dcdc0	render	unknown	re/analysis/promote_c2_render_d3d9/0x004dcdc0.md	
+004cc6e0	FUN_004cc6e0	render	unknown	re/analysis/promote_c2_render_d3d9/0x004cc6e0.md	
+00426cc0	FUN_00426cc0	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00426cc0.md	00426ccc,00663658
+004997b0	FUN_004997b0	util	unknown	re/analysis/promote_c2_video_cfg/004997b0.md	00499720
+00499890	FUN_00499890	boot	unknown	re/analysis/promote_c2_d3d9_window/499890.md	00496400,00499899,004998be,004998cb,004998f3,00499905,00499928,00499951,0049996b,00499979,00499986,00499a05,00499a17,00499a24,00499a2c,005d028c,00773920
+00499ce0	FUN_00499ce0	render	unknown	re/analysis/skeleton_prep_boot_winmain_b/00499ce0.md	00773928,0077392c,00773930,00773934,00773938,0077393c,00773940,00773944,00773948,0077394c,00773950,00773954,00773958,0077395c,00773960,00773964
+00497310	FUN_00497310	input	unknown	re/analysis/promote_c2_video_cfg/00497310.md	004a2c48,005d757c,007730d4,0077311c,00773120,0077313c,007e95c0,007e96c8,007e96fc,007e9700
+00431ae0	FUN_00431ae0	boot	unknown	re/analysis/promote_c2_boot_lowrva/0x00431ae0.md	00431af0,00431b00,00431b10,004924f0,007f0f00,007f0f04
+00431af0	FUN_00431af0	boot	unknown	re/analysis/promote_c2_boot_lowrva/0x00431af0.md	00431ae0,007f0f08
+00431b00	FUN_00431b00	boot	unknown	re/analysis/promote_c2_boot_lowrva/0x00431b00.md	00431ae0,00431af0,007f0f00
+00431b10	FUN_00431b10	boot	unknown	re/analysis/skeleton_prep_high_leverage/00431b10.md	00431b1a,007f0f10
+004a3ac9	FUN_004a3ac9	util	unknown	re/analysis/boot_subsystem_d3/0x004a3ac9.md	
+00431b40	FUN_00431b40	boot	unknown	re/analysis/skeleton_prep_game_state/00431b40.md	00402750,00431b48,0067eaa8
+0055c4f0	PhysicsBodySetFriction	vehicle	unknown	re/analysis/vehicle_update_d3_cont/0055c4f0.md	
+00403c60	FUN_00403c60	hud	unknown	re/analysis/skeleton_prep_high_leverage/00403c60.md	00403c8c,00403c8d,00403cb7,00403cb8,00403cf6,00403cf7,00403d2c,00403d2e,00427ad0
+00404e00	FUN_00404e00	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00404e00.md	00404e1a,00639cc8
+00404e20	FUN_00404e20	vehicle	unknown	re/analysis/promote_c2_vehicle_lowrva/0x00404e20.md	00404e00,00404e43,00636c08
+00496370	FUN_00496370	input	unknown	re/analysis/skeleton_prep_boot_winmain_b/00496370.md	004987b0,00772fb8
+0051e6f0	png_write_hIST	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051e7f0	png_check_keyword	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051e990	FUN_0051e990	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051ead0	FUN_0051ead0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051ed60	FUN_0051ed60	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051ee70	FUN_0051ee70	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051f0e0	FUN_0051f0e0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051f240	FUN_0051f240	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051f350	FUN_0051f350	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051f4f0	FUN_0051f4f0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051f810	FUN_0051f810	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0051fa50	png_write_find_filter	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520640	FUN_00520640	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005207c0	png_create_struct_2	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520850	png_destroy_struct	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520870	FUN_00520870	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520930	png_free	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520960	FUN_00520960	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520990	FUN_00520990	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005209d0	FUN_005209d0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520a00	FUN_00520a00	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520b60	FUN_00520b60	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520c70	FUN_00520c70	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00520ef0	FUN_00520ef0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00521000	FUN_00521000	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00521110	FUN_00521110	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00521410	FUN_00521410	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00521520	FUN_00521520	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00521990	FUN_00521990	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00522970	FUN_00522970	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00522ab0	FUN_00522ab0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00522b00	FUN_00522b00	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00522b50	FUN_00522b50	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00522cc0	FUN_00522cc0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00522ce0	FUN_00522ce0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523110	png_get_uint_32	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523140	png_crc_read	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523170	FUN_00523170	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005232c0	FUN_005232c0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523360	FUN_00523360	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523640	FUN_00523640	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005238c0	FUN_005238c0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523cd0	FUN_00523cd0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00523e40	FUN_00523e40	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005241f0	FUN_005241f0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005245b0	FUN_005245b0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00524f70	FUN_00524f70	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005253c0	FUN_005253c0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00525870	png_handle_sPLT	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00525bd0	FUN_00525bd0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00525fb0	FUN_00525fb0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00526310	FUN_00526310	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00526630	FUN_00526630	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00526910	FUN_00526910	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00526bf0	FUN_00526bf0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005270e0	FUN_005270e0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00527560	FUN_00527560	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+005278a0	FUN_005278a0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00527a40	FUN_00527a40	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00527c30	FUN_00527c30	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00527ee0	FUN_00527ee0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528200	FUN_00528200	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528630	FUN_00528630	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528810	FUN_00528810	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528ba0	FUN_00528ba0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528e00	zcalloc	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528e20	zcfree	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528e30	FUN_00528e30	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00528ef0	FUN_00528ef0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00529050	FUN_00529050	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052a890	FUN_0052a890	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052a9c0	FUN_0052a9c0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052aa40	FUN_0052aa40	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052ab00	inflate	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052b750	FUN_0052b750	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052b7e0	FUN_0052b7e0	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052b820	FUN_0052b820	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052bf20	FUN_0052bf20	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052bf40	FUN_0052bf40	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+0052bff0	inflate_table	util	unknown	re/analysis/bucket_0051e6f0/_BUCKET_HALT.md	
+00516bb0	png_write_data	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516bd0	png_flush_data	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516bf0	png_set_write_fn	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516c40	png_sig_cmp	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516cc0	png_zalloc	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516d20	thunk_png_free	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516d30	png_reset_crc	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516d50	png_calculate_crc	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516da0	png_create_info_struct	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00516de0	png_free_data	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005171a0	FUN_005171a0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00517200	FUN_00517200	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00517270	FUN_00517270	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005172b0	FUN_005172b0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005172f0	FUN_005172f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00517380	FUN_00517380	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005173d0	FUN_005173d0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005173f0	FUN_005173f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005175d0	FUN_005175d0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00517940	FUN_00517940	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00517da0	FUN_00517da0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00517e00	FUN_00517e00	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00518080	FUN_00518080	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00518140	FUN_00518140	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005183a0	FUN_005183a0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005183c0	FUN_005183c0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005184b0	FUN_005184b0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005184f0	FUN_005184f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00518570	FUN_00518570	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00518580	FUN_00518580	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00518590	FUN_00518590	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005185a0	png_do_background	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00519270	png_do_read_transformations	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005196f0	FUN_005196f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00519820	FUN_00519820	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+005199f0	FUN_005199f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00519af0	FUN_00519af0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00519bc0	FUN_00519bc0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00519e30	FUN_00519e30	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+00519f70	FUN_00519f70	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051a6c0	png_do_expand_palette	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051b750	FUN_0051b750	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051bb40	FUN_0051bb40	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051bd70	FUN_0051bd70	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051c100	FUN_0051c100	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051c220	png_build_gamma_table	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051c9f0	FUN_0051c9f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051ca10	FUN_0051ca10	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051ca60	FUN_0051ca60	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051ca90	FUN_0051ca90	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051cb40	FUN_0051cb40	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051cb70	FUN_0051cb70	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051cbe0	FUN_0051cbe0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051cfc0	FUN_0051cfc0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d0f0	FUN_0051d0f0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d1b0	FUN_0051d1b0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d240	FUN_0051d240	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d340	FUN_0051d340	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d400	FUN_0051d400	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d560	FUN_0051d560	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d800	FUN_0051d800	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051d900	FUN_0051d900	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051db30	FUN_0051db30	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051dca0	FUN_0051dca0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051e230	png_write_tRNS	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0051e4a0	FUN_0051e4a0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0052c4a0	inflate_fast_huffman_setup	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0052c630	FUN_0052c630	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0052c660	FUN_0052c660	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+0052c7a0	FUN_0052c7a0	util	unknown	re/analysis/bucket_00516bb0/_BUCKET_HALT.md	
+004b6700	FUN_004b6700	render	unknown	re/analysis/skeleton_prep_boot_winmain_b/004b6700.md	007d3e54
+004ec720	FUN_004ec720	render	unknown	re/analysis/bucket_004d7ac0/0x004ec720.md	
+004ec730	FUN_004ec730	render	unknown	re/analysis/bucket_004d7ac0/0x004ec730.md	004ec720
+004ec740	FUN_004ec740	render	unknown	re/analysis/bucket_004d7ac0/0x004ec740.md	
+004ec750	FUN_004ec750	render	unknown	re/analysis/bucket_004d7ac0/0x004ec750.md	004ec740
+004ec760	FUN_004ec760	render	unknown	re/analysis/bucket_004d7ac0/0x004ec760.md	005dae30,005dae34
+004ec79d	FUN_004ec79d	render	unknown	re/analysis/bucket_004d7ac0/0x004ec79d.md	
+004ec839	FUN_004ec839	render	unknown	re/analysis/bucket_004d7ac0/0x004ec839.md	004ec79d
+004ec915	FUN_004ec915	render	unknown	re/analysis/bucket_004d7ac0/0x004ec915.md	005cc31c,005cc320
+004ec9a3	FUN_004ec9a3	render	unknown	re/analysis/bucket_004d7ac0/0x004ec9a3.md	004ec8eb,004ec9cd,00618864
+004ec9cd	FUN_004ec9cd	render	unknown	re/analysis/bucket_004d7ac0/0x004ec9cd.md	005cc32c
+004eca7c	FUN_004eca7c	render	unknown	re/analysis/bucket_004d7ac0/0x004eca7c.md	004ecaab,00618868
+004ecaab	FUN_004ecaab	render	unknown	re/analysis/bucket_004d7ac0/0x004ecaab.md	
+004ecaee	FUN_004ecaee	render	unknown	re/analysis/bucket_004d7ac0/0x004ecaee.md	006187a8
+004ecb1f	thunk_FUN_004ecb12	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb1f.md	004ecb12,006187cc
+004ecb43	thunk_FUN_004ecb36	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb43.md	006187bc
+004ecb67	thunk_FUN_004ecb5a	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb67.md	006187c4
+004ecb97	FUN_004ecb97	render	unknown	re/analysis/bucket_004d7ac0/0x004ecb97.md	004ec915
+004ecc6f	FUN_004ecc6f	render	unknown	re/analysis/bucket_004d7ac0/0x004ecc6f.md	004ec9cd
+00556e90	FUN_00556e90	render	unknown	re/analysis/promote_c1_high_ab3/0x00556e90.md	005d757c
+004f07a0	FUN_004f07a0	render	unknown	re/analysis/bucket_004f022d/0x004f07a0.md	007d3ff8
+004f07d0	FUN_004f07d0	render	unknown	re/analysis/bucket_004f022d/0x004f07d0.md	004f07a0
+004f0800	FUN_004f0800	render	unknown	re/analysis/bucket_004f022d/0x004f0800.md	0045b350,004f4340,004f43b0,004f43f0,004f4470
+004f0900	FUN_004f0900	render	unknown	re/analysis/bucket_004f022d/0x004f0900.md	007d3ff8
+004f0970	FUN_004f0970	render	unknown	re/analysis/bucket_004f022d/0x004f0970.md	007d3ff8
+004f0ae0	FUN_004f0ae0	render	unknown	re/analysis/bucket_004f022d/0x004f0ae0.md	004d7ff0,004d8480,007d3ff8,007d7290
+004f0bd0	FUN_004f0bd0	render	unknown	re/analysis/bucket_004f022d/0x004f0bd0.md	004f0ae0,007d7290
+004f0c10	FUN_004f0c10	render	unknown	re/analysis/bucket_004f022d/0x004f0c10.md	
+004f0c50	FUN_004f0c50	render	unknown	re/analysis/bucket_004f022d/0x004f0c50.md	
+004f0d80	FUN_004f0d80	render	unknown	re/analysis/bucket_004f022d/0x004f0d80.md	
+004f10e0	FUN_004f10e0	render	unknown	re/analysis/bucket_004f022d/0x004f10e0.md	
+004f1130	FUN_004f1130	render	unknown	re/analysis/bucket_004f022d/0x004f1130.md	004f0f10,007d3ff8
+004f1800	FUN_004f1800	render	unknown	re/analysis/bucket_004f022d/0x004f1800.md	004f1150
+004f1f00	FUN_004f1f00	render	unknown	re/analysis/bucket_004f022d/0x004f1f00.md	004f1800,004f1870
+004f1f90	FUN_004f1f90	render	unknown	re/analysis/bucket_004f022d/0x004f1f90.md	004f1fb0
+004f2570	FUN_004f2570	render	unknown	re/analysis/bucket_004f022d/0x004f2570.md	004f2e70,004f3030,004f3150
+004f2e70	FUN_004f2e70	render	unknown	re/analysis/bucket_004f022d/0x004f2e70.md	004cc7f0,004f2f90
+004f2f90	FUN_004f2f90	render	unknown	re/analysis/bucket_004f022d/0x004f2f90.md	
+004f3030	FUN_004f3030	render	unknown	re/analysis/bucket_004f022d/0x004f3030.md	
+004f3150	FUN_004f3150	render	unknown	re/analysis/bucket_004f022d/0x004f3150.md	004f3030
+004f3440	FUN_004f3440	render	unknown	re/analysis/bucket_004f022d/0x004f3440.md	
+004f3b00	FUN_004f3b00	render	unknown	re/analysis/bucket_004f022d/0x004f3b00.md	004f0bd0,004f36c0,00618a00,00618a10,00618a14
+004f3bc0	FUN_004f3bc0	render	unknown	re/analysis/bucket_004f022d/0x004f3bc0.md	004f3b60
+004f3bd0	FUN_004f3bd0	render	unknown	re/analysis/bucket_004f022d/0x004f3bd0.md	
+004f3be0	FUN_004f3be0	render	unknown	re/analysis/bucket_004f022d/0x004f3be0.md	004d7ff0,004d8480
+004f3cb0	FUN_004f3cb0	render	unknown	re/analysis/bucket_004f022d/0x004f3cb0.md	
+004f4200	FUN_004f4200	render	unknown	re/analysis/bucket_004f022d/0x004f4200.md	004cc7f0,007d7298,007d729c
+004f4270	FUN_004f4270	render	unknown	re/analysis/bucket_004f022d/0x004f4270.md	004f4200,007d7298,007d729c
+004f4900	FUN_004f4900	render	unknown	re/analysis/bucket_004f022d/0x004f4900.md	004f4470,004f46a0,007d7378,007d7380,007d7384,007d7388,007d738c,007d7390,007d7394,007d7398,007d739c
+004f5020	FUN_004f5020	render	unknown	re/analysis/bucket_004f022d/0x004f5020.md	004f5030,004f57e0,004f6870,004f71f0,005dae40
+004f5030	FUN_004f5030	render	unknown	re/analysis/bucket_004f022d/0x004f5030.md	005cd04c,005cfe34,005dae40,005dae88,005dae8c
+004f57e0	FUN_004f57e0	render	unknown	re/analysis/bucket_004f022d/0x004f57e0.md	004f5030
+004f6870	FUN_004f6870	render	unknown	re/analysis/bucket_004f022d/0x004f6870.md	004f5030,004f57e0
+004f71f0	FUN_004f71f0	render	unknown	re/analysis/bucket_004f022d/0x004f71f0.md	004f5030
+004f77f0	FUN_004f77f0	render	unknown	re/analysis/bucket_004f022d/0x004f77f0.md	
+004f7850	FUN_004f7850	render	unknown	re/analysis/bucket_004f022d/0x004f7850.md	004f5020,005dae40
+004f79f0	FUN_004f79f0	render	unknown	re/analysis/bucket_004f022d/0x004f79f0.md	004c3b90,004f57e0,005dae94
+004f7dc0	FUN_004f7dc0	render	unknown	re/analysis/bucket_004f022d/0x004f7dc0.md	005ceb90,005cf00c,005dae88,005dae98
+004f81b0	FUN_004f81b0	render	unknown	re/analysis/bucket_004f022d/0x004f81b0.md	004f7dc0
+004f8400	FUN_004f8400	render	unknown	re/analysis/bucket_004f022d/0x004f8400.md	
+004f8490	FUN_004f8490	render	unknown	re/analysis/bucket_004f022d/0x004f8490.md	004f8400,005cc320,005cc33c,005d757c
+004f8640	FUN_004f8640	render	unknown	re/analysis/bucket_004f022d/0x004f8640.md	004f8580,007d73a8
+004f8660	FUN_004f8660	render	unknown	re/analysis/bucket_004f022d/0x004f8660.md	004f8640,007d73a8
+004f8670	FUN_004f8670	render	unknown	re/analysis/bucket_004f022d/0x004f8670.md	004f8580,007d73ac
+004f8690	FUN_004f8690	render	unknown	re/analysis/bucket_004f022d/0x004f8690.md	004f8670,007d73ac
+004fa5f0	FUN_004fa5f0	render	unknown	re/analysis/bucket_004f022d/0x004fa5f0.md	007d73b0,007d97b0,007d97b4,007d97b8,007d97bc,007d97c8,007d97cc,007d97d4,007d97d8,007d97dc,007d98b8,007d98bc
+004fb050	FUN_004fb050	render	unknown	re/analysis/bucket_004f022d/0x004fb050.md	006199b0,006199c0,006199d0,006199e0,006199e8,007d9900,007d9904
+004fb210	FUN_004fb210	render	unknown	re/analysis/bucket_004f022d/0x004fb210.md	

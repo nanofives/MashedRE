@@ -1,0 +1,476 @@
+================================================================================
+c3_batch_j — C2→C3 fanout (FILTER-FIX CALIBRATION + HARNESS-EXTENSION UPTAKE)
+Generated: 2026-05-18 by promote-c3-batch skill (orchestrator: Opus 4.7 1M)
+================================================================================
+
+CONTEXT
+-------
+- Subsystems: audio + save + vehicle + input + boot (NOT frontend — drained
+  per agent B S-DoD audit; c3_batch_h cleared the remaining frontend C2s).
+- N sessions: 6
+- K per session: 10 (upsized for Opus 1M; matches plan in
+  re/analysis/plans/next_batches_plan.md).
+- Complexity profile: leaf + near-leaf + small dispatcher.
+- Total target promotions: 60.
+- Worker model: Opus 4.7 (claude-opus-4-7[1m]) — per user override.
+- End-of-batch sweep: invoke `frida-sweep` from main.
+
+WHY THIS BATCH HAS HIGHER CANDIDATE COUNTS THAN c3_batch_i
+----------------------------------------------------------
+This batch applies the FOUR filter-implementation fixes flagged by the
+c3_batch_i orchestrator post-mortem:
+
+1. Inline [UNCERTAIN] regex fix — c3_batch_i used `\[UNCERTAIN\]` which
+   misses `[UNCERTAIN U-xxxx]` (mandatory `]` constraint). Filter j uses
+   `\[UNCERTAIN[ \]]` which catches both bare and catalogued forms.
+2. Catalogued-U-ID exemption — per re/CONFIDENCE.md, inline `[UNCERTAIN
+   U-xxxx]` markers whose U-IDs are catalogued in UNCERTAINTIES.md should
+   NOT block C3. Filter j cross-references UNCERTAINTIES.md (1,121 U-IDs)
+   and only refuses bare/uncatalogued markers.
+3. Body-grep callee extraction scope — c3_batch_i's filter grepped RVAs
+   anywhere in the note body, catching false-positives from "Callers",
+   "Stubs encountered", and "Resolves U-xxx from <prior_note>" sections.
+   Filter j restricts grep to `## Decompilation` / `## Callees` /
+   `## Mechanical description` sections only.
+4. "Resolves [UNCERTAIN U-xxx] from <prior_note>" prose pattern — this
+   form (common in promote_c2_vehicle_b notes) was making the body-grep
+   filter mistakenly count cited resolved-by-this-note RVAs. Filter j
+   explicitly skips lines matching `Resolve[ds]? \[UNCERTAIN`.
+
+Filter calibration delta (filter j vs filter i):
+
+| Filter                        | i eliminated | j eliminated | Delta  |
+|-------------------------------|--------------|--------------|--------|
+| Already C3+ (duplicate row)   | 2            | 0            |  -2    |
+| Stale-impl + GREEN diff drift | 0            | 0            |   0    |
+| Inline UNCERTAIN (bare/uncat) | 3            | 22           | +19    |
+| Callee-gate (depth-1 < C2)    | 42           | 26           | -16    |
+| arg_type unsupported          | 0            | 0            |   0    |
+| TOTAL eliminated              | 47           | 48           |  +1    |
+
+Inline-UNCERTAIN moved up (22 vs 3) because filter i missed the
+`[UNCERTAIN U-xxxx]` form entirely. Callee-gate moved down (26 vs 42)
+because filter j scopes the grep correctly and skips Resolves-prose, so
+fewer non-callee RVAs get flagged as blocking callees.
+
+Candidate pool snapshot (2026-05-18):
+- Total C2 in subsystems audio+save+vehicle+input+boot: 183 hooks.csv rows
+  → 173 with analysis notes (10 missing-note auto-rejected).
+- After 4 fixed filters: 122 / 173 = **70.5% pass rate**
+  (vs c3_batch_i's 29.9% pre-fix calibration).
+
+This is a 40 pt swing in candidate pool size. To stay at 60 promotions
+the batch only uses ~50% of the passed pool, leaving ~62 candidates in
+reserve for c3_batch_k.
+
+HARNESS-EXTENSION UPTAKE (commit 656273b)
+------------------------------------------
+Today's harness extensions added these arg_types to re/frida/diff_template.js:
+- `eax_implicit_int` / `eax_implicit_ptr` — for naked-EAX caller-passed
+  slot indices (D-11010)
+- `vec3_global_mul_observe` — for in-place 3-float scale on global vec3
+  (D-11011)
+- `fmt_desc_pair_compare` — for 5-field AND-comparator on audio fmt-desc
+  pairs (c3_batch_i s2 refusal)
+
+The 8 RVAs newly unblocked by these extensions MUST be included in this
+batch. All 8 verified against the passed-list:
+
+| RVA        | Unblocking arg_type        | Session | Status     |
+|------------|----------------------------|---------|------------|
+| 0x00497190 | eax_implicit_int           | S6      | OVERRIDE   |
+| 0x004971b0 | eax_implicit_int           | S5      | passed     |
+| 0x00498d20 | eax_implicit_ptr (HWND)    | S5      | passed     |
+| 0x0042aad0 | (already C3 — drift skip)  | —       | drift-skip |
+| 0x0046c570 | vec3_global_mul_observe    | S3      | passed     |
+| 0x005ac5f0 | fmt_desc_pair_compare      | S1      | passed     |
+| 0x005ac9e0 | fmt_desc_pair_compare      | S1      | passed     |
+| 0x005acaa0 | fmt_desc_pair_compare      | S1      | passed     |
+
+NOTE on 0x00497190: caller-gate-blocked by callee FUN_004a2b60 (render
+C1). Included anyway as the harness extension addresses the original
+refusal cause (EAX-implicit ABI); worker should drift-promote 004a2b60
+in-session or refuse on the callee-gate per usual rubric.
+
+NOTE on 0x0042aad0: this RVA shipped as C3 in branch ma3-frida-s1
+(MenuDimSet, 2026-05-17 sweep). The hooks.csv row may carry a stale C2
+shadow — workers should drift-detect and skip without authoring.
+
+YIELD PROJECTION
+----------------
+- c3_batch_h baseline: 19/72 = 26%
+- c3_batch_i (filter v1):   20/67 = 30%, after sweep 10/20 = 50%
+- c3_batch_j target: 60-70% promotion rate
+  - With filter fixes reducing false refusals: -10 spurious refusals
+  - With harness extensions removing arg_type gap: +6-8 promotions
+  - With D-11007 cleanup landing (cleaner subsystem fields): cleaner
+    cluster boundaries reduce wrong-bucket assignments
+
+CANDIDATE-POOL DISTRIBUTION (passed all 4 filters, 122 total)
+-------------------------------------------------------------
+audio:    20  → S1 (10) + S2 (10) — drains audio passed pool
+save:      9  → S5 (3) — picks all 8d20+8d60+991f0+550910+autosave
+input:     5  → S5 (1) + S6 (4) — drains input passed pool (5)
+vehicle:  56  → S3 (10) + S4 (10) — 36 left in reserve for c3_batch_k
+boot:     32  → S5 (5) + S6 (4) — 23 left in reserve for c3_batch_k
+
+KNOWN DRIFT — verify before authoring
+-------------------------------------
+Each worker MUST run `grep "^<rva>," hooks.csv | head -2` first for each
+candidate. If ANY C3+ row exists, skip and report in PROMOTION_QUEUE.md
+note as drift-skip.
+
+POOL SLOT SEMANTICS
+-------------------
+C3 work does NOT require a Ghidra pool slot (analysis already done at C2;
+no fresh decomp writeback). Each session only needs:
+1. A git worktree (`.worktrees/c3-batch-j-sN/`) bound to its own branch.
+2. Frida pool slot at diff time (shared via scripts/frida_pool.sh; not
+   pre-allocated).
+
+This is the same model as c3_batch_i. No Ghidra pool acquire/release in
+session blocks.
+
+================================================================================
+Session 1 — audio_c3_j1  (audio fmt-desc comparators + RWS leaves, 10 functions)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — cap 10 (this session: 10)
+Worktree:    .worktrees/c3-batch-j-s1/  (branch c3/batch-j-s1)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared via scripts/frida_pool.sh (no pre-allocation)
+Batch id:    c3-batch-j
+
+# Mission
+Promote 10 audio fmt-desc comparators + RWS chunk-reader leaves. Includes
+3 newly-unblocked candidates (005ac5f0, 005ac9e0, 005acaa0) that now
+have the `fmt_desc_pair_compare` arg_type in re/frida/diff_template.js.
+Cluster file: `mashedmod/src/mashed_re/Audio/RwsFmt_j1.cpp`.
+
+# Candidates (10) — 3 newly-unblocked highlighted
+| RVA        | Name             | Analysis note                                       | Signature / arg_type hint                          |
+|------------|------------------|-----------------------------------------------------|----------------------------------------------------|
+| 0x005ac5f0 | FUN_005ac5f0     | re/analysis/promote_c2_audio_rws/005ac5f0.md        | UNBLOCKED: fmt-desc equality; fmt_desc_pair_compare|
+| 0x005ac9e0 | FUN_005ac9e0     | re/analysis/promote_c2_audio_rws/005ac9e0.md        | UNBLOCKED: fmt-entry match predicate; fmt_desc_pair_compare |
+| 0x005acaa0 | FUN_005acaa0     | re/analysis/promote_c2_audio_rws/005acaa0.md        | UNBLOCKED: fmt-desc pack/unpack; fmt_desc_pair_compare or new |
+| 0x005ab410 | FUN_005ab410     | re/analysis/promote_c2_audio_rws/005ab410.md        | undefined4(stream, int *out, ...) — RWS chunk seeker (sole caller 005a7b60 still C1 — verify caller-gate at session start; if blocked, drift-promote in-session) |
+| 0x005abcf0 | FUN_005abcf0     | re/analysis/promote_c2_audio_rws/005abcf0.md        | RWS leaf — read note for sig                       |
+| 0x005abfa0 | FUN_005abfa0     | re/analysis/promote_c2_audio_rws/005abfa0.md        | per-wave loader; 5-arg, ≥12 callees MULTI — STOP-AND-ASK if arg_type needs new harness entry |
+| 0x005abd30 | FUN_005abd30     | re/analysis/promote_c2_audio_rws/005abd30.md        | RWS leaf — read note for sig                       |
+| 0x005aba20 | FUN_005aba20     | re/analysis/promote_c2_audio_rws/005aba20.md        | RWS leaf — read note for sig                       |
+| 0x005ac210 | FUN_005ac210     | re/analysis/promote_c2_audio_rws/005ac210.md        | RWS leaf — read note for sig                       |
+| 0x004522d0 | FUN_004522d0     | re/analysis/audio_rws_loader/004522d0.md            | small audio leaf (8 bytes per c2 plate); int_scalar or void|
+
+# Pre-flight checklist
+1. Worktree binding:  `git worktree list | grep c3-batch-j-s1`
+2. Anchor check:      `sha256sum original/MASHED.exe` matches version anchor
+                      BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+3. Build baseline:    `mashedmod\build.bat` succeeds on clean worktree
+4. Drift check:       `grep "^<rva>," hooks.csv | head -2` for each candidate;
+                      skip if any row is C3+
+5. arg_type check:    For each candidate, identify the matching arg_type in
+                      re/frida/diff_template.js. The 3 fmt-desc candidates
+                      use `fmt_desc_pair_compare`. For others, read each
+                      note's signature section and match. If NEW arg_type
+                      needed, STOP and queue a harness-extension note in
+                      PROMOTION_QUEUE.md (do NOT invent new arg_types).
+
+# Per-function workflow
+Standard hook-author + diff-original cycle. Author all 10 reimpls FIRST,
+then single batched build, then single `run_diff_parallel.py` invocation.
+
+# Batch verification
+scripts/frida_pool.sh cleanup
+py -3.12 re/frida/run_diff_parallel.py <10 names>
+All GREEN required. Partial-complete acceptable; debug RED individually.
+
+# Promotion transaction
+re-classify with all promoted RVAs in one call.
+
+# Commit & queue
+git commit -m "c3: audio RWS fmt+leaves j1 — N hooks (N = actual promoted)"
+Append PROMOTION_QUEUE.md row with branch=c3/batch-j-s1 + evidence csvs.
+
+================================================================================
+Session 2 — audio_c3_j2  (audio RWS dispatchers + loader_d3 set, 10 functions)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — cap 10 (this session: 10)
+Worktree:    .worktrees/c3-batch-j-s2/  (branch c3/batch-j-s2)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-j
+
+# Mission
+Promote 10 audio RWS loader_d3 + rws_audio_loader cluster functions
+(remaining audio C2 pool after S1). Cluster file:
+`mashedmod/src/mashed_re/Audio/RwsLoader_j2.cpp`.
+
+# Candidates (10)
+| RVA        | Name             | Analysis note                                       | Signature / arg_type hint                          |
+|------------|------------------|-----------------------------------------------------|----------------------------------------------------|
+| 0x005aea00 | FUN_005aea00     | re/analysis/audio_rws_loader/005aea00.md            | indirect vtable+0x108 dispatcher (11 bytes) — may need new arg_type; STOP-AND-ASK if so |
+| 0x005aea50 | FUN_005aea50     | re/analysis/audio_rws_loader_d3/005aea50.md         | audio loader_d3 leaf — read note                   |
+| 0x004669b0 | FUN_004669b0     | re/analysis/promote_c2_perm_piz_callees/004669b0.md | audio in perm_piz callee cluster — verify          |
+| 0x005aac20 | FUN_005aac20     | re/analysis/promote_c2_rws_audio_loader/5aac20.md   | rws_audio_loader leaf — read note                  |
+| 0x005aa7e0 | FUN_005aa7e0     | re/analysis/promote_c2_rws_audio_loader/5aa7e0.md   | rws_audio_loader leaf — read note                  |
+| 0x005ae400 | FUN_005ae400     | re/analysis/promote_c2_rws_audio_loader/5ae400.md   | rws_audio_loader near-leaf (1 callee 004522d0)     |
+| 0x005bf610 | FUN_005bf610     | re/analysis/promote_c2_rws_audio_loader/5bf610.md   | rws_audio_loader leaf — read note                  |
+| 0x005be140 | FUN_005be140     | re/analysis/promote_c2_rws_audio_loader/5be140.md   | rws_audio_loader leaf — read note                  |
+| 0x005be190 | FUN_005be190     | re/analysis/promote_c2_rws_audio_loader/5be190.md   | rws_audio_loader leaf — read note                  |
+| 0x005bf690 | FUN_005bf690     | re/analysis/promote_c2_rws_audio_loader/5bf690.md   | rws_audio_loader leaf — read note                  |
+
+# Pre-flight checklist
+Same as Session 1; substitute branch + worktree name.
+
+# STOP-AND-ASK
+- 0x005aea00 is a vtable-dispatch indirect call. If diff_template.js
+  can't express the dispatch arg_type, queue and skip rather than invent.
+- 0x004669b0 is in `promote_c2_perm_piz_callees/` but subsystem field is
+  audio — verify the subsystem assignment via the note; if drift, flag
+  and skip.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 3 — vehicle_c3_j3  (vehicle Replay + lowrva leaves, 10 functions)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — cap 10 (this session: 10)
+Worktree:    .worktrees/c3-batch-j-s3/  (branch c3/batch-j-s3)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-j
+
+# Mission
+Promote 10 vehicle Replay/TimeTrial helpers + small lowrva leaves.
+Includes 1 newly-unblocked candidate (0046c570) that now has
+`vec3_global_mul_observe`. Cluster files split between Vehicle/Replay_j3.cpp
+and Vehicle/MiscDamping_j3.cpp.
+
+# Candidates (10) — 1 newly-unblocked highlighted
+| RVA        | Name                     | Analysis note                                       | Signature / arg_type hint                  |
+|------------|--------------------------|-----------------------------------------------------|--------------------------------------------|
+| 0x0046c570 | FUN_0046c570             | re/analysis/util_c0_promote/0x0046c570.md           | UNBLOCKED: velocity damper; vec3_global_mul_observe |
+| 0x00411350 | Replay::TimeFormat       | re/analysis/promote_c2_vehicle_lowrva/0x00411350.md | replay time-format leaf                    |
+| 0x00411530 | Replay::GetTimeAtIdx     | re/analysis/promote_c2_vehicle_lowrva/0x00411530.md | replay-array index getter                  |
+| 0x00411580 | Replay::GetBestTime      | re/analysis/promote_c2_vehicle_lowrva/0x00411580.md | replay-array best-time scan                |
+| 0x004115c0 | Replay::GetCurrentTime   | re/analysis/promote_c2_vehicle_lowrva/0x004115c0.md | replay-array current-time getter           |
+| 0x004114e0 | Replay::Cleanup          | re/analysis/promote_c2_vehicle_lowrva/0x004114e0.md | replay cleanup                             |
+| 0x00411600 | Replay::RecordFrame      | re/analysis/promote_c2_vehicle_lowrva/0x00411600.md | replay record one frame                    |
+| 0x00411750 | Replay::StartLap         | re/analysis/promote_c2_vehicle_lowrva/0x00411750.md | replay start-lap marker                    |
+| 0x004117b0 | Replay::Save             | re/analysis/promote_c2_vehicle_lowrva/0x004117b0.md | replay save to buffer                      |
+| 0x00411170 | TimeTrial::RecordPlayback| re/analysis/promote_c2_vehicle_lowrva/0x00411170.md | timetrial record+playback                  |
+
+# Pre-flight checklist
+Same as Session 1; substitute branch + worktree name.
+
+# Cluster note
+The Replay::* set shares state through a global ring buffer. Author all 9
+Replay candidates as static members of `class Replay` in
+`mashedmod/src/mashed_re/Vehicle/Replay_j3.cpp` to keep symbol scope tidy
+(matches gta-reversed-style ms_ static fields).
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 4 — vehicle_c3_j4  (vehicle physics + damage near-leaves, 10 functions)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — cap 10 (this session: 10)
+Worktree:    .worktrees/c3-batch-j-s4/  (branch c3/batch-j-s4)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-j
+
+# Mission
+Promote 10 vehicle physics + damage helpers. Cluster files split:
+`mashedmod/src/mashed_re/Vehicle/Damage_j4.cpp` (4 damage_d4 candidates)
++ `mashedmod/src/mashed_re/Vehicle/Physics_j4.cpp` (6 physics/update_d3).
+
+# Candidates (10)
+| RVA        | Name                          | Analysis note                                            | Signature / arg_type hint                |
+|------------|-------------------------------|----------------------------------------------------------|------------------------------------------|
+| 0x00419760 | FUN_00419760                  | re/analysis/vehicle_damage_d4/0x00419760.md              | vehicle damage helper (9 internal RVAs in note)|
+| 0x00420de0 | FUN_00420de0                  | re/analysis/vehicle_damage_d4/0x00420de0.md              | vehicle damage helper                    |
+| 0x00418de0 | FUN_00418de0                  | re/analysis/vehicle_damage_d4/0x00418de0.md              | vehicle damage helper                    |
+| 0x0046c5f0 | FUN_0046c5f0                  | re/analysis/physics_collision_d4_breadth/0046c5f0.md     | physics broad-phase (callees 004c3b30 C3, 005d757c data)|
+| 0x0046cbe0 | FUN_0046cbe0                  | re/analysis/util_c0_promote/0x0046cbe0.md                | leaf — vehicle util                      |
+| 0x0046c7d0 | FUN_0046c7d0                  | re/analysis/util_c0_promote/0x0046c7d0.md                | leaf — vehicle util                      |
+| 0x0046ddb0 | VehicleWheelForceIntegrator   | re/analysis/vehicle_update_d3/0046ddb0.md                | wheel-force integrator                   |
+| 0x0046dc20 | VehicleOOBDebugDraw           | re/analysis/vehicle_update_d3/0046dc20.md                | OOB debug draw (void(int))               |
+| 0x0046f6c0 | VehicleWheelContactSolver     | re/analysis/vehicle_update_d3/0046f6c0.md                | wheel-contact solver                     |
+| 0x00467300 | VehicleCollisionWinTrigger    | re/analysis/vehicle_promote_c2_b/00467300.md             | collision win-trigger (callee 00413c70)  |
+
+# Pre-flight checklist
+Same as Session 1; substitute branch + worktree name.
+
+# STOP-AND-ASK
+- vehicle_promote_c2_b notes historically include "Resolves [UNCERTAIN
+  U-xxx] from <prior_note>" prose. Filter j skips these correctly at
+  batch-gen time, but workers should still scan the note's `## Decompilation`
+  section for any UNCATALOGUED inline UNCERTAIN markers before authoring.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 5 — save_boot_c3_j5  (save settings + boot CRT, 10 functions)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — cap 10 (this session: 10)
+Worktree:    .worktrees/c3-batch-j-s5/  (branch c3/batch-j-s5)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-j
+
+# Mission
+Promote 5 save settings/dialog functions + 1 input dinput + 4 boot
+CRT/perm_piz helpers. Includes 2 newly-unblocked candidates (00498d20,
+004971b0) using `eax_implicit_ptr` (HWND) and `eax_implicit_int` (slot).
+Cluster files split:
+- `mashedmod/src/mashed_re/Save/SettingsDialog_j5.cpp` (4 save funcs)
+- `mashedmod/src/mashed_re/Save/SaveMisc_j5.cpp` (1 save)
+- `mashedmod/src/mashed_re/Input/DInput_j5.cpp` (1 input)
+- `mashedmod/src/mashed_re/Boot/Boot_j5.cpp` (4 boot)
+
+# Candidates (10) — 2 newly-unblocked highlighted
+| RVA        | Name                          | Subsystem | Analysis note                                       | Signature / arg_type hint                                  |
+|------------|-------------------------------|-----------|-----------------------------------------------------|------------------------------------------------------------|
+| 0x00498d20 | ReadModeFromCombo             | save      | re/analysis/promote_c2_settings_dialog/00498d20.md  | UNBLOCKED: WM_COMMAND IDOK handler; eax_implicit_ptr (HWND)|
+| 0x00498d60 | PopulateModeCombo             | save      | re/analysis/promote_c2_settings_dialog/00498d60.md  | combo populator                                            |
+| 0x004991f0 | VideoSettingsDlgProc          | save      | re/analysis/promote_c2_settings_dialog/004991f0.md  | DLGPROC (HWND, UINT, WPARAM, LPARAM); 453 bytes MULTI      |
+| 0x00499400 | VideoSettingsDispatcher       | save      | re/analysis/promote_c2_settings_dialog/00499400.md  | settings dispatcher                                        |
+| 0x00550910 | FUN_00550910                  | save      | re/analysis/save_gamesave_d3/00550910.md            | cleanup helper (2 indirect IAT calls; U-3561/3562 catalogued)|
+| 0x004971b0 | FUN_004971b0                  | input     | re/analysis/promote_c2_dinput_init/004971b0.md      | UNBLOCKED: controller config loader; eax_implicit_int (slot)|
+| 0x004a4bb7 | entry                         | boot      | re/analysis/promote_c2_boot_crt/004a4bb7.md         | CRT entry (leaf)                                           |
+| 0x004a332b | FUN_004a332b                  | boot      | re/analysis/promote_c2_boot_crt/004a332b.md         | CRT exit wrapper (callee 004a3258 C3)                      |
+| 0x004a334d | FUN_004a334d                  | boot      | re/analysis/promote_c2_boot_crt/004a334d.md         | CRT exit wrapper (callee 004a3258 C3)                      |
+| 0x004a31b1 | ___crtExitProcess             | boot      | re/analysis/promote_c2_boot_crt/004a31b1.md         | CRT exit-process (leaf)                                    |
+
+# Pre-flight checklist
+Same as Session 1; substitute branch + worktree name.
+
+# STOP-AND-ASK
+- 0x004991f0 is a 453-byte DLGPROC with multiple WM_COMMAND branches —
+  budget-heavy. If it dominates the session, split it off to a follow-up
+  session and complete the remaining 9 here.
+- 0x00550910 has catalogued U-IDs (U-3561, U-3562) — non-blocking per
+  the catalogued-U-ID exemption rule; reimpl can use raw constants/RVAs.
+- 0x004a31b1 / 0x004a4bb7 may be no-return functions (process-terminating).
+  Harness already has crash_equal_ok pattern (see prior CRT C3 batches);
+  use it.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+Session 6 — input_boot_c3_j6  (input dinput + boot panel_piz, 10 functions)
+================================================================================
+
+Model:       Opus 4.7 (claude-opus-4-7[1m]) — cap 10 (this session: 10)
+Worktree:    .worktrees/c3-batch-j-s6/  (branch c3/batch-j-s6)
+Skills:      hook-author, diff-original, re-classify
+Frida pool:  shared
+Batch id:    c3-batch-j
+
+# Mission
+Promote 4 input dinput/video_cfg helpers + 6 boot panel_piz/window_msgpump
+helpers. Includes 1 newly-unblocked candidate (00497190) using
+`eax_implicit_int` — note caller-gate concern below. Cluster files split:
+- `mashedmod/src/mashed_re/Input/DInput_j6.cpp` (4 input)
+- `mashedmod/src/mashed_re/Boot/PanelPiz_j6.cpp` (4 boot panel)
+- `mashedmod/src/mashed_re/Boot/MsgPump_j6.cpp` (2 boot window)
+
+# Candidates (10) — 1 newly-unblocked highlighted (OVERRIDE — see notes)
+| RVA        | Name                  | Subsystem | Analysis note                                       | Signature / arg_type hint                                  |
+|------------|-----------------------|-----------|-----------------------------------------------------|------------------------------------------------------------|
+| 0x00497190 | FUN_00497190          | input     | re/analysis/promote_c2_dinput_init/00497190.md      | OVERRIDE-UNBLOCKED: filename formatter; eax_implicit_int; sole callee 004a2b60 still render-C1 — drift-promote in-session OR refuse on callee-gate per rubric |
+| 0x004972b0 | FUN_004972b0          | input     | re/analysis/promote_c2_dinput_init/004972b0.md      | dinput init helper                                         |
+| 0x004982a0 | FUN_004982a0          | input     | re/analysis/promote_c2_video_cfg/004982a0.md        | video_cfg helper                                           |
+| 0x00497230 | FUN_00497230          | input     | re/analysis/promote_c2_video_cfg/00497230.md        | video_cfg leaf                                             |
+| 0x0041c100 | FUN_0041c100          | boot      | re/analysis/promote_c2_panel_piz_callees/0041c100.md| panel_piz helper                                           |
+| 0x0041d8b0 | FUN_0041d8b0          | boot      | re/analysis/promote_c2_panel_piz_callees/0041d8b0.md| panel_piz helper                                           |
+| 0x0041db90 | FUN_0041db90          | boot      | re/analysis/promote_c2_panel_piz_callees/0041db90.md| panel_piz helper                                           |
+| 0x00412890 | FUN_00412890          | boot      | re/analysis/promote_c2_panel_piz_callees/00412890.md| panel_piz helper                                           |
+| 0x00496470 | sub_00496470          | boot      | re/analysis/window_msgpump/00496470.md              | leaf (window msg-pump)                                     |
+| 0x004960e0 | sub_004960e0          | boot      | re/analysis/window_msgpump/004960e0.md              | leaf (window msg-pump)                                     |
+
+# Pre-flight checklist
+Same as Session 1; substitute branch + worktree name.
+
+# STOP-AND-ASK
+- 0x00497190 callee-gate concern: 004a2b60 is render-C1 (sprintf
+  wrapper). The user explicitly listed 00497190 as a harness-extension
+  unblock (eax_implicit_int). Two viable paths:
+  (a) Drift-promote 004a2b60 C1→C2 in-session if its note exists and
+      meets C2 quality (mechanical decomp + cited constants).
+  (b) Refuse 00497190 on the standard callee-gate per re/CONFIDENCE.md
+      and queue 004a2b60 for the next discovery batch (batch_u s3).
+  Pick (a) only if 004a2b60's note exists and would pass C2 quality.
+  If unclear, refuse and document in PROMOTION_QUEUE.md note.
+
+# Workflow + commit + queue: same shape as Session 1.
+
+================================================================================
+END OF BATCH
+================================================================================
+
+POST-BATCH SWEEP
+----------------
+After all 6 sessions complete (or partial-complete) and have appended
+to PROMOTION_QUEUE.md, invoke `frida-sweep` from the main worktree:
+
+> "run the frida sweep" / "drain the promotion queue" / "merge the c3 batch"
+
+frida-sweep will:
+- Merge each c3/batch-j-sN branch onto main
+- Resolve the three known text-file conflicts (build.bat,
+  hooks_registry.py, CHANGELOG.md)
+- Rebuild canonical mashed_re_dev.asi from merged state
+- Run integration diff against ALL promoted hooks
+- Commit only if every hook is GREEN
+
+Expected sweep load: heavier than c3_batch_i (60 hooks vs 20). Allocate
+~30 min for sweep merge + rebuild + integration diff.
+
+CALIBRATION REPORT
+------------------
+- Total candidates pulled:    173 (C2 in target subsystems with notes)
+- Viable after fixed filters: 122 (70.5% pass rate)
+- Selected for batch:          60 (49% of viable pool)
+- In-reserve for c3_batch_k:   62
+
+Per-filter elimination (filter j vs filter i):
+- Already C3+:           j=0  vs i=2  (-2)
+- Stale-impl drift:      j=0  vs i=0   (0)
+- Inline UNCERTAIN:      j=22 vs i=3  (+19 — filter i regex bug fixed)
+- Callee-gate < C2:      j=26 vs i=42 (-16 — section-scoped grep fixed)
+- arg_type unsupported:  j=0  vs i=0   (0 — harness extensions landed)
+
+Aggregate pass-rate delta: 70.5% vs 29.9% = +40.6 pts (filter+harness combined).
+
+YIELD PROJECTION
+----------------
+- Per-subsystem distribution in this batch:
+  audio: 20 candidates (S1+S2)
+  vehicle: 20 candidates (S3+S4)
+  save: 5 candidates (S5)
+  input: 5 candidates (S5+S6)
+  boot: 10 candidates (S5+S6)
+- Target promotion yield: 60-70% = 36-42 promotions of 60.
+  - 8 newly-unblocked RVAs near-100% (already verified viable): +7
+  - Audio cluster (S1+S2): ~70% = 14
+  - Vehicle cluster (S3+S4): ~60% = 12
+  - Save+input+boot mixed (S5+S6): ~55% = 11
+  - Total estimate: ~37 of 60 = 62%
+
+NEXT-BATCH RECOMMENDATION
+-------------------------
+After this batch lands:
+- 62 candidates in passed-pool reserve for c3_batch_k
+- ~25-30 candidates expected to fail this batch (deferred for follow-up
+  with caller-gate drift-promotes or remaining harness extensions)
+- c3_batch_k likely shape: 4 sessions × 10 candidates focused on
+  vehicle/boot remainders + any audio loader stragglers
+
+Wall time estimate: ~3-4 hours human-attended parallel work for 6 Opus
+sessions (build + diff time dominates over Opus inference).

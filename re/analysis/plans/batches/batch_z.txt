@@ -1,0 +1,1105 @@
+==============================================================================
+batch_z.txt  -  Mashed C1 brute-force  -  2026-05-19  (GATE-CROSSING)
+==============================================================================
+
+Mode:           Opus 1M first-pass C0/unmapped -> C1 discovery
+Sessions:       6
+RVAs per sess:  80  (Opus 1M hard cap 100; default 80)
+Total RVAs:     480
+Unmapped pool:  637 (post-exclusion; full-inventory unmapped after batch-w/x/y
+                drains accounted for = 1374. The 9 library-residue bands
+                remove 737 candidates -- many newly excluded since the qhull-
+                print band was extended down to 0x005a5820 per batch-y-s6.)
+Pool slots:     Mashed_pool1..Mashed_pool6 (pre-assigned per session)
+Anchor binary:  original/MASHED.exe.unpatched SHA-256 (patched MASHED.exe
+                differs by design; anchor lives on .unpatched per CLAUDE.md)
+                BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+Pool dir:       C:/Users/maria/Desktop/Proyectos/Mashed/mashed_pool
+
+Phase 1 exit context:
+- This batch is the candidate gate-crosser toward >=80% C1+ coverage.
+- After batch_z drains, mapped rows in hooks.csv reach approximately
+  4162 (start of batch_y) + ~475 (batch_y drain in parallel) + ~470
+  (this batch_z drain) = ~5107 / 5800 = ~88% C1+. Pessimistically (low
+  drain yields and library-residue refusals), >=82%.
+- Each bucket is chosen to MAXIMIZE game-code yield; library-residue
+  buckets continue to STOP-AND-ASK rather than be force-promoted.
+
+Read this BEFORE starting any session:
+- .claude/skills/discover-c1-batch/SKILL.md  (Opus 1M caps section)
+- .claude/skills/ghidra-pool/SKILL.md         (acquire/release flow)
+- re/CONFIDENCE.md                            (C0 -> C1 evidence rubric)
+- re/SESSION_RULES.md (search for scribe-queue) (queue-row format)
+
+RW reference catalog (876 RW names by module - use during decomp):
+  re/analysis/plans/rw_function_catalog.tsv
+
+Already-named library-residue ranges (DON'T re-discover):
+  0x004a0000..0x004b3fff  - MSVC CRT (FidDB-attested, pre-excluded)
+  0x0049dcb0..0x004a0000  - DirectShow strmbase static-link (batch-v-s2 finding)
+  0x004b4a80..0x004c4000  - Lua 5.0 source EXTENDED (batch-x-s2 finding;
+                            includes lstate/lgc/lvm/lapi/ltable/lstring/lmem/
+                            llex/lobject/lopcodes/lzio/ldebug/lparser/lundump/
+                            lfunc/lcode)
+  0x004fcb51..0x005112c9  - D3DX9 HLSL shader compiler frontend (batch-w-s4
+                            preprocessor+byacc-parser+lexer+diagnostics+symbol
+                            hashtable + breadth_unmapped_005xx-20260514
+                            assembler+math-primitives band; ~94KB combined)
+  0x00516bb0..0x0052df40  - libpng + zlib + image-loader (batch-v-s4; batch-t-s4)
+  0x0057c5b0..0x005913c0  - qhull 2002.1 extended (batch-v-s5; batch-t-s5)
+  0x005a0e00..0x005a5820  - qhull print* EXTENDED (was 0x005a5017; pushed
+                            down to 0x005a5820 per batch-y-s6 finding: four
+                            additional plates at 0x005a5020..0x005a5820
+                            were confirmed as qhull-print library tail with
+                            literal `qh_printcenter`+`s_qhull_input_*` strings)
+  0x005c0000..0x005d0000  - MSVC CRT tail (batch-v-s6; 33 FidDB + 23 helpers)
+
+If your bucket lands inside one of these ranges, halt per the STOP-AND-ASK
+library-residue clause.
+
+Library-vs-game-code heuristic (batch_w post-mortem 2026-05-19, refined
+by batch_x post-mortem 2026-05-19, validated by batch_y post-mortem
+2026-05-19):
+- Game code: avg function size >= 150 B/fn AND at least 5 game-named
+  (non-FUN_/sub_/thunk_/library-prefixed) mapped neighbors within +/-0x1000
+  of the bucket span.
+- Library residue: dense small functions (avg < 100 B/fn) AND zero
+  game-named neighbors within +/-0x2000.
+- batch-y-s4 caught the inverse signal (large functions but unexplored
+  neighborhood) - turned out to be collision-bvh-octree + physics-math,
+  NOT font-canvas-context as hypothesized. The font/canvas-context entry
+  points (FontGlyph_UploadData, FontCanvas_Init, FontCtx_Alloc,
+  FontCtx_LoadMetrics_*, FontCtx_BuildExtTable, FontStyle_Alloc) are
+  ALREADY MAPPED in hooks.csv at 0x005540d0, 0x00553f40, 0x005551d0,
+  0x00555af0, 0x00555ff0, 0x00555f20, 0x00556d70 - no font candidates
+  remain in this batch's pool to re-attempt that hypothesis.
+- Bucket 1 (this batch) has ZERO game-named neighbors AND avg 496 B/fn
+  - inverse signal repeats. Treat as elevated STOP-AND-ASK risk.
+- Bucket 5 (this batch) has ZERO game-named neighbors AND sits IMMEDIATELY
+  BEFORE the D3DX9 HLSL band - elevated library-residue risk (D3DX9
+  frontend could extend backward).
+
+==============================================================================
+Session 1 - bucket_00591710  (FIRST-PASS, 80-RVA discovery)
+==============================================================================
+
+Pool slot:    Mashed_pool1 (pre-assigned)
+Model:        Opus 4.7 (claude-opus-4-7[1m]) - hard cap 100 RVAs (this session: 80)
+Skill:        discover-c1-batch (first-pass; Opus 1M mode)
+Bucket dir:   re/analysis/bucket_00591710/
+Drains to:    re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+Address span: 0x00591710 .. 0x0059b3e0  (~39,681 bytes of code, avg ~496 B/fn)
+Bucket label: post-qhull-segment-game-or-residue
+
+# Mission
+Discover and write C0->C1 plates for 80 unmapped functions in the
+contiguous-RVA bucket anchored at 0x00591710. Cluster anchored at
+0x00591710 immediately after the qhull-2002.1 band ends (0x005913c0).
+NO game-named neighbors in span - high-density (avg 496 B/fn) suggests
+game code but adjacency is unproven. Adjacent code: only FUN_00591020 +
+FUN_005913c0 mapped (util C1), then audio cluster
+(AudioRwsChunkHeaderRead 0x005ab380) starts ~0x10000 later. Working
+hypothesis: late-segment utility / RW-glue / audio-adjacent helper code.
+CONFIRM during decomp - high-priority STOP-AND-ASK candidate if first
+20 plates show library-tell signature (<150 B/fn AND zero game-string
+anchors).
+These functions have no row in hooks.csv and no analysis note. Report
+final subsystem in the queue row's `subsystem_observed=` field.
+
+# Pre-flight
+```bash
+export POOL_SLOT_FILE=".pool_slot_batch_z_s1"
+bash scripts/ghidra_pool.sh acquire   # should return Mashed_pool1 if free
+sha256sum original/MASHED.exe.unpatched  # MUST equal BDCAE0...EFD3C0E
+```
+
+# Workflow (Opus 1M - bulk-coherent per session)
+Read all candidate RVAs first; then decomp in clusters of ~10-15 at a time.
+Opus 1M context keeps all 80 functions' decomp + cross-refs in scope
+simultaneously - exploit this for cross-function naming (recurring callees,
+shared globals, repeated string patterns).
+
+Per RVA:
+  1. mcp__ghidra__function_at <rva>     (or listing_code_unit_at if no fn)
+  2. mcp__ghidra__decomp_function       (the body)
+  3. mcp__ghidra__function_callees      (depth-1 callees)
+  4. mcp__ghidra__function_callers      (subsystem inference)
+  5. Cross-ref the RW catalog: signature/calls/constants matching an RW
+     API -> name and cite catalog row
+  6. Write re/analysis/bucket_00591710/0x<rva>.md with:
+     - frontmatter (rva, name_in_ghidra, size_bytes, confidence=C1,
+       callees_depth1, callers_noted, opened_in_slot=Mashed_pool1,
+       session_date=2026-05-19)
+     - ## Mechanical description (bullets; no speculation; cite addresses)
+     - ## Constants (table; cite RVA for each)
+     - ## Uncertainties (bare [UNCERTAIN] markers; sweep assigns U-IDs)
+     - ## Stubs encountered (bare [STUB] markers; sweep assigns S-IDs)
+
+# Candidates
+| # | RVA | Ghidra name | size |
+|---|-----|-------------|------|
+| 1 | 0x00591710 | FUN_00591710 | 867 |
+| 2 | 0x00591a80 | FUN_00591a80 | 512 |
+| 3 | 0x00591c80 | FUN_00591c80 | 93 |
+| 4 | 0x00591ce0 | FUN_00591ce0 | 2288 |
+| 5 | 0x005925d0 | FUN_005925d0 | 101 |
+| 6 | 0x00592640 | FUN_00592640 | 68 |
+| 7 | 0x00592690 | FUN_00592690 | 308 |
+| 8 | 0x005927d0 | FUN_005927d0 | 492 |
+| 9 | 0x005929c0 | FUN_005929c0 | 1532 |
+| 10 | 0x00592fc0 | FUN_00592fc0 | 236 |
+| 11 | 0x005930b0 | FUN_005930b0 | 38 |
+| 12 | 0x005930e0 | FUN_005930e0 | 182 |
+| 13 | 0x005931a0 | FUN_005931a0 | 277 |
+| 14 | 0x005932c0 | FUN_005932c0 | 516 |
+| 15 | 0x005934d0 | FUN_005934d0 | 100 |
+| 16 | 0x00593540 | FUN_00593540 | 483 |
+| 17 | 0x00593730 | FUN_00593730 | 364 |
+| 18 | 0x005938a0 | FUN_005938a0 | 232 |
+| 19 | 0x00593990 | FUN_00593990 | 201 |
+| 20 | 0x00593a60 | FUN_00593a60 | 884 |
+| 21 | 0x00593de0 | FUN_00593de0 | 79 |
+| 22 | 0x00593e30 | FUN_00593e30 | 578 |
+| 23 | 0x00594080 | FUN_00594080 | 94 |
+| 24 | 0x005940e0 | FUN_005940e0 | 944 |
+| 25 | 0x00594490 | FUN_00594490 | 90 |
+| 26 | 0x005944f0 | FUN_005944f0 | 353 |
+| 27 | 0x00594660 | FUN_00594660 | 62 |
+| 28 | 0x005946a0 | FUN_005946a0 | 128 |
+| 29 | 0x00594720 | FUN_00594720 | 159 |
+| 30 | 0x005947c0 | FUN_005947c0 | 903 |
+| 31 | 0x00594b50 | FUN_00594b50 | 280 |
+| 32 | 0x00594c70 | FUN_00594c70 | 84 |
+| 33 | 0x00594cd0 | FUN_00594cd0 | 43 |
+| 34 | 0x00594d00 | FUN_00594d00 | 98 |
+| 35 | 0x00594d70 | FUN_00594d70 | 157 |
+| 36 | 0x00594e10 | FUN_00594e10 | 165 |
+| 37 | 0x00594ec0 | FUN_00594ec0 | 285 |
+| 38 | 0x00594fe0 | FUN_00594fe0 | 173 |
+| 39 | 0x00595090 | FUN_00595090 | 421 |
+| 40 | 0x00595240 | FUN_00595240 | 858 |
+| 41 | 0x005955a0 | FUN_005955a0 | 714 |
+| 42 | 0x00595870 | FUN_00595870 | 214 |
+| 43 | 0x00595950 | FUN_00595950 | 289 |
+| 44 | 0x00595a80 | FUN_00595a80 | 1163 |
+| 45 | 0x00595f10 | FUN_00595f10 | 406 |
+| 46 | 0x005960d0 | FUN_005960d0 | 1039 |
+| 47 | 0x005964e0 | FUN_005964e0 | 879 |
+| 48 | 0x00596850 | FUN_00596850 | 827 |
+| 49 | 0x00596b90 | FUN_00596b90 | 426 |
+| 50 | 0x00596d40 | FUN_00596d40 | 535 |
+| 51 | 0x00596f60 | FUN_00596f60 | 138 |
+| 52 | 0x00596ff0 | FUN_00596ff0 | 159 |
+| 53 | 0x00597090 | FUN_00597090 | 370 |
+| 54 | 0x00597210 | FUN_00597210 | 273 |
+| 55 | 0x00597330 | FUN_00597330 | 28 |
+| 56 | 0x00597350 | FUN_00597350 | 768 |
+| 57 | 0x00597650 | FUN_00597650 | 111 |
+| 58 | 0x005976c0 | FUN_005976c0 | 1346 |
+| 59 | 0x00597c10 | FUN_00597c10 | 1119 |
+| 60 | 0x00598070 | FUN_00598070 | 335 |
+| 61 | 0x005981c0 | FUN_005981c0 | 783 |
+| 62 | 0x005984d0 | FUN_005984d0 | 1197 |
+| 63 | 0x00598980 | FUN_00598980 | 1298 |
+| 64 | 0x00598ea0 | FUN_00598ea0 | 1001 |
+| 65 | 0x00599290 | FUN_00599290 | 515 |
+| 66 | 0x005994a0 | FUN_005994a0 | 689 |
+| 67 | 0x00599760 | FUN_00599760 | 1166 |
+| 68 | 0x00599bf0 | FUN_00599bf0 | 878 |
+| 69 | 0x00599f60 | FUN_00599f60 | 1075 |
+| 70 | 0x0059a3a0 | FUN_0059a3a0 | 887 |
+| 71 | 0x0059a720 | FUN_0059a720 | 17 |
+| 72 | 0x0059a740 | FUN_0059a740 | 1179 |
+| 73 | 0x0059abe0 | FUN_0059abe0 | 240 |
+| 74 | 0x0059acd0 | FUN_0059acd0 | 176 |
+| 75 | 0x0059ad80 | FUN_0059ad80 | 48 |
+| 76 | 0x0059adb0 | FUN_0059adb0 | 810 |
+| 77 | 0x0059b0e0 | FUN_0059b0e0 | 408 |
+| 78 | 0x0059b280 | FUN_0059b280 | 213 |
+| 79 | 0x0059b360 | FUN_0059b360 | 117 |
+| 80 | 0x0059b3e0 | FUN_0059b3e0 | 117 |
+
+# Output (this session ONLY produces these - does NOT touch hooks.csv)
+- 80 per-RVA .md plates in re/analysis/bucket_00591710/
+- ONE queue row appended to re/SCRIBE_QUEUE.md (Queued section):
+    2026-05-19  batch-z-s1  rvas=0x...,0x...  bucket=re/analysis/bucket_00591710
+                  subsystem_observed=<X>  notes=<one-line>
+
+# NO COMMITS, NO hooks.csv WRITES
+- Do NOT mutate hooks.csv, STUBS.md, UNCERTAINTIES.md, or DEFERRED.md.
+  Those are the sweep's / orchestrator's responsibility.
+- Do NOT git commit. The orchestrating session commits after all 6
+  sessions return.
+
+# STOP-AND-ASK
+- function_at returns null AND listing_code_unit_at also null -> skip + note
+- Bucket-range turns out to be library residue (any of the 8 already-known
+  ranges above OR newly-discovered FidDB-attested cluster) -> halt + report.
+  Sessions should NOT promote library residue.
+- Average function size in bucket < 150B AND zero game-string anchors after
+  first 20 decomps -> halt + report (library-vs-game-code heuristic miss
+  per batch_w post-mortem; batch_x-s2 caught Lua leakage this way).
+- RW catalog match found but signature mismatches Ghidra decomp -> flag, do
+  NOT auto-name; defer to a re-classify pass.
+- More than 5 candidates have catalogued [UNCERTAIN] markers above C2 -> halt
+- Adjacent functions form a known struct shape (>= 3 share offsets) ->
+    optionally produce re/analysis/structs/<name>.md alongside the plates
+- ELEVATED RISK (this session): ZERO game-named neighbors within span AND
+  bucket abuts qhull library band at 0x005913c0. If first 20 plates show
+  ANY repeating qhull-like strings (q_<>, qh_*, s_qhull_*) -> halt and
+  report - qhull main band may extend forward past current calibrated
+  boundary.
+
+==============================================================================
+Session 2 - bucket_00565cd0  (FIRST-PASS, 80-RVA discovery)
+==============================================================================
+
+Pool slot:    Mashed_pool2 (pre-assigned)
+Model:        Opus 4.7 (claude-opus-4-7[1m]) - hard cap 100 RVAs (this session: 80)
+Skill:        discover-c1-batch (first-pass; Opus 1M mode)
+Bucket dir:   re/analysis/bucket_00565cd0/
+Drains to:    re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+Address span: 0x00565cd0 .. 0x005b8680  (~54,243 bytes of code, avg ~678 B/fn - HIGHEST OF BATCH)
+Bucket label: post-libpng-pre-qhull-plus-late-tail
+
+# Mission
+Discover and write C0->C1 plates for 80 unmapped functions in a
+discontiguous cluster: (A) 0x00565cd0 island + 0x00573670..0x0057ae30
+(between libpng+zlib end at 0x00516bb0..0x0052df40 and qhull 2002.1
+start at 0x0057c5b0; this is the post-libpng / pre-qhull game window
+per batch-v-s4/t-s4 calibration); (B) 0x0059b460..0x0059f5d0 (tail of
+high-density block extending past bucket 1); (C) 0x005b8200..0x005b8680
+(between qhull-print band end 0x005a5820 and MSVC CRT tail start
+0x005c0000). Working hypothesis: high-density game logic + late-binary
+utility tail. Highest avg B/fn of any bucket - most likely 100% game
+code per Phase 1 exit goal.
+These functions have no row in hooks.csv and no analysis note. Report
+final subsystem in the queue row's `subsystem_observed=` field.
+
+# Pre-flight
+```bash
+export POOL_SLOT_FILE=".pool_slot_batch_z_s2"
+bash scripts/ghidra_pool.sh acquire   # should return Mashed_pool2 if free
+sha256sum original/MASHED.exe.unpatched  # MUST equal BDCAE0...EFD3C0E
+```
+
+# Workflow (Opus 1M - bulk-coherent per session)
+Read all candidate RVAs first; then decomp in clusters of ~10-15 at a time.
+Opus 1M context keeps all 80 functions' decomp + cross-refs in scope
+simultaneously - exploit this for cross-function naming (recurring callees,
+shared globals, repeated string patterns).
+
+Per RVA:
+  1. mcp__ghidra__function_at <rva>     (or listing_code_unit_at if no fn)
+  2. mcp__ghidra__decomp_function       (the body)
+  3. mcp__ghidra__function_callees      (depth-1 callees)
+  4. mcp__ghidra__function_callers      (subsystem inference)
+  5. Cross-ref the RW catalog: signature/calls/constants matching an RW
+     API -> name and cite catalog row
+  6. Write re/analysis/bucket_00565cd0/0x<rva>.md with:
+     - frontmatter (rva, name_in_ghidra, size_bytes, confidence=C1,
+       callees_depth1, callers_noted, opened_in_slot=Mashed_pool2,
+       session_date=2026-05-19)
+     - ## Mechanical description (bullets; no speculation; cite addresses)
+     - ## Constants (table; cite RVA for each)
+     - ## Uncertainties (bare [UNCERTAIN] markers; sweep assigns U-IDs)
+     - ## Stubs encountered (bare [STUB] markers; sweep assigns S-IDs)
+
+# Candidates
+| # | RVA | Ghidra name | size |
+|---|-----|-------------|------|
+| 1 | 0x00565cd0 | FUN_00565cd0 | 118 |
+| 2 | 0x00573670 | FUN_00573670 | 544 |
+| 3 | 0x00573890 | FUN_00573890 | 313 |
+| 4 | 0x005739d0 | FUN_005739d0 | 1844 |
+| 5 | 0x00574230 | FUN_00574230 | 112 |
+| 6 | 0x005742c0 | FUN_005742c0 | 1490 |
+| 7 | 0x005748a0 | FUN_005748a0 | 123 |
+| 8 | 0x00574920 | FUN_00574920 | 94 |
+| 9 | 0x005749b0 | FUN_005749b0 | 77 |
+| 10 | 0x00574a20 | FUN_00574a20 | 148 |
+| 11 | 0x00574ac0 | FUN_00574ac0 | 6 |
+| 12 | 0x00574ad0 | FUN_00574ad0 | 1615 |
+| 13 | 0x00575120 | FUN_00575120 | 208 |
+| 14 | 0x005751f0 | FUN_005751f0 | 181 |
+| 15 | 0x005752b0 | FUN_005752b0 | 680 |
+| 16 | 0x00575560 | FUN_00575560 | 618 |
+| 17 | 0x005757d0 | FUN_005757d0 | 170 |
+| 18 | 0x00575880 | FUN_00575880 | 732 |
+| 19 | 0x00575b60 | FUN_00575b60 | 250 |
+| 20 | 0x00575c60 | FUN_00575c60 | 890 |
+| 21 | 0x00575fe0 | FUN_00575fe0 | 1632 |
+| 22 | 0x00576640 | FUN_00576640 | 563 |
+| 23 | 0x00576880 | FUN_00576880 | 4958 |
+| 24 | 0x00577be0 | FUN_00577be0 | 196 |
+| 25 | 0x00577cb0 | FUN_00577cb0 | 513 |
+| 26 | 0x00577ec0 | FUN_00577ec0 | 1497 |
+| 27 | 0x005784a0 | FUN_005784a0 | 366 |
+| 28 | 0x00578610 | FUN_00578610 | 1287 |
+| 29 | 0x00578b20 | FUN_00578b20 | 176 |
+| 30 | 0x00578bd0 | FUN_00578bd0 | 213 |
+| 31 | 0x00578cb0 | FUN_00578cb0 | 212 |
+| 32 | 0x00578d90 | FUN_00578d90 | 185 |
+| 33 | 0x00578e50 | FUN_00578e50 | 105 |
+| 34 | 0x00578ec0 | FUN_00578ec0 | 91 |
+| 35 | 0x00578f20 | FUN_00578f20 | 207 |
+| 36 | 0x00578ff0 | FUN_00578ff0 | 2899 |
+| 37 | 0x00579b50 | FUN_00579b50 | 165 |
+| 38 | 0x00579c00 | FUN_00579c00 | 328 |
+| 39 | 0x00579d50 | FUN_00579d50 | 243 |
+| 40 | 0x00579e50 | FUN_00579e50 | 134 |
+| 41 | 0x00579ee0 | FUN_00579ee0 | 866 |
+| 42 | 0x0057a250 | FUN_0057a250 | 1038 |
+| 43 | 0x0057a660 | FUN_0057a660 | 824 |
+| 44 | 0x0057a9a0 | FUN_0057a9a0 | 1035 |
+| 45 | 0x0057adb0 | FUN_0057adb0 | 105 |
+| 46 | 0x0057ae20 | FUN_0057ae20 | 8 |
+| 47 | 0x0057ae30 | FUN_0057ae30 | 348 |
+| 48 | 0x0059b460 | FUN_0059b460 | 623 |
+| 49 | 0x0059b6d0 | FUN_0059b6d0 | 215 |
+| 50 | 0x0059b7b0 | FUN_0059b7b0 | 488 |
+| 51 | 0x0059b9a0 | FUN_0059b9a0 | 263 |
+| 52 | 0x0059bab0 | FUN_0059bab0 | 365 |
+| 53 | 0x0059bc20 | FUN_0059bc20 | 241 |
+| 54 | 0x0059bd30 | FUN_0059bd30 | 98 |
+| 55 | 0x0059bda0 | FUN_0059bda0 | 1019 |
+| 56 | 0x0059c1a0 | FUN_0059c1a0 | 715 |
+| 57 | 0x0059c470 | FUN_0059c470 | 887 |
+| 58 | 0x0059c7f0 | FUN_0059c7f0 | 775 |
+| 59 | 0x0059cb00 | FUN_0059cb00 | 185 |
+| 60 | 0x0059cbc0 | FUN_0059cbc0 | 222 |
+| 61 | 0x0059cca0 | FUN_0059cca0 | 203 |
+| 62 | 0x0059cd70 | FUN_0059cd70 | 108 |
+| 63 | 0x0059cde0 | FUN_0059cde0 | 127 |
+| 64 | 0x0059ce60 | FUN_0059ce60 | 107 |
+| 65 | 0x0059ced0 | FUN_0059ced0 | 760 |
+| 66 | 0x0059d1d0 | FUN_0059d1d0 | 550 |
+| 67 | 0x0059d400 | FUN_0059d400 | 686 |
+| 68 | 0x0059d6b0 | FUN_0059d6b0 | 1482 |
+| 69 | 0x0059dc80 | FUN_0059dc80 | 202 |
+| 70 | 0x0059dd80 | FUN_0059dd80 | 464 |
+| 71 | 0x0059df50 | FUN_0059df50 | 652 |
+| 72 | 0x0059e1e0 | FUN_0059e1e0 | 165 |
+| 73 | 0x0059e290 | FUN_0059e290 | 616 |
+| 74 | 0x0059e500 | FUN_0059e500 | 453 |
+| 75 | 0x0059e740 | FUN_0059e740 | 945 |
+| 76 | 0x0059eb00 | FUN_0059eb00 | 286 |
+| 77 | 0x0059ec20 | FUN_0059ec20 | 2370 |
+| 78 | 0x0059f5d0 | FUN_0059f5d0 | 6083 |
+| 79 | 0x005b8200 | FUN_005b8200 | 877 |
+| 80 | 0x005b8680 | FUN_005b8680 | 604 |
+
+# Output (this session ONLY produces these - does NOT touch hooks.csv)
+- 80 per-RVA .md plates in re/analysis/bucket_00565cd0/
+- ONE queue row appended to re/SCRIBE_QUEUE.md (Queued section):
+    2026-05-19  batch-z-s2  rvas=0x...,0x...  bucket=re/analysis/bucket_00565cd0
+                  subsystem_observed=<X>  notes=<one-line>
+
+# NO COMMITS, NO hooks.csv WRITES
+- Do NOT mutate hooks.csv, STUBS.md, UNCERTAINTIES.md, or DEFERRED.md.
+  Those are the sweep's / orchestrator's responsibility.
+- Do NOT git commit. The orchestrating session commits after all 6
+  sessions return.
+
+# STOP-AND-ASK
+- function_at returns null AND listing_code_unit_at also null -> skip + note
+- Bucket-range turns out to be library residue (any of the 8 already-known
+  ranges above OR newly-discovered FidDB-attested cluster) -> halt + report.
+  Sessions should NOT promote library residue.
+- Average function size in bucket < 150B AND zero game-string anchors after
+  first 20 decomps -> halt + report (library-vs-game-code heuristic miss
+  per batch_w post-mortem; batch_x-s2 caught Lua leakage this way).
+- RW catalog match found but signature mismatches Ghidra decomp -> flag, do
+  NOT auto-name; defer to a re-classify pass.
+- More than 5 candidates have catalogued [UNCERTAIN] markers above C2 -> halt
+- Adjacent functions form a known struct shape (>= 3 share offsets) ->
+    optionally produce re/analysis/structs/<name>.md alongside the plates
+- DISCONTIGUOUS BUCKET CAVEAT (this session): bucket spans three disjoint
+  regions (A 0x00565cd0..0x0057ae30, B 0x0059b460..0x0059f5d0, C
+  0x005b8200..0x005b8680). Treat each region as a SEPARATE subsystem
+  hypothesis - if the three regions cluster into different subsystems
+  (likely), report all three in subsystem_observed= using slash-separator
+  notation, e.g. "post-libpng-game/late-segment-util/pre-crt-tail".
+
+==============================================================================
+Session 3 - bucket_0052df70  (FIRST-PASS, 80-RVA discovery)
+==============================================================================
+
+Pool slot:    Mashed_pool3 (pre-assigned)
+Model:        Opus 4.7 (claude-opus-4-7[1m]) - hard cap 100 RVAs (this session: 80)
+Skill:        discover-c1-batch (first-pass; Opus 1M mode)
+Bucket dir:   re/analysis/bucket_0052df70/
+Drains to:    re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+Address span: 0x0052df70 .. 0x0053fec0  (~36,548 bytes of code, avg ~457 B/fn)
+Bucket label: mid-density-post-libpng
+
+# Mission
+Discover and write C0->C1 plates for 80 unmapped functions in the
+contiguous-RVA bucket anchored at 0x0052df70 - immediately after the
+libpng+zlib+image-loader band ends (0x0052df40). Adjacent named
+neighbors: image_library_format_handler_registry 0x0052daf0 (util C1,
+last libpng function). Bucket 3 starts ONE function past the libpng
+tail. NO other game-named neighbors in span. Working hypothesis:
+image-loader callers + middleware glue + mid-binary utility code;
+expected mixed renderer / image-decoder integration layer. Confirm
+or reclassify during decomp.
+These functions have no row in hooks.csv and no analysis note. Report
+final subsystem in the queue row's `subsystem_observed=` field.
+
+# Pre-flight
+```bash
+export POOL_SLOT_FILE=".pool_slot_batch_z_s3"
+bash scripts/ghidra_pool.sh acquire   # should return Mashed_pool3 if free
+sha256sum original/MASHED.exe.unpatched  # MUST equal BDCAE0...EFD3C0E
+```
+
+# Workflow (Opus 1M - bulk-coherent per session)
+Read all candidate RVAs first; then decomp in clusters of ~10-15 at a time.
+Opus 1M context keeps all 80 functions' decomp + cross-refs in scope
+simultaneously - exploit this for cross-function naming (recurring callees,
+shared globals, repeated string patterns).
+
+Per RVA:
+  1. mcp__ghidra__function_at <rva>     (or listing_code_unit_at if no fn)
+  2. mcp__ghidra__decomp_function       (the body)
+  3. mcp__ghidra__function_callees      (depth-1 callees)
+  4. mcp__ghidra__function_callers      (subsystem inference)
+  5. Cross-ref the RW catalog: signature/calls/constants matching an RW
+     API -> name and cite catalog row
+  6. Write re/analysis/bucket_0052df70/0x<rva>.md with:
+     - frontmatter (rva, name_in_ghidra, size_bytes, confidence=C1,
+       callees_depth1, callers_noted, opened_in_slot=Mashed_pool3,
+       session_date=2026-05-19)
+     - ## Mechanical description (bullets; no speculation; cite addresses)
+     - ## Constants (table; cite RVA for each)
+     - ## Uncertainties (bare [UNCERTAIN] markers; sweep assigns U-IDs)
+     - ## Stubs encountered (bare [STUB] markers; sweep assigns S-IDs)
+
+# Candidates
+| # | RVA | Ghidra name | size |
+|---|-----|-------------|------|
+| 1 | 0x0052df70 | FUN_0052df70 | 356 |
+| 2 | 0x0052e0e0 | FUN_0052e0e0 | 471 |
+| 3 | 0x0052e2c0 | FUN_0052e2c0 | 73 |
+| 4 | 0x0052e650 | FUN_0052e650 | 98 |
+| 5 | 0x0052ea70 | FUN_0052ea70 | 205 |
+| 6 | 0x0052eb40 | FUN_0052eb40 | 269 |
+| 7 | 0x0052eeb0 | FUN_0052eeb0 | 69 |
+| 8 | 0x0052fd60 | FUN_0052fd60 | 45 |
+| 9 | 0x0052fdb0 | FUN_0052fdb0 | 213 |
+| 10 | 0x0052fe90 | FUN_0052fe90 | 98 |
+| 11 | 0x0052ff00 | FUN_0052ff00 | 202 |
+| 12 | 0x0052ffd0 | FUN_0052ffd0 | 34 |
+| 13 | 0x00530000 | FUN_00530000 | 14 |
+| 14 | 0x00530010 | FUN_00530010 | 60 |
+| 15 | 0x00530050 | FUN_00530050 | 60 |
+| 16 | 0x00530090 | FUN_00530090 | 56 |
+| 17 | 0x005300d0 | FUN_005300d0 | 137 |
+| 18 | 0x00530160 | FUN_00530160 | 349 |
+| 19 | 0x005302c0 | FUN_005302c0 | 28 |
+| 20 | 0x00530650 | FUN_00530650 | 1453 |
+| 21 | 0x00530c00 | FUN_00530c00 | 1810 |
+| 22 | 0x00532000 | FUN_00532000 | 171 |
+| 23 | 0x005320b0 | FUN_005320b0 | 220 |
+| 24 | 0x005327d0 | FUN_005327d0 | 212 |
+| 25 | 0x00532a60 | FUN_00532a60 | 281 |
+| 26 | 0x00532b80 | FUN_00532b80 | 1043 |
+| 27 | 0x005333a0 | FUN_005333a0 | 116 |
+| 28 | 0x00533d00 | FUN_00533d00 | 247 |
+| 29 | 0x00533ec0 | FUN_00533ec0 | 2467 |
+| 30 | 0x00535330 | FUN_00535330 | 859 |
+| 31 | 0x005356f0 | FUN_005356f0 | 5 |
+| 32 | 0x00538310 | FUN_00538310 | 329 |
+| 33 | 0x00538a80 | FUN_00538a80 | 19 |
+| 34 | 0x00538b70 | FUN_00538b70 | 40 |
+| 35 | 0x00538ba0 | FUN_00538ba0 | 40 |
+| 36 | 0x00538bd0 | FUN_00538bd0 | 88 |
+| 37 | 0x00538d60 | FUN_00538d60 | 2961 |
+| 38 | 0x00539900 | FUN_00539900 | 1469 |
+| 39 | 0x00539ec0 | FUN_00539ec0 | 2033 |
+| 40 | 0x0053a6c0 | FUN_0053a6c0 | 203 |
+| 41 | 0x0053a7a0 | FUN_0053a7a0 | 4108 |
+| 42 | 0x0053b7b0 | FUN_0053b7b0 | 1590 |
+| 43 | 0x0053bdf0 | FUN_0053bdf0 | 2013 |
+| 44 | 0x0053c5d0 | FUN_0053c5d0 | 266 |
+| 45 | 0x0053c6e0 | FUN_0053c6e0 | 1490 |
+| 46 | 0x0053ccc0 | FUN_0053ccc0 | 189 |
+| 47 | 0x0053cd80 | FUN_0053cd80 | 694 |
+| 48 | 0x0053d040 | FUN_0053d040 | 18 |
+| 49 | 0x0053d060 | FUN_0053d060 | 41 |
+| 50 | 0x0053d090 | FUN_0053d090 | 20 |
+| 51 | 0x0053d200 | FUN_0053d200 | 38 |
+| 52 | 0x0053d400 | FUN_0053d400 | 85 |
+| 53 | 0x0053d460 | FUN_0053d460 | 318 |
+| 54 | 0x0053d5a0 | FUN_0053d5a0 | 231 |
+| 55 | 0x0053d690 | FUN_0053d690 | 33 |
+| 56 | 0x0053d6c0 | FUN_0053d6c0 | 342 |
+| 57 | 0x0053d820 | FUN_0053d820 | 244 |
+| 58 | 0x0053d920 | FUN_0053d920 | 639 |
+| 59 | 0x0053dba0 | FUN_0053dba0 | 679 |
+| 60 | 0x0053de50 | FUN_0053de50 | 66 |
+| 61 | 0x0053dea0 | FUN_0053dea0 | 1416 |
+| 62 | 0x0053e430 | FUN_0053e430 | 391 |
+| 63 | 0x0053e5d0 | FUN_0053e5d0 | 182 |
+| 64 | 0x0053e690 | FUN_0053e690 | 51 |
+| 65 | 0x0053e6f0 | FUN_0053e6f0 | 63 |
+| 66 | 0x0053e730 | FUN_0053e730 | 48 |
+| 67 | 0x0053e760 | FUN_0053e760 | 44 |
+| 68 | 0x0053e790 | FUN_0053e790 | 94 |
+| 69 | 0x0053e7f0 | FUN_0053e7f0 | 64 |
+| 70 | 0x0053e830 | FUN_0053e830 | 614 |
+| 71 | 0x0053eca0 | FUN_0053eca0 | 105 |
+| 72 | 0x0053f150 | FUN_0053f150 | 76 |
+| 73 | 0x0053fa20 | FUN_0053fa20 | 80 |
+| 74 | 0x0053fb00 | FUN_0053fb00 | 80 |
+| 75 | 0x0053fb70 | FUN_0053fb70 | 48 |
+| 76 | 0x0053fba0 | FUN_0053fba0 | 14 |
+| 77 | 0x0053fbb0 | FUN_0053fbb0 | 356 |
+| 78 | 0x0053fd30 | FUN_0053fd30 | 355 |
+| 79 | 0x0053fea0 | FUN_0053fea0 | 22 |
+| 80 | 0x0053fec0 | FUN_0053fec0 | 438 |
+
+# Output (this session ONLY produces these - does NOT touch hooks.csv)
+- 80 per-RVA .md plates in re/analysis/bucket_0052df70/
+- ONE queue row appended to re/SCRIBE_QUEUE.md (Queued section):
+    2026-05-19  batch-z-s3  rvas=0x...,0x...  bucket=re/analysis/bucket_0052df70
+                  subsystem_observed=<X>  notes=<one-line>
+
+# NO COMMITS, NO hooks.csv WRITES
+- Do NOT mutate hooks.csv, STUBS.md, UNCERTAINTIES.md, or DEFERRED.md.
+  Those are the sweep's / orchestrator's responsibility.
+- Do NOT git commit. The orchestrating session commits after all 6
+  sessions return.
+
+# STOP-AND-ASK
+- function_at returns null AND listing_code_unit_at also null -> skip + note
+- Bucket-range turns out to be library residue (any of the 8 already-known
+  ranges above OR newly-discovered FidDB-attested cluster) -> halt + report.
+  Sessions should NOT promote library residue.
+- Average function size in bucket < 150B AND zero game-string anchors after
+  first 20 decomps -> halt + report (library-vs-game-code heuristic miss
+  per batch_w post-mortem; batch_x-s2 caught Lua leakage this way).
+- RW catalog match found but signature mismatches Ghidra decomp -> flag, do
+  NOT auto-name; defer to a re-classify pass.
+- More than 5 candidates have catalogued [UNCERTAIN] markers above C2 -> halt
+- Adjacent functions form a known struct shape (>= 3 share offsets) ->
+    optionally produce re/analysis/structs/<name>.md alongside the plates
+
+==============================================================================
+Session 4 - bucket_005115aa  (FIRST-PASS, 80-RVA discovery)
+==============================================================================
+
+Pool slot:    Mashed_pool4 (pre-assigned)
+Model:        Opus 4.7 (claude-opus-4-7[1m]) - hard cap 100 RVAs (this session: 80)
+Skill:        discover-c1-batch (first-pass; Opus 1M mode)
+Bucket dir:   re/analysis/bucket_005115aa/
+Drains to:    re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+Address span: 0x005115aa .. 0x005405c0  (~23,711 bytes of code, avg ~296 B/fn)
+Bucket label: between-d3dx9-and-libpng-plus-spillover
+
+# Mission
+Discover and write C0->C1 plates for 80 unmapped functions in a
+discontiguous cluster: (A) 0x005115aa..0x00516a70 (between D3DX9 HLSL
+band end 0x005112c9 and libpng band start 0x00516bb0; narrow ~22KB
+window with 71 candidates); (B) 0x00540080..0x005405c0 (post-bucket-3
+tail; after libpng+zlib finishes at 0x0052df40 and bucket 3 ends at
+0x0053fec0). Adjacent named neighbors: png_write_data 0x00516bb0
+(util C1, libpng entry just after part A ends). Working hypothesis:
+D3DX9 helper glue / shader callers near part A; mid-utility code near
+part B. Lower avg B/fn (296) signals possible mixed library-helper
+content - ELEVATED STOP-AND-ASK risk for part A (D3DX9 frontend
+possibly extends backward).
+These functions have no row in hooks.csv and no analysis note. Report
+final subsystem in the queue row's `subsystem_observed=` field.
+
+# Pre-flight
+```bash
+export POOL_SLOT_FILE=".pool_slot_batch_z_s4"
+bash scripts/ghidra_pool.sh acquire   # should return Mashed_pool4 if free
+sha256sum original/MASHED.exe.unpatched  # MUST equal BDCAE0...EFD3C0E
+```
+
+# Workflow (Opus 1M - bulk-coherent per session)
+Read all candidate RVAs first; then decomp in clusters of ~10-15 at a time.
+Opus 1M context keeps all 80 functions' decomp + cross-refs in scope
+simultaneously - exploit this for cross-function naming (recurring callees,
+shared globals, repeated string patterns).
+
+Per RVA:
+  1. mcp__ghidra__function_at <rva>     (or listing_code_unit_at if no fn)
+  2. mcp__ghidra__decomp_function       (the body)
+  3. mcp__ghidra__function_callees      (depth-1 callees)
+  4. mcp__ghidra__function_callers      (subsystem inference)
+  5. Cross-ref the RW catalog: signature/calls/constants matching an RW
+     API -> name and cite catalog row
+  6. Write re/analysis/bucket_005115aa/0x<rva>.md with:
+     - frontmatter (rva, name_in_ghidra, size_bytes, confidence=C1,
+       callees_depth1, callers_noted, opened_in_slot=Mashed_pool4,
+       session_date=2026-05-19)
+     - ## Mechanical description (bullets; no speculation; cite addresses)
+     - ## Constants (table; cite RVA for each)
+     - ## Uncertainties (bare [UNCERTAIN] markers; sweep assigns U-IDs)
+     - ## Stubs encountered (bare [STUB] markers; sweep assigns S-IDs)
+
+# Candidates
+| # | RVA | Ghidra name | size |
+|---|-----|-------------|------|
+| 1 | 0x005115aa | FUN_005115aa | 60 |
+| 2 | 0x005115e6 | FUN_005115e6 | 80 |
+| 3 | 0x00511636 | FUN_00511636 | 71 |
+| 4 | 0x0051167d | FUN_0051167d | 196 |
+| 5 | 0x00511741 | FUN_00511741 | 51 |
+| 6 | 0x00511774 | FUN_00511774 | 70 |
+| 7 | 0x005117ba | FUN_005117ba | 30 |
+| 8 | 0x00511841 | FUN_00511841 | 28 |
+| 9 | 0x0051185d | FUN_0051185d | 28 |
+| 10 | 0x00511879 | FUN_00511879 | 84 |
+| 11 | 0x005118cd | FUN_005118cd | 75 |
+| 12 | 0x00511918 | FUN_00511918 | 86 |
+| 13 | 0x0051196e | FUN_0051196e | 110 |
+| 14 | 0x005119dc | FUN_005119dc | 114 |
+| 15 | 0x00511a4e | FUN_00511a4e | 137 |
+| 16 | 0x00511ad7 | FUN_00511ad7 | 174 |
+| 17 | 0x00511b85 | FUN_00511b85 | 200 |
+| 18 | 0x00511c4d | FUN_00511c4d | 437 |
+| 19 | 0x00511e02 | FUN_00511e02 | 269 |
+| 20 | 0x00511f0f | FUN_00511f0f | 277 |
+| 21 | 0x00512024 | FUN_00512024 | 814 |
+| 22 | 0x00512352 | FUN_00512352 | 461 |
+| 23 | 0x0051251f | FUN_0051251f | 1951 |
+| 24 | 0x00512cbe | FUN_00512cbe | 489 |
+| 25 | 0x00512ea7 | FUN_00512ea7 | 326 |
+| 26 | 0x005130c0 | FUN_005130c0 | 245 |
+| 27 | 0x005131c0 | FUN_005131c0 | 247 |
+| 28 | 0x005137a0 | FUN_005137a0 | 252 |
+| 29 | 0x005138a0 | FUN_005138a0 | 254 |
+| 30 | 0x00513c58 | FUN_00513c58 | 94 |
+| 31 | 0x00513cb6 | FUN_00513cb6 | 606 |
+| 32 | 0x00513f90 | FUN_00513f90 | 821 |
+| 33 | 0x00514330 | FUN_00514330 | 1039 |
+| 34 | 0x00514780 | FUN_00514780 | 414 |
+| 35 | 0x00514920 | FUN_00514920 | 677 |
+| 36 | 0x00514bd0 | FUN_00514bd0 | 297 |
+| 37 | 0x00514d00 | FUN_00514d00 | 341 |
+| 38 | 0x00514e60 | FUN_00514e60 | 85 |
+| 39 | 0x00514ec0 | FUN_00514ec0 | 508 |
+| 40 | 0x005150e0 | FUN_005150e0 | 211 |
+| 41 | 0x005151c0 | FUN_005151c0 | 152 |
+| 42 | 0x00515260 | FUN_00515260 | 265 |
+| 43 | 0x00515370 | FUN_00515370 | 737 |
+| 44 | 0x00515660 | FUN_00515660 | 30 |
+| 45 | 0x00515680 | FUN_00515680 | 35 |
+| 46 | 0x005156b0 | FUN_005156b0 | 88 |
+| 47 | 0x00515710 | FUN_00515710 | 40 |
+| 48 | 0x00515740 | FUN_00515740 | 47 |
+| 49 | 0x00515770 | FUN_00515770 | 77 |
+| 50 | 0x005157c0 | FUN_005157c0 | 518 |
+| 51 | 0x005159d0 | FUN_005159d0 | 194 |
+| 52 | 0x00515aa0 | FUN_00515aa0 | 53 |
+| 53 | 0x00515ae0 | FUN_00515ae0 | 619 |
+| 54 | 0x00515d50 | FUN_00515d50 | 242 |
+| 55 | 0x00515e50 | FUN_00515e50 | 132 |
+| 56 | 0x00515ee0 | FUN_00515ee0 | 69 |
+| 57 | 0x00515f30 | FUN_00515f30 | 159 |
+| 58 | 0x00515fd0 | FUN_00515fd0 | 464 |
+| 59 | 0x005161a0 | FUN_005161a0 | 47 |
+| 60 | 0x005161d0 | FUN_005161d0 | 326 |
+| 61 | 0x00516320 | FUN_00516320 | 76 |
+| 62 | 0x00516370 | FUN_00516370 | 47 |
+| 63 | 0x005163a0 | FUN_005163a0 | 131 |
+| 64 | 0x00516430 | FUN_00516430 | 45 |
+| 65 | 0x00516460 | FUN_00516460 | 258 |
+| 66 | 0x00516570 | FUN_00516570 | 213 |
+| 67 | 0x00516650 | FUN_00516650 | 478 |
+| 68 | 0x00516830 | FUN_00516830 | 54 |
+| 69 | 0x00516870 | FUN_00516870 | 162 |
+| 70 | 0x00516920 | FUN_00516920 | 321 |
+| 71 | 0x00516a70 | FUN_00516a70 | 311 |
+| 72 | 0x00540080 | FUN_00540080 | 114 |
+| 73 | 0x00540100 | FUN_00540100 | 95 |
+| 74 | 0x00540160 | FUN_00540160 | 97 |
+| 75 | 0x005401d0 | FUN_005401d0 | 134 |
+| 76 | 0x00540260 | FUN_00540260 | 112 |
+| 77 | 0x005402d0 | FUN_005402d0 | 100 |
+| 78 | 0x00540340 | FUN_00540340 | 454 |
+| 79 | 0x00540510 | FUN_00540510 | 166 |
+| 80 | 0x005405c0 | FUN_005405c0 | 3340 |
+
+# Output (this session ONLY produces these - does NOT touch hooks.csv)
+- 80 per-RVA .md plates in re/analysis/bucket_005115aa/
+- ONE queue row appended to re/SCRIBE_QUEUE.md (Queued section):
+    2026-05-19  batch-z-s4  rvas=0x...,0x...  bucket=re/analysis/bucket_005115aa
+                  subsystem_observed=<X>  notes=<one-line>
+
+# NO COMMITS, NO hooks.csv WRITES
+- Do NOT mutate hooks.csv, STUBS.md, UNCERTAINTIES.md, or DEFERRED.md.
+  Those are the sweep's / orchestrator's responsibility.
+- Do NOT git commit. The orchestrating session commits after all 6
+  sessions return.
+
+# STOP-AND-ASK
+- function_at returns null AND listing_code_unit_at also null -> skip + note
+- Bucket-range turns out to be library residue (any of the 8 already-known
+  ranges above OR newly-discovered FidDB-attested cluster) -> halt + report.
+  Sessions should NOT promote library residue.
+- Average function size in bucket < 150B AND zero game-string anchors after
+  first 20 decomps -> halt + report (library-vs-game-code heuristic miss
+  per batch_w post-mortem; batch_x-s2 caught Lua leakage this way).
+- RW catalog match found but signature mismatches Ghidra decomp -> flag, do
+  NOT auto-name; defer to a re-classify pass.
+- More than 5 candidates have catalogued [UNCERTAIN] markers above C2 -> halt
+- Adjacent functions form a known struct shape (>= 3 share offsets) ->
+    optionally produce re/analysis/structs/<name>.md alongside the plates
+- D3DX9-BACKWARD-EXTENSION CAVEAT (this session): part A spans the
+  narrow window between D3DX9 HLSL band end (0x005112c9) and libpng
+  start (0x00516bb0). If first 20 decomps show D3DX9-style strings
+  (HLSL, D3DX*, _D3DXSHADER, shader-token grammar, %s shader compile
+  diagnostics) -> halt and report - D3DX9 band may extend backward
+  past current calibrated boundary.
+
+==============================================================================
+Session 5 - bucket_004f022d  (FIRST-PASS, 80-RVA discovery)
+==============================================================================
+
+Pool slot:    Mashed_pool5 (pre-assigned)
+Model:        Opus 4.7 (claude-opus-4-7[1m]) - hard cap 100 RVAs (this session: 80)
+Skill:        discover-c1-batch (first-pass; Opus 1M mode)
+Bucket dir:   re/analysis/bucket_004f022d/
+Drains to:    re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+Address span: 0x004f022d .. 0x004fb5a0  (~28,860 bytes of code, avg ~361 B/fn)
+Bucket label: pre-d3dx9-band
+
+# Mission
+Discover and write C0->C1 plates for 80 unmapped functions in the
+contiguous-RVA bucket anchored at 0x004f022d - immediately preceding
+the D3DX9 HLSL band start (0x004fcb51). NO game-named neighbors in
+span; bucket sits between render code at 0x004ec000..0x004ec9cd
+(render C1) and the D3DX9 HLSL band. Working hypothesis: D3DX9-adjacent
+glue (game-side shader integration) OR pre-D3DX9 render helpers OR
+D3DX9 frontend that extends BACKWARD from 0x004fcb51 (LIBRARY-RESIDUE
+RISK). Avg 361 B/fn is mid-range; first 20 decomps should resolve
+game-vs-library question.
+These functions have no row in hooks.csv and no analysis note. Report
+final subsystem in the queue row's `subsystem_observed=` field.
+
+# Pre-flight
+```bash
+export POOL_SLOT_FILE=".pool_slot_batch_z_s5"
+bash scripts/ghidra_pool.sh acquire   # should return Mashed_pool5 if free
+sha256sum original/MASHED.exe.unpatched  # MUST equal BDCAE0...EFD3C0E
+```
+
+# Workflow (Opus 1M - bulk-coherent per session)
+Read all candidate RVAs first; then decomp in clusters of ~10-15 at a time.
+Opus 1M context keeps all 80 functions' decomp + cross-refs in scope
+simultaneously - exploit this for cross-function naming (recurring callees,
+shared globals, repeated string patterns).
+
+Per RVA:
+  1. mcp__ghidra__function_at <rva>     (or listing_code_unit_at if no fn)
+  2. mcp__ghidra__decomp_function       (the body)
+  3. mcp__ghidra__function_callees      (depth-1 callees)
+  4. mcp__ghidra__function_callers      (subsystem inference)
+  5. Cross-ref the RW catalog: signature/calls/constants matching an RW
+     API -> name and cite catalog row
+  6. Write re/analysis/bucket_004f022d/0x<rva>.md with:
+     - frontmatter (rva, name_in_ghidra, size_bytes, confidence=C1,
+       callees_depth1, callers_noted, opened_in_slot=Mashed_pool5,
+       session_date=2026-05-19)
+     - ## Mechanical description (bullets; no speculation; cite addresses)
+     - ## Constants (table; cite RVA for each)
+     - ## Uncertainties (bare [UNCERTAIN] markers; sweep assigns U-IDs)
+     - ## Stubs encountered (bare [STUB] markers; sweep assigns S-IDs)
+
+# Candidates
+| # | RVA | Ghidra name | size |
+|---|-----|-------------|------|
+| 1 | 0x004f022d | FUN_004f022d | 218 |
+| 2 | 0x004f0307 | FUN_004f0307 | 191 |
+| 3 | 0x004f07a0 | FUN_004f07a0 | 46 |
+| 4 | 0x004f07d0 | FUN_004f07d0 | 46 |
+| 5 | 0x004f0800 | FUN_004f0800 | 15 |
+| 6 | 0x004f0810 | FUN_004f0810 | 194 |
+| 7 | 0x004f0900 | FUN_004f0900 | 11 |
+| 8 | 0x004f0910 | FUN_004f0910 | 39 |
+| 9 | 0x004f0940 | FUN_004f0940 | 34 |
+| 10 | 0x004f0970 | FUN_004f0970 | 26 |
+| 11 | 0x004f0ae0 | FUN_004f0ae0 | 234 |
+| 12 | 0x004f0bd0 | FUN_004f0bd0 | 64 |
+| 13 | 0x004f0c10 | FUN_004f0c10 | 58 |
+| 14 | 0x004f0c50 | FUN_004f0c50 | 291 |
+| 15 | 0x004f0d80 | FUN_004f0d80 | 58 |
+| 16 | 0x004f0dc0 | FUN_004f0dc0 | 329 |
+| 17 | 0x004f0f10 | FUN_004f0f10 | 462 |
+| 18 | 0x004f10e0 | FUN_004f10e0 | 77 |
+| 19 | 0x004f1130 | FUN_004f1130 | 26 |
+| 20 | 0x004f1150 | FUN_004f1150 | 638 |
+| 21 | 0x004f13d0 | FUN_004f13d0 | 1058 |
+| 22 | 0x004f1800 | FUN_004f1800 | 106 |
+| 23 | 0x004f1870 | FUN_004f1870 | 654 |
+| 24 | 0x004f1b00 | FUN_004f1b00 | 1012 |
+| 25 | 0x004f1f00 | FUN_004f1f00 | 138 |
+| 26 | 0x004f1f90 | FUN_004f1f90 | 18 |
+| 27 | 0x004f1fb0 | FUN_004f1fb0 | 1134 |
+| 28 | 0x004f2570 | FUN_004f2570 | 2302 |
+| 29 | 0x004f2e70 | FUN_004f2e70 | 273 |
+| 30 | 0x004f2f90 | FUN_004f2f90 | 151 |
+| 31 | 0x004f3030 | FUN_004f3030 | 273 |
+| 32 | 0x004f3150 | FUN_004f3150 | 750 |
+| 33 | 0x004f3440 | FUN_004f3440 | 627 |
+| 34 | 0x004f36c0 | FUN_004f36c0 | 497 |
+| 35 | 0x004f3b00 | FUN_004f3b00 | 93 |
+| 36 | 0x004f3b60 | FUN_004f3b60 | 86 |
+| 37 | 0x004f3bc0 | FUN_004f3bc0 | 15 |
+| 38 | 0x004f3bd0 | FUN_004f3bd0 | 14 |
+| 39 | 0x004f3be0 | FUN_004f3be0 | 193 |
+| 40 | 0x004f3cb0 | FUN_004f3cb0 | 39 |
+| 41 | 0x004f3ce0 | FUN_004f3ce0 | 91 |
+| 42 | 0x004f3d40 | FUN_004f3d40 | 325 |
+| 43 | 0x004f3e90 | FUN_004f3e90 | 870 |
+| 44 | 0x004f4200 | FUN_004f4200 | 99 |
+| 45 | 0x004f4270 | FUN_004f4270 | 85 |
+| 46 | 0x004f42d0 | FUN_004f42d0 | 55 |
+| 47 | 0x004f4340 | FUN_004f4340 | 110 |
+| 48 | 0x004f43b0 | FUN_004f43b0 | 58 |
+| 49 | 0x004f43f0 | FUN_004f43f0 | 124 |
+| 50 | 0x004f4470 | FUN_004f4470 | 150 |
+| 51 | 0x004f4510 | FUN_004f4510 | 45 |
+| 52 | 0x004f46a0 | FUN_004f46a0 | 604 |
+| 53 | 0x004f4900 | FUN_004f4900 | 139 |
+| 54 | 0x004f5020 | FUN_004f5020 | 12 |
+| 55 | 0x004f5030 | FUN_004f5030 | 1908 |
+| 56 | 0x004f57e0 | FUN_004f57e0 | 1700 |
+| 57 | 0x004f6870 | FUN_004f6870 | 2370 |
+| 58 | 0x004f71f0 | FUN_004f71f0 | 1467 |
+| 59 | 0x004f77f0 | FUN_004f77f0 | 85 |
+| 60 | 0x004f7850 | FUN_004f7850 | 386 |
+| 61 | 0x004f79f0 | FUN_004f79f0 | 973 |
+| 62 | 0x004f7dc0 | FUN_004f7dc0 | 936 |
+| 63 | 0x004f81b0 | FUN_004f81b0 | 531 |
+| 64 | 0x004f8400 | FUN_004f8400 | 131 |
+| 65 | 0x004f8490 | FUN_004f8490 | 227 |
+| 66 | 0x004f8580 | FUN_004f8580 | 119 |
+| 67 | 0x004f8640 | FUN_004f8640 | 18 |
+| 68 | 0x004f8660 | FUN_004f8660 | 14 |
+| 69 | 0x004f8670 | FUN_004f8670 | 18 |
+| 70 | 0x004f8690 | FUN_004f8690 | 14 |
+| 71 | 0x004f8730 | FUN_004f8730 | 103 |
+| 72 | 0x004fa5f0 | FUN_004fa5f0 | 246 |
+| 73 | 0x004fb050 | FUN_004fb050 | 143 |
+| 74 | 0x004fb0e0 | FUN_004fb0e0 | 80 |
+| 75 | 0x004fb130 | FUN_004fb130 | 214 |
+| 76 | 0x004fb210 | FUN_004fb210 | 141 |
+| 77 | 0x004fb2a0 | FUN_004fb2a0 | 308 |
+| 78 | 0x004fb3e0 | FUN_004fb3e0 | 234 |
+| 79 | 0x004fb4d0 | FUN_004fb4d0 | 203 |
+| 80 | 0x004fb5a0 | FUN_004fb5a0 | 1034 |
+
+# Output (this session ONLY produces these - does NOT touch hooks.csv)
+- 80 per-RVA .md plates in re/analysis/bucket_004f022d/
+- ONE queue row appended to re/SCRIBE_QUEUE.md (Queued section):
+    2026-05-19  batch-z-s5  rvas=0x...,0x...  bucket=re/analysis/bucket_004f022d
+                  subsystem_observed=<X>  notes=<one-line>
+
+# NO COMMITS, NO hooks.csv WRITES
+- Do NOT mutate hooks.csv, STUBS.md, UNCERTAINTIES.md, or DEFERRED.md.
+  Those are the sweep's / orchestrator's responsibility.
+- Do NOT git commit. The orchestrating session commits after all 6
+  sessions return.
+
+# STOP-AND-ASK
+- function_at returns null AND listing_code_unit_at also null -> skip + note
+- Bucket-range turns out to be library residue (any of the 8 already-known
+  ranges above OR newly-discovered FidDB-attested cluster) -> halt + report.
+  Sessions should NOT promote library residue.
+- Average function size in bucket < 150B AND zero game-string anchors after
+  first 20 decomps -> halt + report (library-vs-game-code heuristic miss
+  per batch_w post-mortem; batch_x-s2 caught Lua leakage this way).
+- RW catalog match found but signature mismatches Ghidra decomp -> flag, do
+  NOT auto-name; defer to a re-classify pass.
+- More than 5 candidates have catalogued [UNCERTAIN] markers above C2 -> halt
+- Adjacent functions form a known struct shape (>= 3 share offsets) ->
+    optionally produce re/analysis/structs/<name>.md alongside the plates
+- D3DX9-BACKWARD-EXTENSION CAVEAT (this session): bucket sits IMMEDIATELY
+  BEFORE the D3DX9 HLSL band (0x004fcb51). ELEVATED library-residue risk.
+  If first 20 decomps show D3DX9-style strings (HLSL, D3DX*, _D3DXSHADER,
+  shader-token grammar, %s shader compile diagnostics) -> halt and report
+  immediately - the D3DX9 frontend may extend backward past current
+  calibrated boundary, in which case the entire bucket is library residue
+  and should NOT be promoted.
+
+==============================================================================
+Session 6 - bucket_0041dc30  (FIRST-PASS, 80-RVA discovery)
+==============================================================================
+
+Pool slot:    Mashed_pool6 (pre-assigned)
+Model:        Opus 4.7 (claude-opus-4-7[1m]) - hard cap 100 RVAs (this session: 80)
+Skill:        discover-c1-batch (first-pass; Opus 1M mode)
+Bucket dir:   re/analysis/bucket_0041dc30/
+Drains to:    re/SCRIBE_QUEUE.md (Queued); ghidra-sweep picks up later
+Address span: 0x0041dc30 .. 0x004893d0  (~11,730 bytes of code, avg ~147 B/fn)
+Bucket label: early-game-hud-frontend-state
+
+# Mission
+Discover and write C0->C1 plates for 80 unmapped functions in the
+early-game .text region anchored at 0x0041dc30. STRONG game-named
+neighbor coverage: Sub0041db80_HudThresholdDispatch (hud), HudDrawEnabled
+0x00426ba0 (hud), MenuDimSet 0x0042aad0 (frontend), MenuIm2DQuad
+0x0042aae0 (frontend), MenuAlphaGet 0x0042b930 (frontend),
+StatePhaseIsIdle/Final (util), GetRaceSubMode 0x0042f6a0 (util),
+Vehicle0HandleGet 0x0042f510 (render), ScreenWidthGet/HeightGet (hud),
+SetDat0067ecb8 (util getter/setter cluster). Working hypothesis: HUD +
+frontend menu + state-phase + screen-dim + early-render adapters and
+getter/setter farms. Lower avg B/fn (147) explained by many small
+accessor functions; this is HIGH-CONFIDENCE game code despite low avg.
+These functions have no row in hooks.csv and no analysis note. Report
+final subsystem in the queue row's `subsystem_observed=` field.
+
+# Pre-flight
+```bash
+export POOL_SLOT_FILE=".pool_slot_batch_z_s6"
+bash scripts/ghidra_pool.sh acquire   # should return Mashed_pool6 if free
+sha256sum original/MASHED.exe.unpatched  # MUST equal BDCAE0...EFD3C0E
+```
+
+# Workflow (Opus 1M - bulk-coherent per session)
+Read all candidate RVAs first; then decomp in clusters of ~10-15 at a time.
+Opus 1M context keeps all 80 functions' decomp + cross-refs in scope
+simultaneously - exploit this for cross-function naming (recurring callees,
+shared globals, repeated string patterns).
+
+Per RVA:
+  1. mcp__ghidra__function_at <rva>     (or listing_code_unit_at if no fn)
+  2. mcp__ghidra__decomp_function       (the body)
+  3. mcp__ghidra__function_callees      (depth-1 callees)
+  4. mcp__ghidra__function_callers      (subsystem inference)
+  5. Cross-ref the RW catalog: signature/calls/constants matching an RW
+     API -> name and cite catalog row
+  6. Write re/analysis/bucket_0041dc30/0x<rva>.md with:
+     - frontmatter (rva, name_in_ghidra, size_bytes, confidence=C1,
+       callees_depth1, callers_noted, opened_in_slot=Mashed_pool6,
+       session_date=2026-05-19)
+     - ## Mechanical description (bullets; no speculation; cite addresses)
+     - ## Constants (table; cite RVA for each)
+     - ## Uncertainties (bare [UNCERTAIN] markers; sweep assigns U-IDs)
+     - ## Stubs encountered (bare [STUB] markers; sweep assigns S-IDs)
+
+# Candidates
+| # | RVA | Ghidra name | size |
+|---|-----|-------------|------|
+| 1 | 0x0041dc30 | FUN_0041dc30 | 103 |
+| 2 | 0x0041e080 | FUN_0041e080 | 68 |
+| 3 | 0x00422470 | FUN_00422470 | 94 |
+| 4 | 0x004224d0 | FUN_004224d0 | 158 |
+| 5 | 0x00422a80 | FUN_00422a80 | 30 |
+| 6 | 0x00422aa0 | FUN_00422aa0 | 21 |
+| 7 | 0x00423040 | FUN_00423040 | 556 |
+| 8 | 0x00423270 | FUN_00423270 | 164 |
+| 9 | 0x00423320 | FUN_00423320 | 180 |
+| 10 | 0x00423b40 | FUN_00423b40 | 30 |
+| 11 | 0x00423b60 | FUN_00423b60 | 30 |
+| 12 | 0x00423b80 | FUN_00423b80 | 30 |
+| 13 | 0x00423ba0 | FUN_00423ba0 | 30 |
+| 14 | 0x00423bc0 | FUN_00423bc0 | 127 |
+| 15 | 0x00423c40 | FUN_00423c40 | 127 |
+| 16 | 0x00423cc0 | FUN_00423cc0 | 140 |
+| 17 | 0x00423d50 | FUN_00423d50 | 127 |
+| 18 | 0x00423dd0 | FUN_00423dd0 | 140 |
+| 19 | 0x00423e60 | FUN_00423e60 | 127 |
+| 20 | 0x00423ee0 | FUN_00423ee0 | 127 |
+| 21 | 0x00423f60 | FUN_00423f60 | 140 |
+| 22 | 0x00423ff0 | FUN_00423ff0 | 127 |
+| 23 | 0x00424070 | FUN_00424070 | 140 |
+| 24 | 0x00424100 | FUN_00424100 | 172 |
+| 25 | 0x004241b0 | FUN_004241b0 | 6 |
+| 26 | 0x004241c0 | FUN_004241c0 | 172 |
+| 27 | 0x00424270 | FUN_00424270 | 1537 |
+| 28 | 0x00424920 | FUN_00424920 | 608 |
+| 29 | 0x00424b80 | FUN_00424b80 | 815 |
+| 30 | 0x00425b70 | FUN_00425b70 | 28 |
+| 31 | 0x00425b90 | FUN_00425b90 | 41 |
+| 32 | 0x00425bf0 | FUN_00425bf0 | 12 |
+| 33 | 0x00425c00 | FUN_00425c00 | 156 |
+| 34 | 0x00425ca0 | FUN_00425ca0 | 175 |
+| 35 | 0x00425ea0 | FUN_00425ea0 | 47 |
+| 36 | 0x00425ee0 | FUN_00425ee0 | 13 |
+| 37 | 0x00425ef0 | FUN_00425ef0 | 175 |
+| 38 | 0x00425fa0 | FUN_00425fa0 | 125 |
+| 39 | 0x00426020 | FUN_00426020 | 6 |
+| 40 | 0x00426080 | FUN_00426080 | 6 |
+| 41 | 0x00426090 | FUN_00426090 | 6 |
+| 42 | 0x004260a0 | FUN_004260a0 | 6 |
+| 43 | 0x004260b0 | FUN_004260b0 | 6 |
+| 44 | 0x00426460 | FUN_00426460 | 111 |
+| 45 | 0x00426b40 | FUN_00426b40 | 94 |
+| 46 | 0x00426bc0 | FUN_00426bc0 | 6 |
+| 47 | 0x00426bd0 | FUN_00426bd0 | 35 |
+| 48 | 0x00426c50 | FUN_00426c50 | 23 |
+| 49 | 0x00426cb0 | FUN_00426cb0 | 13 |
+| 50 | 0x00426d00 | FUN_00426d00 | 22 |
+| 51 | 0x00426d20 | FUN_00426d20 | 106 |
+| 52 | 0x00426d90 | FUN_00426d90 | 34 |
+| 53 | 0x00426dc0 | FUN_00426dc0 | 29 |
+| 54 | 0x00426de0 | FUN_00426de0 | 7 |
+| 55 | 0x00426df0 | FUN_00426df0 | 7 |
+| 56 | 0x004273e0 | FUN_004273e0 | 234 |
+| 57 | 0x00427580 | FUN_00427580 | 65 |
+| 58 | 0x004277a0 | FUN_004277a0 | 147 |
+| 59 | 0x00427880 | FUN_00427880 | 67 |
+| 60 | 0x00429b30 | FUN_00429b30 | 62 |
+| 61 | 0x00429b70 | FUN_00429b70 | 92 |
+| 62 | 0x0042a640 | FUN_0042a640 | 103 |
+| 63 | 0x0042a980 | FUN_0042a980 | 62 |
+| 64 | 0x0042a9c0 | FUN_0042a9c0 | 41 |
+| 65 | 0x0042ad10 | FUN_0042ad10 | 118 |
+| 66 | 0x0042ad90 | FUN_0042ad90 | 54 |
+| 67 | 0x0042add0 | FUN_0042add0 | 64 |
+| 68 | 0x0042b920 | FUN_0042b920 | 6 |
+| 69 | 0x0042bde0 | FUN_0042bde0 | 332 |
+| 70 | 0x0042bfb0 | FUN_0042bfb0 | 83 |
+| 71 | 0x0042fab0 | FUN_0042fab0 | 151 |
+| 72 | 0x00430250 | FUN_00430250 | 53 |
+| 73 | 0x00431b70 | FUN_00431b70 | 6 |
+| 74 | 0x00432450 | FUN_00432450 | 73 |
+| 75 | 0x00432ad0 | FUN_00432ad0 | 92 |
+| 76 | 0x00432b30 | FUN_00432b30 | 1327 |
+| 77 | 0x00433240 | FUN_00433240 | 89 |
+| 78 | 0x004332a0 | FUN_004332a0 | 835 |
+| 79 | 0x0043aee0 | FUN_0043aee0 | 40 |
+| 80 | 0x004893d0 | FUN_004893d0 | 119 |
+
+# Output (this session ONLY produces these - does NOT touch hooks.csv)
+- 80 per-RVA .md plates in re/analysis/bucket_0041dc30/
+- ONE queue row appended to re/SCRIBE_QUEUE.md (Queued section):
+    2026-05-19  batch-z-s6  rvas=0x...,0x...  bucket=re/analysis/bucket_0041dc30
+                  subsystem_observed=<X>  notes=<one-line>
+
+# NO COMMITS, NO hooks.csv WRITES
+- Do NOT mutate hooks.csv, STUBS.md, UNCERTAINTIES.md, or DEFERRED.md.
+  Those are the sweep's / orchestrator's responsibility.
+- Do NOT git commit. The orchestrating session commits after all 6
+  sessions return.
+
+# STOP-AND-ASK
+- function_at returns null AND listing_code_unit_at also null -> skip + note
+- Bucket-range turns out to be library residue (any of the 8 already-known
+  ranges above OR newly-discovered FidDB-attested cluster) -> halt + report.
+  Sessions should NOT promote library residue.
+- Average function size in bucket < 150B AND zero game-string anchors after
+  first 20 decomps -> halt + report (library-vs-game-code heuristic miss
+  per batch_w post-mortem; batch_x-s2 caught Lua leakage this way).
+  NOTE: this bucket has avg 147 B/fn (just below 150) but STRONG game-named
+  neighbor coverage - the low avg is from many accessor/getter functions,
+  NOT from library residue. Do NOT halt on the 147 B/fn threshold alone if
+  game-string anchors are present.
+- RW catalog match found but signature mismatches Ghidra decomp -> flag, do
+  NOT auto-name; defer to a re-classify pass.
+- More than 5 candidates have catalogued [UNCERTAIN] markers above C2 -> halt
+- Adjacent functions form a known struct shape (>= 3 share offsets) ->
+    optionally produce re/analysis/structs/<name>.md alongside the plates
+- GETTER/SETTER FARM HINT (this session): candidates 39-43 (0x00426020,
+  0x00426080, 0x00426090, 0x004260a0, 0x004260b0) are all exactly 6 bytes
+  - likely a sequential bank of getter/setter thunks against the same
+  DAT_* global. Cross-reference SetDat0067ecb8/GetDat0067ecb4/GetDat0067ecb8
+  neighbor cluster - this is a known pattern in this region.
+

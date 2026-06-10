@@ -1,0 +1,201 @@
+================================================================================
+batch_ab — C1→C2 promotions targeting c3_batch_l callee-gate blockers
+Batch generated 2026-05-20 by discover-c1-batch skill
+================================================================================
+
+Mission: lift the 39 C1 functions that block c3_batch_l's frontend C2→C3
+promotions. These are the depth-1 callees cited by 22 of the 36 rejected
+candidates in re/analysis/plans/c3_batch_l_rejected.tsv. Promoting them to
+C2 unblocks the next c3 batch.
+
+Drives:
+  re/SCRIBE_QUEUE.md (each session appends a Queued row)
+  After all 3 sessions drain, invoke ghidra-sweep (Opus 4.7) to promote
+  the C1 rows in hooks.csv and write final symbols to master Ghidra.
+
+3 sessions × 13 RVAs each = 39 total (within promote-c2 cap of 15).
+Pre-assigned pool slots: Mashed_pool1, Mashed_pool2, Mashed_pool3.
+
+================================================================================
+Session 1 — bucket_promote_c1_low  (promote-c2, 13-RVA drain)
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 13)
+Skill used:  parallel-fanout promote-c2
+Bucket dir:  re/analysis/promote_c1_low_ab1/  (new bucket, neutrally named)
+Drains to:   re/SCRIBE_QUEUE.md (Queued)
+Env:         export POOL_SLOT_FILE=".pool_slot_session_ab_s1"
+
+# Mission
+Promote 13 C1 frontend/hud/gameplay functions in the 0x00402fb0..0x00472c60
+range to C2 by reading their existing C1 plates, performing a deeper
+mechanical-decomp pass via Ghidra MCP, and authoring a C2-quality
+re-analysis note that resolves enough structure for the C2 gate per
+re/CONFIDENCE.md. These are the lowest-RVA blockers from
+c3_batch_l_rejected.tsv.
+
+# Inputs
+- c3_batch_l_rejected.tsv blocker cluster: see RVA table below
+- Existing C1 plates (input for the deeper pass): one per RVA, paths cited
+- DEFERRED.md rows: none (these are not deferred-row drains)
+
+# Workflow
+1. Startup with $SLOT=Mashed_pool1. Per-session .pool_slot file
+   prevents collisions: export POOL_SLOT_FILE=".pool_slot_session_ab_s1"
+2. For each RVA:
+   a. Read the existing C1 plate listed in the table below.
+   b. mcp__ghidra__decomp_function <rva> via slot Mashed_pool1.
+   c. mcp__ghidra__function_callers and function_callees to confirm graph.
+   d. Author re/analysis/promote_c1_low_ab1/<rva>.md with frontmatter:
+      - rva, name_in_ghidra, size_bytes, confidence_target: C2
+      - callees_depth1 (must enumerate ALL callees, not just function RVAs;
+        include DAT_/PTR_/LAB_ references too — c3_filter_v4's regex
+        catches FUN_xxx-style mentions, so be explicit)
+      - callers_noted (every caller RVA verified via Ghidra MCP)
+      - subsystem_observed: <as observed; reclassify if different from
+        hooks.csv subsystem column>
+      - opened_in_slot: Mashed_pool1
+      - session_date: 2026-05-20
+   e. ## Mechanical description: bullet every constant, every offset,
+      every conditional with the address it cites.
+   f. ## Constants table.
+   g. ## Uncertainties: file U-IDs into UNCERTAINTIES.md inline (use
+      next-available IDs after U-3884).
+   h. ## Stubs encountered: file S-IDs into STUBS.md inline.
+3. After all 13 RVAs done:
+   - Append a Queued row to re/SCRIBE_QUEUE.md per re/SESSION_RULES.md
+     format.
+   - Do NOT touch hooks.csv directly — that's the ghidra-sweep step.
+   - Commit per session policy (one commit at end).
+
+# Candidates
+| RVA        | Ghidra name      | Hooks.csv subsys | Existing C1 plate path                              | Notes |
+|------------|------------------|------------------|-----------------------------------------------------|-------|
+| 0x00402fb0 | FUN_00402fb0     | hud              | re/analysis/hud_ingame_d2/0x00402fb0.md             | Subsystem says hud but cited as frontend C2 blocker. Confirm observed subsystem. |
+| 0x0040ce80 | FUN_0040ce80     | gameplay         | re/analysis/bucket_00405400/0x0040ce80.md           | Subsystem says gameplay; D-11006 c0_promotion_frontend_a backlog mentions this. |
+| 0x00417740 | FUN_00417740     | gameplay         | re/analysis/bucket_00412130/0x00417740.md           | bucket_00412130 is uncommitted (per session opening git status) — may be fresh. |
+| 0x004215c0 | FUN_004215c0     | frontend         | re/analysis/race_results_d2/004215c0.md             | Race-results path. |
+| 0x004277a0 | FUN_004277a0     | frontend         | re/analysis/bucket_0041dc30/0x004277a0.md           | Cited 2x in c3_batch_l_rejected (high impact). |
+| 0x00427e00 | FUN_00427e00     | frontend         | re/analysis/hud_frontend/0x00427e00.md              | Cited 4x in rejections (highest impact, blocks 4 c3 candidates). |
+| 0x00428760 | FUN_00428760     | hud              | re/analysis/hud_ingame_d2/0x00428760.md             |   |
+| 0x00430790 | FUN_00430790     | util             | re/analysis/leaderboard/0x00430790.md               | Subsystem says util — verify and reclassify if needed. |
+| 0x0045ba00 | FUN_0045ba00     | frontend         | re/analysis/race_results_d2/0045ba00.md             |   |
+| 0x0046c5c0 | FUN_0046c5c0     | frontend         | re/analysis/race_results_d2/0046c5c0.md             |   |
+| 0x0046c790 | FUN_0046c790     | frontend         | re/analysis/race_results_d2/0046c790.md             |   |
+| 0x00472c60 | FUN_00472c60     | frontend         | re/analysis/hud_frontend/0x00472c60.md              | Cited 2x in rejections. |
+| 0x00472f40 | FUN_00472f40     | frontend         | re/analysis/credits_screen/0x00472f40.md            |   |
+
+# Output
+- 13 per-RVA .md files in re/analysis/promote_c1_low_ab1/
+- 13 C1→C2 row updates queued via SCRIBE_QUEUE.md (NOT directly to hooks.csv)
+- Any new U-IDs filed inline into UNCERTAINTIES.md
+- Any new S-IDs filed inline into STUBS.md
+
+# STOP-AND-ASK if
+- A candidate's Ghidra function_at returns null.
+- A bucket turns out to be library code (CRT residue, RW primitive) — note
+  the library match in the plate, DO NOT rename; that's a sweep mutation.
+- A candidate's existing C1 plate describes something different from what
+  the Ghidra MCP returns today (drift; file as such, do not auto-correct).
+
+================================================================================
+Session 2 — bucket_promote_c1_mid  (promote-c2, 13-RVA drain)
+================================================================================
+
+Pool slot:   Mashed_pool2 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 13)
+Skill used:  parallel-fanout promote-c2
+Bucket dir:  re/analysis/promote_c1_mid_ab2/
+Drains to:   re/SCRIBE_QUEUE.md (Queued)
+Env:         export POOL_SLOT_FILE=".pool_slot_session_ab_s2"
+
+# Mission
+Promote 13 C1 functions in the 0x004730b0..0x00494fd0 range to C2. This
+cluster spans the intro-splash family (0x00493xxx/0x00494xxx — note that
+the canonical-observation harness D-11001 is currently blocked because
+HardwareShowIntroVideo cannot be NOPped without crashing boot; promoting
+its sub-callees to C2 is the prerequisite for any future intro-skip
+work) and the logo/animated-draw chain (0x00473xxx/0x00474xxx — D-11004
+in DEFERRED.md).
+
+# Workflow
+Same as session 1, substituting Mashed_pool2 and the bucket dir.
+
+# Candidates
+| RVA        | Ghidra name      | Hooks.csv subsys | Existing C1 plate path                              | Notes |
+|------------|------------------|------------------|-----------------------------------------------------|-------|
+| 0x004730b0 | FUN_004730b0     | frontend         | re/analysis/credits_screen/0x004730b0.md            |   |
+| 0x00473870 | FUN_00473870     | frontend         | re/analysis/bucket_c1_strays/0x00473870.md          | Cited 3x; "7-param sprite draw" per U-3880 mention. |
+| 0x004739f0 | FUN_004739f0     | frontend         | re/analysis/hud_frontend/0x004739f0.md              | Cited 3x. |
+| 0x00473c20 | FUN_00473c20     | gameplay         | re/analysis/bucket_00466100/0x00473c20.md           | D-11004 logo-draw chain. |
+| 0x00473ee0 | FUN_00473ee0     | gameplay         | re/analysis/bucket_00466100/0x00473ee0.md           | D-11004. |
+| 0x00474890 | FUN_00474890     | gameplay         | re/analysis/bucket_00466100/0x00474890.md           | D-11004. |
+| 0x00493f70 | sub_00493f70     | frontend         | re/analysis/intro_splash/0x00493f70.md              | D-11003 intro-splash callee tree. |
+| 0x00493f80 | sub_00493f80     | frontend         | re/analysis/intro_splash/0x00493f80.md              | D-11003. |
+| 0x00493fc0 | sub_00493fc0     | frontend         | re/analysis/intro_splash/0x00493fc0.md              | D-11003. Cited 2x. |
+| 0x00493fd0 | sub_00493fd0     | frontend         | re/analysis/intro_splash/0x00493fd0.md              | D-11003. |
+| 0x00494460 | sub_00494460     | frontend         | re/analysis/intro_splash/0x00494460.md              | D-11003. |
+| 0x00494480 | FUN_00494480     | video            | re/analysis/cluster_0049_first_pass/00494480.md     | Subsystem says video — likely intro-splash family; reclassify. |
+| 0x00494fd0 | FUN_00494fd0     | render           | re/analysis/cluster_0049_first_pass/00494fd0.md     | Subsystem says render — verify. |
+
+# STOP-AND-ASK if (same as session 1)
+
+================================================================================
+Session 3 — bucket_promote_c1_high  (promote-c2, 13-RVA drain)
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 15 RVAs (this session: 13)
+Skill used:  parallel-fanout promote-c2
+Bucket dir:  re/analysis/promote_c1_high_ab3/
+Drains to:   re/SCRIBE_QUEUE.md (Queued)
+Env:         export POOL_SLOT_FILE=".pool_slot_session_ab_s3"
+
+# Mission
+Promote 13 C1 functions in the 0x00494a80..0x00556e90 range to C2. Mostly
+the intro-splash tail (FUN_004c1xxx) + RW/util shims at 0x004axxxx +
+text-render leaves at 0x0055xxxx.
+
+# Workflow
+Same as session 1, substituting Mashed_pool3 and the bucket dir.
+
+# Candidates
+| RVA        | Ghidra name      | Hooks.csv subsys | Existing C1 plate path                              | Notes |
+|------------|------------------|------------------|-----------------------------------------------------|-------|
+| 0x00494a80 | sub_00494a80     | frontend         | re/analysis/intro_splash/0x00494a80.md              | D-11003. |
+| 0x004967e0 | FUN_004967e0     | input            | re/analysis/cluster_0049_first_pass/004967e0.md     | Subsystem says input; verify. |
+| 0x004a2b60 | FUN_004a2b60     | frontend         | re/analysis/hud_frontend_d5/0x004a2b60.md           | D-11006 c0_promotion_frontend_a backlog. |
+| 0x004a2c48 | FUN_004a2c48     | frontend         | re/analysis/effects_particle/0x004a2c48.md          | Cited 6x — highest impact across all 39 blockers. |
+| 0x004b5750 | FUN_004b5750     | render           | re/analysis/bucket_004b4a80/0x004b5750.md           | D-11006 backlog; subsystem says render. |
+| 0x004c1a00 | sub_004c1a00     | frontend         | re/analysis/intro_splash/0x004c1a00.md              | D-11003. |
+| 0x004c1bb0 | sub_004c1bb0     | frontend         | re/analysis/intro_splash/0x004c1bb0.md              | D-11003. |
+| 0x004c1be0 | sub_004c1be0     | frontend         | re/analysis/intro_splash/0x004c1be0.md              | D-11003. |
+| 0x004d7ff0 | FUN_004d7ff0     | render           | re/analysis/audio_rws_loader_cont1/0x004d7ff0.md    | Subsystem audio_rws_loader but cited as frontend blocker (RW error reporter). |
+| 0x004d8480 | FUN_004d8480     | render           | re/analysis/audio_rws_loader_cont1/0x004d8480.md    | Same. |
+| 0x00552d70 | FUN_00552d70     | render           | re/analysis/bucket_00549580/0x00552d70.md           |   |
+| 0x005555b0 | FUN_005555b0     | gameplay         | re/analysis/bucket_00554010/0x005555b0.md           |   |
+| 0x00556e90 | FUN_00556e90     | gameplay         | re/analysis/bucket_00554010/0x00556e90.md           |   |
+
+# STOP-AND-ASK if (same as session 1)
+
+================================================================================
+Sweep
+================================================================================
+
+After all 3 sessions have queued, invoke `ghidra-sweep` (Opus 4.7) to:
+1. Drain re/SCRIBE_QUEUE.md Queued rows
+2. Apply C1→C2 promotions to hooks.csv (in one transaction per session)
+3. Reconcile subsystem reclassifications (12 of 39 candidates have
+   subsystem_observed deltas to check)
+4. Write final function-namespace assignments to master Mashed.gpr
+5. Run `bash scripts/ghidra_pool.sh sync` so all pool slots see the new
+   master state.
+
+The next c3 batch (`c3_batch_m`) can run after sweep completes; up to ~22
+new frontend C3 candidates may become eligible (those previously rejected
+in c3_batch_l for callee-gate).
+
+================================================================================
+End of batch_ab.txt
+================================================================================

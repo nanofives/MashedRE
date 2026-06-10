@@ -1,0 +1,296 @@
+================================================================================
+BATCH P — Phase-1 breadth + struct-extract phase-6 (long-tail discovery)
+================================================================================
+
+Six parallel sessions. Pool slots pre-assigned (skip locked 2/4 — fall back).
+
+PREREQUISITE: batch_o frida-sweep complete. The C3 surface is now ~33
+hooks; that informs which C1/C2 functions are still candidates for the
+remaining promotions, and which DAT_ globals have observable C3-verified
+read sites (sharper struct evidence).
+
+This batch revisits Phase-1 breadth: ~4,100 Ghidra function objects still
+have NO row in hooks.csv. Many are in cold-path code (debug overlays,
+demo-mode, unused branches) but the long tail still includes meaningful
+gameplay logic. Each session pulls a 500-RVA Ghidra function_list slice
+and drains 20 mappable ones to C1.
+
+Session 96 is reserved for `struct_extract_phase6_pt3` — consolidates
+DAT_ field evidence across batches M/N/O plates into struct docs. This
+is the continuation of batch_l Session 72 (struct_extract_phase5_pt2).
+
+All sessions follow re/SESSION_RULES.md § "Parallel-fanout scribe-queue
+pattern". After Sessions 91-95 finish, run `ghidra-sweep`. Session 96 is
+documentation-only and does NOT write to SCRIBE_QUEUE.
+
+
+
+================================================================================
+Session 91 — breadth_unmapped_0040x  (FIRST-PASS, 20 RVAs)
+================================================================================
+
+Pool slot:   Mashed_pool0 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (this session: 20)
+Skill used:  parallel-fanout first-pass discovery
+Bucket dir:  re/analysis/breadth_unmapped_0040x/
+
+# Mission
+Drain 20 unmapped Ghidra functions in the 0x00400000–0x0040ffff range.
+After 12 batches of cont-drain, the 0x0040xxxx range still has unmapped
+function objects (compiler-generated thunks, cold demo branches, etc.).
+Identify the mappable ones and write C1 plates; flag the rest as
+`[UNREACHABLE]` or `[COMPILER-GENERATED]` in DEFERRED.
+
+# Inputs
+At session start, run via the Ghidra MCP:
+```
+mcp__ghidra__function_list (paginated; filter address range 0x00400000-0x0040ffff)
+```
+Then:
+```bash
+# Filter for RVAs not yet in hooks.csv
+awk -F, '$1' hooks.csv | sort > /tmp/hooks_rvas.txt
+# diff against function_list output (one RVA per line)
+comm -23 <(sort /tmp/funclist.txt) /tmp/hooks_rvas.txt | head -30
+```
+
+# Workflow
+1. Acquire $SLOT=Mashed_pool0 (fall back).
+2. For each of the top 20 unmapped RVAs:
+   a. Decompile via Ghidra MCP.
+   b. If the function is <50 bytes and has no callers: flag
+      `[UNREACHABLE]` and file in DEFERRED with re-pickup condition
+      "after dead-code analysis."
+   c. If the function is a compiler-generated thunk (FidDB matches a
+      CRT/RW library function): cite the FidDB match, write a short
+      C1 plate, mark library-rename pending.
+   d. If the function is mappable: standard C1 plate with `## Mechanical
+      description` + `## Constants` + `## Uncertainties` + `## Stubs
+      encountered`.
+3. After 20 done:
+   - Append Queued row to SCRIBE_QUEUE.md.
+   - One commit at session end.
+
+# STOP-AND-ASK if
+- The 20 unmapped slots are entirely [UNREACHABLE] / compiler-generated
+  — surface; the slice may be exhausted of meaningful work.
+- A function matches a Ghidra-built-in library function whose name
+  conflicts with an existing FidDB match — do NOT rename this session;
+  flag for the sweep.
+
+
+
+================================================================================
+Session 92 — breadth_unmapped_0044x  (FIRST-PASS, 20 RVAs)
+================================================================================
+
+Pool slot:   Mashed_pool1 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (this session: 20)
+Skill used:  parallel-fanout first-pass discovery
+Bucket dir:  re/analysis/breadth_unmapped_0044x/
+
+# Mission
+Drain 20 unmapped functions in 0x00440000–0x0044ffff (powerups / object
+spawn / impact-response cluster).
+
+# Inputs / Workflow
+Same shape as Session 91 with the 0x0044xxxx slice.
+
+# STOP-AND-ASK if
+- A function turns out to be a powerups-tick callee not yet documented
+  — note for potential `powerups_d2` session in batch Q.
+
+
+
+================================================================================
+Session 93 — breadth_unmapped_0048x  (FIRST-PASS, 20 RVAs)
+================================================================================
+
+Pool slot:   Mashed_pool3 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (this session: 20)
+Skill used:  parallel-fanout first-pass discovery
+Bucket dir:  re/analysis/breadth_unmapped_0048x/
+
+# Mission
+Drain 20 unmapped functions in 0x00480000–0x0048ffff (engine init /
+window pump / message handlers cluster).
+
+# Inputs / Workflow
+Same shape as Session 91 with the 0x0048xxxx slice.
+
+# STOP-AND-ASK if
+- A function turns out to be Windows message-pump infrastructure (e.g.,
+  PeekMessageA/W loop body) — note the Win32 API call but do NOT rename
+  to Win32-canonical names (sweep handles that).
+
+
+
+================================================================================
+Session 94 — breadth_unmapped_0049x  (FIRST-PASS, 20 RVAs)
+================================================================================
+
+Pool slot:   Mashed_pool5 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (this session: 20)
+Skill used:  parallel-fanout first-pass discovery
+Bucket dir:  re/analysis/breadth_unmapped_0049x/
+
+# Mission
+Drain 20 unmapped functions in 0x00490000–0x0049ffff (input / settings /
+config cluster).
+
+# Inputs / Workflow
+Same shape as Session 91 with the 0x0049xxxx slice. Cross-reference
+re/analysis/settings_config_d2_cont1/ (batch_l output) and input_lua*
+for adjacent context.
+
+# STOP-AND-ASK if
+- A function calls into a Lua 5.x library function — note library match,
+  do NOT rename. (Lua-name renames are reserved for a dedicated sweep
+  with FidDB-vetted Lua signatures.)
+
+
+
+================================================================================
+Session 95 — breadth_unmapped_005xx  (FIRST-PASS, 20 RVAs)
+================================================================================
+
+Pool slot:   Mashed_pool6 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — hard cap 24 RVAs (this session: 20)
+Skill used:  parallel-fanout first-pass discovery
+Bucket dir:  re/analysis/breadth_unmapped_005xx/
+
+# Mission
+Drain 20 unmapped functions in 0x00500000–0x0055ffff (high-address cluster:
+some track-load helpers + audio-RWS + RenderWare engine internals).
+
+# Inputs / Workflow
+Same shape as Session 91 with the 0x005xxxxx slice. The address range
+spans multiple subsystems — assign subsystem per plate based on call-tree
+context (caller subsystem + DAT_ globals touched).
+
+# STOP-AND-ASK if
+- A function is verbatim RenderWare engine code (e.g., RpWorldStreamRead,
+  RtBspStreamRead) — cite library match, do NOT rename this session.
+- The subsystem split is ambiguous (function touches audio + render
+  globals) — surface for taxonomy decision rather than picking one.
+
+
+
+================================================================================
+Session 96 — struct_extract_phase6_pt3  (DOCUMENTATION ONLY, no RVA cap)
+================================================================================
+
+Pool slot:   Mashed_pool7 (pre-assigned)
+Model:       Sonnet 4.6 (claude-sonnet-4-6) — no RVA cap
+Skill used:  struct-extract
+Bucket dir:  re/analysis/structs/
+
+# Mission
+Continuation of batch_l Session 72 (struct_extract_phase5_pt2; commit
+"struct: session 72 struct_extract_phase5_pt2 — vehicle, font, boot_crt").
+
+By the time batch P runs:
+  - Batches M+N have added ~240 C2 plates (densest evidence for struct
+    field offsets).
+  - Batch O has produced 30 Frida-verified C3 hooks (= 30 functions whose
+    DAT_ touch points are now empirically confirmed at runtime, not just
+    statically).
+
+This session consolidates that evidence into the next round of struct
+docs.
+
+# Prerequisites
+- batch_l Session 72 commit landed.
+- batch_m + batch_n + batch_o sweeps complete (so the C2/C3 plates are
+  in master and locally readable).
+
+# Target structs (priority order; re-verify against
+# re/analysis/structs/REPORT_phase6.md if it exists, else create)
+1. **camera_state** — `re/analysis/structs/camera_state.md`. batch_l
+   Session 72 likely drafted; this session extends with C2-evidence from
+   batch_m Session 75 + Session 78 (render frame / D3D9 plates).
+2. **race_state** — `re/analysis/structs/race_state.md`. Referenced by
+   leaderboard, race-end, AI tick, game_state STATE_FN dispatcher
+   (FUN_004929d0). Wide cross-subsystem evidence available.
+3. **input_state** — `re/analysis/structs/input_state.md` (likely new).
+   Lua-binding layer + settings_config_d2_cont1 (Controller* funcs from
+   batch_l) provide field evidence.
+4. **frontend_menu_state** — `re/analysis/structs/frontend_menu_state.md`
+   (likely new). Frontend_promote_menus_a/b + batch_n Session 79 evidence.
+5. **boot_crt_globals** — `re/analysis/structs/boot_crt_globals.md`.
+   batch_l Session 72 likely drafted; this session extends with C2
+   evidence from batch_n Session 81 (boot_crt promotion).
+
+# Inputs
+- ALL per-RVA .md files in re/analysis/* with focus on:
+  - re/analysis/promote_c2_*/  (batch_m + batch_n output)
+  - re/analysis/c3_*/  (batch_o output, if the sessions wrote plates)
+  - re/analysis/structs/REPORT_phase5.md / REPORT_phase6.md
+- Existing struct files in re/analysis/structs/ — amend, don't rewrite.
+
+# Workflow
+1. Acquire $SLOT=Mashed_pool7.
+2. For each target struct:
+   a. Grep all per-RVA .md files for the DAT_ root candidate.
+   b. Cluster offsets/widths/signs; cross-validate across ≥3 callers
+      (one of which should be a C3 hook for the strongest evidence).
+   c. Document offset, width, sign, first read RVA + cite, first write
+      RVA + cite, tentative semantic name (only if multiple callers
+      agree), [UNCERTAIN U-NNNN] if disagreement.
+   d. Write or amend re/analysis/structs/<struct_name>.md.
+3. Update re/analysis/structs/REPORT_phase6.md summarizing:
+   - struct → DAT_ root → field count → confidence level
+   - which subsystems' S-DoD this unblocks
+   - any U-IDs filed for unresolved fields
+   - cross-reference to C3 hooks that empirically touch each struct
+4. NO hooks.csv mutations. NO scribe-queue row. NO Ghidra master writes.
+5. Commit at end.
+
+# Output
+- ≥3 new or amended struct files in re/analysis/structs/
+- Updated re/analysis/structs/REPORT_phase6.md
+
+# STOP-AND-ASK if
+- A struct candidate has <3 cross-references in plates even after
+  searching M/N/O output — defer with explicit re-pickup condition
+  ("after subsystem-X reaches N C2 rows").
+- The same DAT_ root is referenced with DIFFERENT struct shapes in
+  different subsystems — union or aliased global; design decision
+  needed.
+- A C3 hook's empirical Frida observation contradicts the C2 plate's
+  static offset claim — that's a CRITICAL signal; surface immediately
+  (the C3 hook is the more authoritative source; the C2 plate likely
+  needs a U-ID filed and demotion).
+
+
+
+================================================================================
+END OF BATCH P
+================================================================================
+
+Expected end state (after sweep + struct session):
+
+  Subsystem        Delta            Notes
+  ---------------  ---------------  ---------------------------------
+  (mixed by RVA)   +100 C1          Phase-1 breadth fills (Sessions 91-95)
+  structs          +≥3 new docs     camera/race/input/frontend/boot extended
+
+Phase-1 breadth coverage: ~4,100 unmapped → ~4,000 (rough; depends on
+how many slots flagged [UNREACHABLE] vs [COMPILER-GENERATED] vs mappable).
+
+After batch P:
+- C1 total: ~1,659 (1,679 - 240 promoted to C2 in M+N + 100 new from
+  breadth ≈ 1,540 — slightly lower than current).
+- C2 total: ~476 (after M+N sweep) - 30 promoted to C3 in O = ~446.
+- C3 total: ~33 (after O sweep).
+- Struct doc coverage: vehicle / font / boot_crt (Session 72) + camera /
+  race / input / frontend / boot_crt-extended (Session 96).
+
+Next-batch direction options (for batch Q discussion):
+  - Continue promote-c3 cadence (batch Q-O wave 2 = 30 more candidates).
+  - Pivot to subsystem-level reimplementation: the audio_dsound C3
+    surface plus a struct-aware approach to RW-RWS loader might be wide
+    enough to start a `mashed_re.exe` build path for the audio
+    subsystem (greenfield experiment).
+  - C4 promotion cycle for the existing C3 hooks (canonical-scenario
+    run with inline-JMP live, per CLAUDE.md C3-vs-C4 distinction).

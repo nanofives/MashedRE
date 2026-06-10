@@ -1,0 +1,9 @@
+function_rva	current_name	proposed_name	string_rva	string_content	xref_count	confidence_hint	evidence_pattern	notes
+0x004624c0	FUN_004624c0	RtFSManagerRegister	0x005ce714	RtFSManagerRegister successful	1	high	STATUS	emitter; C1
+0x00493710	FUN_00493710	RtFSManagerOpen	0x005cf868	Calling RtFSManagerOpen	1	low	CALLING	emitter; C3
+0x00493710	FUN_00493710	RwEngineInit	0x005cf884	Calling RwEngineInit	1	low	CALLING	emitter; C3
+0x00493710	FUN_00493710	RwEngineOpen	0x005cf808	Calling RwEngineOpen	1	low	CALLING	emitter; C3
+0x00493710	FUN_00493710	RwEngineStart	0x005cf7d0	Calling RwEngineStart	1	low	CALLING	emitter; C3
+0x004c2fb0	FUN_004c2fb0	RwEngineStart	(inferred)	(forward-call from 'Calling RwEngineStart' site)	1	high	CALLING-callsite	callee inference; C3
+0x004c30b0	FUN_004c30b0	RwEngineOpen	(inferred)	(forward-call from 'Calling RwEngineOpen' site)	1	high	CALLING-callsite	callee inference; C2
+0x004c32b0	FUN_004c32b0	RwEngineInit	(inferred)	(forward-call from 'Calling RwEngineInit' site)	1	high	CALLING-callsite	callee inference; C2
