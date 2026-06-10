@@ -712,11 +712,23 @@ bool RunNavDemoStep(int phase) {
         case 100: NavDemoLog(phase,"cap screen8",    DumpBackbufferBMP("verify/msm_tree_3_screen8.bmp"));    break;
         case 110: NavDemoTap(DIK_RETURN);            NavDemoLog(phase,"tap ENTER",      true);               break;
         case 120: NavDemoLog(phase,"cap screen19",   DumpBackbufferBMP("verify/msm_tree_4_screen19.bmp"));   break;
+        // R2-close: adjust Music Volume (RIGHT x2) on the Sound screen — the
+        // settings model mutates + persists to mashed_re_settings.bin; the
+        // post-adjust capture shows the slider moved.
+        case 122: NavDemoTap(DIK_RIGHT);             NavDemoLog(phase,"tap RIGHT",      true);               break;
+        case 124: NavDemoTap(DIK_RIGHT);             NavDemoLog(phase,"tap RIGHT",      true);               break;
+        case 126: NavDemoLog(phase,"cap snd_adj",    DumpBackbufferBMP("verify/parity/sa_sound_adjusted.bmp")); break;
         case 130: NavDemoTap(DIK_ESCAPE);            NavDemoLog(phase,"tap ESC",        true);               break;
         case 140: NavDemoLog(phase,"cap back8",      DumpBackbufferBMP("verify/msm_tree_5_back_screen8.bmp"));break;
         case 150: NavDemoTap(DIK_ESCAPE);            NavDemoLog(phase,"tap ESC",        true);               break;
         case 160: NavDemoLog(phase,"cap back_root",  DumpBackbufferBMP("verify/msm_tree_6_back_root.bmp"));  break;
-        case 170: NavDemoLog(phase,"done",true);     return true;
+        // R2-close parity: capture screen 1 (the original's boot-time "Game Type
+        // Select" — Single/Multi/Options/Bonus/Exit). It isn't reachable from
+        // the screen-0 root via the push map, so push it directly (the original
+        // enters it from the title-confirm flow).
+        case 180: Nav(1, kNavPush);                  NavDemoLog(phase,"push screen1",   true);               break;
+        case 190: NavDemoLog(phase,"cap screen1",    DumpBackbufferBMP("verify/parity/sa_gts.bmp"));         break;
+        case 200: NavDemoLog(phase,"done",true);     return true;
         default: break;
     }
     return false;
@@ -850,6 +862,54 @@ void UpdateTitleSlotFromKeyboard() {
 //
 // Returns true if Esc was pressed AT THE ROOT (caller should quit the app);
 // otherwise Esc was consumed as a pop-back.
+// R2-close — persisted menu settings (Sound screen, id 19). The original's
+// Sound screen renders value widgets (Music/SFX/Insults Volume sliders 0..10
+// plus an Insults Off/On toggle, adjusted LEFT/RIGHT — see the parity capture
+// verify/parity/orig_sound.png) and persists through the save path. The
+// standalone keeps a settings model persisted to its OWN file (never touches
+// original/): mashed_re_settings.bin = 'MRES' magic + 4 int32 values.
+struct MenuSettings {
+    std::int32_t music   = 8;   // 0..10
+    std::int32_t sfx     = 8;   // 0..10
+    std::int32_t insults = 8;   // 0..10
+    std::int32_t insults_on = 0;  // 0=Off 1=On (original shows Off default)
+};
+MenuSettings g_settings;
+constexpr char kSettingsPath[] = "mashed_re_settings.bin";
+
+void SaveMenuSettings() {
+    if (std::FILE* f = std::fopen(kSettingsPath, "wb")) {
+        std::fwrite("MRES", 1, 4, f);
+        std::fwrite(&g_settings, sizeof(g_settings), 1, f);
+        std::fclose(f);
+    }
+}
+void LoadMenuSettings() {
+    if (std::FILE* f = std::fopen(kSettingsPath, "rb")) {
+        char magic[4] = {};
+        MenuSettings s;
+        if (std::fread(magic, 1, 4, f) == 4 && std::memcmp(magic, "MRES", 4) == 0 &&
+            std::fread(&s, sizeof(s), 1, f) == 1) {
+            g_settings = s;
+        }
+        std::fclose(f);
+    }
+}
+
+// LEFT/RIGHT on the Sound screen adjusts the highlighted value and persists
+// immediately (autosave-style). Rows: 0..2 = volumes (0..10), 3 = toggle.
+void AdjustSoundSetting(int row, int dir) {
+    auto clamp10 = [](int v) { return v < 0 ? 0 : (v > 10 ? 10 : v); };
+    switch (row) {
+        case 0: g_settings.music   = clamp10(g_settings.music   + dir); break;
+        case 1: g_settings.sfx     = clamp10(g_settings.sfx     + dir); break;
+        case 2: g_settings.insults = clamp10(g_settings.insults + dir); break;
+        case 3: g_settings.insults_on = (g_settings.insults_on != 0) ? 0 : 1; break;
+        default: return;
+    }
+    SaveMenuSettings();
+}
+
 bool UpdateMenuSelection() {
     using namespace mashed_re::Frontend;
     if (!g_kbd) return false;
@@ -863,6 +923,10 @@ bool UpdateMenuSelection() {
     const bool esc_prev  = (g_keys_prev[DIK_ESCAPE]& 0x80) != 0;
     const bool bks_now   = (g_keys[DIK_BACK]      & 0x80) != 0;
     const bool bks_prev  = (g_keys_prev[DIK_BACK] & 0x80) != 0;
+    const bool lft_now   = (g_keys[DIK_LEFT]      & 0x80) != 0;
+    const bool lft_prev  = (g_keys_prev[DIK_LEFT] & 0x80) != 0;
+    const bool rgt_now   = (g_keys[DIK_RIGHT]     & 0x80) != 0;
+    const bool rgt_prev  = (g_keys_prev[DIK_RIGHT]& 0x80) != 0;
 
     if (down_now && !down_prev) Nav_MoveCursor(+1);
     if (up_now   && !up_prev)   Nav_MoveCursor(-1);
@@ -870,6 +934,11 @@ bool UpdateMenuSelection() {
     if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
     if (esc_now  && !esc_prev) {
         if (!Nav_Back()) return true;                   // at root -> quit
+    }
+    // Sound screen (19): LEFT/RIGHT adjusts the highlighted value (persisted).
+    if (Nav_ScreenId() == 19 && Nav_Cursor() >= 0) {
+        if (rgt_now && !rgt_prev) AdjustSoundSetting(Nav_Cursor(), +1);
+        if (lft_now && !lft_prev) AdjustSoundSetting(Nav_Cursor(), -1);
     }
     // Mirror the nav cursor into the legacy global for any code still reading it.
     if (Nav_Cursor() >= 0) g_menu_selected = static_cast<std::uint32_t>(Nav_Cursor());
@@ -1285,6 +1354,36 @@ bool RenderFrame() {
                 const MenuItemTex& it = g_menu_items[rec.row_index];
                 const float w = static_cast<float>(it.w), h = static_cast<float>(it.h);
                 HudIm2DQuad(it.handle, (800.f - w) * 0.5f, ry, w, h, base_argb, uv_full);
+            }
+
+            // R2-close: Sound-screen value widgets (parity with
+            // verify/parity/orig_sound.png — slider bar with < > arrows for the
+            // three volumes, Off/On toggle for Insults). Values come from the
+            // persisted MenuSettings model; right-aligned at virtual x~290.
+            if (Nav_ScreenId() == 19 && !is_back && rec.row_index >= 0) {
+                const float wx = 290.0f * kVScale + slideX;  // widget left
+                const float wy = ry + 2.0f * kVScale;
+                const float bw = 80.0f * kVScale;            // bar width
+                const float bh = text_h * 0.55f;
+                const std::uint32_t fg = highlighted ? 0xff101010u : 0xffffffffu;
+                if (g_font.ready()) {
+                    DrawMashedString(L"\x3c", wx - 16.0f * kVScale, ry, text_h, fg, true);
+                    DrawMashedString(L"\x3e", wx + bw + 6.0f * kVScale, ry, text_h, fg, true);
+                }
+                if (rec.row_index <= 2) {
+                    const int v = (rec.row_index == 0) ? g_settings.music
+                                : (rec.row_index == 1) ? g_settings.sfx
+                                                       : g_settings.insults;
+                    // outline + proportional fill
+                    HudIm2DQuad(0, wx, wy, bw, bh, 0x60000000u, uv_full);
+                    HudIm2DQuad(0, wx + 2.0f, wy + 2.0f,
+                                (bw - 4.0f) * (static_cast<float>(v) / 10.0f),
+                                bh - 4.0f, highlighted ? 0xff101010u : 0xfff0f0f0u,
+                                uv_full);
+                } else if (rec.row_index == 3 && g_font.ready()) {
+                    DrawMashedString(g_settings.insults_on ? L"On" : L"Off",
+                                     wx + 8.0f * kVScale, ry, text_h, fg, true);
+                }
             }
         }
 
@@ -2524,6 +2623,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
         g_menu_badge_ready = LoadBadgeSprites();
+        // R2-close: persisted menu settings (Sound screen values).
+        LoadMenuSettings();
         // R2-2 save-driven game state: load original/gamesave.bin and replay
         // Save::DeserializeFromBuffer's span restore (FUN_00404e80 step 1) so
         // the state-gated routing/grey-out branches see the real save (unlock
