@@ -105,7 +105,17 @@ audit trail `re/analysis/C4_REVALIDATION.md`.
 canonical evidence dates 2026-05-15..24; every row reconfirmed or demoted with a
 CHANGELOG line.
 
-### Phase R2 — Menu complete (work items DONE 2026-06-09; parity sweep pending)
+### Phase R2 — Menu complete (DONE 2026-06-10)
+**Phase closed 2026-06-10** (branch `phase/r2-close-r3-open`): parity sweep vs the
+original DONE (`re/frida/parity_shots.py` walked the original to GTS/Options/Sound —
+runtime screen ids 1/8/19 exactly match the standalone's harvested tables, item lists
+and Bonus-Features grey-out match; montages `verify/parity/parity_*.png`; ranked deltas
+in `re/analysis/standalone_menu_sm/PARITY_2026-06-10.md`). Settings persistence DONE
+(Sound screen: LEFT/RIGHT adjusts 3 volumes + Insults toggle, widgets render, persisted
+to standalone-side `mashed_re_settings.bin`; restart-load proven). 34-screen pass DONE
+(33/33 non-null tables build; 10 menu-reachable fresh-state, 23 classified
+state/flow-gated — consistent with the original; full graph closure lands with R5/R6
+game flows).
 **Goal:** the standalone main menu is pixel-faithful and fully functional.
 **Work items — ALL FIVE LANDED 2026-06-09** (branch `phase/r1-r2-menu-complete`;
 details in the port spec's RESUME section):
@@ -126,15 +136,21 @@ on the canonical screen set; all 34 screens reachable; settings screens actually
 persisted state. Logo animation: done (checkered chrome animates at the original's
 2/3 rad/s).
 
-### Phase R3 — Track & vehicle data foundation
+### Phase R3 — Track & vehicle data foundation (IN PROGRESS — opened 2026-06-10)
 **Goal:** every asset format the game world needs is parsed, documented, and dumpable.
-**Activities:** RE the contents of `TRACKS/*.piz` and `VEHICLES/*.piz` — geometry,
-textures, collision, placements; the `.AI` script format (cross-ref MashedFileExtractor);
-extend `PizReader`/tools; per-format docs with byte-offset tables per the v1 Phase-2
-convention.
-**Exit criteria:** one full track's geometry parsed and exported to a viewable form
-(wireframe/OBJ dump acceptable); vehicle model parsed; `re/analysis/formats/<name>.md`
-per format; round-trip tests where the format is rewritable.
+**Opener LANDED 2026-06-10: the track world geometry is CRACKED.** `GRAPH*.BSP` is a
+standard RW 3.6 world stream; `re/tools/track_dump.py` parses + validates **13/13**
+tracks (sector sums == header totals, all indices in range, triangle order determined
+empirically) and exports OBJ + wireframe PNG. Proof: `verify/r3/arctic_wireframe.png`
+(the Arctic arena — island + bridge — clearly recognizable). Format doc with
+byte-offset tables: `re/analysis/formats/track_world_bsp.md`.
+**Remaining activities:** COLLISIONS/COLLIDE.BSP (collision world), AI*.BSP graph,
+`.SPL` splines / `.MTS` material scripts / `.ANM` anims, material→TXD texture binding
+(needed for textured R4 rendering), `VEHICLES/*.piz` DFF model parsing, `.AI` script
+format (cross-ref MashedFileExtractor), format-flag bit semantics.
+**Exit criteria:** ✅ one full track's geometry parsed and exported to a viewable form;
+vehicle model parsed (open); `re/analysis/formats/<name>.md` per format (world done,
+others open); round-trip tests where the format is rewritable (open).
 
 ### Phase R4 — World render
 **Opening gate — renderer architecture decision (stop-and-ask):** evaluate with short
