@@ -103,10 +103,12 @@ demoted via `re-classify` with a CHANGELOG line.
 - Save-driven `MenuGameState` (gamesave.bin → unlock/team arrays so state-gated branches
   exercise).
 - Animated logo: verbatim port of FUN_00473ee0 wavy grid + FUN_004733b0 / FUN_00473220.
-- Root-cause the intermittent post-init `MainWindowHandle==0` hang (seen 06-08, not 06-09).
+- (The 06-08 "window hang" is already root-caused and fixed — commit `f61caf62`: dev
+  d3d9/dinput8 proxy shims left in `mashedmod/build/` caused STATUS_DLL_INIT_FAILED at
+  load; build.bat now moves them aside. Back-port the explanation into the port spec,
+  which still describes it as unexplained.)
 **Exit criteria:** side-by-side screenshot parity vs original on the canonical screen set;
-all 34 screens reachable; settings screens actually mutate persisted state; logo animates;
-hang root-caused (not just "didn't reproduce").
+all 34 screens reachable; settings screens actually mutate persisted state; logo animates.
 
 ### Phase R3 — Track & vehicle data foundation
 **Goal:** every asset format the game world needs is parsed, documented, and dumpable.
