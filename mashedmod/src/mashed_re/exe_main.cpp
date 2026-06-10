@@ -178,6 +178,11 @@ extern "C" void __cdecl HudIm2DQuad(
 // below, so calling MenuChromeShellA() renders the actual menu chrome via the
 // B15 bridge. The three Im2D draws are also declared so we can thunk to them.
 extern "C" void __cdecl MenuChromeShellA(void);
+// R2-4 animated logo overlay (verbatim FUN_00473ee0 port; Frontend/
+// DrawQuadPrimitives.cpp). Coords 640x480-virtual; vscale folds the original's
+// in-helper ScreenW/640, ScreenH/480 multiply.
+extern "C" void __cdecl LogoOverlayDraw(float slide_x, float wave_t,
+                                        float vscale_x, float vscale_y);
 extern "C" void __cdecl ChromeBaseDraw(float x, float y, float w, float h, std::uint32_t argb);
 extern "C" void __cdecl TextGradientV0V1Override(float x, float y, float w, float h, std::uint32_t argb);
 extern "C" void __cdecl TextGradientV2V3Override(float x, float y, float w, float h, std::uint32_t argb);
@@ -1091,6 +1096,20 @@ bool RenderFrame() {
         const float lx = (800.f - lw) * 0.5f;
         const float ly = 100.f;
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
+
+        // R2-4: animated logo overlay — verbatim FUN_00473ee0 port (fade bands,
+        // circular-arc column strips, wavy edge grid). slide_x settled = 512.0
+        // (the FUN_0042e5b0 call-site value); wave_t = DAT_007f1010 equivalent
+        // = elapsed-microseconds * 1/3e6 (FUN_00493390 @0x0049344b), i.e.
+        // seconds/3. Coords are 640x480-virtual; scale to the 800x600 buffer.
+        {
+            static DWORD s_t0 = 0;
+            const DWORD now = GetTickCount();
+            if (s_t0 == 0) s_t0 = now;
+            const float wave_t =
+                static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
+            LogoOverlayDraw(512.0f, wave_t, 800.0f / 640.0f, 600.0f / 480.0f);
+        }
     }
 
     // State-machine-driven menu draw — faithful port of FUN_0043c5b0's per-frame

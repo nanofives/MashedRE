@@ -33,6 +33,7 @@
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
+#include <cmath>
 
 // ---------------------------------------------------------------------------
 // Shared layout — 4-vertex buffer DAT_00898a20..DAT_00898a98
@@ -508,3 +509,160 @@ extern "C" __declspec(dllexport) void __cdecl HudIm2DQuad(
 }
 
 RH_ScopedInstall(HudIm2DQuad, 0x00450b10);  // re-enabled 2026-05-24 c3-safe
+
+// ---------------------------------------------------------------------------
+// R2-4 — animated logo overlay (verbatim ports, pool0 decomp+disasm 2026-06-09)
+//
+//   FUN_004733b0 (0x004733b0) — gradient quad, second color on V0/V2 (the
+//     left/top pair): all four vertex colors = swizzled c1, then V0 (0x898a30)
+//     and V2 (0x898a68) overwritten with swizzled c2.
+//   FUN_00473220 (0x00473220) — gradient quad, second color on V1/V3
+//     (0x898a4c / 0x898a84).
+//   Both: coords scaled by ScreenW*_DAT_005cd5a8(1/640) / ScreenH*_DAT_005cc560
+//     (1/480); render states (1,0)(0xc,1)(10,5)(0xb,6); TRISTRIP draw of the
+//     0x898a20 scratch quad. The standalone cannot call the RVA screen getters
+//     (image-pad), so these take ABSOLUTE px like HudIm2DQuad and the driver
+//     folds the 640x480->backbuffer scale (same convention as exe_main).
+//   FUN_00473ee0 (0x00473ee0) — the animated overlay driver. See LogoOverlayDraw.
+// ---------------------------------------------------------------------------
+namespace {
+
+// FUN_004733b0 / FUN_00473220 common body; `second_on_v1v3` selects which
+// vertex pair carries c2 (false = 4733b0's V0/V2, true = 473220's V1/V3).
+void LogoGradientQuadPx(float x, float y, float w, float h,
+                        std::uint32_t c1, std::uint32_t c2,
+                        bool second_on_v1v3) {
+    const std::uint32_t z   = rw_z_field();
+    const std::uint32_t s1  = color_swap_argb_to_abgr(c1);
+    const std::uint32_t s2  = color_swap_argb_to_abgr(c2);
+    fill_xy_quad(x, y, w, h);
+    fill_zwc_all(z, s1);
+    if (second_on_v1v3) {            // FUN_00473220: DAT_00898a4c / _DAT_00898a84
+        *reinterpret_cast<std::uint32_t*>(kV1 + 0x10) = s2;
+        *reinterpret_cast<std::uint32_t*>(kV3 + 0x10) = s2;
+    } else {                         // FUN_004733b0: DAT_00898a30 / _DAT_00898a68
+        *reinterpret_cast<std::uint32_t*>(kV0 + 0x10) = s2;
+        *reinterpret_cast<std::uint32_t*>(kV2 + 0x10) = s2;
+    }
+    rw_set_state(1, 0);      // no texture
+    rw_set_state(0xc, 1);    // vertex alpha on
+    rw_set_state(10, 5);     // src blend = SRCALPHA
+    rw_set_state(0xb, 6);    // dst blend = INVSRCALPHA
+    rw_draw_4verts();
+}
+
+// Fade pair model (DAT_0086ecc8 target / DAT_0086eccc current). The original's
+// menu-enter code seeds the target; this fn clamps it to 0xff and steps the
+// current value +-1 twice per call (0x00473f87..0x00473fc2).
+int g_logo_fade_target = 0xff;   // DAT_0086ecc8 (clamped <= 0xff)
+int g_logo_fade_cur    = 0;      // DAT_0086eccc
+
+}  // namespace
+
+// FUN_00473ee0 (0x00473ee0) — animated logo overlay. Verbatim port of the
+// pool0 decomp/disasm with the screen scale folded caller-side (vscale =
+// backbuffer/640; the original multiplies every coord by ScreenW/640 resp.
+// ScreenH/480 inside the helpers).
+//   slide_x  — param_3 (the logo slide-in X; settled = 512.0 per the
+//              FUN_0042e5b0 call site plate).
+//   wave_t   — DAT_007f1010 = raw-µs * _DAT_005ccd68(0x34b2f4fc = 1/3e6),
+//              i.e. seconds/3 (written at 0x0049344b in FUN_00493390).
+// Geometry/constants (all disasm-cited):
+//   bands: FUN_004733b0(slide-128, {0,416}, w=128(0x43000000),
+//          h=64(0x42800000), black 0xff000000 -> transparent 0).
+//   columns (s=0x5a step -0xc while >-0x5a): q=FastSqrt(8100(0x005cead0)-s^2);
+//          x=slide-q-128(0x005cc9d0); y=yi*2.844(0x005ceacc, 0x40360b61);
+//          h=34.133(0x42088889); alpha=cur*0x60/0xff; second strip alpha
+//          *1.25 (0x005cd074); FUN_00473220 white-gradient pairs.
+//   wavy grid (2 passes x 3 rows x 7 cols): xb=(row&1)*21+(col*5+45)*8;
+//          yb=row*21 (+416(0x005ceac8) pass 1); y ripple = 2*sin(col+row*2+
+//          2*wave_t) (x-sine amplitude _DAT_005ce1f8 is 0.0 in the image —
+//          READ-only refs, no writers); cell w=21(0x005ce9e0), corner pins
+//          (pass0,row2 -> 64; pass1,row0 -> 416); colors: gray 0xff808080,
+//          V0/V2 transparent on col 0 of even rows; same render states.
+extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
+    float slide_x, float wave_t, float vscale_x, float vscale_y)
+{
+    auto gq_v = [&](float x, float y, float w, float h,
+                    std::uint32_t c1, std::uint32_t c2) {
+        LogoGradientQuadPx(x * vscale_x, y * vscale_y,
+                           w * vscale_x, h * vscale_y, c1, c2, false);
+    };
+    // FUN_00473ee0 top/bottom fade bands (black -> transparent).
+    const float band_x = slide_x - 128.0f;          // param_3 - _DAT_005cc9d0
+    gq_v(band_x, 0.0f,   128.0f, 64.0f, 0xff000000u, 0u);
+    gq_v(band_x, 416.0f, 128.0f, 64.0f, 0xff000000u, 0u);
+
+    // Fade pair step (0x00473f87..fc2): clamp target, step current twice.
+    if (g_logo_fade_target > 0xff) g_logo_fade_target = 0xff;
+    for (int k = 0; k < 2; ++k) {
+        if (g_logo_fade_cur < g_logo_fade_target) ++g_logo_fade_cur;
+        if (g_logo_fade_target < g_logo_fade_cur) --g_logo_fade_cur;
+    }
+
+    // Circular-arc column strips (0x00473fbd..0x004740cb).
+    constexpr float kColPitch = 2.84443f;           // 0x005ceacc = 0x40360b61
+    int s  = 0x5a;
+    int yi = 0;
+    do {
+        const float q = std::sqrt(8100.0f - static_cast<float>(s) *
+                                            static_cast<float>(s));
+        const float x = slide_x - q - 128.0f;
+        const int alpha = (g_logo_fade_cur * 0x60) / 0xff;
+        const float y = static_cast<float>(yi) * kColPitch;
+        const std::uint32_t c1 =
+            (static_cast<std::uint32_t>(alpha) << 24) | 0x00ffffffu;
+        LogoGradientQuadPx(x * vscale_x, y * vscale_y,
+                           128.0f * vscale_x, 34.1333f * vscale_y,
+                           c1, 0u, true);           // FUN_00473220 #1
+        const int a2 = static_cast<int>(static_cast<float>(alpha) * 1.25f);
+        const std::uint32_t c2 =
+            (static_cast<std::uint32_t>(a2) << 24) | 0x00ffffffu;
+        LogoGradientQuadPx(0.0f, y * vscale_y,
+                           x * vscale_x, 34.1333f * vscale_y,
+                           c2, c1, true);           // FUN_00473220 #2
+        s  -= 0xc;
+        yi += 0xc;
+    } while (s > -0x5a);
+
+    // Wavy grid (0x004740d0.. tail of FUN_00473ee0).
+    const float ph = wave_t + wave_t;               // _DAT_007f1010 * 2
+    const std::uint32_t z = rw_z_field();
+    for (int pass = 0; pass < 2; ++pass) {
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 7; ++col) {
+                const float xb = static_cast<float>(
+                    (row & 1) * 0x15 + (col * 5 + 0x2d) * 8);
+                const float yb = static_cast<float>(row * 0x15) +
+                                 (pass != 0 ? 416.0f : 0.0f);
+                float y0 = 2.0f * std::sin(static_cast<float>(col + row * 2) + ph) + yb;
+                float y1 = 2.0f * std::sin(static_cast<float>(col + 1 + row * 2) + ph) + yb;
+                float y2 = 2.0f * std::sin(static_cast<float>(col + 2 + row * 2) + ph) + (yb + 21.0f);
+                float y3 = 2.0f * std::sin(static_cast<float>(col + 3 + row * 2) + ph) + (yb + 21.0f);
+                if (pass == 0) {
+                    if (row == 2) { y3 = 64.0f; y2 = 64.0f; }
+                } else if (row == 0) {
+                    y1 = 416.0f; y0 = 416.0f;
+                }
+                std::uint32_t c0 = 0xff808080u;
+                if (col == 0 && (row & 1) == 0) c0 = 0;
+                // x-sine term: amplitude _DAT_005ce1f8 = 0.0f -> xb / xb+21.
+                write_vert_xy(kV0, xb * vscale_x,           y0 * vscale_y);
+                write_vert_xy(kV1, (xb + 21.0f) * vscale_x, y1 * vscale_y);
+                write_vert_xy(kV2, xb * vscale_x,           y2 * vscale_y);
+                write_vert_xy(kV3, (xb + 21.0f) * vscale_x, y3 * vscale_y);
+                const std::uint32_t sc0 = color_swap_argb_to_abgr(c0);
+                write_vert_zwc(kV0, z, sc0);
+                write_vert_zwc(kV2, z, sc0);
+                // V1/V3 = 0xff808080 raw (swizzle-invariant: R == B).
+                write_vert_zwc(kV1, z, 0xff808080u);
+                write_vert_zwc(kV3, z, 0xff808080u);
+                rw_set_state(1, 0);
+                rw_set_state(0xc, 1);
+                rw_set_state(10, 5);
+                rw_set_state(0xb, 6);
+                rw_draw_4verts();
+            }
+        }
+    }
+}
