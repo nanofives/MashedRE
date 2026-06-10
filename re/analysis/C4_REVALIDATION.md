@@ -1,3 +1,4 @@
+<!-- This file is referenced by ROADMAP.md Phase R1. -->
 # C4 Re-validation Tracker
 
 Created 2026-06-09 from the project audit (`re/analysis/AUDIT_2026-06-09.md`).
