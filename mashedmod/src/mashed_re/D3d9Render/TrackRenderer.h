@@ -49,6 +49,29 @@ public:
     float world_center(int axis) const { return center_[axis]; }
     float world_radius() const { return radius_; }
 
+    // ---- R5: car on track -------------------------------------------------
+    // Load a vehicle DFF (+ its TXD) from `piz_path` and spawn it on the
+    // collision ground (the track's COLLI*/COLL*.BSP is parsed during Load()).
+    bool LoadCar(IDirect3DDevice9* dev, const char* piz_path,
+                 const char* dff_entry, const char* log_path);
+    bool car_ready() const { return car_ready_; }
+
+    struct DriveInput {
+        float accel = 0.f;   // +1 up-arrow / -1 down-arrow (reverse/brake)
+        float steer = 0.f;   // +1 right / -1 left
+        float dt    = 0.f;
+    };
+    // Kinematic drive step: speed/yaw integration, ground-height snap via
+    // collision raycast. When a car is loaded the camera becomes a chase cam.
+    void UpdateCar(const DriveInput& in);
+    // Downward raycast on the collision world. Returns ground Y at (x,z); ok
+    // set false when no triangle is under the point.
+    float GroundHeight(float x, float z, bool* ok) const;
+    void  car_pos(float out[3]) const {
+        out[0] = car_pos_[0]; out[1] = car_pos_[1]; out[2] = car_pos_[2];
+    }
+    float car_speed() const { return car_speed_; }
+
 private:
     struct V { float x, y, z; D3DCOLOR c; float u, v; };
     static constexpr DWORD kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
@@ -66,6 +89,24 @@ private:
     float  pitch_     = -0.4f;
     float  last_eye_[3] = {};
     float  last_at_[3]  = {};
+
+    // collision world (flat triangle soup for the ground raycast) + the
+    // render world's soup (spawn validation: ground must be VISIBLE — the
+    // frozen-bay ice has collision but its SEA.DFF visual is an unrendered
+    // prop, so collision-only scoring spawns the car on invisible ice)
+    std::vector<float>          col_verts_;  // x,y,z per vertex
+    std::vector<std::uint32_t>  col_tris_;   // v0,v1,v2 triples
+    std::vector<float>          rend_verts_;
+    std::vector<std::uint32_t>  rend_tris_;
+
+    // car model + state
+    std::vector<std::vector<V>>     car_batches_;
+    std::vector<IDirect3DTexture9*> car_textures_;
+    bool  car_ready_   = false;
+    float car_pos_[3]  = {};
+    float car_yaw_     = 0.f;
+    float car_speed_   = 0.f;
+    float car_ground_off_ = 0.f;   // model bbox min-Y -> wheels on ground
 };
 
 }  // namespace D3d9Render

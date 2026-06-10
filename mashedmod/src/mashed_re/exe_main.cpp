@@ -142,6 +142,7 @@
 #include <psapi.h>      // B17: GetMappedFileName — identify MEM_MAPPED squatters
 #include <cstdint>
 #include <cstdlib>      // B19a: std::free for WIC-decoded BGRA buffers
+#include <cmath>        // R5: drive-demo steering waveform
 #include <cstdio>
 #include <cstring>
 #include <climits>
@@ -1157,13 +1158,54 @@ bool RenderFrame() {
                 s_had = false;
             }
         }
-        g_track.Render(g_device, t, &ci);
-        g_device->EndScene();
+        // R5: drive the car. Arrow keys steer/accelerate; MASHED_DRIVE_DEMO
+        // injects a scripted run (accelerate, then weave) and captures shots
+        // proving motion + ground snap.
         static int s_frame = 0;
         ++s_frame;
-        if (s_frame == 60)  DumpBackbufferBMP("verify/r4/arctic_fly_1.bmp");
-        if (s_frame == 200) DumpBackbufferBMP("verify/r4/arctic_fly_2.bmp");
-        if (s_frame == 340) DumpBackbufferBMP("verify/r4/arctic_fly_3.bmp");
+        if (g_track.car_ready()) {
+            mashed_re::D3d9Render::TrackRenderer::DriveInput di;
+            di.dt = dt;
+            static const bool s_drive_demo =
+                GetEnvironmentVariableA("MASHED_DRIVE_DEMO", nullptr, 0) > 0;
+            if (s_drive_demo) {
+                // throttle bursts + gentle weave, then coast: keeps the demo
+                // run on the visible road instead of sailing onto the frozen
+                // bay (which has collision but its SEA.DFF visual is a prop
+                // the spike doesn't render yet).
+                di.accel = (s_frame < 160) ? 1.f : 0.f;
+                di.steer = (s_frame > 90) ? 0.35f * std::sin(t * 0.8f) : 0.f;
+            } else if (g_kbd) {
+                auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
+                di.accel = (dn(DIK_UP) ? 1.f : 0.f) - (dn(DIK_DOWN) ? 1.f : 0.f);
+                di.steer = (dn(DIK_RIGHT) ? 1.f : 0.f) - (dn(DIK_LEFT) ? 1.f : 0.f);
+                // arrows belong to the car now; keep camera-look on the mouse
+                ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
+            }
+            g_track.UpdateCar(di);
+        }
+        g_track.Render(g_device, t, &ci);
+        g_device->EndScene();
+        const bool car = g_track.car_ready();
+        if (s_frame == 60)
+            DumpBackbufferBMP(car ? "verify/r5/car_1_spawn.bmp"
+                                  : "verify/r4/arctic_fly_1.bmp");
+        if (s_frame == 130)
+            DumpBackbufferBMP(car ? "verify/r5/car_2_drive.bmp"
+                                  : "verify/r4/arctic_fly_2.bmp");
+        if (s_frame == 210)
+            DumpBackbufferBMP(car ? "verify/r5/car_3_weave.bmp"
+                                  : "verify/r4/arctic_fly_3.bmp");
+        if (car && s_frame == 340) {
+            float cp[3]; g_track.car_pos(cp);
+            std::FILE* lf = std::fopen(kLogPath, "a");
+            if (lf) {
+                std::fprintf(lf, "R5 drive t=%.1fs pos=(%.2f, %.2f, %.2f) "
+                                 "speed=%.2f\n", t, cp[0], cp[1], cp[2],
+                             g_track.car_speed());
+                std::fclose(lf);
+            }
+        }
         g_device->Present(nullptr, nullptr, nullptr, nullptr);
         return true;
     }
@@ -2707,6 +2749,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 }
                 CreateDirectoryA("verify\\r4", nullptr);
                 g_track_view = g_track.Load(g_device, path, kLogPath);
+                // R5: MASHED_CAR=<1 | vehicle piz path> -> spawn the Advantage
+                // car (or the named vehicle's *0.DFF) on the collision ground.
+                char cv[260] = {};
+                if (g_track_view &&
+                    GetEnvironmentVariableA("MASHED_CAR", cv, sizeof(cv)) > 0) {
+                    CreateDirectoryA("verify\\r5", nullptr);
+                    const char* cpiz = (cv[0] == '1' && cv[1] == '\0')
+                        ? "original/TOASTART/VEHICLES/Advantag.piz" : cv;
+                    g_track.LoadCar(g_device, cpiz, "ADVANTAGE0.DFF", kLogPath);
+                }
             }
         }
         // R2-2 save-driven game state: load original/gamesave.bin and replay

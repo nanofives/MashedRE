@@ -8,6 +8,7 @@
 
 #include "../Piz/PizReader.h"
 #include "../Track/TrackWorld.h"
+#include "../Track/DffModel.h"
 #include "../Txd/TxdDecoder.h"
 
 namespace mashed_re {
@@ -122,6 +123,27 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         if (std::strncmp(u, "GRAPH", 5) == 0 && ln > 4 &&
             std::strcmp(u + ln - 4, ".BSP") == 0) {
             world_blob = piz.blob(i, &world_len);
+        } else if (std::strncmp(u, "COLL", 4) == 0 && ln > 4 &&
+                   std::strcmp(u + ln - 4, ".BSP") == 0) {
+            // COLLISIONS.BSP / COLLIDE.BSP / COLL.BSP — same world stream;
+            // flatten into the raycast triangle soup.
+            std::uint32_t cl = 0;
+            const std::uint8_t* cb = piz.blob(i, &cl);
+            Track::World cw;
+            if (cb && cw.Parse(cb, cl)) {
+                for (const auto& s : cw.sectors) {
+                    const std::uint32_t vbase =
+                        static_cast<std::uint32_t>(col_verts_.size() / 3);
+                    col_verts_.insert(col_verts_.end(), s.verts.begin(),
+                                      s.verts.end());
+                    const std::size_t nt = s.tris.size() / 4;
+                    for (std::size_t ti = 0; ti < nt; ++ti) {
+                        col_tris_.push_back(vbase + s.tris[ti * 4 + 1]);
+                        col_tris_.push_back(vbase + s.tris[ti * 4 + 2]);
+                        col_tris_.push_back(vbase + s.tris[ti * 4 + 3]);
+                    }
+                }
+            }
         } else if (ln > 4 && std::strcmp(u + ln - 4, ".TXD") == 0) {
             std::uint32_t bl = 0;
             const std::uint8_t* b = piz.blob(i, &bl);
@@ -185,6 +207,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
+    // render-world soup for spawn validation (visible-surface heights)
+    for (const auto& s : world.sectors) {
+        const std::uint32_t vbase =
+            static_cast<std::uint32_t>(rend_verts_.size() / 3);
+        rend_verts_.insert(rend_verts_.end(), s.verts.begin(), s.verts.end());
+        const std::size_t nt = s.tris.size() / 4;
+        for (std::size_t ti = 0; ti < nt; ++ti) {
+            rend_tris_.push_back(vbase + s.tris[ti * 4 + 1]);
+            rend_tris_.push_back(vbase + s.tris[ti * 4 + 2]);
+            rend_tris_.push_back(vbase + s.tris[ti * 4 + 3]);
+        }
+    }
+
     center_[0] = (world.bbox[0] + world.bbox[3]) * 0.5f;
     center_[1] = (world.bbox[1] + world.bbox[4]) * 0.5f;
     center_[2] = (world.bbox[2] + world.bbox[5]) * 0.5f;
@@ -204,6 +239,199 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     }
     ready_ = true;
     return true;
+}
+
+namespace {
+// Vertical height query on a triangle soup: barycentric XZ test, plane height
+// at (x,z); returns the HIGHEST surface (bridges: highest = drivable deck).
+float HeightOnSoup(const std::vector<float>& verts,
+                   const std::vector<std::uint32_t>& tris,
+                   float x, float z, bool* ok) {
+    float best = -1e9f;
+    bool found = false;
+    const std::size_t nt = tris.size() / 3;
+    for (std::size_t i = 0; i < nt; ++i) {
+        const float* a = &verts[tris[i * 3 + 0] * 3];
+        const float* b = &verts[tris[i * 3 + 1] * 3];
+        const float* c = &verts[tris[i * 3 + 2] * 3];
+        const float d00x = b[0] - a[0], d00z = b[2] - a[2];
+        const float d01x = c[0] - a[0], d01z = c[2] - a[2];
+        const float den = d00x * d01z - d01x * d00z;
+        if (den > -1e-9f && den < 1e-9f) continue;   // degenerate in XZ
+        const float px = x - a[0], pz = z - a[2];
+        const float u = (px * d01z - d01x * pz) / den;
+        const float v = (d00x * pz - px * d00z) / den;
+        if (u < 0.f || v < 0.f || u + v > 1.f) continue;
+        const float y = a[1] + u * (b[1] - a[1]) + v * (c[1] - a[1]);
+        if (y > best) { best = y; found = true; }
+    }
+    if (ok) *ok = found;
+    return best;
+}
+}  // namespace
+
+float TrackRenderer::GroundHeight(float x, float z, bool* ok) const {
+    return HeightOnSoup(col_verts_, col_tris_, x, z, ok);
+}
+
+bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
+                            const char* dff_entry, const char* log_path) {
+    std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
+    auto fail = [&](const char* why) {
+        if (log) { std::fprintf(log, "R5 car load FAILED: %s\n", why); std::fclose(log); }
+        return false;
+    };
+    Piz::Archive piz;
+    if (!piz.Load(piz_path)) return fail(piz.last_error());
+
+    const std::uint8_t* dff = nullptr; std::uint32_t dff_len = 0;
+    std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        const std::size_t ln = std::strlen(n);
+        if (_stricmp(n, dff_entry) == 0) {
+            dff = piz.blob(i, &dff_len);
+        } else if (ln > 4 && _stricmp(n + ln - 4, ".TXD") == 0) {
+            std::uint32_t bl = 0;
+            const std::uint8_t* b = piz.blob(i, &bl);
+            if (b) txds.emplace_back(b, bl);
+        }
+    }
+    if (!dff) return fail("DFF entry not found");
+
+    Track::DffModel model;
+    if (!model.Parse(dff, dff_len)) return fail(model.last_error());
+
+    std::vector<Txd::Dictionary> dicts(txds.size());
+    for (std::size_t di = 0; di < txds.size(); ++di)
+        dicts[di].Decode(txds[di].first, txds[di].second);
+
+    car_textures_.assign(model.materials.size(), nullptr);
+    for (std::size_t mi = 0; mi < model.materials.size(); ++mi) {
+        const char* want = model.materials[mi].tex_name;
+        if (!want[0]) continue;
+        for (std::size_t di = 0; di < dicts.size() && !car_textures_[mi]; ++di)
+            for (std::uint32_t ti = 0; ti < dicts[di].count(); ++ti)
+                if (std::strcmp(dicts[di].texture(ti).name, want) == 0) {
+                    car_textures_[mi] = MakeTexture(dev, dicts[di].texture(ti));
+                    break;
+                }
+    }
+
+    car_batches_.assign(model.materials.size(), {});
+    for (const auto& b : model.batches) {
+        auto& out = car_batches_[b.material];
+        const std::size_t nt = b.tris.size() / 3;
+        for (std::size_t i = 0; i < nt * 3; ++i) {
+            const std::uint16_t vi = b.tris[i];
+            V v;
+            v.x = b.verts[vi * 3 + 0];
+            v.y = b.verts[vi * 3 + 1];
+            v.z = b.verts[vi * 3 + 2];
+            if (!b.prelit.empty()) {
+                const std::uint32_t p = b.prelit[vi];
+                v.c = D3DCOLOR_ARGB(static_cast<std::uint8_t>(p >> 24),
+                                    static_cast<std::uint8_t>(p),
+                                    static_cast<std::uint8_t>(p >> 8),
+                                    static_cast<std::uint8_t>(p >> 16));
+            } else {
+                v.c = 0xFFFFFFFFu;
+            }
+            v.u = b.uvs[vi * 2 + 0];
+            v.v = b.uvs[vi * 2 + 1];
+            out.push_back(v);
+        }
+    }
+    car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
+
+    // Spawn: scan the collision world for the most OPEN ground point (the
+    // racing surface, not a pit/garage): score each candidate by how many of
+    // 8 directions still have ground 4 units out at <1.0 height delta, and
+    // face the car along the longest open run.
+    bool ok = false;
+    float sx = 0.f, sz = 0.f, sy = 0.f, syaw = 0.f;
+    int best_score = -1;
+    for (float rr = 0.f; rr < radius_; rr += radius_ * 0.07f) {
+        for (int k = 0; k < 16; ++k) {
+            const float ang = static_cast<float>(k) * 0.3926991f;
+            const float x = center_[0] + rr * std::cos(ang);
+            const float z = center_[2] + rr * std::sin(ang);
+            bool hit = false;
+            const float y = GroundHeight(x, z, &hit);
+            if (!hit) continue;
+            // the ground must be VISIBLE (render world within 1.0) — rules
+            // out the frozen bay whose ice is collision-only
+            bool rh = false;
+            const float ry = HeightOnSoup(rend_verts_, rend_tris_, x, z, &rh);
+            if (!rh || std::fabs(ry - y) > 1.0f) continue;
+            int score = 0; float best_run = 0.f; float best_dir = 0.f;
+            for (int d = 0; d < 8; ++d) {
+                const float da = static_cast<float>(d) * 0.7853982f;
+                float run = 0.f;
+                for (float step = 4.f; step <= 16.f; step += 4.f) {
+                    const float px = x + std::cos(da) * step;
+                    const float pz = z + std::sin(da) * step;
+                    bool h2 = false, h3 = false;
+                    const float y2 = GroundHeight(px, pz, &h2);
+                    const float y3 = HeightOnSoup(rend_verts_, rend_tris_,
+                                                  px, pz, &h3);
+                    if (!h2 || !h3 || std::fabs(y2 - y) > 1.5f ||
+                        std::fabs(y3 - y2) > 1.0f) break;
+                    run = step;
+                }
+                if (run >= 4.f) ++score;
+                if (run > best_run) { best_run = run; best_dir = da; }
+            }
+            if (score > best_score) {
+                best_score = score; ok = true;
+                sx = x; sz = z; sy = y; syaw = best_dir;
+                if (score == 8 && best_run >= 16.f) { rr = radius_; break; }
+            }
+        }
+    }
+    if (!ok) return fail("no collision ground found for spawn");
+    car_pos_[0] = sx; car_pos_[1] = sy + car_ground_off_; car_pos_[2] = sz;
+    car_yaw_ = syaw; car_speed_ = 0.f;
+
+    if (log) {
+        std::fprintf(log, "R5 car load OK: %s::%s — batches=%zu mats=%zu "
+                          "tris=%u groundoff=%.3f spawn=(%.2f, %.2f, %.2f) "
+                          "coltris=%zu\n",
+                     piz_path, dff_entry, car_batches_.size(),
+                     model.materials.size(), model.total_tris,
+                     car_ground_off_, sx, sy, sz, col_tris_.size() / 3);
+        std::fclose(log);
+    }
+    car_ready_ = true;
+    return true;
+}
+
+void TrackRenderer::UpdateCar(const DriveInput& in) {
+    if (!car_ready_ || in.dt <= 0.f) return;
+    // Kinematic toy model (R5 opener; NOT the ported physics): accelerate /
+    // brake toward a top speed, steer scaled by speed, integrate, snap to the
+    // collision ground. Leaving the collision world reverts the move (the
+    // island edge acts as a wall).
+    const float kTop    = radius_ * 0.25f;   // top speed (world-relative)
+    const float kAccel  = kTop * 0.8f;
+    const float kDrag   = 0.6f;
+    const float kSteer  = 1.8f;
+    car_speed_ += in.accel * kAccel * in.dt;
+    car_speed_ -= car_speed_ * kDrag * in.dt;
+    if (car_speed_ >  kTop) car_speed_ =  kTop;
+    if (car_speed_ < -kTop * 0.4f) car_speed_ = -kTop * 0.4f;
+    const float spd_norm = car_speed_ / kTop;
+    car_yaw_ += in.steer * kSteer * spd_norm * in.dt;
+    const float nx = car_pos_[0] + std::cos(car_yaw_) * car_speed_ * in.dt;
+    const float nz = car_pos_[2] + std::sin(car_yaw_) * car_speed_ * in.dt;
+    bool ok = false;
+    const float gy = GroundHeight(nx, nz, &ok);
+    if (ok) {
+        car_pos_[0] = nx; car_pos_[2] = nz;
+        car_pos_[1] = gy + car_ground_off_;
+    } else {
+        car_speed_ = 0.f;   // island edge / off-collision: stop
+    }
 }
 
 void TrackRenderer::camera(float eye[3], float at[3]) const {
@@ -252,6 +480,13 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         at[0] = eye_[0] + std::cos(yaw_) * cp;
         at[1] = eye_[1] + sp;
         at[2] = eye_[2] + std::sin(yaw_) * cp;
+    } else if (car_ready_) {
+        // chase cam: behind and above the car, looking at it
+        const float back = 7.0f, up = 3.0f;
+        eye[0] = car_pos_[0] - std::cos(car_yaw_) * back;
+        eye[1] = car_pos_[1] + up;
+        eye[2] = car_pos_[2] - std::sin(car_yaw_) * back;
+        at[0] = car_pos_[0]; at[1] = car_pos_[1] + 0.8f; at[2] = car_pos_[2];
     } else {
         const float yaw = t * 0.3f;
         eye[0] = center_[0] + radius_ * 1.15f * std::cos(yaw);
@@ -296,6 +531,31 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     }
+
+    // R5: the car — model-space batches under a yaw+translate world matrix.
+    if (car_ready_) {
+        D3DMATRIX carm;
+        MatIdentity(&carm);
+        const float cy = std::cos(car_yaw_), sy2 = std::sin(car_yaw_);
+        carm._11 =  cy;  carm._13 = sy2;
+        carm._31 = -sy2; carm._33 = cy;
+        carm._41 = car_pos_[0]; carm._42 = car_pos_[1]; carm._43 = car_pos_[2];
+        dev->SetTransform(D3DTS_WORLD, &carm);
+        for (std::size_t mi = 0; mi < car_batches_.size(); ++mi) {
+            const auto& b = car_batches_[mi];
+            if (b.empty()) continue;
+            dev->SetTexture(0, car_textures_[mi]);
+            if (!car_textures_[mi])
+                dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
+            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                 static_cast<UINT>(b.size() / 3),
+                                 b.data(), sizeof(V));
+            if (!car_textures_[mi])
+                dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        }
+        dev->SetTransform(D3DTS_WORLD, &worldm);
+    }
+
     dev->SetTexture(0, nullptr);
     dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);  // back to the 2D menu path
 }
