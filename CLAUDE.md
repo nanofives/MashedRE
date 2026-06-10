@@ -33,8 +33,8 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 
 Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean checkout becomes bootable only after applying:
 
-1. **Five on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
-   - `scripts/patch_mashed_skip_powerups.py` — NOPs a powerups call sequence (now known-unnecessary but harmless; was solving a Frida-phantom bug).
+1. **Four on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
+   - ~~`scripts/patch_mashed_skip_powerups.py`~~ — **DO NOT APPLY.** Root-caused 2026-06-01 as boot crash #2 (the NOP at 0x40295d causes a downstream stack-imbalance ret-to-0). Removing it made baseline boot to the real main menu (verify/boot_powerups_removed.png). The script now refuses to apply and un-applies if found.
    - `scripts/patch_mashed_show_windowed.py` — unhides `[Window]` entries in the video selector.
    - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
    - `scripts/patch_mashed_skip_selector.py` — silent video selector.
@@ -107,9 +107,9 @@ All commands run from the repo root (`C:\Users\maria\Desktop\Proyectos\Mashed`).
 # Build both targets (mashed_re.exe + mashed_re_dev.asi). Internally calls vcvars32.bat.
 mashedmod\build.bat
 
-# Apply the five binary patches to original\MASHED.exe (idempotent; skip if .unpatched
+# Apply the four binary patches to original\MASHED.exe (idempotent; skip if .unpatched
 # is missing because that means a fresh original/ has not been backed up yet).
-py -3.12 scripts\patch_mashed_skip_powerups.py
+# NOTE: patch_mashed_skip_powerups.py is RETIRED (causes boot crash #2; refuses to apply).
 py -3.12 scripts\patch_mashed_show_windowed.py
 py -3.12 scripts\patch_mashed_skip_audio_com.py
 py -3.12 scripts\patch_mashed_skip_selector.py
@@ -203,7 +203,7 @@ Synthetic Frida A/B with the hook bypassed (env-var disabled) is **C3** evidence
 
 ## Roadmap, DoD, and trackers
 
-**Current phase:** Phase 4 closing / Phase 5 opening (as of 2026-05-11). Three C3 hooks landed during Phase 4 (`Vec3Magnitude` 0x004c3ac0, `FastSqrt` 0x004c3b30, `FastInvSqrt` 0x004c3b90); their C4 promotion is the final gate before Phase 5 — Frontend/HUD sweep — begins in earnest.
+**Current phase (ROADMAP v2, 2026-06-09):** the project pivoted to **standalone-first, demand-driven** development — see `ROADMAP.md` v2 (phases R0–R8) and `re/analysis/AUDIT_2026-06-09.md`. Phase R0 (repair & re-baseline) executed 2026-06-09; active work is R1 (C4 re-validation lane, tracker `re/analysis/C4_REVALIDATION.md` — 101 suspect C4 rows incl. the Vec3 trio await installed-hook canonical re-validation) and R2 (menu completion in the standalone). The v1 "Phase 4/5" framing and per-subsystem percentage gates are retired; batch fanout pipelines are demoted to opportunistic use (first-party C1 = 0; C2→C3 batch yield collapsed to 8/48 — do not run a batch with predicted yield under ~30%).
 
 - `ROADMAP.md` — phases (0..6), Definition of Done at function/subsystem/project levels.
 - `re\CONFIDENCE.md` — C0..C4 rubric; the only gate for status changes.

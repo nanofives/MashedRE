@@ -1,15 +1,15 @@
-# One-time on-disk patch of MASHED.exe to skip the powerups.piz section.
+# RETIRED PATCH — DO NOT APPLY (kept as un-applier / refusal guard).
 #
-# Background: Mashed crashes inside FUN_004b6940 (piz reader inner) on the
-# second piz open of the boot sequence on Win11 + RTX 5070 Ti. Every
-# attempted runtime patch path (UAL+.asi, Frida-injected .asi, Frida byte
-# patch) destabilizes Mashed before it even reaches the patch site. The
-# only stable launch path is Explorer-launched bare MASHED.exe.
+# 2026-06-01 root cause (see re/analysis/CHANGELOG.md and memory
+# project_boot_crash_rws_stacksmash_and_d3d9): NOPping the 25-byte powerups
+# call sequence at RVA 0x0040295d causes a downstream stack-imbalance
+# ret-to-0 — it WAS boot crash #2 (eip=0). Removing the patch made the
+# baseline boot to the real main menu (verify/boot_powerups_removed.png).
+# The original "FUN_004b6940 piz reader crash" this patch tried to solve was
+# a Frida phantom.
 #
-# This script writes the patch directly to MASHED.exe so the user can
-# launch normally. The 25-byte sequence at RVA 0x0040295d (which pushes
-# the powerups.piz string, opens it, calls two helpers, then closes) is
-# replaced with NOPs.
+# Behavior now: if the NOPs are present, restore the original 25 bytes
+# (un-apply); if the original bytes are present, refuse and exit non-zero.
 #
 # Safety:
 #   1. The original is preserved as MASHED.exe.unpatched (created only on
@@ -51,47 +51,40 @@ def main():
     current_sha = hashlib.sha256(data).hexdigest()
     print(f"current MASHED.exe sha256: {current_sha}")
 
-    if current_sha == ANCHOR_SHA:
-        print("  matches the known-good version anchor (unpatched)")
-    else:
-        # Could be already patched, or could be a different build. Don't refuse
-        # outright — check by looking for the signature.
-        if PRE_PATCH not in data and POST_PATCH in data:
-            print("  doesn't match anchor but post-patch signature present — already patched")
-            return 0
-        if PRE_PATCH not in data:
-            sys.exit(f"  sha != anchor and pre-patch signature NOT FOUND. Different build? Abort.")
+    if PRE_PATCH in data:
+        print("RETIRED: powerups call sequence intact — leaving it that way.")
+        print("This patch was root-caused 2026-06-01 as boot crash #2 (stack-")
+        print("imbalance ret-to-0). It must NOT be applied. Nothing to do.")
+        sys.exit("refusing to apply retired patch")
 
-    # Find the offset of the unique pre-patch byte sequence.
-    occurrences = []
-    pos = 0
-    while True:
-        i = data.find(PRE_PATCH, pos)
-        if i == -1: break
-        occurrences.append(i)
-        pos = i + 1
-    if len(occurrences) != 1:
-        sys.exit(f"expected exactly 1 occurrence of pre-patch signature, found {len(occurrences)}")
-    offset = occurrences[0]
-    print(f"pre-patch sequence at file offset 0x{offset:x} (RVA approximation 0x0040295d)")
+    if POST_PATCH in data:
+        # Old patch is live — un-apply it by restoring the original bytes.
+        occurrences = []
+        pos = 0
+        while True:
+            i = data.find(POST_PATCH, pos)
+            if i == -1:
+                break
+            occurrences.append(i)
+            pos = i + 1
+        if len(occurrences) != 1:
+            sys.exit(f"expected exactly 1 occurrence of the 25-NOP block, "
+                     f"found {len(occurrences)} — restore manually from "
+                     f"{BACKUP.name}")
+        offset = occurrences[0]
+        if not BACKUP.exists():
+            sys.exit(f"NOPs found but {BACKUP.name} missing — cannot verify; "
+                     f"restore manually")
+        restored = bytearray(data)
+        restored[offset:offset + 25] = PRE_PATCH
+        MASHED_EXE.write_bytes(bytes(restored))
+        post_sha = hashlib.sha256(MASHED_EXE.read_bytes()).hexdigest()
+        print(f"UN-APPLIED: original 25 bytes restored at offset 0x{offset:x}")
+        print(f"new sha256: {post_sha}")
+        return 0
 
-    # Backup if not already present.
-    if not BACKUP.exists():
-        shutil.copy2(MASHED_EXE, BACKUP)
-        print(f"  backed up to {BACKUP.name}")
-    else:
-        print(f"  backup already exists at {BACKUP.name} (not overwriting)")
-
-    # Apply patch.
-    patched = bytearray(data)
-    patched[offset:offset+25] = POST_PATCH
-    MASHED_EXE.write_bytes(bytes(patched))
-
-    post_sha = hashlib.sha256(MASHED_EXE.read_bytes()).hexdigest()
-    print(f"\npatched MASHED.exe sha256: {post_sha}")
-    print(f"  25 bytes at offset 0x{offset:x} → all 0x90 (NOP)")
-    print(f"  to restore: copy {BACKUP.name} over MASHED.exe")
-    return 0
+    sys.exit("neither pre- nor post-patch signature found — different build? "
+             "Abort.")
 
 
 if __name__ == '__main__':
