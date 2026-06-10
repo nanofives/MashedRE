@@ -187,5 +187,42 @@ int main() {
     std::printf("  re-push screen19: rec1 slide=%d (expect 0x1ff) : %s\n",
                 Nav_RecordSlide(1), (Nav_RecordSlide(1) == 0x1ff) ? "OK" : "FAIL");
 
+    // ----------------------------------------------------------------------
+    // R2-2 — save-driven game state (FUN_00404e80 step-1 span restore).
+    // Craft a full gamesave.bin image: DEADBEEF magic + nonzero gates in the
+    // 0x24A40 span (1:1 image of live 0x007f0a40..0x007f0f60).
+    // ----------------------------------------------------------------------
+    std::printf("\n=== R2-2: save-driven game state (FUN_00404e80) ===\n");
+    {
+        static unsigned char img[0x24FA0] = {0};
+        auto put32 = [&](unsigned off, unsigned v) {
+            img[off] = (unsigned char)(v); img[off+1] = (unsigned char)(v>>8);
+            img[off+2] = (unsigned char)(v>>16); img[off+3] = (unsigned char)(v>>24);
+        };
+        constexpr unsigned kSpan = 0x24A40;     // file image of DAT_007f0a40
+        // Blank image (magic 0) must be REFUSED and keep fresh defaults.
+        Nav_GameStateReset();
+        const bool blank_refused = !Nav_GameStateLoadSave(img, sizeof(img));
+        std::printf("  blank save refused: %s\n", blank_refused ? "OK" : "FAIL");
+        // Written save: magic + savedata gate + profile gate + set-0 unlocks.
+        put32(0x0000, 0xDEADBEEFu);             // magic (0x00404F37)
+        put32(kSpan + 0x4ec, 1);                // DAT_007f0f2c savedata gate
+        put32(kSpan + 0x094, 1);                // DAT_007f0ad4 profile gate
+        put32(kSpan + 0x010, 2);                // DAT_007f0a50 set-0 track unlock
+        put32(kSpan + 0x018, 1);                // DAT_007f0a58 set-0 car unlock
+        const bool loaded = Nav_GameStateLoadSave(img, sizeof(img));
+        std::printf("  written save loaded: %s\n", loaded ? "OK" : "FAIL");
+        // screen 1 item 3 was greyed fresh; with savedata it must enable.
+        Nav_Init(); Nav(1, kNavPush);
+        std::printf("  screen1 item3 enabled w/ savedata: %s\n",
+                    Nav_ItemEnabled(3) ? "OK" : "FAIL");
+        // screen 0x12 (18): track/car unlock items enable from the span.
+        Nav_Init(); Nav(0x12, kNavPush);
+        std::printf("  screen18 av1(track)=%d av6(car)=%d : %s\n",
+                    Nav_ItemEnabled(1), Nav_ItemEnabled(6),
+                    (Nav_ItemEnabled(1) && Nav_ItemEnabled(6)) ? "OK" : "FAIL");
+        Nav_GameStateReset();
+    }
+
     return 0;
 }

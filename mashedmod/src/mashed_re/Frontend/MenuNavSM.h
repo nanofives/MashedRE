@@ -95,6 +95,20 @@ struct MenuGameState {
 MenuGameState& Nav_GameState();
 void           Nav_GameStateReset();
 
+// Save-driven game state — scoped port of Save::DeserializeFromBuffer
+// (FUN_00404e80, 0x00404e80): its step-1 REP MOVSD restores 0x148 dwords from
+// save_buf+0x24A40 (= DAT_00827d98; save_buf 0x00803358 is a 1:1 image of
+// gamesave.bin) into the live span 0x007f0a40..0x007f0f60 — the track/cup
+// table (0x7f0a40, 13x12 int32), the car flags (0x7f0e50, 156 bytes) and the
+// menu state bytes (incl. DAT_007f0f2c savedata gate / DAT_007f0ad4 profile
+// gate). This loader replays that copy into the standalone's span model and
+// re-derives the MenuGameState fields the grey-out/routing ports consume.
+// `data/len` = a full gamesave.bin image (0x24FA0 bytes). Returns false (and
+// keeps fresh defaults) when the image is not a written save (magic at +0 !=
+// 0xDEADBEEF, first written by 0x00404F37 — the shipped blank save has 0;
+// FUN_00404e80 itself does not validate the magic, the gate is caller-side).
+bool           Nav_GameStateLoadSave(const unsigned char* data, unsigned len);
+
 // --- public API ------------------------------------------------------------
 
 // Initialize the nav stack at the root screen (id 0). Analogue of

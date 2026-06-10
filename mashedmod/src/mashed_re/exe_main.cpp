@@ -2423,6 +2423,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {
             LoadMenuItems();
         }
+        // R2-2 save-driven game state: load original/gamesave.bin and replay
+        // Save::DeserializeFromBuffer's span restore (FUN_00404e80 step 1) so
+        // the state-gated routing/grey-out branches see the real save (unlock
+        // arrays, savedata/profile gates). A blank save (magic != 0xDEADBEEF,
+        // as shipped) keeps the fresh-menu defaults.
+        {
+            bool save_ok = false;
+            if (std::FILE* sf = std::fopen("original/gamesave.bin", "rb")) {
+                static unsigned char buf[0x24FA0];
+                const size_t n = std::fread(buf, 1, sizeof(buf), sf);
+                std::fclose(sf);
+                save_ok = mashed_re::Frontend::Nav_GameStateLoadSave(
+                    buf, static_cast<unsigned>(n));
+            }
+            std::FILE* log = std::fopen(kLogPath, "a");
+            if (log) {
+                std::fprintf(log, "R2-2 gamesave load: %s\n",
+                             save_ok ? "LOADED (DEADBEEF save)"
+                                     : "blank/absent -> fresh defaults");
+                std::fclose(log);
+            }
+        }
         // Initialize the ported nav state machine at the root screen (id 0).
         // Analogue of FUN_0043df00's FUN_0043d2a0(0,2) frontend-enter reload.
         // From here the menu is state-machine-driven (push/pop/cursor), replacing

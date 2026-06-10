@@ -838,5 +838,43 @@ bool              Nav_ItemEnabled(int row_index) {
 MenuGameState&    Nav_GameState()    { return g_game_state; }
 void              Nav_GameStateReset() { g_game_state = kFreshState; }
 
+// Scoped port of FUN_00404e80 (0x00404e80) step 1 — see header. The span
+// model below stands in for live 0x007f0a40..0x007f0f60 (0x520 bytes,
+// 0x148 dwords; REP MOVSD at 0x00404e91 from DAT_00827d98 = save_buf+0x24A40).
+static unsigned char g_save_span[0x520];
+
+bool Nav_GameStateLoadSave(const unsigned char* data, unsigned len) {
+    constexpr unsigned kSaveSize  = 0x24FA0;     // gamesave.bin total
+    constexpr unsigned kSpanFile  = 0x24A40;     // 0x00827d98 - 0x00803358
+    constexpr unsigned kSpanBytes = 0x520;       // 0x148 dwords
+    if (data == nullptr || len != kSaveSize) return false;
+    // Caller-side gate: magic 0xDEADBEEF at +0 (written by 0x00404F37 on first
+    // save). The shipped blank gamesave.bin has 0 here -> no savedata.
+    std::uint32_t magic;
+    std::memcpy(&magic, data, 4);
+    if (magic != 0xDEADBEEFu) return false;
+
+    std::memcpy(g_save_span, data + kSpanFile, kSpanBytes);
+
+    // Re-derive the MenuGameState fields the grey-out/routing ports read,
+    // straight from the restored span (offsets relative to 0x007f0a40):
+    //   DAT_007f0f2c savedata gate  -> +0x4ec   (screen 1 item 3)
+    //   DAT_007f0ad4 profile gate   -> +0x094   (screen 2 item 1)
+    //   DAT_007f0a50[set*0x30]      -> +0x010 + set*0x30  (track unlock)
+    //   DAT_007f0a58[set*0x30]      -> +0x018 + set*0x30  (car unlock)
+    auto span32 = [](unsigned off) {
+        std::int32_t v;
+        std::memcpy(&v, g_save_span + off, 4);
+        return v;
+    };
+    MenuGameState& gs = g_game_state;
+    gs.has_savedata = span32(0x4ec);
+    gs.has_profiles = span32(0x094);
+    const unsigned set = static_cast<unsigned>(gs.cur_track_set) & 0xf;
+    gs.unlock_track[0] = span32(0x010 + set * 0x30);
+    gs.unlock_car[0]   = span32(0x018 + set * 0x30);
+    return true;
+}
+
 } // namespace Frontend
 } // namespace mashed_re
