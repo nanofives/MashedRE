@@ -167,10 +167,10 @@ hand-built matrices, depth buffer added to the device). Proof:
 `verify/r4/arctic_fly_*.png` — island, dirt circuit and the suspension bridge
 unmistakable. The spike deliberately prejudges nothing: the parsed world is
 renderer-agnostic and the architecture gate below stays open.
-**Opening gate — renderer architecture decision (stop-and-ask):** evaluate with short
-spikes, then the user decides between (a) vendoring **librw** (the re3 path), (b) porting
-the minimal RW 3.x subset ourselves (extending the `RwIm2DBridge` fake-device approach to
-3D), (c) a custom D3D9 renderer consuming RW-format data directly.
+**Opening gate — RATIFIED 2026-06-10 (re/analysis/RENDERER_GATE_BRIEF.md):** the D3D9
+spike stays the DEV VIEWER; the shipping renderer is the **RW-subset verbatim port**,
+demand-driven (vehicle lighting/material first); **librw is the fallback** only if the
+RW core band proves impractical to port.
 **Goal:** the standalone renders a full track in 3D with a controllable fly-through camera.
 **Exit criteria:** track renders with textures; camera controllable; visual parity vs an
 original-game screenshot of the same viewpoint (lighting deltas allowed and documented);
@@ -199,7 +199,15 @@ qhull + reconstruct the RW-Physics call surface); input (DirectInput path alread
 works; camera follows faithfully; physics behavior diff-checked against original telemetry
 (Frida trace of the original race vs standalone logs on matched inputs where feasible).
 
-### Phase R6 — Race loop ★ flagship demo
+### Phase R6 — Race loop ★ flagship demo (IN PROGRESS — divergence-closure 1 landed 2026-06-10)
+**Landed 2026-06-10 (verbatim ports, re/analysis/race_camera/):** the shared race
+camera (FUN_00446520 + Common/LED.piz per-gate angles — format cracked), the real
+elimination rule (camera required-zoom saturation at 10.0, FUN_00410d10), real car
+selection (liveries of one model, FUN_0040d110), and the points system + match rule
+(FUN_0040eee0 / 0x00410510 — 4P awards −2/−1/+1/+2, match at score>11). Divergence
+ledger #3–#6 CLOSED (re/analysis/DIVERGENCE_LEDGER_3D.md). Remaining in-phase:
+handling/AI verbatim ports (needs the in-race input injector), the standings-drawer
+presentation, the vehicle-lighting consumer (entry points pinned, ledger #9).
 **Goal:** complete a full race against AI in the standalone.
 **Activities:** race state machine (countdown/laps/checkpoints/finish — gameplay subsystem's
 C2 pool becomes the demand-driven port list); in-race HUD; minimal AI opponents (`.AI`
