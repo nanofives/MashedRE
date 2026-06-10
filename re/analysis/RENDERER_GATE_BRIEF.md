@@ -47,4 +47,10 @@ Hybrid: keep the spike as the DEV VIEWER (it is excellent for validating
 data cracks), and adopt **Option B incrementally** for the shipping renderer —
 RE Mashed's render functions demand-driven (lighting/material first), exactly
 like every other subsystem, falling back to **Option A (librw)** only if the
-RW core band proves impractical to port. Decision pending user ratification.
+RW core band proves impractical to port.
+
+## Decision — RATIFIED 2026-06-10
+
+User ratified the recommendation (Option B incremental, spike stays the dev
+viewer, librw is the fallback). First Option-B port target per the divergence
+ledger: vehicle lighting (`Vehicle_Shininess_Range` consumer, ledger #9).
