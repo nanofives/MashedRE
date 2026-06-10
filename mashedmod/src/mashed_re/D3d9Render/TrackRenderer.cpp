@@ -804,6 +804,14 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const float kSteer    = 2.2f;
     const float kGravity  = radius_ * 0.12f;
 
+    // Countdown freeze (3-2-1-GO): cars are held still until it elapses.
+    if (countdown_ > 0.f) {
+        countdown_ -= in.dt;
+        car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
+        for (auto& a : ai_cars_) a.cur_speed = 0.f;
+        if (countdown_ > 0.f) return;
+    }
+
     float accel = in.accel, steer = in.steer;
     if (round_mode_) {
         // exhibition round: the player car auto-follows the gate loop too
@@ -859,27 +867,53 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_vel_[0] = car_vel_[2] = 0.f;
     }
     UpdateRace(in.dt);
-    // stretch AI cars: head for the next gate center at fixed speed
-    for (auto& a : ai_cars_) {
-        if (gates_.empty()) break;
-        const float* g = gates_[static_cast<std::size_t>(a.target) %
-                                gates_.size()].center;
-        const float dx = g[0] - a.pos[0], dz = g[2] - a.pos[2];
+    // AI v2: follow the gate ribbon with a lateral lane offset, braking for
+    // sharp upcoming corners, velocity-shaped speed (no teleport).
+    const int ng = static_cast<int>(gates_.size());
+    for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
+        AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
+        if (ng < 2) break;
+        const RaceCar& rc = race_[ci + 1];
+        if (round_mode_ && !rc.alive) { a.cur_speed = 0.f; continue; }
+        const float* g  = gates_[static_cast<std::size_t>(a.target) % ng].center;
+        const float* g2 = gates_[static_cast<std::size_t>(a.target + 1) % ng].center;
+        // lateral aim = gate center + lane offset along the gate's local right
+        float tdx = g2[0] - g[0], tdz = g2[2] - g[2];
+        const float tl = std::sqrt(tdx * tdx + tdz * tdz);
+        if (tl > 1e-3f) { tdx /= tl; tdz /= tl; }
+        const float aimx = g[0] + (-tdz) * a.lane;
+        const float aimz = g[2] + ( tdx) * a.lane;
+        const float dx = aimx - a.pos[0], dz = aimz - a.pos[2];
         const float dist = std::sqrt(dx * dx + dz * dz);
-        if (dist < 2.0f) {
-            a.target = (a.target + 1) % static_cast<int>(gates_.size());
-            continue;
+        if (dist < 3.0f) {
+            a.target = (a.target + 1) % ng;
         }
-        a.yaw = std::atan2(dz, dx);
-        const float nx2 = a.pos[0] + (dx / dist) * a.speed * in.dt;
-        const float nz2 = a.pos[2] + (dz / dist) * a.speed * in.dt;
+        // corner sharpness ahead: angle between this and next ribbon segment
+        const float* g3 = gates_[static_cast<std::size_t>(a.target + 2) % ng].center;
+        float adx = g2[0] - g[0], adz = g2[2] - g[2];
+        float bdx = g3[0] - g2[0], bdz = g3[2] - g2[2];
+        const float al = std::sqrt(adx*adx + adz*adz), bl = std::sqrt(bdx*bdx + bdz*bdz);
+        float corner = 1.f;   // 1 = straight, ->0 = hairpin
+        if (al > 1e-3f && bl > 1e-3f)
+            corner = (adx*bdx + adz*bdz) / (al * bl);
+        const float want_yaw = std::atan2(dz, dx);
+        float yerr = want_yaw - a.yaw;
+        while (yerr >  3.14159f) yerr -= 6.28318f;
+        while (yerr < -3.14159f) yerr += 6.28318f;
+        a.yaw += yerr * (6.0f * in.dt > 1.f ? 1.f : 6.0f * in.dt);   // turn rate
+        // brake into corners: target speed scaled by corner straightness
+        const float brake = 0.45f + 0.55f * (corner < 0.f ? 0.f : corner);
+        const float tgt = a.speed * brake;
+        a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
+        const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
+        const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
         bool aok = false;
         const float ay = GroundHeight(nx2, nz2, &aok);
         if (aok) {
             a.pos[0] = nx2; a.pos[2] = nz2;
             a.pos[1] = ay + car_ground_off_;
         } else {
-            a.target = (a.target + 1) % static_cast<int>(gates_.size());
+            a.target = (a.target + 1) % ng;   // edge: skip to next gate
         }
     }
 
@@ -925,9 +959,32 @@ void TrackRenderer::StartRound() {
         AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
         place(a.pos, &a.yaw, (i + 1) / 2, (i + 1) % 2);
         a.target = 1;
-        // staggered speeds: all faster than the auto-driven player
-        a.speed = radius_ * (0.20f + 0.025f * static_cast<float>(i));
+        // staggered top speeds (all faster than the auto-driven player) +
+        // distinct racing lanes so they spread out and overtake
+        a.speed = radius_ * (0.20f + 0.03f * static_cast<float>(i));
+        a.cur_speed = 0.f;
+        a.lane = (static_cast<float>(i) - 1.0f) * 3.0f;   // -3, 0, +3
     }
+    countdown_ = 3.0f;   // 3-2-1 freeze before GO
+}
+
+void TrackRenderer::StartMatch(int first_to) {
+    match_target_ = first_to > 0 ? first_to : 3;
+    match_winner_ = -1;
+    round_no_ = 1;
+    for (int i = 0; i < kRaceCars; ++i) wins_[i] = 0;
+    StartRound();
+}
+
+void TrackRenderer::NextRoundOrEnd() {
+    if (round_winner_ < 0) return;
+    ++wins_[round_winner_];
+    if (wins_[round_winner_] >= match_target_) {
+        match_winner_ = round_winner_;
+        return;   // match over; leave the final standings
+    }
+    ++round_no_;
+    StartRound();   // re-grid for the next round
 }
 
 void TrackRenderer::UpdateRace(float dt) {

@@ -143,6 +143,7 @@
 #include <cstdint>
 #include <cstdlib>      // B19a: std::free for WIC-decoded BGRA buffers
 #include <cmath>        // R5: drive-demo steering waveform
+#include <cwchar>       // R6: swprintf for the HUD result banner
 #include <cstdio>
 #include <cstring>
 #include <climits>
@@ -1183,7 +1184,50 @@ bool RenderFrame() {
             }
             g_track.UpdateCar(di);
         }
+        // R6 match flow: when a round ends, hold ~3s on the result then start
+        // the next round (or finish the match).
+        if (g_track.round_mode_ && g_track.round_winner() >= 0 &&
+            g_track.match_winner() < 0) {
+            static float s_round_end_t = -1.f;
+            if (s_round_end_t < 0.f) s_round_end_t = t;
+            if (t - s_round_end_t > 3.0f) {
+                g_track.NextRoundOrEnd();
+                s_round_end_t = -1.f;
+            }
+        }
         g_track.Render(g_device, t, &ci);
+        // R6 HUD overlay (2D, on top of the 3D scene): countdown number,
+        // per-car round-win scoreboard, round/result banner. The track
+        // renderer leaves ZENABLE off on exit, so HudIm2DQuad/DrawMashedString
+        // draw correctly here.
+        if (g_track.round_mode_ && g_bridge_installed) {
+            std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            // scoreboard: one pip row per car, width = wins
+            for (int i = 0; i < 4; ++i) {
+                const std::uint32_t col[4] = {0xffe04040u, 0xff40a0ffu,
+                                              0xff40d060u, 0xffe0c040u};
+                const float y = 24.f + i * 26.f;
+                HudIm2DQuad(0, 20.f, y, 22.f, 20.f, col[i], uvf);   // car tag
+                for (int w = 0; w < g_track.wins(i); ++w)
+                    HudIm2DQuad(0, 50.f + w * 26.f, y, 22.f, 20.f,
+                                col[i], uvf);
+            }
+            if (g_font.ready()) {
+                const float cd = g_track.countdown();
+                if (cd > 0.f) {
+                    const int n = static_cast<int>(cd) + 1;
+                    wchar_t b[2] = {static_cast<wchar_t>(L'0' + (n > 3 ? 3 : n)), 0};
+                    DrawMashedString(b, 400.f, 250.f, 120.f, 0xffffe080u);
+                } else if (g_track.match_winner() >= 0) {
+                    wchar_t b[24];
+                    swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
+                    DrawMashedString(b, 400.f, 60.f, 48.f, 0xffffe080u);
+                } else if (g_track.round_winner() >= 0) {
+                    DrawMashedString(L"ROUND OVER", 400.f, 60.f, 40.f,
+                                     0xffffffffu);
+                }
+            }
+        }
         g_device->EndScene();
         const bool car = g_track.car_ready();
         static bool s_shot[3] = {};
@@ -1205,47 +1249,43 @@ bool RenderFrame() {
         // R6 round telemetry/captures: each elimination + the winner + 2
         // periodic frames of the shared camera.
         if (g_track.round_mode_) {
-            static int s_prev_alive = 4;
-            const int alive_now = g_track.round_alive();
-            if (alive_now < s_prev_alive) {
+            // match-aware captures: per round, grab the GO frame and the
+            // round-result frame; grab the match-result once.
+            static int  s_cap_round = 0;     // round we've GO-captured
+            static int  s_res_round = 0;     // round we've result-captured
+            static bool s_match_cap = false;
+            const int rn = g_track.round_no();
+            if (g_track.countdown() <= 0.f && s_cap_round != rn) {
+                s_cap_round = rn;
                 char pth[64];
-                std::snprintf(pth, sizeof(pth), "verify/r6/round_elim_%d.bmp",
-                              4 - alive_now);
+                std::snprintf(pth, sizeof(pth), "verify/r6/round%d_go.bmp", rn);
+                DumpBackbufferBMP(pth);
+            }
+            if (g_track.round_winner() >= 0 && s_res_round != rn) {
+                s_res_round = rn;
+                char pth[64];
+                std::snprintf(pth, sizeof(pth), "verify/r6/round%d_result.bmp", rn);
                 DumpBackbufferBMP(pth);
                 std::FILE* lf = std::fopen(kLogPath, "a");
                 if (lf) {
-                    std::fprintf(lf, "R6 round t=%.1fs elimination -> %d alive"
-                                     " (progress:", t, alive_now);
+                    std::fprintf(lf, "R6 round %d OVER t=%.1fs winner=car%d "
+                                     "(wins now:", rn, t, g_track.round_winner());
                     for (int i = 0; i < 4; ++i)
-                        std::fprintf(lf, " %c%.1f", g_track.race_[i].alive ?
-                                     '+' : '-', g_track.race_[i].progress);
+                        std::fprintf(lf, " c%d=%d", i, g_track.wins(i));
                     std::fprintf(lf, ")\n");
                     std::fclose(lf);
                 }
-                s_prev_alive = alive_now;
             }
-            static bool s_win = false;
-            if (!s_win && g_track.round_winner() >= 0) {
-                s_win = true;
-                DumpBackbufferBMP("verify/r6/round_winner.bmp");
+            if (!s_match_cap && g_track.match_winner() >= 0) {
+                s_match_cap = true;
+                DumpBackbufferBMP("verify/r6/match_result.bmp");
                 std::FILE* lf = std::fopen(kLogPath, "a");
                 if (lf) {
-                    std::fprintf(lf, "R6 ROUND OVER t=%.1fs winner=car%d "
-                                     "laps=%d progress=%.1f\n", t,
-                                 g_track.round_winner(),
-                                 g_track.race_[g_track.round_winner()].laps,
-                                 g_track.race_[g_track.round_winner()].progress);
+                    std::fprintf(lf, "R6 MATCH OVER t=%.1fs winner=car%d "
+                                     "(first to %d)\n", t,
+                                 g_track.match_winner(), g_track.match_target());
                     std::fclose(lf);
                 }
-            }
-            static bool s_rshot[2] = {};
-            if (!s_rshot[0] && t >= 2.5f) {
-                s_rshot[0] = true;
-                DumpBackbufferBMP("verify/r6/round_start.bmp");
-            }
-            if (!s_rshot[1] && t >= 9.0f) {
-                s_rshot[1] = true;
-                DumpBackbufferBMP("verify/r6/round_mid.bmp");
             }
         }
         if (car && s_frame == 340) {
@@ -2810,10 +2850,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     const char* cpiz = (cv[0] == '1' && cv[1] == '\0')
                         ? "original/TOASTART/VEHICLES/Advantag.piz" : cv;
                     g_track.LoadCar(g_device, cpiz, "ADVANTAGE0.DFF", kLogPath);
-                    // R6: MASHED_ROUND=1 -> 4-car exhibition elimination round
-                    if (GetEnvironmentVariableA("MASHED_ROUND", nullptr, 0) > 0) {
+                    // R6: MASHED_ROUND=1 -> first-to-3-rounds match (countdown,
+                    // elimination, score, results). MASHED_ROUND=N sets the
+                    // round target.
+                    char rv[16] = {};
+                    if (GetEnvironmentVariableA("MASHED_ROUND", rv, sizeof(rv)) > 0) {
                         CreateDirectoryA("verify\\r6", nullptr);
-                        g_track.StartRound();
+                        const int n = std::atoi(rv);
+                        g_track.StartMatch(n > 1 ? n : 3);
                     }
                 }
             }

@@ -140,7 +140,13 @@ private:
 
     // stretch: AI cars following the gate loop at fixed speed (share the
     // player's model batches; placeholder until the real AI port)
-    struct AiCar { float pos[3]; float yaw; int target; float speed; };
+    // AI v2: follows the gate ribbon with a per-car lateral lane offset
+    // (so cars spread out / overtake), brakes for sharp upcoming corners,
+    // and uses a velocity-shaped speed instead of teleport-to-gate.
+    struct AiCar {
+        float pos[3]; float yaw; int target; float speed;
+        float cur_speed; float lane;   // lane = signed lateral offset
+    };
     std::vector<AiCar> ai_cars_;
 
 public:
@@ -161,7 +167,20 @@ public:
     bool  round_mode_  = false;   // MASHED_ROUND: 4-car exhibition round
     int   round_alive_ = kRaceCars;
     int   round_winner_ = -1;     // set when the round ends
+    // match / round structure
+    int   wins_[kRaceCars] = {};  // round wins this match
+    int   match_target_ = 3;      // first-to-N rounds
+    int   match_winner_ = -1;
+    int   round_no_ = 0;
+    float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
     void  StartRound();           // grid all 4 cars at the start line
+    void  StartMatch(int first_to);  // reset wins, start round 1
+    void  NextRoundOrEnd();          // tally the win, start next or finish
+    int   match_winner() const { return match_winner_; }
+    int   match_target() const { return match_target_; }
+    int   round_no() const { return round_no_; }
+    int   wins(int car) const { return (car >= 0 && car < kRaceCars) ? wins_[car] : 0; }
+    float countdown() const { return countdown_; }
     // round step (also advances player bookkeeping outside round mode)
     void  UpdateRace(float dt);
     int   round_winner() const { return round_winner_; }
