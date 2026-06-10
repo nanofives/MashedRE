@@ -810,6 +810,14 @@ int               Nav_ScreenId()     { return g_stack[g_nav_depth].screen_id; }
 
 void              Nav_FrameClockUpdate(int raw_ms) { FrameClockUpdate(raw_ms); }
 bool              Nav_AnimTick() { return Anim_Tick(); }
+
+// Test-support accessors for the internal push-map machinery (linked by the
+// logic harness re/analysis/standalone_menu_sm/harvest/navsm_test.cpp for the
+// 34-screen reachability pass; not part of the runtime API).
+const std::uint32_t* NavTest_TableForScreen(int s) { return TableForScreen(s); }
+std::uint32_t NavTest_ItemActionCode(const std::uint32_t* t, int i) { return ItemActionCode(t, i); }
+int NavTest_ActionToScreen(std::uint32_t a, int kind) { return ActionToScreen(a, kind); }
+int NavTest_KvLookup(const std::uint32_t* t, std::uint32_t tag, int n) { return KvLookup(t, tag, n); }
 int               Nav_RecordSlide(int rec_index) {
     if (rec_index < 0 || rec_index >= g_record_count) return 0;
     const MenuRecord& r = g_records[rec_index];

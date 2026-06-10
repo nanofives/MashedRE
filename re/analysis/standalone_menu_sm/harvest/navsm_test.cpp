@@ -8,6 +8,18 @@
 
 using namespace mashed_re::Frontend;
 
+// Test-support accessors (public wrappers over the MenuNavSM internals).
+namespace mashed_re { namespace Frontend {
+const std::uint32_t* NavTest_TableForScreen(int screen_id);
+std::uint32_t        NavTest_ItemActionCode(const std::uint32_t* table, int item_index);
+int                  NavTest_ActionToScreen(std::uint32_t action, int slot_kind);
+int                  NavTest_KvLookup(const std::uint32_t* table, std::uint32_t tag, int n);
+} }
+#define TableForScreen  NavTest_TableForScreen
+#define ItemActionCode  NavTest_ItemActionCode
+#define ActionToScreen  NavTest_ActionToScreen
+#define KvLookup        NavTest_KvLookup
+
 static void dump(const char* label) {
     const MenuRecord* r = Nav_Records();
     const int n = Nav_RecordCount();
@@ -222,6 +234,72 @@ int main() {
                     Nav_ItemEnabled(1), Nav_ItemEnabled(6),
                     (Nav_ItemEnabled(1) && Nav_ItemEnabled(6)) ? "OK" : "FAIL");
         Nav_GameStateReset();
+    }
+
+    // ----------------------------------------------------------------------
+    // R2-close — 34-screen reachability pass. BFS over the reversed push map
+    // (ItemActionCode + ActionToScreen) from the two real entry roots:
+    // screen 0 (in-race pause root, FUN_0043df00 reload) and screen 1 (the
+    // boot "Game Type Select", entered from the title-confirm flow — runtime-
+    // confirmed by the 2026-06-10 parity walk). slot_kind variants 0..3 are
+    // tried so state-gated pushes expose both branches. Every non-null table
+    // is also pushed directly to prove BuildRecords handles it.
+    // ----------------------------------------------------------------------
+    std::printf("\n=== R2-close: 34-screen reachability (BFS over push map) ===\n");
+    {
+        constexpr int kN = 34;
+        bool visited[kN] = {};
+        int  queue[kN]; int qh = 0, qt = 0;
+        auto push_bfs = [&](int s) {
+            if (s >= 0 && s < kN && !visited[s] && TableForScreen(s) != nullptr) {
+                visited[s] = true; queue[qt++] = s;
+            }
+        };
+        push_bfs(0); push_bfs(1);
+        while (qh < qt) {
+            const int s = queue[qh++];
+            const std::uint32_t* tbl = TableForScreen(s);
+            // count items by tag (0xff040000)
+            int items = 0;
+            for (int r = 0; r < 16; ++r) {
+                if (ItemActionCode(tbl, r) == 0xffffffffu &&
+                    KvLookup(tbl, 0xff040000u, r) == -1 && r >= 1) break;
+                ++items;
+            }
+            for (int r = 0; r < items; ++r) {
+                const std::uint32_t a = ItemActionCode(tbl, r);
+                if (a == 0xffffffffu) continue;
+                for (int kind = 0; kind < 4; ++kind) {
+                    const int t = ActionToScreen(a, kind);
+                    if (t >= 0) push_bfs(t);
+                }
+            }
+        }
+        int n_reach = 0, n_null = 0, n_unreach = 0;
+        char unreach[256] = {}; std::size_t up = 0;
+        for (int s = 0; s < kN; ++s) {
+            if (TableForScreen(s) == nullptr) { ++n_null; continue; }
+            if (visited[s]) ++n_reach;
+            else {
+                ++n_unreach;
+                up += static_cast<std::size_t>(
+                    std::snprintf(unreach + up, sizeof(unreach) - up, "%d ", s));
+            }
+        }
+        std::printf("  reachable from roots {0,1}: %d/%d (null tables: %d)\n",
+                    n_reach, kN - n_null, n_null);
+        if (n_unreach) std::printf("  UNREACHABLE via push map: %s\n", unreach);
+        // Build pass: every non-null table constructs records cleanly.
+        int built = 0;
+        for (int s = 0; s < kN; ++s) {
+            if (TableForScreen(s) == nullptr) continue;
+            Nav_GameStateReset(); Nav_Init();
+            Nav(s, kNavPush);
+            if (Nav_ScreenId() == s && Nav_RecordCount() >= 1) ++built;
+            else std::printf("  BUILD FAIL screen %d (recs=%d)\n", s, Nav_RecordCount());
+        }
+        std::printf("  build pass: %d/%d non-null tables build records OK\n",
+                    built, kN - n_null);
     }
 
     return 0;
