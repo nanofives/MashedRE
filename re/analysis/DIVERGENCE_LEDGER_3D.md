@@ -68,3 +68,30 @@ World geometry/textures/prelight (13/13 validated), collision, props+MTS
 placement, AI gate positions, DFF models, fog parameters, the piz/TXD/DAT
 pipeline — i.e. the entire DATA layer. Divergences above live in the
 RENDERER and BEHAVIOR layers only.
+
+## FRONTEND divergences (added 2026-06-10 after user review — the parity pairs
+## verify/parity/parity_gts.png + parity_sound.png are NOT visually faithful)
+
+F1. **Menu background** — the original renders a LIVE 3D WORLD behind every
+    menu: `Common/Frontend.piz` = MAIN.BSP + TEXTURES.TXD (parses with our
+    existing world parser — materials 'main'/'carbase'/'rendergs'), with a
+    car driving around in it (visible in verify/frontend_ref/menu_burst_*).
+    Standalone shows a checkerboard fallback. [DATA available + SCAFFOLD →
+    render MAIN.BSP behind the menu; harvest the frontend camera (the
+    race-cam chain +0x84 is null at menu — different camera object)]
+F2. **Menu item plates/chrome** — original draws beveled plates + sliders
+    (Panel.piz 3D panels: PANEL0..3.DFF/PANEL.TXD + the FUN_0043c5b0 draw
+    loop with highlight quads FUN_00472c60/FUN_00473540/FUN_0040bb50);
+    standalone draws bare text + flat highlight bar. [SCAFFOLD → execute
+    Part 1 of FUN_0043c5b0_port_spec.md — populators already ported]
+F3. **Animated logo** — original: huge rainbow wavy-grid logo
+    (FUN_00473ee0 + FUN_004733b0/FUN_00473220); standalone: static PNG at
+    wrong position/scale. [SCAFFOLD → port spec'd, .rdata consts harvest
+    needed]
+F4. **Footer strings** — standalone GTS footer shows "Français" (string
+    index bug). [BUG]
+F5. **Animation reference captured** 2026-06-10: 40 frames @50 ms of the
+    original main menu (verify/frontend_ref/menu_burst_*.png +
+    menu_burst_montage.png) — acceptance reference for F1–F3. No menu
+    background VIDEO exists — the "motion" is the live 3D scene + logo
+    grid (no MCI in the menu path).
