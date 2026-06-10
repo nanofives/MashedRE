@@ -257,7 +257,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
             ++found_atomics;
             const Geo& geo = geos[static_cast<std::size_t>(gi)];
             const std::size_t nverts = geo.verts.size() / 3;
-            // transformed vertex positions for this atomic
+            // transformed vertex positions for this atomic (+ its own bbox)
+            float abox[6] = {1e9f, 1e9f, 1e9f, -1e9f, -1e9f, -1e9f};
             std::vector<float> w(nverts * 3);
             for (std::size_t v = 0; v < nverts; ++v) {
                 float out[3];
@@ -266,6 +267,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                 for (int k = 0; k < 3; ++k) {
                     if (out[k] < bbox[k])     bbox[k] = out[k];
                     if (out[k] > bbox[3 + k]) bbox[3 + k] = out[k];
+                    if (out[k] < abox[k])     abox[k] = out[k];
+                    if (out[k] > abox[3 + k]) abox[3 + k] = out[k];
                 }
             }
             total_verts += static_cast<std::uint32_t>(nverts);
@@ -274,6 +277,8 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
             for (std::uint32_t mi = 0; mi < geo.nmats || mi == 0; ++mi) {
                 DffBatch b;
                 b.material = geo.mat_base + (geo.nmats ? mi : 0);
+                b.atomic = found_atomics - 1;
+                std::memcpy(b.abox, abox, sizeof(abox));
                 for (std::size_t i = 0; i < geo.tris.size() / 4; ++i) {
                     if (geo.nmats && geo.tris[i * 4] != mi) continue;
                     for (int k = 1; k <= 3; ++k) {

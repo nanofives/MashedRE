@@ -22,6 +22,8 @@ struct DffMaterial {
 // One renderable batch: model-space triangles for one material.
 struct DffBatch {
     std::uint32_t      material;   // index into materials
+    std::int32_t       atomic;     // owning atomic index (for part splits)
+    float              abox[6];    // owning atomic's model-space bbox
     std::vector<float> verts;      // x,y,z per vertex (model space)
     std::vector<float> uvs;        // u,v per vertex (zeros if untextured)
     std::vector<std::uint32_t> prelit;  // RGBA per vertex (empty if absent)

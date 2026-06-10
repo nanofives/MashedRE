@@ -1169,12 +1169,11 @@ bool RenderFrame() {
             static const bool s_drive_demo =
                 GetEnvironmentVariableA("MASHED_DRIVE_DEMO", nullptr, 0) > 0;
             if (s_drive_demo) {
-                // throttle bursts + gentle weave, then coast: keeps the demo
-                // run on the visible road instead of sailing onto the frozen
-                // bay (which has collision but its SEA.DFF visual is a prop
-                // the spike doesn't render yet).
-                di.accel = (s_frame < 160) ? 1.f : 0.f;
-                di.steer = (s_frame > 90) ? 0.35f * std::sin(t * 0.8f) : 0.f;
+                // TIME-based schedule (fps varies with scene weight):
+                // throttle 3s with a gentle weave from 1.5s, then coast —
+                // keeps the run on the visible road, off the frozen bay.
+                di.accel = (t < 3.0f) ? 1.f : 0.f;
+                di.steer = (t > 1.5f) ? 0.35f * std::sin(t * 0.8f) : 0.f;
             } else if (g_kbd) {
                 auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
                 di.accel = (dn(DIK_UP) ? 1.f : 0.f) - (dn(DIK_DOWN) ? 1.f : 0.f);
@@ -1187,15 +1186,22 @@ bool RenderFrame() {
         g_track.Render(g_device, t, &ci);
         g_device->EndScene();
         const bool car = g_track.car_ready();
-        if (s_frame == 60)
+        static bool s_shot[3] = {};
+        if (!s_shot[0] && t >= 0.8f) {
+            s_shot[0] = true;
             DumpBackbufferBMP(car ? "verify/r5/car_1_spawn.bmp"
                                   : "verify/r4/arctic_fly_1.bmp");
-        if (s_frame == 130)
+        }
+        if (!s_shot[1] && t >= 2.2f) {
+            s_shot[1] = true;
             DumpBackbufferBMP(car ? "verify/r5/car_2_drive.bmp"
                                   : "verify/r4/arctic_fly_2.bmp");
-        if (s_frame == 210)
+        }
+        if (!s_shot[2] && t >= 3.6f) {
+            s_shot[2] = true;
             DumpBackbufferBMP(car ? "verify/r5/car_3_weave.bmp"
                                   : "verify/r4/arctic_fly_3.bmp");
+        }
         if (car && s_frame == 340) {
             float cp[3]; g_track.car_pos(cp);
             std::FILE* lf = std::fopen(kLogPath, "a");

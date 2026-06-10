@@ -119,3 +119,24 @@ cables — baked dusk prelight). Env `MASHED_TRACK_VIEW=<piz|1>`.
 - format-flag bit semantics (0x4001004d vs 0x40020089 etc.) — currently solved
   per-sector empirically; bit meanings unconfirmed. [UNCERTAIN]
 - Round-trip writer: not yet needed (no world rewriting use-case identified).
+
+## AI.BSP — the AI path / lap gates (cracked 2026-06-10, R6 prep)
+
+`AI.BSP` / `AI1.BSP` is the SAME world stream again: one sector of N vertical
+4-vert "gate" quads spanning the track (Arctic 94, City 117). **The material's
+RED byte is the gate index** — the numbers `LAPDATA.LUA`'s `Lap_Line()` /
+`Safe_Start_Lines()` refer to (Arctic: rgba=(0,0,0,255), (1,0,0,255), ...).
+Gate 0 = the start/finish line; race direction = toward gate 1. Runtime-
+verified: spawning at gate-0's center places the car exactly on the rendered
+start straight under the gantry on both tracks.
+
+## .MTS — prop matrix sets (cracked 2026-06-10 via the text twin)
+
+`*.MTS` ("ExportMatrices.mll" output; `CRATE02.MTS.TXT` in Arctic.piz is a
+plain-text twin): `u32 count`, then per instance an RW chunk id 0x0d
+(ver 0x1803FFFF) wrapping a STRUCT of `f32x9` column-major rotation +
+`f32x3` translation (+ trailing u32). COURSE.LUA wires them:
+`RWP_Object(i, "name", "X.dff", "Y.mts")` = instanced physics props (tyre
+walls, crates), `Clump_Filename(i, "x.dff")` = identity-placed world clumps
+(sea, freighter...), `Clump_Exclude_From_World(i)` = overlay exclusions.
+Implemented in TrackRenderer (Arctic: 7 props/23 instances; City: 10/52).

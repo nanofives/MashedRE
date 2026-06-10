@@ -112,6 +112,16 @@ void MatIdentity(D3DMATRIX* m) {
     m->_11 = m->_22 = m->_33 = m->_44 = 1.f;
 }
 
+// out = a * b (row-vector convention: v' = v * a * b)
+void MatMul(D3DMATRIX* out, const D3DMATRIX& a, const D3DMATRIX& b) {
+    D3DMATRIX r;
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            r.m[i][j] = a.m[i][0] * b.m[0][j] + a.m[i][1] * b.m[1][j] +
+                        a.m[i][2] * b.m[2][j] + a.m[i][3] * b.m[3][j];
+    *out = r;
+}
+
 void MatLookAtLH(D3DMATRIX* m, const float eye[3], const float at[3]) {
     float z[3] = {at[0] - eye[0], at[1] - eye[1], at[2] - eye[2]};
     const float zl = std::sqrt(z[0]*z[0] + z[1]*z[1] + z[2]*z[2]);
@@ -510,7 +520,118 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     for (std::size_t di = 0; di < txds.size(); ++di)
         dicts[di].Decode(txds[di].first, txds[di].second);
 
-    BuildDffBatches(dev, model, dicts, &car_batches_, &car_textures_);
+    // ---- wheel identification (visual spin/steer) -------------------------
+    // Per-atomic bboxes are on the batches. A wheel atomic: its two largest
+    // dims are nearly equal (the disc) with the smallest dim on a horizontal
+    // axis (the axle), small overall, sitting at the model's ground level.
+    // Pick the best candidate in each of the 4 corners (long x lateral).
+    struct AtomInfo { float box[6]; bool wheel; };
+    std::vector<AtomInfo> atoms;
+    for (const auto& b : model.batches) {
+        if (b.atomic >= static_cast<std::int32_t>(atoms.size()))
+            atoms.resize(static_cast<std::size_t>(b.atomic) + 1);
+        std::memcpy(atoms[static_cast<std::size_t>(b.atomic)].box, b.abox,
+                    sizeof(b.abox));
+        atoms[static_cast<std::size_t>(b.atomic)].wheel = false;
+    }
+    const float cdx = model.bbox[3] - model.bbox[0];
+    const float cdz = model.bbox[5] - model.bbox[2];
+    const bool long_is_x = cdx >= cdz;     // car's long (fwd/back) model axis
+    const float ccx = (model.bbox[0] + model.bbox[3]) * 0.5f;
+    const float ccz = (model.bbox[2] + model.bbox[5]) * 0.5f;
+    int best[4] = {-1, -1, -1, -1};
+    float best_d[4] = {};
+    for (std::size_t ai = 0; ai < atoms.size(); ++ai) {
+        const float* bx = atoms[ai].box;
+        const float dx = bx[3] - bx[0], dy = bx[4] - bx[1], dz = bx[5] - bx[2];
+        const float lat = long_is_x ? dz : dx;     // axle thickness
+        const float d1 = dy, d2 = long_is_x ? dx : dz;
+        const float dia = (d1 + d2) * 0.5f;
+        if (dia < 0.05f || dia > 1.2f) continue;            // wheel-sized
+        if (std::fabs(d1 - d2) > 0.25f * dia) continue;     // disc-shaped
+        if (lat > dia * 0.9f) continue;                     // thin on the axle
+        if (bx[1] > model.bbox[1] + 0.25f * (model.bbox[4] - model.bbox[1]))
+            continue;                                       // at ground level
+        const float cx = (bx[0] + bx[3]) * 0.5f - ccx;
+        const float cz = (bx[2] + bx[5]) * 0.5f - ccz;
+        const float lng = long_is_x ? cx : cz;
+        const float sde = long_is_x ? cz : cx;
+        const int q = (lng >= 0.f ? 1 : 0) * 2 + (sde >= 0.f ? 1 : 0);
+        if (dia > best_d[q]) { best_d[q] = dia; best[q] = static_cast<int>(ai); }
+    }
+    int nwheels = 0;
+    for (int q = 0; q < 4; ++q) if (best[q] >= 0) ++nwheels;
+    if (nwheels == 4) {
+        for (int q = 0; q < 4; ++q)
+            atoms[static_cast<std::size_t>(best[q])].wheel = true;
+    }
+
+    // textures for ALL car materials
+    std::vector<std::vector<V>> all_batches;
+    BuildDffBatches(dev, model, dicts, &all_batches, &car_textures_);
+    // body batches exclude wheel atomics; wheels collected pivot-relative
+    car_batches_.assign(model.materials.size(), {});
+    wheels_.clear();
+    if (nwheels == 4) {
+        for (int q = 0; q < 4; ++q) {
+            CarWheel w;
+            const float* bx = atoms[static_cast<std::size_t>(best[q])].box;
+            w.pivot[0] = (bx[0] + bx[3]) * 0.5f;
+            w.pivot[1] = (bx[1] + bx[4]) * 0.5f;
+            w.pivot[2] = (bx[2] + bx[5]) * 0.5f;
+            w.radius = (bx[4] - bx[1]) * 0.5f;
+            w.lateral_is_x = !long_is_x;
+            const float lng = (long_is_x ? w.pivot[0] - ccx
+                                         : w.pivot[2] - ccz);
+            w.front = lng >= 0.f;   // +long pair steers (verified visually)
+            wheels_.push_back(std::move(w));
+        }
+    }
+    for (const auto& b : model.batches) {
+        const bool is_wheel =
+            nwheels == 4 &&
+            atoms[static_cast<std::size_t>(b.atomic)].wheel;
+        // convert this model batch to V verts
+        std::vector<V> vs;
+        const std::size_t n = b.tris.size();
+        vs.reserve(n);
+        for (std::size_t i = 0; i < n; ++i) {
+            const std::uint16_t vi = b.tris[i];
+            V v;
+            v.x = b.verts[vi * 3 + 0];
+            v.y = b.verts[vi * 3 + 1];
+            v.z = b.verts[vi * 3 + 2];
+            if (!b.prelit.empty()) {
+                const std::uint32_t p = b.prelit[vi];
+                v.c = D3DCOLOR_ARGB(static_cast<std::uint8_t>(p >> 24),
+                                    static_cast<std::uint8_t>(p),
+                                    static_cast<std::uint8_t>(p >> 8),
+                                    static_cast<std::uint8_t>(p >> 16));
+            } else {
+                v.c = 0xFFFFFFFFu;
+            }
+            v.u = b.uvs[vi * 2 + 0];
+            v.v = b.uvs[vi * 2 + 1];
+            vs.push_back(v);
+        }
+        if (is_wheel) {
+            for (auto& w : wheels_) {
+                const float* bx = atoms[static_cast<std::size_t>(b.atomic)].box;
+                const float px = (bx[0] + bx[3]) * 0.5f;
+                if (std::fabs(px - w.pivot[0]) < 1e-4f &&
+                    std::fabs((bx[2] + bx[5]) * 0.5f - w.pivot[2]) < 1e-4f) {
+                    for (auto& v : vs) {
+                        v.x -= w.pivot[0]; v.y -= w.pivot[1]; v.z -= w.pivot[2];
+                    }
+                    w.parts.emplace_back(b.material, std::move(vs));
+                    break;
+                }
+            }
+        } else {
+            auto& out = car_batches_[b.material];
+            out.insert(out.end(), vs.begin(), vs.end());
+        }
+    }
     car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
 
     // REAL start line when the AI gates parsed: gate 0 center (LAPDATA's
@@ -527,11 +648,32 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
             car_speed_ = 0.f;
             car_ready_ = true;
+            // stretch: 3 AI cars seeded a few gates ahead, looping the path
+            ai_cars_.clear();
+            for (int i = 0; i < 3 && gates_.size() > 8; ++i) {
+                AiCar a{};
+                const std::size_t g = static_cast<std::size_t>(2 + i * 2);
+                a.pos[0] = gates_[g].center[0];
+                a.pos[2] = gates_[g].center[2];
+                bool aok = false;
+                const float ay = GroundHeight(a.pos[0], a.pos[2], &aok);
+                a.pos[1] = (aok ? ay : gates_[g].center[1]) + car_ground_off_;
+                a.target = static_cast<int>(g + 1);
+                a.speed  = radius_ * (0.10f + 0.02f * static_cast<float>(i));
+                a.yaw    = 0.f;
+                ai_cars_.push_back(a);
+            }
             if (log) {
                 std::fprintf(log, "R6 car spawn at REAL start line: gate0="
-                                  "(%.2f, %.2f, %.2f) yaw=%.2f (gates=%zu)\n",
+                                  "(%.2f, %.2f, %.2f) yaw=%.2f (gates=%zu) "
+                                  "wheels=%zu",
                              car_pos_[0], car_pos_[1], car_pos_[2], car_yaw_,
-                             gates_.size());
+                             gates_.size(), wheels_.size());
+                for (const auto& w : wheels_)
+                    std::fprintf(log, " [%.2f,%.2f,%.2f r=%.2f%s]",
+                                 w.pivot[0], w.pivot[1], w.pivot[2], w.radius,
+                                 w.front ? " F" : "");
+                std::fprintf(log, "\n");
                 std::fclose(log);
             }
             return true;
@@ -626,6 +768,38 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     } else {
         car_speed_ = 0.f;   // island edge / off-collision: stop
     }
+    // stretch AI cars: head for the next gate center at fixed speed
+    for (auto& a : ai_cars_) {
+        if (gates_.empty()) break;
+        const float* g = gates_[static_cast<std::size_t>(a.target) %
+                                gates_.size()].center;
+        const float dx = g[0] - a.pos[0], dz = g[2] - a.pos[2];
+        const float dist = std::sqrt(dx * dx + dz * dz);
+        if (dist < 2.0f) {
+            a.target = (a.target + 1) % static_cast<int>(gates_.size());
+            continue;
+        }
+        a.yaw = std::atan2(dz, dx);
+        const float nx2 = a.pos[0] + (dx / dist) * a.speed * in.dt;
+        const float nz2 = a.pos[2] + (dz / dist) * a.speed * in.dt;
+        bool aok = false;
+        const float ay = GroundHeight(nx2, nz2, &aok);
+        if (aok) {
+            a.pos[0] = nx2; a.pos[2] = nz2;
+            a.pos[1] = ay + car_ground_off_;
+        } else {
+            a.target = (a.target + 1) % static_cast<int>(gates_.size());
+        }
+    }
+
+    // visual wheels: spin by distance/radius, steer toward the input
+    const float wr = wheels_.empty() ? 0.3f : wheels_[0].radius;
+    wheel_spin_ -= (car_speed_ / (wr > 0.05f ? wr : 0.3f)) * in.dt;
+    if (wheel_spin_ >  6.2831853f) wheel_spin_ -= 6.2831853f;
+    if (wheel_spin_ < -6.2831853f) wheel_spin_ += 6.2831853f;
+    const float steer_target = in.steer * 0.45f;
+    const float k = (10.f * in.dt > 1.f) ? 1.f : 10.f * in.dt;
+    steer_vis_ += (steer_target - steer_vis_) * k;
 }
 
 void TrackRenderer::camera(float eye[3], float at[3]) const {
@@ -769,6 +943,99 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                                  b.data(), sizeof(V));
             if (!car_textures_[mi])
                 dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        }
+        // wheels: pivot-relative parts under spin (axle) + steer (front pair)
+        for (const auto& w : wheels_) {
+            D3DMATRIX local;
+            MatIdentity(&local);
+            const float c = std::cos(wheel_spin_), s = std::sin(wheel_spin_);
+            if (w.lateral_is_x) {           // axle = model X: rotate Y/Z
+                local._22 = c; local._23 = s; local._32 = -s; local._33 = c;
+            } else {                        // axle = model Z: rotate X/Y
+                local._11 = c; local._12 = s; local._21 = -s; local._22 = c;
+            }
+            if (w.front && steer_vis_ != 0.f) {
+                D3DMATRIX steer;
+                MatIdentity(&steer);
+                const float cs = std::cos(steer_vis_), ss = std::sin(steer_vis_);
+                steer._11 = cs; steer._13 = ss; steer._31 = -ss; steer._33 = cs;
+                MatMul(&local, local, steer);
+            }
+            D3DMATRIX tp;
+            MatIdentity(&tp);
+            tp._41 = w.pivot[0]; tp._42 = w.pivot[1]; tp._43 = w.pivot[2];
+            MatMul(&local, local, tp);
+            D3DMATRIX wm;
+            MatMul(&wm, local, carm);
+            dev->SetTransform(D3DTS_WORLD, &wm);
+            for (const auto& part : w.parts) {
+                const auto& b = part.second;
+                if (b.empty()) continue;
+                IDirect3DTexture9* tex = car_textures_[part.first];
+                dev->SetTexture(0, tex);
+                if (!tex)
+                    dev->SetTextureStageState(0, D3DTSS_COLOROP,
+                                              D3DTOP_SELECTARG2);
+                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                     static_cast<UINT>(b.size() / 3),
+                                     b.data(), sizeof(V));
+                if (!tex)
+                    dev->SetTextureStageState(0, D3DTSS_COLOROP,
+                                              D3DTOP_MODULATE);
+            }
+        }
+        // stretch AI cars: same body batches under their own matrices
+        for (const auto& a : ai_cars_) {
+            D3DMATRIX am;
+            MatIdentity(&am);
+            const float ac = std::cos(a.yaw), as = std::sin(a.yaw);
+            am._11 =  ac; am._13 = as;
+            am._31 = -as; am._33 = ac;
+            am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
+            dev->SetTransform(D3DTS_WORLD, &am);
+            for (std::size_t mi = 0; mi < car_batches_.size(); ++mi) {
+                const auto& b = car_batches_[mi];
+                if (b.empty()) continue;
+                dev->SetTexture(0, car_textures_[mi]);
+                if (!car_textures_[mi])
+                    dev->SetTextureStageState(0, D3DTSS_COLOROP,
+                                              D3DTOP_SELECTARG2);
+                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                     static_cast<UINT>(b.size() / 3),
+                                     b.data(), sizeof(V));
+                if (!car_textures_[mi])
+                    dev->SetTextureStageState(0, D3DTSS_COLOROP,
+                                              D3DTOP_MODULATE);
+            }
+            // wheels (unsteered, shared spin)
+            for (const auto& w : wheels_) {
+                D3DMATRIX local;
+                MatIdentity(&local);
+                const float c2 = std::cos(wheel_spin_),
+                            s2 = std::sin(wheel_spin_);
+                if (w.lateral_is_x) {
+                    local._22 = c2; local._23 = s2;
+                    local._32 = -s2; local._33 = c2;
+                } else {
+                    local._11 = c2; local._12 = s2;
+                    local._21 = -s2; local._22 = c2;
+                }
+                D3DMATRIX tp;
+                MatIdentity(&tp);
+                tp._41 = w.pivot[0]; tp._42 = w.pivot[1]; tp._43 = w.pivot[2];
+                MatMul(&local, local, tp);
+                D3DMATRIX wm2;
+                MatMul(&wm2, local, am);
+                dev->SetTransform(D3DTS_WORLD, &wm2);
+                for (const auto& part : w.parts) {
+                    const auto& b = part.second;
+                    if (b.empty()) continue;
+                    dev->SetTexture(0, car_textures_[part.first]);
+                    dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                         static_cast<UINT>(b.size() / 3),
+                                         b.data(), sizeof(V));
+                }
+            }
         }
         dev->SetTransform(D3DTS_WORLD, &worldm);
     }

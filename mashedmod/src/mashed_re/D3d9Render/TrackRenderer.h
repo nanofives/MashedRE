@@ -123,6 +123,25 @@ private:
     float car_yaw_     = 0.f;
     float car_speed_   = 0.f;
     float car_ground_off_ = 0.f;   // model bbox min-Y -> wheels on ground
+
+    // visual wheels: split from the body by per-atomic bbox heuristic
+    // (disc-shaped, lateral-thin, at the 4 ground corners). Verts stored
+    // pivot-relative; spun around the lateral axle, front pair steered.
+    struct CarWheel {
+        std::vector<std::pair<std::uint32_t, std::vector<V>>> parts;
+        float pivot[3] = {};
+        float radius   = 0.3f;
+        bool  front    = false;
+        bool  lateral_is_x = true;   // axle along model X (else Z)
+    };
+    std::vector<CarWheel> wheels_;
+    float wheel_spin_ = 0.f;
+    float steer_vis_  = 0.f;
+
+    // stretch: AI cars following the gate loop at fixed speed (share the
+    // player's model batches; placeholder until the real AI port)
+    struct AiCar { float pos[3]; float yaw; int target; float speed; };
+    std::vector<AiCar> ai_cars_;
 };
 
 }  // namespace D3d9Render
