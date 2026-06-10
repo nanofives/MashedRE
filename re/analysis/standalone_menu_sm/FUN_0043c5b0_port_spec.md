@@ -850,21 +850,39 @@ flows; their tables are all harvested so any reachable push lands on real conten
   map un-enumerated) so was NOT transcribed; the prompt id is the deterministic
   faithful content. The strip is visible at the bottom in every screenshot.
 
-## RESUME HERE
-1. **FGDC20 font 256-entry LUT (NEW, unblocks the prompt-strip nav glyphs).** The
-   standalone font loads only a 128-entry char->glyph LUT (MashedFont m_lut[128]),
-   so the FUN_004277a0-remapped special codes (0x7f..0x8f = the arrow/L-R/back
-   prompt glyphs) fall through to '?'/space. Crack the FGDC20.RWF LUT past index 127
-   (the deserializer FUN_00554390 reads 128 u16 @0x130 in the current port; confirm
-   whether the real charset has a wider LUT or the codes index the glyph table
-   directly) and extend MashedFont to support codes >=128. Then the prompt strip +
-   back-glyph render as real arrows instead of '?'.
-2. Reimplement the badges.txd NAMED-sprite atlas (SpriteLookupC / FUN_0040bb50:
-   "Button"/"Arrow"/"SemiC") — the still-deferred CHROME atlas behind the highlight
-   bar. Blocked only on cracking the multi-texture TXD-dictionary layout (sprite
-   atlas spec "(3)"); the item-label path does NOT need it.
-3. Feed real per-frame time into Nav_AnimTick (currently a fixed -0x28 step) so the
-   slide speed matches MASHED's frame-rate-scaled FUN_004a2c48 (DAT_007f1004).
-4. Drive MenuGameState from a loaded save (team table &DAT_0067e938, unlock arrays)
-   so deeper state-gated routing/grey-out exercises the secondary branches (e.g.
-   0xff3c0000->push 0xf with a valid 1v1 team).
+## RESUME HERE — ALL FOUR ITEMS + THE ANIMATED LOGO OVERLAY DONE 2026-06-09 (R2)
+
+1. ~~FGDC20 256-entry LUT~~ **DONE (r2-3, commit c3152314).** Not a wider LUT — an
+   EXTENDED-charset table: header ext_base u32 @0x24 (=0x80) / ext_count u32 @0x2c
+   (=128) / u16 codepoint->glyph map @0x30, read by FUN_00554390 BEFORE the 128-entry
+   ASCII table (font struct +0x124/128/12c). MashedFont resolves 0x80..0xFF through
+   it; extended glyphs verified rendering (ñ in the prompt strip).
+2. ~~badges.txd NAMED-sprite atlas~~ **DONE (r2-5, commit 67be20d6).** badges.txd
+   lives in sfx.piz (FUN_0040bbb0 loads it into DAT_0063b8fc; SpriteLookupC =
+   FUN_004c5c00(dict,name)). The existing Txd::Dictionary decodes it clean — 23
+   named textures (Button 16x32, Arrow 16x16, SemiC 128x256, SemiC2 128x64...,
+   probe harvest/badges_test.cpp). Draw site 0x0043cb80..cc: "Button" submitted
+   via FUN_004739f0 (decompiled: (tex,x,y,w,h,color,u0,u1,v0,v1,mode,filter)),
+   w=13.0, x bias 13.0 (_DAT_005cd8d8). Standalone draws the Button cap on the
+   highlight bar (verified in capture).
+3. ~~Frame-rate-scaled anim~~ **DONE (r2-1, commit e78a2435).** Verbatim
+   FUN_00493480 frame clock (50ms tick quantization + carry; dt = ms/3000) +
+   verbatim FUN_004325c0 tick (base 1x/2x on DAT_0067eca4>=4; item -2000/+1000,
+   slide-class -800/+500, float path 300->180; settle Y-recompute incl. screens
+   18/24; full down-up-freeze lifecycle; FUN_004a2c48 = _ftol2 TRUNCATION, not
+   banker's rounding). Logic harness settles at exactly the computed 91 frames.
+4. ~~Save-driven MenuGameState~~ **DONE (r2-2, commit 07432ff7).** FUN_00404e80
+   step-1 span restore (file 0x24A40 -> live 0x7f0a40..0x7f0f60, 0x148 dwords)
+   gated on the caller-side 0xDEADBEEF magic; has_savedata/has_profiles/track/car
+   unlock gates re-derived. Shipped gamesave.bin is blank (magic 0) -> fresh
+   defaults; harness verifies a written save flips screen-1/screen-18 gates.
+
+PLUS: **animated logo overlay DONE (r2-4, commit 61c97421)** — verbatim
+FUN_00473ee0/FUN_004733b0/FUN_00473220 ports; the "wavy grid" is the menu's
+animated CHECKERED-FLAG chrome (renders top-right/bottom-right exactly as the
+original); wave clock = µs/3e6 (FUN_00493390 @0x0049344b); fade pair
+DAT_0086ecc8/cc; x-sine amplitude _DAT_005ce1f8 = 0.0 in the image (READ-only).
+
+Remaining for full R2 phase exit (beyond the five items): side-by-side parity
+sweep vs original on the canonical screen set; settings screens mutating
+persisted state; all-34-screen reachability pass.

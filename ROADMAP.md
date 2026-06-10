@@ -105,21 +105,26 @@ audit trail `re/analysis/C4_REVALIDATION.md`.
 canonical evidence dates 2026-05-15..24; every row reconfirmed or demoted with a
 CHANGELOG line.
 
-### Phase R2 — Menu complete (finish the current slice)
+### Phase R2 — Menu complete (work items DONE 2026-06-09; parity sweep pending)
 **Goal:** the standalone main menu is pixel-faithful and fully functional.
-**Work items** (from `re/analysis/standalone_menu_sm/FUN_0043c5b0_port_spec.md`):
-- FGDC20 256-entry glyph LUT (prompt-strip nav glyphs 0x7f..0x8f currently `?`).
-- badges.txd NAMED-sprite atlas (SpriteLookupC / FUN_0040bb50: "Button"/"Arrow"/"SemiC").
-- Frame-rate-scaled anim timing (FUN_004a2c48 / DAT_007f1004) replacing the fixed −0x28 step.
-- Save-driven `MenuGameState` (gamesave.bin → unlock/team arrays so state-gated branches
-  exercise).
-- Animated logo: verbatim port of FUN_00473ee0 wavy grid + FUN_004733b0 / FUN_00473220.
-- (The 06-08 "window hang" is already root-caused and fixed — commit `f61caf62`: dev
-  d3d9/dinput8 proxy shims left in `mashedmod/build/` caused STATUS_DLL_INIT_FAILED at
-  load; build.bat now moves them aside. Back-port the explanation into the port spec,
-  which still describes it as unexplained.)
-**Exit criteria:** side-by-side screenshot parity vs original on the canonical screen set;
-all 34 screens reachable; settings screens actually mutate persisted state; logo animates.
+**Work items — ALL FIVE LANDED 2026-06-09** (branch `phase/r1-r2-menu-complete`;
+details in the port spec's RESUME section):
+- ✅ FGDC20 extended-charset glyph table (not a 256-LUT — ext_base/ext_count/u16 map
+  @0x24/0x2c/0x30 per FUN_00554390; codepoints 0x80..0xFF resolve; commit `c3152314`).
+- ✅ badges.txd named-sprite chrome (sfx.piz dictionary, 23 textures decoded by the
+  existing Txd::Dictionary; Button cap drawn on the highlight bar; commit `67be20d6`).
+- ✅ Frame-rate-scaled anim timing (verbatim FUN_00493480 clock + FUN_004325c0 tick;
+  commit `e78a2435`).
+- ✅ Save-driven `MenuGameState` (FUN_00404e80 span restore, DEADBEEF-gated; commit
+  `07432ff7`).
+- ✅ Animated logo overlay (verbatim FUN_00473ee0/4733b0/473220 — the wavy grid IS the
+  menu's animated checkered-flag chrome; commit `61c97421`).
+- (The 06-08 "window hang" was root-caused and fixed in `f61caf62` — explanation
+  back-ported to the spec.)
+**Exit criteria (phase close, still open):** side-by-side screenshot parity vs original
+on the canonical screen set; all 34 screens reachable; settings screens actually mutate
+persisted state. Logo animation: done (checkered chrome animates at the original's
+2/3 rad/s).
 
 ### Phase R3 — Track & vehicle data foundation
 **Goal:** every asset format the game world needs is parsed, documented, and dumpable.
