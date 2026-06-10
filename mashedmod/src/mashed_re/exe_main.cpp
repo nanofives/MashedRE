@@ -1122,8 +1122,42 @@ bool RenderFrame() {
                         D3DCOLOR_XRGB(24, 28, 40), 1.0f, 0);
         g_device->BeginScene();
         static DWORD s_t0 = GetTickCount();
-        const float t = static_cast<float>(GetTickCount() - s_t0) * 0.001f;
-        g_track.Render(g_device, t);
+        static DWORD s_prev = 0;
+        const DWORD now = GetTickCount();
+        const float t = static_cast<float>(now - s_t0) * 0.001f;
+        const float dt = (s_prev == 0) ? 0.f
+                       : static_cast<float>(now - s_prev) * 0.001f;
+        s_prev = now;
+        // Free camera: WASD move, Q/E down/up, arrows OR right-button mouse
+        // look, R = back to auto-orbit.
+        mashed_re::D3d9Render::TrackRenderer::CamInput ci;
+        ci.dt = dt;
+        if (g_kbd) {
+            auto dn = [&](int k) { return (g_keys[k] & 0x80) != 0; };
+            ci.move_fwd    = (dn(DIK_W) ? 1.f : 0.f) - (dn(DIK_S) ? 1.f : 0.f);
+            ci.move_strafe = (dn(DIK_D) ? 1.f : 0.f) - (dn(DIK_A) ? 1.f : 0.f);
+            ci.move_up     = (dn(DIK_E) ? 1.f : 0.f) - (dn(DIK_Q) ? 1.f : 0.f);
+            ci.yaw_delta   = ((dn(DIK_RIGHT) ? 1.f : 0.f) -
+                              (dn(DIK_LEFT)  ? 1.f : 0.f)) * 1.6f * dt;
+            ci.pitch_delta = ((dn(DIK_UP)   ? 1.f : 0.f) -
+                              (dn(DIK_DOWN) ? 1.f : 0.f)) * 1.0f * dt;
+            ci.reset_orbit = dn(DIK_R);
+        }
+        {
+            static POINT s_last{};
+            static bool  s_had = false;
+            if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
+                POINT p; GetCursorPos(&p);
+                if (s_had) {
+                    ci.yaw_delta   += static_cast<float>(p.x - s_last.x) * 0.005f;
+                    ci.pitch_delta -= static_cast<float>(p.y - s_last.y) * 0.005f;
+                }
+                s_last = p; s_had = true;
+            } else {
+                s_had = false;
+            }
+        }
+        g_track.Render(g_device, t, &ci);
         g_device->EndScene();
         static int s_frame = 0;
         ++s_frame;
@@ -2655,14 +2689,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         g_menu_badge_ready = LoadBadgeSprites();
         // R2-close: persisted menu settings (Sound screen values).
         LoadMenuSettings();
-        // R4 opener: MASHED_TRACK_VIEW=<piz path | 1> -> fly-through mode.
+        // R4: MASHED_TRACK_VIEW=<1 | track name | piz path> -> fly-through.
+        // A bare name (no slash, no .piz) resolves to TRACKS/<name>.piz.
         {
             char tv[260] = {};
             if (GetEnvironmentVariableA("MASHED_TRACK_VIEW", tv, sizeof(tv)) > 0) {
-                const char* piz = (tv[0] == '1' && tv[1] == '\0')
-                    ? "original/TOASTART/TRACKS/Arctic.piz" : tv;
+                char path[300];
+                if (tv[0] == '1' && tv[1] == '\0') {
+                    std::snprintf(path, sizeof(path),
+                                  "original/TOASTART/TRACKS/Arctic.piz");
+                } else if (!std::strchr(tv, '/') && !std::strchr(tv, '\\') &&
+                           !std::strstr(tv, ".piz")) {
+                    std::snprintf(path, sizeof(path),
+                                  "original/TOASTART/TRACKS/%s.piz", tv);
+                } else {
+                    std::snprintf(path, sizeof(path), "%s", tv);
+                }
                 CreateDirectoryA("verify\\r4", nullptr);
-                g_track_view = g_track.Load(g_device, piz, kLogPath);
+                g_track_view = g_track.Load(g_device, path, kLogPath);
             }
         }
         // R2-2 save-driven game state: load original/gamesave.bin and replay

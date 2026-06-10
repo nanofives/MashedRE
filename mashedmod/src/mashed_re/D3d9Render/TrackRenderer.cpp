@@ -107,11 +107,11 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     Piz::Archive piz;
     if (!piz.Load(piz_path)) return fail(piz.last_error());
 
-    // GRAPH*.BSP (name varies: GRAPH.BSP / GRAPHICS.BSP). TXD: prefer
-    // *TEXTURES.TXD, else the LARGEST *.TXD (CITY.TXD / DUMP.TXD naming).
+    // GRAPH*.BSP (name varies: GRAPH.BSP / GRAPHICS.BSP). Textures: decode
+    // EVERY *.TXD in the piz (DUMP.TXD + CITY.TXD coexist; props reference
+    // secondary dictionaries) and resolve material names across all of them.
     const std::uint8_t* world_blob = nullptr; std::uint32_t world_len = 0;
-    const std::uint8_t* txd_blob = nullptr;   std::uint32_t txd_len = 0;
-    bool txd_preferred = false;
+    std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
@@ -122,13 +122,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         if (std::strncmp(u, "GRAPH", 5) == 0 && ln > 4 &&
             std::strcmp(u + ln - 4, ".BSP") == 0) {
             world_blob = piz.blob(i, &world_len);
-        } else if (ln > 4 && std::strcmp(u + ln - 4, ".TXD") == 0 &&
-                   !txd_preferred) {
-            const bool pref = std::strstr(u, "TEXTURES.TXD") != nullptr;
-            if (pref || txd_blob == nullptr || piz.entry(i).length > txd_len) {
-                txd_blob = piz.blob(i, &txd_len);
-                txd_preferred = pref;
-            }
+        } else if (ln > 4 && std::strcmp(u + ln - 4, ".TXD") == 0) {
+            std::uint32_t bl = 0;
+            const std::uint8_t* b = piz.blob(i, &bl);
+            if (b) txds.emplace_back(b, bl);
         }
     }
     if (!world_blob) return fail("GRAPH*.BSP not found");
@@ -136,18 +133,19 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     Track::World world;
     if (!world.Parse(world_blob, world_len)) return fail(world.last_error());
 
-    Txd::Dictionary dict;
-    const bool txd_ok = txd_blob && dict.Decode(txd_blob, txd_len);
+    std::vector<Txd::Dictionary> dicts(txds.size());
+    for (std::size_t di = 0; di < txds.size(); ++di)
+        dicts[di].Decode(txds[di].first, txds[di].second);  // failures = count 0
 
-    // material -> texture
+    // material -> texture (first match across all dictionaries)
     textures_.assign(world.materials.size(), nullptr);
-    if (txd_ok) {
-        for (std::size_t mi = 0; mi < world.materials.size(); ++mi) {
-            const char* want = world.materials[mi].tex_name;
-            if (!want[0]) continue;
-            for (std::uint32_t ti = 0; ti < dict.count(); ++ti) {
-                if (std::strcmp(dict.texture(ti).name, want) == 0) {
-                    textures_[mi] = MakeTexture(dev, dict.texture(ti));
+    for (std::size_t mi = 0; mi < world.materials.size(); ++mi) {
+        const char* want = world.materials[mi].tex_name;
+        if (!want[0]) continue;
+        for (std::size_t di = 0; di < dicts.size() && !textures_[mi]; ++di) {
+            for (std::uint32_t ti = 0; ti < dicts[di].count(); ++ti) {
+                if (std::strcmp(dicts[di].texture(ti).name, want) == 0) {
+                    textures_[mi] = MakeTexture(dev, dicts[di].texture(ti));
                     break;
                 }
             }
@@ -208,17 +206,63 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     return true;
 }
 
-void TrackRenderer::Render(IDirect3DDevice9* dev, float t) {
+void TrackRenderer::camera(float eye[3], float at[3]) const {
+    for (int i = 0; i < 3; ++i) { eye[i] = last_eye_[i]; at[i] = last_at_[i]; }
+}
+
+void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
-    // fly-through: slow orbit around the world center, slightly above.
-    const float yaw = t * 0.3f;
-    const float eye[3] = {
-        center_[0] + radius_ * 1.15f * std::cos(yaw),
-        center_[1] + radius_ * 0.55f,
-        center_[2] + radius_ * 1.15f * std::sin(yaw),
-    };
+    // Camera: auto-orbit by default; any movement input switches to free
+    // mode (WASD/QE move relative to look direction, mouse/arrow look).
+    float eye[3];
+    float at[3];
+    if (in) {
+        const bool wants_free =
+            in->move_fwd != 0.f || in->move_strafe != 0.f ||
+            in->move_up != 0.f || in->yaw_delta != 0.f || in->pitch_delta != 0.f;
+        if (in->reset_orbit) free_ = false;
+        if (wants_free && !free_) {
+            // seed the free camera from the current orbit pose
+            const float yaw0 = t * 0.3f;
+            eye_[0] = center_[0] + radius_ * 1.15f * std::cos(yaw0);
+            eye_[1] = center_[1] + radius_ * 0.55f;
+            eye_[2] = center_[2] + radius_ * 1.15f * std::sin(yaw0);
+            yaw_   = std::atan2(center_[2] - eye_[2], center_[0] - eye_[0]);
+            pitch_ = -0.4f;
+            free_  = true;
+        }
+        if (free_) {
+            yaw_   += in->yaw_delta;
+            pitch_ += in->pitch_delta;
+            if (pitch_ >  1.5f) pitch_ =  1.5f;
+            if (pitch_ < -1.5f) pitch_ = -1.5f;
+            const float cp = std::cos(pitch_), sp = std::sin(pitch_);
+            const float fwd[3] = {std::cos(yaw_) * cp, sp, std::sin(yaw_) * cp};
+            const float right[3] = {-std::sin(yaw_), 0.f, std::cos(yaw_)};
+            const float speed = radius_ * 0.5f * in->dt;   // half-world/s
+            for (int i = 0; i < 3; ++i)
+                eye_[i] += fwd[i] * in->move_fwd * speed +
+                           right[i] * in->move_strafe * speed;
+            eye_[1] += in->move_up * speed;
+        }
+    }
+    if (free_) {
+        const float cp = std::cos(pitch_), sp = std::sin(pitch_);
+        eye[0] = eye_[0]; eye[1] = eye_[1]; eye[2] = eye_[2];
+        at[0] = eye_[0] + std::cos(yaw_) * cp;
+        at[1] = eye_[1] + sp;
+        at[2] = eye_[2] + std::sin(yaw_) * cp;
+    } else {
+        const float yaw = t * 0.3f;
+        eye[0] = center_[0] + radius_ * 1.15f * std::cos(yaw);
+        eye[1] = center_[1] + radius_ * 0.55f;
+        eye[2] = center_[2] + radius_ * 1.15f * std::sin(yaw);
+        at[0] = center_[0]; at[1] = center_[1]; at[2] = center_[2];
+    }
+    for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
+
     D3DMATRIX viewm, projm, worldm;
-    MatLookAtLH(&viewm, eye, center_);
+    MatLookAtLH(&viewm, eye, at);
     MatPerspectiveFovLH(&projm, 1.0472f /*60 deg*/, 800.f / 600.f,
                         0.05f, radius_ * 8.f);
     MatIdentity(&worldm);

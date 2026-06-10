@@ -25,11 +25,29 @@ public:
     // textures on `dev`. Appends a load report to `log_path` (may be null).
     bool Load(IDirect3DDevice9* dev, const char* piz_path, const char* log_path);
 
-    // Draw one frame: auto-orbit fly-through around the world bbox at time
-    // `t` seconds (camera yaw = t * 0.3 rad). Assumes BeginScene is active.
-    void Render(IDirect3DDevice9* dev, float t);
+    // Per-frame camera input (assembled by the host from DirectInput keys +
+    // Win32 mouse). Any nonzero movement switches from auto-orbit to free
+    // mode; `reset_orbit` switches back.
+    struct CamInput {
+        float move_fwd    = 0.f;   // +1 W / -1 S
+        float move_strafe = 0.f;   // +1 D / -1 A
+        float move_up     = 0.f;   // +1 E / -1 Q
+        float yaw_delta   = 0.f;   // radians (mouse-look / arrow keys)
+        float pitch_delta = 0.f;
+        bool  reset_orbit = false; // R: back to auto-orbit
+        float dt          = 0.f;   // seconds since last frame
+    };
+
+    // Draw one frame. Default camera = auto-orbit fly-through around the
+    // world bbox (yaw = t * 0.3 rad); `in` (optional) drives the free camera.
+    // Assumes BeginScene is active.
+    void Render(IDirect3DDevice9* dev, float t, const CamInput* in = nullptr);
 
     bool ready() const { return ready_; }
+    // Current camera eye/target (for HUD/debug and the car-mode chase cam).
+    void camera(float eye[3], float at[3]) const;
+    float world_center(int axis) const { return center_[axis]; }
+    float world_radius() const { return radius_; }
 
 private:
     struct V { float x, y, z; D3DCOLOR c; float u, v; };
@@ -40,6 +58,14 @@ private:
     float  center_[3] = {};
     float  radius_    = 1.f;
     bool   ready_     = false;
+
+    // free-camera state (orbit when !free_)
+    bool   free_      = false;
+    float  eye_[3]    = {};
+    float  yaw_       = 0.f;
+    float  pitch_     = -0.4f;
+    float  last_eye_[3] = {};
+    float  last_at_[3]  = {};
 };
 
 }  // namespace D3d9Render
