@@ -44,6 +44,9 @@ public:
     void Render(IDirect3DDevice9* dev, float t, const CamInput* in = nullptr);
 
     bool ready() const { return ready_; }
+    // Vertex layout shared by world/car/prop batches (public so file-scope
+    // builder helpers can use it).
+    struct V { float x, y, z; D3DCOLOR c; float u, v; };
     // Current camera eye/target (for HUD/debug and the car-mode chase cam).
     void camera(float eye[3], float at[3]) const;
     float world_center(int axis) const { return center_[axis]; }
@@ -73,7 +76,6 @@ public:
     float car_speed() const { return car_speed_; }
 
 private:
-    struct V { float x, y, z; D3DCOLOR c; float u, v; };
     static constexpr DWORD kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
     std::vector<std::vector<V>>      batches_;   // per material, tri lists
@@ -98,6 +100,20 @@ private:
     std::vector<std::uint32_t>  col_tris_;   // v0,v1,v2 triples
     std::vector<float>          rend_verts_;
     std::vector<std::uint32_t>  rend_tris_;
+
+    // AI path gates (AI*.BSP: 94-ish vertical quads; material RED byte = the
+    // gate index LAPDATA's Lap_Line numbers refer to). gate 0 = start line.
+    struct Gate { float center[3]; };
+    std::vector<Gate> gates_;
+
+    // track props: RWP_Object DFF+MTS instanced sets + Clump_Filename DFFs
+    // at identity (their frames carry placement; COURSE.LUA wiring).
+    struct Prop {
+        std::vector<std::vector<V>>     batches;   // per material
+        std::vector<IDirect3DTexture9*> textures;
+        std::vector<D3DMATRIX>          instances;
+    };
+    std::vector<Prop> props_;
 
     // car model + state
     std::vector<std::vector<V>>     car_batches_;

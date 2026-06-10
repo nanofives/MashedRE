@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 #include "../Piz/PizReader.h"
 #include "../Track/TrackWorld.h"
@@ -58,6 +59,52 @@ IDirect3DTexture9* MakeTexture(IDirect3DDevice9* dev,
     }
     out->UnlockRect(0);
     return out;
+}
+
+// Build per-material vertex batches (+ textures) from a parsed DffModel,
+// resolving texture names across the given TXD dictionaries. Shared by the
+// car and the track props.
+void BuildDffBatches(IDirect3DDevice9* dev,
+                     const mashed_re::Track::DffModel& model,
+                     const std::vector<mashed_re::Txd::Dictionary>& dicts,
+                     std::vector<std::vector<TrackRenderer::V>>* batches,
+                     std::vector<IDirect3DTexture9*>* textures) {
+    using V = TrackRenderer::V;
+    textures->assign(model.materials.size(), nullptr);
+    for (std::size_t mi = 0; mi < model.materials.size(); ++mi) {
+        const char* want = model.materials[mi].tex_name;
+        if (!want[0]) continue;
+        for (std::size_t di = 0; di < dicts.size() && !(*textures)[mi]; ++di)
+            for (std::uint32_t ti = 0; ti < dicts[di].count(); ++ti)
+                if (std::strcmp(dicts[di].texture(ti).name, want) == 0) {
+                    (*textures)[mi] = MakeTexture(dev, dicts[di].texture(ti));
+                    break;
+                }
+    }
+    batches->assign(model.materials.size(), {});
+    for (const auto& b : model.batches) {
+        auto& out = (*batches)[b.material];
+        const std::size_t n = b.tris.size();
+        for (std::size_t i = 0; i < n; ++i) {
+            const std::uint16_t vi = b.tris[i];
+            V v;
+            v.x = b.verts[vi * 3 + 0];
+            v.y = b.verts[vi * 3 + 1];
+            v.z = b.verts[vi * 3 + 2];
+            if (!b.prelit.empty()) {
+                const std::uint32_t p = b.prelit[vi];
+                v.c = D3DCOLOR_ARGB(static_cast<std::uint8_t>(p >> 24),
+                                    static_cast<std::uint8_t>(p),
+                                    static_cast<std::uint8_t>(p >> 8),
+                                    static_cast<std::uint8_t>(p >> 16));
+            } else {
+                v.c = 0xFFFFFFFFu;
+            }
+            v.u = b.uvs[vi * 2 + 0];
+            v.v = b.uvs[vi * 2 + 1];
+            out.push_back(v);
+        }
+    }
 }
 
 void MatIdentity(D3DMATRIX* m) {
@@ -207,6 +254,160 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
+    // ---- track props ------------------------------------------------------
+    // COURSE.LUA wires them: RWP_Object(i,"name","X.dff","Y.mts") = physics
+    // props placed by an MTS matrix set (ExportMatrices: u32 count + per-
+    // instance chunk 0x0d {STRUCT: 3x3 rot + translation + u32}); and
+    // Clump_Filename(i,"x.dff") = world clumps at identity (their frames
+    // carry placement), minus Clump_Exclude_From_World(i) overlays.
+    {
+        auto find_entry = [&](const char* name, std::uint32_t* len)
+            -> const std::uint8_t* {
+            for (std::uint32_t i = 0; i < piz.count(); ++i)
+                if (_stricmp(piz.entry(i).name, name) == 0)
+                    return piz.blob(i, len);
+            return nullptr;
+        };
+        std::uint32_t lua_len = 0;
+        const std::uint8_t* lua = nullptr;
+        for (std::uint32_t i = 0; i < piz.count(); ++i) {
+            const char* n = piz.entry(i).name;
+            const std::size_t ln = std::strlen(n);
+            if (ln > 4 && _stricmp(n + ln - 4, ".LUA") == 0 &&
+                _strnicmp(n, "COURSE", 6) == 0) {
+                lua = piz.blob(i, &lua_len);
+                break;
+            }
+        }
+        auto load_prop = [&](const char* dff_name, Prop* p) -> bool {
+            std::uint32_t dl = 0;
+            const std::uint8_t* db = find_entry(dff_name, &dl);
+            if (!db) return false;
+            Track::DffModel m;
+            if (!m.Parse(db, dl)) return false;
+            BuildDffBatches(dev, m, dicts, &p->batches, &p->textures);
+            return true;
+        };
+        if (lua) {
+            // line-scan the Lua text for the wiring calls (comments start
+            // with "--"; skip them)
+            const char* s = reinterpret_cast<const char*>(lua);
+            std::size_t pos = 0;
+            bool excluded[64] = {};
+            struct ClumpRef { int idx; char dff[64]; };
+            std::vector<ClumpRef> clumps;
+            while (pos < lua_len) {
+                std::size_t eol = pos;
+                while (eol < lua_len && s[eol] != '\n') ++eol;
+                std::string line(s + pos, eol - pos);
+                pos = eol + 1;
+                const std::size_t cmt = line.find("--");
+                if (cmt != std::string::npos) line.resize(cmt);
+                char a[64] = {}, b[64] = {};
+                int idx = -1;
+                if (std::sscanf(line.c_str(),
+                                " RWP_Object( %*d , \"%*[^\"]\" , \"%63[^\"]\" "
+                                ", \"%63[^\"]\" )", a, b) == 2 ||
+                    std::sscanf(line.c_str(),
+                                " RWP_Object( %*d ,\"%*[^\"]\", \"%63[^\"]\", "
+                                "\"%63[^\"]\" )", a, b) == 2) {
+                    Prop p;
+                    std::uint32_t ml = 0;
+                    const std::uint8_t* mb = find_entry(b, &ml);
+                    if (mb && ml >= 4 && load_prop(a, &p)) {
+                        const std::uint32_t cnt =
+                            *reinterpret_cast<const std::uint32_t*>(mb);
+                        std::size_t off = 4;
+                        for (std::uint32_t k = 0; k < cnt &&
+                             off + 24 + 48 <= ml; ++k) {
+                            const std::uint32_t csz =
+                                *reinterpret_cast<const std::uint32_t*>(mb + off + 4);
+                            const float* f =
+                                reinterpret_cast<const float*>(mb + off + 24);
+                            D3DMATRIX m2;
+                            MatIdentity(&m2);
+                            m2._11 = f[0]; m2._12 = f[1]; m2._13 = f[2];
+                            m2._21 = f[3]; m2._22 = f[4]; m2._23 = f[5];
+                            m2._31 = f[6]; m2._32 = f[7]; m2._33 = f[8];
+                            m2._41 = f[9]; m2._42 = f[10]; m2._43 = f[11];
+                            p.instances.push_back(m2);
+                            off += 12 + csz;
+                        }
+                        if (!p.instances.empty())
+                            props_.push_back(std::move(p));
+                    }
+                } else if (std::sscanf(line.c_str(),
+                                       " Clump_Filename( %d , \"%63[^\"]\" )",
+                                       &idx, a) == 2 ||
+                           std::sscanf(line.c_str(),
+                                       " Clump_Filename(%d,\"%63[^\"]\")",
+                                       &idx, a) == 2) {
+                    if (idx >= 0 && idx < 64) {
+                        ClumpRef c; c.idx = idx;
+                        std::snprintf(c.dff, sizeof(c.dff), "%s", a);
+                        clumps.push_back(c);
+                    }
+                } else if (std::sscanf(line.c_str(),
+                                       " Clump_Exclude_From_World( %d )",
+                                       &idx) == 1 ||
+                           std::sscanf(line.c_str(),
+                                       " Clump_Exclude_From_World(%d)",
+                                       &idx) == 1) {
+                    if (idx >= 0 && idx < 64) excluded[idx] = true;
+                }
+            }
+            for (const auto& c : clumps) {
+                if (excluded[c.idx]) continue;
+                Prop p;
+                if (load_prop(c.dff, &p)) {
+                    D3DMATRIX id;
+                    MatIdentity(&id);
+                    p.instances.push_back(id);
+                    props_.push_back(std::move(p));
+                }
+            }
+        }
+    }
+
+    // ---- AI path gates (AI*.BSP — same world stream; 4-vert vertical quad
+    // per gate; the material RED byte = gate index; LAPDATA's Lap_Line
+    // numbers index these). Build ordered gate centers; gate 0 = start line.
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        const std::size_t ln = std::strlen(n);
+        if ((ln >= 6 && _strnicmp(n, "AI", 2) == 0 &&
+             _stricmp(n + ln - 4, ".BSP") == 0)) {
+            std::uint32_t al = 0;
+            const std::uint8_t* ab = piz.blob(i, &al);
+            Track::World aw;
+            if (ab && aw.Parse(ab, al)) {
+                gates_.assign(aw.materials.size(), Gate{});
+                std::vector<int> counts(aw.materials.size(), 0);
+                for (const auto& s : aw.sectors) {
+                    const std::size_t nt = s.tris.size() / 4;
+                    for (std::size_t ti = 0; ti < nt; ++ti) {
+                        const std::uint16_t mat = s.tris[ti * 4 + 0];
+                        // gate index = material RED byte (== mat order here)
+                        const std::uint8_t gi = aw.materials[mat].rgba[0];
+                        if (gi >= gates_.size()) continue;
+                        for (int k = 1; k <= 3; ++k) {
+                            const std::uint16_t vi = s.tris[ti * 4 + k];
+                            gates_[gi].center[0] += s.verts[vi * 3 + 0];
+                            gates_[gi].center[1] += s.verts[vi * 3 + 1];
+                            gates_[gi].center[2] += s.verts[vi * 3 + 2];
+                            ++counts[gi];
+                        }
+                    }
+                }
+                for (std::size_t gi = 0; gi < gates_.size(); ++gi)
+                    if (counts[gi] > 0)
+                        for (int k = 0; k < 3; ++k)
+                            gates_[gi].center[k] /= static_cast<float>(counts[gi]);
+            }
+            break;
+        }
+    }
+
     // render-world soup for spawn validation (visible-surface heights)
     for (const auto& s : world.sectors) {
         const std::uint32_t vbase =
@@ -230,11 +431,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     if (log) {
         int textured = 0;
         for (auto* t : textures_) if (t) ++textured;
+        std::size_t prop_inst = 0;
+        for (const auto& p : props_) prop_inst += p.instances.size();
         std::fprintf(log, "R4 track load OK: %s — tris=%u verts=%u sectors=%zu "
-                          "mats=%zu textured=%d radius=%.2f\n",
+                          "mats=%zu textured=%d radius=%.2f props=%zu "
+                          "(instances=%zu) gates=%zu\n",
                      piz_path, world.total_tris, world.total_verts,
                      world.sectors.size(), world.materials.size(), textured,
-                     radius_);
+                     radius_, props_.size(), prop_inst, gates_.size());
         std::fclose(log);
     }
     ready_ = true;
@@ -306,43 +510,33 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     for (std::size_t di = 0; di < txds.size(); ++di)
         dicts[di].Decode(txds[di].first, txds[di].second);
 
-    car_textures_.assign(model.materials.size(), nullptr);
-    for (std::size_t mi = 0; mi < model.materials.size(); ++mi) {
-        const char* want = model.materials[mi].tex_name;
-        if (!want[0]) continue;
-        for (std::size_t di = 0; di < dicts.size() && !car_textures_[mi]; ++di)
-            for (std::uint32_t ti = 0; ti < dicts[di].count(); ++ti)
-                if (std::strcmp(dicts[di].texture(ti).name, want) == 0) {
-                    car_textures_[mi] = MakeTexture(dev, dicts[di].texture(ti));
-                    break;
-                }
-    }
+    BuildDffBatches(dev, model, dicts, &car_batches_, &car_textures_);
+    car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
 
-    car_batches_.assign(model.materials.size(), {});
-    for (const auto& b : model.batches) {
-        auto& out = car_batches_[b.material];
-        const std::size_t nt = b.tris.size() / 3;
-        for (std::size_t i = 0; i < nt * 3; ++i) {
-            const std::uint16_t vi = b.tris[i];
-            V v;
-            v.x = b.verts[vi * 3 + 0];
-            v.y = b.verts[vi * 3 + 1];
-            v.z = b.verts[vi * 3 + 2];
-            if (!b.prelit.empty()) {
-                const std::uint32_t p = b.prelit[vi];
-                v.c = D3DCOLOR_ARGB(static_cast<std::uint8_t>(p >> 24),
-                                    static_cast<std::uint8_t>(p),
-                                    static_cast<std::uint8_t>(p >> 8),
-                                    static_cast<std::uint8_t>(p >> 16));
-            } else {
-                v.c = 0xFFFFFFFFu;
+    // REAL start line when the AI gates parsed: gate 0 center (LAPDATA's
+    // Lap_Line(0)), facing gate 1 — the race direction.
+    if (gates_.size() >= 2) {
+        const float* g0 = gates_[0].center;
+        const float* g1 = gates_[1].center;
+        bool gok = false;
+        const float gy = GroundHeight(g0[0], g0[2], &gok);
+        if (gok) {
+            car_pos_[0] = g0[0];
+            car_pos_[2] = g0[2];
+            car_pos_[1] = gy + car_ground_off_;
+            car_yaw_ = std::atan2(g1[2] - g0[2], g1[0] - g0[0]);
+            car_speed_ = 0.f;
+            car_ready_ = true;
+            if (log) {
+                std::fprintf(log, "R6 car spawn at REAL start line: gate0="
+                                  "(%.2f, %.2f, %.2f) yaw=%.2f (gates=%zu)\n",
+                             car_pos_[0], car_pos_[1], car_pos_[2], car_yaw_,
+                             gates_.size());
+                std::fclose(log);
             }
-            v.u = b.uvs[vi * 2 + 0];
-            v.v = b.uvs[vi * 2 + 1];
-            out.push_back(v);
+            return true;
         }
     }
-    car_ground_off_ = -model.bbox[1];   // lift so model min-Y sits on ground
 
     // Spawn: scan the collision world for the most OPEN ground point (the
     // racing surface, not a pit/garage): score each candidate by how many of
@@ -531,6 +725,29 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     }
+
+    // R6: track props — instanced DFF batches (tyre walls, crates, sea,
+    // freighter...) under their MTS / identity world matrices.
+    for (const auto& p : props_) {
+        for (const auto& inst : p.instances) {
+            dev->SetTransform(D3DTS_WORLD, &inst);
+            for (std::size_t mi = 0; mi < p.batches.size(); ++mi) {
+                const auto& b = p.batches[mi];
+                if (b.empty()) continue;
+                dev->SetTexture(0, p.textures[mi]);
+                if (!p.textures[mi])
+                    dev->SetTextureStageState(0, D3DTSS_COLOROP,
+                                              D3DTOP_SELECTARG2);
+                dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                     static_cast<UINT>(b.size() / 3),
+                                     b.data(), sizeof(V));
+                if (!p.textures[mi])
+                    dev->SetTextureStageState(0, D3DTSS_COLOROP,
+                                              D3DTOP_MODULATE);
+            }
+        }
+    }
+    dev->SetTransform(D3DTS_WORLD, &worldm);
 
     // R5: the car — model-space batches under a yaw+translate world matrix.
     if (car_ready_) {
