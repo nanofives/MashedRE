@@ -202,6 +202,29 @@ pair member with less race progress.** Round ends at ≤1 alive.
   fractional (node = round(prog) indexes gates) — equals
   `gate_index + frac` of our standalone race state.
 
+## Live probe results (2026-06-10, camera_probe.py on Training track)
+
+- `FUN_00446520` fires 541×/3s (~180/s) — per-frame, multiple subticks.
+- **Elimination empirically confirmed**: `cam[0x268]` (`DAT_00898980`)
+  reached exactly 10.0 and race-phase `DAT_0063ba8c` flipped 6 → 7.
+- Override table populated: 30 entries (elev=15.0, azim per node, h=−1).
+- Node array = gate ribbon (dir = unit race direction, c0/c3 = lateral
+  corner positions, sequential along track) — count 30 = Training's gates.
+- `DAT_007f1030` advanced ~3.0M/s (≈3MHz tick); /60000 quotient ≈ 50/s
+  sway phase. `DAT_007f0fc8` (jitter) = 0.0 in this mode.
+  `DAT_007f100c` = 0.016666 (1/60 per-tick blend step).
+- Ground truth: `log/camera_trace.csv` (286 rows), `log/camera_probe_static.json`.
+
+## Camera-angle data source — SOLVED: Common/LED.piz
+
+`LE<id>.LED` where id = `Course_Id(N)` from the track's COURSE.LUA
+(Arctic=0, Training=30, City=26 — matching the type-0x1a==26 City special
+case in 0x00446520). Format: 12-byte header + 384 × stride-0xC f32 triplets
+(elev°, azim°, height; −1 = unset) — byte-identical to the live
+`DAT_0063a5f0` table (verified LE0.LED hex vs live dump values 22.5/45/
+67.5/90/112.5/135/157.5/180 progression). The cmd-stream opcodes 0xC..0xF
+(0x00409790) are the loader transport for this file.
+
 ## Adapter mapping (port contract)
 
 Original getter → standalone state: `FUN_0046d4a0(+0x30/34/38)` → car pos;
