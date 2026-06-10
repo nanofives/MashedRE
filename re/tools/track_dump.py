@@ -42,6 +42,62 @@ def read_chunk(d, off):
     return t, sz, ver, off + 12
 
 
+def parse_matlist(d, mp, msz):
+    """MATLIST(0x08) -> ordered material list. Each MATERIAL(0x07) carries a
+    STRUCT (color RGBA at struct+0x04) and a TEXTURE(0x06) child whose second
+    subchunk is the STRING texture name. Returns [(tex_name, rgba), ...]."""
+    t2, s2, _, mp2 = read_chunk(d, mp)
+    assert t2 == 0x01
+    n = struct.unpack_from("<i", d, mp2)[0]
+    mats = []
+    q = mp2 + s2
+    for _ in range(n):
+        t3, s3, _, q3 = read_chunk(d, q)
+        assert t3 == 0x07, f"material chunk {t3:#x}"
+        name, rgba = None, None
+        qq, qe = q3, q3 + s3
+        while qq + 12 <= qe:
+            t4, s4, _, q4 = read_chunk(d, qq)
+            if t4 == 0x01:
+                rgba = struct.unpack_from("<4B", d, q4 + 4)
+            elif t4 == 0x06:
+                _t5, s5, _, q5 = read_chunk(d, q4)
+                _t6, s6, _, q6 = read_chunk(d, q4 + 12 + s5)
+                name = d[q6:q6 + s6].split(b"\x00")[0].decode("ascii", "replace")
+            qq = q4 + s4
+        mats.append((name, rgba))
+        q = q3 + s3
+    return mats
+
+
+def txd_names(d):
+    """Texture names in Mashed's chunk-0x23 TXD container (layout per
+    mashedmod/src/mashed_re/Txd/TxdDecoder.h / FUN_0054f8d0)."""
+    t, sz, _ver = struct.unpack_from("<III", d, 0)
+    assert t == 0x23, f"TXD root {t:#x}"
+    num_tex = struct.unpack_from("<H", d, 0x0C)[0]
+    names = []
+    p = 0x10
+    for _ in range(num_tex):
+        num_mips = struct.unpack_from("<I", d, p)[0]
+        p += 4
+        for _ in range(num_mips):
+            _it, isz, _, ip = read_chunk(d, p)          # IMAGE 0x18
+            _st, ssz, _, spp = read_chunk(d, ip)        # STRUCT
+            w, h, depth, stride = struct.unpack_from("<4I", d, spp)
+            q = spp + ssz + stride * h
+            if depth < 9:
+                q += (1 << depth) * 4
+            p = q
+        tt, tsz, _, tp = read_chunk(d, p)               # TEXTURE 0x06
+        assert tt == 0x06, f"texture chunk {tt:#x} @ {p:#x}"
+        _t5, s5, _, q5 = read_chunk(d, tp)              # STRUCT filter
+        _t6, s6, _, q6 = read_chunk(d, tp + 12 + s5)    # STRING name
+        names.append(d[q6:q6 + s6].split(b"\x00")[0].decode("ascii", "replace"))
+        p = tp + tsz
+    return names
+
+
 def parse_world(d):
     t, sz, ver, p = read_chunk(d, 0)
     assert t == 0x0B, f"root chunk {t:#x} != WORLD"
@@ -59,13 +115,12 @@ def parse_world(d):
                colSectorSize=col_sec, format=fmt, bbox=bbox)
     p = sp + ssz
 
-    # ---- material list (count only) ----
+    # ---- material list ----
     t, msz, _, mp = read_chunk(d, p)
     assert t == 0x08, f"matlist {t:#x}"
-    t2, s2, _, mp2 = read_chunk(d, mp)
-    assert t2 == 0x01
-    nmats = struct.unpack_from("<i", d, mp2)[0]
-    hdr["numMaterials"] = nmats
+    mats = parse_matlist(d, mp, msz)
+    hdr["numMaterials"] = len(mats)
+    hdr["materials"] = mats
     p = mp + msz
 
     # ---- sector tree ----
@@ -186,6 +241,34 @@ def main():
     s0 = sectors[0]
     print(f"  sector arrays: normals={s0['normals']} prelit={s0['prelit']} uvsets={s0['nuv']}")
     print(f"  VALIDATED: sector sums match header; all indices in range")
+
+    # material -> texture binding, cross-checked against the track's TXD.
+    # Entry name varies: TEXTURES.TXD (Arctic...) vs <TRACK>.TXD (CITY.TXD,
+    # DUMP.TXD...); prefer TEXTURES.TXD, else the LARGEST .TXD in the piz.
+    txd_blob = None
+    best = None
+    for (name, off, length, _fid) in entries:
+        u = name.upper()
+        if not u.endswith(".TXD"):
+            continue
+        if u.endswith("TEXTURES.TXD"):
+            best = (off, length)
+            break
+        if best is None or length > best[1]:
+            best = (off, length)
+    if best is not None:
+        txd_blob = data[best[0]:best[0] + best[1]]
+    if txd_blob is not None:
+        dict_names = set(txd_names(txd_blob))
+        bound = sum(1 for (n, _c) in hdr["materials"] if n in dict_names)
+        untex = sum(1 for (n, _c) in hdr["materials"] if n is None)
+        missing = [n for (n, _c) in hdr["materials"]
+                   if n is not None and n not in dict_names]
+        print(f"  materials: {len(hdr['materials'])} "
+              f"({bound} bound to TEXTURES.TXD names, {untex} untextured, "
+              f"{len(missing)} MISSING: {missing})")
+        for i, (n, c) in enumerate(hdr["materials"][:8]):
+            print(f"    mat[{i}] tex={n!r} rgba={c}")
 
     if args.obj:
         with open(args.obj, "w") as f:

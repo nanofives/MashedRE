@@ -49,8 +49,8 @@ bool Dictionary::Decode(const std::uint8_t* data, std::size_t size) {
         last_error_ = "root chunk id is not 0x23";
         return false;
     }
-    if (root_ver != kExpectedVersion) {
-        last_error_ = "root chunk version is not 0x1803FFFF";
+    if (!VersionOk(root_ver)) {
+        last_error_ = "root chunk version is not a known RW 3.6 encoding";
         return false;
     }
     if (kRwHeaderSize + root_size > size) {
@@ -109,7 +109,7 @@ bool Dictionary::Decode(const std::uint8_t* data, std::size_t size) {
                 last_error_ = "expected IMAGE chunk (0x18)";
                 return false;
             }
-            if (img_ver != kExpectedVersion) {
+            if (!VersionOk(img_ver)) {
                 last_error_ = "IMAGE chunk version mismatch";
                 return false;
             }
@@ -185,7 +185,7 @@ bool Dictionary::Decode(const std::uint8_t* data, std::size_t size) {
             last_error_ = "expected TEXTURE chunk (id=6)";
             return false;
         }
-        if (tex_ver != kExpectedVersion) {
+        if (!VersionOk(tex_ver)) {
             last_error_ = "TEXTURE chunk version mismatch";
             return false;
         }

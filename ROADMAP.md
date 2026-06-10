@@ -136,7 +136,7 @@ on the canonical screen set; all 34 screens reachable; settings screens actually
 persisted state. Logo animation: done (checkered chrome animates at the original's
 2/3 rad/s).
 
-### Phase R3 — Track & vehicle data foundation (IN PROGRESS — opened 2026-06-10)
+### Phase R3 — Track & vehicle data foundation (DONE 2026-06-10)
 **Goal:** every asset format the game world needs is parsed, documented, and dumpable.
 **Opener LANDED 2026-06-10: the track world geometry is CRACKED.** `GRAPH*.BSP` is a
 standard RW 3.6 world stream; `re/tools/track_dump.py` parses + validates **13/13**
@@ -148,11 +148,25 @@ byte-offset tables: `re/analysis/formats/track_world_bsp.md`.
 `.SPL` splines / `.MTS` material scripts / `.ANM` anims, material→TXD texture binding
 (needed for textured R4 rendering), `VEHICLES/*.piz` DFF model parsing, `.AI` script
 format (cross-ref MashedFileExtractor), format-flag bit semantics.
-**Exit criteria:** ✅ one full track's geometry parsed and exported to a viewable form;
-vehicle model parsed (open); `re/analysis/formats/<name>.md` per format (world done,
-others open); round-trip tests where the format is rewritable (open).
+**Phase closed 2026-06-10 (same day):** collision worlds = the SAME RW world stream,
+validated 13/13 (untextured materials = surface types); material→TXD binding cracked
+(MATERIAL→TEXTURE→STRING; TXD naming + version variants handled; binding sweep 13/13);
+vehicle DFF parsed (`re/tools/dff_dump.py`, ADVANTAGE0: 83 frames / 71 atomics /
+15,358 tris validated → OBJ; doc `re/analysis/formats/vehicle_dff.md`).
+**Exit criteria:** ✅ track geometry parsed+viewable; ✅ vehicle model parsed; ✅ format
+docs (world+collision+binding, DFF); round-trip writers deferred (no rewriting use-case
+yet — recorded in the format doc). Remaining loose ends (AI*.BSP, SPL/MTS/ANM,
+multi-TXD lookup) move into R4/R5 demand-driven scope.
 
-### Phase R4 — World render
+### Phase R4 — World render (OPENED 2026-06-10 — opener landed)
+**Opener LANDED 2026-06-10:** the Arctic track renders TEXTURED in `mashed_re.exe`
+with an auto-orbit fly-through camera (`MASHED_TRACK_VIEW=1`): `Track/TrackWorld` C++
+parser (same validations as the Python tool) + `D3d9Render/TrackRenderer` spike
+(per-material batches, baked prelight as vertex diffuse, PAL4/PAL8/32bpp textures,
+hand-built matrices, depth buffer added to the device). Proof:
+`verify/r4/arctic_fly_*.png` — island, dirt circuit and the suspension bridge
+unmistakable. The spike deliberately prejudges nothing: the parsed world is
+renderer-agnostic and the architecture gate below stays open.
 **Opening gate — renderer architecture decision (stop-and-ask):** evaluate with short
 spikes, then the user decides between (a) vendoring **librw** (the re3 path), (b) porting
 the minimal RW 3.x subset ourselves (extending the `RwIm2DBridge` fake-device approach to

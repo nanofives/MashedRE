@@ -61,6 +61,8 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Piz\PizReader.cpp" ^
     "Rws\RwsChunkWalker.cpp" ^
     "Txd\TxdDecoder.cpp" ^
+    "Track\TrackWorld.cpp" ^
+    "D3d9Render\TrackRenderer.cpp" ^
     "D3d9Render\QuadRenderer.cpp" ^
     "D3d9Render\RwIm2DBridge.cpp" ^
     "D3d9Render\PngLoader.cpp" ^

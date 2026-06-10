@@ -150,6 +150,7 @@
 #include "Rws/RwsChunkWalker.h"
 #include "Txd/TxdDecoder.h"
 #include "D3d9Render/QuadRenderer.h"
+#include "D3d9Render/TrackRenderer.h"
 #include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
 #include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
 #include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
@@ -473,6 +474,12 @@ constexpr int           kHandleMenuFont = 9;
 constexpr std::uint32_t kSlotMenuBadge   = 16;
 constexpr int           kHandleMenuBadge = 10;
 bool             g_menu_badge_ready = false;
+
+// R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
+// for Arctic>). Renders the cracked RW world (Track/TrackWorld) through the
+// spike renderer (D3d9Render/TrackRenderer) with an auto-orbit camera.
+bool                                  g_track_view = false;
+mashed_re::D3d9Render::TrackRenderer  g_track;
 constexpr float         kMenuTextHeight = 30.f;   // on-screen glyph height (px)
 wchar_t          g_menu_msgs[8][64] = {};
 
@@ -1019,6 +1026,9 @@ bool InitD3D9() {
     g_pp.BackBufferFormat       = D3DFMT_UNKNOWN; // current display format
     g_pp.hDeviceWindow          = g_hwnd;
     g_pp.PresentationInterval   = D3DPRESENT_INTERVAL_ONE;
+    // R4: depth buffer for the 3D track path (unused by the 2D menu path).
+    g_pp.EnableAutoDepthStencil = TRUE;
+    g_pp.AutoDepthStencilFormat = D3DFMT_D16;
 
     HRESULT hr = g_d3d->CreateDevice(
         D3DADAPTER_DEFAULT,
@@ -1102,6 +1112,26 @@ bool RenderFrame() {
     if (hr == D3DERR_DEVICENOTRESET) {
         hr = g_device->Reset(&g_pp);
         if (FAILED(hr)) return false;
+    }
+
+    // R4 opener: track fly-through mode (MASHED_TRACK_VIEW). Renders the
+    // parsed RW world instead of the menu; dumps three orbit screenshots
+    // for verification, then keeps flying.
+    if (g_track_view && g_track.ready()) {
+        g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+                        D3DCOLOR_XRGB(24, 28, 40), 1.0f, 0);
+        g_device->BeginScene();
+        static DWORD s_t0 = GetTickCount();
+        const float t = static_cast<float>(GetTickCount() - s_t0) * 0.001f;
+        g_track.Render(g_device, t);
+        g_device->EndScene();
+        static int s_frame = 0;
+        ++s_frame;
+        if (s_frame == 60)  DumpBackbufferBMP("verify/r4/arctic_fly_1.bmp");
+        if (s_frame == 200) DumpBackbufferBMP("verify/r4/arctic_fly_2.bmp");
+        if (s_frame == 340) DumpBackbufferBMP("verify/r4/arctic_fly_3.bmp");
+        g_device->Present(nullptr, nullptr, nullptr, nullptr);
+        return true;
     }
 
     g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
@@ -2625,6 +2655,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         g_menu_badge_ready = LoadBadgeSprites();
         // R2-close: persisted menu settings (Sound screen values).
         LoadMenuSettings();
+        // R4 opener: MASHED_TRACK_VIEW=<piz path | 1> -> fly-through mode.
+        {
+            char tv[260] = {};
+            if (GetEnvironmentVariableA("MASHED_TRACK_VIEW", tv, sizeof(tv)) > 0) {
+                const char* piz = (tv[0] == '1' && tv[1] == '\0')
+                    ? "original/TOASTART/TRACKS/Arctic.piz" : tv;
+                CreateDirectoryA("verify\\r4", nullptr);
+                g_track_view = g_track.Load(g_device, piz, kLogPath);
+            }
+        }
         // R2-2 save-driven game state: load original/gamesave.bin and replay
         // Save::DeserializeFromBuffer's span restore (FUN_00404e80 step 1) so
         // the state-gated routing/grey-out branches see the real save (unlock

@@ -84,11 +84,38 @@ Proof artifact: `verify/r3/arctic_wireframe.png` — the Arctic arena top-down
 wireframe (island terrain + the signature bridge span clearly visible) +
 `verify/r3/arctic_world.obj` (loads in any OBJ viewer).
 
-## Open items (R3 continuation)
+## Collision worlds — SAME format (cracked 2026-06-10)
 
-- COLLISIONS/COLLIDE.BSP container (likely RW collision world — separate crack).
+`COLLISIONS.BSP` / `COLLIDE.BSP` / `COLL.BSP` (naming varies per track) is the
+SAME RW world stream, validated **13/13** with the same parser (e.g. Arctic:
+3,047 tris / 2,675 verts / 6 sectors, format 0x40000079; others 0x40000049).
+Its MATLIST materials are untextured color-only entries = collision surface
+types (3..25 per track).
+
+## Material → texture binding (cracked 2026-06-10)
+
+Each MATERIAL(0x07) carries STRUCT (RGBA at +0x04) + TEXTURE(0x06) whose
+second subchunk is the STRING texture name. Names resolve into the track's
+TXD — entry name varies: `TEXTURES.TXD` (Arctic…) or `<TRACK>.TXD` (CITY.TXD,
+DUMP.TXD…); prefer TEXTURES.TXD else the largest .TXD. Track TXDs are the
+SAME chunk-0x23 container as the menu TXDs but with root version 0x1c02000a
+(TxdDecoder now accepts both encodings). Binding sweep 13/13: 21/24..24/24
+bound per track; small MISSING tail (e.g. 'JetRanger', 'Van') = names living
+in secondary TXDs / prop TXDs — multi-TXD lookup is an R4 detail.
+
+## R4 opener (2026-06-10): rendered in mashed_re.exe
+
+`Track/TrackWorld.{h,cpp}` (C++ twin of track_dump.py, same validations) +
+`D3d9Render/TrackRenderer.{h,cpp}` (per-material batches, prelight as vertex
+diffuse, PAL4/PAL8/32bpp texture expansion, hand-built LookAt/Perspective
+matrices, auto-orbit fly-through) render Arctic textured in the standalone:
+`verify/r4/arctic_fly_*.png` (island, dirt circuit, suspension bridge with
+cables — baked dusk prelight). Env `MASHED_TRACK_VIEW=<piz|1>`.
+
+## Open items (R3/R4 continuation)
+
 - AI*.BSP graph format; `.SPL` splines; `.MTS` material scripts; `.ANM` anims.
-- Material → TEXTURES.TXD texture binding (MATLIST materials carry texture
-  chunks; needed for textured rendering in R4).
+- Multi-TXD texture lookup (props/vehicles referenced from world materials).
 - format-flag bit semantics (0x4001004d vs 0x40020089 etc.) — currently solved
   per-sector empirically; bit meanings unconfirmed. [UNCERTAIN]
+- Round-trip writer: not yet needed (no world rewriting use-case identified).

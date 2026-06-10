@@ -41,6 +41,12 @@ constexpr std::uint32_t kStructChunkId     = 0x00000001;  // rwID_STRUCT
 constexpr std::uint32_t kStringChunkId     = 0x00000002;  // rwID_STRING
 constexpr std::uint32_t kExtensionChunkId  = 0x00000003;  // rwID_EXTENSION
 constexpr std::uint32_t kExpectedVersion   = 0x1803FFFF;  // RW 3.6.0.3 packed
+// Track TXDs (TRACKS/*.piz TEXTURES.TXD / <TRACK>.TXD) carry the alternate
+// packed encoding of the same RW 3.6 build (observed 2026-06-10, R4 opener).
+constexpr std::uint32_t kExpectedVersionAlt = 0x1C02000A;
+inline bool VersionOk(std::uint32_t v) {
+    return v == kExpectedVersion || v == kExpectedVersionAlt;
+}
 constexpr std::size_t   kRwHeaderSize      = 12;
 constexpr std::uint32_t kStructPayloadSize = 16;          // w,h,depth,stride
 constexpr std::uint32_t kMaxNameLen        = 32;
