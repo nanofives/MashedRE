@@ -75,4 +75,5 @@ in notes) or demoted (CHANGELOG line). Track progress below.
 | 2026-06-05 | 25 | 3 | 22 → C2 (no installable reimpl) | CHANGELOG lines 3170–3195 |
 | 2026-06-06 | 1 | 1 (RwMatrixScale) | 0 | `boot_to_menu_install_observe_2026-06-06` |
 | 2026-06-09 | R0 ledger repair (no re-validation) | — | — | 24 escapees + 3 trio tagged (all verified in-window, 0 skips); 22 stale tags on demoted rows rewritten to -CLEARED. Open population = 101, all C4. `scripts/r0/c4_ledger_repair.py` |
+| 2026-06-09 | 16 (R1-A static installability audit) | 0 | 16 → C2 (11 no-install-site, 5 install-disabled) | source scan: 101 suspects vs active RH_ScopedInstall sites (521); fails C3 hook gate per 06-05/06-07 precedents. Open population = 85, all with active installs. `scripts/r1/demote_noninstallable_suspects.py` |
 | | | | | |

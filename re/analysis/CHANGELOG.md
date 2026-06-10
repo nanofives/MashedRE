@@ -3247,3 +3247,19 @@ Demotions use `oldC<-newC` (arrow flipped).
 `n2026-06-09 r0-repair(DEFERRED): two parallel stores unified — all 112 re/DEFERRED.md rows dispositioned into root DEFERRED.md '## Cleared' (every RVA already C2+ in hooks.csv; the 6 previously-unresolvable lookups resolved after rva-prefix normalization); 21 ID collisions renumbered to D-11031+ with breadcrumbs; re/DEFERRED.md replaced by tombstone. Row counts conserved. Script scripts/r0/unify_deferred.py; backups log/backups/{DEFERRED,re_DEFERRED}.md.pre_r0.
 `n2026-06-09 r0-repair(queues): PROMOTION_QUEUE.md reconciled — 33 of 35 Queued rows verified merged/closed (promoted rvas C3+ in hooks.csv, demotions recorded e.g. 004c5890 frida-sweep-q, zero-yield sessions, harness arg_types verified in diff_template.js/run_diff.py) and moved to Merged with reconciliation notes; 2 rows HONESTLY kept Queued: c3-batch-af-s1 (0x00473540/0x004736c0 claimed C2->C3 but hooks.csv shows C2, no promotion record) + c3-batch-af-s4 (0x00401ee0 likewise) — evidence+reimpl exist, central classification never landed, needs re-classify drain. All 70 SCRIBE_QUEUE_<batch>_s<N>.md fragments verified fully-accounted (every rva C2+/library-tagged) and archived to re/archive/scribe_fragments/. Scripts scripts/r0/{reconcile_promotion_queue,archive_scribe_fragments}.py.
 `n2026-06-09 r0-repair(CLAUDE.md+scripts): stale claims fixed — patch count 5->4 with skip_powerups marked RETIRED/DO-NOT-APPLY (boot crash #2 root cause 2026-06-01); patch_mashed_skip_powerups.py rewritten to refuse-apply / un-apply (verified: refuses with exit 1 on current intact binary); 'Current phase' section rewritten to ROADMAP v2 standalone-first framing (R0 executed, R1 C4-revalidation lane 101 suspect rows incl. Vec3 trio, R2 menu completion; batch pipelines demoted).
+2026-06-09  00495270  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004c5c80  C4->C2  R1-A re-validation: install-disabled (fails C3 hook gate)
+2026-06-09  004c9eb0  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004c9f50  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004c9f60  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004cbc60  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004cbc70  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004cbc80  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004cc820  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  00495120  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004c2d90  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  00498c00  C4->C2  R1-A re-validation: no-install-site (fails C3 hook gate)
+2026-06-09  004c5a00  C4->C2  R1-A re-validation: install-disabled (fails C3 hook gate)
+2026-06-09  004c5ae0  C4->C2  R1-A re-validation: install-disabled (fails C3 hook gate)
+2026-06-09  004c5b50  C4->C2  R1-A re-validation: install-disabled (fails C3 hook gate)
+2026-06-09  00428590  C4->C2  R1-A re-validation: install-disabled (fails C3 hook gate)
