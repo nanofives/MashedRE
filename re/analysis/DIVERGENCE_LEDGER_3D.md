@@ -53,7 +53,12 @@ more format/RE work · ✅ = closed this pass.
    original follows AI.BSP with its own controller. [SCAFFOLD → RE]
 9. **Lighting on vehicles** — original applies `Vehicle_Shininess_Range`
    lighting; standalone uses raw DFF prelight (cars look flatter/darker).
-   [GAP — needs RW lighting model or baked approximation]
+   [GAP — Option-B port STARTED 2026-06-10: Lua handler located at
+   0x0047ac80 (registered at 0x00440d40 via 0x0047b980), stores (min,max)
+   to course-ctx `[DAT_006bf1cc]+0x204/+0x208`; ctx init 0x0047a020
+   defaults (0.0, 1.0). Consumer holds the ctx ptr in a register — next
+   step: Frida read-watch on ctx+0x204 in a live race to find the
+   lighting application site.]
 10. **Powerups, shadows, particles, skid marks, UV anims (Sea.uva), Mist/
     windows overlays** — absent entirely. [DATA/feature — out of scope here]
 
