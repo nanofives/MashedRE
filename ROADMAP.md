@@ -176,7 +176,20 @@ the minimal RW 3.x subset ourselves (extending the `RwIm2DBridge` fake-device ap
 original-game screenshot of the same viewpoint (lighting deltas allowed and documented);
 stable frame rate at 800×600.
 
-### Phase R5 — Drivable car
+### Phase R5 — Drivable car (OPENED 2026-06-10 — kinematic opener landed)
+**Opener LANDED 2026-06-10 (branch `phase/r5-car-on-track`):** the Advantage car
+DRIVES on Arctic inside `mashed_re.exe` — C++ DFF clump parser (`Track/DffModel`,
+librw-cross-referenced, frame transforms baked to model space), vehicle TXD textures,
+collision-world ground raycast (`COLLI*.BSP` triangle soup), kinematic drive model
+(accel/drag/speed-scaled steering, ground snap, island-edge stop), chase camera, and a
+visible-ground spawn scorer (Arctic's frozen bay is collision-only — its SEA.DFF visual
+is an unrendered prop). `MASHED_CAR=1 MASHED_DRIVE_DEMO=1`; proof
+`verify/r5/car_1_spawn.png` (the car on Arctic's lit main street) + 60-unit
+ground-snapped drive telemetry. R4 also gained track-by-name loading, a free
+WASD/mouse camera and multi-TXD material lookup (dump.piz 38/40 textured).
+**The kinematic model is explicitly NOT the ported physics** — it is the scaffold the
+real FUN-ported physics/handling will replace (the physics decision gate below).
+
 **Goal:** a vehicle on a track under player control.
 **Activities:** vehicle model load/render; **physics decision gate** (the original vendors
 RenderWare Physics 3.7 + qhull-2002.1 — decide reimplement-the-used-subset vs vendor real
