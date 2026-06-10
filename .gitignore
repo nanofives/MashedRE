@@ -22,6 +22,15 @@
 /.last_master_sync
 /master.WIP-*
 
+# --- Fanout runtime clutter (R0 2026-06-09): markers + generated batch prompts live in log/batches/ ---
+/.pool_slot_*
+/.sweep_sid_*
+/batch_*.txt
+/c3_batch_*.txt
+/build_*.txt
+/sweep_manifest_*.json
+/harness_ext_*.txt
+
 # --- Build outputs ---
 /mashedmod/build/
 /mashedmod/src/mashed_re/build/
