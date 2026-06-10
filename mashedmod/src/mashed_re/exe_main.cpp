@@ -971,8 +971,12 @@ void DrawMashedString(const wchar_t* s, float cx, float top_y,
     if (!g_font.ready() || !s) return;
     const float scale = height_px / g_font.natural_height();
     const float space_adv = height_px * 0.32f;
+    // Codepoints 0..255 flow through: 0..127 hit the ASCII LUT, 0x80..0xFF the
+    // FGDC20 extended table (FUN_00554390 font+0x12c) — the prompt strip's nav
+    // glyphs (remapped 0x80..0x8f arrows/back) resolve there. Only codepoints
+    // outside both ranges fall back to '?'.
     auto glyph_of = [](wchar_t c) -> unsigned char {
-        return static_cast<unsigned char>((c >= 0 && c < 128) ? c : '?');
+        return static_cast<unsigned char>((c >= 0 && c < 256) ? c : '?');
     };
     // Pass 1: measure (for centering / unused when left-anchored).
     float total = 0.f;

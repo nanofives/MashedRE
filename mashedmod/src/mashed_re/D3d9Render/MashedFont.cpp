@@ -78,14 +78,22 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     const std::uint8_t* rwf = FindBlob(piz, "FGDC20.RWF", &rwf_len);
     if (!rwf || rwf_len < 0x230) return false;
     m_height = RdF32(rwf, 0x14);                       // 33.0
-    m_glyphCount = RdU32(rwf, 0x28);
-    const std::uint32_t charTblCount = RdU32(rwf, 0x2c);
+    m_extBase    = RdU32(rwf, 0x24);                   // FGDC20: 0x80
+    m_glyphCount = RdU32(rwf, 0x28);                   // FGDC20: 225
+    m_extCount   = RdU32(rwf, 0x2c);                   // FGDC20: 128
     if (m_glyphCount == 0 || m_glyphCount > 256) return false;
-    const std::size_t lut_off   = 0x30 + static_cast<std::size_t>(charTblCount) * 2;
+    if (m_extCount > 256) return false;
+    const std::size_t lut_off   = 0x30 + static_cast<std::size_t>(m_extCount) * 2;
     const std::size_t glyph_off = lut_off + 0x100;
     if (glyph_off + static_cast<std::size_t>(m_glyphCount) * 21 > rwf_len) return false;
 
-    // LUT: 128 u16 (chars 0..127) -> glyph index.
+    // Extended codepoint -> glyph table (FUN_00554390 reads it BEFORE the
+    // ASCII table: ext-count u16s into font+0x12c; covers codepoints
+    // ext_base..ext_base+ext_count-1 — the 0x80..0x8f nav glyphs live here).
+    for (std::uint32_t c = 0; c < m_extCount; ++c) {
+        m_ext[c] = RdU16(rwf, 0x30 + static_cast<std::size_t>(c) * 2);
+    }
+    // ASCII LUT: 128 u16 (chars 0..127) -> glyph index (font+0x24, 0x100 bytes).
     for (int c = 0; c < 128; ++c) {
         m_lut[c] = RdU16(rwf, lut_off + static_cast<std::size_t>(c) * 2);
     }
@@ -106,8 +114,16 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
 }
 
 bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_px) const {
-    if (!m_ready || ch >= 128) return false;
-    const std::uint16_t g = m_lut[ch];
+    if (!m_ready) return false;
+    std::uint16_t g;
+    if (ch < 128) {
+        g = m_lut[ch];
+    } else if (ch >= m_extBase &&
+               static_cast<std::uint32_t>(ch) < m_extBase + m_extCount) {
+        g = m_ext[ch - m_extBase];   // extended table (nav glyphs 0x80..0x8f)
+    } else {
+        return false;
+    }
     if (g >= m_glyphCount || !m_glyph[g].valid) return false;
     const Glyf& gl = m_glyph[g];
     uv[0] = gl.u0; uv[1] = gl.v0; uv[2] = gl.u1; uv[3] = gl.v1;

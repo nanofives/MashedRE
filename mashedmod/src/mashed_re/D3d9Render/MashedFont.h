@@ -5,9 +5,15 @@
 //                ver 0x1c02000a: root 0x23, struct @0x28 = [plat,w,h,depth],
 //                1024-byte palette region, then w*h intensity bytes @0x438).
 //   FGDC20.RWF — RW chunk 0x199 (RtCharset). Cracked from the deserializer
-//                FUN_00554390: header, char table (u16 @0x30), char->glyph LUT
-//                (128 u16 @0x130, glyph = LUT[char]), then `glyphCount` 21-byte
-//                glyph records @0x230, each [u0,v0,u1,v1 floats][int][page byte].
+//                FUN_00554390: header [ext_base u32 @0x24 (=0x80), glyphCount
+//                u32 @0x28 (=225), ext_count u32 @0x2c (=128)], EXTENDED
+//                codepoint->glyph table (ext_count u16 @0x30; covers chars
+//                ext_base..ext_base+ext_count-1 — the prompt-strip nav glyphs
+//                0x80..0x8f live here), ASCII char->glyph LUT (128 u16
+//                @0x130), then `glyphCount` 21-byte glyph records @0x230,
+//                each [u0,v0,u1,v1 floats][int][page byte]. Struct mirror:
+//                font+0x124 ext-base / +0x128 ext-count / +0x12c ext-table /
+//                +0x24 i16[128] ASCII table (FUN_00554390 read order).
 //
 // The atlas is uploaded as a white-text/alpha texture and registered with the
 // RwIm2DBridge; the caller draws each glyph as a UV-rect quad via HudIm2DQuad.
@@ -31,9 +37,11 @@ public:
     int   handle()         const { return m_handle; }
     float natural_height() const { return m_height; }   // glyph cell height, px
 
-    // Look up an ASCII char's glyph. Fills uv[4] = {u0,v0,u1,v1} and *width_px
-    // (the glyph's atlas width in pixels = advance). Returns false if the char
-    // has no glyph (caller advances by a space).
+    // Look up a char's glyph: ASCII (0..127) via the LUT, extended codepoints
+    // (ext_base..ext_base+ext_count-1, e.g. the 0x80..0x8f nav glyphs) via the
+    // extended table. Fills uv[4] = {u0,v0,u1,v1} and *width_px (the glyph's
+    // atlas width in pixels = advance). Returns false if the char has no glyph
+    // (caller advances by a space).
     bool Glyph(unsigned char ch, float uv[4], float* width_px) const;
 
 private:
@@ -46,6 +54,9 @@ private:
     struct Glyf { float u0, v0, u1, v1, w_px; bool valid; };
     Glyf          m_glyph[256] = {};
     std::uint16_t m_lut[128]   = {};   // char (0..127) -> glyph index
+    std::uint32_t m_extBase  = 0;      // font+0x124 (FGDC20: 0x80)
+    std::uint32_t m_extCount = 0;      // font+0x128 (FGDC20: 128)
+    std::uint16_t m_ext[256]   = {};   // font+0x12c: (ch-ext_base) -> glyph
 };
 
 }  // namespace D3d9Render
