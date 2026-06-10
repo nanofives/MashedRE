@@ -8,11 +8,13 @@
 // ============================ SCAFFOLD NOTICE ===========================
 // (reconciliation 2026-06-10, see re/analysis/DIVERGENCE_LEDGER_3D.md)
 // The DATA parsing consumed here (TrackWorld/DffModel/MTS/gates/fog params)
-// is FAITHFUL — format-cracked and validated. Everything BEHAVIORAL in this
-// class is [SCAFFOLD] — invented stand-ins to be REPLACED by RE'd verbatim
-// ports, NOT refined: the orbit/chase/centroid cameras, the kinematic+
-// harvested-rates handling, AI lane/braking driving, the ">7 gates"
-// elimination rule, first-to-N scoring, spawn scorer, drive/round demos.
+// is FAITHFUL — format-cracked and validated. PORTED (no longer scaffold,
+// 2026-06-10): the shared race camera + zoom-saturation elimination rule
+// (Race/RaceCamera.{h,cpp}, verbatim from 0x00446520/0x00410d10). Still
+// [SCAFFOLD] — invented stand-ins to be REPLACED by RE'd verbatim ports,
+// NOT refined: the orbit/free dev cameras and single-car chase cam, the
+// kinematic+harvested-rates handling, AI lane/braking driving, first-to-N
+// scoring, spawn scorer, drive/round demos.
 // ARCHITECTURE NOTE: this is the R4 *opening spike* — a minimal D3D9 path
 // consuming the cracked RW data so the renderer-architecture decision
 // (librw vs RW-subset port vs custom D3D9) is made against something
@@ -23,6 +25,8 @@
 #include <d3d9.h>
 #include <cstdint>
 #include <vector>
+
+#include "../Race/RaceCamera.h"
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -111,8 +115,25 @@ private:
 
     // AI path gates (AI*.BSP: 94-ish vertical quads; material RED byte = the
     // gate index LAPDATA's Lap_Line numbers refer to). gate 0 = start line.
-    struct Gate { float center[3]; };
+    // c0/c3 = first/fourth vertex in stream order (the original's node
+    // corners j=0/j=3, FUN_00426d00); dir = unit race direction (the
+    // original's node +0x00, FUN_00426cc0) — feeds the RaceCamera port.
+    struct Gate {
+        float center[3];
+        float c0[3], c3[3];
+        float dir[3];
+    };
     std::vector<Gate> gates_;
+
+    // VERBATIM-PORTED race camera + elimination (Race/RaceCamera.{h,cpp};
+    // replaces the invented centroid camera + ">7 gates" rule).
+    Race::RaceCamera race_cam_;
+    std::vector<Race::RaceCamNode> cam_nodes_;
+    int    course_id_ = -1;       // COURSE.LUA Course_Id(N) -> LE<N>.LED
+    double cam_ticks_ = 0.0;      // DAT_007f1030 equivalent (~3.0 MHz live)
+public:
+    float cam_required_zoom() const { return race_cam_.required_zoom(); }
+private:
 
     // track props: RWP_Object DFF+MTS instanced sets + Clump_Filename DFFs
     // at identity (their frames carry placement; COURSE.LUA wiring).

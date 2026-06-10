@@ -75,9 +75,10 @@ build (`re/tools/trainer_anchor_check.py`): camera-height block at
 
 Runtime globals: `DAT_007f0fd0` game mode; `DAT_007f0fd4` "it" player (mode 1);
 `DAT_007f0f38` overhead-cam toggle (pitch=90, zoom=10); `DAT_007f100c`
-per-tick blend increment; `DAT_007f1030` timer (sway phase = u32 quotient
-/60000 at 0x00447c33..0x00447c3f) [UNCERTAIN: unit — resolve via live read];
-`DAT_007f0fc8` target jitter amplitude [UNCERTAIN: value — live read].
+per-tick blend increment (= 0.016666 live); `DAT_007f1030` timer (sway phase
+= u32 quotient /60000 at 0x00447c33..0x00447c3f; advanced ~3.0M/s in the
+live probe — port accumulates dt×3e6); `DAT_007f0fc8` target jitter
+amplitude (= 0.0 live in the standard race).
 
 ## Race-branch algorithm (0x00446520, mechanical)
 
@@ -110,8 +111,8 @@ per-tick blend increment; `DAT_007f1030` timer (sway phase = u32 quotient
    rotY(azim+180) applied to (0,−1,0); else dir = gate-node dir
    (`FUN_00426cc0` → `DAT_00663658 + n×0x4c`) rotated −25° about
    (corner0−corner3) (corners via `FrontendArraySlotGet` 0x00426d00);
-   height = entry.height if != −1 else 0. [UNCERTAIN: whether real tracks
-   populate the override table — resolve live]
+   height = entry.height if != −1 else 0. (Live probe: real tracks DO
+   populate it — from Common/LED.piz, see "Camera-angle data source" below.)
 9. `view_dir = normalize(dirA_sample + dirB_sample)`;
    `path_zoom = (hA + hB) × 0.5`.
 10. Last-survivor: if exactly 1 active+alive and dead-flag set:
@@ -195,9 +196,9 @@ pair member with less race progress.** Round ends at ≤1 alive.
   `DAT_0066d6d8`): +0x0 vec3 node dir, corners at +0x18+j×0xc (j=0..3 via
   0x00426d00). Standalone equivalent: gates from AI.BSP (already parsed).
 - Per-node (elev, azim, height) override: table `DAT_0063a5f0` stride 0xC,
-  fed by cmd-stream opcodes 0xC..0xF (0x00409790); producer not yet located
-  (not COURSE.LUA/LAPDATA.LUA/KTCSCRIPT.LUA text) [UNCERTAIN — live dump
-  will show whether populated and from where; GRAPH.BSP is unexplored].
+  fed by cmd-stream opcodes 0xC..0xF (0x00409790); producer = Common/LED.piz
+  `LE<Course_Id>.LED` (solved — see "Camera-angle data source" below).
+  GRAPH.BSP = the render world (`World_Bsp_Filename` in COURSE.LUA).
 - Progress per player: 0..100-ish float (wrap math 80/20/100), per-gate
   fractional (node = round(prog) indexes gates) — equals
   `gate_index + frac` of our standalone race state.

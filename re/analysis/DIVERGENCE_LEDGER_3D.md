@@ -21,14 +21,23 @@ more format/RE work · ✅ = closed this pass.
    The original races four different vehicles/liveries (yellow/green/blue/red
    in t01). Data exists (10 VEHICLES/*.piz); selection logic is game code.
    [SCAFFOLD → real car-selection port]
-4. **Camera** — invented orbit/chase/centroid cameras vs the original's real
-   shared race camera (higher, frames the pack with its own zoom law — t01).
-   [SCAFFOLD → RE the camera update function]
+4. **Camera** — ✅ CLOSED 2026-06-10: the real shared race camera
+   (FUN_00446520) verbatim-ported to Race/RaceCamera.cpp — pair framing,
+   LED.piz per-gate angles, zoom/distance/pitch laws, springs, sway.
+   Validated against a live original trace (zoom 286/286 rows; offset/
+   pitch within hmix margin). The orbit/free cameras remain as dev-viewer
+   tools only. Residual: countdown/start uses the race cam (original may
+   use a start cinematic — unverified).
 5. **Scoring/HUD** — the real game uses team badges + score BARS + “+1/−1”
    points on a Current Standings screen (t03); my win-pips/banner are
    inventions. [SCAFFOLD → RE the points table + standings screen]
-6. **Elimination rule** — mine = ">7 gates behind leader"; the real rule is
-   screen-edge based (off-camera = out). [SCAFFOLD → RE]
+6. **Elimination rule** — ✅ CLOSED 2026-06-10: the real rule is neither
+   ">7 gates" nor literally screen-edge: a car dies when the camera's
+   REQUIRED ZOOM saturates at 10.0 (cam+0x9a0, checked by fcomp at
+   0x00410ee3), and the victim is the lesser-progress member of the
+   most-separated pair (wrap-adjusted 80/20/100). Ported verbatim
+   (RaceCamera::EliminationCheck); empirically confirmed live (zoom hit
+   10.0 → race-phase 6→7).
 7. **Handling** — velocity/grip/drag rates harvested from live telemetry but
    the force pipeline is approximated; input-matched diff deferred (needs an
    in-race input injector — the menu input override does not reach the race).

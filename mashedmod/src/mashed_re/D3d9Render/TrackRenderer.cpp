@@ -2,6 +2,7 @@
 
 #include "TrackRenderer.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -364,6 +365,11 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                        " Clump_Exclude_From_World(%d)",
                                        &idx) == 1) {
                     if (idx >= 0 && idx < 64) excluded[idx] = true;
+                } else if (std::sscanf(line.c_str(),
+                                       " Course_Id( %d )", &idx) == 1 ||
+                           std::sscanf(line.c_str(),
+                                       " Course_Id(%d)", &idx) == 1) {
+                    course_id_ = idx;   // -> Common/LED.piz LE<id>.LED
                 } else {
                     // Setup_Fog(start_frac, end, r, g, b) — track fog wiring
                     float fa = 0.f, fb = 0.f; int fr = 0, fg2 = 0, fb2 = 0;
@@ -417,6 +423,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             if (ab && aw.Parse(ab, al)) {
                 gates_.assign(aw.materials.size(), Gate{});
                 std::vector<int> counts(aw.materials.size(), 0);
+                // per-gate unique vertex indices in stream order — the
+                // original keeps the quad's 4 verts as node corners j=0..3
+                // (FUN_00426d00); we need j=0 and j=3 for the camera port.
+                std::vector<std::vector<std::uint32_t>> gate_verts(
+                    aw.materials.size());
+                std::vector<const Track::Sector*> gate_sector(
+                    aw.materials.size(), nullptr);
                 for (const auto& s : aw.sectors) {
                     const std::size_t nt = s.tris.size() / 4;
                     for (std::size_t ti = 0; ti < nt; ++ti) {
@@ -424,12 +437,17 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                         // gate index = material RED byte (== mat order here)
                         const std::uint8_t gi = aw.materials[mat].rgba[0];
                         if (gi >= gates_.size()) continue;
+                        gate_sector[gi] = &s;
                         for (int k = 1; k <= 3; ++k) {
                             const std::uint16_t vi = s.tris[ti * 4 + k];
                             gates_[gi].center[0] += s.verts[vi * 3 + 0];
                             gates_[gi].center[1] += s.verts[vi * 3 + 1];
                             gates_[gi].center[2] += s.verts[vi * 3 + 2];
                             ++counts[gi];
+                            auto& gv = gate_verts[gi];
+                            bool seen = false;
+                            for (auto u : gv) if (u == vi) { seen = true; break; }
+                            if (!seen) gv.push_back(vi);
                         }
                     }
                 }
@@ -437,8 +455,70 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                     if (counts[gi] > 0)
                         for (int k = 0; k < 3; ++k)
                             gates_[gi].center[k] /= static_cast<float>(counts[gi]);
+                // corners (vertex order ascending = stream order) + race dir
+                for (std::size_t gi = 0; gi < gates_.size(); ++gi) {
+                    Gate& g = gates_[gi];
+                    auto& gv = gate_verts[gi];
+                    if (gv.size() < 4 || !gate_sector[gi]) continue;
+                    std::sort(gv.begin(), gv.end());
+                    const float* vs = gate_sector[gi]->verts.data();
+                    for (int k = 0; k < 3; ++k) {
+                        g.c0[k] = vs[gv[0] * 3 + k];
+                        g.c3[k] = vs[gv[3] * 3 + k];
+                    }
+                    // dir = quad normal (cross of two edges from c0),
+                    // oriented toward the next gate's center
+                    const float e1[3] = {vs[gv[1] * 3 + 0] - g.c0[0],
+                                         vs[gv[1] * 3 + 1] - g.c0[1],
+                                         vs[gv[1] * 3 + 2] - g.c0[2]};
+                    const float e2[3] = {vs[gv[2] * 3 + 0] - g.c0[0],
+                                         vs[gv[2] * 3 + 1] - g.c0[1],
+                                         vs[gv[2] * 3 + 2] - g.c0[2]};
+                    float n3[3] = {e1[1] * e2[2] - e1[2] * e2[1],
+                                   e1[2] * e2[0] - e1[0] * e2[2],
+                                   e1[0] * e2[1] - e1[1] * e2[0]};
+                    const float nl = std::sqrt(n3[0] * n3[0] + n3[1] * n3[1] +
+                                               n3[2] * n3[2]);
+                    if (nl > 0.f)
+                        for (float& v : n3) v /= nl;
+                    const Gate& gn = gates_[(gi + 1) % gates_.size()];
+                    const float to_next[3] = {gn.center[0] - g.center[0],
+                                              gn.center[1] - g.center[1],
+                                              gn.center[2] - g.center[2]};
+                    const float dot = n3[0] * to_next[0] + n3[1] * to_next[1] +
+                                      n3[2] * to_next[2];
+                    for (int k = 0; k < 3; ++k)
+                        g.dir[k] = (dot < 0.f) ? -n3[k] : n3[k];
+                }
             }
             break;
+        }
+    }
+
+    // RaceCamera wiring: gate ribbon -> camera-path nodes, plus the per-node
+    // angle table from Common/LED.piz LE<Course_Id>.LED (see Race/RaceCamera).
+    cam_nodes_.clear();
+    for (const auto& g : gates_) {
+        Race::RaceCamNode n{};
+        for (int k = 0; k < 3; ++k) {
+            n.dir[k] = g.dir[k];
+            n.c0[k]  = g.c0[k];
+            n.c3[k]  = g.c3[k];
+        }
+        cam_nodes_.push_back(n);
+    }
+    race_cam_.SetNodes(cam_nodes_.data(), static_cast<int>(cam_nodes_.size()));
+    {
+        // <...>/TRACKS/<track>.piz -> <...>/Common/LED.piz
+        std::string led(piz_path);
+        std::size_t cut = led.find_last_of("/\\");
+        if (cut != std::string::npos) {
+            cut = led.find_last_of("/\\", cut - 1);
+            if (cut != std::string::npos) {
+                led.resize(cut + 1);
+                led += "Common\\LED.piz";
+                race_cam_.LoadLed(led.c_str(), course_id_);
+            }
         }
     }
 
@@ -990,6 +1070,7 @@ void TrackRenderer::StartRound() {
         a.lane = (static_cast<float>(i) - 1.0f) * 3.0f;   // -3, 0, +3
     }
     countdown_ = 3.0f;   // 3-2-1 freeze before GO
+    race_cam_.Reset();   // force_reset path on the first camera tick
 }
 
 void TrackRenderer::StartMatch(int first_to) {
@@ -1033,20 +1114,46 @@ void TrackRenderer::UpdateRace(float dt) {
         step(i + 1, ai_cars_[static_cast<std::size_t>(i)].pos);
 
     if (!round_mode_ || round_winner_ >= 0) return;
-    // camera-pull elimination (scaffold of the signature rule): the car that
-    // falls too far behind the leader's progress is eliminated.
-    constexpr float kElimGapGates = 7.0f;
-    float lead = -1.f;
-    for (int i = 0; i < kRaceCars; ++i)
-        if (race_[i].alive && race_[i].progress > lead)
-            lead = race_[i].progress;
+
+    // ---- VERBATIM-PORTED camera + elimination (replaces the ">7 gates"
+    // scaffold). Adapters: standalone race state -> RaceCamCar quantities
+    // the original reads through getters (see Race/RaceCamera.h).
+    Race::RaceCamCar cc[kRaceCars] = {};
+    const float* P2[kRaceCars] = {car_pos_, nullptr, nullptr, nullptr};
+    for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
+        P2[i + 1] = ai_cars_[static_cast<std::size_t>(i)].pos;
     for (int i = 0; i < kRaceCars; ++i) {
-        if (!race_[i].alive) continue;
-        if (lead - race_[i].progress > kElimGapGates) {
-            race_[i].alive = false;
+        Race::RaceCamCar& c = cc[i];
+        c.active = (P2[i] != nullptr);
+        c.alive = race_[i].alive && c.active;
+        if (!c.active) continue;
+        for (int k = 0; k < 3; ++k) c.pos[k] = P2[i][k];
+        if (i == 0) {
+            for (int k = 0; k < 3; ++k) c.vel[k] = car_vel_[k];
+        } else {
+            const AiCar& a = ai_cars_[static_cast<std::size_t>(i - 1)];
+            c.vel[0] = std::cos(a.yaw) * a.cur_speed;
+            c.vel[2] = std::sin(a.yaw) * a.cur_speed;
+        }
+        // dead_flag/dead_ms: the scaffold has no dying state (cars vanish on
+        // elimination); the original's explosion window is not modeled yet.
+        const float prog_in_lap =
+            std::fmod(race_[i].progress, static_cast<float>(n));
+        c.path_prog = prog_in_lap;                       // 0x00408a50 equiv
+        c.race_pct = prog_in_lap / static_cast<float>(n) * 100.f;  // 0x00408ad0
+    }
+    cam_ticks_ += static_cast<double>(dt) * 3000000.0;   // DAT_007f1030 rate
+    race_cam_.Update(cc, course_id_, 1.f / 60.f /*DAT_007f100c live*/,
+                     static_cast<std::uint32_t>(cam_ticks_),
+                     0.f /*DAT_007f0fc8 live*/, false);
+
+    if (countdown_ <= 0.f) {
+        const int victim = race_cam_.EliminationCheck(cc);
+        if (victim >= 0 && race_[victim].alive) {
+            race_[victim].alive = false;
             --round_alive_;
-            if (i > 0 && i - 1 < static_cast<int>(ai_cars_.size()))
-                ai_cars_[static_cast<std::size_t>(i - 1)].speed = 0.f;
+            if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
+                ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
         }
     }
     if (round_alive_ <= 1) {
@@ -1102,37 +1209,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         at[1] = eye_[1] + sp;
         at[2] = eye_[2] + std::sin(yaw_) * cp;
     } else if (round_mode_ && car_ready_) {
-        // shared elimination camera: frame every ALIVE car (the signature
-        // Mashed rule's camera — centroid + pull back to fit the spread)
-        float cx = 0.f, cy = 0.f, cz = 0.f;
-        int na = 0;
-        float lead_yaw = car_yaw_, lead_p = -1.f;
-        const float* P[kRaceCars] = {car_pos_, nullptr, nullptr, nullptr};
-        for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
-            P[i + 1] = ai_cars_[static_cast<std::size_t>(i)].pos;
-        for (int i = 0; i < kRaceCars; ++i) {
-            if (!race_[i].alive || !P[i]) continue;
-            cx += P[i][0]; cy += P[i][1]; cz += P[i][2]; ++na;
-            if (race_[i].progress > lead_p) {
-                lead_p = race_[i].progress;
-                lead_yaw = (i == 0) ? car_yaw_
-                    : ai_cars_[static_cast<std::size_t>(i - 1)].yaw;
-            }
-        }
-        if (na > 0) { cx /= na; cy /= na; cz /= na; }
-        float spread = 0.f;
-        for (int i = 0; i < kRaceCars; ++i) {
-            if (!race_[i].alive || !P[i]) continue;
-            const float dx = P[i][0] - cx, dz = P[i][2] - cz;
-            const float d = std::sqrt(dx * dx + dz * dz);
-            if (d > spread) spread = d;
-        }
-        const float back2 = spread * 1.4f + 9.f;
-        const float up2   = spread * 0.7f + 5.f;
-        eye[0] = cx - std::cos(lead_yaw) * back2;
-        eye[1] = cy + up2;
-        eye[2] = cz - std::sin(lead_yaw) * back2;
-        at[0] = cx; at[1] = cy + 0.5f; at[2] = cz;
+        // VERBATIM-PORTED shared race camera (Race/RaceCamera.cpp, from
+        // 0x00446520) — updated in UpdateRace(); consumed here. Replaces
+        // the invented centroid camera.
+        const float* cp = race_cam_.pos();
+        const float* ct = race_cam_.target();
+        for (int i = 0; i < 3; ++i) { eye[i] = cp[i]; at[i] = ct[i]; }
     } else if (car_ready_) {
         // chase cam: behind and above the car, looking at it
         const float back = 7.0f, up = 3.0f;
@@ -1151,7 +1233,12 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
 
     D3DMATRIX viewm, projm, worldm;
     MatLookAtLH(&viewm, eye, at);
-    MatPerspectiveFovLH(&projm, 1.0472f /*60 deg*/, 800.f / 600.f,
+    // round mode: FOV from the camera struct's view-window 0.6 (cam[0x16],
+    // Camera::Apply 0x00441760/FUN_00441700): fovy = 2*atan(vw * h/w).
+    const float fovy = (round_mode_ && car_ready_ && !free_)
+        ? 2.f * std::atan(race_cam_.view_window() * 600.f / 800.f)
+        : 1.0472f /*60 deg*/;
+    MatPerspectiveFovLH(&projm, fovy, 800.f / 600.f,
                         0.05f, radius_ * 8.f);
     MatIdentity(&worldm);
     dev->SetTransform(D3DTS_WORLD, &worldm);

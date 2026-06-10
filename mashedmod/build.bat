@@ -64,6 +64,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Track\TrackWorld.cpp" ^
     "Track\DffModel.cpp" ^
     "D3d9Render\TrackRenderer.cpp" ^
+    "Race\RaceCamera.cpp" ^
     "D3d9Render\QuadRenderer.cpp" ^
     "D3d9Render\RwIm2DBridge.cpp" ^
     "D3d9Render\PngLoader.cpp" ^
