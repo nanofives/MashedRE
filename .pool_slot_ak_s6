@@ -1,4 +1,0 @@
-Mashed_pool9
-# NOTE: pre-assigned Mashed_pool6 was leak-locked (on-disk .lock from 2026-05-28
-# busy/undeletable, server count=0 = leaked in-JVM lock per feedback_mcp_leaked_project_lock).
-# Fell back to verified-free flat-layout clone Mashed_pool9 (no .lock, intact .rep). NOT acquire, NOT pool4.
