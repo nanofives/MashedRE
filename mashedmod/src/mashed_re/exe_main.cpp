@@ -1202,6 +1202,52 @@ bool RenderFrame() {
             DumpBackbufferBMP(car ? "verify/r5/car_3_weave.bmp"
                                   : "verify/r4/arctic_fly_3.bmp");
         }
+        // R6 round telemetry/captures: each elimination + the winner + 2
+        // periodic frames of the shared camera.
+        if (g_track.round_mode_) {
+            static int s_prev_alive = 4;
+            const int alive_now = g_track.round_alive();
+            if (alive_now < s_prev_alive) {
+                char pth[64];
+                std::snprintf(pth, sizeof(pth), "verify/r6/round_elim_%d.bmp",
+                              4 - alive_now);
+                DumpBackbufferBMP(pth);
+                std::FILE* lf = std::fopen(kLogPath, "a");
+                if (lf) {
+                    std::fprintf(lf, "R6 round t=%.1fs elimination -> %d alive"
+                                     " (progress:", t, alive_now);
+                    for (int i = 0; i < 4; ++i)
+                        std::fprintf(lf, " %c%.1f", g_track.race_[i].alive ?
+                                     '+' : '-', g_track.race_[i].progress);
+                    std::fprintf(lf, ")\n");
+                    std::fclose(lf);
+                }
+                s_prev_alive = alive_now;
+            }
+            static bool s_win = false;
+            if (!s_win && g_track.round_winner() >= 0) {
+                s_win = true;
+                DumpBackbufferBMP("verify/r6/round_winner.bmp");
+                std::FILE* lf = std::fopen(kLogPath, "a");
+                if (lf) {
+                    std::fprintf(lf, "R6 ROUND OVER t=%.1fs winner=car%d "
+                                     "laps=%d progress=%.1f\n", t,
+                                 g_track.round_winner(),
+                                 g_track.race_[g_track.round_winner()].laps,
+                                 g_track.race_[g_track.round_winner()].progress);
+                    std::fclose(lf);
+                }
+            }
+            static bool s_rshot[2] = {};
+            if (!s_rshot[0] && t >= 2.5f) {
+                s_rshot[0] = true;
+                DumpBackbufferBMP("verify/r6/round_start.bmp");
+            }
+            if (!s_rshot[1] && t >= 9.0f) {
+                s_rshot[1] = true;
+                DumpBackbufferBMP("verify/r6/round_mid.bmp");
+            }
+        }
         if (car && s_frame == 340) {
             float cp[3]; g_track.car_pos(cp);
             std::FILE* lf = std::fopen(kLogPath, "a");
@@ -2764,6 +2810,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     const char* cpiz = (cv[0] == '1' && cv[1] == '\0')
                         ? "original/TOASTART/VEHICLES/Advantag.piz" : cv;
                     g_track.LoadCar(g_device, cpiz, "ADVANTAGE0.DFF", kLogPath);
+                    // R6: MASHED_ROUND=1 -> 4-car exhibition elimination round
+                    if (GetEnvironmentVariableA("MASHED_ROUND", nullptr, 0) > 0) {
+                        CreateDirectoryA("verify\\r6", nullptr);
+                        g_track.StartRound();
+                    }
                 }
             }
         }

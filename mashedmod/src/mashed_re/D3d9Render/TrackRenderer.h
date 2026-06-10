@@ -142,6 +142,33 @@ private:
     // player's model batches; placeholder until the real AI port)
     struct AiCar { float pos[3]; float yaw; int target; float speed; };
     std::vector<AiCar> ai_cars_;
+
+public:
+    // ---- R6: handling v2 + race rules + elimination round -----------------
+    // Velocity-vector handling (struct shape adopted from VehicleControlUpdate
+    // 0x00470670 — see re/analysis/standalone_menu_sm/HANDLING_V2_2026-06-10.md).
+    // Ground probe also returns the hit triangle's normal for slope gravity.
+    float GroundProbe(float x, float z, bool* ok, float normal[3]) const;
+
+    struct RaceCar {           // race bookkeeping per car (0 = player)
+        int   gate = 1;        // next gate to cross
+        int   laps = 0;
+        float progress = 0.f;  // gate + fraction (ranking metric)
+        bool  alive = true;
+    };
+    static constexpr int kRaceCars = 4;
+    RaceCar race_[kRaceCars];
+    bool  round_mode_  = false;   // MASHED_ROUND: 4-car exhibition round
+    int   round_alive_ = kRaceCars;
+    int   round_winner_ = -1;     // set when the round ends
+    void  StartRound();           // grid all 4 cars at the start line
+    // round step (also advances player bookkeeping outside round mode)
+    void  UpdateRace(float dt);
+    int   round_winner() const { return round_winner_; }
+    int   round_alive() const { return round_alive_; }
+
+private:
+    float car_vel_[3] = {};       // +0x9b0-shape velocity vector (world)
 };
 
 }  // namespace D3d9Render

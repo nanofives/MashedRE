@@ -488,6 +488,45 @@ float TrackRenderer::GroundHeight(float x, float z, bool* ok) const {
     return HeightOnSoup(col_verts_, col_tris_, x, z, ok);
 }
 
+float TrackRenderer::GroundProbe(float x, float z, bool* ok,
+                                 float normal[3]) const {
+    // Like GroundHeight but also returns the hit triangle's (upward) normal
+    // for slope gravity.
+    float best = -1e9f;
+    bool found = false;
+    normal[0] = 0.f; normal[1] = 1.f; normal[2] = 0.f;
+    const std::size_t nt = col_tris_.size() / 3;
+    for (std::size_t i = 0; i < nt; ++i) {
+        const float* a = &col_verts_[col_tris_[i * 3 + 0] * 3];
+        const float* b = &col_verts_[col_tris_[i * 3 + 1] * 3];
+        const float* c = &col_verts_[col_tris_[i * 3 + 2] * 3];
+        const float d00x = b[0] - a[0], d00z = b[2] - a[2];
+        const float d01x = c[0] - a[0], d01z = c[2] - a[2];
+        const float den = d00x * d01z - d01x * d00z;
+        if (den > -1e-9f && den < 1e-9f) continue;
+        const float px = x - a[0], pz = z - a[2];
+        const float u = (px * d01z - d01x * pz) / den;
+        const float v = (d00x * pz - px * d00z) / den;
+        if (u < 0.f || v < 0.f || u + v > 1.f) continue;
+        const float y = a[1] + u * (b[1] - a[1]) + v * (c[1] - a[1]);
+        if (y > best) {
+            best = y; found = true;
+            const float e1[3] = {b[0]-a[0], b[1]-a[1], b[2]-a[2]};
+            const float e2[3] = {c[0]-a[0], c[1]-a[1], c[2]-a[2]};
+            float n[3] = {e1[1]*e2[2] - e1[2]*e2[1],
+                          e1[2]*e2[0] - e1[0]*e2[2],
+                          e1[0]*e2[1] - e1[1]*e2[0]};
+            const float l = std::sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
+            if (l > 1e-6f) {
+                const float s = (n[1] < 0.f ? -1.f : 1.f) / l;  // upward
+                normal[0] = n[0]*s; normal[1] = n[1]*s; normal[2] = n[2]*s;
+            }
+        }
+    }
+    if (ok) *ok = found;
+    return best;
+}
+
 bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
                             const char* dff_entry, const char* log_path) {
     std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
@@ -744,22 +783,64 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
 
 void TrackRenderer::UpdateCar(const DriveInput& in) {
     if (!car_ready_ || in.dt <= 0.f) return;
-    // Kinematic toy model (R5 opener; NOT the ported physics): accelerate /
-    // brake toward a top speed, steer scaled by speed, integrate, snap to the
-    // collision ground. Leaving the collision world reverts the move (the
-    // island edge acts as a wall).
-    const float kTop    = radius_ * 0.25f;   // top speed (world-relative)
-    const float kAccel  = kTop * 0.8f;
-    const float kDrag   = 0.6f;
-    const float kSteer  = 1.8f;
-    car_speed_ += in.accel * kAccel * in.dt;
-    car_speed_ -= car_speed_ * kDrag * in.dt;
-    if (car_speed_ >  kTop) car_speed_ =  kTop;
-    if (car_speed_ < -kTop * 0.4f) car_speed_ = -kTop * 0.4f;
-    const float spd_norm = car_speed_ / kTop;
-    car_yaw_ += in.steer * kSteer * spd_norm * in.dt;
-    const float nx = car_pos_[0] + std::cos(car_yaw_) * car_speed_ * in.dt;
-    const float nz = car_pos_[2] + std::sin(car_yaw_) * car_speed_ * in.dt;
+    // R6 handling v2 — velocity-vector model whose STRUCT SHAPE follows
+    // VehicleControlUpdate (0x00470670): velocity vec (+0x9b0), forward vec
+    // (+0x9d4), throttle as a force along forward (+0x1a8 pipeline, negated
+    // for reverse), slide = the velocity component orthogonal to forward
+    // (the +0xb0c measure). Tuning constants are SCAFFOLD (see
+    // re/analysis/standalone_menu_sm/HANDLING_V2_2026-06-10.md).
+    const float kTop      = radius_ * 0.25f;
+    const float kThrottle = kTop * 1.4f;
+    const float kDrag     = 0.65f;
+    const float kGrip     = 5.0f;    // lateral-velocity bleed rate (1/s)
+    const float kSteer    = 2.2f;
+    const float kGravity  = radius_ * 0.12f;
+
+    float accel = in.accel, steer = in.steer;
+    if (round_mode_) {
+        // exhibition round: the player car auto-follows the gate loop too
+        if (!gates_.empty() && race_[0].alive) {
+            const float* g = gates_[static_cast<std::size_t>(race_[0].gate) %
+                                    gates_.size()].center;
+            const float want = std::atan2(g[2] - car_pos_[2],
+                                          g[0] - car_pos_[0]);
+            float err = want - car_yaw_;
+            while (err >  3.14159f) err -= 6.28318f;
+            while (err < -3.14159f) err += 6.28318f;
+            steer = (err > 0.25f) ? 1.f : (err < -0.25f ? -1.f : err * 4.f);
+            accel = 0.82f;   // slowest car on the grid
+        } else {
+            accel = 0.f; steer = 0.f;
+        }
+    }
+
+    const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
+    // throttle force along forward
+    car_vel_[0] += fwd[0] * accel * kThrottle * in.dt;
+    car_vel_[2] += fwd[2] * accel * kThrottle * in.dt;
+    // slope gravity: project (0,-g,0) onto the ground plane (XZ components)
+    bool gok = false;
+    float n[3];
+    GroundProbe(car_pos_[0], car_pos_[2], &gok, n);
+    if (gok) {
+        car_vel_[0] += kGravity * n[1] * n[0] * in.dt;
+        car_vel_[2] += kGravity * n[1] * n[2] * in.dt;
+    }
+    // grip: bleed the lateral (slide) component; drag the forward one
+    float vf = car_vel_[0] * fwd[0] + car_vel_[2] * fwd[2];
+    float lx = car_vel_[0] - fwd[0] * vf;
+    float lz = car_vel_[2] - fwd[2] * vf;
+    const float bleed = 1.f - ((kGrip * in.dt > 1.f) ? 1.f : kGrip * in.dt);
+    lx *= bleed; lz *= bleed;
+    vf -= vf * kDrag * in.dt;
+    if (vf >  kTop) vf = kTop;
+    if (vf < -kTop * 0.4f) vf = -kTop * 0.4f;
+    car_vel_[0] = fwd[0] * vf + lx;
+    car_vel_[2] = fwd[2] * vf + lz;
+    car_speed_ = vf;
+    car_yaw_ += steer * kSteer * (vf / kTop) * in.dt;
+    const float nx = car_pos_[0] + car_vel_[0] * in.dt;
+    const float nz = car_pos_[2] + car_vel_[2] * in.dt;
     bool ok = false;
     const float gy = GroundHeight(nx, nz, &ok);
     if (ok) {
@@ -767,7 +848,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_pos_[1] = gy + car_ground_off_;
     } else {
         car_speed_ = 0.f;   // island edge / off-collision: stop
+        car_vel_[0] = car_vel_[2] = 0.f;
     }
+    UpdateRace(in.dt);
     // stretch AI cars: head for the next gate center at fixed speed
     for (auto& a : ai_cars_) {
         if (gates_.empty()) break;
@@ -800,6 +883,87 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const float steer_target = in.steer * 0.45f;
     const float k = (10.f * in.dt > 1.f) ? 1.f : 10.f * in.dt;
     steer_vis_ += (steer_target - steer_vis_) * k;
+}
+
+void TrackRenderer::StartRound() {
+    if (gates_.size() < 4 || !car_ready_) return;
+    round_mode_ = true;
+    round_alive_ = kRaceCars;
+    round_winner_ = -1;
+    for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
+    // grid: 2x2 behind gate 0, offset along the start line's lateral axis
+    const float* g0 = gates_[0].center;
+    const float* g1 = gates_[1].center;
+    float dir[2] = {g1[0] - g0[0], g1[2] - g0[2]};
+    const float dl = std::sqrt(dir[0]*dir[0] + dir[1]*dir[1]);
+    dir[0] /= dl; dir[1] /= dl;
+    const float lat[2] = {-dir[1], dir[0]};
+    auto place = [&](float* pos, float* yaw, int row, int col) {
+        const float side = (col == 0) ? -0.9f : 0.9f;
+        const float back = 1.2f + 1.8f * static_cast<float>(row);
+        const float x = g0[0] - dir[0] * back + lat[0] * side;
+        const float z = g0[2] - dir[1] * back + lat[1] * side;
+        bool ok = false;
+        const float y = GroundHeight(x, z, &ok);
+        pos[0] = x; pos[2] = z;
+        pos[1] = (ok ? y : g0[1]) + car_ground_off_;
+        *yaw = std::atan2(dir[1], dir[0]);
+    };
+    place(car_pos_, &car_yaw_, 0, 0);
+    car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
+    car_speed_ = 0.f;
+    ai_cars_.assign(3, AiCar{});
+    for (int i = 0; i < 3; ++i) {
+        AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
+        place(a.pos, &a.yaw, (i + 1) / 2, (i + 1) % 2);
+        a.target = 1;
+        // staggered speeds: all faster than the auto-driven player
+        a.speed = radius_ * (0.20f + 0.025f * static_cast<float>(i));
+    }
+}
+
+void TrackRenderer::UpdateRace(float dt) {
+    if (gates_.empty()) return;
+    const int n = static_cast<int>(gates_.size());
+    auto step = [&](int i, const float* pos) {
+        RaceCar& r = race_[i];
+        if (!r.alive) return;
+        const float* g = gates_[static_cast<std::size_t>(r.gate) %
+                                gates_.size()].center;
+        const float dx = g[0] - pos[0], dz = g[2] - pos[2];
+        const float d = std::sqrt(dx * dx + dz * dz);
+        if (d < 3.0f) {
+            if (r.gate == 0) ++r.laps;   // crossed start/finish
+            r.gate = (r.gate + 1) % n;
+        }
+        const float frac = (d > 8.f) ? 0.f : (1.f - d / 8.f);
+        r.progress = static_cast<float>(r.laps * n + r.gate) + frac;
+    };
+    step(0, car_pos_);
+    for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
+        step(i + 1, ai_cars_[static_cast<std::size_t>(i)].pos);
+
+    if (!round_mode_ || round_winner_ >= 0) return;
+    // camera-pull elimination (scaffold of the signature rule): the car that
+    // falls too far behind the leader's progress is eliminated.
+    constexpr float kElimGapGates = 7.0f;
+    float lead = -1.f;
+    for (int i = 0; i < kRaceCars; ++i)
+        if (race_[i].alive && race_[i].progress > lead)
+            lead = race_[i].progress;
+    for (int i = 0; i < kRaceCars; ++i) {
+        if (!race_[i].alive) continue;
+        if (lead - race_[i].progress > kElimGapGates) {
+            race_[i].alive = false;
+            --round_alive_;
+            if (i > 0 && i - 1 < static_cast<int>(ai_cars_.size()))
+                ai_cars_[static_cast<std::size_t>(i - 1)].speed = 0.f;
+        }
+    }
+    if (round_alive_ <= 1) {
+        for (int i = 0; i < kRaceCars; ++i)
+            if (race_[i].alive) { round_winner_ = i; break; }
+    }
 }
 
 void TrackRenderer::camera(float eye[3], float at[3]) const {
@@ -848,6 +1012,38 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         at[0] = eye_[0] + std::cos(yaw_) * cp;
         at[1] = eye_[1] + sp;
         at[2] = eye_[2] + std::sin(yaw_) * cp;
+    } else if (round_mode_ && car_ready_) {
+        // shared elimination camera: frame every ALIVE car (the signature
+        // Mashed rule's camera — centroid + pull back to fit the spread)
+        float cx = 0.f, cy = 0.f, cz = 0.f;
+        int na = 0;
+        float lead_yaw = car_yaw_, lead_p = -1.f;
+        const float* P[kRaceCars] = {car_pos_, nullptr, nullptr, nullptr};
+        for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
+            P[i + 1] = ai_cars_[static_cast<std::size_t>(i)].pos;
+        for (int i = 0; i < kRaceCars; ++i) {
+            if (!race_[i].alive || !P[i]) continue;
+            cx += P[i][0]; cy += P[i][1]; cz += P[i][2]; ++na;
+            if (race_[i].progress > lead_p) {
+                lead_p = race_[i].progress;
+                lead_yaw = (i == 0) ? car_yaw_
+                    : ai_cars_[static_cast<std::size_t>(i - 1)].yaw;
+            }
+        }
+        if (na > 0) { cx /= na; cy /= na; cz /= na; }
+        float spread = 0.f;
+        for (int i = 0; i < kRaceCars; ++i) {
+            if (!race_[i].alive || !P[i]) continue;
+            const float dx = P[i][0] - cx, dz = P[i][2] - cz;
+            const float d = std::sqrt(dx * dx + dz * dz);
+            if (d > spread) spread = d;
+        }
+        const float back2 = spread * 1.4f + 9.f;
+        const float up2   = spread * 0.7f + 5.f;
+        eye[0] = cx - std::cos(lead_yaw) * back2;
+        eye[1] = cy + up2;
+        eye[2] = cz - std::sin(lead_yaw) * back2;
+        at[0] = cx; at[1] = cy + 0.5f; at[2] = cz;
     } else if (car_ready_) {
         // chase cam: behind and above the car, looking at it
         const float back = 7.0f, up = 3.0f;
