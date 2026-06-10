@@ -1,142 +1,194 @@
-# Mashed RE Roadmap
+# Mashed RE Roadmap — v2 (2026-06-09)
 
-High-level plan to take Mashed from "imported binary" to "fully reimplemented executable." Phases are gates: do not advance until the **Definition of Done (DoD)** for the current phase is satisfied. Each phase has measurable exit criteria — fuzzy criteria are not allowed (a phase is *done* or it is not).
+**North-star goal:** a fully playable, standalone `mashed_re.exe` — every track, every
+vehicle, every mode — booting from clean Mashed data files with zero dependence on
+`MASHED.exe`, where every ported function is verbatim-verified against the original.
+
+**v2 strategy decision (user-ratified 2026-06-09, evidence in
+`re/analysis/AUDIT_2026-06-09.md`):** the project is now **standalone-first and
+demand-driven**. The supply-driven coverage era is over — it completed its mission
+(full inventory, first-party C1 = 0, 561-hook Frida harness, 99 arg_types) and its
+yields measurably collapsed (C2→C3 batches: 57–80% → 12–21% → 8/48 ceiling). From here,
+functions are reversed and ported **in the dependency order the standalone needs them**,
+each port is verified with `diff-original` against the live original, and C3/C4
+promotions fall out as a *byproduct* of slice work rather than being the goal. Progress
+is measured in demonstrable capabilities, not coverage percentages.
+
+Phases are gates: do not advance until the current phase's **Definition of Done** is
+satisfied. Fuzzy exit criteria are not allowed.
 
 ## Definition of Done — three scopes
 
-The project enforces three nested DoDs. Every reverse-engineered function must satisfy F-DoD; every subsystem rolls up to S-DoD; the project ships when P-DoD is satisfied.
-
-### F-DoD — function level
+### F-DoD — function level (unchanged from v1)
 A function is **DONE** only when ALL of these hold:
 1. **RVA pinned** in `hooks.csv` against the version anchor SHA-256.
-2. **Confidence ≥ C3** per the rubric (`re/CONFIDENCE.md`). C4 means "verified by Frida diff."
-3. **No `[UNCERTAIN]` markers** remain in `re/analysis/<subsystem>/<function>.md`. Outstanding uncertainties either:
-   - Resolved with cited evidence, or
-   - Promoted to `UNCERTAINTIES.md` with an owner and a path-to-resolution.
-4. **No stubs** in the implementation. Every callee resolves to a real reversed function or an explicitly-allowed passthrough hook to the original (recorded in `STUBS.md`).
-5. **Frida diff clean** (the `diff-original` skill produced an identical CSV between original and modded run for at least one canonical scenario).
-6. **Hook registered** via `RH_ScopedInstall(Method, 0xRVA)` and **runtime-toggleable**.
-7. **Inline RVA comments** on every cross-reference (`// 0x00xxxxxx`).
+2. **Confidence ≥ C3** per `re/CONFIDENCE.md`. C4 means "verified by Frida diff with the
+   hook actually installed on a canonical scenario."
+3. **No `[UNCERTAIN]` markers** remain in the analysis note (resolved with evidence, or
+   promoted to `UNCERTAINTIES.md` with a path-to-resolution).
+4. **No stubs** — every callee resolves to a real reversed function or an
+   explicitly-recorded passthrough (in `STUBS.md`).
+5. **Frida diff clean** via `diff-original` on ≥ 1 canonical scenario.
+6. **Hook registered** via `RH_ScopedInstall` and runtime-toggleable (dev target).
+7. **Inline RVA comments** on every cross-reference.
 
-### S-DoD — subsystem level (e.g. AI, Audio, Vehicle, HUD, Frontend)
+### S-DoD — subsystem level (REVISED 2026-06-09 for demand-driven v2)
 A subsystem is **DONE** when:
-1. Every function reachable from the subsystem entry points is at **C3 or higher** (≥ 90%), with **≥ 50% at C4**. (Revised 2026-05-17 from the original "≥ 90% C4" target. Calibration: even Boot, the most-advanced subsystem at audit time, sat at ~30% C4 with ~5 C4 promotions per observation sweep. The original target was multi-year per subsystem, blocking Phase 6 indefinitely. The revised target keeps C3 as the rigor floor — every callable function correct-by-construction — while making C4 a quality marker for the public/cross-subsystem surface, not an exhaustive demand on every leaf.)
-2. The subsystem can run **with all original-fallback hooks disabled** for one full canonical scenario without crash, hang, or visible regression.
-3. All shared structs touched by the subsystem are documented in `re/analysis/structs/` with **field-by-field** RVA citations for first read/write of each field.
-4. Any custom asset format (e.g., `.piz`, `gamesave.bin` for the save subsystem) has a round-trip parser+writer in `re/tools/` with a byte-identical re-encode test.
-5. The subsystem section of `STUBS.md` is empty.
+1. The standalone exe runs the subsystem's canonical scenario **natively** — no original
+   code, no fallbacks (the standalone cannot call MASHED code by construction).
+2. **Every function the standalone actually executes** in that subsystem satisfies F-DoD.
+3. Functions in the subsystem that the standalone never executes are explicitly dispatched:
+   each is either ported anyway (if cheap), or marked `deferred-not-needed` in `DEFERRED.md`
+   with the slice that would need it. **No percentage target** — the v1 "≥90% C3+ / ≥50% C4"
+   gate is retired; ladder percentages are diagnostic, not gates.
+4. Shared structs documented field-by-field in `re/analysis/structs/` with RVA citations.
+5. Custom asset formats have round-trip parser+writer tools in `re/tools/`.
+6. The subsystem's `STUBS.md` section is empty.
 
-### P-DoD — project level
-The project is **DONE** (v1.0) when:
-1. Every subsystem is S-DONE.
-2. A clean playthrough of every track + every vehicle + every game mode runs with the modded DLL alone (no original fallbacks).
-3. `MASHED.exe` is reduced to a thin shim or the build produces a standalone `mashed_re.exe` (TD5RE-style source port).
-4. All four trackers (`hooks.csv`, `STUBS.md`, `UNCERTAINTIES.md`, `DEFERRED.md`) have either zero rows or only rows tagged `wontfix` with rationale.
+### P-DoD — project level (unchanged in substance)
+1. Every subsystem S-DONE.
+2. A clean playthrough of every track + vehicle + mode on `mashed_re.exe` alone.
+3. All trackers have zero rows or only `wontfix`/`deferred-not-needed` rows with rationale.
+4. The dev `.asi` harness is dropped from the shipping build matrix.
 
-## Phases
+## v1 phase ledger (closed 2026-06-09)
 
-### Phase 0 — Bootstrap (DONE on 2026-05-02)
-**Goal:** infrastructure exists, tools wired, prior art archived.
+| v1 phase | Status |
+|---|---|
+| 0 Bootstrap | DONE 2026-05-02 |
+| 1 Surface mapping | DONE 2026-05-20 (100% inventory, 83.3% C1+, subsystem map, skeleton call tree) |
+| 2 Asset formats | Substantially done (piz round-trip, TXD decoder, gamesave/videocfg tools, RWS walker); remaining formats (track/vehicle geometry, .AI scripts) absorbed into Phase R3 |
+| 3 Engine boot path | Superseded — boot subsystem at C2+ end-to-end; standalone boots natively |
+| 4 Dev harness + skeleton | DONE (both targets build; install-observe canonical C4 harness validated 2026-06-05; the "blocked-on-runtime" text was stale — boot-to-menu fixed 2026-06-01) |
+| 5 Subsystem sweeps | Retired as a phase shape. C1→C2 closed (first-party C1 = 0, 2026-06-04). C2→C3 batch lane continues only as opportunistic side-lane (see Operating model) |
+| 6 Standalone v1 | Re-planned as R2–R8 below |
+
+## Phases (v2)
+
+### Phase R0 — Repair & re-baseline (one focused pass)
+**Goal:** the repo tells the truth before new work starts.
 **Exit criteria:**
-- ✅ `original/` immutable; binary anchors pinned (SHA-256 + size).
-- ✅ Ghidra master `Mashed.gpr` analyzed and saved.
-- ✅ MCP wired (`.mcp.json`); pool script + skills functional.
-- ✅ SciLor repos cloned read-only into `re/prior_art/`.
-- ✅ `piz_extract.py` smoke-tested.
-- ✅ CLAUDE.md, AGENTS.md, ROADMAP.md, four trackers seeded.
+- `standalone/menu-state-machine` (253 commits) merged to `main`; verify screenshots cited
+  by commit messages committed; uncommitted scripts/probes triaged (commit or delete).
+- Tracker repair (scripted, one transaction each): STUBS/UNCERTAINTIES rows re-filed from
+  after "## Conventions" into Active/Resolved sections; 80 duplicate U-IDs renumbered;
+  the two DEFERRED stores unified into root `DEFERRED.md` (re/DEFERRED.md is ~95% stale —
+  drop rows whose RVAs are already C2+); hooks.csv duplicate header + 23 newline-spill
+  rows repaired.
+- Queue hygiene: PROMOTION_QUEUE "Queued" rows reconciled against CHANGELOG (move
+  provably-merged rows to Merged); 70 one-row SCRIBE_QUEUE fragments back-annotated or
+  archived to `re/archive/`.
+- C4 ledger honest: the 24 untagged escapees tagged `C4-EVIDENCE-SUSPECT`; stale tags on
+  the 22 already-demoted rows cleared (`re/analysis/C4_REVALIDATION.md` Populations A/B/C).
+- CLAUDE.md stale claims fixed (patch count/skip_powerups status, Vec3-trio framing,
+  "gameplay 324 + render 458 remain" belief).
+- Root clutter cleared: batch/c3_batch txts archived to `log/batches/`, .pool_slot markers
+  and stale `mashed_pool` locks removed (respect the documented pool4 leak-lock), build
+  logs pruned.
 
-### Phase 1 — Surface mapping (target: 1–2 weeks)
-**Goal:** know what every named function in the binary roughly does. No reimplementation yet.
-**Activities:**
-- Auto-name imports/exports; identify `WinMain`, `RwEngineOpen`, RW APIs, MSVCRT calls, DirectX entry points.
-- Sweep all top-level functions; assign C0/C1 in `hooks.csv` based on call-graph and string xrefs.
-- Identify subsystem boundaries by string clustering (audio/AI/render/UI/network/save).
-- Produce a one-page subsystem map in `re/analysis/subsystem_map.md` with RVAs of each entry point.
-**Exit criteria:**
-- Every function in the binary has a row in `hooks.csv` (status `mapped` minimum) — total count from Ghidra `function_list`.
-- ≥ 80% of those rows have a confidence ≥ C1 (purpose hinted by name/strings/xrefs).
-- The subsystem map names each major area and lists ≤ 5 entry-point RVAs per area.
-- A "skeleton call tree" markdown for `WinMain → main loop → frame tick` exists.
+### Phase R1 — C4 truth (standing lane, not a gate)
+**Goal:** zero suspect C4 rows; the C4 column means what the rubric says.
+Runs continuously alongside R2+ at ~1 short session per week (harness throughput is a
+demonstrated 4–9 rows/day).
+**Exit criteria:** per `re/analysis/C4_REVALIDATION.md` — zero `C4-EVIDENCE-SUSPECT` tags;
+zero C4 rows whose only canonical evidence dates 2026-05-15..24; every row reconfirmed or
+demoted via `re-classify` with a CHANGELOG line.
 
-### Phase 2 — Asset formats (target: 1 week, parallelizable with Phase 1)
-**Goal:** every binary asset format Mashed touches has a Python parser.
-**Activities:**
-- `.piz` — verify offset semantics on every file, not just `AI.piz`. Implement repacker with byte-identical round-trip.
-- `.rws` — confirm Mashed's flavor matches RenderWare 3.7 standard or document the deviation.
-- `pc.txd` — TXD reader producing PNGs.
-- `gamesave.bin` — DEADBEEF struct layout.
-- `videocfg.bin` — 512-byte struct layout.
-- `.AI` files inside `AI.piz` — internal AI script format (cross-ref MashedFileExtractor for hints).
-**Exit criteria:**
-- Each format has a tool under `re/tools/` with `list` and `extract` (or `parse`) modes.
-- Each tool has at least one round-trip test on a real archive.
-- `re/analysis/formats/<name>.md` documents the layout with byte-offset table.
+### Phase R2 — Menu complete (finish the current slice)
+**Goal:** the standalone main menu is pixel-faithful and fully functional.
+**Work items** (from `re/analysis/standalone_menu_sm/FUN_0043c5b0_port_spec.md`):
+- FGDC20 256-entry glyph LUT (prompt-strip nav glyphs 0x7f..0x8f currently `?`).
+- badges.txd NAMED-sprite atlas (SpriteLookupC / FUN_0040bb50: "Button"/"Arrow"/"SemiC").
+- Frame-rate-scaled anim timing (FUN_004a2c48 / DAT_007f1004) replacing the fixed −0x28 step.
+- Save-driven `MenuGameState` (gamesave.bin → unlock/team arrays so state-gated branches
+  exercise).
+- Animated logo: verbatim port of FUN_00473ee0 wavy grid + FUN_004733b0 / FUN_00473220.
+- Root-cause the intermittent post-init `MainWindowHandle==0` hang (seen 06-08, not 06-09).
+**Exit criteria:** side-by-side screenshot parity vs original on the canonical screen set;
+all 34 screens reachable; settings screens actually mutate persisted state; logo animates;
+hang root-caused (not just "didn't reproduce").
 
-### Phase 3 — Engine boot path (target: 2–3 weeks)
-**Goal:** reimplement enough of the boot flow that the modded DLL gets to a known-good state inside `WinMain`. We hook nothing yet, just observe.
-**Activities:**
-- Reverse `WinMain`, command-line parsing (cross-ref MashedRunner), language selection, video config load (`videocfg.bin`), Renderware engine init.
-- Identify the global game-state struct(s) and document their fields.
-- Frida-trace the full boot sequence on the original binary; produce a "ground truth CSV" for diffing.
-**Exit criteria:**
-- `WinMain` is C3 or higher in `hooks.csv`.
-- Every global accessed during boot has a documented type.
-- Frida boot trace runs and is checked into `verify/boot_trace_baseline.csv`.
+### Phase R3 — Track & vehicle data foundation
+**Goal:** every asset format the game world needs is parsed, documented, and dumpable.
+**Activities:** RE the contents of `TRACKS/*.piz` and `VEHICLES/*.piz` — geometry,
+textures, collision, placements; the `.AI` script format (cross-ref MashedFileExtractor);
+extend `PizReader`/tools; per-format docs with byte-offset tables per the v1 Phase-2
+convention.
+**Exit criteria:** one full track's geometry parsed and exported to a viewable form
+(wireframe/OBJ dump acceptable); vehicle model parsed; `re/analysis/formats/<name>.md`
+per format; round-trip tests where the format is rewritable.
 
-### Phase 4 — Dev harness + standalone skeleton (PARTIAL — infrastructure done 2026-05-09; full verification blocked-on-runtime)
-**Goal:** stand up *both* build targets (greenfield exe + dev-mode hook DLL) and prove the verification loop on one small function.
-**Activities:**
-- ✅ MSVC Build Tools 2022 (x86); `mashedmod/build.bat` calls `vcvars32.bat`. (2026-05-08)
-- ✅ `mashed_re.exe` standalone scaffold (WinMain → exit 0). (2026-05-08)
-- ✅ `mashed_re_dev.asi` scaffold with env-gated `InjectHooks()`. (2026-05-08, 2026-05-09)
-- ✅ Hand-rolled inline-JMP hook system (`Core/HookSystem.{h,cpp}`) with `RH_ScopedInstall` macro + runtime-toggleable registry. (2026-05-08)
-- ✅ Leaf function picked + reimplemented: `0x004c3ac0` Vec3Magnitude. (2026-05-08, asm-corrected 2026-05-09)
-- ✅ Ultimate-ASI-Loader deployed. (2026-05-08)
-- ✅ Frida force-call harness: bit-identical implementation diff (18/18 vectors against live LUT) — hook-bypass mode (env var). (2026-05-09)
-- 🟡 Vec3Magnitude promoted to **C3** in `hooks.csv` — math verified, build clean, hook code present and registered, but inline-JMP patch was **never live-installed** during the test (we deliberately suppressed it for an A/B isolation), and no canonical scenario was exercised because the game crashes early.
-- 🚫 C4 promotion blocked: the C4 gate requires a "Frida CSV diff between original and modded behavior on at least one canonical scenario" — that requires either the game running to a real call site, or a deliberate hook-installed force-call test that exercises the patcher itself. Neither is possible until either (a) the runtime is fixed (see `memory/project_runtime_blocked.md`) or (b) we add a separate harness that installs the hook AND verifies the JMP redirect via Frida.Interceptor before forcing a call.
+### Phase R4 — World render
+**Opening gate — renderer architecture decision (stop-and-ask):** evaluate with short
+spikes, then the user decides between (a) vendoring **librw** (the re3 path), (b) porting
+the minimal RW 3.x subset ourselves (extending the `RwIm2DBridge` fake-device approach to
+3D), (c) a custom D3D9 renderer consuming RW-format data directly.
+**Goal:** the standalone renders a full track in 3D with a controllable fly-through camera.
+**Exit criteria:** track renders with textures; camera controllable; visual parity vs an
+original-game screenshot of the same viewpoint (lighting deltas allowed and documented);
+stable frame rate at 800×600.
 
-**Exit criteria status:**
-- ✅ `mashed_re.exe` builds and exits 0.
-- ✅ `mashed_re_dev.asi` builds with all required exports.
-- 🟡 Reimpl bit-identical vs original on synthetic input domain (C3 evidence) — full C4 (canonical scenario, hook installed) still pending.
-- 🟡 Frida A/B harness exists and works — but only validates the implementation, not the patcher.
+### Phase R5 — Drivable car
+**Goal:** a vehicle on a track under player control.
+**Activities:** vehicle model load/render; **physics decision gate** (the original vendors
+RenderWare Physics 3.7 + qhull-2002.1 — decide reimplement-the-used-subset vs vendor real
+qhull + reconstruct the RW-Physics call surface); input (DirectInput path already C2/C3)
+→ physics tick → camera follow (camera subsystem); track collision.
+**Exit criteria:** drive a full lap with keyboard/pad; collision with track boundaries
+works; camera follows faithfully; physics behavior diff-checked against original telemetry
+(Frida trace of the original race vs standalone logs on matched inputs where feasible).
 
-**Path to a real C4 demo (in priority order):**
-1. Fix the Mashed runtime so the game reaches main menu / a track. C4 then comes from passive Frida tracing during natural play.
-2. Or: write a hook-installed force-call test — install `Vec3Magnitude` hook normally, then use `Frida.Interceptor.attach` at `0x004c3ac0` to verify the JMP redirect routes through our code before calling the function. This proves the patcher works without needing canonical gameplay.
+### Phase R6 — Race loop ★ flagship demo
+**Goal:** complete a full race against AI in the standalone.
+**Activities:** race state machine (countdown/laps/checkpoints/finish — gameplay subsystem's
+C2 pool becomes the demand-driven port list); in-race HUD; minimal AI opponents (`.AI`
+scripts from R3 + ai subsystem); Mashed's signature camera-pull elimination rule.
+**Exit criteria:** boot → menu → select track/car → finish a race vs AI, end-to-end on
+`mashed_re.exe` alone, screen-recorded.
 
-### Phase 5 — Subsystem sweeps (target: 4–8 weeks each, parallelizable)
-**Goal:** progressively reverse each subsystem and land its functions into the **standalone exe**, using the dev harness for verification.
-**Order (suggested, by isolation):**
-1. **Frontend / HUD** — most isolated, lowest blast radius.
-2. **Save / Load** — pure data, no rendering.
-3. **Audio** — RWS-driven, mostly leaf calls.
-4. **Input** — Lua remap is already exposed.
-5. **Vehicle / Physics** — core gameplay; depends on Save and Input.
-6. **AI** — depends on Vehicle, Track.
-7. **Track / World** — depends on Asset Phase 2.
-8. **Render** — touches everything; do last.
-**Per subsystem:** functions land in `mashed_re/<Subsystem>/`, hooks register them in the dev target only, the standalone exe links them directly. Hook-mode is gradually removed for any subsystem the standalone can run unaided.
-**Exit criteria per subsystem:** S-DoD as defined above; the standalone exe runs the canonical scenario for that subsystem with no hooks active.
+### Phase R7 — Full game systems
+**Goal:** everything else the menu promises actually works.
+**Activities:** all party/battle modes; powerups; particles; audio (RWS playback — audio
+subsystem is 510 C2 / 74 C3 already); save/unlock flows; video playback; multiplayer-local
+(split-screen); remaining menu paths wired to real subsystems; polish.
+**Exit criteria:** every menu path functional; every mode playable; S-DoD for every
+subsystem.
 
-### Phase 6 — Standalone v1 (target: when last subsystem is S-DONE)
-**Goal:** the standalone exe runs every track / vehicle / mode without `MASHED.exe`.
-**Activities:**
-- Decide renderer endgame: keep RenderWare 3 (if a build is licensable / available), or replace with a D3D11 backend like TD5RE's `ddraw_wrapper`.
-- Strip the dev harness from the build matrix.
-- Final pass on `STUBS.md` / `UNCERTAINTIES.md` — every row resolved or `wontfix`.
-**Exit criteria:** P-DoD.
+### Phase R8 — v1.0 ship
+**Exit criteria:** P-DoD. Clean full playthrough; trackers zero-or-wontfix; dev harness
+stripped from shipping build; packaging + README for clean-install users.
 
-## Per-phase rituals
+## Operating model — the Fable-5 era
 
-- **Start of phase:** `git worktree add` a new branch via the `worktree` skill. Update `ROADMAP.md` to mark phase `in-progress`.
-- **End of session:** every newly-touched function gets its row in `hooks.csv` updated; uncertainties promoted to `UNCERTAINTIES.md`; stubs to `STUBS.md`.
-- **End of phase:** all four trackers reviewed; any row not advanceable in this phase moves to `DEFERRED.md` with a phase tag for re-pickup.
-- **Cross-phase:** the `re-classify` skill is invoked on every function as it's touched; the rubric is the only thing that updates a hook's status.
+How we work changed with the model upgrade; the machinery built for smaller models is
+kept but demoted:
 
-## Sizing reality check
+1. **Demand-driven RE.** Pick functions by what the current slice needs next (call-graph
+   from the slice entry point), not by C-level lists. The 3,122-row first-party C2 pool is
+   a *menu*, not a queue.
+2. **Deep solo sessions by default.** One session takes a whole function cluster / port
+   spec end-to-end (the menu-SM port proved multi-KB verbatim ports land in days). The
+   6-way fanout + sweep machinery (`discover-c1-batch`, `promote-c3-batch`, sweeps) is
+   reserved for genuinely mechanical, parallel work — do not run a batch whose predicted
+   yield is under ~30%.
+3. **Verification as byproduct.** Every port goes through `diff-original` against the live
+   original via the dev `.asi`; `re-classify` records the resulting C3/C4. The dev-harness
+   lane (MASHED.exe + Frida) stays alive for exactly this purpose until P-DoD.
+4. **Harness capability work is first-class** — it is the only measured high-yield C3 lever
+   (harness-ext 8/9, scenario-attach 8/8). Scenario-attach with live race state is also the
+   verification vehicle for R5/R6 physics/gameplay ports. Extend the harness when a slice
+   needs it, not speculatively.
+5. **KPIs:** capability milestones shipped (per phase exits), verified ports per week,
+   C4-suspect burn-down (R1), and screenshot/recording artifacts in `verify/`. Ladder
+   percentages are reported but never gate.
+6. **Rituals kept:** trackers mutate only via `re-classify`; ROADMAP.md updated at every
+   phase boundary (the v1 ritual that lapsed — this rewrite is the correction); commit at
+   every working state; stop-and-ask on architecture gates (R4 renderer, R5 physics).
 
-`MASHED.exe` has **5,800 functions** identified after auto-analysis (full inventory at `re/analysis/function_inventory.csv`). At a sustainable 5–15 functions to C4 per week, full C4 coverage is multi-year. **C4 is not the goal for every function** — the goal is **S-DoD** per subsystem, which typically needs 20–40% of a subsystem's functions at C4 (the public/cross-subsystem ones), with the rest at C2/C3 (correct-by-construction leaf utilities).
+## Sizing reality check (revised)
 
-Realistic horizon for a P-DoD shipping `mashed_re.exe`: 12–24 months solo, depending on how much of the renderer is rebuilt (RenderWare passthrough vs D3D11 replacement). Don't promise dates — promise phase exits.
+First-party surface is 3,649 functions; 527 are C3+ today (14.4%). The demand-driven model
+means we do **not** need all 3,122 remaining C2s — only the executed subset, ported in
+slice order. The expensive unknowns are concentrated, not spread: renderer (R4) and physics
+(R5) are the two architecture cliffs; everything else is the proven port-verify-screenshot
+loop. Horizon to P-DoD remains 12–24 months solo. Don't promise dates — promise phase exits.
