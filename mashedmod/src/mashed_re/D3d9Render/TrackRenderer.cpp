@@ -789,10 +789,18 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // for reverse), slide = the velocity component orthogonal to forward
     // (the +0xb0c measure). Tuning constants are SCAFFOLD (see
     // re/analysis/standalone_menu_sm/HANDLING_V2_2026-06-10.md).
+    // Constants fitted to LIVE original telemetry (Quick Battle, 4 cars
+    // sampled at VehicleControlUpdate 0x00470670; harvest_handling.py,
+    // log/handling_telemetry.jsonl). Transferable measurements (rates, unit-
+    // independent): coast decay k ~= 0.21/s (weighty ~4.7s time-constant);
+    // lateral slide rms ~2% of forward speed (strong grip). max-speed const
+    // +0x190 = 34.0 (internal units; world scale differs, so kTop stays
+    // track-radius-relative). See HANDLING_V2_2026-06-10.md.
     const float kTop      = radius_ * 0.25f;
-    const float kThrottle = kTop * 1.4f;
-    const float kDrag     = 0.65f;
-    const float kGrip     = 5.0f;    // lateral-velocity bleed rate (1/s)
+    const float kDrag     = 0.21f;          // HARVESTED coast decay
+    const float kThrottle = kTop * 0.42f;   // top=kThrottle/kDrag=2x kTop ->
+                                            // clamped; ~3.3s spool (faithful)
+    const float kGrip     = 6.0f;    // strong (slide ~2% of fwd, harvested)
     const float kSteer    = 2.2f;
     const float kGravity  = radius_ * 0.12f;
 
