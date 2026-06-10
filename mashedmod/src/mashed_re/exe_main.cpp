@@ -1117,11 +1117,20 @@ bool RenderFrame() {
         // Virtual(640x480) -> backbuffer(800x600) scale (FUN_00427680 analogue).
         constexpr float kVScale = 1.25f;
 
-        // Faithful slide animation (port of FUN_004325c0): advance every record's
-        // slide counter one step per frame. Settled records sit at slide 0; just-
-        // entered records start at 0x1ff and slide in. Step magnitude mirrors the
-        // original's per-frame delta scale (counts down).
-        Nav_AnimTick(-0x28);
+        // Faithful frame-rate-scaled slide animation: feed real elapsed ms into
+        // the FUN_00493480 frame-clock port (the standalone clock stands in for
+        // FUN_00493390), then run the verbatim FUN_004325c0 tick — per-tag
+        // multipliers, 50ms tick quantization and settle/freeze states exactly
+        // as the original computes them.
+        {
+            static DWORD s_last_ms = 0;
+            const DWORD now_ms = GetTickCount();
+            const int raw_ms =
+                (s_last_ms == 0) ? 0 : static_cast<int>(now_ms - s_last_ms);
+            s_last_ms = now_ms;
+            Nav_FrameClockUpdate(raw_ms);
+        }
+        Nav_AnimTick();
 
         for (int r = 0; r < nrec; ++r) {
             const MenuRecord& rec = recs[r];

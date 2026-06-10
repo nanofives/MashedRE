@@ -510,7 +510,10 @@ void BuildRecords(const NavSlot& slot) {
     // DAT_00898ad8/adc/ad4 writes).
     const int back_id = KvLookup(slot.desc_table, kTagBack, 0);
     g_records[rec].tag    = static_cast<std::int32_t>(kTagBack);
-    g_records[rec].type   = 1;
+    // FUN_0043d2a0 back-row anim init: with a live back id the row enters
+    // animating (DAT_00898ad0=0x1ff, DAT_00898ac4=0 or 2); only the no-back
+    // case settles immediately (type=1, slide=0). Root starts settled.
+    g_records[rec].type   = (g_nav_depth == 0) ? 1 : 0;
     g_records[rec].color  = static_cast<std::int32_t>(0xffffffffu);
     g_records[rec].scale  = 0.6f;       // 0x3f19999a
     g_records[rec].x      = 64.0f;      // 0x42800000
@@ -518,7 +521,7 @@ void BuildRecords(const NavSlot& slot) {
     g_records[rec].prim_id = back_id;   // back string id
     g_records[rec].sec_id  = -1;
     g_records[rec].row_index = -1;      // back row is not a list index
-    g_records[rec].slide   = 0x1ff;     // +0x10: slide counter init (FUN_0043d2a0)
+    g_records[rec].slide   = (g_nav_depth == 0) ? 0 : 0x1ff;  // FUN_0043d2a0
     ++rec;
 
     // Phase 6: list items (tag 0xff040000). One record per 0xff040000 occurrence.
@@ -538,10 +541,15 @@ void BuildRecords(const NavSlot& slot) {
         g_records[rec].y         = static_cast<float>(base_y + kSpacing * row);
         g_records[rec].prim_id   = prim;
         g_records[rec].sec_id    = -1;
+        // FUN_0043d2a0 builder: puVar4[2] = iVar6 (record+0x20 = running row
+        // counter; pool0 decomp 2026-06-09) — the anim tick's type-0 settle
+        // recomputes Y from this field (FUN_004325c0 @0x004326b8).
+        g_records[rec].pad20     = row;
         // Anim init (FUN_0043d2a0): slide counter +0x10 = 0x1ff (item slides in),
         // type +0x04 = 0 (not frozen). The anim tick (FUN_004325c0) drives slide
-        // -> 0 then freezes (type=1). Root screen items start settled (type=1).
-        g_records[rec].slide     = 0x1ff;
+        // -> 0 then settles (type=1). Root screen items start settled (type=1,
+        // slide=0 — puVar4[-5]=1 / puVar4[-2]=0 when DAT_0067e9f8 == 0).
+        g_records[rec].slide     = (g_nav_depth == 0) ? 0 : 0x1ff;
         g_records[rec].type      = (g_nav_depth == 0) ? 1 : 0;
         ++rec;
     }
@@ -561,30 +569,136 @@ void BuildRecords(const NavSlot& slot) {
 // `delta` stands in for FUN_004a2c48 (per-frame time-scaled step). The standalone
 // drives a fixed step per RenderFrame; sign matches the original (counts down).
 // Returns true once every record is frozen (all slides settled) = animation done.
-bool Anim_Tick(int delta) {
-    bool all_settled = true;
-    for (int i = 0; i < g_record_count; ++i) {
+// --------------------------------------------------------------------------
+// Frame clock — verbatim port of FUN_00493480 (0x00493480), disasm-verified
+// 2026-06-09 (pool0, anchor BDCAE093...). The original's ms source is
+// FUN_00493390 (CALL at 0x00493480); the standalone's clock supplies raw_ms.
+//   - snap bands (0x0049348a..0x004934cf): 47..53->50, 97..103->100,
+//     147..153->150, 197..203->200;
+//   - carry accumulator DAT_007719d4; ticks = (carry+ms)/50 with remainder
+//     kept (0x004934e3: magic-mul 0x51eb851f >>4 = /50);
+//   - remainder > 47 rounds up one tick and zeroes the carry (0x004934fd);
+//     remainder < 3 drops the carry (0x00493502);
+//   - DAT_007f1000 = ticks*50 (0x00493514);
+//     DAT_007f1004 = DAT_007f1000 * 3.3333333e-4f (_DAT_005cc948 @0x005cc948
+//     = 0x39aec33e = 1/3000) (0x0049351f..0x0049352b).
+int   g_tick_carry = 0;     // DAT_007719d4
+int   g_tick_ms    = 0;     // DAT_007f1000
+float g_frame_dt   = 0.0f;  // DAT_007f1004
+// DAT_0067eca4 model: frontend phase. The menu-item draw loop runs at phase
+// 2..3 (FUN_0043c5b0 gate ladder, port-spec table); the anim tick selects its
+// base speed at 0x004325c8: CMP [0067eca4],4; JL -> 1.0f (0x005cc320) else
+// 2.0f (0x005cc574). The standalone sits in the "menu active" phase (2).
+int   g_anim_phase = 2;     // DAT_0067eca4 model
+int   g_anim_gate  = 1;     // DAT_0067e914 (anim-system gate; menu = nonzero)
+
+void FrameClockUpdate(int raw_ms) {
+    int ms = raw_ms;
+    if      (ms >= 0x2f && ms <= 0x35) ms = 0x32;   // 0x0049348a..94
+    else if (ms >= 0x61 && ms <= 0x67) ms = 0x64;   // 0x0049349b..a5
+    else if (ms >= 0x93 && ms <= 0x99) ms = 0x96;   // 0x004934ac..ba
+    else if (ms >= 0xc5 && ms <= 0xcb) ms = 0xc8;   // 0x004934c1..cf
+    int acc   = g_tick_carry + ms;                  // 0x004934d4..da
+    int ticks = 0;
+    if (acc >= 0x32) { ticks = acc / 50; acc -= ticks * 50; }  // 0x004934e3..f2
+    g_tick_carry = acc;                             // 0x004934f7
+    if      (acc > 0x2f) { ++ticks; g_tick_carry = 0; }        // 0x004934fd
+    else if (acc < 3)    { g_tick_carry = 0; }                 // 0x00493502
+    g_tick_ms  = ticks * 0x32;                      // 0x00493511..14
+    g_frame_dt = static_cast<float>(g_tick_ms) * 3.3333333e-4f; // 0x0049351f
+}
+
+// FUN_004a2c48 (0x004a2c48) is the MSVC _ftol2-style float->int helper:
+// FISTP round-to-nearest, then sign-aware carry adjust (0x004a2c6b..0x004a2ca5)
+// = TRUNCATION toward zero. (The hooks.csv C2 note calling it "banker's
+// rounding" is wrong — corrected in CHANGELOG 2026-06-09.) A plain C integer
+// cast is exactly that truncation.
+inline int AnimStep(float v) { return static_cast<int>(v); }
+
+// Float view of record+0x08: the default-tag anim path (incl. the 0xff080000
+// prompt class) accumulates a FLOAT in the +0x08 cell that item rows use as
+// the int row_index (0x00432751..0x00432777 stores raw 0x43340000 = 180.0f).
+inline float F8Get(const MenuRecord& r) {
+    float f; std::memcpy(&f, &r.row_index, 4); return f;
+}
+inline void F8Set(MenuRecord& r, float f) { std::memcpy(&r.row_index, &f, 4); }
+
+// FUN_004325c0 (0x004325c0) — verbatim port from the 2026-06-09 pool0 disasm.
+// Walks the first 30 records (ESI 0x898ad0 stride 0x34 while < 0x8990e8 =
+// records 0..29). Base speed held in ST1 for the whole walk (see g_anim_phase
+// above). Per-tag steps, each "FLD DAT_007f1004; FMUL ST1(base); FMUL K;
+// CALL 0x004a2c48 (trunc)":
+//   0xff040000 item, type 0/2:  K=-2000.0f (0x005cd904, @0x00432682); settle
+//     on <= 0: type2 -> slide=0x1ff freeze; type0 -> slide=0,type=1 and Y
+//     recompute (0x004326b8): Y = Q_ListBaseY(DAT_0067ece0, 0x1e) +
+//     rec[+0x20]*0x1e; screen 24 (&DAT_005f7370): Q(0x1c)+rec[+0x20]*0x1c
+//     - 58.0f (_DAT_005cd900); screen 18 (&DAT_005f72a0): Y -= 58.0f.
+//   0xff040000 item, other type: K=+1000.0f (0x005cc9fc, @0x0043264e);
+//     >= 0x190 -> slide=0x1ff, freeze.
+//   {0xff110000,0xff000000,0xff120000,0xff130000,0xff230000,0xff100000}
+//     (LAB_0043277c class), type 0/2: K=-800.0f (0x005cd8f8, @0x0043279b);
+//     settle on <= 0 (type2 freeze / type0 -> 0, type=1; no Y recompute);
+//     other type: K=+500.0f (0x005ccd04, @0x00432788) joining the 0x190 clamp.
+//   any other tag (incl. 0 and the prompt class): float path (@0x00432751) —
+//     f8 += DAT_007f1004 * 300.0f (0x005cd8fc); >= 180.0f (0x005cd09c) ->
+//     f8 = 180.0f raw 0x43340000, freeze. (No base multiplier on this path.)
+// Returns 1 when nothing is left animating; a record counts as animating when
+// tag != 0 && type != 0x1000 && DAT_0067e914 != 0 (0x004325f5..0x0043260d).
+bool Anim_Tick() {
+    const float base = (g_anim_phase >= 4) ? 2.0f : 1.0f;   // 0x004325c8..db
+    const NavSlot& slot = g_stack[g_nav_depth];
+    int all_settled = 1;                                    // [ESP+0x10]
+    for (int i = 0; i < 30 && i < kMaxRecords; ++i) {       // 0x898ad0..0x8990e8
         MenuRecord& r = g_records[i];
         const std::uint32_t tag = static_cast<std::uint32_t>(r.tag);
-        if (r.type != 0x1000) {
-            // record is still animating
-            if (tag == kTagItem || tag == kTagBack ||
-                tag == 0xff080000u /* prompt */) {
-                if (r.type == 0 || r.type == 2) {
-                    r.slide += delta;             // *piVar6 += FUN_004a2c48()
-                    if (r.slide < 1) {
-                        if (r.type == 2) { r.slide = 0x1ff; r.type = 0x1000; }
-                        else             { r.slide = 0;     r.type = 1; }
-                    } else {
-                        all_settled = false;
+        if (tag != 0 && r.type != 0x1000 && g_anim_gate != 0)
+            all_settled = 0;                                // 0x004325f5..0d
+        const bool slide_class =
+            (tag == 0xff110000u || tag == 0xff000000u || tag == 0xff120000u ||
+             tag == 0xff130000u || tag == 0xff230000u || tag == 0xff100000u);
+        if (tag == 0xff040000u) {
+            if (r.type == 0 || r.type == 2) {
+                r.slide += AnimStep(g_frame_dt * base * -2000.0f);
+                if (r.slide <= 0) {                         // JG 0x004327d7
+                    if (r.type == 2) { r.slide = 0x1ff; r.type = 0x1000; }
+                    else {                                  // 0x004326b8 settle
+                        const int row20 = r.pad20;          // [ESI+0x10]=+0x20
+                        r.slide = 0; r.type = 1;
+                        float y = static_cast<float>(
+                            Q_ListBaseY(slot.item_count, 0x1e) + row20 * 0x1e);
+                        if (slot.screen_id == 24) {         // &DAT_005f7370
+                            y = static_cast<float>(
+                                    Q_ListBaseY(slot.item_count, 0x1c) +
+                                    row20 * 0x1c) - 58.0f;  // _DAT_005cd900
+                        }
+                        if (slot.screen_id == 18) {         // &DAT_005f72a0
+                            y -= 58.0f;
+                        }
+                        r.y = y;                            // FSTP [ESI+0xc]
                     }
-                } else {
-                    // type==1 already settled list item: nothing to do
                 }
+            } else {                                        // 0x0043264e
+                r.slide += AnimStep(g_frame_dt * base * 1000.0f);
+                if (r.slide >= 0x190) { r.slide = 0x1ff; r.type = 0x1000; }
             }
+        } else if (slide_class) {                           // LAB_0043277c
+            if (r.type == 0 || r.type == 2) {               // 0x0043279b
+                r.slide += AnimStep(g_frame_dt * base * -800.0f);
+                if (r.slide <= 0) {
+                    if (r.type == 2) { r.slide = 0x1ff; r.type = 0x1000; }
+                    else             { r.slide = 0;     r.type = 1; }
+                }
+            } else {                                        // 0x00432788
+                r.slide += AnimStep(g_frame_dt * base * 500.0f);
+                if (r.slide >= 0x190) { r.slide = 0x1ff; r.type = 0x1000; }
+            }
+        } else {                                            // 0x00432751 float
+            const float f = g_frame_dt * 300.0f + F8Get(r);
+            F8Set(r, f);
+            if (f >= 180.0f) { F8Set(r, 180.0f); r.type = 0x1000; }
         }
     }
-    return all_settled;
+    return all_settled != 0;
 }
 
 } // namespace
@@ -694,10 +808,17 @@ int               Nav_RecordCount()  { return g_record_count; }
 int               Nav_Cursor()       { return g_stack[g_nav_depth].cursor; }
 int               Nav_ScreenId()     { return g_stack[g_nav_depth].screen_id; }
 
-bool              Nav_AnimTick(int delta) { return Anim_Tick(delta); }
+void              Nav_FrameClockUpdate(int raw_ms) { FrameClockUpdate(raw_ms); }
+bool              Nav_AnimTick() { return Anim_Tick(); }
 int               Nav_RecordSlide(int rec_index) {
     if (rec_index < 0 || rec_index >= g_record_count) return 0;
-    return g_records[rec_index].slide;
+    const MenuRecord& r = g_records[rec_index];
+    // The horizontal entry offset only applies while the record is actually
+    // sliding in (type 0/2). The post-settle count-up phase (type 1 -> frozen
+    // 0x1000 holding slide=0x1ff, per FUN_004325c0's item lifecycle) leaves
+    // the record at its final position.
+    if (r.type != 0 && r.type != 2) return 0;
+    return r.slide;
 }
 
 int               Nav_PromptId() {

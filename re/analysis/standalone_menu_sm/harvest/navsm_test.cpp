@@ -171,7 +171,14 @@ int main() {
     Nav(8, kNavPush);   // depth>0 -> items enter with slide=0x1ff, type=0
     std::printf("  on push: rec1 slide=%d (expect 0x1ff=511)\n", Nav_RecordSlide(1));
     int frames = 0; bool settled = false;
-    while (frames < 100 && !settled) { settled = Nav_AnimTick(-0x28); ++frames; }
+    // 50ms frames -> one quantized tick each (FUN_00493480 port): item slide
+    // step = trunc(50/3000 * 1.0 * -2000) = -33/frame; 0x1ff crosses zero in
+    // ~16 frames, then the post-settle count-up (+16/frame to 0x190) freezes.
+    while (frames < 200 && !settled) {
+        Nav_FrameClockUpdate(50);
+        settled = Nav_AnimTick();
+        ++frames;
+    }
     std::printf("  settled after %d frames=%d ; rec1 slide=%d (expect 0) : %s\n",
                 frames, settled, Nav_RecordSlide(1),
                 (settled && Nav_RecordSlide(1) == 0) ? "OK" : "FAIL");

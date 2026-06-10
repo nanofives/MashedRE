@@ -137,9 +137,18 @@ int                 Nav_PromptId();
 bool                Nav_ItemEnabled(int row_index);
 
 // Advance the menu slide animation one frame (port of FUN_004325c0). `delta` is
-// the per-frame step (negative; slide counts down toward 0). Returns true when
-// every record has settled (animation complete). Call once per RenderFrame.
-bool                Nav_AnimTick(int delta);
+// Frame clock — verbatim port of FUN_00493480 (0x00493480): quantizes the raw
+// per-frame elapsed ms (the standalone's clock stands in for FUN_00493390) to
+// multiples of 50 ms with a carry accumulator and snap bands, producing the
+// DAT_007f1000 (int ms) / DAT_007f1004 (float = ms/3000) equivalents that the
+// anim tick consumes. Call once per frame BEFORE Nav_AnimTick.
+void                Nav_FrameClockUpdate(int raw_ms);
+
+// Verbatim port of FUN_004325c0 (0x004325c0): advances every record's anim
+// state using the frame delta from Nav_FrameClockUpdate (frame-rate-scaled,
+// exactly the original's per-tag multipliers). Returns true when no record is
+// left animating. Call once per RenderFrame.
+bool                Nav_AnimTick();
 
 // Slide counter (0x1ff..0) for record `rec_index` (NOT row index; includes the
 // back row at index 0). 0x1ff = fully off-screen / just-entered, 0 = settled.
