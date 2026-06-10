@@ -31,9 +31,9 @@ namespace D3d9Render {
 
 class QuadRenderer {
 public:
-    // Hard cap on atlas slots. Frontend.piz contains 8 textures so 16 is a
-    // comfortable upper bound for B5.
-    static constexpr std::uint32_t kMaxSlots = 16;
+    // Hard cap on atlas slots. 8 atlas + bg/logo/font + badge sprites (R2-5)
+    // = 17 in use; 20 leaves headroom.
+    static constexpr std::uint32_t kMaxSlots = 20;
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }

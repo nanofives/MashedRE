@@ -460,6 +460,19 @@ mashed_re::D3d9Render::MashedFont g_font;
 mashed_re::D3d9Render::MenuStringTable g_menu_str;
 constexpr std::uint32_t kSlotMenuFont   = 15;
 constexpr int           kHandleMenuFont = 9;
+
+// R2-5 — badges.txd named-sprite chrome. MASHED's boot loader (FUN_0040bbb0,
+// 0x0040bbb0) opens sfx.piz and loads "badges.txd" into the dictionary at
+// DAT_0063b8fc; SpriteLookupC (FUN_0040bb50, 0x0040bb50 = FUN_004c5c00(dict,
+// name)) resolves named textures from it ("Button"/"Arrow"/"SemiC"...). The
+// menu draw loop's highlight branch looks up "Button" (string @0x005cda7c)
+// and submits it via FUN_004739f0 with width 13.0 (0x41500000 @0x0043cbaa)
+// at the bar's left edge (X bias 13.0 = _DAT_005cd8d8). The standalone
+// decodes BADGES.TXD with Txd::Dictionary (same chunk-0x23/ver 0x1803ffff
+// container as FGDC20.TXD) and uploads "Button" (16x32 PAL8).
+constexpr std::uint32_t kSlotMenuBadge   = 16;
+constexpr int           kHandleMenuBadge = 10;
+bool             g_menu_badge_ready = false;
 constexpr float         kMenuTextHeight = 30.f;   // on-screen glyph height (px)
 wchar_t          g_menu_msgs[8][64] = {};
 
@@ -1198,6 +1211,17 @@ bool RenderFrame() {
                 HudIm2DQuad(0, hx, hy, hw, hh, 0xa0146ef0u, uv_full); // solid fill
                 // gradient overlay (FUN_00473540): brighter upper band.
                 HudIm2DQuad(0, hx, hy, hw, hh * 0.5f, 0x60ffffffu, uv_full);
+                // R2-5: "Button" badge — the rounded left cap. The original's
+                // highlight branch looks it up via SpriteLookupC("Button",
+                // 0x0043cbbe) and submits via FUN_004739f0 with width 13.0
+                // (0x41500000) at the bar's left edge (X bias 13.0 =
+                // _DAT_005cd8d8), full UV, bar height, scale mode 1.
+                if (g_menu_badge_ready) {
+                    HudIm2DQuad(kHandleMenuBadge,
+                                hx - 13.0f * kVScale, hy,
+                                13.0f * kVScale, hh,
+                                0xa0146ef0u, uv_full);
+                }
             }
 
             // --- 0x224 special centered item: triangle border (FUN_00472dc0,
@@ -1647,6 +1671,58 @@ bool UploadAllTexturesForAtlas() {
                   uploaded);
     if (g_hwnd) SetWindowTextA(g_hwnd, g_windowTitle);
     return uploaded > 0;
+}
+
+// R2-5: load sfx.piz/BADGES.TXD (the named-sprite dictionary MASHED loads at
+// FUN_0040bbb0 via FUN_0042a6b0("badges.txd",0,0) into DAT_0063b8fc), decode it
+// with Txd::Dictionary, and upload the "Button" texture (16x32 PAL8 — the
+// rounded left cap of the menu highlight bar, SpriteLookupC name @0x005cda7c)
+// into kSlotMenuBadge / kHandleMenuBadge. The Archive and Dictionary are local:
+// UploadFromTextureToSlot copies the pixels into the D3D9 texture in-scope.
+bool LoadBadgeSprites() {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load("original/TOASTART/Common/sfx.piz")) {
+        if (log) { std::fprintf(log, "\nR2-5: sfx.piz load FAILED: %s\n", piz.last_error()); std::fclose(log); }
+        return false;
+    }
+    const std::uint8_t* blob = nullptr;
+    std::uint32_t blen = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        if (std::strcmp(piz.entry(i).name, "BADGES.TXD") == 0) {
+            blob = piz.blob(i, &blen);
+            break;
+        }
+    }
+    if (!blob) {
+        if (log) { std::fprintf(log, "\nR2-5: BADGES.TXD not found in sfx.piz\n"); std::fclose(log); }
+        return false;
+    }
+    mashed_re::Txd::Dictionary dict;
+    if (!dict.Decode(blob, blen)) {
+        if (log) { std::fprintf(log, "\nR2-5: BADGES.TXD decode FAILED: %s\n", dict.last_error()); std::fclose(log); }
+        return false;
+    }
+    bool ok = false;
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (std::strcmp(tex.name, "Button") == 0) {
+            ok = g_quad_renderer.UploadFromTextureToSlot(kSlotMenuBadge, tex);
+            if (ok) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandleMenuBadge, g_quad_renderer.slot_texture(kSlotMenuBadge));
+            }
+            if (log) {
+                std::fprintf(log, "\nR2-5: badges.txd 'Button' %ux%u upload %s "
+                             "(dict has %u textures)\n",
+                             tex.width(), tex.height(), ok ? "OK" : "FAILED",
+                             dict.count());
+            }
+            break;
+        }
+    }
+    if (log) std::fclose(log);
+    return ok;
 }
 
 // B19a: load a PNG asset from a .piz by entry name, decode it via WIC, upload to
@@ -2446,6 +2522,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {
             LoadMenuItems();
         }
+        // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
+        g_menu_badge_ready = LoadBadgeSprites();
         // R2-2 save-driven game state: load original/gamesave.bin and replay
         // Save::DeserializeFromBuffer's span restore (FUN_00404e80 step 1) so
         // the state-gated routing/grey-out branches see the real save (unlock
