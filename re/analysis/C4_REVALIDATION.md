@@ -21,14 +21,16 @@ install-observe canonical harness; reconfirm what passes, demote what fails.**
 
 ## Population A — 74 tagged rows (C4-EVIDENCE-SUSPECT, still C4)
 
-Authoritative list = live query, do not snapshot here:
+**R0 UPDATE 2026-06-09 (scripts/r0/c4_ledger_repair.py): populations unified.** The
+authoritative open list is now a single live query:
 
 ```
-grep "C4-EVIDENCE-SUSPECT" hooks.csv   # 96 tagged total: 74 still C4, 22 already demoted C2
+grep "C4-EVIDENCE-SUSPECT:" hooks.csv   # 101 open = 74 (A) + 24 (B) + 3 (C), all C4
 ```
 
-The 22 already-demoted rows still carry stale tags — clear tags on demoted rows during
-Phase R0 cleanup so the grep converges to the open population.
+The 22 stale tags on already-demoted C2 rows were rewritten to
+`C4-EVIDENCE-SUSPECT-CLEARED(2026-06-09,demoted):` so the grep converges to the open
+population while history stays readable. Of 122 C4 rows, 21 are clean.
 
 ## Population B — 24 untagged escapees (audit finding, 2026-06-09)
 
@@ -72,4 +74,5 @@ in notes) or demoted (CHANGELOG line). Track progress below.
 | 2026-05-26 | 19 (frontend Phase A) | 9 full + 10 install-only | 2 → C3 | `log/sweep_suspect_c4_frontend_run.txt` |
 | 2026-06-05 | 25 | 3 | 22 → C2 (no installable reimpl) | CHANGELOG lines 3170–3195 |
 | 2026-06-06 | 1 | 1 (RwMatrixScale) | 0 | `boot_to_menu_install_observe_2026-06-06` |
+| 2026-06-09 | R0 ledger repair (no re-validation) | — | — | 24 escapees + 3 trio tagged (all verified in-window, 0 skips); 22 stale tags on demoted rows rewritten to -CLEARED. Open population = 101, all C4. `scripts/r0/c4_ledger_repair.py` |
 | | | | | |
