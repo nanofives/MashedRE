@@ -65,8 +65,14 @@ A subsystem is **DONE** when:
 
 ## Phases (v2)
 
-### Phase R0 — Repair & re-baseline (one focused pass)
+### Phase R0 — Repair & re-baseline (DONE 2026-06-09)
 **Goal:** the repo tells the truth before new work starts.
+**Executed 2026-06-09** (commits `28badb07..` on `standalone/menu-state-machine`, merged
+to `main` same day; repair scripts under `scripts/r0/`, CHANGELOG `r0-repair` entries,
+backups under `log/backups/`). All criteria met; two honest exceptions recorded:
+PROMOTION_QUEUE rows `c3-batch-af-s1`/`af-s4` stay Queued (their claimed promotions
+never landed in hooks.csv — needs a re-classify drain), and the `## camera_follow`
+appendix in DEFERRED.md was left in place (labeled, out of criterion scope).
 **Exit criteria:**
 - `standalone/menu-state-machine` (253 commits) merged to `main`; verify screenshots cited
   by commit messages committed; uncommitted scripts/probes triaged (commit or delete).
