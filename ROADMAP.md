@@ -92,13 +92,18 @@ appendix in DEFERRED.md was left in place (labeled, out of criterion scope).
   and stale `mashed_pool` locks removed (respect the documented pool4 leak-lock), build
   logs pruned.
 
-### Phase R1 — C4 truth (standing lane, not a gate)
+### Phase R1 — C4 truth (DONE 2026-06-09)
 **Goal:** zero suspect C4 rows; the C4 column means what the rubric says.
-Runs continuously alongside R2+ at ~1 short session per week (harness throughput is a
-demonstrated 4–9 rows/day).
-**Exit criteria:** per `re/analysis/C4_REVALIDATION.md` — zero `C4-EVIDENCE-SUSPECT` tags;
-zero C4 rows whose only canonical evidence dates 2026-05-15..24; every row reconfirmed or
-demoted via `re-classify` with a CHANGELOG line.
+**Executed 2026-06-09, same day as R0** — the standing-lane estimate proved pessimistic:
+subset-install batching (12–19 hooks per canonical run) drained all 101 in one session.
+R1-A static audit demoted 16 (11 no-install-site, 5 install-disabled → C2); R1-B
+reconfirmed 85/85 via six subset-install canonical boot-to-menu runs (every hook
+0xE9-live + manifest-confirmed + 25s survival, 0 crashes — incl. the Vec3 trio).
+**C4 = 106, zero suspect tags.** Evidence `log/install_observe_r1b_20260609.txt`;
+audit trail `re/analysis/C4_REVALIDATION.md`.
+**Exit criteria (met):** zero `C4-EVIDENCE-SUSPECT` tags; zero C4 rows whose only
+canonical evidence dates 2026-05-15..24; every row reconfirmed or demoted with a
+CHANGELOG line.
 
 ### Phase R2 — Menu complete (finish the current slice)
 **Goal:** the standalone main menu is pixel-faithful and fully functional.

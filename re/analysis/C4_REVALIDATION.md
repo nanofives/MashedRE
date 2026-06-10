@@ -76,4 +76,13 @@ in notes) or demoted (CHANGELOG line). Track progress below.
 | 2026-06-06 | 1 | 1 (RwMatrixScale) | 0 | `boot_to_menu_install_observe_2026-06-06` |
 | 2026-06-09 | R0 ledger repair (no re-validation) | — | — | 24 escapees + 3 trio tagged (all verified in-window, 0 skips); 22 stale tags on demoted rows rewritten to -CLEARED. Open population = 101, all C4. `scripts/r0/c4_ledger_repair.py` |
 | 2026-06-09 | 16 (R1-A static installability audit) | 0 | 16 → C2 (11 no-install-site, 5 install-disabled) | source scan: 101 suspects vs active RH_ScopedInstall sites (521); fails C3 hook gate per 06-05/06-07 precedents. Open population = 85, all with active installs. `scripts/r1/demote_noninstallable_suspects.py` |
+| 2026-06-09 | 85 (R1-B subset-install canonical observe) | 85 | 0 | 6 runs, every hook 0xE9-live + manifest installed=1 + 25s boot-to-menu survival, 0 crashes (incl. Vec3 trio — Population C resolved). `log/install_observe_r1b_20260609.txt`, `scripts/r1/reconfirm_installed_suspects.py` |
 | | | | | |
+
+## STATUS: EXIT CRITERION MET 2026-06-09
+
+`grep "C4-EVIDENCE-SUSPECT:" hooks.csv` returns **zero rows**. Final disposition of
+the original 122 C4s: 38 demoted (22 on 06-05 + 16 R1-A), 85 reconfirmed (R1-B),
+plus the always-clean rows; **C4 = 106**, every row backed by installed-hook
+canonical evidence or post-fix diffs. This tracker stays as the audit trail; new
+suspect tags (if ever) reopen it.
