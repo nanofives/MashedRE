@@ -885,6 +885,64 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
     return true;
 }
 
+// PORTED car selection (FUN_0040d110, 0x0040d110): the menu vehicle id snaps
+// to its model group ((id/6)*6 — six livery DFFs per model in one piz) and
+// each player's car = base + livery. Mode 0xb assigns livery = player index;
+// we use that as the default for the three AI cars (liveries 1..3) until the
+// per-player DAT_007f1a1c writer is traced.
+bool TrackRenderer::LoadCarLiveries(IDirect3DDevice9* dev,
+                                    const char* piz_path,
+                                    const char* dff_base,
+                                    const char* log_path) {
+    std::FILE* log = log_path ? std::fopen(log_path, "a") : nullptr;
+    Piz::Archive piz;
+    if (!piz.Load(piz_path)) {
+        if (log) std::fclose(log);
+        return false;
+    }
+    std::vector<std::pair<const std::uint8_t*, std::uint32_t>> txds;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        const std::size_t ln = std::strlen(n);
+        if (ln > 4 && _stricmp(n + ln - 4, ".TXD") == 0) {
+            std::uint32_t bl = 0;
+            const std::uint8_t* b = piz.blob(i, &bl);
+            if (b) txds.emplace_back(b, bl);
+        }
+    }
+    std::vector<Txd::Dictionary> dicts(txds.size());
+    for (std::size_t di = 0; di < txds.size(); ++di)
+        dicts[di].Decode(txds[di].first, txds[di].second);
+
+    car_variants_.clear();
+    car_variants_.resize(3);
+    int loaded = 0;
+    for (int li = 1; li <= 3; ++li) {
+        char want[64];
+        std::snprintf(want, sizeof(want), "%s%d.DFF", dff_base, li);
+        const std::uint8_t* dff = nullptr;
+        std::uint32_t dl = 0;
+        for (std::uint32_t i = 0; i < piz.count(); ++i) {
+            if (_stricmp(piz.entry(i).name, want) == 0) {
+                dff = piz.blob(i, &dl);
+                break;
+            }
+        }
+        if (!dff) continue;
+        Track::DffModel model;
+        if (!model.Parse(dff, dl)) continue;
+        CarVariant& v = car_variants_[static_cast<std::size_t>(li - 1)];
+        BuildDffBatches(dev, model, dicts, &v.batches, &v.textures);
+        ++loaded;
+    }
+    if (log) {
+        std::fprintf(log, "R6 car liveries: %s base=%s loaded=%d/3\n",
+                     piz_path, dff_base, loaded);
+        std::fclose(log);
+    }
+    return loaded > 0;
+}
+
 void TrackRenderer::UpdateCar(const DriveInput& in) {
     if (!car_ready_ || in.dt <= 0.f) return;
     // R6 handling v2 — velocity-vector model whose STRUCT SHAPE follows
@@ -1385,8 +1443,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                                               D3DTOP_MODULATE);
             }
         }
-        // stretch AI cars: same body batches under their own matrices
+        // AI cars: per-car LIVERY variant (PORTED selection, FUN_0040d110 —
+        // livery = player index) when loaded; else the shared body batches.
         for (const auto& a : ai_cars_) {
+            const std::size_t li = static_cast<std::size_t>(&a - ai_cars_.data());
+            const CarVariant* var =
+                (li < car_variants_.size() &&
+                 !car_variants_[li].batches.empty()) ? &car_variants_[li]
+                                                     : nullptr;
             D3DMATRIX am;
             MatIdentity(&am);
             const float ac = std::cos(a.yaw), as = std::sin(a.yaw);
@@ -1394,20 +1458,23 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             am._31 = -as; am._33 = ac;
             am._41 = a.pos[0]; am._42 = a.pos[1]; am._43 = a.pos[2];
             dev->SetTransform(D3DTS_WORLD, &am);
-            for (std::size_t mi = 0; mi < car_batches_.size(); ++mi) {
-                const auto& b = car_batches_[mi];
+            const auto& bats = var ? var->batches : car_batches_;
+            const auto& texs = var ? var->textures : car_textures_;
+            for (std::size_t mi = 0; mi < bats.size(); ++mi) {
+                const auto& b = bats[mi];
                 if (b.empty()) continue;
-                dev->SetTexture(0, car_textures_[mi]);
-                if (!car_textures_[mi])
+                dev->SetTexture(0, texs[mi]);
+                if (!texs[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
                 dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
                                      static_cast<UINT>(b.size() / 3),
                                      b.data(), sizeof(V));
-                if (!car_textures_[mi])
+                if (!texs[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
             }
+            if (var) continue;   // variant models carry their wheels baked in
             // wheels (unsteered, shared spin)
             for (const auto& w : wheels_) {
                 D3DMATRIX local;

@@ -2854,6 +2854,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     const char* cpiz = (cv[0] == '1' && cv[1] == '\0')
                         ? "original/TOASTART/VEHICLES/Advantag.piz" : cv;
                     g_track.LoadCar(g_device, cpiz, "ADVANTAGE0.DFF", kLogPath);
+                    // PORTED selection (FUN_0040d110): same piz, liveries
+                    // 1..3 for the AI cars.
+                    g_track.LoadCarLiveries(g_device, cpiz, "ADVANTAGE",
+                                            kLogPath);
                     // R6: MASHED_ROUND=1 -> first-to-3-rounds match (countdown,
                     // elimination, score, results). MASHED_ROUND=N sets the
                     // round target.

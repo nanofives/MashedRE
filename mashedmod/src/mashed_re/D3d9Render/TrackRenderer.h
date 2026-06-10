@@ -71,6 +71,14 @@ public:
                  const char* dff_entry, const char* log_path);
     bool car_ready() const { return car_ready_; }
 
+    // PORTED car selection (FUN_0040d110, 0x0040d110): one model piz is
+    // shared by every player — vehicle id snaps to its 6-livery group
+    // ((id/6)*6) and each player's car = base + livery (DFF "<Base><n>").
+    // Loads liveries 1..3 for the AI cars (mode-0xb of the original assigns
+    // livery = player index; per-player DAT_007f1a1c defaults pending RE).
+    bool LoadCarLiveries(IDirect3DDevice9* dev, const char* piz_path,
+                         const char* dff_base, const char* log_path);
+
     struct DriveInput {
         float accel = 0.f;   // +1 up-arrow / -1 down-arrow (reverse/brake)
         float steer = 0.f;   // +1 right / -1 left
@@ -158,6 +166,13 @@ private:
     // car model + state
     std::vector<std::vector<V>>     car_batches_;
     std::vector<IDirect3DTexture9*> car_textures_;
+    // AI livery variants (index 0 = livery 1 = AI car 0, etc.); full models
+    // with wheels baked in — the spin overlay only applies to the player.
+    struct CarVariant {
+        std::vector<std::vector<V>>     batches;
+        std::vector<IDirect3DTexture9*> textures;
+    };
+    std::vector<CarVariant> car_variants_;
     bool  car_ready_   = false;
     float car_pos_[3]  = {};
     float car_yaw_     = 0.f;
