@@ -222,19 +222,31 @@ public:
     bool  round_mode_  = false;   // MASHED_ROUND: 4-car exhibition round
     int   round_alive_ = kRaceCars;
     int   round_winner_ = -1;     // set when the round ends
-    // match / round structure
-    int   wins_[kRaceCars] = {};  // round wins this match
-    int   match_target_ = 3;      // first-to-N rounds
+    // PORTED points system (FUN_0040eee0 + FUN_0040b290 + Race::
+    // EvaluateResult 0x00410510): per-elimination awards with 4
+    // participants: 1st out -2, 2nd out -1, runner-up +1 (zeroed if its
+    // score >10), winner +2; scores floor at 0; signed delta + 6000 ms
+    // display timer (DAT_008a9520/DAT_008a9510); elimination order kept
+    // (DAT_008a94c0). Match win at score > 11 (0x00410510, DAT_008a94d0==4).
+    int   scores_[kRaceCars] = {};       // DAT_008a94e0
+    int   score_prev_[kRaceCars] = {};   // DAT_008a9570
+    int   score_delta_[kRaceCars] = {};  // DAT_008a9520
+    float delta_timer_[kRaceCars] = {};  // DAT_008a9510 (ms)
+    int   elim_order_[kRaceCars] = {-1, -1, -1, -1};   // DAT_008a94c0
+    int   elim_count_ = 0;
     int   match_winner_ = -1;
     int   round_no_ = 0;
     float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
+    void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
+    void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
     void  StartRound();           // grid all 4 cars at the start line
-    void  StartMatch(int first_to);  // reset wins, start round 1
-    void  NextRoundOrEnd();          // tally the win, start next or finish
+    void  StartMatch(int first_to);  // reset scores, start round 1
+    void  NextRoundOrEnd();          // check match win, start next round
     int   match_winner() const { return match_winner_; }
-    int   match_target() const { return match_target_; }
     int   round_no() const { return round_no_; }
-    int   wins(int car) const { return (car >= 0 && car < kRaceCars) ? wins_[car] : 0; }
+    int   score(int car) const { return (car >= 0 && car < kRaceCars) ? scores_[car] : 0; }
+    int   score_delta(int car) const { return (car >= 0 && car < kRaceCars) ? score_delta_[car] : 0; }
+    float delta_timer(int car) const { return (car >= 0 && car < kRaceCars) ? delta_timer_[car] : 0.f; }
     float countdown() const { return countdown_; }
     // round step (also advances player bookkeeping outside round mode)
     void  UpdateRace(float dt);

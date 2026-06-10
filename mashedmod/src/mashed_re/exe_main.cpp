@@ -1212,9 +1212,20 @@ bool RenderFrame() {
                                               0xff40d060u, 0xffe0c040u};
                 const float y = 24.f + i * 26.f;
                 HudIm2DQuad(0, 20.f, y, 22.f, 20.f, col[i], uvf);   // car tag
-                for (int w = 0; w < g_track.wins(i); ++w)
-                    HudIm2DQuad(0, 50.f + w * 26.f, y, 22.f, 20.f,
+                // PORTED score data (FUN_0040b290 array DAT_008a94e0): one
+                // bar segment per point (match win at >11, 0x00410510)
+                for (int w = 0; w < g_track.score(i) && w < 12; ++w)
+                    HudIm2DQuad(0, 50.f + w * 14.f, y, 10.f, 20.f,
                                 col[i], uvf);
+                // the signed +/- delta flash, 6000 ms (DAT_008a9520/10)
+                if (g_font.ready() && g_track.delta_timer(i) > 0.f &&
+                    g_track.score_delta(i) != 0) {
+                    wchar_t d[8];
+                    swprintf(d, 8, L"%+d", g_track.score_delta(i));
+                    DrawMashedString(d, 240.f, y + 10.f, 24.f,
+                                     g_track.score_delta(i) > 0
+                                         ? 0xff80ff80u : 0xffff8080u);
+                }
             }
             if (g_font.ready()) {
                 const float cd = g_track.countdown();
@@ -1227,7 +1238,7 @@ bool RenderFrame() {
                     swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
                     DrawMashedString(b, 400.f, 60.f, 48.f, 0xffffe080u);
                 } else if (g_track.round_winner() >= 0) {
-                    DrawMashedString(L"ROUND OVER", 400.f, 60.f, 40.f,
+                    DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
                                      0xffffffffu);
                 }
             }
@@ -1275,7 +1286,7 @@ bool RenderFrame() {
                     std::fprintf(lf, "R6 round %d OVER t=%.1fs winner=car%d "
                                      "(wins now:", rn, t, g_track.round_winner());
                     for (int i = 0; i < 4; ++i)
-                        std::fprintf(lf, " c%d=%d", i, g_track.wins(i));
+                        std::fprintf(lf, " c%d=%d", i, g_track.score(i));
                     std::fprintf(lf, ")\n");
                     std::fclose(lf);
                 }
@@ -1286,8 +1297,8 @@ bool RenderFrame() {
                 std::FILE* lf = std::fopen(kLogPath, "a");
                 if (lf) {
                     std::fprintf(lf, "R6 MATCH OVER t=%.1fs winner=car%d "
-                                     "(first to %d)\n", t,
-                                 g_track.match_winner(), g_track.match_target());
+                                     "(score>11 rule, 0x00410510)\n", t,
+                                 g_track.match_winner());
                     std::fclose(lf);
                 }
             }

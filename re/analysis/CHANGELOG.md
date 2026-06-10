@@ -3368,3 +3368,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-10  0040e180  (race-camera cluster)  C2->C2  standalone-port annotation: Race/RaceCamera.cpp verbatim port + live-trace validation (re/analysis/race_camera/)
 2026-06-10  00441820  (race-camera cluster)  C2->C2  standalone-port annotation: Race/RaceCamera.cpp verbatim port + live-trace validation (re/analysis/race_camera/)
 2026-06-10  00410d10  (race-camera cluster)  C2->C2  standalone-port annotation: Race/RaceCamera.cpp verbatim port + live-trace validation (re/analysis/race_camera/)
+2026-06-10  0040eee0  (points system)  C2->C2  standalone-port annotation: scoring rules ported + round-verified; drawer pending
+2026-06-10  0040b290  (points system)  C2->C2  standalone-port annotation: scoring rules ported + round-verified; drawer pending
+2026-06-10  00410510  (points system)  C2->C2  standalone-port annotation: scoring rules ported + round-verified; drawer pending

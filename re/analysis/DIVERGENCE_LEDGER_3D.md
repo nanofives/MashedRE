@@ -17,10 +17,12 @@ more format/RE work · ✅ = closed this pass.
 2. **Sky** — ✅ wired (`Sky_Filename` → sky clump drawn first, z-write off,
    unfogged). NOTE: per-track verification pending; the original's sky has
    cloud layers/UV scroll that a static clump won't animate. [GAP residue]
-3. **Distinct cars** — all four standalone cars are the same red ADVANTAGE0.
-   The original races four different vehicles/liveries (yellow/green/blue/red
-   in t01). Data exists (10 VEHICLES/*.piz); selection logic is game code.
-   [SCAFFOLD → real car-selection port]
+3. **Distinct cars** — ✅ CLOSED 2026-06-10: real selection ported
+   (FUN_0040d110): all four cars are LIVERIES of one model (vehicle table
+   0x005f37a8, 6 DFF variants per piz, car = (id/6)*6 + livery). Standalone
+   AI cars now load Advantage1..3 (sa_liveries_t05.png: green/blue/red pack).
+   Residual adapter: livery-per-player default = player index (mode-0xb
+   verbatim); DAT_007f1a1c writer untraced.
 4. **Camera** — ✅ CLOSED 2026-06-10: the real shared race camera
    (FUN_00446520) verbatim-ported to Race/RaceCamera.cpp — pair framing,
    LED.piz per-gate angles, zoom/distance/pitch laws, springs, sway.
@@ -28,9 +30,14 @@ more format/RE work · ✅ = closed this pass.
    pitch within hmix margin). The orbit/free cameras remain as dev-viewer
    tools only. Residual: countdown/start uses the race cam (original may
    use a start cinematic — unverified).
-5. **Scoring/HUD** — the real game uses team badges + score BARS + “+1/−1”
-   points on a Current Standings screen (t03); my win-pips/banner are
-   inventions. [SCAFFOLD → RE the points table + standings screen]
+5. **Scoring/HUD** — ✅ DATA CLOSED 2026-06-10: the real points system is
+   ported (FUN_0040eee0 + FUN_0040b290 + Race::EvaluateResult 0x00410510):
+   per-elimination awards (4P: −2/−1/+1-capped/+2), score floor 0, signed
+   delta + 6000 ms flash, elimination order, match win at score > 11.
+   Standalone rounds verified (mashed_re.log: runner-up +1 / winner +2
+   accumulation). [residual: PRESENTATION — the standings drawer
+   (FUN_0043a610 lobby panel; 0x0041af50.. HUD sprite cluster; badge
+   sprites/bars layout) still approximated, not verbatim]
 6. **Elimination rule** — ✅ CLOSED 2026-06-10: the real rule is neither
    ">7 gates" nor literally screen-edge: a car dies when the camera's
    REQUIRED ZOOM saturates at 10.0 (cam+0x9a0, checked by fcomp at

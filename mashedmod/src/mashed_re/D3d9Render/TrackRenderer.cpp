@@ -1131,21 +1131,60 @@ void TrackRenderer::StartRound() {
     race_cam_.Reset();   // force_reset path on the first camera tick
 }
 
-void TrackRenderer::StartMatch(int first_to) {
-    match_target_ = first_to > 0 ? first_to : 3;
+void TrackRenderer::StartMatch(int /*first_to: superseded by the ported
+                                 score rules — match win at score > 11
+                                 (0x00410510)*/) {
     match_winner_ = -1;
     round_no_ = 1;
-    for (int i = 0; i < kRaceCars; ++i) wins_[i] = 0;
+    for (int i = 0; i < kRaceCars; ++i) {
+        scores_[i] = score_prev_[i] = score_delta_[i] = 0;
+        delta_timer_[i] = 0.f;
+        elim_order_[i] = -1;
+    }
+    elim_count_ = 0;
     StartRound();
+}
+
+// 0x0040b290 (standard path, mode 0 / no teams): prev snapshot, signed delta
+// display + 6000 ms timer, score += delta, floor at 0. (Modes 1/2 gating and
+// the replay event ring are not ported — standalone round is mode 0.)
+void TrackRenderer::ScoreAward(int car, int delta) {
+    if (car < 0 || car >= kRaceCars) return;
+    score_prev_[car] = scores_[car];        // DAT_008a9570
+    score_delta_[car] = delta;              // DAT_008a9520 (signed display)
+    scores_[car] += delta;                  // DAT_008a94e0
+    delta_timer_[car] = 6000.f;             // DAT_008a9510
+    if (scores_[car] < 0) scores_[car] = 0;
+}
+
+// 0x0040eee0, DAT_008a94d0 == 4 path (4 participants, mode 0, no teams),
+// delta = 1; called AFTER the victim's alive flag drops (matching the
+// original's FUN_00422fd0-then-callback order). AI auto-resolve branches
+// (FUN_0040e470 type-2 fast-forward) are not ported — the player is always
+// in our round.
+void TrackRenderer::ScoreOnElimination(int victim) {
+    if (elim_count_ < kRaceCars) elim_order_[elim_count_++] = victim;  // DAT_008a94c0
+    const int remaining = round_alive_;
+    if (remaining == 3) {
+        ScoreAward(victim, -2);             // param_2 * -2
+    } else if (remaining == 2) {
+        ScoreAward(victim, -1);             // -param_2
+    } else if (remaining == 1) {
+        int survivor = -1;
+        for (int i = 0; i < kRaceCars; ++i)
+            if (race_[i].alive) survivor = i;
+        // runner-up +1, zeroed when its score already exceeds 10
+        ScoreAward(victim, (scores_[victim] > 10) ? 0 : 1);   // FUN_0040b6d0 cap
+        ScoreAward(survivor, 2);
+    }
 }
 
 void TrackRenderer::NextRoundOrEnd() {
     if (round_winner_ < 0) return;
-    ++wins_[round_winner_];
-    if (wins_[round_winner_] >= match_target_) {
-        match_winner_ = round_winner_;
-        return;   // match over; leave the final standings
-    }
+    // Race::EvaluateResult (0x00410510): with 4 participants the match ends
+    // when an alive player's score exceeds 11.
+    for (int i = 0; i < kRaceCars; ++i)
+        if (scores_[i] > 11) { match_winner_ = i; return; }
     ++round_no_;
     StartRound();   // re-grid for the next round
 }
@@ -1205,6 +1244,8 @@ void TrackRenderer::UpdateRace(float dt) {
                      static_cast<std::uint32_t>(cam_ticks_),
                      0.f /*DAT_007f0fc8 live*/, false);
 
+    for (int i = 0; i < kRaceCars; ++i)        // DAT_008a9510 decay
+        if (delta_timer_[i] > 0.f) delta_timer_[i] -= dt * 1000.f;
     if (countdown_ <= 0.f) {
         const int victim = race_cam_.EliminationCheck(cc);
         if (victim >= 0 && race_[victim].alive) {
@@ -1212,6 +1253,7 @@ void TrackRenderer::UpdateRace(float dt) {
             --round_alive_;
             if (victim > 0 && victim - 1 < static_cast<int>(ai_cars_.size()))
                 ai_cars_[static_cast<std::size_t>(victim - 1)].speed = 0.f;
+            ScoreOnElimination(victim);        // FUN_0040eee0(victim, 1)
         }
     }
     if (round_alive_ <= 1) {
