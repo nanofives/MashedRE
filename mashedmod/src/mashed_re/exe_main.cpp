@@ -1544,14 +1544,27 @@ bool RenderFrame() {
             // the untextured solid via HudIm2DQuad (the standalone-safe
             // ChromeBaseDraw analogue; ChromeBaseDraw's own RVA scale-globals are
             // image-pad-zeroed) and a brighter top-half gradient band.
+            // F2 (2026-06-10, verified vs fresh orig_options.png): EVERY item
+            // row gets a PLATE — idle navy, selected orange. FUN_0043c5b0's
+            // fill immediates 0xff501513 / 0xff1050b4 are Im2D-BGR-swapped
+            // (DrawQuadPrimitives write_vert_zwc): navy RGB(0x13,0x15,0x50),
+            // orange RGB(0xb4,0x50,0x10).
+            if (!is224 && (rec.prim_id >= 0 || is_back)) {
+                const float px2 = 60.0f * kVScale + slideX;
+                const float py2 = (rec.y - 13.0f + 1.0f) * kVScale;
+                const float pw2 = 210.0f * kVScale;
+                const float ph2 = 26.0f * kVScale;
+                const std::uint32_t plate =
+                    highlighted ? 0xffb45010u : 0xff131550u;
+                HudIm2DQuad(0, px2, py2, pw2, ph2, plate, uv_full);
+                HudIm2DQuad(0, px2, py2, pw2, ph2 * 0.5f,
+                            highlighted ? 0x50ffffffu : 0x28ffffffu, uv_full);
+            }
             if (highlighted && !is224) {
                 const float hx = 60.0f * kVScale + slideX;
                 const float hy = (rec.y - 13.0f + 1.0f) * kVScale;
                 const float hw = 210.0f * kVScale;
                 const float hh = 26.0f * kVScale;
-                HudIm2DQuad(0, hx, hy, hw, hh, 0xa0146ef0u, uv_full); // solid fill
-                // gradient overlay (FUN_00473540): brighter upper band.
-                HudIm2DQuad(0, hx, hy, hw, hh * 0.5f, 0x60ffffffu, uv_full);
                 // R2-5: "Button" badge — the rounded left cap. The original's
                 // highlight branch looks it up via SpriteLookupC("Button",
                 // 0x0043cbbe) and submits via FUN_004739f0 with width 13.0
