@@ -431,6 +431,16 @@ constexpr std::uint32_t kSlotMenuBg     = 8;
 constexpr std::uint32_t kSlotMenuLogo   = 9;
 constexpr int           kHandleMenuBg   = 2;   // 1 = title texture (B15 demo)
 constexpr int           kHandleMenuLogo = 3;
+
+// F2: track-preview crossfade (MenuChromeShellB 0x0042e5b0, verified reimpl):
+// 24 named previews (slot table 0x005f79d8) from SFX.piz/TRACKIMAGES.TXD.
+// Slots 20..43, bridge handles 10..33.
+constexpr std::uint32_t kSlotPreview0   = 20;
+constexpr int           kHandlePreview0 = 10;
+bool g_previews_ready = false;
+int  g_chrome_spriteA = 0;   // DAT_0067e848 analogue
+int  g_chrome_spriteB = 1;   // DAT_0067f0b8 analogue (forced odd)
+unsigned g_chrome_frame = 0; // FrameCounter analogue
 bool             g_menu_bg_ready   = false;
 mashed_re::D3d9Render::MpegVideoTexture g_menu_video;  // F1 video backdrop
 bool             g_menu_logo_ready = false;
@@ -1468,6 +1478,44 @@ bool RenderFrame() {
     // backbuffer (the standalone-safe analogue of FUN_00427680/ChromeBaseDraw's
     // screen-dimension scaling, whose RVA getters/scale globals are zeroed by the
     // image-pad and so cannot be called here — HudIm2DQuad takes absolute px).
+    // F2: track-preview crossfade — verbatim phase math from the verified
+    // MenuChromeShellB reimpl (0x0042e5b0): 512-frame cycle, A/B alpha ramps,
+    // slot cycle 0..5 over the preview pairs, 352x352 at (288,64) virtual.
+    if (g_bridge_installed && g_frontend_phase >= 2 && g_previews_ready) {
+        static const int kCycle[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
+        const unsigned phase = (g_chrome_frame++) & 0x1ffu;
+        if (phase == 0x1e0u) g_chrome_spriteA += 2;
+        else if (phase == 0x0e0u) g_chrome_spriteB += 2;
+        if ((g_chrome_spriteB & 1) == 0) g_chrome_spriteB += 1;
+        int a6, a7;
+        if (phase < 0x0e0u) { a7 = 0; a6 = 0xff; }
+        else if (phase < 0x100u) {
+            const int t = static_cast<int>(phase) - 0xe0;
+            if (0xf < t) { a6 = (0x1f - t) * 0x10; a7 = 0xff; }
+            else         { a7 = t * 0x10;          a6 = 0xff; }
+        } else if (phase < 0x1e0u) { a6 = 0; a7 = 0xff; }
+        else {
+            const int t = static_cast<int>(phase) - 0x1e0;
+            if (t < 0x10) { a6 = t * 0x10;          a7 = 0xff; }
+            else          { a7 = (0x1f - t) * 0x10; a6 = 0xff; }
+        }
+        const float pvx = 288.f * 1.25f, pvy = 64.f * 1.25f;
+        const float pvw = 352.f * 1.25f, pvh = 352.f * 1.25f;
+        // preview pair index: slot*2 (the "1" image; "2" is the alt frame)
+        if (a6 != 0) {
+            const int h = kHandlePreview0 + kCycle[g_chrome_spriteA & 0xf] * 2;
+            HudIm2DQuad(h, pvx, pvy, pvw, pvh,
+                        (static_cast<std::uint32_t>(a6) << 24) | 0xffffffu,
+                        uv_full);
+        }
+        if (a7 != 0) {
+            const int h = kHandlePreview0 + kCycle[g_chrome_spriteB & 0xf] * 2;
+            HudIm2DQuad(h, pvx, pvy, pvw, pvh,
+                        (static_cast<std::uint32_t>(a7) << 24) | 0xffffffu,
+                        uv_full);
+        }
+    }
+
     // F2: the menu-screen chrome decal — FUN_0043c5b0 phase>=2 draws string
     // id 0x41 twice via FUN_00427e00 (shadow at 600,52 then white at 596,48,
     // scale 0.8; suppressed when FUN_0042b930()==0x21). Evidence:
@@ -2058,6 +2106,47 @@ bool UploadAllTexturesForAtlas() {
 // rounded left cap of the menu highlight bar, SpriteLookupC name @0x005cda7c)
 // into kSlotMenuBadge / kHandleMenuBadge. The Archive and Dictionary are local:
 // UploadFromTextureToSlot copies the pixels into the D3D9 texture in-scope.
+// F2: load the 24 track-preview textures (slot table 0x005f79d8 names) from
+// SFX.piz/TRACKIMAGES.TXD into slots 20..43 / bridge handles 10..33.
+bool LoadTrackPreviews() {
+    static const char* kNames[24] = {
+        "Training1","Training2","Egypt1","Egypt2","Neustein1","Neustein2",
+        "Timgidski1","Timgidski2","Highway1","Highway2","KeisterBay1",
+        "KeisterBay2","SuperG1","SuperG2","TierraPiedra1","TierraPiedra2",
+        "Storm1","Storm2","Forest1","Forest2","Landfill1","Landfill2",
+        "Nukov1","Nukov2"};
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load("original/TOASTART/Common/sfx.piz")) return false;
+    const std::uint8_t* blob = nullptr;
+    std::uint32_t blen = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        if (_stricmp(piz.entry(i).name, "TRACKIMAGES.TXD") == 0) {
+            blob = piz.blob(i, &blen);
+            break;
+        }
+    }
+    if (!blob) return false;
+    mashed_re::Txd::Dictionary dict;
+    if (!dict.Decode(blob, blen)) return false;
+    int loaded = 0;
+    for (int n = 0; n < 24; ++n) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, kNames[n]) != 0) continue;
+            const std::uint32_t slot = kSlotPreview0 + static_cast<std::uint32_t>(n);
+            if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandlePreview0 + n, g_quad_renderer.slot_texture(slot));
+                ++loaded;
+            }
+            break;
+        }
+    }
+    std::FILE* lf = std::fopen(kLogPath, "a");
+    if (lf) { std::fprintf(lf, "F2 track previews: %d/24 loaded\n", loaded); std::fclose(lf); }
+    return loaded > 0;
+}
+
 bool LoadBadgeSprites() {
     std::FILE* log = std::fopen(kLogPath, "a");
     mashed_re::Piz::Archive piz;
@@ -2903,6 +2992,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
         g_menu_badge_ready = LoadBadgeSprites();
+        g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
         // F1 (frontend-faithful): the real menu backdrop — frontend.mpg via
         // DirectShow into a D3D9 texture (the original's own playback path).
         {
