@@ -155,6 +155,7 @@
 #include "D3d9Render/TrackRenderer.h"
 #include "D3d9Render/RwIm2DBridge.h"        // B15: RW Im2D -> D3D9 bridge
 #include "D3d9Render/PngLoader.h"           // B19a: WIC PNG decode (bg/logo assets)
+#include "D3d9Render/MpegVideoTexture.h"    // F1: frontend.mpg backdrop (DirectShow)
 #include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "D3d9Render/MenuStringTable.h"     // menu id->glyph-string (sprite-by-id)
@@ -431,6 +432,7 @@ constexpr std::uint32_t kSlotMenuLogo   = 9;
 constexpr int           kHandleMenuBg   = 2;   // 1 = title texture (B15 demo)
 constexpr int           kHandleMenuLogo = 3;
 bool             g_menu_bg_ready   = false;
+mashed_re::D3d9Render::MpegVideoTexture g_menu_video;  // F1 video backdrop
 bool             g_menu_logo_ready = false;
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
@@ -1320,10 +1322,32 @@ bool RenderFrame() {
     g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
     g_device->BeginScene();
 
-    // B19a: real menu background (Perm.piz/BACKGROUND.PNG) drawn fullscreen behind
-    // everything via the bridge. When present it supersedes the B13 title quad.
+    // F1 (frontend-faithful): the original's menu backdrop is VIDEO —
+    // toastart/pc/movies/frontend.mpg played via DirectShow (the original's
+    // own mechanism; ledger F1). When the graph runs, the current video
+    // frame draws fullscreen; the B19a static PNG stays as the fallback.
     std::uint32_t uv_full[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
-    if (g_bridge_installed && g_menu_bg_ready) {
+    if (g_menu_video.ready()) {
+        g_menu_video.Update();
+        struct VRHW { float x, y, z, rhw; float u, v; };
+        const VRHW q[4] = {
+            {-0.5f,        -0.5f,        0.f, 1.f, 0.f, 0.f},
+            {800.f - 0.5f, -0.5f,        0.f, 1.f, 1.f, 0.f},
+            {-0.5f,        600.f - 0.5f, 0.f, 1.f, 0.f, 1.f},
+            {800.f - 0.5f, 600.f - 0.5f, 0.f, 1.f, 1.f, 1.f},
+        };
+        g_device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+        g_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+        g_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+        g_device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+        g_device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+        g_device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+        g_device->SetTexture(0, g_menu_video.texture());
+        g_device->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
+        g_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, q, sizeof(VRHW));
+        g_device->SetTexture(0, nullptr);
+        g_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    } else if (g_bridge_installed && g_menu_bg_ready) {
         HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
     }
 
@@ -2836,6 +2860,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
         g_menu_badge_ready = LoadBadgeSprites();
+        // F1 (frontend-faithful): the real menu backdrop — frontend.mpg via
+        // DirectShow into a D3D9 texture (the original's own playback path).
+        {
+            char verr[128] = {};
+            const bool vok = g_menu_video.Open(
+                g_device, "original/toastart/pc/movies/frontend.mpg",
+                verr, sizeof(verr));
+            std::FILE* lf = std::fopen(kLogPath, "a");
+            if (lf) {
+                std::fprintf(lf, "F1 frontend.mpg: %s%s (%ux%u)\n",
+                             vok ? "RUNNING" : "FAILED ",
+                             vok ? "" : verr,
+                             g_menu_video.width(), g_menu_video.height());
+                std::fclose(lf);
+            }
+        }
         // R2-close: persisted menu settings (Sound screen values).
         LoadMenuSettings();
         // R4: MASHED_TRACK_VIEW=<1 | track name | piz path> -> fly-through.

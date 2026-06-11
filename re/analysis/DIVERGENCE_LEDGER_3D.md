@@ -95,6 +95,6 @@ F4. **Footer strings** — standalone GTS footer shows "Français" (string
     index bug). [BUG]
 F5. **Animation reference captured** 2026-06-10: 40 frames @50 ms of the
     original main menu (verify/frontend_ref/menu_burst_*.png +
-    menu_burst_montage.png) — acceptance reference for F1–F3. No menu
-    background VIDEO exists — the "motion" is the live 3D scene + logo
-    grid (no MCI in the menu path).
+    menu_burst_montage.png) — acceptance reference for F1–F3. (The earlier
+    "no video in the menu path" note here was WRONG — superseded by the
+    corrected F1: the backdrop motion is frontend.mpg video.)

@@ -68,6 +68,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "D3d9Render\QuadRenderer.cpp" ^
     "D3d9Render\RwIm2DBridge.cpp" ^
     "D3d9Render\PngLoader.cpp" ^
+    "D3d9Render\MpegVideoTexture.cpp" ^
     "D3d9Render\TextRenderer.cpp" ^
     "D3d9Render\MashedFont.cpp" ^
     "D3d9Render\MenuStringTable.cpp" ^
