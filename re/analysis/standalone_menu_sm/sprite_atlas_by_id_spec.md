@@ -163,3 +163,24 @@ layout; documented above, not on the item-label critical path.
 - id 0x224 special centered item: triangle border (FUN_00472dc0) — colored, no atlas.
 - Named chrome (FUN_0040bb50 "Button"/"Arrow"): needs `SpriteAtlasTxd` (badges.txd)
   — the only piece still requiring the TXD-dictionary crack.
+
+---
+
+# Addendum 2026-06-10 — named-sprite SOURCES pinned (frontend-faithful sweep)
+
+- `SpriteAnimFrameThunk` (0x0042e590, C4) slot table `0x005f79d8` = 24 char*
+  names: **track preview pairs** Training1/2, Egypt1/2, Neustein1/2,
+  Timgidski1/2, Highway1/2, KeisterBay1/2, SuperG1/2, TierraPiedra1/2,
+  Storm1/2, Forest1/2, Landfill1/2, Nukov1/2 (dumped from anchored .rdata).
+  Textures live in **SFX.piz/TRACKIMAGES.TXD**.
+- **SFX.piz/INTERFACE.TXD** = the named menu-sprite atlas: MultiPlayer/
+  QuickRace/TimeTrial/Freestyle1/2, Gold/Silver/BronzeCup, *Medal, Lock,
+  Star, Tick, question, NFL* powerup icons, CupBump, ENV...
+- MenuChromeShellB (0x0042e5b0 reimpl, diff GREEN) is the title/menu chrome
+  sequencer: fullscreen BG handle DAT_00898ab8 (= the frontend.mpg video
+  surface), 352x352 track-preview crossfade at (288,64) cycling slots 0..5
+  (phase = frame & 0x1ff), slide DAT_008990e0, logo overlay FUN_00473ee0
+  with handle DAT_008991a0.
+- Standalone wiring plan: load INTERFACE.TXD + TRACKIMAGES.TXD through the
+  badges.txd named-sprite path, drive a standalone MenuChromeShellB
+  equivalent (same phase math), bind MpegVideoTexture as the BG handle.
