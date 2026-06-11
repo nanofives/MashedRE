@@ -72,13 +72,16 @@ RENDERER and BEHAVIOR layers only.
 ## FRONTEND divergences (added 2026-06-10 after user review — the parity pairs
 ## verify/parity/parity_gts.png + parity_sound.png are NOT visually faithful)
 
-F1. **Menu background** — the original renders a LIVE 3D WORLD behind every
-    menu: `Common/Frontend.piz` = MAIN.BSP + TEXTURES.TXD (parses with our
-    existing world parser — materials 'main'/'carbase'/'rendergs'), with a
-    car driving around in it (visible in verify/frontend_ref/menu_burst_*).
-    Standalone shows a checkerboard fallback. [DATA available + SCAFFOLD →
-    render MAIN.BSP behind the menu; harvest the frontend camera (the
-    race-cam chain +0x84 is null at menu — different camera object)]
+F1. **Menu background** — CORRECTED 2026-06-10: the moving backdrop is
+    **VIDEO** — `toastart/pc/movies/frontend.mpg` (MPEG-1 PS, 512x512 @30fps,
+    38.7 MB; untouched by the intro-skip patch). The original plays it via
+    DirectShow ("Could not run the DirectShow graph!" strings @0x005cfb18)
+    into the menu scene — `Common/Frontend.piz` MAIN.BSP (materials
+    'main'/'carbase'/'rendergs') is the menu STAGE; the 512x512 video is
+    texture-sized for its 'main' surface. The "car driving around" in the
+    burst is video content. Standalone shows a checkerboard fallback.
+    [→ DirectShow-to-texture playback of frontend.mpg (the original's own
+    mechanism) + MAIN.BSP stage render; frontend camera still to harvest]
 F2. **Menu item plates/chrome** — original draws beveled plates + sliders
     (Panel.piz 3D panels: PANEL0..3.DFF/PANEL.TXD + the FUN_0043c5b0 draw
     loop with highlight quads FUN_00472c60/FUN_00473540/FUN_0040bb50);
