@@ -80,8 +80,11 @@ F1. **Menu background** — CORRECTED 2026-06-10: the moving backdrop is
     'main'/'carbase'/'rendergs') is the menu STAGE; the 512x512 video is
     texture-sized for its 'main' surface. The "car driving around" in the
     burst is video content. Standalone shows a checkerboard fallback.
-    [→ DirectShow-to-texture playback of frontend.mpg (the original's own
-    mechanism) + MAIN.BSP stage render; frontend camera still to harvest]
+    [BACKDROP CLOSED 2026-06-10: DirectShow-to-texture playback landed
+    (D3d9Render/MpegVideoTexture, the original's own mechanism — graph
+    RUNNING 512x512; verify/frontend_parity2/sa_video_menu_t06.png shows
+    the real dockside scene behind the menu). Residual: MAIN.BSP stage
+    render + per-screen frontend camera harvest + video loop verify]
 F2. **Menu item plates/chrome** — original draws beveled plates + sliders
     (Panel.piz 3D panels: PANEL0..3.DFF/PANEL.TXD + the FUN_0043c5b0 draw
     loop with highlight quads FUN_00472c60/FUN_00473540/FUN_0040bb50);
