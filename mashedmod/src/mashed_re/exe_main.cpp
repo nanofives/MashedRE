@@ -434,6 +434,11 @@ constexpr int           kHandleMenuLogo = 3;
 bool             g_menu_bg_ready   = false;
 mashed_re::D3d9Render::MpegVideoTexture g_menu_video;  // F1 video backdrop
 bool             g_menu_logo_ready = false;
+// F6 (frontend-faithful): the frontend PHASE (DAT_0067eca4 analogue, the
+// FUN_0043c5b0 draw ladder gate): 1 = title (logo only, no items), 2..3 =
+// menu screens (items draw). Title-confirm pushes screen 1 (the original's
+// title -> main-menu flow).
+int              g_frontend_phase  = 1;
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
 
@@ -939,6 +944,17 @@ bool UpdateMenuSelection() {
     const bool rgt_now   = (g_keys[DIK_RIGHT]     & 0x80) != 0;
     const bool rgt_prev  = (g_keys_prev[DIK_RIGHT]& 0x80) != 0;
 
+    // F6: title phase (DAT_0067eca4 == 1): no item nav; confirm advances the
+    // phase and pushes screen 1 (the original's title-confirm flow — the same
+    // push the nav demo driver replicates at phase 180).
+    if (g_frontend_phase < 2) {
+        if (ent_now && !ent_prev) {
+            g_frontend_phase = 3;
+            Nav(1, kNavPush);
+        }
+        if (esc_now && !esc_prev) return true;          // quit from title
+        return false;
+    }
     if (down_now && !down_prev) Nav_MoveCursor(+1);
     if (up_now   && !up_prev)   Nav_MoveCursor(-1);
     if (ent_now  && !ent_prev)  Nav_Select();           // push child screen
@@ -1405,7 +1421,10 @@ bool RenderFrame() {
 
     // B19a: real MASHED logo (Font36.piz/MASHEDLOGO.PNG) over the chrome — fit
     // into a 560x360 box preserving aspect, top-centered below the top band.
-    if (g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
+    // F6: the big centered wavy logo is the TITLE-phase composition; menu
+    // screens draw items without it (their small header chrome is the F2 pass).
+    if (g_frontend_phase < 2 &&
+        g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
         float lw = 560.f;
         float lh = lw * static_cast<float>(g_menu_logo_h) / static_cast<float>(g_menu_logo_w);
         if (lh > 360.f) {
@@ -1449,7 +1468,7 @@ bool RenderFrame() {
     // backbuffer (the standalone-safe analogue of FUN_00427680/ChromeBaseDraw's
     // screen-dimension scaling, whose RVA getters/scale globals are zeroed by the
     // image-pad and so cannot be called here — HudIm2DQuad takes absolute px).
-    if (g_bridge_installed) {
+    if (g_bridge_installed && g_frontend_phase >= 2) {   // F6 phase gate
         using namespace mashed_re::Frontend;
         const MenuRecord* recs = Nav_Records();
         const int         nrec = Nav_RecordCount();
