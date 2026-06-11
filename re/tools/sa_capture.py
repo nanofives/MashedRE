@@ -54,16 +54,24 @@ def shoot(pid, path):
     return True
 
 
-def tap_enter(pid):
-    # focus the window and tap ENTER (DirectInput reads it when focused)
+VK = {"enter": 0x0D, "down": 0x28, "up": 0x26, "esc": 0x1B}
+
+
+def tap_key(pid, name):
     h = find_hwnd(pid)
     if not h: return
     u = ctypes.windll.user32
     u.SetForegroundWindow(h)
-    time.sleep(0.15)
-    u.keybd_event(0x0D, 0x1C, 0, 0)
+    time.sleep(0.12)
+    vk = VK.get(name, 0x0D)
+    sc = u.MapVirtualKeyW(vk, 0)
+    u.keybd_event(vk, sc, 0, 0)
     time.sleep(0.07)
-    u.keybd_event(0x0D, 0x1C, 2, 0)   # KEYEVENTF_KEYUP
+    u.keybd_event(vk, sc, 2, 0)
+
+
+def tap_enter(pid):
+    tap_key(pid, "enter")
 
 
 def main():
@@ -71,16 +79,23 @@ def main():
     times = sorted(float(x) for x in sys.argv[2].split(","))
     env = dict(os.environ)
     enter_at = None
+    keys = []
     for kv in sys.argv[3:]:
         k, _, v = kv.partition("=")
         if k == "ENTER_AT":
             enter_at = float(v)
+        elif k == "KEYS":
+            for item in v.split(","):
+                t, _, kn = item.partition(":")
+                keys.append((float(t), kn))
+            keys.sort()
         else:
             env[k] = v
     proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     t0 = time.time()
     tapped = False
+    ki = 0
     try:
         for tcap in times:
             while time.time() - t0 < tcap:
@@ -88,6 +103,9 @@ def main():
                         time.time() - t0 >= enter_at:
                     tap_enter(proc.pid)
                     tapped = True
+                while ki < len(keys) and time.time() - t0 >= keys[ki][0]:
+                    tap_key(proc.pid, keys[ki][1])
+                    ki += 1
                 if proc.poll() is not None:
                     print(f"exe exited early (rc={proc.returncode})")
                     return 1
