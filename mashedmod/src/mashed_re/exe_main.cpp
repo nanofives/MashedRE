@@ -1468,6 +1468,22 @@ bool RenderFrame() {
     // backbuffer (the standalone-safe analogue of FUN_00427680/ChromeBaseDraw's
     // screen-dimension scaling, whose RVA getters/scale globals are zeroed by the
     // image-pad and so cannot be called here — HudIm2DQuad takes absolute px).
+    // F2: the menu-screen chrome decal — FUN_0043c5b0 phase>=2 draws string
+    // id 0x41 twice via FUN_00427e00 (shadow at 600,52 then white at 596,48,
+    // scale 0.8; suppressed when FUN_0042b930()==0x21). Evidence:
+    // FUN_0043c5b0_chrome.asm 0x0043c695..0x0043c6f3.
+    if (g_bridge_installed && g_frontend_phase >= 2 && g_font.ready() &&
+        mashed_re::Frontend::Nav_ScreenId() != 0x21) {
+        wchar_t cs[64];
+        if (GetMenuMessage(0x41, cs, 64) > 0) {
+            const float csc = kMenuTextHeight * 0.8f * 1.25f;  // 0.8 scale, 640->800
+            DrawMashedString(cs, 600.f * (800.f / 640.f), 52.f * (600.f / 480.f),
+                             csc, 0xff000000u, false);
+            DrawMashedString(cs, 596.f * (800.f / 640.f), 48.f * (600.f / 480.f),
+                             csc, 0xffffffffu, false);
+        }
+    }
+
     if (g_bridge_installed && g_frontend_phase >= 2) {   // F6 phase gate
         using namespace mashed_re::Frontend;
         const MenuRecord* recs = Nav_Records();
