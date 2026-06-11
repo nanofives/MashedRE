@@ -1435,14 +1435,12 @@ bool RenderFrame() {
     // screens draw items without it (their small header chrome is the F2 pass).
     if (g_frontend_phase < 2 &&
         g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
-        float lw = 560.f;
+        // F3: title proportions measured from verify/frontend_ref/menu_burst_*
+        // — the logo spans ~96% of the width, upper-center.
+        float lw = 768.f;
         float lh = lw * static_cast<float>(g_menu_logo_h) / static_cast<float>(g_menu_logo_w);
-        if (lh > 360.f) {
-            lh = 360.f;
-            lw = lh * static_cast<float>(g_menu_logo_w) / static_cast<float>(g_menu_logo_h);
-        }
         const float lx = (800.f - lw) * 0.5f;
-        const float ly = 100.f;
+        const float ly = 80.f;
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
 
         // R2-4: animated logo overlay — verbatim FUN_00473ee0 port (fade bands,
@@ -2984,7 +2982,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             "original/TOASTART/Common/Perm.piz", "BACKGROUND.PNG",
             kSlotMenuBg, kHandleMenuBg, nullptr, nullptr);
         g_menu_logo_ready = LoadPngAssetToSlot(
-            "original/TOASTART/Common/Font36.piz", "MASHEDLOGO.PNG",
+            "original/TOASTART/Common/Font36.piz", "MASHEDNEWLOGO.PNG",  /* F3: the rainbow title logo (MASHEDLOGO.PNG is the grey in-game variant) */
             kSlotMenuLogo, kHandleMenuLogo, &g_menu_logo_w, &g_menu_logo_h);
         // B19b: load the language message table + rasterize the main-menu items.
         if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {

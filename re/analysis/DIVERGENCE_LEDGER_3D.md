@@ -90,10 +90,14 @@ F2. **Menu item plates/chrome** — original draws beveled plates + sliders
     loop with highlight quads FUN_00472c60/FUN_00473540/FUN_0040bb50);
     standalone draws bare text + flat highlight bar. [SCAFFOLD → execute
     Part 1 of FUN_0043c5b0_port_spec.md — populators already ported]
-F3. **Animated logo** — original: huge rainbow wavy-grid logo
-    (FUN_00473ee0 + FUN_004733b0/FUN_00473220); standalone: static PNG at
-    wrong position/scale. [SCAFFOLD → port spec'd, .rdata consts harvest
-    needed]
+F3. **Animated logo** — SUBSTANTIALLY CLOSED 2026-06-10: the title was
+    drawing the WRONG ASSET (grey MASHEDLOGO.PNG); the original's rainbow
+    logo is **MASHEDNEWLOGO.PNG** (Font36.piz). Standalone now draws it at
+    the burst-measured proportions (~96% width) over the video + the
+    verbatim FUN_00473ee0 overlay (LogoOverlayDraw — already ported:
+    fade bands, arc strips, wavy grid). parity2_title_v2.png: near-match.
+    Residual: the original's wave grid DEFORMS the logo texture itself
+    (ours overlays it); burst frame-by-frame diff pending.
 F4. **Footer strings** — ROOT-CAUSED + suppressed 2026-06-10: the
     0xff080000 descriptor value is a screen-KIND code for FUN_00432b30's
     glyph branch table, not a USA.DAT string id — decoding it as a string
