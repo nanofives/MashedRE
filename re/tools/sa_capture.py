@@ -54,23 +54,44 @@ def shoot(pid, path):
     return True
 
 
+def tap_enter(pid):
+    # focus the window and tap ENTER (DirectInput reads it when focused)
+    h = find_hwnd(pid)
+    if not h: return
+    u = ctypes.windll.user32
+    u.SetForegroundWindow(h)
+    time.sleep(0.15)
+    u.keybd_event(0x0D, 0x1C, 0, 0)
+    time.sleep(0.07)
+    u.keybd_event(0x0D, 0x1C, 2, 0)   # KEYEVENTF_KEYUP
+
+
 def main():
     prefix = sys.argv[1]
     times = sorted(float(x) for x in sys.argv[2].split(","))
     env = dict(os.environ)
+    enter_at = None
     for kv in sys.argv[3:]:
         k, _, v = kv.partition("=")
-        env[k] = v
+        if k == "ENTER_AT":
+            enter_at = float(v)
+        else:
+            env[k] = v
     proc = subprocess.Popen([str(EXE)], cwd=str(ROOT), env=env,
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     t0 = time.time()
+    tapped = False
     try:
         for tcap in times:
             while time.time() - t0 < tcap:
+                if enter_at is not None and not tapped and \
+                        time.time() - t0 >= enter_at:
+                    tap_enter(proc.pid)
+                    tapped = True
                 if proc.poll() is not None:
                     print(f"exe exited early (rc={proc.returncode})")
                     return 1
-                time.sleep(0.1)
+                time.sleep(0.05)
             shoot(proc.pid, Path(f"{prefix}_t{int(tcap):02d}.png"))
     finally:
         try: proc.kill()
