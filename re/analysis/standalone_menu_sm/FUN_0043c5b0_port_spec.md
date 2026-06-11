@@ -886,3 +886,17 @@ DAT_0086ecc8/cc; x-sine amplitude _DAT_005ce1f8 = 0.0 in the image (READ-only).
 Remaining for full R2 phase exit (beyond the five items): side-by-side parity
 sweep vs original on the canonical screen set; settings screens mutating
 persisted state; all-34-screen reachability pass.
+
+---
+
+# PART 4 — chrome-sprite addendum (2026-06-10, local capstone disasm)
+
+The phase>=2 "two chrome FUN_00427e00 draws" (Part 1, suppressed when
+FUN_0042b930()==0x21): both draw **sprite id 0x41** — shadow pass at
+(600.0, 52.0) then main at (596.0, 48.0), scale 0.8 (0x3f4ccccd), colors
+built in the scratch ARGB slots (esp+0x20 family; main pass forces RGB
+0xff,0xff,0xff with the phase alpha). Evidence:
+re/analysis/standalone_menu_sm/FUN_0043c5b0_chrome.asm (0x0043c695..
+0x0043c6f3). Id 0x41 resolves through the FUN_00427e00 sprite-by-id path —
+implementing it in the standalone is the sprite_atlas_by_id_spec.md work
+(the same machinery the FUN_0043a610 trophy ids 0xe3/0xd2/0xd3/0xd4 use).
