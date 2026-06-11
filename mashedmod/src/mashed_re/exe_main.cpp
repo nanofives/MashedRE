@@ -1634,19 +1634,14 @@ bool RenderFrame() {
         // that id THROUGH MenuStringTable::Decode so the FUN_004277a0 control-code
         // remap (8/9/a/b/c/d/e -> 0x81/7f/81/8d/80/87/8f) turns it into the actual
         // FGDC20 nav/prompt glyph run — the same glyph path the original uses.
-        const int prompt_id = Nav_PromptId();
-        if (prompt_id >= 0 && g_font.ready() && g_menu_str.ready()) {
-            wchar_t pstr[128];
-            const int pn = g_menu_str.Decode(prompt_id, pstr, 128);
-            if (pn > 0) {
-                // Virtual (64, 428, 0.6) -> 800x600. Strip sits in the bottom band.
-                const float px = 64.0f * kVScale;
-                const float py = 428.0f * kVScale;
-                const float ph = kMenuTextHeight * (0.6f / 0.8f) * kVScale;
-                // Strip is left-justified (FUN_0042ad10 X=0x40=64). Left-anchor.
-                DrawMashedString(pstr, px, py, ph, 0xffd0d0e0u, true);
-            }
-        }
+        // F4 BUGFIX (frontend-faithful 2026-06-10): the 0xff080000 descriptor
+        // value is a SCREEN-KIND code consumed by FUN_00432b30's glyph branch
+        // table — NOT a USA.DAT string id. Decoding it as a string rendered
+        // arbitrary table entries (id 5 = "Français" on GTS). Strip draw is
+        // SUPPRESSED until FUN_00432b30's branch table is ported (pass #27);
+        // rendering nothing is faithful-neutral, rendering a wrong string
+        // is not.
+        (void)Nav_PromptId();
     }
 
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual

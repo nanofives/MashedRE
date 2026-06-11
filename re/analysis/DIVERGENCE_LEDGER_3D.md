@@ -94,8 +94,12 @@ F3. **Animated logo** — original: huge rainbow wavy-grid logo
     (FUN_00473ee0 + FUN_004733b0/FUN_00473220); standalone: static PNG at
     wrong position/scale. [SCAFFOLD → port spec'd, .rdata consts harvest
     needed]
-F4. **Footer strings** — standalone GTS footer shows "Français" (string
-    index bug). [BUG]
+F4. **Footer strings** — ROOT-CAUSED + suppressed 2026-06-10: the
+    0xff080000 descriptor value is a screen-KIND code for FUN_00432b30's
+    glyph branch table, not a USA.DAT string id — decoding it as a string
+    drew arbitrary entries (id 5 = "Français"). Misrender suppressed; the
+    real prompt strip lands with the FUN_00432b30 branch-table port
+    (part of the F2/draw-loop pass).
 F5. **Animation reference captured** 2026-06-10: 40 frames @50 ms of the
     original main menu (verify/frontend_ref/menu_burst_*.png +
     menu_burst_montage.png) — acceptance reference for F1–F3. (The earlier
