@@ -100,6 +100,13 @@ F4. **Footer strings** — ROOT-CAUSED + suppressed 2026-06-10: the
     drew arbitrary entries (id 5 = "Français"). Misrender suppressed; the
     real prompt strip lands with the FUN_00432b30 branch-table port
     (part of the F2/draw-loop pass).
+F6. **Boot screen/items** — found 2026-06-10 (parity2_menu.png): standalone
+    shows screen 0's records (Continue/Restart Race/...) at boot; the
+    original gates item drawing on the frontend PHASE (DAT_0067eca4 ladder
+    in FUN_0043c5b0: ==1 minimal, 2..3 items) so the TITLE phase shows the
+    logo only, and title-confirm pushes screen 1 (the real main menu —
+    Single Player/Multi Player/...). Fix = port the phase ladder + the
+    title-confirm push (part of the F2 draw-loop pass). [SCAFFOLD gap]
 F5. **Animation reference captured** 2026-06-10: 40 frames @50 ms of the
     original main menu (verify/frontend_ref/menu_burst_*.png +
     menu_burst_montage.png) — acceptance reference for F1–F3. (The earlier
