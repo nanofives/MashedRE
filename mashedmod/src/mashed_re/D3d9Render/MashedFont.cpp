@@ -49,9 +49,15 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     const std::uint32_t h     = RdU32(txd, 0x30);
     const std::uint32_t depth = RdU32(txd, 0x34);
     if (w == 0 || h == 0 || w > 4096 || h > 4096 || depth != 8) return false;
-    // 8bpp: a 1024-byte palette region (unused — atlas is direct intensity)
-    // follows the 16-byte struct payload (@0x28..0x38), then w*h intensity bytes.
-    const std::size_t pix_off = 0x38 + 1024;          // = 0x438
+    // Chunk layout (byte-exact, 2026-06-12): root 0x23 -> 4 raw bytes @0x0c ->
+    // rwID_IMAGE (0x18) chunk @0x14 whose size 0x2041c = 12 (struct hdr) +
+    // 0x10 (w,h,depth,STRIDE @0x2c..0x3b) + 0x400 (palette @0x3c..0x43b, all
+    // zeros -> direct intensity) + 0x20000 (pixels). Pixels therefore start at
+    // 0x43c — the previous 0x438 read the palette's last dword as the first
+    // four pixels, shifting the WHOLE atlas 4 columns left (every glyph showed
+    // its neighbor's edge column and lost its rightmost columns = the
+    // long-standing "leading tick" + cut-off glyph edges).
+    const std::size_t pix_off = 0x3c + 1024;          // = 0x43c
     if (pix_off + static_cast<std::size_t>(w) * h > txd_len) return false;
     const std::uint8_t* intensity = txd + pix_off;
 
@@ -69,11 +75,13 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::free(bgra);
     if (!up) return false;
     RwIm2DBridge_RegisterTexture(bridge_handle, qr.slot_texture(slot));
-    // The original renders FGDC20 POINT-sampled (FUN_00554940 binds the
-    // raster's native render-state 9; pixel evidence: the original's glyph
-    // edges are blocky-solid while LINEAR thins the strokes —
-    // verify/font_cmp_exit4x.png).
-    RwIm2DBridge_SetTexturePointFilter(bridge_handle, true);
+    // LINEAR sampling (bridge default). The menu drawer FUN_00428140 sets
+    // render-state 9 = 2 (rwFILTERLINEAR) before printing; FUN_00554940's
+    // per-raster override value (*(texture+0x50)&0xff) is [UNCERTAIN] without
+    // a runtime read. The earlier POINT switch was compensating for the
+    // 4-column atlas shift (pixels @0x438 instead of 0x43c) — with the
+    // correct base, LINEAR renders clean solid glyphs and at the original's
+    // 640x480 (cell scale 1.03x) LINEAR and POINT are visually identical.
     m_handle = bridge_handle;
     m_atlasW = static_cast<float>(w);
     m_atlasH = static_cast<float>(h);
@@ -124,16 +132,9 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
         gl.u1 = RdF32(rwf, o + 8);
         gl.v1 = RdF32(rwf, o + 12);
         gl.w_frac = RdF32(rwf, o + 16);
-        // POINT-sampling adaptation: the record UVs sit on .5-texel cell
-        // boundaries (e.g. 'E' u 51.5..64.5/512). Point sampling at the
-        // quad's left/top edge floors into the NEIGHBOR cell's last texel
-        // (pixel evidence: 1px dark slivers at every glyph's left edge,
-        // absent in the original's render — verify/orig_backbuffer_f1900).
-        // Inset the left/top sample coordinate by half a texel; the right/
-        // bottom edges keep their boundary so the cell's last texel row/
-        // column still samples.
-        gl.u0 += 0.5f / m_atlasW;
-        gl.v0 += 0.5f / m_atlasH;
+        // (No UV adjustment: with the correct 0x43c pixel base every glyph
+        // sits inside its .5-boundary window with clean margins — the old
+        // half-texel inset compensated for the 4-column atlas shift.)
         // The space record has a real width with a (blank) UV rect — the
         // original draws it like any glyph. Validity = a usable rect.
         gl.valid = (gl.u1 >= gl.u0 && gl.v1 > gl.v0);

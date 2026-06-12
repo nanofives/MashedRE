@@ -2,8 +2,9 @@
 //
 // Decodes MASHED's actual menu font from Font36.piz:
 //   FGDC20.TXD — 512x256 8bpp direct-intensity glyph atlas (RW TXD variant
-//                ver 0x1c02000a: root 0x23, struct @0x28 = [plat,w,h,depth],
-//                1024-byte palette region, then w*h intensity bytes @0x438).
+//                ver 0x1c02000a: root 0x23 -> rwID_IMAGE chunk @0x14 -> struct
+//                [w,h,depth,stride] @0x2c, all-zero 0x400 palette @0x3c,
+//                pixels @0x43c — NOT 0x438; see MashedFont.cpp chunk math).
 //   FGDC20.RWF — RW chunk 0x199 (RtCharset). Cracked from the deserializer
 //                FUN_00554390: header [ext_base u32 @0x24 (=0x80), glyphCount
 //                u32 @0x28 (=225), ext_count u32 @0x2c (=128)], EXTENDED

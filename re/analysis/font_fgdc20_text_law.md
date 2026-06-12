@@ -35,9 +35,18 @@ resolved from page at load. **The width float is the glyph width as a
 fraction of the unit cell** and equals the atlas u-extent exactly:
 `(u_right−u_left)×512 == width×33` for all 225 records.
 
-TXD: 512×256 8bpp at file +0x438 (w/h/depth dwords at 0x2c/0x30/0x34;
-0x38..0x437 is a zero "palette" region — 1 nonzero byte). Pixel values are
-direct coverage (0..255 with smooth AA tail).
+TXD (corrected 2026-06-12 evening — byte-exact chunk math): root 0x23 →
+4 raw bytes @0x0c → **rwID_IMAGE (0x18) chunk @0x14**, size 0x2041c =
+12 (struct hdr) + 0x10 (w=512, h=256, depth=8, **stride=512** @0x2c..0x3b) +
+0x400 (palette @0x3c..0x43b, ALL zeros → direct intensity) + 0x20000
+(pixels). **Pixels start at +0x43c, NOT +0x438** — the original B19 parser
+read the palette's last dword as the first four pixels, shifting the whole
+atlas 4 columns left. That shift was the long-standing "leading tick"
+(neighbor's edge column at every glyph's left) AND cut every glyph's
+rightmost columns. With 0x43c, every glyph sits inside its .5-boundary
+record window with clean margins (E ink profile in-window:
+[0,0,17,17,17,10,7,7,7,7,7,5,0,0]). Pixel values are direct coverage
+(0..255, smooth AA tail).
 
 ## Render law (FUN_00554940 + FUN_00427680)
 
@@ -94,16 +103,18 @@ direct coverage (0..255 with smooth AA tail).
 
 ## Sampling / rasterization
 
-- The original's glyph edges are blocky-solid (point-sampled). The
-  standalone marks the font texture POINT via
-  `RwIm2DBridge_SetTexturePointFilter` (pixel evidence
-  verify/font_cmp_exit4x.png — LINEAR visibly thins the strokes).
+- **LINEAR** (bridge default). FUN_00428140 sets render-state 9 = 2
+  (rwFILTERLINEAR) before printing; FUN_00554940's per-raster override value
+  (*(texture+0x50)&0xff) remains [UNCERTAIN] without a runtime read, but at
+  the original's 640×480 (cell scale 1.03×) LINEAR and POINT are visually
+  identical, and with the corrected 0x43c atlas base LINEAR renders clean
+  solid glyphs matching the original's weight
+  (verify/font_cmp_exit_offsetfix.png).
+- (CORRECTION: an earlier intermediate state of this note claimed the
+  original was point-sampled and added a half-texel UV inset — both were
+  compensations for the 4-column atlas shift and are reverted.)
 - Bridge applies the D3D9 −0.5 pixel-center correction at submit (the real
   RW D3D9 driver's job; the Im2D vertex buffer carries edge coordinates).
-- Record UVs sit on .5-texel cell boundaries (authored for bilinear);
-  point sampling at the quad's left/top edge floors into the NEIGHBOR
-  cell's last texel → 1px "tick" slivers (absent in the original's render).
-  MashedFont insets u0/v0 by half a texel at load.
 
 ## Capture instrument (original-side backbuffer)
 
@@ -118,20 +129,19 @@ comparisons. Keyboard injection does NOT advance the original's title.
 
 ## Residuals (open)
 
-1. Stroke weight still reads slightly lighter than the original's (mid-tone
-   AA distribution differs). Suspect the original's 8bpp→raster conversion
-   (FUN_004c5cb0 path) maps coverage differently (e.g. 4-bit alpha
-   quantization or palette curve). Needs a runtime raster read
-   (LockRect via Frida) — [UNCERTAIN].
-2. In-cell atlas bleed: some cells contain the neighbor's AA tail inside
-   their own UV window (e.g. 'W' col 334) → occasional faint tick that the
-   half-texel inset cannot remove. The original may repack cells at raster
-   creation — [UNCERTAIN].
-3. Original watermark not visible at f1900 (mid-transition synthetic-push
+1. ~~Stroke weight lighter~~ / ~~in-cell atlas bleed ticks~~ — **RESOLVED
+   2026-06-12 evening**: both were the 4-column atlas shift (pixels read
+   from +0x438 instead of +0x43c). With the correct base + LINEAR, weight
+   and edges match the original (verify/font_cmp_exit_offsetfix.png,
+   font_cmp_items_offsetfix.png).
+2. Original watermark not visible at f1900 (mid-transition synthetic-push
    frame); verify whether settled scr1 draws the 0x41 watermark in the
    original before trusting ours at (600,52)/(596,48).
-4. The splash "Loading" (id 0x222 at 580,140) right-clips when centered —
+3. The splash "Loading" (id 0x222 at 580,140) right-clips when centered —
    check FUN_004282a0's alignment flag for that draw.
-5. Disabled-row text alphas kept at the landed #18 look (top 0x80 /
+4. Disabled-row text alphas kept at the landed #18 look (top 0x80 /
    bottom×0.5); the exact param_7 the original passes for dim rows is
    unverified (the dim cap is 0x60 per FUN_00428140).
+5. The raster-native filter value (*(texture+0x50)&0xff) — [UNCERTAIN],
+   runtime read would settle it; LINEAR is the best-supported value
+   (explicit FUN_00428140 state set + pixel match).
