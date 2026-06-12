@@ -48,7 +48,7 @@ alpha, call sites) is wrong.
 
 | # | Feedback item | Owning function(s) | Status / route |
 |---|---|---|---|
-| 1 | out-of-focus freeze | window proc / WM_ACTIVATE path (WindowMsgPump 0x00499690 area) | confirm the original's activate handling; decide standalone behavior to match |
+| 1 | out-of-focus freeze | PumpOnce() WaitMessage() park when !g_active | LANDED: replaced the blocking WaitMessage park with Sleep(15) so the render loop keeps running unfocused; verified frame 200 reached while the game window was unfocused |
 | 2 | loading screen: spinning disk + text | FUN_00403050 (sprite DAT_00771964 at 320,200,480,240 + FUN_00402fb0 body) | decomp FUN_00402fb0 next; port |
 | 3 | "Press button to start" flashing | separate title handler (NOT FUN_0043c5b0 - title phase 1 only calls FUN_0042aae0); text via FUN_00554940 glyph pipe | ROUTE PINNED: confirmed drawn at title (live probe text='Press button to start'); print path = FUN_00428140->FUN_00554940 vtable+0x138; next: find the title-screen handler + flash timer |
 | 4 | attract/demo race on title idle | title idle timer → demo launch | find the timer global + transition in the title handler |

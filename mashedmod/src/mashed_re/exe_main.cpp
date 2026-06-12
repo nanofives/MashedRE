@@ -547,12 +547,15 @@ bool PumpOnce() {
         }
         TranslateMessage(&g_msg);
         DispatchMessageA(&g_msg);
-    } else if (!g_active && !g_nav_demo) {
-        // When idle AND unfocused we park on WaitMessage to spare the CPU. The
-        // scripted nav-demo (verification harness) must keep ticking even when
-        // the window is in the background, so it never parks. (g_nav_demo is
-        // false in normal/shipping runs, so behavior there is unchanged.)
-        WaitMessage();
+    }
+    // Item 1 (user review): the menu must NOT freeze when the window loses
+    // focus. The old WaitMessage() park blocked the whole render loop until a
+    // message arrived, freezing the video/animations until re-focus. Keep
+    // rendering when unfocused; throttle with a short sleep so a background
+    // window doesn't peg a CPU core (the frontend animates at the original's
+    // 50ms tick cadence anyway, so ~16ms is well under the visible rate).
+    else if (!g_active && !g_nav_demo) {
+        Sleep(15);
     }
     return g_quit;
 }
