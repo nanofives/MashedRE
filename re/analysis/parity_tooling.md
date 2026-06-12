@@ -34,8 +34,19 @@ $env:MASHED_GOTO=$null; $env:MASHED_DBG_DRAWSTREAM=$null
 
 # 3. diff (font glyphs excluded: the original capture can't see its text pipe)
 py -3.12 re\tools\drawlist_diff.py log\menu_draw_burst.json log\drawstream_re.json `
-    --exclude-tex 9 --map mashedmod\build\mashed_re.map
+    --exclude-tex 9 --map mashedmod\build\mashed_re.map `
+    --rotate-a 0x42e65a --tol-anim 4
 ```
+
+`--rotate-a 0x42e65a` is required for burst captures: Frida splits frames at
+Present, which lands mid-composition (the original's frame order is video ->
+previews -> caps -> arc -> checkers -> bands -> lines -> plates -> logo; an
+unrotated burst frame starts at the bands). Rotating to the ShellB video quad
+(retaddr 0x42e65a) reconstructs the true order. `--tol-anim 4` absorbs the
+checker cells' fsin corner jitter (~2.5px, runs off each side's own frame
+counter — unsynced captures can never agree). Both are explicit opt-ins; drop
+them for strict runs. Baseline: settled scr1 is GREEN 118/118 per frame
+(2026-06-12, post color-convention fix).
 
 Animation phase check: same, but compare frame-by-frame — the differ pairs
 multiple `--label-a/--label-b` in order, so per-frame alpha/position ramps
@@ -84,7 +95,14 @@ draw order, missing element):
   caveats from the frontend tracker to apply to any original-side capture.
 - **Color bytes** are compared raw; both sides write the identical RW Im2D
   vertex layout by construction (the standalone's draw reimpls are the C3/C4
-  ports of the original's emitters).
+  ports of the original's emitters). This is TRUE again as of 2026-06-12: the
+  first run exposed a compensating-bug pair (the bridge re-swapped R<->B at
+  submit while standalone callers passed pre-swapped ARGB constants — screen
+  correct, buffer bytes flipped vs MASHED's DAT_00898a20). Both halves are
+  fixed: callers pass the original's packed dwords (CONCAT13 forms from the
+  decomp), the reimpls' cited swap (U-3415) is the only conversion, the bridge
+  submits raw. Any new standalone draw call must pass ORIGINAL-convention
+  colors, never pre-swapped "screen ARGB".
 
 ## Validation findings (2026-06-12, scr1 settled, harness's first run)
 

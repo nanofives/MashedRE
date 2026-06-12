@@ -52,7 +52,7 @@ alpha, call sites) is wrong.
 | 2 | boot splash | FUN_004288a0 (legal/copyright splash) via FUN_00428a30; ~8s (24000000/3MHz QPC timer) | LANDED: the real boot splash is the Empire/Supersonic COPYRIGHT screen (MASHEDNEWLogo @320,100,256x128 + USA.DAT lines 0x1e5..0x1eb + 'Loading' 0x222), NOT Dolby/ProLogic (those textures are dead-loaded/vestigial - only read at load+free). Ported as phase-0 splash, 8s auto-advance or any key (verify/frontend_parity2/re_splash.png). Residual: bigE icon flanking 0x1e6/0x1e7 |
 | 3 | "Press button to start" flashing | FUN_00402fb0 (string id 0x2a4, called by FUN_00403050) | LANDED verbatim: alpha = 128 + 127*sin(phase), phase += 0.1/frame (amp -127.0 @0x005cc570, step @0x005cc56c); black shadow (320,380) + white main (316,376) scale 1.2 centered; verify/frontend_parity2/re_title_pressbutton.png |
 | 4 | attract/demo race on title idle | title idle timer FUN_004030d0 → FUN_0043df00 | RESOLVED (RE-cited, gameplay-blocked): FUN_0043df00 sets DAT_007f1a14/24/34=0/1/2 (3 cars), marks all three AI via FUN_0040e480(n,2), sets DAT_0067e9fc=0xb, and enters a game session via the nav SM FUN_0043d2a0(0,2). The attract "demo" is a SCRIPTED 3-AI RACE running the full game engine — NOT a video and NOT replay data. It cannot be a frontend fix; it requires the gameplay/racing engine the standalone does not have yet. Defer to the gameplay milestone (tracks with the renderer-gate / vehicle-lighting work). NOT blocked on any user question. |
-| 5 | logo misplaced | FUN_00428760 sprite pipe (emitter 0x450c7a, titleframe dump) | LANDED: ONE static quad at virtual (80,80,480x240) full-white; standalone fixed from the invented 768px/96% placement; draw order corrected (previews before logo) |
+| 5 | logo misplaced | FUN_00428760 sprite pipe (emitter 0x450c7a, titleframe dump) | LANDED: ONE static quad at virtual (80,80,480x240) full-white; standalone fixed from the invented 768px/96% placement; draw order corrected (previews before logo). **2026-06-12 parity adjudication: the logo also draws on MENU screens (scr1 burst A[40]), as the LAST draw of the frame, over the plates — the standalone's title-only gate was wrong and is fixed (drawn after the menu draw loop, phase>=1).** |
 | 6 | band opacity (start semi-transparent, gradient) | chrome bands = vertical alpha gradients (draw dump draws 77-78) | LANDED (parity2 3de78e14): top band ff000000(top)->a0000000(bottom), bottom band a0000000(top)->ff000000(bottom) - exactly 'less opacity at the bottom/top'; the race-flag animation part = #7 (done) |
 | 7 | checkers not animated | FUN_00473ee0 checker pass (above) | LANDED cde0ee52: layer runs every frame per ShellB; animated checkers visible (verify/dbg_backbuffer.png) |
 | 8 | Load/Save Successful modal | FUN_00433f40 box drawer (state DAT_0067eab0/eab8 alpha) + trigger 0x00409d15 | LANDED: ported the confirm dialog VERBATIM (3 panels black/0x202020/black @130,120,380x42 / 162,166 / 328,32 + white border; title 'MASHED' 0x41 @140,142; body id; button 0x2d 'Continue' w/ nav-arrow; alpha fade-in). Wired to Load Game (0x1bc) / Save Game (0x1b7) menu actions, Enter/Esc dismisses (modal freezes menu). verify/frontend_parity2/re_modal.png |
@@ -62,7 +62,7 @@ alpha, call sites) is wrong.
 | 12 | select-arrow texture missing | GetMenuMessage skipped the FUN_004277a0 control-code remap | LANDED ec08ddf2: applied verbatim remap (8->0x81 9->0x7f a->0x81 b->0x8d c->0x80 d->0x87 e->0x8f; pool0 decomp); nav arrow now renders before 'Select' (verify/frontend_parity2/zoom/our_footer_arrow.png) |
 | 13 | black semi-circle (button cap) | 'Button' sprite (16x32 PAL8) = a navy (0x131550) semi-circle ◖; navy x ffb45010 modulate -> near-black. Bug = BRIDGE HANDLE COLLISION: kHandleMenuBadge==kHandlePreview0==10, so the 24 track previews clobbered the badge registration -> cap drew a preview/nothing | LANDED: moved kHandleMenuBadge 10->34 (clear of preview range 10..33); black semi-circle now renders on the selected row (verify/frontend_parity2/our_cap_fixed.png; sprite verify/.../badge_Button_sprite.png) |
 | 14 | video not blending | FUN_00473c20 + FUN_00474890 (preview crossfade); ShellB FUN_0042e5b0 callsite | LANDED (core) + UV-pan RESOLVED as atlas-specific (not portable). The user complaint = track previews + video "not blending" — DONE via the two-quad corner-faded alpha crossfade over the video (ShellB-faithful 512-frame A/B alpha ramps, slot cycle, 352x352 @288,64). FULL RE of the UV-pan residual (pool0 2026-06-12): FUN_00474890 insets the sampled UV by p = param_7/2048 (consts _DAT_005cead4=1/2048, _DAT_005cd050=0.125, _DAT_005cc320=1.0, _DAT_005cc32c=0.5, 1/16,15/16), drawn as TWO half-quads whose u-split is ASYMMETRIC (left u[p,(1-p)/2], right u[(1-p)/2,1-p]) → a directional WIPE keyed on mode param_8∈0..5 (the {0,1,2,3,4,5,...} cycle table in ShellB, NOT a texture index) with param_7 ramping 0..~454 over the cycle (p→~0.22). This is designed for the original's atlas/sub-image wipe; on the standalone's PRE-SPLIT single per-track textures (TRACKIMAGES.TXD: Training1/Egypt1/...) the asymmetric u-split would non-uniformly stretch the image (distortion), so the alpha-crossfade is the correct adaptation for the standalone's asset model. Per NO-GUESSING, no invented substitute. |
-| 15 | screen-transition fades wrong | arc-wash strips + slide DAT_008990e0 + fade pair DAT_0086ecc8/cc | LANDED (writers xref-confirmed): fade 0xff raised by nav RELOAD ops (0x0043d2c2; push/pop skip it) + selects (0x0043f9d7); slide raised +0x20/frame by FUN_0042e8b0 framed-preview body (caller FUN_004368e0) [slide residual lands with Wave-3 per-screen content]. The settled menu's permanent left haze (alpha 0x60 arc wash) is FAITHFUL and now renders |
+| 15 | screen-transition fades wrong | arc-wash strips + slide DAT_008990e0 + fade pair DAT_0086ecc8/cc | LANDED (writers xref-confirmed): fade 0xff raised by nav RELOAD ops (0x0043d2c2; push/pop skip it) + selects (0x0043f9d7); slide raised +0x20/frame by FUN_0042e8b0 framed-preview body (caller FUN_004368e0) [slide residual lands with Wave-3 per-screen content]. ~~The settled menu's permanent left haze (alpha 0x60 arc wash) is FAITHFUL and now renders~~ **CORRECTED by parity harness 2026-06-12: the original's settled wash alpha is 0x00 (burst rows 46-75) — there is NO permanent haze; the 0x60 factor only scales the decaying fade pair. The standalone's fade-driven wash already settles at 0x00 and matched GREEN; the struck claim was wrong, no code change needed.** |
 | 16 | top/bottom text animations wrong | header watermark 0x41 (FUN_0043c5b0 @0x0043c6a0/c6f1); header/footer rows = FUN_004325c0 tick | LANDED (law faithful). RE (FUN_0043c5b0_chrome.asm): the top-right "MASHED" watermark (id 0x41) is drawn STATIC at fixed virtual (600,52) shadow + (596,48) white, scale 0.8 — NO slide; the standalone matches exactly (exe_main.cpp 1780-1783). The header/footer ROWS (back-row tag 0xff000000 + prompt rows 0xff10/11/230000) animate via the BIT-VERIFIED FUN_004325c0 tick (MenuAnimTickTwin C4 GREEN 40/40), applied per-row as Nav_RecordSlide -> slideX in the draw loop. So both the static watermark and the row slide-in law are faithful; the original "wrong animation" was the pre-anim-tick state (now wired). Residual (fine): a side-by-side MULTI-FRAME capture vs the original to confirm per-tag slide phase exactly (needs Frida burst on the original; deferred — driver-wedge risk per [[feedback-d3d9-shim-wedges-gpu-driver]]). |
 | 17 | menu text always black | FUN_0043c5b0 text-color rule (pool0 decomp) | LANDED: list items ARE 0xff000000 black for both states (the original's behavior - plate is the cue); BACK/HEADER rows draw record color (white) + black shadow. Standalone was white-on-record-color for items + shadow on all; now matches (verify/frontend_parity2/re_scr8_text.png) |
 | 18 | unselectable = transparent black | FUN_00428140 dim path (DAT_008990e4 -> 0x80000000, alpha clamp 0x60) | LANDED: greyed rows now draw half-alpha black (0x80000000) per the decomp's dim branch, not the invented 0x60606060 grey |
@@ -104,22 +104,59 @@ acceptance: the item's rows disappear from the diff and no new MISSING/EXTRA
 rows appear. (Rebuild first — the env-var capture compiles in via
 D3d9Render/DrawStreamDump.cpp.)
 
-Harness first-run findings at settled scr1 (machine-derived; for adjudication
-by this program — NOT yet tracker-itemized):
-- **conflicts with #15's settled-state claim**: original draws the 15-strip
-  arc wash at alpha 0x00 when settled; the standalone draws 0x60/0x78
-  (permanent haze). One side of the claim is wrong; captures in log/.
-- **#14 residual visible structurally**: original preview crossfade = TWO
-  176x352 corner-faded HALF-quads per layer (x=288/x=464); standalone draws
-  single full quads -> MISSING rows.
-- gradient-band caps at x=384 draw at a different stream position
-  (MISMATCH(reordered)) than the original.
-- nav_coverage.py: kT27 table hole; screen-4 action 0xff1d0000 dead-ends (no
-  ActionToScreen case); kind-4 screens 31/33 lack the sid-specific widget
-  handling 19/32 have; kind-2 screens 2/3/4 have none while 8 does.
+Harness first-run findings at settled scr1 — **ADJUDICATED 2026-06-12 (this
+session); settled scr1 is now GREEN 118/118 per frame** (`--rotate-a 0x42e65a
+--tol-anim 4`, see parity_tooling.md):
+- **Arc-wash settled alpha — #15's claim REFUTED**: the original draws all 15
+  strips at alpha 0x00 when settled (burst rows 46-75, both frames); the
+  FUN_00473ee0 decomp agrees (alpha = fade-pair x 0x60/0xff, fade decays to
+  0). #15's "permanent left haze is FAITHFUL" conclusion was wrong and is
+  struck below. The recorded "standalone draws 0x60/0x78" did NOT reproduce
+  in the 15:36 capture — the current build's fade-driven wash also settles
+  at 0x00 (drawstream rows 5-34). Already faithful; no code change.
+- **#14 half-quads — finding STALE vs current build**: the standalone already
+  draws TWO 176x352 half-quads with the left-edge alpha ramp (drawstream rows
+  1-2); they matched the original 1:1. True residual is the UV inset: the
+  original samples u/v inset by p = param_7/2048, with p still ramping DOWN
+  at ~1/2048 per frame 2.5 s after push (f0 p=99/2048, f1 p=98/2048 — exact
+  vert floats in log/parity_decode_a.txt); the standalone uses the settled
+  limit p=0 (u 0/0.5/1, v 0/1). Draw-list differ does not compare UVs, so
+  this needs the verbatim FUN_00474890 port + ShellB's param_7/mode driver
+  to close (open item below).
+- **Color convention — REAL bug pair, FIXED at root**: every chromatic chrome
+  color mismatched as R<->B-swapped at the vertex level (81 rows/frame). The
+  screen was correct (BBDUMP plate orange) because TWO compensating bugs
+  cancelled: standalone callers passed pre-swapped "screen ARGB" constants
+  AND the bridge re-swapped at submit — leaving the vertex buffer bytes
+  flipped vs MASHED's DAT_00898a20. Fixed both halves (exe_main constants
+  reverted to the original's packed dwords; RwIm2DBridge submits raw); the
+  0x224 bordered-rect path, which passed original-form constants through the
+  double-swap, was rendering visibly R/B-flipped and is healed by the same
+  fix. Buffers now byte-identical -> 0 color rows.
+- **Title logo MISSING from menu screens — REAL, FIXED**: the original draws
+  the FUN_00428760 sprite-pipe logo quad (virtual 80,80,480x240 white,
+  emitter 0x450c7a) as the LAST draw of EVERY frontend frame including
+  settled scr1 — over the menu plates. The standalone only drew it at the
+  title phase (a wrong F6-era conclusion). Now drawn after the menu draw
+  loop, phase >= 1. [Residual: per-screen suppression on deeper screens
+  unverified — check a screen-8 burst.]
+- **Gradient-band caps / bands "reordered" — ARTIFACT, differ fixed**: burst
+  frames split at Present mid-composition (true frame order is video ->
+  previews -> caps -> arc -> checkers -> bands -> lines -> plates -> logo).
+  New `--rotate-a <retaddr>` differ option rotates A to the ShellB video
+  anchor; the entire reordered class (72 rows/frame) vanished.
+- **Checker cells "moved" ±2.5px — anim phase, opt-in tolerance**: the fsin
+  corner jitter runs off each side's own frame counter; unsynced captures
+  can never agree. New `--tol-anim N` flag (explicit opt-in) counts
+  same-color pairs within N px as matched.
+- nav_coverage.py rows still OPEN (nav/flow, need Ghidra adjudication): kT27
+  table hole; screen-4 action 0xff1d0000 dead-ends (no ActionToScreen case);
+  kind-4 screens 31/33 lack the sid-specific widget handling 19/32 have;
+  kind-2 screens 2/3/4 have none while 8 does (verify intended vs the
+  original's tables).
 
 ## Offline-RE findings (2026-06-12, MCP down — via re/tools/disasm_fn.py)
 
 - **#2 boot splash**: DAT_00771964 is only ever set to MashedNEWLogo (FUN_004283a0) or 0 (teardown 0x00428400). FUN_00403050 draws it + the pulsing press-button (FUN_00402fb0). The Dolby/ProLogic logos (DAT_0067d968/0067d96c) are drawn by separate readers (0x00428c9b / 0x00428ec2) — the splash is a multi-function boot sequence, not a single drawer. Port needs those two drawers + the boot state pump.
 - **#2/#4 title+attract timer = FUN_004030d0**: accumulates DAT_00636ae8 += DAT_007f1004 (frame_dt) each frame; when it exceeds DAT_00636aec it either resets (DAT_00636af8 flag set → memset 0x7f1038 + restart = attract loop) or calls FUN_0043df00 (enter frontend). This is the title-idle timeout that launches the attract demo (#4) and the title→menu advance. Entry points pinned for both.
-- **Verification gate**: ALL 9 remaining items are visual; the launched-process session currently has NO display (GetAdapterDisplayMode fails, REF CreateDevice returns D3DERR_INVALIDCALL), so none can be verified until the env is restored. Offline disasm (re/tools) still works for RE; MCP restore needed for Ghidra decomp.
+- ~~**Verification gate**: ALL 9 remaining items are visual; the launched-process session currently has NO display...~~ **STALE — environment restored 2026-06-12 ~15:35**: display active, standalone runs/captures/BBDUMP all work (re-confirmed 16:17 this session: fresh drawstream + backbuffer captured, differ GREEN at scr1). Visual verification is unblocked; do not refuse it on the strength of this old note.

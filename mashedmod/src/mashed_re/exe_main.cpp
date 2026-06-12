@@ -1505,8 +1505,10 @@ bool RenderFrame() {
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
             // scoreboard: one pip row per car, width = wins
             for (int i = 0; i < 4; ++i) {
-                const std::uint32_t col[4] = {0xffe04040u, 0xff40a0ffu,
-                                              0xff40d060u, 0xffe0c040u};
+                // (invented colors, packed-dword convention: the reimpl's
+                // R<->B swap turns these into the intended screen colors)
+                const std::uint32_t col[4] = {0xff4040e0u, 0xffffa040u,
+                                              0xff60d040u, 0xff40c0e0u};
                 const float y = 24.f + i * 26.f;
                 HudIm2DQuad(0, 20.f, y, 22.f, 20.f, col[i], uvf);   // car tag
                 // PORTED score data (FUN_0040b290 array DAT_008a94e0): one
@@ -1521,7 +1523,7 @@ bool RenderFrame() {
                     swprintf(d, 8, L"%+d", g_track.score_delta(i));
                     DrawMashedString(d, 240.f, y + 10.f, 24.f,
                                      g_track.score_delta(i) > 0
-                                         ? 0xff80ff80u : 0xffff8080u);
+                                         ? 0xff80ff80u : 0xff8080ffu);
                 }
             }
             if (g_font.ready()) {
@@ -1529,11 +1531,11 @@ bool RenderFrame() {
                 if (cd > 0.f) {
                     const int n = static_cast<int>(cd) + 1;
                     wchar_t b[2] = {static_cast<wchar_t>(L'0' + (n > 3 ? 3 : n)), 0};
-                    DrawMashedString(b, 400.f, 250.f, 120.f, 0xffffe080u);
+                    DrawMashedString(b, 400.f, 250.f, 120.f, 0xff80e0ffu);
                 } else if (g_track.match_winner() >= 0) {
                     wchar_t b[24];
                     swprintf(b, 24, L"CAR %d WINS", g_track.match_winner() + 1);
-                    DrawMashedString(b, 400.f, 60.f, 48.f, 0xffffe080u);
+                    DrawMashedString(b, 400.f, 60.f, 48.f, 0xff80e0ffu);
                 } else if (g_track.round_winner() >= 0) {
                     DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
                                      0xffffffffu);
@@ -1865,15 +1867,12 @@ bool RenderFrame() {
 
     if (g_frontend_phase == 1 &&
         g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
-        // Title logo placement GROUND TRUTH (full-frame draw dump 2026-06-12,
-        // emitter 0x450c7a via the FUN_00428760 sprite pipe): ONE static quad
-        // at virtual (80, 80, 480x240), full-white modulate. The previous
-        // 768px/96%-width placement was burst-estimated and wrong.
-        const float lw = 480.f * 1.25f;
-        const float lh = 240.f * 1.25f;
-        const float lx = 80.f * 1.25f;
-        const float ly = 80.f * 1.25f;
-        HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
+        // (The MASHED logo quad itself is drawn AFTER the menu draw loop below
+        // — parity adjudication 2026-06-12: the original's scr1 burst shows the
+        // FUN_00428760 sprite-pipe logo as the LAST draw of the frame, on top
+        // of the menu plates, and present on MENU screens too, not just the
+        // title. The old phase==1-only draw here made it MISSING from settled
+        // scr1 streams.)
 
         // Item 3 (user review): pulsing "Press button to start" — VERBATIM port
         // of FUN_00402fb0 (pool0 decomp 2026-06-12). alpha = 0x80 - (int)(sin
@@ -2081,11 +2080,15 @@ bool RenderFrame() {
             // image-pad-zeroed) and a brighter top-half gradient band.
             // F2 — geometry/colors now mirror the BIT-VERIFIED draw loop
             // (MenuDrawLoopTwin GREEN 20/20): plate fill (idle 0x40f8d0e8 /
-            // selected 0xa0146ef0 in original ARGB; converted to our ARGB
-            // layout), right-fade band at 60+plate_w (width 100), and the
-            // 5-piece border kit on EVERY row (navy idle / orange selected;
-            // unavailable rows grey). Flat quads stand in for the gradient
-            // halves (bridge has no per-vertex fade yet — noted residual).
+            // selected 0xa0146ef0), right-fade band at 60+plate_w (width 100),
+            // and the 5-piece border kit on EVERY row (navy idle / orange
+            // selected; unavailable rows grey). Color convention (parity
+            // adjudication 2026-06-12): callers pass the ORIGINAL'S packed
+            // dwords (the CONCAT13(alpha, 0xRRGGBB-swapped) forms the decomp
+            // shows); the draw reimpls' cited byte-swap (U-3415) turns them
+            // into the D3DCOLOR the original's vertex stream carries, and the
+            // bridge submits the buffer raw — byte-identical to MASHED's
+            // DAT_00898a20. Do NOT pre-swap constants here.
             // The back/header row draws NO plate chrome in the original — just
             // its bold white text on the top band (orig_options.png; the dump's
             // plate rows start at the first item, y=168). Items only.
@@ -2097,14 +2100,13 @@ bool RenderFrame() {
                 const float gx2 = (60.0f + 210.0f) * kVScale + slideX;
                 const float gw2 = 100.0f * kVScale;
                 const std::uint32_t fill =
-                    highlighted ? 0xa0f06e14u : 0x40e8d0f8u;
-                // Border navy is ARGB ff131550 straight from the original's
-                // vertex stream (menu_draw_dump.json draws 91/105: idle
-                // ff131550, disabled-row alpha 30131550) — the previous
-                // 0xff501513 had R/B swapped.
+                    highlighted ? 0xa0146ef0u : 0x40f8d0e8u;
+                // Border navy: the original passes CONCAT13(alpha, 0x501513)
+                // (device D3DCOLOR ff131550 after the reimpl's swap — matches
+                // menu_draw_burst.json rows 14/18; disabled rows alpha 0x30).
                 const std::uint32_t border =
-                    disabled    ? 0x30131550u
-                  : highlighted ? 0xffb45010u : 0xff131550u;
+                    disabled    ? 0x30501513u
+                  : highlighted ? 0xff1050b4u : 0xff501513u;
                 // Right-fades are true horizontal alpha gradients in the
                 // original (menu_draw_dump.json draws 82/84/86: color -> same
                 // color with alpha 00), not dimmed flats.
@@ -2139,7 +2141,7 @@ bool RenderFrame() {
                     HudIm2DQuad(kHandleMenuBadge,
                                 (58.0f - 13.0f) * kVScale + slideX, hy,
                                 13.0f * kVScale, hh,
-                                0xffb45010u, uv_full);
+                                0xff1050b4u, uv_full);
                 }
             }
 
@@ -2294,7 +2296,7 @@ bool RenderFrame() {
                     HudIm2DQuad(0, bx + bw - bt, by, bt, bh, 0xff000000u, uv_full); // right
                     HudIm2DQuad(0, 377.0f * S + slideX, by + bt,
                                 (disp / 10.0f) * 100.0f * S,
-                                10.0f * S, 0xffd88020u, uv_full);              // fill
+                                10.0f * S, 0xff2080d8u, uv_full);              // fill
                 } else if (kind == kTriText && g_font.ready()) {
                     static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
                     const int m = (g_settings.insults_on >= 0 &&
@@ -2356,6 +2358,20 @@ bool RenderFrame() {
         // "Français" misrender was the 0xff080000 SCREEN-KIND code being
         // decoded as a string id; the kind now indexes the ported key tables
         // exactly as the original does.)
+    }
+
+    // MASHED logo (Font36.piz/MASHEDNEWLOGO.PNG) — FUN_00428760 sprite pipe.
+    // Placement GROUND TRUTH (titleframe dump + scr1 burst A[40], emitter
+    // 0x450c7a): ONE static quad at virtual (80, 80, 480x240), full-white
+    // modulate, drawn as the LAST draw of the frame (over the menu plates).
+    // Drawn on the title AND on menu screens (the sprite slot DAT_00771964 is
+    // set at frontend enter FUN_004283a0 and only cleared at teardown
+    // 0x00428400). [Per-screen suppression on deeper screens unverified —
+    // confirm with a screen-8 burst.]
+    if (g_frontend_phase >= 1 &&
+        g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
+        HudIm2DQuad(kHandleMenuLogo, 80.f * 1.25f, 80.f * 1.25f,
+                    480.f * 1.25f, 240.f * 1.25f, 0xffffffffu, uv_full);
     }
 
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual

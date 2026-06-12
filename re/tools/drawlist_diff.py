@@ -237,7 +237,16 @@ def diff_label(A, B, args, sym):
                 break
         if hit is not None:
             usedB2.add(hit)
-            mismatches.append((ia, hit, "moved"))
+            # --tol-anim N (opt-in): a same-color pair displaced/resized by at
+            # most N px is animation PHASE, not composition — e.g. the checker
+            # cells' fsin corner jitter runs off each side's own frame counter,
+            # so unsynced captures always disagree by the jitter amplitude
+            # (~2.5px). Counted as matched, not failed. Off by default.
+            if args.tol_anim > 0 and \
+               geom_match(A[ia], B[hit], args.tol_anim, args.tol_anim):
+                pairs.append((ia, hit))
+            else:
+                mismatches.append((ia, hit, "moved"))
         else:
             rem_a.append(ia)
     rem_b = [j for j in still_b if j not in usedB2]
@@ -256,6 +265,10 @@ def main():
                          "640x480 virtual space (default); use 1 for like-vs-like")
     ap.add_argument("--tol-pos", type=float, default=1.0)
     ap.add_argument("--tol-size", type=float, default=1.0)
+    ap.add_argument("--tol-anim", type=float, default=0.0,
+                    help="opt-in: same-color pairs displaced/resized by <= N px "
+                         "count as matched (animation phase, e.g. checker fsin "
+                         "jitter from unsynced frame counters). 0 = strict")
     ap.add_argument("--tol-color", type=int, default=0)
     ap.add_argument("--tol-alpha", type=int, default=0)
     ap.add_argument("--min-alpha", type=int, default=0,
@@ -267,6 +280,13 @@ def main():
                          "not see the RtCharset text pipe")
     ap.add_argument("--map", dest="mapfile", default=None,
                     help="MSVC .map to resolve side-B retaddrs to names")
+    ap.add_argument("--rotate-a", default=None,
+                    help="retaddr hex (e.g. 0x42e65a): rotate each side-A frame "
+                         "so the first draw whose retaddr chain contains this "
+                         "RVA becomes index 0. Frida bursts split frames at "
+                         "Present, which can land mid-composition; rotating to "
+                         "a stable per-frame anchor (the ShellB video quad at "
+                         "0x42e65a) removes the bogus MISMATCH(reordered) wrap")
     ap.add_argument("--json", dest="json_out", default=None)
     ap.add_argument("--max-rows", type=int, default=40)
     args = ap.parse_args()
@@ -300,6 +320,16 @@ def main():
             return 2
         A = [normalize(r, args.scale_a) for r in da[la]]
         B = [normalize(r, args.scale_b) for r in db[lb]]
+        if args.rotate_a:
+            anchor = args.rotate_a.lower()
+            pivot = next((i for i, d in enumerate(A)
+                          if any(r.lower() == anchor for r in d.get("rets", []))),
+                         None)
+            if pivot is None:
+                print(f"note: --rotate-a {args.rotate_a} not found in {la}; "
+                      f"frame left unrotated")
+            else:
+                A = A[pivot:] + A[:pivot]
         if args.min_alpha:
             A = [d for d in A if max_alpha(d) >= args.min_alpha]
             B = [d for d in B if max_alpha(d) >= args.min_alpha]

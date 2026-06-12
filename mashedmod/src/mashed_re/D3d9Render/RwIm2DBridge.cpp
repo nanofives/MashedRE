@@ -26,7 +26,9 @@ constexpr std::uintptr_t kRwDeviceSlot = 0x007d3ff8u;
 #pragma pack(push, 1)
 struct SrcVert {
     float         x, y, z, w;
-    std::uint32_t color;   // ABGR (the reimpl byte-swapped R<->B from ARGB)
+    std::uint32_t color;   // D3DCOLOR 0xAARRGGBB — the reimpls' cited byte-swap
+                           // (U-3415) already produced the device color, same
+                           // as the original's DAT_00898a20 stream. Submit raw.
     float         u, v;
 };
 struct D3DVert {
@@ -82,14 +84,11 @@ IDirect3DTexture9* ResolveTexture(int handle) {
     return nullptr;
 }
 
-// ABGR (what the reimpl wrote) -> ARGB (D3DCOLOR). Swap R<->B, keep A and G.
-// The reimpl applied the same swap to ARGB inputs, so this returns the original
-// caller's ARGB color.
-inline D3DCOLOR abgr_to_argb(std::uint32_t abgr) {
-    return (abgr & 0xff00ff00u)
-         | ((abgr & 0x00ff0000u) >> 16)
-         | ((abgr & 0x000000ffu) << 16);
-}
+// (Parity adjudication 2026-06-12: the old abgr_to_argb R<->B re-swap here is
+// REMOVED. The original's RW D3D driver submits the Im2D vertex color raw —
+// the device capture of MASHED's DAT_00898a20 holds D3DCOLOR bytes — so the
+// bridge must too. Callers pass the original's packed dwords; the reimpls'
+// cited swap (U-3415) is the only conversion, exactly as in MASHED.)
 
 // RwRenderStateSet replacement (device + 0x20). The draw reimpls call this with
 // RW state codes; we mirror the few that matter for 2D alpha-blended quads.
@@ -147,7 +146,7 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
         // RHW must be non-zero for pre-transformed verts; the reimpl writes 1.0f
         // into +0x0c, but guard against a zeroed buffer.
         dst[i].rhw   = (src[i].w != 0.0f) ? src[i].w : 1.0f;
-        dst[i].color = abgr_to_argb(src[i].color);
+        dst[i].color = src[i].color;
         dst[i].u     = src[i].u;
         dst[i].v     = src[i].v;
     }
