@@ -1793,6 +1793,14 @@ bool RenderFrame() {
     if (g_frontend_phase == 0 && g_bridge_installed) {
         if (g_splash_start_ms == 0) g_splash_start_ms = GetTickCount();
         if (GetTickCount() - g_splash_start_ms > 8000u) g_frontend_phase = 1;
+        // #2/#3 (user review): the original's boot LOADING/splash screen is on a
+        // BLACK background (FUN_00428d30 black gradient), not the menu video bg.
+        // Cover the backdrop with black so the logo + copyright + "Loading" read
+        // on black. RE finding (FUN_00428d30 + FUN_004744a0 + full asset search):
+        // the original's loader shows the MASHED logo + "Loading" text + the wavy
+        // race-flag checker grid — there is NO separate "spinning disk" sprite
+        // anywhere in the game's archives, so none is invented here.
+        HudIm2DQuad(0, 0.f, 0.f, 800.f, 600.f, 0xff000000u, uv_full);
         if (g_menu_logo_ready) {
             const float lw = 256.f * 1.25f, lh = 128.f * 1.25f;
             HudIm2DQuad(kHandleMenuLogo, (320.f - 128.f) * 1.25f, (100.f - 64.f) * 1.25f,
