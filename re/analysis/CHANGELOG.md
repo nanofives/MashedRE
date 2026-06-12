@@ -3371,3 +3371,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-10  0040eee0  (points system)  C2->C2  standalone-port annotation: scoring rules ported + round-verified; drawer pending
 2026-06-10  0040b290  (points system)  C2->C2  standalone-port annotation: scoring rules ported + round-verified; drawer pending
 2026-06-10  00410510  (points system)  C2->C2  standalone-port annotation: scoring rules ported + round-verified; drawer pending
+2026-06-10  004325c0  MenuAnimTickTwin  C2->C3  nav-driven diff GREEN 40/40 (harness extension menu_anim_diff.py)
