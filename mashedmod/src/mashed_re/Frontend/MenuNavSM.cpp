@@ -146,7 +146,9 @@ const MenuGameState kFreshState = {
     0,                   // flag_ed6c
     { 0, 0, 0, 0 },      // player_active[]
     0,                   // has_savedata (DAT_007f0f2c)
-    0,                   // has_profiles (DAT_007f0ad4)
+    2,                   // has_profiles (DAT_007f0ad4) - LIVE-PROBED 2026-06-12:
+                         // the original holds 2 at the menu with an all-zero
+                         // gamesave.bin (boot default, NOT save-derived)
     0,                   // ea88
     0,                   // ea7c
     0,                   // ea84 (DAT_0067ea8c)
@@ -434,9 +436,11 @@ void PlaceCursor(NavSlot& slot) {
         if (gs.has_profiles == 0) av[1] = 0;
         break;
     case 8:   // L41: FUN_00492d10()==1 -> none; else avail[2]=0 then avail[3]=0
-        // DAT_00771968 fresh=0 (!=1) -> disable item 2 and item 3.
-        av[2] = 0;
-        av[3] = 0;
+        // LIVE-PROBED 2026-06-12: DAT_00771968 == 1 at the original's menu
+        // (save system ready even with a blank gamesave) -> Load/Save stay
+        // ENABLED. The standalone's save layer (R2-2) is functional, so the
+        // ready state is 1 here too; the disable path applies only if the
+        // save layer failed to initialize.
         break;
     case 10:  // L48: ea8c!=2 -> avail[1]=0 ; ea8c!=3 -> avail[2]=0
         if (gs.ea84 != 2) av[1] = 0;

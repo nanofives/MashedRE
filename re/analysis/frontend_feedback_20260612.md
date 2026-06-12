@@ -66,12 +66,12 @@ alpha, call sites) is wrong.
 | 16 | top/bottom text animations wrong | header/footer rows' slide/type anim (FUN_004325c0 classes) | port-side audit of row classes vs the verified tick |
 | 17 | menu text always black | record color semantics + FGDC20 glyph fill vs outline | inspect atlas glyphs; check the original's color modulate on text |
 | 18 | unselectable = transparent black | grey-out path: FUN_0042aad0 (per-row grey/alpha engine, EAX-arg) | RE 0042aad0's color writes (we have its diff behavior) |
-| 19 | options load/save greyed out in RE | avail[] gating (FUN_00432800 place-cursor + per-item enable) vs game state | RE the enable predicate for save/load items |
+| 19 | options load/save greyed out in RE | FUN_00432800 case-8 gate on FUN_00492d10 save-ready | LANDED: live probe DAT_00771968==1 at the original's menu (blank save) -> Load/Save enabled; standalone's hardcoded disable removed |
 | 20 | sound sliders all wrong + continuous steps | screen-19 value-widget drawer + input handler (NOT yet located) | find via retaddr dump ON screen 19 (sample was mid-transition; redo) + Ghidra |
 | 21 | insults tri-state Off/Auto/Manual | sound settings model + its strings | locate the setting global + string ids |
 | 22 | gamma screen has no slider | gamma screen widgets (different from sound) | retaddr dump on the gamma screen + RE |
 | 23 | autosave on/off (no arrows) | autosave screen widget | same route as 22 |
-| 24 | quick battle greyed in RE | our avail[] model for screen 2 items | RE the original's enable rule; fix table/predicate |
+| 24 | quick battle greyed in RE | FUN_00432800 case-2 gate on DAT_007f0ad4 | LANDED: live probe shows 2 at the menu with an ALL-ZERO gamesave (boot default, not save-derived); kFreshState.has_profiles 0 -> 2 (verify/frontend_parity2/re_scr2_gates.png) |
 | 25 | player color select UI missing | post-car-select screen (unmapped) | locate its screen id + descriptor table + drawer |
 
 ## Iteration order (goal: all fixed)
