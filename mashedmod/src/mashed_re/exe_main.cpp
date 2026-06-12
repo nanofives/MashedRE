@@ -499,7 +499,12 @@ constexpr int           kHandleMenuFont = 9;
 // decodes BADGES.TXD with Txd::Dictionary (same chunk-0x23/ver 0x1803ffff
 // container as FGDC20.TXD) and uploads "Button" (16x32 PAL8).
 constexpr std::uint32_t kSlotMenuBadge   = 16;
-constexpr int           kHandleMenuBadge = 10;
+// Item 13 fix (2026-06-12): handle 10 COLLIDED with kHandlePreview0 (the 24
+// track previews register bridge handles 10..33), so the badge's handle-10
+// registration was clobbered by Training1 -> the selected-row cap drew a
+// preview texture / nothing instead of the navy 'Button' semi-circle. Move it
+// clear of the preview range (10..33).
+constexpr int           kHandleMenuBadge = 34;
 bool             g_menu_badge_ready = false;
 
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
@@ -2454,6 +2459,39 @@ bool LoadBadgeSprites() {
     if (!dict.Decode(blob, blen)) {
         if (log) { std::fprintf(log, "\nR2-5: BADGES.TXD decode FAILED: %s\n", dict.last_error()); std::fclose(log); }
         return false;
+    }
+    // DEBUG (MASHED_DBG_DUMPBADGE=1): dump Button/SemiC decoded RGBA to a raw
+    // file so the sprite content (esp. alpha) is verifiable offline — pins
+    // whether the cap sprite decodes as the expected black ◖ shape (#13).
+    if (GetEnvironmentVariableA("MASHED_DBG_DUMPBADGE", nullptr, 0) != 0) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& t = dict.texture(i);
+            if (std::strcmp(t.name,"Button") && std::strcmp(t.name,"SemiC") &&
+                std::strcmp(t.name,"SemiC2")) continue;
+            const auto fmt = t.format(); const auto& mp = t.mips[0];
+            char path[160];
+            std::snprintf(path, sizeof(path), "verify/badge_%s.raw", t.name);
+            if (std::FILE* bf = std::fopen(path, "wb")) {
+                std::fprintf(bf, "P7 %u %u\n", t.width(), t.height()); // w h header
+                for (std::uint32_t y=0; y<mp.height; ++y)
+                for (std::uint32_t x=0; x<mp.width; ++x) {
+                    std::uint8_t rgba[4]={0,0,0,0};
+                    if (fmt==mashed_re::Txd::PixelFormat::ARGB8888) {
+                        const std::uint8_t* s=mp.pixels+(std::size_t)y*mp.stride+x*4;
+                        rgba[0]=s[0];rgba[1]=s[1];rgba[2]=s[2];rgba[3]=s[3];
+                    } else if (fmt==mashed_re::Txd::PixelFormat::Paletted8 && mp.palette) {
+                        std::uint8_t idx=mp.pixels[(std::size_t)y*mp.stride+x];
+                        const std::uint8_t* p=mp.palette+idx*4;
+                        rgba[0]=p[0];rgba[1]=p[1];rgba[2]=p[2];rgba[3]=p[3];
+                    }
+                    std::fwrite(rgba,1,4,bf);
+                }
+                std::fclose(bf);
+                if (log) std::fprintf(log, "DBG dumped %s %ux%u fmt=%s -> %s\n",
+                    t.name, t.width(), t.height(),
+                    mashed_re::Txd::PixelFormatName(fmt), path);
+            }
+        }
     }
     bool ok = false;
     for (std::uint32_t i = 0; i < dict.count(); ++i) {
