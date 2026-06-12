@@ -186,6 +186,34 @@ Expected C3 yield (promotions / candidates ever-attempted) varies sharply by sub
 
 When the user requests a "frontend C3 batch", cite this yield expectation back and propose a 2-session pilot before committing to N=6.
 
+## Batch sizing policy (2026-06-12 — ratified after the batch_ah post-mortem)
+
+These rules are mandatory at batch-generation time:
+
+1. **Hard yield gate (ROADMAP v2).** Predicted yield < ~30% → do **not** emit the
+   batch. Compute the prediction with real denominators from the latest C2 gate
+   audit (`re/analysis/C2_GATE_AUDIT_*.md`; regenerate with
+   `py -3.12 scripts\c2_gate_audit.py`) — bucket sizes per blocker/shape per
+   subsystem, not gut feel.
+2. **Right-size by default: 2 sessions × 5 candidates,** emitted only after the
+   relevant harness fix/extension has landed (precedent: c3_batch_ag went 10/10
+   with this shape). The 6×8 shape requires explicit justification in the batch
+   header citing filter evidence. Escalating curation does NOT raise yield at a
+   structural ceiling — batch_ah landed 8/48 *with* 8-agent shape-fit curation.
+3. **Live-state candidates are not batchable at menu-attach. At all.** Route them
+   to the scenario-attach lane (`re/analysis/scenario_attach_lane.md`) instead of
+   a synthetic-diff batch.
+4. **Verdict semantics (2026-06-12).** `run_diff.py` now returns
+   **INCONCLUSIVE-DEGENERATE (exit 5)** when a 0-mismatch run observed only
+   trivial values on both sides — that is *neither GREEN nor RED* and is **not
+   promotion evidence**. Worker prompts must state this. Setting
+   `degenerate_ok=True` in `hooks_registry.py` requires a one-line justification
+   and is SWEEP-CRITICAL to review (same lane as new arg_types).
+5. **Phantom arg_types are FATAL at run time.** `run_diff.py` refuses a registry
+   `arg_type` with no `diff_template.js` handler (previously fell through to a
+   default path that could pass vacuously). Filter (6) above still applies at
+   batch-generation time; the pre-flight is the backstop, not the filter.
+
 ## Worktree binding — use the robust helper, NEVER fall back to main
 
 **This is the #1 stop-and-ask source (c3_batch_ab post-mortem, 2026-06-04): 4 of 6
