@@ -845,6 +845,12 @@ void Nav_Init() {
     s.item_count = CountItems(s.desc_table);
     PlaceCursor(s);
     BuildRecords(s);
+    // #12b: append the footer prompt strip for the ROOT too (Nav() only did this
+    // on push/pop, so rooting the frontend here dropped the footer). For a kind-1
+    // screen the -4 key resolves sec_id to 0x42 = "(glyph) Select" (USA.DAT piz)
+    // — Select only, NO Back (matches #11: no Back on the main menu). cmp must NOT
+    // be 0x16 (that sentinel blanks the whole row).
+    PromptStripAppend(KvLookup(s.desc_table, kTagPrompt, 0), kMainMenuScreen, 0);
     LogoOverlayFadeSet(0xff, -1);   // boot enters via nav(0,2) reload -> fade on
     g_last_dir = kNavReload;
 }
