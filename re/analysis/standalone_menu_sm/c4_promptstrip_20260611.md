@@ -29,9 +29,13 @@ Three spawns, ONLY=[PromptStripTwin] (manifest 535 hooks seen, 1 installed):
 | 3 | 40 s | survived, alive=True | 0xE9 JMP-LIVE |
 
 Organic traffic through the live JMP: the boot nav push (mode 0, key 1,
-cmp 22 — probe row 1) on every run, plus PostMessage Enter pushes (runs 1
-and 3) driving real nav ops. Title screen rendered correctly with the twin
-building the prompt records: `verify/c4_promptstrip_installed_menu.png`.
+cmp 22 — probe row 1) on every run. Title screen rendered correctly with the
+twin building the prompt records: `verify/c4_promptstrip_installed_menu.png`.
+CORRECTION 2026-06-12: the PostMessage Enter presses sent during runs 1/3
+were originally credited as extra nav fires, but PostMessage keystrokes do
+not reach the game's DirectInput polling (established during the parity2
+capture work) — they are NOT evidence. The C4 case rests on the boot fire +
+JMP-live byte + survival + the C3 bit-identity sweep.
 
 ## Implementation
 `mashedmod/src/mashed_re/Frontend/PromptStripTwin.cpp` — cdecl body + naked
