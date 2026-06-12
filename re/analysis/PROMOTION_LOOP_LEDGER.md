@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 4
+- rounds_run: 5
 - total_green: 10
-- dry_counter: 0  (rounds 3-4 BLOCKED-ENV, not dry — pool not drained)
-- last_round: 2026-06-12 round 4 (skipped: environment persists)
+- dry_counter: 0  (rounds 3-5 BLOCKED-ENV, not dry — pool not drained)
+- last_round: 2026-06-12 round 5 (skipped: environment persists, ~70 min)
 
 ## UNFINISHED — round 3 carry-over (finish or defer FIRST next round)
 
@@ -121,6 +121,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 5 | (boot probe only) | attempted 0 (round-3 five still pending) | GREEN 0 — BLOCKED-ENV persists (~70 min; same clean exit -1 after RwEngineOpen; no user intervention yet) | deferred 0 | — | dry_counter 0. Backing off to 1 h retries. NOTE: a user reboot (the likely fix) kills this session and its /loop — if a fresh session picks this up, this ledger is the full state: run the round-3 five (vehicle_dword_67ea80_get + track_desc_field40_get race-lane; rw_global_7d4598_set/get + rw_global_7d459c_set menu-attach) after one boot probe, then classify the GREEN set.
 
 2026-06-12 | round 4 | (env diagnosis only) | attempted 0 new (round-3 five still pending) | GREEN 0 — BLOCKED-ENV persists ≥40 min | deferred 0 | — | dry_counter 0 (unchanged). DIAGNOSIS MATRIX (all ~19:45-20:00): boot probe FAILS same way (exit -1 = clean exit(-1) after "Calling RwEngineOpen", NOT a crash); round-2-content .asi rebuilt+deployed → ALSO fails (round-3 .asi fully exonerated; build.bat restored after bisect); standalone mashed_re.exe from build\ → ALSO fails (exit 0x3; caveat: cwd-sensitivity of its asset paths unverified); monitors 3/3 Active=True (WMI power state); zero TDR/display/PnP events since 18:30; GPU RTX 5070 Ti PnP status OK; disk 718 GB free (round-3 "1 GB" reading was a display artifact — corrected); videocfg.bin still canonical; session console+unlocked+idle-none; TeamViewer running but NO established connection (phantom virtual monitor adapter present but inactive). CONCLUSION: D3D9 device-init broken system-wide for NEW processes since ~19:15, cause unidentified from inside the session — needs hands-on (reboot likely). Pushed a notification to the user. Next round: boot-probe FIRST (18s aliveness); if it boots, run the round-3 five immediately.
 
