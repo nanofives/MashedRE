@@ -67,8 +67,8 @@ alpha, call sites) is wrong.
 | 17 | menu text always black | FUN_0043c5b0 text-color rule (pool0 decomp) | LANDED: list items ARE 0xff000000 black for both states (the original's behavior - plate is the cue); BACK/HEADER rows draw record color (white) + black shadow. Standalone was white-on-record-color for items + shadow on all; now matches (verify/frontend_parity2/re_scr8_text.png) |
 | 18 | unselectable = transparent black | FUN_00428140 dim path (DAT_008990e4 -> 0x80000000, alpha clamp 0x60) | LANDED: greyed rows now draw half-alpha black (0x80000000) per the decomp's dim branch, not the invented 0x60606060 grey |
 | 19 | options load/save greyed out in RE | FUN_00432800 case-8 gate on FUN_00492d10 save-ready | LANDED: live probe DAT_00771968==1 at the original's menu (blank save) -> Load/Save enabled; standalone's hardcoded disable removed |
-| 20 | sound sliders all wrong + continuous steps | screen-19 value-widget drawer + input handler (NOT yet located) | find via retaddr dump ON screen 19 (sample was mid-transition; redo) + Ghidra |
-| 21 | insults tri-state Off/Auto/Manual | sound settings model + its strings | locate the setting global + string ids |
+| 20 | sound sliders all wrong + continuous steps | screen-19 widgets (draw stream log/sound_draw.json): bar x=374 w=106 h=16 0x7f000000 + 4x 3px black borders + orange fill 0xffd88020; arrows 16x16 at x=356/484 | LANDED: geometry/colors/borders verbatim; input now ramps continuously while held (was 1 step/press); verify/frontend_parity2/pair_sound.png |
+| 21 | insults tri-state Off/Auto/Manual | MenuSettings.insults_on widened 0=Off/1=Auto/2=Manual | LANDED: dir-aware cycle + text value drawn (no bar), replacing the Off/On bool |
 | 22 | gamma screen has no slider | gamma screen widgets (different from sound) | retaddr dump on the gamma screen + RE |
 | 23 | autosave on/off (no arrows) | autosave screen widget | same route as 22 |
 | 24 | quick battle greyed in RE | FUN_00432800 case-2 gate on DAT_007f0ad4 | LANDED: live probe shows 2 at the menu with an ALL-ZERO gamesave (boot default, not save-derived); kFreshState.has_profiles 0 -> 2 (verify/frontend_parity2/re_scr2_gates.png) |

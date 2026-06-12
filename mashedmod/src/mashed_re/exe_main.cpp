@@ -908,7 +908,7 @@ struct MenuSettings {
     std::int32_t music   = 8;   // 0..10
     std::int32_t sfx     = 8;   // 0..10
     std::int32_t insults = 8;   // 0..10
-    std::int32_t insults_on = 0;  // 0=Off 1=On (original shows Off default)
+    std::int32_t insults_on = 0;  // tri-state 0=Off 1=Auto 2=Manual (user review #21)
 };
 MenuSettings g_settings;
 constexpr char kSettingsPath[] = "mashed_re_settings.bin";
@@ -940,7 +940,11 @@ void AdjustSoundSetting(int row, int dir) {
         case 0: g_settings.music   = clamp10(g_settings.music   + dir); break;
         case 1: g_settings.sfx     = clamp10(g_settings.sfx     + dir); break;
         case 2: g_settings.insults = clamp10(g_settings.insults + dir); break;
-        case 3: g_settings.insults_on = (g_settings.insults_on != 0) ? 0 : 1; break;
+        case 3: { // tri-state Off/Auto/Manual, dir-aware wrap (user review #21)
+            int m = g_settings.insults_on + (dir >= 0 ? 1 : -1);
+            g_settings.insults_on = (m < 0) ? 2 : (m > 2 ? 0 : m);
+            break;
+        }
         default: return;
     }
     SaveMenuSettings();
@@ -983,9 +987,27 @@ bool UpdateMenuSelection() {
         if (!Nav_Back()) return true;                   // at root -> quit
     }
     // Sound screen (19): LEFT/RIGHT adjusts the highlighted value (persisted).
+    // Item 20 (user review): the volume sliders ramp CONTINUOUSLY while a key
+    // is held (not one step per press). Rows 0..2 (volumes) ramp on key-HELD
+    // with a short initial delay + repeat cadence; row 3 (Insults tri-state)
+    // stays edge-triggered (discrete cycle).
     if (Nav_ScreenId() == 19 && Nav_Cursor() >= 0) {
-        if (rgt_now && !rgt_prev) AdjustSoundSetting(Nav_Cursor(), +1);
-        if (lft_now && !lft_prev) AdjustSoundSetting(Nav_Cursor(), -1);
+        const int cur = Nav_Cursor();
+        if (cur == 3) {
+            if (rgt_now && !rgt_prev) AdjustSoundSetting(3, +1);
+            if (lft_now && !lft_prev) AdjustSoundSetting(3, -1);
+        } else {
+            static int s_holdL = 0, s_holdR = 0;
+            // ramp: act on the first frame, then every 3rd frame after a
+            // ~9-frame initial hold (continuous feel without instant slam).
+            auto ramp = [](int& hold, bool down) -> bool {
+                if (!down) { hold = 0; return false; }
+                const int h = hold++;
+                return h == 0 || (h >= 9 && ((h - 9) % 3 == 0));
+            };
+            if (ramp(s_holdR, rgt_now)) AdjustSoundSetting(cur, +1);
+            if (ramp(s_holdL, lft_now)) AdjustSoundSetting(cur, -1);
+        }
     }
     // Mirror the nav cursor into the legacy global for any code still reading it.
     if (Nav_Cursor() >= 0) g_menu_selected = static_cast<std::uint32_t>(Nav_Cursor());
@@ -1841,37 +1863,50 @@ bool RenderFrame() {
                 HudIm2DQuad(it.handle, (800.f - w) * 0.5f, ry, w, h, base_argb, uv_full);
             }
 
-            // R2-close: Sound-screen value widgets (parity with
-            // verify/parity/orig_sound.png — slider bar with < > arrows for the
-            // three volumes, Off/On toggle for Insults). Values come from the
-            // persisted MenuSettings model; right-aligned at virtual x~290.
-            if (Nav_ScreenId() == 19 && !is_back && rec.row_index >= 0) {
-                const float wx = 290.0f * kVScale + slideX;  // widget left
-                const float wy = ry + 2.0f * kVScale;
-                const float bw = 80.0f * kVScale;            // bar width
-                const float bh = text_h * 0.55f;
-                const std::uint32_t fg = highlighted ? 0xff101010u : 0xffffffffu;
+            // Sound-screen value widgets — VERBATIM geometry from the original's
+            // screen-19 draw stream (log/sound_draw.json, 2026-06-12). Per
+            // volume row (640x480 virtual): left arrow 16x16 at x=356; bar bg
+            // x=374 w=106 h=16 color 0x7f000000; four 3px black borders
+            // (ff000000) top/bottom/left/right; orange fill 0xffd88020 at x=377
+            // y+3 w=(value/10*100) h=10; right arrow 16x16 at x=484. The Insults
+            // row (3) has NO bar — only the two arrows + a text value (Off/Auto/
+            // Manual). Bar Y is the row's plate-center band (the original aligns
+            // the 16px bar to y=187 for the y=183 plate, i.e. plate_top+4).
+            if (Nav_ScreenId() == 19 && !is_back && rec.row_index >= 0 &&
+                rec.row_index <= 3) {
+                const float S = kVScale;
+                const float by = (rec.y - 13.0f + 4.0f + 1.0f) * S; // plate band
+                // Arrows: 16x16 black, drawn as the FGDC20 '<'/'>' glyphs tinted
+                // black to match the original's arrow sprites (ff000000).
                 if (g_font.ready()) {
-                    DrawMashedString(L"\x3c", wx - 16.0f * kVScale, ry, text_h, fg, true);
-                    DrawMashedString(L"\x3e", wx + bw + 6.0f * kVScale, ry, text_h, fg, true);
+                    DrawMashedString(L"\x3c", 356.0f * S + slideX, by, 16.0f * S,
+                                     0xff000000u, true);
+                    const float rax = (rec.row_index == 3 ? 457.0f : 484.0f) * S;
+                    DrawMashedString(L"\x3e", rax + slideX, by, 16.0f * S,
+                                     0xff000000u, true);
                 }
                 if (rec.row_index <= 2) {
                     const int v = (rec.row_index == 0) ? g_settings.music
                                 : (rec.row_index == 1) ? g_settings.sfx
                                                        : g_settings.insults;
-                    // outline + proportional fill
-                    HudIm2DQuad(0, wx, wy, bw, bh, 0x60000000u, uv_full);
-                    HudIm2DQuad(0, wx + 2.0f, wy + 2.0f,
-                                (bw - 4.0f) * (static_cast<float>(v) / 10.0f),
-                                bh - 4.0f,
-                                // F2: the original's slider fill is ORANGE on
-                                // every row (orig_sound.png), darker when the
-                                // row is highlighted.
-                                highlighted ? 0xff7a3608u : 0xffb45010u,
-                                uv_full);
-                } else if (rec.row_index == 3 && g_font.ready()) {
-                    DrawMashedString(g_settings.insults_on ? L"On" : L"Off",
-                                     wx + 8.0f * kVScale, ry, text_h, fg, true);
+                    const float bx = 374.0f * S + slideX;
+                    const float bw = 106.0f * S, bh = 16.0f * S;
+                    const float bt = 3.0f * S;
+                    HudIm2DQuad(0, bx, by, bw, bh, 0x7f000000u, uv_full);      // bg
+                    HudIm2DQuad(0, bx, by, bw, bt, 0xff000000u, uv_full);      // top
+                    HudIm2DQuad(0, bx, by + bh - bt, bw, bt, 0xff000000u, uv_full); // bottom
+                    HudIm2DQuad(0, bx, by, bt, bh, 0xff000000u, uv_full);      // left
+                    HudIm2DQuad(0, bx + bw - bt, by, bt, bh, 0xff000000u, uv_full); // right
+                    HudIm2DQuad(0, 377.0f * S + slideX, by + bt,
+                                (static_cast<float>(v) / 10.0f) * 100.0f * S,
+                                10.0f * S, 0xffd88020u, uv_full);              // fill
+                } else if (g_font.ready()) {
+                    static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
+                    const int m = (g_settings.insults_on >= 0 &&
+                                   g_settings.insults_on <= 2)
+                                      ? g_settings.insults_on : 0;
+                    DrawMashedString(kInsults[m], 392.0f * S + slideX, by,
+                                     16.0f * S, 0xff000000u, false);
                 }
             }
         }
