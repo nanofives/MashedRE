@@ -67,6 +67,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Race\RaceCamera.cpp" ^
     "D3d9Render\QuadRenderer.cpp" ^
     "D3d9Render\RwIm2DBridge.cpp" ^
+    "D3d9Render\DrawStreamDump.cpp" ^
     "D3d9Render\PngLoader.cpp" ^
     "D3d9Render\MpegVideoTexture.cpp" ^
     "D3d9Render\TextRenderer.cpp" ^
@@ -159,6 +160,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\FrontendLeaves_ad2.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
+    /MAP:"%OUT%\mashed_re.map" ^
     user32.lib d3d9.lib
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)

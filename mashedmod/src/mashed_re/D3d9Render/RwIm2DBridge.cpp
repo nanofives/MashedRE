@@ -4,8 +4,11 @@
 #include "RwIm2DBridge.h"
 
 #include <windows.h>
+#include <intrin.h>
 #include <cstdio>
 #include <cstring>
+
+#include "DrawStreamDump.h"
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -108,6 +111,11 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
     if (!g_device || !verts || count < 3 || count > 64) return;
 
     const SrcVert* src = reinterpret_cast<const SrcVert*>(verts);
+
+    // Parity harness (MASHED_DBG_DRAWSTREAM): record the raw source blob +
+    // mirrored state before any conversion. No-op when the env var is unset.
+    DrawStreamDump_OnDraw(verts, count, g_curTexHandle, g_alphaBlend,
+                          g_srcBlend, g_dstBlend, _ReturnAddress());
 
     // One-shot draw logger (MASHED_DBG_DRAWLOG=1): dump the first 150 bridge
     // draws to the log so a white-flood painter can be identified exactly.
