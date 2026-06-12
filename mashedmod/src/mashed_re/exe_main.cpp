@@ -1317,9 +1317,13 @@ int GetMenuMessage(int id, wchar_t* out, int cap);
 // MASHED's FGDC20 atlas UVs. No-op if the font isn't loaded. When `anchor_left`
 // is true, `cx` is the LEFT edge (the original's FUN_00427680 left-justified
 // layout); otherwise `cx` is the centre (legacy callers).
+// grad_bot_frac < 1.0 draws each glyph with a top->bottom vertical ALPHA
+// gradient (top = argb, bottom = argb with alpha*frac), matching the original's
+// menu-item text (FUN_00428140 -> FUN_00556e90 sets top=base / bottom=faded).
+// 1.0 = flat (the title/chrome path FUN_00427e00 passes all-same).
 void DrawMashedString(const wchar_t* s, float cx, float top_y,
                       float height_px, std::uint32_t argb,
-                      bool anchor_left = false) {
+                      bool anchor_left = false, float grad_bot_frac = 1.0f) {
     if (!g_font.ready() || !s) return;
     const float scale = height_px / g_font.natural_height();
     const float space_adv = height_px * 0.32f;
@@ -1349,7 +1353,16 @@ void DrawMashedString(const wchar_t* s, float cx, float top_y,
             std::uint32_t uvb[4];
             std::memcpy(uvb, uv, sizeof(uvb));
             const float gw = wpx * scale;
-            HudIm2DQuad(g_font.handle(), penX, top_y, gw, height_px, argb, uvb);
+            if (grad_bot_frac < 0.999f) {
+                const std::uint32_t a = argb >> 24;
+                const std::uint32_t ab =
+                    static_cast<std::uint32_t>(a * grad_bot_frac);
+                const std::uint32_t bot = (ab << 24) | (argb & 0xffffffu);
+                HudIm2DQuadCorners(g_font.handle(), penX, top_y, gw, height_px,
+                                   argb, argb, bot, bot, uvb);
+            } else {
+                HudIm2DQuad(g_font.handle(), penX, top_y, gw, height_px, argb, uvb);
+            }
             penX += adv * scale;
         } else {
             penX += space_adv;
@@ -2173,7 +2186,11 @@ bool RenderFrame() {
                 if (is_back) {
                     DrawMashedString(txt, lx + sh, ty + sh, text_h, 0xff000000u, true);
                 }
-                DrawMashedString(txt, lx, ty, text_h, base_argb, true);
+                // List items get the original's top->bottom glyph gradient
+                // (FUN_00428140/FUN_00556e90: top=base, bottom faded to ~0.5
+                // alpha for a normal item); back/header rows stay flat.
+                const float gfrac = (is_back || is224) ? 1.0f : 0.5f;
+                DrawMashedString(txt, lx, ty, text_h, base_argb, true, gfrac);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
                        g_menu_items[rec.row_index].ready) {
                 const MenuItemTex& it = g_menu_items[rec.row_index];
