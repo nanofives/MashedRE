@@ -92,6 +92,32 @@ player color select (25).
 
 Window screenshots of the standalone are UNTRUSTWORTHY on this machine (multi-monitor Present issue renders agent-spawned windows white while the backbuffer is correct). Use MASHED_DBG_BBDUMP=1 (dumps verify/dbg_backbuffer.bmp at frame ~200) as the truth channel for all standalone visual verification.
 
+## Parity harness (2026-06-12, merged 8f1a58c2 — use for all composition items)
+
+The composition truth channel is now the **draw-list diff**, not eyeballs:
+`MASHED_GOTO=<scr> MASHED_DBG_DRAWSTREAM=200:203` on the standalone +
+`py -3.12 re/frida/menu_draw_burst.py --screen <scr> --frames 4` on the original,
+then `py -3.12 re/tools/drawlist_diff.py log/menu_draw_burst.json
+log/drawstream_re.json --exclude-tex 9 --map mashedmod/build/mashed_re.map`.
+Full recipes + capture asymmetries: `re/analysis/parity_tooling.md`. Per-fix
+acceptance: the item's rows disappear from the diff and no new MISSING/EXTRA
+rows appear. (Rebuild first — the env-var capture compiles in via
+D3d9Render/DrawStreamDump.cpp.)
+
+Harness first-run findings at settled scr1 (machine-derived; for adjudication
+by this program — NOT yet tracker-itemized):
+- **conflicts with #15's settled-state claim**: original draws the 15-strip
+  arc wash at alpha 0x00 when settled; the standalone draws 0x60/0x78
+  (permanent haze). One side of the claim is wrong; captures in log/.
+- **#14 residual visible structurally**: original preview crossfade = TWO
+  176x352 corner-faded HALF-quads per layer (x=288/x=464); standalone draws
+  single full quads -> MISSING rows.
+- gradient-band caps at x=384 draw at a different stream position
+  (MISMATCH(reordered)) than the original.
+- nav_coverage.py: kT27 table hole; screen-4 action 0xff1d0000 dead-ends (no
+  ActionToScreen case); kind-4 screens 31/33 lack the sid-specific widget
+  handling 19/32 have; kind-2 screens 2/3/4 have none while 8 does.
+
 ## Offline-RE findings (2026-06-12, MCP down — via re/tools/disasm_fn.py)
 
 - **#2 boot splash**: DAT_00771964 is only ever set to MashedNEWLogo (FUN_004283a0) or 0 (teardown 0x00428400). FUN_00403050 draws it + the pulsing press-button (FUN_00402fb0). The Dolby/ProLogic logos (DAT_0067d968/0067d96c) are drawn by separate readers (0x00428c9b / 0x00428ec2) — the splash is a multi-function boot sequence, not a single drawer. Port needs those two drawers + the boot state pump.

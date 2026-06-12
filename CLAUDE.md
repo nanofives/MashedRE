@@ -171,6 +171,8 @@ Every Ghidra session and every reversed function must follow this:
 
 A hook is accepted only when the `diff-original` skill produces a clean Frida diff between original and modded behavior. Compile-passes-and-doesn't-crash is not acceptance.
 
+For standalone **frontend/visual** work the acceptance analogue is the **parity harness** (`re/analysis/parity_tooling.md`): a draw-list diff (`re/tools/drawlist_diff.py`) between an original-side capture (`re/frida/menu_draw_burst.py`) and the standalone's `MASHED_DBG_DRAWSTREAM` dump — GREEN, or RED with every remaining row cited in the tracker. `re/tools/nav_coverage.py` checks new screens; `re/tools/imgdiff.py` covers what draw lists can't (texture decode, font raster). Screenshots alone are not acceptance for composition fixes.
+
 ### Frida overhead on hot paths
 
 Frida `Interceptor.attach` on hot paths (>1000 calls/s) destabilizes Mashed in ~6 seconds — the process drifts and either crashes or hangs. Empirically observed at the main menu where `FastSqrt` fires ~2,700/s and `FastInvSqrt` ~900/s (see `log/auto_count_at_menu.txt`).
