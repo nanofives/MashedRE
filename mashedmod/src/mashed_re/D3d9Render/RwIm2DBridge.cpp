@@ -4,6 +4,7 @@
 #include "RwIm2DBridge.h"
 
 #include <windows.h>
+#include <cstdio>
 #include <cstring>
 
 namespace mashed_re {
@@ -107,6 +108,29 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
     if (!g_device || !verts || count < 3 || count > 64) return;
 
     const SrcVert* src = reinterpret_cast<const SrcVert*>(verts);
+
+    // One-shot draw logger (MASHED_DBG_DRAWLOG=1): dump the first 150 bridge
+    // draws to the log so a white-flood painter can be identified exactly.
+    {
+        static int s_dbg = -1;
+        if (s_dbg == -1)
+            s_dbg = (GetEnvironmentVariableA("MASHED_DBG_DRAWLOG", nullptr, 0) != 0)
+                        ? 150 : 0;
+        if (s_dbg > 0) {
+            --s_dbg;
+            if (std::FILE* f = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(f,
+                    "DRAWLOG n=%d v0=(%.1f,%.1f) v3=(%.1f,%.1f) col=%08lx "
+                    "blend=%d tex=%ld\n",
+                    count, src[0].x, src[0].y,
+                    src[count - 1].x, src[count - 1].y,
+                    static_cast<unsigned long>(src[0].color),
+                    g_alphaBlend ? 1 : 0,
+                    static_cast<long>(g_curTexHandle));
+                std::fclose(f);
+            }
+        }
+    }
     D3DVert        dst[64];
     for (int i = 0; i < count; ++i) {
         dst[i].x     = src[i].x;

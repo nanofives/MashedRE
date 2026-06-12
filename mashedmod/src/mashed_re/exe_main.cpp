@@ -191,6 +191,7 @@ extern "C" void __cdecl MenuChromeShellA(void);
 // R2-4 animated logo overlay (verbatim FUN_00473ee0 port; Frontend/
 // DrawQuadPrimitives.cpp). Coords 640x480-virtual; vscale folds the original's
 // in-helper ScreenW/640, ScreenH/480 multiply.
+extern "C" void __cdecl LogoOverlayFadeSet(int target, int cur);
 extern "C" void __cdecl LogoOverlayDraw(float slide_x, float wave_t,
                                         float vscale_x, float vscale_y);
 extern "C" void __cdecl ChromeBaseDraw(float x, float y, float w, float h, std::uint32_t argb);
@@ -1351,6 +1352,17 @@ bool RenderFrame() {
         return true;
     }
 
+    // Debug: MASHED_DBG_BBDUMP=1 dumps the backbuffer at frame ~200 to
+    // verify/dbg_backbuffer.bmp - discriminates draw-side vs present-side
+    // failures (window shows white while the bridge logs sane draws).
+    {
+        static int s_bb = -1;
+        if (s_bb == -1)
+            s_bb = (GetEnvironmentVariableA("MASHED_DBG_BBDUMP", nullptr, 0) != 0)
+                       ? 200 : 0;
+        if (s_bb > 0 && --s_bb == 1)
+            DumpBackbufferBMP("verify/dbg_backbuffer.bmp");
+    }
     g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
     g_device->BeginScene();
 
@@ -1388,31 +1400,12 @@ bool RenderFrame() {
         HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
     }
 
-    // Right-side white wash + band-edge fades — VERBATIM geometry/colors from
-    // the original's menu draw stream (log/menu_draw_dump.json, draws 1-4,
-    // identical across screens 1/8/19):
-    //   1: x=288..464 y=64..416  white, horizontal alpha 00->ff (fade-in)
-    //   2: x=464..640 y=64..416  solid white
-    //   3: x=384..512 y=0..64    black, horizontal alpha 00->ff
-    //   4: x=384..512 y=416..480 black, horizontal alpha 00->ff
-    // (the 15-strip curved wash draws 5..34 carry alpha-0 colors — they only
-    // matter under the original's modulate blend state; not reproduced yet,
-    // see ledger residual. Checker-flag quads 35..76 need the checker texture
-    // identity — residual.)
-    if (g_bridge_installed) {
-        constexpr float kS = 1.25f;
-        HudIm2DQuadCorners(0, 288.f*kS, 64.f*kS, 176.f*kS, 352.f*kS,
-                           0x00ffffffu, 0xffffffffu, 0x00ffffffu, 0xffffffffu,
-                           uv_full);
-        HudIm2DQuad(0, 464.f*kS, 64.f*kS, 176.f*kS, 352.f*kS, 0xffffffffu,
-                    uv_full);
-        HudIm2DQuadCorners(0, 384.f*kS, 0.f, 128.f*kS, 64.f*kS,
-                           0x00000000u, 0xff000000u, 0x00000000u, 0xff000000u,
-                           uv_full);
-        HudIm2DQuadCorners(0, 384.f*kS, 416.f*kS, 128.f*kS, 64.f*kS,
-                           0x00000000u, 0xff000000u, 0x00000000u, 0xff000000u,
-                           uv_full);
-    }
+    // (2026-06-12 Wave-1 correction, ShellB decomp: the "white wash" quads at
+    // 288/464 ARE the track-preview crossfade layer — FUN_0042e590 ->
+    // FUN_00474890 two-quad pairs — drawn below by the preview block; and the
+    // band-edge black fades at 384..512 are FUN_00473ee0's own first two band
+    // quads (x = slide-128), drawn by the LogoOverlayDraw port. The static
+    // duplicates that briefly lived here are REMOVED.)
 
     if constexpr (kTitleMode) {
         // B6: title-screen MVP — single centered 'main' texture quad. Suppressed
@@ -1444,12 +1437,15 @@ bool RenderFrame() {
     // B16: render MASHED's menu chrome (two dark bands + two white divider
     // lines) through the B15 bridge.
     if (g_bridge_installed) {
-        if (g_b16_chrome_ready) {
-            // Faithful path: call MASHED's ACTUAL frontend function
-            // MenuChromeShellA (0x0042e3a0). Its by-RVA calls to the Im2D draws
-            // + screen getters are redirected by the B16 thunks to our reimpls.
-            // Available only when the 0x00420000/0x00470000 .text granules + the
-            // scale-constant granule were all claimable this cold-start.
+        // B16 ShellA-bytes path RETIRED 2026-06-12: the dump-verbatim rebuild
+        // below (log/menu_draw_dump.json draws 77-80) is bit-derived from the
+        // original's vertex stream and renders identically on EVERY boot,
+        // while the ShellA-bytes call depended on the cold-start granule
+        // lottery (chrome=YES only some boots). One deterministic path wins.
+        // (A white-window incident first blamed on ShellA turned out to be a
+        // Present/monitor-level environment issue — backbuffer dumps proved
+        // the draws correct. Verification now uses MASHED_DBG_BBDUMP.)
+        if (false && g_b16_chrome_ready) {
             MenuChromeShellA();
         } else {
             // Reliable path: the SAME chrome layout read from MenuChromeShellA's
@@ -1483,20 +1479,43 @@ bool RenderFrame() {
         const float lx = (800.f - lw) * 0.5f;
         const float ly = 80.f;
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
+    }
 
-        // R2-4: animated logo overlay — verbatim FUN_00473ee0 port (fade bands,
-        // circular-arc column strips, wavy edge grid). slide_x settled = 512.0
-        // (the FUN_0042e5b0 call-site value); wave_t = DAT_007f1010 equivalent
-        // = elapsed-microseconds * 1/3e6 (FUN_00493390 @0x0049344b), i.e.
-        // seconds/3. Coords are 640x480-virtual; scale to the 800x600 buffer.
-        {
-            static DWORD s_t0 = 0;
-            const DWORD now = GetTickCount();
-            if (s_t0 == 0) s_t0 = now;
-            const float wave_t =
-                static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
-            LogoOverlayDraw(512.0f, wave_t, 800.0f, 600.0f);
+    // Chrome layer — FUN_00473ee0 called per frame by MenuChromeShellB
+    // (0x0042e5b0 decomp, pool0 2026-06-12) on EVERY frontend frame (title and
+    // menus alike): band-edge fades at slide-128, the fade-driven circular-arc
+    // transition wash, and the UNTEXTURED staggered checker grid (the animated
+    // "race flag" bands — there is no checker texture; the look is the 21px
+    // stagger). slide law (0x0042e7f0..): slide_f = pre-decrement
+    // DAT_008990e0 + 512.0 (_DAT_005cd65c); the global steps -0x10/frame,
+    // clamped [0,0x200]. Nav transitions reset it to 0x200.
+    // [SCAFFOLD, tagged]: the original writers of DAT_008990e0 (nav) and the
+    // fade target DAT_0086ecc8 are not yet xref-confirmed; the standalone
+    // detects screen/depth changes and raises slide+fade then — replace with
+    // the verbatim writers once located (route: Ghidra xrefs to 0x008990e0 /
+    // 0x0086ecc8).
+    if (g_bridge_installed &&
+        GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
+        using namespace mashed_re::Frontend;
+        static int s_chrome_slide = 0;
+        static int s_last_scr = -1, s_last_depth = -1;
+        const int scr = Nav_ScreenId(), dep = Nav_Depth();
+        if (scr != s_last_scr || dep != s_last_depth) {
+            if (s_last_scr != -1) {
+                s_chrome_slide = 0x200;
+                LogoOverlayFadeSet(0xff, 0);
+            }
+            s_last_scr = scr; s_last_depth = dep;
         }
+        const float pre = static_cast<float>(s_chrome_slide);
+        s_chrome_slide -= 0x10;
+        if (s_chrome_slide < 0) s_chrome_slide = 0;
+        if (s_chrome_slide == 0) LogoOverlayFadeSet(0, -1);  // settle: fade out
+        static DWORD s_t0 = 0;
+        const DWORD now = GetTickCount();
+        if (s_t0 == 0) s_t0 = now;
+        const float wave_t = static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
+        LogoOverlayDraw(pre + 512.0f, wave_t, 800.0f, 600.0f);
     }
 
     // State-machine-driven menu draw — faithful port of FUN_0043c5b0's per-frame
@@ -1520,7 +1539,8 @@ bool RenderFrame() {
     // F2: track-preview crossfade — verbatim phase math from the verified
     // MenuChromeShellB reimpl (0x0042e5b0): 512-frame cycle, A/B alpha ramps,
     // slot cycle 0..5 over the preview pairs, 352x352 at (288,64) virtual.
-    if (g_bridge_installed && g_frontend_phase >= 2 && g_previews_ready) {
+    if (g_bridge_installed && g_frontend_phase >= 2 && g_previews_ready &&
+        GetEnvironmentVariableA("MASHED_DBG_NO_PREVIEWS", nullptr, 0) == 0) {
         static const int kCycle[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
         const unsigned phase = (g_chrome_frame++) & 0x1ffu;
         if (phase == 0x1e0u) g_chrome_spriteA += 2;
@@ -1538,21 +1558,30 @@ bool RenderFrame() {
             if (t < 0x10) { a6 = t * 0x10;          a7 = 0xff; }
             else          { a7 = (0x1f - t) * 0x10; a6 = 0xff; }
         }
+        // FUN_00474890 draw form (pool0 decomp 2026-06-12): each preview layer
+        // is TWO half-width quads — left half with corners 0/2 (TL/BL) faded
+        // to alpha 0 (grad_flag path) so the layer fades IN over the video,
+        // right half solid; w is halved inside (_DAT_005cc32c = 0.5). The
+        // original pans the texture via the mode-1..5 UV switch over a
+        // 6-sub-image layout — the standalone's per-track preview textures
+        // draw full-UV for now [residual: UV-pan modes need the original's
+        // preview atlas layout].
         const float pvx = 288.f * 1.25f, pvy = 64.f * 1.25f;
-        const float pvw = 352.f * 1.25f, pvh = 352.f * 1.25f;
-        // preview pair index: slot*2 (the "1" image; "2" is the alt frame)
-        if (a6 != 0) {
-            const int h = kHandlePreview0 + kCycle[g_chrome_spriteA & 0xf] * 2;
-            HudIm2DQuad(h, pvx, pvy, pvw, pvh,
-                        (static_cast<std::uint32_t>(a6) << 24) | 0xffffffu,
-                        uv_full);
-        }
-        if (a7 != 0) {
-            const int h = kHandlePreview0 + kCycle[g_chrome_spriteB & 0xf] * 2;
-            HudIm2DQuad(h, pvx, pvy, pvw, pvh,
-                        (static_cast<std::uint32_t>(a7) << 24) | 0xffffffu,
-                        uv_full);
-        }
+        const float pvh = 352.f * 1.25f;
+        const float pvw2 = 176.f * 1.25f;            // 352 * 0.5 per quad
+        auto draw_preview = [&](int handle, int alpha) {
+            const std::uint32_t c =
+                (static_cast<std::uint32_t>(alpha) << 24) | 0xffffffu;
+            const std::uint32_t c0 = c & 0x00ffffffu;
+            std::uint32_t uvL[4] = { 0u, 0u, 0x3f000000u, 0x3f800000u };
+            std::uint32_t uvR[4] = { 0x3f000000u, 0u, 0x3f800000u, 0x3f800000u };
+            HudIm2DQuadCorners(handle, pvx, pvy, pvw2, pvh, c0, c, c0, c, uvL);
+            HudIm2DQuad(handle, pvx + pvw2, pvy, pvw2, pvh, c, uvR);
+        };
+        if (a6 != 0)
+            draw_preview(kHandlePreview0 + kCycle[g_chrome_spriteA & 0xf] * 2, a6);
+        if (a7 != 0)
+            draw_preview(kHandlePreview0 + kCycle[g_chrome_spriteB & 0xf] * 2, a7);
     }
 
     // F2: the menu-screen chrome decal — FUN_0043c5b0 phase>=2 draws string

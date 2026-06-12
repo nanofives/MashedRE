@@ -629,7 +629,7 @@ int g_logo_fade_cur    = 0;      // DAT_0086eccc
 extern "C" __declspec(dllexport) void __cdecl LogoOverlayFadeSet(int target,
                                                                  int cur) {
     g_logo_fade_target = target;
-    g_logo_fade_cur = cur;
+    if (cur >= 0) g_logo_fade_cur = cur;   // cur < 0: leave current alone
 }
 
 extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
