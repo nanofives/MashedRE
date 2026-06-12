@@ -3387,3 +3387,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  0043aee0  MenuSlotFlagSetCurrent  C3->C3  frida-sweep-20260612-1932 re-verified 7/7 GREEN; no status change
 2026-06-12  frida-sweep-20260612-1932  frida-sweep-release  branches=0 merged (2 STALE queue rows drained; content pre-existing on main)  integration-diff=GREEN  hooks=4 (3 C2->C3 + 1 re-verified)
 2026-06-12  0040e370  IsCarSlotActive  C3->C3  scenario_attach lane validation: degenerate early-out vectors replaced with scenario=race in-bounds slots; 10/10 GREEN non-trivial (first scenario:'race' run_diff run)
+2026-06-12  00408af0  AiVehicleFieldPtrGet  C2->C3  promote-round-1 scenario=race diff 10/10 GREEN log/diff_ai_vehicle_field_ptr_get.csv
+2026-06-12  00442cc0  AiVehicleFloat4Get  C2->C3  promote-round-1 scenario=race diff 10/10 GREEN log/diff_ai_vehicle_float4_get.csv
+2026-06-12  00414030  AiSplineBankTimerReset  C2->C3  promote-round-1 scenario=race slot_block_zero diff 10/10 GREEN (param=-1 fill path untested) log/diff_ai_spline_bank_timer_reset.csv
+2026-06-12  0040e350  GetRenderSubMode  C2->C3  promote-round-1 scenario=race diff 10/10 GREEN log/diff_get_render_sub_mode.csv
+2026-06-12  00429300  HudOverlayFloatGet  C2->C3  promote-round-1 scenario=race diff 10/10 GREEN after FILD root-cause (bytes DB 05 B8 91 89 00 C3 @0x29300; DAT_008991b8 is int32 not float) log/diff_hud_overlay_float_get.csv
