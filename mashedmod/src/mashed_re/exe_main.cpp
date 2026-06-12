@@ -456,7 +456,10 @@ bool             g_menu_logo_ready = false;
 // FUN_0043c5b0 draw ladder gate): 1 = title (logo only, no items), 2..3 =
 // menu screens (items draw). Title-confirm pushes screen 1 (the original's
 // title -> main-menu flow).
-int              g_frontend_phase  = 1;
+// Phase 0 = boot legal/copyright splash (#2; FUN_004288a0 over FUN_00428a30,
+// ~8s auto-advance or any key). 1 = title. 2..3 = menu screens.
+int              g_frontend_phase  = 0;
+DWORD            g_splash_start_ms  = 0;   // set on first splash frame
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
 
@@ -979,6 +982,15 @@ bool UpdateMenuSelection() {
     const bool rgt_now   = (g_keys[DIK_RIGHT]     & 0x80) != 0;
     const bool rgt_prev  = (g_keys_prev[DIK_RIGHT]& 0x80) != 0;
 
+    // Phase 0 = boot legal splash (#2): any key advances to the title (the
+    // original auto-advances after 24000000/3MHz = 8s OR on input via
+    // DAT_0067d960; the 8s timeout is handled in RenderFrame).
+    if (g_frontend_phase == 0) {
+        const bool any = ent_now || esc_now || (g_keys[DIK_SPACE] & 0x80) ||
+                         down_now || up_now;
+        if (any) g_frontend_phase = 1;
+        return false;
+    }
     // F6: title phase (DAT_0067eca4 == 1): no item nav; confirm advances the
     // phase and pushes screen 1 (the original's title-confirm flow — the same
     // push the nav demo driver replicates at phase 180).
@@ -1489,7 +1501,7 @@ bool RenderFrame() {
     // ShellB runs the preview crossfade on EVERY frontend frame including
     // the title (titleframe dump 2026-06-12 contains the FUN_00474890 pair) -
     // no phase gate.
-    if (g_bridge_installed && g_previews_ready &&
+    if (g_bridge_installed && g_previews_ready && g_frontend_phase >= 1 &&
         GetEnvironmentVariableA("MASHED_DBG_NO_PREVIEWS", nullptr, 0) == 0) {
         static const int kCycle[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
         const unsigned phase = (g_chrome_frame++) & 0x1ffu;
@@ -1569,8 +1581,8 @@ bool RenderFrame() {
         }
     }
     // B16: render MASHED's menu chrome (two dark bands + two white divider
-    // lines) through the B15 bridge.
-    if (g_bridge_installed) {
+    // lines) through the B15 bridge. Skipped during the phase-0 legal splash.
+    if (g_bridge_installed && g_frontend_phase >= 1) {
         // B16 ShellA-bytes path RETIRED 2026-06-12: the dump-verbatim rebuild
         // below (log/menu_draw_dump.json draws 77-80) is bit-derived from the
         // original's vertex stream and renders identically on EVERY boot,
@@ -1604,7 +1616,44 @@ bool RenderFrame() {
     // into a 560x360 box preserving aspect, top-centered below the top band.
     // F6: the big centered wavy logo is the TITLE-phase composition; menu
     // screens draw items without it (their small header chrome is the F2 pass).
-    if (g_frontend_phase < 2 &&
+    // --- #2 boot legal/copyright splash (phase 0). VERBATIM layout from
+    // FUN_004288a0 (pool0 decomp 2026-06-12): MashedNEWLogo centered at
+    // virtual (320,100,256x128), then the Empire/Supersonic copyright lines
+    // (USA.DAT ids 0x1e5..0x1eb, scale 0.6, centered) at y=180/200/220/240/
+    // 260/280, plus "Loading" (id 0x222) at (580,140). Shown ~8s
+    // (24000000 / 3MHz timer) or until a key (handled in UpdateMenuSelection).
+    if (g_frontend_phase == 0 && g_bridge_installed) {
+        if (g_splash_start_ms == 0) g_splash_start_ms = GetTickCount();
+        if (GetTickCount() - g_splash_start_ms > 8000u) g_frontend_phase = 1;
+        if (g_menu_logo_ready) {
+            const float lw = 256.f * 1.25f, lh = 128.f * 1.25f;
+            HudIm2DQuad(kHandleMenuLogo, (320.f - 128.f) * 1.25f, (100.f - 64.f) * 1.25f,
+                        lw, lh, 0xffffffffu, uv_full);
+        }
+        if (g_font.ready()) {
+            const float th = 0.6f * 0.0708f * 480.f * 1.25f;  // scale-0.6 cell
+            // The original flanks 0x1e6/0x1e7 around the 'bigE' icon on one
+            // line (FUN_004282a0 width-measured). Without the icon we stack them
+            // on their own lines to avoid overlap [residual: bigE icon + the
+            // exact one-line flank].
+            struct L { int id; float y; };
+            static const L lines[] = {
+                {0x1e5,180},{0x1e6,196},{0x1e7,212},{0x1e8,232},
+                {0x1e9,248},{0x1ea,264},{0x1eb,280}};
+            for (const L& ln : lines) {
+                wchar_t t[128];
+                if (GetMenuMessage(ln.id, t, 128) > 0)
+                    DrawMashedString(t, 320.f * 1.25f, ln.y * 1.25f, th,
+                                     0xffffffffu, false);
+            }
+            wchar_t lt[32];
+            if (GetMenuMessage(0x222, lt, 32) > 0)
+                DrawMashedString(lt, 580.f * 1.25f, 140.f * 1.25f,
+                                 0.9f * 0.0708f * 480.f * 1.25f, 0xffffffffu, false);
+        }
+    }
+
+    if (g_frontend_phase == 1 &&
         g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
         // Title logo placement GROUND TRUTH (full-frame draw dump 2026-06-12,
         // emitter 0x450c7a via the FUN_00428760 sprite pipe): ONE static quad
@@ -1653,7 +1702,7 @@ bool RenderFrame() {
     // -0x10/frame here like ShellB. The standalone has no framed-preview
     // screen body yet, so slide stays settled (slide_f = 512) [residual:
     // lands with the FUN_004368e0 per-screen-content work, Wave 3].
-    if (g_bridge_installed &&
+    if (g_bridge_installed && g_frontend_phase >= 1 &&
         GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
         using namespace mashed_re::Frontend;
         static int s_chrome_slide = 0;
