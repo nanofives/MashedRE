@@ -309,6 +309,7 @@ bool               g_active        = true;
 IDirect3D9*        g_d3d           = nullptr;
 IDirect3DDevice9*  g_device        = nullptr;
 D3DPRESENT_PARAMETERS g_pp         = {};
+bool               g_depth_disabled = false;  // set if device fell back to no auto-depth
 
 // B11 — DirectInput8 keyboard state. MASHED stashes its DInput device inside
 // FUN_004997b0 / FUN_004998a0 callchain; we own ours directly.
@@ -1106,19 +1107,60 @@ bool InitD3D9() {
     g_pp.EnableAutoDepthStencil = TRUE;
     g_pp.AutoDepthStencilFormat = D3DFMT_D16;
 
-    HRESULT hr = g_d3d->CreateDevice(
-        D3DADAPTER_DEFAULT,
-        D3DDEVTYPE_HAL,
-        g_hwnd,
-        D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-        &g_pp,
-        &g_device);
-    if (FAILED(hr)) {
-        g_d3d->Release();
-        g_d3d = nullptr;
-        return false;
+    // Log the current adapter display mode (format/size) — a degraded desktop
+    // (non-native res / changed bit-depth) is the usual cause of an otherwise-
+    // valid windowed CreateDevice returning D3DERR_INVALIDCALL (0x8876086C).
+    D3DDISPLAYMODE dm = {};
+    if (SUCCEEDED(g_d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dm))) {
+        if (std::FILE* log = std::fopen(kLogPath, "a")) {
+            std::fprintf(log, "InitD3D9: adapter mode %ux%u fmt=%d refresh=%u\n",
+                         dm.Width, dm.Height, dm.Format, dm.RefreshRate);
+            std::fclose(log);
+        }
     }
-    return true;
+
+    // Robust device creation. Two param variants x several device types, each
+    // retried, every HRESULT logged. Variant B drops the auto depth-stencil
+    // (only the 3D track path needs it; the menu doesn't) and matches the
+    // back-buffer format to the live desktop — this recovers the common
+    // D3DERR_INVALIDCALL from an incompatible depth/format at a non-native mode.
+    struct Attempt { D3DDEVTYPE type; DWORD flags; const char* name; };
+    const Attempt attempts[] = {
+        { D3DDEVTYPE_HAL, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "HAL/SW" },
+        { D3DDEVTYPE_HAL, D3DCREATE_HARDWARE_VERTEXPROCESSING, "HAL/HW" },
+        { D3DDEVTYPE_REF, D3DCREATE_SOFTWARE_VERTEXPROCESSING, "REF/SW" },
+    };
+    for (int variant = 0; variant < 2; ++variant) {
+        if (variant == 1) {
+            // Variant B: no auto depth-stencil, explicit live back-buffer fmt.
+            g_pp.EnableAutoDepthStencil = FALSE;
+            g_pp.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
+            if (dm.Format != D3DFMT_UNKNOWN) g_pp.BackBufferFormat = dm.Format;
+        }
+        for (const Attempt& a : attempts) {
+            for (int retry = 0; retry < 3; ++retry) {
+                HRESULT hr = g_d3d->CreateDevice(D3DADAPTER_DEFAULT, a.type,
+                                                 g_hwnd, a.flags, &g_pp, &g_device);
+                if (std::FILE* log = std::fopen(kLogPath, "a")) {
+                    std::fprintf(log,
+                        "InitD3D9: CreateDevice(%s,var%d) try %d -> hr=0x%08lX%s\n",
+                        a.name, variant, retry, static_cast<unsigned long>(hr),
+                        SUCCEEDED(hr) ? " OK" : "");
+                    std::fclose(log);
+                }
+                if (SUCCEEDED(hr)) {
+                    // Note if we fell back to no-depth (the track path must
+                    // re-create its own depth surface if it ever runs).
+                    g_depth_disabled = (variant == 1);
+                    return true;
+                }
+                Sleep(120);
+            }
+        }
+    }
+    g_d3d->Release();
+    g_d3d = nullptr;
+    return false;
 }
 
 void ShutdownD3D9() {
