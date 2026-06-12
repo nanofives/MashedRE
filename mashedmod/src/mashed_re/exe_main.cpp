@@ -1890,9 +1890,15 @@ bool RenderFrame() {
         wchar_t cs[64];
         if (GetMenuMessage(0x41, cs, 64) > 0) {
             const float csc = kMenuTextHeight * 0.8f * 1.25f;  // 0.8 scale, 640->800
-            DrawMashedString(cs, 600.f * (800.f / 640.f), 52.f * (600.f / 480.f),
+            // #5 (user review): the "MASHED" watermark sits ABOVE THE BAR. The
+            // original's FUN_00427e00 effectively baseline-anchors at virtual
+            // y=48/52; our DrawMashedString takes top_y, so the same y put the
+            // text spanning the band's bottom divider (virtual y=64) into the
+            // content area. Anchor the top inside the top band (0..64 virtual)
+            // so the whole word stays within/above the bar.
+            DrawMashedString(cs, 600.f * (800.f / 640.f), 24.f * (600.f / 480.f),
                              csc, 0xff000000u, false);
-            DrawMashedString(cs, 596.f * (800.f / 640.f), 48.f * (600.f / 480.f),
+            DrawMashedString(cs, 596.f * (800.f / 640.f), 20.f * (600.f / 480.f),
                              csc, 0xffffffffu, false);
         }
     }
