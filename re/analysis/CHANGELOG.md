@@ -3374,3 +3374,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-10  004325c0  MenuAnimTickTwin  C2->C3  nav-driven diff GREEN 40/40 (harness extension menu_anim_diff.py)
 2026-06-10  00473ee0  LogoOverlayDraw  C2->C3  nav-driven draw-sequence diff GREEN 20/20; x-sine wave discovered+ported (amp f64 4.0 @0x005ce1f8)
 2026-06-10  0043c5b0  MenuDrawLoop  C2->C3  nav-driven draw-sequence diff GREEN 20/20 (117 draws/frame bit-identical); border kit/fade/cap semantics recovered
+2026-06-10  004325c0  (frontend twin)  C3->C4  subset-install canonical observe 30s, 3/3 installed, natural per-frame fire
+2026-06-10  00473ee0  (frontend twin)  C3->C4  subset-install canonical observe 30s, 3/3 installed, natural per-frame fire
+2026-06-10  0043c5b0  (frontend twin)  C3->C4  subset-install canonical observe 30s, 3/3 installed, natural per-frame fire
