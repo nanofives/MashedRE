@@ -44,6 +44,11 @@ bool RwIm2DBridge_Install(IDirect3DDevice9* device);
 // reserved for "no texture". Pass the same handle to HudIm2DQuad to draw textured.
 void RwIm2DBridge_RegisterTexture(int handle, IDirect3DTexture9* texture);
 
+// Mark a registered texture as POINT-sampled (default LINEAR). The FGDC20
+// charset draws point-sampled in the original (FUN_00554940 render-state 9
+// from the raster's native field; pixel-verified vs orig backbuffer dumps).
+void RwIm2DBridge_SetTexturePointFilter(int handle, bool point);
+
 // Diagnostics: count of DrawPrimitive submissions since install (for logging).
 std::uint32_t RwIm2DBridge_DrawCount();
 

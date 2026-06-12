@@ -72,14 +72,19 @@ int  g_dstBlend     = 6;     // state 11 (rwBLENDINVSRCALPHA == D3DBLEND_INVSRCA
 // Small handle -> texture map. The frontend uses small integer texture handles;
 // 16 slots is ample for the menu (matches QuadRenderer::kMaxSlots).
 constexpr int     kMaxTexHandles = 64;
-struct TexEntry { int handle; IDirect3DTexture9* tex; };
+struct TexEntry { int handle; IDirect3DTexture9* tex; bool point_filter; };
 TexEntry          g_texMap[kMaxTexHandles] = {};
 int               g_texMapCount = 0;
+bool              g_curTexPoint = false;   // resolved with the texture each draw
 
 IDirect3DTexture9* ResolveTexture(int handle) {
+    g_curTexPoint = false;
     if (handle == 0) return nullptr;
     for (int i = 0; i < g_texMapCount; ++i) {
-        if (g_texMap[i].handle == handle) return g_texMap[i].tex;
+        if (g_texMap[i].handle == handle) {
+            g_curTexPoint = g_texMap[i].point_filter;
+            return g_texMap[i].tex;
+        }
     }
     return nullptr;
 }
@@ -140,8 +145,14 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
     }
     D3DVert        dst[64];
     for (int i = 0; i < count; ++i) {
-        dst[i].x     = src[i].x;
-        dst[i].y     = src[i].y;
+        // D3D9 pixel-center correction (-0.5): pre-transformed verts address
+        // pixel CENTERS; the reimpls (like MASHED's own Im2D buffer) emit
+        // edge coordinates, and the real RW D3D9 driver applies this shift
+        // after the captured tap point. Without it, POINT-sampled textures
+        // (the FGDC20 font) bleed the neighbor atlas cell's last column at
+        // quad edges (the "leading tick").
+        dst[i].x     = src[i].x - 0.5f;
+        dst[i].y     = src[i].y - 0.5f;
         dst[i].z     = src[i].z;
         // RHW must be non-zero for pre-transformed verts; the reimpl writes 1.0f
         // into +0x0c, but guard against a zeroed buffer.
@@ -163,8 +174,14 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
         g_device->SetTextureStageState(0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE);
         g_device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
         g_device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-        g_device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-        g_device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+        // Per-texture filter: the FGDC20 charset renders POINT-sampled in the
+        // original (FUN_00554940 sets render-state 9 from the raster's native
+        // field on bind; pixel evidence verify/font_cmp_exit4x.png — the
+        // original's glyph edges are blocky-solid, LINEAR thins the strokes).
+        const D3DTEXTUREFILTERTYPE f =
+            g_curTexPoint ? D3DTEXF_POINT : D3DTEXF_LINEAR;
+        g_device->SetSamplerState(0, D3DSAMP_MINFILTER, f);
+        g_device->SetSamplerState(0, D3DSAMP_MAGFILTER, f);
     } else {
         // Untextured: take color straight from the diffuse vertex color.
         g_device->SetTextureStageState(0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2);
@@ -256,9 +273,19 @@ void RwIm2DBridge_RegisterTexture(int handle, IDirect3DTexture9* texture) {
         if (g_texMap[i].handle == handle) { g_texMap[i].tex = texture; return; }
     }
     if (g_texMapCount < kMaxTexHandles) {
-        g_texMap[g_texMapCount].handle = handle;
-        g_texMap[g_texMapCount].tex    = texture;
+        g_texMap[g_texMapCount].handle       = handle;
+        g_texMap[g_texMapCount].tex          = texture;
+        g_texMap[g_texMapCount].point_filter = false;
         ++g_texMapCount;
+    }
+}
+
+void RwIm2DBridge_SetTexturePointFilter(int handle, bool point) {
+    for (int i = 0; i < g_texMapCount; ++i) {
+        if (g_texMap[i].handle == handle) {
+            g_texMap[i].point_filter = point;
+            return;
+        }
     }
 }
 

@@ -69,6 +69,11 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::free(bgra);
     if (!up) return false;
     RwIm2DBridge_RegisterTexture(bridge_handle, qr.slot_texture(slot));
+    // The original renders FGDC20 POINT-sampled (FUN_00554940 binds the
+    // raster's native render-state 9; pixel evidence: the original's glyph
+    // edges are blocky-solid while LINEAR thins the strokes —
+    // verify/font_cmp_exit4x.png).
+    RwIm2DBridge_SetTexturePointFilter(bridge_handle, true);
     m_handle = bridge_handle;
     m_atlasW = static_cast<float>(w);
     m_atlasH = static_cast<float>(h);
@@ -77,7 +82,12 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::uint32_t rwf_len = 0;
     const std::uint8_t* rwf = FindBlob(piz, "FGDC20.RWF", &rwf_len);
     if (!rwf || rwf_len < 0x230) return false;
-    m_height = RdF32(rwf, 0x14);                       // 33.0
+    // Header (12-byte chunk hdr + version dword, then the loader's read order
+    // FUN_00554390: cs+0x00 type, +0x04, +0x08, +0x0c, +0x10 flags, +0x124
+    // ext_base, +0x130 count, +0x128 ext_count):
+    m_height   = RdF32(rwf, 0x14);                     // cs+0x04 = 33.0
+    m_c8       = RdF32(rwf, 0x18);                     // cs+0x08 = 0.151515 (5/33)
+    m_tracking = RdF32(rwf, 0x1c);                     // cs+0x0c = 0.0
     m_extBase    = RdU32(rwf, 0x24);                   // FGDC20: 0x80
     m_glyphCount = RdU32(rwf, 0x28);                   // FGDC20: 225
     m_extCount   = RdU32(rwf, 0x2c);                   // FGDC20: 128
@@ -91,13 +101,21 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     // ASCII table: ext-count u16s into font+0x12c; covers codepoints
     // ext_base..ext_base+ext_count-1 — the 0x80..0x8f nav glyphs live here).
     for (std::uint32_t c = 0; c < m_extCount; ++c) {
-        m_ext[c] = RdU16(rwf, 0x30 + static_cast<std::size_t>(c) * 2);
+        m_ext[c] = static_cast<std::int16_t>(
+            RdU16(rwf, 0x30 + static_cast<std::size_t>(c) * 2));
     }
-    // ASCII LUT: 128 u16 (chars 0..127) -> glyph index (font+0x24, 0x100 bytes).
+    // ASCII LUT: 128 i16 (chars 0..127) -> glyph index, -1 = no glyph
+    // (FUN_00554940 reads SIGNED shorts from font+0x24: `(int)*(short*)...`).
     for (int c = 0; c < 128; ++c) {
-        m_lut[c] = RdU16(rwf, lut_off + static_cast<std::size_t>(c) * 2);
+        m_lut[c] = static_cast<std::int16_t>(
+            RdU16(rwf, lut_off + static_cast<std::size_t>(c) * 2));
     }
-    // Glyph UV records (21 bytes: 4 floats UV + int + page byte).
+    // Glyph records, 21 bytes on disk: [4 UV floats][width float][page byte]
+    // (FUN_00554390 reads the 16 UV bytes to rec+0x08, the width dword to
+    // rec+0x00, the page byte to rec+0x1c). The width float is the glyph
+    // width as a fraction of the unit cell — FUN_00554940 uses it for the
+    // quad width AND the pen advance. For FGDC20 it equals the atlas u-extent
+    // exactly ((u1-u0)*512 == width*33 for every record).
     for (std::uint32_t g = 0; g < m_glyphCount; ++g) {
         const std::size_t o = glyph_off + static_cast<std::size_t>(g) * 21;
         Glyf& gl = m_glyph[g];
@@ -105,22 +123,29 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
         gl.v0 = RdF32(rwf, o + 4);
         gl.u1 = RdF32(rwf, o + 8);
         gl.v1 = RdF32(rwf, o + 12);
-        gl.w_px = (gl.u1 - gl.u0) * m_atlasW;
-        // Pen advance: FGDC20 glyph record float@+16 is the advance as a
-        // fraction of the cell height (FUN_00427680). adv_px = frac * m_height
-        // (verified ~= tight width; gives the original's exact letter spacing).
-        gl.adv = RdF32(rwf, o + 16) * m_height;
-        gl.valid = (gl.u1 > gl.u0 && gl.v1 > gl.v0);
+        gl.w_frac = RdF32(rwf, o + 16);
+        // POINT-sampling adaptation: the record UVs sit on .5-texel cell
+        // boundaries (e.g. 'E' u 51.5..64.5/512). Point sampling at the
+        // quad's left/top edge floors into the NEIGHBOR cell's last texel
+        // (pixel evidence: 1px dark slivers at every glyph's left edge,
+        // absent in the original's render — verify/orig_backbuffer_f1900).
+        // Inset the left/top sample coordinate by half a texel; the right/
+        // bottom edges keep their boundary so the cell's last texel row/
+        // column still samples.
+        gl.u0 += 0.5f / m_atlasW;
+        gl.v0 += 0.5f / m_atlasH;
+        // The space record has a real width with a (blank) UV rect — the
+        // original draws it like any glyph. Validity = a usable rect.
+        gl.valid = (gl.u1 >= gl.u0 && gl.v1 > gl.v0);
     }
 
     m_ready = true;
     return true;
 }
 
-bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_px,
-                       float* advance_px) const {
+bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_frac) const {
     if (!m_ready) return false;
-    std::uint16_t g;
+    std::int16_t g;
     if (ch < 128) {
         g = m_lut[ch];
     } else if (ch >= m_extBase &&
@@ -129,11 +154,12 @@ bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_px,
     } else {
         return false;
     }
-    if (g >= m_glyphCount || !m_glyph[g].valid) return false;
+    if (g < 0 || static_cast<std::uint32_t>(g) >= m_glyphCount ||
+        !m_glyph[g].valid)
+        return false;
     const Glyf& gl = m_glyph[g];
     uv[0] = gl.u0; uv[1] = gl.v0; uv[2] = gl.u1; uv[3] = gl.v1;
-    if (width_px) *width_px = gl.w_px;
-    if (advance_px) *advance_px = (gl.adv > 0.f) ? gl.adv : gl.w_px;
+    if (width_frac) *width_frac = gl.w_frac;
     return true;
 }
 

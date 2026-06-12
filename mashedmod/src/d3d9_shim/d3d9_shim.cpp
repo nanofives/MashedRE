@@ -24,6 +24,8 @@
 // D3DPERF_BeginEvent = Forward_D3DPERF_BeginEvent, etc.
 #include <windows.h>
 #include <d3d9.h>
+#include <cstdio>
+#include <cstring>
 
 namespace {
 
@@ -91,6 +93,135 @@ void ApplyWindowBorders(HWND hWnd) {
                  SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 }
 
+// ── Original-side backbuffer dump (font/pixel parity instrument) ──────────
+// Env MASHED_ORIG_BBDUMP="N[,N...]" — at those Present-call counts, copy the
+// backbuffer to ..\verify\orig_backbuffer_f<N>.bmp (24bpp). MASHED's CWD is
+// original\, hence the ..\ prefix. Inert when the env var is unset (the
+// Present vtable slot is only patched when armed). Counterpart of the
+// standalone's MASHED_DBG_BBDUMP truth channel — window screenshots are
+// untrustworthy on this machine (multi-monitor Present issue).
+using PresentFn = HRESULT (STDMETHODCALLTYPE*)(
+    IDirect3DDevice9*, const RECT*, const RECT*, HWND, const RGNDATA*);
+PresentFn g_OriginalPresent      = nullptr;
+LONG      g_PresentPatched       = 0;
+LONG      g_PresentCount         = 0;
+int       g_DumpFrames[16]       = {};
+int       g_DumpFrameCount       = -1;   // -1 = env unparsed
+
+void ParseDumpFramesOnce() {
+    if (g_DumpFrameCount != -1) return;
+    g_DumpFrameCount = 0;
+    char buf[256] = {};
+    if (GetEnvironmentVariableA("MASHED_ORIG_BBDUMP", buf, sizeof(buf)) == 0)
+        return;
+    const char* p = buf;
+    while (*p && g_DumpFrameCount < 16) {
+        int v = atoi(p);
+        if (v > 0) g_DumpFrames[g_DumpFrameCount++] = v;
+        while (*p && *p != ',') ++p;
+        if (*p == ',') ++p;
+    }
+}
+
+void DumpBackbufferBMP(IDirect3DDevice9* dev, int frame) {
+    IDirect3DSurface9* bb = nullptr;
+    if (FAILED(dev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bb)) || !bb)
+        return;
+    D3DSURFACE_DESC desc = {};
+    bb->GetDesc(&desc);
+    IDirect3DSurface9* off = nullptr;
+    if (FAILED(dev->CreateOffscreenPlainSurface(
+            desc.Width, desc.Height, desc.Format, D3DPOOL_SYSTEMMEM,
+            &off, nullptr)) || !off) {
+        bb->Release();
+        return;
+    }
+    if (SUCCEEDED(dev->GetRenderTargetData(bb, off))) {
+        D3DLOCKED_RECT lr = {};
+        if (SUCCEEDED(off->LockRect(&lr, nullptr, D3DLOCK_READONLY))) {
+            char path[MAX_PATH];
+            std::snprintf(path, sizeof(path),
+                          "..\\verify\\orig_backbuffer_f%d.bmp", frame);
+            std::FILE* f = std::fopen(path, "wb");
+            if (f) {
+                const int W = (int)desc.Width, H = (int)desc.Height;
+                const int rowbytes = W * 3;
+                const int datasz   = rowbytes * H;
+                unsigned char hdr[54] = {};
+                hdr[0] = 'B'; hdr[1] = 'M';
+                *(int*)(hdr + 2)  = 54 + datasz;
+                *(int*)(hdr + 10) = 54;
+                *(int*)(hdr + 14) = 40;
+                *(int*)(hdr + 18) = W;
+                *(int*)(hdr + 22) = H;          // bottom-up
+                *(short*)(hdr + 26) = 1;
+                *(short*)(hdr + 28) = 24;
+                std::fwrite(hdr, 1, 54, f);
+                // Format-aware row conversion, bottom-up. MASHED's 640x480
+                // mode is 16-bit (R5G6B5); handle 32-bit too.
+                for (int y = H - 1; y >= 0; --y) {
+                    const unsigned char* src =
+                        (const unsigned char*)lr.pBits + (size_t)y * lr.Pitch;
+                    for (int x = 0; x < W; ++x) {
+                        unsigned char bgr[3];
+                        if (desc.Format == D3DFMT_R5G6B5) {
+                            const unsigned short v =
+                                *(const unsigned short*)(src + (size_t)x * 2);
+                            bgr[0] = (unsigned char)((v & 0x1f) << 3);
+                            bgr[1] = (unsigned char)(((v >> 5) & 0x3f) << 2);
+                            bgr[2] = (unsigned char)(((v >> 11) & 0x1f) << 3);
+                        } else if (desc.Format == D3DFMT_X1R5G5B5 ||
+                                   desc.Format == D3DFMT_A1R5G5B5) {
+                            const unsigned short v =
+                                *(const unsigned short*)(src + (size_t)x * 2);
+                            bgr[0] = (unsigned char)((v & 0x1f) << 3);
+                            bgr[1] = (unsigned char)(((v >> 5) & 0x1f) << 3);
+                            bgr[2] = (unsigned char)(((v >> 10) & 0x1f) << 3);
+                        } else {  // X8R8G8B8 / A8R8G8B8
+                            std::memcpy(bgr, src + (size_t)x * 4, 3);
+                        }
+                        std::fwrite(bgr, 1, 3, f);
+                    }
+                }
+                std::fclose(f);
+            }
+            off->UnlockRect();
+        }
+    }
+    off->Release();
+    bb->Release();
+}
+
+HRESULT STDMETHODCALLTYPE Present_BBDump(
+    IDirect3DDevice9* pThis, const RECT* src, const RECT* dst,
+    HWND wnd, const RGNDATA* dirty)
+{
+    const LONG n = InterlockedIncrement(&g_PresentCount);
+    for (int i = 0; i < g_DumpFrameCount; ++i) {
+        if (g_DumpFrames[i] == (int)n) {
+            DumpBackbufferBMP(pThis, (int)n);
+            break;
+        }
+    }
+    return g_OriginalPresent(pThis, src, dst, wnd, dirty);
+}
+
+void PatchPresentSlot(IDirect3DDevice9* dev) {
+    ParseDumpFramesOnce();
+    if (g_DumpFrameCount <= 0 || !dev) return;           // not armed
+    if (InterlockedExchange(&g_PresentPatched, 1) != 0) return;
+    void** vtbl = *reinterpret_cast<void***>(dev);
+    DWORD oldProt = 0;
+    if (!VirtualProtect(&vtbl[17], sizeof(void*), PAGE_READWRITE, &oldProt)) {
+        g_PresentPatched = 0;
+        return;
+    }
+    g_OriginalPresent = reinterpret_cast<PresentFn>(vtbl[17]);
+    vtbl[17] = reinterpret_cast<void*>(&Present_BBDump);
+    DWORD tmp = 0;
+    VirtualProtect(&vtbl[17], sizeof(void*), oldProt, &tmp);
+}
+
 HRESULT STDMETHODCALLTYPE CreateDevice_ForceWindowed(
     IDirect3D9* pThis,
     UINT Adapter, D3DDEVTYPE DeviceType, HWND hFocusWindow,
@@ -110,6 +241,7 @@ HRESULT STDMETHODCALLTYPE CreateDevice_ForceWindowed(
                                         BehaviorFlags, pPP, ppDevice);
     if (SUCCEEDED(hr)) {
         ApplyWindowBorders(hWnd);
+        if (ppDevice && *ppDevice) PatchPresentSlot(*ppDevice);
     }
     return hr;
 }

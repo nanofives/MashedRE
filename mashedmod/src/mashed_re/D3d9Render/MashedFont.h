@@ -35,15 +35,20 @@ public:
 
     bool  ready()          const { return m_ready; }
     int   handle()         const { return m_handle; }
-    float natural_height() const { return m_height; }   // glyph cell height, px
+    float natural_height() const { return m_height; }   // cs+0x04 (33.0)
+    // Charset header floats the renderer law needs (FUN_00554940 reads them
+    // at cs+0x08 / cs+0x0c; RWF file offsets 0x18 / 0x1c):
+    float baseline_c8()    const { return m_c8; }        // FGDC20: 0.151515
+    float tracking()       const { return m_tracking; }  // FGDC20: 0.0
 
-    // Look up a char's glyph: ASCII (0..127) via the LUT, extended codepoints
-    // (ext_base..ext_base+ext_count-1, e.g. the 0x80..0x8f nav glyphs) via the
-    // extended table. Fills uv[4] = {u0,v0,u1,v1} and *width_px (the glyph's
-    // atlas width in pixels = advance). Returns false if the char has no glyph
-    // (caller advances by a space).
-    bool Glyph(unsigned char ch, float uv[4], float* width_px,
-               float* advance_px = nullptr) const;
+    // Look up a char's glyph: ASCII (0..127) via the i16 LUT, extended
+    // codepoints (ext_base..ext_base+ext_count-1, e.g. the 0x80..0x8f nav
+    // glyphs) via the extended table. Fills uv[4] = {u0,v0,u1,v1} and
+    // *width_frac (the record float@+16 — the glyph width as a fraction of
+    // the unit cell; FUN_00554940 uses it for BOTH the quad width and the
+    // pen advance). Returns false if the char has no glyph — the original
+    // then advances ZERO (FUN_00554940/FUN_005554d0: `if (-1 < idx)` only).
+    bool Glyph(unsigned char ch, float uv[4], float* width_frac) const;
 
 private:
     bool          m_ready   = false;
@@ -51,13 +56,15 @@ private:
     float         m_atlasW  = 512.f;
     float         m_atlasH  = 256.f;
     float         m_height  = 33.f;
+    float         m_c8      = 0.f;     // cs+0x08 (RWF @0x18)
+    float         m_tracking = 0.f;    // cs+0x0c (RWF @0x1c)
     std::uint32_t m_glyphCount = 0;
-    struct Glyf { float u0, v0, u1, v1, w_px, adv; bool valid; };
+    struct Glyf { float u0, v0, u1, v1, w_frac; bool valid; };
     Glyf          m_glyph[256] = {};
-    std::uint16_t m_lut[128]   = {};   // char (0..127) -> glyph index
+    std::int16_t  m_lut[128]   = {};   // char (0..127) -> glyph index (i16, -1 = none)
     std::uint32_t m_extBase  = 0;      // font+0x124 (FGDC20: 0x80)
     std::uint32_t m_extCount = 0;      // font+0x128 (FGDC20: 128)
-    std::uint16_t m_ext[256]   = {};   // font+0x12c: (ch-ext_base) -> glyph
+    std::int16_t  m_ext[256]   = {};   // font+0x12c: (ch-ext_base) -> glyph (i16)
 };
 
 }  // namespace D3d9Render

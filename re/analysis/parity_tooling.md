@@ -18,6 +18,7 @@ mechanical: diff structured draw streams, not pixels or impressions.
 | `re/tools/nav_coverage.py` | RE source | static walk of the kT* descriptor tables + ActionToScreen push map; flags table holes, dead-end actions, kind-inconsistent screens (screens of a kind where only some have `sid == N` handling — the "whole screen missing" class of items 20-25). |
 | `re/tools/imgdiff.py` | both | numeric pixel backstop (mean abs diff, % over threshold, region grid, amplified heatmap) for what draw lists can't encode: texture decode, font rasterization. Use BBDUMP as the standalone's pixel source. |
 | `re/frida/menu_draw_dump.py` | original | (pre-existing) single-frame decoded dump; superseded for new captures by `menu_draw_burst.py` (raw blobs, bursts) but its existing `log/menu_draw_dump.json` remains a valid `A` input to the differ. |
+| `MASHED_ORIG_BBDUMP="N[,N…]"` (env, original) | original | the d3d9 shim patches Present and dumps `verify/orig_backbuffer_f<N>.bmp` at those frame counts (format-aware; MASHED's 640x480 mode is R5G6B5). THE original-side pixel channel — window screenshots render white on this machine. ≤16 frames; inert when unset. Combine with `menu_draw_burst.py --screen N` (env-inheriting spawn) to reach menus; the synthetic nav-push leaves title-layer text composited over the menu, so pick comparison regions away from those overlays. Keyboard injection does NOT advance the original's title. |
 
 ## Standard recipes
 

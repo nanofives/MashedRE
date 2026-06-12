@@ -1322,12 +1322,35 @@ int GetMenuMessage(int id, wchar_t* out, int cap);
 // gradient (top = argb, bottom = argb with alpha*frac), matching the original's
 // menu-item text (FUN_00428140 -> FUN_00556e90 sets top=base / bottom=faded).
 // 1.0 = flat (the title/chrome path FUN_00427e00 passes all-same).
-void DrawMashedString(const wchar_t* s, float cx, float top_y,
+// Verbatim FUN_00554940 / FUN_00427680 text law (pool0 decomp + original
+// backbuffer calibration 2026-06-12, verify/orig_backbuffer_f300.bmp):
+//  - The original's text pipe works in a normalized [0,1]^2 space over the
+//    FULL screen: print scale = menu_scale x 0.0708 (_DAT_005cd5fc), x via
+//    1/640 (@0x005cd5a8), y via 1/480 (@0x005cc560). So the glyph cell is
+//    0.0708*s of the screen WIDTH horizontally and of the screen HEIGHT
+//    vertically — glyphs render 4/3 WIDER than the 33px atlas cell aspect.
+//    (Pixel-verified: "Press button to start" scale 1.2 ink width 335px,
+//    centered pen start 150.3 predicted / 150 measured @640.)
+//  - Glyph quad: x = pen .. pen + rec.width (record float@+16, a unit-cell
+//    fraction), y spans the full cell; UV = the record rect (FUN_00554940
+//    vertex build off the 32-byte runtime record).
+//  - Advance = (rec.width + tracking[cs+0x0c]) * cell_w. Unmapped codepoints
+//    advance ZERO (FUN_00554940/FUN_005554d0 advance only when LUT idx >= 0).
+//  - Anchor: `anchor_y` is the ORIGINAL's y argument (record y, cited layout
+//    constants). Quad top = anchor_y + cell_h*(0.025/0.0708 + c8 - 1)
+//    = anchor_y - 0.4954*cell_h  (0.025 @0x005cc9a4 via FUN_00427680;
+//    c8 = charset+0x08 = 0.151515 from FGDC20.RWF). This independently
+//    re-derives the bit-verified #10 plate centering (rec.y-13.5..+13.7 at
+//    s=0.8 vs plate -12..+14).
+void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
                       float height_px, std::uint32_t argb,
                       bool anchor_left = false, float grad_bot_frac = 1.0f) {
     if (!g_font.ready() || !s) return;
-    const float scale = height_px / g_font.natural_height();
-    const float space_adv = height_px * 0.32f;
+    const float cell_h = height_px;
+    const float cell_w = height_px * (4.0f / 3.0f);  // ScreenW/ScreenH (4:3 both sides)
+    const float trk    = g_font.tracking();
+    const float top_y  = anchor_y +
+        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f);
     // Codepoints 0..255 flow through: 0..127 hit the ASCII LUT, 0x80..0xFF the
     // FGDC20 extended table (FUN_00554390 font+0x12c) — the prompt strip's nav
     // glyphs (remapped 0x80..0x8f arrows/back) resolve there. Only codepoints
@@ -1335,39 +1358,32 @@ void DrawMashedString(const wchar_t* s, float cx, float top_y,
     auto glyph_of = [](wchar_t c) -> unsigned char {
         return static_cast<unsigned char>((c >= 0 && c < 256) ? c : '?');
     };
-    // #9: use the FGDC20 record's true pen ADVANCE (float@+16 x height) for
-    // letter spacing, not the tight quad width + 1px — matches the original's
-    // FUN_00427680 layout so words aren't cramped/spread.
-    // Pass 1: measure (for centering / unused when left-anchored).
+    // Pass 1: measure (FUN_005554d0: sum of (width + tracking) per mapped glyph).
     float total = 0.f;
     for (const wchar_t* p = s; *p; ++p) {
-        float uv[4], wpx, adv;
-        if (g_font.Glyph(glyph_of(*p), uv, &wpx, &adv)) total += adv * scale;
-        else                                            total += space_adv;
+        float uv[4], wf;
+        if (g_font.Glyph(glyph_of(*p), uv, &wf)) total += (wf + trk) * cell_w;
     }
-    // Pass 2: draw. The quad keeps the glyph's own width (wpx) so its shape is
-    // undistorted; the pen advances by `adv` (the metric spacing).
+    // Pass 2: draw (centered = align-2: start at cx - total*0.5, the
+    // _DAT_005cc32c = 0.5 path of FUN_00427680).
     float penX = anchor_left ? cx : (cx - total * 0.5f);
     for (const wchar_t* p = s; *p; ++p) {
-        float uv[4], wpx, adv;
-        if (g_font.Glyph(glyph_of(*p), uv, &wpx, &adv)) {
-            std::uint32_t uvb[4];
-            std::memcpy(uvb, uv, sizeof(uvb));
-            const float gw = wpx * scale;
-            if (grad_bot_frac < 0.999f) {
-                const std::uint32_t a = argb >> 24;
-                const std::uint32_t ab =
-                    static_cast<std::uint32_t>(a * grad_bot_frac);
-                const std::uint32_t bot = (ab << 24) | (argb & 0xffffffu);
-                HudIm2DQuadCorners(g_font.handle(), penX, top_y, gw, height_px,
-                                   argb, argb, bot, bot, uvb);
-            } else {
-                HudIm2DQuad(g_font.handle(), penX, top_y, gw, height_px, argb, uvb);
-            }
-            penX += adv * scale;
+        float uv[4], wf;
+        if (!g_font.Glyph(glyph_of(*p), uv, &wf)) continue;  // no advance
+        std::uint32_t uvb[4];
+        std::memcpy(uvb, uv, sizeof(uvb));
+        const float gw = wf * cell_w;
+        if (grad_bot_frac < 0.999f) {
+            const std::uint32_t a = argb >> 24;
+            const std::uint32_t ab =
+                static_cast<std::uint32_t>(a * grad_bot_frac);
+            const std::uint32_t bot = (ab << 24) | (argb & 0xffffffu);
+            HudIm2DQuadCorners(g_font.handle(), penX, top_y, gw, cell_h,
+                               argb, argb, bot, bot, uvb);
         } else {
-            penX += space_adv;
+            HudIm2DQuad(g_font.handle(), penX, top_y, gw, cell_h, argb, uvb);
         }
+        penX += (wf + trk) * cell_w;
     }
 }
 
@@ -1626,9 +1642,17 @@ bool RenderFrame() {
     // failures (window shows white while the bridge logs sane draws).
     {
         static int s_bb = -1;
-        if (s_bb == -1)
-            s_bb = (GetEnvironmentVariableA("MASHED_DBG_BBDUMP", nullptr, 0) != 0)
-                       ? 200 : 0;
+        if (s_bb == -1) {
+            char bbv[16] = {};
+            if (GetEnvironmentVariableA("MASHED_DBG_BBDUMP", bbv, sizeof(bbv)) == 0) {
+                s_bb = 0;
+            } else {
+                // "1" (or non-numeric) = legacy frame 200; N>1 = dump at frame N
+                // (e.g. 700 to capture the title screen past the 8s splash).
+                const int v = std::atoi(bbv);
+                s_bb = (v > 1) ? v : 200;
+            }
+        }
         if (s_bb > 0 && --s_bb == 1)
             DumpBackbufferBMP("verify/dbg_backbuffer.bmp");
     }
@@ -1930,16 +1954,14 @@ bool RenderFrame() {
         mashed_re::Frontend::Nav_ScreenId() != 0x21) {
         wchar_t cs[64];
         if (GetMenuMessage(0x41, cs, 64) > 0) {
-            const float csc = kMenuTextHeight * 0.8f * 1.25f;  // 0.8 scale, 640->800
-            // #5 (user review): the "MASHED" watermark sits ABOVE THE BAR. The
-            // original's FUN_00427e00 effectively baseline-anchors at virtual
-            // y=48/52; our DrawMashedString takes top_y, so the same y put the
-            // text spanning the band's bottom divider (virtual y=64) into the
-            // content area. Anchor the top inside the top band (0..64 virtual)
-            // so the whole word stays within/above the bar.
-            DrawMashedString(cs, 600.f * (800.f / 640.f), 24.f * (600.f / 480.f),
+            // Scale 0.8, cell = 0.8 x 0.0708 x 480 virtual (the text law);
+            // anchors are the ORIGINAL's cited y values (shadow 600,52 /
+            // main 596,48 — FUN_0043c5b0_chrome.asm) now that DrawMashedString
+            // applies the FUN_00427680 anchor law itself.
+            const float csc = 0.8f * 0.0708f * 480.f * 1.25f;
+            DrawMashedString(cs, 600.f * 1.25f, 52.f * 1.25f,
                              csc, 0xff000000u, false);
-            DrawMashedString(cs, 596.f * (800.f / 640.f), 20.f * (600.f / 480.f),
+            DrawMashedString(cs, 596.f * 1.25f, 48.f * 1.25f,
                              csc, 0xffffffffu, false);
         }
     }
@@ -2023,7 +2045,7 @@ bool RenderFrame() {
                                     (260.f / 511.f);
                             const float sy = rec.y * kVScale;
                             const float sth =
-                                kMenuTextHeight * (rec.scale / 0.8f) * kVScale;
+                                rec.scale * 0.0708f * 480.f * kVScale;
                             const float ssh = 3.0f * kVScale;
                             DrawMashedString(stxt, sx + ssh, sy + ssh, sth,
                                              0xff000000u, true);
@@ -2202,17 +2224,24 @@ bool RenderFrame() {
                 // Drop shadow (LAB_0043d185: FUN_00428140 at +_DAT_005cc31c=3.0f,
                 // color 0xff000000) then the base color.
                 const float sh = 3.0f * kVScale;
-                // Record y is the row CENTER (bit-verified plate rec.y-12..+14).
-                const float ty = (rec.y + 1.0f) * kVScale - text_h * 0.5f;
+                // The record's y IS the original's anchor (FUN_0043c5b0 passes
+                // it to FUN_00428140 raw); DrawMashedString applies the
+                // FUN_00427680 anchor law (top = y - 0.4954*cell), which lands
+                // the cell on the bit-verified plate span (#10) by itself.
+                const float ty = rec.y * kVScale;
                 // Only BACK/HEADER rows get the +3 black shadow (LAB_0043d185);
                 // list items draw the single black pass (FUN_00428140, no shadow).
                 if (is_back) {
                     DrawMashedString(txt, lx + sh, ty + sh, text_h, 0xff000000u, true);
                 }
-                // List items get the original's top->bottom glyph gradient
-                // (FUN_00428140/FUN_00556e90: top=base, bottom faded to ~0.5
-                // alpha for a normal item); back/header rows stay flat.
-                const float gfrac = (is_back || is224) ? 1.0f : 0.5f;
+                // FUN_00428140 vertical alpha law: top = min(param_7, 0xff),
+                // bottom = 0 (p7<=0x80) / (p7+0x80)&0xff (p7<0x180) / 0xff.
+                // SETTLED items run p7 >= 0x180 -> bottom 0xff: SOLID, no
+                // gradient (pixel-verified vs orig f1900 "Exit To Windows" —
+                // the old hardcoded 0.5 washed out every glyph's lower half;
+                // the gradient only exists mid fade-in). Disabled rows keep
+                // the landed #18 half-fade (their exact p7 is unverified).
+                const float gfrac = disabled ? 0.5f : 1.0f;
                 DrawMashedString(txt, lx, ty, text_h, base_argb, true, gfrac);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
                        g_menu_items[rec.row_index].ready) {
@@ -2273,8 +2302,9 @@ bool RenderFrame() {
                         HudIm2DQuad(kHandleMenuArrow, rax + slideX, ay, asz, asz,
                                     0xffffffffu, uvR);
                     } else if (g_font.ready()) {     // fallback: text glyphs
-                        DrawMashedString(L"\x3c", 356.0f * S + slideX, by, asz, 0xff000000u, true);
-                        DrawMashedString(L"\x3e", rax + slideX, by, asz, 0xff000000u, true);
+                        // rec.y anchors center the cell on the row (text law).
+                        DrawMashedString(L"\x3c", 356.0f * S + slideX, rec.y * S, asz, 0xff000000u, true);
+                        DrawMashedString(L"\x3e", rax + slideX, rec.y * S, asz, 0xff000000u, true);
                     }
                 }
                 if (kind == kSlider) {
@@ -2302,11 +2332,11 @@ bool RenderFrame() {
                     const int m = (g_settings.insults_on >= 0 &&
                                    g_settings.insults_on <= 2)
                                       ? g_settings.insults_on : 0;
-                    DrawMashedString(kInsults[m], 392.0f * S + slideX, by,
+                    DrawMashedString(kInsults[m], 392.0f * S + slideX, rec.y * S,
                                      16.0f * S, 0xff000000u, false);
                 } else if (kind == kToggle && g_font.ready()) {
                     DrawMashedString(g_settings.autosave ? L"On" : L"Off",
-                                     380.0f * S + slideX, by, 16.0f * S,
+                                     380.0f * S + slideX, rec.y * S, 16.0f * S,
                                      0xff000000u, false);
                 }
             }
