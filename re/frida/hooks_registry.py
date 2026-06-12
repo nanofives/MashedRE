@@ -13370,4 +13370,84 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 2 (L0: c3_batch_race1 session-2 set) ------------
+    # All five on the scenario:'race' lane; configs verbatim from
+    # c3_batch_race1.txt; bodies byte-verified in MASHED.exe.unpatched.
+
+    # 0x00442410  CameraSlotFieldPtrGet — uint32(int i). POINTER-RETURN:
+    # &0x008964fc + i*0xd8 (field +0x9c of the 5-slot 0xd8-stride camera/view
+    # record array; sibling of CameraSlotFloatGet at +0x110). Never derefs.
+    # ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x00442410.md
+    'camera_slot_field_ptr_get': {
+        'rva':            0x00442410,
+        'export':         'CameraSlotFieldPtrGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00442420  CameraSlotFloatGet — float(int i), x87 ST0 (FLD m32, byte-
+    # verified D9 80 — true float load). DEREFS &0x00896570 + i*0xd8: keep i
+    # in 0..4 (5-slot record array). Time-skew re-run rule applies.
+    # ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x00442420.md
+    'camera_slot_float_get': {
+        'rva':            0x00442420,
+        'export':         'CameraSlotFloatGet',
+        'signature':      {'ret': 'float', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 0, 1, 2, 3, 4],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00423b20  CarSnapshotDwordGet — uint32(int i). DEREFS
+    # (&0x008995ec) + i*0x138 (dword +0x12c of the 0x138-stride per-car
+    # snapshot, STRUCTS.md §4). Keep i in 0..3 (4-car race).
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00423b20.md
+    'car_snapshot_dword_get': {
+        'rva':            0x00423b20,
+        'export':         'CarSnapshotDwordGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00426cc0  VehicleTable4cPtrGet — uint32(int i). POINTER-RETURN:
+    # &0x00663658 + i*0x4c. Never derefs — out-of-range vectors safe.
+    # Sibling of frontend_slot_table_ptr_426cb0 (base +0xc, same stride).
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00426cc0.md
+    'vehicle_table_4c_ptr_get': {
+        'rva':            0x00426cc0,
+        'export':         'VehicleTable4cPtrGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 7, 0, 1, 2, 3],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00442df0  RaceFloat898980Get — float(), x87 ST0 (FLD m32, byte-
+    # verified D9 05 — true float load, NOT FILD). Returns _DAT_00898980
+    # (collision-impact float; caller FUN_00410d10 compares vs 10.0f).
+    # Update cadence unknown → time-skew re-run rule applies.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x00442df0.md
+    'race_float_898980_get': {
+        'rva':            0x00442df0,
+        'export':         'RaceFloat898980Get',
+        'signature':      {'ret': 'float', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
