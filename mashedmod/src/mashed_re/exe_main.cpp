@@ -1795,16 +1795,19 @@ bool RenderFrame() {
 
             // Base color: the record's stored ARGB (piVar9[-8]); selected items
             // render in opaque-black-on-highlight as the original does in the
-            // selected -0xfc0000 branch (FUN_00428140 color arg 0xff000000 when
-            // iStack_3c==cursor); idle items use the record color, dimmed; greyed
-            // items use the grey-out tone.
-            // Back row uses its stored record color (0xffffffff) like any other
-            // row — the old 0x90d0d0ff tint was invented (orig_options.png
-            // header is plain white).
+            // Text color — VERBATIM from FUN_0043c5b0 (pool0 decomp 2026-06-12):
+            //   * LIST ITEMS (tag -0xfc0000) draw 0xff000000 OPAQUE BLACK for both
+            //     selected AND idle (the highlight plate is the only selection cue,
+            //     FUN_00428140 color arg 0xff000000 in both cursor branches);
+            //   * BACK/HEADER rows (tag -0x1000000 etc., LAB_0043d185) draw the
+            //     record's stored color (piVar9[-8] = white) with a black shadow;
+            //   * GREYED rows: the dim path (DAT_008990e4) draws 0x80000000 with
+            //     param_7=0x80 -> half-alpha black ("even more transparent").
+            const bool is_item = !is_back;
             const std::uint32_t base_argb =
-                disabled    ? 0x60606060u                       // greyed/unavailable
-              : highlighted ? 0xff101010u                       // black-on-highlight
-                            : (static_cast<std::uint32_t>(rec.color) & 0xffffffffu);
+                disabled ? 0x80000000u                  // greyed: half-alpha black
+              : is_item  ? 0xff000000u                  // list items: opaque black
+                         : (static_cast<std::uint32_t>(rec.color) & 0xffffffffu);  // header: white
 
             // The original left-justifies text at the record's stored X (virtual
             // 64.0; FUN_00427680). Left-anchor at scaled X + slide offset so the
@@ -1814,12 +1817,11 @@ bool RenderFrame() {
                 // Drop shadow (LAB_0043d185: FUN_00428140 at +_DAT_005cc31c=3.0f,
                 // color 0xff000000) then the base color.
                 const float sh = 3.0f * kVScale;
-                // Item 10 (user review): the record y is the row's CENTER line -
-                // the bit-verified plate spans rec.y-12 .. rec.y+14 (center y+1).
-                // Anchor the glyph cell centered on the plate center instead of
-                // top-anchored at rec.y (which overflowed below the plate).
+                // Record y is the row CENTER (bit-verified plate rec.y-12..+14).
                 const float ty = (rec.y + 1.0f) * kVScale - text_h * 0.5f;
-                if (!highlighted) {
+                // Only BACK/HEADER rows get the +3 black shadow (LAB_0043d185);
+                // list items draw the single black pass (FUN_00428140, no shadow).
+                if (is_back) {
                     DrawMashedString(txt, lx + sh, ty + sh, text_h, 0xff000000u, true);
                 }
                 DrawMashedString(txt, lx, ty, text_h, base_argb, true);
