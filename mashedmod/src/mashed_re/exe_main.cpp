@@ -1730,6 +1730,24 @@ bool RenderFrame() {
                                      kAtlasContentSize, kAtlasContentSize);
         }
     }
+    // Chrome layer — FUN_00473ee0 (arc-wash + animated checker "race flag" grid
+    // + band-edge fades). Drawn HERE — after previews, BEFORE the solid bands +
+    // logo + press-button — so the animated flags render BEHIND the bars and the
+    // wash does not veil the logo/press-button (#6/#7). slide_f settled = 512.
+    if (g_bridge_installed && g_frontend_phase >= 1 &&
+        GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
+        using namespace mashed_re::Frontend;
+        static int s_chrome_slide = 0;
+        const float pre = static_cast<float>(s_chrome_slide);
+        s_chrome_slide -= 0x10;
+        if (s_chrome_slide < 0) s_chrome_slide = 0;
+        static DWORD s_t0 = 0;
+        const DWORD now = GetTickCount();
+        if (s_t0 == 0) s_t0 = now;
+        const float wave_t = static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
+        LogoOverlayDraw(pre + 512.0f, wave_t, 800.0f, 600.0f);
+    }
+
     // B16: render MASHED's menu chrome (two dark bands + two white divider
     // lines) through the B15 bridge. Skipped during the phase-0 legal splash.
     if (g_bridge_installed && g_frontend_phase >= 1) {
@@ -1837,34 +1855,10 @@ bool RenderFrame() {
         }
     }
 
-    // Chrome layer — FUN_00473ee0 called per frame by MenuChromeShellB
-    // (0x0042e5b0 decomp, pool0 2026-06-12) on EVERY frontend frame (title and
-    // menus alike): band-edge fades at slide-128, the fade-driven circular-arc
-    // transition wash, and the UNTEXTURED staggered checker grid (the animated
-    // "race flag" bands — there is no checker texture; the look is the 21px
-    // stagger). slide law (0x0042e7f0..): slide_f = pre-decrement
-    // DAT_008990e0 + 512.0 (_DAT_005cd65c); the global steps -0x10/frame,
-    // clamped [0,0x200]. Nav transitions reset it to 0x200.
-    // Writers xref-confirmed (pool0, 2026-06-12): fade target 0x0086ecc8 is
-    // raised to 0xff by nav RELOAD ops + selects (now wired verbatim inside
-    // MenuNavSM); slide 0x008990e0 is raised +0x20/frame by the framed-
-    // preview screen body FUN_0042e8b0 (caller FUN_004368e0) and decremented
-    // -0x10/frame here like ShellB. The standalone has no framed-preview
-    // screen body yet, so slide stays settled (slide_f = 512) [residual:
-    // lands with the FUN_004368e0 per-screen-content work, Wave 3].
-    if (g_bridge_installed && g_frontend_phase >= 1 &&
-        GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
-        using namespace mashed_re::Frontend;
-        static int s_chrome_slide = 0;
-        const float pre = static_cast<float>(s_chrome_slide);
-        s_chrome_slide -= 0x10;
-        if (s_chrome_slide < 0) s_chrome_slide = 0;
-        static DWORD s_t0 = 0;
-        const DWORD now = GetTickCount();
-        if (s_t0 == 0) s_t0 = now;
-        const float wave_t = static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
-        LogoOverlayDraw(pre + 512.0f, wave_t, 800.0f, 600.0f);
-    }
+    // (#6/#7: the FUN_00473ee0 arc-wash + animated checker "race flag" layer is
+    // now drawn EARLIER — right after the previews and BEFORE the bands/logo —
+    // so the race flags sit BEHIND the bars and the wash no longer veils the
+    // logo/press-button. See the LogoOverlayDraw call above the chrome bands.)
 
     // State-machine-driven menu draw — faithful port of FUN_0043c5b0's per-frame
     // draw loop. The nav stack (Frontend/MenuNavSM, port of FUN_0043d2a0 + the
