@@ -1,0 +1,151 @@
+rva	name	subsystem	reason
+004548e0	FUN_004548e0	vehicle	callee-gate: 004c0b30=C1,004c1040=C1,004c39b0=C1,004e69a0=C1,004e6ab0=C1,004e7e30=C1
+00456760	FUN_00456760	vehicle	callee-gate: 004e6ab0=C1
+00471ec0	sub_00471ec0	camera	callee-gate: 0057c210=C1
+00478660	FUN_00478660	ai	callee-gate: 004c39b0=C1
+0041c2d0	FUN_0041c2d0	hud	signature-unsupported: in_EAX arg
+0041b340	FUN_0041b340	hud	signature-unsupported: in_EAX arg
+0041bc50	FUN_0041bc50	hud	signature-unsupported: in_EAX arg
+0041c9a0	FUN_0041c9a0	hud	signature-unsupported: in_EAX arg
+0041d410	FUN_0041d410	hud	signature-unsupported: in_EAX arg
+00427f00	FUN_00427f00	hud	signature-unsupported: 5-arg shape
+00411ce0	Ghost::SetupRender	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00553f40	FontGlyph_UploadData	hud	callee-gate: 0055deb0=C1
+004c57a0	FontCtxMatrix_AllocInit	hud	signature-unsupported: fastcall ECX/EDX args
+00414570	FUN_00414570	ai	callee-gate: 004c39b0=C1
+00415e20	FUN_00415e20	ai	callee-gate: 004c39b0=C1
+0046d570	FUN_0046d570	ai	callee-gate: 004c39b0=C1
+004781b0	FUN_004781b0	vehicle	callee-gate: 004e7420=C1
+004b5190	FUN_004b5190	vehicle	callee-gate: 00543d40=C1,00543d70=C1,00543df0=C1,0055deb0=C1
+004770c0	FUN_004770c0	vehicle	callee-gate: 004c0b30=C1,004e7e30=C1,004e8090=C1,00534b60=C1
+00414490	FUN_00414490	ai	callee-gate: 004c39b0=C1
+00410d10	FUN_00410d10	vehicle	inline bare [UNCERTAIN] (heading=## constants)
+004783f0	FUN_004783f0	ai	callee-gate: 004c39b0=C1
+00429620	FUN_00429620	hud	signature-unsupported: fastcall ECX/EDX args
+004298e0	TimeDisplay::InitForLap	hud	inline bare [UNCERTAIN] (heading=## decompilation)
+004709a0	VehicleCollisionBroadPhase	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046ef70	FUN_0046ef70	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046ddb0	VehicleWheelForceIntegrator	vehicle	signature-unsupported: implicit-this arg
+00467650	VehicleWheelDrivetrainUpdate	vehicle	callee-gate: 004c39b0=C1
+00468980	VehicleAeroStabilizer	vehicle	callee-gate: 004c39b0=C1
+0046f6c0	VehicleWheelContactSolver	vehicle	signature-unsupported: implicit-this arg
+00467350	VehicleSlipTimerTick	vehicle	callee-gate: 004c39b0=C1
+0046da80	VehicleTrackInteraction	vehicle	inline bare [UNCERTAIN] (heading=## mechanistic description)
+00470670	VehicleControlUpdate	vehicle	inline [UNCERTAIN U-1408] catalogued but Blocks=C3 (matched-RVA) (heading=## mechanistic description)
+00426bb0	CameraPath::GetCount	camera	shape-only note (no verbatim decomp / mechanical-transcript section)
+00469df0	VehicleVehicleCollisionImpulse	vehicle	shape-only note (no verbatim decomp / mechanical-transcript section)
+00468d80	VehicleTerrainContactSolver	vehicle	shape-only note (no verbatim decomp / mechanical-transcript section)
+004694e0	VehicleObjectContactSolver	vehicle	shape-only note (no verbatim decomp / mechanical-transcript section)
+00420de0	FUN_00420de0	vehicle	signature-unsupported: fastcall ECX/EDX args
+00418a30	FUN_00418a30	vehicle	signature-unsupported: in_EAX arg
+00418de0	FUN_00418de0	vehicle	signature-unsupported: in_EAX arg
+00485380	FUN_00485380	vehicle	signature-unsupported: in_EAX arg
+00418860	FUN_00418860	ai	inline bare [UNCERTAIN] (heading=## key addresses)
+00444b60	FUN_00444b60	ai	callee-gate: 005586f0=C1
+00423540	FUN_00423540	ai	inline bare [UNCERTAIN] (heading=## analysis)
+0046c5f0	FUN_0046c5f0	vehicle	signature-unsupported: fastcall ECX/EDX args
+0046cc40	FUN_0046cc40	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046c7d0	FUN_0046c7d0	vehicle	callee-gate: 004c39b0=C1
+00555af0	FontCtx_LoadMetrics_Met	hud	callee-gate: 00550a20=C1
+00555ff0	FontCtx_LoadMetrics_Atlas	hud	callee-gate: 00550a20=C1
+00554050	FontCanvas_Shutdown	hud	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00555280	FontSys_ShutdownContextPool	hud	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00429820	FUN_00429820	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+0047ea60	FUN_0047ea60	vehicle	callee-gate: 0055ac00=C1,0055dff0=C1,0057c210=C1
+00546b10	FUN_00546b10	vehicle	callee-gate: 00546bf0=C1,00546c50=C1,00546cb0=C1
+0041e960	FUN_0041e960	ai	inline bare [UNCERTAIN] (heading=## callees)
+004219a0	FUN_004219a0	ai	signature-unsupported: in_EAX arg
+00481750	FUN_00481750	vehicle	callee-gate: 0055b650=C1,0057c210=C1
+00480d60	FUN_00480d60	vehicle	callee-gate: 0055b650=C1,0057c210=C1
+0047d3c0	VehiclePhysicsWorldCreate	vehicle	callee-gate: 004c0b30=C1,004e7e30=C1,00559c40=C1,0055ae70=C1,0055b940=C1,0055bab0=C1,0055c4a0=C1,0057c220=C1,0057c300=C1,0057c500=C1,0057c550=C1
+00442ce0	VehicleRubberBandSpeedModifier	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046d4d0	VehiclePhysicsMatrixSet	vehicle	inline bare [UNCERTAIN] (heading=## vehicle struct layout derived)
+0047e9c0	PhysicsSceneInitSequence	vehicle	callee-gate: 0055e200=C1,0055fe50=C1,0055fea0=C1,0055ff70=C1,0055ff90=C1,00561040=C1,00561390=C1,00561c50=C1,00561e60=C1,00561e80=C1
+0047d240	VehiclePhysicsBodyPlace	vehicle	callee-gate: 0055ab30=C1,0055ac00=C1,0055ade0=C1,0055dff0=C1,0057c210=C1
+0055c810	PhysicsBodySetLinearVelocity	vehicle	callee-gate: 0055c380=C1
+004826d0	PhysicsCollisionBodyCreate	vehicle	callee-gate: 00563810=C1
+00401000	FUN_00401000	hud	callee-gate: 004c0b30=C1,004e4450=C1,004e4810=C1,004e48e0=C1,004e4900=C1,004e4b90=C1,004e4dd0=C1,004e5850=C1,0053fbb0=C1
+004011f0	FUN_004011f0	hud	callee-gate: 004c15c0=C1
+00404820	FUN_00404820	hud	callee-gate: 004e6e00=C1
+00480b70	FUN_00480b70	vehicle	callee-gate: 0055ac00=C1,0055ad30=C1,0055b650=C1,0057c210=C1
+00481780	FUN_00481780	vehicle	callee-gate: 0057c210=C1
+00481810	FUN_00481810	vehicle	callee-gate: 0055bb70=C1,0055bde0=C1,0057c210=C1
+004818d0	FUN_004818d0	vehicle	callee-gate: 0057c210=C1
+00481a30	FUN_00481a30	vehicle	callee-gate: 0057c210=C1
+00481d90	FUN_00481d90	vehicle	callee-gate: 0055ac00=C1,0055ac50=C1,0055ad30=C1,0055b650=C1,0057c210=C1
+00481e00	FUN_00481e00	vehicle	callee-gate: 0055c000=C1,0057ca30=C1
+00482140	FUN_00482140	vehicle	callee-gate: 004c39b0=C1,004e68a0=C1,004e7fa0=C1,004e8030=C1,004e8640=C1,004e8910=C1,004e8940=C1,004e8a10=C1,004e8c70=C1,004e8ea0=C1
+00482820	FUN_00482820	vehicle	callee-gate: 0055af80=C1,0055afc0=C1,0055de20=C1
+00483ed0	FUN_00483ed0	vehicle	callee-gate: 004c0b30=C1,004c15c0=C1
+004840f0	FUN_004840f0	vehicle	signature-unsupported: fastcall ECX/EDX args
+00441490	FUN_00441490	camera	callee-gate: 004e6920=C1
+00486370	FUN_00486370	particle	signature-unsupported: in_EAX arg
+00486830	FUN_00486830	particle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00487150	FUN_00487150	particle	signature-unsupported: fastcall ECX/EDX args
+00487e00	FUN_00487e00	particle	signature-unsupported: fastcall ECX/EDX args
+0048ae00	FUN_0048ae00	particle	callee-gate: 004c0b30=C1,004c1040=C1,004e69a0=C1,004e7e30=C1,005449f0=C1,00544a70=C1,00544ad0=C1,00544bf0=C1
+0048af70	FUN_0048af70	particle	signature-unsupported: fastcall ECX/EDX args
+0048aff0	FUN_0048aff0	particle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0048b230	FUN_0048b230	particle	callee-gate: 00544bf0=C1
+0048b960	FUN_0048b960	particle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0048d0f0	FUN_0048d0f0	particle	signature-unsupported: fastcall ECX/EDX args
+0048fef0	FUN_0048fef0	particle	callee-gate: 004e89a0=C1
+0048ffd0	FUN_0048ffd0	particle	callee-gate: 004e6e00=C1,004e8090=C1
+0049c620	FUN_0049c620	particle	signature-unsupported: fastcall ECX/EDX args
+0049c6a0	FUN_0049c6a0	particle	signature-unsupported: fastcall ECX/EDX args
+0049c6d0	FUN_0049c6d0	particle	signature-unsupported: fastcall ECX/EDX args
+0049c750	FUN_0049c750	particle	signature-unsupported: fastcall ECX/EDX args
+0049c770	FUN_0049c770	particle	signature-unsupported: fastcall ECX/EDX args
+0049c800	FUN_0049c800	particle	signature-unsupported: fastcall ECX/EDX args
+0049c810	FUN_0049c810	particle	signature-unsupported: fastcall ECX/EDX args
+0049c900	FUN_0049c900	particle	signature-unsupported: fastcall ECX/EDX args
+0049c930	FUN_0049c930	particle	signature-unsupported: fastcall ECX/EDX args
+0049c990	FUN_0049c990	particle	signature-unsupported: fastcall ECX/EDX args
+0049ca00	FUN_0049ca00	particle	signature-unsupported: fastcall ECX/EDX args
+0049ca60	FUN_0049ca60	particle	signature-unsupported: fastcall ECX/EDX args
+0049cb00	FUN_0049cb00	particle	signature-unsupported: fastcall ECX/EDX args
+0049cb20	FUN_0049cb20	particle	signature-unsupported: fastcall ECX/EDX args
+0049cbd0	FUN_0049cbd0	particle	signature-unsupported: fastcall ECX/EDX args
+0049ceb0	FUN_0049ceb0	particle	signature-unsupported: fastcall ECX/EDX args
+0049d1d0	FUN_0049d1d0	particle	signature-unsupported: fastcall ECX/EDX args
+0049d200	FUN_0049d200	particle	signature-unsupported: fastcall ECX/EDX args
+004128f0	FUN_004128f0	hud	signature-unsupported: in_EAX arg
+00413bc0	FUN_00413bc0	hud	signature-unsupported: fastcall ECX/EDX args
+00489dc0	FUN_00489dc0	particle	callee-gate: 004c0b30=C1,004e7e30=C1,004e8090=C1,00534b60=C1,00535700=C1
+0048a060	FUN_0048a060	particle	signature-unsupported: in_EAX arg
+0048a130	FUN_0048a130	particle	signature-unsupported: in_EAX arg
+0048a3c0	FUN_0048a3c0	particle	callee-gate: 004e6920=C1,004e7e30=C1
+0048a490	FUN_0048a490	particle	signature-unsupported: fastcall ECX/EDX args
+0048a6f0	FUN_0048a6f0	particle	callee-gate: 004c39b0=C1
+0048a850	FUN_0048a850	particle	callee-gate: 004c39b0=C1
+0048aa50	FUN_0048aa50	particle	callee-gate: 004c39b0=C1
+0049de90	FUN_0049de90	particle	signature-unsupported: fastcall ECX/EDX args
+0049e140	FUN_0049e140	particle	signature-unsupported: 5-arg shape
+0049e190	FUN_0049e190	particle	inline bare [UNCERTAIN] (heading=## control flow summary)
+0049e580	FUN_0049e580	particle	signature-unsupported: fastcall ECX/EDX args
+0049e5c0	FUN_0049e5c0	particle	signature-unsupported: fastcall ECX/EDX args
+0049e600	FUN_0049e600	particle	signature-unsupported: fastcall ECX/EDX args
+0049e640	FUN_0049e640	particle	signature-unsupported: fastcall ECX/EDX args
+0049ea70	FUN_0049ea70	particle	signature-unsupported: fastcall ECX/EDX args
+0049ead0	thunk_FUN_0049fac0	particle	signature-unsupported: fastcall ECX/EDX args
+0049ebc0	FUN_0049ebc0	particle	signature-unsupported: fastcall ECX/EDX args
+0049eeb0	FUN_0049eeb0	particle	signature-unsupported: fastcall ECX/EDX args
+0049f090	thunk_FUN_004a28b0	particle	signature-unsupported: fastcall ECX/EDX args
+0049f0a0	FUN_0049f0a0	particle	signature-unsupported: fastcall ECX/EDX args
+0049f210	FUN_0049f210	particle	signature-unsupported: fastcall ECX/EDX args
+0049f300	FUN_0049f300	particle	signature-unsupported: fastcall ECX/EDX args
+0049fac0	FUN_0049fac0	particle	signature-unsupported: fastcall ECX/EDX args
+0049fc80	FUN_0049fc80	particle	signature-unsupported: fastcall ECX/EDX args
+00455b50	FUN_00455b50	hud	signature-unsupported: in_EAX arg
+0047c1f0	FUN_0047c1f0	camera	signature-unsupported: in_EAX arg
+0047c230	FUN_0047c230	camera	signature-unsupported: in_EAX arg
+0047c270	FUN_0047c270	camera	signature-unsupported: in_EAX arg
+0047c2d0	FUN_0047c2d0	camera	signature-unsupported: in_EAX arg
+0047d640	FUN_0047d640	hud	callee-gate: 0057c210=C1
+0047def0	FUN_0047def0	hud	callee-gate: 004c39b0=C1,0055ae50=C1,0057c210=C1
+00554010	FUN_00554010	hud	callee-gate: 0055deb0=C1
+00554150	FUN_00554150	hud	callee-gate: 00553e80=C1
+00554200	FUN_00554200	hud	callee-gate: 00553e80=C1
+00555830	FUN_00555830	hud	callee-gate: 00553e80=C1
+00556780	FUN_00556780	hud	callee-gate: 00550a20=C1,00553030=C1,005530f0=C1,005531f0=C1,005533d0=C1,00553e00=C1,00553ef0=C1
+005572c0	FUN_005572c0	hud	callee-gate: 00553590=C1,00553620=C1,0055deb0=C1
