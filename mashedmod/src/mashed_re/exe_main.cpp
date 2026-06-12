@@ -1141,9 +1141,9 @@ bool UpdateMenuSelection() {
         } else if (sid == 32 && cur == 0) {       // Autosave: discrete toggle (#23)
             if (rgt_now && !rgt_prev) AdjustSoundSetting(101, +1);
             if (lft_now && !lft_prev) AdjustSoundSetting(101, -1);
-        } else if (sid == 7) {                     // Player Colour Select (#25)
-            // LEFT/RIGHT cycle player 1's car-colour through the 10 NFL* sprites
-            // (discrete, edge-triggered) — the visible interaction on screen 7.
+        } else if (sid == 4) {                     // Player Color Select (#25)
+            // LEFT/RIGHT cycle player 1's car-color through the 10 NFL* sprites
+            // (discrete, edge-triggered) — the visible interaction on screen 4.
             if (rgt_now && !rgt_prev) g_csel_p1_car = (g_csel_p1_car + 1) % 10;
             if (lft_now && !lft_prev) g_csel_p1_car = (g_csel_p1_car + 9) % 10;
         }
@@ -2233,20 +2233,21 @@ bool RenderFrame() {
             }
         }
 
-        // --- #25 Player Colour Select content (nav screen 7 = kT7, screen-kind
-        // 0xff080000==0x0a==10). RE-confirmed (pool0 2026-06-12): the title
-        // string 0x12d "Player Colour Select" is PUSH'd at 0x00436ea2 inside
-        // FUN_004368e0's `case 10` (DAT_0067e9fc==10), so screen-kind 10 IS this
-        // screen; kT7 is the only kind-10 table. The kT7 item row is prim_id==-1
-        // (empty placeholder); the original fills it via FUN_004368e0, which
-        // draws each active player's car-colour preview (FUN_0042fab0(carIdx) ->
-        // INTERFACE.TXD NFL* sprite) with "vs"(&DAT_005cda30) separators, plus
-        // the right-side info text 0x12d. Representative 2-player layout
+        // --- #25 Player Color Select content (nav screen 4 = kT4). CORRECTED
+        // 2026-06-12: the color-select screen is kT4, whose back-row title id
+        // 0x130 = "Player Color Select" in the table the game uses (Font36.piz/
+        // USA.DAT) — the earlier move to screen 7 was based on the loose
+        // English.dat where 0x130 is a different (prompt) string, so in the REAL
+        // flow (which reaches screen 4) the cars never drew -> "empty" (user #25).
+        // kT4's single item row is prim_id==-1 (the preview placeholder); the
+        // original fills it via FUN_004368e0 drawing each active player's
+        // car-color preview (FUN_0042fab0(carIdx) -> INTERFACE.TXD NFL* sprite)
+        // with "vs"(&DAT_005cda30) separators. Representative 2-player layout
         // (FUN_004739f0 coords, 640x480 virtual -> *kVScale): P1 car @ (40,292)
-        // 112^2, "vs" @ (132,300) 88^2, P2 car @ (196,292) 112^2. [residual: the
-        // full per-controller case-10 layout (FUN_00430670 slots + team "check"
-        // marks) needs the absent multiplayer controller/team state.]
-        if (Nav_ScreenId() == 7 && g_carsel_ready) {
+        // 112^2, "vs" @ (132,300) 88^2, P2 car @ (196,292) 112^2. The title
+        // "Player Color Select" renders via the back-row record (0x130). [residual:
+        // full per-controller layout needs the absent MP controller/team state.]
+        if (Nav_ScreenId() == 4 && g_carsel_ready) {
             const std::uint32_t white = 0xffffffffu;
             auto draw_car = [&](int idx, float vx, float vy, float vs) {
                 if (idx < 0 || idx > 9) idx = 0;
@@ -2257,15 +2258,13 @@ bool RenderFrame() {
             draw_car(g_csel_p2_car, 196.0f, 292.0f, 112.0f);  // player 2
             HudIm2DQuad(kHandleVs, 132.0f * kVScale, 300.0f * kVScale,
                         88.0f * kVScale, 88.0f * kVScale, white, uv_full); // "vs"
-            // Right-side info string "Player Colour Select" (id 0x12d), drawn by
-            // case 10 at virtual (344,350) scale 0.6 (FUN_00427e00 @0x00436ea2).
+            // "Please select a player color" prompt (id 0x131, USA.DAT(piz))
+            // centered under the cars (the title 0x130 is the top back-row).
             if (g_font.ready()) {
                 wchar_t ct[64];
-                if (GetMenuMessage(0x12d, ct, 64) > 0) {
-                    const float th = 0.6f * 0.0708f * 480.f * kVScale;
-                    DrawMashedString(ct, 344.f * kVScale + 3.f, 350.f * kVScale + 3.f,
-                                     th, 0xff000000u, false);
-                    DrawMashedString(ct, 344.f * kVScale, 350.f * kVScale, th,
+                if (GetMenuMessage(0x131, ct, 64) > 0) {
+                    const float th = 0.55f * 0.0708f * 480.f * kVScale;
+                    DrawMashedString(ct, 320.f * kVScale, 250.f * kVScale, th,
                                      0xffffffffu, false);
                 }
             }
