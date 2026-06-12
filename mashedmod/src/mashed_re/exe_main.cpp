@@ -1590,21 +1590,35 @@ bool RenderFrame() {
             // the untextured solid via HudIm2DQuad (the standalone-safe
             // ChromeBaseDraw analogue; ChromeBaseDraw's own RVA scale-globals are
             // image-pad-zeroed) and a brighter top-half gradient band.
-            // F2 (2026-06-10, verified vs fresh orig_options.png): EVERY item
-            // row gets a PLATE — idle navy, selected orange. FUN_0043c5b0's
-            // fill immediates 0xff501513 / 0xff1050b4 are Im2D-BGR-swapped
-            // (DrawQuadPrimitives write_vert_zwc): navy RGB(0x13,0x15,0x50),
-            // orange RGB(0xb4,0x50,0x10).
+            // F2 — geometry/colors now mirror the BIT-VERIFIED draw loop
+            // (MenuDrawLoopTwin GREEN 20/20): plate fill (idle 0x40f8d0e8 /
+            // selected 0xa0146ef0 in original ARGB; converted to our ARGB
+            // layout), right-fade band at 60+plate_w (width 100), and the
+            // 5-piece border kit on EVERY row (navy idle / orange selected;
+            // unavailable rows grey). Flat quads stand in for the gradient
+            // halves (bridge has no per-vertex fade yet — noted residual).
             if (!is224 && (rec.prim_id >= 0 || is_back)) {
                 const float px2 = 60.0f * kVScale + slideX;
                 const float py2 = (rec.y - 13.0f + 1.0f) * kVScale;
                 const float pw2 = 210.0f * kVScale;
                 const float ph2 = 26.0f * kVScale;
-                const std::uint32_t plate =
-                    highlighted ? 0xffb45010u : 0xff131550u;
-                HudIm2DQuad(0, px2, py2, pw2, ph2, plate, uv_full);
-                HudIm2DQuad(0, px2, py2, pw2, ph2 * 0.5f,
-                            highlighted ? 0x50ffffffu : 0x28ffffffu, uv_full);
+                const float gx2 = (60.0f + 210.0f) * kVScale + slideX;
+                const float gw2 = 100.0f * kVScale;
+                const std::uint32_t fill =
+                    highlighted ? 0xa0f06e14u : 0x40e8d0f8u;
+                const std::uint32_t border =
+                    disabled    ? 0x30501513u
+                  : highlighted ? 0xffb45010u : 0xff501513u;
+                HudIm2DQuad(0, px2, py2, pw2, ph2, fill, uv_full);
+                HudIm2DQuad(0, gx2, py2, gw2, ph2, fill & 0x60ffffffu, uv_full);
+                const float bt = 2.0f * kVScale;
+                HudIm2DQuad(0, px2, py2, pw2, bt, border, uv_full);
+                HudIm2DQuad(0, gx2, py2, gw2, bt, border & 0x60ffffffu, uv_full);
+                HudIm2DQuad(0, px2, py2 + ph2 - bt, pw2, bt, border, uv_full);
+                HudIm2DQuad(0, gx2, py2 + ph2 - bt, gw2, bt,
+                            border & 0x60ffffffu, uv_full);
+                HudIm2DQuad(0, px2 - 2.0f * kVScale, py2, bt, ph2, border,
+                            uv_full);
             }
             if (highlighted && !is224) {
                 const float hx = 60.0f * kVScale + slideX;
@@ -1617,12 +1631,12 @@ bool RenderFrame() {
                 // (0x41500000) at the bar's left edge (X bias 13.0 =
                 // _DAT_005cd8d8), full UV, bar height, scale mode 1.
                 if (g_menu_badge_ready) {
-                    // F2: the bullet on the selected plate is dark navy in
-                    // the original (orig_options.png), not translucent blue.
+                    // F2 (bit-verified): the Button cap sits at x = 58-13 =
+                    // 45, in the selected border color.
                     HudIm2DQuad(kHandleMenuBadge,
-                                hx - 13.0f * kVScale, hy,
+                                (58.0f - 13.0f) * kVScale + slideX, hy,
                                 13.0f * kVScale, hh,
-                                0xff131550u, uv_full);
+                                0xffb45010u, uv_full);
                 }
             }
 

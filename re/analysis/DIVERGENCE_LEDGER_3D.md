@@ -89,16 +89,16 @@ F1. **Menu background** — CORRECTED 2026-06-10: the moving backdrop is
     fires through menu depth 4 — MAIN.BSP is NOT a menu component.
     Deferred to the vehicle-select 3D stage work. Video loop verify still
     pending]
-F2. **Menu item plates/chrome** — SUBSTANTIALLY CLOSED 2026-06-10: per-row
-    PLATES (navy idle / orange selected — FUN_0043c5b0 immediates via the
-    Im2D BGR swap), navy bullet on selection, top gradient band, "MASHED"
-    chrome decal (string 0x41 at 600/52+596/48), track-preview crossfade
-    (24/24 from TRACKIMAGES.TXD, verbatim MenuChromeShellB phase math),
-    Sound slider rows with orange fill bars. Acceptance pairs in
-    verify/frontend_parity2/ (gts, sound_v2, title_v2, list18).
-    [residuals: list-screen 166-width metrics + 0.578 scale nuance,
-    secondary right-column ids, the FUN_00432b30 prompt strip, and the
-    hook-side FUN_0043c5b0 twin + diff-original promotion]
+F2. **Menu item plates/chrome** — ✅ CLOSED + PROMOTED 2026-06-10: the menu
+    draw loop FUN_0043c5b0 is BIT-IDENTICAL (nav-driven draw-sequence diff
+    GREEN 20/20, 117 draws/frame; C2→C3, twin MenuDrawLoopTwin.cpp). The
+    diff recovered the real plate language: 5-piece border kit on EVERY
+    row, right-fade gradient at 60+plate_w, Button cap at x=45, persistent
+    color scratch with FUN_0042aad0 (EAX-arg) as the per-row grey/alpha
+    engine, single 7-arg text call. Standalone geometry backported
+    (sa_final_t07.png). [residuals: per-vertex gradient fade in the
+    standalone bridge (flat-quad stand-in, tagged); the FUN_00432b30
+    prompt strip port; list-screen 0.578-scale nuance]
 F3. **Animated logo** — ✅ CLOSED + PROMOTED 2026-06-10: BIT-IDENTICAL to
     the original (nav-driven draw-sequence diff GREEN 20/20, 74 Im2D draws
     per frame byte-compared; FUN_00473ee0 C2→C3). The diff surfaced a
