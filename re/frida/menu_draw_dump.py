@@ -42,7 +42,13 @@ rpc.exports={
         const b=abs(VBUF).readByteArray(VLEN);
         const u=new Uint8Array(b); let h='';
         for(let i=0;i<VLEN;i++){ h+=('0'+u[i].toString(16)).slice(-2); }
-        frames[pending].push(h);
+        // emitter identification: walk a few return addresses (module-relative)
+        let rets=[];
+        try{
+          rets=Thread.backtrace(this.context, Backtracer.FUZZY).slice(0,5)
+               .map(function(a){ return a.sub(DELTA).toString(); });
+        }catch(e){}
+        frames[pending].push({v:h, r:rets});
       }});
       drawHooked=1;
     }
@@ -65,7 +71,9 @@ rpc.exports={
 '''
 
 
-def decode(hexstr):
+def decode(entry):
+    hexstr = entry["v"] if isinstance(entry, dict) else entry
+    rets = entry.get("r", []) if isinstance(entry, dict) else []
     raw = bytes.fromhex(hexstr)
     verts = []
     for i in range(4):
@@ -75,7 +83,8 @@ def decode(hexstr):
     return {"x": min(xs), "y": min(ys),
             "w": round(max(xs) - min(xs), 2), "h": round(max(ys) - min(ys), 2),
             "argb": f"{verts[0][2]:08x}",
-            "corner_colors": [f"{v[2]:08x}" for v in verts]}
+            "corner_colors": [f"{v[2]:08x}" for v in verts],
+            "rets": rets}
 
 
 def main():
@@ -93,6 +102,13 @@ def main():
     while time.time() < end and E.phase() != 3:
         time.sleep(0.2)
     time.sleep(1.5)
+
+    # Title first (no push): the press-button/logo/checker emitters live here.
+    E.arm("title")
+    end = time.time() + 10
+    while time.time() < end and E.got("title") == 0:
+        time.sleep(0.2)
+    print(f"  title: {E.got('title')} draws")
 
     SCREENS = [1, 8, 19]
     for s in SCREENS:
