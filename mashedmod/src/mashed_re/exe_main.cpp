@@ -1489,28 +1489,20 @@ bool RenderFrame() {
     // stagger). slide law (0x0042e7f0..): slide_f = pre-decrement
     // DAT_008990e0 + 512.0 (_DAT_005cd65c); the global steps -0x10/frame,
     // clamped [0,0x200]. Nav transitions reset it to 0x200.
-    // [SCAFFOLD, tagged]: the original writers of DAT_008990e0 (nav) and the
-    // fade target DAT_0086ecc8 are not yet xref-confirmed; the standalone
-    // detects screen/depth changes and raises slide+fade then — replace with
-    // the verbatim writers once located (route: Ghidra xrefs to 0x008990e0 /
-    // 0x0086ecc8).
+    // Writers xref-confirmed (pool0, 2026-06-12): fade target 0x0086ecc8 is
+    // raised to 0xff by nav RELOAD ops + selects (now wired verbatim inside
+    // MenuNavSM); slide 0x008990e0 is raised +0x20/frame by the framed-
+    // preview screen body FUN_0042e8b0 (caller FUN_004368e0) and decremented
+    // -0x10/frame here like ShellB. The standalone has no framed-preview
+    // screen body yet, so slide stays settled (slide_f = 512) [residual:
+    // lands with the FUN_004368e0 per-screen-content work, Wave 3].
     if (g_bridge_installed &&
         GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
         using namespace mashed_re::Frontend;
         static int s_chrome_slide = 0;
-        static int s_last_scr = -1, s_last_depth = -1;
-        const int scr = Nav_ScreenId(), dep = Nav_Depth();
-        if (scr != s_last_scr || dep != s_last_depth) {
-            if (s_last_scr != -1) {
-                s_chrome_slide = 0x200;
-                LogoOverlayFadeSet(0xff, 0);
-            }
-            s_last_scr = scr; s_last_depth = dep;
-        }
         const float pre = static_cast<float>(s_chrome_slide);
         s_chrome_slide -= 0x10;
         if (s_chrome_slide < 0) s_chrome_slide = 0;
-        if (s_chrome_slide == 0) LogoOverlayFadeSet(0, -1);  // settle: fade out
         static DWORD s_t0 = 0;
         const DWORD now = GetTickCount();
         if (s_t0 == 0) s_t0 = now;

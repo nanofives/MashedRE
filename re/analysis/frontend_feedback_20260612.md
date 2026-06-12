@@ -62,7 +62,7 @@ alpha, call sites) is wrong.
 | 12 | select-arrow texture missing | footer strip glyphs = FGDC20 ext glyphs 0x80..0x8f via FUN_004277a0 remap | verify our ext-table decode draws the arrow glyph; compare RtCharset output |
 | 13 | black semi-circle (button cap) | TextSpriteScaled 0x004739f0 'Button' sprite, color ffb45010 (dump draw 88) | port audit: badge texture content + modulate color |
 | 14 | video not blending | FUN_00473c20 + FUN_00474890 (preview crossfade) | PARTIAL cde0ee52: two-quad corner-faded preview form landed; residual = UV-pan modes 1..5 (need preview atlas layout) |
-| 15 | screen-transition fades wrong | arc-wash strips + slide DAT_008990e0 + fade pair DAT_0086ecc8/cc | PARTIAL cde0ee52: slide law + fade wired [SCAFFOLD: writers pending xref of 0x008990e0/0x0086ecc8] |
+| 15 | screen-transition fades wrong | arc-wash strips + slide DAT_008990e0 + fade pair DAT_0086ecc8/cc | LANDED (writers xref-confirmed): fade 0xff raised by nav RELOAD ops (0x0043d2c2; push/pop skip it) + selects (0x0043f9d7); slide raised +0x20/frame by FUN_0042e8b0 framed-preview body (caller FUN_004368e0) [slide residual lands with Wave-3 per-screen content]. The settled menu's permanent left haze (alpha 0x60 arc wash) is FAITHFUL and now renders |
 | 16 | top/bottom text animations wrong | header/footer rows' slide/type anim (FUN_004325c0 classes) | port-side audit of row classes vs the verified tick |
 | 17 | menu text always black | record color semantics + FGDC20 glyph fill vs outline | inspect atlas glyphs; check the original's color modulate on text |
 | 18 | unselectable = transparent black | grey-out path: FUN_0042aad0 (per-row grey/alpha engine, EAX-arg) | RE 0042aad0's color writes (we have its diff behavior) |

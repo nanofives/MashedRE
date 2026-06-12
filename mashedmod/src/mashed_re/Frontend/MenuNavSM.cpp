@@ -572,6 +572,13 @@ void BuildRecords(const NavSlot& slot) {
 
 // FUN_0042a9c0 ModeCodeLookup (C3, Frontend/BatchAA_s4.cpp, exe-built leaf).
 extern "C" std::uint32_t __cdecl ModeCodeLookup();
+// FUN_00472640 fade-target setter analogue (DAT_0086ecc8 = v). Xref-confirmed
+// writers (pool0, 2026-06-12): the FUN_0043d2a0 head raises it to 0xff on
+// dir>=2 (reload) ops ONLY (dispatch at 0x0043d2b1..b7 routes push/pop away
+// from 0x0043d2c2 PUSH 0xff), and FUN_0043dfd0 raises it on select
+// (0x0043f9d7, alongside DAT_0067ecb8=1). The arc-wash strips read it via
+// the DAT_0086eccc chaser inside FUN_00473ee0.
+extern "C" void __cdecl LogoOverlayFadeSet(int target, int cur);
 
 namespace {
 
@@ -819,6 +826,7 @@ void Nav_Init() {
     s.item_count = CountItems(s.desc_table);
     PlaceCursor(s);
     BuildRecords(s);
+    LogoOverlayFadeSet(0xff, -1);   // boot enters via nav(0,2) reload -> fade on
     g_last_dir = kNavReload;
 }
 
@@ -866,6 +874,9 @@ void Nav(int screen_id, int dir) {
                               g_stack[g_nav_depth + 1].desc_table,
                               kTagPrompt, 0)));
     } else { // kNavReload
+        // 0x0043d2c2: reload ops raise the arc-wash fade target to 0xff
+        // (push/pop do NOT - the head dispatch skips the setter for dir<2).
+        LogoOverlayFadeSet(0xff, -1);
         NavSlot& s = g_stack[g_nav_depth];
         s.item_count = CountItems(s.desc_table);
         PlaceCursor(s);
@@ -893,6 +904,9 @@ bool Nav_Select() {
     if (s.cursor < 0 || s.cursor >= s.item_count) return false;
     if (s.cursor < kMaxItems && s.avail[s.cursor] != 1) return false; // disabled
 
+    // FUN_0043dfd0 select path raises the arc-wash fade (0x0043f9d7,
+    // PUSH 0xff -> FUN_00472640) before dispatching the action.
+    LogoOverlayFadeSet(0xff, -1);
     // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
     // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
     const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
