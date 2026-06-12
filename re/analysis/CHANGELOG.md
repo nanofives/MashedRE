@@ -3381,3 +3381,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-11  00432b30  MenuPromptStrip  C3->C4  subset-install canonical observe x3 (50/30/40s), JMP-LIVE, organic boot+Enter nav fires through live JMP, title renders (verify/c4_promptstrip_installed_menu.png)
 
 2026-06-12  frida-sweep-20260612-1932  frida-sweep-claim  branches=2 queued (c3_batch_af s1+s4 STALE: content already on main; evidence-verify + integration-diff + central re-classify only)
+2026-06-12  00473540  GradientQuadHorizAlpha  C2->C3  frida-sweep-20260612-1932 stale-af drain: Frida 10/10 GREEN non-trivial (canonical .asi, non-degeneracy assertion active); caller MenuDrawLoop C4; U-0457 Blocks=none
+2026-06-12  004736c0  BorderQuadFourAlpha  C2->C3  frida-sweep-20260612-1932: Frida 10/10 GREEN non-trivial; U-5706/U-5707/U-5708 RESOLVED via rwplcore.h RwGlobals.dOpenDevice cross-ref (CLAUDE.md-sanctioned RW headers)
+2026-06-12  00401ee0  EntityTableSelectUpdate  C2->C3  frida-sweep-20260612-1932: Frida 4/4 GREEN non-trivial; U-4199 RESOLVED (FUN_004e6680 = RpClumpRender)
+2026-06-12  0043aee0  MenuSlotFlagSetCurrent  C3->C3  frida-sweep-20260612-1932 re-verified 7/7 GREEN; no status change
