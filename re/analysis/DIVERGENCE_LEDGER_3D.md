@@ -113,6 +113,11 @@ F4. **Footer strings** — ROOT-CAUSED + suppressed 2026-06-10: the
     drew arbitrary entries (id 5 = "Français"). Misrender suppressed; the
     real prompt strip lands with the FUN_00432b30 branch-table port
     (part of the F2/draw-loop pass).
+F7. **Panel.piz** — RESOLVED-OUT 2026-06-10: the menu draw loop does NOT
+    reference Panel.piz. The item plates are COLORED QUADS (the FUN_0043c5b0
+    fill immediates, ported); Panel.piz contents (RACEPANEL/STARTLIGHTS/
+    TEAM*PANEL/PANEL0..3 DFFs) are in-RACE HUD panels — they belong to the
+    race-HUD presentation work (ledger #5 residual), not the frontend.
 F6. **Boot screen/items** — found 2026-06-10 (parity2_menu.png): standalone
     shows screen 0's records (Continue/Restart Race/...) at boot; the
     original gates item drawing on the frontend PHASE (DAT_0067eca4 ladder
