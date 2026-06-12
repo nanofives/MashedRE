@@ -511,6 +511,49 @@ extern "C" __declspec(dllexport) void __cdecl HudIm2DQuad(
 RH_ScopedInstall(HudIm2DQuad, 0x00450b10);  // re-enabled 2026-05-24 c3-safe
 
 // ---------------------------------------------------------------------------
+// Per-corner-color variant for the standalone chrome bridge. The original's
+// menu chrome submits gradient quads (vertex streams with per-corner ARGB —
+// log/menu_draw_dump.json, 2026-06-12: white wash 00ffffff->ffffffff, band
+// fades ff000000->a0000000, plate right-fades a0f06e14->00f06e14, ...). Same
+// body as HudIm2DQuad (0x00450b10) except the color loop writes V0..V3
+// individually (corner order TL/TR/BL/BR, matching fill_xy_quad).
+// ---------------------------------------------------------------------------
+extern "C" __declspec(dllexport) void __cdecl HudIm2DQuadCorners(
+    std::int32_t  tex_handle,
+    float         x, float y, float w, float h,
+    std::uint32_t argb_tl, std::uint32_t argb_tr,
+    std::uint32_t argb_bl, std::uint32_t argb_br,
+    std::uint32_t* uv)
+{
+    const std::uint32_t z = rw_z_field();
+    *reinterpret_cast<std::uint32_t*>(kV0 + 0x14) = uv[0];
+    *reinterpret_cast<std::uint32_t*>(kV0 + 0x18) = uv[1];
+    *reinterpret_cast<std::uint32_t*>(kV1 + 0x14) = uv[2];
+    *reinterpret_cast<std::uint32_t*>(kV1 + 0x18) = uv[1];
+    *reinterpret_cast<std::uint32_t*>(kV2 + 0x14) = uv[0];
+    *reinterpret_cast<std::uint32_t*>(kV2 + 0x18) = uv[3];
+    *reinterpret_cast<std::uint32_t*>(kV3 + 0x14) = uv[2];
+    *reinterpret_cast<std::uint32_t*>(kV3 + 0x18) = uv[3];
+    fill_xy_quad(x, y, w, h);
+    write_vert_zwc(kV0, z, color_swap_argb_to_abgr(argb_tl));
+    write_vert_zwc(kV1, z, color_swap_argb_to_abgr(argb_tr));
+    write_vert_zwc(kV2, z, color_swap_argb_to_abgr(argb_bl));
+    write_vert_zwc(kV3, z, color_swap_argb_to_abgr(argb_br));
+    if (tex_handle == 0) {
+        rw_set_state(1, 0);
+    } else {
+        rw_set_state(1, tex_handle);
+        rw_set_state(9, 2);
+    }
+    rw_set_state(8,   0);
+    rw_set_state(6,   0);
+    rw_set_state(0xc, 1);
+    rw_draw_4verts();
+    rw_set_state(8, 1);
+    rw_set_state(6, 1);
+}
+
+// ---------------------------------------------------------------------------
 // R2-4 — animated logo overlay (verbatim ports, pool0 decomp+disasm 2026-06-09)
 //
 //   FUN_004733b0 (0x004733b0) — gradient quad, second color on V0/V2 (the

@@ -172,6 +172,12 @@
 extern "C" void __cdecl HudIm2DQuad(
     std::int32_t tex_handle, float x, float y, float w, float h,
     std::uint32_t argb, std::uint32_t* uv);
+// Per-corner-color variant (TL/TR/BL/BR) for the chrome gradient quads
+// recorded in log/menu_draw_dump.json (2026-06-12 ground truth).
+extern "C" void __cdecl HudIm2DQuadCorners(
+    std::int32_t tex_handle, float x, float y, float w, float h,
+    std::uint32_t argb_tl, std::uint32_t argb_tr,
+    std::uint32_t argb_bl, std::uint32_t argb_br, std::uint32_t* uv);
 
 // B16 — MASHED's real per-frame menu-chrome drawer (0x0042e3a0,
 // Frontend/MenuSpriteDispatch.cpp). It draws two gradient bands + two white
@@ -1356,11 +1362,16 @@ bool RenderFrame() {
     if (g_menu_video.ready()) {
         g_menu_video.Update();
         struct VRHW { float x, y, z, rhw; float u, v; };
+        // Ground truth (log/menu_draw_dump.json draw 0): the original submits
+        // the video as a 512x512 quad at the origin, 1:1 texel-to-virtual-px
+        // (bottom 32 virtual px clip off the 480 backbuffer) — NOT stretched
+        // to the full screen. Scaled 1.25x -> 640x640 on our 800x600 target.
+        const float vw = 512.f * 1.25f, vh = 512.f * 1.25f;
         const VRHW q[4] = {
-            {-0.5f,        -0.5f,        0.f, 1.f, 0.f, 0.f},
-            {800.f - 0.5f, -0.5f,        0.f, 1.f, 1.f, 0.f},
-            {-0.5f,        600.f - 0.5f, 0.f, 1.f, 0.f, 1.f},
-            {800.f - 0.5f, 600.f - 0.5f, 0.f, 1.f, 1.f, 1.f},
+            {-0.5f,      -0.5f,      0.f, 1.f, 0.f, 0.f},
+            {vw - 0.5f,  -0.5f,      0.f, 1.f, 1.f, 0.f},
+            {-0.5f,      vh - 0.5f,  0.f, 1.f, 0.f, 1.f},
+            {vw - 0.5f,  vh - 0.5f,  0.f, 1.f, 1.f, 1.f},
         };
         g_device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
         g_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
@@ -1375,6 +1386,32 @@ bool RenderFrame() {
         g_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     } else if (g_bridge_installed && g_menu_bg_ready) {
         HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
+    }
+
+    // Right-side white wash + band-edge fades — VERBATIM geometry/colors from
+    // the original's menu draw stream (log/menu_draw_dump.json, draws 1-4,
+    // identical across screens 1/8/19):
+    //   1: x=288..464 y=64..416  white, horizontal alpha 00->ff (fade-in)
+    //   2: x=464..640 y=64..416  solid white
+    //   3: x=384..512 y=0..64    black, horizontal alpha 00->ff
+    //   4: x=384..512 y=416..480 black, horizontal alpha 00->ff
+    // (the 15-strip curved wash draws 5..34 carry alpha-0 colors — they only
+    // matter under the original's modulate blend state; not reproduced yet,
+    // see ledger residual. Checker-flag quads 35..76 need the checker texture
+    // identity — residual.)
+    if (g_bridge_installed) {
+        constexpr float kS = 1.25f;
+        HudIm2DQuadCorners(0, 288.f*kS, 64.f*kS, 176.f*kS, 352.f*kS,
+                           0x00ffffffu, 0xffffffffu, 0x00ffffffu, 0xffffffffu,
+                           uv_full);
+        HudIm2DQuad(0, 464.f*kS, 64.f*kS, 176.f*kS, 352.f*kS, 0xffffffffu,
+                    uv_full);
+        HudIm2DQuadCorners(0, 384.f*kS, 0.f, 128.f*kS, 64.f*kS,
+                           0x00000000u, 0xff000000u, 0x00000000u, 0xff000000u,
+                           uv_full);
+        HudIm2DQuadCorners(0, 384.f*kS, 416.f*kS, 128.f*kS, 64.f*kS,
+                           0x00000000u, 0xff000000u, 0x00000000u, 0xff000000u,
+                           uv_full);
     }
 
     if constexpr (kTitleMode) {
@@ -1417,15 +1454,19 @@ bool RenderFrame() {
         } else {
             // Reliable path: the SAME chrome layout read from MenuChromeShellA's
             // decomp (640x480 virtual, scaled 1.25x -> 800x600) issued via the
-            // self-contained HudIm2DQuad bridge draw. No dependence on the flaky
-            // MASHED .text getter-granule, so this renders on every successful
-            // boot. Bands are flat (HudIm2DQuad) vs MASHED's gradient, but the
-            // chrome frame + divider lines match.
+            // self-contained bridge draws. Geometry/colors now VERBATIM from
+            // log/menu_draw_dump.json draws 77-80: bands are vertical alpha
+            // gradients (ff000000 outer edge -> a0000000 inner edge), divider
+            // lines are 1 virtual px at y=64/416.
             std::uint32_t uv[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
-            HudIm2DQuad(0, 0.f,   0.f, 800.f, 80.f, 0xa0000000u, uv); // top band
-            HudIm2DQuad(0, 0.f, 520.f, 800.f, 80.f, 0xa0000000u, uv); // bottom band
-            HudIm2DQuad(0, 0.f,  80.f, 800.f,  2.f, 0xffffffffu, uv); // top divider line
-            HudIm2DQuad(0, 0.f, 520.f, 800.f,  2.f, 0xffffffffu, uv); // bottom divider line
+            HudIm2DQuadCorners(0, 0.f, 0.f, 800.f, 80.f,
+                               0xff000000u, 0xff000000u, 0xa0000000u, 0xa0000000u,
+                               uv);                                  // top band
+            HudIm2DQuadCorners(0, 0.f, 520.f, 800.f, 80.f,
+                               0xa0000000u, 0xa0000000u, 0xff000000u, 0xff000000u,
+                               uv);                                  // bottom band
+            HudIm2DQuad(0, 0.f, 520.f, 800.f, 1.25f, 0xffffffffu, uv); // bottom line
+            HudIm2DQuad(0, 0.f,  80.f, 800.f, 1.25f, 0xffffffffu, uv); // top line
         }
     }
 
@@ -1604,11 +1645,12 @@ bool RenderFrame() {
             // piVar9[-4]=Y, piVar9[-6]=scale, piVar9[-8]=color). Scale to 800x600.
             const float rx = rec.x * kVScale;
             const float ry = rec.y * kVScale;
-            // On-screen glyph height = scale * font-cell; the original passes the
-            // record's scale (0.6/0.8) into FUN_00428140's RtCharsetPrint which
-            // multiplies by _DAT_005cd5fc. kMenuTextHeight is the 0.8-scale height;
-            // derive the others proportionally so the back row (0.6) is smaller.
-            const float text_h = kMenuTextHeight * (rec.scale / 0.8f) * kVScale;
+            // On-screen glyph height: the original's text pipe multiplies the
+            // record scale by _DAT_005cd5fc = 0.0708 (f32 0x3d90ff97 read from
+            // MASHED.exe at 0x005cd5fc, 2026-06-12) as a fraction of the 480
+            // virtual screen height -> cell = scale * 0.0708 * 480 virtual
+            // (0.8 -> 27.2v, 0.6 -> 20.4v).
+            const float text_h = rec.scale * 0.0708f * 480.f * kVScale;
 
             // Slide-in offset: map the record's slide counter (0x1ff..0, settled
             // = 0) to a horizontal entry offset so records slide in from the right
@@ -1635,7 +1677,10 @@ bool RenderFrame() {
             // 5-piece border kit on EVERY row (navy idle / orange selected;
             // unavailable rows grey). Flat quads stand in for the gradient
             // halves (bridge has no per-vertex fade yet — noted residual).
-            if (!is224 && (rec.prim_id >= 0 || is_back)) {
+            // The back/header row draws NO plate chrome in the original — just
+            // its bold white text on the top band (orig_options.png; the dump's
+            // plate rows start at the first item, y=168). Items only.
+            if (!is224 && !is_back && rec.prim_id >= 0) {
                 const float px2 = 60.0f * kVScale + slideX;
                 const float py2 = (rec.y - 13.0f + 1.0f) * kVScale;
                 const float pw2 = 210.0f * kVScale;
@@ -1644,17 +1689,28 @@ bool RenderFrame() {
                 const float gw2 = 100.0f * kVScale;
                 const std::uint32_t fill =
                     highlighted ? 0xa0f06e14u : 0x40e8d0f8u;
+                // Border navy is ARGB ff131550 straight from the original's
+                // vertex stream (menu_draw_dump.json draws 91/105: idle
+                // ff131550, disabled-row alpha 30131550) — the previous
+                // 0xff501513 had R/B swapped.
                 const std::uint32_t border =
-                    disabled    ? 0x30501513u
-                  : highlighted ? 0xffb45010u : 0xff501513u;
+                    disabled    ? 0x30131550u
+                  : highlighted ? 0xffb45010u : 0xff131550u;
+                // Right-fades are true horizontal alpha gradients in the
+                // original (menu_draw_dump.json draws 82/84/86: color -> same
+                // color with alpha 00), not dimmed flats.
+                const std::uint32_t fill0 = fill & 0x00ffffffu;
+                const std::uint32_t bord0 = border & 0x00ffffffu;
                 HudIm2DQuad(0, px2, py2, pw2, ph2, fill, uv_full);
-                HudIm2DQuad(0, gx2, py2, gw2, ph2, fill & 0x60ffffffu, uv_full);
+                HudIm2DQuadCorners(0, gx2, py2, gw2, ph2,
+                                   fill, fill0, fill, fill0, uv_full);
                 const float bt = 2.0f * kVScale;
                 HudIm2DQuad(0, px2, py2, pw2, bt, border, uv_full);
-                HudIm2DQuad(0, gx2, py2, gw2, bt, border & 0x60ffffffu, uv_full);
+                HudIm2DQuadCorners(0, gx2, py2, gw2, bt,
+                                   border, bord0, border, bord0, uv_full);
                 HudIm2DQuad(0, px2, py2 + ph2 - bt, pw2, bt, border, uv_full);
-                HudIm2DQuad(0, gx2, py2 + ph2 - bt, gw2, bt,
-                            border & 0x60ffffffu, uv_full);
+                HudIm2DQuadCorners(0, gx2, py2 + ph2 - bt, gw2, bt,
+                                   border, bord0, border, bord0, uv_full);
                 HudIm2DQuad(0, px2 - 2.0f * kVScale, py2, bt, ph2, border,
                             uv_full);
             }
@@ -1716,10 +1772,12 @@ bool RenderFrame() {
             // selected -0xfc0000 branch (FUN_00428140 color arg 0xff000000 when
             // iStack_3c==cursor); idle items use the record color, dimmed; greyed
             // items use the grey-out tone.
+            // Back row uses its stored record color (0xffffffff) like any other
+            // row — the old 0x90d0d0ff tint was invented (orig_options.png
+            // header is plain white).
             const std::uint32_t base_argb =
                 disabled    ? 0x60606060u                       // greyed/unavailable
               : highlighted ? 0xff101010u                       // black-on-highlight
-              : is_back     ? 0x90d0d0ffu                       // back row tint
                             : (static_cast<std::uint32_t>(rec.color) & 0xffffffffu);
 
             // The original left-justifies text at the record's stored X (virtual
