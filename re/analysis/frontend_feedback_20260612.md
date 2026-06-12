@@ -52,7 +52,7 @@ alpha, call sites) is wrong.
 | 2 | loading screen: spinning disk + text | FUN_00403050 (sprite DAT_00771964 at 320,200,480,240 + FUN_00402fb0 body) | decomp FUN_00402fb0 next; port |
 | 3 | "Press button to start" flashing | text pipe (FUN_00428140 family) called from the title phase — NOT in the Im2D quad stream | find call site via Ghidra xrefs to the string id; flash timer RE |
 | 4 | attract/demo race on title idle | title idle timer → demo launch | find the timer global + transition in the title handler |
-| 5 | logo misplaced | FUN_00473c20 call args from ShellB (0x0042e5b0) | decomp ShellB; extract the logo quad args + which texture handle |
+| 5 | logo misplaced | FUN_00428760 sprite pipe (emitter 0x450c7a, titleframe dump) | LANDED: ONE static quad at virtual (80,80,480x240) full-white; standalone fixed from the invented 768px/96% placement; draw order corrected (previews before logo) |
 | 6 | band opacity (start semi-transparent, gradient) | TextGradientV0V1/V2V3 (0x00472f40/0x004730b0) args from chrome; band alpha may be phase-driven | RE ShellA/ShellB band alpha inputs; verify dump colors ff→a0 vs title state |
 | 7 | checkers not animated | FUN_00473ee0 checker pass (above) | LANDED cde0ee52: layer runs every frame per ShellB; animated checkers visible (verify/dbg_backbuffer.png) |
 | 8 | no boot "Load Successful" modal | save-load boot flow + modal screens (descriptor tables; orig_gts.png shows the modal) | locate the modal screen table + draw path |
@@ -61,7 +61,7 @@ alpha, call sites) is wrong.
 | 11 | back indicator on main menu | back-row visibility rule in FUN_0043d2a0 (type/slide init) + draw gating | RE the exact gate (screen-kind? depth?) |
 | 12 | select-arrow texture missing | footer strip glyphs = FGDC20 ext glyphs 0x80..0x8f via FUN_004277a0 remap | verify our ext-table decode draws the arrow glyph; compare RtCharset output |
 | 13 | black semi-circle (button cap) | TextSpriteScaled 0x004739f0 'Button' sprite, color ffb45010 (dump draw 88) | port audit: badge texture content + modulate color |
-| 14 | video not blending | FUN_00473c20 + FUN_00474890 (preview crossfade) | PARTIAL cde0ee52: two-quad corner-faded preview form landed; residual = UV-pan modes 1..5 (need preview atlas layout) |
+| 14 | video not blending | FUN_00473c20 + FUN_00474890 (preview crossfade) | PARTIAL: two-quad corner-faded form + title gating removed (ShellB runs it every frame) + draw order fixed; residual = UV-pan modes 1..5 (preview atlas layout) |
 | 15 | screen-transition fades wrong | arc-wash strips + slide DAT_008990e0 + fade pair DAT_0086ecc8/cc | LANDED (writers xref-confirmed): fade 0xff raised by nav RELOAD ops (0x0043d2c2; push/pop skip it) + selects (0x0043f9d7); slide raised +0x20/frame by FUN_0042e8b0 framed-preview body (caller FUN_004368e0) [slide residual lands with Wave-3 per-screen content]. The settled menu's permanent left haze (alpha 0x60 arc wash) is FAITHFUL and now renders |
 | 16 | top/bottom text animations wrong | header/footer rows' slide/type anim (FUN_004325c0 classes) | port-side audit of row classes vs the verified tick |
 | 17 | menu text always black | record color semantics + FGDC20 glyph fill vs outline | inspect atlas glyphs; check the original's color modulate on text |

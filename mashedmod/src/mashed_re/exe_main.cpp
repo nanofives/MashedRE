@@ -1400,6 +1400,54 @@ bool RenderFrame() {
         HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
     }
 
+    // ShellB runs the preview crossfade on EVERY frontend frame including
+    // the title (titleframe dump 2026-06-12 contains the FUN_00474890 pair) -
+    // no phase gate.
+    if (g_bridge_installed && g_previews_ready &&
+        GetEnvironmentVariableA("MASHED_DBG_NO_PREVIEWS", nullptr, 0) == 0) {
+        static const int kCycle[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
+        const unsigned phase = (g_chrome_frame++) & 0x1ffu;
+        if (phase == 0x1e0u) g_chrome_spriteA += 2;
+        else if (phase == 0x0e0u) g_chrome_spriteB += 2;
+        if ((g_chrome_spriteB & 1) == 0) g_chrome_spriteB += 1;
+        int a6, a7;
+        if (phase < 0x0e0u) { a7 = 0; a6 = 0xff; }
+        else if (phase < 0x100u) {
+            const int t = static_cast<int>(phase) - 0xe0;
+            if (0xf < t) { a6 = (0x1f - t) * 0x10; a7 = 0xff; }
+            else         { a7 = t * 0x10;          a6 = 0xff; }
+        } else if (phase < 0x1e0u) { a6 = 0; a7 = 0xff; }
+        else {
+            const int t = static_cast<int>(phase) - 0x1e0;
+            if (t < 0x10) { a6 = t * 0x10;          a7 = 0xff; }
+            else          { a7 = (0x1f - t) * 0x10; a6 = 0xff; }
+        }
+        // FUN_00474890 draw form (pool0 decomp 2026-06-12): each preview layer
+        // is TWO half-width quads — left half with corners 0/2 (TL/BL) faded
+        // to alpha 0 (grad_flag path) so the layer fades IN over the video,
+        // right half solid; w is halved inside (_DAT_005cc32c = 0.5). The
+        // original pans the texture via the mode-1..5 UV switch over a
+        // 6-sub-image layout — the standalone's per-track preview textures
+        // draw full-UV for now [residual: UV-pan modes need the original's
+        // preview atlas layout].
+        const float pvx = 288.f * 1.25f, pvy = 64.f * 1.25f;
+        const float pvh = 352.f * 1.25f;
+        const float pvw2 = 176.f * 1.25f;            // 352 * 0.5 per quad
+        auto draw_preview = [&](int handle, int alpha) {
+            const std::uint32_t c =
+                (static_cast<std::uint32_t>(alpha) << 24) | 0xffffffu;
+            const std::uint32_t c0 = c & 0x00ffffffu;
+            std::uint32_t uvL[4] = { 0u, 0u, 0x3f000000u, 0x3f800000u };
+            std::uint32_t uvR[4] = { 0x3f000000u, 0u, 0x3f800000u, 0x3f800000u };
+            HudIm2DQuadCorners(handle, pvx, pvy, pvw2, pvh, c0, c, c0, c, uvL);
+            HudIm2DQuad(handle, pvx + pvw2, pvy, pvw2, pvh, c, uvR);
+        };
+        if (a6 != 0)
+            draw_preview(kHandlePreview0 + kCycle[g_chrome_spriteA & 0xf] * 2, a6);
+        if (a7 != 0)
+            draw_preview(kHandlePreview0 + kCycle[g_chrome_spriteB & 0xf] * 2, a7);
+    }
+
     // (2026-06-12 Wave-1 correction, ShellB decomp: the "white wash" quads at
     // 288/464 ARE the track-preview crossfade layer — FUN_0042e590 ->
     // FUN_00474890 two-quad pairs — drawn below by the preview block; and the
@@ -1472,12 +1520,14 @@ bool RenderFrame() {
     // screens draw items without it (their small header chrome is the F2 pass).
     if (g_frontend_phase < 2 &&
         g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
-        // F3: title proportions measured from verify/frontend_ref/menu_burst_*
-        // — the logo spans ~96% of the width, upper-center.
-        float lw = 768.f;
-        float lh = lw * static_cast<float>(g_menu_logo_h) / static_cast<float>(g_menu_logo_w);
-        const float lx = (800.f - lw) * 0.5f;
-        const float ly = 80.f;
+        // Title logo placement GROUND TRUTH (full-frame draw dump 2026-06-12,
+        // emitter 0x450c7a via the FUN_00428760 sprite pipe): ONE static quad
+        // at virtual (80, 80, 480x240), full-white modulate. The previous
+        // 768px/96%-width placement was burst-estimated and wrong.
+        const float lw = 480.f * 1.25f;
+        const float lh = 240.f * 1.25f;
+        const float lx = 80.f * 1.25f;
+        const float ly = 80.f * 1.25f;
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
     }
 
@@ -1531,51 +1581,6 @@ bool RenderFrame() {
     // F2: track-preview crossfade — verbatim phase math from the verified
     // MenuChromeShellB reimpl (0x0042e5b0): 512-frame cycle, A/B alpha ramps,
     // slot cycle 0..5 over the preview pairs, 352x352 at (288,64) virtual.
-    if (g_bridge_installed && g_frontend_phase >= 2 && g_previews_ready &&
-        GetEnvironmentVariableA("MASHED_DBG_NO_PREVIEWS", nullptr, 0) == 0) {
-        static const int kCycle[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
-        const unsigned phase = (g_chrome_frame++) & 0x1ffu;
-        if (phase == 0x1e0u) g_chrome_spriteA += 2;
-        else if (phase == 0x0e0u) g_chrome_spriteB += 2;
-        if ((g_chrome_spriteB & 1) == 0) g_chrome_spriteB += 1;
-        int a6, a7;
-        if (phase < 0x0e0u) { a7 = 0; a6 = 0xff; }
-        else if (phase < 0x100u) {
-            const int t = static_cast<int>(phase) - 0xe0;
-            if (0xf < t) { a6 = (0x1f - t) * 0x10; a7 = 0xff; }
-            else         { a7 = t * 0x10;          a6 = 0xff; }
-        } else if (phase < 0x1e0u) { a6 = 0; a7 = 0xff; }
-        else {
-            const int t = static_cast<int>(phase) - 0x1e0;
-            if (t < 0x10) { a6 = t * 0x10;          a7 = 0xff; }
-            else          { a7 = (0x1f - t) * 0x10; a6 = 0xff; }
-        }
-        // FUN_00474890 draw form (pool0 decomp 2026-06-12): each preview layer
-        // is TWO half-width quads — left half with corners 0/2 (TL/BL) faded
-        // to alpha 0 (grad_flag path) so the layer fades IN over the video,
-        // right half solid; w is halved inside (_DAT_005cc32c = 0.5). The
-        // original pans the texture via the mode-1..5 UV switch over a
-        // 6-sub-image layout — the standalone's per-track preview textures
-        // draw full-UV for now [residual: UV-pan modes need the original's
-        // preview atlas layout].
-        const float pvx = 288.f * 1.25f, pvy = 64.f * 1.25f;
-        const float pvh = 352.f * 1.25f;
-        const float pvw2 = 176.f * 1.25f;            // 352 * 0.5 per quad
-        auto draw_preview = [&](int handle, int alpha) {
-            const std::uint32_t c =
-                (static_cast<std::uint32_t>(alpha) << 24) | 0xffffffu;
-            const std::uint32_t c0 = c & 0x00ffffffu;
-            std::uint32_t uvL[4] = { 0u, 0u, 0x3f000000u, 0x3f800000u };
-            std::uint32_t uvR[4] = { 0x3f000000u, 0u, 0x3f800000u, 0x3f800000u };
-            HudIm2DQuadCorners(handle, pvx, pvy, pvw2, pvh, c0, c, c0, c, uvL);
-            HudIm2DQuad(handle, pvx + pvw2, pvy, pvw2, pvh, c, uvR);
-        };
-        if (a6 != 0)
-            draw_preview(kHandlePreview0 + kCycle[g_chrome_spriteA & 0xf] * 2, a6);
-        if (a7 != 0)
-            draw_preview(kHandlePreview0 + kCycle[g_chrome_spriteB & 0xf] * 2, a7);
-    }
-
     // F2: the menu-screen chrome decal — FUN_0043c5b0 phase>=2 draws string
     // id 0x41 twice via FUN_00427e00 (shadow at 600,52 then white at 596,48,
     // scale 0.8; suppressed when FUN_0042b930()==0x21). Evidence:

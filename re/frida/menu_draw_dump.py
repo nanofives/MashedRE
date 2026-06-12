@@ -32,6 +32,36 @@ rpc.exports={
   },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
   push:function(scr){ nav(scr,0); return abs(RVA_DEPTH).readS32(); },
+  // Full-frame capture: collect EVERY device draw between two consecutive
+  // entries to FUN_0042e3a0 (ShellA, once per frontend frame) — catches
+  // emitters outside the 0x0043c5b0 tree (title logo, text pipe).
+  armframe:function(label){
+    if(!drawHooked){
+      const vt=abs(VTBL).readU32();
+      const drawFn=ptr(vt).add(0x30).readU32();
+      Interceptor.attach(ptr(drawFn), { onEnter(args){
+        if(collecting===0) return;
+        const b=abs(VBUF).readByteArray(VLEN);
+        const u=new Uint8Array(b); let h='';
+        for(let i=0;i<VLEN;i++){ h+=('0'+u[i].toString(16)).slice(-2); }
+        let rets=[];
+        try{
+          rets=Thread.backtrace(this.context, Backtracer.FUZZY).slice(0,5)
+               .map(function(a){ return a.sub(DELTA).toString(); });
+        }catch(e){}
+        frames[pending].push({v:h, r:rets});
+      }});
+      drawHooked=1;
+    }
+    pending=label; frames[label]=[];
+    let seen=0;
+    const h=Interceptor.attach(abs(0x0042e3a0), { onEnter(args){
+      seen++;
+      if(seen===1){ collecting=1; }
+      else if(seen===2){ collecting=0; h.detach(); }
+    }});
+    return 1;
+  },
   arm:function(label){
     if(!drawHooked){
       // device vtable exists only after D3D9 init -> hook at first arm
@@ -103,14 +133,14 @@ def main():
         time.sleep(0.2)
     time.sleep(1.5)
 
-    # Title first (no push): the press-button/logo/checker emitters live here.
-    E.arm("title")
-    end = time.time() + 10
-    while time.time() < end and E.got("title") == 0:
-        time.sleep(0.2)
-    print(f"  title: {E.got('title')} draws")
+    # Title FULL FRAME (between consecutive ShellA calls): catches the logo
+    # and text-pipe emitters outside the 0x0043c5b0 tree. Vert data is stale
+    # for non-scratch pipes; the retaddrs are what matter there.
+    E.armframe("titleframe")
+    time.sleep(1.0)
+    print(f"  titleframe: {E.got('titleframe')} draws")
 
-    SCREENS = [1, 8, 19]
+    SCREENS = [1]
     for s in SCREENS:
         print(f"push {s} ->", E.push(s))
         time.sleep(2.5)                       # let slide anim fully settle
