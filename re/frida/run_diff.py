@@ -102,6 +102,66 @@ def float_bits(f):
         return None  # output-buffer types return a comma-separated bit string
 
 
+# arg_type handlers that seed NON-ZERO state (sentinels / registry inputs)
+# into the observed region before calling the target. For these, an all-zero
+# post-observation still discriminates (a no-op reimpl would have left the
+# sentinel), so the non-degeneracy assertion must not fire. Derived by
+# re/frida/audit_seeded_argtypes.py 2026-06-12 (heuristic + manual
+# reconciliation — see that script's header); re-derive after any
+# diff_template.js handler change. Unknown/new arg_types default to
+# OBSERVE-ONLY: worst case is an explicit degenerate_ok per hook, never a
+# silent false GREEN.
+SEEDED_ARG_TYPES = {
+    'arena_block_free_predicate', 'audio_list_insert', 'audio_list_min_select',
+    'audio_list_remove', 'audio_pool_free', 'audio_sub_struct_zero',
+    'contact_history', 'count_header_list_ring', 'cursor_back',
+    'dsound_secondary_init', 'endian_pack', 'fmt_desc_copy', 'fmt_desc_ptr',
+    'fmt_global_scan', 'fmt_key_compare', 'fmt_table_search', 'font_ctx_float2',
+    'font_matrix_push', 'guid_from_tag', 'idx_out2', 'int_copy_outbuf',
+    'int_outbuf4', 'int_with_out_ptr', 'matrix_scale', 'music_vol_set',
+    'ptr_nonnull_check', 'ptr_ptr_entity_set', 'ptr_zero_pair', 'read_global',
+    'renderer_field3c_set', 'resource_loader_4arg',
+    'scalars_to_scattered_globals', 'seed_field_read_field', 'semaphore_create',
+    'sentinel_array_ptr', 'slot_block_zero', 'slot_quad_set',
+    'sort_dispatch_out4', 'source_loop_set', 'sprite_table_dispatch',
+    'state_machine_observe', 'struct_call_observe', 'struct_three_write',
+    'structptr_seeded_array', 'thiscall_field_get', 'thread_desc_init',
+    'track_record_deref', 'transform_vector', 'vec2_normalize', 'vec2_ptr',
+    'vec3_global_mul_observe', 'vec3_ptr', 'void_write_observe',
+    'write_global_call_int0',
+}
+
+
+def is_trivial(v):
+    """True when an observed value carries no discriminating information:
+    None/empty, numeric zero, an all-zero hex/fingerprint string, or a
+    list/dict whose elements are all trivial. Used by the non-degeneracy
+    assertion: a run where EVERY observation on BOTH sides is trivial proves
+    nothing about the reimpl (live-state inputs still zero at attach time
+    produce exactly this — the batch_ah menu-attach false-GREEN class)."""
+    if v is None:
+        return True
+    if isinstance(v, bool):
+        return not v
+    if isinstance(v, (int, float)):
+        return v == 0
+    if isinstance(v, (list, tuple)):
+        return all(is_trivial(x) for x in v)
+    if isinstance(v, dict):
+        return all(is_trivial(x) for x in v.values())
+    s = str(v).strip().lower()
+    if s in ('', 'null', 'none', 'false', 'undefined'):
+        return True
+    # All-zero scalar, fingerprint, or packed-bit-string forms: "0", "0.0",
+    # "0x00000000", "0x0,0x0,0x0", "00000000|00000000", "[0, 0.0]", ...
+    if all(c in '0x:,;|[]{}"\' .\t-' for c in s):
+        return True
+    try:
+        return float(s) == 0.0
+    except ValueError:
+        return False
+
+
 def build_config(hook, asi_path=None):
     """Map a hooks_registry entry to the Frida agent CONFIG dict.
 
@@ -256,7 +316,8 @@ def build_config(hook, asi_path=None):
 
 def main():
     if len(sys.argv) < 2:
-        sys.exit(f"usage: {sys.argv[0]} <hook_name>\n  registered: {', '.join(HOOKS.keys())}")
+        sys.exit(f"usage: {sys.argv[0]} <hook_name> [--allow-degenerate]\n"
+                 f"  registered: {', '.join(HOOKS.keys())}")
     name = sys.argv[1]
     if name not in HOOKS:
         sys.exit(f"unknown hook {name!r}; registered: {', '.join(HOOKS.keys())}")
@@ -276,6 +337,23 @@ def main():
         sys.exit(f"FATAL: {_shim} missing (d3d9 windowed shim). "
                  f"Run `mashedmod\\build_d3d9_shim.bat`, then retry. "
                  f"Refusing to spawn MASHED without the shim — it would go fullscreen.")
+
+    # Pre-flight (2026-06-12): a registry arg_type with no handler in
+    # diff_template.js silently falls through to a default path that can pass
+    # trivially (feedback_worker_invented_arg_types; 4 such hooks found in the
+    # 2026-06-12 degenerate-GREEN audit). Refuse to run an undefined arg_type.
+    _at = hook.get('arg_type')
+    if _at and _at not in ('none', 'void') and f"'{_at}'" not in AGENT_JS.read_text(encoding='utf-8'):
+        if '--allow-unknown-argtype' in sys.argv[2:]:
+            print(f"WARNING: arg_type {_at!r} has no handler in {AGENT_JS.name} "
+                  f"— continuing on --allow-unknown-argtype; result is NOT "
+                  f"promotion evidence.")
+        else:
+            sys.exit(f"FATAL: arg_type {_at!r} (hook {name!r}) has no handler in "
+                     f"{AGENT_JS.name} — the diff would fall through to a default "
+                     f"path and could pass without testing anything. Add the "
+                     f"handler or fix the registry entry. Override (NOT for "
+                     f"promotions): --allow-unknown-argtype.")
 
     print(f"hook: {name}  rva={config['target_rva']}  export={config['export']}")
     print(f"spawning {MASHED_EXE} via subprocess (hook BYPASSED)")
@@ -364,6 +442,32 @@ def main():
     print(f"  total cases: {len(results_received)}")
     print(f"  mismatches:  {mismatches}")
     if mismatches == 0:
+        # Non-degeneracy assertion (2026-06-12, batch_ah post-mortem): a clean
+        # match over observations that are ALL trivial on BOTH sides has no
+        # discriminating power — typical when live-state inputs are still zero
+        # at attach time. Such a run is NOT C3 evidence and must not say GREEN.
+        # Exception: SEEDED arg_types pre-fill the observed region with a
+        # non-zero sentinel/input, so their all-zero result proves the target
+        # actively wrote — that GREEN stands.
+        all_trivial = all(is_trivial(r['original']) and is_trivial(r['reimpl'])
+                          for r in results_received)
+        allow = (hook.get('arg_type') in SEEDED_ARG_TYPES
+                 or hook.get('degenerate_ok')
+                 or '--allow-degenerate' in sys.argv[2:])
+        if all_trivial and not allow:
+            print("\nINCONCLUSIVE-DEGENERATE: 0 mismatches, but every observed value")
+            print("on both sides is trivial (zero/empty/all-zero fingerprint). The")
+            print("diff had no discriminating power. Re-run at a state where the")
+            print("inputs are populated (scenario-attach), or — only if all-zero")
+            print("output is genuinely this function's behavior on every test")
+            print("vector — pass --allow-degenerate or set degenerate_ok=True in")
+            print("hooks_registry.py.")
+            return 5
+        if all_trivial:
+            why = ('seeded arg_type ' + repr(hook.get('arg_type'))
+                   if hook.get('arg_type') in SEEDED_ARG_TYPES
+                   else 'degenerate_ok/--allow-degenerate override')
+            print(f"\nNOTE: all observations trivial; GREEN allowed by {why}.")
         print("\nGREEN: every test value produced bit-identical output.")
         return 0
     print("\nRED: at least one mismatch.")
