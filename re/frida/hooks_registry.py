@@ -13280,4 +13280,94 @@ HOOKS = {
         'path2_tests':    [0],
     },
 
+    # ---- promote-round round 1 (L0: c3_batch_race1 session-1 set) ------------
+    # All five run on the scenario:'race' lane (live Quick Battle state);
+    # configs verbatim from c3_batch_race1.txt (generation-time note reads).
+
+    # 0x00408af0  AiVehicleFieldPtrGet — uint32(int i). POINTER-RETURN getter:
+    # &DAT_008a96dc + i*0x30c (field +0x9c of the 0x30c-stride per-vehicle
+    # records). Never dereferences — any index vector is safe; bit-identity
+    # compares the returned original-image VA.
+    # ref: re/analysis/bucket_ai_00407a40_00415880/0x00408af0.md
+    'ai_vehicle_field_ptr_get': {
+        'rva':            0x00408af0,
+        'export':         'AiVehicleFieldPtrGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 7, 0, 1, 2, 3],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00442cc0  AiVehicleFloat4Get — float(int i), x87 ST0 return. Bounds-
+    # checked: i<4 reads DAT_008989b0[i]; else returns DAT_005d757c (0.0,
+    # last-place sentinel). In-race the 4-entry array populates; A/B time-skew
+    # re-run rule applies (single-vector float mismatch → re-run once).
+    # U-7601 is data-semantic (Blocks: none).
+    # ref: re/analysis/bucket_ai_00415d00_00452ea0/0x00442cc0.md
+    'ai_vehicle_float4_get': {
+        'rva':            0x00442cc0,
+        'export':         'AiVehicleFloat4Get',
+        'signature':      {'ret': 'float', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 100, 0, 1, 2, 3],
+        'path2_tests':    [0, 1, 4],
+    },
+
+    # 0x00414030  AiSplineBankTimerReset — void(int slot). Writes 1000 (0x3e8)
+    # at DAT_008032d4[slot*5] (stride 0x14 bytes); slot_block_zero plants a
+    # sentinel at target_global + slot*stride and verifies it is destroyed
+    # (overwritten with 1000) = evidence. NEVER vector -1: the harness would
+    # sentinel base-0x14 (out of the array); the -1 "reset all 5 slots" fill
+    # path therefore stays UNTESTED by this diff.
+    # ref: re/analysis/bucket_ai_00407a40_00415880/0x00414030.md
+    'ai_spline_bank_timer_reset': {
+        'rva':                0x00414030,
+        'export':             'AiSplineBankTimerReset',
+        'signature':          {'ret': 'void', 'args': ['int32']},
+        'arg_type':           'slot_block_zero',
+        'target_global':      0x008032d4,
+        'entity_byte_stride': 0x14,
+        'lut_root_delta':     0,
+        'scenario':           'race',
+        'path1_tests':        [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':        [0, 1, 2],
+    },
+
+    # 0x0040e350  GetRenderSubMode — uint32(). Returns DAT_0063ba8c (game-mode
+    # state global; 5-byte stub). Stable mid-race (nonzero in a live round →
+    # non-degenerate). Export name matches the fn-ptr binding citation in
+    # Render/PerModeRender.cpp:43 (file-local static — no clash).
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0040e350.md
+    'get_render_sub_mode': {
+        'rva':            0x0040e350,
+        'export':         'GetRenderSubMode',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00429300  HudOverlayFloatGet — float(), x87 ST0. FILD (signed-int
+    # load + convert) of DAT_008991b8: bytes DB 05 B8 91 89 00 C3 verified in
+    # MASHED.exe.unpatched @0x29300 — the global is an INTEGER; a raw float
+    # load REDs (orig=923.0f vs denormal-bits-923). Caller's unused arg is
+    # ignored (__cdecl caller-clean). Written at race-overlay setup → stable.
+    # ref: re/analysis/localization_d2/0x00429300.md
+    'hud_overlay_float_get': {
+        'rva':            0x00429300,
+        'export':         'HudOverlayFloatGet',
+        'signature':      {'ret': 'float', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }

@@ -344,6 +344,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Gameplay\Thresholds_ah4.cpp" ^
     "Render\PluginFields_ah4.cpp" ^
     "Audio\TimerGetters_ah5.cpp" ^
+    "Ai\PromoLoop_round1.cpp" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
