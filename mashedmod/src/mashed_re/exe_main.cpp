@@ -515,6 +515,36 @@ constexpr std::uint32_t kSlotMenuBadge   = 16;
 constexpr int           kHandleMenuBadge = 34;
 bool             g_menu_badge_ready = false;
 
+// --- #25 Player Color Select (nav screen 4 = kT4, title id 0x130) ------------
+// RE map (pool0 decomp 2026-06-12): the screen-content body FUN_004368e0 draws
+// per-active-player car-color previews when FUN_00430760()==0 (game-mode global
+// DAT_0067e9fc NOT in {2,3,4,5,10}). Each preview = FUN_0042fab0(carIdx) which
+// maps idx 0..9 -> a named sprite, then FUN_004739f0(sprite,x,y,w,h,argb,...,
+// 1,flip) where (x,y)=top-left, (w,h)=size in 640x480 VIRTUAL units (param_11==1
+// multiplies by screenDim*1/640 / 1/480 = our kVScale 1.25x). The sprite names
+// (FUN_0042fab0 cases, MASHED 0x0042fab0 jump table) and the "vs" separator
+// (&DAT_005cda30) are textures in SFX.piz/INTERFACE.TXD (the global frontend
+// sprite dict DAT_0063b904 that FUN_0040bb90/FUN_004c5c00 resolve).
+//   2-player layout (DAT_0067ea64==0, DAT_0067ea7c==0, the canonical case):
+//     P1 car  @ virtual (40,292) 112x112   (FUN_004368e0 LAB_004375d5)
+//     P2 car  @ virtual (196,292) 112x112
+//     "vs"    @ virtual (132,300) 88x88     (drawn last, on top, between cars)
+// carIdx -> INTERFACE.TXD texture name (0x0042fab0 case order):
+static const char* kCarColorNames[10] = {
+    "NFLRed", "NFLBluejay", "NFLMelon", "NFLGold", "NFLPink",
+    "NFLShadow", "NFLCopter", "NFLBomb", "NFLFugitive", "NFLSurvival"};
+constexpr std::uint32_t kSlotCar0     = 44;   // slots 44..53 (10 cars)
+constexpr int           kHandleCar0   = 35;   // bridge handles 35..44
+constexpr std::uint32_t kSlotVs       = 54;   // "vs" separator
+constexpr int           kHandleVs     = 45;
+bool             g_carsel_ready = false;
+// Per-player chosen car index. The standalone has no multiplayer setup flow yet,
+// so these default to a representative 2-player config (Red vs Bluejay); LEFT/
+// RIGHT on screen 4 cycles player 1's car. [residual: the per-player selection
+// cursor is FUN_00431b80 + the full setup flow that writes DAT_007f1a14..4c.]
+int              g_csel_p1_car = 0;
+int              g_csel_p2_car = 1;
+
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
 // for Arctic>). Renders the cracked RW world (Track/TrackWorld) through the
 // spike renderer (D3d9Render/TrackRenderer) with an auto-orbit camera.
@@ -1066,6 +1096,11 @@ bool UpdateMenuSelection() {
         } else if (sid == 32 && cur == 0) {       // Autosave: discrete toggle (#23)
             if (rgt_now && !rgt_prev) AdjustSoundSetting(101, +1);
             if (lft_now && !lft_prev) AdjustSoundSetting(101, -1);
+        } else if (sid == 7) {                     // Player Colour Select (#25)
+            // LEFT/RIGHT cycle player 1's car-colour through the 10 NFL* sprites
+            // (discrete, edge-triggered) — the visible interaction on screen 7.
+            if (rgt_now && !rgt_prev) g_csel_p1_car = (g_csel_p1_car + 1) % 10;
+            if (lft_now && !lft_prev) g_csel_p1_car = (g_csel_p1_car + 9) % 10;
         }
     }
     // Mirror the nav cursor into the legacy global for any code still reading it.
@@ -2098,6 +2133,44 @@ bool RenderFrame() {
             }
         }
 
+        // --- #25 Player Colour Select content (nav screen 7 = kT7, screen-kind
+        // 0xff080000==0x0a==10). RE-confirmed (pool0 2026-06-12): the title
+        // string 0x12d "Player Colour Select" is PUSH'd at 0x00436ea2 inside
+        // FUN_004368e0's `case 10` (DAT_0067e9fc==10), so screen-kind 10 IS this
+        // screen; kT7 is the only kind-10 table. The kT7 item row is prim_id==-1
+        // (empty placeholder); the original fills it via FUN_004368e0, which
+        // draws each active player's car-colour preview (FUN_0042fab0(carIdx) ->
+        // INTERFACE.TXD NFL* sprite) with "vs"(&DAT_005cda30) separators, plus
+        // the right-side info text 0x12d. Representative 2-player layout
+        // (FUN_004739f0 coords, 640x480 virtual -> *kVScale): P1 car @ (40,292)
+        // 112^2, "vs" @ (132,300) 88^2, P2 car @ (196,292) 112^2. [residual: the
+        // full per-controller case-10 layout (FUN_00430670 slots + team "check"
+        // marks) needs the absent multiplayer controller/team state.]
+        if (Nav_ScreenId() == 7 && g_carsel_ready) {
+            const std::uint32_t white = 0xffffffffu;
+            auto draw_car = [&](int idx, float vx, float vy, float vs) {
+                if (idx < 0 || idx > 9) idx = 0;
+                HudIm2DQuad(kHandleCar0 + idx, vx * kVScale, vy * kVScale,
+                            vs * kVScale, vs * kVScale, white, uv_full);
+            };
+            draw_car(g_csel_p1_car, 40.0f, 292.0f, 112.0f);   // player 1
+            draw_car(g_csel_p2_car, 196.0f, 292.0f, 112.0f);  // player 2
+            HudIm2DQuad(kHandleVs, 132.0f * kVScale, 300.0f * kVScale,
+                        88.0f * kVScale, 88.0f * kVScale, white, uv_full); // "vs"
+            // Right-side info string "Player Colour Select" (id 0x12d), drawn by
+            // case 10 at virtual (344,350) scale 0.6 (FUN_00427e00 @0x00436ea2).
+            if (g_font.ready()) {
+                wchar_t ct[64];
+                if (GetMenuMessage(0x12d, ct, 64) > 0) {
+                    const float th = 0.6f * 0.0708f * 480.f * kVScale;
+                    DrawMashedString(ct, 344.f * kVScale + 3.f, 350.f * kVScale + 3.f,
+                                     th, 0xff000000u, false);
+                    DrawMashedString(ct, 344.f * kVScale, 350.f * kVScale, th,
+                                     0xffffffffu, false);
+                }
+            }
+        }
+
         // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
         // VERBATIM-ported in MenuNavSM.cpp (PromptStripAppend; jump tables from
         // binary dwords 0x433060/0x433088..178; C4 twin diff GREEN 264/264) and
@@ -2624,6 +2697,69 @@ bool LoadBadgeSprites() {
     }
     if (log) std::fclose(log);
     return ok;
+}
+
+// #25: load SFX.piz/INTERFACE.TXD (the global frontend sprite dict
+// DAT_0063b904 that FUN_0040bb90/FUN_004c5c00 resolve named sprites from) and
+// upload the 10 NFL* car-color previews + the "vs" separator into the bridge.
+// These are the sprites FUN_0042fab0(carIdx)/&DAT_005cda30 hand to FUN_004739f0
+// on the Player Color Select screen (nav screen 4 / FUN_004368e0 LAB_004375d5).
+bool LoadCarColorSprites() {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    mashed_re::Piz::Archive piz;
+    if (!piz.Load("original/TOASTART/Common/sfx.piz")) {
+        if (log) { std::fprintf(log, "\n#25: sfx.piz load FAILED: %s\n", piz.last_error()); std::fclose(log); }
+        return false;
+    }
+    const std::uint8_t* blob = nullptr;
+    std::uint32_t blen = 0;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        if (_stricmp(piz.entry(i).name, "INTERFACE.TXD") == 0) {
+            blob = piz.blob(i, &blen);
+            break;
+        }
+    }
+    if (!blob) {
+        if (log) { std::fprintf(log, "\n#25: INTERFACE.TXD not found in sfx.piz\n"); std::fclose(log); }
+        return false;
+    }
+    mashed_re::Txd::Dictionary dict;
+    if (!dict.Decode(blob, blen)) {
+        if (log) { std::fprintf(log, "\n#25: INTERFACE.TXD decode FAILED: %s\n", dict.last_error()); std::fclose(log); }
+        return false;
+    }
+    int cars = 0;
+    for (int n = 0; n < 10; ++n) {
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, kCarColorNames[n]) != 0) continue;
+            const std::uint32_t slot = kSlotCar0 + static_cast<std::uint32_t>(n);
+            if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandleCar0 + n, g_quad_renderer.slot_texture(slot));
+                ++cars;
+            }
+            break;
+        }
+    }
+    bool vs_ok = false;
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (_stricmp(tex.name, "vs") != 0) continue;
+        if (g_quad_renderer.UploadFromTextureToSlot(kSlotVs, tex)) {
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kHandleVs, g_quad_renderer.slot_texture(kSlotVs));
+            vs_ok = true;
+        }
+        break;
+    }
+    if (log) {
+        std::fprintf(log, "\n#25 color-select: INTERFACE.TXD cars %d/10, vs %s "
+                     "(dict has %u textures)\n", cars, vs_ok ? "OK" : "MISSING",
+                     dict.count());
+        std::fclose(log);
+    }
+    return cars > 0;
 }
 
 // B19a: load a PNG asset from a .piz by entry name, decode it via WIC, upload to
@@ -3470,6 +3606,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
         g_menu_badge_ready = LoadBadgeSprites();
         g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
+        g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
         // F1 (frontend-faithful): the real menu backdrop — frontend.mpg via
         // DirectShow into a D3D9 texture (the original's own playback path).
         {

@@ -33,7 +33,7 @@ class QuadRenderer {
 public:
     // Hard cap on atlas slots. 8 atlas + bg/logo/font + badge sprites (R2-5)
     // = 17 in use; 20 leaves headroom.
-    static constexpr std::uint32_t kMaxSlots = 48;  // +24 track previews (F2)
+    static constexpr std::uint32_t kMaxSlots = 64;  // +24 track previews (F2) +11 color-select (#25)
 
     QuadRenderer() = default;
     ~QuadRenderer() { Shutdown(); }
