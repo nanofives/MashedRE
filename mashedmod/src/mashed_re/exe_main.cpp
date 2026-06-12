@@ -909,6 +909,8 @@ struct MenuSettings {
     std::int32_t sfx     = 8;   // 0..10
     std::int32_t insults = 8;   // 0..10
     std::int32_t insults_on = 0;  // tri-state 0=Off 1=Auto 2=Manual (user review #21)
+    std::int32_t gamma = 5;     // 0..10 (screen 30 slider, user review #22)
+    std::int32_t autosave = 1;  // 0=Off 1=On (screen 32 toggle, user review #23)
 };
 MenuSettings g_settings;
 constexpr char kSettingsPath[] = "mashed_re_settings.bin";
@@ -945,6 +947,9 @@ void AdjustSoundSetting(int row, int dir) {
             g_settings.insults_on = (m < 0) ? 2 : (m > 2 ? 0 : m);
             break;
         }
+        case 100: g_settings.gamma = clamp10(g_settings.gamma + dir); break; // gamma slider (#22)
+        case 101: g_settings.autosave = (dir != 0) ? (g_settings.autosave ? 0 : 1)
+                                                   : g_settings.autosave; break; // autosave toggle (#23)
         default: return;
     }
     SaveMenuSettings();
@@ -991,22 +996,31 @@ bool UpdateMenuSelection() {
     // is held (not one step per press). Rows 0..2 (volumes) ramp on key-HELD
     // with a short initial delay + repeat cadence; row 3 (Insults tri-state)
     // stays edge-triggered (discrete cycle).
-    if (Nav_ScreenId() == 19 && Nav_Cursor() >= 0) {
+    {
+        const int sid = Nav_ScreenId();
         const int cur = Nav_Cursor();
-        if (cur == 3) {
-            if (rgt_now && !rgt_prev) AdjustSoundSetting(3, +1);
-            if (lft_now && !lft_prev) AdjustSoundSetting(3, -1);
-        } else {
-            static int s_holdL = 0, s_holdR = 0;
-            // ramp: act on the first frame, then every 3rd frame after a
-            // ~9-frame initial hold (continuous feel without instant slam).
-            auto ramp = [](int& hold, bool down) -> bool {
-                if (!down) { hold = 0; return false; }
-                const int h = hold++;
-                return h == 0 || (h >= 9 && ((h - 9) % 3 == 0));
-            };
-            if (ramp(s_holdR, rgt_now)) AdjustSoundSetting(cur, +1);
-            if (ramp(s_holdL, lft_now)) AdjustSoundSetting(cur, -1);
+        static int s_holdL = 0, s_holdR = 0;
+        // ramp: act on the first frame, then every 3rd frame after a ~9-frame
+        // initial hold (continuous feel without instant slam) — item 20.
+        auto ramp = [](int& hold, bool down) -> bool {
+            if (!down) { hold = 0; return false; }
+            const int h = hold++;
+            return h == 0 || (h >= 9 && ((h - 9) % 3 == 0));
+        };
+        if (sid == 19 && cur >= 0) {              // Sound
+            if (cur == 3) {                       // insults tri-state: discrete
+                if (rgt_now && !rgt_prev) AdjustSoundSetting(3, +1);
+                if (lft_now && !lft_prev) AdjustSoundSetting(3, -1);
+            } else {                              // volumes: continuous ramp
+                if (ramp(s_holdR, rgt_now)) AdjustSoundSetting(cur, +1);
+                if (ramp(s_holdL, lft_now)) AdjustSoundSetting(cur, -1);
+            }
+        } else if (sid == 30 && cur == 0) {       // Gamma: continuous ramp (#22)
+            if (ramp(s_holdR, rgt_now)) AdjustSoundSetting(100, +1);
+            if (ramp(s_holdL, lft_now)) AdjustSoundSetting(100, -1);
+        } else if (sid == 32 && cur == 0) {       // Autosave: discrete toggle (#23)
+            if (rgt_now && !rgt_prev) AdjustSoundSetting(101, +1);
+            if (lft_now && !lft_prev) AdjustSoundSetting(101, -1);
         }
     }
     // Mirror the nav cursor into the legacy global for any code still reading it.
@@ -1872,41 +1886,66 @@ bool RenderFrame() {
             // row (3) has NO bar — only the two arrows + a text value (Off/Auto/
             // Manual). Bar Y is the row's plate-center band (the original aligns
             // the 16px bar to y=187 for the y=183 plate, i.e. plate_top+4).
-            if (Nav_ScreenId() == 19 && !is_back && rec.row_index >= 0 &&
-                rec.row_index <= 3) {
+            // Value widgets on the settings screens. Geometry verbatim from the
+            // originals' draw streams (log/sound_draw.json + screens 30/32 probe,
+            // 2026-06-12): a 16px bar at x=374 w=106 with 3px black borders and an
+            // orange fill (0xffd88020), framed by 16x16 black arrow sprites at
+            // x=356 / x=484 (sliders) or x=356 / x=411 (compact toggles, no bar).
+            const int sid = Nav_ScreenId();
+            const bool is_slider_screen = (sid == 19 || sid == 30);
+            const bool is_toggle_screen = (sid == 32);
+            if ((is_slider_screen || is_toggle_screen) && !is_back &&
+                rec.row_index >= 0 && rec.row_index <= 3) {
                 const float S = kVScale;
                 const float by = (rec.y - 13.0f + 4.0f + 1.0f) * S; // plate band
-                // Arrows: 16x16 black, drawn as the FGDC20 '<'/'>' glyphs tinted
-                // black to match the original's arrow sprites (ff000000).
-                if (g_font.ready()) {
+                // Which kind of widget is THIS row?
+                //   screen 19: rows 0-2 sliders, row 3 insults tri-state text
+                //   screen 30: row 0 gamma slider
+                //   screen 32: row 0 autosave On/Off toggle
+                enum { kSlider, kTriText, kToggle, kNone } kind = kNone;
+                int value = 0;
+                if (sid == 19) {
+                    if (rec.row_index <= 2) {
+                        kind = kSlider;
+                        value = (rec.row_index == 0) ? g_settings.music
+                              : (rec.row_index == 1) ? g_settings.sfx
+                                                     : g_settings.insults;
+                    } else if (rec.row_index == 3) { kind = kTriText; }
+                } else if (sid == 30 && rec.row_index == 0) {
+                    kind = kSlider; value = g_settings.gamma;
+                } else if (sid == 32 && rec.row_index == 0) {
+                    kind = kToggle;
+                }
+                if (kind != kNone && g_font.ready()) {
+                    // left arrow (all kinds) + right arrow (closer for toggles)
                     DrawMashedString(L"\x3c", 356.0f * S + slideX, by, 16.0f * S,
                                      0xff000000u, true);
-                    const float rax = (rec.row_index == 3 ? 457.0f : 484.0f) * S;
+                    const float rax = (kind == kToggle ? 411.0f : 484.0f) * S;
                     DrawMashedString(L"\x3e", rax + slideX, by, 16.0f * S,
                                      0xff000000u, true);
                 }
-                if (rec.row_index <= 2) {
-                    const int v = (rec.row_index == 0) ? g_settings.music
-                                : (rec.row_index == 1) ? g_settings.sfx
-                                                       : g_settings.insults;
+                if (kind == kSlider) {
                     const float bx = 374.0f * S + slideX;
-                    const float bw = 106.0f * S, bh = 16.0f * S;
-                    const float bt = 3.0f * S;
+                    const float bw = 106.0f * S, bh = 16.0f * S, bt = 3.0f * S;
                     HudIm2DQuad(0, bx, by, bw, bh, 0x7f000000u, uv_full);      // bg
                     HudIm2DQuad(0, bx, by, bw, bt, 0xff000000u, uv_full);      // top
                     HudIm2DQuad(0, bx, by + bh - bt, bw, bt, 0xff000000u, uv_full); // bottom
                     HudIm2DQuad(0, bx, by, bt, bh, 0xff000000u, uv_full);      // left
                     HudIm2DQuad(0, bx + bw - bt, by, bt, bh, 0xff000000u, uv_full); // right
                     HudIm2DQuad(0, 377.0f * S + slideX, by + bt,
-                                (static_cast<float>(v) / 10.0f) * 100.0f * S,
+                                (static_cast<float>(value) / 10.0f) * 100.0f * S,
                                 10.0f * S, 0xffd88020u, uv_full);              // fill
-                } else if (g_font.ready()) {
+                } else if (kind == kTriText && g_font.ready()) {
                     static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
                     const int m = (g_settings.insults_on >= 0 &&
                                    g_settings.insults_on <= 2)
                                       ? g_settings.insults_on : 0;
                     DrawMashedString(kInsults[m], 392.0f * S + slideX, by,
                                      16.0f * S, 0xff000000u, false);
+                } else if (kind == kToggle && g_font.ready()) {
+                    DrawMashedString(g_settings.autosave ? L"On" : L"Off",
+                                     380.0f * S + slideX, by, 16.0f * S,
+                                     0xff000000u, false);
                 }
             }
         }

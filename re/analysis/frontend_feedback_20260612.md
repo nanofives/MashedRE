@@ -69,8 +69,8 @@ alpha, call sites) is wrong.
 | 19 | options load/save greyed out in RE | FUN_00432800 case-8 gate on FUN_00492d10 save-ready | LANDED: live probe DAT_00771968==1 at the original's menu (blank save) -> Load/Save enabled; standalone's hardcoded disable removed |
 | 20 | sound sliders all wrong + continuous steps | screen-19 widgets (draw stream log/sound_draw.json): bar x=374 w=106 h=16 0x7f000000 + 4x 3px black borders + orange fill 0xffd88020; arrows 16x16 at x=356/484 | LANDED: geometry/colors/borders verbatim; input now ramps continuously while held (was 1 step/press); verify/frontend_parity2/pair_sound.png |
 | 21 | insults tri-state Off/Auto/Manual | MenuSettings.insults_on widened 0=Off/1=Auto/2=Manual | LANDED: dir-aware cycle + text value drawn (no bar), replacing the Off/On bool |
-| 22 | gamma screen has no slider | gamma screen widgets (different from sound) | retaddr dump on the gamma screen + RE |
-| 23 | autosave on/off (no arrows) | autosave screen widget | same route as 22 |
+| 22 | gamma screen has no slider | screen 30 (action 0xff73; string id 0x234 'Gamma Correction'); one volume-style slider (probe) | LANDED: gamma is screen 30 = a single slider identical to the sound volumes (bar/borders/orange fill verbatim); g_settings.gamma 0..10, continuous ramp; verify/frontend_parity2/re_scr30_gamma.png |
+| 23 | autosave on/off (no arrows) | screen 32 (action 0xff83; string id 0x25f 'Autosave'); two-arrow toggle, no bar (probe: arrows x=356/x=411) | LANDED: autosave is screen 32 = On/Off toggle (arrows + text value, no bar); g_settings.autosave 0/1, discrete; verify/frontend_parity2/re_scr32_autosave.png |
 | 24 | quick battle greyed in RE | FUN_00432800 case-2 gate on DAT_007f0ad4 | LANDED: live probe shows 2 at the menu with an ALL-ZERO gamesave (boot default, not save-derived); kFreshState.has_profiles 0 -> 2 (verify/frontend_parity2/re_scr2_gates.png) |
 | 25 | player color select UI missing | post-car-select screen (unmapped) | locate its screen id + descriptor table + drawer |
 
