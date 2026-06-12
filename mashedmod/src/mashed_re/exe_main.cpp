@@ -2814,6 +2814,35 @@ void ExecuteFrontendBootChain() {
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+    // Self-locating asset root. Every data path in this exe (and the log) is
+    // relative to the REPO ROOT ("original/TOASTART/..."), so a launch whose
+    // cwd is elsewhere (Explorer double-click binds cwd to the exe dir) used
+    // to come up asset-less (title 'slot 0/(none)', empty blue panel). If the
+    // marker archive is not visible from the inherited cwd, walk up from the
+    // exe's own directory (mashedmod\build -> mashedmod -> repo root) until it
+    // is, and chdir there. A cwd that already has the assets wins untouched.
+    {
+        const char kMarker[] = "original\\TOASTART\\Common\\Frontend.piz";
+        if (GetFileAttributesA(kMarker) == INVALID_FILE_ATTRIBUTES) {
+            char dir[MAX_PATH];
+            const DWORD n = GetModuleFileNameA(nullptr, dir, MAX_PATH);
+            if (n > 0 && n < MAX_PATH) {
+                for (int up = 0; up < 7; ++up) {   // exe name + 6 parent hops
+                    char* slash = std::strrchr(dir, '\\');
+                    if (!slash) break;
+                    *slash = '\0';
+                    char probe[MAX_PATH];
+                    if (std::snprintf(probe, sizeof(probe), "%s\\%s", dir,
+                                      kMarker) < static_cast<int>(sizeof(probe)) &&
+                        GetFileAttributesA(probe) != INVALID_FILE_ATTRIBUTES) {
+                        SetCurrentDirectoryA(dir);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     // Truncate the log at session start so subsequent fopen "a" calls
     // build a clean per-run trace.
     {
