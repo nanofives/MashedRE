@@ -1557,6 +1557,44 @@ bool RenderFrame() {
 
         for (int r = 0; r < nrec; ++r) {
             const MenuRecord& rec = recs[r];
+
+            // --- F4 CLOSED: footer prompt-strip rows (tags 0xff100000 /
+            // 0xff110000 / 0xff230000), appended by the MenuNavSM port of
+            // FUN_00432b30 (C4: PromptStripTwin diff GREEN 264/264). Draw rule
+            // is the BIT-VERIFIED FUN_0043c5b0 record loop (MenuDrawLoopTwin
+            // GREEN 20/20): prim_id while type is 0/2 (animating), sec_id
+            // otherwise (settled/frozen); -1 skips (0x0043c885). The id renders
+            // through GetMenuMessage -> FUN_00427780/004277a0 control-code
+            // remap, turning prompt ids (0x42/0x43/0x48/0x13/0x58/0x133/0x225)
+            // into their FGDC20 nav-glyph runs at the row's stored position
+            // (virtual 64,428 scale 0.6 per FUN_0042ad10).
+            {
+                const std::uint32_t utag = static_cast<std::uint32_t>(rec.tag);
+                if (utag == 0xff100000u || utag == 0xff110000u ||
+                    utag == 0xff230000u) {
+                    const int sid = (rec.type == 0 || rec.type == 2)
+                                        ? rec.prim_id : rec.sec_id;
+                    if (sid >= 0 && g_font.ready()) {
+                        wchar_t stxt[128];
+                        if (GetMenuMessage(sid, stxt, 128) > 0) {
+                            const float sx = rec.x * kVScale +
+                                static_cast<float>(Nav_RecordSlide(r)) *
+                                    (260.f / 511.f);
+                            const float sy = rec.y * kVScale;
+                            const float sth =
+                                kMenuTextHeight * (rec.scale / 0.8f) * kVScale;
+                            const float ssh = 3.0f * kVScale;
+                            DrawMashedString(stxt, sx + ssh, sy + ssh, sth,
+                                             0xff000000u, true);
+                            DrawMashedString(stxt, sx, sy, sth,
+                                             static_cast<std::uint32_t>(rec.color),
+                                             true);
+                        }
+                    }
+                    continue;
+                }
+            }
+
             if (rec.prim_id < 0 &&
                 static_cast<std::uint32_t>(rec.prim_id) != 0x224u) continue;  // -1 = no text
             const bool is_back = (static_cast<std::uint32_t>(rec.tag) == 0xff000000u);
@@ -1738,24 +1776,15 @@ bool RenderFrame() {
             }
         }
 
-        // --- bottom prompt strip (port of FUN_00432b30 + FUN_0042ad10). The
-        // original appends nav-prompt glyph records (ids 0x42/0x43/0x48/0x13/0x58/
-        // 0x133/0x225) at virtual (X=0x40=64, Y=0x1ac=428, scale 0x3f19999a=0.6).
-        // The full screen_kind x relation-code branch table is cosmetic and
-        // [UNCERTAIN] (the screen->kind map is un-enumerated; see port spec); the
-        // deterministic, faithful content is the screen's 0xff080000 prompt id
-        // that FUN_0043d2a0 Phase 7 looks up and feeds to FUN_00432b30. We resolve
-        // that id THROUGH MenuStringTable::Decode so the FUN_004277a0 control-code
-        // remap (8/9/a/b/c/d/e -> 0x81/7f/81/8d/80/87/8f) turns it into the actual
-        // FGDC20 nav/prompt glyph run — the same glyph path the original uses.
-        // F4 BUGFIX (frontend-faithful 2026-06-10): the 0xff080000 descriptor
-        // value is a SCREEN-KIND code consumed by FUN_00432b30's glyph branch
-        // table — NOT a USA.DAT string id. Decoding it as a string rendered
-        // arbitrary table entries (id 5 = "Français" on GTS). Strip draw is
-        // SUPPRESSED until FUN_00432b30's branch table is ported (pass #27);
-        // rendering nothing is faithful-neutral, rendering a wrong string
-        // is not.
-        (void)Nav_PromptId();
+        // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
+        // VERBATIM-ported in MenuNavSM.cpp (PromptStripAppend; jump tables from
+        // binary dwords 0x433060/0x433088..178; C4 twin diff GREEN 264/264) and
+        // its rows are appended to g_records by the Nav() Phase-7 call sites.
+        // The rows render in the record walk above under the bit-verified
+        // prim/sec type rule — nothing left to draw here. (The 2026-06-10
+        // "Français" misrender was the 0xff080000 SCREEN-KIND code being
+        // decoded as a string id; the kind now indexes the ported key tables
+        // exactly as the original does.)
     }
 
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual

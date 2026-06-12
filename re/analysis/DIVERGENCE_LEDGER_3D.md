@@ -108,12 +108,23 @@ F3. **Animated logo** — ✅ CLOSED + PROMOTED 2026-06-10: BIT-IDENTICAL to
     chain; all ported. Title also uses the right asset (MASHEDNEWLOGO.PNG)
     at burst proportions. Bit-identity supersedes the planned frame-by-
     frame pixel validation.
-F4. **Footer strings** — ROOT-CAUSED + suppressed 2026-06-10: the
-    0xff080000 descriptor value is a screen-KIND code for FUN_00432b30's
-    glyph branch table, not a USA.DAT string id — decoding it as a string
-    drew arbitrary entries (id 5 = "Français"). Misrender suppressed; the
-    real prompt strip lands with the FUN_00432b30 branch-table port
-    (part of the F2/draw-loop pass).
+F4. **Footer strings** — ✅ CLOSED + PROMOTED 2026-06-11: FUN_00432b30
+    verbatim-ported. Hook twin (PromptStripTwin.cpp) bit-identical GREEN
+    264/264 (synthetic on-game-thread sweep, all 10 keys × b920-gate sides
+    × modes 0/1/2; jump tables re-derived from binary dwords at
+    0x433060/0x433088..178 — the diff caught 4 mistranscribed rows) →
+    C3 → C4 (subset-install canonical observe ×3, JMP-LIVE, organic
+    boot+Enter nav fires; re/analysis/standalone_menu_sm/
+    c4_promptstrip_20260611.md). Standalone port: PromptStripAppend in
+    MenuNavSM.cpp at the Nav() Phase-7 call sites (mode 0 push / mode 1
+    pop-reveal rel via the depth+1 popped slot / mode 2 reload appends
+    nothing), rows drawn in the exe_main record walk under the
+    bit-verified prim/sec type rule. Suppression REMOVED. Verified:
+    verify/f4_promptstrip_standalone_screen1.png ("Select", root push,
+    settled DEF row sec=0x42) + ..._screen8.png ("Select Back", key2 row
+    settled sec=0x43). Organic semantics pinned by probe: key = SHOWN
+    screen kind, rel = the OTHER side's kind, cmp = pushed screen id
+    (gate vs 0x16 hides the title-push glyph).
 F7. **Panel.piz** — RESOLVED-OUT 2026-06-10: the menu draw loop does NOT
     reference Panel.piz. The item plates are COLORED QUADS (the FUN_0043c5b0
     fill immediates, ported); Panel.piz contents (RACEPANEL/STARTLIGHTS/

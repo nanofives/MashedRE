@@ -557,6 +557,106 @@ void BuildRecords(const NavSlot& slot) {
     g_record_count = rec;
 }
 
+// --------------------------------------------------------------------------
+// FUN_00432b30 (0x00432b30) — footer prompt-strip row builder. VERBATIM port
+// of the C4-verified hook twin (Frontend/PromptStripTwin.cpp, diff GREEN
+// 264/264, re/analysis/standalone_menu_sm/c4_promptstrip_20260611.md).
+// Called once per nav op by FUN_0043d2a0 Phase 7 (call site 0x0043d79c) with
+// EAX=mode (0 push / 1 pop-reveal / 2 reload), key = the SHOWN screen's
+// 0xff080000 kind, cmp = pushed screen id (0 on pop). Inside, rel =
+// Add0(0xff080000, 0) = the kind of the screen on the OTHER side of the
+// transition (pre-commit depth slot on push; depth+1 popped slot on pop,
+// via the inc/dec window 0x00432b52..0x00432b6e). Mode 2 zeroes key
+// (0x00432b45) so reloads never append a row.
+// --------------------------------------------------------------------------
+
+// FUN_0042a9c0 ModeCodeLookup (C3, Frontend/BatchAA_s4.cpp, exe-built leaf).
+extern "C" std::uint32_t __cdecl ModeCodeLookup();
+
+namespace {
+
+// finisher codes (cell tails in FUN_00432b30's inner jump-table bodies)
+enum PromptFin { kPZero, kPFrozen, kPDefault };
+struct PromptCell { int prim; bool a9c0; bool dbl48; PromptFin fin; };
+constexpr PromptCell PC(int p, PromptFin f) { return PromptCell{p, false, false, f}; }
+constexpr PromptCell PCA(PromptFin f)       { return PromptCell{0, true, false, f}; }
+constexpr PromptCell PCD(PromptFin f)       { return PromptCell{0, false, true, f}; }
+constexpr PromptCell PFRZ()                 { return PromptCell{-1, false, false, kPFrozen}; }
+constexpr PromptCell PDEF()                 { return PromptCell{-1, false, false, kPDefault}; }
+
+struct PromptKindRow {
+    std::uint32_t tag;
+    int sec;           // -2 = ModeCodeLookup(); -3 = 0x48-then-0x13; -4 = 0x42 w/ b920 gate
+    PromptCell cells[10];
+};
+// Jump tables transcribed literally from MASHED.exe data: outer 10 dwords at
+// 0x433060, inner 10 each at 0x433088/b0/d8/100/128/150/178; every cell body
+// walked linearly in FUN_00432b30_full.asm (ebx=-1, ebp=0). Index = rel-1;
+// out-of-range = PDEF. Keys 3/7/9 dispatch straight to the epilogue (no row).
+const PromptKindRow kPromptRows[10] = {
+    /*key1 */ {0xff100000u, -4, {PFRZ(), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
+    /*key2 */ {0xff100000u, 0x43, {PC(0x42,kPZero), PFRZ(), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
+    /*key3 */ {0, 0, {PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF()}},
+    /*key4 */ {0xff100000u, 0x225, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PFRZ(), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
+    /*key5 */ {0xff100000u, -3, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PFRZ(), PDEF(), PC(0x133,kPZero)}},
+    /*key6 */ {0xff110000u, 0x58, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PFRZ(), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
+    /*key7 */ {0, 0, {PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF()}},
+    /*key8 */ {0xff230000u, -2, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PFRZ(), PDEF(), PCA(kPZero), PDEF(), PC(0x133,kPZero)}},
+    /*key9 */ {0, 0, {PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF(),PDEF()}},
+    /*key10*/ {0xff100000u, 0x133, {PC(0x42,kPZero), PC(0x43,kPZero), PDEF(), PC(0x225,kPZero), PCD(kPZero), PC(0x58,kPZero), PDEF(), PCA(kPZero), PDEF(), PFRZ()}},
+};
+
+// FUN_0042ad10 (0x0042ad10, C2 note frontend_c1_to_c2_s6) — prompt row init,
+// called with (0x40, 0x1ac, 0): tag, RGBA bytes 0xff at +0x0c..0x0f, scale
+// 0x3f19999a (0.6) at +0x14, x=(float)0x40 at +0x18, y=(float)0x1ac at +0x1c,
+// param_5=0 at +0x24.
+void PromptRowInit(MenuRecord& r, std::uint32_t tag) {
+    r.tag    = static_cast<std::int32_t>(tag);
+    r.color  = static_cast<std::int32_t>(0xffffffffu);
+    r.scale  = 0.6f;        // 0x3f19999a
+    r.x      = 64.0f;       // (float)0x40
+    r.y      = 428.0f;      // (float)0x1ac
+    r.flag24 = 0;
+}
+
+// rel normalization: -1 -> 0 (0x00432b62..66 / 0x00432b84..89).
+inline int PromptRelNormalize(int rel) { return (rel == -1) ? 0 : rel; }
+
+// The strip body proper (post-head; key already resolved, mode folded into
+// the rel the caller computed). Appends at the current record cursor.
+void PromptStripAppend(int key, int cmp, int rel) {
+    const unsigned k = static_cast<unsigned>(key) - 1u;
+    if (k > 9u) return;                            // ja 0x43305b
+    const PromptKindRow& row = kPromptRows[k];
+    if (row.tag == 0) return;                      // keys 3/7/9: no row
+    if (g_record_count >= kMaxRecords) return;     // standalone bounds guard
+    MenuRecord& r = g_records[g_record_count];
+    PromptRowInit(r, row.tag);
+    if (row.sec == -2)      r.sec_id = static_cast<std::int32_t>(ModeCodeLookup());
+    else if (row.sec == -3) { r.sec_id = 0x48; r.sec_id = 0x13; }
+    else if (row.sec == -4) {
+        r.sec_id = 0x42;                           // 0x432bbf
+        // FUN_0042b920 = ConstantGetter22 (C3): returns 0x16. Gate hides the
+        // back glyph when pushing the root/title screen (cmp == 22).
+        if (cmp == 0x16) r.sec_id = -1;
+    } else {
+        r.sec_id = row.sec;
+    }
+    const unsigned ri = static_cast<unsigned>(rel) - 1u;
+    const PromptCell cell = (ri > 9u) ? PDEF() : row.cells[ri];
+    if (cell.a9c0)        r.prim_id = static_cast<std::int32_t>(ModeCodeLookup());
+    else if (cell.dbl48)  { r.prim_id = 0x48; r.prim_id = 0x13; }
+    else                  r.prim_id = cell.prim;
+    switch (cell.fin) {
+        case kPZero:    r.type = 0;       r.slide = 0x1ff; break;
+        case kPFrozen:  r.type = 0x1000;  r.slide = 0x1ff; break;
+        case kPDefault: r.type = 1;       r.slide = 0;     break;
+    }
+    ++g_record_count;                              // ++(*rec_index)
+}
+
+} // namespace
+
 // FUN_004325c0 (0x004325c0) - Menu Slide Animation Tick. Walks every record
 // (stride 0xd ints; piVar6 = record+0x10) and advances its slide counter
 // (record+0x10) toward the settled state, keyed on the record tag (record+0x00)
@@ -737,8 +837,19 @@ void Nav(int screen_id, int dir) {
         s.cursor     = 0;                               // DAT_0067ed80 = 0
         s.item_count = CountItems(s.desc_table);        // DAT_0067edb4
         PlaceCursor(s);                                 // FUN_00432800 tail
+        // FUN_00432b30 mode-0 head (0x00432b70): rel = the kind of the screen
+        // being LEFT, looked up at the PRE-commit depth slot; depth==0 skips
+        // the lookup entirely (rel stays 0). -1 normalized (0x00432b84..89).
+        const int strip_rel = (g_nav_depth != 0)
+            ? PromptRelNormalize(KvLookup(g_stack[g_nav_depth].desc_table,
+                                          kTagPrompt, 0))
+            : 0;
         g_nav_depth = d;                                // commit push (Phase 7)
         BuildRecords(s);
+        // Phase 7 strip call (0x0043d79c): key = SHOWN screen kind, cmp =
+        // pushed screen id (probe_prompt_calls.json: push -> mode 0).
+        PromptStripAppend(KvLookup(s.desc_table, kTagPrompt, 0),
+                          screen_id, strip_rel);
     } else if (dir == kNavPop) {
         if (g_nav_depth < 1) return;                    // can't pop past root
         --g_nav_depth;                                  // DAT_0067e9f8 = depth-1
@@ -746,11 +857,21 @@ void Nav(int screen_id, int dir) {
         s.cursor = (s.saved_cursor >= 0) ? s.saved_cursor : 0;
         PlaceCursor(s);
         BuildRecords(s);
+        // FUN_00432b30 mode-1 head (pop-reveal, 0x00432b52..6e): rel = the
+        // POPPED screen's kind read through the depth+1 inc/dec window (the
+        // popped slot is still intact). key = revealed screen kind, cmp = 0
+        // (probe_prompt_calls.json: pop rows).
+        PromptStripAppend(KvLookup(s.desc_table, kTagPrompt, 0), 0,
+                          PromptRelNormalize(KvLookup(
+                              g_stack[g_nav_depth + 1].desc_table,
+                              kTagPrompt, 0)));
     } else { // kNavReload
         NavSlot& s = g_stack[g_nav_depth];
         s.item_count = CountItems(s.desc_table);
         PlaceCursor(s);
         BuildRecords(s);
+        // FUN_00432b30 mode-2 head zeroes key (0x00432b45) -> the key-1 bounds
+        // check (0x00432b8e..96) always early-returns: reloads append NO row.
     }
     g_last_dir = dir;                                   // DAT_0067e844
 }
