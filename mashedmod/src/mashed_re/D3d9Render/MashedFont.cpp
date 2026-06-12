@@ -3,6 +3,7 @@
 
 #include "MashedFont.h"
 
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 
@@ -13,6 +14,69 @@ namespace mashed_re {
 namespace D3d9Render {
 
 namespace {
+// Presentation-side atlas supersampling (NOT part of the RE'd render law).
+// The standalone draws the 33px glyph cell at ~42.5 device px (800x600) —
+// a ~1.3x bilinear MAGNIFICATION of the atlas, which reads soft (the
+// original at 640x480 samples ~1:1 and never shows this). Upscaling the
+// coverage map 2x with Catmull-Rom at load turns that into a ~0.65x
+// MINIFICATION: visibly crisper, mildly sharpened by the CR kernel's
+// negative lobes, with the render law (UVs, geometry, advances) unchanged.
+constexpr int kAtlasSS = 2;
+
+inline float CatmullRom(float t) {
+    t = t < 0 ? -t : t;
+    if (t <= 1.0f) return 1.5f * t * t * t - 2.5f * t * t + 1.0f;
+    if (t <  2.0f) return -0.5f * t * t * t + 2.5f * t * t - 4.0f * t + 2.0f;
+    return 0.0f;
+}
+
+// Separable Catmull-Rom resample of an 8bpp coverage map to (w*K, h*K).
+// Edge-clamped; result clamped 0..255 (CR overshoot = the sharpen).
+std::uint8_t* UpscaleCoverage(const std::uint8_t* src, int w, int h, int K) {
+    const int W = w * K, H = h * K;
+    std::uint8_t* tmp = static_cast<std::uint8_t*>(std::malloc(
+        static_cast<std::size_t>(W) * h));
+    std::uint8_t* dst = static_cast<std::uint8_t*>(std::malloc(
+        static_cast<std::size_t>(W) * H));
+    if (!tmp || !dst) { std::free(tmp); std::free(dst); return nullptr; }
+    auto clampi = [](int v, int lo, int hi) {
+        return v < lo ? lo : (v > hi ? hi : v);
+    };
+    // Horizontal pass.
+    for (int y = 0; y < h; ++y) {
+        const std::uint8_t* row = src + static_cast<std::size_t>(y) * w;
+        for (int X = 0; X < W; ++X) {
+            const float sx = (X + 0.5f) / K - 0.5f;
+            const int   ix = static_cast<int>(std::floor(sx));
+            float acc = 0.f;
+            for (int k = -1; k <= 2; ++k) {
+                acc += CatmullRom(sx - (ix + k)) *
+                       row[clampi(ix + k, 0, w - 1)];
+            }
+            const int v = static_cast<int>(acc + 0.5f);
+            tmp[static_cast<std::size_t>(y) * W + X] =
+                static_cast<std::uint8_t>(v < 0 ? 0 : (v > 255 ? 255 : v));
+        }
+    }
+    // Vertical pass.
+    for (int Y = 0; Y < H; ++Y) {
+        const float sy = (Y + 0.5f) / K - 0.5f;
+        const int   iy = static_cast<int>(std::floor(sy));
+        for (int X = 0; X < W; ++X) {
+            float acc = 0.f;
+            for (int k = -1; k <= 2; ++k) {
+                acc += CatmullRom(sy - (iy + k)) *
+                       tmp[static_cast<std::size_t>(clampi(iy + k, 0, h - 1)) * W + X];
+            }
+            const int v = static_cast<int>(acc + 0.5f);
+            dst[static_cast<std::size_t>(Y) * W + X] =
+                static_cast<std::uint8_t>(v < 0 ? 0 : (v > 255 ? 255 : v));
+        }
+    }
+    std::free(tmp);
+    return dst;
+}
+
 inline std::uint32_t RdU32(const std::uint8_t* p, std::size_t o) {
     std::uint32_t v; std::memcpy(&v, p + o, 4); return v;
 }
@@ -61,17 +125,24 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     if (pix_off + static_cast<std::size_t>(w) * h > txd_len) return false;
     const std::uint8_t* intensity = txd + pix_off;
 
-    // Expand to BGRA: white text, alpha = intensity (so it alpha-blends).
+    // Supersample the coverage map (see kAtlasSS), then expand to BGRA:
+    // white text, alpha = coverage (so it alpha-blends).
+    const std::uint32_t W = w * kAtlasSS, H = h * kAtlasSS;
+    std::uint8_t* cov = UpscaleCoverage(intensity,
+                                        static_cast<int>(w),
+                                        static_cast<int>(h), kAtlasSS);
+    if (!cov) return false;
     std::uint8_t* bgra = static_cast<std::uint8_t*>(
-        std::malloc(static_cast<std::size_t>(w) * h * 4));
-    if (!bgra) return false;
-    for (std::size_t i = 0; i < static_cast<std::size_t>(w) * h; ++i) {
+        std::malloc(static_cast<std::size_t>(W) * H * 4));
+    if (!bgra) { std::free(cov); return false; }
+    for (std::size_t i = 0; i < static_cast<std::size_t>(W) * H; ++i) {
         bgra[i * 4 + 0] = 255;            // B
         bgra[i * 4 + 1] = 255;            // G
         bgra[i * 4 + 2] = 255;            // R
-        bgra[i * 4 + 3] = intensity[i];   // A = coverage
+        bgra[i * 4 + 3] = cov[i];         // A = coverage
     }
-    const bool up = qr.UploadBGRAToSlot(slot, w, h, bgra);
+    std::free(cov);
+    const bool up = qr.UploadBGRAToSlot(slot, W, H, bgra);
     std::free(bgra);
     if (!up) return false;
     RwIm2DBridge_RegisterTexture(bridge_handle, qr.slot_texture(slot));

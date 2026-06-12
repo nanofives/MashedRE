@@ -115,6 +115,13 @@ record window with clean margins (E ink profile in-window:
   compensations for the 4-column atlas shift and are reverted.)
 - Bridge applies the D3D9 −0.5 pixel-center correction at submit (the real
   RW D3D9 driver's job; the Im2D vertex buffer carries edge coordinates).
+- **Presentation enhancement (NOT RE law)**: the atlas coverage map is
+  supersampled 2× with Catmull-Rom at load (`kAtlasSS`, MashedFont.cpp).
+  At 800×600 the cell renders at ~1.3× the atlas resolution — a bilinear
+  magnification that reads soft (the original at 640×480 samples ~1:1 and
+  never shows it). The 2× atlas turns that into ~0.65× minification:
+  visibly crisper, render law (UVs/geometry/advances) unchanged. User-
+  requested sharpening 2026-06-12.
 
 ## Capture instrument (original-side backbuffer)
 
