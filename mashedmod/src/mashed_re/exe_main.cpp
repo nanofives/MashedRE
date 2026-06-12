@@ -521,6 +521,13 @@ constexpr std::uint32_t kSlotMenuBadge   = 16;
 // clear of the preview range (10..33).
 constexpr int           kHandleMenuBadge = 34;
 bool             g_menu_badge_ready = false;
+// #17 (user review): the slider/toggle side arrows are the BADGES.TXD "Arrow"
+// sprite (16x16), NOT the '<'/'>' text glyphs the standalone was drawing. Loaded
+// from sfx.piz/BADGES.TXD alongside "Button"; left arrow = U-flipped, right =
+// normal (FUN_004368e0/sound-screen draw uses a 16x16 sprite at x=356/484).
+constexpr std::uint32_t kSlotMenuArrow   = 55;
+constexpr int           kHandleMenuArrow = 46;
+bool             g_menu_arrow_ready = false;
 
 // --- #25 Player Color Select (nav screen 4 = kT4, title id 0x130) ------------
 // RE map (pool0 decomp 2026-06-12): the screen-content body FUN_004368e0 draws
@@ -965,6 +972,11 @@ struct MenuSettings {
 };
 MenuSettings g_settings;
 constexpr char kSettingsPath[] = "mashed_re_settings.bin";
+// #16 (user review): the slider bar must move CONTINUOUSLY, not snap between the
+// 11 discrete 0..10 steps. Keep the faithful 0..10 model but animate the drawn
+// fill: g_sliderDisp lerps toward the target value each frame (music/sfx/insults/
+// gamma) so the orange bar slides smoothly.
+float g_sliderDisp[4] = { 8.f, 8.f, 8.f, 5.f };
 
 void SaveMenuSettings() {
     if (std::FILE* f = std::fopen(kSettingsPath, "wb")) {
@@ -1120,12 +1132,13 @@ bool UpdateMenuSelection() {
         const int sid = Nav_ScreenId();
         const int cur = Nav_Cursor();
         static int s_holdL = 0, s_holdR = 0;
-        // ramp: act on the first frame, then every 3rd frame after a ~9-frame
-        // initial hold (continuous feel without instant slam) — item 20.
+        // ramp: act on the first frame, then EVERY frame after a short initial
+        // hold so the value climbs continuously while held (#16) — paired with
+        // the lerped bar fill, the slider slides smoothly instead of stepping.
         auto ramp = [](int& hold, bool down) -> bool {
             if (!down) { hold = 0; return false; }
             const int h = hold++;
-            return h == 0 || (h >= 9 && ((h - 9) % 3 == 0));
+            return h == 0 || h >= 6;
         };
         if (sid == 19 && cur >= 0) {              // Sound
             if (cur == 3) {                       // insults tri-state: discrete
@@ -2199,15 +2212,33 @@ bool RenderFrame() {
                 } else if (sid == 32 && rec.row_index == 0) {
                     kind = kToggle;
                 }
-                if (kind != kNone && g_font.ready()) {
-                    // left arrow (all kinds) + right arrow (closer for toggles)
-                    DrawMashedString(L"\x3c", 356.0f * S + slideX, by, 16.0f * S,
-                                     0xff000000u, true);
+                if (kind != kNone) {
+                    // #17: real BADGES.TXD "Arrow" sprite (16x16), left U-flipped
+                    // / right normal — not the '<'/'>' text glyphs.
                     const float rax = (kind == kToggle ? 411.0f : 484.0f) * S;
-                    DrawMashedString(L"\x3e", rax + slideX, by, 16.0f * S,
-                                     0xff000000u, true);
+                    const float ay = by, asz = 16.0f * S;
+                    if (g_menu_arrow_ready) {
+                        std::uint32_t uvL[4] = { 0x3f800000u, 0u, 0u, 0x3f800000u }; // U flipped
+                        std::uint32_t uvR[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u }; // normal
+                        HudIm2DQuad(kHandleMenuArrow, 356.0f * S + slideX, ay, asz, asz,
+                                    0xffffffffu, uvL);
+                        HudIm2DQuad(kHandleMenuArrow, rax + slideX, ay, asz, asz,
+                                    0xffffffffu, uvR);
+                    } else if (g_font.ready()) {     // fallback: text glyphs
+                        DrawMashedString(L"\x3c", 356.0f * S + slideX, by, asz, 0xff000000u, true);
+                        DrawMashedString(L"\x3e", rax + slideX, by, asz, 0xff000000u, true);
+                    }
                 }
                 if (kind == kSlider) {
+                    // #16: lerp the drawn fill toward the target so the bar slides
+                    // continuously rather than snapping between the 10 steps.
+                    const int di = (sid == 30) ? 3 : rec.row_index;  // 0/1/2=mus/sfx/ins, 3=gamma
+                    float disp = static_cast<float>(value);
+                    if (di >= 0 && di < 4) {
+                        g_sliderDisp[di] += (disp - g_sliderDisp[di]) * 0.28f;
+                        if (std::fabs(disp - g_sliderDisp[di]) < 0.02f) g_sliderDisp[di] = disp;
+                        disp = g_sliderDisp[di];
+                    }
                     const float bx = 374.0f * S + slideX;
                     const float bw = 106.0f * S, bh = 16.0f * S, bt = 3.0f * S;
                     HudIm2DQuad(0, bx, by, bw, bh, 0x7f000000u, uv_full);      // bg
@@ -2216,7 +2247,7 @@ bool RenderFrame() {
                     HudIm2DQuad(0, bx, by, bt, bh, 0xff000000u, uv_full);      // left
                     HudIm2DQuad(0, bx + bw - bt, by, bt, bh, 0xff000000u, uv_full); // right
                     HudIm2DQuad(0, 377.0f * S + slideX, by + bt,
-                                (static_cast<float>(value) / 10.0f) * 100.0f * S,
+                                (disp / 10.0f) * 100.0f * S,
                                 10.0f * S, 0xffd88020u, uv_full);              // fill
                 } else if (kind == kTriText && g_font.ready()) {
                     static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
@@ -2816,6 +2847,19 @@ bool LoadBadgeSprites() {
             }
             break;
         }
+    }
+    // #17: also upload the "Arrow" sprite (slider/toggle side arrows).
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (std::strcmp(tex.name, "Arrow") != 0) continue;
+        if (g_quad_renderer.UploadFromTextureToSlot(kSlotMenuArrow, tex)) {
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kHandleMenuArrow, g_quad_renderer.slot_texture(kSlotMenuArrow));
+            g_menu_arrow_ready = true;
+        }
+        if (log) std::fprintf(log, "R2-5: badges.txd 'Arrow' %ux%u upload %s\n",
+                              tex.width(), tex.height(), g_menu_arrow_ready ? "OK" : "FAILED");
+        break;
     }
     if (log) std::fclose(log);
     return ok;
