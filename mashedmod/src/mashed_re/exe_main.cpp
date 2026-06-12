@@ -1814,10 +1814,15 @@ bool RenderFrame() {
                 // Drop shadow (LAB_0043d185: FUN_00428140 at +_DAT_005cc31c=3.0f,
                 // color 0xff000000) then the base color.
                 const float sh = 3.0f * kVScale;
+                // Item 10 (user review): the record y is the row's CENTER line -
+                // the bit-verified plate spans rec.y-12 .. rec.y+14 (center y+1).
+                // Anchor the glyph cell centered on the plate center instead of
+                // top-anchored at rec.y (which overflowed below the plate).
+                const float ty = (rec.y + 1.0f) * kVScale - text_h * 0.5f;
                 if (!highlighted) {
-                    DrawMashedString(txt, lx + sh, ry + sh, text_h, 0xff000000u, true);
+                    DrawMashedString(txt, lx + sh, ty + sh, text_h, 0xff000000u, true);
                 }
-                DrawMashedString(txt, lx, ry, text_h, base_argb, true);
+                DrawMashedString(txt, lx, ty, text_h, base_argb, true);
             } else if (rec.row_index >= 0 && rec.row_index < 8 &&
                        g_menu_items[rec.row_index].ready) {
                 const MenuItemTex& it = g_menu_items[rec.row_index];

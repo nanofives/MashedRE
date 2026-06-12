@@ -57,7 +57,7 @@ alpha, call sites) is wrong.
 | 7 | checkers not animated | FUN_00473ee0 checker pass (above) | LANDED cde0ee52: layer runs every frame per ShellB; animated checkers visible (verify/dbg_backbuffer.png) |
 | 8 | no boot "Load Successful" modal | save-load boot flow + modal screens (descriptor tables; orig_gts.png shows the modal) | locate the modal screen table + draw path |
 | 9 | font pixelated/wrong | RtCharset pipe (FUN_00554390 family) — text does NOT go through the quad scratch | capture text vertex stream (separate device-draw vert buffer) + RE RtCharsetPrint scaling/filtering |
-| 10 | buttons not centered with text | plate vs text x in FUN_0043c5b0 (we have the bit-verified twin) — re-check our walk's text anchor | port-side audit vs twin |
+| 10 | buttons not centered with text | record y = row CENTER line (bit-verified plate spans rec.y-12..+14) | LANDED: glyph cell now centered on the plate center (was top-anchored at rec.y, overflowing below) |
 | 11 | back indicator on main menu | back-row visibility rule in FUN_0043d2a0 (type/slide init) + draw gating | RE the exact gate (screen-kind? depth?) |
 | 12 | select-arrow texture missing | footer strip glyphs = FGDC20 ext glyphs 0x80..0x8f via FUN_004277a0 remap | verify our ext-table decode draws the arrow glyph; compare RtCharset output |
 | 13 | black semi-circle (button cap) | TextSpriteScaled 0x004739f0 'Button' sprite, color ffb45010 (dump draw 88) | port audit: badge texture content + modulate color |
