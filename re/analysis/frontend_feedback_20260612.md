@@ -50,7 +50,7 @@ alpha, call sites) is wrong.
 |---|---|---|---|
 | 1 | out-of-focus freeze | PumpOnce() WaitMessage() park when !g_active | LANDED: replaced the blocking WaitMessage park with Sleep(15) so the render loop keeps running unfocused; verified frame 200 reached while the game window was unfocused |
 | 2 | loading screen: spinning disk + text | FUN_00403050 (sprite DAT_00771964 at 320,200,480,240 + FUN_00402fb0 body) | decomp FUN_00402fb0 next; port |
-| 3 | "Press button to start" flashing | separate title handler (NOT FUN_0043c5b0 - title phase 1 only calls FUN_0042aae0); text via FUN_00554940 glyph pipe | ROUTE PINNED: confirmed drawn at title (live probe text='Press button to start'); print path = FUN_00428140->FUN_00554940 vtable+0x138; next: find the title-screen handler + flash timer |
+| 3 | "Press button to start" flashing | FUN_00402fb0 (string id 0x2a4, called by FUN_00403050) | LANDED verbatim: alpha = 128 + 127*sin(phase), phase += 0.1/frame (amp -127.0 @0x005cc570, step @0x005cc56c); black shadow (320,380) + white main (316,376) scale 1.2 centered; verify/frontend_parity2/re_title_pressbutton.png |
 | 4 | attract/demo race on title idle | title idle timer → demo launch | find the timer global + transition in the title handler |
 | 5 | logo misplaced | FUN_00428760 sprite pipe (emitter 0x450c7a, titleframe dump) | LANDED: ONE static quad at virtual (80,80,480x240) full-white; standalone fixed from the invented 768px/96% placement; draw order corrected (previews before logo) |
 | 6 | band opacity (start semi-transparent, gradient) | TextGradientV0V1/V2V3 (0x00472f40/0x004730b0) args from chrome; band alpha may be phase-driven | RE ShellA/ShellB band alpha inputs; verify dump colors ff→a0 vs title state |

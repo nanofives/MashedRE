@@ -1568,6 +1568,27 @@ bool RenderFrame() {
         const float lx = 80.f * 1.25f;
         const float ly = 80.f * 1.25f;
         HudIm2DQuad(kHandleMenuLogo, lx, ly, lw, lh, 0xffffffffu, uv_full);
+
+        // Item 3 (user review): pulsing "Press button to start" — VERBATIM port
+        // of FUN_00402fb0 (pool0 decomp 2026-06-12). alpha = 0x80 - (int)(sin
+        // (phase) * -127.0) = 128 + 127*sin(phase); phase += 0.1/frame
+        // (_DAT_005cc56c). Two centered draws (flag 2): black shadow at
+        // (320,380) then white main at (316,376), scale 1.2 (string id 0x2a4).
+        if (g_font.ready()) {
+            static float s_pb_phase = 0.0f;
+            const float a = 128.0f + 127.0f * std::sin(s_pb_phase);
+            s_pb_phase += 0.1f;
+            const std::uint32_t alpha =
+                static_cast<std::uint32_t>(a < 0 ? 0 : (a > 255 ? 255 : a)) << 24;
+            wchar_t pb[48];
+            if (GetMenuMessage(0x2a4, pb, 48) > 0) {
+                const float th = 1.2f * 0.0708f * 480.f * 1.25f;  // scale 1.2 cell
+                DrawMashedString(pb, 320.f * 1.25f, 380.f * 1.25f, th,
+                                 alpha /*black shadow*/, false);
+                DrawMashedString(pb, 316.f * 1.25f, 376.f * 1.25f, th,
+                                 alpha | 0xffffffu /*white*/, false);
+            }
+        }
     }
 
     // Chrome layer — FUN_00473ee0 called per frame by MenuChromeShellB
