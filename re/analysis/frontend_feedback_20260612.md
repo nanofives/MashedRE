@@ -49,7 +49,7 @@ alpha, call sites) is wrong.
 | # | Feedback item | Owning function(s) | Status / route |
 |---|---|---|---|
 | 1 | out-of-focus freeze | PumpOnce() WaitMessage() park when !g_active | LANDED: replaced the blocking WaitMessage park with Sleep(15) so the render loop keeps running unfocused; verified frame 200 reached while the game window was unfocused |
-| 2 | loading screen: spinning disk + text | FUN_00403050 (sprite DAT_00771964 at 320,200,480,240 + FUN_00402fb0 body) | decomp FUN_00402fb0 next; port |
+| 2 | loading screen: spinning disk + text | FINDING (pool0): FUN_00403050 draws DAT_00771964 = the 'MashedNEWLogo' TEXTURE at (320,200,480,240) + the pulsing press-button (#3) -> this is the TITLE/attract screen, NOT a spinning disk. The boot splash (FUN_004283a0) cycles proLogicII/DolbyDig logos. A 'spinning disk' element is NOT located in this path - needs user clarification on WHICH loading moment (boot splash? inter-race load?) before porting (no-invent) |
 | 3 | "Press button to start" flashing | FUN_00402fb0 (string id 0x2a4, called by FUN_00403050) | LANDED verbatim: alpha = 128 + 127*sin(phase), phase += 0.1/frame (amp -127.0 @0x005cc570, step @0x005cc56c); black shadow (320,380) + white main (316,376) scale 1.2 centered; verify/frontend_parity2/re_title_pressbutton.png |
 | 4 | attract/demo race on title idle | title idle timer → demo launch | find the timer global + transition in the title handler |
 | 5 | logo misplaced | FUN_00428760 sprite pipe (emitter 0x450c7a, titleframe dump) | LANDED: ONE static quad at virtual (80,80,480x240) full-white; standalone fixed from the invented 768px/96% placement; draw order corrected (previews before logo) |
