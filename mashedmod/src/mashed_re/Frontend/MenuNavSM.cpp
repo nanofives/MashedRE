@@ -818,13 +818,21 @@ bool Anim_Tick() {
 // Public API
 // --------------------------------------------------------------------------
 
+// Frontend main-menu root screen. ROOT-CAUSE FIX (user review #12, 2026-06-12):
+// screen 0 (kT0) is the IN-RACE PAUSE menu ("Powerup Status Select": Continue/
+// Options/Restart Race/Quit Race/Quit Game) — FUN_0043d2a0(0,2) ENTERS A RACE.
+// The real frontend MAIN MENU is screen 1 (kT1: Single Player/Multi Player/
+// Options, title 0x43 "Game Type Select"); FUN_0043d7c0 returns to it via
+// FUN_0043d2a0(1,0). Rooting the frontend nav at 0 made "back" reveal the pause
+// menu and ESC quit. The frontend-only standalone must root at the main menu.
+static constexpr int kMainMenuScreen = 1;
+
 void Nav_Init() {
     g_nav_depth = 0;
     std::memset(g_stack, 0, sizeof(g_stack));
-    // FUN_0043df00 enters the frontend via FUN_0043d2a0(0, 2) (reload screen 0).
     NavSlot& s = g_stack[0];
-    s.screen_id  = 0;
-    s.desc_table = TableForScreen(0);
+    s.screen_id  = kMainMenuScreen;
+    s.desc_table = TableForScreen(kMainMenuScreen);
     s.slide_src  = s.desc_table;
     s.cursor     = 0;
     s.item_count = CountItems(s.desc_table);

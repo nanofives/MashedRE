@@ -1002,6 +1002,11 @@ void AdjustSoundSetting(int row, int dir) {
 bool UpdateMenuSelection() {
     using namespace mashed_re::Frontend;
     if (!g_kbd) return false;
+    // #1 (user review): DirectInput is DISCL_BACKGROUND|NONEXCLUSIVE, so g_kbd
+    // reads GLOBAL key state even when our window isn't focused — meaning keys
+    // pressed in another app were driving the menu. Gate all input on window
+    // focus (g_active, set by WM_ACTIVATE); the nav-demo driver bypasses this.
+    if (!g_active && !g_nav_demo) return false;
     const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
     const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
     const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
@@ -1031,8 +1036,13 @@ bool UpdateMenuSelection() {
     // push the nav demo driver replicates at phase 180).
     if (g_frontend_phase < 2) {
         if (ent_now && !ent_prev) {
+            // #12 (user review): the frontend nav is ALREADY rooted at the real
+            // main menu (screen 1 = kT1 "Game Type Select": Single Player/Multi
+            // Player/Options) by Nav_Init — see the root-cause note there. The
+            // old code pushed screen 1 ONTO screen 0 (the in-race PAUSE menu
+            // kT0: Continue/Restart/Quit), so backing out of any submenu
+            // revealed the pause menu. Just reveal the menu; do NOT push.
             g_frontend_phase = 3;
-            Nav(1, kNavPush);
         }
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
@@ -1064,7 +1074,11 @@ bool UpdateMenuSelection() {
     }
     if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
     if (esc_now  && !esc_prev) {
-        if (!Nav_Back()) return true;                   // at root -> quit
+        // #10 (user review): ESC at the main-menu ROOT must NOT quit the game.
+        // In a submenu it pops one level; at the top (main menu) it returns to
+        // the title/attract phase (the original goes back to the title loop, not
+        // PostQuitMessage). Quitting only happens from the title (above).
+        if (!Nav_Back()) { g_frontend_phase = 1; g_splash_start_ms = 0; return false; }
     }
     // Sound screen (19): LEFT/RIGHT adjusts the highlighted value (persisted).
     // Item 20 (user review): the volume sliders ramp CONTINUOUSLY while a key
@@ -3708,6 +3722,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     while (*tok && *tok != ',') ++tok;
                     if (*tok == ',') ++tok;
                 }
+            }
+            // Capture aid: MASHED_DBG_MENU=1 jumps straight to the menu ROOT
+            // (phase 3) with NO push — shows the true nav root (now the main
+            // menu, screen 1) for verifying the #12 root-cause fix.
+            else if (GetEnvironmentVariableA("MASHED_DBG_MENU", nullptr, 0) != 0) {
+                g_frontend_phase = 3;
             }
             // Capture aid: MASHED_DBG_MODAL=1 force-shows the Load-Successful
             // confirm dialog (#8) at boot for verification.
