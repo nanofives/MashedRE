@@ -2610,6 +2610,21 @@ int GetMenuMessage(int id, wchar_t* out, int cap) {
     for (int i = 0; i < len && n < cap - 1; ++i) {
         std::uint16_t ch;
         std::memcpy(&ch, g_msg_dat + off + 2 + i * 2, 2);
+        // Item 12 fix: apply the FUN_004277a0 control-code -> FGDC20 nav-glyph
+        // remap (verbatim, pool0 decomp 2026-06-12). USA.DAT prompt strings
+        // embed control chars 8..0xe that the original rewrites to the extended
+        // glyph slots before drawing; without this the nav arrow (8/0xa -> 0x81)
+        // and friends rendered as missing/blank (the "select-arrow missing").
+        switch (ch) {
+            case 0x08: ch = 0x81; break;  // nav arrow
+            case 0x09: ch = 0x7f; break;
+            case 0x0a: ch = 0x81; break;  // nav arrow
+            case 0x0b: ch = 0x8d; break;
+            case 0x0c: ch = 0x80; break;
+            case 0x0d: ch = 0x87; break;
+            case 0x0e: ch = 0x8f; break;
+            default: break;
+        }
         out[n++] = static_cast<wchar_t>(ch);
     }
     out[n] = 0;
