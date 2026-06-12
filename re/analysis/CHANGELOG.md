@@ -3385,3 +3385,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  004736c0  BorderQuadFourAlpha  C2->C3  frida-sweep-20260612-1932: Frida 10/10 GREEN non-trivial; U-5706/U-5707/U-5708 RESOLVED via rwplcore.h RwGlobals.dOpenDevice cross-ref (CLAUDE.md-sanctioned RW headers)
 2026-06-12  00401ee0  EntityTableSelectUpdate  C2->C3  frida-sweep-20260612-1932: Frida 4/4 GREEN non-trivial; U-4199 RESOLVED (FUN_004e6680 = RpClumpRender)
 2026-06-12  0043aee0  MenuSlotFlagSetCurrent  C3->C3  frida-sweep-20260612-1932 re-verified 7/7 GREEN; no status change
+2026-06-12  frida-sweep-20260612-1932  frida-sweep-release  branches=0 merged (2 STALE queue rows drained; content pre-existing on main)  integration-diff=GREEN  hooks=4 (3 C2->C3 + 1 re-verified)
