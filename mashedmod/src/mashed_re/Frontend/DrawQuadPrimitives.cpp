@@ -580,13 +580,32 @@ int g_logo_fade_cur    = 0;      // DAT_0086eccc
 //          READ-only refs, no writers); cell w=21(0x005ce9e0), corner pins
 //          (pass0,row2 -> 64; pass1,row0 -> 416); colors: gray 0xff808080,
 //          V0/V2 transparent on col 0 of even rows; same render states.
+// Diff-harness helper: align the port's internal fade pair with the
+// original's globals (DAT_0086ecc8 target / DAT_0086eccc current) before an
+// A/B sample (re/frida/logo_overlay_diff.py).
+extern "C" __declspec(dllexport) void __cdecl LogoOverlayFadeSet(int target,
+                                                                 int cur) {
+    g_logo_fade_target = target;
+    g_logo_fade_cur = cur;
+}
+
 extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
-    float slide_x, float wave_t, float vscale_x, float vscale_y)
+    float slide_x, float wave_t, float screen_w, float screen_h)
 {
+    // EXACT coordinate chain (diff-original finding 2026-06-10, 1-ULP RED):
+    // the original scales as (float(dim) * coord) * recip with the .rdata
+    // reciprocals 1/640 @0x005cd5a8 (0x3acccccd) and 1/480 @0x005cc560
+    // (0x3b088889) — FUN_004733b0 0x004733c0..0x004733e6. Folding the scale
+    // as coord*(dim/640) diverges by 1 ULP (e.g. 416 -> 0x43d00001).
+    static const std::uint32_t kRXBits = 0x3acccccdu;
+    static const std::uint32_t kRYBits = 0x3b088889u;
+    const float kRecipX = *reinterpret_cast<const float*>(&kRXBits);
+    const float kRecipY = *reinterpret_cast<const float*>(&kRYBits);
+    auto sx = [&](float v) { return (screen_w * v) * kRecipX; };
+    auto sy = [&](float v) { return (screen_h * v) * kRecipY; };
     auto gq_v = [&](float x, float y, float w, float h,
                     std::uint32_t c1, std::uint32_t c2) {
-        LogoGradientQuadPx(x * vscale_x, y * vscale_y,
-                           w * vscale_x, h * vscale_y, c1, c2, false);
+        LogoGradientQuadPx(sx(x), sy(y), sx(w), sy(h), c1, c2, false);
     };
     // FUN_00473ee0 top/bottom fade bands (black -> transparent).
     const float band_x = slide_x - 128.0f;          // param_3 - _DAT_005cc9d0
@@ -601,7 +620,12 @@ extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
     }
 
     // Circular-arc column strips (0x00473fbd..0x004740cb).
-    constexpr float kColPitch = 2.84443f;           // 0x005ceacc = 0x40360b61
+    // bit-exact .rdata constants (1-ULP diff finding): 0x005ceacc pitch,
+    // 0x42088889 strip height (the 34.1333f literal rounds to ...880).
+    static const std::uint32_t kPitchBits  = 0x40360b61u;
+    static const std::uint32_t kStripHBits = 0x42088889u;
+    const float kColPitch = *reinterpret_cast<const float*>(&kPitchBits);
+    const float kStripH   = *reinterpret_cast<const float*>(&kStripHBits);
     int s  = 0x5a;
     int yi = 0;
     do {
@@ -612,19 +636,35 @@ extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
         const float y = static_cast<float>(yi) * kColPitch;
         const std::uint32_t c1 =
             (static_cast<std::uint32_t>(alpha) << 24) | 0x00ffffffu;
-        LogoGradientQuadPx(x * vscale_x, y * vscale_y,
-                           128.0f * vscale_x, 34.1333f * vscale_y,
+        LogoGradientQuadPx(sx(x), sy(y), sx(128.0f), sy(kStripH),
                            c1, 0u, true);           // FUN_00473220 #1
         const int a2 = static_cast<int>(static_cast<float>(alpha) * 1.25f);
         const std::uint32_t c2 =
             (static_cast<std::uint32_t>(a2) << 24) | 0x00ffffffu;
-        LogoGradientQuadPx(0.0f, y * vscale_y,
-                           x * vscale_x, 34.1333f * vscale_y,
+        LogoGradientQuadPx(0.0f, sy(y), sx(x), sy(kStripH),
                            c2, c1, true);           // FUN_00473220 #2
         s  -= 0xc;
         yi += 0xc;
     } while (s > -0x5a);
 
+    // x87 fsin — bit-identical to the original's FSIN (std::sin on SSE2
+    // differs by 1 ULP on ~8% of inputs; live diff finding 2026-06-10).
+    struct X87 {
+        // full 80-bit chain fsin -> *amp -> +base -> fstp float (single
+        // rounding, exactly the original's FPU sequence; double-rounding
+        // through a 64-bit intermediate still left 1-ULP REDs).
+        static float SinMulAdd(double term, double amp, float base) {
+            float r;
+            __asm { fld term
+                    fsin
+                    fld amp
+                    fmulp st(1), st(0)
+                    fld base
+                    faddp st(1), st(0)
+                    fstp r }
+            return r;
+        }
+    };
     // Wavy grid (0x004740d0.. tail of FUN_00473ee0).
     const float ph = wave_t + wave_t;               // _DAT_007f1010 * 2
     const std::uint32_t z = rw_z_field();
@@ -635,10 +675,26 @@ extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
                     (row & 1) * 0x15 + (col * 5 + 0x2d) * 8);
                 const float yb = static_cast<float>(row * 0x15) +
                                  (pass != 0 ? 416.0f : 0.0f);
-                float y0 = 2.0f * std::sin(static_cast<float>(col + row * 2) + ph) + yb;
-                float y1 = 2.0f * std::sin(static_cast<float>(col + 1 + row * 2) + ph) + yb;
-                float y2 = 2.0f * std::sin(static_cast<float>(col + 2 + row * 2) + ph) + (yb + 21.0f);
-                float y3 = 2.0f * std::sin(static_cast<float>(col + 3 + row * 2) + ph) + (yb + 21.0f);
+                // per-corner sine s_k; y amp 2.0, x amp 4.0 (the QWORD at
+                // 0x005ce1f8 = 4.0 — earlier "0.0" was an f32 misread of the
+                // double's low half; found live by the draw-sequence diff).
+                const double t0 = static_cast<double>(col + row * 2) + ph;
+                const double t1 = static_cast<double>(col + 1 + row * 2) + ph;
+                const double t2 = static_cast<double>(col + 2 + row * 2) + ph;
+                const double t3 = static_cast<double>(col + 3 + row * 2) + ph;
+                float y0 = X87::SinMulAdd(t0, 2.0, yb);
+                float y1 = X87::SinMulAdd(t1, 2.0, yb);
+                float y2 = X87::SinMulAdd(t2, 2.0, yb + 21.0f);
+                float y3 = X87::SinMulAdd(t3, 2.0, yb + 21.0f);
+                // x-wave phase = col + ROW (not 2*row; live diff finding,
+                // rows 0+1): corners use offsets {0,1,1,2} on that phase.
+                const double u0 = static_cast<double>(col + row) + ph;
+                const double u1 = static_cast<double>(col + row + 1) + ph;
+                const double u2 = static_cast<double>(col + row + 2) + ph;
+                float x0 = X87::SinMulAdd(u0, 4.0, xb);
+                float x1 = X87::SinMulAdd(u1, 4.0, xb + 21.0f);
+                float x2 = X87::SinMulAdd(u1, 4.0, xb);
+                float x3 = X87::SinMulAdd(u2, 4.0, xb + 21.0f);
                 if (pass == 0) {
                     if (row == 2) { y3 = 64.0f; y2 = 64.0f; }
                 } else if (row == 0) {
@@ -646,11 +702,10 @@ extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
                 }
                 std::uint32_t c0 = 0xff808080u;
                 if (col == 0 && (row & 1) == 0) c0 = 0;
-                // x-sine term: amplitude _DAT_005ce1f8 = 0.0f -> xb / xb+21.
-                write_vert_xy(kV0, xb * vscale_x,           y0 * vscale_y);
-                write_vert_xy(kV1, (xb + 21.0f) * vscale_x, y1 * vscale_y);
-                write_vert_xy(kV2, xb * vscale_x,           y2 * vscale_y);
-                write_vert_xy(kV3, (xb + 21.0f) * vscale_x, y3 * vscale_y);
+                write_vert_xy(kV0, sx(x0), sy(y0));
+                write_vert_xy(kV1, sx(x1), sy(y1));
+                write_vert_xy(kV2, sx(x2), sy(y2));
+                write_vert_xy(kV3, sx(x3), sy(y3));
                 const std::uint32_t sc0 = color_swap_argb_to_abgr(c0);
                 write_vert_zwc(kV0, z, sc0);
                 write_vert_zwc(kV2, z, sc0);

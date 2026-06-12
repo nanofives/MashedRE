@@ -1454,7 +1454,7 @@ bool RenderFrame() {
             if (s_t0 == 0) s_t0 = now;
             const float wave_t =
                 static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
-            LogoOverlayDraw(512.0f, wave_t, 800.0f / 640.0f, 600.0f / 480.0f);
+            LogoOverlayDraw(512.0f, wave_t, 800.0f, 600.0f);
         }
     }
 

@@ -169,6 +169,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "dll_main.cpp" ^
     "Core\HookSystem.cpp" ^
     "Frontend\MenuAnimTickTwin.cpp" ^
+    "Frontend\LogoOverlayTwin.cpp" ^
     "Math\Vec3.cpp" ^
     "Math\RwSqrt.cpp" ^
     "GameState\StateAccessors.cpp" ^
