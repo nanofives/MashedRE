@@ -54,15 +54,15 @@ alpha, call sites) is wrong.
 | 4 | attract/demo race on title idle | title idle timer → demo launch | find the timer global + transition in the title handler |
 | 5 | logo misplaced | FUN_00473c20 call args from ShellB (0x0042e5b0) | decomp ShellB; extract the logo quad args + which texture handle |
 | 6 | band opacity (start semi-transparent, gradient) | TextGradientV0V1/V2V3 (0x00472f40/0x004730b0) args from chrome; band alpha may be phase-driven | RE ShellA/ShellB band alpha inputs; verify dump colors ff→a0 vs title state |
-| 7 | checkers not animated | FUN_00473ee0 checker pass (above) | re-wire the existing bit-identical port: untextured, fade-driven, live wave_t |
+| 7 | checkers not animated | FUN_00473ee0 checker pass (above) | LANDED cde0ee52: layer runs every frame per ShellB; animated checkers visible (verify/dbg_backbuffer.png) |
 | 8 | no boot "Load Successful" modal | save-load boot flow + modal screens (descriptor tables; orig_gts.png shows the modal) | locate the modal screen table + draw path |
 | 9 | font pixelated/wrong | RtCharset pipe (FUN_00554390 family) — text does NOT go through the quad scratch | capture text vertex stream (separate device-draw vert buffer) + RE RtCharsetPrint scaling/filtering |
 | 10 | buttons not centered with text | plate vs text x in FUN_0043c5b0 (we have the bit-verified twin) — re-check our walk's text anchor | port-side audit vs twin |
 | 11 | back indicator on main menu | back-row visibility rule in FUN_0043d2a0 (type/slide init) + draw gating | RE the exact gate (screen-kind? depth?) |
 | 12 | select-arrow texture missing | footer strip glyphs = FGDC20 ext glyphs 0x80..0x8f via FUN_004277a0 remap | verify our ext-table decode draws the arrow glyph; compare RtCharset output |
 | 13 | black semi-circle (button cap) | TextSpriteScaled 0x004739f0 'Button' sprite, color ffb45010 (dump draw 88) | port audit: badge texture content + modulate color |
-| 14 | video not blending | FUN_00473c20 SRCALPHA + UV subregion + ShellB alpha arg; plus the wash overlay (#above) | port the composer stack faithfully |
-| 15 | screen-transition fades wrong | the arc-wash strips (FUN_00473ee0 part 3) + dim path (0x8990e4) + fade pair | wire fade pair + strips into standalone transitions |
+| 14 | video not blending | FUN_00473c20 + FUN_00474890 (preview crossfade) | PARTIAL cde0ee52: two-quad corner-faded preview form landed; residual = UV-pan modes 1..5 (need preview atlas layout) |
+| 15 | screen-transition fades wrong | arc-wash strips + slide DAT_008990e0 + fade pair DAT_0086ecc8/cc | PARTIAL cde0ee52: slide law + fade wired [SCAFFOLD: writers pending xref of 0x008990e0/0x0086ecc8] |
 | 16 | top/bottom text animations wrong | header/footer rows' slide/type anim (FUN_004325c0 classes) | port-side audit of row classes vs the verified tick |
 | 17 | menu text always black | record color semantics + FGDC20 glyph fill vs outline | inspect atlas glyphs; check the original's color modulate on text |
 | 18 | unselectable = transparent black | grey-out path: FUN_0042aad0 (per-row grey/alpha engine, EAX-arg) | RE 0042aad0's color writes (we have its diff behavior) |
@@ -87,3 +87,7 @@ Wave 4 (flow): boot modal, back-row gating, grey-out engine, enables
 (8, 11, 18, 19, 24).
 Wave 5 (features): loading screen (2), attract demo (4), focus behavior (1),
 player color select (25).
+
+## Verification note (2026-06-12)
+
+Window screenshots of the standalone are UNTRUSTWORTHY on this machine (multi-monitor Present issue renders agent-spawned windows white while the backbuffer is correct). Use MASHED_DBG_BBDUMP=1 (dumps verify/dbg_backbuffer.bmp at frame ~200) as the truth channel for all standalone visual verification.
