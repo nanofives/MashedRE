@@ -99,14 +99,15 @@ F2. **Menu item plates/chrome** — SUBSTANTIALLY CLOSED 2026-06-10: per-row
     [residuals: list-screen 166-width metrics + 0.578 scale nuance,
     secondary right-column ids, the FUN_00432b30 prompt strip, and the
     hook-side FUN_0043c5b0 twin + diff-original promotion]
-F3. **Animated logo** — SUBSTANTIALLY CLOSED 2026-06-10: the title was
-    drawing the WRONG ASSET (grey MASHEDLOGO.PNG); the original's rainbow
-    logo is **MASHEDNEWLOGO.PNG** (Font36.piz). Standalone now draws it at
-    the burst-measured proportions (~96% width) over the video + the
-    verbatim FUN_00473ee0 overlay (LogoOverlayDraw — already ported:
-    fade bands, arc strips, wavy grid). parity2_title_v2.png: near-match.
-    Residual: the original's wave grid DEFORMS the logo texture itself
-    (ours overlays it); burst frame-by-frame diff pending.
+F3. **Animated logo** — ✅ CLOSED + PROMOTED 2026-06-10: BIT-IDENTICAL to
+    the original (nav-driven draw-sequence diff GREEN 20/20, 74 Im2D draws
+    per frame byte-compared; FUN_00473ee0 C2→C3). The diff surfaced a
+    MISSING ANIMATION TERM — the x-sine wave (amp = f64 4.0 @0x005ce1f8,
+    phase col+row, corner offsets {0,1,1,2}) — plus the reciprocal scale
+    chain, bit-exact strip constants, and the x87 single-rounding sin
+    chain; all ported. Title also uses the right asset (MASHEDNEWLOGO.PNG)
+    at burst proportions. Bit-identity supersedes the planned frame-by-
+    frame pixel validation.
 F4. **Footer strings** — ROOT-CAUSED + suppressed 2026-06-10: the
     0xff080000 descriptor value is a screen-KIND code for FUN_00432b30's
     glyph branch table, not a USA.DAT string id — decoding it as a string
