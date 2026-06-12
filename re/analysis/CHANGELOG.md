@@ -3379,3 +3379,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-10  0043c5b0  (frontend twin)  C3->C4  subset-install canonical observe 30s, 3/3 installed, natural per-frame fire
 2026-06-11  00432b30  MenuPromptStrip  C2->C3  synthetic on-game-thread A/B sweep GREEN 264/264 (menu_prompt_diff.py; all keys x gate sides x modes 0/1/2, fired=168); 2 U-markers resolved in-note
 2026-06-11  00432b30  MenuPromptStrip  C3->C4  subset-install canonical observe x3 (50/30/40s), JMP-LIVE, organic boot+Enter nav fires through live JMP, title renders (verify/c4_promptstrip_installed_menu.png)
+
+2026-06-12  frida-sweep-20260612-1932  frida-sweep-claim  branches=2 queued (c3_batch_af s1+s4 STALE: content already on main; evidence-verify + integration-diff + central re-classify only)
