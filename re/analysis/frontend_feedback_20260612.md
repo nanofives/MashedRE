@@ -91,3 +91,9 @@ player color select (25).
 ## Verification note (2026-06-12)
 
 Window screenshots of the standalone are UNTRUSTWORTHY on this machine (multi-monitor Present issue renders agent-spawned windows white while the backbuffer is correct). Use MASHED_DBG_BBDUMP=1 (dumps verify/dbg_backbuffer.bmp at frame ~200) as the truth channel for all standalone visual verification.
+
+## Offline-RE findings (2026-06-12, MCP down — via re/tools/disasm_fn.py)
+
+- **#2 boot splash**: DAT_00771964 is only ever set to MashedNEWLogo (FUN_004283a0) or 0 (teardown 0x00428400). FUN_00403050 draws it + the pulsing press-button (FUN_00402fb0). The Dolby/ProLogic logos (DAT_0067d968/0067d96c) are drawn by separate readers (0x00428c9b / 0x00428ec2) — the splash is a multi-function boot sequence, not a single drawer. Port needs those two drawers + the boot state pump.
+- **#2/#4 title+attract timer = FUN_004030d0**: accumulates DAT_00636ae8 += DAT_007f1004 (frame_dt) each frame; when it exceeds DAT_00636aec it either resets (DAT_00636af8 flag set → memset 0x7f1038 + restart = attract loop) or calls FUN_0043df00 (enter frontend). This is the title-idle timeout that launches the attract demo (#4) and the title→menu advance. Entry points pinned for both.
+- **Verification gate**: ALL 9 remaining items are visual; the launched-process session currently has NO display (GetAdapterDisplayMode fails, REF CreateDevice returns D3DERR_INVALIDCALL), so none can be verified until the env is restored. Offline disasm (re/tools) still works for RE; MCP restore needed for Ghidra decomp.
