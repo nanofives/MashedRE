@@ -13450,4 +13450,89 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 3 (L1 race-lane pair + L2 cheap re-earns) -------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round3.cpp).
+
+    # 0x0042fe70  VehicleDword67ea80Get — uint32(). Returns DAT_0067ea80
+    # (timeout-selector global, values 0/1/2 per U-0397; bytes A1 80 EA 67 00
+    # C3). Race lane per c3_batch_race1 backfill config.
+    # ref: re/analysis/promote_c2_vehicle_lowrva/0x0042fe70.md
+    'vehicle_dword_67ea80_get': {
+        'rva':            0x0042fe70,
+        'export':         'VehicleDword67ea80Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041ea80  TrackDescField40Get — uint32(). Returns
+    # *(u32*)(DAT_0063d7e4 + 0x40) (bytes A1 E4 D7 63 00 8B 40 40 C3).
+    # DEREFS the track-descriptor object pointer — NULL until a track loads,
+    # so scenario:'race' is REQUIRED (menu-attach would AV both sides).
+    # ref: re/analysis/ai_update_d6/0x0041ea80.md
+    'track_desc_field40_get': {
+        'rva':            0x0041ea80,
+        'export':         'TrackDescField40Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x004cbc60  RwGlobal7d4598Set — void(uint32). Writes param_1 to
+    # DAT_007d4598 (bytes 8B 44 24 04 A3 98 45 7D 00 C3). L2 re-earn
+    # (demoted-needs-reimpl). void_setter_observe: harness calls fn(v),
+    # reads back 0x007d4598, saves/restores the global.
+    # ref: re/analysis/skeleton_prep_render/004cbc60.md
+    'rw_global_7d4598_set': {
+        'rva':            0x004cbc60,
+        'export':         'RwGlobal7d4598Set',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d4598,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x004cbc70  RwGlobal7d4598Get — uint32(). Returns DAT_007d4598 (bytes
+    # A1 98 45 7D 00 C3); getter counterpart of rw_global_7d4598_set. L2
+    # re-earn. read_global: harness seeds 0x007d4598 with each vector,
+    # calls fn(), compares the return (discriminates the cited address;
+    # saves/restores the global).
+    # ref: re/analysis/skeleton_prep_render/004cbc70.md
+    'rw_global_7d4598_get': {
+        'rva':            0x004cbc70,
+        'export':         'RwGlobal7d4598Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007d4598,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x004cbc80  RwGlobal7d459cSet — void(uint32). Writes param_1 to
+    # DAT_007d459c (= 0x007d4598 + 4; bytes 8B 44 24 04 A3 9C 45 7D 00 C3).
+    # L2 re-earn. void_setter_observe on 0x007d459c.
+    # ref: re/analysis/skeleton_prep_render/004cbc80.md
+    'rw_global_7d459c_set': {
+        'rva':            0x004cbc80,
+        'export':         'RwGlobal7d459cSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d459c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
 }
