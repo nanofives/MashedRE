@@ -83,8 +83,12 @@ F1. **Menu background** — CORRECTED 2026-06-10: the moving backdrop is
     [BACKDROP CLOSED 2026-06-10: DirectShow-to-texture playback landed
     (D3d9Render/MpegVideoTexture, the original's own mechanism — graph
     RUNNING 512x512; verify/frontend_parity2/sa_video_menu_t06.png shows
-    the real dockside scene behind the menu). Residual: MAIN.BSP stage
-    render + per-screen frontend camera harvest + video loop verify]
+    the real dockside scene behind the menu). Residual RESOLVED 2026-06-10 (user-directed probe,
+    re/frida/mainbsp_probe.py): the world-render path (FUN_00478cd0 /
+    FUN_004270f0 / guard DAT_0066d704 / world slot DAT_00646e58) NEVER
+    fires through menu depth 4 — MAIN.BSP is NOT a menu component.
+    Deferred to the vehicle-select 3D stage work. Video loop verify still
+    pending]
 F2. **Menu item plates/chrome** — original draws beveled plates + sliders
     (Panel.piz 3D panels: PANEL0..3.DFF/PANEL.TXD + the FUN_0043c5b0 draw
     loop with highlight quads FUN_00472c60/FUN_00473540/FUN_0040bb50);
