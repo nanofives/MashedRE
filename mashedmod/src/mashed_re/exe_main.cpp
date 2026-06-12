@@ -1617,10 +1617,12 @@ bool RenderFrame() {
                 // (0x41500000) at the bar's left edge (X bias 13.0 =
                 // _DAT_005cd8d8), full UV, bar height, scale mode 1.
                 if (g_menu_badge_ready) {
+                    // F2: the bullet on the selected plate is dark navy in
+                    // the original (orig_options.png), not translucent blue.
                     HudIm2DQuad(kHandleMenuBadge,
                                 hx - 13.0f * kVScale, hy,
                                 13.0f * kVScale, hh,
-                                0xa0146ef0u, uv_full);
+                                0xff131550u, uv_full);
                 }
             }
 
@@ -1709,7 +1711,11 @@ bool RenderFrame() {
                     HudIm2DQuad(0, wx, wy, bw, bh, 0x60000000u, uv_full);
                     HudIm2DQuad(0, wx + 2.0f, wy + 2.0f,
                                 (bw - 4.0f) * (static_cast<float>(v) / 10.0f),
-                                bh - 4.0f, highlighted ? 0xff101010u : 0xfff0f0f0u,
+                                bh - 4.0f,
+                                // F2: the original's slider fill is ORANGE on
+                                // every row (orig_sound.png), darker when the
+                                // row is highlighted.
+                                highlighted ? 0xff7a3608u : 0xffb45010u,
                                 uv_full);
                 } else if (rec.row_index == 3 && g_font.ready()) {
                     DrawMashedString(g_settings.insults_on ? L"On" : L"Off",
@@ -3079,6 +3085,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // From here the menu is state-machine-driven (push/pop/cursor), replacing
         // the old hand-rolled g_menu_selected clamp.
         mashed_re::Frontend::Nav_Init();
+        // Dev capture aid (acceptance side-by-sides): MASHED_GOTO=8,19 pushes
+        // the screen chain at boot and skips the title phase. Capture-only.
+        {
+            char gv[64] = {};
+            if (GetEnvironmentVariableA("MASHED_GOTO", gv, sizeof(gv)) > 0) {
+                g_frontend_phase = 3;
+                char* tok = gv;
+                while (*tok) {
+                    const int sid = std::atoi(tok);
+                    mashed_re::Frontend::Nav(sid, mashed_re::Frontend::kNavPush);
+                    while (*tok && *tok != ',') ++tok;
+                    if (*tok == ',') ++tok;
+                }
+            }
+        }
         // B19 faithful font: decode FGDC20.TXD atlas + FGDC20.RWF glyph metrics
         // and upload the glyph sheet. When this succeeds the menu draws in MASHED's
         // actual font (glyph-by-glyph); otherwise the GDI/Arial textures are used.
