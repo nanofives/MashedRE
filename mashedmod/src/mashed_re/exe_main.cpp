@@ -460,6 +460,11 @@ bool             g_menu_logo_ready = false;
 // ~8s auto-advance or any key). 1 = title. 2..3 = menu screens.
 int              g_frontend_phase  = 0;
 DWORD            g_splash_start_ms  = 0;   // set on first splash frame
+// #8 confirm-dialog modal (FUN_00433f40). Active when body_id != 0; alpha
+// fades 0->0xff (DAT_0067eab8). Title 0x41 'MASHED', body = id, button 0x2d.
+int              g_modal_body_id    = 0;
+int              g_modal_button_id  = 0;
+int              g_modal_alpha      = 0;
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
 
@@ -1002,9 +1007,31 @@ bool UpdateMenuSelection() {
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
     }
+    // #8 confirm-dialog modal: while shown, Enter/Esc dismisses it and swallows
+    // all other nav input (FUN_00433f40 is modal — the menu underneath freezes).
+    if (g_modal_body_id != 0) {
+        if ((ent_now && !ent_prev) || (esc_now && !esc_prev)) {
+            g_modal_body_id = 0; g_modal_button_id = 0; g_modal_alpha = 0;
+        }
+        return false;
+    }
     if (down_now && !down_prev) Nav_MoveCursor(+1);
     if (up_now   && !up_prev)   Nav_MoveCursor(-1);
-    if (ent_now  && !ent_prev)  Nav_Select();           // push child screen
+    if (ent_now  && !ent_prev) {
+        // Load Game / Save Game (Options screen 8, rows 2/3) open the
+        // "Load/Save Successful." confirm dialog (#8: the original's Load-Game
+        // action FUN_0042bfb0(0x1bc,...,0x2d) -> FUN_00433f40). Other items nav.
+        const int sid = Nav_ScreenId(), cur = Nav_Cursor();
+        if (sid == 8 && cur == 2) {       // Load Game
+            g_modal_body_id = 0x1bc;      // "Load Successful."
+            g_modal_button_id = 0x2d; g_modal_alpha = 0;
+        } else if (sid == 8 && cur == 3) { // Save Game
+            g_modal_body_id = 0x1b7;      // "Save Successful."
+            g_modal_button_id = 0x2d; g_modal_alpha = 0;
+        } else {
+            Nav_Select();                  // push child screen
+        }
+    }
     if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
     if (esc_now  && !esc_prev) {
         if (!Nav_Back()) return true;                   // at root -> quit
@@ -2099,6 +2126,37 @@ bool RenderFrame() {
                 HudIm2DQuad(kBridgeTitleHandle, 520.f, 380.f, 200.f, 180.f,
                             0xffffffffu, uv_full);
             }
+        }
+    }
+
+    // #8 confirm-dialog modal (VERBATIM layout from FUN_00433f40, pool0 decomp
+    // 2026-06-12): drawn on top of the frozen menu when active. Three stacked
+    // panels (black top 130,120,380x42 / dark-gray 0x202020 body 130,162,380x166
+    // / black bottom 130,328,380x32) + white border, title 'MASHED' (id 0x41)
+    // @140,142 scale 0.8, body text centered, button (id) @140,345 scale 0.4.
+    // Alpha fades in (DAT_0067eab8 ramp). Coords virtual 640x480 -> x1.25.
+    if (g_bridge_installed && g_modal_body_id != 0) {
+        if (g_modal_alpha < 0xff) { g_modal_alpha += 0x11; if (g_modal_alpha > 0xff) g_modal_alpha = 0xff; }
+        const std::uint32_t A = static_cast<std::uint32_t>(g_modal_alpha) << 24;
+        const float S = 1.25f;
+        std::uint32_t uvf[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
+        HudIm2DQuad(0, 130.f*S, 120.f*S, 380.f*S, 42.f*S,  A | 0x000000u, uvf); // top black
+        HudIm2DQuad(0, 130.f*S, 162.f*S, 380.f*S, 166.f*S, A | 0x202020u, uvf); // body gray
+        HudIm2DQuad(0, 130.f*S, 328.f*S, 380.f*S, 32.f*S,  A | 0x000000u, uvf); // bottom black
+        // white border (1.5px) around 130,120 .. 510,360
+        const std::uint32_t W = A | 0xffffffu; const float bx=130.f*S, by=120.f*S, bw=380.f*S, bh=240.f*S, t=1.5f*S;
+        HudIm2DQuad(0, bx, by, bw, t, W, uvf); HudIm2DQuad(0, bx, by+bh-t, bw, t, W, uvf);
+        HudIm2DQuad(0, bx, by, t, bh, W, uvf); HudIm2DQuad(0, bx+bw-t, by, t, bh, W, uvf);
+        if (g_font.ready()) {
+            wchar_t tt[64];
+            if (GetMenuMessage(0x41, tt, 64) > 0)       // title "MASHED"
+                DrawMashedString(tt, 320.f*S, 140.f*S, 0.8f*0.0708f*480.f*S, W, false);
+            wchar_t bt[128];
+            if (GetMenuMessage(g_modal_body_id, bt, 128) > 0)  // body
+                DrawMashedString(bt, 320.f*S, 230.f*S, 0.6f*0.0708f*480.f*S, W, false);
+            wchar_t cb[48];
+            if (GetMenuMessage(g_modal_button_id, cb, 48) > 0) // button "Continue"
+                DrawMashedString(cb, 320.f*S, 340.f*S, 0.5f*0.0708f*480.f*S, W, false);
         }
     }
     g_device->EndScene();
@@ -3513,6 +3571,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                     while (*tok && *tok != ',') ++tok;
                     if (*tok == ',') ++tok;
                 }
+            }
+            // Capture aid: MASHED_DBG_MODAL=1 force-shows the Load-Successful
+            // confirm dialog (#8) at boot for verification.
+            if (GetEnvironmentVariableA("MASHED_DBG_MODAL", nullptr, 0) != 0) {
+                g_frontend_phase = 3;
+                g_modal_body_id = 0x1bc; g_modal_button_id = 0x2d; g_modal_alpha = 0xff;
             }
         }
         // B19 faithful font: decode FGDC20.TXD atlas + FGDC20.RWF glyph metrics
