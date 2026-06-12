@@ -1210,23 +1210,27 @@ void DrawMashedString(const wchar_t* s, float cx, float top_y,
     auto glyph_of = [](wchar_t c) -> unsigned char {
         return static_cast<unsigned char>((c >= 0 && c < 256) ? c : '?');
     };
+    // #9: use the FGDC20 record's true pen ADVANCE (float@+16 x height) for
+    // letter spacing, not the tight quad width + 1px — matches the original's
+    // FUN_00427680 layout so words aren't cramped/spread.
     // Pass 1: measure (for centering / unused when left-anchored).
     float total = 0.f;
     for (const wchar_t* p = s; *p; ++p) {
-        float uv[4], wpx;
-        if (g_font.Glyph(glyph_of(*p), uv, &wpx)) total += wpx * scale + 1.f;
-        else                                      total += space_adv;
+        float uv[4], wpx, adv;
+        if (g_font.Glyph(glyph_of(*p), uv, &wpx, &adv)) total += adv * scale;
+        else                                            total += space_adv;
     }
-    // Pass 2: draw.
+    // Pass 2: draw. The quad keeps the glyph's own width (wpx) so its shape is
+    // undistorted; the pen advances by `adv` (the metric spacing).
     float penX = anchor_left ? cx : (cx - total * 0.5f);
     for (const wchar_t* p = s; *p; ++p) {
-        float uv[4], wpx;
-        if (g_font.Glyph(glyph_of(*p), uv, &wpx)) {
+        float uv[4], wpx, adv;
+        if (g_font.Glyph(glyph_of(*p), uv, &wpx, &adv)) {
             std::uint32_t uvb[4];
             std::memcpy(uvb, uv, sizeof(uvb));
             const float gw = wpx * scale;
             HudIm2DQuad(g_font.handle(), penX, top_y, gw, height_px, argb, uvb);
-            penX += gw + 1.f;
+            penX += adv * scale;
         } else {
             penX += space_adv;
         }

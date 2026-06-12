@@ -42,7 +42,8 @@ public:
     // extended table. Fills uv[4] = {u0,v0,u1,v1} and *width_px (the glyph's
     // atlas width in pixels = advance). Returns false if the char has no glyph
     // (caller advances by a space).
-    bool Glyph(unsigned char ch, float uv[4], float* width_px) const;
+    bool Glyph(unsigned char ch, float uv[4], float* width_px,
+               float* advance_px = nullptr) const;
 
 private:
     bool          m_ready   = false;
@@ -51,7 +52,7 @@ private:
     float         m_atlasH  = 256.f;
     float         m_height  = 33.f;
     std::uint32_t m_glyphCount = 0;
-    struct Glyf { float u0, v0, u1, v1, w_px; bool valid; };
+    struct Glyf { float u0, v0, u1, v1, w_px, adv; bool valid; };
     Glyf          m_glyph[256] = {};
     std::uint16_t m_lut[128]   = {};   // char (0..127) -> glyph index
     std::uint32_t m_extBase  = 0;      // font+0x124 (FGDC20: 0x80)

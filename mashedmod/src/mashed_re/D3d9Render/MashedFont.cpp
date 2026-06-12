@@ -106,6 +106,10 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
         gl.u1 = RdF32(rwf, o + 8);
         gl.v1 = RdF32(rwf, o + 12);
         gl.w_px = (gl.u1 - gl.u0) * m_atlasW;
+        // Pen advance: FGDC20 glyph record float@+16 is the advance as a
+        // fraction of the cell height (FUN_00427680). adv_px = frac * m_height
+        // (verified ~= tight width; gives the original's exact letter spacing).
+        gl.adv = RdF32(rwf, o + 16) * m_height;
         gl.valid = (gl.u1 > gl.u0 && gl.v1 > gl.v0);
     }
 
@@ -113,7 +117,8 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     return true;
 }
 
-bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_px) const {
+bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_px,
+                       float* advance_px) const {
     if (!m_ready) return false;
     std::uint16_t g;
     if (ch < 128) {
@@ -128,6 +133,7 @@ bool MashedFont::Glyph(unsigned char ch, float uv[4], float* width_px) const {
     const Glyf& gl = m_glyph[g];
     uv[0] = gl.u0; uv[1] = gl.v0; uv[2] = gl.u1; uv[3] = gl.v1;
     if (width_px) *width_px = gl.w_px;
+    if (advance_px) *advance_px = (gl.adv > 0.f) ? gl.adv : gl.w_px;
     return true;
 }
 
