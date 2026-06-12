@@ -9,17 +9,16 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 1
-- total_green: 5
+- rounds_run: 2
+- total_green: 10
 - dry_counter: 0
-- last_round: 2026-06-12 round 1
+- last_round: 2026-06-12 round 2
 
 ## Lane queues
 
-### L0 — c3_batch_race1 leftovers (claimable if no PROMOTION_QUEUE row exists for them)
-00442410, 00442420, 00423b20, 00426cc0, 00442df0
-(arg_types already confirmed in c3_batch_race1.txt — use its per-candidate table
-verbatim; session-1 set promoted in round 1)
+### L0 — c3_batch_race1 leftovers
+DRAINED (session-1 set promoted round 1; session-2 set promoted round 2;
+backfill 0042fe70 moved to L1 head — its config is pre-confirmed)
 
 ### L1 — race-lane viable (unlocked ∩ v4-passed, arg_type TO CONFIRM per note)
 00411ae0, 00413b80, 00413bb0, 00413cb0, 00413f50, 004150e0, 00417180,
@@ -55,6 +54,11 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 00414030 AiSplineBankTimerReset — round 1, log/diff_ai_spline_bank_timer_reset.csv 10/10 GREEN (-1 fill path untested)
 - 0040e350 GetRenderSubMode — round 1, log/diff_get_render_sub_mode.csv 10/10 GREEN
 - 00429300 HudOverlayFloatGet — round 1, log/diff_hud_overlay_float_get.csv 10/10 GREEN (after FILD root-cause: body is FILD int32->float, bytes DB 05 B8 91 89 00 C3 @0x29300; first attempt as float-load REDed)
+- 00442410 CameraSlotFieldPtrGet — round 2, log/diff_camera_slot_field_ptr_get.csv 10/10 GREEN
+- 00442420 CameraSlotFloatGet — round 2, log/diff_camera_slot_float_get.csv 10/10 GREEN (FLD byte-verified)
+- 00423b20 CarSnapshotDwordGet — round 2, log/diff_car_snapshot_dword_get.csv 10/10 GREEN
+- 00426cc0 VehicleTable4cPtrGet — round 2, log/diff_vehicle_table_4c_ptr_get.csv 10/10 GREEN
+- 00442df0 RaceFloat898980Get — round 2, log/diff_race_float_898980_get.csv 10/10 GREEN (FLD byte-verified)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -82,6 +86,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
 
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
+
+2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 ## Final gated-remainder report
 
