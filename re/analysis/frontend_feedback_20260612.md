@@ -58,7 +58,7 @@ alpha, call sites) is wrong.
 | 8 | no boot "Load Successful" modal | save-load boot flow + modal screens (descriptor tables; orig_gts.png shows the modal) | locate the modal screen table + draw path |
 | 9 | font pixelated/wrong | FUN_00554940 glyph renderer (vtable ctx+0x138 @0x0067d838); height = param_5*0.0708 (_DAT_005cd5fc); text goes through device slot 0x30 from its OWN vert buf | height scale LANDED; residual = the glyph renderer's per-glyph UV/filter (RE FUN_00554940 vert layout) |
 | 10 | buttons not centered with text | record y = row CENTER line (bit-verified plate spans rec.y-12..+14) | LANDED: glyph cell now centered on the plate center (was top-anchored at rec.y, overflowing below) |
-| 11 | back indicator on main menu | back-row visibility rule in FUN_0043d2a0 (type/slide init) + draw gating | RE the exact gate (screen-kind? depth?) |
+| 11 | back indicator on main menu | top frontend menu back-row prim_id == -1 (live probe) -> not drawn | LANDED: hide back row at depth<=1 (the title-entered top level); deeper screens keep Back (verify/frontend_parity2/re_scr1_noback.png) |
 | 12 | select-arrow texture missing | FGDC20 ext glyph 0x81 (footer=' Select' live-confirmed) | ROUTE PINNED: original footer = glyph 0x81 + ' Select'; verify our FGDC20 ext-table renders 0x81; the prompt-strip records carry it |
 | 13 | black semi-circle (button cap) | TextSpriteScaled 0x004739f0 'Button' sprite, color ffb45010 (dump draw 88) | port audit: badge texture content + modulate color |
 | 14 | video not blending | FUN_00473c20 + FUN_00474890 (preview crossfade) | PARTIAL: two-quad corner-faded form + title gating removed (ShellB runs it every frame) + draw order fixed; residual = UV-pan modes 1..5 (preview atlas layout) |

@@ -1665,7 +1665,13 @@ bool RenderFrame() {
             if (rec.prim_id < 0 &&
                 static_cast<std::uint32_t>(rec.prim_id) != 0x224u) continue;  // -1 = no text
             const bool is_back = (static_cast<std::uint32_t>(rec.tag) == 0xff000000u);
-            if (is_back && depth == 0) continue;            // hide back row at root
+            // Item 11 (user review): the TOP frontend menu has no Back. Live
+            // probe (2026-06-12) of the original at its first frontend screen:
+            // the back-row RECORD exists but carries prim_id == -1 (the back
+            // string is suppressed -> the draw loop's `if (*piVar9 == -1)`
+            // skips it). The standalone enters the main menu at depth 1 (the
+            // title pushes screen 1), so depth==1 is that top level: no Back.
+            if (is_back && depth <= 1) continue;            // hide back at the top menu
 
             // The record's EXACT stored fields (FUN_0043c5b0 reads piVar9[-5]=X,
             // piVar9[-4]=Y, piVar9[-6]=scale, piVar9[-8]=color). Scale to 800x600.
