@@ -3392,3 +3392,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  00414030  AiSplineBankTimerReset  C2->C3  promote-round-1 scenario=race slot_block_zero diff 10/10 GREEN (param=-1 fill path untested) log/diff_ai_spline_bank_timer_reset.csv
 2026-06-12  0040e350  GetRenderSubMode  C2->C3  promote-round-1 scenario=race diff 10/10 GREEN log/diff_get_render_sub_mode.csv
 2026-06-12  00429300  HudOverlayFloatGet  C2->C3  promote-round-1 scenario=race diff 10/10 GREEN after FILD root-cause (bytes DB 05 B8 91 89 00 C3 @0x29300; DAT_008991b8 is int32 not float) log/diff_hud_overlay_float_get.csv
+2026-06-12  00442410  CameraSlotFieldPtrGet  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_camera_slot_field_ptr_get.csv (U-8986 filed)
+2026-06-12  00442420  CameraSlotFloatGet  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_camera_slot_float_get.csv (U-8987 filed)
+2026-06-12  00423b20  CarSnapshotDwordGet  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_car_snapshot_dword_get.csv
+2026-06-12  00426cc0  VehicleTable4cPtrGet  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_vehicle_table_4c_ptr_get.csv
+2026-06-12  00442df0  RaceFloat898980Get  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_race_float_898980_get.csv (FLD byte-verified)
