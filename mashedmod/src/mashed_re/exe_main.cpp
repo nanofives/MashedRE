@@ -159,6 +159,7 @@
 #include "D3d9Render/TextRenderer.h"        // B19b: GDI text -> BGRA (menu item strings, fallback)
 #include "D3d9Render/MashedFont.h"          // B19: faithful FGDC20 glyph font
 #include "D3d9Render/MenuStringTable.h"     // menu id->glyph-string (sprite-by-id)
+#include "D3d9Render/DrawStreamDump.h"      // parity harness: MASHED_DBG_DRAWSTREAM
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 
@@ -1613,6 +1614,11 @@ bool RenderFrame() {
         return true;
     }
 
+    // Parity harness: frontend frame delimiter for MASHED_DBG_DRAWSTREAM
+    // (same frame numbering as the BBDUMP counter below — both tick once per
+    // frontend frame).
+    mashed_re::D3d9Render::DrawStreamDump_OnFrameBegin();
+
     // Debug: MASHED_DBG_BBDUMP=1 dumps the backbuffer at frame ~200 to
     // verify/dbg_backbuffer.bmp - discriminates draw-side vs present-side
     // failures (window shows white while the bridge logs sane draws).
@@ -1657,6 +1663,21 @@ bool RenderFrame() {
         g_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, q, sizeof(VRHW));
         g_device->SetTexture(0, nullptr);
         g_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        // Parity harness: this is the ONE frontend draw that bypasses the
+        // bridge chokepoint (native DrawPrimitiveUP). Mirror it into the
+        // draw stream as an Im2D-layout blob so the original's video quad
+        // (its dump draw 0) has a counterpart instead of a phantom MISSING.
+        {
+            struct ImV { float x, y, z, w; std::uint32_t c; float u, v; };
+            const ImV iv[4] = {
+                {q[0].x, q[0].y, 0.f, 1.f, 0xffffffffu, q[0].u, q[0].v},
+                {q[1].x, q[1].y, 0.f, 1.f, 0xffffffffu, q[1].u, q[1].v},
+                {q[2].x, q[2].y, 0.f, 1.f, 0xffffffffu, q[2].u, q[2].v},
+                {q[3].x, q[3].y, 0.f, 1.f, 0xffffffffu, q[3].u, q[3].v},
+            };
+            mashed_re::D3d9Render::DrawStreamDump_OnDraw(
+                iv, 4, /*tex*/ -1, /*alpha*/ false, 5, 6, nullptr);
+        }
     } else if (g_bridge_installed && g_menu_bg_ready) {
         HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
     }
