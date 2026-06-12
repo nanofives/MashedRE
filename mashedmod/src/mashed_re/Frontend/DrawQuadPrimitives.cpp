@@ -661,6 +661,14 @@ extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
         if (g_logo_fade_cur < g_logo_fade_target) ++g_logo_fade_cur;
         if (g_logo_fade_target < g_logo_fade_cur) --g_logo_fade_cur;
     }
+    // #6 (user review): the circular arc-wash is a TRANSITION flash, not a
+    // permanent veil. Nav reloads/selects raise the target to 0xff via
+    // LogoOverlayFadeSet; decay it back toward 0 each frame so the white wash
+    // fades out after the transition settles (~2s), leaving the logo/press-
+    // button and the menu bg clear. The band fades + checker grid below are
+    // independent of this fade and stay (race-flag chrome remains).
+    if (g_logo_fade_target > 0) --g_logo_fade_target;
+    if (g_logo_fade_target > 0) --g_logo_fade_target;
 
     // Circular-arc column strips (0x00473fbd..0x004740cb).
     // bit-exact .rdata constants (1-ULP diff finding): 0x005ceacc pitch,
