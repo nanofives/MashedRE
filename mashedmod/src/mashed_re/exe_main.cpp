@@ -1840,6 +1840,33 @@ bool RenderFrame() {
         const int         cur  = Nav_Cursor();
         const int         depth = Nav_Depth();
 
+        // DEBUG (MASHED_DBG_MENU): one-shot dump of every record so the title/
+        // back/prompt layout is verifiable offline.
+        {
+            static bool s_dumped = false;
+            if (!s_dumped && GetEnvironmentVariableA("MASHED_DBG_MENU", nullptr, 0)) {
+                s_dumped = true;
+                if (std::FILE* lf = std::fopen(kLogPath, "a")) {
+                    std::fprintf(lf, "\n[DBG records] screen=%d depth=%d nrec=%d cur=%d\n",
+                                 Nav_ScreenId(), depth, nrec, cur);
+                    for (int i = 0; i < nrec; ++i) {
+                        const MenuRecord& d = recs[i];
+                        wchar_t mm[128]; mm[0]=0;
+                        const int mn = (d.prim_id >= 0) ? GetMenuMessage(d.prim_id, mm, 128) : 0;
+                        char a[160]; int k=0;
+                        for (int c=0;c<mn && k<150;++c){ wchar_t w=mm[c];
+                            a[k++] = (w>=32 && w<127) ? (char)w : '.'; }
+                        a[k]=0;
+                        std::fprintf(lf, "  r%-2d tag=%08x prim=%d sec=%d x=%.0f y=%.0f sc=%.2f type=%d row=%d msg='%s'(n=%d c0=%04x)\n",
+                            i, static_cast<unsigned>(d.tag), d.prim_id, d.sec_id,
+                            d.x, d.y, d.scale, d.type, d.row_index, a, mn,
+                            mn>0?(unsigned)mm[0]:0);
+                    }
+                    std::fclose(lf);
+                }
+            }
+        }
+
         // Virtual(640x480) -> backbuffer(800x600) scale (FUN_00427680 analogue).
         constexpr float kVScale = 1.25f;
 
@@ -1901,13 +1928,15 @@ bool RenderFrame() {
             if (rec.prim_id < 0 &&
                 static_cast<std::uint32_t>(rec.prim_id) != 0x224u) continue;  // -1 = no text
             const bool is_back = (static_cast<std::uint32_t>(rec.tag) == 0xff000000u);
-            // Item 11 (user review): the TOP frontend menu has no Back. Live
-            // probe (2026-06-12) of the original at its first frontend screen:
-            // the back-row RECORD exists but carries prim_id == -1 (the back
-            // string is suppressed -> the draw loop's `if (*piVar9 == -1)`
-            // skips it). The standalone enters the main menu at depth 1 (the
-            // title pushes screen 1), so depth==1 is that top level: no Back.
-            if (is_back && depth <= 1) continue;            // hide back at the top menu
+            // #15 (user review, CORRECTS the old #11 handling): the back-row
+            // record at (64,48) IS the screen TITLE (top-left) — "Game Type
+            // Select" on the main menu (BuildRecords overrides screen 1 -> 0x43),
+            // "Single Player"/"Options"/etc. on submenus. It was wrongly hidden
+            // at depth<=1, which removed the title (user: "no Game Type Select
+            // text at the top"). Draw it for every screen; records with a real
+            // -1 title are already skipped above. The "Back" the user didn't want
+            // (orig #11) is the FOOTER prompt strip, handled separately, not this
+            // top title row.
 
             // The record's EXACT stored fields (FUN_0043c5b0 reads piVar9[-5]=X,
             // piVar9[-4]=Y, piVar9[-6]=scale, piVar9[-8]=color). Scale to 800x600.

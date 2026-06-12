@@ -513,6 +513,13 @@ void BuildRecords(const NavSlot& slot) {
     // first 0xff000000 entry in the table. X 64.0 / Y 48.0 / scale 0.6 (verbatim
     // DAT_00898ad8/adc/ad4 writes).
     const int back_id = KvLookup(slot.desc_table, kTagBack, 0);
+    // #15 (user review): the back-row record at (64,48) IS the screen TITLE
+    // (top-left). Its native id already resolves to the right title in the
+    // table the game actually uses — Font36.piz/USA.DAT (g_msg_dat), NOT the
+    // loose English.dat: 0x40="Game Type Select" (main menu kT1), 0x21="Single
+    // Player", 0x27="Options", etc. (The loose English.dat DIVERGES — its 0x40
+    // is "Total" — which is why an earlier 0x43 override drew a prompt string.
+    // All menu text resolves through GetMenuMessage -> USA.DAT(piz).)
     g_records[rec].tag    = static_cast<std::int32_t>(kTagBack);
     // FUN_0043d2a0 back-row anim init: with a live back id the row enters
     // animating (DAT_00898ad0=0x1ff, DAT_00898ac4=0 or 2); only the no-back
