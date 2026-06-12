@@ -80,9 +80,18 @@ same drive, then `replaceFast` A/B at race state.
 
 ## Next steps
 
-1. Implement `scenario: 'race'` support in `run_diff.py` (drive between
-   attach and vectors; reuse the probe's agent verbatim).
+1. ~~Implement `scenario: 'race'` support in `run_diff.py`~~ **DONE
+   2026-06-12**: `drive_to_race()` runs between attach and the vector loop
+   when a registry entry sets `'scenario': 'race'`; nav agent shared at
+   `re/frida/nav_agent.js`. Exit 6 = failed to reach race state. Validated
+   live on `is_car_slot_active` (0x0040e370): its old all-early-out vectors
+   were degenerate; with in-bounds slots 0..3 in-race it returns 1 for the
+   four live cars, 10/10 GREEN non-trivial.
 2. Emit the first 2×5 batch from the unlocked-66 list via `promote-c3-batch`
    (the skill's sizing policy section already points here).
 3. After the first GREEN batch, extend the probe to stride-aware reads for a
    tighter unlocked count.
+4. A/B time-skew caveat for vector choice: prefer discretely-changing state
+   (slot flags, lap counts, gate indices) over per-frame floats (lap
+   fraction, positions) — the original and reimpl calls are not atomic
+   against the running game thread.

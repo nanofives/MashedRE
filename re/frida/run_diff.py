@@ -42,11 +42,69 @@ from hooks_registry import HOOKS
 MASHED_EXE = _find_original(ROOT)
 ASI_PATH   = ROOT / 'mashedmod' / 'build' / 'mashed_re_dev.asi'
 AGENT_JS   = ROOT / 're' / 'frida' / 'diff_template.js'
+NAV_AGENT_JS = ROOT / 're' / 'frida' / 'nav_agent.js'
 LOG_DIR    = ROOT / 'log'
 
 results_received = []
 errors_received  = []
 done_flag        = {'done': False}
+
+
+def drive_to_race(session):
+    """scenario:'race' support (2026-06-12, re/analysis/scenario_attach_lane.md):
+    load the shared nav agent and drive the freshly spawned ORIGINAL into a
+    Quick Battle race (race_refs.py recipe, fresh-save cursor layout) so the
+    diff vectors run against populated live state instead of menu-attach
+    zeros. Returns True when phase leaves the menu value (3). The nav agent's
+    FUN_00497310 interceptor stays attached afterwards but is inert (override
+    only fires inside a press window)."""
+    nav = session.create_script(NAV_AGENT_JS.read_text(encoding='utf-8'))
+    nav.on('message', lambda m, d: None)
+    nav.load()
+    nav.exports_sync.init()
+    E = nav.exports_sync
+
+    def wait(pred, timeout, what):
+        end = time.time() + timeout
+        while time.time() < end:
+            if pred():
+                return True
+            time.sleep(0.1)
+        print(f"  [nav] timeout: {what} depth={E.depth()} phase={E.phase()}")
+        return False
+
+    def press(c, ms=180):
+        E.press(c, ms)
+        time.sleep(ms / 1000.0 + 0.3)
+
+    def confirm_to(target, tries=6):
+        for _ in range(tries):
+            if E.depth() >= target:
+                return True
+            press(4)
+            if wait(lambda: E.depth() >= target, 2.0, f"d{target}"):
+                return True
+        return E.depth() >= target
+
+    print("  [nav] booting to menu...")
+    if not wait(lambda: E.phase() == 3 and E.depth() >= 1, 25, 'title'):
+        return False
+    time.sleep(1.5)
+    confirm_to(2); time.sleep(0.4); press(4); time.sleep(0.8)
+    confirm_to(3)
+    E.setsel(1); time.sleep(0.3)        # Quick Battle (fresh-save cursor)
+    confirm_to(4, 4)
+    confirm_to(5, 4)
+    press(4); time.sleep(1.5)
+    for _ in range(5):
+        if E.phase() != 3:
+            break
+        press(4); time.sleep(1.5)
+    in_race = E.phase() != 3
+    print(f"  [nav] in race? phase={E.phase()} ({'YES' if in_race else 'NO'})")
+    if in_race:
+        time.sleep(4)                   # countdown + state settle
+    return in_race
 
 
 def on_message(message, data):
@@ -391,6 +449,16 @@ def main():
         try: proc.kill()
         except Exception: pass
         return 4
+
+    if hook.get('scenario') == 'race':
+        print("scenario='race': driving to a live race before running vectors")
+        if not drive_to_race(session):
+            print("FAILED to reach race state — aborting (no vectors run).")
+            try: session.detach()
+            except Exception: pass
+            try: proc.kill()
+            except Exception: pass
+            return 6
 
     script_text = AGENT_JS.read_text(encoding='utf-8').replace('$CONFIG$', json.dumps(config))
     script = session.create_script(script_text)

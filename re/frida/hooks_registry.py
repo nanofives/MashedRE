@@ -5078,10 +5078,17 @@ HOOKS = {
         'signature':      {'ret': 'uint32', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
-        # All > 3 to take the early-out (bounds check); avoids PTR_PTR_005f2770
-        # deref which may be NULL at quiescent menu.
-        'path1_tests':    [4, 5, 10, 100, 1000, 0x7FFFFFFF, 4, 5, 100, 1000],
-        'path2_tests':    [4, 100, 0x7FFFFFFF],
+        # scenario:'race' (2026-06-12, re/analysis/scenario_attach_lane.md):
+        # the original vectors were ALL > 3 to take the bounds-check early-out
+        # because the in-bounds path derefs PTR_PTR_005f2770, NULL at quiescent
+        # menu — i.e. the old run only ever tested the early-out (degenerate;
+        # flagged in DEGENERATE_GREEN_AUDIT_2026-06-12.md). In a live race the
+        # pointer is populated and slots 0..3 exist (4-car Quick Battle), so
+        # the real path is exercised; slot-active flags are stable mid-round
+        # (no A/B time-skew). Out-of-bounds vectors kept for early-out cover.
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 100, 0x7FFFFFFF, 0, 1, 2],
+        'path2_tests':    [0, 1, 4],
     },
 
     # 0x00432080  RaceEndCheckFinish â€” int(int param_1). Race-end finalization
