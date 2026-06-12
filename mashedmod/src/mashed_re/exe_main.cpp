@@ -460,11 +460,18 @@ bool             g_menu_logo_ready = false;
 // ~8s auto-advance or any key). 1 = title. 2..3 = menu screens.
 int              g_frontend_phase  = 0;
 DWORD            g_splash_start_ms  = 0;   // set on first splash frame
-// #8 confirm-dialog modal (FUN_00433f40). Active when body_id != 0; alpha
-// fades 0->0xff (DAT_0067eab8). Title 0x41 'MASHED', body = id, button 0x2d.
+// #8/#18/#19 confirm-dialog modal (FUN_00433f40). Active when step != 0; alpha
+// fades 0->0xff (DAT_0067eab8). Title 0x41 'MASHED', body = a USA.DAT(piz) id,
+// buttons Yes/No or Continue. Multi-step flow (real text from Font36.piz/USA.DAT):
+//   Load Game: 10 warn 0x215 (Yes/No) -> 11 'Load Successful.' 0x1bc (Continue)
+//   Save Game: 20 overwrite? 0x1ca (Yes/No) -> 21 'Saving game data.' 0x233
+//              (auto ~0.8s) -> 22 'Save successful.' 0x279 (Continue)
 int              g_modal_body_id    = 0;
 int              g_modal_button_id  = 0;
 int              g_modal_alpha      = 0;
+int              g_modal_step       = 0;     // 0=none; 10/11 load; 20/21/22 save
+bool             g_modal_yesno      = false; // true=Yes/No, false=single Continue
+DWORD            g_modal_timer_ms   = 0;     // auto-advance timer for the saving step
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
 
@@ -999,6 +1006,24 @@ void AdjustSoundSetting(int row, int dir) {
     SaveMenuSettings();
 }
 
+// #18/#19: drive the Load/Save modal flow. step 0 dismisses; other steps set
+// the body text id (Font36.piz/USA.DAT) + button mode. Keeps the current fade
+// alpha so flow transitions don't re-fade.
+void ModalGo(int step) {
+    g_modal_step     = step;
+    g_modal_timer_ms = 0;
+    g_modal_button_id = 0x2d;            // "Continue" (default)
+    switch (step) {
+        case 10: g_modal_body_id = 0x215; g_modal_yesno = true;  break; // load warn
+        case 11: g_modal_body_id = 0x1bc; g_modal_yesno = false; break; // "Load Successful."
+        case 20: g_modal_body_id = 0x1ca; g_modal_yesno = true;  break; // overwrite?
+        case 21: g_modal_body_id = 0x233; g_modal_yesno = false;        // "Saving game data."
+                 g_modal_timer_ms = GetTickCount();              break; // auto-advance
+        case 22: g_modal_body_id = 0x279; g_modal_yesno = false; break; // "Save successful."
+        default: g_modal_body_id = 0; g_modal_step = 0; g_modal_yesno = false; break;
+    }
+}
+
 bool UpdateMenuSelection() {
     using namespace mashed_re::Frontend;
     if (!g_kbd) return false;
@@ -1047,27 +1072,33 @@ bool UpdateMenuSelection() {
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
     }
-    // #8 confirm-dialog modal: while shown, Enter/Esc dismisses it and swallows
-    // all other nav input (FUN_00433f40 is modal — the menu underneath freezes).
-    if (g_modal_body_id != 0) {
-        if ((ent_now && !ent_prev) || (esc_now && !esc_prev)) {
-            g_modal_body_id = 0; g_modal_button_id = 0; g_modal_alpha = 0;
+    // #8/#18/#19 confirm-dialog modal: while shown it swallows all nav input
+    // (FUN_00433f40 is modal). Yes/No steps: Enter=Yes (advance), Esc=No
+    // (dismiss). Continue steps: Enter/Esc dismiss. The 'Saving...' step (21)
+    // auto-advances (handled in RenderFrame); ignore input there.
+    if (g_modal_step != 0) {
+        const bool yes = (ent_now && !ent_prev);
+        const bool no  = (esc_now && !esc_prev);
+        if (g_modal_step == 21) return false;        // auto-advancing; no input
+        if (g_modal_yesno) {
+            if (yes)      ModalGo(g_modal_step == 10 ? 11 : 21);  // load->done, save->saving
+            else if (no)  ModalGo(0);                            // No: dismiss
+        } else {
+            if (yes || no) ModalGo(0);                           // Continue/dismiss
         }
         return false;
     }
     if (down_now && !down_prev) Nav_MoveCursor(+1);
     if (up_now   && !up_prev)   Nav_MoveCursor(-1);
     if (ent_now  && !ent_prev) {
-        // Load Game / Save Game (Options screen 8, rows 2/3) open the
-        // "Load/Save Successful." confirm dialog (#8: the original's Load-Game
-        // action FUN_0042bfb0(0x1bc,...,0x2d) -> FUN_00433f40). Other items nav.
+        // Load Game / Save Game (Options screen 8, rows 2/3) open the real
+        // confirm flow (#18/#19): Load -> warning 0x215 (Yes/No); Save ->
+        // overwrite? 0x1ca (Yes/No) -> saving -> success. Other items nav.
         const int sid = Nav_ScreenId(), cur = Nav_Cursor();
         if (sid == 8 && cur == 2) {       // Load Game
-            g_modal_body_id = 0x1bc;      // "Load Successful."
-            g_modal_button_id = 0x2d; g_modal_alpha = 0;
+            ModalGo(10); g_modal_alpha = 0;
         } else if (sid == 8 && cur == 3) { // Save Game
-            g_modal_body_id = 0x1b7;      // "Save Successful."
-            g_modal_button_id = 0x2d; g_modal_alpha = 0;
+            ModalGo(20); g_modal_alpha = 0;
         } else {
             Nav_Select();                  // push child screen
         }
@@ -1311,6 +1342,32 @@ void DrawMashedString(const wchar_t* s, float cx, float top_y,
             penX += space_adv;
         }
     }
+}
+
+// Greedy word-wrap: draw `text` centered on cx, breaking at spaces so no line
+// exceeds maxchars; lines stack downward by `lh`. Used for the modal body text
+// (#18/#19), whose warning strings are too long for one line. Returns next y.
+float DrawWrappedCentered(const wchar_t* text, float cx, float y, float h,
+                          float lh, std::uint32_t color, int maxchars) {
+    wchar_t line[256]; int ll = 0;
+    wchar_t word[256]; int wl = 0;
+    auto emitLine = [&]() {
+        if (ll > 0) { line[ll] = 0; DrawMashedString(line, cx, y, h, color, false); y += lh; ll = 0; }
+    };
+    auto pushWord = [&]() {
+        if (wl == 0) return;
+        word[wl] = 0;
+        if (ll > 0 && ll + 1 + wl > maxchars) emitLine();
+        if (ll > 0 && ll < 254) line[ll++] = L' ';
+        for (int i = 0; i < wl && ll < 254; ++i) line[ll++] = word[i];
+        wl = 0;
+    };
+    for (const wchar_t* p = text; ; ++p) {
+        if (*p == L' ' || *p == 0) { pushWord(); if (*p == 0) break; }
+        else if (wl < 254) word[wl++] = *p;
+    }
+    emitLine();
+    return y;
 }
 
 // Render one frame: clear to teal, present. Returns false on unrecoverable
@@ -2251,11 +2308,21 @@ bool RenderFrame() {
     // / black bottom 130,328,380x32) + white border, title 'MASHED' (id 0x41)
     // @140,142 scale 0.8, body text centered, button (id) @140,345 scale 0.4.
     // Alpha fades in (DAT_0067eab8 ramp). Coords virtual 640x480 -> x1.25.
-    if (g_bridge_installed && g_modal_body_id != 0) {
+    if (g_bridge_installed && g_modal_step != 0) {
         if (g_modal_alpha < 0xff) { g_modal_alpha += 0x11; if (g_modal_alpha > 0xff) g_modal_alpha = 0xff; }
+        // #18/#19: the 'Saving game data.' step auto-advances to 'Save successful.'
+        if (g_modal_step == 21 && g_modal_timer_ms != 0 &&
+            GetTickCount() - g_modal_timer_ms > 800u) {
+            ModalGo(22); g_modal_alpha = 0xff;
+        }
         const std::uint32_t A = static_cast<std::uint32_t>(g_modal_alpha) << 24;
         const float S = 1.25f;
         std::uint32_t uvf[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
+        // #8: DARKEN the rest of the UI behind the modal (full-screen black at
+        // ~65% of the fade alpha) so the dialog reads as modal.
+        const std::uint32_t dimA =
+            (static_cast<std::uint32_t>(g_modal_alpha * 0xa6 / 0xff) << 24);
+        HudIm2DQuad(0, 0.f, 0.f, 800.f, 600.f, dimA, uvf);
         HudIm2DQuad(0, 130.f*S, 120.f*S, 380.f*S, 42.f*S,  A | 0x000000u, uvf); // top black
         HudIm2DQuad(0, 130.f*S, 162.f*S, 380.f*S, 166.f*S, A | 0x202020u, uvf); // body gray
         HudIm2DQuad(0, 130.f*S, 328.f*S, 380.f*S, 32.f*S,  A | 0x000000u, uvf); // bottom black
@@ -2267,12 +2334,25 @@ bool RenderFrame() {
             wchar_t tt[64];
             if (GetMenuMessage(0x41, tt, 64) > 0)       // title "MASHED"
                 DrawMashedString(tt, 320.f*S, 140.f*S, 0.8f*0.0708f*480.f*S, W, false);
-            wchar_t bt[128];
-            if (GetMenuMessage(g_modal_body_id, bt, 128) > 0)  // body
-                DrawMashedString(bt, 320.f*S, 230.f*S, 0.6f*0.0708f*480.f*S, W, false);
-            wchar_t cb[48];
-            if (GetMenuMessage(g_modal_button_id, cb, 48) > 0) // button "Continue"
-                DrawMashedString(cb, 320.f*S, 340.f*S, 0.5f*0.0708f*480.f*S, W, false);
+            // Body: word-wrapped + centered (the warning strings span 2-3 lines).
+            wchar_t bt[160];
+            if (GetMenuMessage(g_modal_body_id, bt, 160) > 0) {
+                const float bh2 = 0.6f*0.0708f*480.f*S;
+                DrawWrappedCentered(bt, 320.f*S, 195.f*S, bh2, bh2 + 6.f*S, W, 34);
+            }
+            // Buttons row (~y=340): Yes/No for confirm steps, else Continue.
+            const float byb = 340.f*S, bhh = 0.5f*0.0708f*480.f*S;
+            if (g_modal_yesno) {
+                wchar_t y1[32], n1[32];
+                if (GetMenuMessage(0x2e, y1, 32) > 0)   // "(glyph) Yes"
+                    DrawMashedString(y1, 250.f*S, byb, bhh, W, false);
+                if (GetMenuMessage(0x2f, n1, 32) > 0)   // "(glyph) No"
+                    DrawMashedString(n1, 390.f*S, byb, bhh, W, false);
+            } else {
+                wchar_t cb[48];
+                if (GetMenuMessage(g_modal_button_id, cb, 48) > 0) // "(glyph) Continue"
+                    DrawMashedString(cb, 320.f*S, byb, bhh, W, false);
+            }
         }
     }
     g_device->EndScene();
@@ -3758,11 +3838,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             else if (GetEnvironmentVariableA("MASHED_DBG_MENU", nullptr, 0) != 0) {
                 g_frontend_phase = 3;
             }
-            // Capture aid: MASHED_DBG_MODAL=1 force-shows the Load-Successful
-            // confirm dialog (#8) at boot for verification.
-            if (GetEnvironmentVariableA("MASHED_DBG_MODAL", nullptr, 0) != 0) {
-                g_frontend_phase = 3;
-                g_modal_body_id = 0x1bc; g_modal_button_id = 0x2d; g_modal_alpha = 0xff;
+            // Capture aid: MASHED_DBG_MODAL=1 shows the Load warning flow, =2 the
+            // Save overwrite flow (#18/#19) at boot for verification.
+            {
+                char mv[8] = {};
+                if (GetEnvironmentVariableA("MASHED_DBG_MODAL", mv, sizeof(mv)) > 0) {
+                    g_frontend_phase = 3;
+                    ModalGo(std::atoi(mv) == 2 ? 20 : 10);
+                    g_modal_alpha = 0xff;
+                }
             }
         }
         // B19 faithful font: decode FGDC20.TXD atlas + FGDC20.RWF glyph metrics
