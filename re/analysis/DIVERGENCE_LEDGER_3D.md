@@ -89,11 +89,16 @@ F1. **Menu background** — CORRECTED 2026-06-10: the moving backdrop is
     fires through menu depth 4 — MAIN.BSP is NOT a menu component.
     Deferred to the vehicle-select 3D stage work. Video loop verify still
     pending]
-F2. **Menu item plates/chrome** — original draws beveled plates + sliders
-    (Panel.piz 3D panels: PANEL0..3.DFF/PANEL.TXD + the FUN_0043c5b0 draw
-    loop with highlight quads FUN_00472c60/FUN_00473540/FUN_0040bb50);
-    standalone draws bare text + flat highlight bar. [SCAFFOLD → execute
-    Part 1 of FUN_0043c5b0_port_spec.md — populators already ported]
+F2. **Menu item plates/chrome** — SUBSTANTIALLY CLOSED 2026-06-10: per-row
+    PLATES (navy idle / orange selected — FUN_0043c5b0 immediates via the
+    Im2D BGR swap), navy bullet on selection, top gradient band, "MASHED"
+    chrome decal (string 0x41 at 600/52+596/48), track-preview crossfade
+    (24/24 from TRACKIMAGES.TXD, verbatim MenuChromeShellB phase math),
+    Sound slider rows with orange fill bars. Acceptance pairs in
+    verify/frontend_parity2/ (gts, sound_v2, title_v2, list18).
+    [residuals: list-screen 166-width metrics + 0.578 scale nuance,
+    secondary right-column ids, the FUN_00432b30 prompt strip, and the
+    hook-side FUN_0043c5b0 twin + diff-original promotion]
 F3. **Animated logo** — SUBSTANTIALLY CLOSED 2026-06-10: the title was
     drawing the WRONG ASSET (grey MASHEDLOGO.PNG); the original's rainbow
     logo is **MASHEDNEWLOGO.PNG** (Font36.piz). Standalone now draws it at
