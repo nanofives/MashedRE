@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 6
-- total_green: 17
+- rounds_run: 7
+- total_green: 19
 - dry_counter: 0
-- last_round: 2026-06-12 round 6 (3 GREEN, L2 re-earns)
+- last_round: 2026-06-12 round 7 (2 GREEN, L2 re-earns)
 
 ## Lane queues
 
@@ -66,6 +66,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 004c9f50 RwGlobal7d4134Set — round 6 L2 RE-EARN, log/diff_rw_global_7d4134_set.csv 10/10 GREEN
 - 004b6610 BootGlobalPairSet — round 6 L2 RE-EARN, log/diff_boot_global_pair_set.csv 10/10 GREEN (multi_arg_global_write, guard-inside-window trick)
 - 004b6560 BootGlobalPairSetThunk — round 6 L2 RE-EARN, log/diff_boot_global_pair_set_thunk.csv 10/10 GREEN (call-through reimpl)
+- 00499730 BootPtr773818Get — round 7 L2 RE-EARN, log/diff_boot_ptr_773818_get.csv 10/10 GREEN (constant-VA return)
+- 00495120 TimerQpfStore — round 7 L2 RE-EARN, log/diff_timer_qpf_store.csv 10/10 GREEN (scalars_to_scattered_globals)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -108,6 +110,19 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   block via vtable freelist and stores the fresh pointer into 3 globals:
   nondeterministic across A/B calls. Possible fit: allocator_nonnull
   (compare nonnull-ness only) — design-first, weak evidence
+- 004c9eb0 render (round-7) — 146B setter + device-list scan; analysis-note
+  PROSE AMBIGUOUS on inner-loop variable roles (uVar1/uVar3 assignment
+  ordering, break semantics) — verbatim reimpl needs a Ghidra decomp
+  transcript first (NO-GUESSING); queue for a scribe/pool pass
+- 00493900 boot (round-7) — 448B cmdline tokenizer; live cmdline carries no
+  -vs/-cs/-l tokens -> all global writes skipped -> degenerate; needs
+  arbitrary-string seeding of the 0x00773818 buffer per vector (handler ext)
+- 004926c0/00493480 boot/util (round-7) — QPC time-varying outputs; synthetic
+  bit-diff inapplicable; needs a behavioral/tolerance evidence lane
+- CRT-band L2 rows 004a4bb7 (PE entry) / 004a774d (critsec init) / 004a8a04
+  (TLS init) / 004aa3e4 (2-global predicate, one live path only) / 004aa3fe
+  (HeapCreate) / 004ac04a (file-handle table) — live one-shot CRT init side
+  effects or single-path coverage; not promotable via menu-attach re-call
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
@@ -131,7 +146,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
-2026-06-12 | round 6 | L2 | attempted 3 (004c9f50, 004b6610, 004b6560 thunk) | GREEN 3 | deferred 2 (004c9f60 guard+live-vtable; 004b6540 allocating thunk target) | exit-5/6: none. Baseline build LNK1104 once: the USER's own mashed_re.exe instance (started 21:04) locked the exe output — waited out per the MASHED-running rail (exited 21:07), build then OK. RETROACTIVE root-cause for the round-1/round-3 transient exe-link flakes: same class (a running mashed_re.exe locks build\mashed_re.exe). multi_arg_global_write guard-inside-restored-window trick validated for guard-less multi-param setters (time_display_set_entry precedent). dry_counter 0. L2 remaining: ~24 rows (boot-band 00402750-depth cluster + render dispatchers + CRT-band odd-address rows — expect rising cost; several look abi-limited/oversize-adjacent).
+2026-06-12 | round 7 | L2 | attempted 2 (00499730, 00495120) | GREEN 2 | deferred 9 this round (004c9eb0 needs-decomp-transcript; 00493900 needs buffer-seeding ext; 004926c0/00493480 QPC time-varying; 004a4bb7/004a774d/004a8a04/004aa3e4/004aa3fe/004ac04a CRT one-shot-init class) | exit-5/6: none | dry_counter 0. L2 effectively TRIAGED OUT: remaining un-attempted L2 rows are 00402750/00492370 (large multi-phase loaders), 004c2c90/004c2d90/004c2fb0 (RW plugin/driver dispatchers — live registry mutation), 004cc7f0/004cc820 (freelist allocators — nondeterministic ptrs), 00495270 (single-out-ptr — wishlist), 00498c00 (live D3D mode-table alloc), 00499ba0 (CoInitialize+CreateWindow), 00494f20 (callee C1), 00493540-dup n/a. NEXT ROUND: L3 (c3_filter_v4 sweep) or evaluate L5 — wishlist out-buffer-compare now unlocks 0041f030+0041da90+00484c70+00495270 = 4 confirmed (<10 bar). If L3 yields <3, consider relaxing the L5 bar or running an L4 evidence-repair round. (004c9f50, 004b6610, 004b6560 thunk) | GREEN 3 | deferred 2 (004c9f60 guard+live-vtable; 004b6540 allocating thunk target) | exit-5/6: none. Baseline build LNK1104 once: the USER's own mashed_re.exe instance (started 21:04) locked the exe output — waited out per the MASHED-running rail (exited 21:07), build then OK. RETROACTIVE root-cause for the round-1/round-3 transient exe-link flakes: same class (a running mashed_re.exe locks build\mashed_re.exe). multi_arg_global_write guard-inside-restored-window trick validated for guard-less multi-param setters (time_display_set_entry precedent). dry_counter 0. L2 remaining: ~24 rows (boot-band 00402750-depth cluster + render dispatchers + CRT-band odd-address rows — expect rising cost; several look abi-limited/oversize-adjacent).
 
 2026-06-12 | round 5 RESUMED ~21:35 (user present; env recovered — boot probe GREEN on re-check) | L1+L2 round-3 carry-over | attempted 5 | GREEN 4 (0042fe70 via read_global switch after exit-5; 004cbc60/70/80 L2 re-earns) | deferred 1 (0041ea80: lap-line gate field genuinely 0 in arena mode — needs lap-race recipe or pointer-indirect seed) | exit-5 x2, both root-caused (genuinely-zero domain values, NOT wrong-scenario): 0042fe70 fixed by read_global seeding; 0041ea80 deferred | dry_counter 0. LESSON: probe-unlocked != discriminating — a populated SCENARIO can still read a legitimately-zero GLOBAL; prefer read_global/seeded handlers for plain getters wherever the address is fixed.
 
