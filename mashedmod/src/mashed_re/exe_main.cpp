@@ -2221,9 +2221,7 @@ bool RenderFrame() {
                     if (sid >= 0 && g_font.ready()) {
                         wchar_t stxt[128];
                         if (GetMenuMessage(sid, stxt, 128) > 0) {
-                            const float sx = rec.x * kVScale +
-                                static_cast<float>(Nav_RecordSlide(r)) *
-                                    (260.f / 511.f);
+                            const float sx = rec.x * kVScale;  // no horizontal slide
                             const float sy = rec.y * kVScale;
                             const float sth =
                                 rec.scale * 0.0708f * 480.f * kVScale;
@@ -2267,10 +2265,12 @@ bool RenderFrame() {
             // (0.8 -> 27.2v, 0.6 -> 20.4v).
             const float text_h = rec.scale * 0.0708f * 480.f * kVScale;
 
-            // Slide-in offset: map the record's slide counter (0x1ff..0, settled
-            // = 0) to a horizontal entry offset so records slide in from the right
-            // exactly as the anim tick drives them (faithful FUN_004325c0 motion).
-            const float slideX = static_cast<float>(Nav_RecordSlide(r)) * (260.f / 511.f);
+            // Entry animation: the original GROWS each item plate VERTICALLY
+            // (capture log/orig_anim40.json: plate height 2->26px centered on
+            // the row, x CONSTANT — NOT a horizontal slide). grow = 0 (thin
+            // line) -> 1 (full). No horizontal offset.
+            const float slideX = 0.0f;
+            const float grow   = Nav_RecordGrow(r);
 
             const bool highlighted = (!is_back && rec.row_index == cur);
             const bool disabled = (!is_back && rec.row_index >= 0 &&
@@ -2300,10 +2300,13 @@ bool RenderFrame() {
             // its bold white text on the top band (orig_options.png; the dump's
             // plate rows start at the first item, y=168). Items only.
             if (!is224 && !is_back && rec.prim_id >= 0) {
+                // Vertical grow: plate height = 26*grow, centered on the row
+                // center (rec.y+1), so it expands symmetrically from a line.
+                const float cyc = (rec.y + 1.0f) * kVScale;       // plate center
                 const float px2 = 60.0f * kVScale + slideX;
-                const float py2 = (rec.y - 13.0f + 1.0f) * kVScale;
+                const float ph2 = 26.0f * kVScale * grow;
+                const float py2 = cyc - ph2 * 0.5f;
                 const float pw2 = 210.0f * kVScale;
-                const float ph2 = 26.0f * kVScale;
                 const float gx2 = (60.0f + 210.0f) * kVScale + slideX;
                 const float gw2 = 100.0f * kVScale;
                 const std::uint32_t fill =
@@ -2333,10 +2336,11 @@ bool RenderFrame() {
                             uv_full);
             }
             if (highlighted && !is224) {
+                const float cyc = (rec.y + 1.0f) * kVScale;
+                const float hh = 26.0f * kVScale * grow;   // grows with the plate
                 const float hx = 60.0f * kVScale + slideX;
-                const float hy = (rec.y - 13.0f + 1.0f) * kVScale;
+                const float hy = cyc - hh * 0.5f;
                 const float hw = 210.0f * kVScale;
-                const float hh = 26.0f * kVScale;
                 // R2-5: "Button" badge — the rounded left cap. The original's
                 // highlight branch looks it up via SpriteLookupC("Button",
                 // 0x0043cbbe) and submits via FUN_004739f0 with width 13.0
@@ -2396,10 +2400,17 @@ bool RenderFrame() {
             //   * GREYED rows: the dim path (DAT_008990e4) draws 0x80000000 with
             //     param_7=0x80 -> half-alpha black ("even more transparent").
             const bool is_item = !is_back;
-            const std::uint32_t base_argb =
+            std::uint32_t base_argb =
                 disabled ? 0x80000000u                  // greyed: half-alpha black
               : is_item  ? 0xff000000u                  // list items: opaque black
                          : (static_cast<std::uint32_t>(rec.color) & 0xffffffffu);  // header: white
+            // Fade the label in as its plate grows (grow^2 so it stays hidden
+            // while the plate is a thin line, then resolves as it nears full).
+            if (is_item && grow < 0.999f) {
+                const float gf = grow * grow;
+                std::uint32_t a = static_cast<std::uint32_t>((base_argb >> 24) * gf);
+                base_argb = (a << 24) | (base_argb & 0x00ffffffu);
+            }
 
             // The original left-justifies text at the record's stored X (virtual
             // 64.0; FUN_00427680). Left-anchor at scaled X + slide offset so the
@@ -2466,7 +2477,7 @@ bool RenderFrame() {
                 wtag == 0xff230000u)
                 continue;
             const bool is_back = (wtag == 0xff000000u);
-            const float slideX = static_cast<float>(Nav_RecordSlide(r)) * (260.f / 511.f);
+            const float slideX = 0.0f;   // vertical-grow model: no horizontal slide
             const int sid = Nav_ScreenId();
             const bool is_slider_screen = (sid == 19 || sid == 30);
             const bool is_toggle_screen = (sid == 32);

@@ -172,6 +172,11 @@ bool                Nav_AnimTick();
 // The renderer maps this to a horizontal slide-in offset.
 int                 Nav_RecordSlide(int rec_index);
 
+// Vertical-grow fraction (0 = collapsed line, 1 = full height) for the
+// menu-entry animation. The original grows item plates in HEIGHT (not a
+// horizontal slide); the renderer scales each row's plate/text height by this.
+float               Nav_RecordGrow(int rec_index);
+
 } // namespace Frontend
 } // namespace mashed_re
 

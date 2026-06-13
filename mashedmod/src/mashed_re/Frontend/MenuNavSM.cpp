@@ -997,6 +997,19 @@ const std::uint32_t* NavTest_TableForScreen(int s) { return TableForScreen(s); }
 std::uint32_t NavTest_ItemActionCode(const std::uint32_t* t, int i) { return ItemActionCode(t, i); }
 int NavTest_ActionToScreen(std::uint32_t a, int kind) { return ActionToScreen(a, kind); }
 int NavTest_KvLookup(const std::uint32_t* t, std::uint32_t tag, int n) { return KvLookup(t, tag, n); }
+// Vertical-grow fraction for the menu-entry animation (0 = collapsed to a
+// thin line, 1 = full height). The original animates item plates by GROWING
+// their height (capture: plate h 2->26px, x constant, centered on row y —
+// NOT a horizontal slide). The slide counter (record+0x10) runs 0x1ff->0 as
+// the row settles, so grow = 1 - slide/0x1ff. Settled/non-animating rows = 1.
+float             Nav_RecordGrow(int rec_index) {
+    if (rec_index < 0 || rec_index >= g_record_count) return 1.0f;
+    const MenuRecord& r = g_records[rec_index];
+    if (r.type != 0 && r.type != 2) return 1.0f;        // settled / frozen
+    float g = 1.0f - static_cast<float>(r.slide) / 511.0f;
+    return g < 0.0f ? 0.0f : (g > 1.0f ? 1.0f : g);
+}
+
 int               Nav_RecordSlide(int rec_index) {
     if (rec_index < 0 || rec_index >= g_record_count) return 0;
     const MenuRecord& r = g_records[rec_index];
