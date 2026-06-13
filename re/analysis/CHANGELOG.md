@@ -3401,3 +3401,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  004cbc60  RwGlobal7d4598Set  C2->C3  promote-round-5 RE-EARN (demoted-needs-reimpl): reimpl + void_setter_observe diff 10/10 GREEN log/diff_rw_global_7d4598_set.csv
 2026-06-12  004cbc70  RwGlobal7d4598Get  C2->C3  promote-round-5 RE-EARN: reimpl + read_global diff 10/10 GREEN log/diff_rw_global_7d4598_get.csv
 2026-06-12  004cbc80  RwGlobal7d459cSet  C2->C3  promote-round-5 RE-EARN: reimpl + void_setter_observe diff 10/10 GREEN log/diff_rw_global_7d459c_set.csv
+2026-06-12  004c9f50  RwGlobal7d4134Set  C2->C3  promote-round-6 RE-EARN (demoted-needs-reimpl): reimpl + void_setter_observe diff 10/10 GREEN log/diff_rw_global_7d4134_set.csv
+2026-06-12  004b6610  BootGlobalPairSet  C2->C3  promote-round-6 RE-EARN: reimpl + multi_arg_global_write diff 10/10 GREEN log/diff_boot_global_pair_set.csv
+2026-06-12  004b6560  BootGlobalPairSetThunk  C2->C3  promote-round-6 RE-EARN: call-through reimpl + multi_arg_global_write diff 10/10 GREEN log/diff_boot_global_pair_set_thunk.csv
