@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 49
-- total_green: 137
+- rounds_run: 50
+- total_green: 141
 - dry_counter: 0
-- last_round: 2026-06-13 round 49 — pointer-to-table field getter via ptr_table_field_read (136->137)
+- last_round: 2026-06-13 round 50 — indexed table getter + 3 indexed setters (137->141)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -445,6 +445,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 48 | SmplFzx array-stack push/pop pair (snapshot) | GREEN 2 (StackPop485bd0 0x00485bd0, StackPush485bf0 0x00485bf0; {top@0,cap@4,buf@8}) | total_green 134->136. stack_pop/push_snapshot handlers (reset stack state + call + full snapshot + return). 00485bf0 has an untested range-check trap path (top<0 -> FUN_004a332b) reimpl'd faithfully via stub-call. SWEEP MOMENTUM: rounds 45-48 = pool insert/remove + table getter + 2 clearers + stack push/pop = +7 self-contained-complex promotions in the SmplFzx/pool cluster (0x478-0x486). The decompile->skip-nonleaf->bespoke-snapshot loop is productive (~2-3/round). SESSION: 69->136 (+67). 18-handler library. Many more self-contained struct/pool/stack helpers remain in the SmplFzx + other clusters. Continuing autonomously. REMAINING NON-PROMOTED in this cluster: 0x004893d0 (vertex-push, 3 ptr args - bespoke), 0x0046b1c0 (AABB->24float expand, self-contained but large - bespoke).
 
 2026-06-13 | round 49 | pointer-to-table field getter | GREEN 1 (PtrTable5f2770Get 0x0040ce80: return *(((u32*)*0x005f2770)[i]+4)) | total_green 136->137. ptr_table_field_read handler (seed *(tgt)=tableBuf, tableBuf[i]=&entry, entry[off]=distinct). caller MenuTableSearch C3. SESSION: 69->137 (+68). 19-handler library. SWEEP STATE (continuing autonomously across turns): the decompile->skip-nonleaf->bespoke-snapshot loop is reliably yielding ~1-3 self-contained promotions per round. Rounds 45-49 = +9 (pool insert/remove, table getter, 2 clearers, stack push/pop, ptr-table getter). Hundreds of first-party C2 functions remain; the self-contained subset (getters/setters/clearers/stack/pool/struct-ops) is steadily harvestable WITHOUT the display. Pace ~1-3/round. RESUME: keep decompiling first-party candidates (skip non-leaves + library bands 0x4b4a80-0x4c4000 lua / 0x4c-0x4e RW / 0x4ec+ D3DX9), promote self-contained via existing-or-tiny handlers; run_diff the state-dependent majority on display recovery. This is the steady path to 200.
+
+2026-06-13 | round 50 | indexed table getter + 3 indexed setters | GREEN 4 (Table691508Get 0x00472550 stride0x10; Table69150cSet 0x00472520; Table86ae38Set 0x00488390 stride0x38; Table89a500Set 0x00416230 stride0x74) | total_green 137->141. New indexed_table_set handler (void fn(i,val): *(tgt+i*stride)=val; fix i, vary val). SWEEP ACCELERATING: round 50 yielded 4 (4/4 decompiled were promotable simple indexed accessors). Rounds 45-50 = +13. The first-party C2 pool is RICH in simple indexed table getters/setters with non-standard strides (0x10/0x18/0x38/0x74/0xd04 etc.) that earlier opcode-pattern scans MISSED (they used fixed strides) but decompilation finds immediately. SESSION: 69->141 (+72). 20-handler library. The decompile-driven sweep is the reliable engine: ~2-4 self-contained promotions/round, no display needed. Continuing autonomously toward 200.
 
 ## Final gated-remainder report
 
