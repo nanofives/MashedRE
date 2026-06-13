@@ -484,3 +484,40 @@ extern "C" __declspec(dllexport) void __cdecl MaskGet41f0d0(std::uint32_t i, std
     if (out) *out = *reinterpret_cast<std::uint32_t*>(0x0063dc74u + i * 0x2acu) & 0x400u;
 }
 RH_ScopedInstall(MaskGet41f0d0, 0x0041f0d0);
+
+// ===== round 95 =====
+
+// 0x0047c0b0  render — byte-verified: zero 4 contiguous global tables 0x6bf468..0x6c2fec + DAT_006c2fec=0
+extern "C" __declspec(dllexport) void __cdecl ClearColl47c0b0(void) {
+    for (std::uint32_t* p=(std::uint32_t*)0x006bfca8u; p<(std::uint32_t*)(0x006bfca8u+0x560u*4u); ++p) *p=0;
+    for (std::uint32_t* p=(std::uint32_t*)0x006bf468u; p<(std::uint32_t*)(0x006bf468u+0x200u*4u); ++p) *p=0;
+    for (std::uint32_t* p=(std::uint32_t*)0x006bfc68u; p<(std::uint32_t*)(0x006bfc68u+0x10u*4u); ++p) *p=0;
+    for (std::uint32_t* p=(std::uint32_t*)0x006c1228u; p<(std::uint32_t*)(0x006c1228u+0x771u*4u); ++p) *p=0;
+    *(std::uint32_t*)0x006c2fecu=0;
+}
+RH_ScopedInstall(ClearColl47c0b0, 0x0047c0b0);
+
+// 0x00476ae0  render — byte-verified: base=*(*(p1+4)+DAT_007dc57c); base[0xb8]=p2[0]; base[0xbc]=p2[1]; base[0x40]|=0x4000
+extern "C" __declspec(dllexport) void __cdecl Batch476ae0(std::uint32_t* p1, std::uint32_t* p2) {
+    if (!p2) p2=(std::uint32_t*)0x00613288u;
+    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4) + *(std::uint32_t*)0x007dc57cu);
+    *(std::uint32_t*)(b+0xb8)=p2[0]; *(std::uint32_t*)(b+0xbc)=p2[1]; *(std::uint32_t*)(b+0x40)|=0x4000u;
+}
+RH_ScopedInstall(Batch476ae0, 0x00476ae0);
+
+// 0x00476b90  render — byte-verified: base=...; copy 16 dwords p2->base+0xf8; base[0x40]|=0x8000
+extern "C" __declspec(dllexport) void __cdecl Batch476b90(std::uint32_t* p1, std::uint32_t* p2) {
+    if (!p2) p2=(std::uint32_t*)0x00692558u;
+    char* base=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4) + *(std::uint32_t*)0x007dc57cu);
+    std::uint32_t* d=(std::uint32_t*)(base+0xf8);
+    for (int k=0;k<16;k++) d[k]=p2[k];
+    *(std::uint32_t*)(base+0x40)|=0x8000u;
+}
+RH_ScopedInstall(Batch476b90, 0x00476b90);
+
+// 0x00476be0  render — byte-verified: base=...; base[0xc0]=v; base[0x40]|=0x20000
+extern "C" __declspec(dllexport) void __cdecl Batch476be0(std::uint32_t* p1, std::uint32_t v) {
+    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4) + *(std::uint32_t*)0x007dc57cu);
+    *(std::uint32_t*)(b+0xc0)=v; *(std::uint32_t*)(b+0x40)|=0x20000u;
+}
+RH_ScopedInstall(Batch476be0, 0x00476be0);

@@ -118,6 +118,7 @@ PURE_LEAF_ARGTYPES = {
     'copy_arg_to_globals',       # void fn(ptr p): copy len(observe) dwords from p to observe[k].addr globals. test ignored
     'deref_byte_flag',           # void fn(ptr p, set): b=*(u8*)(p+field_off); set?b|=bit:b&=~bit; store. test=[set,seedbyte]
     'indexed_masked_get_out',    # void fn(i, out*): if(out) *out=*(u32*)(tgt+i*stride) & mask. test=[idx,slotval]
+    'deref_p1field_glob_set',    # fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar; snapshot base observe. test ignored
 }
 
 SRC = r"""
@@ -174,6 +175,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'copy_arg_to_globals') ? ['pointer']
               : (cfg.at === 'deref_byte_flag') ? ['pointer','uint32']
               : (cfg.at === 'indexed_masked_get_out') ? ['uint32','pointer']
+              : (cfg.at === 'deref_p1field_glob_set') ? (cfg.arg2_kind === 'ptr' ? ['pointer','pointer'] : cfg.arg2_kind === 'scalar' ? ['pointer','uint32'] : ['pointer'])
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -353,6 +355,23 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'deref_p1field_glob_set') {
+      // fn(p1[, p2/v]): base = *(u32*)(*(u32*)(p1+p1_off) + *(u32*)glob). seed glob=0 so
+      // base = (*(p1+p1_off))[0]: p1[p1_off]->atab, atab[0]->basebuf. reimpl writes basebuf fields.
+      const obs = cfg.observe, p1off = cfg.p1_off | 0, kind = cfg.arg2_kind, n = cfg.arg2_dwords | 0;
+      ptr(cfg.glob).writeU32(0);
+      const base = Memory.alloc(0x400), atab = Memory.alloc(0x40), p1 = Memory.alloc(0x40);
+      _keep.push(base, atab, p1);
+      let p2 = null; if (kind === 'ptr') { p2 = Memory.alloc(n * 4 + 0x10); _keep.push(p2); }
+      const setup = function () {
+        for (let z = 0; z < 0x400; z += 4) base.add(z).writeU32(0xEEEEEEEE);
+        atab.writePointer(base); p1.add(p1off).writePointer(atab);
+        if (kind === 'ptr') for (let k = 0; k < n; k++) p2.add(k * 4).writeU32((0xC0DE0000 | k) >>> 0);
+      };
+      const snap = function () { return obs.map(function (x) { return base.add(x.off | 0).readU32() >>> 0; }).join(','); };
+      const call = function (fn) { if (kind === 'ptr') fn(p1, p2); else if (kind === 'scalar') fn(p1, 0xC0DE0001); else fn(p1); };
+      try { setup(); call(Orig); o = snap(); } catch (e) { eo = e.message; }
+      try { setup(); call(Reim); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'copy_arg_to_globals') {
       // void fn(ptr p): copy len(observe) dwords from p to observe[k].addr globals.
       const obs = cfg.observe, n = obs.length;
@@ -806,7 +825,8 @@ def run(name):
            'add': h.get('add'), 'seedf': h.get('seedf'),
            'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'),
            'stride_dw': h.get('stride_dw'), 'passthrough_arg': h.get('passthrough_arg'),
-           'mask': h.get('mask'), 'asi': ASI}
+           'mask': h.get('mask'), 'glob': h.get('glob'), 'p1_off': h.get('p1_off'),
+           'arg2_kind': h.get('arg2_kind'), 'arg2_dwords': h.get('arg2_dwords'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

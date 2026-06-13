@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 94
-- total_green: 243
+- rounds_run: 95
+- total_green: 247
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 95 | range_init + deref_p1field_glob_set FAMILY | attempted 4 | GREEN 4 (ClearColl47c0b0 0x0047c0b0 range_init [4 contiguous tables]; Batch476ae0/b90/be0 0x00476ae0/b90/be0 deref_p1field_glob_set NEW handler) | deferred 2 (004773f0 eax-implicit ~20-write naked-asm; 0047bc90 register-conv ESI) | exit-5/6: none | dry_counter 0. total_green 243->247. NEW deref_p1field_glob_set handler (2-level deref *(*(p1+4)+glob), glob seeded 0) unlocked a 3-family. Session 79-95 = 205->247 (+42). Handler library ~29.
 
 2026-06-13 | round 94 | bespoke handlers (sessionB) | attempted 3 | GREEN 3 (Copy476a80 0x00476a80 copy_arg_to_globals; ByteFlag474d80 0x00474d80 deref_byte_flag; MaskGet41f0d0 0x0041f0d0 indexed_masked_get_out) | deferred 3 (0042c150 count-nonzero-flag; 0046be10 in-ptr 2-table; 00475f30 eax-implicit multi-float) | exit-5/6: none | dry_counter 0. total_green 240->243. 3 NEW handlers (1 function each now — vein is fragmented singletons). Session 79-94 = 205->243 (+38). Handler library now ~28. Yield ~3/round but each needs a bespoke handler; remaining is 1-fn-per-handler + skip-categories + run_diff bulk (reboot).
 
