@@ -13642,4 +13642,80 @@ HOOKS = {
         'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
     },
 
+    # ---- promote-round round 8 (L3 curated small leaves) ----------------------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round8.cpp).
+    # All menu-attach with SEEDED handlers (discriminating regardless of state).
+
+    # 0x004430a0  Util897fe0Set — void(uint32) -> DAT_00897fe0.
+    # ref: re/analysis/game_state_d5/0x004430a0.md
+    'util_897fe0_set': {
+        'rva':            0x004430a0,
+        'export':         'Util897fe0Set',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x00897fe0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x004430b0  Util897fe0Get — uint32() <- DAT_00897fe0 (pair of the above).
+    # read_global seeds the address -> discriminating at menu-attach.
+    # ref: re/analysis/game_state_d5/0x004430b0.md
+    'util_897fe0_get': {
+        'rva':            0x004430b0,
+        'export':         'Util897fe0Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00897fe0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x0042f790  GhostModeIsActive — uint32() <- DAT_0067ea70 (ghost flag).
+    # ref: re/analysis/leaderboard_d2/0x0042f790.md
+    'ghost_mode_is_active': {
+        'rva':            0x0042f790,
+        'export':         'GhostModeIsActive',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ea70,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x00431d70  CourseGetLeaderIndex — uint32() <- DAT_0067ea94.
+    # ref: re/analysis/leaderboard_d2/0x00431d70.md
+    'course_get_leader_index': {
+        'rva':            0x00431d70,
+        'export':         'CourseGetLeaderIndex',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0067ea94,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x55555555],
+        'path2_tests':    [0, 1, 3],
+    },
+
+    # 0x004cc7e0  RwGlobal6182b0Set — void(uint32) -> DAT_006182b0 (guard
+    # consumed by FUN_004cc820 per U-5102). Harness saves/restores the global.
+    # ref: re/analysis/render_5_c1_to_c2_s1/FUN_004cc7e0.md
+    'rw_global_6182b0_set': {
+        'rva':            0x004cc7e0,
+        'export':         'RwGlobal6182b0Set',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x006182b0,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
 }
