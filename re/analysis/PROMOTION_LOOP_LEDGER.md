@@ -9,10 +9,19 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 11
+- rounds_run: 12
 - total_green: 34
-- dry_counter: 0
-- last_round: 2026-06-12 round 11 (4 GREEN, L3 looser curation)
+- dry_counter: 0  (round 12 BLOCKED-CONTENTION, not dry)
+- last_round: 2026-06-12 round 12 (skipped: user's standalone session locks the exe)
+
+## UNFINISHED — round 12 carry-over (finish or defer FIRST next round)
+
+Three reimpls authored + registered (commit 76334350) but ZERO diffs ran:
+the .asi could not rebuild (user's live mashed_re.exe locks the linker
+output — LNK1104). Next round: baseline build (will pass once the user's
+session ends), then run hud_counter_reset, boot_param_set2,
+tex_stage_cache_get sequentially and classify. The three exit-2 runs
+against the stale .asi are VOID (export-not-found), not verdicts.
 
 ## Lane queues
 
@@ -171,6 +180,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 12 | L3 (looser remainder) | attempted 3 (authored only) | GREEN 0 — BLOCKED-CONTENTION | deferred 1 (004d71f0: all 3 callers third-party-library[renderware] C1 by policy — caller gate unfillable unless a first-party caller surfaces) | exit-2 x3 VOID (stale .asi, export-not-found — NOT verdicts; lesson: ABORT the diff batch when the build fails, the chained command ran them anyway) | dry_counter 0 (contention, not dry). User's mashed_re.exe (22:15:51, still alive >5 min) locks build\mashed_re.exe -> LNK1104 -> .asi cannot rebuild. Carry-over above. Reschedule ~25 min.
 
 2026-06-12 | round 11 | L3 (looser re-curation of loop_round_8_passed: 12 hits) | attempted 4 (00402f40 dropped pre-diff: NO identified caller at C2+ — plate says "xrefs via Ghidra"; caller gate unfillable without a pool pass) | GREEN 4 | deferred 0 new | exit-5/6: none | dry_counter 0. Looser-curation remainder for round 12: 0041b510 (10b zero-setter DAT_0063cab0 — same shape as ReplayCursorReset), 00431b10 (10b setter DAT_007f0f10=2), 004d71f0 (read_global getter DAT_007d6b10), 004d6e60 (indexed getter DAT_007d6b30[i*6] — check stride bytes + bounds), 0046d510 (matrix-transform vec3 — needs vec3-out handler, likely defer), 0046cbb0 (two-out-ptr — wishlist class), 004102f0 (171b coordinator — too big). Plus pending-from-curation: 00402f40 (needs a Ghidra xref to fill the caller gate — queue for a pool pass alongside 004c9eb0's decomp transcript and 004cc7e0's U-5102 read-trace; THREE items now want one shared Ghidra session).
 
