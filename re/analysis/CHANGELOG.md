@@ -3539,3 +3539,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0046d660  VehTbl881f50Get3  C2->C3  promote-round-54 ptr_out_table_get 10/10 GREEN (early_window vec3 per-vehicle getter)
 2026-06-13  0046d6a0  VehTbl8820acGet1  C2->C3  promote-round-54 ptr_out_table_get 10/10 GREEN (early_window scalar per-vehicle getter)
 2026-06-13  0046d6d0  VehTbl881f84Get1  C2->C3  promote-round-54 ptr_out_table_get 10/10 GREEN (early_window scalar per-vehicle getter)
+2026-06-13  0047ce00  Table6c9438Get  C2->C3  promote-round-55 int_scalar 10/10 GREEN (early_window 200-entry getter OOB 0)
+2026-06-13  0047ce80  Table6c9758Get  C2->C3  promote-round-55 int_scalar 10/10 GREEN (early_window 200-entry getter OOB -1)
+2026-06-13  0047d130  Table6c71d8Get  C2->C3  promote-round-55 int_scalar 10/10 GREEN (early_window 200-entry getter OOB 0)
+2026-06-13  0045c860  Clear88f0a0x4  C2->C3  promote-round-55 scalars_to_scattered_globals GREEN (early_window 4-global zero)
