@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 23
-- total_green: 51
-- dry_counter: 1  (round 23 carry-over Vec3Lerp RED/deferred = 0 GREEN; pool NOT dry — out-ptr candidates remain, next round expected to reset)
-- last_round: 2026-06-13 round 23 RESOLVED (Vec3Lerp x87-blocked -> deferred; build unblocked when user closed mashed_re)
+- rounds_run: 24
+- total_green: 53
+- dry_counter: 0  (round 24 reset it: 2 GREEN)
+- last_round: 2026-06-13 round 24 (2 GREEN — clean shapes, existing handlers)
 
 ## CARRY-OVER CLEARED: Vec3Lerp deferred (x87 bit-identity, commit 6414f413)
 The vec3_lerp diff ran 3x (env recovered, user closed their session): all RED
@@ -112,6 +112,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 0041da90 DeltaTimeOutGet — round 20, log/diff_delta_time_out_get.csv 10/10 GREEN (outbuf_only, race lane)
 - 0041f030 TriggerStructRead — round 21, log/diff_trigger_struct_read.csv 10/10 GREEN (int_copy_outbuf 16, race)
 - 0041f260 WorldMatrixCopy — round 21, log/diff_world_matrix_copy.csv 10/10 GREEN (int_copy_outbuf 64, double-deref, race)
+- 00496900 SlotActiveThunk — round 24, log/diff_slot_active_thunk.csv 10/10 GREEN (int_scalar, race, call-through thunk)
+- 00415860 InteractionCooldownSet — round 24, log/diff_interaction_cooldown_set.csv 10/10 GREEN (slot_block_zero)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -232,6 +234,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-13 | round 24 | resume after Vec3Lerp deferral; broad scan for clean shapes with EXISTING handlers | attempted 2 | GREEN 2 (SlotActiveThunk call-through int_scalar race; InteractionCooldownSet slot_block_zero menu) | deferred 0 new | exit-5/6: none | dry_counter 0 (RESET). Both fit existing handlers (no new code). The simple-getter/setter scan now returns ~3 (00496900+00415860 promoted; 0040d040 Course::ValidateCarsFinished has callees = complex). REMAINING author-able with existing handlers is thinning again; next rounds need either the multi-out-ptr handler (0046cbb0 fn(i,out_a,out_b) — U-rows all Blocks:none, caller 00410d10/0040e180 C2; ~clean) or more complex out-ptr bodies (004516d0 dispatcher, 004d4f00 pipeline search). 0046cbb0 is the next clean L5 (multi_out2 handler). Vec3Lerp x87 remains the one inline-asm/fp-strict TODO.
 
 2026-06-13 | round 23 FINAL | round-22 carry-over | attempted 1 (vec3_lerp) | GREEN 0 | deferred 1 (Vec3Lerp x87 bit-identity — see CARRY-OVER CLEARED) | exit-1 RED x3 (all 3-ulp out[0] t=0.9; 3 reimpl variants identical -> /fp:precise artifact) | dry_counter 1 (0 GREEN; pool NOT dry). User closed mashed_re mid-round -> build unblocked -> diagnosed + deferred cleanly. Next round resumes the out-ptr survey / widened curation (expected GREEN -> reset dry_counter). NOTE on the earlier exit-1 line below: superseded by this FINAL row. The diff finally ran (env recovered) and gave a clean RED -> the non-volatile reimpl kept 80-bit precision. Authored the volatile-float fix but CANNOT verify: the user's mashed_re.exe (pid 2660) locks build\mashed_re.exe -> LNK1104 (killed a zombie MASHED 38072 first; waited 5 min, user session persists). LESSON BANKED: x87 float reimpls of functions that store-and-reload intermediates need `volatile` (or /fp:strict) to match the original's f32 truncation — a plain `float` local under /O2 keeps 80-bit precision and REDs by 1-3 ulp. Reschedule ~25 min for the user's session to close.
 
