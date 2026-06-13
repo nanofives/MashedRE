@@ -10,19 +10,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 ## Counters
 
 - rounds_run: 5
-- total_green: 10
-- dry_counter: 0  (rounds 3-5 BLOCKED-ENV, not dry — pool not drained)
-- last_round: 2026-06-12 round 5 (skipped: environment persists, ~70 min)
-
-## UNFINISHED — round 3 carry-over (finish or defer FIRST next round)
-
-Five reimpls authored + built + registered (commit c9998f07) but ZERO diffs
-ran (game cannot boot — see round-3 log row). Next round: verify boot works
-(spawn one manual MASHED, expect menu), then run these five sequentially:
-- vehicle_dword_67ea80_get (race), track_desc_field40_get (race),
-- rw_global_7d4598_set, rw_global_7d4598_get, rw_global_7d459c_set (menu-attach)
-Then classify the GREEN set as usual. Registry entries exist but are NOT
-evidence yet.
+- total_green: 14
+- dry_counter: 0
+- last_round: 2026-06-12 round 5 (resumed after env recovery; 4 GREEN)
 
 ## Lane queues
 
@@ -69,6 +59,10 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 00423b20 CarSnapshotDwordGet — round 2, log/diff_car_snapshot_dword_get.csv 10/10 GREEN
 - 00426cc0 VehicleTable4cPtrGet — round 2, log/diff_vehicle_table_4c_ptr_get.csv 10/10 GREEN
 - 00442df0 RaceFloat898980Get — round 2, log/diff_race_float_898980_get.csv 10/10 GREEN (FLD byte-verified)
+- 0042fe70 VehicleDword67ea80Get — round 5, log/diff_vehicle_dword_67ea80_get.csv 10/10 GREEN via read_global (none+race was exit-5: global genuinely 0 in Quick Battle)
+- 004cbc60 RwGlobal7d4598Set — round 5 L2 RE-EARN, log/diff_rw_global_7d4598_set.csv 10/10 GREEN
+- 004cbc70 RwGlobal7d4598Get — round 5 L2 RE-EARN, log/diff_rw_global_7d4598_get.csv 10/10 GREEN
+- 004cbc80 RwGlobal7d459cSet — round 5 L2 RE-EARN, log/diff_rw_global_7d459c_set.csv 10/10 GREEN
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -99,6 +93,11 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   animator; could run via void_write_observe on DAT_0063d588 (handler
   saves/restores) IF RW callees 004c51a0/004c1480/004c13e0 are C2+ and
   calling them off-frame is safe; revisit when L1/L2 thin out
+- 0041ea80 ai TrackDescField40Get (round-5) — reimpl authored + registered
+  (PromoLoop_round3.cpp), but exit-5 in Quick Battle: DAT_0063d7e4 IS
+  populated (no AV) yet the +0x40 lap-line-gate field is genuinely 0 in
+  ARENA mode (no lap lines). Needs a lap-based-race drive recipe OR a
+  pointer-indirect seed handler. Stays C2; registry entry kept (race)
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
@@ -121,6 +120,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 5 RESUMED ~21:35 (user present; env recovered — boot probe GREEN on re-check) | L1+L2 round-3 carry-over | attempted 5 | GREEN 4 (0042fe70 via read_global switch after exit-5; 004cbc60/70/80 L2 re-earns) | deferred 1 (0041ea80: lap-line gate field genuinely 0 in arena mode — needs lap-race recipe or pointer-indirect seed) | exit-5 x2, both root-caused (genuinely-zero domain values, NOT wrong-scenario): 0042fe70 fixed by read_global seeding; 0041ea80 deferred | dry_counter 0. LESSON: probe-unlocked != discriminating — a populated SCENARIO can still read a legitimately-zero GLOBAL; prefer read_global/seeded handlers for plain getters wherever the address is fixed.
 
 2026-06-12 | round 5 | (boot probe only) | attempted 0 (round-3 five still pending) | GREEN 0 — BLOCKED-ENV persists (~70 min; same clean exit -1 after RwEngineOpen; no user intervention yet) | deferred 0 | — | dry_counter 0. Backing off to 1 h retries. NOTE: a user reboot (the likely fix) kills this session and its /loop — if a fresh session picks this up, this ledger is the full state: run the round-3 five (vehicle_dword_67ea80_get + track_desc_field40_get race-lane; rw_global_7d4598_set/get + rw_global_7d459c_set menu-attach) after one boot probe, then classify the GREEN set.
 
