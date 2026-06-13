@@ -3457,3 +3457,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0049a740  Set773978  C2->C3  promote-round-28 void_setter_observe 10/10 GREEN
 2026-06-13  0042f7a0  GhostMode::Clear  C2->C3  promote-round-28 scalars_to_scattered_globals 10/10 GREEN
 2026-06-13  00452160  PowerupTargetPtrGet  C2->C3  promote-round-28 read_global 10/10 GREEN
+2026-06-13  00493570  Set77196c_1  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  00493580  Set771970_1  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  00462510  Set603868_0  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  00462500  Set603868_1  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  00487df0  Set703058_0  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
