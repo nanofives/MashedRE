@@ -13812,4 +13812,72 @@ HOOKS = {
         'path2_tests':    [{'args': [0]}, {'args': [1]}, {'args': [0xb]}],
     },
 
+    # ---- promote-round round 10 (L3 race-lane + live-global set) --------------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round10.cpp).
+
+    # 0x0046c750  EntityVelocityCounterGet — uint32(int i). Bounds-checked
+    # (SIGNED jl vs 0x10) getter of the velocity/exposure counter at
+    # 0x00882194 + i*0xd04 (range 0-3000, populated by movement in a live
+    # race). OOB (>=16) returns 0. scenario race for populated counters.
+    # ref: re/analysis/bucket_ai_00452eb0_004c3df0/0046c750.md
+    'entity_velocity_counter_get': {
+        'rva':            0x0046c750,
+        'export':         'EntityVelocityCounterGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 15, 16, 100, 0, 1, 2],
+        'path2_tests':    [0, 1, 16],
+    },
+
+    # 0x0046c730  EntityDamageStateGet — uint32(int i). Sibling field (+4):
+    # damage state 0/1/2 at 0x00882198 + i*0xd04. Exit-5 risk noted: a short
+    # drive may have zero damage everywhere — accepted; exit-5 => defer.
+    # ref: re/analysis/bucket_ai_00452eb0_004c3df0/0046c730.md
+    'entity_damage_state_get': {
+        'rva':            0x0046c730,
+        'export':         'EntityDamageStateGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 15, 16, 100, 0, 1, 2],
+        'path2_tests':    [0, 1, 16],
+    },
+
+    # 0x0040b410  RaceScoreTimerGet — uint32(int i). UNBOUNDED indexed read
+    # of the dword array at 0x008a9520 + i*4 (scaled-index byte stride 4).
+    # Group-B reset writes -1000 (0xfffffc18) => nonzero mid-race. Vectors
+    # stay small non-negative (no bounds check in the original).
+    # ref: re/analysis/game_state_d5_cont2/0x0040b410.md
+    'race_score_timer_get': {
+        'rva':            0x0040b410,
+        'export':         'RaceScoreTimerGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0040e360  RaceModeSet — void(uint32) -> 0x0063ba8c, the LIVE
+    # game-mode/race-phase global (read by GetRenderSubMode + AI dispatcher).
+    # void_setter_observe saves/restores per vector, but the game thread can
+    # sample mid-bracket -> vectors RESTRICTED to values observed in the
+    # original (4/5/8/9 compares per 0x0040e350 notes; 7 and 6 from the
+    # cited call sites). NO garbage values — keep it that way.
+    # ref: re/analysis/leaderboard_d2/0x0040e360.md
+    'race_mode_set': {
+        'rva':            0x0040e360,
+        'export':         'RaceModeSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x0063ba8c,
+        'lut_root_delta': 0,
+        'path1_tests':    [7, 6, 4, 5, 8, 9, 7, 6, 4, 5],
+        'path2_tests':    [7, 6, 4],
+    },
+
 }

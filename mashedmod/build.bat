@@ -351,6 +351,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Boot\PromoLoop_round7.cpp" ^
     "Util\PromoLoop_round8.cpp" ^
     "Util\PromoLoop_round9.cpp" ^
+    "Util\PromoLoop_round10.cpp" ^
     /link /DLL /MAP:"%OUT%\mashed_re_dev.map" /MAPINFO:EXPORTS
 popd
 if errorlevel 1 (echo [ERROR] dll build failed & exit /b 1)
