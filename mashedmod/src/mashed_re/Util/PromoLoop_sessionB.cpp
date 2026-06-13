@@ -550,3 +550,29 @@ extern "C" __declspec(dllexport) void __cdecl Batch476cb0(std::uint32_t* p1, std
     *(std::uint32_t*)(b+0xa4)=p2; *(std::uint32_t*)(b+0xa8)=p3; *(std::uint32_t*)(b+0x40)|=0x10000000u;
 }
 RH_ScopedInstall(Batch476cb0, 0x00476cb0);
+
+// ===== round 97 =====
+
+// 0x0047ce40  particle — int fn(key): if(key<=0) return -1; for i<200: if(*(int*)(0x6c6b90+i*4)==key) return i; return -1
+extern "C" __declspec(dllexport) int __cdecl Search47ce40(int key) {
+    if (key <= 0) return -1;
+    for (int i = 0; i < 200; i++)
+        if (reinterpret_cast<int*>(0x006c6b90u)[i] == key) return i;
+    return -1;
+}
+RH_ScopedInstall(Search47ce40, 0x0047ce40);
+
+// 0x0048f260  particle — strided clear: for p in [0x76d980,0x7706d0) step 0x488: *(u32*)p=0  (one dword/record)
+extern "C" __declspec(dllexport) void __cdecl Clear48f260(void) {
+    for (std::uint32_t p = 0x0076d980u; p < 0x007706d0u; p += 0x488u)
+        *reinterpret_cast<std::uint32_t*>(p) = 0;
+}
+RH_ScopedInstall(Clear48f260, 0x0048f260);
+
+// 0x00491bd0  particle — zero vertex buffer *(0x869ca0): for i in [0,0x4000) step 0x20: *(u32*)(*(0x869ca0)+i)=0
+extern "C" __declspec(dllexport) void __cdecl ClearVB491bd0(void) {
+    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x00869ca0u);
+    for (std::uint32_t i = 0; i < 0x4000u; i += 0x20u)
+        *reinterpret_cast<std::uint32_t*>(base + i) = 0;
+}
+RH_ScopedInstall(ClearVB491bd0, 0x00491bd0);

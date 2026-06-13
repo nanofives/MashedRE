@@ -119,6 +119,8 @@ PURE_LEAF_ARGTYPES = {
     'deref_byte_flag',           # void fn(ptr p, set): b=*(u8*)(p+field_off); set?b|=bit:b&=~bit; store. test=[set,seedbyte]
     'indexed_masked_get_out',    # void fn(i, out*): if(out) *out=*(u32*)(tgt+i*stride) & mask. test=[idx,slotval]
     'deref_p1field_glob_set',    # fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar; snapshot base observe. test ignored
+    'global_table_linear_search',# int fn(key): if(key<=0) return -1; for i<count if(*(int*)(tgt+i*stride)==key) return i; return -1. test=[key,placeAt]
+    'global_ptr_strided_clear',  # void fn(): for i in [0,len) step stride: *(u32*)(*(u32*)glob + i)=0. seed *glob=&buf, snapshot strided
 }
 
 SRC = r"""
@@ -176,6 +178,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'deref_byte_flag') ? ['pointer','uint32']
               : (cfg.at === 'indexed_masked_get_out') ? ['uint32','pointer']
               : (cfg.at === 'deref_p1field_glob_set') ? (cfg.arg2_kind === 'ptr' ? ['pointer','pointer'] : cfg.arg2_kind === 'scalar' ? ['pointer','uint32'] : cfg.arg2_kind === 'scalar2' ? ['pointer','uint32','uint32'] : ['pointer'])
+              : (cfg.at === 'global_table_linear_search') ? ['uint32']
+              : (cfg.at === 'global_ptr_strided_clear') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -355,6 +359,21 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_table_linear_search') {
+      // int fn(key): if(key<=0) return -1; for i<count: if(*(int*)(tgt+i*stride)==key) return i; return -1.
+      const base = cfg.tgt, stride = cfg.stride | 0, count = cfg.count | 0, key = t[0] | 0, placeAt = t[1] | 0;
+      for (let i = 0; i < count; i++) ptr(base).add(i * stride).writeU32((0x7F000000 | i) >>> 0);
+      if (placeAt >= 0 && placeAt < count) ptr(base).add(placeAt * stride).writeU32(key >>> 0);
+      try { o = '' + (Orig(key) | 0); } catch (e) { eo = e.message; }
+      try { r = '' + (Reim(key) | 0); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_ptr_strided_clear') {
+      // void fn(): for i in [0,len) step stride: *(u32*)(*(u32*)glob + i)=0. seed *glob=&buf, snapshot strided.
+      const len = cfg.len | 0, stride = cfg.stride | 0;
+      const buf = Memory.alloc(len + 0x20); _keep.push(buf);
+      const setup = function () { ptr(cfg.glob).writePointer(buf); for (let z = 0; z < len; z += 4) buf.add(z).writeU32(0xEEEEEEEE); };
+      const snap = function () { const p = []; for (let i = 0; i < len; i += stride) p.push(buf.add(i).readU32() >>> 0); return p.join(','); };
+      try { setup(); Orig(); o = snap(); } catch (e) { eo = e.message; }
+      try { setup(); Reim(); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'deref_p1field_glob_set') {
       // fn(p1[, p2/v]): base = *(u32*)(*(u32*)(p1+p1_off) + *(u32*)glob). seed glob=0 so
       // base = (*(p1+p1_off))[0]: p1[p1_off]->atab, atab[0]->basebuf. reimpl writes basebuf fields.

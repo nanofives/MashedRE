@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 97 (global-table search + strided clears) --
+    'search_47ce40': {'rva': 0x0047ce40, 'export': 'Search47ce40', 'signature': {'ret': 'int32', 'args': ['uint32']}, 'arg_type': 'global_table_linear_search', 'target_global': 0x006c6b90, 'stride': 4, 'count': 200, 'lut_root_delta': 0, 'path1_tests': [[0x1234,0],[0x1234,50],[0x1234,199],[0x1234,-1],[0xABCD,100]], 'path2_tests': [[0x1234,50],[0x1234,-1]]},
+    'clear_48f260': {'rva': 0x0048f260, 'export': 'Clear48f260', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0076d980, 'len': 0x2d50, 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'clear_vb_491bd0': {'rva': 0x00491bd0, 'export': 'ClearVB491bd0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'global_ptr_strided_clear', 'glob': 0x00869ca0, 'len': 0x4000, 'stride': 0x20, 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+
     # ---- promote-round round 96 (more per-batch state setters) --
     'batch_476c10': {'rva': 0x00476c10, 'export': 'Batch476c10', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'deref_p1field_glob_set', 'glob': 0x007dc57c, 'p1_off': 4, 'arg2_kind': 'ptr', 'arg2_dwords': 4, 'observe': [{'off':0xd8},{'off':0xdc},{'off':0xe0},{'off':0xe4},{'off':0x40}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
     'batch_476c60': {'rva': 0x00476c60, 'export': 'Batch476c60', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'deref_p1field_glob_set', 'glob': 0x007dc57c, 'p1_off': 4, 'arg2_kind': 'ptr', 'arg2_dwords': 8, 'observe': [{'off':0xd8},{'off':0xdc},{'off':0xf0},{'off':0xf4},{'off':0x40}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},

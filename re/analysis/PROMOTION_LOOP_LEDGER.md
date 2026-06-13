@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 96
-- total_green: 250
+- rounds_run: 97
+- total_green: 253
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 97 | global-table search + strided clears | attempted 3 | GREEN 3 (Search47ce40 global_table_linear_search NEW; Clear48f260 range_init strided; ClearVB491bd0 global_ptr_strided_clear NEW) | deferred 4 (00484c90 strided+counter; 0048ebc0 int-div; 00491070 BGRA-fill via globptr; eax-implicit/list earlier) | exit-5/6: none | dry_counter 0. total_green 250->253. Session 79-97 = 205->253 (+48). Handler library ~32.
 
 2026-06-13 | round 96 | deref_p1field_glob_set family cont. | attempted 3 | GREEN 3 (Batch476c10 ptr-4; Batch476c60 ptr-8; Batch476cb0 scalar2) | deferred 3 (00477450 eax-implicit decal; 004840f0 fastcall/register list; 004850b0 list-walk via manager) | exit-5/6: none | dry_counter 0. total_green 247->250. CROSSED 250. deref_p1field_glob_set extended for scalar2. The per-batch-state-setter family (0x476xxx, dirty-bit 0x40) is rich (now 6 promoted). Session 79-96 = 205->250 (+45).
 
