@@ -14179,4 +14179,39 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 21 (out-ptr survey: int_copy_outbuf) -------------
+
+    # 0x0041f030  TriggerStructRead — void(int i, uint32* out4): copies 4
+    # dwords from 0x0063dc38 + i*0x2ac into out[0..3] (type-0x15 trigger
+    # struct). int_copy_outbuf out_buf_size=16; race lane (live triggers).
+    # ref: re/analysis/ai_update_d3/0x0041f030.md
+    'trigger_struct_read': {
+        'rva':            0x0041f030,
+        'export':         'TriggerStructRead',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
+        'arg_type':       'int_copy_outbuf',
+        'out_buf_size':   16,
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041f260  WorldMatrixCopy — void(int i, uint32* out16): DOUBLE-DEREF
+    # src = *(*(0x0063dc4c + i*0x2ac) + 4) + 0x10; copies the 16-dword (4x4)
+    # matrix to out. int_copy_outbuf out_buf_size=64; race lane (per-slot
+    # object ptrs NULL at menu -> in-bounds slots 0..3 only).
+    # ref: re/analysis/random_rng_d2/0x0041f260.md
+    'world_matrix_copy': {
+        'rva':            0x0041f260,
+        'export':         'WorldMatrixCopy',
+        'signature':      {'ret': 'void', 'args': ['int32', 'pointer']},
+        'arg_type':       'int_copy_outbuf',
+        'out_buf_size':   64,
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
