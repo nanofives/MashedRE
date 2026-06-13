@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 44 (EAX-implicit field clearer; naked asm) --
+    'eax_clear_4190f0': {'rva': 0x004190f0, 'export': 'ClearEax4190f0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'eax_implicit_void', 'observe': [{'off': 0x4c}, {'off': 0x50}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
+
     # ---- promote-round round 43 (large-stride imul FLOAT table getters) --
     'float_table_63dc64_get': {'rva': 0x0041f100, 'export': 'FloatTable63dc64Get', 'signature': {'ret': 'float', 'args': ['int32']}, 'arg_type': 'float_table_read', 'seed_table': {'base': 0x0063dc64, 'stride': 0x2ac, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
     'float_table_8900a8_get': {'rva': 0x0044e050, 'export': 'FloatTable8900a8Get', 'signature': {'ret': 'float', 'args': ['int32']}, 'arg_type': 'float_table_read', 'seed_table': {'base': 0x008900a8, 'stride': 0xf8, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},

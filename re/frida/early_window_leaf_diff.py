@@ -65,6 +65,7 @@ PURE_LEAF_ARGTYPES = {
     'const_return',       # fn(): return <fixed constant> — no input, no state; call + compare
     'global_field_read',  # fn(): return *(*(global)+field_off) — point global at a seeded buffer
     'float_table_read',   # fn(i): return *(float*)(base+i*stride) — seed_table bits read as float
+    'eax_implicit_void',  # void fn() with `this` in EAX — trampoline sets EAX=buf, check observed fields
 }
 
 SRC = r"""
@@ -130,6 +131,24 @@ rpc.exports.diff = function(cfg) {
     } else if (cfg.at === 'const_return') {
       try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
       try { r = Reim() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_implicit_void') {
+      // The function uses EAX as an implicit `this`. Build a tiny trampoline
+      // `mov eax, buf ; jmp target` (B8 imm32 / E9 rel32), call it (no args), and
+      // check the observed buffer fields. Fill with a sentinel first so a wrong
+      // reimpl that leaves any field unwritten -> RED.
+      const obs = cfg.observe;
+      const ebuf = Memory.alloc(0x100); _keep.push(ebuf);
+      const mkTramp = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writePointer(ebuf); tr.add(5).writeU8(0xE9);
+        tr.add(6).writeS32(target.sub(tr.add(10)).toInt32());
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'void', [], 'mscdecl');
+      };
+      const fillAll = function () { for (let z = 0; z < 0x100; z += 4) ebuf.add(z).writeU32(0xFFFFFFFF); };
+      const readObs = function () { return obs.map(function (x) { return ebuf.add(x.off | 0).readU32() >>> 0; }).join('|'); };
+      try { fillAll(); mkTramp(ptr(cfg.rva))(); o = readObs(); } catch (e) { eo = e.message; }
+      try { fillAll(); mkTramp(reim)(); r = readObs(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'float_table_read') {
       // return *(float*)(base+i*stride). Seed the table bits (read as float, distinct
       // -> non-degenerate). ret is float so DO NOT coerce with >>> 0.
