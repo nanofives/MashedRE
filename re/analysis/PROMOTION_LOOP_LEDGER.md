@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 77
-- total_green: 204
+- rounds_run: 78
+- total_green: 205
 - dry_counter: 0
-- last_round: 2026-06-13 round 77 — strided -1.0f fill + trailing global zero (opportunistic; 1/8 clean, 1 dropped zero-caller) (203->204)
+- last_round: 2026-06-13 round 78 — 2-global equality predicate (opportunistic; 2 clean but 1 already-C3, so +1) (204->205)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -511,6 +511,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 76 | global-field getter (opportunistic beyond-200) | GREEN 1 (GlobalFieldGet896000 0x0044c370 global_field_read, same shape as round 75) | total_green 202->203. VEIN THINNING SHARPLY: this batch of 8 decompiles yielded only 1 clean existing-handler fit; the other 7 are non-leaves (vtable dispatch 0x00454130/0x00451cc0), __fastcall (0x0041ae20/0x00454c10), EAX-implicit particle spawn (0x00456eb0), heavy float arithmetic (0x0044c740 collision resolve), or complex two-array strided init (0x00413fe0). The early-window display-independent cheap+moderate vein is approaching dry; remaining first-party C2 is dominated by register-convention / float-arith / vtable shapes that need either bespoke register-trampoline handlers or run_diff on a booted game (display-gated). Two-dry-rounds termination is near. 25 handlers.
 
 2026-06-13 | round 77 | strided -1.0f fill + trailing global zero (opportunistic) | GREEN 1 (Fill63e5a4 0x00421080 range_init: strided 0xbf800000 fill base 0x0063e5a4 step 0x2c + *(0x0063fb88)=0 inside range) | total_green 203->204. Batch of 8: 1 clean range_init + 1 dropped (0x00407580 int_scalar getter but ZERO callers) + 6 hard (EAX-implicit table-index init 0x00418a30, EAX-implicit vtable dispatch 0x0041b340, vtable string-path 0x0042a8d0, vtable reset 0x00451cc0, 4-state float machine 0x0040dcb0). VEIN CONFIRMED NEARLY DRY for the display-independent cheap+moderate class. Remaining first-party C2 needs: (a) an EAX-trampoline-with-pre-seeded-index handler (for 0x00418a30-style this-init that reads a table by this[k]), (b) __fastcall handlers, (c) run_diff on a booted game for the state-dependent majority (display-gated). 25 handlers. Loop continuing opportunistically toward 2-dry-round termination.
+
+2026-06-13 | round 78 | 2-global equality predicate (opportunistic) | GREEN 1 (Pred405890 0x00405890 two_global_predicate: g1!=0 && g2==g1) | total_green 204->205. Batch of 8: 2 clean (but 0x0044d6e0 already C3=Set684b34) -> +1; rest hard: integer-div-clamp w/ div-by-zero risk (0x0048ebc0), particle-spawn non-leaves calling FUN_00472650 (0x0048f290/0x0048f420), gate-then-call non-leaves (0x004671a0/0x00467210), FUN_00538c80 caller (0x0048fe70). VEIN DRY-ADJACENT: ~1/round, mostly non-leaves + already-promoted. 25 handlers. Approaching 2-dry-round termination.
 
 ## Final report — 200 C2->C3 reached (2026-06-13)
 

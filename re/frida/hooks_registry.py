@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 78 (2-global equality predicate; opportunistic) --
+    'pred_405890': {'rva': 0x00405890, 'export': 'Pred405890', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'two_global_predicate', 'gate': 0x0063a5d0, 'target_global': 0x0063a5d4, 'lut_root_delta': 0, 'path1_tests': [[5, 5], [5, 3], [0, 0], [7, 7], [3, 9], [0, 5], [10, 10], [2, 2], [0, 7], [8, 4]], 'path2_tests': [[5, 5], [5, 3], [0, 0]]},
+
     # ---- promote-round round 77 (strided -1.0f fill + trailing global zero; opportunistic) --
     'fill_63e5a4': {'rva': 0x00421080, 'export': 'Fill63e5a4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063e5a4, 'len': 0x1600, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
 
