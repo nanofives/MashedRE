@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 72
-- total_green: 193
+- rounds_run: 73
+- total_green: 195
 - dry_counter: 0
-- last_round: 2026-06-13 round 72 — audio-state switch predicate + gated 6-arg message-post via 2 new handlers (191->193)
+- last_round: 2026-06-13 round 73 — state-global 2->3 transition + 2-global trigger predicate via 2 new handlers (193->195)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -501,6 +501,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 71 | bounded TTL setter + Pool-J 2-field reset (new indexed_const2_set) | GREEN 2 (TtlSet68b1b0 0x00458fa0 indexed_table_set bounded; PoolJReset68ba00 0x00459540 indexed_const2_set) | total_green 189->191. indexed_const2_set: void fn(idx) writes 2 baked consts at base+idx*stride+off. DROPPED 0x00455b40 (already C3) + 0x00456ce0 (zero callers) + float10 fpatan/fsin (not bit-reproducible). NOTE: transient Frida "attach failed" on first ttl_set run -> retried GREEN (spawn timing, not a code issue; standard retry). SESSION (this context, rounds 53-71): 142->191 (+49), EIGHTEEN new handlers. RESUME: keep re-intersecting zero-callee∩C2 + sweeping + bespoke handlers; on display recovery run_diff state-dependent majority. 200 imminent (~9 to go).
 
 2026-06-13 | round 72 | audio-state switch predicate + gated 6-arg message-post (2 new handlers) | GREEN 2 (AudioStateActive 0x004627b0 global_switch_member; Post0042bf30 0x0042bf30 gated_args_to_globals) | total_green 191->193. global_switch_member: u32 fn() reads gate global -> switch membership. gated_args_to_globals: void fn(6 args) gated write to N observe globals + aux-conditional. SESSION (this context, rounds 53-72): 142->193 (+51), TWENTY new handlers. RESUME: keep re-intersecting zero-callee∩C2 + bespoke handlers; on display recovery run_diff state-dependent majority. 200 imminent (~7 to go).
+
+2026-06-13 | round 73 | state-global 2->3 transition + 2-global trigger predicate (2 new handlers) | GREEN 2 (StateAdvance2to3 0x0042c1a0 void_global_transition; Trigger432290 0x00432290 two_global_predicate) | total_green 193->195. DROPPED 4 already-promoted (0x00430760/004309b0 C3, 0x0042c2f0 C4, 0x004274d0 C3) + float10 fpatan (0x004233e0). SESSION (this context, rounds 53-73): 142->195 (+53), TWENTY-TWO new handlers. RESUME: keep re-intersecting + bespoke; on display recovery run_diff state-dependent majority. 200 imminent (~5 to go).
 
 ## Final gated-remainder report
 

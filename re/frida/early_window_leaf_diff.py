@@ -95,6 +95,8 @@ PURE_LEAF_ARGTYPES = {
     'indexed_const2_set',    # void fn(idx): *(u32*)(base+idx*stride+off0)=v0; *(u32*)(base+idx*stride+off1)=v1 (consts baked in reimpl)
     'global_switch_member',  # u32 fn(): reads *(int*)gate, returns switch-membership (1/0). seed gate; test = gate value
     'gated_args_to_globals', # void fn(p1..p6): if(*(int*)gate==0){ write args+consts to observe globals; conditional on aux }. test=[p1..p6,auxseed]
+    'void_global_transition',# void fn(): if(*(int*)tgt==from) *(int*)tgt=to. test=[seed] -> seed *tgt, call, snapshot
+    'two_global_predicate',  # u32 fn(): reads gate global + tgt global, returns membership (1/0). test=[g1seed,g2seed]
 }
 
 SRC = r"""
@@ -271,6 +273,17 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'void_global_transition') {
+      // void fn(): if(*(int*)tgt==from) *(int*)tgt=to. test t=[seed]: seed *tgt, call, snapshot.
+      const g = ptr(cfg.tgt);
+      try { g.writeU32(t[0] >>> 0); Orig(); o = g.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { g.writeU32(t[0] >>> 0); Reim(); r = g.readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'two_global_predicate') {
+      // u32 fn(): reads gate global + tgt global, returns membership. test t=[g1seed,g2seed]: seed both, compare.
+      const g1 = t[0] >>> 0, g2 = t[1] >>> 0;
+      ptr(cfg.gate).writeU32(g1); ptr(cfg.tgt).writeU32(g2);
+      try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { ptr(cfg.gate).writeU32(g1); ptr(cfg.tgt).writeU32(g2); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'global_switch_member') {
       // u32 fn(): reads *(int*)gate, returns switch-membership. seed gate to test value, compare.
       ptr(cfg.gate).writeU32(t >>> 0);
