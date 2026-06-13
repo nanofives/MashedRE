@@ -9,7 +9,7 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 83
+- rounds_run: 84
 - total_green: 218
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 84 | run_diff RACE-lane probe (live-state) | attempted 1 (PhysHandleGet485340 0x00485340) | GREEN 0 | reverted 1 (unverified) | dry_counter 0 (lane-blocked, not dry). KEY FINDING: the run_diff RACE lane (scenario:race, nav-drive) crashes MASHED during drive_to_race ("frida.InvalidOperationError: script has been destroyed", consistent x2) — a SEPARATE runtime issue from boot (boot+menu are fine; get_771e78 run_diff menu-attach was 10/10 GREEN). So state-dependent candidates split: MENU-LIVE state + non-leaves are promotable via run_diff menu-attach (open); RACE-LIVE state (physics/vehicle/AI live arrays, e.g. 0x00485340 via DAT_006e71cc manager) is BLOCKED on the race-nav crash. NEXT BLOCKER for the run_diff bulk = fix the race-nav/track-load crash (investigate: boot to menu, manually drive to race; check whether the 640x480 forced dims from patch_mashed_fix_camera_res.py affect race rendering, or it is the pre-existing runtime-survival issue [[project_runtime_blocked]] / nav-drive recipe). Reverted PromoLoop_round84 (no unverified hook shipped). total_green stays 218.
 
 2026-06-13 | round 83 | classifier setter-family recognizers (early_window) | attempted 3 | GREEN 3 (Set5173d0 0x005173d0 + Set5209d0 0x005209d0 deref_struct_set ns=3; Rmw518570 0x00518570 deref_struct_set ns=0 byte-OR) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 215->218. Extended promote_classify.py with indexed_table_set + deref_struct_set recognizers (validated vs 5 hand-authored cases); auto-surfaced 005173d0/005209d0. The classifier now auto-emits the setter families. Frontier tail is thin+diverse so per-round yield ~3; remaining STATE bulk needs run_diff (booted, now open) or more handlers. Note: 00477e00 (rd82) carries non-blocking structural U-4513 (global dual-role question; behavioral bit-identity verified).
 
