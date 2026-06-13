@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 8
-- total_green: 23
+- rounds_run: 9
+- total_green: 28
 - dry_counter: 0
-- last_round: 2026-06-12 round 8 (4 GREEN + 1 refused, L3 curated)
+- last_round: 2026-06-12 round 9 (5 GREEN, L3 curated)
 
 ## Lane queues
 
@@ -72,6 +72,11 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 004430b0 Util897fe0Get — round 8 L3, log/diff_util_897fe0_get.csv 10/10 GREEN
 - 0042f790 GhostMode::IsActive — round 8 L3, log/diff_ghost_mode_is_active.csv 10/10 GREEN
 - 00431d70 Course::GetLeaderIndex — round 8 L3, log/diff_course_get_leader_index.csv 10/10 GREEN
+- 00498be0 RenderBitDepthGet — round 9 L3, log/diff_render_bit_depth_get.csv 10/10 GREEN
+- 0040dc80 UtilFloat63b910Get — round 9 L3, log/diff_util_float_63b910_get.csv 10/10 GREEN (FLD byte-verified)
+- 0040dc90 UtilSlotIndexCondGet — round 9 L3, log/diff_util_slot_index_cond_get.csv 10/10 GREEN (5/10 path untested)
+- 00429860 RaceStateFlagGet — round 9 L3, log/diff_race_state_flag_get.csv 10/10 GREEN
+- 00429840 RaceStateLatchSet — round 9 L3, log/diff_race_state_latch_set.csv 10/10 GREEN (latch branch via fill=0xFF)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -154,6 +159,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 9 | L3 (round-8 curation remainder) | attempted 5 | GREEN 5 | deferred 0 new | exit-5/6: none | dry_counter 0. New technique: latch-branch coverage via scalars_to_scattered_globals fill=0xFF (forces current!=0 inside the restored bracket → no-store branch exercised). L3 curated remainder for round 10: 0046c730/0046c750 (0xd04-stride physics getters — race lane, in-bounds 0..15), 0040b410 (11b indexed getter — read note for stride), 0040e360 RaceMode::Set (9b setter on the LIVE race-phase global 0x0063ba8c — void_setter_observe saves/restores, but a mid-write phase glitch could perturb the menu; vector with menu-mode values; CAUTION). After those: re-run the curation regexes with looser patterns (indexed getters, 2-global conditionals) or move to L4 evidence repair.
 
 2026-06-12 | round 8 | L3 (c3_filter_v4 sweep loop_round_8: 1685 passed, curated to 14 small getter/setter shapes, picked 5) | attempted 5 | GREEN 5 diffs / PROMOTED 4 | refused 1 (004cc7e0: U-5102 explicit Blocks=C2->C3 — first blocking U-row the loop has hit; honored) | exit-4 attach flake x1 (rw_global_6182b0_set, GREEN on retry — injection failure, not a verdict) | dry_counter 0. L3 curated pool remainder: 9 more from this curation pass (00498be0 5b getter; 0040dc80 6b float getter FILD-CHECK; 0040dc90 23b conditional getter; 00429840/00429860 latch pair; 0046c730/0046c750 0xd04-stride physics getters race-lane; 0040b410 11b indexed getter; 0040e360 RaceMode::Set 9b setter CAUTION live race-phase global) — next round continues here.
 
