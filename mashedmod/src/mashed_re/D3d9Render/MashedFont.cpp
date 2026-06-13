@@ -14,14 +14,14 @@ namespace mashed_re {
 namespace D3d9Render {
 
 namespace {
-// Presentation-side atlas supersampling (NOT part of the RE'd render law).
-// The standalone draws the 33px glyph cell at ~42.5 device px (800x600) —
-// a ~1.3x bilinear MAGNIFICATION of the atlas, which reads soft (the
-// original at 640x480 samples ~1:1 and never shows this). Upscaling the
-// coverage map 2x with Catmull-Rom at load turns that into a ~0.65x
-// MINIFICATION: visibly crisper, mildly sharpened by the CR kernel's
-// negative lobes, with the render law (UVs, geometry, advances) unchanged.
-constexpr int kAtlasSS = 2;
+// Atlas supersampling: DISABLED (round-3). The standalone draws the 33px
+// glyph cell at ~34 device px (800x600) — essentially 1:1, same as the
+// original's ~0.82x at 640x480. The original simply uploads the raw FGDC20
+// intensity atlas and bilinear-samples it; matching that gives the original's
+// bold, smooth, solid glyphs. The 2x Catmull-Rom supersample was a mistake:
+// its negative lobes (ringing) eroded thin strokes and gave the edges a
+// ragged/noisy look (font_fair.png, round-3). Raw atlas + GPU LINEAR = match.
+constexpr int kAtlasSS = 1;
 
 inline float CatmullRom(float t) {
     t = t < 0 ? -t : t;
@@ -58,16 +58,13 @@ std::uint8_t* UpscaleCoverage(const std::uint8_t* src, int w, int h, int K) {
                 static_cast<std::uint8_t>(v < 0 ? 0 : (v > 255 ? 255 : v));
         }
     }
-    // Vertical pass + edge hardening. The smoothstep S-curve (fixed point at
-    // 0.5 so edge positions don't move) tightens the AA fringe and saturates
-    // near-core coverage: at 800x600 the bilinear-minified edges otherwise
-    // spread ~2 device px and 1-texel strokes only reach ~60-70% opacity,
-    // while the original at 640x480 (~1:1 sampling) shows 1px fringes and
-    // solid cores (luminance profiles, 2026-06-12).
-    // Round-2 feedback ("pixelated, not smooth"): with the window now
-    // DPI-1:1, the strong 0.15/0.85 curve read aliased. Gentler hardening —
-    // most of the crispness comes from the 2x CR supersample itself.
-    constexpr float kT0 = 0.06f, kT1 = 0.94f;
+    // Vertical pass — PURE Catmull-Rom resample, NO edge hardening. Round-3
+    // (font "pixelated, not smooth, same as before"): the DPI-1:1 fix removed
+    // DWM's window-level smoothing that had been hiding the smoothstep
+    // hardening's quantized edges. The original renders the FGDC20 atlas with
+    // plain bilinear (smooth AA fringe); any thresholding here re-introduces
+    // the jaggies. Keep the coverage map's smooth gradient intact — the GPU's
+    // LINEAR minify then matches the original's anti-aliased look.
     for (int Y = 0; Y < H; ++Y) {
         const float sy = (Y + 0.5f) / K - 0.5f;
         const int   iy = static_cast<int>(std::floor(sy));
@@ -77,10 +74,7 @@ std::uint8_t* UpscaleCoverage(const std::uint8_t* src, int w, int h, int K) {
                 acc += CatmullRom(sy - (iy + k)) *
                        tmp[static_cast<std::size_t>(clampi(iy + k, 0, h - 1)) * W + X];
             }
-            float t = (acc / 255.f - kT0) / (kT1 - kT0);
-            t = t < 0.f ? 0.f : (t > 1.f ? 1.f : t);
-            t = t * t * (3.f - 2.f * t);                 // smoothstep
-            const int v = static_cast<int>(t * 255.f + 0.5f);
+            const int v = static_cast<int>(acc + 0.5f);
             dst[static_cast<std::size_t>(Y) * W + X] =
                 static_cast<std::uint8_t>(v < 0 ? 0 : (v > 255 ? 255 : v));
         }
