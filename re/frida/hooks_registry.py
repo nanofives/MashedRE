@@ -14027,4 +14027,68 @@ HOOKS = {
         'path2_tests':    [{'args': [0x3c]}, {'args': [0x320]}, {'args': [0]}],
     },
 
+    # ---- promote-round round 17 (fresh discovery: single-global leaves) -------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round17.cpp).
+
+    # 0x00496920  TimerTable772ffcGet — uint32(int i). Indexed read of the
+    # 4-byte-element table at 0x00772ffc + i*4 (timer-tick table; caller uses
+    # index 5). Menu-attach was exit-5 (table all-zero on the 2D menu path);
+    # scenario:'race' populates it (the timer tick that writes the table runs
+    # during a live race).
+    # ref: re/analysis/skeleton_prep_boot_winmain_b/00496920.md
+    'timer_table_772ffc_get': {
+        'rva':            0x00496920,
+        'export':         'TimerTable772ffcGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 5, 3],
+        'path2_tests':    [0, 5, 3],
+    },
+
+    # 0x00496930  TimerTable773030Get — uint32(int i). Complement table at
+    # 0x00773030 + i*4 (caller uses indices 3/4). Same exit-5 -> race fix.
+    # ref: re/analysis/timer_d2/0x00496930.md
+    'timer_table_773030_get': {
+        'rva':            0x00496930,
+        'export':         'TimerTable773030Get',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 3, 4],
+        'path2_tests':    [0, 3, 4],
+    },
+
+    # 0x00485360  DynObjListGetCount — uint32() <- DAT_006fa0f8 (count sibling
+    # of DynamicObjectListGetBase 0x00485370, round 11). read_global-seeded.
+    # ref: re/analysis/bucket_vehicle_004820e0_00485420/00485360.md
+    'dyn_obj_list_get_count': {
+        'rva':            0x00485360,
+        'export':         'DynObjListGetCount',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x006fa0f8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x00550790  FsManager7dc76cSet — void(uint32) -> DAT_007dc76c.
+    # void_setter_observe saves/restores the FS-manager field.
+    # ref: re/analysis/input_dinput_d3/00550790.md
+    'fs_manager_7dc76c_set': {
+        'rva':            0x00550790,
+        'export':         'FsManager7dc76cSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007dc76c,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
 }
