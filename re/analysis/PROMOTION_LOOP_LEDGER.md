@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 82
-- total_green: 215
+- rounds_run: 83
+- total_green: 218
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 83 | classifier setter-family recognizers (early_window) | attempted 3 | GREEN 3 (Set5173d0 0x005173d0 + Set5209d0 0x005209d0 deref_struct_set ns=3; Rmw518570 0x00518570 deref_struct_set ns=0 byte-OR) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 215->218. Extended promote_classify.py with indexed_table_set + deref_struct_set recognizers (validated vs 5 hand-authored cases); auto-surfaced 005173d0/005209d0. The classifier now auto-emits the setter families. Frontier tail is thin+diverse so per-round yield ~3; remaining STATE bulk needs run_diff (booted, now open) or more handlers. Note: 00477e00 (rd82) carries non-blocking structural U-4513 (global dual-role question; behavioral bit-identity verified).
 
 2026-06-13 | round 82 | Ghidra STATE leaves (early_window) | attempted 3 | GREEN 3 (CmdBuild5b0dc0Set 0x005b0dc0 deref_struct_set; ClearDesc5bde50 0x005bde50 ptr_fields_clear 5-field; Table69318cSet 0x00477e00 indexed_table_set) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 212->215. Same method (decompile STATE leaf -> match handler -> author -> early_window diff). Deferred this batch: 0041e150 (EAX-ptr-in + stack-out convention; needs custom trampoline), 005c4d30 (conditional deref-get; needs deref_struct_get handler), 0047cdc0 (table[i]=f*f float).
 

@@ -1,10 +1,8 @@
 rva	klass	shape	arg_type	subsystem	size	reason
-0042a9f0	AUTO	read_global_u8 [0x0067eca8]	read_global	render	6	return *(uint8_t*)0x0067eca8;
-004842b0	AUTO	multi_const_store x4	scalars_to_scattered_globals	debug-overlay	23	*(uint32_t*)0x006cfc88 = 0x00000000u; *(uint32_t*)0x006cf068 = 0x00000000u; *(uint32_t*)0x006cf06c = 0x00000000u; *(uint32_t*)0x006cfc8c = 0x00000000u;
-00495520	AUTO	read_global_u32 [0x00771e78]	read_global	input	6	return *(uint32_t*)0x00771e78;
 004a2bf7	AUTO	multi_const_store x6	scalars_to_scattered_globals	boot	56	*(uint32_t*)0x006160d8 = 0x004a5d92u; *(uint32_t*)0x006160dc = 0x004a5a0cu; *(uint32_t*)0x006160e0 = 0x004a5a71u; *(uint32_t*)0x006160e4 = 0x004a59d0u; *(uint32_t*)0x006160e8 = 0x004a5a57u; *(uint32_t*)0x006160ec = 0x004a5d92u;
 004b6700	AUTO	const_setter [0x007d3e54]=0x00000000	scalars_to_scattered_globals	render	11	*(uint32_t*)0x007d3e54 = 0x00000000u;
-005be930	AUTO	ptr_fields_clear offs=['0xc', '0x10']	ptr_fields_clear	audio	13	*(uint32_t*)((char*)p + 0xc) = 0; *(uint32_t*)((char*)p + 0x10) = 0;
+005173d0	AUTO	deref_struct_set ns=3 offs=['0x48', '0x40', '0x44']	deref_struct_set	util	26	*(uint32_t*)((char*)p + 0x48) = a0; *(uint32_t*)((char*)p + 0x40) = a1; *(uint32_t*)((char*)p + 0x44) = a2;
+005209d0	AUTO	deref_struct_set ns=3 offs=['0x1e8', '0x1ec', '0x1f0']	deref_struct_set	util	35	*(uint32_t*)((char*)p + 0x1e8) = a0; *(uint32_t*)((char*)p + 0x1ec) = a1; *(uint32_t*)((char*)p + 0x1f0) = a2;
 00405430	STATE	-	-	gameplay	39	STATE: reads live global / derefs arg → needs booted game
 004058b0	STATE	-	-	gameplay	15	STATE: reads live global / derefs arg → needs booted game
 004075b0	STATE	-	-	gameplay	70	STATE: reads live global / derefs arg → needs booted game
@@ -50,7 +48,6 @@ rva	klass	shape	arg_type	subsystem	size	reason
 0046be10	STATE	-	-	gameplay	55	STATE: reads live global / derefs arg → needs booted game
 0046d2e0	STATE	-	-	gameplay	50	STATE: reads live global / derefs arg → needs booted game
 0046d7f0	STATE	-	-	ai	144	STATE: reads live global / derefs arg → needs booted game
-0046dd90	STATE	-	-	gameplay	21	STATE: reads live global / derefs arg → needs booted game
 00471530	STATE	-	-	gameplay	40	STATE: reads live global / derefs arg → needs booted game
 004726b0	STATE	-	-	gameplay	64	STATE: reads live global / derefs arg → needs booted game
 004726f0	STATE	-	-	gameplay	72	STATE: reads live global / derefs arg → needs booted game
@@ -68,7 +65,6 @@ rva	klass	shape	arg_type	subsystem	size	reason
 004773f0	STATE	-	-	render	84	STATE: reads live global / derefs arg → needs booted game
 00477450	STATE	-	-	render	56	STATE: reads live global / derefs arg → needs booted game
 00477b60	STATE	-	-	render	117	STATE: reads live global / derefs arg → needs booted game
-00477e00	STATE	-	-	render	21	STATE: reads live global / derefs arg → needs booted game
 0047bc90	STATE	-	-	gameplay	36	STATE: reads live global / derefs arg → needs booted game
 0047c0b0	STATE	-	-	track	63	STATE: reads live global / derefs arg → needs booted game
 0047cdc0	STATE	-	-	render	20	STATE: reads live global / derefs arg → needs booted game
@@ -154,12 +150,10 @@ rva	klass	shape	arg_type	subsystem	size	reason
 00516c40	STATE	-	-	util	128	STATE: reads live global / derefs arg → needs booted game
 00517200	STATE	-	-	util	70	STATE: reads live global / derefs arg → needs booted game
 005172f0	STATE	-	-	util	143	STATE: reads live global / derefs arg → needs booted game
-005173d0	STATE	-	-	util	26	STATE: reads live global / derefs arg → needs booted game
 00518570	STATE	-	-	util	14	STATE: reads live global / derefs arg → needs booted game
 005199f0	STATE	-	-	util	248	STATE: reads live global / derefs arg → needs booted game
 00519af0	STATE	-	-	util	196	STATE: reads live global / derefs arg → needs booted game
 0051ca60	STATE	-	-	util	35	STATE: reads live global / derefs arg → needs booted game
-005209d0	STATE	-	-	util	35	STATE: reads live global / derefs arg → needs booted game
 00520ef0	STATE	-	-	util	257	STATE: reads live global / derefs arg → needs booted game
 00523110	STATE	-	-	util	39	STATE: reads live global / derefs arg → needs booted game
 00528e30	STATE	-	-	util	181	STATE: reads live global / derefs arg → needs booted game
@@ -182,9 +176,7 @@ rva	klass	shape	arg_type	subsystem	size	reason
 005b0b90	STATE	-	-	audio	32	STATE: reads live global / derefs arg → needs booted game
 005b0bb0	STATE	-	-	audio	190	STATE: reads live global / derefs arg → needs booted game
 005b0c70	STATE	-	-	audio	44	STATE: reads live global / derefs arg → needs booted game
-005b0ca0	STATE	-	-	audio	19	STATE: reads live global / derefs arg → needs booted game
 005b0cf0	STATE	-	-	audio	170	STATE: reads live global / derefs arg → needs booted game
-005b0dc0	STATE	-	-	audio	19	STATE: reads live global / derefs arg → needs booted game
 005b0ec0	STATE	-	-	audio	71	STATE: reads live global / derefs arg → needs booted game
 005b0f10	STATE	-	-	audio	43	STATE: reads live global / derefs arg → needs booted game
 005b0f90	STATE	-	-	audio	104	STATE: reads live global / derefs arg → needs booted game
@@ -196,9 +188,7 @@ rva	klass	shape	arg_type	subsystem	size	reason
 005b6b00	STATE	-	-	audio	123	STATE: reads live global / derefs arg → needs booted game
 005b93a0	STATE	-	-	audio	102	STATE: reads live global / derefs arg → needs booted game
 005baf00	STATE	-	-	audio	62	STATE: reads live global / derefs arg → needs booted game
-005bde50	STATE	-	-	audio	21	STATE: reads live global / derefs arg → needs booted game
 005beb50	STATE	-	-	audio	69	STATE: reads live global / derefs arg → needs booted game
-005bf7d0	STATE	-	-	audio	25	STATE: reads live global / derefs arg → needs booted game
 005c1f1c	STATE	-	-	boot	123	STATE: reads live global / derefs arg → needs booted game
 005c2f0a	STATE	-	-	boot	28	STATE: reads live global / derefs arg → needs booted game
 005c2f58	STATE	-	-	boot	22	STATE: reads live global / derefs arg → needs booted game

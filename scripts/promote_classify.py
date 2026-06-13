@@ -108,6 +108,8 @@ def classify(insns, va):
                 offs.append(bs[2])
             elif bs[:2] == b"\xc7\x80" and bs[6:10] == b"\x00\x00\x00\x00":  # mov [eax+off32],0
                 offs.append(u32(bs, 2))
+            elif bs[:2] == b"\x89\x08" and ecx_zero:        # mov [eax],ecx (off 0)
+                offs.append(0)
             elif bs[:2] == b"\x89\x48" and ecx_zero:        # mov [eax+off8],ecx
                 offs.append(bs[2])
             elif bs[:2] == b"\x89\x88" and ecx_zero:        # mov [eax+off32],ecx
@@ -165,6 +167,84 @@ def classify(insns, va):
             return None, None, None, f"param_setter target 0x{g:08x} not writable .data"
         return ("void_setter_observe", {"ret": "none", "target_global": g},
                 f"*(uint32_t*)0x{g:08x} = v;", f"param_setter [0x{g:08x}]=arg")
+
+    # --- indexed_table_set: mov eax,[esp+4]=i; mov ecx,[esp+8]=v; imul eax,eax,STRIDE;
+    #     mov [eax+TBL],ecx; ret  -> *(u32*)(TBL + i*STRIDE) = v
+    if (len(core) == 4 and core[0][2][:4] == b"\x8b\x44\x24\x04"
+            and core[1][2][:4] == b"\x8b\x4c\x24\x08"
+            and core[2][2][:2] == b"\x69\xc0" and core[3][2][:2] == b"\x89\x88"):
+        stride = u32(core[2][2], 2); tbl = u32(core[3][2], 2)
+        if is_writable_global(tbl):
+            return ("indexed_table_set",
+                    {"ret": "none", "target_global": tbl, "stride": stride, "set_idx": 2},
+                    f"*(uint32_t*)(0x{tbl:08x}u + i * 0x{stride:x}u) = v;",
+                    f"indexed_table_set [0x{tbl:08x}+i*0x{stride:x}]")
+
+    # --- deref_struct_set: mov eax,[esp+4]=p; <field writes from esp args and/or
+    #     load/op-imm/store RMW on p's fields>; ret. Fully decode every instruction.
+    if core and core[0][2][:4] == b"\x8b\x44\x24\x04":
+        REG = {0x48: "ecx", 0x50: "edx", 0x58: "ebx"}      # mov reg,[esp+N] -> reg
+        ESP_OFF_TO_ARG = {0x08: 0, 0x0c: 1, 0x10: 2}        # esp disp -> scalar idx
+        loaded = {}            # reg_name -> arg_idx
+        writes, obs, ok, nscalar = [], [], True, 0
+        i = 1
+        while i < len(core):
+            bs = core[i][2]
+            # mov reg,[esp+N]  (8b /r with modrm 4C/54/5C 24 disp8)
+            if len(bs) >= 4 and bs[0] == 0x8b and bs[1] in (0x4c, 0x54, 0x5c) and bs[2] == 0x24:
+                reg = {0x4c: "ecx", 0x54: "edx", 0x5c: "ebx"}[bs[1]]
+                if bs[3] in ESP_OFF_TO_ARG:
+                    loaded[reg] = ESP_OFF_TO_ARG[bs[3]]; nscalar = max(nscalar, loaded[reg] + 1); i += 1; continue
+                ok = False; break
+            # mov [eax+off],reg   (89 /r): 89 08/10/18=off0; 89 48/50/58 off8; 89 88/90/98 off32
+            rmap0 = {0x08: "ecx", 0x10: "edx", 0x18: "ebx"}
+            rmap8 = {0x48: "ecx", 0x50: "edx", 0x58: "ebx"}
+            rmap32 = {0x88: "ecx", 0x90: "edx", 0x98: "ebx"}
+            if bs[0] == 0x89 and bs[1] in rmap0:
+                reg = rmap0[bs[1]]
+                if reg in loaded: writes.append((0, f"a{loaded[reg]}")); obs.append(0); i += 1; continue
+                ok = False; break
+            if bs[0] == 0x89 and bs[1] in rmap8:
+                reg = rmap8[bs[1]]; off = bs[2]
+                if reg in loaded: writes.append((off, f"a{loaded[reg]}")); obs.append(off); i += 1; continue
+                ok = False; break
+            if bs[0] == 0x89 and bs[1] in rmap32:
+                reg = rmap32[bs[1]]; off = u32(bs, 2)
+                if reg in loaded: writes.append((off, f"a{loaded[reg]}")); obs.append(off); i += 1; continue
+                ok = False; break
+            # RMW load/op-imm/store: mov ecx,[eax+off]; (or|and) (cl|ecx),imm; mov [eax+off],ecx
+            if (bs[0] == 0x8b and bs[1] in (0x08, 0x48, 0x88) and i + 2 < len(core)):
+                off = 0 if bs[1] == 0x08 else (bs[2] if bs[1] == 0x48 else u32(bs, 2))
+                op_bs = core[i + 1][2]; st_bs = core[i + 2][2]
+                # op: 80/83 C9 imm8 (or), 80/83 E1 imm8 (and), 81 C9/E1 imm32
+                opmap = {0xc9: "|", 0xe1: "&"}
+                opv = None
+                if op_bs[0] in (0x80, 0x83) and op_bs[1] in opmap:
+                    opv = opmap[op_bs[1]]; imm = op_bs[2]
+                    if op_bs[0] == 0x83 and imm >= 0x80: imm -= 0x100  # sign-extend? keep low bits
+                    imm &= 0xffffffff
+                elif op_bs[0] == 0x81 and op_bs[1] in opmap:
+                    opv = opmap[op_bs[1]]; imm = u32(op_bs, 2)
+                # store must write same reg/off
+                st_ok = ((st_bs[0] == 0x89 and st_bs[1] == 0x08 and off == 0) or
+                         (st_bs[0] == 0x89 and st_bs[1] == 0x48 and st_bs[2] == off) or
+                         (st_bs[0] == 0x89 and st_bs[1] == 0x88 and u32(st_bs, 2) == off))
+                if opv and st_ok:
+                    writes.append((off, f"RMW {opv} 0x{imm & 0xffffffff:x}")); obs.append(off); i += 3; continue
+            ok = False; break
+        if ok and writes:
+            seed = 0x11 if any(w[1].startswith("RMW") for w in writes) else 0xEE
+            lines = []
+            for off, val in writes:
+                if val.startswith("RMW"):
+                    _, opc, imm = val.split(); lines.append(f"*(uint32_t*)((char*)p + 0x{off:x}) {opc}= {imm};")
+                else:
+                    lines.append(f"*(uint32_t*)((char*)p + 0x{off:x}) = {val};")
+            cpp = " ".join(lines)
+            return ("deref_struct_set",
+                    {"ret": "none", "nscalar": nscalar, "seed_byte": seed,
+                     "observe": [{"off": o} for o in obs], "arg": "void* p"},
+                    cpp, f"deref_struct_set ns={nscalar} offs={[hex(o) for o,_ in writes]}")
 
     # --- multi_const_store: void(); writes only constants/zero to writable globals.
     #     allowed insns: xor eax,eax | mov eax,imm32 | mov dword[g],imm32 |

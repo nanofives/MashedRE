@@ -24,7 +24,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 00422440	FUN_00422440	gameplay	45	1	00422470	read_global_f32
 004233e0	FUN_004233e0	ai	160	3	004252c0	other
 004277a0	FUN_004277a0	frontend	147	7	004278d0	other
-0042a9f0	GetFadeAlpha	render	6	1	00492e90	other
 0042ac50	FUN_0042ac50	frontend	49	10	0042fb70	other
 0042ad90	FUN_0042ad90	frontend	54	1	0043d2a0	other
 0042add0	FUN_0042add0	frontend	64	1	00432b30	read_global_u32
@@ -52,7 +51,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 0046be10	FUN_0046be10	gameplay	55	4	00451820	other
 0046d2e0	FUN_0046d2e0	gameplay	50	4	0040d8f0	arg_getter
 0046d7f0	FUN_0046d7f0	ai	144	1	004103a0	other
-0046dd90	FUN_0046dd90	gameplay	21	1	004177b0	arg_getter
 00471530	FUN_00471530	gameplay	40	1	00471df0	const_return
 004726b0	FUN_004726b0	gameplay	64	1	00408b00	arg_getter
 004726f0	FUN_004726f0	gameplay	72	6	00405920	arg_getter
@@ -71,7 +69,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 004773f0	FUN_004773f0	render	84	3	00477490	xor_clear
 00477450	FUN_00477450	render	56	1	00477760	other
 00477b60	FUN_00477b60	render	117	1	0040d8f0	other
-00477e00	FUN_00477e00	render	21	1	0040d8f0	arg_getter
 00478cb0	FUN_00478cb0	physics	16	1	0047a020	other
 0047bc90	FUN_0047bc90	gameplay	36	1	0047bcc0	other
 0047c0b0	FUN_0047c0b0	track	63	1	00426e10	other
@@ -81,7 +78,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 00482860	FUN_00482860	vehicle	147	3	00411750	other
 00483ca0	FUN_00483ca0	vehicle	102	1	004117b0	other
 004840f0	FUN_004840f0	vehicle	59	1	004841d0	other
-004842b0	FUN_004842b0	debug-overlay	23	1	00484580	xor_clear
 00484a50	FUN_00484a50	world-objects	108	1	00484ac0	other
 00484c90	FUN_00484c90	util	83	1	0040cfd0	other
 004850b0	FUN_004850b0	smplfzx	42	1	00478cf0	read_global_u32
@@ -103,7 +99,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 004924c0	FUN_004924c0	render	30	2	00426810	other
 004938e0	FUN_004938e0	util	28	3	00403910	arg_getter
 004944b0	FUN_004944b0	util	9	1	00494c80	other
-00495520	FUN_00495520	input	6	1	00496040	read_global_u32
 004957a0	FUN_004957a0	input	136	2	00496530	arg_getter
 00497000	FUN_00497000	render	96	1	00497060	arg_getter
 00497450	FUN_00497450	input	31	2	004967e0	arg_getter
@@ -202,9 +197,7 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 005b0b90	FUN_005b0b90	audio	32	1	005af070	arg_getter
 005b0bb0	FUN_005b0bb0	audio	190	1	005af8f0	other
 005b0c70	FUN_005b0c70	audio	44	1	005a8890	arg_getter
-005b0ca0	FUN_005b0ca0	audio	19	1	005a86a0	arg_getter
 005b0cf0	FUN_005b0cf0	audio	170	1	005a89d0	other
-005b0dc0	FUN_005b0dc0	audio	19	1	005a8960	arg_getter
 005b0ec0	FUN_005b0ec0	audio	71	2	005b7980	arg_getter
 005b0f10	FUN_005b0f10	audio	43	3	005b70e0	other
 005b0f90	FUN_005b0f90	audio	104	1	005b7b30	other
@@ -216,10 +209,7 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 005b6b00	FUN_005b6b00	audio	123	2	005b6760	other
 005b93a0	FUN_005b93a0	audio	102	1	005c8910	other
 005baf00	MusicGroupVolumeSet	audio	62	2	0045dd60	other
-005bde50	FUN_005bde50	audio	21	2	005bd6f0	arg_getter
-005be930	FUN_005be930	audio	13	3	005be8c0	arg_getter
 005beb50	FUN_005beb50	audio	69	2	005beae0	arg_getter
-005bf7d0	FUN_005bf7d0	audio	25	1	005be260	arg_getter
 005c1dac	__ftol	boot	39	5	004b9b60	other
 005c1f1c	__setjmp3	boot	123	5	004b7be0	other
 005c2770	FUN_005c2770	boot	31	1	004fbdd5	other

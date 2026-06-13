@@ -3603,3 +3603,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  005b0dc0  CmdBuild5b0dc0Set  C2->C3  early_window deref_struct_set GREEN 5/5; promote-round-82
 2026-06-13  005bde50  ClearDesc5bde50  C2->C3  early_window ptr_fields_clear GREEN 5/5; promote-round-82
 2026-06-13  00477e00  Table69318cSet  C2->C3  early_window indexed_table_set GREEN 10/10; promote-round-82
+2026-06-13  005173d0  Set5173d0  C2->C3  early_window deref_struct_set GREEN 5/5; promote-round-83
+2026-06-13  005209d0  Set5209d0  C2->C3  early_window deref_struct_set GREEN 5/5; promote-round-83
+2026-06-13  00518570  Rmw518570  C2->C3  early_window deref_struct_set GREEN 5/5; promote-round-83

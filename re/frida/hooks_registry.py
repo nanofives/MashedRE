@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 83 (3-field struct setters + byte-OR RMW; deref_struct_set) --
+    'set_5173d0': {'rva': 0x005173d0, 'export': 'Set5173d0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 3, 'seed_byte': 0xEE, 'observe': [{'off': 0x48},{'off': 0x40},{'off': 0x44}], 'lut_root_delta': 0, 'path1_tests': [[0xA1,0xB2,0xC3],[0x11112222,0x33334444,0x55556666],[0,0,0],[0xFFFFFFFF,0x12345678,0xDEADBEEF],[0xCAFEF00D,0xBADC0FFE,0x8BADF00D]], 'path2_tests': [[0xA1,0xB2,0xC3],[0,0,0]]},
+    'set_5209d0': {'rva': 0x005209d0, 'export': 'Set5209d0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 3, 'seed_byte': 0xEE, 'observe': [{'off': 0x1e8},{'off': 0x1ec},{'off': 0x1f0}], 'lut_root_delta': 0, 'path1_tests': [[0xA1,0xB2,0xC3],[0x11112222,0x33334444,0x55556666],[0,0,0],[0xFFFFFFFF,0x12345678,0xDEADBEEF],[0xCAFEF00D,0xBADC0FFE,0x8BADF00D]], 'path2_tests': [[0xA1,0xB2,0xC3],[0,0,0]]},
+    'rmw_518570': {'rva': 0x00518570, 'export': 'Rmw518570', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'deref_struct_set', 'nscalar': 0, 'seed_byte': 0x11, 'observe': [{'off': 0x70}], 'lut_root_delta': 0, 'path1_tests': [[],[],[],[],[]], 'path2_tests': [[],[]]},
+
     # ---- promote-round round 82 (more indexed/ptr-struct setters + 5-field clear) --
     'cmd_build_5b0dc0_set': {'rva': 0x005b0dc0, 'export': 'CmdBuild5b0dc0Set', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 1, 'seed_byte': 0x11, 'observe': [{'off': 0x04}, {'off': 0x00}], 'lut_root_delta': 0, 'path1_tests': [[0x12345678], [0xDEADBEEF], [0], [0xFFFFFFFF], [0x55555555]], 'path2_tests': [[0x12345678], [0]]},
     'clear_desc_5bde50': {'rva': 0x005bde50, 'export': 'ClearDesc5bde50', 'signature': {'ret': 'pointer', 'args': ['pointer']}, 'arg_type': 'ptr_fields_clear', 'observe': [{'off': 0x00}, {'off': 0x04}, {'off': 0x08}, {'off': 0x0c}, {'off': 0x10}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
