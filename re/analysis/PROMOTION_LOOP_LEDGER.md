@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 47
-- total_green: 134
+- rounds_run: 48
+- total_green: 136
 - dry_counter: 0
-- last_round: 2026-06-13 round 47 — stride-0x18 table getter + table-clear + struct-field-clear (131->134)
+- last_round: 2026-06-13 round 48 — SmplFzx array-stack push/pop pair via snapshot (134->136)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -441,6 +441,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 46 | pool-manager REMOVE (bespoke build-list + snapshot) | GREEN 1 (PoolRemove485b30 0x00485b30: 4-case doubly-linked-list remove head/middle/tail/not-found) | total_green 130->131. pool_remove_snapshot handler: build a 3-node list via the ORIGINAL insert (0x00485a70), then remove the test key, full-state snapshot. Faithful ~50-line reimpl 10/10 GREEN across ALL 4 cases (head/middle/tail/not-found bit-identical). orig b0=0x8b. The insert/remove PAIR is now both C3 -> the self-contained-complex bespoke method is fully validated end-to-end. SESSION: 69->131 (+62). HANDLER LIBRARY (14): read_global(u32/float), void_setter_observe, scalars_to_scattered_globals(multi), int_scalar+seed_table, const_return, global_field_read, float_table_read, deref_field_write, deref_table_read, int2_scalar, eax_implicit_void, pool_insert_snapshot, pool_remove_snapshot. PROVEN: 200 reachable WITHOUT the display via bespoke handlers for self-contained-complex functions (pool/list/allocator class), ~1-2 per function, many fresh-context turns; PLUS the state-dependent majority fast via run_diff on display recovery. RESUME: sweep more self-contained-complex functions (decompile candidates, build bespoke snapshot handlers); on display recovery, run_diff.
 
 2026-06-13 | round 47 | stride-0x18 table getter + 2 clearers (continuing bespoke sweep autonomously) | GREEN 3 (Table688304Get 0x00454a30 *(0x688304+i*0x18) int_scalar+seed_table; Table88f09cClear 0x0045c850 table_clear; Clear894f0 0x004894f0 ptr_fields_clear 3-field struct clear) | total_green 131->134. 2 new tiny handlers (table_clear: seed slot+call+check-0; ptr_fields_clear: alloc buf+call+check observe offsets). Fixed a cfg key bug (table_clear used cfg.target_global; run() maps it to cfg.tgt). DECOMPILE-DRIVEN SWEEP WORKING: decompile first-party candidates -> skip non-leaves -> promote self-contained (getters/clearers/pool ops) with existing-or-tiny handlers. Yield this round 3/4 decompiled (1 non-leaf skipped). SESSION: 69->134 (+65). Handler library now 16. Continuing the sweep autonomously per stop-hook guidance (no pausing to ask).
+
+2026-06-13 | round 48 | SmplFzx array-stack push/pop pair (snapshot) | GREEN 2 (StackPop485bd0 0x00485bd0, StackPush485bf0 0x00485bf0; {top@0,cap@4,buf@8}) | total_green 134->136. stack_pop/push_snapshot handlers (reset stack state + call + full snapshot + return). 00485bf0 has an untested range-check trap path (top<0 -> FUN_004a332b) reimpl'd faithfully via stub-call. SWEEP MOMENTUM: rounds 45-48 = pool insert/remove + table getter + 2 clearers + stack push/pop = +7 self-contained-complex promotions in the SmplFzx/pool cluster (0x478-0x486). The decompile->skip-nonleaf->bespoke-snapshot loop is productive (~2-3/round). SESSION: 69->136 (+67). 18-handler library. Many more self-contained struct/pool/stack helpers remain in the SmplFzx + other clusters. Continuing autonomously. REMAINING NON-PROMOTED in this cluster: 0x004893d0 (vertex-push, 3 ptr args - bespoke), 0x0046b1c0 (AABB->24float expand, self-contained but large - bespoke).
 
 ## Final gated-remainder report
 

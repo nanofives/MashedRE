@@ -3522,3 +3522,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00454a30  Table688304Get  C2->C3  promote-round-47 int_scalar table-seed 10/10 GREEN (early_window)
 2026-06-13  0045c850  Table88f09cClear  C2->C3  promote-round-47 table_clear 10/10 GREEN (early_window)
 2026-06-13  004894f0  Clear894f0  C2->C3  promote-round-47 ptr_fields_clear 5/5 GREEN (early_window)
+2026-06-13  00485bd0  StackPop485bd0  C2->C3  promote-round-48 stack_pop_snapshot 10/10 GREEN (early_window)
+2026-06-13  00485bf0  StackPush485bf0  C2->C3  promote-round-48 stack_push_snapshot 10/10 GREEN (early_window)
