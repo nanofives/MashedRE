@@ -273,6 +273,46 @@ Build verified against clean baselines + window captures (DPI-1:1).
 - (Font "still pixelated") — softened edge-hardening to 0.06/0.94 now the
   window is DPI-1:1 (the prior 0.15/0.85 over-aliased).
 
+## Round-3 item 13 — "missing frontends" scoping (2026-06-13)
+
+The nav SM (MenuNavSM.cpp) already ports all 33 kT* descriptor tables, and
+the menu draw loop renders ANY reached screen. Captured via MASHED_GOTO:
+
+ALREADY RENDER as reachable menus (NOT missing — reachable from the main
+menu through the nav SM):
+- Single Player (screen 2 = kT2): **Challenge Cup / Quick Battle / Time
+  Trial** — verify/screen_2.bmp.
+- Multi Player (screen 3 = kT3): **Standard Play / Team Play** —
+  verify/screen_3.bmp.
+- Bonus Features (main-menu item 0x26b -> 0xff820000) and the other mode
+  submenus render their titles + item lists (verify/screen_5/26/28.bmp).
+So "challenge cup / quick battle / time trial / standard-play MP / team-play
+MP / bonus features frontend" are MENU screens that exist and draw. The
+buildable-frontend part is DONE; what's missing is (a) the per-screen
+SPECIAL CONTENT some need (quick-battle options widgets, challenge-select
+grid) and (b) the deeper flow they lead into (track select -> race), which
+is gameplay.
+
+GAMEPLAY-GATED (require in-race state the frontend-only standalone lacks —
+there is no running race, so no pause context):
+- Pause menu (screen 0 = kT0: Continue/Restart/Quit) — only valid in-race.
+- Options menu within the pause menu — same pause context.
+- Quit-race modal (body 0x33 "Are you sure you want to quit the race?") —
+  reached from the in-race pause Quit; the modal infra + string are ready
+  (ModalGo can add a case), but the trigger needs the pause menu.
+- Pre-race loading screen — the spinning-disc loading screen exists
+  (LoadLoadIconFromExe + FUN_00428450 coin-flip); wiring it before a race
+  needs the race-load path (gameplay).
+
+DONE this round:
+- Quit-to-Windows modal (Exit To Windows -> ModalGo(40), body 0x34, Yes
+  quits).
+
+Net: of the 12 listed, 6 mode frontends RENDER (reachable menus), 1 modal
+DONE, 5 are gameplay-gated or need per-screen content RE — a milestone
+beyond the frontend round. Recommend pairing the gameplay-gated set with the
+race/track-select milestone (renderer gate / RaceCamera work).
+
 ## Offline-RE findings (2026-06-12, MCP down — via re/tools/disasm_fn.py)
 
 - **#2 boot splash**: DAT_00771964 is only ever set to MashedNEWLogo (FUN_004283a0) or 0 (teardown 0x00428400). FUN_00403050 draws it + the pulsing press-button (FUN_00402fb0). The Dolby/ProLogic logos (DAT_0067d968/0067d96c) are drawn by separate readers (0x00428c9b / 0x00428ec2) — the splash is a multi-function boot sequence, not a single drawer. Port needs those two drawers + the boot state pump.
