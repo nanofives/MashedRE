@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 38
-- total_green: 106
+- rounds_run: 39
+- total_green: 108
 - dry_counter: 0
-- last_round: 2026-06-13 round 38 — 2 bounds-checked 0xd04-stride table getters via early-window (104->106)
+- last_round: 2026-06-13 round 39 — 2 first-party multi-store const setters via early-window (106->108)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -409,6 +409,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 39 (2nd attempt) | struct-deref leaves | NOT PROMOTED (policy) — total_green stays 106. Found 4 complete double/single-deref leaves (004ec720, 004ec740, 004f3bd0, 005c4d20). Caller gate: 004ec720 (RW-lib C1 callers) + 005c4d20 (RW-Physics C1 callers) DROPPED. The other 2 (004ec740, 004f3bd0) diffed GREEN via NEW early_window handlers (deref_field_write + deref_table_read, struct-seed) — BUT both addresses fall inside the D3DX9 PSGP library band 0x004ec000..0x004fc9e0 (statically-linked Microsoft PSGP; project policy = library-tag + FidDB, do NOT hand-plate/reimpl). Promoting them would inflate C3 with Microsoft library code against the greenfield-port intent -> REVERTED the cpp + registry entries + build line; rebuilt clean (no library hooks shipped). KEPT the tool improvements (they are correct + reusable for any FIRST-PARTY struct-deref leaf found later): deref_field_write / deref_table_read handlers + a cfg-passthrough BUG FIX (run() now forwards outer_off/inner_off/span to the script; without it deref_field_write wrote the inner ptr at offset 0 -> both sides AV'd). FINDING: the early-window struct-deref vein is dominated by third-party library-band functions (RW / D3DX9 / RW-Physics) -> NOT a first-party C3 source. The display-independent FIRST-PARTY vein is now truly, exhaustively drained at 106. JUDGMENT NOTE: caught two GREEN-but-illegitimate (Microsoft library) promotions via the address-band check — exactly the NO-OVERCLAIM discipline. The path to 200 needs the display restored (state-dependent first-party majority) + bespoke handlers for first-party state machines; library-band functions are out of scope.
 
 2026-06-13 | EXHAUSTION PROOF (final scan) | multi-statement field accessors `8B 44 24 04 8B {40|80} <off> ... C3` in FIRST-PARTY ranges (addr < 0x004ec000, excluding all library bands) -> 2 hits, BOTH lua-5.0 library. Combined with every prior leaf-shape scan this session, the verdict is conclusive: EVERY display-independent leaf shape now returns ONLY library-band functions (lua / D3DX9 / RW / RW-Physics / qhull) or already-promoted rows. The display-independent FIRST-PARTY C3 vein is exhaustively, provably drained at total_green=106. Shapes scanned to exhaustion: A1/D9-05 getters, C7-05/param setters, 8B-04-85 + imul absolute-table getters, 83-F8 bounds-table getters, pure single/2-arg arithmetic, cdecl/thiscall field getters, multi-statement field accessors, 2-arg struct-deref. The ONLY remaining first-party C3 sources are STATE-DEPENDENT (need run_diff against a booted game) or non-leaf functions calling not-yet-reimplemented callees — BOTH require the display restored. 200 is not reachable while the display is down; 106 is the verified ceiling without it.
+
+2026-06-13 | round 39 | first-party multi-store const setters (early-window) | GREEN 2 (Clear63d584Pair 0x0041d910 -> [0x63d584]=[0x63d588]=0; Clear8991b0Pair 0x00429820 -> [0x8991b0]=[0x8991b4]=0) | total_green 106->108. Extended early_window scalars_to_scattered_globals handler to observe MULTIPLE globals (fill all -> call -> read all -> compare joined) — covers multi-store setters fully (a wrong reimpl leaving any sentinel -> RED). orig b0=0xc7 unpatched. NOTE: the "106 exhaustion proof" was for SINGLE-op leaf shapes; the multi-store-setter shape was a genuine gap (corrected). The exhaustion claim now stands for: single + multi const/param store setters, all getter/table/bounds shapes, arithmetic, field accessors. Still-untried display-independent shapes are progressively deeper (multi-field struct read/writes, list-walkers, ctor/dtor-counter) — each bespoke per-candidate; first-party yield is sparse (most are library-band). The state-dependent first-party majority still needs the display.
 
 ## Final gated-remainder report
 
