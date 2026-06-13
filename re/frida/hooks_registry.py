@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 62 (two ghost-vehicle-slot indexed setters) --
+    'ghost_slot_set_63c6ec': {'rva': 0x0041a5b0, 'export': 'GhostSlotSet63c6ec', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0063c6ec, 'stride': 0xc4, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+    'ghost_slot_set_63c6f0': {'rva': 0x0041a8b0, 'export': 'GhostSlotSet63c6f0', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0063c6f0, 'stride': 0xc4, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+
     # ---- promote-round round 61 (global-indexed float getter + vec16 copy setter) --
     'float_idx_639de0': {'rva': 0x004077e0, 'export': 'FloatIdx639de0', 'signature': {'ret': 'float', 'args': []}, 'arg_type': 'global_indexed_float', 'gate': 0x0063a5d8, 'target_global': 0x00639de0, 'stride': 0xec, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 5, 7, 2, 0, 1, 4], 'path2_tests': [0, 3, 7]},
     'vec_copy_881ec8': {'rva': 0x0046d4d0, 'export': 'VecCopy881ec8', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'vec16_copy_set', 'target_global': 0x00881ec8, 'stride': 0xd04, 'span': 16, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},

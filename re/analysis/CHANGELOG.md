@@ -3556,3 +3556,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0045c640  Sel88fbc4  C2->C3  promote-round-60 arg_scattered_globals 10/10 GREEN (early_window 4-way pointer-global selector)
 2026-06-13  004077e0  FloatIdx639de0  C2->C3  promote-round-61 global_indexed_float 10/10 GREEN (early_window x87-safe single-FLD getter)
 2026-06-13  0046d4d0  VehiclePhysicsMatrixSet  C2->C3  promote-round-61 vec16_copy_set 10/10 GREEN (early_window 16-dword x2 matrix copy)
+2026-06-13  0041a5b0  GhostSlotSet63c6ec  C2->C3  promote-round-62 indexed_table_set 10/10 GREEN (early_window ghost-slot setter stride 0xc4)
+2026-06-13  0041a8b0  GhostSlotSet63c6f0  C2->C3  promote-round-62 indexed_table_set 10/10 GREEN (early_window ghost-slot enabled-flag setter)
