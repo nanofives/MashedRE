@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 34
+- rounds_run: 35
 - total_green: 96
 - dry_counter: 0
-- last_round: 2026-06-13 round 34 (4 GREEN: getter/setters + bounds getter; 2 dropped on caller-gate)
+- last_round: 2026-06-13 round 35 BLOCKED-ENV (3 float getters authored+built+wired, pending diff; D3D9 boot wedge)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -363,6 +363,8 @@ engineering. The path forward, in yield order:
 NEXT ROUND should start at L5-A (build read_global_f32, validate on 0x004039e0),
 then sweep the 3 f32 getters, then move to L5-B race-state table getters.
 This is the durable plan; the ledger counters + this block are the full state.
+
+2026-06-13 | round 35 | L5-A float-getter vein (read_global + ret:float) | attempted 3 | GREEN 0 — BLOCKED-ENV (NOT dry, NOT promoted) | deferred 3 (pending diff) | dry_counter 0 (unchanged). The 3 `D9 05 <a4> C3` float getters (Float5ea0a8Get 0x004039e0, Float89a360Get 0x004173a0, Float61313cGet 0x0046dd80) are authored, byte-verified, built into the .asi, and registry-wired with the VALIDATED method: arg_type 'read_global' + signature {ret:'float'} + clean float-bit-pattern seeds (no NaN/Inf) — NO new handler needed (the generic compare captures the ST0 float JS-number and `===` works). They could NOT be diffed: MASHED began exiting 0xC0000005 (ACCESS_VIOLATION) at boot ~3s. ROOT CAUSE = environmental D3D9 boot wedge correlated with the display topology dropping 3 monitors -> 1 (two displays slept mid-session; primary screen-1 still active but the device-init still AVs — same class as the [[feedback_d3d9_shim_wedges_gpu_driver]] / round-3/4/5 outage). Rounds 29-34 (20+ diffs) booted fine earlier this session with the SAME pinned shim, so this is NOT the screen-1 pin and NOT the float code. RESUME: when the display is restored (user wakes monitors / restores the 3-mon config; a boot probe reaching the menu confirms), run the 3 float diffs FIRST (they are the cheapest pending GREENs and validate the float-getter method), then continue L5-A/B per the strategic checkpoint. The round-35 .cpp/registry/build wiring is committed; hooks.csv stays C2 for the trio until GREEN.
 
 ## Final gated-remainder report
 
