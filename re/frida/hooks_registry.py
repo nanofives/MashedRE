@@ -14252,6 +14252,22 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 39 (first-party multi-store const setters) --
+    'clear_63d584_pair': {
+        'rva': 0x0041d910, 'export': 'Clear63d584Pair', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x0063d584', 'len': 4, 'fill': 0xFF}, {'addr': '0x0063d588', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'clear_8991b0_pair': {
+        'rva': 0x00429820, 'export': 'Clear8991b0Pair', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x008991b0', 'len': 4, 'fill': 0xFF}, {'addr': '0x008991b4', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+
     # ---- promote-round round 38 (bounds-checked 0xd04-stride table getters) --
     'table_882194_get': {
         'rva': 0x0046c750, 'export': 'Table882194Get', 'signature': {'ret': 'uint32', 'args': ['int32']},

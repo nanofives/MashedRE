@@ -89,9 +89,13 @@ rpc.exports.diff = function(cfg) {
       try { ptr(cfg.tgt).writeU32(t >>> 0); o = norm(Orig()); } catch (e) { eo = e.message; }
       try { ptr(cfg.tgt).writeU32(t >>> 0); r = norm(Reim()); } catch (e) { er = e.message; }
     } else if (cfg.at === 'scalars_to_scattered_globals') {
-      const a = ptr(cfg.observe[0].addr);
-      try { a.writeU32(0xFFFFFFFF); Orig(); o = a.readU32() >>> 0; } catch (e) { eo = e.message; }
-      try { a.writeU32(0xFFFFFFFF); Reim(); r = a.readU32() >>> 0; } catch (e) { er = e.message; }
+      // Observe ALL written globals: fill each with a sentinel, call, read each back,
+      // join into one comparison string (covers multi-store setters fully).
+      const obs = cfg.observe;
+      const readAll = function () { return obs.map(function (x) { return ptr(x.addr).readU32() >>> 0; }).join('|'); };
+      const fillAll = function () { obs.forEach(function (x) { ptr(x.addr).writeU32(0xFFFFFFFF); }); };
+      try { fillAll(); Orig(); o = readAll(); } catch (e) { eo = e.message; }
+      try { fillAll(); Reim(); r = readAll(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'void_setter_observe') {
       try { Orig(t >>> 0); o = ptr(cfg.tgt).readU32() >>> 0; } catch (e) { eo = e.message; }
       try { Reim(t >>> 0); r = ptr(cfg.tgt).readU32() >>> 0; } catch (e) { er = e.message; }
