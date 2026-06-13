@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 69 (60-dword contiguous zero-fill + Copter linear-scan find) --
+    'zerofill60_63bc60': {'rva': 0x00413f20, 'export': 'ZeroFill60_63bc60', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063bc60, 'len': 0xf0, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+    'copter_find_639dc4': {'rva': 0x00407640, 'export': 'CopterFind639dc4', 'signature': {'ret': 'int32', 'args': ['uint32']}, 'arg_type': 'linear_scan_find', 'target_global': 0x00639dc4, 'stride': 0xec, 'gate': 0x0063a5d0, 'count': 8, 'lut_root_delta': 0, 'path1_tests': [[0xABCD0001, 0], [0xABCD0002, 3], [0xABCD0003, 7], [0xABCD0004, 1], [0xDEAD, 99], [0xABCD0005, 5], [0xABCD0006, 0], [0xBEEF, 50], [0xABCD0007, 6], [0xABCD0008, 2]], 'path2_tests': [[0xABCD0001, 0], [0xABCD0002, 3], [0xDEAD, 99]]},
+
     # ---- promote-round round 68 (strided 30-global zero-init + 64-dword constant fill) --
     'clear10x3_63a494': {'rva': 0x00406370, 'export': 'Clear10x3_63a494', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063a494, 'len': 0x12c, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
     'fill64_63c508': {'rva': 0x00418e50, 'export': 'Fill64_63c508', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063c508, 'len': 0x100, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},

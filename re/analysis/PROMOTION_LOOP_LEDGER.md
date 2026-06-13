@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 68
-- total_green: 183
+- rounds_run: 69
+- total_green: 185
 - dry_counter: 0
-- last_round: 2026-06-13 round 68 — strided 30-global zero-init + 64-dword constant fill via range_init (181->183)
+- last_round: 2026-06-13 round 69 — 60-dword contiguous zero-fill + Copter linear-scan find via new linear_scan_find (183->185)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -493,6 +493,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 67 | two global-array-to-bool-out helpers (new global4_bool_out handler) | GREEN 2 (Bool0Out8a94e0 0x0040b970 ==0; BoolMinOut8a94e0 0x0040ba00 ==min(99,g0..g3)) | total_green 179->181. global4_bool_out: void fn(out) reads N globals -> out[k]=predicate(g[k])?1:0; per-test seed-vectors mix predicate true/false. GOTCHA (fixed mid-round): a seedvec-indexed handler still needs path1_tests=[0..N-1] as the INDEX list (cases=0/RED without it). SESSION (this context, rounds 53-67): 142->181 (+39), FIFTEEN new handlers. BACKLOG: RwMatrix setter-or-identity (0x0041a4a0), 2-global float pred (0x00405430), pointer-chain getters (0x004075b0/0x00407620), 2-index float setter (0x00413c70), register-arg shapes (0x00407550/0x0041e170/0x0041f330 ESI/EAX/EDI), vtable non-leaves, float10. RESUME: keep sweeping the 180-list (re-intersect after batches) + bespoke handlers; on display recovery run_diff the state-dependent majority. 200 close (~19 to go).
 
 2026-06-13 | round 68 | strided 30-global zero-init + 64-dword constant fill (existing range_init) | GREEN 2 (Clear10x3_63a494 0x00406370 strided 10x3 stride 0x20; Fill64_63c508 0x00418e50 REP STOSD 64x0x3fe00000) | total_green 181->183. DROPPED 0x00409930 (ALREADY C4 = LoadingState3Enter, even past C3 — caught by pre-check). SESSION (this context, rounds 53-68): 142->183 (+41), FIFTEEN new handlers. BACKLOG: RwMatrix setter-or-identity (0x0041a4a0), 2-global float pred (0x00405430), pointer-chain getters (0x004075b0), 4-state float machine (0x0040dcb0), __fastcall vec3 (0x0041b770), register-arg/EAX/ESI shapes, vtable non-leaves, float10. RESUME: keep sweeping the 178-list + bespoke handlers; on display recovery run_diff the state-dependent majority. 200 close (~17 to go).
+
+2026-06-13 | round 69 | 60-dword contiguous zero-fill + Copter linear-scan find (new linear_scan_find) | GREEN 2 (ZeroFill60_63bc60 0x00413f20 range_init; CopterFind639dc4 0x00407640 linear_scan_find) | total_green 183->185. linear_scan_find: int fn(key) scans table[k*stride] for count@gate, returns idx or -1; seed count + place key at index + non-matching markers elsewhere. SESSION (this context, rounds 53-69): 142->185 (+43), SIXTEEN new handlers. BACKLOG: RwMatrix setter-or-identity (0x0041a4a0), 2-global float pred (0x00405430), pointer-chain getters (0x004075b0), 2D-grid byte lookup (0x004173e0 CONCAT), __fastcall vec3 (0x0041b770), register-arg/EAX/ESI/EDI shapes, vtable non-leaves, float10/state-machines. RESUME: keep sweeping the 176-list + bespoke handlers; on display recovery run_diff the state-dependent majority. 200 close (~15 to go).
 
 ## Final gated-remainder report
 

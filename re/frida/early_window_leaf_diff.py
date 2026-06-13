@@ -90,6 +90,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_bit_toggle',    # void fn(idx,set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store. test=[idx,set,seed]
     'gated_int_predicate',   # u32 fn(arg): if(*(int*)gate==gateval) <switch membership> else 0. test=[arg,gateseed]
     'global4_bool_out',      # void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0. test indexes cfg.seedvecs
+    'linear_scan_find',      # int fn(key): for k in [0,count@gate): if(*(int*)(base+k*stride)==key) return k; return -1. test=[key,placeAt]
 }
 
 SRC = r"""
@@ -122,6 +123,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_bit_toggle') ? ['uint32','uint32']
               : (cfg.at === 'gated_int_predicate') ? ['uint32']
               : (cfg.at === 'global4_bool_out') ? ['pointer']
+              : (cfg.at === 'linear_scan_find') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -263,6 +265,17 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'linear_scan_find') {
+      // int fn(key): for k in [0,count): if(*(int*)(base+k*stride)==key) return k; return -1.
+      // seed count@gate; fill count slots with distinct non-matching markers; place key at placeAt (if in range).
+      // test t=[key,placeAt]: placeAt in range -> expect placeAt; out of range -> -1. ret int (signed -1 keeps).
+      const base = cfg.tgt, stride = cfg.stride | 0, cnt = cfg.count | 0;
+      const key = t[0] >>> 0, placeAt = t[1] | 0;
+      ptr(cfg.gate).writeU32(cnt);
+      for (let k = 0; k < cnt; k++) ptr(base).add(k * stride).writeU32((0x7F000000 | k) >>> 0);
+      if (placeAt >= 0 && placeAt < cnt) ptr(base).add(placeAt * stride).writeU32(key);
+      try { o = '' + (Orig(key) | 0); } catch (e) { eo = e.message; }
+      try { r = '' + (Reim(key) | 0); } catch (e) { er = e.message; }
     } else if (cfg.at === 'global4_bool_out') {
       // void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0.
       // test t indexes cfg.seedvecs (each a length-N seed vector mixing predicate true/false). out fresh per side.
@@ -513,7 +526,8 @@ def run(name):
            'idxtbl': h.get('idxtbl'), 'tscale': h.get('tscale'),
            'gate': h.get('gate'), 'gatemax': h.get('gatemax'),
            'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'),
-           'bit': h.get('bit'), 'gateval': h.get('gateval'), 'seedvecs': h.get('seedvecs'), 'asi': ASI}
+           'bit': h.get('bit'), 'gateval': h.get('gateval'), 'seedvecs': h.get('seedvecs'),
+           'count': h.get('count'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

@@ -3571,3 +3571,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0040ba00  BoolMinOut8a94e0  C2->C3  promote-round-67 global4_bool_out 10/10 GREEN (early_window ==min bool array)
 2026-06-13  00406370  Clear10x3_63a494  C2->C3  promote-round-68 range_init GREEN (early_window 30-global strided zero stride 0x20)
 2026-06-13  00418e50  Fill64_63c508  C2->C3  promote-round-68 range_init GREEN (early_window 64-dword constant fill 0x3fe00000)
+2026-06-13  00413f20  ZeroFill60_63bc60  C2->C3  promote-round-69 range_init GREEN (early_window 60-dword contiguous zero)
+2026-06-13  00407640  CopterFind639dc4  C2->C3  promote-round-69 linear_scan_find 10/10 GREEN (early_window key linear scan)
