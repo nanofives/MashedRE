@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 58 (conditional getter + pointer-compute getter + equality predicate) --
+    'cond_get_691500': {'rva': 0x00472500, 'export': 'CondGet691500', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'cond_table_get', 'target_global': 0x00691500, 'stride': 0x10, 'off0': 0, 'off1': 4, 'offf': 8, 'lut_root_delta': 0, 'path1_tests': [[0, 0], [0, 1], [1, 0], [1, 5], [2, 0], [2, 0xFF], [3, 0], [3, 1], [0, 0], [1, 0]], 'path2_tests': [[0, 0], [0, 1], [2, 7]]},
+    'ptr_compute_881ec8': {'rva': 0x0046d4a0, 'export': 'PtrCompute881ec8', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'ptr_compute_get', 'target_global': 0x00881ec8, 'idxtbl': 0x00881f48, 'stride': 0xd04, 'tscale': 0x40, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
+    'eq_predicate_7f1a18': {'rva': 0x0045caf0, 'export': 'EqPredicate7f1a18', 'signature': {'ret': 'uint32', 'args': ['int32', 'int32']}, 'arg_type': 'eq_predicate_get', 'target_global': 0x007f1a18, 'stride': 0x10, 'gate': 0x008aa254, 'gatemax': 2, 'lut_root_delta': 0, 'path1_tests': [[0, 1, 1, 0], [0, 1, 0, 0], [2, 3, 1, 0], [2, 3, 0, 0], [0, 1, 1, 2], [0, 0xFFFFFFFF, 1, 0], [5, 5, 1, 0], [1, 4, 0, 0], [0, 1, 1, 0], [3, 3, 1, 0]], 'path2_tests': [[0, 1, 1, 0], [0, 1, 0, 0], [0, 1, 1, 2]]},
+
     # ---- promote-round round 57 (Pool-J pointer-returning getter) --
     'ptr_get_68ba1c': {'rva': 0x0045a110, 'export': 'PtrGet68ba1c', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 0xFFFFFFFF, 2, 3, 1, 0], 'path2_tests': [0, 3, 4]},
 

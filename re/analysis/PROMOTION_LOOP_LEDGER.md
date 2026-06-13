@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 57
-- total_green: 160
+- rounds_run: 58
+- total_green: 163
 - dry_counter: 0
-- last_round: 2026-06-13 round 57 — Pool-J pointer-returning getter via int_scalar (159->160)
+- last_round: 2026-06-13 round 58 — conditional getter + pointer-compute getter + equality predicate via 3 new bespoke handlers (160->163)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -471,6 +471,8 @@ race-state candidates + the bespoke-handler classes.
   - float10 getters: 0x00420d80 (sum of 2 float tables) / 0x004077e0 (global-indexed float) — need x87-safe handler (read st0 as float; single-read ones safe, the ADD one risky)
   - predicate-zero getters: 0x0045bff0 (==0 over table) — need a zero-mixing seeder
 RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each unlocks a small cluster) + keep sweeping the 212 callee-graph list for any remaining clean getters/clearers; on display recovery run_diff the state-dependent majority. 200 on track (~40 to go via continued sweep + display).
+
+2026-06-13 | round 58 | conditional getter + pointer-compute getter + equality predicate (3 NEW bespoke handlers) | GREEN 3 (CondGet691500 0x00472500 cond_table_get; PtrCompute881ec8 0x0046d4a0 ptr_compute_get; EqPredicate7f1a18 0x0045caf0 eq_predicate_get) | total_green 160->163. The bespoke-handler backlog IS harvestable: 3 of the 7 backlog shapes built + promoted in one round, all branches exercised non-degenerately (cond_table both flag branches; eq_predicate equal/unequal/gate-fail/p2<0). orig b0=0x8b/0x8b/0x83. SESSION (this context, rounds 53-58): 142->163 (+21), SIX new handlers (cond_global_set, ptr_out_table_get, idx2_table_get, cond_table_get, ptr_compute_get, eq_predicate_get). BACKLOG REMAINING: vec16_copy_set (0x0046d4d0=VehiclePhysicsMatrixSet), field_swap_void (0x004722e0), float10 getters (0x00420d80/004077e0), predicate-zero (0x0045bff0). Plus the 212-callee-graph list still has unworked simple getters/clearers. RESUME: keep building 1-3 bespoke handlers/round + sweeping the 212 list; on display recovery run_diff the state-dependent majority. 200 on track (~37 to go).
 
 ## Final gated-remainder report
 
