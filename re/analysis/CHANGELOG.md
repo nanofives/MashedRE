@@ -3406,3 +3406,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  004b6560  BootGlobalPairSetThunk  C2->C3  promote-round-6 RE-EARN: call-through reimpl + multi_arg_global_write diff 10/10 GREEN log/diff_boot_global_pair_set_thunk.csv
 2026-06-12  00499730  BootPtr773818Get  C2->C3  promote-round-7 RE-EARN: constant-VA-return reimpl + diff 10/10 GREEN log/diff_boot_ptr_773818_get.csv
 2026-06-12  00495120  TimerQpfStore  C2->C3  promote-round-7 RE-EARN: reimpl + scalars_to_scattered_globals diff 10/10 GREEN log/diff_timer_qpf_store.csv
+2026-06-12  004430a0  Util897fe0Set  C2->C3  promote-round-8 void_setter_observe diff 10/10 GREEN log/diff_util_897fe0_set.csv
+2026-06-12  004430b0  Util897fe0Get  C2->C3  promote-round-8 read_global diff 10/10 GREEN log/diff_util_897fe0_get.csv
+2026-06-12  0042f790  GhostMode::IsActive  C2->C3  promote-round-8 read_global diff 10/10 GREEN log/diff_ghost_mode_is_active.csv
+2026-06-12  00431d70  Course::GetLeaderIndex  C2->C3  promote-round-8 read_global diff 10/10 GREEN log/diff_course_get_leader_index.csv
+2026-06-12  004cc7e0  FUN_004cc7e0  C2->C2  promote-round-8 promotion REFUSED (U-5102 Blocks=C2->C3) despite void_setter_observe 10/10 GREEN — evidence annotated, resolve U-5102 first
