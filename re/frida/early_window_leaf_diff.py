@@ -97,6 +97,8 @@ PURE_LEAF_ARGTYPES = {
     'gated_args_to_globals', # void fn(p1..p6): if(*(int*)gate==0){ write args+consts to observe globals; conditional on aux }. test=[p1..p6,auxseed]
     'void_global_transition',# void fn(): if(*(int*)tgt==from) *(int*)tgt=to. test=[seed] -> seed *tgt, call, snapshot
     'two_global_predicate',  # u32 fn(): reads gate global + tgt global, returns membership (1/0). test=[g1seed,g2seed]
+    'index_then_ptr_array',  # fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4). test=[a0(,a1),idxval]
+    'flag_multibit',         # void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via reimpl bit logic. test=[idx,b1,b2(,b3),seed]
 }
 
 SRC = r"""
@@ -132,6 +134,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'linear_scan_find') ? ['uint32']
               : (cfg.at === 'indexed_const2_set') ? ['uint32']
               : (cfg.at === 'gated_args_to_globals') ? ['uint32','uint32','uint32','uint32','uint32','uint32']
+              : (cfg.at === 'index_then_ptr_array') ? (cfg.mult ? ['uint32','uint32'] : ['uint32'])
+              : (cfg.at === 'flag_multibit') ? (cfg.nargs4 ? ['uint32','uint32','uint32','uint32'] : ['uint32','uint32','uint32'])
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -273,6 +277,24 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'index_then_ptr_array') {
+      // fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4).
+      // basePtr is REAL .rdata (string-pointer table) -> idxval must be a small in-range index; idx=-1 -> 0.
+      const baseIdx = cfg.tgt, basePtr = cfg.basePtr, mult = cfg.mult | 0;
+      const a0 = t[0] >>> 0, a1 = (mult ? (t[1] >>> 0) : 0), idxval = t[t.length - 1] | 0;
+      const comp = mult ? (a0 * mult + a1) : a0;
+      const seed = function () { ptr(baseIdx).add(comp * 4).writeS32(idxval); };
+      const call = function (fn) { return (mult ? fn(a0, a1) : fn(a0)) >>> 0; };
+      try { seed(); o = call(Orig); } catch (e) { eo = e.message; }
+      try { seed(); r = call(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'flag_multibit') {
+      // void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via the reimpl's bit logic.
+      // seed flag with a known prior value, call, snapshot. test t=[idx,b1,b2(,b3),seed].
+      const base = cfg.tgt, stride = cfg.stride | 0, idx = t[0] | 0, is4 = cfg.nargs4, seed = t[t.length - 1] >>> 0;
+      const slot = ptr(base).add(idx * stride);
+      const call = function (fn) { if (is4) fn(idx, t[1] >>> 0, t[2] >>> 0, t[3] >>> 0); else fn(idx, t[1] >>> 0, t[2] >>> 0); };
+      try { slot.writeU32(seed); call(Orig); o = slot.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { slot.writeU32(seed); call(Reim); r = slot.readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'void_global_transition') {
       // void fn(): if(*(int*)tgt==from) *(int*)tgt=to. test t=[seed]: seed *tgt, call, snapshot.
       const g = ptr(cfg.tgt);
@@ -577,7 +599,8 @@ def run(name):
            'gate': h.get('gate'), 'gatemax': h.get('gatemax'),
            'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'),
            'bit': h.get('bit'), 'gateval': h.get('gateval'), 'seedvecs': h.get('seedvecs'),
-           'count': h.get('count'), 'aux': h.get('aux'), 'asi': ASI}
+           'count': h.get('count'), 'aux': h.get('aux'),
+           'basePtr': h.get('basePtr'), 'nargs4': h.get('nargs4'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

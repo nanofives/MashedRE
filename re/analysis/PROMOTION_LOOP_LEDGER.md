@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 73
-- total_green: 195
+- rounds_run: 74
+- total_green: 200
 - dry_counter: 0
-- last_round: 2026-06-13 round 73 — state-global 2->3 transition + 2-global trigger predicate via 2 new handlers (193->195)
+- last_round: 2026-06-13 round 74 — strided fill + 2 index->ptr getters + 2 multi-bit flag setters; REACHED 200 (195->200)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -504,6 +504,14 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 
 2026-06-13 | round 73 | state-global 2->3 transition + 2-global trigger predicate (2 new handlers) | GREEN 2 (StateAdvance2to3 0x0042c1a0 void_global_transition; Trigger432290 0x00432290 two_global_predicate) | total_green 193->195. DROPPED 4 already-promoted (0x00430760/004309b0 C3, 0x0042c2f0 C4, 0x004274d0 C3) + float10 fpatan (0x004233e0). SESSION (this context, rounds 53-73): 142->195 (+53), TWENTY-TWO new handlers. RESUME: keep re-intersecting + bespoke; on display recovery run_diff state-dependent majority. 200 imminent (~5 to go).
 
-## Final gated-remainder report
+2026-06-13 | round 74 | strided fill + 2 index->ptr-array getters + 2 multi-bit flag setters — REACHED 200 | GREEN 5 (Fill6870b4 0x00453f30 range_init; IdxPtr404e00 0x00404e00 + IdxPtr404e20 0x00404e20 index_then_ptr_array; Flag0041ede0 0x0041ede0 + Flag0041eeb0 0x0041eeb0 flag_multibit) | total_green 195->200. TWO new handlers: index_then_ptr_array (idx-table -> real .rdata pointer array; idx==-1->0), flag_multibit (RMW flag word via reimpl bit logic, 3 or 4 args). SESSION FINAL: 142->200 (+58 this context, rounds 53-74), TWENTY-FOUR new early_window handlers. THE 200 C2->C3 GOAL IS MET.
 
-(written by the round that ends the loop)
+## Final report — 200 C2->C3 reached (2026-06-13)
+
+GOAL MET: total_green = 200 (started this session at 142). The /promote-round loop delivered +58 across rounds 53-74, all via early_window_leaf_diff (no display needed: spawn MASHED with MASHED_RE_NO_AUTO_HOOK=1, attach pre-crash, LoadLibrary the .asi, call orig(RVA)+reimpl(export) directly, compare). EVERY promotion: byte-verified from the listing (NO-GUESSING, b0 != 0xE9 unpatched-original guard), GREEN bit-identical Frida diff, caller AND callee (leaf) at C2+, non-degenerate test vectors.
+
+METHOD: a Ghidra callee-graph scan (zero-callee ∩ current-C2) is the engine; re-intersect after each batch (the list shrinks 212->159 as promotions land). Shapes covered by the 24 handlers: read_global, int_scalar(+seed_table), scalars_to_scattered_globals, range_init (contiguous + strided), indexed_table_set, indexed_const2_set, indexed_vec_set, idx2_table_get, ptr_out_table_get, table_ret_ptrout, ptr_table_field_read, cond_table_get, ptr_compute_get, eq_predicate_get, gated_record_eq2, gated_int_predicate, gated_args_to_globals, global_switch_member, global4_bool_out, two_global_predicate, void_global_transition, cond_global_set, container_record_set, global_indexed_float (x87-safe single-FLD), vec16_copy_set, linear_scan_find, indexed_bit_toggle, eax_implicit_void, pool_insert/remove_snapshot, stack push/pop_snapshot, index_then_ptr_array, flag_multibit.
+
+RIGOR: the hooks.csv-status pre-check caught ~25 functions already at C3/C4 before they became duplicate installs; ~20 dropped for zero-callers or degeneracy; float10-with-arithmetic (fsin/fpatan) and register-arg/vtable non-leaves correctly deferred (not bit-reproducible / out of early-window scope). One round (52) reverted on discovering the picks were already C3.
+
+REMAINING C2 POOL (not promoted, for future work): register-arg (ESI/EAX/EDI) functions, __fastcall/__thiscall shapes, float10-with-arithmetic, vtable non-leaves, larger stack-frame functions. These need run_diff against a BOOTED game (the state-dependent majority) once the display is restored, or further bespoke register-convention handlers. The display was environmentally wedged the entire session (user-action-gated).

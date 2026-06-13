@@ -3583,3 +3583,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0042bf30  Post0042bf30  C2->C3  promote-round-72 gated_args_to_globals 10/10 GREEN (early_window gated 6-arg message-post)
 2026-06-13  0042c1a0  StateAdvance2to3  C2->C3  promote-round-73 void_global_transition 10/10 GREEN (early_window state 2->3 transition)
 2026-06-13  00432290  Trigger432290  C2->C3  promote-round-73 two_global_predicate 10/10 GREEN (early_window 2-global trigger predicate)
+2026-06-13  00453f30  Fill6870b4  C2->C3  promote-round-74 range_init GREEN (early_window strided fill 0xffffffff)
+2026-06-13  00404e00  IdxPtr404e00  C2->C3  promote-round-74 index_then_ptr_array 10/10 GREEN (early_window 1-index ptr-array getter)
+2026-06-13  00404e20  IdxPtr404e20  C2->C3  promote-round-74 index_then_ptr_array 10/10 GREEN (early_window 2-index ptr-array getter)
+2026-06-13  0041ede0  Flag0041ede0  C2->C3  promote-round-74 flag_multibit 10/10 GREEN (early_window 3-arg multi-bit flag setter)
+2026-06-13  0041eeb0  Flag0041eeb0  C2->C3  promote-round-74 flag_multibit 10/10 GREEN (early_window 4-arg multi-bit flag setter) [200th]
