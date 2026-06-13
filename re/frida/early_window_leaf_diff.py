@@ -115,6 +115,9 @@ PURE_LEAF_ARGTYPES = {
     'global_float_step',         # void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. test=[seedbits,targetfloat]
     'struct_const_init',         # [u32] fn([passthrough,] ptr p): writes deterministic consts/computed to p's fields. alloc 0x400 buf, snapshot observe offsets (+ret if passthrough). test ignored
     'idx2_table_get_outlast',    # u32 fn(i1,i2,out*): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(tgt+(i1*mult+i2)*stride); return 1. test=[i1,i2]
+    'copy_arg_to_globals',       # void fn(ptr p): copy len(observe) dwords from p to observe[k].addr globals. test ignored
+    'deref_byte_flag',           # void fn(ptr p, set): b=*(u8*)(p+field_off); set?b|=bit:b&=~bit; store. test=[set,seedbyte]
+    'indexed_masked_get_out',    # void fn(i, out*): if(out) *out=*(u32*)(tgt+i*stride) & mask. test=[idx,slotval]
 }
 
 SRC = r"""
@@ -168,6 +171,9 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_float_step') ? ['float']
               : (cfg.at === 'struct_const_init') ? (cfg.passthrough_arg ? ['uint32','pointer'] : ['pointer'].concat(new Array(cfg.nscalar | 0).fill('uint32')))
               : (cfg.at === 'idx2_table_get_outlast') ? ['uint32','uint32','pointer']
+              : (cfg.at === 'copy_arg_to_globals') ? ['pointer']
+              : (cfg.at === 'deref_byte_flag') ? ['pointer','uint32']
+              : (cfg.at === 'indexed_masked_get_out') ? ['uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -347,6 +353,28 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'copy_arg_to_globals') {
+      // void fn(ptr p): copy len(observe) dwords from p to observe[k].addr globals.
+      const obs = cfg.observe, n = obs.length;
+      const buf = Memory.alloc(n * 4 + 0x20); _keep.push(buf);
+      for (let k = 0; k < n; k++) buf.add(k * 4).writeU32((0xC0DE0000 | k) >>> 0);
+      const fill = function () { obs.forEach(function (x) { ptr(x.addr).writeU32(0xEEEEEEEE); }); };
+      const rd = function () { return obs.map(function (x) { return ptr(x.addr).readU32() >>> 0; }).join(','); };
+      try { fill(); Orig(buf); o = rd(); } catch (e) { eo = e.message; }
+      try { fill(); Reim(buf); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'deref_byte_flag') {
+      // void fn(ptr p, set): b=*(u8*)(p+field_off); set?b|=bit:b&=~bit; store. test=[set,seedbyte].
+      const off = cfg.field_off | 0, bit = cfg.bit | 0, set = t[0] >>> 0, seed = t[1] & 0xff;
+      const buf = Memory.alloc(0x40); _keep.push(buf);
+      try { buf.add(off).writeU8(seed); Orig(buf, set); o = buf.add(off).readU8(); } catch (e) { eo = e.message; }
+      try { buf.add(off).writeU8(seed); Reim(buf, set); r = buf.add(off).readU8(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_masked_get_out') {
+      // void fn(i, out*): if(out) *out = *(u32*)(tgt+i*stride) & mask. seed slot, call, read out.
+      const base = cfg.tgt, stride = cfg.stride | 0, mask = cfg.mask >>> 0, idx = t[0] >>> 0, sv = t[1] >>> 0;
+      ptr(base).add(idx * stride).writeU32(sv);
+      const outO = Memory.alloc(4), outR = Memory.alloc(4); _keep.push(outO, outR);
+      try { outO.writeU32(0); Orig(idx, outO); o = outO.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { outR.writeU32(0); Reim(idx, outR); r = outR.readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'idx2_table_get_outlast') {
       // u32 fn(i1, i2, out*): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(tgt+(i1*mult+i2)*stride); return 1.
       const base = cfg.tgt, mult = cfg.mult | 0, stride = cfg.stride | 0, b1 = cfg.bound | 0, b2 = cfg.bound2 | 0;
@@ -777,7 +805,8 @@ def run(name):
            'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'),
            'add': h.get('add'), 'seedf': h.get('seedf'),
            'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'),
-           'stride_dw': h.get('stride_dw'), 'passthrough_arg': h.get('passthrough_arg'), 'asi': ASI}
+           'stride_dw': h.get('stride_dw'), 'passthrough_arg': h.get('passthrough_arg'),
+           'mask': h.get('mask'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

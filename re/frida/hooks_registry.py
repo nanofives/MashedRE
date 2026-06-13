@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 94 (copy-to-globals + byte-flag + masked indexed getter) --
+    'copy_476a80': {'rva': 0x00476a80, 'export': 'Copy476a80', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'copy_arg_to_globals', 'observe': [{'addr':0x00692534},{'addr':0x00692538},{'addr':0x0069253c},{'addr':0x00692540},{'addr':0x00692544},{'addr':0x00692548},{'addr':0x0069254c},{'addr':0x00692550}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'byte_flag_474d80': {'rva': 0x00474d80, 'export': 'ByteFlag474d80', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'deref_byte_flag', 'field_off': 2, 'bit': 4, 'lut_root_delta': 0, 'path1_tests': [[1,0],[0,0xff],[1,0xfb],[0,0x04],[1,0x10]], 'path2_tests': [[1,0],[0,0xff]]},
+    'mask_get_41f0d0': {'rva': 0x0041f0d0, 'export': 'MaskGet41f0d0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'indexed_masked_get_out', 'target_global': 0x0063dc74, 'stride': 0x2ac, 'mask': 0x400, 'lut_root_delta': 0, 'path1_tests': [[0,0x400],[0,0],[1,0xffffffff],[2,0x3ff],[1,0x12345400]], 'path2_tests': [[0,0x400],[0,0]]},
+
     # ---- promote-round round 93 (flag set/clear + strided clear + 2D wheel getter) --
     'flag_41ee50': {'rva': 0x0041ee50, 'export': 'Flag41ee50', 'signature': {'ret': 'void', 'args': ['uint32','uint32','uint32']}, 'arg_type': 'flag_multibit', 'target_global': 0x0063dc74, 'stride': 0x2ac, 'lut_root_delta': 0, 'path1_tests': [[0,0,0,0xFFFFFFFF],[0,1,1,0],[1,0,1,0xFFFFFFFF],[1,1,0,0],[0,0,1,0x12345678]], 'path2_tests': [[0,0,0,0xFFFFFFFF],[0,1,1,0]]},
     'clear_table_471530': {'rva': 0x00471530, 'export': 'ClearTable471530', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00690a30, 'len': 0xad0, 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},

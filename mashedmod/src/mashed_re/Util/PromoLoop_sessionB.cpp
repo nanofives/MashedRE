@@ -453,3 +453,34 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl WheelGet46d2e0(std::uint3
     return 0u;
 }
 RH_ScopedInstall(WheelGet46d2e0, 0x0046d2e0);
+
+// ===== round 94 =====
+
+// 0x00476a80  render — byte-verified: copy 8 dwords from p (null->&DAT_006132a4) to globals 0x692534..0x692550
+extern "C" __declspec(dllexport) void __cdecl Copy476a80(std::uint32_t* p) {
+    if (!p) p = reinterpret_cast<std::uint32_t*>(0x006132a4u);
+    *reinterpret_cast<std::uint32_t*>(0x00692534u)=p[0];
+    *reinterpret_cast<std::uint32_t*>(0x00692538u)=p[1];
+    *reinterpret_cast<std::uint32_t*>(0x0069253cu)=p[2];
+    *reinterpret_cast<std::uint32_t*>(0x00692540u)=p[3];
+    *reinterpret_cast<std::uint32_t*>(0x00692544u)=p[4];
+    *reinterpret_cast<std::uint32_t*>(0x00692548u)=p[5];
+    *reinterpret_cast<std::uint32_t*>(0x0069254cu)=p[6];
+    *reinterpret_cast<std::uint32_t*>(0x00692550u)=p[7];
+}
+RH_ScopedInstall(Copy476a80, 0x00476a80);
+
+// 0x00474d80  render — byte-verified: void fn(p,set): if(p){ b=*(u8*)(p+2); set?b|=4:b&=~4; *(u8*)(p+2)=b; }
+extern "C" __declspec(dllexport) void __cdecl ByteFlag474d80(char* p, std::uint32_t set) {
+    if (p) {
+        if (set) *reinterpret_cast<std::uint8_t*>(p+2) |= 4u;
+        else     *reinterpret_cast<std::uint8_t*>(p+2) &= 0xfbu;
+    }
+}
+RH_ScopedInstall(ByteFlag474d80, 0x00474d80);
+
+// 0x0041f0d0  gameplay — byte-verified: void fn(i,out): if(out) *out = *(u32*)(0x63dc74 + i*0x2ac) & 0x400
+extern "C" __declspec(dllexport) void __cdecl MaskGet41f0d0(std::uint32_t i, std::uint32_t* out) {
+    if (out) *out = *reinterpret_cast<std::uint32_t*>(0x0063dc74u + i * 0x2acu) & 0x400u;
+}
+RH_ScopedInstall(MaskGet41f0d0, 0x0041f0d0);
