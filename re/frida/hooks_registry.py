@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 88 (double-deref ptr getter + float field RMW) --
+    'deref_407620': {'rva': 0x00407620, 'export': 'Deref407620', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'double_deref_ptr_get', 'target_global': 0x00639d90, 'stride': 0xec, 'rec_off': 4, 'add': 0x10, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5], 'path2_tests': [0,1]},
+    'float_sub_4058b0': {'rva': 0x004058b0, 'export': 'FloatSub4058b0', 'signature': {'ret': 'void', 'args': ['pointer','float']}, 'arg_type': 'deref_float_field_rmw', 'field_off': 0x5c, 'seedf': 100.0, 'lut_root_delta': 0, 'path1_tests': [2.5, -3.0, 0.0, 1.5, 10.0], 'path2_tests': [2.5, -3.0]},
+
     # ---- promote-round round 87 (double-deref vec3 getter + gated float-compare predicate) --
     'item_world_pos_44dff0': {'rva': 0x0044dff0, 'export': 'ItemWorldPos44dff0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'double_deref_vec3_get', 'target_global': 0x00890080, 'stride': 0xf8, 'rec_off': 4, 'out_off': 0x40, 'span': 3, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5], 'path2_tests': [0,1]},
     'pred_405430': {'rva': 0x00405430, 'export': 'Pred405430', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'global_float_predicate', 'gate': 0x00639d78, 'thr': 0x00639d74, 'target_global': 0x00639d70, 'rec_off': 0xc, 'lut_root_delta': 0, 'path1_tests': [[1,0x3f800000,0x40000000],[1,0x40000000,0x3f800000],[0,0x3f800000,0x40000000],[1,0x3f800000,0x3f800000],[1,0x40400000,0x40000000]], 'path2_tests': [[1,0x3f800000,0x40000000],[1,0x40000000,0x3f800000]]},

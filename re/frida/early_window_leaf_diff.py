@@ -108,6 +108,8 @@ PURE_LEAF_ARGTYPES = {
     'indexed_float_sq',          # void fn(i,float f): *(float*)(tgt+i*stride)=f*f. test=[idx,fval]
     'double_deref_vec3_get',     # void fn(i,out*): rec=*(tgt+i*stride); t=*(rec+rec_off); out[k]=*(t+out_off+k*4) for k<span. test=idx
     'global_float_predicate',    # u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(tgt)+rec_off))?1:0. test=[gateval,thrbits,valbits]
+    'double_deref_ptr_get',      # void fn(out*,idx): rec=*(tgt+idx*stride); *out=*(rec+rec_off)+add. test=idx
+    'deref_float_field_rmw',     # void fn(ptr p,float f): *(float*)(p+field_off) -= f (seedf initial). test=fval
 }
 
 SRC = r"""
@@ -154,6 +156,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_float_sq') ? ['uint32','float']
               : (cfg.at === 'double_deref_vec3_get') ? ['uint32','pointer']
               : (cfg.at === 'global_float_predicate') ? []
+              : (cfg.at === 'double_deref_ptr_get') ? ['pointer','uint32']
+              : (cfg.at === 'deref_float_field_rmw') ? ['pointer','float']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -303,6 +307,21 @@ rpc.exports.diff = function(cfg) {
       const seed = function () { ptr(base).add(idx * stride).writeU32(recb); };
       try { seed(); o = Orig(idx) >>> 0; } catch (e) { eo = e.message; }
       try { seed(); r = Reim(idx) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'double_deref_ptr_get') {
+      // void fn(out*, idx): rec=*(u32*)(tgt+idx*stride); *out = *(u32*)(rec+rec_off) + add.
+      const base = cfg.tgt, stride = cfg.stride | 0, ro = cfg.rec_off | 0, add = cfg.add | 0, idx = t >>> 0;
+      const buf = Memory.alloc(0x40); _keep.push(buf); buf.add(ro).writeU32((0xC0DE0000 | idx) >>> 0);
+      ptr(base).add(idx * stride).writePointer(buf);
+      const outO = Memory.alloc(4), outR = Memory.alloc(4); _keep.push(outO, outR);
+      try { outO.writeU32(0); Orig(outO, idx); o = outO.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { outR.writeU32(0); Reim(outR, idx); r = outR.readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'deref_float_field_rmw') {
+      // void fn(ptr p, float f): *(float*)(p+field_off) {-=|+=} f. seed field=seedf, call, read field.
+      const off = cfg.field_off | 0, seedf = cfg.seedf, f = t;
+      const buf = Memory.alloc(0x80); _keep.push(buf);
+      const seed = function () { buf.add(off).writeFloat(seedf); };
+      try { seed(); Orig(buf, f); o = buf.add(off).readFloat(); } catch (e) { eo = e.message; }
+      try { seed(); Reim(buf, f); r = buf.add(off).readFloat(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'double_deref_vec3_get') {
       // void fn(i, out*): rec=*(u32*)(tgt+i*stride); tp=*(u32*)(rec+rec_off); out[k]=*(u32*)(tp+out_off+k*4).
       // seed table[i]->buf1, buf1[rec_off]->buf2, buf2[out_off+k*4]=distinct; fresh out per side.
@@ -700,7 +719,8 @@ def run(name):
            'basePtr': h.get('basePtr'), 'nargs4': h.get('nargs4'),
            'nscalar': h.get('nscalar'), 'seed_byte': h.get('seed_byte'),
            'gate_off': h.get('gate_off'), 'val_off': h.get('val_off'),
-           'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'), 'asi': ASI}
+           'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'),
+           'add': h.get('add'), 'seedf': h.get('seedf'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

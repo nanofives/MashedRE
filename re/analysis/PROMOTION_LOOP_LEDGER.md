@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 87
-- total_green: 226
+- rounds_run: 88
+- total_green: 228
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 88 | early_window bespoke handlers + BUILD-INFRA fix | attempted 2 | GREEN 2 (Deref407620 0x00407620 double_deref_ptr_get; FloatSub4058b0 0x004058b0 deref_float_field_rmw) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 226->228. BUILD-INFRA: hit cmd.exe ~8191-char limit on the .asi cl command (8430 chars w/ round88) -> LNK1181 ^.obj / "/link not recognized". FIX: consolidated PromoLoop_round79-88.cpp into ONE PromoLoop_sessionB.cpp (23 funcs), removed 10 build.bat lines -> headroom for many future rounds (append to sessionB, no new build line). hooks.csv file refs updated. LESSON: do NOT add one build.bat line per round; append to a session cluster .cpp. early_window vein now deep singletons (~2/round, 1 handler each).
 
 2026-06-13 | round 87 | early_window bespoke handlers | attempted 2 | GREEN 2 (ItemWorldPos44dff0 0x0044dff0 double_deref_vec3_get; Pred405430 0x00405430 global_float_predicate) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 224->226. NEW handlers double_deref_vec3_get (table-of-ptrs -> rec -> vec3 out; likely a position-getter family incl 00407620 variant) + global_float_predicate (finite-float <= compare reproducible). Session 79-87 = 205->226 (+21) all early_window under the env D3D9 wedge. Each round now = 1 new bespoke handler per ~2 functions; the +500 bulk still needs run_diff (display recovery).
 

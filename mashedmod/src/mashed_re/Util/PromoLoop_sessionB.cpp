@@ -1,0 +1,327 @@
+// Mashed RE — promote-round session B (rounds 79-88), consolidated into one TU to stay
+// under cmd.exe's ~8191-char command-line limit for the .asi cl invocation.
+// Each function keeps its original RVA + byte-verification comment + RH_ScopedInstall.
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+#include "../Core/HookSystem.h"
+
+#include <cstdint>
+
+// ===== round 79 =====
+// Mashed RE — promote-round round 79 (frontier-tool validation batch: 3 display-independent leaves).
+//
+// FIRST batch surfaced by the new tooling pipeline:
+//   scripts/promote_frontier.py  — graph-level leaf finder (capstone call-graph over
+//     MASHED.exe.unpatched): C2 ∩ first-party ∩ zero-callee ∩ <260B ∩ C2+ caller.
+//   scripts/promote_classify.py  — disasm-shape auto-classifier; tags each frontier
+//     row AUTO (display-independent, emittable) / STATE (needs a booted game) / MANUAL.
+// All three below are AUTO pure leaves diffed via early_window_leaf_diff.py (no booted
+// game needed — the display is environmentally wedged this session).
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+//   (preserved in original\MASHED.exe.unpatched)
+
+
+
+// 0x00495520  input — byte-verified: A1 78 1E 77 00 C3
+//   MOV EAX,[0x00771e78] ; RET   (read_global u32; direct caller FUN_00496040 C2)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get771e78(void) {
+    return *reinterpret_cast<std::uint32_t*>(0x00771e78u);
+}
+RH_ScopedInstall(Get771e78, 0x00495520);
+
+// 0x004842b0  debug-overlay — byte-verified: 33 C0 / A3.. x4 / C3
+//   XOR EAX,EAX ; MOV [0x6cfc88],EAX ; MOV [0x6cf068],EAX ; MOV [0x6cf06c],EAX ;
+//   MOV [0x6cfc8c],EAX ; RET   (4-global zero-clear; direct caller FUN_00484580 C2)
+extern "C" __declspec(dllexport) void __cdecl Clear4842b0(void) {
+    *reinterpret_cast<std::uint32_t*>(0x006cfc88u) = 0;   // MOV [0x6cfc88],EAX
+    *reinterpret_cast<std::uint32_t*>(0x006cf068u) = 0;   // MOV [0x6cf068],EAX
+    *reinterpret_cast<std::uint32_t*>(0x006cf06cu) = 0;   // MOV [0x6cf06c],EAX
+    *reinterpret_cast<std::uint32_t*>(0x006cfc8cu) = 0;   // MOV [0x6cfc8c],EAX
+}
+RH_ScopedInstall(Clear4842b0, 0x004842b0);
+
+// NOTE: 0x005c9d00 (XOR EAX,EAX; RET = GetRaceEndTrigger) was surfaced by the
+// classifier as const_return 0 and diffs GREEN bit-identically — but it is DELIBERATELY
+// NOT hooked here. Its body is 3 bytes; the 5-byte inline-JMP patch overwrites past the
+// function boundary into the next function (confirmed crasher, demoted C3->C2 2026-05-22).
+// early_window proves bit-identity (hook bypassed) but cannot catch the install-time
+// corruption. Needs a 2-byte/trampoline patch mechanism before it can be a safe C3.
+
+// ===== round 80 =====
+// Mashed RE — promote-round round 80 (frontier/classifier batch: byte-getter + arg-field-clear).
+//
+// Surfaced by scripts/promote_frontier.py + promote_classify.py (extended recognizers:
+// read_global_u8, ptr_fields_clear). Both display-independent; diffed via early_window_leaf_diff.py.
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+//   (preserved in original\MASHED.exe.unpatched)
+
+
+
+// 0x0042a9f0  render — byte-verified: A0 A8 EC 67 00 C3
+//   MOV AL,[0x0067eca8] ; RET   (read_global u8; caller FUN_00492e90 C2)
+extern "C" __declspec(dllexport) std::uint8_t __cdecl GetFadeAlpha(void) {
+    return *reinterpret_cast<std::uint8_t*>(0x0067eca8u);
+}
+RH_ScopedInstall(GetFadeAlpha, 0x0042a9f0);
+
+// 0x005be930  audio — byte-verified: 8B 44 24 04 33 C9 89 48 0C 89 48 10 C3
+//   MOV EAX,[ESP+4] ; XOR ECX,ECX ; MOV [EAX+0xc],ECX ; MOV [EAX+0x10],ECX ; RET
+//   -> fn(p): p->[0xc]=0, p->[0x10]=0, return p (eax=arg unchanged). callers 005be8c0/990/5c0c20 C2
+extern "C" __declspec(dllexport) void* __cdecl AudioClear5be930(void* p) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x0c) = 0;   // MOV [EAX+0xc],ECX
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x10) = 0;   // MOV [EAX+0x10],ECX
+    return p;                                                              // EAX = arg at RET
+}
+RH_ScopedInstall(AudioClear5be930, 0x005be930);
+
+// ===== round 81 =====
+// Mashed RE — promote-round round 81 (indexed table setter + ptr-struct field setters).
+//
+// Surfaced by promote_frontier.py; decompiled via Ghidra. Display-independent; diffed via
+// early_window_leaf_diff.py (0046dd90 = existing indexed_table_set; 005bf7d0/005b0ca0 = NEW
+// deref_struct_set handler, SWEEP-CRITICAL).
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+//   (preserved in original\MASHED.exe.unpatched)
+
+
+
+// 0x0046dd90  gameplay — byte-verified: 8B 44 24 04 8B 4C 24 08 69 C0 04 0D 00 00 89 88 F4 16 88 00 C3
+//   MOV EAX,[ESP+4]=i ; MOV ECX,[ESP+8]=v ; IMUL EAX,EAX,0xd04 ; MOV [EAX+0x8816f4],ECX ; RET
+//   -> *(u32*)(0x008816f4 + i*0xd04) = v   (per-vehicle 0xd04-stride field setter; caller 004177b0 C2)
+extern "C" __declspec(dllexport) void __cdecl VehField8816f4Set(std::uint32_t i, std::uint32_t v) {
+    *reinterpret_cast<std::uint32_t*>(0x008816f4u + i * 0xd04u) = v;
+}
+RH_ScopedInstall(VehField8816f4Set, 0x0046dd90);
+
+// 0x005bf7d0  audio — byte-verified: 8B 44 24 04 8B 4C 24 08 8B 54 24 0C 89 88 44 01 00 00 89 90 48 01 00 00 C3
+//   fn(p,a,b): *(p+0x144)=a ; *(p+0x148)=b ; RET   (audio object 2-callback setter; caller 005be260 C2)
+extern "C" __declspec(dllexport) void __cdecl AudioCb5bf7d0Set(void* p, std::uint32_t a, std::uint32_t b) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x144) = a;   // MOV [EAX+0x144],ECX
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x148) = b;   // MOV [EAX+0x148],EDX
+}
+RH_ScopedInstall(AudioCb5bf7d0Set, 0x005bf7d0);
+
+// 0x005b0ca0  audio — byte-verified: 8B 44 24 04 8B 4C 24 08 89 48 0C 8B 08 83 C9 08 89 08 C3
+//   fn(p,v): *(p+0xc)=v ; *p |= 8 ; RET   (cmd-builder: set field + flag bit 0x8; caller 005a86a0 C2)
+extern "C" __declspec(dllexport) void __cdecl CmdBuild5b0ca0Set(void* p, std::uint32_t v) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x0c) = v;    // MOV [EAX+0xc],ECX
+    *reinterpret_cast<std::uint32_t*>(p) |= 8u;                             // MOV ECX,[EAX];OR ECX,8;MOV [EAX],ECX
+}
+RH_ScopedInstall(CmdBuild5b0ca0Set, 0x005b0ca0);
+
+// ===== round 82 =====
+// Mashed RE — promote-round round 82 (more indexed/ptr-struct setters + 5-field clear).
+//
+// Ghidra-decompiled STATE leaves; display-independent; diffed via early_window_leaf_diff.py
+// (indexed_table_set + deref_struct_set + ptr_fields_clear handlers).
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+//   (preserved in original\MASHED.exe.unpatched)
+
+
+
+// 0x005b0dc0  audio — byte-verified: 8B 44 24 04 8B 4C 24 08 89 48 04 8B 08 80 C9 80 89 08 C3
+//   fn(p,v): *(p+4)=v ; *p |= 0x80 ; RET   (cmd-builder: field + flag bit 0x80; caller 005a8960 C2)
+extern "C" __declspec(dllexport) void __cdecl CmdBuild5b0dc0Set(void* p, std::uint32_t v) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x04) = v;    // MOV [EAX+4],ECX
+    *reinterpret_cast<std::uint32_t*>(p) |= 0x80u;                          // MOV ECX,[EAX];OR CL,0x80;MOV [EAX],ECX
+}
+RH_ScopedInstall(CmdBuild5b0dc0Set, 0x005b0dc0);
+
+// 0x005bde50  audio — byte-verified: 8B 44 24 04 33 C9 89 08 89 48 04 89 48 08 89 48 0C 89 48 10 C3
+//   fn(p): p[0..4 dwords]=0 ; return p   (zero a 5-dword media-buffer descriptor; callers 005bd6f0/005bdad0 C2)
+extern "C" __declspec(dllexport) void* __cdecl ClearDesc5bde50(void* p) {
+    char* b = static_cast<char*>(p);
+    *reinterpret_cast<std::uint32_t*>(b + 0x00) = 0;   // MOV [EAX],ECX
+    *reinterpret_cast<std::uint32_t*>(b + 0x04) = 0;   // MOV [EAX+4],ECX
+    *reinterpret_cast<std::uint32_t*>(b + 0x08) = 0;   // MOV [EAX+8],ECX
+    *reinterpret_cast<std::uint32_t*>(b + 0x0c) = 0;   // MOV [EAX+0xc],ECX
+    *reinterpret_cast<std::uint32_t*>(b + 0x10) = 0;   // MOV [EAX+0x10],ECX
+    return p;                                          // EAX = arg at RET
+}
+RH_ScopedInstall(ClearDesc5bde50, 0x005bde50);
+
+// 0x00477e00  render — byte-verified: 8B 44 24 04 8B 4C 24 08 69 C0 C0 02 00 00 89 88 8C 31 69 00 C3
+//   fn(i,v): IMUL EAX,EAX,0x2c0 ; *(u32*)(0x0069318c + i*0x2c0) = v ; RET   (caller 0040d8f0 C2)
+extern "C" __declspec(dllexport) void __cdecl Table69318cSet(std::uint32_t i, std::uint32_t v) {
+    *reinterpret_cast<std::uint32_t*>(0x0069318cu + i * 0x2c0u) = v;
+}
+RH_ScopedInstall(Table69318cSet, 0x00477e00);
+
+// ===== round 83 =====
+// Mashed RE — promote-round round 83 (3-field struct setters + byte-OR RMW; deref_struct_set).
+//
+// 005173d0/005209d0 auto-surfaced by promote_classify.py's new deref_struct_set recognizer;
+// 00518570 hand-authored (or ch,4 byte-OR form). Display-independent; early_window_leaf_diff.py.
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+
+
+// 0x005173d0  util — byte-verified: 8B 44 24 04 8B 4C 24 08 8B 54 24 0C 89 48 48 8B 4C 24 10 89 50 40 89 48 44 C3
+//   fn(p,a,b,c): *(p+0x48)=a ; *(p+0x40)=b ; *(p+0x44)=c ; RET   (callers 00514d00/005173f0 C2)
+extern "C" __declspec(dllexport) void __cdecl Set5173d0(void* p, std::uint32_t a, std::uint32_t b, std::uint32_t c) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x48) = a;
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x40) = b;
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x44) = c;
+}
+RH_ScopedInstall(Set5173d0, 0x005173d0);
+
+// 0x005209d0  util — byte-verified: ... 89 88 E8 01 00 00 ... 89 90 EC 01 00 00 89 88 F0 01 00 00 C3
+//   fn(p,a,b,c): *(p+0x1e8)=a ; *(p+0x1ec)=b ; *(p+0x1f0)=c ; RET   (callers 00514d00/005173f0 C2)
+extern "C" __declspec(dllexport) void __cdecl Set5209d0(void* p, std::uint32_t a, std::uint32_t b, std::uint32_t c) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x1e8) = a;
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x1ec) = b;
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x1f0) = c;
+}
+RH_ScopedInstall(Set5209d0, 0x005209d0);
+
+// 0x00518570  util — byte-verified: 8B 44 24 04 8B 48 70 80 CD 04 89 48 70 C3
+//   fn(p): MOV ECX,[EAX+0x70] ; OR CH,4 ; MOV [EAX+0x70],ECX ; RET  -> *(p+0x70) |= 0x400
+extern "C" __declspec(dllexport) void __cdecl Rmw518570(void* p) {
+    *reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 0x70) |= 0x400u;
+}
+RH_ScopedInstall(Rmw518570, 0x00518570);
+
+// ===== round 85 =====
+// Mashed RE — promote-round round 85 (conditional deref-get + table bool predicates).
+//
+// Display-independent; diffed via early_window_leaf_diff.py (NEW cond_deref_get +
+// table_bool_predicate handlers). early_window works despite the env D3D9 wedge (it
+// attaches pre-D3D9-init).
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+
+
+// 0x005c4d30  boot — byte-verified: 8B 44 24 04 8B 48 04 85 C9 74 03 8B 00 C3 33 C0 C3
+//   fn(p): if (*(u32*)(p+4) != 0) return *(u32*)p ; else return 0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl CondGet5c4d30(void* p) {
+    if (*reinterpret_cast<std::uint32_t*>(static_cast<char*>(p) + 4) != 0)
+        return *reinterpret_cast<std::uint32_t*>(p);
+    return 0;
+}
+RH_ScopedInstall(CondGet5c4d30, 0x005c4d30);
+
+// 0x0045bff0  gameplay — byte-verified: 8B 44 24 04 69 C0 B4 00 00 00 8B 90 88 FC 88 00 33 C9 85 D2 0F 94 C1 8B C1 C3
+//   fn(i): return (*(u32*)(0x0088fc88 + i*0xb4) == 0) ? 1 : 0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred45bff0(std::uint32_t i) {
+    return (*reinterpret_cast<std::uint32_t*>(0x0088fc88u + i * 0xb4u) == 0) ? 1u : 0u;
+}
+RH_ScopedInstall(Pred45bff0, 0x0045bff0);
+
+// 0x00497450  input — byte-verified: 8B 44 24 04 83 F8 03 7E 03 33 C0 C3 C1 E0 09 8B 90 FC 96 7E 00 33 C9 85 D2 0F 95 C1 8B C1 C3
+//   CMP EAX,3 ; JLE predicate (i<=3) ; else fall-through XOR EAX,EAX;RET (i>3 -> 0)
+//   fn(i): if ((int)i <= 3) return (*(u32*)(0x007e96fc + i*0x200) != 0) ? 1 : 0 ; return 0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred497450(std::uint32_t i) {
+    if (static_cast<std::int32_t>(i) <= 3)
+        return (*reinterpret_cast<std::uint32_t*>(0x007e96fcu + i * 0x200u) != 0) ? 1u : 0u;
+    return 0;
+}
+RH_ScopedInstall(Pred497450, 0x00497450);
+
+// ===== round 86 =====
+// Mashed RE — promote-round round 86 (global swap-return + 3-byte-globals + indexed float-square).
+//
+// Display-independent; diffed via early_window_leaf_diff.py (NEW global_swap,
+// byte_args_to_globals, indexed_float_sq handlers). Works despite the env D3D9 wedge.
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+
+
+// 0x005a7b40  audio — byte-verified: 8B 4C 24 04 A1 BC CA 7D 00 89 0D BC CA 7D 00 C3
+//   fn(v): old = *(u32*)0x007dcabc ; *(u32*)0x007dcabc = v ; return old  (audio-ctx swap; caller 005a7b60 C2)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl AudioCtxSwap5a7b40(std::uint32_t v) {
+    std::uint32_t old = *reinterpret_cast<std::uint32_t*>(0x007dcabcu);
+    *reinterpret_cast<std::uint32_t*>(0x007dcabcu) = v;
+    return old;
+}
+RH_ScopedInstall(AudioCtxSwap5a7b40, 0x005a7b40);
+
+// 0x004924c0  boot — byte-verified: 8A 44 24 04 8A 4C 24 08 8A 54 24 0C A2 B4 47 61 00 88 0D B5 47 61 00 88 15 B6 47 61 00 C3
+//   fn(a,b,c): *(u8*)0x006147b4=a ; *(u8*)0x006147b5=b ; *(u8*)0x006147b6=c   (callers 00426810/00426e10 C2)
+extern "C" __declspec(dllexport) void __cdecl Set6147b4Triple(unsigned char a, unsigned char b, unsigned char c) {
+    *reinterpret_cast<unsigned char*>(0x006147b4u) = a;
+    *reinterpret_cast<unsigned char*>(0x006147b5u) = b;
+    *reinterpret_cast<unsigned char*>(0x006147b6u) = c;
+}
+RH_ScopedInstall(Set6147b4Triple, 0x004924c0);
+
+// 0x0047cdc0  render — byte-verified: D9 44 24 08 8B 44 24 04 D8 4C 24 08 D9 1C 85 70 68 6C 00 C3
+//   fn(i,f): FLD [esp+8]=f ; FMUL [esp+8]=f ; FSTP [eax*4+0x6c6870] -> *(float*)(0x006c6870 + i*4) = f*f
+//   (store-squared-distance setter; callers 00407800/00412050/0044c4f0 C2)
+extern "C" __declspec(dllexport) void __cdecl StoreDistSq47cdc0(std::uint32_t i, float f) {
+    *reinterpret_cast<float*>(0x006c6870u + i * 4u) = f * f;
+}
+RH_ScopedInstall(StoreDistSq47cdc0, 0x0047cdc0);
+
+// ===== round 87 =====
+// Mashed RE — promote-round round 87 (double-deref vec3 getter + gated float-compare predicate).
+//
+// Display-independent; early_window_leaf_diff.py (NEW double_deref_vec3_get + global_float_predicate).
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+
+
+// 0x0044dff0  gameplay — byte-verified: 8B 44 24 04 69 C0 F8 00 00 00 8B 88 80 00 89 00 8B 51 04 8B 44 24 08 83 C2 40 8B 0A 89 08 8B 4A 04 89 48 04 8B 52 08 89 50 08 C3
+//   fn(i,out): rec=*(u32*)(0x00890080 + i*0xf8) ; t=*(u32*)(rec+4) ;
+//              out[0]=*(u32*)(t+0x40) ; out[1]=*(u32*)(t+0x44) ; out[2]=*(u32*)(t+0x48)  (item world-pos; caller 00461650 C2)
+extern "C" __declspec(dllexport) void __cdecl ItemWorldPos44dff0(std::uint32_t i, std::uint32_t* out) {
+    std::uint32_t rec = *reinterpret_cast<std::uint32_t*>(0x00890080u + i * 0xf8u);
+    std::uint32_t t = *reinterpret_cast<std::uint32_t*>(rec + 4);
+    out[0] = *reinterpret_cast<std::uint32_t*>(t + 0x40);
+    out[1] = *reinterpret_cast<std::uint32_t*>(t + 0x44);
+    out[2] = *reinterpret_cast<std::uint32_t*>(t + 0x48);
+}
+RH_ScopedInstall(ItemWorldPos44dff0, 0x0044dff0);
+
+// 0x00405430  gameplay — byte-verified: A1 78 9D 63 00 85 C0 74 15 A1 70 9D 63 00 D9 05 74 9D 63 00 D8 58 0C DF E0 F6 C4 41 75 03 33 C0 C3 B8 01 00 00 00 C3
+//   fn(): if (*(int*)0x639d78 == 0) return 0 ; return (*(float*)0x639d74 <= *(float*)(*(u32*)0x639d70 + 0xc)) ? 1 : 0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Pred405430(void) {
+    if (*reinterpret_cast<std::int32_t*>(0x00639d78u) == 0) return 0;
+    float thr = *reinterpret_cast<float*>(0x00639d74u);
+    float val = *reinterpret_cast<float*>(*reinterpret_cast<std::uint32_t*>(0x00639d70u) + 0xc);
+    return (thr <= val) ? 1u : 0u;
+}
+RH_ScopedInstall(Pred405430, 0x00405430);
+
+// ===== round 88 =====
+// Mashed RE — promote-round round 88 (double-deref ptr getter + float field RMW).
+//
+// Display-independent; early_window_leaf_diff.py (NEW double_deref_ptr_get + deref_float_field_rmw).
+//
+// Anchored to MASHED.exe SHA-256:
+//   BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+
+
+
+// 0x00407620  gameplay — byte-verified: 8B 44 24 08 69 C0 EC 00 00 00 8B 88 90 9D 63 00 8B 51 04 8B 44 24 04 83 C2 10 89 10 C3
+//   fn(out,idx): rec=*(u32*)(0x00639d90 + idx*0xec) ; *out = *(u32*)(rec+4) + 0x10   (caller 004556f0 C2)
+extern "C" __declspec(dllexport) void __cdecl Deref407620(std::uint32_t* out, std::uint32_t idx) {
+    std::uint32_t rec = *reinterpret_cast<std::uint32_t*>(0x00639d90u + idx * 0xecu);
+    *out = *reinterpret_cast<std::uint32_t*>(rec + 4) + 0x10;
+}
+RH_ScopedInstall(Deref407620, 0x00407620);
+
+// 0x004058b0  gameplay — byte-verified: 8B 44 24 04 D9 40 5C D8 64 24 08 D9 58 5C C3
+//   fn(p,f): FLD [p+0x5c] ; FSUB [esp+8]=f ; FSTP [p+0x5c]  ->  *(float*)(p+0x5c) -= f   (caller 004058c0 C2)
+extern "C" __declspec(dllexport) void __cdecl FloatSub4058b0(void* p, float f) {
+    *reinterpret_cast<float*>(static_cast<char*>(p) + 0x5c) -= f;
+}
+RH_ScopedInstall(FloatSub4058b0, 0x004058b0);
+
