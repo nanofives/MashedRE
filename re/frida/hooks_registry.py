@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 61 (global-indexed float getter + vec16 copy setter) --
+    'float_idx_639de0': {'rva': 0x004077e0, 'export': 'FloatIdx639de0', 'signature': {'ret': 'float', 'args': []}, 'arg_type': 'global_indexed_float', 'gate': 0x0063a5d8, 'target_global': 0x00639de0, 'stride': 0xec, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 5, 7, 2, 0, 1, 4], 'path2_tests': [0, 3, 7]},
+    'vec_copy_881ec8': {'rva': 0x0046d4d0, 'export': 'VecCopy881ec8', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'vec16_copy_set', 'target_global': 0x00881ec8, 'stride': 0xd04, 'span': 16, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
+
     # ---- promote-round round 60 (4-way pointer-global selector) --
     'sel_88fbc4': {'rva': 0x0045c640, 'export': 'Sel88fbc4', 'signature': {'ret': 'void', 'args': ['int32']}, 'arg_type': 'arg_scattered_globals', 'observe': [{'addr': 0x0088fbc4}, {'addr': 0x0088fbc8}], 'lut_root_delta': 0, 'path1_tests': [1, 2, 3, 4, 0, 5, 1, 2, 3, 0], 'path2_tests': [1, 2, 4]},
 

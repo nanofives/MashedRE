@@ -83,6 +83,8 @@ PURE_LEAF_ARGTYPES = {
     'eq_predicate_get',      # u32 fn(p1,p2): if(*(int*)gate<gatemax && p2>=0) return tbl[p1*stride]==tbl[p2*stride]?1:0; return 0
     'table_ret_ptrout',      # u32 fn(idx,out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1)
     'arg_scattered_globals', # void fn(arg): observe globals after call, vary arg (switch/branch setter -> distinct globals per arg)
+    'global_indexed_float',  # float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride) — single FLD, x87-safe
+    'vec16_copy_set',        # u32 fn(idx,in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions at base+idx*stride
 }
 
 SRC = r"""
@@ -110,6 +112,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'ptr_compute_get') ? ['pointer','uint32']
               : (cfg.at === 'table_ret_ptrout') ? ['uint32','pointer']
               : (cfg.at === 'arg_scattered_globals') ? ['uint32']
+              : (cfg.at === 'vec16_copy_set') ? ['uint32','pointer']
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
               : (cfg.at === 'cond_global_set') ? ['uint32']
@@ -250,6 +253,25 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_indexed_float') {
+      // float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride). seed idx + a FINITE
+      // non-NaN float bit pattern at the slot -> distinct per idx. ret 'float' -> no >>>0 coercion.
+      const idx = t >>> 0;
+      ptr(cfg.gate).writeU32(idx);
+      ptr(cfg.tgt).add(idx * (cfg.stride | 0)).writeU32((0x40000000 | (idx << 4)) >>> 0);
+      try { o = Orig(); } catch (e) { eo = e.message; }
+      try { r = Reim(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'vec16_copy_set') {
+      // u32 fn(idx, in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions
+      // at base+idx*stride (region2 immediately follows region1). alloc in distinct, snapshot 2n dwords.
+      const base = cfg.tgt, stride = cfg.stride | 0, n = (cfg.span | 0) || 16, bound = cfg.bound | 0, idx = t >>> 0;
+      const inb = Memory.alloc(n * 4); _keep.push(inb);
+      for (let j = 0; j < n; j++) inb.add(j * 4).writeU32((0xC0DE0000 | ((idx << 8) | j)) >>> 0);
+      const r1 = ptr(base).add(idx * stride);
+      const reset = function () { for (let j = 0; j < n * 2; j++) r1.add(j * 4).writeU32(0xEEEEEEEE); };
+      const snap = function () { const p = []; for (let j = 0; j < n * 2; j++) p.push(r1.add(j * 4).readU32() >>> 0); return p.join(','); };
+      try { reset(); const ro = Orig(idx, inb) >>> 0; o = snap() + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { reset(); const rr = Reim(idx, inb) >>> 0; r = snap() + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'arg_scattered_globals') {
       // void fn(arg): fill observed globals with sentinel, call(arg), read them back; vary arg.
       // A switch/branch setter writes DISTINCT globals per arg -> non-degenerate across the test set.
