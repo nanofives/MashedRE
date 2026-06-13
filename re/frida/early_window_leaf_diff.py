@@ -100,6 +100,7 @@ PURE_LEAF_ARGTYPES = {
     'index_then_ptr_array',  # fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4). test=[a0(,a1),idxval]
     'flag_multibit',         # void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via reimpl bit logic. test=[idx,b1,b2(,b3),seed]
     'float_threshold_predicate', # u32 fn(idx): return (*(float*)(base+idx*stride) < *(float*)gate) ? 1 : 0. test=[idx,recordbits,threshbits]
+    'deref_struct_set',          # void fn(ptr p, scalar...): writes deterministic values into fields of p. alloc+seed buffer, pass as p, call with nscalar args, snapshot observe offsets. test=[a0(,a1,a2)]
 }
 
 SRC = r"""
@@ -138,6 +139,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'index_then_ptr_array') ? (cfg.mult ? ['uint32','uint32'] : ['uint32'])
               : (cfg.at === 'flag_multibit') ? (cfg.nargs4 ? ['uint32','uint32','uint32','uint32'] : ['uint32','uint32','uint32'])
               : (cfg.at === 'float_threshold_predicate') ? ['uint32']
+              : (cfg.at === 'deref_struct_set') ? (['pointer'].concat(new Array(cfg.nscalar | 0).fill('uint32')))
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -287,6 +289,21 @@ rpc.exports.diff = function(cfg) {
       const seed = function () { ptr(base).add(idx * stride).writeU32(recb); };
       try { seed(); o = Orig(idx) >>> 0; } catch (e) { eo = e.message; }
       try { seed(); r = Reim(idx) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'deref_struct_set') {
+      // void fn(ptr p, scalar...): writes deterministic values into fields of p. Alloc a
+      // 0x400 buffer, seed every byte (cfg.seed_byte — non-zero exercises RMW-OR paths),
+      // pass as p with nscalar uint32 args, snapshot the observe offsets. Same init both
+      // sides; absolute addresses are not stored so the snapshots are directly comparable.
+      const obs = cfg.observe, ns = cfg.nscalar | 0, seed = (cfg.seed_byte | 0) & 0xff;
+      const A = Array.isArray(t) ? t : [t];
+      const a0 = (A[0] || 0) >>> 0, a1 = (A[1] || 0) >>> 0, a2 = (A[2] || 0) >>> 0;
+      const mk = function () { const b = Memory.alloc(0x400); _keep.push(b);
+                               for (let z = 0; z < 0x400; z++) b.add(z).writeU8(seed); return b; };
+      const snap = function (b) { return obs.map(function (x) { return b.add(x.off | 0).readU32() >>> 0; }).join(','); };
+      const call = function (fn, b) { if (ns === 1) fn(b, a0); else if (ns === 2) fn(b, a0, a1);
+                                      else if (ns === 3) fn(b, a0, a1, a2); else fn(b); };
+      try { const b = mk(); call(Orig, b); o = snap(b); } catch (e) { eo = e.message; }
+      try { const b = mk(); call(Reim, b); r = snap(b); } catch (e) { er = e.message; }
     } else if (cfg.at === 'index_then_ptr_array') {
       // fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4).
       // basePtr is REAL .rdata (string-pointer table) -> idxval must be a small in-range index; idx=-1 -> 0.
@@ -610,7 +627,8 @@ def run(name):
            'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'),
            'bit': h.get('bit'), 'gateval': h.get('gateval'), 'seedvecs': h.get('seedvecs'),
            'count': h.get('count'), 'aux': h.get('aux'),
-           'basePtr': h.get('basePtr'), 'nargs4': h.get('nargs4'), 'asi': ASI}
+           'basePtr': h.get('basePtr'), 'nargs4': h.get('nargs4'),
+           'nscalar': h.get('nscalar'), 'seed_byte': h.get('seed_byte'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

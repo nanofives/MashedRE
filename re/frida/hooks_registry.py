@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 81 (indexed table setter + ptr-struct field setters; deref_struct_set NEW SWEEP-CRITICAL) --
+    'veh_field_8816f4_set': {'rva': 0x0046dd90, 'export': 'VehField8816f4Set', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x008816f4, 'stride': 0xd04, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0xDEADBEEF, 0x12345678, 0, 0xFFFFFFFF, 0x55555555, 0xAAAAAAAA, 1, 0xC0DE0001, 0x7FFFFFFF, 0x80000000], 'path2_tests': [0xDEADBEEF, 0x12345678, 0]},
+    'audio_cb_5bf7d0_set': {'rva': 0x005bf7d0, 'export': 'AudioCb5bf7d0Set', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 2, 'seed_byte': 0xEE, 'observe': [{'off': 0x144}, {'off': 0x148}], 'lut_root_delta': 0, 'path1_tests': [[0xAAAA0001, 0xBBBB0002], [0x11112222, 0x33334444], [0, 0], [0xFFFFFFFF, 0x12345678], [0xDEADBEEF, 0xCAFEF00D]], 'path2_tests': [[0xAAAA0001, 0xBBBB0002], [0, 0]]},
+    'cmd_build_5b0ca0_set': {'rva': 0x005b0ca0, 'export': 'CmdBuild5b0ca0Set', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 1, 'seed_byte': 0x11, 'observe': [{'off': 0x0c}, {'off': 0x00}], 'lut_root_delta': 0, 'path1_tests': [[0x12345678], [0xDEADBEEF], [0], [0xFFFFFFFF], [0x55555555]], 'path2_tests': [[0x12345678], [0]]},
+
     # ---- promote-round round 80 (frontier/classifier batch: byte-getter + arg-field-clear) --
     'get_fade_alpha': {'rva': 0x0042a9f0, 'export': 'GetFadeAlpha', 'signature': {'ret': 'uint8', 'args': []}, 'arg_type': 'read_global', 'target_global': 0x0067eca8, 'lut_root_delta': 0, 'path1_tests': [0, 0xFF, 0x7F, 0x80, 1, 0x55, 0xAA, 0x42, 0, 0xFE], 'path2_tests': [0, 0xFF, 0x7F]},
     'audio_clear_5be930': {'rva': 0x005be930, 'export': 'AudioClear5be930', 'signature': {'ret': 'pointer', 'args': ['pointer']}, 'arg_type': 'ptr_fields_clear', 'observe': [{'off': 0x0c}, {'off': 0x10}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},

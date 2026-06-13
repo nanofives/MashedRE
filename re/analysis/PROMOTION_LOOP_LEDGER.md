@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 80
-- total_green: 209
+- rounds_run: 81
+- total_green: 212
 - dry_counter: 0
-- last_round: 2026-06-13 round 80 — frontier/classifier batch (2 GREEN: GetFadeAlpha read_global u8 + AudioClear5be930 ptr_fields_clear; new classifier recognizers) (207->209)
+- last_round: 2026-06-13 round 81 — Ghidra-decompiled STATE leaves (3 GREEN: VehField8816f4Set indexed_table_set + AudioCb5bf7d0Set/CmdBuild5b0ca0Set deref_struct_set NEW handler) (209->212)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
 - NEW GOAL (user, 2026-06-13): +500 -> ~705. Feasibility read below.
 - TOOLING ADDED THIS SESSION (the efficiency-memo deliverables):
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 81 | Ghidra-decompiled STATE leaves (early_window, NEW deref_struct_set handler) | attempted 3 | GREEN 3 (VehField8816f4Set 0x0046dd90 indexed_table_set 10/10; AudioCb5bf7d0Set 0x005bf7d0 deref_struct_set 5/5; CmdBuild5b0ca0Set 0x005b0ca0 deref_struct_set 5/5) | deferred 3 (00420d80 float10-sum x87 hazard; 0047cdc0 table[i]=f*f float defer; 005a7b40 swap-return-old needs handler) | exit-5/6: none | dry_counter 0. total_green 209->212. NEW HANDLER deref_struct_set (SWEEP-CRITICAL, early_window_leaf_diff.py): void fn(ptr p, scalar...) writing deterministic values into p's fields — alloc+seed buffer, pass as p, snapshot observe offsets (seed_byte nonzero exercises RMW-OR). Unlocks the ptr-arg struct-setter family. METHOD: decompile STATE leaves via Ghidra (Mashed_pool2 session) -> author faithful reimpl -> early_window diff (no boot). 58 gated STATE leaves 15-45B remain; many are simple ptr/table setters fitting indexed_table_set / deref_struct_set / new tiny handlers. Skip-on-sight: float10-sum / fsin / table=f*f (x87).
 
 2026-06-13 | round 80 | early_window (extended classifier) | attempted 2 | GREEN 2 (GetFadeAlpha 0x0042a9f0 read_global u8 10/10; AudioClear5be930 0x005be930 ptr_fields_clear 5/5) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 207->209. Extended promote_classify.py with read_global_u8 (A0 disp32) + ptr_fields_clear (mov eax,[esp+4]; N× zero arg fields) recognizers -> 2 new display-independent AUTO surfaced from the STATE bucket. NOTE: the small-STATE bucket is dominated by D3DX9/RW library-band (0x4ec/0x4c), thiscall field ops (need ECX trampoline), and fsin float-arith (skip-on-sight) — the bulk of the remaining 201 STATE needs run_diff on the booted game (NOW UNBLOCKED, see counters) or new handlers. Display-independent vein remains the slow tail; run_diff is the fast route.
 
