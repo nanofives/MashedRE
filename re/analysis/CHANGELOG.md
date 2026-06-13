@@ -3593,3 +3593,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0044c370  GlobalFieldGet896000  C2->C3  promote-round-76 global_field_read 10/10 GREEN (early_window global-field+const getter)
 2026-06-13  00421080  Fill63e5a4  C2->C3  promote-round-77 range_init GREEN (early_window strided -1.0f fill + trailing global zero)
 2026-06-13  00405890  Pred405890  C2->C3  promote-round-78 two_global_predicate 10/10 GREEN (early_window mode-5 end-condition g2==g1)
+2026-06-13  00495520  Get771e78  C2->C3  early_window read_global GREEN 10/10 (log/diff_get_771e78.csv); promote-round-79 frontier-tool batch
+2026-06-13  004842b0  Clear4842b0  C2->C3  early_window scalars_to_scattered_globals GREEN 5/5 (log/diff_clear_4842b0.csv); promote-round-79 frontier-tool batch

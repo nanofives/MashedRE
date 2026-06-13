@@ -14252,6 +14252,13 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 79 (frontier-tool validation batch: 3 display-independent leaves) --
+    # surfaced by scripts/promote_frontier.py + scripts/promote_classify.py; diffed via early_window_leaf_diff.py
+    'get_771e78': {'rva': 0x00495520, 'export': 'Get771e78', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'read_global', 'target_global': 0x00771e78, 'lut_root_delta': 0, 'path1_tests': [0, 0xDEADBEEF, 0xCAFEF00D, 0x12345678, 0xFFFFFFFF, 0x80000000, 1, 0x55555555, 0xAAAAAAAA, 0], 'path2_tests': [0, 0xDEADBEEF, 0x12345678]},
+    'clear_4842b0': {'rva': 0x004842b0, 'export': 'Clear4842b0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x006cfc88}, {'addr': 0x006cf068}, {'addr': 0x006cf06c}, {'addr': 0x006cfc8c}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
+    # 0x005c9d00 (GetRaceEndTrigger) intentionally NOT registered: 3-byte body, 5-byte
+    # E9 patch corrupts the next function (demoted C3->C2 2026-05-22 crasher).
+
     # ---- promote-round round 78 (2-global equality predicate; opportunistic) --
     'pred_405890': {'rva': 0x00405890, 'export': 'Pred405890', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'two_global_predicate', 'gate': 0x0063a5d0, 'target_global': 0x0063a5d4, 'lut_root_delta': 0, 'path1_tests': [[5, 5], [5, 3], [0, 0], [7, 7], [3, 9], [0, 5], [10, 10], [2, 2], [0, 7], [8, 4]], 'path2_tests': [[5, 5], [5, 3], [0, 0]]},
 

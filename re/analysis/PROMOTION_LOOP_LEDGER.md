@@ -9,10 +9,35 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 78
-- total_green: 205
+- rounds_run: 79
+- total_green: 207
 - dry_counter: 0
-- last_round: 2026-06-13 round 78 — 2-global equality predicate (opportunistic; 2 clean but 1 already-C3, so +1) (204->205)
+- last_round: 2026-06-13 round 79 — frontier-tool validation batch (2 GREEN: Get771e78 read_global + Clear4842b0 4-global zero-clear; 1 correctly REJECTED 005c9d00 install-crasher) (205->207)
+- NEW GOAL (user, 2026-06-13): +500 -> ~705. Feasibility read below.
+- TOOLING ADDED THIS SESSION (the efficiency-memo deliverables):
+  - scripts/promote_frontier.py — capstone call-graph over MASHED.exe.unpatched;
+    emits re/analysis/plans/promote_frontier.tsv = C2 ∩ first-party ∩ zero-callee
+    ∩ 5<=body<260 ∩ >=1 C2+ caller. Re-run after every round. (Handles the
+    early-return-then-continue false positive; excludes <5B bodies = inline-JMP
+    install-crashers, and DEMOTED-crash notes.) Current frontier: 232.
+  - scripts/promote_classify.py — disasm-shape auto-classifier; reads the frontier,
+    decodes each body, tags AUTO (display-independent, emittable: 5) / STATE (needs
+    booted game: 204) / MANUAL (27). Emits reimpl C++ + registry fragment with --emit.
+- FEASIBILITY (data-grounded 2026-06-13): first-party C2 pool = 2926 rows
+  (render 854, audio 500, util 358, gameplay 279, boot 248, particle 174, ...).
+  +500 = ~17% of it -> physically plausible. BUT the display-INDEPENDENT leaf vein
+  is now PROVEN ~drained (frontier=232 leaves; only ~3-5 are display-independent
+  pure shapes the early_window handlers cover; the rest read live state). The
+  204 STATE rows + the broader pool REQUIRE run_diff against a BOOTED game ->
+  display-gated. The display is WEDGED again this session (1 monitor, MASHED AVs
+  0xC0000005 at D3D9 init ~4s — same class as the round-35 outage). 207 is the
+  display-independent ceiling for now; +500 needs the display restored (reboot).
+- POST-REBOOT RESUME RECIPE: (1) boot-probe original\MASHED.exe (expect a window,
+  not exit 0xC0000005). (2) re-run promote_frontier.py + promote_classify.py.
+  (3) the 204 STATE rows are the worklist: for each, promote_classify --emit gives
+  the reimpl+registry; author in a PromoLoop cluster, build ONCE per batch, run_diff
+  (booted) sequentially. (4) classify GREENs via re-classify. This is the fast,
+  high-volume route to 705.
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -237,6 +262,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 79 | NEW TOOLING (promote_frontier.py + promote_classify.py) + early-window batch | attempted 3 | GREEN 2 (Get771e78 0x00495520 read_global *(0x00771e78) 10/10; Clear4842b0 0x004842b0 scalars_to_scattered_globals 4-global zero-clear 5/5) | REJECTED 1 (0x005c9d00 GetRaceEndTrigger — bit-identical const_return 0 GREEN, but 3-byte body => 5-byte inline-JMP overwrites past the function boundary = install crasher, already demoted C3->C2 2026-05-22; early_window can't catch install-time corruption because it diffs hook-BYPASSED) | exit-5/6: none (1 attach flake on clear_4842b0, GREEN on retry) | dry_counter 0. total_green 205->207. KEY DELIVERABLES: built the two efficiency-memo tools. promote_frontier.py = graph-level leaf finder (capstone call-graph; fixes the byte-scan under-count + the early-return false positive; excludes <5B install-crasher bodies + DEMOTED-crash rows). promote_classify.py = disasm-shape classifier partitioning the frontier into AUTO(5)/STATE(204)/MANUAL(27). LESSON BANKED (hardened into promote_frontier.py): a leaf with body < 5 bytes is an INSTALL CRASHER (the E9 rel32 patch clobbers the next function) even when the bit-identity diff is GREEN — status/notes pre-check (the memo's lesson #2) caught 005c9d00. FEASIBILITY (see counters block): +500 to 705 is physically plausible (first-party C2 = 2926) but display-INDEPENDENT vein is ~drained at 207; the 204 STATE rows + broader pool need run_diff on a BOOTED game; display is WEDGED (1 monitor, AV at D3D9 init). 705 needs the display restored (reboot). Post-reboot resume recipe in counters block.
 
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
