@@ -74,6 +74,7 @@ PURE_LEAF_ARGTYPES = {
     'stack_push_snapshot',   # fn(stk,val): array-stack push; reset+call+snapshot+ret
     'ptr_table_field_read',  # fn(i): return *(*(tgt))[i] + field_off  (pointer-to-table + field)
     'indexed_table_set',     # void fn(i,val): *(tgt + i*stride) = val (fixed i=set_idx, vary val)
+    'range_init',            # void fn(): writes a contiguous global range [tgt, tgt+len) — snapshot whole range
 }
 
 SRC = r"""
@@ -209,6 +210,13 @@ rpc.exports.diff = function(cfg) {
       const rd = function () { return obs.map(function (x) { return buf.add(x.off | 0).readU32() >>> 0; }).join('|'); };
       try { fill(); Orig(buf); o = rd(); } catch (e) { eo = e.message; }
       try { fill(); Reim(buf); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'range_init') {
+      // void fn(): writes a contiguous global range. Fill sentinel, call, snapshot range.
+      const base = ptr(cfg.tgt), len = cfg.len | 0;
+      const fill = function () { for (let z = 0; z < len; z += 4) base.add(z).writeU32(0xEEEEEEEE); };
+      const snap = function () { const p = []; for (let z = 0; z < len; z += 4) p.push(base.add(z).readU32() >>> 0); return p.join(','); };
+      try { fill(); Orig(); o = snap(); } catch (e) { eo = e.message; }
+      try { fill(); Reim(); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'indexed_table_set') {
       // void fn(i, val): *(tgt + i*stride) = val. Fix i=set_idx, vary val.
       const base = ptr(cfg.tgt), stride = cfg.stride | 0, idx = cfg.set_idx | 0, val = t >>> 0;
@@ -314,7 +322,7 @@ def run(name):
            'capacity': h.get('capacity'), 'insert_rva': h.get('insert_rva'),
            'build_keys': h.get('build_keys'), 'init_buf': h.get('init_buf'),
            'init_top': h.get('init_top'), 'stride': h.get('stride'),
-           'set_idx': h.get('set_idx'), 'asi': ASI}
+           'set_idx': h.get('set_idx'), 'len': h.get('len'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
