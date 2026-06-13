@@ -13455,17 +13455,24 @@ HOOKS = {
 
     # 0x0042fe70  VehicleDword67ea80Get — uint32(). Returns DAT_0067ea80
     # (timeout-selector global, values 0/1/2 per U-0397; bytes A1 80 EA 67 00
-    # C3). Race lane per c3_batch_race1 backfill config.
+    # C3). First run as arg_type none + scenario race exited 5 (DEGENERATE):
+    # the global is genuinely 0 in a live Quick Battle (0 = valid domain
+    # value, selects 900k). Switched to read_global — the harness SEEDS
+    # 0x0067ea80 with each vector, calls fn(), compares the return
+    # (discriminates the cited address; saves/restores the global).
+    # Menu-attach suffices (the BSS address exists regardless of state).
     # ref: re/analysis/promote_c2_vehicle_lowrva/0x0042fe70.md
     'vehicle_dword_67ea80_get': {
         'rva':            0x0042fe70,
         'export':         'VehicleDword67ea80Get',
         'signature':      {'ret': 'uint32', 'args': []},
-        'arg_type':       'none',
+        'arg_type':       'read_global',
+        'target_global':  0x0067ea80,
         'lut_root_delta': 0,
-        'scenario':       'race',
-        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        'path2_tests':    [0, 1, 2],
+        # documented domain 0/1/2 (U-0397) + sentinels
+        'path1_tests':    [0, 1, 2, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 3, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
     # 0x0041ea80  TrackDescField40Get — uint32(). Returns
