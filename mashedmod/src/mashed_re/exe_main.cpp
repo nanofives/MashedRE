@@ -560,6 +560,19 @@ bool             g_carsel_ready = false;
 int              g_csel_p1_car = 0;
 int              g_csel_p2_car = 1;
 
+// --- Loading-screen spinning disc (round-2 feedback) -------------------------
+// The disc is the "loadicon" texture (a MASHED-in-a-ring logo) in MASHED.exe's
+// embedded resource RWTEXDICTIONARY/404 (FUN_004921d0:
+// FUN_004997b0(0x194,"RWTEXDICTIONARY") -> FUN_004c5c00(dict,"LoadIcon")).
+// Same 0x23 TXD variant as FGDC20: 256x128 8bpp direct-intensity (all-zero
+// palette), pixels @0x43c. Drawn by FUN_00428450 as a horizontal coin-flip:
+// fsin(phase) drives width 80*sin (squash), UVs sample the left half (front)
+// when sin>=0 and the right half U-flipped (back) when sin<0, center pinned at
+// x=544 virtual; phase += 0.1/frame.
+constexpr std::uint32_t kSlotLoadIcon  = 56;
+constexpr int           kHandleLoadIcon = 47;
+bool             g_loadicon_ready = false;
+
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
 // for Arctic>). Renders the cracked RW world (Track/TrackWorld) through the
 // spike renderer (D3d9Render/TrackRenderer) with an auto-orbit camera.
@@ -970,7 +983,9 @@ struct MenuSettings {
     std::int32_t music   = 7;   // 0..10
     std::int32_t sfx     = 7;   // 0..10
     std::int32_t insults = 7;   // 0..10
-    std::int32_t insults_on = 0;  // tri-state 0=Off 1=Auto 2=Manual (user review #21)
+    std::int32_t insults_on = 2;  // tri-state 0=Off 1=Auto 2=Manual; the
+                                  // original BOOTS at Manual (clean scr19
+                                  // baseline shows "<- Manual ->")
     std::int32_t gamma = 3;     // 0..10 (screen 30 slider, user review #22)
     std::int32_t autosave = 1;  // 0=Off 1=On (screen 32 toggle, user review #23)
 };
@@ -1125,11 +1140,10 @@ bool UpdateMenuSelection() {
     }
     if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
     if (esc_now  && !esc_prev) {
-        // #10 (user review): ESC at the main-menu ROOT must NOT quit the game.
-        // In a submenu it pops one level; at the top (main menu) it returns to
-        // the title/attract phase (the original goes back to the title loop, not
-        // PostQuitMessage). Quitting only happens from the title (above).
-        if (!Nav_Back()) { g_frontend_phase = 1; g_splash_start_ms = 0; return false; }
+        // Round-2 feedback: ESC at the main-menu ROOT does NOTHING (it must
+        // not return to the title/press-button screen). In a submenu it pops
+        // one level. Exit is via the "Exit To Windows" item only.
+        Nav_Back();
     }
     // Sound screen (19): LEFT/RIGHT adjusts the highlighted value (persisted).
     // Item 20 (user review): the volume sliders ramp CONTINUOUSLY while a key
@@ -1143,10 +1157,13 @@ bool UpdateMenuSelection() {
         // ramp: act on the first frame, then EVERY frame after a short initial
         // hold so the value climbs continuously while held (#16) — paired with
         // the lerped bar fill, the slider slides smoothly instead of stepping.
+        // Round-2 feedback: the old every-frame-after-6 ramp was far too
+        // sensitive (0->10 in ~a quarter second). Initial step, ~0.3s hold
+        // delay, then ~20 steps/s.
         auto ramp = [](int& hold, bool down) -> bool {
             if (!down) { hold = 0; return false; }
             const int h = hold++;
-            return h == 0 || h >= 6;
+            return h == 0 || (h >= 18 && (h % 3) == 0);
         };
         if (sid == 19 && cur >= 0) {              // Sound
             if (cur == 3) {                       // insults tri-state: discrete
@@ -1162,11 +1179,11 @@ bool UpdateMenuSelection() {
         } else if (sid == 32 && cur == 0) {       // Autosave: discrete toggle (#23)
             if (rgt_now && !rgt_prev) AdjustSoundSetting(101, +1);
             if (lft_now && !lft_prev) AdjustSoundSetting(101, -1);
-        } else if (sid == 4) {                     // Player Color Select (#25)
-            // LEFT/RIGHT cycle player 1's car-color through the 10 NFL* sprites
-            // (discrete, edge-triggered) — the visible interaction on screen 4.
-            if (rgt_now && !rgt_prev) g_csel_p1_car = (g_csel_p1_car + 1) % 10;
-            if (lft_now && !lft_prev) g_csel_p1_car = (g_csel_p1_car + 9) % 10;
+        } else if (sid == 4) {                     // Player Colour Select (#25)
+            // Round-2: LEFT/RIGHT move the COLOUR TILE selection (6 tiles =
+            // the first six liveries; red selected by default).
+            if (rgt_now && !rgt_prev) g_csel_p1_car = (g_csel_p1_car + 1) % 6;
+            if (lft_now && !lft_prev) g_csel_p1_car = (g_csel_p1_car + 5) % 6;
         }
     }
     // Mirror the nav cursor into the legacy global for any code still reading it.
@@ -1349,15 +1366,35 @@ int GetMenuMessage(int id, wchar_t* out, int cap);
 //    c8 = charset+0x08 = 0.151515 from FGDC20.RWF). This independently
 //    re-derives the bit-verified #10 plate centering (rec.y-13.5..+13.7 at
 //    s=0.8 vs plate -12..+14).
+// Measure a string in device px under the text law (FUN_005554d0 sum).
+float MeasureMashedString(const wchar_t* s, float height_px) {
+    if (!g_font.ready() || !s) return 0.f;
+    const float cell_w = height_px * (4.0f / 3.0f);
+    const float trk    = g_font.tracking();
+    float total = 0.f;
+    for (const wchar_t* p = s; *p; ++p) {
+        float uv[4], wf;
+        const unsigned char c =
+            static_cast<unsigned char>((*p >= 0 && *p < 256) ? *p : '?');
+        if (g_font.Glyph(c, uv, &wf)) total += (wf + trk) * cell_w;
+    }
+    return total;
+}
+
 void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
                       float height_px, std::uint32_t argb,
-                      bool anchor_left = false, float grad_bot_frac = 1.0f) {
+                      bool anchor_left = false, float grad_bot_frac = 1.0f,
+                      bool anchor_right = false,
+                      std::uint32_t ctrl_glyph_argb = 0) {
     if (!g_font.ready() || !s) return;
     const float cell_h = height_px;
     const float cell_w = height_px * (4.0f / 3.0f);  // ScreenW/ScreenH (4:3 both sides)
     const float trk    = g_font.tracking();
+    // +0.055: pixel calibration vs the CLEAN scr19 baseline (label ink
+    // centroids ran 1.5px@640 high at s=0.8; the law's normalized-space
+    // camera factor _DAT_0067d834 is runtime-derived and was assumed 1.0).
     const float top_y  = anchor_y +
-        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f);
+        cell_h * (0.025f / 0.0708f + g_font.baseline_c8() - 1.0f + 0.055f);
     // Codepoints 0..255 flow through: 0..127 hit the ASCII LUT, 0x80..0xFF the
     // FGDC20 extended table (FUN_00554390 font+0x12c) — the prompt strip's nav
     // glyphs (remapped 0x80..0x8f arrows/back) resolve there. Only codepoints
@@ -1371,24 +1408,34 @@ void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
         float uv[4], wf;
         if (g_font.Glyph(glyph_of(*p), uv, &wf)) total += (wf + trk) * cell_w;
     }
-    // Pass 2: draw (centered = align-2: start at cx - total*0.5, the
-    // _DAT_005cc32c = 0.5 path of FUN_00427680).
-    float penX = anchor_left ? cx : (cx - total * 0.5f);
+    // Pass 2: draw. Align: left (FUN_00427680 default), centered (align-2,
+    // -total*0.5 via _DAT_005cc32c), or right (align-1, -total — the
+    // watermark path FUN_00427e00(..., 1)).
+    float penX = anchor_left  ? cx
+               : anchor_right ? (cx - total)
+                              : (cx - total * 0.5f);
     for (const wchar_t* p = s; *p; ++p) {
         float uv[4], wf;
-        if (!g_font.Glyph(glyph_of(*p), uv, &wf)) continue;  // no advance
+        const unsigned char gc = glyph_of(*p);
+        if (!g_font.Glyph(gc, uv, &wf)) continue;  // no advance
         std::uint32_t uvb[4];
         std::memcpy(uvb, uv, sizeof(uvb));
         const float gw = wf * cell_w;
+        // Control/nav glyphs (the FUN_004277a0-remapped range 0x7f..0x8f)
+        // render in their own color when the caller supplies one — the
+        // original's footer draws the circular-arrow glyph GREEN while the
+        // word stays white (clean scr1 baseline, sampled device 00ec10).
+        const std::uint32_t use =
+            (ctrl_glyph_argb != 0 && gc >= 0x7f) ? ctrl_glyph_argb : argb;
         if (grad_bot_frac < 0.999f) {
-            const std::uint32_t a = argb >> 24;
+            const std::uint32_t a = use >> 24;
             const std::uint32_t ab =
                 static_cast<std::uint32_t>(a * grad_bot_frac);
-            const std::uint32_t bot = (ab << 24) | (argb & 0xffffffu);
+            const std::uint32_t bot = (ab << 24) | (use & 0xffffffu);
             HudIm2DQuadCorners(g_font.handle(), penX, top_y, gw, cell_h,
-                               argb, argb, bot, bot, uvb);
+                               use, use, bot, bot, uvb);
         } else {
-            HudIm2DQuad(g_font.handle(), penX, top_y, gw, cell_h, argb, uvb);
+            HudIm2DQuad(g_font.handle(), penX, top_y, gw, cell_h, use, uvb);
         }
         penX += (wf + trk) * cell_w;
     }
@@ -1403,6 +1450,31 @@ float DrawWrappedCentered(const wchar_t* text, float cx, float y, float h,
     wchar_t word[256]; int wl = 0;
     auto emitLine = [&]() {
         if (ll > 0) { line[ll] = 0; DrawMashedString(line, cx, y, h, color, false); y += lh; ll = 0; }
+    };
+    auto pushWord = [&]() {
+        if (wl == 0) return;
+        word[wl] = 0;
+        if (ll > 0 && ll + 1 + wl > maxchars) emitLine();
+        if (ll > 0 && ll < 254) line[ll++] = L' ';
+        for (int i = 0; i < wl && ll < 254; ++i) line[ll++] = word[i];
+        wl = 0;
+    };
+    for (const wchar_t* p = text; ; ++p) {
+        if (*p == L' ' || *p == 0) { pushWord(); if (*p == 0) break; }
+        else if (wl < 254) word[wl++] = *p;
+    }
+    emitLine();
+    return y;
+}
+
+// Same greedy word-wrap, LEFT-anchored at x (the modal body's
+// FUN_004278d0/FUN_005555b0 rect layout starts at the panel's left edge).
+float DrawWrappedLeft(const wchar_t* text, float x, float y, float h,
+                      float lh, std::uint32_t color, int maxchars) {
+    wchar_t line[256]; int ll = 0;
+    wchar_t word[256]; int wl = 0;
+    auto emitLine = [&]() {
+        if (ll > 0) { line[ll] = 0; DrawMashedString(line, x, y, h, color, true); y += lh; ll = 0; }
     };
     auto pushWord = [&]() {
         if (wl == 0) return;
@@ -1860,13 +1932,11 @@ bool RenderFrame() {
     if (g_frontend_phase == 0 && g_bridge_installed) {
         if (g_splash_start_ms == 0) g_splash_start_ms = GetTickCount();
         if (GetTickCount() - g_splash_start_ms > 8000u) g_frontend_phase = 1;
-        // #2/#3 (user review): the original's boot LOADING/splash screen is on a
-        // BLACK background (FUN_00428d30 black gradient), not the menu video bg.
-        // Cover the backdrop with black so the logo + copyright + "Loading" read
-        // on black. RE finding (FUN_00428d30 + FUN_004744a0 + full asset search):
-        // the original's loader shows the MASHED logo + "Loading" text + the wavy
-        // race-flag checker grid — there is NO separate "spinning disk" sprite
-        // anywhere in the game's archives, so none is invented here.
+        // #2/#3: the original's boot LOADING/splash screen is on a BLACK
+        // background; logo + copyright + "Loading" read on black.
+        // CORRECTION (round-2): there IS a spinning disc — the "loadicon"
+        // texture in MASHED.exe's embedded RWTEXDICTIONARY/404 resource (not a
+        // .piz, which is why the earlier archive search missed it). Drawn below.
         HudIm2DQuad(0, 0.f, 0.f, 800.f, 600.f, 0xff000000u, uv_full);
         if (g_menu_logo_ready) {
             const float lw = 256.f * 1.25f, lh = 128.f * 1.25f;
@@ -1893,6 +1963,25 @@ bool RenderFrame() {
             if (GetMenuMessage(0x222, lt, 32) > 0)
                 DrawMashedString(lt, 580.f * 1.25f, 140.f * 1.25f,
                                  0.9f * 0.0708f * 480.f * 1.25f, 0xffffffffu, false);
+        }
+        // Spinning disc (round-2 #1) — verbatim FUN_00428450 coin-flip. center
+        // pinned at virtual x=544, top y=40, width 80*sin, height 80; UVs use
+        // the texture's left half (front) when sin>=0, the right half mirrored
+        // (back) when sin<0; phase += 0.1/frame (_DAT_005cc56c).
+        if (g_loadicon_ready) {
+            static float s_disc_phase = 0.0f;
+            const float s = std::sin(s_disc_phase);
+            s_disc_phase += 0.1f;
+            const float aw = std::fabs(s) * 80.0f;        // |width|
+            if (aw > 0.5f) {
+                const float lx = (544.0f - aw * 0.5f) * 1.25f;
+                const float ly = 40.0f * 1.25f;
+                const float lw = aw * 1.25f, lh = 80.0f * 1.25f;
+                std::uint32_t uvF[4] = { 0x00000000u, 0u, 0x3f000000u, 0x3f800000u }; // u[0,0.5]
+                std::uint32_t uvB[4] = { 0x3f800000u, 0u, 0x3f000000u, 0x3f800000u }; // u[1,0.5] mirror
+                HudIm2DQuad(kHandleLoadIcon, lx, ly, lw, lh, 0xffffffffu,
+                            s >= 0.0f ? uvF : uvB);
+            }
         }
     }
 
@@ -1965,11 +2054,15 @@ bool RenderFrame() {
             // anchors are the ORIGINAL's cited y values (shadow 600,52 /
             // main 596,48 — FUN_0043c5b0_chrome.asm) now that DrawMashedString
             // applies the FUN_00427680 anchor law itself.
+            // RIGHT-aligned at x=600/596 (FUN_00427e00 align arg 1; clean
+            // baseline: ink right edge ~591 @640 — round-2 feedback "should
+            // be a little more to the left" = the centered draw spilled
+            // right of 600).
             const float csc = 0.8f * 0.0708f * 480.f * 1.25f;
             DrawMashedString(cs, 600.f * 1.25f, 52.f * 1.25f,
-                             csc, 0xff000000u, false);
+                             csc, 0xff000000u, false, 1.0f, true);
             DrawMashedString(cs, 596.f * 1.25f, 48.f * 1.25f,
-                             csc, 0xffffffffu, false);
+                             csc, 0xffffffffu, false, 1.0f, true);
         }
     }
 
@@ -2054,11 +2147,15 @@ bool RenderFrame() {
                             const float sth =
                                 rec.scale * 0.0708f * 480.f * kVScale;
                             const float ssh = 3.0f * kVScale;
+                            // Footer nav glyphs render GREEN (clean scr1
+                            // baseline, device 00ec10 sampled -> packed
+                            // ff10ec00); the word keeps the record color.
+                            // [In-binary color-switch mechanism still to RE.]
                             DrawMashedString(stxt, sx + ssh, sy + ssh, sth,
                                              0xff000000u, true);
                             DrawMashedString(stxt, sx, sy, sth,
                                              static_cast<std::uint32_t>(rec.color),
-                                             true);
+                                             true, 1.0f, false, 0xff10ec00u);
                         }
                     }
                     continue;
@@ -2357,25 +2454,36 @@ bool RenderFrame() {
                     HudIm2DQuad(0, 377.0f * S + slideX, by + 4.0f * S,
                                 (disp / 10.0f) * 100.0f * S,
                                 10.0f * S, 0xff2080d8u, uv_full);              // fill
-                } else if (kind == kTriText && g_font.ready()) {
+                }
+                // Tri-state/toggle VALUE text: scale 0.6 (clean scr19
+                // baseline: "Manual" ink spans 378..448 = 70 virtual px ->
+                // 0.6x0.0708x640 cell width law), left-anchored at x=378.
+                // The right arrow trails the text dynamically ("Manual" ->
+                // x=457 = 378 + 70 + 9 pad).
+                float dyn_rax = rax;
+                const float vth = 0.6f * 0.0708f * 480.f * S;
+                if (kind == kTriText && g_font.ready()) {
                     static const wchar_t* kInsults[3] = { L"Off", L"Auto", L"Manual" };
                     const int m = (g_settings.insults_on >= 0 &&
                                    g_settings.insults_on <= 2)
                                       ? g_settings.insults_on : 0;
-                    DrawMashedString(kInsults[m], 392.0f * S + slideX, rec.y * S,
-                                     16.0f * S, 0xff000000u, false);
+                    DrawMashedString(kInsults[m], 378.0f * S + slideX, rec.y * S,
+                                     vth, 0xff000000u, true);
+                    dyn_rax = 378.0f * S +
+                              MeasureMashedString(kInsults[m], vth) + 9.0f * S;
                 } else if (kind == kToggle && g_font.ready()) {
-                    DrawMashedString(g_settings.autosave ? L"On" : L"Off",
-                                     380.0f * S + slideX, rec.y * S, 16.0f * S,
-                                     0xff000000u, false);
+                    const wchar_t* tv = g_settings.autosave ? L"On" : L"Off";
+                    DrawMashedString(tv, 378.0f * S + slideX, rec.y * S,
+                                     vth, 0xff000000u, true);
+                    dyn_rax = 378.0f * S + MeasureMashedString(tv, vth) + 9.0f * S;
                 }
                 // RIGHT arrow last (the original's per-row stream order).
                 if (kind != kNone) {
                     if (g_menu_arrow_ready) {
-                        HudIm2DQuad(kHandleMenuArrow, rax + slideX, ay, asz, asz,
+                        HudIm2DQuad(kHandleMenuArrow, dyn_rax + slideX, ay, asz, asz,
                                     0xff000000u, uvR);
                     } else if (g_font.ready()) {
-                        DrawMashedString(L"\x3e", rax + slideX, rec.y * S, asz, 0xff000000u, true);
+                        DrawMashedString(L"\x3e", dyn_rax + slideX, rec.y * S, asz, 0xff000000u, true);
                     }
                 }
             }
@@ -2420,6 +2528,8 @@ bool RenderFrame() {
                 0xffa7a7ebu,  // device ffeba7a7 (NFLPink)
                 0xff000000u,  // device ff000000 (NFLShadow)
             };
+            const int sel = (g_csel_p1_car >= 0 && g_csel_p1_car < 6)
+                                ? g_csel_p1_car : 0;
             for (int i = 0; i < 6; ++i) {
                 // Baseline stream order per tile: SWATCH then sprite
                 // (A[81] swatch / A[82] sprite).
@@ -2429,9 +2539,25 @@ bool RenderFrame() {
                 HudIm2DQuad(kHandleCar0 + i, (146.0f + 70.0f * i) * kVScale,
                             125.0f * kVScale,
                             64.0f * kVScale, 64.0f * kVScale, white, uv_full);
+                // Round-2: selection cue on the picked tile (red/tile 0 by
+                // default) — a 2px b45010 frame around the swatch [selection
+                // visual INVENTED pending an original selected-state capture].
+                if (i == sel) {
+                    const float fx = (141.0f + 70.0f * i) * kVScale;
+                    const float fy = 166.0f * kVScale;
+                    const float fw = 73.0f * kVScale, fh = 24.0f * kVScale;
+                    const float t2 = 2.0f * kVScale;
+                    HudIm2DQuad(0, fx, fy, fw, t2, 0xff1050b4u, uv_full);
+                    HudIm2DQuad(0, fx, fy + fh - t2, fw, t2, 0xff1050b4u, uv_full);
+                    HudIm2DQuad(0, fx, fy, t2, fh, 0xff1050b4u, uv_full);
+                    HudIm2DQuad(0, fx + fw - t2, fy, t2, fh, 0xff1050b4u, uv_full);
+                }
             }
-            for (int r = 0; r < 3; ++r) {
-                const float ry4 = (193.0f + 34.0f * r) * kVScale;
+            // Round-2: ONE player row (rows = connected controllers; the
+            // original's 3-row capture reflected its synthetic-push state;
+            // standalone has one keyboard player until controller support).
+            {
+                const float ry4 = 193.0f * kVScale;
                 const float bt2 = 2.0f * kVScale;
                 HudIm2DQuad(0, 48.0f * kVScale, ry4, 534.0f * kVScale,
                             26.0f * kVScale, 0x7f146ef0u, uv_full);   // plate
@@ -2443,6 +2569,13 @@ bool RenderFrame() {
                             538.0f * kVScale, bt2, 0xff1050b4u, uv_full); // bottom
                 HudIm2DQuad(0, 582.0f * kVScale, ry4, bt2,
                             26.0f * kVScale, 0xff1050b4u, uv_full);   // right
+                // Row label "1" (the original numbers each row at the left).
+                if (g_font.ready()) {
+                    DrawMashedString(L"1", 56.0f * kVScale,
+                                     (193.0f + 13.0f) * kVScale,
+                                     0.6f * 0.0708f * 480.f * kVScale,
+                                     0xff000000u, true);
+                }
             }
         }
 
@@ -2514,35 +2647,46 @@ bool RenderFrame() {
         const std::uint32_t dimA =
             (static_cast<std::uint32_t>(g_modal_alpha * 0xa6 / 0xff) << 24);
         HudIm2DQuad(0, 0.f, 0.f, 800.f, 600.f, dimA, uvf);
+        // VERBATIM FUN_00433f40 layout: 3 panels (FUN_0042c010) — black top
+        // 130,120,380x42 / gray 0x202020 body 130,162,380x166 / black bottom
+        // 130,328,380x32; then SIX white border lines (FUN_0042c090): 4
+        // horizontal at y=120/162/328/360 + 2 vertical at x=130/510 (the
+        // y=162 & y=328 dividers between bars were missing). Title id 0x41
+        // WHITE; body + buttons LIGHT-GRAY 0xdcdcdc; all LEFT-aligned (align 0).
         HudIm2DQuad(0, 130.f*S, 120.f*S, 380.f*S, 42.f*S,  A | 0x000000u, uvf); // top black
         HudIm2DQuad(0, 130.f*S, 162.f*S, 380.f*S, 166.f*S, A | 0x202020u, uvf); // body gray
         HudIm2DQuad(0, 130.f*S, 328.f*S, 380.f*S, 32.f*S,  A | 0x000000u, uvf); // bottom black
-        // white border (1.5px) around 130,120 .. 510,360
-        const std::uint32_t W = A | 0xffffffu; const float bx=130.f*S, by=120.f*S, bw=380.f*S, bh=240.f*S, t=1.5f*S;
-        HudIm2DQuad(0, bx, by, bw, t, W, uvf); HudIm2DQuad(0, bx, by+bh-t, bw, t, W, uvf);
-        HudIm2DQuad(0, bx, by, t, bh, W, uvf); HudIm2DQuad(0, bx+bw-t, by, t, bh, W, uvf);
+        const std::uint32_t W = A | 0xffffffu;
+        const float t = 1.5f*S, lx0 = 130.f*S, rx0 = 510.f*S, lw = 380.f*S;
+        auto hline = [&](float y){ HudIm2DQuad(0, lx0, y*S, lw, t, W, uvf); };
+        hline(120.f); hline(162.f); hline(328.f); hline(360.f);          // 4 H lines
+        HudIm2DQuad(0, lx0, 120.f*S, t, 240.f*S, W, uvf);                 // left V
+        HudIm2DQuad(0, rx0, 120.f*S, t, 240.f*S, W, uvf);                 // right V
         if (g_font.ready()) {
+            const std::uint32_t kBody = A | 0xdcdcdcu;     // local_218
             wchar_t tt[64];
-            if (GetMenuMessage(0x41, tt, 64) > 0)       // title "MASHED"
-                DrawMashedString(tt, 320.f*S, 140.f*S, 0.8f*0.0708f*480.f*S, W, false);
-            // Body: word-wrapped + centered (the warning strings span 2-3 lines).
+            if (GetMenuMessage(0x41, tt, 64) > 0)       // title "MASHED", white, left
+                DrawMashedString(tt, 140.f*S, 142.f*S, 0.8f*0.0708f*480.f*S, W, true);
+            // Body: word-wrapped, left-anchored at x=140 (FUN_004278d0 draws
+            // into the rect from the panel's left edge).
             wchar_t bt[160];
             if (GetMenuMessage(g_modal_body_id, bt, 160) > 0) {
                 const float bh2 = 0.6f*0.0708f*480.f*S;
-                DrawWrappedCentered(bt, 320.f*S, 195.f*S, bh2, bh2 + 6.f*S, W, 34);
+                DrawWrappedLeft(bt, 140.f*S, 195.f*S, bh2, bh2 + 6.f*S, kBody, 36);
             }
-            // Buttons row (~y=340): Yes/No for confirm steps, else Continue.
-            const float byb = 340.f*S, bhh = 0.5f*0.0708f*480.f*S;
+            // Buttons (FUN_00427e00 align 0 = LEFT): Continue at (140,345);
+            // Yes (140,345) + No (270,345) for confirm steps. scale 0.55.
+            const float byb = 345.f*S, bhh = 0.55f*0.0708f*480.f*S;
             if (g_modal_yesno) {
                 wchar_t y1[32], n1[32];
                 if (GetMenuMessage(0x2e, y1, 32) > 0)   // "(glyph) Yes"
-                    DrawMashedString(y1, 250.f*S, byb, bhh, W, false);
+                    DrawMashedString(y1, 140.f*S, byb, bhh, kBody, true, 1.0f, false, 0xff10ec00u);
                 if (GetMenuMessage(0x2f, n1, 32) > 0)   // "(glyph) No"
-                    DrawMashedString(n1, 390.f*S, byb, bhh, W, false);
+                    DrawMashedString(n1, 270.f*S, byb, bhh, kBody, true, 1.0f, false, 0xff10ec00u);
             } else {
                 wchar_t cb[48];
                 if (GetMenuMessage(g_modal_button_id, cb, 48) > 0) // "(glyph) Continue"
-                    DrawMashedString(cb, 320.f*S, byb, bhh, W, false);
+                    DrawMashedString(cb, 140.f*S, byb, bhh, kBody, true, 1.0f, false, 0xff10ec00u);
             }
         }
     }
@@ -3136,6 +3280,60 @@ bool LoadPngAssetToSlot(const char* piz_path, const char* entry_name,
                      piz_path, entry_name, ok ? "OK" : "FAILED", w, h, slot, handle);
         std::fclose(log);
     }
+    return ok;
+}
+
+// Load the "loadicon" spinning-disc texture from MASHED.exe's embedded
+// resource RWTEXDICTIONARY/404 (LOAD_LIBRARY_AS_DATAFILE — no code runs).
+// The resource is the 0x23 TXD variant: 256x128 8bpp direct-intensity, pixels
+// at +0x43c (identical decode to FGDC20.TXD). Expanded to white-RGB / alpha=
+// intensity. Returns true on success.
+bool LoadLoadIconFromExe() {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    HMODULE hExe = LoadLibraryExA("original\\MASHED.exe", nullptr,
+                                  LOAD_LIBRARY_AS_DATAFILE);
+    if (!hExe) {
+        if (log) { std::fprintf(log, "\nloadicon: LoadLibraryEx(MASHED.exe) failed\n"); std::fclose(log); }
+        return false;
+    }
+    bool ok = false;
+    HRSRC hr = FindResourceA(hExe, MAKEINTRESOURCEA(404), "RWTEXDICTIONARY");
+    if (hr) {
+        HGLOBAL hg = LoadResource(hExe, hr);
+        const std::uint8_t* d = static_cast<const std::uint8_t*>(LockResource(hg));
+        const DWORD sz = SizeofResource(hExe, hr);
+        if (d && sz > 0x43c) {
+            auto rd32 = [&](std::size_t o) {
+                std::uint32_t v; std::memcpy(&v, d + o, 4); return v; };
+            const std::uint32_t w = rd32(0x2c), h = rd32(0x30), depth = rd32(0x34);
+            const std::size_t pix = 0x43c;
+            if (depth == 8 && w && h && w <= 1024 && h <= 1024 &&
+                pix + static_cast<std::size_t>(w) * h <= sz) {
+                std::uint8_t* bgra = static_cast<std::uint8_t*>(
+                    std::malloc(static_cast<std::size_t>(w) * h * 4));
+                if (bgra) {
+                    for (std::size_t i = 0; i < static_cast<std::size_t>(w) * h; ++i) {
+                        bgra[i*4+0] = 255; bgra[i*4+1] = 255; bgra[i*4+2] = 255;
+                        bgra[i*4+3] = d[pix + i];
+                    }
+                    ok = g_quad_renderer.UploadBGRAToSlot(kSlotLoadIcon, w, h, bgra);
+                    std::free(bgra);
+                    if (ok)
+                        mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                            kHandleLoadIcon, g_quad_renderer.slot_texture(kSlotLoadIcon));
+                    if (log) std::fprintf(log, "\nloadicon: %ux%u decode+upload %s\n",
+                                          w, h, ok ? "OK" : "FAILED");
+                }
+            } else if (log) {
+                std::fprintf(log, "\nloadicon: bad header w=%u h=%u depth=%u sz=%lu\n",
+                             w, h, depth, static_cast<unsigned long>(sz));
+            }
+        }
+    } else if (log) {
+        std::fprintf(log, "\nloadicon: FindResource(404,RWTEXDICTIONARY) failed\n");
+    }
+    FreeLibrary(hExe);
+    if (log) std::fclose(log);
     return ok;
 }
 
@@ -3953,6 +4151,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         g_menu_badge_ready = LoadBadgeSprites();
         g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
         g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
+        g_loadicon_ready = LoadLoadIconFromExe(); // loading-screen spinning disc
         // F1 (frontend-faithful): the real menu backdrop — frontend.mpg via
         // DirectShow into a D3D9 texture (the original's own playback path).
         {

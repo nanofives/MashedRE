@@ -64,7 +64,10 @@ std::uint8_t* UpscaleCoverage(const std::uint8_t* src, int w, int h, int K) {
     // spread ~2 device px and 1-texel strokes only reach ~60-70% opacity,
     // while the original at 640x480 (~1:1 sampling) shows 1px fringes and
     // solid cores (luminance profiles, 2026-06-12).
-    constexpr float kT0 = 0.15f, kT1 = 0.85f;
+    // Round-2 feedback ("pixelated, not smooth"): with the window now
+    // DPI-1:1, the strong 0.15/0.85 curve read aliased. Gentler hardening —
+    // most of the crispness comes from the 2x CR supersample itself.
+    constexpr float kT0 = 0.06f, kT1 = 0.94f;
     for (int Y = 0; Y < H; ++Y) {
         const float sy = (Y + 0.5f) / K - 0.5f;
         const int   iy = static_cast<int>(std::floor(sy));
