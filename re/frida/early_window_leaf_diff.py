@@ -86,6 +86,7 @@ PURE_LEAF_ARGTYPES = {
     'global_indexed_float',  # float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride) — single FLD, x87-safe
     'vec16_copy_set',        # u32 fn(idx,in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions at base+idx*stride
     'container_record_set',  # void fn(container,..): base=container[0],idx=container[2]; addr=base+idx*0x30; write args into addr+offs. shape p/f/pp
+    'indexed_vec_set',       # void fn(idx,in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them
 }
 
 SRC = r"""
@@ -114,6 +115,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'table_ret_ptrout') ? ['uint32','pointer']
               : (cfg.at === 'arg_scattered_globals') ? ['uint32']
               : (cfg.at === 'vec16_copy_set') ? ['uint32','pointer']
+              : (cfg.at === 'indexed_vec_set') ? ['uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -255,6 +257,17 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_vec_set') {
+      // void fn(idx, in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them.
+      // tests the write path (non-null in) bit-identically; the null-zero branch shares the same addresses.
+      const base = cfg.tgt, stride = cfg.stride | 0, n = (cfg.span | 0) || 3, idx = t >>> 0;
+      const inb = Memory.alloc(0x20); _keep.push(inb);
+      for (let j = 0; j < n; j++) inb.add(j * 4).writeU32((0xC0DE0000 | ((idx << 4) | j)) >>> 0);
+      const addr = ptr(base).add(idx * stride);
+      const reset = function () { for (let j = 0; j < n; j++) addr.add(j * 4).writeU32(0xEEEEEEEE); };
+      const snap = function () { const p = []; for (let j = 0; j < n; j++) p.push(addr.add(j * 4).readU32() >>> 0); return p.join(','); };
+      try { reset(); Orig(idx, inb); o = snap(); } catch (e) { eo = e.message; }
+      try { reset(); Reim(idx, inb); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'container_record_set') {
       // void fn(container, <args>): base=container[0], idx=container[2]; addr=base+idx*0x30;
       // writes args into addr+off (off may be negative). shape: 'p'=(cont,inA), 'f'=(cont,floatval), 'pp'=(cont,inA,inB).

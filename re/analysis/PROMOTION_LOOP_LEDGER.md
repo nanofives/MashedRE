@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 64
-- total_green: 174
+- rounds_run: 65
+- total_green: 177
 - dry_counter: 0
-- last_round: 2026-06-13 round 64 — strided 2-dword clear via range_init (173->174); 0x004840d0 dropped (already C3)
+- last_round: 2026-06-13 round 65 — ghost-slot vec3/vec4 setters + per-player field setter via new indexed_vec_set + existing indexed_table_set (174->177)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -485,6 +485,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 63 | three container-record setters (new container_record_set handler) | GREEN 3 (ContRecSet450 0x00489450 shape p; ContRecSet480 0x00489480 shape f [float FSTP]; ContRecSet4a0 0x004894a0 shape pp) | total_green 170->173. container_record_set: base=cont[0], idx=cont[2], addr=base+idx*0x30, writes args into addr+off (neg offs); shape-keyed nargs (p=cont+ptr, f=cont+float, pp=cont+ptr+ptr). FLD/FSTP float round-trip exact for finite 32-bit floats. SESSION (this context, rounds 53-63): 142->173 (+31), ELEVEN new handlers. BACKLOG: field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80 / 0x00422440 cos-interp / 0x004223f0 PRNG), float clamp-steppers (0x0045db50 / 0x00420de0 fastcall), thiscall vec3 (0x00430b30), delimiter-scan (0x0042ac00). Plus remaining 212-list simple entries. RESUME: keep building bespoke handlers + sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~27 to go).
 
 2026-06-13 | round 64 | strided 2-dword clear (existing range_init) | GREEN 1 (StridedClear2_709238 0x0048a460: zeroes p[0]+p[1] per 0x330-byte record, 0x00709238..0x00713198) | total_green 173->174. DROPPED 0x004840d0 (diffed GREEN but ALREADY C3 = JointPtr6ce81cGet promoted ROUND 35 THIS SESSION via same method — caught by hooks.csv pre-check) + 0x004840b0 (zero callers). SESSION (this context, rounds 53-64): 142->174 (+32), ELEVEN handlers. Note: now hitting functions already promoted earlier THIS session (round 35) -> the early-window vein is well-mined; pre-check is essential. BACKLOG: field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80/0x00422440/0x004223f0), float clamp-steppers (0x0045db50/0x00420de0), thiscall vec3 (0x00430b30), particle strided-inits (0x00489290 descending). RESUME: build remaining bespoke handlers (register-convention shapes) + sweep remaining 212-list; on display recovery run_diff the state-dependent majority. 200 on track (~26 to go).
+
+2026-06-13 | round 65 | ghost-slot vec3/vec4 setters + per-player field setter | GREEN 3 (GhostVec3Set63c6d0 0x0041a500 indexed_vec_set n=3; GhostVec4Set63c6b0 0x0041a550 indexed_vec_set n=4; Player::WriteFieldZero 0x0041ef60 indexed_table_set) | total_green 174->177. NEW indexed_vec_set handler (void fn(idx,in): addr=base+idx*stride; if(in) write n dwords else zero). RE-SCAN PAID OFF: re-intersected the callee-graph zero-callee list with CURRENT C2 rows -> 180 remaining candidates (excludes this session's promotions); fresh batch yielded 3 clean + several bespoke-shapes. So the vein is NOT exhausted — still ~clean accessors among the 180. SESSION (this context, rounds 53-65): 142->177 (+35), TWELVE new handlers. BACKLOG (bespoke): 2-global predicates (0x00405890), float-field arith (0x004058b0 -= ), pointer-chain getters (0x00407620), bit-extract getter (0x0041efe0 >>3&1, byte ret), + register-convention shapes (EAX/thiscall/fastcall/float10). RESUME: keep sweeping the 180-list (re-intersect after each batch) + build bespoke handlers; on display recovery run_diff the state-dependent majority. 200 on track (~23 to go).
 
 ## Final gated-remainder report
 

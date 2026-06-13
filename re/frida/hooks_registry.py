@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 65 (ghost-slot vec3/vec4 setters + per-player field setter) --
+    'ghost_vec3_set_63c6d0': {'rva': 0x0041a500, 'export': 'GhostVec3Set63c6d0', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_vec_set', 'target_global': 0x0063c6d0, 'stride': 0xc4, 'span': 3, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 0, 1, 2, 3], 'path2_tests': [0, 1, 2]},
+    'ghost_vec4_set_63c6b0': {'rva': 0x0041a550, 'export': 'GhostVec4Set63c6b0', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_vec_set', 'target_global': 0x0063c6b0, 'stride': 0xc4, 'span': 4, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 0, 1, 2, 3], 'path2_tests': [0, 1, 2]},
+    'player_field_set_63dc78': {'rva': 0x0041ef60, 'export': 'PlayerFieldSet63dc78', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0063dc78, 'stride': 0x2ac, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+
     # ---- promote-round round 64 (strided 2-dword clear; 0x004840d0 already C3) --
     'strided_clear2_709238': {'rva': 0x0048a460, 'export': 'StridedClear2_709238', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00709238, 'len': 0x9f60, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
 
