@@ -14252,6 +14252,38 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 30 (worklist batch: global + table getters) ------
+    'global_7d3e4c_get': {
+        'rva': 0x004b68e0, 'export': 'Global7d3e4cGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x007d3e4c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_7d3e4c_get_thunk': {
+        'rva': 0x004b65a0, 'export': 'Global7d3e4cGetThunk', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x007d3e4c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'table_773030_get': {
+        'rva': 0x00496930, 'export': 'Table773030Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 5, 3],
+        'path2_tests': [0, 5, 3],
+    },
+    'joint_ptr_6ce81c_get': {
+        'rva': 0x004840d0, 'export': 'JointPtr6ce81cGet', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 1, 2, 3, 4, 5, 0, 1, 2, 3],
+        'path2_tests': [0, 3, 5],
+    },
+    'powerup_table_6885e0_get': {
+        'rva': 0x00455b40, 'export': 'PowerupTable6885e0Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 2, 4],
+        'path2_tests': [0, 2, 4],
+    },
+
     # ---- promote-round round 29 (worklist batch: const global setters) --------
     'set_77196c_1': {
         'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},
