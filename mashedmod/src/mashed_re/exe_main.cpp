@@ -2603,64 +2603,30 @@ bool RenderFrame() {
         // The old P1-vs-P2 layout was invented from the English.dat-era
         // misread; it never matched the original. [Residual: row/tile TEXT
         // (player names, ids) + selection state need the case-10 decomp.]
+        // #25 / round-3: REBUILT to the verbatim FUN_004368e0 case-10
+        // single-player layout. The original draws the active player's CHOSEN
+        // CAR LIVERY sprite (FUN_0042fab0(colorIdx) -> NFL{Red,Bluejay,...})
+        // cycled by LEFT/RIGHT — for ONE player at virtual (40,292) 112x112
+        // (FUN_004368e0 bottom common path: local_54=40, local_50=292,
+        // 0x42e00000=112). No 6-swatch palette, no orange player bars, no
+        // selection square — those were invented and matched nothing. The
+        // player NUMBER ("1") sits to the RIGHT of the sprite. (The user's
+        // "keyboard icon" reads as this colored car/device sprite; if Mashed
+        // PC shows a literal keyboard for keyboard players that asset is not
+        // in case-10 — flagged for clarification.)
         if (Nav_ScreenId() == 4 && g_carsel_ready) {
             const std::uint32_t white = 0xffffffffu;
-            static const std::uint32_t kSwatch[6] = {
-                0xff3d3a98u,  // device ff983a3d (NFLRed)
-                0xffae894eu,  // device ff4e89ae (NFLBluejay)
-                0xff567661u,  // device ff617656 (NFLMelon)
-                0xff62c3dbu,  // device ffdbc362 (NFLGold)
-                0xffa7a7ebu,  // device ffeba7a7 (NFLPink)
-                0xff000000u,  // device ff000000 (NFLShadow)
-            };
-            const int sel = (g_csel_p1_car >= 0 && g_csel_p1_car < 6)
+            const int sel = (g_csel_p1_car >= 0 && g_csel_p1_car < 10)
                                 ? g_csel_p1_car : 0;
-            for (int i = 0; i < 6; ++i) {
-                // Baseline stream order per tile: SWATCH then sprite
-                // (A[81] swatch / A[82] sprite).
-                HudIm2DQuad(0, (143.0f + 70.0f * i) * kVScale,
-                            168.0f * kVScale, 69.0f * kVScale, 20.0f * kVScale,
-                            kSwatch[i], uv_full);
-                HudIm2DQuad(kHandleCar0 + i, (146.0f + 70.0f * i) * kVScale,
-                            125.0f * kVScale,
-                            64.0f * kVScale, 64.0f * kVScale, white, uv_full);
-                // Round-2: selection cue on the picked tile (red/tile 0 by
-                // default) — a 2px b45010 frame around the swatch [selection
-                // visual INVENTED pending an original selected-state capture].
-                if (i == sel) {
-                    const float fx = (141.0f + 70.0f * i) * kVScale;
-                    const float fy = 166.0f * kVScale;
-                    const float fw = 73.0f * kVScale, fh = 24.0f * kVScale;
-                    const float t2 = 2.0f * kVScale;
-                    HudIm2DQuad(0, fx, fy, fw, t2, 0xff1050b4u, uv_full);
-                    HudIm2DQuad(0, fx, fy + fh - t2, fw, t2, 0xff1050b4u, uv_full);
-                    HudIm2DQuad(0, fx, fy, t2, fh, 0xff1050b4u, uv_full);
-                    HudIm2DQuad(0, fx + fw - t2, fy, t2, fh, 0xff1050b4u, uv_full);
-                }
-            }
-            // Round-2: ONE player row (rows = connected controllers; the
-            // original's 3-row capture reflected its synthetic-push state;
-            // standalone has one keyboard player until controller support).
-            {
-                const float ry4 = 193.0f * kVScale;
-                const float bt2 = 2.0f * kVScale;
-                HudIm2DQuad(0, 48.0f * kVScale, ry4, 534.0f * kVScale,
-                            26.0f * kVScale, 0x7f146ef0u, uv_full);   // plate
-                HudIm2DQuad(0, 46.0f * kVScale, ry4, bt2,
-                            26.0f * kVScale, 0xff1050b4u, uv_full);   // left
-                HudIm2DQuad(0, 46.0f * kVScale, ry4, 538.0f * kVScale,
-                            bt2, 0xff1050b4u, uv_full);               // top
-                HudIm2DQuad(0, 46.0f * kVScale, ry4 + 24.0f * kVScale,
-                            538.0f * kVScale, bt2, 0xff1050b4u, uv_full); // bottom
-                HudIm2DQuad(0, 582.0f * kVScale, ry4, bt2,
-                            26.0f * kVScale, 0xff1050b4u, uv_full);   // right
-                // Row label "1" (the original numbers each row at the left).
-                if (g_font.ready()) {
-                    DrawMashedString(L"1", 56.0f * kVScale,
-                                     (193.0f + 13.0f) * kVScale,
-                                     0.6f * 0.0708f * 480.f * kVScale,
-                                     0xff000000u, true);
-                }
+            const float cx = 40.0f * kVScale, cy = 292.0f * kVScale;
+            const float cw = 112.0f * kVScale;
+            HudIm2DQuad(kHandleCar0 + sel, cx, cy, cw, cw, white, uv_full);
+            // Player number to the right of the sprite.
+            if (g_font.ready()) {
+                DrawMashedString(L"1", (40.0f + 112.0f + 16.0f) * kVScale,
+                                 (292.0f + 56.0f) * kVScale,
+                                 0.8f * 0.0708f * 480.f * kVScale,
+                                 0xffffffffu, true);
             }
         }
 
