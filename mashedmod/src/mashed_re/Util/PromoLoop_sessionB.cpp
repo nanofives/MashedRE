@@ -422,3 +422,34 @@ extern "C" __declspec(dllexport) void __cdecl Init5b0c70(std::uint32_t* p, std::
     p[2]=v; p[3]=0; p[0]=(p[0]&0xfffffff7u)|4u; p[4]=0x3f800000u; p[1]=1; p[5]=0;
 }
 RH_ScopedInstall(Init5b0c70, 0x005b0c70);
+
+// ===== round 93 =====
+
+// 0x0041ee50  gameplay — byte-verified: flag set/clear on *(0x63dc74 + i*0x2ac)
+//   if(p2==0) clear 0x1000 else set 0x1000 ; if(p3) set 0x2000 else clear 0x2000
+extern "C" __declspec(dllexport) void __cdecl Flag41ee50(std::uint32_t i, std::uint32_t p2, std::uint32_t p3) {
+    std::uint32_t* f = reinterpret_cast<std::uint32_t*>(0x0063dc74u + i * 0x2acu);
+    if (p2 == 0) *f &= 0xffffefffu; else *f |= 0x1000u;
+    if (p3) *f |= 0x2000u; else *f &= 0xffffdfffu;
+}
+RH_ScopedInstall(Flag41ee50, 0x0041ee50);
+
+// 0x00471530  particle — byte-verified: strided clear [0x690ab0,0x691500) step 0x84 (byte@-0x80 + dword@0) + [0x691484]=0
+extern "C" __declspec(dllexport) void __cdecl ClearTable471530(void) {
+    for (std::uint32_t p = 0x00690ab0u; p < 0x00691500u; p += 0x84u) {
+        *reinterpret_cast<std::uint8_t*>(p - 0x80) = 0;
+        *reinterpret_cast<std::uint32_t*>(p) = 0;
+    }
+    *reinterpret_cast<std::uint32_t*>(0x00691484u) = 0;
+}
+RH_ScopedInstall(ClearTable471530, 0x00471530);
+
+// 0x0046d2e0  vehicle — byte-verified: u32 fn(i,wheel,out): if(i<0x10 && wheel<4){ *out=*(u32*)(0x881790+(i*0x11+wheel)*0xc4); return 1 } return 0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl WheelGet46d2e0(std::uint32_t i, std::uint32_t wheel, std::uint32_t* out) {
+    if (i < 0x10u && wheel < 4u) {
+        *out = *reinterpret_cast<std::uint32_t*>(0x00881790u + (i * 0x11u + wheel) * 0xc4u);
+        return 1u;
+    }
+    return 0u;
+}
+RH_ScopedInstall(WheelGet46d2e0, 0x0046d2e0);

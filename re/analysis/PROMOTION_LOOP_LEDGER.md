@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 92
-- total_green: 237
+- rounds_run: 93
+- total_green: 240
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 93 | bigger batch (existing handlers + 1 new) | attempted 3 | GREEN 3 (Flag41ee50 0x0041ee50 flag_multibit; ClearTable471530 0x00471530 range_init; WheelGet46d2e0 0x0046d2e0 idx2_table_get_outlast NEW) | deferred 4 (0041b720/0041cdb0 eax-implicit bit-pack; 00458f20 state-machine; 004726b0/f0 float10 dot) | exit-5/6: none | dry_counter 0. total_green 237->240. Bigger-batch approach: decompiled ~8, 3 handler-able (2 via EXISTING flag_multibit/range_init + 1 new idx2-outlast), rest float10/eax-implicit/bespoke. Session 79-93 = 205->240 (+35). Crossed 240.
 
 2026-06-13 | round 92 | struct_const_init+scalar (sessionB) | attempted 1 | GREEN 1 (Init5b0c70 0x005b0c70) | deferred 2 (005a7420 global-list-insert needs reset+snapshot; 00485a00 double-deref-out needs sub-buffer seed) | exit-5/6: none | dry_counter 0. total_green 236->237. struct_const_init extended for p+trailing-scalar. SIGNAL: struct-init family ~mined (this scan: 1 clean of 3; other 2 bespoke). early_window now ~1/round of singletons. Session 79-92 = 205->237 (+32). The +500 bulk remains gated on the reboot (run_diff env wedge).
 

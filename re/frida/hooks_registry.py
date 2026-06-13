@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 93 (flag set/clear + strided clear + 2D wheel getter) --
+    'flag_41ee50': {'rva': 0x0041ee50, 'export': 'Flag41ee50', 'signature': {'ret': 'void', 'args': ['uint32','uint32','uint32']}, 'arg_type': 'flag_multibit', 'target_global': 0x0063dc74, 'stride': 0x2ac, 'lut_root_delta': 0, 'path1_tests': [[0,0,0,0xFFFFFFFF],[0,1,1,0],[1,0,1,0xFFFFFFFF],[1,1,0,0],[0,0,1,0x12345678]], 'path2_tests': [[0,0,0,0xFFFFFFFF],[0,1,1,0]]},
+    'clear_table_471530': {'rva': 0x00471530, 'export': 'ClearTable471530', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00690a30, 'len': 0xad0, 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'wheel_get_46d2e0': {'rva': 0x0046d2e0, 'export': 'WheelGet46d2e0', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32','pointer']}, 'arg_type': 'idx2_table_get_outlast', 'target_global': 0x00881790, 'mult': 0x11, 'stride': 0xc4, 'bound': 0x10, 'bound2': 4, 'lut_root_delta': 0, 'path1_tests': [[0,0],[1,2],[0xf,3],[0x10,0],[5,4]], 'path2_tests': [[0,0],[1,2]]},
+
     # ---- promote-round round 92 (struct-init with trailing scalar arg) --
     'init_5b0c70': {'rva': 0x005b0c70, 'export': 'Init5b0c70', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'struct_const_init', 'nscalar': 1, 'observe': [{'off':0},{'off':4},{'off':8},{'off':0xc},{'off':0x10},{'off':0x14}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
 

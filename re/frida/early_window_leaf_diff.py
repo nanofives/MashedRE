@@ -114,6 +114,7 @@ PURE_LEAF_ARGTYPES = {
     'arg_table_linear_search',   # int fn(key, table*, count): for i<count if(table[i*stride_dw]==key) return i; return -1. test=[key,placeAt,count]
     'global_float_step',         # void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. test=[seedbits,targetfloat]
     'struct_const_init',         # [u32] fn([passthrough,] ptr p): writes deterministic consts/computed to p's fields. alloc 0x400 buf, snapshot observe offsets (+ret if passthrough). test ignored
+    'idx2_table_get_outlast',    # u32 fn(i1,i2,out*): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(tgt+(i1*mult+i2)*stride); return 1. test=[i1,i2]
 }
 
 SRC = r"""
@@ -166,6 +167,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'arg_table_linear_search') ? ['uint32','pointer','uint32']
               : (cfg.at === 'global_float_step') ? ['float']
               : (cfg.at === 'struct_const_init') ? (cfg.passthrough_arg ? ['uint32','pointer'] : ['pointer'].concat(new Array(cfg.nscalar | 0).fill('uint32')))
+              : (cfg.at === 'idx2_table_get_outlast') ? ['uint32','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -345,6 +347,14 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'idx2_table_get_outlast') {
+      // u32 fn(i1, i2, out*): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(tgt+(i1*mult+i2)*stride); return 1.
+      const base = cfg.tgt, mult = cfg.mult | 0, stride = cfg.stride | 0, b1 = cfg.bound | 0, b2 = cfg.bound2 | 0;
+      const i1 = t[0] >>> 0, i2 = t[1] >>> 0;
+      if (i1 < b1 && i2 < b2) ptr(base).add((i1 * mult + i2) * stride).writeU32((0xC0DE0000 | ((i1 << 8) | i2)) >>> 0);
+      const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
+      try { outO.writeU32(0); const ro = Orig(i1, i2, outO) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { outR.writeU32(0); const rr = Reim(i1, i2, outR) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'struct_const_init') {
       // [u32] fn([passthrough,] ptr p): writes deterministic values into p's fields. alloc 0x400
       // sentinel buffer, call (with optional leading passthrough arg), snapshot observe offsets +

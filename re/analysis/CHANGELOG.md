@@ -3625,3 +3625,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  005beb50  Init5beb50  C2->C3  early_window struct_const_init GREEN; promote-round-91
 2026-06-13  005c9120  Init5c9120  C2->C3  early_window struct_const_init GREEN; promote-round-91
 2026-06-13  005b0c70  Init5b0c70  C2->C3  early_window struct_const_init+scalar GREEN 2/2; promote-round-92
+2026-06-13  0041ee50  Flag41ee50  C2->C3  early_window GREEN; promote-round-93
+2026-06-13  00471530  ClearTable471530  C2->C3  early_window GREEN; promote-round-93
+2026-06-13  0046d2e0  WheelGet46d2e0  C2->C3  early_window GREEN; promote-round-93
