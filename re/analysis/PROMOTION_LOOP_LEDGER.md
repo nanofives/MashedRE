@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 74
-- total_green: 200
+- rounds_run: 75
+- total_green: 202
 - dry_counter: 0
-- last_round: 2026-06-13 round 74 — strided fill + 2 index->ptr getters + 2 multi-bit flag setters; REACHED 200 (195->200)
+- last_round: 2026-06-13 round 75 — global-field getter + float-threshold predicate (200 goal already met; loop re-armed) (200->202)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -505,6 +505,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 73 | state-global 2->3 transition + 2-global trigger predicate (2 new handlers) | GREEN 2 (StateAdvance2to3 0x0042c1a0 void_global_transition; Trigger432290 0x00432290 two_global_predicate) | total_green 193->195. DROPPED 4 already-promoted (0x00430760/004309b0 C3, 0x0042c2f0 C4, 0x004274d0 C3) + float10 fpatan (0x004233e0). SESSION (this context, rounds 53-73): 142->195 (+53), TWENTY-TWO new handlers. RESUME: keep re-intersecting + bespoke; on display recovery run_diff state-dependent majority. 200 imminent (~5 to go).
 
 2026-06-13 | round 74 | strided fill + 2 index->ptr-array getters + 2 multi-bit flag setters — REACHED 200 | GREEN 5 (Fill6870b4 0x00453f30 range_init; IdxPtr404e00 0x00404e00 + IdxPtr404e20 0x00404e20 index_then_ptr_array; Flag0041ede0 0x0041ede0 + Flag0041eeb0 0x0041eeb0 flag_multibit) | total_green 195->200. TWO new handlers: index_then_ptr_array (idx-table -> real .rdata pointer array; idx==-1->0), flag_multibit (RMW flag word via reimpl bit logic, 3 or 4 args). SESSION FINAL: 142->200 (+58 this context, rounds 53-74), TWENTY-FOUR new early_window handlers. THE 200 C2->C3 GOAL IS MET.
+
+2026-06-13 | round 75 | global-field getter + float-threshold predicate (loop re-armed past the 200 goal) | GREEN 2 (GlobalFieldGet896278 0x004495d0 global_field_read; FloatLt44e020 0x0044e020 float_threshold_predicate) | total_green 200->202. NEW float_threshold_predicate handler: u32 fn(idx) returns (*(float*)(base+idx*stride) < *(float*)gate)?1:0; gate threshold is READ-ONLY .rdata (do NOT seed it -> AV) so seed only the record float with values straddling the real fixed threshold (read it via memory_read; here ~-0.015 @ 0x5ce2d8). x87 FCOMP matches C++ < for finite floats. GOTCHA recorded: read-only .rdata constants can't be seeded; read them + straddle. 25 handlers now. Continuing the loop opportunistically beyond 200.
 
 ## Final report — 200 C2->C3 reached (2026-06-13)
 
