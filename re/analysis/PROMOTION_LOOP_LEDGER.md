@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 17
-- total_green: 43
+- rounds_run: 18
+- total_green: 44
 - dry_counter: 0
-- last_round: 2026-06-12 round 17 (3 GREEN — fresh discovery vein found)
+- last_round: 2026-06-12 round 18 (1 GREEN — widened-curation getter)
 
 ## Lane queues
 
@@ -92,6 +92,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 00485360 DynObjListGetCount — round 17, log/diff_dyn_obj_list_get_count.csv 10/10 GREEN
 - 00550790 FsManager7dc76cSet — round 17, log/diff_fs_manager_7dc76c_set.csv 10/10 GREEN
 - 00496920 TimerTable772ffcGet — round 17, log/diff_timer_table_772ffc_get.csv 10/10 GREEN (race lane)
+- 0041efc0 Car::GetLapProgress — round 18, log/diff_car_get_lap_progress.csv 10/10 GREEN (double-deref, race lane)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -162,6 +163,17 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   ZERO direct callers, reached only via JMP-thunk 0x004b65a0 (itself C2 with
   C2 callers). Gate NOT stretched: deferred until a direct C2+ caller or a
   policy decision on thunk-only caller gates
+- 0046cbb0 vehicle (round-18) — 47B two-out-pointer (fn(i, out_state*,
+  out_secondary*) from per-car struct DAT_00881f90 stride 0xd04, guard
+  i<=0xf). Needs the out-buffer-compare handler (L5 wishlist) — same class as
+  0041f030/0041da90/00484c70/00495270. Count of this shape now >=5 confirmed
+- 0041c010 util (round-18) — 116B float-block writer: copies 24B of
+  (+/-0.45,0.33,1.0) to &DAT_005f334c, calls FUN_0041b770 (C2) 2x over a
+  0x16c-stride record table, zeros DAT_0063cda0. Callee FUN_0041b770 advances
+  an UNOBSERVABLE global cursor (S-3682) -> A/B state hazard for save/restore
+  diff. Needs the cursor address pinned (Ghidra) + a multi-region observe
+  ([0x005f334c len 24] + [0x0063cda0 len 4] + cursor save/restore) before it
+  can diff cleanly. U-3652
 - 004cc7e0 render (round-8) — GREEN EVIDENCE IN HAND (void_setter_observe
   10/10, log/diff_rw_global_6182b0_set.csv; reimpl in PromoLoop_round8.cpp)
   but U-5102 carries an EXPLICIT Blocks=C2->C3 — promotion refused per the
@@ -171,9 +183,13 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
 - out-buffer-compare handler (fn(args..., out*) with configurable out size,
-  compare buffer + return): unlocks 0041f030 (16B), 0041da90 + 00484c70
-  (single-out-ptr as the 0-int special case) — 3 confirmed, count more
-  in the arg-shape audit bucket (321 rows) when curating
+  compare buffer + return): NOW >=5 CONFIRMED unlocks — 0041f030 (16B 4-dword
+  out), 0041da90 (single out*), 00484c70 (single out*), 00495270 (out*),
+  0046cbb0 (TWO out* + i guard). Plus the arg-shape audit bucket (321 rows)
+  holds more. This is the single highest-leverage extension; once a curation
+  pass confirms >=10 fn(...,out*) shapes the L5 >=10 bar is met and it should
+  be authored (one handler, validate on 0041f030 first, then sweep the rest).
+  NEXT ROUND should run that count.
 - multi-record buffer observe (base, record_size, count → fingerprint):
   unlocks 00489290, 0048ade0-class
 - struct-observe with field map for global objects: VehicleIcons trio +
@@ -191,6 +207,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-12 | round 18 | widened curation (third-shape <=15B = 0 hits; widened to 16-60B) | attempted 1 | GREEN 1 (0041efc0 Car::GetLapProgress, double-deref race-lane getter) | deferred 2 (0046cbb0 two-out-ptr -> L5; 0041c010 cursor hazard -> needs Ghidra cursor-pin + multi-region observe) | exit-5/6: none | dry_counter 0. SIGNAL: the trivial single-global-leaf vein is now genuinely EXHAUSTED (third-shape <=15B found 0). The 16-60B net yields ~1 author-able per pass + accumulating out-ptr deferrals. The out-buffer-compare handler (L5) is now at >=5 confirmed unlocks and rising — it is the clear next high-leverage move. RECOMMENDATION TO USER: rounds 19+ should either (a) authorize the out-buffer-compare L5 extension (one handler unlocks 5+ now, likely 10+ after an arg-shape-bucket curation), or (b) accept ~1 promotion/round from progressively-wider getter curation until that too dries. Note: user's mashed_re.exe standalone session is running concurrently (pid 29596) — builds have not been blocked so far this round, but a future rebuild may hit LNK1104 (wait it out).
 
 2026-06-12 | round 17 | fresh discovery sweep (broadened single-global-leaf curation over loop_round_8_passed, excluding all 40 prior touches) | attempted 4 (00485360, 00550790, 00496920, 00496930) + 1 dropped pre-author (004b68e0: thunk-only caller) | GREEN 3 | deferred 2 (00496930 exit-5 in menu AND race — table zero in arena, needs time-trial/lap mode; 004b68e0 gate) | exit-5 x3 root-caused (2 fixed via menu->race flip, 1 genuinely unreachable scenario) | dry_counter 0. The "POOL EMPTY" call from round 16 was PREMATURE — a broadened curation regex (returns/writes DAT_ + leaf/trivial/stub + size<=35, minus all priors) surfaced 6 fresh single-global leaves the round-8/11 passes missed (their regexes required the literal word "getter"/"setter"). 4 were author-able, 3 GREEN. LESSON: "pool dry" should mean "broadened curation finds nothing", not "my last regex found nothing" — vary the curation shape before declaring dryness. Remaining from this pass: 0041c010 (116B float-block writer — multi_arg/scattered, larger; a real candidate for a careful round). Next round: re-curate once more with a THIRD regex shape (arithmetic leaves, 2-arg ops, fn-ptr-return) + attempt 0041c010; if that yields <1 author-able, THAT is dry round 1.
 
