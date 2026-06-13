@@ -189,4 +189,4 @@ extern "C" __declspec(dllexport) void __cdecl SlotSortByModeScore(int* param_1) 
     }
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(SlotSortByModeScore, 0x0040b620);
+RH_ScopedInstall(SlotSortByModeScore, 0x0040b620);  // re-enabled 2026-06-12 promote-round-19 (outbuf_only harness-ext)

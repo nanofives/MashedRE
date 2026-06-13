@@ -14108,4 +14108,23 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 19 (L5: outbuf_only harness-ext) -----------------
+    # 0x0040b620  SlotSortByModeScore — void(int* out4): bubble-sorts 4 slot
+    # indices descending by per-slot mode score (DAT_008a9530) with -100 for
+    # inactive slots (DAT_007f1a14[i]==-1), writing the int[4] permutation into
+    # the caller buffer. SWEEP-CRITICAL new arg_type 'outbuf_only' (single
+    # out-ptr, no scalar arg; out_buf_size=16). Output is a permutation of
+    # 0..3 -> non-degenerate even when all scores are equal at menu.
+    # ref: re/analysis/frontend_promote_menus_b/0040b620.md
+    'slot_sort_by_mode_score': {
+        'rva':            0x0040b620,
+        'export':         'SlotSortByModeScore',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'outbuf_only',
+        'out_buf_size':   16,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }

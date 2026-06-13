@@ -1481,6 +1481,40 @@ function runDiff() {
         return;
     }
 
+    // ── outbuf_only (promote-round-19 harness-ext, SWEEP-CRITICAL) ────────────
+    // For single-out-pointer void functions: fn(T* out) — no scalar arg, writes
+    // a computed result into the caller buffer. Allocates two CONFIG.out_buf_size
+    // (default 16) buffers, zeros each before the call, calls fn(buf), reads the
+    // buffer back as a little-endian packed-dword fingerprint, compares.
+    // CONFIG.tests is a call-count list (its values are ignored — they only set
+    // how many times the pair is invoked, for stability). Unlocks the
+    // single-out-ptr class: SlotSortByModeScore 0x0040b620 (validated here),
+    // and the deferred 0041da90 / 00484c70 / 00495270.
+    if (CONFIG.arg_type === 'outbuf_only') {
+        const OB_LEN = (CONFIG.out_buf_size | 0) || 16;
+        const obA = Memory.alloc(OB_LEN);
+        const obB = Memory.alloc(OB_LEN);
+        function fpOb(buf) {
+            let s = '';
+            for (let k = 0; k + 3 < OB_LEN; k += 4) {
+                s += ('00000000' + (buf.add(k).readU32() >>> 0).toString(16)).slice(-8);
+            }
+            return s;
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            let origV = null, reimV = null, errO = null, errR = null;
+            for (let k = 0; k < OB_LEN; k++) { obA.add(k).writeU8(0); obB.add(k).writeU8(0); }
+            try { Orig(obA); origV = fpOb(obA); } catch(e) { errO = e.message; }
+            try { Reimpl(obB); reimV = fpOb(obB); } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: i,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── int_copy_outbuf ──────────────────────────────────────────────────────
     // For TimerSlotDataCopy-style: fn(int slot, T* dst) — void return, copies
     // N bytes from a per-slot source global into dst. Each test is a single
