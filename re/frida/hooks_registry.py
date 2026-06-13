@@ -14414,12 +14414,18 @@ HOOKS = {
     'table_773030_get': {
         'rva': 0x00496930, 'export': 'Table773030Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        # seed_table: early_window_leaf_diff seeds 0x00773030[0..7] (stride 4) with
+        # distinct values so the index*4 read is diffed non-degenerately (the live
+        # table is zero at menu/race-attach -> exit-5 in round 30).
+        'seed_table': {'base': 0x00773030, 'stride': 4, 'span': 8},
         'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 5, 3],
         'path2_tests': [0, 5, 3],
     },
     'joint_ptr_6ce81c_get': {
         'rva': 0x004840d0, 'export': 'JointPtr6ce81cGet', 'signature': {'ret': 'uint32', 'args': ['int32']},
         'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        # bounds [0,3]: seed slots 0..3; indices >=4 return 0 on both sides.
+        'seed_table': {'base': 0x006ce81c, 'stride': 4, 'span': 4},
         'path1_tests': [0, 1, 2, 3, 4, 5, 0, 1, 2, 3],
         'path2_tests': [0, 3, 5],
     },

@@ -89,6 +89,14 @@ rpc.exports.diff = function(cfg) {
       try { Orig(t >>> 0); o = ptr(cfg.tgt).readU32() >>> 0; } catch (e) { eo = e.message; }
       try { Reim(t >>> 0); r = ptr(cfg.tgt).readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'int_scalar') {
+      // Optional table-seed: write distinct values into an absolute table the
+      // function indexes, so a state-zero table is diffed NON-degenerately and a
+      // wrong stride/base in the reimpl is caught. Seed once on the first test.
+      if (cfg.seed_table && i === 0) {
+        const base = ptr(cfg.seed_table.base), st = cfg.seed_table.stride | 0;
+        const span = cfg.seed_table.span | 0;
+        for (let k = 0; k < span; k++) base.add(k * st).writeU32((0xC0DE0000 | k) >>> 0);
+      }
       try { o = Orig(t >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { r = Reim(t >>> 0) >>> 0; } catch (e) { er = e.message; }
     }
@@ -109,7 +117,7 @@ def run(name):
         return None
     cfg = {'rva': h['rva'], 'export': h['export'], 'ret': h['signature']['ret'], 'at': at,
            'tgt': h.get('target_global'), 'tests': h.get('path1_tests', []),
-           'observe': h.get('observe'), 'asi': ASI}
+           'observe': h.get('observe'), 'seed_table': h.get('seed_table'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
