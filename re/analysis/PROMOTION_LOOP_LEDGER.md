@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 16
-- total_green: 40
+- rounds_run: 17
+- total_green: 43
 - dry_counter: 0
-- last_round: 2026-06-12 round 16 (1 GREEN — last identified candidate, via disassembly pass)
+- last_round: 2026-06-12 round 17 (3 GREEN — fresh discovery vein found)
 
 ## Lane queues
 
@@ -89,6 +89,9 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 004cc7e0 RwGlobal6182b0Set — round 14 CLASSIFY-ONLY (U-5102 resolved via Ghidra xref; round-8 GREEN evidence)
 - 00402f40 Util636ad8Get — round 15, log/diff_util_636ad8_get.csv 10/10 GREEN (caller gate filled round-14 Ghidra pass)
 - 004c9eb0 DeviceModeBestBelowSet — round 16, log/diff_device_mode_best_below_set.csv 10/10 GREEN non-degenerate (58-instr vtable scanner; disassembly-pinned __stdcall + buffer+8)
+- 00485360 DynObjListGetCount — round 17, log/diff_dyn_obj_list_get_count.csv 10/10 GREEN
+- 00550790 FsManager7dc76cSet — round 17, log/diff_fs_manager_7dc76c_set.csv 10/10 GREEN
+- 00496920 TimerTable772ffcGet — round 17, log/diff_timer_table_772ffc_get.csv 10/10 GREEN (race lane)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -150,6 +153,15 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   all 16 slots in a clean ~20s drive (likely accumulates only under
   damage/exposure, per FUN_0046d7f0 accumulate+drain). Needs a
   damage-inducing scenario (drive recipe ext) — stays C2, entries kept
+- 00496930 util TimerTable773030Get (round-17) — reimpl authored + registered
+  (PromoLoop_round17.cpp), exit-5 at BOTH menu-attach AND Quick-Battle race:
+  the 0x00773030 table is zero in the available scenarios (parent gated
+  DAT_006147b8 — likely time-trial/lap mode, not arena). Needs a different
+  drive recipe; stays C2, entry kept (scenario:race)
+- 004b68e0 render (round-17) — 5B getter DAT_007d3e4c (archive-loaded flag);
+  ZERO direct callers, reached only via JMP-thunk 0x004b65a0 (itself C2 with
+  C2 callers). Gate NOT stretched: deferred until a direct C2+ caller or a
+  policy decision on thunk-only caller gates
 - 004cc7e0 render (round-8) — GREEN EVIDENCE IN HAND (void_setter_observe
   10/10, log/diff_rw_global_6182b0_set.csv; reimpl in PromoLoop_round8.cpp)
   but U-5102 carries an EXPLICIT Blocks=C2->C3 — promotion refused per the
@@ -180,7 +192,9 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
 
---- IDENTIFIED-CANDIDATE POOL NOW EMPTY ---
+2026-06-12 | round 17 | fresh discovery sweep (broadened single-global-leaf curation over loop_round_8_passed, excluding all 40 prior touches) | attempted 4 (00485360, 00550790, 00496920, 00496930) + 1 dropped pre-author (004b68e0: thunk-only caller) | GREEN 3 | deferred 2 (00496930 exit-5 in menu AND race — table zero in arena, needs time-trial/lap mode; 004b68e0 gate) | exit-5 x3 root-caused (2 fixed via menu->race flip, 1 genuinely unreachable scenario) | dry_counter 0. The "POOL EMPTY" call from round 16 was PREMATURE — a broadened curation regex (returns/writes DAT_ + leaf/trivial/stub + size<=35, minus all priors) surfaced 6 fresh single-global leaves the round-8/11 passes missed (their regexes required the literal word "getter"/"setter"). 4 were author-able, 3 GREEN. LESSON: "pool dry" should mean "broadened curation finds nothing", not "my last regex found nothing" — vary the curation shape before declaring dryness. Remaining from this pass: 0041c010 (116B float-block writer — multi_arg/scattered, larger; a real candidate for a careful round). Next round: re-curate once more with a THIRD regex shape (arithmetic leaves, 2-arg ops, fn-ptr-return) + attempt 0041c010; if that yields <1 author-able, THAT is dry round 1.
+
+--- ROUND-16 "POOL EMPTY" CALL (superseded by round 17) ---
 After 16 rounds (40 promotions; 14 productive, 2 env/contention skips fully
 recovered) every candidate the curation/triage passes surfaced is
 promoted-or-deferred-with-reason. The next round has NO pre-identified
