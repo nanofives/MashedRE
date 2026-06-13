@@ -165,18 +165,69 @@ Coverage: **959 / 3,638 first-party rows (26.4%)**; audio 224, render 218,
 util 169, boot 94, frontend 62, gameplay 47, vehicle 41, hud 34.
 `ApplyTwinNames` re-run: 1,813 named, 30 stale labels cleaned.
 
+## Round 3 (2026-06-12): scaffold verification + platform attribution
+
+**Layout, characterized empirically** (`strong` pairs, NO-GUESSING): sorted by
+PC address, consecutive Xbox deltas are inc=755 / dec=400 → the binary is
+**ascending runs (translation units) laid out in DESCENDING xbox-base order**;
+functions within a TU ascend together (top TU run = 53 functions, 401 runs).
+The round-2 "globally reversed" model was the coarse view of this.
+
+**Scaffold verification** (replaces the global-neighbor ordinal check): every
+pair is classified against the *strong-pair* scaffold. A strong bracket [L,R]
+with `xb_L < xb_R` and width ≤ 0x8000 is a same-TU span, so any pair whose PC
+lies inside must have xbox in [xb_L, xb_R]:
+- `ok-asc` (corroborated) — fits a tight ascending same-TU bracket: **859**,
+  of which **352 are weak-tier pairs promoted out of candidate-grade**.
+- `flag` — violates a tight ascending bracket: weak-tier flags are **dropped**
+  (111 removed); the **161 remaining flags are all strong-tier** (byte-full 22,
+  string 50, const 47, mnem 30, …) where independent feature evidence outranks
+  the layout heuristic — retained, annotated `SCAFFOLD-FLAGGED`, treated as
+  layout-model noise not match error.
+- `ambiguous` — only a descending (cross-TU) or wide/edge bracket available,
+  no constraint: 771.
+
+Final table: **1,791 pairs**, 26.5% first-party. CSV column `scaffold`
+(`ok-asc`/`flag`/`ambiguous`) lets consumers trust corroborated weak pairs and
+discount the rest. `ApplyTwinNames` re-run: 1,791 named, 95 stale cleaned.
+
+**Interval-tier correction** (found while characterizing the layout): round 2's
+`tier_interval` used the *global* reversal flag and only processed *descending*
+brackets (which straddle TU boundaries → unreliable cross-TU positional
+pairing), reversing each gap. Round 3 rewrites it to use *per-bracket*
+direction and only trust *tight ascending same-TU* brackets, pairing forward.
+Same count (87) but a disjoint, correct set — **all 87 interval pairs are now
+`scaffold=ok-asc`** (same-TU corroborated), vs cross-TU before. Recall did not
+rise (the within-TU gaps are count-gated 1:1), so the small-getter recall gap
+stays lever 1.
+
+**Platform attribution** (`xbuild_platform_report.py` →
+`re/console/match/platform_candidates.csv`), two signals, reported honestly:
+- *Clean (platform-api):* 6 unmatched first-party functions reference a
+  platform-API token. Three are **verified PC-only platform glue** —
+  `FUN_004944c0` DirectShow video graph, `FUN_00494820` D3DX texture create,
+  `sub_00499ba0` D3D9 device/window (`"MASHED [D3D9] [Release]"`); the Xbox
+  build has these in separate XBE sections (XMV/D3D), so their absence as
+  twins is correct. The greenfield port already reimplements this boundary
+  (PngLoader, custom video path). 3 others are CRT (user32 MessageBox/exit).
+- *Diagnostic (recall-gap):* 324 unmatched first-party functions with matched
+  callers. **NOT platform attribution** — dominated by small getters that hash
+  ambiguously (render 78, util 62, frontend 56). Shipped as a matcher-coverage
+  map: it shows exactly which small-function class the matcher misses, which
+  motivates lever 1 below.
+
 ## Remaining levers
 
-1. **Verify/upgrade `prop-weak` (587) on use** — each pair consulted via
-   `xtwin.py` should be eyeballed; ordinal-consistency already pre-filters.
-2. **Band-aware ordinal check** — segment the order check per library band to
-   cut the ~190 false flags at band boundaries.
-3. **PS2 `.rodata` data-mining** — shared float/string tables as a second
+1. **Small-function matching** — the recall-gap diagnostic shows the matcher
+   misses tiny getters (no strings, generic mnemonics). A within-TU-run
+   positional tier (now that TU runs are characterized) could place them:
+   inside a corroborated ascending run, unmatched gaps pair positionally.
+2. **PS2 `.rodata` data-mining** — shared float/string tables as a second
    witness for PC global identification (demand-driven).
-4. **Use of matches**: (a) hairy PC function → read the Xbox twin
-   (`xtwin.py`); (b) PC functions with NO Xbox match = platform-layer
-   candidates; (c) Xbox `.data` refs corroborate PC global identification.
-5. The Xbox disc asset tree (`ToastArt/`) and PS2 `TOASTART/` are format
+3. **Use of matches**: (a) hairy PC function → read the Xbox twin
+   (`xtwin.py`); (b) the 3 platform-api functions confirm render/IO platform
+   boundaries for the port; (c) Xbox `.data` refs corroborate PC globals.
+4. The Xbox disc asset tree (`ToastArt/`) and PS2 `TOASTART/` are format
    variants of the PC assets — useful when a PC format field is ambiguous.
 
 ## PS2 ELF — retained value despite stripping

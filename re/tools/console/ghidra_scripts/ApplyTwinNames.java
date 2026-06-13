@@ -86,8 +86,13 @@ public class ApplyTwinNames extends GhidraScript {
                 }
             }
             String plate = String.format("[xbuild] PC twin 0x%08x tier=%s", pcVa, tier);
-            if (c.length >= 7 && c[6].equals("0")) {
-                plate += " ORDINAL-FLAGGED";
+            if (c.length >= 7) {
+                if (c[6].equals("flag")) {
+                    plate += " SCAFFOLD-FLAGGED";
+                }
+                else if (c[6].equals("ok-asc")) {
+                    plate += " (scaffold-corroborated)";
+                }
             }
             StringBuilder kept = new StringBuilder();
             String old = fn.getComment();

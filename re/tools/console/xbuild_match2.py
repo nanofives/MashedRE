@@ -39,6 +39,8 @@ OUT = f"{ROOT}/re/console/match/xbuild_match_v2.csv"
 
 RATIO = 1.30   # size / instruction-count sanity bound (strict)
 RATIO_LOOSE = 1.60  # interval tier bound
+MAX_TU_SPAN = 0x8000  # xbox bytes; ascending strong bracket wider than this is
+                      # treated as crossing TUs (coincidental), not same-TU
 STRONG = {"byte-full", "byte-prefix", "mnem", "string", "const",
           "prop-mnem", "caller-mnem", "interval-mnem"}
 WEAK = {"prop-weak", "caller", "interval"}
@@ -232,30 +234,36 @@ class Matcher:
         return n
 
     def tier_interval(self):
-        strong = sorted((p, x) for p, x in self.p2x.items()
+        """Positionally place unmatched gap functions between consecutive strong
+        anchors, using PER-BRACKET direction (NOT a global flag):
+
+          tight ascending bracket (xb_L < xb_R, width <= MAX_TU_SPAN) = same TU,
+            functions ascend on both sides -> forward 1:1 pairing.
+          everything else (descending = cross-TU boundary, or wide ascending =
+            coincidental) -> skipped; no reliable positional constraint.
+
+        This is what catches small getters (no strings / generic mnemonics) that
+        the feature tiers miss, while staying inside a verified same-TU span.
+        """
+        strong = sorted((p, self.p2x[p]) for p in self.p2x
                         if self.tier[p] in STRONG)
         if len(strong) < 3:
             return 0
-        xs = [x for _, x in strong]
-        desc = sum(1 for i in range(1, len(xs)) if xs[i] < xs[i - 1]) \
-            > len(xs) // 2
         pc_sorted = sorted(self.pc)
         xb_sorted = sorted(self.xb)
         n = 0
         for (p1, x1), (p2, x2) in zip(strong, strong[1:]):
+            if not (x1 < x2 and (x2 - x1) <= MAX_TU_SPAN):
+                continue  # only trust tight ascending same-TU brackets
             i1 = bisect.bisect_right(pc_sorted, p1)
             i2 = bisect.bisect_left(pc_sorted, p2)
             gp = [e for e in pc_sorted[i1:i2] if e not in self.p2x]
-            lo, hi = (x2, x1) if desc else (x1, x2)
-            if lo >= hi:
-                continue
-            j1 = bisect.bisect_right(xb_sorted, lo)
-            j2 = bisect.bisect_left(xb_sorted, hi)
+            j1 = bisect.bisect_right(xb_sorted, x1)
+            j2 = bisect.bisect_left(xb_sorted, x2)
             gx = [e for e in xb_sorted[j1:j2] if e not in self.x2p]
             if not gp or len(gp) != len(gx):
                 continue
-            gxo = list(reversed(gx)) if desc else gx
-            pairs = list(zip(gp, gxo))
+            pairs = list(zip(gp, gx))  # both ascending -> forward
             if not all(ratio_ok(self.pc[a]["size"], self.xb[b]["size"], RATIO_LOOSE)
                        and ratio_ok(self.pc[a]["nmnem"], self.xb[b]["nmnem"],
                                     RATIO_LOOSE)
@@ -268,26 +276,44 @@ class Matcher:
                 n += self.add(a, b, t)
         return n
 
-    def ordinal_bad(self):
-        """Pairs whose Xbox VA contradicts BOTH neighbors in dominant order."""
-        pairs = sorted(self.p2x.items())
-        if len(pairs) < 3:
-            return set()
-        xs = [x for _, x in pairs]
-        desc = sum(1 for i in range(1, len(xs)) if xs[i] < xs[i - 1]) \
-            > len(xs) // 2
-        bad = set()
-        for i, (p, x) in enumerate(pairs):
-            viol = checks = 0
-            if i > 0:
-                checks += 1
-                viol += ((x < xs[i - 1]) != desc)
-            if i < len(pairs) - 1:
-                checks += 1
-                viol += ((xs[i + 1] < x) != desc)
-            if checks and viol == checks:
-                bad.add(p)
-        return bad
+    def scaffold_status(self):
+        """Classify every pair against the strong-pair layout scaffold.
+
+        Empirical layout: PC-ascending walks TU blocks in DESCENDING xbox-base
+        order, but functions within a TU ascend together. So a strong pair
+        bracket [L,R] with xb_L < xb_R is a same-TU span — any pair whose PC
+        lies inside must have xbox in (xb_L, xb_R). Descending brackets straddle
+        a TU boundary and give no tight constraint.
+
+        Returns pc -> one of:
+          "ok-asc"    inside an ascending (same-TU) strong bracket, fits  -> corroborated
+          "flag"      inside an ascending strong bracket, xbox out of range -> suspect
+          "ambiguous" only a descending/edge bracket available -> no constraint
+        """
+        strong = sorted((p, self.p2x[p]) for p in self.p2x
+                        if self.tier[p] in STRONG)
+        if len(strong) < 3:
+            return {p: "ambiguous" for p in self.p2x}
+        spc = [p for p, _ in strong]
+        sxb = [x for _, x in strong]
+        out = {}
+        for p, x in self.p2x.items():
+            i = bisect.bisect_left(spc, p)
+            li = i - 1
+            if li >= 0 and spc[li] == p:
+                li -= 1
+            ri = i
+            while ri < len(spc) and spc[ri] == p:
+                ri += 1
+            if li < 0 or ri >= len(spc):
+                out[p] = "ambiguous"
+                continue
+            xl, xr = sxb[li], sxb[ri]
+            if xl < xr and (xr - xl) <= MAX_TU_SPAN:  # tight ascending = same TU
+                out[p] = "ok-asc" if xl <= x <= xr else "flag"
+            else:  # descending, or ascending-but-wide (coincidental cross-TU)
+                out[p] = "ambiguous"
+        return out
 
 
 def main():
@@ -314,13 +340,13 @@ def main():
         if added == 0:
             break
 
-    bad = m.ordinal_bad()
+    status = m.scaffold_status()
     dropped = 0
-    for p in bad:
-        if m.tier[p] in WEAK:
+    for p, st in list(status.items()):
+        if st == "flag" and m.tier[p] in WEAK:
             m.remove(p)
             dropped += 1
-    bad = m.ordinal_bad()  # re-flag on the cleaned set
+    status = m.scaffold_status()  # re-classify on the cleaned set
 
     hooks = load_hooks()
     by_sub = Counter()
@@ -329,22 +355,27 @@ def main():
     with open(OUT, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["pc_va", "xbox_va", "tier", "pc_name", "subsystem",
-                    "confidence", "ordinal_ok"])
+                    "confidence", "scaffold"])
         for pe in sorted(m.p2x):
             name, sub, conf = hooks.get(pe, ("", "", ""))
             if sub:
                 by_sub[sub] += 1
             w.writerow([f"0x{pe:08x}", f"0x{m.p2x[pe]:08x}", m.tier[pe],
-                        name, sub, conf, int(pe not in bad)])
+                        name, sub, conf, status.get(pe, "ambiguous")])
 
     total = len(m.p2x)
+    st_counts = Counter(status.values())
+    weak_corrob = sum(1 for p in m.p2x
+                      if m.tier[p] in WEAK and status.get(p) == "ok-asc")
     print(f"anchors byte={counts['byte']} mnem={counts['mnem']} "
           f"string={counts['string']} const={counts['const']} "
-          f"fixpoint=+{counts['fixpoint']}  dropped(ordinal)={dropped}  "
+          f"fixpoint=+{counts['fixpoint']}  dropped(scaffold-flag)={dropped}  "
           f"TOTAL={total}")
     for t, n in Counter(m.tier.values()).most_common():
         print(f"  {t:14} {n}")
-    print(f"ordinal-flagged remaining: {len(bad)}")
+    print(f"scaffold: ok-asc(corroborated)={st_counts['ok-asc']}  "
+          f"flag(remaining)={st_counts['flag']}  ambiguous={st_counts['ambiguous']}")
+    print(f"weak-tier pairs corroborated by scaffold: {weak_corrob}")
     fp_total = sum(1 for va, (_, s, _) in hooks.items()
                    if not s.startswith("third-party"))
     fp_matched = sum(1 for pe in m.p2x
