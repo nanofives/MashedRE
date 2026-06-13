@@ -145,14 +145,15 @@ void __cdecl Bridge_DrawPrimitive(int count, void* verts, int /*unused*/) {
     }
     D3DVert        dst[64];
     for (int i = 0; i < count; ++i) {
-        // D3D9 pixel-center correction (-0.5): pre-transformed verts address
-        // pixel CENTERS; the reimpls (like MASHED's own Im2D buffer) emit
-        // edge coordinates, and the real RW D3D9 driver applies this shift
-        // after the captured tap point. Without it, POINT-sampled textures
-        // (the FGDC20 font) bleed the neighbor atlas cell's last column at
-        // quad edges (the "leading tick").
-        dst[i].x     = src[i].x - 0.5f;
-        dst[i].y     = src[i].y - 0.5f;
+        // No half-pixel shift: a -0.5 correction was briefly added here to
+        // fix glyph-edge "ticks", but those were really the FGDC20 atlas
+        // pixel-base bug (0x438 vs 0x43c, see MashedFont.cpp). With the
+        // atlas fixed, the shift only moved all texture content up-left by
+        // ~half a texel vs the original (anaglyph evidence
+        // verify/font_anaglyph_exit.png). Submit coordinates raw, exactly
+        // as captured from MASHED's own vertex stream.
+        dst[i].x     = src[i].x;
+        dst[i].y     = src[i].y;
         dst[i].z     = src[i].z;
         // RHW must be non-zero for pre-transformed verts; the reimpl writes 1.0f
         // into +0x0c, but guard against a zeroed buffer.

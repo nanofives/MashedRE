@@ -58,7 +58,13 @@ std::uint8_t* UpscaleCoverage(const std::uint8_t* src, int w, int h, int K) {
                 static_cast<std::uint8_t>(v < 0 ? 0 : (v > 255 ? 255 : v));
         }
     }
-    // Vertical pass.
+    // Vertical pass + edge hardening. The smoothstep S-curve (fixed point at
+    // 0.5 so edge positions don't move) tightens the AA fringe and saturates
+    // near-core coverage: at 800x600 the bilinear-minified edges otherwise
+    // spread ~2 device px and 1-texel strokes only reach ~60-70% opacity,
+    // while the original at 640x480 (~1:1 sampling) shows 1px fringes and
+    // solid cores (luminance profiles, 2026-06-12).
+    constexpr float kT0 = 0.15f, kT1 = 0.85f;
     for (int Y = 0; Y < H; ++Y) {
         const float sy = (Y + 0.5f) / K - 0.5f;
         const int   iy = static_cast<int>(std::floor(sy));
@@ -68,7 +74,10 @@ std::uint8_t* UpscaleCoverage(const std::uint8_t* src, int w, int h, int K) {
                 acc += CatmullRom(sy - (iy + k)) *
                        tmp[static_cast<std::size_t>(clampi(iy + k, 0, h - 1)) * W + X];
             }
-            const int v = static_cast<int>(acc + 0.5f);
+            float t = (acc / 255.f - kT0) / (kT1 - kT0);
+            t = t < 0.f ? 0.f : (t > 1.f ? 1.f : t);
+            t = t * t * (3.f - 2.f * t);                 // smoothstep
+            const int v = static_cast<int>(t * 255.f + 0.5f);
             dst[static_cast<std::size_t>(Y) * W + X] =
                 static_cast<std::uint8_t>(v < 0 ? 0 : (v > 255 ? 255 : v));
         }

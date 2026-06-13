@@ -113,15 +113,21 @@ record window with clean margins (E ink profile in-window:
 - (CORRECTION: an earlier intermediate state of this note claimed the
   original was point-sampled and added a half-texel UV inset — both were
   compensations for the 4-column atlas shift and are reverted.)
-- Bridge applies the D3D9 −0.5 pixel-center correction at submit (the real
-  RW D3D9 driver's job; the Im2D vertex buffer carries edge coordinates).
+- The bridge submits vertex coordinates RAW (no −0.5 half-pixel shift): a
+  −0.5 correction was briefly added against the glyph-edge "ticks", but
+  those were the atlas pixel-base bug; with the atlas fixed, the shift only
+  moved all texture content ~half a texel up-left vs the original (anaglyph
+  evidence verify/font_anaglyph_exit.png → exit2.png).
 - **Presentation enhancement (NOT RE law)**: the atlas coverage map is
-  supersampled 2× with Catmull-Rom at load (`kAtlasSS`, MashedFont.cpp).
-  At 800×600 the cell renders at ~1.3× the atlas resolution — a bilinear
-  magnification that reads soft (the original at 640×480 samples ~1:1 and
-  never shows it). The 2× atlas turns that into ~0.65× minification:
-  visibly crisper, render law (UVs/geometry/advances) unchanged. User-
-  requested sharpening 2026-06-12.
+  supersampled 2× with Catmull-Rom at load and edge-hardened with a
+  smoothstep S-curve, fixed point 0.5 (`kAtlasSS`/`kT0`/`kT1`,
+  MashedFont.cpp). At 800×600 the cell renders at ~1.3× the atlas
+  resolution — bilinear magnification reads soft, edges spread ~2 device px
+  and 1-texel strokes only reach ~60-70% opacity, while the original at
+  640×480 (~1:1) shows 1px fringes and solid cores. After SS+hardening the
+  standalone's luminance profiles match the original's steepness (115→105→0
+  vs 96→12→0). Render law (UVs/geometry/advances) unchanged. User-requested
+  sharpening 2026-06-12.
 
 ## Capture instrument (original-side backbuffer)
 
