@@ -63,6 +63,7 @@ PURE_LEAF_ARGTYPES = {
     'deref_field_write',  # fn(ptr p1, u32 p2): *(*(p1+outer_off)+inner_off)=p2 — harness allocs+links buffers
     'deref_table_read',   # fn(ptr p1, u32 i): return (*p1)[i] — harness allocs+seeds an array behind p1
     'const_return',       # fn(): return <fixed constant> — no input, no state; call + compare
+    'global_field_read',  # fn(): return *(*(global)+field_off) — point global at a seeded buffer
 }
 
 SRC = r"""
@@ -128,6 +129,16 @@ rpc.exports.diff = function(cfg) {
     } else if (cfg.at === 'const_return') {
       try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
       try { r = Reim() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_field_read') {
+      // return *(*(tgt)+field_off). Point the global at a seeded buffer; the test
+      // value lands at +field_off (distinct per test -> non-degenerate).
+      const fo = cfg.field_off | 0;
+      const buf = Memory.alloc(0x100); _keep.push(buf);
+      for (let z = 0; z < 0x100; z += 4) buf.add(z).writeU32(0);
+      buf.add(fo).writeU32(t >>> 0);
+      ptr(cfg.tgt).writePointer(buf);
+      try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { ptr(cfg.tgt).writePointer(buf); buf.add(fo).writeU32(t >>> 0); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'deref_table_read') {
       // return (*p1)[i]. Seed an array behind p1 with distinct values; non-degenerate.
       const span = (cfg.span | 0) || 16;
@@ -156,7 +167,7 @@ def run(name):
            'tgt': h.get('target_global'), 'tests': h.get('path1_tests', []),
            'observe': h.get('observe'), 'seed_table': h.get('seed_table'),
            'outer_off': h.get('outer_off'), 'inner_off': h.get('inner_off'),
-           'span': h.get('span'), 'asi': ASI}
+           'span': h.get('span'), 'field_off': h.get('field_off'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
