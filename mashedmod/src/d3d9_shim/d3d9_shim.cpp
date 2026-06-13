@@ -88,9 +88,18 @@ void ApplyWindowBorders(HWND hWnd) {
     // Grow the outer rect so the client area remains the backbuffer size.
     RECT rc = { 0, 0, (LONG)kForceBackBufferWidth, (LONG)kForceBackBufferHeight };
     AdjustWindowRect(&rc, (DWORD)kBorderStyle, FALSE);
-    SetWindowPos(hWnd, nullptr, 0, 0,
-                 rc.right - rc.left, rc.bottom - rc.top,
-                 SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    // Pin onto screen 1 (the primary monitor — its top-left is (0,0) in Windows
+    // virtual-screen coords by definition, always). A small positive offset keeps
+    // the whole window on the primary, away from secondary monitors that may sleep
+    // and wedge the windowed D3D9 output. Opt out with MASHED_RE_NO_SCREEN1_PIN=1.
+    char pinBuf[8] = { 0 };
+    bool pinScreen1 =
+        !(GetEnvironmentVariableA("MASHED_RE_NO_SCREEN1_PIN", pinBuf, sizeof(pinBuf)) > 0 &&
+          pinBuf[0] == '1');
+    UINT moveFlags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED |
+                     (pinScreen1 ? 0u : SWP_NOMOVE);
+    SetWindowPos(hWnd, nullptr, 64, 64,
+                 rc.right - rc.left, rc.bottom - rc.top, moveFlags);
 }
 
 // ── Original-side backbuffer dump (font/pixel parity instrument) ──────────

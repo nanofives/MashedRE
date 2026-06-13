@@ -14252,6 +14252,43 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 29 (worklist batch: const global setters) --------
+    'set_77196c_1': {
+        'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x0077196c', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'set_771970_1': {
+        'rva': 0x00493580, 'export': 'Set771970_1', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x00771970', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'set_603868_0': {
+        'rva': 0x00462510, 'export': 'Set603868_0', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x00603868', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'set_603868_1': {
+        'rva': 0x00462500, 'export': 'Set603868_1', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x00603868', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'set_703058_0': {
+        'rva': 0x00487df0, 'export': 'Set703058_0', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x00703058', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+
     # ---- promote-round round 27 (worklist batch: global getters) --------------
     'global_67eca4_get': {
         'rva': 0x0042b900, 'export': 'Global67eca4Get', 'signature': {'ret': 'uint32', 'args': []},
