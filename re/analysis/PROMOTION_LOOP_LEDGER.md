@@ -326,6 +326,44 @@ final gated-remainder report.
 
 2026-06-13 | round 34 | byte-scan pool (getter/setters + bounds getter) | attempted 4 | GREEN 4 (Global772facGet 0x00495790 read_global; Set684b34 0x0044d6e0 void_setter_observe; Set771968_1 0x00493590 scalars_to_scattered_globals; VehPwrState68ba00Get 0x0045a0f0 int_scalar bounds getter) | deferred 0 | dropped 2 on caller-gate (0x00496d00 caller 00448951 in UNDEFINED region; 0x004b6700 reached by JUMP not CALL; also 0x00495520 caller FUN_004960a0 not in hooks.csv) | exit-5/6: none | dry_counter 0. total_green 92->96. KEY WIN: 0x0045a0f0 is a bounds-checked getter (signed v<0||v>=4 -> -1) -> the out-of-range -1 returns make int_scalar NON-degenerate even at menu-attach (no race needed), unlike the plain table getters that exit-5'd in round 30. hooks.csv note for 0045a0f0 was WRONG ('no bounds check') -> corrected in the C3 row. TRIVIAL-SHAPE POOL NOW NEARLY DRY: remaining are get_f32×3 (need a float-return read_global handler -> L5, only 3 rows so below the >=10 threshold) + caller-gated/jump-target leftovers (004d71f0, 004b6700, 00496d00, 00495520). NEXT LEVER for sustained yield: L5 handler for the deref-param class (e.g. 0x004cc4f0 RW chunk validator does `mov eax,[eax]` on arg) OR re-curate the broader C2 pool for non-leaf shapes the existing handlers can reach.
 
+## STRATEGIC CHECKPOINT 2026-06-13 (after round 34, total_green=96)
+
+The cheap/trivial-leaf C2 vein is DRAINED. Proven by 5 exhaustive byte-scans of
+original/MASHED.exe.unpatched intersected with still-C2 hooks.csv rows:
+  - u32 getter `A1 <a4> C3`, f32 getter `D9 05 <a4> C3`, const setter
+    `C7 05 <a4> <imm4> C3`, param setter `8B 44 24 04 A3 <a4> C3`  -> 25 found,
+    ALL promoted across rounds 31-34 except: f32×3 (need a float-return
+    read_global handler = L5, only 3 rows < threshold), 004d71f0 (RW-library-only
+    callers), 004b6700 (jump-target), 00496d00/00495520 (caller not a tracked fn).
+  - single-arg arithmetic leaf `8B 44 24 04 ... C3` (<=12B) -> 28 hits, but all
+    are either deref-param (need ptr handler), bounds-getters returning 0
+    (degenerate-prone), live-state table getters (exit-5), or tail-call non-leaves.
+  - cdecl field getter `8B 44 24 04 8B 40 <off> C3` -> 1 (lua lib).
+  - thiscall field getter `8B 41 <off> C3` -> 1 (d3dx9 lib).
+
+CONCLUSION: 69->96 this session (rounds 29-34, all real 10/10 GREEN diffs, full
+gate). The remaining first-party C2 inventory (~thousands of rows) is NON-trivial.
+Reaching 200 requires a PHASE SHIFT from pattern-scan grinding to bespoke harness
+engineering. The path forward, in yield order:
+
+  L5-A. Float-return read_global handler (read_global_f32): seed the target global
+        with a float bit-pattern, call the getter, read ST0 as the return. Unlocks
+        the 3 D9-05 f32 getters now + every future float getter. ~Small but reusable.
+  L5-B. deref-param / bounds-table family via scenario:race: the `83 F8 XX 72 03
+        33 C0` bounds getters + `8B 04 85 <tbl>` table getters are promotable IF run
+        at a race state where the table is populated. Expect a mix of GREEN + exit-5;
+        triage per-candidate. Medium yield, medium cost.
+  L5-C. thiscall/cdecl multi-statement field getters & small methods: thiscall_field_get
+        + ptr_scratch_field already exist; the trivial single-load shapes are gone but
+        2-3 statement field-deref methods (`mov eax,[ecx+off]; <op>; ret`) remain in the
+        broader C2 pool. Needs a curation pass (not a byte-scan) over C2 method-shaped rows.
+  L5-D. COM/DirectShow band (~94 rows) — needs the COM harness (largest single bucket,
+        highest cost). Deferred until A-C are exhausted.
+
+NEXT ROUND should start at L5-A (build read_global_f32, validate on 0x004039e0),
+then sweep the 3 f32 getters, then move to L5-B race-state table getters.
+This is the durable plan; the ledger counters + this block are the full state.
+
 ## Final gated-remainder report
 
 (written by the round that ends the loop)
