@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 100 (size clamp + store + return) --
+    'clamp_5a6190': {'rva': 0x005a6190, 'export': 'Clamp5a6190', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'arg_to_global_ret', 'target_global': 0x00914700, 'lut_root_delta': 0, 'path1_tests': [0, 5, 0xf, 0x10, 0x100, 0xdead], 'path2_tests': [5, 0x100]},
+
     # ---- promote-round round 99 (big-endian u32 store/load) --
     'store_be_51ca60': {'rva': 0x0051ca60, 'export': 'StoreBE51ca60', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'store_be32', 'lut_root_delta': 0, 'path1_tests': [0x12345678, 0, 0xFFFFFFFF, 0xCAFEBABE, 0xDEADBEEF], 'path2_tests': [0x12345678, 0]},
     'load_be_523110': {'rva': 0x00523110, 'export': 'LoadBE523110', 'signature': {'ret': 'int32', 'args': ['pointer']}, 'arg_type': 'load_be32', 'lut_root_delta': 0, 'path1_tests': [0x12345678, 0, 0xFFFFFFFF, 0xCAFEBABE, 0xDEADBEEF], 'path2_tests': [0x12345678, 0]},

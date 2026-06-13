@@ -124,6 +124,7 @@ PURE_LEAF_ARGTYPES = {
     'struct_to_out_build',       # void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1]. snapshot out. test ignored
     'store_be32',                # void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v
     'load_be32',                 # int fn(ptr p): return big-endian u32 from p[0..3]. test = dword to seed
+    'arg_to_global_ret',         # u32 fn(v): reimpl writes *tgt + returns (deterministic fn of v). seed tgt sentinel, call, check tgt+ret. test=v
 }
 
 SRC = r"""
@@ -186,6 +187,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'struct_to_out_build') ? ['pointer','pointer']
               : (cfg.at === 'store_be32') ? ['pointer','uint32']
               : (cfg.at === 'load_be32') ? ['pointer']
+              : (cfg.at === 'arg_to_global_ret') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -365,6 +367,11 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'arg_to_global_ret') {
+      // u32 fn(v): reimpl writes *tgt and returns (deterministic fn of v). seed tgt sentinel, call, check tgt+ret.
+      const g = ptr(cfg.tgt), v = t >>> 0;
+      try { g.writeU32(0xEEEEEEEE); const ro = Orig(v) >>> 0; o = (g.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { g.writeU32(0xEEEEEEEE); const rr = Reim(v) >>> 0; r = (g.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'store_be32') {
       // void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v.
       const buf = Memory.alloc(0x20); _keep.push(buf);

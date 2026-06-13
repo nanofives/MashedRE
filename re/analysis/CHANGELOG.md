@@ -3644,3 +3644,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00497000  Proj497000  C2->C3  early_window struct_to_out_build GREEN; promote-round-98
 2026-06-13  0051ca60  StoreBE51ca60  C2->C3  early_window GREEN; promote-round-99
 2026-06-13  00523110  LoadBE523110  C2->C3  early_window GREEN; promote-round-99
+2026-06-13  005a6190  Clamp5a6190  C2->C3  early_window arg_to_global_ret GREEN; promote-round-100

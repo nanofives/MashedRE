@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 99
-- total_green: 256
+- rounds_run: 100
+- total_green: 257
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 100 | size clamp + store + return | attempted 1 | GREEN 1 (Clamp5a6190 0x005a6190 arg_to_global_ret NEW) | deferred 5 (00484a50 eax cell-insert; 004899c0 2-buf container; 00558100/140 actor-SEH install; 005a7a60 bus-list search) | exit-5/6: none | dry_counter 0. total_green 256->257. VEIN THINNING HARD: last 2 batches 1-of-6 doable; 0x55xxxx/0x5axxxx regions dominated by stateful list-ops/eax-implicit/actor-SEH/register/float-multi-op. Session 79-100 = 205->257 (+52), ~36 handlers. Remaining early_window pool needs stateful-reset handlers (pool/list) or the run_diff bulk (reboot).
 
 2026-06-13 | round 99 | big-endian u32 store/load | attempted 2 | GREEN 2 (StoreBE51ca60 0x0051ca60 store_be32; LoadBE523110 0x00523110 load_be32) | deferred 4 (0045ca30 float-quantizer; 00477b60 pool-alloc stateful; 004893d0 vertex-push container; 00517200 5-byte reverse search) | exit-5/6: none | dry_counter 0. total_green 254->256 (>10% of +500 goal). Session 79-99 = 205->256 (+51). Handler library ~35.
 

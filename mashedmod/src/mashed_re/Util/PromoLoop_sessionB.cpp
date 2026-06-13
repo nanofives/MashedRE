@@ -609,3 +609,12 @@ extern "C" __declspec(dllexport) int __cdecl LoadBE523110(std::uint8_t* p) {
     return (int)(((((std::uint32_t)p[0]*0x100u + p[1])*0x100u + p[2])*0x100u) + p[3]);
 }
 RH_ScopedInstall(LoadBE523110, 0x00523110);
+
+// ===== round 100 =====
+
+// 0x005a6190  audio — byte-verified: uint fn(v): if(v<0x10){ DAT_00914700=0x10; return 0x10; } DAT_00914700=v; return v
+extern "C" __declspec(dllexport) unsigned int __cdecl Clamp5a6190(unsigned int v) {
+    if (v < 0x10u) { *reinterpret_cast<std::uint32_t*>(0x00914700u) = 0x10u; return 0x10u; }
+    *reinterpret_cast<std::uint32_t*>(0x00914700u) = v; return v;
+}
+RH_ScopedInstall(Clamp5a6190, 0x005a6190);
