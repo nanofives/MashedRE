@@ -87,6 +87,8 @@ PURE_LEAF_ARGTYPES = {
     'vec16_copy_set',        # u32 fn(idx,in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions at base+idx*stride
     'container_record_set',  # void fn(container,..): base=container[0],idx=container[2]; addr=base+idx*0x30; write args into addr+offs. shape p/f/pp
     'indexed_vec_set',       # void fn(idx,in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them
+    'indexed_bit_toggle',    # void fn(idx,set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store. test=[idx,set,seed]
+    'gated_int_predicate',   # u32 fn(arg): if(*(int*)gate==gateval) <switch membership> else 0. test=[arg,gateseed]
 }
 
 SRC = r"""
@@ -116,6 +118,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'arg_scattered_globals') ? ['uint32']
               : (cfg.at === 'vec16_copy_set') ? ['uint32','pointer']
               : (cfg.at === 'indexed_vec_set') ? ['uint32','pointer']
+              : (cfg.at === 'indexed_bit_toggle') ? ['uint32','uint32']
+              : (cfg.at === 'gated_int_predicate') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -257,6 +261,21 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_bit_toggle') {
+      // void fn(idx, set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store.
+      // test t=[idx,set,seed]: seed the flag word with a known prior value -> set/clear both exercised.
+      const base = cfg.tgt, stride = cfg.stride | 0, foff = cfg.field_off | 0;
+      const idx = t[0] >>> 0, set = t[1] >>> 0, seed = t[2] >>> 0;
+      const slot = ptr(base).add(idx * stride + foff);
+      try { slot.writeU32(seed); Orig(idx, set); o = slot.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { slot.writeU32(seed); Reim(idx, set); r = slot.readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'gated_int_predicate') {
+      // u32 fn(arg): if(*(int*)gate==gateval) <switch membership over arg> else 0.
+      // test t=[arg,gateseed]: seed the gate global -> exercises in-set/out-of-set AND gate-fail.
+      const arg = t[0] >>> 0, gv = t[1] >>> 0;
+      ptr(cfg.gate).writeU32(gv);
+      try { o = Orig(arg) >>> 0; } catch (e) { eo = e.message; }
+      try { ptr(cfg.gate).writeU32(gv); r = Reim(arg) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'indexed_vec_set') {
       // void fn(idx, in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them.
       // tests the write path (non-null in) bit-identically; the null-zero branch shares the same addresses.
@@ -482,7 +501,8 @@ def run(name):
            'off0': h.get('off0'), 'off1': h.get('off1'), 'offf': h.get('offf'),
            'idxtbl': h.get('idxtbl'), 'tscale': h.get('tscale'),
            'gate': h.get('gate'), 'gatemax': h.get('gatemax'),
-           'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'), 'asi': ASI}
+           'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'),
+           'bit': h.get('bit'), 'gateval': h.get('gateval'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
