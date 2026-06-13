@@ -3437,3 +3437,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  00495270  HWNDGet  C2->C3  promote-round-20 outbuf_only diff 10/10 GREEN log/diff_hwnd_get.csv
 2026-06-12  00484c70  WorldObjectsBaseGet  C2->C3  promote-round-20 outbuf_only+fold_ret diff 10/10 GREEN log/diff_world_objects_base_get.csv
 2026-06-12  0041da90  DeltaTimeOutGet  C2->C3  promote-round-20 outbuf_only race-lane diff 10/10 GREEN log/diff_delta_time_out_get.csv
+2026-06-12  0041f030  TriggerStructRead  C2->C3  promote-round-21 int_copy_outbuf(16) diff 10/10 GREEN log/diff_trigger_struct_read.csv (race)
+2026-06-12  0041f260  WorldMatrixCopy  C2->C3  promote-round-21 int_copy_outbuf(64) diff 10/10 GREEN log/diff_world_matrix_copy.csv (race, double-deref)
