@@ -3590,3 +3590,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0041eeb0  Flag0041eeb0  C2->C3  promote-round-74 flag_multibit 10/10 GREEN (early_window 4-arg multi-bit flag setter) [200th]
 2026-06-13  004495d0  GlobalFieldGet896278  C2->C3  promote-round-75 global_field_read 10/10 GREEN (early_window global-field+const getter)
 2026-06-13  0044e020  FloatLt44e020  C2->C3  promote-round-75 float_threshold_predicate 10/10 GREEN (early_window x87 record<threshold)
+2026-06-13  0044c370  GlobalFieldGet896000  C2->C3  promote-round-76 global_field_read 10/10 GREEN (early_window global-field+const getter)

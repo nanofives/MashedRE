@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 76 (global-field getter; opportunistic, beyond 200) --
+    'global_field_get_896000': {'rva': 0x0044c370, 'export': 'GlobalFieldGet896000', 'signature': {'ret': 'int32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x00896000, 'field_off': 4, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0xDEAD, 0x55, 0x12340, 0, 0x7000, 0x100, 0x1000, 0x9999], 'path2_tests': [0x1000, 0x2000, 0xDEAD]},
+
     # ---- promote-round round 75 (global-field getter + float-threshold predicate) — beyond 200 --
     'global_field_get_896278': {'rva': 0x004495d0, 'export': 'GlobalFieldGet896278', 'signature': {'ret': 'int32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x00896278, 'field_off': 4, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0xDEAD, 0x55, 0x12340, 0, 0x7000, 0x100, 0x1000, 0x9999], 'path2_tests': [0x1000, 0x2000, 0xDEAD]},
     'float_lt_44e020': {'rva': 0x0044e020, 'export': 'FloatLt44e020', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'float_threshold_predicate', 'target_global': 0x008900b0, 'stride': 0xf8, 'gate': 0x005ce2d8, 'lut_root_delta': 0, 'path1_tests': [[0, 0xBF800000], [1, 0x00000000], [2, 0xBDCCCCCD], [3, 0x3F800000], [4, 0xBCA3D70A], [0, 0xBC23D70A], [1, 0xC2C80000], [2, 0x42C80000], [0, 0xBF800000], [1, 0x00000000]], 'path2_tests': [[0, 0xBF800000], [1, 0x00000000], [2, 0xBDCCCCCD]]},
