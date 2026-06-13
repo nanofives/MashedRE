@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 98
-- total_green: 254
+- rounds_run: 99
+- total_green: 256
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 99 | big-endian u32 store/load | attempted 2 | GREEN 2 (StoreBE51ca60 0x0051ca60 store_be32; LoadBE523110 0x00523110 load_be32) | deferred 4 (0045ca30 float-quantizer; 00477b60 pool-alloc stateful; 004893d0 vertex-push container; 00517200 5-byte reverse search) | exit-5/6: none | dry_counter 0. total_green 254->256 (>10% of +500 goal). Session 79-99 = 205->256 (+51). Handler library ~35.
 
 2026-06-13 | round 98 | struct->out matrix builder | attempted 1 | GREEN 1 (Proj497000 0x00497000 struct_to_out_build NEW) | deferred 5 (0046bda0 float-sum getter; 00476b30 2nd-deref-chain; 00482730 list-iterate setter; 00483ca0 replay-save list; 00488320 fsin/eax) | exit-5/6: none | dry_counter 0. total_green 253->254. YIELD THINNING: this batch 1 of 6 doable (rest float-multi-op / multi-deref-chain / list-walk / fsin). Session 79-98 = 205->254 (+49). Handler library ~33. Remaining early_window pool increasingly hard shapes; +500 bulk still needs run_diff (reboot).
 

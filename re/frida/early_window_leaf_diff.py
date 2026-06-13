@@ -122,6 +122,8 @@ PURE_LEAF_ARGTYPES = {
     'global_table_linear_search',# int fn(key): if(key<=0) return -1; for i<count if(*(int*)(tgt+i*stride)==key) return i; return -1. test=[key,placeAt]
     'global_ptr_strided_clear',  # void fn(): for i in [0,len) step stride: *(u32*)(*(u32*)glob + i)=0. seed *glob=&buf, snapshot strided
     'struct_to_out_build',       # void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1]. snapshot out. test ignored
+    'store_be32',                # void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v
+    'load_be32',                 # int fn(ptr p): return big-endian u32 from p[0..3]. test = dword to seed
 }
 
 SRC = r"""
@@ -182,6 +184,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_table_linear_search') ? ['uint32']
               : (cfg.at === 'global_ptr_strided_clear') ? []
               : (cfg.at === 'struct_to_out_build') ? ['pointer','pointer']
+              : (cfg.at === 'store_be32') ? ['pointer','uint32']
+              : (cfg.at === 'load_be32') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -361,6 +365,17 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'store_be32') {
+      // void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v.
+      const buf = Memory.alloc(0x20); _keep.push(buf);
+      const rd = function () { return [buf.readU8(), buf.add(1).readU8(), buf.add(2).readU8(), buf.add(3).readU8()].join(','); };
+      try { buf.writeU32(0xEEEEEEEE); Orig(buf, t >>> 0); o = rd(); } catch (e) { eo = e.message; }
+      try { buf.writeU32(0xEEEEEEEE); Reim(buf, t >>> 0); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'load_be32') {
+      // int fn(ptr p): return big-endian u32 from p[0..3]. test = dword written to p.
+      const buf = Memory.alloc(0x20); _keep.push(buf); buf.writeU32(t >>> 0);
+      try { o = Orig(buf) >>> 0; } catch (e) { eo = e.message; }
+      try { buf.writeU32(t >>> 0); r = Reim(buf) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'struct_to_out_build') {
       // void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1].
       const span = (cfg.span | 0) || 16, seed = cfg.seed || [];

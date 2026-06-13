@@ -595,3 +595,17 @@ extern "C" __declspec(dllexport) void __cdecl Proj497000(std::uint32_t* out, cha
     *reinterpret_cast<float*>(out+0xb) = -(fv*f1);
 }
 RH_ScopedInstall(Proj497000, 0x00497000);
+
+// ===== round 99 =====
+
+// 0x0051ca60  util — byte-verified: void fn(p,v): p[0]=v>>24; p[1]=v>>16; p[2]=v>>8; p[3]=v  (store big-endian u32)
+extern "C" __declspec(dllexport) void __cdecl StoreBE51ca60(std::uint8_t* p, std::uint32_t v) {
+    p[0]=(std::uint8_t)(v>>24); p[1]=(std::uint8_t)(v>>16); p[2]=(std::uint8_t)(v>>8); p[3]=(std::uint8_t)v;
+}
+RH_ScopedInstall(StoreBE51ca60, 0x0051ca60);
+
+// 0x00523110  util — byte-verified: int fn(p): return ((p[0]*0x100+p[1])*0x100+p[2])*0x100+p[3]  (load big-endian u32)
+extern "C" __declspec(dllexport) int __cdecl LoadBE523110(std::uint8_t* p) {
+    return (int)(((((std::uint32_t)p[0]*0x100u + p[1])*0x100u + p[2])*0x100u) + p[3]);
+}
+RH_ScopedInstall(LoadBE523110, 0x00523110);

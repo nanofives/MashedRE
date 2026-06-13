@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 99 (big-endian u32 store/load) --
+    'store_be_51ca60': {'rva': 0x0051ca60, 'export': 'StoreBE51ca60', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'store_be32', 'lut_root_delta': 0, 'path1_tests': [0x12345678, 0, 0xFFFFFFFF, 0xCAFEBABE, 0xDEADBEEF], 'path2_tests': [0x12345678, 0]},
+    'load_be_523110': {'rva': 0x00523110, 'export': 'LoadBE523110', 'signature': {'ret': 'int32', 'args': ['pointer']}, 'arg_type': 'load_be32', 'lut_root_delta': 0, 'path1_tests': [0x12345678, 0, 0xFFFFFFFF, 0xCAFEBABE, 0xDEADBEEF], 'path2_tests': [0x12345678, 0]},
+
     # ---- promote-round round 98 (struct->out projection matrix builder) --
     'proj_497000': {'rva': 0x00497000, 'export': 'Proj497000', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'struct_to_out_build', 'span': 16, 'seed': [{'off':0x70,'bits':0x12345678},{'off':0x74,'bits':0x9abcdef0},{'off':0x80,'bits':0x3f800000},{'off':0x84,'bits':0x40000000}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
 
