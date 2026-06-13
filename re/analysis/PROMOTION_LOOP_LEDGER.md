@@ -9,10 +9,14 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 26
-- total_green: 59
+- rounds_run: 28
+- total_green: 69
 - dry_counter: 0
-- last_round: 2026-06-13 round 26 (5 GREEN — worklist batch)
+- last_round: 2026-06-13 round 28 (5 GREEN — worklist setters/getter)
+- WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
+  (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
+  authoring (the auto-classifier over-permits accumulators/dispatchers as
+  int_scalar — confirm a pure mov/store+ret body in the disasm dump).
 - GOAL (user, 2026-06-13): reach 200 C2->C3. Strategy: batch 5/round from
   re/analysis/plans/promote_worklist.tsv (54 handler-fit candidates pre-curated);
   when that drains, re-curate with the 11-handler inventory over the broader C2
@@ -239,6 +243,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-13 | rounds 27-28 | worklist batches (continuous; goal 200) | attempted 10 | GREEN 10 | exit-5/6: none | dry_counter 0. R27: 5 global getters (Global67eca4/67ed6c/771968 uint + Float67eaa8/PowerupRange float; read_global). R28: 5 setters+getter (Set67eaa8/77396c/773978 void_setter; GhostMode::Clear scalars_to_scattered fill; PowerupTargetPtrGet read_global on *(0x00684dac)+0x30). All callers C2 (batched reference_to). 69 total; ~39 worklist candidates remain. CADENCE: working continuously (not waiting on cron), 5/round, ~1 build + 5 diffs per round.
 
 2026-06-13 | round 26 | worklist batch (NEW: re/analysis/plans/promote_worklist.tsv, 54 handler-fit pre-curated; goal=200) | attempted 5 | GREEN 5 (RwGlobal7d459cGet, Flag63b908Get/Set, ElapsedTimeGet, AiTargetEnableGet — all single-global read_global/void_setter_observe leaves) | deferred 0 | exit-5/6: none | dry_counter 0. THROUGHPUT SHIFT: batching 5/round via the worklist + a single Ghidra reference_to pass for all callers + one build + 5 diffs. ~49 worklist candidates remain (will run ~10 rounds to ~108). Then: re-curate broader C2 (filter_v4 rejected callee/vtable/thiscall shapes that some of the 11 handlers may now cover) + author handlers for the remaining classes (thiscall-3out for 00430b30, dispatcher for 004516d0/004d4f00, COM/DirectShow band ~94 rows). 200 is reachable but the back half needs new handlers + possibly the COM harness.
 
