@@ -3579,3 +3579,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00432260  RecEq232  C2->C3  promote-round-70 gated_record_eq2 10/10 GREEN (early_window gated record-eq predicate)
 2026-06-13  00458fa0  TtlSet68b1b0  C2->C3  promote-round-71 indexed_table_set 10/10 GREEN (early_window bounded TTL setter)
 2026-06-13  00459540  PoolJReset68ba00  C2->C3  promote-round-71 indexed_const2_set 10/10 GREEN (early_window 2-field const reset)
+2026-06-13  004627b0  AudioStateActive  C2->C3  promote-round-72 global_switch_member 10/10 GREEN (early_window audio-state switch predicate)
+2026-06-13  0042bf30  Post0042bf30  C2->C3  promote-round-72 gated_args_to_globals 10/10 GREEN (early_window gated 6-arg message-post)
