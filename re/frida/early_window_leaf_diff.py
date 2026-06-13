@@ -111,6 +111,8 @@ PURE_LEAF_ARGTYPES = {
     'double_deref_ptr_get',      # void fn(out*,idx): rec=*(tgt+idx*stride); *out=*(rec+rec_off)+add. test=idx
     'deref_float_field_rmw',     # void fn(ptr p,float f): *(float*)(p+field_off) -= f (seedf initial). test=fval
     'any_slot_nonzero',          # u32 fn(): return any(observe[k].addr nonzero)?1:0. test=index to set nonzero (-1=all zero)
+    'arg_table_linear_search',   # int fn(key, table*, count): for i<count if(table[i*stride_dw]==key) return i; return -1. test=[key,placeAt,count]
+    'global_float_step',         # void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. test=[seedbits,targetfloat]
 }
 
 SRC = r"""
@@ -160,6 +162,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'double_deref_ptr_get') ? ['pointer','uint32']
               : (cfg.at === 'deref_float_field_rmw') ? ['pointer','float']
               : (cfg.at === 'any_slot_nonzero') ? []
+              : (cfg.at === 'arg_table_linear_search') ? ['uint32','pointer','uint32']
+              : (cfg.at === 'global_float_step') ? ['float']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -339,6 +343,20 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'arg_table_linear_search') {
+      // int fn(key, table*, count): for i<count: if(table[i*stride_dw]==key) return i; return -1.
+      // test t=[key, placeAt, count]: alloc table, fill distinct non-key markers, place key at placeAt.
+      const sdw = cfg.stride_dw | 0, key = t[0] >>> 0, placeAt = t[1] | 0, count = t[2] | 0;
+      const tbl = Memory.alloc(count * sdw * 4 + 0x40); _keep.push(tbl);
+      for (let i = 0; i < count; i++) tbl.add(i * sdw * 4).writeU32((0x7F000000 | i) >>> 0);
+      if (placeAt >= 0 && placeAt < count) tbl.add(placeAt * sdw * 4).writeU32(key);
+      try { o = '' + (Orig(key, tbl, count) | 0); } catch (e) { eo = e.message; }
+      try { r = '' + (Reim(key, tbl, count) | 0); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_float_step') {
+      // void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. seed *tgt, call, read.
+      const g = ptr(cfg.tgt), seedbits = t[0] >>> 0, target = t[1];
+      try { g.writeU32(seedbits); Orig(target); o = g.readFloat(); } catch (e) { eo = e.message; }
+      try { g.writeU32(seedbits); Reim(target); r = g.readFloat(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'any_slot_nonzero') {
       // u32 fn(): return any(observe[k].addr nonzero)?1:0. test = index to set nonzero (-1 = all zero).
       const obs = cfg.observe, set = t | 0;
@@ -731,7 +749,8 @@ def run(name):
            'gate_off': h.get('gate_off'), 'val_off': h.get('val_off'),
            'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'),
            'add': h.get('add'), 'seedf': h.get('seedf'),
-           'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'), 'asi': ASI}
+           'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'),
+           'stride_dw': h.get('stride_dw'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

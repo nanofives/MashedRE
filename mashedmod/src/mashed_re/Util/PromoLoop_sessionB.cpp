@@ -351,3 +351,24 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl ItemPosRet4075b0(std::uin
     return (*reinterpret_cast<std::uint32_t*>(0x00639dc8u + i * 0xecu) == 0) ? 1u : 0u;
 }
 RH_ScopedInstall(ItemPosRet4075b0, 0x004075b0);
+
+// ===== round 90 =====
+
+// 0x0045c4e0  gameplay — byte-verified: 8B 54 24 0C 56 33 C0 85 D2 7E 14 ... 39 31 74 0B 40 83 C1 28 3B C2 7C F4 83 C8 FF 5E C3
+//   int fn(key, table*, count): for i in [0,count): if(table[i*10]==key) return i ; return -1  (caller 0045cb20/0045cbe0 C2)
+extern "C" __declspec(dllexport) int __cdecl ArgSearch45c4e0(int key, int* table, int count) {
+    for (int i = 0; i < count; i++)
+        if (table[i * 10] == key) return i;
+    return -1;
+}
+RH_ScopedInstall(ArgSearch45c4e0, 0x0045c4e0);
+
+// 0x0045df70  gameplay — byte-verified (71B): steps global float DAT_006036c0 toward `target` by DAT_005cc9a4
+//   if (g < target) g += step ; if (target < g) g -= step   (caller 0045dfc0 C2)
+extern "C" __declspec(dllexport) void __cdecl FloatStep45df70(float target) {
+    float* g = reinterpret_cast<float*>(0x006036c0u);
+    float step = *reinterpret_cast<float*>(0x005cc9a4u);
+    if (*g < target) *g += step;
+    if (target < *g) *g -= step;
+}
+RH_ScopedInstall(FloatStep45df70, 0x0045df70);

@@ -3618,3 +3618,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  004058b0  FloatSub4058b0  C2->C3  early_window deref_float_field_rmw GREEN 5/5; promote-round-88
 2026-06-13  004576b0  AnyActive4576b0  C2->C3  early_window any_slot_nonzero GREEN 5/5; promote-round-89
 2026-06-13  004075b0  ItemPosRet4075b0  C2->C3  early_window double_deref_vec3+ret GREEN 5/5; promote-round-89
+2026-06-13  0045c4e0  ArgSearch45c4e0  C2->C3  early_window arg_table_linear_search GREEN 5/5; promote-round-90
+2026-06-13  0045df70  FloatStep45df70  C2->C3  early_window global_float_step GREEN 5/5; promote-round-90

@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 90 (arg-table linear search + global float step) --
+    'arg_search_45c4e0': {'rva': 0x0045c4e0, 'export': 'ArgSearch45c4e0', 'signature': {'ret': 'int32', 'args': ['uint32','pointer','uint32']}, 'arg_type': 'arg_table_linear_search', 'stride_dw': 10, 'lut_root_delta': 0, 'path1_tests': [[0x1234,0,8],[0x1234,3,8],[0x1234,7,8],[0x1234,-1,8],[0xABCD,5,8]], 'path2_tests': [[0x1234,3,8],[0x1234,-1,8]]},
+    'float_step_45df70': {'rva': 0x0045df70, 'export': 'FloatStep45df70', 'signature': {'ret': 'void', 'args': ['float']}, 'arg_type': 'global_float_step', 'target_global': 0x006036c0, 'lut_root_delta': 0, 'path1_tests': [[0x42480000,100.0],[0x42480000,0.0],[0x00000000,5.0],[0x42c80000,50.0],[0x41200000,10.0]], 'path2_tests': [[0x42480000,100.0],[0x00000000,5.0]]},
+
     # ---- promote-round round 89 (any-active predicate + double-deref vec3+ret) --
     'any_active_4576b0': {'rva': 0x004576b0, 'export': 'AnyActive4576b0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'any_slot_nonzero', 'observe': [{'addr': 0x0068a300},{'addr': 0x0068a304},{'addr': 0x0068a274},{'addr': 0x0068a284}], 'lut_root_delta': 0, 'path1_tests': [-1,0,1,2,3], 'path2_tests': [-1,0]},
     'item_pos_ret_4075b0': {'rva': 0x004075b0, 'export': 'ItemPosRet4075b0', 'signature': {'ret': 'uint32', 'args': ['uint32','pointer']}, 'arg_type': 'double_deref_vec3_get', 'target_global': 0x00639d90, 'stride': 0xec, 'rec_off': 4, 'out_off': 0x40, 'span': 4, 'ret_tbl': 0x00639dc8, 'ret_stride': 0xec, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5], 'path2_tests': [0,1]},
