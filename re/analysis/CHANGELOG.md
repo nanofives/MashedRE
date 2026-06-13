@@ -3487,3 +3487,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  004039e0  Float5ea0a8Get  C2->C3  promote-round-35 read_global ret:float 10/10 GREEN (early_window_leaf_diff, validated)
 2026-06-13  004173a0  Float89a360Get  C2->C3  promote-round-35 read_global ret:float 10/10 GREEN (early_window_leaf_diff, validated)
 2026-06-13  0046dd80  Float61313cGet  C2->C3  promote-round-35 read_global ret:float 10/10 GREEN (early_window_leaf_diff, validated)
+2026-06-13  00496930  Table773030Get  C2->C3  promote-round-35 int_scalar table-seed 10/10 GREEN (early_window, reclaims round-30 exit-5)
+2026-06-13  004840d0  JointPtr6ce81cGet  C2->C3  promote-round-35 int_scalar table-seed 10/10 GREEN (early_window, reclaims round-30 exit-5)
