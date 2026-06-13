@@ -28,12 +28,22 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
   +500 = ~17% of it -> physically plausible. BUT the display-INDEPENDENT leaf vein
   is now PROVEN ~drained (frontier=232 leaves; only ~3-5 are display-independent
   pure shapes the early_window handlers cover; the rest read live state). The
-  204 STATE rows + the broader pool REQUIRE run_diff against a BOOTED game ->
-  display-gated. The display is WEDGED again this session (1 monitor, MASHED AVs
-  0xC0000005 at D3D9 init ~4s — same class as the round-35 outage). 207 is the
-  display-independent ceiling for now; +500 needs the display restored (reboot).
-- POST-REBOOT RESUME RECIPE: (1) boot-probe original\MASHED.exe (expect a window,
-  not exit 0xC0000005). (2) re-run promote_frontier.py + promote_classify.py.
+  204 STATE rows + the broader pool REQUIRE run_diff against a BOOTED game.
+- BOOT BLOCKER RE-DIAGNOSED 2026-06-13 (CORRECTS the "display wedge" framing):
+  MASHED AVs 0xC0000005 ~4s into boot, BUT D3D9 CreateDevice SUCCEEDS (probe
+  re/frida/d3d9_createdev_probe.py: adapter=0 HAL 640x480 windowed hr=0, non-null
+  device, adapterCount=1). The real fault is a NULL RW-object deref at
+  MASHED.exe+0xc7785 (FUN_004c7760, `mov cx,[edi+0x1c]`, edi=NULL): caller
+  FUN_0042d4a0 passes arg2 = (FUN_004671a0(-1))->[0x60] which is NULL — a
+  per-screen camera/raster sub-object, null with 1 monitor (onset correlated with
+  3->1 topology, round 35). This blocks run_diff (engine LUT root only populates
+  after this init). NOT a reboot/no-display problem. Probes: boot_crash_probe.py,
+  d3d9_createdev_probe.py. See memory project-boot-crash-rw-nullderef-not-display.
+  FIX OPTIONS (invasive, user-gated): (a) reversible .asi survival hook null-guarding
+  FUN_004c7760/0042d4a0; (b) binary boot-survival patch (precedent skip_audio_com);
+  (c) 2nd monitor. early_window leaves are unaffected (kill pre-init).
+- RESUME RECIPE once boot survives: (1) boot-probe original\MASHED.exe (expect a window).
+  (2) re-run promote_frontier.py + promote_classify.py.
   (3) the 204 STATE rows are the worklist: for each, promote_classify --emit gives
   the reimpl+registry; author in a PromoLoop cluster, build ONCE per batch, run_diff
   (booted) sequentially. (4) classify GREENs via re-classify. This is the fast,
