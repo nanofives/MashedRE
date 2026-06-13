@@ -18,11 +18,46 @@ public class ApplyTwinNames extends GhidraScript {
         BufferedReader r = new BufferedReader(new FileReader(args[0]));
         String line = r.readLine(); // header
         int renamed = 0, missing = 0;
+        java.util.HashSet<Long> inCsv = new java.util.HashSet<>();
+        java.util.ArrayList<String[]> rows = new java.util.ArrayList<>();
         while ((line = r.readLine()) != null) {
             String[] c = line.split(",", -1);
-            if (c.length < 6) {
+            if (c.length >= 6) {
+                rows.add(c);
+                inCsv.add(Long.parseLong(c[1].substring(2), 16));
+            }
+        }
+        r.close();
+
+        // stale-cleanup: functions labeled by a previous run whose pair was
+        // dropped revert to FUN_<va> and lose the [xbuild] plate line
+        int stale = 0;
+        for (Function fn : currentProgram.getFunctionManager().getFunctions(true)) {
+            String cmt = fn.getComment();
+            if (cmt == null || !cmt.contains("[xbuild]")) {
                 continue;
             }
+            long va = fn.getEntryPoint().getOffset();
+            if (inCsv.contains(va)) {
+                continue;
+            }
+            try {
+                fn.setName(String.format("FUN_%08x", va), SourceType.IMPORTED);
+            }
+            catch (Exception e) {
+                // keep name
+            }
+            StringBuilder kept = new StringBuilder();
+            for (String l : cmt.split("\n")) {
+                if (!l.contains("[xbuild]")) {
+                    kept.append(l).append('\n');
+                }
+            }
+            fn.setComment(kept.length() == 0 ? null : kept.toString().trim());
+            stale++;
+        }
+
+        for (String[] c : rows) {
             long pcVa = Long.parseLong(c[0].substring(2), 16);
             long xbVa = Long.parseLong(c[1].substring(2), 16);
             String tier = c[2];
@@ -51,12 +86,22 @@ public class ApplyTwinNames extends GhidraScript {
                 }
             }
             String plate = String.format("[xbuild] PC twin 0x%08x tier=%s", pcVa, tier);
+            if (c.length >= 7 && c[6].equals("0")) {
+                plate += " ORDINAL-FLAGGED";
+            }
+            StringBuilder kept = new StringBuilder();
             String old = fn.getComment();
-            fn.setComment(old == null ? plate
-                    : old.contains("[xbuild]") ? old : old + "\n" + plate);
+            if (old != null) {
+                for (String l : old.split("\n")) {
+                    if (!l.contains("[xbuild]")) {
+                        kept.append(l).append('\n');
+                    }
+                }
+            }
+            fn.setComment((kept + plate).trim());
             renamed++;
         }
-        r.close();
-        println("ApplyTwinNames: " + renamed + " renamed, " + missing + " missing");
+        println("ApplyTwinNames: " + renamed + " renamed, " + stale
+                + " stale cleaned, " + missing + " missing");
     }
 }

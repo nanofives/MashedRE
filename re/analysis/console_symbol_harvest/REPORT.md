@@ -130,20 +130,53 @@ py -3.12 re/tools/console/xbuild_match.py && py -3.12 re/tools/console/xbuild_ma
   Verified on 0x0041e870 `TrackNodeRecordScan` → Xbox 0x001c32a0 (0x48-stride
   record scan, key at +0x10 — structure agrees with the PC side).
 
-## Next levers (in expected-yield order)
+## Round 2 (2026-06-12, backlog levers): 1,334 → 1,813 pairs (26.4% first-party)
 
-1. **Data-reference anchoring** — shared unique float constants / dword tables
-   as a fourth anchor tier (handling constants are identical across builds).
-2. **Caller-context propagation** — current propagation is callee-list only;
-   matching via matched *callers* (who calls me, at which site index) catches
-   leaf functions that string/mnem tiers miss.
-3. **Use of matches**: (a) a PC function that decompiles badly can be read on
-   the Xbox side (different optimizer context, often cleaner); (b) PC-side
-   functions with NO Xbox match in `.text` are platform-layer candidates
-   (window/D3D9/DirectShow glue) — a cheap subsystem-attribution signal;
-   (c) Xbox `.data` is laid out from the same source — matched-function data
-   refs give a second witness for global-variable identification.
-3. The Xbox disc asset tree (`ToastArt/`) and PS2 `TOASTART/` are format
+Three new tiers in `xbuild_match2.py` over an extended feature dump
+(`DumpFuncFeatures.java` now also emits unusual scalar immediates ≥0x10000
+and 8-byte data fingerprints of referenced non-string initialized data):
+
+- **const** (234) — unique-token anchoring over immediates + data
+  fingerprints. Notable: `FrontendDirInput` 0x00423040 → Xbox 0x00204283.
+- **caller / caller-mnem** (12) — reciprocal-best votes from matched callers'
+  unmatched callee sets.
+- **interval / interval-mnem** (87) — positional pairing between consecutive
+  strong anchors. Key discovery: **Xbox link order is globally REVERSED vs
+  PC** (PC-ascending → Xbox-descending, detected at runtime); a thunk train
+  at PC 0x004b5350..90 maps in exact lockstep to Xbox 0x0008eb60..a0. Also
+  surfaced that the Xbox build links libpng (`png_zalloc`, `png_get_uint_32`
+  matched by interval position).
+
+Verification: an **ordinal check** flags pairs whose Xbox VA contradicts both
+address-order neighbors; 89 contradicted weak-tier pairs were dropped,
+1,623/1,813 surviving pairs are ordinal-consistent (flagged pairs keep
+`ordinal_ok=0` in the CSV and an `ORDINAL-FLAGGED` plate in Ghidra — many sit
+at library-band boundaries where band link order legitimately differs).
+
+| tier | pairs | | tier | pairs |
+|---|---|---|---|---|
+| prop-weak | 587 | | prop-mnem | 101 |
+| string | 298 | | interval | 59 |
+| mnem | 259 | | byte-prefix | 50 |
+| const | 234 | | interval-mnem | 28 |
+| byte-full | 185 | | caller(+mnem) | 12 |
+
+Coverage: **959 / 3,638 first-party rows (26.4%)**; audio 224, render 218,
+util 169, boot 94, frontend 62, gameplay 47, vehicle 41, hud 34.
+`ApplyTwinNames` re-run: 1,813 named, 30 stale labels cleaned.
+
+## Remaining levers
+
+1. **Verify/upgrade `prop-weak` (587) on use** — each pair consulted via
+   `xtwin.py` should be eyeballed; ordinal-consistency already pre-filters.
+2. **Band-aware ordinal check** — segment the order check per library band to
+   cut the ~190 false flags at band boundaries.
+3. **PS2 `.rodata` data-mining** — shared float/string tables as a second
+   witness for PC global identification (demand-driven).
+4. **Use of matches**: (a) hairy PC function → read the Xbox twin
+   (`xtwin.py`); (b) PC functions with NO Xbox match = platform-layer
+   candidates; (c) Xbox `.data` refs corroborate PC global identification.
+5. The Xbox disc asset tree (`ToastArt/`) and PS2 `TOASTART/` are format
    variants of the PC assets — useful when a PC format field is ambiguous.
 
 ## PS2 ELF — retained value despite stripping
