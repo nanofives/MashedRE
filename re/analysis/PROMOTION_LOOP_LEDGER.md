@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 9
-- total_green: 28
+- rounds_run: 10
+- total_green: 30
 - dry_counter: 0
-- last_round: 2026-06-12 round 9 (5 GREEN, L3 curated)
+- last_round: 2026-06-12 round 10 (2 GREEN + 2 exit-5 deferrals)
 
 ## Lane queues
 
@@ -77,6 +77,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 0040dc90 UtilSlotIndexCondGet — round 9 L3, log/diff_util_slot_index_cond_get.csv 10/10 GREEN (5/10 path untested)
 - 00429860 RaceStateFlagGet — round 9 L3, log/diff_race_state_flag_get.csv 10/10 GREEN
 - 00429840 RaceStateLatchSet — round 9 L3, log/diff_race_state_latch_set.csv 10/10 GREEN (latch branch via fill=0xFF)
+- 0040e360 RaceMode::Set — round 10 L3, log/diff_race_mode_set.csv 10/10 GREEN (restricted-valid vectors)
+- 0040b410 RaceScoreTimerGet — round 10 L3, log/diff_race_score_timer_get.csv 10/10 GREEN (race lane)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -132,6 +134,12 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   (TLS init) / 004aa3e4 (2-global predicate, one live path only) / 004aa3fe
   (HeapCreate) / 004ac04a (file-handle table) — live one-shot CRT init side
   effects or single-path coverage; not promotable via menu-attach re-call
+- 0046c750/0046c730 ai EntityVelocityCounterGet/EntityDamageStateGet
+  (round-10) — reimpls authored + registered (PromoLoop_round10.cpp) but
+  exit-5: the exposure counter at 0x00882194+i*0xd04 is genuinely 0 across
+  all 16 slots in a clean ~20s drive (likely accumulates only under
+  damage/exposure, per FUN_0046d7f0 accumulate+drain). Needs a
+  damage-inducing scenario (drive recipe ext) — stays C2, entries kept
 - 004cc7e0 render (round-8) — GREEN EVIDENCE IN HAND (void_setter_observe
   10/10, log/diff_rw_global_6182b0_set.csv; reimpl in PromoLoop_round8.cpp)
   but U-5102 carries an EXPLICIT Blocks=C2->C3 — promotion refused per the
@@ -159,6 +167,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 10 | L3 (round-9 leads) | attempted 4 | GREEN 2 (race_mode_set restricted-valid-vector technique on a live state-machine global; race_score_timer_get race lane) | deferred 2 (entity getter pair — exit-5, exposure counter genuinely 0 in clean drive; needs damage-inducing scenario) | exit-5 x1 root-caused | dry_counter 0. The curated cheap-leaf vein from loop_round_8 is now EXHAUSTED (all 14 curated rows promoted/deferred). Round-11 options: (a) re-curate loop_round_8_passed.tsv with looser shape patterns (indexed getters w/o "getter" keyword, 2-arg setters, ptr-return helpers — expect lower hit rate), (b) L4 degenerate-GREEN evidence repair (184 residuals), (c) L5 wishlist review (out-buffer-compare at 4 confirmed unlocks — under the >=10 bar but the bar is ledger-amendable if the loop would otherwise go dry).
 
 2026-06-12 | round 9 | L3 (round-8 curation remainder) | attempted 5 | GREEN 5 | deferred 0 new | exit-5/6: none | dry_counter 0. New technique: latch-branch coverage via scalars_to_scattered_globals fill=0xFF (forces current!=0 inside the restored bracket → no-store branch exercised). L3 curated remainder for round 10: 0046c730/0046c750 (0xd04-stride physics getters — race lane, in-bounds 0..15), 0040b410 (11b indexed getter — read note for stride), 0040e360 RaceMode::Set (9b setter on the LIVE race-phase global 0x0063ba8c — void_setter_observe saves/restores, but a mid-write phase glitch could perturb the menu; vector with menu-mode values; CAUTION). After those: re-run the curation regexes with looser patterns (indexed getters, 2-global conditionals) or move to L4 evidence repair.
 
