@@ -3422,3 +3422,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  0042f520  ViewportBlockPtrGet  C2->C3  promote-round-11 diff 10/10 GREEN log/diff_viewport_block_ptr_get.csv
 2026-06-12  00485370  DynamicObjectListGetBase  C2->C3  promote-round-11 diff 10/10 GREEN log/diff_dynamic_object_list_get_base.csv
 2026-06-12  00405420  ReplayCursorReset  C2->C3  promote-round-11 scalars_to_scattered_globals diff 10/10 GREEN log/diff_replay_cursor_reset.csv
+2026-06-12  0041b510  HudCounterReset  C2->C3  promote-round-13 scalars_to_scattered_globals diff 10/10 GREEN log/diff_hud_counter_reset.csv
+2026-06-12  00431b10  BootParamSet2  C2->C3  promote-round-13 scalars_to_scattered_globals diff 10/10 GREEN log/diff_boot_param_set2.csv
+2026-06-12  004d6e60  TexStageCacheGet  C2->C3  promote-round-13 scenario=race diff 10/10 GREEN log/diff_tex_stage_cache_get.csv (menu was exit-5; in-race bindings populate the cache)
