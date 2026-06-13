@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 33
-- total_green: 92
+- rounds_run: 34
+- total_green: 96
 - dry_counter: 0
-- last_round: 2026-06-13 round 33 (5 GREEN: 4 getters + 1 const setter from byte-scan pool)
+- last_round: 2026-06-13 round 34 (4 GREEN: getter/setters + bounds getter; 2 dropped on caller-gate)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -323,6 +323,8 @@ final gated-remainder report.
 2026-06-13 | round 32 | byte-scan pool (getters + param setters) | attempted 5 | GREEN 5 (GetRaceStateField 0x0042d390, Global7e9584Get 0x00499710 HWND, Global7dcabcGet 0x005a7b50 audioctx read_global; Set86ecc8 0x00472640, Set63ba7c 0x0040e170 void_setter_observe) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 82->87. All menu-attach, all callers C2+ (00492e90 boot / 00495150 input / 005a7b60 audio / 004030d0 util / 0043df00 frontend). ~15 trivial-shape leaves remain in the byte-scan pool (get_u32×~7 incl. caller-gated 004d71f0, get_f32×3, set_const×3, set_u32×~2).
 
 2026-06-13 | round 33 | byte-scan pool (getters + const setter) | attempted 5 | GREEN 5 (Global63a5d0Get 0x004075a0, Global63d7e0Get 0x0041e140, Global6c6eb0Get 0x0047ce70, Global772ffcGet 0x00496910 read_global; Set7f1a0c_1000 0x0042b950 scalars_to_scattered_globals) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 87->92. Note 0x00496910 reads the same 0x00772ffc table base that exit-5'd round-16 via int_scalar — read_global SEEDS the global so it's non-degenerate even though the int_scalar table-index path was degenerate. ~10 trivial-shape leaves remain (get_f32×3 untried + a few get_u32/set_const/set_u32 + caller-gated 004d71f0). NEXT: validate the float-getter (D9 05 <a4> C3) path on 0x004039e0 — needs the existing float read_global arg_type confirmed in diff_template.js.
+
+2026-06-13 | round 34 | byte-scan pool (getter/setters + bounds getter) | attempted 4 | GREEN 4 (Global772facGet 0x00495790 read_global; Set684b34 0x0044d6e0 void_setter_observe; Set771968_1 0x00493590 scalars_to_scattered_globals; VehPwrState68ba00Get 0x0045a0f0 int_scalar bounds getter) | deferred 0 | dropped 2 on caller-gate (0x00496d00 caller 00448951 in UNDEFINED region; 0x004b6700 reached by JUMP not CALL; also 0x00495520 caller FUN_004960a0 not in hooks.csv) | exit-5/6: none | dry_counter 0. total_green 92->96. KEY WIN: 0x0045a0f0 is a bounds-checked getter (signed v<0||v>=4 -> -1) -> the out-of-range -1 returns make int_scalar NON-degenerate even at menu-attach (no race needed), unlike the plain table getters that exit-5'd in round 30. hooks.csv note for 0045a0f0 was WRONG ('no bounds check') -> corrected in the C3 row. TRIVIAL-SHAPE POOL NOW NEARLY DRY: remaining are get_f32×3 (need a float-return read_global handler -> L5, only 3 rows so below the >=10 threshold) + caller-gated/jump-target leftovers (004d71f0, 004b6700, 00496d00, 00495520). NEXT LEVER for sustained yield: L5 handler for the deref-param class (e.g. 0x004cc4f0 RW chunk validator does `mov eax,[eax]` on arg) OR re-curate the broader C2 pool for non-leaf shapes the existing handlers can reach.
 
 ## Final gated-remainder report
 

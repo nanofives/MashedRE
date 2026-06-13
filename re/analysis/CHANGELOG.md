@@ -3480,3 +3480,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0047ce70  Global6c6eb0Get  C2->C3  promote-round-33 read_global 10/10 GREEN
 2026-06-13  00496910  Global772ffcGet  C2->C3  promote-round-33 read_global 10/10 GREEN
 2026-06-13  0042b950  Set7f1a0c_1000  C2->C3  promote-round-33 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  00495790  Global772facGet  C2->C3  promote-round-34 read_global 10/10 GREEN
+2026-06-13  0044d6e0  Set684b34  C2->C3  promote-round-34 void_setter_observe 10/10 GREEN
+2026-06-13  00493590  Set771968_1  C2->C3  promote-round-34 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  0045a0f0  VehPwrState68ba00Get  C2->C3  promote-round-34 int_scalar 10/10 GREEN (bounds-check non-degenerate)
