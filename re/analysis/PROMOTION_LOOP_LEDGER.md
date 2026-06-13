@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 15
-- total_green: 39
+- rounds_run: 16
+- total_green: 40
 - dry_counter: 0
-- last_round: 2026-06-12 round 15 (1 GREEN — round-14 carry-over; user switched to Opus 4.8 1M mid-loop)
+- last_round: 2026-06-12 round 16 (1 GREEN — last identified candidate, via disassembly pass)
 
 ## Lane queues
 
@@ -88,6 +88,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 004d6e60 TexStageCacheGet — round 13, log/diff_tex_stage_cache_get.csv 10/10 GREEN (race lane after menu exit-5)
 - 004cc7e0 RwGlobal6182b0Set — round 14 CLASSIFY-ONLY (U-5102 resolved via Ghidra xref; round-8 GREEN evidence)
 - 00402f40 Util636ad8Get — round 15, log/diff_util_636ad8_get.csv 10/10 GREEN (caller gate filled round-14 Ghidra pass)
+- 004c9eb0 DeviceModeBestBelowSet — round 16, log/diff_device_mode_best_below_set.csv 10/10 GREEN non-degenerate (58-instr vtable scanner; disassembly-pinned __stdcall + buffer+8)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -149,15 +150,6 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   all 16 slots in a clean ~20s drive (likely accumulates only under
   damage/exposure, per FUN_0046d7f0 accumulate+drain). Needs a
   damage-inducing scenario (drive recipe ext) — stays C2, entries kept
-- 004c9eb0 render (round-15) — 146B device-mode selector; verbatim decomp
-  transcript in its note resolves the best-below variable logic, BUT the body
-  makes two double-indirect vtable calls (*DAT_007d4108 + 0x18 count / +0x1c
-  fetch-into-8byte-buf) whose calling convention is `unknown`. A bit-faithful
-  reimpl needs the push/stack-cleanup pattern read from the call-site
-  disassembly (NO-GUESSING) AND the uStack_8 buffer offset (frame analysis
-  suggests buf+8 but unconfirmed). Needs a Ghidra DISASSEMBLY pass (not just
-  decomp). Caller 00493710 C2; indirect-only callees (no named callee to gate,
-  per PerModeRenderMachine precedent)
 - 004cc7e0 render (round-8) — GREEN EVIDENCE IN HAND (void_setter_observe
   10/10, log/diff_rw_global_6182b0_set.csv; reimpl in PromoLoop_round8.cpp)
   but U-5102 carries an EXPLICIT Blocks=C2->C3 — promotion refused per the
@@ -185,6 +177,30 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+--- IDENTIFIED-CANDIDATE POOL NOW EMPTY ---
+After 16 rounds (40 promotions; 14 productive, 2 env/contention skips fully
+recovered) every candidate the curation/triage passes surfaced is
+promoted-or-deferred-with-reason. The next round has NO pre-identified
+candidate to author. Lanes status:
+  L0 race1-leftovers   : DRAINED (rounds 1-2)
+  L1 race-lane         : promoted what was viable; residue is deferred
+                         (callee-internal effects / out-ptr shapes / lap-mode)
+  L2 demoted-needs-reimpl: all 33 promoted or triaged-out (CRT one-shot init,
+                         QPC time-varying, COM — none menu-attach-promotable)
+  L3 curated leaves    : both curation passes (strict + loose) exhausted
+  L4 degenerate-repair : 184 residuals but yields NO new C3s (evidence repair)
+  L5 harness-ext       : out-buffer-compare unlocks ~4 (under the >=10 bar)
+The honest call: a 17th round must either (a) author an L5 harness extension
+(out-buffer-compare; ~4 unlocks; SWEEP-CRITICAL) which the >=10 rule currently
+forbids, or (b) run a fresh c2_gate_audit / c3_filter sweep hunting a NEW vein
+(diminishing returns — the obvious shapes are gone), or (c) declare the
+demand-driven promotable pool DRAINED. Per the loop's own dry-round rule, the
+next round will run the discovery sweep once more; if it surfaces nothing
+author-able, that is dry round 1, and a second dry round ends the loop with the
+final gated-remainder report.
 
 2026-06-12 | round 15 | round-14 carry-over (build unblocked: user fixed their exe_main.cpp WIP; baseline GREEN) | attempted 1 | GREEN 1 (00402f40 read_global) | deferred 1 (004c9eb0 -> moved to Deferred: needs a Ghidra DISASSEMBLY pass for the vtable calling convention, not just decomp) | exit-5/6: none | dry_counter 0. Loop now at 39 promotions over 15 rounds (13 productive, 2 env/contention skips fully recovered). REMAINING PROMOTABLE POOL is thin and Ghidra-gated: (a) 004c9eb0 (disassembly pass — convention + buf offset); (b) L4 evidence-repair (184 degenerate residuals, NO new C3s — would not grow the count); (c) harness-ext wishlist (out-buffer-compare unlocks ~4, under the >=10 bar). Honest assessment for the user: the cheap-leaf + cheap-re-earn veins are EXHAUSTED; further C2->C3 growth now costs either a Ghidra disassembly session (1 hook) or a harness extension (~4 hooks). The loop will go dry within 1-2 rounds unless L5 is authorized or a new candidate vein is identified. Continuing one more round to confirm dryness.
 
