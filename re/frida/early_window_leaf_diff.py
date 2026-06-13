@@ -64,6 +64,7 @@ PURE_LEAF_ARGTYPES = {
     'deref_table_read',   # fn(ptr p1, u32 i): return (*p1)[i] — harness allocs+seeds an array behind p1
     'const_return',       # fn(): return <fixed constant> — no input, no state; call + compare
     'global_field_read',  # fn(): return *(*(global)+field_off) — point global at a seeded buffer
+    'float_table_read',   # fn(i): return *(float*)(base+i*stride) — seed_table bits read as float
 }
 
 SRC = r"""
@@ -79,7 +80,7 @@ rpc.exports.diff = function(cfg) {
   const nargs = (cfg.at === 'int2_scalar') ? ['uint32','uint32']
               : (cfg.at === 'deref_field_write') ? ['pointer','uint32']
               : (cfg.at === 'deref_table_read')  ? ['pointer','uint32']
-              : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar') ? ['uint32'] : [];
+              : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
   const Reim = new NativeFunction(reim,         cfg.ret, nargs, 'mscdecl');
@@ -129,6 +130,13 @@ rpc.exports.diff = function(cfg) {
     } else if (cfg.at === 'const_return') {
       try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
       try { r = Reim() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'float_table_read') {
+      // return *(float*)(base+i*stride). Seed the table bits (read as float, distinct
+      // -> non-degenerate). ret is float so DO NOT coerce with >>> 0.
+      const st = cfg.seed_table;
+      if (i === 0 && st) { const b = ptr(st.base); for (let k = 0; k < (st.span | 0); k++) b.add(k * (st.stride | 0)).writeU32((0xC0DE0000 | k) >>> 0); }
+      try { o = Orig(t >>> 0); } catch (e) { eo = e.message; }
+      try { r = Reim(t >>> 0); } catch (e) { er = e.message; }
     } else if (cfg.at === 'global_field_read') {
       // return *(*(tgt)+field_off). Point the global at a seeded buffer; the test
       // value lands at +field_off (distinct per test -> non-degenerate).

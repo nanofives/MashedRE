@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 43 (large-stride imul FLOAT table getters) --
+    'float_table_63dc64_get': {'rva': 0x0041f100, 'export': 'FloatTable63dc64Get', 'signature': {'ret': 'float', 'args': ['int32']}, 'arg_type': 'float_table_read', 'seed_table': {'base': 0x0063dc64, 'stride': 0x2ac, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
+    'float_table_8900a8_get': {'rva': 0x0044e050, 'export': 'FloatTable8900a8Get', 'signature': {'ret': 'float', 'args': ['int32']}, 'arg_type': 'float_table_read', 'seed_table': {'base': 0x008900a8, 'stride': 0xf8, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # ---- promote-round round 42 (large-stride imul table getters) --
     'table_63dc6c_get': {'rva': 0x0041f300, 'export': 'Table63dc6cGet', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0063dc6c, 'stride': 0x2ac, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
     'table_8a9648_get': {'rva': 0x00407a20, 'export': 'Table8a9648Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x008a9648, 'stride': 0x30c, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
