@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 19
-- total_green: 46
+- rounds_run: 20
+- total_green: 49
 - dry_counter: 0
-- last_round: 2026-06-12 round 19 (2 GREEN — L5 outbuf_only handler authored + out-ptr class unlocked)
+- last_round: 2026-06-12 round 20 (3 GREEN — single-out-ptr class via outbuf_only)
 
 ## Lane queues
 
@@ -95,6 +95,9 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 0041efc0 Car::GetLapProgress — round 18, log/diff_car_get_lap_progress.csv 10/10 GREEN (double-deref, race lane)
 - 0040b620 SlotSortByModeScore — round 19, log/diff_slot_sort_by_mode_score.csv 10/10 GREEN (NEW outbuf_only handler validated here)
 - 0040e3a0 PlayerColorTableGet — round 19, log/diff_player_color_table_get.csv 12/12 GREEN (int_outbuf4; D-10807 caller gate now satisfied)
+- 00495270 HWNDGet — round 20, log/diff_hwnd_get.csv 10/10 GREEN (outbuf_only, call-through)
+- 00484c70 WorldObjectsBaseGet — round 20, log/diff_world_objects_base_get.csv 10/10 GREEN (outbuf_only+fold_ret)
+- 0041da90 DeltaTimeOutGet — round 20, log/diff_delta_time_out_get.csv 10/10 GREEN (outbuf_only, race lane)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -184,17 +187,20 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
-- DONE (round 19): outbuf_only handler authored (SWEEP-CRITICAL, in
-  diff_template.js) + validated on SlotSortByModeScore. Handles single
-  out-ptr void fn(T* out), configurable out_buf_size. STILL TO PROMOTE via
-  this handler (next rounds, each just needs a reimpl + registry entry):
-  - 0041da90 (single out*, *out=DAT_0063d588) — reimpl exists? check
-  - 00495270 HWNDGet (*out=FUN_00499710()) — has a callee FUN_00499710
-  - 00484c70 ai (fn(out_ptr))
-  - plus the int_outbuf4 variant already covers fn(int idx, byte* out4):
-    survey the arg-shape bucket for more idx+outbuf shapes
+- DONE (rounds 19-20): outbuf_only handler (SWEEP-CRITICAL, diff_template.js)
+  with out_buf_size + round-20 fold_ret + seed_global. Promoted 0040b620,
+  0041da90, 00484c70, 00495270. int_outbuf4 (pre-existing) promoted 0040e3a0.
+  CAVEAT BANKED: seed_global does NOT work for globals the game thread writes
+  every frame (it overwrites the seed) -> use the race lane for those.
+  REMAINING out-ptr rows to survey/promote (the 20-row count minus 5 done):
+  the larger fn(...,out*) bodies (0041f030 16B 4-dword out, 0041f1e0/0041f260
+  matrix-copy 64B out, 00425fa0 4-word export, 004224d0, 004b4650 Vec3Lerp,
+  etc.) — most fit outbuf_only with a bigger out_buf_size + scalar args; survey
+  next rounds.
 - STILL NEEDED (separate handler): multi-out-ptr fn(i, out_a*, out_b*) for
-  0046cbb0 + 00430b30 (3 out-params, thiscall) — a 2nd ext when those cluster
+  0046cbb0 + 00430b30 (3 out-params, thiscall) — a 2nd ext when those cluster.
+  ALSO: scalar-arg + outbuf (fn(int i, T* out) with out>4B) — int_copy_outbuf
+  exists for this; survey which out-ptr rows take a leading scalar.
 - multi-record buffer observe (base, record_size, count → fingerprint):
   unlocks 00489290, 0048ade0-class
 - struct-observe with field map for global objects: VehicleIcons trio +
@@ -212,6 +218,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-12 | round 20 | out-ptr class (outbuf_only) | attempted 3 | GREEN 3 (HWNDGet call-through; WorldObjectsBaseGet fold_ret captures out+return; DeltaTimeOutGet race lane) | deferred 0 new | exit-5 x1 root-caused: seed_global degenerate because the game thread overwrites 0x0063d588 -> flipped to race lane -> GREEN | dry_counter 0. outbuf_only extended with fold_ret (XOR return into fingerprint — needed for getters that write *out AND return) + seed_global (works ONLY for non-game-written globals). The out-ptr vein continues to yield 3/round; ~13 out-ptr rows remain (larger out buffers + scalar-arg variants). The loop is healthily productive again (rounds 17-20: 3+1+2+3 = 9 GREEN over 4 rounds). Sustainable cadence: out-ptr survey + widened getter curation alternating.
 
 2026-06-12 | round 19 | L5 out-pointer (counted 20 C2 out-ptr rows -> >=10 bar MET) | attempted 2 | GREEN 2 | deferred 0 new | exit-5/6: none | dry_counter 0. TWO discoveries: (1) the int_outbuf4 handler for fn(int idx, byte* out4) ALREADY EXISTED in diff_template.js (built ma3-frida-s5) with a live registry entry for PlayerColorTableGet — it was never run because the caller gate (D-10807) was unmet; FUN_00434720 has since reached C2, so it promoted with zero new code (re-run -> 12/12 GREEN). LESSON: before authoring an L5 handler, GREP diff_template.js for an existing one — handlers get built and orphaned when their first candidate is gated. (2) Authored the genuinely-new outbuf_only handler (SWEEP-CRITICAL) for single-out-ptr fn(T* out), validated on SlotSortByModeScore (re-enabled its mass-disabled RH_ScopedInstall) -> 10/10 GREEN. Both callers = FUN_00434720 frontend C2. The out-pointer class is now OPEN: next rounds promote 0041da90/00495270/00484c70 (single out*) via outbuf_only + survey the arg-shape bucket (321 rows) for more idx+outbuf shapes via int_outbuf4. POOL RE-OPENED: the loop is NOT near-dry — the out-ptr vein (20 rows) is freshly unlocked.
 
