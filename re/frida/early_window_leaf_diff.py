@@ -106,6 +106,8 @@ PURE_LEAF_ARGTYPES = {
     'global_swap',               # u32 fn(v): old=*tgt; *tgt=v; return old. test=[oldseed,v]
     'byte_args_to_globals',      # void fn(u8 a,u8 b,..): write byte args to byte globals (observe addrs). test=[a,b,..]
     'indexed_float_sq',          # void fn(i,float f): *(float*)(tgt+i*stride)=f*f. test=[idx,fval]
+    'double_deref_vec3_get',     # void fn(i,out*): rec=*(tgt+i*stride); t=*(rec+rec_off); out[k]=*(t+out_off+k*4) for k<span. test=idx
+    'global_float_predicate',    # u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(tgt)+rec_off))?1:0. test=[gateval,thrbits,valbits]
 }
 
 SRC = r"""
@@ -150,6 +152,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_swap') ? ['uint32']
               : (cfg.at === 'byte_args_to_globals') ? (cfg.observe.map(function(){return 'uint8';}))
               : (cfg.at === 'indexed_float_sq') ? ['uint32','float']
+              : (cfg.at === 'double_deref_vec3_get') ? ['uint32','pointer']
+              : (cfg.at === 'global_float_predicate') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -299,6 +303,27 @@ rpc.exports.diff = function(cfg) {
       const seed = function () { ptr(base).add(idx * stride).writeU32(recb); };
       try { seed(); o = Orig(idx) >>> 0; } catch (e) { eo = e.message; }
       try { seed(); r = Reim(idx) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'double_deref_vec3_get') {
+      // void fn(i, out*): rec=*(u32*)(tgt+i*stride); tp=*(u32*)(rec+rec_off); out[k]=*(u32*)(tp+out_off+k*4).
+      // seed table[i]->buf1, buf1[rec_off]->buf2, buf2[out_off+k*4]=distinct; fresh out per side.
+      const base = cfg.tgt, stride = cfg.stride | 0, ro = cfg.rec_off | 0, oo = cfg.out_off | 0, n = (cfg.span | 0) || 3, idx = t >>> 0;
+      const buf1 = Memory.alloc(0x100), buf2 = Memory.alloc(0x100); _keep.push(buf1, buf2);
+      for (let z = 0; z < 0x100; z += 4) { buf1.add(z).writeU32(0); buf2.add(z).writeU32(0); }
+      buf1.add(ro).writePointer(buf2);
+      for (let k = 0; k < n; k++) buf2.add(oo + k * 4).writeU32((0xC0DE0000 | ((idx << 4) | k)) >>> 0);
+      ptr(base).add(idx * stride).writePointer(buf1);
+      const outO = Memory.alloc(0x40), outR = Memory.alloc(0x40); _keep.push(outO, outR);
+      const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
+      try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); Orig(idx, outO); o = rd(outO); } catch (e) { eo = e.message; }
+      try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); Reim(idx, outR); r = rd(outR); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_float_predicate') {
+      // u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(u32*)tgt + rec_off))?1:0.
+      // test t=[gateval,thrbits,valbits]: seed gate(int), thr(float bits), tgt->buf with [rec_off]=val.
+      const gatev = t[0] >>> 0, thrb = t[1] >>> 0, valb = t[2] >>> 0, ro = cfg.rec_off | 0;
+      const buf = Memory.alloc(0x40); _keep.push(buf); buf.add(ro).writeU32(valb);
+      const seed = function () { ptr(cfg.gate).writeU32(gatev); ptr(cfg.thr).writeU32(thrb); ptr(cfg.tgt).writePointer(buf); };
+      try { seed(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { seed(); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'global_swap') {
       // u32 fn(v): old=*tgt; *tgt=v; return old. test t=[oldseed,v]: seed, call, check ret + *tgt.
       const g = ptr(cfg.tgt), oldseed = t[0] >>> 0, v = t[1] >>> 0;
@@ -674,7 +699,8 @@ def run(name):
            'count': h.get('count'), 'aux': h.get('aux'),
            'basePtr': h.get('basePtr'), 'nargs4': h.get('nargs4'),
            'nscalar': h.get('nscalar'), 'seed_byte': h.get('seed_byte'),
-           'gate_off': h.get('gate_off'), 'val_off': h.get('val_off'), 'asi': ASI}
+           'gate_off': h.get('gate_off'), 'val_off': h.get('val_off'),
+           'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

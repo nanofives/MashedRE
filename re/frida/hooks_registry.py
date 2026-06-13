@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 87 (double-deref vec3 getter + gated float-compare predicate) --
+    'item_world_pos_44dff0': {'rva': 0x0044dff0, 'export': 'ItemWorldPos44dff0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'double_deref_vec3_get', 'target_global': 0x00890080, 'stride': 0xf8, 'rec_off': 4, 'out_off': 0x40, 'span': 3, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5], 'path2_tests': [0,1]},
+    'pred_405430': {'rva': 0x00405430, 'export': 'Pred405430', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'global_float_predicate', 'gate': 0x00639d78, 'thr': 0x00639d74, 'target_global': 0x00639d70, 'rec_off': 0xc, 'lut_root_delta': 0, 'path1_tests': [[1,0x3f800000,0x40000000],[1,0x40000000,0x3f800000],[0,0x3f800000,0x40000000],[1,0x3f800000,0x3f800000],[1,0x40400000,0x40000000]], 'path2_tests': [[1,0x3f800000,0x40000000],[1,0x40000000,0x3f800000]]},
+
     # ---- promote-round round 86 (global swap-return + 3-byte-globals + indexed float-square) --
     'audio_ctx_swap_5a7b40': {'rva': 0x005a7b40, 'export': 'AudioCtxSwap5a7b40', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'global_swap', 'target_global': 0x007dcabc, 'lut_root_delta': 0, 'path1_tests': [[0xAAAA,0x1234],[0,0xDEAD],[0xFFFFFFFF,0],[0x5555,0xBEEF],[0,0]], 'path2_tests': [[0xAAAA,0x1234],[0,0xDEAD]]},
     'set_6147b4_triple': {'rva': 0x004924c0, 'export': 'Set6147b4Triple', 'signature': {'ret': 'void', 'args': ['uint8','uint8','uint8']}, 'arg_type': 'byte_args_to_globals', 'observe': [{'addr': 0x006147b4},{'addr': 0x006147b5},{'addr': 0x006147b6}], 'lut_root_delta': 0, 'path1_tests': [[0x11,0x22,0x33],[0xFF,0,0x80],[0,0xAB,0xCD],[0x7F,0x40,0x01],[0,0,0]], 'path2_tests': [[0x11,0x22,0x33],[0,0,0]]},
