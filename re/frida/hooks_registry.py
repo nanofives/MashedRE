@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 85 (cond deref-get + table bool predicates) --
+    'cond_get_5c4d30': {'rva': 0x005c4d30, 'export': 'CondGet5c4d30', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'cond_deref_get', 'gate_off': 4, 'val_off': 0, 'lut_root_delta': 0, 'path1_tests': [[1,0xDEAD],[0,0xBEEF],[5,0x1234],[0,0],[0xFF,0xCAFE]], 'path2_tests': [[1,0xDEAD],[0,0xBEEF]]},
+    'pred_45bff0': {'rva': 0x0045bff0, 'export': 'Pred45bff0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'table_bool_predicate', 'target_global': 0x0088fc88, 'stride': 0xb4, 'off0': 0, 'lut_root_delta': 0, 'path1_tests': [[1,0],[1,0x1234],[3,0],[3,0xFF],[2,0],[5,0x9]], 'path2_tests': [[1,0],[1,0x1234]]},
+    'pred_497450': {'rva': 0x00497450, 'export': 'Pred497450', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'table_bool_predicate', 'target_global': 0x007e96fc, 'stride': 0x200, 'off0': 0, 'lut_root_delta': 0, 'path1_tests': [[1,0],[2,0x1234],[3,0xAA],[5,0x1234],[10,0xFF],[0,0]], 'path2_tests': [[2,0x1234],[5,0x1234]]},
+
     # ---- promote-round round 83 (3-field struct setters + byte-OR RMW; deref_struct_set) --
     'set_5173d0': {'rva': 0x005173d0, 'export': 'Set5173d0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 3, 'seed_byte': 0xEE, 'observe': [{'off': 0x48},{'off': 0x40},{'off': 0x44}], 'lut_root_delta': 0, 'path1_tests': [[0xA1,0xB2,0xC3],[0x11112222,0x33334444,0x55556666],[0,0,0],[0xFFFFFFFF,0x12345678,0xDEADBEEF],[0xCAFEF00D,0xBADC0FFE,0x8BADF00D]], 'path2_tests': [[0xA1,0xB2,0xC3],[0,0,0]]},
     'set_5209d0': {'rva': 0x005209d0, 'export': 'Set5209d0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 3, 'seed_byte': 0xEE, 'observe': [{'off': 0x1e8},{'off': 0x1ec},{'off': 0x1f0}], 'lut_root_delta': 0, 'path1_tests': [[0xA1,0xB2,0xC3],[0x11112222,0x33334444,0x55556666],[0,0,0],[0xFFFFFFFF,0x12345678,0xDEADBEEF],[0xCAFEF00D,0xBADC0FFE,0x8BADF00D]], 'path2_tests': [[0xA1,0xB2,0xC3],[0,0,0]]},

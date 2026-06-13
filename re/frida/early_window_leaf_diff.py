@@ -101,6 +101,8 @@ PURE_LEAF_ARGTYPES = {
     'flag_multibit',         # void fn(idx,b1,b2[,b3]): RMW flag word at base+idx*stride via reimpl bit logic. test=[idx,b1,b2(,b3),seed]
     'float_threshold_predicate', # u32 fn(idx): return (*(float*)(base+idx*stride) < *(float*)gate) ? 1 : 0. test=[idx,recordbits,threshbits]
     'deref_struct_set',          # void fn(ptr p, scalar...): writes deterministic values into fields of p. alloc+seed buffer, pass as p, call with nscalar args, snapshot observe offsets. test=[a0(,a1,a2)]
+    'cond_deref_get',            # u32 fn(ptr p): if(*(u32*)(p+gate_off)) return *(u32*)(p+val_off); else 0. test=[gateval,val]
+    'table_bool_predicate',      # u32 fn(i): if(bound>=0 && (int)i<=bound) return 0; return (*(u32*)(tgt+i*stride+off0) {==|!=} 0)?1:0. test=[idx,slotval]
 }
 
 SRC = r"""
@@ -140,6 +142,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'flag_multibit') ? (cfg.nargs4 ? ['uint32','uint32','uint32','uint32'] : ['uint32','uint32','uint32'])
               : (cfg.at === 'float_threshold_predicate') ? ['uint32']
               : (cfg.at === 'deref_struct_set') ? (['pointer'].concat(new Array(cfg.nscalar | 0).fill('uint32')))
+              : (cfg.at === 'cond_deref_get') ? ['pointer']
+              : (cfg.at === 'table_bool_predicate') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -289,6 +293,22 @@ rpc.exports.diff = function(cfg) {
       const seed = function () { ptr(base).add(idx * stride).writeU32(recb); };
       try { seed(); o = Orig(idx) >>> 0; } catch (e) { eo = e.message; }
       try { seed(); r = Reim(idx) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'cond_deref_get') {
+      // u32 fn(ptr p): if(*(u32*)(p+gate_off)) return *(u32*)(p+val_off); else 0.
+      // test t=[gateval,val]: seed both fields, call, compare return. gate=0 -> 0; gate!=0 -> val.
+      const go = cfg.gate_off | 0, vo = cfg.val_off | 0, gate = t[0] >>> 0, val = t[1] >>> 0;
+      const mk = function () { const b = Memory.alloc(0x40); _keep.push(b);
+                               for (let z = 0; z < 0x40; z += 4) b.add(z).writeU32(0);
+                               b.add(go).writeU32(gate); b.add(vo).writeU32(val); return b; };
+      try { o = Orig(mk()) >>> 0; } catch (e) { eo = e.message; }
+      try { r = Reim(mk()) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'table_bool_predicate') {
+      // u32 fn(i): if(bound>=0 && (int)i<=bound) return 0; return (*(u32*)(tgt+i*stride+off0) {==|!=} 0)?1:0.
+      // test t=[idx,slotval]: seed the slot, call, compare. Vary idx (in/out of bound) + slotval (0/nonzero).
+      const base = cfg.tgt, stride = cfg.stride | 0, off = cfg.off0 | 0, idx = t[0] >>> 0, sv = t[1] >>> 0;
+      ptr(base).add(idx * stride + off).writeU32(sv);
+      try { o = Orig(idx) >>> 0; } catch (e) { eo = e.message; }
+      try { r = Reim(idx) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'deref_struct_set') {
       // void fn(ptr p, scalar...): writes deterministic values into fields of p. Alloc a
       // 0x400 buffer, seed every byte (cfg.seed_byte — non-zero exercises RMW-OR paths),
@@ -628,7 +648,8 @@ def run(name):
            'bit': h.get('bit'), 'gateval': h.get('gateval'), 'seedvecs': h.get('seedvecs'),
            'count': h.get('count'), 'aux': h.get('aux'),
            'basePtr': h.get('basePtr'), 'nargs4': h.get('nargs4'),
-           'nscalar': h.get('nscalar'), 'seed_byte': h.get('seed_byte'), 'asi': ASI}
+           'nscalar': h.get('nscalar'), 'seed_byte': h.get('seed_byte'),
+           'gate_off': h.get('gate_off'), 'val_off': h.get('val_off'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

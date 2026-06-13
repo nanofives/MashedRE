@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 84
-- total_green: 218
+- rounds_run: 85
+- total_green: 221
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 85 | early_window bespoke handlers (works despite env wedge) | attempted 3 | GREEN 3 (CondGet5c4d30 0x005c4d30 cond_deref_get; Pred45bff0 0x0045bff0 + Pred497450 0x00497450 table_bool_predicate) | deferred 0 | exit-1 x1 root-caused (pred_497450 inverted JLE branch -> fixed -> GREEN) | dry_counter 0. total_green 218->221. NEW handlers cond_deref_get + table_bool_predicate. early_window confirmed working under the env D3D9 wedge (attaches pre-init; get_771e78 re-GREEN). LESSON: JLE jumps to the predicate path (i<=3), fall-through is return-0 (i>3) — trust the diff (caught the inversion). Display-independent tail now has only scattered bespoke shapes left (~1-3 per handler); the bulk still needs run_diff (env-wedged).
 
 2026-06-13 | ENV WEDGE RECURRED (run_diff blocked) | After rounds 79-84 the D3D9 environment re-wedged: plain boot now exits cleanly with -1 at ~2s (NOT the 0xC0000005 camera-raster AV, which stays FIXED) and adapterCount fluctuates 1<->3 (monitor topology unstable / GPU device-thrash from this session's dozen+ MASHED spawns). This is the documented environmental D3D9 outage ([[feedback_d3d9_shim_wedges_gpu_driver]] / rounds 3-5/22/35), user-action-gated (reboot or let the GPU/display settle; AVOID spawn-thrash). IMPACT: run_diff (needs a stable booted game) is BLOCKED again — both menu-attach AND race lanes. early_window still works (kills MASHED pre-D3D9-init, no device create/destroy) but its first-party vein is EXHAUSTED at 218. NET STATE: +500 (->705) needs (1) display env recovery for the run_diff bulk, (2) the race-nav/track-load crash fixed for race-state candidates, (3) sustained run_diff grinding — all fresh-session work. Session 205->218 (+13); boot null-deref FIXED (patch_mashed_fix_camera_res.py = the structural unblock), promote_frontier.py + promote_classify.py + deref_struct_set handler built. RESUME: reboot/settle display -> boot-probe original\MASHED.exe (expect a window, not exit -1) -> run_diff menu-state + non-leaf candidates; investigate race-nav crash for race-state bulk.
 
