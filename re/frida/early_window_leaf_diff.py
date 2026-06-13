@@ -73,6 +73,7 @@ PURE_LEAF_ARGTYPES = {
     'stack_pop_snapshot',    # fn(stk): array-stack pop {top,cap,buf}; reset+call+snapshot+ret
     'stack_push_snapshot',   # fn(stk,val): array-stack push; reset+call+snapshot+ret
     'ptr_table_field_read',  # fn(i): return *(*(tgt))[i] + field_off  (pointer-to-table + field)
+    'indexed_table_set',     # void fn(i,val): *(tgt + i*stride) = val (fixed i=set_idx, vary val)
 }
 
 SRC = r"""
@@ -95,6 +96,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'stack_pop_snapshot') ? ['pointer']
               : (cfg.at === 'stack_push_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'ptr_table_field_read') ? ['uint32']
+              : (cfg.at === 'indexed_table_set') ? ['uint32','uint32']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
@@ -207,6 +209,12 @@ rpc.exports.diff = function(cfg) {
       const rd = function () { return obs.map(function (x) { return buf.add(x.off | 0).readU32() >>> 0; }).join('|'); };
       try { fill(); Orig(buf); o = rd(); } catch (e) { eo = e.message; }
       try { fill(); Reim(buf); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_table_set') {
+      // void fn(i, val): *(tgt + i*stride) = val. Fix i=set_idx, vary val.
+      const base = ptr(cfg.tgt), stride = cfg.stride | 0, idx = cfg.set_idx | 0, val = t >>> 0;
+      const slot = base.add(idx * stride);
+      try { slot.writeU32(0xFFFFFFFF); Orig(idx, val); o = slot.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { slot.writeU32(0xFFFFFFFF); Reim(idx, val); r = slot.readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'ptr_table_field_read') {
       // return *(*(tgt)[i] + field_off). Seed *(tgt)=tableBuf, tableBuf[i]=&entry,
       // entry[field_off]=distinct value -> non-degenerate.
@@ -305,7 +313,8 @@ def run(name):
            'span': h.get('span'), 'field_off': h.get('field_off'),
            'capacity': h.get('capacity'), 'insert_rva': h.get('insert_rva'),
            'build_keys': h.get('build_keys'), 'init_buf': h.get('init_buf'),
-           'init_top': h.get('init_top'), 'asi': ASI}
+           'init_top': h.get('init_top'), 'stride': h.get('stride'),
+           'set_idx': h.get('set_idx'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

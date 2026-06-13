@@ -14252,6 +14252,12 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 50 (indexed table getter + 3 indexed setters) --
+    'table_691508_get': {'rva': 0x00472550, 'export': 'Table691508Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x00691508, 'stride': 0x10, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
+    'table_69150c_set': {'rva': 0x00472520, 'export': 'Table69150cSet', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0069150c, 'stride': 0x10, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+    'table_86ae38_set': {'rva': 0x00488390, 'export': 'Table86ae38Set', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0086ae38, 'stride': 0x38, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+    'table_89a500_set': {'rva': 0x00416230, 'export': 'Table89a500Set', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0089a500, 'stride': 0x74, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+
     # ---- promote-round round 49 (pointer-to-table field getter) --
     'ptr_table_5f2770_get': {'rva': 0x0040ce80, 'export': 'PtrTable5f2770Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'ptr_table_field_read', 'target_global': 0x005f2770, 'field_off': 4, 'capacity': 8, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 3, 5], 'path2_tests': [0, 3, 5]},
 
