@@ -3511,3 +3511,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0041ea60  GlobalField63d7e4_38  C2->C3  promote-round-41 global_field_read 10/10 GREEN (early_window cluster @0x0063d7e4)
 2026-06-13  0041ea70  GlobalField63d7e4_3c  C2->C3  promote-round-41 global_field_read 10/10 GREEN (early_window cluster @0x0063d7e4)
 2026-06-13  0041ea80  GlobalField63d7e4_40  C2->C3  promote-round-41 global_field_read 10/10 GREEN (early_window cluster @0x0063d7e4)
+2026-06-13  0041f300  Table63dc6cGet  C2->C3  promote-round-42 int_scalar table-seed 10/10 GREEN (early_window)
+2026-06-13  00407a20  Table8a9648Get  C2->C3  promote-round-42 int_scalar table-seed 10/10 GREEN (early_window)
+2026-06-13  00407a40  Table8a9640Get  C2->C3  promote-round-42 int_scalar table-seed 10/10 GREEN (early_window)

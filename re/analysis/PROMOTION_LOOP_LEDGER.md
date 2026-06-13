@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 41
-- total_green: 123
+- rounds_run: 42
+- total_green: 126
 - dry_counter: 0
-- last_round: 2026-06-13 round 41 — 10-getter global-field cluster @0x0063d7e4 via early-window (113->123)
+- last_round: 2026-06-13 round 42 — 3 large-stride imul table getters via early-window (123->126)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -415,6 +415,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 40 | first-party constant-return leaves (early-window const_return) | GREEN 5 (Ret50 0x0044dfe0, Ret3 0x00493b40, Ret897ff0 0x00443090, Ret63a5f0 0x004098a0, FogColorGetter 0x004924e0) | total_green 108->113. New const_return handler (fn()->fixed const; call+compare, no seed). All B8-imm-C3 leaves, orig b0=0xb8 unpatched. Plate correction: 0x0044dfe0 returns 0x50 (not the "&DAT_00890080" the stale plate claimed). LESSON (re-confirmed twice now, rounds 39+40): "exhaustion" claims are only valid for shapes ACTUALLY SCANNED — each new seedable shape (multi-store setter, constant-return) yielded more. The early_window method + a new tiny handler per shape keeps finding small first-party batches. Shapes now covered: all getters (global/float/table/bounds), all setters (const/param/multi-store/scattered), constant-return, pure arithmetic. STILL-UNTRIED seedable shapes (next, each ~2-5 first-party): struct-field setters via ptr arg, list-walk/count leaves (build a list), ctor/dtor counter leaves, multi-field struct readers. The deeper non-leaf + state-dependent majority still needs the booted game. PROGRESS METHOD VALIDATED: rather than declaring exhaustion, keep scanning new shapes — yield is slow (~2-5/shape) but real and display-INDEPENDENT.
 
 2026-06-13 | round 41 | global-field getter CLUSTER @0x0063d7e4 (early-window) | GREEN 10/10 (GlobalField63d7e4_1c..40 = 0x0041e9f0,ea00,ea10,ea20,ea30,ea40,ea50,ea60,ea70,ea80; each `A1 E4 D7 63 00 8B 40 <off> C3` = return *(*(0x0063d7e4)+off), offsets 0x1c..0x40) | total_green 113->123. NEW global_field_read handler: point the global at a seeded buffer, value at +off (distinct per test -> non-degenerate). All 10 callers C2+ (incl. 3 C4 TimerDispatch). orig b0=0xa1 unpatched. BIG yield (10) — clusters of struct-field accessors over a global base are the richest remaining display-independent vein. METHOD NOTE: keep scanning struct-base-deref clusters (A1 <g> 8B 40 <off> shape over other globals); each cluster = a batch. This is the strongest counter to the "exhausted at 106" claim — +17 since (106->123) via 3 new handlers (multi-store, const_return, global_field_read). Next: scan A1<g>8B40<off> over OTHER globals + the deeper struct-walk/ctor-counter shapes.
+
+2026-06-13 | round 42 | large-stride imul table getters (early-window) | GREEN 3 (Table63dc6cGet 0x0041f300 base 0x63dc6c stride 0x2ac; Table8a9648Get 0x00407a20 + Table8a9640Get 0x00407a40 base 0x8a964x stride 0x30c) | total_green 123->126. META-SCAN (this round): categorized ALL 165 remaining first-party C2 short leaves by opcode signature -> the vein is now FRAGMENTED (top cluster `8B 44 24` param-load x58, but its sub-shapes are mostly singletons/pairs: imul-table, bounds, 2-arg, deref). The big clusters (single-globals, the 0x63d7e4 10-getter set, const-returners) are drained; remaining yield is ~2-3 per micro-shape. DEFERRED this round: 0x0041f100 (FLOAT table getter `imul 0x2ac; fld [eax+0x63dc64]` -> needs a float+seed_table handler) + the `8B 44 24` singletons (each bespoke). HONEST TRAJECTORY: 106->126 (+20) by exhaustively scanning shapes; the display-INDEPENDENT first-party ceiling is now ~130-150 (grinding the remaining micro-shapes, each a small bespoke batch). 200 still needs the display for the state-dependent + non-leaf majority. The /promote-round method is validated end-to-end; remaining work is a long tail of small batches + the env-gated majority.
 
 ## Final gated-remainder report
 
