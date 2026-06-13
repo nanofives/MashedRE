@@ -13986,4 +13986,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 15 (round-14 Ghidra-pass carry-over) -------------
+    # 0x00402f40  Util636ad8Get — uint32() <- DAT_00636ad8 (read_global-seeded,
+    # discriminating at menu-attach). Caller FUN_0043dfd0 frontend C2.
+    # Body byte-verified A1 D8 6A 63 00 C3.
+    # ref: re/analysis/timer_d3_cont1_a/0x00402f40.md
+    'util_636ad8_get': {
+        'rva':            0x00402f40,
+        'export':         'Util636ad8Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00636ad8,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
 }
