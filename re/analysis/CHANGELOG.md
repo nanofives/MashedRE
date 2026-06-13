@@ -3517,3 +3517,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0041f100  FloatTable63dc64Get  C2->C3  promote-round-43 float_table_read 10/10 GREEN (early_window)
 2026-06-13  0044e050  FloatTable8900a8Get  C2->C3  promote-round-43 float_table_read 10/10 GREEN (early_window)
 2026-06-13  004190f0  ClearEax4190f0  C2->C3  promote-round-44 eax_implicit_void 5/5 GREEN (early_window EAX-trampoline; naked asm)
+2026-06-13  00485a70  PoolInsert485a70  C2->C3  promote-round-45 pool_insert_snapshot 10/10 GREEN (early_window full-state snapshot; bespoke self-contained list-insert)
