@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 45 (pool-manager INSERT; self-contained list op) --
+    'pool_insert_485a70': {'rva': 0x00485a70, 'export': 'PoolInsert485a70', 'signature': {'ret': 'uint16', 'args': ['pointer', 'uint32']}, 'arg_type': 'pool_insert_snapshot', 'capacity': 4, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x55, 0xFFFFFFFF, 0x99, 0x42, 0x7F], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+
     # ---- promote-round round 44 (EAX-implicit field clearer; naked asm) --
     'eax_clear_4190f0': {'rva': 0x004190f0, 'export': 'ClearEax4190f0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'eax_implicit_void', 'observe': [{'off': 0x4c}, {'off': 0x50}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
 
