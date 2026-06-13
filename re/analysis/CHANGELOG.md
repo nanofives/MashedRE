@@ -3432,3 +3432,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  00550790  FsManager7dc76cSet  C2->C3  promote-round-17 void_setter_observe diff 10/10 GREEN log/diff_fs_manager_7dc76c_set.csv
 2026-06-12  00496920  TimerTable772ffcGet  C2->C3  promote-round-17 scenario=race int_scalar diff 10/10 GREEN log/diff_timer_table_772ffc_get.csv (menu was exit-5)
 2026-06-12  0041efc0  Car::GetLapProgress  C2->C3  promote-round-18 scenario=race int_scalar diff 10/10 GREEN log/diff_car_get_lap_progress.csv (double-deref per-car getter)
+2026-06-12  0040b620  SlotSortByModeScore  C2->C3  promote-round-19 NEW outbuf_only harness-ext (SWEEP-CRITICAL) + diff 10/10 GREEN log/diff_slot_sort_by_mode_score.csv; caller FUN_00434720 C2
+2026-06-12  0040e3a0  PlayerColorTableGet  C2->C3  promote-round-19 D-10807 caller-gate satisfied (FUN_00434720 now C2); int_outbuf4 diff 12/12 GREEN log/diff_player_color_table_get.csv
