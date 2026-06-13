@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 92 (struct-init with trailing scalar arg) --
+    'init_5b0c70': {'rva': 0x005b0c70, 'export': 'Init5b0c70', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'struct_const_init', 'nscalar': 1, 'observe': [{'off':0},{'off':4},{'off':8},{'off':0xc},{'off':0x10},{'off':0x14}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+
     # ---- promote-round round 91 (struct-const-init family) --
     'init_5b0b90': {'rva': 0x005b0b90, 'export': 'Init5b0b90', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_const_init', 'observe': [{'off':0},{'off':4},{'off':8},{'off':0xc},{'off':0x10},{'off':0x14}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
     'init_5b0f10': {'rva': 0x005b0f10, 'export': 'Init5b0f10', 'signature': {'ret': 'uint32', 'args': ['uint32','pointer']}, 'arg_type': 'struct_const_init', 'passthrough_arg': True, 'observe': [{'off':0},{'off':4},{'off':8},{'off':0xc},{'off':0x10},{'off':0x14},{'off':0x18}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},

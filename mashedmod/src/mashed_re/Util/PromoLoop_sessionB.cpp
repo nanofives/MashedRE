@@ -414,3 +414,11 @@ extern "C" __declspec(dllexport) void __cdecl Init5c9120(char* p) {
     *reinterpret_cast<std::uint32_t*>(p+0x224)=*reinterpret_cast<std::uint32_t*>(p+0x1ec)*2u;
 }
 RH_ScopedInstall(Init5c9120, 0x005c9120);
+
+// ===== round 92 =====
+
+// 0x005b0c70  audio — byte-verified: fn(p,v): p[2]=v; p[3]=0; *p=(*p&0xfffffff7)|4; p[4]=1.0f; p[1]=1; p[5]=0
+extern "C" __declspec(dllexport) void __cdecl Init5b0c70(std::uint32_t* p, std::uint32_t v) {
+    p[2]=v; p[3]=0; p[0]=(p[0]&0xfffffff7u)|4u; p[4]=0x3f800000u; p[1]=1; p[5]=0;
+}
+RH_ScopedInstall(Init5b0c70, 0x005b0c70);

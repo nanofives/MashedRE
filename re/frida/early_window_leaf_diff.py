@@ -165,7 +165,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'any_slot_nonzero') ? []
               : (cfg.at === 'arg_table_linear_search') ? ['uint32','pointer','uint32']
               : (cfg.at === 'global_float_step') ? ['float']
-              : (cfg.at === 'struct_const_init') ? (cfg.passthrough_arg ? ['uint32','pointer'] : ['pointer'])
+              : (cfg.at === 'struct_const_init') ? (cfg.passthrough_arg ? ['uint32','pointer'] : ['pointer'].concat(new Array(cfg.nscalar | 0).fill('uint32')))
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -349,12 +349,17 @@ rpc.exports.diff = function(cfg) {
       // [u32] fn([passthrough,] ptr p): writes deterministic values into p's fields. alloc 0x400
       // sentinel buffer, call (with optional leading passthrough arg), snapshot observe offsets +
       // (if passthrough) the return. Same init both sides -> orig/reim outputs compared directly.
-      const obs = cfg.observe, hasarg = cfg.passthrough_arg;
+      const obs = cfg.observe, hasarg = cfg.passthrough_arg, ns = cfg.nscalar | 0;
       const mk = function () { const b = Memory.alloc(0x400); _keep.push(b);
                                for (let z = 0; z < 0x400; z += 4) b.add(z).writeU32(0xFFFFFFFF); return b; };
       const snap = function (b) { return obs.map(function (x) { return b.add(x.off | 0).readU32() >>> 0; }).join(','); };
-      try { const b = mk(); const ro = hasarg ? Orig(0x12345678, b) : Orig(b); o = snap(b) + (hasarg ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
-      try { const b = mk(); const rr = hasarg ? Reim(0x12345678, b) : Reim(b); r = snap(b) + (hasarg ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+      const call = function (fn, b) {  // p first, then nscalar trailing scalars
+        if (hasarg) return fn(0x12345678, b);
+        if (ns === 1) return fn(b, 0xC0DE0001); if (ns === 2) return fn(b, 0xC0DE0001, 0xC0DE0002);
+        if (ns === 3) return fn(b, 0xC0DE0001, 0xC0DE0002, 0xC0DE0003); return fn(b);
+      };
+      try { const b = mk(); const ro = call(Orig, b); o = snap(b) + (hasarg ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
+      try { const b = mk(); const rr = call(Reim, b); r = snap(b) + (hasarg ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
     } else if (cfg.at === 'arg_table_linear_search') {
       // int fn(key, table*, count): for i<count: if(table[i*stride_dw]==key) return i; return -1.
       // test t=[key, placeAt, count]: alloc table, fill distinct non-key markers, place key at placeAt.

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 91
-- total_green: 236
+- rounds_run: 92
+- total_green: 237
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 92 | struct_const_init+scalar (sessionB) | attempted 1 | GREEN 1 (Init5b0c70 0x005b0c70) | deferred 2 (005a7420 global-list-insert needs reset+snapshot; 00485a00 double-deref-out needs sub-buffer seed) | exit-5/6: none | dry_counter 0. total_green 236->237. struct_const_init extended for p+trailing-scalar. SIGNAL: struct-init family ~mined (this scan: 1 clean of 3; other 2 bespoke). early_window now ~1/round of singletons. Session 79-92 = 205->237 (+32). The +500 bulk remains gated on the reboot (run_diff env wedge).
 
 2026-06-13 | round 91 | struct_const_init FAMILY (NEW handler, sessionB) | attempted 4 | GREEN 4 (Init5b0b90 0x005b0b90; Init5b0f10 0x005b0f10 passthrough; Init5beb50 0x005beb50; Init5c9120 0x005c9120) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 232->236. NEW struct_const_init handler (write deterministic consts/computed/pointer to arg fields; 0x400 buf, snapshot observe offsets +ret; orig-vs-reim compared so any const value works). 4 in ONE round (first family >2 in a while). LIKELY MORE struct-init candidates in the pool -> scan next. Session 79-91 = 205->236 (+31).
 
