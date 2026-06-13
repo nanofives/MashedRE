@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 36
-- total_green: 101
+- rounds_run: 37
+- total_green: 104
 - dry_counter: 0
-- last_round: 2026-06-13 round 36 — table-seed early_window reclaims 2 round-30 exit-5 table getters (99->101)
+- last_round: 2026-06-13 round 37 — 3 absolute-table getters via early-window table-seed (101->104)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -373,6 +373,8 @@ This is the durable plan; the ledger counters + this block are the full state.
 2026-06-13 | round 35 RESOLVED | early_window_leaf_diff capability built + validated -> 3 float getters GREEN | total_green 96->99. NEW CAPABILITY (re/frida/early_window_leaf_diff.py): diffs PURE-LEAF hooks WITHOUT booting MASHED to menu, which sidesteps the D3D9 boot wedge entirely. Method: subprocess-spawn MASHED (MASHED_RE_NO_AUTO_HOOK=1) -> frida.attach the RUNNING pre-crash process -> LoadLibraryW the .asi ourselves (running-process loader lock is free; a SUSPENDED spawn deadlocks) + GetProcAddress the reimpl -> assert orig byte0 != 0xE9 (no hook-patch false-GREEN) -> seed+call orig(fixed RVA)+reimpl(export), compare. For a state-independent leaf this is logically identical to run_diff path1 (orig vs reimpl, hook bypassed); only the attach moment differs, which cannot change a pure leaf's output. VALIDATED 2026-06-13: positive controls global_67f19c_get (round 31) + set_77196c_1 (round 29) reproduce GREEN; negative control (orig=global_67f19c_get vs reimpl=Global67f1a0Get, cross-wired) -> RED on all cases (real discriminating power). Promoted: Float5ea0a8Get 0x004039e0, Float89a360Get 0x004173a0, Float61313cGet 0x0046dd80 (D9-05 fld-dword getters; ret:float; orig b0=0xd9 confirmed unpatched). SCOPE LIMIT (important): this only covers state-INDEPENDENT leaves (read_global / void_setter_observe / scalars_to_scattered_globals / pure int_scalar). State-DEPENDENT functions (scenario:'race', live tables/arrays — the bulk of the remaining ~100 rows to 200) still REQUIRE run_diff against a booted game, so they remain env-blocked until the display is restored. Net: the trivial-leaf vein is now FULLY drained (99 promoted incl. floats); the path past 99 needs either (a) the display restored for race-state diffs, or (b) bespoke handlers per the strategic checkpoint. early_window_leaf_diff is a permanent capability useful even after recovery (fast, no D3D9 dependency for leaves).
 
 2026-06-13 | round 36 | early_window_leaf_diff + table-seed | GREEN 2 (Table773030Get 0x00496930, JointPtr6ce81cGet 0x004840d0 — the 2 round-30 exit-5 deferrals) | total_green 99->101. EXTENSION: early_window_leaf_diff now seeds an absolute table (seed_table:{base,stride,span} in the registry entry) with distinct values 0xC0DE000k before calling, so a table getter that reads ZERO live state at menu/race is diffed NON-degenerately (a wrong stride/base reads a different seeded value -> RED). Verified non-degenerate: returns were 0xC0DE0000+i per index; bounds getter returned 0 for idx>=4 (bounds exercised). This UNBLOCKS the whole absolute-table / bounds-getter family that previously needed a populated live table (scenario:race) -> now promotable without the display. NEXT: scan C2 for the `83 F8 XX 72 03 33 C0` bounds-getter family + `8B 04 85 <tbl>` table getters, author reimpls, diff via early_window table-seed. State-DEPENDENT non-table functions (live struct-ptr args, race control flow) still need a booted game.
+
+2026-06-13 | round 37 | absolute-table getters (early-window table-seed) | attempted 4 | GREEN 3 (Table88ff50Get 0x00452ea0, Table8aa300Get 0x0045dd50, Table63d830Get/Car::GetState 0x0041f320 — all `8B 44 24 04 8B 04 85 <tbl> C3` index*4 getters) | dropped 1 (004840b0 bounds getter — only caller 00448980 in UNDEFINED region) | total_green 101->104. All via early_window_leaf_diff table-seed (orig b0=0x8b unpatched). VEIN STATUS: the absolute-table-getter scan (`8B 04 85` idx4 + imul-stride + `83 F8/72/33 C0` bounds) is now nearly drained in C2 (3 idx4 promoted, imul-variant=0 left, bounds=1 but caller-gated). Remaining toward 200: mostly state-DEPENDENT (live struct-ptr args, race control flow) needing a booted game; plus deref-param field getters (ptr_scratch_field / thiscall_field_get — could extend early_window with a struct-seed mode next).
 
 ## Final gated-remainder report
 
