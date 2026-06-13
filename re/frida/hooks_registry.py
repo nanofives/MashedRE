@@ -13542,4 +13542,65 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 6 (L2 cheap re-earns) ----------------------------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round6.cpp).
+
+    # 0x004c9f50  RwGlobal7d4134Set — void(uint32). Writes param_1 to
+    # DAT_007d4134 (bytes 8B 44 24 04 A3 34 41 7D 00 C3). L2 re-earn.
+    # ref: re/analysis/skeleton_prep_boot_winmain_b/004c9f50.md
+    'rw_global_7d4134_set': {
+        'rva':            0x004c9f50,
+        'export':         'RwGlobal7d4134Set',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d4134,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x004b6610  BootGlobalPairSet — void(uint32 a, uint32 b). Writes a ->
+    # DAT_007d3e5c, b -> DAT_007d3e60 (bytes 8B 44 24 04 8B 4C 24 08 A3 5C 3E
+    # 7D 00 89 0D 60 3E 7D 00 C3). multi_arg_global_write over the 2-dword
+    # block. guard_global REQUIRED by the handler but this fn has no guard:
+    # pointed INSIDE the saved/restored out window (0x007d3e5c — the fn
+    # overwrites it anyway; same self-contained trick as time_display_set_entry).
+    # ref: re/analysis/promote_c2_txd_loader/004b6610.md
+    'boot_global_pair_set': {
+        'rva':            0x004b6610,
+        'export':         'BootGlobalPairSet',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32']},
+        'arg_type':       'multi_arg_global_write',
+        'guard_global':   0x007d3e5c,
+        'out_base':       0x007d3e5c,
+        'out_count':      2,
+        'lut_root_delta': 0,
+        'path1_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE],
+                           [0xFFFFFFFF, 0x80000000], [0x12345678, 0x7FFFFFFF],
+                           [0x00429290, 0], [0x55555555, 0xAAAAAAAA],
+                           [2, 3], [0, 0xFFFFFFFF], [0xABCDEF01, 0x10FEDCBA]],
+        'path2_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE]],
+    },
+
+    # 0x004b6560  BootGlobalPairSetThunk — 5B thunk (E9 AB 00 00 00 ->
+    # 0x004b6610); forwards both args unmodified. Same handler/config as
+    # boot_global_pair_set (behaviorally identical by construction).
+    # ref: re/analysis/promote_c2_txd_loader/004b6560.md
+    'boot_global_pair_set_thunk': {
+        'rva':            0x004b6560,
+        'export':         'BootGlobalPairSetThunk',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32']},
+        'arg_type':       'multi_arg_global_write',
+        'guard_global':   0x007d3e5c,
+        'out_base':       0x007d3e5c,
+        'out_count':      2,
+        'lut_root_delta': 0,
+        'path1_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE],
+                           [0xFFFFFFFF, 0x80000000], [0x12345678, 0x7FFFFFFF],
+                           [0x00429290, 0], [0x55555555, 0xAAAAAAAA],
+                           [2, 3], [0, 0xFFFFFFFF], [0xABCDEF01, 0x10FEDCBA]],
+        'path2_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE]],
+    },
+
 }
