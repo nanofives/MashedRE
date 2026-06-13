@@ -9,10 +9,14 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 25
-- total_green: 54
+- rounds_run: 26
+- total_green: 59
 - dry_counter: 0
-- last_round: 2026-06-13 round 25 (1 GREEN — int2out handler + CarStatePairGet)
+- last_round: 2026-06-13 round 26 (5 GREEN — worklist batch)
+- GOAL (user, 2026-06-13): reach 200 C2->C3. Strategy: batch 5/round from
+  re/analysis/plans/promote_worklist.tsv (54 handler-fit candidates pre-curated);
+  when that drains, re-curate with the 11-handler inventory over the broader C2
+  pool + build handlers for new shape classes (thiscall/dispatcher/COM).
 
 ## CARRY-OVER CLEARED: Vec3Lerp deferred (x87 bit-identity, commit 6414f413)
 The vec3_lerp diff ran 3x (env recovered, user closed their session): all RED
@@ -235,6 +239,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-13 | round 26 | worklist batch (NEW: re/analysis/plans/promote_worklist.tsv, 54 handler-fit pre-curated; goal=200) | attempted 5 | GREEN 5 (RwGlobal7d459cGet, Flag63b908Get/Set, ElapsedTimeGet, AiTargetEnableGet — all single-global read_global/void_setter_observe leaves) | deferred 0 | exit-5/6: none | dry_counter 0. THROUGHPUT SHIFT: batching 5/round via the worklist + a single Ghidra reference_to pass for all callers + one build + 5 diffs. ~49 worklist candidates remain (will run ~10 rounds to ~108). Then: re-curate broader C2 (filter_v4 rejected callee/vtable/thiscall shapes that some of the 11 handlers may now cover) + author handlers for the remaining classes (thiscall-3out for 00430b30, dispatcher for 004516d0/004d4f00, COM/DirectShow band ~94 rows). 200 is reachable but the back half needs new handlers + possibly the COM harness.
 
 2026-06-13 | round 25 | L5 int2out (two-out-ptr getter) | attempted 1 | GREEN 1 (CarStatePairGet 0x0046cbb0) | deferred 0 | exit-5/6: none | dry_counter 0. Authored the int2out handler (SWEEP-CRITICAL): T fn(int idx, U* out_a, U* out_b), compares both outs + the return. Validated on 0046cbb0. HANDLER INVENTORY now: int_scalar, read_global, none, void_setter_observe, slot_block_zero, scalars_to_scattered_globals, int_outbuf4, int_copy_outbuf, outbuf_only (+fold_ret/seed_global), int2out, multi_arg_global_write — covers most getter/setter/out-ptr shapes. REMAINING out-ptr: 00430b30 (thiscall, 3 out-params — needs thiscall+3out handler), 004516d0 (dispatcher switch on *param_2), 004d4f00 (pipeline linear search), 0041f1e0 (2int+outbuf+RW-iterator callee). Plus Vec3Lerp x87 (inline-asm TODO). Next round: survey these or re-run widened getter curation. Yield holding ~1-2/round.
 
