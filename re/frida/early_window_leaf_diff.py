@@ -60,6 +60,8 @@ LOG = os.path.join(ROOT, "log")
 PURE_LEAF_ARGTYPES = {
     'read_global', 'void_setter_observe', 'scalars_to_scattered_globals', 'int_scalar',
     'int2_scalar',  # pure function of TWO int args (no memory) — tests are [p1,p2] pairs
+    'deref_field_write',  # fn(ptr p1, u32 p2): *(*(p1+outer_off)+inner_off)=p2 — harness allocs+links buffers
+    'deref_table_read',   # fn(ptr p1, u32 i): return (*p1)[i] — harness allocs+seeds an array behind p1
 }
 
 SRC = r"""
@@ -73,7 +75,10 @@ rpc.exports.diff = function(cfg) {
   const b0 = ptr(cfg.rva).readU8();
   if (b0 === 0xE9) return { error: 'ORIGINAL PATCHED (b0=0xE9) — NO_AUTO_HOOK failed; aborting' };
   const nargs = (cfg.at === 'int2_scalar') ? ['uint32','uint32']
+              : (cfg.at === 'deref_field_write') ? ['pointer','uint32']
+              : (cfg.at === 'deref_table_read')  ? ['pointer','uint32']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar') ? ['uint32'] : [];
+  const _keep = [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
   const Reim = new NativeFunction(reim,         cfg.ret, nargs, 'mscdecl');
   const norm = function (v) { return (cfg.ret === 'float') ? v : (v >>> 0); };
@@ -104,6 +109,25 @@ rpc.exports.diff = function(cfg) {
     } else if (cfg.at === 'int2_scalar') {
       try { o = Orig(t[0] >>> 0, t[1] >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { r = Reim(t[0] >>> 0, t[1] >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'deref_field_write') {
+      // *(*(p1+outer_off)+inner_off) = p2. Fresh A+inner buffers per side; check inner[inner_off].
+      const oo = cfg.outer_off | 0, io = cfg.inner_off | 0;
+      const A1 = Memory.alloc(0x80), I1 = Memory.alloc(0x80); _keep.push(A1, I1);
+      for (let z = 0; z < 0x80; z += 4) { A1.add(z).writeU32(0); I1.add(z).writeU32(0); }
+      A1.add(oo).writePointer(I1);
+      try { Orig(A1, t >>> 0); o = I1.add(io).readU32() >>> 0; } catch (e) { eo = e.message; }
+      const A2 = Memory.alloc(0x80), I2 = Memory.alloc(0x80); _keep.push(A2, I2);
+      for (let z = 0; z < 0x80; z += 4) { A2.add(z).writeU32(0); I2.add(z).writeU32(0); }
+      A2.add(oo).writePointer(I2);
+      try { Reim(A2, t >>> 0); r = I2.add(io).readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'deref_table_read') {
+      // return (*p1)[i]. Seed an array behind p1 with distinct values; non-degenerate.
+      const span = (cfg.span | 0) || 16;
+      const arr = Memory.alloc(span * 4), A = Memory.alloc(4); _keep.push(arr, A);
+      for (let k = 0; k < span; k++) arr.add(k * 4).writeU32((0xC0DE0000 | k) >>> 0);
+      A.writePointer(arr);
+      try { o = Orig(A, t >>> 0) >>> 0; } catch (e) { eo = e.message; }
+      try { r = Reim(A, t >>> 0) >>> 0; } catch (e) { er = e.message; }
     }
     res.push({ i: i, t: '' + t, o: (o === null ? null : '' + o), r: (r === null ? null : '' + r),
                match: (eo === null && er === null && o !== null && o === r), eo: eo, er: er });
@@ -122,7 +146,9 @@ def run(name):
         return None
     cfg = {'rva': h['rva'], 'export': h['export'], 'ret': h['signature']['ret'], 'at': at,
            'tgt': h.get('target_global'), 'tests': h.get('path1_tests', []),
-           'observe': h.get('observe'), 'seed_table': h.get('seed_table'), 'asi': ASI}
+           'observe': h.get('observe'), 'seed_table': h.get('seed_table'),
+           'outer_off': h.get('outer_off'), 'inner_off': h.get('inner_off'),
+           'span': h.get('span'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
