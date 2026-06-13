@@ -597,7 +597,7 @@ void LogoGradientQuadPx(float x, float y, float w, float h,
 // Fade pair model (DAT_0086ecc8 target / DAT_0086eccc current). The original's
 // menu-enter code seeds the target; this fn clamps it to 0xff and steps the
 // current value +-1 twice per call (0x00473f87..0x00473fc2).
-int g_logo_fade_target = 0xff;   // DAT_0086ecc8 (clamped <= 0xff)
+int g_logo_fade_target = 0;      // DAT_0086ecc8 (BSS zero at boot; clamped <= 0xff)
 int g_logo_fade_cur    = 0;      // DAT_0086eccc
 
 }  // namespace
@@ -661,14 +661,14 @@ extern "C" __declspec(dllexport) void __cdecl LogoOverlayDraw(
         if (g_logo_fade_cur < g_logo_fade_target) ++g_logo_fade_cur;
         if (g_logo_fade_target < g_logo_fade_cur) --g_logo_fade_cur;
     }
-    // #6 (user review): the circular arc-wash is a TRANSITION flash, not a
-    // permanent veil. Nav reloads/selects raise the target to 0xff via
-    // LogoOverlayFadeSet; decay it back toward 0 each frame so the white wash
-    // fades out after the transition settles (~2s), leaving the logo/press-
-    // button and the menu bg clear. The band fades + checker grid below are
-    // independent of this fade and stay (race-flag chrome remains).
-    if (g_logo_fade_target > 0) --g_logo_fade_target;
-    if (g_logo_fade_target > 0) --g_logo_fade_target;
+    // NO target decay — clean-baseline correction 2026-06-12: the original's
+    // settled MENU draws the arc wash PERMANENTLY at 0x60/0x78 (clean scr1
+    // baseline verify/orig_backbuffer_f2100.bmp; the earlier "transition
+    // flash" model came from POLLUTED captures where the un-transitioned
+    // title state kept the pair at 0). The original's step routine
+    // (0x00473f87..fc2) only clamps the target and steps the current; the
+    // writers (nav reloads/selects) leave the target at 0xff. The title shows
+    // no wash because the pair is still BSS-zero until the first menu reload.
 
     // Circular-arc column strips (0x00473fbd..0x004740cb).
     // bit-exact .rdata constants (1-ULP diff finding): 0x005ceacc pitch,

@@ -166,6 +166,63 @@ session); settled scr1 is now GREEN 118/118 per frame** (`--rotate-a 0x42e65a
   kind-2 screens 2/3/4 have none while 8 does (verify intended vs the
   original's tables).
 
+## Clean-baseline screen matrix (2026-06-12 evening — the /goal sweep)
+
+With the harness title-pollution fix, all 8 frontend screens were re-baselined
+(orig: log/parity_burst_scrN.json + verify/parity_caps/orig_scrN_*.bmp; RE:
+log/parity_re_scrN.json + re_scrN.bmp; visual pairs pair_scrN.png). Gate =
+drawlist_diff `--rotate-a 0x42e65a --tol-anim 8` (tol 8 absorbs the checker
+fsin phase, ±7px at some samples).
+
+**VERDICTS: scr1/2/3/4/8/19/30 GREEN; scr32 GREEN except 4 anim-phase rows**
+(the original's preview crossfade was mid-fade alpha 0x10/0x20 at its capture
+frames; ours was at a different cycle phase — same accepted class as the
+checker jitter).
+
+Fixes landed this sweep (all clean-baseline-cited):
+- **Arc wash is a PERMANENT menu haze** (strips 0x60 gradient / 0x78 fill at
+  settle) — the second flip of #15, this time against CLEAN pixels: the
+  "transition flash" model (commit 87f52673) came from polluted captures
+  where the un-transitioned title state pinned the fade pair at 0. The
+  non-verbatim target decay in the FUN_00473ee0 port is REMOVED; the pair is
+  BSS-zero at boot (no wash on title), raised to 0xff by menu entry/reloads/
+  selects and stays.
+- Widget screens (19/30/32): arrows modulate BLACK (ff000000); per-row stream
+  order = left arrow -> bar -> fill -> right arrow; widgets draw in a
+  POST-LOOP pass (the original's dispatcher calls the widget drawers after
+  FUN_0043c5b0 returns — clean scr19 has widget rows after the full plate
+  stack); slider fill at bar+4, bottom border at bar+14; tri-state right
+  arrow at x=457; footer prompt rows excluded from the widget pass.
+- Boot defaults pinned: volumes 7/7/7 (scr19 fills w=70), gamma 3 (scr30
+  w=30).
+- **#25 scr4 REBUILT to the real layout**: six 64x64 car-sprite tiles at
+  (146+i*70, 125) with 69x20 colour swatches at (143+i*70, 168) — swatch
+  colours == the first six NFL liveries (Red/Bluejay/Melon/Gold/Pink/
+  Shadow) — plus three 534x26 orange player rows at y=193/227/261 with
+  b45010 borders (per-tile order swatch->sprite). The old P1-vs-P2 layout
+  was invented and never matched.
+
+Open text-class items from the clean pixel captures (invisible to draw
+lists; for the next pass):
+- Menu music/voice credits ticker (right side of the settled menu: "Voice
+  Casting...", "Vocal Script International Hobo Ltd", cycling names) — the
+  standalone NoOps the credits fn (0x0042d5a0 thunk). Real menu element.
+- scr4 row labels "1"/"2"/"3" + small per-row icons at the row left; ours
+  also resolves the header as "Player Color Select" vs the original's
+  "Player Colour Select" (string id / table divergence — recheck which id
+  kT4's back row carries).
+- Insults right-arrow placement law (457 is pinned from the baseline; the
+  value-width-dependent law needs the kind-4 widget drawer RE
+  (FUN_00430b90 family per the FUN_00492e90 dispatcher: screen 0x20 has a
+  dedicated drawer)).
+- Preview crossfade cycle driver (FUN_00474890 modes + param_7 ramp) — the
+  #14 residual; would also close scr32's phase rows.
+
+Dispatcher intel recorded from FUN_00492e90 (pool1 decomp): title = nav
+screen 0x21 (33); screen 3 multi-viewport branch (FUN_0042f530 count); modal
+FUN_00433f40 drawn last every frontend frame; screen 0x20 special drawer
+FUN_00430b90.
+
 ## Offline-RE findings (2026-06-12, MCP down — via re/tools/disasm_fn.py)
 
 - **#2 boot splash**: DAT_00771964 is only ever set to MashedNEWLogo (FUN_004283a0) or 0 (teardown 0x00428400). FUN_00403050 draws it + the pulsing press-button (FUN_00402fb0). The Dolby/ProLogic logos (DAT_0067d968/0067d96c) are drawn by separate readers (0x00428c9b / 0x00428ec2) — the splash is a multi-function boot sequence, not a single drawer. Port needs those two drawers + the boot state pump.

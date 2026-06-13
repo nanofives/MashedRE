@@ -851,7 +851,10 @@ void Nav_Init() {
     // — Select only, NO Back (matches #11: no Back on the main menu). cmp must NOT
     // be 0x16 (that sentinel blanks the whole row).
     PromptStripAppend(KvLookup(s.desc_table, kTagPrompt, 0), kMainMenuScreen, 0);
-    LogoOverlayFadeSet(0xff, -1);   // boot enters via nav(0,2) reload -> fade on
+    // (No fade raise here: Nav_Init runs at BOOT, before the title. The
+    // original's pair stays BSS-zero through the title — no wash there — and
+    // is raised by the title->menu reload. The raise lives at the phase-3
+    // entries in exe_main; reload/select ops below still raise it.)
     g_last_dir = kNavReload;
 }
 

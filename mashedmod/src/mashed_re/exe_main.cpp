@@ -964,11 +964,14 @@ void UpdateTitleSlotFromKeyboard() {
 // standalone keeps a settings model persisted to its OWN file (never touches
 // original/): mashed_re_settings.bin = 'MRES' magic + 4 int32 values.
 struct MenuSettings {
-    std::int32_t music   = 8;   // 0..10
-    std::int32_t sfx     = 8;   // 0..10
-    std::int32_t insults = 8;   // 0..10
+    // Boot defaults pinned to the original's clean baselines (all-zero
+    // gamesave): scr19 fills w=70/70/70 -> volumes 7, scr30 fill w=30 ->
+    // gamma 3 (verify/parity_caps/orig_scr19_*/orig_scr30_*).
+    std::int32_t music   = 7;   // 0..10
+    std::int32_t sfx     = 7;   // 0..10
+    std::int32_t insults = 7;   // 0..10
     std::int32_t insults_on = 0;  // tri-state 0=Off 1=Auto 2=Manual (user review #21)
-    std::int32_t gamma = 5;     // 0..10 (screen 30 slider, user review #22)
+    std::int32_t gamma = 3;     // 0..10 (screen 30 slider, user review #22)
     std::int32_t autosave = 1;  // 0=Off 1=On (screen 32 toggle, user review #23)
 };
 MenuSettings g_settings;
@@ -977,7 +980,7 @@ constexpr char kSettingsPath[] = "mashed_re_settings.bin";
 // 11 discrete 0..10 steps. Keep the faithful 0..10 model but animate the drawn
 // fill: g_sliderDisp lerps toward the target value each frame (music/sfx/insults/
 // gamma) so the orange bar slides smoothly.
-float g_sliderDisp[4] = { 8.f, 8.f, 8.f, 5.f };
+float g_sliderDisp[4] = { 7.f, 7.f, 7.f, 3.f };
 
 void SaveMenuSettings() {
     if (std::FILE* f = std::fopen(kSettingsPath, "wb")) {
@@ -1081,6 +1084,10 @@ bool UpdateMenuSelection() {
             // kT0: Continue/Restart/Quit), so backing out of any submenu
             // revealed the pause menu. Just reveal the menu; do NOT push.
             g_frontend_phase = 3;
+            // Title->menu = the original's reload: raises the arc-wash fade
+            // pair (permanent 0x60/0x78 haze at menu screens; clean baseline
+            // verify/orig_backbuffer_f2100.bmp).
+            LogoOverlayFadeSet(0xff, -1);
         }
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
@@ -2264,6 +2271,24 @@ bool RenderFrame() {
             // 2026-06-12): a 16px bar at x=374 w=106 with 3px black borders and an
             // orange fill (0xffd88020), framed by 16x16 black arrow sprites at
             // x=356 / x=484 (sliders) or x=356 / x=411 (compact toggles, no bar).
+            // (Value widgets moved to the POST-LOOP pass below: the original
+            // draws them after the whole menu loop — clean scr19 baseline has
+            // the widget rows A[110+] following the full plate stack.)
+        }
+
+        // Widget pass — runs AFTER the record walk, like the original's
+        // per-screen content call (the FUN_00492e90 dispatcher invokes the
+        // widget drawers after FUN_0043c5b0 returns).
+        for (int r = 0; r < nrec; ++r) {
+            const MenuRecord& rec = recs[r];
+            const std::uint32_t wtag = static_cast<std::uint32_t>(rec.tag);
+            // Footer prompt-strip rows reuse row_index 0..3 — they are not
+            // widget rows (the record walk `continue`s them before widgets).
+            if (wtag == 0xff100000u || wtag == 0xff110000u ||
+                wtag == 0xff230000u)
+                continue;
+            const bool is_back = (wtag == 0xff000000u);
+            const float slideX = static_cast<float>(Nav_RecordSlide(r)) * (260.f / 511.f);
             const int sid = Nav_ScreenId();
             const bool is_slider_screen = (sid == 19 || sid == 30);
             const bool is_toggle_screen = (sid == 32);
@@ -2289,22 +2314,23 @@ bool RenderFrame() {
                 } else if (sid == 32 && rec.row_index == 0) {
                     kind = kToggle;
                 }
+                // Arrows modulate BLACK in the original (clean scr19/30/32
+                // baselines: col=ff000000 at the sprite emitters 0x473c19/
+                // 0x4739e7), and the stream order per row is LEFT arrow ->
+                // bar pieces -> fill -> RIGHT arrow (A[110..117] scr19).
+                // Tri-state rows put the right arrow at x=457 (A[135], after
+                // the value text zone); toggles at 411 (scr32 probe).
+                const float rax = (kind == kToggle  ? 411.0f
+                                 : kind == kTriText ? 457.0f : 484.0f) * S;
+                const float ay = by, asz = 16.0f * S;
+                std::uint32_t uvL[4] = { 0x3f800000u, 0u, 0u, 0x3f800000u }; // U flipped
+                std::uint32_t uvR[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u }; // normal
                 if (kind != kNone) {
-                    // #17: real BADGES.TXD "Arrow" sprite (16x16), left U-flipped
-                    // / right normal — not the '<'/'>' text glyphs.
-                    const float rax = (kind == kToggle ? 411.0f : 484.0f) * S;
-                    const float ay = by, asz = 16.0f * S;
                     if (g_menu_arrow_ready) {
-                        std::uint32_t uvL[4] = { 0x3f800000u, 0u, 0u, 0x3f800000u }; // U flipped
-                        std::uint32_t uvR[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u }; // normal
                         HudIm2DQuad(kHandleMenuArrow, 356.0f * S + slideX, ay, asz, asz,
-                                    0xffffffffu, uvL);
-                        HudIm2DQuad(kHandleMenuArrow, rax + slideX, ay, asz, asz,
-                                    0xffffffffu, uvR);
-                    } else if (g_font.ready()) {     // fallback: text glyphs
-                        // rec.y anchors center the cell on the row (text law).
+                                    0xff000000u, uvL);
+                    } else if (g_font.ready()) {
                         DrawMashedString(L"\x3c", 356.0f * S + slideX, rec.y * S, asz, 0xff000000u, true);
-                        DrawMashedString(L"\x3e", rax + slideX, rec.y * S, asz, 0xff000000u, true);
                     }
                 }
                 if (kind == kSlider) {
@@ -2319,12 +2345,16 @@ bool RenderFrame() {
                     }
                     const float bx = 374.0f * S + slideX;
                     const float bw = 106.0f * S, bh = 16.0f * S, bt = 3.0f * S;
+                    // Inner geometry pinned to the clean scr19/scr30 baselines:
+                    // bottom border sits at bar+14 (A y=261 for bar 247) and
+                    // the fill at bar+4 (A y=191/236) — one px below the old
+                    // +3-based placement.
                     HudIm2DQuad(0, bx, by, bw, bh, 0x7f000000u, uv_full);      // bg
                     HudIm2DQuad(0, bx, by, bw, bt, 0xff000000u, uv_full);      // top
-                    HudIm2DQuad(0, bx, by + bh - bt, bw, bt, 0xff000000u, uv_full); // bottom
+                    HudIm2DQuad(0, bx, by + bh - bt + 1.0f * S, bw, bt, 0xff000000u, uv_full); // bottom
                     HudIm2DQuad(0, bx, by, bt, bh, 0xff000000u, uv_full);      // left
                     HudIm2DQuad(0, bx + bw - bt, by, bt, bh, 0xff000000u, uv_full); // right
-                    HudIm2DQuad(0, 377.0f * S + slideX, by + bt,
+                    HudIm2DQuad(0, 377.0f * S + slideX, by + 4.0f * S,
                                 (disp / 10.0f) * 100.0f * S,
                                 10.0f * S, 0xff2080d8u, uv_full);              // fill
                 } else if (kind == kTriText && g_font.ready()) {
@@ -2338,6 +2368,15 @@ bool RenderFrame() {
                     DrawMashedString(g_settings.autosave ? L"On" : L"Off",
                                      380.0f * S + slideX, rec.y * S, 16.0f * S,
                                      0xff000000u, false);
+                }
+                // RIGHT arrow last (the original's per-row stream order).
+                if (kind != kNone) {
+                    if (g_menu_arrow_ready) {
+                        HudIm2DQuad(kHandleMenuArrow, rax + slideX, ay, asz, asz,
+                                    0xff000000u, uvR);
+                    } else if (g_font.ready()) {
+                        DrawMashedString(L"\x3e", rax + slideX, rec.y * S, asz, 0xff000000u, true);
+                    }
                 }
             }
         }
@@ -2356,26 +2395,54 @@ bool RenderFrame() {
         // 112^2, "vs" @ (132,300) 88^2, P2 car @ (196,292) 112^2. The title
         // "Player Color Select" renders via the back-row record (0x130). [residual:
         // full per-controller layout needs the absent MP controller/team state.]
+        // #25 REBUILT to the clean scr4 baseline (verify/parity_caps/
+        // orig_scr4_*.bmp + log/parity_burst_scr4.json — the first unpolluted
+        // capture of the real Player Colour Select):
+        //   * SIX colour tiles in a row: 64x64 car sprite (white modulate,
+        //     emitter 0x433c9b sprite pipe) at (146 + i*70, 125) with a 69x20
+        //     colour SWATCH (emitter 0x433c70) at (143 + i*70, 168). Swatch
+        //     device colors ff983a3d/ff4e89ae/ff617656/ffdbc362/ffeba7a7/
+        //     ff000000 == the first six NFL car liveries (Red, Bluejay, Melon,
+        //     Gold, Pink, Shadow) — args below are the packed pre-swap forms.
+        //   * THREE full-width player rows (emitters 0x42be53/8c/b4/dc/f21):
+        //     plate 534x26 at (48, 193/227/261) fill device 7ff06e14 + four
+        //     b45010 border pieces (left/top/bottom 538x2/right).
+        // The old P1-vs-P2 layout was invented from the English.dat-era
+        // misread; it never matched the original. [Residual: row/tile TEXT
+        // (player names, ids) + selection state need the case-10 decomp.]
         if (Nav_ScreenId() == 4 && g_carsel_ready) {
             const std::uint32_t white = 0xffffffffu;
-            auto draw_car = [&](int idx, float vx, float vy, float vs) {
-                if (idx < 0 || idx > 9) idx = 0;
-                HudIm2DQuad(kHandleCar0 + idx, vx * kVScale, vy * kVScale,
-                            vs * kVScale, vs * kVScale, white, uv_full);
+            static const std::uint32_t kSwatch[6] = {
+                0xff3d3a98u,  // device ff983a3d (NFLRed)
+                0xffae894eu,  // device ff4e89ae (NFLBluejay)
+                0xff567661u,  // device ff617656 (NFLMelon)
+                0xff62c3dbu,  // device ffdbc362 (NFLGold)
+                0xffa7a7ebu,  // device ffeba7a7 (NFLPink)
+                0xff000000u,  // device ff000000 (NFLShadow)
             };
-            draw_car(g_csel_p1_car, 40.0f, 292.0f, 112.0f);   // player 1
-            draw_car(g_csel_p2_car, 196.0f, 292.0f, 112.0f);  // player 2
-            HudIm2DQuad(kHandleVs, 132.0f * kVScale, 300.0f * kVScale,
-                        88.0f * kVScale, 88.0f * kVScale, white, uv_full); // "vs"
-            // "Please select a player color" prompt (id 0x131, USA.DAT(piz))
-            // centered under the cars (the title 0x130 is the top back-row).
-            if (g_font.ready()) {
-                wchar_t ct[64];
-                if (GetMenuMessage(0x131, ct, 64) > 0) {
-                    const float th = 0.55f * 0.0708f * 480.f * kVScale;
-                    DrawMashedString(ct, 320.f * kVScale, 250.f * kVScale, th,
-                                     0xffffffffu, false);
-                }
+            for (int i = 0; i < 6; ++i) {
+                // Baseline stream order per tile: SWATCH then sprite
+                // (A[81] swatch / A[82] sprite).
+                HudIm2DQuad(0, (143.0f + 70.0f * i) * kVScale,
+                            168.0f * kVScale, 69.0f * kVScale, 20.0f * kVScale,
+                            kSwatch[i], uv_full);
+                HudIm2DQuad(kHandleCar0 + i, (146.0f + 70.0f * i) * kVScale,
+                            125.0f * kVScale,
+                            64.0f * kVScale, 64.0f * kVScale, white, uv_full);
+            }
+            for (int r = 0; r < 3; ++r) {
+                const float ry4 = (193.0f + 34.0f * r) * kVScale;
+                const float bt2 = 2.0f * kVScale;
+                HudIm2DQuad(0, 48.0f * kVScale, ry4, 534.0f * kVScale,
+                            26.0f * kVScale, 0x7f146ef0u, uv_full);   // plate
+                HudIm2DQuad(0, 46.0f * kVScale, ry4, bt2,
+                            26.0f * kVScale, 0xff1050b4u, uv_full);   // left
+                HudIm2DQuad(0, 46.0f * kVScale, ry4, 538.0f * kVScale,
+                            bt2, 0xff1050b4u, uv_full);               // top
+                HudIm2DQuad(0, 46.0f * kVScale, ry4 + 24.0f * kVScale,
+                            538.0f * kVScale, bt2, 0xff1050b4u, uv_full); // bottom
+                HudIm2DQuad(0, 582.0f * kVScale, ry4, bt2,
+                            26.0f * kVScale, 0xff1050b4u, uv_full);   // right
             }
         }
 
@@ -3980,6 +4047,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             char gv[64] = {};
             if (GetEnvironmentVariableA("MASHED_GOTO", gv, sizeof(gv)) > 0) {
                 g_frontend_phase = 3;
+                LogoOverlayFadeSet(0xff, -1);   // menu entry raises the wash pair
                 char* tok = gv;
                 while (*tok) {
                     const int sid = std::atoi(tok);
@@ -3993,6 +4061,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             // menu, screen 1) for verifying the #12 root-cause fix.
             else if (GetEnvironmentVariableA("MASHED_DBG_MENU", nullptr, 0) != 0) {
                 g_frontend_phase = 3;
+                LogoOverlayFadeSet(0xff, -1);   // menu entry raises the wash pair
             }
             // Capture aid: MASHED_DBG_MODAL=1 shows the Load warning flow, =2 the
             // Save overwrite flow (#18/#19) at boot for verification.
