@@ -3547,3 +3547,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0046d320  Idx2Wheel881790Get  C2->C3  promote-round-56 idx2_table_get 10/10 GREEN (early_window 2-index wheel getter)
 2026-06-13  0046d360  Idx2Wheel881738Get  C2->C3  promote-round-56 idx2_table_get 10/10 GREEN (early_window 2-index wheel getter)
 2026-06-13  0046bd60  Idx2Wheel881744Get  C2->C3  promote-round-56 idx2_table_get 10/10 GREEN (early_window 2-index wheel getter)
+2026-06-13  0045a110  PtrGet68ba1c  C2->C3  promote-round-57 int_scalar 10/10 GREEN (early_window pointer-returning getter)

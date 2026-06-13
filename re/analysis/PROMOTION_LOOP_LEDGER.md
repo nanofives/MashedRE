@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 56
-- total_green: 159
+- rounds_run: 57
+- total_green: 160
 - dry_counter: 0
-- last_round: 2026-06-13 round 56 — per-vehicle vec3 getter + 3 two-index wheel getters via new idx2_table_get handler (155->159)
+- last_round: 2026-06-13 round 57 — Pool-J pointer-returning getter via int_scalar (159->160)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -461,6 +461,16 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 55 | 3 scenery-actor 200-entry getters + 4-global clearer | GREEN 4 (Table6c9438Get 0x0047ce00 OOB 0 / Table6c9758Get 0x0047ce80 OOB 0xffffffff / Table6c71d8Get 0x0047d130 OOB 0 — int_scalar 0<=i<0xc8 stride 4; Clear88f0a0x4 0x0045c860 scalars_to_scattered_globals zero 4 globals) | total_green 151->155. All existing handlers (no new handler). DROPPED 3: 0x0047ce20 + 0x0047cde0 (ZERO callers -> C3 caller-gate fail) + 0x0045bff0 (`==0` predicate over a table -> DEGENERATE under the int_scalar uniform-nonzero seeder; would need a predicate-aware/zero-mixing seeder). orig b0=0x8b/0x33 unpatched. SESSION (this context): 142->155 (+13) across rounds 53-55, two new handlers (cond_global_set, ptr_out_table_get). The 212-candidate callee-graph list (vehicle/scenery/actor pools) keeps yielding ~4/round via existing+tiny handlers, NO display. RESUME: keep sweeping the 212 list; build ptr_in_table_set (unlocks vec3 SETTER 0x0046d740 + the bounded scalar-setter family) and an idx2_table_get variant (0x0046d2e0/d320/d360 2-index getters) for more cluster unlocks; a predicate-seeder (mix zero+nonzero) unlocks the `==0`/`!=0` flag-getters (e.g. 0x0045bff0). On display recovery, run_diff the state-dependent majority.
 
 2026-06-13 | round 56 | per-vehicle vec3 getter + 3 two-index wheel getters (new idx2_table_get handler) | GREEN 4 (VehTbl8820a0Get3 0x0046bd20 ptr_out_table_get vec3 base 0x008820a0; Idx2Wheel881790Get 0x0046d320 / Idx2Wheel881738Get 0x0046d360 / Idx2Wheel881744Get 0x0046bd60 idx2_table_get base 0x00881790/738/744, (i1*0x11+i2)*0xc4, i1<0x10 i2<4) | total_green 155->159. NEW handler idx2_table_get: u32 fn(out,i1,i2) with composite index (i1*mult+i2)*stride; seed composite slot + fresh out per side. DROPPED 2 already-C3 caught by hooks.csv pre-check (0x0046dbe0=VehicleRacePositionGet, 0x0046dc00=EntityFieldSet — both stale generic plates). orig b0=0x8b. SESSION (this context, rounds 53-56): 142->159 (+17), THREE new handlers (cond_global_set, ptr_out_table_get, idx2_table_get). The 212-candidate callee-graph list remains the engine (~4/round, NO display). STILL on the list unworked: more vec3/scalar per-vehicle getters (0x0046d* family), the 2-index SETTER + scalar setters, predicate getters (==0/!=0, need a zero-mixing seeder), float10 getters (0x00420d80/004077e0, need an x87-safe handler). RESUME: keep sweeping; on display recovery run_diff the state-dependent majority. 200 is on track via this vein + display.
+
+2026-06-13 | round 57 | Pool-J pointer-returning getter | GREEN 1 (PtrGet68ba1c 0x0045a110: int_scalar, returns image VA 0x0068ba1c+i*0x58 for 0<=i<4 else 0; NO memory read -> no seed_table) | total_green 159->160. The clean-EXISTING-handler vein is TAPERING in the 0x0045-0x0047 region: this decompile batch (6 fns) yielded 1 clean + 1 already-C3 (0x0045a0f0=VehPwrState68ba00Get) + 4 BESPOKE shapes. SESSION (this context, rounds 53-57): 142->160 (+18), THREE new handlers. DEFERRED-BESPOKE backlog identified this round (each needs a small new handler, ~1-3 fns each — good fresh-context targets):
+  - ptr_compute_get: 0x0046d4a0 (*out = 0x00881ec8 + table[0x00881f48+idx*0xd04]*0x10 + idx*0x341; seed idx slot, check *out)
+  - vec16_copy_set: 0x0046d4d0 (copies 16 in-dwords to TWO table regions 0x00881ec8/0x00881f08 + idx*0x341; alloc in-buf, snapshot both)
+  - cond_table_get: 0x00472500 (flag@0x691508+idx*0x10 ? slot+4 : slot+0; seed 3 slots, branch-deterministic)
+  - eq_predicate_get: 0x0045caf0 (bool: table[p1*0x10]==table[p2*0x10] gated by global<2; needs equal+unequal seed cases)
+  - field_swap_void: 0x004722e0 (g=*(p1+0x48); *(p1+0x48)=&LAB_004721e0; alloc buf, check g+buf)
+  - float10 getters: 0x00420d80 (sum of 2 float tables) / 0x004077e0 (global-indexed float) — need x87-safe handler (read st0 as float; single-read ones safe, the ADD one risky)
+  - predicate-zero getters: 0x0045bff0 (==0 over table) — need a zero-mixing seeder
+RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each unlocks a small cluster) + keep sweeping the 212 callee-graph list for any remaining clean getters/clearers; on display recovery run_diff the state-dependent majority. 200 on track (~40 to go via continued sweep + display).
 
 ## Final gated-remainder report
 
