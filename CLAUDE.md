@@ -33,12 +33,13 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 
 Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean checkout becomes bootable only after applying:
 
-1. **Four on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
+1. **Five on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
    - ~~`scripts/patch_mashed_skip_powerups.py`~~ — **DO NOT APPLY.** Root-caused 2026-06-01 as boot crash #2 (the NOP at 0x40295d causes a downstream stack-imbalance ret-to-0). Removing it made baseline boot to the real main menu (verify/boot_powerups_removed.png). The script now refuses to apply and un-applies if found.
    - `scripts/patch_mashed_show_windowed.py` — unhides `[Window]` entries in the video selector.
    - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
    - `scripts/patch_mashed_skip_selector.py` — silent video selector.
    - `scripts/patch_mashed_skip_controller_dialog.py` — silent controller selector.
+   - `scripts/patch_mashed_fix_camera_res.py` — **display-independence fix (2026-06-13).** Forces the screen-dim getters `FUN_00498bc0`/`FUN_00498bd0` to return 640×480 (the shim's forced backbuffer) instead of the auto-selected desktop video mode. Without it, MASHED builds the active camera's frameBuffer raster at the desktop resolution (e.g. 2560×1440); that render-target raster fails to create against the shim's 640×480 backbuffer → null camera raster → AV at 0x004c7785 ~4 s into boot. This made boot depend on the monitor topology. Root cause + evidence: `re/analysis/BOOT_CRASH_ROOTCAUSE_2026-06-13.md`. COUPLED to the shim's 640×480 (keep in sync). Reversible via `--restore`.
    - `scripts/patch_mashed_skip_intro.py` — **NOT a binary patch.** Replaces 5 intro .mpg files in `original/toastart/pc/movies/` with empty 1-frame MPEGs (originals backed up to `movies/backup/`). Lets MASHED run its intro player normally — videos just finish in microseconds. Cuts boot-to-menu from ~10s to <3s. Reversible via `--restore` flag. Approach borrowed from SciLor's MashedRunner (re/prior_art/MashedRunner/Intro.cs).
 2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600).
 3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
@@ -123,6 +124,7 @@ py -3.12 scripts\patch_mashed_show_windowed.py
 py -3.12 scripts\patch_mashed_skip_audio_com.py
 py -3.12 scripts\patch_mashed_skip_selector.py
 py -3.12 scripts\patch_mashed_skip_controller_dialog.py
+py -3.12 scripts\patch_mashed_fix_camera_res.py        # display-independence: screen dims -> 640x480; --restore to undo
 py -3.12 scripts\patch_mashed_skip_intro.py            # replaces intro .mpg files; --restore to undo
 
 # Acquire / release a Ghidra pool slot (use the skill rather than calling this directly

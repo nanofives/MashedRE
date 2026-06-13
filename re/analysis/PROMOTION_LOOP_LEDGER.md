@@ -38,12 +38,20 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
   per-screen camera/raster sub-object, null with 1 monitor (onset correlated with
   3->1 topology, round 35). This blocks run_diff (engine LUT root only populates
   after this init). NOT a reboot/no-display problem. Probes: boot_crash_probe.py,
-  d3d9_createdev_probe.py. See memory project-boot-crash-rw-nullderef-not-display.
-  FIX OPTIONS (invasive, user-gated): (a) reversible .asi survival hook null-guarding
-  FUN_004c7760/0042d4a0; (b) binary boot-survival patch (precedent skip_audio_com);
-  (c) 2nd monitor. early_window leaves are unaffected (kill pre-init).
-- RESUME RECIPE once boot survives: (1) boot-probe original\MASHED.exe (expect a window).
-  (2) re-run promote_frontier.py + promote_classify.py.
+  d3d9_createdev_probe.py, raster_create_probe.py.
+- **FIXED 2026-06-13** (root cause: camera frameBuffer raster created at the
+  auto-selected desktop video mode 2560x1440, fails against the shim's forced
+  640x480 backbuffer). scripts/patch_mashed_fix_camera_res.py forces the screen-dim
+  getters FUN_00498bc0/bd0 to return 640x480 (= the shim backbuffer) so the camera
+  raster always matches the device on ANY display. VERIFIED: RwRasterCreate(640,480,
+  flags=2)->non-null; boot survives 15s to menu; run_diff get_771e78 LUT-ready 10/10
+  GREEN. **run_diff lane is OPEN regardless of monitor config.** Full writeup:
+  re/analysis/BOOT_CRASH_ROOTCAUSE_2026-06-13.md. NEW 5th boot patch (CLAUDE.md).
+- RESUME RECIPE (run_diff lane now open): (1) ensure the 5 boot patches applied
+  (incl. patch_mashed_fix_camera_res.py). (2) re-run promote_frontier.py +
+  promote_classify.py. (3) the 204 STATE rows are the worklist: promote_classify
+  --emit gives reimpl+registry; author per PromoLoop cluster, ONE build per batch,
+  run_diff (booted, sequential) each. (4) re-classify GREENs. This is the fast route to 705.
   (3) the 204 STATE rows are the worklist: for each, promote_classify --emit gives
   the reimpl+registry; author in a PromoLoop cluster, build ONCE per batch, run_diff
   (booted) sequentially. (4) classify GREENs via re-classify. This is the fast,
