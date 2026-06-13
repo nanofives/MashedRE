@@ -3465,3 +3465,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  004b68e0  Global7d3e4cGet  C2->C3  promote-round-30 read_global 10/10 GREEN
 2026-06-13  004b65a0  Global7d3e4cGetThunk  C2->C3  promote-round-30 read_global 10/10 GREEN
 2026-06-13  00455b40  PowerupTable6885e0Get  C2->C3  promote-round-30 int_scalar scenario:race 10/10 GREEN
+2026-06-13  0042f760  Global67f19cGet  C2->C3  promote-round-31 read_global 10/10 GREEN
+2026-06-13  0042f770  Global67f1a0Get  C2->C3  promote-round-31 read_global 10/10 GREEN
+2026-06-13  0042f780  Global67f1a4Get  C2->C3  promote-round-31 read_global 10/10 GREEN
+2026-06-13  00426bb0  CameraPath::GetCount  C2->C3  promote-round-31 read_global 10/10 GREEN
+2026-06-13  0045bfe0  Bezier::GetLocate  C2->C3  promote-round-31 read_global 10/10 GREEN

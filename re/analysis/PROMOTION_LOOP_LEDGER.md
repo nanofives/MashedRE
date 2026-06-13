@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 30
-- total_green: 77
+- rounds_run: 31
+- total_green: 82
 - dry_counter: 0
-- last_round: 2026-06-13 round 30 (3 GREEN getters + 2 deferred degenerate table getters)
+- last_round: 2026-06-13 round 31 (5 GREEN single-global getters; pool replenished by binary byte-scan)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -317,6 +317,8 @@ final gated-remainder report.
 2026-06-13 | round 29 | worklist batch (const global setters) | attempted 5 | GREEN 5 (Set77196c_1 0x00493570, Set771970_1 0x00493580, Set603868_0 0x00462510, Set603868_1 0x00462500, Set703058_0 0x00487df0 — all pure `C7 05 <addr> <imm32> C3` single-store leaves; scalars_to_scattered_globals fill=0xFF; menu-attach) | deferred 0 | exit-5/6: none; zero REDs (all 5 byte-verified before authoring) | dry_counter 0. total_green 69->74. SCREEN-1 PIN: user asked to "test on screen 1" — added a SetWindowPos(64,64) pin to the d3d9 shim's ApplyWindowBorders (opt-out env MASHED_RE_NO_SCREEN1_PIN=1), rebuilt+redeployed; verified the MASHED window lands at (51,51) inside DISPLAY1 (primary 0,0 2048x1152). The shim only proxies MASHED.exe, so the standalone is unaffected. 0040d270 (Course::Finish) is the shared caller for both 00462500/00462510 (set/clear pair over 0x00603868). ~34 worklist candidates remain.
 
 2026-06-13 | round 30 | worklist batch (global + table getters) | attempted 5 | GREEN 3 (Global7d3e4cGet 0x004b68e0 + Global7d3e4cGetThunk 0x004b65a0 read_global menu-attach; PowerupTable6885e0Get 0x00455b40 int_scalar scenario:race non-degenerate) | deferred 2 (table_773030_get 0x00496930 + joint_ptr_6ce81c_get 0x004840d0 — both exit-5 INCONCLUSIVE-DEGENERATE: their tables 0x00773030 / 0x006ce81c read all-zero at the race-attach window, unlike sibling 0x00772ffc which populates; need a deeper-into-race / different scenario where those tables are written) | exit-5: 2 (table_773030_get x2, joint_ptr_6ce81c_get x1) | dry_counter 0. total_green 74->77. DROPPED pre-author: 004d71f0 (read_global DAT_007d6b10) — ALL 3 callers are in the RenderWare library band (FUN_005405c0 C1 third-party), fails the C3 "one caller at C2+" gate; requires a first-party caller promotion first. Also deferred-from-curation: 0045a0f0 (bounds-checked table getter, needs full-body read of the v<0/v>=4 branch targets before authoring). LEARNING: table getters that index live arrays are degenerate-GREEN traps even at scenario:race unless that specific table is populated in the attach window — byte-verify the table is non-zero, or expect exit-5 (the powerup table 0x006885e0 populated; the timer 0x00773030 and joint 0x006ce81c did not).
+
+2026-06-13 | round 31 | byte-scan replenished pool (single-global getters) | attempted 5 | GREEN 5 (Global67f19cGet 0x0042f760, Global67f1a0Get 0x0042f770, Global67f1a4Get 0x0042f780 audio trigger-flag trio; CameraPath::GetCount 0x00426bb0; Bezier::GetLocate 0x0045bfe0 — all `A1 <addr> C3` read_global menu-attach) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 77->82. POOL REPLENISHMENT (KEY): the hand-curated worklist + c3_filter_v4 were thinning on trivial leaves, so I byte-scanned original/MASHED.exe.unpatched for the 4 exact opcode shapes my handlers cover (`A1 <a4> C3` u32 getter, `D9 05 <a4> C3` f32 getter, `C7 05 <a4> <imm4> C3` const setter, `8B 44 24 04 A3 <a4> C3` param setter) and intersected with still-C2 rows -> 25 promotable trivial-shape leaves (get_u32×15, get_f32×3, set_const×3, set_u32×4). Scanner output at /tmp/trivial_leaf_hits.csv (PowerShell temp); regenerate any time via the inline scan. This is ~4-5 more rounds of clean leaves. After they drain, the next lever is L5 harness-ext for the deref-param predicate/getter class (e.g. 0x004cc4f0 RW chunk-type validator does `mov eax,[eax]` on its arg -> needs a ptr-to-int-in handler; many leaves share this shape). DROPPED again: 004d71f0 still caller-gated (RW-library-only callers).
 
 ## Final gated-remainder report
 
