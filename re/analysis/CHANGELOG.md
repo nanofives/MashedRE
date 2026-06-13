@@ -3496,3 +3496,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0046c730  Table882198Get  C2->C3  promote-round-38 int_scalar table-seed 10/10 GREEN (early_window, bounds)
 2026-06-13  0041d910  Clear63d584Pair  C2->C3  promote-round-39 scalars_to_scattered_globals(2) 10/10 GREEN (early_window)
 2026-06-13  00429820  Clear8991b0Pair  C2->C3  promote-round-39 scalars_to_scattered_globals(2) 10/10 GREEN (early_window)
+2026-06-13  0044dfe0  Ret50  C2->C3  promote-round-40 const_return 5/5 GREEN (early_window; plate corrected: ret 0x50)
+2026-06-13  00493b40  Ret3  C2->C3  promote-round-40 const_return 5/5 GREEN (early_window; CP_THREAD_ACP)
+2026-06-13  00443090  Ret897ff0  C2->C3  promote-round-40 const_return 5/5 GREEN (early_window; &DAT_00897ff0)
+2026-06-13  004098a0  Ret63a5f0  C2->C3  promote-round-40 const_return 5/5 GREEN (early_window; &DAT_0063a5f0)
+2026-06-13  004924e0  FogColorGetter  C2->C3  promote-round-40 const_return 5/5 GREEN (early_window; &DAT_006147b4)

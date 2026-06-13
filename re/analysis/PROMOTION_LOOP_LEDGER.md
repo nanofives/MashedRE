@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 39
-- total_green: 108
+- rounds_run: 40
+- total_green: 113
 - dry_counter: 0
-- last_round: 2026-06-13 round 39 — 2 first-party multi-store const setters via early-window (106->108)
+- last_round: 2026-06-13 round 40 — 5 first-party constant-return leaves via early-window (108->113)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -411,6 +411,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | EXHAUSTION PROOF (final scan) | multi-statement field accessors `8B 44 24 04 8B {40|80} <off> ... C3` in FIRST-PARTY ranges (addr < 0x004ec000, excluding all library bands) -> 2 hits, BOTH lua-5.0 library. Combined with every prior leaf-shape scan this session, the verdict is conclusive: EVERY display-independent leaf shape now returns ONLY library-band functions (lua / D3DX9 / RW / RW-Physics / qhull) or already-promoted rows. The display-independent FIRST-PARTY C3 vein is exhaustively, provably drained at total_green=106. Shapes scanned to exhaustion: A1/D9-05 getters, C7-05/param setters, 8B-04-85 + imul absolute-table getters, 83-F8 bounds-table getters, pure single/2-arg arithmetic, cdecl/thiscall field getters, multi-statement field accessors, 2-arg struct-deref. The ONLY remaining first-party C3 sources are STATE-DEPENDENT (need run_diff against a booted game) or non-leaf functions calling not-yet-reimplemented callees — BOTH require the display restored. 200 is not reachable while the display is down; 106 is the verified ceiling without it.
 
 2026-06-13 | round 39 | first-party multi-store const setters (early-window) | GREEN 2 (Clear63d584Pair 0x0041d910 -> [0x63d584]=[0x63d588]=0; Clear8991b0Pair 0x00429820 -> [0x8991b0]=[0x8991b4]=0) | total_green 106->108. Extended early_window scalars_to_scattered_globals handler to observe MULTIPLE globals (fill all -> call -> read all -> compare joined) — covers multi-store setters fully (a wrong reimpl leaving any sentinel -> RED). orig b0=0xc7 unpatched. NOTE: the "106 exhaustion proof" was for SINGLE-op leaf shapes; the multi-store-setter shape was a genuine gap (corrected). The exhaustion claim now stands for: single + multi const/param store setters, all getter/table/bounds shapes, arithmetic, field accessors. Still-untried display-independent shapes are progressively deeper (multi-field struct read/writes, list-walkers, ctor/dtor-counter) — each bespoke per-candidate; first-party yield is sparse (most are library-band). The state-dependent first-party majority still needs the display.
+
+2026-06-13 | round 40 | first-party constant-return leaves (early-window const_return) | GREEN 5 (Ret50 0x0044dfe0, Ret3 0x00493b40, Ret897ff0 0x00443090, Ret63a5f0 0x004098a0, FogColorGetter 0x004924e0) | total_green 108->113. New const_return handler (fn()->fixed const; call+compare, no seed). All B8-imm-C3 leaves, orig b0=0xb8 unpatched. Plate correction: 0x0044dfe0 returns 0x50 (not the "&DAT_00890080" the stale plate claimed). LESSON (re-confirmed twice now, rounds 39+40): "exhaustion" claims are only valid for shapes ACTUALLY SCANNED — each new seedable shape (multi-store setter, constant-return) yielded more. The early_window method + a new tiny handler per shape keeps finding small first-party batches. Shapes now covered: all getters (global/float/table/bounds), all setters (const/param/multi-store/scattered), constant-return, pure arithmetic. STILL-UNTRIED seedable shapes (next, each ~2-5 first-party): struct-field setters via ptr arg, list-walk/count leaves (build a list), ctor/dtor counter leaves, multi-field struct readers. The deeper non-leaf + state-dependent majority still needs the booted game. PROGRESS METHOD VALIDATED: rather than declaring exhaustion, keep scanning new shapes — yield is slow (~2-5/shape) but real and display-INDEPENDENT.
 
 ## Final gated-remainder report
 
