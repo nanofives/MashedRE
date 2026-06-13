@@ -37,14 +37,18 @@
 // 0x004b4650
 extern "C" __declspec(dllexport) void __cdecl Vec3Lerp(float* out, float* a,
                                                        float* b, float t) {
-    // diff truncated to f32 before the scale (matches the original's
-    // store/reload at 0x004b4650 body).
-    const float diffx = b[0] - a[0];
-    const float diffy = b[1] - a[1];
-    const float diffz = b[2] - a[2];
-    out[0] = t * diffx + a[0];
-    out[1] = t * diffy + a[1];
-    out[2] = t * diffz + a[2];
+    // The original STORES the diff (b[i]-a[i]) to memory and RELOADS it as a
+    // 32-bit float before the scale (decomp lines 19-23), truncating away the
+    // x87 80-bit excess precision. A plain `float` local lets /O2 keep the
+    // diff in an 80-bit register -> 1-3 ulp drift (caught RED round 23, t=0.9).
+    // `volatile` forces the same memory round-trip -> bit-identical.
+    volatile float diffx = b[0] - a[0];
+    volatile float diffy = b[1] - a[1];
+    volatile float diffz = b[2] - a[2];
+    const float fx = diffx, fy = diffy, fz = diffz;
+    out[0] = t * fx + a[0];
+    out[1] = t * fy + a[1];
+    out[2] = t * fz + a[2];
 }
 
 RH_ScopedInstall(Vec3Lerp, 0x004b4650);
