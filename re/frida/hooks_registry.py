@@ -14091,4 +14091,21 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 18 (widened curation: 16-60B getters) ------------
+    # 0x0041efc0  CarGetLapProgress — uint32(int i). DOUBLE-DEREF:
+    # ptr = *(int*)(0x0063dc48 + i*0x2ac); return *(uint32*)(ptr + 0x80).
+    # Car-data pointers are NULL at menu -> scenario:'race' REQUIRED; in-bounds
+    # car indices 0..3 (4-car Quick Battle). Body byte-verified.
+    # ref: re/analysis/leaderboard_d2/0x0041efc0.md
+    'car_get_lap_progress': {
+        'rva':            0x0041efc0,
+        'export':         'CarGetLapProgress',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
