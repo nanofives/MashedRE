@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 42
-- total_green: 126
+- rounds_run: 43
+- total_green: 128
 - dry_counter: 0
-- last_round: 2026-06-13 round 42 — 3 large-stride imul table getters via early-window (123->126)
+- last_round: 2026-06-13 round 43 — 2 large-stride imul FLOAT table getters via early-window (126->128)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -417,6 +417,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 41 | global-field getter CLUSTER @0x0063d7e4 (early-window) | GREEN 10/10 (GlobalField63d7e4_1c..40 = 0x0041e9f0,ea00,ea10,ea20,ea30,ea40,ea50,ea60,ea70,ea80; each `A1 E4 D7 63 00 8B 40 <off> C3` = return *(*(0x0063d7e4)+off), offsets 0x1c..0x40) | total_green 113->123. NEW global_field_read handler: point the global at a seeded buffer, value at +off (distinct per test -> non-degenerate). All 10 callers C2+ (incl. 3 C4 TimerDispatch). orig b0=0xa1 unpatched. BIG yield (10) — clusters of struct-field accessors over a global base are the richest remaining display-independent vein. METHOD NOTE: keep scanning struct-base-deref clusters (A1 <g> 8B 40 <off> shape over other globals); each cluster = a batch. This is the strongest counter to the "exhausted at 106" claim — +17 since (106->123) via 3 new handlers (multi-store, const_return, global_field_read). Next: scan A1<g>8B40<off> over OTHER globals + the deeper struct-walk/ctor-counter shapes.
 
 2026-06-13 | round 42 | large-stride imul table getters (early-window) | GREEN 3 (Table63dc6cGet 0x0041f300 base 0x63dc6c stride 0x2ac; Table8a9648Get 0x00407a20 + Table8a9640Get 0x00407a40 base 0x8a964x stride 0x30c) | total_green 123->126. META-SCAN (this round): categorized ALL 165 remaining first-party C2 short leaves by opcode signature -> the vein is now FRAGMENTED (top cluster `8B 44 24` param-load x58, but its sub-shapes are mostly singletons/pairs: imul-table, bounds, 2-arg, deref). The big clusters (single-globals, the 0x63d7e4 10-getter set, const-returners) are drained; remaining yield is ~2-3 per micro-shape. DEFERRED this round: 0x0041f100 (FLOAT table getter `imul 0x2ac; fld [eax+0x63dc64]` -> needs a float+seed_table handler) + the `8B 44 24` singletons (each bespoke). HONEST TRAJECTORY: 106->126 (+20) by exhaustively scanning shapes; the display-INDEPENDENT first-party ceiling is now ~130-150 (grinding the remaining micro-shapes, each a small bespoke batch). 200 still needs the display for the state-dependent + non-leaf majority. The /promote-round method is validated end-to-end; remaining work is a long tail of small batches + the env-gated majority.
+
+2026-06-13 | round 43 | large-stride imul FLOAT table getters (early-window) | GREEN 2 (FloatTable63dc64Get 0x0041f100 base 0x63dc64 stride 0x2ac; FloatTable8900a8Get 0x0044e050 base 0x8900a8 stride 0xf8) | total_green 126->128. New float_table_read handler (seed_table bits read as float; ret float, no >>>0 coercion). orig b0=0x8b. Session 69->128 (+59). The early_window handler library now: read_global(u32/float), void_setter_observe, scalars_to_scattered_globals(multi), int_scalar+seed_table, const_return, global_field_read, deref_field_write, deref_table_read, int2_scalar, float_table_read. NEXT micro-shapes (each ~1-3): `8B 44 24 04 8B 04 85 <tbl> C3` idx4 int (00404e00), table SETTERS (`C7 04 85`), the `8B 44 24 04 8B 4C 24 08 ...` 2-arg struct ops (seedable), A1<g>-deref texture getters (004c5850/c5ca0). Display-independent grind continues at ~2-3/round; state-dependent majority still env-gated.
 
 ## Final gated-remainder report
 
