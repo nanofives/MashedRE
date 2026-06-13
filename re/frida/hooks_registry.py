@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 46 (pool-manager REMOVE; self-contained list op) --
+    'pool_remove_485b30': {'rva': 0x00485b30, 'export': 'PoolRemove485b30', 'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32']}, 'arg_type': 'pool_remove_snapshot', 'capacity': 4, 'insert_rva': 0x00485a70, 'build_keys': [0xA1, 0xA2, 0xA3], 'lut_root_delta': 0, 'path1_tests': [0xA1, 0xA2, 0xA3, 0xFF, 0xA2, 0xA1, 0xA3, 0xFF, 0xA1, 0xA3], 'path2_tests': [0xA1, 0xA2, 0xFF]},
+
     # ---- promote-round round 45 (pool-manager INSERT; self-contained list op) --
     'pool_insert_485a70': {'rva': 0x00485a70, 'export': 'PoolInsert485a70', 'signature': {'ret': 'uint16', 'args': ['pointer', 'uint32']}, 'arg_type': 'pool_insert_snapshot', 'capacity': 4, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x55, 0xFFFFFFFF, 0x99, 0x42, 0x7F], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
 

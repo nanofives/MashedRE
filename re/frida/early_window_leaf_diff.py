@@ -67,6 +67,7 @@ PURE_LEAF_ARGTYPES = {
     'float_table_read',   # fn(i): return *(float*)(base+i*stride) — seed_table bits read as float
     'eax_implicit_void',  # void fn() with `this` in EAX — trampoline sets EAX=buf, check observed fields
     'pool_insert_snapshot',  # fn(mgr_ptr, key): pool/list insert — reset+call+full-state snapshot diff
+    'pool_remove_snapshot',  # fn(mgr_ptr, key): pool/list remove — build list via orig insert, then remove, snapshot
 }
 
 SRC = r"""
@@ -83,6 +84,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'deref_field_write') ? ['pointer','uint32']
               : (cfg.at === 'deref_table_read')  ? ['pointer','uint32']
               : (cfg.at === 'pool_insert_snapshot') ? ['pointer','uint32']
+              : (cfg.at === 'pool_remove_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
@@ -157,6 +159,31 @@ rpc.exports.diff = function(cfg) {
       };
       try { reset(); Orig(mgr, t >>> 0); o = snap(); } catch (e) { eo = e.message; }
       try { reset(); Reim(mgr, t >>> 0); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'pool_remove_snapshot') {
+      // Build a list with the ORIGINAL insert (cfg.insert_rva), then remove the
+      // test key; snapshot full state + return value. Same buffers both sides.
+      const N = (cfg.capacity | 0) || 4;
+      const mgr = Memory.alloc(0x18), slots = Memory.alloc(N * 4), pool = Memory.alloc(N * 0x10);
+      _keep.push(mgr, slots, pool);
+      const Insert = new NativeFunction(ptr(cfg.insert_rva), 'uint16', ['pointer', 'uint32'], 'mscdecl');
+      const bks = cfg.build_keys;
+      const build = function () {
+        for (let z = 0; z < 0x18; z += 4) mgr.add(z).writeU32(0);
+        mgr.writeU16(0); mgr.add(2).writeU16(N);
+        mgr.add(0xc).writePointer(pool); mgr.add(0x10).writePointer(slots);
+        for (let z = 0; z < N * 4; z += 4) slots.add(z).writeU32(0);
+        for (let z = 0; z < N * 0x10; z += 4) pool.add(z).writeU32(0);
+        for (let k = 0; k < bks.length; k++) Insert(mgr, bks[k] >>> 0);
+      };
+      const snap = function () {
+        const p = [];
+        for (let z = 0; z < 0x18; z += 4) p.push(mgr.add(z).readU32() >>> 0);
+        for (let z = 0; z < N * 4; z += 4) p.push(slots.add(z).readU32() >>> 0);
+        for (let z = 0; z < N * 0x10; z += 4) p.push(pool.add(z).readU32() >>> 0);
+        return p.join(',');
+      };
+      try { build(); const ro = Orig(mgr, t >>> 0) >>> 0; o = snap() + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { build(); const rr = Reim(mgr, t >>> 0) >>> 0; r = snap() + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'eax_implicit_void') {
       // The function uses EAX as an implicit `this`. Build a tiny trampoline
       // `mov eax, buf ; jmp target` (B8 imm32 / E9 rel32), call it (no args), and
@@ -221,7 +248,8 @@ def run(name):
            'observe': h.get('observe'), 'seed_table': h.get('seed_table'),
            'outer_off': h.get('outer_off'), 'inner_off': h.get('inner_off'),
            'span': h.get('span'), 'field_off': h.get('field_off'),
-           'capacity': h.get('capacity'), 'asi': ASI}
+           'capacity': h.get('capacity'), 'insert_rva': h.get('insert_rva'),
+           'build_keys': h.get('build_keys'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
