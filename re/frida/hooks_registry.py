@@ -14252,6 +14252,12 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 102 (indexed_global_field_read getters) --
+    'get_4c5850': {'rva': 0x004c5850, 'export': 'Get4c5850', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'indexed_global_field_read', 'target_global': 0x007d4054, 'glob': 0x007d3ff8, 'field_off': 0x20, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0xFFFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},
+    'get_4c5ca0': {'rva': 0x004c5ca0, 'export': 'Get4c5ca0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'indexed_global_field_read', 'target_global': 0x007d4054, 'glob': 0x007d3ff8, 'field_off': 0x10, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0x22222222, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0xFFFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},
+    'set_4c5830': {'rva': 0x004c5830, 'export': 'Set4c5830', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'indexed_global_field_write', 'target_global': 0x007d4054, 'glob': 0x007d3ff8, 'field_off': 0x20, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0xFFFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},
+    'set_4c5c80': {'rva': 0x004c5c80, 'export': 'Set4c5c80', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'indexed_global_field_write', 'target_global': 0x007d4054, 'glob': 0x007d3ff8, 'field_off': 0x10, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0x22222222, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0xFFFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},
+
     # ---- promote-round round 101 (const-store / counter-increment leaves) --
     'zero_4b6700': {'rva': 0x004b6700, 'export': 'Zero4b6700', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x007d3e54'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
     'tbl_4a2bf7': {'rva': 0x004a2bf7, 'export': 'Tbl4a2bf7', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x006160d8'}, {'addr': '0x006160dc'}, {'addr': '0x006160e0'}, {'addr': '0x006160e4'}, {'addr': '0x006160e8'}, {'addr': '0x006160ec'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},

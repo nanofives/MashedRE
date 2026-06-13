@@ -644,3 +644,44 @@ extern "C" __declspec(dllexport) void __cdecl Inc45c810(void) {
     ++*reinterpret_cast<std::uint32_t*>(0x0068d54cu);
 }
 RH_ScopedInstall(Inc45c810, 0x0045c810);
+
+// ===== round 102 =====
+// indexed_global_field_read family: return *(*(base_glob) + *(idx_glob) + off)
+
+// 0x004c5850  render — byte-verified: EAX=*[0x7d3ff8]; ECX=*[0x7d4054]; return *(ECX+EAX+0x20)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c5850(void) {
+    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
+    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
+    return *reinterpret_cast<std::uint32_t*>(base + idx + 0x20u);
+}
+RH_ScopedInstall(Get4c5850, 0x004c5850);
+
+// 0x004c5ca0  render — byte-verified: EAX=*[0x7d3ff8]; ECX=*[0x7d4054]; return *(ECX+EAX+0x10)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c5ca0(void) {
+    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
+    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
+    return *reinterpret_cast<std::uint32_t*>(base + idx + 0x10u);
+}
+RH_ScopedInstall(Get4c5ca0, 0x004c5ca0);
+
+// indexed_global_field_write family: *(*(base_glob)+*(idx_glob)+off)=v
+
+// 0x004c5830  render — byte-verified: ECX=*[0x7d3ff8]; EDX=*[0x7d4054]; EAX=[ESP+4];
+//   *(EDX+ECX+0x20)=EAX; return 1
+extern "C" __declspec(dllexport) int __cdecl Set4c5830(std::uint32_t v) {
+    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
+    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
+    *reinterpret_cast<std::uint32_t*>(base + idx + 0x20u) = v;
+    return 1;
+}
+RH_ScopedInstall(Set4c5830, 0x004c5830);
+
+// 0x004c5c80  render — byte-verified: ECX=*[0x7d3ff8]; EDX=*[0x7d4054]; EAX=[ESP+4];
+//   *(EDX+ECX+0x10)=EAX; RET  (EAX left = v)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Set4c5c80(std::uint32_t v) {
+    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8u);
+    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(0x007d4054u);
+    *reinterpret_cast<std::uint32_t*>(base + idx + 0x10u) = v;
+    return v;
+}
+RH_ScopedInstall(Set4c5c80, 0x004c5c80);

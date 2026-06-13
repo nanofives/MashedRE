@@ -125,6 +125,8 @@ PURE_LEAF_ARGTYPES = {
     'store_be32',                # void fn(ptr p, u32 v): p[0..3] = big-endian bytes of v. test = v
     'load_be32',                 # int fn(ptr p): return big-endian u32 from p[0..3]. test = dword to seed
     'arg_to_global_ret',         # u32 fn(v): reimpl writes *tgt + returns (deterministic fn of v). seed tgt sentinel, call, check tgt+ret. test=v
+    'indexed_global_field_read', # u32 fn(): return *(u32*)(*(u32*)tgt + *(u32*)glob + field_off). seed tgt->buf, glob->idx(nonzero), place test at buf[idx+field_off]. verifies base ptr + index global + field_off. test=value
+    'indexed_global_field_write',# int fn(v): *(u32*)(*(u32*)tgt + *(u32*)glob + field_off)=v; return const/v. seed tgt->buf, glob->idx; call; observe slot|ret. test=v
 }
 
 SRC = r"""
@@ -188,6 +190,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'store_be32') ? ['pointer','uint32']
               : (cfg.at === 'load_be32') ? ['pointer']
               : (cfg.at === 'arg_to_global_ret') ? ['uint32']
+              : (cfg.at === 'indexed_global_field_read') ? []
+              : (cfg.at === 'indexed_global_field_write') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -829,6 +833,38 @@ rpc.exports.diff = function(cfg) {
       ptr(cfg.tgt).writePointer(buf);
       try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
       try { ptr(cfg.tgt).writePointer(buf); buf.add(fo).writeU32(t >>> 0); r = Reim() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_global_field_read') {
+      // return *(u32*)(*(u32*)tgt + *(u32*)glob + field_off). Seed base global at a
+      // scratch buffer, index global at a fixed nonzero (cfg.idx, default 0x40), and
+      // place the test value at buf[idx+field_off]. Verifies the base-ptr global, the
+      // index global address, and the field offset all together (a wrong index-global
+      // address reads idx=0 -> different slot -> RED). test = value (varied).
+      const fo2 = cfg.field_off | 0, gidx = (cfg.idx | 0) || 0x40;
+      const gbuf = Memory.alloc(0x800); _keep.push(gbuf);
+      for (let z = 0; z < 0x800; z += 4) gbuf.add(z).writeU32(0);
+      const seedG = function () {
+        ptr(cfg.glob).writeU32(gidx >>> 0);
+        gbuf.add(gidx + fo2).writeU32(t >>> 0);
+        ptr(cfg.tgt).writePointer(gbuf);
+      };
+      try { seedG(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { seedG(); r = Reim() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_global_field_write') {
+      // int fn(v): *(u32*)(*(u32*)tgt + *(u32*)glob + field_off) = v; return <const or v>.
+      // seed base global -> scratch buf, index global -> fixed nonzero (cfg.idx), call
+      // fn(v), observe the written slot AND the return joined. Verifies base ptr +
+      // index global + field_off + store value + return. test = v (varied).
+      const fo4 = cfg.field_off | 0, gi4 = (cfg.idx | 0) || 0x40;
+      const wbuf = Memory.alloc(0x800); _keep.push(wbuf);
+      const runW = function (CALL) {
+        for (let z = 0; z < 0x800; z += 4) wbuf.add(z).writeU32(0);
+        ptr(cfg.glob).writeU32(gi4 >>> 0);
+        ptr(cfg.tgt).writePointer(wbuf);
+        const rv = CALL(t >>> 0) >>> 0;
+        return (wbuf.add(gi4 + fo4).readU32() >>> 0) + '|' + rv;
+      };
+      try { o = runW(Orig); } catch (e) { eo = e.message; }
+      try { r = runW(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'deref_table_read') {
       // return (*p1)[i]. Seed an array behind p1 with distinct values; non-degenerate.
       const span = (cfg.span | 0) || 16;
