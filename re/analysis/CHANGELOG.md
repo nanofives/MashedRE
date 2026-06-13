@@ -3439,3 +3439,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  0041da90  DeltaTimeOutGet  C2->C3  promote-round-20 outbuf_only race-lane diff 10/10 GREEN log/diff_delta_time_out_get.csv
 2026-06-12  0041f030  TriggerStructRead  C2->C3  promote-round-21 int_copy_outbuf(16) diff 10/10 GREEN log/diff_trigger_struct_read.csv (race)
 2026-06-12  0041f260  WorldMatrixCopy  C2->C3  promote-round-21 int_copy_outbuf(64) diff 10/10 GREEN log/diff_world_matrix_copy.csv (race, double-deref)
+2026-06-13  00496900  SlotActiveThunk  C2->C3  promote-round-24 int_scalar race diff 10/10 GREEN log/diff_slot_active_thunk.csv
+2026-06-13  00415860  InteractionCooldownSet  C2->C3  promote-round-24 slot_block_zero diff 10/10 GREEN log/diff_interaction_cooldown_set.csv
