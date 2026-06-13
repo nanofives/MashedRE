@@ -68,6 +68,8 @@ PURE_LEAF_ARGTYPES = {
     'eax_implicit_void',  # void fn() with `this` in EAX — trampoline sets EAX=buf, check observed fields
     'pool_insert_snapshot',  # fn(mgr_ptr, key): pool/list insert — reset+call+full-state snapshot diff
     'pool_remove_snapshot',  # fn(mgr_ptr, key): pool/list remove — build list via orig insert, then remove, snapshot
+    'table_clear',           # void fn(i): zero an absolute table slot [target_global + i*4]
+    'ptr_fields_clear',      # void fn(ptr): zero fields of a struct arg; check observe offsets
 }
 
 SRC = r"""
@@ -85,6 +87,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'deref_table_read')  ? ['pointer','uint32']
               : (cfg.at === 'pool_insert_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'pool_remove_snapshot') ? ['pointer','uint32']
+              : (cfg.at === 'table_clear') ? ['uint32']
+              : (cfg.at === 'ptr_fields_clear') ? ['pointer']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
@@ -184,6 +188,19 @@ rpc.exports.diff = function(cfg) {
       };
       try { build(); const ro = Orig(mgr, t >>> 0) >>> 0; o = snap() + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { build(); const rr = Reim(mgr, t >>> 0) >>> 0; r = snap() + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'table_clear') {
+      // void fn(i): zero [tgt + i*4]. Seed sentinel, call, read back.
+      const base = ptr(cfg.tgt), idx = t >>> 0;
+      try { base.add(idx * 4).writeU32(0xFFFFFFFF); Orig(idx); o = base.add(idx * 4).readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { base.add(idx * 4).writeU32(0xFFFFFFFF); Reim(idx); r = base.add(idx * 4).readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'ptr_fields_clear') {
+      // void fn(ptr): zero struct fields. Fill buffer with sentinel, call, check observe offsets.
+      const obs = cfg.observe;
+      const buf = Memory.alloc(0x100); _keep.push(buf);
+      const fill = function () { for (let z = 0; z < 0x100; z += 4) buf.add(z).writeU32(0xFFFFFFFF); };
+      const rd = function () { return obs.map(function (x) { return buf.add(x.off | 0).readU32() >>> 0; }).join('|'); };
+      try { fill(); Orig(buf); o = rd(); } catch (e) { eo = e.message; }
+      try { fill(); Reim(buf); r = rd(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'eax_implicit_void') {
       // The function uses EAX as an implicit `this`. Build a tiny trampoline
       // `mov eax, buf ; jmp target` (B8 imm32 / E9 rel32), call it (no args), and
