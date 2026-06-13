@@ -3411,3 +3411,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  0042f790  GhostMode::IsActive  C2->C3  promote-round-8 read_global diff 10/10 GREEN log/diff_ghost_mode_is_active.csv
 2026-06-12  00431d70  Course::GetLeaderIndex  C2->C3  promote-round-8 read_global diff 10/10 GREEN log/diff_course_get_leader_index.csv
 2026-06-12  004cc7e0  FUN_004cc7e0  C2->C2  promote-round-8 promotion REFUSED (U-5102 Blocks=C2->C3) despite void_setter_observe 10/10 GREEN — evidence annotated, resolve U-5102 first
+2026-06-12  00498be0  RenderBitDepthGet  C2->C3  promote-round-9 read_global diff 10/10 GREEN log/diff_render_bit_depth_get.csv
+2026-06-12  0040dc80  UtilFloat63b910Get  C2->C3  promote-round-9 read_global diff 10/10 GREEN log/diff_util_float_63b910_get.csv (FLD byte-verified)
+2026-06-12  0040dc90  UtilSlotIndexCondGet  C2->C3  promote-round-9 read_global diff 10/10 GREEN log/diff_util_slot_index_cond_get.csv (5/10 short-circuit path untested)
+2026-06-12  00429860  RaceStateFlagGet  C2->C3  promote-round-9 read_global diff 10/10 GREEN log/diff_race_state_flag_get.csv
+2026-06-12  00429840  RaceStateLatchSet  C2->C3  promote-round-9 scalars_to_scattered_globals diff 10/10 GREEN log/diff_race_state_latch_set.csv (latch branch exercised via fill=0xFF)
