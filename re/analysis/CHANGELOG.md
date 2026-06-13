@@ -3397,3 +3397,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  00423b20  CarSnapshotDwordGet  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_car_snapshot_dword_get.csv
 2026-06-12  00426cc0  VehicleTable4cPtrGet  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_vehicle_table_4c_ptr_get.csv
 2026-06-12  00442df0  RaceFloat898980Get  C2->C3  promote-round-2 scenario=race diff 10/10 GREEN log/diff_race_float_898980_get.csv (FLD byte-verified)
+2026-06-12  0042fe70  VehicleDword67ea80Get  C2->C3  promote-round-5 read_global diff 10/10 GREEN log/diff_vehicle_dword_67ea80_get.csv (first none+race attempt exit-5 degenerate: global genuinely 0 in Quick Battle)
+2026-06-12  004cbc60  RwGlobal7d4598Set  C2->C3  promote-round-5 RE-EARN (demoted-needs-reimpl): reimpl + void_setter_observe diff 10/10 GREEN log/diff_rw_global_7d4598_set.csv
+2026-06-12  004cbc70  RwGlobal7d4598Get  C2->C3  promote-round-5 RE-EARN: reimpl + read_global diff 10/10 GREEN log/diff_rw_global_7d4598_get.csv
+2026-06-12  004cbc80  RwGlobal7d459cSet  C2->C3  promote-round-5 RE-EARN: reimpl + void_setter_observe diff 10/10 GREEN log/diff_rw_global_7d459c_set.csv
