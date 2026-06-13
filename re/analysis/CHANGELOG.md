@@ -3428,3 +3428,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  004cc7e0  RwGlobal6182b0Set  C2->C3  promote-round-14 classify-only: U-5102 RESOLVED via reference_to 0x006182b0 (2 refs, both documented); round-8 GREEN evidence log/diff_rw_global_6182b0_set.csv
 2026-06-12  00402f40  Util636ad8Get  C2->C3  promote-round-15 read_global diff 10/10 GREEN log/diff_util_636ad8_get.csv (caller gate filled round-14 Ghidra pass)
 2026-06-12  004c9eb0  DeviceModeBestBelowSet  C2->C3  promote-round-16 Ghidra disassembly pass (vtable __stdcall + uStack_8=buffer+8) + faithful reimpl + scalars_to_scattered_globals diff 10/10 GREEN non-degenerate log/diff_device_mode_best_below_set.csv
+2026-06-12  00485360  DynObjListGetCount  C2->C3  promote-round-17 read_global diff 10/10 GREEN log/diff_dyn_obj_list_get_count.csv
+2026-06-12  00550790  FsManager7dc76cSet  C2->C3  promote-round-17 void_setter_observe diff 10/10 GREEN log/diff_fs_manager_7dc76c_set.csv
+2026-06-12  00496920  TimerTable772ffcGet  C2->C3  promote-round-17 scenario=race int_scalar diff 10/10 GREEN log/diff_timer_table_772ffc_get.csv (menu was exit-5)
