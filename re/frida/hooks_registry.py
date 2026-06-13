@@ -14252,6 +14252,12 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 54 (stride-0x58 getter + 4 per-vehicle table getters) --
+    'table_68ba04_get': {'rva': 0x0045a0d0, 'export': 'Table68ba04Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0068ba04, 'stride': 0x58, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 0xFFFFFFFF, 2, 3, 1, 0], 'path2_tests': [0, 3, 4]},
+    'veh_tbl_881f50_get3': {'rva': 0x0046d660, 'export': 'VehTbl881f50Get3', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'ptr_out_table_get', 'target_global': 0x00881f50, 'stride': 0xd04, 'span': 3, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
+    'veh_tbl_8820ac_get1': {'rva': 0x0046d6a0, 'export': 'VehTbl8820acGet1', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'ptr_out_table_get', 'target_global': 0x008820ac, 'stride': 0xd04, 'span': 1, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
+    'veh_tbl_881f84_get1': {'rva': 0x0046d6d0, 'export': 'VehTbl881f84Get1', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'ptr_out_table_get', 'target_global': 0x00881f84, 'stride': 0xd04, 'span': 1, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
+
     # ---- promote-round round 53 (scattered-global clearer + 4 strided table clearers) --
     'clear_639d70_x3': {'rva': 0x00405400, 'export': 'Clear639d70x3', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x00639d70}, {'addr': 0x00639d74}, {'addr': 0x00639d78}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
     'strided_clear_76a100': {'rva': 0x0048f680, 'export': 'StridedClear76a100', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0076a100, 'len': 0x3800, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},

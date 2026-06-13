@@ -3535,3 +3535,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0048f6b0  StridedClear766a00  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x20)
 2026-06-13  0048f6e0  StridedClear770718  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x24)
 2026-06-13  0048f710  StridedClear769f50  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x24)
+2026-06-13  0045a0d0  Table68ba04Get  C2->C3  promote-round-54 int_scalar 10/10 GREEN (early_window signed-bound stride-0x58 getter)
+2026-06-13  0046d660  VehTbl881f50Get3  C2->C3  promote-round-54 ptr_out_table_get 10/10 GREEN (early_window vec3 per-vehicle getter)
+2026-06-13  0046d6a0  VehTbl8820acGet1  C2->C3  promote-round-54 ptr_out_table_get 10/10 GREEN (early_window scalar per-vehicle getter)
+2026-06-13  0046d6d0  VehTbl881f84Get1  C2->C3  promote-round-54 ptr_out_table_get 10/10 GREEN (early_window scalar per-vehicle getter)

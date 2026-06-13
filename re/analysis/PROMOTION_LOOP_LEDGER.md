@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 53
-- total_green: 147
+- rounds_run: 54
+- total_green: 151
 - dry_counter: 0
-- last_round: 2026-06-13 round 53 — 1 scattered-global clearer + 4 strided table clearers (142->147)
+- last_round: 2026-06-13 round 54 — stride-0x58 getter + 3 per-vehicle table getters via new ptr_out_table_get handler (147->151)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -455,6 +455,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 52 (REVERTED, 0 promotions) | process-fix: check hooks.csv STATUS before authoring | Picked 3 functions whose Ghidra plate said "[C2 ...]" (0x0046c7b0, 0x0046c770, 0x00429840) — but hooks.csv (the source of truth) already had all 3 at C3 (VehicleSlotGetter / VehicleDestructionStateGetter / RaceStateLatchSet@round-9). They diffed GREEN but were ALREADY promoted -> duplicate RH_ScopedInstall at the same RVAs (latent double-install bug). FULLY REVERTED (cpp deleted, build line + registry block removed). KEPT: the new `cond_global_set` early_window handler (validated GREEN on 0x00429840: seed *tgt + call(arg) + snapshot, [seed,arg] pairs exercise all 3 latch branches) as a proven additive capability for future genuine cond-global-set leaves. LESSON (now a hard rule): the Ghidra plate "[C1/C2 ...]" date annotations are STALE; ALWAYS `grep "^<rva>," hooks.csv` and confirm col4 == C2 BEFORE authoring. total_green unchanged 142.
 
 2026-06-13 | round 53 | 1 scattered-global clearer + 4 strided table clearers (callee-graph scan) | GREEN 5 (Clear639d70x3 0x00405400 scalars_to_scattered_globals zero 3 globals; StridedClear76a100 0x0048f680 / StridedClear766a00 0x0048f6b0 / StridedClear770718 0x0048f6e0 / StridedClear769f50 0x0048f710 all range_init strided "*p=0; p+=step" clears, whole-range snapshot off-stride-sentinel-preserved) | total_green 142->147. **METHOD BREAKTHROUGH — the vein is NOT drained:** ran a Ghidra callee-graph scan (ghidra_eval: FunctionManager + getCalledFunctions==0, body<260B, range 0x400000-0x490000) intersected with hooks.csv C2 rows -> **212 C2 zero-callee self-contained leaf candidates**. The earlier "drained at 129" conclusion was an artifact of the NARROW opcode-pattern scan; the callee-GRAPH scan finds the real self-contained pool, which is large. This round promoted 5 of the first batch via EXISTING handlers (no new handler needed). DROPPED 2 (0x004098d0, 0x00409950 — both zero direct callers -> C3 caller-gate fail, likely dispatched via fn-ptr table). orig b0=0x33/0xb8 unpatched. RESUME: the 212-candidate list (`/tmp/c2_zerocallee.txt` regenerable via the ghidra_eval scan) is the engine — decompile batches, skip caller-gate-fails + non-snapshot-able shapes, promote getters/setters/clearers/inits/strided-clears via existing-or-tiny handlers, ~3-5/round. NEXT immediate: 0x0048f260 (strided clear step 0x488 len 0x2d50, caller-gate TBD); then sweep the 212 list. The display is NOT needed for this vein.
+
+2026-06-13 | round 54 | stride-0x58 getter + 3 per-vehicle table getters (new ptr_out_table_get handler) | GREEN 4 (Table68ba04Get 0x0045a0d0 int_scalar signed-bound stride-0x58; VehTbl881f50Get3 0x0046d660 vec3 / VehTbl8820acGet1 0x0046d6a0 scalar / VehTbl881f84Get1 0x0046d6d0 scalar — all ptr_out_table_get base+idx*0xd04+j*4, idx>=0x10->0) | total_green 147->151. NEW handler ptr_out_table_get: u32 fn(out_ptr,idx) writing N dwords from an absolute per-vehicle table; seed slots + fresh out buffers per side + snapshot out[]+ret. Unlocks the whole 0x0046d2e0-0x0046d740 per-vehicle-getter family (8+ fns, bases 0x00881f50/68/84/8820ac/... stride 0xd04). DROPPED 0x0046d700 (diffed GREEN but ALREADY C3 = VehicleVec3At9C8Get; stale Ghidra [C2] plate — caught by the hooks.csv-status pre-check, the round-52 lesson). orig b0=0x8b/0x8b unpatched. The 212-candidate callee-graph list keeps delivering ~4-5/round via existing+tiny handlers, NO display needed. RESUME: more of the d2e0-d740 family (2-index getter 0x0046d2e0 needs a (idx1,idx2,out) variant; vec3 SETTER 0x0046d740 needs a ptr_in_table_set handler) + sweep the rest of the 212 list (clearers/getters/setters/inits). SWEEP-CRITICAL new arg_types this session: cond_global_set, ptr_out_table_get.
 
 ## Final gated-remainder report
 
