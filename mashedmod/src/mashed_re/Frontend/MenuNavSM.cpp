@@ -915,6 +915,22 @@ void Nav(int screen_id, int dir) {
     g_last_dir = dir;                                   // DAT_0067e844
 }
 
+// Force the current screen's records to slide in (slide=0x1ff, type animating)
+// so the whole menu sweeps in on entry. Used for the title->main-menu
+// transition, where the root would otherwise appear with no motion (slide=0)
+// and read as a pop/fade. The arc-wash fade is raised too (reload-style).
+void Nav_AnimateIn() {
+    LogoOverlayFadeSet(0xff, -1);
+    for (int i = 0; i < g_record_count; ++i) {
+        MenuRecord& r = g_records[i];
+        const std::uint32_t tag = static_cast<std::uint32_t>(r.tag);
+        if (tag == 0) continue;
+        // Only the list-item / back / prompt rows animate (type 0/2); leave
+        // frozen-by-design rows alone.
+        if (r.type == 1 || r.type == 0) { r.slide = 0x1ff; r.type = 0; }
+    }
+}
+
 void Nav_MoveCursor(int delta) {
     NavSlot& s = g_stack[g_nav_depth];
     if (s.item_count <= 0) return;

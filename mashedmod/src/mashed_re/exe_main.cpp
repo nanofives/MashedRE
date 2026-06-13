@@ -1124,7 +1124,8 @@ bool UpdateMenuSelection() {
             // permanent haze is up.
             g_frontend_phase = 3;
             LogoOverlayFadeSet(0xff, -1);
-            ModalGo(30); g_modal_alpha = 0;
+            ModalGo(30); g_modal_alpha = 0;   // brief Loading modal; the menu
+                                              // slides in when it dismisses
         }
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
@@ -2723,10 +2724,13 @@ bool RenderFrame() {
             GetTickCount() - g_modal_timer_ms > 800u) {
             ModalGo(22); g_modal_alpha = 0xff;
         }
-        // Loading modal (step 30) auto-dismisses after ~800ms.
+        // Loading modal (step 30) auto-dismisses after ~800ms, then the main
+        // menu slides in (the slide is hidden while the modal covers it, so
+        // start it on dismiss for visible movement).
         if (g_modal_step == 30 && g_modal_timer_ms != 0 &&
             GetTickCount() - g_modal_timer_ms > 800u) {
             ModalGo(0);
+            mashed_re::Frontend::Nav_AnimateIn();
         }
         const std::uint32_t A = static_cast<std::uint32_t>(g_modal_alpha) << 24;
         const float S = 1.25f;

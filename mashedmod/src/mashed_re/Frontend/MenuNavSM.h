@@ -115,6 +115,9 @@ bool           Nav_GameStateLoadSave(const unsigned char* data, unsigned len);
 // FUN_0043df00's FUN_0043d2a0(0, 2) frontend-enter reload.
 void Nav_Init();
 
+// Force the current screen's records to slide in (title->menu entry motion).
+void Nav_AnimateIn();
+
 // Push/pop/reload. Port of FUN_0043d2a0(screen_id, dir). For kNavPush, screen_id
 // is the child screen to enter; for kNavPop/kNavReload it is ignored (operates on
 // the current top). Repopulates g_records from the active screen's descriptor table.
