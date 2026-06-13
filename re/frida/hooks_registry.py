@@ -13936,4 +13936,52 @@ HOOKS = {
         'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
     },
 
+    # ---- promote-round round 12 (L3 looser-curation remainder) ----------------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round12.cpp).
+
+    # 0x0041b510  HudCounterReset — void(); DAT_0063cab0 := 0. fill=0xFF makes
+    # the zero-store observable inside the restored bracket.
+    'hud_counter_reset': {
+        'rva':            0x0041b510,
+        'export':         'HudCounterReset',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x0063cab0', 'len': 4, 'fill': 0xFF}],
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}],
+        'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
+    },
+
+    # 0x00431b10  BootParamSet2 — void(); DAT_007f0f10 := 2. fill=0xFF baseline
+    # -> 2 after the call (observable).
+    'boot_param_set2': {
+        'rva':            0x00431b10,
+        'export':         'BootParamSet2',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x007f0f10', 'len': 4, 'fill': 0xFF}],
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}],
+        'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
+    },
+
+    # 0x004d6e60  TexStageCacheGet — uint32(int stage). Per-stage texture
+    # cache read at 0x007d6b30 + stage*0x18. Menu renders textured quads so
+    # stage 0 should be populated; exit-5 => defer with reason.
+    'tex_stage_cache_get': {
+        'rva':            0x004d6e60,
+        'export':         'TexStageCacheGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 0, 1],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
