@@ -14252,6 +14252,12 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 91 (struct-const-init family) --
+    'init_5b0b90': {'rva': 0x005b0b90, 'export': 'Init5b0b90', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_const_init', 'observe': [{'off':0},{'off':4},{'off':8},{'off':0xc},{'off':0x10},{'off':0x14}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'init_5b0f10': {'rva': 0x005b0f10, 'export': 'Init5b0f10', 'signature': {'ret': 'uint32', 'args': ['uint32','pointer']}, 'arg_type': 'struct_const_init', 'passthrough_arg': True, 'observe': [{'off':0},{'off':4},{'off':8},{'off':0xc},{'off':0x10},{'off':0x14},{'off':0x18}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'init_5beb50': {'rva': 0x005beb50, 'export': 'Init5beb50', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_const_init', 'observe': [{'off':0x10},{'off':0x14},{'off':0x18},{'off':0x118},{'off':0x11c},{'off':0x120},{'off':0x124},{'off':0x128},{'off':0x148},{'off':0x14c},{'off':0x150}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'init_5c9120': {'rva': 0x005c9120, 'export': 'Init5c9120', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_const_init', 'observe': [{'off':0x1e8},{'off':0x20c},{'off':0x210},{'off':0x224}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+
     # ---- promote-round round 90 (arg-table linear search + global float step) --
     'arg_search_45c4e0': {'rva': 0x0045c4e0, 'export': 'ArgSearch45c4e0', 'signature': {'ret': 'int32', 'args': ['uint32','pointer','uint32']}, 'arg_type': 'arg_table_linear_search', 'stride_dw': 10, 'lut_root_delta': 0, 'path1_tests': [[0x1234,0,8],[0x1234,3,8],[0x1234,7,8],[0x1234,-1,8],[0xABCD,5,8]], 'path2_tests': [[0x1234,3,8],[0x1234,-1,8]]},
     'float_step_45df70': {'rva': 0x0045df70, 'export': 'FloatStep45df70', 'signature': {'ret': 'void', 'args': ['float']}, 'arg_type': 'global_float_step', 'target_global': 0x006036c0, 'lut_root_delta': 0, 'path1_tests': [[0x42480000,100.0],[0x42480000,0.0],[0x00000000,5.0],[0x42c80000,50.0],[0x41200000,10.0]], 'path2_tests': [[0x42480000,100.0],[0x00000000,5.0]]},

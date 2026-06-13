@@ -113,6 +113,7 @@ PURE_LEAF_ARGTYPES = {
     'any_slot_nonzero',          # u32 fn(): return any(observe[k].addr nonzero)?1:0. test=index to set nonzero (-1=all zero)
     'arg_table_linear_search',   # int fn(key, table*, count): for i<count if(table[i*stride_dw]==key) return i; return -1. test=[key,placeAt,count]
     'global_float_step',         # void fn(float target): if(*tgt<target) *tgt+=step; if(target<*tgt) *tgt-=step. test=[seedbits,targetfloat]
+    'struct_const_init',         # [u32] fn([passthrough,] ptr p): writes deterministic consts/computed to p's fields. alloc 0x400 buf, snapshot observe offsets (+ret if passthrough). test ignored
 }
 
 SRC = r"""
@@ -164,6 +165,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'any_slot_nonzero') ? []
               : (cfg.at === 'arg_table_linear_search') ? ['uint32','pointer','uint32']
               : (cfg.at === 'global_float_step') ? ['float']
+              : (cfg.at === 'struct_const_init') ? (cfg.passthrough_arg ? ['uint32','pointer'] : ['pointer'])
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -343,6 +345,16 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_const_init') {
+      // [u32] fn([passthrough,] ptr p): writes deterministic values into p's fields. alloc 0x400
+      // sentinel buffer, call (with optional leading passthrough arg), snapshot observe offsets +
+      // (if passthrough) the return. Same init both sides -> orig/reim outputs compared directly.
+      const obs = cfg.observe, hasarg = cfg.passthrough_arg;
+      const mk = function () { const b = Memory.alloc(0x400); _keep.push(b);
+                               for (let z = 0; z < 0x400; z += 4) b.add(z).writeU32(0xFFFFFFFF); return b; };
+      const snap = function (b) { return obs.map(function (x) { return b.add(x.off | 0).readU32() >>> 0; }).join(','); };
+      try { const b = mk(); const ro = hasarg ? Orig(0x12345678, b) : Orig(b); o = snap(b) + (hasarg ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
+      try { const b = mk(); const rr = hasarg ? Reim(0x12345678, b) : Reim(b); r = snap(b) + (hasarg ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
     } else if (cfg.at === 'arg_table_linear_search') {
       // int fn(key, table*, count): for i<count: if(table[i*stride_dw]==key) return i; return -1.
       // test t=[key, placeAt, count]: alloc table, fill distinct non-key markers, place key at placeAt.
@@ -750,7 +762,7 @@ def run(name):
            'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'),
            'add': h.get('add'), 'seedf': h.get('seedf'),
            'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'),
-           'stride_dw': h.get('stride_dw'), 'asi': ASI}
+           'stride_dw': h.get('stride_dw'), 'passthrough_arg': h.get('passthrough_arg'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

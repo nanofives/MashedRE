@@ -372,3 +372,45 @@ extern "C" __declspec(dllexport) void __cdecl FloatStep45df70(float target) {
     if (target < *g) *g -= step;
 }
 RH_ScopedInstall(FloatStep45df70, 0x0045df70);
+
+// ===== round 91 (struct-const-init family) =====
+
+// 0x005b0b90  audio — byte-verified: 8B 44 24 04 33 C9 89 08 C7 40 04 01.. 89 48 08 89 48 0C C7 40 10 ..3F 89 48 14 C3
+//   fn(p): p[0]=0;p[1]=1;p[2]=0;p[3]=0;p[4]=1.0f;p[5]=0   (6-word descriptor default; caller 005af070 C2)
+extern "C" __declspec(dllexport) void __cdecl Init5b0b90(std::uint32_t* p) {
+    p[0]=0; p[1]=1; p[2]=0; p[3]=0; p[4]=0x3f800000u; p[5]=0;
+}
+RH_ScopedInstall(Init5b0b90, 0x005b0b90);
+
+// 0x005b0f10  audio — byte-verified: fn(a,p=[esp+8]): p[0]=p[1]=-1;p[4]=0;p[2]=0;p[3]=1;p[5]=0;p[6]=0; return a
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Init5b0f10(std::uint32_t a, std::uint32_t* p) {
+    p[0]=0xffffffffu; p[1]=0xffffffffu; p[4]=0; p[2]=0; p[3]=1; p[5]=0; p[6]=0;
+    return a;
+}
+RH_ScopedInstall(Init5b0f10, 0x005b0f10);
+
+// 0x005beb50  audio — byte-verified (69B): zero a CBasePin/CBaseFilter bookkeeping block + set vtable-ish ptr
+//   p[0x10]=0; *(u16*)(p+0x18)=0; p[0x118/11c/120/124/128]=0; p[0x14]=&DAT_00635948; p[0x148/14c/150]=0
+extern "C" __declspec(dllexport) void __cdecl Init5beb50(char* p) {
+    *reinterpret_cast<std::uint32_t*>(p+0x10)=0;
+    *reinterpret_cast<std::uint16_t*>(p+0x18)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x118)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x120)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x11c)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x124)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x128)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x14)=0x00635948u;
+    *reinterpret_cast<std::uint32_t*>(p+0x148)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x14c)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x150)=0;
+}
+RH_ScopedInstall(Init5beb50, 0x005beb50);
+
+// 0x005c9120  audio — byte-verified: p[0x1e8]=0;p[0x20c]=0;p[0x210]=0;p[0x224]=p[0x1ec]*2
+extern "C" __declspec(dllexport) void __cdecl Init5c9120(char* p) {
+    *reinterpret_cast<std::uint32_t*>(p+0x1e8)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x20c)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x210)=0;
+    *reinterpret_cast<std::uint32_t*>(p+0x224)=*reinterpret_cast<std::uint32_t*>(p+0x1ec)*2u;
+}
+RH_ScopedInstall(Init5c9120, 0x005c9120);

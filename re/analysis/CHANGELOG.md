@@ -3620,3 +3620,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  004075b0  ItemPosRet4075b0  C2->C3  early_window double_deref_vec3+ret GREEN 5/5; promote-round-89
 2026-06-13  0045c4e0  ArgSearch45c4e0  C2->C3  early_window arg_table_linear_search GREEN 5/5; promote-round-90
 2026-06-13  0045df70  FloatStep45df70  C2->C3  early_window global_float_step GREEN 5/5; promote-round-90
+2026-06-13  005b0b90  Init5b0b90  C2->C3  early_window struct_const_init GREEN; promote-round-91
+2026-06-13  005b0f10  Init5b0f10  C2->C3  early_window struct_const_init GREEN; promote-round-91
+2026-06-13  005beb50  Init5beb50  C2->C3  early_window struct_const_init GREEN; promote-round-91
+2026-06-13  005c9120  Init5c9120  C2->C3  early_window struct_const_init GREEN; promote-round-91

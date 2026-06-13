@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 90
-- total_green: 232
+- rounds_run: 91
+- total_green: 236
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 91 | struct_const_init FAMILY (NEW handler, sessionB) | attempted 4 | GREEN 4 (Init5b0b90 0x005b0b90; Init5b0f10 0x005b0f10 passthrough; Init5beb50 0x005beb50; Init5c9120 0x005c9120) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 232->236. NEW struct_const_init handler (write deterministic consts/computed/pointer to arg fields; 0x400 buf, snapshot observe offsets +ret; orig-vs-reim compared so any const value works). 4 in ONE round (first family >2 in a while). LIKELY MORE struct-init candidates in the pool -> scan next. Session 79-91 = 205->236 (+31).
 
 2026-06-13 | round 90 | early_window bespoke handlers (sessionB append) | attempted 2 | GREEN 2 (ArgSearch45c4e0 0x0045c4e0 arg_table_linear_search; FloatStep45df70 0x0045df70 global_float_step) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 230->232. NEW handlers arg_table_linear_search (pure arg-driven search) + global_float_step (float toward target). Session 79-90 = 205->232 (+27). Deferred this batch: 00413fe0 (2-range strided init), 0041b770/0045c510 (__fastcall/live-ptr-table), 0045baa0 (register-conv ESI).
 
