@@ -76,9 +76,63 @@ dumps (`DumpFunctions.java`) → masked-hash matcher
 (`re/tools/console/xbuild_match.py`: E8/E9 rel32 + in-image abs32 dwords
 masked, full-body and 64-byte-prefix SHA1 tiers, unique-unique matches only).
 
-## Match results
+## Match results (2026-06-12)
 
-(to be filled by `xbuild_match.py` run)
+Ghidra auto-analysis found **6,810 Xbox** and **5,800 PC** functions.
+
+- Pass 1 (`xbuild_match.py`, byte-identity masked hash, unique-unique only):
+  **235** pairs (185 full-body, 50 prefix). Low rate as expected — PC MSVC vs
+  XDK codegen differs.
+- Pass 2 (`xbuild_match2.py`, feature tiers): **1,334** pairs total —
+  `byte` 235 → `+mnem` 257 (mnemonic-sequence hash unique-unique) →
+  `+string` 298 (unique-string anchors) → `+prop` 544 (call-graph gap
+  propagation, fixpoint).
+
+| tier | pairs |
+|---|---|
+| prop-weak | 459 |
+| string | 298 |
+| mnem | 257 |
+| byte-full | 185 |
+| prop-mnem | 85 |
+| byte-prefix | 50 |
+
+Coverage: **654 / 3,638 first-party hooks.csv rows (18.0%)**; subsystem
+leaders: render 150, util 124, audio 110, boot 83, frontend 58. Output:
+`re/console/match/xbuild_match_v2.csv` (pc_va, xbox_va, tier, name,
+subsystem, confidence).
+
+Quality corroboration:
+- 580/1,334 pairs (43%) have *identical* full mnemonic sequences.
+- Known named functions land plausibly and with per-TU locality, e.g.
+  `TrackNodeRecordScan`/`TrackNodeRecordFind` (PC 0x0041e870/0x0041e980 →
+  Xbox 0x001c32a0/0x001c31a0, adjacent in both builds);
+  `LoadingState1Enter`/`LoadingState3Enter` byte-identical.
+- `prop-weak` (459) is the only tier without an exact-feature witness —
+  treat as candidate-grade; verify before relying on a specific pair.
+
+Regeneration:
+```
+py -3.12 re/tools/console/xbe_flatten.py re/console/xbox/default.xbe re/console/xbox/toast_flat
+<analyzeHeadless import runs — see git log of this report for exact commands>
+py -3.12 re/tools/console/xbuild_match.py && py -3.12 re/tools/console/xbuild_match2.py
+```
+
+## Next levers (in expected-yield order)
+
+1. **Data-reference anchoring** — shared unique float constants / dword tables
+   as a fourth anchor tier (handling constants are identical across builds).
+2. **Caller-context propagation** — current propagation is callee-list only;
+   matching via matched *callers* (who calls me, at which site index) catches
+   leaf functions that string/mnem tiers miss.
+3. **Use of matches**: (a) a PC function that decompiles badly can be read on
+   the Xbox side (different optimizer context, often cleaner); (b) PC-side
+   functions with NO Xbox match in `.text` are platform-layer candidates
+   (window/D3D9/DirectShow glue) — a cheap subsystem-attribution signal;
+   (c) Xbox `.data` is laid out from the same source — matched-function data
+   refs give a second witness for global-variable identification.
+3. The Xbox disc asset tree (`ToastArt/`) and PS2 `TOASTART/` are format
+   variants of the PC assets — useful when a PC format field is ambiguous.
 
 ## PS2 ELF — retained value despite stripping
 
