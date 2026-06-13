@@ -99,6 +99,15 @@ Do not move or delete anything in `original\` without explicit user permission.
 - **MSVC Build Tools 2022 (x86)** — installed at `C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools`. Activated via `VC\Auxiliary\Build\vcvars32.bat`. `cl.exe 19.44+` produces both targets via `mashedmod\build.bat`. Choice locked 2026-05-08: chosen over MinGW for ABI compatibility with the original MSVC-built MASHED.exe (cleaner `__thiscall`, vtable layout, exception handling for hook surfaces).
 - **Frida** for runtime tracing / behavioral diffs. Already installed via the user's Python.
 
+## Cross-build reference (Xbox/PS2 twins)
+
+The Xbox build (`toast.exe`) is a second x86 compile of the **same source** as `MASHED.exe`. A static cross-build matcher pairs functions between them so a hairy PC decompilation can be read from its Xbox twin (different optimizer context, often cleaner). See `re/analysis/console_symbol_harvest/REPORT.md`.
+
+- **Lookup**: `py -3.12 re\tools\console\xtwin.py 0x<pc_rva>` prints the Xbox twin's decompilation (~30–60 s; single-writer `Mashed_Console` headless project — don't run two at once).
+- **Table**: `re/console/match/xbuild_match_v2.csv` (PC RVA → Xbox VA, `tier`, `scaffold` ∈ {ok-asc, flag, ambiguous}). Trust `scaffold=ok-asc`; treat `prop-weak`/`caller`/`interval` tiers as candidate-grade and confirm before relying on a specific pair.
+- **Evidence status**: a twin is a *reading aid and a second static witness only*. It is **NOT** behavioral evidence — it never substitutes for a `diff-original` Frida diff and cannot move a function's C-level. Both consoles are symbol-stripped, so there are no free names to import.
+- `re/console/match/platform_candidates.csv` lists PC functions with no Xbox twin; only the `signal=platform-api` rows (DirectShow/D3DX/D3D9) are real PC-only glue — the `recall-gap` rows are matcher misses, not findings.
+
 ## Common commands
 
 All commands run from the repo root (`C:\Users\maria\Desktop\Proyectos\Mashed`).

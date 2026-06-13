@@ -151,6 +151,10 @@ Read-only tools you can call freely against a slot: `function_at`, `function_by_
 
 If you are unsure whether a tool mutates state, treat it as a write tool and refuse until you hold the master flag.
 
+## Cross-build twin (optional reading aid)
+
+When a PC decompilation is hard to read, `MASHED.exe` has a second x86 compile of the same source in the Xbox build. `py -3.12 re\tools\console\xtwin.py 0x<rva>` prints the matched Xbox twin's decompilation (separate `Mashed_Console` headless project — does NOT touch the pool or master). It is a *reading aid and a second static witness only*: facts you cite still come from Ghidra MCP on this slot, and a twin never substitutes for a `diff-original` Frida diff or moves a C-level. Match table + caveats in `CLAUDE.md` → "Cross-build reference".
+
 ## NO-GUESSING coupling
 
 This skill is the entry point to deterministic RE work. Whenever you load a slot, the conversation should follow the project's NO-GUESSING rule:

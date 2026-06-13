@@ -59,6 +59,7 @@ void CFoo::InjectHooks() {
 1. **Confirm binary anchor** — run `Get-FileHash` on `original\MASHED.exe`. If it doesn't match, abort.
 2. **Acquire a Ghidra slot** via the `ghidra-pool` skill.
 3. **Pull the decomp** with `mcp__ghidra__decomp_function` for the RVA the user gave.
+   - If the PC decomp is hard to read (heavy inlining, opaque casts), check the Xbox twin: `py -3.12 re\tools\console\xtwin.py 0x<rva>`. It's the same source compiled differently and often reads cleaner. Use it to *understand* the function only — cite the PC RVA from Ghidra MCP, not the twin, and never let a twin substitute for the `diff-original` acceptance check. See `CLAUDE.md` → "Cross-build reference".
 4. **Read original behavior literally** — apply NO-GUESSING. Field offsets cited via `+0xNN` comments. Never paraphrase semantics.
 5. **Generate the scaffold** above; place it under `mashedmod/src/mashed_re/<Subsystem>/<Class>.cpp`.
 6. **Update `hooks.csv`** — append a row `RVA, ClassName::Method, status=todo|wip|done, file`.
