@@ -14252,6 +14252,29 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 37 (absolute-table getters; early-window table-seed) --
+    'table_88ff50_get': {
+        'rva': 0x00452ea0, 'export': 'Table88ff50Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'seed_table': {'base': 0x0088ff50, 'stride': 4, 'span': 8},
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 5, 3],
+        'path2_tests': [0, 5, 3],
+    },
+    'table_8aa300_get': {
+        'rva': 0x0045dd50, 'export': 'Table8aa300Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'seed_table': {'base': 0x008aa300, 'stride': 4, 'span': 8},
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 5, 3],
+        'path2_tests': [0, 5, 3],
+    },
+    'table_63d830_get': {
+        'rva': 0x0041f320, 'export': 'Table63d830Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'seed_table': {'base': 0x0063d830, 'stride': 4, 'span': 8},
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 5, 3],
+        'path2_tests': [0, 5, 3],
+    },
+
     # ---- promote-round round 35 (float-getter vein: read_global + ret:float) --
     # D9-05 fld-dword getters; read_global seeds the global with a clean float
     # bit-pattern (no NaN/Inf) and compares the ST0 float return.
