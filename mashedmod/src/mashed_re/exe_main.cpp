@@ -572,6 +572,12 @@ int              g_csel_p2_car = 1;
 constexpr std::uint32_t kSlotLoadIcon  = 56;
 constexpr int           kHandleLoadIcon = 47;
 bool             g_loadicon_ready = false;
+// The little Empire 'E' trademark icon (Font36.piz/BIGE.BMP) drawn inline on
+// the copyright line "Empire, the [E] logo and Mashed are trademarks"
+// (FUN_004288a0: 24x24 at virtual y=188 between strings 0x1e6 and 0x1e7).
+constexpr std::uint32_t kSlotBigE      = 57;
+constexpr int           kHandleBigE    = 48;
+bool             g_bige_ready = false;
 
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
 // for Arctic>). Renders the cracked RW world (Track/TrackWorld) through the
@@ -996,6 +1002,12 @@ constexpr char kSettingsPath[] = "mashed_re_settings.bin";
 // fill: g_sliderDisp lerps toward the target value each frame (music/sfx/insults/
 // gamma) so the orange bar slides smoothly.
 float g_sliderDisp[4] = { 7.f, 7.f, 7.f, 3.f };
+// Real per-frame wall-clock seconds (for constant-speed display animations
+// like the slider fill); updated once per RenderFrame, clamped to 0.1s.
+float g_wall_dt = 0.016f;
+// Set true once the frontend assets finish loading; gates the boot loading
+// screen's auto-advance (so its duration tracks load time, with a min dwell).
+bool  g_assets_loaded = false;
 
 void SaveMenuSettings() {
     if (std::FILE* f = std::fopen(kSettingsPath, "wb")) {
@@ -1051,6 +1063,13 @@ void ModalGo(int step) {
         case 21: g_modal_body_id = 0x233; g_modal_yesno = false;        // "Saving game data."
                  g_modal_timer_ms = GetTickCount();              break; // auto-advance
         case 22: g_modal_body_id = 0x279; g_modal_yesno = false; break; // "Save successful."
+        // Round-3: brief LOADING modal after press-button (body 0x222
+        // "Loading", no buttons, auto-dismiss); and the Exit-To-Windows quit
+        // confirm (body 0x34 "Are you sure you want to quit the game?").
+        case 30: g_modal_body_id = 0x222; g_modal_yesno = false;        // "Loading"
+                 g_modal_button_id = -1;                                 // no button
+                 g_modal_timer_ms = GetTickCount();              break; // auto-advance
+        case 40: g_modal_body_id = 0x34;  g_modal_yesno = true;  break; // quit-game confirm
         default: g_modal_body_id = 0; g_modal_step = 0; g_modal_yesno = false; break;
     }
 }
@@ -1098,19 +1117,18 @@ bool UpdateMenuSelection() {
             // old code pushed screen 1 ONTO screen 0 (the in-race PAUSE menu
             // kT0: Continue/Restart/Quit), so backing out of any submenu
             // revealed the pause menu. Just reveal the menu; do NOT push.
-            // Round-2: show the LOADING screen (disc + "Loading") briefly
-            // before the menu (phase 4 = loading-into-menu; RenderFrame
-            // auto-advances to 3 after ~1.2s). Raise the arc-wash fade pair
-            // now so the menu's permanent haze is up when it appears.
-            g_frontend_phase = 4;
-            g_splash_start_ms = 0;          // reused as the load timer
+            // Round-3 ("disc screen after press-button is a mistake; should be
+            // the loading MODAL"): go straight to the menu (phase 3) and show a
+            // brief centered "Loading" modal over it (~0.8s) — NOT the full
+            // copyright/disc screen. Raise the arc-wash fade pair so the menu's
+            // permanent haze is up.
+            g_frontend_phase = 3;
             LogoOverlayFadeSet(0xff, -1);
+            ModalGo(30); g_modal_alpha = 0;
         }
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
     }
-    // Phase 4 = loading transition: no nav input until the menu appears.
-    if (g_frontend_phase == 4) return false;
     // #8/#18/#19 confirm-dialog modal: while shown it swallows all nav input
     // (FUN_00433f40 is modal). Yes/No steps: Enter=Yes (advance), Esc=No
     // (dismiss). Continue steps: Enter/Esc dismiss. The 'Saving...' step (21)
@@ -1118,9 +1136,12 @@ bool UpdateMenuSelection() {
     if (g_modal_step != 0) {
         const bool yes = (ent_now && !ent_prev);
         const bool no  = (esc_now && !esc_prev);
-        if (g_modal_step == 21) return false;        // auto-advancing; no input
+        if (g_modal_step == 21 || g_modal_step == 30) return false;  // auto-advancing
         if (g_modal_yesno) {
-            if (yes)      ModalGo(g_modal_step == 10 ? 11 : 21);  // load->done, save->saving
+            if (g_modal_step == 40) {                // quit-to-Windows confirm
+                if (yes)      return true;           // Yes -> quit
+                else if (no)  ModalGo(0);            // No -> dismiss
+            } else if (yes) ModalGo(g_modal_step == 10 ? 11 : 21);  // load->done, save->saving
             else if (no)  ModalGo(0);                            // No: dismiss
         } else {
             if (yes || no) ModalGo(0);                           // Continue/dismiss
@@ -1134,7 +1155,20 @@ bool UpdateMenuSelection() {
         // confirm flow (#18/#19): Load -> warning 0x215 (Yes/No); Save ->
         // overwrite? 0x1ca (Yes/No) -> saving -> success. Other items nav.
         const int sid = Nav_ScreenId(), cur = Nav_Cursor();
-        if (sid == 8 && cur == 2) {       // Load Game
+        // Resolve the selected item's string id (the item record whose
+        // row_index == cursor) to detect "Exit To Windows" (id 0x261).
+        int sel_prim = -1;
+        {
+            const MenuRecord* recs = Nav_Records();
+            const int nrec = Nav_RecordCount();
+            for (int i = 0; i < nrec; ++i) {
+                if (static_cast<std::uint32_t>(recs[i].tag) == 0xff040000u &&
+                    recs[i].row_index == cur) { sel_prim = recs[i].prim_id; break; }
+            }
+        }
+        if (sel_prim == 0x261) {          // Exit To Windows -> quit confirm
+            ModalGo(40); g_modal_alpha = 0;
+        } else if (sid == 8 && cur == 2) {       // Load Game
             ModalGo(10); g_modal_alpha = 0;
         } else if (sid == 8 && cur == 3) { // Save Game
             ModalGo(20); g_modal_alpha = 0;
@@ -1426,11 +1460,14 @@ void DrawMashedString(const wchar_t* s, float cx, float anchor_y,
         std::memcpy(uvb, uv, sizeof(uvb));
         const float gw = wf * cell_w;
         // Control/nav glyphs (the FUN_004277a0-remapped range 0x7f..0x8f)
-        // render in their own color when the caller supplies one — the
-        // original's footer draws the circular-arrow glyph GREEN while the
-        // word stays white (clean scr1 baseline, sampled device 00ec10).
-        const std::uint32_t use =
-            (ctrl_glyph_argb != 0 && gc >= 0x7f) ? ctrl_glyph_argb : argb;
+        // render in their own color when the caller supplies one. Per-glyph:
+        // the BACK arrow (remap 0x09->0x7f) is RED, all other nav glyphs
+        // (Select 0x08->0x81 etc.) are the caller's ctrl color (green). A
+        // single prompt row can contain BOTH ("Select ... Back"), so the
+        // choice MUST be per-glyph, not per-string.
+        std::uint32_t use = argb;
+        if (ctrl_glyph_argb != 0 && gc >= 0x7f)
+            use = (gc == 0x7f) ? 0xff0000ffu /*red*/ : ctrl_glyph_argb;
         if (grad_bot_frac < 0.999f) {
             const std::uint32_t a = use >> 24;
             const std::uint32_t ab =
@@ -1933,15 +1970,18 @@ bool RenderFrame() {
     // (USA.DAT ids 0x1e5..0x1eb, scale 0.6, centered) at y=180/200/220/240/
     // 260/280, plus "Loading" (id 0x222) at (580,140). Shown ~8s
     // (24000000 / 3MHz timer) or until a key (handled in UpdateMenuSelection).
-    // phase 0 = boot legal/copyright splash (8s -> title); phase 4 = the brief
-    // loading screen after the title's "press button to start" (~1.2s -> menu).
-    // Both render the same black loading composition (logo + copyright +
-    // "Loading" + spinning disc).
-    if ((g_frontend_phase == 0 || g_frontend_phase == 4) && g_bridge_installed) {
+    // phase 0 = boot legal/copyright splash (logo + copyright + "Loading" +
+    // spinning disc) on black. Duration: stays until assets are loaded AND a
+    // minimum dwell, then auto-advances to the title (round-3: "time in this
+    // screen depends on how long it takes to load"). (The press-button ->
+    // menu transition is now a small Loading MODAL, not this full screen.)
+    if (g_frontend_phase == 0 && g_bridge_installed) {
         if (g_splash_start_ms == 0) g_splash_start_ms = GetTickCount();
         const DWORD elapsed = GetTickCount() - g_splash_start_ms;
-        if (g_frontend_phase == 0 && elapsed > 8000u) g_frontend_phase = 1;
-        if (g_frontend_phase == 4 && elapsed > 1200u) { g_frontend_phase = 3; g_splash_start_ms = 0; }
+        // Advance once the frontend assets are ready (g_assets_loaded) past a
+        // ~1.5s minimum dwell, or an 8s hard cap, or any key.
+        if ((g_assets_loaded && elapsed > 1500u) || elapsed > 8000u)
+            g_frontend_phase = 1;
         // #2/#3: the original's boot LOADING/splash screen is on a BLACK
         // background; logo + copyright + "Loading" read on black.
         // CORRECTION (round-2): there IS a spinning disc — the "loadicon"
@@ -1955,24 +1995,43 @@ bool RenderFrame() {
         }
         if (g_font.ready()) {
             const float th = 0.6f * 0.0708f * 480.f * 1.25f;  // scale-0.6 cell
-            // The original flanks 0x1e6/0x1e7 around the 'bigE' icon on one
-            // line (FUN_004282a0 width-measured). Without the icon we stack them
-            // on their own lines to avoid overlap [residual: bigE icon + the
-            // exact one-line flank].
-            struct L { int id; float y; };
-            static const L lines[] = {
-                {0x1e5,180},{0x1e6,196},{0x1e7,212},{0x1e8,232},
-                {0x1e9,248},{0x1ea,264},{0x1eb,280}};
-            for (const L& ln : lines) {
+            const float S = 1.25f;
+            auto centerline = [&](int id, float y) {
                 wchar_t t[128];
-                if (GetMenuMessage(ln.id, t, 128) > 0)
-                    DrawMashedString(t, 320.f * 1.25f, ln.y * 1.25f, th,
-                                     0xffffffffu, false);
+                if (GetMenuMessage(id, t, 128) > 0)
+                    DrawMashedString(t, 320.f * S, y * S, th, 0xffffffffu, false);
+            };
+            // VERBATIM FUN_004288a0 layout (round-3 "Empire, the [E] logo...
+            // breaks line"): 0x1e5 centered at y=180; then 0x1e6 + the bigE
+            // 24x24 icon (y=188) + 0x1e7 on ONE line at y=200, the group
+            // centered (start = 320 - (w(1e6)+w(1e7)+28)/2); 0x1e8..0x1eb
+            // stacked at y=220/240/260/280.
+            centerline(0x1e5, 180.f);
+            {
+                wchar_t a[96], b[96];
+                const bool ha = GetMenuMessage(0x1e6, a, 96) > 0;
+                const bool hb = GetMenuMessage(0x1e7, b, 96) > 0;
+                if (ha && hb) {
+                    const float wa = MeasureMashedString(a, th);
+                    const float wb = MeasureMashedString(b, th);
+                    const float iconw = 28.f * S;           // _DAT_005cd660 gap
+                    float penx = 320.f * S - (wa + wb + iconw) * 0.5f;
+                    DrawMashedString(a, penx, 200.f * S, th, 0xffffffffu, true);
+                    penx += wa;
+                    if (g_bige_ready)
+                        HudIm2DQuad(kHandleBigE, penx, 188.f * S,
+                                    24.f * S, 24.f * S, 0xffffffffu, uv_full);
+                    DrawMashedString(b, penx + iconw, 200.f * S, th, 0xffffffffu, true);
+                }
             }
+            centerline(0x1e8, 220.f);
+            centerline(0x1e9, 240.f);
+            centerline(0x1ea, 260.f);
+            centerline(0x1eb, 280.f);
             wchar_t lt[32];
             if (GetMenuMessage(0x222, lt, 32) > 0)
-                DrawMashedString(lt, 580.f * 1.25f, 140.f * 1.25f,
-                                 0.9f * 0.0708f * 480.f * 1.25f, 0xffffffffu, false);
+                DrawMashedString(lt, 580.f * S, 140.f * S,
+                                 0.9f * 0.0708f * 480.f * S, 0xffffffffu, false);
         }
         // Spinning disc (round-2 #1) — verbatim FUN_00428450 coin-flip. center
         // pinned at virtual x=544, top y=40, width 80*sin, height 80; UVs use
@@ -2125,6 +2184,8 @@ bool RenderFrame() {
             int raw_ms =
                 (s_last_ms == 0) ? 0 : static_cast<int>(now_ms - s_last_ms);
             s_last_ms = now_ms;
+            g_wall_dt = (raw_ms <= 0) ? 0.016f
+                      : (raw_ms > 100 ? 0.1f : raw_ms * 0.001f);
             // Round-2 ("transitions look like a fade, not movement"): clamp the
             // per-frame delta to one 50ms tick. The 50ms-quantized clock
             // (FUN_00493480) otherwise fires ~10 ticks in a single frame after
@@ -2166,10 +2227,10 @@ bool RenderFrame() {
                             const float sth =
                                 rec.scale * 0.0708f * 480.f * kVScale;
                             const float ssh = 3.0f * kVScale;
-                            // Footer nav glyphs render GREEN (clean scr1
-                            // baseline, device 00ec10 sampled -> packed
-                            // ff10ec00); the word keeps the record color.
-                            // [In-binary color-switch mechanism still to RE.]
+                            // Footer nav glyphs: Select green / Back red, chosen
+                            // PER-GLYPH inside DrawMashedString (the back arrow
+                            // 0x7f -> red, others -> this green); a row may hold
+                            // both ("Select ... Back", id 0x43).
                             DrawMashedString(stxt, sx + ssh, sy + ssh, sth,
                                              0xff000000u, true);
                             DrawMashedString(stxt, sx, sy, sth,
@@ -2450,13 +2511,17 @@ bool RenderFrame() {
                     }
                 }
                 if (kind == kSlider) {
-                    // #16: lerp the drawn fill toward the target so the bar slides
-                    // continuously rather than snapping between the 10 steps.
+                    // Round-3 ("slider feels glitchy, speed should be constant"):
+                    // move the drawn fill toward the target at a CONSTANT rate
+                    // (linear, not the old exponential lerp which decelerated and
+                    // read as glitchy). ~8 value-units/second.
                     const int di = (sid == 30) ? 3 : rec.row_index;  // 0/1/2=mus/sfx/ins, 3=gamma
                     float disp = static_cast<float>(value);
                     if (di >= 0 && di < 4) {
-                        g_sliderDisp[di] += (disp - g_sliderDisp[di]) * 0.28f;
-                        if (std::fabs(disp - g_sliderDisp[di]) < 0.02f) g_sliderDisp[di] = disp;
+                        const float step = 8.0f * g_wall_dt;   // units/sec * dt
+                        const float d = disp - g_sliderDisp[di];
+                        if (std::fabs(d) <= step) g_sliderDisp[di] = disp;
+                        else g_sliderDisp[di] += (d > 0 ? step : -step);
                         disp = g_sliderDisp[di];
                     }
                     const float bx = 374.0f * S + slideX;
@@ -2657,6 +2722,11 @@ bool RenderFrame() {
         if (g_modal_step == 21 && g_modal_timer_ms != 0 &&
             GetTickCount() - g_modal_timer_ms > 800u) {
             ModalGo(22); g_modal_alpha = 0xff;
+        }
+        // Loading modal (step 30) auto-dismisses after ~800ms.
+        if (g_modal_step == 30 && g_modal_timer_ms != 0 &&
+            GetTickCount() - g_modal_timer_ms > 800u) {
+            ModalGo(0);
         }
         const std::uint32_t A = static_cast<std::uint32_t>(g_modal_alpha) << 24;
         const float S = 1.25f;
@@ -4171,6 +4241,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
         g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
         g_loadicon_ready = LoadLoadIconFromExe(); // loading-screen spinning disc
+        g_bige_ready = LoadPngAssetToSlot(        // Empire 'E' trademark icon
+            "original/TOASTART/Common/Font36.piz", "BIGE.BMP",
+            kSlotBigE, kHandleBigE, nullptr, nullptr);
         // F1 (frontend-faithful): the real menu backdrop — frontend.mpg via
         // DirectShow into a D3D9 texture (the original's own playback path).
         {
@@ -4354,6 +4427,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // also poll the keyboard (B11) and refresh the window title to reflect
     // current key state.
     int nav_demo_phase = 0;
+    // All synchronous frontend asset loads above are complete — the boot
+    // loading screen may auto-advance once its min dwell elapses.
+    g_assets_loaded = true;
     while (!PumpOnce()) {
         PollKeyboard();
         // Scripted nav-demo: inject the next in-process key edge / capture a
