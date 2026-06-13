@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 5
-- total_green: 14
+- rounds_run: 6
+- total_green: 17
 - dry_counter: 0
-- last_round: 2026-06-12 round 5 (resumed after env recovery; 4 GREEN)
+- last_round: 2026-06-12 round 6 (3 GREEN, L2 re-earns)
 
 ## Lane queues
 
@@ -63,6 +63,9 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 004cbc60 RwGlobal7d4598Set — round 5 L2 RE-EARN, log/diff_rw_global_7d4598_set.csv 10/10 GREEN
 - 004cbc70 RwGlobal7d4598Get — round 5 L2 RE-EARN, log/diff_rw_global_7d4598_get.csv 10/10 GREEN
 - 004cbc80 RwGlobal7d459cSet — round 5 L2 RE-EARN, log/diff_rw_global_7d459c_set.csv 10/10 GREEN
+- 004c9f50 RwGlobal7d4134Set — round 6 L2 RE-EARN, log/diff_rw_global_7d4134_set.csv 10/10 GREEN
+- 004b6610 BootGlobalPairSet — round 6 L2 RE-EARN, log/diff_boot_global_pair_set.csv 10/10 GREEN (multi_arg_global_write, guard-inside-window trick)
+- 004b6560 BootGlobalPairSetThunk — round 6 L2 RE-EARN, log/diff_boot_global_pair_set_thunk.csv 10/10 GREEN (call-through reimpl)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -98,6 +101,13 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   populated (no AV) yet the +0x40 lap-line-gate field is genuinely 0 in
   ARENA mode (no lap lines). Needs a lap-based-race drive recipe OR a
   pointer-indirect seed handler. Stays C2; registry entry kept (race)
+- 004c9f60 render (round-6) — 66B conditional setter: DAT_007d413c guard +
+  live-vtable call (*DAT_007d4110+0x50) on the DAT_007d4120!=0 path; A/B
+  side effects into a live RW object — needs a bespoke save/restore design
+- 004b6540 boot thunk->FUN_004b6640 (round-6) — target ALLOCATES a 0x58
+  block via vtable freelist and stores the fresh pointer into 3 globals:
+  nondeterministic across A/B calls. Possible fit: allocator_nonnull
+  (compare nonnull-ness only) — design-first, weak evidence
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
@@ -120,6 +130,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 6 | L2 | attempted 3 (004c9f50, 004b6610, 004b6560 thunk) | GREEN 3 | deferred 2 (004c9f60 guard+live-vtable; 004b6540 allocating thunk target) | exit-5/6: none. Baseline build LNK1104 once: the USER's own mashed_re.exe instance (started 21:04) locked the exe output — waited out per the MASHED-running rail (exited 21:07), build then OK. RETROACTIVE root-cause for the round-1/round-3 transient exe-link flakes: same class (a running mashed_re.exe locks build\mashed_re.exe). multi_arg_global_write guard-inside-restored-window trick validated for guard-less multi-param setters (time_display_set_entry precedent). dry_counter 0. L2 remaining: ~24 rows (boot-band 00402750-depth cluster + render dispatchers + CRT-band odd-address rows — expect rising cost; several look abi-limited/oversize-adjacent).
 
 2026-06-12 | round 5 RESUMED ~21:35 (user present; env recovered — boot probe GREEN on re-check) | L1+L2 round-3 carry-over | attempted 5 | GREEN 4 (0042fe70 via read_global switch after exit-5; 004cbc60/70/80 L2 re-earns) | deferred 1 (0041ea80: lap-line gate field genuinely 0 in arena mode — needs lap-race recipe or pointer-indirect seed) | exit-5 x2, both root-caused (genuinely-zero domain values, NOT wrong-scenario): 0042fe70 fixed by read_global seeding; 0041ea80 deferred | dry_counter 0. LESSON: probe-unlocked != discriminating — a populated SCENARIO can still read a legitimately-zero GLOBAL; prefer read_global/seeded handlers for plain getters wherever the address is fixed.
 
