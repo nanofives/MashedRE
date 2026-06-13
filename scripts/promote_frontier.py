@@ -74,8 +74,32 @@ def load_hooks():
     return rows
 
 
+# Statically-linked third-party library bands (FidDB-attested; never first-party
+# port work — reproducing them inflates the count with library internals). RVAs in
+# these ranges are excluded from the frontier even when the hooks.csv subsystem
+# tag is generic (e.g. CRT __cfltcvt table init carries subsystem "boot").
+#   CRT band        0x004a0000..0x004b3fff  (lever3 calibration; MSVC CRT)
+#   D3DX9 PSGP band 0x004ec000..0x004fc9e0  (Microsoft PSGP SSE/SSE2 dispatch)
+#   qhull / RW-Phys 0x0057c5b0..0x005a5820  (qhull-2002.1 via RenderWare Physics 3.7)
+LIBRARY_BANDS = (
+    (0x004a0000, 0x004b3fff),
+    (0x004ec000, 0x004fc9e0),
+    (0x0057c5b0, 0x005a5820),
+)
+
+
+def _rva_of(row):
+    try:
+        return int(str(row.get("rva", "")).strip().replace("0x", ""), 16)
+    except ValueError:
+        return -1
+
+
 def is_first_party(row):
-    return "third-party" not in (row.get("subsystem") or "")
+    if "third-party" in (row.get("subsystem") or ""):
+        return False
+    rva = _rva_of(row)
+    return not any(lo <= rva <= hi for lo, hi in LIBRARY_BANDS)
 
 
 def shape_hint(code, off):

@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 101 (const-store / counter-increment leaves) --
+    'zero_4b6700': {'rva': 0x004b6700, 'export': 'Zero4b6700', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x007d3e54'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'tbl_4a2bf7': {'rva': 0x004a2bf7, 'export': 'Tbl4a2bf7', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x006160d8'}, {'addr': '0x006160dc'}, {'addr': '0x006160e0'}, {'addr': '0x006160e4'}, {'addr': '0x006160e8'}, {'addr': '0x006160ec'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'inc_45c810': {'rva': 0x0045c810, 'export': 'Inc45c810', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x0068d54c'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 100 (size clamp + store + return) --
     'clamp_5a6190': {'rva': 0x005a6190, 'export': 'Clamp5a6190', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'arg_to_global_ret', 'target_global': 0x00914700, 'lut_root_delta': 0, 'path1_tests': [0, 5, 0xf, 0x10, 0x100, 0xdead], 'path2_tests': [5, 0x100]},
 

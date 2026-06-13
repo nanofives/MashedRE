@@ -618,3 +618,29 @@ extern "C" __declspec(dllexport) unsigned int __cdecl Clamp5a6190(unsigned int v
     *reinterpret_cast<std::uint32_t*>(0x00914700u) = v; return v;
 }
 RH_ScopedInstall(Clamp5a6190, 0x005a6190);
+
+// ===== round 101 =====
+
+// 0x004b6700  render — byte-verified: MOV dword[0x007d3e54],0; RET  (single const store)
+extern "C" __declspec(dllexport) void __cdecl Zero4b6700(void) {
+    *reinterpret_cast<std::uint32_t*>(0x007d3e54u) = 0u;
+}
+RH_ScopedInstall(Zero4b6700, 0x004b6700);
+
+// 0x004a2bf7  boot — byte-verified: store 6 code-pointers into globals 0x006160d8..0x006160ec
+//   [d8]=0x4a5d92(EAX); [dc]=0x4a5a0c; [e0]=0x4a5a71; [e4]=0x4a59d0; [e8]=0x4a5a57; [ec]=0x4a5d92(EAX)
+extern "C" __declspec(dllexport) void __cdecl Tbl4a2bf7(void) {
+    *reinterpret_cast<std::uint32_t*>(0x006160d8u) = 0x004a5d92u;
+    *reinterpret_cast<std::uint32_t*>(0x006160dcu) = 0x004a5a0cu;
+    *reinterpret_cast<std::uint32_t*>(0x006160e0u) = 0x004a5a71u;
+    *reinterpret_cast<std::uint32_t*>(0x006160e4u) = 0x004a59d0u;
+    *reinterpret_cast<std::uint32_t*>(0x006160e8u) = 0x004a5a57u;
+    *reinterpret_cast<std::uint32_t*>(0x006160ecu) = 0x004a5d92u;
+}
+RH_ScopedInstall(Tbl4a2bf7, 0x004a2bf7);
+
+// 0x0045c810  util — byte-verified: INC dword[0x0068d54c]; RET  (increment global counter)
+extern "C" __declspec(dllexport) void __cdecl Inc45c810(void) {
+    ++*reinterpret_cast<std::uint32_t*>(0x0068d54cu);
+}
+RH_ScopedInstall(Inc45c810, 0x0045c810);
