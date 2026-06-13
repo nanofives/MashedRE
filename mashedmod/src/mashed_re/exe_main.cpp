@@ -1177,6 +1177,18 @@ bool UpdateMenuSelection() {
             Nav_Select();                  // push child screen
         }
     }
+    // Dev screen-cycle (PageUp/PageDown): jump to prev/next screen id so every
+    // screen — including the gameplay/network ones unreachable in a
+    // frontend-only build — can be navigated/inspected. Gated behind these
+    // keys so it never interferes with normal nav.
+    {
+        const bool pgup_now = (g_keys[DIK_PRIOR] & 0x80) != 0;
+        const bool pgup_prev= (g_keys_prev[DIK_PRIOR] & 0x80) != 0;
+        const bool pgdn_now = (g_keys[DIK_NEXT] & 0x80) != 0;
+        const bool pgdn_prev= (g_keys_prev[DIK_NEXT] & 0x80) != 0;
+        if (pgdn_now && !pgdn_prev) { Nav_DevGoto(Nav_DevScreen() + 1); return false; }
+        if (pgup_now && !pgup_prev) { Nav_DevGoto(Nav_DevScreen() - 1); return false; }
+    }
     if ((bks_now && !bks_prev)) Nav_Back();             // Backspace = pop
     if (esc_now  && !esc_prev) {
         // Round-2 feedback: ESC at the main-menu ROOT does NOTHING (it must

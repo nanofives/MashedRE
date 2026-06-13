@@ -228,6 +228,14 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
         case 0xff380000u: return 0xd;  // L867
         case 0xff3b0000u: return 6;    // L914
         case 0xff400000u: return 4;    // L273 (LAB_0043f468 path; pushes 4)
+        case 0xff1d0000u:
+            // L342-365 (color-select forward). The original pushes 0xf (Ability
+            // Select) when FUN_00430760()==0 && team-comp==0x1000 && ea64==0,
+            // else 0x10 (Team Select). The fresh single-player keyboard state
+            // takes the Ability-Select branch — wire that so the menu chain
+            // (color -> ability -> challenge) is navigable instead of
+            // dead-ending. [Team-mode 0x10 branch is state-gated; not modelled.]
+            return 0xf;  // 15 = Ability Select
         case 0xff4a0000u: return kActReload; // L1145 FUN_0043d2a0(0,2)
         case 0xff3a0000u: return kActReload; // L907 FUN_0043d2a0(0,2)
         case 0xff150000u: return kActReload; // L338 FUN_0043d2a0(0,2)
@@ -930,6 +938,31 @@ void Nav_AnimateIn() {
         if (r.type == 1 || r.type == 0) { r.slide = 0x1ff; r.type = 0; }
     }
 }
+
+// Dev screen jump: reset the nav stack to a single screen and animate it in.
+// Lets every screen (incl. the gameplay/network ones unreachable in a
+// frontend-only build) be inspected via PageUp/PageDown. Clamps to the table
+// range and skips empty/non-existent tables.
+void Nav_DevGoto(int screen_id) {
+    if (screen_id < 0) screen_id = kScreenTableCount - 1;
+    if (screen_id >= kScreenTableCount) screen_id = 0;
+    if (!TableForScreen(screen_id)) return;
+    g_nav_depth = 0;
+    NavSlot& s = g_stack[0];
+    std::memset(&s, 0, sizeof(s));
+    s.screen_id  = screen_id;
+    s.desc_table = TableForScreen(screen_id);
+    s.slide_src  = s.desc_table;
+    s.cursor     = 0;
+    s.item_count = CountItems(s.desc_table);
+    PlaceCursor(s);
+    BuildRecords(s);
+    PromptStripAppend(KvLookup(s.desc_table, kTagPrompt, 0), screen_id, 0);
+    Nav_AnimateIn();
+    g_last_dir = kNavReload;
+}
+
+int  Nav_DevScreen() { return g_stack[g_nav_depth].screen_id; }
 
 void Nav_MoveCursor(int delta) {
     NavSlot& s = g_stack[g_nav_depth];

@@ -118,6 +118,10 @@ void Nav_Init();
 // Force the current screen's records to slide in (title->menu entry motion).
 void Nav_AnimateIn();
 
+// Dev screen jump (PageUp/PageDown inspection of every screen).
+void Nav_DevGoto(int screen_id);
+int  Nav_DevScreen();
+
 // Push/pop/reload. Port of FUN_0043d2a0(screen_id, dir). For kNavPush, screen_id
 // is the child screen to enter; for kNavPop/kNavReload it is ignored (operates on
 // the current top). Repopulates g_records from the active screen's descriptor table.
