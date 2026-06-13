@@ -9,10 +9,22 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 21
+- rounds_run: 22
 - total_green: 51
-- dry_counter: 0
-- last_round: 2026-06-12 round 21 (2 GREEN — int_copy_outbuf scalar+outbuf shapes)
+- dry_counter: 0  (round 22 BLOCKED-ENV mid-round, not dry)
+- last_round: 2026-06-13 round 22 (skipped: D3D9-init outage recurred)
+
+## UNFINISHED — round 22 carry-over (finish FIRST next round, once env recovers)
+
+vec3_lerp handler (SWEEP-CRITICAL) + Vec3Lerp 0x004b4650 reimpl authored +
+registered + BUILT (commit 82d93afa) but the diff never ran: the rounds-3-5
+D3D9-init outage recurred mid-round (MASHED exits 0xFFFFFFFF after RwEngineOpen
+even with all procs killed; 3 displays present; run_diff times out at LUT
+setup). Next round: boot-probe MASHED first; if it reaches the menu, run
+`py -3.12 re/frida/run_diff.py vec3_lerp` and classify on GREEN. WATCH: the
+x87 diff is truncated to f32 in the reimpl via named float locals — if it REDs
+by 1 ulp, the compiler kept 80-bit precision; fix with a volatile float or
+`#pragma float_control`. If MASHED still won't boot, ledger the skip + reschedule.
 
 ## Lane queues
 
@@ -220,6 +232,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-13 | round 22 | L5 vec3_lerp (clean-leaf-with-existing-handler scan = 0 -> otherwise-dry -> L5 warranted) | attempted 1 (Vec3Lerp 0x004b4650) | GREEN 0 — BLOCKED-ENV (not dry) | deferred 1 (0041f1e0: 2-int+outbuf sig + RW-iterator callee FUN_004c0ed0 possible side-effects) | exit-3 TIMEOUT x4 (incl. a known-good hook -> isolated to env, not handler) | dry_counter 0. The D3D9-init outage from rounds 3-5 RECURRED between the (passing) baseline build and the first diff: boot-probe exits 0xFFFFFFFF after RwEngineOpen even after killing all MASHED/mashed_re procs; 3 displays enumerated. Same class as 2026-06-12 ~19:15. Likely display sleep / GPU wedge — needs the machine to recover (user reboot or display wake). Code is committed WIP. Reschedule ~25 min.
 
 2026-06-12 | round 21 | out-ptr survey: int_copy_outbuf (fn(int i, T* out)) | attempted 2 | GREEN 2 (TriggerStructRead 4-dword; WorldMatrixCopy 16-dword double-deref) | deferred 1 (00425fa0: callees FUN_004b3f90 x3 + conditional FUN_004e5fc0 side-effect U-5769 — not a clean callee gate, and a guarded-empty-at-menu write) | exit-5/6: none | dry_counter 0. The int_copy_outbuf handler (pre-existing, fn(int idx, T* dst)) covers the scalar-arg+outbuf shapes cleanly — no new handler needed. 50-promotion milestone crossed (51). Out-ptr remaining: 0041f1e0 (callee FUN_004c0ed0 — check gate), 004b4650 Vec3Lerp (multi-in-vec3+float, specific shape), 004224d0 (157B, FUN_004b6520 zero-fill + copy + fixed floats — bigger), 00425fa0 (callee/guard, deferred), plus the multi-out-ptr class (0046cbb0, 00430b30 thiscall) still needs a 2nd handler. Sustainable: ~2-3/round from the out-ptr + widened-getter veins.
 
