@@ -14252,6 +14252,33 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 34 (byte-scan batch: getter/setters + bounds getter) --
+    'global_772fac_get': {
+        'rva': 0x00495790, 'export': 'Global772facGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x00772fac, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'set_684b34': {
+        'rva': 0x0044d6e0, 'export': 'Set684b34', 'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'void_setter_observe', 'target_global': 0x00684b34, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'set_771968_1': {
+        'rva': 0x00493590, 'export': 'Set771968_1', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x00771968', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'veh_pwr_state_68ba00_get': {
+        'rva': 0x0045a0f0, 'export': 'VehPwrState68ba00Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 2, 3, 4, 5, 0xFFFFFFFF, 0x7FFFFFFF, 0x80000000, 2],
+        'path2_tests': [0, 4, 0xFFFFFFFF],
+    },
+
     # ---- promote-round round 33 (byte-scan batch: getters + const setter) -----
     'global_63a5d0_get': {
         'rva': 0x004075a0, 'export': 'Global63a5d0Get', 'signature': {'ret': 'uint32', 'args': []},
