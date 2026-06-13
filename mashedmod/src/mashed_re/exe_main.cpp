@@ -803,49 +803,64 @@ void NavDemoLog(int phase, const char* what, bool ok) {
     }
 }
 
-bool RunNavDemoStep(int phase) {
+// State-driven interactive walk FROM THE BEGINNING (splash -> title ->
+// press-button -> main menu -> the single-player setup chain -> back -> the
+// Options branch). Drives the REAL input path (NavDemoTap injects key edges
+// that UpdateMenuSelection consumes), so it proves end-to-end navigation, not
+// just per-screen rendering. Captures verify/walk_*.bmp at each settled step
+// and logs the live nav depth/screen/cursor. Step advances are gated on the
+// observed frontend state (phase/modal) so they adapt to the variable
+// splash/loading-modal timing.
+bool RunNavDemoStep(int /*phase*/) {
     if (!g_nav_demo) return false;
     using namespace mashed_re::Frontend;
-    // Let the window/device settle for the first ~60 frames, then run the script
-    // with ~10-frame spacing so each transition is a distinct, settled frame.
-    // Deep faithful path via the REVERSED push map (no heuristic):
-    //   root (screen 0)                                        -- 5 items
-    //     DOWN -> highlight item 1 ("0x27", action 0xff500000)
-    //     ENTER -> push screen 8                               -- 5 items
-    //       ENTER on item 0 ("0x156", action 0xff430000)
-    //       -> push screen 0x13 (=19)                          -- 4 items (all 0xff450000)
-    //         ESC -> pop back to screen 8
-    //           ESC -> pop back to root
-    // Each ENTER target is resolved by ItemActionCode + ActionToScreen, proving
-    // the descriptor-table action codes drive real screen transitions.
-    switch (phase) {
-        case 60:  NavDemoLog(phase,"cap root",       DumpBackbufferBMP("verify/msm_tree_1_root.bmp"));       break;
-        case 70:  NavDemoTap(DIK_DOWN);              NavDemoLog(phase,"tap DOWN",       true);               break;
-        case 80:  NavDemoLog(phase,"cap root_item1", DumpBackbufferBMP("verify/msm_tree_2_root_item1.bmp")); break;
-        case 90:  NavDemoTap(DIK_RETURN);            NavDemoLog(phase,"tap ENTER",      true);               break;
-        case 100: NavDemoLog(phase,"cap screen8",    DumpBackbufferBMP("verify/msm_tree_3_screen8.bmp"));    break;
-        case 110: NavDemoTap(DIK_RETURN);            NavDemoLog(phase,"tap ENTER",      true);               break;
-        case 120: NavDemoLog(phase,"cap screen19",   DumpBackbufferBMP("verify/msm_tree_4_screen19.bmp"));   break;
-        // R2-close: adjust Music Volume (RIGHT x2) on the Sound screen — the
-        // settings model mutates + persists to mashed_re_settings.bin; the
-        // post-adjust capture shows the slider moved.
-        case 122: NavDemoTap(DIK_RIGHT);             NavDemoLog(phase,"tap RIGHT",      true);               break;
-        case 124: NavDemoTap(DIK_RIGHT);             NavDemoLog(phase,"tap RIGHT",      true);               break;
-        case 126: NavDemoLog(phase,"cap snd_adj",    DumpBackbufferBMP("verify/parity/sa_sound_adjusted.bmp")); break;
-        case 130: NavDemoTap(DIK_ESCAPE);            NavDemoLog(phase,"tap ESC",        true);               break;
-        case 140: NavDemoLog(phase,"cap back8",      DumpBackbufferBMP("verify/msm_tree_5_back_screen8.bmp"));break;
-        case 150: NavDemoTap(DIK_ESCAPE);            NavDemoLog(phase,"tap ESC",        true);               break;
-        case 160: NavDemoLog(phase,"cap back_root",  DumpBackbufferBMP("verify/msm_tree_6_back_root.bmp"));  break;
-        // R2-close parity: capture screen 1 (the original's boot-time "Game Type
-        // Select" — Single/Multi/Options/Bonus/Exit). It isn't reachable from
-        // the screen-0 root via the push map, so push it directly (the original
-        // enters it from the title-confirm flow).
-        case 180: Nav(1, kNavPush);                  NavDemoLog(phase,"push screen1",   true);               break;
-        case 190: NavDemoLog(phase,"cap screen1",    DumpBackbufferBMP("verify/parity/sa_gts.bmp"));         break;
-        case 200: NavDemoLog(phase,"done",true);     return true;
-        default: break;
+    static int step = 0, cool = 0;
+    if (cool > 0) { --cool; return false; }
+    const int ph = g_frontend_phase;
+    const int modal = g_modal_step;
+    auto cap = [&](const char* tag) {
+        char path[160];
+        std::snprintf(path, sizeof(path), "verify/walk_%s.bmp", tag);
+        NavDemoLog(step, tag, DumpBackbufferBMP(path));
+    };
+    switch (step) {
+        // --- boot: wait for the title, then press the button ---
+        case 0: if (ph >= 1) { cap("01_title"); step = 1; cool = 8; } return false;
+        case 1: NavDemoTap(DIK_RETURN); step = 2; cool = 4; return false;   // press button
+        case 2: // wait for the loading modal to clear and the menu to be up
+            if (ph == 3 && modal == 0) { cap("02_mainmenu"); step = 3; cool = 6; }
+            return false;
+        // --- main menu: Single Player (cursor starts at item 0) ---
+        case 3: NavDemoTap(DIK_RETURN); step = 4; cool = 20; return false;  // -> Single Player (scr2)
+        case 4: cap("03_singleplayer"); step = 5; cool = 6; return false;
+        case 5: NavDemoTap(DIK_RETURN); step = 6; cool = 20; return false;  // Challenge Cup -> Colour (scr4)
+        case 6: cap("04_colourselect"); step = 7; cool = 6; return false;
+        case 7: NavDemoTap(DIK_RETURN); step = 8; cool = 20; return false;  // -> Ability Select (scr15)
+        case 8: cap("05_abilityselect"); step = 9; cool = 6; return false;
+        case 9: NavDemoTap(DIK_RETURN); step = 10; cool = 20; return false; // -> Challenge Select (scr6)
+        case 10: cap("06_challengeselect"); step = 11; cool = 6; return false;
+        // --- walk back out with ESC: depth 4 -> 0 needs FOUR pops ---
+        case 11: NavDemoTap(DIK_ESCAPE); step = 12; cool = 18; return false;
+        case 12: NavDemoTap(DIK_ESCAPE); step = 13; cool = 18; return false;
+        case 13: NavDemoTap(DIK_ESCAPE); step = 14; cool = 18; return false;
+        case 14: NavDemoTap(DIK_ESCAPE); step = 15; cool = 18; return false;
+        case 15: cap("07_back_mainmenu"); step = 16; cool = 6; return false;  // expect depth 0 scr1
+        // --- Options branch: DOWN x2 (Single->Multi->Options), ENTER ---
+        case 16: NavDemoTap(DIK_DOWN); step = 17; cool = 8; return false;
+        case 17: NavDemoTap(DIK_DOWN); step = 18; cool = 8; return false;
+        case 18: cap("08_options_highlighted"); step = 19; cool = 6; return false;
+        case 19: NavDemoTap(DIK_RETURN); step = 20; cool = 20; return false; // -> Options (scr8)
+        case 20: cap("09_options"); step = 21; cool = 6; return false;
+        case 21: NavDemoTap(DIK_RETURN); step = 22; cool = 20; return false; // Sound -> scr19
+        case 22: cap("10_sound"); step = 23; cool = 6; return false;
+        case 23: NavDemoTap(DIK_RIGHT); step = 24; cool = 8; return false;   // adjust slider
+        case 24: cap("11_sound_adjusted"); step = 25; cool = 6; return false;
+        case 25: NavDemoTap(DIK_ESCAPE); step = 26; cool = 18; return false; // pop to Options
+        case 26: NavDemoTap(DIK_ESCAPE); step = 27; cool = 18; return false; // pop to main menu
+        case 27: cap("12_back_mainmenu2"); step = 28; cool = 6; return false;
+        case 28: NavDemoLog(step, "done", true); return true;
+        default: return true;
     }
-    return false;
 }
 
 // B11 — per-frame title refresh showing current arrow/Enter/Esc state. This
