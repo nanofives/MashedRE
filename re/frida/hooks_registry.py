@@ -14219,6 +14219,39 @@ HOOKS = {
     # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
     # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
     # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
+    # ---- promote-round round 28 (worklist batch: setters + derived getter) ----
+    'set_67eaa8': {
+        'rva': 0x00431b40, 'export': 'Set67eaa8', 'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'void_setter_observe', 'target_global': 0x0067eaa8, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'set_77396c': {
+        'rva': 0x0049a2e0, 'export': 'Set77396c', 'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'void_setter_observe', 'target_global': 0x0077396c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'set_773978': {
+        'rva': 0x0049a740, 'export': 'Set773978', 'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'void_setter_observe', 'target_global': 0x00773978, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'ghost_flag_reset': {
+        'rva': 0x0042f7a0, 'export': 'GhostFlagReset', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x0067ea70', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+    'powerup_target_ptr_get': {
+        'rva': 0x00452160, 'export': 'PowerupTargetPtrGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x00684dac, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFF0, 0x12345678, 0x80000000, 0x7FFFFFF0, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+
     # ---- promote-round round 27 (worklist batch: global getters) --------------
     'global_67eca4_get': {
         'rva': 0x0042b900, 'export': 'Global67eca4Get', 'signature': {'ret': 'uint32', 'args': []},
