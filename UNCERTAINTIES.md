@@ -1,4 +1,4 @@
-﻿# Uncertainties
+# Uncertainties
 
 Every `[UNCERTAIN]` marker dropped in an analysis note or comment gets one row here. Uncertainties are not bugs — they are explicit holes in our knowledge with a path-to-resolution. Knowledge gaps without rows here are **invisible** and forbidden.
 
@@ -1972,7 +1972,7 @@ A function cannot reach C3 while it has unresolved uncertainties **of type seman
 | U-5038 | structural | 0x004cbbd0 (FUN_004cbbd0) | Sign-byte extraction at raw pfVar1+0x11/+0x12 for n-vertex AABB selection and AABB layout (stride -0xc, base +0x14) are non-obvious; exact byte layout of D3DPLANE struct and AABB layout not confirmed | Verify plane struct layout (5 floats = [nx,ny,nz,d,signBytes]) and AABB layout at call site | decomp_function on caller FUN_004ec130 | C2->C3 |
 | U-5100 | cosmetic | 0x004cc580 (FUN_004cc580) | Bit-pack formula for param_4/param_5 in local_4 — raw encoding observed but RW SDK name (version field?) not confirmed | Cross-ref RW3.x rwChunkHeaderInfo or equivalent struct | search_text + RW SDK headers | C2->C3 |
 | U-5101 | cosmetic | 0x004cc790 (FUN_004cc790) | RW error code 0x8000001a — raw hex observed; SDK mnemonic (rwERROR_INVALIDSTREAM?) not confirmed | Cross-ref RW3.x error code table | search_text RW error definitions | C2->C3 |
-| U-5102 | structural | 0x004cc7e0 (FUN_004cc7e0) | Semantic role of DAT_006182b0 — written by FUN_004cc7e0; used as guard in FUN_004cc820 to zero prealloc count when false | Trace all reads of 0x006182b0 | reference_to on 0x006182b0 | C2->C3 |
+| U-5102 | structural | 0x004cc7e0 (FUN_004cc7e0) | Semantic role of DAT_006182b0 — written by FUN_004cc7e0; used as guard in FUN_004cc820 to zero prealloc count when false. RESOLVED 2026-06-12 promote-round-14: reference_to 0x006182b0 (Mashed_pool2 read-only) returns exactly 2 refs — WRITE 0x004cc7e4 (the setter itself) + READ 0x004cc820 (the documented prealloc guard); no other readers exist, the documented role is complete | Trace all reads of 0x006182b0 — DONE | reference_to on 0x006182b0 | none |
 | U-5103 | structural | 0x004cc9e0 (thunk_FUN_004cc820) | Purpose of DAT_007d45fc — appears to be a default pool or freelist root used when allocating pool header; semantic role not confirmed | Trace all writes to 0x007d45fc | reference_to on 0x007d45fc | C2->C3 |
 | U-5104 | cosmetic | 0x004ccce0 (FUN_004ccce0) | SDK name of this pool iterator — observationally visits all allocated elements and fires callback; likely RwPluginRegistryForAllObjectCBs or similar | Cross-ref RW3 plugin registry API | search_text + RW SDK | C2->C3 |
 | U-5105 | cosmetic | 0x004cce20 (FUN_004cce20) | Names of LAB_004ccef0 / LAB_005aead0 / LAB_004ccf00 — Ghidra shows LAB_ labels not FUN_ symbols; implementations not confirmed | Disassemble those addresses to verify they are malloc/calloc/realloc stubs | listing_disassemble_seed on each address | C2->C3 |
