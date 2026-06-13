@@ -13705,6 +13705,8 @@ HOOKS = {
 
     # 0x004cc7e0  RwGlobal6182b0Set — void(uint32) -> DAT_006182b0 (guard
     # consumed by FUN_004cc820 per U-5102). Harness saves/restores the global.
+    # NOTE: diff 10/10 GREEN 2026-06-12 but promotion REFUSED — U-5102 carries
+    # an explicit Blocks=C2->C3; stays C2 until the global's reads are traced.
     # ref: re/analysis/render_5_c1_to_c2_s1/FUN_004cc7e0.md
     'rw_global_6182b0_set': {
         'rva':            0x004cc7e0,
@@ -13716,6 +13718,98 @@ HOOKS = {
         'path1_tests':    [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678,
                            0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
         'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # ---- promote-round round 9 (L3 curated small leaves, continued) -----------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round9.cpp).
+
+    # 0x00498be0  RenderBitDepthGet — uint32() <- DAT_00773414 (render bit
+    # depth). read_global-seeded.
+    # ref: re/analysis/settings_config_d2_cont1/00498be0.md
+    'render_bit_depth_get': {
+        'rva':            0x00498be0,
+        'export':         'RenderBitDepthGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x00773414,
+        'lut_root_delta': 0,
+        'path1_tests':    [16, 32, 0, 1, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x7FFFFFFF, 24, 0x55555555],
+        'path2_tests':    [16, 32, 0],
+    },
+
+    # 0x0040dc80  UtilFloat63b910Get — float() <- DAT_0063b910 (FLD m32,
+    # byte-verified D9 05 — TRUE float load, not FILD). read_global seeds raw
+    # IEEE bits; both sides load identically.
+    # ref: re/analysis/localization_d2/0x0040dc80.md
+    'util_float_63b910_get': {
+        'rva':            0x0040dc80,
+        'export':         'UtilFloat63b910Get',
+        'signature':      {'ret': 'float', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0063b910,
+        'lut_root_delta': 0,
+        # raw IEEE-754 bits: 0, 1.0, -1.0, 0.5, 100.0, -100.0, pi, 0.1, 1e6, 2.0
+        'path1_tests':    [0x00000000, 0x3f800000, 0xbf800000, 0x3f000000,
+                           0x42c80000, 0xc2c80000, 0x40490fdb, 0x3dcccccd,
+                           0x49742400, 0x40000000],
+        'path2_tests':    [0x3f800000, 0xc2c80000, 0x00000000],
+    },
+
+    # 0x0040dc90  UtilSlotIndexCondGet — uint32(). Returns DAT_0063b914 when
+    # DAT_007f0fd0 (game mode) is not 5/10, else 0. read_global seeds the
+    # VALUE global 0x0063b914; the condition global stays live (menu mode is
+    # outside {5,10} -> read path taken consistently both sides; the ==5/10
+    # short-circuit path stays UNTESTED by this diff — recorded here).
+    # ref: re/analysis/localization_d2/0x0040dc90.md
+    'util_slot_index_cond_get': {
+        'rva':            0x0040dc90,
+        'export':         'UtilSlotIndexCondGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x0063b914,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x55555555],
+        'path2_tests':    [0, 1, 0xDEADBEEF],
+    },
+
+    # 0x00429860  RaceStateFlagGet — uint32() <- DAT_008991bc (race-state
+    # flag; 0xb = lap-complete). read_global-seeded.
+    # ref: re/analysis/bucket_ai_00415d00_00452ea0/0x00429860.md
+    'race_state_flag_get': {
+        'rva':            0x00429860,
+        'export':         'RaceStateFlagGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x008991bc,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 0xb, 1, 2, 0xDEADBEEF, 0xFFFFFFFF,
+                           0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 0x55555555],
+        'path2_tests':    [0, 0xb, 1],
+    },
+
+    # 0x00429840  RaceStateLatchSet — void(uint32 v): stores v to
+    # DAT_008991bc iff v==0 OR current==0 (latch). scalars_to_scattered_
+    # globals with fill 0xFF forces current=0xFFFFFFFF inside the restored
+    # bracket: v!=0 vectors exercise the NO-STORE latch branch (window stays
+    # FF), v==0 exercises the unconditional store. The current==0 plain-store
+    # path is NOT separately exercised (would need fill 0x00 — second entry
+    # if ever needed); both tested branches are the latch-distinctive ones.
+    # ref: re/analysis/bucket_ai_00415d00_00452ea0/0x00429840.md
+    'race_state_latch_set': {
+        'rva':            0x00429840,
+        'export':         'RaceStateLatchSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x008991bc', 'len': 4, 'fill': 0xFF}],
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': [0]}, {'args': [1]}, {'args': [0xb]},
+                           {'args': [0]}, {'args': [0xDEADBEEF]},
+                           {'args': [0xFFFFFFFF]}, {'args': [0]},
+                           {'args': [2]}, {'args': [0x80000000]},
+                           {'args': [0]}],
+        'path2_tests':    [{'args': [0]}, {'args': [1]}, {'args': [0xb]}],
     },
 
 }
