@@ -91,6 +91,35 @@ def classify(insns, va):
         return ("read_global", {"ret": "u32", "target_global": g},
                 f"return *(uint32_t*)0x{g:08x};", f"read_global_u32 [0x{g:08x}]")
 
+    # --- read_global_u8: mov al,[imm32] ; ret   (A0 disp32) — ret uint8 (only AL set)
+    if len(core) == 1 and core[0][2][:1] == b"\xa0":
+        g = u32(core[0][2], 1)
+        return ("read_global", {"ret": "uint8", "target_global": g},
+                f"return *(uint8_t*)0x{g:08x};", f"read_global_u8 [0x{g:08x}]")
+
+    # --- ptr_fields_clear: mov eax,[esp+4] ; [xor ecx,ecx;] N× (mov [eax+off],0 |
+    #     mov [eax+off],ecx) ; ret  — zero a fixed set of arg-relative fields.
+    if core and core[0][2][:4] == b"\x8b\x44\x24\x04":
+        offs, ok, ecx_zero = [], True, False
+        for m, ops, bs in core[1:]:
+            if bs[:2] in (b"\x31\xc9", b"\x33\xc9"):        # xor ecx,ecx
+                ecx_zero = True
+            elif bs[:2] == b"\xc7\x40" and bs[3:7] == b"\x00\x00\x00\x00":  # mov [eax+off8],0
+                offs.append(bs[2])
+            elif bs[:2] == b"\xc7\x80" and bs[6:10] == b"\x00\x00\x00\x00":  # mov [eax+off32],0
+                offs.append(u32(bs, 2))
+            elif bs[:2] == b"\x89\x48" and ecx_zero:        # mov [eax+off8],ecx
+                offs.append(bs[2])
+            elif bs[:2] == b"\x89\x88" and ecx_zero:        # mov [eax+off32],ecx
+                offs.append(u32(bs, 2))
+            else:
+                ok = False; break
+        if ok and len(offs) >= 1:
+            cpp = " ".join(f"*(uint32_t*)((char*)p + 0x{o:x}) = 0;" for o in offs)
+            obs = [{"off": o} for o in offs]
+            return ("ptr_fields_clear", {"ret": "none", "observe": obs, "arg": "void* p"},
+                    cpp, f"ptr_fields_clear offs={[hex(o) for o in offs]}")
+
     # --- read_global_f32: fld dword[imm32] ; ret   (D9 05 disp32)
     if len(core) == 1 and core[0][2][:2] == b"\xd9\x05":
         g = u32(core[0][2], 2)

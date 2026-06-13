@@ -1,9 +1,10 @@
 rva	klass	shape	arg_type	subsystem	size	reason
+0042a9f0	AUTO	read_global_u8 [0x0067eca8]	read_global	render	6	return *(uint8_t*)0x0067eca8;
 004842b0	AUTO	multi_const_store x4	scalars_to_scattered_globals	debug-overlay	23	*(uint32_t*)0x006cfc88 = 0x00000000u; *(uint32_t*)0x006cf068 = 0x00000000u; *(uint32_t*)0x006cf06c = 0x00000000u; *(uint32_t*)0x006cfc8c = 0x00000000u;
 00495520	AUTO	read_global_u32 [0x00771e78]	read_global	input	6	return *(uint32_t*)0x00771e78;
 004a2bf7	AUTO	multi_const_store x6	scalars_to_scattered_globals	boot	56	*(uint32_t*)0x006160d8 = 0x004a5d92u; *(uint32_t*)0x006160dc = 0x004a5a0cu; *(uint32_t*)0x006160e0 = 0x004a5a71u; *(uint32_t*)0x006160e4 = 0x004a59d0u; *(uint32_t*)0x006160e8 = 0x004a5a57u; *(uint32_t*)0x006160ec = 0x004a5d92u;
 004b6700	AUTO	const_setter [0x007d3e54]=0x00000000	scalars_to_scattered_globals	render	11	*(uint32_t*)0x007d3e54 = 0x00000000u;
-005c9d00	AUTO	const_return 0	const_return	util	3	return 0u;
+005be930	AUTO	ptr_fields_clear offs=['0xc', '0x10']	ptr_fields_clear	audio	13	*(uint32_t*)((char*)p + 0xc) = 0; *(uint32_t*)((char*)p + 0x10) = 0;
 00405430	STATE	-	-	gameplay	39	STATE: reads live global / derefs arg → needs booted game
 004058b0	STATE	-	-	gameplay	15	STATE: reads live global / derefs arg → needs booted game
 004075b0	STATE	-	-	gameplay	70	STATE: reads live global / derefs arg → needs booted game
@@ -24,7 +25,6 @@ rva	klass	shape	arg_type	subsystem	size	reason
 00420d80	STATE	-	-	gameplay	25	STATE: reads live global / derefs arg → needs booted game
 00420de0	STATE	-	-	vehicle	31	STATE: reads live global / derefs arg → needs booted game
 004277a0	STATE	-	-	frontend	147	STATE: reads live global / derefs arg → needs booted game
-0042a9f0	STATE	-	-	render	6	STATE: reads live global / derefs arg → needs booted game
 0042ad90	STATE	-	-	frontend	54	STATE: reads live global / derefs arg → needs booted game
 0042add0	STATE	-	-	frontend	64	STATE: reads live global / derefs arg → needs booted game
 0042c150	STATE	-	-	util	78	STATE: reads live global / derefs arg → needs booted game
@@ -163,7 +163,6 @@ rva	klass	shape	arg_type	subsystem	size	reason
 00520ef0	STATE	-	-	util	257	STATE: reads live global / derefs arg → needs booted game
 00523110	STATE	-	-	util	39	STATE: reads live global / derefs arg → needs booted game
 00528e30	STATE	-	-	util	181	STATE: reads live global / derefs arg → needs booted game
-00552750	STATE	-	-	hud	238	STATE: reads live global / derefs arg → needs booted game
 00557110	STATE	-	-	hud	169	STATE: reads live global / derefs arg → needs booted game
 00558100	STATE	-	-	gameplay	63	STATE: reads live global / derefs arg → needs booted game
 00558140	STATE	-	-	gameplay	51	STATE: reads live global / derefs arg → needs booted game
@@ -198,7 +197,6 @@ rva	klass	shape	arg_type	subsystem	size	reason
 005b93a0	STATE	-	-	audio	102	STATE: reads live global / derefs arg → needs booted game
 005baf00	STATE	-	-	audio	62	STATE: reads live global / derefs arg → needs booted game
 005bde50	STATE	-	-	audio	21	STATE: reads live global / derefs arg → needs booted game
-005be930	STATE	-	-	audio	13	STATE: reads live global / derefs arg → needs booted game
 005beb50	STATE	-	-	audio	69	STATE: reads live global / derefs arg → needs booted game
 005bf7d0	STATE	-	-	audio	25	STATE: reads live global / derefs arg → needs booted game
 005c1f1c	STATE	-	-	boot	123	STATE: reads live global / derefs arg → needs booted game
@@ -222,8 +220,6 @@ rva	klass	shape	arg_type	subsystem	size	reason
 004a4170	MANUAL	-	-	util	170	MANUAL: unrecognized leaf shape
 004a4220	MANUAL	-	-	util	52	MANUAL: unrecognized leaf shape
 004a4da0	MANUAL	-	-	render	149	MANUAL: unrecognized leaf shape
-004a5984	MANUAL	-	-	boot	59	MANUAL: unrecognized leaf shape
-004a59bf	MANUAL	-	-	boot	17	MANUAL: unrecognized leaf shape
 004a5df5	MANUAL	-	-	boot	64	MANUAL: unrecognized leaf shape
 004aaf90	MANUAL	-	-	boot	96	MANUAL: unrecognized leaf shape
 004aed77	MANUAL	-	-	boot	47	MANUAL: unrecognized leaf shape

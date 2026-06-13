@@ -9,10 +9,11 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 79
-- total_green: 207
+- rounds_run: 80
+- total_green: 209
 - dry_counter: 0
-- last_round: 2026-06-13 round 79 — frontier-tool validation batch (2 GREEN: Get771e78 read_global + Clear4842b0 4-global zero-clear; 1 correctly REJECTED 005c9d00 install-crasher) (205->207)
+- last_round: 2026-06-13 round 80 — frontier/classifier batch (2 GREEN: GetFadeAlpha read_global u8 + AudioClear5be930 ptr_fields_clear; new classifier recognizers) (207->209)
+- BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
 - NEW GOAL (user, 2026-06-13): +500 -> ~705. Feasibility read below.
 - TOOLING ADDED THIS SESSION (the efficiency-memo deliverables):
   - scripts/promote_frontier.py — capstone call-graph over MASHED.exe.unpatched;
@@ -280,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 80 | early_window (extended classifier) | attempted 2 | GREEN 2 (GetFadeAlpha 0x0042a9f0 read_global u8 10/10; AudioClear5be930 0x005be930 ptr_fields_clear 5/5) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 207->209. Extended promote_classify.py with read_global_u8 (A0 disp32) + ptr_fields_clear (mov eax,[esp+4]; N× zero arg fields) recognizers -> 2 new display-independent AUTO surfaced from the STATE bucket. NOTE: the small-STATE bucket is dominated by D3DX9/RW library-band (0x4ec/0x4c), thiscall field ops (need ECX trampoline), and fsin float-arith (skip-on-sight) — the bulk of the remaining 201 STATE needs run_diff on the booted game (NOW UNBLOCKED, see counters) or new handlers. Display-independent vein remains the slow tail; run_diff is the fast route.
 
 2026-06-13 | round 79 | NEW TOOLING (promote_frontier.py + promote_classify.py) + early-window batch | attempted 3 | GREEN 2 (Get771e78 0x00495520 read_global *(0x00771e78) 10/10; Clear4842b0 0x004842b0 scalars_to_scattered_globals 4-global zero-clear 5/5) | REJECTED 1 (0x005c9d00 GetRaceEndTrigger — bit-identical const_return 0 GREEN, but 3-byte body => 5-byte inline-JMP overwrites past the function boundary = install crasher, already demoted C3->C2 2026-05-22; early_window can't catch install-time corruption because it diffs hook-BYPASSED) | exit-5/6: none (1 attach flake on clear_4842b0, GREEN on retry) | dry_counter 0. total_green 205->207. KEY DELIVERABLES: built the two efficiency-memo tools. promote_frontier.py = graph-level leaf finder (capstone call-graph; fixes the byte-scan under-count + the early-return false positive; excludes <5B install-crasher bodies + DEMOTED-crash rows). promote_classify.py = disasm-shape classifier partitioning the frontier into AUTO(5)/STATE(204)/MANUAL(27). LESSON BANKED (hardened into promote_frontier.py): a leaf with body < 5 bytes is an INSTALL CRASHER (the E9 rel32 patch clobbers the next function) even when the bit-identity diff is GREEN — status/notes pre-check (the memo's lesson #2) caught 005c9d00. FEASIBILITY (see counters block): +500 to 705 is physically plausible (first-party C2 = 2926) but display-INDEPENDENT vein is ~drained at 207; the 204 STATE rows + broader pool need run_diff on a BOOTED game; display is WEDGED (1 monitor, AV at D3D9 init). 705 needs the display restored (reboot). Post-reboot resume recipe in counters block.
 

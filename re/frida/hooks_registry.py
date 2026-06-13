@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 80 (frontier/classifier batch: byte-getter + arg-field-clear) --
+    'get_fade_alpha': {'rva': 0x0042a9f0, 'export': 'GetFadeAlpha', 'signature': {'ret': 'uint8', 'args': []}, 'arg_type': 'read_global', 'target_global': 0x0067eca8, 'lut_root_delta': 0, 'path1_tests': [0, 0xFF, 0x7F, 0x80, 1, 0x55, 0xAA, 0x42, 0, 0xFE], 'path2_tests': [0, 0xFF, 0x7F]},
+    'audio_clear_5be930': {'rva': 0x005be930, 'export': 'AudioClear5be930', 'signature': {'ret': 'pointer', 'args': ['pointer']}, 'arg_type': 'ptr_fields_clear', 'observe': [{'off': 0x0c}, {'off': 0x10}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0]},
+
     # ---- promote-round round 79 (frontier-tool validation batch: 3 display-independent leaves) --
     # surfaced by scripts/promote_frontier.py + scripts/promote_classify.py; diffed via early_window_leaf_diff.py
     'get_771e78': {'rva': 0x00495520, 'export': 'Get771e78', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'read_global', 'target_global': 0x00771e78, 'lut_root_delta': 0, 'path1_tests': [0, 0xDEADBEEF, 0xCAFEF00D, 0x12345678, 0xFFFFFFFF, 0x80000000, 1, 0x55555555, 0xAAAAAAAA, 0], 'path2_tests': [0, 0xDEADBEEF, 0x12345678]},
