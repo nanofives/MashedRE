@@ -3416,3 +3416,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  0040dc90  UtilSlotIndexCondGet  C2->C3  promote-round-9 read_global diff 10/10 GREEN log/diff_util_slot_index_cond_get.csv (5/10 short-circuit path untested)
 2026-06-12  00429860  RaceStateFlagGet  C2->C3  promote-round-9 read_global diff 10/10 GREEN log/diff_race_state_flag_get.csv
 2026-06-12  00429840  RaceStateLatchSet  C2->C3  promote-round-9 scalars_to_scattered_globals diff 10/10 GREEN log/diff_race_state_latch_set.csv (latch branch exercised via fill=0xFF)
+2026-06-12  0040e360  RaceMode::Set  C2->C3  promote-round-10 void_setter_observe diff 10/10 GREEN log/diff_race_mode_set.csv (restricted-valid vectors on live phase global)
+2026-06-12  0040b410  RaceScoreTimerGet  C2->C3  promote-round-10 scenario=race diff 10/10 GREEN log/diff_race_score_timer_get.csv
