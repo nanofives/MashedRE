@@ -3470,3 +3470,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0042f780  Global67f1a4Get  C2->C3  promote-round-31 read_global 10/10 GREEN
 2026-06-13  00426bb0  CameraPath::GetCount  C2->C3  promote-round-31 read_global 10/10 GREEN
 2026-06-13  0045bfe0  Bezier::GetLocate  C2->C3  promote-round-31 read_global 10/10 GREEN
+2026-06-13  0042d390  GetRaceStateField  C2->C3  promote-round-32 read_global 10/10 GREEN
+2026-06-13  00499710  Global7e9584Get  C2->C3  promote-round-32 read_global 10/10 GREEN
+2026-06-13  005a7b50  Global7dcabcGet  C2->C3  promote-round-32 read_global 10/10 GREEN
+2026-06-13  00472640  Set86ecc8  C2->C3  promote-round-32 void_setter_observe 10/10 GREEN
+2026-06-13  0040e170  Set63ba7c  C2->C3  promote-round-32 void_setter_observe 10/10 GREEN
