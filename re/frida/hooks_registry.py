@@ -13972,14 +13972,16 @@ HOOKS = {
     },
 
     # 0x004d6e60  TexStageCacheGet — uint32(int stage). Per-stage texture
-    # cache read at 0x007d6b30 + stage*0x18. Menu renders textured quads so
-    # stage 0 should be populated; exit-5 => defer with reason.
+    # cache read at 0x007d6b30 + stage*0x18. Menu-attach was exit-5 (cache
+    # all-zero — the menu's 2D path does not populate it); switched to
+    # scenario:'race' where in-race 3D rendering binds stage textures.
     'tex_stage_cache_get': {
         'rva':            0x004d6e60,
         'export':         'TexStageCacheGet',
         'signature':      {'ret': 'uint32', 'args': ['int32']},
         'arg_type':       'int_scalar',
         'lut_root_delta': 0,
+        'scenario':       'race',
         'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 0, 1],
         'path2_tests':    [0, 1, 2],
     },
