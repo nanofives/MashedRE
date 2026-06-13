@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 71 (bounded TTL setter + Pool-J 2-field reset) --
+    'ttl_set_68b1b0': {'rva': 0x00458fa0, 'export': 'TtlSet68b1b0', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0068b1b0, 'stride': 0x50, 'set_idx': 5, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+    'pool_j_reset_68ba00': {'rva': 0x00459540, 'export': 'PoolJReset68ba00', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'indexed_const2_set', 'target_global': 0x0068ba00, 'stride': 0x58, 'off0': 0, 'off1': 8, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 5, 7, 0, 1, 2, 3], 'path2_tests': [0, 3, 7]},
+
     # ---- promote-round round 70 (bit-extract getter + 4-global clearer + 2 record-eq predicates) --
     'bit_extract_63dc74': {'rva': 0x0041efe0, 'export': 'BitExtract63dc74', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0063dc74, 'stride': 0x2ac, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 8, 15, 3, 10, 9, 7, 12, 5], 'path2_tests': [0, 8, 15]},
     'clear_67d99c_x4': {'rva': 0x004298c0, 'export': 'Clear67d99c_x4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x0067d99c}, {'addr': 0x0067d994}, {'addr': 0x0067d98c}, {'addr': 0x008991bc}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},

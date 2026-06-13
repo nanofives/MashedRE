@@ -92,6 +92,7 @@ PURE_LEAF_ARGTYPES = {
     'global4_bool_out',      # void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0. test indexes cfg.seedvecs
     'linear_scan_find',      # int fn(key): for k in [0,count@gate): if(*(int*)(base+k*stride)==key) return k; return -1. test=[key,placeAt]
     'gated_record_eq2',      # u32 fn(): g=*(int*)gate; rec=base+g*stride; return (*(rec+off0)==v0 && *(rec+off1)==v1)?1:0. test=[gidx,s0,s1]
+    'indexed_const2_set',    # void fn(idx): *(u32*)(base+idx*stride+off0)=v0; *(u32*)(base+idx*stride+off1)=v1 (consts baked in reimpl)
 }
 
 SRC = r"""
@@ -125,6 +126,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'gated_int_predicate') ? ['uint32']
               : (cfg.at === 'global4_bool_out') ? ['pointer']
               : (cfg.at === 'linear_scan_find') ? ['uint32']
+              : (cfg.at === 'indexed_const2_set') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -266,6 +268,14 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_const2_set') {
+      // void fn(idx): *(u32*)(base+idx*stride+off0)=v0; *(u32*)(base+idx*stride+off1)=v1.
+      // seed both slots with sentinel, call(idx), snapshot -> non-degenerate vs sentinel. consts in reimpl.
+      const base = cfg.tgt, stride = cfg.stride | 0, off0 = cfg.off0 | 0, off1 = cfg.off1 | 0, idx = t >>> 0;
+      const rec = ptr(base).add(idx * stride);
+      const snap = function () { return (rec.add(off0).readU32() >>> 0) + ',' + (rec.add(off1).readU32() >>> 0); };
+      try { rec.add(off0).writeU32(0xEEEEEEEE); rec.add(off1).writeU32(0xEEEEEEEE); Orig(idx); o = snap(); } catch (e) { eo = e.message; }
+      try { rec.add(off0).writeU32(0xEEEEEEEE); rec.add(off1).writeU32(0xEEEEEEEE); Reim(idx); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'gated_record_eq2') {
       // u32 fn(): g=*(int*)gate; rec=base+g*stride; return (*(rec+off0)==v0 && *(rec+off1)==v1)?1:0.
       // test t=[gidx,s0,s1]: seed gate index + the 2 slots -> exercises true (both match) + false branches.

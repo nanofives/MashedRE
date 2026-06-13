@@ -3577,3 +3577,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  004298c0  Clear67d99c_x4  C2->C3  promote-round-70 scalars_to_scattered_globals GREEN (early_window 4-global zero)
 2026-06-13  00432230  RecEq231  C2->C3  promote-round-70 gated_record_eq2 10/10 GREEN (early_window gated record-eq predicate)
 2026-06-13  00432260  RecEq232  C2->C3  promote-round-70 gated_record_eq2 10/10 GREEN (early_window gated record-eq predicate)
+2026-06-13  00458fa0  TtlSet68b1b0  C2->C3  promote-round-71 indexed_table_set 10/10 GREEN (early_window bounded TTL setter)
+2026-06-13  00459540  PoolJReset68ba00  C2->C3  promote-round-71 indexed_const2_set 10/10 GREEN (early_window 2-field const reset)

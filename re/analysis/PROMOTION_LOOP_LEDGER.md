@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 70
-- total_green: 189
+- rounds_run: 71
+- total_green: 191
 - dry_counter: 0
-- last_round: 2026-06-13 round 70 — bit-extract getter + 4-global clearer + 2 record-eq predicates via new gated_record_eq2 (185->189)
+- last_round: 2026-06-13 round 71 — bounded TTL setter + Pool-J 2-field reset via new indexed_const2_set (189->191)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -497,6 +497,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 69 | 60-dword contiguous zero-fill + Copter linear-scan find (new linear_scan_find) | GREEN 2 (ZeroFill60_63bc60 0x00413f20 range_init; CopterFind639dc4 0x00407640 linear_scan_find) | total_green 183->185. linear_scan_find: int fn(key) scans table[k*stride] for count@gate, returns idx or -1; seed count + place key at index + non-matching markers elsewhere. SESSION (this context, rounds 53-69): 142->185 (+43), SIXTEEN new handlers. BACKLOG: RwMatrix setter-or-identity (0x0041a4a0), 2-global float pred (0x00405430), pointer-chain getters (0x004075b0), 2D-grid byte lookup (0x004173e0 CONCAT), __fastcall vec3 (0x0041b770), register-arg/EAX/ESI/EDI shapes, vtable non-leaves, float10/state-machines. RESUME: keep sweeping the 176-list + bespoke handlers; on display recovery run_diff the state-dependent majority. 200 close (~15 to go).
 
 2026-06-13 | round 70 | bit-extract getter + 4-global clearer + 2 record-eq predicates (new gated_record_eq2) | GREEN 4 (BitExtract63dc74 0x0041efe0 int_scalar MOVZX>>3&1; Clear67d99c_x4 0x004298c0 scalars_to_scattered_globals; RecEq231 0x00432230 + RecEq232 0x00432260 gated_record_eq2) | total_green 185->189. gated_record_eq2: u32 fn() g=*(int*)gate; rec=base+g*stride; (rec[off0]==v0 && rec[off1]==v1)?1:0. DROPPED a full 5-fn 0x422axx cluster (00422aa0/ac0/af0/b10/b30 — ALL already C3, stale C1 plates; caught by pre-check) + the float10 fsin trio (0x00431b20/b50/b60 — x87 fsin not bit-reproducible via MSVC sinf). SESSION (this context, rounds 53-70): 142->189 (+47), SEVENTEEN new handlers. NOTE: re-intersect of zero-callee ∩ current-C2 now 169 (was 212); many earlier list entries are now C3. RESUME: keep re-intersecting + sweeping + bespoke handlers; on display recovery run_diff state-dependent majority. 200 very close (~11 to go).
+
+2026-06-13 | round 71 | bounded TTL setter + Pool-J 2-field reset (new indexed_const2_set) | GREEN 2 (TtlSet68b1b0 0x00458fa0 indexed_table_set bounded; PoolJReset68ba00 0x00459540 indexed_const2_set) | total_green 189->191. indexed_const2_set: void fn(idx) writes 2 baked consts at base+idx*stride+off. DROPPED 0x00455b40 (already C3) + 0x00456ce0 (zero callers) + float10 fpatan/fsin (not bit-reproducible). NOTE: transient Frida "attach failed" on first ttl_set run -> retried GREEN (spawn timing, not a code issue; standard retry). SESSION (this context, rounds 53-71): 142->191 (+49), EIGHTEEN new handlers. RESUME: keep re-intersecting zero-callee∩C2 + sweeping + bespoke handlers; on display recovery run_diff state-dependent majority. 200 imminent (~9 to go).
 
 ## Final gated-remainder report
 
