@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 42 (large-stride imul table getters) --
+    'table_63dc6c_get': {'rva': 0x0041f300, 'export': 'Table63dc6cGet', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x0063dc6c, 'stride': 0x2ac, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
+    'table_8a9648_get': {'rva': 0x00407a20, 'export': 'Table8a9648Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x008a9648, 'stride': 0x30c, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
+    'table_8a9640_get': {'rva': 0x00407a40, 'export': 'Table8a9640Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x008a9640, 'stride': 0x30c, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # ---- promote-round round 41 (global-field getter cluster @0x0063d7e4) --
     'global_field_63d7e4_1c': {'rva': 0x0041e9f0, 'export': 'GlobalField63d7e4_1c', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x0063d7e4, 'field_off': 0x1c, 'lut_root_delta': 0, 'path1_tests': [1, 2, 0xDEAD, 0x55, 0x1234, 0xCAFE, 7, 0x42424242, 0x99, 0x7FFFFFFF], 'path2_tests': [1, 2, 0xDEAD]},
     'global_field_63d7e4_20': {'rva': 0x0041ea00, 'export': 'GlobalField63d7e4_20', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x0063d7e4, 'field_off': 0x20, 'lut_root_delta': 0, 'path1_tests': [1, 2, 0xDEAD, 0x55, 0x1234, 0xCAFE, 7, 0x42424242, 0x99, 0x7FFFFFFF], 'path2_tests': [1, 2, 0xDEAD]},
