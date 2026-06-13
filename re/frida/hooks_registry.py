@@ -14003,4 +14003,28 @@ HOOKS = {
         'path2_tests':    [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 16 (Ghidra disassembly pass) ---------------------
+    # 0x004c9eb0  DeviceModeBestBelowSet — void(uint32 param_1). Writes param_1
+    # to DAT_006181c4, scans the device's enumerated descriptors (vtable +0x18
+    # count / +0x1c fetch, both __stdcall — disassembly-verified) across 3
+    # categories at 0x005d8b80, then overwrites DAT_006181c4 with the largest
+    # descriptor value strictly below param_1 (or param_1 on exact match) if it
+    # differs. scalars_to_scattered_globals observes the 4-byte result window;
+    # the device object at 0x007d4108 is populated at menu-attach and the
+    # enumeration is deterministic. param_1=0 short-circuits (write 0).
+    # ref: re/analysis/skeleton_prep_boot_winmain_b/004c9eb0.md
+    'device_mode_best_below_set': {
+        'rva':            0x004c9eb0,
+        'export':         'DeviceModeBestBelowSet',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x006181c4', 'len': 4}],
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': [0x3c]}, {'args': [0x190]}, {'args': [0x258]},
+                           {'args': [0x320]}, {'args': [0x400]}, {'args': [0x500]},
+                           {'args': [0x258]}, {'args': [0x320]}, {'args': [0x3c]},
+                           {'args': [0]}],
+        'path2_tests':    [{'args': [0x3c]}, {'args': [0x320]}, {'args': [0]}],
+    },
+
 }
