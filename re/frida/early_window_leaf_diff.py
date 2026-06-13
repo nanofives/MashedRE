@@ -75,6 +75,7 @@ PURE_LEAF_ARGTYPES = {
     'ptr_table_field_read',  # fn(i): return *(*(tgt))[i] + field_off  (pointer-to-table + field)
     'indexed_table_set',     # void fn(i,val): *(tgt + i*stride) = val (fixed i=set_idx, vary val)
     'range_init',            # void fn(): writes a contiguous global range [tgt, tgt+len) — snapshot whole range
+    'cond_global_set',       # void fn(v): if (v==0 || *tgt==0) *tgt=v — tests are [seed,arg] pairs (seed *tgt first)
 }
 
 SRC = r"""
@@ -97,6 +98,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'stack_pop_snapshot') ? ['pointer']
               : (cfg.at === 'stack_push_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'ptr_table_field_read') ? ['uint32']
+              : (cfg.at === 'cond_global_set') ? ['uint32']
               : (cfg.at === 'indexed_table_set') ? ['uint32','uint32']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
@@ -210,6 +212,13 @@ rpc.exports.diff = function(cfg) {
       const rd = function () { return obs.map(function (x) { return buf.add(x.off | 0).readU32() >>> 0; }).join('|'); };
       try { fill(); Orig(buf); o = rd(); } catch (e) { eo = e.message; }
       try { fill(); Reim(buf); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'cond_global_set') {
+      // void fn(v): if (v==0 || *tgt==0) *tgt=v. test t=[seed,arg]: seed *tgt, call(arg),
+      // snapshot *tgt. The seed/arg pairs exercise all 3 branches (v==0 write, global==0
+      // write, both-nonzero no-write) -> non-degenerate. Reset between sides.
+      const seed = t[0] >>> 0, arg = t[1] >>> 0, g = ptr(cfg.tgt);
+      try { g.writeU32(seed); Orig(arg); o = g.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { g.writeU32(seed); Reim(arg); r = g.readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'range_init') {
       // void fn(): writes a contiguous global range. Fill sentinel, call, snapshot range.
       const base = ptr(cfg.tgt), len = cfg.len | 0;

@@ -3530,3 +3530,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00488390  Table86ae38Set  C2->C3  promote-round-50 indexed_table_set 10/10 GREEN (early_window)
 2026-06-13  00416230  Table89a500Set  C2->C3  promote-round-50 indexed_table_set 10/10 GREEN (early_window)
 2026-06-13  004723d0  Init691500  C2->C3  promote-round-51 range_init GREEN (early_window 40-value palette init)
+2026-06-13  00405400  Clear639d70x3  C2->C3  promote-round-53 scalars_to_scattered_globals GREEN (early_window 3-global zero)
+2026-06-13  0048f680  StridedClear76a100  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x38)
+2026-06-13  0048f6b0  StridedClear766a00  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x20)
+2026-06-13  0048f6e0  StridedClear770718  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x24)
+2026-06-13  0048f710  StridedClear769f50  C2->C3  promote-round-53 range_init GREEN (early_window strided clear step 0x24)

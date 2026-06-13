@@ -14252,6 +14252,13 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 53 (scattered-global clearer + 4 strided table clearers) --
+    'clear_639d70_x3': {'rva': 0x00405400, 'export': 'Clear639d70x3', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': 0x00639d70}, {'addr': 0x00639d74}, {'addr': 0x00639d78}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
+    'strided_clear_76a100': {'rva': 0x0048f680, 'export': 'StridedClear76a100', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0076a100, 'len': 0x3800, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+    'strided_clear_766a00': {'rva': 0x0048f6b0, 'export': 'StridedClear766a00', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00766a00, 'len': 0x500, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+    'strided_clear_770718': {'rva': 0x0048f6e0, 'export': 'StridedClear770718', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00770718, 'len': 0xe10, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+    'strided_clear_769f50': {'rva': 0x0048f710, 'export': 'StridedClear769f50', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00769f50, 'len': 0x168, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+
     # ---- promote-round round 51 (palette-array initializer) --
     'init_691500': {'rva': 0x004723d0, 'export': 'Init691500', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00691500, 'len': 0xa0, 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
 
