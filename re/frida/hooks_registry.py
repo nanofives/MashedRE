@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 48 (SmplFzx array-stack push/pop pair) --
+    'stack_pop_485bd0': {'rva': 0x00485bd0, 'export': 'StackPop485bd0', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'stack_pop_snapshot', 'capacity': 4, 'init_buf': [0xAAAA1111, 0xBBBB2222, 0xCCCC3333, 0xDDDD4444], 'lut_root_delta': 0, 'path1_tests': [4, 3, 2, 1, 0, 4, 3, 2, 1, 0], 'path2_tests': [3, 1, 0]},
+    'stack_push_485bf0': {'rva': 0x00485bf0, 'export': 'StackPush485bf0', 'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32']}, 'arg_type': 'stack_push_snapshot', 'capacity': 4, 'init_top': 1, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x55, 0xFFFFFFFF, 0x99, 0x42, 0x7F], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
+
     # ---- promote-round round 47 (stride-0x18 table getter + 2 clearers) --
     'table_688304_get': {'rva': 0x00454a30, 'export': 'Table688304Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x00688304, 'stride': 0x18, 'span': 4}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 0, 1, 2, 3, 1, 2], 'path2_tests': [0, 1, 2]},
     'table_88f09c_clear': {'rva': 0x0045c850, 'export': 'Table88f09cClear', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'table_clear', 'target_global': 0x0088f09c, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 2, 5], 'path2_tests': [0, 1, 2]},

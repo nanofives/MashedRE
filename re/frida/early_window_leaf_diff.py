@@ -70,6 +70,8 @@ PURE_LEAF_ARGTYPES = {
     'pool_remove_snapshot',  # fn(mgr_ptr, key): pool/list remove — build list via orig insert, then remove, snapshot
     'table_clear',           # void fn(i): zero an absolute table slot [target_global + i*4]
     'ptr_fields_clear',      # void fn(ptr): zero fields of a struct arg; check observe offsets
+    'stack_pop_snapshot',    # fn(stk): array-stack pop {top,cap,buf}; reset+call+snapshot+ret
+    'stack_push_snapshot',   # fn(stk,val): array-stack push; reset+call+snapshot+ret
 }
 
 SRC = r"""
@@ -89,6 +91,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'pool_remove_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'table_clear') ? ['uint32']
               : (cfg.at === 'ptr_fields_clear') ? ['pointer']
+              : (cfg.at === 'stack_pop_snapshot') ? ['pointer']
+              : (cfg.at === 'stack_push_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
@@ -201,6 +205,24 @@ rpc.exports.diff = function(cfg) {
       const rd = function () { return obs.map(function (x) { return buf.add(x.off | 0).readU32() >>> 0; }).join('|'); };
       try { fill(); Orig(buf); o = rd(); } catch (e) { eo = e.message; }
       try { fill(); Reim(buf); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'stack_pop_snapshot') {
+      // array-stack {top@0, cap@4, buf@8}. test value t = initial top (exercises edge).
+      const N = (cfg.capacity | 0) || 4;
+      const st = Memory.alloc(0xc), buf = Memory.alloc(N * 4); _keep.push(st, buf);
+      const ib = cfg.init_buf, top0 = (t | 0);
+      const reset = function () { st.writeS32(top0); st.add(4).writeU32(N); st.add(8).writePointer(buf); for (let k = 0; k < N; k++) buf.add(k * 4).writeU32(ib[k] >>> 0); };
+      const snap = function () { const p = [st.readS32()]; for (let k = 0; k < N; k++) p.push(buf.add(k * 4).readU32() >>> 0); return p.join(','); };
+      try { reset(); const ro = Orig(st) >>> 0; o = snap() + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { reset(); const rr = Reim(st) >>> 0; r = snap() + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'stack_push_snapshot') {
+      // array-stack push. test value t = value pushed (distinct -> non-degenerate).
+      const N = (cfg.capacity | 0) || 4;
+      const st = Memory.alloc(0xc), buf = Memory.alloc(N * 4); _keep.push(st, buf);
+      const top0 = (cfg.init_top | 0);
+      const reset = function () { st.writeS32(top0); st.add(4).writeU32(N); st.add(8).writePointer(buf); for (let k = 0; k < N; k++) buf.add(k * 4).writeU32(0); };
+      const snap = function () { const p = [st.readS32()]; for (let k = 0; k < N; k++) p.push(buf.add(k * 4).readU32() >>> 0); return p.join(','); };
+      try { reset(); const ro = Orig(st, t >>> 0) >>> 0; o = snap() + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { reset(); const rr = Reim(st, t >>> 0) >>> 0; r = snap() + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'eax_implicit_void') {
       // The function uses EAX as an implicit `this`. Build a tiny trampoline
       // `mov eax, buf ; jmp target` (B8 imm32 / E9 rel32), call it (no args), and
@@ -266,7 +288,8 @@ def run(name):
            'outer_off': h.get('outer_off'), 'inner_off': h.get('inner_off'),
            'span': h.get('span'), 'field_off': h.get('field_off'),
            'capacity': h.get('capacity'), 'insert_rva': h.get('insert_rva'),
-           'build_keys': h.get('build_keys'), 'asi': ASI}
+           'build_keys': h.get('build_keys'), 'init_buf': h.get('init_buf'),
+           'init_top': h.get('init_top'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
