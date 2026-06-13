@@ -3529,3 +3529,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00472520  Table69150cSet  C2->C3  promote-round-50 indexed_table_set 10/10 GREEN (early_window)
 2026-06-13  00488390  Table86ae38Set  C2->C3  promote-round-50 indexed_table_set 10/10 GREEN (early_window)
 2026-06-13  00416230  Table89a500Set  C2->C3  promote-round-50 indexed_table_set 10/10 GREEN (early_window)
+2026-06-13  004723d0  Init691500  C2->C3  promote-round-51 range_init GREEN (early_window 40-value palette init)

@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 50
-- total_green: 141
+- rounds_run: 51
+- total_green: 142
 - dry_counter: 0
-- last_round: 2026-06-13 round 50 — indexed table getter + 3 indexed setters (137->141)
+- last_round: 2026-06-13 round 51 — palette-array initializer via range_init (141->142)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -449,6 +449,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 50 | indexed table getter + 3 indexed setters | GREEN 4 (Table691508Get 0x00472550 stride0x10; Table69150cSet 0x00472520; Table86ae38Set 0x00488390 stride0x38; Table89a500Set 0x00416230 stride0x74) | total_green 137->141. New indexed_table_set handler (void fn(i,val): *(tgt+i*stride)=val; fix i, vary val). SWEEP ACCELERATING: round 50 yielded 4 (4/4 decompiled were promotable simple indexed accessors). Rounds 45-50 = +13. The first-party C2 pool is RICH in simple indexed table getters/setters with non-standard strides (0x10/0x18/0x38/0x74/0xd04 etc.) that earlier opcode-pattern scans MISSED (they used fixed strides) but decompilation finds immediately. SESSION: 69->141 (+72). 20-handler library. The decompile-driven sweep is the reliable engine: ~2-4 self-contained promotions/round, no display needed. Continuing autonomously toward 200.
 
 2026-06-13 | round 51 (scan/probe) | yield tapering, turn consolidation at 141 | imul-indexed byte-scan -> 1 (00407580, caller-gated undefined region -> drop). Decompile batch (004074a0 wipe-all, 0045dce0 mode-gated, 004103a0 lap-monitor) -> all non-leaves. This batch yield 0. The SIMPLE self-contained-with-valid-caller pool is tapering after the burst (rounds 45-50 = +13). TURN STATE: this single turn ran 50 rounds / ~1050 tool calls, 69->141 (+72), a 20-handler early_window capability, the bespoke snapshot sweep proven across pool/stack/table/clearer/ptr-table/indexed classes. CONSOLIDATING the turn (context at extreme; all work committed atomically). THE SWEEP CONTINUES (proven engine, ~1-3/round when sifting): decompile first-party candidates -> skip non-leaves + caller-gated + library bands -> promote self-contained via existing-or-tiny handlers. RESUME: continue the decompile sweep in fresh context (deeper sifting now needed as simple pool drains); on display recovery, run_diff the state-dependent majority (the larger, faster vein). 200 reachable via sustained sweep + display.
+
+2026-06-13 | round 51 | palette-array initializer | GREEN 1 (Init691500 0x004723d0: 10-entry 0x10-byte palette init at 0x00691500) | total_green 141->142. New range_init handler (fill contiguous range + call + whole-range snapshot). Loop reimpl == unrolled-40-store original (diff compares final memory, not code). orig b0=0x33. INSIGHT: multi-store initializers are promotable as compact loop reimpls via range_init when the writes are a contiguous global range. SESSION: 69->142 (+73). 21-handler library. Yield now ~1-2/batch (simple-accessor burst tapered; remaining self-contained = multi-store inits [loopable via range_init], or complex matrix/spawner ops [skip], or non-leaves). The sweep continues productively at a steadier pace. Continuing autonomously.
 
 ## Final gated-remainder report
 
