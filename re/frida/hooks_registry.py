@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 67 (two global-array-to-bool-out helpers) --
+    'bool0_out_8a94e0': {'rva': 0x0040b970, 'export': 'Bool0Out8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[0, 1, 0, 2], [5, 0, 0, 7], [0, 0, 3, 0], [9, 8, 7, 0], [0, 0, 0, 0], [1, 1, 1, 1], [0, 5, 0, 0], [3, 0, 9, 0], [0, 1, 2, 0], [7, 0, 0, 0]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 3]},
+    'boolmin_out_8a94e0': {'rva': 0x0040ba00, 'export': 'BoolMinOut8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[3, 5, 3, 9], [100, 2, 2, 50], [1, 1, 1, 1], [50, 40, 40, 99], [99, 99, 99, 99], [200, 200, 200, 200], [7, 8, 9, 7], [4, 4, 5, 6], [10, 20, 10, 30], [0, 0, 1, 2]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 3]},
+
     # ---- promote-round round 66 (per-player flag-bit toggle + gated switch predicate) --
     'flag_toggle_63dc74': {'rva': 0x0041ef80, 'export': 'FlagToggle63dc74', 'signature': {'ret': 'void', 'args': ['uint32', 'int32']}, 'arg_type': 'indexed_bit_toggle', 'target_global': 0x0063dc74, 'stride': 0x2ac, 'field_off': 0, 'bit': 0x400, 'lut_root_delta': 0, 'path1_tests': [[0, 1, 0x12345000], [0, 0, 0x12345400], [1, 1, 0], [1, 0, 0x400], [2, 1, 0xfffffbff], [2, 0, 0xffffffff], [3, 1, 0x100], [3, 0, 0x500], [0, 1, 0], [1, 0, 0xfff]], 'path2_tests': [[0, 1, 0x12345000], [0, 0, 0x12345400], [1, 0, 0x400]]},
     'gated_switch_636ad0': {'rva': 0x0041f360, 'export': 'GatedSwitch636ad0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'gated_int_predicate', 'gate': 0x00636ad0, 'lut_root_delta': 0, 'path1_tests': [[4, 0], [5, 0], [1, 0], [0x25, 0], [2, 0], [4, 1], [8, 0], [0x30, 0], [7, 0], [0xe, 0]], 'path2_tests': [[4, 0], [1, 0], [4, 1]]},

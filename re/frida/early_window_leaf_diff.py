@@ -89,6 +89,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_vec_set',       # void fn(idx,in): addr=base+idx*stride; if(in) write n dwords from in to addr+j*4 else zero them
     'indexed_bit_toggle',    # void fn(idx,set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store. test=[idx,set,seed]
     'gated_int_predicate',   # u32 fn(arg): if(*(int*)gate==gateval) <switch membership> else 0. test=[arg,gateseed]
+    'global4_bool_out',      # void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0. test indexes cfg.seedvecs
 }
 
 SRC = r"""
@@ -120,6 +121,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_vec_set') ? ['uint32','pointer']
               : (cfg.at === 'indexed_bit_toggle') ? ['uint32','uint32']
               : (cfg.at === 'gated_int_predicate') ? ['uint32']
+              : (cfg.at === 'global4_bool_out') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -261,6 +263,15 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global4_bool_out') {
+      // void fn(out): reads N globals at base[k], writes out[k]=predicate(base[k])?1:0.
+      // test t indexes cfg.seedvecs (each a length-N seed vector mixing predicate true/false). out fresh per side.
+      const base = cfg.tgt, n = (cfg.span | 0) || 4, sv = cfg.seedvecs[t >>> 0];
+      for (let k = 0; k < n; k++) ptr(base).add(k * 4).writeU32(sv[k] >>> 0);
+      const out = Memory.alloc(0x20); _keep.push(out);
+      const snap = function () { const p = []; for (let k = 0; k < n; k++) p.push(out.add(k * 4).readU32() >>> 0); return p.join(','); };
+      try { for (let k = 0; k < n; k++) out.add(k * 4).writeU32(0xEEEEEEEE); Orig(out); o = snap(); } catch (e) { eo = e.message; }
+      try { for (let k = 0; k < n; k++) ptr(base).add(k * 4).writeU32(sv[k] >>> 0); for (let k = 0; k < n; k++) out.add(k * 4).writeU32(0xEEEEEEEE); Reim(out); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'indexed_bit_toggle') {
       // void fn(idx, set): flag=*(u32*)(base+idx*stride+field_off); set?flag|=bit:flag&=~bit; store.
       // test t=[idx,set,seed]: seed the flag word with a known prior value -> set/clear both exercised.
@@ -502,7 +513,7 @@ def run(name):
            'idxtbl': h.get('idxtbl'), 'tscale': h.get('tscale'),
            'gate': h.get('gate'), 'gatemax': h.get('gatemax'),
            'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'),
-           'bit': h.get('bit'), 'gateval': h.get('gateval'), 'asi': ASI}
+           'bit': h.get('bit'), 'gateval': h.get('gateval'), 'seedvecs': h.get('seedvecs'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

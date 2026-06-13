@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 66
-- total_green: 179
+- rounds_run: 67
+- total_green: 181
 - dry_counter: 0
-- last_round: 2026-06-13 round 66 — per-player flag-bit toggle + gated switch predicate via 2 new handlers (177->179)
+- last_round: 2026-06-13 round 67 — two global-array-to-bool-out helpers via new global4_bool_out handler (179->181)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -489,6 +489,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 65 | ghost-slot vec3/vec4 setters + per-player field setter | GREEN 3 (GhostVec3Set63c6d0 0x0041a500 indexed_vec_set n=3; GhostVec4Set63c6b0 0x0041a550 indexed_vec_set n=4; Player::WriteFieldZero 0x0041ef60 indexed_table_set) | total_green 174->177. NEW indexed_vec_set handler (void fn(idx,in): addr=base+idx*stride; if(in) write n dwords else zero). RE-SCAN PAID OFF: re-intersected the callee-graph zero-callee list with CURRENT C2 rows -> 180 remaining candidates (excludes this session's promotions); fresh batch yielded 3 clean + several bespoke-shapes. So the vein is NOT exhausted — still ~clean accessors among the 180. SESSION (this context, rounds 53-65): 142->177 (+35), TWELVE new handlers. BACKLOG (bespoke): 2-global predicates (0x00405890), float-field arith (0x004058b0 -= ), pointer-chain getters (0x00407620), bit-extract getter (0x0041efe0 >>3&1, byte ret), + register-convention shapes (EAX/thiscall/fastcall/float10). RESUME: keep sweeping the 180-list (re-intersect after each batch) + build bespoke handlers; on display recovery run_diff the state-dependent majority. 200 on track (~23 to go).
 
 2026-06-13 | round 66 | per-player flag-bit toggle + gated switch predicate (2 new handlers) | GREEN 2 (FlagToggle63dc74 0x0041ef80 indexed_bit_toggle; GatedSwitch636ad0 0x0041f360 gated_int_predicate) | total_green 177->179. indexed_bit_toggle: void fn(idx,set) RMW a flag bit, seed prior value -> set+clear both exercised. gated_int_predicate: u32 fn(arg) gated switch membership, seed gate -> in-set/out/gate-fail. DROPPED 0x00409970 (zero callers, like its siblings 004098d0/00409950). SESSION (this context, rounds 53-66): 142->179 (+37), FOURTEEN new handlers. BACKLOG: RwMatrix setter-or-identity (0x0041a4a0, complex else), 2-global float predicate (0x00405430), pointer-chain getters (0x00407620), 2-index float setter (0x00413c70), register-arg search (0x0041f330), bit-extract byte getter (0x0041efe0), + register-convention shapes (EAX/thiscall/fastcall/float10). RESUME: keep sweeping the 180-list (re-intersect after batches) + build bespoke handlers; on display recovery run_diff the state-dependent majority. 200 on track (~21 to go).
+
+2026-06-13 | round 67 | two global-array-to-bool-out helpers (new global4_bool_out handler) | GREEN 2 (Bool0Out8a94e0 0x0040b970 ==0; BoolMinOut8a94e0 0x0040ba00 ==min(99,g0..g3)) | total_green 179->181. global4_bool_out: void fn(out) reads N globals -> out[k]=predicate(g[k])?1:0; per-test seed-vectors mix predicate true/false. GOTCHA (fixed mid-round): a seedvec-indexed handler still needs path1_tests=[0..N-1] as the INDEX list (cases=0/RED without it). SESSION (this context, rounds 53-67): 142->181 (+39), FIFTEEN new handlers. BACKLOG: RwMatrix setter-or-identity (0x0041a4a0), 2-global float pred (0x00405430), pointer-chain getters (0x004075b0/0x00407620), 2-index float setter (0x00413c70), register-arg shapes (0x00407550/0x0041e170/0x0041f330 ESI/EAX/EDI), vtable non-leaves, float10. RESUME: keep sweeping the 180-list (re-intersect after batches) + bespoke handlers; on display recovery run_diff the state-dependent majority. 200 close (~19 to go).
 
 ## Final gated-remainder report
 

@@ -3567,3 +3567,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0041ef60  Player::WriteFieldZero  C2->C3  promote-round-65 indexed_table_set 10/10 GREEN (early_window per-player field setter)
 2026-06-13  0041ef80  FlagToggle63dc74  C2->C3  promote-round-66 indexed_bit_toggle 10/10 GREEN (early_window per-player flag-bit toggle)
 2026-06-13  0041f360  GatedSwitch636ad0  C2->C3  promote-round-66 gated_int_predicate 10/10 GREEN (early_window gated switch membership)
+2026-06-13  0040b970  Bool0Out8a94e0  C2->C3  promote-round-67 global4_bool_out 10/10 GREEN (early_window ==0 bool array)
+2026-06-13  0040ba00  BoolMinOut8a94e0  C2->C3  promote-round-67 global4_bool_out 10/10 GREEN (early_window ==min bool array)
