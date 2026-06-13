@@ -9,23 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 14
-- total_green: 38
+- rounds_run: 15
+- total_green: 39
 - dry_counter: 0
-- last_round: 2026-06-12 round 14 (Ghidra pass: 1 classify-only promotion + 2 unlocks banked)
-
-## UNFINISHED — round 14 carry-over (needs a working build; user WIP in exe_main.cpp blocked it)
-
-1. 00402f40 (5B getter DAT_00636ad8): caller gate NOW FILLED (sole caller
-   FUN_0043dfd0 frontend C2 via xref 0x0043fc07). Author reimpl +
-   read_global entry (target 0x00636ad8) + diff + classify.
-2. 004c9eb0 (146B setter + device-scan): verbatim decomp transcript now in
-   its note (ambiguity resolved). Author reimpl (double-indirect vtable
-   calls via original-image globals 0x007d4108/0x007d410c; best-below
-   logic per transcript) + scalars_to_scattered_globals on 0x006181c4,
-   args [0, 0x3c, 60, 30...] + diff. The vtable calls are live device
-   queries — same calls both sides, race not needed (menu-attach; the
-   device object exists at menu).
+- last_round: 2026-06-12 round 15 (1 GREEN — round-14 carry-over; user switched to Opus 4.8 1M mid-loop)
 
 ## Lane queues
 
@@ -100,6 +87,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 00431b10 BootParamSet2 — round 13, log/diff_boot_param_set2.csv 10/10 GREEN
 - 004d6e60 TexStageCacheGet — round 13, log/diff_tex_stage_cache_get.csv 10/10 GREEN (race lane after menu exit-5)
 - 004cc7e0 RwGlobal6182b0Set — round 14 CLASSIFY-ONLY (U-5102 resolved via Ghidra xref; round-8 GREEN evidence)
+- 00402f40 Util636ad8Get — round 15, log/diff_util_636ad8_get.csv 10/10 GREEN (caller gate filled round-14 Ghidra pass)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -161,6 +149,15 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   all 16 slots in a clean ~20s drive (likely accumulates only under
   damage/exposure, per FUN_0046d7f0 accumulate+drain). Needs a
   damage-inducing scenario (drive recipe ext) — stays C2, entries kept
+- 004c9eb0 render (round-15) — 146B device-mode selector; verbatim decomp
+  transcript in its note resolves the best-below variable logic, BUT the body
+  makes two double-indirect vtable calls (*DAT_007d4108 + 0x18 count / +0x1c
+  fetch-into-8byte-buf) whose calling convention is `unknown`. A bit-faithful
+  reimpl needs the push/stack-cleanup pattern read from the call-site
+  disassembly (NO-GUESSING) AND the uStack_8 buffer offset (frame analysis
+  suggests buf+8 but unconfirmed). Needs a Ghidra DISASSEMBLY pass (not just
+  decomp). Caller 00493710 C2; indirect-only callees (no named callee to gate,
+  per PerModeRenderMachine precedent)
 - 004cc7e0 render (round-8) — GREEN EVIDENCE IN HAND (void_setter_observe
   10/10, log/diff_rw_global_6182b0_set.csv; reimpl in PromoLoop_round8.cpp)
   but U-5102 carries an EXPLICIT Blocks=C2->C3 — promotion refused per the
@@ -188,6 +185,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 15 | round-14 carry-over (build unblocked: user fixed their exe_main.cpp WIP; baseline GREEN) | attempted 1 | GREEN 1 (00402f40 read_global) | deferred 1 (004c9eb0 -> moved to Deferred: needs a Ghidra DISASSEMBLY pass for the vtable calling convention, not just decomp) | exit-5/6: none | dry_counter 0. Loop now at 39 promotions over 15 rounds (13 productive, 2 env/contention skips fully recovered). REMAINING PROMOTABLE POOL is thin and Ghidra-gated: (a) 004c9eb0 (disassembly pass — convention + buf offset); (b) L4 evidence-repair (184 degenerate residuals, NO new C3s — would not grow the count); (c) harness-ext wishlist (out-buffer-compare unlocks ~4, under the >=10 bar). Honest assessment for the user: the cheap-leaf + cheap-re-earn veins are EXHAUSTED; further C2->C3 growth now costs either a Ghidra disassembly session (1 hook) or a harness extension (~4 hooks). The loop will go dry within 1-2 rounds unless L5 is authorized or a new candidate vein is identified. Continuing one more round to confirm dryness.
 
 2026-06-12 | round 14 | Ghidra pass (read-only, Mashed_pool2) | attempted 1 classify-only | GREEN/promoted 1 (004cc7e0 — U-5102 resolved: reference_to 0x006182b0 = 2 refs, both documented) | banked 2 unlocks (00402f40 caller=FUN_0043dfd0 C2; 004c9eb0 transcript appended to note) | — | dry_counter 0. BLOCKED-BUILD context: user's uncommitted exe_main.cpp WIP (112 lines, C2601 mid-edit) fails the exe phase -> no .asi rebuild possible -> no new diffs this round; Ghidra work was read-only so unaffected. POOL HYGIENE: acquire handed Mashed_pool1 but its on-disk lock + JVM-held .lock~ make it POISONED (like pool0) — used pool2 read-only instead, program_close clean; release script removed what it could. Pre-assign pool2+ in future prompts; pool0/pool1 dead until the shared MCP restarts. Next round: boot-probe the build (user WIP may persist — if still broken, ledger the skip), then run the two carry-over authorings.
 
