@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 20
-- total_green: 49
+- rounds_run: 21
+- total_green: 51
 - dry_counter: 0
-- last_round: 2026-06-12 round 20 (3 GREEN — single-out-ptr class via outbuf_only)
+- last_round: 2026-06-12 round 21 (2 GREEN — int_copy_outbuf scalar+outbuf shapes)
 
 ## Lane queues
 
@@ -98,6 +98,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 00495270 HWNDGet — round 20, log/diff_hwnd_get.csv 10/10 GREEN (outbuf_only, call-through)
 - 00484c70 WorldObjectsBaseGet — round 20, log/diff_world_objects_base_get.csv 10/10 GREEN (outbuf_only+fold_ret)
 - 0041da90 DeltaTimeOutGet — round 20, log/diff_delta_time_out_get.csv 10/10 GREEN (outbuf_only, race lane)
+- 0041f030 TriggerStructRead — round 21, log/diff_trigger_struct_read.csv 10/10 GREEN (int_copy_outbuf 16, race)
+- 0041f260 WorldMatrixCopy — round 21, log/diff_world_matrix_copy.csv 10/10 GREEN (int_copy_outbuf 64, double-deref, race)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -218,6 +220,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
 
 2026-06-12 | round 16 | Ghidra disassembly pass (Mashed_pool2 read-only) | attempted 1 | GREEN 1 (004c9eb0 DeviceModeBestBelowSet — the last identified candidate) | deferred 0 | exit-5/6: none | dry_counter 0. The disassembly pinned the two unknowns the decomp left open: (1) both vtable calls are __stdcall — verified by the ABSENCE of a caller-side `add esp` after each CALL (callee pops 12 / 20 bytes), object pushed as explicit first arg so NOT __thiscall; (2) uStack_8 = buffer+8 — LEA EDX,[ESP+0xc] at ESP=E-0x1c gives buffer=E-0x10, and MOV EAX,[ESP+0x14] reads E-0x8. Faithful 58-instr reimpl GREEN non-degenerate at menu-attach (device object live post-RW-init). LESSON BANKED: when a decomp tags calling_convention `unknown`, the __stdcall-vs-__cdecl question is answered by whether a caller-side `add esp,N` follows the CALL — one listing_disassemble_function call settles it; this unblocks the whole class of indirect-vtable-dispatch C2 functions. POOL: pool2 read-only program_close clean; pool0/pool1 still poisoned.
+
+2026-06-12 | round 21 | out-ptr survey: int_copy_outbuf (fn(int i, T* out)) | attempted 2 | GREEN 2 (TriggerStructRead 4-dword; WorldMatrixCopy 16-dword double-deref) | deferred 1 (00425fa0: callees FUN_004b3f90 x3 + conditional FUN_004e5fc0 side-effect U-5769 — not a clean callee gate, and a guarded-empty-at-menu write) | exit-5/6: none | dry_counter 0. The int_copy_outbuf handler (pre-existing, fn(int idx, T* dst)) covers the scalar-arg+outbuf shapes cleanly — no new handler needed. 50-promotion milestone crossed (51). Out-ptr remaining: 0041f1e0 (callee FUN_004c0ed0 — check gate), 004b4650 Vec3Lerp (multi-in-vec3+float, specific shape), 004224d0 (157B, FUN_004b6520 zero-fill + copy + fixed floats — bigger), 00425fa0 (callee/guard, deferred), plus the multi-out-ptr class (0046cbb0, 00430b30 thiscall) still needs a 2nd handler. Sustainable: ~2-3/round from the out-ptr + widened-getter veins.
 
 2026-06-12 | round 20 | out-ptr class (outbuf_only) | attempted 3 | GREEN 3 (HWNDGet call-through; WorldObjectsBaseGet fold_ret captures out+return; DeltaTimeOutGet race lane) | deferred 0 new | exit-5 x1 root-caused: seed_global degenerate because the game thread overwrites 0x0063d588 -> flipped to race lane -> GREEN | dry_counter 0. outbuf_only extended with fold_ret (XOR return into fingerprint — needed for getters that write *out AND return) + seed_global (works ONLY for non-game-written globals). The out-ptr vein continues to yield 3/round; ~13 out-ptr rows remain (larger out buffers + scalar-arg variants). The loop is healthily productive again (rounds 17-20: 3+1+2+3 = 9 GREEN over 4 rounds). Sustainable cadence: out-ptr survey + widened getter curation alternating.
 
