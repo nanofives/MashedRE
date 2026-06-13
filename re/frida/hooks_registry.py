@@ -14252,6 +14252,22 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 38 (bounds-checked 0xd04-stride table getters) --
+    'table_882194_get': {
+        'rva': 0x0046c750, 'export': 'Table882194Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'seed_table': {'base': 0x00882194, 'stride': 0x0d04, 'span': 0x10},
+        'path1_tests': [0, 1, 2, 3, 4, 8, 0xf, 0x10, 0x11, 5],
+        'path2_tests': [0, 0xf, 0x10],
+    },
+    'table_882198_get': {
+        'rva': 0x0046c730, 'export': 'Table882198Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'seed_table': {'base': 0x00882198, 'stride': 0x0d04, 'span': 0x10},
+        'path1_tests': [0, 1, 2, 3, 4, 8, 0xf, 0x10, 0x11, 5],
+        'path2_tests': [0, 0xf, 0x10],
+    },
+
     # ---- promote-round round 37 (absolute-table getters; early-window table-seed) --
     'table_88ff50_get': {
         'rva': 0x00452ea0, 'export': 'Table88ff50Get', 'signature': {'ret': 'uint32', 'args': ['int32']},
