@@ -88,9 +88,12 @@ Wave 4 (flow): boot modal, back-row gating, grey-out engine, enables
 Wave 5 (features): loading screen (2), attract demo (4), focus behavior (1),
 player color select (25).
 
-## Verification note (2026-06-12)
+## Verification note (2026-06-12, amended same day)
 
-Window screenshots of the standalone are UNTRUSTWORTHY on this machine (multi-monitor Present issue renders agent-spawned windows white while the backbuffer is correct). Use MASHED_DBG_BBDUMP=1 (dumps verify/dbg_backbuffer.bmp at frame ~200) as the truth channel for all standalone visual verification.
+PLAIN window screenshots of the standalone are UNTRUSTWORTHY on this machine (BitBlt-style captures of D3D9 windows render white). TWO trustworthy channels now exist, and they verify DIFFERENT things:
+- `MASHED_DBG_BBDUMP=N` (verify/dbg_backbuffer.bmp at frame N) — the BACKBUFFER: what the renderer produced.
+- `scripts/capture_window.ps1` (PrintWindow PW_RENDERFULLCONTENT; works on background/occluded windows, not minimized) — the PRESENTED window: what the user's eyes see, including DWM/DPI scaling.
+The gap between them is real: the 2026-06-12 font complaints persisted across backbuffer-verified fixes because DWM was bitmap-stretching the non-DPI-aware window (>100% display scaling) AFTER Present — invisible to BBDUMP, obvious in the presented capture. mashed_re.exe is now per-monitor DPI-aware (41dbcd93). Presentation-affecting fixes must be verified with capture_window.ps1, not BBDUMP alone.
 
 ## Parity harness (2026-06-12, merged 8f1a58c2 — use for all composition items)
 
