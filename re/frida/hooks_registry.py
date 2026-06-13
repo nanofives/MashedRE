@@ -14252,6 +14252,39 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 33 (byte-scan batch: getters + const setter) -----
+    'global_63a5d0_get': {
+        'rva': 0x004075a0, 'export': 'Global63a5d0Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0063a5d0, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_63d7e0_get': {
+        'rva': 0x0041e140, 'export': 'Global63d7e0Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0063d7e0, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_6c6eb0_get': {
+        'rva': 0x0047ce70, 'export': 'Global6c6eb0Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x006c6eb0, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_772ffc_get': {
+        'rva': 0x00496910, 'export': 'Global772ffcGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x00772ffc, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'set_7f1a0c_1000': {
+        'rva': 0x0042b950, 'export': 'Set7f1a0c_1000', 'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'scalars_to_scattered_globals',
+        'observe': [{'addr': '0x007f1a0c', 'len': 4, 'fill': 0xFF}], 'lut_root_delta': 0,
+        'path1_tests': [{'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}, {'args': []}],
+        'path2_tests': [{'args': []}, {'args': []}, {'args': []}],
+    },
+
     # ---- promote-round round 32 (byte-scan batch: getters + param setters) ----
     'global_67ea6c_get': {
         'rva': 0x0042d390, 'export': 'Global67ea6cGet', 'signature': {'ret': 'uint32', 'args': []},
