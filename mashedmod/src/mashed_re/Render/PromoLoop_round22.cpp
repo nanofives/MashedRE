@@ -37,18 +37,33 @@
 // 0x004b4650
 extern "C" __declspec(dllexport) void __cdecl Vec3Lerp(float* out, float* a,
                                                        float* b, float t) {
-    // The original STORES the diff (b[i]-a[i]) to memory and RELOADS it as a
-    // 32-bit float before the scale (decomp lines 19-23), truncating away the
-    // x87 80-bit excess precision. A plain `float` local lets /O2 keep the
-    // diff in an 80-bit register -> 1-3 ulp drift (caught RED round 23, t=0.9).
-    // `volatile` forces the same memory round-trip -> bit-identical.
-    volatile float diffx = b[0] - a[0];
-    volatile float diffy = b[1] - a[1];
-    volatile float diffz = b[2] - a[2];
-    const float fx = diffx, fy = diffy, fz = diffz;
-    out[0] = t * fx + a[0];
-    out[1] = t * fy + a[1];
-    out[2] = t * fz + a[2];
+    // Replicates the original's EXACT x87 precision behavior (full disasm read
+    // round 23). The original stores each diff (b[i]-a[i]) to out[i] as f32
+    // (fstp), then for the multiply-add it is ASYMMETRIC:
+    //   out[0], out[1]: add the 80-bit (t*diff) straight from ST0
+    //                   -> (f32)(80bit(t * f32diff) + a)
+    //   out[2]:         spills (t*diff2) to f32 (fst [esp+0x10]) and reloads it
+    //                   -> (f32)((f32)(t*diff2) + a)
+    // A uniform C expression can't reproduce this stack-scheduling artifact;
+    // the asymmetric volatile on out[2] does.
+    out[0] = b[0] - a[0];                  // f32 diff0
+    out[1] = b[1] - a[1];                  // f32 diff1
+    out[2] = b[2] - a[2];                  // f32 diff2
+    const float d0 = out[0], d1 = out[1], d2 = out[2];   // reload f32 diffs
+    out[0] = t * d0 + a[0];                // 80-bit t*d0 + a0
+    out[1] = t * d1 + a[1];                // 80-bit t*d1 + a1
+    volatile float td2 = t * d2;           // out[2] path truncates t*diff2 to f32
+    out[2] = td2 + a[2];
 }
 
-RH_ScopedInstall(Vec3Lerp, 0x004b4650);
+// DEFERRED 2026-06-13 (round 23): bit-identity x87-blocked. The original's
+// out[0] = (f32)(80bit(t * f32diff0) + a[0]) keeps the t*diff product in 80-bit
+// FPU precision while truncating the diff to f32 — an asymmetric stack-
+// scheduling artifact (out[2] additionally truncates t*diff2 to f32). MSVC
+// /O2 /fp:precise compiles every C variant of this (plain float, volatile
+// diff, store/reload, asymmetric volatile) to the SAME sequence that keeps
+// diff0 in 80-bit -> 3 ulp on one component (t=0.9, log/diff_vec3_lerp.csv).
+// The formula is verified correct; bit-identity needs inline __asm replicating
+// the exact FPU op order, or compiling THIS file with /fp:strict. Re-enable +
+// re-diff after that. Handler 'vec3_lerp' (diff_template.js) stays banked.
+// RH_ScopedInstall(Vec3Lerp, 0x004b4650);
