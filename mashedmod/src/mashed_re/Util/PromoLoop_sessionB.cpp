@@ -576,3 +576,22 @@ extern "C" __declspec(dllexport) void __cdecl ClearVB491bd0(void) {
         *reinterpret_cast<std::uint32_t*>(base + i) = 0;
 }
 RH_ScopedInstall(ClearVB491bd0, 0x00491bd0);
+
+// ===== round 98 =====
+
+// 0x00497000  render — byte-verified: build 16-dword projection matrix at out from camera struct p2
+//   out[0]=p2[0x70]; out[5]=p2[0x74]; out[10]=fv=p2[0x84]/(p2[0x84]-p2[0x80]); out[0xb]=-(fv*p2[0x80]);
+//   out[0xe]=1.0f; rest 0
+extern "C" __declspec(dllexport) void __cdecl Proj497000(std::uint32_t* out, char* p2) {
+    out[0]=*reinterpret_cast<std::uint32_t*>(p2+0x70);
+    out[1]=0; out[2]=0; out[3]=0; out[4]=0;
+    out[5]=*reinterpret_cast<std::uint32_t*>(p2+0x74);
+    out[6]=0; out[7]=0; out[8]=0; out[9]=0;
+    float fv = *reinterpret_cast<float*>(p2+0x84) / (*reinterpret_cast<float*>(p2+0x84) - *reinterpret_cast<float*>(p2+0x80));
+    *reinterpret_cast<float*>(out+10) = fv;
+    float f1 = *reinterpret_cast<float*>(p2+0x80);
+    out[0xc]=0; out[0xd]=0;
+    *reinterpret_cast<std::uint32_t*>(out+0xe)=0x3f800000u; out[0xf]=0;
+    *reinterpret_cast<float*>(out+0xb) = -(fv*f1);
+}
+RH_ScopedInstall(Proj497000, 0x00497000);

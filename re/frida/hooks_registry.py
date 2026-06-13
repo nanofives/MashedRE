@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 98 (struct->out projection matrix builder) --
+    'proj_497000': {'rva': 0x00497000, 'export': 'Proj497000', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'struct_to_out_build', 'span': 16, 'seed': [{'off':0x70,'bits':0x12345678},{'off':0x74,'bits':0x9abcdef0},{'off':0x80,'bits':0x3f800000},{'off':0x84,'bits':0x40000000}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+
     # ---- promote-round round 97 (global-table search + strided clears) --
     'search_47ce40': {'rva': 0x0047ce40, 'export': 'Search47ce40', 'signature': {'ret': 'int32', 'args': ['uint32']}, 'arg_type': 'global_table_linear_search', 'target_global': 0x006c6b90, 'stride': 4, 'count': 200, 'lut_root_delta': 0, 'path1_tests': [[0x1234,0],[0x1234,50],[0x1234,199],[0x1234,-1],[0xABCD,100]], 'path2_tests': [[0x1234,50],[0x1234,-1]]},
     'clear_48f260': {'rva': 0x0048f260, 'export': 'Clear48f260', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0076d980, 'len': 0x2d50, 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},

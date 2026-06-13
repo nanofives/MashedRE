@@ -121,6 +121,7 @@ PURE_LEAF_ARGTYPES = {
     'deref_p1field_glob_set',    # fn(p1[, p2/v]): base=*(u32*)(*(u32*)(p1+p1_off)+*(u32*)glob); reimpl writes base fields. seed glob=0, p1->atab->base, optional p2 in-ptr(n) or scalar; snapshot base observe. test ignored
     'global_table_linear_search',# int fn(key): if(key<=0) return -1; for i<count if(*(int*)(tgt+i*stride)==key) return i; return -1. test=[key,placeAt]
     'global_ptr_strided_clear',  # void fn(): for i in [0,len) step stride: *(u32*)(*(u32*)glob + i)=0. seed *glob=&buf, snapshot strided
+    'struct_to_out_build',       # void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1]. snapshot out. test ignored
 }
 
 SRC = r"""
@@ -180,6 +181,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'deref_p1field_glob_set') ? (cfg.arg2_kind === 'ptr' ? ['pointer','pointer'] : cfg.arg2_kind === 'scalar' ? ['pointer','uint32'] : cfg.arg2_kind === 'scalar2' ? ['pointer','uint32','uint32'] : ['pointer'])
               : (cfg.at === 'global_table_linear_search') ? ['uint32']
               : (cfg.at === 'global_ptr_strided_clear') ? []
+              : (cfg.at === 'struct_to_out_build') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -359,6 +361,14 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
       try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
       try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_to_out_build') {
+      // void fn(out*, p2): reads p2 fields (seeded per cfg.seed [{off,bits}]), writes out[0..span-1].
+      const span = (cfg.span | 0) || 16, seed = cfg.seed || [];
+      const p2 = Memory.alloc(0x100), outO = Memory.alloc(0x80), outR = Memory.alloc(0x80); _keep.push(p2, outO, outR);
+      const setup = function () { for (let z = 0; z < 0x100; z += 4) p2.add(z).writeU32(0); seed.forEach(function (s) { p2.add(s.off | 0).writeU32(s.bits >>> 0); }); };
+      const rd = function (b) { const p = []; for (let k = 0; k < span; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
+      try { setup(); for (let k = 0; k < span; k++) outO.add(k * 4).writeU32(0xEEEEEEEE); Orig(outO, p2); o = rd(outO); } catch (e) { eo = e.message; }
+      try { setup(); for (let k = 0; k < span; k++) outR.add(k * 4).writeU32(0xEEEEEEEE); Reim(outR, p2); r = rd(outR); } catch (e) { er = e.message; }
     } else if (cfg.at === 'global_table_linear_search') {
       // int fn(key): if(key<=0) return -1; for i<count: if(*(int*)(tgt+i*stride)==key) return i; return -1.
       const base = cfg.tgt, stride = cfg.stride | 0, count = cfg.count | 0, key = t[0] | 0, placeAt = t[1] | 0;
@@ -845,7 +855,8 @@ def run(name):
            'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'),
            'stride_dw': h.get('stride_dw'), 'passthrough_arg': h.get('passthrough_arg'),
            'mask': h.get('mask'), 'glob': h.get('glob'), 'p1_off': h.get('p1_off'),
-           'arg2_kind': h.get('arg2_kind'), 'arg2_dwords': h.get('arg2_dwords'), 'asi': ASI}
+           'arg2_kind': h.get('arg2_kind'), 'arg2_dwords': h.get('arg2_dwords'),
+           'seed': h.get('seed'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
