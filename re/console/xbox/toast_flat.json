@@ -1,0 +1,120 @@
+{
+  "image_base": 65536,
+  "image_size": 5709616,
+  "entry_va": 235257,
+  "kernel_thunk_va": 2639712,
+  "sections": [
+    {
+      "name": ".text",
+      "va": 69632,
+      "vsize": 1930564,
+      "raw": 4096,
+      "rawsize": 1930564,
+      "flags": 22
+    },
+    {
+      "name": "D3D",
+      "va": 2000224,
+      "vsize": 80376,
+      "raw": 1937408,
+      "rawsize": 65848,
+      "flags": 7
+    },
+    {
+      "name": "D3DX",
+      "va": 2080608,
+      "vsize": 1304,
+      "raw": 2007040,
+      "rawsize": 1300,
+      "flags": 7
+    },
+    {
+      "name": "XGRPH",
+      "va": 2081920,
+      "vsize": 136080,
+      "raw": 2011136,
+      "rawsize": 132884,
+      "flags": 7
+    },
+    {
+      "name": "DSOUND",
+      "va": 2218016,
+      "vsize": 123564,
+      "raw": 2146304,
+      "rawsize": 122948,
+      "flags": 7
+    },
+    {
+      "name": "XMV",
+      "va": 2341600,
+      "vsize": 163172,
+      "raw": 2273280,
+      "rawsize": 163156,
+      "flags": 7
+    },
+    {
+      "name": "WMADEC",
+      "va": 2504800,
+      "vsize": 103724,
+      "raw": 2437120,
+      "rawsize": 103724,
+      "flags": 7
+    },
+    {
+      "name": "XPP",
+      "va": 2608544,
+      "vsize": 31168,
+      "raw": 2543616,
+      "rawsize": 31168,
+      "flags": 7
+    },
+    {
+      "name": ".rdata",
+      "va": 2639712,
+      "vsize": 107824,
+      "raw": 2576384,
+      "rawsize": 107808,
+      "flags": 6
+    },
+    {
+      "name": ".data",
+      "va": 2747552,
+      "vsize": 2982600,
+      "raw": 2686976,
+      "rawsize": 222636,
+      "flags": 7
+    },
+    {
+      "name": "DOLBY",
+      "va": 5730176,
+      "vsize": 29056,
+      "raw": 2912256,
+      "rawsize": 29036,
+      "flags": 38
+    },
+    {
+      "name": "$$XTIMAGE",
+      "va": 5759232,
+      "vsize": 10240,
+      "raw": 2945024,
+      "rawsize": 10240,
+      "flags": 56
+    },
+    {
+      "name": "$$XSIMAGE",
+      "va": 5769472,
+      "vsize": 4096,
+      "raw": 2957312,
+      "rawsize": 4096,
+      "flags": 56
+    },
+    {
+      "name": ".XTLID",
+      "va": 5773568,
+      "vsize": 1584,
+      "raw": 2961408,
+      "rawsize": 1584,
+      "flags": 56
+    }
+  ]
+}

@@ -79,3 +79,10 @@ __pycache__/
 .claude/worktrees/agent-*/
 tmp/
 /.pool_slot
+
+# --- Console disc images + extracted binaries (user-supplied; tools in re/tools/console regenerate the rest) ---
+/xbox/
+/re/console/ghidra/
+/re/console/**/*.elf
+/re/console/**/*.xbe
+/re/console/**/*.bin
