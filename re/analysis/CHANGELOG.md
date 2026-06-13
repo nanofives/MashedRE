@@ -3452,3 +3452,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00492d10  Global771968Get  C2->C3  promote-round-27 read_global 10/10 GREEN
 2026-06-13  00431b30  Float67eaa8Get  C2->C3  promote-round-27 read_global float 10/10 GREEN
 2026-06-13  00452eb0  PowerupRangeGet  C2->C3  promote-round-27 read_global float 10/10 GREEN
+2026-06-13  00431b40  Set67eaa8  C2->C3  promote-round-28 void_setter_observe 10/10 GREEN
+2026-06-13  0049a2e0  Set77396c  C2->C3  promote-round-28 void_setter_observe 10/10 GREEN
+2026-06-13  0049a740  Set773978  C2->C3  promote-round-28 void_setter_observe 10/10 GREEN
+2026-06-13  0042f7a0  GhostMode::Clear  C2->C3  promote-round-28 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  00452160  PowerupTargetPtrGet  C2->C3  promote-round-28 read_global 10/10 GREEN
