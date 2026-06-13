@@ -13603,4 +13603,43 @@ HOOKS = {
         'path2_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE]],
     },
 
+    # ---- promote-round round 7 (L2 cheap re-earns) ----------------------------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round7.cpp).
+
+    # 0x00499730  BootPtr773818Get — uint32(). Constant-pointer getter:
+    # mov eax,0x00773818; ret (bytes B8 18 38 77 00 C3). The constant non-zero
+    # return IS the leaf's entire behavior (no loads/branches) — comparing it
+    # is complete coverage, and non-zero passes the degeneracy assertion.
+    # ref: re/analysis/skeleton_prep_boot_winmain_b/00499730.md
+    'boot_ptr_773818_get': {
+        'rva':            0x00499730,
+        'export':         'BootPtr773818Get',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00495120  TimerQpfStore — uint32(). QueryPerformanceFrequency ->
+    # DAT_00771e70 (low) + DAT_00771e74 (high), returns 1 (QPF return
+    # ignored). QPF is a machine constant -> deterministic across A/B.
+    # scalars_to_scattered_globals: observe the 8-byte window + fold the
+    # return; handler saves/restores the window both sides.
+    # ref: re/analysis/skeleton_prep_boot_winmain_a/00495120.md
+    'timer_qpf_store': {
+        'rva':            0x00495120,
+        'export':         'TimerQpfStore',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x00771e70', 'len': 8}],
+        'fold_ret':       True,
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}],
+        'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
+    },
+
 }
