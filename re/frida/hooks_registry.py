@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 96 (more per-batch state setters) --
+    'batch_476c10': {'rva': 0x00476c10, 'export': 'Batch476c10', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'deref_p1field_glob_set', 'glob': 0x007dc57c, 'p1_off': 4, 'arg2_kind': 'ptr', 'arg2_dwords': 4, 'observe': [{'off':0xd8},{'off':0xdc},{'off':0xe0},{'off':0xe4},{'off':0x40}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'batch_476c60': {'rva': 0x00476c60, 'export': 'Batch476c60', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'deref_p1field_glob_set', 'glob': 0x007dc57c, 'p1_off': 4, 'arg2_kind': 'ptr', 'arg2_dwords': 8, 'observe': [{'off':0xd8},{'off':0xdc},{'off':0xf0},{'off':0xf4},{'off':0x40}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+    'batch_476cb0': {'rva': 0x00476cb0, 'export': 'Batch476cb0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32']}, 'arg_type': 'deref_p1field_glob_set', 'glob': 0x007dc57c, 'p1_off': 4, 'arg2_kind': 'scalar2', 'observe': [{'off':0xa4},{'off':0xa8},{'off':0x40}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
+
     # ---- promote-round round 95 (collision-table clear + per-batch state setters family) --
     'clear_coll_47c0b0': {'rva': 0x0047c0b0, 'export': 'ClearColl47c0b0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x006bf468, 'len': 0x3b88, 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},
     'batch_476ae0': {'rva': 0x00476ae0, 'export': 'Batch476ae0', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'deref_p1field_glob_set', 'glob': 0x007dc57c, 'p1_off': 4, 'arg2_kind': 'ptr', 'arg2_dwords': 2, 'observe': [{'off':0xb8},{'off':0xbc},{'off':0x40}], 'lut_root_delta': 0, 'path1_tests': [0,0], 'path2_tests': [0]},

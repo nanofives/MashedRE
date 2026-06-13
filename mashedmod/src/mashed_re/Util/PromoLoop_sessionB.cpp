@@ -521,3 +521,32 @@ extern "C" __declspec(dllexport) void __cdecl Batch476be0(std::uint32_t* p1, std
     *(std::uint32_t*)(b+0xc0)=v; *(std::uint32_t*)(b+0x40)|=0x20000u;
 }
 RH_ScopedInstall(Batch476be0, 0x00476be0);
+
+// ===== round 96 (more per-batch state setters) =====
+
+// 0x00476c10  particle — base=*(*(p1+4)+DAT_007dc57c); base[0xd8/dc/e0/e4]=p2[0..3]; base[0x40]|=0x80000
+extern "C" __declspec(dllexport) void __cdecl Batch476c10(std::uint32_t* p1, std::uint32_t* p2) {
+    if (!p2) p2=(std::uint32_t*)0x00613294u;
+    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4)+*(std::uint32_t*)0x007dc57cu);
+    *(std::uint32_t*)(b+0xd8)=p2[0]; *(std::uint32_t*)(b+0xdc)=p2[1];
+    *(std::uint32_t*)(b+0xe0)=p2[2]; *(std::uint32_t*)(b+0xe4)=p2[3];
+    *(std::uint32_t*)(b+0x40)|=0x80000u;
+}
+RH_ScopedInstall(Batch476c10, 0x00476c10);
+
+// 0x00476c60  particle — base=...; copy 8 dwords p2->base+0xd8; base[0x40]|=0x100000
+extern "C" __declspec(dllexport) void __cdecl Batch476c60(std::uint32_t* p1, std::uint32_t* p2) {
+    if (!p2) p2=(std::uint32_t*)0x006132a4u;
+    char* base=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4)+*(std::uint32_t*)0x007dc57cu);
+    std::uint32_t* d=(std::uint32_t*)(base+0xd8);
+    for (int k=0;k<8;k++) d[k]=p2[k];
+    *(std::uint32_t*)(base+0x40)|=0x100000u;
+}
+RH_ScopedInstall(Batch476c60, 0x00476c60);
+
+// 0x00476cb0  particle — base=...; base[0xa4]=p2; base[0xa8]=p3; base[0x40]|=0x10000000
+extern "C" __declspec(dllexport) void __cdecl Batch476cb0(std::uint32_t* p1, std::uint32_t p2, std::uint32_t p3) {
+    char* b=(char*)*(std::uint32_t*)(*(std::uint32_t*)((char*)p1+4)+*(std::uint32_t*)0x007dc57cu);
+    *(std::uint32_t*)(b+0xa4)=p2; *(std::uint32_t*)(b+0xa8)=p3; *(std::uint32_t*)(b+0x40)|=0x10000000u;
+}
+RH_ScopedInstall(Batch476cb0, 0x00476cb0);

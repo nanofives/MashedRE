@@ -3635,3 +3635,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00476ae0  Batch476ae0  C2->C3  early_window GREEN; promote-round-95
 2026-06-13  00476b90  Batch476b90  C2->C3  early_window GREEN; promote-round-95
 2026-06-13  00476be0  Batch476be0  C2->C3  early_window GREEN; promote-round-95
+2026-06-13  00476c10  Batch476c10  C2->C3  early_window GREEN; promote-round-96
+2026-06-13  00476c60  Batch476c60  C2->C3  early_window GREEN; promote-round-96
+2026-06-13  00476cb0  Batch476cb0  C2->C3  early_window GREEN; promote-round-96

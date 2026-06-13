@@ -175,7 +175,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'copy_arg_to_globals') ? ['pointer']
               : (cfg.at === 'deref_byte_flag') ? ['pointer','uint32']
               : (cfg.at === 'indexed_masked_get_out') ? ['uint32','pointer']
-              : (cfg.at === 'deref_p1field_glob_set') ? (cfg.arg2_kind === 'ptr' ? ['pointer','pointer'] : cfg.arg2_kind === 'scalar' ? ['pointer','uint32'] : ['pointer'])
+              : (cfg.at === 'deref_p1field_glob_set') ? (cfg.arg2_kind === 'ptr' ? ['pointer','pointer'] : cfg.arg2_kind === 'scalar' ? ['pointer','uint32'] : cfg.arg2_kind === 'scalar2' ? ['pointer','uint32','uint32'] : ['pointer'])
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -369,7 +369,7 @@ rpc.exports.diff = function(cfg) {
         if (kind === 'ptr') for (let k = 0; k < n; k++) p2.add(k * 4).writeU32((0xC0DE0000 | k) >>> 0);
       };
       const snap = function () { return obs.map(function (x) { return base.add(x.off | 0).readU32() >>> 0; }).join(','); };
-      const call = function (fn) { if (kind === 'ptr') fn(p1, p2); else if (kind === 'scalar') fn(p1, 0xC0DE0001); else fn(p1); };
+      const call = function (fn) { if (kind === 'ptr') fn(p1, p2); else if (kind === 'scalar') fn(p1, 0xC0DE0001); else if (kind === 'scalar2') fn(p1, 0xC0DE0001, 0xC0DE0002); else fn(p1); };
       try { setup(); call(Orig); o = snap(); } catch (e) { eo = e.message; }
       try { setup(); call(Reim); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'copy_arg_to_globals') {
