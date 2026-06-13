@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 68 (strided 30-global zero-init + 64-dword constant fill) --
+    'clear10x3_63a494': {'rva': 0x00406370, 'export': 'Clear10x3_63a494', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063a494, 'len': 0x12c, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+    'fill64_63c508': {'rva': 0x00418e50, 'export': 'Fill64_63c508', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063c508, 'len': 0x100, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+
     # ---- promote-round round 67 (two global-array-to-bool-out helpers) --
     'bool0_out_8a94e0': {'rva': 0x0040b970, 'export': 'Bool0Out8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[0, 1, 0, 2], [5, 0, 0, 7], [0, 0, 3, 0], [9, 8, 7, 0], [0, 0, 0, 0], [1, 1, 1, 1], [0, 5, 0, 0], [3, 0, 9, 0], [0, 1, 2, 0], [7, 0, 0, 0]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 3]},
     'boolmin_out_8a94e0': {'rva': 0x0040ba00, 'export': 'BoolMinOut8a94e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'global4_bool_out', 'target_global': 0x008a94e0, 'span': 4, 'seedvecs': [[3, 5, 3, 9], [100, 2, 2, 50], [1, 1, 1, 1], [50, 40, 40, 99], [99, 99, 99, 99], [200, 200, 200, 200], [7, 8, 9, 7], [4, 4, 5, 6], [10, 20, 10, 30], [0, 0, 1, 2]], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 3]},
