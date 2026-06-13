@@ -3573,3 +3573,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00418e50  Fill64_63c508  C2->C3  promote-round-68 range_init GREEN (early_window 64-dword constant fill 0x3fe00000)
 2026-06-13  00413f20  ZeroFill60_63bc60  C2->C3  promote-round-69 range_init GREEN (early_window 60-dword contiguous zero)
 2026-06-13  00407640  CopterFind639dc4  C2->C3  promote-round-69 linear_scan_find 10/10 GREEN (early_window key linear scan)
+2026-06-13  0041efe0  BitExtract63dc74  C2->C3  promote-round-70 int_scalar 10/10 GREEN (early_window MOVZX bit-extract)
+2026-06-13  004298c0  Clear67d99c_x4  C2->C3  promote-round-70 scalars_to_scattered_globals GREEN (early_window 4-global zero)
+2026-06-13  00432230  RecEq231  C2->C3  promote-round-70 gated_record_eq2 10/10 GREEN (early_window gated record-eq predicate)
+2026-06-13  00432260  RecEq232  C2->C3  promote-round-70 gated_record_eq2 10/10 GREEN (early_window gated record-eq predicate)
