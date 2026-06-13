@@ -3431,3 +3431,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  00485360  DynObjListGetCount  C2->C3  promote-round-17 read_global diff 10/10 GREEN log/diff_dyn_obj_list_get_count.csv
 2026-06-12  00550790  FsManager7dc76cSet  C2->C3  promote-round-17 void_setter_observe diff 10/10 GREEN log/diff_fs_manager_7dc76c_set.csv
 2026-06-12  00496920  TimerTable772ffcGet  C2->C3  promote-round-17 scenario=race int_scalar diff 10/10 GREEN log/diff_timer_table_772ffc_get.csv (menu was exit-5)
+2026-06-12  0041efc0  Car::GetLapProgress  C2->C3  promote-round-18 scenario=race int_scalar diff 10/10 GREEN log/diff_car_get_lap_progress.csv (double-deref per-car getter)
