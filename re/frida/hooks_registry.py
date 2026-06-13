@@ -14252,6 +14252,33 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 40 (first-party constant-return leaves) --
+    'ret_50': {
+        'rva': 0x0044dfe0, 'export': 'Ret50', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'const_return', 'lut_root_delta': 0,
+        'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0],
+    },
+    'ret_3': {
+        'rva': 0x00493b40, 'export': 'Ret3', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'const_return', 'lut_root_delta': 0,
+        'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0],
+    },
+    'ret_897ff0': {
+        'rva': 0x00443090, 'export': 'Ret897ff0', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'const_return', 'lut_root_delta': 0,
+        'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0],
+    },
+    'ret_63a5f0': {
+        'rva': 0x004098a0, 'export': 'Ret63a5f0', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'const_return', 'lut_root_delta': 0,
+        'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0],
+    },
+    'ret_6147b4': {
+        'rva': 0x004924e0, 'export': 'Ret6147b4', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'const_return', 'lut_root_delta': 0,
+        'path1_tests': [0, 0, 0, 0, 0], 'path2_tests': [0, 0],
+    },
+
     # ---- promote-round round 39 (first-party multi-store const setters) --
     'clear_63d584_pair': {
         'rva': 0x0041d910, 'export': 'Clear63d584Pair', 'signature': {'ret': 'void', 'args': []},

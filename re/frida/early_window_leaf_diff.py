@@ -62,6 +62,7 @@ PURE_LEAF_ARGTYPES = {
     'int2_scalar',  # pure function of TWO int args (no memory) — tests are [p1,p2] pairs
     'deref_field_write',  # fn(ptr p1, u32 p2): *(*(p1+outer_off)+inner_off)=p2 — harness allocs+links buffers
     'deref_table_read',   # fn(ptr p1, u32 i): return (*p1)[i] — harness allocs+seeds an array behind p1
+    'const_return',       # fn(): return <fixed constant> — no input, no state; call + compare
 }
 
 SRC = r"""
@@ -124,6 +125,9 @@ rpc.exports.diff = function(cfg) {
       for (let z = 0; z < 0x80; z += 4) { A2.add(z).writeU32(0); I2.add(z).writeU32(0); }
       A2.add(oo).writePointer(I2);
       try { Reim(A2, t >>> 0); r = I2.add(io).readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'const_return') {
+      try { o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'deref_table_read') {
       // return (*p1)[i]. Seed an array behind p1 with distinct values; non-degenerate.
       const span = (cfg.span | 0) || 16;
