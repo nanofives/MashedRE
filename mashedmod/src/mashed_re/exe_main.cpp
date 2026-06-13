@@ -3686,6 +3686,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // space to settle CreateDevice, and running our 4-MB wedge before it
     // caused 60%+ cold-start failures.
 
+    // DPI awareness — MUST precede window creation. The compat layer gives
+    // MASHED.exe HIGHDPIAWARE (setup_mashed_compat.ps1), so the original
+    // renders 1:1 physical pixels. Without the equivalent here, DWM
+    // bitmap-stretches our 800x600 window on scaled displays (>100% DPI):
+    // the user sees blurred glyphs / fuzzy alpha edges / slight offsets that
+    // NO backbuffer-level fix can touch, while the backbuffer dump stays
+    // pristine — the exact failure mode of the 2026-06-12 font reports.
+    // Per-monitor-v2 when available (multi-monitor correct), else system DPI.
+    {
+        using SetCtxFn = BOOL(WINAPI*)(HANDLE);
+        HMODULE u32 = GetModuleHandleA("user32.dll");
+        SetCtxFn setCtx = u32 ? reinterpret_cast<SetCtxFn>(
+            GetProcAddress(u32, "SetProcessDpiAwarenessContext")) : nullptr;
+        // DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 == (HANDLE)-4
+        if (!setCtx || !setCtx(reinterpret_cast<HANDLE>(-4))) {
+            SetProcessDPIAware();
+        }
+    }
+
     // Register the window class. Pattern from 0x00499ba0 (Window_Create).
     WNDCLASSEXA wc = {};
     wc.cbSize        = sizeof(wc);
