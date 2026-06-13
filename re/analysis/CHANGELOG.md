@@ -3609,3 +3609,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  005c4d30  CondGet5c4d30  C2->C3  early_window cond_deref_get GREEN 5/5; promote-round-85
 2026-06-13  0045bff0  Pred45bff0  C2->C3  early_window table_bool_predicate GREEN 6/6; promote-round-85
 2026-06-13  00497450  Pred497450  C2->C3  early_window table_bool_predicate GREEN 6/6; promote-round-85
+2026-06-13  005a7b40  AudioCtxSwap5a7b40  C2->C3  early_window global_swap GREEN 5/5; promote-round-86
+2026-06-13  004924c0  Set6147b4Triple  C2->C3  early_window byte_args_to_globals GREEN 5/5; promote-round-86
+2026-06-13  0047cdc0  StoreDistSq47cdc0  C2->C3  early_window indexed_float_sq GREEN 5/5; promote-round-86

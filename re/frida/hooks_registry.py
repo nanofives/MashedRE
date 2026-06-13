@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 86 (global swap-return + 3-byte-globals + indexed float-square) --
+    'audio_ctx_swap_5a7b40': {'rva': 0x005a7b40, 'export': 'AudioCtxSwap5a7b40', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'global_swap', 'target_global': 0x007dcabc, 'lut_root_delta': 0, 'path1_tests': [[0xAAAA,0x1234],[0,0xDEAD],[0xFFFFFFFF,0],[0x5555,0xBEEF],[0,0]], 'path2_tests': [[0xAAAA,0x1234],[0,0xDEAD]]},
+    'set_6147b4_triple': {'rva': 0x004924c0, 'export': 'Set6147b4Triple', 'signature': {'ret': 'void', 'args': ['uint8','uint8','uint8']}, 'arg_type': 'byte_args_to_globals', 'observe': [{'addr': 0x006147b4},{'addr': 0x006147b5},{'addr': 0x006147b6}], 'lut_root_delta': 0, 'path1_tests': [[0x11,0x22,0x33],[0xFF,0,0x80],[0,0xAB,0xCD],[0x7F,0x40,0x01],[0,0,0]], 'path2_tests': [[0x11,0x22,0x33],[0,0,0]]},
+    'store_dist_sq_47cdc0': {'rva': 0x0047cdc0, 'export': 'StoreDistSq47cdc0', 'signature': {'ret': 'void', 'args': ['uint32','float']}, 'arg_type': 'indexed_float_sq', 'target_global': 0x006c6870, 'stride': 4, 'lut_root_delta': 0, 'path1_tests': [[0,2.5],[1,-3.0],[2,0.0],[3,1.5],[5,10.0]], 'path2_tests': [[0,2.5],[1,-3.0]]},
+
     # ---- promote-round round 85 (cond deref-get + table bool predicates) --
     'cond_get_5c4d30': {'rva': 0x005c4d30, 'export': 'CondGet5c4d30', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'cond_deref_get', 'gate_off': 4, 'val_off': 0, 'lut_root_delta': 0, 'path1_tests': [[1,0xDEAD],[0,0xBEEF],[5,0x1234],[0,0],[0xFF,0xCAFE]], 'path2_tests': [[1,0xDEAD],[0,0xBEEF]]},
     'pred_45bff0': {'rva': 0x0045bff0, 'export': 'Pred45bff0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'table_bool_predicate', 'target_global': 0x0088fc88, 'stride': 0xb4, 'off0': 0, 'lut_root_delta': 0, 'path1_tests': [[1,0],[1,0x1234],[3,0],[3,0xFF],[2,0],[5,0x9]], 'path2_tests': [[1,0],[1,0x1234]]},

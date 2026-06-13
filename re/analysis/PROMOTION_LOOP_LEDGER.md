@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 85
-- total_green: 221
+- rounds_run: 86
+- total_green: 224
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 86 | early_window bespoke handlers | attempted 3 | GREEN 3 (AudioCtxSwap5a7b40 0x005a7b40 global_swap; Set6147b4Triple 0x004924c0 byte_args_to_globals; StoreDistSq47cdc0 0x0047cdc0 indexed_float_sq) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 221->224. NEW handlers global_swap/byte_args_to_globals/indexed_float_sq. CONFIRMED: single fmul f*f is x87-reproducible (store_dist_sq GREEN) — unlike multi-op float10 sums. Session rounds 79-86 = 205->224 (+19), all early_window display-independent (env D3D9 wedge blocks run_diff). early_window vein now down to deep singletons; the +500 bulk remains gated on display recovery + run_diff.
 
 2026-06-13 | round 85 | early_window bespoke handlers (works despite env wedge) | attempted 3 | GREEN 3 (CondGet5c4d30 0x005c4d30 cond_deref_get; Pred45bff0 0x0045bff0 + Pred497450 0x00497450 table_bool_predicate) | deferred 0 | exit-1 x1 root-caused (pred_497450 inverted JLE branch -> fixed -> GREEN) | dry_counter 0. total_green 218->221. NEW handlers cond_deref_get + table_bool_predicate. early_window confirmed working under the env D3D9 wedge (attaches pre-init; get_771e78 re-GREEN). LESSON: JLE jumps to the predicate path (i<=3), fall-through is return-0 (i>3) — trust the diff (caught the inversion). Display-independent tail now has only scattered bespoke shapes left (~1-3 per handler); the bulk still needs run_diff (env-wedged).
 

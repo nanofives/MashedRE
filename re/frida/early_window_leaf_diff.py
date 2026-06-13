@@ -103,6 +103,9 @@ PURE_LEAF_ARGTYPES = {
     'deref_struct_set',          # void fn(ptr p, scalar...): writes deterministic values into fields of p. alloc+seed buffer, pass as p, call with nscalar args, snapshot observe offsets. test=[a0(,a1,a2)]
     'cond_deref_get',            # u32 fn(ptr p): if(*(u32*)(p+gate_off)) return *(u32*)(p+val_off); else 0. test=[gateval,val]
     'table_bool_predicate',      # u32 fn(i): if(bound>=0 && (int)i<=bound) return 0; return (*(u32*)(tgt+i*stride+off0) {==|!=} 0)?1:0. test=[idx,slotval]
+    'global_swap',               # u32 fn(v): old=*tgt; *tgt=v; return old. test=[oldseed,v]
+    'byte_args_to_globals',      # void fn(u8 a,u8 b,..): write byte args to byte globals (observe addrs). test=[a,b,..]
+    'indexed_float_sq',          # void fn(i,float f): *(float*)(tgt+i*stride)=f*f. test=[idx,fval]
 }
 
 SRC = r"""
@@ -144,6 +147,9 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'deref_struct_set') ? (['pointer'].concat(new Array(cfg.nscalar | 0).fill('uint32')))
               : (cfg.at === 'cond_deref_get') ? ['pointer']
               : (cfg.at === 'table_bool_predicate') ? ['uint32']
+              : (cfg.at === 'global_swap') ? ['uint32']
+              : (cfg.at === 'byte_args_to_globals') ? (cfg.observe.map(function(){return 'uint8';}))
+              : (cfg.at === 'indexed_float_sq') ? ['uint32','float']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -293,6 +299,25 @@ rpc.exports.diff = function(cfg) {
       const seed = function () { ptr(base).add(idx * stride).writeU32(recb); };
       try { seed(); o = Orig(idx) >>> 0; } catch (e) { eo = e.message; }
       try { seed(); r = Reim(idx) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_swap') {
+      // u32 fn(v): old=*tgt; *tgt=v; return old. test t=[oldseed,v]: seed, call, check ret + *tgt.
+      const g = ptr(cfg.tgt), oldseed = t[0] >>> 0, v = t[1] >>> 0;
+      try { g.writeU32(oldseed); o = (Orig(v) >>> 0) + '|g=' + (g.readU32() >>> 0); } catch (e) { eo = e.message; }
+      try { g.writeU32(oldseed); r = (Reim(v) >>> 0) + '|g=' + (g.readU32() >>> 0); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'byte_args_to_globals') {
+      // void fn(u8...): write byte args to byte globals (observe addrs). fill sentinel, call, read back.
+      const obs = cfg.observe, args = (Array.isArray(t) ? t : [t]).map(function (x) { return x & 0xff; });
+      const fill = function () { obs.forEach(function (x) { ptr(x.addr).writeU8(0xEE); }); };
+      const rd = function () { return obs.map(function (x) { return ptr(x.addr).readU8(); }).join(','); };
+      const call = function (fn) { if (args.length === 3) fn(args[0], args[1], args[2]); else if (args.length === 2) fn(args[0], args[1]); else fn(args[0]); };
+      try { fill(); call(Orig); o = rd(); } catch (e) { eo = e.message; }
+      try { fill(); call(Reim); r = rd(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_float_sq') {
+      // void fn(i, float f): *(float*)(tgt+i*stride) = f*f. call, read slot as float, compare.
+      const base = cfg.tgt, stride = cfg.stride | 0, idx = t[0] >>> 0, f = t[1];
+      const slot = ptr(base).add(idx * stride);
+      try { slot.writeU32(0xFFFFFFFF); Orig(idx, f); o = slot.readFloat(); } catch (e) { eo = e.message; }
+      try { slot.writeU32(0xFFFFFFFF); Reim(idx, f); r = slot.readFloat(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'cond_deref_get') {
       // u32 fn(ptr p): if(*(u32*)(p+gate_off)) return *(u32*)(p+val_off); else 0.
       // test t=[gateval,val]: seed both fields, call, compare return. gate=0 -> 0; gate!=0 -> val.
