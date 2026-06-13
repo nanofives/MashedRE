@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 63 (three container-record setters) --
+    'cont_rec_set_450': {'rva': 0x00489450, 'export': 'ContRecSet450', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'container_record_set', 'shape': 'p', 'idx': 2, 'writes': [-0x20, -0x1c], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 2]},
+    'cont_rec_set_480': {'rva': 0x00489480, 'export': 'ContRecSet480', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'container_record_set', 'shape': 'f', 'idx': 2, 'writes': [-0x18], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 2]},
+    'cont_rec_set_4a0': {'rva': 0x004894a0, 'export': 'ContRecSet4a0', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32', 'uint32']}, 'arg_type': 'container_record_set', 'shape': 'pp', 'idx': 2, 'writes': [-0x10, -0xc, -0x8, -0x4], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 2]},
+
     # ---- promote-round round 62 (two ghost-vehicle-slot indexed setters) --
     'ghost_slot_set_63c6ec': {'rva': 0x0041a5b0, 'export': 'GhostSlotSet63c6ec', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0063c6ec, 'stride': 0xc4, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},
     'ghost_slot_set_63c6f0': {'rva': 0x0041a8b0, 'export': 'GhostSlotSet63c6f0', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'indexed_table_set', 'target_global': 0x0063c6f0, 'stride': 0xc4, 'set_idx': 2, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0x22222222, 0xDEADBEEF, 0x55, 0x1234, 0xCAFEBABE, 7, 0xFFFFFFFF, 0x42, 0x99], 'path2_tests': [0x11111111, 0x22222222, 0xDEADBEEF]},

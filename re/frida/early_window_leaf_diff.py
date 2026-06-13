@@ -85,6 +85,7 @@ PURE_LEAF_ARGTYPES = {
     'arg_scattered_globals', # void fn(arg): observe globals after call, vary arg (switch/branch setter -> distinct globals per arg)
     'global_indexed_float',  # float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride) — single FLD, x87-safe
     'vec16_copy_set',        # u32 fn(idx,in): if(idx>=bound) return 0; copy n dwords from in to TWO contiguous regions at base+idx*stride
+    'container_record_set',  # void fn(container,..): base=container[0],idx=container[2]; addr=base+idx*0x30; write args into addr+offs. shape p/f/pp
 }
 
 SRC = r"""
@@ -113,6 +114,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'table_ret_ptrout') ? ['uint32','pointer']
               : (cfg.at === 'arg_scattered_globals') ? ['uint32']
               : (cfg.at === 'vec16_copy_set') ? ['uint32','pointer']
+              : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
               : (cfg.at === 'cond_global_set') ? ['uint32']
@@ -253,6 +255,31 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'container_record_set') {
+      // void fn(container, <args>): base=container[0], idx=container[2]; addr=base+idx*0x30;
+      // writes args into addr+off (off may be negative). shape: 'p'=(cont,inA), 'f'=(cont,floatval), 'pp'=(cont,inA,inB).
+      // base = rec+0x100 so negative offsets stay in-bounds; same buffers both sides.
+      const idx = cfg.idx | 0, shape = cfg.shape, writes = cfg.writes;
+      const cont = Memory.alloc(0x10), rec = Memory.alloc(0x200); _keep.push(cont, rec);
+      const base = rec.add(0x100), addr = base.add(idx * 0x30);
+      const setup = function () { for (let z = 0; z < 0x200; z += 4) rec.add(z).writeU32(0xEEEEEEEE); cont.add(0).writePointer(base); cont.add(8).writeU32(idx); };
+      const snap = function () { return writes.map(function (off) { return addr.add(off | 0).readU32() >>> 0; }).join(','); };
+      if (shape === 'f') {
+        const fval = 1.5 + (t >>> 0) * 0.25;
+        try { setup(); Orig(cont, fval); o = snap(); } catch (e) { eo = e.message; }
+        try { setup(); Reim(cont, fval); r = snap(); } catch (e) { er = e.message; }
+      } else {
+        const inA = Memory.alloc(0x10), inB = Memory.alloc(0x10); _keep.push(inA, inB);
+        inA.writeU32((0xC0DE0000 | ((t << 4) | 1)) >>> 0); inA.add(4).writeU32((0xC0DE0000 | ((t << 4) | 2)) >>> 0);
+        inB.writeU32((0xC0DE0000 | ((t << 4) | 3)) >>> 0); inB.add(4).writeU32((0xC0DE0000 | ((t << 4) | 4)) >>> 0);
+        if (shape === 'pp') {
+          try { setup(); Orig(cont, inA, inB); o = snap(); } catch (e) { eo = e.message; }
+          try { setup(); Reim(cont, inA, inB); r = snap(); } catch (e) { er = e.message; }
+        } else {
+          try { setup(); Orig(cont, inA); o = snap(); } catch (e) { eo = e.message; }
+          try { setup(); Reim(cont, inA); r = snap(); } catch (e) { er = e.message; }
+        }
+      }
     } else if (cfg.at === 'global_indexed_float') {
       // float fn(): idx=*(int*)gate; return *(float*)(base+idx*stride). seed idx + a FINITE
       // non-NaN float bit pattern at the slot -> distinct per idx. ret 'float' -> no >>>0 coercion.
@@ -441,7 +468,8 @@ def run(name):
            'mult': h.get('mult'), 'bound2': h.get('bound2'),
            'off0': h.get('off0'), 'off1': h.get('off1'), 'offf': h.get('offf'),
            'idxtbl': h.get('idxtbl'), 'tscale': h.get('tscale'),
-           'gate': h.get('gate'), 'gatemax': h.get('gatemax'), 'asi': ASI}
+           'gate': h.get('gate'), 'gatemax': h.get('gatemax'),
+           'idx': h.get('idx'), 'shape': h.get('shape'), 'writes': h.get('writes'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

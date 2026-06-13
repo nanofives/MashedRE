@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 62
-- total_green: 170
+- rounds_run: 63
+- total_green: 173
 - dry_counter: 0
-- last_round: 2026-06-13 round 62 — two ghost-vehicle-slot indexed setters via existing indexed_table_set (168->170)
+- last_round: 2026-06-13 round 63 — three container-record setters via new container_record_set handler (170->173)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -481,6 +481,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 61 | global-indexed float getter + vec16 copy setter (2 new handlers) | GREEN 2 (FloatIdx639de0 0x004077e0 global_indexed_float; VehiclePhysicsMatrixSet 0x0046d4d0 vec16_copy_set) | total_green 166->168. global_indexed_float: x87-safe for SINGLE-FLD getters (no arithmetic -> reading st0 as 'float' is exact); distinct finite floats per idx. vec16_copy_set: 16 in-dwords copied to two contiguous regions, full snapshot. SESSION (this context, rounds 53-61): 142->168 (+26), TEN new handlers. BACKLOG STILL OPEN: field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10 WITH arithmetic (0x00420d80 sum / 0x004223f0 PRNG -> NOT x87-safe via single-read trick, need careful handling), float clamp-steppers (0x0045db50/0x00420de0 __fastcall), thiscall vec3 getter (0x00430b30), delimiter-scan (0x0042ac00). Plus remaining 212-list simple entries. RESUME: keep building bespoke handlers + sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~32 to go).
 
 2026-06-13 | round 62 | two ghost-vehicle-slot indexed setters (existing indexed_table_set) | GREEN 2 (GhostSlotSet63c6ec 0x0041a5b0 stride 0xc4; GhostSlotSet63c6f0 0x0041a8b0 stride 0xc4) | total_green 168->170. No new handler — existing indexed_table_set. NEW unworked CLUSTER found this round (container-record setters, base=*param_1 + param_1[2]*0x30 + off): 0x00489450 (2-word @ -0x20/-0x1c), 0x00489480 (1-word @ -0x18), 0x004894a0 (2x vec2 @ -0x10..-0x4) — a 3-fn family needing a `container_record_set` handler (alloc container{[0]=base_ptr,[2]=index} + records buf). SESSION (this context, rounds 53-62): 142->170 (+28), TEN handlers. BACKLOG: container_record_set (3 fns @ 0x489450/480/4a0), field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80/0x00422440 cos-interp/0x004223f0 PRNG), float clamp-steppers, thiscall vec3 (0x00430b30). RESUME: build container_record_set (unlocks 3) + keep sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~30 to go).
+
+2026-06-13 | round 63 | three container-record setters (new container_record_set handler) | GREEN 3 (ContRecSet450 0x00489450 shape p; ContRecSet480 0x00489480 shape f [float FSTP]; ContRecSet4a0 0x004894a0 shape pp) | total_green 170->173. container_record_set: base=cont[0], idx=cont[2], addr=base+idx*0x30, writes args into addr+off (neg offs); shape-keyed nargs (p=cont+ptr, f=cont+float, pp=cont+ptr+ptr). FLD/FSTP float round-trip exact for finite 32-bit floats. SESSION (this context, rounds 53-63): 142->173 (+31), ELEVEN new handlers. BACKLOG: field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80 / 0x00422440 cos-interp / 0x004223f0 PRNG), float clamp-steppers (0x0045db50 / 0x00420de0 fastcall), thiscall vec3 (0x00430b30), delimiter-scan (0x0042ac00). Plus remaining 212-list simple entries. RESUME: keep building bespoke handlers + sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~27 to go).
 
 ## Final gated-remainder report
 
