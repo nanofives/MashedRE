@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 77 (strided -1.0f fill + trailing global zero; opportunistic) --
+    'fill_63e5a4': {'rva': 0x00421080, 'export': 'Fill63e5a4', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x0063e5a4, 'len': 0x1600, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+
     # ---- promote-round round 76 (global-field getter; opportunistic, beyond 200) --
     'global_field_get_896000': {'rva': 0x0044c370, 'export': 'GlobalFieldGet896000', 'signature': {'ret': 'int32', 'args': []}, 'arg_type': 'global_field_read', 'target_global': 0x00896000, 'field_off': 4, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0xDEAD, 0x55, 0x12340, 0, 0x7000, 0x100, 0x1000, 0x9999], 'path2_tests': [0x1000, 0x2000, 0xDEAD]},
 
