@@ -3447,3 +3447,8 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0040e460  Flag63b908Set  C2->C3  promote-round-26 void_setter_observe diff 10/10 GREEN log/diff_flag_63b908_set.csv
 2026-06-13  0040e4a0  ElapsedTimeGet  C2->C3  promote-round-26 read_global diff 10/10 GREEN log/diff_elapsed_time_get.csv
 2026-06-13  00443080  AiTargetEnableGet  C2->C3  promote-round-26 read_global diff 10/10 GREEN log/diff_ai_target_enable_get.csv
+2026-06-13  0042b900  Global67eca4Get  C2->C3  promote-round-27 read_global 10/10 GREEN
+2026-06-13  00430820  Global67ed6cGet  C2->C3  promote-round-27 read_global 10/10 GREEN
+2026-06-13  00492d10  Global771968Get  C2->C3  promote-round-27 read_global 10/10 GREEN
+2026-06-13  00431b30  Float67eaa8Get  C2->C3  promote-round-27 read_global float 10/10 GREEN
+2026-06-13  00452eb0  PowerupRangeGet  C2->C3  promote-round-27 read_global float 10/10 GREEN
