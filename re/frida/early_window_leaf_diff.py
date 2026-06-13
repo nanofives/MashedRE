@@ -82,6 +82,7 @@ PURE_LEAF_ARGTYPES = {
     'ptr_compute_get',       # u32 fn(out,idx): if(idx>=bound) return 0; t=*(u32*)(idxtbl+idx*stride); *out=base+idx*stride+t*tscale; return 1
     'eq_predicate_get',      # u32 fn(p1,p2): if(*(int*)gate<gatemax && p2>=0) return tbl[p1*stride]==tbl[p2*stride]?1:0; return 0
     'table_ret_ptrout',      # u32 fn(idx,out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1)
+    'arg_scattered_globals', # void fn(arg): observe globals after call, vary arg (switch/branch setter -> distinct globals per arg)
 }
 
 SRC = r"""
@@ -108,6 +109,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'idx2_table_get') ? ['pointer','uint32','uint32']
               : (cfg.at === 'ptr_compute_get') ? ['pointer','uint32']
               : (cfg.at === 'table_ret_ptrout') ? ['uint32','pointer']
+              : (cfg.at === 'arg_scattered_globals') ? ['uint32']
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
               : (cfg.at === 'cond_global_set') ? ['uint32']
@@ -248,6 +250,14 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'arg_scattered_globals') {
+      // void fn(arg): fill observed globals with sentinel, call(arg), read them back; vary arg.
+      // A switch/branch setter writes DISTINCT globals per arg -> non-degenerate across the test set.
+      const obs = cfg.observe, arg = t >>> 0;
+      const fill = function () { obs.forEach(function (x) { ptr(x.addr).writeU32(0xFFFFFFFF); }); };
+      const readAll = function () { return obs.map(function (x) { return ptr(x.addr).readU32() >>> 0; }).join('|'); };
+      try { fill(); Orig(arg); o = readAll(); } catch (e) { eo = e.message; }
+      try { fill(); Reim(arg); r = readAll(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'table_ret_ptrout') {
       // u32 fn(idx, out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1).
       // seed both slots distinct -> *out and ret both non-degenerate; fresh out per side.

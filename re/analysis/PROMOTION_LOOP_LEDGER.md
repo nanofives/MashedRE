@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 59
-- total_green: 165
+- rounds_run: 60
+- total_green: 166
 - dry_counter: 0
-- last_round: 2026-06-13 round 59 — two get-and-return-with-ptrout accessors via new table_ret_ptrout handler (163->165)
+- last_round: 2026-06-13 round 60 — 4-way pointer-global selector via new arg_scattered_globals handler (165->166)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -475,6 +475,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 58 | conditional getter + pointer-compute getter + equality predicate (3 NEW bespoke handlers) | GREEN 3 (CondGet691500 0x00472500 cond_table_get; PtrCompute881ec8 0x0046d4a0 ptr_compute_get; EqPredicate7f1a18 0x0045caf0 eq_predicate_get) | total_green 160->163. The bespoke-handler backlog IS harvestable: 3 of the 7 backlog shapes built + promoted in one round, all branches exercised non-degenerately (cond_table both flag branches; eq_predicate equal/unequal/gate-fail/p2<0). orig b0=0x8b/0x8b/0x83. SESSION (this context, rounds 53-58): 142->163 (+21), SIX new handlers (cond_global_set, ptr_out_table_get, idx2_table_get, cond_table_get, ptr_compute_get, eq_predicate_get). BACKLOG REMAINING: vec16_copy_set (0x0046d4d0=VehiclePhysicsMatrixSet), field_swap_void (0x004722e0), float10 getters (0x00420d80/004077e0), predicate-zero (0x0045bff0). Plus the 212-callee-graph list still has unworked simple getters/clearers. RESUME: keep building 1-3 bespoke handlers/round + sweeping the 212 list; on display recovery run_diff the state-dependent majority. 200 on track (~37 to go).
 
 2026-06-13 | round 59 | two get-and-return-with-ptrout accessors (new table_ret_ptrout handler) | GREEN 2 (TblRetPtrout63e4b8_0 0x00420da0 off 0/8; TblRetPtrout63e4b8_4 0x00420dc0 off 4/0xc) | total_green 163->165. u32 fn(idx,out): addr=base+idx*stride; if(out) *out=*(addr+offA); return *(addr+offB). DROPPED 2 already-C3 (0x0042aab0, 0x0042c1d0 — both stale C1 plates, caught by hooks.csv pre-check). orig b0=0x8b. SESSION (this context, rounds 53-59): 142->165 (+23), SEVEN new handlers. BACKLOG REMAINING: vec16_copy_set (0x0046d4d0), field_swap_void (0x004722e0), global-transition (0x0042c1a0 if<->then), 2-global predicate (0x00432290), float10 PRNG/getters (0x004223f0/0x00420d80/0x004077e0 — need x87-safe handler), predicate-zero (0x0045bff0). Plus the 212-list still has unworked simple accessors (now interleaved with non-leaves/setters/floats). RESUME: keep building 1-3 bespoke handlers/round + sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~35 to go).
+
+2026-06-13 | round 60 | 4-way pointer-global selector (new arg_scattered_globals handler) | GREEN 1 (Sel88fbc4 0x0045c640: sets 0x0088fbc4/0x0088fbc8 to constant image VAs per p1 1/2/3/else) | total_green 165->166. arg_scattered_globals: void fn(arg) + observe N globals, vary arg -> switch/branch setters. SESSION (this context, rounds 53-60): 142->166 (+24), EIGHT new handlers (cond_global_set, ptr_out_table_get, idx2_table_get, cond_table_get, ptr_compute_get, eq_predicate_get, table_ret_ptrout, arg_scattered_globals). The 0x42-0x45 region is now mostly EAX-implicit/__fastcall/__thiscall/float/switch shapes (harder); clean existing-handler getters are sparser here. BACKLOG: vec16_copy_set (0x0046d4d0), field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10 family (0x004223f0/0x00420d80/0x004077e0), float clamp-stepper (0x0045db50/0x00420de0 __fastcall), thiscall vec3 getter (0x00430b30). RESUME: keep building bespoke handlers (EAX-trampoline already exists as eax_implicit_void — extend for switch/global cases) + sweep remaining 212-list; on display recovery run_diff the state-dependent majority. 200 on track (~34 to go).
 
 ## Final gated-remainder report
 

@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 60 (4-way pointer-global selector) --
+    'sel_88fbc4': {'rva': 0x0045c640, 'export': 'Sel88fbc4', 'signature': {'ret': 'void', 'args': ['int32']}, 'arg_type': 'arg_scattered_globals', 'observe': [{'addr': 0x0088fbc4}, {'addr': 0x0088fbc8}], 'lut_root_delta': 0, 'path1_tests': [1, 2, 3, 4, 0, 5, 1, 2, 3, 0], 'path2_tests': [1, 2, 4]},
+
     # ---- promote-round round 59 (two get-and-return-with-ptrout accessors) --
     'tbl_ret_ptrout_63e4b8_0': {'rva': 0x00420da0, 'export': 'TblRetPtrout63e4b8_0', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'table_ret_ptrout', 'target_global': 0x0063e4b8, 'stride': 0x24, 'off0': 0, 'off1': 8, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 5, 7, 2, 0, 1, 3], 'path2_tests': [0, 3, 7]},
     'tbl_ret_ptrout_63e4b8_4': {'rva': 0x00420dc0, 'export': 'TblRetPtrout63e4b8_4', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'table_ret_ptrout', 'target_global': 0x0063e4b8, 'stride': 0x24, 'off0': 4, 'off1': 0xc, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 5, 7, 2, 0, 1, 3], 'path2_tests': [0, 3, 7]},

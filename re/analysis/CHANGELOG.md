@@ -3553,3 +3553,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0045caf0  EqPredicate7f1a18  C2->C3  promote-round-58 eq_predicate_get 10/10 GREEN (early_window equality predicate)
 2026-06-13  00420da0  TblRetPtrout63e4b8_0  C2->C3  promote-round-59 table_ret_ptrout 10/10 GREEN (early_window get+return ptrout off 0/8)
 2026-06-13  00420dc0  TblRetPtrout63e4b8_4  C2->C3  promote-round-59 table_ret_ptrout 10/10 GREEN (early_window get+return ptrout off 4/0xc)
+2026-06-13  0045c640  Sel88fbc4  C2->C3  promote-round-60 arg_scattered_globals 10/10 GREEN (early_window 4-way pointer-global selector)
