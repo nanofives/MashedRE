@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 43
-- total_green: 128
+- rounds_run: 44
+- total_green: 129
 - dry_counter: 0
-- last_round: 2026-06-13 round 43 — 2 large-stride imul FLOAT table getters via early-window (126->128)
+- last_round: 2026-06-13 round 44 — EAX-implicit field clearer via early-window trampoline (128->129)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -427,6 +427,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | medium-function probe | deeper vein workable but library-heavy + bespoke | Decompiled medium candidates: 0x004bc440 = clean 4-arg struct-init leaf BUT lua-5.0 library (band 0x4b4a80-0x4c4000, "do NOT promote") -> 5th library/misread declined this session. The 0x4b-0x4e band is heavily library (lua/RW/D3DX9). GENUINELY first-party medium candidates found: 0x004190f0 (gameplay) + 0x00454c00 (render) = EAX-implicit field clearers (`*(EAX+off)=0` x2-3; thiscall-via-EAX). These ARE promotable but need an EAX-trampoline handler in early_window (port of diff_template.js eax_implicit_ptr: build `B8 <bufptr> E9 <rel-to-fn>` tramp, call, check fields). RESUME TARGET #1 (fresh context): add the eax_implicit handler -> unlocks the EAX-implicit field-clear/get cluster (33 C9 89 / similar). MEDIUM-VEIN REALITY: yield ~1-3 per bespoke handler, and a large fraction of the 0x4b-0x4e band is library (auto-declined) -> first-party medium yield is sparse. CEILING ESTIMATE REVISED DOWN: display-independent first-party ceiling ~128-140 (not 150), because the medium remainder is library-dominated. 200 fundamentally needs the display for the state-dependent majority. SESSION CLOSE: 69->128 (+59), 5 illegitimate promotions declined, 11-handler early_window capability + full meta-scan documented. The loop is the right vehicle to continue (eax_implicit handler + display recovery) in fresh context.
 
 2026-06-13 | CEILING PROVEN ~128-129 | EAX-implicit vein = exactly 2 functions, only 1 promotable | 0x004190f0 (gameplay, caller FUN_004194f0 C2) + 0x00454c00 (render, caller 0x00454e60 in UNDEFINED region -> gate fail, DROP). So the entire EAX-implicit field-clearer vein yields ONE promotable function (0x004190f0), and it needs the most complex handler (eax-trampoline `B8 <buf> E9 <rel>` + naked-asm reimpl using EAX). Building that for 1 promotion at extreme context depth is poor risk/reward -> RESUME TARGET (fresh context). DEFINITIVE CEILING: the first-party display-independent vein is drained at 128, with a hard ceiling ~129 (the single 004190f0). EVERY other remaining candidate is: library-band (lua 0x4b4a80-0x4c4000 / RW 0x4c-0x4e / D3DX9 0x4ec+ / qhull), non-leaf (first-C3 = early-return), undefined-caller-gated, or state-dependent (needs a booted game). 6 illegitimate/ungated candidates declined this session. THE PATH TO 200 IS THE DISPLAY: ~71-72 state-dependent first-party functions need run_diff against a booting MASHED; the display is wedged (env, user-action-gated). SESSION FINAL: 69->128 (+59 verified C2->C3), early_window_leaf_diff (11 handlers) + meta-scan method, all committed. RESUME: (1) eax-trampoline handler -> 004190f0 (+1); (2) on display recovery, run_diff the state-dependent majority -> the only route to 200.
+
+2026-06-13 | round 44 | EAX-implicit field clearer (early-window trampoline) | GREEN 1 (ClearEax4190f0 0x004190f0: this->[0x4c]=0,this->[0x50]=0, this in EAX) | total_green 128->129. NEW eax_implicit_void handler: builds a `B8 <buf> E9 <rel>` trampoline (mov eax,buf; jmp target), calls it, checks observed fields (fill 0xFF -> both 0 = non-degenerate). Reimpl is NAKED ASM (consumes EAX identically). orig b0=0x33. This banks the single remaining first-party display-independent leaf identified by the meta-scan (the OTHER EAX clearer 0x00454c00 has an undefined-region caller -> gate fail). CEILING NOW HIT: 129 is the proven first-party display-independent maximum. EVERY remaining C2 candidate is library-band / non-leaf / undefined-caller / state-dependent. SESSION FINAL: 69->129 (+60), early_window_leaf_diff (12 handlers incl. EAX-trampoline) + meta-scan, 6 illegitimate declined. THE ONLY ROUTE TO 200: restore the display, then run_diff the ~71 state-dependent first-party functions. Env-gated; user action required.
 
 ## Final gated-remainder report
 
