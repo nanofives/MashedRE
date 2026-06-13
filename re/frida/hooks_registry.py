@@ -14219,6 +14219,38 @@ HOOKS = {
     # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
     # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
     # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
+    # ---- promote-round round 27 (worklist batch: global getters) --------------
+    'global_67eca4_get': {
+        'rva': 0x0042b900, 'export': 'Global67eca4Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0067eca4, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_67ed6c_get': {
+        'rva': 0x00430820, 'export': 'Global67ed6cGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0067ed6c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_771968_get': {
+        'rva': 0x00492d10, 'export': 'Global771968Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x00771968, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'float_67eaa8_get': {
+        'rva': 0x00431b30, 'export': 'Float67eaa8Get', 'signature': {'ret': 'float', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0067eaa8, 'lut_root_delta': 0,
+        'path1_tests': [0x00000000, 0x3f800000, 0xbf800000, 0x3f000000, 0x42c80000, 0xc2c80000, 0x40490fdb, 0x3dcccccd, 0x49742400, 0x40000000],
+        'path2_tests': [0x3f800000, 0xc2c80000, 0x00000000],
+    },
+    'powerup_range_get': {
+        'rva': 0x00452eb0, 'export': 'PowerupRangeGet', 'signature': {'ret': 'float', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x00684de0, 'lut_root_delta': 0,
+        'path1_tests': [0x00000000, 0x3f800000, 0xbf800000, 0x3f000000, 0x42c80000, 0xc2c80000, 0x40490fdb, 0x3dcccccd, 0x49742400, 0x40000000],
+        'path2_tests': [0x3f800000, 0xc2c80000, 0x00000000],
+    },
+
     # ---- promote-round round 26 (worklist batch: single-global leaves) --------
     'rw_global_7d459c_get': {
         'rva': 0x004cbc90, 'export': 'RwGlobal7d459cGet',
