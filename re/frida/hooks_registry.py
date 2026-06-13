@@ -13880,4 +13880,60 @@ HOOKS = {
         'path2_tests':    [7, 6, 4],
     },
 
+    # ---- promote-round round 11 (L3 looser-curation leaves) -------------------
+    # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round11.cpp).
+
+    # 0x004cae90  RwCapsBlockPtrGet — uint32(). Constant-pointer return
+    # &DAT_00618220 (D3D9 caps block); B8 20 82 61 00 C3.
+    'rw_caps_block_ptr_get': {
+        'rva':            0x004cae90,
+        'export':         'RwCapsBlockPtrGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0042f520  ViewportBlockPtrGet — uint32(). Constant-pointer return
+    # &DAT_00899150; B8 50 91 89 00 C3.
+    'viewport_block_ptr_get': {
+        'rva':            0x0042f520,
+        'export':         'ViewportBlockPtrGet',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00485370  DynamicObjectListGetBase — uint32(). Constant-pointer
+    # return &DAT_006e87b8; B8 B8 87 6E 00 C3.
+    'dynamic_object_list_get_base': {
+        'rva':            0x00485370,
+        'export':         'DynamicObjectListGetBase',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'none',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00405420  ReplayCursorReset — void(). Stores 0 to DAT_00639d74
+    # (C7 05 74 9D 63 00 00 00 00 00 C3). Pre-fill 0xFF makes the zero-store
+    # observable (baseline FF -> 0 after the call); handler saves/restores.
+    'replay_cursor_reset': {
+        'rva':            0x00405420,
+        'export':         'ReplayCursorReset',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'scalars_to_scattered_globals',
+        'observe':        [{'addr': '0x00639d74', 'len': 4, 'fill': 0xFF}],
+        'lut_root_delta': 0,
+        'path1_tests':    [{'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}, {'args': []}, {'args': []},
+                           {'args': []}],
+        'path2_tests':    [{'args': []}, {'args': []}, {'args': []}],
+    },
+
 }
