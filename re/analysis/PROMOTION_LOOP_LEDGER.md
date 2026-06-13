@@ -9,10 +9,23 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 13
-- total_green: 37
+- rounds_run: 14
+- total_green: 38
 - dry_counter: 0
-- last_round: 2026-06-12 round 13 (3 GREEN — round-12 carry-over cleared)
+- last_round: 2026-06-12 round 14 (Ghidra pass: 1 classify-only promotion + 2 unlocks banked)
+
+## UNFINISHED — round 14 carry-over (needs a working build; user WIP in exe_main.cpp blocked it)
+
+1. 00402f40 (5B getter DAT_00636ad8): caller gate NOW FILLED (sole caller
+   FUN_0043dfd0 frontend C2 via xref 0x0043fc07). Author reimpl +
+   read_global entry (target 0x00636ad8) + diff + classify.
+2. 004c9eb0 (146B setter + device-scan): verbatim decomp transcript now in
+   its note (ambiguity resolved). Author reimpl (double-indirect vtable
+   calls via original-image globals 0x007d4108/0x007d410c; best-below
+   logic per transcript) + scalars_to_scattered_globals on 0x006181c4,
+   args [0, 0x3c, 60, 30...] + diff. The vtable calls are live device
+   queries — same calls both sides, race not needed (menu-attach; the
+   device object exists at menu).
 
 ## Lane queues
 
@@ -86,6 +99,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 0041b510 HudCounterReset — round 13, log/diff_hud_counter_reset.csv 10/10 GREEN
 - 00431b10 BootParamSet2 — round 13, log/diff_boot_param_set2.csv 10/10 GREEN
 - 004d6e60 TexStageCacheGet — round 13, log/diff_tex_stage_cache_get.csv 10/10 GREEN (race lane after menu exit-5)
+- 004cc7e0 RwGlobal6182b0Set — round 14 CLASSIFY-ONLY (U-5102 resolved via Ghidra xref; round-8 GREEN evidence)
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -174,6 +188,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 14 | Ghidra pass (read-only, Mashed_pool2) | attempted 1 classify-only | GREEN/promoted 1 (004cc7e0 — U-5102 resolved: reference_to 0x006182b0 = 2 refs, both documented) | banked 2 unlocks (00402f40 caller=FUN_0043dfd0 C2; 004c9eb0 transcript appended to note) | — | dry_counter 0. BLOCKED-BUILD context: user's uncommitted exe_main.cpp WIP (112 lines, C2601 mid-edit) fails the exe phase -> no .asi rebuild possible -> no new diffs this round; Ghidra work was read-only so unaffected. POOL HYGIENE: acquire handed Mashed_pool1 but its on-disk lock + JVM-held .lock~ make it POISONED (like pool0) — used pool2 read-only instead, program_close clean; release script removed what it could. Pre-assign pool2+ in future prompts; pool0/pool1 dead until the shared MCP restarts. Next round: boot-probe the build (user WIP may persist — if still broken, ledger the skip), then run the two carry-over authorings.
 
 2026-06-12 | round 13 | L3 (round-12 carry-over) | attempted 3 | GREEN 3 (tex_stage_cache_get via menu->race scenario flip after exit-5: the 2D menu path never populates the per-stage texture cache; in-race 3D bindings do) | deferred 0 new | exit-5 x1 root-caused + fixed in-round | dry_counter 0. POOL STATUS after 13 rounds: looser-curation list exhausted (promoted/deferred all 12); the remaining identified pools are (a) the Ghidra-pass shortlist — now FOUR items: 00402f40 caller-xref, 004c9eb0 decomp transcript, 004cc7e0 U-5102 read-trace, 0041ea80 lap-mode scenario alternative — one shared pool session unlocks up to 4 classify-only/cheap promotions; (b) L4 evidence repair (184 degenerate-GREEN residuals, no NEW C3s); (c) harness-ext wishlist (out-buffer-compare: 4 confirmed unlocks incl. 00495270, under the >=10 bar); (d) deeper L3 re-curation with yet-looser shapes (diminishing returns expected). Recommendation for the user: the per-round marginal cost is rising — the highest-leverage next step is the ONE Ghidra pool session covering shortlist (a), which this loop cannot do cheaply mid-round (shared-MCP solo policy + pool hygiene).
 
