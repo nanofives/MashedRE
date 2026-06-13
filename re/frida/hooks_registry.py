@@ -14219,6 +14219,40 @@ HOOKS = {
     # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
     # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
     # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
+    # ---- promote-round round 24 (resume; existing handlers) -------------------
+
+    # 0x00496900  SlotActiveThunk — uint32(int idx). 4B thunk call-through to
+    # FUN_00497450 (slot-active predicate; returns 0 for idx>3 else the
+    # live slot-active byte). int_scalar, race lane (slots populated in race).
+    # ref: re/analysis/bucket_vehicle_004922e0_0057c500/0x00496900.md
+    'slot_active_thunk': {
+        'rva':            0x00496900,
+        'export':         'SlotActiveThunk',
+        'signature':      {'ret': 'uint32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 4, 7, 0, 1, 2, 3],
+        'path2_tests':    [0, 1, 4],
+    },
+
+    # 0x00415860  InteractionCooldownSet — void(int idx): writes 30000 to
+    # 0x0089a508 + idx*0x74. slot_block_zero plants a sentinel and verifies it
+    # was overwritten (with 30000) = evidence; both sides write the same value.
+    # Menu-attach (pure memory write).
+    # ref: re/analysis/bucket_ai_00407a40_00415880/0x00415860.md
+    'interaction_cooldown_set': {
+        'rva':                0x00415860,
+        'export':             'InteractionCooldownSet',
+        'signature':          {'ret': 'void', 'args': ['int32']},
+        'arg_type':           'slot_block_zero',
+        'target_global':      0x0089a508,
+        'entity_byte_stride': 0x74,
+        'lut_root_delta':     0,
+        'path1_tests':        [0, 1, 2, 3, 0, 1, 2, 3, 2, 1],
+        'path2_tests':        [0, 1, 2],
+    },
+
     'vec3_lerp': {
         'rva':            0x004b4650,
         'export':         'Vec3Lerp',
