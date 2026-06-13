@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 63
-- total_green: 173
+- rounds_run: 64
+- total_green: 174
 - dry_counter: 0
-- last_round: 2026-06-13 round 63 — three container-record setters via new container_record_set handler (170->173)
+- last_round: 2026-06-13 round 64 — strided 2-dword clear via range_init (173->174); 0x004840d0 dropped (already C3)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -483,6 +483,8 @@ RESUME: build 1-2 of the above bespoke handlers per fresh-context round (each un
 2026-06-13 | round 62 | two ghost-vehicle-slot indexed setters (existing indexed_table_set) | GREEN 2 (GhostSlotSet63c6ec 0x0041a5b0 stride 0xc4; GhostSlotSet63c6f0 0x0041a8b0 stride 0xc4) | total_green 168->170. No new handler — existing indexed_table_set. NEW unworked CLUSTER found this round (container-record setters, base=*param_1 + param_1[2]*0x30 + off): 0x00489450 (2-word @ -0x20/-0x1c), 0x00489480 (1-word @ -0x18), 0x004894a0 (2x vec2 @ -0x10..-0x4) — a 3-fn family needing a `container_record_set` handler (alloc container{[0]=base_ptr,[2]=index} + records buf). SESSION (this context, rounds 53-62): 142->170 (+28), TEN handlers. BACKLOG: container_record_set (3 fns @ 0x489450/480/4a0), field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80/0x00422440 cos-interp/0x004223f0 PRNG), float clamp-steppers, thiscall vec3 (0x00430b30). RESUME: build container_record_set (unlocks 3) + keep sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~30 to go).
 
 2026-06-13 | round 63 | three container-record setters (new container_record_set handler) | GREEN 3 (ContRecSet450 0x00489450 shape p; ContRecSet480 0x00489480 shape f [float FSTP]; ContRecSet4a0 0x004894a0 shape pp) | total_green 170->173. container_record_set: base=cont[0], idx=cont[2], addr=base+idx*0x30, writes args into addr+off (neg offs); shape-keyed nargs (p=cont+ptr, f=cont+float, pp=cont+ptr+ptr). FLD/FSTP float round-trip exact for finite 32-bit floats. SESSION (this context, rounds 53-63): 142->173 (+31), ELEVEN new handlers. BACKLOG: field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80 / 0x00422440 cos-interp / 0x004223f0 PRNG), float clamp-steppers (0x0045db50 / 0x00420de0 fastcall), thiscall vec3 (0x00430b30), delimiter-scan (0x0042ac00). Plus remaining 212-list simple entries. RESUME: keep building bespoke handlers + sweeping; on display recovery run_diff the state-dependent majority. 200 on track (~27 to go).
+
+2026-06-13 | round 64 | strided 2-dword clear (existing range_init) | GREEN 1 (StridedClear2_709238 0x0048a460: zeroes p[0]+p[1] per 0x330-byte record, 0x00709238..0x00713198) | total_green 173->174. DROPPED 0x004840d0 (diffed GREEN but ALREADY C3 = JointPtr6ce81cGet promoted ROUND 35 THIS SESSION via same method — caught by hooks.csv pre-check) + 0x004840b0 (zero callers). SESSION (this context, rounds 53-64): 142->174 (+32), ELEVEN handlers. Note: now hitting functions already promoted earlier THIS session (round 35) -> the early-window vein is well-mined; pre-check is essential. BACKLOG: field_swap_void (0x004722e0), EAX-implicit switch-zero (0x0042f020), float10-arith (0x00420d80/0x00422440/0x004223f0), float clamp-steppers (0x0045db50/0x00420de0), thiscall vec3 (0x00430b30), particle strided-inits (0x00489290 descending). RESUME: build remaining bespoke handlers (register-convention shapes) + sweep remaining 212-list; on display recovery run_diff the state-dependent majority. 200 on track (~26 to go).
 
 ## Final gated-remainder report
 

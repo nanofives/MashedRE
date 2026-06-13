@@ -3561,3 +3561,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00489450  ContRecSet450  C2->C3  promote-round-63 container_record_set 10/10 GREEN (early_window 2-word record setter)
 2026-06-13  00489480  ContRecSet480  C2->C3  promote-round-63 container_record_set 10/10 GREEN (early_window float record setter FSTP)
 2026-06-13  004894a0  ContRecSet4a0  C2->C3  promote-round-63 container_record_set 10/10 GREEN (early_window 4-word paired-vec2 record setter)
+2026-06-13  0048a460  StridedClear2_709238  C2->C3  promote-round-64 range_init GREEN (early_window strided 2-dword clear step 0x330)

@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 64 (strided 2-dword clear; 0x004840d0 already C3) --
+    'strided_clear2_709238': {'rva': 0x0048a460, 'export': 'StridedClear2_709238', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'range_init', 'target_global': 0x00709238, 'len': 0x9f60, 'lut_root_delta': 0, 'path1_tests': [0, 0], 'path2_tests': [0]},
+
     # ---- promote-round round 63 (three container-record setters) --
     'cont_rec_set_450': {'rva': 0x00489450, 'export': 'ContRecSet450', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32']}, 'arg_type': 'container_record_set', 'shape': 'p', 'idx': 2, 'writes': [-0x20, -0x1c], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 2]},
     'cont_rec_set_480': {'rva': 0x00489480, 'export': 'ContRecSet480', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'container_record_set', 'shape': 'f', 'idx': 2, 'writes': [-0x18], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'path2_tests': [0, 1, 2]},
