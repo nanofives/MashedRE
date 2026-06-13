@@ -1,0 +1,55 @@
+rva	name	subsystem	handler	notes
+004a77eb	FUN_004a77eb	boot	int_scalar	LeaveCriticalSection(&DAT_00616408[param_1*2]) | C1->C2 via lever3-expansion-20260523-1330: CRT-band bulk-attest (calibr
+0040cfd0	FUN_0040cfd0	boot	void_setter_observe	promoted_from=re/analysis/boot_app_init_d3/0x0040cfd0.md; batch_u_s5_2026-05-18; seq init: FUN_00490000+FUN_0045bed0+FUN
+004cbc90	FUN_004cbc90	render	read_global	getter: returns DAT_007d459c (setter at 0x004cbc80) | batch-render-4-s6 plate at re/analysis/render_4_c1_to_c2_s6/FUN_00
+0040e4a0	FUN_0040e4a0	ai	read_global	getter: returns DAT_005f29b8 (elapsed-time global); used as countdown comparison value in AI mode-5 path | C1->C2 batch_
+0040e450	FUN_0040e450	util	read_global	returns DAT_0063b908; flag read in STATE_FN case 3 race-end gate; U-0499 
+0040e460	FUN_0040e460	util	void_setter_observe	writes DAT_0063b908=param_1; setter paired with FUN_0040e450; U-0499 
+00494a80	sub_00494a80	frontend	void_setter_observe	"video start: FUN_004c77c0(0,0,0,0x84)->DAT_00771a18; FUN_004944c0(param_2); DAT_00771a04=1; DAT_00771a08=param_3; U-082
+0047c0b0	FUN_0047c0b0	track	void_setter_observe	zero-clear collision tables: DAT_006bfca8(0x1580B) 006bf468(0x800B) 006bfc68(0x40B) 006c1228(0x1DC4B); DAT_006c2fec=0; d
+00430120	FUN_00430120	frontend	void_setter_observe	time-trial mode info panel; items 0x245/244/277/278 or 0x247; writes DAT_007f0fe8=0; D-1252 cleared; session hud_fronten
+0040b290	FUN_0040b290	frontend	int_scalar	409b score-updater: clamp+filter param_2 by mode; write DAT_008a94e0[i]+=delta; circ-buffer event; DAT_008a9510[i]=6000;
+00496930	FUN_00496930	util	int_scalar	11b; returns DAT_00773030[param_1*4]; table lookup; called with args 3/4 by timer; complement to FUN_00496920; U-1144 [m
+004148b0	FUN_004148b0	ai	int_scalar	leader-ranking AI timer: accumulates DAT_0089a4c8[v*0x1d] when last-place; returns 1 after threshold; uses DAT_005f2dd8 
+00415020	FUN_00415020	ai	int_scalar	frustration timer: accumulates DAT_0089a4e4[v*0x74] when last-place; returns 1 when timer>72000 and leader far ahead; ga
+00415220	FUN_00415220	ai	int_scalar	AI powerup-activation: switches on DAT_0088fc88[v*0x2d] powerup type (7/9/10/0xb-0xc/0x10-0x13); writes fire-byte to ctr
+00443080	FUN_00443080	ai	read_global	getter: returns DAT_00897ffc; must be non-zero to enable mode-6 targeting branch in FUN_00416250; U-1432 [merged-from-du
+00452160	FUN_00452160	ai	read_global	getter: returns DAT_00684dac+0x30 (powerup target position float3 pointer); used by FUN_00414f00 mode-10 seek | C1->C2 b
+00452eb0	FUN_00452eb0	ai	read_global	powerup pursuit range getter: returns _DAT_00684de0; callers gate on [0.0 upper_bound] | C1->C2 batch_ak sweep-20260603-
+004b65a0	thunk_FUN_004b68e0	vehicle	read_global	returns DAT_007d3e4c verbatim; stream/loader context thunk; U-1451 | C1->C2 batch_ak sweep-20260603-0116 
+0042b900	FUN_0042b900	util	read_global	getter: returns DAT_0067eca4 
+0045a0f0	FUN_0045a0f0	ai	int_scalar	vehicle powerup-state field getter: DAT_0068ba00[v*0x16]; no bounds check; case 9 armed-clear gate in FUN_00415220; U-18
+00455b40	FUN_00455b40	ai	int_scalar	powerup table getter: DAT_006885e0[param_1*0x2c]; no bounds check; case 0xb gate in FUN_00415220; U-1893 | C1->C2 batch_
+00410510	Race::EvaluateResult	save	void_setter_observe	"820B race-end evaluator; sets DAT_0063b90c=1+DAT_0063ba8c=0xb on conclusion; winner 1-based or -1 draw or 0 pending; DA
+00428a30	FUN_00428a30	frontend	void_setter_observe	title screen draw: branches on FUN_00427c90; dark placeholder (==0) vs full title (!=0); 24M-tick timer→DAT_0067d960=1; 
+004102f0	FUN_004102f0	util	void_setter_observe	"race-start camera-init coordinator; 171b; DAT_005f29b8==100000 one-shot: FUN_00448700(0,0)+setter(1)+S-2930+D-7724; per
+0040da50	FUN_0040da50	util	int_scalar	 per-player HUD/state update (~274b); 4 players 007f1a14; FUN_0046c7b0/0046c770 active check; DAT_0063bc44[i] from FUN_0
+00413c70	FUN_00413c70	vehicle	int_scalar	promoted_from=re/analysis/vehicle_update/00413c70.md; race-event/state write; DAT_0063bc68[i*3]=param_3; inits timer at 
+00428400	FUN_00428400	boot	void_setter_observe	promoted_from=re/analysis/boot_app_init_d5/0x00428400.md; batch_u_s5_2026-05-18; FUN_004ce2d0(0x5cc4de); 4x FUN_004c5a60
+00430820	FUN_00430820	util	read_global	returns DAT_0067ed6c; getter; initialized to 0 by FUN_0043df00; U-3471 
+00493570	FUN_00493570	util	void_setter_observe	sets DAT_0077196c=1; flag setter; 3-word cluster at 0x00771968; U-3472 
+00493580	FUN_00493580	util	void_setter_observe	sets DAT_00771970=1; flag setter; adjacent to U-3472 (+4); U-3473 
+00492d10	FUN_00492d10	util	read_global	returns DAT_00771968; getter for 3-word cluster base at 0x00771968; U-3475 
+00431b30	FUN_00431b30	util	read_global	returns DAT_0067eaa8 as float10 (x87 extended); getter; U-3482 
+0042f7a0	GhostMode::Clear	util	void_setter_observe	setter DAT_0067ea70=0; clears ghost-mode flag; paired GhostMode::IsActive(0x0042f790); frontend_unmapped_a-20260511 
+00462510	FUN_00462510	track	void_setter_observe	" Clear audio course flag: _DAT_00603868=0; complement of FUN_00462500 | C1->C2 batch_aj sweep-20260602-1945 [boundary t
+00462500	FUN_00462500	track	void_setter_observe	"Set audio course flag: _DAT_00603868=1; complement of FUN_00462510 | C1->C2 batch_aj sweep-20260602-1945 [boundary trac
+00423480	FUN_00423480	ai	read_global	AI filename generator: formats AI%%d.AI with FUN_00426c00 track index; appends to DAT_0064410c path buffer; returns DAT_
+0040dbd0	FUN_0040dbd0	util	void_setter_observe	122b switch on FUN_0042f6a0 (cases 2/6/10/default) gated by FUN_0042f500!=0 and DAT_007f0fd0!=2; sets DAT_0063ba8c=5 on 
+00410860	FUN_00410860	util	void_setter_observe	591b score/timeout state-machine; counts FUN_0046c7b0(0..3)==1; threshold DAT_005f29b8>199 + per-player point checks at 
+0041c010	FUN_0041c010	hud	void_setter_observe	"116b copies 24 bytes of (0.45,0.33,1.0)/(-0.45,0.33,1.0) to &DAT_005f334c; iterates 2 records at DAT_0063cab8 stride 0x
+00426030	FUN_00426030	render	void_setter_observe	WorldRenderPrePass: FUN_0041e9b0(DAT_00644158)+FUN_0041ea10()→if!=0: FUN_0041e8f0(&DAT_00646e58)+DAT_005f616c=1; 1 calle
+004affaf	FUN_004affaf	boot	int_scalar	char-class predicate; DAT_008aa340[param_1+1]&param_3; mask-path DAT_005d566a[param_1*2]&param_2; returns 0/1; resolves 
+004a7800	FUN_004a7800	boot	int_scalar	lazy lock-slot init; param_1=lock-id; _malloc(0x18)+__lock(10)+___crtInitCritSecAndSpinCount(4000); FUN_004a77eb(10) unl
+00494f00	thunk_FUN_00494a80	util	void_setter_observe	4-byte thunk to FUN_00494a80; alloc 0x84 via FUN_004c77c0; FUN_004944c0(p2); DAT_00771A04=1; DAT_00771A08=p3; D-10366 
+00431b40	FUN_00431b40	boot	void_setter_observe	setter DAT_0067eaa8=param_1; skeleton_prep_s3 
+004840d0	FUN_004840d0	vehicle	int_scalar	" joint pointer getter: bounds [0 | C1->C2 batch_ak sweep-20260603-0116,3]; returns DAT_006ce81c[param_1]; 2 callers" 
+004d71f0	FUN_004d71f0	render	read_global	trivial getter: returns DAT_007d6b10 (texturing-override flag); read-accessor companion of FUN_004d7100; 3 callers; U-53
+0049a0e0	FUN_0049a0e0	render	void_setter_observe	rain mode selector; DAT_00636ad4 guard; reads DAT_00771e58+0xc4/0xcc; sets DAT_00773968=0/1/2; calls mode-1 init or mode
+0049a2e0	FUN_0049a2e0	render	void_setter_observe	setter: DAT_0077396c = param_1; mode-2 param store; caller FUN_0049a0a0; | batch-render-3-s2 plate at re/analysis/render
+0049a740	FUN_0049a740	render	void_setter_observe	setter: DAT_00773978 = param_1; mode-1 param store; caller FUN_0049a0a0; | batch-render-3-s2 plate at re/analysis/render
+00487df0	FUN_00487df0	particle	void_setter_observe	batch-ac-s2: DAT_00703058 = 0 (clear emitter count) 
+004b68e0	FUN_004b68e0	render	read_global	one-line getter returns DAT_007d3e4c (0x007d3e4c); leaf; archive-loaded flag; batch-render-3-s6 plate at re/analysis/ren
+004d7bc0	FUN_004d7bc0	render	int_scalar	texture filter-mode setter; lookup DAT_005d8c48[param_1*4]→DAT_007d5840; queues byte 9; guard DAT_007d6b2c; 1 caller FUN
+004d7c10	FUN_004d7c10	render	int_scalar	texture address-mode setter; lookup DAT_005d8d18[param_1*4]→DAT_007d58a8; queues byte 0x16; guard DAT_007d6b18; 1 caller
+00426b40	FUN_00426b40	frontend	void_setter_observe	subsystem teardown dispatcher: calls 10 cleanup functions; writes DAT_0066d704=0; includes FUN_00425ea0 (C2) 

@@ -14219,6 +14219,43 @@ HOOKS = {
     # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
     # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
     # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
+    # ---- promote-round round 26 (worklist batch: single-global leaves) --------
+    'rw_global_7d459c_get': {
+        'rva': 0x004cbc90, 'export': 'RwGlobal7d459cGet',
+        'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x007d459c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'flag_63b908_get': {
+        'rva': 0x0040e450, 'export': 'Flag63b908Get',
+        'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0063b908, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'flag_63b908_set': {
+        'rva': 0x0040e460, 'export': 'Flag63b908Set',
+        'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'void_setter_observe', 'target_global': 0x0063b908, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'elapsed_time_get': {
+        'rva': 0x0040e4a0, 'export': 'ElapsedTimeGet',
+        'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x005f29b8, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'ai_target_enable_get': {
+        'rva': 0x00443080, 'export': 'AiTargetEnableGet',
+        'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x00897ffc, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+
     # ---- promote-round round 25 (L5 int2out: two-out-ptr getter) --------------
     # 0x0046cbb0  CarStatePairGet — uint32(uint idx, uint32* out_a, uint32* out_b):
     # idx>=0x10 -> ret 0; else *out_a = per-car state (0x00881f90+idx*0xd04),
