@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 37
-- total_green: 104
+- rounds_run: 38
+- total_green: 106
 - dry_counter: 0
-- last_round: 2026-06-13 round 37 — 3 absolute-table getters via early-window table-seed (101->104)
+- last_round: 2026-06-13 round 38 — 2 bounds-checked 0xd04-stride table getters via early-window (104->106)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -375,6 +375,34 @@ This is the durable plan; the ledger counters + this block are the full state.
 2026-06-13 | round 36 | early_window_leaf_diff + table-seed | GREEN 2 (Table773030Get 0x00496930, JointPtr6ce81cGet 0x004840d0 — the 2 round-30 exit-5 deferrals) | total_green 99->101. EXTENSION: early_window_leaf_diff now seeds an absolute table (seed_table:{base,stride,span} in the registry entry) with distinct values 0xC0DE000k before calling, so a table getter that reads ZERO live state at menu/race is diffed NON-degenerately (a wrong stride/base reads a different seeded value -> RED). Verified non-degenerate: returns were 0xC0DE0000+i per index; bounds getter returned 0 for idx>=4 (bounds exercised). This UNBLOCKS the whole absolute-table / bounds-getter family that previously needed a populated live table (scenario:race) -> now promotable without the display. NEXT: scan C2 for the `83 F8 XX 72 03 33 C0` bounds-getter family + `8B 04 85 <tbl>` table getters, author reimpls, diff via early_window table-seed. State-DEPENDENT non-table functions (live struct-ptr args, race control flow) still need a booted game.
 
 2026-06-13 | round 37 | absolute-table getters (early-window table-seed) | attempted 4 | GREEN 3 (Table88ff50Get 0x00452ea0, Table8aa300Get 0x0045dd50, Table63d830Get/Car::GetState 0x0041f320 — all `8B 44 24 04 8B 04 85 <tbl> C3` index*4 getters) | dropped 1 (004840b0 bounds getter — only caller 00448980 in UNDEFINED region) | total_green 101->104. All via early_window_leaf_diff table-seed (orig b0=0x8b unpatched). VEIN STATUS: the absolute-table-getter scan (`8B 04 85` idx4 + imul-stride + `83 F8/72/33 C0` bounds) is now nearly drained in C2 (3 idx4 promoted, imul-variant=0 left, bounds=1 but caller-gated). Remaining toward 200: mostly state-DEPENDENT (live struct-ptr args, race control flow) needing a booted game; plus deref-param field getters (ptr_scratch_field / thiscall_field_get — could extend early_window with a struct-seed mode next).
+
+2026-06-13 | round 38 | bounds-checked 0xd04-stride table getters (early-window) | GREEN 2 (Table882194Get 0x0046c750, Table882198Get 0x0046c730 — entity velocity/damage-state field getters, (int)i<0x10 ? *(disp+i*0xd04) : 0) | total_green 104->106. Seeded the 0xd04-stride array (16 elems) -> non-degenerate (idx0-15 distinct, idx>=0x10 -> 0). orig b0=0x8b.
+
+## SESSION SUMMARY 2026-06-13 (rounds 29-38): 69 -> 106 (+37), then env-gated
+The trivial + early-window-reachable C2 leaf veins are now DRAINED at 106:
+  - rounds 29-34 (menu-attach): trivial getters/setters/bounds-getter (+27 -> 96).
+  - rounds 35-38 (early_window_leaf_diff, NO display needed): floats, reclaimed
+    degenerate table getters, absolute-table getters, bounds-table getters (+10 -> 106).
+NEW PERMANENT CAPABILITY: re/frida/early_window_leaf_diff.py — diffs state-
+INDEPENDENT pure leaves without booting MASHED (attach pre-crash, LoadLibraryW the
+.asi NO_AUTO_HOOK, assert orig b0!=0xE9, seed globals/tables, compare). Validated
+(2 positive + 1 negative control). Covers read_global (u32/float), setters,
+scalars_to_scattered_globals, pure/bounds/absolute-table int_scalar + table-seed.
+REMAINING TO 200 (~94) — split:
+  (a) STATE-DEPENDENT (the majority): live struct-ptr args, race control flow,
+      functions whose globals must hold real runtime state -> REQUIRE run_diff
+      against a BOOTED game -> still env-blocked on the D3D9 display wedge.
+  (b) HARDER LEAVES extendable into early_window: deref-param field getters
+      (mov eax,[ecx/eax+off]) via a struct-seed mode (thiscall_field_get/
+      ptr_scratch_field analog) — thin in C2 (~1-2 first-party); 2-arg pure
+      functions via a 2-arg early_window mode.
+  (c) BESPOKE-HANDLER classes: COM/DirectShow band (~94 rows, largest), multi-arg
+      state machines, dispatchers — each a handler-engineering effort.
+HONEST BOTTOM LINE: 200 is NOT reachable while the display is down — the
+unblockable-without-display vein is exhausted at 106. The path past 106 needs the
+monitors restored (for state-dependent diffs) and/or sustained bespoke-handler
+work. ON DISPLAY RECOVERY: run_diff resumes normally; re-attempt the round-30-style
+race-state candidates + the bespoke-handler classes.
 
 ## Final gated-remainder report
 

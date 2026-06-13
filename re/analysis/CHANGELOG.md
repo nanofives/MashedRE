@@ -3492,3 +3492,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00452ea0  Table88ff50Get  C2->C3  promote-round-37 int_scalar table-seed 10/10 GREEN (early_window)
 2026-06-13  0045dd50  Table8aa300Get  C2->C3  promote-round-37 int_scalar table-seed 10/10 GREEN (early_window)
 2026-06-13  0041f320  Car::GetState  C2->C3  promote-round-37 int_scalar table-seed 10/10 GREEN (early_window)
+2026-06-13  0046c750  Table882194Get  C2->C3  promote-round-38 int_scalar table-seed 10/10 GREEN (early_window, bounds)
+2026-06-13  0046c730  Table882198Get  C2->C3  promote-round-38 int_scalar table-seed 10/10 GREEN (early_window, bounds)
