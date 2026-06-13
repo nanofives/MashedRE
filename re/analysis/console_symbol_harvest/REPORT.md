@@ -118,6 +118,18 @@ py -3.12 re/tools/console/xbe_flatten.py re/console/xbox/default.xbe re/console/
 py -3.12 re/tools/console/xbuild_match.py && py -3.12 re/tools/console/xbuild_match2.py
 ```
 
+## Lane tooling (2026-06-12, post-match)
+
+- **Names applied**: `ApplyTwinNames.java` renamed all 1,334 matched Xbox
+  functions in `Mashed_Console` (semantic PC name where hooks.csv has one,
+  else `pc_<va>`; tier + PC VA in the plate comment). 0 missing.
+- **Twin decompilation on demand**:
+  `py -3.12 re\tools\console\xtwin.py 0x<pc_va>` — looks up the match table,
+  decompiles the Xbox twin headlessly (~30-60 s), prints C. Warns on
+  `prop-weak` pairs. Single-writer project: don't run two at once.
+  Verified on 0x0041e870 `TrackNodeRecordScan` → Xbox 0x001c32a0 (0x48-stride
+  record scan, key at +0x10 — structure agrees with the PC side).
+
 ## Next levers (in expected-yield order)
 
 1. **Data-reference anchoring** — shared unique float constants / dword tables
