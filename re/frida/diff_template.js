@@ -1486,27 +1486,40 @@ function runDiff() {
     // a computed result into the caller buffer. Allocates two CONFIG.out_buf_size
     // (default 16) buffers, zeros each before the call, calls fn(buf), reads the
     // buffer back as a little-endian packed-dword fingerprint, compares.
-    // CONFIG.tests is a call-count list (its values are ignored — they only set
-    // how many times the pair is invoked, for stability). Unlocks the
-    // single-out-ptr class: SlotSortByModeScore 0x0040b620 (validated here),
-    // and the deferred 0041da90 / 00484c70 / 00495270.
+    // CONFIG.tests sets call count; its values are also used as the seed when
+    // CONFIG.seed_global is set. Optional CONFIG:
+    //   fold_ret      — XOR the function's return value into the fingerprint
+    //                   (for getters that BOTH write *out AND return a value,
+    //                    e.g. 00484c70: *out=count, return=base).
+    //   seed_global   — hex addr; before each call save it, write tests[i], call
+    //                   fn(buf), read buf, restore. Makes a global-copying out
+    //                   getter deterministic + discriminating (e.g. 0041da90,
+    //                   whose *out = a per-frame-moving DAT_0063d588).
+    // Unlocks the single-out-ptr class: SlotSortByModeScore 0x0040b620
+    // (round 19), plus 0041da90 / 00484c70 / 00495270 (round 20).
     if (CONFIG.arg_type === 'outbuf_only') {
-        const OB_LEN = (CONFIG.out_buf_size | 0) || 16;
+        const OB_LEN   = (CONFIG.out_buf_size | 0) || 16;
+        const foldRet  = CONFIG.fold_ret ? true : false;
+        const seedAddr = CONFIG.seed_global ? ptr(CONFIG.seed_global) : null;
         const obA = Memory.alloc(OB_LEN);
         const obB = Memory.alloc(OB_LEN);
-        function fpOb(buf) {
+        function fpOb(buf, ret) {
             let s = '';
             for (let k = 0; k + 3 < OB_LEN; k += 4) {
                 s += ('00000000' + (buf.add(k).readU32() >>> 0).toString(16)).slice(-8);
             }
+            if (foldRet) s += ':' + ('00000000' + ((ret >>> 0)).toString(16)).slice(-8);
             return s;
         }
         for (let i = 0; i < CONFIG.tests.length; i++) {
             let origV = null, reimV = null, errO = null, errR = null;
             for (let k = 0; k < OB_LEN; k++) { obA.add(k).writeU8(0); obB.add(k).writeU8(0); }
-            try { Orig(obA); origV = fpOb(obA); } catch(e) { errO = e.message; }
-            try { Reimpl(obB); reimV = fpOb(obB); } catch(e) { errR = e.message; }
-            results.push({ idx: i, input: i,
+            let savedSeed = null;
+            if (seedAddr) { savedSeed = seedAddr.readU32(); seedAddr.writeU32(CONFIG.tests[i] >>> 0); }
+            try { const r = Orig(obA);    origV = fpOb(obA, r); } catch(e) { errO = e.message; }
+            try { const r = Reimpl(obB);  reimV = fpOb(obB, r); } catch(e) { errR = e.message; }
+            if (seedAddr) seedAddr.writeU32(savedSeed >>> 0);
+            results.push({ idx: i, input: (seedAddr ? (CONFIG.tests[i] >>> 0) : i),
                            original: origV, reimpl: reimV,
                            match: (origV !== null && reimV !== null && origV === reimV),
                            err_original: errO, err_reimpl: errR });

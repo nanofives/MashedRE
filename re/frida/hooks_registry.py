@@ -14127,4 +14127,56 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 20 (single-out-ptr class via outbuf_only) --------
+
+    # 0x00495270  HWNDGet — void(uint32* out): out = FUN_00499710() (game
+    # window handle, constant non-zero at menu). outbuf_only out_buf_size=4.
+    # ref: re/analysis/skeleton_prep_boot_winmain_a/00495270.md
+    'hwnd_get': {
+        'rva':            0x00495270,
+        'export':         'HWNDGet',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'outbuf_only',
+        'out_buf_size':   4,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x00484c70  WorldObjectsBaseGet — uint32(uint32* out): *out =
+    # DAT_006e70d8 (count), RETURN = 0x006dccb8 (base). fold_ret captures the
+    # constant base so the fingerprint is non-degenerate even when the count
+    # is 0 at menu. ret declared uint32 for fold_ret.
+    # ref: re/analysis/bucket_ai_00452eb0_004c3df0/00484c70.md
+    'world_objects_base_get': {
+        'rva':            0x00484c70,
+        'export':         'WorldObjectsBaseGet',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'outbuf_only',
+        'out_buf_size':   4,
+        'fold_ret':       True,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
+    # 0x0041da90  DeltaTimeOutGet — void(uint32* out): if(out) *out =
+    # DAT_0063d588 (lap-complete accumulator). seed_global FAILED (the game
+    # thread overwrites 0x0063d588 every frame, so the seed didn't hold and
+    # the menu value is 0 -> degenerate). scenario:'race' gives a live non-zero
+    # accumulator; the slow per-frame cadence means A/B time-skew is per-mille
+    # (single-vector mismatch -> re-run once).
+    # ref: re/analysis/ai_update_d5/0x0041da90.md
+    'delta_time_out_get': {
+        'rva':            0x0041da90,
+        'export':         'DeltaTimeOutGet',
+        'signature':      {'ret': 'void', 'args': ['pointer']},
+        'arg_type':       'outbuf_only',
+        'out_buf_size':   4,
+        'scenario':       'race',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'path2_tests':    [0, 1, 2],
+    },
+
 }
