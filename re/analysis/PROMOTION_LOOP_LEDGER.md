@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 46
-- total_green: 131
+- rounds_run: 47
+- total_green: 134
 - dry_counter: 0
-- last_round: 2026-06-13 round 46 — pool-manager REMOVE via bespoke build-list+snapshot (130->131)
+- last_round: 2026-06-13 round 47 — stride-0x18 table getter + table-clear + struct-field-clear (131->134)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -439,6 +439,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 45 | pool-manager INSERT (bespoke full-state snapshot) | GREEN 1 (PoolInsert485a70 0x00485a70: SmplFzx pool allocate-slot + doubly-linked-list insert) | total_green 129->130. KEY FINDING: the SELF-CONTAINED COMPLEX vein IS HARVESTABLE without the display. New pool_insert_snapshot handler: same mgr+slots+pool buffers both sides -> reset to fresh -> call(mgr,key) -> snapshot ENTIRE state (count/cap/head/tail/slots/all-node-fields) -> compare. Faithful ~40-line reimpl diffed 10/10 GREEN (full-state bit-identical; absolute link pointers comparable because same buffers). orig b0=0x8b. This PROVES bounded-risk bespoke handlers reach complex self-contained functions (pool/list managers, allocators, etc.) -> a real route to MORE promotions independent of the display, ~1 per function. REVISED OUTLOOK: 200 IS reachable WITHOUT the display via bespoke per-function handlers for the self-contained-complex class (slow, many fresh-context turns), PLUS the state-dependent majority via run_diff once the display boots (fast). IMMEDIATE RESUME TARGET: 0x00485b30 pool REMOVE (build a list via PoolInsert485a70, then remove head/middle/tail/not-found cases, snapshot-diff) -> the insert/remove pair. Then sweep more self-contained-complex functions. SESSION: 69->130 (+61).
 
 2026-06-13 | round 46 | pool-manager REMOVE (bespoke build-list + snapshot) | GREEN 1 (PoolRemove485b30 0x00485b30: 4-case doubly-linked-list remove head/middle/tail/not-found) | total_green 130->131. pool_remove_snapshot handler: build a 3-node list via the ORIGINAL insert (0x00485a70), then remove the test key, full-state snapshot. Faithful ~50-line reimpl 10/10 GREEN across ALL 4 cases (head/middle/tail/not-found bit-identical). orig b0=0x8b. The insert/remove PAIR is now both C3 -> the self-contained-complex bespoke method is fully validated end-to-end. SESSION: 69->131 (+62). HANDLER LIBRARY (14): read_global(u32/float), void_setter_observe, scalars_to_scattered_globals(multi), int_scalar+seed_table, const_return, global_field_read, float_table_read, deref_field_write, deref_table_read, int2_scalar, eax_implicit_void, pool_insert_snapshot, pool_remove_snapshot. PROVEN: 200 reachable WITHOUT the display via bespoke handlers for self-contained-complex functions (pool/list/allocator class), ~1-2 per function, many fresh-context turns; PLUS the state-dependent majority fast via run_diff on display recovery. RESUME: sweep more self-contained-complex functions (decompile candidates, build bespoke snapshot handlers); on display recovery, run_diff.
+
+2026-06-13 | round 47 | stride-0x18 table getter + 2 clearers (continuing bespoke sweep autonomously) | GREEN 3 (Table688304Get 0x00454a30 *(0x688304+i*0x18) int_scalar+seed_table; Table88f09cClear 0x0045c850 table_clear; Clear894f0 0x004894f0 ptr_fields_clear 3-field struct clear) | total_green 131->134. 2 new tiny handlers (table_clear: seed slot+call+check-0; ptr_fields_clear: alloc buf+call+check observe offsets). Fixed a cfg key bug (table_clear used cfg.target_global; run() maps it to cfg.tgt). DECOMPILE-DRIVEN SWEEP WORKING: decompile first-party candidates -> skip non-leaves -> promote self-contained (getters/clearers/pool ops) with existing-or-tiny handlers. Yield this round 3/4 decompiled (1 non-leaf skipped). SESSION: 69->134 (+65). Handler library now 16. Continuing the sweep autonomously per stop-hook guidance (no pausing to ask).
 
 ## Final gated-remainder report
 

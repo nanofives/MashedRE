@@ -3519,3 +3519,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  004190f0  ClearEax4190f0  C2->C3  promote-round-44 eax_implicit_void 5/5 GREEN (early_window EAX-trampoline; naked asm)
 2026-06-13  00485a70  PoolInsert485a70  C2->C3  promote-round-45 pool_insert_snapshot 10/10 GREEN (early_window full-state snapshot; bespoke self-contained list-insert)
 2026-06-13  00485b30  PoolRemove485b30  C2->C3  promote-round-46 pool_remove_snapshot 10/10 GREEN (early_window; 4-case list-remove, full-state snapshot)
+2026-06-13  00454a30  Table688304Get  C2->C3  promote-round-47 int_scalar table-seed 10/10 GREEN (early_window)
+2026-06-13  0045c850  Table88f09cClear  C2->C3  promote-round-47 table_clear 10/10 GREEN (early_window)
+2026-06-13  004894f0  Clear894f0  C2->C3  promote-round-47 ptr_fields_clear 5/5 GREEN (early_window)
