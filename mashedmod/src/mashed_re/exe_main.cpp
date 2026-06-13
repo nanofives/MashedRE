@@ -1098,15 +1098,19 @@ bool UpdateMenuSelection() {
             // old code pushed screen 1 ONTO screen 0 (the in-race PAUSE menu
             // kT0: Continue/Restart/Quit), so backing out of any submenu
             // revealed the pause menu. Just reveal the menu; do NOT push.
-            g_frontend_phase = 3;
-            // Title->menu = the original's reload: raises the arc-wash fade
-            // pair (permanent 0x60/0x78 haze at menu screens; clean baseline
-            // verify/orig_backbuffer_f2100.bmp).
+            // Round-2: show the LOADING screen (disc + "Loading") briefly
+            // before the menu (phase 4 = loading-into-menu; RenderFrame
+            // auto-advances to 3 after ~1.2s). Raise the arc-wash fade pair
+            // now so the menu's permanent haze is up when it appears.
+            g_frontend_phase = 4;
+            g_splash_start_ms = 0;          // reused as the load timer
             LogoOverlayFadeSet(0xff, -1);
         }
         if (esc_now && !esc_prev) return true;          // quit from title
         return false;
     }
+    // Phase 4 = loading transition: no nav input until the menu appears.
+    if (g_frontend_phase == 4) return false;
     // #8/#18/#19 confirm-dialog modal: while shown it swallows all nav input
     // (FUN_00433f40 is modal). Yes/No steps: Enter=Yes (advance), Esc=No
     // (dismiss). Continue steps: Enter/Esc dismiss. The 'Saving...' step (21)
@@ -1929,9 +1933,15 @@ bool RenderFrame() {
     // (USA.DAT ids 0x1e5..0x1eb, scale 0.6, centered) at y=180/200/220/240/
     // 260/280, plus "Loading" (id 0x222) at (580,140). Shown ~8s
     // (24000000 / 3MHz timer) or until a key (handled in UpdateMenuSelection).
-    if (g_frontend_phase == 0 && g_bridge_installed) {
+    // phase 0 = boot legal/copyright splash (8s -> title); phase 4 = the brief
+    // loading screen after the title's "press button to start" (~1.2s -> menu).
+    // Both render the same black loading composition (logo + copyright +
+    // "Loading" + spinning disc).
+    if ((g_frontend_phase == 0 || g_frontend_phase == 4) && g_bridge_installed) {
         if (g_splash_start_ms == 0) g_splash_start_ms = GetTickCount();
-        if (GetTickCount() - g_splash_start_ms > 8000u) g_frontend_phase = 1;
+        const DWORD elapsed = GetTickCount() - g_splash_start_ms;
+        if (g_frontend_phase == 0 && elapsed > 8000u) g_frontend_phase = 1;
+        if (g_frontend_phase == 4 && elapsed > 1200u) { g_frontend_phase = 3; g_splash_start_ms = 0; }
         // #2/#3: the original's boot LOADING/splash screen is on a BLACK
         // background; logo + copyright + "Loading" read on black.
         // CORRECTION (round-2): there IS a spinning disc — the "loadicon"
@@ -2046,7 +2056,8 @@ bool RenderFrame() {
     // id 0x41 twice via FUN_00427e00 (shadow at 600,52 then white at 596,48,
     // scale 0.8; suppressed when FUN_0042b930()==0x21). Evidence:
     // FUN_0043c5b0_chrome.asm 0x0043c695..0x0043c6f3.
-    if (g_bridge_installed && g_frontend_phase >= 2 && g_font.ready() &&
+    if (g_bridge_installed && (g_frontend_phase == 2 || g_frontend_phase == 3) &&
+        g_font.ready() &&
         mashed_re::Frontend::Nav_ScreenId() != 0x21) {
         wchar_t cs[64];
         if (GetMenuMessage(0x41, cs, 64) > 0) {
@@ -2066,7 +2077,7 @@ bool RenderFrame() {
         }
     }
 
-    if (g_bridge_installed && g_frontend_phase >= 2) {   // F6 phase gate
+    if (g_bridge_installed && (g_frontend_phase == 2 || g_frontend_phase == 3)) {   // F6 phase gate (not 4=loading)
         using namespace mashed_re::Frontend;
         const MenuRecord* recs = Nav_Records();
         const int         nrec = Nav_RecordCount();
@@ -2111,9 +2122,17 @@ bool RenderFrame() {
         {
             static DWORD s_last_ms = 0;
             const DWORD now_ms = GetTickCount();
-            const int raw_ms =
+            int raw_ms =
                 (s_last_ms == 0) ? 0 : static_cast<int>(now_ms - s_last_ms);
             s_last_ms = now_ms;
+            // Round-2 ("transitions look like a fade, not movement"): clamp the
+            // per-frame delta to one 50ms tick. The 50ms-quantized clock
+            // (FUN_00493480) otherwise fires ~10 ticks in a single frame after
+            // a boot/asset-load dt spike, blasting the slide counter from
+            // 0x1ff to 0 in one frame — the slide-in never shows and the
+            // screen change reads as an instant pop. The original ran at a
+            // steady framerate and never multi-ticked mid-nav.
+            if (raw_ms > 50) raw_ms = 50;
             Nav_FrameClockUpdate(raw_ms);
         }
         Nav_AnimTick();
