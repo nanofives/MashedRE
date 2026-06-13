@@ -3462,3 +3462,6 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00462510  Set603868_0  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
 2026-06-13  00462500  Set603868_1  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
 2026-06-13  00487df0  Set703058_0  C2->C3  promote-round-29 scalars_to_scattered_globals 10/10 GREEN
+2026-06-13  004b68e0  Global7d3e4cGet  C2->C3  promote-round-30 read_global 10/10 GREEN
+2026-06-13  004b65a0  Global7d3e4cGetThunk  C2->C3  promote-round-30 read_global 10/10 GREEN
+2026-06-13  00455b40  PowerupTable6885e0Get  C2->C3  promote-round-30 int_scalar scenario:race 10/10 GREEN

@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 29
-- total_green: 74
+- rounds_run: 30
+- total_green: 77
 - dry_counter: 0
-- last_round: 2026-06-13 round 29 (5 GREEN — worklist const global setters)
+- last_round: 2026-06-13 round 30 (3 GREEN getters + 2 deferred degenerate table getters)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -315,6 +315,8 @@ final gated-remainder report.
 2026-06-12 | round 3 | L1+L2 | attempted 5 (authored: 0042fe70 + 0041ea80 race-lane, 004cbc60/70/80 L2 re-earns) | GREEN 0 — BLOCKED-ENV, not dry | deferred +8 (L1 triage: 0041f030, 0041da90, 00443d10, 004150e0, 00423480, 00486460, 0046b1c0, +0041d930 caveat-candidate) | run_diff died 2x in boot phase (frida InvalidOperationError "script has been destroyed", surfaces as exit 1 NOT 6) | dry_counter 0 (unchanged — environment outage, pool not drained). ROOT CAUSE BISECTED: MASHED stopped booting ~19:15 local — dies after "Calling RwEngineOpen" with zero hooks (MASHED_HOOK_HI=0) AND with the .asi renamed away → fully environmental, round-3 code exonerated. videocfg.bin = canonical (hash match); 3 displays enumerated (power state unknown); ~14 rapid device create/destroy cycles + 2 force-killed boots preceded the failure. Suspect monitors asleep or GPU driver wedge. ACTION: reschedule ~20 min; next round MUST first confirm one manual boot reaches the menu before burning diff attempts. KEY LEARNINGS: (1) int_with_out_ptr allocs 8B + compares return ONLY — read diff_template.js handler before trusting an arg_type name; (2) L2 demoted-needs-reimpl rows are real cheap wins (render trio authored in minutes); (3) gate-check Glob on **WIP** false-positives on dead worktree copies — check repo root only.
 
 2026-06-13 | round 29 | worklist batch (const global setters) | attempted 5 | GREEN 5 (Set77196c_1 0x00493570, Set771970_1 0x00493580, Set603868_0 0x00462510, Set603868_1 0x00462500, Set703058_0 0x00487df0 — all pure `C7 05 <addr> <imm32> C3` single-store leaves; scalars_to_scattered_globals fill=0xFF; menu-attach) | deferred 0 | exit-5/6: none; zero REDs (all 5 byte-verified before authoring) | dry_counter 0. total_green 69->74. SCREEN-1 PIN: user asked to "test on screen 1" — added a SetWindowPos(64,64) pin to the d3d9 shim's ApplyWindowBorders (opt-out env MASHED_RE_NO_SCREEN1_PIN=1), rebuilt+redeployed; verified the MASHED window lands at (51,51) inside DISPLAY1 (primary 0,0 2048x1152). The shim only proxies MASHED.exe, so the standalone is unaffected. 0040d270 (Course::Finish) is the shared caller for both 00462500/00462510 (set/clear pair over 0x00603868). ~34 worklist candidates remain.
+
+2026-06-13 | round 30 | worklist batch (global + table getters) | attempted 5 | GREEN 3 (Global7d3e4cGet 0x004b68e0 + Global7d3e4cGetThunk 0x004b65a0 read_global menu-attach; PowerupTable6885e0Get 0x00455b40 int_scalar scenario:race non-degenerate) | deferred 2 (table_773030_get 0x00496930 + joint_ptr_6ce81c_get 0x004840d0 — both exit-5 INCONCLUSIVE-DEGENERATE: their tables 0x00773030 / 0x006ce81c read all-zero at the race-attach window, unlike sibling 0x00772ffc which populates; need a deeper-into-race / different scenario where those tables are written) | exit-5: 2 (table_773030_get x2, joint_ptr_6ce81c_get x1) | dry_counter 0. total_green 74->77. DROPPED pre-author: 004d71f0 (read_global DAT_007d6b10) — ALL 3 callers are in the RenderWare library band (FUN_005405c0 C1 third-party), fails the C3 "one caller at C2+" gate; requires a first-party caller promotion first. Also deferred-from-curation: 0045a0f0 (bounds-checked table getter, needs full-body read of the v<0/v>=4 branch targets before authoring). LEARNING: table getters that index live arrays are degenerate-GREEN traps even at scenario:race unless that specific table is populated in the attach window — byte-verify the table is non-zero, or expect exit-5 (the powerup table 0x006885e0 populated; the timer 0x00773030 and joint 0x006ce81c did not).
 
 ## Final gated-remainder report
 
