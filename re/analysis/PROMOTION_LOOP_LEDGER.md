@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 32
-- total_green: 87
+- rounds_run: 33
+- total_green: 92
 - dry_counter: 0
-- last_round: 2026-06-13 round 32 (5 GREEN: 3 getters + 2 param setters from byte-scan pool)
+- last_round: 2026-06-13 round 33 (5 GREEN: 4 getters + 1 const setter from byte-scan pool)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -321,6 +321,8 @@ final gated-remainder report.
 2026-06-13 | round 31 | byte-scan replenished pool (single-global getters) | attempted 5 | GREEN 5 (Global67f19cGet 0x0042f760, Global67f1a0Get 0x0042f770, Global67f1a4Get 0x0042f780 audio trigger-flag trio; CameraPath::GetCount 0x00426bb0; Bezier::GetLocate 0x0045bfe0 — all `A1 <addr> C3` read_global menu-attach) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 77->82. POOL REPLENISHMENT (KEY): the hand-curated worklist + c3_filter_v4 were thinning on trivial leaves, so I byte-scanned original/MASHED.exe.unpatched for the 4 exact opcode shapes my handlers cover (`A1 <a4> C3` u32 getter, `D9 05 <a4> C3` f32 getter, `C7 05 <a4> <imm4> C3` const setter, `8B 44 24 04 A3 <a4> C3` param setter) and intersected with still-C2 rows -> 25 promotable trivial-shape leaves (get_u32×15, get_f32×3, set_const×3, set_u32×4). Scanner output at /tmp/trivial_leaf_hits.csv (PowerShell temp); regenerate any time via the inline scan. This is ~4-5 more rounds of clean leaves. After they drain, the next lever is L5 harness-ext for the deref-param predicate/getter class (e.g. 0x004cc4f0 RW chunk-type validator does `mov eax,[eax]` on its arg -> needs a ptr-to-int-in handler; many leaves share this shape). DROPPED again: 004d71f0 still caller-gated (RW-library-only callers).
 
 2026-06-13 | round 32 | byte-scan pool (getters + param setters) | attempted 5 | GREEN 5 (GetRaceStateField 0x0042d390, Global7e9584Get 0x00499710 HWND, Global7dcabcGet 0x005a7b50 audioctx read_global; Set86ecc8 0x00472640, Set63ba7c 0x0040e170 void_setter_observe) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 82->87. All menu-attach, all callers C2+ (00492e90 boot / 00495150 input / 005a7b60 audio / 004030d0 util / 0043df00 frontend). ~15 trivial-shape leaves remain in the byte-scan pool (get_u32×~7 incl. caller-gated 004d71f0, get_f32×3, set_const×3, set_u32×~2).
+
+2026-06-13 | round 33 | byte-scan pool (getters + const setter) | attempted 5 | GREEN 5 (Global63a5d0Get 0x004075a0, Global63d7e0Get 0x0041e140, Global6c6eb0Get 0x0047ce70, Global772ffcGet 0x00496910 read_global; Set7f1a0c_1000 0x0042b950 scalars_to_scattered_globals) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 87->92. Note 0x00496910 reads the same 0x00772ffc table base that exit-5'd round-16 via int_scalar — read_global SEEDS the global so it's non-degenerate even though the int_scalar table-index path was degenerate. ~10 trivial-shape leaves remain (get_f32×3 untried + a few get_u32/set_const/set_u32 + caller-gated 004d71f0). NEXT: validate the float-getter (D9 05 <a4> C3) path on 0x004039e0 — needs the existing float read_global arg_type confirmed in diff_template.js.
 
 ## Final gated-remainder report
 
