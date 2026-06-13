@@ -14252,6 +14252,28 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 35 (float-getter vein: read_global + ret:float) --
+    # D9-05 fld-dword getters; read_global seeds the global with a clean float
+    # bit-pattern (no NaN/Inf) and compares the ST0 float return.
+    'float_5ea0a8_get': {
+        'rva': 0x004039e0, 'export': 'Float5ea0a8Get', 'signature': {'ret': 'float', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x005ea0a8, 'lut_root_delta': 0,
+        'path1_tests': [0x3F800000, 0x40000000, 0xBF800000, 0x40200000, 0x42C80000, 0x3F000000, 0xBE800000, 0x449A5000, 0x00000000, 0x3DCCCCCD],
+        'path2_tests': [0x3F800000, 0x40000000, 0xBF800000],
+    },
+    'float_89a360_get': {
+        'rva': 0x004173a0, 'export': 'Float89a360Get', 'signature': {'ret': 'float', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0089a360, 'lut_root_delta': 0,
+        'path1_tests': [0x3F800000, 0x40000000, 0xBF800000, 0x40200000, 0x42C80000, 0x3F000000, 0xBE800000, 0x449A5000, 0x00000000, 0x3DCCCCCD],
+        'path2_tests': [0x3F800000, 0x40000000, 0xBF800000],
+    },
+    'float_61313c_get': {
+        'rva': 0x0046dd80, 'export': 'Float61313cGet', 'signature': {'ret': 'float', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0061313c, 'lut_root_delta': 0,
+        'path1_tests': [0x3F800000, 0x40000000, 0xBF800000, 0x40200000, 0x42C80000, 0x3F000000, 0xBE800000, 0x449A5000, 0x00000000, 0x3DCCCCCD],
+        'path2_tests': [0x3F800000, 0x40000000, 0xBF800000],
+    },
+
     # ---- promote-round round 34 (byte-scan batch: getter/setters + bounds getter) --
     'global_772fac_get': {
         'rva': 0x00495790, 'export': 'Global772facGet', 'signature': {'ret': 'uint32', 'args': []},
