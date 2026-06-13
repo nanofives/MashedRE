@@ -14252,6 +14252,38 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 31 (byte-scan batch: single-global getters) ------
+    'global_67f19c_get': {
+        'rva': 0x0042f760, 'export': 'Global67f19cGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0067f19c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_67f1a0_get': {
+        'rva': 0x0042f770, 'export': 'Global67f1a0Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0067f1a0, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_67f1a4_get': {
+        'rva': 0x0042f780, 'export': 'Global67f1a4Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0067f1a4, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_66d6d8_get': {
+        'rva': 0x00426bb0, 'export': 'Global66d6d8Get', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0066d6d8, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+    'global_80332c_get': {
+        'rva': 0x0045bfe0, 'export': 'Global80332cGet', 'signature': {'ret': 'uint32', 'args': []},
+        'arg_type': 'read_global', 'target_global': 0x0080332c, 'lut_root_delta': 0,
+        'path1_tests': [0, 1, 0xDEADBEEF, 0xFFFFFFFF, 0x12345678, 0x80000000, 0x7FFFFFFF, 0xCAFEBABE, 2, 0x55555555],
+        'path2_tests': [0, 1, 0xDEADBEEF],
+    },
+
     # ---- promote-round round 30 (worklist batch: global + table getters) ------
     'global_7d3e4c_get': {
         'rva': 0x004b68e0, 'export': 'Global7d3e4cGet', 'signature': {'ret': 'uint32', 'args': []},
