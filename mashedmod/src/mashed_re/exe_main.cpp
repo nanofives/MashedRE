@@ -2390,15 +2390,17 @@ bool RenderFrame() {
         // exactly as the original does.)
     }
 
-    // MASHED logo (Font36.piz/MASHEDNEWLOGO.PNG) — FUN_00428760 sprite pipe.
-    // Placement GROUND TRUTH (titleframe dump + scr1 burst A[40], emitter
-    // 0x450c7a): ONE static quad at virtual (80, 80, 480x240), full-white
-    // modulate, drawn as the LAST draw of the frame (over the menu plates).
-    // Drawn on the title AND on menu screens (the sprite slot DAT_00771964 is
-    // set at frontend enter FUN_004283a0 and only cleared at teardown
-    // 0x00428400). [Per-screen suppression on deeper screens unverified —
-    // confirm with a screen-8 burst.]
-    if (g_frontend_phase >= 1 &&
+    // MASHED logo (Font36.piz/MASHEDNEWLOGO.PNG) — FUN_00428760 sprite pipe,
+    // drawn at virtual (80, 80, 480x240) full-white, after the menu loop.
+    // TITLE ONLY (clean-baseline correction 2026-06-12): the frame dispatcher
+    // FUN_00492e90 calls the title layer FUN_00403050 (logo + press-button)
+    // iff the current screen global DAT_0067ecb0 == 0x21 — the title IS nav
+    // screen 33. The earlier "logo draws on menu screens too" conclusion came
+    // from a POLLUTED capture: the synthetic nav-push left DAT_0067ecb0 at
+    // 0x21, so the title layer kept compositing over the pushed menu. The
+    // clean baseline (harness fix + verify/orig_backbuffer_f2100.bmp) shows
+    // NO logo at settled scr1. Our phase 1 == the title (screen 33).
+    if (g_frontend_phase == 1 &&
         g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
         HudIm2DQuad(kHandleMenuLogo, 80.f * 1.25f, 80.f * 1.25f,
                     480.f * 1.25f, 240.f * 1.25f, 0xffffffffu, uv_full);

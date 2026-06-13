@@ -54,6 +54,14 @@ const IMG=0x00400000; let DELTA=0;
 const RVA_SHELLA=0x0042e3a0, RVA_PHASE=0x0067eca4;
 const VTBL=0x007d3ff8, VBUF=0x00898a20, STRIDE=0x1c;
 const RVA_NAV=0x0043d2a0, RVA_DEPTH=0x0067e9f8;
+// Current-screen id global (FUN_0042b930 getter / FUN_0042b940 setter). The
+// frame dispatcher FUN_00492e90 draws the TITLE layer (logo + press-button,
+// FUN_00403050) iff this reads 0x21 — the title is nav screen 33. A bare
+// FUN_0043d2a0 push does NOT update it, which left the title layer
+// composited over every synthetically-pushed screen (polluted baselines,
+// 2026-06-12). Writing it after the push is what the real screen-change
+// writers (0x0043f386/0x0043f5b0/0x0043f7e7) do.
+const RVA_CURSCREEN=0x0067ecb0;
 let nav=null, collecting=0, frames={}, order=[], cur=null, drawHooked=0;
 function abs(r){return ptr(r+DELTA);}
 rpc.exports={
@@ -64,7 +72,7 @@ rpc.exports={
     return DELTA;
   },
   phase:function(){ return abs(RVA_PHASE).readS32(); },
-  push:function(scr){ nav(scr,0); return abs(RVA_DEPTH).readS32(); },
+  push:function(scr){ nav(scr,0); abs(RVA_CURSCREEN).writeS32(scr); return abs(RVA_DEPTH).readS32(); },
   armburst:function(label,k){
     if(!drawHooked){
       const vt=abs(VTBL).readU32();

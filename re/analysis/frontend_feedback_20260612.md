@@ -136,13 +136,21 @@ session); settled scr1 is now GREEN 118/118 per frame** (`--rotate-a 0x42e65a
   0x224 bordered-rect path, which passed original-form constants through the
   double-swap, was rendering visibly R/B-flipped and is healed by the same
   fix. Buffers now byte-identical -> 0 color rows.
-- **Title logo MISSING from menu screens — REAL, FIXED**: the original draws
-  the FUN_00428760 sprite-pipe logo quad (virtual 80,80,480x240 white,
-  emitter 0x450c7a) as the LAST draw of EVERY frontend frame including
-  settled scr1 — over the menu plates. The standalone only drew it at the
-  title phase (a wrong F6-era conclusion). Now drawn after the menu draw
-  loop, phase >= 1. [Residual: per-screen suppression on deeper screens
-  unverified — check a screen-8 burst.]
+- **Title logo at scr1 — RE-CORRECTED 2026-06-12 (user caught it): the
+  "missing logo" finding was CAPTURE POLLUTION, and the F6-era title-only
+  conclusion was RIGHT.** The frame dispatcher FUN_00492e90 draws the title
+  layer FUN_00403050 (logo + press-button) iff the current-screen global
+  DAT_0067ecb0 (getter FUN_0042b930) == 0x21 — the title IS nav screen 33.
+  The harness's synthetic FUN_0043d2a0 push never updated DAT_0067ecb0, so
+  the title layer (logo A[40], press-button, credits ticker) kept
+  compositing over every pushed screen — polluting ALL prior original-side
+  scr captures. menu_draw_burst.py now writes DAT_0067ecb0 after the push;
+  the clean baseline (verify/orig_backbuffer_f2100.bmp, 117 draws not 118)
+  shows NO logo at settled scr1, items settled, watermark present. The
+  standalone's logo draw is reverted to title-only (phase == 1). Clean
+  baseline also CONFIRMS #17 black item text (zoom disambiguates the
+  thumbnail's figure-ground illusion) and resolves the "watermark at
+  settled scr1 unverified" residual: it IS drawn.
 - **Gradient-band caps / bands "reordered" — ARTIFACT, differ fixed**: burst
   frames split at Present mid-composition (true frame order is video ->
   previews -> caps -> arc -> checkers -> bands -> lines -> plates -> logo).
