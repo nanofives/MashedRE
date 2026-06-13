@@ -223,6 +223,56 @@ screen 0x21 (33); screen 3 multi-viewport branch (FUN_0042f530 count); modal
 FUN_00433f40 drawn last every frontend frame; screen 0x20 special drawer
 FUN_00430b90.
 
+## Round-2 user feedback (2026-06-12 night) — 13 items
+
+Build verified against clean baselines + window captures (DPI-1:1).
+
+1. **Spinning loading disc** — DONE. It's the "loadicon" texture in
+   MASHED.exe's EMBEDDED resource RWTEXDICTIONARY/404 (FUN_004921d0:
+   FUN_004997b0(0x194,"RWTEXDICTIONARY")->FUN_004c5c00(dict,"LoadIcon")),
+   NOT a .piz — same 0x23 TXD variant, 256x128 8bpp direct-intensity, pixels
+   @0x43c. Loaded via LoadLibraryEx(MASHED.exe, AS_DATAFILE)+FindResource.
+   Coin-flip animated per FUN_00428450: width 80*sin, UV left-half front /
+   right-half mirrored back when sin<0, center x=544, phase += 0.1/frame
+   (_DAT_005cc56c). Earlier "no disc exists" note was wrong (searched only
+   archives, not EXE resources).
+2. **Loading screen after press-button** — DONE: title Enter -> phase 4
+   (loading composition ~1.2s) -> menu.
+3. **Footer Select/Back glyph colorless** — DONE: nav glyphs (codepoints
+   >=0x7f) draw GREEN ff10ec00 (clean scr1 sample 00ec10), word stays white;
+   DrawMashedString gains a per-control-glyph color arg. [The in-binary
+   color-switch mechanism — how FUN_0043c5b0 tints only the glyph — is still
+   to RE; current approach colors the remapped range.]
+4. **Watermark position** — DONE: RIGHT-aligned at x=600/596 (FUN_00427e00
+   align 1) — was centered and spilled off the right edge. DrawMashedString
+   gains right-align.
+5. **Transitions look like a fade** — DONE: per-frame dt cap (the slide was
+   blasting through instantly from the boot dt spike). Slide now sweeps over
+   ~0.75s (instrumented 511->478->...).
+6. **Sliders too sensitive** — DONE: initial step + ~0.3s hold delay + ~20/s
+   (was every-frame-after-6 ≈ 40/s).
+7. **Insults arrow placement + value font** — DONE: value text scale 0.6
+   left-anchored x=378; right arrow trails the MEASURED text width (was a
+   fixed x=457); boots at Manual.
+8. **Button text offset up** — DONE: +0.055-cell vertical correction
+   (label centroids ran ~1.5px@640 high vs the clean scr19 baseline; the
+   text-law camera factor _DAT_0067d834 was assumed 1.0).
+9. **Load/save modal layout** — DONE (VERBATIM FUN_00433f40): 3 panels +
+   SIX white border lines incl. the y=162/328 dividers BETWEEN black & gray
+   bars (were missing); title WHITE left at (140,142); body+buttons
+   LIGHT-GRAY 0xdcdcdc left-aligned (the original IS left-aligned, align 0);
+   green nav glyphs on Yes/No/Continue.
+10. **Load successful instant** — DEFERRED per user (awaits savegame impl).
+11. **Color-select 3 orange bars** — DONE: 1 player row (rows = controllers;
+    leave at 1 until controller support); 6 colour tiles; red selected by
+    default with a selection frame; LEFT/RIGHT cycles 6 tiles; row label "1".
+    [No controller indicator + can't fully test = blocked on MP/controller
+    state, per user "leave one until implemented".]
+12. **ESC on main menu** — DONE: ESC at the root now does NOTHING (was
+    returning to the title); pops one level in submenus.
+- (Font "still pixelated") — softened edge-hardening to 0.06/0.94 now the
+  window is DPI-1:1 (the prior 0.15/0.85 over-aliased).
+
 ## Offline-RE findings (2026-06-12, MCP down — via re/tools/disasm_fn.py)
 
 - **#2 boot splash**: DAT_00771964 is only ever set to MashedNEWLogo (FUN_004283a0) or 0 (teardown 0x00428400). FUN_00403050 draws it + the pulsing press-button (FUN_00402fb0). The Dolby/ProLogic logos (DAT_0067d968/0067d96c) are drawn by separate readers (0x00428c9b / 0x00428ec2) — the splash is a multi-function boot sequence, not a single drawer. Port needs those two drawers + the boot state pump.
