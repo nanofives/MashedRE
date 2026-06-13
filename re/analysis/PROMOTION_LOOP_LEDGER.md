@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 7
-- total_green: 19
+- rounds_run: 8
+- total_green: 23
 - dry_counter: 0
-- last_round: 2026-06-12 round 7 (2 GREEN, L2 re-earns)
+- last_round: 2026-06-12 round 8 (4 GREEN + 1 refused, L3 curated)
 
 ## Lane queues
 
@@ -68,6 +68,10 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 - 004b6560 BootGlobalPairSetThunk — round 6 L2 RE-EARN, log/diff_boot_global_pair_set_thunk.csv 10/10 GREEN (call-through reimpl)
 - 00499730 BootPtr773818Get — round 7 L2 RE-EARN, log/diff_boot_ptr_773818_get.csv 10/10 GREEN (constant-VA return)
 - 00495120 TimerQpfStore — round 7 L2 RE-EARN, log/diff_timer_qpf_store.csv 10/10 GREEN (scalars_to_scattered_globals)
+- 004430a0 Util897fe0Set — round 8 L3, log/diff_util_897fe0_set.csv 10/10 GREEN
+- 004430b0 Util897fe0Get — round 8 L3, log/diff_util_897fe0_get.csv 10/10 GREEN
+- 0042f790 GhostMode::IsActive — round 8 L3, log/diff_ghost_mode_is_active.csv 10/10 GREEN
+- 00431d70 Course::GetLeaderIndex — round 8 L3, log/diff_course_get_leader_index.csv 10/10 GREEN
 
 ## Deferred (with reason — a future round or lane may reclaim)
 
@@ -123,6 +127,11 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
   (TLS init) / 004aa3e4 (2-global predicate, one live path only) / 004aa3fe
   (HeapCreate) / 004ac04a (file-handle table) — live one-shot CRT init side
   effects or single-path coverage; not promotable via menu-attach re-call
+- 004cc7e0 render (round-8) — GREEN EVIDENCE IN HAND (void_setter_observe
+  10/10, log/diff_rw_global_6182b0_set.csv; reimpl in PromoLoop_round8.cpp)
+  but U-5102 carries an EXPLICIT Blocks=C2->C3 — promotion refused per the
+  re-classify rails. Unblock: trace reads of 0x006182b0 (Ghidra
+  reference_to), resolve/downgrade U-5102, then classify-only (no re-diff)
 
 ## Harness-extension wishlist (lane L5: implement when one entry unlocks ≥10 rows)
 
@@ -145,6 +154,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 2026-06-12 | round 1 | L0 | attempted 5 (race1 session-1 set) | GREEN 5 | deferred 0 | exit-5/6: none (one legit RED on 00429300 float-load, root-caused to FILD same round) | dry_counter 0. Housekeeping: removed stale frida-sweep-20260520-1800 WIP flag (released same day per CHANGELOG, claim flag never deleted — commit 0b6bbbf1); baseline build flaked once ([ERROR] exe build failed) then passed twice consecutively unchanged — transient (suspect file lock on freshly-linked exe); watch for recurrence. Nav note: every race drive logs "[nav] timeout: d3 depth=2 phase=3" then still reaches the race — cosmetic but consistent.
 
 2026-06-12 | round 2 | L0 | attempted 5 (race1 session-2 set) | GREEN 5 | deferred 0 | exit-5/6: none; zero REDs (all 5 bodies byte-verified against MASHED.exe.unpatched BEFORE authoring — adopting this as standing round practice after round 1's FILD lesson) | dry_counter 0. L0 drained; U-8986/U-8987 filed for the camera notes' unfiled markers. Next round: L1 (note-read + arg_type confirmation per candidate; 0042fe70 pre-confirmed config goes first; honor the pre-screened deferral list).
+
+2026-06-12 | round 8 | L3 (c3_filter_v4 sweep loop_round_8: 1685 passed, curated to 14 small getter/setter shapes, picked 5) | attempted 5 | GREEN 5 diffs / PROMOTED 4 | refused 1 (004cc7e0: U-5102 explicit Blocks=C2->C3 — first blocking U-row the loop has hit; honored) | exit-4 attach flake x1 (rw_global_6182b0_set, GREEN on retry — injection failure, not a verdict) | dry_counter 0. L3 curated pool remainder: 9 more from this curation pass (00498be0 5b getter; 0040dc80 6b float getter FILD-CHECK; 0040dc90 23b conditional getter; 00429840/00429860 latch pair; 0046c730/0046c750 0xd04-stride physics getters race-lane; 0040b410 11b indexed getter; 0040e360 RaceMode::Set 9b setter CAUTION live race-phase global) — next round continues here.
 
 2026-06-12 | round 7 | L2 | attempted 2 (00499730, 00495120) | GREEN 2 | deferred 9 this round (004c9eb0 needs-decomp-transcript; 00493900 needs buffer-seeding ext; 004926c0/00493480 QPC time-varying; 004a4bb7/004a774d/004a8a04/004aa3e4/004aa3fe/004ac04a CRT one-shot-init class) | exit-5/6: none | dry_counter 0. L2 effectively TRIAGED OUT: remaining un-attempted L2 rows are 00402750/00492370 (large multi-phase loaders), 004c2c90/004c2d90/004c2fb0 (RW plugin/driver dispatchers — live registry mutation), 004cc7f0/004cc820 (freelist allocators — nondeterministic ptrs), 00495270 (single-out-ptr — wishlist), 00498c00 (live D3D mode-table alloc), 00499ba0 (CoInitialize+CreateWindow), 00494f20 (callee C1), 00493540-dup n/a. NEXT ROUND: L3 (c3_filter_v4 sweep) or evaluate L5 — wishlist out-buffer-compare now unlocks 0041f030+0041da90+00484c70+00495270 = 4 confirmed (<10 bar). If L3 yields <3, consider relaxing the L5 bar or running an L4 evidence-repair round. (004c9f50, 004b6610, 004b6560 thunk) | GREEN 3 | deferred 2 (004c9f60 guard+live-vtable; 004b6540 allocating thunk target) | exit-5/6: none. Baseline build LNK1104 once: the USER's own mashed_re.exe instance (started 21:04) locked the exe output — waited out per the MASHED-running rail (exited 21:07), build then OK. RETROACTIVE root-cause for the round-1/round-3 transient exe-link flakes: same class (a running mashed_re.exe locks build\mashed_re.exe). multi_arg_global_write guard-inside-restored-window trick validated for guard-less multi-param setters (time_display_set_entry precedent). dry_counter 0. L2 remaining: ~24 rows (boot-band 00402750-depth cluster + render dispatchers + CRT-band odd-address rows — expect rising cost; several look abi-limited/oversize-adjacent).
 
