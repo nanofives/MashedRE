@@ -404,6 +404,8 @@ monitors restored (for state-dependent diffs) and/or sustained bespoke-handler
 work. ON DISPLAY RECOVERY: run_diff resumes normally; re-attempt the round-30-style
 race-state candidates + the bespoke-handler classes.
 
+2026-06-13 | round 39 | pure 2-arg leaf attempt | REJECTED (RED, correctly) — total_green stays 106. Candidate 0x005adf60 looked like `(p1==p2)?0:p1` but the `jne +3` targets offset 15 (PAST the 33 C0 C3 early-return) -> the function CONTINUES past the byte-scan's first C3; it is NOT a pure 15-byte leaf. early_window_leaf_diff caught the incomplete reimpl: original AV'd on the p1!=p2 path while the (wrong) reimpl returned p1 -> RED on 5/10. Reverted the cpp + registry entry + build line; rebuilt clean (no bogus hook shipped). KEPT the int2_scalar capability in early_window_leaf_diff.py for genuinely-pure 2-arg leaves (none exist in C2 — the scan's "pure 2-arg" hits are all early-return-then-continue or memory-mutators). LESSON (re-confirmed): the "first C3" byte-scan heuristic false-positives on early-return branches; trust the diff, not the scan. The display-INDEPENDENT promotable vein is now EXHAUSTIVELY confirmed drained at 106. Everything remaining genuinely needs the booted game or bespoke per-candidate struct-seed engineering (the ~6 struct-deref 2-arg functions: 004ec720 field-copy-out, 005c4d20 field-decrement, 004f3bd0 double-deref-table, 004ec740 double-deref-write, etc. — each a distinct bespoke seed/check, deferred as a future early_window struct-seed-mode effort).
+
 ## Final gated-remainder report
 
 (written by the round that ends the loop)

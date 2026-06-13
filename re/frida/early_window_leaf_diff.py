@@ -59,6 +59,7 @@ LOG = os.path.join(ROOT, "log")
 
 PURE_LEAF_ARGTYPES = {
     'read_global', 'void_setter_observe', 'scalars_to_scattered_globals', 'int_scalar',
+    'int2_scalar',  # pure function of TWO int args (no memory) — tests are [p1,p2] pairs
 }
 
 SRC = r"""
@@ -71,7 +72,8 @@ rpc.exports.diff = function(cfg) {
   if (reim.isNull()) return { error: 'GetProcAddress failed for ' + cfg.export };
   const b0 = ptr(cfg.rva).readU8();
   if (b0 === 0xE9) return { error: 'ORIGINAL PATCHED (b0=0xE9) — NO_AUTO_HOOK failed; aborting' };
-  const nargs = (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar') ? ['uint32'] : [];
+  const nargs = (cfg.at === 'int2_scalar') ? ['uint32','uint32']
+              : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar') ? ['uint32'] : [];
   const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
   const Reim = new NativeFunction(reim,         cfg.ret, nargs, 'mscdecl');
   const norm = function (v) { return (cfg.ret === 'float') ? v : (v >>> 0); };
@@ -99,6 +101,9 @@ rpc.exports.diff = function(cfg) {
       }
       try { o = Orig(t >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { r = Reim(t >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'int2_scalar') {
+      try { o = Orig(t[0] >>> 0, t[1] >>> 0) >>> 0; } catch (e) { eo = e.message; }
+      try { r = Reim(t[0] >>> 0, t[1] >>> 0) >>> 0; } catch (e) { er = e.message; }
     }
     res.push({ i: i, t: '' + t, o: (o === null ? null : '' + o), r: (r === null ? null : '' + r),
                match: (eo === null && er === null && o !== null && o === r), eo: eo, er: er });
