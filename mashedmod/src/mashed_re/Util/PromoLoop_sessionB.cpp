@@ -325,3 +325,29 @@ extern "C" __declspec(dllexport) void __cdecl FloatSub4058b0(void* p, float f) {
 }
 RH_ScopedInstall(FloatSub4058b0, 0x004058b0);
 
+
+// ===== round 89 =====
+
+// 0x004576b0  particle — byte-verified: 33 C0 8B 0C 85 00 A3 68 00 85 C9 75 25 40 83 F8 02 7C EF 83 F8 04 7D 17 C1 E0 04 05 54 A2 68 00 83 38 00 75 0D 83 C0 10 3D 94 A2 68 00 7C F1 33 C0 C3 B8 01 00 00 00 C3
+//   "any active?" over 4 slots (0x68a300,0x68a304 then 0x68a274,0x68a284) -> return 1 if any nonzero
+extern "C" __declspec(dllexport) std::uint32_t __cdecl AnyActive4576b0(void) {
+    for (std::uint32_t i = 0; i < 2; i++)
+        if (*reinterpret_cast<std::int32_t*>(0x0068a300u + i * 4u)) return 1u;
+    for (std::uint32_t p = 0x0068a274u; p < 0x0068a294u; p += 0x10u)
+        if (*reinterpret_cast<std::int32_t*>(p)) return 1u;
+    return 0u;
+}
+RH_ScopedInstall(AnyActive4576b0, 0x004576b0);
+
+// 0x004075b0  gameplay — byte-verified (70B): IMUL i,0xec; rec=*(0x639d90+i*0xec); t=*(rec+4);
+//   out[0..2]=t[0x40/44/48]; out[3]=0x40000000(2.0f); return (*(0x639dc8+i*0xec)==0)?1:0
+extern "C" __declspec(dllexport) std::uint32_t __cdecl ItemPosRet4075b0(std::uint32_t i, std::uint32_t* out) {
+    std::uint32_t rec = *reinterpret_cast<std::uint32_t*>(0x00639d90u + i * 0xecu);
+    std::uint32_t t = *reinterpret_cast<std::uint32_t*>(rec + 4);
+    out[0] = *reinterpret_cast<std::uint32_t*>(t + 0x40);
+    out[1] = *reinterpret_cast<std::uint32_t*>(t + 0x44);
+    out[2] = *reinterpret_cast<std::uint32_t*>(t + 0x48);
+    out[3] = 0x40000000u;
+    return (*reinterpret_cast<std::uint32_t*>(0x00639dc8u + i * 0xecu) == 0) ? 1u : 0u;
+}
+RH_ScopedInstall(ItemPosRet4075b0, 0x004075b0);

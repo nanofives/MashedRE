@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 88
-- total_green: 228
+- rounds_run: 89
+- total_green: 230
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-13 | round 89 | early_window bespoke handlers (sessionB append) | attempted 2 | GREEN 2 (AnyActive4576b0 0x004576b0 any_slot_nonzero; ItemPosRet4075b0 0x004075b0 double_deref_vec3+ret) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 228->230. NEW any_slot_nonzero handler + double_deref_vec3_get extended with ret_tbl (2nd-table bool return). Appended to PromoLoop_sessionB.cpp (no new build.bat line). Crossed 230.
 
 2026-06-13 | SESSION SUMMARY rounds 79-88 (+23: 205->228) + early_window vein characterization | Session delivered: (1) BOOT FIX patch_mashed_fix_camera_res.py (structural unblock, boots any display); (2) tooling promote_frontier.py + promote_classify.py; (3) ~19 early_window handlers (read_global u8/u32/f32, const_return, *setters, ptr_fields_clear, indexed_table_set, deref_struct_set, cond_deref_get, table_bool_predicate, global_swap, byte_args_to_globals, indexed_float_sq, double_deref_vec3_get, double_deref_ptr_get, global_float_predicate, deref_float_field_rmw); (4) build-infra fix (cmd 8191 limit -> PromoLoop_sessionB.cpp consolidation; APPEND future rounds there, NEVER add a build.bat line per round); (5) +23 C2->C3 all GREEN. EARLY_WINDOW VEIN STATE: deep singletons (~2/round, 1 bespoke handler each). Of a 6-leaf decompile batch ~2 are handler-able, ~4 are SKIP (float10 multi-op, __fastcall, EAX-implicit-with-table-index, register-convention EBX/EDI). ~57 gated STATE leaves 12-70B remain (est ~15-20 handler-able -> ceiling ~245). NEXT handler-able (queued): 0x004075b0 (double_deref_vec3 + 2nd-table bool return), 0x004576b0 (any-active predicate over 0x68a300/0x68a254 bitmaps). THE +500 BULK still needs run_diff (env D3D9 wedge, user reboot). early_window works under the wedge (attaches pre-init); reboot only needed for the run_diff bulk.
 

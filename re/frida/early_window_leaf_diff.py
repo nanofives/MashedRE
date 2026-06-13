@@ -110,6 +110,7 @@ PURE_LEAF_ARGTYPES = {
     'global_float_predicate',    # u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(tgt)+rec_off))?1:0. test=[gateval,thrbits,valbits]
     'double_deref_ptr_get',      # void fn(out*,idx): rec=*(tgt+idx*stride); *out=*(rec+rec_off)+add. test=idx
     'deref_float_field_rmw',     # void fn(ptr p,float f): *(float*)(p+field_off) -= f (seedf initial). test=fval
+    'any_slot_nonzero',          # u32 fn(): return any(observe[k].addr nonzero)?1:0. test=index to set nonzero (-1=all zero)
 }
 
 SRC = r"""
@@ -158,6 +159,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_float_predicate') ? []
               : (cfg.at === 'double_deref_ptr_get') ? ['pointer','uint32']
               : (cfg.at === 'deref_float_field_rmw') ? ['pointer','float']
+              : (cfg.at === 'any_slot_nonzero') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -331,10 +333,18 @@ rpc.exports.diff = function(cfg) {
       buf1.add(ro).writePointer(buf2);
       for (let k = 0; k < n; k++) buf2.add(oo + k * 4).writeU32((0xC0DE0000 | ((idx << 4) | k)) >>> 0);
       ptr(base).add(idx * stride).writePointer(buf1);
+      // optional 2nd parallel table drives a bool return (e.g. table2[idx*ret_stride]==0)
+      if (cfg.ret_tbl) ptr(cfg.ret_tbl).add(idx * (cfg.ret_stride | 0)).writeU32((idx & 1) ? 0 : 0xC0DE);
       const outO = Memory.alloc(0x40), outR = Memory.alloc(0x40); _keep.push(outO, outR);
       const rd = function (b) { const p = []; for (let k = 0; k < n; k++) p.push(b.add(k * 4).readU32() >>> 0); return p.join(','); };
-      try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); Orig(idx, outO); o = rd(outO); } catch (e) { eo = e.message; }
-      try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); Reim(idx, outR); r = rd(outR); } catch (e) { er = e.message; }
+      try { for (let k = 0; k < n; k++) outO.add(k * 4).writeU32(0); const ro = Orig(idx, outO); o = rd(outO) + (cfg.ret_tbl ? ('|ret=' + (ro >>> 0)) : ''); } catch (e) { eo = e.message; }
+      try { for (let k = 0; k < n; k++) outR.add(k * 4).writeU32(0); const rr = Reim(idx, outR); r = rd(outR) + (cfg.ret_tbl ? ('|ret=' + (rr >>> 0)) : ''); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'any_slot_nonzero') {
+      // u32 fn(): return any(observe[k].addr nonzero)?1:0. test = index to set nonzero (-1 = all zero).
+      const obs = cfg.observe, set = t | 0;
+      const seed = function () { obs.forEach(function (x) { ptr(x.addr).writeU32(0); }); if (set >= 0) ptr(obs[set].addr).writeU32(0xC0DE); };
+      try { seed(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { seed(); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'global_float_predicate') {
       // u32 fn(): if(*(int*)gate==0) return 0; return (*(float*)thr <= *(float*)(*(u32*)tgt + rec_off))?1:0.
       // test t=[gateval,thrbits,valbits]: seed gate(int), thr(float bits), tgt->buf with [rec_off]=val.
@@ -720,7 +730,8 @@ def run(name):
            'nscalar': h.get('nscalar'), 'seed_byte': h.get('seed_byte'),
            'gate_off': h.get('gate_off'), 'val_off': h.get('val_off'),
            'rec_off': h.get('rec_off'), 'out_off': h.get('out_off'), 'thr': h.get('thr'),
-           'add': h.get('add'), 'seedf': h.get('seedf'), 'asi': ASI}
+           'add': h.get('add'), 'seedf': h.get('seedf'),
+           'ret_tbl': h.get('ret_tbl'), 'ret_stride': h.get('ret_stride'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None
