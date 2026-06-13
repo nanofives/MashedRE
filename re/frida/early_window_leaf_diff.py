@@ -81,6 +81,7 @@ PURE_LEAF_ARGTYPES = {
     'cond_table_get',        # u32 fn(idx): rec=base+idx*stride; return *(rec+offf) ? *(rec+off1) : *(rec+off0)
     'ptr_compute_get',       # u32 fn(out,idx): if(idx>=bound) return 0; t=*(u32*)(idxtbl+idx*stride); *out=base+idx*stride+t*tscale; return 1
     'eq_predicate_get',      # u32 fn(p1,p2): if(*(int*)gate<gatemax && p2>=0) return tbl[p1*stride]==tbl[p2*stride]?1:0; return 0
+    'table_ret_ptrout',      # u32 fn(idx,out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1)
 }
 
 SRC = r"""
@@ -106,6 +107,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'ptr_out_table_get') ? ['pointer','uint32']
               : (cfg.at === 'idx2_table_get') ? ['pointer','uint32','uint32']
               : (cfg.at === 'ptr_compute_get') ? ['pointer','uint32']
+              : (cfg.at === 'table_ret_ptrout') ? ['uint32','pointer']
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
               : (cfg.at === 'cond_global_set') ? ['uint32']
@@ -246,6 +248,16 @@ rpc.exports.diff = function(cfg) {
       const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
       try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'table_ret_ptrout') {
+      // u32 fn(idx, out): addr=base+idx*stride; if(out) *out=*(u32*)(addr+off0); return *(u32*)(addr+off1).
+      // seed both slots distinct -> *out and ret both non-degenerate; fresh out per side.
+      const base = cfg.tgt, stride = cfg.stride | 0, offA = cfg.off0 | 0, offB = cfg.off1 | 0, idx = t >>> 0;
+      const slot = ptr(base).add(idx * stride);
+      slot.add(offA).writeU32((0xC0DE0000 | idx) >>> 0);
+      slot.add(offB).writeU32((0xC0DE1000 | idx) >>> 0);
+      const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
+      try { outO.writeU32(0); const ro = Orig(idx, outO) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { outR.writeU32(0); const rr = Reim(idx, outR) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'cond_table_get') {
       // u32 fn(idx): rec=base+idx*stride; return *(rec+offf) ? *(rec+off1) : *(rec+off0).
       // test t=[idx,flag]: seed slot0/slot1 distinct + flag -> exercises BOTH branches non-degenerately.
