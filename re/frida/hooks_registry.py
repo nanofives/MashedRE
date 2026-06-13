@@ -14214,4 +14214,35 @@ HOOKS = {
         'path2_tests':    [0, 1, 2],
     },
 
+    # ---- promote-round round 22 (L5 vec3_lerp harness-ext) --------------------
+    # 0x004b4650  Vec3Lerp — void(float* out, float* a, float* b, float t):
+    # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
+    # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
+    # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
+    'vec3_lerp': {
+        'rva':            0x004b4650,
+        'export':         'Vec3Lerp',
+        'signature':      {'ret': 'void',
+                           'args': ['pointer', 'pointer', 'pointer', 'float']},
+        'arg_type':       'vec3_lerp',
+        'lut_root_delta': 0,
+        'path1_tests':    [
+            {'a': [1.0, 2.0, 3.0],   'b': [4.0, 5.0, 6.0],   't': 0.5},
+            {'a': [0.0, 0.0, 0.0],   'b': [1.0, 1.0, 1.0],   't': 0.0},
+            {'a': [0.0, 0.0, 0.0],   'b': [1.0, 1.0, 1.0],   't': 1.0},
+            {'a': [-1.0, -2.0, -3.0],'b': [1.0, 2.0, 3.0],   't': 0.25},
+            {'a': [10.0, 20.0, 30.0],'b': [-10.0, -20.0, -30.0], 't': 0.75},
+            {'a': [3.14, 2.71, 1.41],'b': [1.0, 2.0, 3.0],   't': 0.333},
+            {'a': [100.0, 0.5, -0.5],'b': [0.1, 0.2, 0.3],   't': 0.9},
+            {'a': [1e6, 1e-6, 0.0],  'b': [2e6, 2e-6, 1.0],  't': 0.5},
+            {'a': [1.0, 2.0, 3.0],   'b': [4.0, 5.0, 6.0],   't': 1.5},
+            {'a': [7.0, 8.0, 9.0],   'b': [7.0, 8.0, 9.0],   't': 0.5},
+        ],
+        'path2_tests':    [
+            {'a': [1.0, 2.0, 3.0], 'b': [4.0, 5.0, 6.0], 't': 0.5},
+            {'a': [0.0, 0.0, 0.0], 'b': [1.0, 1.0, 1.0], 't': 1.0},
+            {'a': [-1.0, -2.0, -3.0], 'b': [1.0, 2.0, 3.0], 't': 0.25},
+        ],
+    },
+
 }

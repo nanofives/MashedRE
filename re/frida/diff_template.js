@@ -1528,6 +1528,38 @@ function runDiff() {
         return;
     }
 
+    // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
+    // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
+    // float t) — writes a 3-float result computed from two input vec3s and a
+    // scalar. No globals -> deterministic, menu-attach-safe. Each test is
+    // { a:[x,y,z], b:[x,y,z], t:float }. Fills a/b/t, calls fn(out,a,b,t),
+    // reads the 3 out floats as a packed-bits fingerprint, compares.
+    // Validated on Vec3Lerp 0x004b4650.
+    if (CONFIG.arg_type === 'vec3_lerp') {
+        const outA = Memory.alloc(12), outB = Memory.alloc(12);
+        const aBuf = Memory.alloc(12), bBuf = Memory.alloc(12);
+        function fpVec(buf) {
+            return [0, 4, 8].map(function(o) {
+                return ('00000000' + (buf.add(o).readU32() >>> 0).toString(16)).slice(-8);
+            }).join(',');
+        }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const t = CONFIG.tests[i];
+            let origV = null, reimV = null, errO = null, errR = null;
+            for (let k = 0; k < 3; k++) { aBuf.add(k*4).writeFloat(t.a[k]); bBuf.add(k*4).writeFloat(t.b[k]); }
+            outA.writeU32(0); outA.add(4).writeU32(0); outA.add(8).writeU32(0);
+            outB.writeU32(0); outB.add(4).writeU32(0); outB.add(8).writeU32(0);
+            try { Orig(outA, aBuf, bBuf, t.t);   origV = fpVec(outA); } catch(e) { errO = e.message; }
+            try { Reimpl(outB, aBuf, bBuf, t.t); reimV = fpVec(outB); } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: ('t=' + t.t),
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── int_copy_outbuf ──────────────────────────────────────────────────────
     // For TimerSlotDataCopy-style: fn(int slot, T* dst) — void return, copies
     // N bytes from a per-slot source global into dst. Each test is a single
