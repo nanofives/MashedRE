@@ -3404,3 +3404,5 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  004c9f50  RwGlobal7d4134Set  C2->C3  promote-round-6 RE-EARN (demoted-needs-reimpl): reimpl + void_setter_observe diff 10/10 GREEN log/diff_rw_global_7d4134_set.csv
 2026-06-12  004b6610  BootGlobalPairSet  C2->C3  promote-round-6 RE-EARN: reimpl + multi_arg_global_write diff 10/10 GREEN log/diff_boot_global_pair_set.csv
 2026-06-12  004b6560  BootGlobalPairSetThunk  C2->C3  promote-round-6 RE-EARN: call-through reimpl + multi_arg_global_write diff 10/10 GREEN log/diff_boot_global_pair_set_thunk.csv
+2026-06-12  00499730  BootPtr773818Get  C2->C3  promote-round-7 RE-EARN: constant-VA-return reimpl + diff 10/10 GREEN log/diff_boot_ptr_773818_get.csv
+2026-06-12  00495120  TimerQpfStore  C2->C3  promote-round-7 RE-EARN: reimpl + scalars_to_scattered_globals diff 10/10 GREEN log/diff_timer_qpf_store.csv
