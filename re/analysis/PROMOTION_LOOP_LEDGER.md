@@ -9,10 +9,10 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 55
-- total_green: 155
+- rounds_run: 56
+- total_green: 159
 - dry_counter: 0
-- last_round: 2026-06-13 round 55 — 3 scenery-actor 200-entry getters + 4-global clearer (151->155)
+- last_round: 2026-06-13 round 56 — per-vehicle vec3 getter + 3 two-index wheel getters via new idx2_table_get handler (155->159)
 - WORKLIST: re/analysis/plans/promote_worklist.tsv; ~39 candidates remain
   (done so far via worklist: rounds 26-28 = 15). Byte-verify each before
   authoring (the auto-classifier over-permits accumulators/dispatchers as
@@ -459,6 +459,8 @@ race-state candidates + the bespoke-handler classes.
 2026-06-13 | round 54 | stride-0x58 getter + 3 per-vehicle table getters (new ptr_out_table_get handler) | GREEN 4 (Table68ba04Get 0x0045a0d0 int_scalar signed-bound stride-0x58; VehTbl881f50Get3 0x0046d660 vec3 / VehTbl8820acGet1 0x0046d6a0 scalar / VehTbl881f84Get1 0x0046d6d0 scalar — all ptr_out_table_get base+idx*0xd04+j*4, idx>=0x10->0) | total_green 147->151. NEW handler ptr_out_table_get: u32 fn(out_ptr,idx) writing N dwords from an absolute per-vehicle table; seed slots + fresh out buffers per side + snapshot out[]+ret. Unlocks the whole 0x0046d2e0-0x0046d740 per-vehicle-getter family (8+ fns, bases 0x00881f50/68/84/8820ac/... stride 0xd04). DROPPED 0x0046d700 (diffed GREEN but ALREADY C3 = VehicleVec3At9C8Get; stale Ghidra [C2] plate — caught by the hooks.csv-status pre-check, the round-52 lesson). orig b0=0x8b/0x8b unpatched. The 212-candidate callee-graph list keeps delivering ~4-5/round via existing+tiny handlers, NO display needed. RESUME: more of the d2e0-d740 family (2-index getter 0x0046d2e0 needs a (idx1,idx2,out) variant; vec3 SETTER 0x0046d740 needs a ptr_in_table_set handler) + sweep the rest of the 212 list (clearers/getters/setters/inits). SWEEP-CRITICAL new arg_types this session: cond_global_set, ptr_out_table_get.
 
 2026-06-13 | round 55 | 3 scenery-actor 200-entry getters + 4-global clearer | GREEN 4 (Table6c9438Get 0x0047ce00 OOB 0 / Table6c9758Get 0x0047ce80 OOB 0xffffffff / Table6c71d8Get 0x0047d130 OOB 0 — int_scalar 0<=i<0xc8 stride 4; Clear88f0a0x4 0x0045c860 scalars_to_scattered_globals zero 4 globals) | total_green 151->155. All existing handlers (no new handler). DROPPED 3: 0x0047ce20 + 0x0047cde0 (ZERO callers -> C3 caller-gate fail) + 0x0045bff0 (`==0` predicate over a table -> DEGENERATE under the int_scalar uniform-nonzero seeder; would need a predicate-aware/zero-mixing seeder). orig b0=0x8b/0x33 unpatched. SESSION (this context): 142->155 (+13) across rounds 53-55, two new handlers (cond_global_set, ptr_out_table_get). The 212-candidate callee-graph list (vehicle/scenery/actor pools) keeps yielding ~4/round via existing+tiny handlers, NO display. RESUME: keep sweeping the 212 list; build ptr_in_table_set (unlocks vec3 SETTER 0x0046d740 + the bounded scalar-setter family) and an idx2_table_get variant (0x0046d2e0/d320/d360 2-index getters) for more cluster unlocks; a predicate-seeder (mix zero+nonzero) unlocks the `==0`/`!=0` flag-getters (e.g. 0x0045bff0). On display recovery, run_diff the state-dependent majority.
+
+2026-06-13 | round 56 | per-vehicle vec3 getter + 3 two-index wheel getters (new idx2_table_get handler) | GREEN 4 (VehTbl8820a0Get3 0x0046bd20 ptr_out_table_get vec3 base 0x008820a0; Idx2Wheel881790Get 0x0046d320 / Idx2Wheel881738Get 0x0046d360 / Idx2Wheel881744Get 0x0046bd60 idx2_table_get base 0x00881790/738/744, (i1*0x11+i2)*0xc4, i1<0x10 i2<4) | total_green 155->159. NEW handler idx2_table_get: u32 fn(out,i1,i2) with composite index (i1*mult+i2)*stride; seed composite slot + fresh out per side. DROPPED 2 already-C3 caught by hooks.csv pre-check (0x0046dbe0=VehicleRacePositionGet, 0x0046dc00=EntityFieldSet — both stale generic plates). orig b0=0x8b. SESSION (this context, rounds 53-56): 142->159 (+17), THREE new handlers (cond_global_set, ptr_out_table_get, idx2_table_get). The 212-candidate callee-graph list remains the engine (~4/round, NO display). STILL on the list unworked: more vec3/scalar per-vehicle getters (0x0046d* family), the 2-index SETTER + scalar setters, predicate getters (==0/!=0, need a zero-mixing seeder), float10 getters (0x00420d80/004077e0, need an x87-safe handler). RESUME: keep sweeping; on display recovery run_diff the state-dependent majority. 200 is on track via this vein + display.
 
 ## Final gated-remainder report
 

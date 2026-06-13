@@ -77,6 +77,7 @@ PURE_LEAF_ARGTYPES = {
     'range_init',            # void fn(): writes a contiguous global range [tgt, tgt+len) — snapshot whole range
     'cond_global_set',       # void fn(v): if (v==0 || *tgt==0) *tgt=v — tests are [seed,arg] pairs (seed *tgt first)
     'ptr_out_table_get',     # u32 fn(out_ptr,idx): if(idx>=bound) return 0; out[0..n-1]=*(u32*)(base+idx*stride+j*4); return 1
+    'idx2_table_get',        # u32 fn(out_ptr,i1,i2): if(i1>=bound||i2>=bound2) return 0; *out=*(u32*)(base+(i1*mult+i2)*stride); return 1
 }
 
 SRC = r"""
@@ -100,6 +101,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'stack_push_snapshot') ? ['pointer','uint32']
               : (cfg.at === 'ptr_table_field_read') ? ['uint32']
               : (cfg.at === 'ptr_out_table_get') ? ['pointer','uint32']
+              : (cfg.at === 'idx2_table_get') ? ['pointer','uint32','uint32']
               : (cfg.at === 'cond_global_set') ? ['uint32']
               : (cfg.at === 'indexed_table_set') ? ['uint32','uint32']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
@@ -227,6 +229,17 @@ rpc.exports.diff = function(cfg) {
       const rd = function (b) { const p = []; for (let j = 0; j < n; j++) p.push(b.add(j * 4).readU32() >>> 0); return p.join(','); };
       try { for (let j = 0; j < 16; j++) outO.add(j * 4).writeU32(0); const ro = Orig(outO, idx) >>> 0; o = rd(outO) + '|ret=' + ro; } catch (e) { eo = e.message; }
       try { for (let j = 0; j < 16; j++) outR.add(j * 4).writeU32(0); const rr = Reim(outR, idx) >>> 0; r = rd(outR) + '|ret=' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'idx2_table_get') {
+      // u32 fn(out_ptr, i1, i2): if(i1>=bound || i2>=bound2) return 0; *out=*(u32*)(base+(i1*mult+i2)*stride); return 1.
+      // test t=[i1,i2]. seed the composite slot (distinct -> non-degenerate); fresh out per side.
+      const base = cfg.tgt, mult = cfg.mult | 0, stride = cfg.stride | 0, b1 = cfg.bound | 0, b2 = cfg.bound2 | 0;
+      const i1 = t[0] >>> 0, i2 = t[1] >>> 0;
+      if (i1 < b1 && i2 < b2) {
+        ptr(base).add((i1 * mult + i2) * stride).writeU32((0xC0DE0000 | ((i1 << 8) | i2)) >>> 0);
+      }
+      const outO = Memory.alloc(0x10), outR = Memory.alloc(0x10); _keep.push(outO, outR);
+      try { outO.writeU32(0); const ro = Orig(outO, i1, i2) >>> 0; o = (outO.readU32() >>> 0) + '|ret=' + ro; } catch (e) { eo = e.message; }
+      try { outR.writeU32(0); const rr = Reim(outR, i1, i2) >>> 0; r = (outR.readU32() >>> 0) + '|ret=' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'cond_global_set') {
       // void fn(v): if (v==0 || *tgt==0) *tgt=v. test t=[seed,arg]: seed *tgt, call(arg),
       // snapshot *tgt. The seed/arg pairs exercise all 3 branches (v==0 write, global==0
@@ -346,7 +359,8 @@ def run(name):
            'capacity': h.get('capacity'), 'insert_rva': h.get('insert_rva'),
            'build_keys': h.get('build_keys'), 'init_buf': h.get('init_buf'),
            'init_top': h.get('init_top'), 'stride': h.get('stride'),
-           'set_idx': h.get('set_idx'), 'len': h.get('len'), 'bound': h.get('bound'), 'asi': ASI}
+           'set_idx': h.get('set_idx'), 'len': h.get('len'), 'bound': h.get('bound'),
+           'mult': h.get('mult'), 'bound2': h.get('bound2'), 'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

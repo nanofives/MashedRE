@@ -14252,6 +14252,12 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 56 (per-vehicle vec3 getter + 3 two-index wheel getters) --
+    'veh_tbl_8820a0_get3': {'rva': 0x0046bd20, 'export': 'VehTbl8820a0Get3', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'ptr_out_table_get', 'target_global': 0x008820a0, 'stride': 0xd04, 'span': 3, 'bound': 0x10, 'lut_root_delta': 0, 'path1_tests': [0, 1, 5, 15, 16, 3, 10, 1, 15, 0], 'path2_tests': [0, 7, 16]},
+    'idx2_wheel_881790_get': {'rva': 0x0046d320, 'export': 'Idx2Wheel881790Get', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']}, 'arg_type': 'idx2_table_get', 'target_global': 0x00881790, 'mult': 0x11, 'stride': 0xc4, 'bound': 0x10, 'bound2': 4, 'lut_root_delta': 0, 'path1_tests': [[0, 0], [1, 2], [15, 3], [5, 1], [16, 0], [0, 4], [16, 4], [3, 3], [10, 2], [0, 0]], 'path2_tests': [[0, 0], [15, 3], [16, 4]]},
+    'idx2_wheel_881738_get': {'rva': 0x0046d360, 'export': 'Idx2Wheel881738Get', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']}, 'arg_type': 'idx2_table_get', 'target_global': 0x00881738, 'mult': 0x11, 'stride': 0xc4, 'bound': 0x10, 'bound2': 4, 'lut_root_delta': 0, 'path1_tests': [[0, 0], [1, 2], [15, 3], [5, 1], [16, 0], [0, 4], [16, 4], [3, 3], [10, 2], [0, 0]], 'path2_tests': [[0, 0], [15, 3], [16, 4]]},
+    'idx2_wheel_881744_get': {'rva': 0x0046bd60, 'export': 'Idx2Wheel881744Get', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32', 'uint32']}, 'arg_type': 'idx2_table_get', 'target_global': 0x00881744, 'mult': 0x11, 'stride': 0xc4, 'bound': 0x10, 'bound2': 4, 'lut_root_delta': 0, 'path1_tests': [[0, 0], [1, 2], [15, 3], [5, 1], [16, 0], [0, 4], [16, 4], [3, 3], [10, 2], [0, 0]], 'path2_tests': [[0, 0], [15, 3], [16, 4]]},
+
     # ---- promote-round round 55 (3 scenery-actor 200-entry getters + 4-global clearer) --
     'table_6c9438_get': {'rva': 0x0047ce00, 'export': 'Table6c9438Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x006c9438, 'stride': 4, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 5, 10, 0xC8, 0xFFFFFFFF, 3, 7, 15], 'path2_tests': [0, 0xC8, 0xFFFFFFFF]},
     'table_6c9758_get': {'rva': 0x0047ce80, 'export': 'Table6c9758Get', 'signature': {'ret': 'uint32', 'args': ['int32']}, 'arg_type': 'int_scalar', 'seed_table': {'base': 0x006c9758, 'stride': 4, 'span': 16}, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 5, 10, 0xC8, 0xFFFFFFFF, 3, 7, 15], 'path2_tests': [0, 0xC8, 0xFFFFFFFF]},
