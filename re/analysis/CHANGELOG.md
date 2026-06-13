@@ -3418,3 +3418,7 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-12  00429840  RaceStateLatchSet  C2->C3  promote-round-9 scalars_to_scattered_globals diff 10/10 GREEN log/diff_race_state_latch_set.csv (latch branch exercised via fill=0xFF)
 2026-06-12  0040e360  RaceMode::Set  C2->C3  promote-round-10 void_setter_observe diff 10/10 GREEN log/diff_race_mode_set.csv (restricted-valid vectors on live phase global)
 2026-06-12  0040b410  RaceScoreTimerGet  C2->C3  promote-round-10 scenario=race diff 10/10 GREEN log/diff_race_score_timer_get.csv
+2026-06-12  004cae90  RwCapsBlockPtrGet  C2->C3  promote-round-11 diff 10/10 GREEN log/diff_rw_caps_block_ptr_get.csv
+2026-06-12  0042f520  ViewportBlockPtrGet  C2->C3  promote-round-11 diff 10/10 GREEN log/diff_viewport_block_ptr_get.csv
+2026-06-12  00485370  DynamicObjectListGetBase  C2->C3  promote-round-11 diff 10/10 GREEN log/diff_dynamic_object_list_get_base.csv
+2026-06-12  00405420  ReplayCursorReset  C2->C3  promote-round-11 scalars_to_scattered_globals diff 10/10 GREEN log/diff_replay_cursor_reset.csv
