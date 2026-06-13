@@ -1528,6 +1528,32 @@ function runDiff() {
         return;
     }
 
+    // ── int2out (promote-round-25 harness-ext, SWEEP-CRITICAL) ───────────────
+    // For two-out-pointer getters: T fn(int idx, U* out_a, U* out_b) — writes a
+    // 4-byte value to each out and returns a value. Compares both out buffers
+    // AND the return (packed fingerprint "<a>,<b>:<ret>"). CONFIG.tests is a
+    // list of int indices. Validated on 0x0046cbb0 (per-car state pair getter).
+    if (CONFIG.arg_type === 'int2out') {
+        const a1 = Memory.alloc(4), a2 = Memory.alloc(4);
+        const b1 = Memory.alloc(4), b2 = Memory.alloc(4);
+        function h8(v) { return ('00000000' + (v >>> 0).toString(16)).slice(-8); }
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const idx = CONFIG.tests[i] | 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            a1.writeU32(0); a2.writeU32(0); b1.writeU32(0); b2.writeU32(0);
+            try { const r = Orig(idx, a1, a2);
+                  origV = h8(a1.readU32()) + ',' + h8(a2.readU32()) + ':' + h8(r); } catch(e) { errO = e.message; }
+            try { const r = Reimpl(idx, b1, b2);
+                  reimV = h8(b1.readU32()) + ',' + h8(b2.readU32()) + ':' + h8(r); } catch(e) { errR = e.message; }
+            results.push({ idx: i, input: idx,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a

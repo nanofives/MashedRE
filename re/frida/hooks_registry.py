@@ -14219,6 +14219,23 @@ HOOKS = {
     # out = a + t*(b-a), pure float leaf (no globals). NEW arg_type vec3_lerp
     # (SWEEP-CRITICAL). Pure -> menu-attach-safe; tests provide a/b/t.
     # ref: re/analysis/render_3_c1_to_c2_s3/FUN_004b4650.md
+    # ---- promote-round round 25 (L5 int2out: two-out-ptr getter) --------------
+    # 0x0046cbb0  CarStatePairGet — uint32(uint idx, uint32* out_a, uint32* out_b):
+    # idx>=0x10 -> ret 0; else *out_a = per-car state (0x00881f90+idx*0xd04),
+    # *out_b = secondary (+4), ret 1. NEW arg_type int2out (SWEEP-CRITICAL).
+    # Race lane (per-car struct populated in a live race); in-bounds 0..3 + OOB.
+    # ref: re/analysis/vehicle_damage_d2/0x0046cbb0.md
+    'car_state_pair_get': {
+        'rva':            0x0046cbb0,
+        'export':         'CarStatePairGet',
+        'signature':      {'ret': 'uint32', 'args': ['int32', 'pointer', 'pointer']},
+        'arg_type':       'int2out',
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0, 1, 2, 3, 16, 100, 0, 1, 2, 3],
+        'path2_tests':    [0, 1, 16],
+    },
+
     # ---- promote-round round 24 (resume; existing handlers) -------------------
 
     # 0x00496900  SlotActiveThunk — uint32(int idx). 4B thunk call-through to
