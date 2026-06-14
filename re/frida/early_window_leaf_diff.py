@@ -127,6 +127,7 @@ PURE_LEAF_ARGTYPES = {
     'arg_to_global_ret',         # u32 fn(v): reimpl writes *tgt + returns (deterministic fn of v). seed tgt sentinel, call, check tgt+ret. test=v
     'indexed_global_field_read', # u32 fn(): return *(u32*)(*(u32*)tgt + *(u32*)glob + field_off). seed tgt->buf, glob->idx(nonzero), place test at buf[idx+field_off]. verifies base ptr + index global + field_off. test=value
     'indexed_global_field_write',# int fn(v): *(u32*)(*(u32*)tgt + *(u32*)glob + field_off)=v; return const/v. seed tgt->buf, glob->idx; call; observe slot|ret. test=v
+    'thiscall_struct_from_table',# __thiscall fn(this): idx=this[idx_off]; record=tbl+idx*tbl_stride; derive into this fields. orig=thiscall(ECX), reimpl=__cdecl(self). seed this+table, snapshot observe_offs. test=value
 }
 
 SRC = r"""
@@ -197,10 +198,16 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'cond_table_get') ? ['uint32']
               : (cfg.at === 'cond_global_set') ? ['uint32']
               : (cfg.at === 'indexed_table_set') ? ['uint32','uint32']
+              : (cfg.at === 'thiscall_struct_from_table') ? ['pointer']
               : (cfg.at === 'void_setter_observe' || cfg.at === 'int_scalar' || cfg.at === 'float_table_read') ? ['uint32'] : [];
   const _keep = [];
-  const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, 'mscdecl');
-  const Reim = new NativeFunction(reim,         cfg.ret, nargs, 'mscdecl');
+  // Per-side calling convention. The original may be __thiscall (this in ECX);
+  // the reimpl is exported as plain __cdecl(void* self) (clean undecorated name,
+  // no __fastcall @name@N mangling). The diff compares the OBSERVABLE effect
+  // (struct fields / globals written), not the call mechanism, so mixed
+  // conventions are sound. Defaults preserve the all-mscdecl behaviour.
+  const Orig = new NativeFunction(ptr(cfg.rva), cfg.ret, nargs, cfg.conv_orig || 'mscdecl');
+  const Reim = new NativeFunction(reim,         cfg.ret, nargs, cfg.conv_reim || 'mscdecl');
   const norm = function (v) { return (cfg.ret === 'float') ? v : (v >>> 0); };
   const res = [];
   for (let i = 0; i < cfg.tests.length; i++) {
@@ -865,6 +872,25 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'thiscall_struct_from_table') {
+      // __thiscall void/int fn(this): idx=this[idx_off]; read record at
+      // tbl+idx*tbl_stride; write/derive into this fields. Seed a scratch `this`
+      // (idx_off=cfg.idx) + the global table record (seed_tbl_n dwords, varied by
+      // test), call, snapshot cfg.observe_offs. Reimpl is __cdecl(self) so it sees
+      // the SAME this buffer (passed on the stack); original gets it in ECX.
+      const io5 = cfg.idx_off | 0, gi5 = (cfg.idx | 0) || 5, ts5 = cfg.tbl_stride | 0;
+      const sn5 = cfg.seed_tbl_n | 0, offs5 = cfg.observe_offs || [];
+      const tbl5 = ptr(cfg.tbl);
+      const sbuf = Memory.alloc(0x400); _keep.push(sbuf);
+      const runT = function (CALL) {
+        for (let z = 0; z < 0x400; z += 4) sbuf.add(z).writeU32(0);
+        sbuf.add(io5).writeU32(gi5 >>> 0);
+        for (let k = 0; k < sn5; k++) tbl5.add(gi5 * ts5 + k * 4).writeU32((t ^ (0x100 * k)) >>> 0);
+        CALL(sbuf);
+        return offs5.map(function (o2) { return sbuf.add(o2).readU32() >>> 0; }).join('|');
+      };
+      try { o = runT(Orig); } catch (e) { eo = e.message; }
+      try { r = runT(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'deref_table_read') {
       // return (*p1)[i]. Seed an array behind p1 with distinct values; non-degenerate.
       const span = (cfg.span | 0) || 16;
@@ -914,7 +940,12 @@ def run(name):
            'stride_dw': h.get('stride_dw'), 'passthrough_arg': h.get('passthrough_arg'),
            'mask': h.get('mask'), 'glob': h.get('glob'), 'p1_off': h.get('p1_off'),
            'arg2_kind': h.get('arg2_kind'), 'arg2_dwords': h.get('arg2_dwords'),
-           'seed': h.get('seed'), 'asi': ASI}
+           'seed': h.get('seed'),
+           'idx_off': h.get('idx_off'), 'tbl': h.get('tbl'),
+           'tbl_stride': h.get('tbl_stride'), 'seed_tbl_n': h.get('seed_tbl_n'),
+           'observe_offs': h.get('observe_offs'),
+           'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
+           'asi': ASI}
     p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
                          env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
     session = None

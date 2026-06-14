@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 103 (thiscall struct-from-global-table getters) --
+    'copy_41b770': {'rva': 0x0041b770, 'export': '@Copy41b770@4', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'thiscall_struct_from_table', 'conv_orig': 'thiscall', 'conv_reim': 'thiscall', 'idx_off': 0x164, 'tbl': 0x005f334c, 'tbl_stride': 12, 'seed_tbl_n': 3, 'idx': 5, 'observe_offs': [0x150, 0x154, 0x158], 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0x7FFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},
+    'copy_41ae20': {'rva': 0x0041ae20, 'export': '@Copy41ae20@4', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'thiscall_struct_from_table', 'conv_orig': 'thiscall', 'conv_reim': 'thiscall', 'idx_off': 0x64, 'tbl': 0x005f3304, 'tbl_stride': 12, 'seed_tbl_n': 3, 'idx': 5, 'observe_offs': [0x50, 0x54, 0x58, 0x70], 'lut_root_delta': 0, 'path1_tests': [0x3f800000, 0x40000000, 0x41200000, 0x42480000, 0x3e800000, 0x40490fdb], 'path2_tests': [0x3f800000, 0x40000000]},
+
     # ---- promote-round round 102 (indexed_global_field_read getters) --
     'get_4c5850': {'rva': 0x004c5850, 'export': 'Get4c5850', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'indexed_global_field_read', 'target_global': 0x007d4054, 'glob': 0x007d3ff8, 'field_off': 0x20, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0x11111111, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0xFFFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},
     'get_4c5ca0': {'rva': 0x004c5ca0, 'export': 'Get4c5ca0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'indexed_global_field_read', 'target_global': 0x007d4054, 'glob': 0x007d3ff8, 'field_off': 0x10, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0x22222222, 0xDEADBEEF, 0xCAFEBABE, 0x12345678, 1, 0xFFFFFFFF], 'path2_tests': [0xDEADBEEF, 1]},

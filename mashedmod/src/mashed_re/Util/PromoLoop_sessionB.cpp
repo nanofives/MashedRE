@@ -685,3 +685,33 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Set4c5c80(std::uint32_t v
     return v;
 }
 RH_ScopedInstall(Set4c5c80, 0x004c5c80);
+
+// ===== round 103 =====
+// thiscall_struct_from_table family: __thiscall(this) reads global table indexed by
+// this[idx_off], derives into this fields. Declared __fastcall (this in ECX) so the
+// ABI matches the original for both early_window (Frida thiscall) and auto-install.
+// Export resolves under the decorated name @Name@4 (set in hooks_registry).
+
+// 0x0041b770  render thiscall — byte-verified: i=this[0x164]; rec=&tbl_0x5f334c[i*3];
+//   this[0x150]=rec[0]; this[0x154]=rec[1]; this[0x158]=rec[2]
+extern "C" __declspec(dllexport) void __fastcall Copy41b770(char* self) {
+    std::uint32_t i = *reinterpret_cast<std::uint32_t*>(self + 0x164);
+    const std::uint32_t* rec = reinterpret_cast<const std::uint32_t*>(0x005f334cu + i * 12u);
+    std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(self + 0x150);
+    dst[0] = rec[0]; dst[1] = rec[1]; dst[2] = rec[2];
+}
+RH_ScopedInstall(Copy41b770, 0x0041b770);
+
+// 0x0041ae20  render thiscall — byte-verified: i=this[0x64]; rec=&tbl_0x5f3304[i*3];
+//   this[0x50]=rec[0]; this[0x54]=rec[1]; this[0x58]=rec[2]; this[0x70]=0;
+//   this[0x50] = (float)this[0x50] + (float)this[0x50]  (FLD;FADD ST0,ST0;FSTP — exact 2x)
+extern "C" __declspec(dllexport) void __fastcall Copy41ae20(char* self) {
+    std::uint32_t i = *reinterpret_cast<std::uint32_t*>(self + 0x64);
+    const std::uint32_t* rec = reinterpret_cast<const std::uint32_t*>(0x005f3304u + i * 12u);
+    std::uint32_t* dst = reinterpret_cast<std::uint32_t*>(self + 0x50);
+    dst[0] = rec[0]; dst[1] = rec[1]; dst[2] = rec[2];
+    *reinterpret_cast<std::uint32_t*>(self + 0x70) = 0;
+    float* f = reinterpret_cast<float*>(self + 0x50);
+    *f = *f + *f;
+}
+RH_ScopedInstall(Copy41ae20, 0x0041ae20);
