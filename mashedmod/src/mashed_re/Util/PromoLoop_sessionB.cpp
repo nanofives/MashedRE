@@ -1088,6 +1088,17 @@ extern "C" __declspec(dllexport) void __cdecl Get4d54d0(std::uint32_t idx, std::
 }
 RH_ScopedInstall(Get4d54d0, 0x004d54d0);
 
+// ===== round 119 =====
+// 0x004893b0 — byte-verified: void fn(p): p[0xc]++; base=p[0]; idx=p[8];
+//   *(u32*)(base + idx*0x30 - 0x14) = 1   (nested: p[0] is a base ptr)
+extern "C" __declspec(dllexport) void __cdecl Inc4893b0(std::uint8_t* p) {
+    *reinterpret_cast<std::uint32_t*>(p + 0xc) += 1;
+    std::uint8_t* base = *reinterpret_cast<std::uint8_t**>(p);
+    std::uint32_t idx = *reinterpret_cast<std::uint32_t*>(p + 8);
+    *reinterpret_cast<std::uint32_t*>(base + idx * 0x30u - 0x14u) = 1;
+}
+RH_ScopedInstall(Inc4893b0, 0x004893b0);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

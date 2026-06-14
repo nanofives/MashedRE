@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 119 (nested struct op: p[0]->sub-buffer write) --
+    'inc_4893b0': {'rva': 0x004893b0, 'export': 'Inc4893b0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'nested_struct_op', 'link_off': 0x0, 'p_seed': [{'off': 0x8, 'val': 5}, {'off': 0xc, 'val': 0x100}], 'observe_p': [0xc], 'observe_sub': [0xdc, 0xd8], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 118 (cdecl idx -> static-table -> out-ptr) --
     'get_4d54d0': {'rva': 0x004d54d0, 'export': 'Get4d54d0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'idx_table_out', 'target_global': 0x007d57f8, 'stride': 8, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5,8,16], 'path2_tests': [0,1]},
 

@@ -134,6 +134,7 @@ PURE_LEAF_ARGTYPES = {
     'eax_struct_stack_out',      # void fn(EAX=struct ptr, [esp+4]=out ptr): compute from struct fields into *out. trampoline `mov eax,sbuf; jmp`, NativeFunction(void,['pointer']) called w/ obuf. seed eax_seed into sbuf, observe out_observe in obuf. reimpl naked __asm
     'abstable_ptr_zero',         # void fn(idx): ptr=*(u32*)(abstable+idx*4); operate on a buffer at ptr. seed abstable[idx]=&scratch, fill sentinel, call fn(idx), observe scratch at observe_offs. test ignored
     'idx_table_out',             # void fn(idx, out*): *out = (value from static abs table indexed by idx). call w/ outbuf, observe out[0]. test=idx (varied -> non-degen from static table)
+    'nested_struct_op',          # void fn(ptr p): p has a nested ptr p[link_off]=&sub; fn RMWs p fields + writes into sub. alloc p+sub, link, seed p_seed, fill sub sentinel, call, observe observe_p (in p) + observe_sub (in sub). reimpl __cdecl(p). test ignored
 }
 
 SRC = r"""
@@ -203,6 +204,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'reg_scalar_compute') ? ['uint32', 'uint32']
               : (cfg.at === 'abstable_ptr_zero') ? ['uint32']
               : (cfg.at === 'idx_table_out') ? ['uint32', 'pointer']
+              : (cfg.at === 'nested_struct_op') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -882,6 +884,26 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'nested_struct_op') {
+      // void fn(ptr p): p[link_off] points to a sub-buffer; fn RMWs p's own fields
+      // and writes into the sub-buffer. Alloc p + sub, link p[link_off]=&sub, seed
+      // p fields (cfg.p_seed [{off,val}]), fill sub with sentinel, call fn(p),
+      // observe cfg.observe_p (in p) + cfg.observe_sub (in sub). Reimpl __cdecl(p).
+      const lo = cfg.link_off | 0, pseed = cfg.p_seed || [];
+      const opN = cfg.observe_p || [], osN = cfg.observe_sub || [];
+      const pN = Memory.alloc(0x400), subN = Memory.alloc(0x8000); _keep.push(pN, subN);
+      const runN = function (CALL) {
+        for (let z = 0; z < 0x400; z += 4) pN.add(z).writeU32(0);
+        for (let z = 0; z < 0x8000; z += 4) subN.add(z).writeU32(0xA5A5A5A5);
+        pseed.forEach(function (s) { pN.add(s.off | 0).writeU32(s.val >>> 0); });
+        pN.add(lo).writePointer(subN);
+        CALL(pN);
+        const a = opN.map(function (o2) { return pN.add(o2 | 0).readU32() >>> 0; });
+        const b = osN.map(function (o2) { return subN.add(o2 | 0).readU32() >>> 0; });
+        return 'P[' + a.join(',') + '] S[' + b.join(',') + ']';
+      };
+      try { o = runN(Orig); } catch (e) { eo = e.message; }
+      try { r = runN(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'idx_table_out') {
       // void fn(idx, out*): *out = value from a static abs table indexed by idx.
       // Call with an out buffer, observe out[0]. Varying idx across tests reads
@@ -1079,6 +1101,8 @@ def run(name):
            'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
+           'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
+           'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER
