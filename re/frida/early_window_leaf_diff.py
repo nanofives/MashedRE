@@ -946,24 +946,35 @@ def run(name):
            'observe_offs': h.get('observe_offs'),
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
            'asi': ASI}
-    p = subprocess.Popen([EXE], cwd=os.path.join(ROOT, 'original'),
-                         env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
+    # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
+    # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER
+    # resume — so MASHED's main thread never runs its CRT/RenderWare/d3d9 boot path.
+    # This bypasses the GPU-thrash wedge (which faults only once the main thread
+    # touches the wedge-corrupted heap during boot), so pure-leaf diffs work even when
+    # a full boot crashes pre-window. Pure leaves don't allocate heap, so a possibly-
+    # corrupted loader heap doesn't affect them. Falls back to Popen+attach if spawn
+    # is unavailable.
+    device = frida.get_local_device()
+    pid = None
     session = None
-    for _ in range(50):
-        try:
-            session = frida.attach(p.pid); break
-        except Exception:
-            time.sleep(0.03)
-    if not session:
-        print("  attach failed"); p.kill(); return None
+    try:
+        pid = device.spawn([EXE], cwd=os.path.join(ROOT, 'original'),
+                           env={**os.environ, 'MASHED_RE_NO_AUTO_HOOK': '1'})
+        session = device.attach(pid)
+    except Exception as e:
+        print(f"  spawn/attach failed: {e}")
+        if pid is not None:
+            try: device.kill(pid)
+            except Exception: pass
+        return None
     out = None
     try:
         sc = session.create_script(SRC); sc.load()
-        out = sc.exports_sync.diff(cfg)
+        out = sc.exports_sync.diff(cfg)   # runs on Frida thread; main stays suspended
     except Exception as e:
         print("  script error:", e)
     finally:
-        try: p.kill()
+        try: device.kill(pid)
         except Exception: pass
     if not out:
         return None
