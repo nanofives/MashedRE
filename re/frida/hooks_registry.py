@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 118 (cdecl idx -> static-table -> out-ptr) --
+    'get_4d54d0': {'rva': 0x004d54d0, 'export': 'Get4d54d0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'idx_table_out', 'target_global': 0x007d57f8, 'stride': 8, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5,8,16], 'path2_tests': [0,1]},
+
     # ---- promote-round round 117 (abstable->ptr->zero-region, nested) --
     'zero_489da0': {'rva': 0x00489da0, 'export': 'Zero489da0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'abstable_ptr_zero', 'target_global': 0x007067fc, 'idx': 3, 'buf_dwords': 0x1100, 'observe_offs': [0x0, 0x4, 0x8, 0x20, 0x3fe0, 0x3fe4], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 

@@ -133,6 +133,7 @@ PURE_LEAF_ARGTYPES = {
     'reg_scalar_compute',        # fn with SCALAR register args (EAX[,ECX,EDX]); returns value in EAX. trampoline sets regs per test [a,c(,d)], compare ret. varies inputs (hits all branches). reimpl naked __asm
     'eax_struct_stack_out',      # void fn(EAX=struct ptr, [esp+4]=out ptr): compute from struct fields into *out. trampoline `mov eax,sbuf; jmp`, NativeFunction(void,['pointer']) called w/ obuf. seed eax_seed into sbuf, observe out_observe in obuf. reimpl naked __asm
     'abstable_ptr_zero',         # void fn(idx): ptr=*(u32*)(abstable+idx*4); operate on a buffer at ptr. seed abstable[idx]=&scratch, fill sentinel, call fn(idx), observe scratch at observe_offs. test ignored
+    'idx_table_out',             # void fn(idx, out*): *out = (value from static abs table indexed by idx). call w/ outbuf, observe out[0]. test=idx (varied -> non-degen from static table)
 }
 
 SRC = r"""
@@ -201,6 +202,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'ptr_buffer_op') ? ['pointer']
               : (cfg.at === 'reg_scalar_compute') ? ['uint32', 'uint32']
               : (cfg.at === 'abstable_ptr_zero') ? ['uint32']
+              : (cfg.at === 'idx_table_out') ? ['uint32', 'pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -880,6 +882,19 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'idx_table_out') {
+      // void fn(idx, out*): *out = value from a static abs table indexed by idx.
+      // Call with an out buffer, observe out[0]. Varying idx across tests reads
+      // different (static) table entries -> non-degenerate. Reimpl is __cdecl(idx,out).
+      const obI = Memory.alloc(0x40); _keep.push(obI);
+      const tblI = cfg.tgt ? ptr(cfg.tgt) : null, strI = (cfg.stride | 0) || 8;
+      const seedI = (0xC0DE0000 | (t & 0xffff)) >>> 0;   // varied per idx -> verifies address+stride
+      const runI = function (CALL) {
+        if (tblI) tblI.add((t >>> 0) * strI).writeU32(seedI);
+        obI.writeU32(0xA5A5A5A5); CALL(t >>> 0, obI); return obI.readU32() >>> 0;
+      };
+      try { o = runI(Orig); } catch (e) { eo = e.message; }
+      try { r = runI(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'abstable_ptr_zero') {
       // void fn(idx): ptr = *(u32*)(abstable + idx*4); zero/op a buffer at ptr.
       // Seed abstable[idx] = &scratch, fill scratch sentinel, call fn(idx), observe
