@@ -14255,6 +14255,9 @@ HOOKS = {
     # ---- promote-round round 124 (DLL get-Nth element) --
     'get_5af700': {'rva': 0x005af700, 'export': 'Get5af700', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer','uint32']}, 'arg_type': 'dll_get_nth', 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,4], 'path2_tests': [0,4]},
 
+    # ---- promote-round round 125 (two-level indexed global read) --
+    'get_4c75c0': {'rva': 0x004c75c0, 'export': 'Get4c75c0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'indexed_global_2lvl', 'target_global': 0x007d40a8, 'glob': 0x007d3ff8, 'idx': 0x40, 'mid_off': 0x28, 'edx_val': 7, 'lut_root_delta': 0, 'path1_tests': [0xCAFE0001, 0xBEEF0002, 0x12340003], 'path2_tests': [0xCAFE0001]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 

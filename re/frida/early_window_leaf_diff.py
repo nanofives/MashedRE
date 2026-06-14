@@ -139,6 +139,7 @@ PURE_LEAF_ARGTYPES = {
     'dll_unlink',                # void fn(list, node+0xc): doubly-linked-list unlink (node[0]=next,node[4]=prev,list[8]=head,list[0xc]=sentinel). build 3-node DLL fresh each side, remove middle, snapshot the relinked pointers, compare. faithful __cdecl port
     'circular_dll_search',       # u32 fn(p, key): circular list at p[0x10] (sentinel=p+0x10), node[0]=next, object=node-0x18; returns object whose addr==key, else 0. build 3-obj circular list, test=0 -> find obj1, else bogus. READ-ONLY (simple A/B). faithful __cdecl port
     'dll_get_nth',               # u32 fn(p, cont, idx): DLL get Nth (fwd from p[0x20]=head if idx<count/2 else bwd from p[0x24]=tail; count=cont[8]); node[0]=next,node[4]=prev; returns node-0x2c. build 5-node DLL, test=idx. READ-ONLY. faithful __cdecl port
+    'indexed_global_2lvl',       # u32 fn(): base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off); return *(u32*)(base+edx*4+idx). seed tgt->buf, glob->idx(nonzero), place edx_val at buf[idx+mid_off], place test at buf[edx_val*4+idx]. verifies base+index global+mid_off+the *4 scale. test=value (varied)
 }
 
 SRC = r"""
@@ -213,6 +214,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'dll_unlink') ? ['pointer', 'pointer']
               : (cfg.at === 'circular_dll_search') ? ['pointer', 'pointer']
               : (cfg.at === 'dll_get_nth') ? ['pointer', 'pointer', 'uint32']
+              : (cfg.at === 'indexed_global_2lvl') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -900,6 +902,23 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_global_2lvl') {
+      // base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off);
+      // return *(u32*)(base+edx*4+idx). Seed base global -> scratch buffer, index
+      // global -> fixed nonzero (cfg.idx, default 0x40), write edx_val (default 7) at
+      // buf[idx+mid_off], and the test value at buf[edx_val*4+idx]. A wrong base/index
+      // global, mid_off, or *4 scale in the reimpl reads a 0-sentinel slot -> RED.
+      const mo = cfg.mid_off | 0, gi5 = (cfg.idx | 0) || 0x40, ev = (cfg.edx_val | 0) || 7;
+      const g2buf = Memory.alloc(0x2000); _keep.push(g2buf);
+      const seed2 = function () {
+        for (let z = 0; z < 0x2000; z += 4) g2buf.add(z).writeU32(0);
+        ptr(cfg.glob).writeU32(gi5 >>> 0);
+        ptr(cfg.tgt).writePointer(g2buf);
+        g2buf.add(gi5 + mo).writeU32(ev >>> 0);
+        g2buf.add(ev * 4 + gi5).writeU32(t >>> 0);
+      };
+      try { seed2(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { seed2(); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1188,6 +1207,7 @@ def run(name):
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),
            'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
+           'mid_off': h.get('mid_off'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),

@@ -1218,3 +1218,18 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init4773f0(void)
     }
 }
 RH_ScopedInstall(Init4773f0, 0x004773f0);
+
+// ===== round 125 =====
+// 0x004c75c0 — byte-verified two-level indexed global read (RW texture-catalog region):
+//   mov eax,[0x7d40a8]      ; base = *(u32*)0x7d40a8
+//   mov ecx,[0x7d3ff8]      ; idx  = *(u32*)0x7d3ff8
+//   mov edx,[eax+ecx+0x28]  ; edx  = *(u32*)(base+idx+0x28)
+//   lea eax,[eax+edx*4]     ; eax  = base + edx*4
+//   mov eax,[eax+ecx]       ; return *(u32*)(base+edx*4+idx)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c75c0(void) {
+    std::uint8_t* base = *reinterpret_cast<std::uint8_t**>(0x007d40a8);
+    std::uint32_t idx  = *reinterpret_cast<std::uint32_t*>(0x007d3ff8);
+    std::uint32_t edx  = *reinterpret_cast<std::uint32_t*>(base + idx + 0x28);
+    return *reinterpret_cast<std::uint32_t*>(base + edx * 4 + idx);
+}
+RH_ScopedInstall(Get4c75c0, 0x004c75c0);
