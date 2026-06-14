@@ -915,6 +915,39 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Bits41cdb0(void)
 }
 RH_ScopedInstall(Bits41cdb0, 0x0041cdb0);
 
+// ===== round 110 =====
+// 0x004840f0  vehicle — byte-verified reg-conv (EAX=ptr, EDX=idx): registers the ptr
+//   in tblc40[idx]=0x6cec40, counts leading non-zero dwords of *ptr into
+//   tbl840[idx]=0x6ce840. Verbatim naked-asm (incl. push/pop ebx balance).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Count4840f0(void) {
+    __asm {
+        lea ecx, [edx*4 + 0x6ce840]
+        mov dword ptr [edx*4 + 0x6cec40], eax
+        mov dword ptr [ecx], 0
+        mov dl, byte ptr [eax + 3]
+        push ebx
+        or dl, byte ptr [eax + 2]
+        or dl, byte ptr [eax + 1]
+        or dl, byte ptr [eax]
+        je L40_done
+    L40_loop:
+        mov ebx, dword ptr [ecx]
+        inc ebx
+        add eax, 4
+        mov dword ptr [ecx], ebx
+        mov bl, byte ptr [eax + 2]
+        mov dl, byte ptr [eax + 3]
+        or dl, bl
+        or dl, byte ptr [eax + 1]
+        or dl, byte ptr [eax]
+        jne L40_loop
+    L40_done:
+        pop ebx
+        ret
+    }
+}
+RH_ScopedInstall(Count4840f0, 0x004840f0);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

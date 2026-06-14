@@ -881,25 +881,31 @@ rpc.exports.diff = function(cfg) {
       // naked __asm reading EAX+ECX, so it observes the SAME two buffers.
       const eobs = cfg.eax_observe || [], cobs = cfg.ecx_observe || [];
       const eseed = cfg.eax_seed || [], cseed = cfg.ecx_seed || [];
+      const aobs = cfg.abs_observe || [];   // absolute globals the fn writes (e.g. EDX-indexed tables)
+      const hasEdx = (cfg.edx_val !== undefined && cfg.edx_val !== null);
       const bufA = Memory.alloc(0x400), bufC = Memory.alloc(0x400); _keep.push(bufA, bufC);
       const mkT2 = function (target) {
         const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
         tr.writeU8(0xB8); tr.add(1).writePointer(bufA);        // mov eax, bufA
         tr.add(5).writeU8(0xB9); tr.add(6).writePointer(bufC); // mov ecx, bufC
-        tr.add(10).writeU8(0xE9);                               // jmp target
-        tr.add(11).writeS32(target.sub(tr.add(15)).toInt32());
-        Memory.protect(tr, 16, 'rwx');
+        let p = 10;
+        if (hasEdx) { tr.add(p).writeU8(0xBA); tr.add(p + 1).writeS32(cfg.edx_val | 0); p += 5; } // mov edx, imm32
+        tr.add(p).writeU8(0xE9);                                // jmp target
+        tr.add(p + 1).writeS32(target.sub(tr.add(p + 5)).toInt32());
+        Memory.protect(tr, 32, 'rwx');
         return new NativeFunction(tr, 'uint32', [], 'mscdecl');
       };
       const seedBoth = function () {
         for (let z = 0; z < 0x400; z += 4) { bufA.add(z).writeU32(0); bufC.add(z).writeU32(0); }
         eseed.forEach(function (s) { bufA.add(s.off | 0).writeU32(s.val >>> 0); });
         cseed.forEach(function (s) { bufC.add(s.off | 0).writeU32(s.val >>> 0); });
+        aobs.forEach(function (a2) { ptr(a2).writeU32(0); });   // reset abs globals before each call
       };
       const snap = function (rv) {
         const a = eobs.map(function (o2) { return bufA.add(o2 | 0).readU32() >>> 0; });
         const c = cobs.map(function (o2) { return bufC.add(o2 | 0).readU32() >>> 0; });
-        return 'A[' + a.join(',') + '] C[' + c.join(',') + '] ret=' + (rv >>> 0);
+        const g = aobs.map(function (a2) { return ptr(a2).readU32() >>> 0; });
+        return 'A[' + a.join(',') + '] C[' + c.join(',') + '] G[' + g.join(',') + '] ret=' + (rv >>> 0);
       };
       try { seedBoth(); const rv = mkT2(ptr(cfg.rva))(); o = snap(rv); } catch (e) { eo = e.message; }
       try { seedBoth(); const rv = mkT2(reim)(); r = snap(rv); } catch (e) { er = e.message; }
@@ -978,6 +984,7 @@ def run(name):
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),
            'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
+           'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

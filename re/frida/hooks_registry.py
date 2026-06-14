@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 110 (EAX+EDX reg-conv: count + register into abs tables) --
+    'count_4840f0': {'rva': 0x004840f0, 'export': 'Count4840f0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'edx_val': 2, 'eax_seed': [{'off': 0x0, 'val': 0x11111111}, {'off': 0x4, 'val': 0x22222222}, {'off': 0x8, 'val': 0x33333333}], 'eax_observe': [], 'ecx_observe': [], 'abs_observe': ['0x006ce848', '0x006cec48'], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 109 (EAX-input bitmask-builder loop twins) --
     'bits_41b720': {'rva': 0x0041b720, 'export': 'Bits41b720', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'eax_seed': [{'off': 0xc, 'val': 1}], 'eax_observe': [0x168], 'ecx_observe': [], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
     'bits_41cdb0': {'rva': 0x0041cdb0, 'export': 'Bits41cdb0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'eax_seed': [{'off': 0xc, 'val': 1}], 'eax_observe': [0x15c], 'ecx_observe': [], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
