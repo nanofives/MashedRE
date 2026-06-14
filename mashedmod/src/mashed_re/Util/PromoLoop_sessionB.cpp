@@ -967,6 +967,17 @@ extern "C" __declspec(dllexport) void __cdecl Copy4b65c0(std::uint32_t* dst) {
 }
 RH_ScopedInstall(Copy4b65c0, 0x004b65c0);
 
+// ===== round 112 =====
+// 0x00449880  particle — byte-verified: void fn(): f=(float)*0x5f96d0 + (float)*0x5cc320
+//   (FLD;FADD;FSTP->float32); fill 0x683ec8[0..0xff] (0x100 dwords) with bits(f).
+extern "C" __declspec(dllexport) void __cdecl Fill449880(void) {
+    float f = *reinterpret_cast<float*>(0x005f96d0u) + *reinterpret_cast<float*>(0x005cc320u);
+    std::uint32_t fb = *reinterpret_cast<std::uint32_t*>(&f);
+    std::uint32_t* t = reinterpret_cast<std::uint32_t*>(0x00683ec8u);
+    for (unsigned i = 0; i < 0x100u; i++) t[i] = fb;
+}
+RH_ScopedInstall(Fill449880, 0x00449880);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

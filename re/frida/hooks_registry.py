@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 112 (zero-arg abs-table fill with computed float) --
+    'fill_449880': {'rva': 0x00449880, 'export': 'Fill449880', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x00683ec8'}, {'addr': '0x00683f08'}, {'addr': '0x006842c4'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 111 (cdecl buffer ops: memset / memcpy-from-abs) --
     'memset_478cb0': {'rva': 0x00478cb0, 'export': 'Memset478cb0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'ptr_buffer_op', 'buf_dwords': 0xb00, 'observe_offs': [0x0, 0x400, 0x1000, 0x2adc], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
     'copy_4b65c0': {'rva': 0x004b65c0, 'export': 'Copy4b65c0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'ptr_buffer_op', 'buf_dwords': 0xb00, 'observe_offs': [0x0, 0x400, 0x1000, 0x2098], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
