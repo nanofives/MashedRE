@@ -1251,3 +1251,28 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Get485340(std::uint32_t i
     return *reinterpret_cast<std::uint32_t*>(arr + i * 4);
 }
 RH_ScopedInstall(Get485340, 0x00485340);
+
+// ===== round 127 =====
+// 0x004d5480 — byte-verified mark-dirty setter (absolute tables):
+//   mov eax,[esp+4]                ; i
+//   mov ecx,[esp+8]                ; v
+//   cmp [eax*8+0x7d57f8],ecx       ; if (tbl[i*2] == v)
+//   je  ret                        ;   no change -> return
+//   mov [eax*8+0x7d57f8],ecx       ; tbl[i*2] = v
+//   mov ecx,[eax*8+0x7d57fc]       ; flag = tbl[i*2+1]
+//   test ecx,ecx / jne ret         ; if (already dirty) return
+//   mov ecx,[0x7d6c14]             ; count = *0x7d6c14
+//   mov [eax*8+0x7d57fc],1         ; tbl[i*2+1] = 1
+//   mov [ecx*4+0x7d5168],eax       ; dirtylist[count] = i
+//   inc ecx / mov [0x7d6c14],ecx   ; count++
+extern "C" __declspec(dllexport) void __cdecl Mark4d5480(std::uint32_t i, std::uint32_t v) {
+    std::uint32_t* tbl = reinterpret_cast<std::uint32_t*>(0x007d57f8);
+    if (tbl[i * 2] == v) return;
+    tbl[i * 2] = v;
+    if (tbl[i * 2 + 1] != 0) return;
+    std::uint32_t count = *reinterpret_cast<std::uint32_t*>(0x007d6c14);
+    tbl[i * 2 + 1] = 1;
+    reinterpret_cast<std::uint32_t*>(0x007d5168)[count] = i;
+    *reinterpret_cast<std::uint32_t*>(0x007d6c14) = count + 1;
+}
+RH_ScopedInstall(Mark4d5480, 0x004d5480);

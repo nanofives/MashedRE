@@ -141,6 +141,7 @@ PURE_LEAF_ARGTYPES = {
     'dll_get_nth',               # u32 fn(p, cont, idx): DLL get Nth (fwd from p[0x20]=head if idx<count/2 else bwd from p[0x24]=tail; count=cont[8]); node[0]=next,node[4]=prev; returns node-0x2c. build 5-node DLL, test=idx. READ-ONLY. faithful __cdecl port
     'indexed_global_2lvl',       # u32 fn(): base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off); return *(u32*)(base+edx*4+idx). seed tgt->buf, glob->idx(nonzero), place edx_val at buf[idx+mid_off], place test at buf[edx_val*4+idx]. verifies base+index global+mid_off+the *4 scale. test=value (varied)
     'indexed_bound_array_get',   # u32 fn(i): if(i>*(u32*)glob) return 0; cont=*(u32*)tgt; arr=*(u32*)(cont+field_off); return *(u32*)(arr+i*4). seed glob=large bound, tgt->contbuf, contbuf[field_off]->arrbuf, arrbuf[idx*4]=test; call fn(idx). verifies bound global + container ptr + field_off + array index. test=value (varied)
+    'abs_ranges_setter',         # void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly
 }
 
 SRC = r"""
@@ -217,6 +218,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'dll_get_nth') ? ['pointer', 'pointer', 'uint32']
               : (cfg.at === 'indexed_global_2lvl') ? []
               : (cfg.at === 'indexed_bound_array_get') ? ['uint32']
+              : (cfg.at === 'abs_ranges_setter') ? ((cfg.nscalar | 0) === 1 ? ['uint32'] : (cfg.nscalar | 0) === 3 ? ['uint32','uint32','uint32'] : ['uint32','uint32'])
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -938,6 +940,22 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedB(); o = Orig(gi6 >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { seedB(); r = Reim(gi6 >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'abs_ranges_setter') {
+      // void fn(scalars...): writes to absolute globals. Reset cfg.abs_ranges to 0,
+      // call fn(test scalars), snapshot the same ranges, compare. A wrong base/stride/
+      // offset in the reimpl writes a different slot -> snapshot differs -> RED. The
+      // scalar args (i, v) vary per test so the written slots/values differ -> non-degen.
+      const ranges = cfg.abs_ranges || [];
+      const aa = Array.isArray(t) ? t : [t];
+      const resetR = function () { ranges.forEach(function (rg) { for (let z = 0; z < rg.dwords; z++) ptr(rg.addr).add(z * 4).writeU32(0); }); };
+      const snapR = function () { const p = []; ranges.forEach(function (rg) { for (let z = 0; z < rg.dwords; z++) p.push(ptr(rg.addr).add(z * 4).readU32() >>> 0); }); return p.join(','); };
+      const callF = function (F) {
+        if (aa.length === 1) return F(aa[0] >>> 0);
+        if (aa.length === 3) return F(aa[0] >>> 0, aa[1] >>> 0, aa[2] >>> 0);
+        return F(aa[0] >>> 0, aa[1] >>> 0);
+      };
+      try { resetR(); callF(Orig); o = snapR(); } catch (e) { eo = e.message; }
+      try { resetR(); callF(Reim); r = snapR(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1226,7 +1244,7 @@ def run(name):
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),
            'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
-           'mid_off': h.get('mid_off'),
+           'mid_off': h.get('mid_off'), 'abs_ranges': h.get('abs_ranges'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),

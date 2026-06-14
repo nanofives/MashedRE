@@ -14261,6 +14261,9 @@ HOOKS = {
     # ---- promote-round round 126 (bounded indexed-array getter) --
     'get_485340': {'rva': 0x00485340, 'export': 'Get485340', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'indexed_bound_array_get', 'target_global': 0x006e71cc, 'glob': 0x006e71c4, 'field_off': 0x10, 'idx': 5, 'lut_root_delta': 0, 'path1_tests': [0xAA110001, 0x55220002, 0x99330003], 'path2_tests': [0xAA110001]},
 
+    # ---- promote-round round 127 (mark-dirty setter, absolute tables) --
+    'mark_4d5480': {'rva': 0x004d5480, 'export': 'Mark4d5480', 'signature': {'ret': 'void', 'args': ['uint32','uint32']}, 'arg_type': 'abs_ranges_setter', 'nscalar': 2, 'abs_ranges': [{'addr': 0x007d57f8, 'dwords': 24}, {'addr': 0x007d5168, 'dwords': 8}, {'addr': 0x007d6c14, 'dwords': 1}], 'lut_root_delta': 0, 'path1_tests': [[2, 0xAABB0001], [5, 0xCCDD0002], [9, 0x11220003]], 'path2_tests': [[2, 0xAABB0001]]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 
