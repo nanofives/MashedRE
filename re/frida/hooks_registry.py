@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 114 (EAX struct-ptr + stack out-ptr, pure compute) --
+    'time_41e150': {'rva': 0x0041e150, 'export': 'Time41e150', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'eax_struct_stack_out', 'eax_seed': [{'off': 0x0, 'val': 2}, {'off': 0x4, 'val': 30}, {'off': 0x8, 'val': 5}], 'out_observe': [0x0], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 113b (reg-conv scalar compute, per-side-convention fix) --
     'calc_42ac50': {'rva': 0x0042ac50, 'export': 'Calc42ac50', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32']}, 'arg_type': 'reg_scalar_compute', 'lut_root_delta': 0, 'path1_tests': [[2,10],[3,10],[4,20],[5,7],[0,100],[1,50],[8,3],[7,15]], 'path2_tests': [[2,10],[3,10]]},
 

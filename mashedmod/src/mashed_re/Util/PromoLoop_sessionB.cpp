@@ -993,6 +993,26 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Calc42ac50(std::uint32_t 
     return static_cast<std::uint32_t>(0xf0 - d) - term;
 }
 
+// ===== round 114 =====
+// 0x0041e150  gameplay — byte-verified reg+stack conv (EAX=struct ptr, [esp+4]=out):
+//   *out = ((p[0]*0x3c + p[1]) * 0x64) + p[2]  (time pack: min*60+sec, *100 + cs).
+//   Verbatim naked-asm; installable (ABI matches original EAX+stack).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Time41e150(void) {
+    __asm {
+        mov ecx, dword ptr [eax]
+        mov edx, dword ptr [eax + 4]
+        imul ecx, ecx, 0x3c
+        add ecx, edx
+        mov edx, dword ptr [eax + 8]
+        imul ecx, ecx, 0x64
+        add ecx, edx
+        mov edx, dword ptr [esp + 4]
+        mov dword ptr [edx], ecx
+        ret
+    }
+}
+RH_ScopedInstall(Time41e150, 0x0041e150);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

@@ -131,6 +131,7 @@ PURE_LEAF_ARGTYPES = {
     'eax_ecx_insert',            # fn(EAX=container, ECX=item): cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call)
     'ptr_buffer_op',             # void fn(ptr p): memset/memcpy-from-abs over a buffer at p. alloc buf_dwords*4, fill sentinel 0xA5A5A5A5, call fn(buf), snapshot observe_offs. test ignored
     'reg_scalar_compute',        # fn with SCALAR register args (EAX[,ECX,EDX]); returns value in EAX. trampoline sets regs per test [a,c(,d)], compare ret. varies inputs (hits all branches). reimpl naked __asm
+    'eax_struct_stack_out',      # void fn(EAX=struct ptr, [esp+4]=out ptr): compute from struct fields into *out. trampoline `mov eax,sbuf; jmp`, NativeFunction(void,['pointer']) called w/ obuf. seed eax_seed into sbuf, observe out_observe in obuf. reimpl naked __asm
 }
 
 SRC = r"""
@@ -877,6 +878,27 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_struct_stack_out') {
+      // void fn(EAX=struct ptr, [esp+4]=out ptr). Trampoline `mov eax,sbuf; jmp
+      // target`, NativeFunction(void,['pointer']) called with obuf -> obuf lands at
+      // [esp+4]. Seed sbuf fields (eax_seed), call, observe obuf (out_observe).
+      const eseedQ = cfg.eax_seed || [], oobsQ = cfg.out_observe || [0x0];
+      const sbufQ = Memory.alloc(0x100), obufQ = Memory.alloc(0x100); _keep.push(sbufQ, obufQ);
+      const mkTQ = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writePointer(sbufQ);   // mov eax, sbuf
+        tr.add(5).writeU8(0xE9); tr.add(6).writeS32(target.sub(tr.add(10)).toInt32()); // jmp
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'void', ['pointer'], 'mscdecl');
+      };
+      const runQ = function (CALL) {
+        for (let z = 0; z < 0x100; z += 4) { sbufQ.add(z).writeU32(0); obufQ.add(z).writeU32(0xCCCCCCCC); }
+        eseedQ.forEach(function (s) { sbufQ.add(s.off | 0).writeU32(s.val >>> 0); });
+        CALL(obufQ);
+        return oobsQ.map(function (o2) { return obufQ.add(o2 | 0).readU32() >>> 0; }).join('|');
+      };
+      try { o = runQ(mkTQ(ptr(cfg.rva))); } catch (e) { eo = e.message; }
+      try { r = runQ(mkTQ(reim)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
@@ -1024,7 +1046,7 @@ def run(name):
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),
            'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
-           'buf_dwords': h.get('buf_dwords'),
+           'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER
