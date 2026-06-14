@@ -140,6 +140,7 @@ PURE_LEAF_ARGTYPES = {
     'circular_dll_search',       # u32 fn(p, key): circular list at p[0x10] (sentinel=p+0x10), node[0]=next, object=node-0x18; returns object whose addr==key, else 0. build 3-obj circular list, test=0 -> find obj1, else bogus. READ-ONLY (simple A/B). faithful __cdecl port
     'dll_get_nth',               # u32 fn(p, cont, idx): DLL get Nth (fwd from p[0x20]=head if idx<count/2 else bwd from p[0x24]=tail; count=cont[8]); node[0]=next,node[4]=prev; returns node-0x2c. build 5-node DLL, test=idx. READ-ONLY. faithful __cdecl port
     'indexed_global_2lvl',       # u32 fn(): base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off); return *(u32*)(base+edx*4+idx). seed tgt->buf, glob->idx(nonzero), place edx_val at buf[idx+mid_off], place test at buf[edx_val*4+idx]. verifies base+index global+mid_off+the *4 scale. test=value (varied)
+    'indexed_bound_array_get',   # u32 fn(i): if(i>*(u32*)glob) return 0; cont=*(u32*)tgt; arr=*(u32*)(cont+field_off); return *(u32*)(arr+i*4). seed glob=large bound, tgt->contbuf, contbuf[field_off]->arrbuf, arrbuf[idx*4]=test; call fn(idx). verifies bound global + container ptr + field_off + array index. test=value (varied)
 }
 
 SRC = r"""
@@ -215,6 +216,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'circular_dll_search') ? ['pointer', 'pointer']
               : (cfg.at === 'dll_get_nth') ? ['pointer', 'pointer', 'uint32']
               : (cfg.at === 'indexed_global_2lvl') ? []
+              : (cfg.at === 'indexed_bound_array_get') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -919,6 +921,23 @@ rpc.exports.diff = function(cfg) {
       };
       try { seed2(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
       try { seed2(); r = Reim() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_bound_array_get') {
+      // u32 fn(i): if(i > *(u32*)glob) return 0; cont=*(u32*)tgt; arr=*(u32*)(cont+field_off);
+      // return *(u32*)(arr+i*4). Seed glob=large bound (so the fixed index passes), tgt->cont
+      // buffer, cont[field_off]->arr buffer, arr[idx*4]=test. Call fn(idx). A wrong bound/field
+      // offset/container global reads a 0-sentinel slot or fails the bound -> RED. test=value.
+      const ao6 = cfg.field_off | 0, gi6 = (cfg.idx | 0) || 5;
+      const cbuf = Memory.alloc(0x100), abuf = Memory.alloc(0x400); _keep.push(cbuf, abuf);
+      const seedB = function () {
+        for (let z = 0; z < 0x100; z += 4) cbuf.add(z).writeU32(0);
+        for (let z = 0; z < 0x400; z += 4) abuf.add(z).writeU32(0);
+        ptr(cfg.glob).writeU32(0xFFFF);
+        ptr(cfg.tgt).writePointer(cbuf);
+        cbuf.add(ao6).writePointer(abuf);
+        abuf.add(gi6 * 4).writeU32(t >>> 0);
+      };
+      try { seedB(); o = Orig(gi6 >>> 0) >>> 0; } catch (e) { eo = e.message; }
+      try { seedB(); r = Reim(gi6 >>> 0) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

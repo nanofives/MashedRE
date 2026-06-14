@@ -14258,6 +14258,9 @@ HOOKS = {
     # ---- promote-round round 125 (two-level indexed global read) --
     'get_4c75c0': {'rva': 0x004c75c0, 'export': 'Get4c75c0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'indexed_global_2lvl', 'target_global': 0x007d40a8, 'glob': 0x007d3ff8, 'idx': 0x40, 'mid_off': 0x28, 'edx_val': 7, 'lut_root_delta': 0, 'path1_tests': [0xCAFE0001, 0xBEEF0002, 0x12340003], 'path2_tests': [0xCAFE0001]},
 
+    # ---- promote-round round 126 (bounded indexed-array getter) --
+    'get_485340': {'rva': 0x00485340, 'export': 'Get485340', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'indexed_bound_array_get', 'target_global': 0x006e71cc, 'glob': 0x006e71c4, 'field_off': 0x10, 'idx': 5, 'lut_root_delta': 0, 'path1_tests': [0xAA110001, 0x55220002, 0x99330003], 'path2_tests': [0xAA110001]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 

@@ -1233,3 +1233,21 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Get4c75c0(void) {
     return *reinterpret_cast<std::uint32_t*>(base + edx * 4 + idx);
 }
 RH_ScopedInstall(Get4c75c0, 0x004c75c0);
+
+// ===== round 126 =====
+// 0x00485340 — byte-verified bounded indexed-array getter:
+//   mov eax,[esp+4]          ; i
+//   cmp eax,[0x6e71c4]       ; bound
+//   ja  fail                 ; unsigned: i > bound -> return 0
+//   mov ecx,[0x6e71cc]       ; container ptr
+//   mov edx,[ecx+0x10]       ; arr = container[0x10]
+//   mov eax,[edx+eax*4]      ; return arr[i]
+//   ret
+// fail: xor eax,eax; ret
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get485340(std::uint32_t i) {
+    if (i > *reinterpret_cast<std::uint32_t*>(0x006e71c4)) return 0;
+    std::uint8_t* cont = *reinterpret_cast<std::uint8_t**>(0x006e71cc);
+    std::uint8_t* arr  = *reinterpret_cast<std::uint8_t**>(cont + 0x10);
+    return *reinterpret_cast<std::uint32_t*>(arr + i * 4);
+}
+RH_ScopedInstall(Get485340, 0x00485340);
