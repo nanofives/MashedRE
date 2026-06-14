@@ -1068,6 +1068,19 @@ extern "C" __declspec(dllexport) int __cdecl Tbl4b9540(std::uint32_t a, std::uin
 }
 RH_ScopedInstall(Tbl4b9540, 0x004b9540);
 
+// ===== round 117 =====
+// 0x00489da0 — byte-verified: void fn(idx): ptr=*(u32*)(0x7067fc + idx*4);
+//   for(0x200 recs of 0x20B at ptr){ *(u32*)ptr=0; *(u32*)(ptr+4)=0; ptr+=0x20; }
+extern "C" __declspec(dllexport) void __cdecl Zero489da0(std::uint32_t idx) {
+    std::uint8_t* p = *reinterpret_cast<std::uint8_t**>(0x007067fcu + idx * 4u);
+    for (unsigned i = 0; i < 0x200u; i++) {
+        *reinterpret_cast<std::uint32_t*>(p) = 0;
+        *reinterpret_cast<std::uint32_t*>(p + 4) = 0;
+        p += 0x20u;
+    }
+}
+RH_ScopedInstall(Zero489da0, 0x00489da0);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

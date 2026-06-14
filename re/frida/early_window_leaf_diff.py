@@ -132,6 +132,7 @@ PURE_LEAF_ARGTYPES = {
     'ptr_buffer_op',             # void fn(ptr p): memset/memcpy-from-abs over a buffer at p. alloc buf_dwords*4, fill sentinel 0xA5A5A5A5, call fn(buf), snapshot observe_offs. test ignored
     'reg_scalar_compute',        # fn with SCALAR register args (EAX[,ECX,EDX]); returns value in EAX. trampoline sets regs per test [a,c(,d)], compare ret. varies inputs (hits all branches). reimpl naked __asm
     'eax_struct_stack_out',      # void fn(EAX=struct ptr, [esp+4]=out ptr): compute from struct fields into *out. trampoline `mov eax,sbuf; jmp`, NativeFunction(void,['pointer']) called w/ obuf. seed eax_seed into sbuf, observe out_observe in obuf. reimpl naked __asm
+    'abstable_ptr_zero',         # void fn(idx): ptr=*(u32*)(abstable+idx*4); operate on a buffer at ptr. seed abstable[idx]=&scratch, fill sentinel, call fn(idx), observe scratch at observe_offs. test ignored
 }
 
 SRC = r"""
@@ -199,6 +200,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_global_field_write') ? ['uint32']
               : (cfg.at === 'ptr_buffer_op') ? ['pointer']
               : (cfg.at === 'reg_scalar_compute') ? ['uint32', 'uint32']
+              : (cfg.at === 'abstable_ptr_zero') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -878,6 +880,21 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'abstable_ptr_zero') {
+      // void fn(idx): ptr = *(u32*)(abstable + idx*4); zero/op a buffer at ptr.
+      // Seed abstable[idx] = &scratch, fill scratch sentinel, call fn(idx), observe
+      // scratch at observe_offs. Reimpl reads the SAME abs-table entry -> same scratch.
+      const tbZ = ptr(cfg.tgt), idxZ = (cfg.idx | 0), bdZ = (cfg.buf_dwords | 0) || 0x1000;
+      const offsZ = cfg.observe_offs || [0x0];
+      const scratchZ = Memory.alloc(bdZ * 4); _keep.push(scratchZ);
+      const runZ = function (CALL) {
+        for (let z = 0; z < bdZ; z++) scratchZ.add(z * 4).writeU32(0xA5A5A5A5);
+        tbZ.add(idxZ * 4).writePointer(scratchZ);
+        CALL(idxZ);
+        return offsZ.map(function (o2) { return scratchZ.add(o2 | 0).readU32() >>> 0; }).join('|');
+      };
+      try { o = runZ(Orig); } catch (e) { eo = e.message; }
+      try { r = runZ(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'eax_struct_stack_out') {
       // void fn(EAX=struct ptr, [esp+4]=out ptr). Trampoline `mov eax,sbuf; jmp
       // target`, NativeFunction(void,['pointer']) called with obuf -> obuf lands at

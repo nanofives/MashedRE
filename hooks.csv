@@ -2683,7 +2683,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00489c30,FUN_00489c30,particle,C2,mapped,re/analysis/particle_promote_ac3/0x00489c30.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; U-3964; S-4032
 00489c60,FUN_00489c60,particle,C2,mapped,re/analysis/particle_promote_ac3/0x00489c60.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; U-3965; S-4033
 00489ce0,FUN_00489ce0,particle,C2,mapped,re/analysis/particle_promote_ac3/0x00489ce0.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; U-3966; no new stubs (no callees)
-00489da0,FUN_00489da0,particle,C2,mapped,re/analysis/particle_promote_ac3/0x00489da0.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; no new U/S (pure loop body)
+00489da0,FUN_00489da0,particle,C3,impl,re/analysis/particle_promote_ac3/0x00489da0.md,batch-ac-s3,green-earlywindow-r117,"batch-ac-s3: C1->C2 mechanical; no new U/S (pure loop body) | C2->C3 promote-round 117: early_window abstable_ptr_zero GREEN bit-identical (nested abstable[idx]->ptr->zero 0x200 recs, stride confirmed via preserved sentinel, suspended-spawn); reimpl PromoLoop_sessionB.cpp"
 00489dc0,FUN_00489dc0,particle,C2,mapped,re/analysis/particle_promote_ac3/0x00489dc0.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; U-3967 U-3968; S-4034..S-4038
 0048a060,FUN_0048a060,particle,C2,mapped,re/analysis/particle_promote_ac3/0x0048a060.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; U-3969; S-4039
 0048a130,FUN_0048a130,particle,C2,mapped,re/analysis/particle_promote_ac3/0x0048a130.md,batch-ac-s3,,batch-ac-s3: C1->C2 mechanical; U-3970 U-3971; S-4040 S-4041

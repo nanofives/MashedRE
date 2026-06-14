@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 117 (abstable->ptr->zero-region, nested) --
+    'zero_489da0': {'rva': 0x00489da0, 'export': 'Zero489da0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'abstable_ptr_zero', 'target_global': 0x007067fc, 'idx': 3, 'buf_dwords': 0x1100, 'observe_offs': [0x0, 0x4, 0x8, 0x20, 0x3fe0, 0x3fe4], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 116 (abs-array reset + cdecl abs-table getters) --
     'reset_489290': {'rva': 0x00489290, 'export': 'Reset489290', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x007059a8'}, {'addr': '0x007059a4'}, {'addr': '0x00703990'}, {'addr': '0x0070398c'}, {'addr': '0x00703170'}, {'addr': '0x0070316c'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
     'tbl_4b7020': {'rva': 0x004b7020, 'export': 'Tbl4b7020', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32']}, 'arg_type': 'int2_scalar', 'lut_root_delta': 0, 'path1_tests': [[0,0xffffffff],[0,0],[0,1],[0,2],[0,5],[0,10]], 'path2_tests': [[0,0xffffffff],[0,0]]},
