@@ -137,6 +137,7 @@ PURE_LEAF_ARGTYPES = {
     'nested_struct_op',          # void fn(ptr p): p has a nested ptr p[link_off]=&sub; fn RMWs p fields + writes into sub. alloc p+sub, link, seed p_seed, fill sub sentinel, call, observe observe_p (in p) + observe_sub (in sub). reimpl __cdecl(p). test ignored
     'idx_src_abs_memcpy',        # void fn(idx, src): if(src) memcpy(tgt+idx*stride, src, copy_dwords*4). seed src distinct, reset abs dest, call, observe abs dest. test=idx. reimpl __cdecl(idx,src)
     'dll_unlink',                # void fn(list, node+0xc): doubly-linked-list unlink (node[0]=next,node[4]=prev,list[8]=head,list[0xc]=sentinel). build 3-node DLL fresh each side, remove middle, snapshot the relinked pointers, compare. faithful __cdecl port
+    'circular_dll_search',       # u32 fn(p, key): circular list at p[0x10] (sentinel=p+0x10), node[0]=next, object=node-0x18; returns object whose addr==key, else 0. build 3-obj circular list, test=0 -> find obj1, else bogus. READ-ONLY (simple A/B). faithful __cdecl port
 }
 
 SRC = r"""
@@ -209,6 +210,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'nested_struct_op') ? ['pointer']
               : (cfg.at === 'idx_src_abs_memcpy') ? ['uint32', 'pointer']
               : (cfg.at === 'dll_unlink') ? ['pointer', 'pointer']
+              : (cfg.at === 'circular_dll_search') ? ['pointer', 'pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -896,6 +898,20 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'circular_dll_search') {
+      // u32 fn(p, key): circular list head at p[0x10], sentinel = p+0x10, node[0]=next,
+      // object = node-0x18; returns the object whose addr == key, else 0. Build a 3-object
+      // circular list (node embedded at object+0x18). test 0 -> search obj1 (found), else
+      // a bogus key (not found -> 0). Read-only, so a simple A/B suffices.
+      const pC = Memory.alloc(0x40);
+      const o0 = Memory.alloc(0x40), o1 = Memory.alloc(0x40), o2 = Memory.alloc(0x40);
+      _keep.push(pC, o0, o1, o2);
+      const n0 = o0.add(0x18), n1 = o1.add(0x18), n2 = o2.add(0x18), sentC = pC.add(0x10);
+      const buildC = function () { pC.add(0x10).writePointer(n0); n0.writePointer(n1); n1.writePointer(n2); n2.writePointer(sentC); };
+      const keyC = ((t >>> 0) === 0) ? o1 : pC.add(0x200);
+      const runC = function (CALL) { buildC(); return CALL(pC, keyC) >>> 0; };
+      try { o = runC(Orig); } catch (e) { eo = e.message; }
+      try { r = runC(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_unlink') {
       // Doubly-linked-list unlink. Layout (from 0x5ae550): node[0]=next, node[4]=prev,
       // list[8]=head node, list[0xc]=sentinel; the call removes the node whose

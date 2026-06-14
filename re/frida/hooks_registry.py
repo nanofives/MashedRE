@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 123 (circular doubly-linked-list search) --
+    'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
+
     # ---- promote-round round 122 (doubly-linked-list unlink) --
     'unlink_5ae550': {'rva': 0x005ae550, 'export': 'Unlink5ae550', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'dll_unlink', 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 

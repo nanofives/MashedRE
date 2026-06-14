@@ -1143,6 +1143,24 @@ extern "C" __declspec(dllexport) void __cdecl Unlink5ae550(std::uint8_t* list, s
 }
 RH_ScopedInstall(Unlink5ae550, 0x005ae550);
 
+// ===== round 123 =====
+// 0x005aa030 — byte-verified: u32 fn(p, key): circular list head=p[0x10], sentinel=p+0x10,
+//   node[0]=next, object=node-0x18; is-in-list predicate -> returns p if some object's
+//   addr==key, else 0. (eax holds p throughout; the found path never reassigns it.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Search5aa030(std::uint8_t* p, std::uint8_t* key) {
+    std::uint8_t* sentinel = p + 0x10;
+    std::uint8_t* node = *reinterpret_cast<std::uint8_t**>(p + 0x10);
+    if (node == sentinel) return 0;
+    do {
+        std::uint8_t* obj = node - 0x18;
+        std::uint8_t* next = *reinterpret_cast<std::uint8_t**>(node);
+        if (obj == key) return reinterpret_cast<std::uint32_t>(p);
+        node = next;
+    } while (node != sentinel);
+    return 0;
+}
+RH_ScopedInstall(Search5aa030, 0x005aa030);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
