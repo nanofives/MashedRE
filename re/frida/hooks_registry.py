@@ -14269,6 +14269,11 @@ HOOKS = {
     'search_41f330': {'rva': 0x0041f330, 'export': 'Search41f330', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'esi_global_search', 'target_global': 0x005f3828, 'glob': 0x005f5fe0, 'stride': 0x84, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
     'div_48ebc0': {'rva': 0x0048ebc0, 'export': 'Div48ebc0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'indexed_global_idiv', 'target_global': 0x0076d994, 'stride': 0x488, 'idx': 0, 'lut_root_delta': 0, 'path1_tests': [1, 2, 3, 16], 'path2_tests': [2]},
 
+    # ---- promote-round round 129 (deferred-renderstate setters, abs_ranges_setter, no new handler) --
+    'set_4d6c40': {'rva': 0x004d6c40, 'export': 'Set4d6c40', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'abs_ranges_setter', 'nscalar': 1, 'abs_ranges': [{'addr': 0x007d6bf0, 'dwords': 1}, {'addr': 0x007d5890, 'dwords': 1}, {'addr': 0x007d5894, 'dwords': 1}, {'addr': 0x007d6c14, 'dwords': 1}, {'addr': 0x007d5168, 'dwords': 8}], 'lut_root_delta': 0, 'path1_tests': [1, 2, 3], 'path2_tests': [1]},
+    'set_4d6c90': {'rva': 0x004d6c90, 'export': 'Set4d6c90', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'abs_ranges_setter', 'nscalar': 1, 'abs_ranges': [{'addr': 0x007d6bf4, 'dwords': 1}, {'addr': 0x007d5898, 'dwords': 1}, {'addr': 0x007d589c, 'dwords': 1}, {'addr': 0x007d6c14, 'dwords': 1}, {'addr': 0x007d5168, 'dwords': 8}], 'lut_root_delta': 0, 'path1_tests': [1, 2, 3], 'path2_tests': [1]},
+    'set_4d54f0': {'rva': 0x004d54f0, 'export': 'Set4d54f0', 'signature': {'ret': 'void', 'args': ['uint32','uint32','uint32']}, 'arg_type': 'abs_ranges_setter', 'nscalar': 3, 'abs_ranges': [{'addr': 0x007d4720, 'dwords': 256}, {'addr': 0x007d62a8, 'dwords': 16}, {'addr': 0x007d6c18, 'dwords': 1}], 'lut_root_delta': 0, 'path1_tests': [[1, 2, 0xAA], [2, 1, 0xBB], [3, 3, 0xCC]], 'path2_tests': [[1, 2, 0xAA]]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 

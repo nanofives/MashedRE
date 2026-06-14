@@ -1320,3 +1320,53 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Div48ebc0(std::uint32_t a
     return static_cast<std::uint32_t>(q);
 }
 RH_ScopedInstall(Div48ebc0, 0x0048ebc0);
+
+// ===== round 129 ===== (deferred-renderstate setters, same subsystem as r127)
+// 0x004d6c40 — byte-verified: if(arg==*0x7d6bf0) return 1; *0x7d5890=tbl_0x5d8c64[arg];
+//   if(*0x7d5894==0){ c=*0x7d6c14; *0x7d5894=1; queue_0x7d5168[c]=0x13; *0x7d6c14=c+1; }
+//   *0x7d6bf0=arg; return 1.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Set4d6c40(std::uint32_t arg) {
+    if (arg == *reinterpret_cast<std::uint32_t*>(0x007d6bf0)) return 1;
+    *reinterpret_cast<std::uint32_t*>(0x007d5890) = *reinterpret_cast<std::uint32_t*>(0x005d8c64 + arg * 4);
+    if (*reinterpret_cast<std::uint32_t*>(0x007d5894) == 0) {
+        std::uint32_t c = *reinterpret_cast<std::uint32_t*>(0x007d6c14);
+        *reinterpret_cast<std::uint32_t*>(0x007d5894) = 1;
+        reinterpret_cast<std::uint32_t*>(0x007d5168)[c] = 0x13;
+        *reinterpret_cast<std::uint32_t*>(0x007d6c14) = c + 1;
+    }
+    *reinterpret_cast<std::uint32_t*>(0x007d6bf0) = arg;
+    return 1;
+}
+RH_ScopedInstall(Set4d6c40, 0x004d6c40);
+
+// 0x004d6c90 — twin of 0x4d6c40: prev 0x7d6bf4, dest 0x7d5898, flag 0x7d589c, queued 0x14.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Set4d6c90(std::uint32_t arg) {
+    if (arg == *reinterpret_cast<std::uint32_t*>(0x007d6bf4)) return 1;
+    *reinterpret_cast<std::uint32_t*>(0x007d5898) = *reinterpret_cast<std::uint32_t*>(0x005d8c64 + arg * 4);
+    if (*reinterpret_cast<std::uint32_t*>(0x007d589c) == 0) {
+        std::uint32_t c = *reinterpret_cast<std::uint32_t*>(0x007d6c14);
+        *reinterpret_cast<std::uint32_t*>(0x007d589c) = 1;
+        reinterpret_cast<std::uint32_t*>(0x007d5168)[c] = 0x14;
+        *reinterpret_cast<std::uint32_t*>(0x007d6c14) = c + 1;
+    }
+    *reinterpret_cast<std::uint32_t*>(0x007d6bf4) = arg;
+    return 1;
+}
+RH_ScopedInstall(Set4d6c90, 0x004d6c90);
+
+// 0x004d54f0 — byte-verified 3-arg deferred-renderstate setter (indexed by a,b):
+//   off=((a*33+b)<<3); slot=0x7d4720+off; if(slot[0]==v) return; slot[0]=v;
+//   if(slot[4]!=0) return; slot[4]=1; c=*0x7d6c18; q_0x7d62a8[c*2]=a; q[c*2+1]=b; *0x7d6c18=c+1.
+extern "C" __declspec(dllexport) void __cdecl Set4d54f0(std::uint32_t a, std::uint32_t b, std::uint32_t v) {
+    std::uint32_t off = (a * 33 + b) << 3;
+    std::uint8_t* slot = reinterpret_cast<std::uint8_t*>(0x007d4720 + off);
+    if (*reinterpret_cast<std::uint32_t*>(slot) == v) return;
+    *reinterpret_cast<std::uint32_t*>(slot) = v;
+    if (*reinterpret_cast<std::uint32_t*>(slot + 4) != 0) return;
+    *reinterpret_cast<std::uint32_t*>(slot + 4) = 1;
+    std::uint32_t c = *reinterpret_cast<std::uint32_t*>(0x007d6c18);
+    reinterpret_cast<std::uint32_t*>(0x007d62a8)[c * 2] = a;
+    reinterpret_cast<std::uint32_t*>(0x007d62a8)[c * 2 + 1] = b;
+    *reinterpret_cast<std::uint32_t*>(0x007d6c18) = c + 1;
+}
+RH_ScopedInstall(Set4d54f0, 0x004d54f0);
