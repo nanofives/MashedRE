@@ -138,6 +138,7 @@ PURE_LEAF_ARGTYPES = {
     'idx_src_abs_memcpy',        # void fn(idx, src): if(src) memcpy(tgt+idx*stride, src, copy_dwords*4). seed src distinct, reset abs dest, call, observe abs dest. test=idx. reimpl __cdecl(idx,src)
     'dll_unlink',                # void fn(list, node+0xc): doubly-linked-list unlink (node[0]=next,node[4]=prev,list[8]=head,list[0xc]=sentinel). build 3-node DLL fresh each side, remove middle, snapshot the relinked pointers, compare. faithful __cdecl port
     'circular_dll_search',       # u32 fn(p, key): circular list at p[0x10] (sentinel=p+0x10), node[0]=next, object=node-0x18; returns object whose addr==key, else 0. build 3-obj circular list, test=0 -> find obj1, else bogus. READ-ONLY (simple A/B). faithful __cdecl port
+    'dll_get_nth',               # u32 fn(p, cont, idx): DLL get Nth (fwd from p[0x20]=head if idx<count/2 else bwd from p[0x24]=tail; count=cont[8]); node[0]=next,node[4]=prev; returns node-0x2c. build 5-node DLL, test=idx. READ-ONLY. faithful __cdecl port
 }
 
 SRC = r"""
@@ -211,6 +212,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'idx_src_abs_memcpy') ? ['uint32', 'pointer']
               : (cfg.at === 'dll_unlink') ? ['pointer', 'pointer']
               : (cfg.at === 'circular_dll_search') ? ['pointer', 'pointer']
+              : (cfg.at === 'dll_get_nth') ? ['pointer', 'pointer', 'uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -898,6 +900,27 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'dll_get_nth') {
+      // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
+      // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
+      // (tail) (count-1-idx) times via node[4]; return node-0x2c. Build a 5-node DLL in
+      // fixed object buffers (node embedded at object+0x2c); test = idx. Read-only.
+      const NN = 5;
+      const pG = Memory.alloc(0x40), contG = Memory.alloc(0x40);
+      const objG = []; for (let k = 0; k < NN; k++) { const b = Memory.alloc(0x40); _keep.push(b); objG.push(b); }
+      _keep.push(pG, contG);
+      const nodeG = objG.map(function (b) { return b.add(0x2c); });
+      const buildG = function () {
+        contG.add(8).writeU32(NN);
+        pG.add(0x20).writePointer(nodeG[0]); pG.add(0x24).writePointer(nodeG[NN - 1]);
+        for (let k = 0; k < NN; k++) {
+          nodeG[k].writePointer(k < NN - 1 ? nodeG[k + 1] : ptr(0));        // next
+          nodeG[k].add(4).writePointer(k > 0 ? nodeG[k - 1] : ptr(0));      // prev
+        }
+      };
+      const runG = function (CALL) { buildG(); return CALL(pG, contG, t >>> 0) >>> 0; };
+      try { o = runG(Orig); } catch (e) { eo = e.message; }
+      try { r = runG(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'circular_dll_search') {
       // u32 fn(p, key): circular list head at p[0x10], sentinel = p+0x10, node[0]=next,
       // object = node-0x18; returns the object whose addr == key, else 0. Build a 3-object

@@ -1161,6 +1161,25 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Search5aa030(std::uint8_t
 }
 RH_ScopedInstall(Search5aa030, 0x005aa030);
 
+// ===== round 124 =====
+// 0x005af700 — byte-verified: u32 fn(p, cont, idx): DLL get Nth. count=cont[8];
+//   if(idx<count/2) walk fwd from p[0x20] idx times via node[0]; else walk bwd from
+//   p[0x24] (count-1-idx) times via node[4]; return node-0x2c.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get5af700(std::uint8_t* p, std::uint8_t* cont, std::uint32_t idx) {
+    std::uint32_t count = *reinterpret_cast<std::uint32_t*>(cont + 8);
+    std::uint8_t* node;
+    if (idx < (count >> 1)) {
+        node = *reinterpret_cast<std::uint8_t**>(p + 0x20);
+        for (std::uint32_t i = 0; i < idx; i++) node = *reinterpret_cast<std::uint8_t**>(node);
+    } else {
+        node = *reinterpret_cast<std::uint8_t**>(p + 0x24);
+        std::uint32_t steps = count - 1 - idx;
+        for (std::uint32_t i = 0; i < steps; i++) node = *reinterpret_cast<std::uint8_t**>(node + 4);
+    }
+    return reinterpret_cast<std::uint32_t>(node - 0x2c);
+}
+RH_ScopedInstall(Get5af700, 0x005af700);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
