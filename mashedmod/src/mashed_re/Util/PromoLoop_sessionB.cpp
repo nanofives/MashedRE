@@ -715,3 +715,30 @@ extern "C" __declspec(dllexport) void __fastcall Copy41ae20(char* self) {
     *f = *f + *f;
 }
 RH_ScopedInstall(Copy41ae20, 0x0041ae20);
+
+// ===== round 104 =====
+
+// 0x00413fe0  ai — byte-verified: state reset. [0x89a36c]=0; then for
+//   eax=0x89a4f0; eax<0x89a6c0; eax+=0x74, edx(start 0x8032d4)+=0x14:
+//   zero 12 fields at eax{-0x2c,-0x28,-0x24,-0x20,-4,0,+4,+0x18,+0x2c,+0x30,+0x34,+0x38};
+//   [edx]=0x3e8 (1000). 4 records.
+extern "C" __declspec(dllexport) void __cdecl Reset413fe0(void) {
+    *reinterpret_cast<std::uint32_t*>(0x0089a36cu) = 0;
+    std::uint32_t edx = 0x008032d4u;
+    for (std::uint32_t eax = 0x0089a4f0u; eax < 0x0089a6c0u; eax += 0x74u, edx += 0x14u) {
+        *reinterpret_cast<std::uint32_t*>(eax - 0x2cu) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax - 0x28u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax - 0x24u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax - 0x20u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax - 0x04u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x00u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x04u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x18u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x2cu) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x30u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x34u) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax + 0x38u) = 0;
+        *reinterpret_cast<std::uint32_t*>(edx) = 0x3e8u;
+    }
+}
+RH_ScopedInstall(Reset413fe0, 0x00413fe0);
