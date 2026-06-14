@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 120 (cdecl ptr-deref + abs-table write) --
+    'write_46be10': {'rva': 0x0046be10, 'export': 'Write46be10', 'signature': {'ret': 'uint32', 'args': ['pointer','uint32','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 3, 'seed_byte': 0xCC, 'observe': [], 'abs_observe': ['0x00882ea8', '0x00882f28'], 'lut_root_delta': 0, 'path1_tests': [[1,2,0xDEAD]], 'path2_tests': [[1,2,0xDEAD]]},
+
     # ---- promote-round round 119 (nested struct op: p[0]->sub-buffer write) --
     'inc_4893b0': {'rva': 0x004893b0, 'export': 'Inc4893b0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'nested_struct_op', 'link_off': 0x0, 'p_seed': [{'off': 0x8, 'val': 5}, {'off': 0xc, 'val': 0x100}], 'observe_p': [0xc], 'observe_sub': [0xdc, 0xd8], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 

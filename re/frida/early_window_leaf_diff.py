@@ -564,11 +564,19 @@ rpc.exports.diff = function(cfg) {
       const a0 = (A[0] || 0) >>> 0, a1 = (A[1] || 0) >>> 0, a2 = (A[2] || 0) >>> 0;
       const mk = function () { const b = Memory.alloc(0x400); _keep.push(b);
                                for (let z = 0; z < 0x400; z++) b.add(z).writeU8(seed); return b; };
-      const snap = function (b) { return obs.map(function (x) { return b.add(x.off | 0).readU32() >>> 0; }).join(','); };
+      // Optional abs_observe: absolute globals the fn writes (e.g. abs tables indexed
+      // by the scalar args). Reset to sentinel before each call, snapshot after.
+      const absO = cfg.abs_observe || [];
+      const snap = function (b) {
+        const f = obs.map(function (x) { return b.add(x.off | 0).readU32() >>> 0; });
+        const g = absO.map(function (a) { return ptr(a).readU32() >>> 0; });
+        return f.join(',') + (absO.length ? ' G[' + g.join(',') + ']' : '');
+      };
+      const resetAbs = function () { absO.forEach(function (a) { ptr(a).writeU32(0x5e5e5e5e); }); };
       const call = function (fn, b) { if (ns === 1) fn(b, a0); else if (ns === 2) fn(b, a0, a1);
                                       else if (ns === 3) fn(b, a0, a1, a2); else fn(b); };
-      try { const b = mk(); call(Orig, b); o = snap(b); } catch (e) { eo = e.message; }
-      try { const b = mk(); call(Reim, b); r = snap(b); } catch (e) { er = e.message; }
+      try { const b = mk(); resetAbs(); call(Orig, b); o = snap(b); } catch (e) { eo = e.message; }
+      try { const b = mk(); resetAbs(); call(Reim, b); r = snap(b); } catch (e) { er = e.message; }
     } else if (cfg.at === 'index_then_ptr_array') {
       // fn(args): comp=mult?a0*mult+a1:a0; idx=*(int*)(base_idx+comp*4); if(idx==-1) return 0; return *(u32*)(basePtr+idx*4).
       // basePtr is REAL .rdata (string-pointer table) -> idxval must be a small in-range index; idx=-1 -> 0.
