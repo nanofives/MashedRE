@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 109 (EAX-input bitmask-builder loop twins) --
+    'bits_41b720': {'rva': 0x0041b720, 'export': 'Bits41b720', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'eax_seed': [{'off': 0xc, 'val': 1}], 'eax_observe': [0x168], 'ecx_observe': [], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'bits_41cdb0': {'rva': 0x0041cdb0, 'export': 'Bits41cdb0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'eax_seed': [{'off': 0xc, 'val': 1}], 'eax_observe': [0x15c], 'ecx_observe': [], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 108 (EAX-input entity init from per-type table) --
     'init_418a30': {'rva': 0x00418a30, 'export': 'Init418a30', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'eax_seed': [{'off': 0x50, 'val': 3}], 'eax_observe': [0x0, 0x4, 0x34, 0x38, 0x3c, 0x40, 0x44, 0x4c, 0x64], 'ecx_observe': [], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 

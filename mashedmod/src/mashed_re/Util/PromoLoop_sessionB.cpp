@@ -833,6 +833,88 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init418a30(void)
 }
 RH_ScopedInstall(Init418a30, 0x00418a30);
 
+// ===== round 109 =====
+// EAX-input bitmask-builder twins: count=[eax+0xc]; field=0x800000<<(count-1); then
+// for i<count: field |= 1<<( tbl_0x7f1a1c[[eax+i*4]<<4] + i*6 ). Verbatim naked-asm.
+
+// 0x0041b720  render — field at [eax+0x168]
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Bits41b720(void) {
+    __asm {
+        push edi
+        mov edi, dword ptr [eax + 0xc]
+        lea ecx, [edi - 1]
+        mov edx, 0x800000
+        shl edx, cl
+        mov dword ptr [eax + 0x168], edx
+        xor edx, edx
+        test edi, edi
+        jle L7b_done
+        push ebx
+        push esi
+        xor esi, esi
+        mov edi, edi
+    L7b_loop:
+        mov ecx, dword ptr [eax + edx*4]
+        shl ecx, 4
+        mov ecx, dword ptr [ecx + 0x7f1a1c]
+        add ecx, esi
+        mov ebx, 1
+        shl ebx, cl
+        mov ecx, dword ptr [eax + 0x168]
+        add esi, 6
+        or ecx, ebx
+        inc edx
+        cmp edx, edi
+        mov dword ptr [eax + 0x168], ecx
+        jl L7b_loop
+        pop esi
+        pop ebx
+    L7b_done:
+        pop edi
+        ret
+    }
+}
+RH_ScopedInstall(Bits41b720, 0x0041b720);
+
+// 0x0041cdb0  render — field at [eax+0x15c]
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Bits41cdb0(void) {
+    __asm {
+        push edi
+        mov edi, dword ptr [eax + 0xc]
+        lea ecx, [edi - 1]
+        mov edx, 0x800000
+        shl edx, cl
+        mov dword ptr [eax + 0x15c], edx
+        xor edx, edx
+        test edi, edi
+        jle Lcd_done
+        push ebx
+        push esi
+        xor esi, esi
+        mov edi, edi
+    Lcd_loop:
+        mov ecx, dword ptr [eax + edx*4]
+        shl ecx, 4
+        mov ecx, dword ptr [ecx + 0x7f1a1c]
+        add ecx, esi
+        mov ebx, 1
+        shl ebx, cl
+        mov ecx, dword ptr [eax + 0x15c]
+        add esi, 6
+        or ecx, ebx
+        inc edx
+        cmp edx, edi
+        mov dword ptr [eax + 0x15c], ecx
+        jl Lcd_loop
+        pop esi
+        pop ebx
+    Lcd_done:
+        pop edi
+        ret
+    }
+}
+RH_ScopedInstall(Bits41cdb0, 0x0041cdb0);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

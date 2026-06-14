@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 108
-- total_green: 271
+- rounds_run: 109
+- total_green: 273
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -282,6 +282,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
 
+2026-06-14 | round 109 | EAX-input bitmask-builder loop twins | attempted 2 | GREEN 2 (Bits41b720 0x0041b720 field+0x168; Bits41cdb0 0x0041cdb0 field+0x15c — identical loop, field=0x800000<<(cnt-1) then OR 1<<(tbl_0x7f1a1c[idx<<4]+i*6); verbatim naked-asm incl. conditional push ebx/esi balance) | total_green 271->273. Twins differ only by field offset — port one, do both. eax_seed=[{0xc,1}] (count=1). NEXT reg-conv queue: 0x4840f0 (EDX+EAX, abs-table writes — needs EDX trampoline + abs-global observe), 0x488320 (EAX+EDX switch, EDX out-ptr), 0x477b60/0x4d8c40 (bigger). Session 101-109 = +16 (257->273). Lane is wedge-immune (suspended-spawn); other session contends on build/mashed_re.exe (wait for release).
 2026-06-14 | round 108 | EAX-input entity-init from per-type table | attempted 1 | GREEN 1 (Init418a30 0x00418a30 — idx=[eax+0x50]; [eax]/[eax+4]=tbl_0x5f32b0/b4[idx*8]; [eax+0x64]=-1; zero 6 fields. verbatim naked-asm; eax_ecx_insert with eax_seed=[{0x50,3}]) | total_green 270->271. Table 0x5f32b0 is valid static data at suspended-spawn (read 0x3f400000=0.75f) → non-degenerate. eax_ecx_insert confirmed as the UNIVERSAL register-leaf handler (sets EAX+ECX, per-offset eax_seed/ecx_seed, eax_observe/ecx_observe). Session 101-108 = +14 (257->271).
 2026-06-14 | round 107 | ECX-input const-field setters (reg-conv vein re-opened) | attempted 2 | GREEN 2 (Zero4944b0 0x004944b0 *this=0; Zero49c800 0x0049c800 this->[0x68]=0 — both verbatim naked-asm, via eax_ecx_insert handler which already sets ECX) | total_green 268->270. REGISTER-CONVENTION leaves (EAX/ECX/EDX-arg) are now a HARVESTABLE vein via naked-asm verbatim ports + the trampoline handlers — previously SKIP-on-sight. Frontier scan found ~15 reg-conv leaf candidates not-yet-C3 (filter false positives = internal global-loads e.g. 0x42c150/0x4c75c0; ESI/EDI-arg ones need trampoline extension). BUILD CONTENTION NOTE: the other session runs build/mashed_re.exe for captures -> LNK1104 on the exe target; wait for it to release (don't kill its active work) then rebuild. Session 101-107 = +13 (257->270).
 2026-06-14 | round 106 | eax_ecx_insert family (NEW handler, suspended-spawn) | attempted 1 | GREEN 1 (Insert484a50 0x00484a50 — EAX=container+ECX=item cross-link list-insert; verbatim naked-asm port) | total_green 267->268. NEW handler eax_ecx_insert: trampoline `mov eax,bufA; mov ecx,bufC; jmp target` sets BOTH register args, seeds both structs (eax_seed/ecx_seed), snapshots eax_observe/ecx_observe + ret. Non-degenerate (item/container ptrs, counts->1, sentinel tracked). First promotion via the unblocked suspended-spawn lane — proves both the lane AND new-handler authoring work with NO reboot. The "eax cell-insert" deferred since round 100 is now closed.
