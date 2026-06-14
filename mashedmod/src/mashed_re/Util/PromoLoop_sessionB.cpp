@@ -978,10 +978,20 @@ extern "C" __declspec(dllexport) void __cdecl Fill449880(void) {
 }
 RH_ScopedInstall(Fill449880, 0x00449880);
 
-// ===== round 113: REVERTED (Calc42ac50 0x0042ac50) — naked uint32-return reimpl
-// ret-imbalanced under force-call (AV to result value); RED. reg_scalar_compute
-// handler retained for a future fix (per-side convention: orig via reg-trampoline,
-// reimpl as plain C(a,c) — avoids naked-return). NOT installed (would crash booted). =====
+// ===== round 113b (per-side-convention fix of the reverted 113) =====
+// 0x0042ac50  frontend — byte-verified reg-conv scalar compute (orig: EAX=a idx,
+//   ECX=c val -> layout coord). Reimpl is plain __cdecl(a,c): verified via per-side
+//   convention (orig reg-trampoline vs reimpl cdecl). NOT RH_ScopedInstall'd — the
+//   install ABI (EAX/ECX) differs from cdecl; a standalone port would read its own
+//   args. C3 evidence = formula match under force-call.
+//   even(a): 0xf0 - ((c - (c>>31)) >>a 1) - (((a-1)>>1)*c);  odd(a): 0xf0 - ((a-1)>>1)*c
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Calc42ac50(std::uint32_t a, std::uint32_t c) {
+    std::uint32_t term = ((a - 1u) >> 1) * c;
+    if (a & 1u) return 0xf0u - term;
+    int ic = static_cast<int>(c);
+    int d = (ic - (ic >> 31)) >> 1;
+    return static_cast<std::uint32_t>(0xf0 - d) - term;
+}
 
 // ===== round 105 =====
 

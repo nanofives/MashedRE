@@ -197,6 +197,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_global_field_read') ? []
               : (cfg.at === 'indexed_global_field_write') ? ['uint32']
               : (cfg.at === 'ptr_buffer_op') ? ['pointer']
+              : (cfg.at === 'reg_scalar_compute') ? ['uint32', 'uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -891,8 +892,12 @@ rpc.exports.diff = function(cfg) {
         Memory.protect(tr, 32, 'rwx');
         return new NativeFunction(tr, 'uint32', [], 'mscdecl');
       };
+      // PER-SIDE CONVENTION: original is reg-arg (EAX/ECX[/EDX]) -> reg-trampoline.
+      // Reimpl is plain __cdecl(a,c[,d]) (stack args) -> the standard Reim handle
+      // (nargs = ['uint32',...]). Compares the computed RESULT, not the ABI, so a
+      // naked value-return (ret-imbalance-prone) is avoided.
       try { o = mkS(ptr(cfg.rva))() >>> 0; } catch (e) { eo = e.message; }
-      try { r = mkS(reim)() >>> 0; } catch (e) { er = e.message; }
+      try { r = (tv.length > 2 ? Reim(va, vc, vd) : Reim(va, vc)) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'ptr_buffer_op') {
       // void fn(ptr p): memset / memcpy-from-abs over a buffer at p. Alloc a
       // buffer (cfg.buf_dwords), fill a sentinel, call fn(buf), snapshot

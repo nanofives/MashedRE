@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 113
-- total_green: 277
+- rounds_run: 114
+- total_green: 278
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -283,6 +283,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
 
 2026-06-14 | BOOTED LANE RECOVERED + GOAL=1000 | full boot WORKS again (9s survive test) — the GPU wedge cleared over time. run_diff / run_diff_scenario are AVAILABLE again. **GOAL raised to 1000 total_green (currently 274 = +726, a multi-many-session marathon).** PATH: the +726 bulk is NON-LEAF / stateful functions (the L2 demoted orchestrators + race1_passed candidates all have callees / unknown arg_type) — these need the BOOTED lane (force-call at menu/race so callees run against real state) + per-fn authoring + a diff_template.js arg_type. SPAWN DISCIPLINE (critical): ≤~10 MASHED spawns/round or the wedge returns; prefer run_diff_warm (warm pool, few spawns for many hooks) for booted batches, and the wedge-immune suspended-spawn early_window lane for any remaining pure leaves. If full boots start 0xC0000005-ing pre-window again → re-wedged → pause booted rounds ~20min (it self-clears now) or use suspended-spawn only.
+2026-06-14 | round 113b | reg_scalar_compute FIXED (per-side convention) | attempted 1 | GREEN 1 (Calc42ac50 0x0042ac50 reg-conv scalar int compute, 8 varied vectors both branches) | total_green 277->278. FIX: orig called via reg-trampoline (EAX/ECX), reimpl as plain __cdecl(a,c) via standard Reim handle -> compares RESULT not ABI, avoids naked value-return ret-imbalance. NOT RH_ScopedInstall'd (install ABI=EAX/ECX != cdecl; C3 = force-call formula match). reg_scalar_compute now usable for reg-conv scalar-compute leaves. Session 101-113b = +21 (257->278).
 2026-06-14 | round 113 | reg-conv scalar compute | attempted 1 | GREEN 0 — RED/REVERTED (Calc42ac50 0x0042ac50: naked uint32-return reimpl ret-imbalanced under force-call, AV to result value; reverted to avoid crashing a booted game if auto-installed). total_green stays 277. reg_scalar_compute handler retained; FIX for next time = per-side convention (orig via reg-trampoline, reimpl plain C(a,c) mscdecl) to avoid naked value-return. dry_counter 1.
 2026-06-14 | round 112 | zero-arg abs-table fill (existing handler) | attempted 1 | GREEN 1 (Fill449880 0x00449880 — fill 0x683ec8[0x100] with computed float 3.0; scalars_to_scattered_globals) | total_green 276->277. Wedge-immune. Session 101-112 = +20 (257->277).
 2026-06-14 | round 111 | cdecl buffer ops (NEW ptr_buffer_op handler, wedge-immune) | attempted 2 | GREEN 2 (Memset478cb0 0x00478cb0 memset 0xab8 dwords; Copy4b65c0 0x004b65c0 memcpy 0x82b dwords from 0x8ab7e0) | total_green 274->276. NEW handler ptr_buffer_op: alloc buf, fill 0xA5 sentinel, call fn(ptr), snapshot observe_offs across full range (proves write reached the whole span -> count verified; source addr byte-verified). Wedge-immune (suspended-spawn). MANUAL bucket still has abs-fill/abs-copy (0x449880,0x476a10) + reg-conv int (0x42ac50). Session 101-111 = +19 (257->276).
