@@ -142,6 +142,8 @@ PURE_LEAF_ARGTYPES = {
     'indexed_global_2lvl',       # u32 fn(): base=*(u32*)tgt; idx=*(u32*)glob; edx=*(u32*)(base+idx+mid_off); return *(u32*)(base+edx*4+idx). seed tgt->buf, glob->idx(nonzero), place edx_val at buf[idx+mid_off], place test at buf[edx_val*4+idx]. verifies base+index global+mid_off+the *4 scale. test=value (varied)
     'indexed_bound_array_get',   # u32 fn(i): if(i>*(u32*)glob) return 0; cont=*(u32*)tgt; arr=*(u32*)(cont+field_off); return *(u32*)(arr+i*4). seed glob=large bound, tgt->contbuf, contbuf[field_off]->arrbuf, arrbuf[idx*4]=test; call fn(idx). verifies bound global + container ptr + field_off + array index. test=value (varied)
     'abs_ranges_setter',         # void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly
+    'esi_global_search',         # u32 fn(ESI=key): linear-search a global table (count at glob, base tgt, stride) for entry[+0]==key; return an index-derived pointer or 0. ORIG called via `mov esi,key; jmp` trampoline; reimpl is __cdecl(key) reading the same globals (compares result, not ABI). Seed count=4, zero 4 entries, table[idx*stride]=key, key=0xC0DE0000|idx. test=idx (0..3 -> distinct matched addr -> non-degen)
+    'indexed_global_idiv',       # u32 fn(arg): d=*(int*)(tgt+arg*stride); q=num/d (signed idiv); clamp. Seed d=test value at slot (fixed arg=idx), call fn(idx), compare ret. test=divisor (varied -> distinct quotients -> non-degen). reimpl __cdecl(arg) does signed C division (matches idiv trunc-toward-zero). avoid d=0
 }
 
 SRC = r"""
@@ -219,6 +221,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_global_2lvl') ? []
               : (cfg.at === 'indexed_bound_array_get') ? ['uint32']
               : (cfg.at === 'abs_ranges_setter') ? ((cfg.nscalar | 0) === 1 ? ['uint32'] : (cfg.nscalar | 0) === 3 ? ['uint32','uint32','uint32'] : ['uint32','uint32'])
+              : (cfg.at === 'esi_global_search') ? ['uint32']
+              : (cfg.at === 'indexed_global_idiv') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -956,6 +960,38 @@ rpc.exports.diff = function(cfg) {
       };
       try { resetR(); callF(Orig); o = snapR(); } catch (e) { eo = e.message; }
       try { resetR(); callF(Reim); r = snapR(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'esi_global_search') {
+      // u32 fn(ESI=key): linear-search a global table for entry[+0]==key, return an
+      // index-derived pointer (or 0). ORIG is reg-arg (ESI) -> `mov esi,key; jmp target`
+      // trampoline. REIMPL is __cdecl(key) reading the SAME globals -> compares the
+      // computed pointer, not the ABI. Seed count=4, zero 4 entries, set table[idx*stride]
+      // [+0]=key (key=0xC0DE0000|idx, distinct & nonzero). test=idx -> distinct matched addr.
+      const sstride = cfg.stride | 0, sidx = t | 0;
+      const skey = (0xC0DE0000 | sidx) >>> 0;
+      const seedS = function () {
+        for (let z = 0; z < 4 * sstride; z += 4) ptr(cfg.tgt).add(z).writeU32(0);
+        ptr(cfg.tgt).add(sidx * sstride).writeU32(skey);
+        ptr(cfg.glob).writeU32(4);
+      };
+      const mkEsi = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xBE); tr.add(1).writeU32(skey);            // mov esi, key
+        tr.add(5).writeU8(0xE9);                                // jmp target
+        tr.add(6).writeS32(target.sub(tr.add(10)).toInt32());
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'uint32', [], 'mscdecl');
+      };
+      try { seedS(); o = mkEsi(ptr(cfg.rva))() >>> 0; } catch (e) { eo = e.message; }
+      try { seedS(); r = Reim(skey >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_global_idiv') {
+      // u32 fn(arg): d = *(int*)(tgt + arg*stride); q = num / d (signed idiv); clamp. Seed
+      // d = test value at the slot (fixed arg = cfg.idx, default 0), call fn(idx), compare
+      // ret. test = divisor (varied -> distinct quotients -> non-degen). Reimpl __cdecl(arg)
+      // does signed C division, which truncates toward zero exactly like x86 idiv.
+      const divarg = (cfg.idx | 0), divslot = (cfg.tgt >>> 0) + divarg * (cfg.stride | 0);
+      const seedDv = function () { ptr(divslot).writeS32(t | 0); };
+      try { seedDv(); o = Orig(divarg >>> 0) >>> 0; } catch (e) { eo = e.message; }
+      try { seedDv(); r = Reim(divarg >>> 0) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

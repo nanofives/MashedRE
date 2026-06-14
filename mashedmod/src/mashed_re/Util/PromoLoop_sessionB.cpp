@@ -1276,3 +1276,47 @@ extern "C" __declspec(dllexport) void __cdecl Mark4d5480(std::uint32_t i, std::u
     *reinterpret_cast<std::uint32_t*>(0x007d6c14) = count + 1;
 }
 RH_ScopedInstall(Mark4d5480, 0x004d5480);
+
+// ===== round 128 =====
+// 0x0045baa0 — byte-verified ESI-keyed linear search:
+//   edx=[0x5f9bd8] (count); if(count<=0) return 0; eax=0x5f9998 (base);
+//   loop: if(esi==[eax]) return eax; eax+=0x40; while(++i<count); return 0.
+//   ESI = search key (register arg). Reimpl is __cdecl(key); compares the returned ptr.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Search45baa0(std::uint32_t key) {
+    int count = *reinterpret_cast<int*>(0x005f9bd8);
+    if (count <= 0) return 0;
+    std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x005f9998);
+    for (int i = 0; i < count; i++) {
+        if (*reinterpret_cast<std::uint32_t*>(p) == key) return reinterpret_cast<std::uint32_t>(p);
+        p += 0x40;
+    }
+    return 0;
+}
+RH_ScopedInstall(Search45baa0, 0x0045baa0);
+
+// 0x0041f330 — byte-verified ESI-keyed linear search into a PARALLEL array:
+//   edx=[0x5f5fe0] (count); eax=0 (index); if(count<=0) return 0; ecx=0x5f3828 (base);
+//   loop: if(esi==[ecx]) goto found; eax++; ecx+=0x84; while(eax<count); return 0;
+//   found: return 0x5f37a8 + eax*0x84.   ESI = search key. Reimpl __cdecl(key).
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Search41f330(std::uint32_t key) {
+    int count = *reinterpret_cast<int*>(0x005f5fe0);
+    if (count <= 0) return 0;
+    std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x005f3828);
+    for (int i = 0; i < count; i++) {
+        if (*reinterpret_cast<std::uint32_t*>(p) == key)
+            return static_cast<std::uint32_t>(0x005f37a8 + i * 0x84);
+        p += 0x84;
+    }
+    return 0;
+}
+RH_ScopedInstall(Search41f330, 0x0041f330);
+
+// 0x0048ebc0 — byte-verified indexed-global signed division with high clamp:
+//   ecx=[esp+4]*0x488; eax=8; cdq; idiv [ecx+0x76d994]; if(eax>=8) eax=8; return eax.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Div48ebc0(std::uint32_t arg) {
+    int d = *reinterpret_cast<int*>(0x0076d994 + arg * 0x488);
+    int q = 8 / d;
+    if (q >= 8) q = 8;
+    return static_cast<std::uint32_t>(q);
+}
+RH_ScopedInstall(Div48ebc0, 0x0048ebc0);

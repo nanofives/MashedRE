@@ -14264,6 +14264,11 @@ HOOKS = {
     # ---- promote-round round 127 (mark-dirty setter, absolute tables) --
     'mark_4d5480': {'rva': 0x004d5480, 'export': 'Mark4d5480', 'signature': {'ret': 'void', 'args': ['uint32','uint32']}, 'arg_type': 'abs_ranges_setter', 'nscalar': 2, 'abs_ranges': [{'addr': 0x007d57f8, 'dwords': 24}, {'addr': 0x007d5168, 'dwords': 8}, {'addr': 0x007d6c14, 'dwords': 1}], 'lut_root_delta': 0, 'path1_tests': [[2, 0xAABB0001], [5, 0xCCDD0002], [9, 0x11220003]], 'path2_tests': [[2, 0xAABB0001]]},
 
+    # ---- promote-round round 128 (ESI-keyed global searches + indexed idiv) --
+    'search_45baa0': {'rva': 0x0045baa0, 'export': 'Search45baa0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'esi_global_search', 'target_global': 0x005f9998, 'glob': 0x005f9bd8, 'stride': 0x40, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
+    'search_41f330': {'rva': 0x0041f330, 'export': 'Search41f330', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'esi_global_search', 'target_global': 0x005f3828, 'glob': 0x005f5fe0, 'stride': 0x84, 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
+    'div_48ebc0': {'rva': 0x0048ebc0, 'export': 'Div48ebc0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'indexed_global_idiv', 'target_global': 0x0076d994, 'stride': 0x488, 'idx': 0, 'lut_root_delta': 0, 'path1_tests': [1, 2, 3, 16], 'path2_tests': [2]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 
