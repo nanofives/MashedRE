@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 115 (cdecl ptr struct-field RMW, deref_struct_set) --
+    'and_4c45f0': {'rva': 0x004c45f0, 'export': 'And4c45f0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'deref_struct_set', 'nscalar': 0, 'seed_byte': 0xFF, 'observe': [{'off': 0xc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'or_4b52c0': {'rva': 0x004b52c0, 'export': 'Or4b52c0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 2, 'seed_byte': 0x00, 'observe': [{'off': 0x8}], 'lut_root_delta': 0, 'path1_tests': [[0x1234,1],[0xABCD,0],[0xFF00,1]], 'path2_tests': [[0x1234,1]]},
+    'or_4b5240': {'rva': 0x004b5240, 'export': 'Or4b5240', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 1, 'seed_byte': 0xF9, 'observe': [{'off': 0x0}], 'lut_root_delta': 0, 'path1_tests': [[1],[0]], 'path2_tests': [[1]]},
+
     # ---- promote-round round 114 (EAX struct-ptr + stack out-ptr, pure compute) --
     'time_41e150': {'rva': 0x0041e150, 'export': 'Time41e150', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'eax_struct_stack_out', 'eax_seed': [{'off': 0x0, 'val': 2}, {'off': 0x4, 'val': 30}, {'off': 0x8, 'val': 5}], 'out_observe': [0x0], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 

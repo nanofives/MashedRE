@@ -1013,6 +1013,30 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Time41e150(void)
 }
 RH_ScopedInstall(Time41e150, 0x0041e150);
 
+// ===== round 115 =====
+// cdecl(ptr,...) struct-field RMW (pure arg-deref; deref_struct_set verified).
+
+// 0x004c45f0 — void fn(p): *(u32*)(p+0xc) &= 0xfffdfffc
+extern "C" __declspec(dllexport) void __cdecl And4c45f0(std::uint8_t* p) {
+    *reinterpret_cast<std::uint32_t*>(p + 0xc) &= 0xfffdfffcu;
+}
+RH_ScopedInstall(And4c45f0, 0x004c45f0);
+
+// 0x004b52c0 — void fn(p,val,flag): e=*(u32*)(p+8); if(flag) e|=val; *(u32*)(p+8)=e
+extern "C" __declspec(dllexport) void __cdecl Or4b52c0(std::uint8_t* p, std::uint32_t val, std::uint32_t flag) {
+    std::uint32_t e = *reinterpret_cast<std::uint32_t*>(p + 8);
+    if (flag) e |= val;
+    *reinterpret_cast<std::uint32_t*>(p + 8) = e;
+}
+RH_ScopedInstall(Or4b52c0, 0x004b52c0);
+
+// 0x004b5240 — void fn(p,flag): cl=p[2]; if(flag) p[2]=cl|4
+extern "C" __declspec(dllexport) void __cdecl Or4b5240(std::uint8_t* p, std::uint32_t flag) {
+    std::uint8_t cl = p[2];
+    if (flag) p[2] = static_cast<std::uint8_t>(cl | 4);
+}
+RH_ScopedInstall(Or4b5240, 0x004b5240);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
