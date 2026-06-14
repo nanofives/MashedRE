@@ -743,6 +743,50 @@ extern "C" __declspec(dllexport) void __cdecl Reset413fe0(void) {
 }
 RH_ScopedInstall(Reset413fe0, 0x00413fe0);
 
+// ===== round 106 =====
+// 0x00484a50  world-objects — byte-verified register-conv (EAX=container, ECX=item)
+//   cross-link insert. Verbatim naked __asm port (bit-identical by construction).
+//   Guards on [eax+0x1b4] & [eax+0x190]<0x64; stores ecx into eax[count]; tracks
+//   [ecx+0x10] into [eax+0x1ac]/[eax+0x1b0]; registers eax into ecx[0x24+cnt2]; ret 1/0.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Insert484a50(void) {
+    __asm {
+        mov edx, dword ptr [eax + 0x1b4]
+        test edx, edx
+        jne L_ret0
+        mov edx, dword ptr [eax + 0x190]
+        cmp edx, 0x64
+        jl L_ins
+    L_ret0:
+        xor eax, eax
+        ret
+    L_ins:
+        mov dword ptr [eax + edx*4], ecx
+        inc dword ptr [eax + 0x190]
+        mov edx, dword ptr [eax + 0x1b0]
+        test edx, edx
+        jne L_b
+        mov edx, dword ptr [eax + 0x1ac]
+        test edx, edx
+        jne L_c
+        mov edx, dword ptr [ecx + 0x10]
+        mov dword ptr [eax + 0x1ac], edx
+    L_c:
+        mov edx, dword ptr [eax + 0x1ac]
+        cmp edx, dword ptr [ecx + 0x10]
+        je L_b
+        mov dword ptr [eax + 0x1b0], 1
+        mov edx, dword ptr [ecx + 0x10]
+        mov dword ptr [eax + 0x1ac], edx
+    L_b:
+        mov edx, dword ptr [ecx + 0x64]
+        mov dword ptr [ecx + edx*4 + 0x24], eax
+        inc dword ptr [ecx + 0x64]
+        mov eax, 1
+        ret
+    }
+}
+RH_ScopedInstall(Insert484a50, 0x00484a50);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

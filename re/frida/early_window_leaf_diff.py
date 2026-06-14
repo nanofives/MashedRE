@@ -128,6 +128,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_global_field_read', # u32 fn(): return *(u32*)(*(u32*)tgt + *(u32*)glob + field_off). seed tgt->buf, glob->idx(nonzero), place test at buf[idx+field_off]. verifies base ptr + index global + field_off. test=value
     'indexed_global_field_write',# int fn(v): *(u32*)(*(u32*)tgt + *(u32*)glob + field_off)=v; return const/v. seed tgt->buf, glob->idx; call; observe slot|ret. test=v
     'thiscall_struct_from_table',# __thiscall fn(this): idx=this[idx_off]; record=tbl+idx*tbl_stride; derive into this fields. orig=thiscall(ECX), reimpl=__cdecl(self). seed this+table, snapshot observe_offs. test=value
+    'eax_ecx_insert',            # fn(EAX=container, ECX=item): cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call)
 }
 
 SRC = r"""
@@ -872,6 +873,36 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_ecx_insert') {
+      // fn(EAX=container, ECX=item): cross-link insert. Build a trampoline
+      // `mov eax,bufA ; mov ecx,bufC ; jmp target` and call it (no stack args).
+      // Seed both bufs (cfg.eax_seed / cfg.ecx_seed = [{off,val}]; default 0),
+      // snapshot cfg.eax_observe / cfg.ecx_observe offsets in both + ret. Reimpl is
+      // naked __asm reading EAX+ECX, so it observes the SAME two buffers.
+      const eobs = cfg.eax_observe || [], cobs = cfg.ecx_observe || [];
+      const eseed = cfg.eax_seed || [], cseed = cfg.ecx_seed || [];
+      const bufA = Memory.alloc(0x400), bufC = Memory.alloc(0x400); _keep.push(bufA, bufC);
+      const mkT2 = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writePointer(bufA);        // mov eax, bufA
+        tr.add(5).writeU8(0xB9); tr.add(6).writePointer(bufC); // mov ecx, bufC
+        tr.add(10).writeU8(0xE9);                               // jmp target
+        tr.add(11).writeS32(target.sub(tr.add(15)).toInt32());
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'uint32', [], 'mscdecl');
+      };
+      const seedBoth = function () {
+        for (let z = 0; z < 0x400; z += 4) { bufA.add(z).writeU32(0); bufC.add(z).writeU32(0); }
+        eseed.forEach(function (s) { bufA.add(s.off | 0).writeU32(s.val >>> 0); });
+        cseed.forEach(function (s) { bufC.add(s.off | 0).writeU32(s.val >>> 0); });
+      };
+      const snap = function (rv) {
+        const a = eobs.map(function (o2) { return bufA.add(o2 | 0).readU32() >>> 0; });
+        const c = cobs.map(function (o2) { return bufC.add(o2 | 0).readU32() >>> 0; });
+        return 'A[' + a.join(',') + '] C[' + c.join(',') + '] ret=' + (rv >>> 0);
+      };
+      try { seedBoth(); const rv = mkT2(ptr(cfg.rva))(); o = snap(rv); } catch (e) { eo = e.message; }
+      try { seedBoth(); const rv = mkT2(reim)(); r = snap(rv); } catch (e) { er = e.message; }
     } else if (cfg.at === 'thiscall_struct_from_table') {
       // __thiscall void/int fn(this): idx=this[idx_off]; read record at
       // tbl+idx*tbl_stride; write/derive into this fields. Seed a scratch `this`
@@ -945,6 +976,8 @@ def run(name):
            'tbl_stride': h.get('tbl_stride'), 'seed_tbl_n': h.get('seed_tbl_n'),
            'observe_offs': h.get('observe_offs'),
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
+           'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),
+           'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

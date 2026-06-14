@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 106 (EAX+ECX cross-link list-insert, verbatim asm) --
+    'insert_484a50': {'rva': 0x00484a50, 'export': 'Insert484a50', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'ecx_seed': [{'off': 0x10, 'val': 0xCAFE0010}], 'eax_observe': [0x0, 0x190, 0x1ac, 0x1b0], 'ecx_observe': [0x24, 0x64], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 105 (EAX-implicit struct init, verbatim asm port) --
     'init_4773f0': {'rva': 0x004773f0, 'export': 'Init4773f0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'eax_implicit_void', 'observe': [{'off': 0x00}, {'off': 0x04}, {'off': 0x08}, {'off': 0x0c}, {'off': 0x10}, {'off': 0x14}, {'off': 0x18}, {'off': 0x20}, {'off': 0x24}, {'off': 0x28}, {'off': 0x30}, {'off': 0x34}, {'off': 0x38}, {'off': 0x40}, {'off': 0x48}, {'off': 0x4c}, {'off': 0x50}, {'off': 0x54}, {'off': 0x58}], 'lut_root_delta': 0, 'path1_tests': [0, 0, 0], 'path2_tests': [0, 0]},
 
