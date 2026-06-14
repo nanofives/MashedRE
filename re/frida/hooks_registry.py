@@ -14252,6 +14252,11 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 116 (abs-array reset + cdecl abs-table getters) --
+    'reset_489290': {'rva': 0x00489290, 'export': 'Reset489290', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x007059a8'}, {'addr': '0x007059a4'}, {'addr': '0x00703990'}, {'addr': '0x0070398c'}, {'addr': '0x00703170'}, {'addr': '0x0070316c'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'tbl_4b7020': {'rva': 0x004b7020, 'export': 'Tbl4b7020', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32']}, 'arg_type': 'int2_scalar', 'lut_root_delta': 0, 'path1_tests': [[0,0xffffffff],[0,0],[0,1],[0,2],[0,5],[0,10]], 'path2_tests': [[0,0xffffffff],[0,0]]},
+    'tbl_4b9540': {'rva': 0x004b9540, 'export': 'Tbl4b9540', 'signature': {'ret': 'int32', 'args': ['uint32','uint32']}, 'arg_type': 'int2_scalar', 'lut_root_delta': 0, 'path1_tests': [[0,0],[0,1],[1,0],[2,3],[6,0],[5,10],[3,7]], 'path2_tests': [[0,0],[6,0]]},
+
     # ---- promote-round round 115 (cdecl ptr struct-field RMW, deref_struct_set) --
     'and_4c45f0': {'rva': 0x004c45f0, 'export': 'And4c45f0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'deref_struct_set', 'nscalar': 0, 'seed_byte': 0xFF, 'observe': [{'off': 0xc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
     'or_4b52c0': {'rva': 0x004b52c0, 'export': 'Or4b52c0', 'signature': {'ret': 'void', 'args': ['pointer','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 2, 'seed_byte': 0x00, 'observe': [{'off': 0x8}], 'lut_root_delta': 0, 'path1_tests': [[0x1234,1],[0xABCD,0],[0xFF00,1]], 'path2_tests': [[0x1234,1]]},

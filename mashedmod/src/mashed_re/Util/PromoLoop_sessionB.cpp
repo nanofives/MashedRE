@@ -1037,6 +1037,37 @@ extern "C" __declspec(dllexport) void __cdecl Or4b5240(std::uint8_t* p, std::uin
 }
 RH_ScopedInstall(Or4b5240, 0x004b5240);
 
+// ===== round 116 =====
+
+// 0x00489290 — byte-verified: void fn(): for(eax=0x705a10;;){ eax-=0x68;
+//   *(u32*)(eax-4)=0; *(u32*)eax=1; if(eax==0x703170) break; }  (100-record reset)
+extern "C" __declspec(dllexport) void __cdecl Reset489290(void) {
+    std::uint32_t eax = 0x705a10u;
+    do {
+        eax -= 0x68u;
+        *reinterpret_cast<std::uint32_t*>(eax - 4) = 0;
+        *reinterpret_cast<std::uint32_t*>(eax) = 1;
+    } while (eax != 0x703170u);
+}
+RH_ScopedInstall(Reset489290, 0x00489290);
+
+// 0x004b7020 — byte-verified: uint fn(a, idx): if(idx==-1) return 0x6172f8;
+//   else return *(u32*)(0x5d8818 + idx*4)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Tbl4b7020(std::uint32_t a, std::uint32_t idx) {
+    (void)a;
+    if (idx == 0xffffffffu) return 0x006172f8u;
+    return *reinterpret_cast<std::uint32_t*>(0x005d8818u + idx * 4u);
+}
+RH_ScopedInstall(Tbl4b7020, 0x004b7020);
+
+// 0x004b9540 — byte-verified: int fn(a, b): if(a>=6) return 1;
+//   else return (int)(signed char)*(0x5d8880 + a*15 + b)
+extern "C" __declspec(dllexport) int __cdecl Tbl4b9540(std::uint32_t a, std::uint32_t b) {
+    if (a >= 6u) return 1;
+    return *reinterpret_cast<signed char*>(0x005d8880u + a * 15u + b);
+}
+RH_ScopedInstall(Tbl4b9540, 0x004b9540);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
