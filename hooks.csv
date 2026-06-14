@@ -201,7 +201,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 00493bc0,FUN_00493bc0,util,C2,mapped,re/analysis/video_mci/0x00493bc0.md,,,MultiByteToWideChar wrapper; param4=codepage from PTR_FUN_006147dc; param3=bufsize; returns LPWSTR
 00493c00,FUN_00493c00,util,C2,mapped,re/analysis/video_mci/0x00493c00.md,,,"__thiscall ctor; vtable[0]=PTR_LAB_005cf9e8; sets offsets 0xc,0x10,0xe0,0xe4,0x160; calls FUN_0049ec10; S-0375"
 00493f00,FUN_00493f00,util,C2,mapped,re/analysis/video_mci/0x00493f00.md,,,Error reporter; vsnprintf-like into 1023-byte buf; MessageBoxA NULL/buf/MASHED/0x10; S-0376
-004944b0,FUN_004944b0,util,C2,mapped,re/analysis/video_mci/0x004944b0.md,,,Zero-write thunk; *param_1=0; U-0369
+004944b0,FUN_004944b0,util,C3,impl,re/analysis/video_mci/0x004944b0.md,,green-earlywindow-r107,"Zero-write thunk; *param_1=0; U-0369 | C2->C3 promote-round 107: early_window eax_ecx_insert(ECX-input) GREEN bit-identical (verbatim naked-asm const-field setter, suspended-spawn lane); reimpl PromoLoop_sessionB.cpp"
 004944c0,FUN_004944c0,util,C2,mapped,re/analysis/video_mci/0x004944c0.md,,,VIDEO_PLAY_FN (DirectShow); takes int index into .mpg table 0x006147c4; CoCreateInstance; AddFilter TEXTURERENDERER; AddSourceFilter; Run() vtable[7] on IMediaControl; U-0367 U-0368
 00494ac0,FUN_00494ac0,util,C2,mapped,re/analysis/video_mci/0x00494ac0.md,,,"__thiscall ctor; vtable[0]=PTR_LAB_005cfd70; same offsets 0xc,0x10,0xe0,0xe4,0x160 as FUN_00493c00; calls FUN_0049ec10; S-0375"
 00494c80,FUN_00494c80,util,C2,new,re/analysis/promote_c2_piz_loader/00494c80.md,promote_c2_piz_loader-20260516,,VIDEO_PLAY_FIXED (DirectShow); hardcoded small.mpg (0x005cfcf0); no Run() call; graph setup only; U-0370
@@ -2219,7 +2219,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0049c6e0,FUN_0049c6e0,particle,C2,mapped,re/analysis/particle_promote_ad1/0049c6e0.md,batch-ad-s1,,batch-ad-s1 C1->C2: COM-style QueryInterface; HRESULT returns; vtable at param_1-0xc; U-4038..U-4040 S-4125
 0049c750,FUN_0049c750,particle,C2,mapped,re/analysis/particle_promote_ad1/0049c750.md,batch-ad-s1,,batch-ad-s1 C1->C2: guard param_1[0x14]; vtable+0x28 call arg=1; returns 0; U-4041 S-4126
 0049c770,FUN_0049c770,particle,C2,mapped,re/analysis/particle_promote_ad1/0049c770.md,batch-ad-s1,,batch-ad-s1 C1->C2: guard param_1[0x14]; vtable+0x70 call no arg; returns 0; U-4042 U-4043
-0049c800,FUN_0049c800,particle,C2,mapped,re/analysis/particle_promote_ad1/0049c800.md,batch-ad-s1,,batch-ad-s1 C1->C2: leaf setter writes 0 to *(param_1+0x68)
+0049c800,FUN_0049c800,particle,C3,impl,re/analysis/particle_promote_ad1/0049c800.md,batch-ad-s1,green-earlywindow-r107,"batch-ad-s1 C1->C2: leaf setter writes 0 to *(param_1+0x68) | C2->C3 promote-round 107: early_window eax_ecx_insert(ECX-input) GREEN bit-identical (verbatim naked-asm const-field setter, suspended-spawn lane); reimpl PromoLoop_sessionB.cpp"
 0049c810,FUN_0049c810,particle,C2,mapped,re/analysis/particle_promote_ad1/0049c810.md,batch-ad-s1,,batch-ad-s1 C1->C2: reads +0x68; vtable at +0x18 slot+0x18; FUN_0049c800; ResetEvent at +0x54; U-4044 U-4045
 0049c840,FUN_0049c840,particle,C2,disassembled,re/analysis/particle_promote_ad2/0x0049c840.md,batch-ad-s2,,batch-ad-s2 particle C1->C2; U/S IDs in re/analysis/particle_promote_ad2/
 0049c900,FUN_0049c900,particle,C2,disassembled,re/analysis/particle_promote_ad2/0x0049c900.md,batch-ad-s2,,batch-ad-s2 particle C1->C2; U/S IDs in re/analysis/particle_promote_ad2/

@@ -787,6 +787,28 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Insert484a50(voi
 }
 RH_ScopedInstall(Insert484a50, 0x00484a50);
 
+// ===== round 107 =====
+// ECX-input (thiscall) const-field setters — verbatim naked-asm ports.
+
+// 0x004944b0  util — byte-verified: mov eax,ecx; mov dword[eax],0; ret  (*this = 0; return this)
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero4944b0(void) {
+    __asm {
+        mov eax, ecx
+        mov dword ptr [eax], 0
+        ret
+    }
+}
+RH_ScopedInstall(Zero4944b0, 0x004944b0);
+
+// 0x0049c800  particle — byte-verified: mov dword[ecx+0x68],0; ret  (this->field68 = 0)
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero49c800(void) {
+    __asm {
+        mov dword ptr [ecx + 0x68], 0
+        ret
+    }
+}
+RH_ScopedInstall(Zero49c800, 0x0049c800);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

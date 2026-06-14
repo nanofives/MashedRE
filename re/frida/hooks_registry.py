@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 107 (ECX-input const-field setters, verbatim asm) --
+    'zero_4944b0': {'rva': 0x004944b0, 'export': 'Zero4944b0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'ecx_seed': [{'off': 0x0, 'val': 0xDEAD0000}], 'eax_observe': [], 'ecx_observe': [0x0], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'zero_49c800': {'rva': 0x0049c800, 'export': 'Zero49c800', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'ecx_seed': [{'off': 0x68, 'val': 0xBEEF0068}], 'eax_observe': [], 'ecx_observe': [0x68], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 106 (EAX+ECX cross-link list-insert, verbatim asm) --
     'insert_484a50': {'rva': 0x00484a50, 'export': 'Insert484a50', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'ecx_seed': [{'off': 0x10, 'val': 0xCAFE0010}], 'eax_observe': [0x0, 0x190, 0x1ac, 0x1b0], 'ecx_observe': [0x24, 0x64], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
