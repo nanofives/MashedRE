@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 121
-- total_green: 289
+- rounds_run: 122
+- total_green: 290
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -283,6 +283,7 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
 
 2026-06-14 | BOOTED LANE RECOVERED + GOAL=1000 | full boot WORKS again (9s survive test) — the GPU wedge cleared over time. run_diff / run_diff_scenario are AVAILABLE again. **GOAL raised to 1000 total_green (currently 274 = +726, a multi-many-session marathon).** PATH: the +726 bulk is NON-LEAF / stateful functions (the L2 demoted orchestrators + race1_passed candidates all have callees / unknown arg_type) — these need the BOOTED lane (force-call at menu/race so callees run against real state) + per-fn authoring + a diff_template.js arg_type. SPAWN DISCIPLINE (critical): ≤~10 MASHED spawns/round or the wedge returns; prefer run_diff_warm (warm pool, few spawns for many hooks) for booted batches, and the wedge-immune suspended-spawn early_window lane for any remaining pure leaves. If full boots start 0xC0000005-ing pre-window again → re-wedged → pause booted rounds ~20min (it self-clears now) or use suspended-spawn only.
+2026-06-14 | round 121 | cdecl idx+src -> abs-table memcpy (NEW handler) | attempted 1 | GREEN 1 (Copy41a4a0 0x0041a4a0 memcpy 0x10 dwords src->0x63c630[idx*0xc4]) | total_green 289->290 (290/1000). NEW handler idx_src_abs_memcpy. SKIPPED this batch: 0x4daa00 (recursive trie-walk - needs tree-builder, false-C3 risk), 0x5c3584/0x5c1dac (CRT float helpers), 0x4233e0 (FPATAN), 0x49da90 (stdcall ret4). Remaining = recursive/linked-list/stdcall/CRT/booted (each needs careful fresh-context handler). Session 101-121 = +33 (257->290). ~13 handlers.
 2026-06-14 | round 120 | cdecl ptr-deref + abs-table write | attempted 1 | GREEN 1 (Write46be10 0x0046be10 *arg0->tbl1[idx], a3->tbl2[idx], idx=a1*0x341+a2) | total_green 288->289. Extended deref_struct_set with abs_observe (reset+snapshot absolute globals the fn writes; additive). Session 101-120 = +32 (257->289). ~12 handlers (deref_struct_set now covers cdecl ptr-deref + abs-table writes).
 2026-06-14 | round 119 | nested struct op (NEW handler) | attempted 1 | GREEN 1 (Inc4893b0 0x004893b0 p[0xc]++ + nested *(p[0]+idx*0x30-0x14)=1) | total_green 287->288. NEW handler nested_struct_op: alloc p+sub, link p[link_off]=&sub, seed p_seed, observe p fields + sub fields (neighbor sentinel confirms exact slot). Opens nested-write sub-vein (0x46be10 etc.). Session 101-119 = +31 (257->288). ~12 reusable handlers.
 2026-06-14 | round 118 | cdecl idx->static-table->out (NEW handler) | attempted 1 | GREEN 1 (Get4d54d0 0x004d54d0 *out=tbl_0x7d57f8[idx*8]) | total_green 286->287 (+30 SESSION milestone). NEW handler idx_table_out: SEEDS the abs table entry per idx (0xC0DE|idx) so the diff verifies table address+stride (was degenerate when table read zero at suspended-spawn). Session 101-118 = +30 (257->287). ~11 reusable early_window handlers built this session.

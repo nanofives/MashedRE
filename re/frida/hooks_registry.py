@@ -14252,6 +14252,9 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 121 (cdecl idx+src -> abs-table memcpy) --
+    'copy_41a4a0': {'rva': 0x0041a4a0, 'export': 'Copy41a4a0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'idx_src_abs_memcpy', 'target_global': 0x0063c630, 'stride': 0xc4, 'copy_dwords': 0x10, 'lut_root_delta': 0, 'path1_tests': [2,5,7], 'path2_tests': [2]},
+
     # ---- promote-round round 120 (cdecl ptr-deref + abs-table write) --
     'write_46be10': {'rva': 0x0046be10, 'export': 'Write46be10', 'signature': {'ret': 'uint32', 'args': ['pointer','uint32','uint32','uint32']}, 'arg_type': 'deref_struct_set', 'nscalar': 3, 'seed_byte': 0xCC, 'observe': [], 'abs_observe': ['0x00882ea8', '0x00882f28'], 'lut_root_delta': 0, 'path1_tests': [[1,2,0xDEAD]], 'path2_tests': [[1,2,0xDEAD]]},
 

@@ -1112,6 +1112,17 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Write46be10(std::uint8_t*
 }
 RH_ScopedInstall(Write46be10, 0x0046be10);
 
+// ===== round 121 =====
+// 0x0041a4a0 — byte-verified: void fn(idx, src): if(src) memcpy(0x63c630 + idx*0xc4,
+//   src, 0x10 dwords)  (esi=src=[esp+8] after pushes, edi=idx=[esp+4])
+extern "C" __declspec(dllexport) void __cdecl Copy41a4a0(std::uint32_t idx, std::uint32_t* src) {
+    if (src) {
+        std::uint32_t* d = reinterpret_cast<std::uint32_t*>(0x0063c630u + idx * 0xc4u);
+        for (unsigned i = 0; i < 0x10u; i++) d[i] = src[i];
+    }
+}
+RH_ScopedInstall(Copy41a4a0, 0x0041a4a0);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

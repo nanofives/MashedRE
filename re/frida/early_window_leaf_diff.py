@@ -135,6 +135,7 @@ PURE_LEAF_ARGTYPES = {
     'abstable_ptr_zero',         # void fn(idx): ptr=*(u32*)(abstable+idx*4); operate on a buffer at ptr. seed abstable[idx]=&scratch, fill sentinel, call fn(idx), observe scratch at observe_offs. test ignored
     'idx_table_out',             # void fn(idx, out*): *out = (value from static abs table indexed by idx). call w/ outbuf, observe out[0]. test=idx (varied -> non-degen from static table)
     'nested_struct_op',          # void fn(ptr p): p has a nested ptr p[link_off]=&sub; fn RMWs p fields + writes into sub. alloc p+sub, link, seed p_seed, fill sub sentinel, call, observe observe_p (in p) + observe_sub (in sub). reimpl __cdecl(p). test ignored
+    'idx_src_abs_memcpy',        # void fn(idx, src): if(src) memcpy(tgt+idx*stride, src, copy_dwords*4). seed src distinct, reset abs dest, call, observe abs dest. test=idx. reimpl __cdecl(idx,src)
 }
 
 SRC = r"""
@@ -205,6 +206,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'abstable_ptr_zero') ? ['uint32']
               : (cfg.at === 'idx_table_out') ? ['uint32', 'pointer']
               : (cfg.at === 'nested_struct_op') ? ['pointer']
+              : (cfg.at === 'idx_src_abs_memcpy') ? ['uint32', 'pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -892,6 +894,21 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'idx_src_abs_memcpy') {
+      // void fn(idx, src): if(src) memcpy(tgt + idx*stride, src, copy_dwords*4).
+      // Seed src with distinct values, reset the abs dest, call fn(idx, srcbuf),
+      // observe the abs dest -> distinct copied values (verifies dest addr+stride+count).
+      const cdw = (cfg.copy_dwords | 0) || 0x10, strM = (cfg.stride | 0) || 0;
+      const destM = ptr(cfg.tgt).add((t >>> 0) * strM);
+      const srcM = Memory.alloc(cdw * 4); _keep.push(srcM);
+      const runM = function (CALL) {
+        for (let k = 0; k < cdw; k++) { srcM.add(k * 4).writeU32((0xC0DE0000 | k) >>> 0); destM.add(k * 4).writeU32(0x5e5e5e5e); }
+        CALL(t >>> 0, srcM);
+        const out = []; for (let k = 0; k < cdw; k++) out.push(destM.add(k * 4).readU32() >>> 0);
+        return out.join(',');
+      };
+      try { o = runM(Orig); } catch (e) { eo = e.message; }
+      try { r = runM(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'nested_struct_op') {
       // void fn(ptr p): p[link_off] points to a sub-buffer; fn RMWs p's own fields
       // and writes into the sub-buffer. Alloc p + sub, link p[link_off]=&sub, seed
@@ -1111,6 +1128,7 @@ def run(name):
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),
+           'copy_dwords': h.get('copy_dwords'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER
