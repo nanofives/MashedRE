@@ -130,6 +130,7 @@ PURE_LEAF_ARGTYPES = {
     'thiscall_struct_from_table',# __thiscall fn(this): idx=this[idx_off]; record=tbl+idx*tbl_stride; derive into this fields. orig=thiscall(ECX), reimpl=__cdecl(self). seed this+table, snapshot observe_offs. test=value
     'eax_ecx_insert',            # fn(EAX=container, ECX=item): cross-link insert. trampoline sets EAX+ECX, seed both bufs (eax_seed/ecx_seed [{off,val}]), call, snapshot eax_observe/ecx_observe offsets in both + ret. reimpl naked __asm reading EAX+ECX. test ignored (single call)
     'ptr_buffer_op',             # void fn(ptr p): memset/memcpy-from-abs over a buffer at p. alloc buf_dwords*4, fill sentinel 0xA5A5A5A5, call fn(buf), snapshot observe_offs. test ignored
+    'reg_scalar_compute',        # fn with SCALAR register args (EAX[,ECX,EDX]); returns value in EAX. trampoline sets regs per test [a,c(,d)], compare ret. varies inputs (hits all branches). reimpl naked __asm
 }
 
 SRC = r"""
@@ -875,6 +876,23 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'reg_scalar_compute') {
+      // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
+      // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
+      // a/c across tests exercises all branches. Reimpl is naked __asm reading regs.
+      const tv = (typeof t === 'object' && t !== null) ? t : [t];
+      const va = tv[0] | 0, vc = (tv.length > 1 ? tv[1] : 0) | 0, vd = (tv.length > 2 ? tv[2] : 0) | 0;
+      const mkS = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writeS32(va);              // mov eax, a
+        tr.add(5).writeU8(0xB9); tr.add(6).writeS32(vc);       // mov ecx, c
+        tr.add(10).writeU8(0xBA); tr.add(11).writeS32(vd);     // mov edx, d
+        tr.add(15).writeU8(0xE9); tr.add(16).writeS32(target.sub(tr.add(20)).toInt32()); // jmp
+        Memory.protect(tr, 32, 'rwx');
+        return new NativeFunction(tr, 'uint32', [], 'mscdecl');
+      };
+      try { o = mkS(ptr(cfg.rva))() >>> 0; } catch (e) { eo = e.message; }
+      try { r = mkS(reim)() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'ptr_buffer_op') {
       // void fn(ptr p): memset / memcpy-from-abs over a buffer at p. Alloc a
       // buffer (cfg.buf_dwords), fill a sentinel, call fn(buf), snapshot

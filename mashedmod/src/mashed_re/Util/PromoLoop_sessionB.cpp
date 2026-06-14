@@ -978,6 +978,11 @@ extern "C" __declspec(dllexport) void __cdecl Fill449880(void) {
 }
 RH_ScopedInstall(Fill449880, 0x00449880);
 
+// ===== round 113: REVERTED (Calc42ac50 0x0042ac50) — naked uint32-return reimpl
+// ret-imbalanced under force-call (AV to result value); RED. reg_scalar_compute
+// handler retained for a future fix (per-side convention: orig via reg-trampoline,
+// reimpl as plain C(a,c) — avoids naked-return). NOT installed (would crash booted). =====
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

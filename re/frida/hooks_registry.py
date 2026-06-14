@@ -14252,6 +14252,8 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 113: REVERTED (calc_42ac50 RED — naked uint32-return ret-imbalance) --
+
     # ---- promote-round round 112 (zero-arg abs-table fill with computed float) --
     'fill_449880': {'rva': 0x00449880, 'export': 'Fill449880', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'scalars_to_scattered_globals', 'observe': [{'addr': '0x00683ec8'}, {'addr': '0x00683f08'}, {'addr': '0x006842c4'}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
