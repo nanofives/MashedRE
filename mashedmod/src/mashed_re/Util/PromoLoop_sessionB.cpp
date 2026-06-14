@@ -809,6 +809,30 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Zero49c800(void)
 }
 RH_ScopedInstall(Zero49c800, 0x0049c800);
 
+// ===== round 108 =====
+// 0x00418a30  vehicle — byte-verified EAX-input entity init from per-type table.
+//   idx=[eax+0x50]; [eax]=tbl_0x5f32b0[idx*8]; [eax+4]=tbl_0x5f32b4[idx*8];
+//   [eax+0x64]=-1; zero [eax+{0x34,0x38,0x3c,0x40,0x44,0x4c}]. Verbatim naked-asm.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init418a30(void) {
+    __asm {
+        mov ecx, dword ptr [eax + 0x50]
+        mov edx, dword ptr [ecx*8 + 0x5f32b0]
+        mov dword ptr [eax], edx
+        mov ecx, dword ptr [ecx*8 + 0x5f32b4]
+        mov dword ptr [eax + 4], ecx
+        xor ecx, ecx
+        mov dword ptr [eax + 0x34], ecx
+        mov dword ptr [eax + 0x64], 0xffffffff
+        mov dword ptr [eax + 0x38], ecx
+        mov dword ptr [eax + 0x3c], ecx
+        mov dword ptr [eax + 0x40], ecx
+        mov dword ptr [eax + 0x44], ecx
+        mov dword ptr [eax + 0x4c], ecx
+        ret
+    }
+}
+RH_ScopedInstall(Init418a30, 0x00418a30);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
