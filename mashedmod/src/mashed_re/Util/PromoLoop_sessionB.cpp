@@ -1123,6 +1123,26 @@ extern "C" __declspec(dllexport) void __cdecl Copy41a4a0(std::uint32_t idx, std:
 }
 RH_ScopedInstall(Copy41a4a0, 0x0041a4a0);
 
+// ===== round 122 =====
+// 0x005ae550 — byte-verified: void fn(list, key): doubly-linked-list unlink.
+//   node=list[8]; walk node=node[0] until node+0xc==key (or node[0]==list[0xc]=ret);
+//   prev=node[4]; if(prev!=sentinel) prev[0]=node[0];
+//   next=node[0]; if(next!=sentinel) next[4]=node[4].
+extern "C" __declspec(dllexport) void __cdecl Unlink5ae550(std::uint8_t* list, std::uint8_t* key) {
+    std::uint8_t* sentinel = *reinterpret_cast<std::uint8_t**>(list + 0xc);
+    std::uint8_t* node = *reinterpret_cast<std::uint8_t**>(list + 8);
+    for (;;) {
+        if (node + 0xc == key) break;
+        node = *reinterpret_cast<std::uint8_t**>(node);
+        if (node == sentinel) return;
+    }
+    std::uint8_t* prev = *reinterpret_cast<std::uint8_t**>(node + 4);
+    if (prev != sentinel) *reinterpret_cast<std::uint8_t**>(prev) = *reinterpret_cast<std::uint8_t**>(node);
+    std::uint8_t* next = *reinterpret_cast<std::uint8_t**>(node);
+    if (next != sentinel) *reinterpret_cast<std::uint8_t**>(next + 4) = *reinterpret_cast<std::uint8_t**>(node + 4);
+}
+RH_ScopedInstall(Unlink5ae550, 0x005ae550);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.

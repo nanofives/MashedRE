@@ -136,6 +136,7 @@ PURE_LEAF_ARGTYPES = {
     'idx_table_out',             # void fn(idx, out*): *out = (value from static abs table indexed by idx). call w/ outbuf, observe out[0]. test=idx (varied -> non-degen from static table)
     'nested_struct_op',          # void fn(ptr p): p has a nested ptr p[link_off]=&sub; fn RMWs p fields + writes into sub. alloc p+sub, link, seed p_seed, fill sub sentinel, call, observe observe_p (in p) + observe_sub (in sub). reimpl __cdecl(p). test ignored
     'idx_src_abs_memcpy',        # void fn(idx, src): if(src) memcpy(tgt+idx*stride, src, copy_dwords*4). seed src distinct, reset abs dest, call, observe abs dest. test=idx. reimpl __cdecl(idx,src)
+    'dll_unlink',                # void fn(list, node+0xc): doubly-linked-list unlink (node[0]=next,node[4]=prev,list[8]=head,list[0xc]=sentinel). build 3-node DLL fresh each side, remove middle, snapshot the relinked pointers, compare. faithful __cdecl port
 }
 
 SRC = r"""
@@ -207,6 +208,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'idx_table_out') ? ['uint32', 'pointer']
               : (cfg.at === 'nested_struct_op') ? ['pointer']
               : (cfg.at === 'idx_src_abs_memcpy') ? ['uint32', 'pointer']
+              : (cfg.at === 'dll_unlink') ? ['pointer', 'pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -894,6 +896,28 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runW(Orig); } catch (e) { eo = e.message; }
       try { r = runW(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'dll_unlink') {
+      // Doubly-linked-list unlink. Layout (from 0x5ae550): node[0]=next, node[4]=prev,
+      // list[8]=head node, list[0xc]=sentinel; the call removes the node whose
+      // (node+0xc) == arg1. Build a fresh 3-node DLL (N0<->N1<->N2, sentinel S at both
+      // ends) in FIXED buffers each side, remove the middle (N1), snapshot the relinked
+      // pointers (N0.next, N2.prev) -> both should become &N2 / &N0 (changed from &N1).
+      const L = Memory.alloc(0x20), S = Memory.alloc(0x10);
+      const N0 = Memory.alloc(0x10), N1 = Memory.alloc(0x10), N2 = Memory.alloc(0x10);
+      _keep.push(L, S, N0, N1, N2);
+      const build = function () {
+        L.add(8).writePointer(N0); L.add(0xc).writePointer(S);
+        N0.writePointer(N1); N0.add(4).writePointer(S);   // N0: next=N1, prev=S
+        N1.writePointer(N2); N1.add(4).writePointer(N0);  // N1: next=N2, prev=N0
+        N2.writePointer(S);  N2.add(4).writePointer(N1);  // N2: next=S,  prev=N1
+      };
+      const arg1 = N1.add(0xc);
+      const runD = function (CALL) {
+        build(); CALL(L, arg1);
+        return N0.readPointer().toString() + ',' + N2.add(4).readPointer().toString();
+      };
+      try { o = runD(Orig); } catch (e) { eo = e.message; }
+      try { r = runD(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'idx_src_abs_memcpy') {
       // void fn(idx, src): if(src) memcpy(tgt + idx*stride, src, copy_dwords*4).
       // Seed src with distinct values, reset the abs dest, call fn(idx, srcbuf),
