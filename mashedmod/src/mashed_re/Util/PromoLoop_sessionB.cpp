@@ -742,3 +742,42 @@ extern "C" __declspec(dllexport) void __cdecl Reset413fe0(void) {
     }
 }
 RH_ScopedInstall(Reset413fe0, 0x00413fe0);
+
+// ===== round 105 =====
+
+// 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
+//   Verbatim asm port (bit-identical by construction). Zeroes 14 dwords, sets bytes
+//   [0x40..0x43]=0xff, [0x28]/[0x14]/[0]=1.0f, [0xc]=([0xc]|0x20003).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init4773f0(void) {
+    __asm {
+        xor ecx, ecx
+        mov dl, 0xff
+        mov dword ptr [eax + 0x48], ecx
+        mov dword ptr [eax + 0x4c], ecx
+        mov dword ptr [eax + 0x50], ecx
+        mov dword ptr [eax + 0x54], ecx
+        mov dword ptr [eax + 0x58], ecx
+        mov dword ptr [eax + 0x10], ecx
+        mov dword ptr [eax + 8], ecx
+        mov dword ptr [eax + 4], ecx
+        mov dword ptr [eax + 0x24], ecx
+        mov dword ptr [eax + 0x20], ecx
+        mov dword ptr [eax + 0x18], ecx
+        mov dword ptr [eax + 0x38], ecx
+        mov dword ptr [eax + 0x34], ecx
+        mov dword ptr [eax + 0x30], ecx
+        mov ecx, dword ptr [eax + 0xc]
+        mov byte ptr [eax + 0x40], dl
+        mov byte ptr [eax + 0x41], dl
+        mov byte ptr [eax + 0x42], dl
+        mov byte ptr [eax + 0x43], dl
+        mov edx, 0x3f800000
+        or ecx, 0x20003
+        mov dword ptr [eax + 0x28], edx
+        mov dword ptr [eax + 0x14], edx
+        mov dword ptr [eax], edx
+        mov dword ptr [eax + 0xc], ecx
+        ret
+    }
+}
+RH_ScopedInstall(Init4773f0, 0x004773f0);
