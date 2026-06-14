@@ -14252,6 +14252,10 @@ HOOKS = {
         'path2_tests': [0, 1, 0xDEADBEEF],
     },
 
+    # ---- promote-round round 111 (cdecl buffer ops: memset / memcpy-from-abs) --
+    'memset_478cb0': {'rva': 0x00478cb0, 'export': 'Memset478cb0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'ptr_buffer_op', 'buf_dwords': 0xb00, 'observe_offs': [0x0, 0x400, 0x1000, 0x2adc], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+    'copy_4b65c0': {'rva': 0x004b65c0, 'export': 'Copy4b65c0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'ptr_buffer_op', 'buf_dwords': 0xb00, 'observe_offs': [0x0, 0x400, 0x1000, 0x2098], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     # ---- promote-round round 110 (EAX+EDX reg-conv: count + register into abs tables) --
     'count_4840f0': {'rva': 0x004840f0, 'export': 'Count4840f0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'eax_ecx_insert', 'edx_val': 2, 'eax_seed': [{'off': 0x0, 'val': 0x11111111}, {'off': 0x4, 'val': 0x22222222}, {'off': 0x8, 'val': 0x33333333}], 'eax_observe': [], 'ecx_observe': [], 'abs_observe': ['0x006ce848', '0x006cec48'], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 

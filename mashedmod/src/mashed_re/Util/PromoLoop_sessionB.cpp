@@ -948,6 +948,25 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Count4840f0(void
 }
 RH_ScopedInstall(Count4840f0, 0x004840f0);
 
+// ===== round 111 =====
+// cdecl buffer ops (state-independent: memset / memcpy from abs static data).
+
+// 0x00478cb0  render — byte-verified: void fn(p): rep stosd 0xab8 dwords of 0 at p
+extern "C" __declspec(dllexport) void __cdecl Memset478cb0(std::uint32_t* p) {
+    for (unsigned i = 0; i < 0xab8u; i++) p[i] = 0;
+}
+RH_ScopedInstall(Memset478cb0, 0x00478cb0);
+
+// 0x004b65c0  render — byte-verified: void fn(dst): if(dst) rep movsd 0x82b dwords
+//   from 0x8ab7e0 to dst
+extern "C" __declspec(dllexport) void __cdecl Copy4b65c0(std::uint32_t* dst) {
+    if (dst) {
+        const std::uint32_t* s = reinterpret_cast<const std::uint32_t*>(0x008ab7e0u);
+        for (unsigned i = 0; i < 0x82bu; i++) dst[i] = s[i];
+    }
+}
+RH_ScopedInstall(Copy4b65c0, 0x004b65c0);
+
 // ===== round 105 =====
 
 // 0x004773f0  render — byte-verified EAX-implicit (this in EAX) struct init.
