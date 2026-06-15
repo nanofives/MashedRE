@@ -60,6 +60,22 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004d7100 EventEnqueueCascade4d7100 (render) - PURE LEAF void f(int param):
+    # guarded event-enqueue cascade over global flags + queue 0x7d5168[0x7d6c14].
+    # 3 scenarios: param=1 full cascade from zero, param=0 from set-state, param=1
+    # already-set -> early return. observe the 6 flags + 2 queue slots.
+    'event_enqueue_cascade_4d7100': {'rva': 0x004d7100, 'export': 'EventEnqueueCascade4d7100', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'seed_globals_arg_multiobs',
+        'observe_addrs': [0x007d6b10, 0x007d58d0, 0x007d58d4, 0x007d6c14, 0x007d5870, 0x007d5874, 0x007d5168, 0x007d516c],
+        'seed_sets': [
+            # A: param=1, all-zero inputs (0x7d6bfc=0x55) -> full cascade
+            {'arg': 1, 'globals': [[0x7d6b10,0],[0x7d6b14,0],[0x7d58d0,0],[0x7d58d4,0],[0x7d6c14,0],[0x7d5870,0],[0x7d5874,0],[0x7d6bfc,0x55],[0x7d5168,0],[0x7d516c,0]]},
+            # B: param=0 from set-state (0x7d6b10=1, 0x7d5870=0x55)
+            {'arg': 0, 'globals': [[0x7d6b10,1],[0x7d6b14,0],[0x7d58d0,0],[0x7d58d4,0],[0x7d6c14,0],[0x7d5870,0x55],[0x7d5874,0],[0x7d6bfc,0x99],[0x7d5168,0],[0x7d516c,0]]},
+            # C: param=1 but 0x7d6b10 already set -> early return (no writes)
+            {'arg': 1, 'globals': [[0x7d6b10,1],[0x7d6b14,0],[0x7d58d0,7],[0x7d58d4,7],[0x7d6c14,5],[0x7d5870,3],[0x7d5874,9],[0x7d5168,0],[0x7d516c,0]]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x0046d7f0 BoundedTableSignClamp46d7f0 (ai) - PURE LEAF int f(uint idx, int val):
     # if(idx>=0x10) ret 0; b=*(u8*)(0x7f103c + (*(int*)(0x7f1a14+idx*16))*0x4c);
     # slot=&[0x882194+idx*0xd04]; *slot += (float)b>160.0 ? +val : -val; clamp[0,0xbb8]; ret 1.

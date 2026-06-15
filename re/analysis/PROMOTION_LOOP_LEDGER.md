@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 219
-- total_green: 384
+- rounds_run: 220
+- total_green: 385
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 220 | L3 frontier (classifier-driven) — capstone reimpl (6th) | attempted 1 | GREEN 1 (EventEnqueueCascade4d7100 0x004d7100, render: guarded event-enqueue cascade over global flags + queue) | total_green 384->385 (385/1000). PURE LEAF, full cascade transcribed (both param!=0/==0 paths + shared tail 0x71c5). NEW handler seed_globals_arg_multiobs (seed input globals + arg, observe a global LIST). 3/3 GREEN non-degen (full-cascade / param=0 / early-return). Caller FUN_004d07b0 C2. METHOD: classifier (frontier_classify.py) -> pick CLEAN row -> capstone full disasm -> faithful reimpl -> seed-state handler. Remaining CLEAN frontier ~18 (list surgery / FPU-flag clamps / bit-packers / data loops). Session 101-220 net = +128 (257->385). Context 97 rounds deep. PATH TO 1000 (615 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 219 | L3 frontier (classifier-driven) — capstone reimpl (5th) | attempted 1 | GREEN 1 (BoundedTableSignClamp46d7f0 0x0046d7f0, ai: bounded multi-table update, byte>C ? +val:-val, clamp[0,0xbb8]) | total_green 383->384 (384/1000). Used frontier_classified.tsv to pick. PURE LEAF (3 abs tables + a float-compare sign-select + int clamp; integer output so bit-identity exact). NEW handler bounded_table_signselect_clamp 6/6 GREEN non-degen (+val/-val/idx-index/hi-clamp/lo-clamp/bounds). Caller TimeTrial::LapFinishProcessor 0x4103a0 C2. REMAINING CLEAN frontier (deferred-complex): 005a7a60(2lvl-list), 00483ca0(struct-copy rep movsd), 0045ca30(6-elem FPU-flag clamp - flag semantics fiddly), 004d8c40(list splice), 004c0e50(list-link), 00486f90(tail-jmp table-zero), 0040dcb0(state-machine), + the 190-379B audio/render mutators. ~19 CLEAN remain (mostly stateful mutators/list surgery now). Session 101-219 net = +127 (257->384). Context 96 rounds deep. PATH TO 1000 (616 more) = this method (~1/round, complexity rising) or fanout.
 

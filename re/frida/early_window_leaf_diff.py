@@ -220,6 +220,7 @@ PURE_LEAF_ARGTYPES = {
     'struct_tag_equals',         # int fn(a,b): PURE LEAF tagged-union dword equality. Two 0x80 bufs filled equal, tag at [0], optional one-field perturbation per cfg.scenarios[t]={tag,diff}. compare int return (0/1). non-degen via alternating equal/unequal across tag branches
     'indexed_float_accum16',     # int fn(float* out, uint i, uint j): PURE LEAF. if(i>=0x10||j>=4) ret 0; else acc=init + 16 floats at tbl_base+i*iStride+j*jStride+regionOff; acc*=K; *out=acc; ret 1. Per cfg.scenarios[t]={i,j,fill}: seed 16 floats=fill+k at the region, observe ret:outbits. non-degen via varied fill/index + a bounds (ret 0) case
     'bounded_table_signselect_clamp', # int fn(uint idx, int val): PURE LEAF. if(idx>=0x10) ret 0; b=*(u8*)(t2Tbl + (*(int*)(t1Tbl+idx*16))*0x4c); slot=&t3Tbl[idx*t3Stride]; *slot += (float)b>C ? +val : -val; clamp[0,0xbb8]; ret 1. Per cfg.scenarios[t]={idx,val,byte,slot}: seed t1[idx]=0,t2[0]=byte,t3[idx]=slot; observe ret:slotval. non-degen via +/- + clamp + bounds
+    'seed_globals_arg_multiobs', # void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns
 }
 
 SRC = r"""
@@ -375,6 +376,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'struct_tag_equals') ? ['pointer','pointer']
               : (cfg.at === 'indexed_float_accum16') ? ['pointer','uint32','uint32']
               : (cfg.at === 'bounded_table_signselect_clamp') ? ['uint32','uint32']
+              : (cfg.at === 'seed_globals_arg_multiobs') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1969,6 +1971,14 @@ rpc.exports.diff = function(cfg) {
       const snap = function (ret) { return (ret >>> 0) + ':' + (inb ? (t3.readS32() | 0) : 'na'); };
       try { seedX(); o = snap(Orig(idx, s.val >>> 0)); } catch (e) { eo = e.message; }
       try { seedX(); r = snap(Reim(idx, s.val >>> 0)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'seed_globals_arg_multiobs') {
+      // void f(int arg): seed input globals, call(arg), observe a list of globals.
+      const sp = (cfg.seed_sets || [])[t | 0] || { arg: 0, globals: [] };
+      const obs = cfg.observe_addrs || [];
+      const seedG = function () { (sp.globals || []).forEach(function (g) { ptr(g[0]).writeU32(g[1] >>> 0); }); };
+      const snap = function () { return obs.map(function (a) { return (ptr(a).readU32() >>> 0).toString(16); }).join('|'); };
+      try { seedG(); Orig(sp.arg >>> 0); o = snap(); } catch (e) { eo = e.message; }
+      try { seedG(); Reim(sp.arg >>> 0); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

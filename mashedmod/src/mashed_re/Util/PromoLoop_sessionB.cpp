@@ -3740,3 +3740,54 @@ extern "C" __declspec(dllexport) int __cdecl BoundedTableSignClamp46d7f0(unsigne
     return 1;
 }
 RH_ScopedInstall(BoundedTableSignClamp46d7f0, 0x0046d7f0);
+
+// 0x004d7100  FUN_004d7100 (render, EventEnqueueCascade) — PURE LEAF (no calls)
+// void f(int param): one-shot guarded event-enqueue cascade over global flags +
+// an event queue at 0x7d5168 indexed by counter 0x7d6c14. capstone-verified
+// (both param!=0 and param==0 paths + shared tail at 0x4d71c5). eax=1, edx=0
+// throughout the original. Integer/flag state; observed via seeded globals.
+extern "C" __declspec(dllexport) void __cdecl EventEnqueueCascade4d7100(int param)
+{
+    #define MRE_G(a) (*reinterpret_cast<int*>(static_cast<unsigned>(a)))
+    int* const queue = reinterpret_cast<int*>(0x007d5168u);
+    if (param != 0) {
+        if (MRE_G(0x007d6b10u) != 0) return;
+        MRE_G(0x007d6b10u) = 1;
+        if (MRE_G(0x007d6b14u) != 0) return;
+        MRE_G(0x007d58d0u) = 1;
+        if (MRE_G(0x007d58d4u) == 0) {
+            int c = MRE_G(0x007d6c14u);
+            MRE_G(0x007d58d4u) = 1;
+            queue[c] = 0x1b;
+            MRE_G(0x007d6c14u) = c + 1;
+        }
+        {
+            int e = MRE_G(0x007d6bfcu);
+            if (MRE_G(0x007d5870u) == e) return;
+            MRE_G(0x007d5870u) = e;
+        }
+    } else {
+        if (MRE_G(0x007d6b10u) == 0) return;
+        MRE_G(0x007d6b10u) = 0;
+        if (MRE_G(0x007d6b14u) != 0) return;
+        MRE_G(0x007d58d0u) = 0;
+        if (MRE_G(0x007d58d4u) == 0) {
+            int c = MRE_G(0x007d6c14u);
+            MRE_G(0x007d58d4u) = 1;          // original writes 1 here even on param==0
+            queue[c] = 0x1b;
+            MRE_G(0x007d6c14u) = c + 1;
+        }
+        if (MRE_G(0x007d5870u) == 0) return;
+        MRE_G(0x007d5870u) = 0;
+    }
+    // shared tail (0x4d71c5):
+    if (MRE_G(0x007d5874u) != 0) return;
+    {
+        int c = MRE_G(0x007d6c14u);
+        MRE_G(0x007d5874u) = 1;
+        queue[c] = 0xf;
+        MRE_G(0x007d6c14u) = c + 1;
+    }
+    #undef MRE_G
+}
+RH_ScopedInstall(EventEnqueueCascade4d7100, 0x004d7100);
