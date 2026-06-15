@@ -1678,3 +1678,20 @@ extern "C" __declspec(dllexport) void __cdecl Scan42c150(void) {
     if (cnt != 0) *reinterpret_cast<std::uint32_t*>(0x0067eab4) = 0xff;
 }
 RH_ScopedInstall(Scan42c150, 0x0042c150);
+
+// ===== round 141 ===== (global 2-level list search)
+// 0x004850b0 — int fn(key): g=*(u8**)0x6e71cc; node=*(u8**)(g+4); if(node==0) return -1;
+//   loop: e=*(u8**)node; if(e && e[8]==key) return e[0xc]; node=*(u8**)(node+8); if(node) loop;
+//   return -1.
+extern "C" __declspec(dllexport) int __cdecl Search4850b0(std::uint32_t key) {
+    std::uint8_t* g = *reinterpret_cast<std::uint8_t**>(0x006e71cc);
+    std::uint8_t* node = *reinterpret_cast<std::uint8_t**>(g + 4);
+    while (node) {
+        std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(node);
+        if (e && *reinterpret_cast<std::uint32_t*>(e + 8) == key)
+            return *reinterpret_cast<int*>(e + 0xc);
+        node = *reinterpret_cast<std::uint8_t**>(node + 8);
+    }
+    return -1;
+}
+RH_ScopedInstall(Search4850b0, 0x004850b0);

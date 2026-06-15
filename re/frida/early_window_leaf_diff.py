@@ -156,6 +156,7 @@ PURE_LEAF_ARGTYPES = {
     'global_ptrtable_match',     # u32 fn(arg1, arg2*): for idx in 0..3: e=*(tbl+idx*4); if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0. Seed tbl[2]=&entry (.bss), entry[0xc]=1, entry[0x28]=KEY, arg2[4]= (test0: 2 -> match -> 1 ; test1: 3 -> no match -> 0). non-degen via 1/0
     'global_rec_clear_ret',      # u32 fn(arg1, arg2): rec=*(glob)+arg2; if(rec[0xc]){ rec[0xc]=0; rec[8]=0; return arg1; } return 0. seed *glob=&buf, buf[idx+0xc]= (test0: nonzero -> zeroes + return arg1 ; test1: 0 -> return 0). observe buf[idx+8]|buf[idx+0xc]|ret. non-degen via ret + the zeroing
     'abs_scan_flag',             # void fn(): scans an absolute dword range; if any nonzero, sets flag global=0xff (else leaves it). Reset scan range (glob, span dwords) to 0 + flag(tgt) to a 0x11 sentinel; test0 seeds one nonzero at glob+idx (-> flag 0xff), test1 all-zero (-> flag stays 0x11). observe flag. non-degen 0xff vs 0x11
+    'global_2level_list_search', # int fn(key): g=*(glob); node=g[4]; while(node){ e=node[0]; if(e && e[8]==key) return e[0xc]; node=node[8]; } return -1. seed *glob=&cont, cont[4]=&node, node[0]=&entry, entry[8]=KEY, entry[0xc]=RESULT, node[8]=0. test0 key=KEY (->RESULT), test1 key=KEY^1 (->-1). non-degen
 }
 
 SRC = r"""
@@ -247,6 +248,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_ptrtable_match') ? ['uint32','pointer']
               : (cfg.at === 'global_rec_clear_ret') ? ['uint32','uint32']
               : (cfg.at === 'abs_scan_flag') ? []
+              : (cfg.at === 'global_2level_list_search') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1188,6 +1190,25 @@ rpc.exports.diff = function(cfg) {
       const nzc = (t | 0) === 0;
       try { seedF(nzc); Orig(); o = flag.readU32() >>> 0; } catch (e) { eo = e.message; }
       try { seedF(nzc); Reim(); r = flag.readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_2level_list_search') {
+      // int fn(key): walk outer list node=g[4] via node[8]; each node has an entry e=node[0];
+      // if e && e[8]==key return e[0xc]; else -1. Seed *glob=&cont, cont[4]=&node, node[0]=&entry,
+      // entry[8]=KEY, entry[0xc]=RESULT, node[8]=0. test0 key=KEY (->RESULT), test1 key=KEY^1 (->-1).
+      const cont = Memory.alloc(0x40), node = Memory.alloc(0x40), entry = Memory.alloc(0x40);
+      _keep.push(cont, node, entry);
+      const KEY = 0x1234, RESULT = 0xBEEF99;
+      const setupL = function () {
+        [cont, node, entry].forEach(function (b) { for (let z = 0; z < 0x40; z += 4) b.add(z).writeU32(0); });
+        ptr(cfg.glob).writePointer(cont);
+        cont.add(4).writePointer(node);
+        node.writePointer(entry);
+        node.add(8).writeU32(0);
+        entry.add(8).writeU32(KEY);
+        entry.add(0xc).writeU32(RESULT);
+      };
+      const kk = (t | 0) === 0 ? KEY : (KEY ^ 1);
+      try { setupL(); o = Orig(kk >>> 0) >>> 0; } catch (e) { eo = e.message; }
+      try { setupL(); r = Reim(kk >>> 0) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
