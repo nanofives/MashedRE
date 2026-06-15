@@ -2148,3 +2148,24 @@ extern "C" __declspec(dllexport) void __cdecl StateInsert5b0f90(std::uint8_t* p,
     *reinterpret_cast<std::uint8_t**>(node) = p + 0x14;
 }
 RH_ScopedInstall(StateInsert5b0f90, 0x005b0f90);
+
+// ===== round 167 ===== (multi-deref global setter)
+// 0x00476b30 — void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g);
+//   obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40] |= 0x2000.
+extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::uint8_t* p2) {
+    std::uint32_t val = *reinterpret_cast<std::uint32_t*>(p2 ? p2 : reinterpret_cast<std::uint8_t*>(0x00613290));
+    std::uint32_t g = *reinterpret_cast<std::uint32_t*>(0x007dc57c);
+    std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(p1 + 4);
+    std::uint8_t* obj = *reinterpret_cast<std::uint8_t**>(e + g);
+    *reinterpret_cast<std::uint32_t*>(obj + 0xc4) = val;
+    std::uint8_t* x = *reinterpret_cast<std::uint8_t**>(e + 0x18);
+    std::uint8_t* y = *reinterpret_cast<std::uint8_t**>(x + 0x20);
+    std::uint8_t* n = *reinterpret_cast<std::uint8_t**>(y);
+    if (n != 0) {
+        std::uint8_t* obj2 = *reinterpret_cast<std::uint8_t**>(e + g);
+        *reinterpret_cast<std::uint32_t*>(n + 4) = *reinterpret_cast<std::uint32_t*>(obj2 + 0xc4);
+    }
+    std::uint8_t* obj3 = *reinterpret_cast<std::uint8_t**>(e + g);
+    *reinterpret_cast<std::uint32_t*>(obj3 + 0x40) |= 0x2000;
+}
+RH_ScopedInstall(Set476b30, 0x00476b30);

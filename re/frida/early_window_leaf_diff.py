@@ -181,6 +181,7 @@ PURE_LEAF_ARGTYPES = {
     'strided_color_fill',        # void fn(): base=*0x771530+0x1d; for 896 entries (stride 0x20): p[-1]=*0x616030, p[0]=*0x616032, p[1]=*0x616031, p[2]=*0x616033 (BGRA swizzle from a global color). seed base ptr + 4 color bytes; observe entries 0,1,895. non-degen via swizzle pattern + loop coverage
     'bitmap_alloc_slot',         # u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if found rec=0x693198+idx*0x2c0; rec[0x2b0]=0,[0x2b8]=0,[0x2b4]=1,[0x2bc]=30.0f; set the bit; return idx+1; else 0. seed bitmap so first-clear=K (tests K=5,0); snapshot rec fields|bitmap byte|ret. non-degen
     'state_list_insert',         # void fn(p, _, state_src): state=*state_src; sub=p[0x20]; if(state==1 && sub[0x28]!=3) sub[0x28]=8; elif(state==3 && sub[0x28]!=5) sub[0x28]=4; sub[0x20]=state; old=p[0x14]; if(old){*(p[0x18])=old; *(old+4)=p[0x18];} node=p[0x24]+0xc; nx=*node; p[0x18]=node; p[0x14]=nx; *(nx+4)=&p[0x14]; *node=&p[0x14]. test state 1/3 (p[0x14]=0 empty list). shared bufs; snapshot sub+list ptrs. non-degen
+    'multi_deref_global_set',    # void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g); obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40]|=0x2000. seed g=0 + nested chain (p1[4]=&E, E[0]=&obj, E[0x18]=&X, X[0x20]=&Ncell, Ncell=&N); t0 p2=&val n!=0, t1 p2=0(default) n=0. snapshot obj[0xc4]|N[4]|obj[0x40]. non-degen
 }
 
 SRC = r"""
@@ -297,6 +298,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'strided_color_fill') ? []
               : (cfg.at === 'bitmap_alloc_slot') ? []
               : (cfg.at === 'state_list_insert') ? ['pointer','uint32','pointer']
+              : (cfg.at === 'multi_deref_global_set') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1661,6 +1663,29 @@ rpc.exports.diff = function(cfg) {
       const snapSL = function () { return [sub.add(0x20).readU32(), sub.add(0x28).readU32(), p.add(0x14).readU32(), p.add(0x18).readU32(), srcnode.add(0xc).readU32(), nx.add(4).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
       try { setupSL(); Orig(p, 0, st); o = snapSL(); } catch (e) { eo = e.message; }
       try { setupSL(); Reim(p, 0, st); r = snapSL(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'multi_deref_global_set') {
+      // void fn(p1, p2): multi-deref global setter (g=0 seeded). Nested chain p1[4]=&E,
+      // E[0]=&obj, E[0x18]=&X, X[0x20]=&Ncell, Ncell=&N(or 0). t0 p2=&val n!=0; t1 p2=0/n=0.
+      const G = 0x7dc57c, DEF = 0x613290;
+      const p1 = Memory.alloc(0x40), E = Memory.alloc(0x40), obj = Memory.alloc(0x100), X = Memory.alloc(0x40), Ncell = Memory.alloc(0x40), N = Memory.alloc(0x40), valbuf = Memory.alloc(0x40);
+      _keep.push(p1, E, obj, X, Ncell, N, valbuf);
+      const useN = (t | 0) === 0;
+      const setupMD = function () {
+        [p1, E, X, Ncell, N, valbuf].forEach(function (b) { for (let z = 0; z < 0x40; z += 4) b.add(z).writeU32(0); });
+        for (let z = 0; z < 0x100; z += 4) obj.add(z).writeU32(0xA5A5A5A5);
+        ptr(G).writeU32(0);
+        p1.add(4).writePointer(E);
+        E.writePointer(obj);
+        E.add(0x18).writePointer(X);
+        X.add(0x20).writePointer(Ncell);
+        Ncell.writePointer(useN ? N : ptr(0));
+        obj.add(0x40).writeU32(0x100);
+        if (useN) valbuf.writeU32(0x1234); else ptr(DEF).writeU32(0x5678);
+      };
+      const p2 = useN ? valbuf : ptr(0);
+      const snapMD = function () { return [obj.add(0xc4).readU32() >>> 0, N.add(4).readU32() >>> 0, obj.add(0x40).readU32() >>> 0].join('|'); };
+      try { setupMD(); Orig(p1, p2); o = snapMD(); } catch (e) { eo = e.message; }
+      try { setupMD(); Reim(p1, p2); r = snapMD(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

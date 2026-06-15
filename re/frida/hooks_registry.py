@@ -14388,6 +14388,9 @@ HOOKS = {
     # ---- promote-round round 166 (state dispatch + intrusive-list insert) --
     'stateins_5b0f90': {'rva': 0x005b0f90, 'export': 'StateInsert5b0f90', 'signature': {'ret': 'void', 'args': ['pointer','uint32','pointer']}, 'arg_type': 'state_list_insert', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
 
+    # ---- promote-round round 167 (multi-deref global setter) --
+    'set_476b30': {'rva': 0x00476b30, 'export': 'Set476b30', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'multi_deref_global_set', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
