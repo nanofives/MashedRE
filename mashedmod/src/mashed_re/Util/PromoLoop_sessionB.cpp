@@ -3386,3 +3386,44 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Build472560(void
     }
 }
 RH_ScopedInstall(Build472560, 0x00472560);
+
+// 0x004725f0  FUN_004725f0 (gameplay, NEAR-LEAF: no-arg record-range initializer)
+// void f(void): for edi=0..9 (esi=0x69150c; esi+=0x10): FUN_0046be10(esi-0xc, edi, edi, 0);
+//   FUN_0046be10(esi-8, edi, edi+0xa, 0); [esi-4]=0; [esi]=0. Callee 0x46be10 C3 table setter
+//   (writes *(0x88219c+(idx*0x341+base)*4)=*p1). Verbatim naked port; calls -> mov eax,abs;call eax.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl InitRange4725f0(void)
+{
+    __asm {
+        push esi
+        push edi
+        xor  edi, edi
+        mov  esi, 069150Ch
+    L_IRG_LOOP:
+        push 0
+        push edi
+        lea  eax, [esi-0x0c]
+        push edi
+        push eax
+        mov  dword ptr [esi-4], 0
+        mov  dword ptr [esi], 0
+        mov  eax, 046BE10h
+        call eax
+        push 0
+        lea  ecx, [edi+0x0a]
+        push ecx
+        lea  edx, [esi-8]
+        push edi
+        push edx
+        mov  eax, 046BE10h
+        call eax
+        add  esp, 0x20
+        add  esi, 0x10
+        inc  edi
+        cmp  esi, 06915ACh
+        jl   L_IRG_LOOP
+        pop  edi
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(InitRange4725f0, 0x004725f0);

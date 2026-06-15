@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 200
-- total_green: 367
+- rounds_run: 201
+- total_green: 368
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 200 | near-leaf #14: no-arg record-range initializer (reuse near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (InitRange4725f0 0x004725f0: 10-iter loop, 2x FUN_0046be10/iter writing the 0x88219c table + zeroing rec[8]/[0xc]) | total_green 367->368 (368/1000). Caller 0x40cfd0 C2, callee 0x46be10 C3. No new handler. LESSON: a no-arg deterministic initializer is verifiable via near_leaf_seed_multi_obs by SEEDING the source records it reads + observing the table slots it writes (non-degen across tests via different record seeds). NOT a trivial sibling of 0x472560 (different structure) despite sharing the callee. 14 near-leaf shapes. ~93 candidates remain. Session 101-200 net = +111 (257->368). ~83 handlers. Context 77 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 199 | near-leaf #13: record+table builder via C3 setter (NEW handler near_leaf_record_builder) — ROUND 200 milestone | attempted 1 | GREEN 1 (Build472560 0x00472560: f(A=rec_idx,B): rec=A*0x10+0x691500, loop FUN_0046be10 writes 0x88219c table, rec[8]=B) | total_green 366->367 (367/1000). Callers 0x450300/0x4523f0 C2, callee 0x46be10 C3 (table setter). NEW handler near_leaf_record_builder. GOTCHA (verify-gate caught DEGENERATE all-identical 'dead0000|0|0'): I misread args — `push ebx; mov ebx,[esp+8]` makes ebx=ARG1 not arg2 (the push shifts [esp+8] to the 1st incoming arg) -> fixed to f(A,B); also RE-CONFIRMED harness validity: spawns MASHED_RE_NO_AUTO_HOOK=1 so Orig runs the REAL original (prior GREENs valid, NOT Orig==Reim). 13 near-leaf shapes. SIBLING 0x4725f0 (same callee 0x46be10) is next-round trivial. ~94 candidates remain. Session 101-199 net = +110 (257->367). ~83 handlers. Context 76 rounds deep — fresh context advised; fanout = fast route to 1000.
 

@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'initrange_4725f0': {'rva': 0x004725f0, 'export': 'InitRange4725f0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x0088219c, 0x008821c4, 0x00882ea4, 0x00691508, 0x0069150c],
+        'seed_sets': [
+            {'globals': [[0x00691500, 0x1111], [0x00691504, 0x2222], [0x00691510, 0x3333], [0x00691508, 0xDEAD], [0x0069150c, 0xBEEF], [0x0088219c, 0], [0x008821c4, 0], [0x00882ea4, 0]]},
+            {'globals': [[0x00691500, 0xAAAA], [0x00691504, 0xBBBB], [0x00691510, 0xCCCC], [0x00691508, 0xDEAD], [0x0069150c, 0xBEEF], [0x0088219c, 0], [0x008821c4, 0], [0x00882ea4, 0]]},
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
     'build_472560': {'rva': 0x00472560, 'export': 'Build472560', 'signature': {'ret': 'void', 'args': ['uint32','uint32']}, 'arg_type': 'near_leaf_record_builder',
         'rec_base': 0x00691500, 'rec_stride': 0x10, 'tbl_base': 0x0088219c, 'tbl_stride': 4,
         'seed_sets': [
