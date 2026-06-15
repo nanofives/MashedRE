@@ -218,6 +218,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_float_sum2',        # float fn(int idx): PURE LEAF. p=(float*)(cfg.tgt + idx*cfg.stride); return p[0]+p[1]. Seed two distinct floats at slot+0/+4 per idx; compare float return (exact). non-degen via varied idx -> distinct sums
     'double_indexed_float_mul',  # float fn(int idx): PURE LEAF. c=*(int*)(idx*S+aTbl); d=*(int*)(idx*S+bTbl); e=d+c*4; return *(float*)(fTbl+e*4) * *(float*)K. Seed idx=0: aTbl=0, bTbl=t (e=t), fTbl+t*4=float(t+1); compare float return. non-degen via varied e (K read-only const)
     'struct_tag_equals',         # int fn(a,b): PURE LEAF tagged-union dword equality. Two 0x80 bufs filled equal, tag at [0], optional one-field perturbation per cfg.scenarios[t]={tag,diff}. compare int return (0/1). non-degen via alternating equal/unequal across tag branches
+    'indexed_float_accum16',     # int fn(float* out, uint i, uint j): PURE LEAF. if(i>=0x10||j>=4) ret 0; else acc=init + 16 floats at tbl_base+i*iStride+j*jStride+regionOff; acc*=K; *out=acc; ret 1. Per cfg.scenarios[t]={i,j,fill}: seed 16 floats=fill+k at the region, observe ret:outbits. non-degen via varied fill/index + a bounds (ret 0) case
 }
 
 SRC = r"""
@@ -371,6 +372,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_float_sum2') ? ['uint32']
               : (cfg.at === 'double_indexed_float_mul') ? ['uint32']
               : (cfg.at === 'struct_tag_equals') ? ['pointer','pointer']
+              : (cfg.at === 'indexed_float_accum16') ? ['pointer','uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1933,6 +1935,22 @@ rpc.exports.diff = function(cfg) {
       };
       try { setup(); o = Orig(A, B) >>> 0; } catch (e) { eo = e.message; }
       try { setup(); r = Reim(A, B) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_float_accum16') {
+      // int f(float* out, uint i, uint j): bounds-checked 16-float sum at
+      // tbl_base + i*iStride + j*jStride + regionOff (start = region - 4).
+      const scen = (cfg.scenarios || [])[t] || { i: 0, j: 0, fill: 1 };
+      const out = Memory.alloc(4); _keep.push(out);
+      const inb = (scen.i >>> 0) < 0x10 && (scen.j >>> 0) < 4;
+      const region = ptr(cfg.tbl_base).add((scen.i >>> 0) * (cfg.iStride | 0))
+                                      .add((scen.j >>> 0) * (cfg.jStride | 0))
+                                      .add(cfg.regionOff | 0);
+      const seedA = function () {
+        out.writeU32(0x7f7f7f7f);
+        if (inb) for (let k = 0; k < 16; k++) region.add(-4 + k * 4).writeFloat((scen.fill | 0) + k);
+      };
+      const snap = function (ret) { return (ret >>> 0) + ':' + (out.readU32() >>> 0).toString(16); };
+      try { seedA(); o = snap(Orig(out, scen.i >>> 0, scen.j >>> 0)); } catch (e) { eo = e.message; }
+      try { seedA(); r = snap(Reim(out, scen.i >>> 0, scen.j >>> 0)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };
@@ -2621,6 +2639,7 @@ def run(name):
            'observe_globals': h.get('observe_globals'), 'seed_globals': h.get('seed_globals'),
            'aTbl': h.get('aTbl'), 'bTbl': h.get('bTbl'), 'fTbl': h.get('fTbl'),
            'scenarios': h.get('scenarios'),
+           'iStride': h.get('iStride'), 'jStride': h.get('jStride'), 'regionOff': h.get('regionOff'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

@@ -60,6 +60,22 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0046bda0 IndexedFloatAccum16_46bda0 (gameplay) - PURE LEAF int f(float* out,
+    # uint i, uint j): if(i>=0x10||j>=4) ret 0; else acc = *0x5d757c(0.0) + 16 floats
+    # at 0x8815a0+i*0xd04+j*0xc4+0x1b0-4 .. +0x38; acc *= *0x5cd058(0.0625); *out=acc; ret 1.
+    # Seed 16 floats=fill+k per scenario; observe ret:outbits. capstone-verified.
+    'indexed_float_accum16_46bda0': {'rva': 0x0046bda0, 'export': 'IndexedFloatAccum16_46bda0', 'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32', 'uint32']}, 'arg_type': 'indexed_float_accum16',
+        'tbl_base': 0x008815a0, 'iStride': 0xd04, 'jStride': 0xc4, 'regionOff': 0x1b0,
+        'scenarios': [
+            {'i': 0, 'j': 0, 'fill': 1},    # sum (1..16)/16 = 8.5
+            {'i': 0, 'j': 0, 'fill': 5},    # different fill -> different sum
+            {'i': 1, 'j': 0, 'fill': 1},    # tests i*0xd04 indexing (different region)
+            {'i': 0, 'j': 1, 'fill': 1},    # tests j*0xc4 indexing
+            {'i': 0x10, 'j': 0, 'fill': 1}, # bounds: i>=0x10 -> ret 0, out untouched
+            {'i': 0, 'j': 4, 'fill': 1},    # bounds: j>=4 -> ret 0
+        ],
+        'path1_tests': [0, 1, 2, 3, 4, 5], 'path2_tests': [0, 1, 2, 3, 4, 5]},
+
     # 0x004cb740 StructTagEquals4cb740 (render) - PURE LEAF int f(a,b): tagged-union
     # dword equality. Common compare [0,4,8,c]; tag=a[0] -> tag1{0x34,0x38,0x3c,0x4c}
     # / tag2{...,0x60,0x64} / tag3{0x40,0x44,0x48} / other{}. Returns 1 if equal else 0.

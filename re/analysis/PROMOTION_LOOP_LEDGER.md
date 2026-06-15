@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 217
-- total_green: 382
+- rounds_run: 218
+- total_green: 383
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 218 | L3 frontier — NEW classifier tool + capstone reimpl (4th) | attempted 1 | GREEN 1 (IndexedFloatAccum16_46bda0 0x0046bda0, gameplay: bounds-checked 2D-indexed 16-float sum * 1/16 -> *out) | total_green 382->383 (383/1000). TOOLING: built scripts/frontier_classify.py — auto-disassembles every promote_frontier.tsv leaf + tags CLEAN/SKIP<reason> (CALL/TAILJMP/TRANSC/FLDSTN/REGCONV/BIGFRAME). Output re/analysis/plans/frontier_classified.tsv. Run: 24 CLEAN / 29 SKIP of 53. This replaces per-candidate manual disasm -> future rounds just pick the next CLEAN row. PURE LEAF reimpl (16 explicit in-order fadds preserve x87 order). NEW handler indexed_float_accum16 6/6 GREEN non-degen (fill1->8.5, fill5->12.5, i=1/j=1 index-verified via correct-region read, 2 bounds->ret0). Caller FUN_0041f3d0 C2. REMAINING CLEAN frontier (not yet done, smallest first): 005a7a60(60B,2lvl-list), 00483ca0(102B,struct-copy), 0045ca30(118B), 004d8c40(118B), 004c0e50(125B,list-link), 00486f90(140B), 0046d7f0(144B), 0040dcb0(176B,state-machine), 00456eb0(181B), 005b0bb0/005b6a40(190B audio), 004cde50(198B), 005c95b0(204B), 0048f590(235B), 004d7100(235B), 00476d00(238B), 004d8570(272B), 0041e4b0(379B). ~20 CLEAN remain. Session 101-218 net = +126 (257->383). Context 95 rounds deep. PATH TO 1000 (617 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 217 | L3 frontier — capstone-decomp + reimpl + handler (3rd) | attempted 1 | GREEN 1 (StructTagEquals4cb740 0x004cb740, render: tagged-union dword equality predicate) | total_green 381->382 (382/1000). PURE LEAF (no calls). Transcribed ALL branches via capstone (tag=a[0] selects field set: tag1{0x34,0x38,0x3c,0x4c}/tag2{+0x60,0x64}/tag3{0x40,0x44,0x48}/other{}). NEW handler struct_tag_equals (2 bufs, per-scenario tag + one-field perturbation). 8/8 GREEN non-degen (all 4 tag branches x equal/unequal -> alternating 1/0). Integer logic -> only return observed -> bit-identity trivial (no float/instr-order risk). Caller FUN_004cb600 C2. METHOD NOTE: this turn's frontier scan (5+ candidates) shows the SIMPLE pure-scalar leaves are largely gone; remaining frontier is multi-branch predicates / gather loops / state-linkers / fld-st(N) / register-conv. Each clean one is now a full transcribe-all-branches round. Skipped: 0x4c42d0/0x4c4270 (fld-st(N)), 0x45c550 (0xf0 stack frame), 0x413bc0 (esi/ecx register-conv), 0x486f90 (tail-jmp). Session 101-217 net = +125 (257->382). Context 94 rounds deep. PATH TO 1000 (618 more) = this method (~1/round, rising cost) or the fanout.
 

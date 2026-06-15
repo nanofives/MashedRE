@@ -3680,3 +3680,39 @@ extern "C" __declspec(dllexport) int __cdecl StructTagEquals4cb740(const void* a
     #undef MRE_AE
 }
 RH_ScopedInstall(StructTagEquals4cb740, 0x004cb740);
+
+// 0x0046bda0  FUN_0046bda0 (gameplay, IndexedFloatAccum16) — PURE LEAF (no calls)
+// int f(float* out, uint i, uint j): bounds-checked 2D-indexed 16-float sum.
+//   if (i>=0x10 || j>=4) return 0;
+//   base = 0x8815a0 + i*0xd04 + j*0xc4 + 0x1b0;
+//   acc = *(float*)0x5d757c (=0.0); then 16 sequential fadds at base-4 .. base+0x38;
+//   acc *= *(float*)0x5cd058 (=0.0625); *out = acc; return 1;
+// capstone-verified. 16 explicit in-order adds preserve x87 add order (bit-identity).
+extern "C" __declspec(dllexport) int __cdecl IndexedFloatAccum16_46bda0(float* out, unsigned i, unsigned j)
+{
+    if (i >= 0x10u) return 0;
+    if (j >= 4u) return 0;
+    const char* base = reinterpret_cast<const char*>(
+        0x008815a0u + i * 0xd04u + j * 0xc4u + 0x1b0u);
+    float acc = *reinterpret_cast<const float*>(0x005d757cu);
+    acc += *reinterpret_cast<const float*>(base - 4);
+    acc += *reinterpret_cast<const float*>(base + 0x00);
+    acc += *reinterpret_cast<const float*>(base + 0x04);
+    acc += *reinterpret_cast<const float*>(base + 0x08);
+    acc += *reinterpret_cast<const float*>(base + 0x0c);
+    acc += *reinterpret_cast<const float*>(base + 0x10);
+    acc += *reinterpret_cast<const float*>(base + 0x14);
+    acc += *reinterpret_cast<const float*>(base + 0x18);
+    acc += *reinterpret_cast<const float*>(base + 0x1c);
+    acc += *reinterpret_cast<const float*>(base + 0x20);
+    acc += *reinterpret_cast<const float*>(base + 0x24);
+    acc += *reinterpret_cast<const float*>(base + 0x28);
+    acc += *reinterpret_cast<const float*>(base + 0x2c);
+    acc += *reinterpret_cast<const float*>(base + 0x30);
+    acc += *reinterpret_cast<const float*>(base + 0x34);
+    acc += *reinterpret_cast<const float*>(base + 0x38);
+    acc *= *reinterpret_cast<const float*>(0x005cd058u);
+    *out = acc;
+    return 1;
+}
+RH_ScopedInstall(IndexedFloatAccum16_46bda0, 0x0046bda0);
