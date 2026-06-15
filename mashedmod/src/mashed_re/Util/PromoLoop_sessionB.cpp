@@ -3162,3 +3162,27 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Calc413fa0(void)
     }
 }
 RH_ScopedInstall(Calc413fa0, 0x00413fa0);
+
+// [SKIPPED 2026-06-15] FUN_0049a730 (0x0049a730) is a clean near-leaf (!FUN_00426c00()) but
+// has NO static caller (no direct call, no address-as-data ref) -> cannot satisfy the
+// caller-C2+ gate, so NOT promoted (left C2).
+
+// 0x0040b6e0  FUN_0040b6e0 (gameplay, NEAR-LEAF: conditional global accumulate)
+// void f(int arg): if (FUN_0042f6a0()(=GetRaceSubMode,*0x67e9fc) != 2) *(int*)0x63b8ec += arg.
+// Callee C3 pure getter. Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Add40b6e0(void)
+{
+    __asm {
+        mov  eax, 042F6A0h
+        call eax
+        cmp  eax, 2
+        je   L_ADD_END
+        mov  ecx, dword ptr ds:[063B8ECh]
+        mov  eax, dword ptr [esp+4]
+        add  ecx, eax
+        mov  dword ptr ds:[063B8ECh], ecx
+    L_ADD_END:
+        ret
+    }
+}
+RH_ScopedInstall(Add40b6e0, 0x0040b6e0);

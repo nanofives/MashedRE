@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'add_40b6e0': {'rva': 0x0040b6e0, 'export': 'Add40b6e0', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'near_leaf_seed_arg_obs',
+        'obs_addr': 0x0063b8ec,
+        'seed_sets': [
+            {'globals': [[0x0067e9fc, 2], [0x0063b8ec, 100]], 'arg': 5},     # submode==2 -> no add -> 100
+            {'globals': [[0x0067e9fc, 0], [0x0063b8ec, 100]], 'arg': 5},     # add -> 105
+            {'globals': [[0x0067e9fc, 0], [0x0063b8ec, 0]],   'arg': 0xFF},  # add -> 0xff
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'calc_413fa0': {'rva': 0x00413fa0, 'export': 'Calc413fa0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_globals',
         'seed_sets': [
             {'globals': [[0x0067f17c, 10], [0x0067e9fc, 4]]},   # s=30, b=4 -> 31

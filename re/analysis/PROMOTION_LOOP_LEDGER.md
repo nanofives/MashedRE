@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 193
-- total_green: 360
+- rounds_run: 194
+- total_green: 361
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 193 | near-leaf batch x2 attempted, 1 GREEN + 1 gate-skip (NEW handler near_leaf_seed_arg_obs) | attempted 2 | GREEN 1 (Add40b6e0 0x0040b6e0: if(GetRaceSubMode()!=2) *0x63b8ec+=arg; obs 100/105/255) | deferred 1 (Not49a730 0x0049a730: clean !FUN_00426c00() GREEN 1/0, but NO static caller -> caller-C2+ gate UNSATISFIED -> NOT promoted, left C2). total_green 360->361 (361/1000). Add40b6e0 caller 0x4929d0 C2, callee 0x42f6a0 C3. NEW handler near_leaf_seed_arg_obs (seed globals + 1 arg, observe an abs global). GATE LESSON: a clean bit-identical near-leaf with NO findable caller (no e8 ref, no address-as-data) FAILS the caller-C2+ gate -> skip it (don't overclaim reachability). 7 near-leaf shapes. Session 101-193 net = +104 (257->361). ~80 handlers. Context 70 rounds deep — fresh context advised; fanout = fast route.
 
 2026-06-15 | round 192 | near-leaf #6: combine two pure global getters (NEW handler near_leaf_seed_globals) — REACHED 360 (36%) | attempted 1 | GREEN 1 (Calc413fa0 0x00413fa0: GetDat0067f17c()*3 + (GetRaceSubMode()==4?1:==5?2:0)) | total_green 359->360 (360/1000). Callers FUN_00414060/FUN_00417750 C2, callees 0x430790/0x42f6a0 C3 (pure global getters). NEW handler near_leaf_seed_globals (seed [[addr,val],...] then compare int return). seeds -> 31/32/21. integer verbatim naked port. 6 near-leaf shapes proven. SELECTION LESSON (this round cost several scouts): many small near-leaf candidates are blocked (0x45bfa0/0x49c810 have INDIRECT calls my scan missed; 0x45c330/0x415200 degenerate .bss-callee; 0x5ad540 deep-list callee) -> prefer near-leaves whose callee is a PURE getter/addr-calc or an abs-table setter. ~101 candidates remain (real count lower after removing indirect-call ones). Session 101-192 net = +103 (257->360). ~79 handlers. Context 69 rounds deep — fresh context advised; fanout = fast route to 1000.
 
