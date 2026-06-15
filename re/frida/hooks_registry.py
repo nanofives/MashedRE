@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'cmp_5aa1e0': {'rva': 0x005aa1e0, 'export': 'Cmp5aa1e0', 'signature': {'ret': 'uint32', 'args': ['uint32','pointer','pointer']}, 'arg_type': 'near_leaf_memcmp16',
+        'seed_sets': [
+            {'eq': True},                  # 16 bytes equal -> 1
+            {'eq': False, 'diffat': 0},    # differ at byte 0 -> 0
+            {'eq': False, 'diffat': 8},    # differ at byte 8 -> 0
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'count_42c1f0': {'rva': 0x0042c1f0, 'export': 'Count42c1f0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_ret',
         'tbl_base': 0x007e96fc, 'tbl_stride': 0x200, 'tbl_count': 4,
         'seed_sets': [

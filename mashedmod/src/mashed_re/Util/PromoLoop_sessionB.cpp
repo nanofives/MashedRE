@@ -3022,3 +3022,26 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Count42c1f0(void)
     }
 }
 RH_ScopedInstall(Count42c1f0, 0x0042c1f0);
+
+// 0x005aa1e0  FUN_005aa1e0 (audio, NEAR-LEAF: logical-NOT of a 16-byte memcmp)
+// int f(arg1_unused, arg2, arg3): a=*arg2, b=arg3; return !FUN_005adf30(a,b). Callee 0x5adf30
+// (C3) returns 0 if a==b or the 16 bytes at a/b match, else +/-1. So this returns 1 iff the
+// 16 bytes at *arg2 and arg3 are equal. Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Cmp5aa1e0(void)
+{
+    __asm {
+        mov  ecx, dword ptr [esp+8]          // arg2 (ptr-to-ptr)
+        mov  eax, dword ptr [esp+0x0c]       // arg3 (ptr)
+        push eax
+        mov  edx, dword ptr [ecx]            // *arg2
+        push edx
+        mov  eax, 05ADF30h                    // callee 0x005adf30 (absolute)
+        call eax
+        add  esp, 8
+        neg  eax
+        sbb  eax, eax
+        inc  eax
+        ret
+    }
+}
+RH_ScopedInstall(Cmp5aa1e0, 0x005aa1e0);

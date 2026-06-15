@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 189
-- total_green: 356
+- rounds_run: 190
+- total_green: 357
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 189 | near-leaf #3: !memcmp16 (NEW handler near_leaf_memcmp16) | attempted 1 | GREEN 1 (Cmp5aa1e0 0x005aa1e0: !FUN_005adf30(*arg2,arg3); callee C3 memcmp 16 bytes) | total_green 356->357 (357/1000). Registrar/caller FUN_005aa060 C2 (callback ref @0x5aa092), callee 0x5adf30 C3. NEW handler near_leaf_memcmp16 (build bufP via holder + bufQ; equal->1 differ->0). GOTCHA: my near-leaf scan only counted DIRECT (e8) calls -> some candidates (e.g. 0x49c810) have INDIRECT virtual/IAT calls (ff /2, ff 15) and are NOT clean near-leaves -> skip those; verify a candidate has only direct calls before reimpl. Also: when a near-leaf has no direct caller, its address-as-data ref (callback) gives the registrar -> use that fn's C-level for the gate. 3 near-leaf shapes proven (writer/reader/memcmp). ~104 candidates remain (minus the indirect-call ones). Session 101-189 net = +100 (257->357). ~76 handlers. Context 66 rounds deep — fresh context advised; fanout is the fast route.
 
 2026-06-15 | round 188 | near-leaf #2: read-seedable-table -> derived int (NEW handler near_leaf_seed_ret) | attempted 1 | GREEN 1 (Count42c1f0 0x0042c1f0: returns 1 iff FUN_00496900(0..5) all zero; callee C3 reads table 0x7e96fc) | total_green 355->356 (356/1000). Caller FUN_004324a0 C2, callee 0x496900 C3. NEW handler near_leaf_seed_ret (no-arg parent; seed the callee's READ table per test; compare int return; non-degen via all-zero->1 vs entry-nonzero->0). 2nd near-leaf shape proven (table-READER callee, vs round 187 table-WRITER). ~105 near-leaf candidates remain. Session 101-188 net = +99 (257->356). ~75 handlers. Context 65 rounds deep — fresh context advised; near-leaves are fannable via promote-c3-batch.
 
