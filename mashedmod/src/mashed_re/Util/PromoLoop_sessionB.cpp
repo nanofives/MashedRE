@@ -3594,3 +3594,8 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroFill48a830(v
     }
 }
 RH_ScopedInstall(ZeroFill48a830, 0x0048a830);
+
+// [REVERTED r209 2026-06-15] FUN_004c2dc0 reimpl drafted + GREEN, but its subsystem tag is
+// third-party-library[lua-5.0] -> Lua library-skip (NOT first-party). Left C2. Lesson: the
+// near-leaf scan must check the hooks.csv SUBSYSTEM tag and skip third-party-library[*]
+// (lua/libpng/zlib/CRT), not just address bands.
