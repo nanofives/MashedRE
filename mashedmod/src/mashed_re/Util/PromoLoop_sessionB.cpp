@@ -3205,3 +3205,42 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Sub45c7f0(void)
     }
 }
 RH_ScopedInstall(Sub45c7f0, 0x0045c7f0);
+
+// 0x00430250  FUN_00430250 (frontend, NEAR-LEAF: pointer-array search via C3 getter)
+// int f(int key, int gate): if(gate==0) return 0; arr=FUN_0040d430()(=*0x5f2770, 0xd ptrs);
+//   for i in 0..0xc: if(*arr[i]==key) return i*0x14+0x7f0cb0; return 0. Callee C3 getter.
+//   Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Search430250(void)
+{
+    __asm {
+        mov  eax, dword ptr [esp+8]          // gate
+        test eax, eax
+        jne  L_SR2_GO
+        xor  eax, eax
+        ret
+    L_SR2_GO:
+        mov  eax, 040D430h
+        call eax
+        mov  edx, dword ptr [esp+4]          // key
+        push esi
+        xor  ecx, ecx
+    L_SR2_LOOP:
+        mov  esi, dword ptr [eax+ecx*4]
+        cmp  dword ptr [esi], edx
+        je   L_SR2_FOUND
+        inc  ecx
+        cmp  ecx, 0x0d
+        jl   L_SR2_LOOP
+    L_SR2_FOUND:
+        cmp  ecx, 0x0d
+        pop  esi
+        je   L_SR2_NF
+        lea  eax, [ecx+ecx*4]
+        lea  eax, [eax*4+07F0CB0h]
+        ret
+    L_SR2_NF:
+        xor  eax, eax
+        ret
+    }
+}
+RH_ScopedInstall(Search430250, 0x00430250);

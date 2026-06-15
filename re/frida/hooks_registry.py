@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'search_430250': {'rva': 0x00430250, 'export': 'Search430250', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32']}, 'arg_type': 'near_leaf_ptr_array_search',
+        'glob': 0x005f2770, 'count': 0xd,
+        'seed_sets': [
+            {'gate': 0, 'key': 0x1234, 'at_idx': -1},   # gate 0 -> 0
+            {'gate': 1, 'key': 0x1234, 'at_idx': 3},     # found at 3 -> 3*0x14+0x7f0cb0
+            {'gate': 1, 'key': 0x9999, 'at_idx': -1},    # not found -> 0
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'sub_45c7f0': {'rva': 0x0045c7f0, 'export': 'Sub45c7f0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_globals',
         'seed_sets': [
             {'globals': [[0x0063ba8c, 5], [0x0088fbc0, 5]]},                   # equal -> 5

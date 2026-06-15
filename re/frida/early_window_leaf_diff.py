@@ -205,6 +205,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_dot_plane',       # void fn(arg1, arg2): NEAR-LEAF dot product. idx=arg1[0x20]; rec=C3-pure-callee(idx)=idx*tbl_stride+tbl_base; dp=arg2[0x20]*rec[0]+arg2[0x24]*rec[4]+arg2[0x28]*rec[8]; arg1[0xac]=dp; dp<const?arg1[0xa8]++:0. cfg.tbl_base/tbl_stride. seed_sets[t]={idx,normal:[3],point:[3],a8}. seed table rec + arg1[0x20]/[0xa8] + arg2 point; snapshot arg1[0xac](bits)+[0xa8]. reimpl = verbatim naked x87 port. non-degen via varied point/normal -> different dp
     'near_leaf_seed_globals',    # u32 fn(void): NEAR-LEAF that reads pure global getters (C3 callees) and returns a derived int. seed_sets[t]={globals:[[abs_addr,val],...]} written before the call; compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different global seeds
     'near_leaf_seed_arg_obs',    # void fn(arg): NEAR-LEAF that reads pure global getters (C3) and conditionally writes an ABSOLUTE global. cfg.obs_addr. seed_sets[t]={globals:[[addr,val],...], arg}; seed, call with arg, snapshot *obs_addr. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via seeds/arg
+    'near_leaf_ptr_array_search',# int fn(key, gate): NEAR-LEAF that searches arr=*cfg.glob (cfg.count ptrs) for arr[i] with *arr[i]==key; returns derived addr or 0. C3 getter callee returns the array base. seed_sets[t]={gate,key,at_idx}; build arr of ptr->struct (struct[0]=distinct key), place key at at_idx, seed glob. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via found(addr)/gate0/notfound
 }
 
 SRC = r"""
@@ -345,6 +346,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_dot_plane') ? ['pointer','pointer']
               : (cfg.at === 'near_leaf_seed_globals') ? []
               : (cfg.at === 'near_leaf_seed_arg_obs') ? ['uint32']
+              : (cfg.at === 'near_leaf_ptr_array_search') ? ['uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1797,6 +1799,20 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_ptr_array_search') {
+      // int f(key, gate): search arr=*cfg.glob (cfg.count ptrs) for *arr[i]==key. seed_sets[t]={gate,key,at_idx}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { gate: 1, key: 0, at_idx: -1 };
+      const N = cfg.count | 0;
+      const arr = Memory.alloc(N * 4 + 4); const structs = [];
+      for (let k = 0; k < N; k++) { const b = Memory.alloc(0x10); _keep.push(b); structs.push(b); }
+      _keep.push(arr);
+      const seedS = function () {
+        for (let k = 0; k < N; k++) { structs[k].writeU32((0x10000 + k) >>> 0); arr.add(k * 4).writePointer(structs[k]); }
+        if ((sp.at_idx | 0) >= 0) structs[sp.at_idx | 0].writeU32(sp.key >>> 0);
+        ptr(cfg.glob).writePointer(arr);
+      };
+      try { seedS(); o = Orig(sp.key >>> 0, sp.gate >>> 0) >>> 0; } catch (e) { eo = e.message; }
+      try { seedS(); r = Reim(sp.key >>> 0, sp.gate >>> 0) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_seed_arg_obs') {
       // void f(arg): seed globals, call with arg, observe an absolute global. cfg.obs_addr.
       const sp = (cfg.seed_sets || [])[t | 0] || { globals: [], arg: 0 };

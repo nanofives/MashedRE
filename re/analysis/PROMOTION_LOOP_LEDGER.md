@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 195
-- total_green: 362
+- rounds_run: 196
+- total_green: 363
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 195 | near-leaf #9: pointer-array search via C3 getter (NEW handler near_leaf_ptr_array_search) | attempted 1 | GREEN 1 (Search430250 0x00430250: gate?search arr=*0x5f2770(0xd ptrs) for *arr[i]==key->i*0x14+0x7f0cb0:0) | total_green 362->363 (363/1000). Caller 0x47b230 C2, callee 0x40d430 C3 getter. NEW handler near_leaf_ptr_array_search (build ptr-array of structs, seed getter glob; gate0->0/found@3->0x7f0cec/notfound->0). 9 near-leaf shapes. ~98 candidates remain. Session 101-195 net = +106 (257->363). ~81 handlers. Context 72 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 194 | near-leaf #8: getter-compare + tail-call getter (reuse near_leaf_seed_globals) | attempted 1 | GREEN 1 (Sub45c7f0 0x0045c7f0: (GetRenderSubMode()==*0x88fbc0)?that:tail-call Flag63b908Get(); -> 5/7/3) | total_green 361->362 (362/1000). Caller 0x45d330 C2, callees 0x40e350/0x40e450 C3 (pure getters). No new handler (reused near_leaf_seed_globals). LESSON: a TAIL-CALL near-leaf (jmp to a C3 fn) is clean too -> reimpl ends `mov eax,<callee_abs>; jmp eax`; check both the e8 calls AND the e9 tail-jmp targets are C3 (my scan missed e9 -> verify manually). ~99 candidates remain. Session 101-194 net = +105 (257->362). ~80 handlers. Context 71 rounds deep — fresh context advised; fanout = fast route to 1000.
 
