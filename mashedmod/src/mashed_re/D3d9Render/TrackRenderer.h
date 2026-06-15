@@ -233,8 +233,32 @@ private:
     struct AiCar {
         float pos[3]; float yaw; int target; float speed;
         float cur_speed; float lane;   // lane = signed lateral offset
+        float spin = 0.f;              // >0: spun out (missile/mine hit)
+        float slow = 0.f;              // >0: shocked (capped speed)
     };
     std::vector<AiCar> ai_cars_;
+
+    // ---- power-up EFFECTS (scaffold over the race state; FUN_00430670 family
+    // not yet RE'd). The held power-up (PickupField) is fired with FireHeldPowerup
+    // and acts on the player car / AI cars: Missile -> projectile -> spin-out;
+    // Mine -> dropped hazard -> spin-out on contact (Shield blocks); Shock ->
+    // slow nearby cars; Boost -> player top-speed burst; Shield -> block 1 hit.
+    float boost_timer_  = 0.f;     // player +top speed while >0
+    float shield_timer_ = 0.f;     // player blocks the next spin-out while >0
+    struct Missile { float pos[3]; float vel[3]; int target; float life; };
+    std::vector<Missile> missiles_;
+    struct Mine { float pos[3]; float life; };
+    std::vector<Mine> mines_;
+    void UpdatePowerups(float dt);
+    void SpinOut(int carSlot);     // slot 0 = player, 1..3 = ai_cars_[slot-1]
+    void ApplyPowerup(int kind);   // spawn the effect for a PickupField::Kind
+public:
+    // Use the held power-up (from the pickup field) — called on the fire key.
+    bool FireHeldPowerup();
+    // Fire a specific power-up kind regardless of inventory (demo/testing).
+    void FirePowerupKind(int kind) { if (car_ready_) ApplyPowerup(kind); }
+    bool boost_active()  const { return boost_timer_  > 0.f; }
+    bool shield_active() const { return shield_timer_ > 0.f; }
 
 public:
     // ---- R6: handling v2 + race rules + elimination round -----------------

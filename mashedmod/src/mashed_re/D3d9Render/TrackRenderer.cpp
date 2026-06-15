@@ -990,7 +990,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     // lateral slide rms ~2% of forward speed (strong grip). max-speed const
     // +0x190 = 34.0 (internal units; world scale differs, so kTop stays
     // track-radius-relative). See HANDLING_V2_2026-06-10.md.
-    const float kTop      = radius_ * 0.25f;
+    float       kTop      = radius_ * 0.25f;
+    if (boost_timer_ > 0.f) kTop *= 1.4f;   // Boost power-up: +40% top speed
     const float kDrag     = 0.21f;          // HARVESTED coast decay
     const float kThrottle = kTop * 0.42f;   // top=kThrottle/kDrag=2x kTop ->
                                             // clamped; ~3.3s spool (faithful)
@@ -1069,6 +1070,15 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         if (ng < 2) break;
         const RaceCar& rc = race_[ci + 1];
         if (round_mode_ && !rc.alive) { a.cur_speed = 0.f; continue; }
+        // power-up effect: spun out by a missile/mine -> can't drive, spins in
+        // place until the timer elapses.
+        if (a.spin > 0.f) {
+            a.spin -= in.dt;
+            a.yaw += 12.0f * in.dt;
+            a.cur_speed = 0.f;
+            continue;
+        }
+        if (a.slow > 0.f) a.slow -= in.dt;     // shocked: speed capped below
         const float* g  = gates_[static_cast<std::size_t>(a.target) % ng].center;
         const float* g2 = gates_[static_cast<std::size_t>(a.target + 1) % ng].center;
         // lateral aim = gate center + lane offset along the gate's local right
@@ -1097,7 +1107,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         a.yaw += yerr * (6.0f * in.dt > 1.f ? 1.f : 6.0f * in.dt);   // turn rate
         // brake into corners: target speed scaled by corner straightness
         const float brake = 0.45f + 0.55f * (corner < 0.f ? 0.f : corner);
-        const float tgt = a.speed * brake;
+        float tgt = a.speed * brake;
+        if (a.slow > 0.f) tgt *= 0.35f;        // shock power-up: throttled
         a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
         const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
         const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
@@ -1122,6 +1133,134 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
 
     // power-up pickups: collect orbs the player drives through (respawn loop).
     pickups_.Update(in.dt, car_pos_);
+    // power-up EFFECTS: advance boost/shield timers, missiles, mines.
+    UpdatePowerups(in.dt);
+}
+
+// slot 0 = player, 1..3 = ai_cars_[slot-1]. Spins the car out (brief loss of
+// control) unless it's the player and a shield is up (which absorbs the hit).
+void TrackRenderer::SpinOut(int slot) {
+    if (slot == 0) {
+        if (shield_timer_ > 0.f) { shield_timer_ = 0.f; return; }   // absorbed
+        car_speed_ = 0.f;
+        car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
+    } else {
+        const int idx = slot - 1;
+        if (idx >= 0 && idx < static_cast<int>(ai_cars_.size()))
+            ai_cars_[static_cast<std::size_t>(idx)].spin = 1.6f;   // seconds
+    }
+    const float* p = (slot == 0) ? car_pos_
+                                  : ai_cars_[static_cast<std::size_t>(slot-1)].pos;
+    parts_.SpawnBurst(p, 36, 0xffffd060u, track_radius_ * 0.10f,
+                      track_radius_ * 0.018f, 0.8f);
+}
+
+bool TrackRenderer::FireHeldPowerup() {
+    if (!car_ready_) return false;
+    const int kind = pickups_.ConsumeHeld();
+    if (kind < 0) return false;
+    ApplyPowerup(kind);
+    return true;
+}
+
+void TrackRenderer::ApplyPowerup(int kind) {
+    const float R = track_radius_ > 1.f ? track_radius_ : radius_;
+    switch (kind) {
+        case PickupField::Boost:
+            boost_timer_ = 2.0f;
+            break;
+        case PickupField::Shield:
+            shield_timer_ = 5.0f;
+            break;
+        case PickupField::Shock: {                       // slow nearby AI cars
+            for (auto& a : ai_cars_) {
+                const float dx = a.pos[0]-car_pos_[0], dz = a.pos[2]-car_pos_[2];
+                if (dx*dx + dz*dz < (R*0.5f)*(R*0.5f)) a.slow = 3.0f;
+            }
+            float sp[3] = {car_pos_[0], car_pos_[1] + R*0.02f, car_pos_[2]};
+            parts_.SpawnBurst(sp, 50, 0xffffe040u, R*0.30f, R*0.012f, 0.6f);
+            break;
+        }
+        case PickupField::Mine: {                        // drop behind the car
+            Mine m;
+            m.pos[0] = car_pos_[0] - std::cos(car_yaw_) * R * 0.04f;
+            m.pos[1] = car_pos_[1];
+            m.pos[2] = car_pos_[2] - std::sin(car_yaw_) * R * 0.04f;
+            m.life = 20.0f;
+            mines_.push_back(m);
+            break;
+        }
+        case PickupField::Missile: {                     // homing at nearest AI ahead
+            int best = -1; float bestd = 1e30f;
+            const float fx = std::cos(car_yaw_), fz = std::sin(car_yaw_);
+            for (int i = 0; i < static_cast<int>(ai_cars_.size()); ++i) {
+                const AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
+                if (round_mode_ && !race_[i+1].alive) continue;
+                const float dx = a.pos[0]-car_pos_[0], dz = a.pos[2]-car_pos_[2];
+                if (dx*fx + dz*fz <= 0.f) continue;       // must be ahead
+                const float d = dx*dx + dz*dz;
+                if (d < bestd) { bestd = d; best = i; }
+            }
+            Missile mi;
+            mi.pos[0] = car_pos_[0]; mi.pos[1] = car_pos_[1] + R*0.01f;
+            mi.pos[2] = car_pos_[2];
+            mi.vel[0] = fx * R * 0.6f; mi.vel[1] = 0.f; mi.vel[2] = fz * R * 0.6f;
+            mi.target = best; mi.life = 4.0f;
+            missiles_.push_back(mi);
+            break;
+        }
+        default: break;
+    }
+}
+
+void TrackRenderer::UpdatePowerups(float dt) {
+    if (dt <= 0.f || dt > 0.25f) dt = 0.016f;
+    const float R = track_radius_ > 1.f ? track_radius_ : radius_;
+    if (boost_timer_  > 0.f) boost_timer_  -= dt;
+    if (shield_timer_ > 0.f) shield_timer_ -= dt;
+
+    // missiles: home toward their target AI car, trail particles, hit on contact
+    const float hitR = R * 0.05f;
+    for (size_t i = 0; i < missiles_.size();) {
+        Missile& m = missiles_[i];
+        m.life -= dt;
+        bool dead = (m.life <= 0.f);
+        if (m.target >= 0 && m.target < static_cast<int>(ai_cars_.size())) {
+            const AiCar& a = ai_cars_[static_cast<std::size_t>(m.target)];
+            float to[3] = {a.pos[0]-m.pos[0], a.pos[1]-m.pos[1], a.pos[2]-m.pos[2]};
+            const float d = std::sqrt(to[0]*to[0]+to[1]*to[1]+to[2]*to[2]);
+            if (d < hitR) { SpinOut(m.target + 1); dead = true; }
+            else if (d > 1e-3f) {                        // steer velocity toward target
+                const float spd = R * 0.7f;
+                for (int k = 0; k < 3; ++k) m.vel[k] += (to[k]/d*spd - m.vel[k]) * 4.f * dt;
+            }
+        }
+        m.pos[0] += m.vel[0]*dt; m.pos[1] += m.vel[1]*dt; m.pos[2] += m.vel[2]*dt;
+        parts_.SpawnTrail(m.pos, 0xffff8020u, R*0.012f, 0.4f);   // orange comet
+        if (dead) { missiles_.erase(missiles_.begin()+i); }
+        else ++i;
+    }
+
+    // mines: armed hazard; spin out any car (player or AI) that contacts it.
+    for (size_t i = 0; i < mines_.size();) {
+        Mine& m = mines_[i];
+        m.life -= dt;
+        parts_.SpawnTrail(m.pos, 0xffff4030u, R*0.010f, 0.5f);   // red pulse
+        bool det = false;
+        {
+            const float dx = car_pos_[0]-m.pos[0], dz = car_pos_[2]-m.pos[2];
+            if (dx*dx+dz*dz < hitR*hitR) { SpinOut(0); det = true; }
+        }
+        for (int c = 0; c < static_cast<int>(ai_cars_.size()) && !det; ++c) {
+            const AiCar& a = ai_cars_[static_cast<std::size_t>(c)];
+            const float dx = a.pos[0]-m.pos[0], dz = a.pos[2]-m.pos[2];
+            if (dx*dx+dz*dz < hitR*hitR) { SpinOut(c+1); det = true; }
+        }
+        if (det || m.life <= 0.f) {
+            if (det) parts_.SpawnBurst(m.pos, 30, 0xffff6020u, R*0.12f, R*0.016f, 0.7f);
+            mines_.erase(mines_.begin()+i);
+        } else ++i;
+    }
 }
 
 void TrackRenderer::StartRound() {
@@ -1164,6 +1303,10 @@ void TrackRenderer::StartRound() {
     }
     countdown_ = 3.0f;   // 3-2-1 freeze before GO
     race_cam_.Reset();   // force_reset path on the first camera tick
+    // clear any in-flight power-up effects from the previous round
+    missiles_.clear();
+    mines_.clear();
+    boost_timer_ = shield_timer_ = 0.f;
 }
 
 void TrackRenderer::StartMatch(int /*first_to: superseded by the ported

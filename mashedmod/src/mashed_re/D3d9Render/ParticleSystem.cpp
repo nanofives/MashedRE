@@ -148,6 +148,32 @@ void ParticleSystem::Update(float dt, const float camEye[3], const float camFwd[
     }
 }
 
+void ParticleSystem::SpawnBurst(const float pos[3], int n, std::uint32_t col,
+                                float speed, float size, float life) {
+    for (int i = 0; i < n; ++i) {
+        P* p = Spawn();
+        p->pos[0] = pos[0]; p->pos[1] = pos[1]; p->pos[2] = pos[2];
+        p->vel[0] = (Frand() - 0.5f) * 2.f * speed;
+        p->vel[1] = (Frand() * 0.8f + 0.2f) * speed;     // bias up
+        p->vel[2] = (Frand() - 0.5f) * 2.f * speed;
+        p->size = size * (0.6f + Frand() * 0.8f);
+        p->col = col;
+        p->maxlife = p->life = life * (0.6f + Frand() * 0.6f);
+    }
+}
+
+void ParticleSystem::SpawnTrail(const float pos[3], std::uint32_t col,
+                                float size, float life) {
+    P* p = Spawn();
+    p->pos[0] = pos[0]; p->pos[1] = pos[1]; p->pos[2] = pos[2];
+    p->vel[0] = (Frand() - 0.5f) * size * 2.f;
+    p->vel[1] = (Frand() - 0.5f) * size * 2.f;
+    p->vel[2] = (Frand() - 0.5f) * size * 2.f;
+    p->size = size * (0.7f + Frand() * 0.6f);
+    p->col = col;
+    p->maxlife = p->life = life;
+}
+
 int ParticleSystem::alive() const {
     int n = 0;
     for (const auto& p : pool_) if (p.life > 0.f) ++n;

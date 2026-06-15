@@ -38,6 +38,13 @@ public:
     // progress and view/proj are set; saves/restores the states it changes.
     void Render(IDirect3DDevice9* dev, const float camEye[3], const float camAt[3]);
 
+    // One-off FX (power-up trails / explosions). Burst = n particles flung out
+    // from `pos`; Trail = a single drifting particle (call each frame on a
+    // moving projectile). Sizes are absolute world units.
+    void SpawnBurst(const float pos[3], int n, std::uint32_t col,
+                    float speed, float size, float life);
+    void SpawnTrail(const float pos[3], std::uint32_t col, float size, float life);
+
     int alive() const;
 
 private:

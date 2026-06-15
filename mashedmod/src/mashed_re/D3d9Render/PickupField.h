@@ -36,6 +36,8 @@ public:
 
     int  collected() const { return collected_; }
     int  held() const { return held_; }
+    // Use the held power-up: returns its kind (or -1 if none) and clears it.
+    int  ConsumeHeld() { int h = held_; held_ = -1; return h; }
     bool enabled() const { return !orbs_.empty(); }
 
 private:

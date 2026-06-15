@@ -1850,6 +1850,21 @@ bool RenderFrame() {
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
             g_track.UpdateCar(di);
+            // Fire the held power-up: SPACE (rising edge) when driving manually;
+            // in the drive demo, fire one of each effect on a schedule (kinds:
+            // 0=Missile 1=Mine 2=Shock 3=Boost 4=Shield) plus any collected one.
+            if (s_drive_demo) {
+                static bool fm=false, fb=false, fs=false, fn=false;
+                if (!fm && t > 3.8f) { g_track.FirePowerupKind(0); fm=true; }
+                if (!fb && t > 4.0f) { g_track.FirePowerupKind(3); fb=true; }
+                if (!fs && t > 5.4f) { g_track.FirePowerupKind(2); fs=true; }
+                if (!fn && t > 6.0f) { g_track.FirePowerupKind(1); fn=true; }
+                if (g_track.pickup_held() >= 0) g_track.FireHeldPowerup();
+            } else if (g_kbd) {
+                const bool sp_now  = (g_keys[DIK_SPACE]      & 0x80) != 0;
+                const bool sp_prev = (g_keys_prev[DIK_SPACE] & 0x80) != 0;
+                if (sp_now && !sp_prev) g_track.FireHeldPowerup();
+            }
         }
         // R6 match flow: when a round ends, hold ~3s on the result then start
         // the next round (or finish the match).
@@ -1910,13 +1925,18 @@ bool RenderFrame() {
                     DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
                                      0xffffffffu);
                 }
-                // Power-up HUD: held kind + collected count (bottom-left).
+                // Power-up HUD: held kind + fire hint (bottom-left), then any
+                // active effect badges above it.
                 if (g_track.pickup_held() >= 0) {
-                    wchar_t pw[48];
+                    wchar_t pw[64];
                     const char* nm = g_track.pickup_held_name();
-                    swprintf(pw, 48, L"PWR: %hs  x%d", nm, g_track.pickups_collected());
+                    swprintf(pw, 64, L"PWR: %hs  [SPACE]", nm);
                     DrawMashedString(pw, 20.f, 440.f, 22.f, 0xff80ffc0u);
                 }
+                if (g_track.boost_active())
+                    DrawMashedString(L"BOOST", 20.f, 410.f, 22.f, 0xff60ff70u);
+                if (g_track.shield_active())
+                    DrawMashedString(L"SHIELD", 120.f, 410.f, 22.f, 0xffc0a0ffu);
             }
         }
         g_device->EndScene();
