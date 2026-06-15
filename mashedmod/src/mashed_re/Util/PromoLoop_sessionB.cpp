@@ -1891,3 +1891,19 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Calc5b2fd0(
     return base + *reinterpret_cast<std::uint32_t*>(arg1 + 0x20) * q + rem;
 }
 RH_ScopedInstall(Calc5b2fd0, 0x005b2fd0);
+
+// ===== round 154 ===== (ring-buffer copy to linear dest)
+// 0x005ab980 — void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14])
+//   cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt.
+extern "C" __declspec(dllexport) void __cdecl Ring5ab980(std::uint8_t* arg) {
+    std::uint32_t esi = *reinterpret_cast<std::uint32_t*>(arg + 0xc) - *reinterpret_cast<std::uint32_t*>(0x007dd610);
+    std::uint32_t cnt = *reinterpret_cast<std::uint32_t*>(0x007dd614) - esi;
+    std::uint32_t lim = *reinterpret_cast<std::uint32_t*>(arg + 0x14);
+    if (cnt >= lim) cnt = lim;
+    std::uint8_t* src = reinterpret_cast<std::uint8_t*>(0x007dce08 + esi);
+    std::uint8_t* dst = *reinterpret_cast<std::uint8_t**>(arg + 0x18);
+    for (std::uint32_t i = 0; i < cnt; i++) dst[i] = src[i];
+    *reinterpret_cast<std::uint32_t*>(arg + 0x18) = reinterpret_cast<std::uint32_t>(dst) + cnt;
+    *reinterpret_cast<std::uint32_t*>(arg + 0x14) = lim - cnt;
+}
+RH_ScopedInstall(Ring5ab980, 0x005ab980);

@@ -169,6 +169,7 @@ PURE_LEAF_ARGTYPES = {
     'global_fieldoff_set',       # u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(entry[0]) return arg; entry[4]=arg[0x48]; arg[0x48]=0x557b70; entry[0]=1; return arg. tests: t0 entry[0]=0(set), t1 entry null, t2 entry[0]=5(early ret). seed arg[0x48]=0x66; shared arg+entry bufs; snapshot entry[4]|arg[0x48]|entry[0]|ret. non-degen
     'eax_dest_memcpy_init',      # void fn(EAX=dest, src, arg2*, arg3, arg4): dest[0x54]=0; dest[0x48]=0; dest[0x4c]=arg3; dest[0x58]=1; dest[0x50]=arg4; memcpy(dest,src,16 dwords); dest[0x40]=*arg2. ORIG via `mov eax,dest; jmp` trampoline (4 stack args); REIMPL __cdecl(dest,src,arg2,arg3,arg4). seed src markers + a2 val; snapshot dest[0..0x3f]+[0x40,0x48,0x4c,0x50,0x54,0x58]. non-degen
     'struct_div_mod_compute',    # u32 fn(arg1,arg2,arg3,arg4,arg5): div=*(arg1[0x18]+arg4*0x28+0x20); q=arg2/div(unsigned); rem=arg2%div; *arg5=rem; return *(arg1[0x10]+arg3*0x20+0x1c)+arg1[0x20]*q+rem. seed arg1 ptrs+tables+mult per cfg.seed_sets[t]={val,div}; arg3=1,arg4=2 fixed; snapshot *arg5|ret. non-degen via varied val/div
+    'ring_copy_5ab980',          # void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14]) cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt. seed g610/g614 + ring markers + arg fields; snapshot dest dwords|arg[0x18]|arg[0x14]. non-degen
 }
 
 SRC = r"""
@@ -273,6 +274,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_fieldoff_set') ? ['pointer']
               : (cfg.at === 'eax_dest_memcpy_init') ? ['pointer','pointer','pointer','uint32','uint32']
               : (cfg.at === 'struct_div_mod_compute') ? ['pointer','uint32','uint32','uint32','pointer']
+              : (cfg.at === 'ring_copy_5ab980') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1421,6 +1423,22 @@ rpc.exports.diff = function(cfg) {
       const rdDM = function (rv) { return (a5.readU32() >>> 0) + '|' + (rv >>> 0); };
       try { setupDM(); const ro = Orig(a1, sp.val >>> 0, arg3, arg4, a5) >>> 0; o = rdDM(ro); } catch (e) { eo = e.message; }
       try { setupDM(); const rr = Reim(a1, sp.val >>> 0, arg3, arg4, a5) >>> 0; r = rdDM(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'ring_copy_5ab980') {
+      // void fn(arg): ring-buffer copy from 0x7dce08 to arg[0x18]; advances arg[0x18], decrements
+      // arg[0x14]. Seed g610/g614, ring markers, arg fields; snapshot dest + the two updated fields.
+      const G610 = 0x7dd610, G614 = 0x7dd614, RING = 0x7dce08;
+      const dest = Memory.alloc(0x40), argr = Memory.alloc(0x40); _keep.push(dest, argr);
+      const setupRC = function () {
+        for (let z = 0; z < 0x40; z += 4) { dest.add(z).writeU32(0xA5A5A5A5); argr.add(z).writeU32(0); }
+        ptr(G610).writeU32(0x100); ptr(G614).writeU32(0x40);
+        for (let k = 0; k < 8; k++) ptr(RING).add(k * 4).writeU32((0xC0DE0000 | k) >>> 0);
+        argr.add(0xc).writeU32(0x100);
+        argr.add(0x14).writeU32(0x20);
+        argr.add(0x18).writePointer(dest);
+      };
+      const snapRC = function () { const a = []; for (let k = 0; k < 8; k++) a.push(dest.add(k * 4).readU32() >>> 0); a.push(argr.add(0x18).readU32() >>> 0); a.push(argr.add(0x14).readU32() >>> 0); return a.join('|'); };
+      try { setupRC(); Orig(argr); o = snapRC(); } catch (e) { eo = e.message; }
+      try { setupRC(); Reim(argr); r = snapRC(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

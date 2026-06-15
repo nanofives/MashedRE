@@ -14349,6 +14349,9 @@ HOOKS = {
     # ---- promote-round round 153 (struct-table div/mod compute) --
     'calc_5b2fd0': {'rva': 0x005b2fd0, 'export': 'Calc5b2fd0', 'signature': {'ret': 'uint32', 'args': ['pointer','uint32','uint32','uint32','pointer']}, 'arg_type': 'struct_div_mod_compute', 'seed_sets': [{'val': 100, 'div': 7}, {'val': 50, 'div': 8}, {'val': 1000, 'div': 13}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
 
+    # ---- promote-round round 154 (ring-buffer copy to linear dest) --
+    'ring_5ab980': {'rva': 0x005ab980, 'export': 'Ring5ab980', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'ring_copy_5ab980', 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
