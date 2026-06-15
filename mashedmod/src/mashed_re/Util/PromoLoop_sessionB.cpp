@@ -3533,3 +3533,9 @@ extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search40bb30(vo
     }
 }
 RH_ScopedInstall(Search40bb30, 0x0040bb30);
+
+// [DEFERRED 2026-06-15] FUN_00423b00 (0x00423b00) gated 4-function orchestrator (3 C3 calls +
+// C2 tail 0x423670). Reimpl drafted but the callees are deep multi-branch state machines whose
+// output globals weren't located -> early_window gave a DEGENERATE all-zero gate-on/off snapshot
+// (couldn't find an observe target that changes). Left C2; needs deeper per-callee analysis or
+// the booted lane. Not promoted (no degenerate-GREEN).

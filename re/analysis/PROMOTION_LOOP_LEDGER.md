@@ -9,9 +9,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 205
+- rounds_run: 206
 - total_green: 372
-- dry_counter: 0
+- dry_counter: 1
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
   re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 205 | complex orchestrator attempt -> DEGENERATE, deferred (NO promotion) | attempted 1 (0x423b00) | GREEN 0 | dry_counter 0->1. 0x423b00 = gated 4-fn orchestrator (3 C3 calls + C2 tail 0x423670); reimpl drafted + built, but the callees (0x423270/0x423320) are deep multi-branch state machines reading/writing many globals; early_window gave a DEGENERATE all-zero gate-on/off snapshot (couldn't locate an observe target that changes without reading all 4 callees fully). Reverted (left C2, no degenerate-GREEN). MILESTONE/ASSESSMENT: the EASILY-VERIFIABLE solo near-leaf pool is now EXHAUSTED. Scans this round confirmed: 0 pure-getter/addr-calc combiners left (only 0x40dba0 big-tail + 0x49a730 no-caller), 0 single-field-getter near-leaves; remaining ~92 candidates are complex orchestrators / multi-branch state machines / big-tail-calls needing deep per-callee analysis (high cost, degenerate/crash risk) OR the booted lane. Session 101-205 net = +115 (257->372, unchanged this round). Context 82 rounds deep. PATH TO 1000 (628 more) = promote-c3-batch PARALLEL FANOUT (awaiting explicit user opt-in) — the near_leaf_candidates.tsv + ~86 handlers are ready to fan out.
 
 2026-06-15 | round 204 | near-leaf #18: global-list string-search wrapper (NEW handler near_leaf_global_str_search) | attempted 1 | GREEN 1 (Search40bb30 0x0040bb30: FUN_004c5c00(*0x63b8f8, query)) | total_green 371->372 (372/1000). Callee 0x4c5c00 C3 (circular-list ci-search), 34 C2+ callers (heavily-used name-lookup helper). NEW handler near_leaf_global_str_search (build list, *0x63b8f8=head, query). 18 near-leaf shapes. Session 101-204 net = +115 (257->372). ~86 handlers. Context 81 rounds deep — fresh context STRONGLY advised; fanout = fast route to 1000.
 
