@@ -2123,3 +2123,28 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Alloc477b60(void) {
     return 0;
 }
 RH_ScopedInstall(Alloc477b60, 0x00477b60);
+
+// ===== round 166 ===== (state dispatch + intrusive-list insert)
+// 0x005b0f90 — void fn(p, _, state_src): state=*state_src; sub=p[0x20];
+//   if(state==1){ if(sub[0x28]!=3) sub[0x28]=8; } else if(state==3){ if(sub[0x28]!=5) sub[0x28]=4; }
+//   sub[0x20]=state; old=p[0x14]; if(old){ *(p[0x18])=old; *(old+4)=p[0x18]; }
+//   node=p[0x24]+0xc; nx=*node; p[0x18]=node; p[0x14]=nx; *(nx+4)=&p[0x14]; *node=&p[0x14].
+extern "C" __declspec(dllexport) void __cdecl StateInsert5b0f90(std::uint8_t* p, std::uint32_t /*unused*/, std::uint8_t* state_src) {
+    std::uint32_t state = *reinterpret_cast<std::uint32_t*>(state_src);
+    std::uint8_t* sub = *reinterpret_cast<std::uint8_t**>(p + 0x20);
+    if (state == 1) { if (*reinterpret_cast<std::uint32_t*>(sub + 0x28) != 3) *reinterpret_cast<std::uint32_t*>(sub + 0x28) = 8; }
+    else if (state == 3) { if (*reinterpret_cast<std::uint32_t*>(sub + 0x28) != 5) *reinterpret_cast<std::uint32_t*>(sub + 0x28) = 4; }
+    *reinterpret_cast<std::uint32_t*>(sub + 0x20) = state;
+    std::uint8_t* old = *reinterpret_cast<std::uint8_t**>(p + 0x14);
+    if (old) {
+        *reinterpret_cast<std::uint8_t**>(*reinterpret_cast<std::uint8_t**>(p + 0x18)) = old;
+        *reinterpret_cast<std::uint8_t**>(old + 4) = *reinterpret_cast<std::uint8_t**>(p + 0x18);
+    }
+    std::uint8_t* node = *reinterpret_cast<std::uint8_t**>(p + 0x24) + 0xc;
+    std::uint8_t* nx = *reinterpret_cast<std::uint8_t**>(node);
+    *reinterpret_cast<std::uint8_t**>(p + 0x18) = node;
+    *reinterpret_cast<std::uint8_t**>(p + 0x14) = nx;
+    *reinterpret_cast<std::uint8_t**>(nx + 4) = p + 0x14;
+    *reinterpret_cast<std::uint8_t**>(node) = p + 0x14;
+}
+RH_ScopedInstall(StateInsert5b0f90, 0x005b0f90);
