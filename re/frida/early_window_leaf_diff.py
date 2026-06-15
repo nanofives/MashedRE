@@ -174,6 +174,7 @@ PURE_LEAF_ARGTYPES = {
     'flag_branch_struct_2way',   # void fn(p, arg2): if(p[0x94][0x50]&8){ sub=p[0x11c]; sub[0x88]=0; sub[0x8c]=arg2; } else { s=p[0x84]; val=(s[0x38]>>3)*s[0x39]*arg2; p[0x8c]=p[0x90]=val; p[0x88]=arg2; p[0x28]|=0x400; }. test0 flag set, test1 clear. seed p[0x94]=&f,p[0x11c]=&sub,p[0x84]=&s; snapshot sub[0x88]|sub[0x8c]|p[0x8c]|p[0x90]|p[0x88]|p[0x28]. non-degen
     'abs_region_zeroer',         # void fn(): strided record-array zeroer (base glob, stride 0x8c) that also writes record index (word) to [+0x1c], + trailing tgt=0. Pure writer; sentinel-fill ONLY the observed offsets (base[0], base[0x1c]=idx0, rec1[0x1c]=idx1, rec5[0x1c]=idx5, base[0x64], tgt), call, snapshot, compare. non-degen via the per-record index
     'array_fill_2way',           # void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4]; for i in [0,count): *(arr1+i*12)=*src (vec3 copy); *(arr2+i*12)={0,0,0}. seed count=3, p[0]=&arr1,p[4]=&arr2, src markers; snapshot arr1[0..count]+arr2[0..count]. non-degen via markers + zeros
+    'abs_table_state_setter',    # u32 fn(i, arg2): if(i<0||i>=0x19) return 0; rec=glob+i*0x50; if(arg2==0){rec[0x20]=3;rec[0x1c]=0} elif(rec[0x20]==3){rec[0x20]=1;rec[0x1c]=0} else {rec[0x1c]=0}; return 1. tests cover the 3 branches + OOB; seed rec[0x20]=pre, rec[0x1c]=0xEE; snapshot rec[0x20]|rec[0x1c]|ret. non-degen
 }
 
 SRC = r"""
@@ -283,6 +284,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'flag_branch_struct_2way') ? ['pointer','uint32']
               : (cfg.at === 'abs_region_zeroer') ? []
               : (cfg.at === 'array_fill_2way') ? ['pointer','pointer']
+              : (cfg.at === 'abs_table_state_setter') ? ['uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1513,6 +1515,17 @@ rpc.exports.diff = function(cfg) {
       };
       try { setupA(); Orig(p, src); o = snapA(); } catch (e) { eo = e.message; }
       try { setupA(); Reim(p, src); r = snapA(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'abs_table_state_setter') {
+      // u32 fn(i, arg2): bounded abs-table state setter. tests cover arg2==0 / rec[0x20]==3 /
+      // else / OOB branches. seed rec[0x20]=pre, rec[0x1c]=0xEE; snapshot rec[0x20]|rec[0x1c]|ret.
+      const base = cfg.glob >>> 0, stride = 0x50;
+      const specs = [{ i: 2, a2: 0, pre: 9 }, { i: 3, a2: 1, pre: 3 }, { i: 4, a2: 1, pre: 7 }, { i: 0x20, a2: 1, pre: 5 }];
+      const sp = specs[t | 0];
+      const rec = (base + sp.i * stride) >>> 0;
+      const setupTS = function () { ptr(rec).add(0x20).writeU32(sp.pre); ptr(rec).add(0x1c).writeU32(0xEE); };
+      const snapTS = function (rv) { return (ptr(rec).add(0x20).readU32() >>> 0) + '|' + (ptr(rec).add(0x1c).readU32() >>> 0) + '|' + (rv >>> 0); };
+      try { setupTS(); const ro = Orig(sp.i >>> 0, sp.a2 >>> 0) >>> 0; o = snapTS(ro); } catch (e) { eo = e.message; }
+      try { setupTS(); const rr = Reim(sp.i >>> 0, sp.a2 >>> 0) >>> 0; r = snapTS(rr); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

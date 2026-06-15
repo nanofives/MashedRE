@@ -2017,3 +2017,17 @@ extern "C" __declspec(dllexport) void __cdecl Fill4899c0(std::uint8_t* p, std::u
     }
 }
 RH_ScopedInstall(Fill4899c0, 0x004899c0);
+
+// ===== round 160 ===== (bounded abs-table state setter)
+// 0x00458f20 — u32 fn(i, arg2): if((int)i<0 || i>=0x19) return 0; rec=0x68b198+i*0x50;
+//   if(arg2==0){ rec[0x20]=3; rec[0x1c]=0; } else if(rec[0x20]==3){ rec[0x20]=1; rec[0x1c]=0; }
+//   else { rec[0x1c]=0; } return 1.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Set458f20(std::uint32_t i, std::uint32_t arg2) {
+    if (static_cast<int>(i) < 0 || i >= 0x19) return 0;
+    std::uint8_t* rec = reinterpret_cast<std::uint8_t*>(0x0068b198 + i * 0x50);
+    if (arg2 == 0) { *reinterpret_cast<std::uint32_t*>(rec + 0x20) = 3; *reinterpret_cast<std::uint32_t*>(rec + 0x1c) = 0; }
+    else if (*reinterpret_cast<std::uint32_t*>(rec + 0x20) == 3) { *reinterpret_cast<std::uint32_t*>(rec + 0x20) = 1; *reinterpret_cast<std::uint32_t*>(rec + 0x1c) = 0; }
+    else { *reinterpret_cast<std::uint32_t*>(rec + 0x1c) = 0; }
+    return 1;
+}
+RH_ScopedInstall(Set458f20, 0x00458f20);
