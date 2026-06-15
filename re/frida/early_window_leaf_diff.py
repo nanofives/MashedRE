@@ -176,6 +176,7 @@ PURE_LEAF_ARGTYPES = {
     'array_fill_2way',           # void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4]; for i in [0,count): *(arr1+i*12)=*src (vec3 copy); *(arr2+i*12)={0,0,0}. seed count=3, p[0]=&arr1,p[4]=&arr2, src markers; snapshot arr1[0..count]+arr2[0..count]. non-degen via markers + zeros
     'abs_table_state_setter',    # u32 fn(i, arg2): if(i<0||i>=0x19) return 0; rec=glob+i*0x50; if(arg2==0){rec[0x20]=3;rec[0x1c]=0} elif(rec[0x20]==3){rec[0x20]=1;rec[0x1c]=0} else {rec[0x1c]=0}; return 1. tests cover the 3 branches + OOB; seed rec[0x20]=pre, rec[0x1c]=0xEE; snapshot rec[0x20]|rec[0x1c]|ret. non-degen
     'esi_edx_predicate',         # u32 fn(ESI=s, EDX=e): a=s[0x10];c=e[0x10]; if(a==c||a==e[0x14]){ b=s[0x14]; return (b==c||b==e[0x14])?1:0; } return 0. ORIG via `mov esi,s; mov edx,e; jmp` trampoline; REIMPL __cdecl(s,e). seed fields for match(t0->1)/no-match(t1->0). non-degen
+    'edx_ebx_edi_find',          # u32 fn(EDX=arr, EBX=key, EDI=n): walk arr (terminated 0xff070000); find (n+1)-th element==key, return the FOLLOWING element; else -1. ORIG via a CALL-trampoline that saves/restores callee-saved ebx,edi (push edi/ebx; mov edx/ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(arr,key,n). test=n (0->1st match's next, 1->2nd). non-degen
 }
 
 SRC = r"""
@@ -287,6 +288,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'array_fill_2way') ? ['pointer','pointer']
               : (cfg.at === 'abs_table_state_setter') ? ['uint32','uint32']
               : (cfg.at === 'esi_edx_predicate') ? ['pointer','pointer']
+              : (cfg.at === 'edx_ebx_edi_find') ? ['pointer','uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1549,6 +1551,35 @@ rpc.exports.diff = function(cfg) {
       };
       try { setupEP(); o = mkEP(ptr(cfg.rva))() >>> 0; } catch (e) { eo = e.message; }
       try { setupEP(); r = Reim(bufS, bufE) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'edx_ebx_edi_find') {
+      // u32 fn(EDX=arr, EBX=key, EDI=n): find (n+1)-th key in arr, return following element.
+      // ORIG via a call-trampoline that saves/restores callee-saved ebx,edi. REIMPL __cdecl.
+      const arr = Memory.alloc(0x80); _keep.push(arr);
+      const KEY = 0x1234, TERM = 0xff070000;
+      const buildArr = function () {
+        arr.writeU32(KEY); arr.add(4).writeU32(0xAAAA);
+        arr.add(8).writeU32(0x9999); arr.add(0xc).writeU32(0x8888);
+        arr.add(0x10).writeU32(KEY); arr.add(0x14).writeU32(0xBBBB);
+        arr.add(0x18).writeU32(TERM);
+      };
+      const nval = t | 0;
+      const mkF = function (target, n) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        let p = 0;
+        tr.add(p).writeU8(0x57); p += 1;                                  // push edi
+        tr.add(p).writeU8(0x53); p += 1;                                  // push ebx
+        tr.add(p).writeU8(0xBA); tr.add(p + 1).writePointer(arr); p += 5; // mov edx, arr
+        tr.add(p).writeU8(0xBB); tr.add(p + 1).writeU32(KEY); p += 5;     // mov ebx, key
+        tr.add(p).writeU8(0xBF); tr.add(p + 1).writeU32(n >>> 0); p += 5; // mov edi, n
+        tr.add(p).writeU8(0xE8); tr.add(p + 1).writeS32(target.sub(tr.add(p + 5)).toInt32()); p += 5; // call target
+        tr.add(p).writeU8(0x5B); p += 1;                                  // pop ebx
+        tr.add(p).writeU8(0x5F); p += 1;                                  // pop edi
+        tr.add(p).writeU8(0xC3); p += 1;                                  // ret
+        Memory.protect(tr, 32, 'rwx');
+        return new NativeFunction(tr, 'uint32', [], 'mscdecl');
+      };
+      try { buildArr(); o = mkF(ptr(cfg.rva), nval)() >>> 0; } catch (e) { eo = e.message; }
+      try { buildArr(); r = Reim(arr, KEY >>> 0, nval >>> 0) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

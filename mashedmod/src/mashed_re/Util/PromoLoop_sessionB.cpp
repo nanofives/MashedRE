@@ -2047,3 +2047,20 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Match47bc90(std::uint8_t*
     return 0;
 }
 RH_ScopedInstall(Match47bc90, 0x0047bc90);
+
+// ===== round 162 ===== (EDX/EBX/EDI register-arg array search)
+// 0x0042ad90 — u32 fn(EDX=arr, EBX=key, EDI=n): if(arr==0) return -1; walk arr[ecx] (term
+//   0xff070000); count matches==key in esi; when esi==n at a match, return arr[ecx+1]; else -1.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* arr, std::uint32_t key, std::uint32_t n) {
+    if (arr == 0) return 0xffffffff;
+    std::uint32_t* a = reinterpret_cast<std::uint32_t*>(arr);
+    std::uint32_t ecx = 0, esi = 0, eax = a[0];
+    if (eax == 0xff070000) return 0xffffffff;
+    for (;;) {
+        if (eax == key) { if (n == esi) return a[ecx + 1]; esi++; }
+        eax = a[ecx + 1]; ecx++;
+        if (eax == 0xff070000) break;
+    }
+    return 0xffffffff;
+}
+RH_ScopedInstall(Find42ad90, 0x0042ad90);
