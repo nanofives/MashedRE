@@ -60,6 +60,18 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00476d00 MultiArrayScatter476d00 (render, 21 callers) - PURE LEAF void f(struct* p):
+    # if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays
+    # (ptr fields p+0x10/14/18/1c/20/24/28, strides 12/8/4/64/4/16/32) at counter p[0xc],
+    # then counter++. Observe arr[k] at counter-slot + counter. source globals REAL.
+    'multi_array_scatter_476d00': {'rva': 0x00476d00, 'export': 'MultiArrayScatter476d00', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'multi_array_scatter',
+        'scenarios': [
+            {'counter': 0, 'bound': 4},   # write slot 0, counter->1
+            {'counter': 2, 'bound': 4},   # write slot 2 (index-verified), counter->3
+            {'counter': 4, 'bound': 4},   # bounds: counter>=bound -> no write, counter stays 4
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x0045ca30 FloatClamp3Level45ca30 (gameplay) - PURE LEAF void f(void): 3-level
     # quantize of 6-float array @0x88f5e0. x>-2->0.0; x>-4->-1.0; else -2.0. Fixed
     # constant outputs. Reuses near_leaf_seed_multi_obs: seed 6 floats, observe them.

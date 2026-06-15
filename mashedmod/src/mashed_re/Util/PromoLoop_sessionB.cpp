@@ -3880,3 +3880,53 @@ extern "C" __declspec(dllexport) void __cdecl FloatClamp3Level45ca30(void)
     }
 }
 RH_ScopedInstall(FloatClamp3Level45ca30, 0x0045ca30);
+
+// 0x00476d00  FUN_00476d00 (render, MultiArrayScatter) — PURE LEAF (no calls)
+// void f(struct* p): if (p[0xc] >= p[8]) return; else scatter source globals into
+// up to 7 optional arrays (each gated on a non-null ptr field) indexed by the
+// counter p[0xc], then increment the counter. capstone-verified. memcpy/float copy
+// match the original rep-movsd / fld-fstp (source floats are normal -> exact).
+extern "C" __declspec(dllexport) void __cdecl MultiArrayScatter476d00(unsigned char* p)
+{
+    const int counter = *reinterpret_cast<int*>(p + 0xc);
+    if (counter >= *reinterpret_cast<int*>(p + 8)) return;
+    unsigned char* a0 = *reinterpret_cast<unsigned char**>(p + 0x10);
+    if (a0) {
+        int* d = reinterpret_cast<int*>(a0 + counter * 12);
+        d[0] = *reinterpret_cast<int*>(0x00692528u);
+        d[1] = *reinterpret_cast<int*>(0x0069252cu);
+        d[2] = *reinterpret_cast<int*>(0x00692530u);
+    }
+    unsigned char* a1 = *reinterpret_cast<unsigned char**>(p + 0x14);
+    if (a1) {
+        int* d = reinterpret_cast<int*>(a1 + counter * 8);
+        d[0] = *reinterpret_cast<int*>(0x006924dcu);
+        d[1] = *reinterpret_cast<int*>(0x006924e0u);
+    }
+    unsigned char* a2 = *reinterpret_cast<unsigned char**>(p + 0x18);
+    if (a2) *reinterpret_cast<int*>(a2 + counter * 4) = *reinterpret_cast<int*>(0x00692554u);
+    unsigned char* a3 = *reinterpret_cast<unsigned char**>(p + 0x1c);
+    if (a3) {  // rep movsd 0x10 dwords from 0x6924e8
+        int* d = reinterpret_cast<int*>(a3 + counter * 64);
+        const int* s = reinterpret_cast<const int*>(0x006924e8u);
+        for (int k = 0; k < 0x10; k++) d[k] = s[k];
+    }
+    unsigned char* a4 = *reinterpret_cast<unsigned char**>(p + 0x20);
+    if (a4) *reinterpret_cast<float*>(a4 + counter * 4) = *reinterpret_cast<float*>(0x006924d8u);
+    unsigned char* a5 = *reinterpret_cast<unsigned char**>(p + 0x24);
+    if (a5) {
+        int* d = reinterpret_cast<int*>(a5 + counter * 16);
+        d[0] = *reinterpret_cast<int*>(0x00692598u);
+        d[1] = *reinterpret_cast<int*>(0x0069259cu);
+        d[2] = *reinterpret_cast<int*>(0x006925a0u);
+        d[3] = *reinterpret_cast<int*>(0x006925a4u);
+    }
+    unsigned char* a6 = *reinterpret_cast<unsigned char**>(p + 0x28);
+    if (a6) {  // rep movsd 8 dwords from 0x692534
+        int* d = reinterpret_cast<int*>(a6 + counter * 32);
+        const int* s = reinterpret_cast<const int*>(0x00692534u);
+        for (int k = 0; k < 8; k++) d[k] = s[k];
+    }
+    *reinterpret_cast<int*>(p + 0xc) = counter + 1;
+}
+RH_ScopedInstall(MultiArrayScatter476d00, 0x00476d00);

@@ -222,6 +222,7 @@ PURE_LEAF_ARGTYPES = {
     'bounded_table_signselect_clamp', # int fn(uint idx, int val): PURE LEAF. if(idx>=0x10) ret 0; b=*(u8*)(t2Tbl + (*(int*)(t1Tbl+idx*16))*0x4c); slot=&t3Tbl[idx*t3Stride]; *slot += (float)b>C ? +val : -val; clamp[0,0xbb8]; ret 1. Per cfg.scenarios[t]={idx,val,byte,slot}: seed t1[idx]=0,t2[0]=byte,t3[idx]=slot; observe ret:slotval. non-degen via +/- + clamp + bounds
     'seed_globals_arg_multiobs', # void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns
     'succ_approx_quantize',      # void fn(int arg1, int* p2, int* p3): PURE LEAF successive-approx quantizer. ecx=range tbl[*p3], updates *p2 (quantized recon, clamp) and *p3 (+= deltaTbl[flags]). Per cfg.scenarios[t]={arg1,cur,idx,range}: seed p2/p3 bufs + rangeTbl[idx] + deltaTbl[0..15]; observe *p2|*p3. non-degen via varied arg1 (target) -> distinct flags/outputs
+    'multi_array_scatter',       # void fn(struct* p): PURE LEAF. if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays (ptr fields at p+0x10/14/18/1c/20/24/28) indexed by counter p[0xc] (strides 12/8/4/64/4/16/32), then counter++. Per cfg.scenarios[t]={counter,bound}: build struct + 7 bufs, observe arr[k] at counter-slot + counter. source globals REAL (both sides identical). non-degen via distinct globals + counter
 }
 
 SRC = r"""
@@ -379,6 +380,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'bounded_table_signselect_clamp') ? ['uint32','uint32']
               : (cfg.at === 'seed_globals_arg_multiobs') ? ['uint32']
               : (cfg.at === 'succ_approx_quantize') ? ['uint32','pointer','pointer']
+              : (cfg.at === 'multi_array_scatter') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1995,6 +1997,40 @@ rpc.exports.diff = function(cfg) {
       const snap = function () { return (p2.readS32() | 0) + '|' + (p3.readS32() | 0); };
       try { seedQ(); Orig(s.arg1 >>> 0, p2, p3); o = snap(); } catch (e) { eo = e.message; }
       try { seedQ(); Reim(s.arg1 >>> 0, p2, p3); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'multi_array_scatter') {
+      // void f(struct* p): scatter REAL source globals into 7 arrays indexed by counter.
+      const s = (cfg.scenarios || [])[t] || { counter: 0, bound: 4 };
+      const cnt = s.counter | 0;
+      const st = Memory.alloc(0x40); _keep.push(st);
+      const strides = [12, 8, 4, 64, 4, 16, 32];   // for fields 0x10..0x28
+      const bufs = [];
+      for (let k = 0; k < 7; k++) { const b = Memory.alloc(0x400); _keep.push(b); bufs.push(b); }
+      // seed the REAL source globals with distinct values -> proves source addresses
+      // (runtime values are 0, so without this a wrong source addr would pass).
+      const srcSeed = [
+        [0x692528,0x11110000],[0x69252c,0x22220000],[0x692530,0x33330000],
+        [0x6924dc,0x44440000],[0x6924e0,0x55550000],[0x692554,0x66660000],
+        [0x6924e8,0x77770000],[0x6924d8,0x40000000],
+        [0x692598,0x88880000],[0x692534,0x99990000],
+      ];
+      const seedM = function () {
+        for (let z = 0; z < 0x40; z += 4) st.add(z).writeU32(0);
+        st.add(8).writeU32(s.bound >>> 0);
+        st.add(0xc).writeU32(cnt >>> 0);
+        for (let k = 0; k < 7; k++) {
+          for (let z = 0; z < 0x400; z += 4) bufs[k].add(z).writeU32(0xEEEEEEEE);
+          st.add(0x10 + k * 4).writePointer(bufs[k]);
+        }
+        srcSeed.forEach(function (g) { ptr(g[0]).writeU32(g[1] >>> 0); });
+      };
+      const snap = function () {
+        let parts = [];
+        for (let k = 0; k < 7; k++) parts.push((bufs[k].add(cnt * strides[k]).readU32() >>> 0).toString(16));
+        parts.push((st.add(0xc).readU32() >>> 0).toString(16));
+        return parts.join('|');
+      };
+      try { seedM(); Orig(st); o = snap(); } catch (e) { eo = e.message; }
+      try { seedM(); Reim(st); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

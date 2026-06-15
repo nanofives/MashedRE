@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 223
-- total_green: 388
+- rounds_run: 224
+- total_green: 389
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 224 | L3 frontier (classifier-driven) — capstone reimpl (10th), high-value | attempted 1 | GREEN 1 (MultiArrayScatter476d00 0x00476d00, render, 21 callers: scatter source globals into 7 optional arrays by counter) | total_green 388->389 (389/1000). PURE LEAF; biggest reimpl this session (7 conditional array writes + 2 rep-movsd + fld/fstp). NEW handler multi_array_scatter. INITIAL GREEN was WEAK (runtime source globals = 0 -> all arrays wrote 0; dest/index/bounds verified via sentinel->0 but SOURCE addrs unverified). STRENGTHENED: seeded DISTINCT source globals (11110000..99990000) -> 3/3 GREEN proves source addrs + dest offsets + index (counter=2) + bounds. LESSON: when source globals are 0 at runtime, a wrong-source reimpl passes silently -> ALWAYS seed sources distinctly to verify read addresses (the source seed worked here, unlike r221 deltaTbl). GOTCHA: std::memcpy needs <cstring> (not in this TU) -> used dword loops. Caller FUN_00413cb0 C2. Session 101-224 net = +132 (257->389). Context 101 rounds deep. PATH TO 1000 (611 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 223 | L3 frontier (classifier-driven) — capstone reimpl (9th), REUSED handler | attempted 1 | GREEN 1 (FloatClamp3Level45ca30 0x0045ca30, gameplay: 3-level quantize of 6-float global array) | total_green 387->388 (388/1000). PURE LEAF no-arg. Decoded the fcomp jne/jp flag idiom (jne=x<=C, jp=x>C-or-unordered): x>-2->0.0, x>-4->-1.0, else -2.0. Fixed-constant outputs -> bit-identical (no 80-bit issue; fld widening lossless). REUSED near_leaf_seed_multi_obs (no new handler). 2/2 GREEN non-degen (all 3 levels, distinct patterns). Caller FUN_0045d250 C2. The fcomp-flag idiom (jne/je/jp/jnp after test ah,0x41) is now decoded -> unblocks the other FPU-flag-clamp frontier candidates. Session 101-223 net = +131 (257->388). Context 100 rounds deep. PATH TO 1000 (612 more) = this method (~1/round) or fanout.
 
