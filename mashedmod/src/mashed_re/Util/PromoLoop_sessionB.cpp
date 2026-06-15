@@ -3930,3 +3930,26 @@ extern "C" __declspec(dllexport) void __cdecl MultiArrayScatter476d00(unsigned c
     *reinterpret_cast<int*>(p + 0xc) = counter + 1;
 }
 RH_ScopedInstall(MultiArrayScatter476d00, 0x00476d00);
+
+// 0x004c0e50  FUN_004c0e50 (render, DllHeadInsert) — PURE LEAF (no calls)
+// void f(struct* p): intrusive doubly-linked-list head-insert. node = p[0xa0];
+// if ((node[3] & 3) == 0) insert node at head of list g=*0x7d3ff8 (sentinel @g+0xbc;
+// links: node+8=next, node+0xc=prev; prev points at the &next of the predecessor).
+// Always: node[3] |= 3; p[3] |= 0xc. capstone-verified.
+extern "C" __declspec(dllexport) void __cdecl DllHeadInsert4c0e50(unsigned char* p)
+{
+    unsigned char* node = *reinterpret_cast<unsigned char**>(p + 0xa0);
+    const unsigned char cl = node[3];
+    if ((cl & 3) == 0) {
+        unsigned char* g = *reinterpret_cast<unsigned char**>(0x007d3ff8u);
+        unsigned char* head = *reinterpret_cast<unsigned char**>(g + 0xbc);  // old first
+        *reinterpret_cast<void**>(node + 8)   = head;          // node->next = head
+        *reinterpret_cast<void**>(node + 0xc) = g + 0xbc;      // node->prev = &g->head
+        *reinterpret_cast<void**>(head + 4)   = node + 8;      // head->prev = &node->next
+        *reinterpret_cast<void**>(g + 0xbc)   = node + 8;      // g->head = &node->next
+    }
+    node = *reinterpret_cast<unsigned char**>(p + 0xa0);       // original reloads
+    node[3] = static_cast<unsigned char>(node[3] | 3);
+    p[3] = static_cast<unsigned char>(p[3] | 0xc);
+}
+RH_ScopedInstall(DllHeadInsert4c0e50, 0x004c0e50);

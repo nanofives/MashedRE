@@ -223,6 +223,7 @@ PURE_LEAF_ARGTYPES = {
     'seed_globals_arg_multiobs', # void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns
     'succ_approx_quantize',      # void fn(int arg1, int* p2, int* p3): PURE LEAF successive-approx quantizer. ecx=range tbl[*p3], updates *p2 (quantized recon, clamp) and *p3 (+= deltaTbl[flags]). Per cfg.scenarios[t]={arg1,cur,idx,range}: seed p2/p3 bufs + rangeTbl[idx] + deltaTbl[0..15]; observe *p2|*p3. non-degen via varied arg1 (target) -> distinct flags/outputs
     'multi_array_scatter',       # void fn(struct* p): PURE LEAF. if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays (ptr fields at p+0x10/14/18/1c/20/24/28) indexed by counter p[0xc] (strides 12/8/4/64/4/16/32), then counter++. Per cfg.scenarios[t]={counter,bound}: build struct + 7 bufs, observe arr[k] at counter-slot + counter. source globals REAL (both sides identical). non-degen via distinct globals + counter
+    'dll_head_insert',           # void fn(struct* p): PURE LEAF intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of list *cfg.glob (sentinel @+0xbc; node+8=next,node+0xc=prev). node[3]|=3; p[3]|=0xc. Build p/node/G/H bufs, seed *glob=&G, G[0xbc]=H, node[3]=scenario flag; observe node+8,+0xc,+3,p[3],G[0xbc],H[4] (addresses same both sides). non-degen via insert vs skip
 }
 
 SRC = r"""
@@ -381,6 +382,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'seed_globals_arg_multiobs') ? ['uint32']
               : (cfg.at === 'succ_approx_quantize') ? ['uint32','pointer','pointer']
               : (cfg.at === 'multi_array_scatter') ? ['pointer']
+              : (cfg.at === 'dll_head_insert') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -2031,6 +2033,28 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedM(); Orig(st); o = snap(); } catch (e) { eo = e.message; }
       try { seedM(); Reim(st); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'dll_head_insert') {
+      // void f(struct* p): intrusive DLL head-insert gated on node[3]&3.
+      const s = (cfg.scenarios || [])[t] || { flag: 0 };
+      const P = Memory.alloc(0x100), node = Memory.alloc(0x40), G = Memory.alloc(0x100), H = Memory.alloc(0x40);
+      _keep.push(P, node, G, H);
+      const seedD = function () {
+        for (let z = 0; z < 0x100; z += 4) P.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) { node.add(z).writeU32(0xEEEEEEEE); H.add(z).writeU32(0xEEEEEEEE); }
+        for (let z = 0; z < 0x100; z += 4) G.add(z).writeU32(0xEEEEEEEE);
+        node.add(3).writeU8(s.flag & 0xff);   // byte 3 (clears the 0xEE in that byte)
+        P.add(3).writeU8(0);
+        P.add(0xa0).writePointer(node);
+        G.add(0xbc).writePointer(H);           // old head = H
+        ptr(cfg.glob).writePointer(G);         // *0x7d3ff8 = G
+      };
+      const snap = function () {
+        return [node.add(8).readU32()>>>0, node.add(0xc).readU32()>>>0, node.add(3).readU8(),
+                P.add(3).readU8(), G.add(0xbc).readU32()>>>0, H.add(4).readU32()>>>0]
+               .map(function(x){return (x>>>0).toString(16);}).join('|');
+      };
+      try { seedD(); Orig(P); o = snap(); } catch (e) { eo = e.message; }
+      try { seedD(); Reim(P); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

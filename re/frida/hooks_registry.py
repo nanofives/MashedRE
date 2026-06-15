@@ -60,6 +60,18 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004c0e50 DllHeadInsert4c0e50 (render, 19 callers) - PURE LEAF void f(struct* p):
+    # intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of
+    # list *0x7d3ff8 (sentinel @+0xbc). node[3]|=3; p[3]|=0xc. Observe node links + flags.
+    'dll_head_insert_4c0e50': {'rva': 0x004c0e50, 'export': 'DllHeadInsert4c0e50', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'dll_head_insert',
+        'glob': 0x007d3ff8,
+        'scenarios': [
+            {'flag': 0},   # node[3]&3==0 -> full insert
+            {'flag': 1},   # node[3]&3!=0 -> skip insert, only set flags
+            {'flag': 2},   # bit1 set -> skip insert too
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x00476d00 MultiArrayScatter476d00 (render, 21 callers) - PURE LEAF void f(struct* p):
     # if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays
     # (ptr fields p+0x10/14/18/1c/20/24/28, strides 12/8/4/64/4/16/32) at counter p[0xc],

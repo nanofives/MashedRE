@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 224
-- total_green: 389
+- rounds_run: 225
+- total_green: 390
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 225 | L3 frontier (classifier-driven) — capstone reimpl (11th), high-value | attempted 1 | GREEN 1 (DllHeadInsert4c0e50 0x004c0e50, render, 19 callers: intrusive DLL head-insert) | total_green 389->390 (390/1000). PURE LEAF; pointer-surgery (intrusive doubly-linked list, sentinel @ (*0x7d3ff8)+0xbc, node+8=next/node+0xc=prev). NEW handler dll_head_insert: build p/node/G/H bufs, seed *glob=&G + G[0xbc]=H + node[3]=flag; observe the 4 link writes + flags. 3/3 GREEN non-degen (insert: links=real buffer addrs; skip flag=1/2: sentinels preserved). LESSON: pointer-surgery is verifiable — the written links are seeded-buffer addresses, identical on both sides; insert-vs-skip gives non-degeneracy; sentinel-fill proves which links were written. Caller FUN_004011f0 C2. Session 101-225 net = +133 (257->390). Context 102 rounds deep. PATH TO 1000 (610 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 224 | L3 frontier (classifier-driven) — capstone reimpl (10th), high-value | attempted 1 | GREEN 1 (MultiArrayScatter476d00 0x00476d00, render, 21 callers: scatter source globals into 7 optional arrays by counter) | total_green 388->389 (389/1000). PURE LEAF; biggest reimpl this session (7 conditional array writes + 2 rep-movsd + fld/fstp). NEW handler multi_array_scatter. INITIAL GREEN was WEAK (runtime source globals = 0 -> all arrays wrote 0; dest/index/bounds verified via sentinel->0 but SOURCE addrs unverified). STRENGTHENED: seeded DISTINCT source globals (11110000..99990000) -> 3/3 GREEN proves source addrs + dest offsets + index (counter=2) + bounds. LESSON: when source globals are 0 at runtime, a wrong-source reimpl passes silently -> ALWAYS seed sources distinctly to verify read addresses (the source seed worked here, unlike r221 deltaTbl). GOTCHA: std::memcpy needs <cstring> (not in this TU) -> used dword loops. Caller FUN_00413cb0 C2. Session 101-224 net = +132 (257->389). Context 101 rounds deep. PATH TO 1000 (611 more) = this method (~1/round) or fanout.
 
