@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'memset_520990': {'rva': 0x00520990, 'export': 'Memset520990', 'signature': {'ret': 'pointer', 'args': ['pointer','pointer','uint32','uint32']}, 'arg_type': 'memset4_wrapper',
+        'seed_sets': [
+            {'val': 0xAB, 'count': 10},   # 10 bytes 0xAB
+            {'val': 0xFF, 'count': 7},    # 7 bytes (count&3=3 stosb path)
+            {'val': 0x42, 'count': 16},   # 16 bytes 0x42
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'recupd_5b0cf0': {'rva': 0x005b0cf0, 'export': 'RecUpd5b0cf0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','uint32','uint32','uint32','uint32']}, 'arg_type': 'record_array_filter_update',
         'seed_sets': [
             {'arg3': 2, 'arg4': 5, 'arg5': 0xffffffff, 'arg6': 0xAA},          # row==2, B==5, col any[0,4) -> rec0

@@ -2984,3 +2984,38 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl RecUpd5b0cf0(voi
     }
 }
 RH_ScopedInstall(RecUpd5b0cf0, 0x005b0cf0);
+
+// 0x00520990  FUN_00520990 (util, 4-arg memset wrapper; arg1 unused)
+// void* f(void* unused, void* dest, int val, size_t count): broadcast (val&0xff) to all
+// 4 bytes of eax, rep stosd count/4 dwords + rep stosb count&3 bytes to dest, return dest.
+// (3-arg CRT memset is memset(dest,val,count); the extra unused leading arg makes this a
+// first-party wrapper.) Pure rep stos -> VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Memset520990(void)
+{
+    __asm {
+        mov  al, byte ptr [esp+0x0c]         // val (arg3)
+        mov  ecx, dword ptr [esp+0x10]       // count (arg4)
+        push ebx
+        mov  bl, al
+        mov  bh, bl
+        push esi
+        mov  eax, ebx
+        push edi
+        mov  edi, dword ptr [esp+0x14]       // dest (arg2)
+        mov  edx, ecx
+        shl  eax, 0x10
+        mov  ax, bx
+        mov  esi, edi
+        shr  ecx, 2
+        rep  stosd
+        mov  ecx, edx
+        and  ecx, 3
+        rep  stosb
+        mov  eax, esi
+        pop  edi
+        pop  esi
+        pop  ebx
+        ret
+    }
+}
+RH_ScopedInstall(Memset520990, 0x00520990);

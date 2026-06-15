@@ -44,7 +44,7 @@ EXE = os.path.join(ROOT, "original", "MASHED.exe.unpatched")
 HOOKS = os.path.join(ROOT, "hooks.csv")
 OUT = os.path.join(ROOT, "re", "analysis", "plans", "promote_frontier.tsv")
 
-MAX_BODY = 260            # frontier body-size ceiling (bytes)
+MAX_BODY = 400            # frontier body-size ceiling (bytes); raised 260->400 (2026-06-15) to surface medium clean leaves in the tail phase
 MIN_BODY = 5              # an inline-JMP hook is E9+rel32 = 5 bytes; a body < 5
 #                          bytes gets its 5-byte patch clobbered PAST the function
 #                          boundary into the next function -> install-time crasher

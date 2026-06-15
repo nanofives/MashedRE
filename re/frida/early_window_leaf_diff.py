@@ -197,6 +197,7 @@ PURE_LEAF_ARGTYPES = {
     'pool_freelist_init',        # void fn(pool* arg1): N=arg1[0x16c]; zero (N+2)*0x24 buf at arg1[0x14]; build circular freelist of N+1 nodes (stride 0x24) via node[0x1c]; arg1[0x18]=buf, head arg1[0x1c]=buf, tail arg1[0x20], tail wraps to buf; arg1[0x168/0x170/0x194]=0, arg1[0x198]=1. plain __cdecl. seed_sets[t]={n}; snapshot pool fields + node links. reimpl VERBATIM naked __asm. non-degen via varied N (different ring sizes/links)
     'bitmap_blit',               # int fn(dst* arg1, src* arg2): dst{[4]=channels,[8]=rows,[0xc]=width_bits,[0x10]=dst_stride,[0x14]=dst_px,[0x18]=dst_pal}; src{[0xc]=pal_bits,[0x10]=src_stride,[0x14]=src_px,[0x18]=src_pal}. blockA: if both palettes && pal_bits<=8 copy (2^pal_bits)*4 bytes. blockB: bpr=((width_bits+7)>>3)*channels; per row copy bpr bytes src->dst advancing by strides. returns 1. plain __cdecl. seed_sets[t]={rows,width_bits,channels,dstride,sstride,pal_bits,palette}; snapshot dst_px[0x40]+dst_pal[0x40] hex. reimpl VERBATIM naked __asm. non-degen via varied dims/palette
     'record_array_filter_update',# void fn(arg1, arg2, arg3, arg4, arg5, arg6): scan arg2[4] records (stride 0x10 from arg1+0x18; A@+0,B@+4,C@+8,D@+0xc). rowRange from arg3 (-1->[0,arg2[8]) else exact); colRange from arg5 (-1->[0,4) else exact). match: (A&0x7fffffff) in rowRange && C in colRange && (B==arg4||arg4<0) -> D=arg6, A|=sign. then *arg1|=0x10. plain __cdecl 6 args. fixed 4-record array; seed_sets[t]={arg3,arg4,arg5,arg6}; snapshot *arg1 + per-record (A,D). reimpl VERBATIM naked __asm. non-degen via varied filters -> different update sets
+    'memset4_wrapper',           # void* fn(unused, dest, val, count): 4-arg memset (arg1 ignored); broadcast (val&0xff) to all bytes, rep stosd count/4 + rep stosb count&3 to dest, return dest. plain __cdecl. seed_sets[t]={val,count}; dest pre-filled 0xCC, snapshot dest[0x20]. reimpl VERBATIM naked __asm. non-degen via varied val/count
 }
 
 SRC = r"""
@@ -329,6 +330,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'pool_freelist_init') ? ['pointer']
               : (cfg.at === 'bitmap_blit') ? ['pointer','pointer']
               : (cfg.at === 'record_array_filter_update') ? ['pointer','pointer','uint32','uint32','uint32','uint32']
+              : (cfg.at === 'memset4_wrapper') ? ['pointer','pointer','uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1781,6 +1783,14 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'memset4_wrapper') {
+      // void* f(unused, dest, val, count): 4-arg memset. seed_sets[t]={val,count}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { val: 0, count: 0 };
+      const dst = Memory.alloc(0x80); _keep.push(dst);
+      const seedM = function () { for (let z = 0; z < 0x80; z++) dst.add(z).writeU8(0xCC); };
+      const snapM = function () { const u = new Uint8Array(dst.readByteArray(0x20)); let s = ''; for (let k = 0; k < u.length; k++) s += ('0' + u[k].toString(16)).slice(-2); return s; };
+      try { seedM(); Orig(ptr(0), dst, sp.val >>> 0, sp.count >>> 0); o = snapM(); } catch (e) { eo = e.message; }
+      try { seedM(); Reim(ptr(0), dst, sp.val >>> 0, sp.count >>> 0); r = snapM(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'record_array_filter_update') {
       // void f(arg1, arg2, arg3, arg4, arg5, arg6): record-array filter+update. fixed 4-record
       // array [A,B,C]; seed_sets[t]={arg3,arg4,arg5,arg6}. snapshot *arg1 + per-record (A,D).
