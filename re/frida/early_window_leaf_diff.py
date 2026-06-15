@@ -175,6 +175,7 @@ PURE_LEAF_ARGTYPES = {
     'abs_region_zeroer',         # void fn(): strided record-array zeroer (base glob, stride 0x8c) that also writes record index (word) to [+0x1c], + trailing tgt=0. Pure writer; sentinel-fill ONLY the observed offsets (base[0], base[0x1c]=idx0, rec1[0x1c]=idx1, rec5[0x1c]=idx5, base[0x64], tgt), call, snapshot, compare. non-degen via the per-record index
     'array_fill_2way',           # void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4]; for i in [0,count): *(arr1+i*12)=*src (vec3 copy); *(arr2+i*12)={0,0,0}. seed count=3, p[0]=&arr1,p[4]=&arr2, src markers; snapshot arr1[0..count]+arr2[0..count]. non-degen via markers + zeros
     'abs_table_state_setter',    # u32 fn(i, arg2): if(i<0||i>=0x19) return 0; rec=glob+i*0x50; if(arg2==0){rec[0x20]=3;rec[0x1c]=0} elif(rec[0x20]==3){rec[0x20]=1;rec[0x1c]=0} else {rec[0x1c]=0}; return 1. tests cover the 3 branches + OOB; seed rec[0x20]=pre, rec[0x1c]=0xEE; snapshot rec[0x20]|rec[0x1c]|ret. non-degen
+    'esi_edx_predicate',         # u32 fn(ESI=s, EDX=e): a=s[0x10];c=e[0x10]; if(a==c||a==e[0x14]){ b=s[0x14]; return (b==c||b==e[0x14])?1:0; } return 0. ORIG via `mov esi,s; mov edx,e; jmp` trampoline; REIMPL __cdecl(s,e). seed fields for match(t0->1)/no-match(t1->0). non-degen
 }
 
 SRC = r"""
@@ -285,6 +286,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'abs_region_zeroer') ? []
               : (cfg.at === 'array_fill_2way') ? ['pointer','pointer']
               : (cfg.at === 'abs_table_state_setter') ? ['uint32','uint32']
+              : (cfg.at === 'esi_edx_predicate') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1526,6 +1528,27 @@ rpc.exports.diff = function(cfg) {
       const snapTS = function (rv) { return (ptr(rec).add(0x20).readU32() >>> 0) + '|' + (ptr(rec).add(0x1c).readU32() >>> 0) + '|' + (rv >>> 0); };
       try { setupTS(); const ro = Orig(sp.i >>> 0, sp.a2 >>> 0) >>> 0; o = snapTS(ro); } catch (e) { eo = e.message; }
       try { setupTS(); const rr = Reim(sp.i >>> 0, sp.a2 >>> 0) >>> 0; r = snapTS(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'esi_edx_predicate') {
+      // u32 fn(ESI=s, EDX=e): field-match predicate. ORIG via `mov esi,s; mov edx,e; jmp`
+      // trampoline; REIMPL __cdecl(s,e). seed s/e fields for match (t0->1) or no-match (t1->0).
+      const bufS = Memory.alloc(0x40), bufE = Memory.alloc(0x40); _keep.push(bufS, bufE);
+      const match = (t | 0) === 0;
+      const setupEP = function () {
+        for (let z = 0; z < 0x40; z += 4) { bufS.add(z).writeU32(0); bufE.add(z).writeU32(0); }
+        bufS.add(0x10).writeU32(0x111); bufS.add(0x14).writeU32(0x222);
+        if (match) { bufE.add(0x10).writeU32(0x111); bufE.add(0x14).writeU32(0x222); }
+        else { bufE.add(0x10).writeU32(0x999); bufE.add(0x14).writeU32(0x888); }
+      };
+      const mkEP = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xBE); tr.add(1).writePointer(bufS);             // mov esi, bufS
+        tr.add(5).writeU8(0xBA); tr.add(6).writePointer(bufE);      // mov edx, bufE
+        tr.add(10).writeU8(0xE9); tr.add(11).writeS32(target.sub(tr.add(15)).toInt32()); // jmp
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'uint32', [], 'mscdecl');
+      };
+      try { setupEP(); o = mkEP(ptr(cfg.rva))() >>> 0; } catch (e) { eo = e.message; }
+      try { setupEP(); r = Reim(bufS, bufE) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

@@ -2031,3 +2031,19 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Set458f20(std::uint32_t i
     return 1;
 }
 RH_ScopedInstall(Set458f20, 0x00458f20);
+
+// ===== round 161 ===== (ESI/EDX field-match predicate)
+// 0x0047bc90 — u32 fn(ESI=s, EDX=e): a=s[0x10]; c=e[0x10]; if(a==c || a==e[0x14]){
+//   b=s[0x14]; return (b==c || b==e[0x14]) ? 1 : 0; } return 0.  (reimpl takes s,e on stack.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Match47bc90(std::uint8_t* s, std::uint8_t* e) {
+    std::uint32_t a = *reinterpret_cast<std::uint32_t*>(s + 0x10);
+    std::uint32_t c = *reinterpret_cast<std::uint32_t*>(e + 0x10);
+    std::uint32_t e14 = *reinterpret_cast<std::uint32_t*>(e + 0x14);
+    if (a == c || a == e14) {
+        std::uint32_t b = *reinterpret_cast<std::uint32_t*>(s + 0x14);
+        if (b == c || b == e14) return 1;
+        return 0;
+    }
+    return 0;
+}
+RH_ScopedInstall(Match47bc90, 0x0047bc90);
