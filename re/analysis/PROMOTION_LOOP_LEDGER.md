@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 191
-- total_green: 358
+- rounds_run: 192
+- total_green: 359
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 191 | near-leaf #5: plane dot-product via PURE addr-calc callee (NEW handler near_leaf_dot_plane) | attempted 1 | GREEN 1 (Dot408590 0x00408590: dp over rec=FUN_00426cc0(idx) [C3 pure idx*0x4c+0x663658]; arg1[0xac]=dp; dp<0?a8++:0) | total_green 358->359 (359/1000). Caller FUN_00408610 C2, callee 0x426cc0 C3 (PURE address calc -> easiest near-leaf callee class). NEW handler near_leaf_dot_plane (seed table rec + arg1[0x20]/[0xa8] + arg2 point; snapshot arg1[0xac] bits + [0xa8]). dp=5/-3/8, counter 0/11/0; straight x87 (fld/fmul/fadd/fst/fcomp, no st(N) juggling) -> verbatim naked port. 5 near-leaf shapes proven. NOTE: 0x426cc0 (pure addr-calc) likely has MORE near-leaf callers -> a cluster. ~102 candidates remain. Session 101-191 net = +102 (257->359). ~78 handlers. Context 68 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 190 | near-leaf #4: arg[]->abs-table via C3 setter (NEW handler near_leaf_arr_to_table) | attempted 1 | GREEN 1 (Ghost41a9b0 0x0041a9b0: for i=0,1 GhostSlotSet63c6f0(i,arg[i]) -> table 0x63c6f0 stride 0xc4) | total_green 357->358 (358/1000). Caller Ghost::PlaybackTick 0x411ae0 C2, callee 0x41a8b0 C3. NEW handler near_leaf_arr_to_table (build int* arg + zero table, snapshot table entries; non-degen via varied vals). 4 near-leaf shapes proven. ~103 candidates remain. Session 101-190 net = +101 (257->358). ~77 handlers. Context 67 rounds deep — fresh context advised. The near-leaf candidate list (re/analysis/plans/near_leaf_candidates.tsv) is ready for the promote-c3-batch fanout = fast route to 1000.
 

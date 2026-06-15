@@ -3072,3 +3072,58 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Ghost41a9b0(void
     }
 }
 RH_ScopedInstall(Ghost41a9b0, 0x0041a9b0);
+
+// 0x00408590  FUN_00408590 (gameplay, NEAR-LEAF: plane dot-product + counter)
+// void f(arg1, arg2): idx=arg1[0x20]; rec=FUN_00426cc0(idx) (C3 pure: idx*0x4c+0x663658);
+// dp = arg2[0x20]*rec[0] + arg2[0x24]*rec[4] + arg2[0x28]*rec[8]; arg1[0xac]=dp;
+// if (dp < [0x5d757c]) arg1[0xa8]++ else arg1[0xa8]=0. Straight x87 (no st(N) juggling).
+// Verbatim naked port; the 3 `call rel32` to the pure callee -> `mov eax,0x426cc0; call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Dot408590(void)
+{
+    __asm {
+        push esi
+        mov  esi, dword ptr [esp+8]          // arg1
+        mov  eax, dword ptr [esi+0x20]       // idx
+        push edi
+        push eax
+        mov  eax, 0426CC0h
+        call eax
+        fld  dword ptr [eax+4]
+        mov  edi, dword ptr [esp+0x14]       // arg2
+        mov  ecx, dword ptr [esi+0x20]
+        fmul dword ptr [edi+0x24]
+        push ecx
+        fstp dword ptr [esp+0x14]
+        mov  eax, 0426CC0h
+        call eax
+        fld  dword ptr [edi+0x20]
+        mov  edx, dword ptr [esi+0x20]
+        fmul dword ptr [eax]
+        push edx
+        fadd dword ptr [esp+0x18]
+        fstp dword ptr [esp+0x18]
+        mov  eax, 0426CC0h
+        call eax
+        fld  dword ptr [eax+8]
+        fmul dword ptr [edi+0x28]
+        add  esp, 0x0c
+        fadd dword ptr [esp+0x0c]
+        fst  dword ptr [esi+0xac]
+        fcomp dword ptr ds:[05D757Ch]
+        fnstsw ax
+        test ah, 5
+        jp   L_DOT_RESET
+        mov  eax, dword ptr [esi+0xa8]
+        inc  eax
+        pop  edi
+        mov  dword ptr [esi+0xa8], eax
+        pop  esi
+        ret
+    L_DOT_RESET:
+        pop  edi
+        mov  dword ptr [esi+0xa8], 0
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Dot408590, 0x00408590);

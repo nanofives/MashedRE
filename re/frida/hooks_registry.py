@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'dot_408590': {'rva': 0x00408590, 'export': 'Dot408590', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'near_leaf_dot_plane',
+        'tbl_base': 0x00663658, 'tbl_stride': 0x4c,
+        'seed_sets': [
+            {'idx': 2, 'normal': [1.0, 0.0, 0.0], 'point': [5.0, 0.0, 0.0], 'a8': 0},     # dp=5
+            {'idx': 2, 'normal': [1.0, 0.0, 0.0], 'point': [-3.0, 0.0, 0.0], 'a8': 10},   # dp=-3
+            {'idx': 5, 'normal': [0.0, 2.0, 0.0], 'point': [0.0, 4.0, 0.0], 'a8': 0},     # dp=8
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'ghost_41a9b0': {'rva': 0x0041a9b0, 'export': 'Ghost41a9b0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'near_leaf_arr_to_table',
         'tbl_base': 0x0063c6f0, 'tbl_stride': 0xc4,
         'seed_sets': [

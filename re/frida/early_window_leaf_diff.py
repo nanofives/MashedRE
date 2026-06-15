@@ -202,6 +202,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_seed_ret',        # u32 fn(void): NEAR-LEAF that READS a seedable absolute table (via a C3 callee) and returns a derived int. cfg.tbl_base/tbl_stride/tbl_count. seed_sets[t]={preset:[[idx,val],...]} (zero count entries then write val to entry idx). call parent (no args), compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different table seeds -> different return
     'near_leaf_memcmp16',        # int fn(_, arg2, arg3): NEAR-LEAF = !FUN(a=*arg2,b=arg3) where the C3 callee memcmp's 16 bytes at a/b (0 if equal else +/-1). returns 1 iff the 16 bytes match. seed_sets[t]={eq, diffat}; build bufP via holder *arg2, bufQ as arg3; equal->1, differ->0. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via equal/differ
     'near_leaf_arr_to_table',    # void fn(int* arg): NEAR-LEAF that writes arg[i] into an absolute table[base+i*stride] (i in 0..len(vals)-1) via a C3 setter callee. cfg.tbl_base/tbl_stride. seed_sets[t]={vals:[...]}; build arg buffer + zero table entries, call parent, snapshot table entries. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via varied vals
+    'near_leaf_dot_plane',       # void fn(arg1, arg2): NEAR-LEAF dot product. idx=arg1[0x20]; rec=C3-pure-callee(idx)=idx*tbl_stride+tbl_base; dp=arg2[0x20]*rec[0]+arg2[0x24]*rec[4]+arg2[0x28]*rec[8]; arg1[0xac]=dp; dp<const?arg1[0xa8]++:0. cfg.tbl_base/tbl_stride. seed_sets[t]={idx,normal:[3],point:[3],a8}. seed table rec + arg1[0x20]/[0xa8] + arg2 point; snapshot arg1[0xac](bits)+[0xa8]. reimpl = verbatim naked x87 port. non-degen via varied point/normal -> different dp
 }
 
 SRC = r"""
@@ -339,6 +340,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_seed_ret') ? []
               : (cfg.at === 'near_leaf_memcmp16') ? ['uint32','pointer','pointer']
               : (cfg.at === 'near_leaf_arr_to_table') ? ['pointer']
+              : (cfg.at === 'near_leaf_dot_plane') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1791,6 +1793,22 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_dot_plane') {
+      // void f(arg1, arg2): dot product over a pure-callee table record. seed_sets[t]={idx,normal,point,a8}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { idx: 0, normal: [0, 0, 0], point: [0, 0, 0], a8: 0 };
+      const base = ptr(cfg.tbl_base), stride = cfg.tbl_stride | 0;
+      const a1 = Memory.alloc(0x100), a2 = Memory.alloc(0x40); _keep.push(a1, a2);
+      const rec = base.add((sp.idx | 0) * stride);
+      const seedD = function () {
+        for (let z = 0; z < 0x100; z += 4) a1.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) a2.add(z).writeU32(0);
+        a1.add(0x20).writeU32(sp.idx >>> 0); a1.add(0xa8).writeU32(sp.a8 >>> 0);
+        a2.add(0x20).writeFloat(sp.point[0]); a2.add(0x24).writeFloat(sp.point[1]); a2.add(0x28).writeFloat(sp.point[2]);
+        rec.writeFloat(sp.normal[0]); rec.add(4).writeFloat(sp.normal[1]); rec.add(8).writeFloat(sp.normal[2]);
+      };
+      const snapD = function () { return (a1.add(0xac).readU32() >>> 0).toString(16) + '|' + (a1.add(0xa8).readU32() >>> 0); };
+      try { seedD(); Orig(a1, a2); o = snapD(); } catch (e) { eo = e.message; }
+      try { seedD(); Reim(a1, a2); r = snapD(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_arr_to_table') {
       // void f(int* arg): writes arg[i] into abs table[base+i*stride] via a C3 setter.
       // cfg.tbl_base/tbl_stride. seed_sets[t]={vals:[...]}.
