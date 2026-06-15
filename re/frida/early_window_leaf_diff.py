@@ -170,6 +170,7 @@ PURE_LEAF_ARGTYPES = {
     'eax_dest_memcpy_init',      # void fn(EAX=dest, src, arg2*, arg3, arg4): dest[0x54]=0; dest[0x48]=0; dest[0x4c]=arg3; dest[0x58]=1; dest[0x50]=arg4; memcpy(dest,src,16 dwords); dest[0x40]=*arg2. ORIG via `mov eax,dest; jmp` trampoline (4 stack args); REIMPL __cdecl(dest,src,arg2,arg3,arg4). seed src markers + a2 val; snapshot dest[0..0x3f]+[0x40,0x48,0x4c,0x50,0x54,0x58]. non-degen
     'struct_div_mod_compute',    # u32 fn(arg1,arg2,arg3,arg4,arg5): div=*(arg1[0x18]+arg4*0x28+0x20); q=arg2/div(unsigned); rem=arg2%div; *arg5=rem; return *(arg1[0x10]+arg3*0x20+0x1c)+arg1[0x20]*q+rem. seed arg1 ptrs+tables+mult per cfg.seed_sets[t]={val,div}; arg3=1,arg4=2 fixed; snapshot *arg5|ret. non-degen via varied val/div
     'ring_copy_5ab980',          # void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14]) cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt. seed g610/g614 + ring markers + arg fields; snapshot dest dwords|arg[0x18]|arg[0x14]. non-degen
+    'struct_init_3arg_sub',      # void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; zero dest[8,0x10,0x18,0x1c,0x20,0x24,0x28]; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0,[0x40]=0,[0x44]=0,[0x38]=1,[0x48]=0,[0x50]=1. seed a[4],b,dest[0x60]=&sub; snapshot dest+sub fields. non-degen
 }
 
 SRC = r"""
@@ -275,6 +276,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'eax_dest_memcpy_init') ? ['pointer','pointer','pointer','uint32','uint32']
               : (cfg.at === 'struct_div_mod_compute') ? ['pointer','uint32','uint32','uint32','pointer']
               : (cfg.at === 'ring_copy_5ab980') ? ['pointer']
+              : (cfg.at === 'struct_init_3arg_sub') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1439,6 +1441,25 @@ rpc.exports.diff = function(cfg) {
       const snapRC = function () { const a = []; for (let k = 0; k < 8; k++) a.push(dest.add(k * 4).readU32() >>> 0); a.push(argr.add(0x18).readU32() >>> 0); a.push(argr.add(0x14).readU32() >>> 0); return a.join('|'); };
       try { setupRC(); Orig(argr); o = snapRC(); } catch (e) { eo = e.message; }
       try { setupRC(); Reim(argr); r = snapRC(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_init_3arg_sub') {
+      // void fn(a, b, dest): struct init (dest fields incl float consts + a nested sub=dest[0x60]).
+      // seed a[4], b, dest[0x60]=&sub; snapshot dest + sub fields.
+      const A4 = 0x1234, B = 0xABCD;
+      const ai = Memory.alloc(0x40), dst = Memory.alloc(0x80), sub = Memory.alloc(0x80); _keep.push(ai, dst, sub);
+      const setupI3 = function () {
+        for (let z = 0; z < 0x40; z += 4) ai.add(z).writeU32(0);
+        for (let z = 0; z < 0x80; z += 4) { dst.add(z).writeU32(0xA5A5A5A5); sub.add(z).writeU32(0xA5A5A5A5); }
+        ai.add(4).writeU32(A4);
+        dst.add(0x60).writePointer(sub);
+      };
+      const snapI3 = function () {
+        const dofs = [0, 4, 8, 0xc, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24, 0x28];
+        const a2 = dofs.map(function (x) { return dst.add(x).readU32() >>> 0; });
+        [0x38, 0x3c, 0x40, 0x44, 0x48, 0x50].forEach(function (x) { a2.push(sub.add(x).readU32() >>> 0); });
+        return a2.join('|');
+      };
+      try { setupI3(); Orig(ai, B, dst); o = snapI3(); } catch (e) { eo = e.message; }
+      try { setupI3(); Reim(ai, B, dst); r = snapI3(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

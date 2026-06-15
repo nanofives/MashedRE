@@ -1926,3 +1926,30 @@ extern "C" __declspec(dllexport) int __cdecl Sqrt49da90(std::uint32_t narg) {
     return x;
 }
 RH_ScopedInstall(Sqrt49da90, 0x0049da90);
+
+// ===== round 156 ===== (3-arg struct init with nested sub-object)
+// 0x00485a00 — void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; dest[8/0x10/0x18/0x1c/0x20/0x24/
+//   0x28]=0; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0; sub[0x40]=0;
+//   sub[0x44]=0; sub[0x38]=1; sub[0x48]=0; sub[0x50]=1.
+extern "C" __declspec(dllexport) void __cdecl Init485a00(std::uint8_t* a, std::uint32_t b, std::uint8_t* dest) {
+    std::uint32_t a4 = *reinterpret_cast<std::uint32_t*>(a + 4);
+    *reinterpret_cast<std::uint32_t*>(dest) = b;
+    *reinterpret_cast<std::uint32_t*>(dest + 4) = a4;
+    *reinterpret_cast<std::uint32_t*>(dest + 8) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x10) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x18) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x1c) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x20) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x24) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x28) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0xc) = 0x3f800000;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x14) = 0x3c23d70a;
+    std::uint8_t* sub = *reinterpret_cast<std::uint8_t**>(dest + 0x60);
+    *reinterpret_cast<std::uint32_t*>(sub + 0x3c) = 0;
+    *reinterpret_cast<std::uint32_t*>(sub + 0x40) = 0;
+    *reinterpret_cast<std::uint32_t*>(sub + 0x44) = 0;
+    *reinterpret_cast<std::uint32_t*>(sub + 0x38) = 1;
+    *reinterpret_cast<std::uint32_t*>(sub + 0x48) = 0;
+    *reinterpret_cast<std::uint32_t*>(sub + 0x50) = 1;
+}
+RH_ScopedInstall(Init485a00, 0x00485a00);
