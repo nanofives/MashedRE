@@ -237,6 +237,7 @@ PURE_LEAF_ARGTYPES = {
     'thunk_node_write',          # void fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 0x476cb0. node = (*cfg.glob)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000. Build p/table/node; *glob=table; table[0]=node; p[0x14]=0; node[0x40]=seed; per cfg.scenarios[t]={a2,a3}: observe node[0xa4]|node[0xa8]|node[0x40]. non-degen via varied a2/a3
     'thunk_field_copy',          # void fn(p, out): NEAR-LEAF adjustor thunk -> C3 copy. s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Build p/s/src/out; s[0x24]=count, s[0x20]=src (pattern); observe out[0..count-1]. non-degen via varied src pattern
     'thunk_cond_or',             # uint fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Build p/s; s[8]=seed; per cfg.scenarios[t]={a2,a3,seed}: observe ret|s[8]. non-degen via a3!=0 (or'd) vs a3==0 (unchanged)
+    'thunk_list_count',          # uint fn(p): NEAR-LEAF adjustor thunk -> C3 circular-list count at (p+0xc) (linked +4, sentinel=head). Build a circular list of cfg.scenarios[t].n nodes; observe return = n. non-degen via varied n
 }
 
 SRC = r"""
@@ -404,6 +405,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'thunk_node_write') ? ['pointer','uint32','uint32']
               : (cfg.at === 'thunk_field_copy') ? ['pointer','pointer']
               : (cfg.at === 'thunk_cond_or') ? ['pointer','uint32','uint32']
+              : (cfg.at === 'thunk_list_count') ? ['pointer']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2837,6 +2839,23 @@ rpc.exports.diff = function(cfg) {
       const snap = function (ret) { return (ret >>> 0).toString(16) + '|' + (sp.add(8).readU32() >>> 0).toString(16); };
       try { seedC(); o = snap(Orig(p, sc.a2 >>> 0, sc.a3 >>> 0)); } catch (e) { eo = e.message; }
       try { seedC(); r = snap(Reim(p, sc.a2 >>> 0, sc.a3 >>> 0)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'thunk_list_count') {
+      // uint f(p): adjustor thunk -> C3 count circular list at (p+0xc) (linked +4, sentinel=head).
+      const sc = (cfg.scenarios || [])[t] || { n: 0 };
+      const n = sc.n | 0;
+      const p = Memory.alloc(0x40); _keep.push(p);
+      const d = p.add(0xc);
+      const nodes = []; for (let k = 0; k < n; k++) { const nd = Memory.alloc(0x20); _keep.push(nd); nodes.push(nd); }
+      const seedL = function () {
+        for (let z = 0; z < 0x40; z += 4) p.add(z).writeU32(0);
+        if (n === 0) { d.add(4).writePointer(d); }
+        else {
+          d.add(4).writePointer(nodes[0]);
+          for (let k = 0; k < n; k++) nodes[k].add(4).writePointer(k < n - 1 ? nodes[k + 1] : d);
+        }
+      };
+      try { seedL(); o = (Orig(p) >>> 0).toString(); } catch (e) { eo = e.message; }
+      try { seedL(); r = (Reim(p) >>> 0).toString(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

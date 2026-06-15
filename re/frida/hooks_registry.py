@@ -60,6 +60,12 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x005a7af0 Thunk5a7af0 (audio) - NEAR-LEAF adjustor thunk -> C3 AudioListNodeCount(0x5aded0).
+    # int f(p): count circular list at (p+0xc) (linked +4, sentinel=head). Verbatim naked.
+    'thunk_5a7af0': {'rva': 0x005a7af0, 'export': 'Thunk5a7af0', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'thunk_list_count',
+        'scenarios': [{'n': 0}, {'n': 1}, {'n': 3}],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x004b52f0 Thunk4b52f0 (render) - NEAR-LEAF adjustor thunk -> C3 0x4b52c0.
     # uint f(p, a2, a3): s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Verbatim naked.
     'thunk_4b52f0': {'rva': 0x004b52f0, 'export': 'Thunk4b52f0', 'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32', 'uint32']}, 'arg_type': 'thunk_cond_or',

@@ -4428,3 +4428,19 @@ extern "C" __declspec(dllexport) __declspec(naked) unsigned __cdecl Thunk4b52f0(
     }
 }
 RH_ScopedInstall(Thunk4b52f0, 0x004b52f0);
+
+// 0x005a7af0 FUN_005a7af0 (audio, Thunk5a7af0) — NEAR-LEAF adjustor thunk to C3 0x5aded0.
+// int f(p): p += 0xc; tail-call AudioListNodeCount(p) = count nodes of the circular list
+// headed at p (linked via +4, sentinel = head). So f(p) = count of list at (p+0xc).
+// VERBATIM naked (b0=0x8b; rel32 jmp -> mov eax,abs; jmp eax).
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Thunk5a7af0(void)
+{
+    __asm {
+        mov   eax, dword ptr [esp+4]
+        add   eax, 0Ch
+        mov   dword ptr [esp+4], eax
+        mov   eax, 05ADED0h
+        jmp   eax
+    }
+}
+RH_ScopedInstall(Thunk5a7af0, 0x005a7af0);
