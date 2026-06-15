@@ -208,6 +208,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_ptr_array_search',# int fn(key, gate): NEAR-LEAF that searches arr=*cfg.glob (cfg.count ptrs) for arr[i] with *arr[i]==key; returns derived addr or 0. C3 getter callee returns the array base. seed_sets[t]={gate,key,at_idx}; build arr of ptr->struct (struct[0]=distinct key), place key at at_idx, seed glob. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via found(addr)/gate0/notfound
     'near_leaf_seed_multi_obs',  # void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:[[addr,val],...]}; seed, call, snapshot all observe_addrs. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via path toggles (do-nothing vs compute)
     'near_leaf_record_builder',  # void fn(_, arg2, _, arg4): NEAR-LEAF that builds a record at rec_base+arg2*rec_stride + writes a C3-setter table. cfg.rec_base/rec_stride/tbl_base/tbl_stride. seed_sets[t]={arg2,arg4,v0,v1}; seed rec[0]=v0,rec[4]=v1,rec[8]=sentinel + zero observed tbl slots; call f(0,arg2,0,arg4); observe rec[8] + tbl[arg2] + tbl[arg2+0xa]. reimpl = verbatim naked port. non-degen via varied arg2/arg4/v0
+    'near_leaf_accum_table',     # void fn(a1, float val, a3): NEAR-LEAF that accumulates val into a float table slot tbl_base+a1*rec_stride+a3*4 via a C3 fastcall callee (base[a3]=min(val+base[a3],50)). cfg.tbl_base/rec_stride. seed_sets[t]={a1,val,a3,seed}; seed slot, call, observe slot bits. reimpl = verbatim naked port. non-degen via varied val/seed -> different clamped float
 }
 
 SRC = r"""
@@ -351,6 +352,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_ptr_array_search') ? ['uint32','uint32']
               : (cfg.at === 'near_leaf_seed_multi_obs') ? []
               : (cfg.at === 'near_leaf_record_builder') ? ['uint32','uint32']
+              : (cfg.at === 'near_leaf_accum_table') ? ['uint32','float','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1803,6 +1805,13 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_accum_table') {
+      // void f(a1, float val, a3): accumulate into float table slot via C3 fastcall callee.
+      const sp = (cfg.seed_sets || [])[t | 0] || { a1: 0, val: 0.0, a3: 0, seed: 0.0 };
+      const slot = ptr(cfg.tbl_base).add((sp.a1 | 0) * (cfg.rec_stride | 0)).add((sp.a3 | 0) * 4);
+      const seedF = function () { slot.writeFloat(sp.seed); };
+      try { seedF(); Orig(sp.a1 >>> 0, sp.val, sp.a3 >>> 0); o = slot.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { seedF(); Reim(sp.a1 >>> 0, sp.val, sp.a3 >>> 0); r = slot.readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_record_builder') {
       // void f(A=rec_idx, B=value): record at rec_base+A*rec_stride; rec[8]=B; table writes via C3
       // setter at base=A and A+0xa. seed_sets[t]={A,B,v0,v1}.

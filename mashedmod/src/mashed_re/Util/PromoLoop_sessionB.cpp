@@ -3427,3 +3427,25 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl InitRange4725f0(
     }
 }
 RH_ScopedInstall(InitRange4725f0, 0x004725f0);
+
+// 0x004215c0  FUN_004215c0 (frontend, NEAR-LEAF: fastcall float-accumulate wrapper)
+// void f(arg1, float arg2, arg3): base = 0x63e4b8 + arg1*0x24; calls __fastcall FUN_00420de0
+// (ecx=arg3 idx, edx=base, [esp+4]=arg2 val) which does base[arg3] = min(arg2+base[arg3], 50.0).
+// Callee C3. Verbatim naked port; `call rel32` -> `mov eax,0x420de0; call eax` (callee is
+// __fastcall: ecx/edx set before the call exactly as the original).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum4215c0(void)
+{
+    __asm {
+        mov  eax, dword ptr [esp+8]          // arg2 (val)
+        mov  ecx, dword ptr [esp+0x0c]       // arg3 (idx) -> ecx for fastcall
+        push eax
+        mov  eax, dword ptr [esp+8]          // arg1
+        lea  edx, [eax+eax*8]
+        lea  edx, [edx*4+063E4B8h]           // base = 0x63e4b8 + arg1*0x24
+        mov  eax, 0420DE0h
+        call eax
+        pop  ecx
+        ret
+    }
+}
+RH_ScopedInstall(Accum4215c0, 0x004215c0);

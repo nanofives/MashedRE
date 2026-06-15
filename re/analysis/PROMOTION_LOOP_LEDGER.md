@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 201
-- total_green: 368
+- rounds_run: 202
+- total_green: 369
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 201 | near-leaf #15: fastcall float-accumulate wrapper (NEW handler near_leaf_accum_table) + POOL REFRESH | attempted 1 | GREEN 1 (Accum4215c0 0x004215c0: base=0x63e4b8+a1*0x24; __fastcall FUN_00420de0 -> base[a3]=min(val+base[a3],50)) | total_green 368->369 (369/1000). Callers 0x40be50/0x4039f0 C2 + 0x422fd0 C3, callee 0x420de0 C3. NEW handler near_leaf_accum_table. Regenerated near_leaf_candidates.tsv = 93 (pool REFRESHES as callees promote, but the easy pure-getter/addr-calc combiner tier is DRAINED -> only 0x40dba0/0x49a730 left there; remaining 93 have 'other' complex callees needing per-candidate analysis). NOTE: a near-leaf whose callee is __fastcall is fine -> the verbatim port preserves the original's ecx/edx setup before the call. 15 near-leaf shapes. Session 101-201 net = +112 (257->369). ~84 handlers. Context 78 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 200 | near-leaf #14: no-arg record-range initializer (reuse near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (InitRange4725f0 0x004725f0: 10-iter loop, 2x FUN_0046be10/iter writing the 0x88219c table + zeroing rec[8]/[0xc]) | total_green 367->368 (368/1000). Caller 0x40cfd0 C2, callee 0x46be10 C3. No new handler. LESSON: a no-arg deterministic initializer is verifiable via near_leaf_seed_multi_obs by SEEDING the source records it reads + observing the table slots it writes (non-degen across tests via different record seeds). NOT a trivial sibling of 0x472560 (different structure) despite sharing the callee. 14 near-leaf shapes. ~93 candidates remain. Session 101-200 net = +111 (257->368). ~83 handlers. Context 77 rounds deep — fresh context advised; fanout = fast route to 1000.
 

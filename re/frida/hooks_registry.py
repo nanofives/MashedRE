@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'accum_4215c0': {'rva': 0x004215c0, 'export': 'Accum4215c0', 'signature': {'ret': 'void', 'args': ['uint32','float','uint32']}, 'arg_type': 'near_leaf_accum_table',
+        'tbl_base': 0x0063e4b8, 'rec_stride': 0x24,
+        'seed_sets': [
+            {'a1': 0, 'val': 10.0, 'a3': 2, 'seed': 5.0},     # min(10+5,50)=15
+            {'a1': 1, 'val': 60.0, 'a3': 0, 'seed': 0.0},     # min(60,50)=50 (clamp)
+            {'a1': 0, 'val': -3.0, 'a3': 3, 'seed': 20.0},    # min(-3+20,50)=17
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'initrange_4725f0': {'rva': 0x004725f0, 'export': 'InitRange4725f0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
         'observe_addrs': [0x0088219c, 0x008821c4, 0x00882ea4, 0x00691508, 0x0069150c],
         'seed_sets': [
