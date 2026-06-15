@@ -159,6 +159,7 @@ PURE_LEAF_ARGTYPES = {
     'global_2level_list_search', # int fn(key): g=*(glob); node=g[4]; while(node){ e=node[0]; if(e && e[8]==key) return e[0xc]; node=node[8]; } return -1. seed *glob=&cont, cont[4]=&node, node[0]=&entry, entry[8]=KEY, entry[0xc]=RESULT, node[8]=0. test0 key=KEY (->RESULT), test1 key=KEY^1 (->-1). non-degen
     'arg_flag_branch_getter',    # u32 fn(arg*): pure getter; if(arg[0x20]){ p=arg[0]; f=p[0x40]&0xfffffff; return (arg[0x1c]&2)?f+arg[0x20]+4:f+arg[0x20]; } else return (arg[0x1c]&2)?arg+0x2c:arg+0x28. Seed arg fields per cfg.seed_sets[t]={c,flag,f}; SHARED arg+p bufs (so arg+0x2c/0x28 compare equal). test=index over the 4 branches (non-degen)
     'global_dll_insert_head',    # u32 fn(arg): node=arg+0x28; node[0]=*glob; node[4]=glob(addr const); (*glob)[4]=node; *glob=node; node[0xc]&=~1; return 1. seed *glob=&S, arg[0x34](=node[0xc])=0xF; shared arg+S bufs; snapshot node[0]|node[4]|S[4]|*glob|node[0xc]|ret. test ignored
+    'global_fieldoff_clear',     # u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg; e4=entry[4]; if(e4) arg[0x48]=e4; entry[4]=0; entry[0]=0; return arg. seed *glob=V(0x10), arg[V]=&entry(test0)/0(test1), entry[0]=1,entry[4]=0x77; shared arg+entry bufs; snapshot arg[0x48]|entry[0]|entry[4]|ret. non-degen via ret(arg/0)+arg[0x48]+the clearing
 }
 
 SRC = r"""
@@ -253,6 +254,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_2level_list_search') ? ['uint32']
               : (cfg.at === 'arg_flag_branch_getter') ? ['pointer']
               : (cfg.at === 'global_dll_insert_head') ? ['pointer']
+              : (cfg.at === 'global_fieldoff_clear') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1241,6 +1243,21 @@ rpc.exports.diff = function(cfg) {
       const snapG = function (rv) { return [argg.add(0x28).readU32(), argg.add(0x2c).readU32(), S.add(4).readU32(), ptr(cfg.glob).readU32(), argg.add(0x34).readU32(), rv >>> 0].map(function (x) { return x >>> 0; }).join('|'); };
       try { setupG(); const ro = Orig(argg) >>> 0; o = snapG(ro); } catch (e) { eo = e.message; }
       try { setupG(); const rr = Reim(argg) >>> 0; r = snapG(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_fieldoff_clear') {
+      // u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg;
+      // if(entry[4]) arg[0x48]=entry[4]; entry[4]=0; entry[0]=0; return arg. seed *glob=V,
+      // arg[V]=&entry (test0) or 0 (test1); entry[0]=1, entry[4]=0x77. shared arg+entry bufs.
+      const V = 0x10, argc = Memory.alloc(0x80), ent = Memory.alloc(0x40); _keep.push(argc, ent);
+      const linked = (t | 0) === 0;
+      const setupC = function () {
+        for (let z = 0; z < 0x80; z += 4) argc.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) ent.add(z).writeU32(0);
+        ptr(cfg.glob).writeU32(V);
+        if (linked) { argc.add(V).writePointer(ent); ent.writeU32(1); ent.add(4).writeU32(0x77); }
+      };
+      const snapC2 = function (rv) { return [argc.add(0x48).readU32(), ent.readU32(), ent.add(4).readU32(), rv >>> 0].map(function (x) { return x >>> 0; }).join('|'); };
+      try { setupC(); const ro = Orig(argc) >>> 0; o = snapC2(ro); } catch (e) { eo = e.message; }
+      try { setupC(); const rr = Reim(argc) >>> 0; r = snapC2(rr); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

@@ -1729,3 +1729,19 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Insert5a7420(std::uint8_t
     return 1;
 }
 RH_ScopedInstall(Insert5a7420, 0x005a7420);
+
+// ===== round 144 ===== (global-field-offset struct clear + conditional copy)
+// 0x00558140 — u32 fn(arg): V=*0x913274; entry=*(u8**)(arg+V); if(entry==0) return 0;
+//   if(entry[0]==0) return arg; if(entry[4]) arg[0x48]=entry[4]; entry[4]=0; entry[0]=0; return arg.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Clear558140(std::uint8_t* arg) {
+    std::uint32_t V = *reinterpret_cast<std::uint32_t*>(0x00913274);
+    std::uint8_t* entry = *reinterpret_cast<std::uint8_t**>(arg + V);
+    if (entry == 0) return 0;
+    if (*reinterpret_cast<std::uint32_t*>(entry) == 0) return reinterpret_cast<std::uint32_t>(arg);
+    std::uint32_t e4 = *reinterpret_cast<std::uint32_t*>(entry + 4);
+    if (e4 != 0) *reinterpret_cast<std::uint32_t*>(arg + 0x48) = e4;
+    *reinterpret_cast<std::uint32_t*>(entry + 4) = 0;
+    *reinterpret_cast<std::uint32_t*>(entry) = 0;
+    return reinterpret_cast<std::uint32_t>(arg);
+}
+RH_ScopedInstall(Clear558140, 0x00558140);
