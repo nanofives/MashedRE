@@ -14325,6 +14325,9 @@ HOOKS = {
     # ---- promote-round round 145 (4-state dispatch with list-unlink) --
     'stateadv_5b0ec0': {'rva': 0x005b0ec0, 'export': 'StateAdv5b0ec0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'multi_state_list_setter', 'lut_root_delta': 0, 'path1_tests': [1, 2, 3, 0], 'path2_tests': [1]},
 
+    # ---- promote-round round 146 (byte-field modular counter) --
+    'counter_5b11d0': {'rva': 0x005b11d0, 'export': 'Counter5b11d0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'byte_counter_struct', 'seed_sets': [{'b0': 5, 'b1': 10, 'b3': 8}, {'b0': 7, 'b1': 3, 'b3': 8}, {'b0': 2, 'b1': 0, 'b3': 100}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --

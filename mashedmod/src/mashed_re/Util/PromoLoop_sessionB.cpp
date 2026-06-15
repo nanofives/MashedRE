@@ -1769,3 +1769,15 @@ extern "C" __declspec(dllexport) void __cdecl StateAdv5b0ec0(std::uint8_t* p) {
     }
 }
 RH_ScopedInstall(StateAdv5b0ec0, 0x005b0ec0);
+
+// ===== round 146 ===== (byte-field modular counter)
+// 0x005b11d0 — void fn(p): a = (u8)p[0] + 1; if(a >= (u8)p[3]) a -= (u8)p[3];
+//   p[0] = (u8)a; p[1] = (u8)(p[1] - 1).  (cmp is on full 32-bit a vs p[3].)
+extern "C" __declspec(dllexport) void __cdecl Counter5b11d0(std::uint8_t* p) {
+    std::uint32_t a = static_cast<std::uint32_t>(p[0]) + 1;
+    std::uint32_t lim = p[3];
+    if (a >= lim) a -= lim;
+    p[0] = static_cast<std::uint8_t>(a);
+    p[1] = static_cast<std::uint8_t>(p[1] - 1);
+}
+RH_ScopedInstall(Counter5b11d0, 0x005b11d0);

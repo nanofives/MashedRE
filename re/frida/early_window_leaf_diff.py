@@ -161,6 +161,7 @@ PURE_LEAF_ARGTYPES = {
     'global_dll_insert_head',    # u32 fn(arg): node=arg+0x28; node[0]=*glob; node[4]=glob(addr const); (*glob)[4]=node; *glob=node; node[0xc]&=~1; return 1. seed *glob=&S, arg[0x34](=node[0xc])=0xF; shared arg+S bufs; snapshot node[0]|node[4]|S[4]|*glob|node[0xc]|ret. test ignored
     'global_fieldoff_clear',     # u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg; e4=entry[4]; if(e4) arg[0x48]=e4; entry[4]=0; entry[0]=0; return arg. seed *glob=V(0x10), arg[V]=&entry(test0)/0(test1), entry[0]=1,entry[4]=0x77; shared arg+entry bufs; snapshot arg[0x48]|entry[0]|entry[4]|ret. non-degen via ret(arg/0)+arg[0x48]+the clearing
     'multi_state_list_setter',   # void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14]; *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6; state3: p[0x50]=5; else no change. Seed p[0x48]=state(test), p[0x50]=0x11 sentinel, state1 also p[0x14]=&A,p[0x18]=&B; shared p+A+B bufs; snapshot p[0x50]|p[0x14]|p[0x18]|A[4]|B[0]. test=state in {1,2,3,0} (non-degen)
+    'byte_counter_struct',       # void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a&0xff; p[1]=(p[1]-1)&0xff. seed p[0],p[1],p[3] per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. non-degen via varied seeds incl the wrap
 }
 
 SRC = r"""
@@ -257,6 +258,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_dll_insert_head') ? ['pointer']
               : (cfg.at === 'global_fieldoff_clear') ? ['pointer']
               : (cfg.at === 'multi_state_list_setter') ? ['pointer']
+              : (cfg.at === 'byte_counter_struct') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1276,6 +1278,15 @@ rpc.exports.diff = function(cfg) {
       const snapS = function () { return [ps.add(0x50).readU32(), ps.add(0x14).readU32(), ps.add(0x18).readU32(), A.add(4).readU32(), B.readU32()].map(function (x) { return x >>> 0; }).join('|'); };
       try { setupS(); Orig(ps); o = snapS(); } catch (e) { eo = e.message; }
       try { setupS(); Reim(ps); r = snapS(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'byte_counter_struct') {
+      // void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a; p[1]=p[1]-1. Seed p[0],p[1],p[3]
+      // per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. non-degen via varied seeds + wrap.
+      const sp = (cfg.seed_sets || [])[t | 0] || { b0: 0, b1: 0, b3: 0 };
+      const pc = Memory.alloc(0x20); _keep.push(pc);
+      const setupBC = function () { for (let z = 0; z < 0x20; z += 4) pc.add(z).writeU32(0); pc.writeU8(sp.b0 & 0xff); pc.add(1).writeU8(sp.b1 & 0xff); pc.add(3).writeU8(sp.b3 & 0xff); };
+      const snapBC = function () { return (pc.readU8()) + '|' + (pc.add(1).readU8()); };
+      try { setupBC(); Orig(pc); o = snapBC(); } catch (e) { eo = e.message; }
+      try { setupBC(); Reim(pc); r = snapBC(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
