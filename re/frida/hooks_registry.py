@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'search_40bb30': {'rva': 0x0040bb30, 'export': 'Search40bb30', 'signature': {'ret': 'pointer', 'args': ['pointer']}, 'arg_type': 'near_leaf_global_str_search',
+        'glob': 0x0063b8f8,
+        'seed_sets': [
+            {'q': 'BETA'},    # match -> n1-8
+            {'q': 'zzz'},     # not found -> 0
+            {'q': 'ALPHA'},   # match -> n0-8
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'pred_462760': {'rva': 0x00462760, 'export': 'Pred462760', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_struct_array_predicate',
         'glob': 0x0069045c, 'count': 4, 'struct_size': 0xd80,
         'seed_sets': [

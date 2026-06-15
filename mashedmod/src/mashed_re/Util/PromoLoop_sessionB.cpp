@@ -3515,3 +3515,21 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Pred462760(void)
     }
 }
 RH_ScopedInstall(Pred462760, 0x00462760);
+
+// 0x0040bb30  FUN_0040bb30 (boot, NEAR-LEAF: global-list string-search wrapper)
+// void* f(query): return FUN_004c5c00(*0x63b8f8, query). Callee 0x4c5c00 (C3) = circular-list
+// case-insensitive search -> matched object or 0. Verbatim naked port; call -> mov eax,abs;call eax.
+extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search40bb30(void)
+{
+    __asm {
+        mov  eax, dword ptr [esp+4]          // query
+        mov  ecx, dword ptr ds:[063B8F8h]    // list = *0x63b8f8
+        push eax
+        push ecx
+        mov  eax, 04C5C00h
+        call eax
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(Search40bb30, 0x0040bb30);

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 204
-- total_green: 371
+- rounds_run: 205
+- total_green: 372
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 204 | near-leaf #18: global-list string-search wrapper (NEW handler near_leaf_global_str_search) | attempted 1 | GREEN 1 (Search40bb30 0x0040bb30: FUN_004c5c00(*0x63b8f8, query)) | total_green 371->372 (372/1000). Callee 0x4c5c00 C3 (circular-list ci-search), 34 C2+ callers (heavily-used name-lookup helper). NEW handler near_leaf_global_str_search (build list, *0x63b8f8=head, query). 18 near-leaf shapes. Session 101-204 net = +115 (257->372). ~86 handlers. Context 81 rounds deep — fresh context STRONGLY advised; fanout = fast route to 1000.
 
 2026-06-15 | round 203 | near-leaf #17: pointer-array predicate via C3 field getters (NEW handler near_leaf_struct_array_predicate) | attempted 1 | GREEN 1 (Pred462760 0x00462760: 4 ptrs @0x69045c; return 1 if any null/p[0xd70]in{0,2}/p[0xd6c]==2 else 0) | total_green 370->371 (371/1000). Callers 0x4656e0/0x4657b0 C2, callees 0x5a89b0(p[0xd70])/0x5a89a0(p[0xd6c]) C3 field getters. NEW handler near_leaf_struct_array_predicate (build N structs, set only the read fields, point glob array at them; null/match-early/all-pass). 17 near-leaf shapes. Session 101-203 net = +114 (257->371). ~85 handlers. Context 80 rounds deep — fresh context STRONGLY advised; fanout = fast route to 1000.
 

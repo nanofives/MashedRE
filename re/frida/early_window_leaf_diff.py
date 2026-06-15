@@ -210,6 +210,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_record_builder',  # void fn(_, arg2, _, arg4): NEAR-LEAF that builds a record at rec_base+arg2*rec_stride + writes a C3-setter table. cfg.rec_base/rec_stride/tbl_base/tbl_stride. seed_sets[t]={arg2,arg4,v0,v1}; seed rec[0]=v0,rec[4]=v1,rec[8]=sentinel + zero observed tbl slots; call f(0,arg2,0,arg4); observe rec[8] + tbl[arg2] + tbl[arg2+0xa]. reimpl = verbatim naked port. non-degen via varied arg2/arg4/v0
     'near_leaf_accum_table',     # void fn(a1, float val, a3): NEAR-LEAF that accumulates val into a float table slot tbl_base+a1*rec_stride+a3*4 via a C3 fastcall callee (base[a3]=min(val+base[a3],50)). cfg.tbl_base/rec_stride. seed_sets[t]={a1,val,a3,seed}; seed slot, call, observe slot bits. reimpl = verbatim naked port. non-degen via varied val/seed -> different clamped float
     'near_leaf_struct_array_predicate', # int fn(void): NEAR-LEAF predicate over a pointer array at cfg.glob (cfg.count entries). For each p: checks fields via C3 getters -> returns 1/0. seed_sets[t]={entries:[{null:bool}|{fields:[[off,val],...]}]}; build structs (cfg.struct_size), set field offs, set glob[k]=struct or null; compare int return. reimpl = verbatim naked port. non-degen via null/match-early/all-pass
+    'near_leaf_global_str_search', # void* fn(query): NEAR-LEAF wrapper = C3 circular-list case-insensitive search(*cfg.glob, query). build 3-node alpha/beta/gamma circular list, set *cfg.glob=list head; seed_sets[t]={q}; compare returned ptr. reimpl = verbatim naked port. non-degen via match(distinct node ptrs)/miss(0)
 }
 
 SRC = r"""
@@ -355,6 +356,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_record_builder') ? ['uint32','uint32']
               : (cfg.at === 'near_leaf_accum_table') ? ['uint32','float','uint32']
               : (cfg.at === 'near_leaf_struct_array_predicate') ? []
+              : (cfg.at === 'near_leaf_global_str_search') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1807,6 +1809,22 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_global_str_search') {
+      // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
+      const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };
+      const A = Memory.alloc(0x40), n0 = Memory.alloc(0x40), n1 = Memory.alloc(0x40), n2 = Memory.alloc(0x40), q = Memory.alloc(0x40);
+      _keep.push(A, n0, n1, n2, q);
+      const buildS = function () {
+        [A, n0, n1, n2, q].forEach(function (b) { for (let z = 0; z < 0x40; z += 4) b.add(z).writeU32(0); });
+        A.add(8).writePointer(n0);
+        n0.writePointer(n1); n0.add(8).writeUtf8String('alpha');
+        n1.writePointer(n2); n1.add(8).writeUtf8String('beta');
+        n2.writePointer(A.add(8)); n2.add(8).writeUtf8String('gamma');
+        q.writeUtf8String(ss.q);
+        ptr(cfg.glob).writePointer(A);
+      };
+      try { buildS(); o = '' + Orig(q); } catch (e) { eo = e.message; }
+      try { buildS(); r = '' + Reim(q); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_struct_array_predicate') {
       // int f(void): predicate over a pointer array at cfg.glob. seed_sets[t]={entries:[...]}.
       const sp = (cfg.seed_sets || [])[t | 0] || { entries: [] };
