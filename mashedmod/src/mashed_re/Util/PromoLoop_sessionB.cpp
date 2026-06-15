@@ -2228,3 +2228,72 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Trie4daa00(std::uint8_t* 
     return (r & 0xffffff00u) | *reinterpret_cast<std::uint8_t*>(node + 0x18);
 }
 RH_ScopedInstall(Trie4daa00, 0x004daa00);
+
+// ===== round 171 ===== (struct delta-init + fcomp flag — verbatim naked port)
+// 0x00557110 — u32 fn(out,a,b,c,d): out[0x10]=d[0]; out[0x14]=d[4]; out[0x28]=c[0]-d[0];
+//   out[0x2c]=c[4]-d[4]; out[0x40]=a[0]; out[0x44]=a[4]; out[0x58]=b[0]-a[0];
+//   out[0x5c]=b[4]-a[4]; if any of the 4 deltas is unordered vs [0x5d757c] -> out[0x64]|=2
+//   else out[0x64]&=~2; return out. Single fsubs -> verbatim x87 (straight-line, no juggling).
+extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl Delta557110(void) {
+    __asm {
+        mov  eax, [esp+0x14]
+        mov  ecx, [esp+4]
+        mov  edx, [eax]
+        mov  [ecx+0x10], edx
+        mov  edx, [eax+4]
+        mov  [ecx+0x14], edx
+        mov  edx, [esp+0x10]
+        fld  dword ptr [edx]
+        fsub dword ptr [eax]
+        fstp dword ptr [ecx+0x28]
+        fld  dword ptr [edx+4]
+        fsub dword ptr [eax+4]
+        mov  eax, [esp+8]
+        fstp dword ptr [ecx+0x2c]
+        mov  edx, [eax]
+        mov  [ecx+0x40], edx
+        mov  edx, [eax+4]
+        mov  [ecx+0x44], edx
+        mov  edx, [esp+0xc]
+        fld  dword ptr [edx]
+        fsub dword ptr [eax]
+        fstp dword ptr [ecx+0x58]
+        fld  dword ptr [edx+4]
+        fsub dword ptr [eax+4]
+        fstp dword ptr [esp+0x14]
+        fld  dword ptr [ecx+0x28]
+        fcomp dword ptr ds:[05D757Ch]
+        mov  eax, [esp+0x14]
+        mov  [ecx+0x5c], eax
+        fnstsw ax
+        test ah, 44h
+        jp   L_SET
+        fld  dword ptr [ecx+0x2c]
+        fcomp dword ptr ds:[05D757Ch]
+        fnstsw ax
+        test ah, 44h
+        jp   L_SET
+        fld  dword ptr [ecx+0x58]
+        fcomp dword ptr ds:[05D757Ch]
+        fnstsw ax
+        test ah, 44h
+        jp   L_SET
+        fld  dword ptr [esp+0x14]
+        fcomp dword ptr ds:[05D757Ch]
+        fnstsw ax
+        test ah, 44h
+        jp   L_SET
+        mov  eax, [ecx+0x64]
+        and  al, 0FDh
+        mov  [ecx+0x64], eax
+        mov  eax, ecx
+        ret
+    L_SET:
+        mov  eax, [ecx+0x64]
+        or   al, 2
+        mov  [ecx+0x64], eax
+        mov  eax, ecx
+        ret
+    }
+}
+RH_ScopedInstall(Delta557110, 0x00557110);

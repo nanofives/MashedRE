@@ -185,6 +185,7 @@ PURE_LEAF_ARGTYPES = {
     'list_node_const_init',      # void fn(p, arg2): s=p[0x18]; count=s[0x24]; arr=s[0x20] (array of node ptrs); for i<count: node=arr[i]; node[4]=*arg2; node[0xc]=node[0x10]=1.0f; node[0x14]=0.5f (consts stored, no arith). seed p/s/arr/3 nodes/val; snapshot each node[4,0xc,0x10,0x14]. non-degen
     'bounded_struct_push',       # void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){p[8]=cap; return;} buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0; buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1. store-only. t0 push(top=0), t1 full(top=cap=4). snapshot entry+p[8]+p[0x54]. non-degen
     'trie_walk',                 # u32 fn(node, key, depth): while(depth){ depth--; idx=key&0xf; key>>=4; node=*(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18] (byte in AL, dirty upper=node ptr). build depth-2 trie w/ 2 paths (keys 0x21->leaf1[0x18]=0x77, 0x35->leaf2[0x18]=0x88); shared bufs; compare ret. non-degen
+    'struct_delta_flag_init',    # u32 fn(out,a,b,c,d): copies d.xy->out[0x10/0x14], a.xy->out[0x40/0x44]; deltas out[0x28]=c[0]-d[0], out[0x2c]=c[4]-d[4], out[0x58]=b[0]-a[0], out[0x5c]=b[4]-a[4]; fcomp each vs 0x5d757c -> out[0x64] |=2 or &=~2; return out. seed a/b/c/d xy; snapshot out fields+flag+ret. reimpl VERBATIM naked __asm (single fsubs + fcomp). non-degen
 }
 
 SRC = r"""
@@ -305,6 +306,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'list_node_const_init') ? ['pointer','pointer']
               : (cfg.at === 'bounded_struct_push') ? ['pointer','pointer','pointer']
               : (cfg.at === 'trie_walk') ? ['pointer','uint32','uint32']
+              : (cfg.at === 'struct_delta_flag_init') ? ['pointer','pointer','pointer','pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1741,6 +1743,22 @@ rpc.exports.diff = function(cfg) {
       };
       try { buildT(); o = Orig(root, key >>> 0, depth) >>> 0; } catch (e) { eo = e.message; }
       try { buildT(); r = Reim(root, key >>> 0, depth) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_delta_flag_init') {
+      // u32 fn(out,a,b,c,d): copies + single-fsub deltas + an fcomp-driven flag. seed a/b/c/d
+      // xy floats; snapshot out fields + flag + ret. reimpl is verbatim naked __asm.
+      const out = Memory.alloc(0x80), a = Memory.alloc(0x20), b = Memory.alloc(0x20), c = Memory.alloc(0x20), d = Memory.alloc(0x20);
+      _keep.push(out, a, b, c, d);
+      const setupDF = function () {
+        for (let z = 0; z < 0x80; z += 4) out.add(z).writeU32(0xA5A5A5A5);
+        a.writeFloat(0.5); a.add(4).writeFloat(0.25);
+        b.writeFloat(3.0); b.add(4).writeFloat(4.0);
+        c.writeFloat(5.0); c.add(4).writeFloat(7.0);
+        d.writeFloat(1.0); d.add(4).writeFloat(2.0);
+        out.add(0x64).writeU32(0);
+      };
+      const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
+      try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
+      try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
