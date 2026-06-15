@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 202
-- total_green: 369
+- rounds_run: 203
+- total_green: 370
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 202 | near-leaf #16: per-record update loop (reuse near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (Update41b520 0x0041b520: loops FUN_0041ae20 over 4 records; callee copies table vec3 -> rec[0x50..0x58], doubles rec[0x50], zeros rec[0x70]) | total_green 369->370 (370/1000). Caller 0x40dbd0 C2, callee 0x41ae20 C3. LESSON: for a near-leaf whose C3 callee does a non-trivial per-record update, READ the callee fully (here: vec3 copy from table[rec[0x64]*0xc] + double + zero) then seed the records' index field + the source table + observe the written record fields -> deterministic non-degen WITHOUT a new handler. Also: a fastcall callee that PRESERVES ecx lets the parent loop ecx across calls. 16 near-leaf shapes (370/1000=37%). Session 101-202 net = +113 (257->370). ~84 handlers. Context 79 rounds deep — fresh context strongly advised; fanout = fast route to 1000.
 
 2026-06-15 | round 201 | near-leaf #15: fastcall float-accumulate wrapper (NEW handler near_leaf_accum_table) + POOL REFRESH | attempted 1 | GREEN 1 (Accum4215c0 0x004215c0: base=0x63e4b8+a1*0x24; __fastcall FUN_00420de0 -> base[a3]=min(val+base[a3],50)) | total_green 368->369 (369/1000). Callers 0x40be50/0x4039f0 C2 + 0x422fd0 C3, callee 0x420de0 C3. NEW handler near_leaf_accum_table. Regenerated near_leaf_candidates.tsv = 93 (pool REFRESHES as callees promote, but the easy pure-getter/addr-calc combiner tier is DRAINED -> only 0x40dba0/0x49a730 left there; remaining 93 have 'other' complex callees needing per-candidate analysis). NOTE: a near-leaf whose callee is __fastcall is fine -> the verbatim port preserves the original's ecx/edx setup before the call. 15 near-leaf shapes. Session 101-201 net = +112 (257->369). ~84 handlers. Context 78 rounds deep — fresh context advised; fanout = fast route to 1000.
 

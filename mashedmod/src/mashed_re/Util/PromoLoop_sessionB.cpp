@@ -3449,3 +3449,22 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum4215c0(void
     }
 }
 RH_ScopedInstall(Accum4215c0, 0x004215c0);
+
+// 0x0041b520  FUN_0041b520 (gameplay, NEAR-LEAF: per-record update loop over 4 records)
+// void f(void): for (ecx=0x63c8d0; ecx<0x63caa0; ecx+=0x74) FUN_0041ae20(ecx). Callee 0x41ae20
+// (__fastcall, C3, preserves ecx) copies table[0x5f3304+rec[0x64]*0xc] vec3 -> rec[0x50..0x58],
+// doubles rec[0x50] (float), zeros rec[0x70]. Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Update41b520(void)
+{
+    __asm {
+        mov  ecx, 063C8D0h
+    L_UPD_LOOP:
+        mov  eax, 041AE20h
+        call eax
+        add  ecx, 0x74
+        cmp  ecx, 063CAA0h
+        jl   L_UPD_LOOP
+        ret
+    }
+}
+RH_ScopedInstall(Update41b520, 0x0041b520);

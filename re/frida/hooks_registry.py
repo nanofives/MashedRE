@@ -60,6 +60,21 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'update_41b520': {'rva': 0x0041b520, 'export': 'Update41b520', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x0063c920, 0x0063c924, 0x0063c928, 0x0063c940, 0x0063c994, 0x0063c998, 0x0063c99c, 0x0063c9b4],
+        'seed_sets': [
+            {'globals': [[0x0063c934, 0], [0x0063c9a8, 1], [0x0063ca1c, 0], [0x0063ca90, 0],
+                         [0x005f3304, 0x40a00000], [0x005f3308, 0x1111], [0x005f330c, 0x2222],
+                         [0x005f3310, 0x40400000], [0x005f3314, 0x3333], [0x005f3318, 0x4444],
+                         [0x0063c920, 0xDEAD], [0x0063c924, 0xDEAD], [0x0063c928, 0xDEAD], [0x0063c940, 0xDEAD],
+                         [0x0063c994, 0xDEAD], [0x0063c998, 0xDEAD], [0x0063c99c, 0xDEAD], [0x0063c9b4, 0xDEAD]]},   # R0 idx0 (5.0->10.0), R1 idx1 (3.0->6.0)
+            {'globals': [[0x0063c934, 0], [0x0063c9a8, 1], [0x0063ca1c, 0], [0x0063ca90, 0],
+                         [0x005f3304, 0x40000000], [0x005f3308, 0xAAAA], [0x005f330c, 0xBBBB],
+                         [0x005f3310, 0x40800000], [0x005f3314, 0xCCCC], [0x005f3318, 0xDDDD],
+                         [0x0063c920, 0xDEAD], [0x0063c924, 0xDEAD], [0x0063c928, 0xDEAD], [0x0063c940, 0xDEAD],
+                         [0x0063c994, 0xDEAD], [0x0063c998, 0xDEAD], [0x0063c99c, 0xDEAD], [0x0063c9b4, 0xDEAD]]},   # 2.0->4.0, 4.0->8.0
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
     'accum_4215c0': {'rva': 0x004215c0, 'export': 'Accum4215c0', 'signature': {'ret': 'void', 'args': ['uint32','float','uint32']}, 'arg_type': 'near_leaf_accum_table',
         'tbl_base': 0x0063e4b8, 'rec_stride': 0x24,
         'seed_sets': [
