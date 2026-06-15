@@ -4444,3 +4444,20 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Thunk5a7af0(void)
     }
 }
 RH_ScopedInstall(Thunk5a7af0, 0x005a7af0);
+
+// 0x004058c0 FUN_004058c0 (gameplay, FloatSubThunk4058c0) — NEAR-LEAF adjustor thunk to C3 0x4058b0.
+// void f(idx, float fval): p = 0x639d80 + idx*0xec; tail-call FloatSub4058b0(p, fval) =
+// *(float*)(p+0x5c) -= fval. So f: *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval.
+// VERBATIM naked (b0=0x8b; rel32 jmp -> mov eax,abs; jmp eax).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl FloatSubThunk4058c0(void)
+{
+    __asm {
+        mov   ecx, dword ptr [esp+4]
+        imul  ecx, ecx, 0ECh
+        add   ecx, 0639D80h
+        mov   dword ptr [esp+4], ecx
+        mov   eax, 04058B0h
+        jmp   eax
+    }
+}
+RH_ScopedInstall(FloatSubThunk4058c0, 0x004058c0);

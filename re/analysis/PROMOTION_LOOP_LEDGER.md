@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 241
-- total_green: 406
+- rounds_run: 242
+- total_green: 407
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 242 | NEAR-LEAF lane — adjustor-thunk verbatim -> C3 float-sub | attempted 1 | GREEN 1 (FloatSubThunk4058c0 0x004058c0, gameplay) | total_green 406->407 (407/1000). void f(idx,float fval): *(float*)(0x639d80+idx*0xec+0x5c) -= fval (tail-call C3 FloatSub4058b0). VERBATIM naked. NEW handler thunk_float_sub 3/3 GREEN non-degen (7.0/3.0/0.75, idx-indexed). Caller FUN_004058e0 C2, callee 0x4058b0 C3. Session 101-242 net = +150 (257->407). Context 119 rounds deep. PATH TO 1000 (593 more) = near-leaf+frontier (~1/round) or fanout.
 
 2026-06-15 | round 241 | NEAR-LEAF lane — adjustor-thunk verbatim -> C3 list-count | attempted 1 | GREEN 1 (Thunk5a7af0 0x005a7af0, audio) | total_green 405->406 (406/1000). int f(p): p+=0xc; tail-call C3 AudioListNodeCount(0x5aded0) = count circular list at (p+0xc) (linked +4, sentinel=head). VERBATIM naked. NEW handler thunk_list_count 3/3 GREEN non-degen (n=0/1/3). Caller FUN_0045d460 C2, callee 0x5aded0 C3. Transient build C1083 'Permission denied' on an .obj (file lock) -> retried, OK. Session 101-241 net = +149 (257->406). Context 118 rounds deep. PATH TO 1000 (594 more) = near-leaf+frontier (~1/round) or fanout.
 

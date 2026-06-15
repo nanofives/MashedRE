@@ -238,6 +238,7 @@ PURE_LEAF_ARGTYPES = {
     'thunk_field_copy',          # void fn(p, out): NEAR-LEAF adjustor thunk -> C3 copy. s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Build p/s/src/out; s[0x24]=count, s[0x20]=src (pattern); observe out[0..count-1]. non-degen via varied src pattern
     'thunk_cond_or',             # uint fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Build p/s; s[8]=seed; per cfg.scenarios[t]={a2,a3,seed}: observe ret|s[8]. non-degen via a3!=0 (or'd) vs a3==0 (unchanged)
     'thunk_list_count',          # uint fn(p): NEAR-LEAF adjustor thunk -> C3 circular-list count at (p+0xc) (linked +4, sentinel=head). Build a circular list of cfg.scenarios[t].n nodes; observe return = n. non-degen via varied n
+    'thunk_float_sub',           # void fn(uint idx, float fval): NEAR-LEAF adjustor thunk -> C3 float-sub. *(float*)(cfg.tbl + idx*cfg.stride + cfg.field_off) -= fval. Per cfg.scenarios[t]={idx,seed,fval}: seed field, observe field bits = seed-fval. non-degen via varied seed/fval/idx
 }
 
 SRC = r"""
@@ -406,6 +407,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'thunk_field_copy') ? ['pointer','pointer']
               : (cfg.at === 'thunk_cond_or') ? ['pointer','uint32','uint32']
               : (cfg.at === 'thunk_list_count') ? ['pointer']
+              : (cfg.at === 'thunk_float_sub') ? ['uint32','float']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2856,6 +2858,13 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedL(); o = (Orig(p) >>> 0).toString(); } catch (e) { eo = e.message; }
       try { seedL(); r = (Reim(p) >>> 0).toString(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'thunk_float_sub') {
+      // void f(idx, float fval): adjustor thunk -> C3 *(float*)(tbl+idx*stride+field_off) -= fval.
+      const sc = (cfg.scenarios || [])[t] || { idx: 0, seed: 0, fval: 0 };
+      const entry = ptr(cfg.tbl).add((sc.idx | 0) * (cfg.stride | 0)).add(cfg.field_off | 0);
+      const seedF = function () { entry.writeFloat(sc.seed); };
+      try { seedF(); Orig(sc.idx >>> 0, sc.fval); o = (entry.readU32() >>> 0).toString(16); } catch (e) { eo = e.message; }
+      try { seedF(); Reim(sc.idx >>> 0, sc.fval); r = (entry.readU32() >>> 0).toString(16); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

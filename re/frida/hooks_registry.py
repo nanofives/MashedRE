@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004058c0 FloatSubThunk4058c0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x4058b0.
+    # void f(idx, float fval): *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval. Verbatim naked.
+    'thunk_float_sub_4058c0': {'rva': 0x004058c0, 'export': 'FloatSubThunk4058c0', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'thunk_float_sub',
+        'tbl': 0x00639d80, 'stride': 0xec, 'field_off': 0x5c,
+        'scenarios': [
+            {'idx': 0, 'seed': 10.0, 'fval': 3.0},    # 7.0
+            {'idx': 1, 'seed': 5.0,  'fval': 2.0},    # 3.0 (idx*0xec indexing)
+            {'idx': 0, 'seed': 1.0,  'fval': 0.25},   # 0.75
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x005a7af0 Thunk5a7af0 (audio) - NEAR-LEAF adjustor thunk -> C3 AudioListNodeCount(0x5aded0).
     # int f(p): count circular list at (p+0xc) (linked +4, sentinel=head). Verbatim naked.
     'thunk_5a7af0': {'rva': 0x005a7af0, 'export': 'Thunk5a7af0', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'thunk_list_count',
