@@ -60,6 +60,18 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00552750 FontCtx_ResetTransform (hud) - u32 f(void): resets the current
+    # font ctx's 3x3 matrix to identity (ctx+0x00=1.0, +0x14=1.0, +0x28=1.0, rest 0),
+    # ORs ctx+0xc |= 0x20003, zeros DAT_00912bd8/bec, returns 1. ctx =
+    # (*0x00912a84)[*0x00912b04]. Seed depth=0, ptr_array[0]=ctxbuf (prior AV was a
+    # null deref). Vary ctx+0xc seed -> flags = seed|0x20003 non-degenerate.
+    'fontctx_reset_transform': {'rva': 0x00552750, 'export': 'FontCtx_ResetTransform', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'seed_indirect_ctx_obs',
+        'ptr_array': 0x00912a84, 'depth_global': 0x00912b04, 'depth_idx': 0,
+        'ctx_seed_off': 0x0c,
+        'observe_offs': [0x00, 0x04, 0x0c, 0x14, 0x28, 0x30],
+        'observe_globals': [0x00912bd8, 0x00912bec],
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x00493480 FpsDiscretise (util) - frame-tick discretizer. Calls C2 callee
     # FUN_00493390 (which sets DAT_007f1000=0x32=50 deterministically, timer-indep),
     # then accumulates DAT_007719d4 += 50, snaps to /50 ticks, writes int+float out.

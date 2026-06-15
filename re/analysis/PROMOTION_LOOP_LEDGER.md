@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 212
-- total_green: 378
+- rounds_run: 213
+- total_green: 379
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 213 | C2+status=impl re-verify + L5 handler ext (seed_indirect_ctx_obs) | attempted 1 | GREEN 1 (FontCtx_ResetTransform 0x00552750, hud: resets current font ctx 3x3 matrix to identity, ctx+0xc|=0x20003, zeros DAT_00912bd8/bec, ret 1) | total_green 378->379 (379/1000). Callers FontSys_InitRenderState 0x552c10 C3 + 0x427ff0/0x427f00 C2; pure leaf (no callees); RH_ScopedInstall RE-ENABLED (prior MASS-DISABLE's AV/AV was a null INDIRECT-ctx deref, NOT a reimpl bug). NEW handler seed_indirect_ctx_obs (SWEEP-CRITICAL): the function loads ctx = (*ptr_array)[depth] then writes; seed the INDIRECT pointer by allocating a ctxbuf + writing its addr to ptr_array[0] + depth=0, pre-fill 0xEEEEEEEE, seed ctx+0xc for the OR-test; observe ctx offsets + direct globals. 4/4 GREEN non-degen (flags col c0de0003/0103/0203/0303 vary; matrix consts 3f800000 proven != sentinel; byte-identical). LESSON: 'AV/AV / crash_equal' MASS-DISABLE reasons are often just un-seeded INDIRECT pointers (ptr-array[idx]) -> seed the indirection, re-verify, re-enable. This + struct_list_float_set (r212) confirm the cheap path now = re-enable a mass-disabled leaf + a focused seed-the-state handler. Session 101-213 net = +122 (257->379). Context 90 rounds deep. PATH TO 1000 (621 more) = promote-c3-batch fanout (awaiting opt-in).
 
 2026-06-15 | round 212 | C2+status=impl re-verify + L5 handler ext (struct_list_float_set) | attempted 1 | GREEN 1 (MusicGroupVolumeSet 0x005baf00, audio: struct+0x38=vol; circular-list walk node+0x14|=0x40; secondary+0x30=vol bits) | total_green 377->378 (378/1000). Caller FUN_0045dd60 C2 (the explicit caller-gate in the row note NOW MET); pure leaf (no callees); RH_ScopedInstall already active + reimpl in AudioMusic.cpp (just needed a valid early_window GREEN). NEW handler struct_list_float_set (SWEEP-CRITICAL arg_type): builds a 1-node self-circular list + secondary, vol=0.5+t*0.25, observe struct+0x38|node+0x14|secondary+0x30 = 3f000000|a0040 ... 3fa00000|a0340 (4 distinct, byte-identical incl. float bits + MOV-path secondary). GOTCHA: a stale duplicate registry key 'music_group_volume_set' (booted-lane arg_type 'music_vol_set', never promoted) shadowed my new entry (Python dict: later key wins -> REFUSED). FIX: consolidated to ONE entry, repurposed it to the early_window arg_type. LESSON: grep hooks_registry.py for the hook KEY before adding an entry (dup keys silently shadow). This was a justified L5 one-off (no cheaper candidate; the function is real, installed, leaf). Session 101-212 net = +121 (257->378). Context 89 rounds deep. PATH TO 1000 (622 more) = promote-c3-batch fanout (awaiting opt-in).
 

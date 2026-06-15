@@ -128,11 +128,12 @@ std::uint32_t __cdecl FontCtx_ResetTransform()
     return 1u;
 }
 
-// MASS-DISABLED 2026-05-24 needs-canonical-fontctx-state: RH_ScopedInstall(FontCtx_ResetTransform, 0x00552750);
-// Phase A2 audit 2026-05-24: synthetic diff AV/AV — orig at 0x28, reimpl at
-// 0xc — both crash inside the function deref'ing different FontCtx fields.
-// Banned as crash_equal GREEN per phase-A1 rule. Same canonical-scenario
-// gating as FontCtx_FlushMatrix.
+// Re-enabled r213 2026-06-15. Prior "AV/AV" (2026-05-24) was a null/garbage ctx
+// deref because the harness never seeded the INDIRECT ctx pointer
+// (g_FontCtxPtrs[depth]). The early_window seed_indirect_ctx_obs handler now
+// allocates a ctx buffer + writes its address into g_FontCtxPtrs[0] + sets
+// depth=0 -> no AV; GREEN non-degenerate. C2->C3 promoted on that evidence.
+RH_ScopedInstall(FontCtx_ResetTransform, 0x00552750);
 
 // ---------------------------------------------------------------------------
 // HudSpinCoinAnim  --  0x00428450
