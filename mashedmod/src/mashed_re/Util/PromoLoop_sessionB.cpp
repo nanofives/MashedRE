@@ -2064,3 +2064,21 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42ad90(std::uint8_t* 
     return 0xffffffff;
 }
 RH_ScopedInstall(Find42ad90, 0x0042ad90);
+
+// ===== round 163 ===== (EBX/EDI register-arg search, arr from globals)
+// 0x0042add0 — u32 fn(EBX=key, EDI=n): idx=*0x67e9f8; arr=*(u8**)(idx*0x40 + 0x67ed38);
+//   same walk as 0x42ad90 (find (n+1)-th key, return following element; else -1).
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42add0(std::uint32_t key, std::uint32_t n) {
+    std::uint32_t idx = *reinterpret_cast<std::uint32_t*>(0x0067e9f8);
+    std::uint8_t* arr = *reinterpret_cast<std::uint8_t**>(idx * 0x40 + 0x0067ed38);
+    std::uint32_t* a = reinterpret_cast<std::uint32_t*>(arr);
+    std::uint32_t ecx = 0, esi = 0, eax = a[0];
+    if (eax == 0xff070000) return 0xffffffff;
+    for (;;) {
+        if (eax == key) { if (n == esi) return a[ecx + 1]; esi++; }
+        eax = a[ecx + 1]; ecx++;
+        if (eax == 0xff070000) break;
+    }
+    return 0xffffffff;
+}
+RH_ScopedInstall(Find42add0, 0x0042add0);
