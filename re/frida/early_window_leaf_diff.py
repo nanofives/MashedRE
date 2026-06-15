@@ -198,6 +198,7 @@ PURE_LEAF_ARGTYPES = {
     'bitmap_blit',               # int fn(dst* arg1, src* arg2): dst{[4]=channels,[8]=rows,[0xc]=width_bits,[0x10]=dst_stride,[0x14]=dst_px,[0x18]=dst_pal}; src{[0xc]=pal_bits,[0x10]=src_stride,[0x14]=src_px,[0x18]=src_pal}. blockA: if both palettes && pal_bits<=8 copy (2^pal_bits)*4 bytes. blockB: bpr=((width_bits+7)>>3)*channels; per row copy bpr bytes src->dst advancing by strides. returns 1. plain __cdecl. seed_sets[t]={rows,width_bits,channels,dstride,sstride,pal_bits,palette}; snapshot dst_px[0x40]+dst_pal[0x40] hex. reimpl VERBATIM naked __asm. non-degen via varied dims/palette
     'record_array_filter_update',# void fn(arg1, arg2, arg3, arg4, arg5, arg6): scan arg2[4] records (stride 0x10 from arg1+0x18; A@+0,B@+4,C@+8,D@+0xc). rowRange from arg3 (-1->[0,arg2[8]) else exact); colRange from arg5 (-1->[0,4) else exact). match: (A&0x7fffffff) in rowRange && C in colRange && (B==arg4||arg4<0) -> D=arg6, A|=sign. then *arg1|=0x10. plain __cdecl 6 args. fixed 4-record array; seed_sets[t]={arg3,arg4,arg5,arg6}; snapshot *arg1 + per-record (A,D). reimpl VERBATIM naked __asm. non-degen via varied filters -> different update sets
     'heap_alloc_aligned',        # void* fn(heap* arg1, size, align): aligned first-fit allocator over an embedded block list. arg1[8]=first block, arg1[0xc]=sentinel; block[0]=next/end, block[8]=used. free=block[0]-used-block-0xc; if free>=size+0xc align cur top (block[8]+block) up to align, splice a new block, new[8]=size, return new+0xc; else 0. plain __cdecl. heap = one page-aligned block (end=base+0x100, used=0x10). seed_sets[t]={size,align}; snapshot ret-base + block0[0] + newblock fields. reimpl VERBATIM naked __asm. non-degen via alloc(diff align)/fail(too big)
+    'near_leaf_abs_table',       # void fn(arg): NEAR-LEAF parent that loops calling a C3 callee which writes an ABSOLUTE record table. cfg.tbl_base/tbl_stride/tbl_count/observe(offsets). At suspended-spawn the callee is unhooked -> both orig+reimpl call the real callee -> valid diff. seed_sets[t]={arg, preset:[[off,val],...]} (preset written into every record before the call, after zeroing). snapshot observe-offsets for records 0/mid/last. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via arg + preset variation
 }
 
 SRC = r"""
@@ -331,6 +332,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'bitmap_blit') ? ['pointer','pointer']
               : (cfg.at === 'record_array_filter_update') ? ['pointer','pointer','uint32','uint32','uint32','uint32']
               : (cfg.at === 'heap_alloc_aligned') ? ['pointer','uint32','uint32']
+              : (cfg.at === 'near_leaf_abs_table') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1783,6 +1785,28 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_abs_table') {
+      // void f(arg): near-leaf parent looping a C3 callee that writes an absolute table.
+      // cfg.tbl_base/tbl_stride/tbl_count/observe. seed_sets[t]={arg, preset:[[off,val],...]}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { arg: 0, preset: [] };
+      const base = ptr(cfg.tbl_base), stride = cfg.tbl_stride | 0, count = cfg.tbl_count | 0;
+      const obs = cfg.observe || [];
+      const seedTbl = function () {
+        for (let i = 0; i < count; i++) {
+          const rec = base.add(i * stride);
+          for (let z = 0; z < stride; z += 4) rec.add(z).writeU32(0);
+          (sp.preset || []).forEach(function (pv) { rec.add(pv[0]).writeU32(pv[1] >>> 0); });
+        }
+      };
+      const snap = function () {
+        let s = ''; [0, count >> 1, count - 1].forEach(function (ri) {
+          const rec = base.add(ri * stride);
+          obs.forEach(function (o2) { s += (rec.add(o2).readU32() >>> 0).toString(16) + ','; });
+          s += '|';
+        }); return s;
+      };
+      try { seedTbl(); Orig(sp.arg >>> 0); o = snap(); } catch (e) { eo = e.message; }
+      try { seedTbl(); Reim(sp.arg >>> 0); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'heap_alloc_aligned') {
       // void* f(heap* arg1, size, align): aligned first-fit over one block. seed_sets[t]={size,align}.
       const sp = (cfg.seed_sets || [])[t | 0] || { size: 0x20, align: 0x10 };
@@ -2287,6 +2311,7 @@ def run(name):
            'seed': h.get('seed'),
            'idx_off': h.get('idx_off'), 'tbl': h.get('tbl'),
            'tbl_stride': h.get('tbl_stride'), 'seed_tbl_n': h.get('seed_tbl_n'),
+           'tbl_base': h.get('tbl_base'), 'tbl_count': h.get('tbl_count'),
            'observe_offs': h.get('observe_offs'),
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),

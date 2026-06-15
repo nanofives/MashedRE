@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 187
-- total_green: 354
+- rounds_run: 188
+- total_green: 355
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 187 | NEAR-LEAF LANE FIRST PROMOTION (NEW handler near_leaf_abs_table) | attempted 1 | GREEN 1 (Init458f80 0x00458f80: for i in 0..0x18 call C3 Set458f20(i,arg1) which writes table 0x68b198) | total_green 354->355 (355/1000). Caller Race::EvaluateResult 0x410510 C2, callee 0x458f20 C3. PROVES the near-leaf lane: parent's `call rel32` -> reimpl `mov eax,<callee_abs>; call eax`; at suspended-spawn the callee is UNHOOKED so BOTH orig+reimpl call the real callee -> valid diff (NOT degenerate-equal). Handler pre-seeds the callee's abs table per test (zero or preset rec field) + varies the parent arg -> non-degen (rec[0x20]=3/1/0). GOTCHA fixed: new cfg keys MUST be added to the python passthrough (tbl_base/tbl_count were missing -> 'missing argument' NativeFunction error). 106 near-leaf candidates remain in re/analysis/plans/near_leaf_candidates.tsv (curate to state-writer/pure-arith callees; .bss-reader callees are degenerate). Session 101-187 net = +98 (257->355). ~74 handlers. Context 64 rounds deep — fresh context advised. Fastest route to 1000 still = promote-c3-batch fanout (now near-leaves are also fannable).
 
 2026-06-15 | round 186 | NEAR-LEAF LANE DISCOVERY (no promotion) | attempted 0 GREEN | dry_counter 0 (NOT exhaustion — new lane opened). After round 185 drained the pure-leaf pool, scanned for NEAR-LEAVES: C2 first-party, clean (no fld-stN/transcendental), small (<0x140), with >=1 CALL but ALL call-targets already C3. Found 107 -> re/analysis/plans/near_leaf_candidates.tsv (no-global subset is cleanest: 0x407b00, 0x408590, 0x40e4b0, 0x413fa0, 0x41a9b0, ...). Reimpl = verbatim naked port, replace `call rel32` with `mov eax,<callee_abs>; call eax`; both sides hit the hooked reimpl-callee -> consistent. Validated the CAVEAT on 0x45c330 (callee 0x45bff0 reads .data 0x88fc88 = .bss-zero -> degenerate); so curate to callees that WRITE observable globals or are pure-arith. NEXT ROUND: build a near-leaf handler (zero the callee's target global region, force-call orig vs reimpl, snapshot the written global; vary the parent's arg for non-degen) and start draining the 107. Session 101-186 net = +97 (257->354). Context 63 rounds deep — STRONGLY recommend a fresh context to execute the near-leaf lane cleanly (the absolute-call + global-zeroing handler is fiddly). Alternatively the promote-c3-batch parallel fanout remains the fastest route to 1000.
 

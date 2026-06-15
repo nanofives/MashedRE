@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'init_458f80': {'rva': 0x00458f80, 'export': 'Init458f80', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'near_leaf_abs_table',
+        'tbl_base': 0x0068b198, 'tbl_stride': 0x50, 'tbl_count': 0x19, 'observe': [0x1c, 0x20],
+        'seed_sets': [
+            {'arg': 0, 'preset': []},               # flag=0 -> every rec[0x20]=3
+            {'arg': 5, 'preset': [[0x20, 3]]},      # preset rec[0x20]=3, flag!=0 -> rec[0x20]=1
+            {'arg': 5, 'preset': []},               # zero table, flag!=0 -> rec[0x20] stays 0
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'alloc_5ae4c0': {'rva': 0x005ae4c0, 'export': 'Alloc5ae4c0', 'signature': {'ret': 'pointer', 'args': ['pointer','uint32','uint32']}, 'arg_type': 'heap_alloc_aligned',
         'seed_sets': [
             {'size': 0x20, 'align': 0x10},   # fits -> allocate, splice
