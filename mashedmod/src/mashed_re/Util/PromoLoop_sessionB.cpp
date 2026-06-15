@@ -2818,3 +2818,86 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Pool482860(void)
     }
 }
 RH_ScopedInstall(Pool482860, 0x00482860);
+
+// 0x004ceaf0  FUN_004ceaf0 (render, bitmap/texture blit: palette + per-row copy)
+// int f(dst* arg1=EAX, src* arg2=EDX):  dst{[4]=channels,[8]=rows,[0xc]=width_bits,
+//   [0x10]=dst_stride,[0x14]=dst_pixels,[0x18]=dst_palette}; src{[0xc]=pal_bits,
+//   [0x10]=src_stride,[0x14]=src_pixels,[0x18]=src_palette}.
+//   Block A: if dst_palette && src_palette && pal_bits<=8 copy (2^pal_bits)*4 bytes.
+//   Block B: bpr=((width_bits+7)>>3)*channels; for rows: copy bpr bytes src row->dst row,
+//   advancing src by src_stride and dst by dst_stride. Always returns 1. Uses a push-ecx
+//   scratch slot + push ebp inside the loop. Pure rep movs (no float/global) -> VERBATIM naked.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Blit4ceaf0(void)
+{
+    __asm {
+        push ecx
+        mov  eax, dword ptr [esp+8]          // dst (arg1)
+        mov  edx, dword ptr [esp+0x0c]       // src (arg2)
+        push ebx
+        push esi
+        push edi
+        mov  edi, dword ptr [eax+0x18]       // dst_palette
+        test edi, edi
+        je   L_TX_B
+        mov  esi, dword ptr [edx+0x18]       // src_palette
+        test esi, esi
+        je   L_TX_B
+        mov  ecx, dword ptr [edx+0x0c]       // pal_bits
+        cmp  ecx, 8
+        jg   L_TX_B
+        mov  ebx, 1
+        shl  ebx, cl
+        shl  ebx, 2                           // (2^pal_bits)*4
+        mov  ecx, ebx
+        shr  ecx, 2
+        rep  movsd
+        mov  ecx, ebx
+        and  ecx, 3
+        rep  movsb
+    L_TX_B:
+        mov  ecx, dword ptr [eax+0x0c]       // width_bits
+        mov  esi, dword ptr [eax+8]          // rows
+        add  ecx, 7
+        mov  ebx, dword ptr [edx+0x14]       // src_pixels
+        sar  ecx, 3
+        imul ecx, dword ptr [eax+4]          // * channels = bytes/row
+        mov  edx, dword ptr [eax+0x14]       // dst_pixels
+        mov  dword ptr [esp+0x0c], ecx       // save bytes/row (scratch slot)
+        test esi, esi
+        mov  dword ptr [esp+0x14], 0         // i = 0 (reuse arg1 slot)
+        jle  L_TX_END
+        push ebp
+        jmp  L_TX_BODY
+    L_TX_LOOP:
+        mov  ecx, dword ptr [esp+0x10]       // bytes/row
+    L_TX_BODY:
+        mov  ebp, ecx
+        mov  esi, ebx                         // src row
+        mov  edi, edx                         // dst row
+        shr  ecx, 2
+        rep  movsd
+        mov  ecx, ebp
+        and  ecx, 3
+        rep  movsb
+        mov  ecx, dword ptr [eax+0x10]       // dst_stride
+        mov  esi, dword ptr [eax+8]          // rows (reload for cmp)
+        add  edx, ecx                         // dst += dst_stride
+        mov  ecx, dword ptr [esp+0x1c]       // arg2 (preserved slot)
+        mov  ebp, dword ptr [ecx+0x10]       // src_stride
+        mov  ecx, dword ptr [esp+0x18]       // i
+        add  ebx, ebp                         // src += src_stride
+        inc  ecx
+        cmp  ecx, esi
+        mov  dword ptr [esp+0x18], ecx
+        jl   L_TX_LOOP
+        pop  ebp
+    L_TX_END:
+        pop  edi
+        pop  esi
+        mov  eax, 1
+        pop  ebx
+        pop  ecx
+        ret
+    }
+}
+RH_ScopedInstall(Blit4ceaf0, 0x004ceaf0);

@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'blit_4ceaf0': {'rva': 0x004ceaf0, 'export': 'Blit4ceaf0', 'signature': {'ret': 'int', 'args': ['pointer','pointer']}, 'arg_type': 'bitmap_blit',
+        'seed_sets': [
+            {'rows': 3, 'width_bits': 16, 'channels': 1, 'dstride': 4, 'sstride': 4, 'pal_bits': 4, 'palette': True},  # 2 bpr x3 + 64B palette
+            {'rows': 2, 'width_bits': 24, 'channels': 1, 'dstride': 8, 'sstride': 8, 'pal_bits': 0, 'palette': False}, # 3 bpr x2, no palette
+            {'rows': 4, 'width_bits': 32, 'channels': 1, 'dstride': 8, 'sstride': 8, 'pal_bits': 2, 'palette': True},  # 4 bpr x4 + 16B palette
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'pool_482860': {'rva': 0x00482860, 'export': 'Pool482860', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'pool_freelist_init',
         'seed_sets': [
             {'n': 3},   # 4-node ring (B, B+0x24, B+0x48, B+0x6c)

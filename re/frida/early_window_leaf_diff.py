@@ -195,6 +195,7 @@ PURE_LEAF_ARGTYPES = {
     'circular_str_search_ci',    # void* fn(list* arg1, char* query): circular list at arg1[8] (sentinel=&arg1[8]); node[0]=next, node+8=key string, object=node-8; case-insensitive compare ('a'-'z' folded +0xe0); return object(node-8) on full match else 0. plain __cdecl, no global/float. build a 3-node circular list (alpha/beta/gamma); seed_sets[t]={q}; snapshot returned ptr. reimpl VERBATIM naked __asm. non-degen via match(distinct node ptrs)/miss(0)/prefix(0)
     'byte_format_hexdump',       # void fn(struct* arg1, char* out, void* arg3): for 4 bytes at arg1[0x11c..0x11f] write printable ([0x29,0x5a]|[0x61,0x7a]) directly else "[XX]" via .rdata hex table 0x5e336c; if arg3!=0 append ": "+0x10 dwords from arg3 (last byte nulled) else null-term. plain __cdecl. seed_sets[t]={bytes:[4], payload:bool}; snapshot out[0x70] hex. reimpl VERBATIM naked __asm. non-degen via printable/nonprintable/payload mix
     'pool_freelist_init',        # void fn(pool* arg1): N=arg1[0x16c]; zero (N+2)*0x24 buf at arg1[0x14]; build circular freelist of N+1 nodes (stride 0x24) via node[0x1c]; arg1[0x18]=buf, head arg1[0x1c]=buf, tail arg1[0x20], tail wraps to buf; arg1[0x168/0x170/0x194]=0, arg1[0x198]=1. plain __cdecl. seed_sets[t]={n}; snapshot pool fields + node links. reimpl VERBATIM naked __asm. non-degen via varied N (different ring sizes/links)
+    'bitmap_blit',               # int fn(dst* arg1, src* arg2): dst{[4]=channels,[8]=rows,[0xc]=width_bits,[0x10]=dst_stride,[0x14]=dst_px,[0x18]=dst_pal}; src{[0xc]=pal_bits,[0x10]=src_stride,[0x14]=src_px,[0x18]=src_pal}. blockA: if both palettes && pal_bits<=8 copy (2^pal_bits)*4 bytes. blockB: bpr=((width_bits+7)>>3)*channels; per row copy bpr bytes src->dst advancing by strides. returns 1. plain __cdecl. seed_sets[t]={rows,width_bits,channels,dstride,sstride,pal_bits,palette}; snapshot dst_px[0x40]+dst_pal[0x40] hex. reimpl VERBATIM naked __asm. non-degen via varied dims/palette
 }
 
 SRC = r"""
@@ -325,6 +326,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'circular_str_search_ci') ? ['pointer','pointer']
               : (cfg.at === 'byte_format_hexdump') ? ['pointer','pointer','pointer']
               : (cfg.at === 'pool_freelist_init') ? ['pointer']
+              : (cfg.at === 'bitmap_blit') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1777,6 +1779,33 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'bitmap_blit') {
+      // int f(dst* arg1, src* arg2): palette + per-row pixel copy. seed_sets[t]={rows,width_bits,
+      // channels,dstride,sstride,pal_bits,palette}. snapshot dst pixels[0x40] + dst palette[0x40].
+      const sp = (cfg.seed_sets || [])[t | 0] || {};
+      const D = Memory.alloc(0x40), S = Memory.alloc(0x40);
+      const dpx = Memory.alloc(0x200), spx = Memory.alloc(0x200), dpal = Memory.alloc(0x200), spal = Memory.alloc(0x200);
+      _keep.push(D, S, dpx, spx, dpal, spal);
+      const seedTX = function () {
+        [D, S].forEach(function (b) { for (let z = 0; z < 0x40; z += 4) b.add(z).writeU32(0); });
+        for (let z = 0; z < 0x200; z++) { dpx.add(z).writeU8(0); dpal.add(z).writeU8(0); spx.add(z).writeU8((z * 7 + 3) & 0xff); spal.add(z).writeU8((z * 5 + 0x80) & 0xff); }
+        D.add(4).writeU32((sp.channels | 0) >>> 0);
+        D.add(8).writeU32((sp.rows | 0) >>> 0);
+        D.add(0xc).writeU32((sp.width_bits | 0) >>> 0);
+        D.add(0x10).writeU32((sp.dstride | 0) >>> 0);
+        D.add(0x14).writePointer(dpx);
+        D.add(0x18).writePointer(sp.palette ? dpal : ptr(0));
+        S.add(0xc).writeU32((sp.pal_bits | 0) >>> 0);
+        S.add(0x10).writeU32((sp.sstride | 0) >>> 0);
+        S.add(0x14).writePointer(spx);
+        S.add(0x18).writePointer(sp.palette ? spal : ptr(0));
+      };
+      const snapTX = function () {
+        const hx = function (buf) { const u = new Uint8Array(buf.readByteArray(0x40)); let s = ''; for (let k = 0; k < u.length; k++) s += ('0' + u[k].toString(16)).slice(-2); return s; };
+        return hx(dpx) + '#' + hx(dpal);
+      };
+      try { seedTX(); Orig(D, S); o = snapTX(); } catch (e) { eo = e.message; }
+      try { seedTX(); Reim(D, S); r = snapTX(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'pool_freelist_init') {
       // void f(pool* arg1): zero buffer + build circular freelist. seed_sets[t]={n}.
       const sp = (cfg.seed_sets || [])[t | 0] || { n: 0 };
