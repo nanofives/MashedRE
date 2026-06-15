@@ -1791,3 +1791,22 @@ extern "C" __declspec(dllexport) void __cdecl Copy476a10(std::uint8_t* src) {
     for (int i = 0; i < 16; i++) d[i] = s[i];
 }
 RH_ScopedInstall(Copy476a10, 0x00476a10);
+
+// ===== round 148 ===== (byte-indexed table bit-clear)
+// 0x005b1180 — void fn(p): if(p[1]!=p[3]){ off=(u8)p[1]+(u8)p[0]; if(off>=(u8)p[3]) off-=p[3];
+//   p[1]++; ptr=*(u8**)(p+4) + off*0x14; } else ptr=0; *(u32*)ptr &= ~8.  (else-branch derefs
+//   null exactly as the original; only the main path is exercised.)
+extern "C" __declspec(dllexport) void __cdecl Tbl5b1180(std::uint8_t* p) {
+    std::uint32_t* ptr;
+    if (p[1] != p[3]) {
+        std::uint32_t off = static_cast<std::uint32_t>(p[1]) + static_cast<std::uint32_t>(p[0]);
+        if (off >= p[3]) off -= p[3];
+        p[1] = static_cast<std::uint8_t>(p[1] + 1);
+        std::uint8_t* tbl = *reinterpret_cast<std::uint8_t**>(p + 4);
+        ptr = reinterpret_cast<std::uint32_t*>(tbl + off * 0x14);
+    } else {
+        ptr = reinterpret_cast<std::uint32_t*>(0);
+    }
+    *ptr &= 0xfffffff7;
+}
+RH_ScopedInstall(Tbl5b1180, 0x005b1180);

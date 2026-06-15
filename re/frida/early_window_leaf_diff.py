@@ -163,6 +163,7 @@ PURE_LEAF_ARGTYPES = {
     'multi_state_list_setter',   # void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14]; *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6; state3: p[0x50]=5; else no change. Seed p[0x48]=state(test), p[0x50]=0x11 sentinel, state1 also p[0x14]=&A,p[0x18]=&B; shared p+A+B bufs; snapshot p[0x50]|p[0x14]|p[0x18]|A[4]|B[0]. test=state in {1,2,3,0} (non-degen)
     'byte_counter_struct',       # void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a&0xff; p[1]=(p[1]-1)&0xff. seed p[0],p[1],p[3] per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. non-degen via varied seeds incl the wrap
     'arg_default_memcpy_abs',    # void fn(src): if(!src) src=glob(default); memcpy(tgt, src, copy_dwords*4). test0: src=&buf(markers)->dest=markers; test1: src=0->dest=copy of default. reset dest sentinel; snapshot dest dwords. non-degen across the two tests
+    'byte_idx_table_bitclear',   # void fn(p): if(p[1]!=p[3]){ off=p[1]+p[0]; if(off>=p[3]) off-=p[3]; p[1]++; ptr=p[4]+off*0x14; } else ptr=0; *ptr&=~8. seed p[0]/p[1]/p[3](b1!=b3), p[4]=&tbl, tbl[off*0x14]=0xFF; observe tbl[off*0x14]|p[1]. (main path only; else-branch derefs null in both.) non-degen via off+p[1]++
 }
 
 SRC = r"""
@@ -261,6 +262,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'multi_state_list_setter') ? ['pointer']
               : (cfg.at === 'byte_counter_struct') ? ['pointer']
               : (cfg.at === 'arg_default_memcpy_abs') ? ['pointer']
+              : (cfg.at === 'byte_idx_table_bitclear') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1303,6 +1305,23 @@ rpc.exports.diff = function(cfg) {
       const src = usebuf ? mbuf : ptr(0);
       try { setupM2(); Orig(src); o = snapM2(); } catch (e) { eo = e.message; }
       try { setupM2(); Reim(src); r = snapM2(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'byte_idx_table_bitclear') {
+      // void fn(p): off=p[1]+p[0] (mod p[3]); p[1]++; *(p[4]+off*0x14) &= ~8. Main path
+      // (b1!=b3). Seed p + tbl, place 0xFF at tbl[off*0x14]; observe that slot (->0xF7) + p[1].
+      const sp = (cfg.seed_sets || [])[t | 0] || { b0: 0, b1: 0, b3: 0 };
+      const pbc = Memory.alloc(0x20), tbl = Memory.alloc(0x400); _keep.push(pbc, tbl);
+      let off = sp.b1 + sp.b0; if (off >= sp.b3) off -= sp.b3;
+      const tblOff = off * 0x14;
+      const setupBT = function () {
+        for (let z = 0; z < 0x20; z += 4) pbc.add(z).writeU32(0);
+        for (let z = 0; z < 0x400; z += 4) tbl.add(z).writeU32(0);
+        pbc.writeU8(sp.b0 & 0xff); pbc.add(1).writeU8(sp.b1 & 0xff); pbc.add(3).writeU8(sp.b3 & 0xff);
+        pbc.add(4).writePointer(tbl);
+        tbl.add(tblOff).writeU32(0xFF);
+      };
+      const snapBT = function () { return (tbl.add(tblOff).readU32() >>> 0) + '|' + (pbc.add(1).readU8()); };
+      try { setupBT(); Orig(pbc); o = snapBT(); } catch (e) { eo = e.message; }
+      try { setupBT(); Reim(pbc); r = snapBT(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
