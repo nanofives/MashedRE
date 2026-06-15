@@ -233,6 +233,7 @@ PURE_LEAF_ARGTYPES = {
     'pixel_max_alpha',           # int fn(struct* s): PURE LEAF per-pixel alpha=max(R,G,B). mode=s[0xc]: 4|8 -> (1<<mode) pixels @s[0x18]+2; 0x20 -> s[8]rows x s[4]cols @s[0x14]+2 (base+=s[0x10]); else no-op. ret s. Build base buf with RGB pattern; per cfg.scenarios[t]={mode,rows,cols,stride}: observe base[3]|base[7]|base[0x43]|ret. non-degen via mode (processed vs sentinel alphas)
     'engine_register_funcs',     # int fn(void): PURE LEAF straight-line; stores fixed funcptr constants into (*cfg.glob)+cfg.observe_offs; ret 1. seed *glob=struct (sentinel-filled), observe ret + struct[observe_offs]. non-degen via the distinct registered constants (snapshot != all-same)
     'eax_struct_deref_write',    # void fn(EAX=s): PURE LEAF. if(s[0x1b4]==s[0x1b8]) return; s[0x1b8]=s[0x1b4]; for 12 offsets write table[idx](@cfg.tbl) into chain s[OFF]->+0x18->+0x20->*->+4. Trampoline mov eax,sbuf; jmp target. All 12 offsets -> one chain P1->P2->P3->P4; seed table[idx]; per cfg.scenarios[t]={idx,prev}: observe s[0x1b8]|P4[4]. non-degen via index-changed vs no-op
+    'particle_pool_alloc',       # void fn(int* a1, int a2): PURE LEAF particle-pool alloc at cfg.glob (10 slots stride 0x24). scan for free (slot[+0]==0) else evict max(slot[+0x1c]); write a1[0..2]/a2/255f/used into chosen slot. Seed pool (cfg.scenarios[t]={used:[idxs],pris:[...]}); a1=[0x111,0x222,0x333],a2=0x444; observe slot[+0]/[+4] of slots 0/1/9. non-degen via which slot written
 }
 
 SRC = r"""
@@ -396,6 +397,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'nested_list_search') ? ['uint32']
               : (cfg.at === 'pixel_max_alpha') ? ['pointer']
               : (cfg.at === 'engine_register_funcs') ? []
+              : (cfg.at === 'particle_pool_alloc') ? ['pointer','uint32']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2765,6 +2767,25 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runX(mkT(ptr(cfg.rva))); } catch (e) { eo = e.message; }
       try { r = runX(mkT(reim)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'particle_pool_alloc') {
+      // void f(int* a1, int a2): particle-pool slot allocator at cfg.glob (10 slots stride 0x24).
+      const s = (cfg.scenarios || [])[t] || { used: [], pris: [] };
+      const pool = ptr(cfg.glob);
+      const a1 = Memory.alloc(0x10); _keep.push(a1);
+      const seedPP = function () {
+        for (let z = 0; z < 10 * 0x24; z += 4) pool.add(z).writeU32(0xEEEEEEEE);
+        for (let i = 0; i < 10; i++) pool.add(i * 0x24).writeU32(0);          // all free
+        (s.used || []).forEach(function (i) { pool.add(i * 0x24).writeU32(1); });   // mark used
+        (s.pris || []).forEach(function (pv, i) { pool.add(i * 0x24 + 0x1c).writeU32(pv >>> 0); });
+        a1.writeU32(0x111); a1.add(4).writeU32(0x222); a1.add(8).writeU32(0x333);
+      };
+      const snap = function () {
+        let p = [];
+        [0, 1, 9].forEach(function (i) { p.push((pool.add(i * 0x24).readU32() >>> 0).toString(16)); p.push((pool.add(i * 0x24 + 4).readU32() >>> 0).toString(16)); });
+        return p.join('|');
+      };
+      try { seedPP(); Orig(a1, 0x444); o = snap(); } catch (e) { eo = e.message; }
+      try { seedPP(); Reim(a1, 0x444); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

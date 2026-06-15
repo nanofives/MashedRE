@@ -2198,7 +2198,7 @@ rva,name,subsystem,confidence,status,file,scenario,frida_diff,notes
 0048e7b0,FUN_0048e7b0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e7b0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
 0048e820,FUN_0048e820,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048e820.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4020
 0048eac0,FUN_0048eac0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048eac0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical
-0048f590,FUN_0048f590,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f590.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4021 U-4022
+0048f590,FUN_0048f590,particle,C3,impl,mashedmod/src/mashed_re/Util/PromoLoop_sessionB.cpp,batch-ac-s6,log/diff_particle_pool_alloc_48f590.csv,"batch-ac-s6 C1->C2 mechanical; U-4021 U-4022 | C2->C3 r235 2026-06-15: fresh capstone-decomp + C reimpl. PURE LEAF void f(int* a1, int a2): 10-slot particle pool @0x769f50 (stride 0x24); scan for free (slot[+0]==0) else evict max(slot[+0x1c]); write a1[0..2]/a2/255f/used. NEW handler particle_pool_alloc 3/3 GREEN non-degen (free->slot0, skip->slot1, full->evict-max slot9). Caller FUN_00420e00 C2. arg_type particle_pool_alloc SWEEP-CRITICAL. *** MILESTONE: 400/1000 ***"
 0048f780,FUN_0048f780,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f780.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4023 U-4024
 0048f8a0,FUN_0048f8a0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f8a0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4025 U-4026 U-4027
 0048f9f0,FUN_0048f9f0,particle,C2,mapped,re/analysis/particle_promote_ac6/0x0048f9f0.md,batch-ac-s6,,batch-ac-s6 C1->C2 mechanical; U-4028 U-4029

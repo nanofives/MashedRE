@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 234
-- total_green: 399
+- rounds_run: 235
+- total_green: 400
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 235 | L3 frontier — C reimpl (particle-pool allocator) | attempted 1 | GREEN 1 (ParticlePoolAlloc48f590 0x0048f590, particle) | total_green 399->400 (*** 400/1000 MILESTONE ***). PURE LEAF void f(int* a1, int a2): 10-slot pool @0x769f50 (stride 0x24); scan for free (slot[+0]==0) else evict max-priority(slot[+0x1c]); write a1[0..2]/a2/255f/used. NEW handler particle_pool_alloc 3/3 GREEN non-degen (free->slot0, skip->slot1, full->evict-max slot9). Caller FUN_00420e00 C2. ~4 CLEAN frontier remain (456eb0 EAX-min, 5c95b0 bitpack, 486f90 tail-jmp). Session 101-235 net = +143 (257->400). Context 112 rounds deep. PATH TO 1000 (600 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 234 | L3 frontier — EAX-implicit struct propagator (naked wrapper + C body) | attempted 1 | GREEN 1 (StructPropagate41e4b0 0x0041e4b0, render: index-gated table-value propagation into 12 deref chains) | total_green 398->399 (399/1000). PURE LEAF EAX-implicit, 379B but only 1 branch. if(s[0x1b4]==s[0x1b8])return; else s[0x1b8]=idx; 12x write table[idx] via s[OFF]->+0x18->+0x20->*->+4. NEW handler eax_struct_deref_write (mov eax,sbuf;jmp target trampoline; all 12 offsets -> one shared chain P1..P4; seed table). 2/2 GREEN non-degen (changed->table[3] / no-op->sentinel). GOTCHA: 0xD00D0000|x in JS is signed -> writeU32 'expected unsigned integer' -> append >>>0. Caller FUN_0041e6c0 C2. ~5 CLEAN frontier remain. Session 101-234 net = +142 (257->399). Context 111 rounds deep. PATH TO 1000 (601 more) = this method (~1/round) or fanout.
 

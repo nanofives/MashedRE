@@ -60,6 +60,18 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0048f590 ParticlePoolAlloc48f590 (particle) - PURE LEAF void f(int* a1, int a2):
+    # 10-slot pool @0x769f50 (stride 0x24); scan for free (slot[+0]==0) else evict max
+    # (slot[+0x1c]); write a1[0..2]/a2/255f/used. Observe slot[+0]/[+4] of slots 0/1/9.
+    'particle_pool_alloc_48f590': {'rva': 0x0048f590, 'export': 'ParticlePoolAlloc48f590', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32']}, 'arg_type': 'particle_pool_alloc',
+        'glob': 0x00769f50,
+        'scenarios': [
+            {'used': [],                       'pris': []},                              # all free -> slot0
+            {'used': [0],                      'pris': []},                              # slot0 used -> slot1
+            {'used': [0,1,2,3,4,5,6,7,8,9],    'pris': [1,2,3,4,5,6,7,8,2,9]},          # full -> evict slot9 (max pri 9)
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x0041e4b0 StructPropagate41e4b0 (gameplay) - PURE LEAF EAX-implicit void f(EAX=s):
     # if(s[0x1b4]==s[0x1b8]) return; s[0x1b8]=s[0x1b4]; write table[idx](@0x63d5f8) into 12
     # sub-object deref chains (s[OFF]->+0x18->+0x20->*->+4). EAX-trampoline; observe s[0x1b8]|P4[4].

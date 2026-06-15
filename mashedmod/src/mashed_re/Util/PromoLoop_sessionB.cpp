@@ -4264,3 +4264,37 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructPropagate4
     }
 }
 RH_ScopedInstall(StructPropagate41e4b0, 0x0041e4b0);
+
+// 0x0048f590 FUN_0048f590 (particle, ParticlePoolAlloc) — PURE LEAF (no calls)
+// void f(int* a1, int a2): scan 10 slots (stride 0x24) at pool 0x769f50 for a free
+// one (slot[+0]==0); if none free, evict the max-priority slot (max of slot[+0x1c]).
+// Write the particle into the chosen slot: +4..+0xc = a1[0..2]; +0x10/+0x14 = a2;
+// +0x18 = 0x437f0000(255.0f); +0x1c = 0; +0x20 = 0; +0 = 1. capstone-verified.
+static void Slot48f590(unsigned char* pool, int idx, const int* a1, int a2)
+{
+    unsigned char* sp = pool + idx * 0x24;
+    *reinterpret_cast<int*>(sp + 0x04) = a1[0];
+    *reinterpret_cast<int*>(sp + 0x08) = a1[1];
+    *reinterpret_cast<int*>(sp + 0x0c) = a1[2];
+    *reinterpret_cast<int*>(sp + 0x10) = a2;
+    *reinterpret_cast<int*>(sp + 0x14) = a2;
+    *reinterpret_cast<int*>(sp + 0x1c) = 0;
+    *reinterpret_cast<int*>(sp + 0x18) = 0x437f0000;
+    *reinterpret_cast<int*>(sp + 0x20) = 0;
+    *reinterpret_cast<int*>(sp + 0x00) = 1;
+}
+extern "C" __declspec(dllexport) void __cdecl ParticlePoolAlloc48f590(int* a1, int a2)
+{
+    unsigned char* const pool = reinterpret_cast<unsigned char*>(0x00769f50u);
+    int count = 0, maxIdx = 0, maxVal = 0, slot = -1;
+    for (int i = 0; i < 10; i++) {
+        unsigned char* sp = pool + i * 0x24;
+        if (*reinterpret_cast<int*>(sp + 0) == 0) { slot = i; break; }
+        count++;
+        int pri = *reinterpret_cast<int*>(sp + 0x1c);
+        if (pri > maxVal) { maxIdx = i; maxVal = pri; }
+    }
+    if (slot >= 0) Slot48f590(pool, slot, a1, a2);
+    if (count == 10) Slot48f590(pool, maxIdx, a1, a2);
+}
+RH_ScopedInstall(ParticlePoolAlloc48f590, 0x0048f590);
