@@ -164,6 +164,7 @@ PURE_LEAF_ARGTYPES = {
     'byte_counter_struct',       # void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a&0xff; p[1]=(p[1]-1)&0xff. seed p[0],p[1],p[3] per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. non-degen via varied seeds incl the wrap
     'arg_default_memcpy_abs',    # void fn(src): if(!src) src=glob(default); memcpy(tgt, src, copy_dwords*4). test0: src=&buf(markers)->dest=markers; test1: src=0->dest=copy of default. reset dest sentinel; snapshot dest dwords. non-degen across the two tests
     'byte_idx_table_bitclear',   # void fn(p): if(p[1]!=p[3]){ off=p[1]+p[0]; if(off>=p[3]) off-=p[3]; p[1]++; ptr=p[4]+off*0x14; } else ptr=0; *ptr&=~8. seed p[0]/p[1]/p[3](b1!=b3), p[4]=&tbl, tbl[off*0x14]=0xFF; observe tbl[off*0x14]|p[1]. (main path only; else-branch derefs null in both.) non-degen via off+p[1]++
+    'struct_table5_search',      # u32 fn(p1, p2): if(!p1&&!p2) return 0; count=p1[0x1d0]; if(count<=0) return 0; tbl=p1[0x1d4]; search entries (5 bytes: dword key @+0, byte val @+4) BACKWARD from tbl+count*5-5 for *p2; return (u8)entry[4] or 0. seed count=4, distinct keys/vals, p2 key (test0 match->val, test1 nomatch->0). non-degen
 }
 
 SRC = r"""
@@ -263,6 +264,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'byte_counter_struct') ? ['pointer']
               : (cfg.at === 'arg_default_memcpy_abs') ? ['pointer']
               : (cfg.at === 'byte_idx_table_bitclear') ? ['pointer']
+              : (cfg.at === 'struct_table5_search') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1322,6 +1324,22 @@ rpc.exports.diff = function(cfg) {
       const snapBT = function () { return (tbl.add(tblOff).readU32() >>> 0) + '|' + (pbc.add(1).readU8()); };
       try { setupBT(); Orig(pbc); o = snapBT(); } catch (e) { eo = e.message; }
       try { setupBT(); Reim(pbc); r = snapBT(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_table5_search') {
+      // u32 fn(p1,p2): count=p1[0x1d0]; tbl=p1[0x1d4]; backward search 5-byte entries (dword
+      // key + byte val) for *p2; return entry[4] or 0. seed count=4, distinct keys/vals; p2 key.
+      const count = 4;
+      const p1 = Memory.alloc(0x200), tbl = Memory.alloc(0x80), p2 = Memory.alloc(0x10); _keep.push(p1, tbl, p2);
+      const match = (t | 0) === 0;
+      const setupT5 = function () {
+        for (let z = 0; z < 0x200; z += 4) p1.add(z).writeU32(0);
+        for (let z = 0; z < 0x80; z += 4) tbl.add(z).writeU32(0);
+        p1.add(0x1d0).writeU32(count);
+        p1.add(0x1d4).writePointer(tbl);
+        for (let i = 0; i < count; i++) { tbl.add(i * 5).writeU32((0x1000 + i) >>> 0); tbl.add(i * 5 + 4).writeU8(0x20 + i); }
+        p2.writeU32(match ? 0x1002 : 0x9999);
+      };
+      try { setupT5(); o = Orig(p1, p2) >>> 0; } catch (e) { eo = e.message; }
+      try { setupT5(); r = Reim(p1, p2) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

@@ -1810,3 +1810,22 @@ extern "C" __declspec(dllexport) void __cdecl Tbl5b1180(std::uint8_t* p) {
     *ptr &= 0xfffffff7;
 }
 RH_ScopedInstall(Tbl5b1180, 0x005b1180);
+
+// ===== round 149 ===== (bounded backward search over a 5-byte-stride table)
+// 0x00517200 — u32 fn(p1, p2): if(p1==0 && p2==0) return 0; count=p1[0x1d0]; if(count<=0)
+//   return 0; tbl=p1[0x1d4]; e=tbl+count*5-5; for(i=count;i;i--){ if(*(u32*)e==*(u32*)p2)
+//   return (u8)e[4]; e-=5; } return 0.  (entries are 5 bytes: dword key + byte value.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Search517200(std::uint8_t* p1, std::uint8_t* p2) {
+    if (p1 == 0 && p2 == 0) return 0;
+    int count = *reinterpret_cast<int*>(p1 + 0x1d0);
+    if (count <= 0) return 0;
+    std::uint8_t* tbl = *reinterpret_cast<std::uint8_t**>(p1 + 0x1d4);
+    std::uint8_t* e = tbl + count * 5 - 5;
+    std::uint32_t key = *reinterpret_cast<std::uint32_t*>(p2);
+    for (int i = count; i != 0; i--) {
+        if (*reinterpret_cast<std::uint32_t*>(e) == key) return *reinterpret_cast<std::uint8_t*>(e + 4);
+        e -= 5;
+    }
+    return 0;
+}
+RH_ScopedInstall(Search517200, 0x00517200);
