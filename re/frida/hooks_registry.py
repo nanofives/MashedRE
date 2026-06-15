@@ -14328,6 +14328,9 @@ HOOKS = {
     # ---- promote-round round 146 (byte-field modular counter) --
     'counter_5b11d0': {'rva': 0x005b11d0, 'export': 'Counter5b11d0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'byte_counter_struct', 'seed_sets': [{'b0': 5, 'b1': 10, 'b3': 8}, {'b0': 7, 'b1': 3, 'b3': 8}, {'b0': 2, 'b1': 0, 'b3': 100}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
 
+    # ---- promote-round round 147 (arg-or-default memcpy to abs dest) --
+    'copy_476a10': {'rva': 0x00476a10, 'export': 'Copy476a10', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'arg_default_memcpy_abs', 'target_global': 0x006924e8, 'glob': 0x00692558, 'copy_dwords': 16, 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --

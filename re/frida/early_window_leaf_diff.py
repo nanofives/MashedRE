@@ -162,6 +162,7 @@ PURE_LEAF_ARGTYPES = {
     'global_fieldoff_clear',     # u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg; e4=entry[4]; if(e4) arg[0x48]=e4; entry[4]=0; entry[0]=0; return arg. seed *glob=V(0x10), arg[V]=&entry(test0)/0(test1), entry[0]=1,entry[4]=0x77; shared arg+entry bufs; snapshot arg[0x48]|entry[0]|entry[4]|ret. non-degen via ret(arg/0)+arg[0x48]+the clearing
     'multi_state_list_setter',   # void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14]; *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6; state3: p[0x50]=5; else no change. Seed p[0x48]=state(test), p[0x50]=0x11 sentinel, state1 also p[0x14]=&A,p[0x18]=&B; shared p+A+B bufs; snapshot p[0x50]|p[0x14]|p[0x18]|A[4]|B[0]. test=state in {1,2,3,0} (non-degen)
     'byte_counter_struct',       # void fn(p): a=p[0]+1; if(a>=p[3]) a-=p[3]; p[0]=a&0xff; p[1]=(p[1]-1)&0xff. seed p[0],p[1],p[3] per cfg.seed_sets[t]={b0,b1,b3}; observe p[0]|p[1]. non-degen via varied seeds incl the wrap
+    'arg_default_memcpy_abs',    # void fn(src): if(!src) src=glob(default); memcpy(tgt, src, copy_dwords*4). test0: src=&buf(markers)->dest=markers; test1: src=0->dest=copy of default. reset dest sentinel; snapshot dest dwords. non-degen across the two tests
 }
 
 SRC = r"""
@@ -259,6 +260,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_fieldoff_clear') ? ['pointer']
               : (cfg.at === 'multi_state_list_setter') ? ['pointer']
               : (cfg.at === 'byte_counter_struct') ? ['pointer']
+              : (cfg.at === 'arg_default_memcpy_abs') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1287,6 +1289,20 @@ rpc.exports.diff = function(cfg) {
       const snapBC = function () { return (pc.readU8()) + '|' + (pc.add(1).readU8()); };
       try { setupBC(); Orig(pc); o = snapBC(); } catch (e) { eo = e.message; }
       try { setupBC(); Reim(pc); r = snapBC(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'arg_default_memcpy_abs') {
+      // void fn(src): if(!src) src=glob(default); memcpy(tgt, src, copy_dwords*4). test0:
+      // src=&buf(markers) -> dest=markers; test1: src=0 -> dest=copy of the default source.
+      const dw = cfg.copy_dwords | 0, dest = ptr(cfg.tgt);
+      const mbuf = Memory.alloc(dw * 4 + 0x20); _keep.push(mbuf);
+      const usebuf = (t | 0) === 0;
+      const setupM2 = function () {
+        for (let k = 0; k < dw; k++) mbuf.add(k * 4).writeU32((0xC0DE0000 | k) >>> 0);
+        for (let k = 0; k < dw; k++) dest.add(k * 4).writeU32(0xA5A5A5A5);
+      };
+      const snapM2 = function () { const a = []; for (let k = 0; k < dw; k++) a.push(dest.add(k * 4).readU32() >>> 0); return a.join('|'); };
+      const src = usebuf ? mbuf : ptr(0);
+      try { setupM2(); Orig(src); o = snapM2(); } catch (e) { eo = e.message; }
+      try { setupM2(); Reim(src); r = snapM2(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

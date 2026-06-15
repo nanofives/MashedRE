@@ -1781,3 +1781,13 @@ extern "C" __declspec(dllexport) void __cdecl Counter5b11d0(std::uint8_t* p) {
     p[1] = static_cast<std::uint8_t>(p[1] - 1);
 }
 RH_ScopedInstall(Counter5b11d0, 0x005b11d0);
+
+// ===== round 147 ===== (arg-or-default memcpy to absolute dest)
+// 0x00476a10 — void fn(src): if(src==0) src=0x692558; memcpy(0x6924e8, src, 16 dwords).
+extern "C" __declspec(dllexport) void __cdecl Copy476a10(std::uint8_t* src) {
+    if (src == 0) src = reinterpret_cast<std::uint8_t*>(0x00692558);
+    std::uint32_t* d = reinterpret_cast<std::uint32_t*>(0x006924e8);
+    std::uint32_t* s = reinterpret_cast<std::uint32_t*>(src);
+    for (int i = 0; i < 16; i++) d[i] = s[i];
+}
+RH_ScopedInstall(Copy476a10, 0x00476a10);
