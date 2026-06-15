@@ -1829,3 +1829,17 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Search517200(std::uint8_t
     return 0;
 }
 RH_ScopedInstall(Search517200, 0x00517200);
+
+// ===== round 150 ===== (circular-list search by key field)
+// 0x005b0b60 — u32 fn(list, key): node=*(u8**)list; while(node!=list){ if(*(u32*)(node-0x44)
+//   ==key) return node-0x4c; node=*(u8**)node; } return 0.  (circular list, sentinel=list.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Search5b0b60(std::uint8_t* list, std::uint32_t key) {
+    std::uint8_t* node = *reinterpret_cast<std::uint8_t**>(list);
+    while (node != list) {
+        if (*reinterpret_cast<std::uint32_t*>(node - 0x44) == key)
+            return reinterpret_cast<std::uint32_t>(node - 0x4c);
+        node = *reinterpret_cast<std::uint8_t**>(node);
+    }
+    return 0;
+}
+RH_ScopedInstall(Search5b0b60, 0x005b0b60);
