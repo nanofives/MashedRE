@@ -9,9 +9,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 214
-- total_green: 379
-- dry_counter: 1
+- rounds_run: 215
+- total_green: 380
+- dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
   re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 215 | L3 frontier — fresh capstone-decomp + reimpl + handler | attempted 1 | GREEN 1 (IndexedFloatPairSum420d80 0x00420d80, gameplay: float f(int idx)=p[0]+p[1] @ 0x63e4b8+idx*36) | total_green 379->380 (380/1000). dry_counter 1->0. RECOVERED from r214 dry. METHOD (reusable, no Ghidra-pool needed): disassemble a frontier candidate's raw bytes via capstone directly (scripts/promote_frontier.py regen -> 54 frontier leaves; rva2off needs RVA=VA-0x400000 not VA). 0x420d80 = clean PURE LEAF (no calls, straight x87 fld+fadd). Wrote reimpl in PromoLoop_sessionB.cpp + NEW handler indexed_float_sum2 (seed slot+0/+4 floats, ret float, compare). 4/4 GREEN non-degen (idx 0/1/2/3 -> 1/2.5/4/5.5 exact). Caller FUN_00421100 C2. SKIPPED in same frontier: 0x422440 (fcos transcendental), 0x431b20/b50/b60 (fsin float10). LESSON: the L3 frontier still has clean pure-leaves IF you decomp them fresh (capstone) — the bottleneck was never candidates, it's that each needs decomp+reimpl+handler (a full round). ~50 frontier leaves remain (minus fsin/fcos/EAX-implicit). Session 101-215 net = +123 (257->380). Context 92 rounds deep. PATH TO 1000 (620 more) = fanout (this per-candidate full-round work is exactly what it parallelizes).
 
 2026-06-15 | round 214 | L2b mass-disabled re-verify — DRY (full lane vet, 0 promotable via early_window) | attempted 0 promoted, VETTED 9 candidates | GREEN 0 | dry_counter 0->1. Checked all assessable L2b candidates: every one fails the early_window solo bar — GATE-FAIL C1/untracked callee (MenuMenusBC, FontSys_InitSeq, 0x41c2d0, PlayerSlotConfigInit, LabelTrailRecordAppend), TIMER-NONDET (FontCtxMatrix_AllocInit, GameTickStateMachine7, AudioTickAndAvg), REFUSED-inconsistent-note (FontText_StringWidthAccumulator: binary 1st read [ESI+0x134]+CALL != the note's pure-leaf claim -> needs from-scratch re-decode; reimpl in #if 0), DEEP-CALLEE-SIDEFX (VehicleEliminationSlotInit/PostInit: callee gate OK but transitive FUN_004661a0 x4 + FUN_00413c70 have global side effects -> sequential Orig/Reim diverge, + EAX-implicit convention). Per the inviolable acceptance bar (no degenerate/false GREEN), declined to force any. L2b findings recorded in the lane note so future turns skip them. ASSESSMENT: the early_window suspended-spawn SOLO lane is now drained of clean candidates (pure-leaf + near-leaf + mass-disabled-re-verify all exhausted; FontCtx_ResetTransform r213 was the last clean one). Remaining first-party C2 needs the BOOTED run_diff scenario-attach lane (live state) or the promote-c3-batch PARALLEL FANOUT. Session 101-214 net = +122 (257->379, unchanged this round). Context 91 rounds deep. PATH TO 1000 (621 more) = fanout (awaiting opt-in) OR booted run_diff lane.
 

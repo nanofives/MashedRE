@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00420d80 IndexedFloatPairSum420d80 (gameplay) - PURE LEAF float f(int idx):
+    # p = (float*)(0x63e4b8 + idx*36); return p[0]+p[1]. (capstone-disasm verified:
+    # mov eax,[esp+4]; lea eax,[eax+eax*8]; fld [eax*4+0x63e4b8]; fadd [eax+4]; ret).
+    # Seed two distinct floats at slot+0/+4 per idx; non-degen via varied idx.
+    'indexed_float_pair_sum_420d80': {'rva': 0x00420d80, 'export': 'IndexedFloatPairSum420d80', 'signature': {'ret': 'float', 'args': ['uint32']}, 'arg_type': 'indexed_float_sum2',
+        'target_global': 0x0063e4b8, 'stride': 36,
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x00552750 FontCtx_ResetTransform (hud) - u32 f(void): resets the current
     # font ctx's 3x3 matrix to identity (ctx+0x00=1.0, +0x14=1.0, +0x28=1.0, rest 0),
     # ORs ctx+0xc |= 0x20003, zeros DAT_00912bd8/bec, returns 1. ctx =

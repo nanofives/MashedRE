@@ -215,6 +215,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_memset2',         # void fn(dest, count): NEAR-LEAF = C3 memset(dest, 0, count). seed_sets[t]={count}; dest pre-filled 0xCC, snapshot dest[0x20] (first count bytes -> 0, rest 0xCC). reimpl = verbatim naked port. non-degen via varied count (zero-extent)
     'struct_list_float_set',     # void fn(struct*, float vol): struct+0x38=vol; walk circular list at struct+0xc (sentinel=struct+0xc) setting node+0x14|=0x40; if struct+0x11c!=0 -> secondary+0x30=vol raw bits. Build 1-node self-circular list + a secondary; vol=0.5+t*0.25; seed node+0x14=0xA0000|(t<<8). snapshot struct+0x38|node+0x14|secondary+0x30. non-degen via varied vol + flags seed
     'seed_indirect_ctx_obs',     # u32 fn(void): ctx = (*(ptr_array))[depth] where depth_global=idx; writes fixed values into ctx[offsets] (+ OR a flags field) + zeros direct globals. Seed: alloc ctx buf, write its addr to ptr_array[depth_idx], depth_global=depth_idx, pre-fill ctx 0xEEEEEEEE, seed ctx[ctx_seed_off]=0xC0DE0000|(t<<8) for the OR-test. snapshot ctx[observe_offs] # globals[observe_globals]. non-degen via varied OR seed (matrix consts proven by !=sentinel)
+    'indexed_float_sum2',        # float fn(int idx): PURE LEAF. p=(float*)(cfg.tgt + idx*cfg.stride); return p[0]+p[1]. Seed two distinct floats at slot+0/+4 per idx; compare float return (exact). non-degen via varied idx -> distinct sums
 }
 
 SRC = r"""
@@ -365,6 +366,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_memset2') ? ['pointer','uint32']
               : (cfg.at === 'struct_list_float_set') ? ['pointer','float']
               : (cfg.at === 'seed_indirect_ctx_obs') ? []
+              : (cfg.at === 'indexed_float_sum2') ? ['uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1892,6 +1894,17 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedC(); o = (Orig() >>> 0).toString(16) + ':' + snap(); } catch (e) { eo = e.message; }
       try { seedC(); r = (Reim() >>> 0).toString(16) + ':' + snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_float_sum2') {
+      // float f(int idx): p=(float*)(tgt + idx*stride); return p[0]+p[1]. Seed two
+      // distinct floats per idx; ret 'float' -> compare JS numbers (exact here).
+      const base = ptr(cfg.tgt), stride = cfg.stride | 0, idx = t >>> 0;
+      const seedI = function () {
+        const slot = base.add(idx * stride);
+        slot.writeFloat(idx + 1.0);
+        slot.add(4).writeFloat(idx * 0.5);
+      };
+      try { seedI(); o = Orig(idx); } catch (e) { eo = e.message; }
+      try { seedI(); r = Reim(idx); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

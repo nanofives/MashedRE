@@ -3606,3 +3606,16 @@ RH_ScopedInstall(ZeroFill48a830, 0x0048a830);
 // scan re-surfaced an already-implemented function; a 2nd RH_ScopedInstall at the same
 // RVA would be a duplicate install. C2->C3 promoted via the EXISTING ZeroFillWrapper
 // export + a non-degenerate near_leaf_memset2 early_window diff (registry zero_fill_wrapper).
+
+// 0x00420d80  FUN_00420d80 (gameplay, IndexedFloatPairSum) — PURE LEAF (no calls)
+// Disasm (capstone, original): mov eax,[esp+4]; lea eax,[eax+eax*8]   ; eax = idx*9
+//   fld dword [eax*4 + 0x63e4b8]    ; st0 = *(float*)(0x63e4b8 + idx*36)
+//   lea eax,[eax*4 + 0x63e4b8]; fadd dword [eax+4]  ; st0 += *(float*)(...+4); ret
+// => float f(int idx){ const float* p=(float*)(0x63e4b8 + idx*36); return p[0]+p[1]; }
+extern "C" __declspec(dllexport) float __cdecl IndexedFloatPairSum420d80(int idx)
+{
+    const float* p = reinterpret_cast<const float*>(
+        0x0063e4b8u + static_cast<unsigned>(idx) * 36u);
+    return p[0] + p[1];
+}
+RH_ScopedInstall(IndexedFloatPairSum420d80, 0x00420d80);
