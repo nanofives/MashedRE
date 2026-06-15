@@ -1953,3 +1953,24 @@ extern "C" __declspec(dllexport) void __cdecl Init485a00(std::uint8_t* a, std::u
     *reinterpret_cast<std::uint32_t*>(sub + 0x50) = 1;
 }
 RH_ScopedInstall(Init485a00, 0x00485a00);
+
+// ===== round 157 ===== (2-way flag-branch struct compute)
+// 0x005b93a0 — void fn(p, arg2): if(p[0x94][0x50] & 8){ sub=p[0x11c]; sub[0x88]=0;
+//   sub[0x8c]=arg2; } else { s=p[0x84]; val=((u32)s[0x38]>>3)*(u32)s[0x39]*arg2;
+//   p[0x8c]=val; p[0x90]=val; p[0x88]=arg2; p[0x28] |= 0x400; }
+extern "C" __declspec(dllexport) void __cdecl Calc5b93a0(std::uint8_t* p, std::uint32_t arg2) {
+    std::uint8_t* f = *reinterpret_cast<std::uint8_t**>(p + 0x94);
+    if (*reinterpret_cast<std::uint8_t*>(f + 0x50) & 8) {
+        std::uint8_t* sub = *reinterpret_cast<std::uint8_t**>(p + 0x11c);
+        *reinterpret_cast<std::uint32_t*>(sub + 0x88) = 0;
+        *reinterpret_cast<std::uint32_t*>(sub + 0x8c) = arg2;
+    } else {
+        std::uint8_t* s = *reinterpret_cast<std::uint8_t**>(p + 0x84);
+        std::uint32_t val = (static_cast<std::uint32_t>(s[0x38]) >> 3) * static_cast<std::uint32_t>(s[0x39]) * arg2;
+        *reinterpret_cast<std::uint32_t*>(p + 0x8c) = val;
+        *reinterpret_cast<std::uint32_t*>(p + 0x90) = val;
+        *reinterpret_cast<std::uint32_t*>(p + 0x88) = arg2;
+        *reinterpret_cast<std::uint32_t*>(p + 0x28) |= 0x400;
+    }
+}
+RH_ScopedInstall(Calc5b93a0, 0x005b93a0);

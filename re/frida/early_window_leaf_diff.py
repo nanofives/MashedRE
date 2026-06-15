@@ -171,6 +171,7 @@ PURE_LEAF_ARGTYPES = {
     'struct_div_mod_compute',    # u32 fn(arg1,arg2,arg3,arg4,arg5): div=*(arg1[0x18]+arg4*0x28+0x20); q=arg2/div(unsigned); rem=arg2%div; *arg5=rem; return *(arg1[0x10]+arg3*0x20+0x1c)+arg1[0x20]*q+rem. seed arg1 ptrs+tables+mult per cfg.seed_sets[t]={val,div}; arg3=1,arg4=2 fixed; snapshot *arg5|ret. non-degen via varied val/div
     'ring_copy_5ab980',          # void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14]) cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt. seed g610/g614 + ring markers + arg fields; snapshot dest dwords|arg[0x18]|arg[0x14]. non-degen
     'struct_init_3arg_sub',      # void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; zero dest[8,0x10,0x18,0x1c,0x20,0x24,0x28]; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0,[0x40]=0,[0x44]=0,[0x38]=1,[0x48]=0,[0x50]=1. seed a[4],b,dest[0x60]=&sub; snapshot dest+sub fields. non-degen
+    'flag_branch_struct_2way',   # void fn(p, arg2): if(p[0x94][0x50]&8){ sub=p[0x11c]; sub[0x88]=0; sub[0x8c]=arg2; } else { s=p[0x84]; val=(s[0x38]>>3)*s[0x39]*arg2; p[0x8c]=p[0x90]=val; p[0x88]=arg2; p[0x28]|=0x400; }. test0 flag set, test1 clear. seed p[0x94]=&f,p[0x11c]=&sub,p[0x84]=&s; snapshot sub[0x88]|sub[0x8c]|p[0x8c]|p[0x90]|p[0x88]|p[0x28]. non-degen
 }
 
 SRC = r"""
@@ -277,6 +278,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'struct_div_mod_compute') ? ['pointer','uint32','uint32','uint32','pointer']
               : (cfg.at === 'ring_copy_5ab980') ? ['pointer']
               : (cfg.at === 'struct_init_3arg_sub') ? ['pointer','uint32','pointer']
+              : (cfg.at === 'flag_branch_struct_2way') ? ['pointer','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1460,6 +1462,23 @@ rpc.exports.diff = function(cfg) {
       };
       try { setupI3(); Orig(ai, B, dst); o = snapI3(); } catch (e) { eo = e.message; }
       try { setupI3(); Reim(ai, B, dst); r = snapI3(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'flag_branch_struct_2way') {
+      // void fn(p, arg2): branch on p[0x94][0x50]&8 -> sub-write vs s-derived compute. test0 set,
+      // test1 clear. seed p[0x94]=&f, p[0x11c]=&sub, p[0x84]=&s, s[0x38]=0x40, s[0x39]=3.
+      const p = Memory.alloc(0x140), f = Memory.alloc(0x60), sub = Memory.alloc(0x100), s = Memory.alloc(0x40); _keep.push(p, f, sub, s);
+      const flagset = (t | 0) === 0, ARG2 = flagset ? 0x77 : 5;
+      const setupFB = function () {
+        for (let z = 0; z < 0x140; z += 4) p.add(z).writeU32(0);
+        for (let z = 0; z < 0x60; z += 4) f.add(z).writeU32(0);
+        for (let z = 0; z < 0x100; z += 4) sub.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) s.add(z).writeU32(0);
+        p.add(0x94).writePointer(f); p.add(0x11c).writePointer(sub); p.add(0x84).writePointer(s);
+        f.add(0x50).writeU8(flagset ? 8 : 0);
+        s.add(0x38).writeU8(0x40); s.add(0x39).writeU8(3);
+      };
+      const snapFB = function () { return [sub.add(0x88).readU32(), sub.add(0x8c).readU32(), p.add(0x8c).readU32(), p.add(0x90).readU32(), p.add(0x88).readU32(), p.add(0x28).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
+      try { setupFB(); Orig(p, ARG2); o = snapFB(); } catch (e) { eo = e.message; }
+      try { setupFB(); Reim(p, ARG2); r = snapFB(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
