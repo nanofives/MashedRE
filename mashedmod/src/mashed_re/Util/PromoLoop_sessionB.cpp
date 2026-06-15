@@ -3560,3 +3560,21 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init42c280(void)
     }
 }
 RH_ScopedInstall(Init42c280, 0x0042c280);
+
+// 0x0048ade0  FUN_0048ade0 (particle, NEAR-LEAF: zero-fill wrapper)
+// void f(void): FUN_004b6480(0x7151f0, 0x200) -> clears a 0x200-bit (0x40-byte) array at
+// 0x7151f0 (rep stosd/stosb zero; size&7==0 so no partial mask). Callee 0x4b6480 C3.
+// Verbatim naked port; call -> mov eax,abs;call eax. (Verified via boundary-echo: filled
+// region -> 0, the byte at +0x40 stays = the seed.)
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroFill48ade0(void)
+{
+    __asm {
+        push 0x200
+        push 07151F0h
+        mov  eax, 04B6480h
+        call eax
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(ZeroFill48ade0, 0x0048ade0);

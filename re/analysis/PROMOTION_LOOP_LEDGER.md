@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 207
-- total_green: 373
+- rounds_run: 208
+- total_green: 374
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 207 | near-leaf #19: zero-fill wrapper (reuse near_leaf_seed_multi_obs, BOUNDARY-ECHO verify) | attempted 1 | GREEN 1 (ZeroFill48ade0 0x0048ade0: FUN_004b6480(0x7151f0,0x200) clears 0x40-byte bit-array) | total_green 373->374 (374/1000). Caller 0x40bd80 C2, callee 0x4b6480 C3. LESSON: a no-arg deterministic ZERO-FILL would be degenerate (output always all-0) -> verify via BOUNDARY-ECHO: seed the fill region + the byte just past it; filled->0, boundary stays=seed (varies aa/bb across tests) -> non-degen AND confirms exact fill size. Sibling 0x48a830 (also calls 0x4b6480 but with a [0x71fa34]=0 prefix). 19 near-leaf shapes. Session 101-207 net = +117 (257->374). ~86 handlers. Context 84 rounds deep. PATH TO 1000 (626 more) = promote-c3-batch fanout (awaiting opt-in).
 
 2026-06-15 | round 206 | near-leaf #18b: one-shot init wrapper, fixed consts (reuse near_leaf_seed_multi_obs) — RECOVERED from r205 dry | attempted 1 | GREEN 1 (Init42c280 0x0042c280: FUN_0042bf30(0x27f,0xff210000,0,0,0,0); callee stores 6 args to 0x67eab4.. gated on *0x67eab0==0) | total_green 372->373 (373/1000). dry_counter 1->0. Caller 0x4929d0 C2, callee 0x42bf30 C3. KEY METHOD for complex callees (vs the r205 0x423b00 degenerate failure): fully READ the callee to find its exact WRITE globals, then seed the gate + observe those exact globals -> deterministic non-degen. A 'fixed-const call' wrapper IS verifiable this way (vary the callee's gate/state globals, not the consts). Session 101-206 net = +116 (257->373). ~86 handlers. Context 83 rounds deep. PATH TO 1000 (627 more) = promote-c3-batch fanout (awaiting opt-in).
 
