@@ -179,6 +179,7 @@ PURE_LEAF_ARGTYPES = {
     'edx_ebx_edi_find',          # u32 fn(EDX=arr, EBX=key, EDI=n): walk arr (terminated 0xff070000); find (n+1)-th element==key, return the FOLLOWING element; else -1. ORIG via a CALL-trampoline that saves/restores callee-saved ebx,edi (push edi/ebx; mov edx/ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(arr,key,n). test=n (0->1st match's next, 1->2nd). non-degen
     'ebx_edi_global_find',       # u32 fn(EBX=key, EDI=n): idx=*(glob); arr=*(tgt + idx*0x40); same walk as edx_ebx_edi_find. seed idx=0 + arr ptr + build arr. ORIG via call-trampoline (push edi/ebx; mov ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(key,n). test=n. non-degen
     'strided_color_fill',        # void fn(): base=*0x771530+0x1d; for 896 entries (stride 0x20): p[-1]=*0x616030, p[0]=*0x616032, p[1]=*0x616031, p[2]=*0x616033 (BGRA swizzle from a global color). seed base ptr + 4 color bytes; observe entries 0,1,895. non-degen via swizzle pattern + loop coverage
+    'bitmap_alloc_slot',         # u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if found rec=0x693198+idx*0x2c0; rec[0x2b0]=0,[0x2b8]=0,[0x2b4]=1,[0x2bc]=30.0f; set the bit; return idx+1; else 0. seed bitmap so first-clear=K (tests K=5,0); snapshot rec fields|bitmap byte|ret. non-degen
 }
 
 SRC = r"""
@@ -293,6 +294,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'edx_ebx_edi_find') ? ['pointer','uint32','uint32']
               : (cfg.at === 'ebx_edi_global_find') ? ['uint32','uint32']
               : (cfg.at === 'strided_color_fill') ? []
+              : (cfg.at === 'bitmap_alloc_slot') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1623,6 +1625,22 @@ rpc.exports.diff = function(cfg) {
       const snapCF = function () { return ent(0) + '|' + ent(1) + '|' + ent(895); };
       try { setupCF(); Orig(); o = snapCF(); } catch (e) { eo = e.message; }
       try { setupCF(); Reim(); r = snapCF(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'bitmap_alloc_slot') {
+      // u32 fn(): allocate first free bit in bitmap 0x6bf198; init rec=0x693198+idx*0x2c0; set
+      // bit; return idx+1. seed bitmap so first-clear bit = K; snapshot rec fields + bitmap byte + ret.
+      const BMP = 0x6bf198, REC = 0x693198, Ks = [5, 0], K = Ks[t | 0];
+      const setupBA = function () {
+        for (let b = 0; b < 32; b++) ptr(BMP).add(b).writeU8(0xFF);
+        ptr(BMP).add(K >> 3).writeU8(((1 << (K & 7)) - 1) & 0xff);  // first clear = K
+        const rec = REC + K * 0x2c0;
+        [0x2b0, 0x2b4, 0x2b8, 0x2bc].forEach(function (o2) { ptr(rec).add(o2).writeU32(0xEE); });
+      };
+      const snapBA = function (rv) {
+        const rec = REC + K * 0x2c0;
+        return [ptr(rec).add(0x2b0).readU32() >>> 0, ptr(rec).add(0x2b4).readU32() >>> 0, ptr(rec).add(0x2b8).readU32() >>> 0, ptr(rec).add(0x2bc).readU32() >>> 0, ptr(BMP).add(K >> 3).readU8(), rv >>> 0].join('|');
+      };
+      try { setupBA(); const ro = Orig() >>> 0; o = snapBA(ro); } catch (e) { eo = e.message; }
+      try { setupBA(); const rr = Reim() >>> 0; r = snapBA(rr); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

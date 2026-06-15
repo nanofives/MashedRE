@@ -2099,3 +2099,27 @@ extern "C" __declspec(dllexport) void __cdecl Rain491070(void) {
     }
 }
 RH_ScopedInstall(Rain491070, 0x00491070);
+
+// ===== round 165 ===== (bitmap first-free-slot allocator)
+// 0x00477b60 — u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if none return 0;
+//   rec=0x693198+idx*0x2c0; rec[0x2b0]=0; rec[0x2b8]=0; rec[0x2b4]=1; rec[0x2bc]=30.0f
+//   (0x41f00000); set bit idx in the bitmap; return idx+1.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Alloc477b60(void) {
+    int idx = 0;
+    while (idx < 0x100) {
+        std::uint8_t bit = static_cast<std::uint8_t>(1 << (idx & 7));
+        std::uint8_t b = *reinterpret_cast<std::uint8_t*>(0x006bf198 + (idx >> 3));
+        if (!(b & bit)) {
+            std::uint8_t* rec = reinterpret_cast<std::uint8_t*>(0x00693198 + idx * 0x2c0);
+            *reinterpret_cast<std::uint32_t*>(rec + 0x2b0) = 0;
+            *reinterpret_cast<std::uint32_t*>(rec + 0x2b8) = 0;
+            *reinterpret_cast<std::uint32_t*>(rec + 0x2b4) = 1;
+            *reinterpret_cast<std::uint32_t*>(rec + 0x2bc) = 0x41f00000;
+            *reinterpret_cast<std::uint8_t*>(0x006bf198 + (idx >> 3)) |= bit;
+            return idx + 1;
+        }
+        idx++;
+    }
+    return 0;
+}
+RH_ScopedInstall(Alloc477b60, 0x00477b60);
