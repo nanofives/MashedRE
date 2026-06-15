@@ -14316,6 +14316,9 @@ HOOKS = {
     # ---- promote-round round 142 (4-branch pure pointer getter) --
     'get_5aa9c0': {'rva': 0x005aa9c0, 'export': 'Get5aa9c0', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'arg_flag_branch_getter', 'seed_sets': [{'c': 0x100, 'flag': 2, 'f': 0x5000}, {'c': 0x100, 'flag': 0, 'f': 0x5000}, {'c': 0, 'flag': 2, 'f': 0}, {'c': 0, 'flag': 0, 'f': 0}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2, 3], 'path2_tests': [0]},
 
+    # ---- promote-round round 143 (global DLL insert-at-head) --
+    'insert_5a7420': {'rva': 0x005a7420, 'export': 'Insert5a7420', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'global_dll_insert_head', 'glob': 0x007dca24, 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --

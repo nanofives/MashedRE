@@ -1711,3 +1711,21 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Get5aa9c0(std::uint8_t* a
     return reinterpret_cast<std::uint32_t>(arg + 0x28);
 }
 RH_ScopedInstall(Get5aa9c0, 0x005aa9c0);
+
+// ===== round 143 ===== (global DLL insert-at-head + flag-bit clear)
+// 0x005a7420 — u32 fn(arg): node=arg+0x28; node[4]=0; node[0]=0; old=*0x7dca24;
+//   node[4]=0x7dca24; node[0]=old; old[4]=node; *0x7dca24=node; node[0xc]&=~1; return 1.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Insert5a7420(std::uint8_t* arg) {
+    std::uint8_t* node = arg + 0x28;
+    *reinterpret_cast<std::uint32_t*>(node + 4) = 0;
+    *reinterpret_cast<std::uint32_t*>(node) = 0;
+    std::uint8_t* old = *reinterpret_cast<std::uint8_t**>(0x007dca24);
+    *reinterpret_cast<std::uint32_t*>(node + 4) = 0x007dca24;
+    *reinterpret_cast<std::uint8_t**>(node) = old;
+    *reinterpret_cast<std::uint8_t**>(old + 4) = node;
+    *reinterpret_cast<std::uint8_t**>(0x007dca24) = node;
+    std::uint32_t f = *reinterpret_cast<std::uint32_t*>(node + 0xc);
+    *reinterpret_cast<std::uint32_t*>(node + 0xc) = f & 0xfffffffe;
+    return 1;
+}
+RH_ScopedInstall(Insert5a7420, 0x005a7420);
