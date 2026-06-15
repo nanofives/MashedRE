@@ -217,6 +217,7 @@ PURE_LEAF_ARGTYPES = {
     'seed_indirect_ctx_obs',     # u32 fn(void): ctx = (*(ptr_array))[depth] where depth_global=idx; writes fixed values into ctx[offsets] (+ OR a flags field) + zeros direct globals. Seed: alloc ctx buf, write its addr to ptr_array[depth_idx], depth_global=depth_idx, pre-fill ctx 0xEEEEEEEE, seed ctx[ctx_seed_off]=0xC0DE0000|(t<<8) for the OR-test. snapshot ctx[observe_offs] # globals[observe_globals]. non-degen via varied OR seed (matrix consts proven by !=sentinel)
     'indexed_float_sum2',        # float fn(int idx): PURE LEAF. p=(float*)(cfg.tgt + idx*cfg.stride); return p[0]+p[1]. Seed two distinct floats at slot+0/+4 per idx; compare float return (exact). non-degen via varied idx -> distinct sums
     'double_indexed_float_mul',  # float fn(int idx): PURE LEAF. c=*(int*)(idx*S+aTbl); d=*(int*)(idx*S+bTbl); e=d+c*4; return *(float*)(fTbl+e*4) * *(float*)K. Seed idx=0: aTbl=0, bTbl=t (e=t), fTbl+t*4=float(t+1); compare float return. non-degen via varied e (K read-only const)
+    'struct_tag_equals',         # int fn(a,b): PURE LEAF tagged-union dword equality. Two 0x80 bufs filled equal, tag at [0], optional one-field perturbation per cfg.scenarios[t]={tag,diff}. compare int return (0/1). non-degen via alternating equal/unequal across tag branches
 }
 
 SRC = r"""
@@ -369,6 +370,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'seed_indirect_ctx_obs') ? []
               : (cfg.at === 'indexed_float_sum2') ? ['uint32']
               : (cfg.at === 'double_indexed_float_mul') ? ['uint32']
+              : (cfg.at === 'struct_tag_equals') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1919,6 +1921,18 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedD(); o = Orig(0); } catch (ex) { eo = ex.message; }
       try { seedD(); r = Reim(0); } catch (ex) { er = ex.message; }
+    } else if (cfg.at === 'struct_tag_equals') {
+      // int f(a,b): tagged-union dword equality. Two 0x80 bufs filled identical,
+      // tag at [0], optional one-field perturbation in b per scenario.
+      const scen = (cfg.scenarios || [])[t] || { tag: 0, diff: -1 };
+      const A = Memory.alloc(0x80), B = Memory.alloc(0x80); _keep.push(A, B);
+      const setup = function () {
+        for (let z = 0; z < 0x80; z += 4) { A.add(z).writeU32((z + 0x100) >>> 0); B.add(z).writeU32((z + 0x100) >>> 0); }
+        A.writeU32(scen.tag >>> 0); B.writeU32(scen.tag >>> 0);
+        if (scen.diff >= 0) B.add(scen.diff | 0).writeU32(0xDEADBEEF);
+      };
+      try { setup(); o = Orig(A, B) >>> 0; } catch (e) { eo = e.message; }
+      try { setup(); r = Reim(A, B) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };
@@ -2606,6 +2620,7 @@ def run(name):
            'depth_idx': h.get('depth_idx'), 'ctx_seed_off': h.get('ctx_seed_off'),
            'observe_globals': h.get('observe_globals'), 'seed_globals': h.get('seed_globals'),
            'aTbl': h.get('aTbl'), 'bTbl': h.get('bTbl'), 'fTbl': h.get('fTbl'),
+           'scenarios': h.get('scenarios'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

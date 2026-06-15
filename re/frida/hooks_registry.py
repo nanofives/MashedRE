@@ -60,6 +60,23 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004cb740 StructTagEquals4cb740 (render) - PURE LEAF int f(a,b): tagged-union
+    # dword equality. Common compare [0,4,8,c]; tag=a[0] -> tag1{0x34,0x38,0x3c,0x4c}
+    # / tag2{...,0x60,0x64} / tag3{0x40,0x44,0x48} / other{}. Returns 1 if equal else 0.
+    # 8 scenarios cover all tag branches x equal/unequal -> alternating 1/0 (non-degen).
+    'struct_tag_equals_4cb740': {'rva': 0x004cb740, 'export': 'StructTagEquals4cb740', 'signature': {'ret': 'uint32', 'args': ['pointer', 'pointer']}, 'arg_type': 'struct_tag_equals',
+        'scenarios': [
+            {'tag': 4, 'diff': -1},     # other tag, equal -> 1
+            {'tag': 4, 'diff': 0x04},   # other tag, common field differs -> 0
+            {'tag': 1, 'diff': -1},     # tag1 equal -> 1
+            {'tag': 1, 'diff': 0x4c},   # tag1 field differs -> 0
+            {'tag': 2, 'diff': -1},     # tag2 equal -> 1
+            {'tag': 2, 'diff': 0x60},   # tag2 field differs -> 0
+            {'tag': 3, 'diff': -1},     # tag3 equal -> 1
+            {'tag': 3, 'diff': 0x44},   # tag3 field differs -> 0
+        ],
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7], 'path2_tests': [0, 1, 2, 3, 4, 5, 6, 7]},
+
     # 0x0044e070 DoubleIndexedFloatMul44e070 (audio) - PURE LEAF float f(int idx):
     # c=*(int*)(idx*0xf8+0x89008c); d=*(int*)(idx*0xf8+0x890090); e=d+c*4;
     # return *(float*)(0x894de0+e*4) * *(float*)0x5cc8f4 (K=1/6). capstone-verified.

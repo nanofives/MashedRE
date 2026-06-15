@@ -3637,3 +3637,46 @@ extern "C" __declspec(dllexport) float __cdecl DoubleIndexedFloatMul44e070(int i
          * *reinterpret_cast<const float*>(0x005cc8f4u);
 }
 RH_ScopedInstall(DoubleIndexedFloatMul44e070, 0x0044e070);
+
+// 0x004cb740  FUN_004cb740 (render, StructTagEquals) — PURE LEAF (no calls)
+// Tagged-union dword equality. Common: compare a/b at [0,4,8,c]; then tag=a[0]
+// selects an extra field set (capstone-verified, all branches transcribed):
+//   tag==1: {0x34,0x38,0x3c,0x4c}                          (0x4cb800)
+//   tag==2: {0x34,0x38,0x3c,0x40,0x44,0x48,0x4c,0x60,0x64} (0x4cb7a8)
+//   tag==3: {0x40,0x44,0x48}                               (0x4cb781)
+//   else  : (none — common prefix suffices)                (jmp 0x4cb82c)
+// Returns 1 if all compared dwords equal, else 0. Only the return is observed
+// (integer logic) so bit-identity is exact.
+extern "C" __declspec(dllexport) int __cdecl StructTagEquals4cb740(const void* a, const void* b)
+{
+    #define MRE_AE(off) (*reinterpret_cast<const int*>(static_cast<const char*>(a) + (off)) \
+                      == *reinterpret_cast<const int*>(static_cast<const char*>(b) + (off)))
+    if (!MRE_AE(0x00)) return 0;
+    if (!MRE_AE(0x04)) return 0;
+    if (!MRE_AE(0x08)) return 0;
+    if (!MRE_AE(0x0c)) return 0;
+    const int tag = *reinterpret_cast<const int*>(static_cast<const char*>(a) + 0x00);
+    if (tag == 1) {
+        if (!MRE_AE(0x34)) return 0;
+        if (!MRE_AE(0x38)) return 0;
+        if (!MRE_AE(0x3c)) return 0;
+        return MRE_AE(0x4c) ? 1 : 0;
+    } else if (tag == 2) {
+        if (!MRE_AE(0x34)) return 0;
+        if (!MRE_AE(0x38)) return 0;
+        if (!MRE_AE(0x3c)) return 0;
+        if (!MRE_AE(0x40)) return 0;
+        if (!MRE_AE(0x44)) return 0;
+        if (!MRE_AE(0x48)) return 0;
+        if (!MRE_AE(0x4c)) return 0;
+        if (!MRE_AE(0x60)) return 0;
+        return MRE_AE(0x64) ? 1 : 0;
+    } else if (tag == 3) {
+        if (!MRE_AE(0x40)) return 0;
+        if (!MRE_AE(0x44)) return 0;
+        return MRE_AE(0x48) ? 1 : 0;
+    }
+    return 1;
+    #undef MRE_AE
+}
+RH_ScopedInstall(StructTagEquals4cb740, 0x004cb740);

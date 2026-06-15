@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 216
-- total_green: 381
+- rounds_run: 217
+- total_green: 382
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 217 | L3 frontier — capstone-decomp + reimpl + handler (3rd) | attempted 1 | GREEN 1 (StructTagEquals4cb740 0x004cb740, render: tagged-union dword equality predicate) | total_green 381->382 (382/1000). PURE LEAF (no calls). Transcribed ALL branches via capstone (tag=a[0] selects field set: tag1{0x34,0x38,0x3c,0x4c}/tag2{+0x60,0x64}/tag3{0x40,0x44,0x48}/other{}). NEW handler struct_tag_equals (2 bufs, per-scenario tag + one-field perturbation). 8/8 GREEN non-degen (all 4 tag branches x equal/unequal -> alternating 1/0). Integer logic -> only return observed -> bit-identity trivial (no float/instr-order risk). Caller FUN_004cb600 C2. METHOD NOTE: this turn's frontier scan (5+ candidates) shows the SIMPLE pure-scalar leaves are largely gone; remaining frontier is multi-branch predicates / gather loops / state-linkers / fld-st(N) / register-conv. Each clean one is now a full transcribe-all-branches round. Skipped: 0x4c42d0/0x4c4270 (fld-st(N)), 0x45c550 (0xf0 stack frame), 0x413bc0 (esi/ecx register-conv), 0x486f90 (tail-jmp). Session 101-217 net = +125 (257->382). Context 94 rounds deep. PATH TO 1000 (618 more) = this method (~1/round, rising cost) or the fanout.
 
 2026-06-15 | round 216 | L3 frontier — capstone-decomp + reimpl + handler (2nd this method) | attempted 1 | GREEN 1 (DoubleIndexedFloatMul44e070 0x0044e070, audio: float f(idx)=floatTbl[d+c*4]*K via two idx-tables) | total_green 380->381 (381/1000). PURE LEAF (capstone-verified, no calls). Wrote reimpl + NEW handler double_indexed_float_mul (seed aTbl=0/bTbl=t/fTbl+t*4; ret float). 4/4 GREEN non-degen ((e+1)/6 = 0.1667/0.3333/0.5/0.6667 exact; K=*0x5cc8f4=1/6 verified !=0 pre-build to avoid degenerate-zero). Caller FUN_00461650 C2. Pre-checked SizeOfImage=0x595000 covers the 0x89xxxx/0x894xxx seed targets (no AV). CONFIRMS the capstone-frontier method is the working autonomous lane: regen frontier -> disasm raw bytes -> classify (skip fcos/fsin/EAX-implicit/tail-jmp/long-fld-faddp) -> reimpl + focused handler -> diff. ~48 frontier leaves remain. Session 101-216 net = +124 (257->381). Context 93 rounds deep. PATH TO 1000 (619 more) = this method (~1/round) or the fanout (parallelizes it).
 
