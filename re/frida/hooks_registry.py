@@ -72,6 +72,21 @@ HOOKS = {
         ],
         'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
 
+    # 0x005c95b0 BitRangeFill5c95b0 (audio) - PURE LEAF bitfield range clear/set.
+    # void f(uint8** pbuf, uint startbit, uint nbits, int fill): buf=*pbuf; set bits
+    # [startbit,startbit+nbits) of bit-array buf to (fill!=0), preserving outside bits.
+    # Scenarios exercise: full-byte fast path (fill & clear), partial first/last bytes,
+    # single partial byte, multi-byte spans, fill=1 and fill=0.
+    'bitfield_range_set_5c95b0': {'rva': 0x005c95b0, 'export': 'BitRangeFill5c95b0', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32', 'uint32']}, 'arg_type': 'bitfield_range_set',
+        'scenarios': [
+            {'startbit': 3,  'nbits': 10, 'fill': 1, 'seed': 0x00},  # buf[0]=0xF8 buf[1]=0x1F
+            {'startbit': 5,  'nbits': 20, 'fill': 0, 'seed': 0xFF},  # [0]=0x1F [1]=0x00 [2]=0x00 [3]=0xFE rest 0xFF
+            {'startbit': 16, 'nbits': 16, 'fill': 1, 'seed': 0x00},  # [2]=0xFF [3]=0xFF (full-byte fast path)
+            {'startbit': 9,  'nbits': 3,  'fill': 1, 'seed': 0x55},  # [1]=0x5F rest 0x55 (single partial byte)
+            {'startbit': 12, 'nbits': 5,  'fill': 0, 'seed': 0xFF},  # [1]=0x0F [2]=0xFE rest 0xFF (span)
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
+
     # 0x004058c0 FloatSubThunk4058c0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x4058b0.
     # void f(idx, float fval): *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval. Verbatim naked.
     'thunk_float_sub_4058c0': {'rva': 0x004058c0, 'export': 'FloatSubThunk4058c0', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'thunk_float_sub',

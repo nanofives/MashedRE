@@ -9,9 +9,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 244
-- total_green: 408
-- dry_counter: 1
+- rounds_run: 245
+- total_green: 409
+- dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
   abort the NO_AUTO_HOOK safety check -> SKIP near_leaf rows named thunk_FUN_* ; adjustor thunks
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 245 | L3 frontier — C reimpl (bitfield range clear/set) | attempted 1 | GREEN 1 (BitRangeFill5c95b0 0x005c95b0, audio) | total_green 408->409 (409/1000). dry_counter 1->0. PURE LEAF void f(uint8** pbuf,uint startbit,uint nbits,int fill): buf=*pbuf; set bits [startbit,startbit+nbits) of little-endian bit-array buf to (fill!=0), preserving outside bits. Decode (esp-tracked stack): fill=(arg4!=0) via setne; start_byte=sb>>3, start_bit=sb&7; end_byte=(sb+n)>>3, end_bit=(sb+n)&7; if(start_byte>end_byte)ret; per byte i=start..end: a=(i==start?start_bit:0), b=(i==end?end_bit:8); full byte(a==0&&b==8)->0xFF/0x00 via dec/not idiom, else RMW per bit buf[i]=(buf[i]&~(1<<c))|(fill<<c). C reimpl (data-loop). NEW handler bitfield_range_set 5/5 GREEN non-degen early_window (b0=0x83 real orig, suspended-spawn): snapshots f81f.../1f0000fe.../0000ffff.../555f.../ff0ffe... all distinct & bit-identical (full-byte fast path + partial first/last + single partial byte + span, fill=1 and fill=0). Pure leaf (no callees); callers FUN_005c1140/005c13c0/005c94c0 all C2. arg_type bitfield_range_set SWEEP-CRITICAL. This clears one of the 2 "hard" zero-callee frontier leaves flagged r244 (the 5c95b0 bit-range-fill). REMAINING hard frontier leaf: 0x456eb0 (EAX-implicit min-finder, 181B, fcomp+bitmask). Session 101-245 net = +152 (257->409). Context 121 rounds deep. PATH TO 1000 (591 more) = complex solo rounds (~1/round) or the promote-c3-batch fanout.
 
 2026-06-15 | round 244 | NEAR-LEAF + frontier scout — clean tier DRAINED | attempted 0 promoted (scouted ~10 candidates) | GREEN 0 | dry_counter 0->1. FINDING: the clean solo-verifiable tier is now drained across ALL lanes: (1) pure leaves done; (2) simple adjustor-thunks done — the 2 remaining pure-jmp-free thunks (0x5ae7e0->AudioPoolDestroy, 0x5a9f10->AudioPoolBlockAlloc) call complex pool funcs (free/alloc on fake state = AV risk at suspended-spawn); (3) rest of near-leaf pool (112) = jump-table SWITCHES (0x409790/0x410d10/0x442600), pool-callers (AudioPoolFree 0x5ae920 etc), or mid-size real-logic fns — each a full decode+reimpl+bespoke-handler round; (4) the 2 remaining zero-callee frontier leaves are complex: 0x456eb0 (EAX-implicit min-finder, 181B, fcomp+bitmask loop) and 0x5c95b0 (bit-range-fill, 204B, 8 branches, partial-byte edge masks). All remaining candidates are LONG higher-risk rounds; declined to rush one at the tail of a 120-round-deep context. NEXT (fresh context): C-reimpl 0x5c95b0 (integer, no jumptable/calls -> tractable) or verbatim 0x456eb0 via EAX-trampoline; or build the capstone->MASM verbatim generator to make switch-free verbatim ports reliable. Session 101-244 net = +151 (unchanged this round, 257->408). Context 120 rounds deep. PATH TO 1000 (592 more) = complex solo rounds (<1/round now) or the promote-c3-batch fanout.
 

@@ -4484,3 +4484,49 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl BoundedThunk47d10
     }
 }
 RH_ScopedInstall(BoundedThunk47d100, 0x0047d100);
+
+// 0x005c95b0 FUN_005c95b0 (audio, BitRangeFill5c95b0) — PURE LEAF bitfield range clear/set.
+//   arg1 (pbuf, [esp+4])  : pointer to a (uint8_t*) buffer pointer; buf = *(uint8_t**)arg1
+//                           (0x005c9628 mov ecx,[ebp]; ebp=[arg1] @ 0x005c95f2)
+//   arg2 (startbit,[esp+8]): start bit index
+//   arg3 (nbits,[esp+0xc]) : bit count (length in bits)
+//   arg4 (fill,[esp+0x10]) : nonzero -> set covered bits to 1; zero -> clear to 0
+// Sets bits [startbit, startbit+nbits) of the little-endian bit-array buf to (fill!=0),
+// preserving bits outside the range. Decode:
+//   fill       = (arg4 != 0)                  (0x005c95bb test eax,eax; 0x005c95c0 setne)
+//   start_byte = startbit >> 3                (0x005c95d1 shr edx,3)
+//   start_bit  = startbit & 7                 (0x005c95c5 and al,7)
+//   end_byte   = (startbit+nbits) >> 3        (0x005c95d4 lea; 0x005c95d9 shr ebx,3)
+//   end_bit    = (startbit+nbits) & 7         (0x005c95d7 add al,cl; 0x005c95dc and al,7)
+//   if (start_byte > end_byte) return         (0x005c95df cmp edx,ebx; 0x005c95eb ja)
+//   for byte i = start_byte..end_byte:        (0x005c9670 cmp esi,ebx; 0x005c9672 jbe)
+//     a = (i==start_byte)? start_bit : 0      (0x005c95f7..0x005c960b)
+//     b = (i==end_byte)?   end_bit   : 8      (0x005c95f9 mov cl,8; 0x005c960f..0x005c9617)
+//     if (a==0 && b==8) buf[i] = fill?0xFF:0  (0x005c961b..0x005c962f; dec/not idiom)
+//     else for bit c=a..b-1:                  (0x005c9648 cmp; 0x005c9669 jb)
+//       buf[i] = (buf[i] & ~(1<<c)) | (fill<<c)  (0x005c9655 not bl,and; 0x005c9664 or)
+// C reimpl (data-loop; bit-for-bit identical final buffer state).
+extern "C" __declspec(dllexport) void __cdecl BitRangeFill5c95b0(
+        unsigned char **pbuf, unsigned int startbit, unsigned int nbits, int fillval)
+{
+    unsigned char *buf = *pbuf;
+    unsigned char fill = (fillval != 0) ? 1 : 0;
+    unsigned int start_byte = startbit >> 3;
+    unsigned int start_bit  = startbit & 7;
+    unsigned int end_byte   = (startbit + nbits) >> 3;
+    unsigned int end_bit    = (startbit + nbits) & 7;
+    if (start_byte > end_byte)
+        return;
+    for (unsigned int i = start_byte; i <= end_byte; ++i) {
+        unsigned int a = (i == start_byte) ? start_bit : 0u;
+        unsigned int b = (i == end_byte)   ? end_bit   : 8u;
+        if (a == 0u && b == 8u) {
+            buf[i] = fill ? (unsigned char)0xFF : (unsigned char)0x00;
+        } else {
+            for (unsigned int c = a; c < b; ++c) {
+                buf[i] = (unsigned char)((buf[i] & ~(1u << c)) | ((unsigned int)fill << c));
+            }
+        }
+    }
+}
+RH_ScopedInstall(BitRangeFill5c95b0, 0x005c95b0);

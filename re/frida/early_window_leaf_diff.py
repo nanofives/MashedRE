@@ -240,6 +240,7 @@ PURE_LEAF_ARGTYPES = {
     'thunk_list_count',          # uint fn(p): NEAR-LEAF adjustor thunk -> C3 circular-list count at (p+0xc) (linked +4, sentinel=head). Build a circular list of cfg.scenarios[t].n nodes; observe return = n. non-degen via varied n
     'thunk_float_sub',           # void fn(uint idx, float fval): NEAR-LEAF adjustor thunk -> C3 float-sub. *(float*)(cfg.tbl + idx*cfg.stride + cfg.field_off) -= fval. Per cfg.scenarios[t]={idx,seed,fval}: seed field, observe field bits = seed-fval. non-degen via varied seed/fval/idx
     'bounded_thunk_orflag',      # int fn(uint idx, uint a2): NEAR-LEAF bounds-checked adjustor thunk -> C3. if(idx<0xc8 && (s=*(int*)(cfg.tbl+idx*4))) -> if(a2) s[2]|=4. Build s at cfg.tbl[5]; per cfg.scenarios[t]={idx,a2,s2}: seed s[2], observe s[2]. non-degen via or/no-or/bounds
+    'bitfield_range_set',        # void fn(uint8** pbuf, uint startbit, uint nbits, int fill): PURE LEAF. buf=*pbuf; sets bits [startbit,startbit+nbits) of the bit-array buf to (fill!=0); full bytes set 0xFF/0x00, partial bytes RMW per-bit preserving outside bits. Per cfg.scenarios[t]={startbit,nbits,fill,seed}: seed 24-byte buf=seed, call, observe all 24 bytes hex. non-degen via varied range/fill/seed (full-byte + partial + boundary cases)
 }
 
 SRC = r"""
@@ -410,6 +411,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'thunk_list_count') ? ['pointer']
               : (cfg.at === 'thunk_float_sub') ? ['uint32','float']
               : (cfg.at === 'bounded_thunk_orflag') ? ['uint32','uint32']
+              : (cfg.at === 'bitfield_range_set') ? ['pointer','uint32','uint32','uint32']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2876,6 +2878,18 @@ rpc.exports.diff = function(cfg) {
       const snap = function () { return (s.add(2).readU8()).toString(16); };
       try { seedB(); Orig(sc.idx >>> 0, sc.a2 >>> 0); o = snap(); } catch (e) { eo = e.message; }
       try { seedB(); Reim(sc.idx >>> 0, sc.a2 >>> 0); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'bitfield_range_set') {
+      // void f(uint8** pbuf, uint startbit, uint nbits, int fill): buf=*pbuf; set bits
+      // [startbit,startbit+nbits) of bit-array buf to (fill!=0). 24-byte buf seeded to
+      // cfg.scenarios[t].seed; same pbuf re-seeded both sides. observe all 24 bytes hex.
+      const sc = (cfg.scenarios || [])[t] || { startbit: 0, nbits: 8, fill: 1, seed: 0x00 };
+      const N = 24;
+      const pbuf = Memory.alloc(4), buf = Memory.alloc(N); _keep.push(pbuf, buf);
+      pbuf.writePointer(buf);
+      const seedB = function () { for (let z = 0; z < N; z++) buf.add(z).writeU8(sc.seed & 0xff); };
+      const snap = function () { let h = ''; for (let z = 0; z < N; z++) { const b = buf.add(z).readU8(); h += (b < 16 ? '0' : '') + b.toString(16); } return h; };
+      try { seedB(); Orig(pbuf, sc.startbit >>> 0, sc.nbits >>> 0, sc.fill >>> 0); o = snap(); } catch (e) { eo = e.message; }
+      try { seedB(); Reim(pbuf, sc.startbit >>> 0, sc.nbits >>> 0, sc.fill >>> 0); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
