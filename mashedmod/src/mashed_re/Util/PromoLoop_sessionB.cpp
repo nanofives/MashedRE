@@ -1907,3 +1907,22 @@ extern "C" __declspec(dllexport) void __cdecl Ring5ab980(std::uint8_t* arg) {
     *reinterpret_cast<std::uint32_t*>(arg + 0x14) = lim - cnt;
 }
 RH_ScopedInstall(Ring5ab980, 0x005ab980);
+
+// ===== round 155 ===== (integer Newton-method sqrt, stdcall)
+// 0x0049da90 — int __stdcall fn(n): if(n>0x40000000) return 0x8000; x=1; if(n>1) do{x+=x;}
+//   while(x*x<n); if(n==0) return 0; then 3 Newton iters x=(x*x+n)/(2*x) (with x<0 overflow
+//   guards after iters 1 and 2); return x. (stdcall orig; reimpl __cdecl, compared by value.)
+extern "C" __declspec(dllexport) int __cdecl Sqrt49da90(std::uint32_t narg) {
+    int n = static_cast<int>(narg);
+    if (n > 0x40000000) return 0x8000;
+    int x = 1;
+    if (n > 1) { do { x += x; } while (x * x < n); }
+    if (n == 0) return 0;
+    x = (x * x + n) / (2 * x);
+    if (x < 0) return x;
+    x = (x * x + n) / (2 * x);
+    if (x < 0) return x;
+    x = (x * x + n) / (2 * x);
+    return x;
+}
+RH_ScopedInstall(Sqrt49da90, 0x0049da90);

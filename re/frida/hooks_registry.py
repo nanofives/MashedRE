@@ -14352,6 +14352,9 @@ HOOKS = {
     # ---- promote-round round 154 (ring-buffer copy to linear dest) --
     'ring_5ab980': {'rva': 0x005ab980, 'export': 'Ring5ab980', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'ring_copy_5ab980', 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
+    # ---- promote-round round 155 (integer Newton sqrt, stdcall orig / cdecl reimpl, reuses int_scalar) --
+    'sqrt_49da90': {'rva': 0x0049da90, 'export': 'Sqrt49da90', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'int_scalar', 'conv_orig': 'stdcall', 'lut_root_delta': 0, 'path1_tests': [7, 100, 10000, 1000000], 'path2_tests': [100]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
