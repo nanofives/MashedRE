@@ -2518,3 +2518,91 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Cmp5ae170(void)
     }
 }
 RH_ScopedInstall(Cmp5ae170, 0x005ae170);
+
+// 0x0048a630  FUN_0048a630 (ai, sphere-vs-AABB overlap predicate)
+// int f(box* arg1=EDX, sphere* arg2=ECX):  box = {min.xyz @ 0,4,8; max.xyz @ 0xc,0x10,0x14}
+//   sphere = {center.xyz @ 0,4,8; radius @ 0xc}. Block 1: if center strictly inside the
+//   box on all 3 axes -> return 1. Else block 2: test the box expanded by radius; return 1
+//   if center within, else 0. All straight-line fld/fcomp (NO fld st(N) juggling, no globals)
+//   -> VERBATIM naked port is bit-identical.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Aabb48a630(void)
+{
+    __asm {
+        mov  ecx, dword ptr [esp+8]         // arg2 sphere
+        mov  edx, dword ptr [esp+4]         // arg1 box
+        fld   dword ptr [ecx]
+        fcomp dword ptr [edx+0x0c]
+        fnstsw ax
+        test ah, 1
+        jne  L_AB_B2
+        fld   dword ptr [ecx]
+        fcomp dword ptr [edx]
+        fnstsw ax
+        test ah, 0x41
+        jp   L_AB_B2
+        fld   dword ptr [ecx+4]
+        fcomp dword ptr [edx+0x10]
+        fnstsw ax
+        test ah, 1
+        jne  L_AB_B2
+        fld   dword ptr [ecx+4]
+        fcomp dword ptr [edx+4]
+        fnstsw ax
+        test ah, 0x41
+        jp   L_AB_B2
+        fld   dword ptr [ecx+8]
+        fcomp dword ptr [edx+0x14]
+        fnstsw ax
+        test ah, 1
+        jne  L_AB_B2
+        fld   dword ptr [ecx+8]
+        fcomp dword ptr [edx+8]
+        fnstsw ax
+        test ah, 0x41
+        jnp  L_AB_TRUE
+    L_AB_B2:
+        fld   dword ptr [ecx+0x0c]
+        fadd  dword ptr [ecx]
+        fcomp dword ptr [edx+0x0c]
+        fnstsw ax
+        test ah, 1
+        jne  L_AB_FALSE
+        fld   dword ptr [ecx]
+        fsub  dword ptr [ecx+0x0c]
+        fcomp dword ptr [edx]
+        fnstsw ax
+        test ah, 0x41
+        jp   L_AB_FALSE
+        fld   dword ptr [ecx+0x0c]
+        fadd  dword ptr [ecx+4]
+        fcomp dword ptr [edx+0x10]
+        fnstsw ax
+        test ah, 1
+        jne  L_AB_FALSE
+        fld   dword ptr [ecx+4]
+        fsub  dword ptr [ecx+0x0c]
+        fcomp dword ptr [edx+4]
+        fnstsw ax
+        test ah, 0x41
+        jp   L_AB_FALSE
+        fld   dword ptr [ecx+0x0c]
+        fadd  dword ptr [ecx+8]
+        fcomp dword ptr [edx+0x14]
+        fnstsw ax
+        test ah, 1
+        jne  L_AB_FALSE
+        fld   dword ptr [ecx+8]
+        fsub  dword ptr [ecx+0x0c]
+        fcomp dword ptr [edx+8]
+        fnstsw ax
+        test ah, 0x41
+        jp   L_AB_FALSE
+    L_AB_TRUE:
+        mov  eax, 1
+        ret
+    L_AB_FALSE:
+        xor  eax, eax
+        ret
+    }
+}
+RH_ScopedInstall(Aabb48a630, 0x0048a630);

@@ -191,6 +191,7 @@ PURE_LEAF_ARGTYPES = {
     'list_walk_self_write',      # void fn(p, value): node=*p; while(node!=*node) node=*node (walk linked list until a self-pointing node); *(uint32*)(*0x911ae4 + node)=value. global 0x911ae4 is .bss-zero at suspended-spawn so target=terminal node addr -> writes value to terminal[0]. build a chain p->n0->..->n[len-1](self). seed_sets[t]={len,value}; snapshot terminal[0]. reimpl VERBATIM naked __asm. non-degen via distinct values
     'eax_ecx_float_hash',        # float fn(EAX=a, ECX=b): if(a) b&=a; x=(b<<13)^b; h=((x*x*0x3d73+0xc0ae5)*x - 0x2df722f3) & 0x7fffffff; return fild(h) * .rdata(0x5cd314) (dead fadd 0x5cc94c branch since h>=0). integer noise-hash -> float. ORIG via mov eax/ecx + call trampoline (ret float st0); REIMPL naked __cdecl(a,b)->float reading stack args + scratch slot, EXACT integer/fild/fmul. seed_pairs[t]=[a,b]; snapshot float32 bits. non-degen via distinct hashes
     'case_insensitive_ncmp',     # int fn(char* s1, char* s2, int n): bounded case-insensitive compare with a CUSTOM inline-ASCII toupper. ASYMMETRIC: s1 applies &0xdf to 0x5b-0x60 (cmp 0x41 jl-skip), s2 skips them (cmp 0x41 jg-skip) -> a backtick 0x60 yields s1=0x40 vs s2=0x60 (ret 0x20, NOT 0). Returns 0 if first n upper-folded chars equal, else toupper(s1)-toupper(s2). plain __cdecl (no trampoline). seed_sets[t]={s1,s2,n}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via equal/neg/pos/n-bound/asymmetry cases
+    'aabb_sphere_overlap',       # int fn(box* arg1, sphere* arg2): box={min.xyz@0,4,8; max.xyz@0xc,0x10,0x14}; sphere={center.xyz@0,4,8; radius@0xc}. block1: center strictly inside box on all 3 axes -> 1; else block2: box expanded by radius contains center -> 1 else 0. all straight-line fld/fcomp (no fld-st(N), no globals). plain __cdecl. seed_sets[t]={box:[6 floats], sph:[4 floats]}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via inside(1)/far-outside(0) mix
 }
 
 SRC = r"""
@@ -317,6 +318,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'list_walk_self_write') ? ['pointer','uint32']
               : (cfg.at === 'eax_ecx_float_hash') ? ['uint32','uint32']
               : (cfg.at === 'case_insensitive_ncmp') ? ['pointer','pointer','uint32']
+              : (cfg.at === 'aabb_sphere_overlap') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1769,6 +1771,18 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'aabb_sphere_overlap') {
+      // int f(box* arg1, sphere* arg2): box min[0,4,8] max[0xc,0x10,0x14]; sphere center[0,4,8] r[0xc].
+      // plain __cdecl, no callee/global -> direct Orig/Reim. seed_sets[t]={box:[6],sph:[4]}.
+      const ss = (cfg.seed_sets || [])[t | 0] || { box: [0, 0, 0, 0, 0, 0], sph: [0, 0, 0, 0] };
+      const b1 = Memory.alloc(0x40), b2 = Memory.alloc(0x40); _keep.push(b1, b2);
+      const seedAB = function () {
+        for (let z = 0; z < 0x40; z += 4) { b1.add(z).writeU32(0); b2.add(z).writeU32(0); }
+        for (let k = 0; k < 6; k++) b1.add(k * 4).writeFloat(ss.box[k]);
+        for (let k = 0; k < 4; k++) b2.add(k * 4).writeFloat(ss.sph[k]);
+      };
+      try { seedAB(); o = (Orig(b1, b2) | 0); } catch (e) { eo = e.message; }
+      try { seedAB(); r = (Reim(b1, b2) | 0); } catch (e) { er = e.message; }
     } else if (cfg.at === 'case_insensitive_ncmp') {
       // int fn(char* s1, char* s2, int n): bounded case-insensitive compare (custom toupper).
       // plain __cdecl, no callee -> direct Orig/Reim. seed_sets[t]={s1,s2,n}.

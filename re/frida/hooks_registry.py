@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'aabb_48a630': {'rva': 0x0048a630, 'export': 'Aabb48a630', 'signature': {'ret': 'int', 'args': ['pointer','pointer']}, 'arg_type': 'aabb_sphere_overlap',
+        'seed_sets': [
+            {'box': [0,0,0, 10,10,10], 'sph': [5,5,5, 10.0]},     # center+/-10 covers [0,10] all axes -> 1
+            {'box': [0,0,0, 10,10,10], 'sph': [5,5,5, 1.0]},      # +/-1 too small -> 0
+            {'box': [0,0,0, 10,10,10], 'sph': [5,5,5, 8.0]},      # +/-8 = [-3,13] covers [0,10] -> 1
+            {'box': [0,0,0, 10,10,10], 'sph': [5,5,5, 4.0]},      # +/-4 = [1,9] misses [0,10] -> 0
+            {'box': [2,2,2, 8,8,8],    'sph': [5,5,5, 5.0]},      # +/-5 = [0,10] covers [2,8] -> 1
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'cmp_5ae170': {'rva': 0x005ae170, 'export': 'Cmp5ae170', 'signature': {'ret': 'int', 'args': ['pointer','pointer','uint32']}, 'arg_type': 'case_insensitive_ncmp',
         'seed_sets': [
             {'s1': 'Hello', 's2': 'HELLO', 'n': 5},   # case-insensitive equal -> 0
