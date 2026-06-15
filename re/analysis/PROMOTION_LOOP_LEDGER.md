@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 194
-- total_green: 361
+- rounds_run: 195
+- total_green: 362
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 194 | near-leaf #8: getter-compare + tail-call getter (reuse near_leaf_seed_globals) | attempted 1 | GREEN 1 (Sub45c7f0 0x0045c7f0: (GetRenderSubMode()==*0x88fbc0)?that:tail-call Flag63b908Get(); -> 5/7/3) | total_green 361->362 (362/1000). Caller 0x45d330 C2, callees 0x40e350/0x40e450 C3 (pure getters). No new handler (reused near_leaf_seed_globals). LESSON: a TAIL-CALL near-leaf (jmp to a C3 fn) is clean too -> reimpl ends `mov eax,<callee_abs>; jmp eax`; check both the e8 calls AND the e9 tail-jmp targets are C3 (my scan missed e9 -> verify manually). ~99 candidates remain. Session 101-194 net = +105 (257->362). ~80 handlers. Context 71 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 193 | near-leaf batch x2 attempted, 1 GREEN + 1 gate-skip (NEW handler near_leaf_seed_arg_obs) | attempted 2 | GREEN 1 (Add40b6e0 0x0040b6e0: if(GetRaceSubMode()!=2) *0x63b8ec+=arg; obs 100/105/255) | deferred 1 (Not49a730 0x0049a730: clean !FUN_00426c00() GREEN 1/0, but NO static caller -> caller-C2+ gate UNSATISFIED -> NOT promoted, left C2). total_green 360->361 (361/1000). Add40b6e0 caller 0x4929d0 C2, callee 0x42f6a0 C3. NEW handler near_leaf_seed_arg_obs (seed globals + 1 arg, observe an abs global). GATE LESSON: a clean bit-identical near-leaf with NO findable caller (no e8 ref, no address-as-data) FAILS the caller-C2+ gate -> skip it (don't overclaim reachability). 7 near-leaf shapes. Session 101-193 net = +104 (257->361). ~80 handlers. Context 70 rounds deep — fresh context advised; fanout = fast route.
 

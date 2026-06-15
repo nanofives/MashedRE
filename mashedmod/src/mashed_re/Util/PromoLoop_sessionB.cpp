@@ -3186,3 +3186,22 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Add40b6e0(void)
     }
 }
 RH_ScopedInstall(Add40b6e0, 0x0040b6e0);
+
+// 0x0045c7f0  FUN_0045c7f0 (gameplay, NEAR-LEAF: getter-compare then tail-call getter)
+// int f(void): if (GetRenderSubMode()(=*0x63ba8c) == *0x88fbc0) return that; else tail-call
+// Flag63b908Get()(=*0x63b908). Both callees C3 pure getters. Verbatim naked port; `call rel32`
+// -> `mov eax,abs;call eax`; tail `jmp rel32` -> `mov eax,abs; jmp eax`.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Sub45c7f0(void)
+{
+    __asm {
+        mov  eax, 040E350h
+        call eax
+        cmp  eax, dword ptr ds:[088FBC0h]
+        je   L_SC7_RET
+        mov  eax, 040E450h
+        jmp  eax
+    L_SC7_RET:
+        ret
+    }
+}
+RH_ScopedInstall(Sub45c7f0, 0x0045c7f0);
