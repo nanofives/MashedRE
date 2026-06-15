@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 210
-- total_green: 376
+- rounds_run: 211
+- total_green: 377
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 211 | NEW LANE: C2+status=impl re-verify (shipped reimpl, no valid early_window GREEN) | attempted 1 | GREEN 1 (FpsDiscretise 0x00493480: frame-tick discretizer, accum DAT_007719d4 += 50 -> /50 ticks + float-out) | total_green 376->377 (377/1000). Caller FUN_00492d30 C2, direct callee FUN_00493390 C2. NEW SELECTION VEIN (12 candidates): C2 + status=impl + first-party = functions with a SHIPPED reimpl stuck at C2 because their only prior GREEN was in the broken-loader window / mass-disabled; they need ONLY a valid early_window GREEN + (re-)enabled RH_ScopedInstall, not new code -> cheap. STEPS: (1) re-enabled RH_ScopedInstall(FpsDiscretise) [was MASS-DISABLED 2026-05-24 phase-a2]; (2) reused near_leaf_seed_multi_obs; (3) had to SEED QPF freq DAT_00771e70 nonzero (callee FUN_004950b0 __alldiv's by it; 0 at suspended-spawn -> #DE 'arithmetic error' on BOTH sides = INCONCLUSIVE not RED); (4) outputs timer-INDEPENDENT (callee sets DAT_007f1000=0x32 unconditionally) so seeding accum gives deterministic non-degen 32|0/32|a/64|0/96|0. LESSON: 'arithmetic error' on both sides = uninitialized-divisor at suspended-spawn -> seed the divisor global, don't abandon. float const 1/3000.0f bit-== orig (note's '0x3ec3ae39' was byte-order-flipped; real LE u32 = 0x39aec33e). 21 near-leaf + new re-verify vein. Session 101-211 net = +120 (257->377). Context 88 rounds deep. PATH TO 1000 (623 more) = promote-c3-batch fanout (awaiting opt-in); the 11 remaining C2+impl re-verify candidates are the next cheap vein.
 
 2026-06-15 | round 210 | near-leaf #21: memset wrapper (NEW handler near_leaf_memset2) | attempted 1 | GREEN 1 (ZeroFillWrapper 0x004b6520: FUN_004b64e0(p1,0,p2) = memset count bytes to 0) | total_green 375->376 (376/1000). dry_counter 1->0. Caller SlotBlockZero 0x422a80 C3, callee MemsetInline 0x4b64e0 C3 (subsystem util, NOT lua/library — passed r209's subsystem-tag gate). KEY FINDING: the near-leaf scan re-surfaced an ALREADY-IMPLEMENTED function — 0x4b6520 was already reimpl'd+installed as ZeroFillWrapper in Util/TimerSlot.cpp:33 (std::memset, observably == orig). My drafted naked ZeroFill4b6520 was a DUPLICATE RH_ScopedInstall at the same RVA (reverted to a comment). LESSON: before authoring a near-leaf reimpl, grep mashedmod/src for an existing RH_ScopedInstall at the RVA (the scan doesn't dedup against shipped reimpls). NEW handler near_leaf_memset2: pre-fill dst 0xCC, call f(dst,count), snapshot fixed 0x20 window -> filled->0/rest->0xCC boundary varies per count (10/16/7/0 = 4 distinct fingerprints) AND boundary echo proves a bounded fill -> non-degen. 21 near-leaf shapes. Session 101-210 net = +119 (257->376). ~87 handlers. Context 87 rounds deep. PATH TO 1000 (624 more) = promote-c3-batch fanout (awaiting opt-in).
 

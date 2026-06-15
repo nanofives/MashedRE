@@ -60,6 +60,26 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00493480 FpsDiscretise (util) - frame-tick discretizer. Calls C2 callee
+    # FUN_00493390 (which sets DAT_007f1000=0x32=50 deterministically, timer-indep),
+    # then accumulates DAT_007719d4 += 50, snaps to /50 ticks, writes int+float out.
+    # Seed the accumulator 0x7719d4; observe {0x7f1000 tick_out, 0x7719d4 accum,
+    # 0x7f1004 float}. Distinct per accum: 0->50, 10->50(accum10), 48->100, 100->150.
+    'fps_discretise': {'rva': 0x00493480, 'export': 'FpsDiscretise', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x007f1000, 0x007719d4, 0x007f1004],
+        # MUST seed QPF freq DAT_00771e70/74 nonzero: callee FUN_004950b0 does
+        # __alldiv by it; at suspended-spawn QPF-init FUN_00495120 hasn't run so
+        # it's 0 -> div-by-zero #DE. Freq value is irrelevant (feeds only timer
+        # globals we don't observe; outputs are timer-INDEPENDENT since the callee
+        # sets DAT_007f1000=0x32 unconditionally).
+        'seed_sets': [
+            {'globals': [[0x00771e70, 0x989680], [0x00771e74, 0], [0x007719d4, 0]]},     # accum 0  -> tick 50
+            {'globals': [[0x00771e70, 0x989680], [0x00771e74, 0], [0x007719d4, 10]]},    # accum 10 -> tick 50, accum 10
+            {'globals': [[0x00771e70, 0x989680], [0x00771e74, 0], [0x007719d4, 48]]},    # accum 48 -> rem>=48 -> tick 100
+            {'globals': [[0x00771e70, 0x989680], [0x00771e74, 0], [0x007719d4, 100]]},   # accum 100-> tick 150
+        ],
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     'zerofill_48a830': {'rva': 0x0048a830, 'export': 'ZeroFill48a830', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
         'observe_addrs': [0x0071fa34, 0x007151f0, 0x0071522c, 0x00715230],
         'seed_sets': [

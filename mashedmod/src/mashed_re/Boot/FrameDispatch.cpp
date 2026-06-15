@@ -279,7 +279,11 @@ extern "C" __declspec(dllexport) int __cdecl FpsDiscretise() {
     return 1;
 }
 
-// MASS-DISABLED 2026-05-24 phase-a2-no-registry-deferred: RH_ScopedInstall(FpsDiscretise, 0x00493480);
+// Re-enabled r211 2026-06-15 (was MASS-DISABLED 2026-05-24 phase-a2): reimpl is
+// byte-faithful (callee FUN_00493390 C2 sets DAT_007f1000=0x32 deterministically;
+// float const 1/3000.0f == orig DAT_005cc948 0x39aec33e). Promoted C2->C3 via
+// early_window near_leaf_seed_multi_obs (seed accum 0x7719d4, observe 0x7f1000/0x7719d4/0x7f1004).
+RH_ScopedInstall(FpsDiscretise, 0x00493480);
 
 
 // ---------------------------------------------------------------------------
