@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 197
-- total_green: 364
+- rounds_run: 198
+- total_green: 365
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 197 | near-leaf #11: one-shot float init via 2 C3 getters (NEW handler near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (Init429b30 0x00429b30: if(submode!=2 && *0x8991b0==0) *0x8991b4=-([0x5cd6c8]/(float)(short)*0x67ea56), *0x8991b0=0x3f) | total_green 364->365 (365/1000). Caller 0x410860 C2, callees 0x42f6a0/0x42b8c0 C3 pure getters. NEW handler near_leaf_seed_multi_obs (seed globals, snapshot SEVERAL observe_addrs -> handles fns that write multiple globals). straight-x87 (fild/fdivr/fchs) verbatim naked port. seeds -> aaaa|bbbb / 5|bbbb / 3f|-480.0. 11 near-leaf shapes. ~96 candidates remain. Session 101-197 net = +108 (257->365). ~82 handlers. Context 74 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 196 | near-leaf #10: jump-table state->value mapper (reuse near_leaf_seed_globals, CLEAN-C reimpl) | attempted 1 | GREEN 1 (Calc412130 0x00412130: sub==2?3:sub<2||>5?0:jt[*0x7f0fd0-4], jt={1,0,0,0,1,1,6}) | total_green 363->364 (364/1000). Callers 0x4019d0/0x412190/0x412620/0x401f10 C2, callee 0x42f6a0 C3. NO new handler (reused near_leaf_seed_globals). LESSON: a jump-table near-leaf can be reimpl'd as a CLEAN C switch/array (decode the orig jump table @target, map index->return value) + call the C3 callee via a fn-ptr (int(__cdecl*)(void))0xADDR — no need for a naked port or jumping into original code; compare on return value. 10 near-leaf shapes. ~97 candidates remain (easy pure-getter tier nearly drained; remaining have tail-calls to big fns / deep callees -> rising cost). Session 101-196 net = +107 (257->364). Context 73 rounds deep — fresh context advised; fanout = fast route to 1000.
 

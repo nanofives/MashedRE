@@ -206,6 +206,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_seed_globals',    # u32 fn(void): NEAR-LEAF that reads pure global getters (C3 callees) and returns a derived int. seed_sets[t]={globals:[[abs_addr,val],...]} written before the call; compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different global seeds
     'near_leaf_seed_arg_obs',    # void fn(arg): NEAR-LEAF that reads pure global getters (C3) and conditionally writes an ABSOLUTE global. cfg.obs_addr. seed_sets[t]={globals:[[addr,val],...], arg}; seed, call with arg, snapshot *obs_addr. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via seeds/arg
     'near_leaf_ptr_array_search',# int fn(key, gate): NEAR-LEAF that searches arr=*cfg.glob (cfg.count ptrs) for arr[i] with *arr[i]==key; returns derived addr or 0. C3 getter callee returns the array base. seed_sets[t]={gate,key,at_idx}; build arr of ptr->struct (struct[0]=distinct key), place key at at_idx, seed glob. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via found(addr)/gate0/notfound
+    'near_leaf_seed_multi_obs',  # void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:[[addr,val],...]}; seed, call, snapshot all observe_addrs. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via path toggles (do-nothing vs compute)
 }
 
 SRC = r"""
@@ -347,6 +348,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_seed_globals') ? []
               : (cfg.at === 'near_leaf_seed_arg_obs') ? ['uint32']
               : (cfg.at === 'near_leaf_ptr_array_search') ? ['uint32','uint32']
+              : (cfg.at === 'near_leaf_seed_multi_obs') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1799,6 +1801,14 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_seed_multi_obs') {
+      // void f(void): seed globals, call, snapshot several absolute globals. cfg.observe_addrs.
+      const sp = (cfg.seed_sets || [])[t | 0] || { globals: [] };
+      const obs = cfg.observe_addrs || [];
+      const seedM = function () { (sp.globals || []).forEach(function (g) { ptr(g[0]).writeU32(g[1] >>> 0); }); };
+      const snap = function () { return obs.map(function (a) { return (ptr(a).readU32() >>> 0).toString(16); }).join('|'); };
+      try { seedM(); Orig(); o = snap(); } catch (e) { eo = e.message; }
+      try { seedM(); Reim(); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_ptr_array_search') {
       // int f(key, gate): search arr=*cfg.glob (cfg.count ptrs) for *arr[i]==key. seed_sets[t]={gate,key,at_idx}.
       const sp = (cfg.seed_sets || [])[t | 0] || { gate: 1, key: 0, at_idx: -1 };
@@ -2404,7 +2414,7 @@ def run(name):
            'idx_off': h.get('idx_off'), 'tbl': h.get('tbl'),
            'tbl_stride': h.get('tbl_stride'), 'seed_tbl_n': h.get('seed_tbl_n'),
            'tbl_base': h.get('tbl_base'), 'tbl_count': h.get('tbl_count'),
-           'obs_addr': h.get('obs_addr'),
+           'obs_addr': h.get('obs_addr'), 'observe_addrs': h.get('observe_addrs'),
            'observe_offs': h.get('observe_offs'),
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),

@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'init_429b30': {'rva': 0x00429b30, 'export': 'Init429b30', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x008991b0, 0x008991b4],
+        'seed_sets': [
+            {'globals': [[0x0067e9fc, 2], [0x008991b0, 0xAAAA], [0x008991b4, 0xBBBB]]},               # submode==2 -> no-op
+            {'globals': [[0x0067e9fc, 0], [0x008991b0, 5], [0x008991b4, 0xBBBB]]},                    # flag!=0 -> no-op
+            {'globals': [[0x0067e9fc, 0], [0x008991b0, 0], [0x0067ea56, 100], [0x008991b4, 0xBBBB]]}, # compute -> flag=0x3f, float set
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'calc_412130': {'rva': 0x00412130, 'export': 'Calc412130', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_globals',
         'seed_sets': [
             {'globals': [[0x0067e9fc, 2]]},                    # sub==2 -> 3

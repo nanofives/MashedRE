@@ -3261,3 +3261,35 @@ extern "C" __declspec(dllexport) int __cdecl Calc412130(void)
     return jt[t];
 }
 RH_ScopedInstall(Calc412130, 0x00412130);
+
+// 0x00429b30  FUN_00429b30 (gameplay, NEAR-LEAF: one-shot float init via two C3 getters)
+// void f(void): if (GetRaceSubMode()(*0x67e9fc)==2) return; if (*0x8991b0 != 0) return;
+//   v=(short)FUN_0042b8c0()(*0x67ea56); *0x8991b0=0x3f; *0x8991b4 = -([0x5cd6c8] / (float)v).
+// Both callees C3 pure getters. Straight x87 (fild/fdivr/fchs). Verbatim naked port; calls ->
+// `mov eax,abs; call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init429b30(void)
+{
+    __asm {
+        push ecx
+        mov  eax, 042F6A0h
+        call eax
+        cmp  eax, 2
+        je   L_IN9_END
+        mov  eax, dword ptr ds:[08991B0h]
+        test eax, eax
+        jne  L_IN9_END
+        mov  eax, 042B8C0h
+        call eax
+        movsx eax, ax
+        mov  dword ptr [esp], eax
+        mov  dword ptr ds:[08991B0h], 03Fh
+        fild dword ptr [esp]
+        fdivr dword ptr ds:[05CD6C8h]
+        fchs
+        fstp dword ptr ds:[08991B4h]
+    L_IN9_END:
+        pop  ecx
+        ret
+    }
+}
+RH_ScopedInstall(Init429b30, 0x00429b30);
