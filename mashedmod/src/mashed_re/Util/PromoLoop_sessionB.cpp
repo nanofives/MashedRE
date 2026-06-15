@@ -4390,3 +4390,25 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl AdjThunk4893a0(v
     }
 }
 RH_ScopedInstall(AdjThunk4893a0, 0x004893a0);
+
+// [SKIPPED r239 2026-06-15] 0x004b6550 is a pure tail-jmp thunk (jmp 0x4b6700); its
+// first byte is 0xE9, which the early_window NO_AUTO_HOOK safety check reads as an
+// installed inline-JMP hook -> aborts. Pure-jmp thunks (b0==0xE9) are UNVERIFIABLE via
+// this harness. Reimpl would be trivially correct but cannot earn a GREEN -> left C2.
+// LESSON: skip near_leaf_frontier rows whose name starts with thunk_FUN_ (pure jmp).
+
+// 0x004b4130 FUN_004b4130 (render, Thunk4b4130) — NEAR-LEAF adjustor thunk to C3 0x4b40c0.
+// void f(p, out): p = p[0x18]; tail-call 0x4b40c0(p, out). 0x4b40c0(s, out): if(out && s[0x24]>0)
+// copy s[0x24] dwords from *(s[0x20]) to out. So f copies (p[0x18])[0x24] dwords from
+// *((p[0x18])[0x20]) into out. VERBATIM naked (b0=0x8b ok; rel32 jmp -> mov eax,abs; jmp eax).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Thunk4b4130(void)
+{
+    __asm {
+        mov   ecx, dword ptr [esp+4]
+        mov   edx, dword ptr [ecx+18h]
+        mov   dword ptr [esp+4], edx
+        mov   eax, 04B40C0h
+        jmp   eax
+    }
+}
+RH_ScopedInstall(Thunk4b4130, 0x004b4130);

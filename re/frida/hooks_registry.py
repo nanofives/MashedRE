@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004b4130 Thunk4b4130 (render) - NEAR-LEAF adjustor thunk -> C3 0x4b40c0.
+    # f(p, out): s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Verbatim naked.
+    'thunk_4b4130': {'rva': 0x004b4130, 'export': 'Thunk4b4130', 'signature': {'ret': 'void', 'args': ['pointer', 'pointer']}, 'arg_type': 'thunk_field_copy',
+        'scenarios': [
+            {'pat': 0xA0000000, 'count': 4},
+            {'pat': 0x11110000, 'count': 3},
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x004893a0 AdjThunk4893a0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x476cb0.
     # void f(p, a2, a3): node=(*0x7dc57c)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3;
     # node[0x40]|=0x10000000. Verbatim naked. Build p/table/node; observe node fields.
