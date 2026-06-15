@@ -4224,14 +4224,19 @@ HOOKS = {
         'path1_tests':  [0, 1, 2, 3, 5, 1, 3, 2, 0, 1],
         'path2_tests':  [0, 1, 2],
     },
+    # Repurposed for the early_window lane (was 'music_vol_set' booted-lane, never
+    # promoted -> still C2). struct_list_float_set: struct+0x38=vol; walk circular
+    # list at struct+0xc setting node+0x14|=0x40; secondary+0x30=vol bits. Handler
+    # builds a 1-node self-circular list + secondary; vol=0.5+t*0.25; observe
+    # struct+0x38|node+0x14|secondary+0x30. Already installed + reimpl in AudioMusic.cpp.
     'music_group_volume_set': {
         'rva':            0x005baf00,
         'export':         'MusicGroupVolumeSet',
         'signature':      {'ret': 'void', 'args': ['pointer', 'float']},
-        'arg_type':       'music_vol_set',
+        'arg_type':       'struct_list_float_set',
         'lut_root_delta': 0,
-        'path1_tests':    [0.0, 1.0, 0.5, -1.0, 0.25, 0.75, -0.5, 2.0, 0.001, 100.0],
-        'path2_tests':    [0.0, 1.0, 0.5],
+        'path1_tests':    [0, 1, 2, 3],
+        'path2_tests':    [0, 1, 2, 3],
     },
     'timer_slot_clear': {
         'rva':            0x0041d820,

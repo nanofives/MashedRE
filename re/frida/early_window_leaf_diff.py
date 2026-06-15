@@ -213,6 +213,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_global_str_search', # void* fn(query): NEAR-LEAF wrapper = C3 circular-list case-insensitive search(*cfg.glob, query). build 3-node alpha/beta/gamma circular list, set *cfg.glob=list head; seed_sets[t]={q}; compare returned ptr. reimpl = verbatim naked port. non-degen via match(distinct node ptrs)/miss(0)
     'near_leaf_list_search',     # u32 fn(key): NEAR-LEAF wrapper = C3 list-search(cfg.glob, key) walking *(glob[0x10]) via node[0x30], returns node[0] where node[8]==key else -1. seed_sets[t]={empty:bool, query, nodes:[[key,val],...]}; build nodes (node[0]=val,[8]=key,[0x30]=next), set glob[0x10]=head or 0; compare u32 return. reimpl = verbatim naked port. non-degen via found(val)/empty(-1)/miss(-1)
     'near_leaf_memset2',         # void fn(dest, count): NEAR-LEAF = C3 memset(dest, 0, count). seed_sets[t]={count}; dest pre-filled 0xCC, snapshot dest[0x20] (first count bytes -> 0, rest 0xCC). reimpl = verbatim naked port. non-degen via varied count (zero-extent)
+    'struct_list_float_set',     # void fn(struct*, float vol): struct+0x38=vol; walk circular list at struct+0xc (sentinel=struct+0xc) setting node+0x14|=0x40; if struct+0x11c!=0 -> secondary+0x30=vol raw bits. Build 1-node self-circular list + a secondary; vol=0.5+t*0.25; seed node+0x14=0xA0000|(t<<8). snapshot struct+0x38|node+0x14|secondary+0x30. non-degen via varied vol + flags seed
 }
 
 SRC = r"""
@@ -361,6 +362,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_global_str_search') ? ['pointer']
               : (cfg.at === 'near_leaf_list_search') ? ['uint32']
               : (cfg.at === 'near_leaf_memset2') ? ['pointer','uint32']
+              : (cfg.at === 'struct_list_float_set') ? ['pointer','float']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1843,6 +1845,29 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedM(); Orig(dst, sp.count >>> 0); o = snap(); } catch (e) { eo = e.message; }
       try { seedM(); Reim(dst, sp.count >>> 0); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_list_float_set') {
+      // void f(struct*, float vol): struct+0x38=vol; walk circular list at struct+0xc
+      // (sentinel=struct+0xc), each node sets node+0x14|=0x40; if struct+0x11c!=0,
+      // secondary+0x30 = vol raw bits. Build a 1-node self-circular list + secondary.
+      const S = Memory.alloc(0x140), N = Memory.alloc(0x40), SEC = Memory.alloc(0x40);
+      _keep.push(S, N, SEC);
+      const vol = 0.5 + (t >>> 0) * 0.25;
+      const seedS = function () {
+        for (let z = 0; z < 0x140; z += 4) S.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) { N.add(z).writeU32(0); SEC.add(z).writeU32(0); }
+        N.add(0).writePointer(S.add(0x0c));                         // node->next = sentinel (1 iter)
+        N.add(0x14).writeU32((0xA0000 | ((t >>> 0) << 8)) >>> 0);    // flags seed (varies per t)
+        N.add(0x1c).writeU32(0);                                    // no-op FLD/FSTP source (0.0f)
+        S.add(0x0c).writePointer(N);                               // list head
+        S.add(0x11c).writePointer(SEC);                           // secondary present
+      };
+      const snap = function () {
+        return (S.add(0x38).readU32() >>> 0).toString(16) + '|' +
+               (N.add(0x14).readU32() >>> 0).toString(16) + '|' +
+               (SEC.add(0x30).readU32() >>> 0).toString(16);
+      };
+      try { seedS(); Orig(S, vol); o = snap(); } catch (e) { eo = e.message; }
+      try { seedS(); Reim(S, vol); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

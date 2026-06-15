@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 211
-- total_green: 377
+- rounds_run: 212
+- total_green: 378
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 212 | C2+status=impl re-verify + L5 handler ext (struct_list_float_set) | attempted 1 | GREEN 1 (MusicGroupVolumeSet 0x005baf00, audio: struct+0x38=vol; circular-list walk node+0x14|=0x40; secondary+0x30=vol bits) | total_green 377->378 (378/1000). Caller FUN_0045dd60 C2 (the explicit caller-gate in the row note NOW MET); pure leaf (no callees); RH_ScopedInstall already active + reimpl in AudioMusic.cpp (just needed a valid early_window GREEN). NEW handler struct_list_float_set (SWEEP-CRITICAL arg_type): builds a 1-node self-circular list + secondary, vol=0.5+t*0.25, observe struct+0x38|node+0x14|secondary+0x30 = 3f000000|a0040 ... 3fa00000|a0340 (4 distinct, byte-identical incl. float bits + MOV-path secondary). GOTCHA: a stale duplicate registry key 'music_group_volume_set' (booted-lane arg_type 'music_vol_set', never promoted) shadowed my new entry (Python dict: later key wins -> REFUSED). FIX: consolidated to ONE entry, repurposed it to the early_window arg_type. LESSON: grep hooks_registry.py for the hook KEY before adding an entry (dup keys silently shadow). This was a justified L5 one-off (no cheaper candidate; the function is real, installed, leaf). Session 101-212 net = +121 (257->378). Context 89 rounds deep. PATH TO 1000 (622 more) = promote-c3-batch fanout (awaiting opt-in).
 
 2026-06-15 | round 211 | NEW LANE: C2+status=impl re-verify (shipped reimpl, no valid early_window GREEN) | attempted 1 | GREEN 1 (FpsDiscretise 0x00493480: frame-tick discretizer, accum DAT_007719d4 += 50 -> /50 ticks + float-out) | total_green 376->377 (377/1000). Caller FUN_00492d30 C2, direct callee FUN_00493390 C2. NEW SELECTION VEIN (12 candidates): C2 + status=impl + first-party = functions with a SHIPPED reimpl stuck at C2 because their only prior GREEN was in the broken-loader window / mass-disabled; they need ONLY a valid early_window GREEN + (re-)enabled RH_ScopedInstall, not new code -> cheap. STEPS: (1) re-enabled RH_ScopedInstall(FpsDiscretise) [was MASS-DISABLED 2026-05-24 phase-a2]; (2) reused near_leaf_seed_multi_obs; (3) had to SEED QPF freq DAT_00771e70 nonzero (callee FUN_004950b0 __alldiv's by it; 0 at suspended-spawn -> #DE 'arithmetic error' on BOTH sides = INCONCLUSIVE not RED); (4) outputs timer-INDEPENDENT (callee sets DAT_007f1000=0x32 unconditionally) so seeding accum gives deterministic non-degen 32|0/32|a/64|0/96|0. LESSON: 'arithmetic error' on both sides = uninitialized-divisor at suspended-spawn -> seed the divisor global, don't abandon. float const 1/3000.0f bit-== orig (note's '0x3ec3ae39' was byte-order-flipped; real LE u32 = 0x39aec33e). 21 near-leaf + new re-verify vein. Session 101-211 net = +120 (257->377). Context 88 rounds deep. PATH TO 1000 (623 more) = promote-c3-batch fanout (awaiting opt-in); the 11 remaining C2+impl re-verify candidates are the next cheap vein.
 
