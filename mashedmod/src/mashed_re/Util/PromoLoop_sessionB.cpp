@@ -2082,3 +2082,20 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Find42add0(std::uint32_t 
     return 0xffffffff;
 }
 RH_ScopedInstall(Find42add0, 0x0042add0);
+
+// ===== round 164 ===== (RainColorInit: strided BGRA-swizzle buffer fill)
+// 0x00491070 — void fn(): p = *0x771530 + 0x1d; for(o=0;o<4;o++) for(i=0;i<0xe0;i++){
+//   p[-1]=*0x616030; p[0]=*0x616032; p[1]=*0x616031; p[2]=*0x616033; p+=0x20; }
+extern "C" __declspec(dllexport) void __cdecl Rain491070(void) {
+    std::uint8_t* p = *reinterpret_cast<std::uint8_t**>(0x00771530) + 0x1d;
+    for (int o = 0; o < 4; o++) {
+        for (int i = 0; i < 0xe0; i++) {
+            p[-1] = *reinterpret_cast<std::uint8_t*>(0x00616030);
+            p[0]  = *reinterpret_cast<std::uint8_t*>(0x00616032);
+            p[1]  = *reinterpret_cast<std::uint8_t*>(0x00616031);
+            p[2]  = *reinterpret_cast<std::uint8_t*>(0x00616033);
+            p += 0x20;
+        }
+    }
+}
+RH_ScopedInstall(Rain491070, 0x00491070);

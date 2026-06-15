@@ -178,6 +178,7 @@ PURE_LEAF_ARGTYPES = {
     'esi_edx_predicate',         # u32 fn(ESI=s, EDX=e): a=s[0x10];c=e[0x10]; if(a==c||a==e[0x14]){ b=s[0x14]; return (b==c||b==e[0x14])?1:0; } return 0. ORIG via `mov esi,s; mov edx,e; jmp` trampoline; REIMPL __cdecl(s,e). seed fields for match(t0->1)/no-match(t1->0). non-degen
     'edx_ebx_edi_find',          # u32 fn(EDX=arr, EBX=key, EDI=n): walk arr (terminated 0xff070000); find (n+1)-th element==key, return the FOLLOWING element; else -1. ORIG via a CALL-trampoline that saves/restores callee-saved ebx,edi (push edi/ebx; mov edx/ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(arr,key,n). test=n (0->1st match's next, 1->2nd). non-degen
     'ebx_edi_global_find',       # u32 fn(EBX=key, EDI=n): idx=*(glob); arr=*(tgt + idx*0x40); same walk as edx_ebx_edi_find. seed idx=0 + arr ptr + build arr. ORIG via call-trampoline (push edi/ebx; mov ebx/edi; call; pop ebx/edi; ret); REIMPL __cdecl(key,n). test=n. non-degen
+    'strided_color_fill',        # void fn(): base=*0x771530+0x1d; for 896 entries (stride 0x20): p[-1]=*0x616030, p[0]=*0x616032, p[1]=*0x616031, p[2]=*0x616033 (BGRA swizzle from a global color). seed base ptr + 4 color bytes; observe entries 0,1,895. non-degen via swizzle pattern + loop coverage
 }
 
 SRC = r"""
@@ -291,6 +292,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'esi_edx_predicate') ? ['pointer','pointer']
               : (cfg.at === 'edx_ebx_edi_find') ? ['pointer','uint32','uint32']
               : (cfg.at === 'ebx_edi_global_find') ? ['uint32','uint32']
+              : (cfg.at === 'strided_color_fill') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1607,6 +1609,20 @@ rpc.exports.diff = function(cfg) {
       };
       try { buildG(); o = mkG(ptr(cfg.rva), nval2)() >>> 0; } catch (e) { eo = e.message; }
       try { buildG(); r = Reim(KEY >>> 0, nval2 >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'strided_color_fill') {
+      // void fn(): fills a strided buffer (base=*0x771530+0x1d, 896 entries, stride 0x20) with a
+      // BGRA-swizzled global color. seed base ptr + 4 color bytes; observe entries 0,1,895.
+      const C0 = 0x771530, COL = 0x616030;
+      const buf = Memory.alloc(0x7000); _keep.push(buf);
+      const setupCF = function () {
+        for (let z = 0; z < 0x7000; z += 4) buf.add(z).writeU32(0xA5A5A5A5);
+        ptr(C0).writePointer(buf);
+        ptr(COL).writeU8(0x11); ptr(COL + 1).writeU8(0x22); ptr(COL + 2).writeU8(0x33); ptr(COL + 3).writeU8(0x44);
+      };
+      const ent = function (i) { const a = 0x1d + i * 0x20; return [buf.add(a - 1).readU8(), buf.add(a).readU8(), buf.add(a + 1).readU8(), buf.add(a + 2).readU8()].join(','); };
+      const snapCF = function () { return ent(0) + '|' + ent(1) + '|' + ent(895); };
+      try { setupCF(); Orig(); o = snapCF(); } catch (e) { eo = e.message; }
+      try { setupCF(); Reim(); r = snapCF(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
