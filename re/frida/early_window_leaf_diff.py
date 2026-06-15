@@ -228,6 +228,7 @@ PURE_LEAF_ARGTYPES = {
     'quad_buffer_build',         # int fn(void* out, uint maxsize, struct* rec): PURE LEAF 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; per record P=*(arr+0x14+k*0x28), sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub blocks of 4x16 entries {ri,si,0,1.0f} at out+counter*64, ret counter*4. Per cfg.scenarios[t]={subs:[...],maxsize}: build rec+arr+P bufs, observe ret + out dwords. non-degen via subs + bounds
     'eax_out_2float',            # void fn(EAX=out ptr, float a1@[esp+4], float a2@[esp+8]): PURE LEAF EAX-implicit output. Trampoline `mov eax,outbuf; jmp target`, NativeFunction(void,['float','float']). Per cfg.scenarios[t]={a1,a2}: call, observe outbuf[0]|outbuf[1] (float bits). non-degen via varied a1/a2
     'dll_merge_swap',            # void fn(void): PURE LEAF circular-list merge+swap on table entry base=*glob_a+*glob_b. seed *glob_a=&mybuf, *glob_b=0; mybuf+0x20=B,+0x24=A,+8=sentinel; empty-B (Bnode[0]=Bnode) -> early-exit swap path. Per cfg.scenarios[t]={swap}: assign A/B roles; observe mybuf+0x20|+0x24|+8. non-degen via role swap (verbatim naked reimpl, swap path)
+    'find_node_struct_copy',     # int fn(struct* p1, void** p2): PURE LEAF. walk p2's list for node (node[8]==p1[8] && node[0]==0x10b)||node[0]==0; copy 0x67 dwords p1->node; copy p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; ret 1. Build p1(pat)/node(matched first)/src2 bufs, p1[0x16c]=1; observe node[0]|node[0x66]|node[0x67]|ret. non-degen via varied pat (verbatim naked, found-first path)
 }
 
 SRC = r"""
@@ -387,6 +388,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'succ_approx_quantize') ? ['uint32','pointer','pointer']
               : (cfg.at === 'multi_array_scatter') ? ['pointer']
               : (cfg.at === 'dll_head_insert') ? ['pointer']
+              : (cfg.at === 'find_node_struct_copy') ? ['pointer','pointer']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2656,6 +2658,26 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedS(); Orig(); o = snap(); } catch (e) { eo = e.message; }
       try { seedS(); Reim(); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'find_node_struct_copy') {
+      // int f(struct* p1, void** p2): find node in p2's list, copy p1 into it.
+      const s = (cfg.scenarios || [])[t] || { pat: 0xA0000000, pat2: 0xB0000000 };
+      const p1 = Memory.alloc(0x400), node = Memory.alloc(0x400), src2 = Memory.alloc(0x80), p2 = Memory.alloc(4);
+      _keep.push(p1, node, src2, p2);
+      const seedN = function () {
+        for (let z = 0; z < 0x400; z += 4) p1.add(z).writeU32(((s.pat >>> 0) | (z >>> 2)) >>> 0);
+        p1.add(0x16c).writeU32(1);                 // count -> 2nd copy = 9 dwords
+        p1.add(0x14).writePointer(src2);           // src2 ptr
+        for (let z = 0; z < 0x80; z += 4) src2.add(z).writeU32(((s.pat2 >>> 0) | (z >>> 2)) >>> 0);
+        for (let z = 0; z < 0x400; z += 4) node.add(z).writeU32(0xEEEEEEEE);
+        node.add(8).writeU32(p1.add(8).readU32() >>> 0);  // node[8] = p1[8] -> match
+        node.writeU32(0x10b);                      // node[0] = 0x10b -> found first iter
+        p2.writePointer(node);
+      };
+      const snap = function (ret) {
+        return (ret >>> 0) + ':' + [0, 0x66 * 4, 0x19c].map(function (o2) { return (node.add(o2).readU32() >>> 0).toString(16); }).join('|');
+      };
+      try { seedN(); o = snap(Orig(p1, p2)); } catch (e) { eo = e.message; }
+      try { seedN(); r = snap(Reim(p1, p2)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

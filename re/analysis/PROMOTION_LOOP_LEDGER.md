@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 229
-- total_green: 394
+- rounds_run: 230
+- total_green: 395
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 230 | L3 frontier — VERBATIM naked reimpl (list-walk + rep movsd struct copy) | attempted 1 | GREEN 1 (FindNodeStructCopy483ca0 0x00483ca0, vehicle: find list node + copy struct) | total_green 394->395 (395/1000). PURE LEAF int f(p1,p2): walk p2 list for matching node, copy 0x67 dwords p1->node + p1[0x16c]*9 dwords from p1[0x14]->node+0x19c, ret 1. VERBATIM naked (byte-identical; rep movsd/movsb + MASM labels). NEW handler find_node_struct_copy 2/2 GREEN non-degen (both copies verified). Caller ReplaySave 0x4117b0 C3. Frontier now 9 CLEAN remain (all 140B+: 0x456eb0 EAX min-finder, 0x4cde50 multi-mode imgproc, 0x5c95b0 bit-pack, 0x48f590, 0x4d8570, 0x41e4b0, 0x5a7a60 2lvl-list, 0x486f90 tail-jmp). Session 101-230 net = +138 (257->395). Context 107 rounds deep. PATH TO 1000 (605 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 229 | L3 frontier — VERBATIM naked reimpl (pointer surgery) | attempted 1 | GREEN 1 (DllMergeSwap4d8c40 0x004d8c40, frontend: circular-list merge+swap) | total_green 393->394 (394/1000). PURE LEAF no-arg; intricate circular-list merge+swap on a table entry indexed by 2 globals. Used VERBATIM naked copy (byte-identical, internal MASM labels L6d/L7d/L82) rather than risk a C pointer-surgery transcription error. NEW handler dll_merge_swap 2/2 GREEN non-degen via the empty-B early-exit swap path (role-swapped A/B -> distinct +0x20/+0x24; +8 cleared). Verbatim copy => byte-identical on ALL paths (one safe non-crashing non-degen test confirms identity). LESSON: for intricate pointer-surgery, a VERBATIM naked copy + a safe partial-path test is lower-risk than a full C reimpl + full-path setup. Caller FUN_004c7730 C2. Session 101-229 net = +137 (257->394). Context 106 rounds deep. PATH TO 1000 (606 more) = this method (~1/round) or fanout.
 

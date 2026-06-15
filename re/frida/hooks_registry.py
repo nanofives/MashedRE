@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00483ca0 FindNodeStructCopy483ca0 (vehicle) - PURE LEAF int f(struct* p1, void** p2):
+    # walk p2's list for a node ((node[8]==p1[8] && node[0]==0x10b) || node[0]==0), copy
+    # 0x67 dwords p1->node, then p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; return 1.
+    # Verbatim naked reimpl. Found-first scenario, varied pattern for non-degeneracy.
+    'find_node_struct_copy_483ca0': {'rva': 0x00483ca0, 'export': 'FindNodeStructCopy483ca0', 'signature': {'ret': 'uint32', 'args': ['pointer', 'pointer']}, 'arg_type': 'find_node_struct_copy',
+        'scenarios': [
+            {'pat': 0xA0000000, 'pat2': 0xB0000000},
+            {'pat': 0x11110000, 'pat2': 0x22220000},
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x004d8c40 DllMergeSwap4d8c40 (frontend) - PURE LEAF void f(void): circular-list
     # merge+swap on table entry base=*0x911ad8 + *0x7d3ff8 (B@+0x20, A@+0x24, clear +8).
     # Verbatim naked reimpl (byte-identical). Verified via empty-B swap path, role-swapped.

@@ -1,6 +1,5 @@
 rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 00413bc0	FUN_00413bc0	hud	173	1	00413cb0	other
-00413c70	FUN_00413c70	vehicle	59	4	00412f30	arg_getter
 0041e4b0	FUN_0041e4b0	render	379	1	0041e6c0	other
 00422440	FUN_00422440	gameplay	45	1	00422470	read_global_f32
 004233e0	FUN_004233e0	ai	160	3	004252c0	other
@@ -16,7 +15,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 0045c550	FUN_0045c550	gameplay	232	1	0045cb20	arg_getter
 0045de80	FUN_0045de80	render	236	1	00462950	other
 00475ab0	FUN_00475ab0	render	337	3	00454350	other
-00475f30	FUN_00475f30	render	32	1	00475f90	read_global_f32
 00482ae0	FUN_00482ae0	vehicle	301	4	00404fa0	other
 00483ca0	FUN_00483ca0	vehicle	102	1	004117b0	other
 00486f90	FUN_00486f90	particle	140	2	0040bd80	const_return
@@ -33,11 +31,9 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 004cbbd0	FUN_004cbbd0	render	130	1	004ec130	arg_getter
 004cde50	FUN_004cde50	render	198	1	004ce970	other
 004d8570	RwEngineRegisterStringFunctions	render	272	1	004c32b0	read_global_u32
-004d8c40	FUN_004d8c40	frontend	118	1	004c7730	other
 004d9360	FUN_004d9360	render	309	1	004d9050	other
 004d9a60	FUN_004d9a60	render	320	2	004d9530	other
 004d9ee0	FUN_004d9ee0	render	277	2	004d9d00	other
 005a7a60	FUN_005a7a60	audio	60	1	005ac880	other
 005aed20	FUN_005aed20	audio	119	1	005a9280	other
-005b0bb0	FUN_005b0bb0	audio	190	1	005af8f0	other
 005c95b0	FUN_005c95b0	audio	204	3	005c1140	other

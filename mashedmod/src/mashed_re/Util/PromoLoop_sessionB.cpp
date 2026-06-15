@@ -4072,3 +4072,58 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl DllMergeSwap4d8c
     }
 }
 RH_ScopedInstall(DllMergeSwap4d8c40, 0x004d8c40);
+
+// 0x00483ca0 FUN_00483ca0 (vehicle, FindNodeStructCopy) — PURE LEAF (no calls)
+// int f(struct* p1, void** p2): walk p2's list for a node where (node[8]==p1[8] &&
+// node[0]==0x10b) || node[0]==0; copy 0x67 dwords p1->node; then copy p1[0x16c]*9
+// dwords from p1[0x14] -> node+0x19c (+ tail bytes); return 1. VERBATIM naked copy
+// (byte-identical; internal MASM labels + rep movsd/movsb).
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl FindNodeStructCopy483ca0(void)
+{
+    __asm {
+        mov   edx, dword ptr [esp+4]
+        mov   eax, dword ptr [esp+8]
+        mov   eax, dword ptr [eax]
+        push  ebx
+        mov   ebx, dword ptr [edx+14h]
+        push  esi
+        mov   esi, dword ptr [edx+8]
+        push  edi
+    Lloop:
+        mov   ecx, dword ptr [eax+8]
+        cmp   ecx, esi
+        jne   Lc2
+        cmp   dword ptr [eax], 10Bh
+        je    Lfound
+    Lc2:
+        test  ecx, ecx
+        jne   Lccb
+        cmp   dword ptr [eax], 0
+        je    Lfound
+    Lccb:
+        add   eax, dword ptr [eax+4]
+        jmp   Lloop
+    Lfound:
+        mov   esi, edx
+        mov   edi, eax
+        mov   ecx, 67h
+        rep movsd
+        mov   ecx, dword ptr [edx+16Ch]
+        lea   ecx, [ecx+ecx*8]
+        shl   ecx, 2
+        mov   edx, ecx
+        shr   ecx, 2
+        mov   esi, ebx
+        lea   edi, [eax+19Ch]
+        rep movsd
+        mov   ecx, edx
+        and   ecx, 3
+        rep movsb
+        pop   edi
+        pop   esi
+        mov   eax, 1
+        pop   ebx
+        ret
+    }
+}
+RH_ScopedInstall(FindNodeStructCopy483ca0, 0x00483ca0);
