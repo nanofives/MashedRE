@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'cmp_5ae170': {'rva': 0x005ae170, 'export': 'Cmp5ae170', 'signature': {'ret': 'int', 'args': ['pointer','pointer','uint32']}, 'arg_type': 'case_insensitive_ncmp',
+        'seed_sets': [
+            {'s1': 'Hello', 's2': 'HELLO', 'n': 5},   # case-insensitive equal -> 0
+            {'s1': 'apple', 's2': 'apply', 'n': 5},   # diff at 4: 'E'-'Y' = -20
+            {'s1': 'abc',   's2': 'abd',   'n': 2},   # n bounds before diff -> 0
+            {'s1': 'dog',   's2': 'cat',   'n': 3},   # diff at 0: 'D'-'C' = 1
+            {'s1': '`',     's2': '`',     'n': 1},   # asymmetry: s1 folds 0x60->0x40, s2 keeps 0x60 -> 0x20=32
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'hash_4223f0': {'rva': 0x004223f0, 'export': 'Hash4223f0', 'signature': {'ret': 'float', 'args': ['uint32','uint32']}, 'arg_type': 'eax_ecx_float_hash',
         'seed_pairs': [
             [0,           12345],       # a==0 -> hash(12345)

@@ -190,6 +190,7 @@ PURE_LEAF_ARGTYPES = {
     'fastcall_float_clamp',      # void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val float): v(80bit)=val+base[idx]; base[idx]=(float32)v (fst keeps st0); if v(80bit) > 50.0 (fcomp vs .rdata 0x5cd120) base[idx]=50.0f. ORIG via mov ecx/edx + push valbits + call trampoline; REIMPL naked __cdecl reading cdecl stack args (idx,base,val) but EXACT x87 (fld/fadd/fst/fcomp 0x5cd120) so the 80-bit compare matches. seed_sets[t]={idx,cur,val}; snapshot base[idx] u32. non-degen via clamp + pass-through paths
     'list_walk_self_write',      # void fn(p, value): node=*p; while(node!=*node) node=*node (walk linked list until a self-pointing node); *(uint32*)(*0x911ae4 + node)=value. global 0x911ae4 is .bss-zero at suspended-spawn so target=terminal node addr -> writes value to terminal[0]. build a chain p->n0->..->n[len-1](self). seed_sets[t]={len,value}; snapshot terminal[0]. reimpl VERBATIM naked __asm. non-degen via distinct values
     'eax_ecx_float_hash',        # float fn(EAX=a, ECX=b): if(a) b&=a; x=(b<<13)^b; h=((x*x*0x3d73+0xc0ae5)*x - 0x2df722f3) & 0x7fffffff; return fild(h) * .rdata(0x5cd314) (dead fadd 0x5cc94c branch since h>=0). integer noise-hash -> float. ORIG via mov eax/ecx + call trampoline (ret float st0); REIMPL naked __cdecl(a,b)->float reading stack args + scratch slot, EXACT integer/fild/fmul. seed_pairs[t]=[a,b]; snapshot float32 bits. non-degen via distinct hashes
+    'case_insensitive_ncmp',     # int fn(char* s1, char* s2, int n): bounded case-insensitive compare with a CUSTOM inline-ASCII toupper. ASYMMETRIC: s1 applies &0xdf to 0x5b-0x60 (cmp 0x41 jl-skip), s2 skips them (cmp 0x41 jg-skip) -> a backtick 0x60 yields s1=0x40 vs s2=0x60 (ret 0x20, NOT 0). Returns 0 if first n upper-folded chars equal, else toupper(s1)-toupper(s2). plain __cdecl (no trampoline). seed_sets[t]={s1,s2,n}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via equal/neg/pos/n-bound/asymmetry cases
 }
 
 SRC = r"""
@@ -315,6 +316,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'fastcall_float_clamp') ? ['uint32','pointer','float']
               : (cfg.at === 'list_walk_self_write') ? ['pointer','uint32']
               : (cfg.at === 'eax_ecx_float_hash') ? ['uint32','uint32']
+              : (cfg.at === 'case_insensitive_ncmp') ? ['pointer','pointer','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1767,6 +1769,17 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'case_insensitive_ncmp') {
+      // int fn(char* s1, char* s2, int n): bounded case-insensitive compare (custom toupper).
+      // plain __cdecl, no callee -> direct Orig/Reim. seed_sets[t]={s1,s2,n}.
+      const ss = (cfg.seed_sets || [])[t | 0] || { s1: '', s2: '', n: 0 };
+      const b1 = Memory.alloc(64), b2 = Memory.alloc(64); _keep.push(b1, b2);
+      const seedCC = function () {
+        for (let z = 0; z < 64; z += 4) { b1.add(z).writeU32(0); b2.add(z).writeU32(0); }
+        b1.writeUtf8String(ss.s1); b2.writeUtf8String(ss.s2);
+      };
+      try { seedCC(); o = (Orig(b1, b2, ss.n >>> 0) | 0); } catch (e) { eo = e.message; }
+      try { seedCC(); r = (Reim(b1, b2, ss.n >>> 0) | 0); } catch (e) { er = e.message; }
     } else if (cfg.at === 'eax_ecx_float_hash') {
       // float fn(EAX=a, ECX=b): integer noise-hash -> float. ORIG via mov eax/ecx + call
       // trampoline (returns float in st0); REIMPL naked __cdecl(a,b)->float. seed_pairs[t]=[a,b].

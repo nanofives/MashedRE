@@ -2455,3 +2455,66 @@ extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Hash4223f0(void
     }
 }
 RH_ScopedInstall(Hash4223f0, 0x004223f0);
+
+// 0x005ae170  FUN_005ae170 (audio, bounded case-insensitive compare; custom inline-ASCII toupper)
+// int f(char* s1, char* s2, int n): for up to n chars, fold each to a CUSTOM upper
+// then compare. ASYMMETRIC toupper: s1 folds 0x5b-0x60 via &0xdf (cmp 0x41 jl-skip),
+// s2 leaves them (cmp 0x41 jg-skip) -> e.g. '`'(0x60): s1->0x40, s2->0x60. Returns 0
+// if all n folded chars equal, else toupper(s1[i]) - toupper(s2[i]) (signed). A naive
+// symmetric C toupper would diverge on 0x5b-0x60, so this is a VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Cmp5ae170(void)
+{
+    __asm {
+        mov  edx, dword ptr [esp+4]         // s1
+        push esi
+        mov  esi, dword ptr [esp+0x0c]      // s2
+        push edi
+        mov  edi, dword ptr [esp+0x14]      // n
+    L_CC_LOOP:
+        mov  al, byte ptr [edx]
+        cmp  al, 0x61
+        jge  L_CC_S1Z
+        cmp  al, 0x41
+        jl   L_CC_S1D
+    L_CC_S1Z:
+        cmp  al, 0x7a
+        jle  L_CC_S1U
+        cmp  al, 0x5a
+        jg   L_CC_S1D
+    L_CC_S1U:
+        and  al, 0xdf
+    L_CC_S1D:
+        mov  cl, al
+        mov  al, byte ptr [esi]
+        cmp  al, 0x61
+        jge  L_CC_S2Z
+        cmp  al, 0x41
+        jg   L_CC_S2D
+    L_CC_S2Z:
+        cmp  al, 0x7a
+        jle  L_CC_S2U
+        cmp  al, 0x5a
+        jg   L_CC_S2D
+    L_CC_S2U:
+        and  al, 0xdf
+    L_CC_S2D:
+        cmp  cl, al
+        jne  L_CC_DIFF
+        inc  edx
+        inc  esi
+        dec  edi
+        jne  L_CC_LOOP
+        pop  edi
+        xor  eax, eax
+        pop  esi
+        ret
+    L_CC_DIFF:
+        movsx edx, al
+        movsx eax, cl
+        pop  edi
+        sub  eax, edx
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Cmp5ae170, 0x005ae170);
