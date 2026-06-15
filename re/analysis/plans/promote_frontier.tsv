@@ -15,7 +15,6 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 0045de80	FUN_0045de80	render	236	1	00462950	other
 00475ab0	FUN_00475ab0	render	337	3	00454350	other
 00482ae0	FUN_00482ae0	vehicle	301	4	00404fa0	other
-00486f90	FUN_00486f90	particle	140	2	0040bd80	const_return
 00488320	FUN_00488320	sky	108	1	00488e70	other
 0048b650	FUN_0048b650	particle	355	1	0048b960	read_global_f32
 004b4550	FUN_004b4550	util	247	4	0044e0a0	arg_getter

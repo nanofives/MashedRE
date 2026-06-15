@@ -4351,3 +4351,25 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl PoolArrayReset48
     }
 }
 RH_ScopedInstall(PoolArrayReset486f90, 0x00486f90);
+
+// 0x00477b40 FUN_00477b40 (util, ZeroTwoRegions) — NEAR-LEAF (calls C3 0x4b6520).
+// void f(void): ZeroFillWrapper(0x693198, 0x2c000); ZeroFillWrapper(0x6bf198, 0x20).
+// (0x4b6520 = ZeroFillWrapper = memset(dest,0,count), C3 r210.) VERBATIM naked
+// (rel32 call -> mov eax,abs; call eax; behaviorally identical; both sides call the
+// same real C3 callee at suspended-spawn).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroTwoRegions477b40(void)
+{
+    __asm {
+        push  02C000h
+        push  0693198h
+        mov   eax, 04B6520h
+        call  eax
+        push  020h
+        push  06BF198h
+        mov   eax, 04B6520h
+        call  eax
+        add   esp, 010h
+        ret
+    }
+}
+RH_ScopedInstall(ZeroTwoRegions477b40, 0x00477b40);

@@ -9,9 +9,18 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 236
-- total_green: 401
+- rounds_run: 237
+- total_green: 402
 - dry_counter: 0
+- NEAR-LEAF LANE RE-OPENED (round 237, 2026-06-15): the zero-callee frontier drained to 2 hard
+  candidates, but an inline scan (sys.path scripts; promote_frontier.analyze() graph) found
+  **112 NEAR-LEAF candidates** = C2 first-party, size 5-260, callees ALL C3, has C2+ caller.
+  This pool REFRESHES as leaves promote. Promote via VERBATIM naked (rel32 call -> mov eax,abs;
+  call eax; both sides hit the same real C3 callee at suspended-spawn). Smallest are adjustor
+  thunks (add/imul arg; jmp callee) + fixed-arg C3 wrappers (memset etc). Recipe proven r237
+  (ZeroTwoRegions 0x477b40). CAVEAT: callees that READ .bss state (e.g. 0x45c330->table 0x88fc88
+  all-zero) are degenerate at suspended-spawn -> prefer callees that write observable mem / are
+  pure given seeded args. TODO: promote the inline scan to scripts/near_leaf_frontier.py.
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
   re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
@@ -333,6 +342,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 237 | NEAR-LEAF lane re-opened — verbatim naked calling a C3 callee | attempted 1 | GREEN 1 (ZeroTwoRegions477b40 0x00477b40, util) | total_green 401->402 (402/1000). zero-callee frontier drained to 2 hard candidates -> inline near-leaf scan (callees all C3) found 112 candidates. ZeroTwoRegions calls C3 ZeroFillWrapper(0x4b6520) twice (memset 0x693198/0x2c000 + 0x6bf198/0x20). VERBATIM naked; REUSED near_leaf_seed_multi_obs boundary-echo 1/1 GREEN non-degen (region->0, past-boundary 0x6bf1b8->sentinel). Caller FUN_00477e40 C2. KEY: the near-leaf pool (112) refreshes as leaves promote -> sustainable solo vein beyond the zero-callee frontier. Session 101-237 net = +145 (257->402). Context 114 rounds deep. PATH TO 1000 (598 more) = near-leaf + frontier (~1/round) or fanout.
 
 2026-06-15 | round 236 | L3 frontier — VERBATIM naked (dual clear-loop pool reset) | attempted 1 | GREEN 1 (PoolArrayReset486f90 0x00486f90, particle) | total_green 400->401 (401/1000). PURE LEAF void f(void): clears two global pool arrays (loop1 stride 0x7c down, loop2 stride 0x90 up), [eax-0x44]=50.0f/entry, [0x703038]=[0x70303c]=0. VERBATIM naked (byte-identical). REUSED near_leaf_seed_multi_obs (seed sentinel @6 observed fields -> 50.0f/0). 1/1 GREEN non-degen (both loops proven). GOTCHA: absolute-addr memory operand in MSVC __asm needs ds: prefix (mov [0703038h] -> mov ds:[0703038h]) else C2415. Caller FUN_0040bd80 C2. Frontier now 2 CLEAN (456eb0 EAX-min/5c95b0 bitpack) -> regenerate next round for new candidates. Session 101-236 net = +144 (257->401). Context 113 rounds deep. PATH TO 1000 (599 more) = this method (~1/round) or fanout.
 

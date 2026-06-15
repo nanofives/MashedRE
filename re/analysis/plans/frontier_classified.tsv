@@ -15,7 +15,6 @@ rva	size	subsys	verdict	first_op
 0045de80	236	render	SKIP:REGCONV	sub esp, 8
 00475ab0	337	render	SKIP:FLDSTN	mov eax, dword ptr [esp + 0xc]
 00482ae0	301	vehicle	SKIP:FLDSTN	mov eax, dword ptr [esp + 0xc]
-00486f90	140	particle	CLEAN	mov eax, 0x7030a8
 00488320	108	sky	SKIP:REGCONV	mov ecx, dword ptr [eax]
 0048b650	355	particle	SKIP:FLDSTN	fld dword ptr [0x5d757c]
 004b4550	247	util	SKIP:FLDSTN	mov eax, dword ptr [esp + 4]

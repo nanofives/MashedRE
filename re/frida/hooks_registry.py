@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00477b40 ZeroTwoRegions477b40 (util) - NEAR-LEAF void f(void): calls C3
+    # ZeroFillWrapper(0x4b6520) twice: memset(0x693198,0,0x2c000) + memset(0x6bf198,0,0x20).
+    # Verbatim naked. Boundary-echo verify (reuse near_leaf_seed_multi_obs): seed sentinel
+    # at region points + the byte past region2 (0x6bf1b8); after -> 0 inside, sentinel past.
+    'zero_two_regions_477b40': {'rva': 0x00477b40, 'export': 'ZeroTwoRegions477b40', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x00693198, 0x006bf194, 0x006bf198, 0x006bf1b4, 0x006bf1b8],
+        'seed_sets': [
+            {'globals': [[0x693198,0xCCCCCCCC],[0x6bf194,0xCCCCCCCC],[0x6bf198,0xCCCCCCCC],[0x6bf1b4,0xCCCCCCCC],[0x6bf1b8,0xCCCCCCCC]]},
+        ],
+        'path1_tests': [0], 'path2_tests': [0]},
+
     # 0x00486f90 PoolArrayReset486f90 (particle) - PURE LEAF void f(void): clears two
     # global pool arrays (loop1 stride 0x7c, loop2 stride 0x90), [eax-0x44]=50.0f per
     # entry, [0x703038]=[0x70303c]=0. Verbatim naked. Reuses near_leaf_seed_multi_obs:
