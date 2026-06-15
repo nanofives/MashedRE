@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 230
-- total_green: 395
+- rounds_run: 231
+- total_green: 396
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 231 | L3 frontier — VERBATIM naked reimpl (nested circular-list search) | attempted 1 | GREEN 1 (NestedListSearch5a7a60 0x005a7a60, audio) | total_green 395->396 (396/1000). PURE LEAF uint f(int key): 2-level circular-list search at *0x7dca7c (outer; inner head @node-0xc, sentinel node-0x10); return key if inner payload[0xc]==key else 0. VERBATIM naked (byte-identical; MASM labels Louter/Linner/Lnext/Lnf/Lret). NEW handler nested_list_search builds 1 outer+inner+payload (outer node at outerBuf+0x20 so -0x10/-0xc are valid); 2/2 GREEN non-degen (found 0x1234 / not-found 0). Caller FUN_005ac880 C2. ~8 CLEAN frontier remain (456eb0/4cde50/5c95b0/48f590/4d8570/41e4b0, all 140B+). Session 101-231 net = +139 (257->396). Context 108 rounds deep. PATH TO 1000 (604 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 230 | L3 frontier — VERBATIM naked reimpl (list-walk + rep movsd struct copy) | attempted 1 | GREEN 1 (FindNodeStructCopy483ca0 0x00483ca0, vehicle: find list node + copy struct) | total_green 394->395 (395/1000). PURE LEAF int f(p1,p2): walk p2 list for matching node, copy 0x67 dwords p1->node + p1[0x16c]*9 dwords from p1[0x14]->node+0x19c, ret 1. VERBATIM naked (byte-identical; rep movsd/movsb + MASM labels). NEW handler find_node_struct_copy 2/2 GREEN non-degen (both copies verified). Caller ReplaySave 0x4117b0 C3. Frontier now 9 CLEAN remain (all 140B+: 0x456eb0 EAX min-finder, 0x4cde50 multi-mode imgproc, 0x5c95b0 bit-pack, 0x48f590, 0x4d8570, 0x41e4b0, 0x5a7a60 2lvl-list, 0x486f90 tail-jmp). Session 101-230 net = +138 (257->395). Context 107 rounds deep. PATH TO 1000 (605 more) = this method (~1/round) or fanout.
 

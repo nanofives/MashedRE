@@ -4127,3 +4127,43 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl FindNodeStructCop
     }
 }
 RH_ScopedInstall(FindNodeStructCopy483ca0, 0x00483ca0);
+
+// 0x005a7a60 FUN_005a7a60 (audio, NestedListSearch) — PURE LEAF (no calls)
+// uint f(int key): walk the outer circular list at *0x7dca7c (sentinel 0x7dca7c);
+// for each outer node, walk its inner list (head @node-0xc, sentinel node-0x10,
+// link +4, payload ptr +8); if any inner payload[0xc]==key return key else 0.
+// VERBATIM naked copy (byte-identical; MASM labels).
+extern "C" __declspec(dllexport) __declspec(naked) unsigned __cdecl NestedListSearch5a7a60(void)
+{
+    __asm {
+        mov   edx, dword ptr ds:[07DCA7Ch]
+        push  esi
+        cmp   edx, 7DCA7Ch
+        push  edi
+        je    Lnf
+        mov   eax, dword ptr [esp+0Ch]
+    Louter:
+        mov   ecx, dword ptr [edx-0Ch]
+        lea   esi, [edx-10h]
+        cmp   ecx, esi
+        je    Lnext
+    Linner:
+        mov   edi, dword ptr [ecx+8]
+        cmp   dword ptr [edi+0Ch], eax
+        je    Lret
+        mov   ecx, dword ptr [ecx+4]
+        cmp   ecx, esi
+        jne   Linner
+    Lnext:
+        mov   edx, dword ptr [edx]
+        cmp   edx, 7DCA7Ch
+        jne   Louter
+    Lnf:
+        xor   eax, eax
+    Lret:
+        pop   edi
+        pop   esi
+        ret
+    }
+}
+RH_ScopedInstall(NestedListSearch5a7a60, 0x005a7a60);

@@ -229,6 +229,7 @@ PURE_LEAF_ARGTYPES = {
     'eax_out_2float',            # void fn(EAX=out ptr, float a1@[esp+4], float a2@[esp+8]): PURE LEAF EAX-implicit output. Trampoline `mov eax,outbuf; jmp target`, NativeFunction(void,['float','float']). Per cfg.scenarios[t]={a1,a2}: call, observe outbuf[0]|outbuf[1] (float bits). non-degen via varied a1/a2
     'dll_merge_swap',            # void fn(void): PURE LEAF circular-list merge+swap on table entry base=*glob_a+*glob_b. seed *glob_a=&mybuf, *glob_b=0; mybuf+0x20=B,+0x24=A,+8=sentinel; empty-B (Bnode[0]=Bnode) -> early-exit swap path. Per cfg.scenarios[t]={swap}: assign A/B roles; observe mybuf+0x20|+0x24|+8. non-degen via role swap (verbatim naked reimpl, swap path)
     'find_node_struct_copy',     # int fn(struct* p1, void** p2): PURE LEAF. walk p2's list for node (node[8]==p1[8] && node[0]==0x10b)||node[0]==0; copy 0x67 dwords p1->node; copy p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; ret 1. Build p1(pat)/node(matched first)/src2 bufs, p1[0x16c]=1; observe node[0]|node[0x66]|node[0x67]|ret. non-degen via varied pat (verbatim naked, found-first path)
+    'nested_list_search',        # uint fn(int key): PURE LEAF nested circular-list search at *cfg.glob (sentinel=glob). outer node O1=outerBuf+0x20; inner head @O1-0xc, sentinel O1-0x10, link +4, payload +8, payload[0xc] compared to key. returns key if found else 0. Build 1 outer + 1 inner + payload; per cfg.scenarios[t]={pval,key}: observe return. non-degen via found(key) vs not-found(0)
 }
 
 SRC = r"""
@@ -389,6 +390,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'multi_array_scatter') ? ['pointer']
               : (cfg.at === 'dll_head_insert') ? ['pointer']
               : (cfg.at === 'find_node_struct_copy') ? ['pointer','pointer']
+              : (cfg.at === 'nested_list_search') ? ['uint32']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2678,6 +2680,26 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedN(); o = snap(Orig(p1, p2)); } catch (e) { eo = e.message; }
       try { seedN(); r = snap(Reim(p1, p2)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'nested_list_search') {
+      // uint f(int key): nested circular-list search. outer node O1=outerBuf+0x20.
+      const s = (cfg.scenarios || [])[t] || { pval: 0, key: 0 };
+      const outerBuf = Memory.alloc(0x80), I1 = Memory.alloc(0x40), P1 = Memory.alloc(0x40);
+      _keep.push(outerBuf, I1, P1);
+      const O1 = outerBuf.add(0x20);
+      const sentinel = ptr(cfg.glob);
+      const seedL = function () {
+        for (let z = 0; z < 0x80; z += 4) outerBuf.add(z).writeU32(0);
+        sentinel.writePointer(O1);                 // *glob = O1 (outer head)
+        O1.writePointer(sentinel);                 // O1[0] = sentinel (1-node outer, circular)
+        O1.sub(0xc).writePointer(I1);              // inner head
+        // inner sentinel = O1-0x10 (outerBuf+0x10); link I1 -> sentinel (1-node inner)
+        for (let z = 0; z < 0x40; z += 4) { I1.add(z).writeU32(0); P1.add(z).writeU32(0); }
+        I1.add(8).writePointer(P1);                // inner payload ptr
+        I1.add(4).writePointer(O1.sub(0x10));      // next inner = sentinel
+        P1.add(0xc).writeU32(s.pval >>> 0);        // payload[0xc] = pval
+      };
+      try { seedL(); o = (Orig(s.key >>> 0) >>> 0).toString(16); } catch (e) { eo = e.message; }
+      try { seedL(); r = (Reim(s.key >>> 0) >>> 0).toString(16); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x005a7a60 NestedListSearch5a7a60 (audio) - PURE LEAF uint f(int key): nested
+    # circular-list search at *0x7dca7c; inner payload[0xc]==key -> return key else 0.
+    # Verbatim naked reimpl. Build 1 outer + 1 inner + payload; found vs not-found.
+    'nested_list_search_5a7a60': {'rva': 0x005a7a60, 'export': 'NestedListSearch5a7a60', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'nested_list_search',
+        'glob': 0x007dca7c,
+        'scenarios': [
+            {'pval': 0x1234, 'key': 0x1234},   # found -> 0x1234
+            {'pval': 0x5678, 'key': 0x1234},   # not found -> 0
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x00483ca0 FindNodeStructCopy483ca0 (vehicle) - PURE LEAF int f(struct* p1, void** p2):
     # walk p2's list for a node ((node[8]==p1[8] && node[0]==0x10b) || node[0]==0), copy
     # 0x67 dwords p1->node, then p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; return 1.
