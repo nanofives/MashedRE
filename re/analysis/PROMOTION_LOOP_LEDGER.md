@@ -117,6 +117,33 @@ Pre-screened deferrals with reasons — see c3_batch_race1.txt DEFERRED block:
 (refresh with `py -3.12 scripts/c2_gate_audit.py` if stale; CAUTION: several
 are boot/CRT-band — check each row's gate notes; skip abi-limited)
 
+### L2b — mass-disabled leaf re-verify (NEW r213, 2026-06-15) — HIGH YIELD
+46 `MASS-DISABLED RH_ScopedInstall` reimpls exist in src; 29 are C2 + first-party.
+These have a COMPLETE reimpl already written — promote = re-enable the install +
+a focused early_window "seed-the-state" diff (no new reimpl code). Many disable
+reasons ("AV/AV", "crash_equal", "needs-canonical-X-state") are just UN-SEEDED
+state (null indirect ptr / zero divisor) — seed it and re-verify. Recipe proven
+on FpsDiscretise (r211, seed QPF freq), MusicGroupVolumeSet (r212, build list),
+FontCtx_ResetTransform (r213, seed indirect ctx ptr).
+PROMOTED: 00493480(r211), 00552750(r213).
+GATED — DO NOT (callee<C2 / live-state / library / entry / timer-valued-return):
+  00552e40 FontCtx_FlushMatrix (callees RwMatrixMultiply/Invert/cam-accessor C1 + live cam),
+  004a4bb7 WinMainEntry (process entry, not a leaf),
+  004950b0 QpcTimeScaledTo3Mhz (timer-VALUED return -> nondeterministic across calls),
+  004b302f StricmpThunk (CRT library), 00428590 ViewportInit (RW cam ops, faults),
+  004c5a00/5ae0/5b50 RwTexture* + 004cc7f0/cc820 RwFreeList* (RW engine state),
+  00495280/004b6710/6770/67e0 Piz*Open/Read/Close (file I/O).
+CANDIDATES (assess leaf + callee-C2+ + seedable each round):
+  00410860 ScoreThresholdStateCheck(util), 00412cf0 LabelTrailRecordAppend(hud),
+  00418de0 VehicleEliminationSlotPostInit + 00419760 ...SlotInit(vehicle),
+  0041bc50 HudRender29Dispatcher + 0041c2d0(hud), 0041d730 PlayerSlotConfigInit(util),
+  0042f8d0 MenuMenusBC(frontend), 00442440 TransformMatrixUpdate(util),
+  004926c0 AudioTickAndAvg(boot), 00492d30 GameTickStateMachine7(util),
+  00495350 IntroSplashOrchestrator(frontend), 004c57a0 FontCtxMatrix_AllocInit(hud),
+  00552b60 FontSys_InitSeq(hud), 005554d0 FontText_StringWidthAccumulator(hud).
+NEW early_window handlers this session (SWEEP-CRITICAL): near_leaf_memset2,
+struct_list_float_set, seed_indirect_ctx_obs.
+
 ### L3 — broad confirmed-shape pool
 Generated per round via c3_filter_v4.py over all first-party subsystems;
 do not pre-list here. Done/deferred rows accumulate below.
