@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'calc_413fa0': {'rva': 0x00413fa0, 'export': 'Calc413fa0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_globals',
+        'seed_sets': [
+            {'globals': [[0x0067f17c, 10], [0x0067e9fc, 4]]},   # s=30, b=4 -> 31
+            {'globals': [[0x0067f17c, 10], [0x0067e9fc, 5]]},   # s=30, b=5 -> 32
+            {'globals': [[0x0067f17c, 7],  [0x0067e9fc, 0]]},   # s=21, b=0 -> 21
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'dot_408590': {'rva': 0x00408590, 'export': 'Dot408590', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'near_leaf_dot_plane',
         'tbl_base': 0x00663658, 'tbl_stride': 0x4c,
         'seed_sets': [

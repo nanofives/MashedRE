@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 192
-- total_green: 359
+- rounds_run: 193
+- total_green: 360
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 192 | near-leaf #6: combine two pure global getters (NEW handler near_leaf_seed_globals) — REACHED 360 (36%) | attempted 1 | GREEN 1 (Calc413fa0 0x00413fa0: GetDat0067f17c()*3 + (GetRaceSubMode()==4?1:==5?2:0)) | total_green 359->360 (360/1000). Callers FUN_00414060/FUN_00417750 C2, callees 0x430790/0x42f6a0 C3 (pure global getters). NEW handler near_leaf_seed_globals (seed [[addr,val],...] then compare int return). seeds -> 31/32/21. integer verbatim naked port. 6 near-leaf shapes proven. SELECTION LESSON (this round cost several scouts): many small near-leaf candidates are blocked (0x45bfa0/0x49c810 have INDIRECT calls my scan missed; 0x45c330/0x415200 degenerate .bss-callee; 0x5ad540 deep-list callee) -> prefer near-leaves whose callee is a PURE getter/addr-calc or an abs-table setter. ~101 candidates remain (real count lower after removing indirect-call ones). Session 101-192 net = +103 (257->360). ~79 handlers. Context 69 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 191 | near-leaf #5: plane dot-product via PURE addr-calc callee (NEW handler near_leaf_dot_plane) | attempted 1 | GREEN 1 (Dot408590 0x00408590: dp over rec=FUN_00426cc0(idx) [C3 pure idx*0x4c+0x663658]; arg1[0xac]=dp; dp<0?a8++:0) | total_green 358->359 (359/1000). Caller FUN_00408610 C2, callee 0x426cc0 C3 (PURE address calc -> easiest near-leaf callee class). NEW handler near_leaf_dot_plane (seed table rec + arg1[0x20]/[0xa8] + arg2 point; snapshot arg1[0xac] bits + [0xa8]). dp=5/-3/8, counter 0/11/0; straight x87 (fld/fmul/fadd/fst/fcomp, no st(N) juggling) -> verbatim naked port. 5 near-leaf shapes proven. NOTE: 0x426cc0 (pure addr-calc) likely has MORE near-leaf callers -> a cluster. ~102 candidates remain. Session 101-191 net = +102 (257->359). ~78 handlers. Context 68 rounds deep — fresh context advised; fanout = fast route to 1000.
 

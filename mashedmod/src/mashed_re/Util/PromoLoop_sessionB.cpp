@@ -3127,3 +3127,38 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Dot408590(void)
     }
 }
 RH_ScopedInstall(Dot408590, 0x00408590);
+
+// 0x00413fa0  FUN_00413fa0 (hud, NEAR-LEAF: combine two pure global getters)
+// int f(void): a=FUN_00430790()(=*0x67f17c); s=a*3; b=FUN_0042f6a0()(=*0x67e9fc);
+//   return s + (b==4 ? 1 : b==5 ? 2 : 0). Both callees C3 pure global getters. Verbatim
+//   naked port; `call rel32`->`mov eax,abs;call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Calc413fa0(void)
+{
+    __asm {
+        push esi
+        mov  eax, 0430790h
+        call eax
+        lea  esi, [eax+eax*2]
+        mov  eax, 042F6A0h
+        call eax
+        xor  ecx, ecx
+        cmp  eax, 4
+        jne  L_C4_1
+        mov  eax, 1
+        add  eax, esi
+        pop  esi
+        ret
+    L_C4_1:
+        cmp  eax, 5
+        jne  L_C4_2
+        mov  eax, 2
+        add  eax, esi
+        pop  esi
+        ret
+    L_C4_2:
+        lea  eax, [ecx+esi]
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Calc413fa0, 0x00413fa0);
