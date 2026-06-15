@@ -3334,3 +3334,55 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init429b70(void)
     }
 }
 RH_ScopedInstall(Init429b70, 0x00429b70);
+
+// 0x00472560  FUN_00472560 (gameplay, NEAR-LEAF: record + table builder via C3 setter)
+// void f(_, arg2, _, arg4): rec=arg2*0x10+0x691500; flag=(arg4==0)?1:0; for esi=0..3:
+//   FUN_0046be10(rec, esi, arg2, flag); FUN_0046be10(rec+4, esi, arg2+0xa, arg4); rec[8]=arg4.
+// Callee 0x46be10 C3 writes *(0x88219c + (idx*0x341+base)*4) = *p1. Verbatim naked port; the
+// two `call rel32` -> `mov eax,0x46be10; call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Build472560(void)
+{
+    __asm {
+        push ebx
+        mov  ebx, dword ptr [esp+8]          // arg2
+        push ebp
+        mov  ebp, dword ptr [esp+0x10]       // arg4
+        push esi
+        push edi
+        mov  edi, ebx
+        shl  edi, 4
+        xor  eax, eax
+        xor  esi, esi
+        add  edi, 0x691500
+        test ebp, ebp
+        sete al
+        mov  dword ptr [esp+0x14], eax
+    L_BLD_LOOP:
+        mov  ecx, dword ptr [esp+0x14]
+        push ecx
+        push ebx
+        push esi
+        push edi
+        mov  eax, 046BE10h
+        call eax
+        push ebp
+        lea  eax, [ebx+0x0a]
+        push eax
+        lea  eax, [edi+4]
+        push esi
+        push eax
+        mov  eax, 046BE10h
+        call eax
+        add  esp, 0x20
+        inc  esi
+        cmp  esi, 4
+        jl   L_BLD_LOOP
+        mov  dword ptr [edi+8], ebp
+        pop  edi
+        pop  esi
+        pop  ebp
+        pop  ebx
+        ret
+    }
+}
+RH_ScopedInstall(Build472560, 0x00472560);

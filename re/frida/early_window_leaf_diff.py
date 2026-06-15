@@ -207,6 +207,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_seed_arg_obs',    # void fn(arg): NEAR-LEAF that reads pure global getters (C3) and conditionally writes an ABSOLUTE global. cfg.obs_addr. seed_sets[t]={globals:[[addr,val],...], arg}; seed, call with arg, snapshot *obs_addr. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via seeds/arg
     'near_leaf_ptr_array_search',# int fn(key, gate): NEAR-LEAF that searches arr=*cfg.glob (cfg.count ptrs) for arr[i] with *arr[i]==key; returns derived addr or 0. C3 getter callee returns the array base. seed_sets[t]={gate,key,at_idx}; build arr of ptr->struct (struct[0]=distinct key), place key at at_idx, seed glob. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via found(addr)/gate0/notfound
     'near_leaf_seed_multi_obs',  # void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:[[addr,val],...]}; seed, call, snapshot all observe_addrs. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via path toggles (do-nothing vs compute)
+    'near_leaf_record_builder',  # void fn(_, arg2, _, arg4): NEAR-LEAF that builds a record at rec_base+arg2*rec_stride + writes a C3-setter table. cfg.rec_base/rec_stride/tbl_base/tbl_stride. seed_sets[t]={arg2,arg4,v0,v1}; seed rec[0]=v0,rec[4]=v1,rec[8]=sentinel + zero observed tbl slots; call f(0,arg2,0,arg4); observe rec[8] + tbl[arg2] + tbl[arg2+0xa]. reimpl = verbatim naked port. non-degen via varied arg2/arg4/v0
 }
 
 SRC = r"""
@@ -349,6 +350,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_seed_arg_obs') ? ['uint32']
               : (cfg.at === 'near_leaf_ptr_array_search') ? ['uint32','uint32']
               : (cfg.at === 'near_leaf_seed_multi_obs') ? []
+              : (cfg.at === 'near_leaf_record_builder') ? ['uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1801,6 +1803,20 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_record_builder') {
+      // void f(A=rec_idx, B=value): record at rec_base+A*rec_stride; rec[8]=B; table writes via C3
+      // setter at base=A and A+0xa. seed_sets[t]={A,B,v0,v1}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { A: 0, B: 0, v0: 0, v1: 0 };
+      const rec = ptr(cfg.rec_base).add((sp.A | 0) * (cfg.rec_stride | 0));
+      const tb = ptr(cfg.tbl_base), ts = cfg.tbl_stride | 0;
+      const s0 = tb.add((sp.A | 0) * ts), s1 = tb.add(((sp.A | 0) + 0xa) * ts);
+      const seedB = function () {
+        rec.writeU32(sp.v0 >>> 0); rec.add(4).writeU32(sp.v1 >>> 0); rec.add(8).writeU32(0xDEAD0000 >>> 0);
+        s0.writeU32(0); s1.writeU32(0);
+      };
+      const snapB = function () { return (rec.add(8).readU32() >>> 0).toString(16) + '|' + (s0.readU32() >>> 0).toString(16) + '|' + (s1.readU32() >>> 0).toString(16); };
+      try { seedB(); Orig(sp.A >>> 0, sp.B >>> 0); o = snapB(); } catch (e) { eo = e.message; }
+      try { seedB(); Reim(sp.A >>> 0, sp.B >>> 0); r = snapB(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_seed_multi_obs') {
       // void f(void): seed globals, call, snapshot several absolute globals. cfg.observe_addrs.
       const sp = (cfg.seed_sets || [])[t | 0] || { globals: [] };
@@ -2415,6 +2431,7 @@ def run(name):
            'tbl_stride': h.get('tbl_stride'), 'seed_tbl_n': h.get('seed_tbl_n'),
            'tbl_base': h.get('tbl_base'), 'tbl_count': h.get('tbl_count'),
            'obs_addr': h.get('obs_addr'), 'observe_addrs': h.get('observe_addrs'),
+           'rec_base': h.get('rec_base'), 'rec_stride': h.get('rec_stride'),
            'observe_offs': h.get('observe_offs'),
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),

@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'build_472560': {'rva': 0x00472560, 'export': 'Build472560', 'signature': {'ret': 'void', 'args': ['uint32','uint32']}, 'arg_type': 'near_leaf_record_builder',
+        'rec_base': 0x00691500, 'rec_stride': 0x10, 'tbl_base': 0x0088219c, 'tbl_stride': 4,
+        'seed_sets': [
+            {'A': 1, 'B': 5, 'v0': 0x111, 'v1': 0x222},
+            {'A': 2, 'B': 9, 'v0': 0x333, 'v1': 0x444},
+            {'A': 3, 'B': 0, 'v0': 0xABC, 'v1': 0xDEF},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'init_429b70': {'rva': 0x00429b70, 'export': 'Init429b70', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
         'observe_addrs': [0x008991b0, 0x008991b4, 0x008991b8],
         'seed_sets': [
