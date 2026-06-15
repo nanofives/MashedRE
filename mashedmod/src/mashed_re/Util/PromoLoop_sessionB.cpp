@@ -1646,3 +1646,17 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Match45c510(std::uint32_t
     return 0;
 }
 RH_ScopedInstall(Match45c510, 0x0045c510);
+
+// ===== round 139 ===== (global-record clear + conditional return)
+// 0x004e4350 — u32 fn(arg1, arg2): rec = *(u8**)0x7d716c + arg2; if(rec[0xc] != 0)
+//   { rec[0xc]=0; rec[8]=0; return arg1; } return 0.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Clear4e4350(std::uint32_t arg1, std::uint32_t arg2) {
+    std::uint8_t* rec = *reinterpret_cast<std::uint8_t**>(0x007d716c) + arg2;
+    if (*reinterpret_cast<std::uint32_t*>(rec + 0xc) != 0) {
+        *reinterpret_cast<std::uint32_t*>(rec + 0xc) = 0;
+        *reinterpret_cast<std::uint32_t*>(rec + 8) = 0;
+        return arg1;
+    }
+    return 0;
+}
+RH_ScopedInstall(Clear4e4350, 0x004e4350);
