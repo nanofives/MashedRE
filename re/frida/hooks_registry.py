@@ -60,6 +60,19 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00413c70 Idx2RecordCondSet413c70 (vehicle) - PURE LEAF void f(int i,int j,int v):
+    # off=(j+5i)*12; *(int*)(0x63bc68+off)=v; if(*(float*)(0x63bc60+off)==0.0) ...=0.01f.
+    # Seed A(float)=cur, observe A|B. non-degen via cur==0 vs !=0 + varied v/index.
+    'idx2_record_condset_413c70': {'rva': 0x00413c70, 'export': 'Idx2RecordCondSet413c70', 'signature': {'ret': 'void', 'args': ['uint32', 'uint32', 'uint32']}, 'arg_type': 'idx2_record_condset',
+        'baseA': 0x0063bc60, 'baseB': 0x0063bc68, 'recStride': 12,
+        'scenarios': [
+            {'i': 0, 'j': 0, 'v': 0x111, 'cur': 0.0},    # cur==0 -> A=0.01
+            {'i': 0, 'j': 0, 'v': 0x222, 'cur': 5.0},    # cur!=0 -> A stays 5.0
+            {'i': 1, 'j': 0, 'v': 0x333, 'cur': 0.0},    # index (off=60) -> A=0.01
+            {'i': 0, 'j': 2, 'v': 0x444, 'cur': -3.0},   # index (off=24), cur!=0 -> stays
+        ],
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x004c0e50 DllHeadInsert4c0e50 (render, 19 callers) - PURE LEAF void f(struct* p):
     # intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of
     # list *0x7d3ff8 (sentinel @+0xbc). node[3]|=3; p[3]|=0xc. Observe node links + flags.

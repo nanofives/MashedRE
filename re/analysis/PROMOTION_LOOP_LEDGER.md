@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 225
-- total_green: 390
+- rounds_run: 226
+- total_green: 391
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 226 | L3 frontier (classifier-driven, refreshed 53->42 leaves) | attempted 1 | GREEN 1 (Idx2RecordCondSet413c70 0x00413c70, vehicle: 2-index record cond-set) | total_green 390->391 (391/1000). PURE LEAF void f(int i,int j,int v): off=(j+5i)*12; table2[off]=v; if(table1[off]==0.0) table1[off]=0.01f. NEW handler idx2_record_condset 4/4 GREEN non-degen. Refreshed frontier_classify -> 13 CLEAN remain (deferred: 0x475f30 EAX-implicit output ptr; 0x5a7a60 2lvl-list; 0x483ca0 struct-copy; etc.). Caller FUN_00412f30 C2. Session 101-226 net = +134 (257->391). Context 103 rounds deep. PATH TO 1000 (609 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 225 | L3 frontier (classifier-driven) — capstone reimpl (11th), high-value | attempted 1 | GREEN 1 (DllHeadInsert4c0e50 0x004c0e50, render, 19 callers: intrusive DLL head-insert) | total_green 389->390 (390/1000). PURE LEAF; pointer-surgery (intrusive doubly-linked list, sentinel @ (*0x7d3ff8)+0xbc, node+8=next/node+0xc=prev). NEW handler dll_head_insert: build p/node/G/H bufs, seed *glob=&G + G[0xbc]=H + node[3]=flag; observe the 4 link writes + flags. 3/3 GREEN non-degen (insert: links=real buffer addrs; skip flag=1/2: sentinels preserved). LESSON: pointer-surgery is verifiable — the written links are seeded-buffer addresses, identical on both sides; insert-vs-skip gives non-degeneracy; sentinel-fill proves which links were written. Caller FUN_004011f0 C2. Session 101-225 net = +133 (257->390). Context 102 rounds deep. PATH TO 1000 (610 more) = this method (~1/round) or fanout.
 

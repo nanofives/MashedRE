@@ -3953,3 +3953,17 @@ extern "C" __declspec(dllexport) void __cdecl DllHeadInsert4c0e50(unsigned char*
     p[3] = static_cast<unsigned char>(p[3] | 0xc);
 }
 RH_ScopedInstall(DllHeadInsert4c0e50, 0x004c0e50);
+
+// 0x00413c70 FUN_00413c70 (vehicle, Idx2RecordCondSet) — PURE LEAF (no calls)
+// void f(int i, int j, int v): off = (j + 5*i)*12; *(int*)(0x63bc68+off) = v;
+//   if (*(float*)(0x63bc60+off) == 0.0f) *(int*)(0x63bc60+off) = 0x3c23d70a (0.01f).
+// capstone-verified (fcomp jp test ah,0x44 idiom: jp NOT taken only when ==0.0).
+// The fld loads the PRE-store value of field A; field B is always set to v.
+extern "C" __declspec(dllexport) void __cdecl Idx2RecordCondSet413c70(int i, int j, int v)
+{
+    const unsigned off = static_cast<unsigned>(j + 5 * i) * 12u;
+    *reinterpret_cast<int*>(0x0063bc68u + off) = v;
+    if (*reinterpret_cast<const float*>(0x0063bc60u + off) == 0.0f)
+        *reinterpret_cast<int*>(0x0063bc60u + off) = 0x3c23d70a;
+}
+RH_ScopedInstall(Idx2RecordCondSet413c70, 0x00413c70);

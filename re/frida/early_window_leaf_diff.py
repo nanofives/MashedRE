@@ -224,6 +224,7 @@ PURE_LEAF_ARGTYPES = {
     'succ_approx_quantize',      # void fn(int arg1, int* p2, int* p3): PURE LEAF successive-approx quantizer. ecx=range tbl[*p3], updates *p2 (quantized recon, clamp) and *p3 (+= deltaTbl[flags]). Per cfg.scenarios[t]={arg1,cur,idx,range}: seed p2/p3 bufs + rangeTbl[idx] + deltaTbl[0..15]; observe *p2|*p3. non-degen via varied arg1 (target) -> distinct flags/outputs
     'multi_array_scatter',       # void fn(struct* p): PURE LEAF. if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays (ptr fields at p+0x10/14/18/1c/20/24/28) indexed by counter p[0xc] (strides 12/8/4/64/4/16/32), then counter++. Per cfg.scenarios[t]={counter,bound}: build struct + 7 bufs, observe arr[k] at counter-slot + counter. source globals REAL (both sides identical). non-degen via distinct globals + counter
     'dll_head_insert',           # void fn(struct* p): PURE LEAF intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of list *cfg.glob (sentinel @+0xbc; node+8=next,node+0xc=prev). node[3]|=3; p[3]|=0xc. Build p/node/G/H bufs, seed *glob=&G, G[0xbc]=H, node[3]=scenario flag; observe node+8,+0xc,+3,p[3],G[0xbc],H[4] (addresses same both sides). non-degen via insert vs skip
+    'idx2_record_condset',       # void fn(int i, int j, int v): PURE LEAF. off=(j+5i)*recStride; *(int*)(baseB+off)=v; if(*(float*)(baseA+off)==0.0) *(int*)(baseA+off)=0x3c23d70a. Per cfg.scenarios[t]={i,j,v,cur}: seed baseA+off=cur(float), call, observe A|B. non-degen via cur==0 vs !=0 + varied v/index
 }
 
 SRC = r"""
@@ -383,6 +384,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'succ_approx_quantize') ? ['uint32','pointer','pointer']
               : (cfg.at === 'multi_array_scatter') ? ['pointer']
               : (cfg.at === 'dll_head_insert') ? ['pointer']
+              : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -2055,6 +2057,15 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedD(); Orig(P); o = snap(); } catch (e) { eo = e.message; }
       try { seedD(); Reim(P); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'idx2_record_condset') {
+      // void f(int i, int j, int v): off=(j+5i)*recStride; record A(float)@baseA, B(int)@baseB.
+      const s = (cfg.scenarios || [])[t] || { i: 0, j: 0, v: 0, cur: 0 };
+      const off = ((s.j | 0) + 5 * (s.i | 0)) * (cfg.recStride | 0);
+      const A = ptr(cfg.baseA).add(off), B = ptr(cfg.baseB).add(off);
+      const seedR = function () { A.writeFloat(s.cur); B.writeU32(0xCAFE0000 >>> 0); };
+      const snap = function () { return (A.readU32() >>> 0).toString(16) + '|' + (B.readU32() >>> 0).toString(16); };
+      try { seedR(); Orig(s.i >>> 0, s.j >>> 0, s.v >>> 0); o = snap(); } catch (e) { eo = e.message; }
+      try { seedR(); Reim(s.i >>> 0, s.j >>> 0, s.v >>> 0); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };
@@ -2746,6 +2757,7 @@ def run(name):
            'iStride': h.get('iStride'), 'jStride': h.get('jStride'), 'regionOff': h.get('regionOff'),
            't1Tbl': h.get('t1Tbl'), 't2Tbl': h.get('t2Tbl'), 't3Tbl': h.get('t3Tbl'), 't3Stride': h.get('t3Stride'),
            'rangeTbl': h.get('rangeTbl'), 'deltaTbl': h.get('deltaTbl'),
+           'baseA': h.get('baseA'), 'baseB': h.get('baseB'), 'recStride': h.get('recStride'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER
