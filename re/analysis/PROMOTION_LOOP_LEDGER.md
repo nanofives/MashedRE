@@ -9,9 +9,12 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 237
-- total_green: 402
+- rounds_run: 238
+- total_green: 403
 - dry_counter: 0
+- PAUSED at user request after round 238 (2026-06-15): "stop after the next round". Loop is
+  HEALTHY (not dry) — near-leaf lane open (112 candidates), zero-callee frontier has 2 hard left,
+  + scripts/near_leaf_frontier.py persists the refreshing pool. Resume with /loop /promote-round.
 - NEAR-LEAF LANE RE-OPENED (round 237, 2026-06-15): the zero-callee frontier drained to 2 hard
   candidates, but an inline scan (sys.path scripts; promote_frontier.analyze() graph) found
   **112 NEAR-LEAF candidates** = C2 first-party, size 5-260, callees ALL C3, has C2+ caller.
@@ -342,6 +345,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 238 | NEAR-LEAF lane — adjustor-thunk verbatim + scripts/near_leaf_frontier.py | attempted 1 | GREEN 1 (AdjThunk4893a0 0x004893a0, gameplay) | total_green 402->403 (403/1000). Built scripts/near_leaf_frontier.py (reuses promote_frontier.analyze graph) -> re/analysis/plans/near_leaf_frontier.tsv = 112 candidates (C2 first-party, callees ALL C3, C2+ caller), smallest-first. AdjThunk4893a0: p+=0x10; tail-call C3 0x476cb0 -> node=(*0x7dc57c)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000. VERBATIM naked (rel32 jmp -> mov eax,abs; jmp eax). NEW handler thunk_node_write 2/2 GREEN non-degen. Callers 0x485d90/0x489940 C2, callee C3. *** PAUSED by user "stop after the next round" — loop healthy, near-leaf pool (112) refreshing; resume /loop /promote-round. *** Session 101-238 net = +146 (257->403). Context 115 rounds deep. PATH TO 1000 (597 more) = near-leaf+frontier (~1/round) or fanout.
 
 2026-06-15 | round 237 | NEAR-LEAF lane re-opened — verbatim naked calling a C3 callee | attempted 1 | GREEN 1 (ZeroTwoRegions477b40 0x00477b40, util) | total_green 401->402 (402/1000). zero-callee frontier drained to 2 hard candidates -> inline near-leaf scan (callees all C3) found 112 candidates. ZeroTwoRegions calls C3 ZeroFillWrapper(0x4b6520) twice (memset 0x693198/0x2c000 + 0x6bf198/0x20). VERBATIM naked; REUSED near_leaf_seed_multi_obs boundary-echo 1/1 GREEN non-degen (region->0, past-boundary 0x6bf1b8->sentinel). Caller FUN_00477e40 C2. KEY: the near-leaf pool (112) refreshes as leaves promote -> sustainable solo vein beyond the zero-callee frontier. Session 101-237 net = +145 (257->402). Context 114 rounds deep. PATH TO 1000 (598 more) = near-leaf + frontier (~1/round) or fanout.
 

@@ -4373,3 +4373,20 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroTwoRegions47
     }
 }
 RH_ScopedInstall(ZeroTwoRegions477b40, 0x00477b40);
+
+// 0x004893a0 FUN_004893a0 (gameplay, AdjThunk) — NEAR-LEAF adjustor thunk (calls C3 0x476cb0).
+// void f(p, a2, a3): p += 0x10; tail-call 0x476cb0(p, a2, a3). 0x476cb0 (Batch476cb0, C3):
+// node = (*0x7dc57c)[p[4]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000.
+// So overall: node=(*0x7dc57c)[*(p+0x14)]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000.
+// VERBATIM naked (rel32 jmp -> mov eax,abs; jmp eax; both sides tail-call the same real C3).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl AdjThunk4893a0(void)
+{
+    __asm {
+        mov   edx, dword ptr [esp+4]
+        add   edx, 010h
+        mov   dword ptr [esp+4], edx
+        mov   eax, 0476CB0h
+        jmp   eax
+    }
+}
+RH_ScopedInstall(AdjThunk4893a0, 0x004893a0);

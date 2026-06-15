@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004893a0 AdjThunk4893a0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x476cb0.
+    # void f(p, a2, a3): node=(*0x7dc57c)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3;
+    # node[0x40]|=0x10000000. Verbatim naked. Build p/table/node; observe node fields.
+    'adj_thunk_4893a0': {'rva': 0x004893a0, 'export': 'AdjThunk4893a0', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']}, 'arg_type': 'thunk_node_write',
+        'glob': 0x007dc57c,
+        'scenarios': [
+            {'a2': 0x1111, 'a3': 0x2222},
+            {'a2': 0x3333, 'a3': 0x4444},
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x00477b40 ZeroTwoRegions477b40 (util) - NEAR-LEAF void f(void): calls C3
     # ZeroFillWrapper(0x4b6520) twice: memset(0x693198,0,0x2c000) + memset(0x6bf198,0,0x20).
     # Verbatim naked. Boundary-echo verify (reuse near_leaf_seed_multi_obs): seed sentinel
