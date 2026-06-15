@@ -2755,3 +2755,66 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Fmt5172f0(void)
     }
 }
 RH_ScopedInstall(Fmt5172f0, 0x005172f0);
+
+// 0x00482860  FUN_00482860 (vehicle, pool / circular-freelist initializer)
+// void f(pool* arg1): N = arg1[0x16c]; zero a (N+2)*0x24-byte buffer at arg1[0x14];
+//   arg1[0x18] = buffer; build a circular freelist of (N+1) nodes (stride 0x24) linked via
+//   node[0x1c], head at arg1[0x1c]=buffer, tail at arg1[0x20], tail[0x1c]=buffer (wrap);
+//   arg1[0x168]=arg1[0x170]=arg1[0x194]=0; arg1[0x198]=1; arg1[0x1c]=buffer. Pure
+//   pointer/integer (rep stosd zero-fill + pointer chain) -> VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Pool482860(void)
+{
+    __asm {
+        mov  edx, dword ptr [esp+4]          // pool
+        mov  eax, dword ptr [edx+0x16c]       // N
+        add  eax, 2
+        lea  ecx, [eax+eax*8]
+        shl  ecx, 2                            // (N+2)*0x24 bytes
+        push esi
+        mov  esi, ecx
+        shr  ecx, 2                            // dword count
+        push edi
+        mov  edi, dword ptr [edx+0x14]         // buffer
+        xor  eax, eax
+        mov  dword ptr [edx+0x18], edi
+        rep  stosd
+        mov  ecx, esi
+        and  ecx, 3
+        rep  stosb
+        mov  eax, dword ptr [edx+0x18]
+        lea  ecx, [eax+0x24]
+        mov  dword ptr [edx+0x1c], eax
+        mov  dword ptr [eax+0x1c], ecx
+        mov  eax, dword ptr [edx+0x16c]
+        xor  esi, esi
+        xor  ecx, ecx
+        cmp  eax, esi
+        jle  L_PL_DONE
+    L_PL_LOOP:
+        mov  eax, dword ptr [edx+0x1c]
+        lea  edi, [eax+0x24]
+        mov  dword ptr [eax+0x1c], edi
+        mov  eax, dword ptr [edx+0x1c]
+        mov  eax, dword ptr [eax+0x1c]
+        mov  dword ptr [edx+0x1c], eax
+        mov  eax, dword ptr [edx+0x16c]
+        inc  ecx
+        cmp  ecx, eax
+        jl   L_PL_LOOP
+    L_PL_DONE:
+        mov  eax, dword ptr [edx+0x1c]
+        mov  ecx, dword ptr [edx+0x18]
+        mov  dword ptr [edx+0x20], eax
+        mov  dword ptr [eax+0x1c], ecx
+        mov  eax, dword ptr [edx+0x18]
+        pop  edi
+        mov  dword ptr [edx+0x168], esi
+        mov  dword ptr [edx+0x170], esi
+        mov  dword ptr [edx+0x194], esi
+        mov  dword ptr [edx+0x198], 1
+        mov  dword ptr [edx+0x1c], eax
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Pool482860, 0x00482860);

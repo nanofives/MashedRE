@@ -194,6 +194,7 @@ PURE_LEAF_ARGTYPES = {
     'aabb_sphere_overlap',       # int fn(box* arg1, sphere* arg2): box={min.xyz@0,4,8; max.xyz@0xc,0x10,0x14}; sphere={center.xyz@0,4,8; radius@0xc}. block1: center strictly inside box on all 3 axes -> 1; else block2: box expanded by radius contains center -> 1 else 0. all straight-line fld/fcomp (no fld-st(N), no globals). plain __cdecl. seed_sets[t]={box:[6 floats], sph:[4 floats]}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via inside(1)/far-outside(0) mix
     'circular_str_search_ci',    # void* fn(list* arg1, char* query): circular list at arg1[8] (sentinel=&arg1[8]); node[0]=next, node+8=key string, object=node-8; case-insensitive compare ('a'-'z' folded +0xe0); return object(node-8) on full match else 0. plain __cdecl, no global/float. build a 3-node circular list (alpha/beta/gamma); seed_sets[t]={q}; snapshot returned ptr. reimpl VERBATIM naked __asm. non-degen via match(distinct node ptrs)/miss(0)/prefix(0)
     'byte_format_hexdump',       # void fn(struct* arg1, char* out, void* arg3): for 4 bytes at arg1[0x11c..0x11f] write printable ([0x29,0x5a]|[0x61,0x7a]) directly else "[XX]" via .rdata hex table 0x5e336c; if arg3!=0 append ": "+0x10 dwords from arg3 (last byte nulled) else null-term. plain __cdecl. seed_sets[t]={bytes:[4], payload:bool}; snapshot out[0x70] hex. reimpl VERBATIM naked __asm. non-degen via printable/nonprintable/payload mix
+    'pool_freelist_init',        # void fn(pool* arg1): N=arg1[0x16c]; zero (N+2)*0x24 buf at arg1[0x14]; build circular freelist of N+1 nodes (stride 0x24) via node[0x1c]; arg1[0x18]=buf, head arg1[0x1c]=buf, tail arg1[0x20], tail wraps to buf; arg1[0x168/0x170/0x194]=0, arg1[0x198]=1. plain __cdecl. seed_sets[t]={n}; snapshot pool fields + node links. reimpl VERBATIM naked __asm. non-degen via varied N (different ring sizes/links)
 }
 
 SRC = r"""
@@ -323,6 +324,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'aabb_sphere_overlap') ? ['pointer','pointer']
               : (cfg.at === 'circular_str_search_ci') ? ['pointer','pointer']
               : (cfg.at === 'byte_format_hexdump') ? ['pointer','pointer','pointer']
+              : (cfg.at === 'pool_freelist_init') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1775,6 +1777,23 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'pool_freelist_init') {
+      // void f(pool* arg1): zero buffer + build circular freelist. seed_sets[t]={n}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { n: 0 };
+      const P = Memory.alloc(0x200), B = Memory.alloc(0x100); _keep.push(P, B);
+      const seedP = function () {
+        for (let z = 0; z < 0x200; z += 4) P.add(z).writeU32(0);
+        for (let z = 0; z < 0x100; z += 4) B.add(z).writeU32(0);
+        P.add(0x16c).writeU32(sp.n >>> 0);
+        P.add(0x14).writePointer(B);
+      };
+      const snapP = function () {
+        const fields = [0x18, 0x1c, 0x20, 0x168, 0x170, 0x194, 0x198].map(function (o2) { return P.add(o2).readU32() >>> 0; });
+        const links = [0x00, 0x24, 0x48, 0x6c, 0x90].map(function (o2) { return B.add(o2 + 0x1c).readU32() >>> 0; });
+        return fields.concat(links).join('|');
+      };
+      try { seedP(); Orig(P); o = snapP(); } catch (e) { eo = e.message; }
+      try { seedP(); Reim(P); r = snapP(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'byte_format_hexdump') {
       // void f(struct* arg1, char* out, void* arg3): 4 bytes at arg1[0x11c] -> formatted string.
       // seed_sets[t]={bytes:[4], payload:bool}. snapshot out[0x70] as hex.

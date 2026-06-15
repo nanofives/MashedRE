@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 180
-- total_green: 353
+- rounds_run: 181
+- total_green: 354
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 180 | pool / circular-freelist initializer (NEW handler) — clean queue | attempted 1 | GREEN 1 (Pool482860 0x00482860: zero (N+2)*0x24 buf + build N+1-node circular freelist stride 0x24 + set pool fields) | total_green 353->354 (354/1000). Status-prechecked C2; caller ReplayStartLap 0x411750 C3, zero-callee leaf. (Earlier this round was SKIPPED ~2x on a SUSTAINED concurrent cl.exe build session - PIDs rotating across checks; backed off ~20min each, no shared edits; lock was unrelated work, no competing promote commits, state unchanged.) NEW handler pool_freelist_init (seed N, snapshot pool fields + 5 node links; N=3/1/0 -> 4/2/1-node rings). Session 101-180 = +97 (257->354). ~70 handlers. THIS CONTEXT did rounds 124-180 = +62 (292->354). REMAINING CLEAN QUEUE: 0x5ae4c0(139 ring-arith), 0x4ceaf0(162 two-struct cmp), 0x5b0cf0(170 stack-heavy). ~3 left, then frontier exhausted of clean solo leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) = realistic route to remaining ~646. Context 57 rounds deep — fresh context strongly advised. NOTE: a concurrent build-heavy session is active on this checkout (multi-session hazard) — keep skipping on cl.exe + atomic path-scoped commits.
 
 2026-06-15 | round 179 | 4-byte -> printable/[hex] string formatter (NEW handler) — clean queue | attempted 1 | GREEN 1 (Fmt5172f0 0x005172f0: 4 bytes at arg1[0x11c] -> printable direct else "[XX]" via .rdata hex table 0x5e336c; optional ": "+64-byte payload from arg3) | total_green 352->353 (353/1000). Status-prechecked C2; caller FUN_005172b0 C2, zero-callee leaf. NEW handler byte_format_hexdump (snapshot out[0x70] hex; 5 seeds cover printable/nonprintable/payload). NOTE: .rdata hex table is UPPERCASE "0123456789ABCDEF"; the classifier's abs-global filter (0x600000-0xa00000) does NOT flag .rdata refs <0x600000 (0x5e336c) -> those are read-only, identical both sides, fine. Session 101-179 = +96 (257->353). ~69 handlers. THIS CONTEXT did rounds 124-179 = +61 (292->353). REMAINING CLEAN QUEUE: 0x5ae4c0(139 ring-arith), 0x482860(147 rep-stosd pool+freelist), 0x4ceaf0(162 two-struct cmp), 0x5b0cf0(170 stack-heavy). ~4 left, then frontier exhausted of clean leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) = realistic route to remaining ~647. Context 56 rounds deep — fresh context strongly advised.
 

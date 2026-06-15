@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'pool_482860': {'rva': 0x00482860, 'export': 'Pool482860', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'pool_freelist_init',
+        'seed_sets': [
+            {'n': 3},   # 4-node ring (B, B+0x24, B+0x48, B+0x6c)
+            {'n': 1},   # 2-node ring
+            {'n': 0},   # 1-node ring (loop skipped)
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'fmt_5172f0': {'rva': 0x005172f0, 'export': 'Fmt5172f0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','pointer']}, 'arg_type': 'byte_format_hexdump',
         'seed_sets': [
             {'bytes': [0x41,0x42,0x43,0x44], 'payload': False},   # "ABCD" all printable
