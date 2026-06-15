@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00486f90 PoolArrayReset486f90 (particle) - PURE LEAF void f(void): clears two
+    # global pool arrays (loop1 stride 0x7c, loop2 stride 0x90), [eax-0x44]=50.0f per
+    # entry, [0x703038]=[0x70303c]=0. Verbatim naked. Reuses near_leaf_seed_multi_obs:
+    # seed the observed fields with sentinel, observe = 50.0f (0x42480000) / 0.
+    'pool_array_reset_486f90': {'rva': 0x00486f90, 'export': 'PoolArrayReset486f90', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x00702fe8, 0x0070302c, 0x006fa610, 0x006fa654, 0x00703038, 0x0070303c],
+        'seed_sets': [
+            {'globals': [[0x702fe8,0xCCCCCCCC],[0x70302c,0xCCCCCCCC],[0x6fa610,0xCCCCCCCC],[0x6fa654,0xCCCCCCCC],[0x703038,0xCCCCCCCC],[0x70303c,0xCCCCCCCC]]},
+        ],
+        'path1_tests': [0], 'path2_tests': [0]},
+
     # 0x0048f590 ParticlePoolAlloc48f590 (particle) - PURE LEAF void f(int* a1, int a2):
     # 10-slot pool @0x769f50 (stride 0x24); scan for free (slot[+0]==0) else evict max
     # (slot[+0x1c]); write a1[0..2]/a2/255f/used. Observe slot[+0]/[+4] of slots 0/1/9.

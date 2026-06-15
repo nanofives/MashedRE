@@ -1,6 +1,5 @@
 rva	size	subsys	verdict	first_op
 00413bc0	173	hud	SKIP:REGCONV	push ecx
-0041e4b0	379	render	CLEAN	mov ecx, dword ptr [eax + 0x1b4]
 00422440	45	gameplay	SKIP:TRANSC+FLDSTN	fld dword ptr [0x5cd310]
 004233e0	160	ai	SKIP:TRANSC+FLDSTN	fld dword ptr [esp + 8]
 004277a0	147	frontend	SKIP:REGCONV	push esi
@@ -16,11 +15,9 @@ rva	size	subsys	verdict	first_op
 0045de80	236	render	SKIP:REGCONV	sub esp, 8
 00475ab0	337	render	SKIP:FLDSTN	mov eax, dword ptr [esp + 0xc]
 00482ae0	301	vehicle	SKIP:FLDSTN	mov eax, dword ptr [esp + 0xc]
-00483ca0	102	vehicle	CLEAN	mov edx, dword ptr [esp + 4]
 00486f90	140	particle	CLEAN	mov eax, 0x7030a8
 00488320	108	sky	SKIP:REGCONV	mov ecx, dword ptr [eax]
 0048b650	355	particle	SKIP:FLDSTN	fld dword ptr [0x5d757c]
-0048f590	235	particle	CLEAN	push ecx
 004b4550	247	util	SKIP:FLDSTN	mov eax, dword ptr [esp + 4]
 004c1a70	150	render	SKIP:FLDSTN	sub esp, 8
 004c3910	149	render	SKIP:FLDSTN	mov eax, dword ptr [esp + 8]
@@ -29,11 +26,8 @@ rva	size	subsys	verdict	first_op
 004c4360	200	render	SKIP:FLDSTN	sub esp, 0x18
 004c4eb0	338	render	SKIP:FLDSTN	mov ecx, dword ptr [esp + 8]
 004cbbd0	130	render	SKIP:FLDSTN	mov eax, dword ptr [esp + 4]
-004cde50	198	render	CLEAN	push ebp
-004d8570	272	render	CLEAN	mov eax, dword ptr [0x7d3ff8]
 004d9360	309	render	SKIP:FLDSTN	sub esp, 0x18
 004d9a60	320	render	SKIP:FLDSTN	sub esp, 0x28
 004d9ee0	277	render	SKIP:FLDSTN	sub esp, 0x20
-005a7a60	60	audio	CLEAN	mov edx, dword ptr [0x7dca7c]
 005aed20	119	audio	SKIP:FLDSTN	mov eax, dword ptr [esp + 8]
 005c95b0	204	audio	CLEAN	sub esp, 8

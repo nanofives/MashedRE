@@ -4298,3 +4298,56 @@ extern "C" __declspec(dllexport) void __cdecl ParticlePoolAlloc48f590(int* a1, i
     if (count == 10) Slot48f590(pool, maxIdx, a1, a2);
 }
 RH_ScopedInstall(ParticlePoolAlloc48f590, 0x0048f590);
+
+// 0x00486f90 FUN_00486f90 (particle, PoolArrayReset) — PURE LEAF (no calls)
+// void f(void): clears two global pool arrays. Loop1: eax 0x70302c down to 0x6fe800
+// (stride 0x7c) zeroing 11 fields + [eax-0x44]=50.0f. Loop2: eax 0x6fa654 up to
+// <0x6fde94 (stride 0x90) zeroing 12 fields + [eax-0x44]=50.0f. Also [0x703038]=0,
+// [0x70303c]=0. VERBATIM naked copy (byte-identical; the original's lea esp,[esp] nop
+// and jmp-to-fallthrough are control-flow-equivalent, omitted).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl PoolArrayReset486f90(void)
+{
+    __asm {
+        mov   eax, 07030A8h
+        xor   ecx, ecx
+        mov   edx, 042480000h
+    L1:
+        sub   eax, 7Ch
+        cmp   eax, 06FE800h
+        mov   dword ptr [eax+8], ecx
+        mov   dword ptr [eax], ecx
+        mov   dword ptr [eax-50h], ecx
+        mov   dword ptr [eax-68h], ecx
+        mov   dword ptr [eax-6Ch], ecx
+        mov   dword ptr [eax-70h], ecx
+        mov   dword ptr [eax-5Ch], ecx
+        mov   dword ptr [eax-64h], ecx
+        mov   dword ptr [eax-58h], ecx
+        mov   dword ptr [eax-54h], ecx
+        mov   dword ptr [eax+4], ecx
+        mov   dword ptr [eax-44h], edx
+        jne   L1
+        mov   dword ptr ds:[0703038h], ecx
+        mov   eax, 06FA654h
+    L2:
+        mov   dword ptr [eax-84h], ecx
+        mov   dword ptr [eax+8], ecx
+        mov   dword ptr [eax], ecx
+        mov   dword ptr [eax-50h], ecx
+        mov   dword ptr [eax-68h], ecx
+        mov   dword ptr [eax-6Ch], ecx
+        mov   dword ptr [eax-70h], ecx
+        mov   dword ptr [eax-5Ch], ecx
+        mov   dword ptr [eax-64h], ecx
+        mov   dword ptr [eax-58h], ecx
+        mov   dword ptr [eax-54h], ecx
+        mov   dword ptr [eax+4], ecx
+        mov   dword ptr [eax-44h], edx
+        add   eax, 90h
+        cmp   eax, 06FDE94h
+        jl    L2
+        mov   dword ptr ds:[070303Ch], ecx
+        ret
+    }
+}
+RH_ScopedInstall(PoolArrayReset486f90, 0x00486f90);
