@@ -145,6 +145,7 @@ PURE_LEAF_ARGTYPES = {
     'esi_global_search',         # u32 fn(ESI=key): linear-search a global table (count at glob, base tgt, stride) for entry[+0]==key; return an index-derived pointer or 0. ORIG called via `mov esi,key; jmp` trampoline; reimpl is __cdecl(key) reading the same globals (compares result, not ABI). Seed count=4, zero 4 entries, table[idx*stride]=key, key=0xC0DE0000|idx. test=idx (0..3 -> distinct matched addr -> non-degen)
     'indexed_global_idiv',       # u32 fn(arg): d=*(int*)(tgt+arg*stride); q=num/d (signed idiv); clamp. Seed d=test value at slot (fixed arg=idx), call fn(idx), compare ret. test=divisor (varied -> distinct quotients -> non-degen). reimpl __cdecl(arg) does signed C division (matches idiv trunc-toward-zero). avoid d=0
     'float_vec3_lerp_out',       # void fn(out*, a*, b*, float t): out[k] = a[k] + t*(b[k]-a[k]) per component (pure x87). Seed a,b vec3 (cfg.seed_a/seed_b = 3 u32 float-bit-patterns) + t (cfg.t_bits), call, observe out[0..2] as u32 bit patterns. Reimpl is VERBATIM naked __asm (bit-identical x87; a C float reimpl would round differently). seed-controlled -> non-degen by construction
+    'float_2ptr_ret',            # float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain numbers), call, compare float return as u32 bit pattern. Reimpl is VERBATIM naked __asm (bit-identical x87). test=index into seed_pairs (varied -> non-degen). signature ret MUST be 'float'
 }
 
 SRC = r"""
@@ -225,6 +226,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'esi_global_search') ? ['uint32']
               : (cfg.at === 'indexed_global_idiv') ? ['uint32']
               : (cfg.at === 'float_vec3_lerp_out') ? ['pointer','pointer','pointer','float']
+              : (cfg.at === 'float_2ptr_ret') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1010,6 +1012,21 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runL(Orig); } catch (e) { eo = e.message; }
       try { r = runL(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'float_2ptr_ret') {
+      // float fn(a*, b*): pure float of two vec3 args (dot product + clamp etc.), returns
+      // ST0. Seed a,b from cfg.seed_pairs[t], call, compare the float return as a u32 bit
+      // pattern (avoids NaN compare issues). Reimpl is verbatim naked __asm (bit-identical).
+      const sp = (cfg.seed_pairs || [])[t | 0] || { a: [0, 0, 0], b: [0, 0, 0] };
+      const av2 = Memory.alloc(0x20), bv2 = Memory.alloc(0x20), tmp = Memory.alloc(4);
+      _keep.push(av2, bv2, tmp);
+      const runR = function (CALL) {
+        for (let k = 0; k < 4; k++) { av2.add(k * 4).writeU32(0); bv2.add(k * 4).writeU32(0); }
+        for (let k = 0; k < 3; k++) { av2.add(k * 4).writeFloat(sp.a[k]); bv2.add(k * 4).writeFloat(sp.b[k]); }
+        const fv = CALL(av2, bv2);
+        tmp.writeFloat(fv); return tmp.readU32() >>> 0;
+      };
+      try { o = runR(Orig); } catch (e) { eo = e.message; }
+      try { r = runR(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1300,6 +1317,7 @@ def run(name):
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
            'mid_off': h.get('mid_off'), 'abs_ranges': h.get('abs_ranges'),
            'seed_a': h.get('seed_a'), 'seed_b': h.get('seed_b'), 't_bits': h.get('t_bits'),
+           'seed_pairs': h.get('seed_pairs'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),

@@ -1411,3 +1411,71 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Lerp4b4650(void)
     }
 }
 RH_ScopedInstall(Lerp4b4650, 0x004b4650);
+
+// ===== round 131 ===== (dot-product + cosine-clamp twins — verbatim x87 naked ports)
+// 0x004726b0 — float fn(a*, b*): d = a.y*b.y + a.x*b.x (2D dot); clamp d to [-1.0, 1.0]
+//   (consts 0x5cc320=1.0, 0x5cc33c=-1.0); return ST0. Verbatim x87 transcription.
+extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Dot4726b0(void) {
+    __asm {
+        mov  eax, [esp+4]
+        fld  dword ptr [eax+4]
+        mov  ecx, [esp+8]
+        fmul dword ptr [ecx+4]
+        fld  dword ptr [eax]
+        fmul dword ptr [ecx]
+        faddp st(1), st(0)
+        fcom dword ptr ds:[05CC33Ch]
+        fnstsw ax
+        test ah, 5
+        jp   L1
+        fstp st(0)
+        fld  dword ptr ds:[05CC33Ch]
+        ret
+    L1:
+        fcom dword ptr ds:[05CC320h]
+        fnstsw ax
+        test ah, 41h
+        jne  L2
+        fstp st(0)
+        fld  dword ptr ds:[05CC320h]
+        ret
+    L2:
+        ret
+    }
+}
+RH_ScopedInstall(Dot4726b0, 0x004726b0);
+
+// 0x004726f0 — float fn(a*, b*): d = a.y*b.y + a.x*b.x + a.z*b.z (3D dot); clamp to
+//   [-1.0, 1.0]; return ST0. Verbatim x87 transcription (twin of 0x4726b0).
+extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Dot4726f0(void) {
+    __asm {
+        mov  eax, [esp+4]
+        fld  dword ptr [eax+4]
+        mov  ecx, [esp+8]
+        fmul dword ptr [ecx+4]
+        fld  dword ptr [eax]
+        fmul dword ptr [ecx]
+        faddp st(1), st(0)
+        fld  dword ptr [eax+8]
+        fmul dword ptr [ecx+8]
+        faddp st(1), st(0)
+        fcom dword ptr ds:[05CC33Ch]
+        fnstsw ax
+        test ah, 5
+        jp   M1
+        fstp st(0)
+        fld  dword ptr ds:[05CC33Ch]
+        ret
+    M1:
+        fcom dword ptr ds:[05CC320h]
+        fnstsw ax
+        test ah, 41h
+        jne  M2
+        fstp st(0)
+        fld  dword ptr ds:[05CC320h]
+        ret
+    M2:
+        ret
+    }
+}
+RH_ScopedInstall(Dot4726f0, 0x004726f0);
