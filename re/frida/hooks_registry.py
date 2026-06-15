@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'count_42c1f0': {'rva': 0x0042c1f0, 'export': 'Count42c1f0', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_ret',
+        'tbl_base': 0x007e96fc, 'tbl_stride': 0x200, 'tbl_count': 4,
+        'seed_sets': [
+            {'preset': []},                 # all 4 entries zero -> return 1
+            {'preset': [[0, 0x1234]]},      # entry 0 nonzero -> return 0
+            {'preset': [[3, 0x5678]]},      # entry 3 nonzero -> return 0
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'init_458f80': {'rva': 0x00458f80, 'export': 'Init458f80', 'signature': {'ret': 'void', 'args': ['uint32']}, 'arg_type': 'near_leaf_abs_table',
         'tbl_base': 0x0068b198, 'tbl_stride': 0x50, 'tbl_count': 0x19, 'observe': [0x1c, 0x20],
         'seed_sets': [

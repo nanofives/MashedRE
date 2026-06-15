@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 188
-- total_green: 355
+- rounds_run: 189
+- total_green: 356
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 188 | near-leaf #2: read-seedable-table -> derived int (NEW handler near_leaf_seed_ret) | attempted 1 | GREEN 1 (Count42c1f0 0x0042c1f0: returns 1 iff FUN_00496900(0..5) all zero; callee C3 reads table 0x7e96fc) | total_green 355->356 (356/1000). Caller FUN_004324a0 C2, callee 0x496900 C3. NEW handler near_leaf_seed_ret (no-arg parent; seed the callee's READ table per test; compare int return; non-degen via all-zero->1 vs entry-nonzero->0). 2nd near-leaf shape proven (table-READER callee, vs round 187 table-WRITER). ~105 near-leaf candidates remain. Session 101-188 net = +99 (257->356). ~75 handlers. Context 65 rounds deep — fresh context advised; near-leaves are fannable via promote-c3-batch.
 
 2026-06-15 | round 187 | NEAR-LEAF LANE FIRST PROMOTION (NEW handler near_leaf_abs_table) | attempted 1 | GREEN 1 (Init458f80 0x00458f80: for i in 0..0x18 call C3 Set458f20(i,arg1) which writes table 0x68b198) | total_green 354->355 (355/1000). Caller Race::EvaluateResult 0x410510 C2, callee 0x458f20 C3. PROVES the near-leaf lane: parent's `call rel32` -> reimpl `mov eax,<callee_abs>; call eax`; at suspended-spawn the callee is UNHOOKED so BOTH orig+reimpl call the real callee -> valid diff (NOT degenerate-equal). Handler pre-seeds the callee's abs table per test (zero or preset rec field) + varies the parent arg -> non-degen (rec[0x20]=3/1/0). GOTCHA fixed: new cfg keys MUST be added to the python passthrough (tbl_base/tbl_count were missing -> 'missing argument' NativeFunction error). 106 near-leaf candidates remain in re/analysis/plans/near_leaf_candidates.tsv (curate to state-writer/pure-arith callees; .bss-reader callees are degenerate). Session 101-187 net = +98 (257->355). ~74 handlers. Context 64 rounds deep — fresh context advised. Fastest route to 1000 still = promote-c3-batch fanout (now near-leaves are also fannable).
 

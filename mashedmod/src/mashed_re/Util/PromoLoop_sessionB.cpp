@@ -2988,3 +2988,37 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init458f80(void)
     }
 }
 RH_ScopedInstall(Init458f80, 0x00458f80);
+
+// 0x0042c1f0  FUN_0042c1f0 (gameplay, NEAR-LEAF: count nonzero callee results -> all-zero?)
+// int f(void): edi=0; for esi=0..5 { if (FUN_00496900(esi)) edi++; } return (edi==0)?1:0.
+// Callee 0x00496900 (C3, tail-jmp to 0x497450) returns table[esi*0x200+0x7e96fc]!=0 for esi<=3
+// else 0. So this returns 1 iff table[0..3] are all zero. Verbatim naked port; `call rel32`
+// to the callee -> `mov eax,0x496900; call eax` (callee unhooked at suspended-spawn).
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Count42c1f0(void)
+{
+    __asm {
+        push esi
+        push edi
+        xor  edi, edi
+        xor  esi, esi
+    L_NLC_LOOP:
+        push esi
+        mov  eax, 0496900h                    // callee 0x00496900 (absolute)
+        call eax
+        add  esp, 4
+        test eax, eax
+        je   L_NLC_SKIP
+        inc  edi
+    L_NLC_SKIP:
+        inc  esi
+        cmp  esi, 6
+        jl   L_NLC_LOOP
+        xor  eax, eax
+        test edi, edi
+        pop  edi
+        sete al
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Count42c1f0, 0x0042c1f0);

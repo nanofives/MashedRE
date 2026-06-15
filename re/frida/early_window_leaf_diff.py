@@ -199,6 +199,7 @@ PURE_LEAF_ARGTYPES = {
     'record_array_filter_update',# void fn(arg1, arg2, arg3, arg4, arg5, arg6): scan arg2[4] records (stride 0x10 from arg1+0x18; A@+0,B@+4,C@+8,D@+0xc). rowRange from arg3 (-1->[0,arg2[8]) else exact); colRange from arg5 (-1->[0,4) else exact). match: (A&0x7fffffff) in rowRange && C in colRange && (B==arg4||arg4<0) -> D=arg6, A|=sign. then *arg1|=0x10. plain __cdecl 6 args. fixed 4-record array; seed_sets[t]={arg3,arg4,arg5,arg6}; snapshot *arg1 + per-record (A,D). reimpl VERBATIM naked __asm. non-degen via varied filters -> different update sets
     'heap_alloc_aligned',        # void* fn(heap* arg1, size, align): aligned first-fit allocator over an embedded block list. arg1[8]=first block, arg1[0xc]=sentinel; block[0]=next/end, block[8]=used. free=block[0]-used-block-0xc; if free>=size+0xc align cur top (block[8]+block) up to align, splice a new block, new[8]=size, return new+0xc; else 0. plain __cdecl. heap = one page-aligned block (end=base+0x100, used=0x10). seed_sets[t]={size,align}; snapshot ret-base + block0[0] + newblock fields. reimpl VERBATIM naked __asm. non-degen via alloc(diff align)/fail(too big)
     'near_leaf_abs_table',       # void fn(arg): NEAR-LEAF parent that loops calling a C3 callee which writes an ABSOLUTE record table. cfg.tbl_base/tbl_stride/tbl_count/observe(offsets). At suspended-spawn the callee is unhooked -> both orig+reimpl call the real callee -> valid diff. seed_sets[t]={arg, preset:[[off,val],...]} (preset written into every record before the call, after zeroing). snapshot observe-offsets for records 0/mid/last. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via arg + preset variation
+    'near_leaf_seed_ret',        # u32 fn(void): NEAR-LEAF that READS a seedable absolute table (via a C3 callee) and returns a derived int. cfg.tbl_base/tbl_stride/tbl_count. seed_sets[t]={preset:[[idx,val],...]} (zero count entries then write val to entry idx). call parent (no args), compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different table seeds -> different return
 }
 
 SRC = r"""
@@ -333,6 +334,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'record_array_filter_update') ? ['pointer','pointer','uint32','uint32','uint32','uint32']
               : (cfg.at === 'heap_alloc_aligned') ? ['pointer','uint32','uint32']
               : (cfg.at === 'near_leaf_abs_table') ? ['uint32']
+              : (cfg.at === 'near_leaf_seed_ret') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1785,6 +1787,17 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_seed_ret') {
+      // u32 f(void): near-leaf reading a seedable abs table via a C3 callee, returns derived int.
+      // cfg.tbl_base/tbl_stride/tbl_count. seed_sets[t]={preset:[[idx,val],...]}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { preset: [] };
+      const base = ptr(cfg.tbl_base), stride = cfg.tbl_stride | 0, count = cfg.tbl_count | 0;
+      const seedR = function () {
+        for (let i = 0; i < count; i++) base.add(i * stride).writeU32(0);
+        (sp.preset || []).forEach(function (pv) { base.add(pv[0] * stride).writeU32(pv[1] >>> 0); });
+      };
+      try { seedR(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { seedR(); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_abs_table') {
       // void f(arg): near-leaf parent looping a C3 callee that writes an absolute table.
       // cfg.tbl_base/tbl_stride/tbl_count/observe. seed_sets[t]={arg, preset:[[off,val],...]}.
