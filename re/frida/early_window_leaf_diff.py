@@ -166,6 +166,7 @@ PURE_LEAF_ARGTYPES = {
     'byte_idx_table_bitclear',   # void fn(p): if(p[1]!=p[3]){ off=p[1]+p[0]; if(off>=p[3]) off-=p[3]; p[1]++; ptr=p[4]+off*0x14; } else ptr=0; *ptr&=~8. seed p[0]/p[1]/p[3](b1!=b3), p[4]=&tbl, tbl[off*0x14]=0xFF; observe tbl[off*0x14]|p[1]. (main path only; else-branch derefs null in both.) non-degen via off+p[1]++
     'struct_table5_search',      # u32 fn(p1, p2): if(!p1&&!p2) return 0; count=p1[0x1d0]; if(count<=0) return 0; tbl=p1[0x1d4]; search entries (5 bytes: dword key @+0, byte val @+4) BACKWARD from tbl+count*5-5 for *p2; return (u8)entry[4] or 0. seed count=4, distinct keys/vals, p2 key (test0 match->val, test1 nomatch->0). non-degen
     'circular_list_search_node', # u32 fn(list, key): walk circular list (sentinel=list, *list=first, node[0]=next); each node: if *(node-0x44)==key return node-0x4c; else next; return 0. build 3-object circular list (node=obj+0x4c, key at obj+8), test0 key=match->obj addr, test1 key=nomatch->0. shared bufs. non-degen
+    'global_fieldoff_set',       # u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(entry[0]) return arg; entry[4]=arg[0x48]; arg[0x48]=0x557b70; entry[0]=1; return arg. tests: t0 entry[0]=0(set), t1 entry null, t2 entry[0]=5(early ret). seed arg[0x48]=0x66; shared arg+entry bufs; snapshot entry[4]|arg[0x48]|entry[0]|ret. non-degen
 }
 
 SRC = r"""
@@ -267,6 +268,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'byte_idx_table_bitclear') ? ['pointer']
               : (cfg.at === 'struct_table5_search') ? ['pointer','pointer']
               : (cfg.at === 'circular_list_search_node') ? ['pointer','uint32']
+              : (cfg.at === 'global_fieldoff_set') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1361,6 +1363,21 @@ rpc.exports.diff = function(cfg) {
       const keyC = matchC ? 0x101 : 0x999;
       try { buildC(); o = Orig(listb, keyC >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { buildC(); r = Reim(listb, keyC >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_fieldoff_set') {
+      // u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(entry[0]) return arg;
+      // entry[4]=arg[0x48]; arg[0x48]=0x557b70; entry[0]=1; return arg. t0 set, t1 null, t2 early.
+      const V = 0x10, args = Memory.alloc(0x80), ents = Memory.alloc(0x40); _keep.push(args, ents);
+      const tc = t | 0;
+      const setupFS = function () {
+        for (let z = 0; z < 0x80; z += 4) args.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) ents.add(z).writeU32(0);
+        ptr(cfg.glob).writeU32(V);
+        args.add(0x48).writeU32(0x66);
+        if (tc !== 1) { args.add(V).writePointer(ents); if (tc === 2) ents.writeU32(5); }
+      };
+      const snapFS = function (rv) { return [ents.add(4).readU32(), args.add(0x48).readU32(), ents.readU32(), rv >>> 0].map(function (x) { return x >>> 0; }).join('|'); };
+      try { setupFS(); const ro = Orig(args) >>> 0; o = snapFS(ro); } catch (e) { eo = e.message; }
+      try { setupFS(); const rr = Reim(args) >>> 0; r = snapFS(rr); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

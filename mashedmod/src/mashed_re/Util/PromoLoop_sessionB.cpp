@@ -1843,3 +1843,19 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Search5b0b60(std::uint8_t
     return 0;
 }
 RH_ScopedInstall(Search5b0b60, 0x005b0b60);
+
+// ===== round 151 ===== (global-field-offset struct set — companion of r144 0x558140)
+// 0x00558100 — u32 fn(arg): V=*0x913274; entry=*(u8**)(arg+V); if(entry==0) return 0;
+//   if(entry[0]!=0) return arg; entry[4]=arg[0x48]; arg[0x48]=0x557b70; entry[0]=1; return arg.
+//   (the original's 0x4e5f90 store is dead: its guard `0x557b70 != 0` is always true.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Set558100(std::uint8_t* arg) {
+    std::uint32_t V = *reinterpret_cast<std::uint32_t*>(0x00913274);
+    std::uint8_t* entry = *reinterpret_cast<std::uint8_t**>(arg + V);
+    if (entry == 0) return 0;
+    if (*reinterpret_cast<std::uint32_t*>(entry) != 0) return reinterpret_cast<std::uint32_t>(arg);
+    *reinterpret_cast<std::uint32_t*>(entry + 4) = *reinterpret_cast<std::uint32_t*>(arg + 0x48);
+    *reinterpret_cast<std::uint32_t*>(arg + 0x48) = 0x557b70;
+    *reinterpret_cast<std::uint32_t*>(entry) = 1;
+    return reinterpret_cast<std::uint32_t>(arg);
+}
+RH_ScopedInstall(Set558100, 0x00558100);
