@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'ghost_41a9b0': {'rva': 0x0041a9b0, 'export': 'Ghost41a9b0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'near_leaf_arr_to_table',
+        'tbl_base': 0x0063c6f0, 'tbl_stride': 0xc4,
+        'seed_sets': [
+            {'vals': [0x11, 0x22]},
+            {'vals': [0xAABB, 0xCCDD]},
+            {'vals': [0, 0xFFFF]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'cmp_5aa1e0': {'rva': 0x005aa1e0, 'export': 'Cmp5aa1e0', 'signature': {'ret': 'uint32', 'args': ['uint32','pointer','pointer']}, 'arg_type': 'near_leaf_memcmp16',
         'seed_sets': [
             {'eq': True},                  # 16 bytes equal -> 1

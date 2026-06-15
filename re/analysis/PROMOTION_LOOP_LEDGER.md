@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 190
-- total_green: 357
+- rounds_run: 191
+- total_green: 358
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 190 | near-leaf #4: arg[]->abs-table via C3 setter (NEW handler near_leaf_arr_to_table) | attempted 1 | GREEN 1 (Ghost41a9b0 0x0041a9b0: for i=0,1 GhostSlotSet63c6f0(i,arg[i]) -> table 0x63c6f0 stride 0xc4) | total_green 357->358 (358/1000). Caller Ghost::PlaybackTick 0x411ae0 C2, callee 0x41a8b0 C3. NEW handler near_leaf_arr_to_table (build int* arg + zero table, snapshot table entries; non-degen via varied vals). 4 near-leaf shapes proven. ~103 candidates remain. Session 101-190 net = +101 (257->358). ~77 handlers. Context 67 rounds deep — fresh context advised. The near-leaf candidate list (re/analysis/plans/near_leaf_candidates.tsv) is ready for the promote-c3-batch fanout = fast route to 1000.
 
 2026-06-15 | round 189 | near-leaf #3: !memcmp16 (NEW handler near_leaf_memcmp16) | attempted 1 | GREEN 1 (Cmp5aa1e0 0x005aa1e0: !FUN_005adf30(*arg2,arg3); callee C3 memcmp 16 bytes) | total_green 356->357 (357/1000). Registrar/caller FUN_005aa060 C2 (callback ref @0x5aa092), callee 0x5adf30 C3. NEW handler near_leaf_memcmp16 (build bufP via holder + bufQ; equal->1 differ->0). GOTCHA: my near-leaf scan only counted DIRECT (e8) calls -> some candidates (e.g. 0x49c810) have INDIRECT virtual/IAT calls (ff /2, ff 15) and are NOT clean near-leaves -> skip those; verify a candidate has only direct calls before reimpl. Also: when a near-leaf has no direct caller, its address-as-data ref (callback) gives the registrar -> use that fn's C-level for the gate. 3 near-leaf shapes proven (writer/reader/memcmp). ~104 candidates remain (minus the indirect-call ones). Session 101-189 net = +100 (257->357). ~76 handlers. Context 66 rounds deep — fresh context advised; fanout is the fast route.
 

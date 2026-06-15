@@ -3045,3 +3045,30 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Cmp5aa1e0(void)
     }
 }
 RH_ScopedInstall(Cmp5aa1e0, 0x005aa1e0);
+
+// 0x0041a9b0  FUN_0041a9b0 (vehicle, NEAR-LEAF: write arg[0..1] into an abs table via a C3 setter)
+// void f(int* arg): for i=0,1 call GhostSlotSet63c6f0(i, arg[i]) (callee 0x41a8b0 C3 writes
+// *(int*)(i*0xc4 + 0x63c6f0) = value). Verbatim naked port; `call rel32`->`mov eax,abs;call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Ghost41a9b0(void)
+{
+    __asm {
+        push esi
+        push edi
+        mov  edi, dword ptr [esp+0x0c]       // arg (int*)
+        xor  esi, esi
+    L_NLA_LOOP:
+        mov  eax, dword ptr [edi+esi*4]
+        push eax
+        push esi
+        mov  eax, 041A8B0h                    // callee 0x0041a8b0 (absolute)
+        call eax
+        add  esp, 8
+        inc  esi
+        cmp  esi, 2
+        jl   L_NLA_LOOP
+        pop  edi
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Ghost41a9b0, 0x0041a9b0);

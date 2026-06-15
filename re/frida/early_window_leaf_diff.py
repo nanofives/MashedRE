@@ -201,6 +201,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_abs_table',       # void fn(arg): NEAR-LEAF parent that loops calling a C3 callee which writes an ABSOLUTE record table. cfg.tbl_base/tbl_stride/tbl_count/observe(offsets). At suspended-spawn the callee is unhooked -> both orig+reimpl call the real callee -> valid diff. seed_sets[t]={arg, preset:[[off,val],...]} (preset written into every record before the call, after zeroing). snapshot observe-offsets for records 0/mid/last. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via arg + preset variation
     'near_leaf_seed_ret',        # u32 fn(void): NEAR-LEAF that READS a seedable absolute table (via a C3 callee) and returns a derived int. cfg.tbl_base/tbl_stride/tbl_count. seed_sets[t]={preset:[[idx,val],...]} (zero count entries then write val to entry idx). call parent (no args), compare int return. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via different table seeds -> different return
     'near_leaf_memcmp16',        # int fn(_, arg2, arg3): NEAR-LEAF = !FUN(a=*arg2,b=arg3) where the C3 callee memcmp's 16 bytes at a/b (0 if equal else +/-1). returns 1 iff the 16 bytes match. seed_sets[t]={eq, diffat}; build bufP via holder *arg2, bufQ as arg3; equal->1, differ->0. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via equal/differ
+    'near_leaf_arr_to_table',    # void fn(int* arg): NEAR-LEAF that writes arg[i] into an absolute table[base+i*stride] (i in 0..len(vals)-1) via a C3 setter callee. cfg.tbl_base/tbl_stride. seed_sets[t]={vals:[...]}; build arg buffer + zero table entries, call parent, snapshot table entries. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via varied vals
 }
 
 SRC = r"""
@@ -337,6 +338,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_abs_table') ? ['uint32']
               : (cfg.at === 'near_leaf_seed_ret') ? []
               : (cfg.at === 'near_leaf_memcmp16') ? ['uint32','pointer','pointer']
+              : (cfg.at === 'near_leaf_arr_to_table') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1789,6 +1791,20 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_arr_to_table') {
+      // void f(int* arg): writes arg[i] into abs table[base+i*stride] via a C3 setter.
+      // cfg.tbl_base/tbl_stride. seed_sets[t]={vals:[...]}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { vals: [] };
+      const base = ptr(cfg.tbl_base), stride = cfg.tbl_stride | 0, n = sp.vals.length;
+      const arg = Memory.alloc(0x40); _keep.push(arg);
+      const seedA = function () {
+        for (let z = 0; z < 0x40; z += 4) arg.add(z).writeU32(0);
+        sp.vals.forEach(function (v, i) { arg.add(i * 4).writeU32(v >>> 0); });
+        for (let i = 0; i < n; i++) base.add(i * stride).writeU32(0);
+      };
+      const snap = function () { let s = ''; for (let i = 0; i < n; i++) s += (base.add(i * stride).readU32() >>> 0).toString(16) + ','; return s; };
+      try { seedA(); Orig(arg); o = snap(); } catch (e) { eo = e.message; }
+      try { seedA(); Reim(arg); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_memcmp16') {
       // int f(_, arg2, arg3): !memcmp16(*arg2, arg3) via C3 callee. seed_sets[t]={eq, diffat}.
       const sp = (cfg.seed_sets || [])[t | 0] || { eq: true };
