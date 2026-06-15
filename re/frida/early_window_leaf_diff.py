@@ -146,6 +146,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_global_idiv',       # u32 fn(arg): d=*(int*)(tgt+arg*stride); q=num/d (signed idiv); clamp. Seed d=test value at slot (fixed arg=idx), call fn(idx), compare ret. test=divisor (varied -> distinct quotients -> non-degen). reimpl __cdecl(arg) does signed C division (matches idiv trunc-toward-zero). avoid d=0
     'float_vec3_lerp_out',       # void fn(out*, a*, b*, float t): out[k] = a[k] + t*(b[k]-a[k]) per component (pure x87). Seed a,b vec3 (cfg.seed_a/seed_b = 3 u32 float-bit-patterns) + t (cfg.t_bits), call, observe out[0..2] as u32 bit patterns. Reimpl is VERBATIM naked __asm (bit-identical x87; a C float reimpl would round differently). seed-controlled -> non-degen by construction
     'float_2ptr_ret',            # float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain numbers), call, compare float return as u32 bit pattern. Reimpl is VERBATIM naked __asm (bit-identical x87). test=index into seed_pairs (varied -> non-degen). signature ret MUST be 'float'
+    'float_planes6_predicate',   # u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14 (x,y,z,w); for each test dot(plane.xyz,point.xyz)-plane.w vs -point.w; return 1 if all pass else 0. Seed from cfg.seed_sets[t]={point:[4 floats], planes:[6 lists of 4 floats]}; distinct plane.w verifies the 0x14 stride. Reimpl is VERBATIM naked __asm. test=index (results vary 0/1 -> non-degen)
 }
 
 SRC = r"""
@@ -227,6 +228,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_global_idiv') ? ['uint32']
               : (cfg.at === 'float_vec3_lerp_out') ? ['pointer','pointer','pointer','float']
               : (cfg.at === 'float_2ptr_ret') ? ['pointer','pointer']
+              : (cfg.at === 'float_planes6_predicate') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1027,6 +1029,25 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runR(Orig); } catch (e) { eo = e.message; }
       try { r = runR(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'float_planes6_predicate') {
+      // u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14; return 1 if the point is
+      // inside all 6 (dot(plane.xyz,point)-plane.w <= -point.w) else 0. Seed obj+point from
+      // cfg.seed_sets[t]; distinct plane.w exercises the 0x14 stride + full loop. Reimpl
+      // is verbatim naked __asm (bit-identical). Results vary 0/1 -> non-degenerate.
+      const ss = (cfg.seed_sets || [])[t | 0] || { point: [0, 0, 0, 0], planes: [] };
+      const obj = Memory.alloc(0x200), pt = Memory.alloc(0x20); _keep.push(obj, pt);
+      const runP6 = function (CALL) {
+        for (let z = 0; z < 0x200; z += 4) obj.add(z).writeU32(0);
+        for (let z = 0; z < 0x20; z += 4) pt.add(z).writeU32(0);
+        for (let k = 0; k < 4; k++) pt.add(k * 4).writeFloat((ss.point || [])[k] || 0);
+        for (let p = 0; p < 6; p++) {
+          const pl = (ss.planes || [])[p] || [0, 0, 0, 0];
+          for (let k = 0; k < 4; k++) obj.add(0x94 + p * 0x14 + k * 4).writeFloat(pl[k] || 0);
+        }
+        return CALL(obj, pt) >>> 0;
+      };
+      try { o = runP6(Orig); } catch (e) { eo = e.message; }
+      try { r = runP6(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1317,7 +1338,7 @@ def run(name):
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
            'mid_off': h.get('mid_off'), 'abs_ranges': h.get('abs_ranges'),
            'seed_a': h.get('seed_a'), 'seed_b': h.get('seed_b'), 't_bits': h.get('t_bits'),
-           'seed_pairs': h.get('seed_pairs'),
+           'seed_pairs': h.get('seed_pairs'), 'seed_sets': h.get('seed_sets'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),

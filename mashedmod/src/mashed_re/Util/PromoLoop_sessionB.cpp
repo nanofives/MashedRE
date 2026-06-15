@@ -1479,3 +1479,46 @@ extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Dot4726f0(void)
     }
 }
 RH_ScopedInstall(Dot4726f0, 0x004726f0);
+
+// ===== round 132 ===== (6-plane inside/frustum test — verbatim x87 naked port)
+// 0x004cbb70 — u32 fn(obj*[esp+4], point*[esp+8]): for 6 planes at obj+0x94 stride 0x14
+//   (x@0,y@4,z@8,w@0xc), compute dot(plane.xyz, point.xyz) - plane.w and compare to
+//   -point.w; return 1 if every plane passes, else 0. -point.w is stashed at [esp+8]
+//   (scratch over the obj arg slot after the push esi). Verbatim x87 transcription.
+extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl Inside4cbb70(void) {
+    __asm {
+        mov  edx, [esp+8]
+        mov  eax, [esp+4]
+        push esi
+        mov  esi, 6
+        fld  dword ptr [edx+0Ch]
+        fchs
+        fstp dword ptr [esp+8]
+        lea  ecx, [eax+94h]
+    PL:
+        fld  dword ptr [ecx+4]
+        fmul dword ptr [edx+4]
+        fld  dword ptr [ecx]
+        fmul dword ptr [edx]
+        faddp st(1), st(0)
+        fld  dword ptr [ecx+8]
+        fmul dword ptr [edx+8]
+        faddp st(1), st(0)
+        fsub dword ptr [ecx+0Ch]
+        fcomp dword ptr [esp+8]
+        fnstsw ax
+        and  eax, 4100h
+        je   OUTSIDE
+        add  ecx, 14h
+        dec  esi
+        jne  PL
+        mov  eax, 1
+        pop  esi
+        ret
+    OUTSIDE:
+        xor  eax, eax
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Inside4cbb70, 0x004cbb70);

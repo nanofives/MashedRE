@@ -14281,6 +14281,13 @@ HOOKS = {
     'dot_4726b0': {'rva': 0x004726b0, 'export': 'Dot4726b0', 'signature': {'ret': 'float', 'args': ['pointer','pointer']}, 'arg_type': 'float_2ptr_ret', 'seed_pairs': [{'a': [0.1, 0.2, 0.3], 'b': [0.5, 0.7, 0.9]}, {'a': [0.2, -0.1, 0.4], 'b': [0.3, 0.6, -0.2]}, {'a': [0.05, 0.05, 0.05], 'b': [1.0, 2.0, 3.0]}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
     'dot_4726f0': {'rva': 0x004726f0, 'export': 'Dot4726f0', 'signature': {'ret': 'float', 'args': ['pointer','pointer']}, 'arg_type': 'float_2ptr_ret', 'seed_pairs': [{'a': [0.1, 0.2, 0.3], 'b': [0.5, 0.7, 0.9]}, {'a': [0.2, -0.1, 0.4], 'b': [0.3, 0.6, -0.2]}, {'a': [0.05, 0.05, 0.05], 'b': [1.0, 2.0, 3.0]}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
 
+    # ---- promote-round round 132 (6-plane inside/frustum test) --
+    'inside_4cbb70': {'rva': 0x004cbb70, 'export': 'Inside4cbb70', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'float_planes6_predicate', 'seed_sets': [
+        {'point': [1.0, 2.0, 3.0, 0.5], 'planes': [[0,0,1,0]]*6},
+        {'point': [0.0, 0.0, 0.0, 5.0], 'planes': [[0,0,0,5.0],[0,0,0,6.0],[0,0,0,7.0],[0,0,0,8.0],[0,0,0,9.0],[0,0,0,10.0]]},
+        {'point': [0.0, 0.0, 0.0, 5.0], 'planes': [[0,0,0,5.0],[0,0,0,6.0],[0,0,0,7.0],[0,0,0,8.0],[0,0,0,9.0],[0,0,0,4.0]]}
+    ], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [1]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 
