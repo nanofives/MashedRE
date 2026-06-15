@@ -648,16 +648,12 @@ bool             g_vehprev_ready = false;
 // spike renderer (D3d9Render/TrackRenderer) with an auto-orbit camera.
 bool                                  g_track_view = false;
 mashed_re::D3d9Render::TrackRenderer  g_track;
-// Round 1 (race flow): campaign track id -> TRACKS .piz. The cup display names
-// (Angel Peak, ...) don't match the AREA .piz names; the exact COURSE.LUA
-// display->area mapping is a refinement — for now each cup slot loads a distinct
-// real race track so "launch the selected track" works. [residual: real map.]
-static const char* kRaceTrackPiz[] = {
-    "Arctic", "Egypt", "City", "Forest", "Highway", "Neustein", "Storm", "SuperG" };
+// Campaign track index -> area .piz. Delegates to the real area table in
+// GameFlow (Course_Id + area .piz cracked from each COURSE.LUA), so the
+// selected track loads its correct area and TrackRenderer derives the matching
+// Course_Id/LED. (Replaces the earlier sequential guess.)
 const char* RaceTrackPizPath(int trackId, char* buf, int cap) {
-    const int n = static_cast<int>(sizeof(kRaceTrackPiz) / sizeof(kRaceTrackPiz[0]));
-    if (trackId < 0 || trackId >= n) trackId = 0;
-    std::snprintf(buf, cap, "original/TOASTART/TRACKS/%s.piz", kRaceTrackPiz[trackId]);
+    mashed_re::Race::Campaign_TrackPizPath(trackId, buf, cap);
     return buf;
 }
 constexpr float         kMenuTextHeight = 30.f;   // on-screen glyph height (px)
@@ -1379,12 +1375,31 @@ bool UpdateMenuSelection() {
             // selected cup track's .piz into the track renderer, then enter the
             // InRace state (GameFlow). RenderFrame draws the 3D track while
             // InRace; Esc returns to the menu.
+            // Selected track = the challenge-select cursor row (the cup tracks
+            // are the rows). MASHED_TRACK_SEL overrides for dev/verification.
+            int trackSel = cur;
+            char ts[8] = {};
+            if (GetEnvironmentVariableA("MASHED_TRACK_SEL", ts, sizeof(ts)) > 0)
+                trackSel = std::atoi(ts);
+            mashed_re::Race::Campaign_SetSelectedTrack(trackSel);
             char piz[160];
             RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
             if (g_track.Load(g_device, piz, kLogPath)) {
                 mashed_re::Race::RaceConfig cfg;
                 cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
                 cfg.gameMode = 6;          // challenge
+                // Player vehicle from the frontend car-select cursor
+                // (DAT_0067ea98, player-0 slot — GameModeCarSelect). MASHED_CAR_SEL
+                // overrides for dev/verification. Clamped to the vehicle table;
+                // 0/unset -> car 0 (Advantage). [residual: the car-select screen
+                // isn't interactive in the standalone yet, so the global is
+                // usually 0 — the read is wired for when it becomes live.]
+                int carSel = *reinterpret_cast<const std::int32_t*>(0x0067ea98u);
+                char cs[8] = {};
+                if (GetEnvironmentVariableA("MASHED_CAR_SEL", cs, sizeof(cs)) > 0)
+                    carSel = std::atoi(cs);
+                if (carSel < 0) carSel = 0;
+                cfg.cars[0].carIndex = carSel;
                 // Hand the engine + device to GameFlow so RaceSession::Begin can
                 // spawn the cars + start the match (activates the real sim).
                 mashed_re::Race::GameFlow_RequestRace(cfg, &g_track, g_device);

@@ -51,6 +51,10 @@ struct Cup {
 const Cup& Campaign_CurrentCup();
 int        Campaign_SelectedTrack();      // cursor within the cup
 void       Campaign_SetSelectedTrack(int);
+// Track index (into the cup / real area table) -> area .piz path + engine
+// Course_Id (cracked from each track's COURSE.LUA).
+void       Campaign_TrackPizPath(int trackIdx, char* buf, int cap);
+int        Campaign_TrackCourseId(int trackIdx);
 
 }  // namespace Race
 }  // namespace mashed_re
