@@ -2169,3 +2169,22 @@ extern "C" __declspec(dllexport) void __cdecl Set476b30(std::uint8_t* p1, std::u
     *reinterpret_cast<std::uint32_t*>(obj3 + 0x40) |= 0x2000;
 }
 RH_ScopedInstall(Set476b30, 0x00476b30);
+
+// ===== round 168 ===== (list-node const init: store *arg2 + float consts)
+// 0x00482730 — void fn(p, arg2): s=p[0x18]; count=s[0x24]; if(count<=0) return; arr=s[0x20];
+//   for(i=0;i<count;i++){ node=arr[i]; node[4]=*arg2; node[0xc]=1.0f; node[0x10]=1.0f; node[0x14]=0.5f; }
+extern "C" __declspec(dllexport) void __cdecl Init482730(std::uint8_t* p, std::uint32_t* arg2) {
+    std::uint8_t* s = *reinterpret_cast<std::uint8_t**>(p + 0x18);
+    int count = *reinterpret_cast<int*>(s + 0x24);
+    if (count <= 0) return;
+    std::uint8_t** arr = *reinterpret_cast<std::uint8_t***>(s + 0x20);
+    std::uint32_t v = *arg2;
+    for (int i = 0; i < count; i++) {
+        std::uint8_t* node = arr[i];
+        *reinterpret_cast<std::uint32_t*>(node + 4) = v;
+        *reinterpret_cast<std::uint32_t*>(node + 0xc) = 0x3f800000;
+        *reinterpret_cast<std::uint32_t*>(node + 0x10) = 0x3f800000;
+        *reinterpret_cast<std::uint32_t*>(node + 0x14) = 0x3f000000;
+    }
+}
+RH_ScopedInstall(Init482730, 0x00482730);

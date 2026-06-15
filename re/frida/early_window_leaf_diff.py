@@ -182,6 +182,7 @@ PURE_LEAF_ARGTYPES = {
     'bitmap_alloc_slot',         # u32 fn(): scan bitmap 0x6bf198 for first clear bit idx<0x100; if found rec=0x693198+idx*0x2c0; rec[0x2b0]=0,[0x2b8]=0,[0x2b4]=1,[0x2bc]=30.0f; set the bit; return idx+1; else 0. seed bitmap so first-clear=K (tests K=5,0); snapshot rec fields|bitmap byte|ret. non-degen
     'state_list_insert',         # void fn(p, _, state_src): state=*state_src; sub=p[0x20]; if(state==1 && sub[0x28]!=3) sub[0x28]=8; elif(state==3 && sub[0x28]!=5) sub[0x28]=4; sub[0x20]=state; old=p[0x14]; if(old){*(p[0x18])=old; *(old+4)=p[0x18];} node=p[0x24]+0xc; nx=*node; p[0x18]=node; p[0x14]=nx; *(nx+4)=&p[0x14]; *node=&p[0x14]. test state 1/3 (p[0x14]=0 empty list). shared bufs; snapshot sub+list ptrs. non-degen
     'multi_deref_global_set',    # void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g); obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40]|=0x2000. seed g=0 + nested chain (p1[4]=&E, E[0]=&obj, E[0x18]=&X, X[0x20]=&Ncell, Ncell=&N); t0 p2=&val n!=0, t1 p2=0(default) n=0. snapshot obj[0xc4]|N[4]|obj[0x40]. non-degen
+    'list_node_const_init',      # void fn(p, arg2): s=p[0x18]; count=s[0x24]; arr=s[0x20] (array of node ptrs); for i<count: node=arr[i]; node[4]=*arg2; node[0xc]=node[0x10]=1.0f; node[0x14]=0.5f (consts stored, no arith). seed p/s/arr/3 nodes/val; snapshot each node[4,0xc,0x10,0x14]. non-degen
 }
 
 SRC = r"""
@@ -299,6 +300,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'bitmap_alloc_slot') ? []
               : (cfg.at === 'state_list_insert') ? ['pointer','uint32','pointer']
               : (cfg.at === 'multi_deref_global_set') ? ['pointer','pointer']
+              : (cfg.at === 'list_node_const_init') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1686,6 +1688,25 @@ rpc.exports.diff = function(cfg) {
       const snapMD = function () { return [obj.add(0xc4).readU32() >>> 0, N.add(4).readU32() >>> 0, obj.add(0x40).readU32() >>> 0].join('|'); };
       try { setupMD(); Orig(p1, p2); o = snapMD(); } catch (e) { eo = e.message; }
       try { setupMD(); Reim(p1, p2); r = snapMD(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'list_node_const_init') {
+      // void fn(p, arg2): writes *arg2 + float consts (1.0,1.0,0.5) into each of count nodes
+      // (arr=s[0x20] array of ptrs, count=s[0x24], s=p[0x18]). All stores (C reimpl bit-identical).
+      const count = 3, VAL = 0xCAFE;
+      const p = Memory.alloc(0x40), s = Memory.alloc(0x40), arr = Memory.alloc(0x40), valbuf = Memory.alloc(0x40);
+      const nodes = []; for (let i = 0; i < count; i++) { const nb = Memory.alloc(0x40); _keep.push(nb); nodes.push(nb); }
+      _keep.push(p, s, arr, valbuf);
+      const setupLN = function () {
+        [p, s, arr, valbuf].forEach(function (b) { for (let z = 0; z < 0x40; z += 4) b.add(z).writeU32(0); });
+        nodes.forEach(function (nb) { for (let z = 0; z < 0x40; z += 4) nb.add(z).writeU32(0xA5A5A5A5); });
+        p.add(0x18).writePointer(s);
+        s.add(0x24).writeU32(count);
+        s.add(0x20).writePointer(arr);
+        nodes.forEach(function (nb, i) { arr.add(i * 4).writePointer(nb); });
+        valbuf.writeU32(VAL);
+      };
+      const snapLN = function () { const a = []; nodes.forEach(function (nb) {[4, 0xc, 0x10, 0x14].forEach(function (o2) { a.push(nb.add(o2).readU32() >>> 0); }); }); return a.join('|'); };
+      try { setupLN(); Orig(p, valbuf); o = snapLN(); } catch (e) { eo = e.message; }
+      try { setupLN(); Reim(p, valbuf); r = snapLN(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
