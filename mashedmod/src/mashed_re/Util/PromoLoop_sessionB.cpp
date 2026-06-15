@@ -3599,3 +3599,10 @@ RH_ScopedInstall(ZeroFill48a830, 0x0048a830);
 // third-party-library[lua-5.0] -> Lua library-skip (NOT first-party). Left C2. Lesson: the
 // near-leaf scan must check the hooks.csv SUBSYSTEM tag and skip third-party-library[*]
 // (lua/libpng/zlib/CRT), not just address bands.
+
+// [SKIPPED r210 2026-06-15] 0x004b6520 ZeroFillWrapper is ALREADY reimplemented +
+// installed in Util/TimerSlot.cpp:33 (RH_ScopedInstall(ZeroFillWrapper, 0x004b6520);
+// std::memset(p1,0,p2), observably == original FUN_004b64e0(p1,0,p2)). The near-leaf
+// scan re-surfaced an already-implemented function; a 2nd RH_ScopedInstall at the same
+// RVA would be a duplicate install. C2->C3 promoted via the EXISTING ZeroFillWrapper
+// export + a non-degenerate near_leaf_memset2 early_window diff (registry zero_fill_wrapper).

@@ -212,6 +212,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_struct_array_predicate', # int fn(void): NEAR-LEAF predicate over a pointer array at cfg.glob (cfg.count entries). For each p: checks fields via C3 getters -> returns 1/0. seed_sets[t]={entries:[{null:bool}|{fields:[[off,val],...]}]}; build structs (cfg.struct_size), set field offs, set glob[k]=struct or null; compare int return. reimpl = verbatim naked port. non-degen via null/match-early/all-pass
     'near_leaf_global_str_search', # void* fn(query): NEAR-LEAF wrapper = C3 circular-list case-insensitive search(*cfg.glob, query). build 3-node alpha/beta/gamma circular list, set *cfg.glob=list head; seed_sets[t]={q}; compare returned ptr. reimpl = verbatim naked port. non-degen via match(distinct node ptrs)/miss(0)
     'near_leaf_list_search',     # u32 fn(key): NEAR-LEAF wrapper = C3 list-search(cfg.glob, key) walking *(glob[0x10]) via node[0x30], returns node[0] where node[8]==key else -1. seed_sets[t]={empty:bool, query, nodes:[[key,val],...]}; build nodes (node[0]=val,[8]=key,[0x30]=next), set glob[0x10]=head or 0; compare u32 return. reimpl = verbatim naked port. non-degen via found(val)/empty(-1)/miss(-1)
+    'near_leaf_memset2',         # void fn(dest, count): NEAR-LEAF = C3 memset(dest, 0, count). seed_sets[t]={count}; dest pre-filled 0xCC, snapshot dest[0x20] (first count bytes -> 0, rest 0xCC). reimpl = verbatim naked port. non-degen via varied count (zero-extent)
 }
 
 SRC = r"""
@@ -359,6 +360,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_struct_array_predicate') ? []
               : (cfg.at === 'near_leaf_global_str_search') ? ['pointer']
               : (cfg.at === 'near_leaf_list_search') ? ['uint32']
+              : (cfg.at === 'near_leaf_memset2') ? ['pointer','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1826,6 +1828,21 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedL(); o = Orig(sp.query >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { seedL(); r = Reim(sp.query >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_memset2') {
+      // void f(dest, count): NEAR-LEAF zero-fill via C3 memset callee.
+      // Pre-fill a 0x80 buffer with 0xCC, call f(dest, count), snapshot a fixed
+      // 0x20 window. First `count` bytes -> 0x00, the rest stay 0xCC -> the
+      // boundary varies per count (NON-DEGENERATE) and proves a bounded fill.
+      const sp = (cfg.seed_sets || [])[t | 0] || { count: 0 };
+      const dst = Memory.alloc(0x80); _keep.push(dst);
+      const seedM = function () { for (let z = 0; z < 0x80; z++) dst.add(z).writeU8(0xCC); };
+      const snap = function () {
+        const u = new Uint8Array(dst.readByteArray(0x20)); let s = '';
+        for (let k = 0; k < u.length; k++) s += ('0' + u[k].toString(16)).slice(-2);
+        return s;
+      };
+      try { seedM(); Orig(dst, sp.count >>> 0); o = snap(); } catch (e) { eo = e.message; }
+      try { seedM(); Reim(dst, sp.count >>> 0); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

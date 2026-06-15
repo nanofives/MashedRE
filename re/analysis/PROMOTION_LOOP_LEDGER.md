@@ -10,8 +10,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 ## Counters
 
 - rounds_run: 210
-- total_green: 375
-- dry_counter: 1
+- total_green: 376
+- dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
   re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 210 | near-leaf #21: memset wrapper (NEW handler near_leaf_memset2) | attempted 1 | GREEN 1 (ZeroFillWrapper 0x004b6520: FUN_004b64e0(p1,0,p2) = memset count bytes to 0) | total_green 375->376 (376/1000). dry_counter 1->0. Caller SlotBlockZero 0x422a80 C3, callee MemsetInline 0x4b64e0 C3 (subsystem util, NOT lua/library — passed r209's subsystem-tag gate). KEY FINDING: the near-leaf scan re-surfaced an ALREADY-IMPLEMENTED function — 0x4b6520 was already reimpl'd+installed as ZeroFillWrapper in Util/TimerSlot.cpp:33 (std::memset, observably == orig). My drafted naked ZeroFill4b6520 was a DUPLICATE RH_ScopedInstall at the same RVA (reverted to a comment). LESSON: before authoring a near-leaf reimpl, grep mashedmod/src for an existing RH_ScopedInstall at the RVA (the scan doesn't dedup against shipped reimpls). NEW handler near_leaf_memset2: pre-fill dst 0xCC, call f(dst,count), snapshot fixed 0x20 window -> filled->0/rest->0xCC boundary varies per count (10/16/7/0 = 4 distinct fingerprints) AND boundary echo proves a bounded fill -> non-degen. 21 near-leaf shapes. Session 101-210 net = +119 (257->376). ~87 handlers. Context 87 rounds deep. PATH TO 1000 (624 more) = promote-c3-batch fanout (awaiting opt-in).
 
 2026-06-15 | round 209 | LUA library-skip (no promotion) | attempted 1 (0x4c2dc0) -> REVERTED as Lua | GREEN 0 | dry_counter 0->1. 0x4c2dc0 (list-search wrapper via C3 0x4d7db0=RwPluginExtensionSlotGet) reimpl'd + GREEN non-degen (-1/0xBBBB/-1), BUT its hooks.csv subsystem tag is third-party-library[lua-5.0] -> Lua 5.0 library -> library-skip per the ruling. Reverted (reimpl+registry removed, left C2). AUDIT: NO green-earlywindow C3 this session has a lua/third-party subsystem tag (clean); 0x4b9540/0x4b7020 in the Lua addr-range are r116 (prior session) + tagged input/render. LESSON (bake into selection): the near-leaf scan must check the hooks.csv SUBSYSTEM tag and skip third-party-library[*] (lua band ~0x4b6fc0-0x4c2dc0 is MIXED with game code, so address-band exclusion over-excludes -> use the per-fn subsystem tag). Also the gate caught that 0x4c2dc0's 3 callers are C1 (would've failed caller-C2+ anyway). Session 101-209 net = +118 (257->375, unchanged). ~86 handlers. Context 86 rounds deep. PATH TO 1000 (625 more) = promote-c3-batch fanout (awaiting opt-in).
 

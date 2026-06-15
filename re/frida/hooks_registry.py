@@ -5268,33 +5268,22 @@ HOOKS = {
         'path2_tests':    [0x00000000, 0x00000005, 0xDEADBEEF],
     },
 
-    # 0x004b6520  ZeroFillWrapper â€” memset(p1, 0, p2).
-    # Pure CRT wrapper. arg_type='bytes_inplace' allocates a buffer per side,
-    # writes input bytes via test.init, calls fn(buf, len), fingerprints
-    # readback. Both sides should produce all-zero buffer.
+    # 0x004b6520  ZeroFillWrapper - memset(dest, 0, count) wrapper over C3 callee
+    # FUN_004b64e0. NEAR-LEAF: callee 0x4b64e0 is C3 (input/MemsetInline, pure-leaf
+    # word-then-byte memset). Existing reimpl ZeroFillWrapper (Util/TimerSlot.cpp:33,
+    # std::memset(p1,0,p2)) is observably == original (both zero exactly `count`
+    # bytes, byte at `count` untouched). near_leaf_memset2 handler pre-fills dest
+    # with 0xCC, calls f(dest,count), snapshots a fixed 0x20 window -> the
+    # filled->0 / rest->0xCC boundary varies per count => NON-DEGENERATE (and the
+    # boundary echo proves a bounded memset, not an over-write).
     'zero_fill_wrapper': {
         'rva':            0x004b6520,
         'export':         'ZeroFillWrapper',
         'signature':      {'ret': 'void', 'args': ['pointer', 'uint32']},
-        'arg_type':       'bytes_inplace',
-        'lut_root_delta': 0,
-        'path1_tests':    [
-            {'init': [0xAA] * 8,  'len': 8},
-            {'init': [0xFF] * 16, 'len': 16},
-            {'init': [0x55] * 32, 'len': 32},
-            {'init': [0xCD] * 64, 'len': 64},
-            {'init': [0xDE,0xAD,0xBE,0xEF,0xCA,0xFE,0xBA,0xBE], 'len': 8},
-            {'init': [],          'len': 0},
-            {'init': [0x42] * 4,  'len': 4},
-            {'init': [0x99] * 128,'len': 128},
-            {'init': [0x77] * 1,  'len': 1},
-            {'init': [0x33] * 256,'len': 256},
-        ],
-        'path2_tests':    [
-            {'init': [0xAA] * 8,  'len': 8},
-            {'init': [],          'len': 0},
-            {'init': [0xFF] * 32, 'len': 32},
-        ],
+        'arg_type':       'near_leaf_memset2',
+        'seed_sets':      [{'count': 10}, {'count': 16}, {'count': 7}, {'count': 0}],
+        'path1_tests':    [0, 1, 2, 3],
+        'path2_tests':    [0, 1, 2, 3],
     },
 
     # 0x004c5800  RwTexDictionarySetCurrent â€” writes param_1 to dynamic
