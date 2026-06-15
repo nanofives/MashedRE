@@ -2388,3 +2388,28 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum420de0(void
     }
 }
 RH_ScopedInstall(Accum420de0, 0x00420de0);
+
+// 0x004938e0  FUN_004938e0 (util, linked-list walk-to-self then global-offset write)
+// void f(int* p, uint32 value):
+//   node = *p;
+//   while (node != *node) node = *node;       // walk until a self-pointing node
+//   *(uint32*)(*(uint32*)0x911ae4 + node) = value;   // global base + node
+// global 0x911ae4 is .bss (zero at process start) so the store lands on the
+// terminal node's first dword. Pure integer/pointer; VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Walk4938e0(void)
+{
+    __asm {
+        mov  eax, dword ptr [esp+4]         // p
+        mov  ecx, dword ptr [eax]           // *p
+    L_WK_LOOP:
+        mov  eax, ecx
+        mov  ecx, dword ptr [eax]
+        cmp  eax, ecx
+        jne  L_WK_LOOP
+        mov  ecx, dword ptr [esp+8]         // value
+        mov  edx, dword ptr ds:[0911AE4h]   // global base
+        mov  dword ptr [edx+eax], ecx
+        ret
+    }
+}
+RH_ScopedInstall(Walk4938e0, 0x004938e0);

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 174
-- total_green: 347
+- rounds_run: 175
+- total_green: 348
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 174 | linked-list walk-to-self + global-offset write (NEW handler) | attempted 1 | GREEN 1 (Walk4938e0 0x004938e0: node=*p; while(node!=*node) node=*node; *(*0x911ae4 + node)=value) | total_green 347->348 (348/1000). Status-prechecked C2; caller FUN_00403910 C2, zero-callee leaf. NEW handler list_walk_self_write (build p->n0->..->n[len-1](self); global 0x911ae4 is .bss-zero at suspended-spawn so store lands on terminal[0]; chains len 3/1/2 -> distinct values). LESSON: a .bss-zero global used as an ADDITIVE base (base+node) collapses to a clean known target at suspended-spawn -> buildable; verify the global is bss-tail (raw-size bound) first. Pure integer/pointer -> verbatim naked port. Session 101-174 = +91 (257->348). ~64 handlers. THIS CONTEXT did rounds 124-174 = +56 (292->348). QUEUE: remaining frontier is dominated by naked x87 float loops (0x4b4550 fld-st(N) juggling = OFF-LIMITS, 0x4c4270) + CRT(0x5cxxxx skip) + .bss-dead + transcendental; need a fresh scout for integer/store leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~652. Context 51 rounds deep — fresh context strongly advised.
 
 2026-06-15 | round 173 | __fastcall float accumulate + min-clamp (NEW handler, naked x87) | attempted 1 | GREEN 1 (Accum420de0 0x00420de0: base[idx]=min(val+base[idx], 50.0f), fcomp on 80-bit sum vs .rdata 0x5cd120) | total_green 346->347 (347/1000). Status-prechecked C2; caller FUN_004215c0 C2, zero-callee leaf. NEW handler fastcall_float_clamp (ORIG via mov ecx=idx/edx=base + push valbits + call trampoline; REIMPL naked __cdecl reading cdecl stack args but EXACT x87). LESSON: when an x87 fn does fst (store, KEEPS st0) then fcomp, the compare is on the UNROUNDED 80-bit value -> a plain-C `float v=...; if(v>k)` diverges at the boundary; must naked-port the exact fld/fadd/fst/fcomp. Also: a register-convention (fastcall) ORIG can be diffed by a mov-regs+push+call trampoline while the REIMPL stays naked-cdecl-stack-args (only the COMPUTATION must match, not the ABI; cf esi_edx_predicate). 5 seeds = 15.0/50.0/-16.5/3.75/50.0 (clamp+pass-through+negative+near-boundary). Session 101-173 = +90 (257->347). ~63 handlers. THIS CONTEXT did rounds 124-173 = +55 (292->347). NEXT-ROUND SCOUTING: 0x4938e0 = list-walk-to-self (mov ecx,[eax]; loop while eax!=*eax) then *(global 0x911ae4 + node)=arg2 — buildable if 0x911ae4 in-bounds (build a self-terminal node, seed/observe the write). QUEUE: 0x4938e0 then naked x87 float loops (0x4b4550, 0x4c4270) + CRT(skip)/.bss-dead/transcendental; promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~653. Context 50 rounds deep — fresh context strongly advised.
 

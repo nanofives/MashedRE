@@ -188,6 +188,7 @@ PURE_LEAF_ARGTYPES = {
     'struct_delta_flag_init',    # u32 fn(out,a,b,c,d): copies d.xy->out[0x10/0x14], a.xy->out[0x40/0x44]; deltas out[0x28]=c[0]-d[0], out[0x2c]=c[4]-d[4], out[0x58]=b[0]-a[0], out[0x5c]=b[4]-a[4]; fcomp each vs 0x5d757c -> out[0x64] |=2 or &=~2; return out. seed a/b/c/d xy; snapshot out fields+flag+ret. reimpl VERBATIM naked __asm (single fsubs + fcomp). non-degen
     'table_accum_clamp',         # void fn(a1, p2, p3): idx=*p3; d=((int16)tblA[0x634498][idx]*(2*(a1&7)+1))>>3(logical); *p2 += (a1&8)?-d:+d, clamp[-32768,32767]; *p3 += (int16)tblB[0x634478][a1], clamp[0,88]. tables are absolute .rdata (read identically both sides). seed_sets[t]={a1,v2,v3}; snapshot *p2|*p3. reimpl VERBATIM naked __asm. non-degen via varied a1/idx + both clamps
     'fastcall_float_clamp',      # void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val float): v(80bit)=val+base[idx]; base[idx]=(float32)v (fst keeps st0); if v(80bit) > 50.0 (fcomp vs .rdata 0x5cd120) base[idx]=50.0f. ORIG via mov ecx/edx + push valbits + call trampoline; REIMPL naked __cdecl reading cdecl stack args (idx,base,val) but EXACT x87 (fld/fadd/fst/fcomp 0x5cd120) so the 80-bit compare matches. seed_sets[t]={idx,cur,val}; snapshot base[idx] u32. non-degen via clamp + pass-through paths
+    'list_walk_self_write',      # void fn(p, value): node=*p; while(node!=*node) node=*node (walk linked list until a self-pointing node); *(uint32*)(*0x911ae4 + node)=value. global 0x911ae4 is .bss-zero at suspended-spawn so target=terminal node addr -> writes value to terminal[0]. build a chain p->n0->..->n[len-1](self). seed_sets[t]={len,value}; snapshot terminal[0]. reimpl VERBATIM naked __asm. non-degen via distinct values
 }
 
 SRC = r"""
@@ -311,6 +312,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'struct_delta_flag_init') ? ['pointer','pointer','pointer','pointer','pointer']
               : (cfg.at === 'table_accum_clamp') ? ['uint32','pointer','pointer']
               : (cfg.at === 'fastcall_float_clamp') ? ['uint32','pointer','float']
+              : (cfg.at === 'list_walk_self_write') ? ['pointer','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1763,6 +1765,23 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'list_walk_self_write') {
+      // void fn(p, value): node=*p; while(node!=*node) node=*node; *(*0x911ae4 + node)=value.
+      // global is .bss-zero at spawn -> writes value to terminal[0]. seed_sets[t]={len,value}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { len: 1, value: 0 };
+      const LEN = Math.max(1, sp.len | 0);
+      const pW = Memory.alloc(0x10); _keep.push(pW);
+      const nodesW = []; for (let k = 0; k < LEN; k++) { const b = Memory.alloc(0x40); _keep.push(b); nodesW.push(b); }
+      const buildW = function () {
+        for (let k = 0; k < LEN; k++) {
+          for (let z = 0; z < 0x40; z += 4) nodesW[k].add(z).writeU32(0);
+          nodesW[k].writePointer(k < LEN - 1 ? nodesW[k + 1] : nodesW[k]); // terminal self-points
+        }
+        pW.writePointer(nodesW[0]);
+      };
+      const termW = function () { return nodesW[LEN - 1].readU32() >>> 0; };
+      try { buildW(); Orig(pW, sp.value >>> 0); o = termW(); } catch (e) { eo = e.message; }
+      try { buildW(); Reim(pW, sp.value >>> 0); r = termW(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'fastcall_float_clamp') {
       // void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val): base[idx] = min(val+base[idx], 50.0f)
       // with the compare on the 80-bit sum. ORIG via mov ecx/edx + push valbits + call trampoline;

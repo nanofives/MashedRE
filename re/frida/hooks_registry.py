@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'walk_4938e0': {'rva': 0x004938e0, 'export': 'Walk4938e0', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'list_walk_self_write',
+        'seed_sets': [
+            {'len': 3, 'value': 0x11223344},   # walk n0->n1->n2(self); terminal[0]=0x11223344
+            {'len': 1, 'value': 0x55667788},   # p->n0(self); terminal[0]=0x55667788
+            {'len': 2, 'value': 0xCAFEBABE},   # terminal[0]=0xCAFEBABE
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'accum_420de0': {'rva': 0x00420de0, 'export': 'Accum420de0', 'signature': {'ret': 'void', 'args': ['uint32','pointer','float']}, 'arg_type': 'fastcall_float_clamp',
         'seed_sets': [
             {'idx': 2, 'cur': 10.0,  'val': 5.0},    # v=15.0  -> 15.0  (pass-through)
