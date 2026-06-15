@@ -14288,6 +14288,9 @@ HOOKS = {
         {'point': [0.0, 0.0, 0.0, 5.0], 'planes': [[0,0,0,5.0],[0,0,0,6.0],[0,0,0,7.0],[0,0,0,8.0],[0,0,0,9.0],[0,0,0,4.0]]}
     ], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [1]},
 
+    # ---- promote-round round 133 (value -> 3-component split, EAX=v/EDI=out) --
+    'split_41e170': {'rva': 0x0041e170, 'export': 'Split41e170', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'eax_edi_out', 'lut_root_delta': 0, 'path1_tests': [123456, 7890, 100000], 'path2_tests': [123456]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 

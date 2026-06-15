@@ -147,6 +147,7 @@ PURE_LEAF_ARGTYPES = {
     'float_vec3_lerp_out',       # void fn(out*, a*, b*, float t): out[k] = a[k] + t*(b[k]-a[k]) per component (pure x87). Seed a,b vec3 (cfg.seed_a/seed_b = 3 u32 float-bit-patterns) + t (cfg.t_bits), call, observe out[0..2] as u32 bit patterns. Reimpl is VERBATIM naked __asm (bit-identical x87; a C float reimpl would round differently). seed-controlled -> non-degen by construction
     'float_2ptr_ret',            # float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain numbers), call, compare float return as u32 bit pattern. Reimpl is VERBATIM naked __asm (bit-identical x87). test=index into seed_pairs (varied -> non-degen). signature ret MUST be 'float'
     'float_planes6_predicate',   # u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14 (x,y,z,w); for each test dot(plane.xyz,point.xyz)-plane.w vs -point.w; return 1 if all pass else 0. Seed from cfg.seed_sets[t]={point:[4 floats], planes:[6 lists of 4 floats]}; distinct plane.w verifies the 0x14 stride. Reimpl is VERBATIM naked __asm. test=index (results vary 0/1 -> non-degen)
+    'eax_edi_out',               # void fn(EAX=v, EDI=out*): writes out[0..2] computed from v. ORIG via `mov eax,v; mov edi,outbuf; jmp` trampoline; REIMPL __cdecl(v, out) (compares out[0..2], not ABI). test=v (varied -> distinct outputs -> non-degen). use for integer fns whose magic-multiply == plain C integer division
 }
 
 SRC = r"""
@@ -229,6 +230,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'float_vec3_lerp_out') ? ['pointer','pointer','pointer','float']
               : (cfg.at === 'float_2ptr_ret') ? ['pointer','pointer']
               : (cfg.at === 'float_planes6_predicate') ? ['pointer','pointer']
+              : (cfg.at === 'eax_edi_out') ? ['uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1048,6 +1050,23 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runP6(Orig); } catch (e) { eo = e.message; }
       try { r = runP6(Reim); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_edi_out') {
+      // void fn(EAX=v, EDI=out*): writes out[0..2] derived from v. ORIG via reg trampoline
+      // (mov eax,v; mov edi,outbuf; jmp). REIMPL is __cdecl(v, out) -> compares out[0..2],
+      // not the ABI. test=v (varied -> distinct splits -> non-degen).
+      const v = t | 0;
+      const ob1 = Memory.alloc(0x40), ob2 = Memory.alloc(0x40); _keep.push(ob1, ob2);
+      const mkED = function (target, outp) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writeS32(v);                 // mov eax, v
+        tr.add(5).writeU8(0xBF); tr.add(6).writePointer(outp);   // mov edi, outp
+        tr.add(10).writeU8(0xE9); tr.add(11).writeS32(target.sub(tr.add(15)).toInt32()); // jmp
+        Memory.protect(tr, 32, 'rwx');
+        return new NativeFunction(tr, 'void', [], 'mscdecl');
+      };
+      const rdE = function (buf) { const a = []; for (let k = 0; k < 3; k++) a.push(buf.add(k * 4).readU32() >>> 0); return a.join('|'); };
+      try { for (let z = 0; z < 0x40; z += 4) ob1.add(z).writeU32(0); mkED(ptr(cfg.rva), ob1)(); o = rdE(ob1); } catch (e) { eo = e.message; }
+      try { for (let z = 0; z < 0x40; z += 4) ob2.add(z).writeU32(0); Reim(v >>> 0, ob2); r = rdE(ob2); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

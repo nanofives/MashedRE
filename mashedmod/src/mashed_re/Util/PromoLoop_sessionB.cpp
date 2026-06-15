@@ -1522,3 +1522,18 @@ extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl Inside4
     }
 }
 RH_ScopedInstall(Inside4cbb70, 0x004cbb70);
+
+// ===== round 133 ===== (value -> 3-component split; EAX=v in, EDI=out)
+// 0x0041e170 — byte-verified: a=v/6000; out[0]=a; rem1=v-a*6000; b=rem1/100; out[1]=b;
+//   out[2]=v-(a*60+b)*100. The original uses magic-multiply reciprocals (0x57619f1>>39,
+//   0x51eb851f>>37) which equal signed integer division, so plain C `/` is bit-identical.
+extern "C" __declspec(dllexport) void __cdecl Split41e170(std::uint32_t v, int* out) {
+    int vi = static_cast<int>(v);
+    int a = vi / 6000;
+    out[0] = a;
+    int rem1 = vi - a * 6000;
+    int b = rem1 / 100;
+    out[1] = b;
+    out[2] = vi - (a * 60 + b) * 100;
+}
+RH_ScopedInstall(Split41e170, 0x0041e170);
