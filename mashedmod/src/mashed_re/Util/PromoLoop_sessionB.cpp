@@ -3578,3 +3578,19 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroFill48ade0(v
     }
 }
 RH_ScopedInstall(ZeroFill48ade0, 0x0048ade0);
+
+// 0x0048a830  FUN_0048a830 (particle, NEAR-LEAF: zero a global + zero-fill, sibling of 0x48ade0)
+// void f(void): *0x71fa34 = 0; FUN_004b6480(0x7151f0, 0x200). Callee 0x4b6480 C3. Verbatim naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ZeroFill48a830(void)
+{
+    __asm {
+        push 0x200
+        push 07151F0h
+        mov  dword ptr ds:[071FA34h], 0
+        mov  eax, 04B6480h
+        call eax
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(ZeroFill48a830, 0x0048a830);

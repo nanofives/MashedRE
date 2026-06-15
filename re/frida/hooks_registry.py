@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'zerofill_48a830': {'rva': 0x0048a830, 'export': 'ZeroFill48a830', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x0071fa34, 0x007151f0, 0x0071522c, 0x00715230],
+        'seed_sets': [
+            {'globals': [[0x0071fa34, 0xDEAD], [0x007151f0, 0xAAAAAAAA], [0x0071522c, 0xAAAAAAAA], [0x00715230, 0xAAAAAAAA]]},   # gfa34->0, filled->0, boundary->aa
+            {'globals': [[0x0071fa34, 0xBEEF], [0x007151f0, 0xBBBBBBBB], [0x0071522c, 0xBBBBBBBB], [0x00715230, 0xBBBBBBBB]]},   # ->0, ->0, boundary->bb
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
     'zerofill_48ade0': {'rva': 0x0048ade0, 'export': 'ZeroFill48ade0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
         'observe_addrs': [0x007151f0, 0x0071520c, 0x0071522c, 0x00715230],
         'seed_sets': [
