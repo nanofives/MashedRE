@@ -2359,3 +2359,32 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum5b6b00(void
     }
 }
 RH_ScopedInstall(Accum5b6b00, 0x005b6b00);
+
+// 0x00420de0  FUN_00420de0 (vehicle, __fastcall float accumulate + min-clamp)
+// void __fastcall f(ECX=idx, EDX=base, [esp+4]=val):
+//   st0 = val + base[idx]            (80-bit sum)
+//   base[idx] = (float32)st0         (fst keeps st0)
+//   if (st0 > 50.0)  base[idx] = 50.0f    (fcomp vs .rdata 0x5cd120 == 50.0f)
+// The compare is on the 80-bit sum (fst stored the rounded f32 but st0 retains
+// the unrounded value), so a plain-C `float v = ...; if (v>50.f)` would diverge
+// at the boundary. Reimpl is a VERBATIM naked x87 port. Exported __cdecl reading
+// stack args (idx,base,val) — only the COMPUTATION must match, not the ABI; the
+// early_window harness drives the original via a fastcall trampoline.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum420de0(void)
+{
+    __asm {
+        mov  edx, dword ptr [esp+8]         // base (arg2)
+        mov  ecx, dword ptr [esp+4]         // idx  (arg1)
+        fld  dword ptr [esp+0x0c]           // val  (arg3)
+        fadd dword ptr [edx+ecx*4]
+        fst  dword ptr [edx+ecx*4]
+        fcomp dword ptr ds:[05CD120h]
+        fnstsw ax
+        test ah, 41h
+        jne  L_AC_DONE
+        mov  dword ptr [edx+ecx*4], 042480000h   // 50.0f
+    L_AC_DONE:
+        ret
+    }
+}
+RH_ScopedInstall(Accum420de0, 0x00420de0);

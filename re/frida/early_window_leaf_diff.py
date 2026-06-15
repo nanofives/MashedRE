@@ -187,6 +187,7 @@ PURE_LEAF_ARGTYPES = {
     'trie_walk',                 # u32 fn(node, key, depth): while(depth){ depth--; idx=key&0xf; key>>=4; node=*(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18] (byte in AL, dirty upper=node ptr). build depth-2 trie w/ 2 paths (keys 0x21->leaf1[0x18]=0x77, 0x35->leaf2[0x18]=0x88); shared bufs; compare ret. non-degen
     'struct_delta_flag_init',    # u32 fn(out,a,b,c,d): copies d.xy->out[0x10/0x14], a.xy->out[0x40/0x44]; deltas out[0x28]=c[0]-d[0], out[0x2c]=c[4]-d[4], out[0x58]=b[0]-a[0], out[0x5c]=b[4]-a[4]; fcomp each vs 0x5d757c -> out[0x64] |=2 or &=~2; return out. seed a/b/c/d xy; snapshot out fields+flag+ret. reimpl VERBATIM naked __asm (single fsubs + fcomp). non-degen
     'table_accum_clamp',         # void fn(a1, p2, p3): idx=*p3; d=((int16)tblA[0x634498][idx]*(2*(a1&7)+1))>>3(logical); *p2 += (a1&8)?-d:+d, clamp[-32768,32767]; *p3 += (int16)tblB[0x634478][a1], clamp[0,88]. tables are absolute .rdata (read identically both sides). seed_sets[t]={a1,v2,v3}; snapshot *p2|*p3. reimpl VERBATIM naked __asm. non-degen via varied a1/idx + both clamps
+    'fastcall_float_clamp',      # void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val float): v(80bit)=val+base[idx]; base[idx]=(float32)v (fst keeps st0); if v(80bit) > 50.0 (fcomp vs .rdata 0x5cd120) base[idx]=50.0f. ORIG via mov ecx/edx + push valbits + call trampoline; REIMPL naked __cdecl reading cdecl stack args (idx,base,val) but EXACT x87 (fld/fadd/fst/fcomp 0x5cd120) so the 80-bit compare matches. seed_sets[t]={idx,cur,val}; snapshot base[idx] u32. non-degen via clamp + pass-through paths
 }
 
 SRC = r"""
@@ -309,6 +310,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'trie_walk') ? ['pointer','uint32','uint32']
               : (cfg.at === 'struct_delta_flag_init') ? ['pointer','pointer','pointer','pointer','pointer']
               : (cfg.at === 'table_accum_clamp') ? ['uint32','pointer','pointer']
+              : (cfg.at === 'fastcall_float_clamp') ? ['uint32','pointer','float']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1761,6 +1763,31 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'fastcall_float_clamp') {
+      // void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val): base[idx] = min(val+base[idx], 50.0f)
+      // with the compare on the 80-bit sum. ORIG via mov ecx/edx + push valbits + call trampoline;
+      // REIMPL is naked __cdecl(idx,base,val) doing the exact x87. seed_sets[t]={idx,cur,val}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { idx: 0, cur: 0.0, val: 0.0 };
+      const base = Memory.alloc(0x40), scr = Memory.alloc(8); _keep.push(base, scr);
+      const seedFC = function () {
+        for (let z = 0; z < 0x40; z += 4) base.add(z).writeU32(0);
+        base.add((sp.idx | 0) * 4).writeFloat(sp.cur);
+      };
+      scr.writeFloat(sp.val); const valBits = scr.readU32() >>> 0;
+      const mkFC = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        let p = 0;
+        tr.add(p).writeU8(0xB9); tr.add(p + 1).writeU32((sp.idx | 0) >>> 0); p += 5; // mov ecx, idx
+        tr.add(p).writeU8(0xBA); tr.add(p + 1).writePointer(base); p += 5;           // mov edx, base
+        tr.add(p).writeU8(0x68); tr.add(p + 1).writeU32(valBits); p += 5;            // push valBits
+        tr.add(p).writeU8(0xE8); tr.add(p + 1).writeS32(target.sub(tr.add(p + 5)).toInt32()); p += 5; // call target
+        tr.add(p).writeU8(0x83); tr.add(p + 1).writeU8(0xC4); tr.add(p + 2).writeU8(0x04); p += 3;    // add esp, 4
+        tr.add(p).writeU8(0xC3); p += 1;                                             // ret
+        Memory.protect(tr, 32, 'rwx');
+        return new NativeFunction(tr, 'void', [], 'mscdecl');
+      };
+      try { seedFC(); mkFC(ptr(cfg.rva))(); o = base.add((sp.idx | 0) * 4).readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { seedFC(); Reim(sp.idx >>> 0, base, sp.val); r = base.add((sp.idx | 0) * 4).readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'table_accum_clamp') {
       // void fn(a1, p2, p3): p2/p3 are int32 counters. idx=*p3 -> tblA (0x634498) signed
       // word; scaled by (2*(a1&7)+1), >>3 (logical), added/subbed into *p2 by (a1&8) and

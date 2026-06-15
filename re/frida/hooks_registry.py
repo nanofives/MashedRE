@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'accum_420de0': {'rva': 0x00420de0, 'export': 'Accum420de0', 'signature': {'ret': 'void', 'args': ['uint32','pointer','float']}, 'arg_type': 'fastcall_float_clamp',
+        'seed_sets': [
+            {'idx': 2, 'cur': 10.0,  'val': 5.0},    # v=15.0  -> 15.0  (pass-through)
+            {'idx': 3, 'cur': 48.0,  'val': 10.0},   # v=58.0  -> 50.0  (clamp)
+            {'idx': 5, 'cur': -20.0, 'val': 3.5},    # v=-16.5 -> -16.5 (pass-through, negative)
+            {'idx': 0, 'cur': 1.5,   'val': 2.25},   # v=3.75  -> 3.75  (pass-through)
+            {'idx': 7, 'cur': 49.9,  'val': 0.2},    # v~=50.1 -> 50.0  (near-boundary clamp)
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'accum_5b6b00': {'rva': 0x005b6b00, 'export': 'Accum5b6b00', 'signature': {'ret': 'void', 'args': ['uint32','pointer','pointer']}, 'arg_type': 'table_accum_clamp',
         'seed_sets': [
             {'a1': 0,  'v2': 100,     'v3': 3},     # mult=1 add; tblA[3]=10  -> *p2=101;  *p3=3+(-1)=2
