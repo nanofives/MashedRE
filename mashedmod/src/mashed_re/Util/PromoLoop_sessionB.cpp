@@ -4226,3 +4226,41 @@ extern "C" __declspec(dllexport) int __cdecl EngineRegisterFuncs4d8570(void)
     return 1;
 }
 RH_ScopedInstall(EngineRegisterFuncs4d8570, 0x004d8570);
+
+// 0x0041e4b0 FUN_0041e4b0 (gameplay, StructPropagate) — EAX-implicit struct ptr, no calls.
+// void f(EAX=s): if (s[0x1b4] == s[0x1b8]) return; s[0x1b8] = s[0x1b4]; then for each
+// of 12 sub-object offsets, write table[s[0x1b4]] (table @0x63d5f8) into a 4-level
+// deref chain: p=s[OFF]; p=p[0x18]; p=p[0x20]; p=*p; p[4]=table[idx]. capstone-verified.
+static void __cdecl F41e4b0_Body(unsigned char* s)
+{
+    const int idx = *reinterpret_cast<int*>(s + 0x1b4);
+    if (idx == *reinterpret_cast<int*>(s + 0x1b8)) return;
+    *reinterpret_cast<int*>(s + 0x1b8) = idx;
+    static const unsigned offs[12] = {
+        0x108, 0x10c, 0x110, 0x114, 0x118, 0x11c,
+        0x120, 0x124, 0x128, 0x12c, 0x178, 0x174,
+    };
+    for (int k = 0; k < 12; k++) {
+        const int val = *reinterpret_cast<int*>(
+            0x0063d5f8u + static_cast<unsigned>(*reinterpret_cast<int*>(s + 0x1b4)) * 4u);
+        unsigned char* p = *reinterpret_cast<unsigned char**>(s + offs[k]);
+        p = *reinterpret_cast<unsigned char**>(p + 0x18);
+        p = *reinterpret_cast<unsigned char**>(p + 0x20);
+        p = *reinterpret_cast<unsigned char**>(p);
+        *reinterpret_cast<int*>(p + 4) = val;
+    }
+}
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl StructPropagate41e4b0(void)
+{
+    __asm {
+        push  ebp
+        mov   ebp, esp
+        push  eax
+        call  F41e4b0_Body
+        add   esp, 4
+        mov   esp, ebp
+        pop   ebp
+        ret
+    }
+}
+RH_ScopedInstall(StructPropagate41e4b0, 0x0041e4b0);

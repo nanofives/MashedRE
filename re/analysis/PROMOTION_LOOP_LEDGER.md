@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 233
-- total_green: 398
+- rounds_run: 234
+- total_green: 399
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 234 | L3 frontier — EAX-implicit struct propagator (naked wrapper + C body) | attempted 1 | GREEN 1 (StructPropagate41e4b0 0x0041e4b0, render: index-gated table-value propagation into 12 deref chains) | total_green 398->399 (399/1000). PURE LEAF EAX-implicit, 379B but only 1 branch. if(s[0x1b4]==s[0x1b8])return; else s[0x1b8]=idx; 12x write table[idx] via s[OFF]->+0x18->+0x20->*->+4. NEW handler eax_struct_deref_write (mov eax,sbuf;jmp target trampoline; all 12 offsets -> one shared chain P1..P4; seed table). 2/2 GREEN non-degen (changed->table[3] / no-op->sentinel). GOTCHA: 0xD00D0000|x in JS is signed -> writeU32 'expected unsigned integer' -> append >>>0. Caller FUN_0041e6c0 C2. ~5 CLEAN frontier remain. Session 101-234 net = +142 (257->399). Context 111 rounds deep. PATH TO 1000 (601 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 233 | L3 frontier — C reimpl (straight-line funcptr registration) | attempted 1 | GREEN 1 (EngineRegisterFuncs4d8570/RwEngineRegisterStringFunctions 0x004d8570, render) | total_green 397->398 (398/1000). PURE LEAF int f(void): 36 straight-line insns, 0 branches/calls -> registers 17 funcptr constants into (*0x7d3ff8)+0xc4..0x104; ret 1. NEW handler engine_register_funcs (seed *glob=struct sentinel-filled, observe ret + 17 fields). 2/2 GREEN non-degen (all 17 distinct constants written). LESSON: big functions aren't always hard — check branch/call count first (this 272B fn was trivial: pure straight-line). Caller FUN_004c32b0 C2. ~6 CLEAN frontier remain (456eb0 EAX-min/5c95b0 bitpack/48f590/41e4b0). Session 101-233 net = +141 (257->398). Context 110 rounds deep. PATH TO 1000 (602 more) = this method (~1/round) or fanout.
 

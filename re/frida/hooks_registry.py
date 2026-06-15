@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0041e4b0 StructPropagate41e4b0 (gameplay) - PURE LEAF EAX-implicit void f(EAX=s):
+    # if(s[0x1b4]==s[0x1b8]) return; s[0x1b8]=s[0x1b4]; write table[idx](@0x63d5f8) into 12
+    # sub-object deref chains (s[OFF]->+0x18->+0x20->*->+4). EAX-trampoline; observe s[0x1b8]|P4[4].
+    'struct_propagate_41e4b0': {'rva': 0x0041e4b0, 'export': 'StructPropagate41e4b0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'eax_struct_deref_write',
+        'tbl': 0x0063d5f8,
+        'scenarios': [
+            {'idx': 3, 'prev': 0},    # index changed -> s[0x1b8]=3, P4[4]=table[3]
+            {'idx': 5, 'prev': 5},    # index same -> no-op (s[0x1b8]=5, P4[4]=sentinel)
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x004d8570 EngineRegisterFuncs4d8570 (render) - PURE LEAF int f(void): straight-line
     # registration of 17 funcptr constants into (*0x7d3ff8)+0xc4..0x104; return 1.
     'engine_register_funcs_4d8570': {'rva': 0x004d8570, 'export': 'EngineRegisterFuncs4d8570', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'engine_register_funcs',

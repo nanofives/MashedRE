@@ -232,6 +232,7 @@ PURE_LEAF_ARGTYPES = {
     'nested_list_search',        # uint fn(int key): PURE LEAF nested circular-list search at *cfg.glob (sentinel=glob). outer node O1=outerBuf+0x20; inner head @O1-0xc, sentinel O1-0x10, link +4, payload +8, payload[0xc] compared to key. returns key if found else 0. Build 1 outer + 1 inner + payload; per cfg.scenarios[t]={pval,key}: observe return. non-degen via found(key) vs not-found(0)
     'pixel_max_alpha',           # int fn(struct* s): PURE LEAF per-pixel alpha=max(R,G,B). mode=s[0xc]: 4|8 -> (1<<mode) pixels @s[0x18]+2; 0x20 -> s[8]rows x s[4]cols @s[0x14]+2 (base+=s[0x10]); else no-op. ret s. Build base buf with RGB pattern; per cfg.scenarios[t]={mode,rows,cols,stride}: observe base[3]|base[7]|base[0x43]|ret. non-degen via mode (processed vs sentinel alphas)
     'engine_register_funcs',     # int fn(void): PURE LEAF straight-line; stores fixed funcptr constants into (*cfg.glob)+cfg.observe_offs; ret 1. seed *glob=struct (sentinel-filled), observe ret + struct[observe_offs]. non-degen via the distinct registered constants (snapshot != all-same)
+    'eax_struct_deref_write',    # void fn(EAX=s): PURE LEAF. if(s[0x1b4]==s[0x1b8]) return; s[0x1b8]=s[0x1b4]; for 12 offsets write table[idx](@cfg.tbl) into chain s[OFF]->+0x18->+0x20->*->+4. Trampoline mov eax,sbuf; jmp target. All 12 offsets -> one chain P1->P2->P3->P4; seed table[idx]; per cfg.scenarios[t]={idx,prev}: observe s[0x1b8]|P4[4]. non-degen via index-changed vs no-op
 }
 
 SRC = r"""
@@ -2733,6 +2734,37 @@ rpc.exports.diff = function(cfg) {
       const snap = function (ret) { return (ret >>> 0) + ':' + obs.map(function (o2) { return (stE.add(o2 | 0).readU32() >>> 0).toString(16); }).join('|'); };
       try { seedE(); o = snap(Orig()); } catch (e) { eo = e.message; }
       try { seedE(); r = snap(Reim()); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_struct_deref_write') {
+      // void f(EAX=s): index-gated propagation of table[idx] into 12 deref chains.
+      const s = (cfg.scenarios || [])[t] || { idx: 0, prev: -1 };
+      const sbuf = Memory.alloc(0x200);
+      const P1 = Memory.alloc(0x40), P2 = Memory.alloc(0x40), P3 = Memory.alloc(0x40), P4 = Memory.alloc(0x40);
+      _keep.push(sbuf, P1, P2, P3, P4);
+      const offs = [0x108, 0x10c, 0x110, 0x114, 0x118, 0x11c, 0x120, 0x124, 0x128, 0x12c, 0x178, 0x174];
+      const mkT = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writePointer(sbuf);   // mov eax, sbuf
+        tr.add(5).writeU8(0xE9); tr.add(6).writeS32(target.sub(tr.add(10)).toInt32()); // jmp
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'void', [], 'mscdecl');
+      };
+      const seedX = function () {
+        for (let z = 0; z < 0x200; z += 4) sbuf.add(z).writeU32(0);
+        offs.forEach(function (o2) { sbuf.add(o2).writePointer(P1); });
+        P1.add(0x18).writePointer(P2);
+        P2.add(0x20).writePointer(P3);
+        P3.writePointer(P4);                    // *P3 = P4
+        P4.add(4).writeU32(0xEEEEEEEE);         // target field sentinel
+        sbuf.add(0x1b4).writeS32(s.idx | 0);
+        sbuf.add(0x1b8).writeS32(s.prev | 0);
+        ptr(cfg.tbl).add((s.idx | 0) * 4).writeU32((0xD00D0000 | (s.idx & 0xffff)) >>> 0);   // table[idx]
+      };
+      const runX = function (CALL) {
+        seedX(); CALL();
+        return (sbuf.add(0x1b8).readU32() >>> 0).toString(16) + '|' + (P4.add(4).readU32() >>> 0).toString(16);
+      };
+      try { o = runX(mkT(ptr(cfg.rva))); } catch (e) { eo = e.message; }
+      try { r = runX(mkT(reim)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
