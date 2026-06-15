@@ -2188,3 +2188,27 @@ extern "C" __declspec(dllexport) void __cdecl Init482730(std::uint8_t* p, std::u
     }
 }
 RH_ScopedInstall(Init482730, 0x00482730);
+
+// ===== round 169 ===== (bounded struct-of-arrays push)
+// 0x004893d0 — void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){ p[8]=cap; return; }
+//   buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0;
+//   buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1.
+extern "C" __declspec(dllexport) void __cdecl Push4893d0(std::uint8_t* p, std::uint8_t* arg2, std::uint8_t* arg3) {
+    int top = *reinterpret_cast<int*>(p + 8);
+    int cap = *reinterpret_cast<int*>(p + 4);
+    if (top >= cap) { *reinterpret_cast<int*>(p + 8) = cap; return; }
+    std::uint8_t* buf = *reinterpret_cast<std::uint8_t**>(p);
+    int off = top * 0x30;
+    std::uint8_t* rec = buf + off + 4;
+    *reinterpret_cast<std::uint32_t*>(rec) = *reinterpret_cast<std::uint32_t*>(arg2);
+    *reinterpret_cast<std::uint32_t*>(rec + 4) = *reinterpret_cast<std::uint32_t*>(arg2 + 4);
+    *reinterpret_cast<std::uint32_t*>(rec + 8) = *reinterpret_cast<std::uint32_t*>(arg2 + 8);
+    *reinterpret_cast<std::uint32_t*>(buf + off + 0x1c) = 0;
+    buf[off + 0] = arg3[0];
+    buf[off + 1] = arg3[1];
+    buf[off + 2] = arg3[2];
+    buf[off + 3] = arg3[3];
+    *reinterpret_cast<int*>(p + 8) = top + 1;
+    *reinterpret_cast<int*>(p + 0x54) = 1;
+}
+RH_ScopedInstall(Push4893d0, 0x004893d0);

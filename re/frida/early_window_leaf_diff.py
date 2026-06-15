@@ -183,6 +183,7 @@ PURE_LEAF_ARGTYPES = {
     'state_list_insert',         # void fn(p, _, state_src): state=*state_src; sub=p[0x20]; if(state==1 && sub[0x28]!=3) sub[0x28]=8; elif(state==3 && sub[0x28]!=5) sub[0x28]=4; sub[0x20]=state; old=p[0x14]; if(old){*(p[0x18])=old; *(old+4)=p[0x18];} node=p[0x24]+0xc; nx=*node; p[0x18]=node; p[0x14]=nx; *(nx+4)=&p[0x14]; *node=&p[0x14]. test state 1/3 (p[0x14]=0 empty list). shared bufs; snapshot sub+list ptrs. non-degen
     'multi_deref_global_set',    # void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g); obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40]|=0x2000. seed g=0 + nested chain (p1[4]=&E, E[0]=&obj, E[0x18]=&X, X[0x20]=&Ncell, Ncell=&N); t0 p2=&val n!=0, t1 p2=0(default) n=0. snapshot obj[0xc4]|N[4]|obj[0x40]. non-degen
     'list_node_const_init',      # void fn(p, arg2): s=p[0x18]; count=s[0x24]; arr=s[0x20] (array of node ptrs); for i<count: node=arr[i]; node[4]=*arg2; node[0xc]=node[0x10]=1.0f; node[0x14]=0.5f (consts stored, no arith). seed p/s/arr/3 nodes/val; snapshot each node[4,0xc,0x10,0x14]. non-degen
+    'bounded_struct_push',       # void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){p[8]=cap; return;} buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0; buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1. store-only. t0 push(top=0), t1 full(top=cap=4). snapshot entry+p[8]+p[0x54]. non-degen
 }
 
 SRC = r"""
@@ -301,6 +302,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'state_list_insert') ? ['pointer','uint32','pointer']
               : (cfg.at === 'multi_deref_global_set') ? ['pointer','pointer']
               : (cfg.at === 'list_node_const_init') ? ['pointer','pointer']
+              : (cfg.at === 'bounded_struct_push') ? ['pointer','pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1707,6 +1709,23 @@ rpc.exports.diff = function(cfg) {
       const snapLN = function () { const a = []; nodes.forEach(function (nb) {[4, 0xc, 0x10, 0x14].forEach(function (o2) { a.push(nb.add(o2).readU32() >>> 0); }); }); return a.join('|'); };
       try { setupLN(); Orig(p, valbuf); o = snapLN(); } catch (e) { eo = e.message; }
       try { setupLN(); Reim(p, valbuf); r = snapLN(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'bounded_struct_push') {
+      // void fn(p, arg2, arg3): bounded SoA push (stride 0x30): rec=buf+top*0x30+4 <- arg2 vec3;
+      // buf[off+0..3] <- arg3; buf[off+0x1c]=0; top++; p[0x54]=1. t0 push, t1 full.
+      const p = Memory.alloc(0x80), buf = Memory.alloc(0x200), arg2 = Memory.alloc(0x40), arg3 = Memory.alloc(0x40);
+      _keep.push(p, buf, arg2, arg3);
+      const top = (t | 0) === 1 ? 4 : 0;
+      const setupBP = function () {
+        for (let z = 0; z < 0x80; z += 4) p.add(z).writeU32(0);
+        for (let z = 0; z < 0x200; z += 4) buf.add(z).writeU32(0xA5A5A5A5);
+        for (let z = 0; z < 0x40; z += 4) { arg2.add(z).writeU32(0); arg3.add(z).writeU32(0); }
+        p.writePointer(buf); p.add(4).writeU32(4); p.add(8).writeU32(top); p.add(0x54).writeU32(0xEE);
+        arg2.writeU32(0xC0DE0001); arg2.add(4).writeU32(0xC0DE0002); arg2.add(8).writeU32(0xC0DE0003);
+        arg3.writeU32(0x44332211);
+      };
+      const snapBP = function () { const off = top * 0x30; return [buf.add(off).readU32(), buf.add(off + 4).readU32(), buf.add(off + 8).readU32(), buf.add(off + 0xc).readU32(), buf.add(off + 0x1c).readU32(), p.add(8).readU32(), p.add(0x54).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
+      try { setupBP(); Orig(p, arg2, arg3); o = snapBP(); } catch (e) { eo = e.message; }
+      try { setupBP(); Reim(p, arg2, arg3); r = snapBP(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
