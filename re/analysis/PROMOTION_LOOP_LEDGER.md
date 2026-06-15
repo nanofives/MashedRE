@@ -9,9 +9,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 206
-- total_green: 372
-- dry_counter: 1
+- rounds_run: 207
+- total_green: 373
+- dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
   re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 206 | near-leaf #18b: one-shot init wrapper, fixed consts (reuse near_leaf_seed_multi_obs) — RECOVERED from r205 dry | attempted 1 | GREEN 1 (Init42c280 0x0042c280: FUN_0042bf30(0x27f,0xff210000,0,0,0,0); callee stores 6 args to 0x67eab4.. gated on *0x67eab0==0) | total_green 372->373 (373/1000). dry_counter 1->0. Caller 0x4929d0 C2, callee 0x42bf30 C3. KEY METHOD for complex callees (vs the r205 0x423b00 degenerate failure): fully READ the callee to find its exact WRITE globals, then seed the gate + observe those exact globals -> deterministic non-degen. A 'fixed-const call' wrapper IS verifiable this way (vary the callee's gate/state globals, not the consts). Session 101-206 net = +116 (257->373). ~86 handlers. Context 83 rounds deep. PATH TO 1000 (627 more) = promote-c3-batch fanout (awaiting opt-in).
 
 2026-06-15 | round 205 | complex orchestrator attempt -> DEGENERATE, deferred (NO promotion) | attempted 1 (0x423b00) | GREEN 0 | dry_counter 0->1. 0x423b00 = gated 4-fn orchestrator (3 C3 calls + C2 tail 0x423670); reimpl drafted + built, but the callees (0x423270/0x423320) are deep multi-branch state machines reading/writing many globals; early_window gave a DEGENERATE all-zero gate-on/off snapshot (couldn't locate an observe target that changes without reading all 4 callees fully). Reverted (left C2, no degenerate-GREEN). MILESTONE/ASSESSMENT: the EASILY-VERIFIABLE solo near-leaf pool is now EXHAUSTED. Scans this round confirmed: 0 pure-getter/addr-calc combiners left (only 0x40dba0 big-tail + 0x49a730 no-caller), 0 single-field-getter near-leaves; remaining ~92 candidates are complex orchestrators / multi-branch state machines / big-tail-calls needing deep per-callee analysis (high cost, degenerate/crash risk) OR the booted lane. Session 101-205 net = +115 (257->372, unchanged this round). Context 82 rounds deep. PATH TO 1000 (628 more) = promote-c3-batch PARALLEL FANOUT (awaiting explicit user opt-in) — the near_leaf_candidates.tsv + ~86 handlers are ready to fan out.
 

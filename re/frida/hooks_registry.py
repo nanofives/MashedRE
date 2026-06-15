@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'init_42c280': {'rva': 0x0042c280, 'export': 'Init42c280', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x0067eab0, 0x0067eab4, 0x0067eabc, 0x0067ead4, 0x0067ea5c],
+        'seed_sets': [
+            {'globals': [[0x0067eab0, 0], [0x0067ea5c, 0], [0x0067eab4, 0xAAAA], [0x0067eabc, 0xBBBB], [0x0067ead4, 0xCCCC]]},   # init, ea5c==0 -> ead4=0
+            {'globals': [[0x0067eab0, 5], [0x0067ea5c, 0], [0x0067eab4, 0xAAAA], [0x0067eabc, 0xBBBB], [0x0067ead4, 0xCCCC]]},   # gate!=0 -> no-op
+            {'globals': [[0x0067eab0, 0], [0x0067ea5c, 7], [0x0067eab4, 0xAAAA], [0x0067eabc, 0xBBBB], [0x0067ead4, 0xCCCC]]},   # init, ea5c!=0 -> ead4=1, ea5c=0
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'search_40bb30': {'rva': 0x0040bb30, 'export': 'Search40bb30', 'signature': {'ret': 'pointer', 'args': ['pointer']}, 'arg_type': 'near_leaf_global_str_search',
         'glob': 0x0063b8f8,
         'seed_sets': [

@@ -3539,3 +3539,24 @@ RH_ScopedInstall(Search40bb30, 0x0040bb30);
 // output globals weren't located -> early_window gave a DEGENERATE all-zero gate-on/off snapshot
 // (couldn't find an observe target that changes). Left C2; needs deeper per-callee analysis or
 // the booted lane. Not promoted (no degenerate-GREEN).
+
+// 0x0042c280  FUN_0042c280 (gameplay, NEAR-LEAF: one-shot init wrapper, fixed consts)
+// void f(void): FUN_0042bf30(0x27f, 0xff210000, 0, 0, 0, 0). Callee 0x42bf30 (C3): if
+// (*0x67eab0==0) { store the 6 args to 0x67eab4/bc/c0/c8/cc/d0; 0x67eab0=1; 0x67eab8=0;
+// 0x67ead4=0; if (*0x67ea5c) { 0x67ead4=1; 0x67ea5c=0; } }. Verbatim naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init42c280(void)
+{
+    __asm {
+        push 0
+        push 0
+        push 0
+        push 0
+        push 0FF210000h
+        push 027Fh
+        mov  eax, 042BF30h
+        call eax
+        add  esp, 0x18
+        ret
+    }
+}
+RH_ScopedInstall(Init42c280, 0x0042c280);
