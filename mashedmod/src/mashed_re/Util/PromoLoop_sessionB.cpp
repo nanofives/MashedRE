@@ -3860,3 +3860,23 @@ extern "C" __declspec(dllexport) void __cdecl TimerStateMachine40dcb0(void)
     }
 }
 RH_ScopedInstall(TimerStateMachine40dcb0, 0x0040dcb0);
+
+// 0x0045ca30  FUN_0045ca30 (gameplay, FloatClamp3Level) — PURE LEAF (no calls)
+// void f(void): 3-level quantize of the 6-float global array at 0x88f5e0.
+// Per element x: x > C1(-2.0 @0x5cc34c) -> 0.0; else x > C2(-4.0 @0x5cca00) -> -1.0;
+// else -> -2.0. Outputs are fixed bit constants (0/0xbf800000/0xc0000000) so
+// bit-identity is exact; fld widening of the 32-bit element is lossless -> the
+// 32-bit compare matches the original's 80-bit fcomp. capstone-verified.
+extern "C" __declspec(dllexport) void __cdecl FloatClamp3Level45ca30(void)
+{
+    float* const arr = reinterpret_cast<float*>(0x0088f5e0u);
+    const float c1 = *reinterpret_cast<const float*>(0x005cc34cu);
+    const float c2 = *reinterpret_cast<const float*>(0x005cca00u);
+    for (int i = 0; i < 6; i++) {
+        const float x = arr[i];
+        if (x > c1)      *reinterpret_cast<int*>(arr + i) = 0;
+        else if (x > c2) *reinterpret_cast<int*>(arr + i) = 0xbf800000;
+        else             *reinterpret_cast<int*>(arr + i) = 0xc0000000;
+    }
+}
+RH_ScopedInstall(FloatClamp3Level45ca30, 0x0045ca30);

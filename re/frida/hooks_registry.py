@@ -60,6 +60,19 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0045ca30 FloatClamp3Level45ca30 (gameplay) - PURE LEAF void f(void): 3-level
+    # quantize of 6-float array @0x88f5e0. x>-2->0.0; x>-4->-1.0; else -2.0. Fixed
+    # constant outputs. Reuses near_leaf_seed_multi_obs: seed 6 floats, observe them.
+    'float_clamp3_45ca30': {'rva': 0x0045ca30, 'export': 'FloatClamp3Level45ca30', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x0088f5e0, 0x0088f5e4, 0x0088f5e8, 0x0088f5ec, 0x0088f5f0, 0x0088f5f4],
+        'seed_sets': [
+            # 5.0,-3.0,-10.0,0.0,-2.5,-5.0 -> 0,-1,-2,0,-1,-2
+            {'globals': [[0x88f5e0,0x40a00000],[0x88f5e4,0xc0400000],[0x88f5e8,0xc1200000],[0x88f5ec,0x00000000],[0x88f5f0,0xc0200000],[0x88f5f4,0xc0a00000]]},
+            # -1.0,-3.5,-100.0,10.0,-8.0,-2.1 -> 0,-1,-2,0,-2,-1
+            {'globals': [[0x88f5e0,0xbf800000],[0x88f5e4,0xc0600000],[0x88f5e8,0xc2c80000],[0x88f5ec,0x41200000],[0x88f5f0,0xc1000000],[0x88f5f4,0xc0066666]]},
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x0040dcb0 TimerStateMachine40dcb0 (gameplay) - PURE LEAF void f(void): multi-phase
     # countdown SM on globals 0x63b90c(state)/910(t1)/918(t2), rate 700.0, dt 0x7f100c.
     # Reuses near_leaf_seed_multi_obs: seed state+timers+dt, observe state+t1+t2.

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 222
-- total_green: 387
+- rounds_run: 223
+- total_green: 388
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 223 | L3 frontier (classifier-driven) — capstone reimpl (9th), REUSED handler | attempted 1 | GREEN 1 (FloatClamp3Level45ca30 0x0045ca30, gameplay: 3-level quantize of 6-float global array) | total_green 387->388 (388/1000). PURE LEAF no-arg. Decoded the fcomp jne/jp flag idiom (jne=x<=C, jp=x>C-or-unordered): x>-2->0.0, x>-4->-1.0, else -2.0. Fixed-constant outputs -> bit-identical (no 80-bit issue; fld widening lossless). REUSED near_leaf_seed_multi_obs (no new handler). 2/2 GREEN non-degen (all 3 levels, distinct patterns). Caller FUN_0045d250 C2. The fcomp-flag idiom (jne/je/jp/jnp after test ah,0x41) is now decoded -> unblocks the other FPU-flag-clamp frontier candidates. Session 101-223 net = +131 (257->388). Context 100 rounds deep. PATH TO 1000 (612 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 222 | L3 frontier (classifier-driven) — capstone reimpl (8th), REUSED handler | attempted 1 | GREEN 1 (TimerStateMachine40dcb0 0x0040dcb0, gameplay: multi-phase countdown state machine) | total_green 386->387 (387/1000). PURE LEAF no-arg; 3 state branches (1/2/3) each decrementing a float timer + threshold-gated state advance. REUSED existing near_leaf_seed_multi_obs (no new handler!) — seed state+timers+dt, observe state+t1+t2. 6/6 GREEN non-degen (all states x hold/advance). x87 80-bit-compare caveat handled via non-borderline test vectors (exact-integer float results). Caller TimeTrial::Tick 0x429310 C2. EFFICIENCY: no-arg global state machines reuse near_leaf_seed_multi_obs -> lighter round (no handler/passthrough edits). Session 101-222 net = +130 (257->387). Context 99 rounds deep. PATH TO 1000 (613 more) = this method (~1/round) or fanout.
 
