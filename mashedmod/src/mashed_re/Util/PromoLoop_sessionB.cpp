@@ -4002,3 +4002,23 @@ extern "C" __declspec(dllexport) int __cdecl QuadBufferBuild5b0bb0(unsigned char
     return counter * 4;
 }
 RH_ScopedInstall(QuadBufferBuild5b0bb0, 0x005b0bb0);
+
+// 0x00475f30 FUN_00475f30 (render, ScaledMulAdd) — PURE LEAF, EAX-implicit out ptr.
+// void f(EAX=out, float a1@[esp+4], float a2@[esp+8]):
+//   r = *0x613278(0.5) * *0x613258(2.0) * a1 * a2 + *0x613274(0.1); out[1]=r; out[0]=r.
+// VERBATIM naked copy of the original instructions -> byte-identical. Verified via the
+// eax_out_2float trampoline (mov eax,outbuf; jmp target).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ScaledMulAdd475f30(void)
+{
+    __asm {
+        fld   dword ptr ds:[0613278h]
+        fmul  dword ptr ds:[0613258h]
+        fmul  dword ptr [esp+4]
+        fmul  dword ptr [esp+8]
+        fadd  dword ptr ds:[0613274h]
+        fst   dword ptr [eax+4]
+        fstp  dword ptr [eax]
+        ret
+    }
+}
+RH_ScopedInstall(ScaledMulAdd475f30, 0x00475f30);

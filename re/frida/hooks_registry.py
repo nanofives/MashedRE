@@ -60,6 +60,18 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x00475f30 ScaledMulAdd475f30 (render) - PURE LEAF EAX-implicit: void f(EAX=out,
+    # float a1, float a2): r = 0.5*2.0*a1*a2 + 0.1; out[1]=r; out[0]=r. Verbatim naked
+    # reimpl (byte-identical). EAX-trampoline handler unlocks EAX-implicit functions.
+    'scaled_mul_add_475f30': {'rva': 0x00475f30, 'export': 'ScaledMulAdd475f30', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'eax_out_2float',
+        'scenarios': [
+            {'a1': 1.0, 'a2': 1.0},   # 1.1
+            {'a1': 2.0, 'a2': 3.0},   # 6.1
+            {'a1': 0.5, 'a2': 4.0},   # 2.1
+            {'a1': -1.0,'a2': 2.0},   # -1.9
+        ],
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x005b0bb0 QuadBufferBuild5b0bb0 (audio) - PURE LEAF int f(void* out, uint maxsize,
     # struct* rec): 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; P=*(arr+0x14+k*0x28),
     # sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub 64-byte blocks {ri,si,0,1.0f}.

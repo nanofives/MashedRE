@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 227
-- total_green: 392
+- rounds_run: 228
+- total_green: 393
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 228 | L3 frontier — VERBATIM naked reimpl + NEW EAX-trampoline handler (force-multiplier) | attempted 1 | GREEN 1 (ScaledMulAdd475f30 0x00475f30, render: EAX-implicit out ptr, 2-float scaled mul-add) | total_green 392->393 (393/1000). PURE LEAF EAX-implicit (output ptr in EAX, not a stack arg). Reimpl = VERBATIM naked copy (byte-identical). NEW handler eax_out_2float modeled on eax_struct_stack_out trampoline (mov eax,outbuf; jmp target; NativeFunction(void,[float,float])). 4/4 GREEN non-degen (1.1/6.1/2.1/-1.9). UNLOCKS the EAX-implicit family previously deferred (0x456eb0, VehicleEliminationSlotPostInit 0x418de0, etc.) — these can now be promoted via verbatim naked + an EAX-trampoline handler. Caller FUN_00475f90 C2. Session 101-228 net = +136 (257->393). Context 105 rounds deep. PATH TO 1000 (607 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 227 | L3 frontier (classifier-driven) — capstone reimpl (13th) | attempted 1 | GREEN 1 (QuadBufferBuild5b0bb0 0x005b0bb0, audio: 2-pass nested-loop quad-buffer builder) | total_green 391->392 (392/1000). PURE LEAF; most complex control-flow this session (size-check pass + nested record/sub loops writing 4x16 {ri,si,0,1.0f} blocks). NEW handler quad_buffer_build 3/3 GREEN non-degen (subs[1,1]->ret8, subs[2]->si-indexed, bounds maxsize=4->ret0+untouched). Caller FUN_005af8f0 C2. Deferred this round: 0x475f30/0x456eb0 (EAX-implicit output ptr - need an EAX trampoline handler). Session 101-227 net = +135 (257->392). Context 104 rounds deep. PATH TO 1000 (608 more) = this method (~1/round) or fanout.
 

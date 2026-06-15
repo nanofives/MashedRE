@@ -226,6 +226,7 @@ PURE_LEAF_ARGTYPES = {
     'dll_head_insert',           # void fn(struct* p): PURE LEAF intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of list *cfg.glob (sentinel @+0xbc; node+8=next,node+0xc=prev). node[3]|=3; p[3]|=0xc. Build p/node/G/H bufs, seed *glob=&G, G[0xbc]=H, node[3]=scenario flag; observe node+8,+0xc,+3,p[3],G[0xbc],H[4] (addresses same both sides). non-degen via insert vs skip
     'idx2_record_condset',       # void fn(int i, int j, int v): PURE LEAF. off=(j+5i)*recStride; *(int*)(baseB+off)=v; if(*(float*)(baseA+off)==0.0) *(int*)(baseA+off)=0x3c23d70a. Per cfg.scenarios[t]={i,j,v,cur}: seed baseA+off=cur(float), call, observe A|B. non-degen via cur==0 vs !=0 + varied v/index
     'quad_buffer_build',         # int fn(void* out, uint maxsize, struct* rec): PURE LEAF 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; per record P=*(arr+0x14+k*0x28), sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub blocks of 4x16 entries {ri,si,0,1.0f} at out+counter*64, ret counter*4. Per cfg.scenarios[t]={subs:[...],maxsize}: build rec+arr+P bufs, observe ret + out dwords. non-degen via subs + bounds
+    'eax_out_2float',            # void fn(EAX=out ptr, float a1@[esp+4], float a2@[esp+8]): PURE LEAF EAX-implicit output. Trampoline `mov eax,outbuf; jmp target`, NativeFunction(void,['float','float']). Per cfg.scenarios[t]={a1,a2}: call, observe outbuf[0]|outbuf[1] (float bits). non-degen via varied a1/a2
 }
 
 SRC = r"""
@@ -2613,6 +2614,24 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runQ(mkTQ(ptr(cfg.rva))); } catch (e) { eo = e.message; }
       try { r = runQ(mkTQ(reim)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_out_2float') {
+      // void fn(EAX=out ptr, float a1, float a2). Trampoline mov eax,outbuf; jmp target.
+      const obuf2 = Memory.alloc(0x40); _keep.push(obuf2);
+      const mkE2 = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        tr.writeU8(0xB8); tr.add(1).writePointer(obuf2);   // mov eax, obuf
+        tr.add(5).writeU8(0xE9); tr.add(6).writeS32(target.sub(tr.add(10)).toInt32()); // jmp
+        Memory.protect(tr, 16, 'rwx');
+        return new NativeFunction(tr, 'void', ['float', 'float'], 'mscdecl');
+      };
+      const s = (cfg.scenarios || [])[t] || { a1: 1.0, a2: 1.0 };
+      const runE = function (CALL) {
+        for (let z = 0; z < 0x40; z += 4) obuf2.add(z).writeU32(0xCCCCCCCC);
+        CALL(s.a1, s.a2);
+        return (obuf2.readU32() >>> 0).toString(16) + '|' + (obuf2.add(4).readU32() >>> 0).toString(16);
+      };
+      try { o = runE(mkE2(ptr(cfg.rva))); } catch (e) { eo = e.message; }
+      try { r = runE(mkE2(reim)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
