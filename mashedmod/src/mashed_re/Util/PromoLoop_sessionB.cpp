@@ -1660,3 +1660,21 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Clear4e4350(std::uint32_t
     return 0;
 }
 RH_ScopedInstall(Clear4e4350, 0x004e4350);
+
+// ===== round 140 ===== (abs-array scan -> dirty flag)
+// 0x0042c150 — void fn(): for p=0x67ea14; p<0x67ea44; p+=0x18: count nonzero among
+//   [p-4],[p],[p+4],[p+8],[p+0xc],[p+0x10]; if(count!=0) *(u32*)0x67eab4 = 0xff.
+extern "C" __declspec(dllexport) void __cdecl Scan42c150(void) {
+    int cnt = 0;
+    for (std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x0067ea14);
+         reinterpret_cast<std::uintptr_t>(p) < 0x0067ea44; p += 0x18) {
+        if (*reinterpret_cast<int*>(p - 4)) cnt++;
+        if (*reinterpret_cast<int*>(p)) cnt++;
+        if (*reinterpret_cast<int*>(p + 4)) cnt++;
+        if (*reinterpret_cast<int*>(p + 8)) cnt++;
+        if (*reinterpret_cast<int*>(p + 0xc)) cnt++;
+        if (*reinterpret_cast<int*>(p + 0x10)) cnt++;
+    }
+    if (cnt != 0) *reinterpret_cast<std::uint32_t*>(0x0067eab4) = 0xff;
+}
+RH_ScopedInstall(Scan42c150, 0x0042c150);

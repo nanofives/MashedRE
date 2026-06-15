@@ -155,6 +155,7 @@ PURE_LEAF_ARGTYPES = {
     'dll_insert_head',           # void fn(list, node): if(node[4]) unlink; node[4]=list; node[0xc]=list+8; old=*(list+8); node[8]=old; *(old+4)=&node[8]; *(list+8)=&node[8] (intrusive insert-at-head; links point to the &node[8] field). Test: empty list (*(list+8)=list+8) + node[4]=0 (skip unlink). Shared bufs; snapshot node[4]|node[8]|node[0xc]|*(list+8)|*(list+0xc). test ignored
     'global_ptrtable_match',     # u32 fn(arg1, arg2*): for idx in 0..3: e=*(tbl+idx*4); if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0. Seed tbl[2]=&entry (.bss), entry[0xc]=1, entry[0x28]=KEY, arg2[4]= (test0: 2 -> match -> 1 ; test1: 3 -> no match -> 0). non-degen via 1/0
     'global_rec_clear_ret',      # u32 fn(arg1, arg2): rec=*(glob)+arg2; if(rec[0xc]){ rec[0xc]=0; rec[8]=0; return arg1; } return 0. seed *glob=&buf, buf[idx+0xc]= (test0: nonzero -> zeroes + return arg1 ; test1: 0 -> return 0). observe buf[idx+8]|buf[idx+0xc]|ret. non-degen via ret + the zeroing
+    'abs_scan_flag',             # void fn(): scans an absolute dword range; if any nonzero, sets flag global=0xff (else leaves it). Reset scan range (glob, span dwords) to 0 + flag(tgt) to a 0x11 sentinel; test0 seeds one nonzero at glob+idx (-> flag 0xff), test1 all-zero (-> flag stays 0x11). observe flag. non-degen 0xff vs 0x11
 }
 
 SRC = r"""
@@ -245,6 +246,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'dll_insert_head') ? ['pointer','pointer']
               : (cfg.at === 'global_ptrtable_match') ? ['uint32','pointer']
               : (cfg.at === 'global_rec_clear_ret') ? ['uint32','uint32']
+              : (cfg.at === 'abs_scan_flag') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1177,6 +1179,15 @@ rpc.exports.diff = function(cfg) {
       const rdR = function (rv) { return (rbuf.add(off + 8).readU32() >>> 0) + '|' + (rbuf.add(off + 0xc).readU32() >>> 0) + '|' + (rv >>> 0); };
       try { setupR(); const ro = Orig(ARG1 >>> 0, off >>> 0) >>> 0; o = rdR(ro); } catch (e) { eo = e.message; }
       try { setupR(); const rr = Reim(ARG1 >>> 0, off >>> 0) >>> 0; r = rdR(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'abs_scan_flag') {
+      // void fn(): scan an abs dword range; set flag=0xff if any nonzero. Reset the range
+      // (glob, span dwords) + flag(tgt)=0x11 sentinel; test0 seeds one nonzero at glob+idx
+      // (-> flag 0xff), test1 all-zero (-> flag stays 0x11). observe flag. non-degen.
+      const flag = ptr(cfg.tgt), lo = ptr(cfg.glob), span = cfg.span | 0, so = cfg.idx | 0;
+      const seedF = function (nz) { for (let k = 0; k < span; k++) lo.add(k * 4).writeU32(0); flag.writeU32(0x11); if (nz) lo.add(so).writeU32(1); };
+      const nzc = (t | 0) === 0;
+      try { seedF(nzc); Orig(); o = flag.readU32() >>> 0; } catch (e) { eo = e.message; }
+      try { seedF(nzc); Reim(); r = flag.readU32() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

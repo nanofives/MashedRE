@@ -14307,6 +14307,9 @@ HOOKS = {
     # ---- promote-round round 139 (global-record clear + conditional return) --
     'clear_4e4350': {'rva': 0x004e4350, 'export': 'Clear4e4350', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32']}, 'arg_type': 'global_rec_clear_ret', 'glob': 0x007d716c, 'idx': 0x40, 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
 
+    # ---- promote-round round 140 (abs-array scan -> dirty flag) --
+    'scan_42c150': {'rva': 0x0042c150, 'export': 'Scan42c150', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'abs_scan_flag', 'glob': 0x0067ea10, 'target_global': 0x0067eab4, 'span': 16, 'idx': 4, 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
