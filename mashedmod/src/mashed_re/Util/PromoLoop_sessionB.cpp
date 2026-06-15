@@ -1370,3 +1370,44 @@ extern "C" __declspec(dllexport) void __cdecl Set4d54f0(std::uint32_t a, std::ui
     *reinterpret_cast<std::uint32_t*>(0x007d6c18) = c + 1;
 }
 RH_ScopedInstall(Set4d54f0, 0x004d54f0);
+
+// ===== round 130 ===== (float vec3 lerp — verbatim x87 naked port, bit-identical)
+// 0x004b4650 — out = a + t*(b-a) per component. void fn(out*[esp+4], a*[esp+8],
+//   b*[esp+0xc], float t[esp+0x10]). A C float reimpl would round differently than the
+//   original's 80-bit x87 chain, so this is transcribed instruction-for-instruction.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Lerp4b4650(void) {
+    __asm {
+        mov eax, [esp+4]
+        mov ecx, [esp+8]
+        mov edx, [esp+0Ch]
+        fld   dword ptr [edx]
+        fsub  dword ptr [ecx]
+        fstp  dword ptr [eax]
+        fld   dword ptr [edx+4]
+        fsub  dword ptr [ecx+4]
+        fstp  dword ptr [eax+4]
+        fld   dword ptr [edx+8]
+        fsub  dword ptr [ecx+8]
+        fstp  dword ptr [eax+8]
+        fld   dword ptr [esp+10h]
+        fmul  dword ptr [eax]
+        fst   dword ptr [eax]
+        fld   dword ptr [esp+10h]
+        fmul  dword ptr [eax+4]
+        fst   dword ptr [eax+4]
+        fld   dword ptr [esp+10h]
+        fmul  dword ptr [eax+8]
+        fst   dword ptr [esp+10h]
+        fstp  dword ptr [eax+8]
+        fxch  st(1)
+        fadd  dword ptr [ecx]
+        fstp  dword ptr [eax]
+        fadd  dword ptr [ecx+4]
+        fstp  dword ptr [eax+4]
+        fld   dword ptr [esp+10h]
+        fadd  dword ptr [ecx+8]
+        fstp  dword ptr [eax+8]
+        ret
+    }
+}
+RH_ScopedInstall(Lerp4b4650, 0x004b4650);

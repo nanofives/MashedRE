@@ -144,6 +144,7 @@ PURE_LEAF_ARGTYPES = {
     'abs_ranges_setter',         # void fn(scalars...): writes to ABSOLUTE globals (no ptr args). Reset cfg.abs_ranges [{addr,dwords}] to 0, call fn(test scalars), snapshot the same ranges, compare. nscalar from cfg. test=[a0(,a1,a2)] (varied -> non-degen). reimpl __cdecl reads/writes the absolute globals directly
     'esi_global_search',         # u32 fn(ESI=key): linear-search a global table (count at glob, base tgt, stride) for entry[+0]==key; return an index-derived pointer or 0. ORIG called via `mov esi,key; jmp` trampoline; reimpl is __cdecl(key) reading the same globals (compares result, not ABI). Seed count=4, zero 4 entries, table[idx*stride]=key, key=0xC0DE0000|idx. test=idx (0..3 -> distinct matched addr -> non-degen)
     'indexed_global_idiv',       # u32 fn(arg): d=*(int*)(tgt+arg*stride); q=num/d (signed idiv); clamp. Seed d=test value at slot (fixed arg=idx), call fn(idx), compare ret. test=divisor (varied -> distinct quotients -> non-degen). reimpl __cdecl(arg) does signed C division (matches idiv trunc-toward-zero). avoid d=0
+    'float_vec3_lerp_out',       # void fn(out*, a*, b*, float t): out[k] = a[k] + t*(b[k]-a[k]) per component (pure x87). Seed a,b vec3 (cfg.seed_a/seed_b = 3 u32 float-bit-patterns) + t (cfg.t_bits), call, observe out[0..2] as u32 bit patterns. Reimpl is VERBATIM naked __asm (bit-identical x87; a C float reimpl would round differently). seed-controlled -> non-degen by construction
 }
 
 SRC = r"""
@@ -223,6 +224,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'abs_ranges_setter') ? ((cfg.nscalar | 0) === 1 ? ['uint32'] : (cfg.nscalar | 0) === 3 ? ['uint32','uint32','uint32'] : ['uint32','uint32'])
               : (cfg.at === 'esi_global_search') ? ['uint32']
               : (cfg.at === 'indexed_global_idiv') ? ['uint32']
+              : (cfg.at === 'float_vec3_lerp_out') ? ['pointer','pointer','pointer','float']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -992,6 +994,22 @@ rpc.exports.diff = function(cfg) {
       const seedDv = function () { ptr(divslot).writeS32(t | 0); };
       try { seedDv(); o = Orig(divarg >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { seedDv(); r = Reim(divarg >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'float_vec3_lerp_out') {
+      // void fn(out*, a*, b*, float t): out = a + t*(b-a) per component (pure x87). Seed
+      // a,b vec3 + t, call, snapshot out[0..2] as u32 bit patterns. Reimpl is verbatim
+      // naked __asm -> bit-identical x87. seed-controlled -> non-degenerate.
+      const sa = cfg.seed_a || [0, 0, 0], sb = cfg.seed_b || [0, 0, 0];
+      const tb = Memory.alloc(4); tb.writeU32((cfg.t_bits >>> 0)); const tf = tb.readFloat();
+      const out1 = Memory.alloc(0x20), av = Memory.alloc(0x20), bv = Memory.alloc(0x20);
+      _keep.push(out1, av, bv, tb);
+      const runL = function (CALL) {
+        for (let k = 0; k < 8; k++) out1.add(k * 4).writeU32(0);
+        for (let k = 0; k < 3; k++) { av.add(k * 4).writeU32(sa[k] >>> 0); bv.add(k * 4).writeU32(sb[k] >>> 0); }
+        CALL(out1, av, bv, tf);
+        return [out1.readU32() >>> 0, out1.add(4).readU32() >>> 0, out1.add(8).readU32() >>> 0].join('|');
+      };
+      try { o = runL(Orig); } catch (e) { eo = e.message; }
+      try { r = runL(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1281,6 +1299,7 @@ def run(name):
            'eax_observe': h.get('eax_observe'), 'ecx_observe': h.get('ecx_observe'),
            'edx_val': h.get('edx_val'), 'abs_observe': h.get('abs_observe'),
            'mid_off': h.get('mid_off'), 'abs_ranges': h.get('abs_ranges'),
+           'seed_a': h.get('seed_a'), 'seed_b': h.get('seed_b'), 't_bits': h.get('t_bits'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),
