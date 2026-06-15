@@ -9,9 +9,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 243
+- rounds_run: 244
 - total_green: 408
-- dry_counter: 0
+- dry_counter: 1
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
   abort the NO_AUTO_HOOK safety check -> SKIP near_leaf rows named thunk_FUN_* ; adjustor thunks
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 244 | NEAR-LEAF + frontier scout — clean tier DRAINED | attempted 0 promoted (scouted ~10 candidates) | GREEN 0 | dry_counter 0->1. FINDING: the clean solo-verifiable tier is now drained across ALL lanes: (1) pure leaves done; (2) simple adjustor-thunks done — the 2 remaining pure-jmp-free thunks (0x5ae7e0->AudioPoolDestroy, 0x5a9f10->AudioPoolBlockAlloc) call complex pool funcs (free/alloc on fake state = AV risk at suspended-spawn); (3) rest of near-leaf pool (112) = jump-table SWITCHES (0x409790/0x410d10/0x442600), pool-callers (AudioPoolFree 0x5ae920 etc), or mid-size real-logic fns — each a full decode+reimpl+bespoke-handler round; (4) the 2 remaining zero-callee frontier leaves are complex: 0x456eb0 (EAX-implicit min-finder, 181B, fcomp+bitmask loop) and 0x5c95b0 (bit-range-fill, 204B, 8 branches, partial-byte edge masks). All remaining candidates are LONG higher-risk rounds; declined to rush one at the tail of a 120-round-deep context. NEXT (fresh context): C-reimpl 0x5c95b0 (integer, no jumptable/calls -> tractable) or verbatim 0x456eb0 via EAX-trampoline; or build the capstone->MASM verbatim generator to make switch-free verbatim ports reliable. Session 101-244 net = +151 (unchanged this round, 257->408). Context 120 rounds deep. PATH TO 1000 (592 more) = complex solo rounds (<1/round now) or the promote-c3-batch fanout.
 
 2026-06-15 | round 243 | NEAR-LEAF lane — bounds-checked adjustor thunk -> C3 or-flag | attempted 1 (skipped 5ae380/477e40: complex AudioPoolFree / null-list-search AV risk) | GREEN 1 (BoundedThunk47d100 0x0047d100, physics) | total_green 407->408 (408/1000). int f(idx,a2): if(idx in[0,0xc8) && s=*(int*)(0x6c71d8+idx*4)) -> if(a2) s[2]|=4 (tail-call C3 0x4b5240). VERBATIM naked. NEW handler bounded_thunk_orflag 4/4 GREEN non-degen (or/no-or/bounds). Caller FUN_00412190 C2. NOTE: skip near-leaves whose callee is AudioPoolFree(0x5ae920)/list-search(0x4c5c00) on a global list -> complex/AV at suspended-spawn; prefer adjustor thunks -> simple field-op C3. Session 101-243 net = +151 (257->408). Context 120 rounds deep. PATH TO 1000 (592 more) = near-leaf+frontier (~1/round) or fanout.
 
