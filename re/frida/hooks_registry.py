@@ -14364,6 +14364,9 @@ HOOKS = {
     # ---- promote-round round 158 (strided record-array zeroer + index field) --
     'zero_484c90': {'rva': 0x00484c90, 'export': 'Zero484c90', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'abs_region_zeroer', 'glob': 0x006dccbc, 'target_global': 0x006e70d8, 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
+    # ---- promote-round round 159 (paired vec3 array fill) --
+    'fill_4899c0': {'rva': 0x004899c0, 'export': 'Fill4899c0', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'array_fill_2way', 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --

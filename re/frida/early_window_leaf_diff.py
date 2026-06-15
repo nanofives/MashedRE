@@ -173,6 +173,7 @@ PURE_LEAF_ARGTYPES = {
     'struct_init_3arg_sub',      # void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; zero dest[8,0x10,0x18,0x1c,0x20,0x24,0x28]; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0,[0x40]=0,[0x44]=0,[0x38]=1,[0x48]=0,[0x50]=1. seed a[4],b,dest[0x60]=&sub; snapshot dest+sub fields. non-degen
     'flag_branch_struct_2way',   # void fn(p, arg2): if(p[0x94][0x50]&8){ sub=p[0x11c]; sub[0x88]=0; sub[0x8c]=arg2; } else { s=p[0x84]; val=(s[0x38]>>3)*s[0x39]*arg2; p[0x8c]=p[0x90]=val; p[0x88]=arg2; p[0x28]|=0x400; }. test0 flag set, test1 clear. seed p[0x94]=&f,p[0x11c]=&sub,p[0x84]=&s; snapshot sub[0x88]|sub[0x8c]|p[0x8c]|p[0x90]|p[0x88]|p[0x28]. non-degen
     'abs_region_zeroer',         # void fn(): strided record-array zeroer (base glob, stride 0x8c) that also writes record index (word) to [+0x1c], + trailing tgt=0. Pure writer; sentinel-fill ONLY the observed offsets (base[0], base[0x1c]=idx0, rec1[0x1c]=idx1, rec5[0x1c]=idx5, base[0x64], tgt), call, snapshot, compare. non-degen via the per-record index
+    'array_fill_2way',           # void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4]; for i in [0,count): *(arr1+i*12)=*src (vec3 copy); *(arr2+i*12)={0,0,0}. seed count=3, p[0]=&arr1,p[4]=&arr2, src markers; snapshot arr1[0..count]+arr2[0..count]. non-degen via markers + zeros
 }
 
 SRC = r"""
@@ -281,6 +282,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'struct_init_3arg_sub') ? ['pointer','uint32','pointer']
               : (cfg.at === 'flag_branch_struct_2way') ? ['pointer','uint32']
               : (cfg.at === 'abs_region_zeroer') ? []
+              : (cfg.at === 'array_fill_2way') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1490,6 +1492,27 @@ rpc.exports.diff = function(cfg) {
       const snapZ = function () { return addrs.map(function (a) { return ptr(a).readU32() >>> 0; }).join('|'); };
       try { fillZ(); Orig(); o = snapZ(); } catch (e) { eo = e.message; }
       try { fillZ(); Reim(); r = snapZ(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'array_fill_2way') {
+      // void fn(p, src): count=p[0xc]; fill arr1=p[0] with src vec3 + arr2=p[4] with {0,0,0}
+      // per element (stride 12). seed count=3, arr ptrs, src markers; snapshot both arrays.
+      const count = 3;
+      const p = Memory.alloc(0x20), arr1 = Memory.alloc(0x80), arr2 = Memory.alloc(0x80), src = Memory.alloc(0x20);
+      _keep.push(p, arr1, arr2, src);
+      const setupA = function () {
+        for (let z = 0; z < 0x20; z += 4) p.add(z).writeU32(0);
+        for (let z = 0; z < 0x80; z += 4) { arr1.add(z).writeU32(0xA5A5A5A5); arr2.add(z).writeU32(0xA5A5A5A5); }
+        p.add(0xc).writeU32(count);
+        p.writePointer(arr1); p.add(4).writePointer(arr2);
+        src.writeU32(0xC0DE0001); src.add(4).writeU32(0xC0DE0002); src.add(8).writeU32(0xC0DE0003);
+      };
+      const snapA = function () {
+        const a = [];
+        for (let i = 0; i < count; i++) for (let k = 0; k < 3; k++) a.push(arr1.add(i * 12 + k * 4).readU32() >>> 0);
+        for (let i = 0; i < count; i++) for (let k = 0; k < 3; k++) a.push(arr2.add(i * 12 + k * 4).readU32() >>> 0);
+        return a.join('|');
+      };
+      try { setupA(); Orig(p, src); o = snapA(); } catch (e) { eo = e.message; }
+      try { setupA(); Reim(p, src); r = snapA(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

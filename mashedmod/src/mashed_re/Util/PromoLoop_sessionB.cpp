@@ -1998,3 +1998,22 @@ extern "C" __declspec(dllexport) void __cdecl Zero484c90(void) {
     *reinterpret_cast<std::uint32_t*>(0x006e70cc) = 0;
 }
 RH_ScopedInstall(Zero484c90, 0x00484c90);
+
+// ===== round 159 ===== (paired vec3 array fill: copy src into arr1, zero arr2)
+// 0x004899c0 — void fn(p, src): count=p[0xc]; if(!count) return; arr1=p[0]; arr2=p[4];
+//   for i in [0,count): *(vec3*)(arr1+i*12) = *(vec3*)src; *(vec3*)(arr2+i*12) = {0,0,0}.
+extern "C" __declspec(dllexport) void __cdecl Fill4899c0(std::uint8_t* p, std::uint8_t* src) {
+    int count = *reinterpret_cast<int*>(p + 0xc);
+    if (count == 0) return;
+    std::uint8_t* arr1 = *reinterpret_cast<std::uint8_t**>(p);
+    std::uint8_t* arr2 = *reinterpret_cast<std::uint8_t**>(p + 4);
+    for (int i = 0; i < count; i++) {
+        std::uint32_t* d1 = reinterpret_cast<std::uint32_t*>(arr1 + i * 12);
+        d1[0] = *reinterpret_cast<std::uint32_t*>(src);
+        d1[1] = *reinterpret_cast<std::uint32_t*>(src + 4);
+        d1[2] = *reinterpret_cast<std::uint32_t*>(src + 8);
+        std::uint32_t* d2 = reinterpret_cast<std::uint32_t*>(arr2 + i * 12);
+        d2[0] = 0; d2[1] = 0; d2[2] = 0;
+    }
+}
+RH_ScopedInstall(Fill4899c0, 0x004899c0);
