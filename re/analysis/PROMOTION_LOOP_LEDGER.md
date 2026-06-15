@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 245
-- total_green: 409
+- rounds_run: 246
+- total_green: 410
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 246 | NEAR-LEAF lane (refreshed pool) — ESI-register-arg struct init -> C3 memset | attempted 1 (skipped 5 AV/degenerate) | GREEN 1 (StructInit418a00 0x00418a00, render) | total_green 409->410 (410/1000). dry_counter 0. Regenerated near_leaf_frontier.tsv after r245 (pool refreshes). void f(ESI=p): memset(p,0,0x6c) via C3 ZeroFillWrapper(0x4b6520); *(u32*)(p+8)=*(u32*)(p+0xc)=0x3d4ccccd(0.05f); p[0x10..0x14)=0xFF. POINTER IS A REGISTER ARG (ESI) — NEW handler esi_struct_init drives orig via esi-trampoline (mov esi,buf; jmp rva), reim via plain __cdecl(p) stack arg (compares observable writes, not ABI — like reg_scalar_compute). C reimpl (memset inlined, 0x6c%4==0). 2/2 GREEN non-degen (b0=0x6a real orig): full-0x6c snapshot identical across seeds 0xCC/0x77 -> proves complete memset coverage + const fields. Callee 0x4b6520 C3, caller FUN_0041a060 C2. arg_type esi_struct_init SWEEP-CRITICAL. SKIPPED this round: 0x4b4140 (calls field-copy thunk with out=NULL -> only count=0 safe = degenerate), 0x477e40 (->FUN_0040bb30->list-search 0x4c5c00 on null global 0x63b8f8 = AV/degenerate), 0x474db0 & 0x45bfa0 (indirect vtable calls [eax+0x108]/[eax+4] -> null at suspended-spawn = AV), 0x5ae380/5ad8b0/5a6c90 (callee AudioPoolFree 0x5ae920 AV risk). LANE NOTE: ESI/register-arg near-leaves are now reachable via the esi-trampoline pattern — opens more of the 112-pool. Session 101-246 net = +153 (257->410). Context 122 rounds deep. PATH TO 1000 (590 more) = near-leaf+frontier (~1/round) or the promote-c3-batch fanout.
 
 2026-06-15 | round 245 | L3 frontier — C reimpl (bitfield range clear/set) | attempted 1 | GREEN 1 (BitRangeFill5c95b0 0x005c95b0, audio) | total_green 408->409 (409/1000). dry_counter 1->0. PURE LEAF void f(uint8** pbuf,uint startbit,uint nbits,int fill): buf=*pbuf; set bits [startbit,startbit+nbits) of little-endian bit-array buf to (fill!=0), preserving outside bits. Decode (esp-tracked stack): fill=(arg4!=0) via setne; start_byte=sb>>3, start_bit=sb&7; end_byte=(sb+n)>>3, end_bit=(sb+n)&7; if(start_byte>end_byte)ret; per byte i=start..end: a=(i==start?start_bit:0), b=(i==end?end_bit:8); full byte(a==0&&b==8)->0xFF/0x00 via dec/not idiom, else RMW per bit buf[i]=(buf[i]&~(1<<c))|(fill<<c). C reimpl (data-loop). NEW handler bitfield_range_set 5/5 GREEN non-degen early_window (b0=0x83 real orig, suspended-spawn): snapshots f81f.../1f0000fe.../0000ffff.../555f.../ff0ffe... all distinct & bit-identical (full-byte fast path + partial first/last + single partial byte + span, fill=1 and fill=0). Pure leaf (no callees); callers FUN_005c1140/005c13c0/005c94c0 all C2. arg_type bitfield_range_set SWEEP-CRITICAL. This clears one of the 2 "hard" zero-callee frontier leaves flagged r244 (the 5c95b0 bit-range-fill). REMAINING hard frontier leaf: 0x456eb0 (EAX-implicit min-finder, 181B, fcomp+bitmask). Session 101-245 net = +152 (257->409). Context 121 rounds deep. PATH TO 1000 (591 more) = complex solo rounds (~1/round) or the promote-c3-batch fanout.
 

@@ -29,4 +29,3 @@ rva	size	subsys	verdict	first_op
 004d9a60	320	render	SKIP:FLDSTN	sub esp, 0x28
 004d9ee0	277	render	SKIP:FLDSTN	sub esp, 0x20
 005aed20	119	audio	SKIP:FLDSTN	mov eax, dword ptr [esp + 8]
-005c95b0	204	audio	CLEAN	sub esp, 8

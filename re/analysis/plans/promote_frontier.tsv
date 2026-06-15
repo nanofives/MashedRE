@@ -29,4 +29,3 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 004d9a60	FUN_004d9a60	render	320	2	004d9530	other
 004d9ee0	FUN_004d9ee0	render	277	2	004d9d00	other
 005aed20	FUN_005aed20	audio	119	1	005a9280	other
-005c95b0	FUN_005c95b0	audio	204	3	005c1140	other

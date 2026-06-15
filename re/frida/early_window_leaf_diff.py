@@ -241,6 +241,7 @@ PURE_LEAF_ARGTYPES = {
     'thunk_float_sub',           # void fn(uint idx, float fval): NEAR-LEAF adjustor thunk -> C3 float-sub. *(float*)(cfg.tbl + idx*cfg.stride + cfg.field_off) -= fval. Per cfg.scenarios[t]={idx,seed,fval}: seed field, observe field bits = seed-fval. non-degen via varied seed/fval/idx
     'bounded_thunk_orflag',      # int fn(uint idx, uint a2): NEAR-LEAF bounds-checked adjustor thunk -> C3. if(idx<0xc8 && (s=*(int*)(cfg.tbl+idx*4))) -> if(a2) s[2]|=4. Build s at cfg.tbl[5]; per cfg.scenarios[t]={idx,a2,s2}: seed s[2], observe s[2]. non-degen via or/no-or/bounds
     'bitfield_range_set',        # void fn(uint8** pbuf, uint startbit, uint nbits, int fill): PURE LEAF. buf=*pbuf; sets bits [startbit,startbit+nbits) of the bit-array buf to (fill!=0); full bytes set 0xFF/0x00, partial bytes RMW per-bit preserving outside bits. Per cfg.scenarios[t]={startbit,nbits,fill,seed}: seed 24-byte buf=seed, call, observe all 24 bytes hex. non-degen via varied range/fill/seed (full-byte + partial + boundary cases)
+    'esi_struct_init',           # void fn(ESI=p): NEAR-LEAF struct initializer; pointer is a REGISTER arg in ESI. Orig driven via esi-trampoline (mov esi,buf; jmp rva); Reim is plain __cdecl(void* p) (stack arg) -> compares observable buffer writes (behavior, not ABI). Per cfg.scenarios[t]={seed}: seed cfg.bufsize buf=seed, call, observe full buffer hex dwords. non-degen via the structured post-state (memset region + distinct const fields) + seed variation (proves full memset coverage)
 }
 
 SRC = r"""
@@ -412,6 +413,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'thunk_float_sub') ? ['uint32','float']
               : (cfg.at === 'bounded_thunk_orflag') ? ['uint32','uint32']
               : (cfg.at === 'bitfield_range_set') ? ['pointer','uint32','uint32','uint32']
+              : (cfg.at === 'esi_struct_init') ? ['pointer']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2890,6 +2892,22 @@ rpc.exports.diff = function(cfg) {
       const snap = function () { let h = ''; for (let z = 0; z < N; z++) { const b = buf.add(z).readU8(); h += (b < 16 ? '0' : '') + b.toString(16); } return h; };
       try { seedB(); Orig(pbuf, sc.startbit >>> 0, sc.nbits >>> 0, sc.fill >>> 0); o = snap(); } catch (e) { eo = e.message; }
       try { seedB(); Reim(pbuf, sc.startbit >>> 0, sc.nbits >>> 0, sc.fill >>> 0); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'esi_struct_init') {
+      // void f(ESI=p): struct initializer with pointer in register ESI. Orig driven via an
+      // esi-trampoline (mov esi,buf; jmp rva); Reim is plain __cdecl(void* p). Same buf
+      // re-seeded both sides; observe the full buffer as hex dwords.
+      const sc = (cfg.scenarios || [])[t] || { seed: 0xCC };
+      const N = (cfg.bufsize | 0) || 0x6c;
+      const buf = Memory.alloc(N); _keep.push(buf);
+      const seedB = function () { for (let z = 0; z < N; z++) buf.add(z).writeU8(sc.seed & 0xff); };
+      const snap = function () { let h = ''; for (let z = 0; z < N; z += 4) h += ('00000000' + (buf.add(z).readU32() >>> 0).toString(16)).slice(-8); return h; };
+      const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+      tr.writeU8(0xBE); tr.add(1).writePointer(buf);                                       // mov esi, buf
+      tr.add(5).writeU8(0xE9); tr.add(6).writeS32(ptr(cfg.rva).sub(tr.add(10)).toInt32()); // jmp rva
+      Memory.protect(tr, 16, 'rwx');
+      const OrigT = new NativeFunction(tr, 'void', []);
+      try { seedB(); OrigT(); o = snap(); } catch (e) { eo = e.message; }
+      try { seedB(); Reim(buf); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
@@ -3053,7 +3071,7 @@ def run(name):
            'depth_idx': h.get('depth_idx'), 'ctx_seed_off': h.get('ctx_seed_off'),
            'observe_globals': h.get('observe_globals'), 'seed_globals': h.get('seed_globals'),
            'aTbl': h.get('aTbl'), 'bTbl': h.get('bTbl'), 'fTbl': h.get('fTbl'),
-           'scenarios': h.get('scenarios'),
+           'scenarios': h.get('scenarios'), 'bufsize': h.get('bufsize'),
            'iStride': h.get('iStride'), 'jStride': h.get('jStride'), 'regionOff': h.get('regionOff'),
            't1Tbl': h.get('t1Tbl'), 't2Tbl': h.get('t2Tbl'), 't3Tbl': h.get('t3Tbl'), 't3Stride': h.get('t3Stride'),
            'rangeTbl': h.get('rangeTbl'), 'deltaTbl': h.get('deltaTbl'),

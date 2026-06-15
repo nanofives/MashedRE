@@ -4530,3 +4530,25 @@ extern "C" __declspec(dllexport) void __cdecl BitRangeFill5c95b0(
     }
 }
 RH_ScopedInstall(BitRangeFill5c95b0, 0x005c95b0);
+
+// 0x00418a00 FUN_00418a00 (render, StructInit418a00) — NEAR-LEAF struct initializer.
+// The original takes its pointer in ESI (register arg) and:
+//   memset(p, 0, 0x6c)                     (0x00418a00 push 0x6c; push esi; call C3 ZeroFillWrapper 0x4b6520)
+//   *(u32*)(p+0x08) = 0x3d4ccccd  (0.05f)  (0x00418a08 mov eax,0x3d4ccccd; 0x00418a0d mov [esi+8],eax)
+//   *(u32*)(p+0x0c) = 0x3d4ccccd  (0.05f)  (0x00418a10 mov [esi+0xc],eax)
+//   p[0x10]=p[0x11]=p[0x12]=p[0x13] = 0xFF (0x00418a13 mov al,0xff; 0x00418a18..0x00418a21)
+// Behavioral C reimpl as plain __cdecl(p) (the diff drives the original via an ESI
+// trampoline and the reimpl via a stack-arg pointer — same observable buffer writes).
+// memset is inlined (0x6c is a multiple of 4); identical to ZeroFillWrapper(p,0,0x6c).
+extern "C" __declspec(dllexport) void __cdecl StructInit418a00(unsigned char *p)
+{
+    for (unsigned int i = 0; i < 0x6c; i += 4)
+        *(unsigned int *)(p + i) = 0u;
+    *(unsigned int *)(p + 0x08) = 0x3d4ccccdu;
+    *(unsigned int *)(p + 0x0c) = 0x3d4ccccdu;
+    p[0x10] = 0xFF;
+    p[0x11] = 0xFF;
+    p[0x12] = 0xFF;
+    p[0x13] = 0xFF;
+}
+RH_ScopedInstall(StructInit418a00, 0x00418a00);

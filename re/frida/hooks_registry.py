@@ -87,6 +87,17 @@ HOOKS = {
         ],
         'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
 
+    # 0x00418a00 StructInit418a00 (render) - NEAR-LEAF struct initializer; pointer in ESI.
+    # void f(ESI=p): memset(p,0,0x6c) via C3 ZeroFillWrapper(0x4b6520); *(u32*)(p+8)=*(u32*)(p+0xc)
+    # =0x3d4ccccd (0.05f); p[0x10..0x14)=0xFF. Orig driven via esi-trampoline; reim __cdecl(p).
+    'esi_struct_init_418a00': {'rva': 0x00418a00, 'export': 'StructInit418a00', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'esi_struct_init',
+        'bufsize': 0x6c,
+        'scenarios': [
+            {'seed': 0xCC},   # sentinel CC -> post: zeros + 0.05f@8/0xc + 0xFFFFFFFF@0x10
+            {'seed': 0x77},   # different sentinel -> identical post-state (proves full memset coverage)
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x004058c0 FloatSubThunk4058c0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x4058b0.
     # void f(idx, float fval): *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval. Verbatim naked.
     'thunk_float_sub_4058c0': {'rva': 0x004058c0, 'export': 'FloatSubThunk4058c0', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'thunk_float_sub',
