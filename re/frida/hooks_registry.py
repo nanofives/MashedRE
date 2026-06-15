@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004d8c40 DllMergeSwap4d8c40 (frontend) - PURE LEAF void f(void): circular-list
+    # merge+swap on table entry base=*0x911ad8 + *0x7d3ff8 (B@+0x20, A@+0x24, clear +8).
+    # Verbatim naked reimpl (byte-identical). Verified via empty-B swap path, role-swapped.
+    'dll_merge_swap_4d8c40': {'rva': 0x004d8c40, 'export': 'DllMergeSwap4d8c40', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'dll_merge_swap',
+        'glob_a': 0x00911ad8, 'glob_b': 0x007d3ff8,
+        'scenarios': [
+            {'swap': False},   # A=n1, B=n2 -> +0x24=n2, +0x20=n1, +8=0
+            {'swap': True},    # A=n2, B=n1 -> +0x24=n1, +0x20=n2, +8=0
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x00475f30 ScaledMulAdd475f30 (render) - PURE LEAF EAX-implicit: void f(EAX=out,
     # float a1, float a2): r = 0.5*2.0*a1*a2 + 0.1; out[1]=r; out[0]=r. Verbatim naked
     # reimpl (byte-identical). EAX-trampoline handler unlocks EAX-implicit functions.

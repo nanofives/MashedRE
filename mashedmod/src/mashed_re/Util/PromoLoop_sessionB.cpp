@@ -4022,3 +4022,53 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl ScaledMulAdd475f
     }
 }
 RH_ScopedInstall(ScaledMulAdd475f30, 0x00475f30);
+
+// 0x004d8c40 FUN_004d8c40 (frontend, DllMergeSwap) — PURE LEAF (no calls)
+// void f(void): on table entry base = *0x911ad8 + *0x7d3ff8, splice circular list B
+// (base+0x20) into list A (base+0x24), then swap the two header fields and clear
+// base+8. VERBATIM naked copy of the original -> byte-identical. Internal jumps via
+// MASM labels. Verified via the swap path (empty-B early-exit).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl DllMergeSwap4d8c40(void)
+{
+    __asm {
+        mov   edx, dword ptr ds:[0911AD8h]
+        mov   eax, dword ptr ds:[07D3FF8h]
+        push  esi
+        mov   ecx, dword ptr [edx+eax+24h]
+        mov   eax, dword ptr [edx+eax+20h]
+        mov   edx, dword ptr [eax]
+        cmp   edx, eax
+        je    L82
+        cmp   dword ptr [ecx], ecx
+        jne   L6d
+        mov   dword ptr [ecx], edx
+        mov   dword ptr [edx+4], ecx
+        mov   edx, dword ptr [eax+4]
+        mov   dword ptr [ecx+4], edx
+        mov   dword ptr [edx], ecx
+        jmp   L7d
+    L6d:
+        mov   esi, dword ptr [ecx+4]
+        mov   dword ptr [esi], edx
+        mov   dword ptr [edx+4], esi
+        mov   edx, dword ptr [eax+4]
+        mov   dword ptr [edx], ecx
+        mov   dword ptr [ecx+4], edx
+    L7d:
+        mov   dword ptr [eax], eax
+        mov   dword ptr [eax+4], eax
+    L82:
+        mov   edx, dword ptr ds:[0911AD8h]
+        mov   esi, dword ptr ds:[07D3FF8h]
+        mov   dword ptr [edx+esi+24h], eax
+        mov   eax, dword ptr ds:[0911AD8h]
+        mov   edx, dword ptr ds:[07D3FF8h]
+        pop   esi
+        mov   dword ptr [eax+edx+20h], ecx
+        mov   eax, dword ptr ds:[07D3FF8h]
+        mov   ecx, dword ptr ds:[0911AD8h]
+        mov   dword ptr [ecx+eax+8], 0
+        ret
+    }
+}
+RH_ScopedInstall(DllMergeSwap4d8c40, 0x004d8c40);

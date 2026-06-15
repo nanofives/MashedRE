@@ -227,6 +227,7 @@ PURE_LEAF_ARGTYPES = {
     'idx2_record_condset',       # void fn(int i, int j, int v): PURE LEAF. off=(j+5i)*recStride; *(int*)(baseB+off)=v; if(*(float*)(baseA+off)==0.0) *(int*)(baseA+off)=0x3c23d70a. Per cfg.scenarios[t]={i,j,v,cur}: seed baseA+off=cur(float), call, observe A|B. non-degen via cur==0 vs !=0 + varied v/index
     'quad_buffer_build',         # int fn(void* out, uint maxsize, struct* rec): PURE LEAF 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; per record P=*(arr+0x14+k*0x28), sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub blocks of 4x16 entries {ri,si,0,1.0f} at out+counter*64, ret counter*4. Per cfg.scenarios[t]={subs:[...],maxsize}: build rec+arr+P bufs, observe ret + out dwords. non-degen via subs + bounds
     'eax_out_2float',            # void fn(EAX=out ptr, float a1@[esp+4], float a2@[esp+8]): PURE LEAF EAX-implicit output. Trampoline `mov eax,outbuf; jmp target`, NativeFunction(void,['float','float']). Per cfg.scenarios[t]={a1,a2}: call, observe outbuf[0]|outbuf[1] (float bits). non-degen via varied a1/a2
+    'dll_merge_swap',            # void fn(void): PURE LEAF circular-list merge+swap on table entry base=*glob_a+*glob_b. seed *glob_a=&mybuf, *glob_b=0; mybuf+0x20=B,+0x24=A,+8=sentinel; empty-B (Bnode[0]=Bnode) -> early-exit swap path. Per cfg.scenarios[t]={swap}: assign A/B roles; observe mybuf+0x20|+0x24|+8. non-degen via role swap (verbatim naked reimpl, swap path)
 }
 
 SRC = r"""
@@ -2632,6 +2633,29 @@ rpc.exports.diff = function(cfg) {
       };
       try { o = runE(mkE2(ptr(cfg.rva))); } catch (e) { eo = e.message; }
       try { r = runE(mkE2(reim)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'dll_merge_swap') {
+      // void f(void): circular-list merge+swap on table base=*glob_a + *glob_b.
+      // Test the empty-B early-exit swap path (safe). Role-swap A/B for non-degen.
+      const s = (cfg.scenarios || [])[t] || { swap: false };
+      const mybuf = Memory.alloc(0x40), n1 = Memory.alloc(0x20), n2 = Memory.alloc(0x20);
+      _keep.push(mybuf, n1, n2);
+      const A = s.swap ? n2 : n1, B = s.swap ? n1 : n2;
+      const seedS = function () {
+        for (let z = 0; z < 0x40; z += 4) mybuf.add(z).writeU32(0);
+        ptr(cfg.glob_a).writePointer(mybuf);
+        ptr(cfg.glob_b).writeU32(0);
+        mybuf.add(0x20).writePointer(B);
+        mybuf.add(0x24).writePointer(A);
+        mybuf.add(8).writeU32(0x12345678);   // sentinel -> should be cleared to 0
+        B.writePointer(B);                    // empty B (Bnode[0]==B) -> early-exit
+      };
+      const snap = function () {
+        return (mybuf.add(0x20).readU32() >>> 0).toString(16) + '|' +
+               (mybuf.add(0x24).readU32() >>> 0).toString(16) + '|' +
+               (mybuf.add(8).readU32() >>> 0).toString(16);
+      };
+      try { seedS(); Orig(); o = snap(); } catch (e) { eo = e.message; }
+      try { seedS(); Reim(); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
@@ -2800,6 +2824,7 @@ def run(name):
            't1Tbl': h.get('t1Tbl'), 't2Tbl': h.get('t2Tbl'), 't3Tbl': h.get('t3Tbl'), 't3Stride': h.get('t3Stride'),
            'rangeTbl': h.get('rangeTbl'), 'deltaTbl': h.get('deltaTbl'),
            'baseA': h.get('baseA'), 'baseB': h.get('baseB'), 'recStride': h.get('recStride'),
+           'glob_a': h.get('glob_a'), 'glob_b': h.get('glob_b'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

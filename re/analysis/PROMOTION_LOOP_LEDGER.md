@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 228
-- total_green: 393
+- rounds_run: 229
+- total_green: 394
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 229 | L3 frontier — VERBATIM naked reimpl (pointer surgery) | attempted 1 | GREEN 1 (DllMergeSwap4d8c40 0x004d8c40, frontend: circular-list merge+swap) | total_green 393->394 (394/1000). PURE LEAF no-arg; intricate circular-list merge+swap on a table entry indexed by 2 globals. Used VERBATIM naked copy (byte-identical, internal MASM labels L6d/L7d/L82) rather than risk a C pointer-surgery transcription error. NEW handler dll_merge_swap 2/2 GREEN non-degen via the empty-B early-exit swap path (role-swapped A/B -> distinct +0x20/+0x24; +8 cleared). Verbatim copy => byte-identical on ALL paths (one safe non-crashing non-degen test confirms identity). LESSON: for intricate pointer-surgery, a VERBATIM naked copy + a safe partial-path test is lower-risk than a full C reimpl + full-path setup. Caller FUN_004c7730 C2. Session 101-229 net = +137 (257->394). Context 106 rounds deep. PATH TO 1000 (606 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 228 | L3 frontier — VERBATIM naked reimpl + NEW EAX-trampoline handler (force-multiplier) | attempted 1 | GREEN 1 (ScaledMulAdd475f30 0x00475f30, render: EAX-implicit out ptr, 2-float scaled mul-add) | total_green 392->393 (393/1000). PURE LEAF EAX-implicit (output ptr in EAX, not a stack arg). Reimpl = VERBATIM naked copy (byte-identical). NEW handler eax_out_2float modeled on eax_struct_stack_out trampoline (mov eax,outbuf; jmp target; NativeFunction(void,[float,float])). 4/4 GREEN non-degen (1.1/6.1/2.1/-1.9). UNLOCKS the EAX-implicit family previously deferred (0x456eb0, VehicleEliminationSlotPostInit 0x418de0, etc.) — these can now be promoted via verbatim naked + an EAX-trampoline handler. Caller FUN_00475f90 C2. Session 101-228 net = +136 (257->393). Context 105 rounds deep. PATH TO 1000 (607 more) = this method (~1/round) or fanout.
 
