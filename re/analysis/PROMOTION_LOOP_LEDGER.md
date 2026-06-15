@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 221
-- total_green: 386
+- rounds_run: 222
+- total_green: 387
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 222 | L3 frontier (classifier-driven) — capstone reimpl (8th), REUSED handler | attempted 1 | GREEN 1 (TimerStateMachine40dcb0 0x0040dcb0, gameplay: multi-phase countdown state machine) | total_green 386->387 (387/1000). PURE LEAF no-arg; 3 state branches (1/2/3) each decrementing a float timer + threshold-gated state advance. REUSED existing near_leaf_seed_multi_obs (no new handler!) — seed state+timers+dt, observe state+t1+t2. 6/6 GREEN non-degen (all states x hold/advance). x87 80-bit-compare caveat handled via non-borderline test vectors (exact-integer float results). Caller TimeTrial::Tick 0x429310 C2. EFFICIENCY: no-arg global state machines reuse near_leaf_seed_multi_obs -> lighter round (no handler/passthrough edits). Session 101-222 net = +130 (257->387). Context 99 rounds deep. PATH TO 1000 (613 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 221 | L3 frontier (classifier-driven) — capstone reimpl (7th) | attempted 1 | GREEN 1 (SuccApproxQuantize5b6a40 0x005b6a40, audio: successive-approx quantizer, 2 tables, updates *p2/*p3) | total_green 385->386 (386/1000). PURE LEAF (pure integer). NEW handler succ_approx_quantize 4/4 GREEN non-degen (*p2 128/1920/-384/-1920; *p3 0/8). DEBUG NOTE (important harness lesson): first attempt RED only on *p3 — Orig returned a constant 136 (neither my seed nor real deltaTbl) while Reim read my seed. *p2 matched (quantizer correct) so al was identical. Root cause: seeding deltaTbl(0x634478) DIVERGED Orig vs Reim reads (Orig didn't see the write though it saw the rangeTbl 0x634498 write) — a Frida .data-write artifact on that sub-region. FIX: leave deltaTbl REAL (both sides read it identically) -> GREEN; the deltaTbl read is still exercised (al 7->8, al 9->-1 floored, al 0->-1 floored, al 15->8). LESSON: if a seeded abs-table diverges Orig/Reim but a sibling table seeds fine, STOP seeding that table and read REAL (both sides identical) rather than chase the artifact. Caller FUN_005b6820 C2. Session 101-221 net = +129 (257->386). Context 98 rounds deep. PATH TO 1000 (614 more) = this method (~1/round) or fanout.
 

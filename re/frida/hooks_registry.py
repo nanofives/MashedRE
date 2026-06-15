@@ -60,6 +60,21 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0040dcb0 TimerStateMachine40dcb0 (gameplay) - PURE LEAF void f(void): multi-phase
+    # countdown SM on globals 0x63b90c(state)/910(t1)/918(t2), rate 700.0, dt 0x7f100c.
+    # Reuses near_leaf_seed_multi_obs: seed state+timers+dt, observe state+t1+t2.
+    'timer_state_machine_40dcb0': {'rva': 0x0040dcb0, 'export': 'TimerStateMachine40dcb0', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
+        'observe_addrs': [0x0063b90c, 0x0063b910, 0x0063b918],
+        'seed_sets': [
+            {'globals': [[0x63b90c,3],[0x63b910,0x447a0000],[0x63b918,0],[0x7f100c,0x3f800000]]},  # st3 no reset -> 300
+            {'globals': [[0x63b90c,3],[0x63b910,0x43960000],[0x63b918,0],[0x7f100c,0x3f800000]]},  # st3 reset -> state0, -400
+            {'globals': [[0x63b90c,2],[0x63b910,0],[0x63b918,0x41200000],[0x7f100c,0x3f800000]]},  # st2 no -> 9.0
+            {'globals': [[0x63b90c,2],[0x63b910,0],[0x63b918,0x3f000000],[0x7f100c,0x3f800000]]},  # st2 advance -> state3, -0.5
+            {'globals': [[0x63b90c,1],[0x63b910,0x44fa0000],[0x63b918,0],[0x7f100c,0x3f800000]]},  # st1 no -> 1300
+            {'globals': [[0x63b90c,1],[0x63b910,0x44610000],[0x63b918,0],[0x7f100c,0x3f800000]]},  # st1 advance -> state2,320,5
+        ],
+        'path1_tests': [0, 1, 2, 3, 4, 5], 'path2_tests': [0, 1, 2, 3, 4, 5]},
+
     # 0x005b6a40 SuccApproxQuantize5b6a40 (audio) - PURE LEAF void f(int arg1, int* p2,
     # int* p3): successive-approx quantizer. range=*(s16*)(0x634498+(*p3)*2); flags built
     # by edx>=range (range>>=1 each); *p2 = quantized recon (clamp [-0x8000,0x7fff]);

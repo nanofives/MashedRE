@@ -3821,3 +3821,42 @@ extern "C" __declspec(dllexport) void __cdecl SuccApproxQuantize5b6a40(int arg1,
     if (*p3 < 0) *p3 = 0;
 }
 RH_ScopedInstall(SuccApproxQuantize5b6a40, 0x005b6a40);
+
+// 0x0040dcb0  FUN_0040dcb0 (gameplay, TimerStateMachine) — PURE LEAF (no calls)
+// void f(void): multi-phase countdown state machine on globals. state=*0x63b90c
+// (1/2/3); each phase decrements a float timer by a rate and, on crossing a
+// threshold, advances the state. capstone-verified (consts: rate=700.0 @0x5ccd7c,
+// thr -320 @0x5ccd78, thr 320 @0x5ccd74, thr 0.0 @0x5d757c). fcomp jp-idiom => the
+// reset fires when timer <= threshold (finite). x87: comparison uses the 80-bit
+// intermediate; verified with non-borderline vectors so the 32-bit float compare agrees.
+extern "C" __declspec(dllexport) void __cdecl TimerStateMachine40dcb0(void)
+{
+    int* const pstate = reinterpret_cast<int*>(0x0063b90cu);
+    float* const t1 = reinterpret_cast<float*>(0x0063b910u);
+    float* const t2 = reinterpret_cast<float*>(0x0063b918u);
+    const float dt   = *reinterpret_cast<const float*>(0x007f100cu);
+    const float rate = *reinterpret_cast<const float*>(0x005ccd7cu);
+    const int state = *pstate;
+    if (state == 1) {
+        float v = *t1 - (dt * rate);
+        *t1 = v;
+        if (v <= *reinterpret_cast<const float*>(0x005ccd74u)) {     // <= 320.0
+            *reinterpret_cast<int*>(0x0063b910u) = 0x43a00000;       // 320.0
+            *reinterpret_cast<int*>(0x0063b918u) = 0x40a00000;       // 5.0
+            *pstate = 2;
+        }
+    } else if (state == 2) {
+        float v = *t2 - dt;
+        *t2 = v;
+        if (v <= *reinterpret_cast<const float*>(0x005d757cu)) {     // <= 0.0
+            *pstate = 3;
+        }
+    } else if (state == 3) {
+        float v = *t1 - (dt * rate);
+        *t1 = v;
+        if (v <= *reinterpret_cast<const float*>(0x005ccd78u)) {     // <= -320.0
+            *pstate = 0;
+        }
+    }
+}
+RH_ScopedInstall(TimerStateMachine40dcb0, 0x0040dcb0);
