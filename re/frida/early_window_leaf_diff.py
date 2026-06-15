@@ -236,6 +236,7 @@ PURE_LEAF_ARGTYPES = {
     'particle_pool_alloc',       # void fn(int* a1, int a2): PURE LEAF particle-pool alloc at cfg.glob (10 slots stride 0x24). scan for free (slot[+0]==0) else evict max(slot[+0x1c]); write a1[0..2]/a2/255f/used into chosen slot. Seed pool (cfg.scenarios[t]={used:[idxs],pris:[...]}); a1=[0x111,0x222,0x333],a2=0x444; observe slot[+0]/[+4] of slots 0/1/9. non-degen via which slot written
     'thunk_node_write',          # void fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 0x476cb0. node = (*cfg.glob)[p[0x14]]; node[0xa4]=a2; node[0xa8]=a3; node[0x40]|=0x10000000. Build p/table/node; *glob=table; table[0]=node; p[0x14]=0; node[0x40]=seed; per cfg.scenarios[t]={a2,a3}: observe node[0xa4]|node[0xa8]|node[0x40]. non-degen via varied a2/a3
     'thunk_field_copy',          # void fn(p, out): NEAR-LEAF adjustor thunk -> C3 copy. s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Build p/s/src/out; s[0x24]=count, s[0x20]=src (pattern); observe out[0..count-1]. non-degen via varied src pattern
+    'thunk_cond_or',             # uint fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Build p/s; s[8]=seed; per cfg.scenarios[t]={a2,a3,seed}: observe ret|s[8]. non-degen via a3!=0 (or'd) vs a3==0 (unchanged)
 }
 
 SRC = r"""
@@ -402,6 +403,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'particle_pool_alloc') ? ['pointer','uint32']
               : (cfg.at === 'thunk_node_write') ? ['pointer','uint32','uint32']
               : (cfg.at === 'thunk_field_copy') ? ['pointer','pointer']
+              : (cfg.at === 'thunk_cond_or') ? ['pointer','uint32','uint32']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2827,6 +2829,14 @@ rpc.exports.diff = function(cfg) {
       const snap = function () { let a = []; for (let k = 0; k < cnt; k++) a.push((out.add(k * 4).readU32() >>> 0).toString(16)); return a.join('|'); };
       try { seedC(); Orig(p, out); o = snap(); } catch (e) { eo = e.message; }
       try { seedC(); Reim(p, out); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'thunk_cond_or') {
+      // uint f(p, a2, a3): adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8].
+      const sc = (cfg.scenarios || [])[t] || { a2: 0, a3: 0, seed: 0 };
+      const p = Memory.alloc(0x40), sp = Memory.alloc(0x40); _keep.push(p, sp);
+      const seedC = function () { for (let z = 0; z < 0x40; z += 4) { p.add(z).writeU32(0); sp.add(z).writeU32(0); } p.add(0x18).writePointer(sp); sp.add(8).writeU32(sc.seed >>> 0); };
+      const snap = function (ret) { return (ret >>> 0).toString(16) + '|' + (sp.add(8).readU32() >>> 0).toString(16); };
+      try { seedC(); o = snap(Orig(p, sc.a2 >>> 0, sc.a3 >>> 0)); } catch (e) { eo = e.message; }
+      try { seedC(); r = snap(Reim(p, sc.a2 >>> 0, sc.a3 >>> 0)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

@@ -4412,3 +4412,19 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Thunk4b4130(void
     }
 }
 RH_ScopedInstall(Thunk4b4130, 0x004b4130);
+
+// 0x004b52f0 FUN_004b52f0 (render, Thunk4b52f0) — NEAR-LEAF adjustor thunk to C3 0x4b52c0.
+// uint f(p, a2, a3): p = p[0x18]; tail-call 0x4b52c0(p, a2, a3). 0x4b52c0(s,a2,a3): eax=s[8];
+// if(a3!=0){ eax|=a2; s[8]=eax; } return eax. So f: s=p[0x18]; if(a3) s[8]|=a2; return s[8].
+// VERBATIM naked (b0=0x8b; rel32 jmp -> mov eax,abs; jmp eax).
+extern "C" __declspec(dllexport) __declspec(naked) unsigned __cdecl Thunk4b52f0(void)
+{
+    __asm {
+        mov   edx, dword ptr [esp+4]
+        mov   eax, dword ptr [edx+18h]
+        mov   dword ptr [esp+4], eax
+        mov   eax, 04B52C0h
+        jmp   eax
+    }
+}
+RH_ScopedInstall(Thunk4b52f0, 0x004b52f0);

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 239
-- total_green: 404
+- rounds_run: 240
+- total_green: 405
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 240 | NEAR-LEAF lane — adjustor-thunk verbatim -> C3 cond-or | attempted 1 | GREEN 1 (Thunk4b52f0 0x004b52f0, render) | total_green 404->405 (405/1000). uint f(p,a2,a3): s=p[0x18]; if(a3) s[8]|=a2; return s[8] (tail-call C3 0x4b52c0). VERBATIM naked. NEW handler thunk_cond_or 3/3 GREEN non-degen. Caller FUN_0041a1e0 C2, callee 0x4b52c0 C3. Near-leaf adjustor-thunk pattern is reliable (p[OFF] substitution + tail-call to a C3) — several more in near_leaf_frontier.tsv. Session 101-240 net = +148 (257->405). Context 117 rounds deep. PATH TO 1000 (595 more) = near-leaf+frontier (~1/round) or fanout.
 
 2026-06-15 | round 239 | NEAR-LEAF lane (resumed) — adjustor-thunk verbatim -> C3 array copy | attempted 1 (+1 SKIPPED) | GREEN 1 (Thunk4b4130 0x004b4130, render) | total_green 403->404 (404/1000). f(p,out): s=p[0x18]; tail-call C3 0x4b40c0 -> copy s[0x24] dwords from *(s[0x20]) to out. VERBATIM naked (b0=0x8b ok). NEW handler thunk_field_copy 2/2 GREEN non-degen (count4/3, distinct src). Caller FUN_004b4140 C2, callee 0x4b40c0 C3. SKIPPED 0x4b6550 (pure-jmp thunk, b0==0xE9 -> early_window NO_AUTO_HOOK check aborts; pure-jmp thunks unverifiable via this harness -> skip thunk_FUN_* rows). Session 101-239 net = +147 (257->404). Context 116 rounds deep. PATH TO 1000 (596 more) = near-leaf+frontier (~1/round) or fanout.
 

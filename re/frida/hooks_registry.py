@@ -60,6 +60,16 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004b52f0 Thunk4b52f0 (render) - NEAR-LEAF adjustor thunk -> C3 0x4b52c0.
+    # uint f(p, a2, a3): s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Verbatim naked.
+    'thunk_4b52f0': {'rva': 0x004b52f0, 'export': 'Thunk4b52f0', 'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32', 'uint32']}, 'arg_type': 'thunk_cond_or',
+        'scenarios': [
+            {'a2': 0x0f, 'a3': 1, 'seed': 0x100},   # a3!=0 -> s[8]=0x10f, ret 0x10f
+            {'a2': 0xf0, 'a3': 0, 'seed': 0x100},   # a3==0 -> s[8]=0x100 unchanged, ret 0x100
+            {'a2': 0x33, 'a3': 1, 'seed': 0x44},    # -> s[8]=0x77, ret 0x77
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x004b4130 Thunk4b4130 (render) - NEAR-LEAF adjustor thunk -> C3 0x4b40c0.
     # f(p, out): s=p[0x18]; copy s[0x24] dwords from *(s[0x20]) to out. Verbatim naked.
     'thunk_4b4130': {'rva': 0x004b4130, 'export': 'Thunk4b4130', 'signature': {'ret': 'void', 'args': ['pointer', 'pointer']}, 'arg_type': 'thunk_field_copy',
