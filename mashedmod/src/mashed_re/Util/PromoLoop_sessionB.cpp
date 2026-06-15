@@ -3619,3 +3619,21 @@ extern "C" __declspec(dllexport) float __cdecl IndexedFloatPairSum420d80(int idx
     return p[0] + p[1];
 }
 RH_ScopedInstall(IndexedFloatPairSum420d80, 0x00420d80);
+
+// 0x0044e070  FUN_0044e070 (audio, DoubleIndexedFloatMul) — PURE LEAF (no calls)
+// Disasm (capstone, original): mov eax,[esp+4]; imul eax,eax,0xf8  ; eax = idx*0xf8
+//   mov ecx,[eax+0x89008c]; mov edx,[eax+0x890090]   ; ecx,edx from idx-tables
+//   lea eax,[edx+ecx*4]; fld dword [eax*4+0x894de0]   ; st0 = floatTbl[edx+ecx*4]
+//   fmul dword [0x5cc8f4]; ret                        ; st0 *= K (=1/6, 0x3e2aaaab)
+// => float f(int idx){ int b=idx*0xf8; int c=*(int*)(b+0x89008c); int d=*(int*)(b+0x890090);
+//                      int e=d+c*4; return *(float*)(0x894de0+e*4) * *(float*)0x5cc8f4; }
+extern "C" __declspec(dllexport) float __cdecl DoubleIndexedFloatMul44e070(int idx)
+{
+    const unsigned b = static_cast<unsigned>(idx) * 0xf8u;
+    const int c = *reinterpret_cast<const int*>(b + 0x0089008cu);
+    const int d = *reinterpret_cast<const int*>(b + 0x00890090u);
+    const unsigned e = static_cast<unsigned>(d) + static_cast<unsigned>(c) * 4u;
+    return *reinterpret_cast<const float*>(0x00894de0u + e * 4u)
+         * *reinterpret_cast<const float*>(0x005cc8f4u);
+}
+RH_ScopedInstall(DoubleIndexedFloatMul44e070, 0x0044e070);

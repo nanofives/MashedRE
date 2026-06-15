@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 215
-- total_green: 380
+- rounds_run: 216
+- total_green: 381
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 216 | L3 frontier — capstone-decomp + reimpl + handler (2nd this method) | attempted 1 | GREEN 1 (DoubleIndexedFloatMul44e070 0x0044e070, audio: float f(idx)=floatTbl[d+c*4]*K via two idx-tables) | total_green 380->381 (381/1000). PURE LEAF (capstone-verified, no calls). Wrote reimpl + NEW handler double_indexed_float_mul (seed aTbl=0/bTbl=t/fTbl+t*4; ret float). 4/4 GREEN non-degen ((e+1)/6 = 0.1667/0.3333/0.5/0.6667 exact; K=*0x5cc8f4=1/6 verified !=0 pre-build to avoid degenerate-zero). Caller FUN_00461650 C2. Pre-checked SizeOfImage=0x595000 covers the 0x89xxxx/0x894xxx seed targets (no AV). CONFIRMS the capstone-frontier method is the working autonomous lane: regen frontier -> disasm raw bytes -> classify (skip fcos/fsin/EAX-implicit/tail-jmp/long-fld-faddp) -> reimpl + focused handler -> diff. ~48 frontier leaves remain. Session 101-216 net = +124 (257->381). Context 93 rounds deep. PATH TO 1000 (619 more) = this method (~1/round) or the fanout (parallelizes it).
 
 2026-06-15 | round 215 | L3 frontier — fresh capstone-decomp + reimpl + handler | attempted 1 | GREEN 1 (IndexedFloatPairSum420d80 0x00420d80, gameplay: float f(int idx)=p[0]+p[1] @ 0x63e4b8+idx*36) | total_green 379->380 (380/1000). dry_counter 1->0. RECOVERED from r214 dry. METHOD (reusable, no Ghidra-pool needed): disassemble a frontier candidate's raw bytes via capstone directly (scripts/promote_frontier.py regen -> 54 frontier leaves; rva2off needs RVA=VA-0x400000 not VA). 0x420d80 = clean PURE LEAF (no calls, straight x87 fld+fadd). Wrote reimpl in PromoLoop_sessionB.cpp + NEW handler indexed_float_sum2 (seed slot+0/+4 floats, ret float, compare). 4/4 GREEN non-degen (idx 0/1/2/3 -> 1/2.5/4/5.5 exact). Caller FUN_00421100 C2. SKIPPED in same frontier: 0x422440 (fcos transcendental), 0x431b20/b50/b60 (fsin float10). LESSON: the L3 frontier still has clean pure-leaves IF you decomp them fresh (capstone) — the bottleneck was never candidates, it's that each needs decomp+reimpl+handler (a full round). ~50 frontier leaves remain (minus fsin/fcos/EAX-implicit). Session 101-215 net = +123 (257->380). Context 92 rounds deep. PATH TO 1000 (620 more) = fanout (this per-candidate full-round work is exactly what it parallelizes).
 

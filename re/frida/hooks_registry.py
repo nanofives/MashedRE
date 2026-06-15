@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0044e070 DoubleIndexedFloatMul44e070 (audio) - PURE LEAF float f(int idx):
+    # c=*(int*)(idx*0xf8+0x89008c); d=*(int*)(idx*0xf8+0x890090); e=d+c*4;
+    # return *(float*)(0x894de0+e*4) * *(float*)0x5cc8f4 (K=1/6). capstone-verified.
+    # Seed idx=0: aTbl=0, bTbl=e=t, fTbl+t*4=float(t+1); non-degen via varied e.
+    'double_indexed_float_mul_44e070': {'rva': 0x0044e070, 'export': 'DoubleIndexedFloatMul44e070', 'signature': {'ret': 'float', 'args': ['uint32']}, 'arg_type': 'double_indexed_float_mul',
+        'aTbl': 0x0089008c, 'bTbl': 0x00890090, 'fTbl': 0x00894de0,
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x00420d80 IndexedFloatPairSum420d80 (gameplay) - PURE LEAF float f(int idx):
     # p = (float*)(0x63e4b8 + idx*36); return p[0]+p[1]. (capstone-disasm verified:
     # mov eax,[esp+4]; lea eax,[eax+eax*8]; fld [eax*4+0x63e4b8]; fadd [eax+4]; ret).
