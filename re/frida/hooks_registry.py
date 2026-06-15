@@ -60,6 +60,14 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'pred_462760': {'rva': 0x00462760, 'export': 'Pred462760', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_struct_array_predicate',
+        'glob': 0x0069045c, 'count': 4, 'struct_size': 0xd80,
+        'seed_sets': [
+            {'entries': [{'null': True}, {'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}]},   # entry0 null -> 1
+            {'entries': [{'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}]},  # all pass -> 0
+            {'entries': [{'fields': [[0xd6c, 5], [0xd70, 2]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}, {'fields': [[0xd6c, 5], [0xd70, 5]]}]},  # entry0 d70==2 -> 1
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'update_41b520': {'rva': 0x0041b520, 'export': 'Update41b520', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'near_leaf_seed_multi_obs',
         'observe_addrs': [0x0063c920, 0x0063c924, 0x0063c928, 0x0063c940, 0x0063c994, 0x0063c998, 0x0063c99c, 0x0063c9b4],
         'seed_sets': [

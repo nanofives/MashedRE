@@ -3468,3 +3468,50 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Update41b520(voi
     }
 }
 RH_ScopedInstall(Update41b520, 0x0041b520);
+
+// 0x00462760  FUN_00462760 (gameplay, NEAR-LEAF: predicate over a 4-entry pointer array)
+// int f(void): for each p in array 0x69045c[0..3]: if (p==0 || GetD70(p)==0 || GetD70(p)==2 ||
+//   GetD6c(p)==2) return 1; return 0. Callees 0x5a89b0(=p[0xd70]), 0x5a89a0(=p[0xd6c]) C3 getters.
+// Verbatim naked port; `call rel32` -> `mov eax,abs; call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Pred462760(void)
+{
+    __asm {
+        push esi
+        mov  esi, 069045Ch
+    L_PRD_LOOP:
+        mov  eax, dword ptr [esi]
+        test eax, eax
+        je   L_PRD_RET1
+        push eax
+        mov  eax, 05A89B0h
+        call eax
+        add  esp, 4
+        test eax, eax
+        je   L_PRD_RET1
+        mov  eax, dword ptr [esi]
+        push eax
+        mov  eax, 05A89B0h
+        call eax
+        add  esp, 4
+        cmp  eax, 2
+        je   L_PRD_RET1
+        mov  ecx, dword ptr [esi]
+        push ecx
+        mov  eax, 05A89A0h
+        call eax
+        add  esp, 4
+        cmp  eax, 2
+        je   L_PRD_RET1
+        add  esi, 4
+        cmp  esi, 069046Ch
+        jl   L_PRD_LOOP
+        xor  eax, eax
+        pop  esi
+        ret
+    L_PRD_RET1:
+        mov  eax, 1
+        pop  esi
+        ret
+    }
+}
+RH_ScopedInstall(Pred462760, 0x00462760);

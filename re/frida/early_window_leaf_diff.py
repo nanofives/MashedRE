@@ -209,6 +209,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_seed_multi_obs',  # void fn(void): NEAR-LEAF that reads pure C3 getters and conditionally writes SEVERAL absolute globals. cfg.observe_addrs=[...]. seed_sets[t]={globals:[[addr,val],...]}; seed, call, snapshot all observe_addrs. reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via path toggles (do-nothing vs compute)
     'near_leaf_record_builder',  # void fn(_, arg2, _, arg4): NEAR-LEAF that builds a record at rec_base+arg2*rec_stride + writes a C3-setter table. cfg.rec_base/rec_stride/tbl_base/tbl_stride. seed_sets[t]={arg2,arg4,v0,v1}; seed rec[0]=v0,rec[4]=v1,rec[8]=sentinel + zero observed tbl slots; call f(0,arg2,0,arg4); observe rec[8] + tbl[arg2] + tbl[arg2+0xa]. reimpl = verbatim naked port. non-degen via varied arg2/arg4/v0
     'near_leaf_accum_table',     # void fn(a1, float val, a3): NEAR-LEAF that accumulates val into a float table slot tbl_base+a1*rec_stride+a3*4 via a C3 fastcall callee (base[a3]=min(val+base[a3],50)). cfg.tbl_base/rec_stride. seed_sets[t]={a1,val,a3,seed}; seed slot, call, observe slot bits. reimpl = verbatim naked port. non-degen via varied val/seed -> different clamped float
+    'near_leaf_struct_array_predicate', # int fn(void): NEAR-LEAF predicate over a pointer array at cfg.glob (cfg.count entries). For each p: checks fields via C3 getters -> returns 1/0. seed_sets[t]={entries:[{null:bool}|{fields:[[off,val],...]}]}; build structs (cfg.struct_size), set field offs, set glob[k]=struct or null; compare int return. reimpl = verbatim naked port. non-degen via null/match-early/all-pass
 }
 
 SRC = r"""
@@ -353,6 +354,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'near_leaf_seed_multi_obs') ? []
               : (cfg.at === 'near_leaf_record_builder') ? ['uint32','uint32']
               : (cfg.at === 'near_leaf_accum_table') ? ['uint32','float','uint32']
+              : (cfg.at === 'near_leaf_struct_array_predicate') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1805,6 +1807,23 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_struct_array_predicate') {
+      // int f(void): predicate over a pointer array at cfg.glob. seed_sets[t]={entries:[...]}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { entries: [] };
+      const N = cfg.count | 0, ss = cfg.struct_size | 0;
+      const structs = []; for (let k = 0; k < N; k++) { const b = Memory.alloc(ss); _keep.push(b); structs.push(b); }
+      const arr = ptr(cfg.glob);
+      const seedP = function () {
+        (sp.entries || []).forEach(function (ent, k) {
+          if (ent.null) { arr.add(k * 4).writePointer(ptr(0)); }
+          else {
+            (ent.fields || []).forEach(function (fv) { structs[k].add(fv[0]).writeU32(fv[1] >>> 0); });
+            arr.add(k * 4).writePointer(structs[k]);
+          }
+        });
+      };
+      try { seedP(); o = Orig() >>> 0; } catch (e) { eo = e.message; }
+      try { seedP(); r = Reim() >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_accum_table') {
       // void f(a1, float val, a3): accumulate into float table slot via C3 fastcall callee.
       const sp = (cfg.seed_sets || [])[t | 0] || { a1: 0, val: 0.0, a3: 0, seed: 0.0 };
@@ -2441,6 +2460,7 @@ def run(name):
            'tbl_base': h.get('tbl_base'), 'tbl_count': h.get('tbl_count'),
            'obs_addr': h.get('obs_addr'), 'observe_addrs': h.get('observe_addrs'),
            'rec_base': h.get('rec_base'), 'rec_stride': h.get('rec_stride'),
+           'struct_size': h.get('struct_size'),
            'observe_offs': h.get('observe_offs'),
            'conv_orig': h.get('conv_orig'), 'conv_reim': h.get('conv_reim'),
            'eax_seed': h.get('eax_seed'), 'ecx_seed': h.get('ecx_seed'),

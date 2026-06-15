@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 203
-- total_green: 370
+- rounds_run: 204
+- total_green: 371
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 203 | near-leaf #17: pointer-array predicate via C3 field getters (NEW handler near_leaf_struct_array_predicate) | attempted 1 | GREEN 1 (Pred462760 0x00462760: 4 ptrs @0x69045c; return 1 if any null/p[0xd70]in{0,2}/p[0xd6c]==2 else 0) | total_green 370->371 (371/1000). Callers 0x4656e0/0x4657b0 C2, callees 0x5a89b0(p[0xd70])/0x5a89a0(p[0xd6c]) C3 field getters. NEW handler near_leaf_struct_array_predicate (build N structs, set only the read fields, point glob array at them; null/match-early/all-pass). 17 near-leaf shapes. Session 101-203 net = +114 (257->371). ~85 handlers. Context 80 rounds deep — fresh context STRONGLY advised; fanout = fast route to 1000.
 
 2026-06-15 | round 202 | near-leaf #16: per-record update loop (reuse near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (Update41b520 0x0041b520: loops FUN_0041ae20 over 4 records; callee copies table vec3 -> rec[0x50..0x58], doubles rec[0x50], zeros rec[0x70]) | total_green 369->370 (370/1000). Caller 0x40dbd0 C2, callee 0x41ae20 C3. LESSON: for a near-leaf whose C3 callee does a non-trivial per-record update, READ the callee fully (here: vec3 copy from table[rec[0x64]*0xc] + double + zero) then seed the records' index field + the source table + observe the written record fields -> deterministic non-degen WITHOUT a new handler. Also: a fastcall callee that PRESERVES ecx lets the parent loop ecx across calls. 16 near-leaf shapes (370/1000=37%). Session 101-202 net = +113 (257->370). ~84 handlers. Context 79 rounds deep — fresh context strongly advised; fanout = fast route to 1000.
 
