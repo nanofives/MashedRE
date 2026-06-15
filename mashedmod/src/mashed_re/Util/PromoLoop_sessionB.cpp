@@ -1745,3 +1745,27 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Clear558140(std::uint8_t*
     return reinterpret_cast<std::uint32_t>(arg);
 }
 RH_ScopedInstall(Clear558140, 0x00558140);
+
+// ===== round 145 ===== (4-state dispatch with list-unlink)
+// 0x005b0ec0 — void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14];
+//   *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6;
+//   state3: p[0x50]=5; else (no change).
+extern "C" __declspec(dllexport) void __cdecl StateAdv5b0ec0(std::uint8_t* p) {
+    int state = *reinterpret_cast<int*>(p + 0x48);
+    if (state == 1) {
+        std::uint8_t* a = *reinterpret_cast<std::uint8_t**>(p + 0x14);
+        if (a) {
+            std::uint8_t* b = *reinterpret_cast<std::uint8_t**>(p + 0x18);
+            *reinterpret_cast<std::uint8_t**>(b) = a;
+            *reinterpret_cast<std::uint8_t**>(a + 4) = b;
+            *reinterpret_cast<std::uint32_t*>(p + 0x18) = 0;
+            *reinterpret_cast<std::uint32_t*>(p + 0x14) = 0;
+        }
+        *reinterpret_cast<std::uint32_t*>(p + 0x50) = 3;
+    } else if (state == 2) {
+        *reinterpret_cast<std::uint32_t*>(p + 0x50) = 6;
+    } else if (state == 3) {
+        *reinterpret_cast<std::uint32_t*>(p + 0x50) = 5;
+    }
+}
+RH_ScopedInstall(StateAdv5b0ec0, 0x005b0ec0);

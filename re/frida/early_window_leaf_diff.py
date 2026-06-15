@@ -160,6 +160,7 @@ PURE_LEAF_ARGTYPES = {
     'arg_flag_branch_getter',    # u32 fn(arg*): pure getter; if(arg[0x20]){ p=arg[0]; f=p[0x40]&0xfffffff; return (arg[0x1c]&2)?f+arg[0x20]+4:f+arg[0x20]; } else return (arg[0x1c]&2)?arg+0x2c:arg+0x28. Seed arg fields per cfg.seed_sets[t]={c,flag,f}; SHARED arg+p bufs (so arg+0x2c/0x28 compare equal). test=index over the 4 branches (non-degen)
     'global_dll_insert_head',    # u32 fn(arg): node=arg+0x28; node[0]=*glob; node[4]=glob(addr const); (*glob)[4]=node; *glob=node; node[0xc]&=~1; return 1. seed *glob=&S, arg[0x34](=node[0xc])=0xF; shared arg+S bufs; snapshot node[0]|node[4]|S[4]|*glob|node[0xc]|ret. test ignored
     'global_fieldoff_clear',     # u32 fn(arg): V=*(glob); entry=*(arg+V); if(!entry) return 0; if(!entry[0]) return arg; e4=entry[4]; if(e4) arg[0x48]=e4; entry[4]=0; entry[0]=0; return arg. seed *glob=V(0x10), arg[V]=&entry(test0)/0(test1), entry[0]=1,entry[4]=0x77; shared arg+entry bufs; snapshot arg[0x48]|entry[0]|entry[4]|ret. non-degen via ret(arg/0)+arg[0x48]+the clearing
+    'multi_state_list_setter',   # void fn(p): state=p[0x48]; state1: if(p[0x14]){ *(p[0x18])=p[0x14]; *(p[0x14]+4)=p[0x18]; p[0x18]=0; p[0x14]=0; } p[0x50]=3; state2: p[0x50]=6; state3: p[0x50]=5; else no change. Seed p[0x48]=state(test), p[0x50]=0x11 sentinel, state1 also p[0x14]=&A,p[0x18]=&B; shared p+A+B bufs; snapshot p[0x50]|p[0x14]|p[0x18]|A[4]|B[0]. test=state in {1,2,3,0} (non-degen)
 }
 
 SRC = r"""
@@ -255,6 +256,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'arg_flag_branch_getter') ? ['pointer']
               : (cfg.at === 'global_dll_insert_head') ? ['pointer']
               : (cfg.at === 'global_fieldoff_clear') ? ['pointer']
+              : (cfg.at === 'multi_state_list_setter') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1258,6 +1260,22 @@ rpc.exports.diff = function(cfg) {
       const snapC2 = function (rv) { return [argc.add(0x48).readU32(), ent.readU32(), ent.add(4).readU32(), rv >>> 0].map(function (x) { return x >>> 0; }).join('|'); };
       try { setupC(); const ro = Orig(argc) >>> 0; o = snapC2(ro); } catch (e) { eo = e.message; }
       try { setupC(); const rr = Reim(argc) >>> 0; r = snapC2(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'multi_state_list_setter') {
+      // void fn(p): 4-state dispatch (state=p[0x48]); state1 unlinks p[0x14]/p[0x18] + p[0x50]=3;
+      // state2 p[0x50]=6; state3 p[0x50]=5; else no change. Seed per test state; shared p+A+B
+      // bufs (so state1 list pointers compare equal); snapshot p[0x50]|p[0x14]|p[0x18]|A[4]|B[0].
+      const st = t | 0;
+      const ps = Memory.alloc(0x80), A = Memory.alloc(0x40), B = Memory.alloc(0x40); _keep.push(ps, A, B);
+      const setupS = function () {
+        for (let z = 0; z < 0x80; z += 4) ps.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) { A.add(z).writeU32(0); B.add(z).writeU32(0); }
+        ps.add(0x48).writeU32(st);
+        ps.add(0x50).writeU32(0x11);
+        if (st === 1) { ps.add(0x14).writePointer(A); ps.add(0x18).writePointer(B); }
+      };
+      const snapS = function () { return [ps.add(0x50).readU32(), ps.add(0x14).readU32(), ps.add(0x18).readU32(), A.add(4).readU32(), B.readU32()].map(function (x) { return x >>> 0; }).join('|'); };
+      try { setupS(); Orig(ps); o = snapS(); } catch (e) { eo = e.message; }
+      try { setupS(); Reim(ps); r = snapS(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

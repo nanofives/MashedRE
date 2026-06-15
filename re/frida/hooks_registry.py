@@ -14322,6 +14322,9 @@ HOOKS = {
     # ---- promote-round round 144 (global-field-offset struct clear) --
     'clear_558140': {'rva': 0x00558140, 'export': 'Clear558140', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'global_fieldoff_clear', 'glob': 0x00913274, 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
 
+    # ---- promote-round round 145 (4-state dispatch with list-unlink) --
+    'stateadv_5b0ec0': {'rva': 0x005b0ec0, 'export': 'StateAdv5b0ec0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'multi_state_list_setter', 'lut_root_delta': 0, 'path1_tests': [1, 2, 3, 0], 'path2_tests': [1]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
