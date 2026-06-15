@@ -152,6 +152,7 @@ PURE_LEAF_ARGTYPES = {
     'struct_ctor_big',           # void fn(p): deterministic constructor writing consts/self-relative-ptrs/zeros to p's fields (no live reads). Uses ONE shared sentinel buffer (cfg.buf_dwords) so self-relative pointer writes (p+const) compare equal between sides; snapshot cfg.observe offsets. For ctors too big for struct_const_init's 0x400 buf. test ignored
     'indexed_abs_dualout',       # u32 fn(i, out1*, out2*): if(i>=bound[immediate]) return 0; *out1=*(tbl1+i*stride); *out2=*(tbl2+i*stride); return 1. Seed the two abs table slots (incl .bss, which is committed/writable+zero) at i*stride, call, observe out1|out2|ret. test=in-bounds i (varied -> seeded markers differ -> non-degen)
     'dll_remove_count',          # void fn(list, node): list[0]--; A=node[0x24]; B=node[0x20]; *A=B; *(B+4)=A. (A pure-read search loop precedes it but converges either way; skipped by an EMPTY list list[4]=list+4.) Build list+node+A+B (shared bufs both sides so pointers compare equal), call, snapshot list[0]|A[0]|B[4]. test ignored
+    'dll_insert_head',           # void fn(list, node): if(node[4]) unlink; node[4]=list; node[0xc]=list+8; old=*(list+8); node[8]=old; *(old+4)=&node[8]; *(list+8)=&node[8] (intrusive insert-at-head; links point to the &node[8] field). Test: empty list (*(list+8)=list+8) + node[4]=0 (skip unlink). Shared bufs; snapshot node[4]|node[8]|node[0xc]|*(list+8)|*(list+0xc). test ignored
 }
 
 SRC = r"""
@@ -239,6 +240,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'struct_ctor_big') ? ['pointer']
               : (cfg.at === 'indexed_abs_dualout') ? ['uint32','pointer','pointer']
               : (cfg.at === 'dll_remove_count') ? ['pointer','pointer']
+              : (cfg.at === 'dll_insert_head') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1128,6 +1130,18 @@ rpc.exports.diff = function(cfg) {
       const snapR = function () { return (lst.readU32() >>> 0) + '|' + (A.readU32() >>> 0) + '|' + (Bn.add(4).readU32() >>> 0); };
       try { buildR(); Orig(lst, nd); o = snapR(); } catch (e) { eo = e.message; }
       try { buildR(); Reim(lst, nd); r = snapR(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'dll_insert_head') {
+      // void fn(list, node): intrusive insert-at-head. Test with an empty list
+      // (*(list+8)=list+8) and node[4]=0 (skip the unlink branch). Shared buffers both
+      // sides so the written addresses compare equal; snapshot the 5 link writes.
+      const lst2 = Memory.alloc(0x40), nd2 = Memory.alloc(0x40); _keep.push(lst2, nd2);
+      const buildI = function () {
+        for (let z = 0; z < 0x40; z += 4) { lst2.add(z).writeU32(0); nd2.add(z).writeU32(0); }
+        lst2.add(8).writePointer(lst2.add(8));   // empty: *(list+8)=list+8
+      };
+      const snapI = function () { return [nd2.add(4).readU32(), nd2.add(8).readU32(), nd2.add(0xc).readU32(), lst2.add(8).readU32(), lst2.add(0xc).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
+      try { buildI(); Orig(lst2, nd2); o = snapI(); } catch (e) { eo = e.message; }
+      try { buildI(); Reim(lst2, nd2); r = snapI(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

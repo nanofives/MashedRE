@@ -1611,3 +1611,22 @@ extern "C" __declspec(dllexport) void __cdecl Remove5b35e0(std::uint8_t* list, s
     *reinterpret_cast<std::uint8_t**>(B + 4) = A;
 }
 RH_ScopedInstall(Remove5b35e0, 0x005b35e0);
+
+// ===== round 137 ===== (doubly-linked-list insert-at-head)
+// 0x004c5bc0 — void fn(list, node): if(node[4]) { *(node[0xc])=node[8]; *(node[8]+4)=node[0xc]; }
+//   node[4]=list; head=list+8; old=*head; node[0xc]=head; node[8]=old; *(old+4)=&node[8];
+//   *head=&node[8].  (intrusive list; links reference the &node[8] next-field address.)
+extern "C" __declspec(dllexport) void __cdecl Insert4c5bc0(std::uint8_t* list, std::uint8_t* node) {
+    if (*reinterpret_cast<std::uint32_t*>(node + 4) != 0) {
+        *reinterpret_cast<std::uint8_t**>(*reinterpret_cast<std::uint8_t**>(node + 0xc)) = *reinterpret_cast<std::uint8_t**>(node + 8);
+        *reinterpret_cast<std::uint8_t**>(*reinterpret_cast<std::uint8_t**>(node + 8) + 4) = *reinterpret_cast<std::uint8_t**>(node + 0xc);
+    }
+    *reinterpret_cast<std::uint8_t**>(node + 4) = list;
+    std::uint8_t* head = list + 8;
+    std::uint8_t* old = *reinterpret_cast<std::uint8_t**>(head);
+    *reinterpret_cast<std::uint8_t**>(node + 0xc) = head;
+    *reinterpret_cast<std::uint8_t**>(node + 8) = old;
+    *reinterpret_cast<std::uint8_t**>(old + 4) = node + 8;
+    *reinterpret_cast<std::uint8_t**>(head) = node + 8;
+}
+RH_ScopedInstall(Insert4c5bc0, 0x004c5bc0);
