@@ -1859,3 +1859,19 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Set558100(std::uint8_t* a
     return reinterpret_cast<std::uint32_t>(arg);
 }
 RH_ScopedInstall(Set558100, 0x00558100);
+
+// ===== round 152 ===== (EAX-dest struct init: 16-dword copy + field sets)
+// 0x00477450 — void fn(EAX=dest, [esp+4]=src, [esp+8]=arg2, [esp+0xc]=arg3, [esp+0x10]=arg4):
+//   dest[0x54]=0; dest[0x48]=0; dest[0x4c]=arg3; dest[0x58]=1; dest[0x50]=arg4;
+//   memcpy(dest, src, 16 dwords); dest[0x40]=*arg2.  (dest in EAX; reimpl takes it as arg0.)
+extern "C" __declspec(dllexport) void __cdecl Init477450(
+        std::uint8_t* dest, std::uint8_t* src, std::uint32_t* arg2, std::uint32_t arg3, std::uint32_t arg4) {
+    *reinterpret_cast<std::uint32_t*>(dest + 0x54) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x48) = 0;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x4c) = arg3;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x58) = 1;
+    *reinterpret_cast<std::uint32_t*>(dest + 0x50) = arg4;
+    for (int i = 0; i < 16; i++) reinterpret_cast<std::uint32_t*>(dest)[i] = reinterpret_cast<std::uint32_t*>(src)[i];
+    *reinterpret_cast<std::uint32_t*>(dest + 0x40) = *arg2;
+}
+RH_ScopedInstall(Init477450, 0x00477450);
