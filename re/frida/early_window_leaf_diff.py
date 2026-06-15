@@ -239,6 +239,7 @@ PURE_LEAF_ARGTYPES = {
     'thunk_cond_or',             # uint fn(p, a2, a3): NEAR-LEAF adjustor thunk -> C3 cond-or. s=p[0x18]; if(a3) s[8]|=a2; return s[8]. Build p/s; s[8]=seed; per cfg.scenarios[t]={a2,a3,seed}: observe ret|s[8]. non-degen via a3!=0 (or'd) vs a3==0 (unchanged)
     'thunk_list_count',          # uint fn(p): NEAR-LEAF adjustor thunk -> C3 circular-list count at (p+0xc) (linked +4, sentinel=head). Build a circular list of cfg.scenarios[t].n nodes; observe return = n. non-degen via varied n
     'thunk_float_sub',           # void fn(uint idx, float fval): NEAR-LEAF adjustor thunk -> C3 float-sub. *(float*)(cfg.tbl + idx*cfg.stride + cfg.field_off) -= fval. Per cfg.scenarios[t]={idx,seed,fval}: seed field, observe field bits = seed-fval. non-degen via varied seed/fval/idx
+    'bounded_thunk_orflag',      # int fn(uint idx, uint a2): NEAR-LEAF bounds-checked adjustor thunk -> C3. if(idx<0xc8 && (s=*(int*)(cfg.tbl+idx*4))) -> if(a2) s[2]|=4. Build s at cfg.tbl[5]; per cfg.scenarios[t]={idx,a2,s2}: seed s[2], observe s[2]. non-degen via or/no-or/bounds
 }
 
 SRC = r"""
@@ -408,6 +409,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'thunk_cond_or') ? ['pointer','uint32','uint32']
               : (cfg.at === 'thunk_list_count') ? ['pointer']
               : (cfg.at === 'thunk_float_sub') ? ['uint32','float']
+              : (cfg.at === 'bounded_thunk_orflag') ? ['uint32','uint32']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2865,6 +2867,15 @@ rpc.exports.diff = function(cfg) {
       const seedF = function () { entry.writeFloat(sc.seed); };
       try { seedF(); Orig(sc.idx >>> 0, sc.fval); o = (entry.readU32() >>> 0).toString(16); } catch (e) { eo = e.message; }
       try { seedF(); Reim(sc.idx >>> 0, sc.fval); r = (entry.readU32() >>> 0).toString(16); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'bounded_thunk_orflag') {
+      // int f(idx, a2): bounds-checked adjustor thunk -> C3; s=tbl[idx]; if(a2) s[2]|=4.
+      const sc = (cfg.scenarios || [])[t] || { idx: 5, a2: 0, s2: 0 };
+      const s = Memory.alloc(0x20); _keep.push(s);
+      const slot = ptr(cfg.tbl).add(5 * 4);  // fixed table[5] -> s
+      const seedB = function () { slot.writePointer(s); for (let z = 0; z < 0x20; z += 4) s.add(z).writeU32(0); s.add(2).writeU8(sc.s2 & 0xff); };
+      const snap = function () { return (s.add(2).readU8()).toString(16); };
+      try { seedB(); Orig(sc.idx >>> 0, sc.a2 >>> 0); o = snap(); } catch (e) { eo = e.message; }
+      try { seedB(); Reim(sc.idx >>> 0, sc.a2 >>> 0); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 242
-- total_green: 407
+- rounds_run: 243
+- total_green: 408
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 243 | NEAR-LEAF lane — bounds-checked adjustor thunk -> C3 or-flag | attempted 1 (skipped 5ae380/477e40: complex AudioPoolFree / null-list-search AV risk) | GREEN 1 (BoundedThunk47d100 0x0047d100, physics) | total_green 407->408 (408/1000). int f(idx,a2): if(idx in[0,0xc8) && s=*(int*)(0x6c71d8+idx*4)) -> if(a2) s[2]|=4 (tail-call C3 0x4b5240). VERBATIM naked. NEW handler bounded_thunk_orflag 4/4 GREEN non-degen (or/no-or/bounds). Caller FUN_00412190 C2. NOTE: skip near-leaves whose callee is AudioPoolFree(0x5ae920)/list-search(0x4c5c00) on a global list -> complex/AV at suspended-spawn; prefer adjustor thunks -> simple field-op C3. Session 101-243 net = +151 (257->408). Context 120 rounds deep. PATH TO 1000 (592 more) = near-leaf+frontier (~1/round) or fanout.
 
 2026-06-15 | round 242 | NEAR-LEAF lane — adjustor-thunk verbatim -> C3 float-sub | attempted 1 | GREEN 1 (FloatSubThunk4058c0 0x004058c0, gameplay) | total_green 406->407 (407/1000). void f(idx,float fval): *(float*)(0x639d80+idx*0xec+0x5c) -= fval (tail-call C3 FloatSub4058b0). VERBATIM naked. NEW handler thunk_float_sub 3/3 GREEN non-degen (7.0/3.0/0.75, idx-indexed). Caller FUN_004058e0 C2, callee 0x4058b0 C3. Session 101-242 net = +150 (257->407). Context 119 rounds deep. PATH TO 1000 (593 more) = near-leaf+frontier (~1/round) or fanout.
 

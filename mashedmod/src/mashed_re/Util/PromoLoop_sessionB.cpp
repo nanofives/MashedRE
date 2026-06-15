@@ -4461,3 +4461,26 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl FloatSubThunk405
     }
 }
 RH_ScopedInstall(FloatSubThunk4058c0, 0x004058c0);
+
+// 0x0047d100 FUN_0047d100 (physics, BoundedThunk47d100) — NEAR-LEAF bounds-checked adjustor thunk to C3 0x4b5240.
+// int f(idx, a2): if(idx<0 || idx>=0xc8) return; s = *(int*)(0x6c71d8 + idx*4); if(!s) return;
+// tail-call 0x4b5240(s, a2) -> if(a2!=0) s[2]|=4. VERBATIM naked (b0=0x8b).
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl BoundedThunk47d100(void)
+{
+    __asm {
+        mov   eax, dword ptr [esp+4]
+        test  eax, eax
+        jl    Lret47d
+        cmp   eax, 0C8h
+        jge   Lret47d
+        mov   eax, dword ptr [eax*4 + 06C71D8h]
+        test  eax, eax
+        je    Lret47d
+        mov   dword ptr [esp+4], eax
+        mov   eax, 04B5240h
+        jmp   eax
+    Lret47d:
+        ret
+    }
+}
+RH_ScopedInstall(BoundedThunk47d100, 0x0047d100);

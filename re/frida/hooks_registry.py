@@ -60,6 +60,18 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0047d100 BoundedThunk47d100 (physics) - NEAR-LEAF bounds-checked adjustor thunk -> C3 0x4b5240.
+    # int f(idx, a2): if(idx in [0,0xc8) && s=*(int*)(0x6c71d8+idx*4)) -> if(a2) s[2]|=4. Verbatim naked.
+    'bounded_thunk_47d100': {'rva': 0x0047d100, 'export': 'BoundedThunk47d100', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'bounded_thunk_orflag',
+        'tbl': 0x006c71d8,
+        'scenarios': [
+            {'idx': 5,   'a2': 1, 's2': 0x10},   # valid, a2!=0 -> 0x14
+            {'idx': 5,   'a2': 1, 's2': 0x20},   # -> 0x24
+            {'idx': 5,   'a2': 0, 's2': 0x30},   # a2==0 -> 0x30 (no or)
+            {'idx': 300, 'a2': 1, 's2': 0x40},   # idx>=0xc8 bounds -> 0x40 (no effect)
+        ],
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x004058c0 FloatSubThunk4058c0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x4058b0.
     # void f(idx, float fval): *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval. Verbatim naked.
     'thunk_float_sub_4058c0': {'rva': 0x004058c0, 'export': 'FloatSubThunk4058c0', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'thunk_float_sub',
