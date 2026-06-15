@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'fmt_5172f0': {'rva': 0x005172f0, 'export': 'Fmt5172f0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','pointer']}, 'arg_type': 'byte_format_hexdump',
+        'seed_sets': [
+            {'bytes': [0x41,0x42,0x43,0x44], 'payload': False},   # "ABCD" all printable
+            {'bytes': [0x00,0xFF,0x5b,0x09], 'payload': False},   # "[00][ff][5b][09]"
+            {'bytes': [0x7a,0x7b,0x28,0x29], 'payload': False},   # "z[7b][28])"
+            {'bytes': [0x41,0x42,0x43,0x44], 'payload': True},    # "ABCD: <64-byte payload>"
+            {'bytes': [0x30,0x39,0x80,0x7f], 'payload': False},   # "09[80][7f]"
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'search_4c5c00': {'rva': 0x004c5c00, 'export': 'Search4c5c00', 'signature': {'ret': 'pointer', 'args': ['pointer','pointer']}, 'arg_type': 'circular_str_search_ci',
         'seed_sets': [
             {'q': 'BETA'},    # case-insensitive match -> n1-8

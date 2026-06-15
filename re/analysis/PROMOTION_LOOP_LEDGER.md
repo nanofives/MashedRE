@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 179
-- total_green: 352
+- rounds_run: 180
+- total_green: 353
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 179 | 4-byte -> printable/[hex] string formatter (NEW handler) — clean queue | attempted 1 | GREEN 1 (Fmt5172f0 0x005172f0: 4 bytes at arg1[0x11c] -> printable direct else "[XX]" via .rdata hex table 0x5e336c; optional ": "+64-byte payload from arg3) | total_green 352->353 (353/1000). Status-prechecked C2; caller FUN_005172b0 C2, zero-callee leaf. NEW handler byte_format_hexdump (snapshot out[0x70] hex; 5 seeds cover printable/nonprintable/payload). NOTE: .rdata hex table is UPPERCASE "0123456789ABCDEF"; the classifier's abs-global filter (0x600000-0xa00000) does NOT flag .rdata refs <0x600000 (0x5e336c) -> those are read-only, identical both sides, fine. Session 101-179 = +96 (257->353). ~69 handlers. THIS CONTEXT did rounds 124-179 = +61 (292->353). REMAINING CLEAN QUEUE: 0x5ae4c0(139 ring-arith), 0x482860(147 rep-stosd pool+freelist), 0x4ceaf0(162 two-struct cmp), 0x5b0cf0(170 stack-heavy). ~4 left, then frontier exhausted of clean leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) = realistic route to remaining ~647. Context 56 rounds deep — fresh context strongly advised.
 
 2026-06-15 | round 178 | circular-list case-insensitive string search (NEW handler) — used the static classifier queue | attempted 1 | GREEN 1 (Search4c5c00 0x004c5c00: walk circular list arg1[8], node+8=key, case-insensitive match -> object node-8 else 0) | total_green 351->352 (352/1000). Status-prechecked C2; caller FUN_0040bb30 C2, zero-callee leaf. NEW handler circular_str_search_ci (build 3-node alpha/beta/gamma circular list; 5 queries -> 3 distinct node ptrs + 2 zero). LESSON: returned-pointer comparison works because both sides walk the SAME Memory.alloc'd buffers -> identical absolute node addresses; non-degen via match(distinct ptr)/miss/prefix-reject. This toupper is SYMMETRIC ('a'-'z' +0xe0) unlike 0x5ae170. Session 101-178 = +95 (257->352). ~68 handlers. THIS CONTEXT did rounds 124-178 = +60 (292->352). REMAINING CLEAN QUEUE (from r177 classifier): 0x5ae4c0(139 ring-arith), 0x5172f0(143 char-class copy arg1[0x11c]->arg2), 0x482860(147 rep-stosd pool+freelist init), 0x4ceaf0(162 two-struct cmp), 0x5b0cf0(170 stack-heavy). After these ~5 the frontier is exhausted of clean leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~648. Context 55 rounds deep — fresh context strongly advised.
 

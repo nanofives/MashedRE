@@ -2681,3 +2681,77 @@ extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search4c5c00(vo
     }
 }
 RH_ScopedInstall(Search4c5c00, 0x004c5c00);
+
+// 0x005172f0  FUN_005172f0 (util, 4-byte -> printable/[hex] string formatter)
+// void f(struct* arg1, char* out, void* arg3): for the 4 bytes at arg1[0x11c..0x11f]:
+//   if byte in [0x29,0x5a] or [0x61,0x7a] write it directly, else write "[XX]" with XX
+//   from the .rdata hex-digit table at 0x5e336c. Then if arg3 != 0 append ": " and copy
+//   0x10 dwords (64 bytes) from arg3, null-terminating at out+...+0x3f; else null-terminate.
+// .rdata table read identically both sides; pure byte/pointer work -> VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Fmt5172f0(void)
+{
+    __asm {
+        push ebp
+        mov  ebp, dword ptr [esp+8]          // arg1
+        push esi
+        push edi
+        mov  edi, dword ptr [esp+0x14]       // out (arg2)
+        xor  eax, eax
+        xor  esi, esi
+    L_FM_LOOP:
+        xor  ecx, ecx
+        mov  cl, byte ptr [esi+ebp+0x11c]
+        inc  esi
+        cmp  ecx, 0x29
+        jl   L_FM_NP
+        cmp  ecx, 0x7a
+        jg   L_FM_NP
+        cmp  ecx, 0x5a
+        jle  L_FM_WR
+        cmp  ecx, 0x61
+        jl   L_FM_NP
+    L_FM_WR:
+        mov  byte ptr [eax+edi], cl
+        jmp  L_FM_ADV
+    L_FM_NP:
+        mov  edx, ecx
+        mov  byte ptr [eax+edi], 0x5b        // '['
+        sar  edx, 4
+        and  edx, 0x0f
+        inc  eax
+        and  ecx, 0x0f
+        inc  eax
+        mov  dl, byte ptr [edx+0x5e336c]
+        mov  byte ptr [eax+edi-1], dl
+        mov  cl, byte ptr [ecx+0x5e336c]
+        mov  byte ptr [eax+edi], cl
+        inc  eax
+        mov  byte ptr [eax+edi], 0x5d        // ']'
+    L_FM_ADV:
+        inc  eax
+        cmp  esi, 4
+        jl   L_FM_LOOP
+        mov  esi, dword ptr [esp+0x18]       // arg3
+        test esi, esi
+        jne  L_FM_PAY
+        mov  byte ptr [eax+edi], 0
+        pop  edi
+        pop  esi
+        pop  ebp
+        ret
+    L_FM_PAY:
+        mov  byte ptr [eax+edi], 0x3a        // ':'
+        inc  eax
+        mov  ecx, 0x10
+        mov  byte ptr [eax+edi], 0x20        // ' '
+        lea  eax, [eax+edi+1]
+        mov  edi, eax
+        rep  movsd
+        pop  edi
+        pop  esi
+        mov  byte ptr [eax+0x3f], 0
+        pop  ebp
+        ret
+    }
+}
+RH_ScopedInstall(Fmt5172f0, 0x005172f0);

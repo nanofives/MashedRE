@@ -193,6 +193,7 @@ PURE_LEAF_ARGTYPES = {
     'case_insensitive_ncmp',     # int fn(char* s1, char* s2, int n): bounded case-insensitive compare with a CUSTOM inline-ASCII toupper. ASYMMETRIC: s1 applies &0xdf to 0x5b-0x60 (cmp 0x41 jl-skip), s2 skips them (cmp 0x41 jg-skip) -> a backtick 0x60 yields s1=0x40 vs s2=0x60 (ret 0x20, NOT 0). Returns 0 if first n upper-folded chars equal, else toupper(s1)-toupper(s2). plain __cdecl (no trampoline). seed_sets[t]={s1,s2,n}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via equal/neg/pos/n-bound/asymmetry cases
     'aabb_sphere_overlap',       # int fn(box* arg1, sphere* arg2): box={min.xyz@0,4,8; max.xyz@0xc,0x10,0x14}; sphere={center.xyz@0,4,8; radius@0xc}. block1: center strictly inside box on all 3 axes -> 1; else block2: box expanded by radius contains center -> 1 else 0. all straight-line fld/fcomp (no fld-st(N), no globals). plain __cdecl. seed_sets[t]={box:[6 floats], sph:[4 floats]}; snapshot int ret. reimpl VERBATIM naked __asm. non-degen via inside(1)/far-outside(0) mix
     'circular_str_search_ci',    # void* fn(list* arg1, char* query): circular list at arg1[8] (sentinel=&arg1[8]); node[0]=next, node+8=key string, object=node-8; case-insensitive compare ('a'-'z' folded +0xe0); return object(node-8) on full match else 0. plain __cdecl, no global/float. build a 3-node circular list (alpha/beta/gamma); seed_sets[t]={q}; snapshot returned ptr. reimpl VERBATIM naked __asm. non-degen via match(distinct node ptrs)/miss(0)/prefix(0)
+    'byte_format_hexdump',       # void fn(struct* arg1, char* out, void* arg3): for 4 bytes at arg1[0x11c..0x11f] write printable ([0x29,0x5a]|[0x61,0x7a]) directly else "[XX]" via .rdata hex table 0x5e336c; if arg3!=0 append ": "+0x10 dwords from arg3 (last byte nulled) else null-term. plain __cdecl. seed_sets[t]={bytes:[4], payload:bool}; snapshot out[0x70] hex. reimpl VERBATIM naked __asm. non-degen via printable/nonprintable/payload mix
 }
 
 SRC = r"""
@@ -321,6 +322,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'case_insensitive_ncmp') ? ['pointer','pointer','uint32']
               : (cfg.at === 'aabb_sphere_overlap') ? ['pointer','pointer']
               : (cfg.at === 'circular_str_search_ci') ? ['pointer','pointer']
+              : (cfg.at === 'byte_format_hexdump') ? ['pointer','pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1773,6 +1775,26 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'byte_format_hexdump') {
+      // void f(struct* arg1, char* out, void* arg3): 4 bytes at arg1[0x11c] -> formatted string.
+      // seed_sets[t]={bytes:[4], payload:bool}. snapshot out[0x70] as hex.
+      const ss = (cfg.seed_sets || [])[t | 0] || { bytes: [0, 0, 0, 0], payload: false };
+      const a1 = Memory.alloc(0x140), out = Memory.alloc(0x100), pay = Memory.alloc(0x40);
+      _keep.push(a1, out, pay);
+      const seedF = function () {
+        for (let z = 0; z < 0x140; z += 4) a1.add(z).writeU32(0);
+        for (let z = 0; z < 0x100; z += 4) out.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z++) pay.add(z).writeU8((0x10 + z) & 0xff);
+        for (let k = 0; k < 4; k++) a1.add(0x11c + k).writeU8(ss.bytes[k] & 0xff);
+      };
+      const a3 = ss.payload ? pay : ptr(0);
+      const snap = function () {
+        const u = new Uint8Array(out.readByteArray(0x70));
+        let s = ''; for (let k = 0; k < u.length; k++) s += ('0' + u[k].toString(16)).slice(-2);
+        return s;
+      };
+      try { seedF(); Orig(a1, out, a3); o = snap(); } catch (e) { eo = e.message; }
+      try { seedF(); Reim(a1, out, a3); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'circular_str_search_ci') {
       // void* f(list* arg1, char* query): case-insensitive search over a circular list.
       // build a 3-node list (alpha/beta/gamma); node[0]=next, node+8=key. seed_sets[t]={q}.
