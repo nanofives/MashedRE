@@ -153,6 +153,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_abs_dualout',       # u32 fn(i, out1*, out2*): if(i>=bound[immediate]) return 0; *out1=*(tbl1+i*stride); *out2=*(tbl2+i*stride); return 1. Seed the two abs table slots (incl .bss, which is committed/writable+zero) at i*stride, call, observe out1|out2|ret. test=in-bounds i (varied -> seeded markers differ -> non-degen)
     'dll_remove_count',          # void fn(list, node): list[0]--; A=node[0x24]; B=node[0x20]; *A=B; *(B+4)=A. (A pure-read search loop precedes it but converges either way; skipped by an EMPTY list list[4]=list+4.) Build list+node+A+B (shared bufs both sides so pointers compare equal), call, snapshot list[0]|A[0]|B[4]. test ignored
     'dll_insert_head',           # void fn(list, node): if(node[4]) unlink; node[4]=list; node[0xc]=list+8; old=*(list+8); node[8]=old; *(old+4)=&node[8]; *(list+8)=&node[8] (intrusive insert-at-head; links point to the &node[8] field). Test: empty list (*(list+8)=list+8) + node[4]=0 (skip unlink). Shared bufs; snapshot node[4]|node[8]|node[0xc]|*(list+8)|*(list+0xc). test ignored
+    'global_ptrtable_match',     # u32 fn(arg1, arg2*): for idx in 0..3: e=*(tbl+idx*4); if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0. Seed tbl[2]=&entry (.bss), entry[0xc]=1, entry[0x28]=KEY, arg2[4]= (test0: 2 -> match -> 1 ; test1: 3 -> no match -> 0). non-degen via 1/0
 }
 
 SRC = r"""
@@ -241,6 +242,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_abs_dualout') ? ['uint32','pointer','pointer']
               : (cfg.at === 'dll_remove_count') ? ['pointer','pointer']
               : (cfg.at === 'dll_insert_head') ? ['pointer','pointer']
+              : (cfg.at === 'global_ptrtable_match') ? ['uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1142,6 +1144,22 @@ rpc.exports.diff = function(cfg) {
       const snapI = function () { return [nd2.add(4).readU32(), nd2.add(8).readU32(), nd2.add(0xc).readU32(), lst2.add(8).readU32(), lst2.add(0xc).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
       try { buildI(); Orig(lst2, nd2); o = snapI(); } catch (e) { eo = e.message; }
       try { buildI(); Reim(lst2, nd2); r = snapI(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'global_ptrtable_match') {
+      // u32 fn(arg1, arg2): scan a 4-entry global ptr table for an entry matching arg1 +
+      // arg2[4]==idx. Seed tbl[2]=&entry (.bss), entry[0xc]=1, entry[0x28]=KEY. test 0 ->
+      // arg2[4]=2 (match -> 1); test 1 -> arg2[4]=3 (no match -> 0). non-degen via 1/0.
+      const tbl = ptr(cfg.tbl), entry = Memory.alloc(0x40), a2 = Memory.alloc(0x40); _keep.push(entry, a2);
+      const KEY = 0xABCD01, match = (t | 0) === 0;
+      const setupM = function () {
+        for (let k = 0; k < 4; k++) tbl.add(k * 4).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) { entry.add(z).writeU32(0); a2.add(z).writeU32(0); }
+        tbl.add(2 * 4).writePointer(entry);
+        entry.add(0xc).writeU32(1);
+        entry.add(0x28).writeU32(KEY);
+        a2.add(4).writeU32(match ? 2 : 3);
+      };
+      try { setupM(); o = Orig(KEY >>> 0, a2) >>> 0; } catch (e) { eo = e.message; }
+      try { setupM(); r = Reim(KEY >>> 0, a2) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

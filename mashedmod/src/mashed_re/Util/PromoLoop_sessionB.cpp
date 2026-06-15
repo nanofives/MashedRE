@@ -1630,3 +1630,19 @@ extern "C" __declspec(dllexport) void __cdecl Insert4c5bc0(std::uint8_t* list, s
     *reinterpret_cast<std::uint8_t**>(head) = node + 8;
 }
 RH_ScopedInstall(Insert4c5bc0, 0x004c5bc0);
+
+// ===== round 138 ===== (4-entry global ptr-table match predicate)
+// 0x0045c510 — u32 fn(arg1, arg2): for idx in 0..3: e=*(int**)(0x88f680 + idx*4);
+//   if(e && e[0xc]==1 && e[0x28]==arg1 && arg2[4]==idx) return 1; return 0.
+//   (orig loads arg2 then arg1 across two pushes -> arg1 first stack arg, arg2 second.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Match45c510(std::uint32_t arg1, std::uint8_t* arg2) {
+    for (int idx = 0; idx < 4; idx++) {
+        std::uint8_t* e = *reinterpret_cast<std::uint8_t**>(0x0088f680 + idx * 4);
+        if (e && *reinterpret_cast<int*>(e + 0xc) == 1
+              && *reinterpret_cast<std::uint32_t*>(e + 0x28) == arg1
+              && *reinterpret_cast<int*>(arg2 + 4) == idx)
+            return 1;
+    }
+    return 0;
+}
+RH_ScopedInstall(Match45c510, 0x0045c510);
