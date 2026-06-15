@@ -4167,3 +4167,42 @@ extern "C" __declspec(dllexport) __declspec(naked) unsigned __cdecl NestedListSe
     }
 }
 RH_ScopedInstall(NestedListSearch5a7a60, 0x005a7a60);
+
+// 0x004cde50 FUN_004cde50 (render, PixelMaxAlpha) — PURE LEAF (no calls)
+// int f(struct* s): per-pixel alpha = max(R,G,B). mode = s[0xc]:
+//   mode 4|8: (1<<mode) pixels from s[0x18]+2.
+//   mode 0x20: s[8] rows x s[4] cols from s[0x14]+2, base += s[0x10] per row.
+//   else: no-op. Returns s. capstone-verified; integer max-of-3 per pixel
+//   (pixel p: p[1] = max(p[-2],p[-1],p[0])), p += 4.
+extern "C" __declspec(dllexport) int __cdecl PixelMaxAlpha4cde50(unsigned char* s)
+{
+    const int mode = *reinterpret_cast<int*>(s + 0xc);
+    if (mode == 4 || mode == 8) {
+        const int n = 1 << mode;
+        unsigned char* p = *reinterpret_cast<unsigned char**>(s + 0x18) + 2;
+        for (int j = 0; j < n; j++) {
+            int c = p[-2];
+            if (static_cast<int>(p[-1]) > c) c = p[-1];
+            if (static_cast<int>(p[0])  > c) c = p[0];
+            p[1] = static_cast<unsigned char>(c);
+            p += 4;
+        }
+    } else if (mode == 0x20) {
+        const int rows = *reinterpret_cast<int*>(s + 8);
+        unsigned char* base = *reinterpret_cast<unsigned char**>(s + 0x14);
+        for (int ri = 0; ri < rows; ri++) {
+            const int cols = *reinterpret_cast<int*>(s + 4);
+            unsigned char* p = base + 2;
+            for (int ci = 0; ci < cols; ci++) {
+                int c = p[-2];
+                if (static_cast<int>(p[-1]) > c) c = p[-1];
+                if (static_cast<int>(p[0])  > c) c = p[0];
+                p[1] = static_cast<unsigned char>(c);
+                p += 4;
+            }
+            base += *reinterpret_cast<int*>(s + 0x10);
+        }
+    }
+    return reinterpret_cast<int>(s);
+}
+RH_ScopedInstall(PixelMaxAlpha4cde50, 0x004cde50);

@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004cde50 PixelMaxAlpha4cde50 (render) - PURE LEAF int f(struct* s): per-pixel
+    # alpha=max(R,G,B). mode=s[0xc]: 4|8->(1<<mode) pixels @s[0x18]+2; 0x20->s[8]rows x
+    # s[4]cols @s[0x14]+2; else no-op. ret s. Observe base[3]/[7]/[0x43] alphas + ret.
+    'pixel_max_alpha_4cde50': {'rva': 0x004cde50, 'export': 'PixelMaxAlpha4cde50', 'signature': {'ret': 'uint32', 'args': ['pointer']}, 'arg_type': 'pixel_max_alpha',
+        'scenarios': [
+            {'mode': 4,    'rows': 0, 'cols': 0, 'stride': 0x40},   # 16 pixels -> base[3],[7] set; [0x43] sentinel
+            {'mode': 0x20, 'rows': 2, 'cols': 2, 'stride': 0x40},   # 2x2 -> base[3],[7],[0x43] set
+            {'mode': 0,    'rows': 0, 'cols': 0, 'stride': 0x40},   # no-op -> all sentinel
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x005a7a60 NestedListSearch5a7a60 (audio) - PURE LEAF uint f(int key): nested
     # circular-list search at *0x7dca7c; inner payload[0xc]==key -> return key else 0.
     # Verbatim naked reimpl. Build 1 outer + 1 inner + payload; found vs not-found.

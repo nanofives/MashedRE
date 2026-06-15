@@ -230,6 +230,7 @@ PURE_LEAF_ARGTYPES = {
     'dll_merge_swap',            # void fn(void): PURE LEAF circular-list merge+swap on table entry base=*glob_a+*glob_b. seed *glob_a=&mybuf, *glob_b=0; mybuf+0x20=B,+0x24=A,+8=sentinel; empty-B (Bnode[0]=Bnode) -> early-exit swap path. Per cfg.scenarios[t]={swap}: assign A/B roles; observe mybuf+0x20|+0x24|+8. non-degen via role swap (verbatim naked reimpl, swap path)
     'find_node_struct_copy',     # int fn(struct* p1, void** p2): PURE LEAF. walk p2's list for node (node[8]==p1[8] && node[0]==0x10b)||node[0]==0; copy 0x67 dwords p1->node; copy p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; ret 1. Build p1(pat)/node(matched first)/src2 bufs, p1[0x16c]=1; observe node[0]|node[0x66]|node[0x67]|ret. non-degen via varied pat (verbatim naked, found-first path)
     'nested_list_search',        # uint fn(int key): PURE LEAF nested circular-list search at *cfg.glob (sentinel=glob). outer node O1=outerBuf+0x20; inner head @O1-0xc, sentinel O1-0x10, link +4, payload +8, payload[0xc] compared to key. returns key if found else 0. Build 1 outer + 1 inner + payload; per cfg.scenarios[t]={pval,key}: observe return. non-degen via found(key) vs not-found(0)
+    'pixel_max_alpha',           # int fn(struct* s): PURE LEAF per-pixel alpha=max(R,G,B). mode=s[0xc]: 4|8 -> (1<<mode) pixels @s[0x18]+2; 0x20 -> s[8]rows x s[4]cols @s[0x14]+2 (base+=s[0x10]); else no-op. ret s. Build base buf with RGB pattern; per cfg.scenarios[t]={mode,rows,cols,stride}: observe base[3]|base[7]|base[0x43]|ret. non-degen via mode (processed vs sentinel alphas)
 }
 
 SRC = r"""
@@ -391,6 +392,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'dll_head_insert') ? ['pointer']
               : (cfg.at === 'find_node_struct_copy') ? ['pointer','pointer']
               : (cfg.at === 'nested_list_search') ? ['uint32']
+              : (cfg.at === 'pixel_max_alpha') ? ['pointer']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2700,6 +2702,27 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedL(); o = (Orig(s.key >>> 0) >>> 0).toString(16); } catch (e) { eo = e.message; }
       try { seedL(); r = (Reim(s.key >>> 0) >>> 0).toString(16); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'pixel_max_alpha') {
+      // int f(struct* s): per-pixel alpha = max(R,G,B).
+      const sc = (cfg.scenarios || [])[t] || { mode: 0, rows: 0, cols: 0, stride: 0x40 };
+      const st = Memory.alloc(0x40), base = Memory.alloc(0x400); _keep.push(st, base);
+      const seedP = function () {
+        for (let z = 0; z < 0x40; z += 4) st.add(z).writeU32(0);
+        for (let z = 0; z < 0x400; z++) base.add(z).writeU8((z * 7 + 3) & 0xff);   // RGB pattern
+        for (let z = 3; z < 0x400; z += 4) base.add(z).writeU8(0xEE);               // alpha = sentinel
+        st.add(0xc).writeU32(sc.mode >>> 0);
+        st.add(8).writeU32(sc.rows >>> 0);
+        st.add(4).writeU32(sc.cols >>> 0);
+        st.add(0x10).writeU32(sc.stride >>> 0);
+        st.add(0x14).writePointer(base);   // mode 0x20 base
+        st.add(0x18).writePointer(base);   // mode 4/8 base
+      };
+      const snap = function (ret) {
+        return (ret >>> 0).toString(16) + ':' +
+               [3, 7, 0x43].map(function (o2) { return (base.add(o2).readU8()).toString(16); }).join('|');
+      };
+      try { seedP(); o = snap(Orig(st)); } catch (e) { eo = e.message; }
+      try { seedP(); r = snap(Reim(st)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying

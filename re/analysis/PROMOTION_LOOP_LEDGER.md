@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 231
-- total_green: 396
+- rounds_run: 232
+- total_green: 397
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 232 | L3 frontier — C reimpl (multi-mode data loop) | attempted 1 | GREEN 1 (PixelMaxAlpha4cde50 0x004cde50, render: per-pixel alpha=max(R,G,B)) | total_green 396->397 (397/1000). PURE LEAF int f(struct* s), 3 mode paths (4|8 -> 1<<mode pixels; 0x20 -> rows x cols; else no-op). C reimpl (data loops -> cleaner than verbatim for behavior). NEW handler pixel_max_alpha 3/3 GREEN non-degen (mode4 16px+bounds, mode0x20 2x2 row-stride, mode0 no-op; max-of-3 verified, returns s). Caller FUN_004ce970 C2. ~7 CLEAN frontier remain (456eb0/5c95b0/48f590/4d8570/41e4b0/486f90). Session 101-232 net = +140 (257->397). Context 109 rounds deep. PATH TO 1000 (603 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 231 | L3 frontier — VERBATIM naked reimpl (nested circular-list search) | attempted 1 | GREEN 1 (NestedListSearch5a7a60 0x005a7a60, audio) | total_green 395->396 (396/1000). PURE LEAF uint f(int key): 2-level circular-list search at *0x7dca7c (outer; inner head @node-0xc, sentinel node-0x10); return key if inner payload[0xc]==key else 0. VERBATIM naked (byte-identical; MASM labels Louter/Linner/Lnext/Lnf/Lret). NEW handler nested_list_search builds 1 outer+inner+payload (outer node at outerBuf+0x20 so -0x10/-0xc are valid); 2/2 GREEN non-degen (found 0x1234 / not-found 0). Caller FUN_005ac880 C2. ~8 CLEAN frontier remain (456eb0/4cde50/5c95b0/48f590/4d8570/41e4b0, all 140B+). Session 101-231 net = +139 (257->396). Context 108 rounds deep. PATH TO 1000 (604 more) = this method (~1/round) or fanout.
 
