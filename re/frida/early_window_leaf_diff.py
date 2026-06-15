@@ -196,6 +196,7 @@ PURE_LEAF_ARGTYPES = {
     'byte_format_hexdump',       # void fn(struct* arg1, char* out, void* arg3): for 4 bytes at arg1[0x11c..0x11f] write printable ([0x29,0x5a]|[0x61,0x7a]) directly else "[XX]" via .rdata hex table 0x5e336c; if arg3!=0 append ": "+0x10 dwords from arg3 (last byte nulled) else null-term. plain __cdecl. seed_sets[t]={bytes:[4], payload:bool}; snapshot out[0x70] hex. reimpl VERBATIM naked __asm. non-degen via printable/nonprintable/payload mix
     'pool_freelist_init',        # void fn(pool* arg1): N=arg1[0x16c]; zero (N+2)*0x24 buf at arg1[0x14]; build circular freelist of N+1 nodes (stride 0x24) via node[0x1c]; arg1[0x18]=buf, head arg1[0x1c]=buf, tail arg1[0x20], tail wraps to buf; arg1[0x168/0x170/0x194]=0, arg1[0x198]=1. plain __cdecl. seed_sets[t]={n}; snapshot pool fields + node links. reimpl VERBATIM naked __asm. non-degen via varied N (different ring sizes/links)
     'bitmap_blit',               # int fn(dst* arg1, src* arg2): dst{[4]=channels,[8]=rows,[0xc]=width_bits,[0x10]=dst_stride,[0x14]=dst_px,[0x18]=dst_pal}; src{[0xc]=pal_bits,[0x10]=src_stride,[0x14]=src_px,[0x18]=src_pal}. blockA: if both palettes && pal_bits<=8 copy (2^pal_bits)*4 bytes. blockB: bpr=((width_bits+7)>>3)*channels; per row copy bpr bytes src->dst advancing by strides. returns 1. plain __cdecl. seed_sets[t]={rows,width_bits,channels,dstride,sstride,pal_bits,palette}; snapshot dst_px[0x40]+dst_pal[0x40] hex. reimpl VERBATIM naked __asm. non-degen via varied dims/palette
+    'record_array_filter_update',# void fn(arg1, arg2, arg3, arg4, arg5, arg6): scan arg2[4] records (stride 0x10 from arg1+0x18; A@+0,B@+4,C@+8,D@+0xc). rowRange from arg3 (-1->[0,arg2[8]) else exact); colRange from arg5 (-1->[0,4) else exact). match: (A&0x7fffffff) in rowRange && C in colRange && (B==arg4||arg4<0) -> D=arg6, A|=sign. then *arg1|=0x10. plain __cdecl 6 args. fixed 4-record array; seed_sets[t]={arg3,arg4,arg5,arg6}; snapshot *arg1 + per-record (A,D). reimpl VERBATIM naked __asm. non-degen via varied filters -> different update sets
 }
 
 SRC = r"""
@@ -327,6 +328,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'byte_format_hexdump') ? ['pointer','pointer','pointer']
               : (cfg.at === 'pool_freelist_init') ? ['pointer']
               : (cfg.at === 'bitmap_blit') ? ['pointer','pointer']
+              : (cfg.at === 'record_array_filter_update') ? ['pointer','pointer','uint32','uint32','uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1779,6 +1781,30 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'record_array_filter_update') {
+      // void f(arg1, arg2, arg3, arg4, arg5, arg6): record-array filter+update. fixed 4-record
+      // array [A,B,C]; seed_sets[t]={arg3,arg4,arg5,arg6}. snapshot *arg1 + per-record (A,D).
+      const sp = (cfg.seed_sets || [])[t | 0] || {};
+      const N = 4;
+      const recs = [[2, 5, 1], [3, 5, 2], [2, 9, 1], [7, 5, 3]];
+      const A1 = Memory.alloc(0x200), A2 = Memory.alloc(0x40); _keep.push(A1, A2);
+      const seedR = function () {
+        for (let z = 0; z < 0x200; z += 4) A1.add(z).writeU32(0);
+        for (let z = 0; z < 0x40; z += 4) A2.add(z).writeU32(0);
+        A2.add(4).writeU32(N); A2.add(8).writeU32(10);
+        for (let i = 0; i < N; i++) {
+          const R = A1.add(0x18 + i * 0x10);
+          R.writeU32(recs[i][0] >>> 0); R.add(4).writeU32(recs[i][1] >>> 0); R.add(8).writeU32(recs[i][2] >>> 0); R.add(0xc).writeU32(0);
+        }
+      };
+      const snapR = function () {
+        let s = (A1.readU32() >>> 0).toString(16);
+        for (let i = 0; i < N; i++) { const R = A1.add(0x18 + i * 0x10); s += '|' + (R.readU32() >>> 0).toString(16) + ',' + (R.add(0xc).readU32() >>> 0).toString(16); }
+        return s;
+      };
+      const a3 = sp.arg3 >>> 0, a4 = sp.arg4 >>> 0, a5 = sp.arg5 >>> 0, a6 = sp.arg6 >>> 0;
+      try { seedR(); Orig(A1, A2, a3, a4, a5, a6); o = snapR(); } catch (e) { eo = e.message; }
+      try { seedR(); Reim(A1, A2, a3, a4, a5, a6); r = snapR(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'bitmap_blit') {
       // int f(dst* arg1, src* arg2): palette + per-row pixel copy. seed_sets[t]={rows,width_bits,
       // channels,dstride,sstride,pal_bits,palette}. snapshot dst pixels[0x40] + dst palette[0x40].

@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'recupd_5b0cf0': {'rva': 0x005b0cf0, 'export': 'RecUpd5b0cf0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','uint32','uint32','uint32','uint32']}, 'arg_type': 'record_array_filter_update',
+        'seed_sets': [
+            {'arg3': 2, 'arg4': 5, 'arg5': 0xffffffff, 'arg6': 0xAA},          # row==2, B==5, col any[0,4) -> rec0
+            {'arg3': 0xffffffff, 'arg4': 0xffffffff, 'arg5': 1, 'arg6': 0xBB}, # row[0,10), B any, col==1 -> rec0,rec2
+            {'arg3': 7, 'arg4': 5, 'arg5': 3, 'arg6': 0xCC},                   # row==7, B==5, col==3 -> rec3
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'blit_4ceaf0': {'rva': 0x004ceaf0, 'export': 'Blit4ceaf0', 'signature': {'ret': 'int', 'args': ['pointer','pointer']}, 'arg_type': 'bitmap_blit',
         'seed_sets': [
             {'rows': 3, 'width_bits': 16, 'channels': 1, 'dstride': 4, 'sstride': 4, 'pal_bits': 4, 'palette': True},  # 2 bpr x3 + 64B palette

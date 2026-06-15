@@ -2901,3 +2901,86 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Blit4ceaf0(void)
     }
 }
 RH_ScopedInstall(Blit4ceaf0, 0x004ceaf0);
+
+// 0x005b0cf0  FUN_005b0cf0 (audio, record-array filter + conditional update)
+// void f(arg1, arg2, arg3, arg4, arg5, arg6): derive rowLo/rowHi from arg3 (==-1 -> [0,arg2[8]),
+//   else exact arg3) and colLo/colHi from arg5 (==-1 -> [0,4), else exact arg5). For each of
+//   arg2[4] records (stride 0x10 from arg1+0x18; fields A@+0,B@+4,C@+8,D@+0xc): if (A&0x7fffffff)
+//   in [rowLo,rowHi) and C in [colLo,colHi) and (B==arg4 || arg4<0): D=arg6 and set A's sign bit.
+//   Finally *arg1 |= 0x10. Uses 2 stack locals + push ebp. Pure int/pointer -> VERBATIM naked.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl RecUpd5b0cf0(void)
+{
+    __asm {
+        sub  esp, 8
+        push ebx
+        push esi
+        push edi
+        mov  edi, dword ptr [esp+0x1c]       // arg2
+        xor  esi, esi
+        xor  ebx, ebx
+        mov  eax, dword ptr [edi+8]          // arg2[8]
+        mov  dword ptr [esp+0x0c], esi       // local_A = 0
+        mov  dword ptr [esp+0x1c], eax       // hi_bound = arg2[8]
+        mov  eax, dword ptr [esp+0x20]       // arg3
+        cmp  eax, -1
+        mov  dword ptr [esp+0x10], 4         // local_B = 4
+        je   L_RS_ARG5
+        mov  dword ptr [esp+0x0c], eax       // local_A = arg3
+        inc  eax
+        mov  dword ptr [esp+0x1c], eax       // hi_bound = arg3+1
+    L_RS_ARG5:
+        mov  eax, dword ptr [esp+0x28]       // arg5
+        cmp  eax, -1
+        je   L_RS_CHK
+        mov  ebx, eax                         // ebx = arg5
+        inc  eax
+        mov  dword ptr [esp+0x10], eax       // local_B = arg5+1
+    L_RS_CHK:
+        cmp  dword ptr [edi+4], esi          // arg2[4] vs 0
+        jbe  L_RS_END
+        mov  ecx, dword ptr [esp+0x18]       // arg1
+        push ebp
+        mov  ebp, dword ptr [esp+0x28]       // arg4
+        add  ecx, 0x20
+    L_RS_LOOP:
+        mov  eax, dword ptr [ecx-8]
+        test eax, eax
+        jns  L_RS_NONNEG
+        and  eax, 0x7fffffff
+    L_RS_NONNEG:
+        cmp  eax, dword ptr [esp+0x10]       // local_A
+        jl   L_RS_NEXT
+        cmp  eax, dword ptr [esp+0x20]       // hi_bound
+        jge  L_RS_NEXT
+        mov  edx, dword ptr [ecx]
+        cmp  edx, ebx
+        jl   L_RS_NEXT
+        cmp  edx, dword ptr [esp+0x14]       // local_B
+        jge  L_RS_NEXT
+        cmp  dword ptr [ecx-4], ebp          // field_B vs arg4
+        je   L_RS_UPD
+        test ebp, ebp
+        jge  L_RS_NEXT
+    L_RS_UPD:
+        mov  edx, dword ptr [esp+0x30]       // arg6
+        or   eax, 0x80000000
+        mov  dword ptr [ecx+4], edx          // field_D = arg6
+        mov  dword ptr [ecx-8], eax          // field_A |= sign
+    L_RS_NEXT:
+        mov  eax, dword ptr [edi+4]          // arg2[4]
+        inc  esi
+        add  ecx, 0x10
+        cmp  esi, eax
+        jb   L_RS_LOOP
+        pop  ebp
+    L_RS_END:
+        mov  eax, dword ptr [esp+0x18]       // arg1
+        pop  edi
+        pop  esi
+        pop  ebx
+        or   dword ptr [eax], 0x10
+        add  esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(RecUpd5b0cf0, 0x005b0cf0);
