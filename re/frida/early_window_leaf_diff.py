@@ -221,6 +221,7 @@ PURE_LEAF_ARGTYPES = {
     'indexed_float_accum16',     # int fn(float* out, uint i, uint j): PURE LEAF. if(i>=0x10||j>=4) ret 0; else acc=init + 16 floats at tbl_base+i*iStride+j*jStride+regionOff; acc*=K; *out=acc; ret 1. Per cfg.scenarios[t]={i,j,fill}: seed 16 floats=fill+k at the region, observe ret:outbits. non-degen via varied fill/index + a bounds (ret 0) case
     'bounded_table_signselect_clamp', # int fn(uint idx, int val): PURE LEAF. if(idx>=0x10) ret 0; b=*(u8*)(t2Tbl + (*(int*)(t1Tbl+idx*16))*0x4c); slot=&t3Tbl[idx*t3Stride]; *slot += (float)b>C ? +val : -val; clamp[0,0xbb8]; ret 1. Per cfg.scenarios[t]={idx,val,byte,slot}: seed t1[idx]=0,t2[0]=byte,t3[idx]=slot; observe ret:slotval. non-degen via +/- + clamp + bounds
     'seed_globals_arg_multiobs', # void fn(int arg): PURE LEAF global-cascade. Per cfg.seed_sets[t]={arg, globals:[[a,v]...]} seed input globals (+ queue/sentinel), call f(arg), observe cfg.observe_addrs (list, joined). non-degen via distinct seed states/arg producing distinct write patterns
+    'succ_approx_quantize',      # void fn(int arg1, int* p2, int* p3): PURE LEAF successive-approx quantizer. ecx=range tbl[*p3], updates *p2 (quantized recon, clamp) and *p3 (+= deltaTbl[flags]). Per cfg.scenarios[t]={arg1,cur,idx,range}: seed p2/p3 bufs + rangeTbl[idx] + deltaTbl[0..15]; observe *p2|*p3. non-degen via varied arg1 (target) -> distinct flags/outputs
 }
 
 SRC = r"""
@@ -377,6 +378,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'indexed_float_accum16') ? ['pointer','uint32','uint32']
               : (cfg.at === 'bounded_table_signselect_clamp') ? ['uint32','uint32']
               : (cfg.at === 'seed_globals_arg_multiobs') ? ['uint32']
+              : (cfg.at === 'succ_approx_quantize') ? ['uint32','pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1979,6 +1981,20 @@ rpc.exports.diff = function(cfg) {
       const snap = function () { return obs.map(function (a) { return (ptr(a).readU32() >>> 0).toString(16); }).join('|'); };
       try { seedG(); Orig(sp.arg >>> 0); o = snap(); } catch (e) { eo = e.message; }
       try { seedG(); Reim(sp.arg >>> 0); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'succ_approx_quantize') {
+      // void f(int arg1, int* p2, int* p3): successive-approx quantizer.
+      const s = (cfg.scenarios || [])[t] || { arg1: 0, cur: 0, idx: 0, range: 0x400 };
+      const p2 = Memory.alloc(4), p3 = Memory.alloc(4); _keep.push(p2, p3);
+      const seedQ = function () {
+        p2.writeS32(s.cur | 0);
+        p3.writeS32(s.idx | 0);
+        ptr(cfg.rangeTbl).add((s.idx | 0) * 2).writeS16(s.range | 0);
+        // deltaTbl (0x634478) left at REAL values: both sides read it identically
+        // (seeding it earlier diverged Orig vs Reim - harness artifact).
+      };
+      const snap = function () { return (p2.readS32() | 0) + '|' + (p3.readS32() | 0); };
+      try { seedQ(); Orig(s.arg1 >>> 0, p2, p3); o = snap(); } catch (e) { eo = e.message; }
+      try { seedQ(); Reim(s.arg1 >>> 0, p2, p3); r = snap(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };
@@ -2669,6 +2685,7 @@ def run(name):
            'scenarios': h.get('scenarios'),
            'iStride': h.get('iStride'), 'jStride': h.get('jStride'), 'regionOff': h.get('regionOff'),
            't1Tbl': h.get('t1Tbl'), 't2Tbl': h.get('t2Tbl'), 't3Tbl': h.get('t3Tbl'), 't3Stride': h.get('t3Stride'),
+           'rangeTbl': h.get('rangeTbl'), 'deltaTbl': h.get('deltaTbl'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

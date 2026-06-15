@@ -3791,3 +3791,33 @@ extern "C" __declspec(dllexport) void __cdecl EventEnqueueCascade4d7100(int para
     #undef MRE_G
 }
 RH_ScopedInstall(EventEnqueueCascade4d7100, 0x004d7100);
+
+// 0x005b6a40  FUN_005b6a40 (audio, SuccApproxQuantize) — PURE LEAF (no calls)
+// void f(int arg1, int* p2, int* p3): successive-approximation quantizer.
+//   esi=(short)arg1; ecx=range=*(s16*)(0x634498 + (*p3)*2); edx=esi-*p2;
+//   al=0; if(edx<0){al=8;edx=-edx;} bits 4/2/1 by edx>=ecx (ecx>>=1 each);
+//   *p2 = (al&8)? esi-ecx+edx : ecx-edx+esi; clamp [-0x8000,0x7fff];
+//   *p3 += *(s16*)(0x634478 + (al&0xff)*2); if(*p3<0) *p3=0.
+// capstone-verified; pure integer -> bit-identity exact. ecx sar = signed >>.
+extern "C" __declspec(dllexport) void __cdecl SuccApproxQuantize5b6a40(int arg1, int* p2, int* p3)
+{
+    const short esi = static_cast<short>(arg1);
+    int ecx = *reinterpret_cast<const short*>(0x00634498u + static_cast<unsigned>(*p3) * 2u);
+    int edx = static_cast<int>(esi) - *p2;
+    int al = 0;
+    if (edx < 0) { al = 8; edx = -edx; }
+    if (edx >= ecx) { al |= 4; edx -= ecx; }
+    ecx >>= 1;
+    if (edx >= ecx) { al |= 2; edx -= ecx; }
+    ecx >>= 1;
+    if (edx >= ecx) { al |= 1; edx -= ecx; }
+    ecx >>= 1;
+    *p2 = (al & 8) ? (static_cast<int>(esi) - ecx + edx)
+                   : (ecx - edx + static_cast<int>(esi));
+    if (*p2 > 0x7fff) *p2 = 0x7fff;
+    else if (*p2 < -0x8000) *p2 = -0x8000;
+    const int d = *reinterpret_cast<const short*>(0x00634478u + static_cast<unsigned>(al & 0xff) * 2u);
+    *p3 = *p3 + d;
+    if (*p3 < 0) *p3 = 0;
+}
+RH_ScopedInstall(SuccApproxQuantize5b6a40, 0x005b6a40);

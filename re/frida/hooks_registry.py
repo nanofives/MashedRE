@@ -60,6 +60,20 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x005b6a40 SuccApproxQuantize5b6a40 (audio) - PURE LEAF void f(int arg1, int* p2,
+    # int* p3): successive-approx quantizer. range=*(s16*)(0x634498+(*p3)*2); flags built
+    # by edx>=range (range>>=1 each); *p2 = quantized recon (clamp [-0x8000,0x7fff]);
+    # *p3 += *(s16*)(0x634478+flags*2), floor 0. Seed p2/p3 + range tbl[idx] + delta tbl.
+    'succ_approx_quantize_5b6a40': {'rva': 0x005b6a40, 'export': 'SuccApproxQuantize5b6a40', 'signature': {'ret': 'void', 'args': ['uint32', 'pointer', 'pointer']}, 'arg_type': 'succ_approx_quantize',
+        'rangeTbl': 0x00634498, 'deltaTbl': 0x00634478,
+        'scenarios': [
+            {'arg1': 100,   'cur': 0, 'idx': 0, 'range': 0x400},   # small +delta, no range bits
+            {'arg1': 2000,  'cur': 0, 'idx': 0, 'range': 0x400},   # >range -> bits 4|2|1
+            {'arg1': -300,  'cur': 0, 'idx': 0, 'range': 0x400},   # negative -> al|=8
+            {'arg1': 40000, 'cur': 0, 'idx': 0, 'range': 0x400},   # (short)40000=-25536, all bits
+        ],
+        'path1_tests': [0, 1, 2, 3], 'path2_tests': [0, 1, 2, 3]},
+
     # 0x004d7100 EventEnqueueCascade4d7100 (render) - PURE LEAF void f(int param):
     # guarded event-enqueue cascade over global flags + queue 0x7d5168[0x7d6c14].
     # 3 scenarios: param=1 full cascade from zero, param=0 from set-state, param=1
