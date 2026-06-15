@@ -189,6 +189,7 @@ PURE_LEAF_ARGTYPES = {
     'table_accum_clamp',         # void fn(a1, p2, p3): idx=*p3; d=((int16)tblA[0x634498][idx]*(2*(a1&7)+1))>>3(logical); *p2 += (a1&8)?-d:+d, clamp[-32768,32767]; *p3 += (int16)tblB[0x634478][a1], clamp[0,88]. tables are absolute .rdata (read identically both sides). seed_sets[t]={a1,v2,v3}; snapshot *p2|*p3. reimpl VERBATIM naked __asm. non-degen via varied a1/idx + both clamps
     'fastcall_float_clamp',      # void __fastcall fn(ECX=idx, EDX=base, [esp+4]=val float): v(80bit)=val+base[idx]; base[idx]=(float32)v (fst keeps st0); if v(80bit) > 50.0 (fcomp vs .rdata 0x5cd120) base[idx]=50.0f. ORIG via mov ecx/edx + push valbits + call trampoline; REIMPL naked __cdecl reading cdecl stack args (idx,base,val) but EXACT x87 (fld/fadd/fst/fcomp 0x5cd120) so the 80-bit compare matches. seed_sets[t]={idx,cur,val}; snapshot base[idx] u32. non-degen via clamp + pass-through paths
     'list_walk_self_write',      # void fn(p, value): node=*p; while(node!=*node) node=*node (walk linked list until a self-pointing node); *(uint32*)(*0x911ae4 + node)=value. global 0x911ae4 is .bss-zero at suspended-spawn so target=terminal node addr -> writes value to terminal[0]. build a chain p->n0->..->n[len-1](self). seed_sets[t]={len,value}; snapshot terminal[0]. reimpl VERBATIM naked __asm. non-degen via distinct values
+    'eax_ecx_float_hash',        # float fn(EAX=a, ECX=b): if(a) b&=a; x=(b<<13)^b; h=((x*x*0x3d73+0xc0ae5)*x - 0x2df722f3) & 0x7fffffff; return fild(h) * .rdata(0x5cd314) (dead fadd 0x5cc94c branch since h>=0). integer noise-hash -> float. ORIG via mov eax/ecx + call trampoline (ret float st0); REIMPL naked __cdecl(a,b)->float reading stack args + scratch slot, EXACT integer/fild/fmul. seed_pairs[t]=[a,b]; snapshot float32 bits. non-degen via distinct hashes
 }
 
 SRC = r"""
@@ -313,6 +314,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'table_accum_clamp') ? ['uint32','pointer','pointer']
               : (cfg.at === 'fastcall_float_clamp') ? ['uint32','pointer','float']
               : (cfg.at === 'list_walk_self_write') ? ['pointer','uint32']
+              : (cfg.at === 'eax_ecx_float_hash') ? ['uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1765,6 +1767,24 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'eax_ecx_float_hash') {
+      // float fn(EAX=a, ECX=b): integer noise-hash -> float. ORIG via mov eax/ecx + call
+      // trampoline (returns float in st0); REIMPL naked __cdecl(a,b)->float. seed_pairs[t]=[a,b].
+      const pr = (cfg.seed_pairs || [])[t | 0] || [0, 0];
+      const scrH = Memory.alloc(8); _keep.push(scrH);
+      const bits = function (fv) { scrH.writeFloat(fv); return scrH.readU32() >>> 0; };
+      const mkH = function (target) {
+        const tr = Memory.alloc(Process.pageSize); _keep.push(tr);
+        let p = 0;
+        tr.add(p).writeU8(0xB8); tr.add(p + 1).writeU32(pr[0] >>> 0); p += 5; // mov eax, a
+        tr.add(p).writeU8(0xB9); tr.add(p + 1).writeU32(pr[1] >>> 0); p += 5; // mov ecx, b
+        tr.add(p).writeU8(0xE8); tr.add(p + 1).writeS32(target.sub(tr.add(p + 5)).toInt32()); p += 5; // call
+        tr.add(p).writeU8(0xC3); p += 1;                                      // ret
+        Memory.protect(tr, 24, 'rwx');
+        return new NativeFunction(tr, 'float', [], 'mscdecl');
+      };
+      try { o = bits(mkH(ptr(cfg.rva))()); } catch (e) { eo = e.message; }
+      try { r = bits(Reim(pr[0] >>> 0, pr[1] >>> 0)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'list_walk_self_write') {
       // void fn(p, value): node=*p; while(node!=*node) node=*node; *(*0x911ae4 + node)=value.
       // global is .bss-zero at spawn -> writes value to terminal[0]. seed_sets[t]={len,value}.

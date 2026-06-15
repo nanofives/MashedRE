@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 175
-- total_green: 348
+- rounds_run: 176
+- total_green: 349
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 175 | register-arg integer noise-hash -> float (NEW handler) | attempted 1 | GREEN 1 (Hash4223f0 0x004223f0: if(a)b&=a; x=(b<<13)^b; h=((x*x*0x3d73+0xc0ae5)*x-0x2df722f3)&0x7fffffff; return fild(h)*.rdata(0x5cd314)) | total_green 348->349 (349/1000). Status-prechecked C2; caller FUN_00422470 C2, zero-callee leaf. NEW handler eax_ecx_float_hash (ORIG via mov eax/ecx+call trampoline ret-float-st0; REIMPL naked __cdecl(a,b)->float reading stack args + scratch slot, EXACT integer/fild/fmul). LESSON: the eax+ecx register-arg convention (non-fastcall) is diffable with a mov-eax/mov-ecx+call trampoline (float in st0 read by NativeFunction 'float'); integer-hash + fild + single fmul-const (no fld-st(N) juggling) IS a bit-identical naked port. Scouted+rejected this round: 0x44e070 (.bss-dead index tables -> degenerate), 0x520990 (inlined memset, library-ish), 0x5a7a60 (needs global-seeded circular list). Session 101-175 = +92 (257->349). ~65 handlers. THIS CONTEXT did rounds 124-175 = +57 (292->349). NEXT-ROUND SCOUTING: 0x5baf00 (MusicGroupVolumeSet, named) = circular-list flag setter: p[0x38]=vol; for each node in circular list at p[0xc] (sentinel=&p[0xc]): fld/fstp node[0x1c] (identity reround) + node[0x14]|=0x40 -> build a 2-node circular list, snapshot p[0x38]|node[0x14]s; clean. QUEUE: 0x5baf00 then naked x87 float loops (0x4b4550 OFF-LIMITS fld-st(N)) + CRT(skip)/.bss-dead/transcendental; promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~651. Context 52 rounds deep — fresh context strongly advised.
 
 2026-06-15 | round 174 | linked-list walk-to-self + global-offset write (NEW handler) | attempted 1 | GREEN 1 (Walk4938e0 0x004938e0: node=*p; while(node!=*node) node=*node; *(*0x911ae4 + node)=value) | total_green 347->348 (348/1000). Status-prechecked C2; caller FUN_00403910 C2, zero-callee leaf. NEW handler list_walk_self_write (build p->n0->..->n[len-1](self); global 0x911ae4 is .bss-zero at suspended-spawn so store lands on terminal[0]; chains len 3/1/2 -> distinct values). LESSON: a .bss-zero global used as an ADDITIVE base (base+node) collapses to a clean known target at suspended-spawn -> buildable; verify the global is bss-tail (raw-size bound) first. Pure integer/pointer -> verbatim naked port. Session 101-174 = +91 (257->348). ~64 handlers. THIS CONTEXT did rounds 124-174 = +56 (292->348). QUEUE: remaining frontier is dominated by naked x87 float loops (0x4b4550 fld-st(N) juggling = OFF-LIMITS, 0x4c4270) + CRT(0x5cxxxx skip) + .bss-dead + transcendental; need a fresh scout for integer/store leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~652. Context 51 rounds deep — fresh context strongly advised.
 

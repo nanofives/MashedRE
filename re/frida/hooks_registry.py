@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'hash_4223f0': {'rva': 0x004223f0, 'export': 'Hash4223f0', 'signature': {'ret': 'float', 'args': ['uint32','uint32']}, 'arg_type': 'eax_ecx_float_hash',
+        'seed_pairs': [
+            [0,           12345],       # a==0 -> hash(12345)
+            [0x0000FFFF,  0x12345678],  # b &= 0xFFFF -> hash(0x5678)
+            [7,           0xABCDEF],     # b &= 7 -> hash(7)
+            [0,           1],            # hash(1)
+            [0,           999999],       # hash(999999)
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'walk_4938e0': {'rva': 0x004938e0, 'export': 'Walk4938e0', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'list_walk_self_write',
         'seed_sets': [
             {'len': 3, 'value': 0x11223344},   # walk n0->n1->n2(self); terminal[0]=0x11223344

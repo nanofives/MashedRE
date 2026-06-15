@@ -2413,3 +2413,45 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Walk4938e0(void)
     }
 }
 RH_ScopedInstall(Walk4938e0, 0x004938e0);
+
+// 0x004223f0  FUN_004223f0 (gameplay, integer noise-hash -> float; register args EAX=a, ECX=b)
+// float f(EAX a, ECX b):
+//   if (a) b &= a;
+//   x = (b<<13) ^ b;
+//   h = ((((x*x)*0x3d73 + 0xc0ae5) * x) - 0x2df722f3) & 0x7fffffff;
+//   return (float)((double80)fild(h) [+ .rdata 0x5cc94c if h<0, dead] * .rdata 0x5cd314);
+// h is always >=0 after the &0x7fffffff so the fadd branch is dead, kept for fidelity.
+// Exported __cdecl(a,b)->float reading stack args + a scratch slot; EXACT integer +
+// fild/fmul of the same .rdata consts. VERBATIM naked port (no fld-st(N) juggling).
+extern "C" __declspec(dllexport) __declspec(naked) float __cdecl Hash4223f0(void)
+{
+    __asm {
+        push ecx                          // scratch slot; now [esp+8]=a, [esp+0x0c]=b
+        mov  eax, dword ptr [esp+8]        // a
+        mov  ecx, dword ptr [esp+0x0c]     // b
+        test eax, eax
+        je   L_HS1
+        and  ecx, eax
+    L_HS1:
+        mov  eax, ecx
+        shl  eax, 0x0d
+        xor  eax, ecx
+        mov  ecx, eax
+        imul ecx, eax
+        imul ecx, ecx, 0x3d73
+        add  ecx, 0x0c0ae5
+        imul ecx, eax
+        sub  ecx, 0x2df722f3
+        and  ecx, 0x7fffffff
+        test ecx, ecx
+        mov  dword ptr [esp], ecx
+        fild dword ptr [esp]
+        jge  L_HS2
+        fadd dword ptr ds:[05CC94Ch]
+    L_HS2:
+        fmul dword ptr ds:[05CD314h]
+        pop  ecx
+        ret
+    }
+}
+RH_ScopedInstall(Hash4223f0, 0x004223f0);
