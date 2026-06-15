@@ -148,6 +148,7 @@ PURE_LEAF_ARGTYPES = {
     'float_2ptr_ret',            # float fn(a*, b*): pure float of two vec3 args (dot/clamp/etc.), returns ST0. Seed a,b from cfg.seed_pairs[t]={a:[3 floats],b:[3 floats]} (plain numbers), call, compare float return as u32 bit pattern. Reimpl is VERBATIM naked __asm (bit-identical x87). test=index into seed_pairs (varied -> non-degen). signature ret MUST be 'float'
     'float_planes6_predicate',   # u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14 (x,y,z,w); for each test dot(plane.xyz,point.xyz)-plane.w vs -point.w; return 1 if all pass else 0. Seed from cfg.seed_sets[t]={point:[4 floats], planes:[6 lists of 4 floats]}; distinct plane.w verifies the 0x14 stride. Reimpl is VERBATIM naked __asm. test=index (results vary 0/1 -> non-degen)
     'eax_edi_out',               # void fn(EAX=v, EDI=out*): writes out[0..2] computed from v. ORIG via `mov eax,v; mov edi,outbuf; jmp` trampoline; REIMPL __cdecl(v, out) (compares out[0..2], not ABI). test=v (varied -> distinct outputs -> non-degen). use for integer fns whose magic-multiply == plain C integer division
+    'grid_getter_multiout',      # u32 fn(i,j,out1,_,_,out2,out3): bounds-check i<*b1, j<*b2; idx=i*mul1+j; out1[0..1]=out1_t[*][idx*s12], out2[0..1]=out2_t[*][idx*s12], out3[0]=out3_t[*][(i*mul3+j)*s3]; return 1. Seed bounds large + the indexed table slots per cfg.grid; call with 3 out-bufs; observe outs+ret. test=marker (varied -> non-degen)
 }
 
 SRC = r"""
@@ -231,6 +232,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'float_2ptr_ret') ? ['pointer','pointer']
               : (cfg.at === 'float_planes6_predicate') ? ['pointer','pointer']
               : (cfg.at === 'eax_edi_out') ? ['uint32','pointer']
+              : (cfg.at === 'grid_getter_multiout') ? ['uint32','uint32','pointer','pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1067,6 +1069,23 @@ rpc.exports.diff = function(cfg) {
       const rdE = function (buf) { const a = []; for (let k = 0; k < 3; k++) a.push(buf.add(k * 4).readU32() >>> 0); return a.join('|'); };
       try { for (let z = 0; z < 0x40; z += 4) ob1.add(z).writeU32(0); mkED(ptr(cfg.rva), ob1)(); o = rdE(ob1); } catch (e) { eo = e.message; }
       try { for (let z = 0; z < 0x40; z += 4) ob2.add(z).writeU32(0); Reim(v >>> 0, ob2); r = rdE(ob2); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'grid_getter_multiout') {
+      // u32 fn(i,j,out1,_,_,out2,out3): bounds + 2D-indexed parallel-table getter. Seed
+      // bounds large + the indexed slots (per cfg.grid), call with 3 out-bufs, compare
+      // outs+ret. test=marker base (varied -> distinct seeded values -> non-degen).
+      const g = cfg.grid, gi = g.i | 0, gj = g.j | 0;
+      const idx = gi * (g.mul1 | 0) + gj, idx3 = gi * (g.mul3 | 0) + gj, mk = t >>> 0;
+      const o1 = Memory.alloc(0x20), o2 = Memory.alloc(0x20), o3 = Memory.alloc(0x20); _keep.push(o1, o2, o3);
+      const z = function (b) { for (let q = 0; q < 0x20; q += 4) b.add(q).writeU32(0); };
+      const seedG = function () {
+        ptr(g.b1).writeU32(0x7fffffff); ptr(g.b2).writeU32(0x7fffffff);
+        g.out1_t.forEach(function (a, k) { ptr(a).add(idx * (g.s12 | 0)).writeU32((mk + 0x10 + k) >>> 0); });
+        g.out2_t.forEach(function (a, k) { ptr(a).add(idx * (g.s12 | 0)).writeU32((mk + 0x20 + k) >>> 0); });
+        g.out3_t.forEach(function (a, k) { ptr(a).add(idx3 * (g.s3 | 0)).writeU32((mk + 0x30 + k) >>> 0); });
+      };
+      const rd = function () { return [o1.readU32(), o1.add(4).readU32(), o2.readU32(), o2.add(4).readU32(), o3.readU32()].map(function (x) { return x >>> 0; }).join('|'); };
+      try { seedG(); z(o1); z(o2); z(o3); const ro = Orig(gi >>> 0, gj >>> 0, o1, o2, o3) >>> 0; o = rd() + '|' + ro; } catch (e) { eo = e.message; }
+      try { seedG(); z(o1); z(o2); z(o3); const rr = Reim(gi >>> 0, gj >>> 0, o1, o2, o3) >>> 0; r = rd() + '|' + rr; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1358,6 +1377,7 @@ def run(name):
            'mid_off': h.get('mid_off'), 'abs_ranges': h.get('abs_ranges'),
            'seed_a': h.get('seed_a'), 'seed_b': h.get('seed_b'), 't_bits': h.get('t_bits'),
            'seed_pairs': h.get('seed_pairs'), 'seed_sets': h.get('seed_sets'),
+           'grid': h.get('grid'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),

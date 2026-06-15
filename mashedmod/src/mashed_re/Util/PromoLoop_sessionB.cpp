@@ -1537,3 +1537,29 @@ extern "C" __declspec(dllexport) void __cdecl Split41e170(std::uint32_t v, int* 
     out[2] = vi - (a * 60 + b) * 100;
 }
 RH_ScopedInstall(Split41e170, 0x0041e170);
+
+// ===== round 134 ===== (bounded 2D-grid multi-out getter)
+// 0x004957a0 — u32 fn(i, j, out1, out2, out3): if(i>=*0x772fac || j>=*0x771e80) return 0;
+//   idx=i*0x89+j; if(out1){out1[0]=tbl150[idx*8]; out1[1]=tbl154[idx*8];}
+//   if(out2){out2[0]=tbl1d0[idx*8]; out2[1]=tbl1d4[idx*8];} idx3=i*0x112+j;
+//   if(out3) out3[0]=tbl290[idx3*4]; return 1.
+//   NB: original reads out2/out3 via post-`push esi/edi` [esp+0x18]/[esp+0x1c] which map
+//   to pre-push +0x10/+0x14 -> they are args 4 and 5, not 6 and 7.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Grid4957a0(
+        std::uint32_t i, std::uint32_t j, int* out1, int* out2, int* out3) {
+    if (static_cast<int>(i) >= *reinterpret_cast<int*>(0x00772fac)) return 0;
+    if (static_cast<int>(j) >= *reinterpret_cast<int*>(0x00771e80)) return 0;
+    int idx = static_cast<int>(i) * 0x89 + static_cast<int>(j);
+    if (out1) {
+        out1[0] = *reinterpret_cast<int*>(0x00772150 + idx * 8);
+        out1[1] = *reinterpret_cast<int*>(0x00772154 + idx * 8);
+    }
+    if (out2) {
+        out2[0] = *reinterpret_cast<int*>(0x007721d0 + idx * 8);
+        out2[1] = *reinterpret_cast<int*>(0x007721d4 + idx * 8);
+    }
+    int idx3 = static_cast<int>(i) * 0x112 + static_cast<int>(j);
+    if (out3) out3[0] = *reinterpret_cast<int*>(0x00772290 + idx3 * 4);
+    return 1;
+}
+RH_ScopedInstall(Grid4957a0, 0x004957a0);

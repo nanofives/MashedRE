@@ -14291,6 +14291,9 @@ HOOKS = {
     # ---- promote-round round 133 (value -> 3-component split, EAX=v/EDI=out) --
     'split_41e170': {'rva': 0x0041e170, 'export': 'Split41e170', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'eax_edi_out', 'lut_root_delta': 0, 'path1_tests': [123456, 7890, 100000], 'path2_tests': [123456]},
 
+    # ---- promote-round round 134 (bounded 2D-grid multi-out getter) --
+    'grid_4957a0': {'rva': 0x004957a0, 'export': 'Grid4957a0', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32','pointer','pointer','pointer']}, 'arg_type': 'grid_getter_multiout', 'grid': {'b1': 0x00772fac, 'b2': 0x00771e80, 'i': 1, 'j': 2, 'mul1': 0x89, 'mul3': 0x112, 's12': 8, 's3': 4, 'out1_t': [0x00772150, 0x00772154], 'out2_t': [0x007721d0, 0x007721d4], 'out3_t': [0x00772290]}, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0x3000], 'path2_tests': [0x1000]},
+
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},
 
