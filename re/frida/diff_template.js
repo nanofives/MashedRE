@@ -1554,6 +1554,78 @@ function runDiff() {
         return;
     }
 
+    // ── esi_idx_ecx_outbuf4 ───────────────────────────────────────────────────
+    // SWEEP-CRITICAL (new handler; frida-sweep does NOT auto-merge diff_template.js).
+    // For register-convention LEAVES like FUN_00413bc0: the integer index arrives
+    // in ESI and the out-pointer in ECX; the function writes 4 floats to
+    // [ECX..ECX+0xc] and ends with a PLAIN ret (register-only, no stack args).
+    // Neither int_outbuf4 (passes args cdecl-on-stack) nor fastcall_reg (seeds
+    // only ECX/EDX and captures EAX) can drive it. We build an 18-byte trampoline
+    // per side that PRESERVES the caller's ESI (callee-saved), seeds ESI=idx and
+    // ECX=<16-byte scratch>, CALLs the target, restores ESI, and rets; then read
+    // the 4 output floats back as a packed u32x4 fingerprint.
+    //
+    //   56                 push esi                 ; save caller ESI
+    //   BE ?? ?? ?? ??     mov  esi, imm32(idx)     ; imm patched at +2 per test
+    //   B9 ?? ?? ?? ??     mov  ecx, imm32(scratch) ; imm patched at +7 (constant)
+    //   E8 ?? ?? ?? ??     call rel32 -> target     ; rel32 at +12
+    //   5E                 pop  esi                 ; restore caller ESI
+    //   C3                 ret
+    //
+    // CONFIG.tests : scalar integer indices (incl. negatives / >=5 / the 3 case).
+    if (CONFIG.arg_type === 'esi_idx_ecx_outbuf4') {
+        const scratchO = Memory.alloc(16);
+        const scratchR = Memory.alloc(16);
+        function buildEsiTramp(targetAddr, scratchAddr) {
+            const code = Memory.alloc(Process.pageSize);
+            Memory.patchCode(code, 18, function (cw) {
+                const w = new X86Writer(cw, { pc: code });
+                w.putU8(0x56);                              // push esi
+                w.putBytes([0xBE, 0x00, 0x00, 0x00, 0x00]); // mov esi, 0  (patched +2)
+                w.putBytes([0xB9, 0x00, 0x00, 0x00, 0x00]); // mov ecx, 0  (patched +7)
+                w.putU8(0xE8);                              // call rel32
+                const rel = targetAddr.sub(code.add(16)).toInt32();
+                w.putBytes([rel & 0xff, (rel >>> 8) & 0xff,
+                            (rel >>> 16) & 0xff, (rel >>> 24) & 0xff]);
+                w.putU8(0x5E);                              // pop esi
+                w.putU8(0xC3);                              // ret
+                w.flush();
+            });
+            // ECX imm = scratch address (constant for this side); patch once.
+            code.add(7).writeU32(parseInt(scratchAddr.toString(), 16) >>> 0);
+            return code;
+        }
+        const trampO = buildEsiTramp(TARGET_ADDR, scratchO);
+        const trampR = buildEsiTramp(reimplAddr, scratchR);
+        const FnO = new NativeFunction(trampO, 'void', [], 'mscdecl');
+        const FnR = new NativeFunction(trampR, 'void', [], 'mscdecl');
+        const packU32x4 = function (p) {
+            let s = '';
+            for (let k = 0; k < 16; k += 4) {
+                const v = p.add(k).readU32() >>> 0;
+                s += ('00000000' + v.toString(16)).slice(-8);
+            }
+            return '0x' + s;
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const idx = CONFIG.tests[i] | 0;
+            let origV = null, reimV = null, errO = null, errR = null;
+            // Patch the ESI (idx) imm window on both sides.
+            trampO.add(2).writeU32(idx >>> 0);
+            trampR.add(2).writeU32(idx >>> 0);
+            // Zero the 4-float scratch on both sides before each call.
+            for (let k = 0; k < 16; k += 4) { scratchO.add(k).writeU32(0); scratchR.add(k).writeU32(0); }
+            try { FnO(); origV = packU32x4(scratchO); } catch (e) { errO = e.message; }
+            try { FnR(); reimV = packU32x4(scratchR); } catch (e) { errR = e.message; }
+            results.push({ idx: i, input: idx,
+                           original: origV, reimpl: reimV,
+                           match: (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── vec3_lerp (promote-round-22 harness-ext, SWEEP-CRITICAL) ─────────────
     // For pure vec3 math leaves: void fn(float* out3, float* a3, float* b3,
     // float t) — writes a 3-float result computed from two input vec3s and a

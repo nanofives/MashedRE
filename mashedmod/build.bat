@@ -124,6 +124,8 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\BatchAA_s4.cpp" ^
     "HUD\HudDispatch.cpp" ^
     "HUD\Cluster_v2.cpp" ^
+    "HUD\ScenarioLeaves_sa1.cpp" ^
+    "HUD\ScenarioLeaves_sa2.cpp" ^
     "Boot\GameStateCluster.cpp" ^
     "Boot\BootLowRvaCluster.cpp" ^
     "Boot\Window.cpp" ^
@@ -320,6 +322,8 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Frontend\SkeletonAndScatter_t6.cpp" ^
     "Frontend\Cluster_v1.cpp" ^
     "HUD\Cluster_v2.cpp" ^
+    "HUD\ScenarioLeaves_sa1.cpp" ^
+    "HUD\ScenarioLeaves_sa2.cpp" ^
     "Frontend\Cluster_v3.cpp" ^
     "Frontend\BatchAA_s1.cpp" ^
     "Frontend\BatchAA_s2.cpp" ^

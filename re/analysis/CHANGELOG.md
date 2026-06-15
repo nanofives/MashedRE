@@ -1,6 +1,12 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-15  frida-sweep-20260615-2331  frida-sweep-claim  branches=2 (c3/batch-sa1-s1,s2)
+2026-06-15  C2->C3  0x00413bc0  HudUvRect413bc0  c3-batch-sa1-s1 per-session GREEN-12/12 (esi_idx_ecx_outbuf4; integration-diff DEFERRED: MASHED boot AV 0xC0000005 env)
+2026-06-15  C2->C3  0x0041c010  HudConstTableInitAndSweep  c3-batch-sa1-s2 GREEN-10/10 scenario=race (integration deferred: boot AV)
+2026-06-15  C2->C3  0x0041d930  HudSlideBillboardTick  c3-batch-sa1-s2 GREEN-10/10 scenario=race (integration deferred: boot AV)
+2026-06-15  C2->C3  0x00423480  AiFilenameBuild  c3-batch-sa1-s2 GREEN-10/10 scenario=race (integration deferred: boot AV)
+2026-06-15  frida-sweep-20260615-2331  frida-sweep-release  branches=2  merged=manual-additive(527-stale-base)  integration-diff=DEFERRED(MASHED-boot-AV-env)  hooks=4-C3
 2026-05-26  frida-sweep-20260526-1415  frida-sweep-claim  branches=6 (c3/batch-s-s1..s6)
 2026-05-26  C1->C2  0x004df8d0  FUN_004df8d0  batch-render-7-s3
 2026-05-26  C1->C2  0x004df910  FUN_004df910  batch-render-7-s3

@@ -15856,4 +15856,98 @@ HOOKS = {
         ],
     },
 
+    # ============ c3-batch-sa1 (scenario-attach C2->C3, 2026-06-15) ============
+    # 0x00413bc0  HudUvRect413bc0 — index->UV-rect leaf (c3-batch-sa1-s1).
+    # __fastcall-hybrid: index in ESI, out-ptr in ECX; writes 4 floats to
+    # [ECX..ECX+0xc]; plain ret (register-only, no stack args).
+    # cell = *(float*)0x005cd060 = 0.25f. ESI<0||>=5 -> {0,0,1,1};
+    # ESI==3 -> {0.255,0.255,0.995,0.995}; else 4-wide atlas grid
+    # (c=ESI&3, r=ESI>>2): {c*cell, r*cell, (c+1)*cell, (r+1)*cell}.
+    # arg_type='esi_idx_ecx_outbuf4' (NEW handler — SWEEP-CRITICAL: frida-sweep
+    # does NOT auto-merge diff_template.js): trampoline preserves caller ESI,
+    # seeds ESI=idx + ECX=<16-byte scratch>, CALLs, restores ESI, reads back the
+    # 4 floats as a packed u32x4 fingerprint. PURE/deterministic -> diffs GREEN
+    # at any state (NO scenario:'race' needed; the other 4 sa1 candidates were
+    # audited NON-VIABLE, see re/analysis/scenario_attach_sa1_viability_2026-06-15.md).
+    # ref: re/analysis/bucket_00412130/0x00413bc0.md
+    'hud_uv_rect_413bc0': {
+        'rva':            0x00413bc0,
+        'export':         'HudUvRect413bc0',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'esi_idx_ecx_outbuf4',
+        'lut_root_delta': 0,
+        # grid (0,1,2,4), inset (3), out-of-range default (<0, >=5).
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 10, -1, -5, 100, 0x7fffffff],
+        'path2_tests':    [0, 3, 4, 5, -1],
+    },
+
+    # ---- c3-batch-sa1 session 2 (scenario-attach C2->C3) ---------------------
+    # All void_write_observe on the scenario:'race' lane: write a sentinel to
+    # target_global, call fn (void), read back. The original writes a
+    # deterministic value (overwriting the sentinel); a no-op reimpl would leave
+    # the sentinel -> RED. void_write_observe is SEEDED (run_diff SEEDED_ARG_TYPES)
+    # so the non-degeneracy assertion is satisfied by the sentinel itself.
+    # Bodies byte-verified in MASHED.exe.unpatched; reimpls in
+    # mashedmod/src/mashed_re/HUD/ScenarioLeaves_sa2.cpp.
+
+    # 0x0041c010  HudConstTableInitAndSweep — copies the 24-byte const block to
+    # &DAT_005f334c, then sweeps 2 records via FUN_0041b770(__fastcall). Observe
+    # 0x005f334c = first const dword 0x3ee66666. Race-gated: FUN_0041b770 walks
+    # record fields that are valid only in a live round.
+    # ref: re/analysis/bucket_util_0040e4b0_0042f790/0x0041c010.md
+    'hud_const_table_init_sweep': {
+        'rva':            0x0041c010,
+        'export':         'HudConstTableInitAndSweep',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x005f334c,
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x0041d930  HudSlideBillboardTick — RW 2D billboard with a time-driven
+    # Y-lerp on DAT_0063d580; ends with DAT_0063d584 += 1. Observe 0x0063d584
+    # (frame counter): write sentinel S, fn returns S+1. Garbage-immune (the
+    # uninitialized matrix-flags read affects only DAT_0063d580's flags word, not
+    # the counter). Race-gated: the FUN_004c1480 apply derefs DAT_0063d580, NULL
+    # at the quiescent menu.
+    # ref: re/analysis/bucket_util_0040e4b0_0042f790/0x0041d930.md
+    'hud_slide_billboard_tick': {
+        'rva':            0x0041d930,
+        'export':         'HudSlideBillboardTick',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0063d584,
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0000002A,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0x0000002A, 0x00000001],
+    },
+
+    # 0x00423480  AiFilenameBuild — builds "AI%d.AI" for the current track
+    # (FUN_00426c00 index) at DAT_00644110 (no disk IO). Observe 0x00644110 =
+    # first 4 chars of the filename (probe-confirmed 0x30324941 = "AI20" in a
+    # sample race). Both sides read the same track index in-race -> identical
+    # string. Returns &DAT_00644110 (constant); void_write_observe ignores it.
+    # ref: re/analysis/ai_path_following/0x00423480.md
+    'ai_filename_build': {
+        'rva':            0x00423480,
+        'export':         'AiFilenameBuild',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00644110,
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
 }
