@@ -1589,3 +1589,25 @@ extern "C" __declspec(dllexport) void __cdecl Ctor528e30(std::uint8_t* p) {
     *reinterpret_cast<std::uint16_t*>(p + 0x48c) = 1;
 }
 RH_ScopedInstall(Ctor528e30, 0x00528e30);
+// (0x0046cbb0 CarStatePairGet was ALREADY C3 since round 25 / PromoLoop_round25.cpp —
+//  status-precheck miss; duplicate reverted to avoid a double RH_ScopedInstall.)
+
+// ===== round 136 ===== (doubly-linked-list remove + count decrement)
+// 0x005b35e0 — void fn(list, node): a pure-read search loop (converges either way, skipped
+//   for an empty list[4]==list+4) then: list[0]--; A=node[0x24]; B=node[0x20]; *A=B;
+//   *(B+4)=A  (intrusive DLL unlink via node's own [0x20]/[0x24] link pointers).
+extern "C" __declspec(dllexport) void __cdecl Remove5b35e0(std::uint8_t* list, std::uint8_t* node) {
+    std::uint8_t* sentinel = list + 4;
+    std::uint8_t* p = *reinterpret_cast<std::uint8_t**>(list + 4);
+    while (p != sentinel) {
+        if (p - 0x20 == node) break;
+        p = *reinterpret_cast<std::uint8_t**>(p);
+    }
+    int cnt = *reinterpret_cast<int*>(list);
+    *reinterpret_cast<int*>(list) = cnt - 1;
+    std::uint8_t* A = *reinterpret_cast<std::uint8_t**>(node + 0x24);
+    std::uint8_t* B = *reinterpret_cast<std::uint8_t**>(node + 0x20);
+    *reinterpret_cast<std::uint8_t**>(A) = B;
+    *reinterpret_cast<std::uint8_t**>(B + 4) = A;
+}
+RH_ScopedInstall(Remove5b35e0, 0x005b35e0);

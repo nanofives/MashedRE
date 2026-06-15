@@ -150,6 +150,8 @@ PURE_LEAF_ARGTYPES = {
     'eax_edi_out',               # void fn(EAX=v, EDI=out*): writes out[0..2] computed from v. ORIG via `mov eax,v; mov edi,outbuf; jmp` trampoline; REIMPL __cdecl(v, out) (compares out[0..2], not ABI). test=v (varied -> distinct outputs -> non-degen). use for integer fns whose magic-multiply == plain C integer division
     'grid_getter_multiout',      # u32 fn(i,j,out1,_,_,out2,out3): bounds-check i<*b1, j<*b2; idx=i*mul1+j; out1[0..1]=out1_t[*][idx*s12], out2[0..1]=out2_t[*][idx*s12], out3[0]=out3_t[*][(i*mul3+j)*s3]; return 1. Seed bounds large + the indexed table slots per cfg.grid; call with 3 out-bufs; observe outs+ret. test=marker (varied -> non-degen)
     'struct_ctor_big',           # void fn(p): deterministic constructor writing consts/self-relative-ptrs/zeros to p's fields (no live reads). Uses ONE shared sentinel buffer (cfg.buf_dwords) so self-relative pointer writes (p+const) compare equal between sides; snapshot cfg.observe offsets. For ctors too big for struct_const_init's 0x400 buf. test ignored
+    'indexed_abs_dualout',       # u32 fn(i, out1*, out2*): if(i>=bound[immediate]) return 0; *out1=*(tbl1+i*stride); *out2=*(tbl2+i*stride); return 1. Seed the two abs table slots (incl .bss, which is committed/writable+zero) at i*stride, call, observe out1|out2|ret. test=in-bounds i (varied -> seeded markers differ -> non-degen)
+    'dll_remove_count',          # void fn(list, node): list[0]--; A=node[0x24]; B=node[0x20]; *A=B; *(B+4)=A. (A pure-read search loop precedes it but converges either way; skipped by an EMPTY list list[4]=list+4.) Build list+node+A+B (shared bufs both sides so pointers compare equal), call, snapshot list[0]|A[0]|B[4]. test ignored
 }
 
 SRC = r"""
@@ -235,6 +237,8 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'eax_edi_out') ? ['uint32','pointer']
               : (cfg.at === 'grid_getter_multiout') ? ['uint32','uint32','pointer','pointer','pointer']
               : (cfg.at === 'struct_ctor_big') ? ['pointer']
+              : (cfg.at === 'indexed_abs_dualout') ? ['uint32','pointer','pointer']
+              : (cfg.at === 'dll_remove_count') ? ['pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1097,6 +1101,33 @@ rpc.exports.diff = function(cfg) {
       const snapC = function () { return obs.map(function (x) { return cb.add(x.off | 0).readU32() >>> 0; }).join(','); };
       try { fillC(); Orig(cb); o = snapC(); } catch (e) { eo = e.message; }
       try { fillC(); Reim(cb); r = snapC(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'indexed_abs_dualout') {
+      // u32 fn(i, out1*, out2*): bounded dual-out getter from two absolute tables. Seed
+      // tbl1[i*stride] and tbl2[i*stride] with distinct markers (works on .bss — committed,
+      // zero, writable), call, compare out1|out2|ret. test=in-bounds i (varied -> non-degen).
+      const ii = t | 0, std = cfg.stride | 0, mk = (0xC0DE0000 | ii) >>> 0;
+      const o1 = Memory.alloc(0x10), o2 = Memory.alloc(0x10); _keep.push(o1, o2);
+      const seedD = function () { ptr(cfg.tbl1).add(ii * std).writeU32(mk); ptr(cfg.tbl2).add(ii * std).writeU32((mk ^ 0xFFFF) >>> 0); o1.writeU32(0); o2.writeU32(0); };
+      const rdD = function (rv) { return (o1.readU32() >>> 0) + '|' + (o2.readU32() >>> 0) + '|' + (rv >>> 0); };
+      try { seedD(); const ro = Orig(ii >>> 0, o1, o2) >>> 0; o = rdD(ro); } catch (e) { eo = e.message; }
+      try { seedD(); const rr = Reim(ii >>> 0, o1, o2) >>> 0; r = rdD(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'dll_remove_count') {
+      // void fn(list, node): decrement list[0] and unlink node via its [0x20]/[0x24] link
+      // pointers (A=node[0x24],B=node[0x20]; *A=B; *(B+4)=A). Empty list (list[4]=list+4)
+      // skips the pure-read search loop. Shared buffers both sides so the relinked pointers
+      // compare equal; snapshot list[0]|A[0]|B[4]. test ignored.
+      const lst = Memory.alloc(0x40), nd = Memory.alloc(0x40), A = Memory.alloc(0x40), Bn = Memory.alloc(0x40);
+      _keep.push(lst, nd, A, Bn);
+      const buildR = function () {
+        [lst, nd, A, Bn].forEach(function (bf) { for (let z = 0; z < 0x40; z += 4) bf.add(z).writeU32(0); });
+        lst.writeU32(7);
+        lst.add(4).writePointer(lst.add(4));   // empty list -> skip search loop
+        nd.add(0x20).writePointer(Bn);
+        nd.add(0x24).writePointer(A);
+      };
+      const snapR = function () { return (lst.readU32() >>> 0) + '|' + (A.readU32() >>> 0) + '|' + (Bn.add(4).readU32() >>> 0); };
+      try { buildR(); Orig(lst, nd); o = snapR(); } catch (e) { eo = e.message; }
+      try { buildR(); Reim(lst, nd); r = snapR(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
@@ -1388,7 +1419,7 @@ def run(name):
            'mid_off': h.get('mid_off'), 'abs_ranges': h.get('abs_ranges'),
            'seed_a': h.get('seed_a'), 'seed_b': h.get('seed_b'), 't_bits': h.get('t_bits'),
            'seed_pairs': h.get('seed_pairs'), 'seed_sets': h.get('seed_sets'),
-           'grid': h.get('grid'),
+           'grid': h.get('grid'), 'tbl1': h.get('tbl1'), 'tbl2': h.get('tbl2'),
            'buf_dwords': h.get('buf_dwords'), 'out_observe': h.get('out_observe'),
            'link_off': h.get('link_off'), 'p_seed': h.get('p_seed'),
            'observe_p': h.get('observe_p'), 'observe_sub': h.get('observe_sub'),

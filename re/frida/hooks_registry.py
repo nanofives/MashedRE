@@ -14295,6 +14295,9 @@ HOOKS = {
     'grid_4957a0': {'rva': 0x004957a0, 'export': 'Grid4957a0', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32','pointer','pointer','pointer']}, 'arg_type': 'grid_getter_multiout', 'grid': {'b1': 0x00772fac, 'b2': 0x00771e80, 'i': 1, 'j': 2, 'mul1': 0x89, 'mul3': 0x112, 's12': 8, 's3': 4, 'out1_t': [0x00772150, 0x00772154], 'out2_t': [0x007721d0, 0x007721d4], 'out3_t': [0x00772290]}, 'lut_root_delta': 0, 'path1_tests': [0x1000, 0x2000, 0x3000], 'path2_tests': [0x1000]},
 
     # ---- promote-round round 135 (deterministic struct constructor) --
+    # round 136: 0x0046cbb0 already C3 since round 25 (CarStatePairGet) — status-precheck miss, reverted. indexed_abs_dualout handler retained for future use.
+    'remove_5b35e0': {'rva': 0x005b35e0, 'export': 'Remove5b35e0', 'signature': {'ret': 'void', 'args': ['pointer','pointer']}, 'arg_type': 'dll_remove_count', 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
