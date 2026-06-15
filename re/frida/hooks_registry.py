@@ -60,13 +60,6 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
-    'memset_520990': {'rva': 0x00520990, 'export': 'Memset520990', 'signature': {'ret': 'pointer', 'args': ['pointer','pointer','uint32','uint32']}, 'arg_type': 'memset4_wrapper',
-        'seed_sets': [
-            {'val': 0xAB, 'count': 10},   # 10 bytes 0xAB
-            {'val': 0xFF, 'count': 7},    # 7 bytes (count&3=3 stosb path)
-            {'val': 0x42, 'count': 16},   # 16 bytes 0x42
-        ],
-        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
     'recupd_5b0cf0': {'rva': 0x005b0cf0, 'export': 'RecUpd5b0cf0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','uint32','uint32','uint32','uint32']}, 'arg_type': 'record_array_filter_update',
         'seed_sets': [
             {'arg3': 2, 'arg4': 5, 'arg5': 0xffffffff, 'arg6': 0xAA},          # row==2, B==5, col any[0,4) -> rec0
@@ -88,7 +81,6 @@ HOOKS = {
             {'n': 0},   # 1-node ring (loop skipped)
         ],
         'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
-    'fmt_5172f0': {'rva': 0x005172f0, 'export': 'Fmt5172f0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','pointer']}, 'arg_type': 'byte_format_hexdump',
         'seed_sets': [
             {'bytes': [0x41,0x42,0x43,0x44], 'payload': False},   # "ABCD" all printable
             {'bytes': [0x00,0xFF,0x5b,0x09], 'payload': False},   # "[00][ff][5b][09]"
@@ -14433,7 +14425,6 @@ HOOKS = {
     'tbl_5b1180': {'rva': 0x005b1180, 'export': 'Tbl5b1180', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'byte_idx_table_bitclear', 'seed_sets': [{'b0': 2, 'b1': 3, 'b3': 10}, {'b0': 1, 'b1': 0, 'b3': 8}, {'b0': 5, 'b1': 7, 'b3': 8}], 'lut_root_delta': 0, 'path1_tests': [0, 1, 2], 'path2_tests': [0]},
 
     # ---- promote-round round 149 (bounded backward search, 5-byte-stride table) --
-    'search_517200': {'rva': 0x00517200, 'export': 'Search517200', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'struct_table5_search', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
 
     # ---- promote-round round 150 (circular-list search by key field) --
     'search_5b0b60': {'rva': 0x005b0b60, 'export': 'Search5b0b60', 'signature': {'ret': 'uint32', 'args': ['pointer','uint32']}, 'arg_type': 'circular_list_search_node', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
@@ -14501,7 +14492,6 @@ HOOKS = {
     # ---- promote-round round 171 (struct delta-init + fcomp flag, naked port) --
     'delta_557110': {'rva': 0x00557110, 'export': 'Delta557110', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer','pointer','pointer','pointer']}, 'arg_type': 'struct_delta_flag_init', 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
-    'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --
     'search_5aa030': {'rva': 0x005aa030, 'export': 'Search5aa030', 'signature': {'ret': 'uint32', 'args': ['pointer','pointer']}, 'arg_type': 'circular_dll_search', 'lut_root_delta': 0, 'path1_tests': [0,1], 'path2_tests': [0,1]},

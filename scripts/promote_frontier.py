@@ -81,10 +81,13 @@ def load_hooks():
 #   CRT band        0x004a0000..0x004b3fff  (lever3 calibration; MSVC CRT)
 #   D3DX9 PSGP band 0x004ec000..0x004fc9e0  (Microsoft PSGP SSE/SSE2 dispatch)
 #   qhull / RW-Phys 0x0057c5b0..0x005a5820  (qhull-2002.1 via RenderWare Physics 3.7)
+#   libpng+zlib     0x00516000..0x00529fff  (statically-linked PNG/zlib: png_*, z*; user
+#                                            ruling 2026-06-15 = library-skip, do NOT promote)
 LIBRARY_BANDS = (
     (0x004a0000, 0x004b3fff),
     (0x004ec000, 0x004fc9e0),
     (0x0057c5b0, 0x005a5820),
+    (0x00516000, 0x00529fff),
 )
 
 

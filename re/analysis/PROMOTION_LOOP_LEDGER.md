@@ -9,9 +9,15 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 184
-- total_green: 357
+- rounds_run: 185
+- total_green: 353
 - dry_counter: 0
+- LIBRARY-SKIP CORRECTION (round 184, 2026-06-15): user ruled the statically-linked libpng/zlib
+  band (0x516000-0x529fff) is library-skip (NOT first-party promotable). Reverted ALL 4 of MY
+  this-session in-band C3s -> C2: r135 0x528e30, r149 0x517200, r179 0x5172f0, r183 0x520990
+  (357->353). Band now excluded in promote_frontier.py LIBRARY_BANDS. FLAGGED FOR USER REVIEW
+  (prior-session in-band C3s, NOT reverted — user decision): 0x5209d0 Set5209d0, 0x523110
+  LoadBE523110, 0x5173d0 Set5173d0, 0x518570 Rmw518570, 0x51ca60 StoreBE51ca60.
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
 - NEW GOAL (user, 2026-06-13): +500 -> ~705. Feasibility read below.
@@ -281,6 +287,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 184 | LIBRARY-SKIP CORRECTION (no promotion) | attempted 1 (0x51c100) -> REJECTED as libpng | GREEN 0 | total_green 357->353 (net -4 from reverts). Round 184 candidate 0x51c100 (texture pixel converter) status-checked C2, reimpl'd + GREEN, but its caller is png_do_read_transformations -> it is a libpng-internal function. Investigation: 0x516000-0x529fff is statically-linked libpng+zlib (named exports png_sig_cmp/png_free/png_do_read_transformations/zcalloc/zcfree). STOP-AND-ASK -> user ruled LIBRARY-SKIP + revert. Actions: (1) reverted the uncommitted 0x51c100 work; (2) found 4 of MY this-session promotions were in this band (r135 0x528e30 struct-ctor, r149 0x517200 table-search, r179 0x5172f0 byte-formatter, r183 0x520990 memset) -> reverted all C3->C2 (cpp reimpls removed, registry entries removed, hooks.csv demoted); (3) added the band to promote_frontier.py LIBRARY_BANDS; (4) flagged 5 prior-session in-band C3s for user review (not reverted). LESSON (CRITICAL, bake into future rounds): the static cleanliness classifier (no fld-stN/transcendental/abs-global) does NOT detect VENDORED-LIBRARY membership -> ALWAYS check the caller's NAME (png_/z_/inflate/deflate/etc) + the band before promoting; raising MAX_BODY 260->400 surfaced ONLY library functions (the 3 'new clean candidates' 0x51c100/0x519e30/0x528ef0 are all libpng/zlib). Real first-party clean queue after exclusion: 0x5ae4c0 (audio heap allocator) + whatever the band-excluded frontier reveals. dry_counter NOT incremented (this was a policy correction, not pool exhaustion; first-party candidates remain). Session 101-184 net = +96 (257->353). Context 61 rounds deep — fresh context strongly advised.
 
 2026-06-15 | round 183 | 4-arg memset wrapper (NEW handler) + FRONTIER RUNWAY EXTENDED | attempted 1 | GREEN 1 (Memset520990 0x00520990: broadcast val byte, rep stosd+stosb to dest, return dest; arg1 unused) | total_green 356->357 (357/1000). Status-prechecked C2; caller FUN_00528810 C2, zero-callee leaf. NEW handler memset4_wrapper. RUNWAY EXTENSION (high value): raised promote_frontier.py MAX_BODY 260->400 + re-ran the static classifier -> 3 NEW clean first-party candidates surfaced (260-400B): 0x51c100(274 util), 0x519e30(319 util), 0x528ef0(346 util arg_getter). So the clean queue is NOT empty after all. Current CLEAN queue (next rounds): 0x5ae4c0(139 heap allocator, fragile), 0x51c100(274), 0x519e30(319), 0x528ef0(346). LESSON: when the small-leaf frontier drains, raise MAX_BODY + re-classify to surface medium clean leaves (longer verbatim ports but tractable). Session 101-183 = +100 (257->357) -- ONE HUNDRED this session. ~73 handlers. THIS CONTEXT did rounds 124-183 = +65 (292->357). promote-c3-batch parallel fanout (awaiting explicit user opt-in) = realistic route to remaining ~643. Context 60 rounds deep -- fresh context strongly advised.
 

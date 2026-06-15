@@ -1564,31 +1564,9 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Grid4957a0(
 }
 RH_ScopedInstall(Grid4957a0, 0x004957a0);
 
-// ===== round 135 ===== (deterministic struct constructor)
-// 0x00528e30 — void fn(p): writes self-relative ptrs (p+0x8c -> p[0xb10], p+0x980 ->
-//   p[0xb1c], p+0xa74 -> p[0xb28]), const ptrs (0x6228d8/ec/0x622900 -> p[0xb18/24/30]),
-//   counts (p[0x16ac]=8, p[0x48c]=1 word), several zero fields, and three word-strided
-//   (stride 4) zero loops over p+0x8c (0x11e), p+0x980 (0x1e), p+0xa74 (0x13).
-extern "C" __declspec(dllexport) void __cdecl Ctor528e30(std::uint8_t* p) {
-    *reinterpret_cast<std::uint32_t*>(p + 0xb10) = reinterpret_cast<std::uint32_t>(p + 0x8c);
-    *reinterpret_cast<std::uint32_t*>(p + 0xb18) = 0x6228d8;
-    *reinterpret_cast<std::uint32_t*>(p + 0xb1c) = reinterpret_cast<std::uint32_t>(p + 0x980);
-    *reinterpret_cast<std::uint32_t*>(p + 0xb24) = 0x6228ec;
-    *reinterpret_cast<std::uint32_t*>(p + 0xb28) = reinterpret_cast<std::uint32_t>(p + 0xa74);
-    *reinterpret_cast<std::uint32_t*>(p + 0xb30) = 0x622900;
-    *reinterpret_cast<std::uint16_t*>(p + 0x16b0) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x16b4) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x16ac) = 8;
-    for (int k = 0; k < 0x11e; k++) *reinterpret_cast<std::uint16_t*>(p + 0x8c + k * 4) = 0;
-    for (int k = 0; k < 0x1e; k++)  *reinterpret_cast<std::uint16_t*>(p + 0x980 + k * 4) = 0;
-    for (int k = 0; k < 0x13; k++)  *reinterpret_cast<std::uint16_t*>(p + 0xa74 + k * 4) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x16a4) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x16a0) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x16a8) = 0;
-    *reinterpret_cast<std::uint32_t*>(p + 0x1698) = 0;
-    *reinterpret_cast<std::uint16_t*>(p + 0x48c) = 1;
-}
-RH_ScopedInstall(Ctor528e30, 0x00528e30);
+// [REVERTED 2026-06-15] round 135 FUN_00528e30 (0x00528e30) is in the statically-linked
+// libpng/zlib band (0x516000-0x529fff, right after zcalloc/zcfree) -> library-skip per user
+// ruling; demoted C3->C2. Was a deterministic struct constructor reimpl.
 // (0x0046cbb0 CarStatePairGet was ALREADY C3 since round 25 / PromoLoop_round25.cpp —
 //  status-precheck miss; duplicate reverted to avoid a double RH_ScopedInstall.)
 
@@ -1811,24 +1789,9 @@ extern "C" __declspec(dllexport) void __cdecl Tbl5b1180(std::uint8_t* p) {
 }
 RH_ScopedInstall(Tbl5b1180, 0x005b1180);
 
-// ===== round 149 ===== (bounded backward search over a 5-byte-stride table)
-// 0x00517200 — u32 fn(p1, p2): if(p1==0 && p2==0) return 0; count=p1[0x1d0]; if(count<=0)
-//   return 0; tbl=p1[0x1d4]; e=tbl+count*5-5; for(i=count;i;i--){ if(*(u32*)e==*(u32*)p2)
-//   return (u8)e[4]; e-=5; } return 0.  (entries are 5 bytes: dword key + byte value.)
-extern "C" __declspec(dllexport) std::uint32_t __cdecl Search517200(std::uint8_t* p1, std::uint8_t* p2) {
-    if (p1 == 0 && p2 == 0) return 0;
-    int count = *reinterpret_cast<int*>(p1 + 0x1d0);
-    if (count <= 0) return 0;
-    std::uint8_t* tbl = *reinterpret_cast<std::uint8_t**>(p1 + 0x1d4);
-    std::uint8_t* e = tbl + count * 5 - 5;
-    std::uint32_t key = *reinterpret_cast<std::uint32_t*>(p2);
-    for (int i = count; i != 0; i--) {
-        if (*reinterpret_cast<std::uint32_t*>(e) == key) return *reinterpret_cast<std::uint8_t*>(e + 4);
-        e -= 5;
-    }
-    return 0;
-}
-RH_ScopedInstall(Search517200, 0x00517200);
+// [REVERTED 2026-06-15] round 149 FUN_00517200 (0x00517200) is in the statically-linked
+// libpng/zlib band (0x516000-0x529fff) -> library-skip per user ruling; demoted C3->C2.
+// Was a bounded backward search over a 5-byte-stride table reimpl.
 
 // ===== round 150 ===== (circular-list search by key field)
 // 0x005b0b60 — u32 fn(list, key): node=*(u8**)list; while(node!=list){ if(*(u32*)(node-0x44)
@@ -2682,79 +2645,9 @@ extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search4c5c00(vo
 }
 RH_ScopedInstall(Search4c5c00, 0x004c5c00);
 
-// 0x005172f0  FUN_005172f0 (util, 4-byte -> printable/[hex] string formatter)
-// void f(struct* arg1, char* out, void* arg3): for the 4 bytes at arg1[0x11c..0x11f]:
-//   if byte in [0x29,0x5a] or [0x61,0x7a] write it directly, else write "[XX]" with XX
-//   from the .rdata hex-digit table at 0x5e336c. Then if arg3 != 0 append ": " and copy
-//   0x10 dwords (64 bytes) from arg3, null-terminating at out+...+0x3f; else null-terminate.
-// .rdata table read identically both sides; pure byte/pointer work -> VERBATIM naked port.
-extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Fmt5172f0(void)
-{
-    __asm {
-        push ebp
-        mov  ebp, dword ptr [esp+8]          // arg1
-        push esi
-        push edi
-        mov  edi, dword ptr [esp+0x14]       // out (arg2)
-        xor  eax, eax
-        xor  esi, esi
-    L_FM_LOOP:
-        xor  ecx, ecx
-        mov  cl, byte ptr [esi+ebp+0x11c]
-        inc  esi
-        cmp  ecx, 0x29
-        jl   L_FM_NP
-        cmp  ecx, 0x7a
-        jg   L_FM_NP
-        cmp  ecx, 0x5a
-        jle  L_FM_WR
-        cmp  ecx, 0x61
-        jl   L_FM_NP
-    L_FM_WR:
-        mov  byte ptr [eax+edi], cl
-        jmp  L_FM_ADV
-    L_FM_NP:
-        mov  edx, ecx
-        mov  byte ptr [eax+edi], 0x5b        // '['
-        sar  edx, 4
-        and  edx, 0x0f
-        inc  eax
-        and  ecx, 0x0f
-        inc  eax
-        mov  dl, byte ptr [edx+0x5e336c]
-        mov  byte ptr [eax+edi-1], dl
-        mov  cl, byte ptr [ecx+0x5e336c]
-        mov  byte ptr [eax+edi], cl
-        inc  eax
-        mov  byte ptr [eax+edi], 0x5d        // ']'
-    L_FM_ADV:
-        inc  eax
-        cmp  esi, 4
-        jl   L_FM_LOOP
-        mov  esi, dword ptr [esp+0x18]       // arg3
-        test esi, esi
-        jne  L_FM_PAY
-        mov  byte ptr [eax+edi], 0
-        pop  edi
-        pop  esi
-        pop  ebp
-        ret
-    L_FM_PAY:
-        mov  byte ptr [eax+edi], 0x3a        // ':'
-        inc  eax
-        mov  ecx, 0x10
-        mov  byte ptr [eax+edi], 0x20        // ' '
-        lea  eax, [eax+edi+1]
-        mov  edi, eax
-        rep  movsd
-        pop  edi
-        pop  esi
-        mov  byte ptr [eax+0x3f], 0
-        pop  ebp
-        ret
-    }
-}
-RH_ScopedInstall(Fmt5172f0, 0x005172f0);
+// [REVERTED 2026-06-15] round 179 FUN_005172f0 (0x005172f0) is in the statically-linked
+// libpng/zlib band (0x516000-0x529fff) -> library-skip per user ruling; demoted C3->C2.
+// Was a 4-byte -> printable/[hex] string formatter reimpl.
 
 // 0x00482860  FUN_00482860 (vehicle, pool / circular-freelist initializer)
 // void f(pool* arg1): N = arg1[0x16c]; zero a (N+2)*0x24-byte buffer at arg1[0x14];
@@ -2985,37 +2878,6 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl RecUpd5b0cf0(voi
 }
 RH_ScopedInstall(RecUpd5b0cf0, 0x005b0cf0);
 
-// 0x00520990  FUN_00520990 (util, 4-arg memset wrapper; arg1 unused)
-// void* f(void* unused, void* dest, int val, size_t count): broadcast (val&0xff) to all
-// 4 bytes of eax, rep stosd count/4 dwords + rep stosb count&3 bytes to dest, return dest.
-// (3-arg CRT memset is memset(dest,val,count); the extra unused leading arg makes this a
-// first-party wrapper.) Pure rep stos -> VERBATIM naked port.
-extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Memset520990(void)
-{
-    __asm {
-        mov  al, byte ptr [esp+0x0c]         // val (arg3)
-        mov  ecx, dword ptr [esp+0x10]       // count (arg4)
-        push ebx
-        mov  bl, al
-        mov  bh, bl
-        push esi
-        mov  eax, ebx
-        push edi
-        mov  edi, dword ptr [esp+0x14]       // dest (arg2)
-        mov  edx, ecx
-        shl  eax, 0x10
-        mov  ax, bx
-        mov  esi, edi
-        shr  ecx, 2
-        rep  stosd
-        mov  ecx, edx
-        and  ecx, 3
-        rep  stosb
-        mov  eax, esi
-        pop  edi
-        pop  esi
-        pop  ebx
-        ret
-    }
-}
-RH_ScopedInstall(Memset520990, 0x00520990);
+// [REVERTED 2026-06-15] FUN_00520990 (0x00520990) was promoted in round 183 but is a
+// libpng/zlib memset wrapper (statically-linked library band 0x516000-0x529fff). Per the
+// user's library-skip ruling it is NOT a first-party promotion; demoted back to C2.
