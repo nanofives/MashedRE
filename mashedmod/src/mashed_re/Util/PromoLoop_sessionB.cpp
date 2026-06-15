@@ -3293,3 +3293,44 @@ extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init429b30(void)
     }
 }
 RH_ScopedInstall(Init429b30, 0x00429b30);
+
+// 0x00429b70  FUN_00429b70 (frontend, NEAR-LEAF: sibling of 0x429b30, submode in {3,4,5} gate)
+// void f(void): if (GetRaceSubMode() in {3,4,5} && *0x8991b0==0) { v=(short)FUN_0042b8c0();
+//   *0x8991b0=0xeb; *0x8991b8=0; *0x8991b4 = -([0x5cd6c8] / (float)v); }. Both callees C3
+//   getters. Straight x87. Verbatim naked port; calls -> `mov eax,abs; call eax`.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Init429b70(void)
+{
+    __asm {
+        push ecx
+        mov  eax, 042F6A0h
+        call eax
+        cmp  eax, 3
+        je   L_IN7_C
+        mov  eax, 042F6A0h
+        call eax
+        cmp  eax, 4
+        je   L_IN7_C
+        mov  eax, 042F6A0h
+        call eax
+        cmp  eax, 5
+        jne  L_IN7_END
+    L_IN7_C:
+        mov  eax, dword ptr ds:[08991B0h]
+        test eax, eax
+        jne  L_IN7_END
+        mov  eax, 042B8C0h
+        call eax
+        movsx eax, ax
+        mov  dword ptr [esp], eax
+        mov  dword ptr ds:[08991B0h], 0EBh
+        mov  dword ptr ds:[08991B8h], 0
+        fild dword ptr [esp]
+        fdivr dword ptr ds:[05CD6C8h]
+        fchs
+        fstp dword ptr ds:[08991B4h]
+    L_IN7_END:
+        pop  ecx
+        ret
+    }
+}
+RH_ScopedInstall(Init429b70, 0x00429b70);

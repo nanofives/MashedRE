@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 198
-- total_green: 365
+- rounds_run: 199
+- total_green: 366
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 198 | near-leaf #12: sibling float-init (reuse near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (Init429b70 0x00429b70: submode in {3,4,5} gate -> *0x8991b0=0xeb,*0x8991b8=0,*0x8991b4=-([0x5cd6c8]/(float)*0x67ea56)) | total_green 365->366 (366/1000). Caller 0x429bd0 C2, callees 0x42f6a0/0x42b8c0 C3. No new handler. SIBLING-CLUSTER lesson: once a near-leaf shape is solved, adjacent siblings (0x429b30/0x429b70 here) reuse the same handler + reimpl pattern with trivial edits -> faster. ~95 candidates remain. Session 101-198 net = +109 (257->366). ~82 handlers. Context 75 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 197 | near-leaf #11: one-shot float init via 2 C3 getters (NEW handler near_leaf_seed_multi_obs) | attempted 1 | GREEN 1 (Init429b30 0x00429b30: if(submode!=2 && *0x8991b0==0) *0x8991b4=-([0x5cd6c8]/(float)(short)*0x67ea56), *0x8991b0=0x3f) | total_green 364->365 (365/1000). Caller 0x410860 C2, callees 0x42f6a0/0x42b8c0 C3 pure getters. NEW handler near_leaf_seed_multi_obs (seed globals, snapshot SEVERAL observe_addrs -> handles fns that write multiple globals). straight-x87 (fild/fdivr/fchs) verbatim naked port. seeds -> aaaa|bbbb / 5|bbbb / 3f|-480.0. 11 near-leaf shapes. ~96 candidates remain. Session 101-197 net = +108 (257->365). ~82 handlers. Context 74 rounds deep — fresh context advised; fanout = fast route to 1000.
 
