@@ -9,9 +9,9 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 213
+- rounds_run: 214
 - total_green: 379
-- dry_counter: 0
+- dry_counter: 1
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
   re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
@@ -133,14 +133,25 @@ GATED — DO NOT (callee<C2 / live-state / library / entry / timer-valued-return
   004b302f StricmpThunk (CRT library), 00428590 ViewportInit (RW cam ops, faults),
   004c5a00/5ae0/5b50 RwTexture* + 004cc7f0/cc820 RwFreeList* (RW engine state),
   00495280/004b6710/6770/67e0 Piz*Open/Read/Close (file I/O).
-CANDIDATES (assess leaf + callee-C2+ + seedable each round):
-  00410860 ScoreThresholdStateCheck(util), 00412cf0 LabelTrailRecordAppend(hud),
-  00418de0 VehicleEliminationSlotPostInit + 00419760 ...SlotInit(vehicle),
-  0041bc50 HudRender29Dispatcher + 0041c2d0(hud), 0041d730 PlayerSlotConfigInit(util),
-  0042f8d0 MenuMenusBC(frontend), 00442440 TransformMatrixUpdate(util),
-  004926c0 AudioTickAndAvg(boot), 00492d30 GameTickStateMachine7(util),
-  00495350 IntroSplashOrchestrator(frontend), 004c57a0 FontCtxMatrix_AllocInit(hud),
-  00552b60 FontSys_InitSeq(hud), 005554d0 FontText_StringWidthAccumulator(hud).
+CANDIDATES — VETTED r214 (most fail the bar; do NOT re-investigate via early_window):
+  GATE-FAIL (C1/untracked callee): 0042f8d0 MenuMenusBC (0x427f00 C1), 00552b60
+    FontSys_InitSeq (0x4c57a0 C1), 0041c2d0 (0x41d410/0x41de80 C1), 0041d730
+    PlayerSlotConfigInit (0x41cdb0 untracked + terminus loop), 00412cf0
+    LabelTrailRecordAppend (0x4726f0 untracked + 0x4a2c48 C1 QPC byte).
+  TIMER-NONDET: 004c57a0 FontCtxMatrix_AllocInit (QPC sampler), 00492d30
+    GameTickStateMachine7 (QpcTimeScaledTo3Mhz), 004926c0 AudioTickAndAvg.
+  REFUSED (note inconsistent w/ binary — needs from-scratch re-decode): 005554d0
+    FontText_StringWidthAccumulator (binary 1st read [ESI+0x134]+CALL, not the
+    leaf the note claims; reimpl is in #if 0).
+  DEEP-CALLEE-SIDEFX (callee gate OK but transitive callees have global side
+    effects -> sequential Orig/Reim diverge): 00419760 VehicleEliminationSlotInit
+    + 00418de0 ...PostInit (-> FUN_004661a0 x4 + FUN_00413c70; EAX-implicit).
+  STILL-UNVETTED (assess if revisiting): 00410860 ScoreThresholdStateCheck (591b
+    SM, 3 callees), 0041bc50 HudRender29Dispatcher (29-call dispatcher), 00442440
+    TransformMatrixUpdate (matrix, some C1 callees), 00495350 IntroSplashOrchestrator.
+  => L2b is effectively drained for the early_window solo lane. These live-state /
+     deep-callee candidates need the BOOTED run_diff lane (scenario-attach) or the
+     promote-c3-batch parallel fanout, not suspended-spawn.
 NEW early_window handlers this session (SWEEP-CRITICAL): near_leaf_memset2,
 struct_list_float_set, seed_indirect_ctx_obs.
 
@@ -322,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 214 | L2b mass-disabled re-verify — DRY (full lane vet, 0 promotable via early_window) | attempted 0 promoted, VETTED 9 candidates | GREEN 0 | dry_counter 0->1. Checked all assessable L2b candidates: every one fails the early_window solo bar — GATE-FAIL C1/untracked callee (MenuMenusBC, FontSys_InitSeq, 0x41c2d0, PlayerSlotConfigInit, LabelTrailRecordAppend), TIMER-NONDET (FontCtxMatrix_AllocInit, GameTickStateMachine7, AudioTickAndAvg), REFUSED-inconsistent-note (FontText_StringWidthAccumulator: binary 1st read [ESI+0x134]+CALL != the note's pure-leaf claim -> needs from-scratch re-decode; reimpl in #if 0), DEEP-CALLEE-SIDEFX (VehicleEliminationSlotInit/PostInit: callee gate OK but transitive FUN_004661a0 x4 + FUN_00413c70 have global side effects -> sequential Orig/Reim diverge, + EAX-implicit convention). Per the inviolable acceptance bar (no degenerate/false GREEN), declined to force any. L2b findings recorded in the lane note so future turns skip them. ASSESSMENT: the early_window suspended-spawn SOLO lane is now drained of clean candidates (pure-leaf + near-leaf + mass-disabled-re-verify all exhausted; FontCtx_ResetTransform r213 was the last clean one). Remaining first-party C2 needs the BOOTED run_diff scenario-attach lane (live state) or the promote-c3-batch PARALLEL FANOUT. Session 101-214 net = +122 (257->379, unchanged this round). Context 91 rounds deep. PATH TO 1000 (621 more) = fanout (awaiting opt-in) OR booted run_diff lane.
 
 2026-06-15 | round 213 | C2+status=impl re-verify + L5 handler ext (seed_indirect_ctx_obs) | attempted 1 | GREEN 1 (FontCtx_ResetTransform 0x00552750, hud: resets current font ctx 3x3 matrix to identity, ctx+0xc|=0x20003, zeros DAT_00912bd8/bec, ret 1) | total_green 378->379 (379/1000). Callers FontSys_InitRenderState 0x552c10 C3 + 0x427ff0/0x427f00 C2; pure leaf (no callees); RH_ScopedInstall RE-ENABLED (prior MASS-DISABLE's AV/AV was a null INDIRECT-ctx deref, NOT a reimpl bug). NEW handler seed_indirect_ctx_obs (SWEEP-CRITICAL): the function loads ctx = (*ptr_array)[depth] then writes; seed the INDIRECT pointer by allocating a ctxbuf + writing its addr to ptr_array[0] + depth=0, pre-fill 0xEEEEEEEE, seed ctx+0xc for the OR-test; observe ctx offsets + direct globals. 4/4 GREEN non-degen (flags col c0de0003/0103/0203/0303 vary; matrix consts 3f800000 proven != sentinel; byte-identical). LESSON: 'AV/AV / crash_equal' MASS-DISABLE reasons are often just un-seeded INDIRECT pointers (ptr-array[idx]) -> seed the indirection, re-verify, re-enable. This + struct_list_float_set (r212) confirm the cheap path now = re-enable a mass-disabled leaf + a focused seed-the-state handler. Session 101-213 net = +122 (257->379). Context 90 rounds deep. PATH TO 1000 (621 more) = promote-c3-batch fanout (awaiting opt-in).
 
