@@ -393,6 +393,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                                     sk) == 1) {
                         // sky clump: drawn first, z-write off, unfogged
                         load_prop(sk, &sky_);
+                    } else if (std::sscanf(line.c_str(),
+                                    " AI_Bsp_Filename( \"%63[^\"]\" )", sk) == 1 ||
+                               std::sscanf(line.c_str(),
+                                    " AI_Bsp_Filename(\"%63[^\"]\")", sk) == 1) {
+                        // the gate BSP filename varies per track (ai.bsp /
+                        // lap.bsp / Ai1.bsp); capture it so the gate parser finds
+                        // the right entry instead of guessing "AI*.BSP".
+                        std::snprintf(gate_bsp_, sizeof(gate_bsp_), "%s", sk);
                     }
                 }
             }
@@ -415,8 +423,13 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
-        if ((ln >= 6 && _strnicmp(n, "AI", 2) == 0 &&
-             _stricmp(n + ln - 4, ".BSP") == 0)) {
+        // Prefer the COURSE.LUA-declared gate BSP (ai.bsp / lap.bsp / Ai1.bsp...);
+        // fall back to the "AI*.BSP" heuristic when none was declared.
+        const bool is_gate_bsp =
+            gate_bsp_[0] ? (_stricmp(n, gate_bsp_) == 0)
+                         : (ln >= 6 && _strnicmp(n, "AI", 2) == 0 &&
+                            _stricmp(n + ln - 4, ".BSP") == 0);
+        if (is_gate_bsp) {
             std::uint32_t al = 0;
             const std::uint8_t* ab = piz.blob(i, &al);
             Track::World aw;
