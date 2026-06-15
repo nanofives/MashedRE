@@ -186,6 +186,7 @@ PURE_LEAF_ARGTYPES = {
     'bounded_struct_push',       # void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){p[8]=cap; return;} buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0; buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1. store-only. t0 push(top=0), t1 full(top=cap=4). snapshot entry+p[8]+p[0x54]. non-degen
     'trie_walk',                 # u32 fn(node, key, depth): while(depth){ depth--; idx=key&0xf; key>>=4; node=*(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18] (byte in AL, dirty upper=node ptr). build depth-2 trie w/ 2 paths (keys 0x21->leaf1[0x18]=0x77, 0x35->leaf2[0x18]=0x88); shared bufs; compare ret. non-degen
     'struct_delta_flag_init',    # u32 fn(out,a,b,c,d): copies d.xy->out[0x10/0x14], a.xy->out[0x40/0x44]; deltas out[0x28]=c[0]-d[0], out[0x2c]=c[4]-d[4], out[0x58]=b[0]-a[0], out[0x5c]=b[4]-a[4]; fcomp each vs 0x5d757c -> out[0x64] |=2 or &=~2; return out. seed a/b/c/d xy; snapshot out fields+flag+ret. reimpl VERBATIM naked __asm (single fsubs + fcomp). non-degen
+    'table_accum_clamp',         # void fn(a1, p2, p3): idx=*p3; d=((int16)tblA[0x634498][idx]*(2*(a1&7)+1))>>3(logical); *p2 += (a1&8)?-d:+d, clamp[-32768,32767]; *p3 += (int16)tblB[0x634478][a1], clamp[0,88]. tables are absolute .rdata (read identically both sides). seed_sets[t]={a1,v2,v3}; snapshot *p2|*p3. reimpl VERBATIM naked __asm. non-degen via varied a1/idx + both clamps
 }
 
 SRC = r"""
@@ -307,6 +308,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'bounded_struct_push') ? ['pointer','pointer','pointer']
               : (cfg.at === 'trie_walk') ? ['pointer','uint32','uint32']
               : (cfg.at === 'struct_delta_flag_init') ? ['pointer','pointer','pointer','pointer','pointer']
+              : (cfg.at === 'table_accum_clamp') ? ['uint32','pointer','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1759,6 +1761,21 @@ rpc.exports.diff = function(cfg) {
       const snapDF = function (rv) { return [0x10, 0x14, 0x28, 0x2c, 0x40, 0x44, 0x58, 0x5c, 0x64].map(function (o2) { return out.add(o2).readU32() >>> 0; }).concat([rv >>> 0]).join('|'); };
       try { setupDF(); const ro = Orig(out, a, b, c, d) >>> 0; o = snapDF(ro); } catch (e) { eo = e.message; }
       try { setupDF(); const rr = Reim(out, a, b, c, d) >>> 0; r = snapDF(rr); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'table_accum_clamp') {
+      // void fn(a1, p2, p3): p2/p3 are int32 counters. idx=*p3 -> tblA (0x634498) signed
+      // word; scaled by (2*(a1&7)+1), >>3 (logical), added/subbed into *p2 by (a1&8) and
+      // clamped [-32768,32767]; then *p3 += tblB(0x634478) signed word @ a1, clamp[0,88].
+      // Tables are absolute .rdata read identically by both sides. seed_sets[t]={a1,v2,v3}.
+      const sp = (cfg.seed_sets || [])[t | 0] || { a1: 0, v2: 0, v3: 0 };
+      const p2 = Memory.alloc(0x40), p3 = Memory.alloc(0x40); _keep.push(p2, p3);
+      const runAC = function (CALL) {
+        for (let z = 0; z < 0x40; z += 4) { p2.add(z).writeU32(0); p3.add(z).writeU32(0); }
+        p2.writeS32(sp.v2 | 0); p3.writeS32(sp.v3 | 0);
+        CALL(sp.a1 >>> 0, p2, p3);
+        return (p2.readS32() | 0) + '|' + (p3.readS32() | 0);
+      };
+      try { o = runAC(Orig); } catch (e) { eo = e.message; }
+      try { r = runAC(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

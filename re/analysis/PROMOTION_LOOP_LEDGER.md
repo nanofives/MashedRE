@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 172
-- total_green: 345
+- rounds_run: 173
+- total_green: 346
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 172 | integer two-table accumulate+clamp (NEW handler, verbatim naked) | attempted 1 | GREEN 1 (Accum5b6b00 0x005b6b00: idx=*p3 -> (int16)tblA[0x634498][idx]*(2*(a1&7)+1) >>3 logical, *p2 +/-= by a1&8 clamp[-32768,32767]; *p3 += (int16)tblB[0x634478][a1] clamp[0,88]) | total_green 345->346 (346/1000). Status-prechecked C2; caller FUN_005b6760 C2, zero-callee leaf. NEW handler table_accum_clamp (5 seeds; both clamps + add/sub paths + varied a1/idx; tables are absolute .rdata read identically both sides). LESSON: signed-word .rdata LUT reads (movsx word [base+idx*2]) + imul + LOGICAL shr + signed clamp are a clean verbatim naked port — no float, no callee, fully bit-identical; .rdata tables don't need seeding (both sides read the loaded image). Session 101-172 = +89 (257->346). ~62 handlers. THIS CONTEXT did rounds 124-172 = +54 (292->346). QUEUE: remaining frontier dominated by naked x87 float loops (0x4b4550, 0x4c4270) + CRT(0x5cxxxx skip) + .bss-dead + transcendental; the promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~654. Context 49 rounds deep — fresh context strongly advised.
 
 2026-06-14 | BOOTED LANE RECOVERED + GOAL=1000 | full boot WORKS again (9s survive test) — the GPU wedge cleared over time. run_diff / run_diff_scenario are AVAILABLE again. **GOAL raised to 1000 total_green (currently 274 = +726, a multi-many-session marathon).** PATH: the +726 bulk is NON-LEAF / stateful functions (the L2 demoted orchestrators + race1_passed candidates all have callees / unknown arg_type) — these need the BOOTED lane (force-call at menu/race so callees run against real state) + per-fn authoring + a diff_template.js arg_type. SPAWN DISCIPLINE (critical): ≤~10 MASHED spawns/round or the wedge returns; prefer run_diff_warm (warm pool, few spawns for many hooks) for booted batches, and the wedge-immune suspended-spawn early_window lane for any remaining pure leaves. If full boots start 0xC0000005-ing pre-window again → re-wedged → pause booted rounds ~20min (it self-clears now) or use suspended-spawn only.
 2026-06-15 | round 171 | struct delta-init + fcomp flag (NEW handler, verbatim naked) | attempted 1 | GREEN 1 (Delta557110 0x00557110: copies + single-fsub deltas + fcomp-driven out[0x64] flag) | total_green 344->345 (345/1000). Status-prechecked C2. NEW handler struct_delta_flag_init. LESSON: SINGLE fsub-then-store is bit-identical (x87 80-bit sub of 2 float32 then round == C float sub); straight-line x87 (fld/fsub/fcomp, NO fld st(N) juggling) is a tractable verbatim naked port (unlike the fld-st(N) tier 0x4c4270/0x4b4550). Session 101-171 = +88 (257->345). ~61 handlers. THIS CONTEXT did rounds 124-171 = +53 (292->345). Context 48 rounds deep.

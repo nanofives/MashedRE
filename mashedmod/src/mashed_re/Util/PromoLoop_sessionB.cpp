@@ -2297,3 +2297,65 @@ extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __cdecl Delta55
     }
 }
 RH_ScopedInstall(Delta557110, 0x00557110);
+
+// 0x005b6b00  FUN_005b6b00 (audio backend, integer two-table accumulate+clamp)
+// void f(uint32 a1, int32* p2, int32* p3):
+//   idx = *p3;
+//   d   = ((int16)tblA[0x634498][idx] * (2*(a1&7)+1)) >> 3   (imul then logical shr)
+//   *p2 = clamp(*p2 + ((a1&8) ? -d : +d), -32768, 32767)
+//   *p3 = clamp(*p3 + (int16)tblB[0x634478][a1],           0,    88)
+// tblA/tblB are absolute .rdata signed-word tables in the loaded image; both
+// sides read them identically. VERBATIM naked port (exact imul/shr/movsx/clamps).
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Accum5b6b00(void)
+{
+    __asm {
+        mov  edx, dword ptr [esp+0x0c]      // edx = p3 (arg3)
+        push ebx
+        mov  ebx, dword ptr [esp+8]         // ebx = a1 (arg1)
+        push esi
+        mov  eax, dword ptr [edx]           // eax = *p3 = idx
+        mov  ecx, ebx
+        and  ecx, 7
+        movsx eax, word ptr [eax*2+0634498h]
+        lea  ecx, [ecx+ecx+1]               // 2*(a1&7)+1
+        imul eax, ecx
+        mov  ecx, dword ptr [esp+0x10]      // ecx = p2 (arg2)
+        shr  eax, 3                         // logical shift
+        mov  esi, dword ptr [ecx]           // esi = *p2
+        test bl, 8
+        je   L_ADD
+        sub  esi, eax
+        jmp  L_STORE
+    L_ADD:
+        add  esi, eax
+    L_STORE:
+        mov  eax, esi
+        mov  dword ptr [ecx], esi
+        cmp  eax, 0FFFF8000h
+        jge  L_HI
+        mov  dword ptr [ecx], 0FFFF8000h
+        jmp  L_SECOND
+    L_HI:
+        cmp  eax, 07FFFh
+        jle  L_SECOND
+        mov  dword ptr [ecx], 07FFFh
+    L_SECOND:
+        movsx eax, word ptr [ebx*2+0634478h]
+        mov  ecx, dword ptr [edx]           // ecx = *p3
+        pop  esi
+        add  ecx, eax
+        pop  ebx
+        mov  dword ptr [edx], ecx
+        mov  eax, ecx
+        jns  L_HI2
+        mov  dword ptr [edx], 0
+        ret
+    L_HI2:
+        cmp  eax, 058h
+        jle  L_RET
+        mov  dword ptr [edx], 058h
+    L_RET:
+        ret
+    }
+}
+RH_ScopedInstall(Accum5b6b00, 0x005b6b00);

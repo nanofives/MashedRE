@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'accum_5b6b00': {'rva': 0x005b6b00, 'export': 'Accum5b6b00', 'signature': {'ret': 'void', 'args': ['uint32','pointer','pointer']}, 'arg_type': 'table_accum_clamp',
+        'seed_sets': [
+            {'a1': 0,  'v2': 100,     'v3': 3},     # mult=1 add; tblA[3]=10  -> *p2=101;  *p3=3+(-1)=2
+            {'a1': 5,  'v2': 5000,    'v3': 10},    # mult=11 add; tblA[10]=50 -> +68=5068; *p3=10+4=14
+            {'a1': 12, 'v2': -100,    'v3': 20},    # mult=9 sub; tblA[20]=50  -> -56=-156; *p3=20+2=22
+            {'a1': 3,  'v2': 32760,   'v3': 26},    # mult=7 add; tblA[26]=88  -> upper clamp 32767; *p3=26+10=36
+            {'a1': 11, 'v2': -32760,  'v3': 39},    # mult=7 sub; tblA[39]=307 -> lower clamp -32768; *p3=39+(-1)=38
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'vec3_magnitude': {
         'rva':            0x004c3ac0,
         'export':         'Vec3Magnitude',
