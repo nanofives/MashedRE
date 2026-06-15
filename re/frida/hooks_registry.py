@@ -14361,6 +14361,9 @@ HOOKS = {
     # ---- promote-round round 157 (2-way flag-branch struct compute) --
     'calc_5b93a0': {'rva': 0x005b93a0, 'export': 'Calc5b93a0', 'signature': {'ret': 'void', 'args': ['pointer','uint32']}, 'arg_type': 'flag_branch_struct_2way', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [1]},
 
+    # ---- promote-round round 158 (strided record-array zeroer + index field) --
+    'zero_484c90': {'rva': 0x00484c90, 'export': 'Zero484c90', 'signature': {'ret': 'void', 'args': []}, 'arg_type': 'abs_region_zeroer', 'glob': 0x006dccbc, 'target_global': 0x006e70d8, 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --

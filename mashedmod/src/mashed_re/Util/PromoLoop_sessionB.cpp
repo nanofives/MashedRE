@@ -1974,3 +1974,27 @@ extern "C" __declspec(dllexport) void __cdecl Calc5b93a0(std::uint8_t* p, std::u
     }
 }
 RH_ScopedInstall(Calc5b93a0, 0x005b93a0);
+
+// ===== round 158 ===== (strided record-array zeroer + record-index field)
+// 0x00484c90 — void fn(): for p=0x6dccbc; p<0x6e70cc; p+=0x8c (idx 0,1,2,..):
+//   *(u16*)(p+0x1c)=idx; zero [p-4],[p],[p+4],[p+8],[p+0xc],[p+0x10],[p+0x18]; zero 9 dwords
+//   at [p+0x64]. Then *0x6e70d8=0; *0x6e70cc=0.
+extern "C" __declspec(dllexport) void __cdecl Zero484c90(void) {
+    int idx = 0;
+    for (std::uint8_t* p = reinterpret_cast<std::uint8_t*>(0x006dccbc);
+         reinterpret_cast<std::uintptr_t>(p) < 0x006e70cc; p += 0x8c) {
+        *reinterpret_cast<std::uint16_t*>(p + 0x1c) = static_cast<std::uint16_t>(idx);
+        *reinterpret_cast<std::uint32_t*>(p - 4) = 0;
+        *reinterpret_cast<std::uint32_t*>(p) = 0;
+        *reinterpret_cast<std::uint32_t*>(p + 4) = 0;
+        *reinterpret_cast<std::uint32_t*>(p + 8) = 0;
+        *reinterpret_cast<std::uint32_t*>(p + 0xc) = 0;
+        *reinterpret_cast<std::uint32_t*>(p + 0x10) = 0;
+        *reinterpret_cast<std::uint32_t*>(p + 0x18) = 0;
+        for (int k = 0; k < 9; k++) reinterpret_cast<std::uint32_t*>(p + 0x64)[k] = 0;
+        idx++;
+    }
+    *reinterpret_cast<std::uint32_t*>(0x006e70d8) = 0;
+    *reinterpret_cast<std::uint32_t*>(0x006e70cc) = 0;
+}
+RH_ScopedInstall(Zero484c90, 0x00484c90);

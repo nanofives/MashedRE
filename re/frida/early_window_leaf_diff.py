@@ -172,6 +172,7 @@ PURE_LEAF_ARGTYPES = {
     'ring_copy_5ab980',          # void fn(arg): esi=arg[0xc]-*0x7dd610; cnt=*0x7dd614-esi; if(cnt>=arg[0x14]) cnt=arg[0x14]; memcpy(arg[0x18], 0x7dce08+esi, cnt); arg[0x18]+=cnt; arg[0x14]-=cnt. seed g610/g614 + ring markers + arg fields; snapshot dest dwords|arg[0x18]|arg[0x14]. non-degen
     'struct_init_3arg_sub',      # void fn(a, b, dest): dest[0]=b; dest[4]=a[4]; zero dest[8,0x10,0x18,0x1c,0x20,0x24,0x28]; dest[0xc]=1.0f; dest[0x14]=0.01f; sub=dest[0x60]; sub[0x3c]=0,[0x40]=0,[0x44]=0,[0x38]=1,[0x48]=0,[0x50]=1. seed a[4],b,dest[0x60]=&sub; snapshot dest+sub fields. non-degen
     'flag_branch_struct_2way',   # void fn(p, arg2): if(p[0x94][0x50]&8){ sub=p[0x11c]; sub[0x88]=0; sub[0x8c]=arg2; } else { s=p[0x84]; val=(s[0x38]>>3)*s[0x39]*arg2; p[0x8c]=p[0x90]=val; p[0x88]=arg2; p[0x28]|=0x400; }. test0 flag set, test1 clear. seed p[0x94]=&f,p[0x11c]=&sub,p[0x84]=&s; snapshot sub[0x88]|sub[0x8c]|p[0x8c]|p[0x90]|p[0x88]|p[0x28]. non-degen
+    'abs_region_zeroer',         # void fn(): strided record-array zeroer (base glob, stride 0x8c) that also writes record index (word) to [+0x1c], + trailing tgt=0. Pure writer; sentinel-fill ONLY the observed offsets (base[0], base[0x1c]=idx0, rec1[0x1c]=idx1, rec5[0x1c]=idx5, base[0x64], tgt), call, snapshot, compare. non-degen via the per-record index
 }
 
 SRC = r"""
@@ -279,6 +280,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'ring_copy_5ab980') ? ['pointer']
               : (cfg.at === 'struct_init_3arg_sub') ? ['pointer','uint32','pointer']
               : (cfg.at === 'flag_branch_struct_2way') ? ['pointer','uint32']
+              : (cfg.at === 'abs_region_zeroer') ? []
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1479,6 +1481,15 @@ rpc.exports.diff = function(cfg) {
       const snapFB = function () { return [sub.add(0x88).readU32(), sub.add(0x8c).readU32(), p.add(0x8c).readU32(), p.add(0x90).readU32(), p.add(0x88).readU32(), p.add(0x28).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
       try { setupFB(); Orig(p, ARG2); o = snapFB(); } catch (e) { eo = e.message; }
       try { setupFB(); Reim(p, ARG2); r = snapFB(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'abs_region_zeroer') {
+      // void fn(): strided record-array zeroer that also writes record index (word) to [+0x1c].
+      // Pure writer -> sentinel-fill only the observed offsets, call, snapshot, compare.
+      const base = cfg.glob >>> 0, stride = 0x8c;
+      const addrs = [base, base + 0x1c, base + stride + 0x1c, base + 5 * stride + 0x1c, base + 0x64, cfg.tgt >>> 0];
+      const fillZ = function () { addrs.forEach(function (a) { ptr(a).writeU32(0xA5A5A5A5); }); };
+      const snapZ = function () { return addrs.map(function (a) { return ptr(a).readU32() >>> 0; }).join('|'); };
+      try { fillZ(); Orig(); o = snapZ(); } catch (e) { eo = e.message; }
+      try { fillZ(); Reim(); r = snapZ(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
