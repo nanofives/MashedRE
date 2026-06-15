@@ -219,6 +219,7 @@ PURE_LEAF_ARGTYPES = {
     'double_indexed_float_mul',  # float fn(int idx): PURE LEAF. c=*(int*)(idx*S+aTbl); d=*(int*)(idx*S+bTbl); e=d+c*4; return *(float*)(fTbl+e*4) * *(float*)K. Seed idx=0: aTbl=0, bTbl=t (e=t), fTbl+t*4=float(t+1); compare float return. non-degen via varied e (K read-only const)
     'struct_tag_equals',         # int fn(a,b): PURE LEAF tagged-union dword equality. Two 0x80 bufs filled equal, tag at [0], optional one-field perturbation per cfg.scenarios[t]={tag,diff}. compare int return (0/1). non-degen via alternating equal/unequal across tag branches
     'indexed_float_accum16',     # int fn(float* out, uint i, uint j): PURE LEAF. if(i>=0x10||j>=4) ret 0; else acc=init + 16 floats at tbl_base+i*iStride+j*jStride+regionOff; acc*=K; *out=acc; ret 1. Per cfg.scenarios[t]={i,j,fill}: seed 16 floats=fill+k at the region, observe ret:outbits. non-degen via varied fill/index + a bounds (ret 0) case
+    'bounded_table_signselect_clamp', # int fn(uint idx, int val): PURE LEAF. if(idx>=0x10) ret 0; b=*(u8*)(t2Tbl + (*(int*)(t1Tbl+idx*16))*0x4c); slot=&t3Tbl[idx*t3Stride]; *slot += (float)b>C ? +val : -val; clamp[0,0xbb8]; ret 1. Per cfg.scenarios[t]={idx,val,byte,slot}: seed t1[idx]=0,t2[0]=byte,t3[idx]=slot; observe ret:slotval. non-degen via +/- + clamp + bounds
 }
 
 SRC = r"""
@@ -373,6 +374,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'double_indexed_float_mul') ? ['uint32']
               : (cfg.at === 'struct_tag_equals') ? ['pointer','pointer']
               : (cfg.at === 'indexed_float_accum16') ? ['pointer','uint32','uint32']
+              : (cfg.at === 'bounded_table_signselect_clamp') ? ['uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1951,6 +1953,22 @@ rpc.exports.diff = function(cfg) {
       const snap = function (ret) { return (ret >>> 0) + ':' + (out.readU32() >>> 0).toString(16); };
       try { seedA(); o = snap(Orig(out, scen.i >>> 0, scen.j >>> 0)); } catch (e) { eo = e.message; }
       try { seedA(); r = snap(Reim(out, scen.i >>> 0, scen.j >>> 0)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'bounded_table_signselect_clamp') {
+      // int f(uint idx, int val): bounded table update; sign selected by a byte vs C.
+      const s = (cfg.scenarios || [])[t] || { idx: 0, val: 0, byte: 0, slot: 0 };
+      const idx = s.idx >>> 0;
+      const inb = idx < 0x10;
+      const t3 = ptr(cfg.t3Tbl).add(idx * (cfg.t3Stride | 0));
+      const seedX = function () {
+        if (inb) {
+          ptr(cfg.t1Tbl).add(idx * 16).writeU32(0);
+          ptr(cfg.t2Tbl).writeU8(s.byte & 0xff);
+          t3.writeS32(s.slot | 0);
+        }
+      };
+      const snap = function (ret) { return (ret >>> 0) + ':' + (inb ? (t3.readS32() | 0) : 'na'); };
+      try { seedX(); o = snap(Orig(idx, s.val >>> 0)); } catch (e) { eo = e.message; }
+      try { seedX(); r = snap(Reim(idx, s.val >>> 0)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };
@@ -2640,6 +2658,7 @@ def run(name):
            'aTbl': h.get('aTbl'), 'bTbl': h.get('bTbl'), 'fTbl': h.get('fTbl'),
            'scenarios': h.get('scenarios'),
            'iStride': h.get('iStride'), 'jStride': h.get('jStride'), 'regionOff': h.get('regionOff'),
+           't1Tbl': h.get('t1Tbl'), 't2Tbl': h.get('t2Tbl'), 't3Tbl': h.get('t3Tbl'), 't3Stride': h.get('t3Stride'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

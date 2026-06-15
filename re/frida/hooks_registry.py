@@ -60,6 +60,21 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x0046d7f0 BoundedTableSignClamp46d7f0 (ai) - PURE LEAF int f(uint idx, int val):
+    # if(idx>=0x10) ret 0; b=*(u8*)(0x7f103c + (*(int*)(0x7f1a14+idx*16))*0x4c);
+    # slot=&[0x882194+idx*0xd04]; *slot += (float)b>160.0 ? +val : -val; clamp[0,0xbb8]; ret 1.
+    'bounded_table_signclamp_46d7f0': {'rva': 0x0046d7f0, 'export': 'BoundedTableSignClamp46d7f0', 'signature': {'ret': 'uint32', 'args': ['uint32', 'uint32']}, 'arg_type': 'bounded_table_signselect_clamp',
+        't1Tbl': 0x007f1a14, 't2Tbl': 0x007f103c, 't3Tbl': 0x00882194, 't3Stride': 0xd04,
+        'scenarios': [
+            {'idx': 0, 'val': 100, 'byte': 200, 'slot': 500},   # b>160 -> +100 -> 600
+            {'idx': 0, 'val': 100, 'byte': 50,  'slot': 500},   # b<=160 -> -100 -> 400
+            {'idx': 1, 'val': 50,  'byte': 200, 'slot': 1000},  # idx indexing -> 1050
+            {'idx': 0, 'val': 5000,'byte': 200, 'slot': 0},     # high clamp -> 0xbb8 (3000)
+            {'idx': 0, 'val': 5000,'byte': 50,  'slot': 100},   # low clamp -> 0
+            {'idx': 0x10,'val': 1, 'byte': 0,   'slot': 0},     # bounds -> ret 0
+        ],
+        'path1_tests': [0, 1, 2, 3, 4, 5], 'path2_tests': [0, 1, 2, 3, 4, 5]},
+
     # 0x0046bda0 IndexedFloatAccum16_46bda0 (gameplay) - PURE LEAF int f(float* out,
     # uint i, uint j): if(i>=0x10||j>=4) ret 0; else acc = *0x5d757c(0.0) + 16 floats
     # at 0x8815a0+i*0xd04+j*0xc4+0x1b0-4 .. +0x38; acc *= *0x5cd058(0.0625); *out=acc; ret 1.
