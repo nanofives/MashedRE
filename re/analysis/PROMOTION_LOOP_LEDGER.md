@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 178
-- total_green: 351
+- rounds_run: 179
+- total_green: 352
 - dry_counter: 0
 - last_round: 2026-06-13 round 82 — Ghidra-decompiled STATE leaves (3 GREEN: CmdBuild5b0dc0Set deref_struct_set + ClearDesc5bde50 ptr_fields_clear 5-field + Table69318cSet indexed_table_set) (212->215)
 - BOOT FIXED 2026-06-13 (patch_mashed_fix_camera_res.py): run_diff lane OPEN on any display (validated get_771e78 10/10 GREEN on booted game). The +500 grind is now mechanical — see resume recipe + BOOT BLOCKER note below.
@@ -281,6 +281,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 178 | circular-list case-insensitive string search (NEW handler) — used the static classifier queue | attempted 1 | GREEN 1 (Search4c5c00 0x004c5c00: walk circular list arg1[8], node+8=key, case-insensitive match -> object node-8 else 0) | total_green 351->352 (352/1000). Status-prechecked C2; caller FUN_0040bb30 C2, zero-callee leaf. NEW handler circular_str_search_ci (build 3-node alpha/beta/gamma circular list; 5 queries -> 3 distinct node ptrs + 2 zero). LESSON: returned-pointer comparison works because both sides walk the SAME Memory.alloc'd buffers -> identical absolute node addresses; non-degen via match(distinct ptr)/miss/prefix-reject. This toupper is SYMMETRIC ('a'-'z' +0xe0) unlike 0x5ae170. Session 101-178 = +95 (257->352). ~68 handlers. THIS CONTEXT did rounds 124-178 = +60 (292->352). REMAINING CLEAN QUEUE (from r177 classifier): 0x5ae4c0(139 ring-arith), 0x5172f0(143 char-class copy arg1[0x11c]->arg2), 0x482860(147 rep-stosd pool+freelist init), 0x4ceaf0(162 two-struct cmp), 0x5b0cf0(170 stack-heavy). After these ~5 the frontier is exhausted of clean leaves. promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~648. Context 55 rounds deep — fresh context strongly advised.
 
 2026-06-15 | round 177 | sphere-cube-encloses-box predicate (NEW handler) + STATIC CLEANLINESS CLASSIFIER built | attempted 1 | GREEN 1 (Aabb48a630 0x0048a630: per-axis (center-r)<=min && (center+r)>=max; straight-line fld/fcomp) | total_green 350->351 (351/1000). Status-prechecked C2; caller FUN_00414c30 C2, zero-callee leaf. NEW handler aabb_sphere_overlap. KEY TOOLING (reusable, big efficiency win): built an inline static cleanliness classifier over the whole frontier (scan each fn's bytes for D9/D8/DC/DE C0-CF = fld-st(N) juggling, D9 F0-FF = transcendental, and any 4-byte LE in 0x600000-0xa00000 = abs-global ref incl bss-tail). Verdicts: CLEAN/off-float/fld-stN/global. Of 62 frontier rows only ~9 first-party CLEAN remain (rest are 0x5cxxxx CRT, libpng 0x516c40, inlined memset 0x520990, or off-limits). Remaining first-party CLEAN queue (NEXT ROUNDS, all state-independent so early-window-diffable): 0x4c5c00(115 byte-loop), 0x5ae4c0(139 ring-arith), 0x5172f0(143 char-class copy arg1[0x11c]->arg2), 0x482860(147 rep-stosd pool init), 0x4ceaf0(162 two-struct cmp), 0x5b0cf0(170 stack-heavy). LESSON: verify-gate caught a DEGENERATE all-0 result (my first seeds had radii too small -> all FALSE); GREEN-but-degenerate is NOT acceptance -> re-seeded for a 0/1 mix. straight-line fld/fcomp (no st(N)) AABB/range predicates ARE bit-identical naked ports. Session 101-177 = +94 (257->351). ~67 handlers. THIS CONTEXT did rounds 124-177 = +59 (292->351). QUEUE: the ~6 CLEAN rows above, then frontier is exhausted of clean leaves; promote-c3-batch parallel fanout (awaiting explicit user opt-in) is the realistic route to the remaining ~649. Context 54 rounds deep — fresh context strongly advised.
 

@@ -2606,3 +2606,78 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Aabb48a630(void)
     }
 }
 RH_ScopedInstall(Aabb48a630, 0x0048a630);
+
+// 0x004c5c00  FUN_004c5c00 (frontend, circular-list case-insensitive string search)
+// void* f(list* arg1, char* query): walk the circular list at arg1[8] (sentinel = &arg1[8]);
+// each list node has next at node[0] and a key string at node+8 (object = node-8). Compare
+// the key vs query case-insensitively (only 'a'-'z' folded via +0xe0 == -0x20 mod 256, both
+// sides). Return the object (node-8) on a full match, else 0. Pure pointer/byte walk (no
+// globals, no float) -> VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Search4c5c00(void)
+{
+    __asm {
+        mov  eax, dword ptr [esp+4]         // arg1
+        push ebx
+        add  eax, 8                          // sentinel = &arg1[8]
+        push ebp
+        push esi
+        push edi
+        mov  ebx, dword ptr [eax]            // head = arg1[8]
+        mov  dword ptr [esp+0x14], eax       // save sentinel (clobbers own arg1 slot)
+        cmp  ebx, eax
+        je   L_SR_NF
+        mov  ebp, dword ptr [esp+0x18]       // query (arg2)
+    L_SR_LOOP:
+        lea  eax, [ebx-8]                     // object = node-8
+        lea  ecx, [eax+0x10]                  // key string = object+0x10 = node+8
+        test ecx, ecx
+        je   L_SR_NEXT
+        mov  esi, ecx
+        mov  edi, ebp
+        mov  cl, byte ptr [esi]
+        test cl, cl
+        je   L_SR_END
+    L_SR_INNER:
+        mov  dl, byte ptr [edi]
+        test dl, dl
+        je   L_SR_END
+        cmp  cl, 0x61
+        jl   L_SR_DL
+        cmp  cl, 0x7a
+        jg   L_SR_DL
+        add  cl, 0xe0
+    L_SR_DL:
+        cmp  dl, 0x61
+        jl   L_SR_CMP
+        cmp  dl, 0x7a
+        jg   L_SR_CMP
+        add  dl, 0xe0
+    L_SR_CMP:
+        cmp  cl, dl
+        jne  L_SR_NEXT
+        mov  cl, byte ptr [esi+1]
+        inc  esi
+        inc  edi
+        test cl, cl
+        jne  L_SR_INNER
+    L_SR_END:
+        mov  cl, byte ptr [esi]
+        mov  dl, byte ptr [edi]
+        cmp  cl, dl
+        je   L_SR_RET
+    L_SR_NEXT:
+        mov  ebx, dword ptr [ebx]
+        mov  eax, dword ptr [esp+0x14]
+        cmp  ebx, eax
+        jne  L_SR_LOOP
+    L_SR_NF:
+        xor  eax, eax
+    L_SR_RET:
+        pop  edi
+        pop  esi
+        pop  ebp
+        pop  ebx
+        ret
+    }
+}
+RH_ScopedInstall(Search4c5c00, 0x004c5c00);

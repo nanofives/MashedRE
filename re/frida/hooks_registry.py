@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'search_4c5c00': {'rva': 0x004c5c00, 'export': 'Search4c5c00', 'signature': {'ret': 'pointer', 'args': ['pointer','pointer']}, 'arg_type': 'circular_str_search_ci',
+        'seed_sets': [
+            {'q': 'BETA'},    # case-insensitive match -> n1-8
+            {'q': 'zzz'},     # not found -> 0
+            {'q': 'ALPHA'},   # match -> n0-8
+            {'q': 'Gamma'},   # match -> n2-8
+            {'q': 'bet'},     # prefix, not full match -> 0
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'aabb_48a630': {'rva': 0x0048a630, 'export': 'Aabb48a630', 'signature': {'ret': 'int', 'args': ['pointer','pointer']}, 'arg_type': 'aabb_sphere_overlap',
         'seed_sets': [
             {'box': [0,0,0, 10,10,10], 'sph': [5,5,5, 10.0]},     # center+/-10 covers [0,10] all axes -> 1
