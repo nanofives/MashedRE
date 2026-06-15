@@ -60,6 +60,15 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    'calc_412130': {'rva': 0x00412130, 'export': 'Calc412130', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'near_leaf_seed_globals',
+        'seed_sets': [
+            {'globals': [[0x0067e9fc, 2]]},                    # sub==2 -> 3
+            {'globals': [[0x0067e9fc, 3], [0x007f0fd0, 4]]},   # sub=3,t=0 -> jt[0]=1
+            {'globals': [[0x0067e9fc, 4], [0x007f0fd0, 10]]},  # sub=4,t=6 -> jt[6]=6
+            {'globals': [[0x0067e9fc, 3], [0x007f0fd0, 5]]},   # sub=3,t=1 -> jt[1]=0
+            {'globals': [[0x0067e9fc, 1]]},                    # sub<2 -> 0
+        ],
+        'path1_tests': [0, 1, 2, 3, 4], 'path2_tests': [0, 1, 2, 3, 4]},
     'search_430250': {'rva': 0x00430250, 'export': 'Search430250', 'signature': {'ret': 'uint32', 'args': ['uint32','uint32']}, 'arg_type': 'near_leaf_ptr_array_search',
         'glob': 0x005f2770, 'count': 0xd,
         'seed_sets': [

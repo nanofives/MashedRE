@@ -3244,3 +3244,20 @@ extern "C" __declspec(dllexport) __declspec(naked) int __cdecl Search430250(void
     }
 }
 RH_ScopedInstall(Search430250, 0x00430250);
+
+// 0x00412130  FUN_00412130 (gameplay, NEAR-LEAF: state->value map via GetRaceSubMode + jump table)
+// int f(void): sub = GetRaceSubMode_0x42f6a0() (=*0x67e9fc); if(sub==2) return 3; if(sub<2 ||
+//   sub>5) return 0; t = *0x7f0fd0 - 4; if((unsigned)t>6) return 0; return jt[t] where the
+//   original's jump table @0x41216c maps {1,0,0,0,1,1,6}. Callee C3 pure getter. Clean C reimpl
+//   (calls the original getter via fn-ptr; both sides hit the real getter at suspended-spawn).
+extern "C" __declspec(dllexport) int __cdecl Calc412130(void)
+{
+    int sub = ((int(__cdecl*)(void))0x0042f6a0)();
+    if (sub == 2) return 3;
+    if (sub < 2 || sub > 5) return 0;
+    unsigned t = *reinterpret_cast<unsigned*>(0x007f0fd0) - 4u;
+    if (t > 6u) return 0;
+    static const int jt[7] = { 1, 0, 0, 0, 1, 1, 6 };
+    return jt[t];
+}
+RH_ScopedInstall(Calc412130, 0x00412130);

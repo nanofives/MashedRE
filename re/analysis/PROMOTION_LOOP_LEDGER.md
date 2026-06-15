@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 196
-- total_green: 363
+- rounds_run: 197
+- total_green: 364
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -295,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 196 | near-leaf #10: jump-table state->value mapper (reuse near_leaf_seed_globals, CLEAN-C reimpl) | attempted 1 | GREEN 1 (Calc412130 0x00412130: sub==2?3:sub<2||>5?0:jt[*0x7f0fd0-4], jt={1,0,0,0,1,1,6}) | total_green 363->364 (364/1000). Callers 0x4019d0/0x412190/0x412620/0x401f10 C2, callee 0x42f6a0 C3. NO new handler (reused near_leaf_seed_globals). LESSON: a jump-table near-leaf can be reimpl'd as a CLEAN C switch/array (decode the orig jump table @target, map index->return value) + call the C3 callee via a fn-ptr (int(__cdecl*)(void))0xADDR — no need for a naked port or jumping into original code; compare on return value. 10 near-leaf shapes. ~97 candidates remain (easy pure-getter tier nearly drained; remaining have tail-calls to big fns / deep callees -> rising cost). Session 101-196 net = +107 (257->364). Context 73 rounds deep — fresh context advised; fanout = fast route to 1000.
 
 2026-06-15 | round 195 | near-leaf #9: pointer-array search via C3 getter (NEW handler near_leaf_ptr_array_search) | attempted 1 | GREEN 1 (Search430250 0x00430250: gate?search arr=*0x5f2770(0xd ptrs) for *arr[i]==key->i*0x14+0x7f0cb0:0) | total_green 362->363 (363/1000). Caller 0x47b230 C2, callee 0x40d430 C3 getter. NEW handler near_leaf_ptr_array_search (build ptr-array of structs, seed getter glob; gate0->0/found@3->0x7f0cec/notfound->0). 9 near-leaf shapes. ~98 candidates remain. Session 101-195 net = +106 (257->363). ~81 handlers. Context 72 rounds deep — fresh context advised; fanout = fast route to 1000.
 
