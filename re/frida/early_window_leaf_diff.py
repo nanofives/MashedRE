@@ -225,6 +225,7 @@ PURE_LEAF_ARGTYPES = {
     'multi_array_scatter',       # void fn(struct* p): PURE LEAF. if(p[0xc]>=p[8]) return; else scatter REAL source globals into 7 optional arrays (ptr fields at p+0x10/14/18/1c/20/24/28) indexed by counter p[0xc] (strides 12/8/4/64/4/16/32), then counter++. Per cfg.scenarios[t]={counter,bound}: build struct + 7 bufs, observe arr[k] at counter-slot + counter. source globals REAL (both sides identical). non-degen via distinct globals + counter
     'dll_head_insert',           # void fn(struct* p): PURE LEAF intrusive DLL head-insert. node=p[0xa0]; if((node[3]&3)==0) insert at head of list *cfg.glob (sentinel @+0xbc; node+8=next,node+0xc=prev). node[3]|=3; p[3]|=0xc. Build p/node/G/H bufs, seed *glob=&G, G[0xbc]=H, node[3]=scenario flag; observe node+8,+0xc,+3,p[3],G[0xbc],H[4] (addresses same both sides). non-degen via insert vs skip
     'idx2_record_condset',       # void fn(int i, int j, int v): PURE LEAF. off=(j+5i)*recStride; *(int*)(baseB+off)=v; if(*(float*)(baseA+off)==0.0) *(int*)(baseA+off)=0x3c23d70a. Per cfg.scenarios[t]={i,j,v,cur}: seed baseA+off=cur(float), call, observe A|B. non-degen via cur==0 vs !=0 + varied v/index
+    'quad_buffer_build',         # int fn(void* out, uint maxsize, struct* rec): PURE LEAF 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; per record P=*(arr+0x14+k*0x28), sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub blocks of 4x16 entries {ri,si,0,1.0f} at out+counter*64, ret counter*4. Per cfg.scenarios[t]={subs:[...],maxsize}: build rec+arr+P bufs, observe ret + out dwords. non-degen via subs + bounds
 }
 
 SRC = r"""
@@ -385,6 +386,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'multi_array_scatter') ? ['pointer']
               : (cfg.at === 'dll_head_insert') ? ['pointer']
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
+              : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -2066,6 +2068,27 @@ rpc.exports.diff = function(cfg) {
       const snap = function () { return (A.readU32() >>> 0).toString(16) + '|' + (B.readU32() >>> 0).toString(16); };
       try { seedR(); Orig(s.i >>> 0, s.j >>> 0, s.v >>> 0); o = snap(); } catch (e) { eo = e.message; }
       try { seedR(); Reim(s.i >>> 0, s.j >>> 0, s.v >>> 0); r = snap(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'quad_buffer_build') {
+      // int f(void* out, uint maxsize, struct* rec): 2-pass quad-buffer builder.
+      const s = (cfg.scenarios || [])[t] || { subs: [1], maxsize: 1000 };
+      const subs = s.subs || [1], cnt = subs.length;
+      const out = Memory.alloc(0x800), rec = Memory.alloc(0x40), arr = Memory.alloc(0x200);
+      const Ps = []; for (let k = 0; k < cnt; k++) { const P = Memory.alloc(0x20); _keep.push(P); Ps.push(P); }
+      _keep.push(out, rec, arr);
+      const seedB = function () {
+        for (let z = 0; z < 0x800; z += 4) out.add(z).writeU32(0xEEEEEEEE);
+        rec.add(0x14).writeU32(cnt >>> 0);
+        rec.add(0x18).writePointer(arr);
+        for (let k = 0; k < cnt; k++) {
+          arr.add(0x14 + k * 0x28).writePointer(Ps[k]);
+          Ps[k].add(0xd).writeU8(subs[k] & 0xff);
+        }
+      };
+      const snap = function (ret) {
+        return (ret | 0) + ':' + [0, 4, 12, 64, 68, 76].map(function (o2) { return (out.add(o2).readU32() >>> 0).toString(16); }).join('|');
+      };
+      try { seedB(); o = snap(Orig(out, s.maxsize >>> 0, rec)); } catch (e) { eo = e.message; }
+      try { seedB(); r = snap(Reim(out, s.maxsize >>> 0, rec)); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_global_str_search') {
       // void* f(query): C3 circular-list search(*cfg.glob, query). build 3-node list. seed_sets[t]={q}.
       const ss = (cfg.seed_sets || [])[t | 0] || { q: '' };

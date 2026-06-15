@@ -3967,3 +3967,38 @@ extern "C" __declspec(dllexport) void __cdecl Idx2RecordCondSet413c70(int i, int
         *reinterpret_cast<int*>(0x0063bc60u + off) = 0x3c23d70a;
 }
 RH_ScopedInstall(Idx2RecordCondSet413c70, 0x00413c70);
+
+// 0x005b0bb0 FUN_005b0bb0 (audio, QuadBufferBuild) — PURE LEAF (no calls)
+// int f(void* out, uint maxsize, struct* rec): pass1 sums sub-counts (byte @P+0xd
+// over rec[0x14] records, each P = *(arr + 0x14 + k*0x28), arr = rec[0x18]); if
+// sum*4 > maxsize return 0. pass2: per (record ri, sub si) write a 64-byte block
+// of 4x16 entries {ri, si, 0, 1.0f} at out+counter*64; return counter*4.
+// capstone-verified. Integer + one 1.0f constant -> bit-identical.
+extern "C" __declspec(dllexport) int __cdecl QuadBufferBuild5b0bb0(unsigned char* out, unsigned maxsize, unsigned char* rec)
+{
+    const int count = *reinterpret_cast<int*>(rec + 0x14);
+    unsigned char* arr = *reinterpret_cast<unsigned char**>(rec + 0x18);
+    int sum = 0;
+    for (int k = 0; k < count; k++) {
+        unsigned char* p = *reinterpret_cast<unsigned char**>(arr + 0x14 + k * 0x28);
+        sum += p[0xd];
+    }
+    if (static_cast<unsigned>(sum * 4) > maxsize) return 0;
+    int counter = 0;
+    for (int ri = 0; ri < count; ri++) {
+        unsigned char* p = *reinterpret_cast<unsigned char**>(arr + 0x14 + ri * 0x28);
+        const int sub = p[0xd];
+        for (int si = 0; si < sub; si++) {
+            int* e = reinterpret_cast<int*>(out + counter * 64);
+            for (int j = 0; j < 4; j++) {
+                e[j * 4 + 0] = ri;
+                e[j * 4 + 1] = si;
+                e[j * 4 + 2] = 0;
+                *reinterpret_cast<float*>(e + j * 4 + 3) = 1.0f;
+            }
+            counter++;
+        }
+    }
+    return counter * 4;
+}
+RH_ScopedInstall(QuadBufferBuild5b0bb0, 0x005b0bb0);

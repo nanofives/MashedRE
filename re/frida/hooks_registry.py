@@ -60,6 +60,17 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x005b0bb0 QuadBufferBuild5b0bb0 (audio) - PURE LEAF int f(void* out, uint maxsize,
+    # struct* rec): 2-pass quad builder. rec[0x14]=count, rec[0x18]=arr; P=*(arr+0x14+k*0x28),
+    # sub=P[0xd]; if sum*4>maxsize ret 0 else write count*sub 64-byte blocks {ri,si,0,1.0f}.
+    'quad_buffer_build_5b0bb0': {'rva': 0x005b0bb0, 'export': 'QuadBufferBuild5b0bb0', 'signature': {'ret': 'uint32', 'args': ['pointer', 'uint32', 'pointer']}, 'arg_type': 'quad_buffer_build',
+        'scenarios': [
+            {'subs': [1, 1], 'maxsize': 1000},   # 2 records x1 sub -> ret 8
+            {'subs': [2],    'maxsize': 1000},   # 1 record x2 subs -> ret 8
+            {'subs': [1, 1], 'maxsize': 4},      # sum*4=8 > 4 -> ret 0, out untouched
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x00413c70 Idx2RecordCondSet413c70 (vehicle) - PURE LEAF void f(int i,int j,int v):
     # off=(j+5i)*12; *(int*)(0x63bc68+off)=v; if(*(float*)(0x63bc60+off)==0.0) ...=0.01f.
     # Seed A(float)=cur, observe A|B. non-degen via cur==0 vs !=0 + varied v/index.

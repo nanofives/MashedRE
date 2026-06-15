@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 226
-- total_green: 391
+- rounds_run: 227
+- total_green: 392
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 227 | L3 frontier (classifier-driven) — capstone reimpl (13th) | attempted 1 | GREEN 1 (QuadBufferBuild5b0bb0 0x005b0bb0, audio: 2-pass nested-loop quad-buffer builder) | total_green 391->392 (392/1000). PURE LEAF; most complex control-flow this session (size-check pass + nested record/sub loops writing 4x16 {ri,si,0,1.0f} blocks). NEW handler quad_buffer_build 3/3 GREEN non-degen (subs[1,1]->ret8, subs[2]->si-indexed, bounds maxsize=4->ret0+untouched). Caller FUN_005af8f0 C2. Deferred this round: 0x475f30/0x456eb0 (EAX-implicit output ptr - need an EAX trampoline handler). Session 101-227 net = +135 (257->392). Context 104 rounds deep. PATH TO 1000 (608 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 226 | L3 frontier (classifier-driven, refreshed 53->42 leaves) | attempted 1 | GREEN 1 (Idx2RecordCondSet413c70 0x00413c70, vehicle: 2-index record cond-set) | total_green 390->391 (391/1000). PURE LEAF void f(int i,int j,int v): off=(j+5i)*12; table2[off]=v; if(table1[off]==0.0) table1[off]=0.01f. NEW handler idx2_record_condset 4/4 GREEN non-degen. Refreshed frontier_classify -> 13 CLEAN remain (deferred: 0x475f30 EAX-implicit output ptr; 0x5a7a60 2lvl-list; 0x483ca0 struct-copy; etc.). Caller FUN_00412f30 C2. Session 101-226 net = +134 (257->391). Context 103 rounds deep. PATH TO 1000 (609 more) = this method (~1/round) or fanout.
 
