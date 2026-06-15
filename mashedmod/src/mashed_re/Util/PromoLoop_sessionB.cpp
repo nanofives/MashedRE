@@ -1563,3 +1563,29 @@ extern "C" __declspec(dllexport) std::uint32_t __cdecl Grid4957a0(
     return 1;
 }
 RH_ScopedInstall(Grid4957a0, 0x004957a0);
+
+// ===== round 135 ===== (deterministic struct constructor)
+// 0x00528e30 — void fn(p): writes self-relative ptrs (p+0x8c -> p[0xb10], p+0x980 ->
+//   p[0xb1c], p+0xa74 -> p[0xb28]), const ptrs (0x6228d8/ec/0x622900 -> p[0xb18/24/30]),
+//   counts (p[0x16ac]=8, p[0x48c]=1 word), several zero fields, and three word-strided
+//   (stride 4) zero loops over p+0x8c (0x11e), p+0x980 (0x1e), p+0xa74 (0x13).
+extern "C" __declspec(dllexport) void __cdecl Ctor528e30(std::uint8_t* p) {
+    *reinterpret_cast<std::uint32_t*>(p + 0xb10) = reinterpret_cast<std::uint32_t>(p + 0x8c);
+    *reinterpret_cast<std::uint32_t*>(p + 0xb18) = 0x6228d8;
+    *reinterpret_cast<std::uint32_t*>(p + 0xb1c) = reinterpret_cast<std::uint32_t>(p + 0x980);
+    *reinterpret_cast<std::uint32_t*>(p + 0xb24) = 0x6228ec;
+    *reinterpret_cast<std::uint32_t*>(p + 0xb28) = reinterpret_cast<std::uint32_t>(p + 0xa74);
+    *reinterpret_cast<std::uint32_t*>(p + 0xb30) = 0x622900;
+    *reinterpret_cast<std::uint16_t*>(p + 0x16b0) = 0;
+    *reinterpret_cast<std::uint32_t*>(p + 0x16b4) = 0;
+    *reinterpret_cast<std::uint32_t*>(p + 0x16ac) = 8;
+    for (int k = 0; k < 0x11e; k++) *reinterpret_cast<std::uint16_t*>(p + 0x8c + k * 4) = 0;
+    for (int k = 0; k < 0x1e; k++)  *reinterpret_cast<std::uint16_t*>(p + 0x980 + k * 4) = 0;
+    for (int k = 0; k < 0x13; k++)  *reinterpret_cast<std::uint16_t*>(p + 0xa74 + k * 4) = 0;
+    *reinterpret_cast<std::uint32_t*>(p + 0x16a4) = 0;
+    *reinterpret_cast<std::uint32_t*>(p + 0x16a0) = 0;
+    *reinterpret_cast<std::uint32_t*>(p + 0x16a8) = 0;
+    *reinterpret_cast<std::uint32_t*>(p + 0x1698) = 0;
+    *reinterpret_cast<std::uint16_t*>(p + 0x48c) = 1;
+}
+RH_ScopedInstall(Ctor528e30, 0x00528e30);

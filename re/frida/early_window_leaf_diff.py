@@ -149,6 +149,7 @@ PURE_LEAF_ARGTYPES = {
     'float_planes6_predicate',   # u32 fn(obj*, point*): 6 planes at obj+0x94 stride 0x14 (x,y,z,w); for each test dot(plane.xyz,point.xyz)-plane.w vs -point.w; return 1 if all pass else 0. Seed from cfg.seed_sets[t]={point:[4 floats], planes:[6 lists of 4 floats]}; distinct plane.w verifies the 0x14 stride. Reimpl is VERBATIM naked __asm. test=index (results vary 0/1 -> non-degen)
     'eax_edi_out',               # void fn(EAX=v, EDI=out*): writes out[0..2] computed from v. ORIG via `mov eax,v; mov edi,outbuf; jmp` trampoline; REIMPL __cdecl(v, out) (compares out[0..2], not ABI). test=v (varied -> distinct outputs -> non-degen). use for integer fns whose magic-multiply == plain C integer division
     'grid_getter_multiout',      # u32 fn(i,j,out1,_,_,out2,out3): bounds-check i<*b1, j<*b2; idx=i*mul1+j; out1[0..1]=out1_t[*][idx*s12], out2[0..1]=out2_t[*][idx*s12], out3[0]=out3_t[*][(i*mul3+j)*s3]; return 1. Seed bounds large + the indexed table slots per cfg.grid; call with 3 out-bufs; observe outs+ret. test=marker (varied -> non-degen)
+    'struct_ctor_big',           # void fn(p): deterministic constructor writing consts/self-relative-ptrs/zeros to p's fields (no live reads). Uses ONE shared sentinel buffer (cfg.buf_dwords) so self-relative pointer writes (p+const) compare equal between sides; snapshot cfg.observe offsets. For ctors too big for struct_const_init's 0x400 buf. test ignored
 }
 
 SRC = r"""
@@ -233,6 +234,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'float_planes6_predicate') ? ['pointer','pointer']
               : (cfg.at === 'eax_edi_out') ? ['uint32','pointer']
               : (cfg.at === 'grid_getter_multiout') ? ['uint32','uint32','pointer','pointer','pointer']
+              : (cfg.at === 'struct_ctor_big') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1086,6 +1088,15 @@ rpc.exports.diff = function(cfg) {
       const rd = function () { return [o1.readU32(), o1.add(4).readU32(), o2.readU32(), o2.add(4).readU32(), o3.readU32()].map(function (x) { return x >>> 0; }).join('|'); };
       try { seedG(); z(o1); z(o2); z(o3); const ro = Orig(gi >>> 0, gj >>> 0, o1, o2, o3) >>> 0; o = rd() + '|' + ro; } catch (e) { eo = e.message; }
       try { seedG(); z(o1); z(o2); z(o3); const rr = Reim(gi >>> 0, gj >>> 0, o1, o2, o3) >>> 0; r = rd() + '|' + rr; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'struct_ctor_big') {
+      // void fn(p): deterministic constructor. ONE shared sentinel buffer so self-relative
+      // pointer writes (p+const) compare equal; reset between sides; snapshot observe offsets.
+      const obs = cfg.observe, bd = (cfg.buf_dwords | 0) || 0x600;
+      const cb = Memory.alloc(bd * 4); _keep.push(cb);
+      const fillC = function () { for (let z = 0; z < bd; z++) cb.add(z * 4).writeU32(0xA5A5A5A5); };
+      const snapC = function () { return obs.map(function (x) { return cb.add(x.off | 0).readU32() >>> 0; }).join(','); };
+      try { fillC(); Orig(cb); o = snapC(); } catch (e) { eo = e.message; }
+      try { fillC(); Reim(cb); r = snapC(); } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]
