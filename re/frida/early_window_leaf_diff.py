@@ -184,6 +184,7 @@ PURE_LEAF_ARGTYPES = {
     'multi_deref_global_set',    # void fn(p1, p2): val=*(p2?p2:0x613290); g=*0x7dc57c; e=p1[4]; obj=*(e+g); obj[0xc4]=val; n=*(*(e[0x18])[0x20]); if(n) n[4]=val; obj[0x40]|=0x2000. seed g=0 + nested chain (p1[4]=&E, E[0]=&obj, E[0x18]=&X, X[0x20]=&Ncell, Ncell=&N); t0 p2=&val n!=0, t1 p2=0(default) n=0. snapshot obj[0xc4]|N[4]|obj[0x40]. non-degen
     'list_node_const_init',      # void fn(p, arg2): s=p[0x18]; count=s[0x24]; arr=s[0x20] (array of node ptrs); for i<count: node=arr[i]; node[4]=*arg2; node[0xc]=node[0x10]=1.0f; node[0x14]=0.5f (consts stored, no arith). seed p/s/arr/3 nodes/val; snapshot each node[4,0xc,0x10,0x14]. non-degen
     'bounded_struct_push',       # void fn(p, arg2, arg3): top=p[8]; cap=p[4]; if(top>=cap){p[8]=cap; return;} buf=p[0]; off=top*0x30; rec=buf+off+4; rec[0..8]=arg2 vec3; buf[off+0x1c]=0; buf[off+0..3]=arg3[0..3]; p[8]=top+1; p[0x54]=1. store-only. t0 push(top=0), t1 full(top=cap=4). snapshot entry+p[8]+p[0x54]. non-degen
+    'trie_walk',                 # u32 fn(node, key, depth): while(depth){ depth--; idx=key&0xf; key>>=4; node=*(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18] (byte in AL, dirty upper=node ptr). build depth-2 trie w/ 2 paths (keys 0x21->leaf1[0x18]=0x77, 0x35->leaf2[0x18]=0x88); shared bufs; compare ret. non-degen
 }
 
 SRC = r"""
@@ -303,6 +304,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'multi_deref_global_set') ? ['pointer','pointer']
               : (cfg.at === 'list_node_const_init') ? ['pointer','pointer']
               : (cfg.at === 'bounded_struct_push') ? ['pointer','pointer','pointer']
+              : (cfg.at === 'trie_walk') ? ['pointer','uint32','uint32']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1726,6 +1728,19 @@ rpc.exports.diff = function(cfg) {
       const snapBP = function () { const off = top * 0x30; return [buf.add(off).readU32(), buf.add(off + 4).readU32(), buf.add(off + 8).readU32(), buf.add(off + 0xc).readU32(), buf.add(off + 0x1c).readU32(), p.add(8).readU32(), p.add(0x54).readU32()].map(function (x) { return x >>> 0; }).join('|'); };
       try { setupBP(); Orig(p, arg2, arg3); o = snapBP(); } catch (e) { eo = e.message; }
       try { setupBP(); Reim(p, arg2, arg3); r = snapBP(); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'trie_walk') {
+      // u32 fn(node, key, depth): descend a trie (idx=key&0xf per level, node[idx*4+0x1c]);
+      // return (node&~0xff)|node[0x18]. build depth-2 trie w/ 2 keyed paths.
+      const root = Memory.alloc(0x80), mid1 = Memory.alloc(0x80), mid2 = Memory.alloc(0x80), leaf1 = Memory.alloc(0x80), leaf2 = Memory.alloc(0x80);
+      _keep.push(root, mid1, mid2, leaf1, leaf2);
+      const keys = [0x21, 0x35], key = keys[t | 0], depth = 2;
+      const buildT = function () {
+        [root, mid1, mid2, leaf1, leaf2].forEach(function (b) { for (let z = 0; z < 0x80; z += 4) b.add(z).writeU32(0); });
+        root.add(1 * 4 + 0x1c).writePointer(mid1); mid1.add(2 * 4 + 0x1c).writePointer(leaf1); leaf1.add(0x18).writeU8(0x77);
+        root.add(5 * 4 + 0x1c).writePointer(mid2); mid2.add(3 * 4 + 0x1c).writePointer(leaf2); leaf2.add(0x18).writeU8(0x88);
+      };
+      try { buildT(); o = Orig(root, key >>> 0, depth) >>> 0; } catch (e) { eo = e.message; }
+      try { buildT(); r = Reim(root, key >>> 0, depth) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

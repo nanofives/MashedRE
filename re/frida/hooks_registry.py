@@ -14397,6 +14397,9 @@ HOOKS = {
     # ---- promote-round round 169 (bounded struct-of-arrays push) --
     'push_4893d0': {'rva': 0x004893d0, 'export': 'Push4893d0', 'signature': {'ret': 'void', 'args': ['pointer','pointer','pointer']}, 'arg_type': 'bounded_struct_push', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
 
+    # ---- promote-round round 170 (trie walk, recursion->loop) --
+    'trie_4daa00': {'rva': 0x004daa00, 'export': 'Trie4daa00', 'signature': {'ret': 'uint32', 'args': ['pointer','uint32','uint32']}, 'arg_type': 'trie_walk', 'lut_root_delta': 0, 'path1_tests': [0, 1], 'path2_tests': [0]},
+
     'ctor_528e30': {'rva': 0x00528e30, 'export': 'Ctor528e30', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'struct_ctor_big', 'buf_dwords': 0x600, 'observe': [{'off': 0xb10}, {'off': 0xb18}, {'off': 0xb1c}, {'off': 0xb24}, {'off': 0xb28}, {'off': 0xb30}, {'off': 0x16ac}, {'off': 0x16b4}, {'off': 0x16a4}, {'off': 0x16a0}, {'off': 0x16a8}, {'off': 0x1698}, {'off': 0x48c}, {'off': 0x8c}, {'off': 0x500}, {'off': 0x980}, {'off': 0xa74}, {'off': 0xabc}], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
     # ---- promote-round round 123 (circular doubly-linked-list search) --

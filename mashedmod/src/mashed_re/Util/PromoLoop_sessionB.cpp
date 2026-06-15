@@ -2212,3 +2212,19 @@ extern "C" __declspec(dllexport) void __cdecl Push4893d0(std::uint8_t* p, std::u
     *reinterpret_cast<int*>(p + 0x54) = 1;
 }
 RH_ScopedInstall(Push4893d0, 0x004893d0);
+
+// ===== round 170 ===== (trie walk; tail-recursion reimplemented as a loop)
+// 0x004daa00 — u32 fn(node, key, depth): while(depth!=0){ depth--; idx=key&0xf; key>>=4;
+//   node=*(u8**)(node+idx*4+0x1c); } return (node & 0xffffff00) | node[0x18].
+//   (orig: mov eax,node; mov al,node[0x18] -> byte in AL, upper 24 bits = node ptr.)
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Trie4daa00(std::uint8_t* node, std::uint32_t key, std::uint32_t depth) {
+    while (depth != 0) {
+        depth--;
+        std::uint32_t idx = key & 0xf;
+        key >>= 4;
+        node = *reinterpret_cast<std::uint8_t**>(node + idx * 4 + 0x1c);
+    }
+    std::uint32_t r = reinterpret_cast<std::uint32_t>(node);
+    return (r & 0xffffff00u) | *reinterpret_cast<std::uint8_t*>(node + 0x18);
+}
+RH_ScopedInstall(Trie4daa00, 0x004daa00);
