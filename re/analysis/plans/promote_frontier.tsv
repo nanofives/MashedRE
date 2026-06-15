@@ -53,12 +53,4 @@ rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
 005b0bb0	FUN_005b0bb0	audio	190	1	005af8f0	other
 005b6a40	FUN_005b6a40	audio	191	1	005b6820	other
 005baf00	MusicGroupVolumeSet	audio	62	2	0045dd60	other
-005c1dac	__ftol	boot	39	5	004b9b60	other
-005c1f1c	__setjmp3	boot	123	5	004b7be0	other
-005c2770	FUN_005c2770	boot	31	1	004fbdd5	other
-005c2f0a	FUN_005c2f0a	boot	28	4	005be260	other
-005c2f58	FUN_005c2f58	boot	22	1	005bf000	arg_getter
-005c3403	FUN_005c3403	boot	7	2	005c33bb	other
-005c3584	__fload	boot	60	2	005c33bb	other
-005c6b60	FUN_005c6b60	boot	75	1	005c7330	other
 005c95b0	FUN_005c95b0	audio	204	3	005c1140	other

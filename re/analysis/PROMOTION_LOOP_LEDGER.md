@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 185
-- total_green: 353
+- rounds_run: 186
+- total_green: 354
 - dry_counter: 0
 - LIBRARY-SKIP CORRECTION (round 184, 2026-06-15): user ruled the statically-linked libpng/zlib
   band (0x516000-0x529fff) is library-skip (NOT first-party promotable). Reverted ALL 4 of MY
@@ -287,6 +287,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 185 | aligned first-fit heap allocator (NEW handler) + CRT band excluded | attempted 1 | GREEN 1 (Alloc5ae4c0 0x005ae4c0: walk embedded block list, free=end-used-block-0xc, align cur top, splice new block, return new+0xc else 0) | total_green 353->354 (354/1000). Status-prechecked C2; caller FUN_005ae3a0 C2 audio (first-party). NEW handler heap_alloc_aligned (one page-aligned block; size0x20/align0x10->+0x30 splice, size0x200->0 fail, align0x20->+0x40). ALSO finally added the MSVC CRT runtime band 0x5c0000-0x5c8000 to promote_frontier.py LIBRARY_BANDS (flagged round 156, never done) — the 0x5cxxxx 'clean' candidates were all CRT (__ftol/wcs*/SEH/__ctrandisp2). POOL STATUS: after excluding libpng/zlib + both CRT bands + D3DX9 + qhull, the genuine first-party CLEAN solo pool is now ZERO (0x5ae4c0 was the last). Remaining frontier = fld-stN float (off-limits), abs-global state (degenerate at suspended-spawn), complex multi-block, or library. The solo early-window vein is DRAINED. Session 101-185 net = +97 (257->354). ~73 handlers. THE PATH TO 1000 IS THE promote-c3-batch PARALLEL FANOUT (awaiting explicit user opt-in). Context 62 rounds deep — fresh context strongly advised.
 
 2026-06-15 | round 184 | LIBRARY-SKIP CORRECTION (no promotion) | attempted 1 (0x51c100) -> REJECTED as libpng | GREEN 0 | total_green 357->353 (net -4 from reverts). Round 184 candidate 0x51c100 (texture pixel converter) status-checked C2, reimpl'd + GREEN, but its caller is png_do_read_transformations -> it is a libpng-internal function. Investigation: 0x516000-0x529fff is statically-linked libpng+zlib (named exports png_sig_cmp/png_free/png_do_read_transformations/zcalloc/zcfree). STOP-AND-ASK -> user ruled LIBRARY-SKIP + revert. Actions: (1) reverted the uncommitted 0x51c100 work; (2) found 4 of MY this-session promotions were in this band (r135 0x528e30 struct-ctor, r149 0x517200 table-search, r179 0x5172f0 byte-formatter, r183 0x520990 memset) -> reverted all C3->C2 (cpp reimpls removed, registry entries removed, hooks.csv demoted); (3) added the band to promote_frontier.py LIBRARY_BANDS; (4) flagged 5 prior-session in-band C3s for user review (not reverted). LESSON (CRITICAL, bake into future rounds): the static cleanliness classifier (no fld-stN/transcendental/abs-global) does NOT detect VENDORED-LIBRARY membership -> ALWAYS check the caller's NAME (png_/z_/inflate/deflate/etc) + the band before promoting; raising MAX_BODY 260->400 surfaced ONLY library functions (the 3 'new clean candidates' 0x51c100/0x519e30/0x528ef0 are all libpng/zlib). Real first-party clean queue after exclusion: 0x5ae4c0 (audio heap allocator) + whatever the band-excluded frontier reveals. dry_counter NOT incremented (this was a policy correction, not pool exhaustion; first-party candidates remain). Session 101-184 net = +96 (257->353). Context 61 rounds deep — fresh context strongly advised.
 

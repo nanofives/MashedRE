@@ -2881,3 +2881,84 @@ RH_ScopedInstall(RecUpd5b0cf0, 0x005b0cf0);
 // [REVERTED 2026-06-15] FUN_00520990 (0x00520990) was promoted in round 183 but is a
 // libpng/zlib memset wrapper (statically-linked library band 0x516000-0x529fff). Per the
 // user's library-skip ruling it is NOT a first-party promotion; demoted back to C2.
+
+// 0x005ae4c0  FUN_005ae4c0 (audio, aligned first-fit block allocator over an embedded list)
+// void* f(heap* arg1, uint32 size, uint32 align): walk blocks at arg1[8] via block[0] (which
+// doubles as block-end) until arg1[0xc] (sentinel). For each block: free = block[0] - block[8]
+// (used) - block - 0xc; if free >= size+0xc, align the cur top (block[8]+block) up to `align`
+// (aligned=((cur+align+0x17)&~(align-1))-0xc) and, if it fits before block-end and >= cur+0xc,
+// splice a new block there (new.prev=block, new.next=old-next, fix neighbor links), new.used=
+// size, return new+0xc. Else next block; none -> 0. Pure int/pointer -> VERBATIM naked port.
+extern "C" __declspec(dllexport) __declspec(naked) void* __cdecl Alloc5ae4c0(void)
+{
+    __asm {
+        mov  eax, dword ptr [esp+4]          // heap (arg1)
+        mov  ecx, dword ptr [esp+8]          // size (arg2)
+        push ebx
+        push ebp
+        mov  edx, dword ptr [eax+8]          // first block
+        mov  ebp, dword ptr [esp+0x14]       // align (arg3)
+        push esi
+        push edi
+        lea  ebx, [ecx+0x0c]                  // size + 0xc
+    L_AL_LOOP:
+        mov  esi, dword ptr [edx]            // block.next/end
+        mov  ecx, dword ptr [edx+8]          // block.used
+        mov  eax, esi
+        sub  eax, ecx
+        sub  eax, edx
+        sub  eax, 0x0c                        // free
+        cmp  eax, ebx
+        jb   L_AL_NEXT
+        lea  edi, [ecx+edx]                   // cur top = used + block
+        lea  eax, [ebp-1]
+        not  eax                              // ~(align-1)
+        lea  ecx, [edi+ebp+0x17]
+        and  ecx, eax                         // align up
+        sub  ecx, 0x0c                        // aligned new-block addr
+        lea  eax, [ebx+ecx]
+        cmp  eax, esi
+        ja   L_AL_NEXT
+        add  edi, 0x0c
+        cmp  ecx, edi
+        jae  L_AL_ALLOC
+    L_AL_NEXT:
+        mov  ecx, dword ptr [esp+0x14]       // arg1 (heap)
+        mov  edx, esi
+        cmp  edx, dword ptr [ecx+0x0c]       // next == sentinel?
+        jne  L_AL_LOOP
+    L_AL_FAIL:
+        pop  edi
+        pop  esi
+        pop  ebp
+        xor  eax, eax
+        pop  ebx
+        ret
+    L_AL_ALLOC:
+        test ecx, ecx
+        je   L_AL_FAIL
+        mov  eax, dword ptr [edx]            // old next
+        mov  dword ptr [ecx+4], edx          // new.prev = block
+        mov  edx, dword ptr [esp+0x14]       // arg1
+        mov  dword ptr [ecx], eax            // new.next = old next
+        cmp  eax, dword ptr [edx+0x0c]       // old next == sentinel?
+        je   L_AL_S1
+        mov  dword ptr [eax+4], ecx          // old_next.prev = new
+    L_AL_S1:
+        mov  eax, dword ptr [ecx+4]          // new.prev (= block)
+        mov  esi, dword ptr [edx+0x0c]       // sentinel
+        cmp  eax, esi
+        je   L_AL_S2
+        mov  dword ptr [eax], ecx            // prev.next = new
+    L_AL_S2:
+        mov  edx, dword ptr [esp+0x18]       // size (arg2)
+        pop  edi
+        pop  esi
+        pop  ebp
+        mov  dword ptr [ecx+8], edx          // new.used = size
+        lea  eax, [ecx+0x0c]                  // return new+0xc
+        pop  ebx
+        ret
+    }
+}
+RH_ScopedInstall(Alloc5ae4c0, 0x005ae4c0);

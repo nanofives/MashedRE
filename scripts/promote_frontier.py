@@ -83,11 +83,14 @@ def load_hooks():
 #   qhull / RW-Phys 0x0057c5b0..0x005a5820  (qhull-2002.1 via RenderWare Physics 3.7)
 #   libpng+zlib     0x00516000..0x00529fff  (statically-linked PNG/zlib: png_*, z*; user
 #                                            ruling 2026-06-15 = library-skip, do NOT promote)
+#   MSVC CRT rt     0x005c0000..0x005c8000  (CRT runtime: __ftol/__setjmp3/wcs*/SEH/__ctrandisp2;
+#                                            flagged round 156, added 2026-06-15 per library-skip)
 LIBRARY_BANDS = (
     (0x004a0000, 0x004b3fff),
     (0x004ec000, 0x004fc9e0),
     (0x0057c5b0, 0x005a5820),
     (0x00516000, 0x00529fff),
+    (0x005c0000, 0x005c8000),
 )
 
 
