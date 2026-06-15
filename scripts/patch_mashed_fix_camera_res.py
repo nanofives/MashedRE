@@ -39,15 +39,21 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXE = os.path.join(ROOT, "original", "MASHED.exe")
 
-WIDTH, HEIGHT = 640, 480
+# Default 640x480; --hires forces 1280x960 (2x) to match the d3d9 shim's
+# MASHED_HIRES backbuffer for high-res parity capture. The chosen size MUST equal
+# the shim's forced backbuffer (else the cam-raster-vs-backbuffer mismatch AVs).
+WIDTH, HEIGHT = (1280, 960) if "--hires" in sys.argv else (640, 480)
 
-# (file_offset, original_bytes, patched_bytes)
+# (file_offset, original 6 bytes "mov eax,[glob];ret"). Patched form is always
+# "B8 <imm32> C3" (mov eax,imm32; ret) — same length.
 SITES = [
-    (0x98BC0, bytes.fromhex("a1286061 00 c3".replace(" ", "")),
-     bytes((0xB8,)) + WIDTH.to_bytes(4, "little") + bytes((0xC3,))),
-    (0x98BD0, bytes.fromhex("a12c6061 00 c3".replace(" ", "")),
-     bytes((0xB8,)) + HEIGHT.to_bytes(4, "little") + bytes((0xC3,))),
+    (0x98BC0, bytes.fromhex("a128606100c3"), WIDTH),
+    (0x98BD0, bytes.fromhex("a12c606100c3"), HEIGHT),
 ]
+
+
+def is_patched_form(b):  # any "mov eax,imm32; ret"
+    return len(b) == 6 and b[0] == 0xB8 and b[5] == 0xC3
 
 
 def main():
@@ -57,17 +63,20 @@ def main():
     data = bytearray(open(EXE, "rb").read())
 
     changed = False
-    for off, orig, patched in SITES:
-        cur = bytes(data[off:off + len(orig)])
-        want_from = patched if restore else orig
+    for off, orig, val in SITES:
+        patched = bytes((0xB8,)) + int(val).to_bytes(4, "little") + bytes((0xC3,))
+        cur = bytes(data[off:off + 6])
         want_to = orig if restore else patched
         if cur == want_to:
             print(f"  0x{off:06x}: already {'restored' if restore else 'patched'}")
             continue
-        if cur != want_from:
+        # Accept the original OR ANY previously-patched res form as a valid base
+        # (so we can re-target a different res, and --restore always recovers the
+        # original getter regardless of which res was applied).
+        if cur != orig and not is_patched_form(cur):
             sys.exit(f"  0x{off:06x}: UNEXPECTED bytes {cur.hex(' ')} "
-                     f"(expected {want_from.hex(' ')}) — aborting, re-anchor first")
-        data[off:off + len(orig)] = want_to
+                     f"— aborting, re-anchor first")
+        data[off:off + 6] = want_to
         changed = True
         print(f"  0x{off:06x}: {cur.hex(' ')} -> {want_to.hex(' ')}")
 

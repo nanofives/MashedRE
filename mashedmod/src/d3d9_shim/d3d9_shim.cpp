@@ -58,8 +58,22 @@ using CreateDeviceFn = HRESULT (STDMETHODCALLTYPE*)(
 CreateDeviceFn g_OriginalCreateDevice = nullptr;
 LONG           g_VtablePatched        = 0;
 
-constexpr UINT kForceBackBufferWidth  = 640;
-constexpr UINT kForceBackBufferHeight = 480;
+// Forced windowed backbuffer. Default 640x480 (matches the camera-res patch);
+// env MASHED_HIRES=1 -> 1280x960 (2x) for high-res parity capture. COUPLING:
+// must equal the camera-res patch's screen-dim getters AND the RE's kWidth/
+// kHeight — re-apply patch_mashed_fix_camera_res.py at the matching res.
+static UINT ForcedBackBufW() {
+    static UINT w = 0;
+    if (!w) { char v[16] = {}; w = (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') ? 1280u : 640u; }
+    return w;
+}
+static UINT ForcedBackBufH() {
+    static UINT h = 0;
+    if (!h) { char v[16] = {}; h = (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') ? 960u : 480u; }
+    return h;
+}
+#define kForceBackBufferWidth  ForcedBackBufW()
+#define kForceBackBufferHeight ForcedBackBufH()
 
 // Reshape the device window with a normal title bar / borders, for comfort when
 // arranging several concurrent MASHED instances on screen (parallel C2->C3 diff
@@ -132,7 +146,7 @@ void ParseDumpFramesOnce() {
     }
 }
 
-void DumpBackbufferBMP(IDirect3DDevice9* dev, int frame) {
+void DumpBackbufferBMPPath(IDirect3DDevice9* dev, const char* path) {
     IDirect3DSurface9* bb = nullptr;
     if (FAILED(dev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bb)) || !bb)
         return;
@@ -148,9 +162,6 @@ void DumpBackbufferBMP(IDirect3DDevice9* dev, int frame) {
     if (SUCCEEDED(dev->GetRenderTargetData(bb, off))) {
         D3DLOCKED_RECT lr = {};
         if (SUCCEEDED(off->LockRect(&lr, nullptr, D3DLOCK_READONLY))) {
-            char path[MAX_PATH];
-            std::snprintf(path, sizeof(path),
-                          "..\\verify\\orig_backbuffer_f%d.bmp", frame);
             std::FILE* f = std::fopen(path, "wb");
             if (f) {
                 const int W = (int)desc.Width, H = (int)desc.Height;
@@ -201,6 +212,27 @@ void DumpBackbufferBMP(IDirect3DDevice9* dev, int frame) {
     bb->Release();
 }
 
+void DumpBackbufferBMP(IDirect3DDevice9* dev, int frame) {
+    char path[MAX_PATH];
+    std::snprintf(path, sizeof(path), "..\\verify\\orig_backbuffer_f%d.bmp", frame);
+    DumpBackbufferBMPPath(dev, path);
+}
+
+// On-demand dump: env MASHED_ORIG_BBDUMP_REQ names a request file. When that
+// file exists, its first line is the target .bmp path; we dump the current
+// backbuffer there and delete the request. Lets an external nav driver
+// (re/frida/capture_orig_screens.py) grab the settled frame of any screen it
+// pushes, instead of guessing fixed present-counts. Poll is one
+// GetFileAttributes per Present (~60/s) — negligible.
+char g_ReqPath[MAX_PATH] = {};
+int  g_ReqArmed = -1;   // -1 unparsed, 0 off, 1 on
+
+void ParseReqOnce() {
+    if (g_ReqArmed != -1) return;
+    g_ReqArmed = (GetEnvironmentVariableA("MASHED_ORIG_BBDUMP_REQ",
+                                          g_ReqPath, sizeof(g_ReqPath)) > 0) ? 1 : 0;
+}
+
 HRESULT STDMETHODCALLTYPE Present_BBDump(
     IDirect3DDevice9* pThis, const RECT* src, const RECT* dst,
     HWND wnd, const RGNDATA* dirty)
@@ -212,12 +244,61 @@ HRESULT STDMETHODCALLTYPE Present_BBDump(
             break;
         }
     }
+    if (g_ReqArmed == 1 &&
+        GetFileAttributesA(g_ReqPath) != INVALID_FILE_ATTRIBUTES) {
+        char target[MAX_PATH] = {};
+        std::FILE* rf = std::fopen(g_ReqPath, "rb");
+        if (rf) { if (!std::fgets(target, sizeof(target), rf)) target[0] = 0;
+                  std::fclose(rf); }
+        for (char* c = target; *c; ++c)
+            if (*c == '\r' || *c == '\n') { *c = 0; break; }
+        DeleteFileA(g_ReqPath);
+        if (target[0]) DumpBackbufferBMPPath(pThis, target);
+    }
     return g_OriginalPresent(pThis, src, dst, wnd, dirty);
+}
+
+// Parity-capture background override. env MASHED_PARITY_BG = an ARGB hex (e.g.
+// ffffffff) — when set, the Clear hook below forces every target-clear to that
+// colour so the original draws its chrome on a flat field (white reads the dark
+// elements that vanish on black). 0 = off.
+using ClearFn = HRESULT (STDMETHODCALLTYPE*)(IDirect3DDevice9*, DWORD,
+    const D3DRECT*, DWORD, D3DCOLOR, float, DWORD);
+ClearFn g_OriginalClear = nullptr;
+
+D3DCOLOR ParityBgColor() {
+    static int init = 0; static D3DCOLOR c = 0;
+    if (!init) {
+        init = 1;
+        char v[16] = {};
+        if (GetEnvironmentVariableA("MASHED_PARITY_BG", v, sizeof(v)) > 0) {
+            unsigned long val = 0;
+            for (const char* p = v; *p; ++p) {
+                int d;
+                if (*p >= '0' && *p <= '9') d = *p - '0';
+                else if (*p >= 'a' && *p <= 'f') d = *p - 'a' + 10;
+                else if (*p >= 'A' && *p <= 'F') d = *p - 'A' + 10;
+                else break;
+                val = (val << 4) | (unsigned long)d;
+            }
+            c = (D3DCOLOR)val;
+        }
+    }
+    return c;
+}
+
+HRESULT STDMETHODCALLTYPE Clear_ForceColor(IDirect3DDevice9* pThis, DWORD count,
+    const D3DRECT* rects, DWORD flags, D3DCOLOR color, float z, DWORD stencil)
+{
+    // Only override the colour of full-target clears (leave z-only clears alone).
+    if ((flags & D3DCLEAR_TARGET) != 0) color = ParityBgColor();
+    return g_OriginalClear(pThis, count, rects, flags, color, z, stencil);
 }
 
 void PatchPresentSlot(IDirect3DDevice9* dev) {
     ParseDumpFramesOnce();
-    if (g_DumpFrameCount <= 0 || !dev) return;           // not armed
+    ParseReqOnce();
+    if ((g_DumpFrameCount <= 0 && g_ReqArmed != 1) || !dev) return;  // not armed
     if (InterlockedExchange(&g_PresentPatched, 1) != 0) return;
     void** vtbl = *reinterpret_cast<void***>(dev);
     DWORD oldProt = 0;
@@ -229,6 +310,13 @@ void PatchPresentSlot(IDirect3DDevice9* dev) {
     vtbl[17] = reinterpret_cast<void*>(&Present_BBDump);
     DWORD tmp = 0;
     VirtualProtect(&vtbl[17], sizeof(void*), oldProt, &tmp);
+    // Clear hook (vtable slot 43) — only when a parity background is requested.
+    if (ParityBgColor() != 0 &&
+        VirtualProtect(&vtbl[43], sizeof(void*), PAGE_READWRITE, &oldProt)) {
+        g_OriginalClear = reinterpret_cast<ClearFn>(vtbl[43]);
+        vtbl[43] = reinterpret_cast<void*>(&Clear_ForceColor);
+        VirtualProtect(&vtbl[43], sizeof(void*), oldProt, &tmp);
+    }
 }
 
 HRESULT STDMETHODCALLTYPE CreateDevice_ForceWindowed(

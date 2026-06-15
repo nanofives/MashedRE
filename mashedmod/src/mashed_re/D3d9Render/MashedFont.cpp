@@ -21,6 +21,13 @@ namespace {
 // bold, smooth, solid glyphs. The 2x Catmull-Rom supersample was a mistake:
 // its negative lobes (ringing) eroded thin strokes and gave the edges a
 // ragged/noisy look (font_fair.png, round-3). Raw atlas + GPU LINEAR = match.
+// 2026-06-15: 2x supersample (kAtlasSS=2) tested for the jagged-font complaint
+// (1280x960 white-bg parity) — did NOT smooth the edges (nor did removing the
+// gamma), so the jaggies are NOT atlas-resolution or coverage-curve. Reverted to
+// 1 (known-good; 2 also risks the stroke-erosion noted earlier). The font
+// jaggedness vs the original's smooth edges is still OPEN — likely the actual
+// draw-time sampler state or a different font the original uses for some text;
+// next step is to instrument the real sampler filter at the glyph draw.
 constexpr int kAtlasSS = 1;
 
 inline float CatmullRom(float t) {
@@ -141,11 +148,32 @@ bool MashedFont::Load(QuadRenderer& qr, std::uint32_t slot, int bridge_handle,
     std::uint8_t* bgra = static_cast<std::uint8_t*>(
         std::malloc(static_cast<std::size_t>(W) * H * 4));
     if (!bgra) { std::free(cov); return false; }
+    // Coverage->alpha with a mild gamma boost (user 2026-06-13: "transparency
+    // filter too aggressive on the borders; the original is a little bolder").
+    // The raw 8bpp coverage is the atlas's AA fringe; a gamma < 1 lifts the
+    // mid-coverage edge pixels so strokes read slightly heavier/less-transparent
+    // WITHOUT hardening/quantizing the edge (that earlier smoothstep pass
+    // pixelated them). 0.72 ~= +18% alpha at the 50% edge, tapering to 0 at the
+    // extremes (0 stays 0, 255 stays 255 — no halo, no fill change).
+    // CORRECTED 2026-06-15 (1280x960 white-bg parity, verify/_cmp_s4_title.png):
+    // the gamma 0.72 lift STEEPENED the atlas AA fringe -> hard/jagged glyph
+    // edges vs the original's smooth ones (the "pixelated" complaint). The
+    // original draws the raw 8bpp coverage as alpha (no gamma), LINEAR-sampled.
+    // Use the coverage directly so the soft AA fringe is preserved.
+    // MASHED_FONT_GAMMA env (default 1.0 = natural) lets the boldness be tuned
+    // without a rebuild while we dial it in.
+    double gamma = 1.0;
+    { char gv[16] = {}; if (GetEnvironmentVariableA("MASHED_FONT_GAMMA", gv, sizeof(gv)) > 0) { double g = atof(gv); if (g > 0.05 && g < 5.0) gamma = g; } }
+    std::uint8_t alphaLut[256];
+    for (int v = 0; v < 256; ++v) {
+        const double a = std::pow(v / 255.0, gamma) * 255.0 + 0.5;
+        alphaLut[v] = static_cast<std::uint8_t>(a < 0 ? 0 : (a > 255 ? 255 : a));
+    }
     for (std::size_t i = 0; i < static_cast<std::size_t>(W) * H; ++i) {
         bgra[i * 4 + 0] = 255;            // B
         bgra[i * 4 + 1] = 255;            // G
         bgra[i * 4 + 2] = 255;            // R
-        bgra[i * 4 + 3] = cov[i];         // A = coverage
+        bgra[i * 4 + 3] = alphaLut[cov[i]];  // A = gamma-boosted coverage
     }
     std::free(cov);
     const bool up = qr.UploadBGRAToSlot(slot, W, H, bgra);

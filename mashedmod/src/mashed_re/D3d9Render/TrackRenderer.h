@@ -27,6 +27,8 @@
 #include <vector>
 
 #include "../Race/RaceCamera.h"
+#include "ParticleSystem.h"
+#include "PickupField.h"
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -95,6 +97,16 @@ public:
     }
     float car_speed() const { return car_speed_; }
 
+    // Enable track-weather particles (0=none, 1=snow, 2=dust). Called when a
+    // race begins; the field is drawn at the end of the 3D pass.
+    void SetAmbientParticles(int type) {
+        parts_.SetAmbient(type == 1 ? ParticleSystem::Snow
+                         : type == 2 ? ParticleSystem::Dust
+                                     : ParticleSystem::None,
+                          track_radius_ > 1.f ? track_radius_ : radius_);
+        parts_.Reset();
+    }
+
 private:
     static constexpr DWORD kFVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
@@ -102,7 +114,27 @@ private:
     std::vector<IDirect3DTexture9*>  textures_;  // per material (may be null)
     float  center_[3] = {};
     float  radius_    = 1.f;
+    // Orbit-camera focus derived from the AI gate ribbon (the raceable track),
+    // not the raw world bbox — the bbox is skewed by skybox/backdrop geometry,
+    // so orbiting its midpoint frames mostly empty sky. Falls back to the bbox
+    // center/radius when there are too few gates. Set in Load().
+    float  track_center_[3] = {};
+    float  track_radius_    = 1.f;
     bool   ready_     = false;
+    ParticleSystem parts_;          // in-race weather/dust billboards
+    PickupField    pickups_;        // in-race power-up orbs
+    float  last_t_    = -1.f;        // for per-frame dt (particles)
+
+public:
+    // Enable + place power-up pickups along the gate ribbon (called when a race
+    // starts). The HUD reads collected()/held() back. No-op if no gates.
+    void InitPickups();
+    int  pickups_collected() const { return pickups_.collected(); }
+    int  pickup_held() const { return pickups_.held(); }
+    const char* pickup_held_name() const {
+        return PickupField::KindName(pickups_.held());
+    }
+private:
 
     // free-camera state (orbit when !free_)
     bool   free_      = false;

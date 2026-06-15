@@ -229,13 +229,17 @@ int ActionToScreen(std::uint32_t action, int slot_kind) {
         case 0xff3b0000u: return 6;    // L914
         case 0xff400000u: return 4;    // L273 (LAB_0043f468 path; pushes 4)
         case 0xff1d0000u:
-            // L342-365 (color-select forward). The original pushes 0xf (Ability
-            // Select) when FUN_00430760()==0 && team-comp==0x1000 && ea64==0,
-            // else 0x10 (Team Select). The fresh single-player keyboard state
-            // takes the Ability-Select branch — wire that so the menu chain
-            // (color -> ability -> challenge) is navigable instead of
-            // dead-ending. [Team-mode 0x10 branch is state-gated; not modelled.]
-            return 0xf;  // 15 = Ability Select
+            // Colour-select forward (FUN_0043dfd0 L303+). STATE-DEPENDENT, CORRECTED
+            // 2026-06-15: the post-colour screen is Challenge Select for the
+            // single-player flow, NOT Ability Select (user). The original:
+            //   ecdc != 0           -> push 6  (Challenge Select, kind-2)
+            //   ecdc == 0, ed6c == 0-> push 7  (Challenge Select, kind-0xa) [SP default]
+            //   ecdc == 0, ed6c != 0-> push 0xf (Ability) / 0x10 (Team)  [team/MP]
+            // Ability Select is the TEAM/MULTIPLAYER branch (after the per-player
+            // team-array setup), not the single-player Challenge Cup path.
+            if (g_game_state.flag_ecdc != 0) return 6;
+            if (g_game_state.flag_ed6c == 0) return 7;   // SP -> Challenge Select
+            return 0xf;  // team/MP -> Ability Select [residual: 0x10 Team when ea64!=0]
         case 0xff4a0000u: return kActReload; // L1145 FUN_0043d2a0(0,2)
         case 0xff3a0000u: return kActReload; // L907 FUN_0043d2a0(0,2)
         case 0xff150000u: return kActReload; // L338 FUN_0043d2a0(0,2)
@@ -770,8 +774,17 @@ inline void F8Set(MenuRecord& r, float f) { std::memcpy(&r.row_index, &f, 4); }
 //     f8 = 180.0f raw 0x43340000, freeze. (No base multiplier on this path.)
 // Returns 1 when nothing is left animating; a record counts as animating when
 // tag != 0 && type != 0x1000 && DAT_0067e914 != 0 (0x004325f5..0x0043260d).
+// Deliberate menu-feel tuning (user feedback 2026-06-13 "animations are too
+// slow"): the verbatim FUN_004325c0 step (base 1.0) settles the slide
+// 0x1ff->0 in ~0.77s. That matches the original's timing but reads as sluggish
+// for menu navigation. kMenuAnimSpeedup multiplies the per-tick step so the
+// slide settles in ~0.77/kMenuAnimSpeedup s. NOT a faithfulness change — the
+// settle endpoint (positions/colors) is identical, only the transition rate
+// differs. Set to 1.0 to restore the exact verbatim rate.
+constexpr float kMenuAnimSpeedup = 6.0f;
+
 bool Anim_Tick() {
-    const float base = (g_anim_phase >= 4) ? 2.0f : 1.0f;   // 0x004325c8..db
+    const float base = ((g_anim_phase >= 4) ? 2.0f : 1.0f) * kMenuAnimSpeedup;  // 0x004325c8..db
     const NavSlot& slot = g_stack[g_nav_depth];
     int all_settled = 1;                                    // [ESP+0x10]
     for (int i = 0; i < 30 && i < kMaxRecords; ++i) {       // 0x898ad0..0x8990e8

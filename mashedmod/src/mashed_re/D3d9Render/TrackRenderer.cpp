@@ -542,6 +542,30 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     const float dz = world.bbox[2] - world.bbox[5];
     radius_ = 0.5f * std::sqrt(dx * dx + dz * dz);
 
+    // Orbit-camera focus from the AI gate ribbon (the raceable track). The raw
+    // world bbox above is skewed by the skybox/backdrop, so its midpoint sits in
+    // empty air well above the track and orbiting it frames mostly sky. The gate
+    // centers trace the racing line, so their XZ centroid + max extent give a
+    // vantage that keeps the track in frame and at the track surface Y.
+    for (int k = 0; k < 3; ++k) track_center_[k] = center_[k];
+    track_radius_ = radius_;
+    if (gates_.size() >= 3) {
+        float c[3] = {0.f, 0.f, 0.f};
+        for (const auto& g : gates_)
+            for (int k = 0; k < 3; ++k) c[k] += g.center[k];
+        const float inv = 1.f / static_cast<float>(gates_.size());
+        for (int k = 0; k < 3; ++k) c[k] *= inv;
+        float rmax = 0.f;
+        for (const auto& g : gates_) {
+            const float gdx = g.center[0] - c[0];
+            const float gdz = g.center[2] - c[2];
+            const float r = std::sqrt(gdx * gdx + gdz * gdz);
+            if (r > rmax) rmax = r;
+        }
+        for (int k = 0; k < 3; ++k) track_center_[k] = c[k];
+        track_radius_ = (rmax > 1.f) ? rmax : radius_;
+    }
+
     if (log) {
         int textured = 0;
         for (auto* t : textures_) if (t) ++textured;
@@ -553,6 +577,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                      piz_path, world.total_tris, world.total_verts,
                      world.sectors.size(), world.materials.size(), textured,
                      radius_, props_.size(), prop_inst, gates_.size());
+        std::fprintf(log, "  CAM-DIAG bbox=[%.1f,%.1f,%.1f .. %.1f,%.1f,%.1f] "
+                          "bbox_center=(%.1f,%.1f,%.1f) bbox_R=%.1f | "
+                          "gate_center=(%.1f,%.1f,%.1f) gate_R=%.1f\n",
+                     world.bbox[0], world.bbox[1], world.bbox[2],
+                     world.bbox[3], world.bbox[4], world.bbox[5],
+                     center_[0], center_[1], center_[2], radius_,
+                     track_center_[0], track_center_[1], track_center_[2],
+                     track_radius_);
         std::fclose(log);
     }
     ready_ = true;
@@ -1087,6 +1119,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     const float steer_target = in.steer * 0.45f;
     const float k = (10.f * in.dt > 1.f) ? 1.f : 10.f * in.dt;
     steer_vis_ += (steer_target - steer_vis_) * k;
+
+    // power-up pickups: collect orbs the player drives through (respawn loop).
+    pickups_.Update(in.dt, car_pos_);
 }
 
 void TrackRenderer::StartRound() {
@@ -1143,6 +1178,14 @@ void TrackRenderer::StartMatch(int /*first_to: superseded by the ported
     }
     elim_count_ = 0;
     StartRound();
+}
+
+void TrackRenderer::InitPickups() {
+    std::vector<std::array<float, 3>> spots;
+    spots.reserve(gates_.size());
+    for (const auto& g : gates_)
+        spots.push_back({g.center[0], g.center[1], g.center[2]});
+    pickups_.Init(spots, track_radius_ > 1.f ? track_radius_ : radius_);
 }
 
 // 0x0040b290 (standard path, mode 0 / no teams): prev snapshot, signed delta
@@ -1323,11 +1366,16 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         eye[2] = car_pos_[2] - std::sin(car_yaw_) * back;
         at[0] = car_pos_[0]; at[1] = car_pos_[1] + 0.8f; at[2] = car_pos_[2];
     } else {
+        // Auto-orbit around the racing-line focus (gate centroid/extent), not
+        // the bbox midpoint — keeps the track framed and at the surface Y. Eye
+        // raised to ~1.1x extent for a clear, slightly-overhead vantage.
+        const float* C = track_center_;
+        const float  R = track_radius_;
         const float yaw = t * 0.3f;
-        eye[0] = center_[0] + radius_ * 1.15f * std::cos(yaw);
-        eye[1] = center_[1] + radius_ * 0.55f;
-        eye[2] = center_[2] + radius_ * 1.15f * std::sin(yaw);
-        at[0] = center_[0]; at[1] = center_[1]; at[2] = center_[2];
+        eye[0] = C[0] + R * 1.60f * std::cos(yaw);
+        eye[1] = C[1] + R * 1.10f;
+        eye[2] = C[2] + R * 1.60f * std::sin(yaw);
+        at[0] = C[0]; at[1] = C[1]; at[2] = C[2];
     }
     for (int i = 0; i < 3; ++i) { last_eye_[i] = eye[i]; last_at_[i] = at[i]; }
 
@@ -1373,8 +1421,15 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         }
         dev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
     }
-    // fog (COURSE.LUA Setup_Fog) + alpha cutouts (fence/grate textures)
-    if (fog_on_) {
+    // fog (COURSE.LUA Setup_Fog) + alpha cutouts (fence/grate textures).
+    // The fog range (Setup_Fog end) is calibrated for the in-game chase camera,
+    // which sits a few units behind the car. The orbit/free OVERVIEW cameras sit
+    // a full track-radius back (~1.6x extent), well beyond fog_end_, so applying
+    // the gameplay fog there washes the entire track to fog_color (the dark
+    // sliver we saw). Apply fog only when following the car (chase/race cam);
+    // the overview cameras render unfogged so the whole track is visible.
+    const bool chase_cam = car_ready_ && !free_;
+    if (fog_on_ && chase_cam) {
         dev->SetRenderState(D3DRS_FOGENABLE, TRUE);
         dev->SetRenderState(D3DRS_FOGCOLOR, fog_color_);
         dev->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_LINEAR);
@@ -1383,6 +1438,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         std::memcpy(&fe, &fog_end_, 4);
         dev->SetRenderState(D3DRS_FOGSTART, fs);
         dev->SetRenderState(D3DRS_FOGEND, fe);
+    } else {
+        dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
     }
     dev->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
     dev->SetRenderState(D3DRS_ALPHAREF, 0x30);
@@ -1551,6 +1608,21 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     }
 
     dev->SetTexture(0, nullptr);
+
+    // In-race particles (weather + car dust): update with the per-frame dt and
+    // draw camera-facing billboards. Depth-test ON so geometry occludes them;
+    // depth-write OFF so they blend. Only while actually racing (car present).
+    if (parts_.ambient() != ParticleSystem::None || car_ready_) {
+        const float dt = (last_t_ < 0.f) ? 0.f : (t - last_t_);
+        last_t_ = t;
+        float fwd[3] = {at[0]-eye[0], at[1]-eye[1], at[2]-eye[2]};
+        parts_.Update(dt, eye, fwd, car_ready_ ? car_pos_ : nullptr,
+                      car_ready_ ? car_speed_ : 0.f);
+        parts_.Render(dev, eye, at);
+        // power-up orbs (additive glow billboards) on top of the weather
+        if (pickups_.enabled()) pickups_.Render(dev, eye, at);
+    }
+
     dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
     dev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
     dev->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);  // back to the 2D menu path

@@ -16,7 +16,12 @@ setlocal
 set VCVARS="C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars32.bat"
 set ROOT=%~dp0
 set SRC=%ROOT%src\d3d9_shim
-set OUT=%ROOT%build
+REM Output to a DEDICATED subdir, NOT %ROOT%build (which holds mashed_re.exe).
+REM A d3d9.dll next to mashed_re.exe gets picked up as the standalone's d3d9
+REM import (exe-dir is first in the DLL search order); the shim's DllMain then
+REM LoadLibraryW("d3d9_real.dll") under loader lock, finds no d3d9_real.dll in
+REM that dir, and DEADLOCKS the standalone before WinMain. Keep the two apart.
+set OUT=%ROOT%build\d3d9shim
 set ORIG=%ROOT%..\original
 
 if not exist "%OUT%" mkdir "%OUT%"

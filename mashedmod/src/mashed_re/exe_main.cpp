@@ -162,6 +162,8 @@
 #include "D3d9Render/DrawStreamDump.h"      // parity harness: MASHED_DBG_DRAWSTREAM
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
+#include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
+#include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
 // Frontend/DrawQuadPrimitives.cpp). Writes the DAT_00898a20 vertex buffer and
@@ -319,9 +321,36 @@ IDirectInputDevice8A* g_kbd           = nullptr;
 unsigned char         g_keys[256]     = {};   // raw DInput key state, set 0x80 if held
 unsigned char         g_keys_prev[256]= {};   // last frame, for edge detection
 
-constexpr int   kWidth         = 800;
-constexpr int   kHeight        = 600;
+// Backbuffer/window size. 640x480 matches the ORIGINAL's render resolution
+// 1:1, so the FGDC20 bitmap font (a ~27px atlas font) draws at its native
+// size = pixel-crisp (the original's own crispness). At 800x600 the same
+// glyph is drawn at ~34px = a 1.25x upscale of a fixed-resolution bitmap, which
+// no filtering/supersampling can sharpen (proven 2026-06-13: stroke width,
+// atlas, and filter all matched the original; only the upscale softened edges).
+// kVScale maps MASHED's 640x480 virtual coords onto the backbuffer; at 640x480
+// it is 1.0 (1:1). Every menu draw uses virtual*kVScale, so this one knob
+// rescales the whole frontend. RUNTIME (was constexpr) so env MASHED_HIRES=1
+// switches the whole standalone to 1280x960 (2x) for high-res parity capture —
+// the crisp 1:1 default stays 640x480. Set once in main before InitD3D9.
+int   kWidth         = 640;
+int   kHeight        = 480;
+float kVScale        = 1.0f;     // = kWidth/640
 constexpr char  kClassName[]   = "MashedRE";
+// Parity-capture background. 0 = black (default). env MASHED_PARITY_BG = an ARGB
+// hex (e.g. ffffffff) overrides it, so dark elements (black text/bands/spade)
+// that vanish on black read against a white field. Only used in MASHED_PARITY.
+std::uint32_t g_parity_bg = 0xff000000u;
+// Apply the MASHED_HIRES / MASHED_PARITY_BG envs (call before InitD3D9).
+inline void ApplyResolutionEnv() {
+    char v[16] = {};
+    if (GetEnvironmentVariableA("MASHED_HIRES", v, sizeof(v)) > 0 && v[0] == '1') {
+        kWidth = 1280; kHeight = 960;
+    }
+    kVScale = kWidth / 640.0f;
+    char bg[16] = {};
+    if (GetEnvironmentVariableA("MASHED_PARITY_BG", bg, sizeof(bg)) > 0)
+        g_parity_bg = static_cast<std::uint32_t>(std::strtoul(bg, nullptr, 16));
+}
 
 // Path to one Mashed asset archive. Resolved relative to the exe's working
 // directory (Mashed itself does the same — TOASTART/Common/* paths). For B1 we
@@ -473,6 +502,12 @@ int              g_modal_alpha      = 0;
 int              g_modal_step       = 0;     // 0=none; 10/11 load; 20/21/22 save
 bool             g_modal_yesno      = false; // true=Yes/No, false=single Continue
 DWORD            g_modal_timer_ms   = 0;     // auto-advance timer for the saving step
+bool             g_boot_loadsuccess = false; // true while the boot Loading->Load
+                                             // Successful modal auto-advances (#2)
+bool             g_modal_fadeout    = false; // true while the current modal is
+                                             // fading OUT before the next one fades
+                                             // in (the brief Loading->Load
+                                             // Successful transition; user 2026-06-14)
 std::uint32_t    g_menu_logo_w     = 0;
 std::uint32_t    g_menu_logo_h     = 0;
 
@@ -579,11 +614,52 @@ constexpr std::uint32_t kSlotBigE      = 57;
 constexpr int           kHandleBigE    = 48;
 bool             g_bige_ready = false;
 
+// #10 (2026-06-13): per-player input-device icons for Player Colour Select.
+// RE'd: FUN_0042bcb0 reads the player's device state DAT_007e96fc[player*0x80]
+// (==2 keyboard, ==1 joypad) and looks the sprite up BY NAME ("keyboard" /
+// "joypad") in dict DAT_00636ac8 = FUN_004b3d80("toastart\\pc\\pc.txd") — a
+// LOOSE TXD (not a piz), which is why earlier asset searches missed it.
+// PC.TXD carries keyboard/keyboardi/joypad/joypadi.
+constexpr std::uint32_t kSlotInputKbd  = 58;
+constexpr int           kHandleInputKbd = 49;
+constexpr std::uint32_t kSlotInputJoy  = 59;
+constexpr int           kHandleInputJoy = 50;
+bool             g_inputicons_ready = false;
+
+// Challenge Select (s6/s7) gold "Star" sprite — the per-challenge lock/medal
+// icon (original draws FUN_0040bb50("Star",...); the name lives in
+// INTERFACE.TXD inside sfx.piz, confirmed 2026-06-14). Fresh-save layout: the
+// first (unlocked) challenge row shows star + name on an orange bar; the locked
+// rows below show a lone star.
+constexpr std::uint32_t kSlotStar      = 60;
+constexpr int           kHandleStar    = 51;
+bool             g_star_ready = false;
+
+// Game Mode (s18/s24) vehicle preview sprites "car1".."car8" — the selected
+// vehicle's render (e.g. Hammerhead) shown center-right by FUN_0043af10's tail
+// (FUN_0040bb70((&PTR_DAT_005f6710)[FUN_0042a980(slot)]); names car1..car8 read
+// from 0x5f66a8, 2026-06-14). Sourced from SFX.piz/TRACKIMAGES.TXD.
+constexpr std::uint32_t kSlotVehPrev0  = 61;   // slots 61..68
+constexpr int           kHandleVehPrev0 = 52;  // handles 52..59
+bool             g_vehprev_ready = false;
+
 // R4 opener — track fly-through mode (env MASHED_TRACK_VIEW=<piz path or 1
 // for Arctic>). Renders the cracked RW world (Track/TrackWorld) through the
 // spike renderer (D3d9Render/TrackRenderer) with an auto-orbit camera.
 bool                                  g_track_view = false;
 mashed_re::D3d9Render::TrackRenderer  g_track;
+// Round 1 (race flow): campaign track id -> TRACKS .piz. The cup display names
+// (Angel Peak, ...) don't match the AREA .piz names; the exact COURSE.LUA
+// display->area mapping is a refinement — for now each cup slot loads a distinct
+// real race track so "launch the selected track" works. [residual: real map.]
+static const char* kRaceTrackPiz[] = {
+    "Arctic", "Egypt", "City", "Forest", "Highway", "Neustein", "Storm", "SuperG" };
+const char* RaceTrackPizPath(int trackId, char* buf, int cap) {
+    const int n = static_cast<int>(sizeof(kRaceTrackPiz) / sizeof(kRaceTrackPiz[0]));
+    if (trackId < 0 || trackId >= n) trackId = 0;
+    std::snprintf(buf, cap, "original/TOASTART/TRACKS/%s.piz", kRaceTrackPiz[trackId]);
+    return buf;
+}
 constexpr float         kMenuTextHeight = 30.f;   // on-screen glyph height (px)
 wchar_t          g_menu_msgs[8][64] = {};
 
@@ -718,6 +794,10 @@ void PollKeyboard() {
 // the push/pop/cursor-move transitions are captured without any screen-grab.
 // --------------------------------------------------------------------------
 bool g_nav_demo = false;
+// Round-1 race-flow verification driver (env MASHED_RACE_DEMO=1). Like the nav
+// demo, drives the REAL input path but launches a race from Challenge Select and
+// captures the in-race 3D view. Defined below; also bypasses the focus gate.
+bool g_race_demo = false;
 
 // Dump the current backbuffer (post-Present is unavailable, so we grab the
 // render target before Present, see RenderFrame) to a 24-bit BMP. Self-contained
@@ -859,6 +939,104 @@ bool RunNavDemoStep(int /*phase*/) {
         case 26: NavDemoTap(DIK_ESCAPE); step = 27; cool = 18; return false; // pop to main menu
         case 27: cap("12_back_mainmenu2"); step = 28; cool = 6; return false;
         case 28: NavDemoLog(step, "done", true); return true;
+        default: return true;
+    }
+}
+
+// Robust frontend parity-walk (env MASHED_PARITY=1). Single launch: visits every
+// reachable non-race frontend screen via the nav SM and dumps a settled capture
+// of each to verify/parity/re_s<scr>.bmp. The original-side counterpart
+// (re/frida/frontend_parity.py) drives MASHED's FUN_0043d2a0 through the SAME
+// screen list and dumps via the d3d9-shim on-demand req, so each screen is
+// captured identically on both sides for a per-screen faithfulness diff. All
+// menu items are visible per screen (the list shows them all), so a cursor-0
+// settled shot exposes every option. Quits when the walk completes.
+bool g_parity = false;
+bool RunParityWalk(int phase) {
+    using namespace mashed_re::Frontend;
+    static const int kScr[] = { 1, 2, 3, 4, 6, 7, 8, 15, 16, 18,
+                                19, 24, 29, 30, 31, 32, 33 };
+    static const int kN = static_cast<int>(sizeof(kScr) / sizeof(kScr[0]));
+    static int idx = -1;
+    static DWORD goto_ms = 0;
+    // Dwell on each screen by REAL TIME, not a frame counter — a fixed frame
+    // count is shorter than the slide-in settle at high fps, so the old cool=14
+    // captured mid-animation (user 2026-06-15). 1100ms lets the plate-grow/
+    // slide finish AND is long enough to watch the walk.
+    constexpr DWORD kDwellMs = 1100;
+    if (g_frontend_phase < 3) { g_frontend_phase = 3; LogoOverlayFadeSet(0xff, -1); }
+    if (idx == -1) {           // first: enter screen 0 of the list
+        CreateDirectoryA("verify\\parity", nullptr);
+        idx = 0; Nav_DevGoto(kScr[0]); goto_ms = GetTickCount(); return false;
+    }
+    if (idx >= kN) return true;
+    if (GetTickCount() - goto_ms < kDwellMs) return false;   // wait for the animation to settle
+    char path[128];
+    std::snprintf(path, sizeof(path), "verify/parity/re_s%d.bmp", kScr[idx]);
+    DumpBackbufferBMP(path);
+    NavDemoLog(phase, path, true);
+    ++idx;
+    if (idx >= kN) return true;
+    Nav_DevGoto(kScr[idx]); goto_ms = GetTickCount();
+    return false;
+}
+
+// ROUND-1 race-flow verification driver (env MASHED_RACE_DEMO=1, paired with
+// MASHED_GOTO=6 so we start parked on the Challenge Select screen). This proves
+// the goal end-to-end through the REAL code paths: it injects an Enter edge
+// (consumed by UpdateMenuSelection's sid==6 handler -> RaceTrackPizPath +
+// g_track.Load + GameFlow_RequestRace), waits for the GameFlow LoadingRace->
+// InRace gate, captures the in-race 3D track view, then injects an Esc edge
+// (GameFlow_RequestExit -> Frontend) and captures the menu again. Captures land
+// in verify/race1/. Returns true when finished (caller quits).
+bool RunRaceDemoStep(int /*phase*/) {
+    if (!g_race_demo) return false;
+    static int step = 0, cool = 0;
+    static DWORD t_ms = 0;
+    static bool s_cap[3] = {};
+    if (cool > 0) { --cool; return false; }
+    const bool inrace = (mashed_re::Race::GameFlow_Mode() ==
+                         mashed_re::Race::GameMode::InRace);
+    const bool frontend = (mashed_re::Race::GameFlow_Mode() ==
+                           mashed_re::Race::GameMode::Frontend);
+    auto cap = [&](const char* tag) {
+        char path[160];
+        std::snprintf(path, sizeof(path), "verify/race1/%s.bmp", tag);
+        NavDemoLog(step, tag, DumpBackbufferBMP(path));
+    };
+    switch (step) {
+        case 0:  // settle on Challenge Select for ~0.6s, snapshot it, then Enter
+            CreateDirectoryA("verify\\race1", nullptr);
+            if (g_frontend_phase < 3 || g_modal_step != 0) return false;
+            if (t_ms == 0) { t_ms = GetTickCount(); return false; }
+            if (GetTickCount() - t_ms < 600) return false;
+            cap("00_challengeselect");
+            NavDemoTap(DIK_RETURN);   // -> sid==6 handler launches the race
+            step = 1; t_ms = 0; return false;
+        case 1:  // LoadingRace -> InRace; capture a few moments (start grid +
+                 // mid-race) so at least one frames the track/cars well, then Esc.
+            if (inrace) {
+                if (t_ms == 0) t_ms = GetTickCount();
+                const DWORD el = GetTickCount() - t_ms;
+                if (el >= 1800 && !s_cap[0]) { s_cap[0] = true; cap("01_grid");   }
+                if (el >= 4200 && !s_cap[1]) { s_cap[1] = true; cap("01_inrace_track"); }
+                if (el >= 6600 && !s_cap[2]) {
+                    s_cap[2] = true; cap("01_action");
+                    NavDemoTap(DIK_ESCAPE);   // GameFlow_RequestExit -> Frontend
+                    step = 2; cool = 10;
+                }
+            } else if (frontend && t_ms != 0) {
+                // safety: race ended before we captured -> don't hang. Capture
+                // whatever's on screen and finish.
+                cap("01_inrace_track");
+                step = 3; cool = 4;
+            }
+            return false;
+        case 2:  // confirm we returned to the menu after Esc
+            if (frontend) { cap("02_back_to_menu"); step = 3; cool = 4; }
+            return false;
+        case 3:
+            NavDemoLog(step, "race-demo done", true); return true;
         default: return true;
     }
 }
@@ -1078,10 +1256,11 @@ void ModalGo(int step) {
         case 21: g_modal_body_id = 0x233; g_modal_yesno = false;        // "Saving game data."
                  g_modal_timer_ms = GetTickCount();              break; // auto-advance
         case 22: g_modal_body_id = 0x279; g_modal_yesno = false; break; // "Save successful."
-        // Round-3: brief LOADING modal after press-button (body 0x222
-        // "Loading", no buttons, auto-dismiss); and the Exit-To-Windows quit
-        // confirm (body 0x34 "Are you sure you want to quit the game?").
-        case 30: g_modal_body_id = 0x222; g_modal_yesno = false;        // "Loading"
+        // Round-3: brief LOADING modal after press-button (auto-dismiss, no
+        // buttons); the boot loading message is "Loading saved game data."
+        // (0x231, NOT the bare "Loading" 0x222 — user 2026-06-14); and the
+        // Exit-To-Windows quit confirm (body 0x34).
+        case 30: g_modal_body_id = 0x231; g_modal_yesno = false;     // "Loading saved game data."
                  g_modal_button_id = -1;                                 // no button
                  g_modal_timer_ms = GetTickCount();              break; // auto-advance
         case 40: g_modal_body_id = 0x34;  g_modal_yesno = true;  break; // quit-game confirm
@@ -1096,7 +1275,7 @@ bool UpdateMenuSelection() {
     // reads GLOBAL key state even when our window isn't focused — meaning keys
     // pressed in another app were driving the menu. Gate all input on window
     // focus (g_active, set by WM_ACTIVATE); the nav-demo driver bypasses this.
-    if (!g_active && !g_nav_demo) return false;
+    if (!g_active && !g_nav_demo && !g_race_demo) return false;
     const bool up_now    = (g_keys[DIK_UP]        & 0x80) != 0;
     const bool up_prev   = (g_keys_prev[DIK_UP]   & 0x80) != 0;
     const bool down_now  = (g_keys[DIK_DOWN]      & 0x80) != 0;
@@ -1105,6 +1284,12 @@ bool UpdateMenuSelection() {
     const bool ent_prev  = (g_keys_prev[DIK_RETURN]& 0x80) != 0;
     const bool esc_now   = (g_keys[DIK_ESCAPE]    & 0x80) != 0;
     const bool esc_prev  = (g_keys_prev[DIK_ESCAPE]& 0x80) != 0;
+    // ROUND 1: while in a race the menu is hidden — Esc exits back to the
+    // frontend; swallow all other menu input so nav doesn't run under the race.
+    if (mashed_re::Race::GameFlow_Mode() == mashed_re::Race::GameMode::InRace) {
+        if (esc_now && !esc_prev) mashed_re::Race::GameFlow_RequestExit();
+        return false;
+    }
     const bool bks_now   = (g_keys[DIK_BACK]      & 0x80) != 0;
     const bool bks_prev  = (g_keys_prev[DIK_BACK] & 0x80) != 0;
     const bool lft_now   = (g_keys[DIK_LEFT]      & 0x80) != 0;
@@ -1152,7 +1337,8 @@ bool UpdateMenuSelection() {
     if (g_modal_step != 0) {
         const bool yes = (ent_now && !ent_prev);
         const bool no  = (esc_now && !esc_prev);
-        if (g_modal_step == 21 || g_modal_step == 30) return false;  // auto-advancing
+        if (g_modal_step == 21 || g_modal_step == 30 ||
+            (g_modal_step == 11 && g_boot_loadsuccess)) return false;  // auto-advancing
         if (g_modal_yesno) {
             if (g_modal_step == 40) {                // quit-to-Windows confirm
                 if (yes)      return true;           // Yes -> quit
@@ -1188,6 +1374,21 @@ bool UpdateMenuSelection() {
             ModalGo(10); g_modal_alpha = 0;
         } else if (sid == 8 && cur == 3) { // Save Game
             ModalGo(20); g_modal_alpha = 0;
+        } else if (sid == 6 || sid == 7) {
+            // ROUND 1 (race flow): Challenge Select -> launch the race. Load the
+            // selected cup track's .piz into the track renderer, then enter the
+            // InRace state (GameFlow). RenderFrame draws the 3D track while
+            // InRace; Esc returns to the menu.
+            char piz[160];
+            RaceTrackPizPath(mashed_re::Race::Campaign_SelectedTrack(), piz, sizeof(piz));
+            if (g_track.Load(g_device, piz, kLogPath)) {
+                mashed_re::Race::RaceConfig cfg;
+                cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
+                cfg.gameMode = 6;          // challenge
+                // Hand the engine + device to GameFlow so RaceSession::Begin can
+                // spawn the cars + start the match (activates the real sim).
+                mashed_re::Race::GameFlow_RequestRace(cfg, &g_track, g_device);
+            }
         } else {
             Nav_Select();                  // push child screen
         }
@@ -1580,7 +1781,12 @@ bool RenderFrame() {
     // R4 opener: track fly-through mode (MASHED_TRACK_VIEW). Renders the
     // parsed RW world instead of the menu; dumps three orbit screenshots
     // for verification, then keeps flying.
-    if (g_track_view && g_track.ready()) {
+    // R4 dev fly-through (MASHED_TRACK_VIEW) OR the ROUND-1 race flow: while the
+    // GameFlow is InRace, render the loaded 3D track here (the menu is suppressed
+    // — this block returns before the frontend draw).
+    const bool in_race = (mashed_re::Race::GameFlow_Mode() ==
+                          mashed_re::Race::GameMode::InRace);
+    if ((g_track_view || in_race) && g_track.ready()) {
         g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
                         g_track.fog_color(), 1.0f, 0);  // horizon = fog color
         g_device->BeginScene();
@@ -1704,6 +1910,13 @@ bool RenderFrame() {
                     DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
                                      0xffffffffu);
                 }
+                // Power-up HUD: held kind + collected count (bottom-left).
+                if (g_track.pickup_held() >= 0) {
+                    wchar_t pw[48];
+                    const char* nm = g_track.pickup_held_name();
+                    swprintf(pw, 48, L"PWR: %hs  x%d", nm, g_track.pickups_collected());
+                    DrawMashedString(pw, 20.f, 440.f, 22.f, 0xff80ffc0u);
+                }
             }
         }
         g_device->EndScene();
@@ -1804,7 +2017,37 @@ bool RenderFrame() {
         if (s_bb > 0 && --s_bb == 1)
             DumpBackbufferBMP("verify/dbg_backbuffer.bmp");
     }
-    g_device->Clear(0, nullptr, D3DCLEAR_TARGET, kClearColor, 1.0f, 0);
+    // On-demand capture for the dual-nav parity harness: env MASHED_DBG_BBDUMP_REQ
+    // names a request file; when it exists, its first line is the target .bmp path
+    // — dump there (the just-Presented prior frame = the settled screen) and
+    // delete the request. Mirrors the d3d9-shim MASHED_ORIG_BBDUMP_REQ so the
+    // harness drives + captures BOTH the original and the RE identically.
+    {
+        static char s_reqpath[260]; static int s_reqarmed = -1;
+        if (s_reqarmed == -1)
+            s_reqarmed = (GetEnvironmentVariableA("MASHED_DBG_BBDUMP_REQ",
+                          s_reqpath, sizeof(s_reqpath)) > 0) ? 1 : 0;
+        if (s_reqarmed == 1 &&
+            GetFileAttributesA(s_reqpath) != INVALID_FILE_ATTRIBUTES) {
+            char tgt[260] = {};
+            if (std::FILE* rf = std::fopen(s_reqpath, "rb")) {
+                if (!std::fgets(tgt, sizeof(tgt), rf)) tgt[0] = 0;
+                std::fclose(rf);
+            }
+            for (char* c = tgt; *c; ++c) if (*c=='\r'||*c=='\n') { *c=0; break; }
+            DeleteFileA(s_reqpath);
+            if (tgt[0]) DumpBackbufferBMP(tgt);
+        }
+    }
+    // Parity mode renders the deterministic chrome/content layer on a flat
+    // black field: the frontend's video backdrop (frontend.mpg), the animated
+    // preview crossfade, and the arc-wash/checker "race flag" are all
+    // frame-phase non-deterministic, so a pixel diff against the original is
+    // dominated by them. The original-side harness NOPs the same three draw
+    // functions (FUN_00473c20/FUN_00474890/FUN_00473ee0) so BOTH sides expose
+    // only the static chrome + content for an apples-to-apples per-screen diff.
+    g_device->Clear(0, nullptr, D3DCLEAR_TARGET,
+                    g_parity ? g_parity_bg : kClearColor, 1.0f, 0);
     g_device->BeginScene();
 
     // F1 (frontend-faithful): the original's menu backdrop is VIDEO —
@@ -1812,14 +2055,16 @@ bool RenderFrame() {
     // own mechanism; ledger F1). When the graph runs, the current video
     // frame draws fullscreen; the B19a static PNG stays as the fallback.
     std::uint32_t uv_full[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
-    if (g_menu_video.ready()) {
+    if (g_parity) {
+        // chrome-on-black: skip the non-deterministic video/PNG backdrop entirely
+    } else if (g_menu_video.ready()) {
         g_menu_video.Update();
         struct VRHW { float x, y, z, rhw; float u, v; };
         // Ground truth (log/menu_draw_dump.json draw 0): the original submits
         // the video as a 512x512 quad at the origin, 1:1 texel-to-virtual-px
         // (bottom 32 virtual px clip off the 480 backbuffer) — NOT stretched
         // to the full screen. Scaled 1.25x -> 640x640 on our 800x600 target.
-        const float vw = 512.f * 1.25f, vh = 512.f * 1.25f;
+        const float vw = 512.f * kVScale, vh = 512.f * kVScale;
         const VRHW q[4] = {
             {-0.5f,      -0.5f,      0.f, 1.f, 0.f, 0.f},
             {vw - 0.5f,  -0.5f,      0.f, 1.f, 1.f, 0.f},
@@ -1853,13 +2098,13 @@ bool RenderFrame() {
                 iv, 4, /*tex*/ -1, /*alpha*/ false, 5, 6, nullptr);
         }
     } else if (g_bridge_installed && g_menu_bg_ready) {
-        HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 800.f, 600.f, 0xffffffffu, uv_full);
+        HudIm2DQuad(kHandleMenuBg, 0.f, 0.f, 640.f, 480.f, 0xffffffffu, uv_full);
     }
 
     // ShellB runs the preview crossfade on EVERY frontend frame including
     // the title (titleframe dump 2026-06-12 contains the FUN_00474890 pair) -
     // no phase gate.
-    if (g_bridge_installed && g_previews_ready && g_frontend_phase >= 1 &&
+    if (!g_parity && g_bridge_installed && g_previews_ready && g_frontend_phase >= 1 &&
         GetEnvironmentVariableA("MASHED_DBG_NO_PREVIEWS", nullptr, 0) == 0) {
         static const int kCycle[16] = {0,1,2,3,4,5,0,1,2,3,4,5,0,1,2,3};
         const unsigned phase = (g_chrome_frame++) & 0x1ffu;
@@ -1886,9 +2131,9 @@ bool RenderFrame() {
         // 6-sub-image layout — the standalone's per-track preview textures
         // draw full-UV for now [residual: UV-pan modes need the original's
         // preview atlas layout].
-        const float pvx = 288.f * 1.25f, pvy = 64.f * 1.25f;
-        const float pvh = 352.f * 1.25f;
-        const float pvw2 = 176.f * 1.25f;            // 352 * 0.5 per quad
+        const float pvx = 288.f * kVScale, pvy = 64.f * kVScale;
+        const float pvh = 352.f * kVScale;
+        const float pvw2 = 176.f * kVScale;            // 352 * 0.5 per quad
         auto draw_preview = [&](int handle, int alpha) {
             const std::uint32_t c =
                 (static_cast<std::uint32_t>(alpha) << 24) | 0xffffffu;
@@ -1942,7 +2187,7 @@ bool RenderFrame() {
     // + band-edge fades). Drawn HERE — after previews, BEFORE the solid bands +
     // logo + press-button — so the animated flags render BEHIND the bars and the
     // wash does not veil the logo/press-button (#6/#7). slide_f settled = 512.
-    if (g_bridge_installed && g_frontend_phase >= 1 &&
+    if (!g_parity && g_bridge_installed && g_frontend_phase >= 1 &&
         GetEnvironmentVariableA("MASHED_DBG_NO_ARC", nullptr, 0) == 0) {
         using namespace mashed_re::Frontend;
         static int s_chrome_slide = 0;
@@ -1953,7 +2198,12 @@ bool RenderFrame() {
         const DWORD now = GetTickCount();
         if (s_t0 == 0) s_t0 = now;
         const float wave_t = static_cast<float>(now - s_t0) * (1.0f / 3000.0f);
-        LogoOverlayDraw(pre + 512.0f, wave_t, 800.0f, 600.0f);
+        // Pass the ACTUAL backbuffer dims (LogoOverlayDraw scales every coord by
+        // screen_w/640, screen_h/480). After the 640x480 switch the old hardcoded
+        // 800x600 scaled the race-flag bands 1.25x: the top band (0..64) spilled
+        // past the 64px black bar (->0..80) and the bottom band (416..480) ran
+        // off the 480 buffer (->520..600 = invisible). User #5, 2026-06-13.
+        LogoOverlayDraw(pre + 512.0f, wave_t, (float)kWidth, (float)kHeight);
     }
 
     // B16: render MASHED's menu chrome (two dark bands + two white divider
@@ -1977,14 +2227,14 @@ bool RenderFrame() {
             // gradients (ff000000 outer edge -> a0000000 inner edge), divider
             // lines are 1 virtual px at y=64/416.
             std::uint32_t uv[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
-            HudIm2DQuadCorners(0, 0.f, 0.f, 800.f, 80.f,
+            HudIm2DQuadCorners(0, 0.f, 0.f, (float)kWidth, 64.f * kVScale,
                                0xff000000u, 0xff000000u, 0xa0000000u, 0xa0000000u,
                                uv);                                  // top band
-            HudIm2DQuadCorners(0, 0.f, 520.f, 800.f, 80.f,
+            HudIm2DQuadCorners(0, 0.f, 416.f * kVScale, (float)kWidth, 64.f * kVScale,
                                0xa0000000u, 0xa0000000u, 0xff000000u, 0xff000000u,
                                uv);                                  // bottom band
-            HudIm2DQuad(0, 0.f, 520.f, 800.f, 1.25f, 0xffffffffu, uv); // bottom line
-            HudIm2DQuad(0, 0.f,  80.f, 800.f, 1.25f, 0xffffffffu, uv); // top line
+            HudIm2DQuad(0, 0.f, 416.f * kVScale, (float)kWidth, kVScale, 0xffffffffu, uv); // bottom line
+            HudIm2DQuad(0, 0.f,  64.f * kVScale, (float)kWidth, kVScale, 0xffffffffu, uv); // top line
         }
     }
 
@@ -2015,15 +2265,15 @@ bool RenderFrame() {
         // CORRECTION (round-2): there IS a spinning disc — the "loadicon"
         // texture in MASHED.exe's embedded RWTEXDICTIONARY/404 resource (not a
         // .piz, which is why the earlier archive search missed it). Drawn below.
-        HudIm2DQuad(0, 0.f, 0.f, 800.f, 600.f, 0xff000000u, uv_full);
+        HudIm2DQuad(0, 0.f, 0.f, 640.f, 480.f, 0xff000000u, uv_full);
         if (g_menu_logo_ready) {
-            const float lw = 256.f * 1.25f, lh = 128.f * 1.25f;
-            HudIm2DQuad(kHandleMenuLogo, (320.f - 128.f) * 1.25f, (100.f - 64.f) * 1.25f,
+            const float lw = 256.f * kVScale, lh = 128.f * kVScale;
+            HudIm2DQuad(kHandleMenuLogo, (320.f - 128.f) * kVScale, (100.f - 64.f) * kVScale,
                         lw, lh, 0xffffffffu, uv_full);
         }
         if (g_font.ready()) {
-            const float th = 0.6f * 0.0708f * 480.f * 1.25f;  // scale-0.6 cell
-            const float S = 1.25f;
+            const float th = 0.6f * 0.0708f * 480.f * kVScale;  // scale-0.6 cell
+            const float S = kVScale;
             auto centerline = [&](int id, float y) {
                 wchar_t t[128];
                 if (GetMenuMessage(id, t, 128) > 0)
@@ -2071,12 +2321,20 @@ bool RenderFrame() {
             s_disc_phase += 0.1f;
             const float aw = std::fabs(s) * 80.0f;        // |width|
             if (aw > 0.5f) {
-                const float lx = (544.0f - aw * 0.5f) * 1.25f;
-                const float ly = 40.0f * 1.25f;
-                const float lw = aw * 1.25f, lh = 80.0f * 1.25f;
+                const float lx = (544.0f - aw * 0.5f) * kVScale;
+                const float ly = 40.0f * kVScale;
+                const float lw = aw * kVScale, lh = 80.0f * kVScale;
                 std::uint32_t uvF[4] = { 0x00000000u, 0u, 0x3f000000u, 0x3f800000u }; // u[0,0.5]
                 std::uint32_t uvB[4] = { 0x3f800000u, 0u, 0x3f000000u, 0x3f800000u }; // u[1,0.5] mirror
-                HudIm2DQuad(kHandleLoadIcon, lx, ly, lw, lh, 0xffffffffu,
+                // #1 (CORRECTED 2026-06-14): the LoadIcon texture (res-404) is an
+                // 8bpp GRAYSCALE silver CD (verify/_disc_gray.png: a reflective
+                // disc back + the "mashed" logo). Decoded white-RGB + alpha=
+                // intensity, so on the BLACK loading background a flat WHITE
+                // modulate shows the silver/grey detail faithfully. The earlier
+                // warm-gold modulate (from a mis-measured region) tinted it beige
+                // — the user's complaint. FUN_00428450 draws it with white.
+                const std::uint32_t discMod = 0xffffffffu;  // flat white = silver disc
+                HudIm2DQuad(kHandleLoadIcon, lx, ly, lw, lh, discMod,
                             s >= 0.0f ? uvF : uvB);
             }
         }
@@ -2104,10 +2362,10 @@ bool RenderFrame() {
                 static_cast<std::uint32_t>(a < 0 ? 0 : (a > 255 ? 255 : a)) << 24;
             wchar_t pb[48];
             if (GetMenuMessage(0x2a4, pb, 48) > 0) {
-                const float th = 1.2f * 0.0708f * 480.f * 1.25f;  // scale 1.2 cell
-                DrawMashedString(pb, 320.f * 1.25f, 380.f * 1.25f, th,
+                const float th = 1.2f * 0.0708f * 480.f * kVScale;  // scale 1.2 cell
+                DrawMashedString(pb, 320.f * kVScale, 380.f * kVScale, th,
                                  alpha /*black shadow*/, false);
-                DrawMashedString(pb, 316.f * 1.25f, 376.f * 1.25f, th,
+                DrawMashedString(pb, 316.f * kVScale, 376.f * kVScale, th,
                                  alpha | 0xffffffu /*white*/, false);
             }
         }
@@ -2156,10 +2414,10 @@ bool RenderFrame() {
             // baseline: ink right edge ~591 @640 — round-2 feedback "should
             // be a little more to the left" = the centered draw spilled
             // right of 600).
-            const float csc = 0.8f * 0.0708f * 480.f * 1.25f;
-            DrawMashedString(cs, 600.f * 1.25f, 52.f * 1.25f,
+            const float csc = 0.8f * 0.0708f * 480.f * kVScale;
+            DrawMashedString(cs, 600.f * kVScale, 52.f * kVScale,
                              csc, 0xff000000u, false, 1.0f, true);
-            DrawMashedString(cs, 596.f * 1.25f, 48.f * 1.25f,
+            DrawMashedString(cs, 596.f * kVScale, 48.f * kVScale,
                              csc, 0xffffffffu, false, 1.0f, true);
         }
     }
@@ -2198,8 +2456,8 @@ bool RenderFrame() {
             }
         }
 
-        // Virtual(640x480) -> backbuffer(800x600) scale (FUN_00427680 analogue).
-        constexpr float kVScale = 1.25f;
+        // Virtual(640x480) -> backbuffer scale (FUN_00427680 analogue): file-scope
+        // kVScale (= kWidth/640) drives this; 1.0 at the native 640x480.
 
         // Faithful frame-rate-scaled slide animation: feed real elapsed ms into
         // the FUN_00493480 frame-clock port (the standalone clock stands in for
@@ -2252,15 +2510,21 @@ bool RenderFrame() {
                             const float sy = rec.y * kVScale;
                             const float sth =
                                 rec.scale * 0.0708f * 480.f * kVScale;
-                            const float ssh = 3.0f * kVScale;
                             // Footer nav glyphs: Select green / Back red, chosen
                             // PER-GLYPH inside DrawMashedString (the back arrow
                             // 0x7f -> red, others -> this green); a row may hold
                             // both ("Select ... Back", id 0x43).
-                            DrawMashedString(stxt, sx + ssh, sy + ssh, sth,
+                            // #4 (CORRECTED 2026-06-14): the original's Select/Back
+                            // arrows are crisp green ↻ / red ↺ with a SINGLE thin
+                            // drop-shadow (orig vs RE: image-cache 1.png/2.png) —
+                            // the earlier 4-diagonal outline rendered them blobby.
+                            // One down-right black shadow, then the colour: text in
+                            // WHITE, the Select arrow green / Back arrow (0x7f) red
+                            // chosen per-glyph in DrawMashedString.
+                            const float ob = 1.0f * kVScale;
+                            DrawMashedString(stxt, sx + ob, sy + ob, sth,
                                              0xff000000u, true);
-                            DrawMashedString(stxt, sx, sy, sth,
-                                             static_cast<std::uint32_t>(rec.color),
+                            DrawMashedString(stxt, sx, sy, sth, 0xffffffffu,
                                              true, 1.0f, false, 0xff10ec00u);
                         }
                     }
@@ -2271,6 +2535,15 @@ bool RenderFrame() {
             if (rec.prim_id < 0 &&
                 static_cast<std::uint32_t>(rec.prim_id) != 0x224u) continue;  // -1 = no text
             const bool is_back = (static_cast<std::uint32_t>(rec.tag) == 0xff000000u);
+            // Game Mode (18/24): the nav's generic centered list layout does NOT
+            // match the original's top-aligned plate list (the FUN_004325c0
+            // screen-24/18 settle path), and the rows render in the grayed/
+            // unavailable state (no game-config state). So the ITEM rows for
+            // these two screens are drawn by the dedicated faithful block below
+            // (verbatim FUN_0043af10 value map + Q_ListBaseY layout). Keep the
+            // title (is_back) + prompt rows; suppress only the item rows here.
+            if (!is_back &&
+                (Nav_ScreenId() == 18 || Nav_ScreenId() == 24)) continue;
             // #15 (user review, CORRECTS the old #11 handling): the back-row
             // record at (64,48) IS the screen TITLE (top-left) — "Game Type
             // Select" on the main menu (BuildRecords overrides screen 1 -> 0x43),
@@ -2376,10 +2649,16 @@ bool RenderFrame() {
                 if (g_menu_badge_ready) {
                     // F2 (bit-verified): the Button cap sits at x = 58-13 =
                     // 45, in the selected border color.
+                    // #7 (2026-06-13): crop the sprite's leftmost ~2 texels — the
+                    // 16px "Button" sprite's left edge column renders as a stray
+                    // dark vertical line to the LEFT of the semi-circle (the user's
+                    // "black line, maybe wrongly cropped"). Inset u0 to 2/16.
+                    std::uint32_t uv_badge[4] = {
+                        0x3e000000u /*0.125*/, 0u, 0x3f800000u, 0x3f800000u };
                     HudIm2DQuad(kHandleMenuBadge,
                                 (58.0f - 13.0f) * kVScale + slideX, hy,
                                 13.0f * kVScale, hh,
-                                0xff1050b4u, uv_full);
+                                0xff1050b4u, uv_badge);
                 }
             }
 
@@ -2470,7 +2749,7 @@ bool RenderFrame() {
                        g_menu_items[rec.row_index].ready) {
                 const MenuItemTex& it = g_menu_items[rec.row_index];
                 const float w = static_cast<float>(it.w), h = static_cast<float>(it.h);
-                HudIm2DQuad(it.handle, (800.f - w) * 0.5f, ry, w, h, base_argb, uv_full);
+                HudIm2DQuad(it.handle, ((float)kWidth - w) * 0.5f, ry, w, h, base_argb, uv_full);
             }
 
             // Sound-screen value widgets — VERBATIM geometry from the original's
@@ -2590,10 +2869,13 @@ bool RenderFrame() {
                     const int m = (g_settings.insults_on >= 0 &&
                                    g_settings.insults_on <= 2)
                                       ? g_settings.insults_on : 0;
-                    DrawMashedString(kInsults[m], 378.0f * S + slideX, rec.y * S,
-                                     vth, 0xff000000u, true);
+                    // #8 (2026-06-13): the insults value reads a little small —
+                    // bump it to scale 0.72 (the volume rows keep the 0.6 law).
+                    const float vthIns = 0.72f * 0.0708f * 480.f * S;
+                    DrawMashedString(kInsults[m], 378.0f * S + slideX,
+                                     rec.y * S - 1.0f * S, vthIns, 0xff000000u, true);
                     dyn_rax = 378.0f * S +
-                              MeasureMashedString(kInsults[m], vth) + 9.0f * S;
+                              MeasureMashedString(kInsults[m], vthIns) + 9.0f * S;
                 } else if (kind == kToggle && g_font.ready()) {
                     const wchar_t* tv = g_settings.autosave ? L"On" : L"Off";
                     DrawMashedString(tv, 378.0f * S + slideX, rec.y * S,
@@ -2653,19 +2935,320 @@ bool RenderFrame() {
         // PC shows a literal keyboard for keyboard players that asset is not
         // in case-10 — flagged for clarification.)
         if (Nav_ScreenId() == 4 && g_carsel_ready) {
+            // Player Colour Select (verify/orig_screens/s4.bmp). 6 colour options
+            // = a colour RECTANGLE behind each car-livery icon; below, ONE player
+            // row by default (single-player) with the input-device icon + a small
+            // black player number to its right. L/R cycles the player's colour
+            // (g_csel_p1_car), highlighting the chosen option.
+            // 2026-06-13 user round: (9) swatch BEHIND the car (was a separate bar
+            // below) + correct colours — the old packed dwords were byte-reversed
+            // (red rendered blue-ish); the bridge maps a packed dword's LOW byte
+            // to device RED (the 0xa0146ef0 item bar proves it = orange), so a
+            // device colour (R,G,B) packs as A|B<<16|G<<8|R. (10) 1 player not 3;
+            // number is small + BLACK + right of the controller icon.
+            // [Residual: the keyboard/controller sprite isn't in INTERFACE.TXD —
+            // its source TXD is unconfirmed, so a placeholder box stands in.]
+            // 2026-06-13 round (corrections): (#3) the colour rectangle is a SMALL
+            // SWATCH BELOW each car (69x20 @ y168 — the original shape), NOT a
+            // full-icon-covering rect; keep the corrected colours. (#5) the
+            // SELECTION CURSOR is the player's keyboard icon + number, which MOVES
+            // to the chosen colour's column (g_csel_p1_car) — the tiles/rects stay
+            // static (no moving highlight border). (#4) the number is vertically
+            // centred with the keyboard icon. 1 player by default (keyboard).
             const std::uint32_t white = 0xffffffffu;
-            const int sel = (g_csel_p1_car >= 0 && g_csel_p1_car < 10)
-                                ? g_csel_p1_car : 0;
-            const float cx = 40.0f * kVScale, cy = 292.0f * kVScale;
-            const float cw = 112.0f * kVScale;
-            HudIm2DQuad(kHandleCar0 + sel, cx, cy, cw, cw, white, uv_full);
-            // Player number to the right of the sprite.
-            if (g_font.ready()) {
-                DrawMashedString(L"1", (40.0f + 112.0f + 16.0f) * kVScale,
-                                 (292.0f + 56.0f) * kVScale,
-                                 0.8f * 0.0708f * 480.f * kVScale,
-                                 0xffffffffu, true);
+            // 2026-06-14 user round: the 6 colour RECTANGLES sit BEHIND each car
+            // icon (drawn first, car on top) and use the EXACT colours the user
+            // gave (= the FUN_004335f0 local_1c swatch table): #983A3D #4E89AE
+            // #617656 #DBC362 #EBA7A7 #000000, packed for the bridge's untextured
+            // R/B swap (A | B<<16 | G<<8 | R).
+            static const std::uint32_t kSwatch[6] = {
+                0xff3d3a98u, 0xffae894eu, 0xff567661u,
+                0xff62c3dbu, 0xffa7a7ebu, 0xff000000u };
+            const int selCol = (g_csel_p1_car >= 0 && g_csel_p1_car < 6)
+                                   ? g_csel_p1_car : 0;
+            for (int i = 0; i < 6; ++i) {
+                const float cx = (146.0f + i * 70.0f) * kVScale;
+                // colour rectangle BEHIND the car, then the car livery on top.
+                HudIm2DQuad(0, (143.0f + i * 70.0f) * kVScale, 167.0f * kVScale,
+                            69.0f * kVScale, 20.0f * kVScale, kSwatch[i], uv_full);
+                HudIm2DQuad(kHandleCar0 + i, cx, 125.0f * kVScale,
+                            64.0f * kVScale, 64.0f * kVScale, white, uv_full);
             }
+            // Player cursor (FUN_004335f0 per-player controller at DAT_0067eaf8):
+            // the device icon sits under the player's currently-selected colour
+            // column and MOVES horizontally with L/R (g_csel_p1_car). Single-
+            // player flow = one cursor; the keyboard sprite is drawn WIDER per the
+            // user. [residual: multiplayer = one cursor per active player from the
+            // setup-flow state, not yet tracked.]
+            const float kbw = 46.0f * kVScale, kbh = 24.0f * kVScale;  // wider keyboard
+            const float curx = (146.0f + selCol * 70.0f) * kVScale
+                             + (64.0f * kVScale - kbw) * 0.5f;
+            const float cury = 196.0f * kVScale;
+            if (g_inputicons_ready)
+                HudIm2DQuad(kHandleInputKbd, curx, cury, kbw, kbh, white, uv_full);
+            else
+                HudIm2DQuad(0, curx, cury, kbw, kbh, 0xff202020u, uv_full);
+            if (g_font.ready()) {
+                const float ncell = 0.5f * 0.0708f * 480.f * kVScale;
+                DrawMashedString(L"1", curx + kbw + 4.0f * kVScale,
+                                 cury + kbh * 0.5f, ncell, 0xff000000u, true);
+            }
+        }
+
+        // --- Ability Select (15, FUN_0042...) / Team Select (16, FUN_0043aa30):
+        // ORANGE header tabs (FUN_0042f8d0 0x146ef0 plate, BLACK text) + one row
+        // per player slot. The team/ability draws iterate the player ORDER array
+        // DAT_007f1a14 (probed jumped-to default = {0,0,0,0}); with every order 0
+        // the inner loop draws all 4 slots at outer-index 0, so the screen shows
+        // 4 rows, each car-0 (red, cars={0,0,0,0}) + joypad (device[order=0]=1) +
+        // number "1" (= outer-index+1 = 1 for all). Geometry MEASURED from the
+        // clean captures verify/parity/orig_s15.bmp / orig_s16.bmp: header tabs
+        // virtual y=140 h=26 — ability x=63 w=124 pitch=128 ×4, team x=248/428
+        // w=144; player rows y=200/240/280/320 (pitch 40, h=27). [Residual: the
+        // real per-flow player count / team pairing / per-player selection cell
+        // need the player-setup state (DAT_0067e938 enter handler) — not ported;
+        // this mirrors the cold-boot default the original shows when jumped-to.]
+        if ((Nav_ScreenId() == 15 || Nav_ScreenId() == 16) && g_carsel_ready) {
+            const bool team = (Nav_ScreenId() == 16);
+            const std::uint32_t white   = 0xffffffffu;
+            const std::uint32_t hdrFill = 0xa0146ef0u;   // bridge-swapped -> orange
+            const std::uint32_t hdrBord = 0xff1050b4u;
+            const std::uint32_t rowFill = 0xa0146ef0u;
+            const std::uint32_t rowBord = 0xff1050b4u;
+            const float bt = 1.0f * kVScale;
+            static const wchar_t* kCols4[4] = { L"Elite", L"Pro", L"Amateur", L"Rookie" };
+            static const wchar_t* kCols2[2] = { L"Team 1", L"Team 2" };
+            const int ncol = team ? 2 : 4;
+            const wchar_t* const* cols = team ? kCols2 : kCols4;
+            const float hcell = 0.55f * 0.0708f * 480.f * kVScale;
+            const float hy = 140.0f * kVScale, hh = 26.0f * kVScale;
+            for (int c = 0; c < ncol; ++c) {
+                const float hx = (team ? (248.0f + c * 180.0f)
+                                       : (63.0f  + c * 128.0f)) * kVScale;
+                const float hw = (team ? 144.0f : 124.0f) * kVScale;
+                HudIm2DQuad(0, hx, hy, hw, hh, hdrFill, uv_full);
+                HudIm2DQuad(0, hx, hy, hw, bt, hdrBord, uv_full);
+                HudIm2DQuad(0, hx, hy + hh - bt, hw, bt, hdrBord, uv_full);
+                if (g_font.ready())
+                    DrawMashedString(cols[c], hx + hw * 0.5f, hy + hh * 0.5f,
+                                     hcell, 0xff000000u /*black, centered*/);
+            }
+            // 4 player rows (jumped-to default): car0 + joypad + "1".
+            const float rowX  = (team ? 68.0f  : 58.0f)  * kVScale;
+            const float rowW  = (team ? 513.0f : 526.0f) * kVScale;
+            const float carX  = (team ? 88.0f  : 70.0f)  * kVScale;
+            const float rowH  = 27.0f * kVScale;
+            const float rowY0 = 200.0f * kVScale, rowDY = 40.0f * kVScale;
+            const float ncell = 0.55f * 0.0708f * 480.f * kVScale;
+            for (int r = 0; r < 4; ++r) {
+                const float ry = rowY0 + r * rowDY;
+                HudIm2DQuad(0, rowX, ry, rowW, rowH, rowFill, uv_full);
+                HudIm2DQuad(0, rowX, ry, rowW, bt, rowBord, uv_full);
+                HudIm2DQuad(0, rowX, ry + rowH - bt, rowW, bt, rowBord, uv_full);
+                // player car 0 (red devil) at the row's left.
+                const float cs = rowH - 2.0f * kVScale;
+                HudIm2DQuad(kHandleCar0, carX, ry + 1.0f * kVScale, cs, cs,
+                            white, uv_full);
+                // joypad icon (device[order=0]==joypad) then the number "1".
+                const float jx = carX + 34.0f * kVScale;
+                const float jy = ry + (rowH - 22.0f * kVScale) * 0.5f;
+                if (g_inputicons_ready)
+                    HudIm2DQuad(kHandleInputJoy, jx, jy, 28.0f * kVScale,
+                                22.0f * kVScale, white, uv_full);
+                else
+                    HudIm2DQuad(0, jx, jy, 28.0f * kVScale, 22.0f * kVScale,
+                                0xff202020u, uv_full);
+                if (g_font.ready())
+                    DrawMashedString(L"1", jx + 34.0f * kVScale,
+                                     ry + rowH * 0.5f, ncell, 0xff000000u, true);
+            }
+        }
+
+        // --- Challenge Select (6/7): a vertical list of challenge slots, each
+        // shown as a gold STAR (the per-challenge lock/medal icon); the first
+        // (unlocked) row additionally gets the orange selection bar + the
+        // challenge NAME; locked rows below are bare stars. Below the list, the
+        // 4 challenge-cup "devil" icons + a vertical separator. CORRECTS the old
+        // hand-rolled all-track-names + preview + 5-car row (which did not match
+        // the original at all). Layout MEASURED from the clean capture
+        // verify/parity/orig_s6.bmp: 7 star rows at virtual y=116 (pitch 22),
+        // star at x~42; Angel Peak bar x=0..311 y=107 h=22; 4 devils at x=48
+        // (pitch 64) y~300; separator at x~315. [Residual: the real cup track
+        // names + unlock COUNT come from campaign/save state the original drawer
+        // reads — only the first slot is unlocked at a fresh save, which IS the
+        // jumped-to default this matches. NO-GUESSING: only the unlocked slot is
+        // named; the rest stay as the original's lone stars.]
+        if ((Nav_ScreenId() == 6 || Nav_ScreenId() == 7) && g_carsel_ready) {
+            // Challenge Select now reads the CAMPAIGN scaffold (Race/GameFlow:
+            // Campaign_CurrentCup) — the cup's track list with per-track unlock +
+            // trophy state, the selected-row highlight, the right-side map-preview
+            // rect + semi-transparent detail panel + details, and the cup devil
+            // icons. The full FUN_00434720 cup-progress layout (exact trophy
+            // sprites + the per-challenge medal grid + the map VIDEO) lands as the
+            // campaign/race state is RE'd; this is the scaffold-driven structure.
+            using namespace mashed_re::Race;
+            const Cup& cup = Campaign_CurrentCup();
+            int sel = Nav_Cursor();
+            if (sel < 0) sel = 0;
+            if (sel >= cup.trackCount) sel = cup.trackCount - 1;
+            Campaign_SetSelectedTrack(sel);
+            const std::uint32_t white = 0xffffffffu;
+            const std::uint32_t barFill = 0xa0146ef0u;     // selected = orange
+            const std::uint32_t bord = 0xff1050b4u;
+            const float bt = 1.0f * kVScale;
+            const float lcell = 0.55f * 0.0708f * 480.f * kVScale;
+            const float stx = 42.0f * kVScale, sts = 16.0f * kVScale;
+            const float row0 = 116.0f * kVScale, rowdy = 22.0f * kVScale;
+            // animated star pulse (triangle wave, no <cmath> dep).
+            const float ph = (GetTickCount() % 800u) / 800.0f;
+            const float pulse = 0.82f + 0.18f * (ph < 0.5f ? ph * 2.f : (1.f - ph) * 2.f);
+            for (int i = 0; i < cup.trackCount; ++i) {
+                const float cy = row0 + i * rowdy;          // row centre
+                const bool selrow = (i == sel);
+                if (selrow) {
+                    const float by = cy - 11.0f * kVScale, bh = 22.0f * kVScale;
+                    HudIm2DQuad(0, 0.f, by, 311.0f * kVScale, bh, barFill, uv_full);
+                    HudIm2DQuad(0, 0.f, by, 311.0f * kVScale, bt, bord, uv_full);
+                    HudIm2DQuad(0, 0.f, by + bh - bt, 311.0f * kVScale, bt, bord, uv_full);
+                }
+                const float ss = selrow ? sts * pulse : sts;   // animated star
+                if (g_star_ready)
+                    HudIm2DQuad(kHandleStar, stx - (ss - sts) * 0.5f,
+                                cy - ss * 0.5f, ss, ss, white, uv_full);
+                else
+                    HudIm2DQuad(0, stx, cy - sts * 0.5f, sts, sts, 0xff20c0e0u, uv_full);
+                if (cup.tracks[i].unlocked && g_font.ready())
+                    DrawMashedString(cup.tracks[i].name, 68.0f * kVScale, cy, lcell,
+                                     selrow ? 0xff000000u : 0xffc8c8c8u, true);
+            }
+            // Right side: the selected track's map preview rect + a semi-transparent
+            // black detail panel (with a white divider) + the challenge details.
+            if (g_previews_ready)
+                HudIm2DQuad(kHandlePreview0, 330.0f * kVScale, 96.0f * kVScale,
+                            290.0f * kVScale, 160.0f * kVScale, white, uv_full);
+            HudIm2DQuad(0, 330.0f * kVScale, 264.0f * kVScale,
+                        290.0f * kVScale, 96.0f * kVScale, 0xa0000000u, uv_full);  // black panel
+            HudIm2DQuad(0, 330.0f * kVScale, 264.0f * kVScale,
+                        290.0f * kVScale, bt, white, uv_full);                     // top divider
+            if (g_font.ready()) {
+                DrawMashedString(cup.tracks[sel].name, 340.0f * kVScale,
+                                 280.0f * kVScale, lcell, white, true);
+                DrawMashedString(cup.tracks[sel].unlocked ? L"Bronze Challenge"
+                                                          : L"Locked",
+                                 340.0f * kVScale, 304.0f * kVScale, lcell,
+                                 0xffc8c8c8u, true);
+            }
+            // 4 challenge-cup devil icons + vertical separator at the bottom-left.
+            for (int c = 0; c < 4; ++c)
+                HudIm2DQuad(kHandleCar0, (48.0f + c * 64.0f) * kVScale,
+                            300.0f * kVScale, 56.0f * kVScale, 72.0f * kVScale,
+                            white, uv_full);
+            HudIm2DQuad(0, 315.0f * kVScale, 304.0f * kVScale,
+                        2.0f * kVScale, 80.0f * kVScale, white, uv_full);
+        }
+
+        // --- Game Mode setup (18 MP / 24 SP): the nav item list (above) draws
+        // each option row's plate + LABEL; this overlay adds the right-aligned
+        // "value" text per row. The value's message id is computed from the
+        // game-setup state via the VERBATIM FUN_0043af10 per-row switch (the
+        // iStack_38==0x18 SP branch vs the MP else-branch), reading the probed
+        // jumped-to default state (re/frida/probe_gamemode_state.py 2026-06-14):
+        //   ea74=1 ea7c=0 ea80=0 ea88=0 ea90=1 ea94=0 ea98=4 ea9c=2 eaa0=3 ea78=0
+        // Opponent names come from the local_1c msgid table in FUN_0043af10;
+        // Vehicle from the 0x5f6748 table (slot0 -> msgid 0x105). Strings render
+        // through GetMenuMessage (ENGLISH.DAT) so they are the real localized
+        // values (0x5b=Standard, 0xd4=Rookie, 0x105=Hammerhead, 0x7c/7a/7b=Gold/
+        // Bluejay/Melon, 0x25e=One-against-all). Value right edge + row Y come
+        // from the nav records so the value tracks the label exactly.
+        if ((Nav_ScreenId() == 18 || Nav_ScreenId() == 24) && g_bridge_installed) {
+            const bool sp = (Nav_ScreenId() == 24);
+            const int ea74 = 1, ea7c = 0, ea80 = 0, ea88 = 0, ea90 = 1;
+            const int ea98 = 4, ea9c = 2, eaa0 = 3, ea78 = 0, eaac = 0;
+            static const int local_1c[7] = {0x7f, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e};
+            // (label msgid, value msgid; value -1 = action row, no value). Value
+            // msgids are the VERBATIM FUN_0043af10 per-row switch (0x18 SP branch
+            // for s24 / else-branch for s18) evaluated on the probed default
+            // state; all confirmed against Font36.piz/ENGLISH.DAT (0x5b=Standard,
+            // 0xd4=Rookie, 0x104=Hammerhead, 0x7c/7a/7b=Gold/Bluejay/Melon,
+            // 0x25e=One-against-all, 0xe0=5 mins, 0x59=Off, 0xec=Battle Game).
+            struct GmRow { int label; int value; };
+            const GmRow s24rows[8] = {
+                {0x150, -1},                                                  // Play Game
+                {0x56,  ea74 == 2 ? 0x5c : ea74 == 1 ? 0x5b : 0x59},          // Power Ups
+                {0xfd,  ea90 == 4 ? 0xe3 : ea90 == 3 ? 0xd2 : ea90 == 2 ? 0xd3 : 0xd4}, // Difficulty
+                {0xfe,  0x104},                                               // Vehicle
+                {0x100, local_1c[ea98 & 7]}, {0x101, local_1c[ea9c & 7]},     // Opp 1/2
+                {0x102, local_1c[eaa0 & 7]}, {0x24d, 0x25e - (eaac ? 1 : 0)}};// Opp 3, Game Mode
+            const GmRow s18rows[7] = {
+                {0x150, -1},                                                  // Play Game
+                {0x56,  ea74 == 2 ? 0x5c : ea74 == 1 ? 0x5b : 0x59},          // Power Ups
+                {0x24c, ea80 == 2 ? 0xe2 : ea80 == 1 ? 0xe1 : 0xe0},          // Game Length
+                {0x103, ea7c == 4 ? 0xe3 : ea7c == 3 ? 0xd2 : ea7c == 2 ? 0xd3 : ea7c == 1 ? 0xd4 : 0x59}, // Extra Opp
+                {0xfe,  0x104},                                               // Vehicle
+                {0xdb,  (ea78 ? 1 : 0) + 0x59},                               // Air Strike
+                {0x24d, ea88 == 2 ? 0x141 : ea88 == 1 ? 0x24b : 0xec}};       // Game Mode
+            const GmRow* rows = sp ? s24rows : s18rows;
+            const int nrows = sp ? 8 : 7;
+            // Row Y from the VERBATIM list layout: Q_ListBaseY(count,0x1c)-58
+            // (FUN_004325c0 screen-24/18 settle path) -> s24 row0=84, s18 row0=98,
+            // pitch 28 (the original's 0x1c). Plate/label/value geometry measured
+            // from verify/parity/orig_s24.bmp / orig_s18.bmp.
+            const float y0 = sp ? 84.0f : 98.0f, pitch = 28.0f;
+            const float plateX = 58.0f, plateW = 250.0f;  // s18 was 169 → labels/values overlapped
+            const float labelX = 66.0f, valRight = plateX + plateW - 18.0f;
+            const float plateH = 26.0f, bt = 1.0f * kVScale;
+            const float cell = 0.6f * 0.0708f * 480.f * kVScale;
+            std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            for (int r = 0; r < nrows; ++r) {
+                const float cy = y0 + r * pitch;                 // row centre (virtual)
+                const float pt = (cy - plateH * 0.5f) * kVScale; // plate top
+                const float pw = plateW * kVScale, px = plateX * kVScale;
+                const std::uint32_t fill = (r == 0) ? 0xa0146ef0u   // selected = orange
+                                                    : 0x40f8d0e8u;  // idle = blue
+                HudIm2DQuad(0, px, pt, pw, plateH * kVScale, fill, uvf);
+                HudIm2DQuad(0, px, pt, pw, bt, 0xff1050b4u, uvf);
+                HudIm2DQuad(0, px, pt + plateH * kVScale - bt, pw, bt, 0xff1050b4u, uvf);
+                if (!g_font.ready()) continue;
+                wchar_t lab[64];
+                if (GetMenuMessage(rows[r].label, lab, 64) > 0)
+                    DrawMashedString(lab, labelX * kVScale, cy * kVScale, cell,
+                                     0xff000000u, /*anchor_left*/ true);
+                if (rows[r].value >= 0) {
+                    wchar_t val[64];
+                    if (GetMenuMessage(rows[r].value, val, 64) > 0)
+                        DrawMashedString(val, valRight * kVScale, cy * kVScale, cell,
+                                         0xff000000u, false, 1.0f, /*anchor_right*/ true);
+                    // The "Arrow" sprite (BADGES.TXD, kHandleMenuArrow) just left
+                    // of each value, matching FUN_0040bb50("Arrow",...). Width is
+                    // estimated from the glyph count (no measure fn in-scope).
+                    if (g_menu_arrow_ready) {
+                        const float vw = static_cast<float>(std::wcslen(val)) *
+                                         cell * 0.62f;             // ~advance/char
+                        const float asz = 11.0f * kVScale;
+                        HudIm2DQuad(kHandleMenuArrow,
+                                    valRight * kVScale - vw - asz - 1.0f * kVScale,
+                                    cy * kVScale - asz * 0.5f, asz, asz,
+                                    0xff000000u, uvf);
+                    }
+                }
+            }
+            // Selected vehicle preview (center-right): the "car<N>" render incl.
+            // its "<NAME> V8" caption. Default slot -> Hammerhead = car1
+            // (kHandleVehPrev0). Box measured from orig_s24.bmp (x~459-599).
+            // [residual: the dynamic vehicle->sprite index needs the runtime
+            // 0x5f6748 table / FUN_0042a980; default shows car1.]
+            if (g_vehprev_ready)
+                HudIm2DQuad(kHandleVehPrev0, 458.0f * kVScale, 147.0f * kVScale,
+                            145.0f * kVScale, 141.0f * kVScale, 0xffffffffu, uvf);
+            // 4 red-devil "vs" car icons + separator at the bottom-left (the
+            // FUN_004368e0 active-player car row; all car0/red at the default).
+            // Box measured from orig_s24.bmp: x49..287, y313..371.
+            for (int c = 0; c < 4; ++c)
+                HudIm2DQuad(kHandleCar0, (49.0f + c * 63.0f) * kVScale,
+                            313.0f * kVScale, 54.0f * kVScale, 58.0f * kVScale,
+                            0xffffffffu, uvf);
+            HudIm2DQuad(0, 315.0f * kVScale, 313.0f * kVScale,
+                        2.0f * kVScale, 64.0f * kVScale, 0xffffffffu, uvf);
         }
 
         // --- bottom prompt strip: F4 CLOSED 2026-06-11. FUN_00432b30 is now
@@ -2691,8 +3274,8 @@ bool RenderFrame() {
     // NO logo at settled scr1. Our phase 1 == the title (screen 33).
     if (g_frontend_phase == 1 &&
         g_bridge_installed && g_menu_logo_ready && g_menu_logo_w > 0 && g_menu_logo_h > 0) {
-        HudIm2DQuad(kHandleMenuLogo, 80.f * 1.25f, 80.f * 1.25f,
-                    480.f * 1.25f, 240.f * 1.25f, 0xffffffffu, uv_full);
+        HudIm2DQuad(kHandleMenuLogo, 80.f * kVScale, 80.f * kVScale,
+                    480.f * kVScale, 240.f * kVScale, 0xffffffffu, uv_full);
     }
 
     // B15: prove the RW Im2D -> D3D9 bridge by drawing through MASHED's actual
@@ -2722,28 +3305,47 @@ bool RenderFrame() {
     // @140,142 scale 0.8, body text centered, button (id) @140,345 scale 0.4.
     // Alpha fades in (DAT_0067eab8 ramp). Coords virtual 640x480 -> x1.25.
     if (g_bridge_installed && g_modal_step != 0) {
-        if (g_modal_alpha < 0xff) { g_modal_alpha += 0x11; if (g_modal_alpha > 0xff) g_modal_alpha = 0xff; }
+        // Fade IN normally; fade OUT during a modal->modal transition.
+        if (g_modal_fadeout) {
+            g_modal_alpha -= 0x11;
+            if (g_modal_alpha <= 0) {
+                // The loading modal has fully unloaded — now load the next one
+                // (it fades in from 0), giving the brief two-modal animation the
+                // original shows between "Loading saved game data." and "Load
+                // Successful." (user 2026-06-14).
+                g_modal_alpha = 0; g_modal_fadeout = false;
+                ModalGo(11); g_boot_loadsuccess = true;
+                g_modal_timer_ms = GetTickCount();
+            }
+        } else if (g_modal_alpha < 0xff) {
+            g_modal_alpha += 0x11; if (g_modal_alpha > 0xff) g_modal_alpha = 0xff;
+        }
         // #18/#19: the 'Saving game data.' step auto-advances to 'Save successful.'
         if (g_modal_step == 21 && g_modal_timer_ms != 0 &&
             GetTickCount() - g_modal_timer_ms > 800u) {
             ModalGo(22); g_modal_alpha = 0xff;
         }
-        // Loading modal (step 30) auto-dismisses after ~800ms, then the main
-        // menu slides in (the slide is hidden while the modal covers it, so
-        // start it on dismiss for visible movement).
-        if (g_modal_step == 30 && g_modal_timer_ms != 0 &&
+        // Loading modal (step 30) shows ~800ms, then FADES OUT; once unloaded the
+        // "Load Successful." modal fades IN (handled in the fadeout branch above).
+        if (g_modal_step == 30 && !g_modal_fadeout && g_modal_timer_ms != 0 &&
             GetTickCount() - g_modal_timer_ms > 800u) {
+            g_modal_fadeout = true;
+        }
+        // Boot "Load Successful." auto-dismisses (~1.1s), then the menu slides in.
+        if (g_modal_step == 11 && g_boot_loadsuccess && g_modal_timer_ms != 0 &&
+            GetTickCount() - g_modal_timer_ms > 1100u) {
+            g_boot_loadsuccess = false;
             ModalGo(0);
             mashed_re::Frontend::Nav_AnimateIn();
         }
         const std::uint32_t A = static_cast<std::uint32_t>(g_modal_alpha) << 24;
-        const float S = 1.25f;
+        const float S = kVScale;
         std::uint32_t uvf[4] = { 0u, 0u, 0x3f800000u, 0x3f800000u };
         // #8: DARKEN the rest of the UI behind the modal (full-screen black at
         // ~65% of the fade alpha) so the dialog reads as modal.
         const std::uint32_t dimA =
             (static_cast<std::uint32_t>(g_modal_alpha * 0xa6 / 0xff) << 24);
-        HudIm2DQuad(0, 0.f, 0.f, 800.f, 600.f, dimA, uvf);
+        HudIm2DQuad(0, 0.f, 0.f, 640.f, 480.f, dimA, uvf);
         // VERBATIM FUN_00433f40 layout: 3 panels (FUN_0042c010) — black top
         // 130,120,380x42 / gray 0x202020 body 130,162,380x166 / black bottom
         // 130,328,380x32; then SIX white border lines (FUN_0042c090): 4
@@ -3170,8 +3772,26 @@ bool LoadTrackPreviews() {
             break;
         }
     }
+    // Vehicle preview sprites car1..car8 (same TRACKIMAGES.TXD) -> kHandleVehPrev0.
+    int veh = 0;
+    char cn[8];
+    for (int n = 0; n < 8; ++n) {
+        std::snprintf(cn, sizeof(cn), "car%d", n + 1);
+        for (std::uint32_t i = 0; i < dict.count(); ++i) {
+            const auto& tex = dict.texture(i);
+            if (_stricmp(tex.name, cn) != 0) continue;
+            const std::uint32_t slot = kSlotVehPrev0 + static_cast<std::uint32_t>(n);
+            if (g_quad_renderer.UploadFromTextureToSlot(slot, tex)) {
+                mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                    kHandleVehPrev0 + n, g_quad_renderer.slot_texture(slot));
+                ++veh;
+            }
+            break;
+        }
+    }
+    g_vehprev_ready = (veh > 0);
     std::FILE* lf = std::fopen(kLogPath, "a");
-    if (lf) { std::fprintf(lf, "F2 track previews: %d/24 loaded\n", loaded); std::fclose(lf); }
+    if (lf) { std::fprintf(lf, "F2 track previews: %d/24 loaded; veh %d/8\n", loaded, veh); std::fclose(lf); }
     return loaded > 0;
 }
 
@@ -3321,13 +3941,72 @@ bool LoadCarColorSprites() {
         }
         break;
     }
+    // Challenge-select gold "Star" sprite (same INTERFACE.TXD).
+    for (std::uint32_t i = 0; i < dict.count(); ++i) {
+        const auto& tex = dict.texture(i);
+        if (_stricmp(tex.name, "Star") != 0) continue;
+        if (g_quad_renderer.UploadFromTextureToSlot(kSlotStar, tex)) {
+            mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                kHandleStar, g_quad_renderer.slot_texture(kSlotStar));
+            g_star_ready = true;
+        }
+        break;
+    }
     if (log) {
-        std::fprintf(log, "\n#25 color-select: INTERFACE.TXD cars %d/10, vs %s "
-                     "(dict has %u textures)\n", cars, vs_ok ? "OK" : "MISSING",
+        std::fprintf(log, "\n#25 color-select: INTERFACE.TXD cars %d/10, vs %s, "
+                     "star %s (dict has %u textures)\n", cars,
+                     vs_ok ? "OK" : "MISSING", g_star_ready ? "OK" : "MISSING",
                      dict.count());
         std::fclose(log);
     }
     return cars > 0;
+}
+
+// #10: load the "keyboard"/"joypad" input-device icons from the LOOSE PC.TXD
+// (original/TOASTART/PC/PC.TXD = the dict FUN_00402750 binds to DAT_00636ac8).
+// Not in a piz, so read the file directly + Txd::Dictionary decode.
+bool LoadInputIcons() {
+    std::FILE* log = std::fopen(kLogPath, "a");
+    std::FILE* f = std::fopen("original/TOASTART/PC/PC.TXD", "rb");
+    if (!f) {
+        if (log) { std::fprintf(log, "\n#10: PC.TXD open FAILED\n"); std::fclose(log); }
+        return false;
+    }
+    std::fseek(f, 0, SEEK_END);
+    const long sz = std::ftell(f);
+    std::fseek(f, 0, SEEK_SET);
+    if (sz <= 0) { std::fclose(f); if (log) std::fclose(log); return false; }
+    std::uint8_t* buf = static_cast<std::uint8_t*>(std::malloc(static_cast<size_t>(sz)));
+    if (!buf) { std::fclose(f); if (log) std::fclose(log); return false; }
+    const size_t rd = std::fread(buf, 1, static_cast<size_t>(sz), f);
+    std::fclose(f);
+    mashed_re::Txd::Dictionary dict;
+    bool ok = dict.Decode(buf, static_cast<std::uint32_t>(rd));
+    int n = 0;
+    if (ok) {
+        struct { const char* name; std::uint32_t slot; int handle; } want[2] = {
+            { "keyboard", kSlotInputKbd, kHandleInputKbd },
+            { "joypad",   kSlotInputJoy, kHandleInputJoy } };
+        for (int w = 0; w < 2; ++w) {
+            for (std::uint32_t i = 0; i < dict.count(); ++i) {
+                const auto& tex = dict.texture(i);
+                if (_stricmp(tex.name, want[w].name) != 0) continue;
+                if (g_quad_renderer.UploadFromTextureToSlot(want[w].slot, tex)) {
+                    mashed_re::D3d9Render::RwIm2DBridge_RegisterTexture(
+                        want[w].handle, g_quad_renderer.slot_texture(want[w].slot));
+                    ++n;
+                }
+                break;
+            }
+        }
+    }
+    std::free(buf);
+    if (log) {
+        std::fprintf(log, "\n#10 input icons: PC.TXD decode %s, %d/2 (kbd+joypad)\n",
+                     ok ? "OK" : "FAILED", n);
+        std::fclose(log);
+    }
+    return n > 0;
 }
 
 // B19a: load a PNG asset from a .piz by entry name, decode it via WIC, upload to
@@ -3973,6 +4652,7 @@ void ExecuteFrontendBootChain() {
 }  // namespace
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+    ApplyResolutionEnv();   // MASHED_HIRES=1 -> 1280x960 (else 640x480); before window+device
     // Self-locating asset root. Every data path in this exe (and the log) is
     // relative to the REPO ROOT ("original/TOASTART/..."), so a launch whose
     // cwd is elsewhere (Explorer double-click binds cwd to the exe dir) used
@@ -4012,6 +4692,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // Scripted nav-demo verification harness (in-process input only). Enabled
     // via env var MASHED_NAV_DEMO; drives push/pop/cursor + dumps backbuffer BMPs.
     g_nav_demo = (GetEnvironmentVariableA("MASHED_NAV_DEMO", nullptr, 0) != 0);
+    g_parity   = (GetEnvironmentVariableA("MASHED_PARITY",   nullptr, 0) != 0);
+    g_race_demo= (GetEnvironmentVariableA("MASHED_RACE_DEMO", nullptr, 0) != 0);
 
     // B17: snapshot the low-address arena before ANYTHING runs (no piz heap,
     // no window, no d3d9). This is the pristine layout we get to reserve from.
@@ -4130,6 +4812,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // works; the window title just won't reflect key state.
     (void)InitDirectInput(hInstance);
 
+    // Real audio backend (DirectSound). Non-fatal: if no audio device is
+    // present, RaceSession's ambience becomes a logged no-op.
+    (void)mashed_re::Audio::Init(g_hwnd);
+
     // B14: one-time wedge probe — write a test byte to MASHED's input
     // active byte (0x007f1044) and read it back. If the wedge has the
     // 0x007f0000 granule committed, the readback will match; otherwise
@@ -4241,13 +4927,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             "original/TOASTART/Common/Font36.piz", "MASHEDNEWLOGO.PNG",  /* F3: the rainbow title logo (MASHEDLOGO.PNG is the grey in-game variant) */
             kSlotMenuLogo, kHandleMenuLogo, &g_menu_logo_w, &g_menu_logo_h);
         // B19b: load the language message table + rasterize the main-menu items.
-        if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "USA.DAT")) {
+        // Use Font36.piz/ENGLISH.DAT (British), NOT USA.DAT: the original
+        // MASHED.exe we diff against loads ENGLISH.DAT (its menu reads "Player
+        // Colour Select", "Designed and Developed By Supersonic Software Ltd.",
+        // "Normal controls - one player per controller"). ENGLISH.DAT is a
+        // sibling piz entry in the SAME message-table format as USA.DAT (same
+        // id layout — FUN_00427780), so the descriptor-table string ids resolve
+        // identically; only the language text differs (British vs American).
+        // (2026-06-13 faithfulness pass: USA.DAT showed American "Color" and
+        // dropped the per-screen credit/help strings.)
+        if (LoadMessageTable("original/TOASTART/Common/Font36.piz", "ENGLISH.DAT")) {
             LoadMenuItems();
         }
         // R2-5: badge sprites (highlight-bar "Button" cap from badges.txd).
         g_menu_badge_ready = LoadBadgeSprites();
         g_previews_ready = LoadTrackPreviews();   // F2 crossfade textures
         g_carsel_ready = LoadCarColorSprites();   // #25 color-select car previews
+        g_inputicons_ready = LoadInputIcons();    // #10 keyboard/joypad row icons
         g_loadicon_ready = LoadLoadIconFromExe(); // loading-screen spinning disc
         g_bige_ready = LoadPngAssetToSlot(        // Empire 'E' trademark icon
             "original/TOASTART/Common/Font36.piz", "BIGE.BMP",
@@ -4368,7 +5064,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 char mv[8] = {};
                 if (GetEnvironmentVariableA("MASHED_DBG_MODAL", mv, sizeof(mv)) > 0) {
                     g_frontend_phase = 3;
-                    ModalGo(std::atoi(mv) == 2 ? 20 : 10);
+                    const int m = std::atoi(mv);
+                    ModalGo(m == 2 ? 20 : m == 3 ? 11 : m == 4 ? 30 : 10);
                     g_modal_alpha = 0xff;
                 }
             }
@@ -4447,6 +5144,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
             if (RunNavDemoStep(nav_demo_phase)) { PostQuitMessage(0); }
             ++nav_demo_phase;
         }
+        if (g_parity) {
+            if (RunParityWalk(nav_demo_phase)) { PostQuitMessage(0); }
+            ++nav_demo_phase;
+        }
+        if (g_race_demo) {
+            if (RunRaceDemoStep(nav_demo_phase)) { PostQuitMessage(0); }
+            ++nav_demo_phase;
+        }
         UpdateTitleFromKeyboard();
         // B12: arrow keys translate title quad; Enter resets.
         UpdateQuadFromKeyboard();
@@ -4463,6 +5168,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         // code currently reads these in standalone, but the wiring exists
         // for B16's frontend_mode_dispatch loop.
         WriteMashedInputGlobalsFromKeyboard();
+        // Top-level game-flow scaffold: drives the Frontend->LoadingRace->InRace
+        // state machine + the RaceSession subsystem stubs. In Frontend mode (the
+        // default — nothing requests a race yet) this is a no-op, so the menu is
+        // unaffected; the wiring is in place for when the frontend launches a race.
+        mashed_re::Race::GameFlow_Update(0.016f);
         if (!RenderFrame()) {
             // Unrecoverable device loss; bail out.
             break;
@@ -4470,6 +5180,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     }
 
     // Teardown.
+    mashed_re::Audio::Shutdown();
     ShutdownDirectInput();
     ShutdownD3D9();
     if (g_hwnd) {

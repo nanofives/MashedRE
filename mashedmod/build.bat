@@ -64,7 +64,13 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Track\TrackWorld.cpp" ^
     "Track\DffModel.cpp" ^
     "D3d9Render\TrackRenderer.cpp" ^
+    "D3d9Render\ParticleSystem.cpp" ^
+    "D3d9Render\PickupField.cpp" ^
     "Race\RaceCamera.cpp" ^
+    "Race\RaceSession.cpp" ^
+    "Race\GameFlow.cpp" ^
+    "Audio\RwsBank.cpp" ^
+    "Audio\AudioEngine.cpp" ^
     "D3d9Render\QuadRenderer.cpp" ^
     "D3d9Render\RwIm2DBridge.cpp" ^
     "D3d9Render\DrawStreamDump.cpp" ^
@@ -161,7 +167,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Frontend\MenuLeaves_af5.cpp" ^
     /link /SUBSYSTEM:WINDOWS /BASE:0x10000 /FIXED:NO /DYNAMICBASE:NO ^
     /MAP:"%OUT%\mashed_re.map" ^
-    user32.lib d3d9.lib
+    user32.lib d3d9.lib dsound.lib
 popd
 if errorlevel 1 (echo [ERROR] exe build failed & exit /b 1)
 
