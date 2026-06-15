@@ -1875,3 +1875,19 @@ extern "C" __declspec(dllexport) void __cdecl Init477450(
     *reinterpret_cast<std::uint32_t*>(dest + 0x40) = *arg2;
 }
 RH_ScopedInstall(Init477450, 0x00477450);
+
+// ===== round 153 ===== (struct-table div/mod compute + out-param)
+// 0x005b2fd0 — u32 fn(arg1, arg2, arg3, arg4, arg5):
+//   div = *(u32*)(*(u8**)(arg1+0x18) + arg4*0x28 + 0x20);
+//   q = arg2 / div (unsigned); rem = arg2 % div; *arg5 = rem;
+//   return *(u32*)(*(u8**)(arg1+0x10) + arg3*0x20 + 0x1c) + *(u32*)(arg1+0x20)*q + rem.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Calc5b2fd0(
+        std::uint8_t* arg1, std::uint32_t arg2, std::uint32_t arg3, std::uint32_t arg4, std::uint32_t* arg5) {
+    std::uint32_t div = *reinterpret_cast<std::uint32_t*>(*reinterpret_cast<std::uint8_t**>(arg1 + 0x18) + arg4 * 0x28 + 0x20);
+    std::uint32_t q = arg2 / div;
+    std::uint32_t rem = arg2 % div;
+    *arg5 = rem;
+    std::uint32_t base = *reinterpret_cast<std::uint32_t*>(*reinterpret_cast<std::uint8_t**>(arg1 + 0x10) + arg3 * 0x20 + 0x1c);
+    return base + *reinterpret_cast<std::uint32_t*>(arg1 + 0x20) * q + rem;
+}
+RH_ScopedInstall(Calc5b2fd0, 0x005b2fd0);
