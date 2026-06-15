@@ -98,6 +98,17 @@ HOOKS = {
         ],
         'path1_tests': [0, 1], 'path2_tests': [0, 1]},
 
+    # 0x00421060 StructZero421060 (gameplay) - NEAR-LEAF zero-init; pointer in ESI.
+    # void f(ESI=p): memset(p,0,8) via C3 ZeroFillWrapper(0x4b6520); *(u32*)(p+8/0xc/0x10/0x14)=0
+    # => zeroes p[0..0x18). bufsize 0x20 -> boundary echo: tail [0x18,0x20) keeps sentinel.
+    'esi_struct_init_421060': {'rva': 0x00421060, 'export': 'StructZero421060', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'esi_struct_init',
+        'bufsize': 0x20,
+        'scenarios': [
+            {'seed': 0xCC},   # post: [0,0x18)=0, [0x18,0x20)=0xCCCCCCCC (boundary kept)
+            {'seed': 0x77},   # post: [0,0x18)=0, [0x18,0x20)=0x77777777 (distinct boundary -> non-degen)
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x004058c0 FloatSubThunk4058c0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x4058b0.
     # void f(idx, float fval): *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval. Verbatim naked.
     'thunk_float_sub_4058c0': {'rva': 0x004058c0, 'export': 'FloatSubThunk4058c0', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'thunk_float_sub',

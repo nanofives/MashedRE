@@ -4552,3 +4552,22 @@ extern "C" __declspec(dllexport) void __cdecl StructInit418a00(unsigned char *p)
     p[0x13] = 0xFF;
 }
 RH_ScopedInstall(StructInit418a00, 0x00418a00);
+
+// 0x00421060 FUN_00421060 (gameplay, StructZero421060) — NEAR-LEAF zero-init, ESI=arg.
+//   memset(p, 0, 8)                       (0x00421060 push 8; push esi; call C3 ZeroFillWrapper 0x4b6520)
+//   *(u32*)(p+0x08) = 0                    (0x00421068 xor eax,eax; 0x0042106d mov [esi+8],eax)
+//   *(u32*)(p+0x0c) = 0                    (0x00421070 mov [esi+0xc],eax)
+//   *(u32*)(p+0x10) = 0                    (0x00421073 mov [esi+0x10],eax)
+//   *(u32*)(p+0x14) = 0                    (0x00421076 mov [esi+0x14],eax)
+//   => zeroes p[0 .. 0x18). Behavioral C reimpl as __cdecl(p) (memset inlined; ESI driven
+//   via the diff's esi-trampoline). Verified with a boundary echo (buf > 0x18, tail kept).
+extern "C" __declspec(dllexport) void __cdecl StructZero421060(unsigned char *p)
+{
+    *(unsigned int *)(p + 0x00) = 0u;
+    *(unsigned int *)(p + 0x04) = 0u;
+    *(unsigned int *)(p + 0x08) = 0u;
+    *(unsigned int *)(p + 0x0c) = 0u;
+    *(unsigned int *)(p + 0x10) = 0u;
+    *(unsigned int *)(p + 0x14) = 0u;
+}
+RH_ScopedInstall(StructZero421060, 0x00421060);
