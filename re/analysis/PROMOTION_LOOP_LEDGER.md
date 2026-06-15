@@ -9,9 +9,17 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 186
+- rounds_run: 187
 - total_green: 354
 - dry_counter: 0
+- NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
+  107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
+  re/analysis/plans/near_leaf_candidates.tsv. Reimpl pattern = verbatim naked port with each
+  `call rel32` to the callee replaced by `mov eax,<callee_abs>; call eax` (callee is hooked at
+  suspended-spawn, so BOTH orig+reimpl hit the same reimpl-callee -> consistent). CAVEAT: the
+  callee must be PURE or write OBSERVABLE memory; callees that READ .bss state are degenerate at
+  suspended-spawn (e.g. 0x45c330->0x45bff0 reads .data table 0x88fc88 = all-zero -> degenerate).
+  Prefer near-leaves whose callee is a state-writer (observe the written global) or pure-arith.
 - LIBRARY-SKIP CORRECTION (round 184, 2026-06-15): user ruled the statically-linked libpng/zlib
   band (0x516000-0x529fff) is library-skip (NOT first-party promotable). Reverted ALL 4 of MY
   this-session in-band C3s -> C2: r135 0x528e30, r149 0x517200, r179 0x5172f0, r183 0x520990
@@ -287,6 +295,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 186 | NEAR-LEAF LANE DISCOVERY (no promotion) | attempted 0 GREEN | dry_counter 0 (NOT exhaustion — new lane opened). After round 185 drained the pure-leaf pool, scanned for NEAR-LEAVES: C2 first-party, clean (no fld-stN/transcendental), small (<0x140), with >=1 CALL but ALL call-targets already C3. Found 107 -> re/analysis/plans/near_leaf_candidates.tsv (no-global subset is cleanest: 0x407b00, 0x408590, 0x40e4b0, 0x413fa0, 0x41a9b0, ...). Reimpl = verbatim naked port, replace `call rel32` with `mov eax,<callee_abs>; call eax`; both sides hit the hooked reimpl-callee -> consistent. Validated the CAVEAT on 0x45c330 (callee 0x45bff0 reads .data 0x88fc88 = .bss-zero -> degenerate); so curate to callees that WRITE observable globals or are pure-arith. NEXT ROUND: build a near-leaf handler (zero the callee's target global region, force-call orig vs reimpl, snapshot the written global; vary the parent's arg for non-degen) and start draining the 107. Session 101-186 net = +97 (257->354). Context 63 rounds deep — STRONGLY recommend a fresh context to execute the near-leaf lane cleanly (the absolute-call + global-zeroing handler is fiddly). Alternatively the promote-c3-batch parallel fanout remains the fastest route to 1000.
 
 2026-06-15 | round 185 | aligned first-fit heap allocator (NEW handler) + CRT band excluded | attempted 1 | GREEN 1 (Alloc5ae4c0 0x005ae4c0: walk embedded block list, free=end-used-block-0xc, align cur top, splice new block, return new+0xc else 0) | total_green 353->354 (354/1000). Status-prechecked C2; caller FUN_005ae3a0 C2 audio (first-party). NEW handler heap_alloc_aligned (one page-aligned block; size0x20/align0x10->+0x30 splice, size0x200->0 fail, align0x20->+0x40). ALSO finally added the MSVC CRT runtime band 0x5c0000-0x5c8000 to promote_frontier.py LIBRARY_BANDS (flagged round 156, never done) — the 0x5cxxxx 'clean' candidates were all CRT (__ftol/wcs*/SEH/__ctrandisp2). POOL STATUS: after excluding libpng/zlib + both CRT bands + D3DX9 + qhull, the genuine first-party CLEAN solo pool is now ZERO (0x5ae4c0 was the last). Remaining frontier = fld-stN float (off-limits), abs-global state (degenerate at suspended-spawn), complex multi-block, or library. The solo early-window vein is DRAINED. Session 101-185 net = +97 (257->354). ~73 handlers. THE PATH TO 1000 IS THE promote-c3-batch PARALLEL FANOUT (awaiting explicit user opt-in). Context 62 rounds deep — fresh context strongly advised.
 
