@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 232
-- total_green: 397
+- rounds_run: 233
+- total_green: 398
 - dry_counter: 0
 - NEAR-LEAF LANE OPENED (round 186, 2026-06-15): pure-leaf suspended-spawn pool drained, but
   107 NEAR-LEAF candidates found (C2 first-party, clean, small, ALL callees already C3) ->
@@ -333,6 +333,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-15 | round 233 | L3 frontier — C reimpl (straight-line funcptr registration) | attempted 1 | GREEN 1 (EngineRegisterFuncs4d8570/RwEngineRegisterStringFunctions 0x004d8570, render) | total_green 397->398 (398/1000). PURE LEAF int f(void): 36 straight-line insns, 0 branches/calls -> registers 17 funcptr constants into (*0x7d3ff8)+0xc4..0x104; ret 1. NEW handler engine_register_funcs (seed *glob=struct sentinel-filled, observe ret + 17 fields). 2/2 GREEN non-degen (all 17 distinct constants written). LESSON: big functions aren't always hard — check branch/call count first (this 272B fn was trivial: pure straight-line). Caller FUN_004c32b0 C2. ~6 CLEAN frontier remain (456eb0 EAX-min/5c95b0 bitpack/48f590/41e4b0). Session 101-233 net = +141 (257->398). Context 110 rounds deep. PATH TO 1000 (602 more) = this method (~1/round) or fanout.
 
 2026-06-15 | round 232 | L3 frontier — C reimpl (multi-mode data loop) | attempted 1 | GREEN 1 (PixelMaxAlpha4cde50 0x004cde50, render: per-pixel alpha=max(R,G,B)) | total_green 396->397 (397/1000). PURE LEAF int f(struct* s), 3 mode paths (4|8 -> 1<<mode pixels; 0x20 -> rows x cols; else no-op). C reimpl (data loops -> cleaner than verbatim for behavior). NEW handler pixel_max_alpha 3/3 GREEN non-degen (mode4 16px+bounds, mode0x20 2x2 row-stride, mode0 no-op; max-of-3 verified, returns s). Caller FUN_004ce970 C2. ~7 CLEAN frontier remain (456eb0/5c95b0/48f590/4d8570/41e4b0/486f90). Session 101-232 net = +140 (257->397). Context 109 rounds deep. PATH TO 1000 (603 more) = this method (~1/round) or fanout.
 

@@ -60,6 +60,13 @@ _ROTY90 = [0.0,0.0,-1.0,0.0, 0.0,1.0,0.0,0.0,  1.0,0.0,0.0,0.0,  0.0,0.0,0.0,1.0
 _MIXED  = [2.0,3.0,4.0,0.0,  5.0,6.0,7.0,0.0,  8.0,9.0,10.0,0.0, 11.0,12.0,13.0,1.0]
 
 HOOKS = {
+    # 0x004d8570 EngineRegisterFuncs4d8570 (render) - PURE LEAF int f(void): straight-line
+    # registration of 17 funcptr constants into (*0x7d3ff8)+0xc4..0x104; return 1.
+    'engine_register_funcs_4d8570': {'rva': 0x004d8570, 'export': 'EngineRegisterFuncs4d8570', 'signature': {'ret': 'uint32', 'args': []}, 'arg_type': 'engine_register_funcs',
+        'glob': 0x007d3ff8,
+        'observe_offs': [0xc4, 0xc8, 0xcc, 0xd0, 0xd4, 0xd8, 0xdc, 0xe0, 0xe4, 0xe8, 0xec, 0xf0, 0xf4, 0xf8, 0xfc, 0x100, 0x104],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
     # 0x004cde50 PixelMaxAlpha4cde50 (render) - PURE LEAF int f(struct* s): per-pixel
     # alpha=max(R,G,B). mode=s[0xc]: 4|8->(1<<mode) pixels @s[0x18]+2; 0x20->s[8]rows x
     # s[4]cols @s[0x14]+2; else no-op. ret s. Observe base[3]/[7]/[0x43] alphas + ret.

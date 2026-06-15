@@ -4206,3 +4206,23 @@ extern "C" __declspec(dllexport) int __cdecl PixelMaxAlpha4cde50(unsigned char* 
     return reinterpret_cast<int>(s);
 }
 RH_ScopedInstall(PixelMaxAlpha4cde50, 0x004cde50);
+
+// 0x004d8570 FUN_004d8570 (render, EngineRegisterFuncs) — PURE LEAF (no calls/branches)
+// int f(void): register 17 function pointers into the RW engine struct (*0x7d3ff8)
+// at offsets 0xc4..0x104; return 1. Straight-line stores, capstone-verified.
+extern "C" __declspec(dllexport) int __cdecl EngineRegisterFuncs4d8570(void)
+{
+    static const struct { unsigned off; unsigned val; } regs[] = {
+        {0xc4,0x4a2b60},{0xc8,0x4a42c5},{0xcc,0x4ac560},{0xd0,0x4a34b0},
+        {0xd4,0x4ac570},{0xd8,0x5c2300},{0xdc,0x4d8750},{0xe0,0x4d8730},
+        {0xe4,0x4a3860},{0xe8,0x4af340},{0xec,0x4a3a90},{0xf0,0x4d8680},
+        {0xf4,0x4a9410},{0xf8,0x4d86d0},{0xfc,0x4d8700},{0x100,0x4a3ac9},
+        {0x104,0x5c22bd},
+    };
+    for (int i = 0; i < 17; i++) {
+        unsigned char* e = *reinterpret_cast<unsigned char**>(0x007d3ff8u);
+        *reinterpret_cast<unsigned*>(e + regs[i].off) = regs[i].val;
+    }
+    return 1;
+}
+RH_ScopedInstall(EngineRegisterFuncs4d8570, 0x004d8570);

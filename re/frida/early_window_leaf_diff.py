@@ -231,6 +231,7 @@ PURE_LEAF_ARGTYPES = {
     'find_node_struct_copy',     # int fn(struct* p1, void** p2): PURE LEAF. walk p2's list for node (node[8]==p1[8] && node[0]==0x10b)||node[0]==0; copy 0x67 dwords p1->node; copy p1[0x16c]*9 dwords from p1[0x14]->node+0x19c; ret 1. Build p1(pat)/node(matched first)/src2 bufs, p1[0x16c]=1; observe node[0]|node[0x66]|node[0x67]|ret. non-degen via varied pat (verbatim naked, found-first path)
     'nested_list_search',        # uint fn(int key): PURE LEAF nested circular-list search at *cfg.glob (sentinel=glob). outer node O1=outerBuf+0x20; inner head @O1-0xc, sentinel O1-0x10, link +4, payload +8, payload[0xc] compared to key. returns key if found else 0. Build 1 outer + 1 inner + payload; per cfg.scenarios[t]={pval,key}: observe return. non-degen via found(key) vs not-found(0)
     'pixel_max_alpha',           # int fn(struct* s): PURE LEAF per-pixel alpha=max(R,G,B). mode=s[0xc]: 4|8 -> (1<<mode) pixels @s[0x18]+2; 0x20 -> s[8]rows x s[4]cols @s[0x14]+2 (base+=s[0x10]); else no-op. ret s. Build base buf with RGB pattern; per cfg.scenarios[t]={mode,rows,cols,stride}: observe base[3]|base[7]|base[0x43]|ret. non-degen via mode (processed vs sentinel alphas)
+    'engine_register_funcs',     # int fn(void): PURE LEAF straight-line; stores fixed funcptr constants into (*cfg.glob)+cfg.observe_offs; ret 1. seed *glob=struct (sentinel-filled), observe ret + struct[observe_offs]. non-degen via the distinct registered constants (snapshot != all-same)
 }
 
 SRC = r"""
@@ -393,6 +394,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'find_node_struct_copy') ? ['pointer','pointer']
               : (cfg.at === 'nested_list_search') ? ['uint32']
               : (cfg.at === 'pixel_max_alpha') ? ['pointer']
+              : (cfg.at === 'engine_register_funcs') ? []
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2723,6 +2725,14 @@ rpc.exports.diff = function(cfg) {
       };
       try { seedP(); o = snap(Orig(st)); } catch (e) { eo = e.message; }
       try { seedP(); r = snap(Reim(st)); } catch (e) { er = e.message; }
+    } else if (cfg.at === 'engine_register_funcs') {
+      // int f(void): straight-line stores of fixed funcptrs into (*glob)+offsets; ret 1.
+      const stE = Memory.alloc(0x140); _keep.push(stE);
+      const obs = cfg.observe_offs || [];
+      const seedE = function () { for (let z = 0; z < 0x140; z += 4) stE.add(z).writeU32(0xCCCCCCCC); ptr(cfg.glob).writePointer(stE); };
+      const snap = function (ret) { return (ret >>> 0) + ':' + obs.map(function (o2) { return (stE.add(o2 | 0).readU32() >>> 0).toString(16); }).join('|'); };
+      try { seedE(); o = snap(Orig()); } catch (e) { eo = e.message; }
+      try { seedE(); r = snap(Reim()); } catch (e) { er = e.message; }
     } else if (cfg.at === 'reg_scalar_compute') {
       // fn with scalar register args: trampoline `mov eax,a; mov ecx,c; mov edx,d;
       // jmp target` per test t=[a,c(,d)], NativeFunction returns ret (EAX). Varying
