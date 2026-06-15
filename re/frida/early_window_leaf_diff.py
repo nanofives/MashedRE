@@ -157,6 +157,7 @@ PURE_LEAF_ARGTYPES = {
     'global_rec_clear_ret',      # u32 fn(arg1, arg2): rec=*(glob)+arg2; if(rec[0xc]){ rec[0xc]=0; rec[8]=0; return arg1; } return 0. seed *glob=&buf, buf[idx+0xc]= (test0: nonzero -> zeroes + return arg1 ; test1: 0 -> return 0). observe buf[idx+8]|buf[idx+0xc]|ret. non-degen via ret + the zeroing
     'abs_scan_flag',             # void fn(): scans an absolute dword range; if any nonzero, sets flag global=0xff (else leaves it). Reset scan range (glob, span dwords) to 0 + flag(tgt) to a 0x11 sentinel; test0 seeds one nonzero at glob+idx (-> flag 0xff), test1 all-zero (-> flag stays 0x11). observe flag. non-degen 0xff vs 0x11
     'global_2level_list_search', # int fn(key): g=*(glob); node=g[4]; while(node){ e=node[0]; if(e && e[8]==key) return e[0xc]; node=node[8]; } return -1. seed *glob=&cont, cont[4]=&node, node[0]=&entry, entry[8]=KEY, entry[0xc]=RESULT, node[8]=0. test0 key=KEY (->RESULT), test1 key=KEY^1 (->-1). non-degen
+    'arg_flag_branch_getter',    # u32 fn(arg*): pure getter; if(arg[0x20]){ p=arg[0]; f=p[0x40]&0xfffffff; return (arg[0x1c]&2)?f+arg[0x20]+4:f+arg[0x20]; } else return (arg[0x1c]&2)?arg+0x2c:arg+0x28. Seed arg fields per cfg.seed_sets[t]={c,flag,f}; SHARED arg+p bufs (so arg+0x2c/0x28 compare equal). test=index over the 4 branches (non-degen)
 }
 
 SRC = r"""
@@ -249,6 +250,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'global_rec_clear_ret') ? ['uint32','uint32']
               : (cfg.at === 'abs_scan_flag') ? []
               : (cfg.at === 'global_2level_list_search') ? ['uint32']
+              : (cfg.at === 'arg_flag_branch_getter') ? ['pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
               : (cfg.at === 'eq_predicate_get') ? ['uint32','uint32']
               : (cfg.at === 'cond_table_get') ? ['uint32']
@@ -1209,6 +1211,21 @@ rpc.exports.diff = function(cfg) {
       const kk = (t | 0) === 0 ? KEY : (KEY ^ 1);
       try { setupL(); o = Orig(kk >>> 0) >>> 0; } catch (e) { eo = e.message; }
       try { setupL(); r = Reim(kk >>> 0) >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'arg_flag_branch_getter') {
+      // u32 fn(arg): pure 4-branch getter. Seed arg[0x20]=c, arg[0x1c]=flag, arg[0]=&p,
+      // p[0x40]=f per cfg.seed_sets[t]. SHARED arg+p buffers so the arg+0x2c / arg+0x28
+      // branches (which return the buffer address) compare equal between sides.
+      const ss = (cfg.seed_sets || [])[t | 0] || { c: 0, flag: 0, f: 0 };
+      const argb = Memory.alloc(0x40), pb = Memory.alloc(0x40); _keep.push(argb, pb);
+      const setupB = function () {
+        for (let z = 0; z < 0x40; z += 4) { argb.add(z).writeU32(0); pb.add(z).writeU32(0); }
+        argb.add(0x20).writeU32(ss.c >>> 0);
+        argb.add(0x1c).writeU8(ss.flag & 0xff);
+        argb.writePointer(pb);
+        pb.add(0x40).writeU32(ss.f >>> 0);
+      };
+      try { setupB(); o = Orig(argb) >>> 0; } catch (e) { eo = e.message; }
+      try { setupB(); r = Reim(argb) >>> 0; } catch (e) { er = e.message; }
     } else if (cfg.at === 'dll_get_nth') {
       // u32 fn(p, cont, idx): DLL get Nth element. count=cont[8]; if idx<count/2 walk
       // forward from p[0x20] (head) idx times via node[0]; else backward from p[0x24]

@@ -1695,3 +1695,19 @@ extern "C" __declspec(dllexport) int __cdecl Search4850b0(std::uint32_t key) {
     return -1;
 }
 RH_ScopedInstall(Search4850b0, 0x004850b0);
+
+// ===== round 142 ===== (4-branch pure pointer getter)
+// 0x005aa9c0 — u32 fn(arg): c=arg[0x20]; if(c){ p=arg[0]; f=p[0x40]&0xfffffff;
+//   return (arg[0x1c]&2) ? f+c+4 : f+c; } else return (arg[0x1c]&2) ? arg+0x2c : arg+0x28.
+extern "C" __declspec(dllexport) std::uint32_t __cdecl Get5aa9c0(std::uint8_t* arg) {
+    std::uint32_t c = *reinterpret_cast<std::uint32_t*>(arg + 0x20);
+    if (c != 0) {
+        std::uint8_t* p = *reinterpret_cast<std::uint8_t**>(arg);
+        std::uint32_t f = *reinterpret_cast<std::uint32_t*>(p + 0x40) & 0x0fffffff;
+        if (*reinterpret_cast<std::uint8_t*>(arg + 0x1c) & 2) return f + c + 4;
+        return f + c;
+    }
+    if (*reinterpret_cast<std::uint8_t*>(arg + 0x1c) & 2) return reinterpret_cast<std::uint32_t>(arg + 0x2c);
+    return reinterpret_cast<std::uint32_t>(arg + 0x28);
+}
+RH_ScopedInstall(Get5aa9c0, 0x005aa9c0);
