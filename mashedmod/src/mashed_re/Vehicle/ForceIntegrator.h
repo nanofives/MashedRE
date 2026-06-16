@@ -94,7 +94,9 @@ extern float g_suspScale;       // _DAT_0088e5f0
 extern float g_rubberBand[16];  // DAT_008989b0 (per-player catch-up float)
 extern int   g_rubberRefCar;    // DAT_008989c8
 extern int*  g_vehicleArrayBase;// DAT_008815a0 (16-car array; other cars' contact summary + drafting)
-extern float g_suspScratch[12]; // DAT_00881560 (per-wheel suspension/steer scratch, 0x40 before base)
+// DAT_00881560 (per-wheel suspension/steer scratch) lives in the Collision module
+// (Collision::g_suspScratch) since the wheel solver writes it; ForceIntegrator.cpp
+// references it qualified.
 
 // The per-car contact summary the integrator consumes (B2/B3 output): the 4-car
 // {active@+4, count@+8} fields at the vehicle base DAT_008815a0 (stride 0xd04).

@@ -253,6 +253,34 @@ WITHOUT the WS-A consumer or vehicle-struct init. (The real-track baseline *diff
 still awaits WS-A struct population, since the live classifier needs real
 transformed wheel positions in `DAT_0088e620`.)
 
+## WS-B4 orchestrator — wheel solver ported + full chain verified (2026-06-16)
+
+`FUN_0046f6c0` (3.5 KB, the per-tick car↔world ORCHESTRATOR) ported into
+`Collision/WheelContactSolver.cpp`. It is the missing link: it resets the contact
+scratch, runs the RW contact queries + the broadphase (producer) + the classifier,
+then the per-wheel **3-state machine** (state at self+0x198/0x25c/0x320/0x3e4) +
+position/orientation correction + rotation alignment + velocity-friction impulse,
+and the wheel **states** it sets are exactly what `FUN_0046ddb0` reads as the
+grounded count. Key data-flow finding: the classifier writes each wheel's contact
+**depth** to self+0x65+w·0x31 and **normal** to self+0x80+…; the state machine
+reads the depth as the spring load (−2.0 < depth < 0 ⇒ state 2). Residuals (no
+effect on the state→grounded output): the RW contact queries `FUN_004c3d90`, the
+register-arg `FUN_0046c5f0` (wheel normal), the RW rotation set `FUN_004c52f0`.
+`DAT_00881560` susp scratch is now the shared `Collision::g_suspScratch`.
+
+**Full-chain verified** by `Collision/b4_chain_selftest.cpp` (builds + runs): 4
+wheels penetrating a ground triangle → producer emits the batch → classifier
+registers **4 contacts** → wheel solver sets all 4 wheels to **state 2** →
+grounded count **4** → `VehicleWheelForceIntegrate` reads grounded **4** → **PASS**.
+The producer→classifier→orchestrator→integrator pipeline now runs end-to-end.
+
+So all four ported pieces (producer, classifier/solvers, wheel-solver orchestrator,
+force integrator) are individually + chain verified. The remaining gap to a LIVE
+race swap is the non-contact rest of the cluster: `FUN_004709a0` (substep entry),
+`FUN_0046b540` (vehicle init/spawn — allocates+populates the 0xd04 record),
+`FUN_00470670` (control-input integrator), and binding the residual RW/PRNG/runtime
+globals + a `COLLI*.BSP`→`CollTriangle` adapter. Then diff vs the captured baseline.
+
 ## Next (B4, depends on A5)
 
 Wire B2/B3 as the contact source for the ported vehicle sim (replace the

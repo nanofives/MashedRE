@@ -20,7 +20,8 @@ float g_suspScale      = 0.0f;       // _DAT_0088e5f0
 float g_rubberBand[16] = {0};        // DAT_008989b0
 int   g_rubberRefCar   = 0;          // DAT_008989c8
 int*  g_vehicleArrayBase = nullptr;  // DAT_008815a0
-float g_suspScratch[12] = {0};       // DAT_00881560
+// g_suspScratch (DAT_00881560) is defined in the Collision module (shared with
+// the wheel solver) — Collision::g_suspScratch.
 
 // --- residual engine deps (stubbed; real RVAs cited) -----------------------
 // FUN_004c3df0 — RwV3dTransformPoints. Real impl: Math/RwV3dTransformPoints.cpp.

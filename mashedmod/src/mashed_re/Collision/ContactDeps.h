@@ -106,6 +106,10 @@ extern int   g_terrainEntryCount;   // DAT_0088e60c
 // to (the byte-address the solvers iterate; first entry's data at +8). In the
 // original this is a register-passed global; the standalone wiring (B4) sets it.
 extern int*  g_terrainBatch;        // batch base (byte-addressable via int*)
+// DAT_00881560 — per-wheel suspension/steer scratch (12 floats). Shared by the
+// wheel solver (here) and the force integrator (Vehicle/ForceIntegrator); one
+// canonical definition lives in ContactStubs.cpp.
+extern float g_suspScratch[12];
 
 }  // namespace Collision
 }  // namespace mashed_re

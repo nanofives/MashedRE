@@ -18,11 +18,13 @@
 // wired (B4). Residual RW-math / PRNG / runtime-global deps stubbed inert.
 #include "ForceIntegrator.h"
 #include "../Collision/ContactSolvers.h"   // reuse TriangleFaceNormal (0x0046c5f0)
+#include "../Collision/ContactDeps.h"      // Collision::g_suspScratch (DAT_00881560)
 
 namespace mashed_re {
 namespace Vehicle {
 
 using namespace fi;
+using Collision::g_suspScratch;   // shared DAT_00881560 scratch
 
 // 0x0046ddb0
 void VehicleWheelForceIntegrate(int* self, float dt, void* xform)

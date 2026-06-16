@@ -29,5 +29,16 @@ void FillBatchEntry(ContactBatchEntry* e, const float* v0, const float* v1, cons
 int  ProduceTerrainBatch(const float* center, float radius,
                          const CollTriangle* tris, int triCount);                            // FUN_00538c80 stand-in
 
+// The standalone's COLLI*.BSP triangle list the wheel solver's broadphase walks
+// (the FUN_00538c80 query over the collision world). B4 wiring (or a self-test)
+// points these at the loaded track collision triangles.
+extern const CollTriangle* g_worldTris;
+extern int                 g_worldTriCount;
+
+// 0x0046f6c0 — the wheel solver / contact orchestrator: runs the broadphase +
+// classifier and the per-wheel 3-state machine that sets the wheel states the
+// force integrator (FUN_0046ddb0) reads as the grounded count.
+void WheelContactSolver(int* self, void* world, int substep);
+
 }  // namespace Collision
 }  // namespace mashed_re

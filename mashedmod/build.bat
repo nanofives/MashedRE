@@ -158,6 +158,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Collision\CarWorldContacts.cpp" ^
     "Collision\CarCarContacts.cpp" ^
     "Collision\ContactProducer.cpp" ^
+    "Collision\WheelContactSolver.cpp" ^
     "Collision\ContactStubs.cpp" ^
     "Vehicle\ForceIntegrator.cpp" ^
     "Vehicle\ForceIntegratorStubs.cpp" ^
