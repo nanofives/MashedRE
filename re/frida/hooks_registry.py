@@ -16070,4 +16070,29 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
+    # 0x00487d00  Particle3rdEmitterSubmit (c3-batch-sa2 s1, inline) — void
+    # f(u4 transform, byte alpha); submits a particle to the third emitter and
+    # bumps the count DAT_00703058 IF DAT_00703058 < DAT_00703070 (capacity).
+    # Seed capacity high so the gate passes -> readback = sentinel+1
+    # (sentinel-dependent, non-degenerate). call_args param_1 = 0x00703068
+    # (readable emitter base; FUN_00476a10 only READS the transform, content
+    # irrelevant to the count). The probe hint 0x007030b4 was a 24-dword window
+    # over-count of this count global. Callees FUN_00476a10/004769f0/00476d00.
+    # ref: re/analysis/cluster_0048_first_pass/0x00487d00.md
+    'sa2_particle_3rd_emitter_submit': {
+        'rva':            0x00487d00,
+        'export':         'Particle3rdEmitterSubmit',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32']},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00703058,
+        'seed_globals':   [{'addr': 0x00703070, 'val': 0x7fffffff}],
+        'call_args':      [0x00703068, 0xff],
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x0000007F,
+                           0x80000000, 0x00000001, 0x55555555, 0x0000002A,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0x00000001, 0x0000002A, 0xDEADBEEF],
+    },
+
 }

@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  C2->C3  0x00487d00  Particle3rdEmitterSubmit  c3-batch-sa2-s1(inline) GREEN 10/10 scenario=race (4 s1 siblings DEFERRED: EAX-implicit/RNG/texture-load/degenerate)
 2026-06-16  frida-sweep-sa2  merge c3/batch-sa2-s2 + void_write_observe seed_globals/call_args ext; integration GREEN 5/5
 2026-06-16  C2->C3  0x004331a0  RaceFinalizeOnce  c3-batch-sa2-s2 GREEN 10/10 scenario=race (guarded, seed_globals)
 2026-06-16  C2->C3  0x00415020  AiLastPlaceFrustration  c3-batch-sa2-s2 GREEN 10/10 scenario=race
