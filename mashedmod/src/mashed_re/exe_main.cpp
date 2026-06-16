@@ -1374,9 +1374,10 @@ bool UpdateMenuSelection() {
         }
         return false;
     }
-    if (down_now && !down_prev) Nav_MoveCursor(+1);
-    if (up_now   && !up_prev)   Nav_MoveCursor(-1);
+    if (down_now && !down_prev) { Nav_MoveCursor(+1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
+    if (up_now   && !up_prev)   { Nav_MoveCursor(-1); mashed_re::Audio::SfxPlay("menu navigation", 0.7f); }
     if (ent_now  && !ent_prev) {
+        mashed_re::Audio::SfxPlay("menu selection", 0.8f);   // real menu SFX
         // Load Game / Save Game (Options screen 8, rows 2/3) open the real
         // confirm flow (#18/#19): Load -> warning 0x215 (Yes/No); Save ->
         // overwrite? 0x1ca (Yes/No) -> saving -> success. Other items nav.
@@ -4975,6 +4976,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // Real audio backend (DirectSound). Non-fatal: if no audio device is
     // present, RaceSession's ambience becomes a logged no-op.
     (void)mashed_re::Audio::Init(g_hwnd);
+    // Preload the permanent SFX bank (permdict.rws: menu clicks, countdown,
+    // power-up/impact one-shots) for menu + race SFX.
+    mashed_re::Audio::SfxLoadBank(
+        "original/toastaudio/pc/audio/pcdics/permdict.rws");
 
     // B14: one-time wedge probe — write a test byte to MASHED's input
     // active byte (0x007f1044) and read it back. If the wedge has the

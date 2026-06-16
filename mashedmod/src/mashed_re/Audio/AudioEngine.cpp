@@ -28,6 +28,9 @@ IDirectSound8* g_ds = nullptr;
 IDirectSoundBuffer* g_engine = nullptr;   // procedural engine voice
 DWORD               g_engineBaseHz = 22050;
 IDirectSoundBuffer* g_music = nullptr;    // streamed-RWS music voice
+std::vector<RwsWave> g_sfxBank;           // cached 0x809 SFX bank (permdict)
+IDirectSoundBuffer*  g_sfxRing[8] = {};   // one-shot SFX voices (round-robin)
+int                  g_sfxNext = 0;
 
 struct Voice {
     IDirectSoundBuffer* buf = nullptr;
@@ -115,6 +118,8 @@ bool Init(void* hwnd) {
 void Shutdown() {
     EngineStop();
     MusicStop();
+    for (auto& b : g_sfxRing) if (b) { b->Stop(); b->Release(); b = nullptr; }
+    g_sfxBank.clear();
     StopAll();
     for (auto& v : g_voices) if (v.buf) { v.buf->Release(); v.buf = nullptr; }
     g_voices.clear();
@@ -250,6 +255,39 @@ void MusicStart(const char* rwsPath, float volume, int maxSeconds) {
 
 void MusicStop() {
     if (g_music) { g_music->Stop(); g_music->Release(); g_music = nullptr; }
+}
+
+void SfxLoadBank(const char* rwsPath) {
+    if (!g_sfxBank.empty()) return;
+    RwsBankLoad(rwsPath, g_sfxBank, kLog);
+}
+
+void SfxPlay(const char* waveNameSub, float volume) {
+    if (!g_ds || g_sfxBank.empty()) return;
+    const RwsWave* w = RwsBankFind(g_sfxBank, waveNameSub);
+    if (!w || !w->valid()) return;
+    WAVEFORMATEX wf = {};
+    wf.wFormatTag = WAVE_FORMAT_PCM; wf.nChannels = static_cast<WORD>(w->channels);
+    wf.nSamplesPerSec = w->rate; wf.wBitsPerSample = 16;
+    wf.nBlockAlign = static_cast<WORD>(w->channels * 2);
+    wf.nAvgBytesPerSec = w->rate * wf.nBlockAlign;
+    DSBUFFERDESC d = {};
+    d.dwSize = sizeof(d);
+    d.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GLOBALFOCUS;
+    d.dwBufferBytes = static_cast<DWORD>(w->pcm.size());
+    d.lpwfxFormat = &wf;
+    int slot = g_sfxNext; g_sfxNext = (g_sfxNext + 1) & 7;
+    if (g_sfxRing[slot]) { g_sfxRing[slot]->Stop(); g_sfxRing[slot]->Release(); g_sfxRing[slot] = nullptr; }
+    IDirectSoundBuffer* buf = nullptr;
+    if (FAILED(g_ds->CreateSoundBuffer(&d, &buf, nullptr)) || !buf) return;
+    void* p1 = nullptr; DWORD s1 = 0;
+    if (SUCCEEDED(buf->Lock(0, d.dwBufferBytes, &p1, &s1, nullptr, nullptr, 0))) {
+        std::memcpy(p1, w->pcm.data(), s1);
+        buf->Unlock(p1, s1, nullptr, 0);
+    }
+    buf->SetVolume(VolToDs(volume));
+    buf->Play(0, 0, 0);          // one-shot
+    g_sfxRing[slot] = buf;
 }
 
 bool IsPlaying(int voice) {

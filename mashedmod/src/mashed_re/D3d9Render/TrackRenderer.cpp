@@ -12,6 +12,7 @@
 #include "../Track/TrackWorld.h"
 #include "../Track/DffModel.h"
 #include "../Txd/TxdDecoder.h"
+#include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -1017,6 +1018,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         countdown_ -= in.dt;
         car_speed_ = 0.f; car_vel_[0] = car_vel_[1] = car_vel_[2] = 0.f;
         for (auto& a : ai_cars_) a.cur_speed = 0.f;
+        if (countdown_ <= 0.f) Audio::SfxPlay("go", 0.9f);   // real "GO!" SFX
         if (countdown_ > 0.f) return;
     }
 
@@ -1167,6 +1169,7 @@ void TrackRenderer::SpinOut(int slot) {
                                   : ai_cars_[static_cast<std::size_t>(slot-1)].pos;
     parts_.SpawnBurst(p, 36, 0xffffd060u, track_radius_ * 0.10f,
                       track_radius_ * 0.018f, 0.8f);
+    Audio::SfxPlay("explosion1", 0.85f);   // real spin-out explosion SFX
 }
 
 bool TrackRenderer::FireHeldPowerup() {
@@ -1182,11 +1185,14 @@ void TrackRenderer::ApplyPowerup(int kind) {
     switch (kind) {
         case PickupField::Boost:
             boost_timer_ = 2.0f;
+            Audio::SfxPlay("flame thrower", 0.7f);
             break;
         case PickupField::Shield:
             shield_timer_ = 5.0f;
+            Audio::SfxPlay("flash", 0.7f);
             break;
         case PickupField::Shock: {                       // slow nearby AI cars
+            Audio::SfxPlay("shotgun", 0.8f);
             for (auto& a : ai_cars_) {
                 const float dx = a.pos[0]-car_pos_[0], dz = a.pos[2]-car_pos_[2];
                 if (dx*dx + dz*dz < (R*0.5f)*(R*0.5f)) a.slow = 3.0f;
@@ -1202,6 +1208,7 @@ void TrackRenderer::ApplyPowerup(int kind) {
             m.pos[2] = car_pos_[2] - std::sin(car_yaw_) * R * 0.04f;
             m.life = 20.0f;
             mines_.push_back(m);
+            Audio::SfxPlay("drop mine", 0.8f);
             break;
         }
         case PickupField::Missile: {                     // homing at nearest AI ahead
@@ -1221,6 +1228,7 @@ void TrackRenderer::ApplyPowerup(int kind) {
             mi.vel[0] = fx * R * 0.6f; mi.vel[1] = 0.f; mi.vel[2] = fz * R * 0.6f;
             mi.target = best; mi.life = 4.0f;
             missiles_.push_back(mi);
+            Audio::SfxPlay("missile exhaust", 0.8f);
             break;
         }
         default: break;
@@ -1316,6 +1324,7 @@ void TrackRenderer::StartRound() {
         a.lane = (static_cast<float>(i) - 1.0f) * 3.0f;   // -3, 0, +3
     }
     countdown_ = 3.0f;   // 3-2-1 freeze before GO
+    Audio::SfxPlay("threetwoone", 0.9f);   // real countdown SFX (permdict)
     race_cam_.Reset();   // force_reset path on the first camera tick
     // clear any in-flight power-up effects from the previous round
     missiles_.clear();

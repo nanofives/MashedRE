@@ -46,6 +46,13 @@ void EngineStop();
 void MusicStart(const char* rwsPath, float volume, int maxSeconds);
 void MusicStop();
 
+// SFX bank — preload a 0x809 wave bank (e.g. permdict.rws: "menu navigation",
+// "menu selection", "threetwoone", "go", "rocket", "drop mine", "explosion1"...)
+// once, then fire named one-shots from the cache (8-voice ring). Cheap to call
+// per UI event / race event.
+void SfxLoadBank(const char* rwsPath);
+void SfxPlay(const char* waveNameSub, float volume);
+
 // Verification aid: true if `voice`'s buffer is actually in the PLAYING state
 // (DSBSTATUS_PLAYING) — used to prove audio is live in a headless run.
 bool IsPlaying(int voice);
