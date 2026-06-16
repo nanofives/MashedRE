@@ -333,10 +333,18 @@ Replaces the gate-ribbon lane-follower scaffold. Real = **FUN_00418860 family**
 - **C2** Port verbatim. **C3** wire + diff-original on a canonical race.
 
 ### WS-D — Power-up effects (item 1)
-Replaces the invented boost/shield/missile/mine/shock. Real = FUN_00430670 family
-(+ the 12 real types already in POWERUPS_GOLD.LUA).
-- **D1** RE the power-up dispatch + per-type effect functions.
-- **D2** Port per-type. **D3** wire to the held-pickup + collision; diff.
+Replaces the invented boost/shield/missile/mine/shock. Real = the **FUN_0045bba0
+dispatcher + 9-entry type table @0x005f9998** family (+ the 12 real types in
+POWERUPS_GOLD.LUA). [Corrected 2026-06-16: the old "FUN_00430670" was a mis-citation
+— that RVA is a player-slot resolver.]
+- **D1 DONE 2026-06-16** — full map in `re/analysis/structs/powerup_system.md`
+  (dispatcher, slot struct @0x0088fbe0, type table + per-type effect-fn RVAs,
+  lifecycle helpers, input bridge). Scaffold held-type name made data-faithful.
+- **D2** Port per-type — GATED on (a) a Ghidra fn-split of 0x453f60–0x45be81 (the
+  effect cluster is one merged fn; the table targets aren’t individually defined),
+  (b) WS-A1 vehicle struct, (c) WS-B collision, (d) WS-E RW scene-graph. Start with
+  low-dep area effects (OIL 0x457800 / FLASH 0x454db0); defer projectiles to WS-B.
+- **D3** wire to the held-pickup + collision; diff.
 
 ### WS-E — Renderer: RW-subset verbatim port (item 2; large; partly PARALLEL)
 Gate already RATIFIED (RENDERER_GATE_BRIEF.md: RW-subset port, librw fallback).
