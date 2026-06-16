@@ -17,6 +17,18 @@ Must be REPLACED by verbatim ports before they can be verified:
   tick → per-vehicle decide/steer/throttle → synthetic input block). [Corrected
   2026-06-16: "FUN_0040e480" was a mis-citation; that RVA is `CarSlotStateSet` (frontend
   leaf). Cluster mapped in `re/analysis/ai_controller.md` (WS-C C1 done).]
+  **WS-C2 progress (2026-06-16):** ctrl byte→axis map RESOLVED (U-0407 closed,
+  `ai_ctrl_byte_map_RESOLVED_2026-06-16.md`); the orchestration spine
+  (`Ai/AiController.cpp`: 0x00418860 tick, 0x00418560 step, 0x00417640 post-step) +
+  LOS/spline leaves (`Ai/AiTargeting.cpp`: 0x00416060 LOS, 0x004161e0 spline-target,
+  0x0046d510 velocity) are **verbatim-ported** as RH_ScopedInstall hooks and
+  **build+link into mashed_re_dev.asi** (all 6 exports verified in the .map). These are
+  **NOT yet C-level-promoted** — porting is implementation, not evidence; the C3a
+  per-function `run_diff` (esp. 0x00416060, isolatable) needs a scenario:'race' attach,
+  and the whole-loop C3b position diff stays gated on WS-A8. Remaining C2: the float
+  control step FUN_00416250 + 4/9/8 variants, pre-tick FUN_004177b0, bank switcher
+  FUN_00417180, the rest of the targeting helpers (incl. FPU-arg FUN_004150e0 needing a
+  naked-asm shim), the `.AI` parser, and the DAT_005ccXXX tuning-const harvest.
 - Collision (ground raycast only) — real = RW-Physics contact system.
 - Power-up EFFECTS (boost/shield/missile/mine/shock) — real = **FUN_0045bba0
   dispatcher + 9-entry type table @0x005f9998 family**. [Corrected 2026-06-16:
