@@ -51,7 +51,12 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean ch
    boot, before the menu. The working layer is `~ RUNASINVOKER WIN98RTM
    HIGHDPIAWARE` (boots + survives a live race, verified via `run_diff`). If
    MASHED suddenly AVs at boot and Frida attach fails with `VirtualAllocEx 0x5`,
-   check the AppCompat layer for `EMULATEHEAP` first.
+   check the AppCompat layer for `EMULATEHEAP` first — **and if the layer is
+   already clean, clear the PCA Store** (`AppCompatFlags\Compatibility
+   Assistant\Store`): after a crash storm the Program Compatibility Assistant
+   applies its own heap/FTH-style shim *outside* the Layers key that re-breaks
+   boot identically, and `setup_mashed_compat.ps1` did not used to undo it (it
+   now clears both — re-run it to recover).
 4. **d3d9 shim** built and deployed via `mashedmod\build_d3d9_shim.bat`. This proxy
    intercepts `IDirect3D9::CreateDevice` to force `Windowed=TRUE`+640×480 — without
    it, MASHED runs fullscreen, and the resolution-mode switch between launches

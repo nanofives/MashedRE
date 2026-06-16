@@ -14,6 +14,8 @@ import csv
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 import time
 from collections import defaultdict
@@ -29,6 +31,14 @@ OUT_JSON = ROOT / "log" / "scenario_attach_probe.json"
 
 RACE_SUBSYSTEMS = {"gameplay", "vehicle", "ai", "camera", "race", "hud", "particle"}
 DAT_RX = re.compile(r"DAT_(00[4-9a-fA-F][0-9a-fA-F]{4,5})")
+
+# Stride-aware probe window (2026-06-16): read this many dwords past each cited
+# base. The single-dword read undercounted per-slot arrays whose base element
+# stays 0 in-race while later slots (stride 0x14..0x4e) populate — see the lane
+# doc's caveat. A flip anywhere in the window unlocks the candidate; the vet
+# step confirms the function actually reads the flipped offset (windows can
+# spill into an adjacent global = candidate-grade, not proof).
+WINDOW_DWORDS = 24
 
 # Shared nav agent (single copy — also used by run_diff.py scenario:'race').
 AGENT = (Path(__file__).resolve().parent / "nav_agent.js").read_text(encoding="utf-8")
@@ -53,19 +63,56 @@ def candidates_and_globals():
 
 def main():
     cand = candidates_and_globals()
-    addrs = sorted({a for v in cand.values() for a in v})
-    print(f"{len(cand)} candidate C2 rows cite {len(addrs)} distinct DAT_* globals")
 
-    env = dict(os.environ)
-    env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    def windowed(base):
+        return [base + 4 * k for k in range(WINDOW_DWORDS)]
+    addrs = sorted({wa for v in cand.values() for a in v for wa in windowed(a)})
+    print(f"{len(cand)} candidate C2 rows cite "
+          f"{len({a for v in cand.values() for a in v})} DAT_* globals -> "
+          f"{len(addrs)} probe addresses (window={WINDOW_DWORDS} dwords)")
+
+    # Spawn EXACTLY like run_diff.py (subprocess.Popen + attach, NOT frida
+    # dev.spawn): a Frida-controlled suspended spawn does not get the WIN98RTM
+    # AppCompat layer applied the same way and crashes MASHED at boot (2026-06-16).
+    # Enforce the windowed videocfg first so we don't fight fullscreen.
+    canon = ROOT / "scripts" / "canonical" / "videocfg_windowed.bin"
+    if canon.exists():
+        shutil.copy2(str(canon), str(ORIG / "videocfg.bin"))
+    env = {**os.environ, "MASHED_RE_NO_AUTO_HOOK": "1"}
+    _CREATE_NEW_PROCESS_GROUP = 0x00000200
+    _DETACHED_PROCESS = 0x00000008
     dev = frida.get_local_device()
-    pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
-    sess = dev.attach(pid)
+
+    def spawn_attach():
+        # Attach FAST (0.2 s) like run_diff.py — suspend MASHED before any
+        # residual boot-crash window. Intermittent boot AVs are retried by
+        # respawning (post-EMULATEHEAP-fix boot is ~stable but not 100%).
+        p = subprocess.Popen(
+            [str(EXE)], cwd=str(ORIG), env=env,
+            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            creationflags=_CREATE_NEW_PROCESS_GROUP | _DETACHED_PROCESS)
+        time.sleep(0.2)
+        try:
+            return p, dev.attach(p.pid)
+        except Exception as e:
+            try: p.kill()
+            except Exception: pass
+            return p, None
+
+    proc = sess = None
+    for attempt in range(4):
+        proc, sess = spawn_attach()
+        if sess is not None:
+            break
+        print(f"  spawn/attach attempt {attempt+1} failed (boot crash window) — retrying")
+        time.sleep(1.0)
+    if sess is None:
+        print("attach failed after 4 spawn retries (MASHED boot unstable)")
+        return 4
     scr = sess.create_script(AGENT)
     scr.on("message", lambda m, d: None)
     scr.load()
     scr.exports_sync.init()
-    dev.resume(pid)
     E = scr.exports_sync
 
     def wait(pred, timeout, what):
@@ -120,7 +167,7 @@ def main():
         race_snap_b = E.snap(addrs)
     finally:
         try:
-            dev.kill(pid)
+            proc.kill()
         except Exception:
             pass
 
@@ -129,9 +176,14 @@ def main():
     val = dict(zip(addrs, zip(menu_snap, race)))
     flipped = {a: (m, rcv) for a, (m, rcv) in val.items()
                if m == 0 and rcv not in (0, None)}
-    unlocked = {rva: [a for a in dats if a in flipped]
-                for rva, dats in cand.items()}
-    unlocked = {k: v for k, v in unlocked.items() if v}
+    flipset = set(flipped)
+    unlocked = {}
+    for rva, bases in cand.items():
+        hits = sorted({base + off for base in bases
+                       for off in range(0, WINDOW_DWORDS * 4, 4)
+                       if (base + off) in flipset})
+        if hits:
+            unlocked[rva] = hits
 
     print(f"\nglobals zero at menu:            {sum(1 for m, _ in val.values() if m == 0)}")
     print(f"of those, NON-ZERO in race:      {len(flipped)}")

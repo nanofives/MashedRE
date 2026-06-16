@@ -34,6 +34,17 @@ if (-not (Test-Path $layersKey)) {
 }
 Set-ItemProperty -Path $layersKey -Name $mashedPath -Value $layer -Type String
 
+# Clear the Program Compatibility Assistant (PCA) record for MASHED. After
+# repeated crashes (e.g. during Frida diff iteration) PCA flags the exe in its
+# Store and applies a heap/FTH-style compat shim OUTSIDE the Layers key above
+# that re-breaks boot (0xC0000005 in ntdll heap during CRT init) — and setting
+# the layer alone does NOT undo it. Root-caused 2026-06-16. Idempotent.
+$pcaStore = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant\Store"
+if ((Test-Path $pcaStore) -and ((Get-Item $pcaStore).Property -contains $mashedPath)) {
+    Remove-ItemProperty -Path $pcaStore -Name $mashedPath -Force
+    Write-Host "Cleared PCA Store record for MASHED.exe (post-crash compat shim)"
+}
+
 Write-Host "AppCompat layer set on $mashedPath"
 Write-Host "  -> $layer"
 Write-Host ""
