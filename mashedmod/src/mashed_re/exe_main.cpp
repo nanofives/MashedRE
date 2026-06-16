@@ -1892,7 +1892,16 @@ bool RenderFrame() {
             di.dt = dt;
             static const bool s_drive_demo =
                 GetEnvironmentVariableA("MASHED_DRIVE_DEMO", nullptr, 0) > 0;
-            if (s_drive_demo) {
+            static const bool s_play_demo =
+                GetEnvironmentVariableA("MASHED_PLAY_DEMO", nullptr, 0) > 0;
+            // The HUMAN drives the player car for real keyboard play (and the
+            // play-demo); the exhibition drive-demo keeps the gate auto-follow.
+            g_track.SetHumanDrive(!s_drive_demo || s_play_demo);
+            if (s_play_demo) {
+                // control test: accelerate + steer hard right -> the car should
+                // arc right (yaw climbs). Logged below to prove input drives it.
+                di.accel = 1.f; di.steer = 1.f;
+            } else if (s_drive_demo) {
                 // TIME-based schedule (fps varies with scene weight):
                 // throttle 3s with a gentle weave from 1.5s, then coast —
                 // keeps the run on the visible road, off the frozen bay.
@@ -1906,6 +1915,22 @@ bool RenderFrame() {
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
             g_track.UpdateCar(di);
+            if (s_play_demo) {   // control proof: log the player yaw under input
+                static float s_yaw_log_t = 0.f;
+                if (t - s_yaw_log_t > 1.0f) {
+                    s_yaw_log_t = t;
+                    float cp[3]; g_track.car_pos(cp);
+                    std::FILE* lf = std::fopen(kLogPath, "a");
+                    if (lf) {
+                        std::fprintf(lf, "PLAY-DEMO t=%.1f human_drive=%d "
+                                     "car_yaw=%.3f pos=(%.1f,%.1f) speed=%.2f\n",
+                                     t, (int)g_track.human_drive(),
+                                     g_track.car_yaw(), cp[0], cp[2],
+                                     g_track.car_speed());
+                        std::fclose(lf);
+                    }
+                }
+            }
             // Fire the held power-up: SPACE (rising edge) when driving manually;
             // in the drive demo, fire one of each effect on a schedule (kinds:
             // 0=Missile 1=Mine 2=Shock 3=Boost 4=Shield) plus any collected one.

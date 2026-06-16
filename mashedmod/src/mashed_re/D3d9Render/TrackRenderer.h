@@ -96,6 +96,7 @@ public:
         out[0] = car_pos_[0]; out[1] = car_pos_[1]; out[2] = car_pos_[2];
     }
     float car_speed() const { return car_speed_; }
+    float car_yaw()   const { return car_yaw_; }
 
     // Enable track-weather particles (0=none, 1=snow, 2=dust). Called when a
     // race begins; the field is drawn at the end of the 3D pass.
@@ -295,6 +296,7 @@ public:
     int   round_no_ = 0;
     int   race_mode_ = 0;         // 0 = elimination, 1 = laps
     int   lap_target_ = 3;        // laps mode: laps to finish
+    bool  human_drive_ = false;   // true: player car uses input (not auto-follow)
     float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
     void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
     void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
@@ -339,6 +341,10 @@ public:
     }
     int   race_mode()  const { return race_mode_; }
     int   lap_target() const { return lap_target_; }
+    // true: the player car is driven by input (a human races); false: the
+    // exhibition auto-follow drives it. Set when a race begins.
+    void  SetHumanDrive(bool h) { human_drive_ = h; }
+    bool  human_drive() const { return human_drive_; }
     int   car_lap(int slot) const {
         return (slot >= 0 && slot < kRaceCars) ? race_[slot].laps : 0;
     }

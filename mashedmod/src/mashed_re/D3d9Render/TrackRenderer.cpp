@@ -1021,8 +1021,9 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
     }
 
     float accel = in.accel, steer = in.steer;
-    if (round_mode_) {
+    if (round_mode_ && !human_drive_) {
         // exhibition round: the player car auto-follows the gate loop too
+        // (skipped when human_drive_ — then accel/steer come from the player).
         if (!gates_.empty() && race_[0].alive) {
             const float* g = gates_[static_cast<std::size_t>(race_[0].gate) %
                                     gates_.size()].center;
