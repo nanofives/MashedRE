@@ -12,6 +12,10 @@ A row goes into DEFERRED when:
 
 | ID | Title | Why deferred | Re-pickup when | Phase tag |
 |----|-------|--------------|----------------|-----------|
+| D-11052 | Full per-rule race win-condition engine in the standalone (rules 5/7 position/checkpoint via FUN_0046c7b0; time/gap conditions in FUN_00410510/FUN_00410d10 cases 4/8/9/10) | WS-G1 ported the game-mode→rule derivation (Race/RaceModes) but the standalone race layer has only elim/non-elim objectives; the 11 real rules can't be faithfully run yet | standalone race-rule engine is built (vehicle physics + race state) | frontend/gameplay (WS-A/WS-H) |
+| D-11053 | MP/quick-race rule from game length DAT_0067ea88 (action 0xff420000: 0→rule0,1→rule1,2→rule2) | WS-G1 ported the championship path (0xff240000); the standalone's race-launch uses challenge-select only | MP/quick-race race-launch is wired in the standalone | frontend (WS-G2) |
+| D-11054 | Cup-tier → game-mode (3/4/5) selection on challenge-select (standalone forces gameMode=6 scaffold default → rule 0 → elimination) | WS-G1 derives the rule faithfully from gameMode+track, but the real SP championship mode (3/4/5 by cup tier, DAT_0067ecdc/DAT_0067ed6c) isn't selected in the standalone yet | challenge-select cup-stage state is ported | frontend (WS-G2/G3) |
+| D-11055 | Real per-event lap counts from LAPDATA.LUA (standalone uses cfg.laps default 3 + MASHED_LAPS override) | WS-G1 derives the objective but not the lap target; lap lines/counts live in LAPDATA.LUA | LAPDATA.LUA parser lands | data formats (WS-F4) |
 | D-0001 | Depth-2 callees of entry+depth-1 subset (boot CRT chain) | Out of scope for this session; only entry+depth-1 targeted | boot subsystem sweep session opened for CRT init chain | boot |
 | ~~D-0040~~ | ~~depth-3 callees of 0x00402750 (56 RVAs)~~ | RESOLVED 2026-05-13: all 56 RVAs C1+; final 2 (00496e40/004caea0) added boot_subsystem_d3; remainder covered across boot_app_init_d3/d4/d5 sessions | — | boot |
 | ~~D-0041~~ | ~~depth-3 callees of 0x00402a40 (39 RVAs)~~ | RESOLVED 2026-05-13: all 39 RVAs C1+; 0041de70 in boot_app_init_d5; remainder covered across boot_app_init_d3/d4/d5 sessions | — | boot |

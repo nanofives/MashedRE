@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  WS-G1  game-mode->rule pipeline (FUN_0042f6b0 sel->mode, FUN_0043dfd0@0xff240000 switch DAT_0067e9fc + DAT_005f65c8 cup event-type table -> DAT_007f0fd0, objective split from FUN_00410d10/FUN_00410510 {4,5,7,8,9,10}) RE'd + ported to standalone Race/RaceModes; replaces exe_main MASHED_RACE_MODE/MASHED_LAPS env scaffold. No C-level change (frags of C2 0043dfd0/00410510/00410d10; 0042f6b0/0042f6a0/00430760 already C3). Data/logic-verified (host selfcheck OK). Filed U-8988/U-8989, D-11052..D-11055. Map: re/analysis/game_mode_rules_REmap_20260616.md
 2026-06-16  frida-sweep-20260615-2331  integration-diff GREEN 4/4 (hud_uv_rect_413bc0 menu + 3 race hooks) after MASHED boot-AV fix (dropped EMULATEHEAP); sa1 C3s fully verified
 2026-06-15  frida-sweep-20260615-2331  frida-sweep-claim  branches=2 (c3/batch-sa1-s1,s2)
 2026-06-15  C2->C3  0x00413bc0  HudUvRect413bc0  c3-batch-sa1-s1 per-session GREEN-12/12 (esi_idx_ecx_outbuf4; integration-diff DEFERRED: MASHED boot AV 0xC0000005 env)

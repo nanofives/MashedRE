@@ -163,6 +163,7 @@
 #include "Compat/StandaloneRvaThunks.h"     // B16: standalone RVA-thunk installer
 #include "Frontend/MenuNavSM.h"             // standalone menu nav state machine (FUN_0043d2a0 port)
 #include "Race/GameFlow.h"                  // top-level game state machine + race scaffold
+#include "Race/RaceModes.h"                 // [WS-G1] real game-mode -> race-rule pipeline
 #include "Audio/AudioEngine.h"              // real DirectSound playback (in-race ambience)
 
 // B15 — the frontend's bit-identical C3 Im2D quad draw (0x00450b10,
@@ -1435,10 +1436,22 @@ bool UpdateMenuSelection() {
                     carSel = std::atoi(cs);
                 if (carSel < 0) carSel = 0;
                 cfg.cars[0].carIndex = carSel;
-                // Race objective from the game mode. [SCAFFOLD] real mode-id ->
-                // rules table is binary-RE (FUN_0042f6a0 GetRaceSubMode); for now
-                // default elimination, with MASHED_RACE_MODE=laps + MASHED_LAPS=N
-                // overriding for dev/verification.
+                // [WS-G1] Real per-mode race rule (replaces the old
+                // MASHED_RACE_MODE/MASHED_LAPS env scaffold). Derive the
+                // original's race rule (DAT_007f0fd0, 0..10) from the real game
+                // mode + track via the cup event-type table, then collapse it
+                // onto the standalone's two objectives via the proximity-
+                // elimination split proven in FUN_00410d10 (elimination runs
+                // for every rule except {5,7}). gameMode 6 (the challenge-select
+                // scaffold default) -> rule 0 -> elimination (unchanged demo
+                // default). RE map: re/analysis/game_mode_rules_REmap_20260616.md.
+                cfg.raceRule = mashed_re::Race::RaceModes::RaceRule(cfg.gameMode,
+                                                                    cfg.trackId);
+                cfg.raceMode = mashed_re::Race::RaceModes::RaceModeForObjective(
+                                   cfg.raceRule);
+                // Dev overrides (verification only), applied after the real
+                // derivation: MASHED_RACE_MODE forces elim/laps, MASHED_LAPS the
+                // lap target.
                 char rm[8] = {};
                 if (GetEnvironmentVariableA("MASHED_RACE_MODE", rm, sizeof(rm)) > 0)
                     cfg.raceMode = (rm[0] == 'l' || rm[0] == 'L' || rm[0] == '1') ? 1 : 0;
