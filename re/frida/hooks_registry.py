@@ -15950,4 +15950,124 @@ HOOKS = {
         'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
     },
 
+    # ---- c3-batch-sa2 session 2 (scenario-attach C2->C3 WRITERS) -------------
+    # All void_write_observe on the scenario:'race' lane. These functions write
+    # per-vehicle / race-state globals that are ZERO at the quiescent menu, so
+    # they are verified attached inside a LIVE Quick Battle race. Two harness
+    # extensions to void_write_observe (SWEEP-CRITICAL — diff_template.js change):
+    #   seed_globals : list of {addr,val} written before EACH Orig/Reimpl call
+    #                  (resets a one-shot guard / accumulator slot for both sides).
+    #   call_args    : fixed int args passed to the call so the write address is
+    #                  deterministic for index-by-param_1 functions.
+    # Bodies byte-verified in MASHED.exe.unpatched (Mashed_pool10, read-only);
+    # reimpls in mashedmod/src/mashed_re/HUD/ScenarioWriters_sa2s2.cpp.
+
+    # 0x004331a0  RaceFinalizeOnce — guarded one-shot race-end init. The guard
+    # DAT_0067eca4 is SEEDED to 0 before each call so the body runs on BOTH sides
+    # (else orig runs once, reimpl no-ops -> spurious RED). param_1=0 (-> 0x0067ecac).
+    # Observe 0x0067ebb0 = 0x43520000 (210.0f, constant). Callees FUN_0042d3a0/
+    # 004248b0/00424920 all C3. ref: re/analysis/game_state_d2/0x004331a0.md
+    'sa2_race_finalize_once': {
+        'rva':            0x004331a0,
+        'export':         'RaceFinalizeOnce',
+        'signature':      {'ret': 'void', 'args': ['int32']},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0067ebb0,
+        'seed_globals':   [{'addr': 0x0067eca4, 'val': 0}],
+        'call_args':      [0],
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00415020  AiLastPlaceFrustration — int f(int car); last-place catch-up
+    # timer. call_args=[0] (car 0) so the write addr is fixed: leader-progress
+    # float at 0x0089a4e8+0*0x74. In the last-place branch (car 0 progress==0.0)
+    # it writes a live leader-progress float there; otherwise the sentinel
+    # survives (seeded arg_type). Both sides take the same branch on the same live
+    # state -> identical readback. Callees FUN_00442cc0/FUN_0040e470 C3.
+    # ref: re/analysis/ai_update_d2/0x00415020.md
+    'sa2_ai_last_place_frustration': {
+        'rva':            0x00415020,
+        'export':         'AiLastPlaceFrustration',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x0089a4e8,
+        'call_args':      [0],
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x004922e0  CarEventTrigger — void f(int car,u4,u4,u4); guarded per-player
+    # pending-event record write. call_args=[0,3,10,0x80] mirror the real call
+    # site FUN_00410d10. Guards: FUN_0040e470(car)==1 && FUN_0040e350()==6 &&
+    # guard-byte!=0. When guards pass for car 0 mapping to slot 0 it writes the
+    # trigger flag (=1) at 0x007f1058; otherwise the sentinel survives. Both sides
+    # identical. Callees FUN_0040e470/FUN_0040e350 C3.
+    # ref: re/analysis/bucket_vehicle_004922e0_0057c500/0x004922e0.md
+    'sa2_car_event_trigger': {
+        'rva':            0x004922e0,
+        'export':         'CarEventTrigger',
+        'signature':      {'ret': 'void', 'args': ['int32', 'int32', 'int32', 'int32']},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x007f1058,
+        'call_args':      [0, 3, 10, 0x80],
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00422b50  VehicleDamageAccum — void f(int car,int delta); accumulates
+    # delta into DAT_008995bc[car*0x4e] (stride 0x138 bytes). call_args=[0,1000]:
+    # car 0 = player (FUN_0040e470(0)==1) so the random-subtract branch is NOT
+    # taken (deterministic). The sentinel write to target_global 0x008995bc is the
+    # slot seed; fn does [slot]=sentinel+1000 -> readback varies with the sentinel
+    # (non-degenerate) and matches on both sides. Callees FUN_0040e470 C3 +
+    # FUN_00472650/FUN_004a2c48 C2 (unused on the player path).
+    # ref: re/analysis/ai_update_d6/0x00422b50.md
+    'sa2_vehicle_damage_accum': {
+        'rva':            0x00422b50,
+        'export':         'VehicleDamageAccum',
+        'signature':      {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x008995bc,
+        'call_args':      [0, 1000],
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
+    # 0x00401340  CupSpinSpeedAndColor — void f(void). DAT_00636574 =
+    # (float)(-(int)DAT_007f0ff0) * DAT_005cc328 (FILD integer load, NOT a float
+    # negate — listing 0x00401343..60). Then writes a mode-selected ARGB color to
+    # *(FUN_004b4080(DAT_00636564)+4). Observe 0x00636574 (live -> non-zero in a
+    # round). No args / no seed. Callees FUN_004b4080 C2 + FUN_0042f6a0 C3.
+    # ref: re/analysis/boot_hud_promote_ae1/0x00401340.md
+    'sa2_cup_spin_speed_and_color': {
+        'rva':            0x00401340,
+        'export':         'CupSpinSpeedAndColor',
+        'signature':      {'ret': 'void', 'args': []},
+        'arg_type':       'void_write_observe',
+        'target_global':  0x00636574,
+        'lut_root_delta': 0,
+        'scenario':       'race',
+        'path1_tests':    [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0xFFFFFFFF,
+                           0x80000000, 0x00000001, 0x55555555, 0xAAAAAAAA,
+                           0x3F800000, 0xBEEFCAFE],
+        'path2_tests':    [0xDEADBEEF, 0xCAFEBABE, 0xFFFFFFFF],
+    },
+
 }

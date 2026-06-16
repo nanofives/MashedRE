@@ -369,6 +369,19 @@ def build_config(hook, asi_path=None):
                'object_size', 'init_rva_str', 'pushback_rva_str'):
         if _k in hook:
             config[_k] = hook[_k]
+    # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):
+    #   seed_globals — list of {addr, val} written before EACH Orig/Reimpl call so
+    #     a one-shot guard / accumulator slot is reset for both sides.
+    #   call_args    — fixed integer args passed to the void_write_observe call so
+    #     the write address is deterministic for index-by-param_1 functions.
+    if 'seed_globals' in hook:
+        config['seed_globals'] = [
+            {'addr': f"0x{g['addr']:08x}" if isinstance(g.get('addr'), int) else g['addr'],
+             'val':  g['val']}
+            for g in hook['seed_globals']
+        ]
+    if 'call_args' in hook:
+        config['call_args'] = hook['call_args']
     return config
 
 
