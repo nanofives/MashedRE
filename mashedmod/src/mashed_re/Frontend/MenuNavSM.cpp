@@ -989,6 +989,31 @@ void Nav_MoveCursor(int delta) {
     s.cursor = c;
 }
 
+// FUN_0043dfd0 menu-action -> game-mode side effects (WS-G2; Mashed_pool6,
+// 2026-06-16). Selecting a Single-/Multi-Player MODE item writes the selection
+// index DAT_0067f184 then calls FUN_0042f6b0 (sel -> game-mode DAT_0067e9fc); it
+// also sets the team flag DAT_0067ea64. Transcribed verbatim from the harvested
+// decomp (re/analysis/standalone_menu_sm/harvest/FUN_0043dfd0.c):
+//   Challenge Cup (msgid 0xe5, 0xff3d0000): L259 sel=1   -> mode 3,  ea64=0 (L270)
+//   Quick Race    (msgid 0xe6, 0xff4d0000): L931 sel=0xb -> mode 10, ea64=1 (L938)
+//   Time Attack   (msgid 0x24, 0xff400000): L262 sel=0   -> mode 2,  ea64=0 (L270)
+//   Top Dog  (MP) (msgid 0x13e,0xff2c0000): L827 sel=3   -> mode 6,  ea64=0 (L829)
+//   Team Game(MP) (msgid 0x140,0xff2e0000): L827 sel=3   -> mode 6,  ea64=1 (L829)
+// (FUN_0042f6b0 / Race::RaceModes::SelectionToGameMode: 0->2,1->3,3->6,0xb->10.)
+// Any other action is not a mode-select item -> leaves game_mode unchanged. This
+// is what makes the standalone's game mode (and hence the Race/RaceModes rule
+// derived at launch) track the chosen frontend mode instead of a hard-coded id.
+void ApplyActionGameMode(std::uint32_t action) {
+    switch (action) {
+        case 0xff3d0000u: g_game_state.game_mode = 3;  g_game_state.flag_ea64 = 0; break;
+        case 0xff4d0000u: g_game_state.game_mode = 10; g_game_state.flag_ea64 = 1; break;
+        case 0xff400000u: g_game_state.game_mode = 2;  g_game_state.flag_ea64 = 0; break;
+        case 0xff2c0000u: g_game_state.game_mode = 6;  g_game_state.flag_ea64 = 0; break;
+        case 0xff2e0000u: g_game_state.game_mode = 6;  g_game_state.flag_ea64 = 1; break;
+        default: break;
+    }
+}
+
 bool Nav_Select() {
     const NavSlot& s = g_stack[g_nav_depth];
     if (s.cursor < 0 || s.cursor >= s.item_count) return false;
@@ -1000,6 +1025,10 @@ bool Nav_Select() {
     // Reversed map (FUN_0043dfd0): read the highlighted item's action code from
     // the descriptor table (FUN_0042ac90), then dispatch it (ActionToScreen).
     const std::uint32_t action = ItemActionCode(s.desc_table, s.cursor);
+    // WS-G2: apply the action's game-mode side effect before the nav dispatch
+    // (faithful to FUN_0043dfd0, which writes DAT_0067e9fc inline in the action
+    // handler, before the FUN_0043d2a0 child-screen push).
+    ApplyActionGameMode(action);
     const int target = ActionToScreen(action, s.slot_kind);
     if (target == kActPop) {
         return Nav_Back();
@@ -1042,6 +1071,12 @@ bool              Nav_AnimTick() { return Anim_Tick(); }
 const std::uint32_t* NavTest_TableForScreen(int s) { return TableForScreen(s); }
 std::uint32_t NavTest_ItemActionCode(const std::uint32_t* t, int i) { return ItemActionCode(t, i); }
 int NavTest_ActionToScreen(std::uint32_t a, int kind) { return ActionToScreen(a, kind); }
+// WS-G2: exercise the menu-action -> game-mode side effect in isolation. Applies
+// it to the live game-state, then returns the resulting game_mode.
+int NavTest_ApplyActionGameMode(std::uint32_t a) {
+    ApplyActionGameMode(a);
+    return g_game_state.game_mode;
+}
 int NavTest_KvLookup(const std::uint32_t* t, std::uint32_t tag, int n) { return KvLookup(t, tag, n); }
 // Vertical-grow fraction for the menu-entry animation (0 = collapsed to a
 // thin line, 1 = full height). The original animates item plates by GROWING

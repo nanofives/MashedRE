@@ -182,12 +182,55 @@ elimination — **no change to the flagship demo default**.
   not independently diff-original-able as a unit — it stays data/logic-verified
   until the standalone race-rule engine is built out (WS-A/WS-H).
 
-## Residuals / deferred (WS-G2, WS-A, WS-H)
+## WS-G2 (2026-06-16) — frontend mode selection wired to the real game mode
 
-- The standalone forces `gameMode=6` on challenge-select; the real SP
-  championship uses modes 3/4/5 by cup tier (`DAT_0067ecdc`/`DAT_0067ed6c`
-  cup-stage state). Wiring the cup-tier → mode selection is **WS-G2/G3**.
-- MP/quick-race rule from `DAT_0067ea88` (game length): WS-G2.
+The five real frontend MODE items now SET the standalone game mode on select,
+reproducing `FUN_0043dfd0`'s per-item `DAT_0067f184` (selection index) write +
+`FUN_0042f6b0` (sel → game-mode `DAT_0067e9fc`) + the `DAT_0067ea64` team flag.
+Map transcribed verbatim from the harvested decomp
+(`re/analysis/standalone_menu_sm/harvest/FUN_0043dfd0.c`), names from
+`original/TOASTART/Common/FONT/Defines.txt`:
+
+| menu item (msgid, name)            | screen | action      | sel (`f184`) | game-mode | `ea64` |
+|------------------------------------|--------|-------------|--------------|-----------|--------|
+| 0xe5  `challengecupmess`           | 2 SP   | 0xff3d0000  | 1            | **3**     | 0      |
+| 0xe6  `quickracemess`              | 2 SP   | 0xff4d0000  | 0xb          | **10**    | 1      |
+| 0x24  `timeattackmess`             | 2 SP   | 0xff400000  | 0            | **2**     | 0      |
+| 0x13e `topdogmess`                 | 3 MP   | 0xff2c0000  | 3            | **6**     | 0      |
+| 0x140 `teamgamemess`               | 3 MP   | 0xff2e0000  | 3            | **6**     | 1      |
+
+(Decomp lines: 0xff3d L259/L270, 0xff4d L931/L938, 0xff40 L262/L270, 0xff2c/0xff2e
+L827/L829.) The main menu (kT1, title 0x40 `gametypeselectmess`) is Single Player
+/ Multi Player / Options / Bonus Features / Exit; the mode items live one level
+down on the Single-Player (kT2, 0x21) and Multi-Player (kT3, 0x22) screens — so
+"each real mode" = these five items, NOT the main-menu rows. Modes 4/5 are the
+later championship cup tiers (advanced by cup progression, not a menu pick);
+modes 7/8/9 are MP game-type variants set on the game-mode config screen.
+
+**Wired:** `Frontend/MenuNavSM.cpp` `ApplyActionGameMode` (called from
+`Nav_Select`) sets `Nav_GameState().game_mode`. `exe_main` race launch now reads
+that mode (default 3 = Challenge Cup when unset; `MASHED_GAME_MODE` overrides for
+verification) → `Race/RaceModes::RaceRule` → objective. Mode 3, track 0 → event
+0x9 → rule 0 → elimination (unchanged demo default).
+
+**Verified (logic/data, GREEN):**
+- `mashedmod/src/mashed_re/Race/tests/racemodes_test.cpp` — selection→mode (12),
+  full `(mode 3/4/5, track 0..12)`→rule table vs the hand-decoded ground truth
+  (39 cells), modes 2/6/7/8/9/10→rule 0, event→rule (13), elimination split (11),
+  end-to-end for the 3 non-elim cup races (mode5 tracks 3/7/12). 0 failures.
+- `navsm_test.cpp` Piece 4 — the five actions → game_mode + two end-to-end nav
+  flows (SP Challenge Cup→mode 3→push colour; MP Top Dog→mode 6). 0 failures.
+Both are pure-logic harnesses (no booted original); this stays data/logic-verified
+per the same status as steps 1–4 (not independently `diff-original`-able as a unit).
+
+## Residuals / deferred (WS-G2 follow-ups, WS-A, WS-H)
+
+- Team Game (mode 6, `ea64=1`) shares the rule path of Top Dog (mode 6); the
+  team-array setup (`FUN_0046dc00`, `DAT_0067e850`) is not yet wired standalone.
+- MP/quick-race rule from `DAT_0067ea88` (game length) via the 0xff420000 action
+  uses `RaceRuleFromGameLength` (already in RaceModes), but the game-length
+  setting isn't live in the standalone yet — race launch uses the championship
+  `RaceRule` path. Wiring the 0xff420000 game-length path: follow-up.
 - Real lap counts come from `LAPDATA.LUA` (WS-F4), not env; `cfg.laps`
   default stays 3 + `MASHED_LAPS` override.
 - Rules 5/7 (position/checkpoint races) and the per-car float win metric

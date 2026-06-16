@@ -8,12 +8,19 @@
 
 using namespace mashed_re::Frontend;
 
+// Stubs for the frontend-render hooks MenuNavSM declares extern (the arc-wash
+// logo fade + the active-screen mode-code lookup). They are pure presentation/
+// state side-channels with no effect on the nav-logic this harness exercises.
+extern "C" void __cdecl LogoOverlayFadeSet(int, int) {}
+extern "C" unsigned int __cdecl ModeCodeLookup() { return 0xffffffffu; }
+
 // Test-support accessors (public wrappers over the MenuNavSM internals).
 namespace mashed_re { namespace Frontend {
 const std::uint32_t* NavTest_TableForScreen(int screen_id);
 std::uint32_t        NavTest_ItemActionCode(const std::uint32_t* table, int item_index);
 int                  NavTest_ActionToScreen(std::uint32_t action, int slot_kind);
 int                  NavTest_KvLookup(const std::uint32_t* table, std::uint32_t tag, int n);
+int                  NavTest_ApplyActionGameMode(std::uint32_t action);  // WS-G2
 } }
 #define TableForScreen  NavTest_TableForScreen
 #define ItemActionCode  NavTest_ItemActionCode
@@ -301,6 +308,50 @@ int main() {
         std::printf("  build pass: %d/%d non-null tables build records OK\n",
                     built, kN - n_null);
     }
+
+    // ----------------------------------------------------------------------
+    // Piece 4 (WS-G2) — frontend mode selection sets the game mode. Selecting a
+    // Single-/Multi-Player MODE item must write Nav_GameState().game_mode the way
+    // FUN_0043dfd0 writes DAT_0067e9fc (via DAT_0067f184 + FUN_0042f6b0). The
+    // resulting mode drives Race/RaceModes' rule derivation at race launch.
+    // ----------------------------------------------------------------------
+    std::printf("\n=== Piece 4 (WS-G2): mode-select -> game_mode wiring ===\n");
+    int g2_fail = 0;
+    auto modecheck = [&](const char* what, int got, int want) {
+        bool ok = (got == want);
+        std::printf("  [%s] %-26s got=%d want=%d : %s\n",
+                    ok ? "ok" : "FAIL", what, got, want, ok ? "OK" : "FAIL");
+        if (!ok) ++g2_fail;
+    };
+    // (a) direct action -> game_mode mapping (bypasses nav/avail).
+    Nav_GameStateReset();
+    modecheck("0xff3d (Challenge Cup)", NavTest_ApplyActionGameMode(0xff3d0000u), 3);
+    modecheck("0xff4d (Quick Race)",    NavTest_ApplyActionGameMode(0xff4d0000u), 10);
+    modecheck("0xff40 (Time Attack)",   NavTest_ApplyActionGameMode(0xff400000u), 2);
+    modecheck("0xff2c (Top Dog)",       NavTest_ApplyActionGameMode(0xff2c0000u), 6);
+    modecheck("0xff2e (Team Game)",     NavTest_ApplyActionGameMode(0xff2e0000u), 6);
+    // a non-mode action must leave game_mode unchanged.
+    Nav_GameStateReset();
+    NavTest_ApplyActionGameMode(0xff500000u);  // Options -> no mode write
+    modecheck("0xff50 (Options) no-op",  Nav_GameState().game_mode, 0);
+
+    // (b) end-to-end nav flow: main(1) -> Single Player(2), select item 0
+    // (Challenge Cup, always enabled) -> game_mode 3 AND push to colour(4).
+    Nav_GameStateReset(); Nav_Init();
+    Nav(2, kNavPush);                         // Single Player screen
+    // cursor defaults to the first enabled item (0 = Challenge Cup).
+    std::printf("  [SP screen cursor=%d (expect 0 Challenge Cup)]\n", Nav_Cursor());
+    Nav_Select();                             // -> sets mode 3, pushes screen 4
+    modecheck("flow: SP item0 -> mode3", Nav_GameState().game_mode, 3);
+    std::printf("  [after select -> screen=%d (expect 4 colour)]\n", Nav_ScreenId());
+
+    // (c) end-to-end nav flow: Multi Player(3), select item 0 (Top Dog) -> mode 6.
+    Nav_GameStateReset(); Nav_Init();
+    Nav(3, kNavPush);                         // Multi Player screen
+    Nav_Select();                             // -> sets mode 6
+    modecheck("flow: MP item0 -> mode6", Nav_GameState().game_mode, 6);
+
+    std::printf("  Piece 4: %s (%d failures)\n", g2_fail ? "RED" : "GREEN", g2_fail);
 
     return 0;
 }

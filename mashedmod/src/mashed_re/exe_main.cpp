@@ -1417,13 +1417,21 @@ bool UpdateMenuSelection() {
             if (g_track.Load(g_device, piz, kLogPath)) {
                 mashed_re::Race::RaceConfig cfg;
                 cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
-                // [item 4] real frontend game mode (DAT_0067e9fc via the menu
-                // game-state) drives the race instead of a hard-coded 6; 0/unset
-                // -> 6 (challenge, this screen's mode). The race-rule mapping
-                // (elim/laps) is still scaffold (MASHED_RACE_MODE) until the real
-                // mode-id->rules table is RE'd.
+                // [item 4 / WS-G2] real frontend game mode (DAT_0067e9fc via the
+                // menu game-state) drives the race. The Single-/Multi-Player mode
+                // items now SET game_mode on select (MenuNavSM ApplyActionGameMode,
+                // faithful to FUN_0043dfd0): Challenge Cup->3, Quick Race->10,
+                // Time Attack->2, Top Dog/Team Game->6. 0/unset (e.g. a dev jump
+                // straight to challenge-select) -> 3 (Championship/Challenge Cup,
+                // this screen's mode). MASHED_GAME_MODE forces a specific mode for
+                // verification (each real mode launches with its own rule below).
                 cfg.gameMode = mashed_re::Frontend::Nav_GameState().game_mode;
-                if (cfg.gameMode == 0) cfg.gameMode = 6;
+                if (cfg.gameMode == 0) cfg.gameMode = 3;
+                char gm[8] = {};
+                if (GetEnvironmentVariableA("MASHED_GAME_MODE", gm, sizeof(gm)) > 0) {
+                    int g = std::atoi(gm);
+                    if (g >= 2 && g <= 10) cfg.gameMode = g;
+                }
                 // Player vehicle from the frontend car-select cursor
                 // (DAT_0067ea98, player-0 slot — GameModeCarSelect). MASHED_CAR_SEL
                 // overrides for dev/verification. Clamped to the vehicle table;
@@ -1442,9 +1450,9 @@ bool UpdateMenuSelection() {
                 // mode + track via the cup event-type table, then collapse it
                 // onto the standalone's two objectives via the proximity-
                 // elimination split proven in FUN_00410d10 (elimination runs
-                // for every rule except {5,7}). gameMode 6 (the challenge-select
-                // scaffold default) -> rule 0 -> elimination (unchanged demo
-                // default). RE map: re/analysis/game_mode_rules_REmap_20260616.md.
+                // for every rule except {5,7}). The default (mode 3, track 0)
+                // -> event 0x9 -> rule 0 -> elimination (unchanged demo default).
+                // RE map: re/analysis/game_mode_rules_REmap_20260616.md.
                 cfg.raceRule = mashed_re::Race::RaceModes::RaceRule(cfg.gameMode,
                                                                     cfg.trackId);
                 cfg.raceMode = mashed_re::Race::RaceModes::RaceModeForObjective(
