@@ -20,9 +20,10 @@ Must be REPLACED by verbatim ports before they can be verified:
   **WS-C2 progress (2026-06-16):** ctrl byte→axis map RESOLVED (U-0407 closed,
   `ai_ctrl_byte_map_RESOLVED_2026-06-16.md`); the orchestration spine
   (`Ai/AiController.cpp`: 0x00418860 tick, 0x00418560 step, 0x00417640 post-step) +
-  LOS/spline leaves (`Ai/AiTargeting.cpp`: 0x00416060 LOS, 0x004161e0 spline-target,
-  0x0046d510 velocity) are **verbatim-ported** as RH_ScopedInstall hooks and
-  **build+link into mashed_re_dev.asi** (all 6 exports verified in the .map). These are
+  LOS/spline/steering leaves (`Ai/AiTargeting.cpp`: 0x00416060 LOS, 0x004161e0 spline-target,
+  0x0046d510 velocity, 0x00415e20 steering-angle-error, 0x00415d00 wall-ahead) are
+  **verbatim-ported** as RH_ScopedInstall hooks and **build+link into mashed_re_dev.asi**
+  (all 8 exports verified in the .map). These are
   **NOT yet C-level-promoted** — porting is implementation, not evidence; the C3a
   per-function `run_diff` (esp. 0x00416060, isolatable) needs a scenario:'race' attach,
   and the whole-loop C3b position diff stays gated on WS-A8. Remaining C2: the float
