@@ -1,6 +1,8 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  C2->C4  0x0040e180  MostSeparatedPair  WS-H2 verbatim .asi hook (Race/CameraClusterHooks.cpp; getters+LUT forwarded->bit-exact; no stubs) + clean orig-vs-modded A/B GREEN 12/12 bit-identical (diff_mostsep_pair.py; full synthetic car-state control at menu). Camera/elimination cluster pair finder. FINDING: standalone RaceCamera::MostSeparatedPair assigns (outer,inner) = SWAPPED vs original (inner,outer)
+2026-06-16  C2->C4  0x004c4a50  RwMatrixRotateInner  WS-A2 follow-up; Rodrigues build = inline __asm verbatim x87 (plain C++ 1-ULP off on R11 via FPU spill); path1 10/10 GREEN incl device-mult modes + canonical install-observe JMP-LIVE + 25s survival; RwMatrixRotate rewired to call it (re-diff GREEN)
 2026-06-16  C3->C4  0x0040b290  FUN_0040b290 (ScoreAdd)  WS-H2 clean orig-vs-modded A/B GREEN 84/84 bit-identical (diff_scoring_adder.py: .asi Module.load + uninject + state-controlled snapshot/restore; live-timer RingCtx field excluded) + installed-hook canonical-race observation; no stubs
 2026-06-16  C2->C3  0x0040b290  FUN_0040b290 (ScoreAdd)  WS-H2 verbatim .asi hook + installed-hook canonical-race observation GREEN (verify_scoring_hooks.py; E9 live, fires x16 in 4p-FFA Quick Battle, scores correct, match concludes, no crash); C4 pending clean orig-vs-modded CSV diff
 2026-06-16  C2->C3  0x0040eee0  FUN_0040eee0 (ScoreElim)  WS-H2 verbatim .asi hook (full 3-branch); installed-hook canonical-race GREEN (E9 live, fires x5, elim order fills, match concludes); FFA mode-0 path exercised; C4 pending diff (destructive callee FUN_00422fd0)
