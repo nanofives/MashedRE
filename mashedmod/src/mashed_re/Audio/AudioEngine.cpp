@@ -149,22 +149,39 @@ void StopAll() {
         }
 }
 
-void EngineStart(float volume) {
+void EngineStart(float volume, const char* rwsPath) {
     if (!g_ds || g_engine) return;
-    const DWORD rate = 22050;
-    g_engineBaseHz = rate;
-    // 1 s buffer = an integer number of cycles of a low buzz (seamless loop):
-    // base 55 Hz sawtooth + a touch of harmonic grit. SetFrequency pitches it.
-    const int N = static_cast<int>(rate);
-    std::vector<std::int16_t> pcm(static_cast<size_t>(N));
-    const double baseCyc = 55.0;        // 55 cycles in 1 s -> seamless
-    for (int i = 0; i < N; ++i) {
-        const double ph = std::fmod(static_cast<double>(i) * baseCyc / N, 1.0);
-        double s = (2.0 * ph - 1.0) * 0.6;             // sawtooth
-        s += 0.25 * (2.0 * std::fmod(ph * 2.0, 1.0) - 1.0);  // octave grit
-        if (s > 1.0) s = 1.0; if (s < -1.0) s = -1.0;
-        pcm[static_cast<size_t>(i)] = static_cast<std::int16_t>(s * 9000.0);
+    DWORD rate = 22050;
+    std::vector<std::int16_t> pcm;
+    // Prefer the REAL per-car engine sample: first sub-sound (RD_1) of the 0x80d
+    // bank — a tonal engine loop (cracked: continuous IMA ADPCM). Decode ~0.6 s.
+    if (rwsPath) {
+        std::uint32_t r = 44100;
+        if (RwsStreamDecode(rwsPath, pcm, r, static_cast<std::size_t>(0.6 * 44100), kLog)
+            && pcm.size() > 1000) {
+            rate = r;
+            logf("EngineStart: real engine sample %s (%u samples @%u)",
+                 rwsPath, (unsigned)pcm.size(), rate);
+        } else {
+            pcm.clear();
+        }
     }
+    if (pcm.empty()) {
+        // procedural fallback: 1 s seamless low buzz (sawtooth + octave grit).
+        rate = 22050;
+        const int N = static_cast<int>(rate);
+        pcm.resize(static_cast<size_t>(N));
+        const double baseCyc = 55.0;
+        for (int i = 0; i < N; ++i) {
+            const double ph = std::fmod(static_cast<double>(i) * baseCyc / N, 1.0);
+            double s = (2.0 * ph - 1.0) * 0.6;
+            s += 0.25 * (2.0 * std::fmod(ph * 2.0, 1.0) - 1.0);
+            if (s > 1.0) s = 1.0; if (s < -1.0) s = -1.0;
+            pcm[static_cast<size_t>(i)] = static_cast<std::int16_t>(s * 9000.0);
+        }
+        logf("EngineStart: procedural engine voice");
+    }
+    g_engineBaseHz = rate;
     WAVEFORMATEX wf = {};
     wf.wFormatTag = WAVE_FORMAT_PCM; wf.nChannels = 1; wf.nSamplesPerSec = rate;
     wf.wBitsPerSample = 16; wf.nBlockAlign = 2; wf.nAvgBytesPerSec = rate * 2;

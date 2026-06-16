@@ -146,7 +146,12 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         m_ambient = voice;
         m_ticks = 0;
         m_audio.ready = (voice >= 0);
-        Audio::EngineStart(0.5f);     // procedural engine voice (pitched in-race)
+        // Real per-car engine: first sub-sound of a 0x80d per-car bank (RD_1, a
+        // tonal engine loop). [SCAFFOLD] the audio banks are per-CHARACTER
+        // (bluejay/gold/melon/pink/red/shadow); the exact vehicle->bank map needs
+        // RE, so use a representative bank for now (falls back to the synth).
+        Audio::EngineStart(0.5f,
+            "original/toastaudio/pc/audio/pcdics/english/red.rws");
         // Real race music: the cdaudio.rws streamed bank, cracked as continuous
         // IMA ADPCM @44100 (Audio/RwsBank::RwsStreamDecode). Cap the decode to a
         // ~120s loop. Quiet under the engine/ambient.

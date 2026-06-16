@@ -34,7 +34,10 @@ void StopAll();
 // per-car engine samples live in the 0x80d streamed RWS banks (toastaudio
 // english/<car>.rws), a format not yet cracked; this synth stand-in gives the
 // race an engine note that rises with speed until those are decoded.
-void EngineStart(float volume);              // start (idempotent)
+// Start the engine voice. If `rwsPath` is a 0x80d per-car bank, the first
+// sub-sound (RD_1, a tonal engine loop) is decoded as the REAL engine sample;
+// otherwise a procedural buzz is synthesized. Pitched by EngineSetRpm.
+void EngineStart(float volume, const char* rwsPath = nullptr);
 void EngineSetRpm(float norm01);             // 0..1 -> playback pitch
 void EngineStop();
 
