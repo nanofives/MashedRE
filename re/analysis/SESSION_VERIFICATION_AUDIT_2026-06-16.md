@@ -75,6 +75,14 @@ Not C4 (no function), but verified that the PARSE matches the original data:
 - RWS audio 0x809 + 0x80d IMA ADPCM — decoded WAVs + autocorr 0.84/0.96 vs noise.
 - Course_Id<->area table — read directly from each COURSE.LUA.
 - POWERUPS_GOLD.LUA placement — independent re-parse cross-check (below): MATCH.
+- **WS-C .AI path data (2026-06-16)** — opponent-AI race-line splines + tile grid
+  cracked from MASHED.exe (saver FUN_00423540 / loader FUN_004235b0) + the real
+  AI.piz bytes: AI%d.AI = 12-byte RW chunk hdr (type 0x13269902, size 0x11884,
+  ver 0x1c02000a) + 0x11884 payload (tile grid 128×128 i16, subcell grid, 4 line
+  arrays race/inside/slow/cheat each 3×0x204 splines of 64 XZ points + count).
+  **13/13 members parsed, exact 0x11890 byte consumption** (re/tools/ai_data.py
+  validate). C++ header Ai/AiData.h (validate/load); doc
+  re/analysis/formats/ai_path_data.md. AI30.AI ver=0x1803ffff (loader ignores ver).
 - **WS-F track data formats (2026-06-16)** — all five cracked as standard RW core
   chunk streams (IDs vs rwplcore.h), parsed with exact byte consumption across
   **229/229 assets / 13 tracks, 0 failures** (re/tools/rw_track_data.py validate;
