@@ -171,6 +171,7 @@ let v3nBufs   = null;   // vec3_normalize:  { out, in }
 let xfdBufs   = null;   // device_transform_dispatch: { out, mat, in }
 let matsBufs  = null;   // matrix_scale:    { mat, scale }
 let matrBufs  = null;   // matrix_rotate:   { mat, axis }
+let mriBufs   = null;   // matrix_rotate_inner: { mat, axis }
 let tmpF32    = null;   // 4-byte scratch for float→U32 extraction
 
 function readLutRoot(delta) {
@@ -713,6 +714,24 @@ function callFn(fn, input, buf) {
         return out.join(',');
     }
 
+    if (CONFIG.arg_type === 'matrix_rotate_inner') {
+        // input: { matrix:[16], axis:[3] normalized, omc:float (1-cos), sin:float, mode:int }
+        // 0x004c4a50 RwMatrixRotateInner. fn(matrix, axis_n, 1-cos, sin, mode) -> matrix.
+        // mode 0 ignores the input matrix (pure replace); modes 1/2 use it as the concat
+        // operand + dispatch the RW device matrix-mult. Skip pad [7]/[11]/[15] (uninitialized).
+        for (let j = 0; j < 16; j++) mriBufs.mat.add(j * 4).writeFloat(input.matrix[j]);
+        mriBufs.axis.writeFloat(input.axis[0]);
+        mriBufs.axis.add(4).writeFloat(input.axis[1]);
+        mriBufs.axis.add(8).writeFloat(input.axis[2]);
+        fn(mriBufs.mat, mriBufs.axis, input.omc, input.sin, input.mode | 0);
+        const out = [];
+        for (let j = 0; j < 16; j++) {
+            if (j === 7 || j === 11 || j === 15) continue;  // pad — uninitialized
+            out.push(mriBufs.mat.add(j * 4).readU32());
+        }
+        return out.join(',');
+    }
+
     if (CONFIG.arg_type === 'matrix_scale') {
         // input: { mat: [16 floats], scale: [3 floats], mode: int }
         for (let j = 0; j < 16; j++)
@@ -874,6 +893,9 @@ function runDiff() {
     }
     if (CONFIG.arg_type === 'matrix_rotate') {
         matrBufs = { mat: Memory.alloc(64), axis: Memory.alloc(12) };
+    }
+    if (CONFIG.arg_type === 'matrix_rotate_inner') {
+        mriBufs = { mat: Memory.alloc(64), axis: Memory.alloc(12) };
     }
     if (CONFIG.arg_type === 'matrix_scale') {
         matsBufs = { mat: Memory.alloc(64), scale: Memory.alloc(12) };

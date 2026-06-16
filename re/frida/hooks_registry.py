@@ -2380,6 +2380,34 @@ HOOKS = {
         ],
     },
 
+    # 0x004c4a50  RwMatrixRotateInner  (WS-A2 follow-up; Rodrigues builder, RwMatrixRotate callee)
+    # fn(matrix, axis_n, one_minus_cos, sin, mode). mode 0 (replace) is pure (no device);
+    # modes 1/2 (pre/postconcat) dispatch the RW device matrix-mult. axis must be unit.
+    # Pad slots [7]/[11]/[15] uninitialized -> skipped in the matrix_rotate_inner comparison.
+    'rw_matrix_rotate_inner': {
+        'rva':            0x004c4a50,
+        'export':         'RwMatrixRotateInner',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'float', 'float', 'int32']},
+        'arg_type':       'matrix_rotate_inner',
+        'lut_root_delta': 0,   # device-table readiness poll (game-init gate)
+        'path1_tests': [
+            {'matrix': _IDENT, 'axis': [0.0, 0.0, 1.0],                    'omc': 1.0,        'sin': 1.0,        'mode': 0},  # 90 Z
+            {'matrix': _IDENT, 'axis': [1.0, 0.0, 0.0],                    'omc': 0.29289323, 'sin': 0.70710677, 'mode': 0},  # 45 X
+            {'matrix': _IDENT, 'axis': [0.0, 1.0, 0.0],                    'omc': 0.5,        'sin': 0.8660254,  'mode': 0},  # 60 Y
+            {'matrix': _IDENT, 'axis': [0.57735027, 0.57735027, 0.57735027],'omc': 0.5,       'sin': 0.8660254,  'mode': 0},  # 60 diag
+            {'matrix': _IDENT, 'axis': [0.0, 0.0, 1.0],                    'omc': 2.0,        'sin': 0.0,        'mode': 0},  # 180 Z
+            {'matrix': _IDENT, 'axis': [0.6, 0.8, 0.0],                    'omc': 1.5,        'sin': 0.8660254,  'mode': 0},  # 120
+            {'matrix': _IDENT, 'axis': [1.0, 0.0, 0.0],                    'omc': 1.0,        'sin': 1.0,        'mode': 0},  # 90 X
+            {'matrix': _IDENT, 'axis': [0.0, 1.0, 0.0],                    'omc': 0.13397461, 'sin': 0.5,        'mode': 0},  # 30 Y
+            {'matrix': _MIXED, 'axis': [0.0, 0.0, 1.0],                    'omc': 1.0,        'sin': 1.0,        'mode': 1},  # preconcat (device mult)
+            {'matrix': _MIXED, 'axis': [1.0, 0.0, 0.0],                    'omc': 0.5,        'sin': 0.8660254,  'mode': 2},  # postconcat (device mult)
+        ],
+        'path2_tests': [
+            {'matrix': _IDENT, 'axis': [0.0, 0.0, 1.0], 'omc': 1.0, 'sin': 1.0,       'mode': 0},
+            {'matrix': _IDENT, 'axis': [1.0, 0.0, 0.0], 'omc': 0.5, 'sin': 0.8660254, 'mode': 0},
+        ],
+    },
+
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session c3-batch-a-s6 â€” frontend_menus_a larger + game_mode (C2->C3)
     # MenuButtonDetect.cpp + GameModeCarSelect.cpp

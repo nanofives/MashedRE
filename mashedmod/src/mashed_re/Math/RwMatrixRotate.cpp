@@ -24,26 +24,27 @@
 // in an inline __asm block that mirrors asm 0x004c4d91..0x004c4da7 instruction-for-
 // instruction (FLD; FSIN; FSTP / FLD; FCOS; FSUBR 1.0; FSTP).
 //
-// DELEGATION: the Rodrigues inner builder FUN_004c4a50 (716 B, separate C2 render fn,
-// re/analysis/render_4_c1_to_c2_s2/FUN_004c4a50.md) is called at its original RVA. In the
-// dev .asi (injected into MASHED) that is the genuine original code, so the matrix output
-// is identical by construction and a diff-original of THIS function isolates exactly its
-// own preprocessing (deg->rad, axis normalize, sin/cos, 1-cos). For the standalone
-// (mashed_re.exe) wiring (WS-A8 / WS-E render), FUN_004c4a50 must itself be ported — it is
-// not yet, so RwMatrixRotate is dormant in the exe target (never called there yet).
+// DELEGATION: the Rodrigues inner builder FUN_004c4a50 is now ported as the C++ symbol
+// RwMatrixRotateInner (Math/RwMatrixRotateInner.cpp, also hooked at 0x004c4a50). This file
+// calls that symbol directly (not the RVA), so RwMatrixRotate is real in BOTH the dev .asi
+// and the standalone exe. In the .asi the inner is verified bit-identical (its own
+// diff-original), so a diff of THIS function still isolates its preprocessing (deg->rad,
+// axis normalize, sin/cos, 1-cos). NOTE: the inner's concat modes 1/2 dispatch the RW
+// device matrix-mult, so those modes still need RW device init in the standalone (WS-E);
+// mode 0 (a fresh rotation build) is fully self-contained.
 #include "../Core/HookSystem.h"
 
 #include <cstdint>
 
 // Ported, bit-identical RW fast inverse-sqrt (Math/RwSqrt.cpp, 0x004c3b90).
 extern "C" float __cdecl FastInvSqrt(float x);
+// Ported Rodrigues inner builder (Math/RwMatrixRotateInner.cpp, 0x004c4a50). Calling the
+// ported C++ symbol (not the original RVA) makes this work in the standalone exe too.
+extern "C" float* __cdecl RwMatrixRotateInner(float* matrix, const float* axis_n,
+                                              float one_minus_cos, float sin_a, int mode);
 
 static constexpr std::uintptr_t kDegToRadAddr = 0x005cd7a8u;  // float π/180 = 0x3c8efa35
 static constexpr std::uintptr_t kOneAddr      = 0x005cc320u;  // float 1.0f
-static constexpr std::uintptr_t kFUN_004c4a50 = 0x004c4a50u;  // Rodrigues inner builder
-
-typedef void* (__cdecl *RwMatrixRotateInner)(void* matrix, const float* axis,
-                                             float one_minus_cos, float sin_a, int mode);
 
 // 0x004c4d20
 extern "C" __declspec(dllexport)
@@ -75,7 +76,7 @@ void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, i
         fstp  dword ptr [one_minus_cos]
     }
 
-    reinterpret_cast<RwMatrixRotateInner>(kFUN_004c4a50)(matrix, axis_n, one_minus_cos, s, mode);
+    RwMatrixRotateInner(static_cast<float*>(matrix), axis_n, one_minus_cos, s, mode);
     return matrix;
 }
 

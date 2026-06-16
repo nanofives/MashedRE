@@ -60,11 +60,13 @@ Struct stride between cars in the contact loop = **0xd04 bytes** (~3.3 KB).
   **WS-A2 DONE 2026-06-16** — all four ported + C4 (diff-original GREEN + canonical
   install-observe, build 26200): FUN_004c3ac0 already C4 (Math/Vec3.cpp Vec3Magnitude);
   the other three now Math/RwV3dNormalize.cpp (13/13), Math/RwMatrixRotate.cpp (10/10,
-  x87 fsin/fcos inline-asm), Math/RwV3dTransformPoints.cpp (7/7 dispatch thunk). NOTE:
-  FUN_004c4d20 delegates to FUN_004c4a50 (Rodrigues inner, C2) at its RVA — that callee
-  still needs porting for standalone-exe wiring (it dispatches a device matrix-mult in
-  concat modes 1/2; mode 0 / replace is self-contained). Also Math/RwV3dTransform.cpp,
-  RwV2d, RwSqrt, RwMatrixScale (the 8 pre-existing C4 leaves).
+  x87 fsin/fcos inline-asm), Math/RwV3dTransformPoints.cpp (7/7 dispatch thunk). The
+  Rodrigues inner FUN_004c4a50 is ALSO ported + C4 (Math/RwMatrixRotateInner.cpp, 10/10;
+  the 3x3 build is inline __asm verbatim x87 because plain C++ is 1-ULP off on the R11
+  diagonal — MSVC spills (1-y²)·omc to f32 under FPU register pressure); RwMatrixRotate
+  now calls it by C++ symbol, so it works standalone for mode 0. Concat modes 1/2 still
+  dispatch the RW device matrix-mult, so they need RW device init in the standalone (WS-E).
+  Also Math/RwV3dTransform.cpp, RwV2d, RwSqrt, RwMatrixScale (the 8 pre-existing C4 leaves).
 - **RW-Physics collision** contact arrays (DAT_008815a4..) — the qhull/RW-Physics
   3.7 island (see [[qhull-rwphysics-island]], ~165 KB, 0x57c5b0..0x5a5820). The
   per-wheel ground + car↔car contacts feed FUN_0046ddb0. This is item-1's
