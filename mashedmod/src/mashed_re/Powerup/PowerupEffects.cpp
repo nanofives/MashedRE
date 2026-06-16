@@ -17,18 +17,25 @@ namespace mashed_re {
 namespace Powerup {
 namespace Effect {
 
-// ---- STUB tuning stand-ins (original consts in the unharvested 0x005c* band) --
+// ---- tuning constants ------------------------------------------------------
+// REAL (harvested 2026-06-16 from MASHED.exe .rdata; values in
+// powerup_effects_decomp.md §6): these are scale-independent counts/rates/seconds
+// and are bit-faithful. STAND-IN: the projectile launch *velocities* and the flame
+// duration live in the world-coordinate / frame-count domain and do not translate
+// to this radius-relative host backend, so they stay playable stand-ins (the real
+// model is cited for the future verbatim de-stub when WS-E lands).
 namespace tune {
-    constexpr int   kGunAmmo      = 50;    // orig pool +0x10 = 0x32 (FUN_00456040)
-    constexpr float kGunRate      = 0.06f; // orig timer reset 0x3d75c28f (FUN_004561c0)
-    constexpr int   kMissileAmmo  = 1;     // orig DAT_006885d8 = 1 (FUN_00455060)
-    constexpr int   kMortarAmmo   = 3;     // orig (&DAT_00684e44)[] = 3 (FUN_00453350)
-    constexpr float kMortarRate   = 0.4f;  // orig (&DAT_00684e48)[] = 0x3ecccccd (FUN_004533b0)
-    constexpr int   kShotgunPellets = 4;   // orig +0x10 = 4 (FUN_0045b200)
-    constexpr float kFlameDuration  = 1.2f;// orig +0x14 burns to >4 frames (FUN_0045a850)
-    constexpr float kMissileSpeed   = 0.6f;// projectile launch speed (host scale)
-    constexpr float kMortarSpeed    = 0.5f;
-    constexpr float kOilDrop        = 0.34f;// supply consumed per slick (FUN_00457800)
+    constexpr int   kGunAmmo      = 50;    // REAL: pool +0x10 = 0x32 (FUN_00456040)
+    constexpr float kGunRate      = 0.06f; // REAL: timer reset 0x3d75c28f (FUN_004561c0)
+    constexpr int   kMissileAmmo  = 1;     // REAL: DAT_006885d8 = 1 (FUN_00455060)
+    constexpr int   kMortarAmmo   = 3;     // REAL: (&DAT_00684e44)[] = 3 (FUN_00453350)
+    constexpr float kMortarRate   = 0.4f;  // REAL: (&DAT_00684e48)[] = 0x3ecccccd (FUN_004533b0)
+    constexpr int   kShotgunPellets = 4;   // REAL: +0x10 = 4 (FUN_0045b200)
+    constexpr float kOilDrop        = 0.1f;// REAL: _DAT_005cc56c = 0.1 -> supply 1.0/0.1 = 10 drops (FUN_00457800)
+    // STAND-INS (world-scale / frame-count in the original; host-scaled here):
+    constexpr float kFlameDuration  = 1.2f;// real gate = +0x14 frame counter >4 (FUN_0045a850); ~playable
+    constexpr float kMissileSpeed   = 0.6f;// real aim = trig * _DAT_005ce480/005ccad0/005cd988 (FUN_00455150)
+    constexpr float kMortarSpeed    = 0.5f;// real = fwd*_DAT_005cd02c(0.13) + ownerVel*_DAT_005cc9c8(0.9) (FUN_004533b0)
 }
 
 // helper: forward unit vec from the firing car (owner +0x20 fwd; fall back to yaw)

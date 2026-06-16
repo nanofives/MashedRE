@@ -201,3 +201,56 @@ specific `fire_mode`; TICK iterates the pool advancing each instance.
 (The full verbatim C of every function above was read this session; small fns are
 reproduced 1:1 in `Powerup/PowerupEffects.cpp` headers, big fns are ported as their
 decision logic with the leaf calls routed through `IPowerupBackend`.)
+
+---
+
+## 6. Harvested tuning constants (read 2026-06-16 from .rdata, slot Mashed_pool12)
+
+Float values read directly from MASHED.exe (`memory.getInt` → `<f`) at each address
+the effects reference. These are the real values; use them verbatim when the
+projectile pools + RW scene-graph land and the effect bodies are de-stubbed.
+
+| addr | value | seen in / meaning |
+|---|---|---|
+| DAT_005d757c | **0.0** | the float-zero sentinel (all effects compare against it) |
+| DAT_005cc320 | 1.0 | GUN/MISSILE/R_FLAME unit/clamp |
+| DAT_005cc31c | 3.0 | spin/clamp (GUN tick, MISSILE tick) |
+| DAT_005ce4d4 | -3.0 | paired with 005cc31c |
+| DAT_005ccac4 | 360.0 | angle wrap (GUN tick yaw) |
+| DAT_005ccad0 | 90.0 | MISSILE aim base angle (FUN_00455150) |
+| DAT_005cd988 | 0.075 | MISSILE aim pitch offset (FUN_00455150) |
+| DAT_005ce480 | 0.0 | MISSILE aim horizontal factor (FUN_00455150) |
+| DAT_005cc33c | -1.0 | MISSILE aim sign (FUN_00455150) |
+| DAT_005cd274 | 40.0 | **GUN charge cap** (+0x18 ramps to this, FUN_004561c0) |
+| DAT_005cc35c | 4.0 | **GUN charge per-frame increment** (FUN_004561c0) |
+| DAT_005cc55c | 10.0 | GUN spread/recoil (FUN_004561c0) |
+| DAT_005cc568 | 100.0 | GUN long-range branch (FUN_004561c0) |
+| DAT_005cc9c8 | 0.9 | **MORTAR owner-velocity factor** (FUN_004533b0) + GUN |
+| DAT_005cd02c | 0.13 | **MORTAR forward-velocity factor** (FUN_004533b0) |
+| DAT_005cc99c | 0.3 | MORTAR/GUN/R_FLAME random spread |
+| DAT_005cc998 | -0.3 | paired with 005cc99c |
+| DAT_005cc56c | **0.1** | **OIL drop-distance² threshold AND supply decrement** (FUN_00457800); supply starts 1.0 → 10 drops |
+| DAT_005cd18c | 0.04 | OIL reflect / MISSILE blend factor |
+| DAT_005cc32c | 0.5 | GUN aim normalise |
+| DAT_005cc9a8 | 0.023 | GUN tracer scale |
+| DAT_005cd0fc | -0.1 | GUN tick clamp lo |
+| DAT_005cd088 | 2.5 | GUN/MISSILE tick gain |
+| DAT_005ce1b0 | -2.5 | paired with 005cd088 |
+| DAT_005cc348 | 1.5 | MISSILE/R_FLAME radius |
+| DAT_005ccac0 | 0.4 | MISSILE tick threshold |
+| DAT_005cd50c | -0.5 | MISSILE tick gain |
+| DAT_005cd054 | -0.05 | MISSILE tick clamp |
+| DAT_005ce018 | 0.002 | R_FLAME spark drift (FUN_0045ae80) |
+| DAT_005ce18c | 0.02 | R_FLAME spark reflect (FUN_0045ae80) |
+| DAT_005cd114 | 1.111111 | R_FLAME spark life scale (FUN_0045ae80) |
+| DAT_005cc564 | 0.25 | R_FLAME spark clamp (FUN_0045ae80) |
+
+(`_DAT_007f100c` = the per-frame dt and `_DAT_007f101c` = a per-frame flags dword are
+runtime RAM, not .rdata, so they are 0 statically — not harvestable here.)
+
+**Promoted into the port (PowerupEffects.cpp `tune::`):** the scale-independent
+counts/rates/seconds are now bit-faithful — GUN ammo 50 / rate 0.06s, MISSILE ammo 1,
+MORTAR ammo 3 / rate 0.4s, SHOTGUN 4 pellets, **OIL 0.1 supply-decrement (10 drops)**.
+The projectile launch *velocities* (MISSILE/MORTAR) and the R_FLAME duration stay
+host-scaled stand-ins (world-coordinate / frame-count domain — not portable to the
+radius-relative backend); the real model is cited in code for the verbatim de-stub.
