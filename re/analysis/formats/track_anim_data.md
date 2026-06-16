@@ -85,10 +85,31 @@ frame30.t). `KTC1` = 51 frames / 29.98 s, the `KTC_Apache` copter from
 `HAnim::Sample(t, pos, q)` (C++) linearly interpolates translation and nlerps the
 quaternion (shortest-arc) between the bracketing keyframes, looping on duration.
 
-**Wiring status (F2):** the sampler is data-verified. Rendering the animated
-copter/cameraman prop (bind the animated frame transform to its DFF — `CAMMAN.DFF`
-and the heli model — under `D3DTS_WORLD` each frame) is the remaining hookup; the
-renderer's prop path (`props_`) draws under a static matrix today.
+**Wiring status (F2): WIRED 2026-06-16.** `TrackRenderer::LoadCopters` parses the
+copter wiring from the track's `COURSE.LUA` — `General_Anim_Filename( slot ,"x.anm" )`
+registers a flight path into a slot, and `SetCopter( "Copter"|"JetRanger" , slot )`
+puts a scenery copter on that path — plus `KTCSCRIPT.LUA`'s
+`KTC_NewCopter( "KTC_Apache", slot )` (the shoot-for-weapons gameplay copter). It
+loads the bound `.ANM` paths from the track piz and the model DFFs
+(`COPTER.DFF` / `JETRANGER.DFF` / `KTC_APACHE.DFF`) + `COPTERS.TXD` from the shared
+`Common/Perm.piz` (entries under `TOASTART/COMMON/PERM/COPTERS/`; the path is derived
+from the track piz exactly as `LED.piz` is). `Render` draws each copter under the
+per-frame `HAnim::Sample(t)` transform — unit quaternion → rotation + translation in
+the row-vector convention the MTS/prop path already feeds to `D3DTS_WORLD` — looped on
+the race clock `t`. Verified on **Arctic** (6 flying = 5 `SetCopter` slots 0-4 + 1
+`KTC_NewCopter` slot 5, 3 unique models) and **Warzone** (5 flying) via the load-log
+line plus an A/B render diff (`MASHED_NO_COPTERS` toggle) that isolates exactly the
+copter pixels — a helicopter model airborne over the track and scattered surface
+copters, with the track/sky otherwise pixel-identical (`verify/_f2_diff_highlight.png`).
+
+The **cameraman is NOT animated** by any shipped track: `Camera_Anim_Filename` is the
+commented-out template on every `COURSE.LUA` (active count 0/13 tracks), and `CamMan.dff`
+is a static `Clump_Filename` prop — so it correctly renders under its world/identity
+matrix, not an HAnim. [UNCERTAIN] the original's exact copter playback cadence/phase is
+not RE'd from the binary; since the `.ANM` durations are in seconds and the paths are
+closed loops (frame0 ≈ frameLast), playback is looped at 1× on the race clock — the
+faithful reading of the data, pending an engine-side copter-update RE. Orientation uses
+the data-stated `q=(x,y,z,w)` order; nose-orientation is not bit-verified vs the original.
 
 ## F3 — `.UVA` UV-animation dictionaries (rwID_UVANIMDICT 0x2B)
 

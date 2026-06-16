@@ -24,12 +24,15 @@
 
 #include <d3d9.h>
 #include <cstdint>
+#include <cstdio>
 #include <vector>
 
 #include "../Race/RaceCamera.h"
 #include "../Track/TrackData.h"
 #include "ParticleSystem.h"
 #include "PickupField.h"
+
+namespace mashed_re { namespace Piz { class Archive; } }
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -203,6 +206,25 @@ private:
         std::vector<D3DMATRIX>          instances;
     };
     std::vector<Prop> props_;
+
+    // ---- F2 .ANM animated copters (COURSE.LUA General_Anim_Filename + SetCopter;
+    // KTCSCRIPT.LUA KTC_NewCopter). The flight paths are the track's .ANM
+    // (Track::HAnim, rwID_HANIMANIMATION); the models are COPTER/JETRANGER/
+    // KTC_APACHE.DFF (+ COPTERS.TXD) from Common/Perm.piz COPTERS/. Each copter
+    // flies its bound path, looped on the race clock — drawn under the per-frame
+    // HAnim transform (props otherwise draw under a static matrix). See
+    // re/analysis/formats/track_anim_data.md F2.
+    struct CopterModel {
+        std::vector<std::vector<V>>     batches;
+        std::vector<IDirect3DTexture9*> textures;
+    };
+    std::vector<CopterModel> copter_models_;
+    struct AnimCopter { int model = -1; Track::HAnim anim; };
+    std::vector<AnimCopter>  copters_;
+    // Parse the copter wiring from the track piz's COURSE.LUA + KTCSCRIPT.LUA,
+    // load the bound .ANM paths (track piz) and model DFFs (Common/Perm.piz).
+    void LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
+                     const char* piz_path, std::FILE* log);
 
     // renderer-gap closures (reconciliation 2026-06-10): fog from COURSE.LUA
     // Setup_Fog(start_frac, end, r, g, b); sky.dff drawn first, z-write off,

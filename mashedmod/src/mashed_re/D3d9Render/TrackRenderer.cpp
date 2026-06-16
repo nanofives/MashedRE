@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 
@@ -204,6 +205,19 @@ void MatPerspectiveFovLH(D3DMATRIX* m, float fovy, float aspect,
     m->_11 = xs; m->_22 = ys;
     m->_33 = zf / (zf - zn); m->_34 = 1.f;
     m->_43 = -zn * zf / (zf - zn);
+}
+
+// [F2] World matrix from an HAnim sample: unit quaternion (x,y,z,w) -> rotation
+// + translation, in the row-vector convention the MTS/prop path already feeds
+// to D3DTS_WORLD (matches D3DXMatrixRotationQuaternion).
+void QuatPosMatrix(const float q[4], const float p[3], D3DMATRIX* m) {
+    const float x = q[0], y = q[1], z = q[2], w = q[3];
+    const float xx = x*x, yy = y*y, zz = z*z;
+    const float xy = x*y, xz = x*z, yz = y*z, wx = w*x, wy = w*y, wz = w*z;
+    m->_11 = 1.f - 2.f*(yy+zz); m->_12 = 2.f*(xy+wz);     m->_13 = 2.f*(xz-wy);     m->_14 = 0.f;
+    m->_21 = 2.f*(xy-wz);       m->_22 = 1.f - 2.f*(xx+zz); m->_23 = 2.f*(yz+wx);   m->_24 = 0.f;
+    m->_31 = 2.f*(xz+wy);       m->_32 = 2.f*(yz-wx);       m->_33 = 1.f - 2.f*(xx+yy); m->_34 = 0.f;
+    m->_41 = p[0];             m->_42 = p[1];             m->_43 = p[2];           m->_44 = 1.f;
 }
 
 }  // namespace
@@ -575,6 +589,12 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
+    // ---- F2 animated copters: COURSE.LUA SetCopter / KTCSCRIPT.LUA
+    // KTC_NewCopter bind a copter model DFF (Common/Perm.piz) to a
+    // General_Anim_Filename .ANM flight path (track piz); flown under the
+    // per-frame HAnim transform (see LoadCopters + the Render copter pass).
+    LoadCopters(dev, piz, piz_path, log);
+
     // ---- AI path gates (AI*.BSP — same world stream; 4-vert vertical quad
     // per gate; the material RED byte = gate index; LAPDATA's Lap_Line
     // numbers index these). Build ordered gate centers; gate 0 = start line.
@@ -760,6 +780,142 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
     }
     ready_ = true;
     return true;
+}
+
+// [F2] Animated copters. COURSE.LUA wires them in two parts:
+//   General_Anim_Filename( slot , "X.anm" )   slot -> flight-path .ANM (track piz)
+//   SetCopter( "Copter"|"JetRanger" , slot )   scenery copter on that path
+// and KTCSCRIPT.LUA adds the gameplay copter:
+//   KTC_NewCopter( "KTC_Apache", slot )
+// The named models (COPTER/JETRANGER/KTC_APACHE.DFF) + COPTERS.TXD live in the
+// shared Common/Perm.piz, not the track piz. Each copter flies its bound HAnim
+// path looped on the race clock (the .ANM durations are in seconds).
+void TrackRenderer::LoadCopters(IDirect3DDevice9* dev, Piz::Archive& piz,
+                                const char* piz_path, std::FILE* log) {
+    auto basename = [](const char* n) -> const char* {
+        const char* b = n;
+        for (const char* p = n; *p; ++p)
+            if (*p == '/' || *p == '\\') b = p + 1;
+        return b;
+    };
+    auto find_blob = [&](Piz::Archive& a, const char* want_base,
+                         std::uint32_t* len) -> const std::uint8_t* {
+        for (std::uint32_t i = 0; i < a.count(); ++i)
+            if (_stricmp(basename(a.entry(i).name), want_base) == 0)
+                return a.blob(i, len);
+        return nullptr;
+    };
+
+    // slot -> .anm filename; (model, slot) bindings
+    char anm[16][64] = {};
+    struct Bind { char model[32]; int slot; };
+    std::vector<Bind> binds;
+    auto scan_lua = [&](const char* txt, std::size_t len) {
+        std::size_t pos = 0;
+        while (pos < len) {
+            std::size_t eol = pos;
+            while (eol < len && txt[eol] != '\n') ++eol;
+            std::string line(txt + pos, eol - pos);
+            pos = eol + 1;
+            const std::size_t cmt = line.find("--");
+            if (cmt != std::string::npos) line.resize(cmt);
+            int slot = -1;
+            char nm[64] = {};
+            const char* g = std::strstr(line.c_str(), "General_Anim_Filename");
+            const char* s = std::strstr(line.c_str(), "SetCopter");
+            const char* k = std::strstr(line.c_str(), "KTC_NewCopter");
+            if (g) {
+                char f[64] = {};
+                if (std::sscanf(g, "General_Anim_Filename( %d %*[ ,]\"%63[^\"]\"",
+                                &slot, f) == 2 && slot >= 0 && slot < 16)
+                    std::snprintf(anm[slot], sizeof(anm[slot]), "%s", f);
+            } else if (s) {
+                if (std::sscanf(s, "SetCopter( \"%31[^\"]\" %*[ ,]%d",
+                                nm, &slot) == 2 && slot >= 0) {
+                    Bind b{}; std::snprintf(b.model, sizeof(b.model), "%s", nm);
+                    b.slot = slot; binds.push_back(b);
+                }
+            } else if (k) {
+                if (std::sscanf(k, "KTC_NewCopter( \"%31[^\"]\" %*[ ,]%d",
+                                nm, &slot) == 2 && slot >= 0) {
+                    Bind b{}; std::snprintf(b.model, sizeof(b.model), "%s", nm);
+                    b.slot = slot; binds.push_back(b);
+                }
+            }
+        }
+    };
+    std::uint32_t cl = 0;
+    const std::uint8_t* cb = find_blob(piz, "COURSE.LUA", &cl);
+    if (cb && cl) scan_lua(reinterpret_cast<const char*>(cb), cl);
+    std::uint32_t kl = 0;
+    const std::uint8_t* kb = find_blob(piz, "KTCSCRIPT.LUA", &kl);
+    if (kb && kl) scan_lua(reinterpret_cast<const char*>(kb), kl);
+    if (binds.empty()) return;
+
+    // Common/Perm.piz (sibling of TRACKS/) — derived like LED.piz in Load().
+    std::string perm(piz_path);
+    std::size_t cut = perm.find_last_of("/\\");
+    if (cut == std::string::npos) return;
+    cut = perm.find_last_of("/\\", cut - 1);
+    if (cut == std::string::npos) return;
+    perm.resize(cut + 1);
+    perm += "Common\\Perm.piz";
+    Piz::Archive pp;
+    if (!pp.Load(perm.c_str())) {
+        if (log) std::fprintf(log, "  F2 copters: Perm.piz load FAILED (%s): %s\n",
+                              perm.c_str(), pp.last_error());
+        return;
+    }
+    std::vector<Txd::Dictionary> dicts(1);
+    {
+        std::uint32_t tl = 0;
+        const std::uint8_t* tb = find_blob(pp, "COPTERS.TXD", &tl);
+        if (tb) dicts[0].Decode(tb, tl);
+    }
+
+    // build a model DFF on demand, cached by "<NAME>.DFF"
+    std::vector<std::string> model_names;   // parallel to copter_models_
+    auto model_index = [&](const char* name) -> int {
+        char up[40];
+        std::size_t j = 0;
+        for (; name[j] && j < sizeof(up) - 1; ++j)
+            up[j] = static_cast<char>(::toupper(static_cast<unsigned char>(name[j])));
+        up[j] = '\0';
+        char want[48];
+        std::snprintf(want, sizeof(want), "%s.DFF", up);
+        for (std::size_t mi = 0; mi < model_names.size(); ++mi)
+            if (model_names[mi] == want) return static_cast<int>(mi);
+        std::uint32_t dl = 0;
+        const std::uint8_t* db = find_blob(pp, want, &dl);
+        if (!db) return -1;
+        Track::DffModel m;
+        if (!m.Parse(db, dl)) return -1;
+        CopterModel cm;
+        BuildDffBatches(dev, m, dicts, &cm.batches, &cm.textures);
+        copter_models_.push_back(std::move(cm));
+        model_names.emplace_back(want);
+        return static_cast<int>(copter_models_.size()) - 1;
+    };
+
+    int loaded = 0;
+    for (const auto& b : binds) {
+        if (b.slot < 0 || b.slot >= 16 || !anm[b.slot][0]) continue;
+        std::uint32_t al = 0;
+        const std::uint8_t* ab = find_blob(piz, anm[b.slot], &al);
+        if (!ab) continue;
+        Track::HAnim ha;
+        if (!ha.Parse(ab, al)) continue;
+        const int mi = model_index(b.model);
+        if (mi < 0) continue;
+        AnimCopter c;
+        c.model = mi;
+        c.anim = std::move(ha);
+        copters_.push_back(std::move(c));
+        ++loaded;
+    }
+    if (log) std::fprintf(log,
+        "  F2 copters: %d flying, %zu models from %s\n",
+        loaded, copter_models_.size(), perm.c_str());
 }
 
 namespace {
@@ -1841,6 +1997,36 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
             }
+        }
+    }
+
+    // F2: animated copters — the model DFF under the per-frame HAnim transform
+    // (COURSE.LUA SetCopter / KTCSCRIPT.LUA KTC_NewCopter; flight path = the
+    // bound .ANM). Looped on the race clock t (the .ANM durations are seconds).
+    // MASHED_NO_COPTERS suppresses the pass (A/B verification toggle).
+    static const bool s_copters_off = std::getenv("MASHED_NO_COPTERS") != nullptr;
+    if (!s_copters_off)
+    for (const auto& c : copters_) {
+        if (c.model < 0 || c.model >= static_cast<int>(copter_models_.size()) ||
+            c.anim.frames.empty())
+            continue;
+        float cp[3], cq[4];
+        c.anim.Sample(t, cp, cq);
+        D3DMATRIX cm;
+        QuatPosMatrix(cq, cp, &cm);
+        dev->SetTransform(D3DTS_WORLD, &cm);
+        const CopterModel& m = copter_models_[c.model];
+        for (std::size_t mi = 0; mi < m.batches.size(); ++mi) {
+            const auto& b = m.batches[mi];
+            if (b.empty()) continue;
+            dev->SetTexture(0, m.textures[mi]);
+            if (!m.textures[mi])
+                dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
+            dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                 static_cast<UINT>(b.size() / 3),
+                                 b.data(), sizeof(V));
+            if (!m.textures[mi])
+                dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
         }
     }
     dev->SetTransform(D3DTS_WORLD, &worldm);
