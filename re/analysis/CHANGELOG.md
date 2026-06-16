@@ -1,6 +1,12 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  frida-sweep-sa2  merge c3/batch-sa2-s2 + void_write_observe seed_globals/call_args ext; integration GREEN 5/5
+2026-06-16  C2->C3  0x004331a0  RaceFinalizeOnce  c3-batch-sa2-s2 GREEN 10/10 scenario=race (guarded, seed_globals)
+2026-06-16  C2->C3  0x00415020  AiLastPlaceFrustration  c3-batch-sa2-s2 GREEN 10/10 scenario=race
+2026-06-16  C2->C3  0x004922e0  CarEventTrigger  c3-batch-sa2-s2 GREEN 10/10 scenario=race (call_args)
+2026-06-16  C2->C3  0x00422b50  VehicleDamageAccum  c3-batch-sa2-s2 GREEN 10/10 scenario=race (call_args slot-pin)
+2026-06-16  C2->C3  0x00401340  CupSpinSpeedAndColor  c3-batch-sa2-s2 GREEN 10/10 scenario=race
 2026-06-16  WS-H/H1  boot-original diff lane RE-STOOD-UP on Win11 build 26200 (no C-level change): overnight feature update 26100->26200 re-broke boot (ntdll!RtlpHeap +0x542f0 heap corruption, IDENTICAL signature ECX=0x5477, layer/.asi/d3d9-independent); EMULATEHEAP relationship INVERTED -> re-added on 26200+ (setup_mashed_compat.ps1 now build-gated; scripts/parse_minidump.py added). 8 RW-math leaves re-diffed GREEN 113/113 vectors (path1 bit-identity; first-ever clean A/B for the 4 pointer-arg leaves RwV3dTransformPoint/Vector+Vec2Length/Normalize, whose C4 lacked it). RaceCamera 0x00446520 + scoring trio 0x0040eee0/0x0040b290/0x00410510 confirmed standalone-adapted (not RH_ScopedInstall hooks) -> NOT synthetic-diffable, stay C2; real C4 path = WS-H2 installed-hook canonical race. Audit: SESSION_VERIFICATION_AUDIT_2026-06-16.md.
 2026-06-16  WS-D/D1  powerup-effects map COMPLETE (no C-level change): dispatcher FUN_0045bba0 + 9-entry type table @0x005f9998 + slot struct @0x0088fbe0 fully enumerated; ROADMAP "FUN_00430670 family" corrected (=player-slot resolver). Doc re/analysis/structs/powerup_system.md. D2/D3 gated on Ghidra fn-split + WS-A1/WS-B/WS-E.
 2026-06-16  WS-G1  game-mode->rule pipeline (FUN_0042f6b0 sel->mode, FUN_0043dfd0@0xff240000 switch DAT_0067e9fc + DAT_005f65c8 cup event-type table -> DAT_007f0fd0, objective split from FUN_00410d10/FUN_00410510 {4,5,7,8,9,10}) RE'd + ported to standalone Race/RaceModes; replaces exe_main MASHED_RACE_MODE/MASHED_LAPS env scaffold. No C-level change (frags of C2 0043dfd0/00410510/00410d10; 0042f6b0/0042f6a0/00430760 already C3). Data/logic-verified (host selfcheck OK). Filed U-8988/U-8989, D-11052..D-11055. Map: re/analysis/game_mode_rules_REmap_20260616.md
