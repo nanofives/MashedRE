@@ -19,6 +19,40 @@ namespace D3d9Render {
 
 namespace {
 
+// [item 2 — renderer] Flat per-face directional+ambient lighting for car models.
+// The DFF path carries no per-vertex normals, so cars render flat; this folds a
+// face-normal diffuse into the vertex colours so vehicles gain form/shading.
+// APPROXIMATION toward RW's RpWorld lighting (the verbatim RW lighting model is
+// part of the larger renderer port); two-sided (CULLMODE is NONE).
+void ApplyCarLighting(std::vector<TrackRenderer::V>& vs) {
+    const float L[3] = {0.40f, 0.78f, 0.48f};   // ~normalised sun direction
+    const float amb = 0.45f;
+    for (std::size_t i = 0; i + 2 < vs.size(); i += 3) {
+        const TrackRenderer::V& a = vs[i]; const TrackRenderer::V& b = vs[i+1];
+        const TrackRenderer::V& c = vs[i+2];
+        const float e1[3] = {b.x-a.x, b.y-a.y, b.z-a.z};
+        const float e2[3] = {c.x-a.x, c.y-a.y, c.z-a.z};
+        float nx = e1[1]*e2[2]-e1[2]*e2[1];
+        float ny = e1[2]*e2[0]-e1[0]*e2[2];
+        float nz = e1[0]*e2[1]-e1[1]*e2[0];
+        const float nl = std::sqrt(nx*nx+ny*ny+nz*nz);
+        if (nl > 1e-6f) { nx/=nl; ny/=nl; nz/=nl; }
+        float d = nx*L[0]+ny*L[1]+nz*L[2]; if (d < 0.f) d = -d;   // two-sided
+        float s = amb + (1.f-amb)*d; if (s > 1.f) s = 1.f;
+        for (int k = 0; k < 3; ++k) {
+            std::uint32_t c0 = vs[i+k].c;
+            std::uint8_t A = static_cast<std::uint8_t>(c0 >> 24);
+            std::uint8_t R = static_cast<std::uint8_t>((c0 >> 16) & 0xff);
+            std::uint8_t G = static_cast<std::uint8_t>((c0 >> 8) & 0xff);
+            std::uint8_t B = static_cast<std::uint8_t>(c0 & 0xff);
+            R = static_cast<std::uint8_t>(R*s); G = static_cast<std::uint8_t>(G*s);
+            B = static_cast<std::uint8_t>(B*s);
+            vs[i+k].c = (static_cast<std::uint32_t>(A)<<24)|(static_cast<std::uint32_t>(R)<<16)|
+                        (static_cast<std::uint32_t>(G)<<8)|B;
+        }
+    }
+}
+
 // Expand a Txd::Texture base mip (PAL4 / PAL8 / ARGB8888) into a fresh
 // A8R8G8B8 D3D9 texture. TXD palettes are RGBA byte order (per TxdDecoder's
 // PAL8 path in QuadRenderer); D3D wants BGRA dwords.
@@ -863,6 +897,7 @@ bool TrackRenderer::LoadCar(IDirect3DDevice9* dev, const char* piz_path,
             v.v = b.uvs[vi * 2 + 1];
             vs.push_back(v);
         }
+        ApplyCarLighting(vs);   // [item 2] flat directional shading (was flat-white)
         if (is_wheel) {
             for (auto& w : wheels_) {
                 const float* bx = atoms[static_cast<std::size_t>(b.atomic)].box;

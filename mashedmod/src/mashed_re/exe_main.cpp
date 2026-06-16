@@ -1416,7 +1416,13 @@ bool UpdateMenuSelection() {
             if (g_track.Load(g_device, piz, kLogPath)) {
                 mashed_re::Race::RaceConfig cfg;
                 cfg.trackId  = mashed_re::Race::Campaign_SelectedTrack();
-                cfg.gameMode = 6;          // challenge
+                // [item 4] real frontend game mode (DAT_0067e9fc via the menu
+                // game-state) drives the race instead of a hard-coded 6; 0/unset
+                // -> 6 (challenge, this screen's mode). The race-rule mapping
+                // (elim/laps) is still scaffold (MASHED_RACE_MODE) until the real
+                // mode-id->rules table is RE'd.
+                cfg.gameMode = mashed_re::Frontend::Nav_GameState().game_mode;
+                if (cfg.gameMode == 0) cfg.gameMode = 6;
                 // Player vehicle from the frontend car-select cursor
                 // (DAT_0067ea98, player-0 slot — GameModeCarSelect). MASHED_CAR_SEL
                 // overrides for dev/verification. Clamped to the vehicle table;
