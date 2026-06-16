@@ -309,6 +309,19 @@ public:
     void  UpdateRace(float dt);
     int   round_winner() const { return round_winner_; }
     int   round_alive() const { return round_alive_; }
+    // Dev/verification: end the match now, winner = current points leader.
+    void  ForceMatchEnd() {
+        int best = 0;
+        for (int i = 1; i < kRaceCars; ++i) if (scores_[i] > scores_[best]) best = i;
+        match_winner_ = best;
+    }
+    // Final standings: car slots sorted by score (desc). out[] gets car indices.
+    void  Standings(int out[kRaceCars]) const {
+        for (int i = 0; i < kRaceCars; ++i) out[i] = i;
+        for (int i = 0; i < kRaceCars; ++i)
+            for (int j = i + 1; j < kRaceCars; ++j)
+                if (scores_[out[j]] > scores_[out[i]]) { int t = out[i]; out[i] = out[j]; out[j] = t; }
+    }
 
 private:
     float car_vel_[3] = {};       // +0x9b0-shape velocity vector (world)

@@ -25,6 +25,9 @@ void     GameFlow_RequestRace(const RaceConfig& cfg,
 // Esc/back during a race: InRace/LoadingRace/Results -> Frontend (ends the
 // session). The frontend menu resumes where it left off.
 void     GameFlow_RequestExit();
+// Match over: InRace -> Results (keeps the session/scene for the results
+// overlay; the sim is frozen). Esc/timeout from Results -> Frontend.
+void     GameFlow_RequestResults();
 // Driven once per frame from exe_main's main loop (after the frontend update).
 void     GameFlow_Update(float dt);
 // Draw the race frame when in race; no-op in Frontend (the menu draws itself).

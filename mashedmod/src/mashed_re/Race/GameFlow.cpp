@@ -78,6 +78,12 @@ void GameFlow_RequestExit() {
     log("RequestExit -> Frontend");
 }
 
+void GameFlow_RequestResults() {
+    if (g_mode != GameMode::InRace) return;
+    g_mode = GameMode::Results;       // session stays active (scene + scores held)
+    log("RequestResults -> Results");
+}
+
 void GameFlow_Update(float dt) {
     switch (g_mode) {
         case GameMode::Frontend:

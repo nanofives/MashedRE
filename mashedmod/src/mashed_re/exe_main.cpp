@@ -988,13 +988,17 @@ bool RunParityWalk(int phase) {
 bool RunRaceDemoStep(int /*phase*/) {
     if (!g_race_demo) return false;
     static int step = 0, cool = 0;
-    static DWORD t_ms = 0;
+    static DWORD t_ms = 0, res_ms = 0;
     static bool s_cap[3] = {};
+    static const bool s_result_demo =
+        GetEnvironmentVariableA("MASHED_RESULT_DEMO", nullptr, 0) > 0;
     if (cool > 0) { --cool; return false; }
     const bool inrace = (mashed_re::Race::GameFlow_Mode() ==
                          mashed_re::Race::GameMode::InRace);
     const bool frontend = (mashed_re::Race::GameFlow_Mode() ==
                            mashed_re::Race::GameMode::Frontend);
+    const bool results = (mashed_re::Race::GameFlow_Mode() ==
+                          mashed_re::Race::GameMode::Results);
     auto cap = [&](const char* tag) {
         char path[160];
         std::snprintf(path, sizeof(path), "verify/race1/%s.bmp", tag);
@@ -1018,9 +1022,16 @@ bool RunRaceDemoStep(int /*phase*/) {
                 if (el >= 4200 && !s_cap[1]) { s_cap[1] = true; cap("01_inrace_track"); }
                 if (el >= 6600 && !s_cap[2]) {
                     s_cap[2] = true; cap("01_action");
-                    NavDemoTap(DIK_ESCAPE);   // GameFlow_RequestExit -> Frontend
-                    step = 2; cool = 10;
+                    if (s_result_demo) {
+                        // wait for the match-end -> results screen (don't Esc yet)
+                        step = 4; t_ms = GetTickCount();
+                    } else {
+                        NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
+                        step = 2; cool = 10;
+                    }
                 }
+            } else if (results) {
+                step = 4; t_ms = GetTickCount();   // already in results
             } else if (frontend && t_ms != 0) {
                 // safety: race ended before we captured -> don't hang. Capture
                 // whatever's on screen and finish.
@@ -1033,6 +1044,19 @@ bool RunRaceDemoStep(int /*phase*/) {
             return false;
         case 3:
             NavDemoLog(step, "race-demo done", true); return true;
+        case 4:  // wait for the results screen, let it render, capture, then Esc
+            if (results) {
+                // capture grabs the *already-rendered* backbuffer, so settle a
+                // few frames after entering Results so the overlay is on-screen.
+                if (res_ms == 0) { res_ms = GetTickCount(); return false; }
+                if (GetTickCount() - res_ms < 500) return false;
+                cap("01_results");
+                NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
+                step = 2; cool = 10;
+            } else if (GetTickCount() - t_ms > 9000) {
+                NavDemoTap(DIK_ESCAPE); step = 2; cool = 10;   // safety
+            }
+            return false;
         default: return true;
     }
 }
@@ -1280,11 +1304,15 @@ bool UpdateMenuSelection() {
     const bool ent_prev  = (g_keys_prev[DIK_RETURN]& 0x80) != 0;
     const bool esc_now   = (g_keys[DIK_ESCAPE]    & 0x80) != 0;
     const bool esc_prev  = (g_keys_prev[DIK_ESCAPE]& 0x80) != 0;
-    // ROUND 1: while in a race the menu is hidden — Esc exits back to the
-    // frontend; swallow all other menu input so nav doesn't run under the race.
-    if (mashed_re::Race::GameFlow_Mode() == mashed_re::Race::GameMode::InRace) {
-        if (esc_now && !esc_prev) mashed_re::Race::GameFlow_RequestExit();
-        return false;
+    // ROUND 1: while in a race OR on the results screen the menu is hidden —
+    // Esc exits back to the frontend; swallow all other menu input.
+    {
+        const mashed_re::Race::GameMode gm = mashed_re::Race::GameFlow_Mode();
+        if (gm == mashed_re::Race::GameMode::InRace ||
+            gm == mashed_re::Race::GameMode::Results) {
+            if (esc_now && !esc_prev) mashed_re::Race::GameFlow_RequestExit();
+            return false;
+        }
     }
     const bool bks_now   = (g_keys[DIK_BACK]      & 0x80) != 0;
     const bool bks_prev  = (g_keys_prev[DIK_BACK] & 0x80) != 0;
@@ -1801,7 +1829,9 @@ bool RenderFrame() {
     // — this block returns before the frontend draw).
     const bool in_race = (mashed_re::Race::GameFlow_Mode() ==
                           mashed_re::Race::GameMode::InRace);
-    if ((g_track_view || in_race) && g_track.ready()) {
+    const bool results = (mashed_re::Race::GameFlow_Mode() ==
+                          mashed_re::Race::GameMode::Results);
+    if ((g_track_view || in_race || results) && g_track.ready()) {
         g_device->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
                         g_track.fog_color(), 1.0f, 0);  // horizon = fog color
         g_device->BeginScene();
@@ -1846,7 +1876,7 @@ bool RenderFrame() {
         // proving motion + ground snap.
         static int s_frame = 0;
         ++s_frame;
-        if (g_track.car_ready()) {
+        if (g_track.car_ready() && !results) {   // sim frozen on the results screen
             mashed_re::D3d9Render::TrackRenderer::DriveInput di;
             di.dt = dt;
             static const bool s_drive_demo =
@@ -1892,6 +1922,23 @@ bool RenderFrame() {
                 s_round_end_t = -1.f;
             }
         }
+        // Dev/verification: MASHED_RESULT_DEMO forces the match to end ~5s in so
+        // the post-race results flow can be exercised + captured.
+        if (in_race) {
+            static const bool s_result_demo =
+                GetEnvironmentVariableA("MASHED_RESULT_DEMO", nullptr, 0) > 0;
+            if (s_result_demo && t > 5.0f && g_track.match_winner() < 0)
+                g_track.ForceMatchEnd();
+            // Match over -> hold ~3s on the winner banner, then the results screen.
+            if (g_track.match_winner() >= 0) {
+                static float s_match_end_t = -1.f;
+                if (s_match_end_t < 0.f) s_match_end_t = t;
+                if (t - s_match_end_t > 3.0f) {
+                    mashed_re::Race::GameFlow_RequestResults();
+                    s_match_end_t = -1.f;
+                }
+            }
+        }
         g_track.Render(g_device, t, &ci);
         // [SCAFFOLD] R6 HUD overlay — invented pips/banner; the REAL game
         // uses team badges + score bars + "+1/-1" points on a Current
@@ -1901,7 +1948,7 @@ bool RenderFrame() {
         // per-car round-win scoreboard, round/result banner. The track
         // renderer leaves ZENABLE off on exit, so HudIm2DQuad/DrawMashedString
         // draw correctly here.
-        if (g_track.round_mode_ && g_bridge_installed) {
+        if (g_track.round_mode_ && g_bridge_installed && !results) {
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
             // scoreboard: one pip row per car, width = wins
             for (int i = 0; i < 4; ++i) {
@@ -1953,6 +2000,24 @@ bool RenderFrame() {
                 if (g_track.shield_active())
                     DrawMashedString(L"SHIELD", 120.f, 410.f, 22.f, 0xffc0a0ffu);
             }
+        }
+        // Post-race RESULTS overlay (GameMode::Results): final standings over
+        // the frozen scene, cars sorted by points (winner first). [SCAFFOLD] the
+        // original draws a themed results screen; this is a functional stand-in.
+        if (results && g_font.ready() && g_bridge_installed) {
+            std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
+            HudIm2DQuad(0, 90.f, 70.f, 460.f, 300.f, 0xe0100c0cu, uvf);  // dark panel
+            DrawMashedString(L"RACE RESULTS", 400.f, 96.f, 42.f, 0xffffffffu);
+            int order[4]; g_track.Standings(order);
+            for (int p = 0; p < 4; ++p) {
+                const int carIdx = order[p];
+                wchar_t row[48];
+                swprintf(row, 48, L"%d.   CAR %d      %d pts",
+                         p + 1, carIdx + 1, g_track.score(carIdx));
+                DrawMashedString(row, 200.f, 160.f + p * 46.f, 30.f,
+                                 p == 0 ? 0xff80ff80u : 0xffffffffu);
+            }
+            DrawMashedString(L"[ESC] Continue", 250.f, 350.f, 22.f, 0xffb0b0b0u);
         }
         g_device->EndScene();
         const bool car = g_track.car_ready();
