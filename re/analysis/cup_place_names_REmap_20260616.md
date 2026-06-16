@@ -71,3 +71,36 @@ index 5), so index-pairing would be a guess (forbidden).
 Until the pairing is pinned, wiring real names per track would require guessing
 the order — so it stays a documented residual. The verified deliverable here is
 the corrected anchors + the 13 real strings.
+
+## Deeper static-RE pass (2026-06-16, user-requested) — sources EXHAUSTED
+
+Pursued the static pairing per the user's choice; every static source is a dead
+end (Mashed_pool9, read-only):
+
+1. **No exe table.** `search_bytes` for a contiguous name-msgid table found
+   nothing: int `49 00 00 00 4a 00 00 00 4b 00 00 00`, byte `49 4a 4b 4c …`, and
+   u16 `49 00 4a 00 4b 00 4c 00` — all 0 hits.
+2. **`0x49` base is never a msgid immediate.** `search_instructions` for `0x49`
+   across the whole image yields only stack/frame offsets (`[ESP+0x49]`,
+   `[EBP-0x49]`) — so the name is NOT computed inline as `0x49 + index`; the
+   binding is built through the localized message system at runtime.
+3. **Track .piz files mostly don't self-name.** A `grep` of all track data found
+   the place-name strings in only **2 of 13** `*.piz`: `Arctic.piz` and
+   `rouabout.piz`. Their `POWERUPS_GOLD.LUA` header comment (line 2) gives the
+   place-name; the other 11 tracks' comments are the **AREA** name
+   (City/Egypt/Forest/Highway/Warzone/Dump/Training) or absent
+   (Neustein/Storm/SuperG/sands have no `POWERUPS_GOLD.LUA`).
+
+**Two pairings confirmed (from the .piz self-names):**
+`Arctic.piz` → **Timgidski** (0x4c); `rouabout.piz` → **Tierra Piedra** (0x50).
+Plus the frontend capture shows the fresh-save challenge-select first (unlocked)
+track = **Angel Peak** (0x49). These three are real datapoints but don't fix a
+formula (Course_Id 0→0x4c, 2→0x50 — no linear relation; msgid order ≠ kAreas
+order), so the full 13-track map is not statically derivable.
+
+**Conclusion:** static RE cannot recover the full trackID→place-name pairing —
+the name binding is runtime-assembled with no static immediate/table and the
+track assets don't carry the names. The remaining authoritative route is a Frida
+capture on the booted original of the **runtime name table** (locate it by hooking
+the challenge-select name draw — NOT `DAT_008a94f0`), or a deep trace of the
+cup-init / track-load name-assignment.
