@@ -3867,14 +3867,38 @@ function runDiff() {
             if (CONFIG.arg_type === 'void_write_observe') {
                 const gaddr = ptr(CONFIG.target_global);
                 let origRead = null, reimRead = null;
+                // Optional CONFIG.seed_globals: array of {addr:'0x..', val:<u32>}
+                // written before EACH call so a one-shot guard (e.g.
+                // DAT_0067eca4==0) or an accumulator slot is reset to a known
+                // state for both Orig and Reimpl — without it a guarded fn runs
+                // its body on the first call only and the second side no-ops,
+                // producing a spurious RED. Backward-compatible: absent => skip.
+                const seedGlobals = CONFIG.seed_globals || [];
+                const seedAll = function () {
+                    for (let s = 0; s < seedGlobals.length; s++) {
+                        ptr(seedGlobals[s].addr).writeU32(seedGlobals[s].val >>> 0);
+                    }
+                };
+                // Optional CONFIG.call_args: fixed integer args passed to both
+                // sides so the write address is deterministic for functions that
+                // index by param_1 (else param_1 is uncontrolled stack garbage).
+                // signature.args must match the arg count. Absent => call with
+                // no args (the historical void(void) behavior).
+                const callArgs = CONFIG.call_args || null;
+                const invoke = function (fn) {
+                    if (callArgs) { return fn.apply(null, callArgs); }
+                    return fn();
+                };
                 try {
+                    seedAll();
                     gaddr.writeU32(t >>> 0);
-                    Orig();
+                    invoke(Orig);
                     origRead = gaddr.readU32();
                 } catch (e) { errOrig = e.message; }
                 try {
+                    seedAll();
                     gaddr.writeU32(t >>> 0);
-                    Reimpl();
+                    invoke(Reimpl);
                     reimRead = gaddr.readU32();
                 } catch (e) { errReim = e.message; }
                 // crash_equal_ok: if both sides throw the same error string, count as match
