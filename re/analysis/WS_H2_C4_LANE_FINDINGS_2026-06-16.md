@@ -127,3 +127,66 @@ The leaf sub-functions feeding both are already C3 via the race scenario lane
 (RaceFloat898980Get 0x00442df0, CarStatePairGet 0x0046cbb0, CarSnapshotDwordGet
 0x00423b20, RaceModeSet 0x0040e360, Player::WriteFieldZero 0x0041ef60, Pred405890
 0x00405890, TiebreakFlagGet 0x00431d80, EntityScoreFieldAdd 0x0046c700).
+
+## SESSION EXECUTION (2026-06-16, ratified "all five RVAs")
+
+### Scoring trio — DONE: C2→C3, installed-hook canonical-race GREEN
+Authored `mashedmod/src/mashed_re/Race/ScoringHooks.cpp` — `.asi`-only verbatim
+ports of all three, installed via `RH_ScopedInstall` at their RVAs, reading/
+writing the ORIGINAL globals (`DAT_008a94e0…`), callees forwarded to RVAs (composes
+with the live `ScoreAdd`/`EntityScoreFieldAdd`/`TiebreakFlagGet` hooks), debug
+`wprintf`(0x004a2cbd) omitted (side-effect-only). Build note: the `.asi` cl line
+hit cmd's 8191-char limit — converted to a response file (`mashedmod/asi_sources.rsp`).
+- **Installed-hook canonical-race observation GREEN** (`re/frida/verify_scoring_hooks.py`,
+  commit a6fb582f): E9 inline-JMP live at all three RVAs; all three fire in a
+  4-player FFA Quick Battle (ScoreAdd ×16, ScoreElim ×5, EvalResult ×4); scores
+  evolve `[4,4,4,4]→[3,5,5,5]→[0,8,8,8]`, elim order fills, match concludes
+  (`DAT_0063ba8c=0xb`), no crash/rollback through the verbatim reimpls.
+- **Promoted C2→C3** (1a3a0b10). **C4 NOT claimed** (no-overclaim): CONFIDENCE.md
+  requires a clean orig-vs-modded CSV diff. Two blockers, BOTH environmental (not
+  logic): (a) the arena race is **nondeterministic** — two runs gave the same score
+  pattern + final `[0,8,8,8]` but different elim order/winner (3 vs 2) — so a full-
+  race per-call diff can't be bit-identical; (b) the dinput8 `.asi` loader is **flaky
+  under concurrent (multi-session) MASHED instances** — the `.asi` failed to load in
+  the state-controlled A/B runs while a sibling session's MASHED was up. The clean
+  path1 A/B harness is BUILT and ready: `re/frida/diff_scoring_adder.py`
+  (uninject → restore original → per-vector snapshot/restore + compare vs the
+  `ScoreAdd_0040b290` export); it lands C4 for `0x0040b290` once the loader is
+  uncontended. `0x0040eee0`/`0x00410510` additionally have **destructive callees**
+  (FUN_00422fd0 eliminator; result-setup) so a clean A/B needs a call-through
+  trampoline — their C4 is the installed-hook telemetry diff once determinism/
+  loader are solved.
+
+### Camera (0x00446520 / 0x00410d10) — DEFERRED (path deepened)
+Re-confirmed during authoring that the camera C4 is a genuinely large, separate
+effort, made worse by the SAME environmental blockers that stopped the scoring
+clean diff. Concrete C4 recipe for a dedicated, **uncontended** session:
+1. A `.asi`-only verbatim hook at `0x00446520` (7411 B) that does NOT inline math:
+   the original delegates magnitude/normalize to the LUT (`call 0x004c3ac0` ×3,
+   `call 0x004c39b0` ×4) and the rotation/`acos`/`sin` to sub-functions (no
+   `fsin`/`fcos` in 0x00446520 itself — they are `call`s). The standalone
+   `RaceCamera::Update` **inlines** `std::sqrt`/`std::sin`/`std::cos`/`std::acos`,
+   which are bit-distinct (LUT; and MSVC `sinf`/`cosf`≠`FSIN`/`FCOS` per
+   [[project-wsa2-rwmath-bitident]]). So the hook must FORWARD every primitive to
+   the original sub-RVA — i.e. a fresh transcription of 0x00446520, not a reuse of
+   the standalone body.
+2. A marshalling adapter reading the live cam struct `DAT_00897fe0` (state fields
+   `+0x964…+0x9a0`), the runtime globals, the 4 vehicle structs (pos/vel/progress/
+   alive/dead via FUN_0046d4a0/0046cb30/00408a50/0046c7b0/0046cbb0), and the LED/
+   node tables; writing back + `Camera::Apply` (0x00441760).
+3. Verification: per-frame camera-pos/target/zoom telemetry diff hooked-vs-original
+   over a **deterministic** race (or per-call record-replay with captured inputs).
+   `camera_trace.csv` already shows the standalone residual is exactly the LUT/
+   transcendental gap (zoom 286/286 exact; offset/pitch within hmix margin); the
+   forwarded-primitive hook is what closes it.
+`0x00410d10` (elimination core, 1080 B) is smaller and fires in the canonical race
+like the scoring hooks — it is the cheaper camera-cluster follow-up (installed-hook
+canonical observation), but its clean A/B is blocked by the destructive eliminator
+FUN_00422fd0, same as 0x0040eee0.
+
+**Net:** four of five RVAs (the scoring trio + 0x0040b290 specifically) advanced to
+C3 with installed-hook canonical-race GREEN; the camera director (0x00446520) and
+elimination core (0x00410d10) remain C2, deferred to a dedicated uncontended
+session with the full recipe above. The binding blocker on ALL clean-diff C4
+this session was environmental: race nondeterminism + multi-session `.asi`-loader
+contention, not the ports.
