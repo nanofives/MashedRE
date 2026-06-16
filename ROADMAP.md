@@ -216,6 +216,12 @@ scripts from R3 + ai subsystem); Mashed's signature camera-pull elimination rule
 `mashed_re.exe` alone, screen-recorded.
 
 ### Phase R7 — Full game systems
+**Scaffold landed 2026-06-15/16 (SCAFFOLD, not verbatim):** the full race loop,
+results/progression, elimination+laps modes, particles, pickups (real
+POWERUPS_GOLD placement), power-up effects, and **real audio** (both RWS formats
+cracked — ambient/music/engine/menu+race SFX). See the **Completion plan**
+section below for the session-by-session breakdown of converting these scaffolds
+to verbatim + the remaining data/mode/verify work (WS-A..K).
 **Goal:** everything else the menu promises actually works.
 **Activities:** all party/battle modes; powerups; particles; audio (RWS playback — audio
 subsystem is 510 C2 / 74 C3 already); save/unlock flows; video playback; multiplayer-local
@@ -261,3 +267,133 @@ means we do **not** need all 3,122 remaining C2s — only the executed subset, p
 slice order. The expensive unknowns are concentrated, not spread: renderer (R4) and physics
 (R5) are the two architecture cliffs; everything else is the proven port-verify-screenshot
 loop. Horizon to P-DoD remains 12–24 months solo. Don't promise dates — promise phase exits.
+
+---
+
+# Completion plan — finishing the logic, session-by-session (2026-06-16)
+
+## Current state (2026-06-16): the SCAFFOLD loop is complete end-to-end
+A full playable loop runs in `mashed_re.exe`: boot → faithful menu → select
+track/car → load any of 13 real tracks → **drive** (human control) → AI opponents
+→ collision (ground) → race camera → HUD → pickups (real `POWERUPS_GOLD.LUA`
+placement) → power-up effects → particles → **real audio** (ambient + music +
+engine + menu/race SFX; both RWS formats cracked: 0x809 wave bank + 0x80d IMA
+ADPCM) → elimination/laps modes → results screen → progression (persists).
+
+**What that means for the plan:** breadth is done — every subsystem *exists*. The
+remaining work is almost entirely **converting SCAFFOLD → VERBATIM** (item 1
+gameplay + item 2 renderer) plus a finite tail of completable data/mode/verify
+work (items 3–5). The classification of what is scaffold vs verbatim vs
+data-verified is in `re/analysis/SESSION_VERIFICATION_AUDIT_2026-06-16.md`.
+
+## How to run these as separate sessions
+Each **WS-x.n** below is sized to fit one session (finishes before auto-compact)
+and is self-contained. Per session: take a **worktree** bound to a **Ghidra pool
+slot** (`worktree` + `ghidra-pool` skills; pre-assign the slot in the prompt —
+[[feedback-pool-slot-in-prompts]]), do the RE+port, verify, `re-classify`, commit,
+and `program_close` (lock hygiene). Coordinate via the `multi-session` skill.
+**Verification gate:** every verbatim port lands a `diff-original` C4 (the
+boot-original lane — boot AV is fixed); scaffolds that aren't 1:1 ports stay
+data-verified. The scaffold stays live until its verbatim replacement is C4.
+
+## Workstreams (the missing logic)
+
+### WS-A — Vehicle physics (item 1; the biggest; mostly SEQUENTIAL within)
+Replaces TrackRenderer::UpdateCar kinematic scaffold with the RW-Physics rigid-
+body+wheel sim. Foundation: `re/analysis/vehicle_physics_cluster.md`.
+- **A1** Map the full ~0xd04 vehicle struct (all fields) → `re/analysis/structs/`.
+- **A2** Port/verify the RW math primitives the cluster uses (FUN_004c3df0
+  transform, 004c4d20 matrix, 004c3ac0 length, 004c39b0 normalize) — extend
+  Math/. (Parallel-safe; prereq for A5/A6.)
+- **A3** Port the vehicle init/spawn chain (allocates+fills the struct from the
+  DFF/handling data) — unmapped; find it from the spawn call site.
+- **A4** Port FUN_00470670 (control input → drive/steer force) verbatim.
+- **A5** Port FUN_0046ddb0 (per-wheel contact, drive/suspension/friction torque,
+  ang-vel integrate) — the core; depends on A2 + WS-B contacts.
+- **A6** Port FUN_00467650 + FUN_00468980 (the 2nd/3rd integration steps).
+- **A7** Harvest every DAT_005c/005cea tuning constant the cluster reads.
+- **A8** Wire the ported cluster into the standalone car; `diff-original` the
+  per-frame velocity/pos vs the original on matched inputs (C4).
+
+### WS-B — Collision / RW-Physics (item 1; prereq for WS-A handling)
+The per-wheel + car↔car contacts feed WS-A. The original vendors RW-Physics 3.7 +
+qhull-2002.1 ([[qhull-rwphysics-island]], 0x57c5b0..0x5a5820).
+- **B1** Decide vendor-real-qhull vs port-the-used-subset (architecture gate;
+  stop-and-ask). **B2** car↔world contact query. **B3** car↔car contacts.
+  **B4** wire as the contact source for WS-A; diff vs original contact telemetry.
+
+### WS-C — AI drivers (item 1)
+Replaces the gate-ribbon lane-follower scaffold. Real = FUN_0040e480 family.
+- **C1** RE the AI controller cluster (per-driver decide/steer/throttle).
+- **C2** Port verbatim. **C3** wire + diff-original on a canonical race.
+
+### WS-D — Power-up effects (item 1)
+Replaces the invented boost/shield/missile/mine/shock. Real = FUN_00430670 family
+(+ the 12 real types already in POWERUPS_GOLD.LUA).
+- **D1** RE the power-up dispatch + per-type effect functions.
+- **D2** Port per-type. **D3** wire to the held-pickup + collision; diff.
+
+### WS-E — Renderer: RW-subset verbatim port (item 2; large; partly PARALLEL)
+Gate already RATIFIED (RENDERER_GATE_BRIEF.md: RW-subset port, librw fallback).
+Replaces the D3D9 spike.
+- **E1** RE + port the RW world render path (RpWorld sector render, atomic/clump).
+- **E2** Material system + multi-TXD binding (verbatim) + the real draw order.
+- **E3** **RpWorld lighting** (replaces the flat-shading approx) + vehicle
+  lighting consumer (ledger #9). **E4** RW immediate-mode / 2D (HUD/menu) path.
+- **E5** wire + screenshot parity vs original viewpoints.
+(E1–E4 can split across sessions; E is independent of WS-A/B/C/D.)
+
+### WS-F — Data formats (item 3; all PARALLEL, completable, no Ghidra)
+Self-contained parsers like the audio/powerup wins; verify against asset bytes.
+- **F1** `.SPL` splines (waves/water paths). **F2** `.ANM` anims (helicopter/
+  cameraman flythrough). **F3** `.UVA` UV-anim dictionaries (sea/water scroll).
+  **F4** `LAPDATA.LUA` lap lines (real checkpoints/lap counting). **F5** `.MTS`
+  material scripts (if any binding still missing).
+
+### WS-G — Modes & frontend completeness (item 4; mostly PARALLEL)
+- **G1** RE the game-mode-id → rules table (DAT_0067e9fc switch) → replace the
+  scaffold elim/laps env mapping with the real per-mode rules.
+- **G2** Wire each real mode (Championship/Wreckin'/Gladiator/Time-Trial/Bonus).
+- **G3** Cup PLACE-NAMES: Frida-capture runtime DAT_008a94f0 + DAT_0067ecbc from
+  the booted original (cup structure already RE'd) → real names + membership.
+- **G4** Remaining menu screens/leaves still scaffolded; full save/load + options
+  (controls/video) screens. **G5** Full gamesave serialization (FUN_00404e80
+  write side) → replace the sidecar progress store.
+
+### WS-H — Verification debt / C4 lane (item 5; ONGOING, runs alongside)
+- **H1** Stand up the boot-original `diff-original` lane for this era's verbatim
+  pieces (RaceCamera 0x00446520, scoring trio, RW-math leaves) → first C4s.
+- **H2..** As each WS-A/C/D/E port lands, diff-original it (C4) and move it
+  scaffold→verbatim in the audit. Audit: SESSION_VERIFICATION_AUDIT_2026-06-16.md.
+
+### WS-I — Multiplayer (later; R7 tail)
+Split-screen render + 2nd input + the MP frontend screens (the 4-car race already
+exists). **Netcode/online = out of scope for v1.0 (wontfix until a contributor).**
+
+### WS-J — Audio remainder (small; PARALLEL)
+Exact vehicle→character engine-bank map (6 char banks vs 12 vehicles), remaining
+permdict FX wiring (skids/impacts on real collision events — needs WS-B), music
+state transitions (menu vs race vs results).
+
+## Dependency graph + suggested parallelization
+```
+WS-B (collision) ──┐
+WS-A2 (RW math) ───┼─> WS-A (physics) ─> WS-A8 diff ─┐
+                   │                                  ├─> race feel faithful
+WS-C (AI) ─────────┘                                  │
+WS-D (powerup effects) ───────────────────────────────┘
+WS-E (renderer) ── independent, large, own track
+WS-F (data) ── all parallel, independent, cheap
+WS-G (modes/frontend) ── mostly parallel (G3 needs Frida)
+WS-H (verify) ── continuous, gates everything
+```
+**Run in parallel now (independent, no shared cliffs):** WS-F (any), WS-G1/G2,
+WS-E1, WS-B1 (the architecture gate), WS-A1/A2. **Serialize:** WS-A core (A3→A8)
+after A2+B; WS-J impacts after WS-B. **Critical path to "faithful race":**
+WS-B → WS-A → WS-A8, with WS-C/WS-D folded in. **Critical path to "faithful
+render":** WS-E. These two are the long poles; everything else is the
+proven parse/port/verify loop and can be filled by parallel sessions.
+
+## Definition of "all the logic written"
+Every WS-A..G item ported + `diff-original`-C4 (item 5), the scaffolds removed,
+and a clean full playthrough (P-DoD §R8). Order phases, not dates.
