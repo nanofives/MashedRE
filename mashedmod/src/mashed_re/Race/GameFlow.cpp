@@ -1,8 +1,11 @@
 // GameFlow scaffold impl (2026-06-15). See GameFlow.h.
 #include "GameFlow.h"
 #include "../Audio/AudioEngine.h"
+#include "../Save/GameSaveFormat.h"        // [WS-G5] real gamesave.bin format
+#include "../Frontend/MenuNavSM.h"          // [WS-G5] feed save image to menu state
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
 
 namespace mashed_re {
 namespace Race {
@@ -57,20 +60,55 @@ void log(const char* m) {
     }
 }
 
-// ---- progression persistence (sidecar; NEVER original/gamesave.bin) ----------
-// Our own small progress store: per-area unlock + trophy (0..3). The shipped
-// gamesave is read-only reference; this captures the standalone's own progress.
-const char* kProgressPath = "mashed_re_progress.bin";
-const std::uint32_t kProgressMagic = 0x4d525031u;   // 'MRP1'
+// ---- progression persistence (REAL gamesave.bin format; WS-G5) ---------------
+// The standalone persists campaign progression (per-area unlock + trophy) in the
+// REAL 0x24FA0-byte gamesave.bin format (Save/GameSaveFormat.h = buffer port of
+// Save::SerializeToBuffer 0x00404ee0 / DeserializeFromBuffer 0x00404e80), written
+// to a STANDALONE-COPY file — NEVER original/gamesave.bin. Replaces the old MRP1
+// sidecar. Progression maps onto the championship span (row = area index): the
+// verified track-unlock column (col 4) + a standalone-private trophy column.
+const char* kSavePath = "mashed_re_gamesave.bin";
 int g_progUnlock[kAreaCount] = {0};
 int g_progTrophy[kAreaCount] = {0};
+std::uint32_t g_saveCounter = 0;
 bool g_progLoaded = false;
 
+// progression -> championship span (the SerializeToBuffer source layout, 0x7f0a40).
+void BuildSpanFromProgress(unsigned char span[mashed_re::Save::kSpanBytes]) {
+    using namespace mashed_re::Save;
+    std::memset(span, 0, kSpanBytes);
+    bool any = false;
+    for (int r = 0; r < kAreaCount && r < kSpanRows; ++r) {
+        std::uint32_t u = g_progUnlock[r] ? 2u : 0u;   // real "track available" = 2
+        std::uint32_t t = static_cast<std::uint32_t>(g_progTrophy[r]);
+        std::memcpy(span + r * kRowStride + kColTrackUnlock, &u, 4);
+        std::memcpy(span + r * kRowStride + kColTrophyPriv,  &t, 4);
+        if (g_progUnlock[r] || g_progTrophy[r]) any = true;
+    }
+    std::uint32_t gate = any ? 1u : 0u;                // DAT_007f0f2c savedata gate
+    std::memcpy(span + kSpanSavedataGate, &gate, 4);
+}
+
+// championship span -> progression (the Deserialize consumer side).
+void ApplyProgressFromSpan(const unsigned char span[mashed_re::Save::kSpanBytes]) {
+    using namespace mashed_re::Save;
+    for (int r = 0; r < kAreaCount && r < kSpanRows; ++r) {
+        std::uint32_t u, t;
+        std::memcpy(&u, span + r * kRowStride + kColTrackUnlock, 4);
+        std::memcpy(&t, span + r * kRowStride + kColTrophyPriv,  4);
+        g_progUnlock[r] = (u != 0) ? 1 : 0;
+        g_progTrophy[r] = static_cast<int>(t);
+    }
+}
+
 void SaveProgress() {
-    if (std::FILE* f = std::fopen(kProgressPath, "wb")) {
-        std::fwrite(&kProgressMagic, 4, 1, f);
-        std::fwrite(g_progUnlock, sizeof(int), kAreaCount, f);
-        std::fwrite(g_progTrophy, sizeof(int), kAreaCount, f);
+    using namespace mashed_re::Save;
+    unsigned char span[kSpanBytes];
+    BuildSpanFromProgress(span);
+    static unsigned char img[kSaveSize];
+    BuildImage(span, ++g_saveCounter, img);            // bump the save-state counter
+    if (std::FILE* f = std::fopen(kSavePath, "wb")) {
+        std::fwrite(img, 1, kSaveSize, f);
         std::fclose(f);
     }
 }
@@ -155,20 +193,29 @@ const Cup& Campaign_CurrentCup() {
 }
 
 void Campaign_LoadProgress() {
+    using namespace mashed_re::Save;
     if (g_progLoaded) return;
     g_progLoaded = true;
     g_progUnlock[0] = 1;                          // track 0 always available
-    if (std::FILE* f = std::fopen(kProgressPath, "rb")) {
-        std::uint32_t magic = 0;
-        if (std::fread(&magic, 4, 1, f) == 1 && magic == kProgressMagic) {
-            std::fread(g_progUnlock, sizeof(int), kAreaCount, f);
-            std::fread(g_progTrophy, sizeof(int), kAreaCount, f);
-        }
+    static unsigned char img[kSaveSize];
+    if (std::FILE* f = std::fopen(kSavePath, "rb")) {
+        size_t n = std::fread(img, 1, kSaveSize, f);
         std::fclose(f);
+        unsigned char span[kSpanBytes];
+        std::uint32_t counter = 0;
+        // Magic gate (DEADBEEF) + size check; a blank/short file keeps defaults.
+        if (n == kSaveSize && ParseImage(img, kSaveSize, span, &counter)) {
+            ApplyProgressFromSpan(span);
+            g_saveCounter = counter;
+            // Drive the menu grey-out / unlock state from the SAME real image (the
+            // real reader Nav_GameStateLoadSave consumes the full gamesave.bin).
+            mashed_re::Frontend::Nav_GameStateLoadSave(img, kSaveSize);
+        }
     }
-    char m[96];
+    char m[112];
     int n = 0; for (int i = 0; i < kAreaCount; ++i) n += (g_progUnlock[i] != 0);
-    std::snprintf(m, sizeof(m), "progress loaded: %d/%d tracks unlocked", n, kAreaCount);
+    std::snprintf(m, sizeof(m), "progress loaded: %d/%d tracks unlocked (save counter %u)",
+                  n, kAreaCount, g_saveCounter);
     log(m);
 }
 

@@ -143,6 +143,30 @@ i.e. file offset = 0x24A40 + block_offset):
 | 0x00404F50 | SAVE_WRITE_FN (sub_00404F50) | save_buf → gamesave.bin |
 | 0x00404E50 | SAVE_LOAD_FN (sub_00404E50) | gamesave.bin → save_buf |
 
+## WS-G5 (2026-06-16) — standalone writer
+
+`SerializeToBuffer` (0x00404EE0) re-confirmed by disasm (Mashed_pool6): the
+counter MOV at 0x00404F23 (`MOV [0x00828254],EAX`, EAX = DAT_008A95AC loaded at
+0x00404F03) runs **after** the championship REP MOVSD (0x00404F19) — the
+decompiler hoists it into the gather loop, but the byte order is span-copy →
+counter-overwrite → [profile, skipped when DAT_008A94A8==0] → magic. So span+0x4BC
+(file 0x24EFC) holds the counter, not the table dword (matches the Tail section).
+
+`SAVE_WRITE_FN` (0x00404F50) = `FUN_004b3bb0("gamesave.bin", &save_buf, 0x24fa0)`
+= plain open/write/close (FUN_004cc230 / 004cbe80 / 004cc160). No special framing.
+
+**Standalone port:** `mashedmod/src/mashed_re/Save/GameSaveFormat.h` — header-only,
+buffer-based port of the same format (the existing `Save/GameSaveBuffer.cpp` is a
+raw-pointer dev-.asi hook on live 0x803358; this is the exe-linkable, testable
+twin). `BuildImage`/`ParseImage` produce/consume the real 0x24FA0 envelope (magic
+@0, championship span @0x24A40, counter @0x24EFC; profile region zero — the
+standalone has no live profile block). `Race/GameFlow.cpp` now persists campaign
+progression via this format to a **standalone-copy** `mashed_re_gamesave.bin`
+(NEVER original/gamesave.bin), replacing the old MRP1 sidecar; the same image is
+fed to `Nav_GameStateLoadSave` so menu unlock/grey-out state tracks the save.
+Round-trip verified GREEN: `Save/tests/gamesave_format_test.cpp` (byte layout +
+write/read identity + magic gate + per-area unlock/trophy recovery).
+
 ---
 
 ## Uncertainties
