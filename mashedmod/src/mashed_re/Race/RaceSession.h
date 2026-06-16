@@ -47,6 +47,7 @@ struct RaceConfig {
     int  difficulty  = 0;        // DAT_0067ea7c
     int  powerUps    = 0;        // DAT_0067ea80
     int  laps        = 3;
+    int  raceMode    = 0;        // race objective: 0 = elimination, 1 = laps
     RaceCar cars[8];
 };
 

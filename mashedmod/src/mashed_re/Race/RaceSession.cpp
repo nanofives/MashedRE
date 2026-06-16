@@ -110,6 +110,8 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         // First-to-3-rounds match (the ported elimination/scoring rules). This
         // grids all 4 cars at the start line and runs the countdown.
         track->StartMatch(3);
+        // Race objective from the chosen game mode (0 = elimination, 1 = laps).
+        track->SetRaceMode(m_cfg.raceMode, m_cfg.laps);
         // Track-weather particles: snow on the frozen tracks, dust elsewhere
         // (1=snow, 2=dust). Arctic=0, Storm=6 are the snowy/stormy areas.
         const int tid = m_cfg.trackId;
@@ -118,8 +120,9 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         track->InitPickups();        // place power-up orbs along the gate ribbon
         m_powerups.ready = true;
         logf("Begin: track ready, vehicle=%s player_car=%d liveries=%d "
-             "-> StartMatch(3) particles=%d pickups=on [real sim active]",
-             ve.dffBase, (int)car, (int)liv, ptype);
+             "-> StartMatch(3) particles=%d pickups=on mode=%s laps=%d [real sim active]",
+             ve.dffBase, (int)car, (int)liv, ptype,
+             m_cfg.raceMode == 1 ? "laps" : "elim", m_cfg.laps);
     } else {
         logf("Begin: no track/device (logs-only race) ready=%d",
              track ? (int)track->ready() : -1);

@@ -293,6 +293,8 @@ public:
     int   elim_count_ = 0;
     int   match_winner_ = -1;
     int   round_no_ = 0;
+    int   race_mode_ = 0;         // 0 = elimination, 1 = laps
+    int   lap_target_ = 3;        // laps mode: laps to finish
     float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
     void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
     void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
@@ -315,12 +317,37 @@ public:
         for (int i = 1; i < kRaceCars; ++i) if (scores_[i] > scores_[best]) best = i;
         match_winner_ = best;
     }
-    // Final standings: car slots sorted by score (desc). out[] gets car indices.
-    void  Standings(int out[kRaceCars]) const {
+    // Final standings: car slots ranked (desc) by score (elimination mode) or by
+    // race progress (laps mode). out[] gets car indices best-first.
+    void  Standings(int out[kRaceCars], bool byProgress = false) const {
         for (int i = 0; i < kRaceCars; ++i) out[i] = i;
         for (int i = 0; i < kRaceCars; ++i)
-            for (int j = i + 1; j < kRaceCars; ++j)
-                if (scores_[out[j]] > scores_[out[i]]) { int t = out[i]; out[i] = out[j]; out[j] = t; }
+            for (int j = i + 1; j < kRaceCars; ++j) {
+                const bool swap = byProgress
+                    ? (race_[out[j]].progress > race_[out[i]].progress)
+                    : (scores_[out[j]] > scores_[out[i]]);
+                if (swap) { int t = out[i]; out[i] = out[j]; out[j] = t; }
+            }
+    }
+
+    // ---- race objective mode: 0 = Elimination (rounds + score, the default),
+    // 1 = Laps (single race to lap_target_; positions by progress). The frontend
+    // game-mode selection maps to this; SetRaceMode is called when a race begins.
+    void  SetRaceMode(int mode, int laps) {
+        race_mode_ = (mode == 1) ? 1 : 0;
+        lap_target_ = laps > 0 ? laps : 3;
+    }
+    int   race_mode()  const { return race_mode_; }
+    int   lap_target() const { return lap_target_; }
+    int   car_lap(int slot) const {
+        return (slot >= 0 && slot < kRaceCars) ? race_[slot].laps : 0;
+    }
+    int   car_position(int slot) const {       // 1-based rank by progress (desc)
+        if (slot < 0 || slot >= kRaceCars) return kRaceCars;
+        int rank = 1;
+        for (int i = 0; i < kRaceCars; ++i)
+            if (i != slot && race_[i].progress > race_[slot].progress) ++rank;
+        return rank;
     }
 
 private:

@@ -1409,7 +1409,8 @@ void TrackRenderer::UpdateRace(float dt) {
     for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
         step(i + 1, ai_cars_[static_cast<std::size_t>(i)].pos);
 
-    if (!round_mode_ || round_winner_ >= 0) return;
+    if (!round_mode_) return;   // race rules only run during a match (both modes
+                                // update the shared camera below).
 
     // ---- VERBATIM-PORTED camera + elimination (replaces the ">7 gates"
     // scaffold). Adapters: standalone race state -> RaceCamCar quantities
@@ -1445,6 +1446,16 @@ void TrackRenderer::UpdateRace(float dt) {
 
     for (int i = 0; i < kRaceCars; ++i)        // DAT_008a9510 decay
         if (delta_timer_[i] > 0.f) delta_timer_[i] -= dt * 1000.f;
+
+    // Laps mode: no elimination — first car to complete lap_target_ laps wins.
+    if (race_mode_ == 1) {
+        if (match_winner_ < 0 && countdown_ <= 0.f)
+            for (int i = 0; i < kRaceCars; ++i)
+                if (race_[i].laps >= lap_target_) { match_winner_ = i; break; }
+        return;
+    }
+    if (round_winner_ >= 0) return;            // elimination round-end hold
+
     if (countdown_ <= 0.f) {
         const int victim = race_cam_.EliminationCheck(cc);
         if (victim >= 0 && race_[victim].alive) {

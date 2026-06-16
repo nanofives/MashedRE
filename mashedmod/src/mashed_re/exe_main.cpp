@@ -1428,6 +1428,17 @@ bool UpdateMenuSelection() {
                     carSel = std::atoi(cs);
                 if (carSel < 0) carSel = 0;
                 cfg.cars[0].carIndex = carSel;
+                // Race objective from the game mode. [SCAFFOLD] real mode-id ->
+                // rules table is binary-RE (FUN_0042f6a0 GetRaceSubMode); for now
+                // default elimination, with MASHED_RACE_MODE=laps + MASHED_LAPS=N
+                // overriding for dev/verification.
+                char rm[8] = {};
+                if (GetEnvironmentVariableA("MASHED_RACE_MODE", rm, sizeof(rm)) > 0)
+                    cfg.raceMode = (rm[0] == 'l' || rm[0] == 'L' || rm[0] == '1') ? 1 : 0;
+                char lp[8] = {};
+                if (GetEnvironmentVariableA("MASHED_LAPS", lp, sizeof(lp)) > 0) {
+                    int nl = std::atoi(lp); if (nl > 0) cfg.laps = nl;
+                }
                 // Hand the engine + device to GameFlow so RaceSession::Begin can
                 // spawn the cars + start the match (activates the real sim).
                 mashed_re::Race::GameFlow_RequestRace(cfg, &g_track, g_device);
@@ -1987,6 +1998,15 @@ bool RenderFrame() {
                     DrawMashedString(L"CURRENT STANDINGS", 400.f, 60.f, 36.f,
                                      0xffffffffu);
                 }
+                // Laps mode: player lap + race position (top-right).
+                if (g_track.race_mode() == 1 && g_track.countdown() <= 0.f) {
+                    wchar_t lp[32];
+                    int lap = g_track.car_lap(0) + 1;
+                    if (lap > g_track.lap_target()) lap = g_track.lap_target();
+                    swprintf(lp, 32, L"LAP %d/%d   POS %d/4",
+                             lap, g_track.lap_target(), g_track.car_position(0));
+                    DrawMashedString(lp, 470.f, 24.f, 22.f, 0xffffffffu);
+                }
                 // Power-up HUD: held kind + fire hint (bottom-left), then any
                 // active effect badges above it.
                 if (g_track.pickup_held() >= 0) {
@@ -2008,12 +2028,17 @@ bool RenderFrame() {
             std::uint32_t uvf[4] = {0u, 0u, 0x3f800000u, 0x3f800000u};
             HudIm2DQuad(0, 90.f, 70.f, 460.f, 300.f, 0xe0100c0cu, uvf);  // dark panel
             DrawMashedString(L"RACE RESULTS", 400.f, 96.f, 42.f, 0xffffffffu);
-            int order[4]; g_track.Standings(order);
+            const bool laps = (g_track.race_mode() == 1);
+            int order[4]; g_track.Standings(order, laps);   // progress order in laps mode
             for (int p = 0; p < 4; ++p) {
                 const int carIdx = order[p];
                 wchar_t row[48];
-                swprintf(row, 48, L"%d.   CAR %d      %d pts",
-                         p + 1, carIdx + 1, g_track.score(carIdx));
+                if (laps)
+                    swprintf(row, 48, L"%d.   CAR %d      %d laps",
+                             p + 1, carIdx + 1, g_track.car_lap(carIdx));
+                else
+                    swprintf(row, 48, L"%d.   CAR %d      %d pts",
+                             p + 1, carIdx + 1, g_track.score(carIdx));
                 DrawMashedString(row, 200.f, 160.f + p * 46.f, 30.f,
                                  p == 0 ? 0xff80ff80u : 0xffffffffu);
             }
