@@ -27,7 +27,8 @@ void logf(const char* fmt, ...) {
 IDirectSound8* g_ds = nullptr;
 IDirectSoundBuffer* g_engine = nullptr;   // procedural engine voice
 DWORD               g_engineBaseHz = 22050;
-IDirectSoundBuffer* g_music = nullptr;    // streamed-RWS music voice
+IDirectSoundBuffer* g_music = nullptr;    // the single music voice
+MusicState          g_musicState = MusicState::Silent;
 std::vector<RwsWave> g_sfxBank;           // cached 0x809 SFX bank (permdict)
 IDirectSoundBuffer*  g_sfxRing[8] = {};   // one-shot SFX voices (round-robin)
 int                  g_sfxNext = 0;
@@ -154,21 +155,22 @@ void StopAll() {
         }
 }
 
-void EngineStart(float volume, const char* rwsPath) {
+void EngineStart(float volume) {
     if (!g_ds || g_engine) return;
     DWORD rate = 22050;
     std::vector<std::int16_t> pcm;
-    // Prefer the REAL per-car engine sample: first sub-sound (RD_1) of the 0x80d
-    // bank — a tonal engine loop (cracked: continuous IMA ADPCM). Decode ~0.6 s.
-    if (rwsPath) {
-        std::uint32_t r = 44100;
-        if (RwsStreamDecode(rwsPath, pcm, r, static_cast<std::size_t>(0.6 * 44100), kLog)
-            && pcm.size() > 1000) {
-            rate = r;
-            logf("EngineStart: real engine sample %s (%u samples @%u)",
-                 rwsPath, (unsigned)pcm.size(), rate);
-        } else {
-            pcm.clear();
+    // Prefer the REAL engine loop: `eng1` from the permdict SFX bank (0x809,
+    // 16-bit mono @22050; already loaded by SfxLoadBank at boot). permdict has
+    // eng1..eng4 engine classes; per-vehicle class assignment is unresolved
+    // (REmap note §4) so eng1 is used for all cars.
+    if (!g_sfxBank.empty()) {
+        const RwsWave* w = RwsBankFind(g_sfxBank, "eng1");
+        if (w && w->valid() && w->pcm.size() > 1000) {
+            rate = w->rate ? w->rate : 22050;
+            pcm.resize(w->pcm.size() / 2);
+            std::memcpy(pcm.data(), w->pcm.data(), pcm.size() * 2);
+            logf("EngineStart: real engine 'eng1' from permdict (%u samples @%u)",
+                 (unsigned)pcm.size(), rate);
         }
     }
     if (pcm.empty()) {
@@ -205,7 +207,7 @@ void EngineStart(float volume, const char* rwsPath) {
     }
     g_engine->SetVolume(VolToDs(volume));
     g_engine->Play(0, 0, DSBPLAY_LOOPING);
-    logf("EngineStart: procedural engine voice playing");
+    logf("EngineStart: engine voice playing (@%u Hz)", g_engineBaseHz);
 }
 
 void EngineSetRpm(float norm01) {
@@ -255,6 +257,89 @@ void MusicStart(const char* rwsPath, float volume, int maxSeconds) {
 
 void MusicStop() {
     if (g_music) { g_music->Stop(); g_music->Release(); g_music = nullptr; }
+}
+
+// --- character voice banks (cited map; see the REmap note §2) ------------------
+const char* CharacterBankName(int charIndex) {
+    // DAT_006041f0 order (0x006041f0 stride 0x80): RED/BLUEJAY/MELON/GOLD/PINK/
+    // SHADOW. Lowercased to match the on-disk english/<name>.rws files.
+    static const char* kNames[6] = { "red", "bluejay", "melon", "gold", "pink", "shadow" };
+    if (charIndex < 0 || charIndex > 5) return nullptr;
+    return kNames[charIndex];
+}
+
+bool CharacterBankPath(int charIndex, int langCode, char* buf, int cap) {
+    const char* name = CharacterBankName(charIndex);
+    if (!name || !buf || cap <= 0) return false;
+    const char* lang;          // FUN_004625b0 language switch
+    switch (langCode) {
+        case 1:  lang = "french";  break;
+        case 2:  lang = "german";  break;
+        case 3:  lang = "spanish"; break;
+        case 4:  lang = "italian"; break;
+        default: lang = "english"; break;
+    }
+    std::snprintf(buf, static_cast<std::size_t>(cap),
+                  "original/toastaudio/pc/audio/pcdics/%s/%s.rws", lang, name);
+    return true;
+}
+
+// --- music state controller ---------------------------------------------------
+namespace {
+// Loop a named 16-bit-mono wave from the loaded SFX bank (permdict) on the music
+// voice — used for the menu music (`musicloop1`). No-op if already playing.
+void MusicStartBankWaveLoop(const char* waveSub, float volume) {
+    if (!g_ds || g_music || g_sfxBank.empty()) return;
+    const RwsWave* w = RwsBankFind(g_sfxBank, waveSub);
+    if (!w || !w->valid()) { logf("MusicBankLoop: '%s' not in SFX bank", waveSub); return; }
+    WAVEFORMATEX wf = {};
+    wf.wFormatTag = WAVE_FORMAT_PCM; wf.nChannels = 1; wf.nSamplesPerSec = w->rate;
+    wf.wBitsPerSample = 16; wf.nBlockAlign = 2; wf.nAvgBytesPerSec = w->rate * 2;
+    DSBUFFERDESC d = {};
+    d.dwSize = sizeof(d);
+    d.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
+    d.dwBufferBytes = static_cast<DWORD>(w->pcm.size());
+    d.lpwfxFormat = &wf;
+    if (FAILED(g_ds->CreateSoundBuffer(&d, &g_music, nullptr)) || !g_music) { g_music = nullptr; return; }
+    void* p1 = nullptr; DWORD s1 = 0;
+    if (SUCCEEDED(g_music->Lock(0, d.dwBufferBytes, &p1, &s1, nullptr, nullptr, 0))) {
+        std::memcpy(p1, w->pcm.data(), s1);
+        g_music->Unlock(p1, s1, nullptr, 0);
+    }
+    g_music->SetVolume(VolToDs(volume));
+    g_music->Play(0, 0, DSBPLAY_LOOPING);
+    logf("MusicBankLoop '%s' (%u bytes @%u) looping", waveSub, (unsigned)w->pcm.size(), w->rate);
+}
+}  // namespace
+
+void MusicSetState(MusicState s) {
+    if (s == g_musicState) return;          // idempotent: never restart per-frame
+    const char* kCdaudio = "original/toastaudio/pc/audio/pcdics/cdaudio.rws";
+    switch (s) {
+        case MusicState::Silent:
+            MusicStop();
+            break;
+        case MusicState::Menu:
+            MusicStop();
+            MusicStartBankWaveLoop("musicloop1", 0.60f);   // permdict menu loop
+            break;
+        case MusicState::Race:
+            MusicStop();
+            MusicStart(kCdaudio, 0.45f, 120);              // cdaudio race music
+            break;
+        case MusicState::Results:
+            // Keep the race stream running but duck it; start a ducked race
+            // stream if none is playing (e.g. Results entered cold).
+            if (g_music && g_musicState == MusicState::Race) {
+                g_music->SetVolume(VolToDs(0.25f));
+            } else {
+                MusicStop();
+                MusicStart(kCdaudio, 0.25f, 120);
+            }
+            break;
+    }
+    g_musicState = s;
+    logf("MusicSetState -> %d", static_cast<int>(s));
 }
 
 void SfxLoadBank(const char* rwsPath) {

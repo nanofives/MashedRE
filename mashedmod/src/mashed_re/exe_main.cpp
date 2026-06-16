@@ -1922,7 +1922,7 @@ bool RenderFrame() {
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
             g_track.UpdateCar(di);
-            // engine note rises with speed (procedural scaffold voice)
+            // engine note (real permdict eng1) rises with speed
             mashed_re::Audio::EngineSetRpm(
                 g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
             if (s_play_demo) {   // control proof: log the player yaw under input
@@ -4985,9 +4985,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
     // present, RaceSession's ambience becomes a logged no-op.
     (void)mashed_re::Audio::Init(g_hwnd);
     // Preload the permanent SFX bank (permdict.rws: menu clicks, countdown,
-    // power-up/impact one-shots) for menu + race SFX.
+    // power-up/impact one-shots, the eng1..eng4 engine loops, musicloop1) for
+    // menu + race SFX, engine, and menu music.
     mashed_re::Audio::SfxLoadBank(
         "original/toastaudio/pc/audio/pcdics/permdict.rws");
+    // Boot into the frontend with menu music (permdict musicloop1). The
+    // music-state controller switches this to the cdaudio race track on the
+    // Race state edge and back to menu on exit.
+    mashed_re::Audio::MusicSetState(mashed_re::Audio::MusicState::Menu);
 
     // B14: one-time wedge probe — write a test byte to MASHED's input
     // active byte (0x007f1044) and read it back. If the wedge has the

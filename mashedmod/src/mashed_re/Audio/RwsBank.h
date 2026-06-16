@@ -37,11 +37,13 @@ bool RwsBankLoad(const char* path, std::vector<RwsWave>& out,
 // Returns nullptr if none matches.
 const RwsWave* RwsBankFind(const std::vector<RwsWave>& waves, const char* nameSub);
 
-// Decode a 0x80d STREAMED RWS bank (cdaudio.rws / per-car english/<car>.rws):
-// the audio payload is continuous IMA ADPCM (cracked 2026-06-16 — autocorr 0.96
-// on cdaudio; rate 44100 from the 0x80e header). Finds the largest leaf chunk
-// (the ADPCM stream), decodes to 16-bit mono PCM. `maxSamples` caps the decode
-// (0 = all). Returns false on read/parse error.
+// Decode a 0x80d STREAMED RWS bank (cdaudio.rws music; the per-CHARACTER voice
+// banks english/<name>.rws are also 0x80d): the audio payload is continuous IMA
+// ADPCM (cracked 2026-06-16 — autocorr 0.96 on cdaudio; rate 44100 from the
+// 0x80e header). Finds the largest leaf chunk (the ADPCM stream), decodes to
+// 16-bit mono PCM as ONE continuous run — individual sub-sound boundaries live
+// in the 0x80e directory (not yet parsed; see audio_character_banks_REmap note).
+// `maxSamples` caps the decode (0 = all). Returns false on read/parse error.
 bool RwsStreamDecode(const char* path, std::vector<std::int16_t>& pcmOut,
                      std::uint32_t& rateOut, std::size_t maxSamples = 0,
                      const char* log_path = nullptr);

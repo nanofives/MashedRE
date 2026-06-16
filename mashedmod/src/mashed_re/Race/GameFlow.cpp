@@ -1,5 +1,6 @@
 // GameFlow scaffold impl (2026-06-15). See GameFlow.h.
 #include "GameFlow.h"
+#include "../Audio/AudioEngine.h"
 #include <cstdio>
 #include <cstdint>
 
@@ -93,12 +94,14 @@ void GameFlow_RequestExit() {
     if (g_mode == GameMode::Frontend) return;
     g_session.End();
     g_mode = GameMode::Frontend;
+    Audio::MusicSetState(Audio::MusicState::Menu);   // back to menu music
     log("RequestExit -> Frontend");
 }
 
 void GameFlow_RequestResults() {
     if (g_mode != GameMode::InRace) return;
     g_mode = GameMode::Results;       // session stays active (scene + scores held)
+    Audio::MusicSetState(Audio::MusicState::Results);  // duck the race music
     log("RequestResults -> Results");
 }
 
@@ -111,6 +114,7 @@ void GameFlow_Update(float dt) {
             if (++g_loadFrames > 30) {
                 g_session.Begin(g_pending, g_pendingTrack, g_pendingDev);
                 g_mode = GameMode::InRace;
+                Audio::MusicSetState(Audio::MusicState::Race);  // cdaudio race music
                 log("LoadingRace -> InRace");
             }
             break;

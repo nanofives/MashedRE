@@ -146,17 +146,25 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         m_ambient = voice;
         m_ticks = 0;
         m_audio.ready = (voice >= 0);
-        // Real per-car engine: first sub-sound of a 0x80d per-car bank (RD_1, a
-        // tonal engine loop). [SCAFFOLD] the audio banks are per-CHARACTER
-        // (bluejay/gold/melon/pink/red/shadow); the exact vehicle->bank map needs
-        // RE, so use a representative bank for now (falls back to the synth).
-        Audio::EngineStart(0.5f,
-            "original/toastaudio/pc/audio/pcdics/english/red.rws");
-        // Real race music: the cdaudio.rws streamed bank, cracked as continuous
-        // IMA ADPCM @44100 (Audio/RwsBank::RwsStreamDecode). Cap the decode to a
-        // ~120s loop. Quiet under the engine/ambient.
-        Audio::MusicStart("original/toastaudio/pc/audio/pcdics/cdaudio.rws",
-                          0.45f, 120);
+        // Real engine: the permdict `eng1` loop, pitched by RPM (the engN engine
+        // classes live in permdict, NOT the english/*.rws banks — see
+        // re/analysis/audio_character_banks_REmap_20260616.md §4).
+        Audio::EngineStart(0.5f);
+        // Character voice bank: follows the racer's Player Colour index 0..5
+        // (0=RED 1=BLUEJAY 2=MELON 3=GOLD 4=PINK 5=SHADOW), NOT the vehicle
+        // (REmap note §1-§3; cited from DAT_006041f0 / FUN_004625b0 / FUN_00462dd0).
+        // Resolve + log the player's bank (cars[0].colour); per-clip taunt
+        // playback awaits the 0x80E clip-directory parse (deferred).
+        {
+            const int colour = m_cfg.cars[0].colour;
+            char vbank[200];
+            if (Audio::CharacterBankPath(colour, 0, vbank, sizeof(vbank)))
+                logf("player voice bank: colour=%d -> %s", colour, vbank);
+            else
+                logf("player voice bank: colour=%d out of range (0..5)", colour);
+        }
+        // Music (cdaudio race track) is owned by GameFlow's music-state
+        // controller, switched on the Frontend/Race/Results state edges.
     } else {
         logf("ambience: audio engine unavailable");
     }

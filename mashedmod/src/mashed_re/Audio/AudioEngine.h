@@ -30,19 +30,40 @@ void SetVolume(int voice, float volume);     // 0..1
 void Stop(int voice);
 void StopAll();
 
-// Engine voice — a procedural looping buzz pitched by RPM. [SCAFFOLD] the real
-// per-car engine samples live in the 0x80d streamed RWS banks (toastaudio
-// english/<car>.rws), a format not yet cracked; this synth stand-in gives the
-// race an engine note that rises with speed until those are decoded.
-// Start the engine voice. If `rwsPath` is a 0x80d per-car bank, the first
-// sub-sound (RD_1, a tonal engine loop) is decoded as the REAL engine sample;
-// otherwise a procedural buzz is synthesized. Pitched by EngineSetRpm.
-void EngineStart(float volume, const char* rwsPath = nullptr);
+// Engine voice — loops the REAL engine sample `eng1` from the permdict SFX bank
+// (0x809; loaded once via SfxLoadBank), pitched by RPM. permdict carries 4
+// engine classes (eng1..eng4 + `d` variants); which class each of the 12
+// vehicles uses is vehicle stat-data not yet RE'd — eng1 is used for all cars
+// for now (see re/analysis/audio_character_banks_REmap_20260616.md §4). Falls
+// back to a procedural buzz only if permdict isn't loaded. Pitched by
+// EngineSetRpm.
+void EngineStart(float volume);
 void EngineSetRpm(float norm01);             // 0..1 -> playback pitch
 void EngineStop();
 
-// Music — decode a 0x80d streamed RWS (IMA ADPCM, e.g. cdaudio.rws) and play it
-// looping. `maxSeconds` caps the decode (0 = whole track). Idempotent.
+// Character voice banks (driver taunts/commentary). The 6 localized
+// english/<name>.rws banks are per-CHARACTER (NOT engine, NOT per-vehicle):
+// the bank follows the racer's Player Colour index 0..5. Cited map (DAT_006041f0
+// / FUN_004625b0; see the REmap note §2):
+//   0=RED 1=BLUEJAY 2=MELON 3=GOLD 4=PINK 5=SHADOW
+// CharacterBankName returns the base name (nullptr if out of range);
+// CharacterBankPath builds the localized file path
+//   original/toastaudio/pc/audio/pcdics/<lang>/<name>.rws
+// langCode follows FUN_004625b0 (0=english 1=french 2=german 3=spanish
+// 4=italian; default english). Returns false if charIndex is out of range.
+const char* CharacterBankName(int charIndex);
+bool        CharacterBankPath(int charIndex, int langCode, char* buf, int cap);
+
+// Music — one dedicated music voice, switched on game-state edges. The state
+// setter is idempotent (re-setting the current state is a no-op; it never
+// restarts the voice per-frame). Menu=permdict `musicloop1`, Race=cdaudio.rws
+// (streamed IMA), Results=ducked race music, Silent=stopped.
+enum class MusicState { Silent, Menu, Race, Results };
+void MusicSetState(MusicState s);
+
+// Lower-level music controls (MusicSetState uses these). MusicStart decodes a
+// 0x80d streamed RWS (e.g. cdaudio.rws) and loops it; `maxSeconds` caps the
+// decode (0 = whole track).
 void MusicStart(const char* rwsPath, float volume, int maxSeconds);
 void MusicStop();
 
