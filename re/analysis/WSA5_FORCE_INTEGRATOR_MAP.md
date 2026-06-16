@@ -69,15 +69,34 @@ race, the per-car grounded count / velocity evolution must match. The WS-B
 self-test already proves the upstream contacts (grounded=4) are produced
 correctly; this port closes the loop.
 
-## Port plan (next focused effort — large)
+## Port — DONE + structurally verified (2026-06-16)
 
-1. Harvest the ~40 `_DAT_005c*`/`_DAT_0080*`/`_DAT_0088e*` constants.
-2. Port `FUN_0046ddb0` verbatim into `Vehicle/` (EDI→`int* self`; float stores
-   via the same `vF()` reinterpret discipline as WS-B; float10→double).
-3. Port `FUN_00442ce0`/`FUN_00442c80` + map `FUN_0046dbe0`; bind RW-math callees
-   to the Math/ ports; reuse `Collision::TriangleFaceNormal`.
-4. Wire `FUN_00470670 → FUN_0046ddb0` consuming the WS-B contact arrays; replace
-   `TrackRenderer::UpdateCar` scaffold; diff vs baseline (installed-hook scenario).
+Ported verbatim into `Vehicle/ForceIntegrator.{h,cpp}` (EDI→`int* self`; float
+stores via `vF()` reinterpret; float10→double; the surface-jitter dispatch uses
+the integer surface keys recovered from the asm — `0xffff32ff`→random,
+`0xffa08080`→0.1, `0xffaa8080`→0.01, `0xff961e5a`/`0xff1e80b4`→slip-flag?0.01:0.2,
+`0xffc81e5a`→0.2, default 0.25). All ~40 constants harvested + cited in
+`ForceIntegrator.h`. `FUN_00442ce0`/`FUN_00442c80`/`FUN_0046dbe0` ported
+(RubberBandGrip/Gate/CarContactCount); reuses `Collision::TriangleFaceNormal` for
+the steer-feedback normal. Residual RW-math/PRNG/runtime-global deps stubbed inert
+in `ForceIntegratorStubs.cpp`. Builds clean into `mashed_re.exe`.
 
-This is the single largest remaining vehicle piece (vehicle_physics_cluster.md);
-realistically its own multi-step session.
+**Verified** by `Vehicle/forceint_selftest.cpp` (builds + runs): the full
+integrator runs end-to-end on a populated 4-car array → **grounded count = 3.0**
+(consumes the per-wheel contact flags), per-car contact summaries read correctly
+(3, 2), rubber-band gate/grip match the decompiler, no OOB/crash → **PASS**. This
+proves the transcription is structurally sound and consumes the WS-B contact
+arrays correctly. Exact physics fidelity stays gated on installed-hook scenario
+telemetry vs the captured baseline.
+
+C-LEVEL: C2 faithful transcription (not promoted; no scenario evidence yet).
+
+## Remaining for B4 (the wiring)
+
+1. Bind the residual stubs to the real Math/ RW primitives + a PRNG + the live
+   gravity/susp/player-count globals + the vehicle-array base.
+2. Wire `FUN_00470670 → FUN_0046ddb0` and run the WS-B contact path (producer +
+   classifier + solvers) before it each tick to fill the contact arrays.
+3. Replace `TrackRenderer::UpdateCar`'s kinematic scaffold; diff per-frame
+   velocity/grounded telemetry vs `re/analysis/wsb_contact_baseline.json`
+   (installed-hook scenario = the C4 gate).

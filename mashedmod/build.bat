@@ -159,6 +159,8 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Collision\CarCarContacts.cpp" ^
     "Collision\ContactProducer.cpp" ^
     "Collision\ContactStubs.cpp" ^
+    "Vehicle\ForceIntegrator.cpp" ^
+    "Vehicle\ForceIntegratorStubs.cpp" ^
     "GameState\StateAccessors.cpp" ^
     "Math\Vec3.cpp" ^
     "Math\RwSqrt.cpp" ^
