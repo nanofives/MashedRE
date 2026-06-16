@@ -10,7 +10,6 @@
 #   RUNASINVOKER                  - tell Windows to NOT elevate, ever
 #   WIN98RTM                      - Win98 emulation (RW3-friendly)
 #   HIGHDPIAWARE                  - prevent auto-DPI-scale
-#   EMULATEHEAP                   - XP-style heap (helps some 2000s games)
 #
 # DROPPED 2026-05-15:
 #   DISABLEDXMAXIMIZEDWINDOWEDMODE  conflicts with mashedmod d3d9_shim
@@ -18,10 +17,17 @@
 #     process init; see mashedmod/src/d3d9_shim/d3d9_shim.cpp). The
 #     proxy forces Windowed=TRUE at CreateDevice anyway, which is what
 #     this shim was working around.
+# DROPPED 2026-06-16:
+#   EMULATEHEAP                     heap-corrupts MASHED at boot under the
+#     current Win11 ntdll (10.0.26100.x). WIN98RTM + EMULATEHEAP together
+#     smash a heap free-list pointer during CRT init -> 0xC0000005 WRITE in
+#     ntdll!RtlpHeap (+0x542f0) ~4s in, before the menu. Removing EMULATEHEAP
+#     (keeping WIN98RTM) boots clean AND survives a live race (verified via
+#     run_diff: sa1 hooks GREEN 4/4). Root cause + minidump analysis 2026-06-16.
 
 $mashedPath = (Resolve-Path "$PSScriptRoot\..\original\MASHED.exe").Path
 $layersKey  = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"
-$layer      = "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP"
+$layer      = "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE"
 
 if (-not (Test-Path $layersKey)) {
     New-Item -Path $layersKey -Force | Out-Null
