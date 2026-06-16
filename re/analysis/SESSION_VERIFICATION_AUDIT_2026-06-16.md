@@ -26,6 +26,23 @@ Must be REPLACED by verbatim ports before they can be verified:
   port) gated on Ghidra fn-split of 0x453f60–0x45be81 + WS-A1 (vehicle struct) + WS-B
   (collision) + WS-E (RW scene-graph). Scaffold held-type name now data-faithful to
   POWERUPS_GOLD.LUA (PickupField::RealTypeName).
+  - **WS-D2+D3 done (2026-06-16, this session).** Fn-split (clone-only, no master
+    write) + full decomp captured in `re/analysis/structs/powerup_effects_decomp.md`.
+    **D2:** `mashedmod/src/mashed_re/Powerup/{PowerupSystem,PowerupEffects}.{h,cpp}`
+    — the dispatcher (FUN_0045bba0), slot lifecycle (FUN_0045baa0/bfa0/bac0),
+    fire-mode decode, and each of the 9 types' ARM/FIRE/CANFIRE/DEACT/TICK decision
+    logic ported VERBATIM; the leaves (RW scene-graph WS-E, contacts WS-B,
+    projectile pools 0x006883xx, tuning band 0x005c*) routed through
+    `IPowerupBackend` stubs (each citing its RVA). **D3:** the invented
+    boost/shield/missile/mine/shock `ApplyPowerup` switch in `TrackRenderer.cpp` is
+    REPLACED — `FireHeldPowerup()` now reads `PickupField::held_type()` (the real
+    code) and drives `PowerupSystem`; `PowerupBackendImpl` realises each effect's
+    leaf on the in-race visuals (missiles_/mines_/ai_cars_/parts_). Both targets
+    build GREEN. **Still C2** (faithful structure, stubbed un-diffable leaves) — NOT
+    C4; not `diff-original`-able while the leaves are stubs and the effects read live
+    race state. The numeric rates/durations are marked stand-ins (DAT_005c* band
+    unharvested), not bit-faithful. C4 path = WS-H2 installed-hook canonical-race
+    observation of FUN_0045bba0 once WS-B/WS-E land, not synthetic run_diff.
 - Particles, pickup orb visuals, lap/elim flow tuning, results screen layout,
   game-mode->rule mapping, car flat-lighting (approx, not RW RpWorld).
 - Progression store (our own sidecar format, not the gamesave serialization).

@@ -67,6 +67,8 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "D3d9Render\TrackRenderer.cpp" ^
     "D3d9Render\ParticleSystem.cpp" ^
     "D3d9Render\PickupField.cpp" ^
+    "Powerup\PowerupSystem.cpp" ^
+    "Powerup\PowerupEffects.cpp" ^
     "Race\RaceCamera.cpp" ^
     "Race\RaceSession.cpp" ^
     "Race\GameFlow.cpp" ^
@@ -153,6 +155,9 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
     "Vehicle\MiscDamping.cpp" ^
+    "Collision\CarWorldContacts.cpp" ^
+    "Collision\CarCarContacts.cpp" ^
+    "Collision\ContactStubs.cpp" ^
     "GameState\StateAccessors.cpp" ^
     "Math\Vec3.cpp" ^
     "Math\RwSqrt.cpp" ^

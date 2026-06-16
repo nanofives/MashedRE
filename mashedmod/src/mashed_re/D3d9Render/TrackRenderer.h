@@ -31,8 +31,11 @@
 #include "../Track/TrackData.h"
 #include "ParticleSystem.h"
 #include "PickupField.h"
+#include "../Powerup/PowerupSystem.h"
 
 namespace mashed_re { namespace Piz { class Archive; } }
+
+namespace mashed_re { namespace D3d9Render { class PowerupBackendImpl; } }
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -204,6 +207,9 @@ private:
         std::vector<std::vector<V>>     batches;   // per material
         std::vector<IDirect3DTexture9*> textures;
         std::vector<D3DMATRIX>          instances;
+        // F3: per-material UV-scroll rate (units/sec) from the DFF material's
+        // RW UVAnim extension -> the track .UVA dict (sea/sky props scroll).
+        std::vector<MatScroll>          mat_scroll;
     };
     std::vector<Prop> props_;
 
@@ -280,25 +286,43 @@ private:
     };
     std::vector<AiCar> ai_cars_;
 
-    // ---- power-up EFFECTS (scaffold over the race state; FUN_00430670 family
-    // not yet RE'd). The held power-up (PickupField) is fired with FireHeldPowerup
-    // and acts on the player car / AI cars: Missile -> projectile -> spin-out;
-    // Mine -> dropped hazard -> spin-out on contact (Shield blocks); Shock ->
-    // slow nearby cars; Boost -> player top-speed burst; Shield -> block 1 hit.
-    float boost_timer_  = 0.f;     // player +top speed while >0
-    float shield_timer_ = 0.f;     // player blocks the next spin-out while >0
+    // ---- power-up EFFECTS — D3 (2026-06-16): the ported dispatch replaces the
+    // invented boost/shield/missile/mine/shock switch. PickupField::held_type()
+    // (the real POWERUPS_GOLD.LUA code) now drives Powerup::PowerupSystem (the
+    // verbatim FUN_0045bba0 dispatcher + 9-entry type table + slot lifecycle —
+    // Powerup/PowerupSystem.{h,cpp}). The per-type effect LEAVES (projectile
+    // spawn, hazard drop, hitscan, oil, flash, flame) are realised on the
+    // visuals below via PowerupBackendImpl (IPowerupBackend) — the WS-B/WS-E
+    // subsystem stand-in. boost_/shield_timer_ remain only as general handling
+    // hooks; the real 9 codes do not set them (no boost/shield power-up exists).
+    float boost_timer_  = 0.f;     // player +top speed while >0 (no powerup sets it now)
+    float shield_timer_ = 0.f;     // player blocks the next spin-out while >0 (idem)
     struct Missile { float pos[3]; float vel[3]; int target; float life; };
     std::vector<Missile> missiles_;
     struct Mine { float pos[3]; float life; };
     std::vector<Mine> mines_;
     void UpdatePowerups(float dt);
     void SpinOut(int carSlot);     // slot 0 = player, 1..3 = ai_cars_[slot-1]
-    void ApplyPowerup(int kind);   // spawn the effect for a PickupField::Kind
+
+    // ported power-up dispatch + its host-visuals backend (WS-D2/D3).
+    friend class PowerupBackendImpl;
+    Powerup::PowerupSystem      pw_;
+    Powerup::IPowerupBackend*   pu_be_ = nullptr;     // lazily-created backend
+    Powerup::HostCar            pu_player_;           // filled each fire
+    std::vector<Powerup::HostCar> pu_ai_;
+    float pu_oil_last_[3] = {0, 0, 0};                // OIL drop-distance trail
+    bool  pu_oil_has_     = false;
+    void  EnsurePowerupBackend();                     // lazy Init(this)
+    void  SyncHostCar();                              // fill pu_player_/pu_ai_
+    void  PowerupFireOnce(int realCode);              // drive the dispatch one-shot
+    int   MissileTargetAhead() const;                 // nearest AI ahead, or -1
 public:
     // Use the held power-up (from the pickup field) — called on the fire key.
+    // Reads PickupField::held_type() (the real MASHED code) and runs the ported
+    // per-type effect; falls back to MISSILE for the index-only (-1) orb.
     bool FireHeldPowerup();
-    // Fire a specific power-up kind regardless of inventory (demo/testing).
-    void FirePowerupKind(int kind) { if (car_ready_) ApplyPowerup(kind); }
+    // Fire a specific power-up TYPE CODE regardless of inventory (demo/testing).
+    void FirePowerupKind(int code);
     bool boost_active()  const { return boost_timer_  > 0.f; }
     bool shield_active() const { return shield_timer_ > 0.f; }
 

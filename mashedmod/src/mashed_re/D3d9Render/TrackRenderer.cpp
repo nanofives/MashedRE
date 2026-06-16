@@ -20,24 +20,6 @@ namespace D3d9Render {
 
 namespace {
 
-// case-insensitive substring test (F3 UVA stem -> material tex_name binding)
-bool IContains(const char* hay, const char* needle) {
-    if (!hay || !needle || !needle[0]) return false;
-    const std::size_t nl = std::strlen(needle), hl = std::strlen(hay);
-    if (nl > hl) return false;
-    for (std::size_t i = 0; i + nl <= hl; ++i) {
-        std::size_t j = 0;
-        for (; j < nl; ++j) {
-            char a = hay[i + j], b = needle[j];
-            if (a >= 'A' && a <= 'Z') a = static_cast<char>(a - 'A' + 'a');
-            if (b >= 'A' && b <= 'Z') b = static_cast<char>(b - 'A' + 'a');
-            if (a != b) break;
-        }
-        if (j == nl) return true;
-    }
-    return false;
-}
-
 // [item 2 — renderer] Flat per-face directional+ambient lighting for car models.
 // The DFF path carries no per-vertex normals, so cars render flat; this folds a
 // face-normal diffuse into the vertex colours so vehicles gain form/shading.
@@ -299,16 +281,15 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
-    // ---- F3 .UVA UV-anim: bind scrolling-UV rates to world materials -------
-    // The track's .UVA (rwID_UVANIMDICT) names entries "bmp_<Tex>_M". The
-    // original binds them to materials via a per-material UV-anim extension;
-    // we don't parse that extension yet, so bind by the documented name
-    // heuristic — a material whose tex_name carries the entry's stem (Sea/Sky)
-    // scrolls at the entry's keyframe rate (du/dt, dv/dt). Applies to materials
-    // that are part of the WORLD geometry; sea/sky drawn as DFF props (Arctic's
-    // SEA.DFF, the sky clump) are not yet covered — see the format doc F3 note.
-    mat_scroll_.assign(world.materials.size(), {});
-    uv_anim_ = false;
+    // ---- F3 .UVA UV-anim: bind each track .UVA (rwID_UVANIMDICT) entry's
+    // scroll rate (units/sec) to the materials that reference it through their
+    // RW UVAnim material extension (rwID_UVANIMPLUGIN 0x135) — the original's
+    // real binding (TrackWorld/DffModel parse the extension into
+    // Material::uv_anim). Applies to WORLD materials here and to DFF props/sky
+    // below: on Arctic the world BSP carries no UVAnim extension and the sea
+    // (SEA.DFF) / sky (SKY.DFF) clumps do (names "bmp_Sea_M"/"bmp_Sky_M"), so
+    // the prop path is where the scroll actually shows. See the format doc F3.
+    std::vector<std::pair<std::string, MatScroll>> uv_rates;   // entry name -> rate
     for (std::uint32_t i = 0; i < piz.count(); ++i) {
         const char* n = piz.entry(i).name;
         const std::size_t ln = std::strlen(n);
@@ -317,20 +298,24 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         const std::uint8_t* ub = piz.blob(i, &ul);
         Track::UVDict uv;
         if (!ub || !uv.Parse(ub, ul)) break;
-        for (const auto& e : uv.anims) {
-            if (e.du_dt == 0.f && e.dv_dt == 0.f) continue;
-            const std::string stem = e.TextureStem();
-            if (stem.empty()) continue;
-            for (std::size_t mi = 0; mi < world.materials.size(); ++mi) {
-                const char* tn = world.materials[mi].tex_name;
-                if (tn[0] && IContains(tn, stem.c_str())) {
-                    mat_scroll_[mi].du = e.du_dt;
-                    mat_scroll_[mi].dv = e.dv_dt;
-                    uv_anim_ = true;
-                }
-            }
-        }
+        for (const auto& e : uv.anims)
+            if (e.du_dt != 0.f || e.dv_dt != 0.f)
+                uv_rates.push_back({e.name, MatScroll{e.du_dt, e.dv_dt}});
         break;   // one .UVA dictionary per track
+    }
+    // UVAnim-extension name -> scroll rate (exact match; empty -> {0,0})
+    auto uv_rate = [&](const char* nm) -> MatScroll {
+        if (nm && nm[0])
+            for (const auto& kv : uv_rates)
+                if (kv.first == nm) return kv.second;
+        return {};
+    };
+    // world materials: scroll those whose UVAnim extension names a .UVA entry.
+    mat_scroll_.assign(world.materials.size(), {});
+    uv_anim_ = false;
+    for (std::size_t mi = 0; mi < world.materials.size(); ++mi) {
+        const MatScroll s = uv_rate(world.materials[mi].uv_anim);
+        if (s.du != 0.f || s.dv != 0.f) { mat_scroll_[mi] = s; uv_anim_ = true; }
     }
 
     // ---- F4 LAPDATA.LUA: real lap lines (parsed once; used by UpdateRace to
@@ -469,6 +454,10 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
             Track::DffModel m;
             if (!m.Parse(db, dl)) return false;
             BuildDffBatches(dev, m, dicts, &p->batches, &p->textures);
+            // F3: bind each material's UVAnim-extension name to its .UVA rate.
+            p->mat_scroll.assign(m.materials.size(), {});
+            for (std::size_t mi = 0; mi < m.materials.size(); ++mi)
+                p->mat_scroll[mi] = uv_rate(m.materials[mi].uv_anim);
             return true;
         };
         if (lua) {
@@ -587,6 +576,16 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 }
             }
         }
+    }
+
+    // F3 diag: materials that actually scroll, by where they live.
+    if (log) {
+        int wc = 0; for (const auto& s : mat_scroll_) if (s.du != 0.f || s.dv != 0.f) ++wc;
+        int pc = 0; for (const auto& pr : props_) for (const auto& s : pr.mat_scroll)
+                        if (s.du != 0.f || s.dv != 0.f) ++pc;
+        int sc = 0; for (const auto& s : sky_.mat_scroll) if (s.du != 0.f || s.dv != 0.f) ++sc;
+        std::fprintf(log, "  F3 UV-anim: %zu .UVA rate(s); scrolling materials "
+                          "world=%d props=%d sky=%d\n", uv_rates.size(), wc, pc, sc);
     }
 
     // ---- F2 animated copters: COURSE.LUA SetCopter / KTCSCRIPT.LUA
@@ -1486,67 +1485,190 @@ void TrackRenderer::SpinOut(int slot) {
     Audio::SfxPlay("explosion1", 0.85f);   // real spin-out explosion SFX
 }
 
+// ---- WS-D3: drive the ported power-up dispatch (Powerup/PowerupSystem) -------
+// The invented boost/shield/missile/mine/shock ApplyPowerup switch is replaced by
+// PowerupBackendImpl, which realises each ported per-type effect's LEAF on the
+// existing in-race visuals (missiles_/mines_/ai_cars_/parts_). This is the
+// WS-B/WS-E subsystem stand-in (the original effects attach RW models + run the
+// contact system); the DISPATCH + per-type decision logic is the verbatim port.
+class PowerupBackendImpl : public Powerup::IPowerupBackend {
+    TrackRenderer* t_;
+    float R() const { return t_->track_radius_ > 1.f ? t_->track_radius_ : t_->radius_; }
+public:
+    explicit PowerupBackendImpl(TrackRenderer* t) : t_(t) {}
+
+    const Powerup::HostCar& Player() const override { return t_->pu_player_; }
+    int  AiCount() const override { return static_cast<int>(t_->pu_ai_.size()); }
+    Powerup::HostCar& Ai(int i) override { return t_->pu_ai_[static_cast<std::size_t>(i)]; }
+
+    // MISSILE FIRE leaf (orig FUN_00455150: projectile pool + RwFrameAddChild).
+    void SpawnMissile(const float pos[3], const float vel[3], int target) override {
+        const float r = R();
+        TrackRenderer::Missile mi;
+        mi.pos[0]=pos[0]; mi.pos[1]=pos[1]+r*0.01f; mi.pos[2]=pos[2];
+        mi.vel[0]=vel[0]*r; mi.vel[1]=vel[1]*r; mi.vel[2]=vel[2]*r;
+        mi.target = (target >= 0) ? target : t_->MissileTargetAhead();
+        mi.life = 4.0f;
+        t_->missiles_.push_back(mi);
+    }
+    // MORTAR FIRE leaf (orig FUN_004533b0: lobbed pool DAT_00684ea8).
+    void SpawnMortar(const float pos[3], const float vel[3], int /*target*/) override {
+        const float r = R();
+        TrackRenderer::Missile mi;
+        mi.pos[0]=pos[0]; mi.pos[1]=pos[1]+r*0.02f; mi.pos[2]=pos[2];
+        mi.vel[0]=vel[0]*r; mi.vel[1]=vel[1]*r*0.3f; mi.vel[2]=vel[2]*r;
+        mi.target = -1;                       // arcs forward, no homing
+        mi.life = 3.0f;
+        t_->missiles_.push_back(mi);
+    }
+    // DRUM/P_MINE FIRE leaf (orig FUN_00454740 / FUN_00457ef0: dropped hazard).
+    void DropHazard(const float pos[3], bool /*proximity*/) override {
+        const float r = R();
+        TrackRenderer::Mine m;
+        m.pos[0]=pos[0]-std::cos(t_->car_yaw_)*r*0.04f;
+        m.pos[1]=pos[1];
+        m.pos[2]=pos[2]-std::sin(t_->car_yaw_)*r*0.04f;
+        m.life = 20.0f;
+        t_->mines_.push_back(m);
+    }
+    // GUN FIRE leaf (orig FUN_004561c0: forward hitscan tracer).
+    void HitscanForward(const float pos[3], const float fwd[3]) override {
+        const float r = R();
+        const int tgt = t_->MissileTargetAhead();
+        if (tgt >= 0) {
+            const TrackRenderer::AiCar& a = t_->ai_cars_[static_cast<std::size_t>(tgt)];
+            const float dx=a.pos[0]-pos[0], dz=a.pos[2]-pos[2];
+            if (dx*dx+dz*dz < (r*0.8f)*(r*0.8f)) t_->SpinOut(tgt+1);
+        }
+        float sp[3] = { pos[0]+fwd[0]*r*0.1f, pos[1]+r*0.01f, pos[2]+fwd[2]*r*0.1f };
+        t_->parts_.SpawnBurst(sp, 12, 0xffffe080u, r*0.05f, r*0.008f, 0.3f);
+    }
+    // SHOTGUN FIRE leaf (orig FUN_0045b6e0 -> FUN_0045b390: short spread cone).
+    void SpreadCone(const float pos[3], const float fwd[3]) override {
+        const float r = R();
+        for (auto& a : t_->ai_cars_) {
+            const float dx=a.pos[0]-pos[0], dz=a.pos[2]-pos[2];
+            if (dx*dx+dz*dz < (r*0.4f)*(r*0.4f) && (dx*fwd[0]+dz*fwd[2]) > 0.f) a.slow = 2.5f;
+        }
+        float sp[3] = {pos[0], pos[1]+r*0.02f, pos[2]};
+        t_->parts_.SpawnBurst(sp, 40, 0xffffe040u, r*0.25f, r*0.012f, 0.5f);
+    }
+    // R_FLAME jet leaf (orig FUN_0045a850: continuous forward burner).
+    void FlameJet(const float pos[3], const float fwd[3], bool on) override {
+        if (!on) return;
+        const float r = R();
+        for (auto& a : t_->ai_cars_) {
+            const float dx=a.pos[0]-pos[0], dz=a.pos[2]-pos[2];
+            if (dx*dx+dz*dz < (r*0.25f)*(r*0.25f) && (dx*fwd[0]+dz*fwd[2]) > 0.f) a.slow = 1.5f;
+        }
+        float sp[3] = {pos[0]+fwd[0]*r*0.08f, pos[1]+r*0.015f, pos[2]+fwd[2]*r*0.08f};
+        t_->parts_.SpawnBurst(sp, 18, 0xffff8020u, r*0.10f, r*0.010f, 0.4f);
+    }
+    // FLASH FIRE leaf (orig FUN_00454db0: blind/screen flash).
+    void BlindFlash(const float pos[3]) override {
+        const float r = R();
+        for (auto& a : t_->ai_cars_) {
+            const float dx=a.pos[0]-pos[0], dz=a.pos[2]-pos[2];
+            if (dx*dx+dz*dz < (r*0.6f)*(r*0.6f)) a.slow = 2.0f;
+        }
+        float sp[3] = {pos[0], pos[1]+r*0.03f, pos[2]};
+        t_->parts_.SpawnBurst(sp, 60, 0xffffffffu, r*0.35f, r*0.010f, 0.5f);
+    }
+    // OIL FIRE leaf (orig FUN_00457800: ground slick).
+    void DropOilSlick(const float pos[3]) override {
+        TrackRenderer::Mine m;
+        m.pos[0]=pos[0]; m.pos[1]=pos[1]; m.pos[2]=pos[2];
+        m.life = 25.0f;
+        t_->mines_.push_back(m);
+    }
+    void SfxByName(const char* name, float vol) override { Audio::SfxPlay(name, vol); }
+    // OIL distance gate (orig: |pos-lastDrop|^2 >= _DAT_005cc56c, trail per owner).
+    bool OilDropDue(int /*owner*/, const float pos[3]) override {
+        const float r = R();
+        if (!t_->pu_oil_has_) {
+            t_->pu_oil_has_ = true;
+            std::memcpy(t_->pu_oil_last_, pos, sizeof(float)*3);
+            return true;
+        }
+        const float dx=pos[0]-t_->pu_oil_last_[0], dz=pos[2]-t_->pu_oil_last_[2];
+        if (dx*dx+dz*dz >= (r*0.06f)*(r*0.06f)) {
+            std::memcpy(t_->pu_oil_last_, pos, sizeof(float)*3);
+            return true;
+        }
+        return false;
+    }
+};
+
+// nearest AI car ahead of the player (replicates the old missile targeting).
+int TrackRenderer::MissileTargetAhead() const {
+    int best = -1; float bestd = 1e30f;
+    const float fx = std::cos(car_yaw_), fz = std::sin(car_yaw_);
+    for (int i = 0; i < static_cast<int>(ai_cars_.size()); ++i) {
+        const AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
+        if (round_mode_ && !race_[i+1].alive) continue;
+        const float dx = a.pos[0]-car_pos_[0], dz = a.pos[2]-car_pos_[2];
+        if (dx*fx + dz*fz <= 0.f) continue;       // must be ahead
+        const float d = dx*dx + dz*dz;
+        if (d < bestd) { bestd = d; best = i; }
+    }
+    return best;
+}
+
+void TrackRenderer::EnsurePowerupBackend() {
+    if (!pu_be_) { pu_be_ = new PowerupBackendImpl(this); pw_.Init(pu_be_); }
+}
+
+void TrackRenderer::SyncHostCar() {
+    pu_player_.pos[0]=car_pos_[0]; pu_player_.pos[1]=car_pos_[1]; pu_player_.pos[2]=car_pos_[2];
+    pu_player_.fwd[0]=std::cos(car_yaw_); pu_player_.fwd[1]=0.f; pu_player_.fwd[2]=std::sin(car_yaw_);
+    pu_player_.vel[0]=car_vel_[0]; pu_player_.vel[1]=car_vel_[1]; pu_player_.vel[2]=car_vel_[2];
+    pu_player_.yaw=car_yaw_; pu_player_.owner=0; pu_player_.alive=true;
+    pu_ai_.resize(ai_cars_.size());
+    for (std::size_t i=0;i<ai_cars_.size();++i) {
+        const AiCar& a = ai_cars_[i];
+        pu_ai_[i].pos[0]=a.pos[0]; pu_ai_[i].pos[1]=a.pos[1]; pu_ai_[i].pos[2]=a.pos[2];
+        pu_ai_[i].fwd[0]=std::cos(a.yaw); pu_ai_[i].fwd[1]=0.f; pu_ai_[i].fwd[2]=std::sin(a.yaw);
+        pu_ai_[i].yaw=a.yaw; pu_ai_[i].owner=static_cast<int>(i)+1;
+        pu_ai_[i].alive = !(round_mode_ && !race_[i+1].alive);
+    }
+}
+
+// Drive the ported dispatch for a single use of the held type. The original is a
+// per-frame fire-button loop; the standalone fires one pickup per key press, so
+// we pulse primary (mode 2) then secondary (mode 1) so whichever button the
+// type's FIRE gates on triggers, then deactivate (one use per collected pickup).
+void TrackRenderer::PowerupFireOnce(int code) {
+    EnsurePowerupBackend();
+    SyncHostCar();
+    pw_.Activate(code);
+    pw_.SetFireButtons(true, false);  pw_.Tick(0.016f, pu_player_, 6);   // primary
+    if (pw_.Armed()) { pw_.SetFireButtons(false, true); pw_.Tick(0.016f, pu_player_, 6); }  // secondary
+    pw_.SetFireButtons(false, false);
+    pw_.Deactivate();
+}
+
 bool TrackRenderer::FireHeldPowerup() {
     if (!car_ready_) return false;
-    const int kind = pickups_.ConsumeHeld();
-    if (kind < 0) return false;
-    ApplyPowerup(kind);
+    if (pickups_.held() < 0) return false;
+    int code = pickups_.held_type();          // real MASHED code, or -1 (index orb)
+    pickups_.ConsumeHeld();                    // clear the HUD held slot
+    if (code < 0) code = Powerup::kMissile;    // index-only orb -> a default weapon
+    PowerupFireOnce(code);
     return true;
 }
 
-void TrackRenderer::ApplyPowerup(int kind) {
-    const float R = track_radius_ > 1.f ? track_radius_ : radius_;
-    switch (kind) {
-        case PickupField::Boost:
-            boost_timer_ = 2.0f;
-            Audio::SfxPlay("flame thrower", 0.7f);
-            break;
-        case PickupField::Shield:
-            shield_timer_ = 5.0f;
-            Audio::SfxPlay("flash", 0.7f);
-            break;
-        case PickupField::Shock: {                       // slow nearby AI cars
-            Audio::SfxPlay("shotgun", 0.8f);
-            for (auto& a : ai_cars_) {
-                const float dx = a.pos[0]-car_pos_[0], dz = a.pos[2]-car_pos_[2];
-                if (dx*dx + dz*dz < (R*0.5f)*(R*0.5f)) a.slow = 3.0f;
-            }
-            float sp[3] = {car_pos_[0], car_pos_[1] + R*0.02f, car_pos_[2]};
-            parts_.SpawnBurst(sp, 50, 0xffffe040u, R*0.30f, R*0.012f, 0.6f);
-            break;
-        }
-        case PickupField::Mine: {                        // drop behind the car
-            Mine m;
-            m.pos[0] = car_pos_[0] - std::cos(car_yaw_) * R * 0.04f;
-            m.pos[1] = car_pos_[1];
-            m.pos[2] = car_pos_[2] - std::sin(car_yaw_) * R * 0.04f;
-            m.life = 20.0f;
-            mines_.push_back(m);
-            Audio::SfxPlay("drop mine", 0.8f);
-            break;
-        }
-        case PickupField::Missile: {                     // homing at nearest AI ahead
-            int best = -1; float bestd = 1e30f;
-            const float fx = std::cos(car_yaw_), fz = std::sin(car_yaw_);
-            for (int i = 0; i < static_cast<int>(ai_cars_.size()); ++i) {
-                const AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
-                if (round_mode_ && !race_[i+1].alive) continue;
-                const float dx = a.pos[0]-car_pos_[0], dz = a.pos[2]-car_pos_[2];
-                if (dx*fx + dz*fz <= 0.f) continue;       // must be ahead
-                const float d = dx*dx + dz*dz;
-                if (d < bestd) { bestd = d; best = i; }
-            }
-            Missile mi;
-            mi.pos[0] = car_pos_[0]; mi.pos[1] = car_pos_[1] + R*0.01f;
-            mi.pos[2] = car_pos_[2];
-            mi.vel[0] = fx * R * 0.6f; mi.vel[1] = 0.f; mi.vel[2] = fz * R * 0.6f;
-            mi.target = best; mi.life = 4.0f;
-            missiles_.push_back(mi);
-            Audio::SfxPlay("missile exhaust", 0.8f);
-            break;
-        }
-        default: break;
+void TrackRenderer::FirePowerupKind(int code) {
+    if (!car_ready_) return;
+    // demo/testing: small indices (0..6) map to representative real type codes;
+    // the 9 real codes (7,9,10,11,12,16,17,18,19) pass straight through.
+    int real = code;
+    if (code >= 0 && code < 7) {
+        static const int demo[7] = { Powerup::kMissile, Powerup::kPMine,
+                                     Powerup::kShotgun,  Powerup::kGun,
+                                     Powerup::kFlash,    Powerup::kDrum, Powerup::kOil };
+        real = demo[code];
     }
+    PowerupFireOnce(real);
 }
 
 void TrackRenderer::UpdatePowerups(float dt) {
@@ -1817,6 +1939,8 @@ void TrackRenderer::camera(float eye[3], float at[3]) const {
 
 void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     if (!ready_) return;
+    // F3 A/B verification toggle: suppress all UV-scroll texture transforms.
+    static const bool s_uvscroll_off = std::getenv("MASHED_NO_UVSCROLL") != nullptr;
     // Camera: auto-orbit by default; any movement input switches to free
     // mode (WASD/QE move relative to look direction, mouse/arrow look).
     float eye[3];
@@ -1921,9 +2045,23 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
             const auto& b = sky_.batches[mi];
             if (b.empty()) continue;
             dev->SetTexture(0, sky_.textures[mi]);
+            // F3: scroll the UV-animated sky material (SKY.DFF "bmp_Sky_M").
+            const bool scroll = !s_uvscroll_off && mi < sky_.mat_scroll.size() &&
+                (sky_.mat_scroll[mi].du != 0.f || sky_.mat_scroll[mi].dv != 0.f);
+            if (scroll) {
+                D3DMATRIX tm; MatIdentity(&tm);
+                tm._31 = std::fmod(sky_.mat_scroll[mi].du * t, 1.f);
+                tm._32 = std::fmod(sky_.mat_scroll[mi].dv * t, 1.f);
+                dev->SetTransform(D3DTS_TEXTURE0, &tm);
+                dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
+                                          D3DTTFF_COUNT2);
+            }
             dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
                                  static_cast<UINT>(b.size() / 3),
                                  b.data(), sizeof(V));
+            if (scroll)
+                dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
+                                          D3DTTFF_DISABLE);
         }
         dev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
     }
@@ -1958,7 +2096,7 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         // F3: scroll the UVs of UV-animated materials (sea/sky) via a texture
         // transform — translation in row 3 with D3DTTFF_COUNT2 (the standard
         // 2D scroll), offset = rate * time wrapped to [0,1).
-        const bool scroll = uv_anim_ && mi < mat_scroll_.size() &&
+        const bool scroll = !s_uvscroll_off && uv_anim_ && mi < mat_scroll_.size() &&
                             (mat_scroll_[mi].du != 0.f || mat_scroll_[mi].dv != 0.f);
         if (scroll) {
             D3DMATRIX tm; MatIdentity(&tm);
@@ -1987,6 +2125,18 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 const auto& b = p.batches[mi];
                 if (b.empty()) continue;
                 dev->SetTexture(0, p.textures[mi]);
+                // F3: scroll UV-animated prop materials (Arctic sea/sky clumps)
+                // — the .UVA rate bound via the material's UVAnim extension.
+                const bool scroll = !s_uvscroll_off && mi < p.mat_scroll.size() &&
+                    (p.mat_scroll[mi].du != 0.f || p.mat_scroll[mi].dv != 0.f);
+                if (scroll) {
+                    D3DMATRIX tm; MatIdentity(&tm);
+                    tm._31 = std::fmod(p.mat_scroll[mi].du * t, 1.f);
+                    tm._32 = std::fmod(p.mat_scroll[mi].dv * t, 1.f);
+                    dev->SetTransform(D3DTS_TEXTURE0, &tm);
+                    dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
+                                              D3DTTFF_COUNT2);
+                }
                 if (!p.textures[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_SELECTARG2);
@@ -1996,6 +2146,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                 if (!p.textures[mi])
                     dev->SetTextureStageState(0, D3DTSS_COLOROP,
                                               D3DTOP_MODULATE);
+                if (scroll)
+                    dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS,
+                                              D3DTTFF_DISABLE);
             }
         }
     }
