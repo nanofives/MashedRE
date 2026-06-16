@@ -141,3 +141,113 @@ std::uint32_t __cdecl AiVehicleVelocity3(std::uint32_t* param_1, std::uint32_t p
 }
 
 RH_ScopedInstall(AiVehicleVelocity3, 0x0046d510);
+
+// ---------------------------------------------------------------------------
+// More call-throughs for the steering + wall-ahead leaves.
+namespace {
+typedef void   (__cdecl* fn_norm_t)(float*, float*);            // RwV3dNormalize
+typedef double (__cdecl* fn_acos_t)(double);                    // acos (float10 in ST0)
+typedef void   (__cdecl* fn_velget_t)(std::uint32_t*, int);     // velocity vec3 getter
+typedef char   (__cdecl* fn_tile2_t)(float, float);            // tile query (float args)
+inline void   call_004c39b0(float* d, float* s) { reinterpret_cast<fn_norm_t>(0x004c39b0)(d, s); }
+inline double call_004a3384(double x)           { return reinterpret_cast<fn_acos_t>(0x004a3384)(x); }
+inline void   call_0046d510(std::uint32_t* o, int v) { reinterpret_cast<fn_velget_t>(0x0046d510)(o, v); }
+inline char   call_00443d10(float x, float z)   { return reinterpret_cast<fn_tile2_t>(0x00443d10)(x, z); }
+} // namespace
+
+// ===========================================================================
+// 0x00415e20  AiSteeringAngleError(vehicle, targetX, targetZ) -> signed angle
+//
+// Returns (via x87 ST0) the signed angular error between the bearing from the
+// vehicle to (targetX,targetZ) and the vehicle's current heading: acos of each
+// normalized direction dotted with +X, z-sign corrected, scaled by _DAT_005cc970,
+// each wrapped to [0,2pi); the difference is re-wrapped to [0,2pi). Cited:
+// 0x00415e20 body. Returned as float — MSVC leaves it in ST0 under x87 (the
+// caller truncates to 32-bit immediately, so the value matches). acos via the
+// original FUN_004a3384 (RVA), not MSVC acos.
+// NOTE: (local_c,local_8,local_4) are stack-adjacent in the original and used as
+// one 3-vector via &local_c — ported as an explicit float[3] to guarantee that.
+// ===========================================================================
+extern "C" __declspec(dllexport)
+float __cdecl AiSteeringAngleError(int param_1, float param_2, float param_3)
+{
+    const float kZero = F32(0x005d757cu);
+    const float kTwoPi = F32(0x005ccac4u);
+
+    int local_10;
+    call_0046d4a0(&local_10, param_1);
+    float n[3];                                   // {local_c, local_8, local_4}
+    n[0] = param_2 - F32(static_cast<std::uintptr_t>(local_10) + 0x30u);   // local_c
+    n[1] = 0.0f;                                                            // local_8
+    n[2] = -(param_3 - F32(static_cast<std::uintptr_t>(local_10) + 0x38u)); // local_4
+    call_004c39b0(n, n);
+    float fVar1 = n[2] * kZero + n[1] * kZero + n[0];
+    if (fVar1 < F32(0x005cd0d0u)) fVar1 = F32(0x005cc33cu);
+    if (F32(0x005cd0c8u) < fVar1) fVar1 = F32(0x005cc320u);
+    float fVar2 = static_cast<float>(call_004a3384(static_cast<double>(fVar1))) * F32(0x005cc970u);
+    if (n[2] - n[0] * kZero < kZero) fVar2 = -fVar2;
+    while (fVar2 < kZero) fVar2 += kTwoPi;
+    float bearing = fVar2;
+
+    call_0046d510(reinterpret_cast<std::uint32_t*>(n), param_1);   // velocity into n[]
+    n[2] = -n[2];                                   // local_4 = -local_4
+    n[1] = 0.0f;                                     // local_8 = 0
+    call_004c39b0(n, n);
+    fVar1 = n[2] * kZero + n[1] * kZero + n[0];
+    if (fVar1 < F32(0x005cd0d0u)) fVar1 = F32(0x005cc33cu);
+    if (F32(0x005cd0c8u) < fVar1) fVar1 = F32(0x005cc320u);
+    fVar2 = static_cast<float>(call_004a3384(static_cast<double>(fVar1))) * F32(0x005cc970u);
+    if (n[2] - n[0] * kZero < kZero) fVar2 = -fVar2;
+    while (fVar2 < kZero) fVar2 += kTwoPi;
+
+    float result = bearing - fVar2;
+    while (result < kZero) result += kTwoPi;
+    while (result < kZero) result += kTwoPi;   // (decomp has the wrap twice)
+    while (kTwoPi < result) result -= kTwoPi;
+    return result;
+}
+
+RH_ScopedInstall(AiSteeringAngleError, 0x00415e20);
+
+// ===========================================================================
+// 0x00415d00  AiWallAhead(vehicle) -> 1 wall ahead / 0 clear
+//
+// Extrapolates the vehicle's velocity 2x forward and ray-marches that segment
+// (1/length steps, step _DAT_005cc564) sampling the track tile via FUN_00443d10;
+// tile type 0 or 3 => wall => 1. Suppresses the mode-2 ram. Cited: 0x00415d00.
+// (local_c,local_8,local_4) and (local_1c,local_18) are stack-adjacent vectors
+// in the original — ported as explicit arrays.
+// ===========================================================================
+extern "C" __declspec(dllexport)
+std::uint32_t __cdecl AiWallAhead(int param_1)
+{
+    int local_28;
+    call_0046d4a0(&local_28, param_1);
+    float local_24 = F32(static_cast<std::uintptr_t>(local_28) + 0x30u);  // own X
+    float local_20 = F32(static_cast<std::uintptr_t>(local_28) + 0x38u);  // own Z
+    float vel[3];                                   // {local_c, local_8, local_4}
+    call_0046d510(reinterpret_cast<std::uint32_t*>(vel), param_1);
+    vel[0] = vel[0] + vel[0];                        // 2x velX
+    float local_34 = 0.0f;
+    vel[1] = vel[1] + vel[1];                        // 2x velY
+    vel[2] = vel[2] + vel[2];                        // 2x velZ
+    float seg[2];                                    // {local_1c, local_18}
+    seg[0] = (vel[0] + local_24) - local_24;
+    seg[1] = (vel[2] + local_20) - local_20;
+    float fVar1 = call_004c3bf0(seg);               // length(seg)
+    if (F32(0x005d757cu) < fVar1) {
+        float fVar2 = F32(0x005cc320u) / fVar1;
+        do {
+            float local_14 = fVar2 * seg[0] * local_34 + local_24;
+            float local_10 = fVar2 * seg[1] * local_34 + local_20;
+            char cVar3 = call_00443d10(local_14, local_10);
+            if (cVar3 == 0 || cVar3 == 3) {
+                return 1;
+            }
+            local_34 = local_34 + F32(0x005cc564u);
+        } while (local_34 < fVar1);
+    }
+    return 0;
+}
+
+RH_ScopedInstall(AiWallAhead, 0x00415d00);
