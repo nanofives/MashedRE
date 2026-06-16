@@ -13,7 +13,10 @@ it is explicit + actionable (you cannot pay down debt you have not classified).
 Must be REPLACED by verbatim ports before they can be verified:
 - Vehicle handling (TrackRenderer::UpdateCar) — kinematic; real = FUN_00470670
   cluster (RW-Physics). See vehicle_physics_cluster.md. **C4 blocked on the port.**
-- AI driving (gate-ribbon lane follower) — real = FUN_0040e480 family.
+- AI driving (gate-ribbon lane follower) — real = **FUN_00418860 family** (per-frame AI
+  tick → per-vehicle decide/steer/throttle → synthetic input block). [Corrected
+  2026-06-16: "FUN_0040e480" was a mis-citation; that RVA is `CarSlotStateSet` (frontend
+  leaf). Cluster mapped in `re/analysis/ai_controller.md` (WS-C C1 done).]
 - Collision (ground raycast only) — real = RW-Physics contact system.
 - Power-up EFFECTS (boost/shield/missile/mine/shock) — real = FUN_00430670 family.
 - Particles, pickup orb visuals, lap/elim flow tuning, results screen layout,

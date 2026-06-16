@@ -323,8 +323,13 @@ qhull-2002.1 ([[qhull-rwphysics-island]], 0x57c5b0..0x5a5820).
   **B4** wire as the contact source for WS-A; diff vs original contact telemetry.
 
 ### WS-C — AI drivers (item 1)
-Replaces the gate-ribbon lane-follower scaffold. Real = FUN_0040e480 family.
-- **C1** RE the AI controller cluster (per-driver decide/steer/throttle).
+Replaces the gate-ribbon lane-follower scaffold. Real = **FUN_00418860 family**
+(per-frame tick → per-vehicle decide/steer/throttle → synthetic input). [Corrected
+2026-06-16: the earlier "FUN_0040e480 family" was a mis-citation — 0x0040e480 is
+`CarSlotStateSet`, a frontend leaf the tick loop only pokes; root is FUN_00418860.]
+- **C1** RE the AI controller cluster (per-driver decide/steer/throttle) — **DONE
+  2026-06-16**, blueprint at `re/analysis/ai_controller.md` (cluster already C2-mapped;
+  consolidated into one port-ready spec).
 - **C2** Port verbatim. **C3** wire + diff-original on a canonical race.
 
 ### WS-D — Power-up effects (item 1)
