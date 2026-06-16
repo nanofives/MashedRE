@@ -59,6 +59,11 @@ void       Campaign_SetSelectedTrack(int);
 // + trophy, then save). Campaign_CurrentCup merges this with the save-table.
 void       Campaign_LoadProgress();
 void       Campaign_OnRaceResult(int trackIdx, int winnerSlot, int position);
+// Manual Save Game / Load Game (Options screen 8 rows 2/3). SaveNow writes the
+// current progression to the real-format standalone gamesave (mashed_re_gamesave
+// .bin); ReloadFromSave re-reads it and re-applies (WS-G5/G4).
+void       Campaign_SaveNow();
+void       Campaign_ReloadFromSave();
 // Track index (into the cup / real area table) -> area .piz path + engine
 // Course_Id (cracked from each track's COURSE.LUA).
 void       Campaign_TrackPizPath(int trackIdx, char* buf, int cap);

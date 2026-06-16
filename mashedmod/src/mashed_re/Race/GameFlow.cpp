@@ -219,6 +219,19 @@ void Campaign_LoadProgress() {
     log(m);
 }
 
+// Manual Save Game (Options screen 8 row 3): write the current progression to the
+// real-format standalone gamesave. SaveProgress is the file-static writer above.
+void Campaign_SaveNow() {
+    SaveProgress();
+    log("manual save: gamesave written");
+}
+
+// Manual Load Game (Options screen 8 row 2): re-read + re-apply the gamesave.
+void Campaign_ReloadFromSave() {
+    g_progLoaded = false;          // drop the load-once guard
+    Campaign_LoadProgress();       // re-reads mashed_re_gamesave.bin and applies
+}
+
 void Campaign_OnRaceResult(int trackIdx, int winnerSlot, int position) {
     Campaign_LoadProgress();
     char m[128];

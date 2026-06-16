@@ -1368,7 +1368,18 @@ bool UpdateMenuSelection() {
             if (g_modal_step == 40) {                // quit-to-Windows confirm
                 if (yes)      return true;           // Yes -> quit
                 else if (no)  ModalGo(0);            // No -> dismiss
-            } else if (yes) ModalGo(g_modal_step == 10 ? 11 : 21);  // load->done, save->saving
+            } else if (yes) {
+                // [WS-G4/G5] perform the real save/load at the confirm, then
+                // advance the modal: Load (10) re-reads the real gamesave ->
+                // "Load Successful" (11); Save (20) writes it -> "Saving" (21).
+                if (g_modal_step == 10) {
+                    mashed_re::Race::Campaign_ReloadFromSave();
+                    ModalGo(11);
+                } else {
+                    mashed_re::Race::Campaign_SaveNow();
+                    ModalGo(21);
+                }
+            }
             else if (no)  ModalGo(0);                            // No: dismiss
         } else {
             if (yes || no) ModalGo(0);                           // Continue/dismiss
