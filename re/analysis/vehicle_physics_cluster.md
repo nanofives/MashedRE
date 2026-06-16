@@ -57,7 +57,14 @@ Struct stride between cars in the contact loop = **0xd04 bytes** (~3.3 KB).
 
 - **RW math primitives**: FUN_004c3df0 (RwV3dTransformPoints), FUN_004c4d20
   (RwMatrix build), FUN_004c3ac0 (RwV3dLength), FUN_004c39b0 (RwV3dNormalize).
-  Some already have standalone ports (Math/RwV3dTransform.cpp, RwV2d, RwSqrt).
+  **WS-A2 DONE 2026-06-16** — all four ported + C4 (diff-original GREEN + canonical
+  install-observe, build 26200): FUN_004c3ac0 already C4 (Math/Vec3.cpp Vec3Magnitude);
+  the other three now Math/RwV3dNormalize.cpp (13/13), Math/RwMatrixRotate.cpp (10/10,
+  x87 fsin/fcos inline-asm), Math/RwV3dTransformPoints.cpp (7/7 dispatch thunk). NOTE:
+  FUN_004c4d20 delegates to FUN_004c4a50 (Rodrigues inner, C2) at its RVA — that callee
+  still needs porting for standalone-exe wiring (it dispatches a device matrix-mult in
+  concat modes 1/2; mode 0 / replace is self-contained). Also Math/RwV3dTransform.cpp,
+  RwV2d, RwSqrt, RwMatrixScale (the 8 pre-existing C4 leaves).
 - **RW-Physics collision** contact arrays (DAT_008815a4..) — the qhull/RW-Physics
   3.7 island (see [[qhull-rwphysics-island]], ~165 KB, 0x57c5b0..0x5a5820). The
   per-wheel ground + car↔car contacts feed FUN_0046ddb0. This is item-1's
@@ -69,7 +76,8 @@ Struct stride between cars in the contact loop = **0xd04 bytes** (~3.3 KB).
 
 ## Phased port plan (item 1 = this, multi-session)
 
-1. Port the RW math primitives the cluster needs (mostly done — verify/extend).
+1. Port the RW math primitives the cluster needs (**DONE — WS-A2 2026-06-16**:
+   FUN_004c39b0/004c4d20/004c3df0 ported + C4; FUN_004c3ac0 already C4).
 2. Define the vehicle struct (full 0xd04 layout) as a C++ type.
 3. Port the vehicle init/spawn chain (struct population from handling data).
 4. Port FUN_00470670 -> FUN_0046ddb0 -> FUN_00467650 -> FUN_00468980 verbatim,

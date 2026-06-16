@@ -1,6 +1,9 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  C1->C4  0x004c39b0  RwV3dNormalize  WS-A2 demand-port (supersedes batch_ak reclass-OUT, now plated+verified); path1 13/13 GREEN + canonical install-observe JMP-LIVE 0xE9 + 25s survival (log/install_observe_wsa2_20260616.txt)
+2026-06-16  C2->C4  0x004c4d20  RwMatrixRotate  WS-A2 demand-port; x87 fsin/fcos inline-asm; path1 10/10 GREEN (mode0) + canonical install-observe JMP-LIVE + 25s survival; delegates FUN_004c4a50 (C2) at RVA
+2026-06-16  C2->C4  0x004c3df0  RwV3dTransformPoints  WS-A2 demand-port; subsystem ai->render; dispatch thunk +0x14; path1 7/7 GREEN + canonical install-observe JMP-LIVE + 25s survival; U-1891 open (data-semantic, non-blocking)
 2026-06-16  C2->C3  0x00487d00  Particle3rdEmitterSubmit  c3-batch-sa2-s1(inline) GREEN 10/10 scenario=race (4 s1 siblings DEFERRED: EAX-implicit/RNG/texture-load/degenerate)
 2026-06-16  frida-sweep-sa2  merge c3/batch-sa2-s2 + void_write_observe seed_globals/call_args ext; integration GREEN 5/5
 2026-06-16  C2->C3  0x004331a0  RaceFinalizeOnce  c3-batch-sa2-s2 GREEN 10/10 scenario=race (guarded, seed_globals)

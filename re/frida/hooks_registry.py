@@ -2288,6 +2288,98 @@ HOOKS = {
         ],
     },
 
+    # 0x004c39b0  RwV3dNormalize  (WS-A2 vehicle-physics RW-math prereq)
+    # Normalise in[3] into out[3]; return original magnitude. Uses both the sqrt
+    # LUT (delta 0, for the returned magnitude) and the inv-sqrt LUT (delta 4, for
+    # the normalisation scale) — the 3D sibling of Vec2Normalize. Zero vector ->
+    # out={0,0,0}, mag=0 (error path fires identically). Magnitude threshold read
+    # at runtime from 0x005d757c (static value 0.0).
+    'rw_v3d_normalize': {
+        'rva':            0x004c39b0,
+        'export':         'RwV3dNormalize',
+        'signature':      {'ret': 'float', 'args': ['pointer', 'pointer']},
+        'arg_type':       'vec3_normalize',
+        'lut_root_delta': 0,
+        'path1_tests': [
+            [1.0,   0.0,   0.0],
+            [0.0,   1.0,   0.0],
+            [0.0,   0.0,   1.0],
+            [3.0,   4.0,   0.0],
+            [-3.0,  4.0,   0.0],
+            [1.0,   1.0,   1.0],
+            [-1.0, -1.0,  -1.0],
+            [2.0,   3.0,   6.0],
+            [10.0,  0.0,   0.0],
+            [12.34,-56.78, 90.12],
+            [0.001, 0.001, 0.001],
+            [100.0, 100.0, 100.0],
+            [0.0,   0.0,   0.0],   # zero -> error path; out={0,0,0} mag=0 (both match)
+        ],
+        'path2_tests': [
+            [1.0, 0.0, 0.0], [3.0, 4.0, 0.0], [2.0, 3.0, 6.0], [0.0, 0.0, 0.0],
+        ],
+    },
+
+    # 0x004c4d20  RwMatrixRotate  (WS-A2 vehicle-physics RW-math prereq)
+    # Axis-angle rotation matrix (degrees): deg->rad (*π/180), normalize axis via
+    # FastInvSqrt, x87 fsin/fcos, then Rodrigues inner builder FUN_004c4a50. Mode 0
+    # (rwCOMBINEREPLACE) is fully self-contained (no device matrix-multiply
+    # dispatch), so path1 tests use mode 0 across varied axes/angles; the reimpl
+    # delegates to the original 0x004c4a50 so the diff isolates this fn's own
+    # preprocessing (the bit-identity-sensitive deg->rad / normalize / sin/cos).
+    'rw_matrix_rotate': {
+        'rva':            0x004c4d20,
+        'export':         'RwMatrixRotate',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'float', 'int32']},
+        'arg_type':       'matrix_rotate',
+        'lut_root_delta': 4,   # FastInvSqrt LUT readiness poll (game-init gate)
+        'path1_tests': [
+            {'axis': [0.0, 0.0, 1.0], 'angle': 90.0,  'mode': 0},
+            {'axis': [1.0, 0.0, 0.0], 'angle': 45.0,  'mode': 0},
+            {'axis': [0.0, 1.0, 0.0], 'angle': 30.0,  'mode': 0},
+            {'axis': [1.0, 1.0, 1.0], 'angle': 60.0,  'mode': 0},
+            {'axis': [0.0, 0.0, 1.0], 'angle': 0.0,   'mode': 0},
+            {'axis': [0.0, 0.0, 1.0], 'angle': 180.0, 'mode': 0},
+            {'axis': [2.0, 0.0, 0.0], 'angle': 90.0,  'mode': 0},  # non-unit axis -> normalize
+            {'axis': [3.0, 4.0, 0.0], 'angle': 120.0, 'mode': 0},
+            {'axis': [0.0, 0.0, 1.0], 'angle': -45.0, 'mode': 0},
+            {'axis': [1.0, 2.0, 2.0], 'angle': 270.0, 'mode': 0},
+        ],
+        'path2_tests': [
+            {'axis': [0.0, 0.0, 1.0], 'angle': 90.0, 'mode': 0},
+            {'axis': [1.0, 0.0, 0.0], 'angle': 45.0, 'mode': 0},
+            {'axis': [1.0, 1.0, 1.0], 'angle': 60.0, 'mode': 0},
+        ],
+    },
+
+    # 0x004c3df0  RwV3dTransformPoints  (WS-A2 vehicle-physics RW-math prereq)
+    # Thin __cdecl indirect-dispatch thunk: calls *(rw_offset + rw_globals + 0x14)
+    # (the RW device transform-points method) with all 4 args, returns arg1. Both
+    # original and reimpl read the same device globals (0x7d3ff8/0x7d3ffc) and slot
+    # +0x14, so the result is identical by construction; GREEN validates the +0x14
+    # offset and the global selection. Call shape mirrors caller FUN_0046d510:
+    # fn(out_vec3, matrix, 1, in_vec3).
+    'rw_v3d_transform_points': {
+        'rva':            0x004c3df0,
+        'export':         'RwV3dTransformPoints',
+        'signature':      {'ret': 'pointer', 'args': ['pointer', 'pointer', 'int32', 'pointer']},
+        'arg_type':       'device_transform_dispatch',
+        'lut_root_delta': 0,   # device-table readiness poll (game-init gate)
+        'path1_tests': [
+            {'mat': _IDENT,  'in': [1.0,  2.0,  3.0]},
+            {'mat': _IDENT,  'in': [0.0,  0.0,  0.0]},
+            {'mat': _TRANS,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _SCALE2, 'in': [1.0, -2.0,  3.0]},
+            {'mat': _ROTY90, 'in': [1.0,  0.0,  0.0]},
+            {'mat': _MIXED,  'in': [1.0,  1.0,  1.0]},
+            {'mat': _MIXED,  'in': [-1.0, 2.0, -3.0]},
+        ],
+        'path2_tests': [
+            {'mat': _IDENT, 'in': [1.0, 2.0, 3.0]},
+            {'mat': _MIXED, 'in': [1.0, 1.0, 1.0]},
+        ],
+    },
+
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Session c3-batch-a-s6 â€” frontend_menus_a larger + game_mode (C2->C3)
     # MenuButtonDetect.cpp + GameModeCarSelect.cpp

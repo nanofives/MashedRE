@@ -167,7 +167,10 @@ let fmtKeyBuf     = null;  // 16-byte format key
 // Output-buffer types — allocated once, reused per call.
 let xformBufs = null;   // transform_point / transform_vector: { out, in, mat }
 let v2nBufs   = null;   // vec2_normalize:  { out, in }
+let v3nBufs   = null;   // vec3_normalize:  { out, in }
+let xfdBufs   = null;   // device_transform_dispatch: { out, mat, in }
 let matsBufs  = null;   // matrix_scale:    { mat, scale }
+let matrBufs  = null;   // matrix_rotate:   { mat, axis }
 let tmpF32    = null;   // 4-byte scratch for float→U32 extraction
 
 function readLutRoot(delta) {
@@ -651,6 +654,65 @@ function callFn(fn, input, buf) {
         ].join(',');
     }
 
+    if (CONFIG.arg_type === 'vec3_normalize') {
+        // input: [x, y, z]; fn(out, in) -> magnitude (float). 0x004c39b0 RwV3dNormalize.
+        v3nBufs.in.writeFloat(input[0]);
+        v3nBufs.in.add(4).writeFloat(input[1]);
+        v3nBufs.in.add(8).writeFloat(input[2]);
+        v3nBufs.out.writeU32(0);
+        v3nBufs.out.add(4).writeU32(0);
+        v3nBufs.out.add(8).writeU32(0);
+        const retVal = fn(v3nBufs.out, v3nBufs.in);
+        tmpF32.writeFloat(retVal !== undefined ? retVal : 0.0);
+        return [
+            tmpF32.readU32(),               // magnitude bits
+            v3nBufs.out.readU32(),          // out[0] bits
+            v3nBufs.out.add(4).readU32(),   // out[1] bits
+            v3nBufs.out.add(8).readU32(),   // out[2] bits
+        ].join(',');
+    }
+
+    if (CONFIG.arg_type === 'device_transform_dispatch') {
+        // input: { mat: [16 floats], in: [x,y,z] }. 0x004c3df0 RwV3dTransformPoints thunk.
+        // fn(out, mat, 1, in) -> out (matches caller FUN_0046d510's call shape). Both orig
+        // and reimpl read the same device globals (0x7d3ff8/0x7d3ffc) and dispatch the same
+        // slot +0x14, so the result is identical by construction; a GREEN here validates the
+        // +0x14 offset and the global selection (a wrong offset would call a different slot).
+        for (let j = 0; j < 16; j++) xfdBufs.mat.add(j * 4).writeFloat(input.mat[j]);
+        xfdBufs.in.writeFloat(input.in[0]);
+        xfdBufs.in.add(4).writeFloat(input.in[1]);
+        xfdBufs.in.add(8).writeFloat(input.in[2]);
+        xfdBufs.out.writeU32(0);
+        xfdBufs.out.add(4).writeU32(0);
+        xfdBufs.out.add(8).writeU32(0);
+        fn(xfdBufs.out, xfdBufs.mat, 1, xfdBufs.in);
+        return [
+            xfdBufs.out.readU32(),
+            xfdBufs.out.add(4).readU32(),
+            xfdBufs.out.add(8).readU32(),
+        ].join(',');
+    }
+
+    if (CONFIG.arg_type === 'matrix_rotate') {
+        // input: { axis: [x,y,z], angle: degrees, mode: int }. 0x004c4d20 RwMatrixRotate.
+        // fn(matrix, axis, angle_deg, mode) -> matrix; compare all 16 output floats (bits).
+        for (let j = 0; j < 16; j++) matrBufs.mat.add(j * 4).writeU32(0);
+        matrBufs.axis.writeFloat(input.axis[0]);
+        matrBufs.axis.add(4).writeFloat(input.axis[1]);
+        matrBufs.axis.add(8).writeFloat(input.axis[2]);
+        fn(matrBufs.mat, matrBufs.axis, input.angle, input.mode | 0);
+        // Compare the 12 rotation/translation floats + the flags word at [3].
+        // Skip RwMatrix pad slots [7]/[11]/[15]: the Rodrigues inner builder
+        // (FUN_004c4a50) never writes them in mode 0, so they read uninitialized
+        // stack — caller-dependent garbage in the ORIGINAL too (not real output).
+        const out = [];
+        for (let j = 0; j < 16; j++) {
+            if (j === 7 || j === 11 || j === 15) continue;  // pad — uninitialized
+            out.push(matrBufs.mat.add(j * 4).readU32());
+        }
+        return out.join(',');
+    }
+
     if (CONFIG.arg_type === 'matrix_scale') {
         // input: { mat: [16 floats], scale: [3 floats], mode: int }
         for (let j = 0; j < 16; j++)
@@ -800,6 +862,18 @@ function runDiff() {
     if (CONFIG.arg_type === 'vec2_normalize') {
         v2nBufs = { out: Memory.alloc(8), in: Memory.alloc(8) };
         tmpF32  = Memory.alloc(4);
+    }
+    if (CONFIG.arg_type === 'vec3_normalize') {
+        v3nBufs = { out: Memory.alloc(12), in: Memory.alloc(12) };
+        tmpF32  = Memory.alloc(4);
+    }
+    if (CONFIG.arg_type === 'device_transform_dispatch') {
+        // generous (64B) so any device-method over-read past the 3-float payload
+        // stays inside a mapped allocation rather than faulting.
+        xfdBufs = { out: Memory.alloc(64), mat: Memory.alloc(64), in: Memory.alloc(64) };
+    }
+    if (CONFIG.arg_type === 'matrix_rotate') {
+        matrBufs = { mat: Memory.alloc(64), axis: Memory.alloc(12) };
     }
     if (CONFIG.arg_type === 'matrix_scale') {
         matsBufs = { mat: Memory.alloc(64), scale: Memory.alloc(12) };

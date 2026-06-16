@@ -158,6 +158,9 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Math\RwSqrt.cpp" ^
     "Math\RwV2d.cpp" ^
     "Math\RwV3dTransform.cpp" ^
+    "Math\RwV3dNormalize.cpp" ^
+    "Math\RwV3dTransformPoints.cpp" ^
+    "Math\RwMatrixRotate.cpp" ^
     "Math\RwMatrixScale.cpp" ^
     "Frontend\Cluster_v1.cpp" ^
     "Frontend\BatchAA_s1.cpp" ^
@@ -208,6 +211,9 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Audio\AudioMusic.cpp" ^
     "Audio\AudioLeaves_ab4.cpp" ^
     "Math\RwV3dTransform.cpp" ^
+    "Math\RwV3dNormalize.cpp" ^
+    "Math\RwV3dTransformPoints.cpp" ^
+    "Math\RwMatrixRotate.cpp" ^
     "Math\RwV2d.cpp" ^
     "Math\RwMatrixScale.cpp" ^
     "Frontend\TimerReset.cpp" ^
@@ -361,6 +367,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Render\PluginFields_ah4.cpp" ^
     "Audio\TimerGetters_ah5.cpp" ^
     "Ai\PromoLoop_round1.cpp" ^
+    "Ai\AiController.cpp" ^
     "Vehicle\PromoLoop_round2.cpp" ^
     "Render\PromoLoop_round3.cpp" ^
     "Boot\PromoLoop_round6.cpp" ^
