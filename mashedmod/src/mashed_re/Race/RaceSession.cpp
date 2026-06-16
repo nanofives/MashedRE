@@ -120,8 +120,9 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         track->InitPickups();        // place power-up orbs along the gate ribbon
         m_powerups.ready = true;
         logf("Begin: track ready, vehicle=%s player_car=%d liveries=%d "
-             "-> StartMatch(3) particles=%d pickups=on mode=%s laps=%d [real sim active]",
-             ve.dffBase, (int)car, (int)liv, ptype,
+             "-> StartMatch(3) particles=%d pickups=on gameMode=%d raceRule=%d "
+             "mode=%s laps=%d [real sim active]",
+             ve.dffBase, (int)car, (int)liv, ptype, m_cfg.gameMode, m_cfg.raceRule,
              m_cfg.raceMode == 1 ? "laps" : "elim", m_cfg.laps);
     } else {
         logf("Begin: no track/device (logs-only race) ready=%d",

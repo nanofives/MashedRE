@@ -48,6 +48,9 @@ struct RaceConfig {
     int  powerUps    = 0;        // DAT_0067ea80
     int  laps        = 3;
     int  raceMode    = 0;        // race objective: 0 = elimination, 1 = laps
+    int  raceRule    = 0;        // real DAT_007f0fd0 race rule (0..10), derived
+                                 // from gameMode+track via Race/RaceModes
+                                 // (re/analysis/game_mode_rules_REmap_20260616.md)
     RaceCar cars[8];
 };
 
