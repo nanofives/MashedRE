@@ -127,3 +127,26 @@ C3-grade ([[feedback-no-overclaiming-c-levels]]); the math leaves stay C4 on
 their prior install-observe evidence, now backed by the path1 A/B they lacked.
 **No function was promoted to C4 from this run alone.** The "first C4s" goal for
 RaceCamera/scoring is deferred to WS-H2 (installed-hook canonical race).
+
+## H2 update — camera/scoring C4 blockers pinned (2026-06-16)
+
+Findings: `re/analysis/WS_H2_C4_LANE_FINDINGS_2026-06-16.md`.
+- **Part 1 (C4 newly-landed WS-A..E ports): no-op.** Every WS-commit since the
+  audit baseline is an RE-map / data-verify / decision, not an installed verbatim
+  function port → nothing new to bit-diff. Recorded, not skipped.
+- **Camera (0x00446520 / 0x00410d10): C2 is permanent for the standalone body.**
+  Evidence-pinned: the original routes magnitude/normalize through the RW
+  fast-sqrt **LUT** (`call 0x004c3ac0` ×3, `call 0x004c39b0` ×4 in
+  `FUN_00446520.asm`); the standalone `RaceCamera.cpp` must approximate with
+  `std::sqrt` because the LUT globals (`0x007d3ff8/0x007d3ffc`) are not the
+  fast-sqrt table standalone — so it is bit-distinct **by construction** (this
+  is the exact "offset/pitch within margin" residual in `camera_trace.csv`). A
+  camera C4 datapoint needs a SEPARATE ~7.4 KB `.asi`-only verbatim hook calling
+  the real LUT primitives — large; recommend its own session.
+- **Scoring trio (0x0040eee0 / 0x0040b290 / 0x00410510): C4-FEASIBLE.** Integer
+  arithmetic over `DAT_008a94e0…` globals, no LUT/transcendental hazard → an
+  `.asi`-only verbatim hook can be bit-exact and reach C4 via installed-hook
+  canonical-race observation. This is the realistic WS-H2 win (bounded effort).
+- **Decision pending user ratification** (architecture-level: authoring
+  `.asi`-only second implementations distinct from the standalone bodies). See
+  the findings doc's "Recommendation".
