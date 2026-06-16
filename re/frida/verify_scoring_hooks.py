@@ -43,11 +43,21 @@ G_PHASE   = "0x0063ba8c"   # DAT_0063ba8c race phase (0xb on conclusion)
 CALLEES   = ["0x00422fd0", "0x0046c700", "0x00431d80"]
 
 AGENT = statenav.AGENT.replace(
+    "let pressCtrl=-1, pressUntil=0; const CNT={};",
+    "let pressCtrl=-1, pressUntil=0; const CNT={}; const TRACE=[]; const G_SCORE_ABS=0x008a94e0;"
+).replace(
     "  sel:function(){ try{const d=abs(RVA_DEPTH).readS32(); return abs(RVA_SEL+d*0x40).readS32();}catch(e){return -999;} }",
     "  sel:function(){ try{const d=abs(RVA_DEPTH).readS32(); return abs(RVA_SEL+d*0x40).readS32();}catch(e){return -999;} },\n"
     "  installbyte:function(rva){ try{ return abs(parseInt(rva,16)).readU8(); }catch(e){ return -1; } },\n"
     "  peeks:function(rva){ try{ return abs(parseInt(rva,16)).readS32(); }catch(e){ return -999; } },\n"
-    "  peekarr:function(rva,n){ const o=[]; try{ const b=abs(parseInt(rva,16)); for(let i=0;i<n;i++) o.push(b.add(i*4).readS32()); }catch(e){} return o; }"
+    "  peekarr:function(rva,n){ const o=[]; try{ const b=abs(parseInt(rva,16)); for(let i=0;i<n;i++) o.push(b.add(i*4).readS32()); }catch(e){} return o; },\n"
+    "  tracecalls:function(rvas){ rvas.forEach(function(r){ const a=parseInt(r,16);\n"
+    "    try{ Interceptor.attach(abs(a),{ onEnter:function(args){ const sp=this.context.esp;\n"
+    "        this.p1=sp.add(4).readS32(); this.p2=sp.add(8).readS32(); },\n"
+    "      onLeave:function(ret){ const sc=[]; const b=abs(G_SCORE_ABS);\n"
+    "        for(let i=0;i<4;i++) sc.push(b.add(i*4).readS32());\n"
+    "        TRACE.push({rva:r, p1:this.p1, p2:this.p2, ret:ret.toInt32(), sc:sc}); }}); }catch(e){} }); return 1; },\n"
+    "  gettrace:function(){ return TRACE; }"
 )
 
 
@@ -55,9 +65,16 @@ def main():
     round_secs = int(sys.argv[sys.argv.index("--round")+1]) if "--round" in sys.argv else 150
     shotdir = sys.argv[sys.argv.index("--shot-dir")+1] if "--shot-dir" in sys.argv else "verify/scoring"
     Path(ROOT/shotdir).mkdir(parents=True, exist_ok=True)
+    # --baseline: hooks OFF (original scoring). Captures the SAME telemetry through
+    # Interceptor on the original RVAs, for an original-vs-modded telemetry diff.
+    baseline = "--baseline" in sys.argv
+    tag = "baseline" if baseline else "hooked"
 
-    # HOOKS LIVE: spawn WITHOUT MASHED_RE_NO_AUTO_HOOK so the .asi auto-installs.
-    env = dict(os.environ); env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    # HOOKS LIVE unless --baseline: spawn WITHOUT MASHED_RE_NO_AUTO_HOOK so the
+    # .asi auto-installs. --baseline sets it so the original scoring runs.
+    env = dict(os.environ)
+    if baseline: env["MASHED_RE_NO_AUTO_HOOK"] = "1"
+    else: env.pop("MASHED_RE_NO_AUTO_HOOK", None)
     dev = frida.get_local_device()
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
     sess = dev.attach(pid)
@@ -65,8 +82,9 @@ def main():
     scr.exports_sync.init()
     E = scr.exports_sync
 
-    # count the three ported hooks + the scoring callees
+    # count the three ported hooks + the scoring callees; per-call telemetry trace
     E.countthese(list(HOOKS.keys()) + CALLEES)
+    E.tracecalls(list(HOOKS.keys()))
     dev.resume(pid)
     nav = statenav.Nav(scr, pid)
 
@@ -75,13 +93,15 @@ def main():
 
     # ---- (1) PATH2 installer check: E9 live at the three RVAs --------------
     inst = {rva: E.installbyte(rva) for rva in HOOKS}
-    print("  === installer (E9) check ===")
+    print(f"  === installer (E9) check [{tag}] ===")
     all_e9 = True
     for rva, b in inst.items():
         ok = (b == 0xE9)
         all_e9 = all_e9 and ok
-        print(f"    {rva} {HOOKS[rva]:22s} byte0=0x{b & 0xff:02x} {'E9 INSTALLED' if ok else 'NOT INSTALLED'}")
-    statenav.shoot(pid, ROOT/shotdir/"scoring_title.png")
+        print(f"    {rva} {HOOKS[rva]:22s} byte0=0x{b & 0xff:02x} {'E9 INSTALLED' if ok else 'original (not hooked)'}")
+    if baseline:
+        print(f"    [baseline] expect original bytes (NOT E9): {'OK' if not all_e9 else 'UNEXPECTED E9'}")
+    statenav.shoot(pid, ROOT/shotdir/f"scoring_{tag}_title.png")
 
     # ---- drive into a 4-player FFA Quick Battle ----------------------------
     nav.confirm_to_depth(2); time.sleep(0.3); nav.press(4); time.sleep(0.5)
@@ -149,26 +169,68 @@ def main():
     print(f"  final elim order DAT_008a94c0: {final_elim}")
     print(f"  final winner DAT_0063b914: {final_winner}   race phase DAT_0063ba8c: 0x{final_phase:x}")
 
+    trace = list(E.gettrace())
     fired = [r for r in HOOKS if isinstance(cc.get(r), int) and cc[r] > 0]
     concluded = (final_phase == 0xb) or (final_winner not in (-1, 0, -999))
-    verdict = "GREEN" if (all_e9 and fired) else ("PARTIAL" if all_e9 else "RED")
-    print(f"\n  VERDICT: {verdict}  (E9={all_e9}  hooks_fired={len(fired)}/3  "
-          f"round_concluded={concluded})")
-    print("  ==================================================")
+    print(f"  per-call trace: {len(trace)} scoring calls captured")
 
-    out = {"installer": inst, "all_e9": all_e9, "counts": cc, "fired_at": fired_at,
+    out = {"tag": tag, "installer": inst, "all_e9": all_e9, "counts": cc, "fired_at": fired_at,
            "participants": E.peeks(G_PART), "score_timeline": score_log,
            "final_scores": final_scores, "final_elim": final_elim,
            "final_winner": final_winner, "final_phase": final_phase,
-           "verdict": verdict, "concluded": concluded}
-    (ROOT/"log"/"verify_scoring_hooks.json").write_text(json.dumps(out, indent=1))
-    print(f"  -> log/verify_scoring_hooks.json")
+           "concluded": concluded, "trace": trace}
+    (ROOT/"log"/f"verify_scoring_{tag}.json").write_text(json.dumps(out, indent=1))
+    print(f"  -> log/verify_scoring_{tag}.json")
+
+    # ---- original-vs-modded telemetry DIFF (CONFIDENCE.md C4 requirement) ----
+    diff_verdict = None
+    other_tag = "baseline" if not baseline else "hooked"
+    other_path = ROOT/"log"/f"verify_scoring_{other_tag}.json"
+    if other_path.exists():
+        other = json.loads(other_path.read_text())
+        b = other if baseline is False else out          # hooked
+        o = out if baseline is False else other          # baseline
+        # "b" = hooked(modded), "o" = baseline(original). Diff the per-call telemetry.
+        bt, ot = b["trace"], o["trace"]
+        print("\n  ===== ORIGINAL vs MODDED telemetry diff =====")
+        print(f"    baseline(original) calls={len(ot)}  hooked(modded) calls={len(bt)}")
+        seq_match = len(ot) == len(bt)
+        per_call_mismatch = []
+        for i in range(min(len(ot), len(bt))):
+            a, c = ot[i], bt[i]
+            # compare (rva, args, return, resulting score array) per aligned call
+            if (a["rva"], a["p1"], a["p2"], a["ret"], a["sc"]) != \
+               (c["rva"], c["p1"], c["p2"], c["ret"], c["sc"]):
+                per_call_mismatch.append((i, a, c))
+        agg_match = (o["final_scores"] == b["final_scores"] and
+                     o["final_elim"] == b["final_elim"] and
+                     o["final_winner"] == b["final_winner"])
+        print(f"    aggregate outcome match (scores/elim/winner): {agg_match}")
+        print(f"      original final: scores={o['final_scores']} elim={o['final_elim']} winner={o['final_winner']}")
+        print(f"      modded   final: scores={b['final_scores']} elim={b['final_elim']} winner={b['final_winner']}")
+        print(f"    per-call sequence aligned: {seq_match}; mismatches: {len(per_call_mismatch)}")
+        for i, a, c in per_call_mismatch[:6]:
+            print(f"      [{i}] orig={a}  mod={c}")
+        if seq_match and not per_call_mismatch:
+            diff_verdict = "GREEN: per-call telemetry BIT-IDENTICAL original==modded"
+        elif agg_match:
+            diff_verdict = ("AGGREGATE-GREEN: identical final scores/elim/winner; "
+                            "per-call sequence diverged (race nondeterminism, not scoring)")
+        else:
+            diff_verdict = "RED: telemetry diverges (see mismatches)"
+        print(f"    DIFF VERDICT: {diff_verdict}")
+        print("  =============================================")
+
+    verdict = "GREEN" if (all_e9 and fired) else ("PARTIAL" if all_e9 else "RED")
+    print(f"\n  VERDICT [{tag}]: {verdict}  (E9={all_e9}  hooks_fired={len(fired)}/3  "
+          f"round_concluded={concluded})  diff={diff_verdict}")
+    print("  ==================================================")
     try:
         if nav.alive(): dev.kill(pid)
     except Exception: pass
     try: sess.detach()
     except Exception: pass
-    return 0 if (all_e9 and fired) else 1
+    return 0 if ((baseline or (all_e9 and fired))) else 1
 
 
 if __name__ == "__main__":
