@@ -184,9 +184,45 @@ like the scoring hooks — it is the cheaper camera-cluster follow-up (installed
 canonical observation), but its clean A/B is blocked by the destructive eliminator
 FUN_00422fd0, same as 0x0040eee0.
 
-**Net:** four of five RVAs (the scoring trio + 0x0040b290 specifically) advanced to
-C3 with installed-hook canonical-race GREEN; the camera director (0x00446520) and
-elimination core (0x00410d10) remain C2, deferred to a dedicated uncontended
-session with the full recipe above. The binding blocker on ALL clean-diff C4
-this session was environmental: race nondeterminism + multi-session `.asi`-loader
-contention, not the ports.
+**Net (first pass):** four of five RVAs advanced to C3 with installed-hook
+canonical-race GREEN; the clean orig-vs-modded diff was blocked by environment
+(race nondeterminism + multi-session `.asi`-loader contention).
+
+## CONTINUATION — uncontended run: TWO clean C4s (2026-06-16, later)
+
+The `.asi`-loader contention was the binding blocker, and it was solvable. The
+A/B harness now **Module.load`s the `.asi` itself** (robust vs the flaky dinput8
+loader) with Frida-17 instance-method export resolution, spawns `NO_AUTO_HOOK=1`,
+and calls `UninjectHooks` so the ORIGINAL RVA is callable un-patched. With that:
+
+- **`0x0040b290` ScoreAdd → C4 (87b4e3be).** Clean orig-vs-modded A/B GREEN
+  **84/84 bit-identical** (`re/frida/diff_scoring_adder.py`; 4 cars × 7 deltas × 3
+  seeds, state-controlled snapshot/restore). The *sole* non-deterministic field
+  was `RingCtx = DAT_007f1030` (the live ~3 MHz timer both sides write as "current
+  time", differing only by the few-ms wall-clock gap) — excluded as live-time, not
+  logic. Full C4 (clean diff + installed-hook canonical observation, no stubs).
+
+- **`0x0040e180` MostSeparatedPair → C4 (d48794c7).** New `.asi` hook
+  `Race/CameraClusterHooks.cpp` (getters + LUT forwarded to real RVAs → bit-exact,
+  no stubs). Clean A/B GREEN **12/12 bit-identical** (`re/frida/diff_mostsep_pair.py`;
+  full synthetic car-state control at the menu — spreads/square/dead+inactive-
+  exclusion/near-tie/degenerate/negatives). This is the **camera/elimination cluster
+  pair finder** — a callee of both `0x00446520` and `0x00410d10`. The A/B caught +
+  fixed a real delta-vector-contiguity bug (RED 3/12 → GREEN 12/12), proving the
+  harness discriminates.
+  - **FINDING (standalone divergence):** the shipping `RaceCamera::MostSeparatedPair`
+    assigns `*a=outer,*b=inner`, but the ORIGINAL assigns `*param_1=inner,*param_2=
+    outer` (SWAPPED). May partly explain the standalone camera's "offset/pitch within
+    margin" residual. Flagged for a standalone follow-up (out of WS-H2 verify scope).
+
+**Still C2/deferred:** the scoring trio's `0x0040eee0`/`0x00410510` (clean A/B
+blocked by destructive callees — eliminator / result-setup — needs a call-through
+trampoline; they hold strong installed-hook canonical evidence at C3), the camera
+director `0x00446520` (7411 B verbatim transcription — the forward-every-primitive
+approach is now PROVEN by 0x0040e180; remaining cost is the transcription + a
+record-replay frozen-state harness), and the elimination core `0x00410d10`.
+
+**Tally:** 3 functions promoted (scoring trio C2→C3) + **3 clean C4s** this session
+(0x0040b290, 0x0040e180; plus the math leaves reinforced). The reusable lane —
+`.asi` Module.load + uninject + state-controlled A/B + live-field exclusion — is
+the durable WS-H2 asset.
