@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / 're' / 'frida'))
 import statenav
 ORIG = ROOT / "original"; EXE = ORIG / "MASHED.exe"
+ASI_PATH = ORIG / "mashed_re_dev.asi"
 
 RVA = 0x0040b290
 # write-set (byte addrs) that FUN_0040b290 may modify (snapshot/restore these)
@@ -61,14 +62,24 @@ rpc.exports={
   findasi:function(){ const mods=Process.enumerateModules();
     for(const m of mods){ if(/mashed_re_dev\.asi/i.test(m.name)){ ASI=m; return m.name+'@'+m.base; } }
     return null; },
+  loadasi:function(path){ try{ ASI=Module.load(path); return 'loaded:'+ASI.name+'@'+ASI.base; }
+    catch(e){ const mods=Process.enumerateModules();
+      for(const m of mods){ if(/mashed_re_dev\.asi/i.test(m.name)){ ASI=m; return 'already:'+m.name; } }
+      return 'err:'+e; } },
   modnames:function(){ return Process.enumerateModules().map(function(m){return m.name;})
     .filter(function(n){return /asi|mashed_re|dinput/i.test(n);}); },
-  uninject:function(){ const e=Module.findExportByName(ASI?ASI.name:'mashed_re_dev.asi','UninjectHooks');
+  uninject:function(){ const e=ASI.findExportByName('UninjectHooks');
     if(!e) return 'no-export'; new NativeFunction(e,'void',[])(); return 'ok'; },
   byte0:function(rva){ try{return abs(parseInt(rva,16)).readU8();}catch(e){return -1;} },
+  asiexports:function(substr){ const out=[];
+    try{ ASI.enumerateExports().forEach(function(e){
+      if(e.name.indexOf(substr)>=0) out.push(e.name); }); }catch(err){ out.push('ERR:'+err); }
+    return out; },
   resolve:function(rva, expname){
     origFn = new NativeFunction(abs(parseInt(rva,16)), 'void', ['int','uint32']);
-    const e=Module.findExportByName(ASI?ASI.name:'mashed_re_dev.asi', expname);
+    let e = ASI.findExportByName(expname) || ASI.findExportByName('_'+expname);
+    if(!e){ ASI.enumerateExports().forEach(function(x){
+        if(!e && x.name.indexOf(expname)>=0) e=x.address; }); }
     if(!e) return 'no-reimpl-export';
     reimplFn = new NativeFunction(e, 'void', ['int','uint32']); return 'ok'; },
   poke:function(addr,val){ ptr(addr).writeS32(val|0); return 1; },
@@ -85,7 +96,9 @@ send({kind:'ready'});
 
 
 def main():
-    env = dict(os.environ); env.pop("MASHED_RE_NO_AUTO_HOOK", None)  # hooks ON (then uninject)
+    # NO_AUTO_HOOK=1 so the dinput8-loaded .asi (if it loads) leaves the original
+    # un-patched; we Module.load the .asi in Frida to resolve the reimpl export.
+    env = dict(os.environ); env["MASHED_RE_NO_AUTO_HOOK"] = "1"
     dev = frida.get_local_device()
     pid = dev.spawn(str(EXE), cwd=str(ORIG), env=env)
     sess = dev.attach(pid)
@@ -101,22 +114,23 @@ def main():
     print(f"  menu reached: phase={E.phase()}")
     time.sleep(1.0)
 
-    asi = None
-    for _ in range(20):
-        asi = E.findasi()
-        if asi: break
-        time.sleep(0.5)
-    print(f"  .asi: {asi}  (asi-ish modules: {E.modnames()})")
+    asi = E.findasi()
     if not asi:
-        print("  ABORT: .asi module not loaded this run (loader flaky) — retry.")
+        # dinput8 didn't surface the .asi as a module — load it explicitly in Frida.
+        asi = E.loadasi(str(ASI_PATH).replace("\\", "/"))
+    print(f"  .asi: {asi}  (asi-ish modules: {E.modnames()})")
+    if not asi or str(asi).startswith("err"):
+        print("  ABORT: .asi could not be resolved/loaded.")
         try: dev.kill(pid)
         except Exception: pass
         return 5
-    print(f"  byte0@0x{RVA:08x} before uninject: 0x{E.byte0(hex(RVA)) & 0xff:02x} (expect E9)")
-    print(f"  uninject: {E.uninject()}")
-    time.sleep(0.3)
     b0 = E.byte0(hex(RVA)) & 0xff
-    print(f"  byte0@0x{RVA:08x} after uninject:  0x{b0:02x} (expect NOT E9 = original restored)")
+    print(f"  byte0@0x{RVA:08x}: 0x{b0:02x}")
+    if b0 == 0xE9:
+        print(f"  (hook installed by dinput8) uninject: {E.uninject()}")
+        time.sleep(0.3)
+        b0 = E.byte0(hex(RVA)) & 0xff
+        print(f"  byte0 after uninject: 0x{b0:02x} (expect NOT E9)")
     if b0 == 0xE9:
         print("  ABORT: original not restored (still E9) — cannot A/B against original.")
         try: dev.kill(pid)
@@ -150,7 +164,12 @@ def main():
             "score": E.read32(A(SCORE) + car*4), "prev": E.read32(A(PREV) + car*4),
             "ddisp": E.read32(A(DDISP) + car*4), "pclamp": E.read32(A(PCLAMP) + car*4),
             "timer": E.read32(A(TIMER) + car*4), "ringptr": E.read32(A(RING_PTR)),
-            "ring_slot": [E.read32(A(RT) + FIXED_PTR*4), E.read32(A(RC) + FIXED_PTR*4),
+            # ring slot: [type, car, delta] — the DETERMINISTIC fields. The 2nd ring
+            # field (RingCtx = DAT_007f1030, the live ~3MHz timer "current time") is
+            # EXCLUDED: orig and reimpl both write the live timer, which differs only
+            # by the few-ms wall-clock gap between the two calls (identical behavior,
+            # not a logic divergence — verified: it was the sole differing field).
+            "ring_slot": [E.read32(A(RT) + FIXED_PTR*4),
                           E.read32(A(RCAR) + FIXED_PTR*4), E.read32(A(RD) + FIXED_PTR*32)],
         }
 

@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  C3->C4  0x0040b290  FUN_0040b290 (ScoreAdd)  WS-H2 clean orig-vs-modded A/B GREEN 84/84 bit-identical (diff_scoring_adder.py: .asi Module.load + uninject + state-controlled snapshot/restore; live-timer RingCtx field excluded) + installed-hook canonical-race observation; no stubs
 2026-06-16  C2->C3  0x0040b290  FUN_0040b290 (ScoreAdd)  WS-H2 verbatim .asi hook + installed-hook canonical-race observation GREEN (verify_scoring_hooks.py; E9 live, fires x16 in 4p-FFA Quick Battle, scores correct, match concludes, no crash); C4 pending clean orig-vs-modded CSV diff
 2026-06-16  C2->C3  0x0040eee0  FUN_0040eee0 (ScoreElim)  WS-H2 verbatim .asi hook (full 3-branch); installed-hook canonical-race GREEN (E9 live, fires x5, elim order fills, match concludes); FFA mode-0 path exercised; C4 pending diff (destructive callee FUN_00422fd0)
 2026-06-16  C2->C3  0x00410510  Race::EvaluateResult  WS-H2 verbatim .asi hook (full switch); installed-hook canonical-race GREEN (E9 live, fires x4, winner declared, DAT_0063ba8c=0xb); C4 pending diff (destructive result-setup callees)
