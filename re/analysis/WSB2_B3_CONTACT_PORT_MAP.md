@@ -148,6 +148,43 @@ C-level disposition (honest, no overclaim per [[feedback-no-overclaiming-c-level
 - C3/C4 path = installed-hook scenario diff vs the baseline, once the WS-A
   consumer (`FUN_0046ddb0`) drives them (B4 depends on A5).
 
+## Captured original-side baseline (2026-06-16) — the verification anchor
+
+`re/frida/wsb_contact_baseline.py` (timer-polled one-shot snapshot, **no** sustained
+Interceptor) spawned the original and, when MASHED auto-entered its attract/demo
+race (runtime game-mode = **6**, ∈ the {6,7,10,0xb} race set) at ~t=25s, captured
+an 8-frame time series → `log/wsb_contact_baseline.json`. Ground truth:
+
+| metric | observed |
+|---|---|
+| game-mode (FUN_0040e350) | 6 (race) — confirms the contact path is live |
+| `DAT_0088e60c` terrain entry count | 2–7 / frame (broadphase batch size as cars move) |
+| `DAT_0088e650` tick active contacts | 4 every frame |
+| per-car grounded count (`+0x9e0`) | 4.0 (all wheels) for all 3 active cars |
+| per-car speed (`+0x9e4`) | ~2800–3550 |
+| 18-slot contact scan (`+0x4ac`) | empty during smooth cruising (deep-penetration/ |
+|  | impact slots populate only on hits — none in the demo window) |
+
+So in a real race the broadphase yields a small terrain batch (2–7 tris/query),
+all four wheels register contact (`tickActiveContacts=4`, `grounded=4`), and the
+solvers continuously correct the linear velocity (`+0x9b0`). When B4 wires the
+port and replays the demo, the standalone must reproduce these (grounded=4,
+tickActiveContacts≈4, terrain batch 2–7, velocity in range) — that is the
+installed-hook scenario diff. This also empirically validates that the contact
+producer is the first-party broadphase (no qhull): qhull never ran and the batch
+was populated each tick.
+
+## Tracker disposition (honest — no promotion)
+
+No C-level moved this session (no behavioral evidence for the *standalone* port):
+- `0046c5f0` C2, `0046cc40` C2, `00468d80` C2, `004694e0` C2, `00469aa0` C2,
+  `00469df0` C2 — faithful transcriptions now exist under `Collision/`; stay C2.
+- `00468b40` is **already C3** as an `.asi` hook (`Vehicle/VehicleState.cpp`, A/B
+  7/7 GREEN); the Collision copy is the self-contained standalone twin.
+- `0046c5f0` C3 path: it is a genuine leaf and `run_diff`-able once the harness
+  gains the non-standard EAX(apex)+ESI(out) `arg_type` — the one cheap real-C3
+  datapoint available from this set without a full scenario run.
+
 ## Residual dependencies (stubbed in ContactStubs.cpp; bound in WS-B4 / WS-A)
 
 | stub | real RVA | bind to |
