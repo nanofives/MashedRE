@@ -338,6 +338,11 @@ public:
         int   laps = 0;
         float progress = 0.f;  // gate + fraction (ranking metric)
         bool  alive = true;
+        // F4 (algorithm-faithful, FUN_00408610): bitmask of LAPDATA Lap_Line
+        // gates crossed since the last lap. A lap completes on the primary
+        // line once every declared line is set (the multi-Lap_Line anti-shortcut
+        // — see re/analysis/lap_progress_subsystem_2026-06-16.md).
+        std::uint32_t lap_mask = 0;
     };
     static constexpr int kRaceCars = 4;
     RaceCar race_[kRaceCars];
@@ -362,6 +367,13 @@ public:
     int   lap_target_ = 3;        // laps mode: laps to finish
     bool  human_drive_ = false;   // true: player car uses input (not auto-follow)
     float countdown_ = 0.f;       // >0 = pre-go freeze (seconds remaining)
+    // F4: race clock (seconds since GO) + per-Split_Sector split times for the
+    // player car (recorded at the declared split gates, mirroring the original's
+    // DAT_008a964c / FUN_00411600 intermediate timing). Reset each lap.
+    static constexpr int kMaxSplits = 8;
+    float race_time_ = 0.f;
+    float split_time_[kMaxSplits] = {};
+    bool  split_done_[kMaxSplits] = {};
     void  ScoreAward(int car, int delta);          // FUN_0040b290 mode-0 path
     void  ScoreOnElimination(int victim);          // FUN_0040eee0 4-player path
     void  StartRound();           // grid all 4 cars at the start line
@@ -373,6 +385,14 @@ public:
     int   score_delta(int car) const { return (car >= 0 && car < kRaceCars) ? score_delta_[car] : 0; }
     float delta_timer(int car) const { return (car >= 0 && car < kRaceCars) ? delta_timer_[car] : 0.f; }
     float countdown() const { return countdown_; }
+    // F4 split timing (player car): race clock + the current lap's split times.
+    float race_time() const { return race_time_; }
+    float split_time(int id) const {
+        return (id >= 0 && id < kMaxSplits) ? split_time_[id] : 0.f;
+    }
+    bool  split_done(int id) const {
+        return (id >= 0 && id < kMaxSplits) && split_done_[id];
+    }
     // round step (also advances player bookkeeping outside round mode)
     void  UpdateRace(float dt);
     int   round_winner() const { return round_winner_; }

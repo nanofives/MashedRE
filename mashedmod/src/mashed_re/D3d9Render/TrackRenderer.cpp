@@ -12,6 +12,7 @@
 #include "../Piz/PizReader.h"
 #include "../Track/TrackWorld.h"
 #include "../Track/DffModel.h"
+#include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 
@@ -1727,6 +1728,9 @@ void TrackRenderer::StartRound() {
     round_alive_ = kRaceCars;
     round_winner_ = -1;
     for (int i = 0; i < kRaceCars; ++i) race_[i] = RaceCar{};
+    // F4: reset the race clock + the player's per-lap split records.
+    race_time_ = 0.f;
+    for (int k = 0; k < kMaxSplits; ++k) { split_time_[k] = 0.f; split_done_[k] = false; }
     // grid: 2x2 behind gate 0, offset along the start line's lateral axis
     const float* g0 = gates_[0].center;
     const float* g1 = gates_[1].center;
@@ -1847,6 +1851,7 @@ void TrackRenderer::NextRoundOrEnd() {
 void TrackRenderer::UpdateRace(float dt) {
     if (gates_.empty()) return;
     const int n = static_cast<int>(gates_.size());
+    if (countdown_ <= 0.f) race_time_ += dt;   // F4 race clock (seconds since GO)
     auto step = [&](int i, const float* pos) {
         RaceCar& r = race_[i];
         if (!r.alive) return;
@@ -1855,13 +1860,45 @@ void TrackRenderer::UpdateRace(float dt) {
         const float dx = g[0] - pos[0], dz = g[2] - pos[2];
         const float d = std::sqrt(dx * dx + dz * dz);
         if (d < 3.0f) {
-            // F4: lap completes at the LAPDATA-declared finish gate (the
-            // primary Lap_Line) — falls back to gate 0 when a track has no
-            // LAPDATA. (The multi-Lap_Line crossing-sequence + Split_Sector
-            // split times remain a Ghidra port; see the format doc F4 note.)
-            const int finish = lap_data_.valid() ? lap_data_.finish_gate() : 0;
-            if (r.gate == finish) ++r.laps;   // crossed start/finish
-            r.gate = (r.gate + 1) % n;
+            const int G = r.gate;            // reached this gate
+            bool lapped = false;
+            // F4 (algorithm-faithful port of FUN_00408610 + FUN_00411600; map in
+            // re/analysis/lap_progress_subsystem_2026-06-16.md). The original
+            // flags a LAPDATA Lap_Line gate only on a forward one-gate advance
+            // onto it (cur==prev+1 && cur==lapLine via FUN_00426cf0's list) and a
+            // lap is the declared lap-line set crossed in order — the multi-
+            // Lap_Line anti-shortcut. The standalone advances gates forward by
+            // proximity, so each reach IS that forward advance; we keep the
+            // per-car crossed set in r.lap_mask and complete a lap on the primary
+            // line once every line is set. NOT bit-identical: the original's gate
+            // index comes from a spline racing-line projection we don't port.
+            if (Track::LapLineStep(G, lap_data_.lap_lines, r.lap_mask)) {
+                ++r.laps; lapped = true;
+            }
+            // F4 split times (player car only): record the race clock at each
+            // Split_Sector gate, one record per split per lap (FUN_00411600's
+            // intermediate timing / DAT_008a964c). Re-armed on lap completion.
+            if (i == 0) {
+                for (const auto& s : lap_data_.split_sectors)
+                    if (G == s.second && s.first >= 0 && s.first < kMaxSplits &&
+                        !split_done_[s.first]) {
+                        split_time_[s.first] = race_time_;
+                        split_done_[s.first] = true;
+                    }
+                if (lapped) {
+                    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                        std::fprintf(lf, "F4 player lap %d @ t=%.2fs splits:",
+                                     r.laps, race_time_);
+                        for (int k = 0; k < kMaxSplits; ++k)
+                            if (split_done_[k])
+                                std::fprintf(lf, " s%d=%.2f", k, split_time_[k]);
+                        std::fprintf(lf, "\n");
+                        std::fclose(lf);
+                    }
+                    for (int k = 0; k < kMaxSplits; ++k) split_done_[k] = false;
+                }
+            }
+            r.gate = (G + 1) % n;
         }
         const float frac = (d > 8.f) ? 0.f : (1.f - d / 8.f);
         r.progress = static_cast<float>(r.laps * n + r.gate) + frac;

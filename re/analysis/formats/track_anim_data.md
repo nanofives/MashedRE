@@ -211,14 +211,27 @@ The numbers index the AI gate ribbon (`AI*.BSP`, material RED byte = gate index;
 gate 0 = start line). Arctic: `Lap_Line(0)`, `Lap_Line(93)`,
 `Split_Sector(0,26)`, `Split_Sector(1,55)`, 7 `Safe_Start_Lines`.
 
-**Wiring status (F4):** `TrackRenderer::Load` parses `LAPDATA.LUA`;
-`UpdateRace` now counts a lap when a car crosses `lap_data_.finish_gate()` (the
-primary `Lap_Line`, data-driven) instead of the hardcoded gate 0. The parsed
-split sectors and safe-start ranges are carried for split-timing / start-grace.
-**Deferred (needs Ghidra):** the multi-`Lap_Line` crossing-*sequence* semantics
-(why a track lists two lap lines) and the exact line-plane crossing test are the
-original's lap FUN, out of this no-Ghidra workstream's scope; the data-driven
-finish gate is a strict improvement over the hardcoded constant.
+**Wiring status (F4): SEQUENCE + SPLITS WIRED 2026-06-16 (algorithm-faithful).**
+After RE'ing the original lap FUN (`FUN_00408610` crossing rule + lap-line list
+`FUN_00426cf0` → `DAT_0066d6e4[6]` + Time-Trial intermediate recorder
+`FUN_00411600`; full subsystem map in
+`re/analysis/lap_progress_subsystem_2026-06-16.md`), `UpdateRace` now uses the
+multi-`Lap_Line` **crossing sequence** rather than a single finish gate.
+`Track::LapLineStep` (`Track/LapLogic.h`, shared verbatim with the test) flags
+each declared `Lap_Line` gate as the car advances forward onto it and completes a
+lap only when the primary line is reached with EVERY declared line crossed since
+the last lap — the "why two lap lines" anti-shortcut (Arctic must cross gate 93
+then gate 0). `Split_Sector` gates record the race clock per lap for the player
+car, mirroring `FUN_00411600`'s intermediate timing (`race_time_`/`split_time_`).
+
+**NOT bit-identical / not C4:** the original derives its gate index from a spline
+racing-line projection (`FUN_00407e20` family) the standalone doesn't port — it
+advances gates by proximity — so the diff lane can't bit-match `FUN_00408610`.
+Verified: `Track/tests/lap_test.cpp` drives the real `LapLineStep` (one loop = 1
+lap; anti-shortcut reach-primary-without-other = 0 laps; 3-line sequence; single-
+line; no-LAPDATA → gate-0 fallback — ALL PASS) plus an integration smoke (the
+race runs the per-car step without crash). The remaining verbatim/C4 path is the
+racing-line-projection subsystem port.
 
 ---
 
