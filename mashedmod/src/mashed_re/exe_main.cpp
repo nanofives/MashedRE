@@ -1915,6 +1915,9 @@ bool RenderFrame() {
                 ci.yaw_delta = 0.f; ci.pitch_delta = 0.f;
             }
             g_track.UpdateCar(di);
+            // engine note rises with speed (procedural scaffold voice)
+            mashed_re::Audio::EngineSetRpm(
+                g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
             if (s_play_demo) {   // control proof: log the player yaw under input
                 static float s_yaw_log_t = 0.f;
                 if (t - s_yaw_log_t > 1.0f) {

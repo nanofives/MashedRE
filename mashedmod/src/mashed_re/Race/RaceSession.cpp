@@ -146,6 +146,7 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         m_ambient = voice;
         m_ticks = 0;
         m_audio.ready = (voice >= 0);
+        Audio::EngineStart(0.5f);     // procedural engine voice (pitched in-race)
     } else {
         logf("ambience: audio engine unavailable");
     }
@@ -185,6 +186,7 @@ void RaceSession::Render() {
 void RaceSession::End() {
     if (!m_active) return;
     once("RaceSession::End");
+    Audio::EngineStop();
     Audio::StopAll();          // silence the ambience when the race ends
     m_active = false;
 }

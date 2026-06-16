@@ -30,6 +30,14 @@ void SetVolume(int voice, float volume);     // 0..1
 void Stop(int voice);
 void StopAll();
 
+// Engine voice — a procedural looping buzz pitched by RPM. [SCAFFOLD] the real
+// per-car engine samples live in the 0x80d streamed RWS banks (toastaudio
+// english/<car>.rws), a format not yet cracked; this synth stand-in gives the
+// race an engine note that rises with speed until those are decoded.
+void EngineStart(float volume);              // start (idempotent)
+void EngineSetRpm(float norm01);             // 0..1 -> playback pitch
+void EngineStop();
+
 // Verification aid: true if `voice`'s buffer is actually in the PLAYING state
 // (DSBSTATUS_PLAYING) — used to prove audio is live in a headless run.
 bool IsPlaying(int voice);

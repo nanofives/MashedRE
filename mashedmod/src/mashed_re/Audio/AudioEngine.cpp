@@ -25,6 +25,8 @@ void logf(const char* fmt, ...) {
 }
 
 IDirectSound8* g_ds = nullptr;
+IDirectSoundBuffer* g_engine = nullptr;   // procedural engine voice
+DWORD               g_engineBaseHz = 22050;
 
 struct Voice {
     IDirectSoundBuffer* buf = nullptr;
@@ -110,6 +112,7 @@ bool Init(void* hwnd) {
 }
 
 void Shutdown() {
+    EngineStop();
     StopAll();
     for (auto& v : g_voices) if (v.buf) { v.buf->Release(); v.buf = nullptr; }
     g_voices.clear();
@@ -142,6 +145,55 @@ void StopAll() {
         if (g_voices[i].used && g_voices[i].buf) {
             g_voices[i].buf->Stop(); g_voices[i].buf->Release(); g_voices[i] = Voice{};
         }
+}
+
+void EngineStart(float volume) {
+    if (!g_ds || g_engine) return;
+    const DWORD rate = 22050;
+    g_engineBaseHz = rate;
+    // 1 s buffer = an integer number of cycles of a low buzz (seamless loop):
+    // base 55 Hz sawtooth + a touch of harmonic grit. SetFrequency pitches it.
+    const int N = static_cast<int>(rate);
+    std::vector<std::int16_t> pcm(static_cast<size_t>(N));
+    const double baseCyc = 55.0;        // 55 cycles in 1 s -> seamless
+    for (int i = 0; i < N; ++i) {
+        const double ph = std::fmod(static_cast<double>(i) * baseCyc / N, 1.0);
+        double s = (2.0 * ph - 1.0) * 0.6;             // sawtooth
+        s += 0.25 * (2.0 * std::fmod(ph * 2.0, 1.0) - 1.0);  // octave grit
+        if (s > 1.0) s = 1.0; if (s < -1.0) s = -1.0;
+        pcm[static_cast<size_t>(i)] = static_cast<std::int16_t>(s * 9000.0);
+    }
+    WAVEFORMATEX wf = {};
+    wf.wFormatTag = WAVE_FORMAT_PCM; wf.nChannels = 1; wf.nSamplesPerSec = rate;
+    wf.wBitsPerSample = 16; wf.nBlockAlign = 2; wf.nAvgBytesPerSec = rate * 2;
+    DSBUFFERDESC d = {};
+    d.dwSize = sizeof(d);
+    d.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLFREQUENCY | DSBCAPS_GLOBALFOCUS;
+    d.dwBufferBytes = static_cast<DWORD>(pcm.size() * 2);
+    d.lpwfxFormat = &wf;
+    if (FAILED(g_ds->CreateSoundBuffer(&d, &g_engine, nullptr)) || !g_engine) {
+        g_engine = nullptr; return;
+    }
+    void* p1 = nullptr; DWORD s1 = 0;
+    if (SUCCEEDED(g_engine->Lock(0, d.dwBufferBytes, &p1, &s1, nullptr, nullptr, 0))) {
+        std::memcpy(p1, pcm.data(), s1);
+        g_engine->Unlock(p1, s1, nullptr, 0);
+    }
+    g_engine->SetVolume(VolToDs(volume));
+    g_engine->Play(0, 0, DSBPLAY_LOOPING);
+    logf("EngineStart: procedural engine voice playing");
+}
+
+void EngineSetRpm(float norm01) {
+    if (!g_engine) return;
+    if (norm01 < 0.f) norm01 = 0.f; if (norm01 > 1.f) norm01 = 1.f;
+    // idle..redline: 0.7x .. 2.2x base rate.
+    const DWORD hz = static_cast<DWORD>(g_engineBaseHz * (0.7f + norm01 * 1.5f));
+    g_engine->SetFrequency(hz);
+}
+
+void EngineStop() {
+    if (g_engine) { g_engine->Stop(); g_engine->Release(); g_engine = nullptr; }
 }
 
 bool IsPlaying(int voice) {
