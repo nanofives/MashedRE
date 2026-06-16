@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  WS-H/H1  boot-original diff lane RE-STOOD-UP on Win11 build 26200 (no C-level change): overnight feature update 26100->26200 re-broke boot (ntdll!RtlpHeap +0x542f0 heap corruption, IDENTICAL signature ECX=0x5477, layer/.asi/d3d9-independent); EMULATEHEAP relationship INVERTED -> re-added on 26200+ (setup_mashed_compat.ps1 now build-gated; scripts/parse_minidump.py added). 8 RW-math leaves re-diffed GREEN 113/113 vectors (path1 bit-identity; first-ever clean A/B for the 4 pointer-arg leaves RwV3dTransformPoint/Vector+Vec2Length/Normalize, whose C4 lacked it). RaceCamera 0x00446520 + scoring trio 0x0040eee0/0x0040b290/0x00410510 confirmed standalone-adapted (not RH_ScopedInstall hooks) -> NOT synthetic-diffable, stay C2; real C4 path = WS-H2 installed-hook canonical race. Audit: SESSION_VERIFICATION_AUDIT_2026-06-16.md.
 2026-06-16  WS-D/D1  powerup-effects map COMPLETE (no C-level change): dispatcher FUN_0045bba0 + 9-entry type table @0x005f9998 + slot struct @0x0088fbe0 fully enumerated; ROADMAP "FUN_00430670 family" corrected (=player-slot resolver). Doc re/analysis/structs/powerup_system.md. D2/D3 gated on Ghidra fn-split + WS-A1/WS-B/WS-E.
 2026-06-16  frida-sweep-20260615-2331  integration-diff GREEN 4/4 (hud_uv_rect_413bc0 menu + 3 race hooks) after MASHED boot-AV fix (dropped EMULATEHEAP); sa1 C3s fully verified
 2026-06-15  frida-sweep-20260615-2331  frida-sweep-claim  branches=2 (c3/batch-sa1-s1,s2)

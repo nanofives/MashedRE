@@ -45,18 +45,31 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean ch
 3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
    Must NOT include `DISABLEDXMAXIMIZEDWINDOWEDMODE` while the d3d9 shim is deployed
    (the AcLayers d3d9 hooks deadlock against our proxy at process init).
-   Must NOT include `EMULATEHEAP` either (**dropped 2026-06-16**): with `WIN98RTM`
-   it heap-corrupts MASHED during CRT init under the current Win11 ntdll
-   (10.0.26100.x) → `0xC0000005` WRITE in `ntdll!RtlpHeap` (+0x542f0) ~4 s into
-   boot, before the menu. The working layer is `~ RUNASINVOKER WIN98RTM
-   HIGHDPIAWARE` (boots + survives a live race, verified via `run_diff`). If
-   MASHED suddenly AVs at boot and Frida attach fails with `VirtualAllocEx 0x5`,
-   check the AppCompat layer for `EMULATEHEAP` first — **and if the layer is
-   already clean, clear the PCA Store** (`AppCompatFlags\Compatibility
-   Assistant\Store`): after a crash storm the Program Compatibility Assistant
-   applies its own heap/FTH-style shim *outside* the Layers key that re-breaks
-   boot identically, and `setup_mashed_compat.ps1` did not used to undo it (it
-   now clears both — re-run it to recover).
+   `EMULATEHEAP` is **BUILD-DEPENDENT and the relationship INVERTS across Win11
+   builds** — the setup script now toggles it on `[Environment]::OSVersion.Build`:
+   - **Build 26100** (EMULATEHEAP dropped 2026-06-16): `WIN98RTM`+`EMULATEHEAP`
+     together heap-corrupt MASHED at CRT init → `0xC0000005` WRITE in
+     `ntdll!RtlpHeap` (+0x542f0); boots clean WITHOUT EMULATEHEAP.
+   - **Build 26200+** (EMULATEHEAP re-added 2026-06-16, after an overnight feature
+     update 26100→26200 + reboot re-broke boot): now the **native** heap is what
+     MASHED's legacy CRT init corrupts (IDENTICAL signature: ntdll +0x542f0,
+     `ECX=0x5477`, heap base 0x30000, CRT ret-chain
+     0x4ac660/0x4a5f49/0x4a4274/0x49644c) **regardless of compat layer / apphelp /
+     our .asi / our d3d9 proxy** (proven by isolation). EMULATEHEAP's legacy heap
+     emulation side-steps it. Working layer on 26200+ = `~ RUNASINVOKER WIN98RTM
+     HIGHDPIAWARE EMULATEHEAP` (boots + `run_diff` GREEN). See
+     [[project-emulateheap-boot-av]].
+
+   **If MASHED suddenly AVs at boot** (Frida attach fails `VirtualAllocEx 0x5`):
+   (a) parse the newest `%LOCALAPPDATA%\CrashDumps\MASHED.exe.*.dmp` with
+   `scripts/parse_minidump.py` — identical `ECX=0x5477` / CRT ret-chain ==
+   the heap-inversion class above → re-run `setup_mashed_compat.ps1` (it picks
+   EMULATEHEAP by build) or flip `$useEmulateHeap` if the inversion point moved;
+   (b) else check the layer for stray `EMULATEHEAP`/`DISABLEDXMAXIMIZEDWINDOWEDMODE`;
+   (c) else **clear the PCA Store** (`AppCompatFlags\Compatibility Assistant\Store`):
+   after a crash storm the Program Compatibility Assistant applies its own
+   heap/FTH-style shim *outside* the Layers key — `setup_mashed_compat.ps1` clears
+   both, re-run it to recover.
 4. **d3d9 shim** built and deployed via `mashedmod\build_d3d9_shim.bat`. This proxy
    intercepts `IDirect3D9::CreateDevice` to force `Windowed=TRUE`+640×480 — without
    it, MASHED runs fullscreen, and the resolution-mode switch between launches

@@ -17,17 +17,29 @@
 #     process init; see mashedmod/src/d3d9_shim/d3d9_shim.cpp). The
 #     proxy forces Windowed=TRUE at CreateDevice anyway, which is what
 #     this shim was working around.
-# DROPPED 2026-06-16:
-#   EMULATEHEAP                     heap-corrupts MASHED at boot under the
-#     current Win11 ntdll (10.0.26100.x). WIN98RTM + EMULATEHEAP together
-#     smash a heap free-list pointer during CRT init -> 0xC0000005 WRITE in
-#     ntdll!RtlpHeap (+0x542f0) ~4s in, before the menu. Removing EMULATEHEAP
-#     (keeping WIN98RTM) boots clean AND survives a live race (verified via
-#     run_diff: sa1 hooks GREEN 4/4). Root cause + minidump analysis 2026-06-16.
+# EMULATEHEAP — BUILD-DEPENDENT, the relationship INVERTS across Win11 builds:
+#   * Build 26100 (dropped 2026-06-16): WIN98RTM + EMULATEHEAP together smash a
+#     heap free-list pointer during CRT init -> 0xC0000005 WRITE in
+#     ntdll!RtlpHeap (+0x542f0) ~4s in, before the menu. Booted clean WITHOUT it.
+#   * Build 26200 (re-added 2026-06-16, same day, after an overnight feature
+#     update 26100->26200 + reboot): now the *native* heap is what MASHED's
+#     legacy MSVC CRT init corrupts (IDENTICAL signature: ntdll +0x542f0,
+#     ECX=0x5477, heap base 0x30000, CRT ret-chain 0x4ac660/0x4a5f49/0x4a4274/
+#     0x49644c) regardless of compat layer / apphelp / our .asi / our d3d9 proxy.
+#     EMULATEHEAP (legacy heap emulation) side-steps it -> boots + run_diff GREEN.
+# So the shim is toggled on OS build below. If a future update inverts this AGAIN
+# (boot AV at ntdll +0x542f0 with the layer "correct"), flip $useEmulateHeap and
+# re-diagnose with scripts/parse_minidump.py (newest %LOCALAPPDATA%\CrashDumps
+# dump): identical ECX=0x5477 / CRT ret-chain == this same heap-inversion class.
 
 $mashedPath = (Resolve-Path "$PSScriptRoot\..\original\MASHED.exe").Path
 $layersKey  = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"
-$layer      = "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE"
+# Observed inversion point: native heap corrupts on 26200+, so EMULATEHEAP helps.
+$build = [int]([Environment]::OSVersion.Version.Build)
+$useEmulateHeap = ($build -ge 26200)
+$layer = if ($useEmulateHeap) { "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP" }
+         else                  { "~ RUNASINVOKER WIN98RTM HIGHDPIAWARE" }
+Write-Host "OS build $build -> EMULATEHEAP $(if($useEmulateHeap){'ON'}else{'OFF'})"
 
 if (-not (Test-Path $layersKey)) {
     New-Item -Path $layersKey -Force | Out-Null

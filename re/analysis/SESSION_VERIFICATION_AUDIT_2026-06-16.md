@@ -60,3 +60,57 @@ Not C4 (no function), but verified that the PARSE matches the original data:
 3. Category-C data parsers stay "data-verified" (no function to diff).
 This audit is the item-5 starting point; see re/analysis/C4_REVALIDATION.md for
 the historical C4 debt tracker.
+
+## H1 update — lane stood up on build 26200 (2026-06-16, later same day)
+
+**Boot regression found + fixed first.** The boot-original lane was dead on
+arrival: `run_diff.py` failed `VirtualAllocEx 0x5`, and a clean manual boot (no
+Frida, no .asi) AVed within ~7 s. Root-caused via WER minidump
+(`scripts/parse_minidump.py`, new this session): `0xC0000005` WRITE in
+`ntdll!RtlpHeap +0x542f0`, `ECX=0x5477`, heap base 0x30000, MSVC-CRT-init
+ret-chain 0x4ac660/0x4a5f49/0x4a4274/0x49644c — **byte-for-byte the
+[[project-emulateheap-boot-av]] signature**. Isolation proved it independent of
+the compat layer (reproduced with no layer / WIN98RTM-only / no apphelp), of our
+`.asi` (`MASHED_RE_NO_AUTO_HOOK=1`), and of our d3d9 proxy (real system d3d9
+substituted). Cause: an **overnight Windows feature update 26100→26200 + reboot
+(08:54)** changed the native heap so MASHED's legacy CRT init corrupts it. The
+EMULATEHEAP relationship **inverted** (dropped on 26100, now REQUIRED on 26200+).
+Fix = `~ RUNASINVOKER WIN98RTM HIGHDPIAWARE EMULATEHEAP`; `setup_mashed_compat.ps1`
+now toggles EMULATEHEAP on `OSVersion.Build >= 26200`. Lane re-verified GREEN.
+
+**Category-B results.**
+- **RW math leaves — REINFORCED (already C4).** All 8 registered leaves re-diffed
+  GREEN on build 26200 via run_diff (path1 bit-identity, hook bypassed = C3-grade
+  per CONFIDENCE.md, reinforcing existing C4): fast_sqrt 18/18, fast_inv_sqrt
+  18/18, vec3_magnitude 18/18, rw_v3d_transform_point 14/14,
+  rw_v3d_transform_vector 10/10, vec2_length 14/14, vec2_normalize 10/10,
+  rw_matrix_scale 11/11 (113 vectors, 0 mismatches; CSVs in `log/diff_*.csv`).
+  **NET-NEW:** the 4 pointer-arg leaves (RwV3dTransformPoint/Vector @0x004c3730/
+  0x004c3880, Vec2Length/Normalize @0x004c3bf0/0x004c3c60) carried C4 whose A/B
+  was "harness-limited RPC (pointer args)" — i.e. path1 bit-identity was never
+  actually run. The diff_template.js transform/vec2 handlers now exist, so this
+  is the **first clean path1 bit-identity** for those four. (No re-classify: level
+  unchanged at C4, evidence strengthened.)
+- **RaceCamera (0x00446520 / 0x00410d10) + scoring trio (0x0040eee0 / 0x0040b290 /
+  0x00410510) — NOT synthetic-diffable; stay C2.** Confirmed these are *standalone
+  adapted reimplementations* inside mashed_re.exe (Race/RaceCamera.cpp camera+
+  elimination; D3d9Render/TrackRenderer.cpp scoring) — NOT `RH_ScopedInstall`
+  hooks at those RVAs and not exported from the .asi. They are multi-KB
+  state-machines reading live race globals (game-mode DAT_008a94d0, score arrays
+  DAT_008a94e0…) and calling subroutines; not callable in isolation, so the
+  bypassed-call run_diff lane cannot bit-diff them. Their **real C4 path is an
+  installed-hook canonical-race observation** (RH_ScopedInstall the original RVA
+  in the .asi + `scenario=race` telemetry diff with the inline-JMP live = WS-H2),
+  not run_diff. Behavioral evidence already on file: camera live-trace
+  `camera_trace.csv` (zoom law 286/286 rows; offset/pitch within hmix margin) —
+  strong but not bit-identity, so the "C2 retained" in hooks.csv is correct.
+  Their **leaf sub-functions are already C3** via the race scenario lane:
+  RaceFloat898980Get 0x00442df0, CarStatePairGet 0x0046cbb0, CarSnapshotDwordGet
+  0x00423b20, RaceModeSet 0x0040e360, Player::WriteFieldZero 0x0041ef60,
+  Pred405890 0x00405890, TiebreakFlagGet 0x00431d80, EntityScoreFieldAdd 0x0046c700.
+
+**Honest C-level note (no overclaiming).** run_diff with the hook bypassed is
+C3-grade ([[feedback-no-overclaiming-c-levels]]); the math leaves stay C4 on
+their prior install-observe evidence, now backed by the path1 A/B they lacked.
+**No function was promoted to C4 from this run alone.** The "first C4s" goal for
+RaceCamera/scoring is deferred to WS-H2 (installed-hook canonical race).
