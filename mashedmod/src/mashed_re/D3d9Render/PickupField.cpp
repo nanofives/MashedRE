@@ -60,26 +60,62 @@ bool PickupField::EnsureTexture(IDirect3DDevice9* dev) {
     return true;
 }
 
+// MASHED powerup type -> our effect Kind. (Real types collapse onto the five
+// scaffolded effects until the FUN_00430670 power-up logic is ported.)
+int PickupField::KindFromType(int t) {
+    switch (t) {
+        case 11:                      return Missile;  // MISSILE
+        case 7: case 8: case 10:      return Missile;  // MORTAR/DETONATOR/DRUM
+        case 6: case 12:              return Mine;     // MINE / P_MINE
+        case 9: case 17:              return Shock;    // GUN / SHOTGUN
+        case 16: case 19:             return Boost;    // R_FLAME / OIL
+        case 18:                      return Shield;   // FLASH
+        default:                      return Boost;    // BLANK(21) = random box
+    }
+}
+std::uint32_t PickupField::ColForType(int t) {
+    int k = KindFromType(t);
+    return (k >= 0 && k < kKindCount) ? kKindCol[k] : 0xffffffffu;
+}
+
 void PickupField::Init(const std::vector<std::array<float, 3>>& spots, float worldRadius) {
     orbs_.clear();
     collected_ = 0; held_ = -1; phase_ = 0.f;
     worldR_ = worldRadius > 1.f ? worldRadius : 100.f;
-    // every 8th spot gets an orb (keeps the field readable, not cluttered)
+    // FALLBACK placement (no POWERUPS_GOLD.LUA): every 8th gate gets an orb.
     const int step = 8;
     for (size_t i = 0; i < spots.size(); i += step) {
         Orb o{};
         o.pos[0] = spots[i][0];
         o.pos[1] = spots[i][1] + worldR_ * 0.02f;   // float above the surface
         o.pos[2] = spots[i][2];
-        o.active = true;
-        o.respawn = 0.f;
+        o.active = true; o.respawn = 6.0f; o.cooldown = 0.f;
+        o.gameType = -1;                            // index-based kind
         o.col = kKindCol[(i / step) % kKindCount];
         orbs_.push_back(o);
     }
 }
 
+void PickupField::InitReal(const std::vector<Spawn>& spawns, float worldRadius) {
+    orbs_.clear();
+    collected_ = 0; held_ = -1; phase_ = 0.f;
+    worldR_ = worldRadius > 1.f ? worldRadius : 100.f;
+    for (const Spawn& s : spawns) {
+        Orb o{};
+        o.pos[0] = s.pos[0];
+        o.pos[1] = s.pos[1] + worldR_ * 0.012f;     // float just above the road
+        o.pos[2] = s.pos[2];
+        o.active = true;
+        o.respawn = s.respawn > 0.f ? s.respawn : 5.0f;
+        o.cooldown = 0.f;
+        o.gameType = s.type;
+        o.col = ColForType(s.type);
+        orbs_.push_back(o);
+    }
+}
+
 void PickupField::Reset() {
-    for (auto& o : orbs_) { o.active = true; o.respawn = 0.f; }
+    for (auto& o : orbs_) { o.active = true; o.cooldown = 0.f; }
     collected_ = 0; held_ = -1; phase_ = 0.f;
 }
 
@@ -92,8 +128,8 @@ bool PickupField::Update(float dt, const float carPos[3]) {
     for (size_t i = 0; i < orbs_.size(); ++i) {
         Orb& o = orbs_[i];
         if (!o.active) {
-            o.respawn -= dt;
-            if (o.respawn <= 0.f) o.active = true;
+            o.cooldown -= dt;
+            if (o.cooldown <= 0.f) o.active = true;
             continue;
         }
         if (!carPos) continue;
@@ -102,9 +138,10 @@ bool PickupField::Update(float dt, const float carPos[3]) {
         const float dy = carPos[1] - o.pos[1];
         if (dx*dx + dz*dz <= pickR2 && std::fabs(dy) <= pickR * 2.f) {
             o.active = false;
-            o.respawn = 6.0f;                  // cooldown
+            o.cooldown = o.respawn;            // real per-pickup respawn time
             ++collected_;
-            held_ = static_cast<int>(i % kKindCount);   // pick up its kind
+            held_ = (o.gameType >= 0) ? KindFromType(o.gameType)
+                                      : static_cast<int>(i % kKindCount);
             got = true;
         }
     }

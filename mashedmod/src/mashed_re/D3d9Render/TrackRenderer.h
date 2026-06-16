@@ -124,6 +124,7 @@ private:
     bool   ready_     = false;
     ParticleSystem parts_;          // in-race weather/dust billboards
     PickupField    pickups_;        // in-race power-up orbs
+    std::vector<PickupField::Spawn> powerup_spawns_;  // POWERUPS_GOLD.LUA placement
     float  last_t_    = -1.f;        // for per-frame dt (particles)
 
 public:

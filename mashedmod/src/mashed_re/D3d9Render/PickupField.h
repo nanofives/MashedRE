@@ -24,9 +24,16 @@ public:
     enum Kind { Missile = 0, Mine, Shock, Boost, Shield, kKindCount };
     static const char* KindName(int k);
 
+    // Real powerup placement from POWERUPS_GOLD.LUA: world pos + game type
+    // (MASHED ids: MINE=6 MORTAR=7 DETONATOR=8 GUN=9 DRUM=10 MISSILE=11 P_MINE=12
+    // R_FLAME=16 SHOTGUN=17 FLASH=18 OIL=19 BLANK=21) + respawn seconds.
+    struct Spawn { float pos[3]; int type; float respawn; };
+
     bool EnsureTexture(IDirect3DDevice9* dev);
     // Place orbs at a subset of the supplied world positions (e.g. gate centers).
     void Init(const std::vector<std::array<float, 3>>& spots, float worldRadius);
+    // Place orbs at the REAL powerup positions/types (POWERUPS_GOLD.LUA).
+    void InitReal(const std::vector<Spawn>& spawns, float worldRadius);
     void Reset();
 
     // Advance bob/spin + respawn timers; collect orbs the player drives through.
@@ -40,8 +47,13 @@ public:
     int  ConsumeHeld() { int h = held_; held_ = -1; return h; }
     bool enabled() const { return !orbs_.empty(); }
 
+    // Map a MASHED powerup game type -> a Kind (effect) / orb colour.
+    static int  KindFromType(int gameType);
+    static std::uint32_t ColForType(int gameType);
+
 private:
-    struct Orb { float pos[3]; bool active; float respawn; std::uint32_t col; };
+    struct Orb { float pos[3]; bool active; float respawn; float cooldown;
+                 int gameType; std::uint32_t col; };
     struct PV  { float x, y, z; D3DCOLOR c; float u, v; };
 
     std::vector<Orb>   orbs_;

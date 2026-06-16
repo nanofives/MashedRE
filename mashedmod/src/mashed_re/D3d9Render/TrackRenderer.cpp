@@ -291,6 +291,66 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 break;
             }
         }
+        // POWERUPS_GOLD.LUA -> real power-up placement (pos/type/respawn). The
+        // type ids are local consts in the LUA; we read the numeric arg from
+        // Set_Current_Type and resolve via a name->id alias table.
+        powerup_spawns_.clear();
+        for (std::uint32_t i = 0; i < piz.count(); ++i) {
+            if (_strnicmp(piz.entry(i).name, "POWERUPS", 8) != 0) continue;
+            std::uint32_t pl = 0;
+            const std::uint8_t* pb = piz.blob(i, &pl);
+            if (!pb || pl == 0) break;
+            std::string txt(reinterpret_cast<const char*>(pb), pl);
+            // alias map from the "local NAME = id" lines at the top of the file
+            std::vector<std::pair<std::string,int>> alias;
+            {
+                std::size_t p = 0;
+                while ((p = txt.find("local ", p)) != std::string::npos) {
+                    char nm[32]; int id = 0;
+                    if (std::sscanf(txt.c_str() + p, "local %31[A-Za-z0-9_] = %d", nm, &id) == 2)
+                        alias.emplace_back(nm, id);
+                    p += 6;
+                }
+            }
+            auto resolve = [&](const char* a) -> int {
+                for (auto& kv : alias) if (kv.first == a) return kv.second;
+                return std::atoi(a);   // numeric type
+            };
+            // walk Set_Current_Position(...) / Set_Current_Type(...) /
+            // Set_Current_Respawn_Time(...) / Place_Powerup()
+            PickupField::Spawn cur{}; cur.respawn = 5.f; bool havePos = false;
+            std::size_t p = 0;
+            auto findNext = [&](const char* key) { return txt.find(key, p); };
+            while (p < txt.size()) {
+                std::size_t pos = txt.find("Set_Current_Position", p);
+                std::size_t typ = txt.find("Set_Current_Type", p);
+                std::size_t rsp = txt.find("Set_Current_Respawn_Time", p);
+                std::size_t plc = txt.find("Place_Powerup", p);
+                std::size_t nxt = pos;
+                if (typ < nxt) nxt = typ;
+                if (rsp < nxt) nxt = rsp;
+                if (plc < nxt) nxt = plc;
+                if (nxt == std::string::npos) break;
+                if (nxt == pos) {
+                    std::sscanf(txt.c_str() + pos,
+                                "Set_Current_Position( %f , %f , %f )",
+                                &cur.pos[0], &cur.pos[1], &cur.pos[2]);
+                    havePos = true; p = pos + 20;
+                } else if (nxt == typ) {
+                    char a[32] = {};
+                    std::sscanf(txt.c_str() + typ, "Set_Current_Type( %31[A-Za-z0-9_] )", a);
+                    cur.type = resolve(a); p = typ + 16;
+                } else if (nxt == rsp) {
+                    std::sscanf(txt.c_str() + rsp, "Set_Current_Respawn_Time( %f )", &cur.respawn);
+                    p = rsp + 24;
+                } else {
+                    if (havePos) powerup_spawns_.push_back(cur);
+                    havePos = false; cur.respawn = 5.f; p = plc + 13;
+                }
+            }
+            (void)findNext;
+            break;
+        }
         auto load_prop = [&](const char* dff_name, Prop* p) -> bool {
             std::uint32_t dl = 0;
             const std::uint8_t* db = find_entry(dff_name, &dl);
@@ -1347,11 +1407,21 @@ void TrackRenderer::StartMatch(int /*first_to: superseded by the ported
 }
 
 void TrackRenderer::InitPickups() {
-    std::vector<std::array<float, 3>> spots;
+    const float R = track_radius_ > 1.f ? track_radius_ : radius_;
+    if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+        std::fprintf(lf, "R4 pickups: %zu real powerup spawns (POWERUPS_GOLD.LUA)\n",
+                     powerup_spawns_.size());
+        std::fclose(lf);
+    }
+    if (!powerup_spawns_.empty()) {
+        pickups_.InitReal(powerup_spawns_, R);    // REAL POWERUPS_GOLD.LUA placement
+        return;
+    }
+    std::vector<std::array<float, 3>> spots;       // fallback: gate-stride orbs
     spots.reserve(gates_.size());
     for (const auto& g : gates_)
         spots.push_back({g.center[0], g.center[1], g.center[2]});
-    pickups_.Init(spots, track_radius_ > 1.f ? track_radius_ : radius_);
+    pickups_.Init(spots, R);
 }
 
 // 0x0040b290 (standard path, mode 0 / no teams): prev snapshot, signed delta
