@@ -54,6 +54,11 @@ struct Cup {
 const Cup& Campaign_CurrentCup();
 int        Campaign_SelectedTrack();      // cursor within the cup
 void       Campaign_SetSelectedTrack(int);
+// Progression persistence (sidecar mashed_re_progress.bin; NEVER original/).
+// Load at boot; record a result (winnerSlot 0 = player won -> unlock next track
+// + trophy, then save). Campaign_CurrentCup merges this with the save-table.
+void       Campaign_LoadProgress();
+void       Campaign_OnRaceResult(int trackIdx, int winnerSlot, int position);
 // Track index (into the cup / real area table) -> area .piz path + engine
 // Course_Id (cracked from each track's COURSE.LUA).
 void       Campaign_TrackPizPath(int trackIdx, char* buf, int cap);

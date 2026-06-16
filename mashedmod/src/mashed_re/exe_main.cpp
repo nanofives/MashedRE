@@ -1965,10 +1965,17 @@ bool RenderFrame() {
                 GetEnvironmentVariableA("MASHED_RESULT_DEMO", nullptr, 0) > 0;
             if (s_result_demo && t > 5.0f && g_track.match_winner() < 0)
                 g_track.ForceMatchEnd();
-            // Match over -> hold ~3s on the winner banner, then the results screen.
+            // Match over -> record the result (progression) then, after a ~3s
+            // hold on the winner banner, show the results screen.
             if (g_track.match_winner() >= 0) {
                 static float s_match_end_t = -1.f;
-                if (s_match_end_t < 0.f) s_match_end_t = t;
+                if (s_match_end_t < 0.f) {
+                    s_match_end_t = t;
+                    // persist progress once on match end (player win unlocks next)
+                    mashed_re::Race::Campaign_OnRaceResult(
+                        mashed_re::Race::Campaign_SelectedTrack(),
+                        g_track.match_winner(), g_track.car_position(0));
+                }
                 if (t - s_match_end_t > 3.0f) {
                     mashed_re::Race::GameFlow_RequestResults();
                     s_match_end_t = -1.f;
@@ -5181,6 +5188,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
                 std::fclose(log);
             }
         }
+        // Standalone progression (sidecar) — overlays unlock/trophy onto the cup.
+        mashed_re::Race::Campaign_LoadProgress();
         // Initialize the ported nav state machine at the root screen (id 0).
         // Analogue of FUN_0043df00's FUN_0043d2a0(0,2) frontend-enter reload.
         // From here the menu is state-machine-driven (push/pop/cursor), replacing

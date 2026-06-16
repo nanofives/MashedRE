@@ -55,6 +55,24 @@ void log(const char* m) {
         std::fprintf(f, "[gameflow] %s\n", m); std::fclose(f);
     }
 }
+
+// ---- progression persistence (sidecar; NEVER original/gamesave.bin) ----------
+// Our own small progress store: per-area unlock + trophy (0..3). The shipped
+// gamesave is read-only reference; this captures the standalone's own progress.
+const char* kProgressPath = "mashed_re_progress.bin";
+const std::uint32_t kProgressMagic = 0x4d525031u;   // 'MRP1'
+int g_progUnlock[kAreaCount] = {0};
+int g_progTrophy[kAreaCount] = {0};
+bool g_progLoaded = false;
+
+void SaveProgress() {
+    if (std::FILE* f = std::fopen(kProgressPath, "wb")) {
+        std::fwrite(&kProgressMagic, 4, 1, f);
+        std::fwrite(g_progUnlock, sizeof(int), kAreaCount, f);
+        std::fwrite(g_progTrophy, sizeof(int), kAreaCount, f);
+        std::fclose(f);
+    }
+}
 }  // namespace
 
 GameMode GameFlow_Mode() { return g_mode; }
@@ -121,15 +139,51 @@ const Cup& Campaign_CurrentCup() {
     for (int i = 0; i < kCupTrackCount && i < 10; ++i) {
         g_cup.tracks[i].trackId  = i;             // index into kAreas
         g_cup.tracks[i].name     = kAreas[i].name;
-        bool unlocked = false;
-        // guard the read (image-padded span); col 4 = track-unlock flag.
-        unlocked = (unlockTbl[i * 12 + 4] != 0);
+        // unlocked if the save table says so OR our own progress store does.
+        bool unlocked = (unlockTbl[i * 12 + 4] != 0) ||
+                        (i < kAreaCount && g_progUnlock[i] != 0);
         g_cup.tracks[i].unlocked = unlocked;
-        g_cup.tracks[i].trophy   = 0;             // TODO-RE trophy column
+        g_cup.tracks[i].trophy   = (i < kAreaCount) ? g_progTrophy[i] : 0;
         if (unlocked) anyUnlocked = true;
     }
     if (!anyUnlocked) g_cup.tracks[0].unlocked = true;   // fresh-save default
     return g_cup;
+}
+
+void Campaign_LoadProgress() {
+    if (g_progLoaded) return;
+    g_progLoaded = true;
+    g_progUnlock[0] = 1;                          // track 0 always available
+    if (std::FILE* f = std::fopen(kProgressPath, "rb")) {
+        std::uint32_t magic = 0;
+        if (std::fread(&magic, 4, 1, f) == 1 && magic == kProgressMagic) {
+            std::fread(g_progUnlock, sizeof(int), kAreaCount, f);
+            std::fread(g_progTrophy, sizeof(int), kAreaCount, f);
+        }
+        std::fclose(f);
+    }
+    char m[96];
+    int n = 0; for (int i = 0; i < kAreaCount; ++i) n += (g_progUnlock[i] != 0);
+    std::snprintf(m, sizeof(m), "progress loaded: %d/%d tracks unlocked", n, kAreaCount);
+    log(m);
+}
+
+void Campaign_OnRaceResult(int trackIdx, int winnerSlot, int position) {
+    Campaign_LoadProgress();
+    char m[128];
+    std::snprintf(m, sizeof(m), "race result: track=%d winner=%d pos=%d",
+                  trackIdx, winnerSlot, position);
+    log(m);
+    if (winnerSlot != 0) return;                  // only the player's win unlocks
+    if (trackIdx >= 0 && trackIdx < kAreaCount) {
+        // trophy by finishing position (1st=gold..); win => at least bronze.
+        int tr = (position <= 1) ? 3 : (position == 2) ? 2 : (position == 3) ? 1 : 1;
+        if (tr > g_progTrophy[trackIdx]) g_progTrophy[trackIdx] = tr;
+    }
+    const int next = trackIdx + 1;                // unlock the next track
+    if (next >= 0 && next < kAreaCount) g_progUnlock[next] = 1;
+    SaveProgress();
+    log("progress saved (next track unlocked)");
 }
 int  Campaign_SelectedTrack() { return g_selTrack; }
 void Campaign_SetSelectedTrack(int t) {
