@@ -38,6 +38,11 @@ void EngineStart(float volume);              // start (idempotent)
 void EngineSetRpm(float norm01);             // 0..1 -> playback pitch
 void EngineStop();
 
+// Music — decode a 0x80d streamed RWS (IMA ADPCM, e.g. cdaudio.rws) and play it
+// looping. `maxSeconds` caps the decode (0 = whole track). Idempotent.
+void MusicStart(const char* rwsPath, float volume, int maxSeconds);
+void MusicStop();
+
 // Verification aid: true if `voice`'s buffer is actually in the PLAYING state
 // (DSBSTATUS_PLAYING) — used to prove audio is live in a headless run.
 bool IsPlaying(int voice);

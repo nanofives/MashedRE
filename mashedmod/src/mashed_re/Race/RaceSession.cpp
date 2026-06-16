@@ -147,6 +147,11 @@ void RaceSession::Begin(const RaceConfig& cfg, D3d9Render::TrackRenderer* track,
         m_ticks = 0;
         m_audio.ready = (voice >= 0);
         Audio::EngineStart(0.5f);     // procedural engine voice (pitched in-race)
+        // Real race music: the cdaudio.rws streamed bank, cracked as continuous
+        // IMA ADPCM @44100 (Audio/RwsBank::RwsStreamDecode). Cap the decode to a
+        // ~120s loop. Quiet under the engine/ambient.
+        Audio::MusicStart("original/toastaudio/pc/audio/pcdics/cdaudio.rws",
+                          0.45f, 120);
     } else {
         logf("ambience: audio engine unavailable");
     }
@@ -187,6 +192,7 @@ void RaceSession::End() {
     if (!m_active) return;
     once("RaceSession::End");
     Audio::EngineStop();
+    Audio::MusicStop();
     Audio::StopAll();          // silence the ambience when the race ends
     m_active = false;
 }

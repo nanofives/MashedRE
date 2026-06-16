@@ -27,6 +27,7 @@ void logf(const char* fmt, ...) {
 IDirectSound8* g_ds = nullptr;
 IDirectSoundBuffer* g_engine = nullptr;   // procedural engine voice
 DWORD               g_engineBaseHz = 22050;
+IDirectSoundBuffer* g_music = nullptr;    // streamed-RWS music voice
 
 struct Voice {
     IDirectSoundBuffer* buf = nullptr;
@@ -113,6 +114,7 @@ bool Init(void* hwnd) {
 
 void Shutdown() {
     EngineStop();
+    MusicStop();
     StopAll();
     for (auto& v : g_voices) if (v.buf) { v.buf->Release(); v.buf = nullptr; }
     g_voices.clear();
@@ -194,6 +196,43 @@ void EngineSetRpm(float norm01) {
 
 void EngineStop() {
     if (g_engine) { g_engine->Stop(); g_engine->Release(); g_engine = nullptr; }
+}
+
+void MusicStart(const char* rwsPath, float volume, int maxSeconds) {
+    if (!g_ds || g_music) return;
+    std::uint32_t rate = 44100;
+    std::vector<std::int16_t> pcm;
+    const std::size_t cap = (maxSeconds > 0)
+        ? static_cast<std::size_t>(maxSeconds) * 44100u : 0u;
+    if (!RwsStreamDecode(rwsPath, pcm, rate, cap, kLog) || pcm.empty()) {
+        logf("MusicStart: decode failed %s", rwsPath); return;
+    }
+    WAVEFORMATEX wf = {};
+    wf.wFormatTag = WAVE_FORMAT_PCM; wf.nChannels = 1; wf.nSamplesPerSec = rate;
+    wf.wBitsPerSample = 16; wf.nBlockAlign = 2; wf.nAvgBytesPerSec = rate * 2;
+    DSBUFFERDESC d = {};
+    d.dwSize = sizeof(d);
+    d.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
+    d.dwBufferBytes = static_cast<DWORD>(pcm.size() * 2);
+    d.lpwfxFormat = &wf;
+    if (FAILED(g_ds->CreateSoundBuffer(&d, &g_music, nullptr)) || !g_music) {
+        g_music = nullptr; logf("MusicStart: CreateSoundBuffer failed"); return;
+    }
+    void* p1 = nullptr; void* p2 = nullptr; DWORD s1 = 0, s2 = 0;
+    if (SUCCEEDED(g_music->Lock(0, d.dwBufferBytes, &p1, &s1, &p2, &s2, 0))) {
+        std::memcpy(p1, pcm.data(), s1);
+        if (p2 && s2) std::memcpy(p2, reinterpret_cast<const std::uint8_t*>(pcm.data()) + s1, s2);
+        g_music->Unlock(p1, s1, p2, s2);
+    }
+    g_music->SetVolume(VolToDs(volume));
+    g_music->Play(0, 0, DSBPLAY_LOOPING);
+    DWORD st = 0; g_music->GetStatus(&st);
+    logf("MusicStart: %s %u samples @%u Hz status=%s", rwsPath,
+         (unsigned)pcm.size(), rate, (st & DSBSTATUS_PLAYING) ? "PLAYING" : "stopped");
+}
+
+void MusicStop() {
+    if (g_music) { g_music->Stop(); g_music->Release(); g_music = nullptr; }
 }
 
 bool IsPlaying(int voice) {
