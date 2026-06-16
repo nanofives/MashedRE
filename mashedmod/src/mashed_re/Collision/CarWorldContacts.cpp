@@ -103,10 +103,12 @@ void WheelTerrainContactClassifier(int* param_1, float* param_2)
 
         float* local_90 = vFP(param_1, 0x65);      // per-wheel contact entry base
         int*   local_88 = g_wheelSkipFlags;        // DAT_0088e5e0
-        float* local_8c = g_wheelContactPos;       // DAT_0088e624 (4 x vec3)
+        // wheel-pos array bases at DAT_0088e620; the original local_8c starts at
+        // DAT_0088e624 (= base+1 float) and reads [-1]/[0]/[1] = wheel.x/y/z.
+        float* local_8c = g_wheelContactPos + 1;   // models DAT_0088e624
         for (int w = 0; w < 4; ++w) {
             if (*local_88 == 0) {
-                float fVar14 = local_8c[-1];       // wheel pos x (local_8c starts at +1 of slot)
+                float fVar14 = local_8c[-1];       // wheel pos x
                 float fVar15 = local_8c[0];        // wheel pos y
                 float fVar16 = local_8c[1];        // wheel pos z
                 if ((kZero <= (fVar14 - fVar2) * param_2[0x1b] + (fVar15 - fVar3) * param_2[0x1c] + (fVar16 - fVar4) * param_2[0x1d]) &&

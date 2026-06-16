@@ -219,6 +219,40 @@ eventual installed-hook diff ([[project-wsa2-rwmath-bitident]]).
   increment the per-pass contact counter `local_b0[]`; vertices 3 and 4 increment
   only the global `iVar15`. Preserved verbatim.
 
+## WS-B4 producer half — DONE + verified (2026-06-16)
+
+The car↔world geometry producer is fully RE'd and ported. `FUN_00538c80` is an RW
+collision-query dispatcher (switch on shape type `param_2[6]`; the wheel solver
+passes type 3 → `FUN_00539ec0`, which walks the world and fires the callback per
+triangle). The callback **`LAB_00468b80`** (0x00468b80..0x00468d7c — Ghidra never
+made it a function; reached only via the callback ptr) is the per-triangle
+collector. Disassembled this session:
+
+- Batch base = the 5th arg (the query `userData`) = **`DAT_00828320`** (resolved).
+- Entry stride 0x90 (`count*9<<4`); `DAT_0088e60c++` per entry.
+- Fill (float idx): `[0..2]`=v0 `[3..5]`=v1 `[6..8]`=v2 (from collTriangle vert ptrs
+  +0x1c/+0x20/+0x24); `[9..0xb]`=face normal (collTriangle[0..2]); `[0xc]`=material;
+  `[0xd]` (byte 0x34)=surface key (the history-match key); `[0xf]`=100000.0; `[0x10..0x12]`=0;
+  `[0x1b..0x1d]`=N×(v1−v0), `[0x1e..0x20]`=N×(v2−v1), `[0x21..0x23]`=N×(v0−v2)
+  (the 3 SAT half-plane edge normals; sat0.x = N.y·e0.z − N.z·e0.y confirmed @0x468c8f).
+
+Ported as `Collision/ContactProducer.cpp` (`FillBatchEntry` verbatim + a broadphase
+loop over the standalone's COLLI*.BSP triangles). Plus a wheel-pos correction: the
+transformed-wheel-pos array bases at **`DAT_0088e620`** (the wheel solver writes 4
+vec3 there via `FUN_004c3d90(&DAT_0088e620,…,4,…)`); the classifier's `local_8c`
+starts at `+1` float (`DAT_0088e624`) and reads `[-1]/[0]/[1]` = wheel x/y/z. (The
+prior `DAT_0088e624` label was off by one float; fixed in the port.)
+
+**Verified** by `Collision/contact_selftest.cpp` (builds standalone, runs): 4 wheels
+just above one ground triangle, inside its XZ projection, approach into the surface
+→ producer emits 1 batch entry, classifier registers **4 active contacts**, latches
+each wheel's face normal `(0,1,0)` + depth `0.1`, sets all 4 skip flags → **PASS**.
+This reproduces the captured baseline's signature (4 active wheel contacts on flat
+ground) and is the first behavioral evidence the contact-source path is correct —
+WITHOUT the WS-A consumer or vehicle-struct init. (The real-track baseline *diff*
+still awaits WS-A struct population, since the live classifier needs real
+transformed wheel positions in `DAT_0088e620`.)
+
 ## Next (B4, depends on A5)
 
 Wire B2/B3 as the contact source for the ported vehicle sim (replace the

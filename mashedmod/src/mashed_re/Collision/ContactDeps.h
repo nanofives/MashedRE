@@ -98,7 +98,8 @@ void   Obj_ReadWorldPos(void* obj, float* outPos);   // FUN_00485420
 // they live in ContactStubs.cpp so the solver ports resolve.
 extern int   g_wheelSkipFlags[4];   // DAT_0088e5e0  (per-wheel "already classified")
 extern float g_contactQueryScratch[16]; // DAT_0088e600 (RW contact-normal query scratch)
-extern float g_wheelContactPos[12]; // DAT_0088e624  (4 × vec3 transformed wheel pos)
+extern float g_wheelContactPos[12]; // DAT_0088e620 base (4 × vec3 transformed wheel pos;
+                                    // classifier reads from +1 float = DAT_0088e624)
 extern int   g_activeContactCount;  // DAT_0088e650  (filled this tick, max 4)
 extern int   g_terrainEntryCount;   // DAT_0088e60c
 // Base of the per-tick terrain triangle batch the broadphase callback appends

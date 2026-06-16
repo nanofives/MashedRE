@@ -157,6 +157,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Vehicle\MiscDamping.cpp" ^
     "Collision\CarWorldContacts.cpp" ^
     "Collision\CarCarContacts.cpp" ^
+    "Collision\ContactProducer.cpp" ^
     "Collision\ContactStubs.cpp" ^
     "GameState\StateAccessors.cpp" ^
     "Math\Vec3.cpp" ^
@@ -166,6 +167,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Math\RwV3dNormalize.cpp" ^
     "Math\RwV3dTransformPoints.cpp" ^
     "Math\RwMatrixRotate.cpp" ^
+    "Math\RwMatrixRotateInner.cpp" ^
     "Math\RwMatrixScale.cpp" ^
     "Frontend\Cluster_v1.cpp" ^
     "Frontend\BatchAA_s1.cpp" ^

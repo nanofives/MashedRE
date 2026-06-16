@@ -21,5 +21,13 @@ int  VehicleContactHistoryUpdate(int* veh);                                     
 // --- B3: car<->car ----------------------------------------------------------
 bool VehicleCarCarContact(int* vehA, int* vehB, int pass);                                  // 0x00469df0
 
+// --- B4 producer half: the terrain-batch producer (LAB_00468b80 + broadphase) ---
+struct ContactBatchEntry;  // defined in ContactConstants.h
+struct CollTriangle { float v0[3], v1[3], v2[3]; float normal[3]; int material; int surfaceKey; };
+void FillBatchEntry(ContactBatchEntry* e, const float* v0, const float* v1, const float* v2,
+                    const float* faceNormal, int material, int surfaceKey);                 // LAB_00468b80
+int  ProduceTerrainBatch(const float* center, float radius,
+                         const CollTriangle* tris, int triCount);                            // FUN_00538c80 stand-in
+
 }  // namespace Collision
 }  // namespace mashed_re
