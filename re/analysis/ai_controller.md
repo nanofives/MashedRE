@@ -232,22 +232,23 @@ So the AI is a **virtual gamepad**: it writes the same byte block the human cont
 writes, and that flows through the identical input→physics path. This is why C3 ("diff AI
 positions") is coupled to the physics consumer (§8).
 
-### Byte map — UNRESOLVED CONFLICT (must close before C2)
+### Byte map — RESOLVED 2026-06-16 (see `ai_ctrl_byte_map_RESOLVED_2026-06-16.md`)
 
-| byte | AI-side plate (00416250/00418560, U-0413/U-0407) | physics-side plate (FUN_00470670, vehicle_physics_cluster.md) |
+| byte | role | confirmed by |
 |---|---|---|
-| [0] | steer component | **accel** |
-| [1] | steer component | **brake/reverse** |
-| [3] | (written by FUN_00415220) **fire/powerup button** (ai_update_d2/SESSION_END.md) | — |
-| [4] | **accel** (0xff full, 0x40 partial, 0 off) | ? |
-| [5] | **brake** (0xff full, 0x40 partial) | ? |
+| [0] | steer cmd sign A | writer FUN_00416250 ⇄ steering source FUN_00415e20 |
+| [1] | steer cmd sign B (+ mode-2 ram) | writer FUN_00416250 |
+| [3] | fire / powerup button | writer FUN_00415220 |
+| [4] | **accel** (0/0x40/0xff) | writer FUN_00416250/00418560 + override FUN_00417640 ⇄ consumer **FUN_00467650** (`*(param_4+4)` = forward drive torque) |
+| [5] | **brake/reverse** (0/0x40/0xff) | writer FUN_00416250 + override FUN_00417640 ⇄ consumer **FUN_00467650** (`*(param_4+5)`, negative force) + FUN_00470670 accel-curve gate |
+| [6],[7] | zeroed scratch | FUN_00418560 |
 
-The two plates disagree on [0]/[1] vs [4]/[5]. Both are *inferred*, neither verified
-against the byte-level producer/consumer. **Resolution path:** decompile the DirectInput
-writer (`FUN_00496530` region — which bytes does a held throttle/steer key set?) and the
-physics reader (`FUN_00470670` — which byte indices does it read for accel/brake/steer?)
-and reconcile. Carry as **U-0407 / U-0413** (and physics `param_3` mapping). This MUST be
-closed first — the C3 position diff is meaningless if accel and steer are swapped.
+The AI-side plate was CORRECT; the old "physics-side plate" (`[0]=accel`) was a misread
+of FUN_00470670's *secondary* longitudinal-impulse channel — the *primary* throttle/brake
+consumer is FUN_00467650, which reads [4]/[5]. **Accel and steer are NOT swapped.**
+`FUN_004a2c48` = MSVC `__ftol` (reads x87 ST0). U-0407 closed; U-0413 downgraded to a
+non-blocking downstream-physics label question. The verbatim port reproduces the writes
+by byte index, so byte semantics do not affect port correctness.
 
 Observed value vocabulary: `0xff` = full, `0x40` = partial (mode-7 throttle, mode-5
 brake), `0x00` = off. The final gate forces `[4]=[5]=0` when game mode ∉ {5,6,9,10,11}.
