@@ -18,6 +18,9 @@ namespace Track {
 struct Material {
     char          tex_name[33];   // empty string = untextured (color-only)
     std::uint8_t  rgba[4];
+    // F3: UVAnim dict entry bound via the RW UVAnim material extension
+    // (rwID_UVANIMPLUGIN 0x135); empty if none. See track_anim_data.md F3.
+    char          uv_anim[33];
 };
 
 struct Sector {

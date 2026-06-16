@@ -141,14 +141,25 @@ for both — pure vertical scroll). These rates are byte-exact; the only
 [UNCERTAIN] is the affine element ordering, which does not affect the extracted
 scroll vector.
 
-**Wiring status (F3):** `TrackRenderer::Load` parses the `.UVA` and binds each
-entry's scroll rate to world materials whose `tex_name` carries the entry's stem
-("bmp_Sea_M" → "Sea"); `Render` scrolls them via a `D3DTS_TEXTURE0` translation
-with `D3DTTFF_COUNT2`. **Binding heuristic** — the original binds a UV anim to a
-material through a per-material UV-anim extension chunk; we don't parse that
-extension yet, so we name-match. Materials drawn as **DFF props** (Arctic's sea is
-`SEA.DFF`, the sky is a clump) aren't covered yet (props don't retain material
-names); covering them + the extension-based binding is the faithful follow-on.
+**Wiring status (F3): WIRED — extension-based 2026-06-16.** The name-match heuristic
+is replaced by the original's real binding. `TrackWorld`/`DffModel` now parse the RW
+**UVAnim material extension** (`rwID_UVANIMPLUGIN` 0x135 = `MAKECHUNKID(CRITERIONTK,
+0x35)`) inside each material's `EXTENSION` (0x03) chunk — librw `readUVAnim` layout: a
+`STRUCT` (0x01) holding `u32 mask`, then a 32-byte name per set bit; the lowest set
+bit's name (e.g. "bmp_Sea_M") binds the material to that `.UVA` dict entry. The parsed
+name is stored in `Material::uv_anim` / `DffMaterial::uv_anim`. `TrackRenderer` maps
+each `.UVA` entry name → its keyframe scroll rate and applies it (a `D3DTS_TEXTURE0`
+translation, `D3DTTFF_COUNT2`) to the bound material — for **world** geometry, **DFF
+props** (Arctic's sea = `SEA.DFF`) AND the **sky** clump (`SKY.DFF`), the cases the
+old world-only name-match missed.
+
+Data-verified (byte scan of the Arctic assets): `GRAPH.BSP` carries **no** UVAnim
+extension; `SEA.DFF` has one (`mask=0x1`, name `bmp_Sea_M`, off 0x2240) and `SKY.DFF`
+one (`bmp_Sky_M`) — i.e. on Arctic the UV-scroll lives entirely on the prop/sky clumps,
+so the old heuristic (world materials only) bound nothing visible. Standalone verify:
+load log `F3 UV-anim: 2 .UVA rate(s); scrolling materials world=0 props=1 sky=1`, and an
+A/B render diff (`MASHED_NO_UVSCROLL` toggle) localises the moving texels to the
+frozen-bay sea surface (`verify/_f3_scroll_highlight.png`).
 
 ## F5 — `.MTS` matrices (count + N · rwID_MATRIX 0x0D)
 

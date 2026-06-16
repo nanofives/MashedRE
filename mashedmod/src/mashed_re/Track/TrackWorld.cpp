@@ -30,6 +30,34 @@ bool read_chunk(const Rd& r, std::size_t off, Chunk* c) {
     return r.ok(c->payload, c->size);
 }
 
+// [F3] First UVAnim material-extension name (rwID_UVANIMPLUGIN 0x135) within a
+// material EXTENSION(0x03) payload. librw readUVAnim layout: chunk 0x135 ->
+// STRUCT 0x01 -> u32 mask + a 32-byte name per set bit; the lowest set bit's
+// name binds the material to that UVAnimDict entry. Writes "" if absent.
+void read_uvanim_ext(const Rd& r, const std::uint8_t* data,
+                     std::size_t ext_payload, std::size_t ext_size, char* out) {
+    out[0] = '\0';
+    std::size_t o = ext_payload;
+    const std::size_t end = ext_payload + ext_size;
+    while (o + 12 <= end) {
+        Chunk c;
+        if (!read_chunk(r, o, &c)) return;
+        if (c.id == 0x135) {
+            Chunk us;
+            if (!read_chunk(r, c.payload, &us) || us.id != 0x01 || us.size < 4)
+                return;
+            const std::uint32_t mask = r.u32(us.payload);
+            if (!mask || !r.ok(us.payload + 4, 32)) return;
+            std::size_t cn = 0;
+            const std::uint8_t* nm = data + us.payload + 4;
+            while (cn < 32 && nm[cn]) { out[cn] = static_cast<char>(nm[cn]); ++cn; }
+            out[cn] = '\0';
+            return;
+        }
+        o = c.payload + c.size;
+    }
+}
+
 }  // namespace
 
 bool World::Parse(const std::uint8_t* data, std::size_t len) {
@@ -85,6 +113,8 @@ bool World::Parse(const std::uint8_t* data, std::size_t len) {
                         }
                         out.tex_name[cn] = '\0';
                     }
+                } else if (ch.id == 0x03) {   // F3: material EXTENSION (UVAnim)
+                    read_uvanim_ext(r, data, ch.payload, ch.size, out.uv_anim);
                 }
                 qq = ch.payload + ch.size;
             }

@@ -17,6 +17,10 @@ namespace Track {
 struct DffMaterial {
     char         tex_name[33];
     std::uint8_t rgba[4];
+    // F3: the UVAnim dict entry this material is bound to via its RW UVAnim
+    // material extension (rwID_UVANIMPLUGIN 0x135), e.g. "bmp_Sea_M". Empty if
+    // the material carries no UV-anim binding. See track_anim_data.md F3.
+    char         uv_anim[33];
 };
 
 // One renderable batch: model-space triangles for one material.

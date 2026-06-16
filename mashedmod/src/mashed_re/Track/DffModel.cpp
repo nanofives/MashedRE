@@ -44,6 +44,25 @@ bool find_child(const Rd& r, std::size_t off, std::size_t end,
     return false;
 }
 
+// [F3] First UVAnim material-extension name (rwID_UVANIMPLUGIN 0x135) within a
+// material EXTENSION(0x03) payload. librw readUVAnim layout: chunk 0x135 ->
+// STRUCT 0x01 -> u32 mask + a 32-byte name per set bit; the lowest set bit's
+// name binds the material to that UVAnimDict entry. Writes "" if absent.
+void read_uvanim_ext(const Rd& r, const std::uint8_t* data,
+                     std::size_t ext_payload, std::size_t ext_size, char* out) {
+    out[0] = '\0';
+    Chunk uc;
+    if (!find_child(r, ext_payload, ext_payload + ext_size, 0x135, &uc)) return;
+    Chunk us;
+    if (!read_chunk(r, uc.payload, &us) || us.id != 0x01 || us.size < 4) return;
+    const std::uint32_t mask = r.u32(us.payload);
+    if (!mask || !r.ok(us.payload + 4, 32)) return;
+    std::size_t cn = 0;
+    const std::uint8_t* nm = data + us.payload + 4;
+    while (cn < 32 && nm[cn]) { out[cn] = static_cast<char>(nm[cn]); ++cn; }
+    out[cn] = '\0';
+}
+
 struct Frame {
     float rot[9];   // column-major 3x3
     float pos[3];
@@ -222,6 +241,9 @@ bool DffModel::Parse(const std::uint8_t* data, std::size_t len) {
                                 }
                                 out.tex_name[cn] = '\0';
                             }
+                        } else if (ch.id == 0x03) {   // F3: material EXTENSION
+                            read_uvanim_ext(r, data, ch.payload, ch.size,
+                                            out.uv_anim);
                         }
                         qq = ch.payload + ch.size;
                     }
