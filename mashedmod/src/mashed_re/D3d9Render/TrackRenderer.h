@@ -27,6 +27,7 @@
 #include <vector>
 
 #include "../Race/RaceCamera.h"
+#include "../Track/TrackData.h"
 #include "ParticleSystem.h"
 #include "PickupField.h"
 
@@ -170,6 +171,18 @@ private:
         float dir[3];
     };
     std::vector<Gate> gates_;
+
+    // ---- F4 LAPDATA.LUA: real lap lines (parsed in Load) — replaces the
+    // hardcoded gate-0 lap heuristic. Also carries split sectors + safe-start
+    // ranges for split timing / start-grace (re/analysis/formats/track_anim_data.md).
+    Track::LapData lap_data_;
+    // ---- F3 .UVA UV-anim: per-material scrolling-UV rate (units/sec). Sized to
+    // batches_ (one entry per world material); zero = static. The named UVA
+    // entries (bmp_Sea_M / bmp_Sky_M) bind to materials whose tex_name carries
+    // the stem (Sea / Sky) — see Track::UVEntry::TextureStem.
+    struct MatScroll { float du = 0.f, dv = 0.f; };
+    std::vector<MatScroll> mat_scroll_;
+    bool uv_anim_ = false;          // any world material scrolls
 
     // VERBATIM-PORTED race camera + elimination (Race/RaceCamera.{h,cpp};
     // replaces the invented centroid camera + ">7 gates" rule).

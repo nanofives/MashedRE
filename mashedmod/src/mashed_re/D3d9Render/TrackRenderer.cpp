@@ -19,6 +19,24 @@ namespace D3d9Render {
 
 namespace {
 
+// case-insensitive substring test (F3 UVA stem -> material tex_name binding)
+bool IContains(const char* hay, const char* needle) {
+    if (!hay || !needle || !needle[0]) return false;
+    const std::size_t nl = std::strlen(needle), hl = std::strlen(hay);
+    if (nl > hl) return false;
+    for (std::size_t i = 0; i + nl <= hl; ++i) {
+        std::size_t j = 0;
+        for (; j < nl; ++j) {
+            char a = hay[i + j], b = needle[j];
+            if (a >= 'A' && a <= 'Z') a = static_cast<char>(a - 'A' + 'a');
+            if (b >= 'A' && b <= 'Z') b = static_cast<char>(b - 'A' + 'a');
+            if (a != b) break;
+        }
+        if (j == nl) return true;
+    }
+    return false;
+}
+
 // [item 2 — renderer] Flat per-face directional+ambient lighting for car models.
 // The DFF path carries no per-vertex normals, so cars render flat; this folds a
 // face-normal diffuse into the vertex colours so vehicles gain form/shading.
@@ -265,6 +283,51 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
                 }
             }
         }
+    }
+
+    // ---- F3 .UVA UV-anim: bind scrolling-UV rates to world materials -------
+    // The track's .UVA (rwID_UVANIMDICT) names entries "bmp_<Tex>_M". The
+    // original binds them to materials via a per-material UV-anim extension;
+    // we don't parse that extension yet, so bind by the documented name
+    // heuristic — a material whose tex_name carries the entry's stem (Sea/Sky)
+    // scrolls at the entry's keyframe rate (du/dt, dv/dt). Applies to materials
+    // that are part of the WORLD geometry; sea/sky drawn as DFF props (Arctic's
+    // SEA.DFF, the sky clump) are not yet covered — see the format doc F3 note.
+    mat_scroll_.assign(world.materials.size(), {});
+    uv_anim_ = false;
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        const char* n = piz.entry(i).name;
+        const std::size_t ln = std::strlen(n);
+        if (ln < 4 || _stricmp(n + ln - 4, ".UVA") != 0) continue;
+        std::uint32_t ul = 0;
+        const std::uint8_t* ub = piz.blob(i, &ul);
+        Track::UVDict uv;
+        if (!ub || !uv.Parse(ub, ul)) break;
+        for (const auto& e : uv.anims) {
+            if (e.du_dt == 0.f && e.dv_dt == 0.f) continue;
+            const std::string stem = e.TextureStem();
+            if (stem.empty()) continue;
+            for (std::size_t mi = 0; mi < world.materials.size(); ++mi) {
+                const char* tn = world.materials[mi].tex_name;
+                if (tn[0] && IContains(tn, stem.c_str())) {
+                    mat_scroll_[mi].du = e.du_dt;
+                    mat_scroll_[mi].dv = e.dv_dt;
+                    uv_anim_ = true;
+                }
+            }
+        }
+        break;   // one .UVA dictionary per track
+    }
+
+    // ---- F4 LAPDATA.LUA: real lap lines (parsed once; used by UpdateRace to
+    // count laps at the data-declared finish gate instead of a hardcoded 0).
+    for (std::uint32_t i = 0; i < piz.count(); ++i) {
+        if (_strnicmp(piz.entry(i).name, "LAPDATA", 7) != 0) continue;
+        std::uint32_t ll = 0;
+        const std::uint8_t* lb = piz.blob(i, &ll);
+        if (lb && ll)
+            lap_data_.Parse(reinterpret_cast<const char*>(lb), ll);
+        break;
     }
 
     // batches per material
@@ -1514,7 +1577,12 @@ void TrackRenderer::UpdateRace(float dt) {
         const float dx = g[0] - pos[0], dz = g[2] - pos[2];
         const float d = std::sqrt(dx * dx + dz * dz);
         if (d < 3.0f) {
-            if (r.gate == 0) ++r.laps;   // crossed start/finish
+            // F4: lap completes at the LAPDATA-declared finish gate (the
+            // primary Lap_Line) — falls back to gate 0 when a track has no
+            // LAPDATA. (The multi-Lap_Line crossing-sequence + Split_Sector
+            // split times remain a Ghidra port; see the format doc F4 note.)
+            const int finish = lap_data_.valid() ? lap_data_.finish_gate() : 0;
+            if (r.gate == finish) ++r.laps;   // crossed start/finish
             r.gate = (r.gate + 1) % n;
         }
         const float frac = (d > 8.f) ? 0.f : (1.f - d / 8.f);
@@ -1731,6 +1799,18 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
         const auto& b = batches_[mi];
         if (b.empty()) continue;
         dev->SetTexture(0, textures_[mi]);
+        // F3: scroll the UVs of UV-animated materials (sea/sky) via a texture
+        // transform — translation in row 3 with D3DTTFF_COUNT2 (the standard
+        // 2D scroll), offset = rate * time wrapped to [0,1).
+        const bool scroll = uv_anim_ && mi < mat_scroll_.size() &&
+                            (mat_scroll_[mi].du != 0.f || mat_scroll_[mi].dv != 0.f);
+        if (scroll) {
+            D3DMATRIX tm; MatIdentity(&tm);
+            tm._31 = std::fmod(mat_scroll_[mi].du * t, 1.f);
+            tm._32 = std::fmod(mat_scroll_[mi].dv * t, 1.f);
+            dev->SetTransform(D3DTS_TEXTURE0, &tm);
+            dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2);
+        }
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG2);
         dev->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
@@ -1738,6 +1818,8 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
                              b.data(), sizeof(V));
         if (!textures_[mi])
             dev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        if (scroll)
+            dev->SetTextureStageState(0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_DISABLE);
     }
 
     // R6: track props — instanced DFF batches (tyre walls, crates, sea,
