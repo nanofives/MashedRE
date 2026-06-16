@@ -45,6 +45,19 @@ Not C4 (no function), but verified that the PARSE matches the original data:
 - RWS audio 0x809 + 0x80d IMA ADPCM — decoded WAVs + autocorr 0.84/0.96 vs noise.
 - Course_Id<->area table — read directly from each COURSE.LUA.
 - POWERUPS_GOLD.LUA placement — independent re-parse cross-check (below): MATCH.
+- **WS-F track data formats (2026-06-16)** — all five cracked as standard RW core
+  chunk streams (IDs vs rwplcore.h), parsed with exact byte consumption across
+  **229/229 assets / 13 tracks, 0 failures** (re/tools/rw_track_data.py validate;
+  C++ twin Track/TrackData.{h,cpp} runtime-checked vs Arctic — ALL PASS). Doc:
+  re/analysis/formats/track_anim_data.md.
+    - F1 .SPL = rwID_SPLINE (0x0C); F2 .ANM = rwID_HANIMANIMATION (0x1B);
+      F3 .UVA = rwID_UVANIMDICT (0x2B); F5 .MTS = rwID_MATRIX (0x0D) list
+      (AUDIT: instance-placement matrices, NOT material scripts; .MTS.TXT twins
+      stale on several tracks — binary authoritative); F4 LAPDATA.LUA (text).
+    - Wired (both targets build clean): F4 laps count at the LAPDATA finish gate
+      (was hardcoded gate 0); F3 UV-scroll on world sea/sky materials. Deferred
+      (in the doc): F2 copter prop render, F3 prop/extension binding, F4
+      multi-line sequence + split times (the original lap FUN — out of no-Ghidra WS-F).
 
 ## Verification run this session (data level)
 
