@@ -2053,7 +2053,9 @@ bool RenderFrame() {
                 // active effect badges above it.
                 if (g_track.pickup_held() >= 0) {
                     wchar_t pw[64];
-                    const char* nm = g_track.pickup_held_name();
+                    // Show the faithful MASHED power-up name (real type code from the
+                    // POWERUPS_GOLD.LUA spawn); the effect itself is still the scaffold.
+                    const char* nm = g_track.pickup_held_real_name();
                     swprintf(pw, 64, L"PWR: %hs  [SPACE]", nm);
                     DrawMashedString(pw, 20.f, 440.f, 22.f, 0xff80ffc0u);
                 }

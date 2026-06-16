@@ -1,6 +1,7 @@
 # Analysis Changelog
 
 Append-only log of confidence promotions and demotions, written by the `re-classify` skill. One line per event.
+2026-06-16  WS-D/D1  powerup-effects map COMPLETE (no C-level change): dispatcher FUN_0045bba0 + 9-entry type table @0x005f9998 + slot struct @0x0088fbe0 fully enumerated; ROADMAP "FUN_00430670 family" corrected (=player-slot resolver). Doc re/analysis/structs/powerup_system.md. D2/D3 gated on Ghidra fn-split + WS-A1/WS-B/WS-E.
 2026-06-16  frida-sweep-20260615-2331  integration-diff GREEN 4/4 (hud_uv_rect_413bc0 menu + 3 race hooks) after MASHED boot-AV fix (dropped EMULATEHEAP); sa1 C3s fully verified
 2026-06-15  frida-sweep-20260615-2331  frida-sweep-claim  branches=2 (c3/batch-sa1-s1,s2)
 2026-06-15  C2->C3  0x00413bc0  HudUvRect413bc0  c3-batch-sa1-s1 per-session GREEN-12/12 (esi_idx_ecx_outbuf4; integration-diff DEFERRED: MASHED boot AV 0xC0000005 env)

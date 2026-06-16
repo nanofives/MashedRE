@@ -27,6 +27,35 @@ const char* PickupField::KindName(int k) {
     return (k >= 0 && k < kKindCount) ? n[k] : "None";
 }
 
+// Faithful MASHED type names (data-verified vs POWERUPS_GOLD.LUA constants and the
+// runtime effect table @0x005f9998, which holds entries for codes 7,9,10,11,12,16,
+// 17,18,19). Codes 6/8/21 have no own table entry (D1 map U-WSD-3).
+const char* PickupField::RealTypeName(int t) {
+    switch (t) {
+        case 6:  return "Mine";        // MINE   (no own effect entry; aliases P_MINE? U-WSD-3)
+        case 7:  return "Mortar";      // MORTAR
+        case 8:  return "Detonator";   // DETONATOR (no own effect entry; U-WSD-3)
+        case 9:  return "Gatling Gun"; // GUN
+        case 10: return "Drum";        // DRUM
+        case 11: return "Missile";     // MISSILE
+        case 12: return "Proximity Mine"; // P_MINE
+        case 16: return "Flamethrower";   // R_FLAME
+        case 17: return "Shotgun";     // SHOTGUN
+        case 18: return "Flash";       // FLASH
+        case 19: return "Oil Slick";   // OIL
+        case 21: return "Random";      // BLANK (random box; U-WSD-3)
+        default: return "Power-up";
+    }
+}
+
+bool PickupField::TypeHasEffectEntry(int t) {
+    switch (t) {
+        case 7: case 9: case 10: case 11: case 12:
+        case 16: case 17: case 18: case 19: return true;   // present in 0x005f9998
+        default:                            return false;  // 6/8/21 absent (U-WSD-3)
+    }
+}
+
 float PickupField::Frand() {
     rng_ ^= rng_ << 13; rng_ ^= rng_ >> 17; rng_ ^= rng_ << 5;
     return static_cast<float>(rng_ & 0xFFFFFF) / static_cast<float>(0x1000000);
@@ -60,17 +89,21 @@ bool PickupField::EnsureTexture(IDirect3DDevice9* dev) {
     return true;
 }
 
-// MASHED powerup type -> our effect Kind. (Real types collapse onto the five
-// scaffolded effects until the FUN_00430670 power-up logic is ported.)
+// [SCAFFOLD] MASHED powerup type -> one of the 5 scaffolded effect Kinds. This is
+// an INVENTED stand-in: the real effects are the per-type FIRE handlers in the
+// 0x005f9998 table (Missile FIRE = FUN_00455150, etc.), gated on WS-A1/WS-B/WS-E
+// (D1 map). The mapping picks the nearest scaffold behaviour per real type so the
+// live stand-in stays plausible until the verbatim per-type port (D2) replaces it.
 int PickupField::KindFromType(int t) {
     switch (t) {
-        case 11:                      return Missile;  // MISSILE
-        case 7: case 8: case 10:      return Missile;  // MORTAR/DETONATOR/DRUM
-        case 6: case 12:              return Mine;     // MINE / P_MINE
-        case 9: case 17:              return Shock;    // GUN / SHOTGUN
-        case 16: case 19:             return Boost;    // R_FLAME / OIL
-        case 18:                      return Shield;   // FLASH
-        default:                      return Boost;    // BLANK(21) = random box
+        case 11:                      return Missile;  // MISSILE  -> homing projectile
+        case 7: case 8: case 10:      return Missile;  // MORTAR/DETONATOR/DRUM -> projectile
+        case 6: case 12:              return Mine;     // MINE / P_MINE -> dropped hazard
+        case 9: case 17:              return Shock;    // GUN / SHOTGUN -> disrupt nearby
+        case 16:                      return Boost;    // R_FLAME (flamethrower) -> forward burst
+        case 19:                      return Mine;     // OIL (slick) -> dropped hazard
+        case 18:                      return Shield;   // FLASH (blind) -> defensive stand-in
+        default:                      return Boost;    // BLANK(21) random box -> stand-in
     }
 }
 std::uint32_t PickupField::ColForType(int t) {
@@ -80,7 +113,7 @@ std::uint32_t PickupField::ColForType(int t) {
 
 void PickupField::Init(const std::vector<std::array<float, 3>>& spots, float worldRadius) {
     orbs_.clear();
-    collected_ = 0; held_ = -1; phase_ = 0.f;
+    collected_ = 0; held_ = -1; held_type_ = -1; phase_ = 0.f;
     worldR_ = worldRadius > 1.f ? worldRadius : 100.f;
     // FALLBACK placement (no POWERUPS_GOLD.LUA): every 8th gate gets an orb.
     const int step = 8;
@@ -98,7 +131,7 @@ void PickupField::Init(const std::vector<std::array<float, 3>>& spots, float wor
 
 void PickupField::InitReal(const std::vector<Spawn>& spawns, float worldRadius) {
     orbs_.clear();
-    collected_ = 0; held_ = -1; phase_ = 0.f;
+    collected_ = 0; held_ = -1; held_type_ = -1; phase_ = 0.f;
     worldR_ = worldRadius > 1.f ? worldRadius : 100.f;
     for (const Spawn& s : spawns) {
         Orb o{};
@@ -116,7 +149,7 @@ void PickupField::InitReal(const std::vector<Spawn>& spawns, float worldRadius) 
 
 void PickupField::Reset() {
     for (auto& o : orbs_) { o.active = true; o.cooldown = 0.f; }
-    collected_ = 0; held_ = -1; phase_ = 0.f;
+    collected_ = 0; held_ = -1; held_type_ = -1; phase_ = 0.f;
 }
 
 bool PickupField::Update(float dt, const float carPos[3]) {
@@ -142,6 +175,7 @@ bool PickupField::Update(float dt, const float carPos[3]) {
             ++collected_;
             held_ = (o.gameType >= 0) ? KindFromType(o.gameType)
                                       : static_cast<int>(i % kKindCount);
+            held_type_ = o.gameType;           // faithful real type code (HUD)
             got = true;
         }
     }

@@ -18,7 +18,14 @@ Must be REPLACED by verbatim ports before they can be verified:
   2026-06-16: "FUN_0040e480" was a mis-citation; that RVA is `CarSlotStateSet` (frontend
   leaf). Cluster mapped in `re/analysis/ai_controller.md` (WS-C C1 done).]
 - Collision (ground raycast only) — real = RW-Physics contact system.
-- Power-up EFFECTS (boost/shield/missile/mine/shock) — real = FUN_00430670 family.
+- Power-up EFFECTS (boost/shield/missile/mine/shock) — real = **FUN_0045bba0
+  dispatcher + 9-entry type table @0x005f9998 family**. [Corrected 2026-06-16:
+  "FUN_00430670" was a mis-citation; that RVA is a player-slot resolver. **WS-D/D1
+  done** — full architecture, slot struct @0x0088fbe0, type table and per-type
+  effect-fn RVAs in `re/analysis/structs/powerup_system.md`.] D2 (verbatim per-type
+  port) gated on Ghidra fn-split of 0x453f60–0x45be81 + WS-A1 (vehicle struct) + WS-B
+  (collision) + WS-E (RW scene-graph). Scaffold held-type name now data-faithful to
+  POWERUPS_GOLD.LUA (PickupField::RealTypeName).
 - Particles, pickup orb visuals, lap/elim flow tuning, results screen layout,
   game-mode->rule mapping, car flat-lighting (approx, not RW RpWorld).
 - Progression store (our own sidecar format, not the gamesave serialization).

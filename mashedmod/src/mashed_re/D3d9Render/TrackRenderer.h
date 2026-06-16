@@ -136,6 +136,10 @@ public:
     const char* pickup_held_name() const {
         return PickupField::KindName(pickups_.held());
     }
+    // Faithful MASHED name of the held power-up (real type code from the spawn data).
+    const char* pickup_held_real_name() const {
+        return PickupField::RealTypeName(pickups_.held_type());
+    }
 private:
 
     // free-camera state (orbit when !free_)

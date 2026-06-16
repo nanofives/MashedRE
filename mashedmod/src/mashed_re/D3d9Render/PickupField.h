@@ -5,9 +5,16 @@
 //   * respawn after a cooldown;
 //   * a held-power-up slot + collected counter the HUD reads.
 //
-// [SCAFFOLD] The power-up EFFECTS (missiles/mines/shock — FUN_00430670 family)
-// are NOT simulated; this is the pickup/economy layer only. The orb placement
-// and effect roster are invented presentation pending RE of the power-up cluster.
+// [SCAFFOLD] The power-up EFFECTS are NOT simulated here; this is the pickup/
+// economy layer only. The real effect system (mapped in WS-D/D1 — see
+// re/analysis/structs/powerup_system.md) is a vtable-dispatched cluster:
+// dispatcher FUN_0045bba0, 9-entry type table @0x005f9998 (stride 0x40), slot
+// struct @0x0088fbe0 (+0xa8 active entry, +0xac armed handle). (NOT "FUN_00430670"
+// — that ROADMAP RVA is a player-slot resolver; corrected in the D1 map.) The
+// verbatim per-type effect port (D2) is gated on the vehicle struct (WS-A1),
+// the projectile pool, the RW scene-graph (WS-E) and collision (WS-B); until then
+// the held-effect roster below is an invented stand-in. The real held TYPE is
+// reported faithfully via RealTypeName() (data-verified vs POWERUPS_GOLD.LUA).
 #pragma once
 
 #include <d3d9.h>
@@ -23,6 +30,14 @@ public:
     // Power-up roster (names only; effects un-ported). -1 = none held.
     enum Kind { Missile = 0, Mine, Shock, Boost, Shield, kKindCount };
     static const char* KindName(int k);
+
+    // Faithful MASHED power-up type name for a game type code (data-verified vs
+    // POWERUPS_GOLD.LUA + the 0x005f9998 type table). Used by the HUD to show the
+    // real held power-up name even while the effect itself is the scaffold stand-in.
+    static const char* RealTypeName(int gameType);
+    // True if the type code has a real effect-table entry (codes 7,9,10,11,12,16,
+    // 17,18,19). Codes 6/8/21 are absent from the table — see D1 map U-WSD-3.
+    static bool        TypeHasEffectEntry(int gameType);
 
     // Real powerup placement from POWERUPS_GOLD.LUA: world pos + game type
     // (MASHED ids: MINE=6 MORTAR=7 DETONATOR=8 GUN=9 DRUM=10 MISSILE=11 P_MINE=12
@@ -43,8 +58,11 @@ public:
 
     int  collected() const { return collected_; }
     int  held() const { return held_; }
+    // The real MASHED game type code of the held power-up (-1 if none / index-based
+    // fallback orb). Data-faithful: comes straight from the POWERUPS_GOLD.LUA spawn.
+    int  held_type() const { return held_type_; }
     // Use the held power-up: returns its kind (or -1 if none) and clears it.
-    int  ConsumeHeld() { int h = held_; held_ = -1; return h; }
+    int  ConsumeHeld() { int h = held_; held_ = -1; held_type_ = -1; return h; }
     bool enabled() const { return !orbs_.empty(); }
 
     // Map a MASHED powerup game type -> a Kind (effect) / orb colour.
@@ -62,6 +80,7 @@ private:
     float              phase_  = 0.f;     // shared bob/spin phase
     int                collected_ = 0;
     int                held_   = -1;
+    int                held_type_ = -1;  // real MASHED type code of the held orb
     std::uint32_t      rng_    = 0x51ed270bu;
     std::vector<PV>    verts_;
     float Frand();
