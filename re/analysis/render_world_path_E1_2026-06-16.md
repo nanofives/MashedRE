@@ -333,6 +333,11 @@ FUN_00492e90 frame loop
 ```
 
 ## 9. Open / next (B-full port sequence)
+> **Items below partly closed 2026-06-16 in `render_world_path_E2_prep_2026-06-16.md`**
+> (submit-path dispatch + two default pipelines + submit leaves; full BSP→RpWorld
+> loader chain `FUN_00426e10`→`FUN_00479330`→`FUN_0042a640`→`FUN_004b3c60`→
+> `FUN_004e99b0`; `FUN_004c1b40` full decomp; `FUN_004f0900` mechanism). Remaining:
+> RxPipeline node-function identities (pipeline-create at OPEN) + `FUN_004e99b0` body.
 - **E2 prep:** decompile the RxPipeline node graph from `FUN_004d40d0` — walk
   `pipeline+8` node vtable[1] chain; identify instance/cull/light/submit nodes;
   the submit node's D3D9 `DrawIndexedPrimitive` call (device `DAT_007d4120`,
