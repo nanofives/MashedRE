@@ -1242,6 +1242,17 @@ void LoadMenuSettings() {
     }
 }
 
+// [WS-G4] Push the persisted option settings into the live subsystems they
+// actually control: the Music/SFX volume sliders -> AudioEngine master volumes
+// (0..10 -> 0..1); the Autosave toggle -> the campaign auto-save gate. Called at
+// boot (after LoadMenuSettings) and after every Sound-screen change so the
+// options aren't merely displayed but take real effect.
+void ApplyOptionSettings() {
+    mashed_re::Audio::SetMasterMusicVolume(g_settings.music / 10.0f);
+    mashed_re::Audio::SetMasterSfxVolume(g_settings.sfx / 10.0f);
+    mashed_re::Race::Campaign_SetAutosave(g_settings.autosave != 0);
+}
+
 // LEFT/RIGHT on the Sound screen adjusts the highlighted value and persists
 // immediately (autosave-style). Rows: 0..2 = volumes (0..10), 3 = toggle.
 void AdjustSoundSetting(int row, int dir) {
@@ -1261,6 +1272,7 @@ void AdjustSoundSetting(int row, int dir) {
         default: return;
     }
     SaveMenuSettings();
+    ApplyOptionSettings();    // make the change take real effect immediately
 }
 
 // #18/#19: drive the Load/Save modal flow. step 0 dismisses; other steps set
@@ -5176,6 +5188,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         // R2-close: persisted menu settings (Sound screen values).
         LoadMenuSettings();
+        ApplyOptionSettings();   // [WS-G4] push loaded settings into audio/save
         // R4: MASHED_TRACK_VIEW=<1 | track name | piz path> -> fly-through.
         // A bare name (no slash, no .piz) resolves to TRACKS/<name>.piz.
         {

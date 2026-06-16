@@ -72,6 +72,7 @@ int g_progUnlock[kAreaCount] = {0};
 int g_progTrophy[kAreaCount] = {0};
 std::uint32_t g_saveCounter = 0;
 bool g_progLoaded = false;
+bool g_autosave   = true;     // [WS-G4] Autosave option gate (Sound/Options screen 32)
 
 // progression -> championship span (the SerializeToBuffer source layout, 0x7f0a40).
 void BuildSpanFromProgress(unsigned char span[mashed_re::Save::kSpanBytes]) {
@@ -246,9 +247,19 @@ void Campaign_OnRaceResult(int trackIdx, int winnerSlot, int position) {
     }
     const int next = trackIdx + 1;                // unlock the next track
     if (next >= 0 && next < kAreaCount) g_progUnlock[next] = 1;
-    SaveProgress();
-    log("progress saved (next track unlocked)");
+    // [WS-G4] persist only when Autosave is on; the in-memory unlock/trophy still
+    // updated either way (manual Save Game always writes).
+    if (g_autosave) {
+        SaveProgress();
+        log("progress autosaved (next track unlocked)");
+    } else {
+        log("autosave off: progression updated in memory, not written");
+    }
 }
+
+// [WS-G4] Autosave option (screen 32). When off, race results update progression
+// in memory but are not auto-written (manual Save Game still persists).
+void Campaign_SetAutosave(bool on) { g_autosave = on; }
 int  Campaign_SelectedTrack() { return g_selTrack; }
 void Campaign_SetSelectedTrack(int t) {
     if (t < 0) t = 0;

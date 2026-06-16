@@ -33,6 +33,17 @@ std::vector<RwsWave> g_sfxBank;           // cached 0x809 SFX bank (permdict)
 IDirectSoundBuffer*  g_sfxRing[8] = {};   // one-shot SFX voices (round-robin)
 int                  g_sfxNext = 0;
 
+// [WS-G4] master category volumes (0..1), driven by the Sound options screen
+// (Music / SFX Volume sliders). All playback scales its per-voice volume by the
+// category master so the sliders actually attenuate audio. Base (pre-master)
+// volumes of the persistent music/engine voices are tracked so a slider change
+// re-applies live. Default 1.0 (full) until the loaded settings push real values.
+float g_masterMusic   = 1.0f;
+float g_masterSfx     = 1.0f;
+float g_musicBaseVol  = 0.0f;
+float g_engineBaseVol = 0.0f;
+inline float Clamp01f(float v) { return v < 0.f ? 0.f : (v > 1.f ? 1.f : v); }
+
 struct Voice {
     IDirectSoundBuffer* buf = nullptr;
     bool                loop = false;
@@ -84,7 +95,7 @@ int CreateAndPlay(const char* rwsPath, const char* waveName, float volume, bool 
     std::memcpy(p1, w->pcm.data(), s1);
     if (p2 && s2) std::memcpy(p2, w->pcm.data() + s1, s2);
     buf->Unlock(p1, s1, p2, s2);
-    buf->SetVolume(VolToDs(volume));
+    buf->SetVolume(VolToDs(volume * g_masterSfx));   // ambience = SFX category
     if (FAILED(buf->Play(0, 0, loop ? DSBPLAY_LOOPING : 0))) {
         buf->Release(); logf("PlayLoop: Play failed"); return -1;
     }
@@ -205,7 +216,8 @@ void EngineStart(float volume) {
         std::memcpy(p1, pcm.data(), s1);
         g_engine->Unlock(p1, s1, nullptr, 0);
     }
-    g_engine->SetVolume(VolToDs(volume));
+    g_engineBaseVol = volume;
+    g_engine->SetVolume(VolToDs(volume * g_masterSfx));   // engine = SFX category
     g_engine->Play(0, 0, DSBPLAY_LOOPING);
     logf("EngineStart: engine voice playing (@%u Hz)", g_engineBaseHz);
 }
@@ -248,7 +260,8 @@ void MusicStart(const char* rwsPath, float volume, int maxSeconds) {
         if (p2 && s2) std::memcpy(p2, reinterpret_cast<const std::uint8_t*>(pcm.data()) + s1, s2);
         g_music->Unlock(p1, s1, p2, s2);
     }
-    g_music->SetVolume(VolToDs(volume));
+    g_musicBaseVol = volume;
+    g_music->SetVolume(VolToDs(volume * g_masterMusic));
     g_music->Play(0, 0, DSBPLAY_LOOPING);
     DWORD st = 0; g_music->GetStatus(&st);
     logf("MusicStart: %s %u samples @%u Hz status=%s", rwsPath,
@@ -306,7 +319,8 @@ void MusicStartBankWaveLoop(const char* waveSub, float volume) {
         std::memcpy(p1, w->pcm.data(), s1);
         g_music->Unlock(p1, s1, nullptr, 0);
     }
-    g_music->SetVolume(VolToDs(volume));
+    g_musicBaseVol = volume;
+    g_music->SetVolume(VolToDs(volume * g_masterMusic));
     g_music->Play(0, 0, DSBPLAY_LOOPING);
     logf("MusicBankLoop '%s' (%u bytes @%u) looping", waveSub, (unsigned)w->pcm.size(), w->rate);
 }
@@ -331,7 +345,8 @@ void MusicSetState(MusicState s) {
             // Keep the race stream running but duck it; start a ducked race
             // stream if none is playing (e.g. Results entered cold).
             if (g_music && g_musicState == MusicState::Race) {
-                g_music->SetVolume(VolToDs(0.25f));
+                g_musicBaseVol = 0.25f;
+                g_music->SetVolume(VolToDs(0.25f * g_masterMusic));
             } else {
                 MusicStop();
                 MusicStart(kCdaudio, 0.25f, 120);
@@ -341,6 +356,21 @@ void MusicSetState(MusicState s) {
     g_musicState = s;
     logf("MusicSetState -> %d", static_cast<int>(s));
 }
+
+// [WS-G4] Sound-options master volumes. Setting one re-applies live to the
+// persistent voice in that category (music / engine) so the slider audibly moves
+// the level while you hold it; one-shot SFX + ambience pick the master up at
+// their next play.
+void SetMasterMusicVolume(float v) {
+    g_masterMusic = Clamp01f(v);
+    if (g_music) g_music->SetVolume(VolToDs(g_musicBaseVol * g_masterMusic));
+}
+void SetMasterSfxVolume(float v) {
+    g_masterSfx = Clamp01f(v);
+    if (g_engine) g_engine->SetVolume(VolToDs(g_engineBaseVol * g_masterSfx));
+}
+float MasterMusicVolume() { return g_masterMusic; }
+float MasterSfxVolume()   { return g_masterSfx; }
 
 void SfxLoadBank(const char* rwsPath) {
     if (!g_sfxBank.empty()) return;
@@ -370,7 +400,7 @@ void SfxPlay(const char* waveNameSub, float volume) {
         std::memcpy(p1, w->pcm.data(), s1);
         buf->Unlock(p1, s1, nullptr, 0);
     }
-    buf->SetVolume(VolToDs(volume));
+    buf->SetVolume(VolToDs(volume * g_masterSfx));
     buf->Play(0, 0, 0);          // one-shot
     g_sfxRing[slot] = buf;
 }

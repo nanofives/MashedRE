@@ -64,6 +64,9 @@ void       Campaign_OnRaceResult(int trackIdx, int winnerSlot, int position);
 // .bin); ReloadFromSave re-reads it and re-applies (WS-G5/G4).
 void       Campaign_SaveNow();
 void       Campaign_ReloadFromSave();
+// Autosave option (Options screen 32): when off, race results update progression
+// in memory but are not auto-written; manual Save Game still persists. (WS-G4)
+void       Campaign_SetAutosave(bool on);
 // Track index (into the cup / real area table) -> area .piz path + engine
 // Course_Id (cracked from each track's COURSE.LUA).
 void       Campaign_TrackPizPath(int trackIdx, char* buf, int cap);

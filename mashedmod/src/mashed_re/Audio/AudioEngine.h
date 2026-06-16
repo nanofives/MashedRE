@@ -30,6 +30,15 @@ void SetVolume(int voice, float volume);     // 0..1
 void Stop(int voice);
 void StopAll();
 
+// Master category volumes (0..1) for the Sound options screen. All playback
+// scales by the category master; setting one re-applies live to the persistent
+// music / engine voice. Music slider -> SetMasterMusicVolume, SFX slider ->
+// SetMasterSfxVolume. Default 1.0. (WS-G4)
+void  SetMasterMusicVolume(float v);
+void  SetMasterSfxVolume(float v);
+float MasterMusicVolume();
+float MasterSfxVolume();
+
 // Engine voice — loops the REAL engine sample `eng1` from the permdict SFX bank
 // (0x809; loaded once via SfxLoadBank), pitched by RPM. permdict carries 4
 // engine classes (eng1..eng4 + `d` variants); which class each of the 12
