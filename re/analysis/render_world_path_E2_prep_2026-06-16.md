@@ -20,6 +20,13 @@ Decision context: the user chose "RE-prereq first (decompile)" this session — 
 port code is written; this map is the source-of-truth every verbatim line below
 the +0x48 atomic render callback needs.
 
+> **UPDATE (same session, residuals):** items 1 (world-stream loader) and 2
+> (RxPipeline node graph) are now **CLOSED** — see **§9** (`RpWorldStreamRead`
+> `FUN_004e99b0` + sector readers) and **§10** (the node graph = single
+> all-in-one nodes `FUN_004eb3d0` world / `FUN_004ea6d0` atomic; pipeline-create
+> `FUN_004f0810`). Remaining open: §7 items 3–5 (`FUN_004f0900` target, world-B
+> semantics, verification) + the node-body internals (port-time, non-blocking).
+
 ---
 
 ## 1. Culling predicates (E1 §4 leaves)
@@ -279,16 +286,16 @@ FUN_00426b40/FUN_00426e10-teardown); `DAT_0066d700` world A/B selector
 
 In dependency order for the B-FULL world-render port:
 
-1. **World-loader port root — decompile `FUN_004e99b0` (RpWorldStreamRead) + its
-   sector-read recursion.** Yields the exact RpWorld / RpWorldSector / RpAtomic
-   build (confirms sector+0x38 list construction, material/mesh layout). This is
-   what lets the port build RW structs the §1–§3 traversal can walk, instead of the
-   standalone's renderer-agnostic `Track::World`.
-2. **Pipeline-CREATE at device OPEN — find the writer of `plugin+0x3c` and
-   `plugin+0x40`.** Decompile it to name the node functions (instance / transform-
-   cull / light / submit). Entry from `fpSystem` OPEN (0x004c7a70 case0, E1 §7).
-   The submit node ends at the 0x004e1007 `DrawIndexedPrimitive` (§4.2); identify
-   its function start there.
+1. **[CLOSED 2026-06-16 — see §9]** World-loader port root: `FUN_004e99b0`
+   (RpWorldStreamRead) + its sector readers `FUN_004ea220` (plane-sector tree) and
+   `FUN_004e9e40` (atomic-sector geometry) decompiled; RpWorld/RpWorldSector build
+   + `sector+0x38` list construction mapped.
+2. **[CLOSED 2026-06-16 — see §10]** Pipeline-CREATE: `FUN_004f0810` (master) →
+   `FUN_004f43f0` (atomic, plugin+0x3c) / `FUN_004f4340` (world, plugin+0x40). Both
+   are single all-in-one nodes: world body `FUN_004eb3d0`
+   (`nodeD3D9WorldSectorAllInOne`), atomic body `0x004ea6d0`
+   (`nodeD3D9AtomicAllInOne`). Remaining: full decompile of the two node bodies
+   (the internal instance/light/submit → 0x004e1007) — port-time work, not blocking.
 3. **`FUN_004f0900` concrete target** — find the writer of `RwGlobals+4` (object O)
    and trace `O+0x68` to the real sector-visibility function.
 4. **World-B semantics** — which game-mode sets `DAT_0066d700 != 0` so the collision
@@ -318,3 +325,120 @@ In dependency order for the B-FULL world-render port:
 | 0x004cc230 / 0x004cc5e0 / 0x004cc160 | RwStreamOpen / FindChunk / Close |
 | 0x004e4320 | world begin = `*(DAT_007d716c+world+0xc)=camera` |
 | 0x00426b40 / 0x004266f0 | world teardown (flag=0) / A-B selector setter |
+| **0x004ea220** | RpPlaneSector recursive reader (rwID_PLANESECTOR 10) |
+| **0x004e9e40** | RpWorldSector geometry reader (rwID_ATOMICSECTOR 9); builds sector+0x38 list |
+| 0x004f3e90 | material-list reader (world+0x10) |
+| 0x004e1b60 / 0x004e1c90 | RpWorld/sector plugin-extension (binMesh) reader |
+| 0x004e5300 / 0x004e5700 | RpWorldInstance / RpWorldDestroy (Ghidra-named) |
+| 0x004cbd30 / 0x004cc790 | RwStreamRead / RwStreamReadReal(endian) |
+| **0x004f0810** | master D3D9 default-pipelines create (zeroes plugin+0x3c..+0x5c) |
+| **0x004f43f0** / **0x004f4340** | atomic / world default-pipeline create |
+| 0x004f07d0 / 0x004f07a0 | atomic (plugin+0x3c) / world (plugin+0x40) pipeline setter |
+| 0x004eb3c0 / 0x004eb9d0 | atomic / world node-definition providers |
+| **0x004ea6d0** | nodeD3D9AtomicAllInOne body (atomic node execute) |
+| **0x004eb3d0** | nodeD3D9WorldSectorAllInOne body (world node execute) |
+| 0x004d4170 / 0x004d4380 / 0x004d41e0 | RxPipelineCreate / Unlock / Destroy |
+| 0x004d4dd0 / 0x004d4f90 | RxPipelineLock / RxPipelineNodeAddFragment |
+
+---
+
+## 9. RpWorldStreamRead build — `FUN_004e99b0` (residual #1 closed)
+
+`FUN_004e99b0(stream)` @ 0x004e99b0..0x004e9e33 — builds the RpWorld from the
+rwID_WORLD chunk. Sequence (every callee verified):
+1. `FUN_004cc5e0(stream, 1, &len, &ver)` RwStreamFindChunk(**rwID_STRUCT=1**);
+   version gate `0x34fff < ver < 0x37003`.
+2. `FUN_004cbd30(stream, &hdr, len)` RwStreamRead → 0x40-byte world header (flags
+   `local_1c`, bbox 3 floats × scale `_DAT_005cc33c`, counts, format `local_20`).
+3. Computes the RpWorld+inline-sector alloc size from the format flags
+   (`base DAT_0061864c + DAT_006189e4*numMat + …`; +normals if flag 0x10, +prelight
+   if flag 8, +texcoord sets, +tris), allocates via `(*(RwGlobals+0x108))(size,
+   0x3000b)`, zero-fills.
+4. Inits the RpWorld struct (offsets below), `FUN_004e5280` (sub-init).
+5. `FUN_004cc5e0(stream, **8**, …)` rwID_MATLIST → `FUN_004f3e90(stream, world+0x10)`
+   reads the material list to `world+0x10`.
+6. Sector tree: if `hdr[0]==0` → `FUN_004cc5e0(stream, **10**,…)` rwID_PLANESECTOR →
+   **`FUN_004ea220`** (recursive); else `FUN_004cc5e0(stream, **9**,…)`
+   rwID_ATOMICSECTOR → **`FUN_004e9e40`**. Root stored at **`world+0x1c`**.
+7. `FUN_004e51e0` + `FUN_004e5820(world, 0)` set `world+0x68` = default render
+   callback (`FUN_004e5190`). Per-material `FUN_004e8090`.
+8. `FUN_004d8000` + `FUN_004e1b60(&DAT_0061864c, stream, world)` read the world's
+   rwID_EXTENSION plugins (binMesh native data → `DAT_007d7278`).
+9. **`RpWorldInstance(world)` @ 0x004e5300** — instances geometry into the device
+   (the resident VB/IB the node bodies submit). Returns world.
+
+**RpWorld struct** (handle = world-A `DAT_0065742c`):
+`+0x00`(byte)=7 rpWORLD type; `+0x03`=1; `+0x08`=format flags; `+0x0c`=2;
+**`+0x10`=material list**; `+0x14`=numMaterials; **`+0x1c`=root sector**;
+`+0x20`=numTexCoordSets; `+0x2c/+0x34/+0x3c`=intrusive list heads (self-linked);
+`+0x44..+0x4c`=bbox×scale; `+0x50..+0x67`=6-float bbox/origin; `+0x68`=render cb.
+
+**RpPlaneSector** (`FUN_004ea220`, 0x18 bytes): `+0x00`=plane type/axis; `+0x04`=
+split value; **`+0x08`=left child**, **`+0x0c`=right child** (each a plane-sector→
+recurse, or atomic-sector→leaf, chosen by the hdr left/right flags); `+0x10/+0x14`
+=left/right bound values.
+
+**RpWorldSector** (`FUN_004e9e40`, size `DAT_006189e4`): `+0x00`=0xffffffff (leaf
+tag); `+0x04`=triangles ptr (numTris×8 = 4×u16 v0,v1,v2,mat); `+0x08`=vertex
+positions (numVerts×0xc); `+0x0c`=normals (if format 0x10); `+0x30`=prelight
+(if format 8, RGBA×numVerts); `+0x10..`=texcoord-set ptrs; `+0x34`=mesh/binMesh
+list (read by the node body `FUN_004eb3d0`); **`+0x38`=intrusive atomic-list head
+(self-linked empty at load)** ← the list `FUN_004e5680` walks; `+0x40`=2nd list
+head; `+0x60..`=bbox (6 floats); `+0x80`(short)=matListWindowBase;
+`+0x82`(short)=numVertices; `+0x84`(short)=numTriangles. **Triangle u16 order +
+geometry layout are byte-faithful to the standalone's `Track::World` parse.**
+Pre-0x36002 streams byte-swap the triangle words (loop @ ~0x004e9f80).
+
+Note: at load the `sector+0x38` atomic list is an empty self-link; movable atomics
+(cars, props) are linked in later when added to the world — static world geometry
+is rendered by the world-sector NODE (§10), not via the +0x38 atomic list.
+
+---
+
+## 10. The RxD3D9 node graph — single all-in-one nodes (residual #2 closed)
+
+The default pipelines are built by **`FUN_004f0810`** (the RxD3D9 pipelines-create,
+reached at device OPEN): it zeroes `plugin+0x3c..+0x5c`, then calls `FUN_004d8560`
+(`return 1` stub), **`FUN_004f43f0`** (atomic pipe), **`FUN_004f4340`** (world pipe);
+on failure `FUN_004f43b0`/`FUN_004f4470`/`FUN_0045b350` tear down.
+
+Each create is identical in shape (standard RW): `RxPipelineCreate` `FUN_004d4170`
+→ set `pipe+0x2c=2` → `RxPipelineLock` `FUN_004d4dd0` → node-definition provider →
+`RxPipelineNodeAddFragment` `FUN_004d4f90(locked, 0, nodeDef)` → `RxPipelineUnlock`
+`FUN_004d4380` → save factory copy + install:
+- **World** (`FUN_004f4340`): nodeDef = `FUN_004eb9d0()` =
+  `&nodeD3D9WorldSectorAllInOne.csl` desc @ **0x00618768**; save `plugin+0x58`
+  (factory), set `plugin+0x40` via `FUN_004f07a0`.
+- **Atomic** (`FUN_004f43f0`): nodeDef = `FUN_004eb3c0()` =
+  `&nodeD3D9AtomicAllInOne.csl` desc @ **0x00618708**; save `plugin+0x54`, set
+  `plugin+0x3c` via `FUN_004f07d0`; then `FUN_004f46a0` + `FUN_004fa5f0`.
+
+**Both pipelines are a SINGLE fused "all-in-one" node** — NOT a multi-node
+instance→cull→light→submit chain. The RxNodeDefinition (`.csl`) layout decoded from
+the two descriptors:
+| desc off | world @0x618768 | atomic @0x618708 | RxNodeDefinition field |
+|---|---|---|---|
+| +0x00 | 0x00618748 | 0x006186e8 | name ptr ("nodeD3D9{WorldSector,Atomic}AllInOne.csl") |
+| +0x04 | **0x004eb3d0** | **0x004ea6d0** | **nodeBody = the node EXECUTE fn** |
+| +0x08,+0x0c | 0 | 0 | nodeInit / nodeTerm |
+| +0x10 | 0x004eb520 | 0x004ea970 | pipelineNodeInit |
+| +0x2c | 0x1000 | 0x1000 | pipelineNodePrivateDataSize |
+
+So `FUN_004d40d0`'s `pipeline+8 → P->vtable[1](P, &io)` resolves to these node
+bodies: an atomic renders via `FUN_004ea6d0`, a world sector via `FUN_004eb3d0`.
+Both take `(self, &io)` with `*io` = the object (verified from the prologues:
+`MOV ECX,[ESP+4]; MOV EAX,[ESP+8]; … MOV reg,[EAX]`). `FUN_004eb3d0` reads
+`sector+0x82` (numVertices) and walks the mesh list at `sector+0x34`, bottoming into
+the 3D submit leaf (§4.2, DrawIndexedPrimitive @0x004e1007). Both node bodies are
+FPO/undefined in Ghidra (never auto-disassembled) — their full internal
+decompile (instance / transform / light / per-mesh submit) is the next port-time
+task, but is no longer a *blocker*: the node identities, contract, and submit leaf
+are all pinned.
+
+### Port consequence
+The B-FULL world render = port (a) `RpWorldStreamRead` §9 to build the structs,
+(b) the traversal §1–§3 (already mapped), (c) the two all-in-one node bodies
+`FUN_004eb3d0`/`FUN_004ea6d0` as the geometry submit, (d) the RW D3D9 device-table
+leaves they call (render-state set 0x004d7480, the 3D submit @0x004e1007). No
+multi-node RxPipeline machinery needs porting beyond Create/Lock/AddNode/Unlock/
+Execute — the graph is one node per object type.
