@@ -38,7 +38,17 @@ struct PlayerCarIO {
     float vel[3];           // in/out -> record +0x9b0 (kVelocity)
     float yaw;              // in/out (radians); forward = {cos,0,sin}
     float speed;            // out    -> record +0x9e4 (kSpeed)
-    std::uint8_t input[8];  // [0]=accel 0..255, [1]=brake/reverse 0..255, [5]=gate
+    // The vehicle input descriptor (&DAT_007f1038 + slot*0x4c). Byte map RESOLVED
+    // (re/analysis/ai_ctrl_byte_map_RESOLVED_2026-06-16.md): [0]/[1]=steer cmd
+    // (sign A/B; FUN_00470670 secondary body-impulse channel), [4]=accelerator,
+    // [5]=brake/reverse. The PRIMARY throttle/brake consumer is FUN_00467650 (A6a),
+    // which reads [4]/[5] — these MUST be set for the car to drive.
+    std::uint8_t input[8];  // [4]=accel 0..255, [5]=brake/reverse 0..255
+    // Standalone wheel-grounding hint (substitute for the un-portable RW BSP
+    // broadphase FUN_00538c80 + device transform FUN_004c3d90): the caller knows
+    // the car is on the track via its own GroundHeight collision; when set, the
+    // chain marks the 4 wheels grounded so the drive/suspension blocks engage.
+    int grounded;           // 1 = car is in ground contact (caller's GroundHeight ok)
 };
 
 bool VehiclePhysics_Enabled();                       // MASHED_REAL_PHYSICS set once

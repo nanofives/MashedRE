@@ -188,3 +188,44 @@ Findings: `re/analysis/WS_H2_C4_LANE_FINDINGS_2026-06-16.md`.
 - **Decision pending user ratification** (architecture-level: authoring
   `.asi`-only second implementations distinct from the standalone bodies). See
   the findings doc's "Recommendation".
+
+## WS-A-VERIFY-3 update — physics chain MOVES; per-fn C4 verdict (2026-06-17)
+
+The vehicle-physics chain (A3 FUN_0046b540, A4 FUN_00470670, A5 FUN_0046ddb0,
+A6a FUN_00467650, A6b FUN_00468980) now DRIVES the standalone car (speed 0->~112,
+grounded reaches 4.0, clean exit — see PHYS_SMOKE_2026-06-17.md "WS-PHYS-MOTION").
+Motion root cause + fix: the port passed a ZEROED +0x928 wheel-matrix block as A5's
+xform (original passes A4's param_4 world xform); forward = xform*(0,0,1) collapsed
+to (0,0,0) -> drive direction 0 -> no force. Fixed by synthesizing a yaw world matrix.
+
+### [U-A6A-FLOAT10] — RESOLVED
+A6a's grip (l_60) + normal-load (l_d0) accumulators store back as 32-bit `FSTP float
+ptr` every iteration (asm 0x004682c0.. pool11); the x87 80-bit width is only a ST0
+transient of one a*b+c before rounding to float32. `double` intermediates are a
+strictly-closer approximation (<=1 ULP), and the standalone fn is bit-distinct by
+construction anyway (LUT fallback, below). For an .asi verbatim hook the TU must
+stay x87 (build.bat: no /arch:SSE2).
+
+### Per-fn C4 verdict (HONEST — no synthetic-bypass overclaim)
+All five remain **C2** in hooks.csv. None was promoted this session, because:
+- **A5/A6a/A6b are BIT-DISTINCT BY CONSTRUCTION in the standalone** — same hazard the
+  H2 camera finding pins: they route magnitude/normalize/transform through the RW
+  fast-sqrt LUT (FUN_004c3ac0/004c39b0/004c3df0), which the standalone replaces with
+  std::sqrt fallbacks (no RW device -> null LUT, WS-PHYS-CRASH-FIX). So the standalone
+  bodies CANNOT be bit-identical to the original; a C4 datapoint needs `.asi`-only
+  verbatim hooks calling the real LUT primitives in the running MASHED + installed-JMP
+  canonical-race telemetry — the SAME architecture "pending user ratification" above.
+- **They are hot-path** (FUN_004c3ac0 fires ~2,700/s at the menu — CLAUDE.md "Frida
+  overhead on hot paths"): an Interceptor-per-frame field diff destabilises MASHED in
+  ~6s, so the telemetry lane must hot-path-SAMPLE one fn at a time, not trace all five.
+- **No RH_ScopedInstall + no hooks_registry.py entry exists** for any of the five; they
+  are standalone ports only. The full register-ABI (.asi A4 EAX=record, A5 EDI=record)
+  installed-hook lane is a large, multi-session build.
+
+**Verdict A3/A4/A5/A6a/A6b = BLOCKED on the ratified `.asi`-second-impl C4 lane** (NOT
+RED — the standalone bodies are faithful transcriptions that now produce correct
+motion; they are simply not bit-diffable against the original while they use the LUT
+fallback). A4 (FUN_00470670) is the one with NO transcendental hazard in its own body
+(it only does the input->force arithmetic; the LUT calls are in the A5/A6a callees it
+dispatches) -> **A4 is C4-FEASIBLE as a standalone-body installed hook** the same way
+the scoring trio is (bounded effort), if/when the .asi-second-impl decision is ratified.

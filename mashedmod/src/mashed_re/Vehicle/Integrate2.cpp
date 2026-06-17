@@ -4,8 +4,16 @@
 // cross-product friction block (#5) + the angular/linear integration tail + the trailing
 // speed-limit grip-clamp (#6) are now all transcribed (WS-A6-COMPLETE). PENDING diff-original
 // C4. Residual uncertainties (resolve at A-VERIFY-2):
-//   [U-A6A-FLOAT10] float10 (80-bit x87) accumulators (l_60 grip, l_d0 normal-load, the
-//     per-vector magnitudes feeding them) rendered as `double` — may differ in low bits.
+//   [U-A6A-FLOAT10] RESOLVED (WS-A-VERIFY-3, 2026-06-17, asm 0x004682c0.. pool11):
+//     the grip (l_60) and normal-load (l_d0) accumulators — and every per-vector
+//     magnitude feeding them — are stored back to the stack as 32-bit `FSTP float
+//     ptr [ESP+..]` EACH iteration (not qword/tbyte); the x87 80-bit width is purely
+//     a TRANSIENT of one `a*b+c` step in ST0 before it rounds to float32 on store.
+//     So `double` intermediates round to the same float32 (closer than the 80-bit
+//     transient, differ by <=1 ULP in rare cases). For the standalone body this is
+//     moot (the fn is bit-distinct by construction — it calls the std::sqrt LUT
+//     fallback, not the RW fast-sqrt LUT). For an .asi-only verbatim hook the TU must
+//     compile x87 (build.bat does — no /arch:SSE2) so the transient stays 80-bit.
 //   [U-A6A-ST0] FUN_004a2c48 (=round-of-ST0) calls take an implicit ST0 input not in the
 //     decomp; the gearbox/boost timers + brake quantizer use Vc_RoundST0() (stub=0).
 //   [U-A6A-GLOB] g_suspScale (_DAT_0088e5f0) is 0 in the standalone stub -> the suspension

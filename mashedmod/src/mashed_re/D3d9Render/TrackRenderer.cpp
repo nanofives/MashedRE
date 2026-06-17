@@ -1470,18 +1470,26 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         io.vel[0] = car_vel_[0]; io.vel[1] = car_vel_[1]; io.vel[2] = car_vel_[2];
         io.yaw = car_yaw_; io.speed = car_speed_;
         for (int k = 0; k < 8; ++k) io.input[k] = 0;
-        io.input[0] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
-        io.input[1] = static_cast<unsigned char>((accel < 0.f ? -accel : 0.f) * 255.f);
+        // Input byte map RESOLVED (ai_ctrl_byte_map_RESOLVED_2026-06-16.md):
+        // [4]=accelerator, [5]=brake/reverse are the PRIMARY throttle the A6a wheel
+        // integrator (FUN_00467650) reads. ([0]/[1] are the steer channel A4 treats
+        // as a secondary body impulse; steer is applied kinematically below.)
+        io.input[4] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
+        io.input[5] = static_cast<unsigned char>((accel < 0.f ? -accel : 0.f) * 255.f);
+        // Ground the wheels from our own collision (the standalone substitute for the
+        // RW BSP broadphase the chain's contact orchestrator needs) so the drive +
+        // suspension blocks engage. Probe the next XZ before committing.
+        const float pnx = car_pos_[0] + car_vel_[0] * in.dt;
+        const float pnz = car_pos_[2] + car_vel_[2] * in.dt;
+        bool pok = false;
+        const float pgy = GroundHeight(pnx, pnz, &pok);
+        io.grounded = pok ? 1 : 0;
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
         // [U-A8-STEER] steering-input path into the chain is unmapped (A4 reads
         // accel/brake only) -> apply steer kinematically until the steer byte is RE'd.
         car_yaw_ += steer * kSteer * (io.speed / kTop) * in.dt;
-        const float pnx = car_pos_[0] + car_vel_[0] * in.dt;
-        const float pnz = car_pos_[2] + car_vel_[2] * in.dt;
-        bool pok = false;
-        const float pgy = GroundHeight(pnx, pnz, &pok);
         if (pok) { car_pos_[0] = pnx; car_pos_[2] = pnz; car_pos_[1] = pgy + car_ground_off_; }
         else { car_speed_ = 0.f; car_vel_[0] = car_vel_[2] = 0.f; }
     } else {

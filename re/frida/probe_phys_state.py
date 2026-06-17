@@ -48,19 +48,19 @@ const id=setInterval(function(){
         send({kind:'st',
             wtc: WTC.readU32(),
             tec: TEC.readU32(),
-            grounded278: f(0x278),
-            g9e0_int: i(0x9e0),
+            // grounded count is a FLOAT at byte +0x9e0 (int idx 0x278); 4.0 = all-grounded
+            grounded_9e0_f: f(0x9e0),
+            grounded_9e0_hex: '0x'+i(0x9e0).toString(16),
             vel:[f(0x9b0),f(0x9b4),f(0x9b8)],
             speed9e4: f(0x9e4),
-            driveB14:[f(0xb14),f(0xb18),f(0xb1c)],
-            f1a8: f(0x1a8),
+            driveB14:[f(0xb14),f(0xb18),f(0xb1c)],   // drive accum (FUN_00467650 +0xb14)
+            torque1a8: f(0x1a8),
             state9f0: i(0x9f0),
-            // wheel0 state machine: self+0x66 (int idx 0x66), spring load +0x65 wait it's float
-            wheel0_state: i(0x198),  // self+0x198 = int 0x66
+            wstate:[i(0x198),i(0x25c),i(0x320),i(0x3e4)],  // wheel states 0..3
         });
     } catch(e) { send({kind:'err', e:String(e)}); }
-    if (++n>=8) clearInterval(id);
-}, 600);
+    if (++n>=24) clearInterval(id);
+}, 500);
 ''' % (hex(g_records), hex(g_wtc), hex(g_tec))
 
 def main():
@@ -75,7 +75,7 @@ def main():
         print(m.get('payload'))
     sc = s.create_script(AGENT); sc.on('message',on); sc.load()
     dev.resume(pid)
-    time.sleep(7)
+    time.sleep(14)
     try: s.detach()
     except Exception: pass
     try: dev.kill(pid)
