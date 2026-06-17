@@ -26,6 +26,7 @@
 #include "RwWorldLoad.h"
 #include <cstdint>
 #include <cstring>
+#include <cstdlib>
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -138,6 +139,87 @@ void* RwWorldLoad_FromBytes(const void* buf, int len)
     RwMemStream s;
     RwWorldLoad_OpenMemory(&s, buf, len);
     return RwWorldLoad_StreamRead(&s);
+}
+
+// ===========================================================================
+// WS-E-DEVICE-2: parse-completing chunk consumers (DEVICE-AGNOSTIC).
+//
+// RwWorldLoad_FromBytes was blocked: Rwl_MatListRead (FUN_004f3e90) and
+// Rwl_ReadExtensions (FUN_004e1b60) were inert stubs that did NOT consume their
+// chunks, so the stream mis-aligned before the sector tree and the sectors never
+// parsed. These consume them by-size (GEOMETRY-ONLY: materials + binMesh strips
+// are skipped, not bound — the sectors' raw positions/UV/triangles parse intact;
+// material binding + the device VB/IB submit remain the RwEngineOpen-bound tail).
+// ===========================================================================
+int Rwl_StreamSkip(void* stream, int n) { return StreamSkip(stream, n); }   // expose case-3 skip
+void Rwl_WorldDestroy(void* w);                                             // RpWorldDestroy (free)
+
+// FUN_004f3e90 RpMaterialListStreamRead — consumes [rwID_STRUCT: i32 count]
+// [i32 idx[count]] [rwID_MATERIAL chunk per idx<0]. Leaves the matlist empty
+// (out[0..2]=0); only advances the stream so the sector tree reads correctly.
+int Rwl_MatListRead(void* stream, void* matListField)
+{
+    int* out = static_cast<int*>(matListField);     // world+0x10: [0]=list [1]=count [2]=cap
+    out[0] = 0; out[1] = 0; out[2] = 0;
+    int len = 0; unsigned ver = 0;
+    if (Rwl_StreamFindChunk(stream, 1, &len, &ver) == 0) return 0;          // rwID_STRUCT
+    int count = 0;
+    if (Rwl_StreamReadReal(stream, &count, 4) == 0) return 0;
+    if (count <= 0) return 1;                                               // empty matlist
+    int* idx = static_cast<int*>(std::malloc(static_cast<size_t>(count) * 4));
+    if (!idx) return 0;
+    if (Rwl_StreamReadReal(stream, idx, count * 4) == 0) { std::free(idx); return 0; }
+    int rc = 1;
+    for (int i = 0; i < count; ++i) {                                       // idx<0 => a new material chunk
+        if (idx[i] < 0) {
+            int mlen = 0; unsigned mver = 0;
+            if (Rwl_StreamFindChunk(stream, 7, &mlen, &mver) == 0) { rc = 0; break; }  // rwID_MATERIAL
+            if (mlen > 0 && Rwl_StreamSkip(stream, mlen) == 0)     { rc = 0; break; }  // skip body (deferred)
+        }
+    }
+    std::free(idx);
+    return rc;
+}
+
+// FUN_004e1b60 plugin-extension stream reader — consumes the rwID_EXTENSION
+// wrapper (+ all its sub-chunks). Geometry-only: skip the whole wrapper (binMesh
+// native strips etc. deferred; the sector raw triangles are used instead).
+int Rwl_ReadExtensions(void* /*desc*/, void* stream, void* /*obj*/)
+{
+    int len = 0; unsigned ver = 0;
+    if (Rwl_StreamFindChunk(stream, 3, &len, &ver) == 0) return 0;          // rwID_EXTENSION
+    if (len > 0 && Rwl_StreamSkip(stream, len) == 0) return 0;
+    return 1;
+}
+
+// ---- parse self-check: exercise the now-complete loader + count geometry -----
+// Walks the parsed sector tree (leaf tag +0x00 == -1; plane children +0x08/+0x0c;
+// leaf counts u16 @ +0x82 verts / +0x84 tris). Cross-check the totals vs the
+// standalone's byte-faithful Track::World in the MAIN tree. Returns 1 on a valid parse.
+static void PC_Walk(void* sec, int* nSec, long* nV, long* nT)
+{
+    if (!sec) return;
+    if (*static_cast<int*>(sec) == -1) {                                    // leaf
+        *nSec += 1;
+        *nV += static_cast<unsigned short>(*reinterpret_cast<short*>(static_cast<char*>(sec) + 0x82));
+        *nT += static_cast<unsigned short>(*reinterpret_cast<short*>(static_cast<char*>(sec) + 0x84));
+        return;
+    }
+    PC_Walk(*reinterpret_cast<void**>(static_cast<char*>(sec) + 0x08), nSec, nV, nT);  // plane left
+    PC_Walk(*reinterpret_cast<void**>(static_cast<char*>(sec) + 0x0c), nSec, nV, nT);  // plane right
+}
+
+int RwWorldLoad_ParseCheck(const void* bsp, int len, int* outSectors, long* outVerts, long* outTris)
+{
+    void* w = RwWorldLoad_FromBytes(bsp, len);
+    if (!w) return 0;
+    int nSec = 0; long nV = 0, nT = 0;
+    PC_Walk(*reinterpret_cast<void**>(static_cast<char*>(w) + 0x1c), &nSec, &nV, &nT);  // world+0x1c root
+    if (outSectors) *outSectors = nSec;
+    if (outVerts)   *outVerts   = nV;
+    if (outTris)    *outTris    = nT;
+    Rwl_WorldDestroy(w);                                                    // single-block free
+    return 1;
 }
 
 } // namespace D3d9Render

@@ -21,14 +21,16 @@ namespace D3d9Render {
 unsigned Rwl_ErrFmt(unsigned, unsigned)            { return 0; }          // FUN_004d7ff0
 void  Rwl_ErrEmit(void*)                           {}                     // FUN_004d8480
 void  Rwl_PluginCtor(void*, void*)                 {}                     // FUN_004d8000
-int   Rwl_ReadExtensions(void*, void*, void*)      { return 1; }          // FUN_004e1b60
+// Rwl_ReadExtensions (FUN_004e1b60) is now a REAL chunk-consumer in RwWorldStream.cpp
+// (WS-E-DEVICE-2 parse-completion) — removed here to avoid a duplicate symbol.
 void  Rwl_BinMeshAttach(void*, int, void*, int)    {}                     // FUN_004e1c90
 void* Rwl_Alloc(unsigned size, unsigned)           { return std::malloc(size); } // (**(RwGlobals+0x108))
 void  Rwl_WorldSubInit(void*, unsigned)            {}                     // FUN_004e5280
 void  Rwl_WorldSubInit2(void*)                     {}                     // FUN_004e51e0
 void  Rwl_WorldSetRenderCB(void*, int)             {}                     // FUN_004e5820
 void  Rwl_MaterialInit(void*, int)                 {}                     // FUN_004e8090
-int   Rwl_MatListRead(void*, void*)                { return 1; }          // FUN_004f3e90
+// Rwl_MatListRead (FUN_004f3e90) is now a REAL chunk-consumer in RwWorldStream.cpp
+// (WS-E-DEVICE-2 parse-completion) — removed here to avoid a duplicate symbol.
 void  Rwl_WorldDestroy(void* w)                    { std::free(w); }      // RpWorldDestroy
 int   Rwl_WorldInstance(void*)                     { return 1; }          // RpWorldInstance (device — deferred)
 void  Rwl_FrameDestroy()                           {}                     // RwFrameDestroy

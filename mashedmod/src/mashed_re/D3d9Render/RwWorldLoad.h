@@ -30,6 +30,16 @@ namespace D3d9Render {
 // `arenaBase` receives the inline sector-allocation cursor (= world + 0x70).
 void* RwWorldLoad_StreamRead(void* stream);
 
+// WS-E-DEVICE-2: parse an in-memory rwID_WORLD (GRAPH*.BSP) blob into a geometry-only
+// RpWorld (materials/binMesh skipped). Now fully parses (matlist + extensions
+// consumers landed). Defined in RwWorldStream.cpp.
+void* RwWorldLoad_FromBytes(const void* buf, int len);
+
+// Exercise + validate the parse: counts sector-tree leaves/verts/tris. Cross-check
+// the totals vs the byte-faithful Track::World in the MAIN tree (worktrees lack data).
+// Returns 1 on a valid parse, 0 if the loader bailed.
+int RwWorldLoad_ParseCheck(const void* bsp, int len, int* outSectors, long* outVerts, long* outTris);
+
 // ---- RW size/scale constants (memory_read 2026-06-16) -----------------------
 namespace rwl {
 constexpr unsigned kRpWorldBaseSize   = 0x70;   // DAT_0061864c (112) RpWorld header size
