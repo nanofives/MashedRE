@@ -59,18 +59,22 @@ namespace {
 inline float& Fb(void* b, int off) { return *reinterpret_cast<float*>(reinterpret_cast<char*>(b) + off); }
 inline int&   Ib(void* b, int off) { return *reinterpret_cast<int*>  (reinterpret_cast<char*>(b) + off); }
 
-// ── tuning constants: raw value @ address (all memory_read, pool12) ──────────
-const float DAT_005d757c = 0.0f;          // 0x00000000
-const float _DAT_005cc320 = 1.0f;         // 0x3f800000
-const float _DAT_005cc32c = 0.5f;         // 0x3f000000
-const float _DAT_005cd6d4 = 64.0f;        // 0x42800000 airborne-flag speed thr
-const float _DAT_005ceaa8 = 0.00390625f;  // 0x3b800000 = 1/256 input->force
-const float _DAT_005cc950 = 0.75f;        // 0x3f400000 boost-gate mul
-const float _DAT_005cc9d0 = 128.0f;       // 0x43000000 input[5] grip-branch thr
-const float _DAT_005ceaa4 = 6000.0f;      // 0x45bb8000 filtered-input clamp
-const float _DAT_005cea58 = 1.66677e-4f;  // 0x392ec33e ~1/6000 grip scale
-const float _DAT_005cc348 = 1.5f;         // 0x3fc00000 high-input branch mul
-const float _DAT_005cc9c8 = 0.9f;         // 0x3f666666 parked vel damp
+// ── tuning constants: EXACT bit patterns @ address (memory_read, pool12) ─────
+// Initialized from the raw 32-bit hex so they bit-match the original's .rdata
+// (decimal literals mis-round: e.g. 1.66677e-4f -> 0x392ec604 != 0x392ec33e,
+// which caused the WS-PHYS-C4-LANE grip-branch ~1-2 ULP divergence — fixed here).
+inline float Cf(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return f; }
+const float DAT_005d757c  = Cf(0x00000000);  // 0.0
+const float _DAT_005cc320 = Cf(0x3f800000);  // 1.0
+const float _DAT_005cc32c = Cf(0x3f000000);  // 0.5
+const float _DAT_005cd6d4 = Cf(0x42800000);  // 64.0  airborne-flag speed thr
+const float _DAT_005ceaa8 = Cf(0x3b800000);  // 1/256 input->force
+const float _DAT_005cc950 = Cf(0x3f400000);  // 0.75  boost-gate mul
+const float _DAT_005cc9d0 = Cf(0x43000000);  // 128.0 input[5] grip-branch thr
+const float _DAT_005ceaa4 = Cf(0x45bb8000);  // 6000.0 filtered-input clamp
+const float _DAT_005cea58 = Cf(0x392ec33e);  // ~1/6000 grip scale  (EXACT)
+const float _DAT_005cc348 = Cf(0x3fc00000);  // 1.5   high-input branch mul
+const float _DAT_005cc9c8 = Cf(0x3f666666);  // 0.9   parked vel damp
 
 // runtime global the torque ring phase indexes (live: DAT_007f101c)
 inline int& TorqueRingPhase() { return *reinterpret_cast<int*>(0x007f101c); }
@@ -307,11 +311,20 @@ void SelfTestLog(const char* s) {
 
 // Compare MY A4_BodyMath vs the ORIGINAL body on the SAME live record state.
 // Returns mismatch count; logs per-call summary. Runs for the first kMaxTests calls.
-int g_selfTestCount = 0;
-const int kMaxTests = 64;
+int g_selfTestCount = 0;        // calls WITH nonzero accel/brake input (the force path)
+int g_selfTestIdle  = 0;        // coast calls (no input) — sampled sparsely
+const int kMaxTests = 96;
 void A4_SelfTest(void* record, int param_1, float dt, std::uint8_t* input, void* xform,
                  int gameMode, unsigned phase) {
     if (g_selfTestCount >= kMaxTests) return;
+    // Prioritize the DRIVE path (input nonzero exercises the force formula / grip
+    // branch / boost gate). Keep only a few idle/coast samples so the log isn't
+    // flooded by the pre-throttle countdown frames.
+    const bool hasInput = (input[0] != 0) || (input[1] != 0);
+    if (!hasInput) {
+        if (g_selfTestIdle >= 8) return;
+        ++g_selfTestIdle;
+    }
     // snapshot the full record so each impl runs from identical input state
     static std::uint8_t snap[0xd04], mineOut[0xd04];
     std::memcpy(snap, record, 0xd04);
