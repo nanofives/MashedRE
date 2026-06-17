@@ -11,15 +11,16 @@
 // (Ghidra pool11, read_only, 2026-06-16). Every constant memory_read this session.
 // Struct field map: re/analysis/structs/vehicle.md (base = DAT_008815a0, stride 0xd04).
 //
-// STATUS: standalone logic is verbatim; three callees are NOT yet ported and are
-// declared extern here so this compiles in the .asi build (which globs every .cpp):
-//   FUN_0046ddb0 = VehicleWheelForceIntegrate (A5, ported, ForceIntegrator.h)
-//   FUN_00467650 = Vehicle_Integrate2          (A6a, port pending WS-A6)
-//   FUN_00468980 = Vehicle_AeroStabilize       (A6b, port pending WS-A6)
-//   FUN_004a2c48 = Vc_InputFilter              ([UNCERTAIN sig] input smoother, pending)
-//   FUN_0040e350 = Fi_GameMode                 (ForceIntegrator.h dep)
-// The exact callee arg/register binding and the dispatcher (FUN_00470c70) wiring
-// are resolved at A8 (diff-original). This file is not yet in the exe source list.
+// STATUS: standalone logic is verbatim. The chain callees are now all ported
+// (PENDING diff-original C4 — see physics_completion_track doc):
+//   FUN_0046ddb0 = VehicleWheelForceIntegrate (A5, ForceIntegrator.h)
+//   FUN_00467650 = Vehicle_Integrate2          (A6a, Integrate2.cpp — spine; contact block deferred)
+//   FUN_00468980 = Vehicle_AeroStabilize       (A6b, AeroStabilize.cpp — rotation-apply deferred)
+//   FUN_004a2c48 = Vc_InputFilter              ([UNCERTAIN sig] input smoother, still a stub)
+//   FUN_0040e350 = Fi_GameMode                 (ForceIntegrator.h dep, still a stub)
+// The exact callee arg/register binding (incl. A6a param_1, FUN_004c3df0 arg order)
+// and the dispatcher (FUN_00470c70) wiring are resolved at WS-A8 + WS-A-VERIFY
+// (diff-original). This file is NOT yet in the exe source list (link closure = A8).
 #include "ForceIntegrator.h"
 #include <cstdint>
 
