@@ -552,18 +552,18 @@ void A5_Body(int* self, float dt, void* xform) {
     int* piVar12 = self + 0x5b;
     do {
         if (piVar12[0xb] != 0)
-            a5F(self, 0x278) = (float)self[0x278] + A5_005cc320;                        // contact -> grounded++ (FLOAT store)
+            a5F(self, 0x278) = a5F(self, 0x278) + A5_005cc320;                        // contact -> grounded++ (FLOAT store)
         piVar10[0] = piVar12[0];
         piVar10[1] = 0;
         piVar10[2] = piVar12[2];
         Live_004c3df0(reinterpret_cast<float*>(piVar12 + 5), reinterpret_cast<float*>(piVar10), 1, xform);
-        if ((float)piVar12[0xf] == DAT_005d757c) {
+        if (a5F(piVar12, 0xf) == DAT_005d757c) {
             piVar12[0x2d] = self[0x275];
             piVar12[0x2e] = self[0x276];
             piVar12[0x2f] = self[0x277];
         } else {
             unsigned char m[64];
-            Live_004c4d20(m, A5_DAT_006146fc, (float)piVar12[0xf], 0);                  // 0x0046dxx FUN_004c4d20
+            Live_004c4d20(m, A5_DAT_006146fc, a5F(piVar12, 0xf), 0);                  // 0x0046dxx FUN_004c4d20
             Live_004c3df0(reinterpret_cast<float*>(piVar12 + 0x2d),
                           reinterpret_cast<float*>(self + 0x275), 1, m);
         }
@@ -577,11 +577,11 @@ void A5_Body(int* self, float dt, void* xform) {
     self[uVar7 * 3 + 0x2b5] = self[0x26c];
     self[uVar7 * 3 + 0x2b6] = self[0x26d];
     self[uVar7 * 3 + 0x2b7] = self[0x26e];
-    float fVar4 = (float)self[0x279];
-    if ((float)self[0x279] < A5_005cd03c) fVar4 = DAT_005d757c;
-    fVar4 = (float)self[0x54] * (float)self[0x55] * (float)self[0x56] * fVar4;
+    float fVar4 = a5F(self, 0x279);
+    if (a5F(self, 0x279) < A5_005cd03c) fVar4 = DAT_005d757c;
+    fVar4 = a5F(self, 0x54) * a5F(self, 0x55) * a5F(self, 0x56) * fVar4;
     if (self[0x278] != 0x40800000) fVar4 = fVar4 * A5_005cc32c;
-    fVar4 = fVar4 * (float)self[0x15] * dt * A5_005cc948;
+    fVar4 = fVar4 * a5F(self, 0x15) * dt * A5_005cc948;
 
     // ── Phase 2: drafting / proximity grip reduction (local_70) ──
     int iVar11 = 0, iVar13 = 0;
@@ -592,12 +592,12 @@ void A5_Body(int* self, float dt, void* xform) {
             int iVar8 = *reinterpret_cast<int*>(gb + (0x881f48 - 0x8815a0) + iVar13) * 0x40;
             int iVar9 = iVar8 + iVar13;
             float local_64 = *reinterpret_cast<float*>(gb + (0x881ef8 - 0x8815a0) + iVar13 + iVar8)
-                             - (float)self[iVar3 * 0x10 + 0x256];
+                             - a5F(self, iVar3 * 0x10 + 0x256);
             float local_60 = *reinterpret_cast<float*>(gb + (0x881efc - 0x8815a0) + iVar9)
-                             - (float)self[iVar3 * 0x10 + 599];
+                             - a5F(self, iVar3 * 0x10 + 599);
             float local_58 = *reinterpret_cast<float*>(gb + (0x881f50 - 0x8815a0) + iVar13);
             float local_5c = *reinterpret_cast<float*>(gb + (0x881f00 - 0x8815a0) + iVar9)
-                             - (float)self[iVar3 * 0x10 + 600];
+                             - a5F(self, iVar3 * 0x10 + 600);
             float local_54 = *reinterpret_cast<float*>(gb + (0x881f54 - 0x8815a0) + iVar13);
             float local_50 = *reinterpret_cast<float*>(gb + (0x881f58 - 0x8815a0) + iVar13);
             // local_58/54/50 = other car velocity (vec3 starting at &local_58)
@@ -671,32 +671,32 @@ void A5_Body(int* self, float dt, void* xform) {
     // ── Phase 4: drive-drag + gravity applied to linear velocity (+0x9b0) ──
     fVar4 = A5_005cc320 - local_70 * fVar4;
     if ((fVar4 < DAT_005d757c) || (A5_005cc320 < fVar4)) fVar4 = DAT_005d757c;
-    a5F(self, 0x26c) = fVar4 * (float)self[0x26c];
-    a5F(self, 0x26d) = fVar4 * (float)self[0x26d];
-    a5F(self, 0x26e) = fVar4 * (float)self[0x26e];
-    float local_5c = dt * (float)self[0x279] * A5_005cc990;
+    a5F(self, 0x26c) = fVar4 * a5F(self, 0x26c);
+    a5F(self, 0x26d) = fVar4 * a5F(self, 0x26d);
+    a5F(self, 0x26e) = fVar4 * a5F(self, 0x26e);
+    float local_5c = dt * a5F(self, 0x279) * A5_005cc990;
     if (A5_005cc574 < local_5c) local_5c = A5_005cc574;
     local_5c = local_5c * A5_GravScale();
     float local_64 = A5_GravX() * local_5c;
     float local_60 = A5_GravY() * local_5c;
     local_5c = A5_GravZ() * local_5c;
-    a5F(self, 0x26c) = local_64 + (float)self[0x26c];
-    a5F(self, 0x26d) = local_60 + (float)self[0x26d];
-    a5F(self, 0x26e) = local_5c + (float)self[0x26e];
+    a5F(self, 0x26c) = local_64 + a5F(self, 0x26c);
+    a5F(self, 0x26d) = local_60 + a5F(self, 0x26d);
+    a5F(self, 0x26e) = local_5c + a5F(self, 0x26e);
 
     // ── Phase 5: steer torque from velocity delta (any wheel grounded) ──
-    if ((float)self[0x278] != DAT_005d757c) {
+    if (a5F(self, 0x278) != DAT_005d757c) {
         int hi = self[0x2b4];
         unsigned int lo = (unsigned int)(hi - 1) & 1;
-        local_64 = ((float)self[hi * 3 + 0x2b5] - (float)self[lo * 3 + 0x2b5]) * dt;
-        local_60 = ((float)self[hi * 3 + 0x2b6] - (float)self[lo * 3 + 0x2b6]) * dt;
-        local_5c = ((float)self[hi * 3 + 0x2b7] - (float)self[lo * 3 + 0x2b7]) * dt;
-        fVar4 = ((float)self[0x14] / (float)self[0x278]) * A5_SuspDtTerm();
+        local_64 = (a5F(self, hi * 3 + 0x2b5) - a5F(self, lo * 3 + 0x2b5)) * dt;
+        local_60 = (a5F(self, hi * 3 + 0x2b6) - a5F(self, lo * 3 + 0x2b6)) * dt;
+        local_5c = (a5F(self, hi * 3 + 0x2b7) - a5F(self, lo * 3 + 0x2b7)) * dt;
+        fVar4 = (a5F(self, 0x14) / a5F(self, 0x278)) * A5_SuspDtTerm();
         fVar5 = fVar4 * A5_005ccac8;
         // wheel0  -> self[0x83], scratch[1] (DAT_00881564)
         if (self[0x66] == 0) { self[0x83] = 0; }
         else {
-            float f = ((float)self[0x62] * local_5c + (float)self[0x60] * local_64 + (float)self[0x61] * local_60) * A5_005ce018;
+            float f = (a5F(self, 0x62) * local_5c + a5F(self, 0x60) * local_64 + a5F(self, 0x61) * local_60) * A5_005ce018;
             if (fVar5 < f) f = fVar5;
             if (f < -fVar5) f = -fVar5;
             a5F(self, 0x83) = fVar4 + f;
@@ -706,7 +706,7 @@ void A5_Body(int* self, float dt, void* xform) {
         // wheel1  -> self[0xb4], scratch[4] (DAT_00881570)
         if (self[0x97] == 0) { self[0xb4] = 0; }
         else {
-            float f = ((float)self[0x93] * local_5c + (float)self[0x91] * local_64 + (float)self[0x92] * local_60) * A5_005ce018;
+            float f = (a5F(self, 0x93) * local_5c + a5F(self, 0x91) * local_64 + a5F(self, 0x92) * local_60) * A5_005ce018;
             if (fVar5 < f) f = fVar5;
             if (f < -fVar5) f = -fVar5;
             a5F(self, 0xb4) = fVar4 + f;
@@ -716,7 +716,7 @@ void A5_Body(int* self, float dt, void* xform) {
         // wheel2  -> self[0xe5], scratch[7] (DAT_0088157c)
         if (self[200] == 0) { self[0xe5] = 0; }
         else {
-            float f = ((float)self[0xc4] * local_5c + (float)self[0xc2] * local_64 + (float)self[0xc3] * local_60) * A5_005ce018;
+            float f = (a5F(self, 0xc4) * local_5c + a5F(self, 0xc2) * local_64 + a5F(self, 0xc3) * local_60) * A5_005ce018;
             if (fVar5 < f) f = fVar5;
             if (f < -fVar5) f = -fVar5;
             a5F(self, 0xe5) = fVar4 + f;
@@ -726,19 +726,19 @@ void A5_Body(int* self, float dt, void* xform) {
         // wheel3  -> self[0x116], scratch[10] (DAT_00881588)
         if (self[0xf9] == 0) { self[0x116] = 0; }
         else {
-            float f = ((float)self[0xf5] * local_5c + (float)self[0xf3] * local_64 + (float)self[0xf4] * local_60) * A5_005ce018;
+            float f = (a5F(self, 0xf5) * local_5c + a5F(self, 0xf3) * local_64 + a5F(self, 0xf4) * local_60) * A5_005ce018;
             if (fVar5 < f) f = fVar5;
             if (f < -fVar5) f = -fVar5;
             a5F(self, 0x116) = fVar4 + f;
             if (f <= A5_005ccd6c) { if (f < A5_005cd61c) f = A5_005cd61c; a5F(scratch, 10) = f * A5_005cea6c; }
             else { a5F(scratch, 10) = A5_005ccd6c * A5_005cea6c; }
         }
-        a5F(self, 0x116) = (float)self[0x116] * A5_005cc32c;
+        a5F(self, 0x116) = a5F(self, 0x116) * A5_005cc32c;
         unsigned int ring = (unsigned int)(self[0x2fb] + 1) & 0xf;
         self[0x2fb] = (int)ring;
         Call_FaceNormal(reinterpret_cast<float*>(self + (ring * 3 + 0x2cb)));   // FUN_0046c5f0 (live)
         int slot = ring * 3 + 0x2cd;
-        if ((float)self[slot] < DAT_005d757c) a5F(self, slot) = (float)self[slot] * A5_005cc564;
+        if (a5F(self, slot) < DAT_005d757c) a5F(self, slot) = a5F(self, slot) * A5_005cc564;
     }
 
     // ── Phase 6: per-wheel suspension force + surface jitter (4 wheels) ──
@@ -752,7 +752,7 @@ void A5_Body(int* self, float dt, void* xform) {
             *pfVar14 = 0.25f;
             self[0x2c0] = 0; self[0x2c1] = 0; self[0x2c2] = 0;
             if (key == A5_keyRandom) {
-                float rr = (float)self[0x279] * A5_005cea68;
+                float rr = a5F(self, 0x279) * A5_005cea68;
                 a5F(self, 0x2c0) = Live_00472650(-rr, rr);          // FUN_00472650 (live PRNG)
                 self[0x2c1] = 0;
                 a5F(self, 0x2c2) = Live_00472650(-rr, rr);
@@ -766,7 +766,7 @@ void A5_Body(int* self, float dt, void* xform) {
                 if (key == A5_key0p2)
                     *pfVar14 = A5_jit0p2;
             }
-            if (self[0xb] != 0) *pfVar14 = (float)self[0xb] * *pfVar14 * A5_005cc328;
+            if (self[0xb] != 0) *pfVar14 = a5F(self, 0xb) * *pfVar14 * A5_005cc328;
             float f = pfVar14[-0x1a] * *pfVar14;
             *pfVar14 = f;
             pfVar14[1] = A5_005cc318 * f;
@@ -803,9 +803,9 @@ void A5_Body(int* self, float dt, void* xform) {
         pfVar14 += 0x31;
         loopCount -= 1;
         if (loopCount == 0) {
-            if ((float)self[0x278] < A5_005cc31c) {
+            if (a5F(self, 0x278) < A5_005cc31c) {
                 self[0x2c8] = 1;
-                a5F(self, 0x2c6) = (float)self[0x2c6] - A5_SuspDtTerm() * (float)self[0x14] * A5_005ccd08;
+                a5F(self, 0x2c6) = a5F(self, 0x2c6) - A5_SuspDtTerm() * a5F(self, 0x14) * A5_005ccd08;
             }
             return;
         }
@@ -860,10 +860,13 @@ void A5_SelfTestLog(const char* s) {
 // with the SAME ABI as the original: EDI=record; [ESP]=ret [ESP+4]=dt [ESP+8]=xform.
 __declspec(naked) void OrigA5Trampoline() {
     __asm {
-        mov  eax, dword ptr [esp+8]   // 8b442408  (original prologue instr 1)
-        sub  esp, 0x70                // 83ec70    (original prologue instr 2)
-        mov  eax, 0x0046ddb7          // -> first untouched original instruction (PUSH EBX)
-        jmp  eax
+        mov  eax, dword ptr [esp+8]   // 8b442408  (instr 1; EAX=xform — MUST reach 0x0046ddb7)
+        sub  esp, 0x70                // 83ec70    (instr 2)
+        // jump to 0x0046ddb7 (PUSH EBX) WITHOUT clobbering EAX: the original pushes
+        // EAX as the transform mtx at 0x0046ddba, so a `mov reg,target;jmp reg` that
+        // touched EAX would feed a garbage matrix. push-imm + ret jumps clobber-free.
+        push 0x0046ddb7
+        ret
         // the original body runs to its own `ADD ESP,0x70; RET` (0x0046e9cd/d0),
         // returning to Call_OrigA5's `add esp,8`.
     }
