@@ -17,6 +17,7 @@
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 #include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
+#include "../Vehicle/VehiclePhysicsRun.h"  // WS-A8: ported physics chain (behind MASHED_REAL_PHYSICS)
 #include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
 #include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
 
@@ -1450,6 +1451,35 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
     }
 
+    // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
+    // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead
+    // of the kinematic scaffold. PENDING runtime-smoke + C4 (WS-A-VERIFY-3).
+    if (Vehicle::VehiclePhysics_Enabled()) {
+        static bool s_pinit = false;
+        if (!s_pinit) {
+            Vehicle::VehiclePhysics_Init(1 + static_cast<int>(ai_cars_.size()), course_id_);
+            s_pinit = true;
+        }
+        Vehicle::PlayerCarIO io;
+        io.pos[0] = car_pos_[0]; io.pos[1] = car_pos_[1]; io.pos[2] = car_pos_[2];
+        io.vel[0] = car_vel_[0]; io.vel[1] = car_vel_[1]; io.vel[2] = car_vel_[2];
+        io.yaw = car_yaw_; io.speed = car_speed_;
+        for (int k = 0; k < 8; ++k) io.input[k] = 0;
+        io.input[0] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
+        io.input[1] = static_cast<unsigned char>((accel < 0.f ? -accel : 0.f) * 255.f);
+        Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
+        car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
+        car_speed_  = io.speed;
+        // [U-A8-STEER] steering-input path into the chain is unmapped (A4 reads
+        // accel/brake only) -> apply steer kinematically until the steer byte is RE'd.
+        car_yaw_ += steer * kSteer * (io.speed / kTop) * in.dt;
+        const float pnx = car_pos_[0] + car_vel_[0] * in.dt;
+        const float pnz = car_pos_[2] + car_vel_[2] * in.dt;
+        bool pok = false;
+        const float pgy = GroundHeight(pnx, pnz, &pok);
+        if (pok) { car_pos_[0] = pnx; car_pos_[2] = pnz; car_pos_[1] = pgy + car_ground_off_; }
+        else { car_speed_ = 0.f; car_vel_[0] = car_vel_[2] = 0.f; }
+    } else {
     const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
     // throttle force along forward
     car_vel_[0] += fwd[0] * accel * kThrottle * in.dt;
@@ -1486,6 +1516,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_speed_ = 0.f;   // island edge / off-collision: stop
         car_vel_[0] = car_vel_[2] = 0.f;
     }
+    }  // end MASHED_REAL_PHYSICS else (scaffold body)
     UpdateRace(in.dt);
     // WS-AI-BRIDGE (2026-06-17): when MASHED_REAL_AI is on AND the .AI race-line banks
     // loaded (kSplineRaceCnt>3), the standalone AI controller (Ai_Standalone_Tick) drives

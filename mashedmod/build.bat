@@ -67,6 +67,23 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "D3d9Render\TrackRenderer.cpp" ^
     "D3d9Render\RwWorldRender.cpp" ^
     "Ai\AiStandalone.cpp" ^
+    "Vehicle\ForceIntegrator.cpp" ^
+    "Vehicle\ForceIntegratorStubs.cpp" ^
+    "Vehicle\VehicleControl.cpp" ^
+    "Vehicle\Integrate2.cpp" ^
+    "Vehicle\AeroStabilize.cpp" ^
+    "Vehicle\VehicleInit.cpp" ^
+    "Vehicle\VehiclePhysicsRun.cpp" ^
+    "Collision\ContactStubs.cpp" ^
+    "Collision\ContactProducer.cpp" ^
+    "Collision\CarWorldContacts.cpp" ^
+    "Collision\CarCarContacts.cpp" ^
+    "Collision\WheelContactSolver.cpp" ^
+    "Math\RwV3dTransformPointsCPU.cpp" ^
+    "Math\RwMatrixRotate.cpp" ^
+    "Math\RwMatrixRotateInner.cpp" ^
+    "Math\RwV3dNormalize.cpp" ^
+    "Math\Vec3.cpp" ^
     "D3d9Render\RwWorldLoad.cpp" ^
     "D3d9Render\RwWorldLoadStubs.cpp" ^
     "D3d9Render\RwWorldStream.cpp" ^
