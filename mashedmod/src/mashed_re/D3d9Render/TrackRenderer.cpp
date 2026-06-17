@@ -15,6 +15,7 @@
 #include "../Track/LapLogic.h"      // F4 lap-line crossing sequence (shared w/ test)
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
+#include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -2074,6 +2075,14 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     dev->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
     dev->SetFVF(kFVF);
 
+    // WS-E1: real RenderWare world render path (B-full), behind MASHED_RW_RENDER.
+    // It is INERT in the standalone until the RW engine substrate is bound
+    // (RwEngineOpen + BSP->RpWorld loader = E2/B-full), so RwWorldRender_Render()
+    // returns 0 and the spike world draw below stays the shipping path. When active
+    // it traverses RpWorld sectors -> RpAtomic render callbacks (full world incl.
+    // sky/props route through it; the spike world-geometry loop is then skipped).
+    const bool rw_world = D3d9Render::RwWorldRender_Render(/*world*/nullptr, /*cam*/nullptr) != 0;
+
     // sky clump first: unfogged, no depth write (renderer-gap closure)
     if (!sky_.batches.empty()) {
         dev->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -2126,6 +2135,9 @@ void TrackRenderer::Render(IDirect3DDevice9* dev, float t, const CamInput* in) {
     dev->SetRenderState(D3DRS_ALPHAREF, 0x30);
     dev->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
+    // WS-E1: skip the spike's world-geometry batches when the RW world render path
+    // drew the world (the `if` gates the entire for-statement; inert today).
+    if (!rw_world)
     for (std::size_t mi = 0; mi < batches_.size(); ++mi) {
         const auto& b = batches_[mi];
         if (b.empty()) continue;
