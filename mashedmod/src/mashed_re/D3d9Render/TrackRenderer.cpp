@@ -17,11 +17,96 @@
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
 #include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
+#include "../Ai/AiState.h"          // WS-AI-BRIDGE: ctrl-block / slot-table / spline addrs
+#include "../Ai/AiData.h"           // WS-AI-BRIDGE: .AI loader (AiData_LoadInto)
 
 namespace mashed_re {
 namespace D3d9Render {
 
 namespace {
+
+// ===========================================================================
+// WS-AI-BRIDGE (2026-06-17): make the standalone AI tick (Ai_Standalone_Tick,
+// Ai/AiStandalone.cpp) actually drive the opponents. Three parts:
+//   (1) Ai_BridgeLoad  — load AI<course>.AI (Common/AI.piz) into the controller
+//       image @0x007f1a9c so the race-line banks fill (tick non-inert) + init the
+//       per-vehicle slot table and behaviour records (race line, type0/idx0).
+//   (2) host snapshot + Ai::Host fns — feed the tick each car's world pos/vel
+//       (Ai::Host uses context-free fn ptrs, so they read file-static g_aib).
+//   (3) the adapter (inline in UpdateCar) reads the tick's ctrl-block outputs and
+//       steers/throttles ai_cars_, REPLACING the gate-ribbon scaffold when on.
+// Absolute writes (0x007f1a9c, kSlotTableBase, kCtrlBlockBase) target the
+// image-pad in mashed_re.exe (valid writable memory — standalone-exe-phase-h);
+// everything is gated on MASHED_REAL_AI so the dev .asi (injected into MASHED.exe)
+// never clobbers the original's live AI image. PENDING diff-original C4 — the
+// ctrl->yaw/throttle mapping (turn rate, accel bands) is APPROXIMATE: the exact
+// bands live in the un-ported FUN_00416250 ([U-C-BANDS]).
+// ===========================================================================
+struct AiBridgeState {
+    float pos[4][2];   // [v] = {x,z};  v0 = player, v1..3 = ai_cars_[v-1]
+    float vel[4][2];
+    int   alive[4];
+    int   course;
+    bool  loaded;
+};
+AiBridgeState g_aib = {};
+
+void aib_own_xz(int v, float* x, float* z) {
+    if (v < 0 || v > 3) { *x = *z = 0.f; return; }
+    *x = g_aib.pos[v][0]; *z = g_aib.pos[v][1];
+}
+void aib_own_vel_xz(int v, float* vx, float* vz) {
+    if (v < 0 || v > 3) { *vx = *vz = 0.f; return; }
+    *vx = g_aib.vel[v][0]; *vz = g_aib.vel[v][1];
+}
+int aib_alive(int v)       { return (v >= 0 && v <= 3) ? g_aib.alive[v] : 0; }
+int aib_veh_type(int v)    { return v == 0 ? 0 : 2; }   // 0 = player(human); else AI
+int aib_game_sub_mode()    { return 6; }                // race (FUN_0040e350)
+int aib_round_type()       { return 3; }                // AI-enabled round (FUN_0042f6a0)
+int aib_game_mode_fd0()    { return 0; }
+int aib_track_index()      { return g_aib.course; }
+int aib_ai_target_enable() { return 1; }
+
+// (1) load AI<course>.AI from Common/AI.piz into the controller image.
+bool Ai_BridgeLoad(int course, const char* trackPizPath) {
+    // derive <...>/Common/AI.piz from <...>/TRACKS/<track>.piz (mirrors LED.piz).
+    std::string ai(trackPizPath ? trackPizPath : "");
+    std::size_t cut = ai.find_last_of("/\\");
+    if (cut == std::string::npos) return false;
+    cut = ai.find_last_of("/\\", cut - 1);
+    if (cut == std::string::npos) return false;
+    ai.resize(cut + 1);
+    ai += "Common\\AI.piz";
+
+    Piz::Archive arc;
+    if (!arc.Load(ai.c_str())) return false;
+    char want[32];
+    std::snprintf(want, sizeof(want), "AI%d.AI", course);
+    const std::uint8_t* raw = nullptr; std::uint32_t len = 0;
+    for (std::uint32_t i = 0; i < arc.count(); ++i) {
+        const char* n = arc.entry(i).name;
+        const char* base = n;
+        for (const char* p = n; *p; ++p) if (*p == '\\' || *p == '/') base = p + 1;
+        if (_stricmp(base, want) == 0) { raw = arc.blob(i, &len); break; }
+    }
+    if (!raw) return false;
+    if (!Ai::AiData_LoadInto(raw, len, reinterpret_cast<void*>(0x007f1a9cu))) return false;
+
+    // slot table: vehicle v -> ctrl slot v (image-pad is zeroed; make it explicit).
+    for (int v = 0; v < 4; ++v)
+        Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride) = v;
+    // per-vehicle behaviour record -> race line (type 0, index 0).
+    for (int v = 0; v < 4; ++v) {
+        Ai::I32(Ai::kAiLineType    + static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u) = 0;
+        Ai::I32(Ai::kAiSplineIndex + static_cast<std::uintptr_t>(v) * Ai::kAiStateDwords * 4u) = 0;
+    }
+    Ai::Host h = {
+        aib_game_sub_mode, aib_round_type, aib_game_mode_fd0, aib_track_index,
+        aib_alive, aib_veh_type, aib_ai_target_enable, aib_own_xz, aib_own_vel_xz,
+    };
+    Ai::Ai_SetHost(&h);
+    return true;
+}
 
 // [item 2 — renderer] Flat per-face directional+ambient lighting for car models.
 // The DFF path carries no per-vertex normals, so cars render flat; this folds a
@@ -715,6 +800,14 @@ bool TrackRenderer::Load(IDirect3DDevice9* dev, const char* piz_path,
         }
     }
 
+    // WS-AI-BRIDGE: load AI<course>.AI -> controller image so Ai_Standalone_Tick is
+    // non-inert (gated on MASHED_REAL_AI; gate-ribbon stays the driver otherwise).
+    {
+        static const bool s_real_ai_load = (std::getenv("MASHED_REAL_AI") != nullptr);
+        g_aib.course  = course_id_;
+        g_aib.loaded  = s_real_ai_load ? Ai_BridgeLoad(course_id_, piz_path) : false;
+    }
+
     // render-world soup for spawn validation (visible-surface heights)
     for (const auto& s : world.sectors) {
         const std::uint32_t vbase =
@@ -1394,16 +1487,54 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_vel_[0] = car_vel_[2] = 0.f;
     }
     UpdateRace(in.dt);
-    // WS-C-WIRE: standalone AI tick (FUN_00418860 reimpl, Ai/AiStandalone.cpp).
-    // Gated + INERT until the .AI spline loader fills the race-line banks
-    // (kSplineRaceCnt>3) and a ctrl-block->ai_cars_ adapter routes its output; the
-    // gate-ribbon scaffold below stays the active driver meanwhile.
-    // [TODO WS-C: .AI loader (FUN_004235b0 / AiData_LoadInto) + Ai::Host bind + adapter]
+    // WS-AI-BRIDGE (2026-06-17): when MASHED_REAL_AI is on AND the .AI race-line banks
+    // loaded (kSplineRaceCnt>3), the standalone AI controller (Ai_Standalone_Tick) drives
+    // the opponents via its ctrl-block output; otherwise the gate-ribbon scaffold drives.
     static const bool s_real_ai = (std::getenv("MASHED_REAL_AI") != nullptr);
-    if (s_real_ai) Ai::Ai_Standalone_Tick();
+    const int ng = static_cast<int>(gates_.size());
+    const bool real_ai = s_real_ai && g_aib.loaded && (Ai::I32(Ai::kSplineRaceCnt) > 3);
+    if (real_ai) {
+        // (a) snapshot car world pos/vel for the controller host (v0=player, v1..3=ai).
+        g_aib.pos[0][0] = car_pos_[0]; g_aib.pos[0][1] = car_pos_[2];
+        g_aib.vel[0][0] = car_vel_[0]; g_aib.vel[0][1] = car_vel_[2];
+        g_aib.alive[0] = 1;
+        for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i) {
+            const AiCar& a = ai_cars_[static_cast<std::size_t>(i)];
+            g_aib.pos[i + 1][0] = a.pos[0]; g_aib.pos[i + 1][1] = a.pos[2];
+            g_aib.vel[i + 1][0] = std::cos(a.yaw) * a.cur_speed;
+            g_aib.vel[i + 1][1] = std::sin(a.yaw) * a.cur_speed;
+            g_aib.alive[i + 1] = (round_mode_ && !race_[i + 1].alive) ? 0 : 1;
+        }
+        // (b) run the real controller — writes per-vehicle ctrl blocks.
+        Ai::Ai_Standalone_Tick();
+        // (c) adapter: ctrl block -> ai_cars_ steer/throttle + integrate (replaces ribbon).
+        for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
+            AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
+            const int v = ci + 1;
+            if (round_mode_ && !race_[ci + 1].alive) { a.cur_speed = 0.f; continue; }
+            if (a.spin > 0.f) { a.spin -= in.dt; a.yaw += 12.0f * in.dt; a.cur_speed = 0.f; continue; }
+            if (a.slow > 0.f) a.slow -= in.dt;
+            const int slot = Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride);
+            const std::uint8_t* ctrl = reinterpret_cast<const std::uint8_t*>(
+                Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * Ai::kCtrlBlockStride);
+            // steer pair [0]/[1], accel [4], brake [5]. ctrl->motion mapping is APPROX
+            // (turn rate / accel bands): the real bands are the un-ported FUN_00416250
+            // ([U-C-BANDS]); steer-sign pending the WS-A-VERIFY-class diff.
+            const float steer = (ctrl[0] ? 1.f : 0.f) - (ctrl[1] ? 1.f : 0.f);
+            a.yaw += steer * 2.4f * in.dt;
+            float tgt = a.speed * (static_cast<float>(ctrl[4]) / 255.0f);
+            if (ctrl[5]) tgt = 0.f;                 // brake
+            if (a.slow > 0.f) tgt *= 0.35f;
+            a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
+            const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
+            const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
+            bool aok = false;
+            const float ay = GroundHeight(nx2, nz2, &aok);
+            if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
+        }
+    } else {
     // AI v2: follow the gate ribbon with a lateral lane offset, braking for
     // sharp upcoming corners, velocity-shaped speed (no teleport).
-    const int ng = static_cast<int>(gates_.size());
     for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
         AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
         if (ng < 2) break;
@@ -1459,6 +1590,7 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         } else {
             a.target = (a.target + 1) % ng;   // edge: skip to next gate
         }
+    }
     }
 
     // visual wheels: spin by distance/radius, steer toward the input
