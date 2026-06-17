@@ -22,6 +22,23 @@ int  VehicleInit(int slot, int trackType);                                      
 void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xf); // A4 0x00470670
 extern int g_torqueRingPhase;   // DAT_007f101c (defined in ForceIntegratorStubs.cpp)
 
+// Build a vehicle WORLD-transform RwMatrix (the layout RwV3dTransformPointsCPU /
+// RwMatrixRotate use: right@m[0..2], flags@m[3], up@m[4..6], at@m[8..10],
+// pos@m[12..14]) for a heading `yaw` so that transforming the body forward axis
+// (0,0,1) yields the car's heading {cos(yaw),0,sin(yaw)} (the TrackRenderer/adapter
+// forward convention). In the original this matrix comes from the live RW scene
+// graph; the standalone has no RW device, so we synthesize it from the car's yaw.
+//   at    = (cos, 0, sin)         [forward; transform of (0,0,1)]
+//   up    = (0, 1, 0)
+//   right = up x at = (sin, 0, -cos)   [transform of (1,0,0)]
+static void BuildYawMatrix(float yaw, float* m /*[16]*/) {
+    const float c = std::cos(yaw), s = std::sin(yaw);
+    m[0]  =  s; m[1]  = 0.f; m[2]  = -c; m[3]  = 0.f;   // right
+    m[4]  = 0.f; m[5] = 1.f; m[6]  = 0.f; m[7]  = 0.f;  // up
+    m[8]  =  c; m[9]  = 0.f; m[10] =  s; m[11] = 0.f;   // at (forward)
+    m[12] = 0.f; m[13] = 0.f; m[14] = 0.f; m[15] = 0.f; // pos (origin; only axes used)
+}
+
 namespace {
 constexpr std::size_t kRec   = 0xd04;          // record stride (== sizeof, vehicle.md)
 constexpr float       kSuspDtK = 0.0027809f;   // _DAT_005cea80
@@ -138,6 +155,13 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     g_suspDtTerm = frameMs * kSuspDtK;
     g_suspScale  = (g_suspDtTerm != 0.f) ? (kSuspNum / g_suspDtTerm) : 0.f;
 
+    // The body-forward/wheel-axis world transform A5 needs (zeroed +0x928 wheel
+    // matrix block produced (0,0,0) -> no drive direction -> no motion). Synthesize
+    // it from the car's yaw each frame (origin position; only the rotation axes are
+    // read by A5's forward/right-axis transforms).
+    float xform[16];
+    BuildYawMatrix(io.yaw, xform);
+
     // Subdivide the frame ms budget into <=50ms chunks (the FUN_00470c70 chunk loop,
     // local_24 = min(remaining,0x32)); A4's dt per chunk is that ms count.
     float remMs = frameMs;
@@ -148,24 +172,26 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
         // the verbatim A6a drive/suspension blocks engage (see SetGrounded).
         SetGrounded(r, io.grounded != 0);
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), chunkMs, input, nullptr);
+        VehicleControlIntegrate(reinterpret_cast<int*>(r), chunkMs, input, xform);
         // A6a's drive block clears the wheel state in some branches; re-assert the
         // grounded count so the next chunk's suspension block stays engaged.
         SetGrounded(r, io.grounded != 0);
         remMs -= chunkMs;
     }
 
-#if 1  /* TEMP diag (reverted before commit) */
+#if defined(MASHED_PHYS_DIAG)  /* TEMP diag — compiled only with -DMASHED_PHYS_DIAG */
     {
         static int dn = 0;
         if (dn < 200) {
-            if (std::FILE* lf = std::fopen("C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\phys_diag.log", "a")) {
-                std::fprintf(lf, "DIAG in4=%d in5=%d gnd=%d frameMs=%.2f susp=%.1f "
-                    "b14=%g 1a8=%g cc_speed=%g vel=(%g,%g,%g) gear=%d\n",
-                    io.input[4], io.input[5], io.grounded, frameMs, g_suspScale,
-                    F(r,0xb14), F(r,0x1a8), F(r,0x9e4),
+            if (std::FILE* lf = std::fopen("phys_diag.log", "a")) {   // cwd-relative
+                std::fprintf(lf, "DIAG in4=%d gnd=%d sp=%g vel=(%.2f,%.2f,%.2f) "
+                    "pos=(%.1f,%.1f,%.1f) fwd=(%.2f,%.2f,%.2f) b14=(%g,%g,%g)\n",
+                    io.input[4], io.grounded,
+                    F(r,0x9e4),
                     F(r,off::kVelocity), F(r,off::kVelocity+4), F(r,off::kVelocity+8),
-                    I(r,0x490));
+                    io.pos[0], io.pos[1], io.pos[2],
+                    F(r,off::kForward), F(r,off::kForward+4), F(r,off::kForward+8),
+                    F(r,0xb14), F(r,0xb18), F(r,0xb1c));
                 std::fclose(lf);
             }
             ++dn;

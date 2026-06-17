@@ -113,3 +113,60 @@ C4 leaves are preserved — guard is a no-op there).
 
 Repro tooling added: re/frida/catch_standalone_phys_crash.py (+_off.py),
 re/frida/probe_rwsqrt_lut.py, re/frida/probe_phys_state.py.
+
+---
+
+## WS-PHYS-MOTION — RESOLVED: the car MOVES (2026-06-17, branch ws-a-verify3-motion)
+
+### Verdict: Y — real physics drives. Speed 0 -> ~112; grounded reaches 4.0; pos trajectory live.
+MASHED_REAL_PHYSICS=1 race (MASHED_RACE_DEMO/PLAY_DEMO/GOTO=6, Arctic, PLAY-DEMO
+= full accel+steer). Per-frame record diag (compile with -DMASHED_PHYS_DIAG, writes
+phys_diag.log; CL='/DMASHED_PHYS_DIAG' build):
+```
+sp=34.9  vel=(0.73,0.00,34.90)   pos=(-25.2,0.0,15.8)  fwd=(0.02,0.00,1.00)
+sp=80.7  vel=(-60.85,0.00,-33.80) pos=(-28.6,0.0,27.1)  fwd=(-0.69,0.00,-0.72)
+sp=92.6  vel=(83.66,0.00,14.95)   pos=(-29.3,0.0,11.1)  fwd=(0.44,0.00,0.90)
+sp=112.6 vel=(-106.87,-0.00,0.83) pos=(-38.6,-4.1,1.5)  fwd=(-0.91,0.00,-0.41)
+```
+Speed ramps with throttle; velocity tracks the heading; position wanders (the car
+circles because PLAY-DEMO holds steer=1). No crash; clean exit. grounded count
++0x9e0 reaches 0x40800000 (=4.0); susp scale +0x9e5f0 ~8600-17000 (non-zero).
+
+### Root cause: it needed MORE than the input byte-map fix — a zeroed world xform.
+The recovered WIP (973d20ab) correctly wired input[4]=accel/[5]=brake to A6a and a
+SetGrounded() hint (wheel-state +0x198/.. = 1, grounded count +0x9e0 = 4.0). But the
+diag with that alone showed `b14=(0,0,0) drvDir=(0,0,0) fwd=(0,0,0) sp=0` — the drive
+force accumulator stayed zero EVEN THOUGH input + grounded + committed-mode (+0x168=2)
+were all correct.
+
+The chain (verified vs original FUN_00470670/FUN_0046ddb0/FUN_00467650, Ghidra pool11):
+- A6a (FUN_00467650) drive block accumulates `+0xb14 += piVar12[0x1f..0x21] * drive`,
+  where piVar12[0x1f..0x21] (byte +0x220) is the per-wheel DRIVE DIRECTION.
+- That drive direction is written by A5 (FUN_0046ddb0) Phase 0: when wheel steer==0,
+  `piVar12[0x2d..0x2f] (== same byte +0x220) = self forward (+0x9d4)`, and the forward
+  itself is `FUN_004c3df0(self+0x9d4, &DAT_00614708 /*(0,0,1)*/, 1, xform)` — i.e.
+  forward = xform * (0,0,1).
+- **The standalone port passed the WRONG xform.** VehicleControl.cpp passed `wheelBlock`
+  (the +0x928 wheel-matrix ring slot) as A5's xform; the original passes A4's `param_4`
+  (the world xform) — `FUN_0046ddb0(param_2/*dt*/, iVar1/*wheelBlock*/, param_4/*xform*/)`
+  at 0x004708... The +0x928 block is NEVER initialized standalone (RW scene-graph
+  populates it; no RW device runs), so it is a ZERO matrix -> forward = (0,0,0) ->
+  drive direction = (0,0,0) -> b14 = 0 -> no force -> no motion.
+
+### Fix (this branch)
+- VehicleControl.cpp: pass A4's `xform` param (not `wheelBlock`) to A5, matching the
+  original arg order.
+- VehiclePhysicsRun.cpp: synthesize the world xform each frame from the car's yaw
+  (BuildYawMatrix -> RwMatrix with at=(cos,0,sin)=forward, up=(0,1,0), right=(sin,0,-cos)),
+  pass it down the chain. (The original's xform is the live RW vehicle matrix; the
+  standalone has no RW device, so the yaw matrix is the faithful substitute — only the
+  forward + wheel right-axis transforms read it.) [UNCERTAIN] the original xform SOURCE
+  (A4 param_4 traces to the dispatcher's param_2 which vehicle.md calls `&dt`) is not
+  fully resolved; the yaw-matrix substitute makes the standalone correct regardless.
+
+So motion needed: (a) the input byte-map fix [4]/[5] (WIP), (b) the SetGrounded hint
+(WIP), AND (c) the world-xform fix (this session). All three are required.
+
+NOTE the diag block in VehiclePhysicsRun.cpp is gated behind -DMASHED_PHYS_DIAG (inert
+in the shipped build) and writes phys_diag.log (cwd) — kept for the WS-A-VERIFY-3
+telemetry lane.

@@ -136,7 +136,14 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     }
 
     // the per-frame integration chain (callee arg binding finalized at A8)
-    VehicleWheelForceIntegrate(self, dt, wheelBlock);              // A5 0x0046ddb0 (ported)
+    // A5 transforms the body-forward/wheel axes by the vehicle WORLD matrix. The
+    // original passes A4's param_4 (the xform) here, NOT iVar1/wheelBlock:
+    //   FUN_00470670: FUN_0046ddb0(param_2 /*dt*/, iVar1 /*wheelBlock*/, param_4 /*xform*/)
+    // (decomp 0x004708.., Ghidra pool11 2026-06-17). The standalone supplies a
+    // yaw world-rotation matrix as `xform` (StepPlayer) so forward = M*(0,0,1) is
+    // the car's real heading; passing the zeroed +0x928 wheelBlock zeroed it -> no
+    // drive direction -> no motion (root cause, WS-A-VERIFY-3).
+    VehicleWheelForceIntegrate(self, dt, xform);                  // A5 0x0046ddb0 (ported)
     Vehicle_Integrate2(self, 0, dt, wheelBlock, input);            // A6a 0x00467650 (param_1=0 [UNCERTAIN])
     Vehicle_AeroStabilize(self, nullptr, dt);                    // A6b 0x00468980 (orient bound at A8)
 
