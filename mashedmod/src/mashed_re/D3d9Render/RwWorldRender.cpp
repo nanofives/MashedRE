@@ -113,6 +113,29 @@ unsigned RpAtomicDefaultRenderCallback(void* atomic)
 }
 
 // ===========================================================================
+// 0x004e5190  RwWorldPipelineRender(world) — the world's +0x68 render callback
+// (installed by FUN_004e5820 = RwWorldLoad's Rwl_WorldSetRenderCB). Resolves the
+// world pipeline (world+0x7c override, else the world-TYPE default
+// (*(RwGlobals+4))+0x6c, else engine default WORLD pipe plugin+0x40) and executes it.
+// Verbatim of FUN_004e5190 (0x004e5190..0x004e51d7).
+// ===========================================================================
+unsigned RwWorldPipelineRender(void* world)
+{
+    if (S(world, 0x84) == 0) return reinterpret_cast<unsigned>(world);  // empty-world guard
+    void* pipe = PP(world, 0x7c);                                       // world's own pipeline override
+    if (!pipe) {
+        if (g_rwGlobals) {
+            void* o = PP(g_rwGlobals, 4);                              // world-TYPE object O (§1.2)
+            if (o) pipe = PP(o, 0x6c);
+        }
+        if (!pipe && g_defPipeBase && g_rwGlobals)                    // engine default WORLD pipeline
+            pipe = *reinterpret_cast<void**>(g_defPipeBase + 0x40 + reinterpret_cast<intptr_t>(g_rwGlobals));
+    }
+    unsigned r = RxPipelineExecute(pipe, world, 1);
+    return (r != 0) ? reinterpret_cast<unsigned>(world) : 0u;
+}
+
+// ===========================================================================
 // 0x004f0900  RwWorldSectorCull(sector) — indirect device dispatch
 // `(**(code**)(*(RwGlobals+4) + 0x68))()` — a RW device-table call (the sector
 // visibility/frustum predicate). The device table is the RW D3D9 driver (B-full,
