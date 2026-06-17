@@ -51,7 +51,33 @@ extern "C" {
     void* PCH_Fwd_46ddb0 = reinterpret_cast<void*>(0x0046ddb0);  // A5
     void* PCH_Fwd_467650 = reinterpret_cast<void*>(0x00467650);  // A6a
     void* PCH_Fwd_468980 = reinterpret_cast<void*>(0x00468980);  // A6b
+    // A5-chain live callees (forwarded so the running MASHED's RW LUT / PRNG run):
+    void* PCH_Fwd_46c5f0 = reinterpret_cast<void*>(0x0046c5f0);  // TriangleFaceNormal (EDI=record)
 }
+
+// A5 (FUN_0046ddb0) callees called as plain C function pointers at their live RVAs.
+// ABI read from the call sites (Mashed_pool11, read-only, 2026-06-17):
+//   FUN_004c3df0(dst,src,count,mtx)  __cdecl 4 stack args (RwV3dTransformPoints, RW device)
+//   FUN_004c4d20(outMtx,axis,angle,mode) __cdecl 4 args (RwMatrix from axis+angle)
+//   FUN_004c3ac0(float* v) -> ST0    __cdecl 1 arg     (Vec3 magnitude; RW fast-sqrt LUT)
+//   FUN_004c39b0(out,in) -> ST0      __cdecl 2 args    (Vec3 normalize; RW fast-inv-sqrt LUT)
+//   FUN_00472650(lo,hi) -> ST0       __cdecl 2 args    (random float in [lo,hi); PRNG FUN_00534870)
+//   FUN_00442ce0(car,band,grip) -> ST0 __cdecl 3 args  (rubber-band grip multiplier)
+//   FUN_00442c80(car) -> int(EAX)    __cdecl 1 arg      (rubber-band activation gate)
+typedef void  (__cdecl* Fn_xform_t)(float* dst, const float* src, int count, const void* mtx);
+typedef void  (__cdecl* Fn_axang_t)(void* outMtx, const float* axis, float angle, int mode);
+typedef float (__cdecl* Fn_mag_t)  (const float* v);
+typedef float (__cdecl* Fn_norm_t) (float* out, const float* in);
+typedef float (__cdecl* Fn_rand_t) (float lo, float hi);
+typedef float (__cdecl* Fn_rbg_t)  (int car, float band, float grip);
+typedef int   (__cdecl* Fn_rbgate_t)(int car);
+static const Fn_xform_t  Live_004c3df0 = reinterpret_cast<Fn_xform_t> (0x004c3df0);
+static const Fn_axang_t  Live_004c4d20 = reinterpret_cast<Fn_axang_t> (0x004c4d20);
+static const Fn_mag_t    Live_004c3ac0 = reinterpret_cast<Fn_mag_t>   (0x004c3ac0);
+static const Fn_norm_t   Live_004c39b0 = reinterpret_cast<Fn_norm_t>  (0x004c39b0);
+static const Fn_rand_t   Live_00472650 = reinterpret_cast<Fn_rand_t>  (0x00472650);
+static const Fn_rbg_t    Live_00442ce0 = reinterpret_cast<Fn_rbg_t>   (0x00442ce0);
+static const Fn_rbgate_t Live_00442c80 = reinterpret_cast<Fn_rbgate_t>(0x00442c80);
 
 namespace {
 
@@ -81,6 +107,67 @@ inline int& TorqueRingPhase() { return *reinterpret_cast<int*>(0x007f101c); }
 
 // FUN_0040e350  Fi_GameMode  (__cdecl int(void))
 inline int Fi_GameMode() { return reinterpret_cast<int(__cdecl*)()>(0x0040e350)(); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// A5 (FUN_0046ddb0) — exact-bit constants (memory_read, Mashed_pool11 2026-06-17)
+// All from ForceIntegrator.h + this session's reads; cited @ their .rdata address.
+// ═══════════════════════════════════════════════════════════════════════════
+const float A5_005cc320 = Cf(0x3f800000);  // 1.0
+const float A5_005cc32c = Cf(0x3f000000);  // 0.5
+const float A5_005cc318 = Cf(0x3f19999a);  // 0.6   suspForce[1] coeff / rubber A
+const float A5_005cc328 = Cf(0x3c23d70a);  // 0.01  spin-scale (_DAT_005cc328)
+const float A5_005cc564 = Cf(0x3e800000);  // 0.25  steer ring quarter
+const float A5_005cc574 = Cf(0x40000000);  // 2.0   gravity-ramp clamp
+const float A5_005cc31c = Cf(0x40400000);  // 3.0   airborne grounded-count thr
+const float A5_005cc990 = Cf(0x3727c5ac);  // 9.98199e-6 gravity ang-scale (EXACT, read 2026-06-17)
+const float A5_005cc948 = Cf(0x39aec33e);  // 3.33e-4  substep ms->s
+const float A5_005cc9b4 = Cf(0x3f7d70a4);  // 0.99    draft cos threshold
+const float A5_005ccac8 = Cf(0x3eaaaaab);  // 0.333   steer clamp third
+const float A5_005ccd08 = Cf(0x453b8000);  // 3000.0  airborne damp k (_DAT_005ccd08) (EXACT, read 2026-06-17)
+const float A5_005ccd6c = Cf(0x41a00000);  // 20.0    steer-out hi clamp
+const float A5_005cd03c = Cf(0x38d1b717);  // 9.99e-5 speed-min epsilon
+const float A5_005cd050 = Cf(0x3e000000);  // 0.125   draft ramp
+const float A5_005cd0a0 = Cf(0x40c00000);  // 6.0     draft distance
+const float A5_005cd61c = Cf(0xc1a00000);  // -20.0   steer-out lo clamp
+const float A5_005ce018 = Cf(0x3b03126f);  // 0.002   steer projection scale
+const float A5_005cea64 = Cf(0x47800000);  // 65536.0 airborne vel threshold
+const float A5_005cea68 = Cf(0x36a7c5ac);  // 4.99955e-6 rand-impulse speed scale
+const float A5_005cea6c = Cf(0x3b5a740e);  // 0.00333 steer-out scale
+const float A5_005cea70 = Cf(0xbe19999a);  // -0.15   grip count-0 coeff
+const float A5_005cea74 = Cf(0xb80bcf65);  // -3.33e-5 grip-ramp k
+const float A5_005cea78 = Cf(0xc6ea6000);  // -30000  grip-ramp lo clamp
+const float A5_005cea7c = Cf(0x476a6000);  // 60000   grip-ramp hi
+const float A5_00613138 = Cf(0x3d4ccccd);  // 0.05    suspForce[2] coeff (_DAT_00613138)
+// surface-jitter coefficients (selected by integer surface key)
+const float A5_jit0p25 = Cf(0x3e800000);   // 0.25 default
+const float A5_jit0p1  = Cf(0x3dcccccd);   // 0.1
+const float A5_jit0p01 = Cf(0x3c23d70a);   // 0.01
+const float A5_jit0p2  = Cf(0x3e4ccccd);   // 0.2
+// surface keys (CMP EAX,imm — verbatim from the dispatch asm 0x0046e76d..0x0046e817)
+const int   A5_keyRandom = (int)0xffff32ff;
+const int   A5_key0p1    = (int)0xffa08080;
+const int   A5_key0p01   = (int)0xffaa8080;
+const int   A5_keySlipA  = (int)0xff961e5a;
+const int   A5_keySlipB  = (int)0xff1e80b4;
+const int   A5_key0p2    = (int)0xffc81e5a;
+// local model axes the vehicle matrix transforms (DAT_006146fc up, DAT_00614708 fwd)
+const float* const A5_DAT_006146fc = reinterpret_cast<const float*>(0x006146fc);  // (0,1,0)
+const float* const A5_DAT_00614708 = reinterpret_cast<const float*>(0x00614708);  // (0,0,1)
+
+// live runtime globals A5 reads (absolute; populated by the running MASHED) ----
+inline int&   A5_PlayerCount() { return *reinterpret_cast<int*>  (0x007f0fd0); }   // DAT_007f0fd0
+inline int&   A5_RaceTimer()   { return *reinterpret_cast<int*>  (0x007f0ff8); }   // DAT_007f0ff8
+inline float& A5_GravScale()   { return *reinterpret_cast<float*>(0x00803340); }   // _DAT_00803340
+inline float& A5_GravX()       { return *reinterpret_cast<float*>(0x00803334); }   // _DAT_00803334
+inline float& A5_GravY()       { return *reinterpret_cast<float*>(0x00803338); }   // _DAT_00803338
+inline float& A5_GravZ()       { return *reinterpret_cast<float*>(0x0080333c); }   // _DAT_0080333c
+inline float& A5_SuspDtTerm()  { return *reinterpret_cast<float*>(0x0088e610); }   // _DAT_0088e610
+inline float& A5_SuspScale()   { return *reinterpret_cast<float*>(0x0088e5f0); }   // _DAT_0088e5f0
+inline char*  A5_VehBase()     { return reinterpret_cast<char*>(0x008815a0); }     // DAT_008815a0
+// shared per-wheel scratch region A5 WRITES (0x00881560..0x00881590, 48 bytes):
+//   piVar10 loop [0x881560..0x88158c] + steer scalars 0x881564/570/57c/588
+inline float* A5_Scratch()     { return reinterpret_cast<float*>(0x00881560); }    // DAT_00881560
+inline int*   A5_ScratchI()    { return reinterpret_cast<int*>  (0x00881560); }
 
 // ── input smoother: store EAX of FUN_004a2c48(ST0 = (float)*(int*)(rec+off) + dt)
 // reproduces A4's exact x87 sequence (FILD dword; FADD float; CALL) bit-for-bit.
