@@ -16,6 +16,7 @@
 #include "../Txd/TxdDecoder.h"
 #include "../Audio/AudioEngine.h"   // real SFX (permdict.rws) for countdown/powerups
 #include "RwWorldRender.h"          // WS-E1: RW world render path (behind MASHED_RW_RENDER)
+#include "../Ai/AiStandalone.h"     // WS-C-WIRE: standalone AI tick (behind MASHED_REAL_AI)
 
 namespace mashed_re {
 namespace D3d9Render {
@@ -1393,6 +1394,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_vel_[0] = car_vel_[2] = 0.f;
     }
     UpdateRace(in.dt);
+    // WS-C-WIRE: standalone AI tick (FUN_00418860 reimpl, Ai/AiStandalone.cpp).
+    // Gated + INERT until the .AI spline loader fills the race-line banks
+    // (kSplineRaceCnt>3) and a ctrl-block->ai_cars_ adapter routes its output; the
+    // gate-ribbon scaffold below stays the active driver meanwhile.
+    // [TODO WS-C: .AI loader (FUN_004235b0 / AiData_LoadInto) + Ai::Host bind + adapter]
+    static const bool s_real_ai = (std::getenv("MASHED_REAL_AI") != nullptr);
+    if (s_real_ai) Ai::Ai_Standalone_Tick();
     // AI v2: follow the gate ribbon with a lateral lane offset, braking for
     // sharp upcoming corners, velocity-shaped speed (no teleport).
     const int ng = static_cast<int>(gates_.size());

@@ -66,6 +66,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Track\TrackData.cpp" ^
     "D3d9Render\TrackRenderer.cpp" ^
     "D3d9Render\RwWorldRender.cpp" ^
+    "Ai\AiStandalone.cpp" ^
     "D3d9Render\ParticleSystem.cpp" ^
     "D3d9Render\PickupField.cpp" ^
     "Powerup\PowerupSystem.cpp" ^
