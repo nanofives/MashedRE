@@ -56,6 +56,15 @@ namespace off {
     constexpr std::size_t kAngTorqueRing= 0x270; // float[16] ring
     constexpr std::size_t kScratch330   = 0x330; // cleared/tick [UNCERTAIN U-V01]
     constexpr std::size_t kScratch3f4   = 0x3f4; // cleared/tick [UNCERTAIN U-V02]
+    // --- per-wheel state flags (FUN_0046f6c0 writes; FUN_00467650 drive-gate reads
+    //     as p[-3]; FUN_0046ddb0/FUN_0046f6c0 sum them into the grounded count) ---
+    //     wheelN state = byte +0x198 + N*0xC4 (int idx 0x66/0x97/0xc8/0xf9).
+    constexpr std::size_t kWheel0State  = 0x198; // [0x66]
+    constexpr std::size_t kWheel1State  = 0x25c; // [0x97]
+    constexpr std::size_t kWheel2State  = 0x320; // [0xc8]
+    constexpr std::size_t kWheel3State  = 0x3e4; // [0xf9]
+    //     wheelN committed-mode = byte +0x168 + N*0xC4 (FUN_0046b540: 2,2,1,1);
+    //     FUN_00467650 drive block fires only where committed-mode == 2 (wheels 0,1).
     // --- wheel-matrix blocks ---
     constexpr std::size_t kWheelMatrices= 0x928; // RwMatrix[] (0x40 each)
     constexpr std::size_t kContactBufIdx= 0x9a4; // double-buffer index A (init 0)

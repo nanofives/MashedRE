@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <cstdio>
 #include <vector>
 
 namespace mashed_re {
@@ -28,8 +29,7 @@ constexpr float       kSuspNum = 3000.0f;      // _DAT_005ccd08
 // [U-A8-SUBSTEP] the dispatcher FUN_00470c70 runs the chain in <=0x32 (50) chunks
 // (local_24 = min(remaining, 0x32)) over the frame's substep budget. We subdivide
 // the frame into <=kMaxSubstep fixed ~1ms steps (the dispatcher's chunks are in ms).
-constexpr int         kMaxSubstep = 50;        // 0x32
-constexpr float       kSubstepSec = 0.001f;    // ~1ms per substep (chunk granularity)
+constexpr int         kMaxSubstep = 50;        // 0x32 (ms chunk cap)
 
 unsigned char g_records[16 * kRec];            // the 0xd04 record array (mirror of DAT_008815a0)
 bool          g_inited = false;
@@ -91,6 +91,25 @@ void VehiclePhysics_Init(int carCount, int trackType) {
     g_inited = true;
 }
 
+// Mark all 4 wheels grounded (state=1) + grounded count=4.0, or airborne (state=0,
+// count=0). STANDALONE SUBSTITUTE for the un-portable RW contact orchestrator
+// FUN_0046f6c0 (it sets the wheel states self+0x198/0x25c/0x320/0x3e4 from the RW
+// BSP broadphase FUN_00538c80 + device transform FUN_004c3d90 of the wheel mounts;
+// both are stubbed standalone, so without this the wheels never ground -> the A6a
+// drive block (gated on the wheel state p[-3]!=0) and the suspension block (gated on
+// grounded count +0x9e0 == 0x40800000 = 4.0) never fire -> the car cannot move).
+// The grounded fact comes from the caller's own GroundHeight collision (PlayerCarIO).
+static void SetGrounded(unsigned char* r, bool grounded) {
+    const int s = grounded ? 1 : 0;
+    I(r, off::kWheel0State) = s;
+    I(r, off::kWheel1State) = s;
+    I(r, off::kWheel2State) = s;
+    I(r, off::kWheel3State) = s;
+    // grounded count is a FLOAT count of grounded wheels at byte +0x9e0 (int idx
+    // 0x278); 4.0 (0x40800000) is the all-grounded sentinel A6a/A5 gate on.
+    F(r, off::kGroundedCnt) = grounded ? 4.0f : 0.0f;
+}
+
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     if (!g_inited) VehiclePhysics_Init(4, 0);
     if (dt <= 0.f) return;
@@ -109,23 +128,50 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     std::uint8_t input[8];
     std::memcpy(input, io.input, sizeof(input));
 
-    // [U-A8-SUBSTEP] subdivide the frame into <=kMaxSubstep fixed ~1ms substeps
-    // (the dispatcher's chunk granularity) instead of one integrate/frame -> stable
-    // integration. Per substep: bind the dispatcher-computed globals at the substep
-    // dt (so g_suspScale is no longer 0 -- the WS-A-VERIFY-2 blocker), run the B4
-    // contact pass (grounded state from the real terrain soup, [terrain] above), then
-    // the verbatim chain A4 -> A5 -> A6a -> A6b.
-    int n = static_cast<int>(dt / kSubstepSec + 0.5f);
-    if (n < 1) n = 1; if (n > kMaxSubstep) n = kMaxSubstep;
-    const float dtSub = dt / static_cast<float>(n);
-    for (int s = 0; s < n; ++s) {
-        g_suspDtTerm      = dtSub * kSuspDtK;
-        g_suspScale       = (g_suspDtTerm != 0.f) ? (kSuspNum / g_suspDtTerm) : 0.f;
+    // The chain works in the ORIGINAL's millisecond time base: FUN_00470c70 passes
+    // A4 a dt that is the integer ms chunk count (local_24 = min(remaining,0x32)),
+    // and computes the per-frame suspension scale from the FRAME dt in ms:
+    //   _DAT_0088e610 (suspDtTerm) = frameMs * _DAT_005cea80 (0.0027809)
+    //   _DAT_0088e5f0 (suspScale)  = _DAT_005ccd08 (3000) / suspDtTerm
+    // (the chain constants — kDt 3.33e-4, etc. — are calibrated for ms, NOT seconds).
+    const float frameMs = dt * 1000.0f;
+    g_suspDtTerm = frameMs * kSuspDtK;
+    g_suspScale  = (g_suspDtTerm != 0.f) ? (kSuspNum / g_suspDtTerm) : 0.f;
+
+    // Subdivide the frame ms budget into <=50ms chunks (the FUN_00470c70 chunk loop,
+    // local_24 = min(remaining,0x32)); A4's dt per chunk is that ms count.
+    float remMs = frameMs;
+    int guard = 0;
+    while (remMs > 0.0f && guard++ < 64) {
+        float chunkMs = (remMs < (float)kMaxSubstep) ? remMs : (float)kMaxSubstep;
+        // Stand-in for FUN_0046f6c0: ground the wheels from the caller's collision so
+        // the verbatim A6a drive/suspension blocks engage (see SetGrounded).
+        SetGrounded(r, io.grounded != 0);
         g_torqueRingPhase = (g_torqueRingPhase + 1) & 0xf;
-        Collision::WheelContactSolver(reinterpret_cast<int*>(r), nullptr, s);
-        VehicleControlIntegrate(reinterpret_cast<int*>(r), dtSub, input, nullptr);
+        VehicleControlIntegrate(reinterpret_cast<int*>(r), chunkMs, input, nullptr);
+        // A6a's drive block clears the wheel state in some branches; re-assert the
+        // grounded count so the next chunk's suspension block stays engaged.
+        SetGrounded(r, io.grounded != 0);
+        remMs -= chunkMs;
     }
 
+#if 1  /* TEMP diag (reverted before commit) */
+    {
+        static int dn = 0;
+        if (dn < 200) {
+            if (std::FILE* lf = std::fopen("C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\phys_diag.log", "a")) {
+                std::fprintf(lf, "DIAG in4=%d in5=%d gnd=%d frameMs=%.2f susp=%.1f "
+                    "b14=%g 1a8=%g cc_speed=%g vel=(%g,%g,%g) gear=%d\n",
+                    io.input[4], io.input[5], io.grounded, frameMs, g_suspScale,
+                    F(r,0xb14), F(r,0x1a8), F(r,0x9e4),
+                    F(r,off::kVelocity), F(r,off::kVelocity+4), F(r,off::kVelocity+8),
+                    I(r,0x490));
+                std::fclose(lf);
+            }
+            ++dn;
+        }
+    }
+#endif  /* TEMP diag */
     // --- adapter OUT: read back the integrated body state ---
     io.vel[0] = F(r, off::kVelocity + 0);
     io.vel[1] = F(r, off::kVelocity + 4);
