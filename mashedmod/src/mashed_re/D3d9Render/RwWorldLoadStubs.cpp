@@ -16,10 +16,8 @@
 namespace mashed_re {
 namespace D3d9Render {
 
-int   Rwl_StreamFindChunk(void*, int, int* lenOut, unsigned* verOut)      // FUN_004cc5e0
-{ if (lenOut) *lenOut = 0; if (verOut) *verOut = 0; return 0; }           // inert: chunk "not found"
-int   Rwl_StreamRead(void*, void*, int)            { return 0; }          // FUN_004cbd30
-int   Rwl_StreamReadReal(void*, void*, int)        { return 0; }          // FUN_004cc790
+// Rwl_StreamFindChunk / Rwl_StreamRead / Rwl_StreamReadReal are now REAL ports in
+// RwWorldStream.cpp (WS-E-DEVICE stream half) — removed here to avoid duplicate symbols.
 unsigned Rwl_ErrFmt(unsigned, unsigned)            { return 0; }          // FUN_004d7ff0
 void  Rwl_ErrEmit(void*)                           {}                     // FUN_004d8480
 void  Rwl_PluginCtor(void*, void*)                 {}                     // FUN_004d8000

@@ -69,6 +69,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Ai\AiStandalone.cpp" ^
     "D3d9Render\RwWorldLoad.cpp" ^
     "D3d9Render\RwWorldLoadStubs.cpp" ^
+    "D3d9Render\RwWorldStream.cpp" ^
     "D3d9Render\ParticleSystem.cpp" ^
     "D3d9Render\PickupField.cpp" ^
     "Powerup\PowerupSystem.cpp" ^
