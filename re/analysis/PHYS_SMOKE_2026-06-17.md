@@ -51,3 +51,65 @@ MASHED.exe not loaded (correct — standalone); no AcLayers/apphelp shims.`
 2. Audit the A8 wiring pointers: record-array base, contact soup, the substep loop's
    per-substep global rebind, and any reimpl dep still pointing at an inert/zero stub.
 3. Only after it runs crash-free, assess drive/brake/suspension/steer quality.
+
+---
+
+## WS-PHYS-CRASH-FIX — RESOLVED (2026-06-17, branch ws-phys-crash-fix)
+
+### Caller chain (captured live via re/frida/catch_standalone_phys_crash.py)
+The WS-PHYS-SMOKE dump's "eip=0x0005ad26 garbage address" reading was WRONG: it
+assumed image base 0x400000, but mashed_re.exe is `/BASE:0x10000`. Resolved against
+mashed_re.map (Rva+Base) the fatal fault is a DATA read (NOT a bad fn-ptr):
+
+```
+eip rva 0x4ad26  _FastInvSqrt+0x36   (instr: add esi,[eax+edx*4]; eax=0, edx=0x800 -> READ @0x2000)
+  <- _RwMatrixRotate+0x67
+  <- ?Rw_MatrixFromAxisAngle@Vehicle  (the A5/A6a stub binding -> Math/RwMatrixRotate)
+  <- ?VehicleWheelForceIntegrate@Vehicle+0xf3   (A5, Phase 0: steered-wheel matrix)
+  <- ?VehicleControlIntegrate@Vehicle+0x302     (A4)
+  <- ?VehiclePhysics_StepPlayer@Vehicle+0x1c3
+  <- ?UpdateCar@TrackRenderer+0x417
+```
+(NOTE: the harness must let the boot chain's SEH-recovered `MainLoopInit` execute-
+into-zero AVs at 0x495110 pass — return false on `op=='execute'` — and stop only on a
+DATA fault, else it catches the benign boot AV. Both ON and OFF raise the boot AV.)
+
+### Root cause
+`Math/RwSqrt.cpp::FastInvSqrt` (and the whole RW two-level fast-sqrt LUT family:
+FastSqrt, Vec3Magnitude 0x4c3ac0, RwV3dNormalize 0x4c39b0, RwV2d 0x4c3bf0/3c60) reads
+its LUT root via `*(*0x7d3ff8 + *0x7d3ffc + delta)`. That LUT is built by
+**RwEngineOpen, which never runs in the standalone** (no RW device). At runtime
+0x7d3ffc stays 0 but 0x7d3ff8 is overwritten with a NON-zero garbage heap value
+(~0xb54f88) during boot, so a "both selectors zero" guard is insufficient: the path
+proceeds, derefs the garbage slot -> a ZERO table pointer -> `lut_root[0x800]` reads
+[0+0x800*4]=[0x2000] -> 0xC0000005. Physics-ON hits it because the chain calls these
+RW-math leaves with live (null) LUT pointers; the scaffold (OFF) uses std::* and never
+touches them.
+
+### Fix
+All five RW-LUT functions now resolve + VALIDATE the actual LUT root pointer
+(`RwSqrtLutRoot`/`Vec3LutRoot`/`lut_root`: require the slot and the whole 0x1000-entry
+table to lie inside the image 0x10000..0xb40000). When invalid (standalone, no engine)
+they fall back to a plain CPU `std::sqrt` / `1/sqrt` — the same several-ULP standalone
+substitute already used for the RW *device* transform (RwV3dTransformPointsCPU). In the
+dev .asi the LUT IS live, so the original bit-identical LUT path is taken unchanged (the
+C4 leaves are preserved — guard is a no-op there).
+
+### Result: race SURVIVES (Y). Motion: residual zero (handoff to SMOKE-2/VERIFY-3).
+- catch_standalone_phys_crash.py: **0 data-access faults in 30s** (was AV @ t~2.2s).
+- 12s PLAY-DEMO race exits code 0; full 6.6s of PLAY-DEMO frames, no AV.
+- BUT speed stays ~0 (probe_phys_state.py once the race starts): wtc=3047, tec=256
+  (terrain soup + batch live), A4 drive force `+0x1a8=16.93` computed, A6a accumulates
+  `+0xb14=-18.19` — so the chain RUNS and produces force. Velocity stays ~0 because:
+    (a) `+0x9e0` (grounded-int) = 0, never the 0x40800000 (=4.0-as-int) all-grounded
+        sentinel A6a/A5's suspension-velocity blocks gate on;
+    (b) `+0x278` grounded-count reads 16.93 (= the drive force), i.e. it is being
+        ALIASED/overwritten — a field-mapping correctness bug, not a crash;
+    (c) the linear-integration `linTerm = dt*mass(+0x54=0.001)*kDt` is vanishingly
+        small with the current A3 mass init.
+  These are physics-CORRECTNESS issues (grounded-state machine + field map + tuning),
+  explicitly the WS-PHYS-SMOKE-2 / WS-A-VERIFY-3 gate (diff-original needed), NOT the
+  crash. The crash blocker is cleared; the chain is now safe to iterate on.
+
+Repro tooling added: re/frida/catch_standalone_phys_crash.py (+_off.py),
+re/frida/probe_rwsqrt_lut.py, re/frida/probe_phys_state.py.
