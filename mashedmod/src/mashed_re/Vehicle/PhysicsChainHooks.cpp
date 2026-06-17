@@ -41,6 +41,9 @@
 
 #include "../Core/HookSystem.h"
 #include <cstdint>
+#include <windows.h>
+#include <cstdlib>
+#include <cstring>
 
 // ── live-original forward addresses (absolute; MASHED is /FIXED base 0x400000) ─
 extern "C" {
@@ -134,22 +137,25 @@ __declspec(naked) void Call_A6b(void* /*record*/, float /*dt*/, void* /*input*/)
     }
 }
 
+}  // namespace
+
 // ===========================================================================
-// A4 body — verbatim transcription of FUN_00470670 (0x00470670..0x00470991).
-//   record  = the 0xd04 vehicle record (original in_EAX)
-//   param_1 = stack arg0 (to A6a)
-//   dt      = stack arg1 (the float dt; A5/A6a/A6b)
-//   input   = stack arg2 (per-car input descriptor; [0]=accel [1]=brake [5]=gate)
-//   xform   = stack arg3 (vehicle world matrix; to A5)
-// Pure x87 + integer in this body (the LUT hazard is entirely in the forwarded
-// callees). Built x87 → bit-identical float32 stores.
+// A4 body-MATH — the pure-arithmetic half of FUN_00470670 (0x00470670 prologue
+// through 0x00470914, i.e. everything BEFORE the A5/A6a/A6b callee dispatch).
+//   v        = the 0xd04 vehicle record
+//   input    = per-car input descriptor ([0]=accel [1]=brake [5]=gate)
+//   dt       = the float dt (FADD slot fed to the input smoother)
+//   gameMode = FUN_0040e350() result (==7 special)
+//   phase    = DAT_007f101c & 0xf (torque ring index)
+// SELF-CONTAINED: every constant is a compiled-in literal (NOT read from MASHED
+// memory) and the smoother call is the ONLY external dependency (FUN_004a2c48 at
+// a fixed RVA). Exported so the telemetry harness can A/B it against the live
+// original's body outputs on a captured record (deterministic, no race noise).
+// Built x87 (.asi TU, no /arch:SSE2) → bit-identical float32 stores.
 // ===========================================================================
-void A4_Body(void* record, int param_1, float dt, std::uint8_t* input, void* xform) {
-    void* v = record;
-    const int gameMode = Fi_GameMode();                              // 0x0047067b
+extern "C" __declspec(dllexport)
+void A4_BodyMath(void* v, std::uint8_t* input, float dt, int gameMode, unsigned phase) {
     const bool atRest = (Fb(v, 0x9e4) == DAT_005d757c);              // 0x00470680
-    int* wheelBlock = reinterpret_cast<int*>(
-        reinterpret_cast<char*>(v) + Ib(v, 0x9a8) * 0x40 + 0x928);   // 0x0047068e
 
     Ib(v, 0xb20) = 0; Ib(v, 0xb1c) = 0; Ib(v, 0xb18) = 0; Ib(v, 0xb14) = 0;
     Ib(v, 0x3f4) = 0; Ib(v, 0x330) = 0; Ib(v, 0x26c) = 0; Ib(v, 0x1a8) = 0;
@@ -170,7 +176,6 @@ void A4_Body(void* record, int param_1, float dt, std::uint8_t* input, void* xfo
     if (input[1] == 0) { Ib(v, 0xb28) = 0; }
     else { Ib(v, 0xb28) = SmoothInput(v, 0xb28, dt); }
 
-    const unsigned phase = static_cast<unsigned>(TorqueRingPhase()) & 0xf;  // 0x00470785
     float force = DAT_005d757c;
 
     if (input[0] != 0) {                                            // 0x00470788 accelerate
@@ -211,6 +216,151 @@ void A4_Body(void* record, int param_1, float dt, std::uint8_t* input, void* xfo
         Fb(v, 0x1ac + phase * 4) = force;
         Fb(v, 0x270 + phase * 4) = force;
     }
+}
+
+namespace {
+
+// ═══════════════════════════════════════════════════════════════════════════
+// IN-PROCESS BIT-IDENTITY SELF-TEST (gated by env MASHED_PHYS_C4_SELFTEST)
+// ───────────────────────────────────────────────────────────────────────────
+// Frida Interceptor on this >1000/s hot path destabilizes MASHED before a single
+// call can be captured (CLAUDE.md; verified WS-PHYS-C4-LANE). So the bit-identity
+// A/B is done IN-PROCESS with ZERO Frida overhead: run the ORIGINAL A4 body-math
+// (the instruction stream 0x00470670..0x00470914) on the live record, snapshot
+// its outputs, restore the record, run MY A4_BodyMath, and bit-compare. The
+// original body is reached by an early-return trampoline: the original prologue
+// (5 bytes saved by HookSystem) is re-executed and then JMP A4+5; 0x00470914
+// (first instr after the body) is temporarily patched to a frame-restoring RET
+// so the original body math runs WITHOUT its A5/A6a/A6b callee dispatch (which
+// would double-step shared globals). Results are written to phys_c4_selftest.log.
+// Single-threaded physics -> the temporary patch is safe (restored before return).
+// ═══════════════════════════════════════════════════════════════════════════
+const int kBodyOutOffs[] = {0x1a8,0x26c,0xb0c,0xb24,0xb28,0xb14,0xb18,0xb1c,0xb20,0x330,0x3f4};
+
+inline int SelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { const char* s = std::getenv("MASHED_PHYS_C4_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
+    return v;
+}
+
+// early-return patch site + saved bytes
+const std::uintptr_t kA4BodyEnd = 0x00470914;   // MOV ECX,[ESP+0x24] (first post-body instr)
+// frame-restoring early return: POP EDI;POP ESI;POP EBP;POP EBX;POP ECX;RET = 6 bytes
+const std::uint8_t kEarlyRet[6] = {0x5f,0x5e,0x5d,0x5b,0x59,0xc3};
+std::uint8_t g_saveBodyEnd[6];
+
+// re-execute the original prologue then jump to A4+5 — i.e. run the ORIGINAL A4.
+// 5 saved prologue bytes: 51 53 55 8b 6c  (PUSH ECX;PUSH EBX;PUSH EBP; MOV EBP,..[split])
+__declspec(naked) void OrigA4Trampoline() {
+    __asm {
+        // executed with EAX=record + the 4 cdecl stack args already in place,
+        // exactly as the original is entered. Re-run the saved prologue bytes:
+        push ecx                              // 0x51
+        push ebx                              // 0x53
+        push ebp                              // 0x55
+        mov  ebp, dword ptr [esp+0x18]        // 8b 6c 24 18 (the full original MOV)
+        push esi                              // continue original at A4+0x7 (0x00470677)
+        push edi
+        mov  edi, eax
+        // jump into the original body at 0x0047067b (after MOV EDI,EAX, i.e.
+        // the CALL 0x0040e350 — keeps the gameMode call identical)
+        mov  eax, 0x0047067b
+        jmp  eax
+        // control reaches 0x00470914 -> our patched POP../RET unwinds the 5
+        // pushes above and returns here's caller.
+    }
+}
+
+// run the original A4 body-math on `record` (with the same ABI args), capturing
+// nothing — the outputs land in the live record. Patches/*restores* kA4BodyEnd.
+typedef void (*OrigA4Fn)(void* record_in_eax, int param_1, float dt, void* input, void* xform);
+void RunOrigBody(void* record, int param_1, float dt, void* input, void* xform) {
+    DWORD op;
+    auto* site = reinterpret_cast<std::uint8_t*>(kA4BodyEnd);
+    if (!VirtualProtect(site, 6, PAGE_EXECUTE_READWRITE, &op)) return;
+    std::memcpy(g_saveBodyEnd, site, 6);
+    std::memcpy(site, kEarlyRet, 6);
+    DWORD tmp; VirtualProtect(site, 6, op, &tmp);
+    // call the trampoline with EAX=record + cdecl args (push xform,input,dt,param_1)
+    __asm {
+        mov  eax, record
+        push xform
+        push input
+        push dt
+        push param_1
+        call OrigA4Trampoline
+        add  esp, 16
+    }
+    // restore the patched site
+    if (VirtualProtect(site, 6, PAGE_EXECUTE_READWRITE, &op)) {
+        std::memcpy(site, g_saveBodyEnd, 6);
+        VirtualProtect(site, 6, op, &tmp);
+    }
+}
+
+void SelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("phys_c4_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+
+// Compare MY A4_BodyMath vs the ORIGINAL body on the SAME live record state.
+// Returns mismatch count; logs per-call summary. Runs for the first kMaxTests calls.
+int g_selfTestCount = 0;
+const int kMaxTests = 64;
+void A4_SelfTest(void* record, int param_1, float dt, std::uint8_t* input, void* xform,
+                 int gameMode, unsigned phase) {
+    if (g_selfTestCount >= kMaxTests) return;
+    // snapshot the full record so each impl runs from identical input state
+    static std::uint8_t snap[0xd04], mineOut[0xd04];
+    std::memcpy(snap, record, 0xd04);
+    // (1) original body on the live record
+    RunOrigBody(record, param_1, dt, input, xform);
+    // capture original outputs
+    std::uint32_t origVals[16]; int nf = 0;
+    for (int off : kBodyOutOffs) origVals[nf++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+    std::uint32_t origRD = *reinterpret_cast<std::uint32_t*>((char*)record + 0x1ac + phase*4);
+    std::uint32_t origRA = *reinterpret_cast<std::uint32_t*>((char*)record + 0x270 + phase*4);
+    // restore the record, run MY body math
+    std::memcpy(record, snap, 0xd04);
+    A4_BodyMath(record, input, dt, gameMode, phase);
+    // compare
+    int mism = 0; char line[512]; int p = 0;
+    for (int i = 0; i < nf; ++i) {
+        std::uint32_t mv = *reinterpret_cast<std::uint32_t*>((char*)record + kBodyOutOffs[i]);
+        if (mv != origVals[i]) { mism++;
+            p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", kBodyOutOffs[i], origVals[i], mv); }
+    }
+    std::uint32_t mRD = *reinterpret_cast<std::uint32_t*>((char*)record + 0x1ac + phase*4);
+    std::uint32_t mRA = *reinterpret_cast<std::uint32_t*>((char*)record + 0x270 + phase*4);
+    if (mRD != origRD) { mism++; p += wsprintfA(line+p, " rd:o=%08x,m=%08x", origRD, mRD); }
+    if (mRA != origRA) { mism++; p += wsprintfA(line+p, " ra:o=%08x,m=%08x", origRA, mRA); }
+    char hdr[160];
+    wsprintfA(hdr, "[%d] in0=%u in1=%u in5=%u gm=%d ph=%u ndiff=%d%s\r\n",
+              g_selfTestCount, input[0], input[1], input[5], gameMode, phase, mism,
+              mism ? "" : " OK");
+    SelfTestLog(hdr);
+    if (mism) { line[p]=0; SelfTestLog("   "); SelfTestLog(line); SelfTestLog("\r\n"); }
+    g_selfTestCount++;
+}
+
+// ===========================================================================
+// A4 body — full FUN_00470670: the body-math + the callee dispatch + parked damp.
+//   param_1 = stack arg0 (to A6a)
+//   xform   = stack arg3 (vehicle world matrix; to A5)
+// ===========================================================================
+void A4_Body(void* record, int param_1, float dt, std::uint8_t* input, void* xform) {
+    void* v = record;
+    const int gameMode = Fi_GameMode();                              // 0x0047067b
+    int* wheelBlock = reinterpret_cast<int*>(
+        reinterpret_cast<char*>(v) + Ib(v, 0x9a8) * 0x40 + 0x928);   // 0x0047068e
+    const unsigned phase = static_cast<unsigned>(TorqueRingPhase()) & 0xf;  // 0x00470785
+
+    if (SelfTestEnabled())
+        A4_SelfTest(v, param_1, dt, input, xform, gameMode, phase);
+
+    A4_BodyMath(v, input, dt, gameMode, phase);
 
     Call_A5(v, dt, wheelBlock, xform);                              // 0x00470923 (EDI=record)
     Call_A6a(v, param_1, dt, wheelBlock, input);                   // 0x00470936 (ESI=record)
