@@ -1458,6 +1458,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         static bool s_pinit = false;
         if (!s_pinit) {
             Vehicle::VehiclePhysics_Init(1 + static_cast<int>(ai_cars_.size()), course_id_);
+            // WS-A8-GAPS: feed the track collision soup so the wheel solver finds
+            // ground -> A5 suspension force is live (was the empty-terrain gap).
+            Vehicle::VehiclePhysics_SetWorld(
+                col_verts_.data(), static_cast<int>(col_verts_.size() / 3),
+                col_tris_.data(),  static_cast<int>(col_tris_.size()  / 3));
             s_pinit = true;
         }
         Vehicle::PlayerCarIO io;
