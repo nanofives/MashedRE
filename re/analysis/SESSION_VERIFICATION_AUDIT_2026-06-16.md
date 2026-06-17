@@ -271,7 +271,7 @@ record state → no race noise.
 |----|-----|---------|
 | A4 VehicleControl | 0x00470670 | **C4-GREEN, 96/96 bit-identical** (88 drive-force calls in0=1..66, gm=6 Quick Battle, all 16 ring phases; 8 coast). inline-JMP LIVE (0xE9) confirmed in canonical race; chain crash-free. Evidence: `re/analysis/phys_c4_evidence/A4_selftest_GREEN.txt`. Promoted in hooks.csv; U-1408 (reg-ABI) resolved. |
 | A5 ForceIntegrator | 0x0046ddb0 | **C4-GREEN, 96/96 bit-identical** (WS-PHYS-C4-A5 2026-06-17). EDI=record reg-ABI hook; inline-JMP LIVE in canonical race; in-process FULL-fn A/B vs live original GREEN over 2 races. All callees forwarded to live originals (RW LUT 004c3df0/4d20/3ac0/39b0, RNG 472650, rubber-band 442ce0/442c80, face-normal 46c5f0) → no stubs in body. Shared scratch 0x881560..0x881590 snapshot/restore; RNG-cursor detect (excludes +0xb00/+0xb08 if random branch fires). Evidence: `re/analysis/phys_c4_evidence/A5_selftest_GREEN.txt`. U-2687/U-3563 resolved. **COVERAGE-GAP:** in Arctic Quick Battle the car stayed all-4-grounded (grounded==4.0 all 96) so the airborne branch (grounded!=4.0: divide-by-dt susp path + airborne-flag) and the random-surface branch (key 0xffff32ff → +0xb00/+0xb08 via FUN_00472650) were NOT exercised — transcribed verbatim but unverified in-race (NOT overclaimed). |
-| A6a Integrate2 | 0x00467650 | C2 — the big x87 float10 body; ESI=record; same full-fn self-test needs + [U-A6A-ST0] implicit-ST0 smoother. Own session. |
+| A6a Integrate2 | 0x00467650 | C2 (stays) — **RED 93/96** via the verbatim-LUT lane (WS-PHYS-C4-A6A 2026-06-17, below). [U-A6A-ST0] RESOLVED (7 ST0 shims). NOT promoted: 3/96 calls diverge 1-8 ULP in the suspension force X (`piVar12[0x1c]`) — the last un-shimmed [U-A6A-FLOAT10] chain (`local_bc`/`local_98`/`f5`/`f4` x87-register-retained). |
 | A6b AeroStabilize | 0x00468980 | C2 — small but ECX=ESI=record + transcendental `FUN_004a3384` (asin/acos) + opaque `FUN_004c4d20` (no visible args, FPU/device matrix). Own session. |
 | A3 VehicleInit | 0x0046b540 | C2 — spawn-time; deterministic table writes; not on the per-frame hot path. Lane applies but lower priority. |
 
@@ -330,3 +330,43 @@ same class as A4's brake-branch note): the car was all-4-grounded for every samp
 the **airborne branch** (grounded != 4.0) and the **random-surface RNG branch** (key 0xffff32ff)
 were transcribed verbatim but not exercised in-race. A scenario that drives the car airborne
 (jump/ramp) and onto a random-surface tile would close them. Remaining chain: A6a, A6b, A3.
+
+## WS-PHYS-C4-A6A — A6a (FUN_00467650): RED 93/96, stays C2 (2026-06-17, branch ws-phys-c4-a6a)
+
+A6a (the big x87 float10 velocity/ang-vel integration step) ported into the same
+`.asi`-only verbatim-LUT installed-hook lane (`PhysicsChainHooks.cpp`). Full findings:
+`re/analysis/phys_c4_evidence/A6a_FINDINGS_2026-06-17.md`; evidence
+`re/analysis/phys_c4_evidence/A6a_selftest_93of96.txt`.
+
+### [U-A6A-ST0] — RESOLVED
+A6a calls FUN_004a2c48 (round-ST0-to-i64) at **7 sites** with implicit ST0 inputs absent
+from the decomp. Disassembled (Mashed_pool12 RO) each call's exact x87 feed and reproduced
+it with naked shims forwarding to the LIVE FUN_004a2c48: gear up/down timer (FILD[+0x494]
+±dt), 3× boost timer (FILD[+0xbf4]−dt), the drive-projection round
+(`(w·vel)/(w[-0xa]·1.74533)`), and the brake quantize (FILD input[5]+256.0). All ST0 inputs
+cited to their instruction address.
+
+### Verdict: RED — 93/96 bit-identical; NOT promoted (NO overclaim).
+In-process A/B (A6a inline-JMP LIVE, canonical Arctic Quick-Battle, MASHED_HOOK_ONLY=A6a_Entry):
+**93/96 calls bit-identical** over 2 races (deterministic). The structural fix
+(`local_c0` drive-dir dot association: `fwd.z*(inv*ld8)` with `s2` pre-computed+reused)
+took it from 58 RED → 3 RED; the gear/CVT float10 shim (`GearCvtCompute` keeping fVar5/fVar3
+float10 across the 5-candidate loop) took 79 → 93. **15 of 38 .rdata constants** that the
+standalone Integrate2.cpp's decimal literals mis-round were replaced with exact `Cf(0x..)`
+bit patterns. Six float10-accumulator chains shimmed (GearCvtCompute, DriveForceAccum,
+Accum60, AccumD0Num, FrictionUpdate, LinVelFactor).
+
+**Why not C4:** the remaining 3 calls (24/82/84) diverge **1-8 ULP in the per-wheel
+suspension force X** (`piVar12[0x1c]`) + one dependent `+0x9c0`. Root cause pinned
+(disasm 0x468127..0x468337): the suspension force block keeps `local_bc`/`local_98`/`f5`/`f4`
+in x87 registers as float10 across the compute+store; the C transcription rounds them to
+float32 at different points (the significant X drive-dir exposes it; near-zero Y always
+matched). The 4 closed float10 chains used naked shims; closing the suspension chain needs a
+**full naked-asm shim of the whole grounded-suspension block** — large + high-regression-risk,
+deferred. This is exactly the pre-acknowledged **[U-A6A-FLOAT10]** residual (`<=ULP in rare
+cases`), so per [[feedback-no-overclaiming-c-levels]] A6a STAYS C2 in hooks.csv (NOT 96/96).
+
+### Coverage (honest)
+gm=6 all-4-grounded every call; the airborne path, helicopter type-C drive, brake branch
+(BrakeForceAccum + call#7 transcribed, unhit in the throttle-only demo), spinning-powerup
+vel-damp, and the boost-state machine were transcribed verbatim but NOT exercised in-race.
