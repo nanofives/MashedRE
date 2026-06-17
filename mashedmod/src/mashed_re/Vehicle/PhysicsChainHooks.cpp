@@ -2036,6 +2036,356 @@ __declspec(naked) void A6a_Entry() {
 
 }  // namespace
 
+// ===========================================================================
+// A6b — FUN_00468980 the aerodynamic-stabilization step (ECX=record, ESI=xform,
+// [ESP+4]=dt=param_2). VERBATIM transcription of 0x00468980..0x00468b34 (disasm
+// Mashed_pool12 RO 2026-06-17). Runs ONLY when grounded count +0x9e0 == 0.0
+// (airborne). Two sub-branches on motion-state +0x9f0:
+//   == 0 : auto-level. Two RwMatrixRotate (FUN_004c4d20) passes preconcat onto the
+//          world xform: pitch about world X (axis _DAT_006146f0=(1,0,0)) by
+//          ang1 = -(acos(clamp(at.y))*180/pi - 90)*dts; roll about world Z
+//          (axis _DAT_00614708=(0,0,1)) by ang2 = (acos(clamp(right.y))*180/pi
+//          - 90)*dts.  dts = dt*0.001 (_DAT_005cc558). 90 is _DAT_005ccad8 (double)
+//          for ang1 and _DAT_005ccad0 (float) for ang2; 180/pi is _DAT_005ccae0
+//          (double, 0x404ca5dcc0000000). at.y/right.y are read as a dot of xform
+//          row {idx8/9/10} resp. {0/1/2} with the Y basis _DAT_006146fc=(0,1,0).
+//   != 0 : zero ang-vel (+0x9bc/0x9c0/0x9c4), normalize linear-vel (FUN_004c39b0)
+//          to a dir, then RwMatrixRotate(xform, dir, dt*0.05, 1) (_DAT_005cc9a0).
+//
+// ABI: confirmed at the A4 dispatch site 0x00470943 — MOV ECX,EDI (record);
+// MOV ESI,[ESP+0x3c] (xform = A4's param_4 world matrix); PUSH EBP(input,UNUSED);
+// PUSH EBX(dt). So A6b is effectively __thiscall-with-ESI: ECX=record, ESI=xform,
+// one float stack arg (dt). The lane's own A4_Body Call_A6b set ESI=record — that
+// is a latent dispatch bug there (A4 is C4 via its body-math self-test which stops
+// BEFORE the dispatch tail), NOT used by this A6b self-test.
+//
+// Bit-identity strategy: the angle math keeps the acos result in ST0 as float10
+// across (*180/pi)(double FMUL), (-90)(double/float FSUB), FCHS, (*dts)(float FMUL)
+// before the single FSTP-to-float32 — and routes acos through the LIVE CRT
+// (FUN_004a3384) + the matrix rotate through the LIVE RW device builder
+// (FUN_004c4d20, internally FUN_004c3b90 inv-sqrt LUT + fsin/fcos) + the live
+// normalize (FUN_004c39b0). Reproduced as a NAKED transcription of the exact
+// instruction stream so the float10 width + .rdata bit patterns + live calls match.
+// ===========================================================================
+namespace {
+
+// EXACT-bit .rdata constants A6b reads (memory_read, Mashed_pool12 2026-06-17).
+// MSVC inline-asm cannot encode an absolute-address x87 memory operand
+// (`fmul dword ptr [0x00614700]` -> C2415), so the constants are materialized as
+// file-scope variables with the exact original bit patterns and referenced by name.
+const float  A6b_005d757c = Cf(0x00000000);  // 0.0
+const float  A6b_005cc558 = Cf(0x3a83126f);  // 0.001   dt scale (rad/deg-ish)
+const float  A6b_005cc33c = Cf(0xbf800000);  // -1.0    clamp lo
+const float  A6b_005cc320 = Cf(0x3f800000);  // 1.0     clamp hi
+const float  A6b_005cc9a0 = Cf(0x3d4ccccd);  // 0.05    vel-align angle scale
+const float  A6b_005ccad0 = Cf(0x42b40000);  // 90.0    (FLOAT; roll bias)
+const float  A6b_g6fc     = Cf(0x00000000);  // _DAT_006146fc = 0.0  (Y-basis.x)
+const float  A6b_g700     = Cf(0x3f800000);  // _DAT_00614700 = 1.0  (Y-basis.y)
+const float  A6b_g704     = Cf(0x00000000);  // _DAT_00614704 = 0.0  (Y-basis.z)
+// doubles (exact 8-byte patterns):
+inline double Cd(std::uint64_t bits) { double d; std::memcpy(&d, &bits, 8); return d; }
+const double A6b_005ccae0 = Cd(0x404ca5dcc0000000ULL);  // 57.29578 = 180/pi
+const double A6b_005ccad8 = Cd(0x4056800000000000ULL);  // 90.0  (DOUBLE; pitch bias)
+
+// FUN_00468980 body, register ABI ECX=record, ESI=xform, [ESP+4]=dt(param_2).
+// VERBATIM bytes 0x00468980..0x00468b34, with the three external CALLs retargeted
+// to live absolute addresses via the PCH_Fwd_* pointers.
+extern "C" void* PCH_Fwd_4a3384;
+extern "C" void* PCH_Fwd_4c4d20;
+extern "C" void* PCH_Fwd_4c39b0;
+__declspec(naked) void A6b_BodyAsm(/* ECX=record, ESI=xform, [esp+4]=dt */) {
+    __asm {
+        fld   dword ptr [ecx+0x9e0]          // 0x468980  grounded count
+        sub   esp, 0x20                       // 0x468986  -> param_2(dt) at [esp+0x24]
+        fcomp A6b_005d757c                    // 0x468989  : 0.0
+        fnstsw ax
+        test  ah, 0x44
+        jp    a6b_end                         // 0x468994  not airborne -> skip
+        mov   edx, dword ptr [ecx+0x9f0]      // 0x46899a  motion state
+        xor   eax, eax
+        cmp   edx, eax
+        jnz   a6b_state_nz                    // 0x4689a4  -> state != 0 branch
+        // ── state == 0 : auto-level (pitch + roll) ──
+        fld   dword ptr [esp+0x24]            // dt
+        fmul  A6b_005cc558                    // * 0.001
+        fstp  dword ptr [esp+4]               // dts (f32) -> [esp+4]
+        // fVar4 = xform[10]*g704 + xform[8]*g6fc + xform[9]*g700  (= at.y)
+        fld   dword ptr [esi+0x24]            // xform[9]
+        fmul  A6b_g700                        // * 1.0
+        fld   dword ptr [esi+0x20]            // xform[8]
+        fmul  A6b_g6fc                        // * 0.0
+        faddp st(1), st(0)
+        fld   dword ptr [esi+0x28]            // xform[10]
+        fmul  A6b_g704                        // * 0.0
+        faddp st(1), st(0)
+        fcom  A6b_005cc33c                    // : -1.0
+        fnstsw ax
+        test  ah, 5
+        jp    a6b_p1_chkhi
+        fstp  st(0)
+        fld   A6b_005cc33c                    // clamp lo -> -1.0
+        jmp   a6b_p1_acos
+    a6b_p1_chkhi:
+        fcom  A6b_005cc320                    // : 1.0
+        fnstsw ax
+        test  ah, 0x41
+        jnz   a6b_p1_acos
+        fstp  st(0)
+        fld   A6b_005cc320                    // clamp hi -> 1.0
+    a6b_p1_acos:
+        sub   esp, 8
+        fstp  qword ptr [esp]                 // push clamp as double
+        call  dword ptr [PCH_Fwd_4a3384]      // ST0 = acos(clamp)  [live CRT]
+        fmul  A6b_005ccae0                    // * 180/pi (double, float10)
+        push  1                               // mode arg (early)
+        fsub  A6b_005ccad8                    // - 90.0 (double)
+        fchs                                  // negate
+        fmul  dword ptr [esp+0x10]            // * dts
+        fstp  dword ptr [esp+0xc]             // ang1 (f32)
+        mov   eax, dword ptr [esp+0xc]
+        push  eax                             // angle
+        push  0x6146f0                        // axis X = (1,0,0)
+        push  esi                             // out = xform
+        call  dword ptr [PCH_Fwd_4c4d20]      // RwMatrixRotate(xform,X,ang1,1) [live RW]
+        // fVar1 = xform[2]*g704 + g6fc*xform[0] + xform[1]*g700  (= right.y)
+        fld   dword ptr [esi+4]               // xform[1]
+        fmul  A6b_g700                        // * 1.0
+        add   esp, 0x18                        // clean acos double + the 4 c4d20 args
+        fld   A6b_g6fc                        // 0.0
+        fmul  dword ptr [esi]                 // * xform[0]
+        faddp st(1), st(0)
+        fld   dword ptr [esi+8]               // xform[2]
+        fmul  A6b_g704                        // * 0.0
+        faddp st(1), st(0)
+        fcom  A6b_005cc33c                    // : -1.0
+        fnstsw ax
+        test  ah, 5
+        jp    a6b_p2_chkhi
+        fstp  st(0)
+        fld   A6b_005cc33c
+        jmp   a6b_p2_acos
+    a6b_p2_chkhi:
+        fcom  A6b_005cc320                    // : 1.0
+        fnstsw ax
+        test  ah, 0x41
+        jnz   a6b_p2_acos
+        fstp  st(0)
+        fld   A6b_005cc320
+    a6b_p2_acos:
+        sub   esp, 8
+        fstp  qword ptr [esp]                 // push clamp as double
+        call  dword ptr [PCH_Fwd_4a3384]      // ST0 = acos(clamp) [live CRT]
+        fmul  A6b_005ccae0                    // * 180/pi (double, float10)
+        push  1                               // mode
+        fsub  A6b_005ccad0                    // - 90.0 (FLOAT here)
+        fmul  dword ptr [esp+0x10]            // * dts   (NO FCHS on roll)
+        fstp  dword ptr [esp+0xc]             // ang2 (f32)
+        mov   ecx, dword ptr [esp+0xc]
+        push  ecx                             // angle
+        push  0x614708                        // axis Z = (0,0,1)
+        push  esi                             // out = xform
+        call  dword ptr [PCH_Fwd_4c4d20]      // RwMatrixRotate(xform,Z,ang2,1) [live RW]
+        add   esp, 0x18
+        add   esp, 0x20
+        ret
+    a6b_state_nz:
+        // ── state != 0 : zero ang-vel + align xform to velocity dir ──
+        mov   dword ptr [ecx+0x9c4], eax      // 0.0
+        mov   dword ptr [ecx+0x9c0], eax
+        mov   dword ptr [ecx+0x9bc], eax
+        add   ecx, 0x9b0                       // &linVel
+        mov   edx, dword ptr [ecx]            // velX
+        mov   eax, dword ptr [ecx+4]          // velY
+        mov   ecx, dword ptr [ecx+8]          // velZ
+        mov   dword ptr [esp+8], edx
+        lea   edx, [esp+8]                     // &local (in)
+        mov   dword ptr [esp+0xc], eax
+        push  edx                              // src
+        lea   eax, [esp+0xc]                   // dst (= &local after push)
+        push  eax                              // dst
+        mov   dword ptr [esp+0x18], ecx        // velZ stored
+        call  dword ptr [PCH_Fwd_4c39b0]      // FUN_004c39b0 normalize [live]
+        fstp  st(0)                            // pop ST0 magnitude
+        mov   ecx, dword ptr [esp+0x18]        // velZ (preserved)
+        fld   dword ptr [esp+0x2c]            // dt
+        fmul  A6b_005cc9a0                    // * 0.05
+        mov   edx, dword ptr [esp+0x14]        // normX
+        mov   eax, dword ptr [esp+0x10]        // (slot)
+        add   esp, 8
+        push  1                                // mode
+        push  ecx                              // (velZ slot reuse)
+        mov   dword ptr [esp+0x1c], ecx
+        lea   ecx, [esp+0x1c]
+        fstp  dword ptr [esp]                  // angle = dt*0.05 (f32)
+        push  ecx                              // axis (&local dir)
+        push  esi                              // out = xform
+        mov   dword ptr [esp+0x28], edx
+        mov   dword ptr [esp+0x2c], eax
+        call  dword ptr [PCH_Fwd_4c4d20]      // RwMatrixRotate(xform,dir,dt*0.05,1) [live]
+        add   esp, 0x10
+    a6b_end:
+        add   esp, 0x20
+        ret
+    }
+}
+
+// ── self-test forwarder: invoke the ORIGINAL A6b bypassing our inline-JMP ────
+// The 5-byte JMP at 0x00468980 overwrites the first 5 bytes of `FLD float ptr
+// [ECX+0x9e0]`(6 bytes: d9 81 e0 09 00 00) + first byte of `SUB ESP,0x20`. Re-execute
+// the whole FLD then `push 0x00468986; ret` (clobber-free; preserves ECX=record +
+// ESI=xform). The original body runs to its own `ADD ESP,0x20; RET`.
+extern "C" void* PCH_Fwd_468980;
+__declspec(naked) void OrigA6bTrampoline(/* ECX=record, ESI=xform, [esp+4]=dt */) {
+    __asm {
+        fld  dword ptr [ecx+0x9e0]     // d981e0090000 (the full overwritten instr)
+        push 0x00468986                // -> SUB ESP,0x20 (first untouched byte)
+        ret
+    }
+}
+// Call the original A6b with ECX=record, ESI=xform, dt on the stack.
+__declspec(naked) void Call_OrigA6b(int* /*record*/, void* /*xform*/, float /*dt*/) {
+    __asm {
+        push esi
+        mov  ecx, dword ptr [esp+8]    // record -> ECX  ([esp+4]+4 for pushed esi)
+        mov  esi, dword ptr [esp+12]   // xform  -> ESI
+        push dword ptr [esp+16]        // dt (param_2)
+        call OrigA6bTrampoline
+        add  esp, 4
+        pop  esi
+        ret
+    }
+}
+// Call MY A6b body with the same ABI.
+__declspec(naked) void Call_A6bBody(int* /*record*/, void* /*xform*/, float /*dt*/) {
+    __asm {
+        push esi
+        mov  ecx, dword ptr [esp+8]
+        mov  esi, dword ptr [esp+12]
+        push dword ptr [esp+16]        // dt
+        call A6b_BodyAsm
+        add  esp, 4
+        pop  esi
+        ret
+    }
+}
+
+inline int A6b_SelfTestEnabled() {
+    static int vv = -1;
+    if (vv < 0) { const char* s = std::getenv("MASHED_PHYS_C4_SELFTEST"); vv = (s && s[0]) ? 1 : 0; }
+    return vv;
+}
+void A6b_SelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("phys_c4_a6b_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+
+// observed outputs: the angular-velocity it zeroes (state!=0 branch) and the 16-float
+// xform matrix that FUN_004c4d20 rotates IN PLACE (the principal observable). The
+// xform is the per-vehicle world matrix; A6b preconcats a rotation onto it.
+const int kA6bRecOffs[] = { 0x9bc, 0x9c0, 0x9c4 };
+
+int g_a6bCount = 0;
+int g_a6bAir   = 0;     // calls that actually entered the airborne body
+const int kA6bMaxTests = 96;
+
+void A6b_SelfTest(int* record, void* xform, float dt) {
+    if (g_a6bCount >= kA6bMaxTests) return;
+    // Only the airborne path (+0x9e0==0.0) writes anything. Sample those plus a few
+    // grounded no-ops so the log shows the gate is exercised.
+    const bool airborne = (*reinterpret_cast<float*>((char*)record + 0x9e0) == 0.0f);
+    const bool haveXform = (xform != nullptr);
+    if (!airborne) { if (g_a6bAir >= 4) return; }   // a few grounded no-op rows only
+
+    static std::uint8_t snapRec[0xd04];
+    static std::uint8_t snapXf[64];
+    std::memcpy(snapRec, record, 0xd04);
+    if (haveXform) std::memcpy(snapXf, xform, 64);
+
+    // (1) ORIGINAL A6b on the live record/xform (bypassing our inline-JMP).
+    Call_OrigA6b(record, xform, dt);
+    std::uint32_t origRec[4]; int nr = 0;
+    for (int off : kA6bRecOffs) origRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+    std::uint32_t origXf[16];
+    if (haveXform) std::memcpy(origXf, xform, 64);
+
+    // restore, run mine
+    std::memcpy(record, snapRec, 0xd04);
+    if (haveXform) std::memcpy(xform, snapXf, 64);
+    Call_A6bBody(record, xform, dt);
+
+    int mism = 0; char line[1024]; int p = 0;
+    nr = 0;
+    for (int off : kA6bRecOffs) {
+        std::uint32_t mv = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+        if (mv != origRec[nr]) { mism++;
+            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, origRec[nr], mv); }
+        nr++;
+    }
+    if (haveXform) {
+        std::uint32_t mXf[16]; std::memcpy(mXf, xform, 64);
+        for (int i = 0; i < 16; ++i) {
+            if (mXf[i] != origXf[i]) { mism++;
+                if (p < 900) p += wsprintfA(line+p, " m[%d]:o=%08x,m=%08x", i, origXf[i], mXf[i]); }
+        }
+    }
+    if (airborne) g_a6bAir = (g_a6bAir < 1000) ? g_a6bAir + 1 : g_a6bAir;
+    else          g_a6bAir++;
+
+    char hdr[200];
+    int state = *reinterpret_cast<int*>((char*)record + 0x9f0);
+    wsprintfA(hdr, "[%d] dt=%08x air=%d state=%d xform=%d ndiff=%d%s\r\n",
+              g_a6bCount, *reinterpret_cast<std::uint32_t*>(&dt), airborne ? 1 : 0,
+              state, haveXform ? 1 : 0, mism, mism ? "" : " OK");
+    A6b_SelfTestLog(hdr);
+    if (mism) { line[p] = 0; A6b_SelfTestLog("   "); A6b_SelfTestLog(line); A6b_SelfTestLog("\r\n"); }
+    g_a6bCount++;
+}
+
+// ── entry trampoline installed at 0x00468980 ────────────────────────────────
+// A6b ABI: ECX=record, ESI=xform, [esp+4]=dt. The original saves only ESI (PUSH ESI
+// at 0x468543... actually 0x468985 is SUB; the body PUSHes nothing — it uses ESP-relative
+// scratch and `RET` no-imm). We preserve ESI (the caller relies on it) + EBX/EBP/EDI
+// for safety and forward to A6b_Hook (a normal C fn) with (record, xform, dt).
+void A6b_Hook(int* record, void* xform, float dt) {
+    if (A6b_SelfTestEnabled())
+        A6b_SelfTest(record, xform, dt);
+    else {
+        // run the verbatim body for real (ECX=record, ESI=xform, dt on stack)
+        Call_A6bBody(record, xform, dt);
+    }
+}
+
+__declspec(naked) void A6b_Entry() {
+    __asm {
+        // ECX=record, ESI=xform; [esp]=ret [esp+4]=dt
+        push ebx
+        push ebp
+        push edi
+        push esi                  // preserve callee-saved + ESI (xform); 4 saves
+        push dword ptr [esp+20]   // dt   ([esp+4]+16 for the 4 saves)
+        push esi                  // xform (ESI)
+        push ecx                  // record (ECX)
+        call A6b_Hook
+        add  esp, 12              // cdecl: clean our 3 forwarded args
+        pop  esi
+        pop  edi
+        pop  ebp
+        pop  ebx
+        ret                       // caller cleans A6b's 1 stack arg (dt)
+    }
+}
+
+}  // namespace
+
+extern "C" {
+    void* PCH_Fwd_4a3384 = reinterpret_cast<void*>(0x004a3384);  // CRT acos(double)->ST0
+    void* PCH_Fwd_4c4d20 = reinterpret_cast<void*>(0x004c4d20);  // RwMatrixRotate(out,axis,ang,mode)
+    void* PCH_Fwd_4c39b0 = reinterpret_cast<void*>(0x004c39b0);  // Vec3 normalize
+}
+
 RH_ScopedInstall(A4_Entry, 0x00470670);
 RH_ScopedInstall(A5_Entry, 0x0046ddb0);
 RH_ScopedInstall(A6a_Entry, 0x00467650);
+RH_ScopedInstall(A6b_Entry, 0x00468980);
