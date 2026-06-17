@@ -3671,3 +3671,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  0051ca60  StoreBE51ca60  C2->C3  early_window GREEN; promote-round-99
 2026-06-13  00523110  LoadBE523110  C2->C3  early_window GREEN; promote-round-99
 2026-06-13  005a6190  Clamp5a6190  C2->C3  early_window arg_to_global_ret GREEN; promote-round-100
+2026-06-17  00470670  VehicleControlUpdate  C2->C4  WS-PHYS-C4-LANE: .asi reg-ABI hook inline-JMP LIVE in canonical race + in-process body A/B vs live original GREEN 96/96 (88 drive-force); U-1408 resolved

@@ -148,6 +148,7 @@
 "Frontend\SplashGameMode_t5.cpp"
 "Race\ScoringHooks.cpp"
 "Race\CameraClusterHooks.cpp"
+"Vehicle\PhysicsChainHooks.cpp"
 "Frontend\SkeletonAndScatter_t6.cpp"
 "Frontend\Cluster_v1.cpp"
 "HUD\Cluster_v2.cpp"

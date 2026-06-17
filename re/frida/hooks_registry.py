@@ -16215,4 +16215,42 @@ HOOKS = {
         'path2_tests':    [0x00000001, 0x0000002A, 0xDEADBEEF],
     },
 
+    # ───────────────────────────────────────────────────────────────────────
+    # WS-PHYS-C4-LANE — vehicle-physics chain (REGISTER ABI; NOT run_diff-able)
+    # ───────────────────────────────────────────────────────────────────────
+    # These take the 0xd04 vehicle record in a REGISTER (EAX/EDI/ESI/ECX) + a
+    # live record/globals and fire >1000/s — run_diff (scalar vectors, hook
+    # bypassed) cannot exercise them, and Interceptor on the hot path
+    # destabilizes MASHED before a single call can be captured (verified
+    # WS-PHYS-C4-LANE; CLAUDE.md "Frida overhead on hot paths"). Their C4 lane is
+    # the INSTALLED-HOOK canonical-race telemetry harness, NOT this registry:
+    #   re/frida/phys_c4_telemetry.py   — install the .asi hook (MASHED_HOOK_ONLY),
+    #     drive a canonical Quick-Battle race, confirm inline-JMP LIVE (0xE9),
+    #     sample the player record trajectory.
+    #   In-process bit-identity self-test: env MASHED_PHYS_C4_SELFTEST=1 makes the
+    #     .asi hook run the ORIGINAL body (early-return trampoline) AND the verbatim
+    #     transcription on identical live record state and bit-compare, logging
+    #     phys_c4_selftest.log (see Vehicle/PhysicsChainHooks.cpp).
+    # The .asi-only verbatim hooks live in Vehicle/PhysicsChainHooks.cpp
+    # (RH_ScopedInstall; excluded from the exe; gated by MASHED_HOOK_ONLY).
+    #
+    # A4 0x00470670 VehicleControlIntegrate — EAX=record; [+4]=param_1 [+8]=dt
+    #   [+c]=input* [+10]=xform; caller-cleans. C4 GREEN 2026-06-17: in-process
+    #   body A/B vs the live original 96/96 calls (88 on the drive-force path,
+    #   in0=1..66, all ring phases). Forwards A5/A6a/A6b + smoother 0x4a2c48 to the
+    #   live originals (RW fast-sqrt LUT live). NO run_diff vector — recorded for
+    #   provenance; reproduce via phys_c4_telemetry.py + MASHED_PHYS_C4_SELFTEST.
+    'phys_a4_control_integrate': {
+        'rva':            0x00470670,
+        'export':         'A4_Entry',        # .asi naked entry trampoline (EAX=record)
+        'signature':      {'ret': 'void', 'args': []},  # register ABI — not callable as cdecl
+        'arg_type':       'register_abi_record',         # NOT a run_diff arg_type; marker only
+        'scenario':       'race',
+        'lane':           'installed_hook_canonical_race',   # phys_c4_telemetry.py / MASHED_PHYS_C4_SELFTEST
+        'not_run_diffable': True,
+        'lut_root_delta': 0,
+        'path1_tests':    [],
+        'path2_tests':    [],
+    },
+
 }
