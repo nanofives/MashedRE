@@ -10,12 +10,15 @@
 // CALLEE PORT LEDGER (standalone)
 //   DONE (faithful):   tick spine, per-vehicle bank-select dispatch, nearest-point
 //                      search (FUN_00443dc0 loop 1), target seed (FUN_004161e0).
-//   DONE (structural,  steering-angle FUN_00415e20 — transcribed literally; its
-//   constants flagged):clamp/scale constants 0x005cd0c8/0x005cd0d0 read 0 and
-//                      0x005cc970 reads 0x20000000 (≈2^-63) — suspected Ghidra
-//                      _DAT-overlap artifacts; baked literally + flagged
-//                      [U-C-STEER]. MUST be resolved at diff-original before the
-//                      steering output is trusted.
+//   DONE (faithful):   steering-angle FUN_00415e20 — [U-C-STEER] RESOLVED 2026-06-16
+//                      (pool11): the clamp consts 0x005cd0c8/0x005cd0d0 are DOUBLES
+//                      +1.0/-1.0 (acos-domain clamp to [-1,+1]) and the scale
+//                      0x005cc970 is the DOUBLE 0x404ca5dc20000000 ~= 57.29578
+//                      (rad->deg) — the prior 0/0/2^-63 were low-dword misreads.
+//                      Steering output is now trustworthy (modulo final diff).
+//   IDENTIFIED:        FUN_004a2c48 = ROUND(ST0) (round the FPU value to int — the
+//                      ctrl-byte quantizer); steer split _DAT_005cd09c = 180.0.
+//                      FUN_00416250 full decomp mapped (targeting modes 1..10).
 //   STUBBED (RVA TODO, port in WS-C follow-ups):
 //     FUN_00416250 primary control step (behaviour tree modes 1..10 + ctrl bands)
 //     FUN_00416a30 / FUN_00417da0      control-step variants (modes 4/9 / 8)
@@ -61,9 +64,15 @@ inline std::uintptr_t st_field(std::uintptr_t field, int v) {
 // ---- FUN_00415e20 constants (memory_read 2026-06-16; [U-C-STEER] flagged) ----
 const float kSteerClampLo = -1.0f;                  // _DAT_005cc33c (0xbf800000)
 const float kSteerClampHi =  1.0f;                  // _DAT_005cc320 (0x3f800000)
-const float kSteerThrLo   =  0.0f;                  // _DAT_005cd0d0 (0x00000000) [U-C-STEER]
-const float kSteerThrHi   =  0.0f;                  // _DAT_005cd0c8 (0x00000000) [U-C-STEER]
-const float kSteerScale   =  bits_to_f(0x20000000); // _DAT_005cc970 ≈2^-63 [U-C-STEER suspicious]
+// [U-C-STEER] RESOLVED 2026-06-16 (pool11): 0x005cd0c8/0x005cd0d0 are DOUBLES, not
+// floats. 0x005cd0c8 = 0x3ff0000000000000 = +1.0; 0x005cd0d0 = 0xbff0000000000000 =
+// -1.0. The decomp's (float)_DAT_... cast = +1.0/-1.0: a standard acos-domain clamp of
+// the normalized dot to [-1,+1] (the prior 0.0/0.0 were the doubles' low dwords).
+const float  kSteerThrLo   = -1.0f;                 // (float)_DAT_005cd0d0 = -1.0 (acos clamp lo)
+const float  kSteerThrHi   =  1.0f;                 // (float)_DAT_005cd0c8 = +1.0 (acos clamp hi)
+// _DAT_005cc970 is a DOUBLE 0x404ca5dc20000000 ~= 57.29578 (rad->deg), NOT 2^-63 (that
+// was the low dword 0x20000000 read as a float). acos()[0,pi] * this -> degrees [0,180].
+const double kSteerScale   = 57.2957802;            // _DAT_005cc970 (0x404ca5dc20000000)
 const float kWrap         =  360.0f;                // _DAT_005ccac4 (0x43b40000)
 
 // ---------------------------------------------------------------------------
