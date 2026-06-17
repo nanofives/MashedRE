@@ -3672,3 +3672,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-13  00523110  LoadBE523110  C2->C3  early_window GREEN; promote-round-99
 2026-06-13  005a6190  Clamp5a6190  C2->C3  early_window arg_to_global_ret GREEN; promote-round-100
 2026-06-17  00470670  VehicleControlUpdate  C2->C4  WS-PHYS-C4-LANE: .asi reg-ABI hook inline-JMP LIVE in canonical race + in-process body A/B vs live original GREEN 96/96 (88 drive-force); U-1408 resolved
+2026-06-17  0046ddb0  VehicleWheelForceIntegrator  C2->C4  WS-PHYS-C4-A5: .asi reg-ABI hook (EDI=record) inline-JMP LIVE in canonical race + in-process full-fn A/B vs live original (OrigA5 trampoline) GREEN 96/96 over 2 races; all callees live-forwarded (no stubs); shared scratch snapshot/restore + RNG-cursor detect; U-2687/U-3563 resolved; evidence re/analysis/phys_c4_evidence/A5_selftest_GREEN.txt; coverage-gap: airborne + random-surface branches unhit in-race

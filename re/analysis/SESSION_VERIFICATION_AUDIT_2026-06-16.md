@@ -270,7 +270,7 @@ record state → no race noise.
 | Fn | RVA | Verdict |
 |----|-----|---------|
 | A4 VehicleControl | 0x00470670 | **C4-GREEN, 96/96 bit-identical** (88 drive-force calls in0=1..66, gm=6 Quick Battle, all 16 ring phases; 8 coast). inline-JMP LIVE (0xE9) confirmed in canonical race; chain crash-free. Evidence: `re/analysis/phys_c4_evidence/A4_selftest_GREEN.txt`. Promoted in hooks.csv; U-1408 (reg-ABI) resolved. |
-| A5 ForceIntegrator | 0x0046ddb0 | C2 — lane-ready but LARGER (~3KB) + harder self-test: writes SHARED globals (DAT_008815xx wheel scratch) and calls **RNG** `FUN_00472650` (random-impulse +0x2c0) → the full-fn A/B needs shared-global snapshot/restore + RNG-seed control (or exclude +0x2c0). EDI=record; calls 004c3df0/004c4d20/004c3ac0/004c39b0 (live LUT). Own focused session. |
+| A5 ForceIntegrator | 0x0046ddb0 | **C4-GREEN, 96/96 bit-identical** (WS-PHYS-C4-A5 2026-06-17). EDI=record reg-ABI hook; inline-JMP LIVE in canonical race; in-process FULL-fn A/B vs live original GREEN over 2 races. All callees forwarded to live originals (RW LUT 004c3df0/4d20/3ac0/39b0, RNG 472650, rubber-band 442ce0/442c80, face-normal 46c5f0) → no stubs in body. Shared scratch 0x881560..0x881590 snapshot/restore; RNG-cursor detect (excludes +0xb00/+0xb08 if random branch fires). Evidence: `re/analysis/phys_c4_evidence/A5_selftest_GREEN.txt`. U-2687/U-3563 resolved. **COVERAGE-GAP:** in Arctic Quick Battle the car stayed all-4-grounded (grounded==4.0 all 96) so the airborne branch (grounded!=4.0: divide-by-dt susp path + airborne-flag) and the random-surface branch (key 0xffff32ff → +0xb00/+0xb08 via FUN_00472650) were NOT exercised — transcribed verbatim but unverified in-race (NOT overclaimed). |
 | A6a Integrate2 | 0x00467650 | C2 — the big x87 float10 body; ESI=record; same full-fn self-test needs + [U-A6A-ST0] implicit-ST0 smoother. Own session. |
 | A6b AeroStabilize | 0x00468980 | C2 — small but ECX=ESI=record + transcendental `FUN_004a3384` (asin/acos) + opaque `FUN_004c4d20` (no visible args, FPU/device matrix). Own session. |
 | A3 VehicleInit | 0x0046b540 | C2 — spawn-time; deterministic table writes; not on the per-frame hot path. Lane applies but lower priority. |
@@ -282,4 +282,51 @@ must: (1) author the register-ABI `.asi` verbatim hook forwarding LUT calls to t
 originals; (2) extend the self-test to a FULL-function A/B (snapshot+restore the shared
 globals each writes; control/seed `FUN_00472650` RNG for A5, or exclude the random-
 impulse +0x2c0 fields); (3) capture drive-path calls and bit-compare; (4) promote GREEN
-subset via re-classify. A5 next (task priority), then A6a, A6b, A3.
+subset via re-classify. ~~A5 next (task priority)~~, **A5 DONE (below)**; then A6a, A6b, A3.
+
+## WS-PHYS-C4-A5 — A5 (FUN_0046ddb0) is C4-GREEN (2026-06-17, branch ws-phys-c4-a5)
+
+A5 the per-wheel force integrator is now **C4 in hooks.csv** (second physics-chain C4
+after A4). The lane is the A4 template extended for A5's two extra hazards.
+
+### What A5 adds over A4 (and how it was handled)
+- **EDI=record reg-ABI** (vs A4's EAX): prologue `MOV EAX,[ESP+8]; SUB ESP,0x70; PUSH
+  EBX/EBP/ESI`, caller-cleans, `ret` no-imm (Mashed_pool11). `A5_Entry`
+  (`__declspec(naked)`) captures EDI + forwards dt(`[ESP+4]`)+xform(`[ESP+8]`).
+- **A5's whole function IS the body** (no callee-dispatch tail like A4), so the
+  "original-body" A/B run is a forwarded call to the LIVE original via `OrigA5Trampoline`
+  — it re-executes the 2 patched prologue instrs then `push 0x0046ddb7; ret` (clobber-free
+  jump that PRESERVES EAX=xform, which the original pushes as the transform matrix). This
+  bypasses our own inline-JMP so the self-test compares original-vs-mine on identical state.
+- **SHARED globals**: A5 writes the per-wheel scratch `0x00881560..0x00881590` (48 b: the
+  piVar10 loop + 4 steer scalars 0x881564/570/57c/588). The self-test snapshots+restores
+  that region (with the 0xd04 record) so both impls see identical input.
+- **RNG**: the random-surface branch (key 0xffff32ff) calls `FUN_00472650` twice writing
+  +0xb00/+0xb08. The self-test reads the PRNG read-cursor `*(DAT_007dc578+4+DAT_007d3ff8)`
+  before/after the original run; if it advanced, the random branch fired → those two fields
+  are EXCLUDED from the bit-compare (not replayed) and the call is flagged `rng=1`. On Arctic
+  the branch never fired (rng=0 all 96).
+- All other callees forwarded to live originals (RW LUT 004c3df0/4d20/3ac0/39b0, rubber-band
+  442ce0/442c80, face-normal 0046c5f0 with its EAX/ECX/EDX/ESI custom reg setup) → **no stubs
+  in the body** (the C4 gate). Built x87; float10 → `double`.
+
+### Exact-bit-pattern + transcription bugs caught by the A/B (the value of the lane)
+1. Two `.rdata` constants mis-rounded from the header/decimal: `_DAT_005cc990`
+   0x37278908→**0x3727c5ac**; `_DAT_005ccd08` 6000→**3000.0 (0x453b8000)**.
+2. `(int)(floatexpr)` stores are **FSTP float stores**, not C++ int truncations:
+   converted all such writes to float-reinterpret. The grounded-count smoking gun stored
+   integer 4 vs float 4.0=0x40800000.
+3. `(float)self[idx]` reads are **float REINTERPRETS** (the field is a float), not int→float
+   conversions: converted all 48 record reads to `a5F()`. Grounded count was reading its own
+   float bits as an int then re-converting → 4.0 ran away to ~1.3e9.
+4. `OrigA5Trampoline` initially clobbered EAX(=xform) with the jump target before the
+   original pushed it as the transform matrix → garbage world-forward; fixed via push-imm+ret.
+
+### Verdict
+A5 FUN_0046ddb0 = **C4-GREEN, 96/96 bit-identical** across two canonical Arctic Quick-Battle
+races (deterministic; chain crash-free; clean process exit). Evidence
+`re/analysis/phys_c4_evidence/A5_selftest_GREEN.txt`. **Honest coverage gap** (NOT overclaimed,
+same class as A4's brake-branch note): the car was all-4-grounded for every sampled call, so
+the **airborne branch** (grounded != 4.0) and the **random-surface RNG branch** (key 0xffff32ff)
+were transcribed verbatim but not exercised in-race. A scenario that drives the car airborne
+(jump/ramp) and onto a random-surface tile would close them. Remaining chain: A6a, A6b, A3.

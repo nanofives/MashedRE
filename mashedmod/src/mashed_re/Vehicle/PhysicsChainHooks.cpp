@@ -51,7 +51,33 @@ extern "C" {
     void* PCH_Fwd_46ddb0 = reinterpret_cast<void*>(0x0046ddb0);  // A5
     void* PCH_Fwd_467650 = reinterpret_cast<void*>(0x00467650);  // A6a
     void* PCH_Fwd_468980 = reinterpret_cast<void*>(0x00468980);  // A6b
+    // A5-chain live callees (forwarded so the running MASHED's RW LUT / PRNG run):
+    void* PCH_Fwd_46c5f0 = reinterpret_cast<void*>(0x0046c5f0);  // TriangleFaceNormal (EDI=record)
 }
+
+// A5 (FUN_0046ddb0) callees called as plain C function pointers at their live RVAs.
+// ABI read from the call sites (Mashed_pool11, read-only, 2026-06-17):
+//   FUN_004c3df0(dst,src,count,mtx)  __cdecl 4 stack args (RwV3dTransformPoints, RW device)
+//   FUN_004c4d20(outMtx,axis,angle,mode) __cdecl 4 args (RwMatrix from axis+angle)
+//   FUN_004c3ac0(float* v) -> ST0    __cdecl 1 arg     (Vec3 magnitude; RW fast-sqrt LUT)
+//   FUN_004c39b0(out,in) -> ST0      __cdecl 2 args    (Vec3 normalize; RW fast-inv-sqrt LUT)
+//   FUN_00472650(lo,hi) -> ST0       __cdecl 2 args    (random float in [lo,hi); PRNG FUN_00534870)
+//   FUN_00442ce0(car,band,grip) -> ST0 __cdecl 3 args  (rubber-band grip multiplier)
+//   FUN_00442c80(car) -> int(EAX)    __cdecl 1 arg      (rubber-band activation gate)
+typedef void  (__cdecl* Fn_xform_t)(float* dst, const float* src, int count, const void* mtx);
+typedef void  (__cdecl* Fn_axang_t)(void* outMtx, const float* axis, float angle, int mode);
+typedef float (__cdecl* Fn_mag_t)  (const float* v);
+typedef float (__cdecl* Fn_norm_t) (float* out, const float* in);
+typedef float (__cdecl* Fn_rand_t) (float lo, float hi);
+typedef float (__cdecl* Fn_rbg_t)  (int car, float band, float grip);
+typedef int   (__cdecl* Fn_rbgate_t)(int car);
+static const Fn_xform_t  Live_004c3df0 = reinterpret_cast<Fn_xform_t> (0x004c3df0);
+static const Fn_axang_t  Live_004c4d20 = reinterpret_cast<Fn_axang_t> (0x004c4d20);
+static const Fn_mag_t    Live_004c3ac0 = reinterpret_cast<Fn_mag_t>   (0x004c3ac0);
+static const Fn_norm_t   Live_004c39b0 = reinterpret_cast<Fn_norm_t>  (0x004c39b0);
+static const Fn_rand_t   Live_00472650 = reinterpret_cast<Fn_rand_t>  (0x00472650);
+static const Fn_rbg_t    Live_00442ce0 = reinterpret_cast<Fn_rbg_t>   (0x00442ce0);
+static const Fn_rbgate_t Live_00442c80 = reinterpret_cast<Fn_rbgate_t>(0x00442c80);
 
 namespace {
 
@@ -81,6 +107,67 @@ inline int& TorqueRingPhase() { return *reinterpret_cast<int*>(0x007f101c); }
 
 // FUN_0040e350  Fi_GameMode  (__cdecl int(void))
 inline int Fi_GameMode() { return reinterpret_cast<int(__cdecl*)()>(0x0040e350)(); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// A5 (FUN_0046ddb0) — exact-bit constants (memory_read, Mashed_pool11 2026-06-17)
+// All from ForceIntegrator.h + this session's reads; cited @ their .rdata address.
+// ═══════════════════════════════════════════════════════════════════════════
+const float A5_005cc320 = Cf(0x3f800000);  // 1.0
+const float A5_005cc32c = Cf(0x3f000000);  // 0.5
+const float A5_005cc318 = Cf(0x3f19999a);  // 0.6   suspForce[1] coeff / rubber A
+const float A5_005cc328 = Cf(0x3c23d70a);  // 0.01  spin-scale (_DAT_005cc328)
+const float A5_005cc564 = Cf(0x3e800000);  // 0.25  steer ring quarter
+const float A5_005cc574 = Cf(0x40000000);  // 2.0   gravity-ramp clamp
+const float A5_005cc31c = Cf(0x40400000);  // 3.0   airborne grounded-count thr
+const float A5_005cc990 = Cf(0x3727c5ac);  // 9.98199e-6 gravity ang-scale (EXACT, read 2026-06-17)
+const float A5_005cc948 = Cf(0x39aec33e);  // 3.33e-4  substep ms->s
+const float A5_005cc9b4 = Cf(0x3f7d70a4);  // 0.99    draft cos threshold
+const float A5_005ccac8 = Cf(0x3eaaaaab);  // 0.333   steer clamp third
+const float A5_005ccd08 = Cf(0x453b8000);  // 3000.0  airborne damp k (_DAT_005ccd08) (EXACT, read 2026-06-17)
+const float A5_005ccd6c = Cf(0x41a00000);  // 20.0    steer-out hi clamp
+const float A5_005cd03c = Cf(0x38d1b717);  // 9.99e-5 speed-min epsilon
+const float A5_005cd050 = Cf(0x3e000000);  // 0.125   draft ramp
+const float A5_005cd0a0 = Cf(0x40c00000);  // 6.0     draft distance
+const float A5_005cd61c = Cf(0xc1a00000);  // -20.0   steer-out lo clamp
+const float A5_005ce018 = Cf(0x3b03126f);  // 0.002   steer projection scale
+const float A5_005cea64 = Cf(0x47800000);  // 65536.0 airborne vel threshold
+const float A5_005cea68 = Cf(0x36a7c5ac);  // 4.99955e-6 rand-impulse speed scale
+const float A5_005cea6c = Cf(0x3b5a740e);  // 0.00333 steer-out scale
+const float A5_005cea70 = Cf(0xbe19999a);  // -0.15   grip count-0 coeff
+const float A5_005cea74 = Cf(0xb80bcf65);  // -3.33e-5 grip-ramp k
+const float A5_005cea78 = Cf(0xc6ea6000);  // -30000  grip-ramp lo clamp
+const float A5_005cea7c = Cf(0x476a6000);  // 60000   grip-ramp hi
+const float A5_00613138 = Cf(0x3d4ccccd);  // 0.05    suspForce[2] coeff (_DAT_00613138)
+// surface-jitter coefficients (selected by integer surface key)
+const float A5_jit0p25 = Cf(0x3e800000);   // 0.25 default
+const float A5_jit0p1  = Cf(0x3dcccccd);   // 0.1
+const float A5_jit0p01 = Cf(0x3c23d70a);   // 0.01
+const float A5_jit0p2  = Cf(0x3e4ccccd);   // 0.2
+// surface keys (CMP EAX,imm — verbatim from the dispatch asm 0x0046e76d..0x0046e817)
+const int   A5_keyRandom = (int)0xffff32ff;
+const int   A5_key0p1    = (int)0xffa08080;
+const int   A5_key0p01   = (int)0xffaa8080;
+const int   A5_keySlipA  = (int)0xff961e5a;
+const int   A5_keySlipB  = (int)0xff1e80b4;
+const int   A5_key0p2    = (int)0xffc81e5a;
+// local model axes the vehicle matrix transforms (DAT_006146fc up, DAT_00614708 fwd)
+const float* const A5_DAT_006146fc = reinterpret_cast<const float*>(0x006146fc);  // (0,1,0)
+const float* const A5_DAT_00614708 = reinterpret_cast<const float*>(0x00614708);  // (0,0,1)
+
+// live runtime globals A5 reads (absolute; populated by the running MASHED) ----
+inline int&   A5_PlayerCount() { return *reinterpret_cast<int*>  (0x007f0fd0); }   // DAT_007f0fd0
+inline int&   A5_RaceTimer()   { return *reinterpret_cast<int*>  (0x007f0ff8); }   // DAT_007f0ff8
+inline float& A5_GravScale()   { return *reinterpret_cast<float*>(0x00803340); }   // _DAT_00803340
+inline float& A5_GravX()       { return *reinterpret_cast<float*>(0x00803334); }   // _DAT_00803334
+inline float& A5_GravY()       { return *reinterpret_cast<float*>(0x00803338); }   // _DAT_00803338
+inline float& A5_GravZ()       { return *reinterpret_cast<float*>(0x0080333c); }   // _DAT_0080333c
+inline float& A5_SuspDtTerm()  { return *reinterpret_cast<float*>(0x0088e610); }   // _DAT_0088e610
+inline float& A5_SuspScale()   { return *reinterpret_cast<float*>(0x0088e5f0); }   // _DAT_0088e5f0
+inline char*  A5_VehBase()     { return reinterpret_cast<char*>(0x008815a0); }     // DAT_008815a0
+// shared per-wheel scratch region A5 WRITES (0x00881560..0x00881590, 48 bytes):
+//   piVar10 loop [0x881560..0x88158c] + steer scalars 0x881564/570/57c/588
+inline float* A5_Scratch()     { return reinterpret_cast<float*>(0x00881560); }    // DAT_00881560
+inline int*   A5_ScratchI()    { return reinterpret_cast<int*>  (0x00881560); }
 
 // ── input smoother: store EAX of FUN_004a2c48(ST0 = (float)*(int*)(rec+off) + dt)
 // reproduces A4's exact x87 sequence (FILD dword; FADD float; CALL) bit-for-bit.
@@ -136,6 +223,28 @@ __declspec(naked) void Call_A6b(void* /*record*/, float /*dt*/, void* /*input*/)
         push dword ptr [esp+16]        // dt
         call dword ptr [PCH_Fwd_468980]
         add  esp, 8
+        pop  esi
+        ret
+    }
+}
+
+// FUN_0046c5f0 (TriangleFaceNormal) — __fastcall(ECX=v1,EDX=v2)+EAX=v0+ESI=out.
+// A5 invokes it with the EXACT register setup (asm 0x0046e6f3..0x0046e728):
+//   EAX=&scratch[0]  ECX=&scratch[6]  EDX=&scratch[3]  ESI=&record[ring*3+0x2cb].
+// We forward to the LIVE original (its inner fast-sqrt FUN_004c3b30 runs the live
+// RW LUT) so the steer-feedback normal is bit-identical. `out` = the output ptr;
+// the three scratch vertices are the fixed DAT_00881560 region.
+extern "C" void* PCH_Fwd_46c5f0;
+__declspec(naked) void Call_FaceNormal(float* /*out*/) {
+    __asm {
+        push esi
+        push ebx
+        mov  esi, dword ptr [esp+12]   // out -> ESI  ([esp+4]+8 for the 2 pushes)
+        mov  eax, 0x00881560           // EAX = &scratch[0]   (v0 / in_EAX)
+        mov  ecx, 0x00881578           // ECX = &scratch[6]   (param_1)
+        mov  edx, 0x0088156c           // EDX = &scratch[3]   (param_2)
+        call dword ptr [PCH_Fwd_46c5f0]
+        pop  ebx
         pop  esi
         ret
     }
@@ -416,4 +525,493 @@ __declspec(naked) void A4_Entry() {
 
 }  // namespace
 
+// ===========================================================================
+// A5 — FUN_0046ddb0 the per-wheel force integrator (EDI=record; dt, xform).
+// VERBATIM transcription of 0x0046ddb0..0x0046e9d0 (decomp Mashed_pool11 RO
+// 2026-06-17). Every callee forwarded to its LIVE original so the running
+// MASHED's RW fast-sqrt LUT + PRNG execute → a faithful C transcription is
+// bit-identical. Built x87 (.asi TU, no /arch:SSE2): float10 transients map to
+// `double`, each store rounds to float32 like the original FSTP. Constants are
+// exact .rdata bit patterns (A5_005c... above).
+//   self  = the 0xd04 record (int* view; vF() = the decompiler's float reinterp)
+//   dt    = param_1; xform = param_2 (the vehicle world matrix).
+// ===========================================================================
+namespace {
+
+inline float& a5F(int* v, int i) { return *reinterpret_cast<float*>(v + i); }
+inline int    a5AsI(float f) { int i; std::memcpy(&i, &f, 4); return i; }
+
+void A5_Body(int* self, float dt, void* xform) {
+    char* gb = A5_VehBase();
+    int*  scratch = A5_ScratchI();   // DAT_00881560 (shared)
+
+    // ── Phase 0: world forward + grounded count + per-wheel transforms ──
+    Live_004c3df0(reinterpret_cast<float*>(self + 0x275), A5_DAT_00614708, 1, xform);  // 0x0046ddc9
+    self[0x278] = 0;                                                                   // 0x0046ddd1
+    int* piVar10 = scratch;
+    int* piVar12 = self + 0x5b;
+    do {
+        if (piVar12[0xb] != 0)
+            a5F(self, 0x278) = a5F(self, 0x278) + A5_005cc320;                        // contact -> grounded++ (FLOAT store)
+        piVar10[0] = piVar12[0];
+        piVar10[1] = 0;
+        piVar10[2] = piVar12[2];
+        Live_004c3df0(reinterpret_cast<float*>(piVar12 + 5), reinterpret_cast<float*>(piVar10), 1, xform);
+        if (a5F(piVar12, 0xf) == DAT_005d757c) {
+            piVar12[0x2d] = self[0x275];
+            piVar12[0x2e] = self[0x276];
+            piVar12[0x2f] = self[0x277];
+        } else {
+            unsigned char m[64];
+            Live_004c4d20(m, A5_DAT_006146fc, a5F(piVar12, 0xf), 0);                  // 0x0046dxx FUN_004c4d20
+            Live_004c3df0(reinterpret_cast<float*>(piVar12 + 0x2d),
+                          reinterpret_cast<float*>(self + 0x275), 1, m);
+        }
+        piVar10 += 3;
+        piVar12 += 0x31;
+    } while ((int)(std::uintptr_t)piVar10 < 0x881590);
+
+    // ── Phase 1: velocity history ring + drive-torque base ──
+    unsigned int uVar7 = (unsigned int)(self[0x2b4] - 1) & 1;
+    self[0x2b4] = (int)uVar7;
+    self[uVar7 * 3 + 0x2b5] = self[0x26c];
+    self[uVar7 * 3 + 0x2b6] = self[0x26d];
+    self[uVar7 * 3 + 0x2b7] = self[0x26e];
+    float fVar4 = a5F(self, 0x279);
+    if (a5F(self, 0x279) < A5_005cd03c) fVar4 = DAT_005d757c;
+    fVar4 = a5F(self, 0x54) * a5F(self, 0x55) * a5F(self, 0x56) * fVar4;
+    if (self[0x278] != 0x40800000) fVar4 = fVar4 * A5_005cc32c;
+    fVar4 = fVar4 * a5F(self, 0x15) * dt * A5_005cc948;
+
+    // ── Phase 2: drafting / proximity grip reduction (local_70) ──
+    int iVar11 = 0, iVar13 = 0;
+    float local_70 = 1.0f;
+    do {
+        if ((iVar11 != *self) && (*reinterpret_cast<int*>(gb + 4 + iVar13) == 1)) {
+            int iVar3 = self[0x26a];
+            int iVar8 = *reinterpret_cast<int*>(gb + (0x881f48 - 0x8815a0) + iVar13) * 0x40;
+            int iVar9 = iVar8 + iVar13;
+            float local_64 = *reinterpret_cast<float*>(gb + (0x881ef8 - 0x8815a0) + iVar13 + iVar8)
+                             - a5F(self, iVar3 * 0x10 + 0x256);
+            float local_60 = *reinterpret_cast<float*>(gb + (0x881efc - 0x8815a0) + iVar9)
+                             - a5F(self, iVar3 * 0x10 + 599);
+            float local_58 = *reinterpret_cast<float*>(gb + (0x881f50 - 0x8815a0) + iVar13);
+            float local_5c = *reinterpret_cast<float*>(gb + (0x881f00 - 0x8815a0) + iVar9)
+                             - a5F(self, iVar3 * 0x10 + 600);
+            float local_54 = *reinterpret_cast<float*>(gb + (0x881f54 - 0x8815a0) + iVar13);
+            float local_50 = *reinterpret_cast<float*>(gb + (0x881f58 - 0x8815a0) + iVar13);
+            // local_58/54/50 = other car velocity (vec3 starting at &local_58)
+            float other[3]  = { local_58, local_54, local_50 };
+            float deltaN[3];
+            double mag = (double)Live_004c3ac0(other);
+            if ((double)A5_005cd03c <= mag) {
+                Live_004c39b0(other, other);                  // FUN_004c39b0 normalize in place
+                float delta[3] = { local_64, local_60, local_5c };
+                Live_004c39b0(deltaN, delta);
+                if ((double)A5_005cc9b4 < (double)(deltaN[2] * other[2] + deltaN[0] * other[0] + deltaN[1] * other[1])) {
+                    double dd = (double)Live_004c3ac0(delta);
+                    if (dd < (double)A5_005cd0a0) {
+                        double r = (double)A5_005cc320 - ((double)A5_005cd0a0 - dd) * (double)A5_005cd050;
+                        if (r < (double)local_70) local_70 = (float)r;
+                    }
+                }
+            }
+        }
+        iVar13 += 0xd04;
+        iVar11 += 1;
+    } while (iVar13 < 0x3410);
+
+    // ── Phase 3: player-count / time-ramp / contact-count / rubber-band grip ──
+    if (A5_PlayerCount() == 4)      local_70 = 1.0f;
+    else if (A5_PlayerCount() == 9) local_70 = 1.0f;
+    else if ((A5_PlayerCount() == 8) && (*self != 0)) local_70 = 0.75f;
+
+    float fVar5 = A5_005cea7c - (float)A5_RaceTimer();
+    float local_6c;
+    if (DAT_005d757c <= fVar5) {
+        local_6c = 1.0f;
+    } else {
+        if (fVar5 < A5_005cea78) fVar5 = A5_005cea78;
+        local_6c = A5_005cc320 - fVar5 * A5_005cea74;
+    }
+
+    int* C0a = reinterpret_cast<int*>(gb + 4);           int* C0c = reinterpret_cast<int*>(gb + 8);
+    int* C1a = reinterpret_cast<int*>(gb + 4 + 0xd04);   int* C1c = reinterpret_cast<int*>(gb + 8 + 0xd04);
+    int* C2a = reinterpret_cast<int*>(gb + 4 + 0x1a08);  int* C2c = reinterpret_cast<int*>(gb + 8 + 0x1a08);
+    int* C3a = reinterpret_cast<int*>(gb + 4 + 0x270c);  int* C3c = reinterpret_cast<int*>(gb + 8 + 0x270c);
+
+    iVar11 = 0;
+    if ((*C0a != 0) && (0 < *C0c)) iVar11 = *C0c;
+    if ((*C1a != 0) && (iVar11 < *C1c)) iVar11 = *C1c;
+    if ((*C2a != 0) && (iVar11 < *C2c)) iVar11 = *C2c;
+    if ((*C3a != 0) && (iVar11 < *C3c)) iVar11 = *C3c;
+    fVar5 = A5_005cea70;
+    if ((((iVar11 != 0) && (fVar5 = DAT_005d757c, iVar11 != 1)) &&
+         (fVar5 = A5_005cc32c, iVar11 != 2)) && (fVar5 = DAT_005d757c, iVar11 == 3)) {
+        fVar5 = A5_005cc320;
+    }
+    if (local_6c == DAT_005d757c) {
+        iVar11 = 3;
+        if ((*C0a != 0) && (*C0c < 3)) iVar11 = *C0c;
+        if ((*C1a != 0) && (*C1c < iVar11)) iVar11 = *C1c;
+        if ((*C2a != 0) && (*C2c < iVar11)) iVar11 = *C2c;
+        if ((*C3a != 0) && (*C3c < iVar11)) iVar11 = *C3c;
+        if (iVar11 == 0) { local_6c = 1.0f; fVar5 = A5_005cea70; }
+    }
+    local_70 = (fVar5 * local_6c + A5_005cc320) * local_70;
+    local_70 = (float)((double)Live_00442ce0(*self, local_70, local_6c) * (double)local_70);
+    if ((DAT_005d757c < local_6c) && (Live_00442c80(*self) != 0)) {
+        unsigned char bVar15 = (*C0a != 0) ? 1 : 0;
+        if (*C1a != 0) bVar15 = bVar15 + 1;
+        if (*C2a != 0) bVar15 = bVar15 + 1;
+        if (*C3a != 0) bVar15 = bVar15 + 1;
+        if (2 < bVar15) local_70 = local_70 * A5_005cc32c;
+    }
+
+    // ── Phase 4: drive-drag + gravity applied to linear velocity (+0x9b0) ──
+    fVar4 = A5_005cc320 - local_70 * fVar4;
+    if ((fVar4 < DAT_005d757c) || (A5_005cc320 < fVar4)) fVar4 = DAT_005d757c;
+    a5F(self, 0x26c) = fVar4 * a5F(self, 0x26c);
+    a5F(self, 0x26d) = fVar4 * a5F(self, 0x26d);
+    a5F(self, 0x26e) = fVar4 * a5F(self, 0x26e);
+    float local_5c = dt * a5F(self, 0x279) * A5_005cc990;
+    if (A5_005cc574 < local_5c) local_5c = A5_005cc574;
+    local_5c = local_5c * A5_GravScale();
+    float local_64 = A5_GravX() * local_5c;
+    float local_60 = A5_GravY() * local_5c;
+    local_5c = A5_GravZ() * local_5c;
+    a5F(self, 0x26c) = local_64 + a5F(self, 0x26c);
+    a5F(self, 0x26d) = local_60 + a5F(self, 0x26d);
+    a5F(self, 0x26e) = local_5c + a5F(self, 0x26e);
+
+    // ── Phase 5: steer torque from velocity delta (any wheel grounded) ──
+    if (a5F(self, 0x278) != DAT_005d757c) {
+        int hi = self[0x2b4];
+        unsigned int lo = (unsigned int)(hi - 1) & 1;
+        local_64 = (a5F(self, hi * 3 + 0x2b5) - a5F(self, lo * 3 + 0x2b5)) * dt;
+        local_60 = (a5F(self, hi * 3 + 0x2b6) - a5F(self, lo * 3 + 0x2b6)) * dt;
+        local_5c = (a5F(self, hi * 3 + 0x2b7) - a5F(self, lo * 3 + 0x2b7)) * dt;
+        fVar4 = (a5F(self, 0x14) / a5F(self, 0x278)) * A5_SuspDtTerm();
+        fVar5 = fVar4 * A5_005ccac8;
+        // wheel0  -> self[0x83], scratch[1] (DAT_00881564)
+        if (self[0x66] == 0) { self[0x83] = 0; }
+        else {
+            float f = (a5F(self, 0x62) * local_5c + a5F(self, 0x60) * local_64 + a5F(self, 0x61) * local_60) * A5_005ce018;
+            if (fVar5 < f) f = fVar5;
+            if (f < -fVar5) f = -fVar5;
+            a5F(self, 0x83) = fVar4 + f;
+            if (f <= A5_005ccd6c) { if (f < A5_005cd61c) f = A5_005cd61c; a5F(scratch, 1) = f * A5_005cea6c; }
+            else { a5F(scratch, 1) = A5_005ccd6c * A5_005cea6c; }
+        }
+        // wheel1  -> self[0xb4], scratch[4] (DAT_00881570)
+        if (self[0x97] == 0) { self[0xb4] = 0; }
+        else {
+            float f = (a5F(self, 0x93) * local_5c + a5F(self, 0x91) * local_64 + a5F(self, 0x92) * local_60) * A5_005ce018;
+            if (fVar5 < f) f = fVar5;
+            if (f < -fVar5) f = -fVar5;
+            a5F(self, 0xb4) = fVar4 + f;
+            if (f <= A5_005ccd6c) { if (f < A5_005cd61c) f = A5_005cd61c; a5F(scratch, 4) = f * A5_005cea6c; }
+            else { a5F(scratch, 4) = A5_005ccd6c * A5_005cea6c; }
+        }
+        // wheel2  -> self[0xe5], scratch[7] (DAT_0088157c)
+        if (self[200] == 0) { self[0xe5] = 0; }
+        else {
+            float f = (a5F(self, 0xc4) * local_5c + a5F(self, 0xc2) * local_64 + a5F(self, 0xc3) * local_60) * A5_005ce018;
+            if (fVar5 < f) f = fVar5;
+            if (f < -fVar5) f = -fVar5;
+            a5F(self, 0xe5) = fVar4 + f;
+            if (f <= A5_005ccd6c) { if (f < A5_005cd61c) f = A5_005cd61c; a5F(scratch, 7) = f * A5_005cea6c; }
+            else { a5F(scratch, 7) = A5_005ccd6c * A5_005cea6c; }
+        }
+        // wheel3  -> self[0x116], scratch[10] (DAT_00881588)
+        if (self[0xf9] == 0) { self[0x116] = 0; }
+        else {
+            float f = (a5F(self, 0xf5) * local_5c + a5F(self, 0xf3) * local_64 + a5F(self, 0xf4) * local_60) * A5_005ce018;
+            if (fVar5 < f) f = fVar5;
+            if (f < -fVar5) f = -fVar5;
+            a5F(self, 0x116) = fVar4 + f;
+            if (f <= A5_005ccd6c) { if (f < A5_005cd61c) f = A5_005cd61c; a5F(scratch, 10) = f * A5_005cea6c; }
+            else { a5F(scratch, 10) = A5_005ccd6c * A5_005cea6c; }
+        }
+        a5F(self, 0x116) = a5F(self, 0x116) * A5_005cc32c;
+        unsigned int ring = (unsigned int)(self[0x2fb] + 1) & 0xf;
+        self[0x2fb] = (int)ring;
+        Call_FaceNormal(reinterpret_cast<float*>(self + (ring * 3 + 0x2cb)));   // FUN_0046c5f0 (live)
+        int slot = ring * 3 + 0x2cd;
+        if (a5F(self, slot) < DAT_005d757c) a5F(self, slot) = a5F(self, slot) * A5_005cc564;
+    }
+
+    // ── Phase 6: per-wheel suspension force + surface jitter (4 wheels) ──
+    float* pfVar14 = reinterpret_cast<float*>(self + 0x7d);
+    int loopCount = 4;
+    do {
+        if (pfVar14[-0x17] == 0.0f) {
+            pfVar14[10] = 0.0f; pfVar14[9] = 0.0f; pfVar14[8] = 0.0f;
+        } else {
+            int key = a5AsI(pfVar14[-1]);
+            *pfVar14 = 0.25f;
+            self[0x2c0] = 0; self[0x2c1] = 0; self[0x2c2] = 0;
+            if (key == A5_keyRandom) {
+                float rr = a5F(self, 0x279) * A5_005cea68;
+                a5F(self, 0x2c0) = Live_00472650(-rr, rr);          // FUN_00472650 (live PRNG)
+                self[0x2c1] = 0;
+                a5F(self, 0x2c2) = Live_00472650(-rr, rr);
+            } else if (key == A5_key0p1) {
+                *pfVar14 = A5_jit0p1;
+            } else if (key == A5_key0p01) {
+                *pfVar14 = A5_jit0p01;
+            } else {
+                if ((key == A5_keySlipA) || (key == A5_keySlipB))
+                    *pfVar14 = (self[0x340] == 0) ? A5_jit0p01 : A5_jit0p2;
+                if (key == A5_key0p2)
+                    *pfVar14 = A5_jit0p2;
+            }
+            if (self[0xb] != 0) *pfVar14 = a5F(self, 0xb) * *pfVar14 * A5_005cc328;
+            float f = pfVar14[-0x1a] * *pfVar14;
+            *pfVar14 = f;
+            pfVar14[1] = A5_005cc318 * f;
+            pfVar14[2] = A5_00613138 * f;
+            if (self[4] == 1) { pfVar14[1] = f; pfVar14[2] = f; }
+            pfVar14[7] = pfVar14[6] * pfVar14[4];
+            if (pfVar14[6] * pfVar14[4] < DAT_005d757c) pfVar14[7] = 0.0f;
+            double fVar17;
+            if (self[0x278] == 0x40800000) {
+                float fc = A5_SuspScale() * pfVar14[6] * A5_005cc32c;
+                pfVar14[8]  = fc * pfVar14[3];
+                pfVar14[9]  = (pfVar14[4] - A5_005cc320) * fc;
+                pfVar14[10] = fc * pfVar14[5];
+                fVar17 = (double)Live_004c3ac0(pfVar14 + 8);
+                if ((float)fVar17 != DAT_005d757c) {
+                    double inv = (double)A5_005cc320 / fVar17;
+                    float a0 = (float)(inv * (double)pfVar14[8]);
+                    float a1 = (float)(inv * (double)pfVar14[9]);
+                    float a2 = (float)(inv * (double)pfVar14[10]);
+                    double proj = ((double)a2 * (double)pfVar14[0xd] + (double)a0 * (double)pfVar14[0xb] +
+                                   (double)a1 * (double)pfVar14[0xc]) * fVar17;
+                    pfVar14[8]  = (float)(proj * (double)pfVar14[0xb]);
+                    pfVar14[9]  = (float)(proj * (double)pfVar14[0xc]);
+                    pfVar14[10] = (float)(proj * (double)pfVar14[0xd]);
+                }
+            } else {
+                fVar17 = ((double)pfVar14[6] / (double)dt) * (double)A5_SuspScale();
+                pfVar14[8]  = (float)(fVar17 * (double)pfVar14[3]);
+                pfVar14[9]  = (float)(fVar17 * (double)pfVar14[4]);
+                pfVar14[10] = (float)(fVar17 * (double)pfVar14[5]);
+            }
+            if ((self[0x2c8] == 0) && ((double)A5_005cea64 < fVar17)) self[0x2c8] = 1;
+        }
+        pfVar14 += 0x31;
+        loopCount -= 1;
+        if (loopCount == 0) {
+            if (a5F(self, 0x278) < A5_005cc31c) {
+                self[0x2c8] = 1;
+                a5F(self, 0x2c6) = a5F(self, 0x2c6) - A5_SuspDtTerm() * a5F(self, 0x14) * A5_005ccd08;
+            }
+            return;
+        }
+    } while (true);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// A5 IN-PROCESS BIT-IDENTITY SELF-TEST (env MASHED_PHYS_C4_SELFTEST)
+// ───────────────────────────────────────────────────────────────────────────
+// A5's WHOLE function is the body (no callee-dispatch tail like A4), so the
+// "original-body" run is just a forwarded call to the LIVE A5 (Call_A5). The
+// hazards the task flags:
+//   (1) SHARED globals: A5 writes the scratch region 0x00881560..0x00881590
+//       (48 b). Snapshot + restore it (with the record) so both impls see
+//       identical input state.
+//   (2) RNG: the random-surface branch (key 0xffff32ff) consumes FUN_00472650
+//       twice, writing +0xb00/+0xb08. Running the original first advances the
+//       live PRNG; my run would then read a DIFFERENT sequence. Detect this by
+//       watching the PRNG read cursor *(DAT_007dc578 + 4 + DAT_007d3ff8); if it
+//       advanced, the random branch fired → EXCLUDE +0xb00/+0xb08 from the
+//       bit-compare for that call and FLAG it (honest: not replayed).
+// Single-threaded physics → snapshot/restore is safe.
+// ═══════════════════════════════════════════════════════════════════════════
+namespace {
+
+inline int A5_SelfTestEnabled() {
+    static int v = -1;
+    if (v < 0) { const char* s = std::getenv("MASHED_PHYS_C4_SELFTEST"); v = (s && s[0]) ? 1 : 0; }
+    return v;
+}
+
+// PRNG read-cursor (FUN_00534870): *(int*)(*(int*)0x7dc578 + 4 + *(int*)0x7d3ff8).
+// Returns 0 if the PRNG hasn't been initialised yet (base ptr null).
+inline std::uintptr_t A5_PrngCursor() {
+    int base = *reinterpret_cast<int*>(0x007dc578);
+    int off  = *reinterpret_cast<int*>(0x007d3ff8);
+    if (base == 0) return 0;
+    return *reinterpret_cast<std::uintptr_t*>(static_cast<char*>(0) + base + 4 + off);
+}
+
+void A5_SelfTestLog(const char* s) {
+    HANDLE h = CreateFileA("phys_c4_a5_selftest.log", FILE_APPEND_DATA, FILE_SHARE_READ,
+                           nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return;
+    DWORD wrote; WriteFile(h, s, (DWORD)std::strlen(s), &wrote, nullptr); CloseHandle(h);
+}
+
+// Re-run the ORIGINAL A5 body, bypassing OUR inline-JMP at 0x0046ddb0. The 5-byte
+// JMP RH_ScopedInstall writes overwrites the prologue `MOV EAX,[ESP+8]`(4) + first
+// byte of `SUB ESP,0x70`. Re-execute those two whole instructions then JMP to the
+// first untouched instruction at 0x0046ddb7 (PUSH EBX). Entered (via Call_OrigA5)
+// with the SAME ABI as the original: EDI=record; [ESP]=ret [ESP+4]=dt [ESP+8]=xform.
+__declspec(naked) void OrigA5Trampoline() {
+    __asm {
+        mov  eax, dword ptr [esp+8]   // 8b442408  (instr 1; EAX=xform — MUST reach 0x0046ddb7)
+        sub  esp, 0x70                // 83ec70    (instr 2)
+        // jump to 0x0046ddb7 (PUSH EBX) WITHOUT clobbering EAX: the original pushes
+        // EAX as the transform mtx at 0x0046ddba, so a `mov reg,target;jmp reg` that
+        // touched EAX would feed a garbage matrix. push-imm + ret jumps clobber-free.
+        push 0x0046ddb7
+        ret
+        // the original body runs to its own `ADD ESP,0x70; RET` (0x0046e9cd/d0),
+        // returning to Call_OrigA5's `add esp,8`.
+    }
+}
+// self-test forwarder: invoke the ORIGINAL A5 (not our hook) with EDI=record.
+__declspec(naked) void Call_OrigA5(int* /*record*/, float /*dt*/, void* /*xform*/) {
+    __asm {
+        push edi
+        mov  edi, dword ptr [esp+8]   // record -> EDI
+        push dword ptr [esp+16]       // xform  ([esp+12]+4 for pushed edi)
+        push dword ptr [esp+16]       // dt
+        call OrigA5Trampoline
+        add  esp, 8
+        pop  edi
+        ret
+    }
+}
+
+// the record fields A5 writes that the telemetry observes + the shared scratch.
+// Output offsets (byte) checked per call (record-relative):
+const int kA5RecOffs[] = {
+    0x9b0,0x9b4,0x9b8,            // linear velocity (drive-drag + gravity)
+    0x9d4,0x9d8,0x9dc,            // world forward
+    0x9e0,                        // grounded count
+    0x20c,0x2d0,0x394,0x458,      // per-wheel steer torque (self[0x83]/0xb4/0xe5/0x116)
+    0xb00,0xb08,                  // random impulse (RNG-derived; conditionally compared)
+    0xb18,0xb20,                  // airborne damp counter + airborne flag
+    0xad0,                        // ping-pong ring index
+};
+// suspension-force vectors per wheel — write outputs. pfVar14 = (float*)(self+0x7d)
+// = byte +0x1f4; pfVar14[8] (susp force X) = +0x214; +0xC4 (0x31 ints) per wheel.
+//   w0=+0x214 w1=+0x2d8 w2=+0x39c w3=+0x460  (X; Z = +8). Matches vehicle.md §3 (+0xa8).
+const int kA5WheelOffs[] = { 0x214, 0x2d8, 0x39c, 0x460 };
+
+int   g_a5Count = 0;
+int   g_a5RngHits = 0;
+const int kA5MaxTests = 96;
+
+void A5_SelfTest(int* record, float dt, void* xform) {
+    if (g_a5Count >= kA5MaxTests) return;
+    static std::uint8_t snapRec[0xd04];
+    static std::uint8_t snapScr[0x30];   // 0x881560..0x881590
+    char* scr = reinterpret_cast<char*>(0x00881560);
+
+    // snapshot input state
+    std::memcpy(snapRec, record, 0xd04);
+    std::memcpy(snapScr, scr, 0x30);
+    std::uintptr_t prngBefore = A5_PrngCursor();
+
+    // (1) ORIGINAL A5 on the live record (Call_OrigA5 re-runs the original body,
+    //     bypassing our inline-JMP; forwards dt+xform, EDI=record).
+    Call_OrigA5(record, dt, xform);
+    std::uintptr_t prngAfter = A5_PrngCursor();
+    const bool rngFired = (prngBefore != prngAfter) && (prngBefore != 0);
+
+    // capture original outputs (record + scratch)
+    std::uint32_t origRec[32]; int nr = 0;
+    for (int off : kA5RecOffs)   origRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+    std::uint32_t origWh[8]; int nw = 0;
+    for (int off : kA5WheelOffs) {
+        origWh[nw++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);       // susp X (+0x20)
+        origWh[nw++] = *reinterpret_cast<std::uint32_t*>((char*)record + off + 8);    // susp Z (+0x28)
+    }
+    std::uint32_t origScr[12];
+    std::memcpy(origScr, scr, 0x30);
+
+    // restore input state, run MY A5_Body
+    std::memcpy(record, snapRec, 0xd04);
+    std::memcpy(scr, snapScr, 0x30);
+    A5_Body(record, dt, xform);
+
+    // compare
+    int mism = 0; char line[1024]; int p = 0;
+    nr = 0;
+    for (int off : kA5RecOffs) {
+        std::uint32_t mv = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+        // exclude RNG-derived +0xb00/+0xb08 if the original consumed PRNG (not replayed)
+        const bool isRng = (off == 0xb00) || (off == 0xb08);
+        if (isRng && rngFired) { nr++; continue; }
+        if (mv != origRec[nr]) { mism++;
+            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, origRec[nr], mv); }
+        nr++;
+    }
+    nw = 0;
+    for (int off : kA5WheelOffs) {
+        std::uint32_t mx = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+        std::uint32_t mz = *reinterpret_cast<std::uint32_t*>((char*)record + off + 8);
+        if (mx != origWh[nw]) { mism++; if (p < 900) p += wsprintfA(line+p, " w+0x%x:o=%08x,m=%08x", off, origWh[nw], mx); }
+        nw++;
+        if (mz != origWh[nw]) { mism++; if (p < 900) p += wsprintfA(line+p, " w+0x%x:o=%08x,m=%08x", off+8, origWh[nw], mz); }
+        nw++;
+    }
+    std::uint32_t mineScr[12];
+    std::memcpy(mineScr, scr, 0x30);
+    for (int i = 0; i < 12; ++i) {
+        if (mineScr[i] != origScr[i]) { mism++;
+            if (p < 900) p += wsprintfA(line+p, " scr[%d]:o=%08x,m=%08x", i, origScr[i], mineScr[i]); }
+    }
+    if (rngFired) g_a5RngHits++;
+
+    char hdr[200];
+    int grounded = *reinterpret_cast<int*>((char*)record + 0x9e0);
+    wsprintfA(hdr, "[%d] dt=%08x grounded=%08x rng=%d ndiff=%d%s\r\n",
+              g_a5Count, *reinterpret_cast<std::uint32_t*>(&dt), grounded, rngFired ? 1 : 0,
+              mism, mism ? "" : " OK");
+    A5_SelfTestLog(hdr);
+    if (mism) { line[p] = 0; A5_SelfTestLog("   "); A5_SelfTestLog(line); A5_SelfTestLog("\r\n"); }
+    g_a5Count++;
+}
+
+// ── entry trampoline installed at 0x0046ddb0 ────────────────────────────────
+// A5 ABI: EDI=record; [ESP+4]=dt; [ESP+8]=xform; caller-cleans (saves EBX/EBP/ESI,
+// `ret` no-imm). The trampoline preserves the same callee-saved set + EDI and
+// forwards to A5_Hook (a normal C fn). When the self-test runs, A5_Hook runs the
+// in-process A/B; either way it then runs A5_Body for real.
+void A5_Hook(int* record, float dt, void* xform) {
+    if (A5_SelfTestEnabled())
+        A5_SelfTest(record, dt, xform);
+    else
+        A5_Body(record, dt, xform);
+}
+
+__declspec(naked) void A5_Entry() {
+    __asm {
+        // EDI=record; [esp]=ret [esp+4]=dt [esp+8]=xform
+        push ebx
+        push ebp
+        push esi
+        push edi                  // preserve A5's callee-saved set + EDI; 4 saves
+        push dword ptr [esp+24]   // xform   ([esp+8]+16 for the 4 saves)
+        push dword ptr [esp+24]   // dt
+        push edi                  // record (EDI)
+        call A5_Hook
+        add  esp, 12              // cdecl: clean our 3 forwarded args
+        pop  edi
+        pop  esi
+        pop  ebp
+        pop  ebx
+        ret                       // caller cleans A5's 2 (effective) stack args
+    }
+}
+
+}  // namespace
+
+}  // namespace
+
 RH_ScopedInstall(A4_Entry, 0x00470670);
+RH_ScopedInstall(A5_Entry, 0x0046ddb0);
