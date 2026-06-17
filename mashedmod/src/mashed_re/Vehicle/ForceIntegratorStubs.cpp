@@ -37,5 +37,17 @@ int Fi_GameMode() { return 0; }
 // FUN_0040e340 — game-mode tick (side-effecting; no-op stand-in).
 void Fi_GameModeTick() {}
 
+// --- control-integrator residual deps -------------------------------------
+// The per-frame torque-ring phase counter DAT_007f101c (& 0xf each frame). A8
+// binds it to the real per-frame counter; inert here.
+int g_torqueRingPhase = 0;                                   // DAT_007f101c
+// A6a (Integrate2.cpp) + A6b (AeroStabilize.cpp) are now REAL ports — no stubs here.
+// FUN_004a2c48 — per-input smoother/round-of-ST0 [UNCERTAIN signature/input].
+int  Vc_InputFilter() { return 0; }
+int  Vc_RoundST0()    { return 0; }                          // FUN_004a2c48 (ST0 input implicit)
+// A6a runtime-ptr comparands (mode-4 boost-pad cars) — inert until A8 binds them.
+int  g_modeCarA = 0;                                         // DAT_0088e668 [UNCERTAIN]
+int  g_modeCarB = 0;                                         // DAT_0088e66c
+
 }  // namespace Vehicle
 }  // namespace mashed_re
