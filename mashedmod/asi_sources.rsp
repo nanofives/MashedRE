@@ -28,6 +28,7 @@
 "Math\RwV3dTransform.cpp"
 "Math\RwV3dNormalize.cpp"
 "Math\RwV3dTransformPoints.cpp"
+"Math\RwV3dTransformPointsCPU.cpp"
 "Math\RwMatrixRotate.cpp"
 "Math\RwMatrixRotateInner.cpp"
 "Math\RwV2d.cpp"

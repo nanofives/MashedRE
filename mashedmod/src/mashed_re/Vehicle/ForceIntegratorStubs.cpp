@@ -7,6 +7,12 @@
 // make the module compile + link inert. Each cites the real RVA / DAT.
 #include "ForceIntegrator.h"
 
+// Forward-decls at GLOBAL scope (must NOT be nested inside mashed_re::Vehicle).
+namespace mashed_re { namespace Math {
+    void RwV3dTransformPointsCPU(float* dst, const float* src, int count, const float* m);
+} }
+extern "C" void* __cdecl RwMatrixRotate(void* matrix, const float* axis, float angle_deg, int mode);
+
 namespace mashed_re {
 namespace Vehicle {
 
@@ -23,13 +29,20 @@ int*  g_vehicleArrayBase = nullptr;  // DAT_008815a0
 // g_suspScratch (DAT_00881560) is defined in the Collision module (shared with
 // the wheel solver) — Collision::g_suspScratch.
 
-// --- residual engine deps (stubbed; real RVAs cited) -----------------------
-// FUN_004c3df0 — RwV3dTransformPoints. Real impl: Math/RwV3dTransformPoints.cpp.
-void Rw_TransformPoints(float* dst, const float* src, int count, void* /*mtx*/) {
-    for (int i = 0; i < count * 3; ++i) dst[i] = src[i];   // identity until wired
+// --- residual engine deps (WS-A-DEVXFORM: now bound to real C++ impls) ------
+// (RwV3dTransformPointsCPU + RwMatrixRotate forward-declared at global scope above)
+// FUN_004c3df0 — RwV3dTransformPoints. The original dispatches the RW DEVICE
+// transform; bound to the CPU 3x4 matrix*vec3 (Math/RwV3dTransformPointsCPU.cpp) so
+// A5/A6a compute correctly standalone (mtx = the 16-float RwMatrix from FUN_004c4d20).
+void Rw_TransformPoints(float* dst, const float* src, int count, void* mtx) {
+    mashed_re::Math::RwV3dTransformPointsCPU(dst, src, count, reinterpret_cast<const float*>(mtx));
 }
-// FUN_004c4d20 — RwMatrix from axis+angle. Real impl: Math/RwMatrixRotate.cpp.
-void Rw_MatrixFromAxisAngle(void* /*outMtx*/, const float* /*axis*/, float /*angle*/, int) {}
+// FUN_004c4d20 — RwMatrix from axis+angle. Bound to Math/RwMatrixRotate (0x004c4d20).
+// mode 0 (REPLACE) is standalone-correct; modes 1/2 (concat) dispatch the RW device
+// matrix-mult (need RW device init, WS-E). A6a uses mode 0; A6b uses mode 1 (.asi only).
+void Rw_MatrixFromAxisAngle(void* outMtx, const float* axis, float angle, int mode) {
+    RwMatrixRotate(outMtx, axis, angle, mode);
+}
 // FUN_00472650 (+ PRNG FUN_00534870) — random float in [lo,hi).
 float Fi_RandRange(float lo, float /*hi*/) { return lo; }  // deterministic stand-in
 // FUN_0040e350 — game-mode discriminator (race = 6).
