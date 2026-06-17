@@ -144,6 +144,22 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
 
     std::uint8_t input[8];
     std::memcpy(input, io.input, sizeof(input));
+    // WS-A8-STEER: map the steer command [-1,+1] onto the descriptor's mutually-
+    // exclusive STEER bytes [0]/[1] — the byte channel A4 (FUN_00470670) reads (it
+    // writes the scaled result to the FRONT-wheel steer-angle slots +0x1a8/+0x26c,
+    // which A5 FUN_0046ddb0 Phase 0 turns into a per-wheel forward-axis rotation via
+    // FUN_004c4d20). +steer -> input[0] (sign A, +angle), -steer -> input[1] (sign B,
+    // -angle); 0..255 magnitude exactly as AI writer FUN_00416250 / human cook
+    // FUN_00496530 produce. Mutually exclusive (the original writes one or the other).
+    {
+        float st = io.steer;
+        if (st >  1.0f) st =  1.0f;
+        if (st < -1.0f) st = -1.0f;
+        const int mag = static_cast<int>((st < 0.f ? -st : st) * 255.f + 0.5f);
+        const std::uint8_t m = static_cast<std::uint8_t>(mag > 255 ? 255 : mag);
+        input[0] = (st > 0.f) ? m : 0;
+        input[1] = (st < 0.f) ? m : 0;
+    }
 
     // The chain works in the ORIGINAL's millisecond time base: FUN_00470c70 passes
     // A4 a dt that is the integer ms chunk count (local_24 = min(remaining,0x32)),
@@ -203,9 +219,32 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     io.vel[1] = F(r, off::kVelocity + 4);
     io.vel[2] = F(r, off::kVelocity + 8);
     io.speed  = F(r, off::kSpeed);
-    const float fx = F(r, off::kForward + 0);
-    const float fz = F(r, off::kForward + 8);
-    if (fx != 0.f || fz != 0.f) io.yaw = std::atan2(fz, fx);   // forward {cos,0,sin}
+
+    // WS-A8-STEER: PHYSICS-real heading. The chain integrates the body angular
+    // velocity into +0x9bc (vec3, world frame) — A6a FUN_00467650 (Integrate2.cpp
+    // 0x9bc/0x9c0/0x9c4) accrues the per-wheel lateral-grip cross-product torque
+    // there. The steer input drives it: input[0]/[1] -> A4 front-wheel steer angle
+    // (+0x1a8/+0x26c) -> A5 rotates the wheel forward axes -> A6a's grip yaws the
+    // body. Our body forward (+0x9d4 = {cos,0,sin}) is about world-up (Y), so the Y
+    // component of the angular velocity (+0x9c0) is the yaw rate. Advance io.yaw by
+    // it over the frame — this REPLACES the kinematic steer*kSteer*dt stopgap.
+    //
+    // [U-A8-YAWSCALE] In the original the orientation is integrated from +0x9bc by
+    // the RW-Physics rigid-body integrator (the FUN_0055xxxx RW-Physics/qhull island,
+    // applied to the RW frame matrix — NOT a first-party function; the standalone has
+    // no RW node so we fold +0x9c0 into io.yaw ourselves). The exact rate->orientation
+    // scale that engine uses is therefore not recoverable from a first-party decomp;
+    // kYawScale is the one tunable here. 1.0 integrates +0x9c0 directly as rad over
+    // the frame ms; the follow-up runtime smoke (WS-PHYS-SMOKE) calibrates it to match
+    // the original's turn radius. The STEER PATH is physics; only this gain is tuned.
+    constexpr std::size_t kAngVelY  = 0x9c0;   // angular-velocity Y = yaw rate
+    constexpr float       kYawScale = 1.0f;    // [U-A8-YAWSCALE] smoke-calibrated gain
+    const float yawRate = F(r, kAngVelY);
+    io.yaw += yawRate * frameMs * kYawScale;
+    // keep yaw bounded so the synthesized forward stays well-conditioned
+    constexpr float kTwoPi = 6.2831853f;
+    while (io.yaw >  kTwoPi) io.yaw -= kTwoPi;
+    while (io.yaw < -kTwoPi) io.yaw += kTwoPi;
 }
 
 }  // namespace mashed_re::Vehicle

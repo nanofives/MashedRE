@@ -1470,12 +1470,13 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         io.vel[0] = car_vel_[0]; io.vel[1] = car_vel_[1]; io.vel[2] = car_vel_[2];
         io.yaw = car_yaw_; io.speed = car_speed_;
         for (int k = 0; k < 8; ++k) io.input[k] = 0;
-        // Input byte map RESOLVED (ai_ctrl_byte_map_RESOLVED_2026-06-16.md):
-        // [4]=accelerator, [5]=brake/reverse are the PRIMARY throttle the A6a wheel
-        // integrator (FUN_00467650) reads. ([0]/[1] are the steer channel A4 treats
-        // as a secondary body impulse; steer is applied kinematically below.)
+        // Input byte map RESOLVED (ai_ctrl_byte_map_RESOLVED + WS-A8-STEER):
+        // [0]/[1]=STEER (sign A/B; A4 FUN_00470670 reads them and writes the front-
+        // wheel steer angle to +0x1a8/+0x26c), [4]=accelerator, [5]=brake/reverse
+        // (A6a FUN_00467650 reads them). StepPlayer sets input[0]/[1] from io.steer.
         io.input[4] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
         io.input[5] = static_cast<unsigned char>((accel < 0.f ? -accel : 0.f) * 255.f);
+        io.steer    = steer;   // [-1,+1] -> descriptor steer bytes [0]/[1]
         // Ground the wheels from our own collision (the standalone substitute for the
         // RW BSP broadphase the chain's contact orchestrator needs) so the drive +
         // suspension blocks engage. Probe the next XZ before committing.
@@ -1487,9 +1488,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
-        // [U-A8-STEER] steering-input path into the chain is unmapped (A4 reads
-        // accel/brake only) -> apply steer kinematically until the steer byte is RE'd.
-        car_yaw_ += steer * kSteer * (io.speed / kTop) * in.dt;
+        // WS-A8-STEER: heading is now PHYSICS-driven. StepPlayer advanced io.yaw from
+        // the chain's integrated body angular velocity (+0x9c0), which the steer input
+        // produced through the front-wheel steer angle -> lateral grip -> angular
+        // velocity. The kinematic car_yaw_ += steer*kSteer*dt stopgap is REMOVED here.
+        car_yaw_ = io.yaw;
         if (pok) { car_pos_[0] = pnx; car_pos_[2] = pnz; car_pos_[1] = pgy + car_ground_off_; }
         else { car_speed_ = 0.f; car_vel_[0] = car_vel_[2] = 0.f; }
     } else {
