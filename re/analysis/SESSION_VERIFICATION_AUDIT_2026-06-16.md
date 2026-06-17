@@ -229,3 +229,57 @@ fallback). A4 (FUN_00470670) is the one with NO transcendental hazard in its own
 (it only does the input->force arithmetic; the LUT calls are in the A5/A6a callees it
 dispatches) -> **A4 is C4-FEASIBLE as a standalone-body installed hook** the same way
 the scoring trio is (bounded effort), if/when the .asi-second-impl decision is ratified.
+
+## WS-PHYS-C4-LANE — lane STOOD UP; A4 is C4-GREEN (2026-06-17, branch ws-phys-c4-lane)
+
+User ratified the full `.asi`-only verbatim-LUT installed-hook canonical-race
+telemetry lane. Built it; **A4 (FUN_00470670) is now C4 in hooks.csv** (first real
+physics-chain C4). The rest of the chain remains C2 (scoped below).
+
+### Lane architecture (`mashedmod/src/mashed_re/Vehicle/PhysicsChainHooks.cpp`, .asi-only)
+- **Register-ABI entry trampolines.** The physics fns are NOT __cdecl — the
+  dispatcher passes the 0xd04 record in a register. A4's ABI (disassembled,
+  Mashed_pool12): EAX=record; stack [+4]=param_1 [+8]=dt [+c]=input* [+10]=xform;
+  caller-cleans (5 reg pushes ECX/EBX/EBP/ESI/EDI, `ret` no-imm). `A4_Entry`
+  (`__declspec(naked)`) captures EAX + forwards the 4 cdecl args to `A4_Body`,
+  preserving the same callee-saved set.
+- **Live-LUT callee forwarders.** Naked shims set EDI=record (A5 FUN_0046ddb0),
+  ESI=record (A6a FUN_00467650), ECX=ESI=record (A6b FUN_00468980) and forward the
+  cdecl stack args to the **live originals** — so the RW fast-sqrt LUT (built by
+  RwEngineOpen, live inside MASHED) executes; the input smoother FUN_004a2c48
+  (round-ST0-to-i64, implicit ST0) is forwarded by a naked shim that loads ST0
+  exactly as A4 does (FILD;FADD dt;CALL). This is what makes bit-identity reachable.
+- **Built x87** (the .asi TU has no /arch:SSE2) so the C transcription's float
+  intermediates round to float32 like the original. **EXACT-bit-pattern constants**
+  (`Cf(0x........)`): the decimal literal `1.66677e-4f` (0x392ec604) for the grip
+  scale was the *only* divergence — the real .rdata value is 0x392ec33e; fixed.
+- **MASHED_HOOK_ONLY gate** installs only the physics hook live (HookSystem.cpp
+  allowlist) → a clean "modded-vs-original" canonical scenario.
+
+### Deterministic bit-identity self-test (the wall run_diff/Interceptor can't cross)
+Frida Interceptor on A4 (>1000/s) destabilizes MASHED before a single call can be
+captured (re-verified 3×). So the A/B is **in-process, ZERO Frida overhead**
+(env `MASHED_PHYS_C4_SELFTEST=1`): per call, the hook runs the **ORIGINAL A4 body**
+via an early-return trampoline (re-execute the saved prologue → JMP A4+5; 0x00470914
+temporarily patched to a frame-restoring `RET` so ONLY the body math runs, not the
+A5/A6a/A6b dispatch), snapshots the original body outputs, restores the record, runs
+my `A4_BodyMath`, and bit-compares — logging `phys_c4_selftest.log`. Same exact live
+record state → no race noise.
+
+### Per-fn verdict
+| Fn | RVA | Verdict |
+|----|-----|---------|
+| A4 VehicleControl | 0x00470670 | **C4-GREEN, 96/96 bit-identical** (88 drive-force calls in0=1..66, gm=6 Quick Battle, all 16 ring phases; 8 coast). inline-JMP LIVE (0xE9) confirmed in canonical race; chain crash-free. Evidence: `re/analysis/phys_c4_evidence/A4_selftest_GREEN.txt`. Promoted in hooks.csv; U-1408 (reg-ABI) resolved. |
+| A5 ForceIntegrator | 0x0046ddb0 | C2 — lane-ready but LARGER (~3KB) + harder self-test: writes SHARED globals (DAT_008815xx wheel scratch) and calls **RNG** `FUN_00472650` (random-impulse +0x2c0) → the full-fn A/B needs shared-global snapshot/restore + RNG-seed control (or exclude +0x2c0). EDI=record; calls 004c3df0/004c4d20/004c3ac0/004c39b0 (live LUT). Own focused session. |
+| A6a Integrate2 | 0x00467650 | C2 — the big x87 float10 body; ESI=record; same full-fn self-test needs + [U-A6A-ST0] implicit-ST0 smoother. Own session. |
+| A6b AeroStabilize | 0x00468980 | C2 — small but ECX=ESI=record + transcendental `FUN_004a3384` (asin/acos) + opaque `FUN_004c4d20` (no visible args, FPU/device matrix). Own session. |
+| A3 VehicleInit | 0x0046b540 | C2 — spawn-time; deterministic table writes; not on the per-frame hot path. Lane applies but lower priority. |
+
+### Remaining work (next sessions)
+The A4 lane (register-ABI trampoline + live-LUT forwarders + early-return original-body
+trampoline + in-process bit-A/B) is the reusable template. For A5/A6a/A6b each session
+must: (1) author the register-ABI `.asi` verbatim hook forwarding LUT calls to the live
+originals; (2) extend the self-test to a FULL-function A/B (snapshot+restore the shared
+globals each writes; control/seed `FUN_00472650` RNG for A5, or exclude the random-
+impulse +0x2c0 fields); (3) capture drive-path calls and bit-compare; (4) promote GREEN
+subset via re-classify. A5 next (task priority), then A6a, A6b, A3.
