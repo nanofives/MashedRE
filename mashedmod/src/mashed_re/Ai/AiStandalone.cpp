@@ -19,18 +19,24 @@
 //   IDENTIFIED:        FUN_004a2c48 = ROUND(ST0) (round the FPU value to int — the
 //                      ctrl-byte quantizer); steer split _DAT_005cd09c = 180.0.
 //                      FUN_00416250 full decomp mapped (targeting modes 1..10).
+//   DONE (WS-C-AITREE 2026-06-17): FUN_00416250 primary control step — the steer
+//                      bands + anti-oscillation timer state machine + accel/brake
+//                      bands + mode-7/9 tails + game-mode gate, verbatim from asm
+//                      (ControlStep). [U-C-BANDS] CLOSED (consts 005cd0e8/ec/04c,
+//                      005cc9a0, 005cd09c/0b8/0d8/dc/e0/e4, 005cc9b0/72c/55c all
+//                      memory_read pool11). Residual: [U-C-STEER-MAG] exact ESP-slot
+//                      / FPU-rounding of the ROUND(ST0) magnitude; [U-C-RATE0/1] the
+//                      two rate floats FUN_0046d6a0/6d0 (speed substituted; rate1=0).
 //   STUBBED (RVA TODO, port in WS-C follow-ups):
-//     FUN_00416250 primary control step (behaviour tree modes 1..10 + ctrl bands)
-//     FUN_00416a30 / FUN_00417da0      control-step variants (modes 4/9 / 8)
-//     FUN_004177b0 pre-tick rubber-banding (difficulty catch-up)
-//     FUN_00417180 bank-switch timer/RNG detail   FUN_00417640 powerup-brake
-//     FUN_00415220 powerup activation             FUN_00417cf0 mode-8 targeting
 //     FUN_00414570/00415880/00414a70/00414c30/004150e0/00414f00/004148b0/00415020
-//                  targeting + LOS helpers        FUN_00416060 LOS  FUN_00415d00 wall-ahead
+//                  targeting + LOS helpers (modes 1..10) FUN_00416060 LOS  FUN_00415d00 wall
+//     FUN_00416a30 / FUN_00417da0      control-step variants (modes 4/9 / 8)
+//     FUN_004177b0 pre-tick rubber-banding  FUN_00417180 bank-switch timer/RNG
+//     FUN_00417640 powerup-brake  FUN_00415220 powerup activation  FUN_00417cf0 mode-8
 //     FUN_00443300 spline interpolation + FUN_00443dc0 curvature-walk/wall-march tail
 //     .AI parser (populates the 0x00801aa0 spline arrays + 0x007f1a9c tile grid)
-//   The ctrl-byte STEER BANDS (which |error| → which 0/0x40/0xff) live in
-//   FUN_00416250 (not yet ported) → marked [U-C-BANDS].
+//   With targeting helpers stubbed, `mode`=0 (race-line follow); the REAL bands now
+//   drive steering/throttle toward the seed (was a crude turn-rate-2.4 placeholder).
 // ===========================================================================
 #include "AiState.h"
 #include "AiStandalone.h"
@@ -153,32 +159,137 @@ void TargetPoint(std::uintptr_t spline, int nearestIdx, float* tx, float* tz)
     *tz = F32(spline + idx * 8 + 4);
 }
 
-// ---------------------------------------------------------------------------
-// Mode-0 control step (the default spline-follow path of FUN_00416250). The full
-// behaviour tree (targeting modes 1..10) + the exact ctrl steer/accel/brake band
-// thresholds are STUBBED ([U-C-BANDS]); this writes a minimal follow output.
-// ---------------------------------------------------------------------------
-void ControlStepMode0(std::uintptr_t spline, int v, std::uint8_t* ctrl)
+// ===========================================================================
+// FUN_00416250 — primary per-vehicle control step (behaviour tree + ctrl bands).
+// [U-C-BANDS] CLOSED 2026-06-17 (pool11): the real steer/accel/brake band logic +
+// the per-vehicle anti-oscillation timer state machine, verbatim from the asm
+// (0x004165c0.. listing). Targeting helpers (modes 1..10) are STUBBED → return 0,
+// so `mode` stays 0 (race-line follow) and the real bands steer toward the seed.
+//
+// Band constants (memory_read pool11 2026-06-17; addr cited):
+const float kSteerDeadband = 1.0f;       // _DAT_005cc320  (err>1° before steering)
+const float kSteerSplit    = 180.0f;     // _DAT_005cd09c  (err<180 one way, >180 other)
+const float kSteerMagScale = 0.0030034f; // _DAT_005cd0e8  fresh: err*speed*this
+const float kSteerExtra    = 0.05f;      // _DAT_005cc9a0  *this when rate1<=20
+const float kSteerMagClamp = 255.0f;     // _DAT_005cd04c  steer-byte clamp (max)
+const float kCounterScale  = 0.005f;     // _DAT_005cd0ec  counter: (200-el)*this*stored
+const int   kSettleFrames  = 200;        // CMP 0xc8       anti-oscillation window
+const float kBrakeSpeedDel = 15.0f;      // _DAT_005cc9b0
+const float kBrakeMinSpeed = 10.0f;      // _DAT_005cc55c
+const float kAccelErrLo    = 30.0f;      // _DAT_005cc72c
+const float kAccelErrHi    = 330.0f;     // _DAT_005cd0e0
+const float kSteer359      = 359.0f;     // _DAT_005cd0e4  (err>180 active < this)
+const float k20f           = 20.0f;      // _DAT_005ccd6c
+const float kRate1Brake    = 2000.0f;    // _DAT_005cd0b8
+const float kMode9BrakeA   = 1750.0f;    // _DAT_005cd0dc
+const float kMode9BrakeB   = 1250.0f;    // _DAT_005cd0d8
+const float kZeroF         = 0.0f;       // DAT_005d757c
+// per-vehicle state arrays (ORIGINAL image-pad addresses; writable in the exe):
+//   stride 0x14: 0x008032d8 hist(other) / 0x008032dc hist(this) / 0x008032e0 prevSpeed
+//   stride 0x74: 0x0089a4ec timerState / 0x0089a4f0 timerStart / 0x0089a4f4 storedSteer
+//                0x0089a52c behaviour mode
+//   0x007f0ff4 frame counter (host-ticked) ; 0x007f0ff8 race timer
+inline std::uintptr_t a14(std::uintptr_t b, int v){ return b + (std::uintptr_t)v*0x14u; }
+inline std::uintptr_t a74(std::uintptr_t b, int v){ return b + (std::uintptr_t)v*0x74u; }
+// FUN_004a2c48 = ROUND(ST0)→int; orig stores AL (low byte). [U: FPU rounding mode].
+inline std::uint8_t RoundST0(float x){
+    long r = std::lround(x);
+    if (r < 0) r = 0; if (r > 255) r = 255;
+    return (std::uint8_t)r;
+}
+
+void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 {
-    float ownX, ownZ;
-    s_host.own_xz(v, &ownX, &ownZ);
+    const int gameMode = s_host.game_mode_fd0();   // FUN_0040e350 (local_34)
+    float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);
+    float vx, vz;      s_host.own_vel_xz(v, &vx, &vz);
+    const float speed = std::sqrt(vx*vx + vz*vz);  // local_38 ~ FUN_0046d6a0 [U-C-RATE0]
+    const float rate1 = 0.0f;                       // local_3c = FUN_0046d6d0 [U-C-RATE1]
+
+    // --- targeting chain (FUN_00414570/15880/14a70/14c30/150e0/14f00/148b0/15020/
+    //     15220 + LOS 00416060 + wall 00415d00). STUBBED → mode 0; target = the
+    //     FUN_004161e0 seed (spline lookahead). Port the helpers in a follow-up. ---
+    int mode = 0;
+    float tx = ownX, tz = ownZ;
     int nearest = SplineNearestIndex(spline, ownX, ownZ);
-    if (nearest < 0) return;                 // bank empty → leave ctrl zeroed
+    if (nearest >= 0) TargetPoint(spline, nearest, &tx, &tz);
+    I32(a74(0x0089a52cu, v)) = mode;                // commit behaviour mode
 
-    float tx, tz;
-    TargetPoint(spline, nearest, &tx, &tz);
-    float err = SteerAngleError(v, tx, tz);  // [0,360); 0/360 = aligned, 180 = behind
+    const float err = SteerAngleError(v, tx, tz);  // FUN_00415e20, [0,360)
+    const int   frame = I32(0x007f0ff4u);
 
-    // ctrl[4]=accel full (mode-0 default). [U-C-BANDS]: real bands from FUN_00416250.
-    ctrl[4] = 0xff;
-    ctrl[5] = 0;
-    // steer toward smaller wrap direction: err<180 → one side, else the other.
-    if (err > 1.0f && err < (kWrap * 0.5f)) {
-        ctrl[0] = 0xff; ctrl[1] = 0;
-    } else if (err >= (kWrap * 0.5f) && err < (kWrap - 1.0f)) {
-        ctrl[0] = 0; ctrl[1] = 0xff;
-    } else {
-        ctrl[0] = 0; ctrl[1] = 0;
+    // ---- STEER bands (asm 0x004165c0..) : anti-oscillation timer state machine ----
+    if (err < kSteerSplit) {                        // steer toward (state 1)
+        F32(a14(0x008032d8u, v)) = 360.0f;
+        F32(a14(0x008032dcu, v)) = err;
+        if (err > kSteerDeadband) {
+            const int st = I32(a74(0x0089a4ecu, v));
+            const int el = frame - I32(a74(0x0089a4f0u, v));
+            if (st == 1 || el > kSettleFrames - 1) { // fresh steer
+                float mag = err * speed * kSteerMagScale; // [ESP+0x1c]~speed [U-C-STEER-MAG]
+                if (rate1 <= k20f) mag *= kSteerExtra;
+                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
+                ctrl[0] = RoundST0(mag);
+                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4ecu, v)) = 1;
+                I32(a74(0x0089a4f0u, v)) = frame;
+            } else {                                 // counter-steer (settling)
+                float cs = (float)(kSettleFrames - el) * kCounterScale
+                           * (float)I32(a74(0x0089a4f4u, v));
+                ctrl[1] = RoundST0(cs);
+            }
+        }
+    }
+    if (err > kSteerSplit) {                         // steer the other way (state 2)
+        F32(a14(0x008032dcu, v)) = 0.0f;
+        F32(a14(0x008032d8u, v)) = err;
+        if (err < kSteer359) {
+            const int st = I32(a74(0x0089a4ecu, v));
+            const int el = frame - I32(a74(0x0089a4f0u, v));
+            if (st == 2 || el > kSettleFrames - 1) { // fresh steer (mirror) [U-C-STEER-MAG]
+                float mag = err * speed * kSteerMagScale;
+                if (rate1 <= k20f) mag *= kSteerExtra;
+                if (mag > kSteerMagClamp) mag = kSteerMagClamp;
+                ctrl[1] = RoundST0(mag);
+                I32(a74(0x0089a4f4u, v)) = (long)std::lround(mag);
+                I32(a74(0x0089a4ecu, v)) = 2;
+                I32(a74(0x0089a4f0u, v)) = frame;
+            } else {
+                float cs = (float)(kSettleFrames - el) * kCounterScale
+                           * (float)I32(a74(0x0089a4f4u, v));
+                ctrl[0] = RoundST0(cs);
+            }
+        }
+    }
+
+    // ---- ACCEL / BRAKE bands ----
+    ctrl[4] = 0xff;                                  // accel full (default)
+    const float prevSpeed = F32(a14(0x008032e0u, v));
+    F32(a14(0x008032e0u, v)) = speed;
+    if (kBrakeSpeedDel < speed - prevSpeed && kBrakeMinSpeed < speed) { // hard speed spike
+        ctrl[4] = 0; ctrl[5] = 0xff;
+    }
+    if (k20f < err && kRate1Brake < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; } // [U-C-RATE1]
+    if (err < kSteerSplit && kAccelErrLo < err) {   // mildly off → accel+brake+steer
+        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[0] = 0xff;
+    }
+    if (kSteerSplit < err && err < kAccelErrHi) {
+        ctrl[4] = 0xff; ctrl[5] = 0xff; ctrl[1] = 0xff;
+    }
+
+    // ---- behaviour-mode tails (7/5/9/2) : inert until targeting helpers ported ----
+    const int m = I32(a74(0x0089a52cu, v));
+    if (m == 7) { ctrl[4] = 0x40; }
+    else if (m == 9) {
+        if (kMode9BrakeA < rate1) { ctrl[4] = 0; ctrl[5] = 0xff; }   // [U-C-RATE1]
+        if (kMode9BrakeB < rate1) { ctrl[4] = 0; }
+    }
+    // m==5 (drum/oil) + m==2 (cross-product align, needs FUN_00408af0) tails: TODO.
+
+    // ---- final game-mode gate (race-class modes 6/5/9/10/11 keep throttle) ----
+    if (gameMode != 6 && gameMode != 5 && gameMode != 9 &&
+        gameMode != 10 && gameMode != 11) {
+        ctrl[4] = 0; ctrl[5] = 0;
     }
 }
 
@@ -215,9 +326,9 @@ void VehicleStep(int v)
     std::uintptr_t spline = SelectSpline(v);
 
     int fd0 = s_host.game_mode_fd0();
-    // modes 4/9 (FUN_00416a30) and 8 (FUN_00417da0) variants: STUB → mode-0 path.
+    // modes 4/9 (FUN_00416a30) and 8 (FUN_00417da0) variants: STUB → main step.
     (void)fd0;
-    ControlStepMode0(spline, v, ctrl);
+    ControlStep(spline, v, ctrl);   // FUN_00416250 (bands real; targeting stubbed)
     // FUN_00417640 post-step powerup-brake: STUB (TODO).
     // override-replay (+0x40..0x4c): STUB (TODO) — clean integer logic, low risk.
 }
