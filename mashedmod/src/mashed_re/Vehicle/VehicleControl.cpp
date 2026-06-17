@@ -49,10 +49,10 @@ constexpr float kParkedDamp = 0.9f;          // _DAT_005cc9c8 (0x3f666666) motio
 extern int g_torqueRingPhase;   // DAT_007f101c (& 0xf each frame); provided by A8 wiring
 
 // ---- callees (see header note) ---------------------------------------------
-// A6a 0x00467650 — velocity/angular integration step (port pending WS-A6).
-void Vehicle_Integrate2(int param_1, float dt, void* wheelBlock, std::uint8_t* input);
-// A6b 0x00468980 — aerodynamic stabilization (port pending WS-A6).
-void Vehicle_AeroStabilize(int self, float dt);
+// A6a 0x00467650 — velocity/angular integration step (ported: Integrate2.cpp, PENDING C4).
+void Vehicle_Integrate2(int* self, int param_1, float dt, void* wheelBlock, std::uint8_t* input);
+// A6b 0x00468980 — aerodynamic stabilization (ported: AeroStabilize.cpp, PENDING C4).
+void Vehicle_AeroStabilize(int* self, float dt);
 // FUN_004a2c48 — per-input smoother/accumulator [UNCERTAIN signature] (pending).
 int  Vc_InputFilter();
 
@@ -135,8 +135,8 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
 
     // the per-frame integration chain (callee arg binding finalized at A8)
     VehicleWheelForceIntegrate(self, dt, wheelBlock);              // A5 0x0046ddb0 (ported)
-    Vehicle_Integrate2(0, dt, wheelBlock, input);                 // A6a 0x00467650 (pending)
-    Vehicle_AeroStabilize(reinterpret_cast<int>(self), dt);       // A6b 0x00468980 (pending)
+    Vehicle_Integrate2(self, 0, dt, wheelBlock, input);            // A6a 0x00467650 (param_1=0 [UNCERTAIN])
+    Vehicle_AeroStabilize(self, dt);                              // A6b 0x00468980
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;
