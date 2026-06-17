@@ -173,6 +173,7 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Math\RwV3dTransform.cpp" ^
     "Math\RwV3dNormalize.cpp" ^
     "Math\RwV3dTransformPoints.cpp" ^
+    "Math\RwV3dTransformPointsCPU.cpp" ^
     "Math\RwMatrixRotate.cpp" ^
     "Math\RwMatrixRotateInner.cpp" ^
     "Math\RwMatrixScale.cpp" ^

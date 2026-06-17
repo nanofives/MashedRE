@@ -53,7 +53,8 @@ extern int g_torqueRingPhase;   // DAT_007f101c (& 0xf each frame); provided by 
 // A6a 0x00467650 — velocity/angular integration step (ported: Integrate2.cpp, PENDING C4).
 void Vehicle_Integrate2(int* self, int param_1, float dt, void* wheelBlock, std::uint8_t* input);
 // A6b 0x00468980 — aerodynamic stabilization (ported: AeroStabilize.cpp, PENDING C4).
-void Vehicle_AeroStabilize(int* self, float dt);
+// orient = vehicle world-transform RwMatrix (nullptr until A8 binds it; .asi supplies ESI).
+void Vehicle_AeroStabilize(int* self, float* orient, float dt);
 // FUN_004a2c48 — per-input smoother/accumulator [UNCERTAIN signature] (pending).
 int  Vc_InputFilter();
 
@@ -137,7 +138,7 @@ void VehicleControlIntegrate(int* self, float dt, std::uint8_t* input, void* xfo
     // the per-frame integration chain (callee arg binding finalized at A8)
     VehicleWheelForceIntegrate(self, dt, wheelBlock);              // A5 0x0046ddb0 (ported)
     Vehicle_Integrate2(self, 0, dt, wheelBlock, input);            // A6a 0x00467650 (param_1=0 [UNCERTAIN])
-    Vehicle_AeroStabilize(self, dt);                              // A6b 0x00468980
+    Vehicle_AeroStabilize(self, nullptr, dt);                    // A6b 0x00468980 (orient bound at A8)
 
     if (Ib(v, 0x9f0) == 2) {                                       // parked/stopped state
         Fb(v, 0x9b0) *= vc::kParkedDamp;
