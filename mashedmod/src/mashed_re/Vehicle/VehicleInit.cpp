@@ -12,6 +12,7 @@
 // Anchored to MASHED.exe SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
 #include "ForceIntegrator.h"
 #include <cstdint>
+#include <cstddef>   // std::ptrdiff_t (exe build's stricter include set surfaces this)
 #include <cstring>
 #include <cmath>
 
