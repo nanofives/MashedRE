@@ -32,6 +32,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <cmath>
 
 static constexpr std::uintptr_t kRwGlobalsBase   = 0x007d3ff8u;
 static constexpr std::uintptr_t kRwSqrtTableSlot  = 0x007d3ffcu;
@@ -43,12 +44,22 @@ typedef void (__cdecl *RwErrRecordFn)(int*);
 static constexpr std::uintptr_t kFUN_004d7ff0 = 0x004d7ff0u;
 static constexpr std::uintptr_t kFUN_004d8480 = 0x004d8480u;
 
-// Shared LUT accessor — reads (rw_globals + rw_offset + delta) to get a LUT root.
+// WS-PHYS-CRASH-FIX (2026-06-17): same null RW-LUT failure mode as Math/RwSqrt.cpp.
+// In the standalone (no RwEngineOpen) the LUT root is unbuilt (selector 0x007d3ff8
+// holds garbage, 0x007d3ffc=0) -> deref yields a 0 table -> lut_root[idx] reads near
+// null -> AV. Resolve + validate the root; nullptr -> CPU normalize fallback (the
+// engine builds the LUT in the dev .asi, so the bit-identical path is preserved there).
+static constexpr std::uintptr_t kImgLo = 0x00010000u;
+static constexpr std::uintptr_t kImgHi = 0x00b40000u;
 static inline const std::uint32_t* lut_root(std::uint32_t delta)
 {
     const std::uint32_t globals = *reinterpret_cast<const std::uint32_t*>(kRwGlobalsBase);
     const std::uint32_t offset  = *reinterpret_cast<const std::uint32_t*>(kRwSqrtTableSlot);
-    return *reinterpret_cast<std::uint32_t* const*>(globals + offset + delta);
+    const std::uintptr_t slotAddr = (std::uintptr_t)globals + offset + delta;
+    if (slotAddr < kImgLo || slotAddr + 4u > kImgHi) return nullptr;
+    const std::uint32_t root = *reinterpret_cast<std::uint32_t*>(slotAddr);
+    if (root < kImgLo || (std::uintptr_t)root + 0x1000u * 4u > kImgHi) return nullptr;
+    return reinterpret_cast<const std::uint32_t*>(root);
 }
 
 // 0x004c39b0
@@ -66,16 +77,31 @@ float __cdecl RwV3dNormalize(float* out, const float* in)
     float magnitude = 0.0f;
     float scale     = 0.0f;  // = (float)0 when mag2 == 0 (the original leaves it 0)
 
+    const std::uint32_t* sqrtRoot = lut_root(0);
+    const std::uint32_t* invRoot  = lut_root(4);
+    if (!sqrtRoot || !invRoot) {
+        // Standalone CPU fallback: plain normalize. Degenerate (zero-length) input
+        // leaves out=0 and returns 0, like the original's zero-mag branch.
+        if (mag2 > 0.0f) {
+            magnitude = std::sqrt(mag2);
+            scale     = 1.0f / magnitude;
+        }
+        out[0] = scale * in[0];
+        out[1] = in[1] * scale;
+        out[2] = in[2] * scale;
+        return magnitude;
+    }
+
     if (mag2_bits != 0u) {
         const std::uint32_t biased = mag2_bits + 0x800u;
         {
-            const std::uint32_t mantissa = lut_root(0)[(biased >> 12) & 0xfffu];
+            const std::uint32_t mantissa = sqrtRoot[(biased >> 12) & 0xfffu];
             const std::uint32_t exponent = (biased >> 1) & 0x3fc00000u;
             const std::uint32_t bits     = mantissa + exponent;
             std::memcpy(&magnitude, &bits, sizeof(magnitude));
         }
         {
-            const std::uint32_t mantissa = lut_root(4)[(biased >> 12) & 0xfffu];
+            const std::uint32_t mantissa = invRoot[(biased >> 12) & 0xfffu];
             const std::uint32_t exponent = (~biased >> 1) & 0x3fc00000u;
             const std::uint32_t bits     = mantissa + exponent;
             std::memcpy(&scale, &bits, sizeof(scale));

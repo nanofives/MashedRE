@@ -21,6 +21,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <cmath>
 
 static constexpr std::uintptr_t kRwGlobalsBase    = 0x007d3ff8u;
 static constexpr std::uintptr_t kRwSqrtTableSlot  = 0x007d3ffcu;
@@ -32,12 +33,20 @@ typedef void  (__cdecl *RwErrRecordFn)(float*);
 static constexpr std::uintptr_t kFUN_004d7ff0 = 0x004d7ff0u;
 static constexpr std::uintptr_t kFUN_004d8480 = 0x004d8480u;
 
-// Shared LUT accessor — reads (rw_globals + rw_offset + delta) to get LUT root.
+// WS-PHYS-CRASH-FIX (2026-06-17): same null RW-LUT failure mode as Math/RwSqrt.cpp
+// (standalone has no RwEngineOpen -> unbuilt LUT -> null table deref -> AV). Resolve
+// + validate the root; nullptr -> std::sqrt fallback (dev .asi keeps the LUT path).
+static constexpr std::uintptr_t kImgLo = 0x00010000u;
+static constexpr std::uintptr_t kImgHi = 0x00b40000u;
 static inline const std::uint32_t* lut_root(std::uint32_t delta)
 {
     const std::uint32_t globals = *reinterpret_cast<const std::uint32_t*>(kRwGlobalsBase);
     const std::uint32_t offset  = *reinterpret_cast<const std::uint32_t*>(kRwSqrtTableSlot);
-    return *reinterpret_cast<std::uint32_t* const*>(globals + offset + delta);
+    const std::uintptr_t slotAddr = (std::uintptr_t)globals + offset + delta;
+    if (slotAddr < kImgLo || slotAddr + 4u > kImgHi) return nullptr;
+    const std::uint32_t root = *reinterpret_cast<std::uint32_t*>(slotAddr);
+    if (root < kImgLo || (std::uintptr_t)root + 0x1000u * 4u > kImgHi) return nullptr;
+    return reinterpret_cast<const std::uint32_t*>(root);
 }
 
 // 0x004c3bf0
@@ -53,8 +62,11 @@ float __cdecl Vec2Length(const float* v)
     if (sq_bits == 0u)
         return 0.0f;
 
+    const std::uint32_t* root0 = lut_root(0);
+    if (!root0) return (sq > 0.0f) ? std::sqrt(sq) : 0.0f;   // standalone fallback
+
     const std::uint32_t biased   = sq_bits + 0x800u;
-    const std::uint32_t mantissa = lut_root(0)[(biased >> 12) & 0xfffu];
+    const std::uint32_t mantissa = root0[(biased >> 12) & 0xfffu];
     const std::uint32_t exponent = (biased >> 1) & 0x3fc00000u;
     const std::uint32_t result_bits = mantissa + exponent;
 
@@ -79,18 +91,28 @@ float __cdecl Vec2Normalize(float* out, const float* in)
 
     float mag = 0.0f, inv_mag = 0.0f;
 
+    const std::uint32_t* root0 = lut_root(0);
+    const std::uint32_t* root4 = lut_root(4);
+    if (!root0 || !root4) {
+        // standalone CPU fallback (no engine LUT)
+        if (sq > 0.0f) { mag = std::sqrt(sq); inv_mag = 1.0f / mag; }
+        out[0] = inv_mag * in[0];
+        out[1] = in[1]  * inv_mag;
+        return mag;
+    }
+
     if (sq_bits != 0u) {
         const std::uint32_t biased = sq_bits + 0x800u;
         // sqrt for return value
         {
-            const std::uint32_t mantissa = lut_root(0)[(biased >> 12) & 0xfffu];
+            const std::uint32_t mantissa = root0[(biased >> 12) & 0xfffu];
             const std::uint32_t exponent = (biased >> 1) & 0x3fc00000u;
             const std::uint32_t bits     = mantissa + exponent;
             std::memcpy(&mag, &bits, sizeof(mag));
         }
         // inv-sqrt for normalisation (uses same biased bits, different LUT, NOT before shift)
         {
-            const std::uint32_t mantissa = lut_root(4)[(biased >> 12) & 0xfffu];
+            const std::uint32_t mantissa = root4[(biased >> 12) & 0xfffu];
             const std::uint32_t exponent = (~biased >> 1) & 0x3fc00000u;
             const std::uint32_t bits     = mantissa + exponent;
             std::memcpy(&inv_mag, &bits, sizeof(inv_mag));

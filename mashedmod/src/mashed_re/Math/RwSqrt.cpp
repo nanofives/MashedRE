@@ -32,12 +32,50 @@
 
 #include <cstdint>
 #include <cstring>
+#include <cmath>
 
 // Same RW3 globals as Vec3Magnitude. The LUT root for inv-sqrt sits at +4
 // inside the RW globals struct, vs +0 for the sqrt LUT.
 static constexpr std::uintptr_t kRwGlobalsBase    = 0x007d3ff8;
 static constexpr std::uintptr_t kRwSqrtTableSlot  = 0x007d3ffc;
 static constexpr std::uint32_t  kInvSqrtRootDelta = 4;
+
+// WS-PHYS-CRASH-FIX (2026-06-17): the RW two-level sqrt LUT is built by
+// RwEngineOpen, which NEVER runs in the standalone exe (no RW device). The LUT root
+// pointer lives at *(*(0x007d3ff8) + *(0x007d3ffc) + delta).  In the standalone the
+// selector 0x007d3ff8 is overwritten with a NON-zero garbage heap value (~0xb54f88)
+// during boot while 0x007d3ffc stays 0, so a "both selectors zero" check is NOT
+// enough: the path proceeds, derefs the garbage root -> reads a ZERO table pointer
+// -> lut_root[idx] reads [0 + idx*4] (e.g. [0x2000]) -> 0xC0000005. This is exactly
+// the MASHED_REAL_PHYSICS AV (eip in FastInvSqrt, READ @0x2000, eax=0), reached via
+// VehicleWheelForceIntegrate -> Rw_MatrixFromAxisAngle -> RwMatrixRotate ->
+// FastInvSqrt.  Correct guard: resolve the actual LUT ROOT pointer and require it to
+// be a valid, in-image, aligned table; if not (standalone, no engine), fall back to
+// a plain CPU computation — the same several-ULP standalone substitute already used
+// for the RW *device* transform (Math/RwV3dTransformPointsCPU.cpp, Collision
+// FastSqrt=std::sqrt). In the dev .asi the LUT IS live, so the original bit-identical
+// path is taken unchanged (the C4 leaf is preserved).
+//
+// Image span (validity window for the root pointer): PE base .. ~0xb50000 (the exe
+// is /BASE:0x10000 image-padded through the original RVA range; the real RW LUT, when
+// built by the engine in the .asi, lives well inside MASHED's static data).
+static constexpr std::uintptr_t kImgLo = 0x00010000u;
+static constexpr std::uintptr_t kImgHi = 0x00b40000u;
+
+// Returns the LUT root pointer if (and only if) it is a valid in-image aligned
+// table; otherwise nullptr (-> CPU fallback). `delta` = 0 (sqrt) / 4 (inv-sqrt).
+static inline const std::uint32_t* RwSqrtLutRoot(std::uint32_t delta) {
+    const std::uint32_t rw_globals = *reinterpret_cast<std::uint32_t*>(kRwGlobalsBase);
+    const std::uint32_t rw_offset  = *reinterpret_cast<std::uint32_t*>(kRwSqrtTableSlot);
+    const std::uintptr_t slotAddr  = (std::uintptr_t)rw_globals + rw_offset + delta;
+    // the slot holding the root pointer must itself be inside the image
+    if (slotAddr < kImgLo || slotAddr + 4u > kImgHi) return nullptr;
+    const std::uint32_t root = *reinterpret_cast<std::uint32_t*>(slotAddr);
+    // the root must be a non-null, aligned, in-image table base; a 0x1000-entry table
+    // is indexed up to root+0xfff*4, so require the whole span to be in-image.
+    if (root < kImgLo || (std::uintptr_t)root + 0x1000u * 4u > kImgHi) return nullptr;
+    return reinterpret_cast<const std::uint32_t*>(root);
+}
 
 extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
     std::uint32_t bits;
@@ -48,11 +86,15 @@ extern "C" __declspec(dllexport) float __cdecl FastInvSqrt(float x) {
         return 0.0f;
     }
 
+    const std::uint32_t* lut_root = RwSqrtLutRoot(kInvSqrtRootDelta);
+    if (!lut_root) {
+        // Standalone CPU fallback: 1/sqrt(x). Negatives (sign bit set) can't reach
+        // the LUT path meaningfully either; guard to avoid NaN propagation.
+        if (x <= 0.0f) return 0.0f;
+        return 1.0f / std::sqrt(x);
+    }
+
     const std::uint32_t biased     = bits + 0x800u;
-    const std::uint32_t rw_globals = *reinterpret_cast<std::uint32_t*>(kRwGlobalsBase);
-    const std::uint32_t rw_offset  = *reinterpret_cast<std::uint32_t*>(kRwSqrtTableSlot);
-    const auto*  lut_root          = *reinterpret_cast<std::uint32_t**>(
-                                        rw_globals + rw_offset + kInvSqrtRootDelta);
     const std::uint32_t mantissa   = lut_root[(biased >> 12) & 0xfffu];
     const std::uint32_t exp_corr   = (~biased >> 1) & 0x3fc00000u;
     const std::uint32_t result_bits = mantissa + exp_corr;
@@ -82,10 +124,15 @@ extern "C" __declspec(dllexport) float __cdecl FastSqrt(float x) {
         return 0.0f;
     }
 
+    // WS-PHYS-CRASH-FIX: standalone CPU fallback when the RW sqrt LUT is unbuilt
+    // (no RwEngineOpen) — same null-LUT guard as FastInvSqrt above (delta 0 = sqrt).
+    const std::uint32_t* lut_root = RwSqrtLutRoot(0u);
+    if (!lut_root) {
+        if (x < 0.0f) return 0.0f;
+        return std::sqrt(x);
+    }
+
     const std::uint32_t biased     = bits + 0x800u;
-    const std::uint32_t rw_globals = *reinterpret_cast<std::uint32_t*>(kRwGlobalsBase);
-    const std::uint32_t rw_offset  = *reinterpret_cast<std::uint32_t*>(kRwSqrtTableSlot);
-    const auto*  lut_root          = *reinterpret_cast<std::uint32_t**>(rw_globals + rw_offset);
     const std::uint32_t mantissa   = lut_root[(biased >> 12) & 0xfffu];
     const std::uint32_t exp_corr   = (biased >> 1) & 0x3fc00000u;
     const std::uint32_t result_bits = mantissa + exp_corr;
