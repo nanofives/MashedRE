@@ -44,6 +44,8 @@
 #include <cstdint>
 #include <cmath>
 #include <cstring>
+#include <cstdlib>   // std::getenv (G4 pure-pursuit toggle)
+#include <cstdio>    // [G4] env-gated AI nav trace
 
 namespace Ai {
 
@@ -260,6 +262,66 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 
     const float err = SteerAngleError(v, tx, tz);  // FUN_00415e20, [0,360)
     const int   frame = I32(0x007f0ff4u);
+
+    // [G4] STANDALONE PURE-PURSUIT steering substitute. The ported ControlStep bands below
+    // full-lock the steer (ctrl=255) for any bearing error in 30..180deg ("mildly off" hard
+    // corrective) — correct in the original because its curvature-walk target (FUN_00443300 /
+    // FUN_00443dc0 tail) keeps the error <30deg, but that refinement is STUBBED here, so with
+    // the crude lookahead the error sits in the full-steer band at every corner and the car
+    // ORBITS / drives into the edge instead of negotiating it (all cars stalled ~gate 7). This
+    // proportional controller reuses the sign-correct SteerAngleError (err<180 -> one way,
+    // >180 -> the other) but scales the steer by how far off the car is (full lock only past
+    // ~kFullDeg), so the car drives FORWARD through bends -> full laps. A ratified standalone
+    // shim (cf. the std::sqrt LUT fallback / contact stub). Env MASHED_AI_PUREPURSUIT=0 reverts
+    // to the verbatim bands.
+    static const bool s_pp = [] {
+        const char* e = std::getenv("MASHED_AI_PUREPURSUIT");
+        return (e && e[0] != '0');   // OPT-IN (default off -> verbatim bands). Experimental:
+        // the nav trace showed steer has no effect once the car flings off-track + loses
+        // grounding (no +0x9c0 authority) + the edge-stop traps it — so neither the bands nor
+        // this pure-pursuit completes a lap yet. Kept as debugging infra; see PLAYTHROUGH_G4 doc.
+    }();
+    if (s_pp) {
+        float off; bool toCtrl0;
+        if (err <= kSteerSplit) { off = err; toCtrl0 = true; }     // steer toward (ctrl[0])
+        else { off = kWrap - err; toCtrl0 = false; }               // other way (ctrl[1])
+        const float kFullDeg = 90.0f;                              // full lock at >=90deg off
+        float s = off / kFullDeg; if (s > 1.0f) s = 1.0f;
+        int mag = static_cast<int>(s * 255.0f + 0.5f); if (mag > 255) mag = 255;
+        // [G4] STEER SIGN: the nav trace showed the car driving AWAY from the target — for a
+        // target to the car's east/north it applied ctrl[1] (which, per the verified physics in
+        // G2, increases yaw -> rotates forward toward -x/west = the WRONG way). The AI steer sign
+        // was long flagged [UNCERTAIN] ("steer-sign pending verify"); it is INVERTED. Flip it so
+        // err<180 -> ctrl[1] and err>180 -> ctrl[0]. Env MASHED_AI_STEERFLIP=0 reverts for A/B.
+        static const bool s_flip = [] {
+            const char* e = std::getenv("MASHED_AI_STEERFLIP");
+            return !(e && e[0] == '0');           // flipped by default
+        }();
+        bool c0 = s_flip ? !toCtrl0 : toCtrl0;
+        ctrl[0] = c0 ? static_cast<std::uint8_t>(mag) : 0;
+        ctrl[1] = c0 ? 0 : static_cast<std::uint8_t>(mag);
+        ctrl[4] = 0xff;                                            // accelerate
+        ctrl[5] = 0;
+        if (off > 60.0f) { ctrl[4] = 0x70; ctrl[5] = 0x60; }       // trail-brake sharp corners
+        const int gm = s_host.game_sub_mode();
+        if (gm != 6 && gm != 5 && gm != 9 && gm != 10 && gm != 11) { ctrl[4] = 0; ctrl[5] = 0; }
+        // [G4] env MASHED_AI_NAV -> a6_diag.log: trace one car's nav to see the failure mode.
+        {
+            static const bool s_nav = (std::getenv("MASHED_AI_NAV") != nullptr);
+            static int s_nn = 0;
+            if (s_nav && v == 1 && (s_nn % 30) == 0 && s_nn < 1200) {
+                if (std::FILE* lf = std::fopen("ai_nav.log", "a")) {
+                    std::fprintf(lf, "NAV v1 prog=%d own=(%.1f,%.1f) tgt=(%.1f,%.1f) err=%.0f "
+                                 "spd=%.1f vel=(%.1f,%.1f) ctrl[%d,%d,%d,%d]\n",
+                                 s_prog[1] % (count > 0 ? count : 1), ownX, ownZ, tx, tz, err,
+                                 speed, vx, vz, ctrl[0], ctrl[1], ctrl[4], ctrl[5]);
+                    std::fclose(lf);
+                }
+            }
+            if (s_nav && v == 1) ++s_nn;
+        }
+        return;                                                    // skip the orbit-prone bands
+    }
 
     // ---- STEER bands (asm 0x004165c0..) : anti-oscillation timer state machine ----
     if (err < kSteerSplit) {                        // steer toward (state 1)

@@ -50,4 +50,29 @@ Root cause = AI navigation quality at the first corner (~gate 7):
 
 ## Env knobs added this session (all default-off / inert)
 MASHED_AI_DRIVES_PLAYER, MASHED_AI_SPREAD(default on), MASHED_PLAYTHROUGH (let the real match
-resolve; extends the result-demo wait to 300s), MASHED_LAP_DIAG, MASHED_AI_DIAG.
+resolve; extends the result-demo wait to 300s), MASHED_LAP_DIAG, MASHED_AI_DIAG, MASHED_AI_NAV
+(per-car nav trace), MASHED_AI_PUREPURSUIT (opt-in experimental proportional steer),
+MASHED_AI_STEERFLIP (steer-sign A/B for the pursuit path).
+
+## UPDATE — deepened diagnosis (per-car nav trace, MASHED_AI_NAV -> ai_nav.log)
+Traced one opponent (v1) frame-by-frame. The target is correctly NORTH of the car
+(tgt=(-25.8,27.8) then (-26.8,36.1)), but the car drives WEST/SOUTH AWAY from it
+(own (-27,16)->(-47,21)->(-50,13)->(-32,3)), then hits a track edge, velocity is zeroed
+(spd=0), and it sticks. Two findings:
+1. STEER HAS NO EFFECT on the trajectory: flipping the AI steer byte (ctrl[0]<->ctrl[1],
+   MASHED_AI_STEERFLIP) produced an IDENTICAL path. So the issue is not the steer sign.
+2. ROOT = grounding-loss + edge-trap. The car flings off the racing line near spawn; once off
+   the collision mesh GroundHeight fails so (a) the standalone sets io.grounded=0 -> SetGrounded
+   writes NO contact load -> A6a produces no +0x9c0 -> the car has ZERO yaw/steer authority (the
+   exact G2 mechanism), and (b) UpdateCar zeroes the world velocity on the GroundHeight miss ->
+   the car is trapped at the edge (spd=0). err then thrashes (186/48/225...) because the heading
+   is reconstructed from a near-zero velocity. So steer can never recover the car.
+
+So natural completion is blocked by a COMPOUND opponent-integration issue, not a single tune:
+the cars leave the drivable surface early and lose all steering authority. Fixing it needs
+(in order): (a) keep AI cars grounded + on-line near spawn (correct spawn orientation along the
+spline + ensure the first frames don't fling them off); (b) NON-TRAPPING off-track response —
+slide along / project back onto the collision surface instead of zeroing velocity, so a car that
+clips the edge recovers with steer authority intact; (c) THEN the AI target/steer (pure-pursuit or
+the verbatim bands) can actually hold the line -> full laps -> match -> cup. This is a focused
+methodical debugging effort (per-frame physics+grounding trace), scoped here.
