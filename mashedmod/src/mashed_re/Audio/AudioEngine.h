@@ -39,6 +39,11 @@ void  SetMasterSfxVolume(float v);
 float MasterMusicVolume();
 float MasterSfxVolume();
 
+// Window focus / minimize mute (driven from WinMain's WM_ACTIVATE). active=false
+// silences ALL output (music/engine/ambience/SFX); active=true restores the live
+// looping voices. Independent of the Music/SFX category sliders (those persist).
+void  SetOutputActive(bool active);
+
 // Engine voice — loops the REAL engine sample `eng1` from the permdict SFX bank
 // (0x809; loaded once via SfxLoadBank), pitched by RPM. permdict carries 4
 // engine classes (eng1..eng4 + `d` variants); which class each of the 12

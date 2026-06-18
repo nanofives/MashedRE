@@ -42,17 +42,25 @@ float g_masterMusic   = 1.0f;
 float g_masterSfx     = 1.0f;
 float g_musicBaseVol  = 0.0f;
 float g_engineBaseVol = 0.0f;
+// Global OUTPUT gain for window focus/minimize muting (SetOutputActive). Folded
+// into VolToDs so EVERY voice — music, engine, ambience, one-shots created while
+// unfocused — is silenced; SEPARATE from the user's Music/SFX category sliders so
+// muting on focus loss never clobbers their saved volume settings. 1=audible, 0=muted.
+float g_focusGain     = 1.0f;
 inline float Clamp01f(float v) { return v < 0.f ? 0.f : (v > 1.f ? 1.f : v); }
 
 struct Voice {
     IDirectSoundBuffer* buf = nullptr;
     bool                loop = false;
     bool                used = false;
+    float               vol  = 0.0f;   // intended (linear x category-master) for focus re-apply
 };
 std::vector<Voice> g_voices;
 
 // 0..1 linear -> DirectSound hundredths-of-dB (DSBVOLUME_MIN..MAX = -10000..0).
+// Scaled by g_focusGain so a focus-loss mute applies to every SetVolume.
 LONG VolToDs(float v) {
+    v *= g_focusGain;
     if (v <= 0.0001f) return DSBVOLUME_MIN;
     if (v >= 1.0f)    return DSBVOLUME_MAX;     // 0
     LONG db = static_cast<LONG>(2000.0 * std::log10(static_cast<double>(v)));
@@ -105,6 +113,7 @@ int CreateAndPlay(const char* rwsPath, const char* waveName, float volume, bool 
         if (!g_voices[i].used) { id = static_cast<int>(i); break; }
     if (id < 0) { id = static_cast<int>(g_voices.size()); g_voices.push_back(Voice{}); }
     g_voices[id].buf = buf; g_voices[id].loop = loop; g_voices[id].used = true;
+    g_voices[id].vol = volume * g_masterSfx;   // intended level for focus re-apply
 
     DWORD st = 0; buf->GetStatus(&st);
     logf("PlayLoop voice=%d '%s' rate=%u ch=%d bytes=%u loop=%d status=%s",
@@ -148,8 +157,10 @@ int PlayOnce(const char* rwsPath, const char* waveName, float volume) {
 }
 
 void SetVolume(int voice, float volume) {
-    if (voice >= 0 && voice < (int)g_voices.size() && g_voices[voice].used && g_voices[voice].buf)
+    if (voice >= 0 && voice < (int)g_voices.size() && g_voices[voice].used && g_voices[voice].buf) {
+        g_voices[voice].vol = volume;                 // track intended for focus re-apply
         g_voices[voice].buf->SetVolume(VolToDs(volume));
+    }
 }
 
 void Stop(int voice) {
@@ -371,6 +382,28 @@ void SetMasterSfxVolume(float v) {
 }
 float MasterMusicVolume() { return g_masterMusic; }
 float MasterSfxVolume()   { return g_masterSfx; }
+
+// Window focus / minimize mute. Called from the WinMain WM_ACTIVATE handler with
+// the window's active state: when the app loses focus or is minimized the entire
+// output is silenced; on refocus the live looping voices (music / engine / ambience)
+// are restored to their intended levels. Idempotent. Independent of the user's
+// Music/SFX category sliders (those are preserved). One-shot SFX fired while muted
+// are silent automatically (g_focusGain is folded into VolToDs at creation).
+void SetOutputActive(bool active) {
+    const float g = active ? 1.0f : 0.0f;
+    if (g == g_focusGain) return;            // no change
+    g_focusGain = g;
+    // Re-apply the persistent + looping voices so the new gain takes effect on
+    // sounds that are ALREADY playing (DirectSound buffer volume is latched, not
+    // continuously read). New/one-shot sounds pick g_focusGain up via VolToDs.
+    if (g_music)  g_music->SetVolume(VolToDs(g_musicBaseVol  * g_masterMusic));
+    if (g_engine) g_engine->SetVolume(VolToDs(g_engineBaseVol * g_masterSfx));
+    for (auto& v : g_voices)
+        if (v.used && v.buf) v.buf->SetVolume(VolToDs(v.vol));
+    for (auto* b : g_sfxRing)
+        if (b) b->SetVolume(VolToDs(g_masterSfx));   // transient; mute any still ringing
+    logf("SetOutputActive(%d) -> focusGain=%.0f", (int)active, g_focusGain);
+}
 
 void SfxLoadBank(const char* rwsPath) {
     if (!g_sfxBank.empty()) return;

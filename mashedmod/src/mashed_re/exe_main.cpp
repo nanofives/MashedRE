@@ -672,6 +672,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 
     case WM_ACTIVATE:
         g_active = (LOWORD(wp) != WA_INACTIVE);
+        // Mute all audio when the window loses focus or is minimized (WA_INACTIVE
+        // fires for both); restore the live voices on refocus. Safe before Audio::Init
+        // (no-op until buffers exist). Preserves the user's Music/SFX slider settings.
+        mashed_re::Audio::SetOutputActive(g_active);
         return 0;
 
     case WM_KEYDOWN:
@@ -2023,7 +2027,15 @@ bool RenderFrame() {
         if (g_track.round_mode_ && g_track.round_winner() >= 0 &&
             g_track.match_winner() < 0) {
             static float s_round_end_t = -1.f;
-            if (s_round_end_t < 0.f) s_round_end_t = t;
+            if (s_round_end_t < 0.f) {
+                s_round_end_t = t;
+                if (std::FILE* lf = std::fopen(kLogPath, "a")) {   // [G4] round trace
+                    std::fprintf(lf, "R6 ROUND END winner=car%d scores=[%d,%d,%d,%d]\n",
+                                 g_track.round_winner(), g_track.score(0), g_track.score(1),
+                                 g_track.score(2), g_track.score(3));
+                    std::fclose(lf);
+                }
+            }
             if (t - s_round_end_t > 3.0f) {
                 g_track.NextRoundOrEnd();
                 s_round_end_t = -1.f;
@@ -2034,7 +2046,12 @@ bool RenderFrame() {
         if (in_race) {
             static const bool s_result_demo =
                 GetEnvironmentVariableA("MASHED_RESULT_DEMO", nullptr, 0) > 0;
-            if (s_result_demo && t > 5.0f && g_track.match_winner() < 0)
+            // [G4] MASHED_PLAYTHROUGH: let the REAL elimination match resolve naturally
+            // (no force-end). The per-car speed spread (VehiclePhysicsRun kSlotCapMul) makes
+            // the field separate so the camera-zoom elimination rule fires + rounds resolve.
+            static const bool s_playthrough =
+                GetEnvironmentVariableA("MASHED_PLAYTHROUGH", nullptr, 0) > 0;
+            if (s_result_demo && !s_playthrough && t > 5.0f && g_track.match_winner() < 0)
                 g_track.ForceMatchEnd();
             // Match over -> record the result (progression) then, after a ~3s
             // hold on the winner banner, show the results screen.
