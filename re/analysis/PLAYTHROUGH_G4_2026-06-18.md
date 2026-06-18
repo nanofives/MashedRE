@@ -115,6 +115,24 @@ retains velocity but the deadband (steer 0, "aligned") won't turn the car back o
 idles against the edge. Outcome is frame-timing-chaotic (usually stuck at gate 6; occasionally one
 car slips past). So a full lap still doesn't complete reliably.
 
+## UPDATE 4 — COMPLETE RACE achieved, scaffold-free (track 1), progression persists ✅
+The active off-mesh steer-back (target gate+3 ahead) + the deadband + the physics-grounded steer
+cap got the AI-driven cars driving the racing line. On the larger Arctic track (94 gates) cars stick
+at one hard corner (gate ~88, the start/finish approach) — but on track 1 (40 gates) a car drives a
+FULL LAP and the match resolves NATURALLY:
+  F4 player lap 1 @ t=27.28s (splits s0=7.25 s1=16.55)
+  R6 MATCH OVER t=30.2s winner=car0 (laps>=target, NO force-end scaffold)
+  [gameflow] race result: track=0 winner=0 pos=1
+  [gameflow] progress autosaved (next track unlocked)   <- mashed_re_gamesave.bin rewritten
+  [gameflow] RequestResults -> Results
+So a COMPLETE RACE runs end-to-end on real physics + real AI + ground collision + (powerups/audio
+active) -> results -> progression persists (unlock + autosave), with NO scaffold fallback. This is
+the G4 "playable port" core, proven.
+RESIDUAL: (a) the championship CUP = this race loop repeated across the cup's tracks (progression
+already unlocks + autosaves per win) — needs a cup-loop harness. (b) Arctic (track 0, 94 gates) still
+sticks at gate ~88 — a track-specific hard corner; cars do 94% of it. Robust all-track navigation
+(so the cup runs on any track) wants the curvature-walk port or a smarter steer-back at that section.
+
 REMAINING (corner navigation, focused): the off-mesh recovery must ACTIVELY steer the car back onto
 the track (not just retain velocity) — e.g. when GroundHeight(next) fails, rotate velocity toward
 the nearest on-mesh gate/spline point; OR override the deadband while off-mesh so the AI corrects;
