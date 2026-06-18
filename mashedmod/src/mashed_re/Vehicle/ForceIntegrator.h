@@ -32,7 +32,7 @@ constexpr float kDt        = 3.33268e-4f; // _DAT_005cc948 (0x39aec33e) substep 
 constexpr float kDraftDot  = 0.989999f;   // _DAT_005cc9b4 (0x3f7d70a4) draft cos thresh
 constexpr float kRubberThr = 7.0f;        // _DAT_005cc9b8 (rubber-band activate)
 constexpr float kThird     = 0.333333f;   // _DAT_005ccac8
-constexpr float k3000      = 3000.0f;     // _DAT_005ccd08
+const     float k3000      = asFb(0x453b8000);  // _DAT_005ccd08 = 3000.0 (EXACT bits)
 constexpr float k20        = 20.0f;       // _DAT_005ccd6c
 constexpr float kSpeedMin  = 9.99999e-5f; // _DAT_005cd03c
 constexpr float kDraft0p125= 0.125f;      // _DAT_005cd050
@@ -49,7 +49,7 @@ constexpr float kGripRampLo= -30000.0f;   // _DAT_005cea78
 constexpr float kGripRampHi= 60000.0f;    // _DAT_005cea7c
 constexpr float k2         = 2.0f;        // _DAT_005cc574
 constexpr float k3         = 3.0f;        // _DAT_005cc31c
-constexpr float kAngScale  = 9.98199e-6f; // _DAT_005cc990
+const     float kAngScale  = asFb(0x3727c5ac);  // _DAT_005cc990 ~= 9.982e-6 (EXACT bits)
 constexpr float kRubberA   = 0.6f;        // _DAT_005cc318 (rubber grip coeff, == k0p6)
 // surface jitter coefficients (selected by integer surface key)
 constexpr float kJit0p25 = 0.25f;  // 0x3e800000 default

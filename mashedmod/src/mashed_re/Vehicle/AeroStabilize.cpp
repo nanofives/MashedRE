@@ -32,13 +32,23 @@ static inline float Rf(void* b, int off) { float v; std::memcpy(&v, (char*)b + o
 static inline void  Wf(void* b, int off, float v) { std::memcpy((char*)b + off, &v, 4); }
 static inline int   Ri(void* b, int off) { int v; std::memcpy(&v, (char*)b + off, 4); return v; }
 
+// exact-bit constructors (memory_read pool6 2026-06-17; the decimal literals for
+// 180/pi mis-round). Cf=float, Cd=double from the .rdata qword.
+static inline float  Cf(std::uint32_t bits) { float  f; std::memcpy(&f, &bits, 4); return f; }
+static inline double Cd(std::uint64_t bits) { double d; std::memcpy(&d, &bits, 8); return d; }
+
 namespace a6b {
 constexpr float kDtScale = 0.001f;   // _DAT_005cc558
 constexpr float kNegOne  = -1.0f;    // _DAT_005cc33c
 constexpr float kOne     =  1.0f;    // _DAT_005cc320
-constexpr double kAcosM  = -2.0;     // _DAT_005ccae0
-constexpr double kBias0  =  0.0;     // _DAT_005ccad8 (pitch bias)
-constexpr double kBias90 = 90.0;     // _DAT_005ccad0 (roll bias)
+// FUN_00468980 disasm (0x00468a0e..0x00468a9c, pool6 2026-06-17): BOTH the pitch
+// and roll angles are acos(c) * RAD2DEG - 90 (degrees), then * dts. The original
+// FMULs _DAT_005ccae0 = double 180/pi (NOT -2.0 — prior labeling was WRONG) and
+// FSUBs 90: pitch uses the DOUBLE 90.0 @_DAT_005ccad8 (then FCHS), roll uses the
+// FLOAT 90.0f @_DAT_005ccad0 (no FCHS).
+const     double kRad2Deg   = Cd(0x404ca5dcc0000000);  // _DAT_005ccae0 = 180/pi (57.295799)
+const     double kBias90d   = Cd(0x4056800000000000);  // _DAT_005ccad8 = 90.0 (double, pitch)
+const     float  kBias90f   = Cf(0x42b40000);          // _DAT_005ccad0 = 90.0f (float, roll)
 constexpr float kVelAng  = 0.05f;    // _DAT_005cc9a0
 // axis vectors (memory_read 0x006146f0..): X=(1,0,0), Z=(0,0,1)
 const float kAxisX[3] = { 1.0f, 0.0f, 0.0f };   // _DAT_006146f0
@@ -62,11 +72,13 @@ void Vehicle_AeroStabilize(int* self, float* orient, float dt)
     if (Ri(v, 0x9f0) == 0) {                           // motion state 0: auto-level
         const float dts = dt * kDtScale;
         if (orient) {
+            // pitch: -(acos(c1)*180/pi - 90.0_double) * dts   (FCHS @0x00468a1c)
             const float c1 = clamp11(orient[9]);       // at.y  (pitch)
-            const float ang1 = (float)(-(((double)std::acos((double)c1) * kAcosM) - kBias0) * (double)dts);
+            const float ang1 = (float)(-((double)std::acos((double)c1) * kRad2Deg - kBias90d) * (double)dts);
             RwMatrixRotate(orient, kAxisX, ang1, 1);
+            // roll: (acos(c2)*180/pi - 90.0_float) * dts      (no FCHS)
             const float c2 = clamp11(orient[1]);       // right.y (roll)
-            const float ang2 = (float)((((double)std::acos((double)c2) * kAcosM) - kBias90) * (double)dts);
+            const float ang2 = (float)(((double)std::acos((double)c2) * kRad2Deg - (double)kBias90f) * (double)dts);
             RwMatrixRotate(orient, kAxisZ, ang2, 1);
         }
         return;

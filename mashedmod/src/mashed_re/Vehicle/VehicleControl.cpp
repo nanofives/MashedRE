@@ -23,6 +23,7 @@
 // (diff-original). This file is NOT yet in the exe source list (link closure = A8).
 #include "ForceIntegrator.h"
 #include <cstdint>
+#include <cstring>
 
 namespace mashed_re {
 namespace Vehicle {
@@ -30,6 +31,12 @@ namespace Vehicle {
 // ---- byte-offset field views on the 0xd04 vehicle record --------------------
 static inline float& Fb(void* b, int off) { return *reinterpret_cast<float*>(reinterpret_cast<char*>(b) + off); }
 static inline int&   Ib(void* b, int off) { return *reinterpret_cast<int*>  (reinterpret_cast<char*>(b) + off); }
+// exact-bit float constructor: the decimal literals mis-round vs the original's
+// .rdata (e.g. 1.66677e-4f -> 0x392ec604 != the real 0x392ec33e). Cf() takes the
+// memory_read 32-bit pattern so the standalone body matches the .asi PhysicsChainHooks
+// Cf(0x..) values and (where the math is bit-distinct-by-construction is moot) the
+// original. (WS-PHYS-SMOKE-STEER const back-port; bits memory_read pool6 2026-06-17.)
+static inline float Cf(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return f; }
 
 // ---- tuning constants (raw value @ address, all memory_read 2026-06-16) -----
 namespace vc {
@@ -41,7 +48,7 @@ constexpr float kInputScale = 0.00390625f;   // _DAT_005ceaa8 (0x3b800000) = 1/2
 constexpr float kBoostMul   = 0.75f;         // _DAT_005cc950 (0x3f400000) boost-gate multiplier
 constexpr float kInput5Thr  = 128.0f;        // _DAT_005cc9d0 (0x43000000) input[5] grip-branch thr
 constexpr float kFilterClamp= 6000.0f;       // _DAT_005ceaa4 (0x45bb8000) filtered-input clamp
-constexpr float kGripMul    = 1.66677e-4f;   // _DAT_005cea58 (0x392ec33e) ~= 1/6000 grip scale
+const     float kGripMul    = Cf(0x392ec33e); // _DAT_005cea58 ~= 1/6000 grip scale (EXACT bits)
 constexpr float kElseMul    = 1.5f;          // _DAT_005cc348 (0x3fc00000) high-input branch mult
 constexpr float kParkedDamp = 0.9f;          // _DAT_005cc9c8 (0x3f666666) motion-state-2 vel damp
 } // namespace vc

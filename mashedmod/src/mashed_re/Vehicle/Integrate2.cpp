@@ -34,6 +34,12 @@ namespace Vehicle {
 int  Fi_GameMode();        // FUN_0040e350
 int  Vc_RoundST0();        // FUN_004a2c48 (round ST0 -> long) — input implicit [U-A6A-ST0]
 
+// exact-bit float constructor — the decimal literals below mis-round vs the
+// original's .rdata (e.g. 299488.0f -> 0x48923c00 != the real 0x48927c00). Cf()
+// takes the memory_read 32-bit pattern (pool6 2026-06-17) so the 16 A6a tuning
+// constants bit-match the .asi PhysicsChainHooks A6_005c.. values exactly.
+// (WS-PHYS-SMOKE-STEER const back-port.)
+static inline float Cf(std::uint32_t bits) { float f; std::memcpy(&f, &bits, 4); return f; }
 static inline float Rf(void* b, int off) { float v; std::memcpy(&v, (char*)b + off, 4); return v; }
 static inline void  Wf(void* b, int off, float v) { std::memcpy((char*)b + off, &v, 4); }
 static inline int   Ri(void* b, int off) { int v; std::memcpy(&v, (char*)b + off, 4); return v; }
@@ -43,44 +49,47 @@ static inline void  Wp(int* p, int k, float v) { std::memcpy(p + k, &v, 4); }
 static inline float Mag3(float a, float b, float c) { float t[3] = {a,b,c}; return Vec3Mag3(t); }
 
 namespace a6 {
-constexpr float kZero=0.0f, kHalf=0.5f, k0p25=0.25f, k0p01=0.01f, k0p1=0.1f, k10=10.0f, k0p99=0.98999f;
-constexpr float kDt=3.33268e-4f;        // 005cc948
-constexpr float kSpeedMin=9.99999e-5f;  // 005cd03c
+// Constants with EXACT-representable decimal literals stay constexpr; the 16 that
+// mis-round are pinned to their memory_read .rdata bit pattern via Cf() (const).
+constexpr float kZero=0.0f, kHalf=0.5f, k0p25=0.25f, k0p01=0.01f, k0p1=0.1f, k10=10.0f;
+const     float k0p99      = Cf(0x3f7d70a4);  // 005cc9b4 0.99 spin-type vel damp (EXACT)
+const     float kDt        = Cf(0x39aec33e);  // 005cc948 ~3.33e-4 substep ms->s (EXACT)
+const     float kSpeedMin  = Cf(0x38d1b717);  // 005cd03c ~9.99e-5 speed-min eps (EXACT)
 constexpr float k1500=1500.0f;          // 005cd0ac
 constexpr float k500=500.0f;            // 005ccd04
-constexpr float k0p0167=0.0166667f;     // 005cd694
-constexpr float k6p667e4=6.6667e-4f;    // 005ce1e8
-constexpr float k149744=149744.0f;      // 005cea34
+const     float k0p0167    = Cf(0x3c888889);  // 005cd694 0.0166667 spin damp (EXACT)
+const     float k6p667e4   = Cf(0x3a2ec33e);  // 005ce1e8 6.6667e-4 gear scale (EXACT)
+const     float k149744    = Cf(0x48127c00);  // 005cea34 150000.0 type-A grip thr (EXACT)
 constexpr float k200000=200000.0f;      // 005cea30
-constexpr float k349872=349872.0f;      // 005cea38
-constexpr float k299488=299488.0f;      // 005cea2c
+const     float k349872    = Cf(0x48aae600);  // 005cea38 350000.0 default grip thr (EXACT)
+const     float k299488    = Cf(0x48927c00);  // 005cea2c 300000.0 type-C grip thr (EXACT)
 constexpr float k160=160.0f;            // 005cea3c
 constexpr float k250=250.0f;            // 005cea40
-constexpr float kBrake=0.9f;            // 005cc9c8
+const     float kBrake     = Cf(0x3f666666);  // 005cc9c8 0.9 brake scale (EXACT)
 // contact-frame block (#4)
-constexpr float kAngLo=-9.9954e-6f;     // 005cea1c
-constexpr float kAngHi=9.98e-6f;        // 005cc990
-constexpr float k0p008=0.008f;          // 005cea14
+const     float kAngLo     = Cf(0xb727c5ac);  // 005cea1c ~-1e-5 ang-vel lo bound (EXACT)
+const     float kAngHi     = Cf(0x3727c5ac);  // 005cc990 ~1e-5  ang-vel hi bound (EXACT)
+const     float k0p008     = Cf(0x3c03126f);  // 005cea14 0.008 spin scale (EXACT)
 constexpr float k8=8.0f;                // 005cc9f4
-constexpr float k0p019877=0.019877f;    // 005cea18
+const     float k0p019877  = Cf(0x3ca30eac);  // 005cea18 0.0199045 spin scale 2 (EXACT)
 constexpr float k360=360.0f;            // 005ccac4
 constexpr float k270=270.0f;            // 0x43870000
 constexpr float k1024=1024.0f;          // 005cea10
-constexpr float k0p0009766=0.0009766f;  // 005cea0c
+const     float k0p0009766 = Cf(0x3a800000);  // 005cea0c 0.0009766 susp force k (EXACT)
 constexpr float k50=50.0f;              // 005cd120
 constexpr float k0p02=0.02f;            // 005ce18c
-constexpr float k0p85=0.85f;            // 005ce264
+const     float k0p85      = Cf(0x3f59999a);  // 005ce264 0.85 high-load susp scale (EXACT)
 constexpr float k3=3.0f;                // 005cc31c
-constexpr float k0p0019531=0.0019531f;  // 005cea08
-constexpr float k1p1=1.1f;              // 005ccabc
+const     float k0p0019531 = Cf(0x3b000000);  // 005cea08 0.0019531 high-load susp k (EXACT)
+constexpr float k1p1      = 1.1f;       // 005ccabc (0x3f8ccccd; literal already exact)
 // tail
-constexpr float kNormAccum=50.24f;      // 005cea04
-constexpr float kAngMul=9.2549e-7f;     // 005cea00
+const     float kNormAccum = Cf(0x4248f5c3);  // 005cea04 50.24 normal-load accum (EXACT)
+const     float kAngMul    = Cf(0x35788da7);  // 005cea00 ~9.255e-7 ang-inertia scale (EXACT)
 constexpr float k1p5=1.5f;              // 005cc348
 constexpr float k32768=32768.0f;        // 005ce9fc
 constexpr float k1e7=1.0e7f;            // 005ce9f8
-constexpr float k9p9998e8=9.9998e-8f;   // 005ce9f4
-constexpr float k3p0518e5=3.0518e-5f;   // 005ce9f0
+const     float k9p9998e8  = Cf(0x33d6bf95);  // 005ce9f4 ~1e-7 hi-grip slope (EXACT)
+const     float k3p0518e5  = Cf(0x38000000);  // 005ce9f0 3.0518e-5 low-grip slope (EXACT)
 constexpr float k16=16.0f;              // 005cc750
 } // namespace a6
 
