@@ -6,8 +6,12 @@ C2 (3 RED = x87 float10 per-wheel suspension-force X, disasm 0x468127..0x468337)
 body airborne-gated, unexercised in the all-grounded Arctic demo). The standalone DRIVES + STEERS
 a real-physics race. COMMON PREAMBLE: re/SESSION_PROMPTS.md. Rules: Frida/boot/standalone-runtime =
 MAIN tree; analyzed Ghidra (pool11/12/6, NOT pool4); subagent=`general-purpose`, self-contained;
-NO-GUESSING; commit nanofives+trailer; guard original/; only DATA faults matter; kill MASHED.exe;
-in-process self-test; COMMIT INCREMENTALLY.
+NO-GUESSING; commit nanofives+trailer; guard original/; only DATA faults matter; in-process
+self-test; COMMIT INCREMENTALLY. **MASHED PROCESS HYGIENE (mandatory, CLAUDE.md "MASHED process
+hygiene (multi-session)"): MASHED is NOT single-instance — other sessions run their own. Track the
+PID you spawn and kill ONLY that PID (Stop-Process -Id <pid>); NEVER blanket-kill by name
+(no Stop-Process -Name MASHED / taskkill /im MASHED.exe); NEVER auto-attach to "first MASHED by
+name" — always target your explicit spawned PID.**
 
 KEY INSIGHT: the last-2 physics C4 + the A4/A5/A6a coverage caveats share ONE blocker — the
 canonical Arctic throttle-only all-grounded demo never goes airborne / brakes / hits random
