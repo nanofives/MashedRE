@@ -143,10 +143,14 @@ def drive_and_sample(mode, csv_path):
         print(f"  in race? phase={E.phase()} ({'YES' if in_race else 'NO'})")
         if not in_race: return 3
         # Hold accelerate (control 4 acts as confirm; the demo/AI drives the car).
-        # Sample the player record every ~250 ms for ~12 s.
+        # Sample the player record every ~250 ms. Window is env-tunable
+        # (PHYS_C4_RACE_SECS) so airborne-path coverage runs (A6b/A5 jump branch)
+        # can hold accelerate long enough for the car to hit Arctic's ramps.
+        secs = float(os.environ.get("PHYS_C4_RACE_SECS", "12"))
         n = 0
-        end = time.time() + 12.0
+        end = time.time() + secs
         while time.time() < end:
+            E.press(4, 400)         # keep accelerate held so the car keeps moving
             E.sample(round(time.time()*4)/4.0)
             n += 1
             time.sleep(0.25)

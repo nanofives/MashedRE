@@ -370,3 +370,53 @@ cases`), so per [[feedback-no-overclaiming-c-levels]] A6a STAYS C2 in hooks.csv 
 gm=6 all-4-grounded every call; the airborne path, helicopter type-C drive, brake branch
 (BrakeForceAccum + call#7 transcribed, unhit in the throttle-only demo), spinning-powerup
 vel-damp, and the boost-state machine were transcribed verbatim but NOT exercised in-race.
+
+## WS-PHYS-C4-A6B+A3 — A3 is C4-GREEN; A6b grounded-gate GREEN but airborne body unexercised (2026-06-17, branch ws-phys-c4-a6b-a3)
+
+Extended the proven A4/A5 `.asi` verbatim-LUT installed-hook lane to the last two
+physics-chain fns. **4 of 5 physics fns are now C4** (A3, A4, A5; A6a + A6b stay C2).
+
+### A3 FUN_0046b540 (spawn-time vehicle init) — **C4-GREEN, 24/24 bit-identical**
+`__cdecl(int slot)` (ABI confirmed at caller 0x0040ed68 PUSH EDI;CALL + body
+SUB ESP,8;PUSH ESI;...;MOV ESI,[ESP+0x10];CMP ESI,0x10). Runs ONCE per car at
+spawn (NOT per-frame) -> a single-shot in-process A/B at the spawn call suffices.
+The `.asi` body is a faithful transcription of 0x0046b540..0x0046ba97 reading the
+record base `&DAT_008815a0 + slot*0xd04`: 4 handling-global writes, the
+track-type table walk (`[0x613140]`/`0x613148` 5-int entries, stop @ entry[+0xc]==-1),
+~80 record field writes, 4 FastSqrt radius loops (FUN_004c3b30 = RW fast-sqrt LUT,
+forwarded LIVE), and a float10 mass/inertia reduction kept verbatim as a NAKED helper
+(`A3_MassInertia`, 5 float10 values on the FPU stack). The 5 type-lookup fns
+(FUN_00430790/0042f6a0/00431d70/0040ce80) forwarded LIVE (deterministic per spawn).
+In-process A/B (A3 inline-JMP LIVE, canonical Arctic Quick-Battle, original-vs-mine on
+the same slot via the OrigA3 trampoline): the FULL 0xd04 record + the 4 handling
+globals (0x613108/14/30/3c) + the return value are **bit-identical across slots 0-3,
+24/24 OK** (`re/analysis/phys_c4_evidence/A3_selftest_GREEN.txt`). U-7510/U-7511 are
+DATA-semantic (what the table values / suspension consts MEAN) — non-blocking for C4
+(behavior is bit-identical; meaning deferred). Promoted in hooks.csv.
+- **OrigA3 trampoline gotcha (fixed):** the 5-byte inline-JMP at 0x0046b540 splits the
+  first `MOV [0x613108],imm` (10 bytes, 0x46b544..0x46b54d). Resuming at 0x46b544 lands
+  mid-instruction -> crash. Fix: the trampoline re-executes SUB ESP,8 + PUSH ESI + the
+  WHOLE first MOV (EAX dead at 0x46b54e), then jumps to 0x0046b54e (first intact instr).
+
+### A6b FUN_00468980 (aero-stabilize) — grounded-gate GREEN 4/4; airborne body UNEXERCISED -> C2
+ABI resolved (the decomp's wall): at the A4 dispatch 0x00470943 — **ECX=record,
+ESI=xform** (the world RwMatrix, NOT the record; `MOV ESI,[ESP+0x3c]`), [ESP+4]=dt.
+(The lane's own A4_Body Call_A6b set ESI=record — a latent dispatch bug there; A4 is
+C4 via its body-math self-test which stops before the dispatch tail.) Callee ABIs:
+**FUN_004a3384 = CRT acos(double)->ST0**; **FUN_004c4d20 = `__cdecl RwMatrixRotate(out,
+axis, angle_deg, mode)`** (internally FUN_004c3b90 inv-sqrt LUT + fsin/fcos -> routes
+through the RW device, forwarded LIVE); FUN_004c39b0 = normalize. The body is a NAKED
+verbatim transcription of 0x00468980..0x00468b34 with the 3 CALLs live-forwarded +
+EXACT-bit .rdata consts. The exact-bit sweep CAUGHT the standalone
+`Vehicle/AeroStabilize.cpp` using WRONG consts (`_DAT_005ccae0` is the double 180/pi
+0x404ca5dcc0000000, NOT -2.0; the pitch bias `_DAT_005ccad8` is double 90.0, NOT 0.0).
+**Verdict:** A6b's whole body is gated airborne (`+0x9e0==0.0`); in the canonical
+Arctic race the car is all-4-grounded EVERY frame (`groundedCnt`==4.0, 179/179
+telemetry), so only the grounded SHORT-CIRCUIT path is reachable -> A/B GREEN 4/4 but
+the aero body (the real work) is UNEXERCISED. Per [[feedback-no-overclaiming-c-levels]]
+A6b STAYS C2 (not C4 on "correctly does nothing"). Closing it needs an airborne
+scenario; the available harness (nav_agent.js) overrides only control 4 (no steering),
+so the car can't be driven off Arctic's ramps. Evidence:
+`re/analysis/phys_c4_evidence/A6b_FINDINGS_2026-06-17.md` + `A6b_selftest_grounded_4of4.txt`.
+
+### Physics-chain C4 tally: 3/5 (A3, A4, A5). A6a RED 93/96 (susp-force float10); A6b grounded-only.
