@@ -993,6 +993,8 @@ bool RunRaceDemoStep(int /*phase*/) {
     static bool s_cap[3] = {};
     static const bool s_result_demo =
         GetEnvironmentVariableA("MASHED_RESULT_DEMO", nullptr, 0) > 0;
+    static const bool s_drive_hold =
+        GetEnvironmentVariableA("MASHED_DRIVE_HOLD", nullptr, 0) > 0;   // G2: hold InRace for sustained-drive calibration
     if (cool > 0) { --cool; return false; }
     const bool inrace = (mashed_re::Race::GameFlow_Mode() ==
                          mashed_re::Race::GameMode::InRace);
@@ -1026,10 +1028,15 @@ bool RunRaceDemoStep(int /*phase*/) {
                     if (s_result_demo) {
                         // wait for the match-end -> results screen (don't Esc yet)
                         step = 4; t_ms = GetTickCount();
-                    } else {
+                    } else if (!s_drive_hold) {
                         NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
                         step = 2; cool = 10;
                     }
+                    // s_drive_hold: stay InRace, keep driving + logging (G2 calibration)
+                }
+                if (s_drive_hold && s_cap[2] && el >= 30000) {
+                    NavDemoTap(DIK_ESCAPE);   // held ~30s for calibration -> exit cleanly
+                    step = 2; cool = 10;
                 }
             } else if (results) {
                 step = 4; t_ms = GetTickCount();   // already in results
@@ -1949,9 +1956,13 @@ bool RenderFrame() {
             // play-demo); the exhibition drive-demo keeps the gate auto-follow.
             g_track.SetHumanDrive(!s_drive_demo || s_play_demo);
             if (s_play_demo) {
-                // control test: accelerate + steer hard right -> the car should
-                // arc right (yaw climbs). Logged below to prove input drives it.
-                di.accel = 1.f; di.steer = 1.f;
+                // G2 calibration: full throttle + a scripted STEER RAMP so the log
+                // shows yaw response per phase: straight, hard-R, hard-L, half-R, half-L.
+                di.accel = 1.f;
+                di.steer = (t < 3.f)  ? 0.f
+                         : (t < 6.f)  ? 1.f
+                         : (t < 9.f)  ? -1.f
+                         : (t < 12.f) ? 0.5f : -0.5f;
             } else if (s_drive_demo) {
                 // TIME-based schedule (fps varies with scene weight):
                 // throttle 3s with a gentle weave from 1.5s, then coast —
@@ -1969,16 +1980,16 @@ bool RenderFrame() {
             // engine note (real permdict eng1) rises with speed
             mashed_re::Audio::EngineSetRpm(
                 g_track.car_speed() / (g_track.world_radius() * 0.25f + 1e-3f));
-            if (s_play_demo) {   // control proof: log the player yaw under input
-                static float s_yaw_log_t = 0.f;
-                if (t - s_yaw_log_t > 1.0f) {
+            if (s_play_demo) {   // control proof: log player yaw vs steer under input
+                static float s_yaw_log_t = -1.f;
+                if (t - s_yaw_log_t > 0.25f) {
                     s_yaw_log_t = t;
                     float cp[3]; g_track.car_pos(cp);
                     std::FILE* lf = std::fopen(kLogPath, "a");
                     if (lf) {
-                        std::fprintf(lf, "PLAY-DEMO t=%.1f human_drive=%d "
-                                     "car_yaw=%.3f pos=(%.1f,%.1f) speed=%.2f\n",
-                                     t, (int)g_track.human_drive(),
+                        std::fprintf(lf, "PLAY-DEMO t=%.2f steer=%+.2f "
+                                     "car_yaw=%.4f pos=(%.1f,%.1f) speed=%.2f\n",
+                                     t, di.steer,
                                      g_track.car_yaw(), cp[0], cp[2],
                                      g_track.car_speed());
                         std::fclose(lf);
