@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cstdio>
 #include <vector>
+// #define MASHED_PHYS_DIAG 1   /* enable the steer-chain diag block (G2 drive debug) */
 
 namespace mashed_re {
 namespace Vehicle {
@@ -200,14 +201,16 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
         static int dn = 0;
         if (dn < 200) {
             if (std::FILE* lf = std::fopen("phys_diag.log", "a")) {   // cwd-relative
-                std::fprintf(lf, "DIAG in4=%d gnd=%d sp=%g vel=(%.2f,%.2f,%.2f) "
-                    "pos=(%.1f,%.1f,%.1f) fwd=(%.2f,%.2f,%.2f) b14=(%g,%g,%g)\n",
-                    io.input[4], io.grounded,
+                std::fprintf(lf, "DIAG in0=%d in1=%d in4=%d in5=%d gnd=%d sp=%g "
+                    "vel=(%.2f,%.2f,%.2f) steerAng=(%g,%g) angvel=(%g,%g,%g) "
+                    "wheel0st=%d wheelfwd=(%g,%g,%g)\n",
+                    input[0], input[1], io.input[4], io.input[5], io.grounded,
                     F(r,0x9e4),
                     F(r,off::kVelocity), F(r,off::kVelocity+4), F(r,off::kVelocity+8),
-                    io.pos[0], io.pos[1], io.pos[2],
-                    F(r,off::kForward), F(r,off::kForward+4), F(r,off::kForward+8),
-                    F(r,0xb14), F(r,0xb18), F(r,0xb1c));
+                    F(r,0x1a8), F(r,0x26c),                 /* A4 front-wheel steer-angle out */
+                    F(r,0x9bc), F(r,0x9c0), F(r,0x9c4),     /* A6a body angular velocity */
+                    I(r,off::kWheel0State),                  /* grounded gate */
+                    F(r,0x180), F(r,0x184), F(r,0x188));    /* wheel0 right/steer axis sample */
                 std::fclose(lf);
             }
             ++dn;

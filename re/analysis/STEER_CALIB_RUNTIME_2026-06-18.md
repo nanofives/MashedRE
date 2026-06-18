@@ -38,3 +38,32 @@ PLAY_DEMO scripted accel+steer, logging yaw/speed for ~20s. Then: (a) confirm a 
 (if erratic, root-cause the drive instability first — substep loop / contact feed / const back-port);
 (b) observe steering response to di.steer; (c) verify/flip the steer sign; (d) calibrate kYawScale
 (VehiclePhysicsRun.cpp:241, currently 1.0). All PID-scoped (CLAUDE.md MASHED hygiene).
+
+## UPDATE 2026-06-18 — PRECISE root-cause (sustained-drive harness + steer-chain diag)
+Built MASHED_DRIVE_HOLD (exe_main 4159bc1e) + a steer-chain diag (VehiclePhysicsRun
+MASHED_PHYS_DIAG block). A 30s real-physics run pinned it:
+- **Steer WIRING is CORRECT.** input[0]/[1] track the steer ramp (255 R / 255 L / 128 half) and A4
+  (FUN_00470670) writes the front-wheel steer angle correctly: steerAng(+0x1a8/+0x26c) =
+  +16.93 / -16.93 / +8.5 deg. NOT a steer-wiring bug.
+- **Dead yaw is downstream:** body angular velocity (+0x9bc/+0x9c0/+0x9c4) = (0,0,0) EVERY frame ->
+  A6a never converts the steer angle into yaw rate -> car_yaw flat -> can't turn.
+- **ROOT = speed runaway + grounded oscillation:** speed RAMPS 62 -> 182 -> 300 in 3 frames
+  (UNCLAMPED — the original maxspeed cap +0x190=34 vs +0x9e4 isn't limiting the port), and `gnd`
+  oscillates 1/0 EVERY frame (airborne frames show vel.y=-33.9). The runaway speed makes the
+  next-pos probe overshoot the GroundHeight region -> grounded=0 half the frames -> A6a's
+  grounded-gated grip blocks fire intermittently -> no sustained lateral grip -> +0x9c0 stays 0 ->
+  dead steering -> car plows straight (+z) off the strip at z~59 -> probe-ahead-fail zeroes velocity
+  (UpdateCar 1496-1497) -> stick/oscillate/start-reset.
+- FLOW bug too: UpdateCar probes + commits pos with the PRE-chain velocity, and io.grounded is a
+  probe-AHEAD with that runaway velocity, not the car's CURRENT-pos grounding.
+
+## WAVE-16 FIX (the real DRIVE-STABILIZE, focused):
+1. **Speed clamp / scale** (prime mover): find why the port doesn't cap speed — the original gates
+   drive force by +0x9e4 vs maxspeed +0x190, or A5/A6a drag/grip caps it; the 62->300 runaway
+   suggests a missing/ineffective maxspeed gate OR a units/scale mismatch (chain internal units vs
+   the standalone world coords).
+2. **Grounded gate**: ground from the CURRENT pos (on-ground-now), not a probe-ahead with the
+   runaway velocity; integrate pos from the chain's OUTPUT velocity (StepPlayer first, then pos);
+   slide/clamp at the strip edge instead of hard-zeroing velocity.
+3. Once speed is stable + wheels stay grounded, A6a grip should yield +0x9c0 -> steering works ->
+   THEN calibrate kYawScale. (Steer wiring already confirmed correct.)
