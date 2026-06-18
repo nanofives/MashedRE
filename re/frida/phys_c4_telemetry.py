@@ -144,16 +144,33 @@ def drive_and_sample(mode, csv_path):
         if not in_race: return 3
         # Hold accelerate (control 4 acts as confirm; the demo/AI drives the car).
         # Sample the player record every ~250 ms. Window is env-tunable
-        # (PHYS_C4_RACE_SECS) so airborne-path coverage runs (A6b/A5 jump branch)
-        # can hold accelerate long enough for the car to hit Arctic's ramps.
-        secs = float(os.environ.get("PHYS_C4_RACE_SECS", "12"))
+        # (PHYS_C4_RACE_SECS).
+        #
+        # WS-PHYS-COVERAGE-SCENARIO (wave-13): the in-process self-test
+        # (MASHED_PHYS_C4_SELFTEST) is the actual A/B; it fires for EVERY car the
+        # per-frame dispatcher (FUN_00470c70) processes, NOT just the player. The AI
+        # opponents (slots 1-3) brake into corners, steer, and fly off Arctic's terrain
+        # on their own, so a LONGER race lets the brake / airborne / random-surface
+        # branches arrive on the AI records and fill the dedicated per-branch quotas in
+        # PhysicsChainHooks.cpp. Default raised 12 -> 45 s so the field reaches the first
+        # corners + jumps. The Frida-sampled CSV here is only a liveness/screenshot
+        # aid; the bit-identity verdict is the in-process selftest .log files.
+        secs = float(os.environ.get("PHYS_C4_RACE_SECS", "45"))
+        # Optional steer control to make the player car corner hard (ram walls/AI),
+        # diversifying the per-car branch coverage. 4=accelerate (confirmed by
+        # phys_c4_inrace_probe.py). PHYS_C4_STEER selects a steer control index.
+        steer = int(os.environ.get("PHYS_C4_STEER", "-1"))
         n = 0
         end = time.time() + secs
         while time.time() < end:
-            E.press(4, 400)         # keep accelerate held so the car keeps moving
+            E.press(4, 300)         # keep accelerate held continuously
+            time.sleep(0.05)
+            if steer >= 0:
+                E.press(steer, 300)
+                time.sleep(0.05)
             E.sample(round(time.time()*4)/4.0)
             n += 1
-            time.sleep(0.25)
+            time.sleep(0.15)
         rows = E.dump()
         LOG.mkdir(exist_ok=True)
         with open(csv_path, "w", newline="", encoding="utf-8") as f:

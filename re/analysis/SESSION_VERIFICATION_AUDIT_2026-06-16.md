@@ -420,3 +420,45 @@ so the car can't be driven off Arctic's ramps. Evidence:
 `re/analysis/phys_c4_evidence/A6b_FINDINGS_2026-06-17.md` + `A6b_selftest_grounded_4of4.txt`.
 
 ### Physics-chain C4 tally: 3/5 (A3, A4, A5). A6a RED 93/96 (susp-force float10); A6b grounded-only.
+
+## WS-PHYS-COVERAGE-SCENARIO — richer scenario closes A4's brake gap; airborne still flat-blocked (2026-06-17, branch ws-phys-coverage-scenario)
+
+Drove a richer canonical scenario through the same `.asi` verbatim-LUT installed-hook
+lane to exercise the transcribed-but-unhit branches. Full findings:
+`re/analysis/phys_c4_evidence/COVERAGE_SCENARIO_FINDINGS_2026-06-17.md`.
+
+**Driver:** AI-opponent multi-car coverage. The per-frame dispatcher (FUN_00470c70)
+runs A4/A5/A6a/A6b for EVERY car record (slot 0 = player, 1-3 = AI), and the AI
+opponents brake/steer/race on their own. Each self-test was re-armed with independent
+per-branch sampling quotas (so the early all-grounded throttle-only frames stop flooding
+the cap before a branch-novel call lands) and now logs the record's car `slot=`. Harness
+`phys_c4_telemetry.py` window 12->45 s default + continuous accel (ctrl 4, confirmed by
+`phys_c4_inrace_probe.py`) + optional steer; authoritative run 75 s, all 4 hooks live,
+self-test on, A4 inline-JMP LIVE. Process hygiene: harness Popen-spawns its own MASHED
+and kills ONLY that PID.
+
+**Results (per-branch bit-confirm):**
+- **A4 brake branch + input[5]>128 grip-else — GREEN, caveats REMOVED.** 53 brake calls
+  (input[1]=76..155) + 16 input[5]=255 calls from braking AI records (slots 1-3),
+  **0/104 mismatch**. A4's honest coverage gap is closed. hooks.csv updated.
+  Evidence `A4_coverage_brake_GREEN.txt`.
+- **A6a brake branch — exercised; A6a STAYS C2 (residual unchanged).** 32 brake calls;
+  the 11/83 non-OK are ONLY the pre-known `[U-A6A-FLOAT10]` susp-force `wNfx`/`wNfz`
+  residual (+ downstream vel) that runs on the grounded contact path regardless of
+  throttle vs brake. BrakeForceAccum/call#7 themselves are bit-clean -> no new
+  divergence class, no regression. Evidence `A6a_coverage_brake_93pct.txt`.
+- **A5 airborne + random-surface, A6a airborne, A6b aero body — STILL UNREACHED.** The
+  Quick-Battle Arctic arena is geometrically FLAT: probed exhaustively
+  (`phys_c4_inrace_probe.py`) the player car driven full-throttle to speed ~2888 with
+  every steer/ram combo NEVER lifted a wheel, and the racing AI opponents stayed
+  all-4-grounded for 75 s (grounded==4.0 every sample). With zero airborne frames for
+  any car, the airborne-gated branches and the Arctic-absent random-surface key can't be
+  reached on this scenario. Closing them needs a circuit-race menu path to a ramp/jump
+  track (the nav recipe is hardcoded Quick-Battle/Arctic) + a per-track jump map — a
+  separate menu-RE effort; NO-GUESSING: not fabricated, and no synthetic +0x9e0=0.0 write
+  (that is C3, not canonical). A5 stays C4 (caveat retained, now noted environmental);
+  A6a/A6b stay C2.
+
+**A6b verdict: NOT C4 (airborne body still unexercised; grounded gate GREEN 8/8).**
+
+### Physics-chain C4 tally (unchanged): 3/5 (A3, A4, A5; A4 coverage now broader). A6a RED 93/96; A6b grounded-only.
