@@ -217,6 +217,32 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
         remMs -= chunkMs;
     }
 
+    // [U-A8-SPEEDCAP] The verbatim chain self-limits LATERAL velocity (grip-clamp #6,
+    // Integrate2.cpp 324-348) but not STRAIGHT-line speed — the drive force ramps the
+    // internal velocity unbounded (observed 77->553 going straight), far past the small
+    // standalone collision strip. Cap the chain VELOCITY MAGNITUDE here (env MASHED_SPEEDCAP,
+    // default 60) — applied AFTER the chunk loop so the chain's own grip/yaw dynamics run
+    // at full fidelity; only the carried-over velocity is bounded. Kept well above the
+    // grip-clamp's low-speed full-stop (16) so it does NOT re-trigger the over-damp that
+    // killed +0x9c0 before the contact-load fix. 0 disables.
+    {
+        static const float kSpeedCap = [] {
+            const char* e = std::getenv("MASHED_SPEEDCAP");
+            return e ? (float)std::atof(e) : 45.0f;   // calibrated 2026-06-18 (smooth lap)
+        }();
+        if (kSpeedCap > 0.f) {
+            float vx = F(r, off::kVelocity + 0), vy = F(r, off::kVelocity + 4), vz = F(r, off::kVelocity + 8);
+            float sp = std::sqrt(vx*vx + vy*vy + vz*vz);
+            if (sp > kSpeedCap && sp > 1e-4f) {
+                float s = kSpeedCap / sp;
+                F(r, off::kVelocity + 0) = vx * s;
+                F(r, off::kVelocity + 4) = vy * s;
+                F(r, off::kVelocity + 8) = vz * s;
+                F(r, off::kSpeed) = kSpeedCap;
+            }
+        }
+    }
+
 #if defined(MASHED_PHYS_DIAG)  /* TEMP diag — compiled only with -DMASHED_PHYS_DIAG */
     {
         static int dn = 0;
@@ -262,7 +288,15 @@ void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
     // the frame ms; the follow-up runtime smoke (WS-PHYS-SMOKE) calibrates it to match
     // the original's turn radius. The STEER PATH is physics; only this gain is tuned.
     constexpr std::size_t kAngVelY  = 0x9c0;   // angular-velocity Y = yaw rate
-    constexpr float       kYawScale = 1.0f;    // [U-A8-YAWSCALE] smoke-calibrated gain
+    // [U-A8-YAWSCALE] integrate the chain yaw rate (+0x9c0) over the frame ms. Matched
+    // to kWorldVel (TrackRenderer) by the SAME factor so slowing the world pace keeps
+    // the turn radius (= world_speed / yaw_rate) constant. Env-tunable (MASHED_YAWSCALE)
+    // for runtime calibration without a rebuild; default tracks kWorldVel's 0.12.
+    static const float kYawScale = [] {
+        const char* e = std::getenv("MASHED_YAWSCALE");
+        float v = e ? (float)std::atof(e) : 0.34f;   // calibrated 2026-06-18 (smooth lap)
+        return (v > 0.f) ? v : 0.34f;
+    }();
     const float yawRate = F(r, kAngVelY);
     io.yaw += yawRate * frameMs * kYawScale;
     // keep yaw bounded so the synthesized forward stays well-conditioned

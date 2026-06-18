@@ -1955,14 +1955,20 @@ bool RenderFrame() {
             // The HUMAN drives the player car for real keyboard play (and the
             // play-demo); the exhibition drive-demo keeps the gate auto-follow.
             g_track.SetHumanDrive(!s_drive_demo || s_play_demo);
+            static float s_drive_t0 = -1.f;
             if (s_play_demo) {
-                // G2 calibration: full throttle + a scripted STEER RAMP so the log
-                // shows yaw response per phase: straight, hard-R, hard-L, half-R, half-L.
+                // G2 calibration: full throttle + a scripted STEER RAMP keyed to a
+                // DRIVE-relative clock (starts on the first driving frame — the global
+                // `t` is already ~15s by the time the race loads + countdown ends, which
+                // mis-aligned the old t<3..t<12 thresholds). Phases: straight (clean
+                // speed ramp), gentle-R, gentle-L, hard-R, hard-L.
+                if (s_drive_t0 < 0.f) s_drive_t0 = t;
+                const float td = t - s_drive_t0;
                 di.accel = 1.f;
-                di.steer = (t < 3.f)  ? 0.f
-                         : (t < 6.f)  ? 1.f
-                         : (t < 9.f)  ? -1.f
-                         : (t < 12.f) ? 0.5f : -0.5f;
+                di.steer = (td < 4.f)  ? 0.f
+                         : (td < 9.f)  ? 0.5f
+                         : (td < 14.f) ? -0.5f
+                         : (td < 19.f) ? 1.0f : -1.0f;
             } else if (s_drive_demo) {
                 // TIME-based schedule (fps varies with scene weight):
                 // throttle 3s with a gentle weave from 1.5s, then coast —
@@ -1987,9 +1993,9 @@ bool RenderFrame() {
                     float cp[3]; g_track.car_pos(cp);
                     std::FILE* lf = std::fopen(kLogPath, "a");
                     if (lf) {
-                        std::fprintf(lf, "PLAY-DEMO t=%.2f steer=%+.2f "
+                        std::fprintf(lf, "PLAY-DEMO td=%.2f steer=%+.2f "
                                      "car_yaw=%.4f pos=(%.1f,%.1f) speed=%.2f\n",
-                                     t, di.steer,
+                                     (s_drive_t0 < 0.f ? 0.f : t - s_drive_t0), di.steer,
                                      g_track.car_yaw(), cp[0], cp[2],
                                      g_track.car_speed());
                         std::fclose(lf);

@@ -1495,9 +1495,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         // an external cap to ~kTop pushes the car permanently into the over-damp /
         // full-stop regime and KILLS the yaw rate. Let the chain run at its scale; convert
         // to world units only for the POSITION step via kWorldVel (internal->world).
-        // [U-A8-WORLDVEL] scale TBD by this run; start 1.0 (no conversion) to read the
-        // chain's natural speed/yaw, then calibrate so the car covers the track sanely.
-        const float kWorldVel = 1.0f;
+        // [U-A8-WORLDVEL] the chain integrates velocity in its own internal length
+        // scale (self-limits ~150); the standalone track (original .piz geometry) is
+        // small, so convert internal->world for the POSITION step. Scaled WITH kYawScale
+        // (VehiclePhysicsRun) by the same factor so the turn radius (path shape) is
+        // preserved — both linear + angular advance proportionally slower. Env-tunable
+        // (MASHED_WORLDVEL) for runtime calibration without a rebuild.
+        static const float kWorldVel = [] {
+            const char* e = std::getenv("MASHED_WORLDVEL");
+            float v = e ? (float)std::atof(e) : 0.22f;   // calibrated 2026-06-18 (smooth lap)
+            return (v > 0.f) ? v : 0.22f;
+        }();
         const float nx = car_pos_[0] + car_vel_[0] * kWorldVel * in.dt;
         const float nz = car_pos_[2] + car_vel_[2] * kWorldVel * in.dt;
         bool nok = false;

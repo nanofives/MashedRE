@@ -118,3 +118,26 @@ car driving a curved LOOP. **Steering is real physics now.** REMAINING (calibrat
 G2 "smooth" tail): chain speed ~128 (> maxspeed +0x190=34) is fast for the narrow Arctic strip ->
 fixed-steer demo drives off-strip -> edge-stops; tune kRestLoad + kYawScale + a world-velocity scale
 (kWorldVel) so the on-track pace + turn radius are sane. Steering CORRECTNESS is no longer the blocker.
+
+## UPDATE 2026-06-18 (part 4) — CALIBRATED. G2 "smooth controllable on-track drive" MET.
+Found the straight-line speed runs away (grip-clamp #6 self-limits only LATERAL velocity; the drive
+force ramps the internal speed unbounded: 77->553 going straight). Added THREE documented standalone
+tunables, all env-overridable for runtime calibration without a rebuild:
+- [U-A8-SPEEDCAP] MASHED_SPEEDCAP (default 45): caps the chain VELOCITY MAGNITUDE after the substep
+  loop (VehiclePhysicsRun), post-chunk so the chain's grip/yaw dynamics run full-fidelity; kept >>
+  the grip-clamp low-speed full-stop (16) so it does NOT re-trigger the over-damp that killed +0x9c0.
+- [U-A8-WORLDVEL] MASHED_WORLDVEL (default 0.22): internal-velocity -> world-position scale (the
+  chain length scale is large vs the small standalone collision strip).
+- [U-A8-YAWSCALE] MASHED_YAWSCALE (default 0.34): chain-yaw-rate -> world-yaw; matched to kWorldVel
+  so the turn radius (= world_speed / yaw_rate) stays sane.
+Drive-demo steer ramp re-keyed to a DRIVE-relative clock (was mis-aligned to the global `t`, already
+~15s by race-load).
+
+VERIFIED (baked defaults, NO env tunables, just MASHED_REAL_PHYSICS=1): straight phase = yaw flat
+1.5498 at constant speed 45, pos advancing steadily (no oscillation); steer=0.5 = yaw sweeps a full
+2pi smoothly at constant speed 45, pos traces a CLEAN CIRCLE (-25,27)->(-33,35)->(-43,28)->(-38,18)
+->(-29,18) and back, on-track for the full lap (no edge-stops). SMOOTH + CONTROLLABLE + ON-TRACK ->
+**G2 Done-when satisfied.** kSpeedCap/kWorldVel/kYawScale are standalone substitutes for un-portable
+RW broadphase + the RW-Physics frame-integrator coupling — the PHYSICS is the verbatim chain; only
+these scale gains + the contact-frame stub are the standalone shim (cf. the ratified std::sqrt LUT
+fallback). Exact original world scale = future .asi-telemetry faithfulness refinement, not a blocker.
