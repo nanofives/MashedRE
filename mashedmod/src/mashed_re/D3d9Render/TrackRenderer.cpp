@@ -1537,7 +1537,16 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         bool nok = false;
         const float ngy = GroundHeight(nx, nz, &nok);
         if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }
-        else { car_speed_ = 0.f; car_vel_[0] = car_vel_[2] = 0.f; }
+        else {
+            // [G4] NON-TRAPPING off-track response. Zeroing velocity here killed the chain's
+            // grip force -> no +0x9c0 yaw rate -> the car lost ALL steer authority and could
+            // never turn back onto the track (it re-accelerated straight off the edge every
+            // frame -> permanent stall). Instead: hold position this frame but RETAIN velocity
+            // (heavily damped) so the chain keeps producing a yaw rate and the steering can
+            // pull the car back onto the mesh next frame. [U-A8-OFFTRACK]
+            car_vel_[0] *= 0.5f; car_vel_[2] *= 0.5f;
+            car_speed_ = std::sqrt(car_vel_[0]*car_vel_[0] + car_vel_[2]*car_vel_[2]);
+        }
     } else {
     const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
     // throttle force along forward
@@ -1641,7 +1650,11 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 bool aok = false;
                 const float ay = GroundHeight(nx2, nz2, &aok);
                 if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
-                else { a.vel[0] = a.vel[2] = 0.f; a.cur_speed = 0.f; }
+                else {   // [U-A8-OFFTRACK] non-trapping: retain (damped) velocity so the chain
+                         // keeps a yaw rate + the AI can steer back onto the mesh (see player path)
+                    a.vel[0] *= 0.5f; a.vel[2] *= 0.5f;
+                    a.cur_speed = std::sqrt(a.vel[0]*a.vel[0] + a.vel[2]*a.vel[2]);
+                }
             } else {
                 // --- physics off: keep the lightweight kinematic ctrl->motion mapping ---
                 const float steer = (ctrl[0] ? 1.f : 0.f) - (ctrl[1] ? 1.f : 0.f);

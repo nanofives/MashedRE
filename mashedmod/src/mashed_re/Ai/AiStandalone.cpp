@@ -282,12 +282,19 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         // this pure-pursuit completes a lap yet. Kept as debugging infra; see PLAYTHROUGH_G4 doc.
     }();
     if (s_pp) {
-        float off; bool toCtrl0;
-        if (err <= kSteerSplit) { off = err; toCtrl0 = true; }     // steer toward (ctrl[0])
-        else { off = kWrap - err; toCtrl0 = false; }               // other way (ctrl[1])
-        const float kFullDeg = 90.0f;                              // full lock at >=90deg off
-        float s = off / kFullDeg; if (s > 1.0f) s = 1.0f;
-        int mag = static_cast<int>(s * 255.0f + 0.5f); if (mag > 255) mag = 255;
+        // SIGNED continuous error in [-180,180] (0 = aligned). The previous split at err=180
+        // (err<180 -> one way, >180 -> other) was BANG-BANG: the car's error sat near 180 and
+        // flipped steer direction every crossing -> a U-turn limit cycle near spawn (velocity
+        // reversed north<->south each frame). A signed proportional steer has no discontinuity
+        // to oscillate around: it eases off as the car aligns. Magnitude capped low (anti-spin,
+        // G2's +0x9c0 is strong). toCtrl0 = (se>0): err<180 (se>0) -> ctrl[0], matching the bands.
+        float se = err; if (se > 180.0f) se -= kWrap;              // [-180,180]
+        const float kFullDeg = 90.0f;
+        float s = se / kFullDeg; if (s > 1.0f) s = 1.0f; if (s < -1.0f) s = -1.0f;
+        const float kMaxSteer = 0.45f;                             // [G4] AI steer cap (anti-spin)
+        s *= kMaxSteer;
+        bool toCtrl0 = (s >= 0.0f);
+        int mag = static_cast<int>((s < 0.f ? -s : s) * 255.0f + 0.5f); if (mag > 255) mag = 255;
         // [G4] STEER SIGN: the nav trace showed the car driving AWAY from the target — for a
         // target to the car's east/north it applied ctrl[1] (which, per the verified physics in
         // G2, increases yaw -> rotates forward toward -x/west = the WRONG way). The AI steer sign
@@ -300,9 +307,9 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         bool c0 = s_flip ? !toCtrl0 : toCtrl0;
         ctrl[0] = c0 ? static_cast<std::uint8_t>(mag) : 0;
         ctrl[1] = c0 ? 0 : static_cast<std::uint8_t>(mag);
-        ctrl[4] = 0xff;                                            // accelerate
-        ctrl[5] = 0;
-        if (off > 60.0f) { ctrl[4] = 0x70; ctrl[5] = 0x60; }       // trail-brake sharp corners
+        ctrl[4] = 0xff;                                            // accelerate (full; gentle steer
+        ctrl[5] = 0;                                               // handles corners, no mid-corner
+                                                                   // brake that bled momentum)
         const int gm = s_host.game_sub_mode();
         if (gm != 6 && gm != 5 && gm != 9 && gm != 10 && gm != 11) { ctrl[4] = 0; ctrl[5] = 0; }
         // [G4] env MASHED_AI_NAV -> a6_diag.log: trace one car's nav to see the failure mode.

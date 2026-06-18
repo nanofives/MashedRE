@@ -76,3 +76,25 @@ slide along / project back onto the collision surface instead of zeroing velocit
 clips the edge recovers with steer authority intact; (c) THEN the AI target/steer (pure-pursuit or
 the verbatim bands) can actually hold the line -> full laps -> match -> cup. This is a focused
 methodical debugging effort (per-frame physics+grounding trace), scoped here.
+
+## UPDATE 2 — edge-trap FIXED; remaining blocker = under-damped steering (needs PD)
+(b) DONE [U-A8-OFFTRACK], TrackRenderer player + opponent paths: on a GroundHeight-miss next-pos
+we now RETAIN (0.5x-damped) velocity instead of zeroing it, so the chain keeps producing a +0x9c0
+yaw rate and the AI keeps steer authority — the car is no longer permanently trapped at the edge.
+Plus a signed continuous steer (removes the bang-bang flip at err=180) + a low steer cap.
+
+REMAINING (the real wall): with the trap gone the cars MOVE but OSCILLATE / donut near spawn — the
+per-car nav trace shows the car briefly align (err=42, velocity toward the target) then swing past
+and away, repeatedly; gate progress crawls (a car occasionally reaches gate ~7 then swings back).
+This is an UNDER-DAMPED steering control loop: the AI has only a PROPORTIONAL term, but G2's
+contact-load fix made +0x9c0 strong + kYawScale=0.34 gives high yaw authority, so the yaw OVERSHOOTS
+alignment (momentum) and swings back -> a limit cycle. The player's G2 smooth circle used a CONSTANT
+steer (no feedback) so it never oscillated; the AI's target-tracking feedback loop does.
+
+THE fix (focused, next session): a PD steering controller — add a DERIVATIVE/damping term that
+counter-steers proportional to the body yaw rate (+0x9c0), so the car settles onto the target
+heading instead of overshooting. Needs the Ai::Host to expose the per-car yaw rate (+0x9c0) (one
+new getter) so ControlStep can damp. Then: cars hold the line -> full laps -> elimination/laps
+resolve -> the cup loop (results -> next track -> re-enter, progression already persists per win).
+This is control-systems tuning, not RVA RE; ~a focused session. Env infra in place: MASHED_AI_NAV,
+MASHED_AI_PUREPURSUIT, MASHED_AI_STEERFLIP, MASHED_LAP_DIAG, MASHED_PLAYTHROUGH.
