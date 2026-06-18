@@ -1001,6 +1001,14 @@ bool RunRaceDemoStep(int /*phase*/) {
         GetEnvironmentVariableA("MASHED_DRIVE_HOLD", nullptr, 0) > 0;   // G2: hold InRace for sustained-drive calibration
     static const bool s_playthrough =
         GetEnvironmentVariableA("MASHED_PLAYTHROUGH", nullptr, 0) > 0;  // G4: wait for the REAL match to finish
+    // G4: championship CUP — race MASHED_CUP rounds back-to-back, each a full natural race ->
+    // results -> progression (autosave/unlock) -> re-enter the next round. Default 1 (single race).
+    static int  cupRound = 0;
+    static const int s_cup_n = [] {
+        char b[8]; DWORD n = GetEnvironmentVariableA("MASHED_CUP", b, sizeof b);
+        int v = (n > 0 && n < sizeof b) ? std::atoi(b) : 1;
+        return v < 1 ? 1 : v;
+    }();
     if (cool > 0) { --cool; return false; }
     const bool inrace = (mashed_re::Race::GameFlow_Mode() ==
                          mashed_re::Race::GameMode::InRace);
@@ -1064,9 +1072,16 @@ bool RunRaceDemoStep(int /*phase*/) {
                 // few frames after entering Results so the overlay is on-screen.
                 if (res_ms == 0) { res_ms = GetTickCount(); return false; }
                 if (GetTickCount() - res_ms < 500) return false;
-                cap("01_results");
+                { char cn[16]; std::snprintf(cn, sizeof cn, "%02d_results", cupRound); cap(cn); }
                 NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
-                step = 2; cool = 10;
+                NavDemoLog(step, "cup round done (results+progression)", true);
+                if (cupRound + 1 < s_cup_n) {       // G4 CUP: more rounds -> race the next
+                    ++cupRound;
+                    s_cap[0] = s_cap[1] = s_cap[2] = false; t_ms = 0; res_ms = 0;
+                    step = 0; cool = 30;            // back to Challenge Select -> re-enter
+                } else {
+                    step = 2; cool = 10;            // cup complete -> finish
+                }
             } else if (GetTickCount() - t_ms > (s_playthrough ? 300000u : 9000u)) {
                 NavDemoTap(DIK_ESCAPE); step = 2; cool = 10;   // safety (G4: allow a full race)
             }
