@@ -1,3 +1,23 @@
+# G4 — full playthrough on real systems  [DONE 2026-06-18]
+
+## OUTCOME: MILESTONE MET. Complete race + 3-round championship cup, scaffold-free.
+A complete race AND a 3-round championship cup play start-to-finish on real physics + real AI +
+ground collision + powerups/audio -> results -> progression persists (autosave + unlock per win),
+with NO scaffold fallbacks (each race finishes NATURALLY: full lap -> match_winner; the result-demo
+force-end is gated off by MASHED_PLAYTHROUGH). Repro:
+  mashed_re.exe  MASHED_REAL_PHYSICS=1 MASHED_REAL_AI=1 MASHED_AI_DRIVES_PLAYER=1
+                 MASHED_AI_PUREPURSUIT=1 MASHED_RACE_DEMO=1 MASHED_RESULT_DEMO=1
+                 MASHED_PLAYTHROUGH=1 MASHED_CUP=3 MASHED_RACE_MODE=laps MASHED_LAPS=1
+                 MASHED_GOTO=6 MASHED_TRACK_SEL=1
+Evidence: F4 player lap 1 @27.25s ; R6 MATCH OVER winner=car0 ; 3x "cup round done"; gameflow
+"race result"+"progress autosaved (next track unlocked)". The AI control journey that got here:
+donut-at-spawn -> deadband (drive straight when aligned) -> physics-grounded steer cap (radius ~=
+track radius) -> active off-mesh steer-back (gate+3 ahead) -> full lap -> natural match -> cup loop.
+RESIDUAL (not blocking the milestone): Arctic (track 0, 94 gates) sticks at the gate~88 start/finish
+corner (cars do 94%); robust ALL-track nav wants the curvature-walk port (FUN_00443300). The sections
+below are the historical debugging trail.
+
+---
 # G4 — full playthrough on real systems: status + blocker (2026-06-18)
 
 Goal: a complete race AND a championship cup, end-to-end on real physics/AI/collision/
