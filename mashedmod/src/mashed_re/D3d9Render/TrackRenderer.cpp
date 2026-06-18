@@ -1545,7 +1545,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             // surface; next frame its forward points on-mesh and it advances. Standalone collision-
             // recovery shim (the original's RW contact pushes the car off walls).
             if (!gates_.empty()) {
-                const float* g = gates_[static_cast<std::size_t>(race_[0].gate) % gates_.size()].center;
+                const int n = static_cast<int>(gates_.size());
+                const float* g = gates_[static_cast<std::size_t>((race_[0].gate + 3) % n)].center;  // a few AHEAD
                 float dx = g[0] - car_pos_[0], dz = g[2] - car_pos_[2];
                 float dl = std::sqrt(dx*dx + dz*dz);
                 if (dl > 1e-3f) {
@@ -1662,7 +1663,8 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 else {   // [U-A8-OFFTRACK] ACTIVE steer-back toward the next gate (pull the car
                          // back onto the track ribbon; see the player path for the rationale).
                     if (!gates_.empty()) {
-                        const float* g = gates_[static_cast<std::size_t>(race_[v].gate) % gates_.size()].center;
+                        const int n = static_cast<int>(gates_.size());
+                        const float* g = gates_[static_cast<std::size_t>((race_[v].gate + 3) % n)].center;  // a few AHEAD
                         float dx = g[0] - a.pos[0], dz = g[2] - a.pos[2];
                         float dl = std::sqrt(dx*dx + dz*dz);
                         if (dl > 1e-3f) {
