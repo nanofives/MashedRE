@@ -150,9 +150,14 @@ static void SetGrounded(unsigned char* r, bool grounded) {
 }
 
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {
+    VehiclePhysics_StepCar(0, dt, io);
+}
+
+void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     if (!g_inited) VehiclePhysics_Init(4, 0);
     if (dt <= 0.f) return;
-    unsigned char* r = rec(0);
+    if (slot < 0 || slot >= 16) return;
+    unsigned char* r = rec(slot);
 
     // --- adapter IN: world velocity, forward (= {cos,0,sin} per TrackRenderer), speed ---
     F(r, off::kVelocity + 0) = io.vel[0];

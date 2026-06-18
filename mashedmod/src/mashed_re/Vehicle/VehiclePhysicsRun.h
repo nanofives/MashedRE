@@ -89,6 +89,10 @@ void VehiclePhysics_Init(int carCount, int trackType);
 void VehiclePhysics_SetWorld(const float* verts, int vertCount,
                              const unsigned* tris, int triCount);
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io);
+// Step any car slot through the same physics chain (slot 0 = player; 1..3 = AI
+// opponents). The caller supplies the descriptor input (io.input[4]/[5] throttle +
+// io.steer) and persists vel/yaw/pos per car. StepPlayer == StepCar(0, ...).
+void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io);
 
 }  // namespace Vehicle
 }  // namespace mashed_re

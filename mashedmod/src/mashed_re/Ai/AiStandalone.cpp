@@ -200,7 +200,10 @@ inline std::uint8_t RoundST0(float x){
 
 void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
 {
-    const int gameMode = s_host.game_mode_fd0();   // FUN_0040e350 (local_34)
+    const int gameMode = s_host.game_sub_mode();   // FUN_0040e350 (local_34) — the SUB-mode
+    // (race=6), NOT DAT_007f0fd0 (game_mode_fd0). The throttle gate below keeps accel for
+    // race-class sub-modes {6,5,9,10,11}; calling game_mode_fd0() here (=0) wrongly gated
+    // throttle OFF (ctrl[4]=0 -> AI cars never moved). [G3 fix 2026-06-18]
     float ownX, ownZ;  s_host.own_xz(v, &ownX, &ownZ);
     float vx, vz;      s_host.own_vel_xz(v, &vx, &vz);
     const float speed = std::sqrt(vx*vx + vz*vz);  // local_38 ~ FUN_0046d6a0 [U-C-RATE0]

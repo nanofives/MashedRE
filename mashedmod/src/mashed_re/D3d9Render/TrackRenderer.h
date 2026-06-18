@@ -283,6 +283,7 @@ private:
         float cur_speed; float lane;   // lane = signed lateral offset
         float spin = 0.f;              // >0: spun out (missile/mine hit)
         float slow = 0.f;              // >0: shocked (capped speed)
+        float vel[3] = {0.f,0.f,0.f};  // G3: persistent world velocity (real-physics AI)
     };
     std::vector<AiCar> ai_cars_;
 

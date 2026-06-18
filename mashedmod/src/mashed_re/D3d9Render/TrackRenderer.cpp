@@ -109,6 +109,18 @@ bool Ai_BridgeLoad(int course, const char* trackPizPath) {
     return true;
 }
 
+// G3: the internal-velocity -> world-position scale (shared with the player path's
+// [U-A8-WORLDVEL] kWorldVel) so AI opponents driven through the real physics chain
+// cover ground at the same calibrated pace. Env MASHED_WORLDVEL, default 0.22.
+float AiPhysWorldVel() {
+    static const float v = [] {
+        const char* e = std::getenv("MASHED_WORLDVEL");
+        float f = e ? (float)std::atof(e) : 0.22f;
+        return (f > 0.f) ? f : 0.22f;
+    }();
+    return v;
+}
+
 // [item 2 — renderer] Flat per-face directional+ambient lighting for car models.
 // The DFF path carries no per-vertex normals, so cars render flat; this folds a
 // face-normal diffuse into the vertex colours so vehicles gain form/shading.
@@ -1571,30 +1583,88 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         }
         // (b) run the real controller — writes per-vehicle ctrl blocks.
         Ai::Ai_Standalone_Tick();
-        // (c) adapter: ctrl block -> ai_cars_ steer/throttle + integrate (replaces ribbon).
+        // (c) G3 adapter: feed each opponent's AI descriptor ctrl bytes into the SAME
+        // physics chain as the player (VehiclePhysics_StepCar on slots 1..3), replacing
+        // the old kinematic turn-rate/accel-band approximation. The AI ctrl block is
+        // already in descriptor format (ctrl[0]/[1]=steer, ctrl[4]=accel, ctrl[5]=brake),
+        // exactly what the chain's input[] expects -> no lossy remap.
+        const bool phys = Vehicle::VehiclePhysics_Enabled();
+        const float kWorldVelAi = AiPhysWorldVel();
         for (int ci = 0; ci < static_cast<int>(ai_cars_.size()); ++ci) {
             AiCar& a = ai_cars_[static_cast<std::size_t>(ci)];
             const int v = ci + 1;
-            if (round_mode_ && !race_[ci + 1].alive) { a.cur_speed = 0.f; continue; }
-            if (a.spin > 0.f) { a.spin -= in.dt; a.yaw += 12.0f * in.dt; a.cur_speed = 0.f; continue; }
+            if (round_mode_ && !race_[ci + 1].alive) {
+                a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
+            }
+            if (a.spin > 0.f) {   // spun out by a missile/mine: kinematic spin in place
+                a.spin -= in.dt; a.yaw += 12.0f * in.dt;
+                a.cur_speed = 0.f; a.vel[0] = a.vel[1] = a.vel[2] = 0.f; continue;
+            }
             if (a.slow > 0.f) a.slow -= in.dt;
             const int slot = Ai::I32(Ai::kSlotTableBase + static_cast<std::uintptr_t>(v) * Ai::kSlotTableStride);
             const std::uint8_t* ctrl = reinterpret_cast<const std::uint8_t*>(
                 Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * Ai::kCtrlBlockStride);
-            // steer pair [0]/[1], accel [4], brake [5]. ctrl->motion mapping is APPROX
-            // (turn rate / accel bands): the real bands are the un-ported FUN_00416250
-            // ([U-C-BANDS]); steer-sign pending the WS-A-VERIFY-class diff.
-            const float steer = (ctrl[0] ? 1.f : 0.f) - (ctrl[1] ? 1.f : 0.f);
-            a.yaw += steer * 2.4f * in.dt;
-            float tgt = a.speed * (static_cast<float>(ctrl[4]) / 255.0f);
-            if (ctrl[5]) tgt = 0.f;                 // brake
-            if (a.slow > 0.f) tgt *= 0.35f;
-            a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
-            const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
-            const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
-            bool aok = false;
-            const float ay = GroundHeight(nx2, nz2, &aok);
-            if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
+            if (phys) {
+                // --- REAL physics: AI descriptor bytes -> the verbatim chain (StepCar) ---
+                Vehicle::PlayerCarIO io{};
+                io.pos[0] = a.pos[0]; io.pos[1] = a.pos[1]; io.pos[2] = a.pos[2];
+                io.vel[0] = a.vel[0]; io.vel[1] = a.vel[1]; io.vel[2] = a.vel[2];
+                io.yaw    = a.yaw;
+                io.speed  = std::sqrt(a.vel[0]*a.vel[0] + a.vel[2]*a.vel[2]);
+                std::uint8_t accel = ctrl[4];
+                if (a.slow > 0.f) accel = static_cast<std::uint8_t>(accel * 0.35f);  // shock power-up
+                io.input[4] = accel;            // accelerator byte
+                io.input[5] = ctrl[5];          // brake byte
+                io.steer = (static_cast<float>(ctrl[0]) - static_cast<float>(ctrl[1])) / 255.0f;
+                bool gok = false; GroundHeight(a.pos[0], a.pos[2], &gok);
+                io.grounded = gok ? 1 : 0;
+                Vehicle::VehiclePhysics_StepCar(v, in.dt, io);
+                a.vel[0] = io.vel[0]; a.vel[1] = io.vel[1]; a.vel[2] = io.vel[2];
+                a.yaw = io.yaw;
+                a.cur_speed = std::sqrt(io.vel[0]*io.vel[0] + io.vel[2]*io.vel[2]);
+                const float nx2 = a.pos[0] + io.vel[0] * kWorldVelAi * in.dt;
+                const float nz2 = a.pos[2] + io.vel[2] * kWorldVelAi * in.dt;
+                bool aok = false;
+                const float ay = GroundHeight(nx2, nz2, &aok);
+                if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
+                else { a.vel[0] = a.vel[2] = 0.f; a.cur_speed = 0.f; }
+            } else {
+                // --- physics off: keep the lightweight kinematic ctrl->motion mapping ---
+                const float steer = (ctrl[0] ? 1.f : 0.f) - (ctrl[1] ? 1.f : 0.f);
+                a.yaw += steer * 2.4f * in.dt;
+                float tgt = a.speed * (static_cast<float>(ctrl[4]) / 255.0f);
+                if (ctrl[5]) tgt = 0.f;
+                if (a.slow > 0.f) tgt *= 0.35f;
+                a.cur_speed += (tgt - a.cur_speed) * (2.5f * in.dt > 1.f ? 1.f : 2.5f * in.dt);
+                const float nx2 = a.pos[0] + std::cos(a.yaw) * a.cur_speed * in.dt;
+                const float nz2 = a.pos[2] + std::sin(a.yaw) * a.cur_speed * in.dt;
+                bool aok = false;
+                const float ay = GroundHeight(nx2, nz2, &aok);
+                if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
+            }
+        }
+        // G3 one-shot diagnostic: confirm the .AI loaded + the controller is producing
+        // descriptor bytes for each opponent (env MASHED_AI_DIAG -> mashed_re.log).
+        {
+            static const bool s_aidiag = (std::getenv("MASHED_AI_DIAG") != nullptr);
+            static int s_aidn = 0;
+            if (s_aidiag && s_aidn < 40) {
+                if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                    std::fprintf(lf, "AI-DIAG splineCnt=%d", Ai::I32(Ai::kSplineRaceCnt));
+                    for (int ci = 0; ci < static_cast<int>(ai_cars_.size()) && ci < 3; ++ci) {
+                        const int v = ci + 1;
+                        const int slot = Ai::I32(Ai::kSlotTableBase + (std::uintptr_t)v * Ai::kSlotTableStride);
+                        const std::uint8_t* c = reinterpret_cast<const std::uint8_t*>(
+                            Ai::kCtrlBlockBase + (std::uintptr_t)slot * Ai::kCtrlBlockStride);
+                        const AiCar& a = ai_cars_[(std::size_t)ci];
+                        std::fprintf(lf, " | v%d ctrl[%d,%d,%d,%d] spd=%.1f pos=(%.0f,%.0f)",
+                                     v, c[0], c[1], c[4], c[5], a.cur_speed, a.pos[0], a.pos[2]);
+                    }
+                    std::fprintf(lf, "\n");
+                    std::fclose(lf);
+                }
+                ++s_aidn;
+            }
         }
     } else {
     // AI v2: follow the gate ribbon with a lateral lane offset, braking for
