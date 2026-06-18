@@ -2144,29 +2144,32 @@ void TrackRenderer::UpdateRace(float dt) {
     auto step = [&](int i, const float* pos) {
         RaceCar& r = race_[i];
         if (!r.alive) return;
-        const float* g = gates_[static_cast<std::size_t>(r.gate) %
-                                gates_.size()].center;
-        const float dx = g[0] - pos[0], dz = g[2] - pos[2];
-        const float d = std::sqrt(dx * dx + dz * dz);
-        if (d < 3.0f) {
-            const int G = r.gate;            // reached this gate
+        // [G4] Robust forward-projection progress (replaces the strict 3.0-unit proximity
+        // to gate[r.gate], which the AI cars — following the race-line SPLINE, offset from
+        // the gate ribbon — often never satisfied, so r.gate stalled and no lap/race ever
+        // completed). Project the car onto the NEAREST gate within a forward window and
+        // advance r.gate through the intervening gates (forward only — no shortcut/backward
+        // jumps), running the same lap-line + split logic on each gate left behind. A lap
+        // completes on the LAPDATA lap-line set (FUN_00426cf0 anti-shortcut) when present,
+        // else on a start/finish wrap (gate n-1 -> 0).
+        const int W = 15;                        // forward search window (gates)
+        int best = r.gate; float bestD = 1e18f;
+        for (int k = 0; k <= W; ++k) {
+            int gi = (r.gate + k) % n;
+            const float* gg = gates_[static_cast<std::size_t>(gi)].center;
+            const float ex = gg[0] - pos[0], ez = gg[2] - pos[2];
+            const float ed = ex * ex + ez * ez;
+            if (ed < bestD) { bestD = ed; best = gi; }
+        }
+        int guard = 0;
+        while (r.gate != best && guard++ < W + 2) {
+            const int G = r.gate;                // forward advance onto G+1
             bool lapped = false;
-            // F4 (algorithm-faithful port of FUN_00408610 + FUN_00411600; map in
-            // re/analysis/lap_progress_subsystem_2026-06-16.md). The original
-            // flags a LAPDATA Lap_Line gate only on a forward one-gate advance
-            // onto it (cur==prev+1 && cur==lapLine via FUN_00426cf0's list) and a
-            // lap is the declared lap-line set crossed in order — the multi-
-            // Lap_Line anti-shortcut. The standalone advances gates forward by
-            // proximity, so each reach IS that forward advance; we keep the
-            // per-car crossed set in r.lap_mask and complete a lap on the primary
-            // line once every line is set. NOT bit-identical: the original's gate
-            // index comes from a spline racing-line projection we don't port.
-            if (Track::LapLineStep(G, lap_data_.lap_lines, r.lap_mask)) {
+            if (!lap_data_.lap_lines.empty()) {
+                if (Track::LapLineStep(G, lap_data_.lap_lines, r.lap_mask)) { ++r.laps; lapped = true; }
+            } else if (((G + 1) % n) == 0) {      // wrap fallback (no LAPDATA lap lines)
                 ++r.laps; lapped = true;
             }
-            // F4 split times (player car only): record the race clock at each
-            // Split_Sector gate, one record per split per lap (FUN_00411600's
-            // intermediate timing / DAT_008a964c). Re-armed on lap completion.
             if (i == 0) {
                 for (const auto& s : lap_data_.split_sectors)
                     if (G == s.second && s.first >= 0 && s.first < kMaxSplits &&
@@ -2189,12 +2192,32 @@ void TrackRenderer::UpdateRace(float dt) {
             }
             r.gate = (G + 1) % n;
         }
+        const float* gc = gates_[static_cast<std::size_t>(r.gate)].center;
+        const float dx = gc[0] - pos[0], dz = gc[2] - pos[2];
+        const float d = std::sqrt(dx * dx + dz * dz);
         const float frac = (d > 8.f) ? 0.f : (1.f - d / 8.f);
         r.progress = static_cast<float>(r.laps * n + r.gate) + frac;
     };
     step(0, car_pos_);
     for (int i = 0; i < 3 && i < static_cast<int>(ai_cars_.size()); ++i)
         step(i + 1, ai_cars_[static_cast<std::size_t>(i)].pos);
+
+    // [G4] lap-progress diagnostic (env MASHED_LAP_DIAG -> mashed_re.log, ~1/s).
+    {
+        static const bool s_lapdiag = (std::getenv("MASHED_LAP_DIAG") != nullptr);
+        static int s_lf = 0;
+        if (s_lapdiag && (++s_lf % 60) == 0) {
+            if (std::FILE* lf = std::fopen("mashed_re.log", "a")) {
+                std::fprintf(lf, "LAP-DIAG round=%d mode=%d t=%.1f gates=%d laptgt=%d | "
+                    "p0 gate=%d lap=%d prog=%.1f | a1 gate=%d lap=%d | a2 gate=%d lap=%d | a3 gate=%d lap=%d\n",
+                    round_mode_ ? 1 : 0, race_mode_, race_time_, n, lap_target_,
+                    race_[0].gate, race_[0].laps, race_[0].progress,
+                    race_[1].gate, race_[1].laps, race_[2].gate, race_[2].laps,
+                    race_[3].gate, race_[3].laps);
+                std::fclose(lf);
+            }
+        }
+    }
 
     if (!round_mode_) return;   // race rules only run during a match (both modes
                                 // update the shared camera below).

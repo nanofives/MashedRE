@@ -999,6 +999,8 @@ bool RunRaceDemoStep(int /*phase*/) {
         GetEnvironmentVariableA("MASHED_RESULT_DEMO", nullptr, 0) > 0;
     static const bool s_drive_hold =
         GetEnvironmentVariableA("MASHED_DRIVE_HOLD", nullptr, 0) > 0;   // G2: hold InRace for sustained-drive calibration
+    static const bool s_playthrough =
+        GetEnvironmentVariableA("MASHED_PLAYTHROUGH", nullptr, 0) > 0;  // G4: wait for the REAL match to finish
     if (cool > 0) { --cool; return false; }
     const bool inrace = (mashed_re::Race::GameFlow_Mode() ==
                          mashed_re::Race::GameMode::InRace);
@@ -1065,8 +1067,8 @@ bool RunRaceDemoStep(int /*phase*/) {
                 cap("01_results");
                 NavDemoTap(DIK_ESCAPE);   // RequestExit -> Frontend
                 step = 2; cool = 10;
-            } else if (GetTickCount() - t_ms > 9000) {
-                NavDemoTap(DIK_ESCAPE); step = 2; cool = 10;   // safety
+            } else if (GetTickCount() - t_ms > (s_playthrough ? 300000u : 9000u)) {
+                NavDemoTap(DIK_ESCAPE); step = 2; cool = 10;   // safety (G4: allow a full race)
             }
             return false;
         default: return true;

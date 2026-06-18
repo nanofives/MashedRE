@@ -149,7 +149,9 @@ int SplineNearestIndex(std::uintptr_t spline, float px, float pz)
 // mode-0 follow lookahead: BOUNDED raw-point advance (the FUN_00443dc0 curvature
 // walk + FUN_00443300 interpolation refinement are TODO). Advance kLookahead raw
 // points from nearest. [U-C-BANDS / lookahead-refine pending].
-const int kLookahead = 4;
+const int kLookahead = 1;   // [G4] closer target -> small bearing error -> the ControlStep
+                            // "mildly off" full-steer band (err 30..180) rarely fires, so the
+                            // car drives FORWARD along the line instead of orbiting a far point.
 
 void TargetPoint(std::uintptr_t spline, int nearestIdx, float* tx, float* tz)
 {
@@ -214,8 +216,46 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
     //     FUN_004161e0 seed (spline lookahead). Port the helpers in a follow-up. ---
     int mode = 0;
     float tx = ownX, tz = ownZ;
-    int nearest = SplineNearestIndex(spline, ownX, ownZ);
-    if (nearest >= 0) TargetPoint(spline, nearest, &tx, &tz);
+    // [G4] MONOTONIC waypoint follower (standalone nav aid; the original's curvature-walk
+    // FUN_00443300 / FUN_00443dc0 tail is stubbed). Re-searching the NEAREST spline point
+    // each frame let a circling car "stick" near spawn (nearest never advances) so it never
+    // drove a full lap. Instead keep a per-car progress index that ONLY moves forward:
+    // advance when the car reaches its current waypoint, target a few points ahead for smooth
+    // steering, and re-seed to nearest if the car is far off its waypoint (spawn / knocked
+    // off). This makes the AI drive the full racing line -> laps + elimination can resolve.
+    static int s_prog[4] = {0, 0, 0, 0};
+    const int count = I32(spline + 0x200);
+    if (count > 1 && v >= 0 && v < 4) {
+        // mean inter-point spacing (for the lost-reseed threshold only).
+        float total = 0.f;
+        for (int k = 0; k < count; ++k) {
+            int b = (k + 1) % count;
+            float ax = F32(spline + k * 8) - F32(spline + b * 8);
+            float az = F32(spline + k * 8 + 4) - F32(spline + b * 8 + 4);
+            total += std::sqrt(ax * ax + az * az);
+        }
+        float meanSp = total / static_cast<float>(count);
+        if (meanSp < 1.0f) meanSp = 1.0f;
+        int cur = ((s_prog[v] % count) + count) % count;
+        int nxt = (cur + 1) % count;
+        float cx = F32(spline + cur * 8), cz = F32(spline + cur * 8 + 4);
+        float nx = F32(spline + nxt * 8), nz = F32(spline + nxt * 8 + 4);
+        float dc = (cx - ownX) * (cx - ownX) + (cz - ownZ) * (cz - ownZ);
+        float dn = (nx - ownX) * (nx - ownX) + (nz - ownZ) * (nz - ownZ);
+        const float lost = meanSp * 6.0f;
+        if (dc > lost * lost) {                  // genuinely lost (spawn/knocked off) -> reseed
+            int nrst = SplineNearestIndex(spline, ownX, ownZ);
+            if (nrst >= 0) s_prog[v] = nrst;
+        } else if (dn <= dc) {                   // closer to the NEXT waypoint -> advance forward
+            s_prog[v] = s_prog[v] + 1;           // monotonic; scale-free (no arrive radius)
+        }
+        int tgt = ((s_prog[v] + kLookahead) % count + count) % count;
+        tx = F32(spline + tgt * 8);
+        tz = F32(spline + tgt * 8 + 4);
+    } else {
+        int nearest = SplineNearestIndex(spline, ownX, ownZ);   // fallback
+        if (nearest >= 0) TargetPoint(spline, nearest, &tx, &tz);
+    }
     I32(a74(0x0089a52cu, v)) = mode;                // commit behaviour mode
 
     const float err = SteerAngleError(v, tx, tz);  // FUN_00415e20, [0,360)
