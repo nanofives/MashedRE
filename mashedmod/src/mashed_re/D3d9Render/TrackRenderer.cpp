@@ -1462,6 +1462,20 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
             accel = 0.f; steer = 0.f;
         }
     }
+    // [G4] AI-driven player (autonomous playthrough, MASHED_AI_DRIVES_PLAYER): source the
+    // player's steer/accel from slot 0's AI ctrl block — the standalone AI controller already
+    // steps v0 (Ai_Standalone_Tick), so a complete race/cup can run + be verified headless on
+    // the REAL systems (no human, no gate-ribbon scaffold). Last frame's ctrl (the tick runs
+    // later in this fn); one-frame lag is negligible. Requires the .AI bridge (real AI) loaded.
+    static const bool s_ai_player = (std::getenv("MASHED_AI_DRIVES_PLAYER") != nullptr);
+    if (s_ai_player && g_aib.loaded && Ai::I32(Ai::kSplineRaceCnt) > 3) {
+        const int slot = Ai::I32(Ai::kSlotTableBase + 0 * Ai::kSlotTableStride);
+        const std::uint8_t* c = reinterpret_cast<const std::uint8_t*>(
+            Ai::kCtrlBlockBase + static_cast<std::uintptr_t>(slot) * Ai::kCtrlBlockStride);
+        steer = (static_cast<float>(c[0]) - static_cast<float>(c[1])) / 255.0f;
+        accel = c[4] ? static_cast<float>(c[4]) / 255.0f
+                     : -(static_cast<float>(c[5]) / 255.0f);
+    }
 
     // WS-A8 (2026-06-17): when MASHED_REAL_PHYSICS is on, drive the player car
     // through the ported chain (A3 init -> A4 control -> A5 -> A6a -> A6b) instead

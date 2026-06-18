@@ -231,10 +231,24 @@ void VehiclePhysics_StepCar(int slot, float dt, PlayerCarIO& io) {
     // grip-clamp's low-speed full-stop (16) so it does NOT re-trigger the over-damp that
     // killed +0x9c0 before the contact-load fix. 0 disables.
     {
-        static const float kSpeedCap = [] {
+        static const float kSpeedCapBase = [] {
             const char* e = std::getenv("MASHED_SPEEDCAP");
             return e ? (float)std::atof(e) : 45.0f;   // calibrated 2026-06-18 (smooth lap)
         }();
+        // [G4] Per-car cap spread: AI opponents get slightly different top speeds so the
+        // field SEPARATES on track (the elimination rule fires only when the race camera's
+        // required zoom saturates at 10.0 — i.e. cars spread far apart; identical cars cluster
+        // and never resolve a round). A documented standalone substitute for the un-ported
+        // per-AI skill/rubber-band variation (FUN_004177b0/FUN_00417180). Slot 0 (player) =
+        // full base so a human races at the base pace; opponents 1..3 vary. Env MASHED_AI_SPREAD=0
+        // disables (all cars = base).
+        static const bool kSpread = [] {
+            const char* e = std::getenv("MASHED_AI_SPREAD");
+            return !(e && (e[0] == '0'));   // on unless explicitly "0"
+        }();
+        static const float kSlotCapMul[4] = { 1.00f, 0.86f, 1.00f, 0.92f };
+        const float kSpeedCap = kSpeedCapBase *
+            ((kSpread && slot >= 1 && slot <= 3) ? kSlotCapMul[slot] : 1.0f);
         if (kSpeedCap > 0.f) {
             float vx = F(r, off::kVelocity + 0), vy = F(r, off::kVelocity + 4), vz = F(r, off::kVelocity + 8);
             float sp = std::sqrt(vx*vx + vy*vy + vz*vz);
