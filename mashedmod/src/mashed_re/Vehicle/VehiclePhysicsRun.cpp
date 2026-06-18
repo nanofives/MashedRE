@@ -126,6 +126,27 @@ static void SetGrounded(unsigned char* r, bool grounded) {
     // grounded count is a FLOAT count of grounded wheels at byte +0x9e0 (int idx
     // 0x278); 4.0 (0x40800000) is the all-grounded sentinel A6a/A5 gate on.
     F(r, off::kGroundedCnt) = grounded ? 4.0f : 0.0f;
+
+    // [U-A8-CONTACTLOAD] (G2 2026-06-18) Standalone substitute for the per-frame RW
+    // broadphase contact query (FUN_00538c80 + callback LAB_00468b80) that the original
+    // runs: it fills each wheel's contact NORMAL at +0x200/+0x204/+0x208 (A5 Phase-6
+    // pf[3..5], FUN_0046ddb0 @0x46e6xx) and contact LOAD/depth at +0x20c (pf[6]).
+    // Evidence (a6_diag.log): block#4 fired n4=4 but wrote w0f=(0,0,0) because A5 set
+    // the grip coefficients pf[1]/pf[2]/pf[7] (+0x1f8/+0x1fc/+0x210) from pf[6]*pf[4]
+    // = LOAD*normal.y, and LOAD was 0 -> A6a block#4 lbc/l98 = 0 -> zero suspension/grip
+    // force -> no lateral grip -> no yaw torque (+0x9c0 stayed exactly 0) -> the car
+    // could not turn. The flat Arctic ground normal is exactly world-up (0,1,0); kRestLoad
+    // is the rest suspension compression the broadphase would report — a documented
+    // standalone tunable (cf. kYawScale) that scales the overall grip stiffness.
+    constexpr float kRestLoad = 1.0f;   // [U-A8-CONTACTLOAD] calibrate via runtime drive
+    const float load = grounded ? kRestLoad : 0.0f;
+    for (int w = 0; w < 4; ++w) {
+        const std::size_t nb = 0x200u + static_cast<std::size_t>(w) * 0xc4u;  // contact frame base
+        F(r, nb + 0x0) = 0.0f;                       // contact normal.x
+        F(r, nb + 0x4) = grounded ? 1.0f : 0.0f;     // contact normal.y (world up on flat)
+        F(r, nb + 0x8) = 0.0f;                       // contact normal.z
+        F(r, nb + 0xc) = load;                       // +0x20c contact load/depth (pf[6])
+    }
 }
 
 void VehiclePhysics_StepPlayer(float dt, PlayerCarIO& io) {

@@ -27,6 +27,8 @@
 #include <cstdint>
 #include <cstring>
 #include <cmath>
+#include <cstdio>     // [G2-A6DIAG] env-gated angular-velocity production diag
+#include <cstdlib>
 
 namespace mashed_re {
 namespace Vehicle {
@@ -153,6 +155,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
     unsigned local_58 = bGrip ? 1u : 0u;
 
     // per-wheel loop (4 wheels, piVar12 = self + 0x1a4 ints, stride 0x31 ints)
+    int g2_n4 = 0, g2_n5 = 0;   // [G2-A6DIAG] block#4 / block#5 fire counts
     int* p = self + (0x1a4 / 4);
     for (int wheel = 0; wheel < 4; ++wheel, p += 0x31) {
         // drive-force block (committed mode 2 + active)
@@ -221,6 +224,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
             }
             // all-grounded suspension force (writes per-wheel force p[0x1c..0x1e])
             if (kSpeedMin < le4 && Ri(v, 0x9e0) == 0x40800000) {
+                ++g2_n4;   // [G2-A6DIAG]
                 float inv = 1.0f / le4;
                 float s0 = le0 * inv, s1 = ldc * inv;
                 if (k1024 < le4) le4 = k1024;
@@ -254,6 +258,7 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
 
         // ===== cross-product friction block #5 (per-wheel force -> torque accum) =====
         if (kSpeedMin < Mag3(Rp(p,0x1c), Rp(p,0x1d), Rp(p,0x1e))) {
+            ++g2_n5;   // [G2-A6DIAG]
             float inv = 1.0f / Rp(p,-0xb);
             float d0 = Rp(p,-9)*inv, d1 = Rp(p,-8)*inv, d2 = Rp(p,-7)*inv;
             float f0 = Rp(p,0x1c), f1 = Rp(p,0x1d), f2 = Rp(p,0x1e);
@@ -283,6 +288,25 @@ void Vehicle_Integrate2(int* self, int param_1, float dt, void* /*wheelBlock*/, 
         Wf(v, 0x9bc, l_78 * adt + Rf(v,0x9bc));
         Wf(v, 0x9c0, l_74 * adt + Rf(v,0x9c0));
         Wf(v, 0x9c4, l_70 * adt + Rf(v,0x9c4));
+    }
+    // [G2-A6DIAG] env MASHED_A6_DIAG: pinpoint why +0x9c0 (yaw rate) stays 0.
+    {
+        static const bool g2_on = (std::getenv("MASHED_A6_DIAG") != nullptr);
+        static int g2_n = 0;
+        if (g2_on && g2_n < 60) {
+            if (std::FILE* lf = std::fopen("a6_diag.log", "a")) {
+                std::fprintf(lf,
+                    "A6 mode=%d gndBits=%08x st10=%d c54=%g c5c=%g adt=%g "
+                    "n4=%d n5=%d l78=%g l74=%g l70=%g l60=%g ld0=%g "
+                    "w0f=(%g,%g,%g) av=(%g,%g,%g)\n",
+                    mode, (unsigned)Ri(v,0x9e0), Ri(v,0x10), Rf(v,0x54), Rf(v,0x5c), adt,
+                    g2_n4, g2_n5, l_78, l_74, l_70, (double)l_60, (double)l_d0,
+                    Rf(v,0x214), Rf(v,0x218), Rf(v,0x21c),       /* wheel-0 force p[0x1c..0x1e] */
+                    Rf(v,0x9bc), Rf(v,0x9c0), Rf(v,0x9c4));
+                std::fclose(lf);
+            }
+            ++g2_n;
+        }
     }
     // redistribute the normal-load torque by (l_d0 - |l_78,l_74,l_70|)/l_d0
     double m78 = (double)Mag3(l_78, l_74, l_70);

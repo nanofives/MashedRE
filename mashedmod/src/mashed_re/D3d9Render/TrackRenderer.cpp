@@ -1489,23 +1489,17 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
         car_yaw_ = io.yaw;   // WS-A8-STEER: physics-integrated heading (+0x9c0)
-        // [U-A8-SPEEDCAP] the ported chain integrates in the original's internal scale;
-        // pending the units RE (WAVE-16) the standalone velocity runs away (~300 vs the
-        // track-scale ~kTop). Clamp horizontal speed to the track-relative max as a
-        // documented standalone stabilization so the car stays controllable + on-collision
-        // (the drive-units faithfulness is the wave-16 DRIVE-STABILIZE RE; the steer PATH
-        // is already verified correct).
-        {
-            const float vh = std::sqrt(car_vel_[0]*car_vel_[0] + car_vel_[2]*car_vel_[2]);
-            if (vh > kTop && vh > 1e-4f) {
-                const float sc = kTop / vh;
-                car_vel_[0] *= sc; car_vel_[2] *= sc; car_speed_ = kTop;
-            }
-        }
-        // Integrate pos from the chain's OUTPUT velocity (not the pre-chain value);
-        // stop at the collision edge instead of teleport/oscillate.
-        const float nx = car_pos_[0] + car_vel_[0] * in.dt;
-        const float nz = car_pos_[2] + car_vel_[2] * in.dt;
+        // G2 (2026-06-18): do NOT cap speed here. A6a's grip-clamp #6 (Integrate2.cpp
+        // 324-348) self-limits speed + damps angular velocity against thresholds tuned
+        // for the chain's NATURAL internal velocity scale (32768, low-speed-stop at 16);
+        // an external cap to ~kTop pushes the car permanently into the over-damp /
+        // full-stop regime and KILLS the yaw rate. Let the chain run at its scale; convert
+        // to world units only for the POSITION step via kWorldVel (internal->world).
+        // [U-A8-WORLDVEL] scale TBD by this run; start 1.0 (no conversion) to read the
+        // chain's natural speed/yaw, then calibrate so the car covers the track sanely.
+        const float kWorldVel = 1.0f;
+        const float nx = car_pos_[0] + car_vel_[0] * kWorldVel * in.dt;
+        const float nz = car_pos_[2] + car_vel_[2] * kWorldVel * in.dt;
         bool nok = false;
         const float ngy = GroundHeight(nx, nz, &nok);
         if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }

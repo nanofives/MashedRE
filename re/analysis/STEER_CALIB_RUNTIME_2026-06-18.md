@@ -87,3 +87,34 @@ NEXT (focused): diag the steered_fwd (+0xb4) + the Phase-5 steer-torque + the +0
 find why the steered wheels don't produce a body yaw rate (candidate: Phase-5 torque needs a
 lateral velocity-delta the straight-line drive doesn't yet have; or the +0x9c0 integrate is
 gated/inert). THEN calibrate kYawScale. Steer wiring + wheel rotation are confirmed working.
+
+## UPDATE 2026-06-18 (part 3) — ROOT CAUSE FOUND + FIXED. STEERING WORKS.
+Instrumented A6a (Integrate2.cpp, env MASHED_A6_DIAG -> a6_diag.log). The decisive read:
+`n4=4 n5=0 w0f=(0,0,0) l74=0 av=(0,0,0)` while `l60` (grip dir accumulator) GREW — i.e. block #4
+fired for all 4 wheels and computed a valid force DIRECTION, but wrote an EXACTLY ZERO force, so
+block #5 (force->torque) never fired -> no yaw.
+
+WHY: A6a block #4's force magnitude is `lbc = p[0x15]*p[0x1b]*g_suspScale*..` and
+`l98 = p[0x16]*p[0x1b]*..`, where (mapping A6a's p=self+0x1a4, wheel-0 base +0x16c):
+  p[0x15]=wheel +0x1f8, p[0x16]=+0x1fc, p[0x1b]=+0x210 (the per-wheel SUSPENSION/GRIP coefficients).
+Ghidra (pool11 RO) FUN_0046ddb0 (A5) final per-wheel loop (pfVar14=self+0x7d=+0x1f4) sets them:
+  pfVar14[1]=+0x1f8 = 0.6*spring*gripcoef ; pfVar14[2]=+0x1fc = 0.05*spring*gripcoef ;
+  pfVar14[7]=+0x210 = pfVar14[6]*pfVar14[4] = LOAD(+0x20c) * normal.y(+0x204).
+The grip COEFFICIENTS (pf[1]/pf[2]) need only the spring (A3 sets it) — but pf[7] = LOAD*normal.y,
+and the per-wheel CONTACT LOAD (+0x20c) + NORMAL (+0x200/+0x204/+0x208) are produced each frame by
+the RW broadphase contact query (FUN_00538c80 + callback LAB_00468b80) — which the standalone STUBS.
+`SetGrounded` set only the wheel STATE (+0x198) + grounded count (+0x9e0), NOT the contact geometry.
+=> LOAD=0 => pf[7]=0 => block#4 force=0 => no lateral grip => +0x9c0=0 => the car could not turn.
+
+FIX (VehiclePhysicsRun.cpp SetGrounded, [U-A8-CONTACTLOAD]): the contact stub now also writes, per
+grounded wheel, the flat-ground contact NORMAL (0,1,0) at +0x200/+0x204/+0x208 and a rest LOAD at
++0x20c (kRestLoad, a documented standalone tunable like kYawScale). Also removed the external speed
+CAP in TrackRenderer (it forced the car into A6a's grip-clamp #6 low-speed/over-damp regime and
+killed +0x9c0); the chain's own grip-clamp #6 self-limits speed at its natural scale.
+
+RESULT (a6_diag + drive log, MASHED_DRIVE_HOLD): n5=4, l74~2.2e5, w0f=(-375,0,-17839),
+av=(0,0.0072,0) — and car_yaw sweeps 1.55 -> 1.91 -> 2.45 -> ... -> 5.84 under held steer=-0.5, the
+car driving a curved LOOP. **Steering is real physics now.** REMAINING (calibration, the original
+G2 "smooth" tail): chain speed ~128 (> maxspeed +0x190=34) is fast for the narrow Arctic strip ->
+fixed-steer demo drives off-strip -> edge-stops; tune kRestLoad + kYawScale + a world-velocity scale
+(kWorldVel) so the on-track pace + turn radius are sane. Steering CORRECTNESS is no longer the blocker.
