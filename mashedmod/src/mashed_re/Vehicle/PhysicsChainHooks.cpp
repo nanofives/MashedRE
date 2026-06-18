@@ -424,20 +424,38 @@ void SelfTestLog(const char* s) {
 
 // Compare MY A4_BodyMath vs the ORIGINAL body on the SAME live record state.
 // Returns mismatch count; logs per-call summary. Runs for the first kMaxTests calls.
-int g_selfTestCount = 0;        // calls WITH nonzero accel/brake input (the force path)
+int g_selfTestCount = 0;        // total logged calls
 int g_selfTestIdle  = 0;        // coast calls (no input) — sampled sparsely
-const int kMaxTests = 96;
+int g_selfTestAccel = 0;        // accel-only calls (input[0]!=0, input[1]==0)
+int g_selfTestBrake = 0;        // BRAKE-branch calls (input[1]!=0)  — TARGET branch
+int g_selfTestHiIn5 = 0;        // input[5]>128 grip-else branch    — TARGET branch
+const int kMaxIdle  = 8;
+const int kMaxAccel = 40;
+const int kMaxBrake = 40;       // reserve a dedicated quota for the brake branch
+const int kMaxHiIn5 = 16;
+// WS-PHYS-COVERAGE-SCENARIO: A4's brake branch (input[1]!=0, the FCHS-negated force
+// path) and the input[5]>128 grip-else branch were unhit in the throttle-only
+// player-car demo. The per-frame dispatcher invokes A4 for EVERY car; the AI
+// opponents (slots 1-3) brake into corners on their own, so the brake-branch calls
+// arrive from AI records during a normal race. Independent per-branch quotas keep the
+// (far more numerous) accel/coast calls from filling the cap before a brake call lands.
 void A4_SelfTest(void* record, int param_1, float dt, std::uint8_t* input, void* xform,
                  int gameMode, unsigned phase) {
-    if (g_selfTestCount >= kMaxTests) return;
-    // Prioritize the DRIVE path (input nonzero exercises the force formula / grip
-    // branch / boost gate). Keep only a few idle/coast samples so the log isn't
-    // flooded by the pre-throttle countdown frames.
-    const bool hasInput = (input[0] != 0) || (input[1] != 0);
-    if (!hasInput) {
-        if (g_selfTestIdle >= 8) return;
-        ++g_selfTestIdle;
-    }
+    const bool brake  = (input[1] != 0);
+    const bool accel  = (input[0] != 0) && !brake;
+    const bool hiIn5  = ((input[0] != 0) || brake) && (input[5] > 128);
+    const bool idle   = (input[0] == 0) && (input[1] == 0);
+    // admit the call only if it advances some branch quota that is not yet full
+    bool admit = false;
+    if (brake && g_selfTestBrake < kMaxBrake) admit = true;
+    if (hiIn5 && g_selfTestHiIn5 < kMaxHiIn5) admit = true;
+    if (accel && g_selfTestAccel < kMaxAccel) admit = true;
+    if (idle  && g_selfTestIdle  < kMaxIdle ) admit = true;
+    if (!admit) return;
+    if (idle)  ++g_selfTestIdle;
+    if (accel) ++g_selfTestAccel;
+    if (brake) ++g_selfTestBrake;
+    if (hiIn5) ++g_selfTestHiIn5;
     // snapshot the full record so each impl runs from identical input state
     static std::uint8_t snap[0xd04], mineOut[0xd04];
     std::memcpy(snap, record, 0xd04);
@@ -462,9 +480,10 @@ void A4_SelfTest(void* record, int param_1, float dt, std::uint8_t* input, void*
     std::uint32_t mRA = *reinterpret_cast<std::uint32_t*>((char*)record + 0x270 + phase*4);
     if (mRD != origRD) { mism++; p += wsprintfA(line+p, " rd:o=%08x,m=%08x", origRD, mRD); }
     if (mRA != origRA) { mism++; p += wsprintfA(line+p, " ra:o=%08x,m=%08x", origRA, mRA); }
-    char hdr[160];
-    wsprintfA(hdr, "[%d] in0=%u in1=%u in5=%u gm=%d ph=%u ndiff=%d%s\r\n",
-              g_selfTestCount, input[0], input[1], input[5], gameMode, phase, mism,
+    char hdr[200];
+    int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
+    wsprintfA(hdr, "[%d] slot=%d in0=%u in1=%u in5=%u gm=%d ph=%u ndiff=%d%s\r\n",
+              g_selfTestCount, slot, input[0], input[1], input[5], gameMode, phase, mism,
               mism ? "" : " OK");
     SelfTestLog(hdr);
     if (mism) { line[p]=0; SelfTestLog("   "); SelfTestLog(line); SelfTestLog("\r\n"); }
@@ -907,10 +926,21 @@ const int kA5WheelOffs[] = { 0x214, 0x2d8, 0x39c, 0x460 };
 
 int   g_a5Count = 0;
 int   g_a5RngHits = 0;
-const int kA5MaxTests = 96;
-
+int   g_a5Gnd = 0;      // all-4-grounded (grounded==4.0) baseline calls
+int   g_a5Air = 0;      // airborne (grounded != 4.0) — TARGET branch
+const int kA5MaxGnd = 48;
+const int kA5MaxAir = 48;   // reserve a dedicated quota for the airborne susp path
+// WS-PHYS-COVERAGE-SCENARIO: A5's airborne branch (grounded != 4.0 -> the
+// divide-by-dt suspension path + airborne-flag) and the random-surface RNG branch
+// (key 0xffff32ff) were unhit when only the all-grounded player car was sampled. The
+// per-frame dispatcher invokes A5 for EVERY car; AI opponents (slots 1-3) leave the
+// ground on Arctic's terrain, so their records drive the airborne branch. A dedicated
+// airborne quota (independent of the grounded baseline) lets a longer race fill it.
 void A5_SelfTest(int* record, float dt, void* xform) {
-    if (g_a5Count >= kA5MaxTests) return;
+    const std::uint32_t groundedBits = *reinterpret_cast<std::uint32_t*>((char*)record + 0x9e0);
+    const bool airborne = (groundedBits != 0x40800000u);   // != 4.0f
+    if (airborne) { if (g_a5Air >= kA5MaxAir) return; }
+    else          { if (g_a5Gnd >= kA5MaxGnd) return; }
     static std::uint8_t snapRec[0xd04];
     static std::uint8_t snapScr[0x30];   // 0x881560..0x881590
     char* scr = reinterpret_cast<char*>(0x00881560);
@@ -970,12 +1000,14 @@ void A5_SelfTest(int* record, float dt, void* xform) {
             if (p < 900) p += wsprintfA(line+p, " scr[%d]:o=%08x,m=%08x", i, origScr[i], mineScr[i]); }
     }
     if (rngFired) g_a5RngHits++;
+    if (airborne) g_a5Air++; else g_a5Gnd++;
 
-    char hdr[200];
+    char hdr[220];
     int grounded = *reinterpret_cast<int*>((char*)record + 0x9e0);
-    wsprintfA(hdr, "[%d] dt=%08x grounded=%08x rng=%d ndiff=%d%s\r\n",
-              g_a5Count, *reinterpret_cast<std::uint32_t*>(&dt), grounded, rngFired ? 1 : 0,
-              mism, mism ? "" : " OK");
+    int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x grounded=%08x air=%d rng=%d ndiff=%d%s\r\n",
+              g_a5Count, slot, *reinterpret_cast<std::uint32_t*>(&dt), grounded,
+              airborne ? 1 : 0, rngFired ? 1 : 0, mism, mism ? "" : " OK");
     A5_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A5_SelfTestLog("   "); A5_SelfTestLog(line); A5_SelfTestLog("\r\n"); }
     g_a5Count++;
@@ -1943,13 +1975,37 @@ const int kA6aWheelPrev[]  = { 0x1a0, 0x264, 0x328, 0x3ec };   // piVar12[-1]
 const int kA6aWheelFx[]    = { 0x214, 0x2d8, 0x39c, 0x460 };   // force X (Z=+8)
 
 int g_a6aCount = 0;
-int g_a6aIdle  = 0;
-const int kA6aMaxTests = 96;
-
+int g_a6aIdle  = 0;     // coast (no throttle/brake)
+int g_a6aAccel = 0;     // throttle (input[4]!=0)
+int g_a6aBrake = 0;     // BRAKE branch (input[5]!=0 && input[4]==0) — TARGET
+int g_a6aAir   = 0;     // airborne (grounded != 4.0)               — TARGET
+const int kA6aMaxIdle  = 8;
+const int kA6aMaxAccel = 32;
+const int kA6aMaxBrake = 32;
+const int kA6aMaxAir   = 32;
+// WS-PHYS-COVERAGE-SCENARIO: A6a's brake branch (input[5]!=0 && input[4]==0 ->
+// BrakeForceAccum + the wheel>1 brake-quantize call#7) and the airborne path
+// (grounded != 4.0) were unhit in the throttle-only player demo. The per-frame
+// dispatcher invokes A6a for EVERY car; the AI opponents brake into corners and
+// leave the ground, so their records exercise both. Independent per-branch quotas
+// keep the more-numerous accel/coast calls from filling the cap first. (A6a's known
+// susp-force float10 residual is on the GROUNDED accel path and is unaffected.)
 void A6a_SelfTest(int* record, int param_1, float dt, void* param_3, std::uint8_t* input) {
-    if (g_a6aCount >= kA6aMaxTests) return;
-    const bool hasInput = (input[4] != 0) || (input[5] != 0);
-    if (!hasInput) { if (g_a6aIdle >= 8) return; ++g_a6aIdle; }
+    const bool brake = (input[5] != 0) && (input[4] == 0);
+    const bool accel = (input[4] != 0);
+    const bool idle  = (input[4] == 0) && (input[5] == 0);
+    const std::uint32_t groundedBits = *reinterpret_cast<std::uint32_t*>((char*)record + 0x9e0);
+    const bool airborne = (groundedBits != 0x40800000u);
+    bool admit = false;
+    if (airborne && g_a6aAir   < kA6aMaxAir  ) admit = true;
+    if (brake    && g_a6aBrake < kA6aMaxBrake) admit = true;
+    if (accel    && g_a6aAccel < kA6aMaxAccel) admit = true;
+    if (idle     && g_a6aIdle  < kA6aMaxIdle ) admit = true;
+    if (!admit) return;
+    if (airborne) ++g_a6aAir;
+    if (brake)    ++g_a6aBrake;
+    if (accel)    ++g_a6aAccel;
+    if (idle)     ++g_a6aIdle;
 
     static std::uint8_t snapRec[0xd04];
     std::memcpy(snapRec, record, 0xd04);
@@ -1991,11 +2047,12 @@ void A6a_SelfTest(int* record, int param_1, float dt, void* param_3, std::uint8_
         if (fz != origFz[i])   { mism++; if (p<900) p += wsprintfA(line+p, " w%dfz:o=%08x,m=%08x", i, origFz[i], fz); }
     }
 
-    char hdr[220];
+    char hdr[240];
     int grounded = *reinterpret_cast<int*>((char*)record + 0x9e0);
-    wsprintfA(hdr, "[%d] dt=%08x in4=%u in5=%u gm=%d grounded=%08x ndiff=%d%s\r\n",
-              g_a6aCount, *reinterpret_cast<std::uint32_t*>(&dt), input[4], input[5],
-              Fi_GameMode(), grounded, mism, mism ? "" : " OK");
+    int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x in4=%u in5=%u gm=%d grounded=%08x air=%d ndiff=%d%s\r\n",
+              g_a6aCount, slot, *reinterpret_cast<std::uint32_t*>(&dt), input[4], input[5],
+              Fi_GameMode(), grounded, airborne ? 1 : 0, mism, mism ? "" : " OK");
     A6a_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A6a_SelfTestLog("   "); A6a_SelfTestLog(line); A6a_SelfTestLog("\r\n"); }
     g_a6aCount++;
@@ -2287,16 +2344,23 @@ void A6b_SelfTestLog(const char* s) {
 const int kA6bRecOffs[] = { 0x9bc, 0x9c0, 0x9c4 };
 
 int g_a6bCount = 0;
-int g_a6bAir   = 0;     // calls that actually entered the airborne body
-const int kA6bMaxTests = 96;
+int g_a6bAir   = 0;     // calls that actually entered the airborne body (the TARGET branch)
+int g_a6bGnd   = 0;     // grounded no-op calls (gate-only)
+const int kA6bMaxAir = 64;   // reserve most slots for the airborne aero body
+const int kA6bMaxGnd = 8;    // a few grounded no-op rows only
 
+// WS-PHYS-COVERAGE-SCENARIO: the airborne aero body (+0x9e0==0.0) is the function's
+// real work; in a throttle-only player-car demo the player never leaves the ground,
+// but the per-frame dispatcher (FUN_00470c70) invokes A6b for EVERY car record, and
+// the AI opponents (slots 1-3) brake/steer/jump on their own — so an AI car that
+// flies off Arctic's terrain drives this hook airborne. The sampler now keeps a large
+// dedicated AIRBORNE quota (independent of the grounded-no-op quota) so a longer race
+// fills it from whichever car (player or AI) actually goes airborne.
 void A6b_SelfTest(int* record, void* xform, float dt) {
-    if (g_a6bCount >= kA6bMaxTests) return;
-    // Only the airborne path (+0x9e0==0.0) writes anything. Sample those plus a few
-    // grounded no-ops so the log shows the gate is exercised.
     const bool airborne = (*reinterpret_cast<float*>((char*)record + 0x9e0) == 0.0f);
     const bool haveXform = (xform != nullptr);
-    if (!airborne) { if (g_a6bAir >= 4) return; }   // a few grounded no-op rows only
+    if (airborne) { if (g_a6bAir >= kA6bMaxAir) return; }
+    else          { if (g_a6bGnd >= kA6bMaxGnd) return; }
 
     static std::uint8_t snapRec[0xd04];
     static std::uint8_t snapXf[64];
@@ -2330,13 +2394,15 @@ void A6b_SelfTest(int* record, void* xform, float dt) {
                 if (p < 900) p += wsprintfA(line+p, " m[%d]:o=%08x,m=%08x", i, origXf[i], mXf[i]); }
         }
     }
-    if (airborne) g_a6bAir = (g_a6bAir < 1000) ? g_a6bAir + 1 : g_a6bAir;
-    else          g_a6bAir++;
+    if (airborne) g_a6bAir++;
+    else          g_a6bGnd++;
 
     char hdr[200];
     int state = *reinterpret_cast<int*>((char*)record + 0x9f0);
-    wsprintfA(hdr, "[%d] dt=%08x air=%d state=%d xform=%d ndiff=%d%s\r\n",
-              g_a6bCount, *reinterpret_cast<std::uint32_t*>(&dt), airborne ? 1 : 0,
+    // slot = (record - DAT_008815a0) / 0xd04 : 0=player, 1..3=AI opponents
+    int slot = (int)(((std::uintptr_t)record - 0x008815a0) / 0xd04);
+    wsprintfA(hdr, "[%d] slot=%d dt=%08x air=%d state=%d xform=%d ndiff=%d%s\r\n",
+              g_a6bCount, slot, *reinterpret_cast<std::uint32_t*>(&dt), airborne ? 1 : 0,
               state, haveXform ? 1 : 0, mism, mism ? "" : " OK");
     A6b_SelfTestLog(hdr);
     if (mism) { line[p] = 0; A6b_SelfTestLog("   "); A6b_SelfTestLog(line); A6b_SelfTestLog("\r\n"); }
