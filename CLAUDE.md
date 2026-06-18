@@ -218,6 +218,15 @@ Rules:
 - If you must trace a hot function, **sample one function at a time** and keep the run short.
 - For crash investigation, use `re/frida/poll_attach_catch_crash.py` (an exception-handler-based EIP catcher), not `Interceptor` traces.
 
+### MASHED process hygiene (multi-session)
+
+Multiple Claude sessions may run concurrently, each spawning its own `MASHED.exe` (Frida diffs, TTD captures, parity). **MASHED is NOT single-instance** — concurrent instances coexist fine.
+
+Rules (mandatory — a violation killed another session's TTD race capture mid-record on 2026-06-17):
+- **Track the PIDs you spawn; kill ONLY those.** Never blanket-kill by name — no `Stop-Process -Name MASHED`, no `taskkill /im MASHED.exe`, no "kill all MASHED before my run". That terminates other sessions' games (forced-kill shows as guest exit `0xFFFFFFFF`).
+- **Never auto-attach to "first MASHED by name".** Target an explicit PID (the one you spawned). Tools that record/attach must take an explicit PID and refuse to guess when several MASHED are running.
+- See the **multi-session** skill for capture-window coordination. Detail: memory `feedback_multisession_mashed_kill_by_pid`.
+
 ### Confidence promotion (NO overclaiming)
 
 Synthetic Frida A/B with the hook bypassed (env-var disabled) is **C3** evidence at best — it proves the implementation is bit-identical, not that the patcher works. **C4 demands a canonical-scenario run with the hook actually installed.** This rule has been violated before; refuse C4 promotions that lack canonical-scenario evidence with the inline-JMP live.

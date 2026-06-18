@@ -1,0 +1,34 @@
+$$ ============================================================================
+$$ extract_fastsqrt.txt — TTD replay extraction, FastSqrt 0x004c3b30
+$$
+$$ Target: FastSqrt (hooks.csv:004c3b30, C4) — RW3 fast-sqrt LUT primitive.
+$$ Signature: single float in, float out. __cdecl => arg at [esp+4] on entry;
+$$ x87 float return in st0 on exit. Self-validating: out^2 ~= in.
+$$
+$$ Why this target: fires ~2,700x/s at the main menu — the exact hot path where
+$$ a Frida Interceptor destabilizes MASHED in ~6 s (CLAUDE.md "Frida overhead on
+$$ hot paths"). If TTD.Calls() returns thousands here, the lane is proven.
+$$
+$$ Run (after opening the .run in WinDbg):
+$$    0:000> $$><C:\Users\maria\Desktop\Proyectos\Mashed\scripts\ttd\extract_fastsqrt.txt
+$$ ============================================================================
+
+.echo ===== [1] FastSqrt 0x4c3b30 call census (decisive feasibility evidence) =====
+dx @$cursession.TTD.Calls(0x4c3b30).Count()
+
+.echo ===== [2] first 30 calls: positions + thread =====
+dx -r2 @$cursession.TTD.Calls(0x4c3b30).Select(c => new { Start = c.TimeStart, End = c.TimeEnd, Tid = c.ThreadId }).Take(30)
+
+.echo ===== [3] spot-check call[0] INPUT (float @ [esp+4] at entry) =====
+dx @$cursession.TTD.Calls(0x4c3b30)[0].TimeStart.SeekTo()
+dx ((float *)(@esp + 4))[0]
+
+.echo ===== [4] spot-check call[0] OUTPUT (st0 at exit) — verify out^2 ~= in =====
+dx @$cursession.TTD.Calls(0x4c3b30)[0].TimeEnd.SeekTo()
+dx @$curthread.Registers.FloatingPoint.st0
+
+$$ NOTE: commands [3]/[4] (seek + reinterpret + FP register name) are validated
+$$ interactively against the FIRST real trace, then folded into a per-call JS
+$$ extractor (scripts\ttd\extract_calls.js) that dumps every (in,out) pair to CSV
+$$ for an offline bit-diff against the reimpl. The census [1] alone answers the
+$$ spike: does TTD capture the Frida-hostile hot path? Yes/No by the count.

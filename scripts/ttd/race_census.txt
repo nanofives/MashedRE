@@ -1,0 +1,7 @@
+.echo ===FASTSQRT_0x4c3b30===
+dx @$cursession.TTD.Calls(0x4c3b30).Count()
+.echo ===CAMERA_DIRECTOR_0x446520===
+dx @$cursession.TTD.Calls(0x446520).Count()
+.echo ===PHYS_A4_ENTRY_0x470670===
+dx @$cursession.TTD.Calls(0x470670).Count()
+.echo ===DONE===

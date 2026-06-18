@@ -1,0 +1,7 @@
+.echo ===MODULE===
+lm m MASHED
+.echo ===EXEC_FASTSQRT===
+dx @$cursession.TTD.Memory(0x4c3b30, 0x4c3b31, "e").Count()
+.echo ===CALLS_FASTSQRT===
+dx @$cursession.TTD.Calls(0x4c3b30).Count()
+.echo ===DONE===

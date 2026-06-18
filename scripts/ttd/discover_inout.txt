@@ -1,0 +1,23 @@
+.echo ===C0_START===
+dx @$cursession.TTD.Calls(0x4c3b30)[0].TimeStart.SeekTo()
+.echo --input *(float*)(esp+4)--
+dx ((float *)@esp)[1]
+.echo ===C0_END===
+dx @$cursession.TTD.Calls(0x4c3b30)[0].TimeEnd.SeekTo()
+.echo --st0 via r--
+r st0
+.echo --st0 via data model--
+dx @$curthread.Registers.FloatingPoint.st0
+.echo ===C1_START===
+dx @$cursession.TTD.Calls(0x4c3b30)[1].TimeStart.SeekTo()
+dx ((float *)@esp)[1]
+.echo ===C1_END===
+dx @$cursession.TTD.Calls(0x4c3b30)[1].TimeEnd.SeekTo()
+r st0
+.echo ===C2_START===
+dx @$cursession.TTD.Calls(0x4c3b30)[2].TimeStart.SeekTo()
+dx ((float *)@esp)[1]
+.echo ===C2_END===
+dx @$cursession.TTD.Calls(0x4c3b30)[2].TimeEnd.SeekTo()
+r st0
+.echo ===DONE===
