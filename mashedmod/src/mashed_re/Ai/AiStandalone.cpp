@@ -289,8 +289,19 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         // to oscillate around: it eases off as the car aligns. Magnitude capped low (anti-spin,
         // G2's +0x9c0 is strong). toCtrl0 = (se>0): err<180 (se>0) -> ctrl[0], matching the bands.
         float se = err; if (se > 180.0f) se -= kWrap;              // [-180,180]
-        const float kFullDeg = 90.0f;
-        float s = se / kFullDeg; if (s > 1.0f) s = 1.0f; if (s < -1.0f) s = -1.0f;
+        // PD controller: proportional + DERIVATIVE damping. Proportional-only oscillated because
+        // G2's strong +0x9c0 yaw rate overshoots alignment (momentum) and swings back. The D term
+        // (rate of change of the error) opposes that overshoot -> the car SETTLES onto the target
+        // heading instead of donut-ing. Derivative is on the error signal (per-car prevSe) so no
+        // physics plumbing is needed; the wrap-corrected delta avoids the +-180 seam.
+        static float s_prevSe[4] = {0, 0, 0, 0};
+        float d = se - s_prevSe[v];
+        while (d > 180.0f) d -= kWrap; while (d < -180.0f) d += kWrap;
+        s_prevSe[v] = se;
+        const float kP = 1.0f / 90.0f;                             // full P at 90deg off
+        const float kD = 0.020f;                                   // damping (per-frame err rate)
+        float s = kP * se + kD * d;
+        if (s > 1.0f) s = 1.0f; if (s < -1.0f) s = -1.0f;
         const float kMaxSteer = 0.45f;                             // [G4] AI steer cap (anti-spin)
         s *= kMaxSteer;
         bool toCtrl0 = (s >= 0.0f);
