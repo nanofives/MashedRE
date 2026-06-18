@@ -298,11 +298,24 @@ void ControlStep(std::uintptr_t spline, int v, std::uint8_t* ctrl)
         float d = se - s_prevSe[v];
         while (d > 180.0f) d -= kWrap; while (d < -180.0f) d += kWrap;
         s_prevSe[v] = se;
+        // DEADBAND: steer 0 when roughly aligned so the car drives STRAIGHT (a continuous small
+        // steer makes it circle forever — that's why every car, incl. the AI-driven player,
+        // donut'd near spawn; G2's "smooth drive" was itself a CIRCLE, not a lap). Outside the
+        // band, steer proportionally toward the target; once within it, go straight and let the
+        // car cover ground -> it reaches the waypoint -> advance -> new target.
+        const float kDeadDeg = 12.0f;
         const float kP = 1.0f / 90.0f;                             // full P at 90deg off
         const float kD = 0.020f;                                   // damping (per-frame err rate)
-        float s = kP * se + kD * d;
-        if (s > 1.0f) s = 1.0f; if (s < -1.0f) s = -1.0f;
-        const float kMaxSteer = 0.45f;                             // [G4] AI steer cap (anti-spin)
+        float s;
+        if (se > -kDeadDeg && se < kDeadDeg) { s = 0.0f; }         // aligned -> drive straight
+        else { s = kP * se + kD * d; if (s > 1.0f) s = 1.0f; if (s < -1.0f) s = -1.0f; }
+        // [G4] kMaxSteer is PHYSICS-GROUNDED, not arbitrary: turn radius = worldSpeed/yawRate, and
+        // at the old 0.45 cap the AI turned at radius ~10 on a radius-80 TRACK — 3-4x too tight, so
+        // the car was geometrically LOCKED in a circle and could never reach a target ~20u ahead
+        // (it donut'd near spawn). The player's G2 circle: steer 0.5 -> radius ~13. To follow the
+        // track curvature the steer must arc at ~track radius -> steer ~0.08-0.12. Cap at 0.15 (a
+        // little margin for real corners) so the car drives nearly STRAIGHT with gentle correction.
+        const float kMaxSteer = 0.15f;
         s *= kMaxSteer;
         bool toCtrl0 = (s >= 0.0f);
         int mag = static_cast<int>((s < 0.f ? -s : s) * 255.0f + 0.5f); if (mag > 255) mag = 255;

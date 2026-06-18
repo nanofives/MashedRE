@@ -98,3 +98,29 @@ new getter) so ControlStep can damp. Then: cars hold the line -> full laps -> el
 resolve -> the cup loop (results -> next track -> re-enter, progression already persists per win).
 This is control-systems tuning, not RVA RE; ~a focused session. Env infra in place: MASHED_AI_NAV,
 MASHED_AI_PUREPURSUIT, MASHED_AI_STEERFLIP, MASHED_LAP_DIAG, MASHED_PLAYTHROUGH.
+
+## UPDATE 3 — STEERING DEADBAND: cars now drive to the first corner (gate 2 -> 6); stick there
+Two more fixes to the opt-in pure-pursuit (MASHED_AI_PUREPURSUIT):
+- PHYSICS-GROUNDED steer cap: at the old 0.45 cap the AI turned at radius ~10 on a radius-80
+  TRACK (3-4x too tight) -> geometrically locked in a circle, couldn't reach a target ~20u ahead.
+  Capped to 0.15 (turn radius ~= track radius) so the car arcs nearly STRAIGHT.
+- STEERING DEADBAND (12deg): steer 0 when roughly aligned so the car drives STRAIGHT instead of
+  continuously turning (any continuous small steer makes it circle — that's why every car incl.
+  the AI-driven player donut'd; G2's "smooth drive" was itself a CIRCLE, not a lap).
+RESULT: real progress — the cars now drive NORTH and reach the FIRST CORNER (gate ~6, z=41) instead
+of donut-ing at spawn (gate 2). One car (a2) once climbed gate 6->11 (most of the way around). BUT
+they reliably STICK at the gate-6 corner: the car drives straight (deadband) toward a lookahead
+target whose straight chord cuts OFF the collision mesh at the corner apex; off-mesh, the recovery
+retains velocity but the deadband (steer 0, "aligned") won't turn the car back onto the track -> it
+idles against the edge. Outcome is frame-timing-chaotic (usually stuck at gate 6; occasionally one
+car slips past). So a full lap still doesn't complete reliably.
+
+REMAINING (corner navigation, focused): the off-mesh recovery must ACTIVELY steer the car back onto
+the track (not just retain velocity) — e.g. when GroundHeight(next) fails, rotate velocity toward
+the nearest on-mesh gate/spline point; OR override the deadband while off-mesh so the AI corrects;
+OR port the real curvature-walk (FUN_00443300) which keeps the target on the drivable line through
+corners. Then cars hold corners -> a car completes a lap -> match (laps>=target, or elimination as
+the field spreads) -> Results -> Campaign_OnRaceResult (progression persists) -> cup loop. The
+whole chain downstream of "a car completes a lap" is already wired + reachable (proven via the
+force-end path). Net G4 arc this session: donut-at-spawn -> drives to first corner; the last wall
+is robust corner navigation.

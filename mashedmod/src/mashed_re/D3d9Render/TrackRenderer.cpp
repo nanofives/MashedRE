@@ -1538,14 +1538,23 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         const float ngy = GroundHeight(nx, nz, &nok);
         if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }
         else {
-            // [G4] NON-TRAPPING off-track response. Zeroing velocity here killed the chain's
-            // grip force -> no +0x9c0 yaw rate -> the car lost ALL steer authority and could
-            // never turn back onto the track (it re-accelerated straight off the edge every
-            // frame -> permanent stall). Instead: hold position this frame but RETAIN velocity
-            // (heavily damped) so the chain keeps producing a yaw rate and the steering can
-            // pull the car back onto the mesh next frame. [U-A8-OFFTRACK]
-            car_vel_[0] *= 0.5f; car_vel_[2] *= 0.5f;
-            car_speed_ = std::sqrt(car_vel_[0]*car_vel_[0] + car_vel_[2]*car_vel_[2]);
+            // [G4][U-A8-OFFTRACK] ACTIVE steer-back. Just retaining velocity left the car idling
+            // against the edge (it cut the corner off-mesh and the deadband kept steer 0 toward a
+            // target whose chord leads off-track). Instead, redirect velocity + heading toward the
+            // next gate (the on-track ribbon point) so the car is pulled BACK onto the drivable
+            // surface; next frame its forward points on-mesh and it advances. Standalone collision-
+            // recovery shim (the original's RW contact pushes the car off walls).
+            if (!gates_.empty()) {
+                const float* g = gates_[static_cast<std::size_t>(race_[0].gate) % gates_.size()].center;
+                float dx = g[0] - car_pos_[0], dz = g[2] - car_pos_[2];
+                float dl = std::sqrt(dx*dx + dz*dz);
+                if (dl > 1e-3f) {
+                    const float sp = car_speed_ * 0.6f;   // damped
+                    car_vel_[0] = dx/dl * sp; car_vel_[2] = dz/dl * sp;
+                    car_yaw_ = std::atan2(dz, dx); car_speed_ = sp;
+                } else { car_vel_[0] = car_vel_[2] = 0.f; car_speed_ = 0.f; }
+            } else { car_vel_[0] *= 0.5f; car_vel_[2] *= 0.5f;
+                     car_speed_ = std::sqrt(car_vel_[0]*car_vel_[0] + car_vel_[2]*car_vel_[2]); }
         }
     } else {
     const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
@@ -1650,10 +1659,19 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
                 bool aok = false;
                 const float ay = GroundHeight(nx2, nz2, &aok);
                 if (aok) { a.pos[0] = nx2; a.pos[2] = nz2; a.pos[1] = ay + car_ground_off_; }
-                else {   // [U-A8-OFFTRACK] non-trapping: retain (damped) velocity so the chain
-                         // keeps a yaw rate + the AI can steer back onto the mesh (see player path)
-                    a.vel[0] *= 0.5f; a.vel[2] *= 0.5f;
-                    a.cur_speed = std::sqrt(a.vel[0]*a.vel[0] + a.vel[2]*a.vel[2]);
+                else {   // [U-A8-OFFTRACK] ACTIVE steer-back toward the next gate (pull the car
+                         // back onto the track ribbon; see the player path for the rationale).
+                    if (!gates_.empty()) {
+                        const float* g = gates_[static_cast<std::size_t>(race_[v].gate) % gates_.size()].center;
+                        float dx = g[0] - a.pos[0], dz = g[2] - a.pos[2];
+                        float dl = std::sqrt(dx*dx + dz*dz);
+                        if (dl > 1e-3f) {
+                            const float sp = a.cur_speed * 0.6f;
+                            a.vel[0] = dx/dl * sp; a.vel[2] = dz/dl * sp;
+                            a.yaw = std::atan2(dz, dx); a.cur_speed = sp;
+                        } else { a.vel[0] = a.vel[2] = 0.f; a.cur_speed = 0.f; }
+                    } else { a.vel[0] *= 0.5f; a.vel[2] *= 0.5f;
+                             a.cur_speed = std::sqrt(a.vel[0]*a.vel[0] + a.vel[2]*a.vel[2]); }
                 }
             } else {
                 // --- physics off: keep the lightweight kinematic ctrl->motion mapping ---
