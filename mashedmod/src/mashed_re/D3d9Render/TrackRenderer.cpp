@@ -1477,23 +1477,38 @@ void TrackRenderer::UpdateCar(const DriveInput& in) {
         io.input[4] = static_cast<unsigned char>((accel > 0.f ? accel : 0.f) * 255.f);
         io.input[5] = static_cast<unsigned char>((accel < 0.f ? -accel : 0.f) * 255.f);
         io.steer    = steer;   // [-1,+1] -> descriptor steer bytes [0]/[1]
-        // Ground the wheels from our own collision (the standalone substitute for the
-        // RW BSP broadphase the chain's contact orchestrator needs) so the drive +
-        // suspension blocks engage. Probe the next XZ before committing.
-        const float pnx = car_pos_[0] + car_vel_[0] * in.dt;
-        const float pnz = car_pos_[2] + car_vel_[2] * in.dt;
-        bool pok = false;
-        const float pgy = GroundHeight(pnx, pnz, &pok);
-        io.grounded = pok ? 1 : 0;
+        // G2 DRIVE-STABILIZE (2026-06-18): ground from the car's CURRENT pos (is it on
+        // the ground NOW?), not a probe-ahead with last frame's velocity — the
+        // probe-ahead + a runaway velocity made `grounded` oscillate 1/0 each frame,
+        // so A6a's grounded-gated grip fired only intermittently -> no yaw. (diag:
+        // re/analysis/STEER_CALIB_RUNTIME_2026-06-18.md)
+        bool gok = false;
+        GroundHeight(car_pos_[0], car_pos_[2], &gok);
+        io.grounded = gok ? 1 : 0;
         Vehicle::VehiclePhysics_StepPlayer(in.dt, io);
         car_vel_[0] = io.vel[0]; car_vel_[1] = io.vel[1]; car_vel_[2] = io.vel[2];
         car_speed_  = io.speed;
-        // WS-A8-STEER: heading is now PHYSICS-driven. StepPlayer advanced io.yaw from
-        // the chain's integrated body angular velocity (+0x9c0), which the steer input
-        // produced through the front-wheel steer angle -> lateral grip -> angular
-        // velocity. The kinematic car_yaw_ += steer*kSteer*dt stopgap is REMOVED here.
-        car_yaw_ = io.yaw;
-        if (pok) { car_pos_[0] = pnx; car_pos_[2] = pnz; car_pos_[1] = pgy + car_ground_off_; }
+        car_yaw_ = io.yaw;   // WS-A8-STEER: physics-integrated heading (+0x9c0)
+        // [U-A8-SPEEDCAP] the ported chain integrates in the original's internal scale;
+        // pending the units RE (WAVE-16) the standalone velocity runs away (~300 vs the
+        // track-scale ~kTop). Clamp horizontal speed to the track-relative max as a
+        // documented standalone stabilization so the car stays controllable + on-collision
+        // (the drive-units faithfulness is the wave-16 DRIVE-STABILIZE RE; the steer PATH
+        // is already verified correct).
+        {
+            const float vh = std::sqrt(car_vel_[0]*car_vel_[0] + car_vel_[2]*car_vel_[2]);
+            if (vh > kTop && vh > 1e-4f) {
+                const float sc = kTop / vh;
+                car_vel_[0] *= sc; car_vel_[2] *= sc; car_speed_ = kTop;
+            }
+        }
+        // Integrate pos from the chain's OUTPUT velocity (not the pre-chain value);
+        // stop at the collision edge instead of teleport/oscillate.
+        const float nx = car_pos_[0] + car_vel_[0] * in.dt;
+        const float nz = car_pos_[2] + car_vel_[2] * in.dt;
+        bool nok = false;
+        const float ngy = GroundHeight(nx, nz, &nok);
+        if (nok) { car_pos_[0] = nx; car_pos_[2] = nz; car_pos_[1] = ngy + car_ground_off_; }
         else { car_speed_ = 0.f; car_vel_[0] = car_vel_[2] = 0.f; }
     } else {
     const float fwd[3] = {std::cos(car_yaw_), 0.f, std::sin(car_yaw_)};
