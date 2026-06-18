@@ -67,3 +67,23 @@ MASHED_PHYS_DIAG block). A 30s real-physics run pinned it:
    slide/clamp at the strip edge instead of hard-zeroing velocity.
 3. Once speed is stable + wheels stay grounded, A6a grip should yield +0x9c0 -> steering works ->
    THEN calibrate kYawScale. (Steer wiring already confirmed correct.)
+
+## UPDATE 2026-06-18 (part 2) — fixes landed + remaining blocker localized
+FIXED (committed 88af2f8e, gated behind MASHED_REAL_PHYSICS):
+- **Speed runaway** -> [U-A8-SPEEDCAP] clamp horizontal speed to kTop in UpdateCar. Speed now
+  caps at 20.11 (was 300). Documented standalone stabilization (units RE still pending).
+- **Grounded oscillation** -> ground from the car's CURRENT pos (not a probe-ahead); integrate
+  pos from the chain's OUTPUT velocity. Grounded now stable, no crash, clean exit.
+RESULT: drive is now SANE-SPEED + STABLE-GROUNDED, but the car STILL can't TURN (car_yaw flat).
+LOCALIZED the remaining blocker:
+- A4 writes the front-wheel steer angle to wheel +0x3c (=+0x1a8/+0x26c). CONFIRMED.
+- A5 Phase-0 (ForceIntegrator.cpp:49-56) READS wheel +0x3c (piVar12[0xf]) and, when !=0, builds a
+  rotation about kUpAxis by the steer angle via Rw_MatrixFromAxisAngle(...,mode 0) [CPU Rodrigues,
+  works standalone] and rotates the wheel forward axis -> steered_fwd (+0xb4). So the WHEELS DO STEER.
+- BUT body angular velocity +0x9bc/+0x9c0/+0x9c4 stays (0,0,0) -> no yaw. So the blocker is the
+  ANGULAR-VELOCITY PRODUCTION: A5 Phase-5 "steer torque from velocity delta (when any wheel
+  grounded)" (ForceIntegrator.cpp:157+) and/or A6a (Integrate2.cpp) accrual into +0x9bc/+0x9c0.
+NEXT (focused): diag the steered_fwd (+0xb4) + the Phase-5 steer-torque + the +0x9c0 accrual to
+find why the steered wheels don't produce a body yaw rate (candidate: Phase-5 torque needs a
+lateral velocity-delta the straight-line drive doesn't yet have; or the +0x9c0 integrate is
+gated/inert). THEN calibrate kYawScale. Steer wiring + wheel rotation are confirmed working.
