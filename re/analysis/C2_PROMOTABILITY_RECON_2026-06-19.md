@@ -173,3 +173,65 @@ ranked, validated worklist is now:
 
 Re-run `scripts/promote_subdivide.py` after a batch to refresh the lanes (it is
 read-only and writes only under `re/analysis/recon_c2/subdivide_*`).
+
+---
+
+## 7. Full enrichment — 8 more dimensions (`scripts/promote_enrich.py`)
+
+One pass over a single disassembly adds eight orthogonal signals to every clean
+first-party C2 row (no Ghidra, no game). Master table `enrich_all.tsv` (21 cols);
+focused worklists per dimension. Summary over the 2,195 universe:
+
+| # | dimension | result | output |
+|---|---|---|---|
+| 1 | **signature → generic arg_type** | **504 path1-runnable today** (none 287 / int_scalar 137 / int_pair 80); **439 also callee-clean = immediate path1 worklist**; 1,460 callee-clean need a bespoke arg_type | `enrich_runnable_today.tsv`, `enrich_needs_argtype.tsv` |
+| 2 | **promote-order (SCC + keystones)** | DAG is **acyclic over C2** (0 cycles → clean bottom-up order); 234 C1 keystones; several top blockers are **C1 *leaves*** (cheap C1→C2) | `enrich_keystones.tsv` |
+| 3 | RW-API orchestrator | 309 (≥50 % library/RW-named callees) — promotable once RW-struct arg_types exist | `enrich_all.tsv` (`rw_orch`) |
+| 4 | Xbox-twin | 181 have a clean `ok-asc` twin (second static witness → easier author); 46 of the 439 immediate-path1 set | `enrich_all.tsv` (`twin`) |
+| 5 | FP/x87 | 672 use x87/SSE → bit-identity care (x87 build, inline-asm transcendentals) | `enrich_all.tsv` (`fp`) |
+| 6 | IAT imports | only **13** touch COM/D3D/DSound/DInput *imports directly* (the device-creation sites); Win32 111, WinMM 9 | `enrich_all.tsv` (`imports`,`com_d3d`) |
+| 7 | clone clusters | **60 clusters cover 169 fns** — identical body shape → batch one template | `enrich_clone_clusters.tsv` |
+| 8 | shared-state globals | hot global `0x007d3ff8` touched by **285** C2 fns (dispatch table); **52 shared-state components** (≥3 fns operate on the same globals → promote together under one scenario) | `enrich_hot_globals.tsv`, `enrich_state_components.tsv` |
+
+### 7a. Headline: 439 immediate path1 candidates
+
+`runnable_today ∩ callee-clean` = **439** functions whose inferred signature maps
+to an existing generic scalar arg_type (`none`/`int_scalar`/`int_pair`) — they can
+be `run_diff` path1-diffed **right now**, no new arg_type, no booted game.
+Subsystems: render 100, audio 83, boot 45, util 45, gameplay 38, particle 38,
+frontend 22, input 20. Signature inference verified against disasm (3/3 correct).
+
+**Caveats (NO-GUESSING):** (a) signature inference is heuristic — `sig_conf` col
+flags esp-arg cases as `low`; (b) for the state-reading subset, path1 will go
+GREEN but only the **booted** observe gives *meaningful* coverage (a race-state
+global reads zero at menu-attach); (c) clone clusters share control-flow shape but
+the masked call-targets/immediates differ per member → batch as a *template*,
+verify each instance's data; (d) DIM6's 13 is direct-import only — the larger
+vtable-COM set (calls through a stored interface ptr) is not IAT-visible.
+
+### 7b. Keystone refinement
+
+The C2 call graph is **fully acyclic** (0 SCC cycles) → a clean bottom-up
+promotion order exists. The top keystones include **C1 leaves** —
+`0x0057c210` (blocks 35, leaf), `0x004c15c0` (22, leaf), `0x0055ac00` /
+`0x004e4800` (15 each, leaf) — so they are *cheap* C1→C2 mechanical promotions
+(no callee gate on C1→C2) that each unblock dozens of C2→C3 parents. Promote the
+top ~8 keystones first; `enrich_keystones.tsv` ranks all 234 with leaf/cyclic
+flags.
+
+### 7c. Updated recommended order (supersedes §6)
+
+1. **439 immediate path1** (`enrich_runnable_today.tsv` ∩ callee-clean) — cheapest,
+   prefer the 46 with a clean Xbox twin.
+2. **Keystone C1 *leaves*** (§7b) — a handful of cheap C1→C2 promotions cascade-
+   unblock ~80 C2→C3 parents.
+3. **1,288 `state-runnable-now`** (§4) — booted `run_diff`, just opened.
+4. **60 clone-cluster templates** (`enrich_clone_clusters.tsv`) — author once, apply
+   across 169 fns.
+5. **52 shared-state components** (`enrich_state_components.tsv`) — promote a whole
+   component under one booted scenario that exercises its shared globals.
+6. **309 RW-orchestrators** — after RW-struct arg_types land (existing high-yield-
+   with-harness lever).
+7. **467 reclassify-OUT** (§1) cleanup; deprioritize indirect-dispatch / oversize.
+
+Re-run `scripts/promote_enrich.py` after a batch to refresh all eight dimensions.
