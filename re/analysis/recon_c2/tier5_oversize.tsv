@@ -1,0 +1,3 @@
+rva	subsystem	name	notes
+0040acd0	frontend	FUN_0040acd0	 | C1->C2 via frontend-oversize-20260525-1740: save-game state-machine dispatcher (6 ops x sub-state ladder); plate at re/analysis/frontend_c1_to_c2_followup_main/FUN_0040acd0.md
+0043af10	frontend	FUN_0043af10	game-setup lobby; 7-row option loop; layout mode 0x18 vs other; powerup shadow; D-1243 cleared; session hud_frontend_d2-20260503-0559 | C1->C2 via frontend-oversize-20260525-1810: full 7-block lobby r

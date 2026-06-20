@@ -1,0 +1,91 @@
+rva	subsystem	name	notes
+00411ce0	vehicle	Ghost::SetupRender	promoted_from=re/analysis/replay_record/notes.md; mode==2: 5 vtable calls (DAT_007d3ff8+0x20) params (10,5)(0xb,6)(8,1)(6,1)(0x14,2); if ghost/best: S-1571; if DAT_0063bb28&&best: FUN_00483a70
+0042a6b0	vehicle	FUN_0042a6b0	promoted_from=re/analysis/powerups/0x0042a6b0.md; TXD/DFF loader by filename; vtable call at 007d3ff8+0xcc; strchr ext check; FUN_0042a530 lookup; returns 0/FUN_004b3d20/FUN_004b3d80 result
+0045cc80	audio	FUN_0045cc80	,event ring-buffer scanner; walks 256-entry circular buf; type 0x3ff03/0x3ff04 → bidirectional FUN_0045cb20(0x13 ch_a ch_b); depth-1-fill | C1->C2 batch_ah sweep-20260602-0245
+004944c0	util	FUN_004944c0	VIDEO_PLAY_FN (DirectShow); takes int index into .mpg table 0x006147c4; CoCreateInstance; AddFilter TEXTURERENDERER; AddSourceFilter; Run() vtable[7] on IMediaControl; U-0367 U-0368
+00494c80	util	FUN_00494c80	VIDEO_PLAY_FIXED (DirectShow); hardcoded small.mpg (0x005cfcf0); no Run() call; graph setup only; U-0370
+004951f0	render	FUN_004951f0	D3DDeviceCreate/RenderDeviceInit; FUN_00499400(DAT_006147bc); ShowCursor(0); D3DCAPS9 at +0xC4/+0xCC; U-3923 U-3924 U-3925 S-3957..S-3961; skeleton-prep-s1
+00498860	util	FUN_00498860	170b; builds sanitized time-string via FUN_004a43d2/43b9; format=%.19s.%hu; chars replaced:space/:/. -> _; indirect vtable call DAT_007d3ff8+0xd4; U-1145 U-1146
+0049d240	util	FUN_0049d240	fastcall; vtable call at *param_1+0xb4 then timeGetTime()→param_1[0x3f]; timestamp-save not frame-delta; U-0670 U-0671
+0049e5c0	particle	FUN_0049e5c0	batch-ad-s4: C1->C2 mechanical; __fastcall; cond ResetEvent; 3 vtable calls +0x28/+0x6c/+0x70; calls FUN_0049c620
+004c7a70	render	_rwDeviceSystemFn	D3D_INIT_FN switch 23 cases rwDEVICESYSTEM_*; IDirect3D9* 007d4108; IDirect3DDevice9* 007d4110; ATI/R300 vendor-workaround 0x1002/0x5157; render_c0_promote_c-20260512; U-0247 U-3631 U-3632 U-3633 | ba
+004c8740	render	FUN_004c8740	enumerate MSAA; IDirect3D9::CheckDeviceMultiSampleType vtbl+0x2c; loops type 2..16; result→006181b4; quality→006181bc
+004c8800	render	FUN_004c8800	select back-buffer+depth format; GetWindowRect; IDirect3D9 vtbl+0x24/28/2c/30; depth formats 0x4b/0x4f/0x47/0x4d/0x49/0x50; output 009120e0..00912114
+004c8c70	render	FUN_004c8c70	D3D9 device teardown; unbinds 8 textures+indices+4 streams+PS+VD+VS; IDirect3DDevice9::Release vtbl+0x08 on 007d4110; 5 callees
+004d5570	render	FUN_004d5570	direct SetSamplerState setter; idx=state+sampler*0xe (14/sampler); cache DAT_007d4f60; DAT_007d4110+0x114 = IDirect3DDevice9::SetSamplerState | C1->C2 batch-render-6-s1
+005acaa0	audio	FUN_005acaa0	C2: fmt-desc bidirectional pack/unpack; param_3=0 deserialise else serialise; param_4=bswap; FUN_005acd60 lookup on read; U-1731 U-3032
+005bba60	audio	FUN_005bba60	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bbac0	audio	FUN_005bbac0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bbb70	audio	FUN_005bbb70	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bbbb0	audio	FUN_005bbbb0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bbc00	audio	FUN_005bbc00	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bbd50	audio	FUN_005bbd50	IDirectSound8::CreateSoundBuffer wrapper; DSBUFFERDESC2 size=0x24; DSBCAPS_CTRL3D if param_2; clears S-1374 D-4014 | C1->C2 batch_ai sweep-20260602-0347
+005bbed0	audio	FUN_005bbed0	QI x2 on IDirectSoundBuffer: DAT_005d09cc→[1] DAT_005d09bc→[2]; clears S-1375 D-4015 | C1->C2 batch_ai sweep-20260602-0347
+005bbf60	audio	FUN_005bbf60	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc020	audio	FUN_005bc020	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc050	audio	FUN_005bc050	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc0f0	audio	FUN_005bc0f0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc690	audio	FUN_005bc690	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc800	audio	FUN_005bc800	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc850	audio	FUN_005bc850	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc890	audio	FUN_005bc890	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc900	audio	FUN_005bc900	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bc920	audio	FUN_005bc920	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcab0	audio	FUN_005bcab0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcbb0	audio	FUN_005bcbb0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcbe0	audio	FUN_005bcbe0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcc70	audio	FUN_005bcc70	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcca0	audio	FUN_005bcca0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcd10	audio	FUN_005bcd10	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcd80	audio	FUN_005bcd80	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bcda0	audio	FUN_005bcda0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bce80	audio	FUN_005bce80	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bd500	audio	FUN_005bd500	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bd610	audio	FUN_005bd610	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bd6f0	audio	FUN_005bd6f0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bd9e0	audio	FUN_005bd9e0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bdad0	audio	FUN_005bdad0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bdc70	audio	FUN_005bdc70	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bde70	audio	FUN_005bde70	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bdef0	audio	FUN_005bdef0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bdf40	audio	FUN_005bdf40	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bdff0	audio	FUN_005bdff0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be080	audio	FUN_005be080	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be1b0	audio	FUN_005be1b0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be260	audio	FUN_005be260	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be450	audio	FUN_005be450	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be540	audio	FUN_005be540	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be5f0	audio	FUN_005be5f0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be630	audio	FUN_005be630	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be720	audio	FUN_005be720	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be8c0	audio	FUN_005be8c0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be940	audio	FUN_005be940	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be990	audio	FUN_005be990	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005be9f0	audio	FUN_005be9f0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005beaa0	audio	FUN_005beaa0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005beae0	audio	FUN_005beae0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005beba0	audio	FUN_005beba0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bec10	audio	FUN_005bec10	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bedc0	audio	FUN_005bedc0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bef20	audio	FUN_005bef20	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf000	audio	FUN_005bf000	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf050	audio	FUN_005bf050	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf0c0	audio	FUN_005bf0c0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf160	audio	FUN_005bf160	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf230	audio	FUN_005bf230	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf350	audio	FUN_005bf350	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf370	audio	FUN_005bf370	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf470	audio	FUN_005bf470	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf4d0	audio	FUN_005bf4d0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf670	audio	FUN_005bf670	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf6d0	audio	FUN_005bf6d0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf710	audio	FUN_005bf710	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf8a0	audio	FUN_005bf8a0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bf8f0	audio	FUN_005bf8f0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfa20	audio	FUN_005bfa20	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfa40	audio	FUN_005bfa40	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfb20	audio	FUN_005bfb20	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfb90	audio	FUN_005bfb90	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfd10	audio	FUN_005bfd10	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfe60	audio	FUN_005bfe60	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347
+005bfed0	audio	FUN_005bfed0	batch_x s6 RwaDSRenderer DirectShow filter; audio backend implemented via DirectShow filter graph (RW audio over DS) | C1->C2 batch_ai sweep-20260602-0347

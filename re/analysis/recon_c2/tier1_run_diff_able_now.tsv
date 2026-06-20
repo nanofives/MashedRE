@@ -1,0 +1,55 @@
+rva	subsystem	name	notes
+00404830	boot	FUN_00404830	perm.piz post-mount callee; fills 0x636c08..0x639d67 with 0xffffffff; 13 scalar overrides; stride-6 loop at 0x6390b0; no callees; U-0173 U-0174; promoted S-122
+00407600	util	Player::GetPositionPtr	FUN_0047d150((&DAT_00639dc4)[param_1*0x3B])+0x30; player array stride 0x3B; returns float* position for mode-5; D-6474
+00409290	util	FUN_00409290	player index range clamp; 109b; walks player list FUN_00426bc0/bd0; clamps *param_1 to [min,max] per entry; wraps to first-entry min; D-8802
+004260e0	render	FUN_004260e0	path builder: inline concat ToastArt[sep]tracks[sep]param2[sep]param3+param4 into DAT_008991e0; no callees; 1 caller FUN_00426e10; U-3218 [merged-from-dup: path builder: ToastArt[/|\]tracks[sep]param2
+00429620	hud	FUN_00429620	__fastcall; X slide-in animator; 470.0-(1.0-clamp(FUN_004a2c48(),30)*0.033f)*500.0f; range -30→~465; callees FUN_00429300+FUN_004a2c48
+0042f020	frontend	FUN_0042f020	vehicle flag clear: __fastcall switch(param_1) zeroes byte DAT_007f0e50+in_EAX*0xc; leaf; U-3594; D-4852 cleared; session frontend_c0_promote
+00441820	util	CameraPath::SamplePoint	override table FUN_004098a0 at idx*0xc; two FUN_004c4d20 rotations if entry[0]!=-1; fallback FUN_00426cc0/426d00 delta+rotate -25.0f (0xC1C80000); outputs orientation matrix+scalar; D-6466 | standalon
+0045db50	util	FUN_0045db50	float slider DAT_0068fc8c: dir0=dec/1=inc/2=zero/3=fast-dec; clamp [0.0,1.0]; sibling FUN_0045dbe0; U-3483
+0045dbe0	util	FUN_0045dbe0	float slider DAT_0068fcbc: dir0=dec/1=inc/2=zero; clamp; then FUN_004943f0(scale*val) if FUN_00493f70(0)!=0; U-3484
+004647f0	audio	FUN_004647f0	master volume fader: FUN_0042b8d0 dir; adjust+clamp DAT_006036b8; apply FUN_0045e0f0 to DAT_0088e674 channels; D-10352-fill | C1->C2 batch_ah sweep-20260602-0245
+0046baa0	util	FUN_0046baa0	per-vehicle physics state reset; 571b; zeros velocity/force/angular/contact fields at stride 0xd04; inits -1.0f loop+0xffffffff loop; returns 1; leaf; U-3012
+0046c5f0	vehicle	FUN_0046c5f0	triangle face normal helper; __fastcall EAX=apex ESI=output; cross-product then FastSqrt normalize; 209b; leaf; callee of VehicleWheelContactSolver 0x0046f6c0; C2 plate: re/analysis/promote_c2_vehicle
+0046d570	ai	FUN_0046d570	vehicle forward-angle projection: normalizes +0x88 heading; dots with velocity +0xac; acos*scale → game-angle units; returns float | C1->C2 batch_ak sweep-20260603-0116
+00472380	render	FUN_00472380	calls FUN_004c2d90(0,4,cb,cb) then FUN_004e7d40(0x10,0x26990004,lbl,cb,lbl); result→DAT_0086ecd4; returns bool; S-0200 S-0201 U-0207 U-0208; d11007-audit 2026-05-18: subsystem=render confirmed via re/
+00476880	util	FUN_00476880	,clamp-vector wrapper; inserts literal 0 as 4th arg; forwards to FUN_00476710; 30 bytes; depth-1-fill
+00484170	boot	FUN_00484170	vtable[0x108] alloc 24B rec; [0-1]=param_3[0-1]; [2]=*param_2; [3]=DAT_005cc320/(param_1+0x80); [4-5]=0; pure leaf (vtable); U-3335; skeleton-prep-s5
+00484ac0	world-objects	FUN_00484ac0	cluster_0048_first_pass batch_u-s4; multi-cell AABB registration via FUN_00484a50 over X/Z grid (11x11 max, 10 clamp) | C1->C2 batch_aj sweep-20260602-1945
+00489ce0	particle	FUN_00489ce0	batch-ac-s3: C1->C2 mechanical; U-3966; no new stubs (no callees)
+0048b650	particle	FUN_0048b650	batch-ac-s4 C1->C2; shockwave-pool 2-arg slot alloc+write (64-slot scan+evict; stride 0x18); leaf; U-3993
+0048d0f0	particle	FUN_0048d0f0	batch-ac-s5: age-advance leaf; __fastcall+EAX; +0x2c age +0x30 norm +0x38 flag; U-4004..U-4006
+0048fe70	render	FUN_0048fe70	world query at position via FUN_00538c80 callback; returns int result; U-0595; S-0598 | batch-render-2-s4 plate at re/analysis/render_2_c1_to_c2_s4/FUN_0048fe70.md; U-4584
+00491c00	render	FUN_00491c00	batch-render-2-s6 plate at re/analysis/render_2_c1_to_c2_s6/FUN_00491c00.md spark init alloc+point-sprites+white-tex; U-4627,0x80007) point-sprites + white texture fill; no callers visible
+004929d0	util	FUN_004929d0	STATE_FN: switch(DAT_00771968) 7 cases; session-phase dispatcher; calls course-load in case 2; U-0487 U-0488; S-0480..S-0490; [drift-corrected 2026-05-12: existing analysis is full C2 mechanical-case-
+00493600	render	FUN_00493600	calls FUN_004ce790 twice with (ptr-to-global fn-ptr label-addr) 3-arg pattern; returns bool; S-0068; C2 ma1-ghidra-s1 2026-05-16 promote_c2_winmain_chain; S-3906 S-3907 S-3908
+0049eab0	particle	FUN_0049eab0	batch-ad-s4: C1->C2 mechanical; scalar-deleting dtor; calls thunk_FUN_0049fac0; conditional _free
+0049ebf0	particle	FUN_0049ebf0	batch-ad-s4: C1->C2 mechanical; scalar-deleting dtor; calls FUN_0049de90; conditional _free
+0049ec80	particle	FUN_0049ec80	batch-ad-s4: C1->C2 mechanical; scalar-deleting dtor; calls FUN_0049ebc0->FUN_0049de90 chain; conditional _free
+004a2c48	frontend	FUN_004a2c48	promoted_from=re/analysis/hud_frontend/0x004a2c48.md; batch-ab; FPU rounding: ROUND(in_ST0) to 64-bit int with banker's rounding; 116 bytes; no callees; used as frame-counter source; U-0460 [merged-fr
+004a4170	util	__alldiv	169b MSVC VS2003 embedded CRT helper; signed 64-bit division; no callees; not a stub | C1->C2 via lever3-expansion-20260523-1330: CRT-band bulk-attest (calibrated 004a0000..004b3fff); FidDB name or CR
+004a4220	util	__allmul	51b MSVC VS2003 embedded CRT helper; signed 64-bit multiply; no callees; not a stub | C1->C2 via lever3-expansion-20260523-1330: CRT-band bulk-attest (calibrated 004a0000..004b3fff); FidDB name or CRT
+004abbea	boot	FUN_004abbea	cmdline arg-start scan; quote(0x22)/printable(0x21) boundary walk; MBCS FUN_004affe0; returns byte* into cmdline
+004b47c0	render	FUN_004b47c0	2-step setter: FUN_0052e0e0(*(param_1+0x20), param_2) then FUN_00533ec0(param_1); no callers in Ghidra | batch-render-3-s3 plate at re/analysis/render_3_c1_to_c2_s3/FUN_004b47c0.md
+004b6b00	render	FUN_004b6b00	__fastcall store-EAX helper: *param_1=in_EAX; 2-byte body; leaf; batch-render-3-s6 plate at re/analysis/render_3_c1_to_c2_s6/FUN_004b6b00.md
+004b6b90	render	FUN_004b6b90	__fastcall floor-align: (in_EAX/param_1)*param_1; 6-byte leaf; batch-render-3-s6 plate at re/analysis/render_3_c1_to_c2_s6/FUN_004b6b90.md
+004b7480	input	FUN_004b7480	teardown: FUN_004ba210(1)+FUN_004b9850; arith updates on +0x60 via offsets +4/+8/+0x18/+0x1c/+0x48/+0x4c/+0x50/+0x54; FUN_004ba1b0 x5; S-2408 S-2409 U-2414..U-2417 | C1->C2 batch_aj sweep-20260602-194
+004c0b10	render	FUN_004c0b10	frame dirty-state predicate: returns *(*(param_1+0xa0)+3)&3; low-2-bit mask; leaf; callers RpAtomicGetWorldBoundingSphere FUN_00533ec0; batch-render-3-s6 plate at re/analysis/render_3_c1_to_c2_s6/FUN_
+004c3270	render	sub_004c3270	RwEngineStop wrapper; DAT_007d3ff4==0 → FUN_004d7ca0+FUN_004ccf20+[0x49]=0; returns bool; S-0083 S-0084; U-0092; skeleton-prep-s5
+004c3d60	render	FUN_004c3d60	RW engine vtable matrix dispatch: calls *(DAT_007d3ffc+8+DAT_007d3ff8)(out,in1,in2); returns param_1; 0x25 bytes; leaf; clears S-1963; U-3582 U-3583 | batch-render-4-s1 plate at re/analysis/render_4_c
+004cc4f0	render	FUN_004cc4f0	RW chunk type validator: switch 1 for valid RW types {5..0x1a subset}; leaf; 1 caller FUN_004cc400 | batch-render-5-s1 plate at re/analysis/render_5_c1_to_c2_s1/FUN_004cc4f0.md
+004d3ab0	render	rwD3D8CheckAutoMipMapCube	cluster_004d_first_pass batch_t-s4; RW3 D3D8 raster; checks D3DUSAGE_AUTOGENMIPMAP(0x400) for cube(count=5); no callers found; batch-render-5-s5
+004d3d50	render	rwD3D8RasterClose	cluster_004d_first_pass batch_t-s4; RW3 D3D8 raster; subsystem close; frees heap block + calls FUN_004e1780 + zeroes DAT_007d470c/4710; returns 1; no callers found; batch-render-5-s5
+004d3db0	render	FUN_004d3db0	RW D3D pipeline init: guard DAT_007d470c(0x7d470c); FUN_004e17e0 creates pipeline ptr DAT_007d4710; alloc tag 0x34 at DAT_00911ae0+DAT_007d3ff8; sets +0x38/+0x34/+0x30; marks init flag; no callers (pl
+004d7430	render	FUN_004d7430	render-state dirty-flag setter; tests param_1 vs DAT_007d6b0c; writes DAT_007d59d0; queues byte 0x3b via dirty-state queue DAT_007d5168[DAT_007d6c14]; 1 caller FUN_004d7480 case 0x1c; leaf; U-5350 | b
+004d7ac0	render	FUN_004d7ac0	fog-blend enable/disable toggle; param_1==0 clears DAT_007d6aec queues byte 7+0x17; else sets it; 1 caller FUN_004d7480 case 6; leaf; U-5352 | batch-render-6-s3 plate at re/analysis/render_6_c1_to_c2_
+004d7bc0	render	FUN_004d7bc0	texture filter-mode setter; lookup DAT_005d8c48[param_1*4]→DAT_007d5840; queues byte 9; guard DAT_007d6b2c; 1 caller FUN_004d7480 case 7; leaf; U-5353 | batch-render-6-s3 plate at re/analysis/render_6
+004d7c10	render	FUN_004d7c10	texture address-mode setter; lookup DAT_005d8d18[param_1*4]→DAT_007d58a8; queues byte 0x16; guard DAT_007d6b18; 1 caller FUN_004d7480 case 0x14; leaf; U-5354 | batch-render-6-s3 plate at re/analysis/r
+00547bf0	track	FUN_00547bf0	AABB vs triangle SAT 12-axis; 5807 bytes; leaf; clears S-1964; track_collision_geometry_s14
+005571c0	hud	FontSys_ShutdownFontPool	C1->C2 batch-ae-s6: FUN_004cc9f0(DAT_00912a2c)+zero DAT_00912a2c; 25-byte leaf; counterpart FUN_005571e0; no uncertainties
+00557220	hud	FontSys_ShutdownDataPools	C1->C2 batch-ae-s6: FUN_004cc9f0(DAT_00912a34)+FUN_004cc9f0(DAT_00912a38)+zero both; 38-byte leaf; counterpart FUN_00557250; no uncertainties
+00558470	render	sub_00558470	teardown step-1: 2x vtable-free dispatch DAT_007d3ff8+0x10c on 007dc8b8/bc; zero 007dc8ac; pure leaf; U-0088; skeleton_prep_s5-20260522
+0055c4f0	vehicle	PhysicsBodySetFriction	recursive compound setter; type8=recurse on children stride 0x60; else body+0x50=friction scalar; called with 0.45f; C2 plate: re/analysis/promote_c2_vehicle_dynamics/0055c4f0.md
+005bad30	audio	LAB_005bad30	unrecognized; DirectSound init path B: NULL GUID; hardcoded 0xbb80Hz/0x10-bit; GetCaps(vtable+0x10)+clamp; vtable+0x18; 459 bytes; U-0356..U-0359
+005bc860	audio	FUN_005bc860	tracker alloc: FUN_005ae250(0x12,8,1,0,&DAT_007ddfec); returns bool; clears S-1361 D-4001; U-3188 | C1->C2 batch_ai sweep-20260602-0347
+005c9d00	util	GetRaceEndTrigger	DEMOTED C3->C2 2026-05-22: crashes canonical scenario at t~10s; 2-byte function (XOR EAX,EAX; RET) but JMP patch is 5 bytes overwriting 3 bytes past function boundary into next function; confirmed ind
