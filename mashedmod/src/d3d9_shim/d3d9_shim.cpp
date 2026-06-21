@@ -233,10 +233,68 @@ void ParseReqOnce() {
                                           g_ReqPath, sizeof(g_ReqPath)) > 0) ? 1 : 0;
 }
 
+// ---------------------------------------------------------------------------
+// Frame limiter. MASHED is frame-COUPLED (game logic advances per rendered
+// frame) with NO in-game limiter, so on modern GPUs it runs uncapped (~360 FPS
+// measured => ~6x too fast; a full challenge ran in ~40 s). Pace the Present
+// rate (one Present per game frame) to a target FPS so the frame-coupled logic
+// runs at its intended speed. Tunable via env MASHED_FPS_CAP (default 60 ~=
+// 360/6; 0 disables). RE: time source FUN_004950b0 = QPC*3e6/QPF (accurate,
+// uses QPF correctly => no frequency bug); no native frame cap exists.
+// NOTE: the Present hook (PatchPresentSlot) is installed unconditionally so this
+// runs every frame (it used to be gated behind the BBDump screenshot feature).
+// kernel32-only: Sleep for the bulk, spin (SwitchToThread) for the final <2ms.
+// Set MASHED_FPS_LOG=1 to write measured Present FPS to log/fps_limiter.txt.
+static void FrameLimit()
+{
+    static int           s_cap  = -1;          // -1 uninit, 0 disabled
+    static int           s_log  = 0;
+    static LARGE_INTEGER s_freq = {};
+    static LARGE_INTEGER s_last = {};
+    static LARGE_INTEGER s_logLast = {};
+    static int           s_frames = 0;
+    if (s_cap == -1) {
+        char buf[16] = {};
+        DWORD got = GetEnvironmentVariableA("MASHED_FPS_CAP", buf, sizeof(buf));
+        int v = 60;                            // default 60 FPS
+        if (got > 0 && got < sizeof(buf)) { v = 0; for (char* c = buf; *c >= '0' && *c <= '9'; ++c) v = v * 10 + (*c - '0'); }
+        s_cap = (v < 0) ? 0 : v;
+        s_log = (GetEnvironmentVariableA("MASHED_FPS_LOG", buf, sizeof(buf)) > 0);
+        QueryPerformanceFrequency(&s_freq);
+        QueryPerformanceCounter(&s_last);
+        s_logLast = s_last;
+    }
+    LARGE_INTEGER now;
+    if (s_cap > 0 && s_freq.QuadPart != 0) {
+        const LONGLONG target = s_freq.QuadPart / s_cap;   // ticks per frame
+        for (;;) {
+            QueryPerformanceCounter(&now);
+            LONGLONG elapsed = now.QuadPart - s_last.QuadPart;
+            if (elapsed >= target) break;
+            LONGLONG remainMs = (target - elapsed) * 1000 / s_freq.QuadPart;
+            if (remainMs > 2) Sleep(1); else SwitchToThread();
+        }
+        s_last = now;
+    } else {
+        QueryPerformanceCounter(&now);
+    }
+    if (s_log && s_freq.QuadPart != 0) {       // optional: measured Present FPS once/sec
+        s_frames++;
+        LONGLONG since = now.QuadPart - s_logLast.QuadPart;
+        if (since >= s_freq.QuadPart) {
+            double fps = (double)s_frames * (double)s_freq.QuadPart / (double)since;
+            std::FILE* lf = std::fopen("C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\log\\fps_limiter.txt", "a");
+            if (lf) { std::fprintf(lf, "present_fps=%.1f (cap=%d)\n", fps, s_cap); std::fclose(lf); }
+            s_frames = 0; s_logLast = now;
+        }
+    }
+}
+
 HRESULT STDMETHODCALLTYPE Present_BBDump(
     IDirect3DDevice9* pThis, const RECT* src, const RECT* dst,
     HWND wnd, const RGNDATA* dirty)
 {
+    FrameLimit();
     const LONG n = InterlockedIncrement(&g_PresentCount);
     for (int i = 0; i < g_DumpFrameCount; ++i) {
         if (g_DumpFrames[i] == (int)n) {
@@ -298,7 +356,8 @@ HRESULT STDMETHODCALLTYPE Clear_ForceColor(IDirect3DDevice9* pThis, DWORD count,
 void PatchPresentSlot(IDirect3DDevice9* dev) {
     ParseDumpFramesOnce();
     ParseReqOnce();
-    if ((g_DumpFrameCount <= 0 && g_ReqArmed != 1) || !dev) return;  // not armed
+    if (!dev) return;  // ALWAYS patch: frame limiter needs Present hooked unconditionally
+                       // (BBDump's dump logic stays gated by g_DumpFrameCount/g_ReqArmed inside Present_BBDump)
     if (InterlockedExchange(&g_PresentPatched, 1) != 0) return;
     void** vtbl = *reinterpret_cast<void***>(dev);
     DWORD oldProt = 0;

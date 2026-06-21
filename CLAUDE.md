@@ -33,13 +33,15 @@ See `re/INJECTION.md` for why we still need a hook harness during dev (it lets u
 
 Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean checkout becomes bootable only after applying:
 
-1. **Five on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
+1. **Seven on-disk binary patches** to `original/MASHED.exe` (idempotent; each script self-checks). `original/MASHED.exe.unpatched` is the backup that matches the SHA-256 anchor — never delete it.
    - ~~`scripts/patch_mashed_skip_powerups.py`~~ — **DO NOT APPLY.** Root-caused 2026-06-01 as boot crash #2 (the NOP at 0x40295d causes a downstream stack-imbalance ret-to-0). Removing it made baseline boot to the real main menu (verify/boot_powerups_removed.png). The script now refuses to apply and un-applies if found.
    - `scripts/patch_mashed_show_windowed.py` — unhides `[Window]` entries in the video selector.
    - `scripts/patch_mashed_skip_audio_com.py` — neutralizes `FUN_005bc750` (real null-deref fix).
    - `scripts/patch_mashed_skip_selector.py` — silent video selector.
    - `scripts/patch_mashed_skip_controller_dialog.py` — silent controller selector.
    - `scripts/patch_mashed_fix_camera_res.py` — **display-independence fix (2026-06-13).** Forces the screen-dim getters `FUN_00498bc0`/`FUN_00498bd0` to return 640×480 (the shim's forced backbuffer) instead of the auto-selected desktop video mode. Without it, MASHED builds the active camera's frameBuffer raster at the desktop resolution (e.g. 2560×1440); that render-target raster fails to create against the shim's 640×480 backbuffer → null camera raster → AV at 0x004c7785 ~4 s into boot. This made boot depend on the monitor topology. Root cause + evidence: `re/analysis/BOOT_CRASH_ROOTCAUSE_2026-06-13.md`. COUPLED to the shim's 640×480 (keep in sync). Reversible via `--restore`.
+   - `scripts/patch_mashed_disable_log.py` — **boot fix (2026-06-20).** Neutralizes the 3 boot-path file-log functions (`FUN_00496490` open→ret0, `FUN_00496400` printf→ret, `FUN_004963e0` write je→jmp). After a ~2026-06-10 Windows servicing update, stock boot AVs ~4 s in at `RtlEnterCriticalSection` (ntdll+0x542f0, ECX=0x5477): the log `FILE*` global `DAT_00772fbc` (PE-init 0) holds garbage `0x5453` at boot (layout-dependent wild write), so the log `fputs()` enters a bad critical section. **This is NOT heap** — the 06-10 ntdll layout shift made `+0x542f0` = `RtlEnterCriticalSection`, so the prior "RtlpHeap / EMULATEHEAP heap-inversion" reading (see runtime item 3) is WRONG for this crash; no compat shim (EMULATEHEAP / page heap / segment heap) fixes it. Logging to `mashed.log` is cosmetic; disabling it boots to the menu (`verify/_boot_fixed_menu.png`). Caveats: it MASKS the broken log (the wild write still happens, harmless once readers are no-ops, source not yet root-caused); Frida-**spawn** still crashes (perturbs layout) so record via **attach-after-boot**. Reversible (`--restore`; full backup `MASHED.exe.prelogpatch`). Root cause + evidence: [[project-boot-crash-static-init-not-heap]]. **Partial alone (~80% boot — a lottery over which fopen caller hit the garbage first); the reliable root fix is `patch_mashed_fix_fopen.py` below.**
+   - `scripts/patch_mashed_fix_fopen.py` — **ROOT boot fix (2026-06-20); makes boot reliable (8/8).** The same crash class generalized: the fopen wrapper `FUN_004a4541` (`_fsopen`) returns a garbage `FILE*` (`~0x5453`, i.e. `< 0x10000`) to **all 6 of its callers** on direct launch, so boot is a lottery over which caller runs first (the log was just the most common). Valid `FILE*`s are always `≥ 0x10000` (static `_iob` in .data + heap allocs are high; null page is `0..0x10000`), so this redirects `FUN_004a4541` (jmp) to a 0xCC code cave at RVA `0x50f6c4` that does the original `_fsopen` call then `if (result < 0x10000) result = 0` — every caller already guards `if (fp != NULL)` and skips cleanly. Verified: boots to menu 8/8, menu renders (`verify/_boot_fixed_fopen.png`). Frida-**spawn** still crashes (perturbs layout) → record via **attach-after-boot** (`re/frida/record_attach.py`). Reversible (`--restore`; backup `MASHED.exe.prefopenpatch`). See [[project-boot-crash-static-init-not-heap]].
    - `scripts/patch_mashed_skip_intro.py` — **NOT a binary patch.** Replaces 5 intro .mpg files in `original/toastart/pc/movies/` with empty 1-frame MPEGs (originals backed up to `movies/backup/`). Lets MASHED run its intro player normally — videos just finish in microseconds. Cuts boot-to-menu from ~10s to <3s. Reversible via `--restore` flag. Approach borrowed from SciLor's MashedRunner (re/prior_art/MashedRunner/Intro.cs).
 2. **Canonical `videocfg.bin`** copied from `scripts/canonical/videocfg_windowed.bin` (800×600).
 3. **One-time per-machine compat shim** via `scripts/setup_mashed_compat.ps1`.
@@ -76,7 +78,13 @@ Stock `MASHED.exe` does not boot to main menu on Win11 + modern GPUs. A clean ch
    causes monitor flicker. 640×480 matches the lowest fullscreen mode so HUD/
    sprite assets render without stretching. The build script auto-copies
    `SysWOW64\d3d9.dll` to `original\d3d9_real.dll` (one-time; loader-dedup
-   workaround).
+   workaround). The proxy also hosts a **frame limiter** in its `Present` hook
+   (installed unconditionally): MASHED is frame-COUPLED with no native cap, so it
+   runs ~360 FPS / ~6× too fast on modern GPUs — the limiter paces `Present` to a
+   target FPS. Tunable via env `MASHED_FPS_CAP` (default **60**; lower e.g. 30 for
+   slower play; 0 disables). `MASHED_FPS_LOG=1` logs measured FPS to
+   `log/fps_limiter.txt`. Rebuild the shim after editing. See
+   [[project-frame-limiter-speed-fix]].
 
 End state: double-click `MASHED.exe` → main menu in a windowed 800×600 D3D9 backbuffer,
 no dialogs, no monitor mode switch, no flicker, no audio, ~5 s boot.
@@ -151,6 +159,8 @@ py -3.12 scripts\patch_mashed_skip_selector.py
 py -3.12 scripts\patch_mashed_skip_controller_dialog.py
 py -3.12 scripts\patch_mashed_fix_camera_res.py        # display-independence: screen dims -> 640x480; --restore to undo
 py -3.12 scripts\patch_mashed_skip_intro.py            # replaces intro .mpg files; --restore to undo
+py -3.12 scripts\patch_mashed_disable_log.py           # boot fix (partial): neutralize broken file-log; --restore to undo
+py -3.12 scripts\patch_mashed_fix_fopen.py             # boot fix (ROOT, reliable): fopen returns NULL on garbage FILE*; --restore to undo
 
 # Acquire / release a Ghidra pool slot (use the skill rather than calling this directly
 # unless you know what you're doing — the skill handles lock hygiene).

@@ -1,0 +1,24 @@
+{
+  "name": "nav-demo",
+  "ordinal": 1,
+  "slug": "001-nav-demo",
+  "mode": "physics",
+  "binary": "original",
+  "exe": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\original\\MASHED.exe",
+  "exe_sha256": "A91AC12DD6C5320BC7E2A7AB2FF5FE8F3F6BABFC5FD3562BFC4D67C17CF3EF16",
+  "image_base": "0x00400000",
+  "capture": "attach",
+  "pid": 25472,
+  "date": "2026-06-20T16:08:39",
+  "coverage_candidates": [
+    "0x0046b540",
+    "0x00470670",
+    "0x0046ddb0",
+    "0x00467650",
+    "0x00468980",
+    "0x00470c70"
+  ],
+  "frames": 14508,
+  "input_events": 61,
+  "coverage_hits": 6
+}
