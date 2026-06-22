@@ -1,0 +1,890 @@
+rva	name	subsystem	reason
+00492370	sub_00492370	boot	live-state-side-effect: _unlink on live path (in ## why c2)
+004abe86	FUN_004abe86	boot	signature-unsupported: fastcall ECX/EDX args
+004c5930	sub_004c5930	boot	inline [UNCERTAIN U-0010] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+00550390	sub_00550390	render	callee-gate: 00551510=C1
+004c3040	sub_004c3040	render	inline [UNCERTAIN U-0091] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+00493710	FUN_00493710	render	callee-gate: 00550350=C1,005584c0=C1
+00493640	FUN_00493640	render	callee-gate: 004e5d30=C1,0052d8e0=C1,0052e310=C1,005336d0=C1,00534a80=C1,00538600=C1,0053d0b0=C1,0053eaa0=C1,00543e50=C1,00544d20=C1,00546530=C1,00549640=C1,005515a0=C1,005578a0=C1,00561ee0=C1,0057c270=C1
+005a7b60	FUN_005a7b60	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005a79a0	FUN_005a79a0	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005aea00	FUN_005aea00	audio	inline [UNCERTAIN U-0125] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+004a2be9	__security_check_cookie	boot	signature-unsupported: fastcall ECX/EDX args
+004aac76	___sbh_alloc_block	boot	inline [UNCERTAIN U-0191] catalogued but Blocks=C3 (matched-RVA) (heading=## uncertainties)
+004ac45c	___crtMessageBoxA	boot	live-state-side-effect: blocking message box (in ## mechanical description)
+0047b8d0	FUN_0047b8d0	input	live-state-side-effect: fopen — live file I/O (in (preamble))
+00472380	FUN_00472380	render	callee-gate: 004e7d40=C1
+00499710	FUN_00499710	render	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in ## mechanical description)
+004014b0	FUN_004014b0	boot	callee-gate: 004e45b0=C1,004e4860=C1,004e4d90=C1,004e5700=C1,004e6e00=C1
+004015a0	FUN_004015a0	boot	callee-gate: 004e6e00=C1
+00403660	FUN_00403660	boot	inline bare [UNCERTAIN] (heading=## struct offsets)
+00418980	thunk_FUN_0041a060	boot	callee-gate: 004c0b30=C1,004e69a0=C1,004e7e30=C1
+004189e0	thunk_FUN_004196f0	boot	callee-gate: 004e6920=C1,004e6e00=C1
+004c7a70	_rwDeviceSystemFn	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c8740	FUN_004c8740	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c8800	FUN_004c8800	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c8c70	FUN_004c8c70	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+00493f00	FUN_00493f00	util	live-state-side-effect: blocking message box (in (preamble))
+004944b0	FUN_004944b0	util	signature-unsupported: fastcall ECX/EDX args
+004944c0	FUN_004944c0	util	live-state-side-effect: blocking message box (in ## mechanical description)
+004548e0	FUN_004548e0	vehicle	callee-gate: 004c0b30=C1,004c1040=C1,004c39b0=C1,004e69a0=C1,004e6ab0=C1,004e7e30=C1
+00456760	FUN_00456760	vehicle	callee-gate: 004e6ab0=C1
+00427e00	FUN_00427e00	frontend	signature-unsupported: fastcall ECX/EDX args
+004a2c48	FUN_004a2c48	frontend	signature-unsupported: in_ST0 (FPU) arg
+005ba1d0	FUN_005ba1d0	audio	no-note
+005bad30	LAB_005bad30	audio	no-note
+005aa560	FUN_005aa560	audio	no-note
+004cf7d0	FUN_004cf7d0	render	callee-gate: 004e1b60=C1
+004b3d80	FUN_004b3d80	render	callee-gate: 0054f8d0=C1
+004b44f0	FUN_004b44f0	util	inline bare [UNCERTAIN] (heading=## callers (xref — 10 total))
+004b4510	FUN_004b4510	util	callee-gate: 00534870=C1
+00472690	FUN_00472690	util	callee-gate: 00534870=C1
+00476df0	FUN_00476df0	render	inline bare [UNCERTAIN] (heading=## open items)
+0048fe70	FUN_0048fe70	render	callee-gate: 00538c80=C1
+00471ec0	sub_00471ec0	camera	callee-gate: 0057c210=C1
+0049d240	FUN_0049d240	util	signature-unsupported: fastcall ECX/EDX args
+004cc230	FUN_004cc230	frontend	callee-gate: 005507b0=C1
+0049d080	FUN_0049d080	util	signature-unsupported: fastcall ECX/EDX args
+0049cfb0	FUN_0049cfb0	util	signature-unsupported: fastcall ECX/EDX args
+0049d270	FUN_0049d270	util	signature-unsupported: fastcall ECX/EDX args
+00499400	VideoSettingsDispatcher	save	shape-only note (no verbatim decomp / mechanical-transcript section)
+004c9cd0	RESET_FN	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c9ad0	FUN_004c9ad0	render	callee-gate: 004dc8e0=C1,004e08b0=C1
+00499820	sub_00499820	boot	live-state-side-effect: fclose on live FILE* (in ## stubs encountered (callees not yet reversed))
+00496470	sub_00496470	boot	live-state-side-effect: fclose on live FILE* (in (preamble))
+00496490	sub_00496490	boot	inline bare [UNCERTAIN] (heading=## why c2)
+00534920	FUN_00534920	util	callee-gate: 00534870=C1
+005a7e70	FUN_005a7e70	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00478660	FUN_00478660	ai	callee-gate: 004c39b0=C1
+00480340	FUN_00480340	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+0041c2d0	FUN_0041c2d0	hud	signature-unsupported: in_EAX arg
+0041b340	FUN_0041b340	hud	signature-unsupported: in_EAX arg
+0041bc50	FUN_0041bc50	hud	signature-unsupported: in_EAX arg
+0041c9a0	FUN_0041c9a0	hud	signature-unsupported: in_EAX arg
+0041d410	FUN_0041d410	hud	signature-unsupported: in_EAX arg
+00427f00	FUN_00427f00	hud	signature-unsupported: 5-arg shape
+004652b0	FUN_004652b0	audio	callee-gate: 005459c0=C1
+00464e10	FUN_00464e10	audio	callee-gate: 005459c0=C1
+0042ac50	FUN_0042ac50	frontend	signature-unsupported: fastcall ECX/EDX args
+00430b30	FUN_00430b30	frontend	signature-unsupported: in_EAX arg
+004391b0	FUN_004391b0	frontend	signature-unsupported: fastcall ECX/EDX args
+00433f40	FUN_00433f40	render	signature-unsupported: 5-arg shape
+004cb8a0	FUN_004cb8a0	render	live-state-side-effect: Direct3D vtable on live device (in ## decompilation summary)
+004d5570	FUN_004d5570	render	live-state-side-effect: Direct3D vtable on live device (in ## role)
+004d53b0	FUN_004d53b0	render	live-state-side-effect: Direct3D vtable on live device (in ## role)
+00493ac0	LAB_00493ac0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00493b40	LAB_00493b40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00411ce0	Ghost::SetupRender	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00553f40	FontGlyph_UploadData	hud	callee-gate: 0055deb0=C1
+004c4d20	RwMatrix_SetRotAxisAngle	render	signature-unsupported: fastcall ECX/EDX args
+004c57a0	FontCtxMatrix_AllocInit	hud	signature-unsupported: fastcall ECX/EDX args
+00414570	FUN_00414570	ai	callee-gate: 004c39b0=C1
+00415e20	FUN_00415e20	ai	callee-gate: 004c39b0=C1
+0046d570	FUN_0046d570	ai	callee-gate: 004c39b0=C1
+00472650	FUN_00472650	util	callee-gate: 00534870=C1
+004781b0	FUN_004781b0	vehicle	callee-gate: 004e7420=C1
+004b5190	FUN_004b5190	vehicle	callee-gate: 00543d40=C1,00543d70=C1,00543df0=C1,0055deb0=C1
+004770c0	FUN_004770c0	vehicle	callee-gate: 004c0b30=C1,004e7e30=C1,004e8090=C1,00534b60=C1
+005ba7f0	FUN_005ba7f0	audio	live-state-side-effect: DirectSound vtable on live device (in ## constants)
+005bb000	FUN_005bb000	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005bbdb0	FUN_005bbdb0	audio	live-state-side-effect: DirectSound vtable on live device (in (preamble))
+0043d2a0	FUN_0043d2a0	frontend	signature-unsupported: in_EAX arg
+00432800	FUN_00432800	frontend	signature-unsupported: in_EAX arg
+00431b80	FUN_00431b80	frontend	signature-unsupported: in_EAX arg
+004324a0	FUN_004324a0	frontend	signature-unsupported: in_EAX arg
+004322c0	FUN_004322c0	frontend	signature-unsupported: in_EAX arg
+0042f400	FUN_0042f400	frontend	signature-unsupported: in_EAX arg
+0042f020	FUN_0042f020	frontend	signature-unsupported: fastcall ECX/EDX args
+00431d00	FUN_00431d00	frontend	signature-unsupported: in_EAX arg
+004d5bc0	FUN_004d5bc0	render	live-state-side-effect: Direct3D vtable on live device (in ## global data references)
+004cff00	FUN_004cff00	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cb330	FUN_004cb330	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+00498c00	VideoModeTableInit	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004491e0	SkyDomeUpdatePos	render	callee-gate: 004c15c0=C1
+004914b0	RainRender	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+00491070	RainColorInit	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004270f0	CourseRenderFrame	render	callee-gate: 004e5660=C1
+004924e0	FogColorGetter	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+00420050	PerPlayerViewportRender	render	callee-gate: 004e4900=C1
+00425e40	FUN_00425e40	render	callee-gate: 004e6100=C1
+00475e50	FUN_00475e50	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00475d30	FUN_00475d30	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00477810	FUN_00477810	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00477a10	FUN_00477a10	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+0048fd70	FUN_0048fd70	render	signature-unsupported: 5-arg shape
+00414490	FUN_00414490	ai	callee-gate: 004c39b0=C1
+0042c960	CameraTransitionStateMachine	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+00410d10	FUN_00410d10	vehicle	inline bare [UNCERTAIN] (heading=## constants)
+0042a740	FUN_0042a740	render	callee-gate: 00558df0=C1
+004790e0	FUN_004790e0	track	callee-gate: 004e5c70=C1
+004b5030	FUN_004b5030	render	callee-gate: 004e5c70=C1
+004785e0	FUN_004785e0	util	signature-unsupported: in_EAX arg
+004783f0	FUN_004783f0	ai	callee-gate: 004c39b0=C1
+0045e2a0	FUN_0045e2a0	render	callee-gate: 00546380=C1
+0045e160	FUN_0045e160	render	callee-gate: 00546380=C1
+00454170	FUN_00454170	gameplay	callee-gate: 004c1210=C1,004c15c0=C1,004e43b0=C1,004e4440=C1
+004547c0	FUN_004547c0	gameplay	callee-gate: 004e4800=C1
+004c51a0	RwMatrixTranslate	render	inline bare [UNCERTAIN] (heading=## d-4360 partial — lab_00554940 im2d per-glyph vertex emission)
+00441990	FUN_00441990	util	inline [UNCERTAIN U-2187] not in UNCERTAINTIES.md (heading=## constants)
+00446520	FUN_00446520	util	inline [UNCERTAIN U-2189] not in UNCERTAINTIES.md (heading=## constants)
+00442e00	FUN_00442e00	util	inline [UNCERTAIN U-2196] not in UNCERTAINTIES.md (heading=## constants)
+00429620	FUN_00429620	hud	signature-unsupported: fastcall ECX/EDX args
+0045e040	FUN_0045e040	audio	callee-gate: 00546320=C1
+00429240	FUN_00429240	frontend	signature-unsupported: fastcall ECX/EDX args
+00428d30	FUN_00428d30	frontend	signature-unsupported: 5-arg shape
+00497190	FUN_00497190	input	signature-unsupported: EAX-implicit arg
+004298e0	TimeDisplay::InitForLap	hud	inline bare [UNCERTAIN] (heading=## decompilation)
+004103a0	TimeTrial::LapFinishProcessor	util	inline bare [UNCERTAIN] (heading=## decompilation (summary))
+00406ce0	FUN_00406ce0	util	callee-gate: 0055ac00=C1,0057c210=C1
+00488e70	FUN_00488e70	util	callee-gate: 00535700=C1,00535910=C1
+004709a0	VehicleCollisionBroadPhase	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046ef70	FUN_0046ef70	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+004b3c60	FUN_004b3c60	render	callee-gate: 004e99b0=C1
+004b3cc0	FUN_004b3cc0	render	callee-gate: 00545260=C1
+00479030	FUN_00479030	track	callee-gate: 00543da0=C1,00543dc0=C1
+00474f30	FUN_00474f30	render	callee-gate: 00552020=C1
+00487280	FUN_00487280	render	callee-gate: 00538c80=C1,00547230=C1
+0047be80	FUN_0047be80	track	signature-unsupported: fastcall ECX/EDX args
+0047bcc0	FUN_0047bcc0	track	signature-unsupported: in_EAX arg
+0046ddb0	VehicleWheelForceIntegrator	vehicle	signature-unsupported: implicit-this arg
+00467650	VehicleWheelDrivetrainUpdate	vehicle	callee-gate: 004c39b0=C1
+00468980	VehicleAeroStabilizer	vehicle	callee-gate: 004c39b0=C1
+0046f6c0	VehicleWheelContactSolver	vehicle	signature-unsupported: implicit-this arg
+00467350	VehicleSlipTimerTick	vehicle	callee-gate: 004c39b0=C1
+004c5bc0	FUN_004c5bc0	render	live-state-side-effect: _unlink on live path (in ## why c2)
+004cee90	FUN_004cee90	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cefd0	FUN_004cefd0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004b42c0	FUN_004b42c0	render	callee-gate: 004c39b0=C1
+004c4470	sub_004c4470 (rwID_MATRIXMODULE ctor)	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004c4430	sub_004c4430 (rwID_MATRIXMODULE dtor)	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004c07b0	sub_004c07b0 (rwID_FRAMEMODULE ctor)	render	inline bare [UNCERTAIN] (heading=## evidence for c2)
+004c0830	sub_004c0830 (rwID_FRAMEMODULE dtor)	render	inline bare [UNCERTAIN] (heading=## evidence for c2)
+00150c50	RtFSHandler::Open	util	callee-gate: 00550740=C1,00551410=C1,00551460=C1
+00150d80	RtFSHandler::Close	util	live-state-side-effect: CloseHandle on live handle (in (preamble))
+00150da0	RtFSHandler::ReadAsync	util	callee-gate: 00551550=C1
+00151090	RtFSHandler::Poll	util	callee-gate: 00551090=C1,00551550=C1
+001512b0	RtFSHandler::GetStatus	util	callee-gate: 00551090=C1,005512b0=C1
+001512d0	RtFSHandler::Stat	util	callee-gate: 00551410=C1,00551460=C1
+00151190	RtFSHandler::Install	util	callee-gate: 005504d0=C1,00551090=C1,00551190=C1,005512b0=C1,00551330=C1
+001504d0	RtFSManager::FindHandler	util	callee-gate: 005504d0=C1
+000b6710	PizWin32Open	util	signature-unsupported: in_EAX arg
+000b6940	PizOpenAndParse	util	callee-gate: 005507a0=C1
+005aaa00	FUN_005aaa00	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005bbd50	FUN_005bbd50	audio	live-state-side-effect: DirectSound vtable on live device (in (preamble))
+005bbed0	FUN_005bbed0	audio	live-state-side-effect: DirectSound vtable on live device (in (preamble))
+0046da80	VehicleTrackInteraction	vehicle	inline bare [UNCERTAIN] (heading=## mechanistic description)
+00470670	VehicleControlUpdate	vehicle	inline [UNCERTAIN U-1408] catalogued but Blocks=C3 (matched-RVA) (heading=## mechanistic description)
+004c1c10	Camera::SetProjection	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00441760	Camera::Apply	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0041ef60	Player::WriteFieldZero	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00442600	CameraPath::InitForTrack	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0046cb30	Player::GetOffset3D	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00441820	CameraPath::SamplePoint	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00426bb0	CameraPath::GetCount	camera	shape-only note (no verbatim decomp / mechanical-transcript section)
+00441700	Camera::SetupFOV	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004464c0	CameraEntry::DispatchAll	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00442a60	Spectator::ComputeDistances	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004a3384	CRT::acos	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004a3620	CRT::atan	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00407600	Player::GetPositionPtr	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0041f120	Player::ComputeVehicleToCameraVec	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004427c0	Spectator::SelectCamera	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00442a20	Camera::InitWithMatrix	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004a3700	CRT::math_float_371d	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004a37b0	CRT::math_float_37cd	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004b4430	Camera::BuildFrame	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004b4cd0	Bezier::QueryWrapper	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0045bfe0	Bezier::GetLocate	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0045c350	Bezier::Interpolate	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004b6640	FUN_004b6640	boot	callee-gate: 005504d0=C1,00551330=C1
+004275d0	FUN_004275d0	boot	callee-gate: 00552920=C1,00553cf0=C1,00553e80=C1,00553ef0=C1
+004881d0	FUN_004881d0	boot	callee-gate: 004c0b30=C1,004e7e30=C1,004e8090=C1,00534b60=C1
+0041cb10	FUN_0041cb10	boot	callee-gate: 004e6ab0=C1
+0041def0	FUN_0041def0	boot	callee-gate: 004c0b30=C1,004c1040=C1,004e69a0=C1,004e7e30=C1
+0041eaa0	FUN_0041eaa0	boot	callee-gate: 004c0b30=C1
+0041a3d0	FUN_0041a3d0	boot	callee-gate: 004e6e00=C1
+0041de70	FUN_0041de70	boot	callee-gate: 004e6e00=C1
+0041c2c0	FUN_0041c2c0	boot	callee-gate: 004e6e00=C1
+0041da80	FUN_0041da80	boot	callee-gate: 004e6e00=C1
+00425ed0	FUN_00425ed0	boot	callee-gate: 004e6e00=C1
+0041e0d0	FUN_0041e0d0	boot	callee-gate: 004e6920=C1,004e6e00=C1,004e7e30=C1
+0042c2a0	FUN_0042c2a0	boot	callee-gate: 004e5700=C1
+00489250	FUN_00489250	boot	inline bare [UNCERTAIN] (heading=## why c2)
+00494bc0	FUN_00494bc0	boot	inline bare [UNCERTAIN] (heading=## why c2)
+00558240	FUN_00558240	boot	callee-gate: 00558180=C1,00558400=C1
+00469df0	VehicleVehicleCollisionImpulse	vehicle	shape-only note (no verbatim decomp / mechanical-transcript section)
+00468d80	VehicleTerrainContactSolver	vehicle	shape-only note (no verbatim decomp / mechanical-transcript section)
+004694e0	VehicleObjectContactSolver	vehicle	shape-only note (no verbatim decomp / mechanical-transcript section)
+00498810	FUN_00498810	util	inline bare [UNCERTAIN] (heading=## notes)
+0045d1e0	FUN_0045d1e0	util	inline bare [UNCERTAIN] (heading=## notes)
+0045d330	FUN_0045d330	util	inline bare [UNCERTAIN] (heading=## notes)
+00472640	FUN_00472640	util	inline bare [UNCERTAIN] (heading=## constants / globals cited)
+0040e170	FUN_0040e170	util	inline bare [UNCERTAIN] (heading=## constants / globals cited)
+0045dbe0	FUN_0045dbe0	util	inline bare [UNCERTAIN] (heading=## notes)
+004657b0	FUN_004657b0	util	inline bare [UNCERTAIN] (heading=## notes)
+00472820	FUN_00472820	util	inline bare [UNCERTAIN] (heading=## mechanical description)
+0042d420	FUN_0042d420	render	callee-gate: 004c0b30=C1
+004624c0	FUN_004624c0	audio	callee-gate: 00551190=C1
+00550430	FUN_00550430	util	callee-gate: 00551510=C1
+00550910	FUN_00550910	save	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+00420de0	FUN_00420de0	vehicle	signature-unsupported: fastcall ECX/EDX args
+00418a30	FUN_00418a30	vehicle	signature-unsupported: in_EAX arg
+00418de0	FUN_00418de0	vehicle	signature-unsupported: in_EAX arg
+004c4eb0	RwMatrixInvert_CofactorPath	render	inline bare [UNCERTAIN] (heading=## algorithm)
+00485380	FUN_00485380	vehicle	signature-unsupported: in_EAX arg
+004ce790	FUN_004ce790	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf160	FUN_004cf160	render	inline bare [UNCERTAIN] (heading=## why c2)
+00418860	FUN_00418860	ai	inline bare [UNCERTAIN] (heading=## key addresses)
+00444b60	FUN_00444b60	ai	callee-gate: 005586f0=C1
+00423540	FUN_00423540	ai	inline bare [UNCERTAIN] (heading=## analysis)
+004c3d60	FUN_004c3d60	render	callee-gate: 00534870=C1
+0046c5f0	FUN_0046c5f0	vehicle	signature-unsupported: fastcall ECX/EDX args
+0046cc40	FUN_0046cc40	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00403fa0	FUN_00403fa0	render	signature-unsupported: in_EAX arg
+00413a00	FUN_00413a00	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00413a40	FUN_00413a40	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046d400	FUN_0046d400	render	callee-gate: 00538c80=C1
+0046c7d0	FUN_0046c7d0	vehicle	callee-gate: 004c39b0=C1
+004c90a0	FUN_004c90a0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004d40d0	FUN_004d40d0	render	callee-gate: 004e1710=C1,004e2030=C1
+004292d0	sub_004292d0	util	callee-gate: 0055deb0=C1
+00414060	FUN_00414060	util	signature-unsupported: fastcall ECX/EDX args
+00426810	sub_00426810	render	callee-gate: 004c39b0=C1
+005aacf0	FUN_005aacf0	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005aac20	FUN_005aac20	audio	live-state-side-effect: _unlink on live path (in ## why c2)
+005a75b0	FUN_005a75b0	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00555af0	FontCtx_LoadMetrics_Met	hud	callee-gate: 00550a20=C1
+00555ff0	FontCtx_LoadMetrics_Atlas	hud	callee-gate: 00550a20=C1
+00554050	FontCanvas_Shutdown	hud	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00555280	FontSys_ShutdownContextPool	hud	live-state-side-effect: _unlink on live path (in ## mechanical description)
+004aed77	FUN_004aed77	boot	signature-unsupported: in_EAX arg
+00404fa0	FUN_00404fa0	render	callee-gate: 00532a60=C1
+00408b00	FUN_00408b00	util	callee-gate: 004c39b0=C1
+0041ef80	FUN_0041ef80	util	inline bare [UNCERTAIN] (heading=## mechanical description)
+00429820	FUN_00429820	hud	inline bare [UNCERTAIN] (heading=## mechanical description)
+0047ea60	FUN_0047ea60	vehicle	callee-gate: 0055ac00=C1,0055dff0=C1,0057c210=C1
+004a2bb8	report_failure	boot	live-state-side-effect: ExitProcess terminates host (in ## mechanical description)
+004ad351	__fcloseall	boot	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004a583a	FUN_004a583a	boot	live-state-side-effect: blocking message box (in ## mechanical description)
+004773f0	FUN_004773f0	render	signature-unsupported: in_EAX arg
+004a4ff4	write_multi_char	render	signature-unsupported: in_EAX arg
+004a5018	write_string	render	signature-unsupported: in_EAX arg
+00546b10	FUN_00546b10	vehicle	callee-gate: 00546bf0=C1,00546c50=C1,00546cb0=C1
+004dcaa0	FUN_004dcaa0	render	live-state-side-effect: Direct3D vtable on live device (in ## what it does)
+004c3910	FUN_004c3910	render	inline bare [UNCERTAIN] (heading=(preamble))
+004c3dc0	FUN_004c3dc0	render	inline bare [UNCERTAIN] (heading=(preamble))
+004ccba0	FUN_004ccba0	render	live-state-side-effect: _unlink on live path (in ## decompilation (verbatim, verified 2026-05-13))
+00421d20	FUN_00421d20	util	inline bare [UNCERTAIN] (heading=## constants)
+004219f0	FUN_004219f0	util	inline bare [UNCERTAIN] (heading=## mechanical description)
+0044e0a0	FUN_0044e0a0	util	inline bare [UNCERTAIN] (heading=## constants)
+004764f0	FUN_004764f0	util	inline bare [UNCERTAIN] (heading=## constants)
+004764e0	FUN_004764e0	util	signature-unsupported: fastcall ECX/EDX args
+00421960	FUN_00421960	audio	inline bare [UNCERTAIN] (heading=## mechanical description)
+0041e960	FUN_0041e960	ai	inline bare [UNCERTAIN] (heading=## callees)
+004219a0	FUN_004219a0	ai	signature-unsupported: in_EAX arg
+00481750	FUN_00481750	vehicle	callee-gate: 0055b650=C1,0057c210=C1
+00480d60	FUN_00480d60	vehicle	callee-gate: 0055b650=C1,0057c210=C1
+004c1a70	FUN_004c1a70	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004982a0	FUN_004982a0	input	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in (preamble))
+00497230	FUN_00497230	input	signature-unsupported: in_EAX arg
+00495150	FUN_00495150	input	inline [UNCERTAIN U-2293] not in UNCERTAINTIES.md (heading=## mechanical description)
+004c5a60	FUN_004c5a60	render	inline bare [UNCERTAIN] (heading=## why c2)
+00496e40	FUN_00496e40	boot	inline bare [UNCERTAIN] (heading=## notes)
+00498510	FUN_00498510	input	live-state-side-effect: modal Win32 dialog (DialogBoxParam) (in (preamble))
+004caea0	FUN_004caea0	render	inline [UNCERTAIN U-3720] not in UNCERTAINTIES.md (heading=## why c2)
+0047d3c0	VehiclePhysicsWorldCreate	vehicle	callee-gate: 004c0b30=C1,004e7e30=C1,00559c40=C1,0055ae70=C1,0055b940=C1,0055bab0=C1,0055c4a0=C1,0057c220=C1,0057c300=C1,0057c500=C1,0057c550=C1
+00442ce0	VehicleRubberBandSpeedModifier	vehicle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0046d4d0	VehiclePhysicsMatrixSet	vehicle	inline bare [UNCERTAIN] (heading=## vehicle struct layout derived)
+0047e9c0	PhysicsSceneInitSequence	vehicle	callee-gate: 0055e200=C1,0055fe50=C1,0055fea0=C1,0055ff70=C1,0055ff90=C1,00561040=C1,00561390=C1,00561c50=C1,00561e60=C1,00561e80=C1
+0047d240	VehiclePhysicsBodyPlace	vehicle	callee-gate: 0055ab30=C1,0055ac00=C1,0055ade0=C1,0055dff0=C1,0057c210=C1
+0055c810	PhysicsBodySetLinearVelocity	vehicle	callee-gate: 0055c380=C1
+004826d0	PhysicsCollisionBodyCreate	vehicle	callee-gate: 00563810=C1
+00401000	FUN_00401000	hud	callee-gate: 004c0b30=C1,004e4450=C1,004e4810=C1,004e48e0=C1,004e4900=C1,004e4b90=C1,004e4dd0=C1,004e5850=C1,0053fbb0=C1
+004011f0	FUN_004011f0	hud	callee-gate: 004c15c0=C1
+00401fe0	FUN_00401fe0	render	callee-gate: 004e7fa0=C1,004e8030=C1,004e8640=C1,004e8910=C1,004e8940=C1,004e8a10=C1,004e8c70=C1
+00402240	FUN_00402240	render	callee-gate: 004c0b30=C1,004c1040=C1,004e67b0=C1,004e68a0=C1,004e6d80=C1,004e6f80=C1,004e7e30=C1,004e8ea0=C1
+004022a0	FUN_004022a0	render	callee-gate: 004e7fa0=C1,004e8030=C1,004e8640=C1,004e8910=C1,004e8940=C1,004e8a10=C1,004e8c70=C1
+00402590	FUN_00402590	render	callee-gate: 004c0b30=C1,004c1040=C1,004e67b0=C1,004e68a0=C1,004e6d80=C1,004e6f80=C1,004e7e30=C1,004e8ea0=C1
+004034a0	FUN_004034a0	render	inline bare [UNCERTAIN] (heading=## body summary)
+004036a0	FUN_004036a0	render	signature-unsupported: in_EAX arg
+00404820	FUN_00404820	hud	callee-gate: 004e6e00=C1
+00480b70	FUN_00480b70	vehicle	callee-gate: 0055ac00=C1,0055ad30=C1,0055b650=C1,0057c210=C1
+00481780	FUN_00481780	vehicle	callee-gate: 0057c210=C1
+00481810	FUN_00481810	vehicle	callee-gate: 0055bb70=C1,0055bde0=C1,0057c210=C1
+004818d0	FUN_004818d0	vehicle	callee-gate: 0057c210=C1
+00481a30	FUN_00481a30	vehicle	callee-gate: 0057c210=C1
+00481d90	FUN_00481d90	vehicle	callee-gate: 0055ac00=C1,0055ac50=C1,0055ad30=C1,0055b650=C1,0057c210=C1
+00481e00	FUN_00481e00	vehicle	callee-gate: 0055c000=C1,0057ca30=C1
+00482140	FUN_00482140	vehicle	callee-gate: 004c39b0=C1,004e68a0=C1,004e7fa0=C1,004e8030=C1,004e8640=C1,004e8910=C1,004e8940=C1,004e8a10=C1,004e8c70=C1,004e8ea0=C1
+00482820	FUN_00482820	vehicle	callee-gate: 0055af80=C1,0055afc0=C1,0055de20=C1
+00483ed0	FUN_00483ed0	vehicle	callee-gate: 004c0b30=C1,004c15c0=C1
+004840f0	FUN_004840f0	vehicle	signature-unsupported: fastcall ECX/EDX args
+00441490	FUN_00441490	camera	callee-gate: 004e6920=C1
+00443210	FUN_00443210	render	inline bare [UNCERTAIN] (heading=## body summary)
+00448770	FUN_00448770	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+00448820	FUN_00448820	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+00448880	FUN_00448880	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+00448cb0	FUN_00448cb0	render	callee-gate: 004c15c0=C1
+00448dc0	FUN_00448dc0	render	callee-gate: 004c15c0=C1
+00448e20	FUN_00448e20	render	callee-gate: 004c15c0=C1
+00490000	FUN_00490000	render	callee-gate: 004e8090=C1
+00490020	FUN_00490020	render	callee-gate: 004e8090=C1
+00490e70	FUN_00490e70	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00490fb0	FUN_00490fb0	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004910c0	FUN_004910c0	render	callee-gate: 004c39b0=C1
+00491340	FUN_00491340	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00491b20	FUN_00491b20	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00491c00	FUN_00491c00	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00491e50	FUN_00491e50	render	signature-unsupported: in_EAX arg
+00491f00	FUN_00491f00	render	callee-gate: 00535700=C1,00535910=C1
+00492170	FUN_00492170	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+004921b0	FUN_004921b0	render	inline bare [UNCERTAIN] (heading=## mechanical description)
+00467110	FUN_00467110	render	callee-gate: 004c0b30=C1
+004d0290	FUN_004d0290	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d0660	FUN_004d0660	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d07b0	FUN_004d07b0	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d0d00	FUN_004d0d00	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d1020	FUN_004d1020	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d1640	FUN_004d1640	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d1d20	FUN_004d1d20	render	live-state-side-effect: Direct3D vtable on live device (in (preamble))
+004d3db0	FUN_004d3db0	render	callee-gate: 004e1780=C1,004e17e0=C1,004e1e70=C1
+004d41e0	FUN_004d41e0	render	live-state-side-effect: remove() on live path (in ## callees)
+004d4380	FUN_004d4380	render	callee-gate: 004e2090=C1
+004d55b0	FUN_004d55b0	render	live-state-side-effect: Direct3D vtable on live device (in ## role)
+004d6910	FUN_004d6910	render	inline bare [UNCERTAIN] (heading=## case table (0x004d6910))
+00493c60	FUN_00493c60	render	signature-unsupported: fastcall ECX/EDX args
+00494820	FUN_00494820	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+00494b65	FUN_00494b65	render	signature-unsupported: fastcall ECX/EDX args
+00494f40	FUN_00494f40	render	signature-unsupported: fastcall ECX/EDX args
+00494fd0	FUN_00494fd0	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004954f0	FUN_004954f0	boot	live-state-side-effect: DirectInput vtable on live device (in ## mechanical description)
+00495580	FUN_00495580	input	live-state-side-effect: DirectInput vtable on live device (in ## mechanical description)
+004955d0	FUN_004955d0	boot	callee-gate: 00551190=C1
+00496040	FUN_00496040	input	live-state-side-effect: DirectInput vtable on live device (in ## constants)
+00496100	FUN_00496100	input	live-state-side-effect: DirectInput vtable on live device (in ## constants)
+00496320	FUN_00496320	input	live-state-side-effect: DirectInput vtable on live device (in ## mechanical description)
+00496940	FUN_00496940	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004969a0	FUN_004969a0	render	signature-unsupported: in_EAX arg
+00496d20	FUN_00496d20	render	callee-gate: 004e5c70=C1
+00496d60	FUN_00496d60	util	callee-gate: 004eb3c0=C1
+00496db0	FUN_00496db0	util	callee-gate: 004eb3c0=C1,004eb9d0=C1
+00497470	FUN_00497470	frontend	signature-unsupported: fastcall ECX/EDX args
+004974b0	FUN_004974b0	frontend	signature-unsupported: in_EAX arg
+00497b10	FUN_00497b10	frontend	signature-unsupported: in_EAX arg
+00499d90	FUN_00499d90	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+00486370	FUN_00486370	particle	signature-unsupported: in_EAX arg
+00486830	FUN_00486830	particle	inline bare [UNCERTAIN] (heading=## mechanical description)
+00487150	FUN_00487150	particle	signature-unsupported: fastcall ECX/EDX args
+00487e00	FUN_00487e00	particle	signature-unsupported: fastcall ECX/EDX args
+00487e20	thunk_FUN_00535700	render	callee-gate: 00535700=C1
+00487e30	thunk_FUN_00535910	render	callee-gate: 00535910=C1
+00405540	FUN_00405540	gameplay	callee-gate: 004c39b0=C1
+00405920	FUN_00405920	gameplay	signature-unsupported: in_EAX arg
+00405f60	FUN_00405f60	gameplay	signature-unsupported: fastcall ECX/EDX args
+004064c0	FUN_004064c0	gameplay	signature-unsupported: in_EAX arg
+004069d0	FUN_004069d0	gameplay	callee-gate: 004c39b0=C1
+00406ae0	FUN_00406ae0	gameplay	signature-unsupported: in_EAX arg
+004074a0	FUN_004074a0	gameplay	callee-gate: 004e6e00=C1
+00407e20	FUN_00407e20	gameplay	callee-gate: 004c39b0=C1
+00408610	FUN_00408610	gameplay	callee-gate: 00538c80=C1
+004093b0	FUN_004093b0	gameplay	callee-gate: 004c39b0=C1
+004096a0	FUN_004096a0	gameplay	signature-unsupported: 5-arg shape
+0040baa0	FUN_0040baa0	gameplay	signature-unsupported: 5-arg shape
+0040bae0	FUN_0040bae0	gameplay	callee-gate: 004e89a0=C1,0053fb70=C1
+0040be50	FUN_0040be50	gameplay	signature-unsupported: fastcall ECX/EDX args
+00412010	FUN_00412010	gameplay	callee-gate: 004e6e00=C1
+0048ae00	FUN_0048ae00	particle	callee-gate: 004c0b30=C1,004c1040=C1,004e69a0=C1,004e7e30=C1,005449f0=C1,00544a70=C1,00544ad0=C1,00544bf0=C1
+0048af70	FUN_0048af70	particle	signature-unsupported: fastcall ECX/EDX args
+0048aff0	FUN_0048aff0	particle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0048b230	FUN_0048b230	particle	callee-gate: 00544bf0=C1
+0048b960	FUN_0048b960	particle	inline bare [UNCERTAIN] (heading=## mechanical description)
+0048d0f0	FUN_0048d0f0	particle	signature-unsupported: fastcall ECX/EDX args
+0048fef0	FUN_0048fef0	particle	callee-gate: 004e89a0=C1
+0048ffd0	FUN_0048ffd0	particle	callee-gate: 004e6e00=C1,004e8090=C1
+0049c620	FUN_0049c620	particle	signature-unsupported: fastcall ECX/EDX args
+0049c6a0	FUN_0049c6a0	particle	signature-unsupported: fastcall ECX/EDX args
+0049c6d0	FUN_0049c6d0	particle	signature-unsupported: fastcall ECX/EDX args
+0049c750	FUN_0049c750	particle	signature-unsupported: fastcall ECX/EDX args
+0049c770	FUN_0049c770	particle	signature-unsupported: fastcall ECX/EDX args
+0049c800	FUN_0049c800	particle	signature-unsupported: fastcall ECX/EDX args
+0049c810	FUN_0049c810	particle	signature-unsupported: fastcall ECX/EDX args
+0049c900	FUN_0049c900	particle	signature-unsupported: fastcall ECX/EDX args
+0049c930	FUN_0049c930	particle	signature-unsupported: fastcall ECX/EDX args
+0049c990	FUN_0049c990	particle	signature-unsupported: fastcall ECX/EDX args
+0049ca00	FUN_0049ca00	particle	signature-unsupported: fastcall ECX/EDX args
+0049ca60	FUN_0049ca60	particle	signature-unsupported: fastcall ECX/EDX args
+0049cb00	FUN_0049cb00	particle	signature-unsupported: fastcall ECX/EDX args
+0049cb20	FUN_0049cb20	particle	signature-unsupported: fastcall ECX/EDX args
+0049cbd0	FUN_0049cbd0	particle	signature-unsupported: fastcall ECX/EDX args
+0049ceb0	FUN_0049ceb0	particle	signature-unsupported: fastcall ECX/EDX args
+0049d1d0	FUN_0049d1d0	particle	signature-unsupported: fastcall ECX/EDX args
+0049d200	FUN_0049d200	particle	signature-unsupported: fastcall ECX/EDX args
+004e66d0	RpClumpForAllAtomics	render	live-state-side-effect: _unlink on live path (in ## mechanical description (decomp transcript))
+005c7070	FUN_005c7070	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005c7fb0	FUN_005c7fb0	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005c91f0	FUN_005c91f0	audio	signature-unsupported: 5-arg shape
+0051e6f0	png_write_hIST	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051e7f0	png_check_keyword	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051e990	FUN_0051e990	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051ead0	FUN_0051ead0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051ed60	FUN_0051ed60	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051ee70	FUN_0051ee70	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051f0e0	FUN_0051f0e0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051f240	FUN_0051f240	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051f350	FUN_0051f350	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051f4f0	FUN_0051f4f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051f810	FUN_0051f810	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051fa50	png_write_find_filter	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520640	FUN_00520640	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005207c0	png_create_struct_2	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520850	png_destroy_struct	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520870	FUN_00520870	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520930	png_free	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520960	FUN_00520960	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520990	FUN_00520990	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005209d0	FUN_005209d0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520a00	FUN_00520a00	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520b60	FUN_00520b60	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520c70	FUN_00520c70	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00520ef0	FUN_00520ef0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00521000	FUN_00521000	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00521110	FUN_00521110	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00521410	FUN_00521410	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00521520	FUN_00521520	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00521990	FUN_00521990	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00522970	FUN_00522970	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00522ab0	FUN_00522ab0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00522b00	FUN_00522b00	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00522b50	FUN_00522b50	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00522cc0	FUN_00522cc0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00522ce0	FUN_00522ce0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523110	png_get_uint_32	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523140	png_crc_read	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523170	FUN_00523170	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005232c0	FUN_005232c0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523360	FUN_00523360	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523640	FUN_00523640	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005238c0	FUN_005238c0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523cd0	FUN_00523cd0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00523e40	FUN_00523e40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005241f0	FUN_005241f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005245b0	FUN_005245b0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00524f70	FUN_00524f70	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005253c0	FUN_005253c0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00525870	png_handle_sPLT	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00525bd0	FUN_00525bd0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00525fb0	FUN_00525fb0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00526310	FUN_00526310	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00526630	FUN_00526630	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00526910	FUN_00526910	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00526bf0	FUN_00526bf0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005270e0	FUN_005270e0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00527560	FUN_00527560	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005278a0	FUN_005278a0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00527a40	FUN_00527a40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00527c30	FUN_00527c30	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00527ee0	FUN_00527ee0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528200	FUN_00528200	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528630	FUN_00528630	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528810	FUN_00528810	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528ba0	FUN_00528ba0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528e00	zcalloc	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528e20	zcfree	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528e30	FUN_00528e30	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00528ef0	FUN_00528ef0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00529050	FUN_00529050	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052a890	FUN_0052a890	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052a9c0	FUN_0052a9c0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052aa40	FUN_0052aa40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052ab00	inflate	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052b750	FUN_0052b750	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052b7e0	FUN_0052b7e0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052b820	FUN_0052b820	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052bf20	FUN_0052bf20	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052bf40	FUN_0052bf40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052bff0	inflate_table	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+004128f0	FUN_004128f0	hud	signature-unsupported: in_EAX arg
+00413bc0	FUN_00413bc0	hud	signature-unsupported: fastcall ECX/EDX args
+00417750	FUN_00417750	gameplay	signature-unsupported: fastcall ECX/EDX args
+00418a70	FUN_00418a70	render	signature-unsupported: in_EAX arg
+00418aa0	FUN_00418aa0	render	signature-unsupported: in_EAX arg
+00418bd0	FUN_00418bd0	render	signature-unsupported: fastcall ECX/EDX args
+00419090	FUN_00419090	gameplay	signature-unsupported: in_EAX arg
+004190f0	FUN_004190f0	gameplay	signature-unsupported: in_EAX arg
+00419480	FUN_00419480	gameplay	signature-unsupported: in_EAX arg
+004196f0	FUN_004196f0	gameplay	callee-gate: 004e6920=C1,004e6e00=C1
+00419a00	FUN_00419a00	gameplay	callee-gate: 004c15c0=C1,004c39b0=C1,004e6100=C1
+0041a060	FUN_0041a060	gameplay	callee-gate: 004c0b30=C1,004e69a0=C1,004e7e30=C1
+0041a980	FUN_0041a980	render	callee-gate: 004e6e00=C1
+0041a9d0	FUN_0041a9d0	render	callee-gate: 004c39b0=C1
+0041aac0	FUN_0041aac0	render	callee-gate: 004c39b0=C1
+0041ad60	FUN_0041ad60	render	signature-unsupported: in_EAX arg
+0041ae20	FUN_0041ae20	render	signature-unsupported: fastcall ECX/EDX args
+0041af50	FUN_0041af50	render	signature-unsupported: in_EAX arg
+0041b440	FUN_0041b440	render	callee-gate: 004e6e00=C1
+0041b770	FUN_0041b770	render	signature-unsupported: fastcall ECX/EDX args
+0041beb0	FUN_0041beb0	render	callee-gate: 004e6e00=C1
+0041cb00	FUN_0041cb00	render	callee-gate: 004e6e00=C1
+0041d6d0	FUN_0041d6d0	render	callee-gate: 004e6e00=C1
+00489dc0	FUN_00489dc0	particle	callee-gate: 004c0b30=C1,004e7e30=C1,004e8090=C1,00534b60=C1,00535700=C1
+0048a060	FUN_0048a060	particle	signature-unsupported: in_EAX arg
+0048a130	FUN_0048a130	particle	signature-unsupported: in_EAX arg
+0048a3c0	FUN_0048a3c0	particle	callee-gate: 004e6920=C1,004e7e30=C1
+0048a490	FUN_0048a490	particle	signature-unsupported: fastcall ECX/EDX args
+0048a6f0	FUN_0048a6f0	particle	callee-gate: 004c39b0=C1
+0048a850	FUN_0048a850	particle	callee-gate: 004c39b0=C1
+0048aa50	FUN_0048aa50	particle	callee-gate: 004c39b0=C1
+0049de90	FUN_0049de90	particle	signature-unsupported: fastcall ECX/EDX args
+0049e140	FUN_0049e140	particle	signature-unsupported: 5-arg shape
+0049e190	FUN_0049e190	particle	inline bare [UNCERTAIN] (heading=## control flow summary)
+0049e580	FUN_0049e580	particle	signature-unsupported: fastcall ECX/EDX args
+0049e5c0	FUN_0049e5c0	particle	signature-unsupported: fastcall ECX/EDX args
+0049e600	FUN_0049e600	particle	signature-unsupported: fastcall ECX/EDX args
+0049e640	FUN_0049e640	particle	signature-unsupported: fastcall ECX/EDX args
+0049ea70	FUN_0049ea70	particle	signature-unsupported: fastcall ECX/EDX args
+0049ead0	thunk_FUN_0049fac0	particle	signature-unsupported: fastcall ECX/EDX args
+0049ebc0	FUN_0049ebc0	particle	signature-unsupported: fastcall ECX/EDX args
+0049eeb0	FUN_0049eeb0	particle	signature-unsupported: fastcall ECX/EDX args
+0049f090	thunk_FUN_004a28b0	particle	signature-unsupported: fastcall ECX/EDX args
+0049f0a0	FUN_0049f0a0	particle	signature-unsupported: fastcall ECX/EDX args
+0049f210	FUN_0049f210	particle	signature-unsupported: fastcall ECX/EDX args
+0049f300	FUN_0049f300	particle	signature-unsupported: fastcall ECX/EDX args
+0049fac0	FUN_0049fac0	particle	signature-unsupported: fastcall ECX/EDX args
+0049fc80	FUN_0049fc80	particle	signature-unsupported: fastcall ECX/EDX args
+004b4080	FUN_004b4080	render	callee-gate: 004e89a0=C1
+004b40f0	FUN_004b40f0	render	callee-gate: 004e89a0=C1
+004df9b0	FUN_004df9b0	render	callee-gate: 004df8a0=C1
+004dfa10	FUN_004dfa10	render	callee-gate: 004df750=C1
+004dfa70	FUN_004dfa70	render	callee-gate: 004df750=C1
+004dfaa0	FUN_004dfaa0	render	callee-gate: 004df750=C1
+004dfb60	FUN_004dfb60	render	callee-gate: 004dee20=C1
+004dfbc0	FUN_004dfbc0	render	callee-gate: 004dee40=C1
+004e02d0	FUN_004e02d0	render	callee-gate: 004df120=C1,004df750=C1
+005c2d9b	FUN_005c2d9b	boot	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005c2f70	FUN_005c2f70	boot	signature-unsupported: in_ST0 (FPU) arg
+005c4180	FUN_005c4180	boot	signature-unsupported: in_ST0 (FPU) arg
+005c4640	FUN_005c4640	boot	callee-gate: 004e1ac0=C1
+005c4670	FUN_005c4670	boot	callee-gate: 004e1b60=C1
+005c4780	FUN_005c4780	boot	callee-gate: 004e1ac0=C1
+005c47e0	FUN_005c47e0	boot	callee-gate: 004c0b30=C1,004e1b60=C1
+005c4e20	FUN_005c4e20	boot	inline bare [UNCERTAIN] (heading=## mechanical description)
+005c4fa0	FUN_005c4fa0	boot	inline bare [UNCERTAIN] (heading=## mechanical description)
+005c5780	FUN_005c5780	boot	inline bare [UNCERTAIN] (heading=## mechanical description)
+005cb160	FUN_005cb160	boot	inline bare [UNCERTAIN] (heading=## mechanical description)
+00516bb0	png_write_data	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516bd0	png_flush_data	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516bf0	png_set_write_fn	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516c40	png_sig_cmp	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516cc0	png_zalloc	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516d20	thunk_png_free	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516d30	png_reset_crc	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516d50	png_calculate_crc	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516da0	png_create_info_struct	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00516de0	png_free_data	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005171a0	FUN_005171a0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00517200	FUN_00517200	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00517270	FUN_00517270	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005172b0	FUN_005172b0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005172f0	FUN_005172f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00517380	FUN_00517380	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005173d0	FUN_005173d0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005173f0	FUN_005173f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005175d0	FUN_005175d0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00517940	FUN_00517940	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00517da0	FUN_00517da0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00517e00	FUN_00517e00	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00518080	FUN_00518080	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00518140	FUN_00518140	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005183a0	FUN_005183a0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005183c0	FUN_005183c0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005184b0	FUN_005184b0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005184f0	FUN_005184f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00518570	FUN_00518570	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00518580	FUN_00518580	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00518590	FUN_00518590	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005185a0	png_do_background	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00519270	png_do_read_transformations	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005196f0	FUN_005196f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00519820	FUN_00519820	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+005199f0	FUN_005199f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00519af0	FUN_00519af0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00519bc0	FUN_00519bc0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00519e30	FUN_00519e30	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+00519f70	FUN_00519f70	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051a6c0	png_do_expand_palette	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051b750	FUN_0051b750	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051bb40	FUN_0051bb40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051bd70	FUN_0051bd70	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051c100	FUN_0051c100	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051c220	png_build_gamma_table	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051c9f0	FUN_0051c9f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051ca10	FUN_0051ca10	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051ca60	FUN_0051ca60	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051ca90	FUN_0051ca90	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051cb40	FUN_0051cb40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051cb70	FUN_0051cb70	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051cbe0	FUN_0051cbe0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051cfc0	FUN_0051cfc0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d0f0	FUN_0051d0f0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d1b0	FUN_0051d1b0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d240	FUN_0051d240	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d340	FUN_0051d340	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d400	FUN_0051d400	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d560	FUN_0051d560	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d800	FUN_0051d800	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051d900	FUN_0051d900	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051db30	FUN_0051db30	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051dca0	FUN_0051dca0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051e230	png_write_tRNS	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0051e4a0	FUN_0051e4a0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052c4a0	inflate_fast_huffman_setup	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052c630	FUN_0052c630	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052c660	FUN_0052c660	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052c7a0	FUN_0052c7a0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052cb00	image_library_bmp_loader	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052d170	FUN_0052d170	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052d7e0	FUN_0052d7e0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052d980	FUN_0052d980	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052da20	FUN_0052da20	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052daf0	image_library_format_handler_registry	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052ddc0	FUN_0052ddc0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052ddf0	FUN_0052ddf0	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052de60	FUN_0052de60	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0052df40	FUN_0052df40	util	shape-only note (no verbatim decomp / mechanical-transcript section)
+0041e150	FUN_0041e150	gameplay	signature-unsupported: in_EAX arg
+0041e170	FUN_0041e170	gameplay	signature-unsupported: in_EAX arg
+0041e1c0	FUN_0041e1c0	gameplay	signature-unsupported: fastcall ECX/EDX args
+0041e4b0	FUN_0041e4b0	render	signature-unsupported: in_EAX arg
+0041ec00	FUN_0041ec00	gameplay	callee-gate: 004e6e00=C1,0053d060=C1,0053d090=C1
+0041ecc0	FUN_0041ecc0	render	callee-gate: 0053fba0=C1,0053fbb0=C1,0053fea0=C1,005401d0=C1
+0041f2c0	FUN_0041f2c0	gameplay	callee-gate: 0053d090=C1
+0041f330	FUN_0041f330	gameplay	signature-unsupported: fastcall ECX/EDX args
+0041f710	FUN_0041f710	gameplay	signature-unsupported: in_EAX arg
+0041f770	FUN_0041f770	gameplay	signature-unsupported: in_EAX arg
+0041fe10	FUN_0041fe10	gameplay	inline bare [UNCERTAIN] (heading=## mechanical description)
+00420340	FUN_00420340	gameplay	callee-gate: 00540080=C1,00540100=C1,00540160=C1
+004216b0	FUN_004216b0	render	callee-gate: 004e6100=C1
+00421750	FUN_00421750	render	callee-gate: 0055ac00=C1,0055ad30=C1,0057c210=C1
+00421800	FUN_00421800	render	callee-gate: 0055ac00=C1,0055ad30=C1,0055b650=C1,0057c210=C1
+004218b0	FUN_004218b0	render	callee-gate: 0057c220=C1,0057c300=C1
+004218d0	FUN_004218d0	render	callee-gate: 0055b940=C1,0055c4a0=C1,0055c540=C1,0057c500=C1,0057c550=C1
+00421930	FUN_00421930	render	callee-gate: 0057c210=C1
+00421980	FUN_00421980	render	callee-gate: 00559ee0=C1
+00421a90	FUN_00421a90	render	signature-unsupported: in_EAX arg
+00421ba0	FUN_00421ba0	render	signature-unsupported: in_EAX arg
+00421c50	FUN_00421c50	render	signature-unsupported: in_EAX arg
+00421c80	FUN_00421c80	render	callee-gate: 004e6e00=C1,004e7e30=C1,0057c370=C1
+004223f0	FUN_004223f0	gameplay	signature-unsupported: fastcall ECX/EDX args
+004752f0	FUN_004752f0	render	callee-gate: 00532a60=C1
+00475830	FUN_00475830	render	callee-gate: 00557ec0=C1,00558030=C1
+00475f30	FUN_00475f30	render	signature-unsupported: in_EAX arg
+00475f90	FUN_00475f90	render	callee-gate: 004c39b0=C1
+00476320	FUN_00476320	render	callee-gate: 004c39b0=C1
+00476650	FUN_00476650	render	signature-unsupported: 5-arg shape
+004768c0	FUN_004768c0	render	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00477450	FUN_00477450	render	signature-unsupported: fastcall ECX/EDX args
+00477490	FUN_00477490	render	signature-unsupported: fastcall ECX/EDX args
+00477500	FUN_00477500	render	signature-unsupported: in_EAX arg
+00477580	FUN_00477580	render	callee-gate: 004e6920=C1,004e7e30=C1
+004775b0	FUN_004775b0	render	callee-gate: 004c0b30=C1,004e69a0=C1,004e7e30=C1,005493d0=C1
+00477870	FUN_00477870	render	callee-gate: 004e6e00=C1,005495b0=C1
+00477e60	FUN_00477e60	render	callee-gate: 004c39b0=C1
+00477f00	FUN_00477f00	render	callee-gate: 004c39b0=C1
+00479100	FUN_00479100	render	callee-gate: 00559040=C1
+00479fb0	FUN_00479fb0	render	callee-gate: 004e6920=C1,004e7e30=C1
+0047acd0	FUN_0047acd0	render	inline bare [UNCERTAIN] (heading=## key globals / offsets)
+0047ad00	FUN_0047ad00	render	inline bare [UNCERTAIN] (heading=## key globals / offsets)
+005ae330	FUN_005ae330	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005ae550	FUN_005ae550	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005ae7e0	FUN_005ae7e0	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005af200	FUN_005af200	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005af230	FUN_005af230	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005b04b0	FUN_005b04b0	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005b0a90	FUN_005b0a90	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005b0b40	FUN_005b0b40	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005b0ec0	FUN_005b0ec0	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005b0f90	FUN_005b0f90	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+00452ec0	FUN_00452ec0	gameplay	callee-gate: 004e45b0=C1,004e4800=C1
+00452f00	FUN_00452f00	gameplay	callee-gate: 004e45b0=C1,004e4800=C1
+004532f0	FUN_004532f0	gameplay	signature-unsupported: in_EAX arg
+00453730	FUN_00453730	gameplay	signature-unsupported: in_EAX arg
+004538b0	FUN_004538b0	gameplay	signature-unsupported: in_EAX arg
+004541e0	FUN_004541e0	gameplay	callee-gate: 004c1210=C1
+00454350	FUN_00454350	gameplay	callee-gate: 004e43b0=C1,004e4440=C1
+00454bd0	FUN_00454bd0	render	callee-gate: 004e4800=C1
+00454c00	FUN_00454c00	render	signature-unsupported: in_EAX arg
+00454c10	FUN_00454c10	render	signature-unsupported: fastcall ECX/EDX args
+00454c60	FUN_00454c60	render	signature-unsupported: in_EAX arg
+00454f80	FUN_00454f80	render	callee-gate: 004e6ab0=C1
+00454fa0	FUN_00454fa0	render	callee-gate: 004e4800=C1
+00454ff0	FUN_00454ff0	render	callee-gate: 004e4800=C1
+00455060	FUN_00455060	render	callee-gate: 004e4800=C1
+00455150	FUN_00455150	gameplay	callee-gate: 004e4800=C1
+00455610	FUN_00455610	gameplay	callee-gate: 004c15c0=C1
+004556f0	FUN_004556f0	gameplay	callee-gate: 004c15c0=C1,004c39b0=C1
+00455b50	FUN_00455b50	hud	signature-unsupported: in_EAX arg
+00455fe0	FUN_00455fe0	render	callee-gate: 004e4800=C1
+004568a0	FUN_004568a0	gameplay	callee-gate: 004e6e00=C1
+00456ce0	FUN_00456ce0	gameplay	signature-unsupported: in_EAX arg
+00456d00	FUN_00456d00	gameplay	signature-unsupported: in_EAX arg
+00456eb0	FUN_00456eb0	gameplay	signature-unsupported: in_EAX arg
+004570a0	FUN_004570a0	gameplay	signature-unsupported: in_EAX arg
+00457ba0	FUN_00457ba0	gameplay	callee-gate: 004e45b0=C1,004e4800=C1
+00457c10	FUN_00457c10	gameplay	signature-unsupported: in_EAX arg
+00458020	FUN_00458020	gameplay	callee-gate: 004e4800=C1
+00458080	FUN_00458080	gameplay	signature-unsupported: in_EAX arg
+004584e0	FUN_004584e0	gameplay	signature-unsupported: in_EAX arg
+00458570	FUN_00458570	gameplay	callee-gate: 004c39b0=C1
+00458880	FUN_00458880	gameplay	callee-gate: 004e6e00=C1
+004588c0	FUN_004588c0	gameplay	signature-unsupported: 5-arg shape
+00458c70	FUN_00458c70	gameplay	callee-gate: 004c15c0=C1
+00458dd0	FUN_00458dd0	gameplay	callee-gate: 004e8090=C1
+00458e00	FUN_00458e00	gameplay	callee-gate: 004c15c0=C1
+00459400	FUN_00459400	gameplay	callee-gate: 004e89e0=C1,004e8a10=C1
+00459620	FUN_00459620	gameplay	callee-gate: 004c15c0=C1,004c39b0=C1,0055bb70=C1,0055bde0=C1,0057c210=C1
+004b4a80	FUN_004b4a80	render	callee-gate: 00538c80=C1
+004b4c80	FUN_004b4c80	render	callee-gate: 00538c80=C1
+004b4e20	FUN_004b4e20	render	callee-gate: 0053c5d0=C1
+004b5080	FUN_004b5080	render	callee-gate: 004c39b0=C1
+004b52f0	FUN_004b52f0	render	signature-unsupported: fastcall ECX/EDX args
+004b5360	thunk_FUN_005507b0	render	live-state-side-effect: fopen — live file I/O (in ## mechanical description)
+004b6590	thunk_FUN_004b67a0	render	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004b6710	FUN_004b6710	render	signature-unsupported: in_EAX arg
+004b6770	FUN_004b6770	render	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004b67a0	FUN_004b67a0	render	live-state-side-effect: fclose on live FILE* (in ## mechanical description)
+004b6940	FUN_004b6940	render	callee-gate: 005507a0=C1
+004b6b00	FUN_004b6b00	render	signature-unsupported: fastcall ECX/EDX args
+004b6b20	FUN_004b6b20	render	signature-unsupported: fastcall ECX/EDX args
+004b6b90	FUN_004b6b90	render	signature-unsupported: fastcall ECX/EDX args
+004c5da0	FUN_004c5da0	render	signature-unsupported: 5-arg shape
+004c79f0	FUN_004c79f0	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c7a20	FUN_004c7a20	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004c9fb0	FUN_004c9fb0	render	live-state-side-effect: Direct3D vtable on live device (in ## mechanical description)
+004cafd0	FUN_004cafd0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb070	FUN_004cb070	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb0b0	FUN_004cb0b0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb130	FUN_004cb130	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb190	FUN_004cb190	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb2c0	FUN_004cb2c0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb2f0	FUN_004cb2f0	render	live-state-side-effect: Direct3D vtable on live device (in ## constants)
+004cb4c0	FUN_004cb4c0	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cb840	FUN_004cb840	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cbb00	FUN_004cbb00	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cbb20	FUN_004cbb20	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cbbd0	FUN_004cbbd0	render	inline bare [UNCERTAIN] (heading=## c2 evidence)
+004cd430	FUN_004cd430	render	callee-gate: 004e12b0=C1,004e14a0=C1
+004cdd00	FUN_004cdd00	render	live-state-side-effect: remove() on live path (in ## mechanical description)
+004cde20	FUN_004cde20	render	live-state-side-effect: _unlink on live path (in ## mechanical description)
+004ce480	FUN_004ce480	render	callee-gate: 004e1a90=C1
+004ce970	FUN_004ce970	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004ceba0	FUN_004ceba0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cecb0	FUN_004cecb0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf2b0	FUN_004cf2b0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf4a0	FUN_004cf4a0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+004cf5a0	FUN_004cf5a0	render	shape-only note (no verbatim decomp / mechanical-transcript section)
+005a8060	FUN_005a8060	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005a8390	FUN_005a8390	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005a9280	FUN_005a9280	audio	callee-gate: 004c39b0=C1
+005a9d00	FUN_005a9d00	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005ab090	FUN_005ab090	audio	callee-gate: 00550670=C1
+005ab620	FUN_005ab620	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005ab710	FUN_005ab710	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005ad2e0	FUN_005ad2e0	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005bc020	FUN_005bc020	audio	live-state-side-effect: DirectSound vtable on live device (in (preamble))
+005bc050	FUN_005bc050	audio	live-state-side-effect: DirectSound vtable on live device (in ## constants)
+005bcc70	FUN_005bcc70	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005be260	FUN_005be260	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005be450	FUN_005be450	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+0044ab20	FUN_0044ab20	render	callee-gate: 0055e300=C1
+0044bfa0	FUN_0044bfa0	render	callee-gate: 004c39b0=C1
+0044c5f0	FUN_0044c5f0	render	callee-gate: 00545d30=C1
+0044c8b0	FUN_0044c8b0	render	callee-gate: 004e4800=C1,004e6ab0=C1
+0044caa0	FUN_0044caa0	render	callee-gate: 004c15c0=C1,004e6ab0=C1
+0044cb00	FUN_0044cb00	render	callee-gate: 004c15c0=C1
+0044df80	FUN_0044df80	render	callee-gate: 00557fb0=C1
+0044e190	FUN_0044e190	gameplay	signature-unsupported: fastcall ECX/EDX args
+0044e240	FUN_0044e240	gameplay	signature-unsupported: in_EAX arg
+0044e2d0	FUN_0044e2d0	gameplay	signature-unsupported: in_EAX arg
+0044e310	FUN_0044e310	gameplay	callee-gate: 004c0b30=C1,004c1040=C1,004e69a0=C1,004e7e30=C1
+0044e680	FUN_0044e680	gameplay	callee-gate: 004e5fc0=C1
+0044f830	FUN_0044f830	gameplay	callee-gate: 0055ae70=C1,0057c210=C1
+004523f0	FUN_004523f0	gameplay	callee-gate: 004e6e00=C1
+0045a530	FUN_0045a530	gameplay	signature-unsupported: in_EAX arg
+0045a590	FUN_0045a590	gameplay	signature-unsupported: in_EAX arg
+0045ac40	FUN_0045ac40	gameplay	signature-unsupported: in_EAX arg
+0045b360	FUN_0045b360	gameplay	callee-gate: 004e45b0=C1,004e4800=C1
+0045b390	FUN_0045b390	gameplay	callee-gate: 004c39b0=C1
+0045c030	FUN_0045c030	gameplay	callee-gate: 004c39b0=C1
+004670a0	FUN_004670a0	render	callee-gate: 004c0b30=C1
+0046bfc0	FUN_0046bfc0	gameplay	callee-gate: 004c39b0=C1
+00471780	FUN_00471780	gameplay	callee-gate: 0055ac00=C1,0055ac50=C1,0055ad30=C1,0055b650=C1,0055c4a0=C1,0057c210=C1
+004721b0	FUN_004721b0	gameplay	callee-gate: 004e89a0=C1
+004728f0	FUN_004728f0	gameplay	callee-gate: 005459c0=C1
+004729b0	FUN_004729b0	render	callee-gate: 005459c0=C1
+0047ba20	FUN_0047ba20	gameplay	callee-gate: 004c39b0=C1
+0047bc90	FUN_0047bc90	gameplay	signature-unsupported: fastcall ECX/EDX args
+0047c1f0	FUN_0047c1f0	camera	signature-unsupported: in_EAX arg
+0047c230	FUN_0047c230	camera	signature-unsupported: in_EAX arg
+0047c270	FUN_0047c270	camera	signature-unsupported: in_EAX arg
+0047c2d0	FUN_0047c2d0	camera	signature-unsupported: in_EAX arg
+0047ccb0	FUN_0047ccb0	gameplay	callee-gate: 004e6920=C1
+0047cf20	FUN_0047cf20	gameplay	callee-gate: 0055ac50=C1,0055ad30=C1,0055ade0=C1,0057c210=C1
+0047d150	FUN_0047d150	gameplay	callee-gate: 0057c210=C1
+0047d180	FUN_0047d180	gameplay	callee-gate: 0055ab30=C1,0055ac00=C1,0055ade0=C1,0055dff0=C1,0057c210=C1,0057c420=C1
+0047d330	FUN_0047d330	gameplay	callee-gate: 004e43b0=C1,004e4440=C1,004e6920=C1,004e7e30=C1,00559ee0=C1,0057c210=C1,0057c370=C1
+0047d640	FUN_0047d640	hud	callee-gate: 0057c210=C1
+0047def0	FUN_0047def0	hud	callee-gate: 004c39b0=C1,0055ae50=C1,0057c210=C1
+0047f1e0	FUN_0047f1e0	gameplay	callee-gate: 0057c210=C1
+0047f230	FUN_0047f230	gameplay	callee-gate: 0057c210=C1
+0047f290	FUN_0047f290	gameplay	callee-gate: 004e43b0=C1,004e4440=C1,004e6920=C1,004e7e30=C1,00559ee0=C1,0057c210=C1,0057c370=C1
+0047f380	FUN_0047f380	gameplay	live-state-side-effect: remove() on live path (in ## mechanical description)
+0047f450	FUN_0047f450	gameplay	callee-gate: 0055afc0=C1
+0047f480	FUN_0047f480	gameplay	callee-gate: 0055dd60=C1,00562560=C1
+0047f6d0	FUN_0047f6d0	gameplay	callee-gate: 00561ea0=C1
+0047fad0	FUN_0047fad0	gameplay	callee-gate: 004c0b30=C1,004e4380=C1,004e69a0=C1,004e7e30=C1,00559c40=C1,0055b940=C1,0055bab0=C1,0055c4a0=C1,0057c220=C1,0057c300=C1,0057c500=C1,0057c550=C1
+004d8eb0	RwResourcesDrainArena	render	live-state-side-effect: _unlink on live path (in ## mechanical description (confirmed from decomp))
+004dba60	FUN_004dba60	render	callee-gate: 004dcbb0=C1
+00554010	FUN_00554010	hud	callee-gate: 0055deb0=C1
+00554150	FUN_00554150	hud	callee-gate: 00553e80=C1
+00554200	FUN_00554200	hud	callee-gate: 00553e80=C1
+00555830	FUN_00555830	hud	callee-gate: 00553e80=C1
+00556780	FUN_00556780	hud	callee-gate: 00550a20=C1,00553030=C1,005530f0=C1,005531f0=C1,005533d0=C1,00553e00=C1,00553ef0=C1
+005572c0	FUN_005572c0	hud	callee-gate: 00553590=C1,00553620=C1,0055deb0=C1
+005a5910	FUN_005a5910	audio	callee-gate: 0055df90=C1,00564190=C1
+005a5b30	FUN_005a5b30	audio	callee-gate: 0055b060=C1,0055e300=C1
+005a5d90	FUN_005a5d90	audio	callee-gate: 0055b930=C1,00562560=C1,00564190=C1
+005a6cb0	FUN_005a6cb0	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005b1500	FUN_005b1500	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+005b15d0	thunk_FUN_005b1500	audio	live-state-side-effect: CloseHandle on live handle (in ## mechanical description)
+005b3550	FUN_005b3550	audio	live-state-side-effect: _unlink on live path (in ## mechanical description)
+005b8080	FUN_005b8080	audio	live-state-side-effect: CloseHandle on live handle (in (preamble))
+00425ea0	FUN_00425ea0	frontend	callee-gate: 004e6e00=C1
+00425fa0	FUN_00425fa0	frontend	callee-gate: 004e5fc0=C1
+00426460	FUN_00426460	frontend	signature-unsupported: fastcall ECX/EDX args
+004277a0	FUN_004277a0	frontend	signature-unsupported: in_EAX arg
+00429b30	FUN_00429b30	frontend	signature-unsupported: fastcall ECX/EDX args
+00429b70	FUN_00429b70	frontend	signature-unsupported: fastcall ECX/EDX args
+0042ad10	FUN_0042ad10	frontend	signature-unsupported: fastcall ECX/EDX args
+0042ad90	FUN_0042ad90	frontend	signature-unsupported: fastcall ECX/EDX args
+004f0940	FUN_004f0940	render	callee-gate: 004e1ac0=C1
+004f13d0	FUN_004f13d0	render	callee-gate: 004dc5b0=C1,004ebc30=C1
+004f1870	FUN_004f1870	render	callee-gate: 004e55d0=C1
+004f1b00	FUN_004f1b00	render	callee-gate: 004dc5b0=C1,004e55d0=C1
+004f3b60	FUN_004f3b60	render	callee-gate: 004e8030=C1
+004f3ce0	FUN_004f3ce0	render	callee-gate: 004e8400=C1
+004f3d40	FUN_004f3d40	render	callee-gate: 004e8440=C1
+004f3e90	FUN_004f3e90	render	callee-gate: 004e8030=C1,004e8120=C1
+004f4340	FUN_004f4340	render	callee-gate: 004eb9d0=C1
+004f43f0	FUN_004f43f0	render	callee-gate: 004eb3c0=C1,004eb9d0=C1
+004f4510	FUN_004f4510	render	callee-gate: 004e4bd0=C1
+004f8580	FUN_004f8580	render	callee-gate: 004e8f50=C1
+004898d0	FUN_004898d0	gameplay	callee-gate: 004d8bd0=C1
+004b4150	FUN_004b4150	render	callee-gate: 005493d0=C1,00549610=C1,00549620=C1
+004b41f0	FUN_004b41f0	render	callee-gate: 004e5c30=C1
+004b4230	FUN_004b4230	render	callee-gate: 004e5bf0=C1
+004b47c0	FUN_004b47c0	render	callee-gate: 0052e0e0=C1,00533ec0=C1
+004b47e0	FUN_004b47e0	render	callee-gate: 00532a60=C1,00532b80=C1
+004b48e0	FUN_004b48e0	render	callee-gate: 004c0b30=C1,004c15c0=C1
+005b8be0	FUN_005b8be0	audio	live-state-side-effect: _unlink on live path (in (preamble))
+005b9e30	FUN_005b9e30	audio	signature-unsupported: 5-arg shape
+005bb820	FUN_005bb820	audio	signature-unsupported: 5-arg shape
