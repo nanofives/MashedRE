@@ -214,6 +214,12 @@ def main():
                          "menu-poll frame counter starts fresh at menu-appear; dodges the frontend.mpg "
                          "movie-crash window. Kills ONLY the pid we launch.")
     ap.add_argument("--fps", default="60", help="MASHED_FPS_CAP for --launch (default 60)")
+    ap.add_argument("--hooks", default="",
+                    help="comma-separated .asi hook names/RVAs to install LIVE (MASHED_HOOK_ONLY) and "
+                         "turn on the in-process physics A/B self-test (MASHED_PHYS_C4_SELFTEST). The "
+                         "selftest appends per-call bit-identity rows to original/phys_c4_*_selftest.log "
+                         "(air=1 => airborne body exercised; ndiff=0 OK => GREEN). Empty = stock original "
+                         "(no hooks). --launch only.")
     ap.add_argument("--seconds", type=int, default=0)
     ap.add_argument("--lead", type=int, default=0,
                     help="shift plan so the first INPUT lands at this replay-frame "
@@ -261,7 +267,14 @@ def main():
         exe = Path(meta["exe"])
         env = dict(os.environ)
         env["MASHED_FPS_CAP"] = str(args.fps)
-        env["MASHED_RE_NO_AUTO_HOOK"] = "1"   # stock original behavior (no installed hooks)
+        if args.hooks:
+            env["MASHED_RE_DEV"] = "1"
+            env["MASHED_HOOK_ONLY"] = args.hooks            # install ONLY these .asi hooks live
+            env["MASHED_PHYS_C4_SELFTEST"] = "1"            # in-process A/B selftest -> phys_c4_*_selftest.log
+            env.pop("MASHED_RE_NO_AUTO_HOOK", None)         # let dinput8 auto-load the .asi
+            print(f"  hooks LIVE: MASHED_HOOK_ONLY={args.hooks}  + physics A/B self-test ON")
+        else:
+            env["MASHED_RE_NO_AUTO_HOOK"] = "1"             # stock original behavior (no installed hooks)
         proc = subprocess.Popen([str(exe)], cwd=str(exe.parent), env=env)
         pid = proc.pid; we_launched = True
         print(f"  launched {exe.name} pid={pid} (fps={args.fps}); attaching ASAP...")

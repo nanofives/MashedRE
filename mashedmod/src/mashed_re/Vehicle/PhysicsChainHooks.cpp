@@ -2359,39 +2359,46 @@ const int kA6bMaxGnd = 8;    // a few grounded no-op rows only
 void A6b_SelfTest(int* record, void* xform, float dt) {
     const bool airborne = (*reinterpret_cast<float*>((char*)record + 0x9e0) == 0.0f);
     const bool haveXform = (xform != nullptr);
-    if (airborne) { if (g_a6bAir >= kA6bMaxAir) return; }
-    else          { if (g_a6bGnd >= kA6bMaxGnd) return; }
+    // NON-PERTURBING verification (2026-06-23): the ORIGINAL always runs and is LEFT as the
+    // live game state, so the race follows faithful physics even when our body diverges (the
+    // old "leave mine" + "skip past quota" perturbed the run — a skipped aero corrupts the
+    // rest of the race and flung the car off ramps). MINE is measured on a restored copy.
+    // Past the per-branch sample quota we STILL run the original (never skip the function).
+    // A6b's only side effects are record + xform (pure aero math, no PRNG), so snapshot/
+    // restore of those two makes the two runs independent.
+    const bool sample = airborne ? (g_a6bAir < kA6bMaxAir) : (g_a6bGnd < kA6bMaxGnd);
+    if (!sample) { Call_OrigA6b(record, xform, dt); return; }   // quota full: run original only
 
     static std::uint8_t snapRec[0xd04];
     static std::uint8_t snapXf[64];
     std::memcpy(snapRec, record, 0xd04);
     if (haveXform) std::memcpy(snapXf, xform, 64);
 
-    // (1) ORIGINAL A6b on the live record/xform (bypassing our inline-JMP).
+    // (1) MINE on the live copy — capture its outputs.
+    Call_A6bBody(record, xform, dt);
+    std::uint32_t mineRec[4]; int nr = 0;
+    for (int off : kA6bRecOffs) mineRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
+    std::uint32_t mineXf[16];
+    if (haveXform) std::memcpy(mineXf, xform, 64);
+
+    // (2) restore, run the ORIGINAL, and LEAVE its output as the faithful game state.
+    std::memcpy(record, snapRec, 0xd04);
+    if (haveXform) std::memcpy(xform, snapXf, 64);
     Call_OrigA6b(record, xform, dt);
-    std::uint32_t origRec[4]; int nr = 0;
+    std::uint32_t origRec[4]; nr = 0;
     for (int off : kA6bRecOffs) origRec[nr++] = *reinterpret_cast<std::uint32_t*>((char*)record + off);
     std::uint32_t origXf[16];
     if (haveXform) std::memcpy(origXf, xform, 64);
 
-    // restore, run mine
-    std::memcpy(record, snapRec, 0xd04);
-    if (haveXform) std::memcpy(xform, snapXf, 64);
-    Call_A6bBody(record, xform, dt);
-
     int mism = 0; char line[1024]; int p = 0;
-    nr = 0;
-    for (int off : kA6bRecOffs) {
-        std::uint32_t mv = *reinterpret_cast<std::uint32_t*>((char*)record + off);
-        if (mv != origRec[nr]) { mism++;
-            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", off, origRec[nr], mv); }
-        nr++;
+    for (int i = 0; i < nr; ++i) {
+        if (mineRec[i] != origRec[i]) { mism++;
+            if (p < 900) p += wsprintfA(line+p, " +0x%x:o=%08x,m=%08x", kA6bRecOffs[i], origRec[i], mineRec[i]); }
     }
     if (haveXform) {
-        std::uint32_t mXf[16]; std::memcpy(mXf, xform, 64);
         for (int i = 0; i < 16; ++i) {
-            if (mXf[i] != origXf[i]) { mism++;
-                if (p < 900) p += wsprintfA(line+p, " m[%d]:o=%08x,m=%08x", i, origXf[i], mXf[i]); }
+            if (mineXf[i] != origXf[i]) { mism++;
+                if (p < 900) p += wsprintfA(line+p, " m[%d]:o=%08x,m=%08x", i, origXf[i], mineXf[i]); }
         }
     }
     if (airborne) g_a6bAir++;

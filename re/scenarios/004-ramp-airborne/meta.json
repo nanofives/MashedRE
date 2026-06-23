@@ -1,0 +1,27 @@
+{
+  "name": "ramp-airborne",
+  "ordinal": 4,
+  "slug": "004-ramp-airborne",
+  "mode": "physics",
+  "binary": "original",
+  "exe": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\original\\MASHED.exe",
+  "exe_sha256": "F6FE0BF1AD9170D2C03AE005AD6A458A50D401DC126EB6D446C7BA10479B5EF1",
+  "image_base": "0x00400000",
+  "capture": "attach",
+  "pid": 22772,
+  "launched": true,
+  "fps_cap": "60",
+  "clock": "render_0x004c1be0__anchor_menu_0x0043c5b0",
+  "date": "2026-06-22T23:50:58",
+  "coverage_candidates": [
+    "0x0046b540",
+    "0x00470670",
+    "0x0046ddb0",
+    "0x00467650",
+    "0x00468980",
+    "0x00470c70"
+  ],
+  "frames": 5177,
+  "input_events": 187,
+  "coverage_hits": 6
+}

@@ -1,0 +1,7 @@
+rva	first_frame	first_t_ms	name	subsystem	confidence
+0x0046b540	888	14787	VehicleSpawnInit	vehicle	C4
+0x00470c70	890	14819	FUN_00470c70	vehicle	C2
+0x00470670	890	14822	VehicleControlUpdate	vehicle	C4
+0x0046ddb0	890	14822	VehicleWheelForceIntegrator	vehicle	C4
+0x00467650	890	14822	VehicleWheelDrivetrainUpdate	vehicle	C2
+0x00468980	890	14822	VehicleAeroStabilizer	vehicle	C2
