@@ -158,7 +158,8 @@ Process.setExceptionHandler(function(d){
 rpc.exports = {
   setplan: function(p){ PLAN=p; pi=0; cur=[]; return PLAN.length; },
   armcoverage: function(m,b,r){ return armCoverage(m,b,r); },
-  status: function(){ return {frames:curFrame(), pres:presCount, anchored:anchored, idx:pi, writes:writes, cur:cur, cov:COV.length, gds:N_GDS}; },
+  status: function(){ let tk=-999; try{ const m=Process.findModuleByName('MASHED.exe'); if(m) tk=m.base.add(0x0063ba7c-0x400000).readS32(); }catch(e){}
+    return {frames:curFrame(), pres:presCount, anchored:anchored, idx:pi, writes:writes, cur:cur, cov:COV.length, gds:N_GDS, track:tk}; },
   dump: function(){ return {frames:curFrame(), pres:presCount, anchored:anchored, writes:writes, cov:COV, gds:N_GDS, crash:CRASH}; }
 };
 send({kind:'ready', msg:'replay-verify armed; GetDeviceState vtable hooks='+N_GDS});
@@ -339,7 +340,7 @@ def main():
                 cur_names = ",".join("0x%02x" % k for k in st["cur"]) or "(none)"
                 anc = "MENU" if st.get("anchored") else "boot"
                 print(f"\r  pres={st.get('pres',0)}[{anc}] frame={st['frames']}  plan-idx={st['idx']}/{len(plan)}  writes={st['writes']}"
-                      f"  cov={st['cov']}/{len(cand)}  held={cur_names}   ", end="", flush=True)
+                      f"  cov={st['cov']}/{len(cand)}  DAT_0063ba7c={st.get('track')}  held={cur_names}   ", end="", flush=True)
                 # early-finish: stop ~5s after plan done AND all coverage seen
                 if st["idx"] >= len(plan) and st["cov"] >= len(cand) and all_hit_at is None:
                     all_hit_at = time.time()

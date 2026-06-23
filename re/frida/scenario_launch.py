@@ -54,6 +54,18 @@ let spawnFired = 0, spawnArmed = false;
 function armSpawn(){ if(spawnArmed) return; spawnArmed = true;
   try { Interceptor.attach(ga(SPAWN_RVA), { onEnter(){ spawnFired++; } }); } catch(e){ send({kind:'err', msg:'armSpawn '+e}); } }
 
+// In-process control injection (nav_agent.js method): override FUN_00497310's return for
+// player-0 control `pressCtrl` to 0xff (pressed) while pressUntil is in the future. Control 4
+// = confirm/accelerate -> used to skip the race-start intro, keep the race driving, and
+// continue between rounds. No OS input injection.
+const RES_RVA = 0x00497310;
+let pressCtrl = -1, pressUntil = 0, inputArmed = false;
+function armInput(){ if(inputArmed) return; inputArmed = true;
+  try { Interceptor.attach(ga(RES_RVA), {
+    onEnter(){ const sp=this.context.esp; this.p=sp.add(4).readS32(); this.c=sp.add(8).readS32(); },
+    onLeave(ret){ if(this.p===0 && this.c===pressCtrl && Date.now()<pressUntil) ret.replace(ptr(0xff)); }
+  }); } catch(e){ send({kind:'err', msg:'armInput '+e}); } }
+
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
   phase: function(){ try { return ga(PHASE).readU8(); } catch(e){ return -1; } },
@@ -70,12 +82,15 @@ rpc.exports = {
       // array; this is the fix. cdecl void(int,int). DAT_008a94d0 (player count) is recomputed
       // by the spawn loop, so we do NOT preset it.
       const e480 = new NativeFunction(ga(ACTIVATE), 'void', ['int','int'], 'mscdecl');
-      for (let s = 0; s < 4; s++) e480(s, s < cars ? 1 : 0);
+      // slot 0 = human player (1); slots 1..cars-1 = AI opponents (2); rest = empty (0).
+      for (let s = 0; s < 4; s++) e480(s, s === 0 ? 1 : (s < cars ? 2 : 0));
       armSpawn();
+      armInput();
       return 'globals set + '+cars+' slot(s) activated: track='+track+' mode='+mode;
     } catch(e){ return 'ERR '+e; }
   },
   launch: function(){ try { ga(PHASE).writeU8(2); return 1; } catch(e){ return 'ERR '+e; } },
+  press: function(c, ms){ pressCtrl = c; pressUntil = Date.now() + ms; return 1; },
   carinfo: function(){
     try { const r = ga(CARREC);
       return { spawnFired: spawnFired,
@@ -97,6 +112,10 @@ def main():
     ap.add_argument("--cars", type=int, default=1, help="active car slots (slot 0 = player; rest AI)")
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
+    ap.add_argument("--hooks", default="",
+                    help="comma .asi hook RVAs/names to install LIVE + turn on the physics A/B "
+                         "self-test (MASHED_PHYS_C4_SELFTEST -> original/phys_c4_*_selftest.log). "
+                         "Empty = stock original. e.g. 0x00468980 for A6b airborne capture.")
     args = ap.parse_args()
 
     if not EXE.exists():
@@ -104,7 +123,13 @@ def main():
 
     env = dict(os.environ)
     env["MASHED_FPS_CAP"] = str(args.fps)
-    env["MASHED_RE_NO_AUTO_HOOK"] = "1"        # stock original, no installed hooks
+    if args.hooks:
+        env["MASHED_RE_DEV"] = "1"
+        env["MASHED_HOOK_ONLY"] = args.hooks
+        env["MASHED_PHYS_C4_SELFTEST"] = "1"
+        env.pop("MASHED_RE_NO_AUTO_HOOK", None)
+    else:
+        env["MASHED_RE_NO_AUTO_HOOK"] = "1"     # stock original, no installed hooks
     dev = frida.get_local_device()
     proc = subprocess.Popen([str(EXE)], cwd=str(EXE.parent), env=env)
     pid = proc.pid
@@ -169,11 +194,22 @@ def main():
             rc = 0
         else:
             print("\n  VERDICT: phase 3 reached but VehicleSpawnInit never fired — spawn incomplete.")
-        print(f"\n  holding in race {args.hold}s (watch the window)...")
-        t = time.time() + args.hold
+        print(f"\n  racing {args.hold}s — pulsing control 4 (confirm/accel) to skip the start intro + continue rounds...")
+        t0 = time.time(); t = t0 + args.hold; n = 0
         while time.time() < t:
-            if psutil and not psutil.pid_exists(pid): print("  game exited."); break
-            time.sleep(1.0)
+            if psutil and not psutil.pid_exists(pid): print("\n  game exited."); break
+            try: E.press(4, 250)            # pulse: 250ms held, ~0.35s gap -> edges for round-end prompts
+            except Exception: pass
+            n += 1
+            if n % 8 == 0:
+                try:
+                    ci = E.carinfo()
+                    print(f"\r    +{int(time.time()-t0):>3}s  spawnFired={ci.get('spawnFired')}"
+                          f"  p0.grounded={ci.get('grounded')} airflag={ci.get('airflag')}"
+                          f"  vel={[round(v,1) for v in ci.get('vel',[0,0,0])]}   ", end="", flush=True)
+                except Exception: pass
+            time.sleep(0.6)
+        print()
     except SystemExit:
         pass
     finally:
