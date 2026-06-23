@@ -3681,3 +3681,4 @@ Demotions use `oldC<-newC` (arrow flipped).
 2026-06-23  0040b9a0  MaxScoreFlags40b9a0  C2->C3  early_window near_leaf_seed_outbuf GREEN 2/2 non-degen (mode0 [0,1,0,1]; mode1 gated [0,1,0,0]); callee 0x0046c7b0 C3; caller 0x0041b540 C2; promote-round-248
 2026-06-23  0045cab0  SlotAliveState45cab0  C2->C3  early_window near_leaf_seed_outbuf GREEN 3/3 non-degen (ret 0,1,0); callees 0x0046cbb0/0x0046c7b0 C3; caller 0x0045d0e0 C2; promote-round-248
 2026-06-23  0045c330  PredNot45c330  C2->C3  early_window table_bool_predicate GREEN 2/2 non-degen (ret 0,1); callee 0x0045bff0 C3; caller 0x00406950 C2; promote-round-248
+2026-06-23  00468980  VehicleAeroStabilizer  C2->C3  airborne aero body 18/18 GREEN (ndiff=0) via scenario_launch.py --boost; evidence re/analysis/phys_c4_evidence/A6b_airborne_boosted_GREEN_20260623.txt
