@@ -213,6 +213,7 @@ PURE_LEAF_ARGTYPES = {
     'near_leaf_global_str_search', # void* fn(query): NEAR-LEAF wrapper = C3 circular-list case-insensitive search(*cfg.glob, query). build 3-node alpha/beta/gamma circular list, set *cfg.glob=list head; seed_sets[t]={q}; compare returned ptr. reimpl = verbatim naked port. non-degen via match(distinct node ptrs)/miss(0)
     'near_leaf_list_search',     # u32 fn(key): NEAR-LEAF wrapper = C3 list-search(cfg.glob, key) walking *(glob[0x10]) via node[0x30], returns node[0] where node[8]==key else -1. seed_sets[t]={empty:bool, query, nodes:[[key,val],...]}; build nodes (node[0]=val,[8]=key,[0x30]=next), set glob[0x10]=head or 0; compare u32 return. reimpl = verbatim naked port. non-degen via found(val)/empty(-1)/miss(-1)
     'near_leaf_memset2',         # void fn(dest, count): NEAR-LEAF = C3 memset(dest, 0, count). seed_sets[t]={count}; dest pre-filled 0xCC, snapshot dest[0x20] (first count bytes -> 0, rest 0xCC). reimpl = verbatim naked port. non-degen via varied count (zero-extent)
+    'near_leaf_seed_outbuf',     # NEAR-LEAF reading seedable abs table(s) via C3 getter callee(s), writing a small out-buffer arg and/or returning a derived int. cfg.out_size/out_argpos/out_observe/fold_ret/argkinds. seed_sets[t]={seeds:[[addr,val],...], args:[int,...]}; out-buf alloc'd fresh per side (sentinel 0xEE) at out_argpos, int args from scenario. snapshot out_observe offsets (+ ret if fold_ret). reimpl = verbatim naked port w/ `mov eax,<callee_abs>; call eax`. non-degen via per-scenario table seeds -> distinct out/return
     'struct_list_float_set',     # void fn(struct*, float vol): struct+0x38=vol; walk circular list at struct+0xc (sentinel=struct+0xc) setting node+0x14|=0x40; if struct+0x11c!=0 -> secondary+0x30=vol raw bits. Build 1-node self-circular list + a secondary; vol=0.5+t*0.25; seed node+0x14=0xA0000|(t<<8). snapshot struct+0x38|node+0x14|secondary+0x30. non-degen via varied vol + flags seed
     'seed_indirect_ctx_obs',     # u32 fn(void): ctx = (*(ptr_array))[depth] where depth_global=idx; writes fixed values into ctx[offsets] (+ OR a flags field) + zeros direct globals. Seed: alloc ctx buf, write its addr to ptr_array[depth_idx], depth_global=depth_idx, pre-fill ctx 0xEEEEEEEE, seed ctx[ctx_seed_off]=0xC0DE0000|(t<<8) for the OR-test. snapshot ctx[observe_offs] # globals[observe_globals]. non-degen via varied OR seed (matrix consts proven by !=sentinel)
     'indexed_float_sum2',        # float fn(int idx): PURE LEAF. p=(float*)(cfg.tgt + idx*cfg.stride); return p[0]+p[1]. Seed two distinct floats at slot+0/+4 per idx; compare float return (exact). non-degen via varied idx -> distinct sums
@@ -414,6 +415,7 @@ rpc.exports.diff = function(cfg) {
               : (cfg.at === 'bounded_thunk_orflag') ? ['uint32','uint32']
               : (cfg.at === 'bitfield_range_set') ? ['pointer','uint32','uint32','uint32']
               : (cfg.at === 'esi_struct_init') ? ['pointer']
+              : (cfg.at === 'near_leaf_seed_outbuf') ? (cfg.argkinds || ['pointer'])
               : (cfg.at === 'idx2_record_condset') ? ['uint32','uint32','uint32']
               : (cfg.at === 'quad_buffer_build') ? ['pointer','uint32','pointer']
               : (cfg.at === 'container_record_set') ? (cfg.shape === 'pp' ? ['pointer','pointer','pointer'] : cfg.shape === 'f' ? ['pointer','float'] : ['pointer','pointer'])
@@ -2200,6 +2202,38 @@ rpc.exports.diff = function(cfg) {
       const seedO = function () { (sp.globals || []).forEach(function (g) { ptr(g[0]).writeU32(g[1] >>> 0); }); };
       try { seedO(); Orig(sp.arg >>> 0); o = ptr(cfg.obs_addr).readU32() >>> 0; } catch (e) { eo = e.message; }
       try { seedO(); Reim(sp.arg >>> 0); r = ptr(cfg.obs_addr).readU32() >>> 0; } catch (e) { er = e.message; }
+    } else if (cfg.at === 'near_leaf_seed_outbuf') {
+      // NEAR-LEAF that reads seedable absolute table(s) via C3 getter callee(s) and either
+      // writes a small out-buffer arg and/or returns a derived int. Generic:
+      //   cfg.seed_sets[t] = { seeds:[[addr,val],...], args:[int,...] }
+      //   cfg.out_size     = bytes to alloc for the out buffer (0 => no out buffer)
+      //   cfg.out_argpos   = position of the out-ptr in the call's arg list (only if out_size>0)
+      //   cfg.out_observe  = [offsets] to snapshot from the out buffer
+      //   cfg.ret          = true to also fold the function's return into the compared value
+      // Both Orig and Reim call the SAME real C3 getter callee(s) at their absolute RVAs,
+      // so a faithful verbatim-naked port is identical by construction; the per-scenario
+      // table seeds make the observed value vary -> non-degenerate.
+      const sp = (cfg.seed_sets || [])[t | 0] || { seeds: [], args: [] };
+      const outSize = cfg.out_size | 0, outPos = (cfg.out_argpos == null ? -1 : (cfg.out_argpos | 0));
+      const obs = cfg.out_observe || [];
+      const intArgs = (sp.args || []).map(function (a) { return a >>> 0; });
+      const seedT = function () { (sp.seeds || []).forEach(function (s) { ptr(s[0]).writeU32(s[1] >>> 0); }); };
+      const run = function (fn) {
+        let ob = null;
+        const args = intArgs.slice();
+        if (outSize > 0) {
+          ob = Memory.alloc(outSize); _keep.push(ob);
+          for (let z = 0; z < outSize; z++) ob.add(z).writeU8(0xEE);
+          args.splice(outPos, 0, ob);  // insert out-ptr at the declared position
+        }
+        const rv = fn.apply(null, args);
+        let s = '';
+        if (ob) s += obs.map(function (x) { return (ob.add(x | 0).readU32() >>> 0).toString(16); }).join(',');
+        if (cfg.fold_ret) s += '|R=' + ((rv >>> 0).toString(16));
+        return s;
+      };
+      try { seedT(); o = run(Orig); } catch (e) { eo = e.message; }
+      try { seedT(); r = run(Reim); } catch (e) { er = e.message; }
     } else if (cfg.at === 'near_leaf_seed_globals') {
       // u32 f(void): near-leaf reading pure global getters. seed_sets[t]={globals:[[addr,val],...]}.
       const sp = (cfg.seed_sets || [])[t | 0] || { globals: [] };
@@ -3077,6 +3111,8 @@ def run(name):
            'rangeTbl': h.get('rangeTbl'), 'deltaTbl': h.get('deltaTbl'),
            'baseA': h.get('baseA'), 'baseB': h.get('baseB'), 'recStride': h.get('recStride'),
            'glob_a': h.get('glob_a'), 'glob_b': h.get('glob_b'),
+           'out_size': h.get('out_size'), 'out_argpos': h.get('out_argpos'),
+           'argkinds': h.get('argkinds'), 'fold_ret': h.get('fold_ret'),
            'asi': ASI}
     # SUSPENDED-SPAWN MODE (2026-06-14): frida.spawn leaves the process suspended at
     # the entry point. We force-call the leaf on Frida's own thread via rpc and NEVER

@@ -9,8 +9,8 @@ two consecutive dry rounds, leaving the final gated-remainder report below.
 
 ## Counters
 
-- rounds_run: 247
-- total_green: 411
+- rounds_run: 248
+- total_green: 415
 - dry_counter: 0
 - RESUMED 2026-06-15 (round 239) via /loop /promote-round. Near-leaf lane active
   (scripts/near_leaf_frontier.py -> 112 candidates). HARNESS LIMIT: pure-jmp thunks (b0==0xE9)
@@ -346,6 +346,8 @@ DEGENERATE_GREEN_AUDIT_raw.txt. Done rows accumulate below.
 ## Round log
 
 (append one row per round: date | lanes used | attempted | GREEN | deferred | exit-5/6 | dry_counter)
+
+2026-06-23 | round 248 | NEAR-LEAF lane — vehicle-slot-getter family (4 verbatim-naked ports) | attempted 4 | GREEN 4 (Active4Slots40ba60 0x0040ba60 gameplay; MaxScoreFlags40b9a0 0x0040b9a0 gameplay; SlotAliveState45cab0 0x0045cab0 gameplay; PredNot45c330 0x0045c330 gameplay) | deferred 0 | exit-5/6: none | dry_counter 0. total_green 411->415 (415/1000). Refreshed near_leaf_frontier.tsv (105 candidates). All four are C2 near-leaves whose ONLY callees are the pure bounds-checked static-table getters VehicleSlotGetter 0x0046c7b0 (C3) / CarStatePairGet 0x0046cbb0 (C3) / Pred45bff0 0x0045bff0 (C3); reimpls are VERBATIM naked ports (call rel32 -> mov eax,abs; call eax) in PromoLoop_sessionB.cpp -> BOTH orig+reimpl hit the same real C3 callee at suspended-spawn. NEW SWEEP-CRITICAL arg_type near_leaf_seed_outbuf (early_window_leaf_diff.py): seeds a list of [addr,val] abs-table slots per scenario, allocs a fresh sentinel out-buffer at a declared arg position (optional), passes scenario int args, observes out_observe offsets +/- the return (fold_ret) — covered active4slots(out only)/maxscoreflags(out+mode)/slot_alive(idx->ret); prednot reused EXISTING table_bool_predicate. GOTCHAS (both caught + fixed THIS round, NO false-GREEN shipped): (1) table_bool_predicate cfg key is `target_global` NOT `tgt` (cfg builder maps tgt=h.get('target_global')) -> first run hit "expected a pointer" (base=None); (2) NO-GUESSING arithmetic slip: the Ghidra decompiler renders VehicleSlotGetter/CarStatePairGet as `(&DAT)[i*0x341]` (undefined4* indexing) but the REAL byte stride is `IMUL ...,0xd04` (0x341*4=0xD04) — I first used 0xCD04 (off by 16x) which produced a DEGENERATE all-0 GREEN on slot_alive; re-derived the slot addrs from the actual IMUL instructions (verified via Ghidra listing) -> 0x882fac/0x883998 etc., re-ran -> non-degenerate (slot_alive ret 0,1,0; active4slots out [1,0,1,0]; maxscoreflags [0,1,0,1]/[0,1,0,0]). All b0 real-orig (0x56/0x53/0x83/0x8b, not 0xE9). Data-semantic U-7833/U-7831/U-8380 (callee query meaning) non-blocking (behavioral bit-identity verified; callees already C3). Session 101-248 net = +155 (257->415). PATH TO 1000 (585 more) = near-leaf+frontier (~1-4/round) or the promote-c3-batch fanout. WISHLIST: near_leaf_seed_outbuf generalizes the "near-leaf reads seeded static table(s) + writes out-buf and/or returns int" shape -> reusable for the rest of the 0x0046c7b0/0x0046cbb0 getter-family consumers in the near-leaf pool.
 
 2026-06-15 | round 247 | NEAR-LEAF lane — 2nd ESI-register-arg zero-init -> C3 memset | attempted 1 | GREEN 1 (StructZero421060 0x00421060, gameplay) | total_green 410->411 (411/1000). dry_counter 0. void f(ESI=p): memset(p,0,8) via C3 ZeroFillWrapper(0x4b6520); *(u32*)(p+8/0xc/0x10/0x14)=0 => zeroes p[0..0x18). REUSED esi_struct_init handler (built r246) -> no new handler. C reimpl __cdecl(p). bufsize 0x20 BOUNDARY ECHO: seed 0xCC/0x77, post [0,0x18)=0 + [0x18,0x20) keeps distinct sentinel -> non-degen + proves exact 0x18 coverage (no over-run). 2/2 GREEN (b0=0x6a real orig). Callee 0x4b6520 C3, caller FUN_00421690 C2. CONFIRMS the esi-trampoline handler generalizes (2nd consumer) -> register-arg near-leaves are a reliable vein. Session 101-247 net = +154 (257->411). Context 123 rounds deep. PATH TO 1000 (589 more) = near-leaf+frontier (~1/round) or the promote-c3-batch fanout.
 

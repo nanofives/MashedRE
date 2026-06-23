@@ -4571,3 +4571,174 @@ extern "C" __declspec(dllexport) void __cdecl StructZero421060(unsigned char *p)
     *(unsigned int *)(p + 0x14) = 0u;
 }
 RH_ScopedInstall(StructZero421060, 0x00421060);
+
+// ===== round 248 (2026-06-23) — NEAR-LEAF lane: vehicle-slot-getter family =====
+// Four C2 near-leaves whose ONLY callees are the pure bounds-checked static-table
+// getters VehicleSlotGetter 0x0046c7b0 (C3) / CarStatePairGet 0x0046cbb0 (C3) /
+// Pred45bff0 0x0045bff0 (C3). Each is a VERBATIM naked port: the original's
+// `call rel32 <callee>` is replaced by `mov eax,<callee_abs>; call eax` (byte-identical
+// behavior; BOTH orig+reimpl hit the SAME real C3 callee at its absolute RVA at
+// suspended-spawn). Callees read static tables (DAT_008815a4 / DAT_00881f90 /
+// DAT_0088fc88) which early_window seeds -> non-degenerate. Anchored to MASHED.exe
+// SHA-256 BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E.
+
+// 0x0040ba60 FUN_0040ba60 (gameplay) — Active4Slots404ba60.
+//   void f(int* out): for i=0..3: out[i]=0; if(VehicleSlotGetter(i)==0) out[i]=1;
+//   Disasm (0x0040ba60..0x0040ba93):
+//     56               push esi
+//     57               push edi
+//     8b 7c 24 0c      mov  edi,[esp+0xc]        ; arg out
+//     33 f6            xor  esi,esi
+//     eb 06            jmp  L70
+//   L70:
+//     56               push esi
+//     c7 04 b7 00..    mov  dword ptr [edi+esi*4],0
+//     e8 33 0d 06 00   call 0x0046c7b0           ; VehicleSlotGetter(i)  [->mov eax,abs;call eax]
+//     83 c4 04         add  esp,4
+//     85 c0            test eax,eax
+//     75 07            jnz  L8b
+//     c7 04 b7 01..    mov  dword ptr [edi+esi*4],1
+//   L8b:
+//     46               inc  esi
+//     83 fe 04         cmp  esi,4
+//     7c df            jl   L70
+//     5f 5e c3         pop edi; pop esi; ret
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl Active4Slots40ba60(int * /*out*/)
+{
+    __asm {
+        push  esi
+        push  edi
+        mov   edi, dword ptr [esp+0Ch]
+        xor   esi, esi
+        jmp   La70
+    La70:
+        push  esi
+        mov   dword ptr [edi+esi*4], 0
+        mov   eax, 046C7B0h
+        call  eax
+        add   esp, 4
+        test  eax, eax
+        jnz   La8b
+        mov   dword ptr [edi+esi*4], 1
+    La8b:
+        inc   esi
+        cmp   esi, 4
+        jl    La70
+        pop   edi
+        pop   esi
+        ret
+    }
+}
+RH_ScopedInstall(Active4Slots40ba60, 0x0040ba60);
+
+// 0x0040b9a0 FUN_0040b9a0 (gameplay) — MaxScoreFlags40b9a0.
+//   void f(int* out,int mode): find max m over DAT_008a94e0[0..3] (when mode!=0 only
+//   slots i with VehicleSlotGetter(i)!=0 are eligible); then out[i]=(DAT_008a94e0[i]==m)?1:0.
+//   Disasm (0x0040b9a0..0x0040b9fe) verbatim; only callee call rewritten.
+extern "C" __declspec(dllexport) __declspec(naked) void __cdecl MaxScoreFlags40b9a0(int * /*out*/, int /*mode*/)
+{
+    __asm {
+        push  ebx
+        mov   ebx, dword ptr [esp+0Ch]     ; arg mode  (1 push so far -> +0xc)
+        push  esi
+        push  edi
+        xor   edi, edi
+        xor   esi, esi
+        jmp   Lb_b0
+    Lb_b0:
+        test  ebx, ebx
+        jz    Lb_c1
+        push  esi
+        mov   eax, 046C7B0h
+        call  eax
+        add   esp, 4
+        test  eax, eax
+        jz    Lb_ce
+    Lb_c1:
+        mov   eax, dword ptr [esi*4 + 08A94E0h]
+        cmp   eax, edi
+        jle   Lb_ce
+        mov   edi, eax
+    Lb_ce:
+        inc   esi
+        cmp   esi, 4
+        jl    Lb_b0
+        mov   eax, dword ptr [esp+10h]      ; arg out (3 pushes -> +0x10)
+        mov   ecx, 08A94E0h
+        sub   ecx, eax
+        mov   edx, 4
+    Lb_e4:
+        mov   dword ptr [eax], 0
+        cmp   dword ptr [ecx+eax*1], edi
+        jnz   Lb_f5
+        mov   dword ptr [eax], 1
+    Lb_f5:
+        add   eax, 4
+        dec   edx
+        jnz   Lb_e4
+        pop   edi
+        pop   esi
+        pop   ebx
+        ret
+    }
+}
+RH_ScopedInstall(MaxScoreFlags40b9a0, 0x0040b9a0);
+
+// 0x0045cab0 FUN_0045cab0 (gameplay) — SlotAliveAndState45cab0.
+//   bool f(uint idx): CarStatePairGet(idx,&state,&secondary); if(state!=0) return 0;
+//   else return VehicleSlotGetter(idx)==1.  Disasm (0x0045cab0..0x0045caed) verbatim.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl SlotAliveState45cab0(unsigned int /*idx*/)
+{
+    __asm {
+        sub   esp, 8
+        push  esi
+        mov   esi, dword ptr [esp+10h]      ; arg idx (sub 8 + push esi + ret = +0x10)
+        lea   eax, [esp+8]
+        push  eax
+        lea   ecx, [esp+8]
+        push  ecx
+        push  esi
+        mov   eax, 046CBB0h                 ; CarStatePairGet
+        call  eax
+        mov   eax, dword ptr [esp+10h]      ; state out
+        add   esp, 0Ch
+        test  eax, eax
+        jz    Lc_ret1path
+        xor   eax, eax
+        pop   esi
+        add   esp, 8
+        ret
+    Lc_ret1path:
+        push  esi
+        mov   eax, 046C7B0h                 ; VehicleSlotGetter
+        call  eax
+        add   esp, 4
+        dec   eax
+        neg   eax
+        sbb   eax, eax
+        inc   eax
+        pop   esi
+        add   esp, 8
+        ret
+    }
+}
+RH_ScopedInstall(SlotAliveState45cab0, 0x0045cab0);
+
+// 0x0045c330 FUN_0045c330 (gameplay) — PredNot45c330.
+//   bool f(int idx): return Pred45bff0(idx)==0;  (NEG/SBB/INC = "x==0 ? 1 : 0")
+//   Disasm (0x0045c330..0x0045c342) verbatim.
+extern "C" __declspec(dllexport) __declspec(naked) int __cdecl PredNot45c330(int /*idx*/)
+{
+    __asm {
+        mov   eax, dword ptr [esp+4]
+        push  eax
+        mov   eax, 045BFF0h                 ; Pred45bff0
+        call  eax
+        add   esp, 4
+        neg   eax
+        sbb   eax, eax
+        inc   eax
+        ret
+    }
+}
+RH_ScopedInstall(PredNot45c330, 0x0045c330);

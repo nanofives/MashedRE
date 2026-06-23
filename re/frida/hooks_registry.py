@@ -109,6 +109,58 @@ HOOKS = {
         ],
         'path1_tests': [0, 1], 'path2_tests': [0, 1]},
 
+    # ===== round 248 (2026-06-23) NEAR-LEAF lane: vehicle-slot-getter family =====
+    # 0x0040ba60 Active4Slots40ba60 (gameplay) - NEAR-LEAF void f(int* out):
+    #   for i=0..3: out[i]=0; if(VehicleSlotGetter(i)==0) out[i]=1;  (callee C3 0x0046c7b0
+    #   reads (&DAT_008815a4)[i*0x341] => byte 0x008815a4 + i*(0x341*4=0xD04)). Verbatim naked.
+    #   Slot addrs i0..3 = 0x8815a4, 0x8822a8, 0x882fac, 0x883cb0.
+    #   Seed slots 0,2 -> 0 (out=1) and 1,3 -> nonzero (out=0): out = [1,0,1,0] (non-degen).
+    'active4slots_40ba60': {'rva': 0x0040ba60, 'export': 'Active4Slots40ba60', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'near_leaf_seed_outbuf',
+        'argkinds': ['pointer'], 'out_size': 0x20, 'out_argpos': 0, 'out_observe': [0x0, 0x4, 0x8, 0xc],
+        'seed_sets': [
+            {'seeds': [[0x8815a4, 0], [0x8822a8, 0x55], [0x882fac, 0], [0x883cb0, 0x77]], 'args': []},
+        ],
+        'path1_tests': [0], 'path2_tests': [0]},
+
+    # 0x0040b9a0 MaxScoreFlags40b9a0 (gameplay) - NEAR-LEAF void f(int* out, int mode):
+    #   m=max over DAT_008a94e0[0..3] (mode!=0 => only slots i with VehicleSlotGetter(i)!=0
+    #   are eligible); then out[i]=(DAT_008a94e0[i]==m)?1:0. DAT_008a94e0[i] @ 0x008a94e0+i*4;
+    #   getter table (&DAT_008815a4)[i*0x341] @ 0x008815a4+i*0xD04 (i0..3 = 0x8815a4,0x8822a8,0x882fac,0x883cb0).
+    #   Verbatim naked.
+    #   A (mode=0): DAT=[10,30,20,30] -> max 30 -> out=[0,1,0,1].
+    #   B (mode=1): getters elig {1,2} (i0,i3 = 0); DAT=[100,30,20,5] -> max over {30,20}=30
+    #              -> out=[0,1,0,0] (proves gating: i0 DAT=100 would be max if not gated out).
+    'maxscoreflags_40b9a0': {'rva': 0x0040b9a0, 'export': 'MaxScoreFlags40b9a0', 'signature': {'ret': 'void', 'args': ['pointer', 'uint32']}, 'arg_type': 'near_leaf_seed_outbuf',
+        'argkinds': ['pointer', 'uint32'], 'out_size': 0x20, 'out_argpos': 0, 'out_observe': [0x0, 0x4, 0x8, 0xc],
+        'seed_sets': [
+            {'seeds': [[0x8a94e0, 10], [0x8a94e4, 30], [0x8a94e8, 20], [0x8a94ec, 30]], 'args': [0]},
+            {'seeds': [[0x8a94e0, 100], [0x8a94e4, 30], [0x8a94e8, 20], [0x8a94ec, 5],
+                       [0x8815a4, 0], [0x8822a8, 1], [0x882fac, 1], [0x883cb0, 0]], 'args': [1]},
+        ],
+        'path1_tests': [0, 1], 'path2_tests': [0, 1]},
+
+    # 0x0045cab0 SlotAliveState45cab0 (gameplay) - NEAR-LEAF int f(uint idx):
+    #   CarStatePairGet(idx,&state,&sec): state=(&DAT_00881f90)[idx*0x341] @ 0x00881f90+idx*0xD04;
+    #   if(state!=0) return 0; else return VehicleSlotGetter(idx)==1. Callees C3 0x0046cbb0/0x0046c7b0.
+    #   idx fixed = 2: state slot @ 0x00881f90+2*0xD04 = 0x00883998; getter slot @ 0x008815a4+2*0xD04 = 0x00882FAC.
+    #   A: state=5 (nonzero) -> ret 0.  B: state=0, getter=1 -> ret 1.  C: state=0, getter=7 -> ret 0.
+    'slot_alive_state_45cab0': {'rva': 0x0045cab0, 'export': 'SlotAliveState45cab0', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'near_leaf_seed_outbuf',
+        'argkinds': ['uint32'], 'out_size': 0, 'fold_ret': True,
+        'seed_sets': [
+            {'seeds': [[0x883998, 5], [0x882FAC, 1]], 'args': [2]},   # state!=0 -> 0
+            {'seeds': [[0x883998, 0], [0x882FAC, 1]], 'args': [2]},   # state==0, getter==1 -> 1
+            {'seeds': [[0x883998, 0], [0x882FAC, 7]], 'args': [2]},   # state==0, getter!=1 -> 0
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
+    # 0x0045c330 PredNot45c330 (gameplay) - NEAR-LEAF int f(int idx): return Pred45bff0(idx)==0,
+    #   i.e. returns (DAT_0088fc88[idx*0x2d] != 0) ? 1 : 0 (NEG/SBB/INC idiom). Callee C3 0x0045bff0.
+    #   Existing table_bool_predicate handler: slot @ tgt+idx*stride+off0, stride=0x2d*4=0xb4.
+    #   tests=[idx,slotval]: [2,0] (slot==0 -> ret 0), [2,0x55] (slot!=0 -> ret 1). bound=-1 (no early return).
+    'prednot_45c330': {'rva': 0x0045c330, 'export': 'PredNot45c330', 'signature': {'ret': 'uint32', 'args': ['uint32']}, 'arg_type': 'table_bool_predicate',
+        'target_global': 0x0088fc88, 'stride': 0xb4, 'off0': 0, 'bound': -1,
+        'path1_tests': [[2, 0], [2, 0x55]], 'path2_tests': [[2, 0], [2, 0x55]]},
+
     # 0x004058c0 FloatSubThunk4058c0 (gameplay) - NEAR-LEAF adjustor thunk -> C3 0x4058b0.
     # void f(idx, float fval): *(float*)(0x639d80 + idx*0xec + 0x5c) -= fval. Verbatim naked.
     'thunk_float_sub_4058c0': {'rva': 0x004058c0, 'export': 'FloatSubThunk4058c0', 'signature': {'ret': 'void', 'args': ['uint32', 'float']}, 'arg_type': 'thunk_float_sub',
