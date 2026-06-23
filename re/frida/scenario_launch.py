@@ -98,6 +98,7 @@ rpc.exports = {
   },
   launch: function(){ try { ga(PHASE).writeU8(2); return 1; } catch(e){ return 'ERR '+e; } },
   press: function(c, ms){ pressCtrl = c; pressUntil = Date.now() + ms; return 1; },
+  boost: function(v){ try { ga(CARREC).add(0x9b4).writeFloat(v); return 1; } catch(e){ return 'ERR '+e; } },
   carinfo: function(){
     try { const r = ga(CARREC);
       return { spawnFired: spawnFired,
@@ -122,6 +123,9 @@ def main():
     ap.add_argument("--team", type=int, default=0, help="team-game flag (DAT_0067ea64; 1=team)")
     ap.add_argument("--powerups", type=int, default=-1, help="power-up setting (DAT_0067ea80; -1=game default)")
     ap.add_argument("--difficulty", type=int, default=-1, help="difficulty (DAT_0067ea7c; -1=game default)")
+    ap.add_argument("--boost", type=float, default=0,
+                    help="upward vel-Y impulse per tick on the player car to FORCE it airborne "
+                         "(grounded->0 => A6b airborne body runs). 0=off. Contrived state (C3-grade).")
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
     ap.add_argument("--hooks", default="",
@@ -215,6 +219,11 @@ def main():
             if psutil and not psutil.pid_exists(pid): print("\n  game exited."); break
             try: E.press(4, 250)            # pulse: 250ms held, ~0.35s gap -> edges for round-end prompts
             except Exception: pass
+            if args.boost:
+                for _ in range(4):          # re-launch a few times per tick so it stays airborne
+                    try: E.boost(args.boost)
+                    except Exception: pass
+                    time.sleep(0.08)
             n += 1
             if n % 8 == 0:
                 try:
