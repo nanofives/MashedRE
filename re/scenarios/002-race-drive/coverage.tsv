@@ -1,0 +1,7 @@
+rva	first_frame	first_t_ms	name	subsystem	confidence
+0x0046b540	2287	20839	VehicleSpawnInit	vehicle	C4
+0x00470c70	2291	20871	FUN_00470c70	vehicle	C2
+0x00470670	2291	20873	VehicleControlUpdate	vehicle	C4
+0x0046ddb0	2291	20873	VehicleWheelForceIntegrator	vehicle	C4
+0x00467650	2291	20873	VehicleWheelDrivetrainUpdate	vehicle	C2
+0x00468980	2291	20873	VehicleAeroStabilizer	vehicle	C2

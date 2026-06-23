@@ -1,0 +1,26 @@
+{
+  "name": "race-drive",
+  "ordinal": 2,
+  "slug": "002-race-drive",
+  "mode": "physics",
+  "binary": "original",
+  "exe": "C:\\Users\\maria\\Desktop\\Proyectos\\Mashed\\original\\MASHED.exe",
+  "exe_sha256": "BE1CE720A044AB00E6D185899B04FDFBA17AFD13AF023002F85E37554EB84515",
+  "image_base": "0x00400000",
+  "capture": "attach",
+  "pid": 40616,
+  "launched": true,
+  "fps_cap": "60",
+  "date": "2026-06-22T15:38:34",
+  "coverage_candidates": [
+    "0x0046b540",
+    "0x00470670",
+    "0x0046ddb0",
+    "0x00467650",
+    "0x00468980",
+    "0x00470c70"
+  ],
+  "frames": 5743,
+  "input_events": 106,
+  "coverage_hits": 6
+}

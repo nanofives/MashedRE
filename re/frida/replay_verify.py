@@ -28,23 +28,58 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 
 AGENT = r'''
 'use strict';
-let frameCount=0, t0=0;
+// Deterministic frame clock (verified 2026-06-22 via probe_replay_clock.py) — MUST match
+// record_attach.py: index by RENDER frames (FUN_004c1be0, 1x/frame, continuous in menu AND
+// race) with frame 0 ANCHORED at the first menu-state-machine tick (FUN_0043c5b0). The old
+// GetDeviceState poll clock drifted +24 polls boot->menu run-to-run -> menu-nav desync.
+let presCount=0, anchored=false, anchorPres=0, t0=0;
 let PLAN=[], pi=0, cur=[], writes=0;
 const COV=[]; const _toDetach=[];
 let textLo=null, textHi=null;
 function inText(p){ return textLo && p.compare(textLo)>=0 && p.compare(textHi)<0; }
 function addText(mod){ mod.enumerateRanges('r-x').forEach(function(r){ const e=r.base.add(r.size);
   if(textLo===null||r.base.compare(textLo)<0)textLo=r.base; if(textHi===null||e.compare(textHi)>0)textHi=e; }); }
+function curFrame(){ return anchored ? (presCount - anchorPres) : -1; }
+function armClock(){
+  const mod=Process.findModuleByName('MASHED.exe'); if(!mod){ send({kind:'err',msg:'clock: MASHED.exe missing'}); return; }
+  try{ Interceptor.attach(mod.base.add(0x004c1be0-0x400000), { onEnter(){ presCount++; } }); }
+  catch(e){ send({kind:'err',msg:'arm PRES: '+e}); }
+  try{ Interceptor.attach(mod.base.add(0x0043c5b0-0x400000), { onEnter(){ if(!anchored){
+        anchored=true; anchorPres=presCount; if(t0===0) t0=Date.now();
+        send({kind:'info', msg:'menu anchor: clock zeroed at pres='+presCount}); } } }); }
+  catch(e){ send({kind:'err',msg:'arm MENU: '+e}); }
+}
 
-function onFrame(buf){
-  frameCount++; if(t0===0) t0=Date.now();
-  while (pi<PLAN.length && PLAN[pi].f<=frameCount){ cur=PLAN[pi].d; pi++; }
-  for (const k of cur){ try{ buf.add(k).writeU8(0x80); writes++; }catch(e){} }  // IN-PROCESS only
+const ZEROS = new Array(256).fill(0);
+function onPoll(buf){
+  // Rebuild the whole 256-byte keyboard state each poll: ZERO it, then set our held keys.
+  // The explicit zero is what makes BACKGROUND replay correct: when MASHED's window is
+  // unfocused, DirectInput drops acquisition and GetDeviceState FAILS without filling the
+  // buffer (leaving stale/garbage). Zeroing + writing our keys + forcing DI_OK in hookGDS
+  // makes the game consume our injected input regardless of focus. We only ever write MASHED's
+  // OWN in-process buffer (no OS input injection — nothing leaks to your other windows).
+  try{
+    buf.writeByteArray(ZEROS);
+    if(!anchored){
+      // Pre-menu GATE: hold ENTER to clear the "press button to start" screen until the menu
+      // clock anchors (its keypress is in the non-deterministic boot window, not in the trace).
+      buf.add(0x1c).writeU8(0x80); writes++;                 // 0x1c = ENTER (select/confirm)
+      return;
+    }
+    const f=curFrame();
+    while (pi<PLAN.length && PLAN[pi].f<=f){ cur=PLAN[pi].d; pi++; }
+    for (const k of cur){ buf.add(k).writeU8(0x80); }        // IN-PROCESS only
+    writes++;
+  }catch(e){}
 }
 const seen={};
 function hookGDS(addr){ const k=addr.toString(); if(seen[k]) return; seen[k]=1;
   Interceptor.attach(addr,{ onEnter(a){ this.cb=a[1].toInt32(); this.buf=a[2]; },
-                            onLeave(){ if(this.cb===256) onFrame(this.buf); } }); }
+                            onLeave(retval){ if(this.cb===256){ onPoll(this.buf);
+                              // force DI_OK so the game uses our injected buffer even when its
+                              // window is in the background (DirectInput foreground coop level
+                              // otherwise returns DIERR_INPUTLOST/NOTACQUIRED and drops input).
+                              try{ retval.replace(ptr(0)); }catch(e){} } } }); }
 function resolveGDS(){
   let armed=0;
   ['dinput8_real.DLL','DINPUT8.dll','dinput8.dll'].forEach(function(mn){
@@ -69,12 +104,13 @@ if (N_GDS === 0) {
   const iv = setInterval(function(){ const n = resolveGDS(); if (n > 0) { N_GDS = n; clearInterval(iv);
     send({kind:'info', msg:'GetDeviceState armed late='+n}); } }, 100);
 }
+armClock();
 
 function armCoverage(modName, imgBase, rvas){
   const mod=Process.findModuleByName(modName); if(!mod){ send({kind:'err',msg:'cov: '+modName+' missing'}); return 0; }
   let n=0;
   rvas.forEach(function(rva){ try{ const addr=mod.base.add(rva-imgBase); const h={hit:false,rva:rva};
-    h.L=Interceptor.attach(addr,{ onEnter(){ if(h.hit)return; h.hit=true; COV.push({rva:rva,f:frameCount,t:Date.now()-t0}); _toDetach.push(h.L); } }); n++;
+    h.L=Interceptor.attach(addr,{ onEnter(){ if(h.hit)return; h.hit=true; COV.push({rva:rva,f:curFrame(),t:Date.now()-t0}); _toDetach.push(h.L); } }); n++;
   }catch(e){} });
   setInterval(function(){ if(_toDetach.length){ const d=_toDetach.splice(0); d.forEach(function(L){try{L.detach();}catch(e){}}); } },200);
   return n;
@@ -104,7 +140,7 @@ Process.setExceptionHandler(function(d){
       send({kind:'firstchance', av:{n:firstChanceN, type:d.type, eip:ctx.pc.toString(),
         mem:(d.memory?(''+d.memory.address+'/'+d.memory.operation):'?'),
         eax:''+ctx.eax, ebx:''+ctx.ebx, ecx:''+ctx.ecx, edx:''+ctx.edx, esi:''+ctx.esi, edi:''+ctx.edi,
-        ebp:''+ctx.ebp, esp:''+ctx.esp, code_chain:chain(ctx).slice(0,20), frame:frameCount, idx:pi}});
+        ebp:''+ctx.ebp, esp:''+ctx.esp, code_chain:chain(ctx).slice(0,20), frame:curFrame(), idx:pi}});
     }
     return false;   // let the app handle it (it may recover or proceed to shutdown)
   }
@@ -114,7 +150,7 @@ Process.setExceptionHandler(function(d){
     eax:''+ctx.eax, ecx:''+ctx.ecx, edx:''+ctx.edx, esi:''+ctx.esi, edi:''+ctx.edi,
     ebp:''+ctx.ebp, esp:''+ctx.esp,
     mem:(d.memory?(''+d.memory.address+'/'+d.memory.operation):'?'),
-    code_chain:chain(ctx).slice(0,40), frame:frameCount, idx:pi};
+    code_chain:chain(ctx).slice(0,40), frame:curFrame(), idx:pi};
   send({kind:'crash', crash:CRASH});
   ctx.pc = _spin;     // park the thread in a tight loop; we'll kill the pid from Python
   return true;        // resume (into the spin) so the message is delivered
@@ -122,8 +158,8 @@ Process.setExceptionHandler(function(d){
 rpc.exports = {
   setplan: function(p){ PLAN=p; pi=0; cur=[]; return PLAN.length; },
   armcoverage: function(m,b,r){ return armCoverage(m,b,r); },
-  status: function(){ return {frames:frameCount, idx:pi, writes:writes, cur:cur, cov:COV.length, gds:N_GDS}; },
-  dump: function(){ return {frames:frameCount, writes:writes, cov:COV, gds:N_GDS, crash:CRASH}; }
+  status: function(){ return {frames:curFrame(), pres:presCount, anchored:anchored, idx:pi, writes:writes, cur:cur, cov:COV.length, gds:N_GDS}; },
+  dump: function(){ return {frames:curFrame(), pres:presCount, anchored:anchored, writes:writes, cov:COV, gds:N_GDS, crash:CRASH}; }
 };
 send({kind:'ready', msg:'replay-verify armed; GetDeviceState vtable hooks='+N_GDS});
 '''
@@ -211,6 +247,12 @@ def main():
     print(f"=== replay-verify {scn_dir.name} on pid {args.pid} ===")
     print(f"  module={mod_name} base=0x{img_base:08x}  plan-events={len(plan)}  last-frame={last_frame}")
     print(f"  coverage candidates={len(cand)}  recorded-hits={len(rec_cov)}  window={seconds}s  lead-shift={delta:+d}")
+    clock = meta.get("clock")
+    print(f"  clock={clock or 'POLL (legacy GetDeviceState)'}")
+    if not clock:
+        print("  WARNING: this trace predates the render/menu clock (indexed by GetDeviceState polls,")
+        print("           which drift run-to-run); replay alignment will be unreliable. Re-record with")
+        print("           record_attach.py --launch to capture on the deterministic clock.")
 
     dev = frida.get_local_device()
     we_launched = False
@@ -282,7 +324,8 @@ def main():
             try:
                 st = scr.exports_sync.status()
                 cur_names = ",".join("0x%02x" % k for k in st["cur"]) or "(none)"
-                print(f"\r  frame={st['frames']}  plan-idx={st['idx']}/{len(plan)}  writes={st['writes']}"
+                anc = "MENU" if st.get("anchored") else "boot"
+                print(f"\r  pres={st.get('pres',0)}[{anc}] frame={st['frames']}  plan-idx={st['idx']}/{len(plan)}  writes={st['writes']}"
                       f"  cov={st['cov']}/{len(cand)}  held={cur_names}   ", end="", flush=True)
                 # early-finish: stop ~5s after plan done AND all coverage seen
                 if st["idx"] >= len(plan) and st["cov"] >= len(cand) and all_hit_at is None:
