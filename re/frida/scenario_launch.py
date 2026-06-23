@@ -41,6 +41,8 @@ const TRACK_MENU = 0x0067f17c;   // menu-side track idx (keep consistent)
 const MODE       = 0x0067e9fc;   // game-mode 2..10 (10=QuickRace, 2=TimeTrial)
 const RULE       = 0x007f0fd0;   // race-rule
 const CAR_P0     = 0x0067ea98;   // player-0 car/character cursor
+const DIFFICULTY = 0x0067ea7c;   // RaceConfig.difficulty
+const POWERUPS   = 0x0067ea80;   // RaceConfig.powerUps
 const SLOT0      = 0x007f1a14;   // per-slot car-index array (stride 0x10; -1=inactive)
 const PCOUNT     = 0x008a94d0;   // player count 1..4
 const TEAM       = 0x0067ea64;   // team-game flag
@@ -69,24 +71,29 @@ function armInput(){ if(inputArmed) return; inputArmed = true;
 rpc.exports = {
   ready: function(){ return modBase() ? 1 : 0; },
   phase: function(){ try { return ga(PHASE).readU8(); } catch(e){ return -1; } },
-  setup: function(track, mode, cars){
+  setup: function(cfg){
     try {
-      ga(TRACK_ENG ).writeS32(track);
-      ga(TRACK_MENU).writeS32(track);
-      ga(MODE      ).writeS32(mode);
-      ga(RULE      ).writeS32(0);
-      ga(CAR_P0    ).writeS32(0);
-      ga(TEAM      ).writeS32(0);
+      ga(TRACK_ENG ).writeS32(cfg.track);
+      ga(TRACK_MENU).writeS32(cfg.track);
+      ga(MODE      ).writeS32(cfg.mode);
+      ga(RULE      ).writeS32(cfg.rule);
+      ga(CAR_P0    ).writeS32(cfg.car);
+      ga(TEAM      ).writeS32(cfg.team);
+      // difficulty / powerups: encoding [UNCERTAIN] — only write when explicitly given (>=0),
+      // else leave the game default so an unknown value can't break the race.
+      if (cfg.difficulty >= 0) ga(DIFFICULTY).writeS32(cfg.difficulty);
+      if (cfg.powerups   >= 0) ga(POWERUPS  ).writeS32(cfg.powerups);
       // Activate the per-slot vehicles via FUN_0040e480(slot,val) — THIS is the array the
-      // spawn loop reads (slot 0 = player). The earlier raw DAT_007f1a14 write was the wrong
-      // array; this is the fix. cdecl void(int,int). DAT_008a94d0 (player count) is recomputed
-      // by the spawn loop, so we do NOT preset it.
+      // spawn loop reads. slot 0 = human player (1); slots 1..cars-1 = AI (2); rest = empty (0).
+      // (The earlier raw DAT_007f1a14 write was the wrong array.) DAT_008a94d0 (player count)
+      // is recomputed by the spawn loop, so we do NOT preset it.
       const e480 = new NativeFunction(ga(ACTIVATE), 'void', ['int','int'], 'mscdecl');
-      // slot 0 = human player (1); slots 1..cars-1 = AI opponents (2); rest = empty (0).
-      for (let s = 0; s < 4; s++) e480(s, s === 0 ? 1 : (s < cars ? 2 : 0));
+      for (let s = 0; s < 4; s++) e480(s, s === 0 ? 1 : (s < cfg.cars ? 2 : 0));
       armSpawn();
       armInput();
-      return 'globals set + '+cars+' slot(s) activated: track='+track+' mode='+mode;
+      return 'set track='+cfg.track+' mode='+cfg.mode+' cars='+cfg.cars+' car='+cfg.car
+             +' rule='+cfg.rule+' team='+cfg.team
+             +(cfg.difficulty>=0?' diff='+cfg.difficulty:'')+(cfg.powerups>=0?' powerups='+cfg.powerups:'');
     } catch(e){ return 'ERR '+e; }
   },
   launch: function(){ try { ga(PHASE).writeU8(2); return 1; } catch(e){ return 'ERR '+e; } },
@@ -110,6 +117,11 @@ def main():
     ap.add_argument("--track", type=int, default=0, help="engine track index (0=Arctic)")
     ap.add_argument("--mode", type=int, default=10, help="game-mode (10=QuickRace, 2=TimeTrial)")
     ap.add_argument("--cars", type=int, default=1, help="active car slots (slot 0 = player; rest AI)")
+    ap.add_argument("--car", type=int, default=0, help="player car/character index (DAT_0067ea98)")
+    ap.add_argument("--rule", type=int, default=0, help="race-rule sub-mode 0..10 (DAT_007f0fd0)")
+    ap.add_argument("--team", type=int, default=0, help="team-game flag (DAT_0067ea64; 1=team)")
+    ap.add_argument("--powerups", type=int, default=-1, help="power-up setting (DAT_0067ea80; -1=game default)")
+    ap.add_argument("--difficulty", type=int, default=-1, help="difficulty (DAT_0067ea7c; -1=game default)")
     ap.add_argument("--fps", default="60")
     ap.add_argument("--hold", type=int, default=20, help="seconds to hold in the race after spawn")
     ap.add_argument("--hooks", default="",
@@ -173,7 +185,10 @@ def main():
         if wait_phase(1, 40, "menu (phase 1)") is None: raise SystemExit
         time.sleep(0.5)
         # 2) write the selection globals
-        print("  [setup]", E.setup(args.track, args.mode, args.cars))
+        cfg = {"track": args.track, "mode": args.mode, "cars": args.cars, "car": args.car,
+               "rule": args.rule, "team": args.team,
+               "difficulty": args.difficulty, "powerups": args.powerups}
+        print("  [setup]", E.setup(cfg))
         time.sleep(0.2)
         # 3) poke the state machine into load+spawn
         print("  [launch] poke DAT_00771968 = 2 ->", E.launch())
