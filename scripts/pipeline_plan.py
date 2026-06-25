@@ -90,17 +90,62 @@ def load_blocked_rvas():
     return blocked
 
 
+# --- exclusion classes the manual process DEFERS (round-1 post-mortem 2026-06-25) --
+# A round-1 batch of 30 was 24 thunks + several destructive teardowns; ALL 12
+# worker-"GREEN" verdicts RED'd in the real integration diff (uniform ~61s
+# timeout) because:
+#   * thunks = 5-byte JMP trampolines into (often already-C3) targets — no new
+#     first-party behavior, and a hook on the thunk double-installs with the target.
+#   * destructive teardown/free fns free live heap when the synthetic A/B harness
+#     calls them => hang/crash/timeout, never a clean bit-identity diff.
+#   * arg_type=='none' (0-arg) fns have NOTHING to feed and only global side
+#     effects to observe — undiffable by the scalar A/B harness.
+# What DOES diff GREEN here: getters / computed-returns with a real arg_type.
+THUNK_RE = re.compile(r"\bthunk\b|^thunk_", re.I)
+DESTRUCTIVE_RE = re.compile(
+    r"teardown|free|kill|release|destroy|shutdown|dtor|delete|close|unlock|"
+    r"reset|dealloc|cleanup", re.I)
+
+
+def exclude_reason(row):
+    """Return a drop-reason string if this row is structurally undiffable, else None."""
+    name = (row.get("name") or "")
+    if THUNK_RE.search(name):
+        return "thunk"
+    if DESTRUCTIVE_RE.search(name):
+        return "destructive"
+    if (row.get("arg_type_today") or "none") == "none":
+        return "no_argtype"        # 0-arg: nothing to feed/observe
+    if (row.get("ret") or "").lower() in ("void", ""):
+        return "void_ret"          # no computed return = no diff observable
+    try:
+        if int(row.get("nargs") or 0) < 1:
+            return "no_args"
+    except ValueError:
+        pass
+    return None
+
+
 def score(row):
-    """Higher = higher expected yield + lower bit-identity risk.
+    """Higher = more likely to produce a clean bit-identity Frida diff.
 
     Mechanical, decompiler-shape only (NO-GUESSING): every term cites a column
-    emitted by promote_enrich.py.
+    emitted by promote_enrich.py. Rows reaching score() have already passed
+    exclude_reason() (real arg_type, non-void ret, not thunk/destructive).
     """
     s = 0.0
     why = []
+    # a real, existing arg_type is the single best diffability signal
+    at = row.get("arg_type_today") or "none"
+    s += 3; why.append(f"arg:{at}")
+    # getter shape: derefs an arg or reads a global and returns it
+    if (row.get("derefs_arg") or "0") not in ("0", "-", ""):
+        s += 1; why.append("deref-arg")
+    if (row.get("reads_global") or "0") not in ("0", "-", ""):
+        s += 1; why.append("reads-global")
     sig = (row.get("sig_conf") or "").lower()
     if sig == "high":
-        s += 3; why.append("sig:high")
+        s += 2; why.append("sig:high")
     elif sig in ("med", "medium"):
         s += 1; why.append("sig:med")
     else:
@@ -110,14 +155,14 @@ def score(row):
     except ValueError:
         ncall = 0
     if ncall == 0:
-        s += 2; why.append("leaf")
+        s += 1; why.append("leaf")
     try:
         size = int(row.get("size") or 0)
     except ValueError:
         size = 0
-    if 3 <= size <= 40:
-        s += 1; why.append("small")
-    elif size > 200:
+    if 8 <= size <= 120:
+        s += 1; why.append("right-size")
+    elif size > 250:
         s -= 2; why.append("huge")
     if (row.get("fp") or "0") in ("0", "-", ""):
         s += 1; why.append("no-fp")
@@ -126,19 +171,11 @@ def score(row):
     if (row.get("com_d3d") or "0") in ("0", "-", ""):
         s += 1
     else:
-        s -= 1; why.append("com")
+        s -= 2; why.append("com")          # COM/D3D/DSound/DInput state = unsafe to diff
     if (row.get("rw_orch") or "0") in ("0", "-", ""):
         s += 1
     else:
         why.append("rw-orch")
-    try:
-        nargs = int(row.get("nargs") or 0)
-    except ValueError:
-        nargs = 0
-    if nargs == 0:
-        s += 1; why.append("0-arg")
-    if "thunk" in (row.get("name") or "").lower():
-        s += 1; why.append("thunk")
     return s, ",".join(why)
 
 
@@ -204,7 +241,9 @@ def main():
     blocked = load_blocked_rvas()
 
     scored = []
-    dropped = {"blocked_c3": 0, "in_queue": 0, "low_score": 0, "dup": 0}
+    dropped = {"blocked_c3": 0, "in_queue": 0, "low_score": 0, "dup": 0,
+               "thunk": 0, "destructive": 0, "no_argtype": 0, "void_ret": 0,
+               "no_args": 0}
     seen = set()
     for r in runnable:
         rva = norm_rva(r.get("rva"))
@@ -217,6 +256,10 @@ def main():
         if rva in blocked:
             reason = blocked[rva]
             dropped["in_queue" if reason == "in_queue" else "blocked_c3"] += 1
+            continue
+        ex = exclude_reason(r)
+        if ex:
+            dropped[ex] += 1
             continue
         sc, why = score(r)
         if sc < args.min_score:
