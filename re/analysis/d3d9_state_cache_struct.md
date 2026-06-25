@@ -274,3 +274,42 @@ Dispatcher `FUN_004d7480` callees (all 17 cluster members): `5480, 6b90, 6c40,
 QUEUE rationale follows the caller-gate / leaf-exemption ruling
 ([[feedback_c3_caller_gate_leaf_exemption]]): a verified leaf getter whose
 callers are all C1 (or which has no caller) must be QUEUED, not promoted.
+
+---
+
+## 9. Promotion ledger (workstream reimpl/d3d9-state-cache, 2026-06-25)
+
+**PROMOTED C2->C3 (5)** — reimpl in `Render/D3d9StateCache.cpp`, each a SOUND
+non-degenerate `run_diff` (exit 0). New arg_types `cache_roundtrip` /
+`cache_setter_observe` (SWEEP-CRITICAL; in `diff_template.js` + `run_diff.py`):
+
+| RVA | name | arg_type | diff | CSV |
+|-----|------|----------|------|-----|
+| 0x004d6910 | D3d9State_Get | cache_roundtrip | 10/10 GREEN | log/diff_d3d9_state_get.csv |
+| 0x004d7ac0 | D3d9State_FogBlendToggle | cache_setter_observe | 5/5 GREEN | log/diff_d3d9_fog_blend_toggle.csv |
+| 0x004d5570 | D3d9State_SetSampler | cache_setter_observe | 4/4 GREEN | log/diff_d3d9_set_sampler.csv |
+| 0x004d6b90 | D3d9State_SetStage0Filter | cache_setter_observe | 4/4 GREEN | log/diff_d3d9_set_stage0_filter.csv |
+| 0x004d53b0 | D3d9State_Flush | cache_setter_observe | 3/3 GREEN | log/diff_d3d9_state_flush.csv |
+
+The method (reimpl-first + synthetic cache control) defeats the menu-attach
+degeneracy that stalls leaf-picking: each function's own cache state is seeded
+before the call, so getters/setters/flush that read a constant at idle become
+discriminating. Device-calling functions (5570/6b90/53b0) verify soundly via
+cache-observe — the SetSamplerState/SetRenderState/SetTSS arguments are
+byte-derived from the same locals that index+fill the observed cache slots, so
+the cache observation fully constrains the device-call args; the device call
+itself is a benign side-effect on the throwaway diff process.
+
+**DEFERRED — reimpl + promotion pending, cited reasons (4):**
+
+| RVA | name | why deferred |
+|-----|------|--------------|
+| 0x004d6ce0 | SetTexture binder | non-null path derefs a LIVE texture object (`DAT_00911ae4+param_1` -> D3D texture @+0, palette @+4, alpha flag @+8); menu-attach synthetic harness can't faithfully populate it without a fake-texture builder. Only the null-clear + per-stage-cache paths are cleanly diffable -> partial verification would overclaim. Needs a `texture_bind_observe` arg_type (alloc fake tex, point `DAT_00911ae4`+offset at it). |
+| 0x004d7480 | dispatcher | 600 B, 12 inline cases. Cases 2/3/4/0xd call SetSamplerState (table 0x5d8c94); 0xe/0x10 branch on HW caps `DAT_00911fc4` (&0x180/&0x100/&0x100000); 0x11 derefs param_2 as float*; **case 0x1d has a register artifact** (`param_2 = extraout_EDX` after `FUN_004d5480(0xf,..)` — EDX value flows into the 0x5d8d4c index, not modellable as clean C). Needs a per-case HW-cap-seeded device diff matrix + naked-asm for case 0x1d. Callee+caller gate already fine. |
+| 0x004d5bc0 | cold init | ~1.6 KB; 30+ device calls; HW-cap-dependent (`DAT_00911fc4`/`DAT_00911fe0`); decompiler `extraout_EDX` artifacts feeding `DAT_007d6af0`/`6b04`/`6bf0`/`6bf8`. Needs naked-asm + cap injection. Reimpl-for-standalone tracked separately. |
+| 0x004d6200 | device-reset | ~1.8 KB; same HW-cap dependence + re-queue-from-current-cache structure as init. Same deferral basis. |
+
+**QUEUED — caller-gate-blocked (4):** `0x004d6e70` (callers all C1 third-party
+0x540xxx), `0x004d5550` (no callers), `0x004d55b0` (no callers), `0x004d71f0`
+(callers all C1). Verified leaves; promote only after a C2+ caller is reimpl'd
+(identified-caller clause) or via a QUEUE-not-promote ruling.
