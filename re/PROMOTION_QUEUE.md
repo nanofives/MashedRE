@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  c3-batch-sgr1-s3  rvas=0x0046d510  branch=c3/batch-sgr1-s3  evidence=log/diff_vehicle_velocity_world_get.csv  note=1/7 PROMOTED C2->C3 (VehicleVelocityWorldGet out3_idx GREEN 9/9 non-degen race). 6 QUEUED (reimpls authored+faithful, kept; see re/analysis/c3_batch_sgr1_s3_QUEUED.md): 0x004840b0 degenerate+0-callers(D-10584,caller-gate ruling); 0x0047c270/0x0047c2d0 8/8 identical-crash param_1=0 needs valid-ctx harness; 0x00448700 live-race DispatchAll flaky needs frozen-state; 0x004853b0 10/10 identical-crash SmplFzx-mgr-uninit; 0x0041f880 void_setter_observe can't express thiscall struct mutator.
 ```
 
 ## Merged
