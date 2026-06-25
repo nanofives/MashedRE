@@ -118,6 +118,7 @@
 "Render\HighAB3Helpers_p6.cpp"
 "Render\TrackNodeLeaves_o1.cpp"
 "Render\LowRvaSetters_o2.cpp"
+"Render\RenderStateSettersB.cpp"
 "Render\RwPluginHelpers_o3.cpp"
 "Render\RwPluginHelpers_q1.cpp"
 "Render\RenderSubmit_o4.cpp"
