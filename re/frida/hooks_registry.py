@@ -932,6 +932,28 @@ HOOKS = {
         'path2_tests': [[0.0, 1.0, 0.5], [10.0, 20.0, 0.25], [0.0, 1.0, 1.0]],
     },
 
+    # 0x004c0b10 nested-deref getter: ret = *(byte*)(*(int*)(this+0xa0)+3) & 3.
+    #   Validates the thiscall_nested_field_get arg_type AND the 2026-06-25
+    #   identified-caller clause (caller RpAtomicGetWorldBoundingSphere = named
+    #   RW API). outer_off=0xa0 holds the inner ptr; inner_off=3 holds the flag byte.
+    'rw_atomic_dirty_flag': {
+        'rva':            0x004c0b10,
+        'export':         'RwAtomicDirtyFlagGet',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'thiscall_nested_field_get',
+        'outer_off':      0xa0,
+        'inner_off':      3,
+        'ret_kind':       'u32',
+        'struct_size':    0xb0,
+        'inner_size':     16,
+        'path1_tests': [
+            # seeded at inner+3 (low byte matters); return = (val & 0xff) & 3.
+            0, 1, 2, 3, 0xff, 0x100, 0x55, 0xaa, 0x80, 0x7f,
+            0xfffffffc, 0xfffffffd, 0xfffffffe, 0xffffffff,
+        ],
+        'path2_tests': [0, 1, 2, 3, 0xff],
+    },
+
     'fast_inv_sqrt': {
         'rva':            0x004c3b90,
         'export':         'FastInvSqrt',

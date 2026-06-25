@@ -7,6 +7,7 @@
 "Math\Vec3.cpp"
 "Math\RwSqrt.cpp"
 "Math\CosineLerp.cpp"
+"Render\RwAtomicDirtyFlag.cpp"
 "GameState\StateAccessors.cpp"
 "Vehicle\VehicleState.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"

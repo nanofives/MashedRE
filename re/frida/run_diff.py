@@ -366,7 +366,9 @@ def build_config(hook, asi_path=None):
     for _k in ('seed_off', 'read_off', 'read_size', 'read_offs', 'fold_ret',
                'idx_call_str', 'idx_arrays', 'prep_call_str', 'prep_arg_types',
                'pre_fill_byte', 'list_op', 'node_link_off', 'cmp_field_off',
-               'object_size', 'init_rva_str', 'pushback_rva_str'):
+               'object_size', 'init_rva_str', 'pushback_rva_str',
+               # thiscall_nested_field_get (2026-06-25): nested struct-ptr getter.
+               'outer_off', 'inner_off', 'struct_size', 'inner_size'):
         if _k in hook:
             config[_k] = hook[_k]
     # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):
