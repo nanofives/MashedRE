@@ -2446,6 +2446,56 @@ function runDiff() {
         return;
     }
 
+    // ── thiscall_nested_field_get ─────────────────────────────────────────────
+    // Like thiscall_field_get, but the observed field is ONE pointer-indirection
+    // deep: ret = *(*(this + outer_off) + inner_off) [& mask, applied inside fn].
+    // thiscall_field_get can't drive these (its zeroed scratch has this+outer_off=0
+    // -> the inner deref hits the null page -> AV). Here we allocate BOTH an outer
+    // struct AND an inner buffer, write the inner ptr at this+outer_off, then seed
+    // the field at inner+inner_off. CONFIG: outer_off, inner_off, ret_kind('u32'|
+    // 'float'), struct_size, inner_size. Precedent consumer: 0x004c0b10
+    // (*(*(this+0xa0)+3) & 3). Bit-identity is integer-only (no x87 issue).
+    if (CONFIG.arg_type === 'thiscall_nested_field_get') {
+        const outerOff = CONFIG.outer_off | 0;
+        const innerOff = CONFIG.inner_off | 0;
+        const retKind  = CONFIG.ret_kind || 'u32';
+        const OS = CONFIG.struct_size || (outerOff + 16);
+        const IS = CONFIG.inner_size  || (innerOff + 16);
+        const _keep = [];
+        const seedInner = function (innerP, v) {
+            const a = innerP.add(innerOff);
+            if (retKind === 'float') a.writeFloat(v);
+            else                     a.writeU32(v >>> 0);
+        };
+        const callSide = function (Fn, structPtr) {
+            const r = Fn(structPtr);
+            if (retKind === 'float') return (typeof r === 'number') ? r : null;
+            if (r === undefined || r === null) return null;
+            return (typeof r === 'object') ? (parseInt(r.toString(), 16) >>> 0) : (r >>> 0);
+        };
+        for (let i = 0; i < CONFIG.tests.length; i++) {
+            const v = CONFIG.tests[i];
+            const outerO = Memory.alloc(OS), outerR = Memory.alloc(OS);
+            const innerO = Memory.alloc(IS), innerR = Memory.alloc(IS);
+            _keep.push(outerO, outerR, innerO, innerR);
+            for (let b = 0; b < OS; b += 4) { outerO.add(b).writeU32(0); outerR.add(b).writeU32(0); }
+            for (let b = 0; b < IS; b += 4) { innerO.add(b).writeU32(0); innerR.add(b).writeU32(0); }
+            outerO.add(outerOff).writePointer(innerO);
+            outerR.add(outerOff).writePointer(innerR);
+            seedInner(innerO, v); seedInner(innerR, v);
+            let origV = null, reimV = null, errO = null, errR = null;
+            try { origV = callSide(Orig,   outerO); } catch (e) { errO = e.message; }
+            try { reimV = callSide(Reimpl, outerR); } catch (e) { errR = e.message; }
+            const crashEqual = CONFIG.crash_equal_ok && errO !== null && errR !== null && errO === errR;
+            results.push({ idx: i, input: v,
+                           original: origV, reimpl: reimV,
+                           match: crashEqual || (origV !== null && reimV !== null && origV === reimV),
+                           err_original: errO, err_reimpl: errR });
+        }
+        send({ type: 'results', data: results });
+        return;
+    }
+
     // ── fastcall_reg ─────────────────────────────────────────────────────────
     // Register-convention force-call for __fastcall / __thiscall LEAF functions
     // whose arguments live ENTIRELY in ECX (+ EDX) with NO stack args. This is
