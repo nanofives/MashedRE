@@ -15378,6 +15378,176 @@ HOOKS = {
     # ---- promote-round round 119 (nested struct op: p[0]->sub-buffer write) --
     'inc_4893b0': {'rva': 0x004893b0, 'export': 'Inc4893b0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'nested_struct_op', 'link_off': 0x0, 'p_seed': [{'off': 0x8, 'val': 5}, {'off': 0xc, 'val': 0x100}], 'observe_p': [0xc], 'observe_sub': [0xdc, 0xd8], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
+    # ---- reimpl/d3d9-state-cache (2026-06-25): cache-core C2->C3 cluster --
+    # cache_roundtrip (SWEEP-CRITICAL new arg_type): seed the scattered input-cache
+    # global the 30-case getter reads, then compare BOTH the return value AND the
+    # out-slot. Distinct per-test sentinels make the otherwise-degenerate getter
+    # discriminating. Contract: re/analysis/d3d9_state_cache_struct.md §5.
+    'd3d9_state_get': {'rva': 0x004d6910, 'export': 'D3d9State_Get',
+        'signature': {'ret': 'uint32', 'args': ['uint32', 'pointer']},
+        'arg_type': 'cache_roundtrip', 'lut_root_delta': 0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x007d6b30', 'val': 0x01010101}], 'args': [1, None]},     # case 1
+            {'seed': [{'addr': '0x007d6b34', 'val': 0x11112222},
+                      {'addr': '0x007d6b38', 'val': 0x11112222}], 'args': [2, None]},     # case 2 equal -> ret 1
+            {'seed': [{'addr': '0x007d6b34', 'val': 0x11112222},
+                      {'addr': '0x007d6b38', 'val': 0x33334444}], 'args': [2, None]},     # case 2 unequal -> ret 0, out 0
+            {'seed': [{'addr': '0x007d6aec', 'val': 0x00000006}], 'args': [6, None]},     # case 6
+            {'seed': [{'addr': '0x007d6bf0', 'val': 0xA5A5000A}], 'args': [10, None]},    # case 0xa
+            {'seed': [{'addr': '0x007d6b10', 'val': 0x0000C0DE}], 'args': [0xc, None]},   # case 0xc
+            {'seed': [{'addr': '0x007d6b24', 'val': 0x3f800000}], 'args': [0x11, None]},  # case 0x11 (float; non-SNaN)
+            {'seed': [{'addr': '0x007d58b8', 'val': 0xDEAD001E}], 'args': [0x1e, None]},  # case 0x1e
+            {'seed': [], 'args': [5, None]},                                              # default: ret 0, no write
+            {'seed': [], 'args': [0x13, None]},                                           # default: ret 0, no write
+        ],
+        'path2_tests': [{'seed': [{'addr': '0x007d6bf0', 'val': 0xA5A5000A}], 'args': [10, None]}]},
+
+    # cache_setter_observe (SWEEP-CRITICAL new arg_type): seed cache polarity +
+    # gate flags + dirty-queue counter + queue-slot poison, call the setter, read
+    # back the scattered stores/dirty/cache/queue. Contract §2.
+    # 0x004d7ac0 fog-blend toggle (pure queue-only, NO device call). obs order:
+    #   [cache 6aec, op7 store 5830, op7 dirty 5834, op0x17 store 58b0,
+    #    op0x17 dirty 58b4, counter 6c14, queue[0] 5168, queue[1] 516c].
+    'd3d9_fog_blend_toggle': {'rva': 0x004d7ac0, 'export': 'D3d9State_FogBlendToggle',
+        'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'cache_setter_observe', 'lut_root_delta': 0,
+        'obs_globals': ['0x007d6aec', '0x007d5830', '0x007d5834', '0x007d58b0',
+                        '0x007d58b4', '0x007d6c14', '0x007d5168', '0x007d516c'],
+        'path1_tests': [
+            # 1: enable, cache-miss, op7 gate open (6ae8==0): push 7 then 0x17.
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+            # 2: disable, cache-miss, op7 gate open: stores 0 then 8.
+            {'seed': [{'addr': '0x007d6aec', 'val': 1}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [0]},
+            # 3: enable, cache HIT (6aec already 1): no writes at all.
+            {'seed': [{'addr': '0x007d6aec', 'val': 1}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+            # 4: enable, cache-miss, op7 gate CLOSED (6ae8!=0): op7 skipped, only 0x17 pushed at slot 0.
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 1},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+            # 5: enable, gate open, op7 dirty ALREADY set: 5830 written but op7 NOT pushed; 0x17 pushed at slot 0.
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 1}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]}]},
+
+    # 0x004d5570 direct sampler-state setter. idx=state+sampler*0xe; value cache
+    # at 0x007d4f60[idx]. On cache-miss writes cache + SetSamplerState(sampler,
+    # state,value). cache_setter_observe observes the cache slot: the device-call
+    # args (sampler,state,value) are byte-derived from the same locals that index
+    # + fill the observed slot, so the cache observation fully constrains them.
+    # Contract §4.
+    'd3d9_set_sampler': {'rva': 0x004d5570, 'export': 'D3d9State_SetSampler',
+        'signature': {'ret': 'void', 'args': ['uint32', 'uint32', 'uint32']},
+        'arg_type': 'cache_setter_observe', 'lut_root_delta': 0,
+        'path1_tests': [
+            # cache-miss (sampler 0, state 0 -> idx 0 -> 0x7d4f60): writes + device call.
+            {'seed': [{'addr': '0x007d4f60', 'val': 0xDEAD0000}], 'args': [0, 0, 0x11223344], 'obs': ['0x007d4f60']},
+            # cache-miss (sampler 1, state 2 -> idx 16 -> 0x7d4fa0).
+            {'seed': [{'addr': '0x007d4fa0', 'val': 0xDEAD0001}], 'args': [1, 2, 0x55667788], 'obs': ['0x007d4fa0']},
+            # cache-miss (sampler 2, state 5 -> idx 33 -> 0x7d4fe4).
+            {'seed': [{'addr': '0x007d4fe4', 'val': 0xDEAD0002}], 'args': [2, 5, 0xCAFEBABE], 'obs': ['0x007d4fe4']},
+            # cache-HIT (slot already == value): no write, no device call.
+            {'seed': [{'addr': '0x007d4f60', 'val': 0x99887766}], 'args': [0, 0, 0x99887766], 'obs': ['0x007d4f60']},
+        ],
+        'path2_tests': [{'seed': [{'addr': '0x007d4f60', 'val': 0xDEAD0000}], 'args': [0, 0, 0x11223344], 'obs': ['0x007d4f60']}]},
+
+    # 0x004d6b90 stage-0 min/mag/mip filter setter. One-time aniso clamp (6b44>1
+    # signed) + table-mapped filter push to sampler 0 (tables 0x5d8ca8 min /
+    # 0x5d8cac mag, read identically by orig + reimpl). obs: filter cache 6b3c,
+    # sampler caches 4f78/74/7c, aniso 6b44/4f88. Contract §4.
+    'd3d9_set_stage0_filter': {'rva': 0x004d6b90, 'export': 'D3d9State_SetStage0Filter',
+        'signature': {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type': 'cache_setter_observe', 'lut_root_delta': 0,
+        'obs_globals': ['0x007d6b3c', '0x007d4f78', '0x007d4f74', '0x007d4f7c',
+                        '0x007d6b44', '0x007d4f88'],
+        'path1_tests': [
+            # filter change idx 0, no aniso (6b44<=1), mag write taken (4f7c poison != mag).
+            {'seed': [{'addr': '0x007d6b3c', 'val': 0xFFFFFFFF}, {'addr': '0x007d6b44', 'val': 0},
+                      {'addr': '0x007d4f7c', 'val': 0xAAAAAAAA}, {'addr': '0x007d4f78', 'val': 0xBBBBBBBB},
+                      {'addr': '0x007d4f74', 'val': 0xCCCCCCCC}, {'addr': '0x007d4f88', 'val': 0xDDDDDDDD}],
+             'args': [0]},
+            # filter change idx 3.
+            {'seed': [{'addr': '0x007d6b3c', 'val': 0xFFFFFFFF}, {'addr': '0x007d6b44', 'val': 0},
+                      {'addr': '0x007d4f7c', 'val': 0xAAAAAAAA}, {'addr': '0x007d4f78', 'val': 0xBBBBBBBB},
+                      {'addr': '0x007d4f74', 'val': 0xCCCCCCCC}, {'addr': '0x007d4f88', 'val': 0xDDDDDDDD}],
+             'args': [3]},
+            # aniso clamp (6b44=5>1 signed) + filter cache HIT (6b3c==idx): only aniso runs.
+            {'seed': [{'addr': '0x007d6b3c', 'val': 2}, {'addr': '0x007d6b44', 'val': 5},
+                      {'addr': '0x007d4f7c', 'val': 0xAAAAAAAA}, {'addr': '0x007d4f78', 'val': 0xBBBBBBBB},
+                      {'addr': '0x007d4f74', 'val': 0xCCCCCCCC}, {'addr': '0x007d4f88', 'val': 0xDDDDDDDD}],
+             'args': [2]},
+            # full no-op: filter cache hit (6b3c==2) + no aniso (6b44=0).
+            {'seed': [{'addr': '0x007d6b3c', 'val': 2}, {'addr': '0x007d6b44', 'val': 0},
+                      {'addr': '0x007d4f7c', 'val': 0xAAAAAAAA}, {'addr': '0x007d4f78', 'val': 0xBBBBBBBB},
+                      {'addr': '0x007d4f74', 'val': 0xCCCCCCCC}, {'addr': '0x007d4f88', 'val': 0xDDDDDDDD}],
+             'args': [2]},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x007d6b3c', 'val': 0xFFFFFFFF}, {'addr': '0x007d6b44', 'val': 0},
+                      {'addr': '0x007d4f7c', 'val': 0xAAAAAAAA}, {'addr': '0x007d4f78', 'val': 0xBBBBBBBB},
+                      {'addr': '0x007d4f74', 'val': 0xCCCCCCCC}, {'addr': '0x007d4f88', 'val': 0xDDDDDDDD}],
+             'args': [0]}]},
+
+    # 0x004d53b0 RS+TSS deferred-queue flush. Drains dirty-queue 0x5168 (RS,
+    # count 6c14) via SetRenderState and pair-queue 0x62a8 (TSS, count 6c18) via
+    # SetTextureStageState; copies desired->applied, clears dirty, zeroes counts.
+    # obs: RS applied[0x40]=55b0, RS dirty[0x40]=59fc, RS count=6c14,
+    #      TSS applied[35]=5f14, TSS dirty[35]=483c, TSS count=6c18. Contract §2/§3.
+    'd3d9_state_flush': {'rva': 0x004d53b0, 'export': 'D3d9State_Flush',
+        'signature': {'ret': 'void', 'args': []},
+        'arg_type': 'cache_setter_observe', 'lut_root_delta': 0,
+        'obs_globals': ['0x007d55b0', '0x007d59fc', '0x007d6c14',
+                        '0x007d5f14', '0x007d483c', '0x007d6c18'],
+        'path1_tests': [
+            # RS drain, applied != desired -> apply + SetRenderState(0x40, val) + clear + zero count.
+            {'seed': [{'addr': '0x007d6c14', 'val': 1}, {'addr': '0x007d5168', 'val': 0x40},
+                      {'addr': '0x007d59f8', 'val': 0x12340000}, {'addr': '0x007d55b0', 'val': 0x99990000},
+                      {'addr': '0x007d59fc', 'val': 1}, {'addr': '0x007d6c18', 'val': 0},
+                      {'addr': '0x007d5f14', 'val': 0x77770000}, {'addr': '0x007d483c', 'val': 0x66660000}],
+             'args': []},
+            # RS no-op, applied == desired -> NO device call, but dirty cleared + count zeroed.
+            {'seed': [{'addr': '0x007d6c14', 'val': 1}, {'addr': '0x007d5168', 'val': 0x40},
+                      {'addr': '0x007d59f8', 'val': 0x12340000}, {'addr': '0x007d55b0', 'val': 0x12340000},
+                      {'addr': '0x007d59fc', 'val': 1}, {'addr': '0x007d6c18', 'val': 0},
+                      {'addr': '0x007d5f14', 'val': 0x77770000}, {'addr': '0x007d483c', 'val': 0x66660000}],
+             'args': []},
+            # TSS drain (stage 1, state 2 -> slot 35), applied != desired.
+            {'seed': [{'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d6c18', 'val': 1},
+                      {'addr': '0x007d62a8', 'val': 1}, {'addr': '0x007d62ac', 'val': 2},
+                      {'addr': '0x007d4838', 'val': 0x44440000}, {'addr': '0x007d5f14', 'val': 0xAAAA0000},
+                      {'addr': '0x007d483c', 'val': 1}, {'addr': '0x007d55b0', 'val': 0x88880000},
+                      {'addr': '0x007d59fc', 'val': 0x55550000}],
+             'args': []},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x007d6c14', 'val': 1}, {'addr': '0x007d5168', 'val': 0x40},
+                      {'addr': '0x007d59f8', 'val': 0x12340000}, {'addr': '0x007d55b0', 'val': 0x99990000},
+                      {'addr': '0x007d59fc', 'val': 1}, {'addr': '0x007d6c18', 'val': 0},
+                      {'addr': '0x007d5f14', 'val': 0x77770000}, {'addr': '0x007d483c', 'val': 0x66660000}],
+             'args': []}]},
+
     # ---- promote-round round 118 (cdecl idx -> static-table -> out-ptr) --
     'get_4d54d0': {'rva': 0x004d54d0, 'export': 'Get4d54d0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'idx_table_out', 'target_global': 0x007d57f8, 'stride': 8, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5,8,16], 'path2_tests': [0,1]},
 
