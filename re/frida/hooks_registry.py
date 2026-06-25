@@ -914,6 +914,24 @@ HOOKS = {
         'path2_tests': [0.0, 1.0, 4.0, 9.0, 100.0],
     },
 
+    # 0x00422440 cosine-ease lerp: float f(float a, float b, float t) =
+    #   w=(1-cos(pi*t))*0.5; return w*b + (1-w)*a.  Pure x87 leaf (only fcos);
+    #   caller FUN_00422470 C2 (caller-gate OK). New arg_type float3_scalar_ret.
+    'cosine_lerp': {
+        'rva':            0x00422440,
+        'export':         'CosineLerp',
+        'signature':      {'ret': 'float', 'args': ['float', 'float', 'float']},
+        'arg_type':       'float3_scalar_ret',
+        'path1_tests': [
+            # [a, b, t] — vary endpoints a,b and phase t (incl. 0/1 and out-of-[0,1]).
+            [0.0, 1.0, 0.0],    [0.0, 1.0, 1.0],   [0.0, 1.0, 0.5],   [0.0, 1.0, 0.25],
+            [0.0, 1.0, 0.75],   [-1.0, 1.0, 0.5],  [10.0, 20.0, 0.5], [5.0, -5.0, 0.3],
+            [100.0, 200.0, 0.1],[0.0, 1.0, 1.5],   [0.0, 1.0, -0.5],  [3.14, 2.71, 0.6],
+            [1000.0, 0.0, 0.9], [0.25, 0.75, 0.333],
+        ],
+        'path2_tests': [[0.0, 1.0, 0.5], [10.0, 20.0, 0.25], [0.0, 1.0, 1.0]],
+    },
+
     'fast_inv_sqrt': {
         'rva':            0x004c3b90,
         'export':         'FastInvSqrt',

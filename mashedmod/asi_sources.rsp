@@ -6,6 +6,7 @@
 "Frontend\PromptStripTwin.cpp"
 "Math\Vec3.cpp"
 "Math\RwSqrt.cpp"
+"Math\CosineLerp.cpp"
 "GameState\StateAccessors.cpp"
 "Vehicle\VehicleState.cpp"
 "Vehicle\ShapeOwnerHandlePool.cpp"
