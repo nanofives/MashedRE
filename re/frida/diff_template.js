@@ -224,6 +224,14 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'float_scalar') {
         return fn(input);
     }
+    // float3_scalar_ret — three scalar float args in, float return: fn(a, b, t).
+    // For pure math leaves whose signature is float f(float,float,float) (e.g. the
+    // cosine-ease lerp 0x00422440). input is a [a, b, t] triple; registry signature
+    // must be {ret:'float', args:['float','float','float']}. The framework reads the
+    // float return and fingerprints it as IEEE-754 bits (ret_kind 'float').
+    if (CONFIG.arg_type === 'float3_scalar_ret') {
+        return fn(input[0], input[1], input[2]);
+    }
     if (CONFIG.arg_type === 'vec3_ptr') {
         buf.writeFloat(input[0]);
         buf.add(4).writeFloat(input[1]);

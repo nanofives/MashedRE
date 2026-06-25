@@ -234,7 +234,7 @@ def build_config(hook, asi_path=None):
         'export':         hook['export'],
         'signature':      hook['signature'],
         'arg_type':       hook['arg_type'],
-        'lut_root_delta': hook['lut_root_delta'],
+        'lut_root_delta': hook.get('lut_root_delta', 0),  # LUT-hook-only; default 0 polls the (already-built) sqrt LUT root for non-LUT hooks
         'tests':          hook['path1_tests'],
     }
     # Optional fields — only forwarded if present in the registry entry.
