@@ -15,6 +15,8 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  c3-batch-sgr1-s1  rvas=0x004d7200,0x004d7250,0x004d72a0,0x004d72f0,0x004d7340  branch=c3/batch-sgr1-s1  evidence=log/diff_RenderState_SetOpcode34.csv;log/diff_RenderState_SetOpcode35.csv;log/diff_RenderState_SetOpcode36.csv;log/diff_RenderState_SetOpcode37.csv;log/diff_RenderState_SetOpcode38.csv (all GREEN bit-identical non-degenerate)  note=5/6 PROMOTED C2->C3 render-state dirty-queue setters A (Render/RenderStateSettersA.cpp; opcodes 0x34..0x38; void_setter_observe EXISTING arg_type, NOT sweep-critical, NO diff_template.js/run_diff.py edits; shared dispatcher caller FUN_004d7480 C2; pure leaves -> callee-exemption CONFIDENCE.md L24). branch base e78aebfc (=main).
+2026-06-25  c3-batch-sgr1-s1  rvas=0x004d71f0  branch=c3/batch-sgr1-s1  evidence=log/diff_RenderState_GetTexturingOverride.csv (GREEN 12/12 non-degenerate, read_global)  note=BLOCKED — NOT promoted (1/6). RenderState::GetTexturingOverride is bit-identically verified but ALL 3 callers (FUN_005405c0/FUN_005412d0/FUN_00541d40) are C1; C3 caller-at-C2+ gate (CONFIDENCE.md L23) unmet and the leaf-exemption (L24) relaxes only the one-callee-at-C2+ half. reimpl RenderState_GetTexturingOverride in Render/RenderStateSettersA.cpp + registry entry + GREEN evidence already on file; re-pickup: promote once any caller reaches C2 (then trivial C2->C3, no new work). User-ruled 2026-06-25 (queue, don't overclaim).
 ```
 
 ## Merged
