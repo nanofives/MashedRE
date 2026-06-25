@@ -174,6 +174,11 @@ cl /nologo /EHa /W3 /O2 /Fo"%OUT%\\" /Fe"%OUT%\mashed_re.exe" ^
     "Util\UtilLeaves_ab6.cpp" ^
     "Util\UtilLeaves_ac.cpp" ^
     "Vehicle\VehicleState.cpp" ^
+    "Vehicle\ShapeOwnerHandlePool.cpp" ^
+    "Vehicle\VehicleSeed.cpp" ^
+    "Camera\CameraPathPredicates.cpp" ^
+    "Ai\VehicleVelocityWorldGet.cpp" ^
+    "Physics\SmplFzxStateBlock.cpp" ^
     "Vehicle\SmallLeaves_o5.cpp" ^
     "Vehicle\SmallLeaves_q4.cpp" ^
     "Vehicle\MiscDamping.cpp" ^

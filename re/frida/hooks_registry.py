@@ -15934,6 +15934,79 @@ HOOKS = {
         'path2_tests': [0, 2, 4],
     },
 
+    # ---- c3_batch_sgr1 s3 (2026-06-25): mixed getters/setters (menu + race) ----
+    # 0x004840b0  ShapeOwnerHandleGet (vehicle, MENU/pure-leaf) — bounds [0,3] read of
+    #   the 4-slot shape-owner handle pool DAT_006ce82c (companion to joint pool
+    #   0x004840d0). The live pool is zero at menu/race-attach (the sister
+    #   joint_ptr_6ce81c_get needed the same), so VERIFY VIA early_window_leaf_diff:
+    #   seed_table seeds slots 0..3 -> distinct non-zero -> non-degenerate. int_scalar
+    #   is a PURE_LEAF_ARGTYPE; idx>=4 returns 0 on both sides. (run_diff would be
+    #   INCONCLUSIVE-DEGENERATE here because it does not honor seed_table.)
+    'shape_owner_6ce82c_get': {
+        'rva': 0x004840b0, 'export': 'ShapeOwnerHandleGet', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0,
+        'seed_table': {'base': 0x006ce82c, 'stride': 4, 'span': 4},
+        'path1_tests': [0, 1, 2, 3, 4, 5, 0, 1, 2, 3],
+        'path2_tests': [0, 3, 5],
+    },
+    # 0x0047c270  CameraPathAllNodesEq2 (camera, RACE) — any active camera-path node
+    #   whose sub-items are all state==2. Reads live node arrays (count DAT_006c2fe8 /
+    #   sub-counts 0x006c2fa8 / records 0x006c27a8) and calls the ORIGINAL inner
+    #   predicate 0x0047c230 (EAX/EBX register convention) -> 0/1. param_1=0 sentinel.
+    'camera_path_all_nodes_eq2': {
+        'rva': 0x0047c270, 'export': 'CameraPathAllNodesEq2', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0, 0],
+    },
+    # 0x0047c2d0  CameraPathAnyNodeNonzero (camera, RACE) — twin of 0x0047c270, inner
+    #   predicate 0x0047c1f0 (all sub-items != 0).
+    'camera_path_any_node_nonzero': {
+        'rva': 0x0047c2d0, 'export': 'CameraPathAnyNodeNonzero', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 0, 0, 0, 0, 0, 0, 0],
+        'path2_tests': [0, 0, 0],
+    },
+    # 0x00448700  VehicleSeedWritePair (vehicle, RACE) — void(p1,p2): 100x DispatchAll
+    #   (0x004464c0, loops DAT_008964c0 — does NOT touch 0x897ffc/0x898000) then writes
+    #   p1->0x00897ffc, p2->0x00898000. void_write_observe: write sentinel to 0x00897ffc,
+    #   call fn(p1,p2), read back -> must == p1. call_args fixed -> deterministic write.
+    #   seed_globals resets the DispatchAll entry count DAT_00898994=0 before EACH
+    #   call (disasm 0x004464c0: mov eax,[0x898994]; test eax,eax; jle skip) so the
+    #   100x DispatchAll loop is a clean no-op on BOTH sides — without it the live
+    #   camera-entry array is partially-init at race-attach and DispatchAll AVs, and
+    #   void_write_observe (orig THEN reimpl) double-runs it, poisoning state between
+    #   the two sides (orig wrote p1 fine, reimpl then crashed on orig-mutated state).
+    #   DispatchAll touches DAT_008964c0, NOT 0x00897ffc, so neutering it does not
+    #   affect the observed write-pair.
+    'vehicle_seed_write_pair': {
+        'rva': 0x00448700, 'export': 'VehicleSeedWritePair', 'signature': {'ret': 'void', 'args': ['int32', 'int32']},
+        'arg_type': 'void_write_observe', 'target_global': 0x00897ffc,
+        'call_args': [0xDEADBEEF, 0xCAFEBABE], 'lut_root_delta': 0, 'scenario': 'race',
+        'seed_globals': [{'addr': '0x00898994', 'val': 0}],
+        'path1_tests': [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555],
+        'path2_tests': [0x11111111, 0x22222222],
+    },
+    # 0x0046d510  VehicleVelocityWorldGet (ai, RACE) — direct twin of 0x0046d700; transforms
+    #   the +0xac velocity float3 via FUN_004c3df0 (C4) then copies it out. out3_idx validates
+    #   the 0/1 BOUNDS RETURN (idx<16); boundary tests 15/16/17 give the non-degenerate mix.
+    'vehicle_velocity_world_get': {
+        'rva': 0x0046d510, 'export': 'VehicleVelocityWorldGet', 'signature': {'ret': 'int32', 'args': ['pointer', 'uint32']},
+        'arg_type': 'out3_idx', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 1, 5, 10, 15, 16, 17, 255, 0xffffffff],
+        'path2_tests': [0, 15, 16, 255],
+    },
+    # 0x004853b0  SmplFzxStateBlockGetLogged (smplfzx, RACE) — int(id): validate via 0x00485340
+    #   (C3); on miss log via 0x004987b0 + return 0; else return *( *( *(0x6e71cc)+0xc ) + id*0x10 ).
+    #   The state-block manager pointer is null at menu (double deref) -> race. Spread of ids
+    #   incl. OOB for the bounds/miss path.
+    'smplfzx_stateblock_get_logged': {
+        'rva': 0x004853b0, 'export': 'SmplFzxStateBlockGetLogged', 'signature': {'ret': 'uint32', 'args': ['int32']},
+        'arg_type': 'int_scalar', 'lut_root_delta': 0, 'scenario': 'race',
+        'path1_tests': [0, 1, 2, 3, 4, 5, 6, 7, 8, 12],
+        'path2_tests': [0, 1, 2],
+    },
+
     # ---- promote-round round 29 (worklist batch: const global setters) --------
     'set_77196c_1': {
         'rva': 0x00493570, 'export': 'Set77196c_1', 'signature': {'ret': 'void', 'args': []},
