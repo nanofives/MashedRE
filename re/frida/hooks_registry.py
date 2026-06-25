@@ -16305,4 +16305,102 @@ HOOKS = {
         'path2_tests':    [],
     },
 
+    # ---- c3-batch-sgr1 s1: render-state setter cluster (0x004d71f0..0x004d7340) ----
+    # Six deferred render-state dirty-queue leaves. One read accessor (read_global)
+    # and five cached dirty-queue setters (void_setter_observe). Each setter writes
+    # its VALUE-STORE global (the target_global below), then guards a one-shot dirty
+    # flag + appends an opcode to the shared dword queue 0x007d5168[0x007d6c14].
+    # All __cdecl plain-ret (byte-verified). Reimpl: Render/RenderStateSettersA.cpp.
+
+    # 0x004d71f0  RenderState::GetTexturingOverride — undefined4 f(void){return DAT_007d6b10;}
+    # read_global: seed sentinel -> DAT_007d6b10, call fn(), compare return.
+    'RenderState_GetTexturingOverride': {
+        'rva':            0x004d71f0,
+        'export':         'RenderState_GetTexturingOverride',
+        'signature':      {'ret': 'uint32', 'args': []},
+        'arg_type':       'read_global',
+        'target_global':  0x007d6b10,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF, 0x80000000,
+                           0x55555555, 0xAAAAAAAA, 0x12345678, 0x7FFFFFFF,
+                           0xDEADBEEF, 0xCAFEBABE, 0x00010000, 0x0000FFFF],
+        'path2_tests':    [0x00000000, 0x00000001, 0xFFFFFFFF],
+    },
+
+    # 0x004d7200  RenderState::SetOpcode34 — RAW store: DAT_007d5998 = param_1 (opcode 0x34).
+    # void_setter_observe: call fn(value), read back DAT_007d5998. Raw store => any
+    # 32-bit value is in-domain. (Cache 0x007d6af0; dirty 0x007d599c.)
+    'RenderState_SetOpcode34': {
+        'rva':            0x004d7200,
+        'export':         'RenderState_SetOpcode34',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d5998,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x00000001, 0x00000002, 0x00000010, 0x00000100,
+                           0x12345678, 0x7FFFFFFF, 0x80000000, 0xDEADBEEF,
+                           0xCAFEBABE, 0xFFFFFFFF, 0x55555555, 0xAAAAAAAA],
+        'path2_tests':    [0x00000001, 0x12345678, 0xFFFFFFFF],
+    },
+
+    # 0x004d7250  RenderState::SetOpcode35 — DAT_007d59a0 = table_0x005d8d28[param_1] (0x35).
+    # void_setter_observe with table-indexed store (off-label but non-degenerate:
+    # table values differ per index). In-domain indices 1..8 = identity table
+    # values 1..8; indices 19..24 read the contiguous .rdata float entries
+    # (0x3e46de6b,0x3f02660d,0x437ffd71,0x40a4c59d,0x3ffb4a7d,0x37800000) — all
+    # distinct, non-zero. Orig and reimpl read identical memory => match for any
+    # in-mapped index. (Cache 0x007d6af4; dirty 0x007d59a4.)
+    'RenderState_SetOpcode35': {
+        'rva':            0x004d7250,
+        'export':         'RenderState_SetOpcode35',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d59a0,
+        'lut_root_delta': 0,
+        'path1_tests':    [1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23, 24],
+        'path2_tests':    [1, 5, 20],
+    },
+
+    # 0x004d72a0  RenderState::SetOpcode36 — DAT_007d59a8 = table_0x005d8d28[param_1] (0x36).
+    # Twin of SetOpcode35 (same table). Cache 0x007d6af8; dirty 0x007d59ac.
+    'RenderState_SetOpcode36': {
+        'rva':            0x004d72a0,
+        'export':         'RenderState_SetOpcode36',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d59a8,
+        'lut_root_delta': 0,
+        'path1_tests':    [1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23, 24],
+        'path2_tests':    [1, 5, 20],
+    },
+
+    # 0x004d72f0  RenderState::SetOpcode37 — DAT_007d59b0 = table_0x005d8d28[param_1] (0x37).
+    # Twin of SetOpcode35 (same table). Cache 0x007d6afc; dirty 0x007d59b4.
+    'RenderState_SetOpcode37': {
+        'rva':            0x004d72f0,
+        'export':         'RenderState_SetOpcode37',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d59b0,
+        'lut_root_delta': 0,
+        'path1_tests':    [1, 2, 3, 4, 5, 6, 7, 8, 19, 20, 21, 22, 23, 24],
+        'path2_tests':    [1, 5, 20],
+    },
+
+    # 0x004d7340  RenderState::SetOpcode38 — DAT_007d59b8 = table_0x005d8d4c[param_1] (0x38).
+    # Uses a DIFFERENT table (0x005d8d4c). Indices 1..8 = identity values 1..8;
+    # indices 10..15 = that table's own distinct float entries (0x3e46de6b,
+    # 0x3f02660d,0x437ffd71,0x40a4c59d,0x3ffb4a7d,0x37800000). Cache 0x007d6b00;
+    # dirty 0x007d59bc.
+    'RenderState_SetOpcode38': {
+        'rva':            0x004d7340,
+        'export':         'RenderState_SetOpcode38',
+        'signature':      {'ret': 'void', 'args': ['uint32']},
+        'arg_type':       'void_setter_observe',
+        'target_global':  0x007d59b8,
+        'lut_root_delta': 0,
+        'path1_tests':    [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15],
+        'path2_tests':    [1, 5, 12],
+    },
+
 }

@@ -170,6 +170,7 @@
 "Render\BatchAB_s6.cpp"
 "Render\RenderLeaves_ae1.cpp"
 "Render\RenderLeaves_ae3.cpp"
+"Render\RenderStateSettersA.cpp"
 "Frontend\FrontendLeaves_ad2.cpp"
 "Gameplay\GameplayLeaves_ad3.cpp"
 "Particle\ParticleLeaves_ad4.cpp"
