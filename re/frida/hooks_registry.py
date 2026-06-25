@@ -422,6 +422,95 @@ HOOKS = {
         ],
         'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
 
+    # ── c3-batch-sgr1-s2 render-state cached dirty-queue setters (cluster B) ──
+    # All 5 are cache-guarded D3D8 render-state setters in the SAME cluster as
+    # 0x004d7100 (shared queue 0x7d5168[0x7d6c14]). The plain void_setter_observe
+    # lane is DEGENERATE for them: Orig(arg) primes *cache=arg, so Reimpl(arg)
+    # cache-HITS and no-ops -> a wrong reimpl reads Orig's leftover and still
+    # passes. Promoted via the SAME proven lane as 0x004d7100:
+    # seed_globals_arg_multiobs (early_window_leaf_diff.py) — seed the cache so
+    # BOTH sides run the full body, snapshot the whole effect-set. 3 scenarios:
+    #   A: cache-miss + dirty=0 -> store + enqueue opcode + idx++ + cache update
+    #   B: cache-miss + dirty=1 -> store + cache update, NO enqueue (dirty guard)
+    #   C: cache-HIT (cache==arg) -> early return, NO writes
+    # -> 3 distinct observable patterns => non-degenerate. arg_type
+    # seed_globals_arg_multiobs is SWEEP-CRITICAL (run_diff.py has no handler for
+    # it; verify these via early_window_leaf_diff.py, NOT run_diff/run_diff_parallel).
+    # Seeds: cache, store(sentinel 0xAAAAAAAA), dirty, idx(0), queue[0](0).
+    # Observe: [store, dirty, idx(0x7d6c14), queue[0](0x7d5168), cache].
+
+    # 0x004d7390  RenderStateSetOpcode39 — raw store DAT_007d59c0, opcode 0x39. U-5338
+    'render_state_set_opcode39': {
+        'rva':            0x004d7390,
+        'export':         'RenderStateSetOpcode39',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'seed_globals_arg_multiobs',
+        'observe_addrs':  [0x007d59c0, 0x007d59c4, 0x007d6c14, 0x007d5168, 0x007d6b04],
+        'seed_sets': [
+            {'arg': 0x11111111, 'globals': [[0x7d6b04, 0], [0x7d59c0, 0xAAAAAAAA], [0x7d59c4, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 0x22222222, 'globals': [[0x7d6b04, 0], [0x7d59c0, 0xAAAAAAAA], [0x7d59c4, 1], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 0x33333333, 'globals': [[0x7d6b04, 0x33333333], [0x7d59c0, 0xAAAAAAAA], [0x7d59c4, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
+    # 0x004d73e0  RenderStateSetOpcode3a — raw store DAT_007d59c8, opcode 0x3a. U-5339
+    'render_state_set_opcode3a': {
+        'rva':            0x004d73e0,
+        'export':         'RenderStateSetOpcode3a',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'seed_globals_arg_multiobs',
+        'observe_addrs':  [0x007d59c8, 0x007d59cc, 0x007d6c14, 0x007d5168, 0x007d6b08],
+        'seed_sets': [
+            {'arg': 0x11111111, 'globals': [[0x7d6b08, 0], [0x7d59c8, 0xAAAAAAAA], [0x7d59cc, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 0x22222222, 'globals': [[0x7d6b08, 0], [0x7d59c8, 0xAAAAAAAA], [0x7d59cc, 1], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 0x33333333, 'globals': [[0x7d6b08, 0x33333333], [0x7d59c8, 0xAAAAAAAA], [0x7d59cc, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
+    # 0x004d7430  RenderStateSetOpcode3b — raw store DAT_007d59d0, opcode 0x3b. U-5350
+    'render_state_set_opcode3b': {
+        'rva':            0x004d7430,
+        'export':         'RenderStateSetOpcode3b',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'seed_globals_arg_multiobs',
+        'observe_addrs':  [0x007d59d0, 0x007d59d4, 0x007d6c14, 0x007d5168, 0x007d6b0c],
+        'seed_sets': [
+            {'arg': 0x11111111, 'globals': [[0x7d6b0c, 0], [0x7d59d0, 0xAAAAAAAA], [0x7d59d4, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 0x22222222, 'globals': [[0x7d6b0c, 0], [0x7d59d0, 0xAAAAAAAA], [0x7d59d4, 1], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 0x33333333, 'globals': [[0x7d6b0c, 0x33333333], [0x7d59d0, 0xAAAAAAAA], [0x7d59d4, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
+    # 0x004d7bc0  TextureStateSetFilterMode — TABLE store DAT_007d5840=tbl(0x5d8c48)[arg],
+    # opcode 0x09. in-range args: [1]->1, [4]->3, [2]->2 (C is a cache-hit so no read). U-5353
+    'texture_state_set_filter_mode': {
+        'rva':            0x004d7bc0,
+        'export':         'TextureStateSetFilterMode',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'seed_globals_arg_multiobs',
+        'observe_addrs':  [0x007d5840, 0x007d5844, 0x007d6c14, 0x007d5168, 0x007d6b2c],
+        'seed_sets': [
+            {'arg': 1, 'globals': [[0x7d6b2c, 0], [0x7d5840, 0xAAAAAAAA], [0x7d5844, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 4, 'globals': [[0x7d6b2c, 0], [0x7d5840, 0xAAAAAAAA], [0x7d5844, 1], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 2, 'globals': [[0x7d6b2c, 2], [0x7d5840, 0xAAAAAAAA], [0x7d5844, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
+    # 0x004d7c10  TextureStateSetAddressMode — TABLE store DAT_007d58a8=tbl(0x5d8d18)[arg],
+    # opcode 0x16. in-range args: [1]->1, [3]->3, [2]->2 (C is a cache-hit). U-5354
+    'texture_state_set_address_mode': {
+        'rva':            0x004d7c10,
+        'export':         'TextureStateSetAddressMode',
+        'signature':      {'ret': 'uint32', 'args': ['uint32']},
+        'arg_type':       'seed_globals_arg_multiobs',
+        'observe_addrs':  [0x007d58a8, 0x007d58ac, 0x007d6c14, 0x007d5168, 0x007d6b18],
+        'seed_sets': [
+            {'arg': 1, 'globals': [[0x7d6b18, 0], [0x7d58a8, 0xAAAAAAAA], [0x7d58ac, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 3, 'globals': [[0x7d6b18, 0], [0x7d58a8, 0xAAAAAAAA], [0x7d58ac, 1], [0x7d6c14, 0], [0x7d5168, 0]]},
+            {'arg': 2, 'globals': [[0x7d6b18, 2], [0x7d58a8, 0xAAAAAAAA], [0x7d58ac, 0], [0x7d6c14, 0], [0x7d5168, 0]]},
+        ],
+        'path1_tests': [0, 1, 2], 'path2_tests': [0, 1, 2]},
+
     # 0x0046d7f0 BoundedTableSignClamp46d7f0 (ai) - PURE LEAF int f(uint idx, int val):
     # if(idx>=0x10) ret 0; b=*(u8*)(0x7f103c + (*(int*)(0x7f1a14+idx*16))*0x4c);
     # slot=&[0x882194+idx*0xd04]; *slot += (float)b>160.0 ? +val : -val; clamp[0,0xbb8]; ret 1.
