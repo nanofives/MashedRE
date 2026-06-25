@@ -170,6 +170,7 @@ def float_bits(f):
 # OBSERVE-ONLY: worst case is an explicit degenerate_ok per hook, never a
 # silent false GREEN.
 SEEDED_ARG_TYPES = {
+    'cache_roundtrip', 'cache_setter_observe',
     'arena_block_free_predicate', 'audio_list_insert', 'audio_list_min_select',
     'audio_list_remove', 'audio_pool_free', 'audio_sub_struct_zero',
     'contact_history', 'count_header_list_ring', 'cursor_back',
@@ -368,7 +369,9 @@ def build_config(hook, asi_path=None):
                'pre_fill_byte', 'list_op', 'node_link_off', 'cmp_field_off',
                'object_size', 'init_rva_str', 'pushback_rva_str',
                # thiscall_nested_field_get (2026-06-25): nested struct-ptr getter.
-               'outer_off', 'inner_off', 'struct_size', 'inner_size'):
+               'outer_off', 'inner_off', 'struct_size', 'inner_size',
+               # cache_setter_observe (2026-06-25): scattered output-global list.
+               'obs_globals'):
         if _k in hook:
             config[_k] = hook[_k]
     # void_write_observe scenario-attach extension (c3-batch-sa2 s2, 2026-06-16):

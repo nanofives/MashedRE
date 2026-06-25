@@ -15378,6 +15378,80 @@ HOOKS = {
     # ---- promote-round round 119 (nested struct op: p[0]->sub-buffer write) --
     'inc_4893b0': {'rva': 0x004893b0, 'export': 'Inc4893b0', 'signature': {'ret': 'void', 'args': ['pointer']}, 'arg_type': 'nested_struct_op', 'link_off': 0x0, 'p_seed': [{'off': 0x8, 'val': 5}, {'off': 0xc, 'val': 0x100}], 'observe_p': [0xc], 'observe_sub': [0xdc, 0xd8], 'lut_root_delta': 0, 'path1_tests': [0], 'path2_tests': [0]},
 
+    # ---- reimpl/d3d9-state-cache (2026-06-25): cache-core C2->C3 cluster --
+    # cache_roundtrip (SWEEP-CRITICAL new arg_type): seed the scattered input-cache
+    # global the 30-case getter reads, then compare BOTH the return value AND the
+    # out-slot. Distinct per-test sentinels make the otherwise-degenerate getter
+    # discriminating. Contract: re/analysis/d3d9_state_cache_struct.md §5.
+    'd3d9_state_get': {'rva': 0x004d6910, 'export': 'D3d9State_Get',
+        'signature': {'ret': 'uint32', 'args': ['uint32', 'pointer']},
+        'arg_type': 'cache_roundtrip', 'lut_root_delta': 0,
+        'path1_tests': [
+            {'seed': [{'addr': '0x007d6b30', 'val': 0x01010101}], 'args': [1, None]},     # case 1
+            {'seed': [{'addr': '0x007d6b34', 'val': 0x11112222},
+                      {'addr': '0x007d6b38', 'val': 0x11112222}], 'args': [2, None]},     # case 2 equal -> ret 1
+            {'seed': [{'addr': '0x007d6b34', 'val': 0x11112222},
+                      {'addr': '0x007d6b38', 'val': 0x33334444}], 'args': [2, None]},     # case 2 unequal -> ret 0, out 0
+            {'seed': [{'addr': '0x007d6aec', 'val': 0x00000006}], 'args': [6, None]},     # case 6
+            {'seed': [{'addr': '0x007d6bf0', 'val': 0xA5A5000A}], 'args': [10, None]},    # case 0xa
+            {'seed': [{'addr': '0x007d6b10', 'val': 0x0000C0DE}], 'args': [0xc, None]},   # case 0xc
+            {'seed': [{'addr': '0x007d6b24', 'val': 0x3f800000}], 'args': [0x11, None]},  # case 0x11 (float; non-SNaN)
+            {'seed': [{'addr': '0x007d58b8', 'val': 0xDEAD001E}], 'args': [0x1e, None]},  # case 0x1e
+            {'seed': [], 'args': [5, None]},                                              # default: ret 0, no write
+            {'seed': [], 'args': [0x13, None]},                                           # default: ret 0, no write
+        ],
+        'path2_tests': [{'seed': [{'addr': '0x007d6bf0', 'val': 0xA5A5000A}], 'args': [10, None]}]},
+
+    # cache_setter_observe (SWEEP-CRITICAL new arg_type): seed cache polarity +
+    # gate flags + dirty-queue counter + queue-slot poison, call the setter, read
+    # back the scattered stores/dirty/cache/queue. Contract §2.
+    # 0x004d7ac0 fog-blend toggle (pure queue-only, NO device call). obs order:
+    #   [cache 6aec, op7 store 5830, op7 dirty 5834, op0x17 store 58b0,
+    #    op0x17 dirty 58b4, counter 6c14, queue[0] 5168, queue[1] 516c].
+    'd3d9_fog_blend_toggle': {'rva': 0x004d7ac0, 'export': 'D3d9State_FogBlendToggle',
+        'signature': {'ret': 'void', 'args': ['uint32']},
+        'arg_type': 'cache_setter_observe', 'lut_root_delta': 0,
+        'obs_globals': ['0x007d6aec', '0x007d5830', '0x007d5834', '0x007d58b0',
+                        '0x007d58b4', '0x007d6c14', '0x007d5168', '0x007d516c'],
+        'path1_tests': [
+            # 1: enable, cache-miss, op7 gate open (6ae8==0): push 7 then 0x17.
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+            # 2: disable, cache-miss, op7 gate open: stores 0 then 8.
+            {'seed': [{'addr': '0x007d6aec', 'val': 1}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [0]},
+            # 3: enable, cache HIT (6aec already 1): no writes at all.
+            {'seed': [{'addr': '0x007d6aec', 'val': 1}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+            # 4: enable, cache-miss, op7 gate CLOSED (6ae8!=0): op7 skipped, only 0x17 pushed at slot 0.
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 1},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+            # 5: enable, gate open, op7 dirty ALREADY set: 5830 written but op7 NOT pushed; 0x17 pushed at slot 0.
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 1}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]},
+        ],
+        'path2_tests': [
+            {'seed': [{'addr': '0x007d6aec', 'val': 0}, {'addr': '0x007d6ae8', 'val': 0},
+                      {'addr': '0x007d5834', 'val': 0}, {'addr': '0x007d58b4', 'val': 0},
+                      {'addr': '0x007d6c14', 'val': 0}, {'addr': '0x007d5830', 'val': 0xAAAA0000},
+                      {'addr': '0x007d58b0', 'val': 0xAAAA0017}, {'addr': '0x007d5168', 'val': 0xEEEE0000},
+                      {'addr': '0x007d516c', 'val': 0xEEEE0001}], 'args': [1]}]},
+
     # ---- promote-round round 118 (cdecl idx -> static-table -> out-ptr) --
     'get_4d54d0': {'rva': 0x004d54d0, 'export': 'Get4d54d0', 'signature': {'ret': 'void', 'args': ['uint32','pointer']}, 'arg_type': 'idx_table_out', 'target_global': 0x007d57f8, 'stride': 8, 'lut_root_delta': 0, 'path1_tests': [0,1,2,3,5,8,16], 'path2_tests': [0,1]},
 

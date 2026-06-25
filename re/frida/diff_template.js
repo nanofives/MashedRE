@@ -278,6 +278,63 @@ function callFn(fn, input, buf) {
     if (CONFIG.arg_type === 'int_with_out_ptr') {
         return fn(input >>> 0, buf);
     }
+    // cache_roundtrip — getter verification by SEEDING the scattered cache
+    // global(s) the getter reads, then comparing BOTH the return value AND the
+    // out-slot between orig and reimpl. This makes a getter that reads a single
+    // constant at idle (degenerate) discriminating: distinct per-test sentinels
+    // force distinct out values. The target is a pure read, so seeding is
+    // non-destructive (each test snapshots, seeds, calls, reads, restores — and
+    // both Orig and Reimpl see the identical seed). SWEEP-CRITICAL: a registry
+    // arg_type with no handler here is FATAL (run_diff pre-flight).
+    //   tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...] }
+    //     args entries: a number is passed verbatim; `null` is the out-ptr slot
+    //     (replaced by a poisoned 4-byte buf). signature.args must match (the
+    //     out-ptr slot is 'pointer'). Fingerprint = "<ret_hex>:<out_hex>".
+    if (CONFIG.arg_type === 'cache_roundtrip') {
+        const seeds = input.seed || [];
+        const saved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        buf.writeU32(0xCCCCCCCC >>> 0);            // poison out-slot: a no-write stays visible
+        const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
+        let rv = 0;
+        try {
+            const ret = fn.apply(null, callArgs);
+            rv = (ret === null || ret === undefined) ? 0
+               : (typeof ret === 'object' ? (ret.toInt32() >>> 0) : (ret >>> 0));
+        } finally {
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(saved[s] >>> 0);
+        }
+        const outv = buf.readU32() >>> 0;
+        return ('00000000' + rv.toString(16)).slice(-8) + ':' +
+               ('00000000' + outv.toString(16)).slice(-8);
+    }
+    // cache_setter_observe — setter / flush verification: seed input globals
+    // (current cache polarity, gate flags, the dirty-queue counter, queue-slot
+    // poison), call fn(...args), then read a list of SCATTERED output globals as
+    // a packed fingerprint. Snapshots + restores every touched global so the
+    // diff is non-destructive to the live game. Distinct seeded scenarios force
+    // distinct queue/store/cache fingerprints (non-degenerate). SWEEP-CRITICAL.
+    //   tests[i] = { seed:[{addr:'0x..', val:<u32>}], args:[...], obs:['0x..', ...] }
+    //     obs may be omitted to fall back to CONFIG.obs_globals (array of hex
+    //     strings). A `null` in args is the out-ptr slot (replaced by buf).
+    if (CONFIG.arg_type === 'cache_setter_observe') {
+        const seeds = input.seed || [];
+        const obs   = input.obs || CONFIG.obs_globals || [];
+        const seedSaved = seeds.map(s => ptr(s.addr).readU32() >>> 0);
+        const obsSaved  = obs.map(a => ptr(a).readU32() >>> 0);
+        for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seeds[s].val >>> 0);
+        const callArgs = (input.args || []).map(a => (a === null ? buf : (a >>> 0)));
+        let result = '';
+        try {
+            fn.apply(null, callArgs);
+            for (let o = 0; o < obs.length; o++)
+                result += ('00000000' + (ptr(obs[o]).readU32() >>> 0).toString(16)).slice(-8);
+        } finally {
+            for (let o = 0; o < obs.length; o++) ptr(obs[o]).writeU32(obsSaved[o] >>> 0);
+            for (let s = 0; s < seeds.length; s++) ptr(seeds[s].addr).writeU32(seedSaved[s] >>> 0);
+        }
+        return '0x' + (result || '0');
+    }
     // write_global_call_int0 — write sentinel to target_global, call fn(0), return value
     // Use for getters where non-trivial domain requires injecting known values.
     if (CONFIG.arg_type === 'write_global_call_int0') {
@@ -862,7 +919,7 @@ function runDiff() {
     const Reimpl = new NativeFunction(reimplAddr,  CONFIG.signature.ret, CONFIG.signature.args, reimplCallConv);
 
     const buf = (['vec3_ptr', 'out3_idx', 'vec2_ptr'].includes(CONFIG.arg_type)) ? Memory.alloc(12)
-              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
+              : (['int_with_out_ptr', 'idx_out2', 'int_ptr2_out', 'cache_roundtrip', 'cache_setter_observe'].includes(CONFIG.arg_type)) ? Memory.alloc(8)
               : (CONFIG.arg_type === 'time_diff_decompose') ? Memory.alloc(16)
               : (CONFIG.arg_type === 'sentinel_array_ptr') ? Memory.alloc(256)
               : (CONFIG.arg_type === 'fmt_desc_ptr') ? Memory.alloc(0x20)
