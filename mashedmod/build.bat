@@ -343,6 +343,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Gameplay\ScoreMasks_ah3.cpp" ^
     "Gameplay\Thresholds_ah4.cpp" ^
     "Render\PluginFields_ah4.cpp" ^
+    "Render\RpMaterialNibble_wf1.cpp" ^
     "Audio\TimerGetters_ah5.cpp" ^
     "Ai\PromoLoop_round1.cpp" ^
     "Vehicle\PromoLoop_round2.cpp" ^

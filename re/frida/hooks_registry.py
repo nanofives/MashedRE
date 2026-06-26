@@ -14874,4 +14874,26 @@ HOOKS = {
         ],
     },
 
+    # RpMaterialReflectivityGet  --  0x004cff00
+    # Per-material reflectivity nibble reader; returns low nibble of the byte
+    # at (DAT_00911ae4 + 9 + mat_ptr). DAT_00911ae4 is the RW plugin slot
+    # offset set by FUN_004cfa00 (material plugin registration). Non-zero =
+    # reflection vector path in LIGHT_FN (FUN_00541b50, RW specular env-map).
+    # arg_type ptr_arg_int_get: scratch buffer passed as mat_ptr; function reads
+    # *(byte*)(slot + 9 + buf_addr) & 0xf; struct_size 0x1000 covers plugin
+    # slot offsets up to ~4087, well beyond any realistic RW material plugin.
+    # Seeds 0..15 produce all 16 distinct nibble values regardless of slot.
+    'rp_material_reflectivity_get': {
+        'rva':            0x004cff00,
+        'export':         'RpMaterialReflectivityGet',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    0x1000,
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 2, 3, 4, 5, 6, 7,
+                           8, 9, 10, 11, 12, 13, 14, 15,
+                           16, 32, 64, 128, 255, 256, 512, 1024],
+        'path2_tests':    [0, 1, 7, 15],
+    },
+
 }
