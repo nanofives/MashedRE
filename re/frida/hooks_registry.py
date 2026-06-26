@@ -14874,4 +14874,33 @@ HOOKS = {
         ],
     },
 
+    # 0x005a8960  AudioVoiceQueueSet5a8960  (audio, C2->C3)
+    # void fn(int base, uint32 val): WaitForSingleObject(DAT_007dcae0,INFINITE);
+    #   FUN_005b0dc0(base+0x154, val);  ReleaseSemaphore(DAT_007dcae0,1,NULL).
+    # FUN_005b0dc0 inlined: *(base+0x158)=val ; *(base+0x154)|=0x80.
+    # DAT_007dcae0 @ 0x007dcae0: global audio semaphore handle.
+    # Strategy: struct_three_write — allocate 0x160-byte scratch, sentinel-fill,
+    #   call fn(buf, valA, 0 [extra cdecl-ignored]), observe buf+0x158 (where valA
+    #   is written). buf+0x154 OR'd with 0x80 not observed (sentinel 0xDEADBEEF
+    #   already has bit 7 set, making the OR non-observable). Test vectors avoid
+    #   0xDEADBEEF to keep the observed offset discriminating.
+    # Signature declared with 3 args to match struct_three_write's fn(buf,va,vb)
+    # call pattern; the original and reimpl only read 2 (cdecl caller cleans all 3).
+    'audio_voice_queue_set_5a8960': {
+        'rva':            0x005a8960,
+        'export':         'AudioVoiceQueueSet5a8960',
+        'signature':      {'ret': 'void', 'args': ['pointer', 'uint32', 'uint32']},
+        'arg_type':       'struct_three_write',
+        'struct_size':    0x160,          # must cover base+0x154+8 = base+0x15C
+        'observe_offsets': [0x158],       # buf+0x158 = valA after fn writes *(p+4)=val
+        'lut_root_delta': 0,
+        # [valA, 0]: valA = param_2; 0 = harmless extra arg (ignored by 2-arg callee).
+        # Avoid 0xDEADBEEF (= sentinel) so every case is discriminating.
+        'path1_tests':    [[0x12345678, 0], [0x00000000, 0], [0xFFFFFFFF, 0],
+                           [0x00000001, 0], [0x80000000, 0], [0x11223344, 0],
+                           [0xABCDE001, 0], [0x55555555, 0], [0xCAFEBABE, 0],
+                           [0x7FFFFFFF, 0]],
+        'path2_tests':    [[0x12345678, 0], [0x00000000, 0], [0xFFFFFFFF, 0]],
+    },
+
 }
