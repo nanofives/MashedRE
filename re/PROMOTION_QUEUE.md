@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd  rvas=0x004dfa70  branch=worktree-wf_b0f68acd-63f-15  evidence=log/diff_pix_read_u32.csv  note=PixReadU32 (render, C2->C3): ptr_arg_int_get unaligned 4-byte LE reader, GREEN 10/10; pure leaf, no callees; caller FUN_004e02d0 C2 (leaf-exemption); Render/PixReadU32_wf.cpp; diff_template.js ptr_arg_int_get handler backported to worktree
 ```
 
 ## Merged

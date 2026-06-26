@@ -11724,6 +11724,44 @@ HOOKS = {
         ],
     },
 
+    # 0x004dfa70  PixReadU32
+    # uint FUN_004dfa70(byte *p)  — 33 bytes, pure leaf (no callees)
+    # Reads 4 bytes from p[0..3] and returns little-endian assembled uint32:
+    #   result = p[0] | (p[1]<<8) | (p[2]<<16) | (p[3]<<24)
+    # This is an unaligned 32-bit read (byte-by-byte via CH/CL/DL assembly pattern).
+    # Equivalent to *(uint32_t*)p on a little-endian host.
+    # Decoder match: D3DFORMAT 0x20 / 0x3f (identity passthrough arms in FUN_004df750).
+    # Caller: FUN_004e02d0 (render, C2). Leaf-exemption: no callees; caller is C2.
+    # arg_type: ptr_arg_int_get — passes buffer seeded with seed-based u32 pattern;
+    #   fn reads buf[0..3] = seed → returns seed. Non-degenerate across seeds.
+    # ref: re/analysis/bucket_004ddfb0/0x004dfa70.md
+    # impl: mashedmod/src/mashed_re/Render/PixReadU32_wf.cpp
+    'pix_read_u32': {
+        'rva':            0x004dfa70,
+        'export':         'PixReadU32',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    4,
+        'lut_root_delta': 0,
+        'path1_tests': [
+            0x00000000,   # all zeros
+            0xFFFFFFFF,   # all ones
+            0x12345678,   # mixed bytes
+            0xDEADBEEF,   # classic pattern
+            0xAABBCCDD,   # alternating nibbles
+            0x01020304,   # ascending bytes
+            0x80000000,   # high bit only
+            0x7FFFFFFF,   # max signed positive
+            0x11223344,   # low nibbles
+            0xFEFDFCFB,   # near-max descending
+        ],
+        'path2_tests': [
+            0x12345678,
+            0xDEADBEEF,
+            0xAABBCCDD,
+        ],
+    },
+
     # 0x004d7db0  RwPluginExtensionSlotGet
     # uint32(int param_1, int param_2): walk *(param_1+0x10) linked list;
     # match node[2]==param_2; return node[0] or 0xffffffff on miss.
