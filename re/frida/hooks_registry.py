@@ -17116,4 +17116,34 @@ HOOKS = {
         'path1_tests':    [0, 1, 5, 50, 100, 127, 128, 200, 255, 0],
         'path2_tests':    [0, 127, 200],
     },
+
+    # 0x00551180  RtFSHandlerCancel  (util, C2->C3)
+    # int __cdecl fn(void* slot): *(slot+0x20) = 1; return 1.
+    # Slot Cancel: marks the file-system handler slot idle by writing 1 to
+    # the state field at offset +0x20. Returns 1 (success).
+    # Disasm (12 bytes at 0x00551180):
+    #   8B 4C 24 04   mov ecx, [esp+4]
+    #   B8 01 00 00 00 mov eax, 1
+    #   89 41 20      mov [ecx+0x20], eax
+    #   C3            ret
+    # arg_type: ptr_arg_int_get â€” harness fills 256-byte scratch buffer with
+    # per-test seed pattern, passes pointer; observes int return value.
+    # Return value is always 1 (non-trivial, is_trivial(1)==False), so
+    # all tests return 1 -> GREEN without degenerate-rejection.
+    # struct_size: 64 (covers +0x20 write; harness only checks return value).
+    # Tests: 5 distinct seed ints to satisfy non-degeneracy (return is const 1,
+    # but the buffer fill varies per seed â€” harness design).
+    # lut_root_delta: 0 (no LUT; poll triggers after game-init, menu-visible).
+    # ref: re/analysis/bucket_util_00095280_0040e460/00151180.md
+    # anchor: BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E
+    'rtfs_handler_cancel': {
+        'rva':            0x00551180,
+        'export':         'RtFSHandlerCancel',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    64,
+        'lut_root_delta': 0,
+        'path1_tests':    [0x11111111, 0x22222222, 0x33333333, 0x44444444, 0x55555555],
+        'path2_tests':    [0x11111111, 0x22222222],
+    },
 }
