@@ -17093,4 +17093,27 @@ HOOKS = {
         'path2_tests':    [0, 1, 7, 15],
     },
 
+    # â”€â”€ wf_b0f68acd-63f-7 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # 0x00487e40  SkyElementRemove
+    # Removes the sky/cloud element at index param_1 from the 128-slot element
+    # array (stride 0xe dwords = 0x38 bytes; base DAT_0086ae20).
+    # Zeros slot active flag (DAT_0086ae34[idx*0x38]) and transform/model ptr
+    # (DAT_0086ae4c[idx*0x38]), then clears dirty flag DAT_007030b4.
+    # Returns 0 if idx >= 128, else 1.
+    # Calling convention: cdecl (param at [ESP+4]; bare RET).
+    # Bounds check: CMP EAX,0x80 / JL (signed). Body: 0x00487e40..0x00487e6a.
+    # arg_type='int_scalar': single int index param_1 (uint32 via >>> 0).
+    # Tests: mix of in-range (0..127 â†’ return 1) and out-of-range (>=128 â†’ 0).
+    # Non-degenerate: in-range returns 1, out-of-range returns 0.
+    # Side effect: zeros sky element slots (safe â€” tick guards on active flag).
+    # ref: re/analysis/bucket_sky_worldobj_dbg_video_hud_00484280_00555910/00487e40.md
+    'sky_element_remove': {
+        'rva':            0x00487e40,
+        'export':         'SkyElementRemove',
+        'signature':      {'ret': 'int32', 'args': ['int32']},
+        'arg_type':       'int_scalar',
+        'lut_root_delta': 0,
+        'path1_tests':    [0, 1, 5, 50, 100, 127, 128, 200, 255, 0],
+        'path2_tests':    [0, 127, 200],
+    },
 }
