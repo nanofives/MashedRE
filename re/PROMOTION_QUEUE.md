@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-4  rvas=0x004cff00  branch=worktree-wf_b0f68acd-63f-4  hook=rp_material_reflectivity_get  arg_type=ptr_arg_int_get  evidence=log/diff_rp_material_reflectivity_get.csv  note=RpMaterialReflectivityGet: per-material reflectivity nibble reader; *(byte*)(DAT_00911ae4+9+mat_ptr)&0xf; 24/24 GREEN non-degenerate (4 distinct nibble values: 12,13,14,0); return type fixed uint8->uint32 for MOVZX zero-extension parity; caller FUN_00541b50 is identified RW library fn (identified-caller clause satisfied); leaf fn callee exemption (no callees); Render/RpMaterialNibble_wf1.cpp (new)
 ```
 
 ## Merged
