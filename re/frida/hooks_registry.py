@@ -12916,6 +12916,45 @@ HOOKS = {
         ],
     },
 
+    # 0x004b4140  RenderElemArrayCopyAll — __cdecl void(ptr): convenience wrapper that
+    # calls FUN_004b4130(param_1, 0). FUN_004b4130 [C3 adjustor thunk] replaces
+    # param_1 with param_1[0x18] (sub-struct s) and tail-calls FUN_004b40c0(s, 0)
+    # [C3 RenderElemArrayCopy]. With param_2=0, FUN_004b40c0 reads count from s+0x24
+    # then returns immediately (loop guard param_2!=0 is false) — effectively a no-op.
+    # struct_call_observe: main struct (param_1) has nested sub-struct at +0x18 with
+    # count at +0x24. A sentinel at main struct +0x0 (unused by fn) is seeded with
+    # distinct values per test and observed back unchanged — necessary for a
+    # non-degenerate CSV since the fn makes no writes. Different sentinels per vector
+    # produce distinct rows; both orig and reimpl observe the same unchanged value.
+    # ref: re/analysis/bucket_powerups_camera_particle_0044d5e0_004b4140/0x004b4140.md
+    'render_elem_array_copy_all': {
+        'rva':         0x004b4140,
+        'export':      'RenderElemArrayCopyAll',
+        'signature':   {'ret': 'void', 'args': ['pointer']},
+        'arg_type':    'struct_call_observe',
+        'struct_size': 0x20,
+        'out_ptrs':    0,
+        'observe_ret': False,
+        'observe':     [{'src': 'struct', 'off': 0x0, 'type': 'u32'}],
+        'lut_root_delta': 0,
+        'path1_tests': [
+            {'seeds': [{'off': 0x0, 'type': 'u32', 'value': 0xAABBCCDD}],
+             'nested': [{'ptr_off': 0x18, 'size': 0x28, 'fields': [{'off': 0x24, 'type': 'u32', 'value': 2}]}]},
+            {'seeds': [{'off': 0x0, 'type': 'u32', 'value': 0x11223344}],
+             'nested': [{'ptr_off': 0x18, 'size': 0x28, 'fields': [{'off': 0x24, 'type': 'u32', 'value': 0}]}]},
+            {'seeds': [{'off': 0x0, 'type': 'u32', 'value': 0xDEADBEEF}],
+             'nested': [{'ptr_off': 0x18, 'size': 0x28, 'fields': [{'off': 0x24, 'type': 'u32', 'value': 5}]}]},
+            {'seeds': [{'off': 0x0, 'type': 'u32', 'value': 0x55667788}],
+             'nested': [{'ptr_off': 0x18, 'size': 0x28, 'fields': [{'off': 0x24, 'type': 'u32', 'value': 0xFFFFFFFF}]}]},
+            {'seeds': [{'off': 0x0, 'type': 'u32', 'value': 0x99AABBCC}],
+             'nested': [{'ptr_off': 0x18, 'size': 0x28, 'fields': [{'off': 0x24, 'type': 'u32', 'value': 1}]}]},
+        ],
+        'path2_tests': [
+            {'seeds': [{'off': 0x0, 'type': 'u32', 'value': 0xAABBCCDD}],
+             'nested': [{'ptr_off': 0x18, 'size': 0x28, 'fields': [{'off': 0x24, 'type': 'u32', 'value': 2}]}]},
+        ],
+    },
+
     # 0x00478cc0  RenderWorldStateZeroFill — __cdecl void(p): memset(p,0,0x418f*4)
     # (inline REP STOSD, 67132 bytes). struct_call_observe: struct_size 0x10680
     # (> 0x1063c so off 0x1063c is a one-past-the-end guard that must SURVIVE).
