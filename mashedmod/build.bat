@@ -476,7 +476,6 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Util\PromoLoop_round76.cpp" ^
     "Util\PromoLoop_round77.cpp" ^
     "Util\PromoLoop_round78.cpp" ^
-    "Util\PromoLoop_round79.cpp" ^
     "Sky\SkyElementRemove.cpp" ^
     "Util\RtFSHandlerCancel.cpp" ^
     "Render\RgbPackEncoder_wfb0f.cpp" ^
