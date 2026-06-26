@@ -1,0 +1,570 @@
+{
+  "round": 4,
+  "supply": {
+    "runnable_today": 501,
+    "needs_argtype": 1440,
+    "scored_eligible": 166,
+    "scheduled": 30
+  },
+  "dropped": {
+    "blocked_c3": 0,
+    "in_queue": 56,
+    "low_score": 0,
+    "dup": 0,
+    "thunk": 40,
+    "destructive": 8,
+    "no_argtype": 214,
+    "void_ret": 17,
+    "no_args": 0
+  },
+  "batches": [
+    {
+      "session": 1,
+      "model": "claude-opus-4-8[1m]",
+      "candidates": [
+        {
+          "rva": "0x00496d00",
+          "name": "FUN_00496d00",
+          "sub": "util",
+          "size": "10",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_scalar,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x0049cc40",
+          "name": "FUN_0049cc40",
+          "sub": "particle",
+          "size": "39",
+          "conv": "stdcall",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_scalar,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x00490ff0",
+          "name": "FUN_00490ff0",
+          "sub": "render",
+          "size": "20",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_pair,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x00491010",
+          "name": "FUN_00491010",
+          "sub": "render",
+          "size": "20",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_pair,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x005aaac0",
+          "name": "FUN_005aaac0",
+          "sub": "audio",
+          "size": "53",
+          "conv": "cdecl",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_pair,reads-global,sig:low,leaf,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 2,
+      "model": "claude-opus-4-8[1m]",
+      "candidates": [
+        {
+          "rva": "0x0049d920",
+          "name": "FUN_0049d920",
+          "sub": "particle",
+          "size": "54",
+          "conv": "stdcall",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_pair,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x0049d960",
+          "name": "FUN_0049d960",
+          "sub": "particle",
+          "size": "54",
+          "conv": "stdcall",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_pair,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x0049d9a0",
+          "name": "FUN_0049d9a0",
+          "sub": "particle",
+          "size": "113",
+          "conv": "stdcall",
+          "nargs": "2",
+          "ret": "int",
+          "arg_type": "int_pair",
+          "sig_conf": "low",
+          "score": 9.0,
+          "why": "arg:int_pair,reads-global,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x005bf670",
+          "name": "FUN_005bf670",
+          "sub": "audio",
+          "size": "17",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x005aefa0",
+          "name": "FUN_005aefa0",
+          "sub": "audio",
+          "size": "21",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,sig:low,leaf,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 3,
+      "model": "claude-opus-4-8[1m]",
+      "candidates": [
+        {
+          "rva": "0x00403640",
+          "name": "FUN_00403640",
+          "sub": "boot",
+          "size": "24",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005bc900",
+          "name": "FUN_005bc900",
+          "sub": "audio",
+          "size": "28",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x00426640",
+          "name": "FUN_00426640",
+          "sub": "render",
+          "size": "44",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005b70e0",
+          "name": "FUN_005b70e0",
+          "sub": "audio",
+          "size": "45",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005a7e70",
+          "name": "FUN_005a7e70",
+          "sub": "audio",
+          "size": "46",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 4,
+      "model": "claude-opus-4-8[1m]",
+      "candidates": [
+        {
+          "rva": "0x005af010",
+          "name": "FUN_005af010",
+          "sub": "audio",
+          "size": "46",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005b81d0",
+          "name": "FUN_005b81d0",
+          "sub": "audio",
+          "size": "47",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,sig:low,leaf,right-size,no-fp"
+        },
+        {
+          "rva": "0x0045d3f0",
+          "name": "FUN_0045d3f0",
+          "sub": "util",
+          "size": "53",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x00489890",
+          "name": "FUN_00489890",
+          "sub": "gameplay",
+          "size": "55",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x004b9850",
+          "name": "FUN_004b9850",
+          "sub": "input",
+          "size": "55",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 5,
+      "model": "claude-opus-4-8[1m]",
+      "candidates": [
+        {
+          "rva": "0x0040df20",
+          "name": "sub_0040df20",
+          "sub": "render",
+          "size": "57",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x00471560",
+          "name": "FUN_00471560",
+          "sub": "gameplay",
+          "size": "62",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005ad6a0",
+          "name": "FUN_005ad6a0",
+          "sub": "audio",
+          "size": "67",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x0041ad60",
+          "name": "FUN_0041ad60",
+          "sub": "render",
+          "size": "72",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x005a7560",
+          "name": "FUN_005a7560",
+          "sub": "audio",
+          "size": "78",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        }
+      ]
+    },
+    {
+      "session": 6,
+      "model": "claude-opus-4-8[1m]",
+      "candidates": [
+        {
+          "rva": "0x0044df80",
+          "name": "FUN_0044df80",
+          "sub": "render",
+          "size": "81",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x00401630",
+          "name": "FUN_00401630",
+          "sub": "track",
+          "size": "87",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x00433240",
+          "name": "FUN_00433240",
+          "sub": "frontend",
+          "size": "89",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x004987b0",
+          "name": "FUN_004987b0",
+          "sub": "input",
+          "size": "90",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        },
+        {
+          "rva": "0x0041c320",
+          "name": "FUN_0041c320",
+          "sub": "render",
+          "size": "91",
+          "conv": "cdecl",
+          "nargs": "1",
+          "ret": "int",
+          "arg_type": "int_scalar",
+          "sig_conf": "low",
+          "score": 8.0,
+          "why": "arg:int_scalar,reads-global,sig:low,right-size,no-fp"
+        }
+      ]
+    }
+  ],
+  "argtype_gaps": [
+    {
+      "shape": "cdecl nargs=1 ret=int int",
+      "would_unblock": 195,
+      "example_rvas": [
+        "004cbb50",
+        "00551180",
+        "004dfaa0",
+        "00550af0"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=0 ret=int int",
+      "would_unblock": 130,
+      "example_rvas": [
+        "00489240",
+        "005aea50",
+        "0040ab40",
+        "0040ac80"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=2 ret=int int",
+      "would_unblock": 125,
+      "example_rvas": [
+        "0040d020",
+        "00556ca0",
+        "0047cde0",
+        "00550c30"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=3 ret=int int",
+      "would_unblock": 115,
+      "example_rvas": [
+        "00476860",
+        "005b3b60",
+        "005b1140",
+        "005b1160"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=4 ret=int int",
+      "would_unblock": 61,
+      "example_rvas": [
+        "005a6280",
+        "005a7f70",
+        "005b8570",
+        "005b9e30"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=2 ret=int fp",
+      "would_unblock": 47,
+      "example_rvas": [
+        "00495080",
+        "0046cc10",
+        "004cb490",
+        "0041f060"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=3 ret=int fp",
+      "would_unblock": 43,
+      "example_rvas": [
+        "0041f1e0",
+        "0045dff0",
+        "00477f00",
+        "004780c0"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=1 ret=int fp",
+      "would_unblock": 38,
+      "example_rvas": [
+        "00417740",
+        "0047acd0",
+        "0047ad00",
+        "004173b0"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=4 ret=int fp",
+      "would_unblock": 33,
+      "example_rvas": [
+        "004b4cd0",
+        "004b4e70",
+        "004417e0",
+        "00411350"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=5 ret=int fp",
+      "would_unblock": 33,
+      "example_rvas": [
+        "004b4b20",
+        "004820e0",
+        "005bbd50",
+        "00476320"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=13 ret=int fp",
+      "would_unblock": 30,
+      "example_rvas": [
+        "0048a4e0",
+        "004b5080",
+        "00497060",
+        "0041c180"
+      ]
+    },
+    {
+      "shape": "cdecl nargs=6 ret=int int",
+      "would_unblock": 28,
+      "example_rvas": [
+        "00490fb0",
+        "00491030",
+        "00472ad0",
+        "004b4b60"
+      ]
+    }
+  ]
+}

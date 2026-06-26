@@ -179,6 +179,33 @@ def score(row):
     return s, ",".join(why)
 
 
+def load_prior_scheduled():
+    """RVAs any prior round already scheduled (landed OR queued OR failed).
+
+    Avoids re-burning tokens re-attempting the same candidates every round: a
+    candidate a prior round scheduled but didn't land was already determined
+    queued/failed for THIS arg_type set. NOTE: clear/ignore this after building a
+    NEW arg_type (the meta-action) — previously-queued "needs arg_type X"
+    candidates may then become runnable and deserve a retry.
+    """
+    rvas = set()
+    if not os.path.isdir(ROUNDS_DIR):
+        return rvas
+    for fn in os.listdir(ROUNDS_DIR):
+        if not re.match(r"round_\d+_plan\.json$", fn):
+            continue
+        try:
+            p = json.load(open(os.path.join(ROUNDS_DIR, fn), encoding="utf-8"))
+        except Exception:
+            continue
+        for b in p.get("batches", []):
+            for c in b.get("candidates", []):
+                rv = norm_rva(c.get("rva"))
+                if rv:
+                    rvas.add(rv)
+    return rvas
+
+
 def next_round_number():
     if not os.path.isdir(ROUNDS_DIR):
         return 1
@@ -230,6 +257,8 @@ def main():
     ap.add_argument("--round", type=int, default=None)
     ap.add_argument("--min-score", type=float, default=2.0,
                     help="drop candidates below this yield score")
+    ap.add_argument("--peek", action="store_true",
+                    help="print the plan but do NOT write a round file or consume candidates")
     args = ap.parse_args()
 
     runnable = load_tsv(RUNNABLE)
@@ -239,11 +268,12 @@ def main():
               file=sys.stderr)
         return 2
     blocked = load_blocked_rvas()
+    prior = load_prior_scheduled()
 
     scored = []
     dropped = {"blocked_c3": 0, "in_queue": 0, "low_score": 0, "dup": 0,
                "thunk": 0, "destructive": 0, "no_argtype": 0, "void_ret": 0,
-               "no_args": 0}
+               "no_args": 0, "prior_round": 0}
     seen = set()
     for r in runnable:
         rva = norm_rva(r.get("rva"))
@@ -256,6 +286,9 @@ def main():
         if rva in blocked:
             reason = blocked[rva]
             dropped["in_queue" if reason == "in_queue" else "blocked_c3"] += 1
+            continue
+        if rva in prior:
+            dropped["prior_round"] += 1
             continue
         ex = exclude_reason(r)
         if ex:
@@ -307,17 +340,21 @@ def main():
         "argtype_gaps": argtype_gaps(needs),
     }
 
-    os.makedirs(ROUNDS_DIR, exist_ok=True)
-    out = os.path.join(ROUNDS_DIR, f"round_{rnd}_plan.json")
-    with open(out, "w", encoding="utf-8") as f:
-        json.dump(plan, f, indent=2)
+    if args.peek:
+        out = "(peek — not written)"
+    else:
+        os.makedirs(ROUNDS_DIR, exist_ok=True)
+        out = os.path.join(ROUNDS_DIR, f"round_{rnd}_plan.json")
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(plan, f, indent=2)
+        out = os.path.relpath(out, ROOT)
 
     print(f"round {rnd}: {len(picked)} scheduled across {len(batches)} sessions "
           f"(eligible {len(scored)} / runnable {len(runnable)}; "
           f"argtype-blocked {len(needs)})")
     print(f"  dropped: {dropped}")
     print(f"  top arg_type gap: {plan['argtype_gaps'][0] if plan['argtype_gaps'] else 'none'}")
-    print(f"  wrote {os.path.relpath(out, ROOT)}")
+    print(f"  wrote {out}")
     return 0
 
 

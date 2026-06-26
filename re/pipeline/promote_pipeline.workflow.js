@@ -10,14 +10,18 @@ export const meta = {
   ],
 }
 
-// ---- args (all optional) ----------------------------------------------------
+// ---- config -----------------------------------------------------------------
+// NOTE: the Workflow `args` global did NOT propagate to the script in this harness
+// (run wf_980e3d3a ignored {rounds:8,model:sonnet} -> ran 1 Opus round). So the
+// DEFAULTS below are the real control surface — edit them and re-invoke with
+// {scriptPath}. args still override IF present.
 const A = args || {}
-const ROUNDS = A.rounds || 1            // how many plan->execute->collect rounds to run back-to-back
-const SESSIONS = A.sessions || 6        // worker sessions per round
-const PER_SESSION = A.perSession || 5   // candidates per session
-const AUTO_MERGE = A.autoMerge !== false // user chose fully-autonomous: default ON
-const DRY_EXECUTE = A.dryExecute === true // workers author+diff+queue but never merge (validation mode)
-const MODEL = A.model || 'claude-opus-4-8[1m]'
+const ROUNDS = A.rounds || 8             // plan->execute->collect rounds back-to-back
+const SESSIONS = A.sessions || 6         // worker sessions per round
+const PER_SESSION = A.perSession || 5    // candidates per session (30/round)
+const AUTO_MERGE = A.autoMerge !== false // fully-autonomous: default ON
+const DRY_EXECUTE = A.dryExecute === true // author+diff+queue but never merge (validation mode)
+const MODEL = A.model || 'claude-sonnet-4-6'  // worker (Execute) model; orchestration inherits Opus
 
 // ---- schemas ----------------------------------------------------------------
 const PREFLIGHT_SCHEMA = {
