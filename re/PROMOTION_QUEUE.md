@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-7  rvas=0x00487e40  branch=worktree-wf_b0f68acd-63f-7  evidence=log/diff_sky_element_remove.csv  note=1 sky C2->C3 (SkyElementRemove 0x00487e40): removes cloud/sky element by index 0..127; zeros active flag DAT_0086ae34[idx*0x38] + transform ptr DAT_0086ae4c[idx*0x38] + dirty flag DAT_007030b4; returns 0 if idx>=128 (CMP EAX,0x80/JL), 1 on success; cdecl leaf 42B; Sky/SkyElementRemove.cpp (NEW); arg_type=int_scalar (candidate was ptr_arg_int_get which does NOT match fn(int)->int; int_scalar is the correct existing shape); 10/10 GREEN non-degenerate (in-range 0..127->1, out-of-range 128..255->0); anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E verified
 ```
 
 ## Merged
