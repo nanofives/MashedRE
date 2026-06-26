@@ -2633,6 +2633,43 @@ HOOKS = {
         ],
     },
 
+    # 0x00490ff0  RainSetCameraScale
+    # 19-byte leaf setter: void FUN_00490ff0(param_1, param_2).
+    #   00490ff0  MOV EAX,[ESP+0x8]       ; param_2
+    #   00490ff4  MOV ECX,[ESP+0x4]       ; param_1
+    #   00490ff8  MOV [0x006146b4],EAX    ; _DAT_006146b4 = param_2
+    #   00490ffd  MOV [0x006146b0],ECX    ; _DAT_006146b0 = param_1
+    #   00491003  RET                     ; cdecl plain ret; eax = param_2
+    # Observable: original is void but the final store leaves eax = param_2 at RET.
+    # int_pair (ret='uint32') reads eax; reimpl declares uint32 return + `return param_2`
+    # to reproduce eax bit-for-bit. Distinct param_2 per vector -> non-degenerate.
+    # ref: re/analysis/breadth_unmapped_0049x/0x00490ff0.md
+    'rain_set_camera_scale': {
+        'rva':            0x00490ff0,
+        'export':         'RainSetCameraScale',
+        'signature':      {'ret': 'uint32', 'args': ['uint32', 'uint32']},
+        'arg_type':       'int_pair',
+        'lut_root_delta': 0,
+        # [param_1, param_2]; eax == param_2.
+        'path1_tests': [
+            [0x00000000, 0x00000000],
+            [0x00000001, 0x00000002],
+            [0x3e800000, 0x3e800000],   # default 0.25f (FUN_00490e70)
+            [0x12345678, 0xDEADBEEF],
+            [0xCAFEBABE, 0x3f000000],   # 0.5f
+            [0xFFFFFFFF, 0x40000000],   # 2.0f
+            [0x00000010, 0x80000000],
+            [0x7FFFFFFF, 0x00C0FFEE],
+            [0xABAD1DEA, 0x0BADF00D],
+            [0x40490FDB, 0x3F800000],   # pi bits / 1.0f
+        ],
+        'path2_tests': [
+            [0x3e800000, 0x3e800000],
+            [0x12345678, 0xDEADBEEF],
+            [0xFFFFFFFF, 0x40000000],
+        ],
+    },
+
     # Session c3-batch-e-s2 â€” VfsFileExists + AutosaveTrigger (C2->C3)
     # Save/GameSaveVFS.cpp
     # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

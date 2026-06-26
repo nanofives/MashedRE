@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-25  c2c3-worker  rva=0x00490ff0  hook=rain_set_camera_scale  export=RainSetCameraScale  arg_type=int_pair  branch=worktree-wf_980e3d3a-b86-5  evidence=log/diff_rain_set_camera_scale.csv:GREEN-10/10  note=Render leaf setter void FUN_00490ff0(p1,p2): _DAT_006146b0=p1, _DAT_006146b4=p2 (rain camera-scale; default 0.25f from FUN_00490e70; _DAT_006146b4 consumed in per-frame rain update FUN_004910c0/FUN_00491340; Lua "RainSetCameraScale" str@0x005cdacc). Disasm 0x00490ff0: MOV EAX,[ESP+8]; MOV ECX,[ESP+4]; MOV [6146b4],EAX; MOV [6146b0],ECX; RET -> eax=param_2 at RET. int_pair (ret=uint32) observes eax; reimpl declares uint32 return + `return param_2` to reproduce eax bit-for-bit. CSV non-degenerate (10 distinct param_2 return values, all orig==reimpl). mashedmod/src/mashed_re/Render/RainCameraScale.cpp; build.bat .asi list; hooks_registry rain_set_camera_scale. No diff_template.js/run_diff.py edits (reuses existing int_pair) -> NOT sweep-critical. anchor BDCAE093 (original/MASHED.exe.unpatched). Ghidra pool2 read-only, closed.
 ```
 
 ## Merged
