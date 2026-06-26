@@ -274,3 +274,6 @@
 "Render\RainLineWidthRange.cpp"
 "Audio\AtomicExchangeStore.cpp"
 "Frontend\RaceArmReset.cpp"
+"Util\CameraEntryDispatch.cpp"
+"Audio\AudioVoiceQueueSet.cpp"
+"Render\ElemArrayCopyAll.cpp"
