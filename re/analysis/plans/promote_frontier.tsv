@@ -1,6 +1,4 @@
 rva	name	subsystem	size	n_callers_c2plus	best_caller	shape_hint
-00413bc0	FUN_00413bc0	hud	173	1	00413cb0	other
-00422440	FUN_00422440	gameplay	45	1	00422470	read_global_f32
 004233e0	FUN_004233e0	ai	160	3	004252c0	other
 004277a0	FUN_004277a0	frontend	147	7	004278d0	other
 00431b20	FUN_00431b20	audio	15	2	0045dd60	read_global_f32

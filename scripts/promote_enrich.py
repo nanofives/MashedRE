@@ -172,13 +172,24 @@ def infer_sig(insns, derefs_arg):
     ret = "float" if (st0_live and not eax_written) else ("int" if eax_written else "void")
     # map to a GENERIC scalar arg_type the harness supports today
     at = None
-    if not (ecx_in or edx_in) and not float_arg and not derefs_arg and ret in ("int", "void"):
-        if nargs == 0:
-            at = "none"
-        elif nargs == 1:
-            at = "int_scalar"
-        elif nargs == 2:
-            at = "int_pair"
+    if not (ecx_in or edx_in) and not float_arg and ret in ("int", "void"):
+        if not derefs_arg:
+            if nargs == 0:
+                at = "none"
+            elif nargs == 1:
+                at = "int_scalar"
+            elif nargs == 2:
+                at = "int_pair"
+        else:
+            # single deref'd-pointer arg, int return: the ptr_arg_int_get
+            # arg_type (diff_template.js 2026-06-26 meta-action) feeds a seeded
+            # scratch buffer and observes the int return. Unblocks ~195 cdecl/1/
+            # int getters that int_scalar can't touch (random-int deref => AV).
+            # Restricted to nargs==1 + int return (the validated shape); deeper
+            # double-deref getters that fault are dropped by the flake-tolerant
+            # collector, never falsely promoted.
+            if nargs == 1 and ret == "int":
+                at = "ptr_arg_int_get"
     runnable = at is not None
     sig_conf = "low" if not ebp_frame else "med"   # esp-arg counting is less reliable
     return dict(conv=conv, nargs=nargs, float_arg=float_arg, ret=ret,
