@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-s1  rvas=0x00486610  branch=main  evidence=log/diff_particle_burst_4.csv  note=ParticleBurst4 void_write_observe GREEN 10/10; SWEEP-CRITICAL: diff_template.js+run_diff.py extended with call_args/seed_globals support for void_write_observe (worktree-only patch; must port to main before next sweep)
 ```
 
 ## Merged

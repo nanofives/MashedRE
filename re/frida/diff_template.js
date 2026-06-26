@@ -3795,14 +3795,31 @@ function runDiff() {
             if (CONFIG.arg_type === 'void_write_observe') {
                 const gaddr = ptr(CONFIG.target_global);
                 let origRead = null, reimRead = null;
+                // Optional CONFIG.seed_globals: array of {addr:'0x..', val:<u32>}
+                // written before EACH call so a one-shot guard is reset for both sides.
+                const seedGlobals = CONFIG.seed_globals || [];
+                const seedAll = function () {
+                    for (let s = 0; s < seedGlobals.length; s++) {
+                        ptr(seedGlobals[s].addr).writeU32(seedGlobals[s].val >>> 0);
+                    }
+                };
+                // Optional CONFIG.call_args: fixed integer args for non-void-arg functions.
+                // Without call_args the function is called with no stack args (void(void) form).
+                const callArgs = CONFIG.call_args || null;
+                const invoke = function (fn) {
+                    if (!callArgs || callArgs.length === 0) return fn();
+                    return fn.apply(null, callArgs.map(function(v) { return v >>> 0; }));
+                };
                 try {
+                    seedAll();
                     gaddr.writeU32(t >>> 0);
-                    Orig();
+                    invoke(Orig);
                     origRead = gaddr.readU32();
                 } catch (e) { errOrig = e.message; }
                 try {
+                    seedAll();
                     gaddr.writeU32(t >>> 0);
-                    Reimpl();
+                    invoke(Reimpl);
                     reimRead = gaddr.readU32();
                 } catch (e) { errReim = e.message; }
                 // crash_equal_ok: if both sides throw the same error string, count as match

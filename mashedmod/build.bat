@@ -332,6 +332,7 @@ cl /nologo /EHsc /W3 /O2 /LD /Fo"%OUT%\\" /Fe"%OUT%\mashed_re_dev.asi" ^
     "Gameplay\GameplayLeaves_ad3.cpp" ^
     "Particle\ParticleLeaves_ad4.cpp" ^
     "Particle\ParticleLeaves_ad5.cpp" ^
+    "Particle\ParticleBurst_ac1.cpp" ^
     "Frontend\MenuLeaves_af5.cpp" ^
     "Input\MemsetInline_ag1.cpp" ^
     "Vehicle\ReplayRewind_ag.cpp" ^

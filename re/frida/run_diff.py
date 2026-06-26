@@ -369,6 +369,17 @@ def build_config(hook, asi_path=None):
                'object_size', 'init_rva_str', 'pushback_rva_str'):
         if _k in hook:
             config[_k] = hook[_k]
+    # void_write_observe scenario-attach extension: call_args (fixed integer args
+    # for non-void-arg functions) and seed_globals ({addr,val} list reset before
+    # each call pair). Forwarded verbatim to the JS agent.
+    if 'call_args' in hook:
+        config['call_args'] = hook['call_args']
+    if 'seed_globals' in hook:
+        config['seed_globals'] = [
+            {'addr': f"0x{g['addr']:08x}" if isinstance(g.get('addr'), int) else g['addr'],
+             'val':  g['val']}
+            for g in hook['seed_globals']
+        ]
     return config
 
 
