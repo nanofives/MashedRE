@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-11  rva=0x00551180  hook=rtfs_handler_cancel  export=RtFSHandlerCancel  arg_type=ptr_arg_int_get  branch=worktree-wf_b0f68acd-63f-11  evidence=log/diff_rtfs_handler_cancel.csv:GREEN-5/5-NONDEGEN  note=RtFSHandler::Cancel util C2->C3; int __cdecl fn(void* slot): *(slot+0x20)=1; return 1 (12 bytes, 0x00551180..0x0055118b, disasm 8B4C2404 B801000000 894120 C3); vtable+0x40 Cancel slot; mirrors Close (0x00550d80) state-reset; ptr_arg_int_get return=1 non-trivial (is_trivial(1)==False) GREEN 5/5 bit-identical all orig==reimpl==0x00000001; Util/RtFSHandlerCancel.cpp (NEW, added to build.bat .asi list after PromoLoop_round79.cpp); diff_template.js updated from main (ptr_arg_int_get handler absent in worktree branch, synced via git show main:); NOT SWEEP-CRITICAL (ptr_arg_int_get already in main diff_template.js); anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (original/MASHED.exe.unpatched verified); author+verify-only; central re-classify deferred to Collect tier
 ```
 
 ## Merged
