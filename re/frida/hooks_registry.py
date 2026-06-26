@@ -14600,6 +14600,29 @@ HOOKS = {
         'path2_tests':    [[0, 0], [1, 0], [0xDEADBEEF, 0xCAFEBABE]],
     },
 
+    # 0x00491010  RainLineWidthRangeSet — void(uint32 a, uint32 b). Writes a ->
+    # DAT_006146b8, b -> DAT_006146bc (bytes 8B 44 24 04 8B 4C 24 08 A3 B8 46 61
+    # 00 89 0D BC 46 61 00 C3). multi_arg_global_write over the 2-dword block.
+    # guard_global REQUIRED by the handler but this fn has no guard: pointed
+    # INSIDE the saved/restored out window (0x006146b8 — the fn overwrites it
+    # anyway; same self-contained trick as boot_global_pair_set).
+    # ref: re/analysis/render_2_c1_to_c2_s5/FUN_00491010.md
+    'rain_line_width_range_set': {
+        'rva':            0x00491010,
+        'export':         'RainLineWidthRangeSet',
+        'signature':      {'ret': 'void', 'args': ['uint32', 'uint32']},
+        'arg_type':       'multi_arg_global_write',
+        'guard_global':   0x006146b8,
+        'out_base':       0x006146b8,
+        'out_count':      2,
+        'lut_root_delta': 0,
+        'path1_tests':    [[0, 0], [1, 0], [0x40400000, 0x40c00000],
+                           [0xDEADBEEF, 0xCAFEBABE], [0xFFFFFFFF, 0x80000000],
+                           [0x12345678, 0x7FFFFFFF], [0x55555555, 0xAAAAAAAA],
+                           [2, 3], [0, 0xFFFFFFFF], [0xABCDEF01, 0x10FEDCBA]],
+        'path2_tests':    [[0, 0], [1, 0], [0x40400000, 0x40c00000]],
+    },
+
     # ---- promote-round round 7 (L2 cheap re-earns) ----------------------------
     # Bodies byte-verified in MASHED.exe.unpatched (cites in PromoLoop_round7.cpp).
 
