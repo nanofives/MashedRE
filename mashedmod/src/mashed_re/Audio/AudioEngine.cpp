@@ -125,6 +125,17 @@ int CreateAndPlay(const char* rwsPath, const char* waveName, float volume, bool 
 
 bool Init(void* hwnd) {
     if (g_ds) return true;
+    // MASHED_MUTE=1 -> skip DirectSound init entirely. g_ds stays null and every
+    // playback fn (CreateAndPlay/EngineStart/MusicStart) already early-returns on
+    // !g_ds, so the whole audio system silently no-ops. For headless/screenshot
+    // runs so the game doesn't blast sound.
+    {
+        char muteBuf[8] = {};
+        if (GetEnvironmentVariableA("MASHED_MUTE", muteBuf, sizeof(muteBuf)) > 0 && muteBuf[0] == '1') {
+            logf("Init: MASHED_MUTE=1 — audio disabled (no DirectSound)");
+            return false;
+        }
+    }
     HRESULT hr = DirectSoundCreate8(nullptr, &g_ds, nullptr);
     if (FAILED(hr) || !g_ds) { g_ds = nullptr; logf("Init: DirectSoundCreate8 failed hr=%#lx", hr); return false; }
     // PRIORITY lets us set the primary format; the window may be null in odd
