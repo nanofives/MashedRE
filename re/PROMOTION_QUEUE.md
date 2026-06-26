@@ -15,6 +15,7 @@ The sweep (or user-driven merge) moves rows from "Queued" to "Merged".
 
 ## Queued
 ```
+2026-06-26  wf_b0f68acd-63f-13  rva=0x004dfa10  hook=rgb_pack_encoder_4dfa10  export=RgbPackEncoder4dfa10  arg_type=ptr_arg_int_get  branch=worktree-wf_b0f68acd-63f-13  evidence=log/diff_rgb_pack_encoder_4dfa10.csv:GREEN-10/10-NONDEGEN  note=Render pure leaf uint FUN_004dfa10(byte* rgb): packs rgb[2]|0xffffff00 << 8 | rgb[1] << 8 | rgb[0] -> 0xff[b2][b1][b0] DWORD (alpha=0xFF). __cdecl, plain RET at 0x004dfa31, single ptr arg [ESP+4]. Non-degenerate (10 distinct 0xff-prefixed outputs; caller FUN_004e02d0 C2). Reimpl in Render/RgbPackEncoder_wfb0f.cpp. ptr_arg_int_get handler+buf added to worktree diff_template.js (matches main verbatim — handler pre-exists in main at line 289; no diff_template.js conflict on merge). anchor BDCAE093A30FBF226BDD852B9C36798A987AEE33B3AE82BF7404B0336EFD3C0E (original/MASHED.exe.unpatched). author+verify-only; central re-classify deferred to Collect tier.
 ```
 
 ## Merged
