@@ -17170,4 +17170,23 @@ HOOKS = {
             0x00000001, 0x0000abcd, 0x0000ff00,
         ],
     },
+
+    # 0x004dfa10 RgbPackEncoder4dfa10 (render) - PURE LEAF encoder fn(byte *rgb) -> uint32:
+    # packs rgb[2], rgb[1], rgb[0] into a 32-bit DWORD with top byte=0xFF.
+    # Disasm: MOV ECX,[ESP+4]; XOR EAX,EAX; XOR EDX,EDX; MOV AL,[ECX+2]; MOV DL,[ECX+1];
+    #         OR EAX,0xffffff00; SHL EAX,8; OR EAX,EDX; XOR EDX,EDX; MOV DL,[ECX];
+    #         SHL EAX,8; OR EAX,EDX; RET   (cdecl, single ptr arg)
+    # Buffer fill at o=0 writes U32(seed+0) â†’ bytes [0..3] all vary per seed â†’ non-degenerate.
+    # Reimpl: Render/RgbPackEncoder_wfb0f.cpp  (worktree wf_b0f68acd)
+    'rgb_pack_encoder_4dfa10': {
+        'rva':            0x004dfa10,
+        'export':         'RgbPackEncoder4dfa10',
+        'signature':      {'ret': 'uint32', 'args': ['pointer']},
+        'arg_type':       'ptr_arg_int_get',
+        'struct_size':    4,
+        'lut_root_delta': 0,   # unused for ptr_arg_int_get; kept for harness uniformity
+        'path1_tests':    [0x00000000, 0x12345678, 0xdeadbeef, 0xffffff00, 0x01010101,
+                           0xabcdef12, 0x80402010, 0x55aa55aa, 0x11223344, 0xcafebabe],
+        'path2_tests':    [0x12345678, 0x00000000, 0xdeadbeef],
+    },
 }
